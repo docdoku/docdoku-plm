@@ -21,7 +21,10 @@
 package com.docdoku.core.document;
 
 import com.docdoku.core.common.User;
+
 import javax.persistence.Entity;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 /**
@@ -34,13 +37,16 @@ import javax.persistence.Table;
  */
 @Table(name="STATECHANGESUBSCRIPTION")
 @Entity
+@NamedQueries({
+    @NamedQuery(name="StateChangeSubscription.findSubscriptionByUserAndDocRevision", query="SELECT s FROM StateChangeSubscription s WHERE s.subscriber = :user AND s.observedDocumentRevision = :docR"),
+})
 public class StateChangeSubscription extends Subscription{
     
 
     public StateChangeSubscription() {
     }
     
-    public StateChangeSubscription (User pSubscriber, DocumentMaster pObservedElement){
+    public StateChangeSubscription (User pSubscriber, DocumentRevision pObservedElement){
         super(pSubscriber,pObservedElement);
     }
     

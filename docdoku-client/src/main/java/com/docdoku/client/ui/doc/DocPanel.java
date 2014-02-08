@@ -20,14 +20,14 @@
 
 package com.docdoku.client.ui.doc;
 
+import com.docdoku.client.localization.I18N;
 import com.docdoku.client.ui.common.GUIConstants;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentMaster;
-import java.text.DateFormat;
 
 import javax.swing.*;
 import java.awt.*;
-import com.docdoku.client.localization.I18N;
+import java.text.DateFormat;
 
 public abstract class DocPanel extends JPanel {
 

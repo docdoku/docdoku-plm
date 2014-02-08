@@ -21,13 +21,14 @@ package com.docdoku.client.ui.login;
 
 import com.docdoku.client.data.Prefs;
 import com.docdoku.client.localization.I18N;
+import com.docdoku.client.ui.common.OKButton;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import com.docdoku.client.ui.common.OKButton;
 
 public class LoginFrame extends JFrame implements ActionListener {
 

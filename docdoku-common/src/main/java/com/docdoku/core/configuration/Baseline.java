@@ -22,7 +22,6 @@ package com.docdoku.core.configuration;
 import com.docdoku.core.product.ConfigurationItem;
 
 import javax.persistence.*;
-import javax.persistence.criteria.Fetch;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
@@ -144,10 +143,7 @@ public class Baseline implements Serializable {
         if (!(o instanceof Baseline)) return false;
 
         Baseline baseline = (Baseline) o;
-
-        if (id != baseline.id) return false;
-
-        return true;
+        return id == baseline.id;
     }
 
     @Override

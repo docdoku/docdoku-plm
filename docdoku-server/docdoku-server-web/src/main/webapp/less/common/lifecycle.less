@@ -1,6 +1,11 @@
 #tab-iteration-lifecycle {
 
   .history-content{
+
+    max-height: 68px;
+    overflow-y: scroll;
+    border: solid 1px lightblue;
+
     a:not(.active){
       color:#333;
     }
@@ -8,9 +13,9 @@
 
   #lifecycle-activities-wrapper {
 
-    //width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
     //height: 340px;
-    //overflow: auto;
 
     #lifecycle-activities {
 
@@ -28,7 +33,15 @@
         background: white;
 
         &.complete {
-          border: 1px solid #5bb75b;
+          border: 3px solid #5bb75b;
+        }
+
+        &.in_progress{
+          border: 3px dashed royalblue;
+        }
+
+        &.rejected{
+          border: 3px solid #ee5f5b;
         }
 
         &.incomplete {
@@ -44,16 +57,19 @@
             padding: 9px 19px;
 
             &.not_started {
-              border: 1px dashed #aaaaaa;
+              border: 1px dotted #aaaaaa;
             }
+
             &.in_progress {
-              border: 2px dashed #5bb75b;
+              border: 2px dashed royalblue;
             }
+
             &.approved {
-              border: 1px solid #5bb75b;
+              border: 2px solid #5bb75b;
             }
+
             &.rejected {
-              border: 1px dashed #ee5f5b;
+              border: 2px solid #ee5f5b;
             }
 
             h5 {
@@ -127,7 +143,7 @@
         &.serial {
           .tasks {
             .task {
-              float: left;
+              //float: left;
             }
           }
         }
@@ -141,6 +157,42 @@
 
       }
 
+    }
+  }
+
+  .lifecycle-legend{
+    padding: 10px 0px;
+
+    span{
+      margin-right: 10px;
+
+      &:before{
+        content: "";
+        display: inline-block;
+        width: 5px;
+        height: 5px;
+        margin: 0px 2px;
+        border: 2px solid #000;
+        -webkit-border-radius: 50%;
+        -moz-border-radius: 50%;
+        border-radius: 50%;
+      }
+
+      &.lifecycle-legend-incomplete:before{
+        background: #aaaaaa;
+      }
+
+      &.lifecycle-legend-complete:before{
+        background: #5bb75b;
+      }
+
+      &.lifecycle-legend-in-progress:before{
+        background: royalblue;
+      }
+
+      &.lifecycle-legend-rejected:before{
+        background: #ee5f5b;;
+      }
     }
   }
 }

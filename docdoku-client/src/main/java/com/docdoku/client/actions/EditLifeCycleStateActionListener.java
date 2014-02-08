@@ -20,16 +20,15 @@
 
 package com.docdoku.client.actions;
 
+import com.docdoku.client.ui.workflow.EditLifeCycleStateDialog;
 import com.docdoku.client.ui.workflow.LifeCycleStateCanvas;
+import com.docdoku.client.ui.workflow.WorkflowModelFrame;
 import com.docdoku.core.workflow.ActivityModel;
 import com.docdoku.core.workflow.WorkflowModel;
 
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import com.docdoku.client.ui.workflow.EditLifeCycleStateDialog;
-import com.docdoku.client.ui.workflow.WorkflowModelFrame;
-
-import javax.swing.*;
 
 public class EditLifeCycleStateActionListener implements ActionListener {
 

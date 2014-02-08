@@ -21,10 +21,10 @@
 package com.docdoku.server.dao;
 
 import com.docdoku.core.common.Account;
+import com.docdoku.core.exceptions.CreationException;
+import com.docdoku.core.exceptions.GCMAccountAlreadyExistsException;
+import com.docdoku.core.exceptions.GCMAccountNotFoundException;
 import com.docdoku.core.gcm.GCMAccount;
-import com.docdoku.core.services.CreationException;
-import com.docdoku.core.services.GCMAccountAlreadyExistsException;
-import com.docdoku.core.services.GCMAccountNotFoundException;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;

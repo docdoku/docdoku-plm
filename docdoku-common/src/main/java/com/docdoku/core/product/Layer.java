@@ -22,11 +22,12 @@
 package com.docdoku.core.product;
 
 import com.docdoku.core.common.User;
+
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
-import javax.persistence.*;
 
 /**
  * A Layer is a collection of <a href="Marker.html">Marker</a>s that can be

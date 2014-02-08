@@ -117,9 +117,16 @@ define([
         },
 
         tasksToCompleteChanged: function(){
-            this.model.set({
-                tasksToComplete: this.inputTasksToComplete.val()
-            });
+            var tasksToCompleteValue = parseInt(this.inputTasksToComplete.val());
+            if(tasksToCompleteValue > 0){
+                this.model.set({
+                    tasksToComplete: tasksToCompleteValue
+                });
+            }else{
+                this.model.set({
+                    tasksToComplete: 1
+                });
+            }
         },
 
         taskPositionChanged: function(oldPosition, newPosition){

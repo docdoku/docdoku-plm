@@ -19,19 +19,24 @@
  */
 package com.docdoku.server.rest;
 
-import com.docdoku.core.document.TagKey;
+import com.docdoku.core.meta.TagKey;
+import com.docdoku.core.exceptions.ApplicationException;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.server.rest.dto.TagDTO;
+import org.dozer.DozerBeanMapperSingletonWrapper;
+import org.dozer.Mapper;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import org.dozer.DozerBeanMapperSingletonWrapper;
-import org.dozer.Mapper;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -59,27 +64,6 @@ public class TagResource {
     @PostConstruct
     public void init() {
         mapper = DozerBeanMapperSingletonWrapper.getInstance();
-    } 
-
-    @GET
-    @Produces("application/json;charset=UTF-8")
-    public TagDTO[] getTagsInWorkspace (@PathParam("workspaceId") String workspaceId){
-        
-        try{    
-        
-            String[] tagsName = documentService.getTags(workspaceId);
-            TagDTO[] tagDtos = new TagDTO[tagsName.length];
-            for (int i = 0; i < tagsName.length; i++) {                
-                tagDtos[i] = new TagDTO();
-                tagDtos[i].setWorkspaceId(workspaceId);
-                tagDtos[i].setLabel(tagsName[i]);
-            }            
-            
-            return tagDtos;
-        } catch (com.docdoku.core.services.ApplicationException ex) {
-        
-            throw new RestApiException(ex.toString(), ex.getMessage());
-        }          
     }
 
     @Path("{tagId}/documents/")
@@ -87,25 +71,46 @@ public class TagResource {
         return documentsResource;
     }
 
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<TagDTO> getTagsInWorkspace (@PathParam("workspaceId") String workspaceId){
+        
+        try{    
+        
+            String[] tagsName = documentService.getTags(workspaceId);
+
+            List<TagDTO> tagsDTO = new ArrayList<TagDTO>();
+
+            for (String tagName : tagsName) {
+                tagsDTO.add(new TagDTO(tagName,workspaceId));
+            }            
+            
+            return tagsDTO;
+
+        } catch (ApplicationException ex) {
+        
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }          
+    }
+
     @POST
-    @Consumes("application/json;charset=UTF-8")
-    @Produces("application/json;charset=UTF-8")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public TagDTO createTag(@PathParam("workspaceId") String workspaceId, TagDTO tag) {
         try {
 
             documentService.createTag(workspaceId, tag.getLabel());
             return new TagDTO(tag.getLabel());
             
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
 
     @POST
     @Path("/multiple")
-    @Consumes("application/json;charset=UTF-8")
-    @Produces("application/json;charset=UTF-8")
-    public Response createTags(@PathParam("workspaceId") String workspaceId, TagDTO[] tagsDTO) {
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response createTags(@PathParam("workspaceId") String workspaceId, List<TagDTO> tagsDTO) {
         try {
 
             for(TagDTO tagDTO : tagsDTO){
@@ -114,25 +119,18 @@ public class TagResource {
 
             return Response.ok().build();
 
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
-    
-    /**
-     * DELETE method for deleting an instance of TagResource
-     */
+
     @DELETE
     @Path("{tagId}")
-    @Produces("application/json;charset=UTF-8")
     public Response deleteTag(@PathParam("workspaceId") String workspaceId, @PathParam("tagId") String tagId) {
         try {
-            
             documentService.deleteTag(new TagKey(workspaceId, tagId));
-            
-            return Response.status(Response.Status.OK).build();
-            
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+            return Response.ok().build();
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }

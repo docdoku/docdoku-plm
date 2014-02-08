@@ -20,6 +20,7 @@
 
 package com.docdoku.core.document;
 
+import javax.persistence.Column;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.io.Serializable;
@@ -37,8 +38,8 @@ import java.util.Stack;
 @Table(name="FOLDER")
 @javax.persistence.Entity
 public class Folder implements Serializable, Comparable<Folder> {
-       
-    
+
+    @Column(length=255)
     @javax.persistence.Id
     private String completePath="";
             
@@ -55,15 +56,6 @@ public class Folder implements Serializable, Comparable<Folder> {
             parentFolder = new Folder(completePath.substring(0, index));
         }
     }
-
-    public void setCompletePath(String completePath) {
-        this.completePath = completePath;
-    }
-
-    public void setParentFolder(Folder parentFolder) {
-        this.parentFolder = parentFolder;
-    }
-    
 
     public String getWorkspaceId(){
         return Folder.parseWorkspaceId(completePath);
@@ -144,13 +136,6 @@ public class Folder implements Serializable, Comparable<Folder> {
             folders[i] = foldersStack.pop();
         }
         return folders;
-    }
-
-    public void changeName(String pNewName) {
-        if (!isRoot() && !isHome()){
-            int index = completePath.lastIndexOf('/');
-            completePath = completePath.substring(0, index + 1) + pNewName;
-        }
     }
     
     public String getShortName() {

@@ -159,6 +159,17 @@ public abstract class Activity implements Serializable, Cloneable {
 
     public abstract boolean isStopped();
 
+    public boolean isInProgress() {
+        if (!isComplete() && !isStopped()) {
+            for (Task task : tasks) {
+                if(task.isInProgress()){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     public abstract void relaunch();
 
     @Override

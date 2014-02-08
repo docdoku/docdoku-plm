@@ -22,6 +22,8 @@ package com.docdoku.server.http;
 
 import com.docdoku.core.product.ConfigurationItem;
 import com.docdoku.core.services.IProductManagerLocal;
+
+import javax.ejb.EJB;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -30,7 +32,6 @@ import java.io.IOException;
 import java.net.URLDecoder;
 import java.util.List;
 import java.util.regex.Pattern;
-import javax.ejb.EJB;
 
 public class VisualizationServlet extends HttpServlet {
 

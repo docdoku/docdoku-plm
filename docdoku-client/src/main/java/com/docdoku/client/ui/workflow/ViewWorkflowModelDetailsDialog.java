@@ -20,12 +20,12 @@
 
 package com.docdoku.client.ui.workflow;
 
+import com.docdoku.client.localization.I18N;
 import com.docdoku.client.ui.common.CloseButton;
+import com.docdoku.core.workflow.WorkflowModel;
 
 import javax.swing.*;
 import java.awt.*;
-import com.docdoku.client.localization.I18N;
-import com.docdoku.core.workflow.WorkflowModel;
 
 public class ViewWorkflowModelDetailsDialog extends JDialog {
 

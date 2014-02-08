@@ -22,31 +22,13 @@ package com.docdoku.core.product;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Version;
 import com.docdoku.core.common.Workspace;
+
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
-import javax.persistence.OrderColumn;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 /**
  * This class holds the unchanging aspects of a part.
@@ -99,8 +81,6 @@ public class PartMaster implements Serializable {
 
     private String type;
 
-    @Lob
-    private String description;
     
     
     @OneToMany(mappedBy = "partMaster", cascade = CascadeType.ALL, fetch = FetchType.EAGER)    
@@ -108,6 +88,8 @@ public class PartMaster implements Serializable {
     private List<PartRevision> partRevisions = new ArrayList<PartRevision>();
 
     private boolean standardPart;
+
+    private boolean attributesLocked;
     
     public PartMaster() {
     }
@@ -190,7 +172,11 @@ public class PartMaster implements Serializable {
         else
             return partRevisions.remove(index);
     }
-    
+
+    public void removeRevision(PartRevision partR) {
+        this.partRevisions.remove(partR);
+    }
+
     public PartRevision createNextRevision(User pUser){
         PartRevision lastRev=getLastRevision();
         Version version;
@@ -226,14 +212,6 @@ public class PartMaster implements Serializable {
     public PartMasterKey getKey() {
         return new PartMasterKey(getWorkspaceId(),number);
     }
-        
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
 
     public String getWorkspaceId() {
         return workspace == null ? "" : workspace.getId();
@@ -245,6 +223,14 @@ public class PartMaster implements Serializable {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public boolean isAttributesLocked() {
+        return attributesLocked;
+    }
+
+    public void setAttributesLocked(boolean attributesLocked) {
+        this.attributesLocked = attributesLocked;
     }
 
     @Override
@@ -273,4 +259,5 @@ public class PartMaster implements Serializable {
     public String toString() {
         return number;
     }
+
 }

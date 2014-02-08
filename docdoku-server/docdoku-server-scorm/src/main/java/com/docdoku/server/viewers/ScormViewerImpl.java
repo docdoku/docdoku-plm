@@ -20,8 +20,8 @@
 package com.docdoku.server.viewers;
 
 import com.docdoku.core.common.BinaryResource;
+import com.docdoku.core.exceptions.StorageException;
 import com.docdoku.core.services.IDataManagerLocal;
-import com.docdoku.core.services.StorageException;
 import com.docdoku.server.viewers.utils.ScormManifestParser;
 import com.docdoku.server.viewers.utils.ScormOrganization;
 import com.docdoku.server.viewers.utils.ScormUtil;
@@ -33,7 +33,6 @@ import javax.ejb.EJB;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 public class ScormViewerImpl implements DocumentViewer {
 
@@ -58,13 +57,13 @@ public class ScormViewerImpl implements DocumentViewer {
         Mustache mustache = mf.compile("com/docdoku/server/viewers/scorm_viewer.mustache");
         Map<String, Object> scopes = new HashMap<>();
         scopes.put("organization", scormOrganization);
-        scopes.put("uriResource", ViewerUtils.getURI(scormResource,uuid));
-        scopes.put("externalUriResource", dataManager.getExternalStorageURI(scormResource));
-        scopes.put("fileName", scormResource.getName());
-        scopes.put("thisId", UUID.randomUUID().toString());
+        scopes.put("uriResource", ViewerUtils.getURI(scormResource, uuid));
         StringWriter templateWriter = new StringWriter();
         mustache.execute(templateWriter, scopes).flush();
-        return templateWriter.toString();
+
+        String html = ViewerUtils.getViewerTemplate(dataManager, scormResource, uuid, templateWriter.toString());
+
+        return html;
     }
 
 }

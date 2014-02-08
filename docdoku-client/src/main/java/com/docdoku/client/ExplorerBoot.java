@@ -19,22 +19,23 @@
  */
 package com.docdoku.client;
 
-import com.docdoku.core.services.IUploadDownloadWS;
-import com.docdoku.core.services.IDocumentManagerWS;
 import com.docdoku.client.actions.LoginActionListener;
-import com.docdoku.client.data.Prefs;
-import com.docdoku.client.ui.login.LoginFrame;
 import com.docdoku.client.actions.MainController;
-import com.docdoku.client.localization.I18N;
 import com.docdoku.client.data.Config;
+import com.docdoku.client.data.Prefs;
+import com.docdoku.client.localization.I18N;
+import com.docdoku.client.ui.login.LoginFrame;
+import com.docdoku.core.services.IDocumentManagerWS;
+import com.docdoku.core.services.IUploadDownloadWS;
 import com.docdoku.core.services.IWorkflowManagerWS;
 import com.docdoku.core.util.FileIO;
-import java.awt.Toolkit;
-import java.net.MalformedURLException;
+
 import javax.swing.*;
-import java.net.URL;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.soap.MTOMFeature;
+import java.awt.*;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 public class ExplorerBoot {
 

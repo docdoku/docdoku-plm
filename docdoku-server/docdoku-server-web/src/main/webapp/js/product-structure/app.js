@@ -15,7 +15,6 @@ define(
         "views/control_layers_view",
         "views/control_options_view",
         "views/control_explode_view",
-        //"views/control_cutplan_view",
         "views/control_measure_view",
         "views/baseline_select_view",
         "dmu/SceneManager",
@@ -35,7 +34,6 @@ define(
                  ControlLayersView,
                  ControlOptionsView,
                  ControlExplodeView,
-                 //ControlCutPlanView,
                  ControlMeasureView,
                  BaselineSelectView,
                  SceneManager,
@@ -85,18 +83,16 @@ define(
             try{
                 instancesManager = new InstancesManager();
                 sceneManager = new SceneManager();
-                instancesManager.init();
-                sceneManager.init();
-
                 this.$ControlsContainer.append(new ControlModesView().render().$el);
                 this.$ControlsContainer.append(new ControlOptionsView().render().$el);
                 this.$ControlsContainer.append(new ControlExplodeView().render().$el);
-                //this.$ControlsContainer.append(new ControlCutPlanView().render().$el);
-                this.$ControlsContainer.append(new ControlMeasureView().render().$el);
                 this.$ControlsContainer.append(new ControlMarkersView().render().$el);
                 this.$ControlsContainer.append(new ControlLayersView().render().$el);
-
+                this.$ControlsContainer.append(new ControlMeasureView().render().$el);
+                instancesManager.init();
+                sceneManager.init();
             }catch(ex){
+                console.log("Got exception in dmu");
                 this.onNoWebGLSupport();
             }
 
@@ -196,9 +192,9 @@ define(
             var urlRoot = splitUrl[0] + "//" + splitUrl[2];
 
             var iframeSrc = urlRoot + '/visualization/' + APP_CONFIG.workspaceId + '/' + APP_CONFIG.productId
-                + '?cameraX=' + sceneManager.camera.position.x
-                + '&cameraY=' + sceneManager.camera.position.y
-                + '&cameraZ=' + sceneManager.camera.position.z;
+                + '?cameraX=' + sceneManager.cameraObject.position.x
+                + '&cameraY=' + sceneManager.cameraObject.position.y
+                + '&cameraZ=' + sceneManager.cameraObject.position.z;
 
             if(this.partsTreeView.componentSelected.getPath()){
                 iframeSrc += '&pathToLoad=' + this.partsTreeView.componentSelected.getPath();

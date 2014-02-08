@@ -99,6 +99,10 @@ public class DocumentCreationDTO implements Serializable, Comparable<DocumentCre
         return templateId;
     }
 
+    public void setTemplateId(String templateId) {
+        this.templateId = templateId;
+    }
+
     public void setDocumentMsTemplate(String templateId) {
         this.templateId = templateId;
     }

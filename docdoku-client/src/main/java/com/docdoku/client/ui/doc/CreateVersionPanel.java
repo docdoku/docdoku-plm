@@ -20,16 +20,16 @@
 
 package com.docdoku.client.ui.doc;
 
+import com.docdoku.client.data.MainModel;
+import com.docdoku.client.localization.I18N;
 import com.docdoku.client.ui.common.GUIConstants;
 import com.docdoku.client.ui.common.MaxLengthDocument;
-import com.docdoku.client.data.MainModel;
+import com.docdoku.core.common.Version;
 import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.workflow.WorkflowModel;
-import com.docdoku.core.common.Version;
 
 import javax.swing.*;
 import java.awt.*;
-import com.docdoku.client.localization.I18N;
 
 public class CreateVersionPanel extends JPanel {
 

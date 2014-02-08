@@ -9,12 +9,13 @@
         <class>com.docdoku.core.common.UserGroup</class>
         <class>com.docdoku.core.common.Workspace</class>
         <class>com.docdoku.core.document.DocumentIteration</class>
+        <class>com.docdoku.core.document.DocumentRevision</class>
         <class>com.docdoku.core.document.DocumentMaster</class>
         <class>com.docdoku.core.document.DocumentLink</class>
         <class>com.docdoku.core.document.Folder</class>
         <class>com.docdoku.core.document.IterationChangeSubscription</class>
         <class>com.docdoku.core.document.StateChangeSubscription</class>
-        <class>com.docdoku.core.document.Tag</class>
+        <class>com.docdoku.core.meta.Tag</class>
         <class>com.docdoku.core.log.DocumentLog</class>
         <class>com.docdoku.core.log.PartLog</class>
         <class>com.docdoku.core.log.WorkspaceLog</class>

@@ -34,6 +34,8 @@ define([
             this.newVersionButton = this.$(".actions .new-version");
             this.aclButton = this.$(".actions .edit-acl");
 
+            this.tagsButton.show();
+
             this.listView = this.addSubView(
                 new DocumentListView({
                     el: "#list-" + this.cid,
@@ -71,7 +73,7 @@ define([
         onNoDocumentSelected: function() {
             this.deleteButton.hide();
             this.checkoutGroup.hide();
-            this.tagsButton.hide();
+            //this.tagsButton.show();
             this.newVersionButton.hide();
             this.aclButton.hide();
         },
@@ -79,7 +81,6 @@ define([
         onOneDocumentSelected: function(document) {
             this.deleteButton.show();
             this.checkoutGroup.css('display', 'inline-block');
-            this.tagsButton.show();
             this.newVersionButton.show();
 
             if (document.isCheckout()) {
@@ -104,7 +105,6 @@ define([
 
         onSeveralDocumentsSelected: function() {
             this.deleteButton.show();
-            this.tagsButton.show();
             this.newVersionButton.hide();
             this.checkoutGroup.hide();
             this.aclButton.hide();
@@ -140,6 +140,7 @@ define([
                     promptView.setPromptOptions(i18n.REVISION_NOTE, i18n.REVISION_NOTE_PROMPT_LABEL, i18n.REVISION_NOTE_PROMPT_OK, i18n.REVISION_NOTE_PROMPT_CANCEL);
                     $("body").append(promptView.render().el);
                     promptView.openModal();
+
                     self.listenTo(promptView, 'prompt-ok', function(args) {
                         var revisionNote = args[0];
                         if(_.isEqual(revisionNote, "")) {
@@ -147,12 +148,16 @@ define([
                         }
                         view.model.getLastIteration().save({
                             revisionNote: revisionNote
+                        }).success(function(){
+                            view.model.checkin();
                         });
-                        view.model.checkin();
+
                     });
+
                     self.listenTo(promptView, 'prompt-cancel', function() {
                         view.model.checkin();
                     });
+
                 } else {
                     view.model.checkin();
                 }
@@ -247,9 +252,11 @@ define([
 
                     aclEditView.openModal();
                     aclEditView.on("acl:update",function(){
-                        var acl = aclEditView.toList() ;
+
+                        var acl = aclEditView.toList();
+
                         documentChecked.updateACL({
-                            acl:acl,
+                            acl: acl||{userEntries:{},groupEntries:{}},
                             success:function(){
                                 documentChecked.set("acl",acl);
                                 aclEditView.closeModal();
@@ -261,8 +268,6 @@ define([
                         });
 
                     });
-
-
 
             }
 

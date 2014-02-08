@@ -20,6 +20,7 @@
 
 package com.docdoku.server.rest.dto;
 
+import javax.xml.bind.annotation.XmlElement;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +29,10 @@ public class ActivityModelDTO implements Serializable {
 
     private int step;
     private Integer relaunchStep;
+
+    @XmlElement(nillable = false, required = true)
     private List<TaskModelDTO> taskModels;
+
     private String lifeCycleState;
     private Type type;
     public enum Type {

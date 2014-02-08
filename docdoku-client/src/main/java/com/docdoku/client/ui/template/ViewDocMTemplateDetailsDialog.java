@@ -25,9 +25,9 @@ import com.docdoku.client.ui.common.CloseButton;
 import com.docdoku.client.ui.common.ViewFilesPanel;
 import com.docdoku.core.document.DocumentMasterTemplate;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
-import javax.swing.JPanel;
 
 
 public class ViewDocMTemplateDetailsDialog extends DocMTemplateDialog{

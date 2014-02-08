@@ -21,7 +21,7 @@ package com.docdoku.server.jsf.actions;
 
 import com.docdoku.core.common.Account;
 import com.docdoku.core.common.Workspace;
-import com.docdoku.core.services.AccountNotFoundException;
+import com.docdoku.core.exceptions.AccountNotFoundException;
 import com.docdoku.core.services.IUserManagerLocal;
 
 import javax.ejb.EJB;
@@ -67,6 +67,10 @@ public class ConnectionBean {
         //TODO switch to a more JSF style code
         HttpServletRequest request = (HttpServletRequest) (FacesContext.getCurrentInstance().getExternalContext().getRequest());     
         HttpSession session = (HttpSession) request.getSession();
+
+        //Logout in case of user is already logged in,
+        //that could happen when using multiple tabs
+        request.logout();
         request.login(login, password);
 
         Account account = userManager.getAccount(login);

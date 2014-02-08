@@ -15,6 +15,7 @@ public class PartMasterTemplateDTO {
     private String mask;
     private String attachedFile;
     private Set<InstanceAttributeTemplateDTO> attributeTemplates;
+    private boolean attributesLocked;
 
     public PartMasterTemplateDTO(){
     }
@@ -103,5 +104,13 @@ public class PartMasterTemplateDTO {
 
     public void setReference(String reference) {
         this.reference = reference;
+    }
+
+    public boolean isAttributesLocked() {
+        return attributesLocked;
+    }
+
+    public void setAttributesLocked(boolean attributesLocked) {
+        this.attributesLocked = attributesLocked;
     }
 }

@@ -20,9 +20,9 @@
 
 package com.docdoku.core.meta;
 
-import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import java.util.Date;
 
 /**
  * Defines a date type custom attribute of a document.
@@ -42,8 +42,8 @@ public class InstanceDateAttribute extends InstanceAttribute{
     public InstanceDateAttribute() {
     }
     
-    public InstanceDateAttribute(String pName, Date pValue) {
-        super(pName);
+    public InstanceDateAttribute(String pName, Date pValue, boolean pMandatory) {
+        super(pName, pMandatory);
         setDateValue(pValue);
     }
 

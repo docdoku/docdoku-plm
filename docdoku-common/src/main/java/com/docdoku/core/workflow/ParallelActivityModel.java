@@ -22,11 +22,11 @@ package com.docdoku.core.workflow;
 
 import com.docdoku.core.common.User;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import javax.persistence.*;
 
 /**
  * This class is the model used to create instances

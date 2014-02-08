@@ -33,7 +33,12 @@ define([
 
         getUploadBaseUrl: function () {
             return "/files/" + this.get("workspaceId") + "/document-templates/" + this.get("id")+"/";
+        },
+
+        isAttributesLocked:function(){
+            return this.get("attributesLocked");
         }
+
     });
 	return Template;
 });

@@ -12,6 +12,7 @@
     "height": 500,
     "min_width": 820,
     "min_height": 500,
-    "resizable": true
+    "resizable": true,
+    "icon": "images/icon.png"
   }
 }

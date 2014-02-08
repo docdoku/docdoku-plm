@@ -21,6 +21,7 @@
 package com.docdoku.client.ui;
 
 import com.docdoku.client.backbone.ElementSelectedListener;
+
 import javax.swing.*;
 
 

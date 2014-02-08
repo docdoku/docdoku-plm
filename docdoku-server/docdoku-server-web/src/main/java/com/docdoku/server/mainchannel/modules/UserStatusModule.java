@@ -2,37 +2,35 @@ package com.docdoku.server.mainchannel.modules;
 
 import com.docdoku.server.mainchannel.MainChannelApplication;
 import com.docdoku.server.mainchannel.MainChannelDispatcher;
-import com.docdoku.server.mainchannel.MainChannelWebSocket;
 import com.docdoku.server.mainchannel.util.ChannelMessagesType;
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
 
-import java.util.HashMap;
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.websocket.Session;
 
 public class UserStatusModule {
 
     private UserStatusModule(){
     }
 
-    public static void onUserStatusRequestMessage(MainChannelWebSocket socket, JSONObject jsobj) throws JSONException {
+    public static void onUserStatusRequestMessage(Session session, JsonObject jsobj){
 
         String remoteUser = jsobj.getString("remoteUser");
-        // check if remoteUser has at least a socket
+        // check if remoteUser has at least a session
 
         if(!MainChannelApplication.hasChannels(remoteUser)){
-            MainChannelDispatcher.send(socket, buildStatusMessage(remoteUser, "OFFLINE"));
+            MainChannelDispatcher.send(session, buildStatusMessage(remoteUser, "OFFLINE"));
         }else{
-            MainChannelDispatcher.send(socket, buildStatusMessage(remoteUser, "ONLINE"));
+            MainChannelDispatcher.send(session, buildStatusMessage(remoteUser, "ONLINE"));
         }
 
     }
 
-    private static String buildStatusMessage(String remoteUser, String status) throws JSONException {
-        JSONObject jsobj = new JSONObject();
-        jsobj.put("type", ChannelMessagesType.USER_STATUS);
-        jsobj.put("remoteUser", remoteUser);
-        jsobj.put("status", status);
-        return jsobj.toString();
+    private static String buildStatusMessage(String remoteUser, String status) {
+        return Json.createObjectBuilder()
+        .add("type", ChannelMessagesType.USER_STATUS)
+        .add("remoteUser", remoteUser)
+        .add("status", status).build().toString();
     }
 
 }

@@ -41,6 +41,6 @@ public class Positioning {
     }
 
     public CADInstance toCADInstance() {
-        return new CADInstance(tx, ty, tz, rx, ry, rz, CADInstance.Positioning.PARENT_RELATIVE);
+        return new CADInstance(tx, ty, tz, rx, ry, rz);
     }
 }

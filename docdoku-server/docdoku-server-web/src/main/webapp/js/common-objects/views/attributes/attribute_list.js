@@ -25,6 +25,8 @@ define([
 
         editMode: true,
 
+        attributesLocked: false,
+
 		itemViewFactory: function (model) {
 			var type = model.get("type");
             if(!type){
@@ -35,6 +37,7 @@ define([
                 model: model
             });
             view.setEditMode(this.editMode);
+            view.setAttributesLocked(this.attributesLocked);
 			return view;
 		},
 
@@ -44,6 +47,10 @@ define([
 
         setEditMode: function(editMode) {
             this.editMode = editMode;
+        },
+
+        setAttributesLocked: function(attributesLocked) {
+            this.attributesLocked = attributesLocked;
         }
 
 	});

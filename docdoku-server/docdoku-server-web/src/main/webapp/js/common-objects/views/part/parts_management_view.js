@@ -25,7 +25,11 @@ define (
                 this.$("#existingParts").typeahead({
                     source: function(query, process) {
                         $.getJSON('/api/workspaces/' + APP_CONFIG.workspaceId + '/parts/numbers?q=' + query, function(data) {
-                            process(data);
+                            var partNumbers = [];
+                            _(data).each(function(d){
+                                partNumbers.push(d.partNumber);
+                            });
+                            process(partNumbers);
                         });
                     },
                     updater: function(partKey) {
@@ -80,7 +84,7 @@ define (
             },
 
             addPart: function(model) {
-                model.set("cadInstances",[{tx:0,ty:0,tz:0,rx:0,ry:0,rz:0,positioning:"ABSOLUTE"}]);
+                model.set("cadInstances",[{tx:0,ty:0,tz:0,rx:0,ry:0,rz:0}]);
                 this.addView(model);
             },
 
@@ -92,7 +96,7 @@ define (
                         standardPart:false
                     },
                     cadInstances:[
-                        {tx:0,ty:0,tz:0,rx:0,ry:0,rz:0,positioning:"ABSOLUTE"}
+                        {tx:0,ty:0,tz:0,rx:0,ry:0,rz:0}
                     ]
                 };
                 this.collection.push(newPart);

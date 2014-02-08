@@ -21,15 +21,18 @@ package com.docdoku.server.dao;
 
 
 import com.docdoku.core.configuration.EffectivityConfigSpec;
+import com.docdoku.core.exceptions.ConfigurationItemAlreadyExistsException;
+import com.docdoku.core.exceptions.ConfigurationItemNotFoundException;
+import com.docdoku.core.exceptions.CreationException;
+import com.docdoku.core.exceptions.LayerNotFoundException;
 import com.docdoku.core.product.*;
-import com.docdoku.core.services.ConfigurationItemAlreadyExistsException;
-import com.docdoku.core.services.ConfigurationItemNotFoundException;
-import com.docdoku.core.services.CreationException;
-import com.docdoku.core.services.LayerNotFoundException;
 
+import javax.persistence.EntityExistsException;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceException;
+import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.Locale;
-import javax.persistence.*;
 
 public class ConfigurationItemDAO {
 

@@ -20,17 +20,17 @@
 
 package com.docdoku.core.document;
 
-import com.docdoku.core.common.FileHolder;
 import com.docdoku.core.common.BinaryResource;
+import com.docdoku.core.common.FileHolder;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.meta.InstanceAttributeTemplate;
 
-import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Date;
-import java.util.Set;
 import javax.persistence.*;
+import java.io.Serializable;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * A model object from which we can create a
@@ -48,11 +48,11 @@ import javax.persistence.*;
 @javax.persistence.Entity
 public class DocumentMasterTemplate implements Serializable, FileHolder, Comparable<DocumentMasterTemplate> {
 
-    @Column(length=50)
+    @Column(length=255)
     @javax.persistence.Id
     private String id="";
     
-    @javax.persistence.Column(name = "WORKSPACE_ID", length=50, nullable = false, insertable = false, updatable = false)
+    @javax.persistence.Column(name = "WORKSPACE_ID", length=255, nullable = false, insertable = false, updatable = false)
     @javax.persistence.Id
     private String workspaceId="";
     
@@ -86,6 +86,8 @@ public class DocumentMasterTemplate implements Serializable, FileHolder, Compara
             }
     )
     private Set<InstanceAttributeTemplate> attributeTemplates=new HashSet<InstanceAttributeTemplate>();
+
+    private boolean attributesLocked;
     
     @ManyToOne(fetch=FetchType.EAGER)
     @JoinColumns({
@@ -172,7 +174,15 @@ public class DocumentMasterTemplate implements Serializable, FileHolder, Compara
         pAttributeTemplates.removeAll(attributeTemplates);
         attributeTemplates.addAll(pAttributeTemplates);
     }
-    
+
+    public boolean isAttributesLocked() {
+        return attributesLocked;
+    }
+
+    public void setAttributesLocked(boolean attributesLocked) {
+        this.attributesLocked = attributesLocked;
+    }
+
     public void setAuthor(User pAuthor) {
         author = pAuthor;
     }

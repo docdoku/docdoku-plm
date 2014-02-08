@@ -20,7 +20,7 @@
 
 package com.docdoku.core.services;
 
-import com.docdoku.core.document.DocumentMaster;
+import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.gcm.GCMAccount;
 
 /**
@@ -28,6 +28,6 @@ import com.docdoku.core.gcm.GCMAccount;
  * @author Morgan Guimard
  */
 public interface IGCMSenderLocal {
-    public void sendStateNotification(GCMAccount[] pGCGcmAccounts, DocumentMaster pDocumentMaster);
-    void sendIterationNotification(GCMAccount[] pGCGcmAccounts, DocumentMaster pDocumentMaster);
+    public void sendStateNotification(GCMAccount[] pGCGcmAccounts, DocumentRevision pDocumentRevision);
+    void sendIterationNotification(GCMAccount[] pGCGcmAccounts, DocumentRevision pDocumentRevision);
 }

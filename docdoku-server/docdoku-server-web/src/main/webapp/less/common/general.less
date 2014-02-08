@@ -10,7 +10,9 @@ a:hover {
   cursor: pointer;
 }
 
-:invalid {
+input:focus:invalid,
+textarea:focus:invalid,
+select:focus:invalid {
   color: @errorText;
   background-color: @errorBackground;
 }

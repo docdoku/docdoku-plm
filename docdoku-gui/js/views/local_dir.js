@@ -51,7 +51,7 @@ define([
                 _.each(curFiles, function (file) {
                     fs.stat(path.join(p, file), function(err, stat) {
                         totalFiles--;
-                        if(stat.isFile() && file !== ".dplm/index.xml") {
+                        if(stat.isFile() && file !== ".dplm"+OS_SLASH+"index.xml") {
                             Dplm.getStatusForFile(path.join(p, file), {
                                 success : function(status) {
                                     self.localVersionedFilesView.addVersionedFile(file,p,status,stat);

@@ -20,14 +20,9 @@
 package com.docdoku.core.log;
 
 
+import javax.persistence.*;
 import java.io.Serializable;
-import java.util.*;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
+import java.util.Date;
 
 /**
  * The <code>PartLog</code> class represents an entry in the log

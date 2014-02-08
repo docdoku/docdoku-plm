@@ -22,6 +22,7 @@
 package com.docdoku.core.product;
 
 import com.docdoku.core.common.BinaryResource;
+
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.util.Date;

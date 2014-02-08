@@ -21,16 +21,18 @@
 package com.docdoku.client.actions;
 
 import com.docdoku.client.localization.I18N;
+import com.docdoku.client.ui.ExplorerFrame;
+import com.docdoku.client.ui.doc.ViewDocDetailsDialog;
 import com.docdoku.client.ui.template.ViewDocMTemplateDetailsDialog;
+import com.docdoku.client.ui.workflow.ViewWorkflowModelDetailsDialog;
 import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.document.DocumentMasterTemplate;
 import com.docdoku.core.workflow.WorkflowModel;
-import com.docdoku.client.ui.ExplorerFrame;
-import com.docdoku.client.ui.workflow.ViewWorkflowModelDetailsDialog;
-import com.docdoku.client.ui.doc.ViewDocDetailsDialog;
 
 import javax.swing.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 
 public class ViewElementAction extends ClientAbstractAction {
 

@@ -21,6 +21,7 @@
 package com.docdoku.core.services;
 
 import com.docdoku.core.common.BinaryResource;
+import com.docdoku.core.exceptions.StorageException;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -37,5 +38,6 @@ public interface IDataManagerLocal {
     void deleteData(BinaryResource binaryResource) throws StorageException;
     Date getLastModified(BinaryResource binaryResource, String subResourceVirtualPath) throws StorageException;
     String getExternalStorageURI(BinaryResource binaryResource);
+    String getShortenExternalStorageURI(BinaryResource binaryResource);
     void deleteWorkspaceFolder(String workspaceId, List<BinaryResource> binaryResourcesInWorkspace) throws StorageException;
 }

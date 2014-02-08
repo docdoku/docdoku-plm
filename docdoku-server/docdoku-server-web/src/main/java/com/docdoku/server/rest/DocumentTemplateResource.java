@@ -21,24 +21,28 @@ package com.docdoku.server.rest;
 
 import com.docdoku.core.document.DocumentMasterTemplate;
 import com.docdoku.core.document.DocumentMasterTemplateKey;
+import com.docdoku.core.exceptions.ApplicationException;
 import com.docdoku.core.meta.InstanceAttributeTemplate;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.server.rest.dto.DocumentMasterTemplateDTO;
 import com.docdoku.server.rest.dto.DocumentTemplateCreationDTO;
 import com.docdoku.server.rest.dto.InstanceAttributeTemplateDTO;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import com.docdoku.server.rest.dto.TemplateGeneratedIdDTO;
+import org.dozer.DozerBeanMapperSingletonWrapper;
+import org.dozer.Mapper;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import org.dozer.DozerBeanMapperSingletonWrapper;
-import org.dozer.Mapper;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 /**
  *
@@ -62,7 +66,7 @@ public class DocumentTemplateResource {
     }
 
     @GET
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public DocumentMasterTemplateDTO[] getDocumentMasterTemplates(@PathParam("workspaceId") String workspaceId) {
         try {
 
@@ -75,14 +79,14 @@ public class DocumentTemplateResource {
 
             return dtos;
 
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
 
     @GET
     @Path("{templateId}")
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public DocumentMasterTemplateDTO getDocumentMasterTemplates(@PathParam("workspaceId") String workspaceId, @PathParam("templateId") String templateId) {
         try {
 
@@ -91,27 +95,28 @@ public class DocumentTemplateResource {
 
             return dto;
 
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
     
     @GET
     @Path("{templateId}/generate_id")
-    @Produces("application/json;charset=UTF-8")
-    public String generateDocMsId(@PathParam("workspaceId") String workspaceId, @PathParam("templateId") String templateId) {
+    @Produces(MediaType.APPLICATION_JSON)
+    public TemplateGeneratedIdDTO generateDocMsId(@PathParam("workspaceId") String workspaceId, @PathParam("templateId") String templateId) {
         try {
 
-            return documentService.generateId(workspaceId, templateId);
+            String generateId = documentService.generateId(workspaceId, templateId);
+            return new TemplateGeneratedIdDTO(generateId);
 
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
-    }    
+    }
 
     @POST
-    @Consumes("application/json;charset=UTF-8")
-    @Produces("application/json;charset=UTF-8")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public DocumentMasterTemplateDTO createDocumentMasterTemplate(@PathParam("workspaceId") String workspaceId, DocumentTemplateCreationDTO templateCreationDTO) {
 
         try {      
@@ -119,6 +124,7 @@ public class DocumentTemplateResource {
             String documentType = templateCreationDTO.getDocumentType();
             String mask = templateCreationDTO.getMask();
             boolean idGenerated = templateCreationDTO.isIdGenerated();
+            boolean attributesLocked = templateCreationDTO.isAttributesLocked();
 
             Set<InstanceAttributeTemplateDTO> attributeTemplates = templateCreationDTO.getAttributeTemplates();
             List<InstanceAttributeTemplateDTO> attributeTemplatesList = new ArrayList<InstanceAttributeTemplateDTO>(attributeTemplates);
@@ -128,20 +134,20 @@ public class DocumentTemplateResource {
                 attributeTemplatesDtos[i] = attributeTemplatesList.get(i);
             }
 
-            DocumentMasterTemplate template = documentService.createDocumentMasterTemplate(workspaceId, id, documentType, mask, createInstanceAttributeTemplateFromDto(attributeTemplatesDtos), idGenerated);
+            DocumentMasterTemplate template = documentService.createDocumentMasterTemplate(workspaceId, id, documentType, mask, createInstanceAttributeTemplateFromDto(attributeTemplatesDtos), idGenerated, attributesLocked);
             DocumentMasterTemplateDTO templateDto = mapper.map(template, DocumentMasterTemplateDTO.class);
 
             return templateDto;
 
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
     
     @PUT
     @Path("{templateId}") 
-    @Consumes("application/json;charset=UTF-8")
-    @Produces("application/json;charset=UTF-8")  
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public DocumentMasterTemplateDTO updateDocMsTemplate(@PathParam("workspaceId") String workspaceId,@PathParam("templateId") String templateId, DocumentMasterTemplateDTO docMsTemplateDTO) {
 
         try {
@@ -149,6 +155,7 @@ public class DocumentTemplateResource {
             String documentType = docMsTemplateDTO.getDocumentType();
             String mask = docMsTemplateDTO.getMask();
             boolean idGenerated = docMsTemplateDTO.isIdGenerated();
+            boolean attributesLocked = docMsTemplateDTO.isAttributesLocked();
 
             Set<InstanceAttributeTemplateDTO> attributeTemplates = docMsTemplateDTO.getAttributeTemplates();
             List<InstanceAttributeTemplateDTO> attributeTemplatesList = new ArrayList<InstanceAttributeTemplateDTO>(attributeTemplates);
@@ -158,12 +165,12 @@ public class DocumentTemplateResource {
                 attributeTemplatesDtos[i] = attributeTemplatesList.get(i);
             }
 
-            DocumentMasterTemplate template = documentService.updateDocumentMasterTemplate(new DocumentMasterTemplateKey(workspaceId, templateId), documentType, mask, createInstanceAttributeTemplateFromDto(attributeTemplatesDtos), idGenerated);
+            DocumentMasterTemplate template = documentService.updateDocumentMasterTemplate(new DocumentMasterTemplateKey(workspaceId, templateId), documentType, mask, createInstanceAttributeTemplateFromDto(attributeTemplatesDtos), idGenerated, attributesLocked);
             DocumentMasterTemplateDTO templateDto = mapper.map(template, DocumentMasterTemplateDTO.class);
 
             return templateDto;
 
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -174,14 +181,14 @@ public class DocumentTemplateResource {
         try {
             documentService.deleteDocumentMasterTemplate(new DocumentMasterTemplateKey(workspaceId, templateId));
             return Response.ok().build();
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
 
     @DELETE
-    @Consumes("application/json;charset=UTF-8")
     @Path("{templateId}/files/{fileName}")
+    @Consumes(MediaType.APPLICATION_JSON)
     public Response removeAttachedFile(@PathParam("workspaceId") String workspaceId, @PathParam("templateId") String templateId, @PathParam("fileName") String fileName) {
         try {
             String fileFullName = workspaceId + "/document-templates/" + templateId + "/" + fileName;
@@ -189,7 +196,7 @@ public class DocumentTemplateResource {
             documentService.removeFileFromTemplate(fileFullName);
             return Response.ok().build();
 
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -208,6 +215,7 @@ public class DocumentTemplateResource {
         InstanceAttributeTemplate data = new InstanceAttributeTemplate();
         data.setName(instanceAttributeTemplateDTO.getName());
         data.setAttributeType(InstanceAttributeTemplate.AttributeType.valueOf(instanceAttributeTemplateDTO.getAttributeType().name()));
+        data.setMandatory(instanceAttributeTemplateDTO.isMandatory());
         return data;
     }
 }

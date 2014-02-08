@@ -22,7 +22,10 @@ package com.docdoku.cli.commands;
 
 import com.docdoku.cli.ScriptingTools;
 import com.docdoku.cli.helpers.FileHelper;
-import com.docdoku.core.product.*;
+import com.docdoku.core.product.PartIterationKey;
+import com.docdoku.core.product.PartMaster;
+import com.docdoku.core.product.PartRevision;
+import com.docdoku.core.product.PartRevisionKey;
 import com.docdoku.core.services.IProductManagerWS;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
@@ -52,7 +55,7 @@ public class PartCreationCommand extends AbstractCommandLine {
 
     public Object execImpl() throws Exception {
         IProductManagerWS productS = ScriptingTools.createProductService(getServerURL(), user, password);
-        PartMaster partMaster = productS.createPartMaster(workspace, partNumber, partName, description, false, null, "", null, null, null, null);
+        PartMaster partMaster = productS.createPartMaster(workspace, partNumber, partName, false, null, description, null, null, null, null);
         PartRevision pr = partMaster.getLastRevision();
         PartRevisionKey partRPK = new PartRevisionKey(workspace, partNumber, pr.getVersion());
         PartIterationKey partIPK = new PartIterationKey(partRPK, pr.getLastIteration().getIteration());

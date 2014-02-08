@@ -21,12 +21,12 @@
 package com.docdoku.server.dao;
 
 import com.docdoku.core.common.User;
+import com.docdoku.core.exceptions.CreationException;
+import com.docdoku.core.exceptions.PartRevisionAlreadyExistsException;
+import com.docdoku.core.exceptions.PartRevisionNotFoundException;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.product.PartRevisionKey;
-import com.docdoku.core.product.PartSearchQuery;
-import com.docdoku.core.services.CreationException;
-import com.docdoku.core.services.PartRevisionAlreadyExistsException;
-import com.docdoku.core.services.PartRevisionNotFoundException;
+import com.docdoku.core.query.SearchQuery;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
@@ -70,6 +70,7 @@ public class PartRevisionDAO {
     }
 
     public void removeRevision(PartRevision pPartR) {
+        new SharedEntityDAO(em).deleteSharesForPart(pPartR);
         new WorkflowDAO(em).removeWorkflowConstraints(pPartR);
         em.remove(pPartR);
     }
@@ -137,7 +138,7 @@ public class PartRevisionDAO {
 
     }
 
-    public List<PartRevision> searchPartRevisions(String pWorkspaceId, String pNumber, String pName, String pVersion, String pAuthor, String pType, Date pCreationDateFrom, Date pCreationDateTo, List<PartSearchQuery.AbstractAttributeQuery> pAttrs, Boolean standardPart) {
+    public List<PartRevision> searchPartRevisions(String pWorkspaceId, String pNumber, String pName, String pVersion, String pAuthor, String pType, Date pCreationDateFrom, Date pCreationDateTo, List<SearchQuery.AbstractAttributeQuery> pAttrs, Boolean standardPart) {
 
         StringBuilder queryStr = new StringBuilder();
         queryStr.append("SELECT DISTINCT p FROM PartRevision p ");
@@ -150,29 +151,29 @@ public class PartRevisionDAO {
         if (pAttrs != null && pAttrs.size() > 0) {
             queryStr.append("AND i.iteration = (SELECT MAX(i2.iteration) FROM PartRevision p2 JOIN p2.partIterations i2 WHERE p2=p) ");
             int i = 0;
-            for (PartSearchQuery.AbstractAttributeQuery attr : pAttrs) {
+            for (SearchQuery.AbstractAttributeQuery attr : pAttrs) {
                 queryStr.append("AND EXISTS (");
-                if (attr instanceof PartSearchQuery.DateAttributeQuery) {
+                if (attr instanceof SearchQuery.DateAttributeQuery) {
                     queryStr.append("SELECT attr").append(i).append(" FROM InstanceDateAttribute attr").append(i).append(" ");
                     queryStr.append("WHERE attr").append(i).append(".dateValue BETWEEN :attrLValue").append(i).append(" AND :attrUValue").append(i).append(" ");
                     queryStr.append("AND attr").append(i).append(" MEMBER OF i.instanceAttributes ");
                     queryStr.append("AND attr").append(i).append(".name = :attrName").append(i++);
-                } else if (attr instanceof PartSearchQuery.TextAttributeQuery) {
+                } else if (attr instanceof SearchQuery.TextAttributeQuery) {
                     queryStr.append("SELECT attr").append(i).append(" FROM InstanceTextAttribute attr").append(i).append(" ");
                     queryStr.append("WHERE attr").append(i).append(".textValue  = :attrValue").append(i).append(" ");
                     queryStr.append("AND attr").append(i).append(" MEMBER OF i.instanceAttributes ");
                     queryStr.append("AND attr").append(i).append(".name = :attrName").append(i++);
-                } else if (attr instanceof PartSearchQuery.NumberAttributeQuery) {
+                } else if (attr instanceof SearchQuery.NumberAttributeQuery) {
                     queryStr.append("SELECT attr").append(i).append(" FROM InstanceNumberAttribute attr").append(i).append(" ");
                     queryStr.append("WHERE ABS(attr").append(i).append(".numberValue - :attrValue").append(i).append(" ) < 0.0001");
                     queryStr.append("AND attr").append(i).append(" MEMBER OF i.instanceAttributes ");
                     queryStr.append("AND attr").append(i).append(".name = :attrName").append(i++);
-                } else if (attr instanceof PartSearchQuery.BooleanAttributeQuery) {
+                } else if (attr instanceof SearchQuery.BooleanAttributeQuery) {
                     queryStr.append("SELECT attr").append(i).append(" FROM InstanceBooleanAttribute attr").append(i).append(" ");
                     queryStr.append("WHERE attr").append(i).append(".booleanValue  = :attrValue").append(i).append(" ");
                     queryStr.append("AND attr").append(i).append(" MEMBER OF i.instanceAttributes ");
                     queryStr.append("AND attr").append(i).append(".name = :attrName").append(i++);
-                } else if (attr instanceof PartSearchQuery.URLAttributeQuery) {
+                } else if (attr instanceof SearchQuery.URLAttributeQuery) {
                     queryStr.append("SELECT attr").append(i).append(" FROM InstanceURLAttribute attr").append(i).append(" ");
                     queryStr.append("WHERE attr").append(i).append(".urlValue  = :attrValue").append(i).append(" ");
                     queryStr.append("AND attr").append(i).append(" MEMBER OF i.instanceAttributes ");
@@ -215,18 +216,18 @@ public class PartRevisionDAO {
 
         if (pAttrs != null && pAttrs.size() > 0) {
             int i = 0;
-            for (PartSearchQuery.AbstractAttributeQuery attr : pAttrs) {
-                if (attr instanceof PartSearchQuery.TextAttributeQuery) {
-                    query.setParameter("attrValue" + i, ((PartSearchQuery.TextAttributeQuery) attr).getTextValue());
-                } else if (attr instanceof PartSearchQuery.URLAttributeQuery) {
-                    query.setParameter("attrValue" + i, ((PartSearchQuery.URLAttributeQuery) attr).getUrlValue());
-                } else if (attr instanceof PartSearchQuery.NumberAttributeQuery) {
-                    query.setParameter("attrValue" + i, ((PartSearchQuery.NumberAttributeQuery) attr).getNumberValue());
-                } else if (attr instanceof PartSearchQuery.BooleanAttributeQuery) {
-                    query.setParameter("attrValue" + i, ((PartSearchQuery.BooleanAttributeQuery) attr).isBooleanValue());
-                } else if (attr instanceof PartSearchQuery.DateAttributeQuery) {
-                    query.setParameter("attrLValue" + i, ((PartSearchQuery.DateAttributeQuery) attr).getFromDate());
-                    query.setParameter("attrUValue" + i, ((PartSearchQuery.DateAttributeQuery) attr).getToDate());
+            for (SearchQuery.AbstractAttributeQuery attr : pAttrs) {
+                if (attr instanceof SearchQuery.TextAttributeQuery) {
+                    query.setParameter("attrValue" + i, ((SearchQuery.TextAttributeQuery) attr).getTextValue());
+                } else if (attr instanceof SearchQuery.URLAttributeQuery) {
+                    query.setParameter("attrValue" + i, ((SearchQuery.URLAttributeQuery) attr).getUrlValue());
+                } else if (attr instanceof SearchQuery.NumberAttributeQuery) {
+                    query.setParameter("attrValue" + i, ((SearchQuery.NumberAttributeQuery) attr).getNumberValue());
+                } else if (attr instanceof SearchQuery.BooleanAttributeQuery) {
+                    query.setParameter("attrValue" + i, ((SearchQuery.BooleanAttributeQuery) attr).isBooleanValue());
+                } else if (attr instanceof SearchQuery.DateAttributeQuery) {
+                    query.setParameter("attrLValue" + i, ((SearchQuery.DateAttributeQuery) attr).getFromDate());
+                    query.setParameter("attrUValue" + i, ((SearchQuery.DateAttributeQuery) attr).getToDate());
                 }
                 query.setParameter("attrName" + (i++), attr.getName());
             }

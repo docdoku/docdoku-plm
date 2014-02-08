@@ -21,8 +21,8 @@
 package com.docdoku.server.storage.filesystem;
 
 import com.docdoku.core.common.BinaryResource;
-import com.docdoku.core.services.*;
-import com.docdoku.core.services.FileNotFoundException;
+import com.docdoku.core.exceptions.FileNotFoundException;
+import com.docdoku.core.exceptions.StorageException;
 import com.docdoku.core.util.FileIO;
 import com.docdoku.core.util.Tools;
 import com.docdoku.server.storage.StorageProvider;
@@ -118,6 +118,11 @@ public class FileStorageProvider implements StorageProvider {
 
     @Override
     public String getExternalResourceURI(BinaryResource binaryResource) {
+        return null;
+    }
+
+    @Override
+    public String getShortenExternalResourceURI(BinaryResource binaryResource) {
         return null;
     }
 

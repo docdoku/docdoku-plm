@@ -3,7 +3,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:h="http://java.sun.com/jsf/html">
+      xmlns:em="http://java.sun.com/jsf/composite/default"
+        >
     <ui:composition template="/WEB-INF/templates/moduleTemplate.xhtml">
         <ui:define name="styles">
             <link rel="stylesheet/less" type="text/css" href="#{request.contextPath}/less/document-management/style.less?v=${BUILD_NUMBER}"/>
@@ -18,7 +19,7 @@
                     workspaceId: "${workspaceID}",
                     login: "${login}",
                     sessionId : "${session.id}",
-                    workspaceAdmin:${workspaceAdmin},
+                    workspaceAdmin:"${workspaceAdmin}",
                     groups: [${groups}]
                 };
                 $(document).ready(function() {
@@ -49,6 +50,9 @@
                     ]);
                 });
             </script>
+        </ui:define>
+        <ui:define name="header">
+            <em:header moduleName="document-manager" moduleIcon="icon-file" moduleTranslate="#{i18nTemplate['toplinks.document']}"/>
         </ui:define>
         <ui:define name="content">
             <div id="workspace"></div>

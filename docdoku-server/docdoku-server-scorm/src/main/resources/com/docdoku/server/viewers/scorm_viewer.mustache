@@ -1,21 +1,6 @@
-<div class="accordion-heading">
-    <a class="download" href="{{uriResource}}"><i class="icon-cloud-download"></i></a>
-    {{#externalUriResource}}
-        <a class="external-download" href="{{externalUriResource}}"><i class="icon-google-plus-sign"></i></a>
-    {{/externalUriResource}}
-    <a class="accordion-toggle" data-toggle="collapse" href="#{{thisId}}">{{fileName}}</a>
-</div>
-<div id="{{thisId}}" class="accordion-body collapse">
-    <div class="accordion-inner">
-        {{#externalUriResource}}
-            <i class="icon-google-plus-sign"></i> <input type="text" class="input-xxlarge" readonly value="{{externalUriResource}}" />
-            <br /> <br />
-        {{/externalUriResource}}
-        <h5>{{organization.title}}</h5>
-        <ul>
-            {{#organization.activities}}
-                <li><a target="_blank" href="{{uriResource}}/{{resourceHref}}">{{title}}</a></li>
-            {{/organization.activities}}
-        </ul>
-    </div>
-</div>
+<h5>{{organization.title}}</h5>
+<ul>
+{{#organization.activities}}
+    <li><a target="_blank" href="{{uriResource}}/{{resourceHref}}">{{title}}</a></li>
+{{/organization.activities}}
+</ul>

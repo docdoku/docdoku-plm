@@ -21,8 +21,8 @@
 package com.docdoku.server.storage;
 
 import com.docdoku.core.common.BinaryResource;
-import com.docdoku.core.services.FileNotFoundException;
-import com.docdoku.core.services.StorageException;
+import com.docdoku.core.exceptions.FileNotFoundException;
+import com.docdoku.core.exceptions.StorageException;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -34,5 +34,6 @@ public interface StorageProvider {
     void copyData(BinaryResource pSourceBinaryResource, BinaryResource pTargetBinaryResource) throws StorageException, FileNotFoundException;
     void delData(BinaryResource pBinaryResource) throws StorageException;
     String getExternalResourceURI(BinaryResource binaryResource);
+    String getShortenExternalResourceURI(BinaryResource binaryResource);
     public void deleteWorkspaceFolder(String workspaceId, List<BinaryResource> binaryResourcesInWorkspace) throws StorageException;
 }

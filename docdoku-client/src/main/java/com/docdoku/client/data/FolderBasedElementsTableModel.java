@@ -21,14 +21,14 @@
 package com.docdoku.client.data;
 
 import com.docdoku.client.localization.I18N;
+import com.docdoku.core.common.User;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.document.DocumentMasterTemplate;
-import com.docdoku.core.common.User;
 import com.docdoku.core.workflow.WorkflowModel;
-import java.util.Date;
 
-import javax.swing.table.*;
+import javax.swing.table.AbstractTableModel;
+import java.util.Date;
 
 public class FolderBasedElementsTableModel extends AbstractTableModel implements ElementsTableModel {
     

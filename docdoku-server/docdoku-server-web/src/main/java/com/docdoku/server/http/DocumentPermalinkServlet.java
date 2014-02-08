@@ -21,11 +21,11 @@
 package com.docdoku.server.http;
 
 import com.docdoku.core.document.DocumentIteration;
-import com.docdoku.core.document.DocumentMaster;
-import com.docdoku.core.document.DocumentMasterKey;
+import com.docdoku.core.document.DocumentRevision;
+import com.docdoku.core.document.DocumentRevisionKey;
+import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.services.IDocumentManagerLocal;
-import com.docdoku.core.services.NotAllowedException;
 
 import javax.ejb.EJB;
 import javax.servlet.ServletException;
@@ -51,9 +51,9 @@ public class DocumentPermalinkServlet extends HttpServlet {
     protected void doGet(HttpServletRequest pRequest, HttpServletResponse pResponse) throws ServletException, IOException {
 
         try {
-            if(pRequest.getAttribute("publicDocumentMaster") != null){
-                DocumentMaster documentMaster = (DocumentMaster) pRequest.getAttribute("publicDocumentMaster");
-                handleSuccess(pRequest,pResponse,documentMaster);
+            if(pRequest.getAttribute("publicDocumentRevision") != null){
+                DocumentRevision documentRevision = (DocumentRevision) pRequest.getAttribute("publicDocumentRevision");
+                handleSuccess(pRequest,pResponse,documentRevision);
             }else{
                 HttpServletRequest httpRequest = (HttpServletRequest) pRequest;
                 String requestURI = httpRequest.getRequestURI();
@@ -62,11 +62,11 @@ public class DocumentPermalinkServlet extends HttpServlet {
 
                 String workspaceId = URLDecoder.decode(pathInfos[offset], "UTF-8");
                 String documentMasterId = URLDecoder.decode(pathInfos[offset+1],"UTF-8");
-                String documentMasterVersion = pathInfos[offset+2];
+                String documentRevisionVersion = pathInfos[offset+2];
 
-                DocumentMasterKey documentMasterKey  =  new DocumentMasterKey(workspaceId,documentMasterId,documentMasterVersion);
-                DocumentMaster documentMaster = documentService.getDocumentMaster(documentMasterKey);
-                handleSuccess(pRequest,pResponse,documentMaster);
+                DocumentRevisionKey documentRevisionKey = new DocumentRevisionKey(workspaceId,documentMasterId,documentRevisionVersion);
+                DocumentRevision documentRevision = documentService.getDocumentRevision(documentRevisionKey);
+                handleSuccess(pRequest,pResponse,documentRevision);
             }
         }  catch (Exception pEx) {
             pEx.printStackTrace();
@@ -74,9 +74,9 @@ public class DocumentPermalinkServlet extends HttpServlet {
         }
     }
 
-    private void handleSuccess(HttpServletRequest pRequest, HttpServletResponse pResponse, DocumentMaster documentMaster) throws ServletException, IOException, NotAllowedException {
-        pRequest.setAttribute("documentMaster", documentMaster);
-        DocumentIteration docI =  documentMaster.getLastIteration();
+    private void handleSuccess(HttpServletRequest pRequest, HttpServletResponse pResponse, DocumentRevision documentRevision) throws ServletException, IOException, NotAllowedException {
+        pRequest.setAttribute("documentRevision", documentRevision);
+        DocumentIteration docI =  documentRevision.getLastIteration();
 
         if(docI == null){
             throw new NotAllowedException(Locale.getDefault(), "NotAllowedException27");

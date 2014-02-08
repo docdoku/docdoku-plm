@@ -19,7 +19,7 @@
  */
 package com.docdoku.server;
 
-import com.docdoku.core.common.BinaryResource;
+/*import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.document.DocumentMasterKey;
 import java.io.File;
 import java.io.IOException;
@@ -27,22 +27,26 @@ import java.util.HashSet;
 import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import javax.annotation.Resource;
 import javax.ejb.EJBException;
 import javax.ejb.Stateless;
+import com.docdoku.core.document.DocumentRevisionKey;
 import org.apache.lucene.index.CorruptIndexException;
+*/
+
 import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.Term;
+
+import javax.annotation.Resource;
+import javax.ejb.Stateless;
+/*import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TermQuery;
-import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.WildcardQuery;
 import org.apache.lucene.store.FSDirectory;
-
+*/
 /**
  *
  * @author Florent Garin
@@ -53,7 +57,7 @@ public class IndexSearcherBean {
     @Resource(name = "indexPath")
     private String indexPath;
     private IndexReader indexReader;
-
+/*
     @PostConstruct
     private void setup() {
         try {
@@ -74,9 +78,9 @@ public class IndexSearcherBean {
         }
     }
 
-    public Set<DocumentMasterKey> searchInIndex(String pWorkspaceId, String pContent) {
+    public Set<DocumentRevisionKey> searchInIndex(String pWorkspaceId, String pContent) {
         try {
-            Set<DocumentMasterKey> indexedKeys = new HashSet<DocumentMasterKey>();
+            Set<DocumentRevisionKey> indexedKeys = new HashSet<>();
 
             Query fullNameQuery = new WildcardQuery(new Term("fullName", pWorkspaceId + "/*"));
             Query contentQuery = new TermQuery(new Term("content", pContent));
@@ -95,15 +99,14 @@ public class IndexSearcherBean {
                 org.apache.lucene.document.Document doc = indexReader.document(hits[i].doc);
                 String fullName = doc.get("fullName");
                 String[] partRefs = BinaryResource.parseOwnerRef(fullName).split("/");
-                DocumentMasterKey key = new DocumentMasterKey(pWorkspaceId, partRefs[0], partRefs[1]);
+                DocumentRevisionKey key = new DocumentRevisionKey(pWorkspaceId, partRefs[0], partRefs[1]);
                 indexedKeys.add(key);
             }
    
             return indexedKeys;
-        } catch (CorruptIndexException ex) {
-            throw new EJBException(ex);
         } catch (IOException ex) {
             throw new EJBException(ex);
         }
     }
+*/
 }

@@ -22,19 +22,18 @@ package com.docdoku.client.actions;
 
 import com.docdoku.client.data.Config;
 import com.docdoku.client.data.Prefs;
+import com.docdoku.client.localization.I18N;
+import com.docdoku.client.ui.ExplorerFrame;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.document.DocumentIteration;
-import com.docdoku.core.util.FileIO;
 import com.docdoku.core.document.DocumentMaster;
-import com.docdoku.client.ui.ExplorerFrame;
-import com.docdoku.client.localization.I18N;
-import java.io.File;
-import java.io.InterruptedIOException;
+import com.docdoku.core.util.FileIO;
 
 import javax.swing.*;
-
-import java.awt.event.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.io.File;
+import java.io.InterruptedIOException;
 
 public class CheckInAction extends ClientAbstractAction {
     

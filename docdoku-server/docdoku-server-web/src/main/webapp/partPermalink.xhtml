@@ -1,7 +1,6 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:f="http://java.sun.com/jsf/core"
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:c="http://java.sun.com/jsp/jstl/core">
@@ -34,7 +33,8 @@
         <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/threex.domevent.js?v=${BUILD_NUMBER}"></script>
         <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/threex.windowresize.js?v=${BUILD_NUMBER}"></script>
         <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/VisualizationUtils.js?v=${BUILD_NUMBER}"></script>
-        <script type="text/javascript" src="#{request.contextPath}/js/product-structure/dmu/TrackballControlsCustom.js?v=${BUILD_NUMBER}"></script>
+        <script type="text/javascript" src="#{request.contextPath}/js/product-structure/dmu/TrackballControls.js?v=${BUILD_NUMBER}"></script>
+        <script type="text/javascript" src="#{request.contextPath}/js/product-structure/dmu/PointerLockControls.js?v=${BUILD_NUMBER}"></script>
     </c:if>
 
 </head>
@@ -62,6 +62,7 @@
                     <li><a href="#tab-part-attributes" data-toggle="tab">#{i18nPart['tabs.attributes']}</a></li>
                     <li><a href="#tab-part-native-cad-file" data-toggle="tab">#{i18nPart['tabs.nativeCADFile']}</a></li>
                     <li><a href="#tab-part-links" data-toggle="tab">#{i18nPart['tabs.links']}</a></li>
+                    <li><a href="#tab-part-assembly" data-toggle="tab">#{i18nPart['tabs.assembly']}</a></li>
                 </ul>
 
                 <div class="tab-content form-horizontal">
@@ -194,11 +195,6 @@
                             <div id="container"></div>
                             <script type="text/javascript">
                                 var SCENE_INIT = {
-                                    camera: {
-                                        x:0,
-                                        y:0,
-                                        z:0
-                                    }
                                 };
                                 var APP_CONFIG = {};
                                 $(document).ready(function () {
@@ -240,6 +236,16 @@
                             <ul>
                                 <c:forEach var="item" items="${partRevision.lastIteration.linkedDocuments}">
                                     <li><a href="#{request.contextPath}/documents/${item.targetDocumentWorkspaceId}/${item.targetDocumentDocumentMasterId}/${item.targetDocumentDocumentMasterVersion}">${item.targetDocumentDocumentMasterId}-${item.targetDocumentDocumentMasterVersion}-${item.targetDocumentIteration}</a></li>
+                                </c:forEach>
+                            </ul>
+                        </c:if>
+                    </div>
+
+                    <div id="tab-part-assembly" class="tab-pane">
+                        <c:if test="${partRevision.lastIteration.components.size()!=0}">
+                            <ul>
+                                <c:forEach var="item" items="${partRevision.lastIteration.components}">
+                                    <li><a href="#{request.contextPath}/parts/${item.component.workspace.id}/${item.component.number}/${item.component.getLastRevision().version}">${item.component.number}-${item.component.getLastRevision().version} (${item.amount.intValue()})</a></li>
                                 </c:forEach>
                             </ul>
                         </c:if>

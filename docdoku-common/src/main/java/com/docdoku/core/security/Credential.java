@@ -20,9 +20,10 @@
 
 package com.docdoku.core.security;
 
+import javax.persistence.Column;
+import javax.persistence.Table;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import javax.persistence.Table;
 
 /**
  * Useful class for storing credential, login/password pair, to the persistence
@@ -35,7 +36,8 @@ import javax.persistence.Table;
 @Table(name="CREDENTIAL")
 @javax.persistence.Entity
 public class Credential implements java.io.Serializable {
-    
+
+    @Column(length = 255)
     @javax.persistence.Id
     private String login="";
     

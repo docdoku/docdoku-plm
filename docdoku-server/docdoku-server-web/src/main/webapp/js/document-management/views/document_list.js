@@ -26,10 +26,15 @@ define([
             this.dataTable();
         },
         dataTable:function(){
-            var oldSort = [[0,"asc"]];
+            var oldSort = [];
             if(this.oTable){
                 oldSort = this.oTable.fnSettings().aaSorting;
-                this.oTable.fnDestroy();
+                try{
+                    this.oTable.fnDestroy();
+                }catch(e){
+                    console.error(e)
+                }
+
             }
             this.oTable = this.$el.dataTable({
                 aaSorting:oldSort,

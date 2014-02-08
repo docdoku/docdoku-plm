@@ -30,7 +30,6 @@ import javax.ejb.EJB;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 public class ImageViewerImpl implements DocumentViewer {
 
@@ -48,12 +47,12 @@ public class ImageViewerImpl implements DocumentViewer {
         Mustache mustache = mf.compile("com/docdoku/server/viewers/image_viewer.mustache");
         Map<String, Object> scopes = new HashMap<>();
         scopes.put("uriResource", ViewerUtils.getURI(imageResource,uuid));
-        scopes.put("externalUriResource", dataManager.getExternalStorageURI(imageResource));
-        scopes.put("fileName", imageResource.getName());
-        scopes.put("thisId", UUID.randomUUID().toString());
         StringWriter templateWriter = new StringWriter();
         mustache.execute(templateWriter, scopes).flush();
-        return templateWriter.toString();
+
+        String html = ViewerUtils.getViewerTemplate(dataManager, imageResource, uuid, templateWriter.toString());
+
+        return html;
     }
 
 }

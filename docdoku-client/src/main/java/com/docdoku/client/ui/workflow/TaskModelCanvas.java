@@ -21,18 +21,11 @@
 package com.docdoku.client.ui.workflow;
 
 import com.docdoku.client.localization.I18N;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Image;
-import java.awt.Toolkit;
-import javax.swing.AbstractButton;
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
 import com.docdoku.client.ui.common.GUIConstants;
 import com.docdoku.core.workflow.TaskModel;
+
+import javax.swing.*;
+import java.awt.*;
 
 
 public class TaskModelCanvas extends JPanel{

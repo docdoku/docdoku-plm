@@ -20,22 +20,21 @@
 
 package com.docdoku.client.actions;
 
-import com.docdoku.client.ui.search.SearchDialog;
-import com.docdoku.client.ui.search.SearchResultDialog;
-import com.docdoku.client.ui.doc.EditLinksPanel;
 import com.docdoku.client.data.MainModel;
 import com.docdoku.client.localization.I18N;
-import com.docdoku.core.document.DocumentLink;
+import com.docdoku.client.ui.doc.EditLinksPanel;
+import com.docdoku.client.ui.search.SearchDialog;
+import com.docdoku.client.ui.search.SearchResultDialog;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Version;
+import com.docdoku.core.document.DocumentLink;
 import com.docdoku.core.document.DocumentMaster;
-
 import com.docdoku.core.document.DocumentSearchQuery;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.*;
 import java.util.Date;
 
 public class AddLinkActionListener implements ActionListener {

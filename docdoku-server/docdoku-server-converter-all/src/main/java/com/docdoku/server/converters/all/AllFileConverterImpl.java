@@ -21,9 +21,11 @@
 package com.docdoku.server.converters.all;
 
 import com.docdoku.core.common.BinaryResource;
+import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartIterationKey;
-import com.docdoku.core.services.*;
+import com.docdoku.core.services.IDataManagerLocal;
+import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.core.util.FileIO;
 import com.docdoku.server.converters.CADConverter;
 import com.docdoku.server.converters.utils.RadiusCalculator;

@@ -1,7 +1,7 @@
 {{> attribute_list_item}}
 <div class="controls">
     {{#editMode}}
-	<input type="text" class="input-xlarge value" placeholder="{{i18n.VALUE}}" value="{{model.value}}"  />
+	<input type="text" class="input-xlarge value" placeholder="{{i18n.VALUE}}" value="{{model.value}}" {{#model.mandatory}}required{{/model.mandatory}}/>
     {{/editMode}}
     {{^editMode}}{{model.value}}{{/editMode}}
 </div>

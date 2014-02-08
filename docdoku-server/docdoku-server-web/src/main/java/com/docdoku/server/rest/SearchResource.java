@@ -19,21 +19,17 @@
  */
 package com.docdoku.server.rest;
 
-import com.docdoku.core.document.DocumentMaster;
-import com.docdoku.core.document.TagKey;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentManagerLocal;
-import com.docdoku.server.rest.dto.DocumentMasterDTO;
-import com.docdoku.server.rest.dto.TagDTO;
+import org.dozer.DozerBeanMapperSingletonWrapper;
+import org.dozer.Mapper;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Response;
-import org.dozer.DozerBeanMapperSingletonWrapper;
-import org.dozer.Mapper;
+import javax.ws.rs.Path;
 
 /**
  *

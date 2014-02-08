@@ -52,7 +52,7 @@
     </enterprise-beans>
     <assembly-descriptor>
         <application-exception>
-            <exception-class>com.docdoku.core.services.ApplicationException</exception-class>
+            <exception-class>com.docdoku.core.exceptions.ApplicationException</exception-class>
             <rollback>true</rollback>
         </application-exception>
     </assembly-descriptor>

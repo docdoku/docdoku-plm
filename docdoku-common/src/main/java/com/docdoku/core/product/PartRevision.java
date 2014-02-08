@@ -58,12 +58,10 @@ public class PartRevision implements Serializable, Comparable<PartRevision>, Clo
     })
     private PartMaster partMaster;
 
-
     @Column(length=10)
     @Id
     private String version="";
 
-    
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumns({
         @JoinColumn(name = "AUTHOR_LOGIN", referencedColumnName = "LOGIN"),
@@ -84,9 +82,9 @@ public class PartRevision implements Serializable, Comparable<PartRevision>, Clo
         @JoinColumn(name="EFFECTIVITY_ID", referencedColumnName="ID")
     },
     joinColumns={
-        @JoinColumn(name="WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
+        @JoinColumn(name="PARTMASTER_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
         @JoinColumn(name="PARTMASTER_PARTNUMBER", referencedColumnName="PARTMASTER_PARTNUMBER"),
-        @JoinColumn(name="VERSION", referencedColumnName="VERSION")
+        @JoinColumn(name="PARTREVISION_VERSION", referencedColumnName="VERSION")
     })
     private Set<Effectivity> effectivities = new HashSet<Effectivity>();
     
@@ -116,10 +114,10 @@ public class PartRevision implements Serializable, Comparable<PartRevision>, Clo
         },
         joinColumns={
                 @JoinColumn(name="PARTMASTER_PARTNUMBER", referencedColumnName="PARTMASTER_PARTNUMBER"),
-                @JoinColumn(name="PARTMASTER_VERSION", referencedColumnName="VERSION"),
+                @JoinColumn(name="PARTREVISION_VERSION", referencedColumnName="VERSION"),
                 @JoinColumn(name="PARTMASTER_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID")
     })
-    private List<Workflow> abortedWorkflows;
+    private List<Workflow> abortedWorkflows=new ArrayList<>();
 
     @Column(name = "PARTMASTER_PARTNUMBER", nullable = false, insertable = false, updatable = false)
     private String partMasterNumber="";
@@ -327,13 +325,6 @@ public class PartRevision implements Serializable, Comparable<PartRevision>, Clo
         return partMasterWorkspaceId;
     }
 
-    public void setPartMasterNumber(String partMasterNumber) {
-        this.partMasterNumber = partMasterNumber;
-    }
-
-    public void setPartMasterWorkspaceId(String partMasterWorkspaceId) {
-        this.partMasterWorkspaceId = partMasterWorkspaceId;
-    }
 
     public Set<Effectivity> getEffectivities() {
         return effectivities;
@@ -371,15 +362,15 @@ public class PartRevision implements Serializable, Comparable<PartRevision>, Clo
     @Override
     public int hashCode() {
         int hash = 1;
-	hash = 31 * hash + getWorkspaceId().hashCode();
-	hash = 31 * hash + getPartNumber().hashCode();
+	    hash = 31 * hash + getWorkspaceId().hashCode();
+	    hash = 31 * hash + getPartNumber().hashCode();
         hash = 31 * hash + version.hashCode();
-	return hash;
+	    return hash;
     }
 
     @Override
     public int compareTo(PartRevision pPartR) {
-        int wksComp = partMaster.getWorkspaceId().compareTo(pPartR.getPartMaster().getWorkspaceId());
+        int wksComp = getWorkspaceId().compareTo(pPartR.getWorkspaceId());
         if (wksComp != 0)
             return wksComp;
         int numberComp = getPartNumber().compareTo(pPartR.getPartNumber());
@@ -411,6 +402,15 @@ public class PartRevision implements Serializable, Comparable<PartRevision>, Clo
 
         if(workflow !=null)
             clone.workflow = workflow.clone();
+
+        //perform a deep copy
+        List<Workflow> clonedAbortedWorkflows =new ArrayList<>();
+        for (Workflow abortedWorkflow : abortedWorkflows) {
+            Workflow clonedWorkflow=abortedWorkflow.clone();
+            clonedAbortedWorkflows.add(clonedWorkflow);
+        }
+        clone.abortedWorkflows = clonedAbortedWorkflows;
+
 
         if(acl !=null)
             clone.acl = acl.clone();

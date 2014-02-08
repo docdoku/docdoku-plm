@@ -93,6 +93,10 @@ public class GoogleStorageProperties {
         return properties.getProperty("googlestorage.bucketName");
     }
 
+    public String getShortenApiURI() {
+        return properties.getProperty("googlestorage.shortenApiURI");
+    }
+
     private Properties load() {
         try {
             properties.load(getClass().getResourceAsStream("/com/docdoku/server/storage/googlestorage/conf.properties"));

@@ -19,35 +19,34 @@
  */
 package com.docdoku.server;
 
-import java.io.*;
+/*import java.io.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-import javax.annotation.Resource;
 import javax.ejb.Asynchronous;
-import javax.ejb.ConcurrencyManagement;
-import javax.ejb.ConcurrencyManagementType;
 import javax.ejb.EJBException;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
+import javax.annotation.Resource;
+*/
+import javax.ejb.ConcurrencyManagement;
+import javax.ejb.ConcurrencyManagementType;
 import javax.ejb.Singleton;
+/*
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.index.Term;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.LockObtainFailedException;
-import org.apache.lucene.util.Version;
 import org.apache.poi.hslf.extractor.PowerPointExtractor;
 import org.apache.poi.hwpf.extractor.WordExtractor;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
-
+*/
 /**
  * Singleton class IndexerBean
  *
@@ -56,16 +55,16 @@ import org.xml.sax.helpers.DefaultHandler;
 @Singleton(name="IndexerBean")
 @ConcurrencyManagement(ConcurrencyManagementType.CONTAINER)
 public class IndexerBean {
-
+    /*
     @Resource(name = "indexPath")
     private String indexPath;
-    
+
     @Asynchronous
     @Lock(LockType.WRITE)
     public void removeFromIndex(String fullName) {
         IndexWriter indexWriter = null;
         Directory indexDir = null;
-        try {
+/*        try {
             indexDir = FSDirectory.open(new File(indexPath));
             indexWriter = new IndexWriter(indexDir, new StandardAnalyzer(Version.LUCENE_30),IndexWriter.MaxFieldLength.LIMITED);
             indexWriter.deleteDocuments(new Term("fullName", fullName));
@@ -91,8 +90,9 @@ public class IndexerBean {
                 throw new EJBException(ex);
             }
         }
-    }
 
+    }*/
+    /*
     @Asynchronous
     @Lock(LockType.WRITE)
     public void addToIndex(String fullName, InputStream inputStream) {
@@ -100,7 +100,7 @@ public class IndexerBean {
         Directory indexDir = null;
         try {
             indexDir = FSDirectory.open(new File(indexPath));
-            indexWriter = new IndexWriter(indexDir, new StandardAnalyzer(Version.LUCENE_30), IndexWriter.MaxFieldLength.LIMITED);
+           // indexWriter = new IndexWriter(indexDir, new StandardAnalyzer(Version.LUCENE_30), IndexWriter.MaxFieldLength.LIMITED);
             int lastDotIndex = fullName.lastIndexOf('.');
             String extension = "";
             if (lastDotIndex != -1) {
@@ -158,7 +158,6 @@ public class IndexerBean {
                 Reader contentReader = new StringReader(pptExtractor.getText(true, true));
                 pptStream.close();
                 addDoc(indexWriter, contentReader, fullName);
-                pptExtractor.close();
                 contentReader.close();
             } else if (extension.equals(".txt")) {
                 //Text Document
@@ -215,4 +214,5 @@ public class IndexerBean {
         doc.add(new Field("content", pContentReader));
         pIndexWriter.addDocument(doc);
     }
+    */
 }

@@ -20,13 +20,12 @@
 
 package com.docdoku.client.ui.common;
 
-import java.awt.Component;
+import javax.activation.FileDataSource;
+import javax.swing.*;
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-
-import javax.activation.FileDataSource;
-import javax.swing.ProgressMonitorInputStream;
 
 public class ProgressMonitorFileDataSource extends FileDataSource {
 

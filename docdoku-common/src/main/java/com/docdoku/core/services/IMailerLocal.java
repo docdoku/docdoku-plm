@@ -21,7 +21,7 @@ package com.docdoku.core.services;
 
 import com.docdoku.core.common.Account;
 import com.docdoku.core.common.User;
-import com.docdoku.core.document.DocumentMaster;
+import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.workflow.Task;
 
@@ -33,11 +33,11 @@ import java.util.Collection;
  */
 public interface IMailerLocal {
 
-    void sendStateNotification(User[] pSubscribers, DocumentMaster pDocumentMaster);
+    void sendStateNotification(User[] pSubscribers, DocumentRevision pDocumentRevision);
 
-    void sendIterationNotification(User[] pSubscribers, DocumentMaster pDocumentMaster);
+    void sendIterationNotification(User[] pSubscribers, DocumentRevision pDocumentRevision);
 
-    void sendApproval(Collection<Task> pRunningTasks, DocumentMaster pDocumentMaster);
+    void sendApproval(Collection<Task> pRunningTasks, DocumentRevision pDocumentRevision);
 
     void sendPasswordRecovery(Account account, String passwordRRUuid);
 
@@ -47,5 +47,5 @@ public interface IMailerLocal {
 
     void sendPartRevisionWorkflowRelaunchedNotification(PartRevision partRevision);
 
-    void sendDocumentMasterWorkflowRelaunchedNotification(DocumentMaster documentMaster);
+    void sendDocumentRevisionWorkflowRelaunchedNotification(DocumentRevision pDocumentRevision);
 }

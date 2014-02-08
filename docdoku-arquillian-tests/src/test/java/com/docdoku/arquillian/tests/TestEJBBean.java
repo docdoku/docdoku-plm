@@ -23,13 +23,15 @@ package com.docdoku.arquillian.tests;
 import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.common.UserGroupKey;
 import com.docdoku.core.common.Workspace;
-import com.docdoku.core.document.DocumentMaster;
-import com.docdoku.core.document.DocumentMasterKey;
+import com.docdoku.core.document.DocumentRevision;
+import com.docdoku.core.document.DocumentRevisionKey;
 import com.docdoku.core.document.Folder;
+import com.docdoku.core.exceptions.*;
 import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;
-import com.docdoku.core.services.*;
-import com.sun.appserv.security.ProgrammaticLogin;
+import com.docdoku.core.services.IDocumentManagerLocal;
+import com.docdoku.core.services.IUserManagerLocal;
+import com.sun.enterprise.security.ee.auth.login.ProgrammaticLogin;
 
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
@@ -55,13 +57,13 @@ public class TestEJBBean {
     @PersistenceContext
     private EntityManager em;
 
-    private com.sun.appserv.security.ProgrammaticLogin loginP = new ProgrammaticLogin();
+    private ProgrammaticLogin loginP = new ProgrammaticLogin();
     private String password = "password";
 
 
     public Workspace testWorkspaceCreation(String login, String pWorkspace) throws AccountNotFoundException, UserAlreadyExistsException, CreationException, WorkspaceAlreadyExistsException, FolderAlreadyExistsException {
         loginP.login(login, password.toCharArray());
-        Workspace workspace = userManagerLocal.createWorkspace(pWorkspace, userManagerLocal.getAccount(login), "", Workspace.VaultType.LARGE, false);
+        Workspace workspace = userManagerLocal.createWorkspace(pWorkspace, userManagerLocal.getAccount(login), "", false);
         loginP.logout();
         return workspace;
     }
@@ -73,11 +75,11 @@ public class TestEJBBean {
         return folder;
     }
 
-    public DocumentMaster testDocumentCreation(String login, String path, String documentId, ACLUserEntry[] pACLUserEntries, ACLUserGroupEntry[] pACLUserGroupEntries) throws WorkspaceNotFoundException, RoleNotFoundException, AccessRightException, CreationException, FolderNotFoundException, UserNotFoundException, NotAllowedException, DocumentMasterAlreadyExistsException, DocumentMasterTemplateNotFoundException, WorkflowModelNotFoundException, FileAlreadyExistsException {
+    public DocumentRevision testDocumentCreation(String login, String path, String documentId, ACLUserEntry[] pACLUserEntries, ACLUserGroupEntry[] pACLUserGroupEntries) throws WorkspaceNotFoundException, RoleNotFoundException, AccessRightException, CreationException, FolderNotFoundException, UserNotFoundException, NotAllowedException, DocumentMasterAlreadyExistsException, DocumentMasterTemplateNotFoundException, WorkflowModelNotFoundException, FileAlreadyExistsException, DocumentRevisionAlreadyExistsException {
         loginP.login(login, password.toCharArray());
-        DocumentMaster documentMaster = documentManagerLocal.createDocumentMaster(path, documentId, "", "", null, null, pACLUserEntries, pACLUserGroupEntries, null);
+        DocumentRevision documentRevision = documentManagerLocal.createDocumentMaster(path, documentId, "", "", null, null, pACLUserEntries, pACLUserGroupEntries, null);
         loginP.logout();
-        return documentMaster;
+        return documentRevision;
     }
 
     public UserGroup testGroupCreation(String login, String workspaceId, String groupId) throws WorkspaceNotFoundException, AccessRightException, CreationException, UserGroupAlreadyExistsException, AccountNotFoundException {
@@ -116,15 +118,15 @@ public class TestEJBBean {
         loginP.logout();
     }
 
-    public void testDocumentCheckIn(String login, DocumentMasterKey documentMasterKey) throws UserNotActiveException, WorkspaceNotFoundException, AccessRightException, UserNotFoundException, NotAllowedException, DocumentMasterNotFoundException {
+    public void testDocumentCheckIn(String login, DocumentRevisionKey documentRevisionKey) throws UserNotActiveException, WorkspaceNotFoundException, AccessRightException, UserNotFoundException, NotAllowedException, DocumentRevisionNotFoundException, IndexerServerException {
         loginP.login(login, password.toCharArray());
-        documentManagerLocal.checkInDocument(documentMasterKey);
+        documentManagerLocal.checkInDocument(documentRevisionKey);
         loginP.logout();
     }
 
-    public void testDocumentCheckOut(String login, DocumentMasterKey documentMasterKey) throws UserNotActiveException, WorkspaceNotFoundException, AccessRightException, UserNotFoundException, NotAllowedException, DocumentMasterNotFoundException, CreationException, FileAlreadyExistsException {
+    public void testDocumentCheckOut(String login, DocumentRevisionKey documentRevisionKey) throws UserNotActiveException, WorkspaceNotFoundException, AccessRightException, UserNotFoundException, NotAllowedException, DocumentRevisionNotFoundException, CreationException, FileAlreadyExistsException {
         loginP.login(login, password.toCharArray());
-        documentManagerLocal.checkOutDocument(documentMasterKey);
+        documentManagerLocal.checkOutDocument(documentRevisionKey);
         loginP.logout();
     }
 }

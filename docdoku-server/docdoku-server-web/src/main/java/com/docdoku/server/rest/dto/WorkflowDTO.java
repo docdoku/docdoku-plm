@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class WorkflowDTO implements Serializable {
+public class WorkflowDTO implements Serializable, Comparable<WorkflowDTO> {
 
     private int id;
     private String finalLifeCycleState;
@@ -58,7 +58,7 @@ public class WorkflowDTO implements Serializable {
 
     public String getLifeCycleState() {
         ActivityDTO current = getCurrentActivity();
-        return current==null?finalLifeCycleState:current.getLifeCycleState();
+        return (current==null)?finalLifeCycleState:current.getLifeCycleState();
     }
 
     public Date getAbortedDate() {
@@ -91,4 +91,8 @@ public class WorkflowDTO implements Serializable {
         return i;
     }
 
+    @Override
+    public int compareTo(WorkflowDTO o) {
+        return o.getAbortedDate().compareTo(this.getAbortedDate());
+    }
 }

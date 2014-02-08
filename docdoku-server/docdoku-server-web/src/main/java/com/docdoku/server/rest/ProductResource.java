@@ -23,6 +23,7 @@ import com.docdoku.core.common.User;
 import com.docdoku.core.configuration.Baseline;
 import com.docdoku.core.configuration.ConfigSpec;
 import com.docdoku.core.configuration.LatestConfigSpec;
+import com.docdoku.core.exceptions.ApplicationException;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.product.*;
 import com.docdoku.core.security.UserGroupMapping;
@@ -37,10 +38,7 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.*;
-import javax.ws.rs.core.CacheControl;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Request;
-import javax.ws.rs.core.Response;
+import javax.ws.rs.core.*;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
@@ -72,7 +70,7 @@ public class ProductResource {
     }
 
     @GET
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public ConfigurationItemDTO[] getRootProducts(@PathParam("workspaceId") String workspaceId) {
         try {
 
@@ -85,7 +83,7 @@ public class ProductResource {
             }
 
             return dtos;
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
 
@@ -93,7 +91,7 @@ public class ProductResource {
 
     @GET
     @Path("{ciId}/bom")
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public PartDTO[] filterPart(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("configSpec") String configSpecType, @QueryParam("partUsageLink") Integer partUsageLink) {
 
         try {
@@ -125,14 +123,14 @@ public class ProductResource {
 
             return partsDTO;
 
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
 
     @GET
     @Path("{ciId}")
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public ComponentDTO filterProductStructure(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("configSpec") String configSpecType, @QueryParam("partUsageLink") Integer partUsageLink, @QueryParam("depth") Integer depth) {
         try {
             ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
@@ -152,45 +150,51 @@ public class ProductResource {
                 return createDTO(rootUsageLink, depth);
             }
 
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
 
     @DELETE
     @Path("{ciId}")
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public Response deleteProduct(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId) {
         try {
             ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
             productService.deleteConfigurationItem(ciKey);
             return Response.ok().build();
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
 
     @GET
     @Path("{ciId}/paths")
-    @Produces("application/json;charset=UTF-8")
-    public String[] searchPaths(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("partNumber") String partNumber) {
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<PathDTO> searchPaths(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("partNumber") String partNumber) {
         try {
+
             ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
             List<PartUsageLink[]> usagePaths = productService.findPartUsages(ciKey, new PartMasterKey(workspaceId,partNumber));
-            String[] paths=new String[usagePaths.size()];
-            
-            for(int i=0;i<usagePaths.size();i++){
+
+            List<PathDTO> pathsDTO = new ArrayList<PathDTO>();
+
+            for(PartUsageLink[] usagePath : usagePaths){
                 StringBuilder sb=new StringBuilder();
-                PartUsageLink[] usagePath=usagePaths.get(i);
+
                 for(PartUsageLink link:usagePath){
                     sb.append(link.getId());
                     sb.append("-");
                 }
                 sb.deleteCharAt(sb.length()-1);
-                paths[i]=sb.toString();
+                pathsDTO.add(new PathDTO(sb.toString()));
             }
-            return paths;
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+
+
+
+            return pathsDTO;
+
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
 
@@ -203,10 +207,12 @@ public class ProductResource {
 
     private ComponentDTO createDTO(PartUsageLink usageLink, int depth) {
         PartMaster pm = usageLink.getComponent();
+        PartRevision partR = pm.getLastRevision();
+
         ComponentDTO dto = new ComponentDTO();
         dto.setNumber(pm.getNumber());
         dto.setPartUsageLinkId(usageLink.getId());
-        dto.setDescription(pm.getDescription());
+        dto.setDescription(partR.getDescription());
         dto.setName(pm.getName());
         dto.setStandardPart(pm.isStandardPart());
         dto.setAuthor(pm.getAuthor().getName());
@@ -216,7 +222,7 @@ public class ProductResource {
         List<InstanceAttributeDTO> lstAttributes = new ArrayList<InstanceAttributeDTO>();
         List<ComponentDTO> components = new ArrayList<ComponentDTO>();
 
-        PartRevision partR = pm.getLastRevision();
+
         PartIteration partI = null;
         if (partR != null) {
             partI = partR.getLastIteration();
@@ -251,14 +257,14 @@ public class ProductResource {
 
     @GET
     @Path("{ciId}/instances")
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public Response getInstances(@Context Request request, @PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("configSpec") String configSpecType, @QueryParam("path") String path) {
         try {
             //Because some AS (like Glassfish) forbids the use of CacheControl
             //when authenticated we use the LastModified header to fake
-            //a similar behavior (30 minutes of cache)
+            //a similar behavior (15 minutes of cache)
             Calendar cal = new GregorianCalendar();
-            cal.add(Calendar.MINUTE, -30);
+            cal.add(Calendar.MINUTE, -15);
             Response.ResponseBuilder rb = request.evaluatePreconditions(cal.getTime());
             if (rb != null) {
                 return rb.build();
@@ -266,7 +272,7 @@ public class ProductResource {
 
                 CacheControl cc = new CacheControl();
                 //this request is resources consuming so we cache the response for 30 minutes
-                cc.setMaxAge(60 * 30);
+                cc.setMaxAge(60 * 15);
 
                 ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
 
@@ -293,29 +299,29 @@ public class ProductResource {
                     rootUsageLink = productService.filterProductStructure(ciKey, cs, null, 0);                  
                 }
                 
-                return Response.ok().lastModified(new Date()).cacheControl(cc).entity(new InstanceCollection(rootUsageLink, usageLinkPaths)).build();
+                return Response.ok().lastModified(new Date()).cacheControl(cc).entity(new InstanceCollection(rootUsageLink, usageLinkPaths, cs)).build();
             }
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
 
     @POST
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public Response createConfigurationItem(ConfigurationItemDTO configurationItemDTO) throws UnsupportedEncodingException {
         try {
             ConfigurationItem configurationItem = productService.createConfigurationItem(configurationItemDTO.getWorkspaceId(), configurationItemDTO.getId(), configurationItemDTO.getDescription(), configurationItemDTO.getDesignItemNumber());
             ConfigurationItemDTO configurationItemDTOCreated = mapper.map(configurationItem, ConfigurationItemDTO.class);
             configurationItemDTOCreated.setDesignItemNumber(configurationItem.getDesignItem().getNumber());
             return Response.created(URI.create(URLEncoder.encode(configurationItemDTOCreated.getId(),"UTF-8"))).entity(configurationItemDTOCreated).build();
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
 
     @GET
     @Path("{ciId}/baseline")
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public List<BaselineDTO> getBaselines(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId){
         try {
             ConfigurationItemKey configurationItemKey = new ConfigurationItemKey(workspaceId,ciId);
@@ -325,14 +331,14 @@ public class ProductResource {
                 baselinesDTO.add(mapper.map(baseline,BaselineDTO.class));
             }
             return baselinesDTO;
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
 
     @GET
     @Path("{ciId}/baseline/{baselineId}")
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public BaselineDTO getBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @PathParam("baselineId") String baselineId){
         try {
             ConfigurationItemKey configurationItemKey = new ConfigurationItemKey(workspaceId,ciId);
@@ -340,26 +346,26 @@ public class ProductResource {
             BaselineDTO baselineDTO = mapper.map(baseline,BaselineDTO.class);
             baselineDTO.setBaselinedParts(Tools.mapBaselinedPartsToBaselinedPartDTO(baseline));
             return baselineDTO;
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
 
     @POST
     @Path("{ciId}/baseline")
-    @Consumes("application/json;charset=UTF-8")
+    @Consumes(MediaType.APPLICATION_JSON)
     public Response createBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, BaselineCreationDTO baselineCreationDTO){
         try {
             productService.createBaseline(new ConfigurationItemKey(workspaceId,ciId),baselineCreationDTO.getName(),baselineCreationDTO.getDescription());
             return Response.ok().build();
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
 
     @PUT
     @Path("{ciId}/baseline/{baselineId}")
-    @Consumes("application/json;charset=UTF-8")
+    @Consumes(MediaType.APPLICATION_JSON)
     public Response updateBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @PathParam("baselineId") String baselineId, BaselineDTO baselineDTO){
         try {
 
@@ -371,32 +377,32 @@ public class ProductResource {
 
             productService.updateBaseline(new ConfigurationItemKey(workspaceId,ciId),Integer.parseInt(baselineId),baselineDTO.getName(),baselineDTO.getDescription(),partIterationKeys);
             return Response.ok().build();
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
 
     @POST
     @Path("{ciId}/baseline/{baselineId}/duplicate")
-    @Consumes("application/json;charset=UTF-8")
-    @Produces("application/json;charset=UTF-8")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public BaselineDTO duplicateBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @PathParam("baselineId") String baselineId,  BaselineCreationDTO baselineCreationDTO){
         try {
             Baseline baseline = productService.duplicateBaseline(new ConfigurationItemKey(workspaceId, ciId), Integer.parseInt(baselineId), baselineCreationDTO.getName(), baselineCreationDTO.getDescription());
             return mapper.map(baseline, BaselineDTO.class);
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
 
     @DELETE
     @Path("{ciId}/baseline/{baselineId}")
-    @Consumes("application/json;charset=UTF-8")
+    @Consumes(MediaType.APPLICATION_JSON)
     public Response deleteBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @PathParam("baselineId") String baselineId){
         try {
             productService.deleteBaseline(new ConfigurationItemKey(workspaceId,ciId), Integer.parseInt(baselineId));
             return Response.ok().build();
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }

@@ -86,7 +86,5 @@ define({
     "MODIFICATION_DATE":"Date de modification",
     EXPLODE:"Eclater",
     CUTPLAN:"Plan de coupe",
-    ABSOLUTE:"Absolue",
-    RELATIVE:"Relative",
     MEASURE:"Mesure"
 });

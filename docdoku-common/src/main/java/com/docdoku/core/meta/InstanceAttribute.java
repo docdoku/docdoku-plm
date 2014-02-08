@@ -20,14 +20,9 @@
 
 package com.docdoku.core.meta;
 
-import java.io.Serializable;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.xml.bind.annotation.XmlSeeAlso;
+import java.io.Serializable;
 
 /**
  * Base class for all instance attributes.  
@@ -49,11 +44,14 @@ public abstract class InstanceAttribute implements Serializable, Cloneable {
 
     protected String name = "";
 
+    protected boolean mandatory;
+
     public InstanceAttribute() {
     }
 
-    public InstanceAttribute(String pName) {
+    public InstanceAttribute(String pName, boolean pMandatory) {
         name = pName;
+        mandatory = pMandatory;
     }
 
     public String getName() {
@@ -62,6 +60,15 @@ public abstract class InstanceAttribute implements Serializable, Cloneable {
 
     public void setName(String name) {
         this.name = name;
+    }
+    public String getNameWithoutWhiteSpace(){ return this.name.replaceAll(" ","_"); }
+
+    public boolean isMandatory() {
+        return mandatory;
+    }
+
+    public void setMandatory(boolean mandatory) {
+        this.mandatory = mandatory;
     }
 
     @Override
@@ -88,13 +95,11 @@ public abstract class InstanceAttribute implements Serializable, Cloneable {
 
     @Override
     public InstanceAttribute clone() {
-        InstanceAttribute clone = null;
         try {
-            clone = (InstanceAttribute) super.clone();
+            return (InstanceAttribute) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new InternalError();
         }
-        return clone;
     }
 
     public void setId(int id) {
@@ -111,6 +116,6 @@ public abstract class InstanceAttribute implements Serializable, Cloneable {
 
     public boolean isValueEquals(Object pValue) {
         Object value = getValue();
-        return value == null ? false : value.equals(pValue);
+        return value!=null && value.equals(pValue);
     }
 }

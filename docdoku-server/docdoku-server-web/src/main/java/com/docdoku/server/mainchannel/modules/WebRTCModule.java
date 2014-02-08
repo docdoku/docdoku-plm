@@ -2,21 +2,23 @@ package com.docdoku.server.mainchannel.modules;
 
 import com.docdoku.server.mainchannel.MainChannelApplication;
 import com.docdoku.server.mainchannel.MainChannelDispatcher;
-import com.docdoku.server.mainchannel.MainChannelWebSocket;
-import com.docdoku.server.mainchannel.util.ChannelMessagesBuilder;
 import com.docdoku.server.mainchannel.util.ChannelMessagesType;
 import com.docdoku.server.mainchannel.util.Room;
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
+
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.websocket.Session;
+import java.security.Principal;
 
 public class WebRTCModule {
 
     private WebRTCModule(){
     }
 
-    public static void onWebRTCInviteMessage(MainChannelWebSocket socket, JSONObject jsobj) throws JSONException {
+    public static void onWebRTCInviteMessage(Session session, JsonObject jsobj) {
 
-        String callerLogin = socket.getUserLogin();
+        Principal userPrincipal = session.getUserPrincipal();
+        String callerLogin = userPrincipal.getName();
 
         String remoteUser = jsobj.getString("remoteUser");
         String context = jsobj.getString("context");
@@ -24,7 +26,7 @@ public class WebRTCModule {
         String roomKey = callerLogin + "-" + remoteUser;
 
         if(! MainChannelApplication.hasChannels(remoteUser)){
-            MainChannelDispatcher.send(socket, buildUserOfflineMessage(remoteUser,roomKey));
+            MainChannelDispatcher.send(session, buildUserOfflineMessage(remoteUser,roomKey));
             return ;
         }
 
@@ -35,20 +37,23 @@ public class WebRTCModule {
         }
         //else :  multiple invitations, caller is spamming or something goes wrong.
 
-        // the room is ready to receive user sockets.
+        // the room is ready to receive user sessions.
 
-        // add the caller socket in the room
-        room.addUserSocket(socket);
+        // add the caller session in the room
+        room.addUserSession(session);
 
-        // send room join event to caller socket (single channel)
-        MainChannelDispatcher.send(socket, buildRoomJoinEventMessage(socket.getUserLogin(), room));
+        // send room join event to caller session (single channel)
+        MainChannelDispatcher.send(session, buildRoomJoinEventMessage(callerLogin, room));
 
-        // send invitation to the remote user sockets (all channels)
+        // send invitation to the remote user sessions (all channels)
         MainChannelDispatcher.sendToAllUserChannels(remoteUser, buildWebRTCInvitationMessage(callerLogin, context, roomKey));
 
     }
 
-    public static void onWebRTCAcceptMessage(MainChannelWebSocket socket, JSONObject jsobj) throws JSONException {
+    public static void onWebRTCAcceptMessage(Session session, JsonObject jsobj) {
+
+        Principal userPrincipal = session.getUserPrincipal();
+        String callerLogin = userPrincipal.getName();
 
         String remoteUser = jsobj.getString("remoteUser");
         String roomKey = jsobj.getString("roomKey");
@@ -57,23 +62,26 @@ public class WebRTCModule {
 
         if (room != null && room.hasUser(remoteUser)) {
 
-            room.addUserSocket(socket);
+            room.addUserSession(session);
 
             // send room join event to caller (all channels to remove invitations if any)
-            MainChannelDispatcher.sendToAllUserChannels(socket.getUserLogin(),buildRoomJoinEventMessage(socket.getUserLogin(), room));
+            MainChannelDispatcher.sendToAllUserChannels(callerLogin,buildRoomJoinEventMessage(callerLogin, room));
 
             // send room join event to the other user in room
-            MainChannelWebSocket otherSocket = room.getOtherUserSocket(socket);
+            Session otherSession = room.getOtherUserSession(session);
 
-            if(otherSocket != null){
-                MainChannelDispatcher.send(otherSocket, buildWebRTCAcceptMessage(socket.getUserLogin(),room.key()));
+            if(otherSession != null){
+                MainChannelDispatcher.send(otherSession, buildWebRTCAcceptMessage(callerLogin,room.key()));
             }
 
         }
 
     }
 
-    public static void onWebRTCRejectMessage(MainChannelWebSocket socket, JSONObject jsobj) throws JSONException {
+    public static void onWebRTCRejectMessage(Session session, JsonObject jsobj) {
+
+        Principal userPrincipal = session.getUserPrincipal();
+        String callerLogin = userPrincipal.getName();
 
         String remoteUser = jsobj.getString("remoteUser");
         String roomKey = jsobj.getString("roomKey");
@@ -84,29 +92,31 @@ public class WebRTCModule {
         if (room != null) {
 
             // send "room reject event" to caller, to remove invitations in other tabs if any
-            MainChannelDispatcher.sendToAllUserChannels(socket.getUserLogin(), buildRoomRejectEventMessage(socket.getUserLogin(), room));
+            MainChannelDispatcher.sendToAllUserChannels(callerLogin, buildRoomRejectEventMessage(callerLogin, room));
 
-            MainChannelWebSocket otherSocket = room.getUserSocket(remoteUser);
-            if(otherSocket != null){
-                MainChannelDispatcher.send(otherSocket, buildWebRTCRejectMessage(socket.getUserLogin(), room.key(), reason));
+            Session otherSession = room.getUserSession(remoteUser);
+            if(otherSession != null){
+                MainChannelDispatcher.send(otherSession, buildWebRTCRejectMessage(callerLogin, room.key(), reason));
             }
 
         }
 
     }
 
-    public static void onWebRTCHangupMessage(MainChannelWebSocket socket, JSONObject jsobj) throws JSONException {
+    public static void onWebRTCHangupMessage(Session session, JsonObject jsobj) {
+
+        Principal userPrincipal = session.getUserPrincipal();
+        String callerLogin = userPrincipal.getName();
 
         String roomKey = jsobj.getString("roomKey");
-
         Room room = Room.getByKeyName(roomKey);
 
         if (room != null) {
 
-            MainChannelWebSocket otherSocket = room.getOtherUserSocket(socket);
-            room.removeUserSocket(socket);
+            Session otherSession = room.getOtherUserSession(session);
+            room.removeUserSession(session);
 
-            MainChannelDispatcher.send(otherSocket, buildWebRTCHangupMessage(socket.getUserLogin(), room.key()));
+            MainChannelDispatcher.send(otherSession, buildWebRTCHangupMessage(callerLogin, room.key()));
 
         }
 
@@ -114,25 +124,28 @@ public class WebRTCModule {
 
     // webRTC P2P signaling messages
     // These messages are forwarded to the remote peer(s) in the room
-    public static void onWebRTCSignalingMessage(MainChannelWebSocket socket, JSONObject jsobj, String data) throws JSONException {
+    public static void onWebRTCSignalingMessage(Session session, JsonObject jsobj, String data) {
+
+        Principal userPrincipal = session.getUserPrincipal();
+        String callerLogin = userPrincipal.getName();
 
         String roomKey = jsobj.getString("roomKey");
         Room room = Room.getByKeyName(roomKey);
 
         if (room != null) {
 
-            if (room.hasUser(socket.getUserLogin())) {
+            if (room.hasUser(callerLogin)) {
 
                 // forward the message to the other peer
-                MainChannelWebSocket otherSocket = room.getOtherUserSocket(socket);
+                Session otherSession = room.getOtherUserSession(session);
 
                 // on bye message, remove the user from the room
                 if(jsobj.getString("type").equals(ChannelMessagesType.WEBRTC_BYE)){
-                    room.removeUserSocket(socket);
+                    room.removeUserSession(session);
                 }
 
-                if (otherSocket != null) {
-                    MainChannelDispatcher.send(otherSocket, data);
+                if (otherSession != null) {
+                    MainChannelDispatcher.send(otherSession, data);
                 } //else {
                     // tell the user the room is empty ?
                 //}
@@ -147,65 +160,58 @@ public class WebRTCModule {
 
 
     // Web RTC
-    private static String buildWebRTCInvitationMessage(String callerLogin, String context, String roomKey) throws JSONException {
-        JSONObject jsobj = new JSONObject();
-        jsobj.put("type", ChannelMessagesType.WEBRTC_INVITE);
-        jsobj.put("remoteUser", callerLogin);
-        jsobj.put("context", context);
-        jsobj.put("roomKey", roomKey);
-        return jsobj.toString();
+    private static String buildWebRTCInvitationMessage(String callerLogin, String context, String roomKey) {
+        return Json.createObjectBuilder()
+        .add("type", ChannelMessagesType.WEBRTC_INVITE)
+        .add("remoteUser", callerLogin)
+        .add("context", context)
+        .add("roomKey", roomKey).build().toString();
     }
 
-    private static String buildWebRTCAcceptMessage(String callerLogin, String roomKey) throws JSONException {
-        JSONObject jsobj = new JSONObject();
-        jsobj.put("type", ChannelMessagesType.WEBRTC_ACCEPT);
-        jsobj.put("remoteUser", callerLogin);
-        jsobj.put("roomKey", roomKey);
-        return jsobj.toString();
+    private static String buildWebRTCAcceptMessage(String callerLogin, String roomKey) {
+        return Json.createObjectBuilder()
+        .add("type", ChannelMessagesType.WEBRTC_ACCEPT)
+        .add("remoteUser", callerLogin)
+        .add("roomKey", roomKey).build().toString();
     }
 
-    private static String buildWebRTCRejectMessage(String callerLogin, String roomKey, String reason) throws JSONException {
-        JSONObject jsobj = new JSONObject();
-        jsobj.put("type", ChannelMessagesType.WEBRTC_REJECT);
-        jsobj.put("remoteUser", callerLogin);
-        jsobj.put("roomKey", roomKey);
-        jsobj.put("reason", reason);
-        return jsobj.toString();
+    private static String buildWebRTCRejectMessage(String callerLogin, String roomKey, String reason) {
+        return Json.createObjectBuilder()
+        .add("type", ChannelMessagesType.WEBRTC_REJECT)
+        .add("remoteUser", callerLogin)
+        .add("roomKey", roomKey)
+        .add("reason", reason).build().toString();
     }
 
-    private static String buildWebRTCHangupMessage(String callerLogin, String roomKey) throws JSONException {
-        JSONObject jsobj = new JSONObject();
-        jsobj.put("type", ChannelMessagesType.WEBRTC_HANGUP);
-        jsobj.put("remoteUser", callerLogin);
-        jsobj.put("roomKey", roomKey);
-        return jsobj.toString();
+    private static String buildWebRTCHangupMessage(String callerLogin, String roomKey) {
+        return Json.createObjectBuilder()
+        .add("type", ChannelMessagesType.WEBRTC_HANGUP)
+        .add("remoteUser", callerLogin)
+        .add("roomKey", roomKey).build().toString();
     }
 
-    private static String buildRoomJoinEventMessage(String userLogin, Room room)  throws JSONException {
-        JSONObject jsobj = new JSONObject();
-        jsobj.put("type", ChannelMessagesType.WEBRTC_ROOM_JOIN_EVENT);
-        jsobj.put("roomKey", room.key());
-        jsobj.put("roomOccupancy", room.getOccupancy());
-        jsobj.put("userLogin", userLogin);
-        return jsobj.toString();
+    private static String buildRoomJoinEventMessage(String userLogin, Room room) {
+        return Json.createObjectBuilder()
+        .add("type", ChannelMessagesType.WEBRTC_ROOM_JOIN_EVENT)
+        .add("roomKey", room.key())
+        .add("roomOccupancy", room.getOccupancy())
+        .add("userLogin", userLogin).build().toString();
     }
 
-    private static String buildRoomRejectEventMessage(String userLogin, Room room)  throws JSONException {
-        JSONObject jsobj = new JSONObject();
-        jsobj.put("type", ChannelMessagesType.WEBRTC_ROOM_REJECT_EVENT);
-        jsobj.put("roomKey", room.key());
-        jsobj.put("roomOccupancy", room.getOccupancy());
-        jsobj.put("userLogin", userLogin);
-        return jsobj.toString();
+    private static String buildRoomRejectEventMessage(String userLogin, Room room) {
+        return Json.createObjectBuilder()
+        .add("type", ChannelMessagesType.WEBRTC_ROOM_REJECT_EVENT)
+        .add("roomKey", room.key())
+        .add("roomOccupancy", room.getOccupancy())
+        .add("userLogin", userLogin).build().toString();
     }
 
-    private static String buildUserOfflineMessage(String remoteUser, String roomKey)  throws JSONException {
-        JSONObject jsobj = new JSONObject();
-        jsobj.put("type", ChannelMessagesType.WEBRTC_REJECT);
-        jsobj.put("roomKey", roomKey);
-        jsobj.put("userLogin", remoteUser);
-        jsobj.put("reason", "OFFLINE");
-        return jsobj.toString();
+    private static String buildUserOfflineMessage(String remoteUser, String roomKey) {
+        return Json.createObjectBuilder()
+        .add("type", ChannelMessagesType.WEBRTC_REJECT)
+        .add("roomKey", roomKey)
+        .add("userLogin", remoteUser)
+        .add("reason", "OFFLINE").build().toString();
     }
 
 }

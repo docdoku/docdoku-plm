@@ -22,25 +22,27 @@ package com.docdoku.client.actions;
 import com.docdoku.client.data.Config;
 import com.docdoku.client.data.MainModel;
 import com.docdoku.client.data.Prefs;
+import com.docdoku.client.localization.I18N;
+import com.docdoku.client.ui.ExplorerFrame;
+import com.docdoku.client.ui.doc.EditDocDialog;
 import com.docdoku.client.ui.template.EditDocMTemplateDialog;
-import com.docdoku.core.document.DocumentIteration;
-import com.docdoku.core.util.FileIO;
+import com.docdoku.client.ui.workflow.WorkflowModelFrame;
 import com.docdoku.core.common.BinaryResource;
+import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.document.DocumentMasterTemplate;
-import com.docdoku.core.workflow.WorkflowModel;
-import com.docdoku.client.ui.ExplorerFrame;
-import com.docdoku.client.ui.workflow.WorkflowModelFrame;
-import com.docdoku.client.ui.doc.EditDocDialog;
-import com.docdoku.client.localization.I18N;
-
 import com.docdoku.core.meta.InstanceAttribute;
-import java.awt.Cursor;
-import javax.swing.*;
+import com.docdoku.core.util.FileIO;
+import com.docdoku.core.workflow.WorkflowModel;
 
-import java.awt.event.*;
-import java.util.*;
-import java.io.*;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseListener;
+import java.io.File;
+import java.io.InterruptedIOException;
+import java.util.Map;
 
 public class EditElementAction extends ClientAbstractAction {
 

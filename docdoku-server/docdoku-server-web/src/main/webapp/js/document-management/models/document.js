@@ -17,6 +17,10 @@ define(["collections/document_iteration", "common-objects/utils/acl-checker"], f
             return data;
         },
 
+        getId:function(){
+            return this.get("id");
+        },
+
         getReference: function() {
             var id = this.get("id");
             return id.substr(0,id.lastIndexOf("-"));
@@ -63,7 +67,7 @@ define(["collections/document_iteration", "common-objects/utils/acl-checker"], f
         },
 
         getTags: function() {
-            return this.tags;
+            return this.get("tags");
         },
 
         getPath: function() {
@@ -142,7 +146,8 @@ define(["collections/document_iteration", "common-objects/utils/acl-checker"], f
         },
 
         isCheckout: function() {
-            return !_.isNull(this.attributes.checkOutDate);
+            return this.attributes.checkOutDate;
+           // return !_.isNull(this.attributes.checkOutDate);
         },
 
         getPermalink: function() {
@@ -172,18 +177,31 @@ define(["collections/document_iteration", "common-objects/utils/acl-checker"], f
 
         },
 
-        removeTags: function(tags, callback) {
-
+        removeTag: function(tag, callback) {
             $.ajax({
-                context: this,
                 type: "DELETE",
-                url: this.url() + "/tags",
-                data: JSON.stringify(tags),
-                contentType: "application/json; charset=utf-8",
+                url:this.url() + "/tags/" +tag,
                 success: function() {
-                    this.fetch();
                     callback();
                 }
+            });
+        },
+
+        removeTags: function(tags, callback) {
+            var baseUrl = this.url() + "/tags/";
+            var count = 0;
+            var total = _(tags).length;
+            _(tags).each(function(tag){
+                $.ajax({
+                    type: "DELETE",
+                    url:baseUrl+tag,
+                    success: function() {
+                        count ++;
+                        if(count >= total){
+                            callback();
+                        }
+                    }
+                });
             });
 
         },
@@ -289,6 +307,10 @@ define(["collections/document_iteration", "common-objects/utils/acl-checker"], f
 
         getACLPermissionForCurrentUser:function(){
             return ACLChecker.getPermission(this.get("acl"));
+        },
+
+        isAttributesLocked:function(){
+            return this.get("attributesLocked");
         }
 
     });

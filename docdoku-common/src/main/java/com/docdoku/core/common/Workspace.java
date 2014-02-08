@@ -35,31 +35,28 @@ import java.io.Serializable;
 @Table(name="WORKSPACE")
 @javax.persistence.Entity
 @NamedQueries({
-        @NamedQuery(name="Workspace.findWorkspacesWhereUserIsActive", query="SELECT w FROM Workspace w WHERE EXISTS (SELECT u.workspace FROM WorkspaceUserMembership u WHERE u.workspace = w AND u.member.login = :userLogin) OR EXISTS (SELECT g FROM WorkspaceUserGroupMembership g WHERE g.workspace = w AND EXISTS (SELECT gr FROM UserGroup gr, User us WHERE us.workspace = gr.workspace AND g.workspace = gr.workspace AND us.login = :userLogin AND us member of gr.users)) ")
+        @NamedQuery(name="Workspace.findWorkspacesWhereUserIsActive", query="SELECT w FROM Workspace w WHERE EXISTS (SELECT u.workspace FROM WorkspaceUserMembership u WHERE u.workspace = w AND u.member.login = :userLogin) OR EXISTS (SELECT g FROM WorkspaceUserGroupMembership g WHERE g.workspace = w AND EXISTS (SELECT gr FROM UserGroup gr, User us WHERE us.workspace = gr.workspace AND g.workspace = gr.workspace AND us.login = :userLogin AND us member of gr.users))"),
+        @NamedQuery(name="Workspace.findAllWorkspaces", query="SELECT w FROM Workspace w")        
 })
 public class Workspace implements Serializable, Cloneable {
 
-    @Column(length=50)
+    @Column(length=255)
     @javax.persistence.Id
     private String id="";
     
     @javax.persistence.ManyToOne(optional=false, fetch=FetchType.EAGER)
     private Account admin;
-    
+
+    @Lob
     private String description;    
     
     private boolean folderLocked;
-    
-    private VaultType vaultType;
-    
-    public enum VaultType {DEMO,SMALL,LARGE,UNLIMITED}
 
 
-    public Workspace(String pId, Account pAdmin, String pDescription, VaultType pVaultType, boolean pFolderLocked) {
+    public Workspace(String pId, Account pAdmin, String pDescription, boolean pFolderLocked) {
         id = pId;
         admin = pAdmin;
         description = pDescription;
-        vaultType = pVaultType;
         folderLocked=pFolderLocked;
     }
     
@@ -92,14 +89,6 @@ public class Workspace implements Serializable, Cloneable {
     
     public String getDescription() {
         return description;
-    }
-
-    public VaultType getVaultType() {
-        return vaultType;
-    }
-
-    public void setVaultType(VaultType pVaultType) {
-        vaultType = pVaultType;
     }
 
     public boolean isFolderLocked() {
@@ -135,12 +124,10 @@ public class Workspace implements Serializable, Cloneable {
 
     @Override
     public Workspace clone() {
-        Workspace clone = null;
         try {
-            clone = (Workspace) super.clone();
+            return (Workspace) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new InternalError();
         }
-        return clone;
     }
 }

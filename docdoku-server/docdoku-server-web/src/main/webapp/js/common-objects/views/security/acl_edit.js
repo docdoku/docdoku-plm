@@ -68,7 +68,14 @@
             this.admin = new Admin();
             this.admin.fetch({reset:true,success:function(){
 
-                that.useACL = (that.acl != null);
+                that.useACL = false ;
+
+                if(that.acl){
+                    if(that.acl.userEntries.entry.length > 0 || that.acl.groupEntries.entry.length > 0){
+                        that.useACL = true ;
+                    }
+                }
+
                 if(!that.useACL){
                     that.$usingAcl.addClass("hide");
                 }
@@ -76,17 +83,26 @@
                 if(that.acl == null){
                     that.onNoAclGiven();
                 }else{
-                    for(var userLogin in that.acl.userEntries){
-                        var userAclView = new ACLItemView({model:new ACLUserEntry({userLogin : userLogin, permission :that.acl.userEntries[userLogin]}), editMode:that.options.editMode  && userLogin != that.admin.getLogin() && userLogin != APP_CONFIG.login}).render();
+
+                    _.each(that.acl.userEntries.entry,function(entry){
+                        var userLogin = entry.key;
+                        var permission = entry.value;
+                        var editMode = that.options.editMode  && userLogin != that.admin.getLogin() && userLogin != APP_CONFIG.login;
+                        var userAclView = new ACLItemView({model:new ACLUserEntry({userLogin : userLogin, permission :permission}), editMode:editMode}).render();
                         that.$usersAcls.append(userAclView.$el);
                         that.aclUserEntries.push(userAclView.model);
-                    }
+                    });
 
-                    for(var groupId in that.acl.groupEntries){
-                        var groupAclView = new ACLItemView({model:new ACLUserGroupEntry({groupId : groupId, permission :that.acl.groupEntries[groupId]}), editMode:that.options.editMode}).render();
+
+                    _.each(that.acl.groupEntries.entry,function(entry){
+                        var groupId = entry.key;
+                        var permission = entry.value;
+                        var editMode = that.options.editMode;
+                        var groupAclView = new ACLItemView({model:new ACLUserGroupEntry({groupId : groupId, permission :permission}), editMode:editMode}).render();
                         that.$userGroupsAcls.append(groupAclView.$el);
                         that.aclUserGroupEntries.push(groupAclView.model);
-                    }
+                    });
+
                 }
 
                 that.$aclSwitch.bootstrapSwitch();
@@ -134,19 +150,26 @@
         },
 
         toList:function(){
-            if(!this.useACL){
-                return null;
-            }
+
             var dto = {};
             dto.userEntries = {};
             dto.groupEntries = {};
-            _(this.aclUserEntries).each(function(aclEntry){
-                dto.userEntries[aclEntry.key()]=aclEntry.getPermission();
-            });
-            _(this.aclUserGroupEntries).each(function(aclEntry){
-                dto.groupEntries[aclEntry.key()]=aclEntry.getPermission();
-            });
-            return dto;
+
+            dto.userEntries.entry = [];
+            dto.groupEntries.entry = [];
+
+            if(this.useACL){
+                _(this.aclUserEntries).each(function(aclEntry){
+                    dto.userEntries.entry.push({key:aclEntry.key(),value:aclEntry.getPermission()});
+                });
+                _(this.aclUserGroupEntries).each(function(aclEntry){
+                    dto.groupEntries.entry.push({key:aclEntry.key(),value:aclEntry.getPermission()});
+                });
+                return dto;
+            }
+
+            return null;
+
         },
 
         onSubmit:function(e){

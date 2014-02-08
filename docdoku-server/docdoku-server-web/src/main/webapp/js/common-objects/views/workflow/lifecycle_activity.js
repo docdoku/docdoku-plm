@@ -30,9 +30,22 @@ define([
 
             var that = this ;
 
-            this.$el.html(Mustache.render(template, {i18n: i18n, activity:this.activity}));
+            switch(this.activity.type){
+                case "SERIAL":
+                    this.activityType = i18n.SERIAL_ACTIVITY;
+                    break;
+                case "PARALLEL":
+                    this.activityType = i18n.PARALLEL_ACTIVITY+" "+this.activity.tasksToComplete;
+                    break;
+            }
 
-            var completeClass = this.activity.complete ? "complete" : "incomplete";
+            this.$el.html(Mustache.render(template, {i18n: i18n, activity:this.activity, activityType:this.activityType}));
+
+            var completeClass = "incomplete";// = this.activity.complete ? "complete" : "incomplete";
+
+            if(this.activity.complete){ completeClass ="complete";}
+            if(this.activity.stopped){ completeClass ="rejected";}
+            if(this.activity.inProgress){ completeClass ="in_progress";}
 
             this.$el.addClass(this.activity.type.toLowerCase()).addClass(completeClass);
 
@@ -43,6 +56,10 @@ define([
                 task.parentWorkflowId = that.activity.parentWorkflowId;
                 task.parentActivityStep = that.activity.step;
                 task.index = index;
+
+                if((that.activity.stopped || that.activity.complete) && task.status.toLowerCase()=="in_progress"){
+                    task.status="NOT_STARTED";                                                                          // Disable task if activity is close
+                }
 
                 var lifecycleTaskView = new LifecycleTaskView().setTask(task).setEntityType(that.entityType).render();
 

@@ -20,8 +20,9 @@
 package com.docdoku.core.product;
 
 import com.docdoku.core.common.Workspace;
-import java.io.Serializable;
+
 import javax.persistence.*;
+import java.io.Serializable;
 
 /**
  * This class represents an entire product or some portion
@@ -48,15 +49,16 @@ import javax.persistence.*;
 public class ConfigurationItem implements Serializable {
 
 
-    @Column(length = 50)
+    @Column(length = 255)
     @Id
     private String id = "";
     
     @Id
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private Workspace workspace;
-    
 
+
+    @Lob
     private String description;
        
     /**

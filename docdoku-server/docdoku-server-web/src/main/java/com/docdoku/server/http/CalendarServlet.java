@@ -22,21 +22,20 @@ package com.docdoku.server.http;
 
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.workflow.Task;
-import java.io.IOException;
-import java.net.URLDecoder;
-import java.util.regex.Pattern;
-
-import javax.ejb.EJB;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServlet;
-
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Dur;
 import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.property.CalScale;
 import net.fortuna.ical4j.model.property.Version;
+
+import javax.ejb.EJB;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.net.URLDecoder;
+import java.util.regex.Pattern;
 
 public class CalendarServlet extends HttpServlet {
 

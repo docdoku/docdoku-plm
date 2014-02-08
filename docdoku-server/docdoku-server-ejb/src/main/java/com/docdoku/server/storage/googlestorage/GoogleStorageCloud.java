@@ -20,18 +20,16 @@
 
 package com.docdoku.server.storage.googlestorage;
 
-import com.docdoku.core.services.FileNotFoundException;
-import com.docdoku.core.services.StorageException;
+import com.docdoku.core.exceptions.FileNotFoundException;
+import com.docdoku.core.exceptions.StorageException;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.impl.client.DefaultHttpClient;
 
-import java.io.FilterOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.HttpURLConnection;
-import java.net.ProtocolException;
 import java.net.URL;
 import java.util.logging.Logger;
 
@@ -168,4 +166,37 @@ public class GoogleStorageCloud {
         }
     }
 
+    public static String getShortenURI(String externalResourceURI) throws IOException {
+        URL url = new URL(properties.getShortenApiURI());
+        HttpURLConnection httpConnection = (HttpURLConnection) url.openConnection();
+        httpConnection.setDoInput (true);
+        httpConnection.setDoOutput (true);
+
+        httpConnection.setRequestMethod("POST");
+        httpConnection.setRequestProperty("Content-Type", "application/json");
+        httpConnection.connect();
+
+        JsonObject json = new JsonObject();
+        json.addProperty("longUrl", externalResourceURI);
+
+        DataOutputStream wr = new DataOutputStream(httpConnection.getOutputStream());
+        wr.writeBytes(json.toString());
+        wr.flush();
+        wr.close();
+
+        BufferedReader br = new BufferedReader(new InputStreamReader(httpConnection.getInputStream()));
+        String line = null;
+        StringBuilder sb = new StringBuilder();
+
+        while ((line = br.readLine()) != null) {
+            sb.append(line);
+        }
+
+        JsonParser parser = new JsonParser();
+        JsonObject jsonResponse = (JsonObject)parser.parse(sb.toString());
+
+        String shortenUrl = jsonResponse.get("id").getAsString();
+
+        return shortenUrl;
+    }
 }

@@ -21,7 +21,10 @@
 package com.docdoku.core.document;
 
 import com.docdoku.core.common.User;
+
 import javax.persistence.Entity;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 /**
@@ -35,13 +38,16 @@ import javax.persistence.Table;
  */
 @Table(name="ITERATIONCHANGESUBSCRIPTION")
 @Entity
+@NamedQueries({
+    @NamedQuery(name="IterationChangeSubscription.findSubscriptionByUserAndDocRevision", query="SELECT s FROM IterationChangeSubscription s WHERE s.subscriber = :user AND s.observedDocumentRevision = :docR"),
+})
 public class IterationChangeSubscription extends Subscription{
     
 
     public IterationChangeSubscription() {
     }
     
-    public IterationChangeSubscription (User pSubscriber, DocumentMaster pObservedElement){
+    public IterationChangeSubscription (User pSubscriber, DocumentRevision pObservedElement){
         super(pSubscriber,pObservedElement);
     }
 }

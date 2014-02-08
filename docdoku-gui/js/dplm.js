@@ -43,7 +43,6 @@ define(function(){
 
         run:function(args,callbacks){
             var command = toCommand(args);
-            console.log("NEW CALL")
             console.log(command);
             exec(Dplm.base() + command,{ maxBuffer: 1274916 * 2  },function (error, stdout, stderr) {
                 var results = stdout ? JSON.parse(stdout) : {};

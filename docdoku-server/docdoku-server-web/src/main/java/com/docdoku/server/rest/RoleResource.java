@@ -20,6 +20,7 @@
 package com.docdoku.server.rest;
 
 
+import com.docdoku.core.exceptions.ApplicationException;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IWorkflowManagerLocal;
 import com.docdoku.core.workflow.Role;
@@ -35,6 +36,7 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
@@ -63,7 +65,7 @@ public class RoleResource {
     } 
 
     @GET
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public RoleDTO[] getRolesInWorkspace (@PathParam("workspaceId") String workspaceId){
 
         try {
@@ -76,7 +78,7 @@ public class RoleResource {
 
             return rolesDTO;
 
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
 
@@ -84,7 +86,7 @@ public class RoleResource {
 
     @GET
     @Path("inuse")
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public RoleDTO[] getRolesInUseInWorkspace (@PathParam("workspaceId") String workspaceId){
 
         try {
@@ -97,7 +99,7 @@ public class RoleResource {
 
             return rolesDTO;
 
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
 
@@ -105,8 +107,8 @@ public class RoleResource {
 
 
     @POST
-    @Produces("application/json;charset=UTF-8")
-    @Consumes("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
     public Response createRole(RoleDTO roleDTO) throws UnsupportedEncodingException {
         try {
 
@@ -119,15 +121,15 @@ public class RoleResource {
             Role roleCreated = roleService.createRole(roleDTO.getName(),roleDTO.getWorkspaceId(),userLogin);
             RoleDTO roleCreatedDTO = mapRoleToDTO(roleCreated);
             return Response.created(URI.create(URLEncoder.encode(roleCreatedDTO.getName(), "UTF-8"))).entity(roleCreatedDTO).build();
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
 
     @PUT
-    @Produces("application/json;charset=UTF-8")
-    @Consumes("application/json;charset=UTF-8")
     @Path("{roleName}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
     public Response updateRole(@PathParam("roleName") String roleName, RoleDTO roleDTO) throws UnsupportedEncodingException {
         try {
 
@@ -140,20 +142,20 @@ public class RoleResource {
             Role roleUpdated = roleService.updateRole(new RoleKey(roleDTO.getWorkspaceId(), roleName), userLogin);
             RoleDTO roleUpdatedDTO = mapRoleToDTO(roleUpdated);
             return Response.status(Response.Status.OK).entity(roleUpdatedDTO).build();
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
 
     @DELETE
     @Path("{roleName}")
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public Response deleteRole(@PathParam("workspaceId") String workspaceId, @PathParam("roleName") String roleName) {
         try {
             RoleKey roleKey = new RoleKey(workspaceId, roleName);
             roleService.deleteRole(roleKey);
             return Response.ok().build();
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }

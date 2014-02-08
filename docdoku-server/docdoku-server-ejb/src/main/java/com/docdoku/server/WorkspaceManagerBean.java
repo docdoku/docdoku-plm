@@ -23,7 +23,13 @@ package com.docdoku.server;
 import com.docdoku.core.common.Account;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
-import com.docdoku.core.services.*;
+import com.docdoku.core.exceptions.AccessRightException;
+import com.docdoku.core.exceptions.StorageException;
+import com.docdoku.core.exceptions.UserNotFoundException;
+import com.docdoku.core.services.IDataManagerLocal;
+import com.docdoku.core.services.IMailerLocal;
+import com.docdoku.core.services.IUserManagerLocal;
+import com.docdoku.core.services.IWorkspaceManagerLocal;
 import com.docdoku.server.dao.UserDAO;
 import com.docdoku.server.dao.WorkspaceDAO;
 

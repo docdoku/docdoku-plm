@@ -20,18 +20,13 @@
 
 package com.docdoku.client.ui.workflow;
 
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.util.Collection;
-import java.util.Iterator;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
 import com.docdoku.core.workflow.ParallelActivityModel;
 import com.docdoku.core.workflow.TaskModel;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.Collection;
+import java.util.Iterator;
 
 
 public abstract class ParallelActivityModelCanvas extends JPanel{

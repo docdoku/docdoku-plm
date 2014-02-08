@@ -38,10 +38,10 @@ public class BaselinedPartKey implements Serializable{
     @Column(name = "BASELINE_ID", nullable = false, insertable = false, updatable = false)
     private int baselineId;
 
-    @Column(name = "TARGET_WORKSPACE_ID", length=50, nullable = false, insertable = false, updatable = false)
+    @Column(name = "TARGET_WORKSPACE_ID", length=255, nullable = false, insertable = false, updatable = false)
     private String targetPartWorkspaceId="";
 
-    @Column(name = "TARGET_PARTMASTER_PARTNUMBER", length=50, nullable = false, insertable = false, updatable = false)
+    @Column(name = "TARGET_PARTMASTER_PARTNUMBER", length=255, nullable = false, insertable = false, updatable = false)
     private String targetPartNumber="";
 
     public BaselinedPartKey(){

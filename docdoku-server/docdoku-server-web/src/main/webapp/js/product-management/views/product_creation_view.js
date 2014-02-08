@@ -35,7 +35,11 @@ define(
             this.$inputPartNumber.typeahead({
                 source: function(query, process) {
                     $.getJSON('/api/workspaces/' + APP_CONFIG.workspaceId + '/parts/numbers?q=' + query, function(data) {
-                        process(data);
+                        var partNumbers = [];
+                        _(data).each(function(d){
+                            partNumbers.push(d.partNumber);
+                        });
+                        process(partNumbers);
                     });
                 }
             });

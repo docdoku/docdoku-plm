@@ -24,6 +24,8 @@ import com.docdoku.core.common.User;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.document.DocumentMasterTemplateKey;
+import com.docdoku.core.exceptions.AccessRightException;
+import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.product.PartIterationKey;
 import com.docdoku.core.product.PartMasterTemplateKey;
 import com.docdoku.core.services.*;
@@ -47,6 +49,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -125,6 +128,13 @@ public class UploadDownloadServlet extends HttpServlet {
             String fileName = binaryResource.getName();
             String eTag = fileName + "_" + length + "_" + lastModified;
 
+            // Insure we serve the requested output format
+            if(outputFormat != null){
+                fileName+="."+outputFormat;
+            }
+
+            fileName = URLEncoder.encode(fileName, "UTF-8");
+            
             // Set content type
             String contentType = "";
             if (isSubResource) {

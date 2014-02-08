@@ -19,11 +19,16 @@
  */
 package com.docdoku.server.rest;
 
-import com.docdoku.core.document.DocumentMasterKey;
+import com.docdoku.core.document.DocumentRevisionKey;
 import com.docdoku.core.document.Folder;
+import com.docdoku.core.exceptions.*;
+import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.security.UserGroupMapping;
-import com.docdoku.core.services.*;
+import com.docdoku.core.services.IDocumentManagerLocal;
+import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.rest.dto.FolderDTO;
+import org.dozer.DozerBeanMapperSingletonWrapper;
+import org.dozer.Mapper;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
@@ -32,10 +37,9 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import org.dozer.DozerBeanMapperSingletonWrapper;
-import org.dozer.Mapper;
 
 @Stateless
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
@@ -76,7 +80,7 @@ public class FolderResource {
      * @return the array of folders
      */
     @GET
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public FolderDTO[] getRootFoldersJson(@PathParam("workspaceId") String workspaceId) {
         try {
             
@@ -97,14 +101,14 @@ public class FolderResource {
             }
 
             return folderDtos;
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
     
     @GET
     @Path("{completePath}/folders")
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public FolderDTO[] getSubFoldersJson(@PathParam("completePath") String folderId) {
         try {
             
@@ -127,7 +131,7 @@ public class FolderResource {
             }
 
             return folderDtos;
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -136,9 +140,9 @@ public class FolderResource {
      * PUT method for updating or creating an instance of FolderResource
      */
     @PUT
-    @Consumes("application/json;charset=UTF-8")
-    @Produces("application/json;charset=UTF-8")
     @Path("{folderId}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public FolderDTO renameFolderjson(@PathParam("folderId") String folderPath, FolderDTO folder) {
         try {
             
@@ -161,15 +165,15 @@ public class FolderResource {
                     
             return renamedFolderDto;
 
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
 
     @POST
-    @Consumes("application/json;charset=UTF-8")
-    @Produces("application/json;charset=UTF-8")
     @Path("{parentFolderPath}/folders")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public FolderDTO createSubFolder(@PathParam("parentFolderPath") String parentFolderPath, FolderDTO folder) {
         try {
             
@@ -179,14 +183,14 @@ public class FolderResource {
             FolderDTO createdSubFolder =  createFolder(decodedCompletePath, folderName);
             
             return createdSubFolder;
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
 
     @POST
-    @Consumes("application/json;charset=UTF-8")
-    @Produces("application/json;charset=UTF-8")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public FolderDTO createRootFolder(@PathParam("workspaceId") String workspaceId, FolderDTO folder) {
         try {
 
@@ -195,7 +199,7 @@ public class FolderResource {
             
             return createdRootFolder;
             
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -208,7 +212,7 @@ public class FolderResource {
      */
     @DELETE
     @Path("{folderId}")
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public Response deleteRootFolder(@PathParam("folderId") String completePath) {
         try {
             
@@ -216,12 +220,12 @@ public class FolderResource {
             
             return Response.status(Response.Status.OK).build();
             
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
     
-    private DocumentMasterKey[] deleteFolder(String pCompletePath) throws WorkspaceNotFoundException, NotAllowedException, AccessRightException, UserNotFoundException, UserNotActiveException, FolderNotFoundException{
+    private DocumentRevisionKey[] deleteFolder(String pCompletePath) throws WorkspaceNotFoundException, NotAllowedException, AccessRightException, UserNotFoundException, UserNotActiveException, FolderNotFoundException, IndexerServerException{
 
         String decodedCompletePath = Tools.replaceColonWithSlash(pCompletePath);
 
@@ -230,7 +234,7 @@ public class FolderResource {
         return documentService.deleteFolder(completePath);      
     }
     
-    private FolderDTO createFolder(String pCompletePath, String pFolderName) throws WorkspaceNotFoundException, NotAllowedException, AccessRightException, FolderNotFoundException, FolderAlreadyExistsException, UserNotFoundException, UserNotActiveException, CreationException{
+    private FolderDTO createFolder(String pCompletePath, String pFolderName) throws WorkspaceNotFoundException, NotAllowedException, AccessRightException, FolderNotFoundException, FolderAlreadyExistsException, UserNotFoundException, UserNotActiveException, CreationException {
     
         Folder createdFolder= documentService.createFolder(pCompletePath, pFolderName);
                         

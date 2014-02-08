@@ -23,18 +23,19 @@ import com.docdoku.core.common.User;
 import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.common.UserGroupKey;
 import com.docdoku.core.common.Workspace;
-import com.docdoku.core.document.DocumentMaster;
+import com.docdoku.core.document.DocumentRevision;
+import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.security.WorkspaceUserGroupMembership;
 import com.docdoku.core.security.WorkspaceUserMembership;
-import com.docdoku.core.services.*;
-import org.codehaus.jettison.json.JSONArray;
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
+import com.docdoku.core.services.IDocumentManagerLocal;
+import com.docdoku.core.services.IProductManagerLocal;
+import com.docdoku.core.services.IUserManagerLocal;
 
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.json.*;
 import java.io.Serializable;
 import java.util.*;
 
@@ -133,94 +134,78 @@ public class AdminStateBean implements Serializable {
         return productService.getPartMastersCount(selectedWorkspace);
     }
 
-    public JSONObject getDiskSpaceUsageStats() throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException, AccountNotFoundException {
-
-        Map<String, Long> diskUsage = new HashMap<String,Long>();
+    public JsonObject getDiskSpaceUsageStats() throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException, AccountNotFoundException {
 
         Long documentDiskUsage = documentService.getDiskUsageForDocumentsInWorkspace(selectedWorkspace);
         Long partsDiskUsage = productService.getDiskUsageForPartsInWorkspace(selectedWorkspace);
         Long documentTemplatesDiskUsage = documentService.getDiskUsageForDocumentTemplatesInWorkspace(selectedWorkspace);
         Long partTemplatesDiskUsage = productService.getDiskUsageForPartTemplatesInWorkspace(selectedWorkspace);
 
-        diskUsage.put("documents", documentDiskUsage);
-        diskUsage.put("parts", partsDiskUsage);
-        diskUsage.put("document-templates", documentTemplatesDiskUsage);
-        diskUsage.put("part-templates", partTemplatesDiskUsage);
-
-        return new JSONObject(diskUsage);
-
+        return Json.createObjectBuilder()
+        .add("documents", documentDiskUsage)
+        .add("parts", partsDiskUsage)
+        .add("document-templates", documentTemplatesDiskUsage)
+        .add("part-templates", partTemplatesDiskUsage).build();
     }
 
-    public JSONObject getCheckedOutDocumentsStats() throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException, AccountNotFoundException, JSONException {
+    public JsonObject getCheckedOutDocumentsStats() throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException, AccountNotFoundException {
 
-        DocumentMaster[] checkedOutDocumentMasters = documentService.getAllCheckedOutDocumentMasters(selectedWorkspace);
+        DocumentRevision[] checkedOutDocumentRevisions = documentService.getAllCheckedOutDocumentRevisions(selectedWorkspace);
+        JsonObjectBuilder statsByUserBuilder = Json.createObjectBuilder();
 
-        JSONObject statsByUser = new JSONObject();
+        Map<String, JsonArrayBuilder> userArrays=new HashMap<>();
+        for(DocumentRevision documentRevision : checkedOutDocumentRevisions){
 
-        for(DocumentMaster documentMaster : checkedOutDocumentMasters){
-
-            String userLogin = documentMaster.getCheckOutUser().getLogin() ;
-
-            JSONArray userArray;
-            try {
-                userArray = (JSONArray) statsByUser.get(userLogin);
-            } catch (JSONException e) {
-                userArray = new JSONArray();
-                statsByUser.put(userLogin, userArray);
+            String userLogin = documentRevision.getCheckOutUser().getLogin();
+            JsonArrayBuilder userArray=userArrays.get(userLogin);
+            if(userArray==null) {
+                userArray = Json.createArrayBuilder();
+                userArrays.put(userLogin, userArray);
+                statsByUserBuilder.add(userLogin, userArray);
             }
-
-            JSONObject doc = new JSONObject();
-            doc.put("date",documentMaster.getCheckOutDate().getTime());
-            userArray.put(doc);
-
+            userArray.add(Json.createObjectBuilder().add("date",documentRevision.getCheckOutDate().getTime()).build());
         }
 
-        return statsByUser;
+        return statsByUserBuilder.build();
 
     }
 
-    public JSONObject getCheckedOutPartsStats() throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException, AccountNotFoundException, JSONException {
+    public JsonObject getCheckedOutPartsStats() throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException, AccountNotFoundException {
 
         PartRevision[] checkedOutPartRevisions = productService.getAllCheckedOutPartRevisions(selectedWorkspace);
+        JsonObjectBuilder statsByUserBuilder = Json.createObjectBuilder();
 
-        JSONObject statsByUser = new JSONObject();
-
+        Map<String, JsonArrayBuilder> userArrays=new HashMap<>();
         for(PartRevision partRevision : checkedOutPartRevisions){
 
-            String userLogin = partRevision.getCheckOutUser().getLogin() ;
-
-            JSONArray userArray;
-            try {
-                userArray = (JSONArray) statsByUser.get(userLogin);
-            } catch (JSONException e) {
-                userArray = new JSONArray();
-                statsByUser.put(userLogin, userArray);
+            String userLogin = partRevision.getCheckOutUser().getLogin();
+            JsonArrayBuilder userArray=userArrays.get(userLogin);
+            if(userArray==null) {
+                userArray = Json.createArrayBuilder();
+                userArrays.put(userLogin, userArray);
+                statsByUserBuilder.add(userLogin, userArray);
             }
-
-            JSONObject doc = new JSONObject();
-            doc.put("date",partRevision.getCheckOutDate().getTime());
-            userArray.put(doc);
-
+            userArray.add(Json.createObjectBuilder().add("date",partRevision.getCheckOutDate().getTime()).build());
         }
 
-        return statsByUser;
+        return statsByUserBuilder.build();
 
     }
 
 
 
-    public JSONArray getUsersInWorkspace() throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException, AccountNotFoundException, JSONException {
+    public JsonArray getUsersInWorkspace() throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException, AccountNotFoundException {
 
-        JSONArray usersJSONArray = new JSONArray();
+        JsonArrayBuilder usersJSONArrayBuilder = Json.createArrayBuilder();
         User[] users = documentService.getUsers(selectedWorkspace);
         for(int i = 0 ; i< users.length ; i++ ){
-            usersJSONArray.put(users[i].getLogin());
+            usersJSONArrayBuilder.add(users[i].getLogin());
         }
-        return usersJSONArray;
+        return usersJSONArrayBuilder.build();
 
     }
 
-    public JSONObject getUsersStats() throws WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException, JSONException {
+    public JsonObject getUsersStats() throws WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException {
 
         WorkspaceUserMembership[] workspaceUserMemberships = userManager.getWorkspaceUserMemberships(selectedWorkspace);
         WorkspaceUserGroupMembership[] workspaceUserGroupMemberships = userManager.getWorkspaceUserGroupMemberships(selectedWorkspace);
@@ -233,17 +218,13 @@ public class AdminStateBean implements Serializable {
         int activeGroupsCount = workspaceUserGroupMemberships.length;
         int inactiveGroupsCount = groupsCount - activeGroupsCount;
 
-        JSONObject usersStats = new JSONObject();
-
-        usersStats.put("users", usersCount);
-        usersStats.put("activeusers", activeUsersCount);
-        usersStats.put("inactiveusers", inactiveUsersCount);
-
-        usersStats.put("groups", groupsCount);
-        usersStats.put("activegroups", activeGroupsCount);
-        usersStats.put("inactivegroups", inactiveGroupsCount);
-
-        return usersStats;
+        return Json.createObjectBuilder()
+        .add("users", usersCount)
+        .add("activeusers", activeUsersCount)
+        .add("inactiveusers", inactiveUsersCount)
+        .add("groups", groupsCount)
+        .add("activegroups", activeGroupsCount)
+        .add("inactivegroups", inactiveGroupsCount).build();
     }
 
 

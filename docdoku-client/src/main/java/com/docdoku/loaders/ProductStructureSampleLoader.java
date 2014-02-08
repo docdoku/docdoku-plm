@@ -22,8 +22,6 @@ package com.docdoku.loaders;
 import com.docdoku.client.ScriptingTools;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.meta.InstanceNumberAttribute;
-import com.docdoku.core.product.*;
-import com.docdoku.core.services.*;
 
 import javax.activation.DataHandler;
 import java.io.Console;
@@ -69,7 +67,7 @@ public class ProductStructureSampleLoader {
         link.setAmount(1);
         link.setComponent(componentM);
         List<CADInstance> cads = new ArrayList<CADInstance>();
-        cads.add(new CADInstance(0D, 0D, 0D, 0D, 0D, 0D, CADInstance.Positioning.ABSOLUTE));
+        cads.add(new CADInstance(0D, 0D, 0D, 0D, 0D, 0D));
         link.setCadInstances(cads);
         subParts.add(link);
 
@@ -125,7 +123,7 @@ public class ProductStructureSampleLoader {
         link.setAmount(1);
         link.setComponent(componentM);
         List<CADInstance> cads = new ArrayList<CADInstance>();
-        cads.add(new CADInstance(0D, 0D, 0D, 0D, 0D, 0D, CADInstance.Positioning.ABSOLUTE));
+        cads.add(new CADInstance(0D, 0D, 0D, 0D, 0D, 0D));
         link.setCadInstances(cads);
         subParts.add(link);
 

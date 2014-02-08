@@ -19,14 +19,15 @@
  */
 
 package com.docdoku.client.ui.workflow;
-import com.docdoku.client.localization.I18N;
-import com.docdoku.core.workflow.TaskModel;
-import java.awt.*;
-import java.util.Iterator;
-import javax.swing.*;
 
+import com.docdoku.client.localization.I18N;
 import com.docdoku.core.workflow.ParallelActivity;
 import com.docdoku.core.workflow.Task;
+import com.docdoku.core.workflow.TaskModel;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.Iterator;
 
 
 

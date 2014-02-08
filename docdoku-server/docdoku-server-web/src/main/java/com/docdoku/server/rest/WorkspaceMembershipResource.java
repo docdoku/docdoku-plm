@@ -20,6 +20,7 @@
 
 package com.docdoku.server.rest;
 
+import com.docdoku.core.exceptions.ApplicationException;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.security.WorkspaceUserGroupMembership;
 import com.docdoku.core.security.WorkspaceUserMembership;
@@ -38,6 +39,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
 /**
  *
@@ -63,7 +65,7 @@ public class WorkspaceMembershipResource {
 
     @GET
     @Path("users")
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public WorkspaceUserMemberShipDTO[] getWorkspaceUserMemberShips (@PathParam("workspaceId") String workspaceId){
 
         try{
@@ -77,7 +79,7 @@ public class WorkspaceMembershipResource {
 
             return workspaceUserMemberShipDTO;
 
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
 
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
@@ -86,7 +88,7 @@ public class WorkspaceMembershipResource {
 
     @GET
     @Path("usergroups")
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public WorkspaceUserGroupMemberShipDTO[] getWorkspaceUserGroupMemberShips (@PathParam("workspaceId") String workspaceId){
 
         try{
@@ -100,7 +102,7 @@ public class WorkspaceMembershipResource {
 
             return workspaceUserGroupMemberShipDTO;
 
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
 
             throw new RestApiException(ex.toString(), ex.getMessage());
         }

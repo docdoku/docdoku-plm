@@ -20,8 +20,9 @@
 
 package com.docdoku.core.security;
 
-import java.util.UUID;
+import javax.persistence.Column;
 import javax.persistence.Table;
+import java.util.UUID;
 
 /**
  * Represents a password recovery request. This class makes the link between
@@ -34,7 +35,8 @@ import javax.persistence.Table;
 @Table(name="PASSWORDRECOVERYREQUEST")
 @javax.persistence.Entity
 public class PasswordRecoveryRequest implements java.io.Serializable {
-    
+
+    @Column(length = 255)
     @javax.persistence.Id
     private String uuid="";
     

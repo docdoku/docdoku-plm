@@ -35,11 +35,13 @@ public class ActivityDTO implements Serializable {
     private Integer tasksToComplete;
     private boolean complete;
     private boolean stopped;
+    private boolean inProgress;
+
     public enum Type {
         SERIAL, PARALLEL;
     }
 
-    public ActivityDTO(int step, List<TaskDTO> tasks, String lifeCycleState, Type type, Integer tasksToComplete, boolean complete, boolean stopped, Integer relaunchStep) {
+    public ActivityDTO(int step, List<TaskDTO> tasks, String lifeCycleState, Type type, Integer tasksToComplete, boolean complete, boolean stopped, boolean inProgress, Integer relaunchStep) {
         this.step = step;
         this.relaunchStep = relaunchStep;
         this.tasks = tasks;
@@ -48,6 +50,7 @@ public class ActivityDTO implements Serializable {
         this.tasksToComplete = tasksToComplete;
         this.complete = complete;
         this.stopped = stopped;
+        this.inProgress = inProgress;
     }
 
     public ActivityDTO() {
@@ -89,6 +92,10 @@ public class ActivityDTO implements Serializable {
     public void setComplete(boolean complete) {
         this.complete = complete;
     }
+
+    public boolean isInProgress() { return inProgress; }
+
+    public void setInProgress(boolean inProgress) { this.inProgress = inProgress;}
 
     public String getLifeCycleState() {
         return lifeCycleState;

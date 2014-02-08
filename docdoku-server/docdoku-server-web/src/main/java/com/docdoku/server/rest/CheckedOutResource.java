@@ -21,7 +21,6 @@ package com.docdoku.server.rest;
 
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentManagerLocal;
-
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -30,7 +29,7 @@ import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.ws.rs.*;
+import javax.ws.rs.Path;
 
 @Stateless
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)

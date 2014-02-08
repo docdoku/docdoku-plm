@@ -47,11 +47,11 @@ import java.util.Set;
 @Entity
 public class PartMasterTemplate implements Serializable, Comparable<PartMasterTemplate> {
 
-    @Column(length=50)
+    @Column(length=255)
     @Id
     private String id="";
 
-    @Column(name = "WORKSPACE_ID", length=50, nullable = false, insertable = false, updatable = false)
+    @Column(name = "WORKSPACE_ID", length=255, nullable = false, insertable = false, updatable = false)
     @Id
     private String workspaceId="";
 
@@ -76,6 +76,8 @@ public class PartMasterTemplate implements Serializable, Comparable<PartMasterTe
     )
     private Set<InstanceAttributeTemplate> attributeTemplates=new HashSet<InstanceAttributeTemplate>();
 
+    private boolean attributesLocked;
+
     @ManyToOne(fetch=FetchType.EAGER)
     @JoinColumns({
         @JoinColumn(name="AUTHOR_LOGIN", referencedColumnName="LOGIN"),
@@ -92,12 +94,13 @@ public class PartMasterTemplate implements Serializable, Comparable<PartMasterTe
     public PartMasterTemplate() {
     }
 
-    public PartMasterTemplate(Workspace pWorkspace, String pId, User pAuthor, String pPartType, String pMask) {
+    public PartMasterTemplate(Workspace pWorkspace, String pId, User pAuthor, String pPartType, String pMask, boolean pAttributesLocked) {
         id=pId;
         setWorkspace(pWorkspace);
         author = pAuthor;
         mask = pMask;   
         partType=pPartType;
+        attributesLocked=pAttributesLocked;
     }
 
     public String getPartType() {
@@ -151,7 +154,15 @@ public class PartMasterTemplate implements Serializable, Comparable<PartMasterTe
         pAttributeTemplates.removeAll(attributeTemplates);
         attributeTemplates.addAll(pAttributeTemplates);
     }
-    
+
+    public boolean isAttributesLocked() {
+        return attributesLocked;
+    }
+
+    public void setAttributesLocked(boolean attributesLocked) {
+        this.attributesLocked = attributesLocked;
+    }
+
     public void setAuthor(User pAuthor) {
         author = pAuthor;
     }

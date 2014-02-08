@@ -20,9 +20,9 @@
 
 package com.docdoku.core.common;
 
-import java.io.Serializable;
-import java.util.*;
 import javax.persistence.Table;
+import java.io.Serializable;
+import java.util.Date;
 
 /**
  * The <a href="Account.html">Account</a> class represents a user

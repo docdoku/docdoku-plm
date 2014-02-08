@@ -23,9 +23,10 @@ package com.docdoku.cli.commands;
 import com.docdoku.cli.ScriptingTools;
 import com.docdoku.cli.helpers.JSONOutput;
 import com.docdoku.core.product.PartRevision;
-import com.docdoku.core.product.PartSearchQuery;
+import com.docdoku.core.query.PartSearchQuery;
 import com.docdoku.core.services.IProductManagerWS;
 import org.kohsuke.args4j.Option;
+
 import java.util.List;
 
 /**

@@ -113,7 +113,7 @@ define([
                 data.iteration = this.iteration.toJSON();
                 data.iteration.hasNextIteration = hasNextIteration;
                 data.iteration.hasPreviousIteration = hasPreviousIteration;
-                data.reference = this.iteration.getReference();
+                data.reference = this.iteration.getId();
                 data.iteration.creationDate = date.formatTimestamp(
                     i18n._DATE_FORMAT,
                     data.iteration.creationDate
@@ -134,25 +134,27 @@ define([
             this.tabs = this.$('.nav-tabs li');
 
 
-            this.customAttributesView =
+            this.attributesView =
                 this.addSubView(
                     new DocumentAttributesView({
                         el:"#iteration-additional-attributes-container"
                     })
             );
 
-            this.customAttributesView.setEditMode(editMode);
-            this.customAttributesView.render();
+            this.attributesView.setAttributesLocked(this.model.isAttributesLocked());
+
+            this.attributesView.setEditMode(editMode);
+            this.attributesView.render();
 
             var that = this;
 
             if (this.model.hasIterations()) {
                 this.iteration.getAttributes().each(function (item) {
-                    that.customAttributesView.addAndFillAttribute(item);
+                    that.attributesView.addAndFillAttribute(item);
                 });
 
                 this.fileListView = new FileListView({
-                    baseName: this.iteration.getWorkspace() + "/documents/" + this.iteration.getDocumentMasterId() + "/" + this.iteration.getDocumentMasterVersion() + "/" + this.iteration.getIteration(),
+                    baseName: this.iteration.getBaseName(),
                     deleteBaseUrl: this.iteration.url(),
                     uploadBaseUrl: this.iteration.getUploadBaseUrl(),
                     collection:this.iteration.getAttachedFiles(),
@@ -201,18 +203,11 @@ define([
         },
 
         onSubmitForm:function(e){
-            // prevent page reload when pressing enter
-            e.preventDefault();
-            e.stopPropagation();
-            return false;
-        },
-
-        primaryAction: function() {
 
             /*saving iteration*/
             this.iteration.save({
                 revisionNote: this.$('#inputRevisionNote').val(),
-                instanceAttributes: this.customAttributesView.collection.toJSON(),
+                instanceAttributes: this.attributesView.collection.toJSON(),
                 linkedDocuments: this.linkedDocumentsView.collection.toJSON()
             });
 
@@ -231,14 +226,18 @@ define([
             this.fileListView.deleteFilesToDelete();
 
             /*
-            * Delete tags if needed
-            * */
+             * Delete tags if needed
+             * */
 
             this.deleteClickedTags();
 
 
             this.hide();
 
+            // prevent page reload when pressing enter
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
         },
 
         cancelAction: function() {
@@ -274,8 +273,19 @@ define([
                     }} :
                 {
                     model: new Tag({id: tagLabel, label: tagLabel}),
-                    isAdded: false,
-                    clicked: null
+                    isAdded: true,
+                    clicked: function () {
+                        that.tagsToRemove.push(tagLabel);
+                        tagView.$el.remove();
+                        that.model.removeTag(tagLabel, function(){
+                            if(that.model.collection.parent) {
+                                if(_.contains(that.tagsToRemove, that.model.collection.parent.id)){
+                                    that.model.collection.remove(that.model);
+                                }
+                            }
+                        });
+                        tagView.$el.remove();
+                    }
                 };
 
                 tagView = new TagView(tagViewParams).render();
@@ -287,9 +297,9 @@ define([
         },
 
         deleteClickedTags:function(){
-            var that = this ;
             if(this.tagsToRemove.length){
-                that.model.removeTags(this.tagsToRemove, function(){
+                var that = this ;
+                this.model.removeTags(this.tagsToRemove, function(){
                     if(that.model.collection.parent) {
                         if(_.contains(that.tagsToRemove, that.model.collection.parent.id)){
                             that.model.collection.remove(that.model);

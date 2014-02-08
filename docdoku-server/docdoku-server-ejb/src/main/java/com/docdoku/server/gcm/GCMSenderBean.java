@@ -1,20 +1,21 @@
 package com.docdoku.server.gcm;
 
-import com.docdoku.core.document.DocumentMaster;
+import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.gcm.GCMAccount;
 import com.docdoku.core.services.IGCMSenderLocal;
 import com.docdoku.core.services.IUserManagerLocal;
-import org.codehaus.jettison.json.JSONArray;
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
 
 import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 import javax.net.ssl.HttpsURLConnection;
-import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.util.Properties;
 import java.util.logging.Logger;
@@ -42,77 +43,70 @@ public class GCMSenderBean implements IGCMSenderLocal {
 
     @Override
     @Asynchronous
-    public void sendStateNotification(GCMAccount[] pGCGcmAccounts, DocumentMaster pDocumentMaster) {
+    public void sendStateNotification(GCMAccount[] pGCGcmAccounts, DocumentRevision documentRevision) {
         for(GCMAccount gcmAccount:pGCGcmAccounts){
-            sendStateNotification(gcmAccount,pDocumentMaster);
+            sendStateNotification(gcmAccount,documentRevision);
         }
     }
 
     @Override
     @Asynchronous
-    public void sendIterationNotification(GCMAccount[] pGCGcmAccounts, DocumentMaster pDocumentMaster) {
+    public void sendIterationNotification(GCMAccount[] pGCGcmAccounts, DocumentRevision documentRevision) {
         for(GCMAccount gcmAccount:pGCGcmAccounts){
-            sendIterationNotification(gcmAccount, pDocumentMaster);
+            sendIterationNotification(gcmAccount, documentRevision);
         }
     }
 
-    private void sendStateNotification(GCMAccount gcmAccount, DocumentMaster documentMaster){
-        try {
-            JSONObject data = new JSONObject();
-            data.put("type","stateNotification");
-            data.put("workspaceId",documentMaster.getWorkspaceId());
-            data.put("documentMasterId",documentMaster.getId());
-            data.put("documentMasterVersion",documentMaster.getVersion());
-            data.put("documentMasterIteration", documentMaster.getLastIteration().getIteration());
-            data.put("hashCode", documentMaster.hashCode());
-            LOGGER.info("gcm Sender : Sending state notification for the document " + documentMaster.getLastIteration());
-            sendMessage(data,gcmAccount);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+    private void sendStateNotification(GCMAccount gcmAccount, DocumentRevision documentRevision){
+        JsonObjectBuilder data = Json.createObjectBuilder()
+        .add("type","stateNotification")
+        .add("workspaceId",documentRevision.getWorkspaceId())
+        .add("documentMasterId",documentRevision.getId())
+        .add("documentMasterVersion",documentRevision.getVersion())
+        .add("documentMasterIteration", documentRevision.getLastIteration().getIteration())
+        .add("hashCode", documentRevision.hashCode());
+        LOGGER.info("gcm Sender : Sending state notification for the document " + documentRevision.getLastIteration());
+        sendMessage(data.build(),gcmAccount);
     }
 
 
-    private void sendIterationNotification(GCMAccount gcmAccount, DocumentMaster documentMaster) {
-        try {
-            JSONObject data = new JSONObject();
-            data.put("type","iterationNotification");
-            data.put("workspaceId",documentMaster.getWorkspaceId());
-            data.put("documentMasterId",documentMaster.getId());
-            data.put("documentMasterVersion",documentMaster.getVersion());
-            data.put("documentMasterIteration",documentMaster.getLastIteration().getIteration());
-            data.put("hashCode", documentMaster.hashCode());
-            LOGGER.info("gcm Sender : Sending iteration notification for the document " + documentMaster.getLastIteration());
-            sendMessage(data,gcmAccount);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+    private void sendIterationNotification(GCMAccount gcmAccount, DocumentRevision documentRevision) {
+        JsonObjectBuilder data = Json.createObjectBuilder()
+        .add("type","iterationNotification")
+        .add("workspaceId",documentRevision.getWorkspaceId())
+        .add("documentMasterId",documentRevision.getId())
+        .add("documentMasterVersion",documentRevision.getVersion())
+        .add("documentMasterIteration",documentRevision.getLastIteration().getIteration())
+        .add("hashCode", documentRevision.hashCode());
+        LOGGER.info("gcm Sender : Sending iteration notification for the document " + documentRevision.getLastIteration());
+        sendMessage(data.build(),gcmAccount);
     }
 
-    private void sendMessage(JSONObject message, GCMAccount gcmAccount) {
+    private void sendMessage(JsonObject message, GCMAccount gcmAccount) {
 
         try{
             String apiKey = CONF.getProperty("key");
 
-            JSONObject body = new JSONObject();
-            JSONArray registrationIds = new JSONArray();
-            registrationIds.put(0,gcmAccount.getGcmId());
+            JsonObjectBuilder body = Json.createObjectBuilder();
+            JsonArrayBuilder registrationIds = Json.createArrayBuilder();
+            registrationIds.add(gcmAccount.getGcmId());
 
-            body.put("registration_ids",registrationIds);
-            body.put("data",message);
+            body.add("registration_ids", registrationIds);
+            body.add("data", message);
 
             URL url = new URL(GCM_URL);
 
             HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
             con.setRequestMethod("POST");
             con.setRequestProperty("Authorization", "key="+apiKey);
-            con.setRequestProperty("Content-Type","application/json");
+            con.setRequestProperty("Content-Type","application/json; charset=utf-8");
 
             con.setDoOutput(true);
             con.setDoInput(true);
 
-            DataOutputStream output = new DataOutputStream(con.getOutputStream());
-            output.writeBytes(body.toString());
+            OutputStreamWriter output = new OutputStreamWriter(con.getOutputStream(), "UTF-8");
+            output.write(body.build().toString());
+            output.flush();
             output.close();
 
             int responseCode = con.getResponseCode();
@@ -122,8 +116,6 @@ public class GCMSenderBean implements IGCMSenderLocal {
 
         }catch(IOException e){
             LOGGER.info("gcm Sender : Failed to send message :  " + message.toString());
-        } catch (JSONException e) {
-            LOGGER.info("gcm Sender : JSON exception occurred :  " + message.toString());
         }
 
     }

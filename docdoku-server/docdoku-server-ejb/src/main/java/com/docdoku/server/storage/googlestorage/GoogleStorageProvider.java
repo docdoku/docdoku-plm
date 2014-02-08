@@ -21,11 +21,12 @@
 package com.docdoku.server.storage.googlestorage;
 
 import com.docdoku.core.common.BinaryResource;
-import com.docdoku.core.services.FileNotFoundException;
-import com.docdoku.core.services.StorageException;
+import com.docdoku.core.exceptions.FileNotFoundException;
+import com.docdoku.core.exceptions.StorageException;
 import com.docdoku.core.util.Tools;
 import com.docdoku.server.storage.StorageProvider;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
@@ -104,6 +105,24 @@ public class GoogleStorageProvider implements StorageProvider {
             return null;
         }
         return null;
+    }
+
+    @Override
+    public String getShortenExternalResourceURI(BinaryResource binaryResource) {
+
+        String externalResourceURI = getExternalResourceURI(binaryResource);
+        String shortenExternalResourceURI = null;
+
+        if(externalResourceURI != null) {
+
+            try {
+                shortenExternalResourceURI = GoogleStorageCloud.getShortenURI(externalResourceURI);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return  shortenExternalResourceURI;
     }
 
 }

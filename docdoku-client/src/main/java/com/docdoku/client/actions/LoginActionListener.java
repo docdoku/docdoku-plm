@@ -27,9 +27,9 @@ import com.docdoku.core.services.UserNotActiveException;
 import com.docdoku.core.services.UserNotFoundException;
 
 import javax.swing.*;
+import javax.xml.ws.WebServiceException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.xml.ws.WebServiceException;
 
 public class LoginActionListener implements ActionListener {
     

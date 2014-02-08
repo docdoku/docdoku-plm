@@ -20,12 +20,11 @@
 
 package com.docdoku.server.dao;
 
+import com.docdoku.core.exceptions.PasswordRecoveryRequestNotFoundException;
 import com.docdoku.core.security.PasswordRecoveryRequest;
-import com.docdoku.core.services.PasswordRecoveryRequestNotFoundException;
-import java.util.Locale;
-
 
 import javax.persistence.EntityManager;
+import java.util.Locale;
 
 public class PasswordRecoveryRequestDAO {
     

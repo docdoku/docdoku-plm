@@ -11,25 +11,27 @@
                 <div class="controls">
                     <input type="text" class="input-xlarge newTag" id="form-{{view.cid}}-newTag" />
                      <i class="btn icon-plus newTag-button"></i>
-                    <p class="help-block">{{i18n.ADD_NEW_TAG_HELP}}</p>
                 </div>
             </div>
         </div>
         <form id="form-{{view.cid}}" class="form-horizontal">
             <div class="control-group">
-                <label class="control-label required" for="form-{{view.cid}}-newTag">{{i18n.ADD_EXISTING_TAG}}</label>
+                <label class="control-label required" for="form-{{view.cid}}-newTag">{{i18n.EXISTING_TAGS}}</label>
                 <div class="controls">
                     <ul class="unstyled existing-tags-list"></ul>
                 </div>
             </div>
-            <hr />
 
+            {{^isEmptyCollection}}
+            <hr />
             <div class="control-group">
-                <label class="control-label required" for="form-{{view.cid}}-newTag">{{i18n.TAGS_TO_ADD}}</label>
+                {{#isSingleChecked}}<label class="control-label required" for="form-{{view.cid}}-newTag">{{i18n.CURRENT_TAGS}}</label>{{/isSingleChecked}}
+                {{^isSingleChecked}}<label class="control-label required" for="form-{{view.cid}}-newTag">{{i18n.TAGS_TO_ADD}}</label>{{/isSingleChecked}}
                 <div class="controls">
                     <ul class="unstyled tags-to-add-list"></ul>
                 </div>
             </div>
+            {{/isEmptyCollection}}
 
         </form>
     </div>

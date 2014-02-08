@@ -21,15 +21,17 @@
 package com.docdoku.server.converters.catia.product;
 
 import com.docdoku.core.common.BinaryResource;
+import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.CADInstance;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartMaster;
 import com.docdoku.core.product.PartUsageLink;
-import com.docdoku.core.services.*;
+import com.docdoku.core.services.IDataManagerLocal;
+import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.core.util.FileIO;
 import com.docdoku.server.converters.CADConverter;
+import com.docdoku.server.converters.catia.product.parser.ComponentDTK;
 import com.docdoku.server.converters.catia.product.parser.ComponentDTKSaxHandler;
-import com.docdoku.server.converters.catia.product.parser.Component_DTK;
 import com.google.common.io.Files;
 import com.google.common.io.InputSupplier;
 import org.xml.sax.SAXException;
@@ -132,7 +134,7 @@ public class CatiaProductFileParserImpl implements CADConverter {
         return null;
     }
 
-    private void syncAssembly(Component_DTK component_dtk, PartIteration partToConvert) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+    private void syncAssembly(ComponentDTK component_dtk, PartIteration partToConvert) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
 
         List<PartUsageLink> partUsageLinks = new ArrayList<PartUsageLink>();
 
@@ -162,12 +164,12 @@ public class CatiaProductFileParserImpl implements CADConverter {
 
 
 
-    private void parseSubComponents(Map<String, List<CADInstance>> mapInstances, Component_DTK root) {
+    private void parseSubComponents(Map<String, List<CADInstance>> mapInstances, ComponentDTK root) {
 
-        List<Component_DTK> subComponentDtkList = root.getSubComponentDtkList();
+        List<ComponentDTK> subComponentDtkList = root.getSubComponentDtkList();
         if (subComponentDtkList != null) {
 
-            for (Component_DTK component_dtk : subComponentDtkList) {
+            for (ComponentDTK component_dtk : subComponentDtkList) {
 
                 if (component_dtk.isLinkable()) {
 

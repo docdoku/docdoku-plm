@@ -20,16 +20,14 @@
 
 package com.docdoku.client.actions;
 
-import com.docdoku.client.ui.workflow.ParallelActivityModelCanvas;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import com.docdoku.client.ui.workflow.EditableWorkflowModelCanvas;
+import com.docdoku.client.ui.workflow.ParallelActivityModelCanvas;
 import com.docdoku.client.ui.workflow.WorkflowModelFrame;
 import com.docdoku.core.workflow.WorkflowModel;
 
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class DeleteParallelActivityModelActionListener implements ActionListener {
 

@@ -2,13 +2,20 @@
 {{#abortedWorkflows.length}}
     <a class="history">{{i18n.WORKFLOW_HISTORY}}</a>
     <div class="history-content hide">
-        <a class="currentWorkflow active">{{i18n.CURRENT_WORKFLOW}}</a><br />
-    {{#abortedWorkflows}}
-       <a class="abortedWorkflow" data-id="{{id}}">{{abortedFormattedDate}}</a><br />
-    {{/abortedWorkflows}}
+        <ul>
+            <li><a class="currentWorkflow active">{{i18n.CURRENT_WORKFLOW}}</a></li>
+            {{#abortedWorkflows}}
+            <li><a class="abortedWorkflow" data-id="{{id}}">{{abortedFormattedDate}}</a><br /></li>
+            {{/abortedWorkflows}}
+        </ul>
     </div>
-    <hr />
 {{/abortedWorkflows.length}}
+<div class="lifecycle-legend">
+    <span class="lifecycle-legend-incomplete">{{i18n.WORKFLOW_LEGEND_INCOMPLETE}}</span>
+    <span class="lifecycle-legend-complete">{{i18n.WORKFLOW_LEGEND_COMPLETE}}</span>
+    <span class="lifecycle-legend-rejected">{{i18n.WORKFLOW_LEGEND_REJECTED}}</span>
+    <span class="lifecycle-legend-in-progress">{{i18n.WORKFLOW_LEGEND_INPROGRESS}}</span>
+</div>
 <div id="lifecycle-activities-wrapper">
     <div id="lifecycle-activities"></div>
 </div>

@@ -19,6 +19,7 @@
  */
 package com.docdoku.server.rest;
 
+import com.docdoku.core.exceptions.ApplicationException;
 import com.docdoku.core.meta.InstanceAttributeTemplate;
 import com.docdoku.core.product.PartMasterTemplate;
 import com.docdoku.core.product.PartMasterTemplateKey;
@@ -27,6 +28,7 @@ import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.rest.dto.InstanceAttributeTemplateDTO;
 import com.docdoku.server.rest.dto.PartMasterTemplateDTO;
 import com.docdoku.server.rest.dto.PartTemplateCreationDTO;
+import com.docdoku.server.rest.dto.TemplateGeneratedIdDTO;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -36,6 +38,7 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.List;
@@ -63,7 +66,7 @@ public class PartTemplateResource {
     }
 
     @GET
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public PartMasterTemplateDTO[] getPartMasterTemplates(@PathParam("workspaceId") String workspaceId) {
         try {
 
@@ -76,14 +79,14 @@ public class PartTemplateResource {
 
             return dtos;
 
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
 
     @GET
     @Path("{templateId}")
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public PartMasterTemplateDTO getPartMasterTemplates(@PathParam("workspaceId") String workspaceId, @PathParam("templateId") String templateId) {
         try {
 
@@ -92,26 +95,26 @@ public class PartTemplateResource {
 
             return dto;
 
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
     
     @GET
     @Path("{templateId}/generate_id")
-    @Produces("application/json;charset=UTF-8")
-    public String generatePartMsId(@PathParam("workspaceId") String workspaceId, @PathParam("templateId") String templateId) {
+    @Produces(MediaType.APPLICATION_JSON)
+    public TemplateGeneratedIdDTO generatePartMsId(@PathParam("workspaceId") String workspaceId, @PathParam("templateId") String templateId) {
         try {
-            return productService.generateId(workspaceId, templateId);
-
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+            String generatedId = productService.generateId(workspaceId, templateId);
+            return new TemplateGeneratedIdDTO(generatedId);
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }    
 
     @POST
-    @Consumes("application/json;charset=UTF-8")
-    @Produces("application/json;charset=UTF-8")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public PartMasterTemplateDTO createPartMasterTemplate(@PathParam("workspaceId") String workspaceId, PartTemplateCreationDTO templateCreationDTO) {
 
         try {      
@@ -119,6 +122,7 @@ public class PartTemplateResource {
             String partType = templateCreationDTO.getPartType();
             String mask = templateCreationDTO.getMask();
             boolean idGenerated = templateCreationDTO.isIdGenerated();
+            boolean attributesLocked = templateCreationDTO.isAttributesLocked();
 
             Set<InstanceAttributeTemplateDTO> attributeTemplates = templateCreationDTO.getAttributeTemplates();
             List<InstanceAttributeTemplateDTO> attributeTemplatesList = new ArrayList<InstanceAttributeTemplateDTO>(attributeTemplates);
@@ -128,20 +132,20 @@ public class PartTemplateResource {
                 attributeTemplatesDtos[i] = attributeTemplatesList.get(i);
             }
 
-            PartMasterTemplate template = productService.createPartMasterTemplate(workspaceId, id, partType, mask, createInstanceAttributeTemplateFromDto(attributeTemplatesDtos), idGenerated);
+            PartMasterTemplate template = productService.createPartMasterTemplate(workspaceId, id, partType, mask, createInstanceAttributeTemplateFromDto(attributeTemplatesDtos), idGenerated, attributesLocked);
             PartMasterTemplateDTO templateDto = mapper.map(template, PartMasterTemplateDTO.class);
 
             return templateDto;
 
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
     
     @PUT
     @Path("{templateId}") 
-    @Consumes("application/json;charset=UTF-8")
-    @Produces("application/json;charset=UTF-8")  
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public PartMasterTemplateDTO updatePartMsTemplate(@PathParam("workspaceId") String workspaceId,@PathParam("templateId") String templateId, PartMasterTemplateDTO partMsTemplateDTO) {
 
         try {
@@ -149,6 +153,7 @@ public class PartTemplateResource {
             String partType = partMsTemplateDTO.getPartType();
             String mask = partMsTemplateDTO.getMask();
             boolean idGenerated = partMsTemplateDTO.isIdGenerated();
+            boolean attributesLocked = partMsTemplateDTO.isAttributesLocked();
 
             Set<InstanceAttributeTemplateDTO> attributeTemplates = partMsTemplateDTO.getAttributeTemplates();
             List<InstanceAttributeTemplateDTO> attributeTemplatesList = new ArrayList<InstanceAttributeTemplateDTO>(attributeTemplates);
@@ -158,12 +163,12 @@ public class PartTemplateResource {
                 attributeTemplatesDtos[i] = attributeTemplatesList.get(i);
             }
 
-            PartMasterTemplate template = productService.updatePartMasterTemplate(new PartMasterTemplateKey(workspaceId, templateId), partType, mask, createInstanceAttributeTemplateFromDto(attributeTemplatesDtos), idGenerated);
+            PartMasterTemplate template = productService.updatePartMasterTemplate(new PartMasterTemplateKey(workspaceId, templateId), partType, mask, createInstanceAttributeTemplateFromDto(attributeTemplatesDtos), idGenerated, attributesLocked);
             PartMasterTemplateDTO templateDto = mapper.map(template, PartMasterTemplateDTO.class);
 
             return templateDto;
 
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -174,20 +179,20 @@ public class PartTemplateResource {
         try {
             productService.deletePartMasterTemplate(new PartMasterTemplateKey(workspaceId, templateId));
             return Response.ok().build();
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
 
     @DELETE
-    @Consumes("application/json;charset=UTF-8")
     @Path("{templateId}/files/{fileName}")
+    @Consumes(MediaType.APPLICATION_JSON)
     public Response removeAttachedFile(@PathParam("workspaceId") String workspaceId, @PathParam("templateId") String templateId, @PathParam("fileName") String fileName) {
         try {
             String fileFullName = workspaceId + "/part-templates/" + templateId + "/" + fileName;
             productService.removeFileFromTemplate(fileFullName);
             return Response.ok().build();
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -204,6 +209,7 @@ public class PartTemplateResource {
         InstanceAttributeTemplate data = new InstanceAttributeTemplate();
         data.setName(instanceAttributeTemplateDTO.getName());
         data.setAttributeType(InstanceAttributeTemplate.AttributeType.valueOf(instanceAttributeTemplateDTO.getAttributeType().name()));
+        data.setMandatory(instanceAttributeTemplateDTO.isMandatory());
         return data;
     }
 }

@@ -20,7 +20,6 @@
 
 package com.docdoku.server.rest.dto;
 
-import com.docdoku.server.rest.dto.UserDTO;
 import java.io.Serializable;
 
 /**
@@ -36,6 +35,14 @@ public class TaskModelDTO implements Serializable {
     private int duration;
 
     public TaskModelDTO() {
+    }
+
+    public TaskModelDTO(int num, String title, String instructions, RoleDTO role, int duration) {
+        this.num = num;
+        this.title = title;
+        this.instructions = instructions;
+        this.role = role;
+        this.duration = duration;
     }
 
     public int getNum() {

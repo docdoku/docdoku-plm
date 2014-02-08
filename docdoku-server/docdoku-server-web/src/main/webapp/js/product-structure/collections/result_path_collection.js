@@ -8,6 +8,13 @@ define([
 
         model: ResultPath,
 
+        /*parse:function(response){
+           var self = this;
+            _(response).each(function(o){
+                self.push(new ResultPath({path:o.path}));
+            });
+        },*/
+
         contains: function(partUsageLinkId) {
             return this.some(function(resultPath) {
                 return resultPath.contains(partUsageLinkId);

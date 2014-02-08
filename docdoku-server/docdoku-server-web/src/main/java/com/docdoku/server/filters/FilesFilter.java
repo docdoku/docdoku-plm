@@ -24,8 +24,9 @@ import com.docdoku.core.common.Account;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.User;
 import com.docdoku.core.document.DocumentIteration;
-import com.docdoku.core.document.DocumentMaster;
-import com.docdoku.core.document.DocumentMasterKey;
+import com.docdoku.core.document.DocumentRevision;
+import com.docdoku.core.document.DocumentRevisionKey;
+import com.docdoku.core.exceptions.AccountNotFoundException;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.product.PartRevisionKey;
 import com.docdoku.core.services.*;
@@ -39,6 +40,7 @@ import javax.security.auth.login.LoginException;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.xml.bind.DatatypeConverter;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -80,13 +82,12 @@ public class FilesFilter implements Filter {
         // Check headers for Authorization
         if(account == null){
 
-            sun.misc.BASE64Decoder decoder = new sun.misc.BASE64Decoder();
             String authorization = httpRequest.getHeader("Authorization");
 
             if(authorization != null && !authorization.isEmpty()){
                 String[] splitAuthorization = authorization.split(" ");
                 if(splitAuthorization.length == 2){
-                    byte[] decoded = decoder.decodeBuffer(splitAuthorization[1]);
+                    byte[] decoded = DatatypeConverter.parseBase64Binary(splitAuthorization[1]);
                     String credentials = new String(decoded, "US-ASCII");
                     String[] splitCredentials = credentials.split(":");
                     String userLogin = splitCredentials[0];
@@ -154,8 +155,8 @@ public class FilesFilter implements Filter {
                         docI = documentService.findDocumentIterationByBinaryResource(binaryResource);
                         user = documentService.whoAmI(workspaceId);
                     }else{
-                        DocumentMasterKey docMK = new DocumentMasterKey(workspaceId, docMId, docMVersion);
-                        binaryResource = guestProxy.getPublicBinaryResourceForDocument(docMK,fullName);
+                        DocumentRevisionKey docRK = new DocumentRevisionKey(workspaceId, docMId, docMVersion);
+                        binaryResource = guestProxy.getPublicBinaryResourceForDocument(docRK,fullName);
                         docI = guestProxy.findDocumentIterationByBinaryResource(binaryResource);
                         user = guestProxy.whoAmI();
                     }
@@ -241,14 +242,14 @@ public class FilesFilter implements Filter {
                 }
 
                 if(sharedEntity instanceof SharedDocument){
-                    DocumentMaster docM = ((SharedDocument) sharedEntity).getDocumentMaster();
-                    docI =  docM.getLastIteration();
-                    String docMId = docM.getId();
-                    String docMVersion = docM.getVersion();
+                    DocumentRevision documentRevision = ((SharedDocument) sharedEntity).getDocumentRevision();
+                    docI =  documentRevision.getLastIteration();
+                    String id = documentRevision.getId();
+                    String version = documentRevision.getVersion();
                     iteration = Integer.valueOf(URLDecoder.decode(pathInfo[offset + 1], "UTF-8"));
 
                     fileName = URLDecoder.decode(pathInfo[offset + 2], "UTF-8");
-                    fullName = workspaceId + "/" + "documents" + "/" + docMId + "/" + docMVersion + "/" + iteration + "/" + fileName;
+                    fullName = workspaceId + "/" + "documents" + "/" + id + "/" + version + "/" + iteration + "/" + fileName;
 
                     if(account != null){
                         binaryResource = documentService.getBinaryResource(fullName);

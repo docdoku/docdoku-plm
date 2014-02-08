@@ -20,6 +20,8 @@
 
 package com.docdoku.core.services;
 
+import com.docdoku.core.exceptions.UserNotFoundException;
+
 /**
  *
  * @author Morgan Guimard

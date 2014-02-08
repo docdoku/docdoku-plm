@@ -15,11 +15,12 @@ VERSION=$1;
 RELEASER_DIR=$(dirname "$0");
 SOURCE="$RELEASER_DIR/../docdoku-gui/*";
 TMP_DIR="$RELEASER_DIR/tmp";
+NWVERSION="0.8.4";
 
-NW_LINUX_32="$RELEASER_DIR/nw-releases/node-webkit-v0.7.5-linux-ia32/nw";
-NW_LINUX_64="$RELEASER_DIR/nw-releases/node-webkit-v0.7.5-linux-x64/nw";
-NW_WIN_32="$RELEASER_DIR/nw-releases/node-webkit-v0.7.5-win-ia32";
-NW_OSX="$RELEASER_DIR/nw-releases/node-webkit-v0.7.5-osx-ia32/node-webkit.app";
+NW_LINUX_32="$RELEASER_DIR/nw-releases/node-webkit-v$NWVERSION-linux-ia32/nw";
+NW_LINUX_64="$RELEASER_DIR/nw-releases/node-webkit-v$NWVERSION-linux-x64/nw";
+NW_WIN_32="$RELEASER_DIR/nw-releases/node-webkit-v$NWVERSION-win-ia32";
+NW_OSX="$RELEASER_DIR/nw-releases/node-webkit-v$NWVERSION-osx-ia32/node-webkit.app";
 
 
 OUT_DIR_LINUX_32="$RELEASER_DIR/out/linux-32";

@@ -178,8 +178,9 @@ define([
                     }
                     selectedPart.getLastIteration().save({
                         iterationNote: iterationNote
+                    }).success(function(){
+                        selectedPart.checkin();
                     });
-                    selectedPart.checkin();
                 });
 
                 self.listenTo(promptView, 'prompt-cancel', function() {
@@ -217,10 +218,10 @@ define([
 
             aclEditView.on("acl:update",function(){
 
-                var acl = aclEditView.toList() ;
+                var acl = aclEditView.toList();
 
                 selectedPart.updateACL({
-                    acl:acl,
+                    acl:acl||{userEntries:{},groupEntries:{}},
                     success:function(){
                         selectedPart.set("acl",acl);
                         aclEditView.closeModal();

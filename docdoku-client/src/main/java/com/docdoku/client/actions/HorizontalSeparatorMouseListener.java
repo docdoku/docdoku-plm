@@ -26,9 +26,9 @@ import com.docdoku.client.ui.workflow.WorkflowModelFrame;
 import com.docdoku.core.workflow.WorkflowModel;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.*;
 
 
 public class HorizontalSeparatorMouseListener extends MouseAdapter {

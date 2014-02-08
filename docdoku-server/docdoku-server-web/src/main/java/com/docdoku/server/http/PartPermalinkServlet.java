@@ -21,12 +21,12 @@
 package com.docdoku.server.http;
 
 import com.docdoku.core.common.BinaryResource;
+import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.product.PartRevisionKey;
 import com.docdoku.core.services.IProductManagerLocal;
-import com.docdoku.core.services.NotAllowedException;
 
 import javax.ejb.EJB;
 import javax.servlet.ServletException;

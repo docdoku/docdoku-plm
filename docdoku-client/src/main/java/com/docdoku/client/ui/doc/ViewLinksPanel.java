@@ -20,20 +20,20 @@
 
 package com.docdoku.client.ui.doc;
 
+import com.docdoku.client.data.MainModel;
+import com.docdoku.client.localization.I18N;
+import com.docdoku.client.ui.common.GUIConstants;
 import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.document.DocumentLink;
 import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.document.DocumentMasterKey;
-import com.docdoku.client.ui.common.GUIConstants;
-import com.docdoku.client.data.MainModel;
-import com.docdoku.client.localization.I18N;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.*;
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Set;
 
 public class ViewLinksPanel extends JPanel {

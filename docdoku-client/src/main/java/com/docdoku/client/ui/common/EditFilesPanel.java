@@ -19,23 +19,23 @@
  */
 package com.docdoku.client.ui.common;
 
+import com.docdoku.client.localization.I18N;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.FileHolder;
+
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.filechooser.FileSystemView;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.util.*;
-
-import com.docdoku.client.localization.I18N;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.IOException;
-import javax.swing.filechooser.FileSystemView;
+import java.util.*;
 
 public class EditFilesPanel extends JPanel implements ActionListener {
 

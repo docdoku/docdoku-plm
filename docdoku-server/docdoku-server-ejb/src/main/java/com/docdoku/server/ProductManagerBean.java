@@ -24,11 +24,13 @@ import com.docdoku.core.configuration.*;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.document.DocumentLink;
+import com.docdoku.core.exceptions.*;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.meta.InstanceAttributeTemplate;
 import com.docdoku.core.meta.InstanceNumberAttribute;
 import com.docdoku.core.product.*;
 import com.docdoku.core.product.PartIteration.Source;
+import com.docdoku.core.query.PartSearchQuery;
 import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;
@@ -39,6 +41,7 @@ import com.docdoku.core.util.NamingConvention;
 import com.docdoku.core.util.Tools;
 import com.docdoku.core.workflow.*;
 import com.docdoku.server.dao.*;
+import com.docdoku.server.esindexer.ESIndexer;
 
 import javax.annotation.Resource;
 import javax.annotation.security.DeclareRoles;
@@ -70,6 +73,8 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     private IUserManagerLocal userManager;
     @EJB
     private IDataManagerLocal dataManager;
+    @EJB
+    private ESIndexer esIndexer;
 
     @RolesAllowed("users")
     @Override
@@ -102,7 +107,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             rootUsageLink.setId(-1);
             rootUsageLink.setAmount(1d);
             List<CADInstance> cads = new ArrayList<CADInstance>();
-            CADInstance cad = new CADInstance(0d, 0d, 0d, 0d, 0d, 0d, CADInstance.Positioning.ABSOLUTE);
+            CADInstance cad = new CADInstance(0d, 0d, 0d, 0d, 0d, 0d);
             cad.setId(-1);
             cads.add(cad);
             rootUsageLink.setCadInstances(cads);
@@ -177,7 +182,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed("users")
     @Override
-    public PartMaster createPartMaster(String pWorkspaceId, String pNumber, String pName, String pPartMasterDescription, boolean pStandardPart, String pWorkflowModelId, String pPartRevisionDescription, String templateId, Map<String, String> roleMappings, ACLUserEntry[] pACLUserEntries, ACLUserGroupEntry[] pACLUserGroupEntries) throws NotAllowedException, UserNotFoundException, WorkspaceNotFoundException, AccessRightException, WorkflowModelNotFoundException, PartMasterAlreadyExistsException, CreationException, PartMasterTemplateNotFoundException, FileAlreadyExistsException, RoleNotFoundException {
+    public PartMaster createPartMaster(String pWorkspaceId, String pNumber, String pName, boolean pStandardPart, String pWorkflowModelId, String pPartRevisionDescription, String templateId, Map<String, String> roleMappings, ACLUserEntry[] pACLUserEntries, ACLUserGroupEntry[] pACLUserGroupEntries) throws NotAllowedException, UserNotFoundException, WorkspaceNotFoundException, AccessRightException, WorkflowModelNotFoundException, PartMasterAlreadyExistsException, CreationException, PartMasterTemplateNotFoundException, FileAlreadyExistsException, RoleNotFoundException {
 
         User user = userManager.checkWorkspaceWriteAccess(pWorkspaceId);
         if (!NamingConvention.correct(pNumber)) {
@@ -187,7 +192,6 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         PartMaster pm = new PartMaster(user.getWorkspace(), pNumber, user);
         pm.setName(pName);
         pm.setStandardPart(pStandardPart);
-        pm.setDescription(pPartMasterDescription);
         Date now = new Date();
         pm.setCreationDate(now);
         PartRevision newRevision = pm.createNextRevision(user);
@@ -233,6 +237,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
             PartMasterTemplate partMasterTemplate = new PartMasterTemplateDAO(new Locale(user.getLanguage()),em).loadPartMTemplate(new PartMasterTemplateKey(pWorkspaceId,templateId));
             pm.setType(partMasterTemplate.getPartType());
+            pm.setAttributesLocked(partMasterTemplate.isAttributesLocked());
 
             Map<String, InstanceAttribute> attrs = new HashMap<String, InstanceAttribute>();
             for (InstanceAttributeTemplate attrTemplate : partMasterTemplate.getAttributeTemplates()) {
@@ -433,7 +438,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed("users")
     @Override
-    public PartRevision checkInPart(PartRevisionKey pPartRPK) throws PartRevisionNotFoundException, UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException {
+    public PartRevision checkInPart(PartRevisionKey pPartRPK) throws PartRevisionNotFoundException, UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, IndexerServerException {
         User user = userManager.checkWorkspaceWriteAccess(pPartRPK.getPartMaster().getWorkspace());
         PartRevisionDAO partRDAO = new PartRevisionDAO(new Locale(user.getLanguage()), em);
         PartRevision partR = partRDAO.loadPartR(pPartRPK);
@@ -449,6 +454,11 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         if (partR.isCheckedOut() && partR.getCheckOutUser().equals(user)) {
             partR.setCheckOutDate(null);
             partR.setCheckOutUser(null);
+
+            //esIndexer.index(partR.getLastIteration());                                                                  // Index the last iteration in ElasticSearch
+            for(PartIteration partIteration : partR.getPartIterations()){
+                esIndexer.index(partIteration);                                                                         // Index all iterations in ElasticSearch (decrease old iteration boost factor)
+            }
             return partR;
         } else {
             throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException20");
@@ -760,7 +770,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed("users")
     @Override
-    public void updatePartRevisionACL(String workspaceId, PartRevisionKey revisionKey, Map<String, String> pACLUserEntries, Map<String, String> pACLUserGroupEntries) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException, AccessRightException, DocumentMasterNotFoundException {
+    public void updatePartRevisionACL(String workspaceId, PartRevisionKey revisionKey, Map<String, String> pACLUserEntries, Map<String, String> pACLUserGroupEntries) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException, AccessRightException, DocumentRevisionNotFoundException {
 
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         PartRevisionDAO partRevisionDAO = new PartRevisionDAO(new Locale(user.getLanguage()),em);
@@ -850,11 +860,11 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed("users")
     @Override
-    public List<PartRevision> searchPartRevisions(PartSearchQuery pQuery) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
-        User user = userManager.checkWorkspaceReadAccess(pQuery.getWorkspaceId());
+    public List<PartRevision> searchPartRevisions(PartSearchQuery pQuery) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, IndexerServerException {
+        esIndexer.indexAll();                                                                                           // Index all resources
 
-        List<PartRevision> fetchedPartRs = new PartRevisionDAO(new Locale(user.getLanguage()), em).searchPartRevisions(pQuery.getWorkspaceId(), pQuery.getPartNumber(), pQuery.getName(), pQuery.getVersion(), pQuery.getAuthor(), pQuery.getType(), pQuery.getCreationDateFrom(),
-                pQuery.getCreationDateTo(), pQuery.getAttributes() != null ? Arrays.asList(pQuery.getAttributes()) : null, pQuery.isStandardPart());
+        User user = userManager.checkWorkspaceReadAccess(pQuery.getWorkspaceId());
+        List<PartRevision> fetchedPartRs = esIndexer.search(pQuery);                                                    // Get Search Results
 
         Workspace wks = new WorkspaceDAO(new Locale(user.getLanguage()), em).loadWorkspace(pQuery.getWorkspaceId());
         boolean isAdmin = wks.getAdmin().getLogin().equals(user.getLogin());
@@ -863,20 +873,19 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         while (ite.hasNext()) {
             PartRevision partR = ite.next();
 
-            if ((partR.isCheckedOut()) && (!partR.getCheckOutUser().equals(user))) {
+            if ((partR.isCheckedOut()) && (!partR.getCheckOutUser().equals(user))) {                                    // Remove CheckedOut PartRevision From Results
                 partR = partR.clone();
                 partR.removeLastIteration();
                 ite.set(partR);
             }
 
             //Check access rights
-            if (!isAdmin && partR.getACL() != null && !partR.getACL().hasReadAccess(user)) {
+            if (!isAdmin && partR.getACL() != null && !partR.getACL().hasReadAccess(user)) {                            // Check Rigth Acces
                 ite.remove();
                 continue;
             }
         }
         return new ArrayList<PartRevision>(fetchedPartRs);
-
     }
 
     @Override
@@ -1082,12 +1091,12 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed("users")
     @Override
-    public PartMasterTemplate createPartMasterTemplate(String pWorkspaceId, String pId, String pPartType, String pMask, InstanceAttributeTemplate[] pAttributeTemplates, boolean idGenerated) throws WorkspaceNotFoundException, AccessRightException, PartMasterTemplateAlreadyExistsException, UserNotFoundException, NotAllowedException, CreationException {
+    public PartMasterTemplate createPartMasterTemplate(String pWorkspaceId, String pId, String pPartType, String pMask, InstanceAttributeTemplate[] pAttributeTemplates, boolean idGenerated, boolean attributesLocked) throws WorkspaceNotFoundException, AccessRightException, PartMasterTemplateAlreadyExistsException, UserNotFoundException, NotAllowedException, CreationException {
         User user = userManager.checkWorkspaceWriteAccess(pWorkspaceId);
         if (!NamingConvention.correct(pId)) {
             throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException9");
         }
-        PartMasterTemplate template = new PartMasterTemplate(user.getWorkspace(), pId, user, pPartType, pMask);
+        PartMasterTemplate template = new PartMasterTemplate(user.getWorkspace(), pId, user, pPartType, pMask, attributesLocked);
         Date now = new Date();
         template.setCreationDate(now);
         template.setIdGenerated(idGenerated);
@@ -1104,7 +1113,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed("users")
     @Override
-    public PartMasterTemplate updatePartMasterTemplate(PartMasterTemplateKey pKey, String pPartType, String pMask, InstanceAttributeTemplate[] pAttributeTemplates, boolean idGenerated) throws WorkspaceNotFoundException, WorkspaceNotFoundException, AccessRightException, PartMasterTemplateNotFoundException, UserNotFoundException {
+    public PartMasterTemplate updatePartMasterTemplate(PartMasterTemplateKey pKey, String pPartType, String pMask, InstanceAttributeTemplate[] pAttributeTemplates, boolean idGenerated, boolean attributesLocked) throws WorkspaceNotFoundException, WorkspaceNotFoundException, AccessRightException, PartMasterTemplateNotFoundException, UserNotFoundException {
         User user = userManager.checkWorkspaceWriteAccess(pKey.getWorkspaceId());
 
         PartMasterTemplateDAO templateDAO = new PartMasterTemplateDAO(new Locale(user.getLanguage()), em);
@@ -1115,6 +1124,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         template.setPartType(pPartType);
         template.setMask(pMask);
         template.setIdGenerated(idGenerated);
+        template.setAttributesLocked(attributesLocked);
 
         Set<InstanceAttributeTemplate> attrs = new HashSet<InstanceAttributeTemplate>();
         for (InstanceAttributeTemplate attr : pAttributeTemplates) {
@@ -1230,7 +1240,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed("users")
     @Override
-    public void deletePartMaster(PartMasterKey partMasterKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartMasterNotFoundException, EntityConstraintException {
+    public void deletePartMaster(PartMasterKey partMasterKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartMasterNotFoundException, EntityConstraintException, IndexerServerException {
 
         User user = userManager.checkWorkspaceReadAccess(partMasterKey.getWorkspace());
 
@@ -1266,6 +1276,13 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             }
         }
 
+        // delete ElasticSearch Index for this revision iteration
+        for (PartRevision partRevision : partMaster.getPartRevisions()) {
+            for (PartIteration partIteration : partRevision.getPartIterations()) {
+                esIndexer.delete(partIteration);                                                                       // Remove ElasticSearch Index for this PartIteration
+            }
+        }
+
         // ok to delete
         partMasterDAO.removePartM(partMaster);
     }
@@ -1273,7 +1290,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed("users")
     @Override
-    public void deletePartRevision(PartRevisionKey partRevisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException, EntityConstraintException {
+    public void deletePartRevision(PartRevisionKey partRevisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException, EntityConstraintException, IndexerServerException {
 
         User user = userManager.checkWorkspaceReadAccess(partRevisionKey.getPartMaster().getWorkspace());
 
@@ -1295,9 +1312,15 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             throw new EntityConstraintException(new Locale(user.getLanguage()),"EntityConstraintException2");
         }
 
+        // delete ElasticSearch Index for this revision iteration
+        for (PartIteration partIteration : partR.getPartIterations()) {
+            esIndexer.delete(partIteration);                                                                       // Remove ElasticSearch Index for this PartIteration
+        }
+
         if(isLastRevision){
             partMasterDAO.removePartM(partMaster);
         }else{
+            partMaster.removeRevision(partR);
             partRevisionDAO.removeRevision(partR);
         }
 
@@ -1388,7 +1411,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed("users")
     @Override
-    public PartRevision createPartVersion(PartRevisionKey revisionKey, String pDescription, String pWorkflowModelId, ACLUserEntry[] pACLUserEntries, ACLUserGroupEntry[] pACLUserGroupEntries, Map<String, String> roleMappings) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, PartRevisionNotFoundException, NotAllowedException, FileAlreadyExistsException, CreationException, RoleNotFoundException, WorkflowModelNotFoundException, PartRevisionAlreadyExistsException {
+    public PartRevision createPartRevision(PartRevisionKey revisionKey, String pDescription, String pWorkflowModelId, ACLUserEntry[] pACLUserEntries, ACLUserGroupEntry[] pACLUserGroupEntries, Map<String, String> roleMappings) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, PartRevisionNotFoundException, NotAllowedException, FileAlreadyExistsException, CreationException, RoleNotFoundException, WorkflowModelNotFoundException, PartRevisionAlreadyExistsException {
 
         User user = userManager.checkWorkspaceWriteAccess(revisionKey.getPartMaster().getWorkspace());
         PartRevisionDAO partRevisionDAO = new PartRevisionDAO(new Locale(user.getLanguage()),em);

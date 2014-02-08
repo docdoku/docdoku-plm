@@ -21,15 +21,19 @@
 package com.docdoku.server.jsf.actions;
 
 import com.docdoku.core.common.Workspace;
-import com.docdoku.core.services.*;
-import org.codehaus.jettison.json.JSONObject;
+import com.docdoku.core.exceptions.*;
+import com.docdoku.core.services.IDocumentManagerLocal;
+import com.docdoku.core.services.IProductManagerLocal;
+import com.docdoku.core.services.IUserManagerLocal;
+import com.docdoku.core.services.IWorkspaceManagerLocal;
 
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
 
 @ManagedBean(name = "superAdminStateBean")
 @SessionScoped
@@ -47,78 +51,78 @@ public class SuperAdminStateBean implements Serializable {
     public SuperAdminStateBean(){
     }
 
-    public JSONObject getDiskSpaceUsageStats() throws AccountNotFoundException, UserNotFoundException {
+    public JsonObject getDiskSpaceUsageStats() throws AccountNotFoundException, UserNotFoundException {
 
-        Map<String, Long> diskUsage = new HashMap<String,Long>();
+        JsonObjectBuilder diskUsage = Json.createObjectBuilder();
 
         Workspace[] allWorkspaces = userManager.getAdministratedWorkspaces();
 
         for(Workspace workspace:allWorkspaces){
             Long workspaceDiskUsage = workspaceService.getDiskUsageInWorkspace(workspace.getId());
-            diskUsage.put(workspace.getId(), workspaceDiskUsage);
+            diskUsage.add(workspace.getId(), workspaceDiskUsage);
         }
 
-        return new JSONObject(diskUsage);
+        return diskUsage.build();
 
     }
 
-    public JSONObject getUsersStats() throws WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException, AccountNotFoundException {
+    public JsonObject getUsersStats() throws WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException, AccountNotFoundException {
 
-        Map<String, Integer> userStats = new HashMap<String,Integer>();
+        JsonObjectBuilder userStats = Json.createObjectBuilder();
 
         Workspace[] allWorkspaces = userManager.getAdministratedWorkspaces();
 
         for(Workspace workspace:allWorkspaces){
             int userCount =  documentService.getUsers(workspace.getId()).length;
-            userStats.put(workspace.getId(), userCount);
+            userStats.add(workspace.getId(), userCount);
         }
 
-        return new JSONObject(userStats);
+        return userStats.build();
 
     }
 
-    public JSONObject getDocsStats() throws AccountNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+    public JsonObject getDocsStats() throws AccountNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
 
-        Map<String, Integer> docStats = new HashMap<String,Integer>();
+        JsonObjectBuilder docStats = Json.createObjectBuilder();
 
         Workspace[] allWorkspaces = userManager.getAdministratedWorkspaces();
 
         for(Workspace workspace:allWorkspaces){
             int documentsCount = documentService.getDocumentsCountInWorkspace(workspace.getId());
-            docStats.put(workspace.getId(), documentsCount);
+            docStats.add(workspace.getId(), documentsCount);
         }
 
-        return new JSONObject(docStats);
+        return docStats.build();
 
     }
 
-    public JSONObject getProductsStats() throws AccountNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+    public JsonObject getProductsStats() throws AccountNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
 
-        Map<String, Integer> productsStats = new HashMap<String,Integer>();
+        JsonObjectBuilder productsStats = Json.createObjectBuilder();
 
         Workspace[] allWorkspaces = userManager.getAdministratedWorkspaces();
 
         for(Workspace workspace:allWorkspaces){
             int productsCount = productService.getConfigurationItems(workspace.getId()).size();
-            productsStats.put(workspace.getId(), productsCount);
+            productsStats.add(workspace.getId(), productsCount);
         }
 
-        return new JSONObject(productsStats);
+        return productsStats.build();
 
     }
 
-    public JSONObject getPartsStats() throws AccountNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException, WorkspaceNotFoundException {
+    public JsonObject getPartsStats() throws AccountNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException, WorkspaceNotFoundException {
 
-        Map<String, Integer> partsStats = new HashMap<String,Integer>();
+        JsonObjectBuilder partsStats = Json.createObjectBuilder();
 
         Workspace[] allWorkspaces = userManager.getAdministratedWorkspaces();
 
         for(Workspace workspace:allWorkspaces){
             int productsCount = productService.getPartMastersCount(workspace.getId());
-            partsStats.put(workspace.getId(), productsCount);
+            partsStats.add(workspace.getId(), productsCount);
         }
 
-        return new JSONObject(partsStats);
+        return partsStats.build();
 
     }
 

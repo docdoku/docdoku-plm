@@ -28,8 +28,11 @@ casper.then(function() {
             this.test.assertExists('#inputPartNumber', 'Part number input found');
             this.sendKeys('#inputPartNumber', partCreationNumber);
             this.test.assertExists('#product_creation_modal .btn-primary', 'Submit button found');
+            this.capture('productCreation1.png');
             this.click('#product_creation_modal .btn-primary');
-
+            this.wait(1000,function(){
+                this.capture('productCreation2.png');
+            })
         }
     )
 });

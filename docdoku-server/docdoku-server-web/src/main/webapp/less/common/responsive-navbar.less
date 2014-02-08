@@ -68,7 +68,7 @@
   .nav-collapse .dropdown-menu a {
     padding: 9px 15px;
     font-weight: bold;
-    color: @navbarLinkColor;
+    color: white;
     .border-radius(3px);
   }
   // Buttons
@@ -167,6 +167,23 @@
     padding-right: 10px;
   }
 
+  // Negative breadcrumb-menu design
+  body > form #header ul.breadcrumb-menu > li:first-child > a{
+    border: none;
+    background: none;
+  }
+  body > form #header ul.breadcrumb-menu > li:first-child > a{
+    border: none;
+    background: none;
+
+    &:before, &:after{
+      display: none;
+    }
+
+    .caret{
+      display: inline-block !important;
+    }
+  }
 
 }
 

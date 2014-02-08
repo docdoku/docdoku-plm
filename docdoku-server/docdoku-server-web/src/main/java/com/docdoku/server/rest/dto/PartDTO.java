@@ -20,6 +20,7 @@
 
 package com.docdoku.server.rest.dto;
 
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.Date;
@@ -36,14 +37,19 @@ public class PartDTO implements Serializable {
     private Date creationDate;
     private String description;
     private List<PartIterationDTO> partIterations;
+    @XmlElement(nillable = true)
     private UserDTO checkOutUser;
+    @XmlElement(nillable = true)
     private Date checkOutDate;
+    @XmlElement(nillable = true)
     private WorkflowDTO workflow;
     private String lifeCycleState;
     private boolean standardPart;
     private String workspaceId;
     private boolean publicShared;
+    @XmlElement(nillable = true)
     private ACLDTO acl;
+    private boolean attributesLocked;
 
     public PartDTO() {
     }
@@ -174,5 +180,13 @@ public class PartDTO implements Serializable {
 
     public void setAcl(ACLDTO acl) {
         this.acl = acl;
+    }
+
+    public boolean isAttributesLocked() {
+        return attributesLocked;
+    }
+
+    public void setAttributesLocked(boolean attributesLocked) {
+        this.attributesLocked = attributesLocked;
     }
 }

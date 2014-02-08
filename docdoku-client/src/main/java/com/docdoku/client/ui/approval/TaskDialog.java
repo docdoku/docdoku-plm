@@ -23,12 +23,12 @@ package com.docdoku.client.ui.approval;
 import com.docdoku.client.ui.common.OKCancelPanel;
 import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.workflow.Task;
-import java.util.Collection;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Collection;
 
 public class TaskDialog extends JDialog implements ActionListener {
     private TaskPanel mTaskPanel;

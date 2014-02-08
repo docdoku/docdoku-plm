@@ -23,7 +23,10 @@ import com.docdoku.core.common.Account;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.UserGroupKey;
 import com.docdoku.core.common.Workspace;
-import com.docdoku.core.services.*;
+import com.docdoku.core.exceptions.*;
+import com.docdoku.core.services.IDocumentManagerLocal;
+import com.docdoku.core.services.IUserManagerLocal;
+import com.docdoku.core.services.IWorkspaceManagerLocal;
 
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
@@ -116,26 +119,6 @@ public class WorkspaceBean {
         //TODO switch to a more JSF style code
         HttpServletRequest request = (HttpServletRequest) (FacesContext.getCurrentInstance().getExternalContext().getRequest());
         
-        switch (workspace.getVaultType()) {
-            case DEMO:
-                if (users.length > 1) {
-                    throw new NotAllowedException(request.getLocale(), "NotAllowedException1");
-                }
-                break;
-
-            case SMALL:
-                if (users.length > 9) {
-                    throw new NotAllowedException(request.getLocale(), "NotAllowedException2");
-                }
-                break;
-
-            case LARGE:
-                if (users.length > 19) {
-                    throw new NotAllowedException(request.getLocale(), "NotAllowedException3");
-                }
-                break;
-        }
-        
         if (adminState.getSelectedGroup() != null && !adminState.getSelectedGroup().equals("")) {
             userManager.addUserInGroup(new UserGroupKey(workspace.getId(), adminState.getSelectedGroup()), loginToAdd);
             return "/admin/workspace/manageUsersGroup.xhtml?group=" + adminState.getSelectedGroup();
@@ -190,9 +173,7 @@ public class WorkspaceBean {
         Account account = (Account) sessionHTTP.getAttribute("account");
         Map<String, Workspace> administeredWorkspaces = (Map<String, Workspace>) sessionHTTP.getAttribute("administeredWorkspaces");
 
-        Workspace.VaultType vaultType = Workspace.VaultType.UNLIMITED;
-
-        Workspace workspace = userManager.createWorkspace(workspaceId, account, workspaceDescription, vaultType, freezeFolders);
+        Workspace workspace = userManager.createWorkspace(workspaceId, account, workspaceDescription, freezeFolders);
 
         administeredWorkspaces.put(workspace.getId(), workspace);
         adminState.setSelectedWorkspace(workspace.getId());
@@ -217,7 +198,7 @@ public class WorkspaceBean {
         selectedLogins.clear();
     }
     
-    public void remove() throws UserGroupNotFoundException, AccessRightException, UserNotFoundException, NotAllowedException, AccountNotFoundException, WorkspaceNotFoundException, FolderNotFoundException {
+    public void remove() throws UserGroupNotFoundException, AccessRightException, UserNotFoundException, NotAllowedException, AccountNotFoundException, WorkspaceNotFoundException, FolderNotFoundException, IndexerServerException {
         if (!selectedLogins.isEmpty()) {
             userManager.removeUsers(adminState.getSelectedWorkspace(), getLogins());
         }

@@ -20,9 +20,9 @@
 package com.docdoku.server;
 
 import com.docdoku.core.common.BinaryResource;
-import com.docdoku.core.services.FileNotFoundException;
+import com.docdoku.core.exceptions.FileNotFoundException;
+import com.docdoku.core.exceptions.StorageException;
 import com.docdoku.core.services.IDataManagerLocal;
-import com.docdoku.core.services.StorageException;
 import com.docdoku.server.storage.StorageProvider;
 import com.docdoku.server.storage.filesystem.FileStorageProvider;
 
@@ -149,6 +149,12 @@ public class DataManagerBean implements IDataManagerLocal {
     public String getExternalStorageURI(BinaryResource binaryResource) {
         return defaultStorageProvider.getExternalResourceURI(binaryResource);
     }
+
+    @Override
+    public String getShortenExternalStorageURI(BinaryResource binaryResource) {
+        return defaultStorageProvider.getShortenExternalResourceURI(binaryResource);
+    }
+
 
     @Override
     public void deleteWorkspaceFolder(String workspaceId, List<BinaryResource> binaryResourcesInWorkspace) throws StorageException {

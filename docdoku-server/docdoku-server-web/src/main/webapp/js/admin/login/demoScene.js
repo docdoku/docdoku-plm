@@ -40,15 +40,15 @@ window.onload = function() {
         camera.lookAt(scene.position);
 
         // RENDERER
-        renderer = new THREE.WebGLRenderer( {antialias:true} );
+        renderer = new THREE.WebGLRenderer( {antialias:true, alpha:true} );
         renderer.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
         container = document.createElement( 'div' );
         info_panel.appendChild( container );
         container.appendChild( renderer.domElement );
 
         // CONTROLS
-        controls = new THREE.TrackballControlsCustom( camera, info_panel );
-        controls.initHomepageControl();
+        controls = new THREE.TrackballControls( camera, info_panel );
+
 
         // LIGHT
         var light = new THREE.PointLight(0xffffff);

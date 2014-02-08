@@ -78,20 +78,29 @@ define([
         },
 
         toList:function(){
-            if(!this.useACL){
-                return null;
+
+            if(this.useACL){
+
+                var dto = {};
+                dto.userEntries = {};
+                dto.groupEntries = {};
+
+                dto.userEntries.entry = [];
+                dto.groupEntries.entry = [];
+                this.userMemberships.each(function(userMembership){
+                    dto.userEntries.entry.push({key:userMembership.key(),value:userMembership.getPermission()});
+                });
+                this.userGroupMemberships.each(function(userGroupMembership){
+                    dto.groupEntries.entry.push({key:userGroupMembership.key(),value:userGroupMembership.getPermission()});
+                });
+                return dto;
+
             }
-            var dto = {};
-            dto.userEntries = {};
-            dto.groupEntries = {};
-            this.userMemberships.each(function(userMembership){
-                dto.userEntries[userMembership.key()]=userMembership.getPermission();
-            });
-            this.userGroupMemberships.each(function(userGroupMembership){
-                dto.groupEntries[userGroupMembership.key()]=userGroupMembership.getPermission();
-            });
-            return dto;
+
+            return null;
+
         }
+
     });
 
     return ACLView;

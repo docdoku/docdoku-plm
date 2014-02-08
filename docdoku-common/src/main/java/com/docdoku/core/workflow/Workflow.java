@@ -113,7 +113,7 @@ public class Workflow implements Serializable, Cloneable {
     }
 
     public List<String> getLifeCycle() {
-        List<String> lc = new LinkedList<String>();
+        List<String> lc = new LinkedList<>();
         for (Activity activity : activities) {
             lc.add(activity.getLifeCycleState());
         }
@@ -174,7 +174,7 @@ public class Workflow implements Serializable, Cloneable {
             throw new InternalError();
         }
         //perform a deep copy
-        List<Activity> clonedActivities = new LinkedList<Activity>();
+        List<Activity> clonedActivities = new LinkedList<>();
         for (Activity activity : activities) {
             Activity clonedActivity = activity.clone();
             clonedActivity.setWorkflow(clone);

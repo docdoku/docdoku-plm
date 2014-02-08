@@ -21,6 +21,7 @@ package com.docdoku.server.rest;
 
 import com.docdoku.core.common.Account;
 import com.docdoku.core.common.Workspace;
+import com.docdoku.core.exceptions.ApplicationException;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.rest.dto.AccountDTO;
@@ -37,6 +38,7 @@ import javax.ejb.EJB;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.List;
@@ -65,13 +67,13 @@ public class AccountResource {
 
     @GET
     @Path("/me")
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public AccountDTO getAccount(){
 
         try{
             Account account = userManager.getAccount(ctx.getCallerPrincipal().getName());
             return mapper.map(account,AccountDTO.class);
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
 
@@ -80,7 +82,7 @@ public class AccountResource {
 
     @GET
     @Path("/workspaces")
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public List<WorkspaceDTO> getWorkspaces(){
 
         Workspace[] workspacesWhereCallerIsActive = userManager.getWorkspacesWhereCallerIsActive();
@@ -96,12 +98,12 @@ public class AccountResource {
 
     @PUT
     @Path("gcm")
-    @Consumes("application/json;charset=UTF-8")
+    @Consumes(MediaType.APPLICATION_JSON)
     public Response setGCMAccount(GCMAccountDTO data){
         try{
             userManager.setGCMAccount(data.getGcmId());
             return Response.ok().build();
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -113,7 +115,7 @@ public class AccountResource {
         try{
             userManager.deleteGCMAccount();
             return Response.ok().build();
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }

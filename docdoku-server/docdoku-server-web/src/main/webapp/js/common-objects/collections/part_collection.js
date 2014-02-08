@@ -28,7 +28,7 @@ define([
             $.ajax({
                 url:"/api/workspaces/" + APP_CONFIG.workspaceId + "/parts/count",
                 success:function(data){
-                    self.pageCount = Math.ceil(data/self.resultsPerPage);
+                    self.pageCount = Math.ceil(data.count/self.resultsPerPage);
                     self.trigger("page-count:fetch");
                 },
                 error:function(){

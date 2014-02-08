@@ -21,14 +21,13 @@
 package com.docdoku.client.ui.login;
 
 
-import com.docdoku.client.localization.I18N;
-import javax.swing.*;
-
-import java.awt.*;
-
 import com.docdoku.client.data.Config;
+import com.docdoku.client.localization.I18N;
 import com.docdoku.client.ui.common.GUIConstants;
 import com.docdoku.client.ui.common.WebLink;
+
+import javax.swing.*;
+import java.awt.*;
 
 public class LoginPanel extends JPanel {
 

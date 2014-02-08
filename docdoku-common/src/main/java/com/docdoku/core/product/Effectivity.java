@@ -19,9 +19,9 @@
  */
 package com.docdoku.core.product;
 
-import java.io.Serializable;
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlSeeAlso;
+import java.io.Serializable;
 
 /**
  * An Effectivity is an abstract subclass which is
@@ -47,6 +47,8 @@ public abstract class Effectivity implements Serializable {
     @Id
     private int id;
     protected String name;
+
+    @Lob
     private String description;
     
     @ManyToOne(optional = true, fetch = FetchType.EAGER)

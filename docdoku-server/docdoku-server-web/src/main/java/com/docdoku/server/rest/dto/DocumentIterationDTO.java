@@ -20,7 +20,8 @@
 package com.docdoku.server.rest.dto;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -29,8 +30,9 @@ import java.util.*;
 public class DocumentIterationDTO implements Serializable {
 
     private String workspaceId;
+    private String id;
     private String documentMasterId;
-    private String documentMasterVersion;
+    private String documentRevisionVersion;
     private int iteration;
     private Date creationDate;
     private UserDTO author;
@@ -42,15 +44,23 @@ public class DocumentIterationDTO implements Serializable {
     public DocumentIterationDTO() {
     }
 
-    public DocumentIterationDTO(String pWorkspaceId, String pDocumentMasterId, String pDocumentMasterVersion, int pIteration) {
+    public DocumentIterationDTO(String pWorkspaceId, String pDocumentMasterId, String pDocumentRevisionVersion, int pIteration) {
         workspaceId = pWorkspaceId;
         documentMasterId = pDocumentMasterId;
-        documentMasterVersion = pDocumentMasterVersion;
+        documentRevisionVersion = pDocumentRevisionVersion;
         iteration = pIteration;
     }
 
     public UserDTO getAuthor() {
         return author;
+    }
+
+    public String getId() {
+        return documentMasterId+"-"+documentRevisionVersion+"-"+iteration;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public void setAuthor(UserDTO author) {
@@ -99,7 +109,7 @@ public class DocumentIterationDTO implements Serializable {
 
     @Override
     public String toString() {
-        return workspaceId + "-" + documentMasterId + "-" + documentMasterVersion + "-" + iteration;
+        return workspaceId + "-" + documentMasterId + "-" + documentRevisionVersion + "-" + iteration;
     }
 
     public String getWorkspaceId() {
@@ -118,12 +128,12 @@ public class DocumentIterationDTO implements Serializable {
         documentMasterId = pDocumentMasterId;
     }
 
-    public String getDocumentMasterVersion() {
-        return documentMasterVersion;
+    public String getDocumentRevisionVersion() {
+        return documentRevisionVersion;
     }
 
-    public void setDocumentMasterVersion(String pDocumentMasterVersion) {
-        this.documentMasterVersion = pDocumentMasterVersion;
+    public void setDocumentRevisionVersion(String pDocumentRevisionVersion) {
+        this.documentRevisionVersion = pDocumentRevisionVersion;
     }
 
     public int getIteration() {

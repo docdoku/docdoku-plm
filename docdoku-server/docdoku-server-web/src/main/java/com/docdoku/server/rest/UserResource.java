@@ -21,10 +21,11 @@ package com.docdoku.server.rest;
 
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
+import com.docdoku.core.exceptions.ApplicationException;
+import com.docdoku.core.exceptions.WorkspaceNotFoundException;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
-import com.docdoku.core.services.WorkspaceNotFoundException;
 import com.docdoku.server.rest.dto.UserDTO;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
@@ -38,6 +39,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
 @Stateless
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
@@ -61,7 +63,7 @@ public class UserResource {
     }
 
     @GET
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public UserDTO[] getUsersInWorkspace(@PathParam("workspaceId") String workspaceId) {
         try {
 
@@ -74,26 +76,26 @@ public class UserResource {
 
             return dtos;
 
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
 
     @GET
     @Path("me")
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public UserDTO whoami(@PathParam("workspaceId") String workspaceId){
         try {
             User  user = documentService.whoAmI(workspaceId);
             return mapper.map(user, UserDTO.class);
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
 
     @GET
     @Path("reachable")
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public UserDTO[] getReachableUsersForCaller(@PathParam("workspaceId") String workspaceId) {
         try {
 
@@ -106,14 +108,14 @@ public class UserResource {
 
             return dtos;
 
-        } catch (com.docdoku.core.services.ApplicationException ex) {
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
 
     @GET
     @Path("admin")
-    @Produces("application/json;charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON)
     public UserDTO getAdminInWorkspace(@PathParam("workspaceId") String workspaceId) throws WorkspaceNotFoundException {
         Workspace workspace = userManager.getWorkspace(workspaceId);
         return mapper.map(workspace.getAdmin(),UserDTO.class);

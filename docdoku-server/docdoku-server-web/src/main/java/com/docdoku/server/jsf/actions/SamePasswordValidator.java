@@ -20,8 +20,6 @@
 
 package com.docdoku.server.jsf.actions;
 
-import java.util.Locale;
-import java.util.ResourceBundle;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIInput;
@@ -29,6 +27,8 @@ import javax.faces.context.FacesContext;
 import javax.faces.validator.FacesValidator;
 import javax.faces.validator.Validator;
 import javax.faces.validator.ValidatorException;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 @FacesValidator(value = "samePasswordValidator")
 public class SamePasswordValidator implements Validator {

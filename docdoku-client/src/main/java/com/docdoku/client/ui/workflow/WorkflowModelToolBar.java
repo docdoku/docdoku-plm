@@ -21,9 +21,10 @@
 package com.docdoku.client.ui.workflow;
 
 import com.docdoku.client.localization.I18N;
-import java.awt.event.ActionListener;
+
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 
 public class WorkflowModelToolBar extends JToolBar {
     private JToggleButton mSelectButton;

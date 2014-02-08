@@ -25,7 +25,9 @@ define({
         GENERAL:"General",
         ATTRIBUTES:"Attributes",
         WORKFLOW:"Workflow",
-        ACL:"ACL"
+        ACL:"ACL",
+        LOCK_ATTRIBUTES:"Freeze attributes structure",
+        MANDATORY:"Mandatory"
     },
     "fr": true
 });

@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:h="http://java.sun.com/jsf/html">
+        >
     <ui:composition template="/WEB-INF/templates/frameTemplate.xhtml">
         <ui:define name="title">
             <f:loadBundle var="i18nPS" basename="com.docdoku.server.localization.explorer_resource"/>
@@ -26,7 +26,8 @@
         <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/threex.windowresize.js?v=${BUILD_NUMBER}"></script>
         <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/VisualizationUtils.js?v=${BUILD_NUMBER}"></script>
 
-        <script type="text/javascript" src="#{request.contextPath}/js/product-structure/dmu/TrackballControlsCustom.js?v=${BUILD_NUMBER}"></script>
+        <script type="text/javascript" src="#{request.contextPath}/js/product-structure/dmu/TrackballControls.js?v=${BUILD_NUMBER}"></script>
+        <script type="text/javascript" src="#{request.contextPath}/js/product-structure/dmu/PointerLockControls.js?v=${BUILD_NUMBER}"></script>
 
         <script type="text/javascript" src="#{request.contextPath}/js/product-structure/models/instance.js?v=${BUILD_NUMBER}"></script>
         <script type="text/javascript" src="#{request.contextPath}/js/product-structure/models/levelGeometry.js?v=${BUILD_NUMBER}"></script>

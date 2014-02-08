@@ -19,8 +19,8 @@
  */
 package com.docdoku.core.meta;
 
-import java.io.Serializable;
 import javax.persistence.*;
+import java.io.Serializable;
 
 /**
  * This class holds the definition of the custom attribute of the documents and parts
@@ -38,8 +38,10 @@ public class InstanceAttributeTemplate implements Serializable {
     @Id
     private int id;
 
-    @Column(length=50)
+    @Column(length=255)
     private String name = "";
+
+    private  boolean mandatory;
 
     private AttributeType attributeType;
 
@@ -72,6 +74,14 @@ public class InstanceAttributeTemplate implements Serializable {
         this.name = name;
     }
 
+    public boolean isMandatory() {
+        return mandatory;
+    }
+
+    public void setMandatory(boolean mandatory) {
+        this.mandatory = mandatory;
+    }
+
     public InstanceAttributeTemplate.AttributeType getAttributeType() {
         return attributeType;
     }
@@ -85,25 +95,24 @@ public class InstanceAttributeTemplate implements Serializable {
         switch (attributeType) {
             case TEXT:
                 attr = new InstanceTextAttribute();
-                attr.setName(name);
                 break;
             case NUMBER:
                 attr = new InstanceNumberAttribute();
-                attr.setName(name);
                 break;
             case BOOLEAN:
                 attr = new InstanceBooleanAttribute();
-                attr.setName(name);
                 break;
             case DATE:
                 attr = new InstanceDateAttribute();
-                attr.setName(name);
                 break;
             case URL :
                 attr = new InstanceURLAttribute();
-                attr.setName(name);
                 break;
         }
+
+        attr.setName(name);
+        attr.setMandatory(mandatory);
+
         return attr;
     }
 

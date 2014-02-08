@@ -21,12 +21,9 @@ package com.docdoku.core.security;
 
 import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.common.Workspace;
+
+import javax.persistence.*;
 import java.io.Serializable;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
 
 /**
  * Class that holds information on how a specific user group belongs to a
@@ -41,12 +38,12 @@ import javax.persistence.Table;
 @javax.persistence.Entity
 public class WorkspaceUserGroupMembership implements Serializable {
 
-    @javax.persistence.Column(name = "WORKSPACE_ID", length=50, nullable = false, insertable = false, updatable = false)
+    @javax.persistence.Column(name = "WORKSPACE_ID", length=255, nullable = false, insertable = false, updatable = false)
     @javax.persistence.Id
     private String workspaceId = "";
     @javax.persistence.ManyToOne(optional = false, fetch = FetchType.EAGER)
     private Workspace workspace;
-    @javax.persistence.Column(name = "MEMBER_WORKSPACE_ID", length=50, nullable = false, insertable = false, updatable = false)
+    @javax.persistence.Column(name = "MEMBER_WORKSPACE_ID", length=255, nullable = false, insertable = false, updatable = false)
     @javax.persistence.Id
     private String memberWorkspaceId = "";
     @javax.persistence.Column(name = "MEMBER_ID", nullable = false, insertable = false, updatable = false)

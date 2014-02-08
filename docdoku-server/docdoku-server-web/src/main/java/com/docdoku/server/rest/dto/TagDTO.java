@@ -19,6 +19,7 @@
  */
 package com.docdoku.server.rest.dto;
 
+import javax.xml.bind.annotation.XmlElement;
 import java.io.Serializable;
 
 /**
@@ -26,17 +27,25 @@ import java.io.Serializable;
  * @author Yassine Belouad
  */
 public class TagDTO implements Serializable {
-    
+
+    @XmlElement(nillable = true)
     private String id;
+    @XmlElement(nillable = true)
     private String label;
+    @XmlElement(nillable = true)
     private String workspaceId;
     
     public TagDTO(){
-    
     }
     
     public TagDTO(String label){
         this.label=label;
+    }
+
+    public TagDTO(String label, String workspaceId) {
+        this.id = label;
+        this.label = label;
+        this.workspaceId = workspaceId;
     }
 
     public String getLabel() {
