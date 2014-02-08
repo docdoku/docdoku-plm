@@ -21,7 +21,7 @@
 package com.docdoku.server.extras;
 
 import com.docdoku.core.document.DocumentIteration;
-import com.docdoku.core.document.Tag;
+import com.docdoku.core.meta.Tag;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.workflow.Activity;
 import com.docdoku.core.workflow.Task;

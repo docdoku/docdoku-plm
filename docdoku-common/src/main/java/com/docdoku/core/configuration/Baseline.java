@@ -143,10 +143,7 @@ public class Baseline implements Serializable {
         if (!(o instanceof Baseline)) return false;
 
         Baseline baseline = (Baseline) o;
-
-        if (id != baseline.id) return false;
-
-        return true;
+        return id == baseline.id;
     }
 
     @Override

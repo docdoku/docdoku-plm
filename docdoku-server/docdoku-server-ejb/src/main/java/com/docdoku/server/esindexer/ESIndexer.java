@@ -27,6 +27,7 @@ import com.docdoku.core.exceptions.IndexerServerException;
 import com.docdoku.core.exceptions.PartRevisionNotFoundException;
 import com.docdoku.core.exceptions.StorageException;
 import com.docdoku.core.meta.InstanceAttribute;
+import com.docdoku.core.meta.Tag;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartMaster;
 import com.docdoku.core.product.PartRevision;

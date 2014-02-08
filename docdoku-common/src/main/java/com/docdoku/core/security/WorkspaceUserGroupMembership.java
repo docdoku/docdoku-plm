@@ -38,12 +38,12 @@ import java.io.Serializable;
 @javax.persistence.Entity
 public class WorkspaceUserGroupMembership implements Serializable {
 
-    @javax.persistence.Column(name = "WORKSPACE_ID", length=50, nullable = false, insertable = false, updatable = false)
+    @javax.persistence.Column(name = "WORKSPACE_ID", length=255, nullable = false, insertable = false, updatable = false)
     @javax.persistence.Id
     private String workspaceId = "";
     @javax.persistence.ManyToOne(optional = false, fetch = FetchType.EAGER)
     private Workspace workspace;
-    @javax.persistence.Column(name = "MEMBER_WORKSPACE_ID", length=50, nullable = false, insertable = false, updatable = false)
+    @javax.persistence.Column(name = "MEMBER_WORKSPACE_ID", length=255, nullable = false, insertable = false, updatable = false)
     @javax.persistence.Id
     private String memberWorkspaceId = "";
     @javax.persistence.Column(name = "MEMBER_ID", nullable = false, insertable = false, updatable = false)

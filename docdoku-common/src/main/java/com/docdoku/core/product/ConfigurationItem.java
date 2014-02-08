@@ -49,15 +49,16 @@ import java.io.Serializable;
 public class ConfigurationItem implements Serializable {
 
 
-    @Column(length = 50)
+    @Column(length = 255)
     @Id
     private String id = "";
     
     @Id
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private Workspace workspace;
-    
 
+
+    @Lob
     private String description;
        
     /**

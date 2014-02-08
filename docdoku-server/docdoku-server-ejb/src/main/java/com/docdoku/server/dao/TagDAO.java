@@ -19,8 +19,8 @@
  */
 package com.docdoku.server.dao;
 
-import com.docdoku.core.document.Tag;
-import com.docdoku.core.document.TagKey;
+import com.docdoku.core.meta.Tag;
+import com.docdoku.core.meta.TagKey;
 import com.docdoku.core.exceptions.CreationException;
 import com.docdoku.core.exceptions.TagAlreadyExistsException;
 import com.docdoku.core.exceptions.TagNotFoundException;

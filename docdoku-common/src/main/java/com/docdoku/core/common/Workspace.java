@@ -40,13 +40,14 @@ import java.io.Serializable;
 })
 public class Workspace implements Serializable, Cloneable {
 
-    @Column(length=50)
+    @Column(length=255)
     @javax.persistence.Id
     private String id="";
     
     @javax.persistence.ManyToOne(optional=false, fetch=FetchType.EAGER)
     private Account admin;
-    
+
+    @Lob
     private String description;    
     
     private boolean folderLocked;

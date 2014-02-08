@@ -39,6 +39,8 @@ public class PartSubstituteLink implements Serializable, Cloneable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private int id;
+
+    @Lob
     private String referenceDescription;
     
     @Column(name="COMMENTDATA")

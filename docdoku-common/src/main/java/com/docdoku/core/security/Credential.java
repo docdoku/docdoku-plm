@@ -20,6 +20,7 @@
 
 package com.docdoku.core.security;
 
+import javax.persistence.Column;
 import javax.persistence.Table;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -35,7 +36,8 @@ import java.security.NoSuchAlgorithmException;
 @Table(name="CREDENTIAL")
 @javax.persistence.Entity
 public class Credential implements java.io.Serializable {
-    
+
+    @Column(length = 255)
     @javax.persistence.Id
     private String login="";
     

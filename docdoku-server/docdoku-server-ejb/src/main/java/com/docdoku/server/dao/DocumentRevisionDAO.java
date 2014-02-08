@@ -24,7 +24,7 @@ import com.docdoku.core.common.User;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.document.DocumentRevisionKey;
-import com.docdoku.core.document.Tag;
+import com.docdoku.core.meta.Tag;
 import com.docdoku.core.exceptions.CreationException;
 import com.docdoku.core.exceptions.DocumentRevisionAlreadyExistsException;
 import com.docdoku.core.exceptions.DocumentRevisionNotFoundException;

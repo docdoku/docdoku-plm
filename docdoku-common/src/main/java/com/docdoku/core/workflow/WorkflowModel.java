@@ -41,11 +41,11 @@ import java.util.*;
 public class WorkflowModel implements Serializable, Cloneable {
     
 
-    @Column(length=50)
+    @Column(length=255)
     @javax.persistence.Id
     private String id="";
     
-    @javax.persistence.Column(name = "WORKSPACE_ID", length=50, nullable = false, insertable = false, updatable = false)
+    @javax.persistence.Column(name = "WORKSPACE_ID", length=255, nullable = false, insertable = false, updatable = false)
     @javax.persistence.Id
     private String workspaceId="";
     
