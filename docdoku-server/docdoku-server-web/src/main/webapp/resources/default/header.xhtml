@@ -118,7 +118,7 @@
                                                                 </c:if>
                                                                 ${item.id}
                                                             </a>
-                                                            <ul class="dropdown-submenu">
+                                                            <ul class="dropdown-menu">
                                                                 <li><a href="#{request.contextPath}/document-management/${item.id}#folders">#{i18nTemplate['sublinks.documents']}</a></li>
                                                                 <li><a href="#{request.contextPath}/product-management/${item.id}#products">#{i18nTemplate['sublinks.products']}</a></li>
                                                                 <!--li><a href="#{request.contextPath}/workflow-management/${item.id}">#{i18nTemplate['sublinks.workflows']}</a></li>
@@ -138,13 +138,13 @@
                                                 </a>
                                                 <ul class="dropdown-menu">
                                                     <li><a href="#{request.contextPath}/document-management/${workspaceID}#folders">
-                                                        <c:if test="#{cc.attrs.moduleName == 'document-manager'}">
+                                                        <c:if test="#{cc.attrs.moduleName == 'document-management'}">
                                                             <i class="icon-ok"></i>
                                                         </c:if>
                                                         #{i18nTemplate['sublinks.documents']}
                                                     </a></li>
                                                     <li><a href="#{request.contextPath}/product-management/${workspaceID}#products">
-                                                        <c:if test="#{cc.attrs.moduleName =='product-manager' or cc.attrs.moduleName =='product-structure'}">
+                                                        <c:if test="#{cc.attrs.moduleName =='product-management' or cc.attrs.moduleName =='product-structure'}">
                                                             <i class="icon-ok"></i>
                                                         </c:if>
                                                         #{i18nTemplate['sublinks.products']}
