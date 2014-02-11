@@ -94,7 +94,7 @@ public class PMServlet extends HttpServlet {
                 pRequest.setAttribute("groups", StringUtils.join(groups, ","));
             } catch (UserNotFoundException e) {
             }
-            pRequest.setAttribute("workspaceAdmin", administeredWorkspaces.containsKey(workspaceID) ? true : false);
+            pRequest.setAttribute("workspaceAdmin", administeredWorkspaces.containsKey(workspaceID));
             pRequest.setAttribute("urlRoot", getUrlRoot(pRequest));
             pRequest.setAttribute("workspaceID", workspaceID);
             pRequest.setAttribute("login", login);

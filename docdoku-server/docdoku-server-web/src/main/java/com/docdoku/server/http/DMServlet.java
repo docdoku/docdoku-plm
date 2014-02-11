@@ -93,7 +93,7 @@ public class DMServlet extends HttpServlet {
             } catch (UserNotFoundException e) {
             }
 
-            pRequest.setAttribute("workspaceAdmin", administeredWorkspaces.containsKey(workspaceID) ? true : false);
+            pRequest.setAttribute("workspaceAdmin", administeredWorkspaces.containsKey(workspaceID));
             pRequest.setAttribute("workspaceID", workspaceID);
             pRequest.setAttribute("login", login);
             pRequest.getRequestDispatcher("/faces/document-management/index.xhtml").forward(pRequest, pResponse);
