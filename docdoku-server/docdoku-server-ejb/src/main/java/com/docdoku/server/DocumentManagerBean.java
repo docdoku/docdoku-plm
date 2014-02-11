@@ -392,8 +392,6 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         List<DocumentRevision> docRs = new DocumentRevisionDAO(new Locale(user.getLanguage()), em).getDocumentRevisionsFiltered(user, workspaceId, start, pMaxResults);
         ListIterator<DocumentRevision> ite = docRs.listIterator();
 
-        Workspace wks = new WorkspaceDAO(new Locale(user.getLanguage()), em).loadWorkspace(workspaceId);
-
         while (ite.hasNext()) {
             DocumentRevision docR = ite.next();
 
@@ -493,9 +491,9 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             String inputMask = template.getMask();
             String convertedMask = Tools.convertMask(inputMask);
             newId = Tools.increaseId(latestId, convertedMask);
-        } catch (ParseException ex) {
+        } catch (ParseException | NoResultException ex) {
             //may happen when a different mask has been used for the same document type
-        } catch (NoResultException ex) {
+            //or
             //may happen when no document of the specified type has been created
         }
         return newId;
@@ -505,7 +503,8 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @RolesAllowed("users")
     @Override
     public DocumentRevision[] searchDocumentRevisions(DocumentSearchQuery pQuery) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, IndexerServerException {
-        esIndexer.indexAll();                                                                                           // Index all resources
+        String workspaceId = pQuery.getWorkspaceId();
+        esIndexer.indexAllDocuments(workspaceId);                                                                       // Index all documents of the Query workspace
         
         User user = userManager.checkWorkspaceReadAccess(pQuery.getWorkspaceId());
         List<DocumentRevision> fetchedDocRs = esIndexer.search(pQuery);                                                 // Get Search Results
@@ -515,24 +514,23 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             boolean isAdmin = wks.getAdmin().getLogin().equals(user.getLogin());
 
             ListIterator<DocumentRevision> ite = fetchedDocRs.listIterator();
-            docMBlock:
             while (ite.hasNext()) {
-                DocumentRevision docR = ite.next();                
-                
+                DocumentRevision docR = ite.next();
+
+                if (!isAdmin && docR.getACL() != null && !docR.getACL().hasReadAccess(user)) {                          // Check Rigth Acces
+                    ite.remove();
+                    continue;
+                }
+
                 if(docR.getLocation().isPrivate() && (!docR.getLocation().getOwner().equals(user.getLogin())) ){        // Remove Private DocMaster From Results
                     ite.remove();
-                    continue docMBlock;
+                    continue;
                 }
 
                 if ((docR.isCheckedOut()) && (!docR.getCheckOutUser().equals(user))) {                                  // Remove CheckedOut DocMaster From Results
                     docR = docR.clone();
                     docR.removeLastIteration();
                     ite.set(docR);
-                }
-
-                if (!isAdmin && docR.getACL() != null && !docR.getACL().hasReadAccess(user)) {                          // Check Rigth Acces
-                    ite.remove();
-                    continue;
                 }
             }
             return fetchedDocRs.toArray(new DocumentRevision[fetchedDocRs.size()]);
@@ -557,7 +555,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
     @RolesAllowed("users")
     @Override
-    public DocumentMasterTemplate updateDocumentMasterTemplate(DocumentMasterTemplateKey pKey, String pDocumentType, String pMask, InstanceAttributeTemplate[] pAttributeTemplates, boolean idGenerated, boolean attributesLocked) throws WorkspaceNotFoundException, WorkspaceNotFoundException, AccessRightException, DocumentMasterTemplateNotFoundException, UserNotFoundException {
+    public DocumentMasterTemplate updateDocumentMasterTemplate(DocumentMasterTemplateKey pKey, String pDocumentType, String pMask, InstanceAttributeTemplate[] pAttributeTemplates, boolean idGenerated, boolean attributesLocked) throws WorkspaceNotFoundException, AccessRightException, DocumentMasterTemplateNotFoundException, UserNotFoundException {
         User user = userManager.checkWorkspaceWriteAccess(pKey.getWorkspaceId());
 
         DocumentMasterTemplateDAO templateDAO = new DocumentMasterTemplateDAO(new Locale(user.getLanguage()), em);
@@ -570,12 +568,10 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         template.setIdGenerated(idGenerated);
         template.setAttributesLocked(attributesLocked);
 
-        Set<InstanceAttributeTemplate> attrs = new HashSet<InstanceAttributeTemplate>();
-        for (InstanceAttributeTemplate attr : pAttributeTemplates) {
-            attrs.add(attr);
-        }
+        Set<InstanceAttributeTemplate> attrs = new HashSet<>();
+        Collections.addAll(attrs, pAttributeTemplates);
 
-        Set<InstanceAttributeTemplate> attrsToRemove = new HashSet<InstanceAttributeTemplate>(template.getAttributeTemplates());
+        Set<InstanceAttributeTemplate> attrsToRemove = new HashSet<>(template.getAttributeTemplates());
         attrsToRemove.removeAll(attrs);
 
         InstanceAttributeTemplateDAO attrDAO = new InstanceAttributeTemplateDAO(em);
@@ -646,7 +642,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             newDoc = docR.createNextIteration(user);
 
 
-            Map<String, InstanceAttribute> attrs = new HashMap<String, InstanceAttribute>();
+            Map<String, InstanceAttribute> attrs = new HashMap<>();
             for (InstanceAttributeTemplate attrTemplate : template.getAttributeTemplates()) {
                 InstanceAttribute attr = attrTemplate.createInstanceAttribute();
                 //attr.setDocument(newDoc);
@@ -677,17 +673,15 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             UserDAO userDAO = new UserDAO(new Locale(user.getLanguage()),em);
             RoleDAO roleDAO = new RoleDAO(new Locale(user.getLanguage()),em);
 
-            Map<Role,User> roleUserMap = new HashMap<Role,User>();
+            Map<Role,User> roleUserMap = new HashMap<>();
 
-            Iterator it = roleMappings.entrySet().iterator();
-
-            while (it.hasNext()) {
-                Map.Entry pairs = (Map.Entry)it.next();
+            for (Object o : roleMappings.entrySet()) {
+                Map.Entry pairs = (Map.Entry) o;
                 String roleName = (String) pairs.getKey();
                 String userLogin = (String) pairs.getValue();
-                User worker = userDAO.loadUser(new UserKey(Folder.parseWorkspaceId(pParentFolder),userLogin));
-                Role role  = roleDAO.loadRole(new RoleKey(Folder.parseWorkspaceId(pParentFolder),roleName));
-                roleUserMap.put(role,worker);
+                User worker = userDAO.loadUser(new UserKey(Folder.parseWorkspaceId(pParentFolder), userLogin));
+                Role role = roleDAO.loadRole(new RoleKey(Folder.parseWorkspaceId(pParentFolder), roleName));
+                roleUserMap.put(role, worker);
             }
 
             WorkflowModel workflowModel = new WorkflowModelDAO(new Locale(user.getLanguage()), em).loadWorkflowModel(new WorkflowModelKey(user.getWorkspaceId(), pWorkflowModelId));
@@ -753,10 +747,8 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         template.setIdGenerated(idGenerated);
         template.setAttributesLocked(attributesLocked);
 
-        Set<InstanceAttributeTemplate> attrs = new HashSet<InstanceAttributeTemplate>();
-        for (InstanceAttributeTemplate attr : pAttributeTemplates) {
-            attrs.add(attr);
-        }
+        Set<InstanceAttributeTemplate> attrs = new HashSet<>();
+        Collections.addAll(attrs, pAttributeTemplates);
         template.setAttributeTemplates(attrs);
 
         new DocumentMasterTemplateDAO(new Locale(user.getLanguage()), em).createDocMTemplate(template);
@@ -966,7 +958,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
                 newDoc.addFile(targetFile);
             }
 
-            Set<DocumentLink> links = new HashSet<DocumentLink>();
+            Set<DocumentLink> links = new HashSet<>();
             for (DocumentLink link : beforeLastDocument.getLinkedDocuments()) {
                 DocumentLink newLink = link.clone();
                 links.add(newLink);
@@ -974,10 +966,9 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             newDoc.setLinkedDocuments(links);
 
             InstanceAttributeDAO attrDAO = new InstanceAttributeDAO(em);
-            Map<String, InstanceAttribute> attrs = new HashMap<String, InstanceAttribute>();
+            Map<String, InstanceAttribute> attrs = new HashMap<>();
             for (InstanceAttribute attr : beforeLastDocument.getInstanceAttributes().values()) {
                 InstanceAttribute newAttr = attr.clone();
-                //newAttr.setDocument(newDoc);
                 //Workaround for the NULL DTYPE bug
                 attrDAO.createAttribute(newAttr);
                 attrs.put(newAttr.getName(), newAttr);
@@ -1001,7 +992,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException5");
         }
 
-        HashSet<Tag> tags = new HashSet<Tag>();
+        HashSet<Tag> tags = new HashSet<>();
         for (String label : pTags) {
             tags.add(new Tag(user.getWorkspace(), label));
         }
@@ -1009,7 +1000,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         TagDAO tagDAO = new TagDAO(userLocale, em);
         List<Tag> existingTags = Arrays.asList(tagDAO.findAllTags(user.getWorkspaceId()));
 
-        Set<Tag> tagsToCreate = new HashSet<Tag>(tags);
+        Set<Tag> tagsToCreate = new HashSet<>(tags);
         tagsToCreate.removeAll(existingTags);
 
         for (Tag t : tagsToCreate) {
@@ -1304,10 +1295,10 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         if (docR.isCheckedOut() && docR.getCheckOutUser().equals(user) && docR.getLastIteration().getKey().equals(iKey)) {
             DocumentIteration doc = docR.getLastIteration();
 
-            Set<DocumentIterationKey> linkKeys = new HashSet<DocumentIterationKey>(Arrays.asList(pLinkKeys));
-            Set<DocumentIterationKey> currentLinkKeys = new HashSet<DocumentIterationKey>();
+            Set<DocumentIterationKey> linkKeys = new HashSet<>(Arrays.asList(pLinkKeys));
+            Set<DocumentIterationKey> currentLinkKeys = new HashSet<>();
 
-            Set<DocumentLink> currentLinks = new HashSet<DocumentLink>(doc.getLinkedDocuments());
+            Set<DocumentLink> currentLinks = new HashSet<>(doc.getLinkedDocuments());
 
             for(DocumentLink link:currentLinks){
                 DocumentIterationKey linkKey = link.getTargetDocumentKey();
@@ -1326,12 +1317,12 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             }
 
             
-            Map<String, InstanceAttribute> attrs = new HashMap<String, InstanceAttribute>();
+            Map<String, InstanceAttribute> attrs = new HashMap<>();
             for (InstanceAttribute attr : pAttributes) {
                 attrs.put(attr.getName(), attr);
             }
 
-            Set<InstanceAttribute> currentAttrs = new HashSet<InstanceAttribute>(doc.getInstanceAttributes().values());
+            Set<InstanceAttribute> currentAttrs = new HashSet<>(doc.getInstanceAttributes().values());
 
             for(InstanceAttribute attr:currentAttrs){
                 if(!attrs.containsKey(attr.getName())){
@@ -1401,14 +1392,14 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
                 }
             }
 
-            Set<DocumentLink> links = new HashSet<DocumentLink>();
+            Set<DocumentLink> links = new HashSet<>();
             for (DocumentLink link : lastDoc.getLinkedDocuments()) {
                 DocumentLink newLink = link.clone();
                 links.add(newLink);
             }
             firstIte.setLinkedDocuments(links);
 
-            Map<String, InstanceAttribute> attrs = new HashMap<String, InstanceAttribute>();
+            Map<String, InstanceAttribute> attrs = new HashMap<>();
             for (InstanceAttribute attr : lastDoc.getInstanceAttributes().values()) {
                 InstanceAttribute clonedAttribute = attr.clone();
                 //clonedAttribute.setDocument(firstIte);
@@ -1422,17 +1413,15 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             UserDAO userDAO = new UserDAO(new Locale(user.getLanguage()),em);
             RoleDAO roleDAO = new RoleDAO(new Locale(user.getLanguage()),em);
 
-            Map<Role,User> roleUserMap = new HashMap<Role,User>();
+            Map<Role,User> roleUserMap = new HashMap<>();
 
-            Iterator it = roleMappings.entrySet().iterator();
-
-            while (it.hasNext()) {
-                Map.Entry pairs = (Map.Entry)it.next();
+            for (Object o : roleMappings.entrySet()) {
+                Map.Entry pairs = (Map.Entry) o;
                 String roleName = (String) pairs.getKey();
                 String userLogin = (String) pairs.getValue();
-                User worker = userDAO.loadUser(new UserKey(pOriginalDocRPK.getWorkspaceId(),userLogin));
-                Role role  = roleDAO.loadRole(new RoleKey(pOriginalDocRPK.getWorkspaceId(),roleName));
-                roleUserMap.put(role,worker);
+                User worker = userDAO.loadUser(new UserKey(pOriginalDocRPK.getWorkspaceId(), userLogin));
+                Role role = roleDAO.loadRole(new RoleKey(pOriginalDocRPK.getWorkspaceId(), roleName));
+                roleUserMap.put(role, worker);
             }
 
             WorkflowModel workflowModel = new WorkflowModelDAO(new Locale(user.getLanguage()), em).loadWorkflowModel(new WorkflowModelKey(user.getWorkspaceId(), pWorkflowModelId));

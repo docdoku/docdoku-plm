@@ -21,7 +21,10 @@ package com.docdoku.server.esindexer;
 
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.Workspace;
-import com.docdoku.core.document.*;
+import com.docdoku.core.document.DocumentIteration;
+import com.docdoku.core.document.DocumentMaster;
+import com.docdoku.core.document.DocumentRevision;
+import com.docdoku.core.document.DocumentRevisionKey;
 import com.docdoku.core.exceptions.DocumentRevisionNotFoundException;
 import com.docdoku.core.exceptions.IndexerServerException;
 import com.docdoku.core.exceptions.PartRevisionNotFoundException;
@@ -64,7 +67,6 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
-import javax.ejb.EJBException;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -143,6 +145,64 @@ public class ESIndexer{
                         for(PartIteration partIte : partRev.getPartIterations()){
                             bulkRequest.add(indexRequest(client, partIte));
                         }
+                    }
+                }
+            }
+
+            BulkResponse bulkResponse = bulkRequest.execute().actionGet();
+            client.close();
+            if (bulkResponse.hasFailures()) {                                                                               // TODO Failure case
+                System.out.println(bulkResponse.buildFailureMessage());
+            }
+        }catch (NoNodeAvailableException e){
+            Logger.getLogger(ESIndexer.class.getName()).log(Level.SEVERE, null, e);
+            throw new IndexerServerException(Locale.getDefault(), "IndexerServerException1");
+        }
+    }
+
+    /**
+     * Index all documents in this workspace
+     * @param workspaceId Workspace to index
+     */
+    @Asynchronous
+    public void indexAllDocuments(String workspaceId) throws IndexerServerException {
+        try{
+            Client client = createClient();
+            BulkRequestBuilder bulkRequest = client.prepareBulk();
+            DocumentMasterDAO docMasterDAO = new DocumentMasterDAO(em);
+            for(DocumentMaster docM : docMasterDAO.getAllByWorkspace(workspaceId)){
+                for(DocumentRevision docR : docM.getDocumentRevisions()){
+                    for(DocumentIteration docI : docR.getDocumentIterations()){
+                        bulkRequest.add(indexRequest(client, docI));
+                    }
+                }
+            }
+
+            BulkResponse bulkResponse = bulkRequest.execute().actionGet();
+            client.close();
+            if (bulkResponse.hasFailures()) {                                                                               // TODO Failure case
+                System.out.println(bulkResponse.buildFailureMessage());
+            }
+        }catch (NoNodeAvailableException e){
+            Logger.getLogger(ESIndexer.class.getName()).log(Level.SEVERE, null, e);
+            throw new IndexerServerException(Locale.getDefault(), "IndexerServerException1");
+        }
+    }
+
+    /**
+     * Index all parts in this workspace
+     * @param workspaceId Workspace to index
+     */
+    @Asynchronous
+    public void indexAllParts(String workspaceId) throws IndexerServerException {
+        try{
+            Client client = createClient();
+            BulkRequestBuilder bulkRequest = client.prepareBulk();
+            PartMasterDAO partMasterDAO = new PartMasterDAO(em);
+            for(PartMaster partMaster : partMasterDAO.getAllByWorkspace(workspaceId)){
+                for(PartRevision partRev : partMaster.getPartRevisions()){
+                    for(PartIteration partIte : partRev.getPartIterations()){
+                        bulkRequest.add(indexRequest(client, partIte));
                     }
                 }
             }
@@ -445,13 +505,6 @@ public class ESIndexer{
      * @return List of part revision
      */
     public List<Object> searchInAllWorkspace(SearchQuery query) throws IndexerServerException {                                                       // TODO Optimize it
-       /* List<DocumentRevision> listOfDocuments = searchInAllWorkspace((DocumentSearchQuery) query);
-        List<PartRevision> listOfParts = searchInAllWorkspace((PartSearchQuery) query);
-
-        List<Object> ret= new ArrayList<>();
-        ret.addAll(listOfDocuments);
-        ret.addAll(listOfParts);
-        return ret;*/
         return null; //TODO
     }
 
@@ -549,8 +602,7 @@ public class ESIndexer{
      */
     private QueryBuilder getQueryBuilder (PartSearchQuery partQuery){
         QueryBuilder qr;
-        if(partQuery.getPartNumber() != null){
-            qr = QueryBuilders.fuzzyLikeThisQuery().likeText(partQuery.getPartNumber());                                // TODO Cut the query and make a boolQuery() with all the words
+        if(partQuery.getPartNumber() != null){                                                                          // TODO Cut the query and make a boolQuery() with all the words
             qr = QueryBuilders.disMaxQuery()
                     .add(QueryBuilders.fuzzyLikeThisQuery()
                             .likeText(partQuery.getPartNumber()))
@@ -784,7 +836,7 @@ public class ESIndexer{
     }
 
     private XContentBuilder setField(XContentBuilder object, String field, String value, float coef ) throws IOException {
-        value = (value != null && value !="") ? value : " ";
+        value = (value != null && !value.equals("")) ? value : " ";
         object.field(field, value, coef);
         return object;
     }
@@ -898,7 +950,8 @@ public class ESIndexer{
                 default: break;
             }
         } catch (ParserConfigurationException|SAXException|IOException ex) {
-            throw new EJBException(ex);
+            ex.printStackTrace();                                                                                       // TODO FileNotIndexedError
+            System.out.println(fullName+" can't be indexed");
         }
         return strRet;
     }

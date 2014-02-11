@@ -106,7 +106,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             rootUsageLink = new PartUsageLink();
             rootUsageLink.setId(-1);
             rootUsageLink.setAmount(1d);
-            List<CADInstance> cads = new ArrayList<CADInstance>();
+            List<CADInstance> cads = new ArrayList<>();
             CADInstance cad = new CADInstance(0d, 0d, 0d, 0d, 0d, 0d);
             cad.setId(-1);
             cads.add(cad);
@@ -148,13 +148,16 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
         em.detach(partMaster);
 
-        if (partMaster.getPartRevisions().size() > 1) {
-            partMaster.getPartRevisions().retainAll(Collections.singleton(partI.getPartRevision()));
-        }
-        if (partI.getPartRevision() != null && partI.getPartRevision().getNumberOfIterations() > 1) {
-            partI.getPartRevision().getPartIterations().retainAll(Collections.singleton(partI));
-        }
+        if(partI!=null){
+            PartRevision partRevision = partI.getPartRevision();
 
+            if (partMaster.getPartRevisions().size() > 1) {
+                partMaster.getPartRevisions().retainAll(Collections.singleton(partRevision));
+            }
+            if (partRevision != null && partRevision.getNumberOfIterations() > 1) {
+                partRevision.getPartIterations().retainAll(Collections.singleton(partI));
+            }
+        }
     }
 
 
@@ -201,17 +204,15 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             UserDAO userDAO = new UserDAO(new Locale(user.getLanguage()),em);
             RoleDAO roleDAO = new RoleDAO(new Locale(user.getLanguage()),em);
 
-            Map<Role,User> roleUserMap = new HashMap<Role,User>();
+            Map<Role,User> roleUserMap = new HashMap<>();
 
-            Iterator it = roleMappings.entrySet().iterator();
-
-            while (it.hasNext()) {
-                Map.Entry pairs = (Map.Entry)it.next();
+            for (Object o : roleMappings.entrySet()) {
+                Map.Entry pairs = (Map.Entry) o;
                 String roleName = (String) pairs.getKey();
                 String userLogin = (String) pairs.getValue();
-                User worker = userDAO.loadUser(new UserKey(user.getWorkspaceId(),userLogin));
-                Role role  = roleDAO.loadRole(new RoleKey(user.getWorkspaceId(),roleName));
-                roleUserMap.put(role,worker);
+                User worker = userDAO.loadUser(new UserKey(user.getWorkspaceId(), userLogin));
+                Role role = roleDAO.loadRole(new RoleKey(user.getWorkspaceId(), roleName));
+                roleUserMap.put(role, worker);
             }
 
             WorkflowModel workflowModel = new WorkflowModelDAO(new Locale(user.getLanguage()), em).loadWorkflowModel(new WorkflowModelKey(user.getWorkspaceId(), pWorkflowModelId));
@@ -239,7 +240,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             pm.setType(partMasterTemplate.getPartType());
             pm.setAttributesLocked(partMasterTemplate.isAttributesLocked());
 
-            Map<String, InstanceAttribute> attrs = new HashMap<String, InstanceAttribute>();
+            Map<String, InstanceAttribute> attrs = new HashMap<>();
             for (InstanceAttributeTemplate attrTemplate : partMasterTemplate.getAttributeTemplates()) {
                 InstanceAttribute attr = attrTemplate.createInstanceAttribute();
                 attrs.put(attr.getName(), attr);
@@ -386,7 +387,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 newPartIteration.addFile(targetFile);
             }
 
-            List<PartUsageLink> components = new LinkedList<PartUsageLink>();
+            List<PartUsageLink> components = new LinkedList<>();
             for (PartUsageLink usage : beforeLastPartIteration.getComponents()) {
                 PartUsageLink newUsage = usage.clone();
                 components.add(newUsage);
@@ -415,7 +416,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 newPartIteration.setNativeCADFile(targetFile);
             }
 
-            Set<DocumentLink> links = new HashSet<DocumentLink>();
+            Set<DocumentLink> links = new HashSet<>();
             for (DocumentLink link : beforeLastPartIteration.getLinkedDocuments()) {
                 DocumentLink newLink = link.clone();
                 links.add(newLink);
@@ -423,7 +424,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             newPartIteration.setLinkedDocuments(links);
 
             InstanceAttributeDAO attrDAO = new InstanceAttributeDAO(em);
-            Map<String, InstanceAttribute> attrs = new HashMap<String, InstanceAttribute>();
+            Map<String, InstanceAttribute> attrs = new HashMap<>();
             for (InstanceAttribute attr : beforeLastPartIteration.getInstanceAttributes().values()) {
                 InstanceAttribute newAttr = attr.clone();
                 //Workaround for the NULL DTYPE bug
@@ -658,10 +659,10 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
         if (partRev.isCheckedOut() && partRev.getCheckOutUser().equals(user) && partIte.getKey().equals(pKey)) {
             if (pLinkKeys != null) {
-                Set<DocumentIterationKey> linkKeys = new HashSet<DocumentIterationKey>(Arrays.asList(pLinkKeys));
-                Set<DocumentIterationKey> currentLinkKeys = new HashSet<DocumentIterationKey>();
+                Set<DocumentIterationKey> linkKeys = new HashSet<>(Arrays.asList(pLinkKeys));
+                Set<DocumentIterationKey> currentLinkKeys = new HashSet<>();
 
-                Set<DocumentLink> currentLinks = new HashSet<DocumentLink>(partIte.getLinkedDocuments());
+                Set<DocumentLink> currentLinks = new HashSet<>(partIte.getLinkedDocuments());
 
                 for (DocumentLink link : currentLinks) {
                     DocumentIterationKey linkKey = link.getTargetDocumentKey();
@@ -680,7 +681,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 }
             }
             if (pUsageLinks != null) {
-                List<PartUsageLink> usageLinks = new LinkedList<PartUsageLink>();
+                List<PartUsageLink> usageLinks = new LinkedList<>();
                 for (PartUsageLink usageLink : pUsageLinks) {
                     PartUsageLink ul = new PartUsageLink();
                     ul.setAmount(usageLink.getAmount());
@@ -691,7 +692,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                     PartMaster pm = usageLink.getComponent();
                     PartMaster component = partMDAO.loadPartM(new PartMasterKey(pm.getWorkspaceId(), pm.getNumber()));
                     ul.setComponent(component);
-                    List<PartSubstituteLink> substitutes = new LinkedList<PartSubstituteLink>();
+                    List<PartSubstituteLink> substitutes = new LinkedList<>();
                     for (PartSubstituteLink substitute : usageLink.getSubstitutes()) {
                         PartSubstituteLink sub = new PartSubstituteLink();
                         sub.setCadInstances(substitute.getCadInstances());
@@ -709,12 +710,12 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             }
             if (pAttributes != null) {
                 // set doc for all attributes
-                Map<String, InstanceAttribute> attrs = new HashMap<String, InstanceAttribute>();
+                Map<String, InstanceAttribute> attrs = new HashMap<>();
                 for (InstanceAttribute attr : pAttributes) {
                     attrs.put(attr.getName(), attr);
                 }
 
-                Set<InstanceAttribute> currentAttrs = new HashSet<InstanceAttribute>(partIte.getInstanceAttributes().values());
+                Set<InstanceAttribute> currentAttrs = new HashSet<>(partIte.getInstanceAttributes().values());
                 for (InstanceAttribute attr : currentAttrs) {
                     if (!attrs.containsKey(attr.getName())) {
                         partIte.getInstanceAttributes().remove(attr.getName());
@@ -861,9 +862,10 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     @RolesAllowed("users")
     @Override
     public List<PartRevision> searchPartRevisions(PartSearchQuery pQuery) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, IndexerServerException {
-        esIndexer.indexAll();                                                                                           // Index all resources
+        String workspaceId = pQuery.getWorkspaceId();
+        esIndexer.indexAllParts(workspaceId);                                                                           // Index all parts of the Query workspace
 
-        User user = userManager.checkWorkspaceReadAccess(pQuery.getWorkspaceId());
+        User user = userManager.checkWorkspaceReadAccess(workspaceId);
         List<PartRevision> fetchedPartRs = esIndexer.search(pQuery);                                                    // Get Search Results
 
         Workspace wks = new WorkspaceDAO(new Locale(user.getLanguage()), em).loadWorkspace(pQuery.getWorkspaceId());
@@ -882,10 +884,9 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             //Check access rights
             if (!isAdmin && partR.getACL() != null && !partR.getACL().hasReadAccess(user)) {                            // Check Rigth Acces
                 ite.remove();
-                continue;
             }
         }
-        return new ArrayList<PartRevision>(fetchedPartRs);
+        return new ArrayList<>(fetchedPartRs);
     }
 
     @Override
@@ -909,8 +910,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     public List<Baseline> findBaselinesWherePartRevisionHasIterations(PartRevisionKey partRevisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(partRevisionKey.getPartMaster().getWorkspace());
         PartRevision partRevision = new PartRevisionDAO(new Locale(user.getLanguage()),em).loadPartR(partRevisionKey);
-        List<Baseline> baselines = new BaselineDAO(em).findBaselineWherePartRevisionHasIterations(partRevision);
-        return baselines;
+        return new BaselineDAO(em).findBaselineWherePartRevisionHasIterations(partRevision);
     }
 
     @RolesAllowed("users")
@@ -923,8 +923,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         if ((partR.isCheckedOut()) && (!partR.getCheckOutUser().equals(user)) && partR.getLastIteration().equals(partI)) {
             throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException34");
         }
-        List<PartUsageLink> usageLinks = partI.getComponents();
-        return usageLinks;
+        return partI.getComponents();
     }
 
     @RolesAllowed("users")
@@ -1101,10 +1100,8 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         template.setCreationDate(now);
         template.setIdGenerated(idGenerated);
 
-        Set<InstanceAttributeTemplate> attrs = new HashSet<InstanceAttributeTemplate>();
-        for (InstanceAttributeTemplate attr : pAttributeTemplates) {
-            attrs.add(attr);
-        }
+        Set<InstanceAttributeTemplate> attrs = new HashSet<>();
+        Collections.addAll(attrs, pAttributeTemplates);
         template.setAttributeTemplates(attrs);
 
         new PartMasterTemplateDAO(new Locale(user.getLanguage()), em).createPartMTemplate(template);
@@ -1113,7 +1110,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed("users")
     @Override
-    public PartMasterTemplate updatePartMasterTemplate(PartMasterTemplateKey pKey, String pPartType, String pMask, InstanceAttributeTemplate[] pAttributeTemplates, boolean idGenerated, boolean attributesLocked) throws WorkspaceNotFoundException, WorkspaceNotFoundException, AccessRightException, PartMasterTemplateNotFoundException, UserNotFoundException {
+    public PartMasterTemplate updatePartMasterTemplate(PartMasterTemplateKey pKey, String pPartType, String pMask, InstanceAttributeTemplate[] pAttributeTemplates, boolean idGenerated, boolean attributesLocked) throws WorkspaceNotFoundException, AccessRightException, PartMasterTemplateNotFoundException, UserNotFoundException {
         User user = userManager.checkWorkspaceWriteAccess(pKey.getWorkspaceId());
 
         PartMasterTemplateDAO templateDAO = new PartMasterTemplateDAO(new Locale(user.getLanguage()), em);
@@ -1126,12 +1123,10 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         template.setIdGenerated(idGenerated);
         template.setAttributesLocked(attributesLocked);
 
-        Set<InstanceAttributeTemplate> attrs = new HashSet<InstanceAttributeTemplate>();
-        for (InstanceAttributeTemplate attr : pAttributeTemplates) {
-            attrs.add(attr);
-        }
+        Set<InstanceAttributeTemplate> attrs = new HashSet<>();
+        Collections.addAll(attrs, pAttributeTemplates);
 
-        Set<InstanceAttributeTemplate> attrsToRemove = new HashSet<InstanceAttributeTemplate>(template.getAttributeTemplates());
+        Set<InstanceAttributeTemplate> attrsToRemove = new HashSet<>(template.getAttributeTemplates());
         attrsToRemove.removeAll(attrs);
 
         InstanceAttributeTemplateDAO attrDAO = new InstanceAttributeTemplateDAO(em);
@@ -1368,8 +1363,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     public List<Baseline> getBaselines(ConfigurationItemKey configurationItemKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(configurationItemKey.getWorkspace());
         BaselineDAO baselineDAO = new BaselineDAO(em);
-        List<Baseline> baselines = baselineDAO.findBaselines(configurationItemKey.getId());
-        return baselines;
+        return baselineDAO.findBaselines(configurationItemKey.getId());
     }
 
     @RolesAllowed("users")
@@ -1377,8 +1371,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     public Baseline getBaseline(ConfigurationItemKey configurationItemKey, int baselineId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(configurationItemKey.getWorkspace());
         BaselineDAO baselineDAO = new BaselineDAO(em);
-        Baseline baseline = baselineDAO.findBaseline(configurationItemKey.getId(), baselineId);
-        return baseline;
+        return baselineDAO.findBaseline(configurationItemKey.getId(), baselineId);
     }
 
     @RolesAllowed("users")
@@ -1452,7 +1445,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             }
 
             // copy components
-            List<PartUsageLink> components = new LinkedList<PartUsageLink>();
+            List<PartUsageLink> components = new LinkedList<>();
             for (PartUsageLink usage : lastPartI.getComponents()) {
                 PartUsageLink newUsage = usage.clone();
                 components.add(newUsage);
@@ -1493,14 +1486,14 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             }
 
 
-            Set<DocumentLink> links = new HashSet<DocumentLink>();
+            Set<DocumentLink> links = new HashSet<>();
             for (DocumentLink link : lastPartI.getLinkedDocuments()) {
                 DocumentLink newLink = link.clone();
                 links.add(newLink);
             }
             firstPartI.setLinkedDocuments(links);
 
-            Map<String, InstanceAttribute> attrs = new HashMap<String, InstanceAttribute>();
+            Map<String, InstanceAttribute> attrs = new HashMap<>();
             for (InstanceAttribute attr : lastPartI.getInstanceAttributes().values()) {
                 InstanceAttribute clonedAttribute = attr.clone();
                 //clonedAttribute.setDocument(firstIte);
@@ -1516,17 +1509,15 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             UserDAO userDAO = new UserDAO(new Locale(user.getLanguage()),em);
             RoleDAO roleDAO = new RoleDAO(new Locale(user.getLanguage()),em);
 
-            Map<Role,User> roleUserMap = new HashMap<Role,User>();
+            Map<Role,User> roleUserMap = new HashMap<>();
 
-            Iterator it = roleMappings.entrySet().iterator();
-
-            while (it.hasNext()) {
-                Map.Entry pairs = (Map.Entry)it.next();
+            for (Object o : roleMappings.entrySet()) {
+                Map.Entry pairs = (Map.Entry) o;
                 String roleName = (String) pairs.getKey();
                 String userLogin = (String) pairs.getValue();
-                User worker = userDAO.loadUser(new UserKey(originalPartR.getWorkspaceId(),userLogin));
-                Role role  = roleDAO.loadRole(new RoleKey(originalPartR.getWorkspaceId(),roleName));
-                roleUserMap.put(role,worker);
+                User worker = userDAO.loadUser(new UserKey(originalPartR.getWorkspaceId(), userLogin));
+                Role role = roleDAO.loadRole(new RoleKey(originalPartR.getWorkspaceId(), roleName));
+                roleUserMap.put(role, worker);
             }
 
             WorkflowModel workflowModel = new WorkflowModelDAO(new Locale(user.getLanguage()), em).loadWorkflowModel(new WorkflowModelKey(user.getWorkspaceId(), pWorkflowModelId));
@@ -1667,9 +1658,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException17");
         }
 
-        int previousStep = workflow.getCurrentStep();
         task.approve(pComment, partRevision.getLastIteration().getIteration(), pSignature);
-        int currentStep = workflow.getCurrentStep();
 
         Collection<Task> runningTasks = workflow.getRunningTasks();
         for (Task runningTask : runningTasks) {
