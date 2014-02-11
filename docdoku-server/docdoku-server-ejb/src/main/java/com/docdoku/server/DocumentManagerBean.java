@@ -77,12 +77,6 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @EJB
     private IGCMSenderLocal gcmNotifier;
 
-/*    @EJB
-    private IndexerBean indexer;
-*/
-/*    @EJB
-    private IndexSearcherBean indexSearcher;
-*/
     @EJB
     private ESIndexer esIndexer;
 
@@ -504,7 +498,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @Override
     public DocumentRevision[] searchDocumentRevisions(DocumentSearchQuery pQuery) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, IndexerServerException {
         String workspaceId = pQuery.getWorkspaceId();
-        esIndexer.indexAllDocuments(workspaceId);                                                                       // Index all documents of the Query workspace
+        //esIndexer.indexAllDocuments(workspaceId);                                                                       // Index all documents of the Query workspace
         
         User user = userManager.checkWorkspaceReadAccess(pQuery.getWorkspaceId());
         List<DocumentRevision> fetchedDocRs = esIndexer.search(pQuery);                                                 // Get Search Results

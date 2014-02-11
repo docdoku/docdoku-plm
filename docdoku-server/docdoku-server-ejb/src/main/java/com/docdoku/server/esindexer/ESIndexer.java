@@ -938,7 +938,12 @@ public class ESIndexer{
                     PdfReader reader = new PdfReader(inputStream);
                     strRet = "";
                     for(int i=1; i<=reader.getNumberOfPages(); i++){
-                        strRet += PdfTextExtractor.getTextFromPage(reader,i);
+                        try{
+                            strRet += PdfTextExtractor.getTextFromPage(reader,i);
+                        }catch (Exception e){
+                            Logger.getLogger(ESIndexer.class.getName()).log(Level.SEVERE, "A problem occur in the file : "+fullName+", indexing", e);
+                        }
+
                     }
                     reader.close();
                     break;
@@ -949,9 +954,8 @@ public class ESIndexer{
                 case ".msg":
                 default: break;
             }
-        } catch (ParserConfigurationException|SAXException|IOException ex) {
-            ex.printStackTrace();                                                                                       // TODO FileNotIndexedError
-            System.out.println(fullName+" can't be indexed");
+        } catch (ParserConfigurationException|SAXException|IOException ex) {                                            // TODO FileNotIndexedError
+            Logger.getLogger(ESIndexer.class.getName()).log(Level.SEVERE, "The file : "+fullName+", can't be indexed", ex);
         }
         return strRet;
     }

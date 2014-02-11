@@ -863,7 +863,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     @Override
     public List<PartRevision> searchPartRevisions(PartSearchQuery pQuery) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, IndexerServerException {
         String workspaceId = pQuery.getWorkspaceId();
-        esIndexer.indexAllParts(workspaceId);                                                                           // Index all parts of the Query workspace
+//        esIndexer.indexAllParts(workspaceId);                                                                           // Index all parts of the Query workspace
 
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         List<PartRevision> fetchedPartRs = esIndexer.search(pQuery);                                                    // Get Search Results
