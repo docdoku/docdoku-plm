@@ -75,7 +75,7 @@ public class SerialActivity extends Activity {
     @Override
     public boolean isComplete() {
         for(Task task:tasks)
-            if(!task.isApproved())
+            if(!(task.isApproved() || task.isNotToBeDone()))
                 return false;
         
         return true;

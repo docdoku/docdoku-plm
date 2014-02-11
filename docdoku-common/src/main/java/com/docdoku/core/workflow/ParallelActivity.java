@@ -65,7 +65,7 @@ public class ParallelActivity extends Activity {
     private int numberOfApproved(){
         int approved=0;
         for(Task task:tasks){
-            if(task.isApproved())
+            if(task.isApproved() || task.isNotToBeDone())
                 approved++;
         }
         return approved;

@@ -139,12 +139,17 @@ public class Workflow implements Serializable, Cloneable {
         this.setAbortedDate(new Date());
     }
 
-    public void relaunch(Integer relaunchActivityStep) {
+    public void relaunch(int relaunchActivityStep) {
 
         for(Activity a :activities){
+            if(a.getStep() < relaunchActivityStep){ 
+                for(Task t : a.getTasks()){
+                    t.reset(Task.Status.NOT_TO_BE_DONE);
+                }
+            }
             if(a.getStep() >= relaunchActivityStep){
                 for(Task t : a.getTasks()){
-                    t.reset();
+                    t.reset(Task.Status.NOT_STARTED);
                 }
             }
         }
@@ -181,6 +186,9 @@ public class Workflow implements Serializable, Cloneable {
             clonedActivities.add(clonedActivity);
         }
         clone.activities = clonedActivities;
+
+        if (abortedDate != null)
+            clone.abortedDate = (Date) abortedDate.clone();
         return clone;
     }
 

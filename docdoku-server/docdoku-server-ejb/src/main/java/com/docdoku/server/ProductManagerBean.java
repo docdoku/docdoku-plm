@@ -1711,13 +1711,13 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
             WorkflowDAO workflowDAO = new WorkflowDAO(em);
 
-            Integer relaunchActivityStep  = currentActivity.getRelaunchActivity().getStep();
+            int relaunchActivityStep  = currentActivity.getRelaunchActivity().getStep();
 
             // Clone workflow
             Workflow relaunchedWorkflow  = workflow.clone();
             workflowDAO.createWorkflow(relaunchedWorkflow);
 
-            // Move aborted workflow in docM list
+            // Move aborted workflow in partM list
             workflow.abort();
             partRevision.addAbortedWorkflows(workflow);
 

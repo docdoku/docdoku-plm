@@ -896,7 +896,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
             WorkflowDAO workflowDAO = new WorkflowDAO(em);
 
-            Integer relaunchActivityStep  = currentActivity.getRelaunchActivity().getStep();
+            int relaunchActivityStep  = currentActivity.getRelaunchActivity().getStep();
 
             // Clone new workflow
             Workflow relaunchedWorkflow  = workflow.clone();
