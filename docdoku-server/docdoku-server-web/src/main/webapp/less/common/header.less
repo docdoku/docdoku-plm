@@ -48,6 +48,7 @@ body > form {
     ul.breadcrumb-menu{
       > li{
         padding: 8px 0px;
+        border-radius:0;
 
         > a{
           padding: 4px 14px !important;
@@ -89,14 +90,16 @@ body > form {
         &:first-child{
           > a{
             border-left: 1px;
-            border-radius: 10px 0px 0px 10px;
+            border-top-left-radius: 10px;
+            border-bottom-left-radius: 10px;
           }
         }
 
         &:last-child{
           > a{
             border-right: 1px;
-            border-radius: 0px 10px 10px 0px;
+            border-top-right-radius: 10px;
+            border-bottom-right-radius: 10px;
           }
         }
 
