@@ -3,22 +3,18 @@ define([
 	"views/folder_nav",
 	"views/tag_nav",
 	"views/search_nav",
-	"views/workflow_nav",
 	"views/template_nav",
 	"views/checkedout_nav",
-	"views/task_nav",
-    "views/workflow_model_editor"
+	"views/task_nav"
 ],
 function (
 	singletonDecorator,
 	FolderNavView,
 	TagNavView,
 	SearchNavView,
-	WorkflowNavView,
 	TemplateNavView,
 	CheckedoutNavView,
-	TaskNavView,
-    WorkflowModelEditorView
+	TaskNavView
 ) {
 	var Router = Backbone.Router.extend({
 		routes: {
@@ -27,9 +23,6 @@ function (
 			"tags":				"tags",
 			"tags/:id":         "tag",
 			"templates":		"templates",
-			"workflows":		"workflows",
-            "workflow-model-editor/:workflowModelId":  "workflowModelEditor",
-            "workflow-model-editor":  "workflowModelEditorNew",
 			"checkedouts":		"checkedouts",
 			"tasks":	        "tasks",
 			"tasks/:filter":	"tasks",
@@ -52,35 +45,6 @@ function (
 			this.defaults();
 			TagNavView.getInstance().show(id);
 		},
-		workflows: function() {
-			this.defaults();
-			var view = WorkflowNavView.getInstance();
-			view.showContent();
-		},
-        workflowModelEditor: function(workflowModelId) {
-            this.defaults();
-
-            if(!_.isUndefined(this.workflowModelEditorView)){
-                this.workflowModelEditorView.unbindAllEvents();
-            }
-
-            this.workflowModelEditorView = new WorkflowModelEditorView({
-                workflowModelId: decodeURI(workflowModelId)
-            });
-
-            this.workflowModelEditorView.render();
-        },
-        workflowModelEditorNew: function() {
-            this.defaults();
-
-            if(!_.isUndefined(this.workflowModelEditorView)){
-                this.workflowModelEditorView.unbindAllEvents();
-            }
-
-            this.workflowModelEditorView = new WorkflowModelEditorView();
-
-            this.workflowModelEditorView.render();
-        },
 		templates: function() {
 			this.defaults();
 			var view = TemplateNavView.getInstance();
@@ -101,7 +65,6 @@ function (
 		defaults: function() {
 			FolderNavView.getInstance();
 			TagNavView.getInstance();
-			WorkflowNavView.getInstance();
 			TemplateNavView.getInstance();
 			CheckedoutNavView.getInstance();
             SearchNavView.getInstance();
