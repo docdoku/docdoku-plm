@@ -1,5 +1,5 @@
 /*global casper*/
-casper.test.begin('Docdoku can logout user',3, function(){
+casper.test.begin('User can logout',3, function(){
     casper.thenOpen(authUrl);
 
     casper.waitForSelector("#account_name_link", function openAccountDropdown() {

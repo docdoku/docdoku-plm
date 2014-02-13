@@ -1,5 +1,7 @@
 /*global casper*/
 casper.test.begin('Show a part details is available',5, function(){
+    casper.thenOpen(authUrl);
+
     casper.then(function openProductManagement() {
         this.test.assertExists('#products_management_link a', 'Products management link found');
         this.click('#products_management_link a');
@@ -16,7 +18,7 @@ casper.test.begin('Show a part details is available',5, function(){
 
     var partName;
     casper.then(function () {
-        casper.waitForSelector('#part_table',
+        casper.waitForSelector('#part_table tbody tr',
             function showPartDetails() {
                 partName = this.getHTML('#part_table tbody tr td:nth-child(6)');
                 this.test.assertExists('#part_table tbody tr:first-child .part_number', 'First part found');

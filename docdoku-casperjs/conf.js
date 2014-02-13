@@ -1,8 +1,8 @@
-var domain = 'val.docdoku.net';
-var port = '8080';
-var login = 'test';
-var pass = 'test';
-var workspace = 'test';
+var domain = casper.cli.get("domain");
+var port = casper.cli.get("port");
+var login = casper.cli.get("login");
+var pass = casper.cli.get("pass");
+var workspace = casper.cli.get("workspace");
 
 var authUrl = 'http://'+domain+':'+port+'/';
 var userInfoUrl = authUrl+'/api/workspaces/'+workspace+'/users/me';
@@ -24,6 +24,8 @@ casper.options.viewportSize = {
     width: 1680,
     height: 1050
 };
+
+casper.options.waitTimeout = 10000;
 
 casper.setFilter("page.confirm", function(msg) {
     this.echo("Confirm box: "+msg);

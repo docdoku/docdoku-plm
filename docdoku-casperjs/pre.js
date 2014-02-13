@@ -1,6 +1,6 @@
 /*global casper*/
-casper.test.begin('Docdoku can login user',3, function(){
-    casper.start(authUrl, function loginTest(response) {
+casper.test.begin('User can login',3, function(){
+    casper.start(authUrl, function loginTest() {
         this.test.assertExists('form[id="login_form"]', 'Login form found');
         this.fill('form[id="login_form"]', {
             'login_form:login': login,
@@ -11,6 +11,7 @@ casper.test.begin('Docdoku can login user',3, function(){
     });
 
     casper.thenOpen(userInfoUrl, function loggedIn() {
+
         this.test.assertHttpStatus(200, 'Logged in');
     });
 
