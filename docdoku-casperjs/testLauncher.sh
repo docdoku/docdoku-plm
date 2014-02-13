@@ -1,5 +1,5 @@
 #!/bin/sh
-casperjs test   --pre=login.js \
+casperjs test   --pre=pre.js \
                 --post=logout.js \
                 --includes=conf.js \
                 --fail-fast \
