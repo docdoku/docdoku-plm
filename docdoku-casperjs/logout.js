@@ -13,7 +13,7 @@ casper.test.begin('User can logout',3, function(){
     });
 
     casper.thenOpen(userInfoUrl, function loggedOut() {
-        this.test.assert(this.currentHTTPStatus === 401, 'Logged out');
+        this.test.assertHttpStatus(401,'Logged out');
     });
 
     casper.run(function() {
