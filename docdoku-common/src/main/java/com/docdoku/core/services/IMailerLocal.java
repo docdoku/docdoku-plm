@@ -48,4 +48,6 @@ public interface IMailerLocal {
     void sendPartRevisionWorkflowRelaunchedNotification(PartRevision partRevision);
 
     void sendDocumentRevisionWorkflowRelaunchedNotification(DocumentRevision pDocumentRevision);
+
+    void sendIndexerResult(Account account, String workspaceId, boolean hasSuccess, String pMessage);
 }

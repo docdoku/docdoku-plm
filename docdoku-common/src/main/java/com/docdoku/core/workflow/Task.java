@@ -30,68 +30,68 @@ import java.util.Date;
 
 /**
  * <a href="Task.html">Task</a> is the smallest unit of work in a workflow.
- * 
+ *
  * @author Florent Garin
  * @version 1.0, 02/06/08
- * @since   V1.0
+ * @since V1.0
  */
-@Table(name="TASK")
+@Table(name = "TASK")
 @javax.persistence.IdClass(com.docdoku.core.workflow.TaskKey.class)
 @Entity
 public class Task implements Serializable, Cloneable {
 
-    
+
     @Id
-    @ManyToOne(optional=false, fetch=FetchType.EAGER)
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumns({
-        @JoinColumn(name="ACTIVITY_STEP", referencedColumnName="STEP"),
-        @JoinColumn(name="WORKFLOW_ID", referencedColumnName="WORKFLOW_ID")
+            @JoinColumn(name = "ACTIVITY_STEP", referencedColumnName = "STEP"),
+            @JoinColumn(name = "WORKFLOW_ID", referencedColumnName = "WORKFLOW_ID")
     })
     private Activity activity;
-    
+
     @Id
     private int num;
-    
+
     private String title;
-    
+
     @Lob
     private String instructions;
 
-    private int duration=1;
-    
+    private int duration = 1;
+
     @javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date startDate;
-    
-    
-    @ManyToOne(fetch=FetchType.EAGER)
+
+
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumns({
-        @JoinColumn(name="WORKER_LOGIN", referencedColumnName="LOGIN"),
-        @JoinColumn(name="WORKER_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID")
+            @JoinColumn(name = "WORKER_LOGIN", referencedColumnName = "LOGIN"),
+            @JoinColumn(name = "WORKER_WORKSPACE_ID", referencedColumnName = "WORKSPACE_ID")
     })
     private User worker;
-    
+
     private int targetIteration;
     private String closureComment;
-    
+
     @javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date closureDate;
 
     @Lob
     private String signature;
-    
-    private Status status=Status.NOT_STARTED;
-    
-    public enum Status {NOT_STARTED, IN_PROGRESS, APPROVED, REJECTED};
-    
-    
+
+    private Status status = Status.NOT_STARTED;
+
+    public enum Status {NOT_STARTED, IN_PROGRESS, APPROVED, REJECTED, NOT_TO_BE_DONE}
+
+
     public Task() {
     }
 
     public Task(int pNum, String pTitle, String pInstructions, User pWorker) {
-        num=pNum;
-        title=pTitle;
-        worker=pWorker;
-        instructions=pInstructions;
+        num = pNum;
+        title = pTitle;
+        worker = pWorker;
+        instructions = pInstructions;
     }
 
     @XmlTransient
@@ -100,14 +100,14 @@ public class Task implements Serializable, Cloneable {
     }
 
     public int getWorkflowId() {
-        return activity==null?0:activity.getWorkflowId();
+        return activity == null ? 0 : activity.getWorkflowId();
     }
 
     public int getActivityStep() {
-        return activity==null?0:activity.getStep();
+        return activity == null ? 0 : activity.getStep();
     }
-    
-    
+
+
     public int getNum() {
         return num;
     }
@@ -181,12 +181,12 @@ public class Task implements Serializable, Cloneable {
     public void setTargetIteration(int targetIteration) {
         this.targetIteration = targetIteration;
     }
-    
+
     public TaskKey getKey() {
-        return new TaskKey(new ActivityKey(getWorkflowId(), getActivityStep()),num);
+        return new TaskKey(new ActivityKey(getWorkflowId(), getActivityStep()), num);
     }
-    
-    public Date getClosureDate(){
+
+    public Date getClosureDate() {
         return closureDate;
     }
 
@@ -206,79 +206,84 @@ public class Task implements Serializable, Cloneable {
         this.signature = signature;
     }
 
-    public void reject(String pComment, int pTargetIteration){
+    public void reject(String pComment, int pTargetIteration) {
         reject(pComment, pTargetIteration, null);
     }
 
-    public void reject(String pComment, int pTargetIteration, String pSignature){
-        closureDate=new Date();
-        closureComment=pComment;
-        signature=pSignature;
-        status=Status.REJECTED;
-        targetIteration=pTargetIteration;
+    public void reject(String pComment, int pTargetIteration, String pSignature) {
+        closureDate = new Date();
+        closureComment = pComment;
+        signature = pSignature;
+        status = Status.REJECTED;
+        targetIteration = pTargetIteration;
     }
-    
-    public void approve(String pComment, int pTargetIteration){
+
+    public void approve(String pComment, int pTargetIteration) {
         approve(pComment, pTargetIteration, null);
     }
 
-    public void approve(String pComment, int pTargetIteration, String pSignature){
-        closureDate=new Date();
-        closureComment=pComment;
-        signature=pSignature;
-        status=Status.APPROVED;
-        targetIteration=pTargetIteration;
+    public void approve(String pComment, int pTargetIteration, String pSignature) {
+        closureDate = new Date();
+        closureComment = pComment;
+        signature = pSignature;
+        status = Status.APPROVED;
+        targetIteration = pTargetIteration;
     }
-    
-    public void start(){
-        if(isNotStarted()){
-            startDate=new Date();
-            status=Status.IN_PROGRESS;
+
+    public void start() {
+        if (isNotStarted()) {
+            startDate = new Date();
+            status = Status.IN_PROGRESS;
         }
     }
 
-    public void stop(){
-        if(isInProgress()){
+    public void stop() {
+        if (isInProgress()) {
             status = Status.NOT_STARTED;
         }
     }
-    
-    public boolean isNotStarted(){
+
+    public boolean isNotStarted() {
         //because of bug #6277781
-        return status.ordinal()==Status.NOT_STARTED.ordinal();
-    }
-    
-    public boolean isRejected(){
-        //because of bug #6277781
-        return status.ordinal()==Status.REJECTED.ordinal();
-    }
-    
-    public boolean isApproved(){
-        //because of bug #6277781
-        return status.ordinal()==Status.APPROVED.ordinal();
-    }
-    
-    public boolean isInProgress(){
-        //because of bug #6277781
-        return status.ordinal()==Status.IN_PROGRESS.ordinal();
+        return status.ordinal() == Status.NOT_STARTED.ordinal();
     }
 
-    public void reset(){
-        setStatus(Task.Status.NOT_STARTED);
+    public boolean isRejected() {
+        //because of bug #6277781
+        return status.ordinal() == Status.REJECTED.ordinal();
+    }
+
+    public boolean isApproved() {
+        //because of bug #6277781
+        return status.ordinal() == Status.APPROVED.ordinal();
+    }
+
+    public boolean isInProgress() {
+        //because of bug #6277781
+        return status.ordinal() == Status.IN_PROGRESS.ordinal();
+    }
+
+    public boolean isNotToBeDone() {
+        //because of bug #6277781
+        return status.ordinal() == Status.NOT_TO_BE_DONE.ordinal();
+    }
+
+    public void reset(Task.Status status) {
+        setStatus(status);
         setSignature(null);
         setClosureComment(null);
         setClosureDate(null);
         setStartDate(null);
     }
-    
+
     @Override
     public int hashCode() {
         int hash = 1;
-	hash = 31 * hash + (activity==null?0:activity.hashCode());
+        hash = 31 * hash + (activity == null ? 0 : activity.hashCode());
         hash = 31 * hash + num;
-	return hash;
+        return hash;
     }
-    
+
     @Override
     public boolean equals(Object pObj) {
         if (this == pObj) {
@@ -287,15 +292,15 @@ public class Task implements Serializable, Cloneable {
         if (!(pObj instanceof Task))
             return false;
         Task task = (Task) pObj;
-        return ((Tools.safeEquals(task.activity,activity)) && (task.num==num));
+        return ((Tools.safeEquals(task.activity, activity)) && (task.num == num));
     }
-    
+
     @Override
     public String toString() {
         return title;
     }
-    
-    
+
+
     /**
      * perform a deep clone operation
      */
@@ -307,12 +312,12 @@ public class Task implements Serializable, Cloneable {
         } catch (CloneNotSupportedException e) {
             throw new InternalError();
         }
-        if(startDate!=null)
+        if (startDate != null)
             clone.startDate = (Date) startDate.clone();
-        
-        if(closureDate!=null)
+
+        if (closureDate != null)
             clone.closureDate = (Date) closureDate.clone();
-        
+
         return clone;
     }
 }

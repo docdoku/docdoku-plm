@@ -82,8 +82,6 @@ public class AccessRightsTest {
                         MailerBean.class,
                         IGCMSenderLocal.class,
                         GCMSenderBean.class,
-                        IndexerBean.class,
-                        IndexSearcherBean.class,
                         IDocumentManagerLocal.class,
                         DocumentManagerBean.class,
                         DataManagerBean.class,

@@ -23,15 +23,14 @@ package com.docdoku.server;
 import com.docdoku.core.common.Account;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
-import com.docdoku.core.exceptions.AccessRightException;
-import com.docdoku.core.exceptions.StorageException;
-import com.docdoku.core.exceptions.UserNotFoundException;
+import com.docdoku.core.exceptions.*;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.services.IMailerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.core.services.IWorkspaceManagerLocal;
 import com.docdoku.server.dao.UserDAO;
 import com.docdoku.server.dao.WorkspaceDAO;
+import com.docdoku.server.esindexer.ESIndexer;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -57,6 +56,9 @@ public class WorkspaceManagerBean implements IWorkspaceManagerLocal {
 
     @EJB
     private IMailerLocal mailerManager;
+
+    @EJB
+    private ESIndexer esIndexer;
 
     @PersistenceContext
     private EntityManager em;
@@ -98,6 +100,23 @@ public class WorkspaceManagerBean implements IWorkspaceManagerLocal {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
 
+    }
+
+    @Override
+    @RolesAllowed({"users","admin"})
+    public void synchronizeIndexer(String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException {
+        if(userManager.isCallerInRole("admin")){
+            esIndexer.indexWorkspace(workspaceId);
+        }else{
+            User user = userManager.checkWorkspaceReadAccess(workspaceId);
+            Workspace workspace = new WorkspaceDAO(em, dataManager).loadWorkspace(workspaceId);
+
+            if(workspace.getAdmin().getLogin().equals(ctx.getCallerPrincipal().getName())){
+                esIndexer.indexWorkspace(workspaceId);
+            }else{
+                throw new AccessRightException(new Locale(user.getLanguage()),user);
+            }
+        }
     }
 
     private void doWorkspaceDeletion(Workspace workspace){

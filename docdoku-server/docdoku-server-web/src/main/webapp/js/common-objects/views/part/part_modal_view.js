@@ -131,7 +131,6 @@ define(
 
         onSubmitForm:function(e){
 
-            var that = this;
             // cannot pass a collection of cad file to server.
             var cadFile = this.fileListView.collection.first();
             if(cadFile){
@@ -179,7 +178,8 @@ define(
             this.partsManagementView = new PartsManagementView({
                 el:"#iteration-components",
                 collection: new Backbone.Collection(this.iteration.getComponents()),
-                editMode:this.editMode
+                editMode:this.editMode,
+                model: this.model
             }).render();
         },
 

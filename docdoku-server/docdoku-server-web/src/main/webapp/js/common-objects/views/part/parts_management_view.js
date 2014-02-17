@@ -27,7 +27,9 @@ define (
                         $.getJSON('/api/workspaces/' + APP_CONFIG.workspaceId + '/parts/numbers?q=' + query, function(data) {
                             var partNumbers = [];
                             _(data).each(function(d){
-                                partNumbers.push(d.partNumber);
+                                if(!that.model.getNumber() || !(that.model.getNumber() == d.partNumber)){
+                                    partNumbers.push(d.partNumber);
+                                }
                             });
                             process(partNumbers);
                         });
@@ -88,7 +90,7 @@ define (
                 this.addView(model);
             },
 
-            createPart: function(e) {
+            createPart: function() {
                 var newPart = {
                     amount : 1,
                     component:{

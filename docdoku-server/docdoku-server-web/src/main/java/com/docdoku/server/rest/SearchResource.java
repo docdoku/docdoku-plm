@@ -19,8 +19,10 @@
  */
 package com.docdoku.server.rest;
 
+import com.docdoku.core.exceptions.ApplicationException;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentManagerLocal;
+import com.docdoku.core.services.IWorkspaceManagerLocal;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -29,7 +31,10 @@ import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.core.Response;
 
 /**
  *
@@ -49,6 +54,9 @@ public class SearchResource {
     @EJB
     private DocumentResource documentResource;
 
+    @EJB
+    private IWorkspaceManagerLocal workspaceManager;
+
     private Mapper mapper;
 
     public SearchResource() {
@@ -62,6 +70,20 @@ public class SearchResource {
     @Path("{query}/documents/")
     public DocumentsResource getDocumentsResource() {
         return documentsResource;
+    }
+
+
+    @PUT
+    @Path("indexall")
+    public Response synchronizeIndexer(@PathParam("workspaceId") String workspaceId) {
+
+        try{
+            workspaceManager.synchronizeIndexer(workspaceId);
+        }catch(ApplicationException e){
+            return Response.serverError().build();
+        }
+
+        return Response.ok().build();
     }
 
 }
