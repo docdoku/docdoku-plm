@@ -497,9 +497,6 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @RolesAllowed("users")
     @Override
     public DocumentRevision[] searchDocumentRevisions(DocumentSearchQuery pQuery) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, IndexerServerException {
-        String workspaceId = pQuery.getWorkspaceId();
-        //esIndexer.indexAllDocuments(workspaceId);                                                                       // Index all documents of the Query workspace
-        
         User user = userManager.checkWorkspaceReadAccess(pQuery.getWorkspaceId());
         List<DocumentRevision> fetchedDocRs = esIndexer.search(pQuery);                                                 // Get Search Results
 

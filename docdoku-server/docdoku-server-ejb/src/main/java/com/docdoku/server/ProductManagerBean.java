@@ -456,7 +456,6 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             partR.setCheckOutDate(null);
             partR.setCheckOutUser(null);
 
-            //esIndexer.index(partR.getLastIteration());                                                                  // Index the last iteration in ElasticSearch
             for(PartIteration partIteration : partR.getPartIterations()){
                 esIndexer.index(partIteration);                                                                         // Index all iterations in ElasticSearch (decrease old iteration boost factor)
             }
@@ -862,10 +861,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     @RolesAllowed("users")
     @Override
     public List<PartRevision> searchPartRevisions(PartSearchQuery pQuery) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, IndexerServerException {
-        String workspaceId = pQuery.getWorkspaceId();
-//        esIndexer.indexAllParts(workspaceId);                                                                           // Index all parts of the Query workspace
-
-        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+        User user = userManager.checkWorkspaceReadAccess(pQuery.getWorkspaceId());
         List<PartRevision> fetchedPartRs = esIndexer.search(pQuery);                                                    // Get Search Results
 
         Workspace wks = new WorkspaceDAO(new Locale(user.getLanguage()), em).loadWorkspace(pQuery.getWorkspaceId());
