@@ -9,11 +9,12 @@ casper.test.begin('User can logout',3, function(){
 
     casper.then(function logout() {
         this.test.assertExists('#logout_link a', 'Disconnect link found');
-        this.click("#logout_link a");
     });
 
-    casper.thenOpen(userInfoUrl, function loggedOut() {
-        this.test.assertHttpStatus(401,'Logged out');
+    casper.thenClick("#logout_link a", function(){
+        this.thenOpen(userInfoUrl, function loggedIn() {
+            this.test.assertHttpStatus(401,'Logged out');
+        });
     });
 
     casper.run(function() {

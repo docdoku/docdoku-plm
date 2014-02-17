@@ -7,12 +7,12 @@ casper.test.begin('User can login',3, function(){
             'login_form:password': pass
         }, false);
         this.test.assertExists('#login_button_container input','Submit button exists');
-        this.click("#login_button_container input");
     });
 
-    casper.thenOpen(userInfoUrl, function loggedIn() {
-
-        this.test.assertHttpStatus(200, 'Logged in');
+    casper.thenClick("#login_button_container input", function(){
+        this.thenOpen(userInfoUrl, function loggedIn() {
+            this.test.assertHttpStatus(200, 'Logged in');
+        });
     });
 
     casper.then(function cleanup() {
