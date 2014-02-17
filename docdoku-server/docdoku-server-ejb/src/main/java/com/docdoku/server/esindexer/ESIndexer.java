@@ -19,13 +19,14 @@
  */
 package com.docdoku.server.esindexer;
 
+import com.docdoku.core.common.Account;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.Workspace;
-import com.docdoku.core.document.*;
-import com.docdoku.core.exceptions.DocumentRevisionNotFoundException;
-import com.docdoku.core.exceptions.IndexerServerException;
-import com.docdoku.core.exceptions.PartRevisionNotFoundException;
-import com.docdoku.core.exceptions.StorageException;
+import com.docdoku.core.document.DocumentIteration;
+import com.docdoku.core.document.DocumentMaster;
+import com.docdoku.core.document.DocumentRevision;
+import com.docdoku.core.document.DocumentRevisionKey;
+import com.docdoku.core.exceptions.*;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.meta.Tag;
 import com.docdoku.core.product.PartIteration;
@@ -36,6 +37,8 @@ import com.docdoku.core.query.DocumentSearchQuery;
 import com.docdoku.core.query.PartSearchQuery;
 import com.docdoku.core.query.SearchQuery;
 import com.docdoku.core.services.IDataManagerLocal;
+import com.docdoku.core.services.IMailerLocal;
+import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.dao.*;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.parser.PdfTextExtractor;
@@ -62,9 +65,10 @@ import org.elasticsearch.search.SearchHit;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import javax.annotation.Resource;
 import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
-import javax.ejb.EJBException;
+import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -88,6 +92,12 @@ import java.util.zip.ZipInputStream;
 public class ESIndexer{
     private final static String CONF_PROPERTIES="/com/docdoku/server/esindexer/conf.properties";
     private final static Properties CONF = new Properties();
+    private final static String SEARCH_ERROR_LOG_1 = "Search can't be done. The ElasticSearch server doesn't seem to respond.";
+    private static final String DELETE_ERROR_LOG_1 = "Delete index can't be done. The ElasticSearch server doesn't seem to respond.";
+    private static final String INDEX_ERROR_LOG_1 = "Indexing can't be done. The ElasticSearch server doesn't seem to respond.";
+    private static final String INDEX_ERROR_LOG_2 = "Multiple indexing can't be done. The ElasticSearch server doesn't seem to respond.";
+    private static final String INDEX_ERROR_LOG_3 = "Multiple indexing meet some problem: ";
+    private static final String MAIL_ERROR_LOG_1 = "Application can't send a reponse mail";
 
     static{
         try {
@@ -97,11 +107,21 @@ public class ESIndexer{
         }
     }
 
+
     @PersistenceContext
     private EntityManager em;
 
     @EJB
     private IDataManagerLocal dataManager;
+
+    @Resource
+    private SessionContext ctx;
+
+    @EJB
+    private IUserManagerLocal userManager;
+
+    @EJB
+    private IMailerLocal mailer;
 
     public ESIndexer() {
         super();
@@ -114,7 +134,6 @@ public class ESIndexer{
         try{
             return new TransportClient().addTransportAddress(new InetSocketTransportAddress(CONF.getProperty("host"), Integer.parseInt(CONF.getProperty("port"))));
         }catch (NoNodeAvailableException e){
-            Logger.getLogger(ESIndexer.class.getName()).log(Level.SEVERE, null, e);
             throw new IndexerServerException(Locale.getDefault(), "IndexerServerException1");
         }
     }
@@ -149,12 +168,59 @@ public class ESIndexer{
 
             BulkResponse bulkResponse = bulkRequest.execute().actionGet();
             client.close();
-            if (bulkResponse.hasFailures()) {                                                                               // TODO Failure case
-                System.out.println(bulkResponse.buildFailureMessage());
+
+            if (bulkResponse.hasFailures()) {
+                Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, INDEX_ERROR_LOG_3+" \n "+bulkResponse.buildFailureMessage());
             }
-        }catch (NoNodeAvailableException e){
-            Logger.getLogger(ESIndexer.class.getName()).log(Level.SEVERE, null, e);
-            throw new IndexerServerException(Locale.getDefault(), "IndexerServerException1");
+        }catch (IndexerServerException | NoNodeAvailableException e){
+            Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, INDEX_ERROR_LOG_2);
+        }
+    }
+
+    /**
+     * Index all resources in this workspace
+     * @param workspaceId Workspace to index
+     */
+    @Asynchronous
+    public void indexWorkspace(String workspaceId){
+        try{
+            Client client = createClient();
+            BulkRequestBuilder bulkRequest = client.prepareBulk();
+            DocumentMasterDAO docMasterDAO = new DocumentMasterDAO(em);
+            PartMasterDAO partMasterDAO = new PartMasterDAO(em);
+            for(DocumentMaster docM : docMasterDAO.getAllByWorkspace(workspaceId)){
+                for(DocumentRevision docR : docM.getDocumentRevisions()){
+                    for(DocumentIteration docI : docR.getDocumentIterations()){
+                        bulkRequest.add(indexRequest(client, docI));
+                    }
+                }
+            }
+            for(PartMaster partMaster : partMasterDAO.getAllByWorkspace(workspaceId)){
+                for(PartRevision partRev : partMaster.getPartRevisions()){
+                    for(PartIteration partIte : partRev.getPartIterations()){
+                        bulkRequest.add(indexRequest(client, partIte));
+                    }
+                }
+            }
+
+            BulkResponse bulkResponse = bulkRequest.execute().actionGet();
+            client.close();
+
+            String failureMessage;
+            if (bulkResponse.hasFailures()) {
+                failureMessage = bulkResponse.buildFailureMessage();
+                Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, INDEX_ERROR_LOG_3+" \n "+failureMessage);
+            }
+
+            try{
+                String login = ctx.getCallerPrincipal().getName();
+                Account account = userManager.getAccount(login);
+                mailer.sendIndexerResult(account,workspaceId,!bulkResponse.hasFailures(),"");
+            }catch (AccountNotFoundException e){
+                Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, MAIL_ERROR_LOG_1);
+            }
+        }catch (IndexerServerException | NoNodeAvailableException e){
+            Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, INDEX_ERROR_LOG_2);
         }
     }
 
@@ -170,7 +236,7 @@ public class ESIndexer{
                                      .actionGet();
             client.close();
         }catch (NoNodeAvailableException e){
-            Logger.getLogger(ESIndexer.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, INDEX_ERROR_LOG_1);
             throw new IndexerServerException(Locale.getDefault(), "IndexerServerException1");
         }
     }
@@ -187,7 +253,7 @@ public class ESIndexer{
                               .actionGet();
             client.close();
         }catch (NoNodeAvailableException e){
-            Logger.getLogger(ESIndexer.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, INDEX_ERROR_LOG_1);
             throw new IndexerServerException(Locale.getDefault(), "IndexerServerException1");
         }
     }
@@ -205,7 +271,7 @@ public class ESIndexer{
                     .actionGet();
             client.close();
         }catch (NoNodeAvailableException e){
-            Logger.getLogger(ESIndexer.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, DELETE_ERROR_LOG_1);
             throw new IndexerServerException(Locale.getDefault(), "IndexerServerException1");
         }
     }
@@ -223,7 +289,7 @@ public class ESIndexer{
                     .actionGet();
             client.close();
         }catch (NoNodeAvailableException e){
-            Logger.getLogger(ESIndexer.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, DELETE_ERROR_LOG_1);
             throw new IndexerServerException(Locale.getDefault(), "IndexerServerException1");
         }
     }
@@ -259,7 +325,7 @@ public class ESIndexer{
             client.close();
             return listOfDocuments;
         }catch (NoNodeAvailableException e){
-            Logger.getLogger(ESIndexer.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, SEARCH_ERROR_LOG_1);
             throw new IndexerServerException(Locale.getDefault(), "IndexerServerException1");
         }
     }
@@ -292,7 +358,7 @@ public class ESIndexer{
             client.close();
             return listOfParts;
         }catch (NoNodeAvailableException e){
-            Logger.getLogger(ESIndexer.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, SEARCH_ERROR_LOG_1);
             throw new IndexerServerException(Locale.getDefault(), "IndexerServerException1");
         }
 
@@ -346,7 +412,7 @@ public class ESIndexer{
             client.close();
             return ret;
         }catch (NoNodeAvailableException e){
-            Logger.getLogger(ESIndexer.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, SEARCH_ERROR_LOG_1);
             throw new IndexerServerException(Locale.getDefault(), "IndexerServerException1");
         }
     }
@@ -390,7 +456,7 @@ public class ESIndexer{
             client.close();
             return listOfDocuments;
         }catch (NoNodeAvailableException e){
-            Logger.getLogger(ESIndexer.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, SEARCH_ERROR_LOG_1);
             throw new IndexerServerException(Locale.getDefault(), "IndexerServerException1");
         }
     }
@@ -434,7 +500,7 @@ public class ESIndexer{
             client.close();
             return listOfParts;
         }catch (NoNodeAvailableException e){
-            Logger.getLogger(ESIndexer.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, SEARCH_ERROR_LOG_1);
             throw new IndexerServerException(Locale.getDefault(), "IndexerServerException1");
         }
     }
@@ -444,45 +510,29 @@ public class ESIndexer{
      * @param query PartSearchQuery
      * @return List of part revision
      */
+    /*
     public List<Object> searchInAllWorkspace(SearchQuery query) throws IndexerServerException {                                                       // TODO Optimize it
-       /* List<DocumentRevision> listOfDocuments = searchInAllWorkspace((DocumentSearchQuery) query);
-        List<PartRevision> listOfParts = searchInAllWorkspace((PartSearchQuery) query);
-
-        List<Object> ret= new ArrayList<>();
-        ret.addAll(listOfDocuments);
-        ret.addAll(listOfParts);
-        return ret;*/
         return null; //TODO
-    }
+    }*/
 
     /**
      * Get the Index request for a documentIteration in ElasticSearch Cluster
      * @param doc The document iteration to index
      */
-    private IndexRequestBuilder indexRequest(Client client, DocumentIteration doc){
-        try{
-            XContentBuilder jsonDoc = documentIterationToJSON(doc);
-            return client.prepareIndex(doc.getWorkspaceId().toLowerCase(), "document", doc.getKey().toString())
-                         .setSource(jsonDoc);
-        }catch (NoNodeAvailableException e){
-            e.printStackTrace();
-            return null;
-        }
+    private IndexRequestBuilder indexRequest(Client client, DocumentIteration doc) throws NoNodeAvailableException{
+        XContentBuilder jsonDoc = documentIterationToJSON(doc);
+        return client.prepareIndex(doc.getWorkspaceId().toLowerCase(), "document", doc.getKey().toString())
+                     .setSource(jsonDoc);
     }
 
     /**
      * Get the Index request for a partIteration in ElasticSearch Cluster
      * @param part The part iteration to index
      */
-    private IndexRequestBuilder indexRequest(Client client, PartIteration part){
-        try{
-            XContentBuilder jsonDoc = partIterationToJSON(part);
-            return client.prepareIndex(part.getWorkspaceId().toLowerCase(), "part", part.getKey().toString())
-                         .setSource(jsonDoc);
-        }catch (NoNodeAvailableException e){
-            e.printStackTrace();
-            return null;
-        }
+    private IndexRequestBuilder indexRequest(Client client, PartIteration part) throws NoNodeAvailableException{
+        XContentBuilder jsonDoc = partIterationToJSON(part);
+        return client.prepareIndex(part.getWorkspaceId().toLowerCase(), "part", part.getKey().toString())
+                     .setSource(jsonDoc);
     }
 
     /**
@@ -493,10 +543,9 @@ public class ESIndexer{
     private QueryBuilder getQueryBuilder(DocumentSearchQuery docQuery){
         QueryBuilder qr;
         if(docQuery.getDocMId() != null){
-            //qr = QueryBuilders.fuzzyLikeThisQuery().likeText(docQuery.getDocMId());                                     // TODO Cut the query and make a boolQuery() with all the words
-            qr = QueryBuilders.disMaxQuery()
+            qr = QueryBuilders.disMaxQuery()                                                                            // TODO Cut the query and make a boolQuery() with all the words
                               .add(QueryBuilders.fuzzyLikeThisQuery()
-                                                .likeText(docQuery.getDocMId()))
+                                      .likeText(docQuery.getDocMId()))
                               .add(QueryBuilders.queryString(docQuery.getDocMId()+"*")
                                                 .boost(2.5f))
                               .tieBreaker(1.2f);
@@ -549,8 +598,7 @@ public class ESIndexer{
      */
     private QueryBuilder getQueryBuilder (PartSearchQuery partQuery){
         QueryBuilder qr;
-        if(partQuery.getPartNumber() != null){
-            qr = QueryBuilders.fuzzyLikeThisQuery().likeText(partQuery.getPartNumber());                                // TODO Cut the query and make a boolQuery() with all the words
+        if(partQuery.getPartNumber() != null){                                                                          // TODO Cut the query and make a boolQuery() with all the words
             qr = QueryBuilders.disMaxQuery()
                     .add(QueryBuilders.fuzzyLikeThisQuery()
                             .likeText(partQuery.getPartNumber()))
@@ -633,7 +681,7 @@ public class ESIndexer{
      * @param pQuery Search criterion
      * @return the uniWorkspace Search Request
      */
-    private SearchRequestBuilder getSearchRequest(Client client, String workspaceId, String type, QueryBuilder pQuery){
+    private SearchRequestBuilder getSearchRequest(Client client, String workspaceId, String type, QueryBuilder pQuery) throws NoNodeAvailableException{
         return client.prepareSearch(workspaceId)
                      .setTypes(type)
                      .setSearchType(SearchType.QUERY_THEN_FETCH)
@@ -702,7 +750,7 @@ public class ESIndexer{
                 tmp.endObject();
             return tmp;
         } catch (IOException e) {
-            e.printStackTrace();
+            Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, "The document " + doc + " can't be indexed.");
             return null;
         }
     }
@@ -714,8 +762,8 @@ public class ESIndexer{
      */
     private XContentBuilder partIterationToJSON(PartIteration part) {
         try {
-            float nbIteration = part.getPartRevision().getLastIteration().getIteration();                            // Calcul of the number of iteration
-            float seniority = nbIteration - part.getIteration();                                                         // Calcul of iteration seniority
+            float nbIteration = part.getPartRevision().getLastIteration().getIteration();                               // Calcul of the number of iteration
+            float seniority = nbIteration - part.getIteration();                                                        // Calcul of iteration seniority
             float coef = (seniority/nbIteration) * 10;                                                                  // Calcul of decrease factor
             XContentBuilder tmp = XContentFactory.jsonBuilder()
                 .startObject();
@@ -758,11 +806,11 @@ public class ESIndexer{
                         }
                         tmp.endObject();
                     }
-                    setField(tmp,"negative_boost_value","",coef);
+                    setField(tmp, "negative_boost_value", "", coef);                                                       // Set the decrease factor
                 tmp.endObject();
             return tmp;
         } catch (IOException e) {
-            e.printStackTrace();
+            Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, "The part " + part + " can't be indexed.");
             return null;
         }
     }
@@ -784,7 +832,7 @@ public class ESIndexer{
     }
 
     private XContentBuilder setField(XContentBuilder object, String field, String value, float coef ) throws IOException {
-        value = (value != null && value !="") ? value : " ";
+        value = (value != null && !value.equals("")) ? value : " ";
         object.field(field, value, coef);
         return object;
     }
@@ -808,8 +856,8 @@ public class ESIndexer{
      * @param inputStream Stream of the resource
      * @return String to index
      */
-    private String streamToString(String fullName, InputStream inputStream){
-        String strRet = "";
+    private String streamToString(String fullName, InputStream inputStream) {
+        String strRet = " ";
 
         try {
             int lastDotIndex = fullName.lastIndexOf('.');
@@ -884,9 +932,12 @@ public class ESIndexer{
                     break;
                 case ".pdf":                                                                                            // PDF Document
                     PdfReader reader = new PdfReader(inputStream);
-                    strRet = "";
                     for(int i=1; i<=reader.getNumberOfPages(); i++){
-                        strRet += PdfTextExtractor.getTextFromPage(reader,i);
+                        try{
+                            strRet += PdfTextExtractor.getTextFromPage(reader,i);
+                        }catch (Exception e){
+                            Logger.getLogger(ESIndexer.class.getName()).log(Level.INFO,"A problem occur in the file : "+fullName+", indexing");
+                        }
                     }
                     reader.close();
                     break;
@@ -898,7 +949,7 @@ public class ESIndexer{
                 default: break;
             }
         } catch (ParserConfigurationException|SAXException|IOException ex) {
-            throw new EJBException(ex);
+            Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, "The file " + fullName + " can't be indexed.");
         }
         return strRet;
     }

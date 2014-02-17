@@ -31,6 +31,7 @@ import javax.annotation.Resource;
 import javax.ejb.Asynchronous;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
+import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.Transport;
@@ -67,15 +68,15 @@ public class MailerBean implements IMailerLocal {
         try {
             javax.mail.Message message = new MimeMessage(mailSession);
 
-            for (int i = 0; i < pSubscribers.length; i++) {
+            for (User pSubscriber : pSubscribers) {
                 try {
-                    Locale locale = new Locale(pSubscribers[i].getLanguage());
-                    message.addRecipient(javax.mail.Message.RecipientType.TO,
-                            new InternetAddress(pSubscribers[i].getEmail(),
-                            pSubscribers[i].getName()));
+                    Locale locale = new Locale(pSubscriber.getLanguage());
+                    message.addRecipient(Message.RecipientType.TO,
+                            new InternetAddress(pSubscriber.getEmail(),
+                                    pSubscriber.getName()));
                     message.setSubject(getStateNotificationSubject(locale));
                     message.setSentDate(new Date());
-                    message.setContent(getStateNotificationMessage(pDocumentRevision,locale),
+                    message.setContent(getStateNotificationMessage(pDocumentRevision, locale),
                             "text/html; charset=utf-8");
                     message.setFrom();
                     Transport.send(message);
@@ -100,16 +101,16 @@ public class MailerBean implements IMailerLocal {
     public void sendIterationNotification(User[] pSubscribers,
                                           DocumentRevision pDocumentRevision) {
         try {
-            for (int i = 0; i < pSubscribers.length; i++) {
+            for (User pSubscriber : pSubscribers) {
                 try {
-                    Locale locale = new Locale(pSubscribers[i].getLanguage());
-                    javax.mail.Message message = new MimeMessage(mailSession);
-                    message.addRecipient(javax.mail.Message.RecipientType.TO,
-                            new InternetAddress(pSubscribers[i].getEmail(),
-                            pSubscribers[i].getName()));
+                    Locale locale = new Locale(pSubscriber.getLanguage());
+                    Message message = new MimeMessage(mailSession);
+                    message.addRecipient(Message.RecipientType.TO,
+                            new InternetAddress(pSubscriber.getEmail(),
+                                    pSubscriber.getName()));
                     message.setSubject(getIterationNotificationSubject(locale));
                     message.setSentDate(new Date());
-                    message.setContent(getIterationNotificationMessage(pDocumentRevision,locale),
+                    message.setContent(getIterationNotificationMessage(pDocumentRevision, locale),
                             "text/html; charset=utf-8");
                     message.setFrom();
                     Transport.send(message);
@@ -275,6 +276,29 @@ public class MailerBean implements IMailerLocal {
         }
     }
 
+    @Asynchronous
+    @Override
+    public void sendIndexerResult(Account account, String workspaceId, boolean hasSuccess, String pMessage) {
+        try {
+            Locale locale = new Locale(account.getLanguage());
+            javax.mail.Message message = new MimeMessage(mailSession);
+            message.setRecipient(javax.mail.Message.RecipientType.TO,
+                    new InternetAddress(account.getEmail(),account.getName()));
+            message.setSubject(getIndexerResultSubject(locale, hasSuccess));
+            message.setSentDate(new Date());
+            message.setContent(getIndexerResultMessage(workspaceId, pMessage, hasSuccess, locale),
+                    "text/html; charset=utf-8");
+            message.setFrom();
+            Transport.send(message);
+        } catch (UnsupportedEncodingException pUEEx) {
+            LOGGER.warning("Mail address format error.");
+            LOGGER.warning(pUEEx.getMessage());
+        } catch (MessagingException pMEx) {
+            LOGGER.severe("Message format error.");
+            LOGGER.severe(pMEx.getMessage());
+        }
+    }
+
     private void sendWorkflowRelaunchedNotification(String userName, String userEmail, String userLanguage, String workspaceId, PartRevision partRevision){
         try {
             Locale locale = new Locale(userLanguage);
@@ -374,11 +398,20 @@ public class MailerBean implements IMailerLocal {
         Object[] args = {
                 pDocumentRevision,
                 pDocumentRevision.getLastIteration().getCreationDate(),
-            new Integer(pDocumentRevision.getLastIteration().getIteration()),
+                pDocumentRevision.getLastIteration().getIteration(),
                 pDocumentRevision.getLastIteration().getAuthor(), getURL(pDocumentRevision)};
         ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
         return MessageFormat.format(bundle.getString("IterationNotification_text"), args);
+    }
 
+    private String getIndexerResultMessage(String workspaceId, String pMessage, boolean hasSuccess, Locale pLocale){
+        Object[] args = {
+                workspaceId,
+                pMessage
+        };
+        ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
+        return (hasSuccess) ? MessageFormat.format(bundle.getString("Indexer_success_text"), args) :
+                              MessageFormat.format(bundle.getString("Indexer_failure_text"), args);
     }
 
     private String getStateNotificationMessage(DocumentRevision pDocumentRevision, Locale pLocale) {
@@ -433,5 +466,9 @@ public class MailerBean implements IMailerLocal {
         ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
         return bundle.getString("DocumentRevision_workflow_relaunched_title");
 
+    }
+    private String getIndexerResultSubject(Locale pLocale, boolean hasSuccess){
+        ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
+        return (hasSuccess) ? bundle.getString("Indexer_success_title") : bundle.getString("Indexer_failure_title");
     }
 }

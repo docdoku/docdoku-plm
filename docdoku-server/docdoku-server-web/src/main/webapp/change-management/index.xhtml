@@ -7,7 +7,7 @@
         >
     <ui:composition template="/WEB-INF/templates/moduleTemplate.xhtml">
         <ui:define name="styles">
-            <link rel="stylesheet/less" type="text/css" href="#{request.contextPath}/less/document-management/style.less?v=${BUILD_NUMBER}"/>
+            <link rel="stylesheet/less" type="text/css" href="#{request.contextPath}/less/change-management/style.less?v=${BUILD_NUMBER}"/>
         </ui:define>
         <ui:define name="title">
             <f:loadBundle var="i18nDM" basename="com.docdoku.server.localization.explorer_resource"/>
@@ -24,7 +24,7 @@
                 };
                 $(document).ready(function() {
                     require.config({
-                        baseUrl: "${request.contextPath}/js/document-management",
+                        baseUrl: "${request.contextPath}/js/change-management",
                         paths: {
                             "require": "../lib/require/require.min-2.1.2",
                             "text": "../lib/require/text-2.0.3",
@@ -52,7 +52,7 @@
             </script>
         </ui:define>
         <ui:define name="header">
-            <em:header moduleName="document-management" moduleIcon="icon-file" moduleTranslate="#{i18nTemplate['toplinks.document']}" breadcrumbDept="2" />
+            <em:header moduleName="change-management" moduleIcon="icon-refresh" moduleTranslate="#{i18nTemplate['toplinks.workflow']}" breadcrumbDept="2" />
         </ui:define>
         <ui:define name="content">
             <div id="workspace"></div>

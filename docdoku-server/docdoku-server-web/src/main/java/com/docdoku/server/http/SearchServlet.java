@@ -34,13 +34,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.net.URLDecoder;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
-public class PSServlet extends HttpServlet {
+public class SearchServlet extends HttpServlet {
 
     @EJB
     private IUserManagerLocal userManager;
@@ -50,13 +49,9 @@ public class PSServlet extends HttpServlet {
             HttpServletResponse pResponse)
             throws ServletException, IOException {
 
-        HttpSession sessionHTTP = pRequest.getSession();
+
         String login = pRequest.getRemoteUser();
-
-        Map<String, Workspace> administeredWorkspaces = (Map<String, Workspace>) sessionHTTP.getAttribute("administeredWorkspaces");
-
         String[] pathInfos = Pattern.compile("/").split(pRequest.getRequestURI());
-
         int offset;
         if (pRequest.getContextPath().equals("")) {
             offset = 2;
@@ -65,53 +60,43 @@ public class PSServlet extends HttpServlet {
         }
 
         String workspaceID = null;
-        String productID = null;
-        
         try {
             workspaceID = URLDecoder.decode(pathInfos[offset], "UTF-8");
         } catch (IndexOutOfBoundsException ex) {
-            
+            //we'll try to switch to default workspace
         }
 
-        try {
-            productID = URLDecoder.decode(pathInfos[offset+1], "UTF-8");
-        } catch (IndexOutOfBoundsException ex) {
-            
-        }
-        
-        if (workspaceID == null ) {
-            pResponse.sendRedirect(pRequest.getContextPath() + "/faces/admin/workspace/workspacesMenu.xhtml");
-            
-        } else if(productID == null){
-            pResponse.sendRedirect(pRequest.getContextPath() + "/faces/admin/workspace/workspacesMenu.xhtml");
-            
-        }
-        else {
+        HttpSession sessionHTTP = pRequest.getSession();
+        Map<String, Workspace> administeredWorkspaces = (Map<String, Workspace>) sessionHTTP.getAttribute("administeredWorkspaces");
+
+        if (workspaceID == null) {
+            Set<Workspace> regularWorkspaces = (Set<Workspace>) sessionHTTP.getAttribute("regularWorkspaces");
+            if (administeredWorkspaces != null && !administeredWorkspaces.isEmpty()) {
+                workspaceID = administeredWorkspaces.values().iterator().next().getId();
+            } else if (regularWorkspaces != null && !regularWorkspaces.isEmpty()) {
+                workspaceID = regularWorkspaces.iterator().next().getId();
+            }
+
+            if(workspaceID == null){
+                pResponse.sendRedirect(pRequest.getContextPath() + "/faces/admin/workspace/workspacesMenu.xhtml");
+            }else{
+                pResponse.sendRedirect(pRequest.getContextPath() + "/search/" + workspaceID);
+            }
+        } else {
             try{
                 UserGroup[] userGroups = userManager.getUserGroupsForUser(new UserKey(workspaceID, login));
                 String[] groups = new String[userGroups.length];
                 for(int i = 0 ; i< userGroups.length;i++){
                     groups[i] = "\""+userGroups[i].toString()+"\"";
                 }
-                pRequest.setAttribute("groups",StringUtils.join(groups,","));
+                pRequest.setAttribute("groups", StringUtils.join(groups, ","));
             } catch (UserNotFoundException e) {
             }
-            pRequest.setAttribute("workspaceAdmin", administeredWorkspaces.containsKey(workspaceID));
-            pRequest.setAttribute("urlRoot", getUrlRoot(pRequest));
-            pRequest.setAttribute("workspaceID", workspaceID);
-            pRequest.setAttribute("productID", productID);
-            pRequest.setAttribute("login", login);
-            pRequest.getRequestDispatcher("/faces/product-structure/index.xhtml").forward(pRequest, pResponse);
-        }
-    }
 
-    private static String getUrlRoot(HttpServletRequest pRequest) {
-        URL url = null;
-        try {
-            url = new URL(new URL(pRequest.getRequestURL().toString()),"/");
-        } catch (MalformedURLException e) {
-            return null;
+            pRequest.setAttribute("workspaceAdmin", administeredWorkspaces.containsKey(workspaceID));
+            pRequest.setAttribute("workspaceID", workspaceID);
+            pRequest.setAttribute("login", login);
+            pRequest.getRequestDispatcher("/faces/search/index.xhtml").forward(pRequest, pResponse);
         }
-        return url.toString();
     }
 }

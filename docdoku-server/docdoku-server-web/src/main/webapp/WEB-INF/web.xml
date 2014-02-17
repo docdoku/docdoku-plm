@@ -87,6 +87,14 @@
         <servlet-class>com.docdoku.server.http.PMServlet</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>CMServlet</servlet-name>
+        <servlet-class>com.docdoku.server.http.CMServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>SearchServlet</servlet-name>
+        <servlet-class>com.docdoku.server.http.SearchServlet</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>VisualizationServlet</servlet-name>
         <servlet-class>com.docdoku.server.http.VisualizationServlet</servlet-class>
     </servlet>
@@ -125,6 +133,14 @@
     <servlet-mapping>
         <servlet-name>PMServlet</servlet-name>
         <url-pattern>/product-management/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CMServlet</servlet-name>
+        <url-pattern>/change-management/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>SearchServlet</servlet-name>
+        <url-pattern>/search/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>VisualizationServlet</servlet-name>
