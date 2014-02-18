@@ -90,7 +90,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     public BinaryResource saveFileInTemplate(DocumentMasterTemplateKey pDocMTemplateKey, String pName, long pSize) throws WorkspaceNotFoundException, NotAllowedException, DocumentMasterTemplateNotFoundException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException, CreationException, AccessRightException {
         User user = userManager.checkWorkspaceWriteAccess(pDocMTemplateKey.getWorkspaceId());
 
-        if (!NamingConvention.correct(pName)) {
+        if (!NamingConvention.correctNameFile(pName)) {
             throw new NotAllowedException(Locale.getDefault(), "NotAllowedException9");
         }
 
@@ -121,7 +121,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @Override
     public BinaryResource saveFileInDocument(DocumentIterationKey pDocPK, String pName, long pSize) throws WorkspaceNotFoundException, NotAllowedException, DocumentRevisionNotFoundException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException, CreationException, AccessRightException {
         User user = checkDocumentRevisionWriteAccess(new DocumentRevisionKey(pDocPK.getWorkspaceId(), pDocPK.getDocumentMasterId(), pDocPK.getDocumentRevisionVersion()));
-        if (!NamingConvention.correct(pName)) {
+        if (!NamingConvention.correctNameFile(pName)) {
             throw new NotAllowedException(Locale.getDefault(), "NotAllowedException9");
         }
 
