@@ -59,7 +59,7 @@ public abstract class Activity implements Serializable, Cloneable {
 
     @OneToMany(mappedBy="activity", cascade=CascadeType.ALL, fetch=FetchType.EAGER)
     @OrderBy(value="num")
-    protected List<Task> tasks=new LinkedList<Task>();
+    protected List<Task> tasks=new LinkedList<>();
 
     @ManyToOne(optional = true,fetch=FetchType.EAGER)
     @JoinTable (
@@ -135,14 +135,14 @@ public abstract class Activity implements Serializable, Cloneable {
      */
     @Override
     public Activity clone() {
-        Activity clone = null;
+        Activity clone;
         try {
             clone = (Activity) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new InternalError();
         }
         //perform a deep copy
-        List<Task> clonedTasks = new LinkedList<Task>();
+        List<Task> clonedTasks = new LinkedList<>();
         for (Task task : tasks) {
             Task clonedTask=task.clone();
             clonedTask.setActivity(clone);
@@ -168,6 +168,15 @@ public abstract class Activity implements Serializable, Cloneable {
             }
         }
         return false;
+    }
+
+    public boolean isToDo(){
+        for(Task task : tasks){
+            if(task.isNotToBeDone()){
+                return false;
+            }
+        }
+        return true;
     }
 
     public abstract void relaunch();

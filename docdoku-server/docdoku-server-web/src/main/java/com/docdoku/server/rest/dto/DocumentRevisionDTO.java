@@ -191,7 +191,6 @@ public class DocumentRevisionDTO implements Serializable, Comparable<DocumentRev
                 return null;
             } else {
                 return documentIterations.get(index);
-                 
             }
         } else {
             return null;
