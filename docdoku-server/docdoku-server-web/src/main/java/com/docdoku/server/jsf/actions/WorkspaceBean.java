@@ -163,11 +163,12 @@ public class WorkspaceBean {
         workspace.setFolderLocked(freezeFolders);
         if (newAdmin != null) {
             workspace.setAdmin(newAdmin);
-
-            Map<String, Workspace> administeredWorkspaces = (Map<String, Workspace>) sessionHTTP.getAttribute("administeredWorkspaces");
-            administeredWorkspaces.remove(workspace.getId());
-            Set<Workspace> regularWorkspaces = (Set<Workspace>) sessionHTTP.getAttribute("regularWorkspaces");
-            regularWorkspaces.add(workspace);
+            if(!userManager.isCallerInRole("admin")){
+                Map<String, Workspace> administeredWorkspaces = (Map<String, Workspace>) sessionHTTP.getAttribute("administeredWorkspaces");
+                administeredWorkspaces.remove(workspace.getId());
+                Set<Workspace> regularWorkspaces = (Set<Workspace>) sessionHTTP.getAttribute("regularWorkspaces");
+                regularWorkspaces.add(workspace);
+            }
         }
 
         return "/admin/workspace/editWorkspace.xhtml";

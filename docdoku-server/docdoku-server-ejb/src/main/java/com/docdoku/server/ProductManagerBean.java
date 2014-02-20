@@ -626,11 +626,16 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         }
     }
 
-    @RolesAllowed({"users"})
+    @RolesAllowed({"users","admin"})
     @Override
     public List<ConfigurationItem> getConfigurationItems(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
-        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
-        return new ConfigurationItemDAO(new Locale(user.getLanguage()), em).findAllConfigurationItems(pWorkspaceId);
+        Locale locale = Locale.getDefault();
+        if(!userManager.isCallerInRole("admin")){
+            User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
+            locale = new Locale(user.getLanguage());
+        }
+
+        return new ConfigurationItemDAO(locale, em).findAllConfigurationItems(pWorkspaceId);
     }
 
     /*
