@@ -626,7 +626,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         }
     }
 
-    @RolesAllowed({"users","admin"})
+    @RolesAllowed({"users"})
     @Override
     public List<ConfigurationItem> getConfigurationItems(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
@@ -862,7 +862,8 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     @Override
     public List<PartRevision> searchPartRevisions(PartSearchQuery pQuery) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, IndexerServerException {
         User user = userManager.checkWorkspaceReadAccess(pQuery.getWorkspaceId());
-        List<PartRevision> fetchedPartRs = esIndexer.search(pQuery);                                                    // Get Search Results
+        List<PartRevision> fetchedPartRs = esIndexer.search(pQuery);
+        // Get Search Results
 
         Workspace wks = new WorkspaceDAO(new Locale(user.getLanguage()), em).loadWorkspace(pQuery.getWorkspaceId());
         boolean isAdmin = wks.getAdmin().getLogin().equals(user.getLogin());
@@ -871,20 +872,23 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         while (ite.hasNext()) {
             PartRevision partR = ite.next();
 
-            if ((partR.isCheckedOut()) && (!partR.getCheckOutUser().equals(user))) {                                    // Remove CheckedOut PartRevision From Results
+            if ((partR.isCheckedOut()) && (!partR.getCheckOutUser().equals(user))) {
+            // Remove CheckedOut PartRevision From Results
                 partR = partR.clone();
                 partR.removeLastIteration();
                 ite.set(partR);
             }
 
             //Check access rights
-            if (!isAdmin && partR.getACL() != null && !partR.getACL().hasReadAccess(user)) {                            // Check Rigth Acces
+            if (!isAdmin && partR.getACL() != null && !partR.getACL().hasReadAccess(user)) {
+            // Check Rigth Acces
                 ite.remove();
             }
         }
         return new ArrayList<>(fetchedPartRs);
     }
 
+    @RolesAllowed("users")
     @Override
     public PartMaster findPartMasterByCADFileName(String workspaceId, String cadFileName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
@@ -901,6 +905,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         }
 
     }
+
     @RolesAllowed("users")
     @Override
     public List<Baseline> findBaselinesWherePartRevisionHasIterations(PartRevisionKey partRevisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException {
@@ -1031,6 +1036,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         return layer;
     }
 
+    @RolesAllowed("users")
     @Override
     public Layer updateLayer(ConfigurationItemKey pKey, int pId, String pName) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, ConfigurationItemNotFoundException, LayerNotFoundException, UserNotActiveException {
         Layer layer = getLayer(pId);
@@ -1039,6 +1045,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         return layer;
     }
 
+    @RolesAllowed("users")
     @Override
     public Marker createMarker(int pLayerId, String pTitle, String pDescription, double pX, double pY, double pZ) throws LayerNotFoundException, UserNotFoundException, WorkspaceNotFoundException, AccessRightException {
         Layer layer = new LayerDAO(em).loadLayer(pLayerId);
@@ -1052,6 +1059,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         return marker;
     }
 
+    @RolesAllowed("users")
     @Override
     public void deleteMarker(int pLayerId, int pMarkerId) throws WorkspaceNotFoundException, UserNotActiveException, LayerNotFoundException, UserNotFoundException, AccessRightException, MarkerNotFoundException {
         Layer layer = new LayerDAO(em).loadLayer(pLayerId);
@@ -1215,18 +1223,18 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         return new PartRevisionDAO(new Locale(user.getLanguage()), em).getPartRevisionsFiltered(user, pWorkspaceId, start, pMaxResults);
     }
 
-    @RolesAllowed({"users","admin"})
+    @RolesAllowed({"users"})
     @Override
-    public int getPartRevisionsCount(String pWorkspaceId) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, UserNotActiveException {
+    public int getPartsInWorkspaceCount(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
         return new PartRevisionDAO(new Locale(user.getLanguage()), em).getPartRevisionCountFiltered(user, pWorkspaceId);
     }
 
     @RolesAllowed({"users","admin"})
     @Override
-    public int getPartMastersCount(String pWorkspaceId) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, UserNotActiveException {
-        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
-        return new PartMasterDAO(new Locale(user.getLanguage()), em).getPartMasterCount(pWorkspaceId);
+    public int getTotalNumberOfParts(String pWorkspaceId) throws AccessRightException, WorkspaceNotFoundException, AccountNotFoundException {
+        Account account = userManager.checkAdmin(pWorkspaceId);
+        return new PartRevisionDAO(new Locale(account.getLanguage()), em).getTotalNumberOfParts(pWorkspaceId);
     }
 
     @RolesAllowed("users")
@@ -1270,7 +1278,8 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         // delete ElasticSearch Index for this revision iteration
         for (PartRevision partRevision : partMaster.getPartRevisions()) {
             for (PartIteration partIteration : partRevision.getPartIterations()) {
-                esIndexer.delete(partIteration);                                                                       // Remove ElasticSearch Index for this PartIteration
+                esIndexer.delete(partIteration);
+                // Remove ElasticSearch Index for this PartIteration
             }
         }
 
@@ -1305,7 +1314,8 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
         // delete ElasticSearch Index for this revision iteration
         for (PartIteration partIteration : partR.getPartIterations()) {
-            esIndexer.delete(partIteration);                                                                       // Remove ElasticSearch Index for this PartIteration
+            esIndexer.delete(partIteration);
+            // Remove ElasticSearch Index for this PartIteration
         }
 
         if(isLastRevision){
@@ -1565,6 +1575,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         return new BaselineConfigSpec(baseline);
     }
 
+    @RolesAllowed("users")
     @Override
     public void deleteBaseline(ConfigurationItemKey configurationItemKey, int baselineId) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException {
         User user = userManager.checkWorkspaceWriteAccess(configurationItemKey.getWorkspace());
@@ -1612,22 +1623,23 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed({"users","admin"})
     @Override
-    public Long getDiskUsageForPartsInWorkspace(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
-        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
-        return new PartMasterDAO(new Locale(user.getLanguage()), em).getDiskUsageForPartsInWorkspace(pWorkspaceId);
+    public long getDiskUsageForPartsInWorkspace(String pWorkspaceId) throws WorkspaceNotFoundException, AccessRightException, AccountNotFoundException {
+        Account account = userManager.checkAdmin(pWorkspaceId);
+        return new PartMasterDAO(new Locale(account.getLanguage()), em).getDiskUsageForPartsInWorkspace(pWorkspaceId);
     }
 
     @RolesAllowed({"users","admin"})
     @Override
-    public Long getDiskUsageForPartTemplatesInWorkspace(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
-        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
-        return new PartMasterDAO(new Locale(user.getLanguage()), em).getDiskUsageForPartTemplatesInWorkspace(pWorkspaceId);
+    public long getDiskUsageForPartTemplatesInWorkspace(String pWorkspaceId) throws WorkspaceNotFoundException, AccessRightException, AccountNotFoundException {
+        Account account = userManager.checkAdmin(pWorkspaceId);
+        return new PartMasterDAO(new Locale(account.getLanguage()), em).getDiskUsageForPartTemplatesInWorkspace(pWorkspaceId);
     }
 
     @RolesAllowed({"users","admin"})
-    public PartRevision[] getAllCheckedOutPartRevisions(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
-        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
-        List<PartRevision> partRevisions = new PartRevisionDAO(new Locale(user.getLanguage()), em).findAllCheckedOutPartRevisions(pWorkspaceId);
+    @Override
+    public PartRevision[] getAllCheckedOutPartRevisions(String pWorkspaceId) throws WorkspaceNotFoundException, AccessRightException, AccountNotFoundException {
+        Account account = userManager.checkAdmin(pWorkspaceId);
+        List<PartRevision> partRevisions = new PartRevisionDAO(new Locale(account.getLanguage()), em).findAllCheckedOutPartRevisions(pWorkspaceId);
         return partRevisions.toArray(new PartRevision[partRevisions.size()]);
     }
 

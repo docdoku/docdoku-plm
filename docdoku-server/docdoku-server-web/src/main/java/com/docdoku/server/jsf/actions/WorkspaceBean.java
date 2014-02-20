@@ -43,9 +43,6 @@ import java.util.*;
 public class WorkspaceBean {
 
     @EJB
-    private IDocumentManagerLocal documentService;
-
-    @EJB
     private IWorkspaceManagerLocal workspaceManager;
 
     @EJB
@@ -115,7 +112,6 @@ public class WorkspaceBean {
     
     public String addUser() throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException, UserGroupNotFoundException, NotAllowedException, AccountNotFoundException, UserAlreadyExistsException, FolderAlreadyExistsException, CreationException {
         Workspace workspace = adminState.getCurrentWorkspace();
-        User[] users = documentService.getUsers(workspace.getId());
         //TODO switch to a more JSF style code
         HttpServletRequest request = (HttpServletRequest) (FacesContext.getCurrentInstance().getExternalContext().getRequest());
         

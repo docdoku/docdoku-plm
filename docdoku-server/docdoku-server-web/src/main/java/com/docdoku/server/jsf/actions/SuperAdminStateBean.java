@@ -51,14 +51,14 @@ public class SuperAdminStateBean implements Serializable {
     public SuperAdminStateBean(){
     }
 
-    public JsonObject getDiskSpaceUsageStats() throws AccountNotFoundException, UserNotFoundException {
+    public JsonObject getDiskSpaceUsageStats() throws AccountNotFoundException {
 
         JsonObjectBuilder diskUsage = Json.createObjectBuilder();
 
         Workspace[] allWorkspaces = userManager.getAdministratedWorkspaces();
 
         for(Workspace workspace:allWorkspaces){
-            Long workspaceDiskUsage = workspaceService.getDiskUsageInWorkspace(workspace.getId());
+            long workspaceDiskUsage = workspaceService.getDiskUsageInWorkspace(workspace.getId());
             diskUsage.add(workspace.getId(), workspaceDiskUsage);
         }
 
@@ -66,7 +66,7 @@ public class SuperAdminStateBean implements Serializable {
 
     }
 
-    public JsonObject getUsersStats() throws WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException, AccountNotFoundException {
+    public JsonObject getUsersStats() throws AccountNotFoundException, WorkspaceNotFoundException, AccessRightException {
 
         JsonObjectBuilder userStats = Json.createObjectBuilder();
 
@@ -81,14 +81,14 @@ public class SuperAdminStateBean implements Serializable {
 
     }
 
-    public JsonObject getDocsStats() throws AccountNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+    public JsonObject getDocsStats() throws AccountNotFoundException, WorkspaceNotFoundException, AccessRightException {
 
         JsonObjectBuilder docStats = Json.createObjectBuilder();
 
         Workspace[] allWorkspaces = userManager.getAdministratedWorkspaces();
 
         for(Workspace workspace:allWorkspaces){
-            int documentsCount = documentService.getDocumentsCountInWorkspace(workspace.getId());
+            int documentsCount = documentService.getTotalNumberOfDocuments(workspace.getId());
             docStats.add(workspace.getId(), documentsCount);
         }
 
@@ -111,14 +111,14 @@ public class SuperAdminStateBean implements Serializable {
 
     }
 
-    public JsonObject getPartsStats() throws AccountNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException, WorkspaceNotFoundException {
+    public JsonObject getPartsStats() throws AccountNotFoundException, AccessRightException, WorkspaceNotFoundException {
 
         JsonObjectBuilder partsStats = Json.createObjectBuilder();
 
         Workspace[] allWorkspaces = userManager.getAdministratedWorkspaces();
 
         for(Workspace workspace:allWorkspaces){
-            int productsCount = productService.getPartMastersCount(workspace.getId());
+            int productsCount = productService.getTotalNumberOfParts(workspace.getId());
             partsStats.add(workspace.getId(), productsCount);
         }
 

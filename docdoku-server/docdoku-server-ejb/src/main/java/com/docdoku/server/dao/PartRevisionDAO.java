@@ -81,18 +81,18 @@ public class PartRevisionDAO {
         return query.getResultList();
     }
 
-    public int getPartRevisionCount(String pWorkspaceId) {
-        return ((Number) em.createNamedQuery("PartRevision.countByWorkspace")
-                .setParameter("workspaceId", pWorkspaceId)
-                .getSingleResult()).intValue();
-    }
-
     public List<PartRevision> getPartRevisions(String pWorkspaceId, int pStart, int pMaxResults) {
         return em.createNamedQuery("PartRevision.findByWorkspace", PartRevision.class)
                 .setParameter("workspaceId", pWorkspaceId)
                 .setFirstResult(pStart)
                 .setMaxResults(pMaxResults)
                 .getResultList();
+    }
+
+    public int getTotalNumberOfParts(String pWorkspaceId) {
+        return ((Number)em.createNamedQuery("PartRevision.countByWorkspace")
+                .setParameter("workspaceId", pWorkspaceId)
+                .getSingleResult()).intValue();
     }
 
     public int getPartRevisionCountFiltered(User caller, String workspaceId) {

@@ -48,16 +48,6 @@ public class UserDAO {
         mLocale = Locale.getDefault();
     }
 
-    public User loadAdmin(String userLogin) throws UserNotFoundException {
-        Query query = em.createQuery("SELECT DISTINCT u FROM User u WHERE u.login = :userLogin");
-        try{
-            User admin = (User) query.setParameter("userLogin",userLogin).getSingleResult();
-            return admin;
-        }catch(NoResultException ex){
-            throw new UserNotFoundException(mLocale, userLogin);
-        }
-    }
-
     public User loadUser(UserKey pUserKey) throws UserNotFoundException {
         User user = em.find(User.class, pUserKey);
         if (user == null) {

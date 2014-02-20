@@ -125,13 +125,7 @@ public class PartMasterDAO {
                 .getResultList();
     }
 
-    public int getPartMasterCount(String pWorkspaceId) {
-        return ((Number)em.createNamedQuery("PartMaster.countByWorkspace")
-                .setParameter("workspaceId", pWorkspaceId)
-                .getSingleResult()).intValue();
-    }
-
-    public Long getDiskUsageForPartsInWorkspace(String pWorkspaceId) {
+    public long getDiskUsageForPartsInWorkspace(String pWorkspaceId) {
         Number result = ((Number)em.createNamedQuery("BinaryResource.diskUsageInPath")
                 .setParameter("path", pWorkspaceId+"/parts/%")
                 .getSingleResult());
@@ -139,7 +133,7 @@ public class PartMasterDAO {
         return result != null ? result.longValue() : 0L;
     }
 
-    public Long getDiskUsageForPartTemplatesInWorkspace(String pWorkspaceId) {
+    public long getDiskUsageForPartTemplatesInWorkspace(String pWorkspaceId) {
         Number result = ((Number)em.createNamedQuery("BinaryResource.diskUsageInPath")
                 .setParameter("path", pWorkspaceId+"/part-templates/%")
                 .getSingleResult());

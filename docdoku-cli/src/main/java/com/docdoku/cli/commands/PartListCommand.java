@@ -51,7 +51,7 @@ public class PartListCommand extends AbstractCommandLine {
         IProductManagerWS productS = ScriptingTools.createProductService(getServerURL(), user, password);
 
         if(count){
-            int partMastersCount = productS.getPartMastersCount(workspace);
+            int partMastersCount = productS.getTotalNumberOfParts(workspace);
             return JSONOutput.printPartMastersCount(partMastersCount);
         }else{
             List<PartMaster> partMasters = productS.getPartMasters(workspace, start, max);

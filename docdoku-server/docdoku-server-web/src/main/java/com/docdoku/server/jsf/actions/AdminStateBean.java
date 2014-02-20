@@ -56,16 +56,16 @@ public class AdminStateBean implements Serializable {
     public AdminStateBean() {
     }
 
-    public User[] getUsers() throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
+    public User[] getUsers() throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException {
         return documentService.getUsers(selectedWorkspace);
     }
     
-    public User[] getUsersInGroup() throws UserGroupNotFoundException, WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException{
+    public User[] getUsersInGroup() throws UserGroupNotFoundException, WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException, AccountNotFoundException {
         UserGroup ug = userManager.getUserGroup(new UserGroupKey(selectedWorkspace,selectedGroup));
         return ug.getUsers().toArray(new User[ug.getUsers().size()]);
     }
     
-    public User[] getUsersToManage() throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
+    public User[] getUsersToManage() throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException {
         User[] users = documentService.getUsers(selectedWorkspace);
         List<User> usersToManage=new ArrayList<User>();
         Map<String, List<UserGroup>> usersGroups = getUsersGroups();
@@ -78,11 +78,11 @@ public class AdminStateBean implements Serializable {
         return usersToManage.toArray(new User[usersToManage.size()]);
     }
     
-    public UserGroup[] getGroups() throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
+    public UserGroup[] getGroups() throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccountNotFoundException {
         return userManager.getUserGroups(selectedWorkspace);
     }
     
-    public Map<String, WorkspaceUserMembership> getUserMembers() throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
+    public Map<String, WorkspaceUserMembership> getUserMembers() throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccountNotFoundException {
 
         WorkspaceUserMembership[] userMemberships = userManager.getWorkspaceUserMemberships(selectedWorkspace);
         Map<String, WorkspaceUserMembership> userMembersMap = new HashMap<String, WorkspaceUserMembership>();
@@ -92,7 +92,7 @@ public class AdminStateBean implements Serializable {
         return userMembersMap;
     }
 
-    public Map<String, WorkspaceUserGroupMembership> getGroupMembers() throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
+    public Map<String, WorkspaceUserGroupMembership> getGroupMembers() throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccountNotFoundException {
         WorkspaceUserGroupMembership[] groupMemberships = userManager.getWorkspaceUserGroupMemberships(selectedWorkspace);
         Map<String, WorkspaceUserGroupMembership> groupMembersMap = new HashMap<String, WorkspaceUserGroupMembership>();
         for (WorkspaceUserGroupMembership membership : groupMemberships) {
@@ -102,7 +102,7 @@ public class AdminStateBean implements Serializable {
         return groupMembersMap;
     }
 
-    public Map<String, List<UserGroup>> getUsersGroups() throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
+    public Map<String, List<UserGroup>> getUsersGroups() throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccountNotFoundException {
         Map<String, List<UserGroup>> usersGroups = new HashMap<String, List<UserGroup>>();
         UserGroup[] groups = getGroups();
         for (UserGroup group : groups) {
@@ -118,28 +118,28 @@ public class AdminStateBean implements Serializable {
         return usersGroups;
     }
 
-    public int getUsersCount() throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
+    public int getUsersCount() throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException {
         return documentService.getUsers(selectedWorkspace).length;
     }
 
-    public int getDocumentsCount() throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
-        return documentService.getDocumentsCountInWorkspace(selectedWorkspace);
+    public int getDocumentsCount() throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException {
+        return documentService.getTotalNumberOfDocuments(selectedWorkspace);
     }
 
-    public int getProductsCount() throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException {
+    public int getProductsCount() throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         return productService.getConfigurationItems(selectedWorkspace).size();
     }
 
-    public int getPartsCount() throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException {
-        return productService.getPartMastersCount(selectedWorkspace);
+    public int getPartsCount() throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException {
+        return productService.getTotalNumberOfParts(selectedWorkspace);
     }
 
-    public JsonObject getDiskSpaceUsageStats() throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException, AccountNotFoundException {
+    public JsonObject getDiskSpaceUsageStats() throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException {
 
-        Long documentDiskUsage = documentService.getDiskUsageForDocumentsInWorkspace(selectedWorkspace);
-        Long partsDiskUsage = productService.getDiskUsageForPartsInWorkspace(selectedWorkspace);
-        Long documentTemplatesDiskUsage = documentService.getDiskUsageForDocumentTemplatesInWorkspace(selectedWorkspace);
-        Long partTemplatesDiskUsage = productService.getDiskUsageForPartTemplatesInWorkspace(selectedWorkspace);
+        long documentDiskUsage = documentService.getDiskUsageForDocumentsInWorkspace(selectedWorkspace);
+        long partsDiskUsage = productService.getDiskUsageForPartsInWorkspace(selectedWorkspace);
+        long documentTemplatesDiskUsage = documentService.getDiskUsageForDocumentTemplatesInWorkspace(selectedWorkspace);
+        long partTemplatesDiskUsage = productService.getDiskUsageForPartTemplatesInWorkspace(selectedWorkspace);
 
         return Json.createObjectBuilder()
         .add("documents", documentDiskUsage)
@@ -148,7 +148,7 @@ public class AdminStateBean implements Serializable {
         .add("part-templates", partTemplatesDiskUsage).build();
     }
 
-    public JsonObject getCheckedOutDocumentsStats() throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException, AccountNotFoundException {
+    public JsonObject getCheckedOutDocumentsStats() throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException {
 
         DocumentRevision[] checkedOutDocumentRevisions = documentService.getAllCheckedOutDocumentRevisions(selectedWorkspace);
         JsonObjectBuilder statsByUserBuilder = Json.createObjectBuilder();
@@ -170,7 +170,7 @@ public class AdminStateBean implements Serializable {
 
     }
 
-    public JsonObject getCheckedOutPartsStats() throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException, AccountNotFoundException {
+    public JsonObject getCheckedOutPartsStats() throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException {
 
         PartRevision[] checkedOutPartRevisions = productService.getAllCheckedOutPartRevisions(selectedWorkspace);
         JsonObjectBuilder statsByUserBuilder = Json.createObjectBuilder();
@@ -194,7 +194,7 @@ public class AdminStateBean implements Serializable {
 
 
 
-    public JsonArray getUsersInWorkspace() throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException, AccountNotFoundException {
+    public JsonArray getUsersInWorkspace() throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException {
 
         JsonArrayBuilder usersJSONArrayBuilder = Json.createArrayBuilder();
         User[] users = documentService.getUsers(selectedWorkspace);
@@ -205,7 +205,7 @@ public class AdminStateBean implements Serializable {
 
     }
 
-    public JsonObject getUsersStats() throws WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException {
+    public JsonObject getUsersStats() throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccountNotFoundException, AccessRightException {
 
         WorkspaceUserMembership[] workspaceUserMemberships = userManager.getWorkspaceUserMemberships(selectedWorkspace);
         WorkspaceUserGroupMembership[] workspaceUserGroupMemberships = userManager.getWorkspaceUserGroupMemberships(selectedWorkspace);

@@ -97,7 +97,7 @@ public class WorkspaceDAO {
         }
     }
 
-    public Long getDiskUsageForWorkspace(String pWorkspaceId) {
+    public long getDiskUsageForWorkspace(String pWorkspaceId) {
         Number result = ((Number)em.createNamedQuery("BinaryResource.diskUsageInPath")
                 .setParameter("path", pWorkspaceId+"/%")
                 .getSingleResult());

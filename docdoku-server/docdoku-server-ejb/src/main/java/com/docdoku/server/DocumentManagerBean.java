@@ -379,6 +379,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         }
     }
 
+    @RolesAllowed("users")
     @Override
     public DocumentRevision[] getAllDocumentsInWorkspace(String workspaceId, int start, int pMaxResults) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
 
@@ -399,15 +400,25 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         return docRs.toArray(new DocumentRevision[docRs.size()]);
     }
 
+    @RolesAllowed("users")
     @Override
     public int getDocumentsInWorkspaceCount(String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         return new DocumentRevisionDAO(new Locale(user.getLanguage()), em).getDocumentRevisionsCountFiltered(user, workspaceId);
     }
 
+    @RolesAllowed({"users","admin"})
+    @Override
+    public int getTotalNumberOfDocuments(String pWorkspaceId) throws WorkspaceNotFoundException, AccessRightException, AccountNotFoundException {
+        Account account = userManager.checkAdmin(pWorkspaceId);
+        DocumentRevisionDAO documentRevisionDAO = new DocumentRevisionDAO(new Locale(account.getLanguage()),em);
+        return documentRevisionDAO.getTotalNumberOfDocuments(pWorkspaceId);
+    }
+
     @RolesAllowed("users")
     @Override
-    public DocumentRevision[] getCheckedOutDocumentRevisions(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException{        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
+    public DocumentRevision[] getCheckedOutDocumentRevisions(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException{
+        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
         List<DocumentRevision> docRs = new DocumentRevisionDAO(new Locale(user.getLanguage()), em).findCheckedOutDocRs(user);
         return docRs.toArray(new DocumentRevision[docRs.size()]);
     }
@@ -718,9 +729,9 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
     @RolesAllowed({"users","admin"})
     @Override
-    public DocumentRevision[] getAllCheckedOutDocumentRevisions(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
-        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
-        List<DocumentRevision> docRs = new DocumentRevisionDAO(new Locale(user.getLanguage()), em).findAllCheckedOutDocRevisions(pWorkspaceId);
+    public DocumentRevision[] getAllCheckedOutDocumentRevisions(String pWorkspaceId) throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException {
+        Account account = userManager.checkAdmin(pWorkspaceId);
+        List<DocumentRevision> docRs = new DocumentRevisionDAO(new Locale(account.getLanguage()), em).findAllCheckedOutDocRevisions(pWorkspaceId);
         return docRs.toArray(new DocumentRevision[docRs.size()]);
     }
 
@@ -1015,19 +1026,8 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         return docR;
     }
 
-    /**
-     * Remove a tag from a DocumentMaster
-     * @param pDocRPK DocumentRevision with the tag to remove
-     * @param pTag The tag to remove
-     * @return The DocumentMaster without the tag
-     * @throws WorkspaceNotFoundException
-     * @throws NotAllowedException
-     * @throws DocumentRevisionNotFoundException
-     * @throws AccessRightException
-     * @throws UserNotFoundException
-     * @throws UserNotActiveException
-     */
     @RolesAllowed("users")
+    @Override
     public DocumentRevision removeTag(DocumentRevisionKey pDocRPK, String pTag)
             throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, DocumentRevisionNotFoundException, NotAllowedException, IndexerServerException {
 
@@ -1140,7 +1140,8 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
                             e.printStackTrace();
                         }
                     }
-                    esIndexer.delete(doc);                                                                              // Remove ElasticSearch Index for this DocumentIteration
+                    esIndexer.delete(doc);
+                    // Remove ElasticSearch Index for this DocumentIteration
                 }
             }
             return pks;
@@ -1198,7 +1199,8 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
                     e.printStackTrace();
                 }
 
-                esIndexer.delete(doc);                                                                                  // Remove ElasticSearch Index for this DocumentIteration
+                esIndexer.delete(doc);
+                // Remove ElasticSearch Index for this DocumentIteration
             }
         }
 
@@ -1507,9 +1509,9 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
     @RolesAllowed({"users","admin"})
     @Override
-    public User[] getUsers(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
-        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
-        return new UserDAO(new Locale(user.getLanguage()), em).findAllUsers(pWorkspaceId);
+    public User[] getUsers(String pWorkspaceId) throws WorkspaceNotFoundException, AccessRightException, AccountNotFoundException {
+        Account account = userManager.checkAdmin(pWorkspaceId);
+        return new UserDAO(new Locale(account.getLanguage()), em).findAllUsers(pWorkspaceId);
     }
 
     @RolesAllowed("users")
@@ -1536,25 +1538,17 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
     @RolesAllowed({"users","admin"})
     @Override
-    public int getDocumentsCountInWorkspace(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
-        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
-        DocumentRevisionDAO documentRevisionDAO = new DocumentRevisionDAO(new Locale(user.getLanguage()),em);
-        return documentRevisionDAO.getDocumentsCountInWorkspace(pWorkspaceId);
-    }
-
-    @RolesAllowed({"users","admin"})
-    @Override
-    public Long getDiskUsageForDocumentsInWorkspace(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
-        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
-        DocumentRevisionDAO documentRevisionDAO = new DocumentRevisionDAO(new Locale(user.getLanguage()),em);
+    public long getDiskUsageForDocumentsInWorkspace(String pWorkspaceId) throws WorkspaceNotFoundException, AccessRightException, AccountNotFoundException {
+        Account account = userManager.checkAdmin(pWorkspaceId);
+        DocumentRevisionDAO documentRevisionDAO = new DocumentRevisionDAO(new Locale(account.getLanguage()),em);
         return documentRevisionDAO.getDiskUsageForDocumentsInWorkspace(pWorkspaceId);
     }
 
     @RolesAllowed({"users","admin"})
     @Override
-    public Long getDiskUsageForDocumentTemplatesInWorkspace(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
-        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
-        DocumentRevisionDAO documentRevisionDAO = new DocumentRevisionDAO(new Locale(user.getLanguage()),em);
+    public long getDiskUsageForDocumentTemplatesInWorkspace(String pWorkspaceId) throws WorkspaceNotFoundException, AccessRightException, AccountNotFoundException {
+        Account account = userManager.checkAdmin(pWorkspaceId);
+        DocumentRevisionDAO documentRevisionDAO = new DocumentRevisionDAO(new Locale(account.getLanguage()),em);
         return documentRevisionDAO.getDiskUsageForDocumentTemplatesInWorkspace(pWorkspaceId);
     }
 

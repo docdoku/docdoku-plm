@@ -76,13 +76,7 @@ public class SearchResource {
     @PUT
     @Path("indexall")
     public Response synchronizeIndexer(@PathParam("workspaceId") String workspaceId) {
-
-        try{
-            workspaceManager.synchronizeIndexer(workspaceId);
-        }catch(ApplicationException e){
-            return Response.serverError().build();
-        }
-
+        workspaceManager.synchronizeIndexer(workspaceId);
         return Response.ok().build();
     }
 
