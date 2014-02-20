@@ -78,6 +78,7 @@ import javax.xml.parsers.SAXParserFactory;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -266,7 +267,7 @@ public class ESIndexer{
     public void delete(DocumentIteration doc) throws IndexerServerException {
         try{
             Client client = createClient();
-            client.prepareDelete(doc.getWorkspaceId().toLowerCase(), "document", doc.getKey().toString())
+            client.prepareDelete(formatIndexName(doc.getWorkspaceId()), "document", doc.getKey().toString())
                     .execute()
                     .actionGet();
             client.close();
@@ -284,7 +285,7 @@ public class ESIndexer{
     public void delete(PartIteration part) throws IndexerServerException {
         try{
             Client client = createClient();
-            client.prepareDelete(part.getWorkspaceId().toLowerCase(), "part", part.getKey().toString())
+            client.prepareDelete(formatIndexName(part.getWorkspaceId()), "part", part.getKey().toString())
                     .execute()
                     .actionGet();
             client.close();
@@ -303,7 +304,7 @@ public class ESIndexer{
         try{
             Client client = createClient();
             QueryBuilder qr = getQueryBuilder(docQuery);
-            SearchRequestBuilder srb = getSearchRequest(client, docQuery.getWorkspaceId().toLowerCase(), "document", qr);
+            SearchRequestBuilder srb = getSearchRequest(client, formatIndexName(docQuery.getWorkspaceId()), "document", qr);
             SearchResponse sr = srb.execute().actionGet();
 
 
@@ -339,7 +340,7 @@ public class ESIndexer{
         try{
             Client client = createClient();
             QueryBuilder qr = getQueryBuilder(partQuery);
-            SearchRequestBuilder srb = getSearchRequest(client, partQuery.getWorkspaceId().toLowerCase(), "part", qr);
+            SearchRequestBuilder srb = getSearchRequest(client, formatIndexName(partQuery.getWorkspaceId()), "part", qr);
             SearchResponse sr = srb.execute().actionGet();
 
             List<PartRevision> listOfParts = new ArrayList<>();
@@ -374,8 +375,8 @@ public class ESIndexer{
             Client client = createClient();
             QueryBuilder qr = getQueryBuilder(query);
             MultiSearchRequestBuilder srbm = client.prepareMultiSearch();
-            srbm.add(getSearchRequest(client, query.getWorkspaceId().toLowerCase(), "document", qr));
-            srbm.add(getSearchRequest(client, query.getWorkspaceId().toLowerCase(), "part", qr));
+            srbm.add(getSearchRequest(client, formatIndexName(query.getWorkspaceId()), "document", qr));
+            srbm.add(getSearchRequest(client, formatIndexName(query.getWorkspaceId()), "part", qr));
             MultiSearchResponse srm = srbm.execute().actionGet();
 
             List<Object> ret= new ArrayList<>();
@@ -429,7 +430,7 @@ public class ESIndexer{
             MultiSearchRequestBuilder srbm = client.prepareMultiSearch();
             WorkspaceDAO wDAO = new WorkspaceDAO(em);
             for(Workspace w : wDAO.getAll()){
-                srbm.add(getSearchRequest(client, w.getId().toLowerCase(), "document", qr));
+                srbm.add(getSearchRequest(client, formatIndexName(w.getId()), "document", qr));
             }
             MultiSearchResponse srm = srbm.execute().actionGet();
 
@@ -473,7 +474,7 @@ public class ESIndexer{
             MultiSearchRequestBuilder srbm = client.prepareMultiSearch();
             WorkspaceDAO wDAO = new WorkspaceDAO(em);
             for(Workspace w : wDAO.getAll()){
-                srbm.add(getSearchRequest(client, w.getId().toLowerCase(), "part", qr));
+                srbm.add(getSearchRequest(client, formatIndexName(w.getId()), "part", qr));
             }
             MultiSearchResponse srm = srbm.execute().actionGet();
 
@@ -521,8 +522,8 @@ public class ESIndexer{
      */
     private IndexRequestBuilder indexRequest(Client client, DocumentIteration doc) throws NoNodeAvailableException{
         XContentBuilder jsonDoc = documentIterationToJSON(doc);
-        return client.prepareIndex(doc.getWorkspaceId().toLowerCase(), "document", doc.getKey().toString())
-                     .setSource(jsonDoc);
+        return client.prepareIndex(formatIndexName(doc.getWorkspaceId()), "document", doc.getKey().toString())
+                         .setSource(jsonDoc);
     }
 
     /**
@@ -531,7 +532,7 @@ public class ESIndexer{
      */
     private IndexRequestBuilder indexRequest(Client client, PartIteration part) throws NoNodeAvailableException{
         XContentBuilder jsonDoc = partIterationToJSON(part);
-        return client.prepareIndex(part.getWorkspaceId().toLowerCase(), "part", part.getKey().toString())
+        return client.prepareIndex(formatIndexName(part.getWorkspaceId()), "part", part.getKey().toString())
                      .setSource(jsonDoc);
     }
 
@@ -812,6 +813,20 @@ public class ESIndexer{
         } catch (IOException e) {
             Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, "The part " + part + " can't be indexed.");
             return null;
+        }
+    }
+
+    /**
+     * Convert the workspaceId to a Elastic Search index name
+     *
+     * @param workspaceId Id to convert
+     * @return The workspaceId without uppercase and space
+     */
+    private String formatIndexName(String workspaceId){
+        try {
+            return java.net.URLEncoder.encode(workspaceId.toLowerCase(), "UTF-8").replace("&", "&&").replace("+", "&20").replace("%","&25");
+        } catch (UnsupportedEncodingException e) {
+            return workspaceId.toLowerCase().replace("&", "&&").replace(" ", "&20").replace("%","&25");
         }
     }
 

@@ -68,7 +68,7 @@ public class ActivityDozerConverter extends DozerConverter<Activity, ActivityDTO
             throw new IllegalArgumentException("Activity type not supported");
         }
 
-        return new ActivityDTO(activity.getStep(), tasksDTO, activity.getLifeCycleState(), type, tasksToComplete, activity.isComplete(), activity.isStopped(), activity.isInProgress(), relaunchStep);
+        return new ActivityDTO(activity.getStep(), tasksDTO, activity.getLifeCycleState(), type, tasksToComplete, activity.isComplete(), activity.isStopped(), activity.isInProgress(), activity.isToDo(), relaunchStep);
     }
 
     @Override

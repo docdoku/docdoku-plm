@@ -108,12 +108,14 @@ define([
             var that = this;
             this.$lifecycleActivities.empty();
             _.each(workflow.activities,function(activity){
-                activity.parentWorkflowId = that.workflow.id;
-                var lifecycleActivityView = new LifecycleActivityView().setActivity(activity).setEntityType(that.entityType).render();
-                that.$lifecycleActivities.append(lifecycleActivityView.$el);
-                lifecycleActivityView.on("activity:change",function(){
-                    that.trigger("lifecycle:change");
-                });
+                if(activity && activity.toDo){
+                    activity.parentWorkflowId = that.workflow.id;
+                    var lifecycleActivityView = new LifecycleActivityView().setActivity(activity).setEntityType(that.entityType).render();
+                    that.$lifecycleActivities.append(lifecycleActivityView.$el);
+                    lifecycleActivityView.on("activity:change",function(){
+                        that.trigger("lifecycle:change");
+                    });
+                }
             });
         }
 

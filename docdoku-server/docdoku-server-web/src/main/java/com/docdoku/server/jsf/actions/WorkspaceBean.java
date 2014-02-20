@@ -27,6 +27,7 @@ import com.docdoku.core.exceptions.*;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.core.services.IWorkspaceManagerLocal;
+import com.docdoku.core.util.NamingConvention;
 
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
@@ -51,8 +52,8 @@ public class WorkspaceBean {
     @ManagedProperty(value = "#{adminStateBean}")
     private AdminStateBean adminState;
 
-    private Map<String, Boolean> selectedGroups = new HashMap<String, Boolean>();
-    private Map<String, Boolean> selectedLogins = new HashMap<String, Boolean>();
+    private Map<String, Boolean> selectedGroups = new HashMap<>();
+    private Map<String, Boolean> selectedLogins = new HashMap<>();
     private String loginToAdd;
     private String groupToCreate;
     private String workspaceAdmin;
@@ -160,14 +161,17 @@ public class WorkspaceBean {
         return "/admin/workspace/editWorkspace.xhtml";
     }
 
-    public String createWorkspace() throws FolderAlreadyExistsException, UserAlreadyExistsException, WorkspaceAlreadyExistsException, CreationException {
-
+    public String createWorkspace() throws FolderAlreadyExistsException, UserAlreadyExistsException, WorkspaceAlreadyExistsException, CreationException, NotAllowedException {
         //TODO switch to a more JSF style code
         HttpServletRequest request = (HttpServletRequest) (FacesContext.getCurrentInstance().getExternalContext().getRequest());
         HttpSession sessionHTTP = request.getSession();
 
         Account account = (Account) sessionHTTP.getAttribute("account");
         Map<String, Workspace> administeredWorkspaces = (Map<String, Workspace>) sessionHTTP.getAttribute("administeredWorkspaces");
+
+        if (!NamingConvention.correct(workspaceId)) {
+            throw new NotAllowedException(new Locale(account.getLanguage()), "NotAllowedException9");
+        }
 
         Workspace workspace = userManager.createWorkspace(workspaceId, account, workspaceDescription, freezeFolders);
 
@@ -239,7 +243,7 @@ public class WorkspaceBean {
     }
 
     private String[] getGroupIds() {
-        List<String> groupIds = new ArrayList<String>();
+        List<String> groupIds = new ArrayList<>();
         for (Map.Entry<String, Boolean> entry : selectedGroups.entrySet()) {
             if (entry.getValue()) {
                 groupIds.add(entry.getKey());
@@ -249,7 +253,7 @@ public class WorkspaceBean {
     }
 
     private String[] getLogins() {
-        List<String> logins = new ArrayList<String>();
+        List<String> logins = new ArrayList<>();
         for (Map.Entry<String, Boolean> entry : selectedLogins.entrySet()) {
             if (entry.getValue()) {
                 logins.add(entry.getKey());

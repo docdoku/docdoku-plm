@@ -496,7 +496,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     @Override
     public BinaryResource saveGeometryInPartIteration(PartIterationKey pPartIPK, String pName, int quality, long pSize, double radius) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, PartRevisionNotFoundException, FileAlreadyExistsException, CreationException {
         User user = userManager.checkWorkspaceReadAccess(pPartIPK.getWorkspaceId());
-        if (!NamingConvention.correct(pName)) {
+        if (!NamingConvention.correctNameFile(pName)) {
             throw new NotAllowedException(Locale.getDefault(), "NotAllowedException9");
         }
 
@@ -533,7 +533,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     @Override
     public BinaryResource saveNativeCADInPartIteration(PartIterationKey pPartIPK, String pName, long pSize) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, PartRevisionNotFoundException, FileAlreadyExistsException, CreationException {
         User user = userManager.checkWorkspaceReadAccess(pPartIPK.getWorkspaceId());
-        if (!NamingConvention.correct(pName)) {
+        if (!NamingConvention.correctNameFile(pName)) {
             throw new NotAllowedException(Locale.getDefault(), "NotAllowedException9");
         }
 
@@ -595,7 +595,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     @Override
     public BinaryResource saveFileInPartIteration(PartIterationKey pPartIPK, String pName, long pSize) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, PartRevisionNotFoundException, FileAlreadyExistsException, CreationException {
         User user = userManager.checkWorkspaceReadAccess(pPartIPK.getWorkspaceId());
-        if (!NamingConvention.correct(pName)) {
+        if (!NamingConvention.correctNameFile(pName)) {
             throw new NotAllowedException(Locale.getDefault(), "NotAllowedException9");
         }
 
@@ -1163,7 +1163,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     public BinaryResource saveFileInTemplate(PartMasterTemplateKey pPartMTemplateKey, String pName, long pSize) throws WorkspaceNotFoundException, NotAllowedException, PartMasterTemplateNotFoundException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException, CreationException {
         User user = userManager.checkWorkspaceReadAccess(pPartMTemplateKey.getWorkspaceId());
         //TODO checkWorkspaceWriteAccess ?
-        if (!NamingConvention.correct(pName)) {
+        if (!NamingConvention.correctNameFile(pName)) {
             throw new NotAllowedException(Locale.getDefault(), "NotAllowedException9");
         }
 
