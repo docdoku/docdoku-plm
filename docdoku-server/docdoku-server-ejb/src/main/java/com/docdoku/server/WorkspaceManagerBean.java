@@ -23,13 +23,14 @@ package com.docdoku.server;
 import com.docdoku.core.common.Account;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
-import com.docdoku.core.exceptions.*;
+import com.docdoku.core.exceptions.AccessRightException;
+import com.docdoku.core.exceptions.AccountNotFoundException;
+import com.docdoku.core.exceptions.StorageException;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.services.IMailerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.core.services.IWorkspaceManagerLocal;
 import com.docdoku.server.dao.AccountDAO;
-import com.docdoku.server.dao.UserDAO;
 import com.docdoku.server.dao.WorkspaceDAO;
 import com.docdoku.server.esindexer.ESIndexer;
 
@@ -89,11 +90,13 @@ public class WorkspaceManagerBean implements IWorkspaceManagerLocal {
             if(userManager.isCallerInRole("admin")){
                 Workspace workspace = new WorkspaceDAO(em, dataManager).loadWorkspace(workspaceId);
                 doWorkspaceDeletion(workspace);
+                esIndexer.deleteWorkspace(workspaceId);
             }else{
                 User user = userManager.checkWorkspaceReadAccess(workspaceId);
                 Workspace workspace = new WorkspaceDAO(em, dataManager).loadWorkspace(workspaceId);
                 if(workspace.getAdmin().getLogin().equals(ctx.getCallerPrincipal().getName())){
                    doWorkspaceDeletion(workspace);
+                    esIndexer.deleteWorkspace(workspaceId);
                 }else{
                     throw new AccessRightException(new Locale(user.getLanguage()),user);
                 }
@@ -124,8 +127,6 @@ public class WorkspaceManagerBean implements IWorkspaceManagerLocal {
             LOGGER.severe(e.getMessage());
         }
 
-
-        // todo : Send mail to admin
         mailerManager.sendWorkspaceDeletionNotification(admin,workspaceId);
 
     }
