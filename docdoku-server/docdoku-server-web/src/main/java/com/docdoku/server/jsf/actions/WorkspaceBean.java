@@ -103,12 +103,13 @@ public class WorkspaceBean {
 
             Map<String, Workspace> administeredWorkspaces = (Map<String, Workspace>) session.getAttribute("administeredWorkspaces");
             administeredWorkspaces.remove(wks.getId());
-
-            Set<Workspace> regularWorkspaces = (Set<Workspace>) session.getAttribute("regularWorkspaces");
-            regularWorkspaces.remove(wks);
-
             session.setAttribute("administeredWorkspaces", administeredWorkspaces);
-            session.setAttribute("regularWorkspaces", regularWorkspaces);
+
+            if(!isRoot){
+                Set<Workspace> regularWorkspaces = (Set<Workspace>) session.getAttribute("regularWorkspaces");
+                regularWorkspaces.remove(wks);
+                session.setAttribute("regularWorkspaces", regularWorkspaces);
+            }
 
             return "/admin/workspace/workspaceDeleted.xhtml";
 
@@ -174,23 +175,33 @@ public class WorkspaceBean {
         return "/admin/workspace/editWorkspace.xhtml";
     }
 
-    public String createWorkspace() throws FolderAlreadyExistsException, UserAlreadyExistsException, WorkspaceAlreadyExistsException, CreationException, NotAllowedException, IndexNamingException, IndexerServerException, IndexAlreadyExistException {
+    public String createWorkspace() throws FolderAlreadyExistsException, UserAlreadyExistsException, WorkspaceAlreadyExistsException, CreationException, NotAllowedException, AccountNotFoundException {
         //TODO switch to a more JSF style code
         HttpServletRequest request = (HttpServletRequest) (FacesContext.getCurrentInstance().getExternalContext().getRequest());
         HttpSession sessionHTTP = request.getSession();
 
-        Account account = (Account) sessionHTTP.getAttribute("account");
+        Account account;
+        if(userManager.isCallerInRole("admin")){
+            account = userManager.getAccount(loginToAdd);
+        }else{
+            account = (Account) sessionHTTP.getAttribute("account");
+        }
+
         Map<String, Workspace> administeredWorkspaces = (Map<String, Workspace>) sessionHTTP.getAttribute("administeredWorkspaces");
 
         if (!NamingConvention.correct(workspaceId)) {
             throw new NotAllowedException(new Locale(account.getLanguage()), "NotAllowedException9");
         }
 
-        Workspace workspace = userManager.createWorkspace(workspaceId, account, workspaceDescription, freezeFolders);
+        try {
+            Workspace workspace = userManager.createWorkspace(workspaceId, account, workspaceDescription, freezeFolders);
+            administeredWorkspaces.put(workspace.getId(), workspace);
+            adminState.setSelectedWorkspace(workspace.getId());
+            adminState.setSelectedGroup(null);
 
-        administeredWorkspaces.put(workspace.getId(), workspace);
-        adminState.setSelectedWorkspace(workspace.getId());
-        adminState.setSelectedGroup(null);
+        } catch (IndexNamingException e) {
+            throw new NotAllowedException(new Locale(account.getLanguage()), "NotAllowedException9");
+        }
         return "/admin/workspace/createWorkspace.xhtml";
     }
 

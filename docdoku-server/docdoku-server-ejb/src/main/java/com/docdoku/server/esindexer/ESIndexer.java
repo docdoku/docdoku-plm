@@ -386,37 +386,10 @@ public class ESIndexer{
         try{
             Client client = createClient();
             deleteIndex(formatIndexName(workspaceId),client);
-            BulkRequestBuilder bulkRequest = client.prepareBulk();
-            DocumentMasterDAO docMasterDAO = new DocumentMasterDAO(em);
-            PartMasterDAO partMasterDAO = new PartMasterDAO(em);
-            for(DocumentMaster docM : docMasterDAO.getAllByWorkspace(workspaceId)){
-                for(DocumentRevision docR : docM.getDocumentRevisions()){
-                    for(DocumentIteration docI : docR.getDocumentIterations()){
-                        bulkRequest.add(deleteRequest(client, docI));
-                    }
-                }
-            }
-            for(PartMaster partMaster : partMasterDAO.getAllByWorkspace(workspaceId)){
-                for(PartRevision partRev : partMaster.getPartRevisions()){
-                    for(PartIteration partIte : partRev.getPartIterations()){
-                        bulkRequest.add(deleteRequest(client, partIte));
-                    }
-                }
-            }
-
-            BulkResponse bulkResponse = bulkRequest.execute().actionGet();
             client.close();
-
-            if (bulkResponse.hasFailures()) {
-                hasSuccess = false;
-                failureMessage = bulkResponse.buildFailureMessage();
-            }
         }catch (IndexerServerException | NoNodeAvailableException e){
             hasSuccess = false;
             failureMessage = DELETE_ERROR_LOG_2;
-        }
-
-        if(!hasSuccess){
             Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, DELETE_ERROR_LOG_3+" \n "+failureMessage);
         }
 

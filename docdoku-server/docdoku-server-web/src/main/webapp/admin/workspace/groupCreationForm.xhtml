@@ -11,6 +11,14 @@
             #{i18nGroupCreationForm['title']}
         </ui:define>
         <ui:define name="content">
+            <f:loadBundle var="i18nManageUsers" basename="com.docdoku.server.localization.admin.manageUsers_resource"/>
+            <ol class="breadcrumb">
+                <li><a href="/faces/admin/workspace/workspacesMenu.xhtml">#{i18nTemplate['toplinks.admin']}</a>
+                    <span class="divider">/</span></li>
+                <li><a href="/faces/admin/workspace/manageUsers.xhtml">#{i18nManageUsers['main.title']}</a>
+                    <span class="divider">/</span></li>
+                <li class="active">#{i18nGroupCreationForm['main.title']}</li>
+            </ol>
 
             <div id="sidebar" class="well well-large">
                 <h3>#{i18nGroupCreationForm['sidebar.title']}</h3>
@@ -18,7 +26,7 @@
             </div>
 
             <h2>#{i18nGroupCreationForm['main.title']}</h2>
-            <h3>#{i18nGroupCreationForm['section.title']}</h3>
+            <h3>#{i18nGroupCreationForm['section.title']} #{adminStateBean.selectedWorkspace}</h3>
 
             <h:form>
                 <fieldset id="admin">

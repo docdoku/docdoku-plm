@@ -54,7 +54,7 @@ public class ConnectionBean {
 
         //TODO switch to a more JSF style code
         HttpServletRequest request = (HttpServletRequest) (FacesContext.getCurrentInstance().getExternalContext().getRequest());
-        HttpSession session = (HttpSession) request.getSession();
+        HttpSession session = request.getSession();
         session.removeAttribute("account");
         session.removeAttribute("administeredWorkspaces");
         session.removeAttribute("regularWorkspaces");
@@ -66,7 +66,7 @@ public class ConnectionBean {
     public void logIn() throws ServletException, AccountNotFoundException, IOException {
         //TODO switch to a more JSF style code
         HttpServletRequest request = (HttpServletRequest) (FacesContext.getCurrentInstance().getExternalContext().getRequest());     
-        HttpSession session = (HttpSession) request.getSession();
+        HttpSession session = request.getSession();
 
         //Logout in case of user is already logged in,
         //that could happen when using multiple tabs
@@ -83,22 +83,26 @@ public class ConnectionBean {
 
         session.setAttribute("account", account);
 
-        Map<String, Workspace> administeredWorkspaces = new HashMap<String, Workspace>();
+        Map<String, Workspace> administeredWorkspaces = new HashMap<>();
         for (Workspace wks : userManager.getAdministratedWorkspaces()) {
             administeredWorkspaces.put(wks.getId(), wks);
         }
         session.setAttribute("administeredWorkspaces", administeredWorkspaces);
 
-        Set<Workspace> regularWorkspaces = new HashSet<Workspace>();
-        Workspace[] workspaces = userManager.getWorkspacesWhereCallerIsActive();
-        regularWorkspaces.addAll(Arrays.asList(workspaces));
-        regularWorkspaces.removeAll(administeredWorkspaces.values());
-        session.setAttribute("regularWorkspaces", regularWorkspaces);
+        boolean isAdmin=userManager.isCallerInRole("admin");
+
+        if(!isAdmin){
+            Set<Workspace> regularWorkspaces = new HashSet<>();
+            Workspace[] workspaces = userManager.getWorkspacesWhereCallerIsActive();
+            regularWorkspaces.addAll(Arrays.asList(workspaces));
+            regularWorkspaces.removeAll(administeredWorkspaces.values());
+            session.setAttribute("regularWorkspaces", regularWorkspaces);
+        }
 
         FacesContext fc = FacesContext.getCurrentInstance();
         ExternalContext ec = fc.getExternalContext();
 
-        if(userManager.isCallerInRole("admin")){
+        if(isAdmin){
             ec.redirect(request.getContextPath() + "/faces/admin/workspace/workspacesMenu.xhtml");
             session.setAttribute("isSuperAdmin",true);
         }else{
@@ -133,6 +137,5 @@ public class ConnectionBean {
     public void setOriginURL(String originURL) {
         this.originURL = originURL;
     }
-    
-    
+
 }

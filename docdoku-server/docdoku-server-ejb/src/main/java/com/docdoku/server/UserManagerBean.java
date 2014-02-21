@@ -124,16 +124,24 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
         return groupToCreate;
     }
 
-    @RolesAllowed("users")
+    @RolesAllowed({"users","admin"})
     @Override
-    public Workspace createWorkspace(String pID, Account pAdmin, String pDescription, boolean pFolderLocked) throws WorkspaceAlreadyExistsException, FolderAlreadyExistsException, UserAlreadyExistsException, CreationException, IndexNamingException, IndexerServerException, IndexAlreadyExistException {
+    public Workspace createWorkspace(String pID, Account pAdmin, String pDescription, boolean pFolderLocked) throws WorkspaceAlreadyExistsException, FolderAlreadyExistsException, UserAlreadyExistsException, CreationException, IndexNamingException{
         Workspace workspace = new Workspace(pID, pAdmin, pDescription, pFolderLocked);
         new WorkspaceDAO(em).createWorkspace(workspace);
         User userToCreate = new User(workspace, pAdmin.getLogin(), pAdmin.getName(), pAdmin.getEmail(), pAdmin.getLanguage());
         UserDAO userDAO = new UserDAO(new Locale(pAdmin.getLanguage()), em);
         userDAO.createUser(userToCreate);
         userDAO.addUserMembership(workspace, userToCreate);
-        esIndexer.createIndex(pID);
+
+        try{
+            esIndexer.createIndex(pID);
+        }catch(IndexerServerException e){
+            // When ElasticSearch have not start
+        } catch (IndexAlreadyExistException e) {
+            throw new WorkspaceAlreadyExistsException(new Locale(pAdmin.getLanguage()),workspace);                      // Send if the workspace have the same index name that another
+        }
+
         return workspace;
     }
 
@@ -488,7 +496,7 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
     @Override
     public Account checkAdmin(Workspace pWorkspace) throws AccessRightException, AccountNotFoundException {
         Account account = new AccountDAO(em).loadAccount(ctx.getCallerPrincipal().toString());
-        if (!pWorkspace.getAdmin().equals(account)) {
+        if (!isCallerInRole("admin") && !pWorkspace.getAdmin().equals(account)) {
             throw new AccessRightException(new Locale(account.getLanguage()), account);
         }
         return account;
