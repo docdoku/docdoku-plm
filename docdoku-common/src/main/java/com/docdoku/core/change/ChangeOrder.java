@@ -21,6 +21,9 @@
 
 package com.docdoku.core.change;
 
+import com.docdoku.core.common.User;
+import com.docdoku.core.common.Workspace;
+
 import javax.persistence.*;
 import java.util.Date;
 import java.util.HashSet;
@@ -35,6 +38,9 @@ import java.util.Set;
  */
 @Table(name="CHANGEORDER")
 @Entity
+@NamedQueries({
+        @NamedQuery(name="ChangeOrder.findChangeOrdersByWorkspace",query="SELECT DISTINCT c FROM ChangeOrder c WHERE c.workspace.id = :workspaceId"),
+})
 public class ChangeOrder extends ChangeItem {
 
 
@@ -56,6 +62,23 @@ public class ChangeOrder extends ChangeItem {
     public ChangeOrder() {
     }
 
+    public ChangeOrder(Workspace pWorkspace, String pName, User pAuthor) {
+        super(pWorkspace, pName, pAuthor);
+    }
 
+    public Priority getPriority() {
+        return priority;
+    }
 
+    public void setPriority(Priority priority) {
+        this.priority = priority;
+    }
+
+    public Milestone getMilestone() {
+        return milestone;
+    }
+
+    public void setMilestone(Milestone milestone) {
+        this.milestone = milestone;
+    }
 }
