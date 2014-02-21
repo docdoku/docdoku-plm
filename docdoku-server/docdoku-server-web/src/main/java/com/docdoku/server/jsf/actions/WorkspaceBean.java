@@ -24,7 +24,6 @@ import com.docdoku.core.common.User;
 import com.docdoku.core.common.UserGroupKey;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.exceptions.*;
-import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.core.services.IWorkspaceManagerLocal;
 import com.docdoku.core.util.NamingConvention;
@@ -75,14 +74,27 @@ public class WorkspaceBean {
         return "/admin/workspace/workspaceEditionForm.xhtml";
     }
 
+
+    public void synchronizeIndexer() throws WorkspaceNotFoundException {
+        Workspace wks = adminState.getCurrentWorkspace();
+        if(userManager.isCallerInRole("admin")){
+            workspaceManager.synchronizeIndexer(wks.getId());
+        }
+    }
+
     public String deleteWorkspace() throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException, IOException, StorageException, AccountNotFoundException {
 
         Workspace wks = adminState.getCurrentWorkspace();
+        User user = null;
+        boolean isRoot = userManager.isCallerInRole("admin");
+        boolean canAccess = isRoot;
 
-        User user = userManager.checkWorkspaceReadAccess(wks.getId());
+        if(!isRoot){
+            user = userManager.checkWorkspaceReadAccess(wks.getId());
+            canAccess = wks.getAdmin().getLogin().equals(user.getLogin());
+        }
 
-        if(userManager.isCallerInRole("admin") || wks.getAdmin().getLogin().equals(user.getLogin())){
-
+        if(canAccess){
             workspaceManager.deleteWorkspace(wks.getId());
 
             // Remove workspace from session attributes
@@ -151,17 +163,18 @@ public class WorkspaceBean {
         workspace.setFolderLocked(freezeFolders);
         if (newAdmin != null) {
             workspace.setAdmin(newAdmin);
-
-            Map<String, Workspace> administeredWorkspaces = (Map<String, Workspace>) sessionHTTP.getAttribute("administeredWorkspaces");
-            administeredWorkspaces.remove(workspace.getId());
-            Set<Workspace> regularWorkspaces = (Set<Workspace>) sessionHTTP.getAttribute("regularWorkspaces");
-            regularWorkspaces.add(workspace);
+            if(!userManager.isCallerInRole("admin")){
+                Map<String, Workspace> administeredWorkspaces = (Map<String, Workspace>) sessionHTTP.getAttribute("administeredWorkspaces");
+                administeredWorkspaces.remove(workspace.getId());
+                Set<Workspace> regularWorkspaces = (Set<Workspace>) sessionHTTP.getAttribute("regularWorkspaces");
+                regularWorkspaces.add(workspace);
+            }
         }
 
         return "/admin/workspace/editWorkspace.xhtml";
     }
 
-    public String createWorkspace() throws FolderAlreadyExistsException, UserAlreadyExistsException, WorkspaceAlreadyExistsException, CreationException, NotAllowedException {
+    public String createWorkspace() throws FolderAlreadyExistsException, UserAlreadyExistsException, WorkspaceAlreadyExistsException, CreationException, NotAllowedException, IndexNamingException, IndexerServerException, IndexAlreadyExistException {
         //TODO switch to a more JSF style code
         HttpServletRequest request = (HttpServletRequest) (FacesContext.getCurrentInstance().getExternalContext().getRequest());
         HttpSession sessionHTTP = request.getSession();

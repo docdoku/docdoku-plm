@@ -36,11 +36,9 @@ import com.sun.enterprise.security.ee.auth.login.ProgrammaticLogin;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
 /**
- * @author: Asmae CHADID
+ * @author Asmae CHADID
  */
 
 
@@ -54,14 +52,11 @@ public class TestEJBBean {
     @EJB
     private IUserManagerLocal userManagerLocal;
 
-    @PersistenceContext
-    private EntityManager em;
-
     private ProgrammaticLogin loginP = new ProgrammaticLogin();
     private String password = "password";
 
 
-    public Workspace testWorkspaceCreation(String login, String pWorkspace) throws AccountNotFoundException, UserAlreadyExistsException, CreationException, WorkspaceAlreadyExistsException, FolderAlreadyExistsException {
+    public Workspace testWorkspaceCreation(String login, String pWorkspace) throws AccountNotFoundException, UserAlreadyExistsException, CreationException, WorkspaceAlreadyExistsException, FolderAlreadyExistsException, IndexNamingException, IndexerServerException, IndexAlreadyExistException {
         loginP.login(login, password.toCharArray());
         Workspace workspace = userManagerLocal.createWorkspace(pWorkspace, userManagerLocal.getAccount(login), "", false);
         loginP.logout();

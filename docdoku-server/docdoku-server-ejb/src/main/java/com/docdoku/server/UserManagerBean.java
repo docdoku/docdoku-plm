@@ -26,7 +26,6 @@ import com.docdoku.core.exceptions.*;
 import com.docdoku.core.gcm.GCMAccount;
 import com.docdoku.core.security.*;
 import com.docdoku.core.services.IDataManagerLocal;
-import com.docdoku.core.services.IMailerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.core.services.IUserManagerWS;
 import com.docdoku.server.dao.*;
@@ -45,7 +44,6 @@ import javax.persistence.PersistenceContext;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.logging.Logger;
 
 @DeclareRoles({"users","admin"})
 @Local(IUserManagerLocal.class)
@@ -58,12 +56,9 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
     @Resource
     private SessionContext ctx;
     @EJB
-    private IMailerLocal mailer;
-    @EJB
-    private ESIndexer indexer;
+    private ESIndexer esIndexer;
     @EJB
     private IDataManagerLocal dataManager;
-    private final static Logger LOGGER = Logger.getLogger(UserManagerBean.class.getName());
 
     @Override
     public Account createAccount(String pLogin, String pName, String pEmail, String pLanguage, String pPassword) throws AccountAlreadyExistsException, CreationException {
@@ -75,7 +70,7 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
 
     @RolesAllowed({"users","admin"})
     @Override
-    public void addUserInGroup(UserGroupKey pGroupKey, String pLogin) throws AccessRightException, UserGroupNotFoundException, UserGroupNotFoundException, AccountNotFoundException, WorkspaceNotFoundException, UserAlreadyExistsException, FolderAlreadyExistsException, CreationException {
+    public void addUserInGroup(UserGroupKey pGroupKey, String pLogin) throws AccessRightException, UserGroupNotFoundException, AccountNotFoundException, WorkspaceNotFoundException, UserAlreadyExistsException, FolderAlreadyExistsException, CreationException {
         Account account = checkAdmin(pGroupKey.getWorkspaceId());
         UserDAO userDAO = new UserDAO(new Locale(account.getLanguage()), em);
         User userToAdd = em.find(User.class, new UserKey(pGroupKey.getWorkspaceId(), pLogin));
@@ -131,13 +126,14 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
 
     @RolesAllowed("users")
     @Override
-    public Workspace createWorkspace(String pID, Account pAdmin, String pDescription, boolean pFolderLocked) throws WorkspaceAlreadyExistsException, FolderAlreadyExistsException, UserAlreadyExistsException, CreationException {
+    public Workspace createWorkspace(String pID, Account pAdmin, String pDescription, boolean pFolderLocked) throws WorkspaceAlreadyExistsException, FolderAlreadyExistsException, UserAlreadyExistsException, CreationException, IndexNamingException, IndexerServerException, IndexAlreadyExistException {
         Workspace workspace = new Workspace(pID, pAdmin, pDescription, pFolderLocked);
         new WorkspaceDAO(em).createWorkspace(workspace);
         User userToCreate = new User(workspace, pAdmin.getLogin(), pAdmin.getName(), pAdmin.getEmail(), pAdmin.getLanguage());
         UserDAO userDAO = new UserDAO(new Locale(pAdmin.getLanguage()), em);
         userDAO.createUser(userToCreate);
         userDAO.addUserMembership(workspace, userToCreate);
+        esIndexer.createIndex(pID);
         return workspace;
     }
 
@@ -167,9 +163,9 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
 
         User[] users = new UserDAO(em).getUsers(ctx.getCallerPrincipal().toString());
         Workspace workspace=null;
-        for (int i = 0; i < users.length; i++) {
-            if(users[i].getWorkspace().getId().equals(workspaceId)){
-                workspace=users[i].getWorkspace();
+        for (User user : users) {
+            if (user.getWorkspace().getId().equals(workspaceId)) {
+                workspace = user.getWorkspace();
                 break;
             }
         }
@@ -312,7 +308,7 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
                         }
                     }
 
-                    indexer.delete(doc);
+                    esIndexer.delete(doc);
                 }
             }
         }
@@ -351,10 +347,10 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
         UserDAO userDAO = new UserDAO(new Locale(pLanguage), em);
         User[] users = userDAO.getUsers(account.getLogin());
 
-        for(int i=0; i<users.length;i++){
-            users[i].setEmail(pEmail);
-            users[i].setLanguage(pLanguage);
-            users[i].setName(pName);
+        for (User user : users) {
+            user.setEmail(pEmail);
+            user.setLanguage(pLanguage);
+            user.setName(pName);
         }
 
     }
@@ -437,12 +433,7 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
     */
     @Override
     public boolean hasCommonWorkspace(String userLogin1, String userLogin2) {
-
-        if( userLogin1 != null && userLogin2 != null){
-            return new UserDAO(em).hasCommonWorkspace(userLogin1,userLogin2);
-        }
-
-        return false;
+        return userLogin1 != null && userLogin2 != null && new UserDAO(em).hasCommonWorkspace(userLogin1, userLogin2);
     }
 
     @Override
