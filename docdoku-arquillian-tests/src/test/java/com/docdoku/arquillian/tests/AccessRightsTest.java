@@ -48,6 +48,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.UserTransaction;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author Asmae CHADID
@@ -126,7 +128,8 @@ public class AccessRightsTest {
 
 
     @Test
-    public void atestSimpleCreation() throws Exception {
+    public void testSimpleCreation() throws Exception {
+        Logger.getLogger(AccessRightsTest.class.getName()).log(Level.INFO, "Test method : testSimpleCreation");
         testBean.testWorkspaceCreation("user1", "TEST_WORKSPACE");
         testBean.testFolderCreation("user1", "TEST_WORKSPACE", "TEST_FOLDER");
         testBean.testAddingUserInWorkspace("user1", "user2", "TEST_WORKSPACE");
@@ -136,12 +139,14 @@ public class AccessRightsTest {
 
     @Test
     public void testMatrixRights1() throws Exception {
+        Logger.getLogger(AccessRightsTest.class.getName()).log(Level.INFO, "Test method : testMatrixRights1");
         testBean.testGrantingUserAccessInWorkspace("user1", new String[]{"user2"}, "TEST_WORKSPACE", false);
         testBean.testDocumentCreation("user2", "TEST_WORKSPACE/TEST_FOLDER", "DOCUMENT1", null, null);
     }
 
     @Test
     public void testMatrixRights2() throws Exception {
+        Logger.getLogger(AccessRightsTest.class.getName()).log(Level.INFO, "Test method : testMatrixRights2");
         testBean.testGroupCreation("user1", "TEST_WORKSPACE", "group1");
         testBean.testGrantingUserGroupAccessInWorkspace("user1", new String[]{"group1"}, "TEST_WORKSPACE", true);
         testBean.testAddingUserInGroup("user1", "group1", "TEST_WORKSPACE", "user3");
@@ -152,6 +157,7 @@ public class AccessRightsTest {
 
     @Test
     public void testMatrixRights3() throws Exception {
+        Logger.getLogger(AccessRightsTest.class.getName()).log(Level.INFO, "Test method : testMatrixRights3");
         testBean.testGroupCreation("user1", "TEST_WORKSPACE", "group2");
         testBean.testGrantingUserGroupAccessInWorkspace("user1", new String[]{"group2"}, "TEST_WORKSPACE", false);
         testBean.testGrantingUserGroupAccessInWorkspace("user1", new String[]{"group1"}, "TEST_WORKSPACE", true);
@@ -162,6 +168,7 @@ public class AccessRightsTest {
 
     @Test
     public void testMatrixRights4() throws Exception {
+        Logger.getLogger(AccessRightsTest.class.getName()).log(Level.INFO, "Test method : testMatrixRights4");
         testBean.testAddingUserInWorkspace("user1", "user4", "TEST_WORKSPACE");
         testBean.testGrantingUserAccessInWorkspace("user1", new String[]{"user4"}, "TEST_WORKSPACE", true);
         User user = em.find(User.class, new UserKey("TEST_WORKSPACE", "user4"));
@@ -178,6 +185,7 @@ public class AccessRightsTest {
 
     @Test
     public void testCheckInCheckOut() throws Exception {
+        Logger.getLogger(AccessRightsTest.class.getName()).log(Level.INFO, "Test method : testCheckInCheckOut");
         testBean.testDocumentCheckIn("user1", new DocumentRevisionKey(new DocumentMasterKey("TEST_WORKSPACE", "DOCUMENT5"), "A"));
         testBean.testDocumentCheckOut("user4", new DocumentRevisionKey(new DocumentMasterKey("TEST_WORKSPACE", "DOCUMENT5"), "A"));
     }
