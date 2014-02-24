@@ -56,7 +56,7 @@ import java.util.logging.Logger;
  */
 
 @RunWith(Arquillian.class)
-@FixMethodOrder(value = MethodSorters.JVM )
+@FixMethodOrder(value = MethodSorters.NAME_ASCENDING )
 public class AccessRightsTest {
 
     @EJB
@@ -128,7 +128,7 @@ public class AccessRightsTest {
 
 
     @Test
-    public void testSimpleCreation() throws Exception {
+    public void Test1_testSimpleCreation() throws Exception {
         Logger.getLogger(AccessRightsTest.class.getName()).log(Level.INFO, "Test method : testSimpleCreation");
         testBean.testWorkspaceCreation("user1", "TEST_WORKSPACE");
         testBean.testFolderCreation("user1", "TEST_WORKSPACE", "TEST_FOLDER");
@@ -138,14 +138,14 @@ public class AccessRightsTest {
     }
 
     @Test
-    public void testMatrixRights1() throws Exception {
+    public void Test2_testMatrixRights1() throws Exception {
         Logger.getLogger(AccessRightsTest.class.getName()).log(Level.INFO, "Test method : testMatrixRights1");
         testBean.testGrantingUserAccessInWorkspace("user1", new String[]{"user2"}, "TEST_WORKSPACE", false);
         testBean.testDocumentCreation("user2", "TEST_WORKSPACE/TEST_FOLDER", "DOCUMENT1", null, null);
     }
 
     @Test
-    public void testMatrixRights2() throws Exception {
+    public void Test3_testMatrixRights2() throws Exception {
         Logger.getLogger(AccessRightsTest.class.getName()).log(Level.INFO, "Test method : testMatrixRights2");
         testBean.testGroupCreation("user1", "TEST_WORKSPACE", "group1");
         testBean.testGrantingUserGroupAccessInWorkspace("user1", new String[]{"group1"}, "TEST_WORKSPACE", true);
@@ -156,7 +156,7 @@ public class AccessRightsTest {
     }
 
     @Test
-    public void testMatrixRights3() throws Exception {
+    public void Test4_testMatrixRights3() throws Exception {
         Logger.getLogger(AccessRightsTest.class.getName()).log(Level.INFO, "Test method : testMatrixRights3");
         testBean.testGroupCreation("user1", "TEST_WORKSPACE", "group2");
         testBean.testGrantingUserGroupAccessInWorkspace("user1", new String[]{"group2"}, "TEST_WORKSPACE", false);
@@ -167,7 +167,7 @@ public class AccessRightsTest {
     }
 
     @Test
-    public void testMatrixRights4() throws Exception {
+    public void Test5_testMatrixRights4() throws Exception {
         Logger.getLogger(AccessRightsTest.class.getName()).log(Level.INFO, "Test method : testMatrixRights4");
         testBean.testAddingUserInWorkspace("user1", "user4", "TEST_WORKSPACE");
         testBean.testGrantingUserAccessInWorkspace("user1", new String[]{"user4"}, "TEST_WORKSPACE", true);
@@ -184,7 +184,7 @@ public class AccessRightsTest {
     }
 
     @Test
-    public void testCheckInCheckOut() throws Exception {
+    public void Test6_testCheckInCheckOut() throws Exception {
         Logger.getLogger(AccessRightsTest.class.getName()).log(Level.INFO, "Test method : testCheckInCheckOut");
         testBean.testDocumentCheckIn("user1", new DocumentRevisionKey(new DocumentMasterKey("TEST_WORKSPACE", "DOCUMENT5"), "A"));
         testBean.testDocumentCheckOut("user4", new DocumentRevisionKey(new DocumentMasterKey("TEST_WORKSPACE", "DOCUMENT5"), "A"));
