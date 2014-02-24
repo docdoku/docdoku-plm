@@ -36,8 +36,10 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Before;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 
 import javax.ejb.EJB;
 import javax.inject.Inject;
@@ -48,10 +50,11 @@ import javax.transaction.UserTransaction;
 import java.util.Date;
 
 /**
- * @author: Asmae CHADID
+ * @author Asmae CHADID
  */
 
 @RunWith(Arquillian.class)
+@FixMethodOrder(value = MethodSorters.JVM )
 public class AccessRightsTest {
 
     @EJB
@@ -75,7 +78,7 @@ public class AccessRightsTest {
                         Credential.class,
                         GCMAccount.class,
                         Workspace.class,
- TestEJBBean.class,
+                        TestEJBBean.class,
                         IUserManagerLocal.class,
                         UserManagerBean.class,
                         IMailerLocal.class,
@@ -123,7 +126,7 @@ public class AccessRightsTest {
 
 
     @Test
-    public void testSimpleCreation() throws Exception {
+    public void atestSimpleCreation() throws Exception {
         testBean.testWorkspaceCreation("user1", "TEST_WORKSPACE");
         testBean.testFolderCreation("user1", "TEST_WORKSPACE", "TEST_FOLDER");
         testBean.testAddingUserInWorkspace("user1", "user2", "TEST_WORKSPACE");
@@ -179,57 +182,4 @@ public class AccessRightsTest {
         testBean.testDocumentCheckOut("user4", new DocumentRevisionKey(new DocumentMasterKey("TEST_WORKSPACE", "DOCUMENT5"), "A"));
     }
 
-    /*
-    public void findAllPersistedObjectUsingJpqlQuery() {
-
-        String fetchingAllAccountsInJpql = "select a from Account  a ";
-        String fetchingAllUsersInJpql = "select u from User  u ";
-        String fetchingAllCredentialsInJpql = "select c from Credential c ";
-        String fetchingAllWorkspaceInJpql = "select w from Workspace w ";
-
-
-        List<Account> accounts = em.createQuery(fetchingAllAccountsInJpql, Account.class).getResultList();
-        List<User> users = em.createQuery(fetchingAllUsersInJpql, User.class).getResultList();
-        List<Credential> credentials = em.createQuery(fetchingAllCredentialsInJpql, Credential.class).getResultList();
-        List<Workspace> workspaces = em.createQuery(fetchingAllWorkspaceInJpql, Workspace.class).getResultList();
-
-        assertContainsAllAccounts(accounts);
-        assertContainsAllWorkspaces(workspaces);
-        assertContainsAllCredentials(credentials);
-        assertContainsAllUsers(users);
-    }
-
-    private static void assertContainsAllAccounts(Collection<Account> retrievedAccounts) {
-        Assert.assertEquals(COUNT, retrievedAccounts.size());
-        final Set<String> retrievedAccountLogins = new HashSet<String>();
-        for (Account account : retrievedAccounts) {
-            retrievedAccountLogins.add(account.getLogin());
-        }
-    }
-
-    private static void assertContainsAllWorkspaces(Collection<Workspace> retrievedWorkspaces) {
-        Assert.assertEquals(COUNT, retrievedWorkspaces.size());
-        final Set<String> retrievedAccountLogins = new HashSet<String>();
-        for (Workspace workspace : retrievedWorkspaces) {
-            retrievedAccountLogins.add(workspace.getId());
-        }
-    }
-
-    private static void assertContainsAllCredentials(Collection<Credential> retrievedCredentials) {
-        Assert.assertEquals(COUNT, retrievedCredentials.size());
-        final Set<String> retrievedAccountLogins = new HashSet<String>();
-        for (Credential credential : retrievedCredentials) {
-            retrievedAccountLogins.add(credential.toString());
-        }
-    }
-
-    private static void assertContainsAllUsers(Collection<User> retrievedUsers) {
-        Assert.assertEquals(COUNT, retrievedUsers.size());
-        final Set<String> retrievedAccountLogins = new HashSet<String>();
-        for (User user : retrievedUsers) {
-            retrievedAccountLogins.add(user.getLogin());
-        }
-        Assert.assertTrue(retrievedAccountLogins.contains("user1"));
-    }
-    */
 }
