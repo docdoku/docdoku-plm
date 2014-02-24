@@ -49,6 +49,7 @@ import org.apache.poi.hwpf.extractor.WordExtractor;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.delete.DeleteRequestBuilder;
@@ -139,25 +140,25 @@ public class ESIndexer{
     /**
      * Create a ElasticSearch Client to make QueryRequest
      */
-    private Client createClient() throws IndexerServerException {
+    private Client createClient() throws ESServerException {
         try{
             return new TransportClient().addTransportAddress(new InetSocketTransportAddress(CONF.getProperty("host"), Integer.parseInt(CONF.getProperty("port"))));
-        }catch (NoNodeAvailableException e){
-            throw new IndexerServerException(Locale.getDefault(), "IndexerServerException1");
+        }catch (ElasticsearchException e){
+            throw new ESServerException(Locale.getDefault(), "IndexerServerException1");
         }
     }
 
-    private void createIndex(String pIndex, Client pClient) throws IndexAlreadyExistException, IndexNamingException {
+    private void createIndex(String pIndex, Client pClient) throws ESIndexAlreadyExistsException, ESIndexNamingException {
         try{
             pClient.admin().indices().prepareCreate(pIndex)
                    .setSettings(ImmutableSettings.settingsBuilder().put("number_of_shards", CONF.getProperty("number_of_shards")).put("number_of_replicas", CONF.getProperty("number_of_replicas")))
                    .execute().actionGet();
         }catch (IndexAlreadyExistsException e){
             Logger.getLogger(ESIndexer.class.getName()).log(Level.INFO, INDEX_CREATION_ERROR_LOG_1+pIndex);
-            throw new IndexAlreadyExistException(Locale.getDefault());
+            throw new ESIndexAlreadyExistsException(Locale.getDefault());
         }catch(InvalidIndexNameException e){
             Logger.getLogger(ESIndexer.class.getName()).log(Level.INFO, INDEX_CREATION_ERROR_LOG_2+pIndex);
-            throw new IndexNamingException(Locale.getDefault());
+            throw new ESIndexNamingException(Locale.getDefault());
         }
     }
 
@@ -166,10 +167,14 @@ public class ESIndexer{
                        .execute().actionGet();
     }
 
-    public void createIndex(String workspaceId) throws IndexerServerException, IndexAlreadyExistException, IndexNamingException {
-        Client client = createClient();
-        createIndex(formatIndexName(workspaceId), client);
-        client.close();
+    public void createIndex(String workspaceId) throws ESServerException, ESIndexAlreadyExistsException, ESIndexNamingException {
+        try{
+            Client client = createClient();
+            createIndex(formatIndexName(workspaceId), client);
+            client.close();
+        }catch (NoNodeAvailableException e){
+            Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, "Error on creating: "+workspaceId+" index");
+        }
     }
 
     public void deleteIndex(String workspaceId){
@@ -177,8 +182,10 @@ public class ESIndexer{
             Client client = createClient();
             deleteIndex(formatIndexName(workspaceId), client);
             client.close();
-        } catch (IndexerServerException e) {
+        } catch (ESServerException e) {
             e.printStackTrace();
+        }catch (NoNodeAvailableException e){
+            Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, "Error on deleting: "+workspaceId+" index");
         }
 
     }
@@ -198,7 +205,7 @@ public class ESIndexer{
                 try{
                     try{
                         createIndex(formatIndexName(w.getId()), client);
-                    }catch (IndexAlreadyExistException e){
+                    }catch (ESIndexAlreadyExistsException e){
                         // When the index name already exists
                     }
 
@@ -216,7 +223,7 @@ public class ESIndexer{
                             }
                         }
                     }
-                }catch (IndexNamingException e){
+                }catch (ESIndexNamingException e){
                     // When the index name is invalid
                 }
             }
@@ -227,7 +234,7 @@ public class ESIndexer{
             if (bulkResponse.hasFailures()) {
                 Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, INDEX_ERROR_LOG_3+" \n "+bulkResponse.buildFailureMessage());
             }
-        }catch (IndexerServerException | NoNodeAvailableException e){
+        }catch (ESServerException | NoNodeAvailableException e){
             Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, INDEX_ERROR_LOG_2);
         }
     }
@@ -245,7 +252,7 @@ public class ESIndexer{
             Client client = createClient();
             try{
                 createIndex(formatIndexName(workspaceId), client);
-            }catch (IndexAlreadyExistException e){
+            }catch (ESIndexAlreadyExistsException e){
                 // When the index name already exists
             }
             BulkRequestBuilder bulkRequest = client.prepareBulk();
@@ -273,10 +280,10 @@ public class ESIndexer{
                 hasSuccess = false;
                 failureMessage = bulkResponse.buildFailureMessage();
             }
-        }catch (IndexNamingException e){
+        }catch (ESIndexNamingException e){
             hasSuccess = false;
             failureMessage = INDEX_CREATION_ERROR_LOG_2 + workspaceId ;
-        }catch (IndexerServerException | NoNodeAvailableException e){
+        }catch (ESServerException | NoNodeAvailableException e){
             hasSuccess = false;
             failureMessage = INDEX_ERROR_LOG_2;
         }
@@ -305,15 +312,15 @@ public class ESIndexer{
             Client client = createClient();
             try{
                 createIndex(formatIndexName(workspaceId), client);
-            }catch (IndexAlreadyExistException e){
+            }catch (ESIndexAlreadyExistsException e){
                 // When the index name already exists
             }
             indexRequest(client, doc).execute()
                                      .actionGet();
             client.close();
-        }catch (NoNodeAvailableException | IndexerServerException e){
+        }catch (NoNodeAvailableException | ESServerException e){
             Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, "Error on : "+doc+" indexing\n Cause by : "+ INDEX_ERROR_LOG_1);
-        }catch(IndexNamingException e){
+        }catch(ESIndexNamingException e){
             Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, "Error on : "+doc+" indexing\n Cause by : "+ INDEX_CREATION_ERROR_LOG_2 + workspaceId);
         }
     }
@@ -329,15 +336,15 @@ public class ESIndexer{
             Client client = createClient();
             try{
                 createIndex(formatIndexName(workspaceId), client);
-            }catch (IndexAlreadyExistException e){
+            }catch (ESIndexAlreadyExistsException e){
                 // When the index name already exists
             }
             indexRequest(client, part).execute()
                               .actionGet();
             client.close();
-        }catch (NoNodeAvailableException | IndexerServerException e){
+        }catch (NoNodeAvailableException | ESServerException e){
             Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, "Error on : "+part+" indexing\n Cause by : "+ INDEX_ERROR_LOG_1);
-        }catch(IndexNamingException e){
+        }catch(ESIndexNamingException e){
             Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, "Error on : "+part+" indexing\n Cause by : "+ INDEX_CREATION_ERROR_LOG_2 + workspaceId);
         }
     }
@@ -353,7 +360,7 @@ public class ESIndexer{
             deleteRequest(client, doc).execute()
                                      .actionGet();
             client.close();
-        }catch (NoNodeAvailableException | IndexerServerException e){
+        }catch (NoNodeAvailableException | ESServerException e){
             Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, DELETE_ERROR_LOG_1);
         }
     }
@@ -369,7 +376,7 @@ public class ESIndexer{
             deleteRequest(client, part).execute()
                                        .actionGet();
             client.close();
-        }catch (NoNodeAvailableException | IndexerServerException e){
+        }catch (NoNodeAvailableException | ESServerException e){
             Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, DELETE_ERROR_LOG_1);
         }
     }
@@ -387,7 +394,7 @@ public class ESIndexer{
             Client client = createClient();
             deleteIndex(formatIndexName(workspaceId),client);
             client.close();
-        }catch (IndexerServerException | NoNodeAvailableException e){
+        }catch (ESServerException | NoNodeAvailableException e){
             hasSuccess = false;
             failureMessage = DELETE_ERROR_LOG_2;
             Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, DELETE_ERROR_LOG_3+" \n "+failureMessage);
@@ -407,7 +414,7 @@ public class ESIndexer{
      * @param docQuery DocumentSearchQuery
      * @return List of document master
      */
-    public List<DocumentRevision> search(DocumentSearchQuery docQuery) throws IndexerServerException {
+    public List<DocumentRevision> search(DocumentSearchQuery docQuery) throws ESServerException {
         try{
             Client client = createClient();
             QueryBuilder qr = getQueryBuilder(docQuery);
@@ -434,7 +441,7 @@ public class ESIndexer{
             return listOfDocuments;
         }catch (NoNodeAvailableException e){
             Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, SEARCH_ERROR_LOG_1);
-            throw new IndexerServerException(Locale.getDefault(), "IndexerServerException1");
+            throw new ESServerException(Locale.getDefault(), "IndexerServerException1");
         }
     }
 
@@ -443,7 +450,7 @@ public class ESIndexer{
      * @param partQuery PartSearchQuery
      * @return List of part revision
      */
-    public List<PartRevision> search(PartSearchQuery partQuery) throws IndexerServerException {
+    public List<PartRevision> search(PartSearchQuery partQuery) throws ESServerException {
         try{
             Client client = createClient();
             QueryBuilder qr = getQueryBuilder(partQuery);
@@ -467,7 +474,7 @@ public class ESIndexer{
             return listOfParts;
         }catch (NoNodeAvailableException e){
             Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, SEARCH_ERROR_LOG_1);
-            throw new IndexerServerException(Locale.getDefault(), "IndexerServerException1");
+            throw new ESServerException(Locale.getDefault(), "IndexerServerException1");
         }
 
     }
@@ -477,7 +484,7 @@ public class ESIndexer{
      * @param query PartSearchQuery
      * @return List of part revision
      */
-    public List<Object> search(SearchQuery query) throws IndexerServerException {
+    public List<Object> search(SearchQuery query) throws ESServerException {
         try{
             Client client = createClient();
             QueryBuilder qr = getQueryBuilder(query);
@@ -521,7 +528,7 @@ public class ESIndexer{
             return ret;
         }catch (NoNodeAvailableException e){
             Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, SEARCH_ERROR_LOG_1);
-            throw new IndexerServerException(Locale.getDefault(), "IndexerServerException1");
+            throw new ESServerException(Locale.getDefault(), "IndexerServerException1");
         }
     }
 
@@ -530,7 +537,7 @@ public class ESIndexer{
      * @param docQuery DocumentSearchQuery
      * @return List of document master
      */
-    public List<DocumentRevision> searchInAllWorkspace(DocumentSearchQuery docQuery) throws IndexerServerException {
+    public List<DocumentRevision> searchInAllWorkspace(DocumentSearchQuery docQuery) throws ESServerException {
         try{
             Client client = createClient();
             QueryBuilder qr = getQueryBuilder(docQuery);
@@ -565,7 +572,7 @@ public class ESIndexer{
             return listOfDocuments;
         }catch (NoNodeAvailableException e){
             Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, SEARCH_ERROR_LOG_1);
-            throw new IndexerServerException(Locale.getDefault(), "IndexerServerException1");
+            throw new ESServerException(Locale.getDefault(), "IndexerServerException1");
         }
     }
 
@@ -574,7 +581,7 @@ public class ESIndexer{
      * @param partQuery PartSearchQuery
      * @return List of part revision
      */
-    public List<PartRevision> searchInAllWorkspace(PartSearchQuery partQuery) throws IndexerServerException {
+    public List<PartRevision> searchInAllWorkspace(PartSearchQuery partQuery) throws ESServerException {
         try{
             Client client = createClient();
             QueryBuilder qr = getQueryBuilder(partQuery);
@@ -609,7 +616,7 @@ public class ESIndexer{
             return listOfParts;
         }catch (NoNodeAvailableException e){
             Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, SEARCH_ERROR_LOG_1);
-            throw new IndexerServerException(Locale.getDefault(), "IndexerServerException1");
+            throw new ESServerException(Locale.getDefault(), "IndexerServerException1");
         }
     }
 
@@ -619,7 +626,7 @@ public class ESIndexer{
      * @return List of part revision
      */
     /*
-    public List<Object> searchInAllWorkspace(SearchQuery query) throws IndexerServerException {                                                       // TODO Optimize it
+    public List<Object> searchInAllWorkspace(SearchQuery query) throws ESServerException {                                                       // TODO Optimize it
         return null; //TODO
     }*/
 

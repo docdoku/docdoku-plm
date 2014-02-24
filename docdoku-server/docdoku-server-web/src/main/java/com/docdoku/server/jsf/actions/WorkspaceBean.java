@@ -199,7 +199,7 @@ public class WorkspaceBean {
             adminState.setSelectedWorkspace(workspace.getId());
             adminState.setSelectedGroup(null);
 
-        } catch (IndexNamingException e) {
+        } catch (ESIndexNamingException e) {
             throw new NotAllowedException(new Locale(account.getLanguage()), "NotAllowedException9");
         }
         return "/admin/workspace/createWorkspace.xhtml";
@@ -222,7 +222,7 @@ public class WorkspaceBean {
         selectedLogins.clear();
     }
     
-    public void remove() throws UserGroupNotFoundException, AccessRightException, UserNotFoundException, NotAllowedException, AccountNotFoundException, WorkspaceNotFoundException, FolderNotFoundException, IndexerServerException {
+    public void remove() throws UserGroupNotFoundException, AccessRightException, UserNotFoundException, NotAllowedException, AccountNotFoundException, WorkspaceNotFoundException, FolderNotFoundException, ESServerException {
         if (!selectedLogins.isEmpty()) {
             userManager.removeUsers(adminState.getSelectedWorkspace(), getLogins());
         }

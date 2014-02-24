@@ -22,15 +22,18 @@ package com.docdoku.core.exceptions;
 import java.util.Locale;
 
 /**
- * Exception when trying to create a index with a wrong Name;
+ * Exception on the Indexer Server usage
  * @author Taylor LABEJOF
  */
-public class IndexNamingException extends ApplicationException {
+public class ESServerException extends ApplicationException {
     private String mKey;
 
-    public IndexNamingException(Locale pLocale) {
+    public ESServerException(String pMessage) {
+        super(pMessage);
+    }
+    public ESServerException(Locale pLocale, String pKey) {
         super(pLocale);
-        mKey="IndexNamingException1";
+        mKey=pKey;
     }
     public String getLocalizedMessage() {
         return mKey==null?null:getBundleMessage(mKey);

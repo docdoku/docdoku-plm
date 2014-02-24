@@ -56,7 +56,7 @@ public class TestEJBBean {
     private String password = "password";
 
 
-    public Workspace testWorkspaceCreation(String login, String pWorkspace) throws AccountNotFoundException, UserAlreadyExistsException, CreationException, WorkspaceAlreadyExistsException, FolderAlreadyExistsException, IndexNamingException, IndexerServerException, IndexAlreadyExistException {
+    public Workspace testWorkspaceCreation(String login, String pWorkspace) throws AccountNotFoundException, UserAlreadyExistsException, CreationException, WorkspaceAlreadyExistsException, FolderAlreadyExistsException, ESIndexNamingException {
         loginP.login(login, password.toCharArray());
         Workspace workspace = userManagerLocal.createWorkspace(pWorkspace, userManagerLocal.getAccount(login), "", false);
         loginP.logout();
@@ -113,7 +113,7 @@ public class TestEJBBean {
         loginP.logout();
     }
 
-    public void testDocumentCheckIn(String login, DocumentRevisionKey documentRevisionKey) throws UserNotActiveException, WorkspaceNotFoundException, AccessRightException, UserNotFoundException, NotAllowedException, DocumentRevisionNotFoundException, IndexerServerException {
+    public void testDocumentCheckIn(String login, DocumentRevisionKey documentRevisionKey) throws UserNotActiveException, WorkspaceNotFoundException, AccessRightException, UserNotFoundException, NotAllowedException, DocumentRevisionNotFoundException, ESServerException {
         loginP.login(login, password.toCharArray());
         documentManagerLocal.checkInDocument(documentRevisionKey);
         loginP.logout();

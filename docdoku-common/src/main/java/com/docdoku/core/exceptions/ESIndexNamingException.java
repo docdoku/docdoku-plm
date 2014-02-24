@@ -22,15 +22,15 @@ package com.docdoku.core.exceptions;
 import java.util.Locale;
 
 /**
- * Exception when trying to create a existing index;
+ * Exception when trying to create a index with a wrong Name;
  * @author Taylor LABEJOF
  */
-public class IndexAlreadyExistException extends ApplicationException {
+public class ESIndexNamingException extends ApplicationException {
     private String mKey;
 
-    public IndexAlreadyExistException(Locale pLocale) {
+    public ESIndexNamingException(Locale pLocale) {
         super(pLocale);
-        mKey="IndexAlreadyExistException1";
+        mKey="IndexNamingException1";
     }
     public String getLocalizedMessage() {
         return mKey==null?null:getBundleMessage(mKey);
