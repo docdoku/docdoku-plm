@@ -10,7 +10,7 @@
     </engine>
     <container qualifier="glassfish-embedded" default="true">
         <configuration>
-            <property name="configurationXml">docdoku-arquillian-tests/src/test/resources-glassfish-embedded/domain.xml</property>
+            <property name="configurationXml">src/test/resources-glassfish-embedded/domain.xml</property>
         </configuration>
     </container>
 
