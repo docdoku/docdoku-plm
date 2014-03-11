@@ -37,7 +37,7 @@ public class PartListCommand extends AbstractCommandLine {
     @Option(name="-w", aliases = "--workspace", required = true, metaVar = "<workspace>", usage="workspace on which operations occur")
     protected String workspace;
 
-    @Option(name="-c", aliases = "--count", usage="return part master count in workspace")
+    @Option(name="-c", aliases = "--count", usage="return the number of part revisions within the workspace")
     private boolean count;
 
     @Option(name="-s", aliases = "--start", usage="start offset")

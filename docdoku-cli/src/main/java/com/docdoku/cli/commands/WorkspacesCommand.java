@@ -47,6 +47,6 @@ public class WorkspacesCommand extends AbstractCommandLine{
 
     @Override
     public String getDescription() {
-        return "List all workspaces the user belongs.";
+        return "List all workspaces the user belongs to.";
     }
 }
