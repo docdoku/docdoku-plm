@@ -30,7 +30,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * Class link that gathers a baseline and a given part iteration.
+ * Class link that gathers a part collection and a given part iteration.
  *
  * @author Florent Garin
  * @version 2.0, 15/05/13
@@ -40,17 +40,17 @@ import java.util.Date;
 @Table(name="BASELINEDPART")
 @Entity
 @NamedQueries({
-        @NamedQuery(name="BaselinedPart.existBaselinedPart", query="SELECT count(b) FROM BaselinedPart b WHERE b.targetPart.partRevision.partMaster.number LIKE :partNumber"),
-        @NamedQuery(name="BaselinedPart.getBaselinesForPartRevision", query="SELECT b.baseline FROM BaselinedPart b WHERE b.targetPart.partRevision = :partRevision")
+        @NamedQuery(name="BaselinedPart.existBaselinedPart", query="SELECT count(b) FROM BaselinedPart b WHERE b.baselinedPartKey.targetPartNumber = :partNumber AND b.baselinedPartKey.targetPartWorkspaceId = :workspaceId")
 })
 public class BaselinedPart implements Serializable{
 
     @EmbeddedId
     private BaselinedPartKey baselinedPartKey;
 
+    //@MapsId("partCollectionId")
     @ManyToOne(optional=false, fetch=FetchType.EAGER)
-    @JoinColumn(name="BASELINE_ID", referencedColumnName="ID")
-    private Baseline baseline;
+    @JoinColumn(name="PARTCOLLECTION_ID", referencedColumnName="ID")
+    private PartCollection partCollection;
 
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
@@ -69,42 +69,19 @@ public class BaselinedPart implements Serializable{
     @Column(name = "TARGET_PARTREVISION_VERSION", length=10, nullable = false, insertable = false, updatable = false)
     private String targetPartVersion="";
 
-    @Column(name="COMMENTDATA")
-    private String comment;
-
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
-    @JoinColumns({
-            @JoinColumn(name = "AUTHOR_LOGIN", referencedColumnName = "LOGIN"),
-            @JoinColumn(name = "AUTHOR_WORKSPACE_ID", referencedColumnName = "WORKSPACE_ID")
-    })
-    private User author;
-
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date creationDate;
-
     public BaselinedPart(){
     }
 
-    public BaselinedPart(Baseline baseline, PartIteration targetPart, User author, String comment) {
-        this.baseline = baseline;
+    public BaselinedPart(PartCollection partCollection, PartIteration targetPart) {
+        this.partCollection = partCollection;
         this.targetPart = targetPart;
-        this.author = author;
-        this.comment = comment;
-        this.creationDate = new Date();
-        this.baselinedPartKey=new BaselinedPartKey(baseline.getId(), targetPart.getWorkspaceId(),targetPart.getPartNumber());
+        this.baselinedPartKey=new BaselinedPartKey(partCollection.getId(), targetPart.getWorkspaceId(),targetPart.getPartNumber());
     }
 
-    public BaselinedPart(Baseline baseline, PartIteration targetPart, User user) {
-        this(baseline, targetPart, user, null);
-    }
 
     @XmlTransient
-    public Baseline getBaseline() {
-        return baseline;
-    }
-
-    public void setBaseline(Baseline baseline) {
-        this.baseline = baseline;
+    public PartCollection getPartCollection() {
+        return partCollection;
     }
 
     public BaselinedPartKey getBaselinedPartKey() {
@@ -115,43 +92,10 @@ public class BaselinedPart implements Serializable{
         return targetPart;
     }
 
-    public void setTargetPart(PartIteration targetPart) {
-        this.targetPart = targetPart;
-    }
-
-    public User getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(User author) {
-        this.author = author;
-    }
-
-    public Date getCreationDate() {
-        return creationDate;
-    }
-
-    public void setCreationDate(Date creationDate) {
-        this.creationDate = creationDate;
-    }
-
-
-    public String getComment() {
-        return comment;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
-
-
     public String getTargetPartVersion() {
         return targetPartVersion;
     }
 
-    public void setTargetPartVersion(String targetPartVersion) {
-        this.targetPartVersion = targetPartVersion;
-    }
 
     public String getTargetPartNumber() {
         return targetPart.getPartNumber();
@@ -162,26 +106,21 @@ public class BaselinedPart implements Serializable{
         return targetPartIteration;
     }
 
-    public void setTargetPartIteration(int targetPartIteration) {
-        this.targetPartIteration = targetPartIteration;
-    }
-
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof BaselinedPart)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
 
         BaselinedPart that = (BaselinedPart) o;
 
-        if (!baselinedPartKey.equals(that.baselinedPartKey)) return false;
+        if (baselinedPartKey != null ? !baselinedPartKey.equals(that.baselinedPartKey) : that.baselinedPartKey != null)
+            return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = baselinedPartKey != null ? baselinedPartKey.hashCode() : 0;
-        return result;
+        return baselinedPartKey != null ? baselinedPartKey.hashCode() : 0;
     }
 }

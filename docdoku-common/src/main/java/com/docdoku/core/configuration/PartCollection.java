@@ -19,7 +19,9 @@
  */
 package com.docdoku.core.configuration;
 
+import com.docdoku.core.common.User;
 import com.docdoku.core.product.ConfigurationItem;
+import com.docdoku.core.product.PartIteration;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -28,22 +30,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Baseline refers to a specific configuration, it could be seen as
- * "snapshots in time" of configurations. More concretely, baselines are collections
- * of items (for instance parts) at a specified iteration.
- * Within a baseline, there must not be two different iterations of the same part.
- * 
+ * This class maintains a collection of part iterations which cannot hold
+ * more than one <a href="PartIteration.html">PartIteration</a> linked
+ * to the same <a href="PartMaster.html">PartMaster</a>.
+ *
+ * PartCollection is a foundation for the definition of <a href="Baseline.html">Baseline</a>
+ * and <a href="ProductInstanceIteration.html">ProductInstanceIteration</a>.
+ *
  * @author Florent Garin
- * @version 2.0, 15/05/13
+ * @version 2.0, 25/02/14
  * @since   V2.0
  */
-@Table(name="BASELINE")
+@Table(name="PARTCOLLECTION")
 @Entity
-@NamedQueries({
-        @NamedQuery(name="Baseline.findByConfigurationItemId", query="SELECT b FROM Baseline b WHERE b.configurationItem.id LIKE :ciId"),
-        @NamedQuery(name="Baseline.findByBaselineId", query="SELECT b FROM Baseline b WHERE b.id = :baselineId"),
-        @NamedQuery(name="Baseline.findByConfigurationItemIdAndBaselineId", query="SELECT b FROM Baseline b WHERE b.configurationItem.id LIKE :ciId AND b.id = :baselineId")
-})
 public class PartCollection implements Serializable {
 
 
@@ -51,41 +50,33 @@ public class PartCollection implements Serializable {
     @Id
     private int id;
 
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumns({
-            @JoinColumn(name = "CONFIGURATIONITEM_ID", referencedColumnName = "ID"),
-            @JoinColumn(name = "CONFIGURATIONITEM_WORKSPACE_ID", referencedColumnName = "WORKSPACE_ID")
+            @JoinColumn(name = "AUTHOR_LOGIN", referencedColumnName = "LOGIN"),
+            @JoinColumn(name = "AUTHOR_WORKSPACE_ID", referencedColumnName = "WORKSPACE_ID")
     })
-    private ConfigurationItem configurationItem;
-
-    @Column(nullable = false)
-    private String name;
-
-    @Lob
-    private String description;
+    private User author;
 
     @Temporal(TemporalType.TIMESTAMP)
-    private Date creationDate;
+    private java.util.Date creationDate;
 
-    @MapsId("baselinedPartKey")
-    @OneToMany(mappedBy="baseline", cascade=CascadeType.ALL, fetch=FetchType.LAZY, orphanRemoval=true)
+    @MapKey(name="baselinedPartKey")
+    @OneToMany(mappedBy="partCollection", cascade=CascadeType.ALL, fetch=FetchType.LAZY, orphanRemoval=true)
     private Map<BaselinedPartKey, BaselinedPart> baselinedParts=new HashMap<BaselinedPartKey, BaselinedPart>();
 
     public PartCollection() {
     }
 
-    public PartCollection(ConfigurationItem configurationItem, String name, String description) {
-        this.configurationItem = configurationItem;
-        this.name = name;
-        this.description = description;
-        this.creationDate = new Date();
+    public void removeAllBaselinedParts() {
+        baselinedParts.clear();
     }
 
     public Map<BaselinedPartKey, BaselinedPart> getBaselinedParts() {
         return baselinedParts;
     }
 
-    public void addBaselinedPart(BaselinedPart baselinedPart){
+    public void addBaselinedPart(PartIteration targetPart){
+        BaselinedPart baselinedPart = new BaselinedPart(this, targetPart);
         baselinedParts.put(baselinedPart.getBaselinedPartKey(),baselinedPart);
     }
 
@@ -94,15 +85,7 @@ public class PartCollection implements Serializable {
     }
 
     public boolean hasBasedLinedPart(BaselinedPartKey baselinedPartKey){
-        return baselinedParts.get(baselinedPartKey) != null;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+        return baselinedParts.containsKey(baselinedPartKey);
     }
 
     public Date getCreationDate() {
@@ -113,12 +96,12 @@ public class PartCollection implements Serializable {
         this.creationDate = creationDate;
     }
 
-    public String getDescription() {
-        return description;
+    public User getAuthor() {
+        return author;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setAuthor(User author) {
+        this.author = author;
     }
 
     public int getId() {
@@ -129,21 +112,13 @@ public class PartCollection implements Serializable {
         this.id = id;
     }
 
-    public ConfigurationItem getConfigurationItem() {
-        return configurationItem;
-    }
-
-    public void setConfigurationItem(ConfigurationItem configurationItem) {
-        this.configurationItem = configurationItem;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof PartCollection)) return false;
 
-        PartCollection baseline = (PartCollection) o;
-        return id == baseline.id;
+        PartCollection collection = (PartCollection) o;
+        return id == collection.id;
     }
 
     @Override

@@ -23,40 +23,58 @@ import com.docdoku.core.product.ConfigurationItem;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
- * This class is an instance of a product.
- * 
+ * This class is an instance of a product, its main attributes are
+ * the serial number and the configuration item it is an instance of.
+ *
+ * The composition of the instance may vary according to modifications
+ * applied on it so to track this evolution the part collection is kept
+ * on several <a href="ProductInstanceIteration.html">ProductInstanceIteration</a>.
+ *
  * @author Florent Garin
  * @version 2.0, 24/02/14
  * @since   V2.0
  */
-@Table(name="PRODUCTINSTANCE")
+@Table(name="PRODUCTINSTANCEMASTER")
+@IdClass(com.docdoku.core.configuration.ProductInstanceMasterKey.class)
 @Entity
 public class ProductInstanceMaster implements Serializable {
 
 
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @Column(name="SERIALNUMBER", length = 255)
     @Id
-    private int id;
-
-
-
-    @Column(nullable = false)
     private String serialNumber;
 
+    @Id
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @JoinColumns({
+            @JoinColumn(name = "CONFIGURATIONITEM_ID", referencedColumnName = "ID"),
+            @JoinColumn(name = "WORKSPACE_ID", referencedColumnName = "WORKSPACE_ID")
+    })
+    private ConfigurationItem instanceOf;
+
+
+    @OneToMany(mappedBy = "productInstanceMaster", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OrderBy("iteration ASC")
+    private List<ProductInstanceIteration> productInstanceIterations = new ArrayList<>();
 
     public ProductInstanceMaster() {
     }
 
     public ProductInstanceMaster(ConfigurationItem configurationItem, String serialNumber) {
-        this.configurationItem = configurationItem;
+        this.instanceOf = configurationItem;
         this.serialNumber = serialNumber;
     }
 
+    public ConfigurationItem getInstanceOf() {
+        return instanceOf;
+    }
+
+    public void setInstanceOf(ConfigurationItem instanceOf) {
+        this.instanceOf = instanceOf;
+    }
 
     public String getSerialNumber() {
         return serialNumber;
@@ -65,5 +83,9 @@ public class ProductInstanceMaster implements Serializable {
     public void setSerialNumber(String serialNumber) {
         this.serialNumber = serialNumber;
     }
+
+
+
+
 
 }

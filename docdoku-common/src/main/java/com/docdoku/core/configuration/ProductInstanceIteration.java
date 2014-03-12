@@ -19,61 +19,71 @@
  */
 package com.docdoku.core.configuration;
 
-import com.docdoku.core.product.ConfigurationItem;
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 
 /**
- * This class is an instance of a product.
+ * This class represents a state, identified by its iteration, of an instance of
+ * a product <a href="ProductInstanceMaster.html">ProductInstanceMaster</a>.
  * 
  * @author Florent Garin
  * @version 2.0, 24/02/14
  * @since   V2.0
  */
-@Table(name="PRODUCTINSTANCE")
+@Table(name="PRODUCTINSTANCEITERATION")
+@IdClass(com.docdoku.core.configuration.ProductInstanceIterationKey.class)
 @Entity
 public class ProductInstanceIteration implements Serializable {
 
-
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Id
-    private int id;
-
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @ManyToOne(optional=false, fetch=FetchType.EAGER)
     @JoinColumns({
-            @JoinColumn(name = "CONFIGURATIONITEM_ID", referencedColumnName = "ID"),
-            @JoinColumn(name = "CONFIGURATIONITEM_WORKSPACE_ID", referencedColumnName = "WORKSPACE_ID")
+            @JoinColumn(name="PRDINSTANCEMASTER_SERIALNUMBER", referencedColumnName="SERIALNUMBER"),
+            @JoinColumn(name="CONFIGURATIONITEM_ID", referencedColumnName="CONFIGURATIONITEM_ID"),
+            @JoinColumn(name="WORKSPACE_ID", referencedColumnName="WORKSPACE_ID")
+
     })
-    private ConfigurationItem instanceOf;
+    private ProductInstanceMaster productInstanceMaster;
+
+    @Id
+    private int iteration;
 
 
-    @Column(nullable = false)
-    private String serialNumber;
-
+    @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY, orphanRemoval = true)
+    private PartCollection partCollection;
 
     public ProductInstanceIteration() {
     }
 
-    public ProductInstanceIteration(ConfigurationItem configurationItem, String serialNumber) {
-        this.instanceOf = configurationItem;
-        this.serialNumber = serialNumber;
+    public ProductInstanceIteration(ProductInstanceMaster pProductInstanceMaster, int pIteration) {
+        this.productInstanceMaster = pProductInstanceMaster;
+        this.iteration = pIteration;
     }
 
-    public ConfigurationItem getInstanceOf() {
-        return instanceOf;
+    @XmlTransient
+    public ProductInstanceMaster getProductInstanceMaster() {
+        return productInstanceMaster;
     }
 
-    public void setInstanceOf(ConfigurationItem instanceOf) {
-        this.instanceOf = instanceOf;
+    public void setProductInstanceMaster(ProductInstanceMaster productInstanceMaster) {
+        this.productInstanceMaster = productInstanceMaster;
     }
 
-    public String getSerialNumber() {
-        return serialNumber;
+    public int getIteration() {
+        return iteration;
     }
 
-    public void setSerialNumber(String serialNumber) {
-        this.serialNumber = serialNumber;
+    public void setIteration(int iteration) {
+        this.iteration = iteration;
     }
 
+    public PartCollection getPartCollection() {
+        return partCollection;
+    }
+
+    public void setPartCollection(PartCollection partCollection) {
+        this.partCollection = partCollection;
+    }
 }

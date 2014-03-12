@@ -20,79 +20,70 @@
 
 package com.docdoku.core.configuration;
 
-import com.docdoku.core.product.PartRevisionKey;
-
 import java.io.Serializable;
 
 /**
- * Identity class of <a href="PartIteration.html">PartIteration</a> objects.
+ * Identity class of <a href="ProductInstanceIteration.html">ProductInstanceIteration</a> objects.
  * 
  * @author Florent Garin
  */
 public class ProductInstanceIterationKey implements Serializable {
 
-    private PartRevisionKey partRevision;
+    private ProductInstanceMasterKey productInstanceMaster;
     private int iteration;
 
     public ProductInstanceIterationKey() {
     }
 
-    public ProductInstanceIterationKey(String pWorkspaceId, String pNumber, String pVersion, int pIteration) {
-        partRevision= new PartRevisionKey(pWorkspaceId, pNumber, pVersion);
+    public ProductInstanceIterationKey(String serialNumber,String pWorkspaceId, String pId, int pIteration) {
+        this(new ProductInstanceMasterKey(serialNumber, pWorkspaceId, pId),pIteration);
+    }
+
+    public ProductInstanceIterationKey(ProductInstanceMasterKey pProductInstanceMaster, int pIteration) {
+        productInstanceMaster=pProductInstanceMaster;
         iteration=pIteration;
     }
 
-    public ProductInstanceIterationKey(PartRevisionKey pPartRevisionKey, int pIteration) {
-        partRevision=pPartRevisionKey;
-        iteration=pIteration;
-    }
-    
-    @Override
-    public int hashCode() {
-        int hash = 1;
-	hash = 31 * hash + partRevision.hashCode();
-        hash = 31 * hash + iteration;
-	return hash;
-    }
-    
-    @Override
-    public boolean equals(Object pObj) {
-        if (this == pObj) {
-            return true;
-        }
-        if (!(pObj instanceof ProductInstanceIterationKey))
-            return false;
-        ProductInstanceIterationKey key = (ProductInstanceIterationKey) pObj;
-        return ((key.partRevision.equals(partRevision)) && (key.iteration==iteration));
-    }
-    
-    @Override
-    public String toString() {
-        return partRevision + "-" + iteration;
-    }
-
-    public PartRevisionKey getPartRevision() {
-        return partRevision;
-    }
-
-    public void setPartRevision(PartRevisionKey partRevision) {
-        this.partRevision = partRevision;
-    }
-
-    
-    public int getIteration(){
+    public int getIteration() {
         return iteration;
     }
-    
-    public void setIteration(int pIteration){
-        iteration=pIteration;
+
+    public void setIteration(int iteration) {
+        this.iteration = iteration;
     }
 
-    public String getWorkspaceId() {
-        return partRevision.getPartMaster().getWorkspace();
+    public ProductInstanceMasterKey getProductInstanceMaster() {
+        return productInstanceMaster;
     }
 
-    public String getPartMasterNumber() {
-        return partRevision.getPartMaster().getNumber();
+    public void setProductInstanceMaster(ProductInstanceMasterKey productInstanceMaster) {
+        this.productInstanceMaster = productInstanceMaster;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ProductInstanceIterationKey that = (ProductInstanceIterationKey) o;
+
+        if (iteration != that.iteration) return false;
+        if (!productInstanceMaster.equals(that.productInstanceMaster)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = productInstanceMaster.hashCode();
+        result = 31 * result + iteration;
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return productInstanceMaster + "-" + iteration;
+    }
+
+
 }

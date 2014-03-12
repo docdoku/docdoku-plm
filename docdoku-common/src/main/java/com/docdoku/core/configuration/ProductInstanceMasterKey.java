@@ -20,85 +20,67 @@
 
 package com.docdoku.core.configuration;
 
+import com.docdoku.core.product.ConfigurationItemKey;
+
 import java.io.Serializable;
 
 /**
- * Identity class of <a href="PartMaster.html">PartMaster</a> objects.
+ * Identity class of <a href="ProductInstanceMaster.html">ProductInstanceMaster</a> objects.
  * 
  * @author Florent Garin
  */
-public class ProductInstanceMasterKey implements Serializable, Comparable<ProductInstanceMasterKey>, Cloneable {
+public class ProductInstanceMasterKey implements Serializable {
 
-    private String workspace;
-    private String number;
+    private ConfigurationItemKey instanceOf;
+    private String serialNumber;
 
 
     public ProductInstanceMasterKey() {
     }
 
-    public ProductInstanceMasterKey(String pWorkspaceId, String pNumber) {
-        workspace=pWorkspaceId;
-        number=pNumber;
+    public ProductInstanceMasterKey(String serialNumber, String pWorkspaceId, String pId) {
+        this.serialNumber=serialNumber;
+        this.instanceOf=new ConfigurationItemKey(pWorkspaceId,pId);
     }
 
-    public String getWorkspace() {
-        return workspace;
+    public String getSerialNumber() {
+        return serialNumber;
     }
 
-    public void setWorkspace(String workspace) {
-        this.workspace = workspace;
+    public void setSerialNumber(String serialNumber) {
+        this.serialNumber = serialNumber;
     }
-  
-    
-    public String getNumber() {
-        return number;
+
+    public ConfigurationItemKey getInstanceOf() {
+        return instanceOf;
     }
-    
-    public void setNumber(String pNumber) {
-        number = pNumber;
+
+    public void setInstanceOf(ConfigurationItemKey instanceOf) {
+        this.instanceOf = instanceOf;
     }
-    
-    
+
     @Override
     public String toString() {
-        return workspace + "-" + number;
+        return instanceOf + "-" + serialNumber;
     }
 
     @Override
-    public boolean equals(Object pObj) {
-        if (this == pObj) {
-            return true;
-        }
-        if (!(pObj instanceof ProductInstanceMasterKey))
-            return false;
-        ProductInstanceMasterKey key = (ProductInstanceMasterKey) pObj;
-        return ((key.number.equals(number)) && (key.workspace.equals(workspace)));
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ProductInstanceMasterKey that = (ProductInstanceMasterKey) o;
+
+        if (!instanceOf.equals(that.instanceOf)) return false;
+        if (!serialNumber.equals(that.serialNumber)) return false;
+
+        return true;
     }
 
     @Override
     public int hashCode() {
-        int hash = 1;
-	    hash = 31 * hash + workspace.hashCode();
-	    hash = 31 * hash + number.hashCode();
-	    return hash;
-    }
-
-    public int compareTo(ProductInstanceMasterKey pKey) {
-        int wksComp = workspace.compareTo(pKey.workspace);
-        if (wksComp != 0)
-            return wksComp;
-        else
-            return number.compareTo(pKey.number);
-    }
-    
-    @Override
-    public ProductInstanceMasterKey clone() {
-        ProductInstanceMasterKey clone = null;
-        try {
-            clone = (ProductInstanceMasterKey) super.clone();
-        } catch (CloneNotSupportedException e) {
-            throw new InternalError();
-        }
-        return clone;
+        int result = instanceOf.hashCode();
+        result = 31 * result + serialNumber.hashCode();
+        return result;
     }
 }

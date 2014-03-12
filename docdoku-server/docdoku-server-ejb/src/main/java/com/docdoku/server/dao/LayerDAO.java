@@ -64,7 +64,7 @@ public class LayerDAO {
         em.flush();
     }
 
-    public void deleteLayer(Layer layer) throws LayerNotFoundException {
+    public void deleteLayer(Layer layer) {
         em.remove(layer);
         em.flush();
     }

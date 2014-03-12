@@ -30,7 +30,7 @@ import java.util.Locale;
 public class BaselineNotFoundException extends ApplicationException {
 
 
-    private int mLayer;
+    private int mBaseline;
 
 
     public BaselineNotFoundException(String pMessage) {
@@ -38,17 +38,17 @@ public class BaselineNotFoundException extends ApplicationException {
     }
 
 
-    public BaselineNotFoundException(Locale pLocale, int pLayer) {
-        this(pLocale, pLayer, null);
+    public BaselineNotFoundException(Locale pLocale, int pBaseline) {
+        this(pLocale, pBaseline, null);
     }
 
-    public BaselineNotFoundException(Locale pLocale, int pLayer, Throwable pCause) {
+    public BaselineNotFoundException(Locale pLocale, int pBaseline, Throwable pCause) {
         super(pLocale, pCause);
-        mLayer=pLayer;
+        mBaseline=pBaseline;
     }
     
     public String getLocalizedMessage() {
         String message = getBundleDefaultMessage();
-        return MessageFormat.format(message,mLayer);     
+        return MessageFormat.format(message,mBaseline);
     }
 }
