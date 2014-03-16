@@ -12,6 +12,12 @@
             #{i18nWorkspaceEdition['title']}
         </ui:define>
         <ui:define name="content">
+            <ol class="breadcrumb">
+                <li><a href="/faces/admin/workspace/workspacesMenu.xhtml">#{i18nTemplate['toplinks.admin']}</a>
+                    <span class="divider">/</span></li>
+                <li class="active">#{i18nWorkspaceEdition['main.title']}</li>
+            </ol>
+
             <h2>#{i18nWorkspaceEdition['main.title']}</h2>
 
             <h3>#{i18nWorkspaceEdition['section.title']}</h3>

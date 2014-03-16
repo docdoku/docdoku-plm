@@ -219,4 +219,8 @@ public abstract class ChangeItem implements Serializable {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    public String getWorkspaceId() {
+        return workspace == null ? "" : workspace.getId();
+    }
 }

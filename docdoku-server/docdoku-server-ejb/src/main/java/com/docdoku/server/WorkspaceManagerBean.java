@@ -23,12 +23,14 @@ package com.docdoku.server;
 import com.docdoku.core.common.Account;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
-import com.docdoku.core.exceptions.*;
+import com.docdoku.core.exceptions.AccessRightException;
+import com.docdoku.core.exceptions.AccountNotFoundException;
+import com.docdoku.core.exceptions.StorageException;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.services.IMailerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.core.services.IWorkspaceManagerLocal;
-import com.docdoku.server.dao.UserDAO;
+import com.docdoku.server.dao.AccountDAO;
 import com.docdoku.server.dao.WorkspaceDAO;
 import com.docdoku.server.esindexer.ESIndexer;
 
@@ -43,7 +45,7 @@ import java.io.IOException;
 import java.util.Locale;
 import java.util.logging.Logger;
 
-@DeclareRoles("admin")
+@DeclareRoles({"users","admin"})
 @Local(IWorkspaceManagerLocal.class)
 @Stateless(name = "WorkspaceManagerBean")
 public class WorkspaceManagerBean implements IWorkspaceManagerLocal {
@@ -75,69 +77,56 @@ public class WorkspaceManagerBean implements IWorkspaceManagerLocal {
 
     @RolesAllowed("admin")
     @Override
-    public Long getDiskUsageInWorkspace(String workspaceId) throws UserNotFoundException {
-        User admin = new UserDAO(em).loadAdmin(ctx.getCallerPrincipal().getName());
-        return new WorkspaceDAO(new Locale(admin.getLanguage()),em).getDiskUsageForWorkspace(workspaceId);
+    public long getDiskUsageInWorkspace(String workspaceId) throws AccountNotFoundException {
+        Account account = new AccountDAO(em).loadAccount(ctx.getCallerPrincipal().toString());
+        return new WorkspaceDAO(new Locale(account.getLanguage()),em).getDiskUsageForWorkspace(workspaceId);
     }
 
     @Override
     @RolesAllowed({"users","admin"})
     @Asynchronous
     public void deleteWorkspace(String workspaceId) {
-
         try{
-            User user = userManager.checkWorkspaceReadAccess(workspaceId);
-            Workspace workspace = new WorkspaceDAO(em, dataManager).loadWorkspace(workspaceId);
-
-            if(userManager.isCallerInRole("admin") || workspace.getAdmin().getLogin().equals(ctx.getCallerPrincipal().getName())){
-               doWorkspaceDeletion(workspace);
+            if(userManager.isCallerInRole("admin")){
+                Workspace workspace = new WorkspaceDAO(em, dataManager).loadWorkspace(workspaceId);
+                doWorkspaceDeletion(workspace);
+                esIndexer.deleteWorkspace(workspaceId);
             }else{
-                throw new AccessRightException(new Locale(user.getLanguage()),user);
+                User user = userManager.checkWorkspaceReadAccess(workspaceId);
+                Workspace workspace = new WorkspaceDAO(em, dataManager).loadWorkspace(workspaceId);
+                if(workspace.getAdmin().getLogin().equals(ctx.getCallerPrincipal().getName())){
+                   doWorkspaceDeletion(workspace);
+                    esIndexer.deleteWorkspace(workspaceId);
+                }else{
+                    throw new AccessRightException(new Locale(user.getLanguage()),user);
+                }
             }
 
         }catch(Exception e){
-            LOGGER.severe("Exception in deleteWorkspace "+e.getMessage());
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            LOGGER.severe("Exception deleting workspace " + e.getMessage());
         }
 
     }
 
     @Override
-    @RolesAllowed({"users","admin"})
-    public void synchronizeIndexer(String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException {
-        if(userManager.isCallerInRole("admin")){
-            esIndexer.indexWorkspace(workspaceId);
-        }else{
-            User user = userManager.checkWorkspaceReadAccess(workspaceId);
-            Workspace workspace = new WorkspaceDAO(em, dataManager).loadWorkspace(workspaceId);
-
-            if(workspace.getAdmin().getLogin().equals(ctx.getCallerPrincipal().getName())){
-                esIndexer.indexWorkspace(workspaceId);
-            }else{
-                throw new AccessRightException(new Locale(user.getLanguage()),user);
-            }
-        }
+    @RolesAllowed({"admin"})
+    public void synchronizeIndexer(String workspaceId) {
+        esIndexer.indexWorkspace(workspaceId);
     }
 
     private void doWorkspaceDeletion(Workspace workspace){
-
         Account admin = workspace.getAdmin();
         String workspaceId = workspace.getId();
-
         try {
             new WorkspaceDAO(em, dataManager).removeWorkspace(workspace);
         } catch (IOException e) {
-            LOGGER.severe("IOException while deleting the workspace : "+workspace.getId());
+            LOGGER.severe("IOException while deleting the workspace : "+workspaceId);
             LOGGER.severe(e.getMessage());
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         } catch (StorageException e) {
-            LOGGER.severe("StorageException while deleting the workspace : "+workspace.getId());
+            LOGGER.severe("StorageException while deleting the workspace : "+workspaceId);
             LOGGER.severe(e.getMessage());
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
 
-
-        // todo : Send mail to admin
         mailerManager.sendWorkspaceDeletionNotification(admin,workspaceId);
 
     }

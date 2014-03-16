@@ -24,9 +24,9 @@ import com.docdoku.core.common.User;
 import com.docdoku.core.common.UserGroupKey;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.exceptions.*;
-import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.core.services.IWorkspaceManagerLocal;
+import com.docdoku.core.util.NamingConvention;
 
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
@@ -43,9 +43,6 @@ import java.util.*;
 public class WorkspaceBean {
 
     @EJB
-    private IDocumentManagerLocal documentService;
-
-    @EJB
     private IWorkspaceManagerLocal workspaceManager;
 
     @EJB
@@ -54,8 +51,8 @@ public class WorkspaceBean {
     @ManagedProperty(value = "#{adminStateBean}")
     private AdminStateBean adminState;
 
-    private Map<String, Boolean> selectedGroups = new HashMap<String, Boolean>();
-    private Map<String, Boolean> selectedLogins = new HashMap<String, Boolean>();
+    private Map<String, Boolean> selectedGroups = new HashMap<>();
+    private Map<String, Boolean> selectedLogins = new HashMap<>();
     private String loginToAdd;
     private String groupToCreate;
     private String workspaceAdmin;
@@ -77,14 +74,27 @@ public class WorkspaceBean {
         return "/admin/workspace/workspaceEditionForm.xhtml";
     }
 
+
+    public void synchronizeIndexer() throws WorkspaceNotFoundException {
+        Workspace wks = adminState.getCurrentWorkspace();
+        if(userManager.isCallerInRole("admin")){
+            workspaceManager.synchronizeIndexer(wks.getId());
+        }
+    }
+
     public String deleteWorkspace() throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException, IOException, StorageException, AccountNotFoundException {
 
         Workspace wks = adminState.getCurrentWorkspace();
+        User user = null;
+        boolean isRoot = userManager.isCallerInRole("admin");
+        boolean canAccess = isRoot;
 
-        User user = userManager.checkWorkspaceReadAccess(wks.getId());
+        if(!isRoot){
+            user = userManager.checkWorkspaceReadAccess(wks.getId());
+            canAccess = wks.getAdmin().getLogin().equals(user.getLogin());
+        }
 
-        if(userManager.isCallerInRole("admin") || wks.getAdmin().getLogin().equals(user.getLogin())){
-
+        if(canAccess){
             workspaceManager.deleteWorkspace(wks.getId());
 
             // Remove workspace from session attributes
@@ -93,12 +103,13 @@ public class WorkspaceBean {
 
             Map<String, Workspace> administeredWorkspaces = (Map<String, Workspace>) session.getAttribute("administeredWorkspaces");
             administeredWorkspaces.remove(wks.getId());
-
-            Set<Workspace> regularWorkspaces = (Set<Workspace>) session.getAttribute("regularWorkspaces");
-            regularWorkspaces.remove(wks);
-
             session.setAttribute("administeredWorkspaces", administeredWorkspaces);
-            session.setAttribute("regularWorkspaces", regularWorkspaces);
+
+            if(!isRoot){
+                Set<Workspace> regularWorkspaces = (Set<Workspace>) session.getAttribute("regularWorkspaces");
+                regularWorkspaces.remove(wks);
+                session.setAttribute("regularWorkspaces", regularWorkspaces);
+            }
 
             return "/admin/workspace/workspaceDeleted.xhtml";
 
@@ -115,7 +126,6 @@ public class WorkspaceBean {
     
     public String addUser() throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException, UserGroupNotFoundException, NotAllowedException, AccountNotFoundException, UserAlreadyExistsException, FolderAlreadyExistsException, CreationException {
         Workspace workspace = adminState.getCurrentWorkspace();
-        User[] users = documentService.getUsers(workspace.getId());
         //TODO switch to a more JSF style code
         HttpServletRequest request = (HttpServletRequest) (FacesContext.getCurrentInstance().getExternalContext().getRequest());
         
@@ -154,30 +164,44 @@ public class WorkspaceBean {
         workspace.setFolderLocked(freezeFolders);
         if (newAdmin != null) {
             workspace.setAdmin(newAdmin);
-
-            Map<String, Workspace> administeredWorkspaces = (Map<String, Workspace>) sessionHTTP.getAttribute("administeredWorkspaces");
-            administeredWorkspaces.remove(workspace.getId());
-            Set<Workspace> regularWorkspaces = (Set<Workspace>) sessionHTTP.getAttribute("regularWorkspaces");
-            regularWorkspaces.add(workspace);
+            if(!userManager.isCallerInRole("admin")){
+                Map<String, Workspace> administeredWorkspaces = (Map<String, Workspace>) sessionHTTP.getAttribute("administeredWorkspaces");
+                administeredWorkspaces.remove(workspace.getId());
+                Set<Workspace> regularWorkspaces = (Set<Workspace>) sessionHTTP.getAttribute("regularWorkspaces");
+                regularWorkspaces.add(workspace);
+            }
         }
 
         return "/admin/workspace/editWorkspace.xhtml";
     }
 
-    public String createWorkspace() throws FolderAlreadyExistsException, UserAlreadyExistsException, WorkspaceAlreadyExistsException, CreationException {
-
+    public String createWorkspace() throws FolderAlreadyExistsException, UserAlreadyExistsException, WorkspaceAlreadyExistsException, CreationException, NotAllowedException, AccountNotFoundException {
         //TODO switch to a more JSF style code
         HttpServletRequest request = (HttpServletRequest) (FacesContext.getCurrentInstance().getExternalContext().getRequest());
         HttpSession sessionHTTP = request.getSession();
 
-        Account account = (Account) sessionHTTP.getAttribute("account");
+        Account account;
+        if(userManager.isCallerInRole("admin")){
+            account = userManager.getAccount(loginToAdd);
+        }else{
+            account = (Account) sessionHTTP.getAttribute("account");
+        }
+
         Map<String, Workspace> administeredWorkspaces = (Map<String, Workspace>) sessionHTTP.getAttribute("administeredWorkspaces");
 
-        Workspace workspace = userManager.createWorkspace(workspaceId, account, workspaceDescription, freezeFolders);
+        if (!NamingConvention.correct(workspaceId)) {
+            throw new NotAllowedException(new Locale(account.getLanguage()), "NotAllowedException9");
+        }
 
-        administeredWorkspaces.put(workspace.getId(), workspace);
-        adminState.setSelectedWorkspace(workspace.getId());
-        adminState.setSelectedGroup(null);
+        try {
+            Workspace workspace = userManager.createWorkspace(workspaceId, account, workspaceDescription, freezeFolders);
+            administeredWorkspaces.put(workspace.getId(), workspace);
+            adminState.setSelectedWorkspace(workspace.getId());
+            adminState.setSelectedGroup(null);
+
+        } catch (ESIndexNamingException e) {
+            throw new NotAllowedException(new Locale(account.getLanguage()), "NotAllowedException9");
+        }
         return "/admin/workspace/createWorkspace.xhtml";
     }
 
@@ -198,7 +222,7 @@ public class WorkspaceBean {
         selectedLogins.clear();
     }
     
-    public void remove() throws UserGroupNotFoundException, AccessRightException, UserNotFoundException, NotAllowedException, AccountNotFoundException, WorkspaceNotFoundException, FolderNotFoundException, IndexerServerException {
+    public void remove() throws UserGroupNotFoundException, AccessRightException, UserNotFoundException, NotAllowedException, AccountNotFoundException, WorkspaceNotFoundException, FolderNotFoundException, ESServerException {
         if (!selectedLogins.isEmpty()) {
             userManager.removeUsers(adminState.getSelectedWorkspace(), getLogins());
         }
@@ -243,7 +267,7 @@ public class WorkspaceBean {
     }
 
     private String[] getGroupIds() {
-        List<String> groupIds = new ArrayList<String>();
+        List<String> groupIds = new ArrayList<>();
         for (Map.Entry<String, Boolean> entry : selectedGroups.entrySet()) {
             if (entry.getValue()) {
                 groupIds.add(entry.getKey());
@@ -253,7 +277,7 @@ public class WorkspaceBean {
     }
 
     private String[] getLogins() {
-        List<String> logins = new ArrayList<String>();
+        List<String> logins = new ArrayList<>();
         for (Map.Entry<String, Boolean> entry : selectedLogins.entrySet()) {
             if (entry.getValue()) {
                 logins.add(entry.getKey());

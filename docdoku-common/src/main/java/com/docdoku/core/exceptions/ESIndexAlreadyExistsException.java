@@ -22,18 +22,15 @@ package com.docdoku.core.exceptions;
 import java.util.Locale;
 
 /**
- * Exception on the Indexer Server usage
+ * Exception when trying to create a existing index;
  * @author Taylor LABEJOF
  */
-public class IndexerServerException extends ApplicationException {
+public class ESIndexAlreadyExistsException extends ApplicationException {
     private String mKey;
 
-    public IndexerServerException(String pMessage) {
-        super(pMessage);
-    }
-    public IndexerServerException(Locale pLocale, String pKey) {
+    public ESIndexAlreadyExistsException(Locale pLocale) {
         super(pLocale);
-        mKey=pKey;
+        mKey="IndexAlreadyExistException1";
     }
     public String getLocalizedMessage() {
         return mKey==null?null:getBundleMessage(mKey);

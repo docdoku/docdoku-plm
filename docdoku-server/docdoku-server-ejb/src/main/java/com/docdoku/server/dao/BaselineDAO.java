@@ -22,27 +22,31 @@ package com.docdoku.server.dao;
 
 import com.docdoku.core.configuration.Baseline;
 import com.docdoku.core.configuration.BaselinedPart;
-import com.docdoku.core.configuration.BaselinedPartKey;
+import com.docdoku.core.exceptions.BaselineNotFoundException;
 import com.docdoku.core.product.PartRevision;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class BaselineDAO {
 
     private EntityManager em;
+    private Locale mLocale;
 
     public BaselineDAO(EntityManager pEM) {
         em = pEM;
     }
 
-    public List<Baseline> findBaselines(String ciId){
+    public BaselineDAO(Locale pLocale, EntityManager pEM) {
+        em = pEM;
+        mLocale = pLocale;
+    }
+
+    public List<Baseline> findBaselines(String ciId, String workspaceId){
         return em.createNamedQuery("Baseline.findByConfigurationItemId", Baseline.class)
                 .setParameter("ciId", ciId)
+                .setParameter("workspaceId",workspaceId)
                 .getResultList();
     }
 
@@ -51,53 +55,39 @@ public class BaselineDAO {
         em.flush();
     }
 
-    public Baseline findBaseline(String ciId, int baselineId) {
-        try{
-            return em.createNamedQuery("Baseline.findByConfigurationItemIdAndBaselineId", Baseline.class)
-                .setParameter("ciId", ciId)
-                .setParameter("baselineId", baselineId)
-                .getSingleResult();
-        }catch(NoResultException ex){
-            return null;
+    public Baseline loadBaseline(int pId) throws BaselineNotFoundException {
+        Baseline baseline = em.find(Baseline.class, pId);
+        if (baseline == null) {
+            throw new BaselineNotFoundException(mLocale, pId);
+        } else {
+            return baseline;
         }
     }
 
-    public void deleteBaseline(String ciId, int baselineId) {
-        Baseline baseline = findBaseline(ciId,baselineId);
-        if(baseline != null){
-            em.remove(baseline);
-            em.flush();
-        }
+    public void deleteBaseline(Baseline baseline) {
+        em.remove(baseline);
+        em.flush();
     }
 
-    public boolean existBaselinedPart(String partNumber) {
-        return em.createNamedQuery("BaselinedPart.existBaselinedPart", Baseline.class)
+    public boolean existBaselinedPart(String workspaceId, String partNumber) {
+        return em.createNamedQuery("BaselinedPart.existBaselinedPart", BaselinedPart.class)
             .setParameter("partNumber", partNumber)
+            .setParameter("workspaceId", workspaceId)
             .executeUpdate() > 0;
     }
 
     public void flushBaselinedParts(Baseline baseline) {
-        Set<Map.Entry<BaselinedPartKey,BaselinedPart>> entries = baseline.getBaselinedParts().entrySet();
-        for(Iterator<Map.Entry<BaselinedPartKey,BaselinedPart>> it = entries.iterator(); it.hasNext(); ) {
-            it.next();
-            it.remove();
-        }
+        baseline.removeAllBaselinedParts();
         em.flush();
     }
 
     public List<Baseline> findBaselineWherePartRevisionHasIterations(PartRevision partRevision) {
-        return em.createNamedQuery("BaselinedPart.getBaselinesForPartRevision", Baseline.class)
+        return em.createNamedQuery("Baseline.getBaselinesForPartRevision", Baseline.class)
                 .setParameter("partRevision", partRevision)
                 .getResultList();
     }
 
     public Baseline findBaselineById(int baselineId) {
-        try{
-            return em.createNamedQuery("Baseline.findByBaselineId", Baseline.class)
-                    .setParameter("baselineId", baselineId)
-                    .getSingleResult();
-        }catch(NoResultException ex){
-            return null;
-        }
+        return em.find(Baseline.class,baselineId);
     }
 }

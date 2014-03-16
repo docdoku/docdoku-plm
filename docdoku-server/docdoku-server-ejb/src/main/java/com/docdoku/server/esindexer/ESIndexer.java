@@ -39,6 +39,7 @@ import com.docdoku.core.query.SearchQuery;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.services.IMailerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
+import com.docdoku.core.util.Tools;
 import com.docdoku.server.dao.*;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.parser.PdfTextExtractor;
@@ -48,19 +49,24 @@ import org.apache.poi.hwpf.extractor.WordExtractor;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
+import org.elasticsearch.action.delete.DeleteRequestBuilder;
 import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.action.search.*;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.NoNodeAvailableException;
 import org.elasticsearch.client.transport.TransportClient;
+import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.indices.IndexAlreadyExistsException;
+import org.elasticsearch.indices.InvalidIndexNameException;
 import org.elasticsearch.search.SearchHit;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -78,6 +84,7 @@ import javax.xml.parsers.SAXParserFactory;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -94,10 +101,14 @@ public class ESIndexer{
     private final static Properties CONF = new Properties();
     private final static String SEARCH_ERROR_LOG_1 = "Search can't be done. The ElasticSearch server doesn't seem to respond.";
     private static final String DELETE_ERROR_LOG_1 = "Delete index can't be done. The ElasticSearch server doesn't seem to respond.";
+    private static final String DELETE_ERROR_LOG_2 = "Multiple deleting index can't be done. The ElasticSearch server doesn't seem to respond.";
+    private static final Object DELETE_ERROR_LOG_3 = "Multiple deleting index meet some problem: ";
+    private static final String INDEX_CREATION_ERROR_LOG_1 = "Index can't be create. The following index name already exist: ";
+    private static final String INDEX_CREATION_ERROR_LOG_2 = "Index can't be create. The following index name is invalid: ";
     private static final String INDEX_ERROR_LOG_1 = "Indexing can't be done. The ElasticSearch server doesn't seem to respond.";
     private static final String INDEX_ERROR_LOG_2 = "Multiple indexing can't be done. The ElasticSearch server doesn't seem to respond.";
     private static final String INDEX_ERROR_LOG_3 = "Multiple indexing meet some problem: ";
-    private static final String MAIL_ERROR_LOG_1 = "Application can't send a reponse mail";
+    private static final String MAIL_ERROR_LOG_1 = "Application can't send a ElasticSearch response mail";
 
     static{
         try {
@@ -106,7 +117,6 @@ public class ESIndexer{
             e.printStackTrace();
         }
     }
-
 
     @PersistenceContext
     private EntityManager em;
@@ -130,19 +140,61 @@ public class ESIndexer{
     /**
      * Create a ElasticSearch Client to make QueryRequest
      */
-    private Client createClient() throws IndexerServerException {
+    private Client createClient() throws ESServerException {
         try{
             return new TransportClient().addTransportAddress(new InetSocketTransportAddress(CONF.getProperty("host"), Integer.parseInt(CONF.getProperty("port"))));
-        }catch (NoNodeAvailableException e){
-            throw new IndexerServerException(Locale.getDefault(), "IndexerServerException1");
+        }catch (ElasticsearchException e){
+            throw new ESServerException(Locale.getDefault(), "IndexerServerException1");
         }
+    }
+
+    private void createIndex(String pIndex, Client pClient) throws ESIndexAlreadyExistsException, ESIndexNamingException {
+        try{
+            pClient.admin().indices().prepareCreate(pIndex)
+                   .setSettings(ImmutableSettings.settingsBuilder().put("number_of_shards", CONF.getProperty("number_of_shards")).put("number_of_replicas", CONF.getProperty("number_of_replicas")))
+                   .execute().actionGet();
+        }catch (IndexAlreadyExistsException e){
+            Logger.getLogger(ESIndexer.class.getName()).log(Level.INFO, INDEX_CREATION_ERROR_LOG_1+pIndex);
+            throw new ESIndexAlreadyExistsException(Locale.getDefault());
+        }catch(InvalidIndexNameException e){
+            Logger.getLogger(ESIndexer.class.getName()).log(Level.INFO, INDEX_CREATION_ERROR_LOG_2+pIndex);
+            throw new ESIndexNamingException(Locale.getDefault());
+        }
+    }
+
+    private void deleteIndex(String pIndex, Client pClient){
+        pClient.admin().indices().prepareDelete(pIndex)
+                       .execute().actionGet();
+    }
+
+    public void createIndex(String workspaceId) throws ESServerException, ESIndexAlreadyExistsException, ESIndexNamingException {
+        try{
+            Client client = createClient();
+            createIndex(formatIndexName(workspaceId), client);
+            client.close();
+        }catch (NoNodeAvailableException e){
+            Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, "Error on creating: "+workspaceId+" index");
+        }
+    }
+
+    public void deleteIndex(String workspaceId){
+        try{
+            Client client = createClient();
+            deleteIndex(formatIndexName(workspaceId), client);
+            client.close();
+        } catch (ESServerException e) {
+            e.printStackTrace();
+        }catch (NoNodeAvailableException e){
+            Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, "Error on deleting: "+workspaceId+" index");
+        }
+
     }
 
     /**
      * Index all content in all workspace
      */
     @Asynchronous
-    public void indexAll() throws IndexerServerException {
+    public void indexAll(){
         try{
             Client client = createClient();
             BulkRequestBuilder bulkRequest = client.prepareBulk();
@@ -150,19 +202,29 @@ public class ESIndexer{
             DocumentMasterDAO docMasterDAO = new DocumentMasterDAO(em);
             PartMasterDAO partMasterDAO = new PartMasterDAO(em);
             for(Workspace w : wDAO.getAll()){
-                for(DocumentMaster docM : docMasterDAO.getAllByWorkspace(w.getId())){
-                    for(DocumentRevision docR : docM.getDocumentRevisions()){
-                        for(DocumentIteration docI : docR.getDocumentIterations()){
-                            bulkRequest.add(indexRequest(client, docI));
+                try{
+                    try{
+                        createIndex(formatIndexName(w.getId()), client);
+                    }catch (ESIndexAlreadyExistsException e){
+                        // When the index name already exists
+                    }
+
+                    for(DocumentMaster docM : docMasterDAO.getAllByWorkspace(w.getId())){
+                        for(DocumentRevision docR : docM.getDocumentRevisions()){
+                            for(DocumentIteration docI : docR.getDocumentIterations()){
+                                bulkRequest.add(indexRequest(client, docI));
+                            }
                         }
                     }
-                }
-                for(PartMaster partMaster : partMasterDAO.getAllByWorkspace(w.getId())){
-                    for(PartRevision partRev : partMaster.getPartRevisions()){
-                        for(PartIteration partIte : partRev.getPartIterations()){
-                            bulkRequest.add(indexRequest(client, partIte));
+                    for(PartMaster partMaster : partMasterDAO.getAllByWorkspace(w.getId())){
+                        for(PartRevision partRev : partMaster.getPartRevisions()){
+                            for(PartIteration partIte : partRev.getPartIterations()){
+                                bulkRequest.add(indexRequest(client, partIte));
+                            }
                         }
                     }
+                }catch (ESIndexNamingException e){
+                    // When the index name is invalid
                 }
             }
 
@@ -172,7 +234,7 @@ public class ESIndexer{
             if (bulkResponse.hasFailures()) {
                 Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, INDEX_ERROR_LOG_3+" \n "+bulkResponse.buildFailureMessage());
             }
-        }catch (IndexerServerException | NoNodeAvailableException e){
+        }catch (ESServerException | NoNodeAvailableException e){
             Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, INDEX_ERROR_LOG_2);
         }
     }
@@ -183,8 +245,16 @@ public class ESIndexer{
      */
     @Asynchronous
     public void indexWorkspace(String workspaceId){
+        String failureMessage="";
+        boolean hasSuccess = true;
+
         try{
             Client client = createClient();
+            try{
+                createIndex(formatIndexName(workspaceId), client);
+            }catch (ESIndexAlreadyExistsException e){
+                // When the index name already exists
+            }
             BulkRequestBuilder bulkRequest = client.prepareBulk();
             DocumentMasterDAO docMasterDAO = new DocumentMasterDAO(em);
             PartMasterDAO partMasterDAO = new PartMasterDAO(em);
@@ -206,21 +276,28 @@ public class ESIndexer{
             BulkResponse bulkResponse = bulkRequest.execute().actionGet();
             client.close();
 
-            String failureMessage;
             if (bulkResponse.hasFailures()) {
+                hasSuccess = false;
                 failureMessage = bulkResponse.buildFailureMessage();
-                Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, INDEX_ERROR_LOG_3+" \n "+failureMessage);
             }
+        }catch (ESIndexNamingException e){
+            hasSuccess = false;
+            failureMessage = INDEX_CREATION_ERROR_LOG_2 + workspaceId ;
+        }catch (ESServerException | NoNodeAvailableException e){
+            hasSuccess = false;
+            failureMessage = INDEX_ERROR_LOG_2;
+        }
 
-            try{
-                String login = ctx.getCallerPrincipal().getName();
-                Account account = userManager.getAccount(login);
-                mailer.sendIndexerResult(account,workspaceId,!bulkResponse.hasFailures(),"");
-            }catch (AccountNotFoundException e){
-                Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, MAIL_ERROR_LOG_1);
-            }
-        }catch (IndexerServerException | NoNodeAvailableException e){
-            Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, INDEX_ERROR_LOG_2);
+        if(!hasSuccess){
+            Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, INDEX_ERROR_LOG_3+" \n "+failureMessage);
+        }
+
+        try{
+            String login = ctx.getCallerPrincipal().getName();
+            Account account = userManager.getAccount(login);
+            mailer.sendIndexerResult(account,workspaceId,hasSuccess,failureMessage);
+        }catch (AccountNotFoundException e){
+            Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, MAIL_ERROR_LOG_1);
         }
     }
 
@@ -229,15 +306,22 @@ public class ESIndexer{
      * @param doc The document iteration to index
      */
     @Asynchronous
-    public void index(DocumentIteration doc) throws IndexerServerException {
+    public void index(DocumentIteration doc){
+        String workspaceId = doc.getWorkspaceId();
         try{
             Client client = createClient();
+            try{
+                createIndex(formatIndexName(workspaceId), client);
+            }catch (ESIndexAlreadyExistsException e){
+                // When the index name already exists
+            }
             indexRequest(client, doc).execute()
                                      .actionGet();
             client.close();
-        }catch (NoNodeAvailableException e){
-            Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, INDEX_ERROR_LOG_1);
-            throw new IndexerServerException(Locale.getDefault(), "IndexerServerException1");
+        }catch (NoNodeAvailableException | ESServerException e){
+            Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, "Error on : "+doc+" indexing\n Cause by : "+ INDEX_ERROR_LOG_1);
+        }catch(ESIndexNamingException e){
+            Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, "Error on : "+doc+" indexing\n Cause by : "+ INDEX_CREATION_ERROR_LOG_2 + workspaceId);
         }
     }
 
@@ -246,15 +330,22 @@ public class ESIndexer{
      * @param part The part iteration to index
      */
     @Asynchronous
-    public void index(PartIteration part) throws IndexerServerException {
+    public void index(PartIteration part){
+        String workspaceId = part.getWorkspaceId();
         try{
             Client client = createClient();
+            try{
+                createIndex(formatIndexName(workspaceId), client);
+            }catch (ESIndexAlreadyExistsException e){
+                // When the index name already exists
+            }
             indexRequest(client, part).execute()
                               .actionGet();
             client.close();
-        }catch (NoNodeAvailableException e){
-            Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, INDEX_ERROR_LOG_1);
-            throw new IndexerServerException(Locale.getDefault(), "IndexerServerException1");
+        }catch (NoNodeAvailableException | ESServerException e){
+            Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, "Error on : "+part+" indexing\n Cause by : "+ INDEX_ERROR_LOG_1);
+        }catch(ESIndexNamingException e){
+            Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, "Error on : "+part+" indexing\n Cause by : "+ INDEX_CREATION_ERROR_LOG_2 + workspaceId);
         }
     }
 
@@ -263,16 +354,14 @@ public class ESIndexer{
      * @param doc The document iteration to remove from index
      */
     @Asynchronous
-    public void delete(DocumentIteration doc) throws IndexerServerException {
+    public void delete(DocumentIteration doc){
         try{
             Client client = createClient();
-            client.prepareDelete(doc.getWorkspaceId().toLowerCase(), "document", doc.getKey().toString())
-                    .execute()
-                    .actionGet();
+            deleteRequest(client, doc).execute()
+                                     .actionGet();
             client.close();
-        }catch (NoNodeAvailableException e){
+        }catch (NoNodeAvailableException | ESServerException e){
             Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, DELETE_ERROR_LOG_1);
-            throw new IndexerServerException(Locale.getDefault(), "IndexerServerException1");
         }
     }
 
@@ -281,16 +370,42 @@ public class ESIndexer{
      * @param part The part iteration to remove from index
      */
     @Asynchronous
-    public void delete(PartIteration part) throws IndexerServerException {
+    public void delete(PartIteration part){
         try{
             Client client = createClient();
-            client.prepareDelete(part.getWorkspaceId().toLowerCase(), "part", part.getKey().toString())
-                    .execute()
-                    .actionGet();
+            deleteRequest(client, part).execute()
+                                       .actionGet();
             client.close();
-        }catch (NoNodeAvailableException e){
+        }catch (NoNodeAvailableException | ESServerException e){
             Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, DELETE_ERROR_LOG_1);
-            throw new IndexerServerException(Locale.getDefault(), "IndexerServerException1");
+        }
+    }
+
+    /**
+     * Delete index for all resources in this workspace
+     * @param workspaceId Workspace to delete
+     */
+    @Asynchronous
+    public void deleteWorkspace(String workspaceId){
+        String failureMessage="";
+        boolean hasSuccess = true;
+
+        try{
+            Client client = createClient();
+            deleteIndex(formatIndexName(workspaceId),client);
+            client.close();
+        }catch (ESServerException | NoNodeAvailableException e){
+            hasSuccess = false;
+            failureMessage = DELETE_ERROR_LOG_2;
+            Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, DELETE_ERROR_LOG_3+" \n "+failureMessage);
+        }
+
+        try{
+            String login = ctx.getCallerPrincipal().getName();
+            Account account = userManager.getAccount(login);
+            mailer.sendIndexerResult(account,workspaceId,hasSuccess,failureMessage);
+        }catch (AccountNotFoundException e){
+            Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, MAIL_ERROR_LOG_1);
         }
     }
 
@@ -299,11 +414,11 @@ public class ESIndexer{
      * @param docQuery DocumentSearchQuery
      * @return List of document master
      */
-    public List<DocumentRevision> search(DocumentSearchQuery docQuery) throws IndexerServerException {
+    public List<DocumentRevision> search(DocumentSearchQuery docQuery) throws ESServerException {
         try{
             Client client = createClient();
             QueryBuilder qr = getQueryBuilder(docQuery);
-            SearchRequestBuilder srb = getSearchRequest(client, docQuery.getWorkspaceId().toLowerCase(), "document", qr);
+            SearchRequestBuilder srb = getSearchRequest(client, formatIndexName(docQuery.getWorkspaceId()), "document", qr);
             SearchResponse sr = srb.execute().actionGet();
 
 
@@ -326,7 +441,7 @@ public class ESIndexer{
             return listOfDocuments;
         }catch (NoNodeAvailableException e){
             Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, SEARCH_ERROR_LOG_1);
-            throw new IndexerServerException(Locale.getDefault(), "IndexerServerException1");
+            throw new ESServerException(Locale.getDefault(), "IndexerServerException1");
         }
     }
 
@@ -335,11 +450,11 @@ public class ESIndexer{
      * @param partQuery PartSearchQuery
      * @return List of part revision
      */
-    public List<PartRevision> search(PartSearchQuery partQuery) throws IndexerServerException {
+    public List<PartRevision> search(PartSearchQuery partQuery) throws ESServerException {
         try{
             Client client = createClient();
             QueryBuilder qr = getQueryBuilder(partQuery);
-            SearchRequestBuilder srb = getSearchRequest(client, partQuery.getWorkspaceId().toLowerCase(), "part", qr);
+            SearchRequestBuilder srb = getSearchRequest(client, formatIndexName(partQuery.getWorkspaceId()), "part", qr);
             SearchResponse sr = srb.execute().actionGet();
 
             List<PartRevision> listOfParts = new ArrayList<>();
@@ -359,7 +474,7 @@ public class ESIndexer{
             return listOfParts;
         }catch (NoNodeAvailableException e){
             Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, SEARCH_ERROR_LOG_1);
-            throw new IndexerServerException(Locale.getDefault(), "IndexerServerException1");
+            throw new ESServerException(Locale.getDefault(), "IndexerServerException1");
         }
 
     }
@@ -369,13 +484,13 @@ public class ESIndexer{
      * @param query PartSearchQuery
      * @return List of part revision
      */
-    public List<Object> search(SearchQuery query) throws IndexerServerException {
+    public List<Object> search(SearchQuery query) throws ESServerException {
         try{
             Client client = createClient();
             QueryBuilder qr = getQueryBuilder(query);
             MultiSearchRequestBuilder srbm = client.prepareMultiSearch();
-            srbm.add(getSearchRequest(client, query.getWorkspaceId().toLowerCase(), "document", qr));
-            srbm.add(getSearchRequest(client, query.getWorkspaceId().toLowerCase(), "part", qr));
+            srbm.add(getSearchRequest(client, formatIndexName(query.getWorkspaceId()), "document", qr));
+            srbm.add(getSearchRequest(client, formatIndexName(query.getWorkspaceId()), "part", qr));
             MultiSearchResponse srm = srbm.execute().actionGet();
 
             List<Object> ret= new ArrayList<>();
@@ -413,7 +528,7 @@ public class ESIndexer{
             return ret;
         }catch (NoNodeAvailableException e){
             Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, SEARCH_ERROR_LOG_1);
-            throw new IndexerServerException(Locale.getDefault(), "IndexerServerException1");
+            throw new ESServerException(Locale.getDefault(), "IndexerServerException1");
         }
     }
 
@@ -422,14 +537,14 @@ public class ESIndexer{
      * @param docQuery DocumentSearchQuery
      * @return List of document master
      */
-    public List<DocumentRevision> searchInAllWorkspace(DocumentSearchQuery docQuery) throws IndexerServerException {
+    public List<DocumentRevision> searchInAllWorkspace(DocumentSearchQuery docQuery) throws ESServerException {
         try{
             Client client = createClient();
             QueryBuilder qr = getQueryBuilder(docQuery);
             MultiSearchRequestBuilder srbm = client.prepareMultiSearch();
             WorkspaceDAO wDAO = new WorkspaceDAO(em);
             for(Workspace w : wDAO.getAll()){
-                srbm.add(getSearchRequest(client, w.getId().toLowerCase(), "document", qr));
+                srbm.add(getSearchRequest(client, formatIndexName(w.getId()), "document", qr));
             }
             MultiSearchResponse srm = srbm.execute().actionGet();
 
@@ -457,7 +572,7 @@ public class ESIndexer{
             return listOfDocuments;
         }catch (NoNodeAvailableException e){
             Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, SEARCH_ERROR_LOG_1);
-            throw new IndexerServerException(Locale.getDefault(), "IndexerServerException1");
+            throw new ESServerException(Locale.getDefault(), "IndexerServerException1");
         }
     }
 
@@ -466,14 +581,14 @@ public class ESIndexer{
      * @param partQuery PartSearchQuery
      * @return List of part revision
      */
-    public List<PartRevision> searchInAllWorkspace(PartSearchQuery partQuery) throws IndexerServerException {
+    public List<PartRevision> searchInAllWorkspace(PartSearchQuery partQuery) throws ESServerException {
         try{
             Client client = createClient();
             QueryBuilder qr = getQueryBuilder(partQuery);
             MultiSearchRequestBuilder srbm = client.prepareMultiSearch();
             WorkspaceDAO wDAO = new WorkspaceDAO(em);
             for(Workspace w : wDAO.getAll()){
-                srbm.add(getSearchRequest(client, w.getId().toLowerCase(), "part", qr));
+                srbm.add(getSearchRequest(client, formatIndexName(w.getId()), "part", qr));
             }
             MultiSearchResponse srm = srbm.execute().actionGet();
 
@@ -501,7 +616,7 @@ public class ESIndexer{
             return listOfParts;
         }catch (NoNodeAvailableException e){
             Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, SEARCH_ERROR_LOG_1);
-            throw new IndexerServerException(Locale.getDefault(), "IndexerServerException1");
+            throw new ESServerException(Locale.getDefault(), "IndexerServerException1");
         }
     }
 
@@ -511,7 +626,7 @@ public class ESIndexer{
      * @return List of part revision
      */
     /*
-    public List<Object> searchInAllWorkspace(SearchQuery query) throws IndexerServerException {                                                       // TODO Optimize it
+    public List<Object> searchInAllWorkspace(SearchQuery query) throws ESServerException {                                                       // TODO Optimize it
         return null; //TODO
     }*/
 
@@ -521,8 +636,8 @@ public class ESIndexer{
      */
     private IndexRequestBuilder indexRequest(Client client, DocumentIteration doc) throws NoNodeAvailableException{
         XContentBuilder jsonDoc = documentIterationToJSON(doc);
-        return client.prepareIndex(doc.getWorkspaceId().toLowerCase(), "document", doc.getKey().toString())
-                     .setSource(jsonDoc);
+        return client.prepareIndex(formatIndexName(doc.getWorkspaceId()), "document", doc.getKey().toString())
+                         .setSource(jsonDoc);
     }
 
     /**
@@ -531,8 +646,24 @@ public class ESIndexer{
      */
     private IndexRequestBuilder indexRequest(Client client, PartIteration part) throws NoNodeAvailableException{
         XContentBuilder jsonDoc = partIterationToJSON(part);
-        return client.prepareIndex(part.getWorkspaceId().toLowerCase(), "part", part.getKey().toString())
+        return client.prepareIndex(formatIndexName(part.getWorkspaceId()), "part", part.getKey().toString())
                      .setSource(jsonDoc);
+    }
+
+    /**
+     * Get the Delete request for a documentIteration in ElasticSearch Cluster
+     * @param doc The document iteration to delete
+     */
+    private DeleteRequestBuilder deleteRequest(Client client, DocumentIteration doc) throws NoNodeAvailableException{
+        return client.prepareDelete(formatIndexName(doc.getWorkspaceId()), "document", doc.getKey().toString());
+    }
+
+    /**
+     * Get the Delete request for a partIteration in ElasticSearch Cluster
+     * @param part The part iteration to delete
+     */
+    private DeleteRequestBuilder deleteRequest(Client client, PartIteration part) throws NoNodeAvailableException{
+        return client.prepareDelete(formatIndexName(part.getWorkspaceId()), "part", part.getKey().toString());
     }
 
     /**
@@ -811,6 +942,20 @@ public class ESIndexer{
             return tmp;
         } catch (IOException e) {
             Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, "The part " + part + " can't be indexed.");
+            return null;
+        }
+    }
+
+    /**
+     * Convert the workspaceId to a Elastic Search index name
+     *
+     * @param workspaceId Id to convert
+     * @return The workspaceId without uppercase and space
+     */
+    private String formatIndexName(String workspaceId){
+        try {
+            return java.net.URLEncoder.encode(Tools.unAccent(workspaceId), "UTF-8").toLowerCase();
+        } catch (UnsupportedEncodingException e) {
             return null;
         }
     }

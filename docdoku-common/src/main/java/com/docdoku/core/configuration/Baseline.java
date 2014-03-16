@@ -20,17 +20,17 @@
 package com.docdoku.core.configuration;
 
 import com.docdoku.core.product.ConfigurationItem;
+import com.docdoku.core.product.PartIteration;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Baseline refers to a specific configuration, it could be seen as
  * "snapshots in time" of configurations. More concretely, baselines are collections
- * of items (for instance parts) at a specified iteration.
+ * of items (like parts) at a specified iteration.
  * Within a baseline, there must not be two different iterations of the same part.
  * 
  * @author Florent Garin
@@ -40,9 +40,8 @@ import java.util.Map;
 @Table(name="BASELINE")
 @Entity
 @NamedQueries({
-        @NamedQuery(name="Baseline.findByConfigurationItemId", query="SELECT b FROM Baseline b WHERE b.configurationItem.id LIKE :ciId"),
-        @NamedQuery(name="Baseline.findByBaselineId", query="SELECT b FROM Baseline b WHERE b.id = :baselineId"),
-        @NamedQuery(name="Baseline.findByConfigurationItemIdAndBaselineId", query="SELECT b FROM Baseline b WHERE b.configurationItem.id LIKE :ciId AND b.id = :baselineId")
+        @NamedQuery(name="Baseline.findByConfigurationItemId", query="SELECT b FROM Baseline b WHERE b.configurationItem.id = :ciId AND b.configurationItem.workspace.id = :workspaceId"),
+        @NamedQuery(name="Baseline.getBaselinesForPartRevision", query="SELECT b FROM Baseline b WHERE b.partCollection IN (SELECT bl.partCollection FROM BaselinedPart bl WHERE bl.targetPart.partRevision = :partRevision)")
 })
 public class Baseline implements Serializable {
 
@@ -67,9 +66,8 @@ public class Baseline implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private java.util.Date creationDate;
 
-    @MapsId("baselinedPartKey")
-    @OneToMany(mappedBy="baseline", cascade=CascadeType.ALL, fetch=FetchType.LAZY, orphanRemoval=true)
-    private Map<BaselinedPartKey, BaselinedPart> baselinedParts=new HashMap<BaselinedPartKey, BaselinedPart>();
+    @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY, orphanRemoval = true)
+    private PartCollection partCollection=new PartCollection();
 
     public Baseline() {
     }
@@ -82,19 +80,23 @@ public class Baseline implements Serializable {
     }
 
     public Map<BaselinedPartKey, BaselinedPart> getBaselinedParts() {
-        return baselinedParts;
+        return partCollection.getBaselinedParts();
     }
 
-    public void addBaselinedPart(BaselinedPart baselinedPart){
-        baselinedParts.put(baselinedPart.getBaselinedPartKey(),baselinedPart);
+    public void removeAllBaselinedParts() {
+        partCollection.removeAllBaselinedParts();
+    }
+
+    public void addBaselinedPart(PartIteration targetPart){
+        partCollection.addBaselinedPart(targetPart);
+    }
+
+    public boolean hasBasedLinedPart(String targetPartWorkspaceId, String targetPartNumber){
+        return partCollection.hasBasedLinedPart(new BaselinedPartKey(partCollection.getId(),targetPartWorkspaceId,targetPartNumber));
     }
 
     public BaselinedPart getBaselinedPart(BaselinedPartKey baselinedPartKey){
-        return baselinedParts.get(baselinedPartKey);
-    }
-
-    public boolean hasBasedLinedPart(BaselinedPartKey baselinedPartKey){
-        return baselinedParts.get(baselinedPartKey) != null;
+        return partCollection.getBaselinedPart(baselinedPartKey);
     }
 
     public String getName() {
@@ -120,6 +122,11 @@ public class Baseline implements Serializable {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    public PartCollection getPartCollection() {
+        return partCollection;
+    }
+
 
     public int getId() {
         return id;

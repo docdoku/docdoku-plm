@@ -100,9 +100,9 @@ public class PartsResource {
     @GET
     @Path("count")
     @Produces(MediaType.APPLICATION_JSON)
-    public PartCountDTO getPartRevisionCount(@PathParam("workspaceId") String workspaceId) {
+    public PartCountDTO getTotalNumberOfParts(@PathParam("workspaceId") String workspaceId) {
         try {
-            return new PartCountDTO(productService.getPartRevisionsCount(Tools.stripTrailingSlash(workspaceId)));
+            return new PartCountDTO(productService.getTotalNumberOfParts(Tools.stripTrailingSlash(workspaceId)));
         } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }

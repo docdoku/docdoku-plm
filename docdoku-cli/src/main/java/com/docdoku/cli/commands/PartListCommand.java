@@ -37,7 +37,7 @@ public class PartListCommand extends AbstractCommandLine {
     @Option(name="-w", aliases = "--workspace", required = true, metaVar = "<workspace>", usage="workspace on which operations occur")
     protected String workspace;
 
-    @Option(name="-c", aliases = "--count", usage="return part master count in workspace")
+    @Option(name="-c", aliases = "--count", usage="return the number of part revisions within the workspace")
     private boolean count;
 
     @Option(name="-s", aliases = "--start", usage="start offset")
@@ -51,7 +51,7 @@ public class PartListCommand extends AbstractCommandLine {
         IProductManagerWS productS = ScriptingTools.createProductService(getServerURL(), user, password);
 
         if(count){
-            int partMastersCount = productS.getPartMastersCount(workspace);
+            int partMastersCount = productS.getTotalNumberOfParts(workspace);
             return JSONOutput.printPartMastersCount(partMastersCount);
         }else{
             List<PartMaster> partMasters = productS.getPartMasters(workspace, start, max);

@@ -28,10 +28,7 @@ import com.docdoku.core.exceptions.CreationException;
 import com.docdoku.core.security.Credential;
 import com.docdoku.core.security.UserGroupMapping;
 
-import javax.persistence.EntityExistsException;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceException;
-import javax.persistence.Query;
+import javax.persistence.*;
 import java.util.List;
 import java.util.Locale;
 
@@ -90,22 +87,22 @@ public class AccountDAO {
     
     public Workspace[] getAdministratedWorkspaces(Account pAdmin) {
         Workspace[] workspaces;
-        Query query = em.createQuery("SELECT DISTINCT w FROM Workspace w WHERE w.admin = :admin");
-        List listWorkspaces = query.setParameter("admin",pAdmin).getResultList();
+        TypedQuery<Workspace> query = em.createQuery("SELECT DISTINCT w FROM Workspace w WHERE w.admin = :admin", Workspace.class);
+        List<Workspace> listWorkspaces = query.setParameter("admin",pAdmin).getResultList();
         workspaces = new Workspace[listWorkspaces.size()];
         for(int i=0;i<listWorkspaces.size();i++)
-            workspaces[i]=(Workspace) listWorkspaces.get(i);
+            workspaces[i]=listWorkspaces.get(i);
         
         return workspaces;    
     }
 
     public Workspace[] getAllWorkspaces() {
         Workspace[] workspaces;
-        Query query = em.createQuery("SELECT DISTINCT w FROM Workspace w");
-        List listWorkspaces = query.getResultList();
+        TypedQuery<Workspace> query = em.createQuery("SELECT DISTINCT w FROM Workspace w", Workspace.class);
+        List<Workspace> listWorkspaces = query.getResultList();
         workspaces = new Workspace[listWorkspaces.size()];
         for(int i=0;i<listWorkspaces.size();i++)
-            workspaces[i]=(Workspace) listWorkspaces.get(i);
+            workspaces[i]=listWorkspaces.get(i);
 
         return workspaces;
     }

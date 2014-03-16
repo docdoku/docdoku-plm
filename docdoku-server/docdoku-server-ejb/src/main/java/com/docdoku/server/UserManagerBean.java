@@ -26,7 +26,6 @@ import com.docdoku.core.exceptions.*;
 import com.docdoku.core.gcm.GCMAccount;
 import com.docdoku.core.security.*;
 import com.docdoku.core.services.IDataManagerLocal;
-import com.docdoku.core.services.IMailerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.core.services.IUserManagerWS;
 import com.docdoku.server.dao.*;
@@ -45,7 +44,6 @@ import javax.persistence.PersistenceContext;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.logging.Logger;
 
 @DeclareRoles({"users","admin"})
 @Local(IUserManagerLocal.class)
@@ -58,12 +56,9 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
     @Resource
     private SessionContext ctx;
     @EJB
-    private IMailerLocal mailer;
-    @EJB
-    private ESIndexer indexer;
+    private ESIndexer esIndexer;
     @EJB
     private IDataManagerLocal dataManager;
-    private final static Logger LOGGER = Logger.getLogger(UserManagerBean.class.getName());
 
     @Override
     public Account createAccount(String pLogin, String pName, String pEmail, String pLanguage, String pPassword) throws AccountAlreadyExistsException, CreationException {
@@ -75,7 +70,7 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
 
     @RolesAllowed({"users","admin"})
     @Override
-    public void addUserInGroup(UserGroupKey pGroupKey, String pLogin) throws AccessRightException, UserGroupNotFoundException, UserGroupNotFoundException, AccountNotFoundException, WorkspaceNotFoundException, UserAlreadyExistsException, FolderAlreadyExistsException, CreationException {
+    public void addUserInGroup(UserGroupKey pGroupKey, String pLogin) throws AccessRightException, UserGroupNotFoundException, AccountNotFoundException, WorkspaceNotFoundException, UserAlreadyExistsException, FolderAlreadyExistsException, CreationException {
         Account account = checkAdmin(pGroupKey.getWorkspaceId());
         UserDAO userDAO = new UserDAO(new Locale(account.getLanguage()), em);
         User userToAdd = em.find(User.class, new UserKey(pGroupKey.getWorkspaceId(), pLogin));
@@ -129,15 +124,24 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
         return groupToCreate;
     }
 
-    @RolesAllowed("users")
+    @RolesAllowed({"users","admin"})
     @Override
-    public Workspace createWorkspace(String pID, Account pAdmin, String pDescription, boolean pFolderLocked) throws WorkspaceAlreadyExistsException, FolderAlreadyExistsException, UserAlreadyExistsException, CreationException {
+    public Workspace createWorkspace(String pID, Account pAdmin, String pDescription, boolean pFolderLocked) throws WorkspaceAlreadyExistsException, FolderAlreadyExistsException, UserAlreadyExistsException, CreationException, ESIndexNamingException {
         Workspace workspace = new Workspace(pID, pAdmin, pDescription, pFolderLocked);
         new WorkspaceDAO(em).createWorkspace(workspace);
         User userToCreate = new User(workspace, pAdmin.getLogin(), pAdmin.getName(), pAdmin.getEmail(), pAdmin.getLanguage());
         UserDAO userDAO = new UserDAO(new Locale(pAdmin.getLanguage()), em);
         userDAO.createUser(userToCreate);
         userDAO.addUserMembership(workspace, userToCreate);
+
+        try{
+            esIndexer.createIndex(pID);
+        }catch(ESServerException e){
+            // When ElasticSearch have not start
+        } catch (ESIndexAlreadyExistsException e) {
+            throw new WorkspaceAlreadyExistsException(new Locale(pAdmin.getLanguage()),workspace);                      // Send if the workspace have the same index name that another
+        }
+
         return workspace;
     }
 
@@ -159,23 +163,6 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
 
     @RolesAllowed({"users","admin"})
     @Override
-    public Workspace[] getWorkspaces() {
-
-        if(ctx.isCallerInRole("admin")){
-            return new Workspace[0];
-        }
-
-        User[] users = new UserDAO(em).getUsers(ctx.getCallerPrincipal().toString());
-        Workspace[] workspaces = new Workspace[users.length];
-        for (int i = 0; i < users.length; i++) {
-            workspaces[i] = users[i].getWorkspace();
-        }
-
-        return workspaces;
-    }
-
-    @RolesAllowed({"users","admin"})
-    @Override
     public Workspace getWorkspace(String workspaceId) throws WorkspaceNotFoundException {
 
         if(ctx.isCallerInRole("admin")){
@@ -184,9 +171,9 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
 
         User[] users = new UserDAO(em).getUsers(ctx.getCallerPrincipal().toString());
         Workspace workspace=null;
-        for (int i = 0; i < users.length; i++) {
-            if(users[i].getWorkspace().getId().equals(workspaceId)){
-                workspace=users[i].getWorkspace();
+        for (User user : users) {
+            if (user.getWorkspace().getId().equals(workspaceId)) {
+                workspace = user.getWorkspace();
                 break;
             }
         }
@@ -196,30 +183,50 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
 
     @RolesAllowed({"users","admin"})
     @Override
-    public UserGroup[] getUserGroups(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
-        User user = checkWorkspaceReadAccess(pWorkspaceId);
-        return new UserGroupDAO(new Locale(user.getLanguage()), em).findAllUserGroups(pWorkspaceId);
+    public UserGroup[] getUserGroups(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccountNotFoundException {
+        if(ctx.isCallerInRole("admin")){
+            Account account = new AccountDAO(em).loadAccount(ctx.getCallerPrincipal().toString());
+            return new UserGroupDAO(new Locale(account.getLanguage()), em).findAllUserGroups(pWorkspaceId);
+        }else{
+            User user = checkWorkspaceReadAccess(pWorkspaceId);
+            return new UserGroupDAO(new Locale(user.getLanguage()), em).findAllUserGroups(pWorkspaceId);
+        }
     }
 
     @RolesAllowed({"users","admin"})
     @Override
-    public UserGroup getUserGroup(UserGroupKey pKey) throws WorkspaceNotFoundException, UserGroupNotFoundException, UserNotFoundException, UserNotActiveException {
-        User user = checkWorkspaceReadAccess(pKey.getWorkspaceId());
-        return new UserGroupDAO(new Locale(user.getLanguage()), em).loadUserGroup(pKey);
+    public UserGroup getUserGroup(UserGroupKey pKey) throws WorkspaceNotFoundException, UserGroupNotFoundException, UserNotFoundException, UserNotActiveException, AccountNotFoundException {
+        if(ctx.isCallerInRole("admin")){
+            Account account = new AccountDAO(em).loadAccount(ctx.getCallerPrincipal().toString());
+            return new UserGroupDAO(new Locale(account.getLanguage()), em).loadUserGroup(pKey);
+        }else{
+            User user = checkWorkspaceReadAccess(pKey.getWorkspaceId());
+            return new UserGroupDAO(new Locale(user.getLanguage()), em).loadUserGroup(pKey);
+        }
     }
 
     @RolesAllowed({"users","admin"})
     @Override
-    public WorkspaceUserMembership[] getWorkspaceUserMemberships(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
-        User user = checkWorkspaceReadAccess(pWorkspaceId);
-        return new UserDAO(new Locale(user.getLanguage()), em).findAllWorkspaceUserMemberships(pWorkspaceId);
+    public WorkspaceUserMembership[] getWorkspaceUserMemberships(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccountNotFoundException {
+        if(ctx.isCallerInRole("admin")){
+            Account account = new AccountDAO(em).loadAccount(ctx.getCallerPrincipal().toString());
+            return new UserDAO(new Locale(account.getLanguage()), em).findAllWorkspaceUserMemberships(pWorkspaceId);
+        }else{
+            User user = checkWorkspaceReadAccess(pWorkspaceId);
+            return new UserDAO(new Locale(user.getLanguage()), em).findAllWorkspaceUserMemberships(pWorkspaceId);
+        }
     }
 
     @RolesAllowed({"users","admin"})
     @Override
-    public WorkspaceUserGroupMembership[] getWorkspaceUserGroupMemberships(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
-        User user = checkWorkspaceReadAccess(pWorkspaceId);
-        return new UserGroupDAO(new Locale(user.getLanguage()), em).findAllWorkspaceUserGroupMemberships(pWorkspaceId);
+    public WorkspaceUserGroupMembership[] getWorkspaceUserGroupMemberships(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccountNotFoundException {
+        if(ctx.isCallerInRole("admin")){
+            Account account = new AccountDAO(em).loadAccount(ctx.getCallerPrincipal().toString());
+            return new UserGroupDAO(new Locale(account.getLanguage()), em).findAllWorkspaceUserGroupMemberships(pWorkspaceId);
+        }else{
+            User user = checkWorkspaceReadAccess(pWorkspaceId);
+            return new UserGroupDAO(new Locale(user.getLanguage()), em).findAllWorkspaceUserGroupMemberships(pWorkspaceId);
+        }
     }
 
     @RolesAllowed({"users","admin"})
@@ -231,7 +238,7 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
             WorkspaceUserMembership ms = userDAO.loadUserMembership(new WorkspaceUserMembershipKey(pWorkspaceId, pWorkspaceId, login));
             if (ms != null) {
                 ms.setReadOnly(pReadOnly);
-                            }
+            }
         }
     }
 
@@ -294,7 +301,7 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
 
     @RolesAllowed({"users","admin"})
     @Override
-    public void removeUsers(String pWorkspaceId, String[] pLogins) throws UserNotFoundException, NotAllowedException, AccessRightException, AccountNotFoundException, WorkspaceNotFoundException, FolderNotFoundException, IndexerServerException {
+    public void removeUsers(String pWorkspaceId, String[] pLogins) throws UserNotFoundException, NotAllowedException, AccessRightException, AccountNotFoundException, WorkspaceNotFoundException, FolderNotFoundException, ESServerException {
         Account account = checkAdmin(pWorkspaceId);
         UserDAO userDAO = new UserDAO(new Locale(account.getLanguage()), em);
         for (String login : pLogins) {
@@ -309,7 +316,7 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
                         }
                     }
 
-                    indexer.delete(doc);
+                    esIndexer.delete(doc);
                 }
             }
         }
@@ -348,10 +355,10 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
         UserDAO userDAO = new UserDAO(new Locale(pLanguage), em);
         User[] users = userDAO.getUsers(account.getLogin());
 
-        for(int i=0; i<users.length;i++){
-            users[i].setEmail(pEmail);
-            users[i].setLanguage(pLanguage);
-            users[i].setName(pName);
+        for (User user : users) {
+            user.setEmail(pEmail);
+            user.setLanguage(pLanguage);
+            user.setName(pName);
         }
 
     }
@@ -372,14 +379,10 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
         return passwdRR;
     }
 
-    @RolesAllowed({"users","admin"})
+    @RolesAllowed({"users"})
     @Override
     public User checkWorkspaceReadAccess(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         String login = ctx.getCallerPrincipal().toString();
-
-        if(ctx.isCallerInRole("admin")){
-            return new UserDAO(em).loadAdmin(login);
-        }
 
         UserDAO userDAO = new UserDAO(em);
         WorkspaceUserMembership userMS = userDAO.loadUserMembership(new WorkspaceUserMembershipKey(pWorkspaceId, pWorkspaceId, login));
@@ -399,14 +402,10 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
         }
     }
 
-    @RolesAllowed({"users","admin"})
+    @RolesAllowed({"users"})
     @Override
     public User checkWorkspaceWriteAccess(String pWorkspaceId) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException {
         String login = ctx.getCallerPrincipal().toString();
-
-        if(ctx.isCallerInRole("admin")){
-            return new UserDAO(em).loadAdmin(login);
-        }
 
         UserDAO userDAO = new UserDAO(em);
 
@@ -442,12 +441,7 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
     */
     @Override
     public boolean hasCommonWorkspace(String userLogin1, String userLogin2) {
-
-        if( userLogin1 != null && userLogin2 != null){
-            return new UserDAO(em).hasCommonWorkspace(userLogin1,userLogin2);
-        }
-
-        return false;
+        return userLogin1 != null && userLogin2 != null && new UserDAO(em).hasCommonWorkspace(userLogin1, userLogin2);
     }
 
     @Override
@@ -498,15 +492,19 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
         gcmAccountDAO.deleteGCMAccount(gcmAccount);
     }
 
-    private Account checkAdmin(Workspace pWorkspace) throws AccessRightException, AccountNotFoundException {
+    @RolesAllowed({"users","admin"})
+    @Override
+    public Account checkAdmin(Workspace pWorkspace) throws AccessRightException, AccountNotFoundException {
         Account account = new AccountDAO(em).loadAccount(ctx.getCallerPrincipal().toString());
-        if (!pWorkspace.getAdmin().equals(account)) {
+        if (!isCallerInRole("admin") && !pWorkspace.getAdmin().equals(account)) {
             throw new AccessRightException(new Locale(account.getLanguage()), account);
         }
         return account;
     }
 
-    private Account checkAdmin(String pWorkspaceId) throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException {
+    @RolesAllowed({"users","admin"})
+    @Override
+    public Account checkAdmin(String pWorkspaceId) throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException {
         Account account = new AccountDAO(em).loadAccount(ctx.getCallerPrincipal().toString());
 
         if(isCallerInRole("admin")){

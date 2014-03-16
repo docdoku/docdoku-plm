@@ -26,7 +26,7 @@ import java.io.Serializable;
 
 /**
  * Identity class of <a href="BaselinedPart.html">BaselinedPart</a> objects defined as an embeddable object in order
- * to be used inside the baselined parts map in the <a href="Baseline.html">Baseline</a> class.
+ * to be used inside the baselined parts map in the <a href="PartCollection.html">PartCollection</a> class.
  *
  * @author Florent Garin
  */
@@ -35,8 +35,8 @@ public class BaselinedPartKey implements Serializable{
 
 
 
-    @Column(name = "BASELINE_ID", nullable = false, insertable = false, updatable = false)
-    private int baselineId;
+    @Column(name = "PARTCOLLECTION_ID", nullable = false, insertable = false, updatable = false)
+    private int partCollectionId;
 
     @Column(name = "TARGET_WORKSPACE_ID", length=255, nullable = false, insertable = false, updatable = false)
     private String targetPartWorkspaceId="";
@@ -47,18 +47,18 @@ public class BaselinedPartKey implements Serializable{
     public BaselinedPartKey(){
     }
 
-    public BaselinedPartKey(int baselineId, String targetPartWorkspaceId, String targetPartNumber) {
-        this.baselineId = baselineId;
+    public BaselinedPartKey(int partCollectionId, String targetPartWorkspaceId, String targetPartNumber) {
+        this.partCollectionId = partCollectionId;
         this.targetPartWorkspaceId = targetPartWorkspaceId;
         this.targetPartNumber = targetPartNumber;
     }
 
-    public int getBaselineId() {
-        return baselineId;
+    public int getPartCollectionId() {
+        return partCollectionId;
     }
 
-    public void setBaselineId(int baseline) {
-        this.baselineId = baseline;
+    public void setPartCollectionId(int partCollectionId) {
+        this.partCollectionId = partCollectionId;
     }
 
     public String getTargetPartWorkspaceId() {
@@ -85,7 +85,7 @@ public class BaselinedPartKey implements Serializable{
 
         BaselinedPartKey that = (BaselinedPartKey) o;
 
-        if (baselineId != that.baselineId) return false;
+        if (partCollectionId != that.partCollectionId) return false;
         if (!targetPartNumber.equals(that.targetPartNumber)) return false;
         if (!targetPartWorkspaceId.equals(that.targetPartWorkspaceId)) return false;
 
@@ -94,7 +94,7 @@ public class BaselinedPartKey implements Serializable{
 
     @Override
     public int hashCode() {
-        int result = baselineId;
+        int result = partCollectionId;
         result = 31 * result + targetPartWorkspaceId.hashCode();
         result = 31 * result + targetPartNumber.hashCode();
         return result;

@@ -58,6 +58,6 @@ public class SearchPartsCommand extends AbstractCommandLine {
 
     @Override
     public String getDescription() {
-        return "Retrieve all part revisions matching the provided search value in number and name";
+        return "Retrieve all part revisions matching the provided search value (expressed as a part number or a name)";
     }
 }

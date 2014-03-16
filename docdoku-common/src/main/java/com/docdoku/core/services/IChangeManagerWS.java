@@ -33,16 +33,16 @@ import java.util.List;
  */
 public interface IChangeManagerWS {
 
-    void deleteChangeIssue(int pKey);
-    List<ChangeIssue> getChangeIssues(String pWorkspaceId);
-    ChangeIssue createChangeIssue(String pWorkspaceId, String name, String description, String initiator, ChangeItem.Priority priority, String assignee, ChangeItem.Category category);
+    void deleteChangeIssue(int pId) throws ChangeIssueNotFoundException, UserNotFoundException, AccessRightException, WorkspaceNotFoundException;
+    List<ChangeIssue> getChangeIssues(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
+    ChangeIssue createChangeIssue(String pWorkspaceId, String name, String description, String initiator, ChangeItem.Priority priority, String assignee, ChangeItem.Category category) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException;
 
-    void deleteChangeRequest(int pKey);
-    List<ChangeRequest> getChangeRequests(String pWorkspaceId);
-    ChangeRequest createChangeRequest(String pWorkspaceId, String name, String description, int milestone, ChangeItem.Priority priority, String assignee, ChangeItem.Category category);
+    void deleteChangeRequest(int pId) throws ChangeRequestNotFoundException, UserNotFoundException, AccessRightException, WorkspaceNotFoundException;
+    List<ChangeRequest> getChangeRequests(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
+    ChangeRequest createChangeRequest(String pWorkspaceId, String name, String description, int milestone, ChangeItem.Priority priority, String assignee, ChangeItem.Category category) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException;
 
-    void deleteChangeOrder(int pKey);
-    List<ChangeOrder> getChangeOrders(String pWorkspaceId);
-    ChangeOrder createChangeOrder(String pWorkspaceId, String name, String description, int milestone, ChangeItem.Priority priority, String assignee, ChangeItem.Category category);
+    void deleteChangeOrder(int pId) throws ChangeOrderNotFoundException, UserNotFoundException, AccessRightException, WorkspaceNotFoundException;
+    List<ChangeOrder> getChangeOrders(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
+    ChangeOrder createChangeOrder(String pWorkspaceId, String name, String description, int milestone, ChangeItem.Priority priority, String assignee, ChangeItem.Category category) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException;
 
 }

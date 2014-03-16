@@ -272,13 +272,13 @@ public class DocumentRevisionDAO {
                 setParameter("workspaceId", pWorkspaceId).setParameter("id", "%" + reference + "%").setMaxResults(maxResults).getResultList();
     }
 
-    public int getDocumentsCountInWorkspace(String pWorkspaceId) {
-        return ((Number)em.createNamedQuery("DocumentRevision.countInWorkspace")
+    public int getTotalNumberOfDocuments(String pWorkspaceId) {
+        return ((Number)em.createNamedQuery("DocumentRevision.countByWorkspace")
                 .setParameter("workspaceId", pWorkspaceId)
                 .getSingleResult()).intValue();
     }
 
-    public Long getDiskUsageForDocumentsInWorkspace(String pWorkspaceId) {
+    public long getDiskUsageForDocumentsInWorkspace(String pWorkspaceId) {
         Number result = ((Number)em.createNamedQuery("BinaryResource.diskUsageInPath")
                 .setParameter("path", pWorkspaceId+"/documents/%")
                 .getSingleResult());
@@ -287,7 +287,7 @@ public class DocumentRevisionDAO {
 
     }
 
-    public Long getDiskUsageForDocumentTemplatesInWorkspace(String pWorkspaceId) {
+    public long getDiskUsageForDocumentTemplatesInWorkspace(String pWorkspaceId) {
         Number result = ((Number)em.createNamedQuery("BinaryResource.diskUsageInPath")
                 .setParameter("path", pWorkspaceId+"/document-templates/%")
                 .getSingleResult());

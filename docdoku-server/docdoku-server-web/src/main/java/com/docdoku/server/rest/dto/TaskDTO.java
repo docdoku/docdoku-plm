@@ -25,10 +25,7 @@ import java.util.Date;
 
 public class TaskDTO implements Serializable {
 
-    public enum Status {
-
-        NOT_STARTED, IN_PROGRESS, APPROVED, REJECTED
-    };
+    public enum Status {NOT_STARTED, IN_PROGRESS, APPROVED, REJECTED, NOT_TO_BE_DONE}
     private String closureComment;
     private String title;
     private String instructions;

@@ -20,17 +20,14 @@
 
 package com.docdoku.core.services;
 
-import com.docdoku.core.exceptions.AccessRightException;
-import com.docdoku.core.exceptions.UserNotActiveException;
-import com.docdoku.core.exceptions.UserNotFoundException;
-import com.docdoku.core.exceptions.WorkspaceNotFoundException;
+import com.docdoku.core.exceptions.*;
 
 /**
  *
  * @author Morgan Guimard
  */
 public interface IWorkspaceManagerLocal {
-    Long getDiskUsageInWorkspace(String workspaceId) throws UserNotFoundException;
+    long getDiskUsageInWorkspace(String workspaceId) throws AccountNotFoundException;
     void deleteWorkspace(String workspaceId);
-    void synchronizeIndexer(String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException;
+    void synchronizeIndexer(String workspaceId);
 }

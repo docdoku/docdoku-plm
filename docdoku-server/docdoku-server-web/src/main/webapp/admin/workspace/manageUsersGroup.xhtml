@@ -14,6 +14,14 @@
             #{i18nManageUsersGroup['title']}
         </ui:define>
         <ui:define name="content">
+            <f:loadBundle var="i18nManageUsers" basename="com.docdoku.server.localization.admin.manageUsers_resource"/>
+            <ol class="breadcrumb">
+                <li><a href="/faces/admin/workspace/workspacesMenu.xhtml">#{i18nTemplate['toplinks.admin']}</a>
+                    <span class="divider">/</span></li>
+                <li><a href="/faces/admin/workspace/manageUsers.xhtml">#{i18nManageUsers['main.title']}</a>
+                    <span class="divider">/</span></li>
+                <li class="active">#{i18nManageUsersGroup['main.title']}</li>
+            </ol>
 
             <div id="sidebar" class="well well-large">
                 <h3>#{i18nManageUsersGroup['sidebar.title']}</h3>

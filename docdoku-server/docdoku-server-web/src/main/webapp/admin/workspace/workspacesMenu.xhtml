@@ -12,6 +12,10 @@
             #{i18nWorkspacesMenu['title']}
         </ui:define>
         <ui:define name="content">
+            <ol class="breadcrumb">
+                <li class="active">#{i18nTemplate['toplinks.admin']}</li>
+            </ol>
+
             <div id="sidebar" class="well well-large">
                 <h3>#{i18nWorkspacesMenu['sidebar.title']}</h3>
                 <p>#{i18nWorkspacesMenu['sidebar.text']}</p>               
@@ -29,6 +33,7 @@
                     <div class="actions-btn">
                         <h:commandLink value="#{i18nWorkspacesMenu['section.edit']}" action="#{workspaceBean.editWorkspace}"/> |
                         <h:commandLink value="#{i18nWorkspacesMenu['section.manage']}" action="/admin/workspace/manageUsers.xhtml"/> |
+                        <c:if test="#{isSuperAdmin==true}"> <h:commandLink value="#{i18nWorkspacesMenu['section.index']}" action="#{workspaceBean.synchronizeIndexer}"/> | </c:if>
                         <h:commandLink value="#{i18nWorkspacesMenu['section.dashboard']}" action="/admin/workspace/workspaceDashboard.xhtml"/> |
                         <h:commandLink value="#{i18nWorkspacesMenu['section.delete']}" action="#{workspaceBean.deleteWorkspace}" onclick="return prompt('#{i18nWorkspacesMenu['section.deleteConfirm']}') == '#{i18nWorkspacesMenu['section.deleteConfirmPromptValue']}'" />
                     </div>

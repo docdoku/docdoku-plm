@@ -11,6 +11,11 @@
             #{i18nManageUsers['title']}
         </ui:define>
         <ui:define name="content">
+            <ol class="breadcrumb">
+                <li><a href="/faces/admin/workspace/workspacesMenu.xhtml">#{i18nTemplate['toplinks.admin']}</a>
+                    <span class="divider">/</span></li>
+                <li class="active">#{i18nManageUsers['main.title']}</li>
+            </ol>
 
             <div id="sidebar" class="well well-large">
                 <h3>#{i18nManageUsers['sidebar.title']}</h3>

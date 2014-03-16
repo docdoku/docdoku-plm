@@ -93,17 +93,14 @@ public class ProductResource {
     @Path("{ciId}/bom")
     @Produces(MediaType.APPLICATION_JSON)
     public PartDTO[] filterPart(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("configSpec") String configSpecType, @QueryParam("partUsageLink") Integer partUsageLink) {
-
         try {
-
             ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
-
-            ConfigSpec cs ;
+            ConfigSpec cs;
 
             if(configSpecType == null || configSpecType.equals("latest")){
                 cs = new LatestConfigSpec();
             }else{
-                cs = productService.getConfigSpecForBaseline(ciKey,Integer.parseInt(configSpecType));
+                cs = productService.getConfigSpecForBaseline(Integer.parseInt(configSpecType));
             }
 
             PartUsageLink rootUsageLink = productService.filterProductStructure(ciKey, cs, partUsageLink, 1);
@@ -139,7 +136,7 @@ public class ProductResource {
             if(configSpecType == null || configSpecType.equals("latest")){
                 cs = new LatestConfigSpec();
             }else{
-                cs = productService.getConfigSpecForBaseline(ciKey,Integer.parseInt(configSpecType));
+                cs = productService.getConfigSpecForBaseline(Integer.parseInt(configSpecType));
             }
 
             PartUsageLink rootUsageLink = productService.filterProductStructure(ciKey, cs, partUsageLink, depth);
@@ -281,7 +278,7 @@ public class ProductResource {
                 if(configSpecType == null || configSpecType.equals("latest") || configSpecType.equals("undefined")){
                     cs = new LatestConfigSpec();
                 }else{
-                    cs = productService.getConfigSpecForBaseline(ciKey,Integer.parseInt(configSpecType));
+                    cs = productService.getConfigSpecForBaseline(Integer.parseInt(configSpecType));
                 }
 
                 PartUsageLink rootUsageLink;
@@ -339,10 +336,10 @@ public class ProductResource {
     @GET
     @Path("{ciId}/baseline/{baselineId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public BaselineDTO getBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @PathParam("baselineId") String baselineId){
+    public BaselineDTO getBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @PathParam("baselineId") int baselineId){
         try {
             ConfigurationItemKey configurationItemKey = new ConfigurationItemKey(workspaceId,ciId);
-            Baseline baseline = productService.getBaseline(configurationItemKey,Integer.parseInt(baselineId));
+            Baseline baseline = productService.getBaseline(baselineId);
             BaselineDTO baselineDTO = mapper.map(baseline,BaselineDTO.class);
             baselineDTO.setBaselinedParts(Tools.mapBaselinedPartsToBaselinedPartDTO(baseline));
             return baselineDTO;
@@ -386,9 +383,9 @@ public class ProductResource {
     @Path("{ciId}/baseline/{baselineId}/duplicate")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public BaselineDTO duplicateBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @PathParam("baselineId") String baselineId,  BaselineCreationDTO baselineCreationDTO){
+    public BaselineDTO duplicateBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @PathParam("baselineId") int baselineId,  BaselineCreationDTO baselineCreationDTO){
         try {
-            Baseline baseline = productService.duplicateBaseline(new ConfigurationItemKey(workspaceId, ciId), Integer.parseInt(baselineId), baselineCreationDTO.getName(), baselineCreationDTO.getDescription());
+            Baseline baseline = productService.duplicateBaseline(baselineId, baselineCreationDTO.getName(), baselineCreationDTO.getDescription());
             return mapper.map(baseline, BaselineDTO.class);
         } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
@@ -398,9 +395,9 @@ public class ProductResource {
     @DELETE
     @Path("{ciId}/baseline/{baselineId}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response deleteBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @PathParam("baselineId") String baselineId){
+    public Response deleteBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @PathParam("baselineId") int baselineId){
         try {
-            productService.deleteBaseline(new ConfigurationItemKey(workspaceId,ciId), Integer.parseInt(baselineId));
+            productService.deleteBaseline(baselineId);
             return Response.ok().build();
         } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());

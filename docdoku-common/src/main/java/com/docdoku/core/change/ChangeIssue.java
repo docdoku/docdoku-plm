@@ -21,7 +21,12 @@
 
 package com.docdoku.core.change;
 
+import com.docdoku.core.common.User;
+import com.docdoku.core.common.Workspace;
+
 import javax.persistence.Entity;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 /**
@@ -34,6 +39,9 @@ import javax.persistence.Table;
  */
 @Table(name="CHANGEISSUE")
 @Entity
+@NamedQueries({
+        @NamedQuery(name="ChangeIssue.findChangeIssuesByWorkspace",query="SELECT DISTINCT c FROM ChangeIssue c WHERE c.workspace.id = :workspaceId"),
+})
 public class ChangeIssue extends ChangeItem {
 
     /**
@@ -49,7 +57,24 @@ public class ChangeIssue extends ChangeItem {
     public ChangeIssue() {
     }
 
+    public ChangeIssue(Workspace pWorkspace, String pName, User pAuthor) {
+        super(pWorkspace, pName, pAuthor);
+    }
 
 
+    public Priority getPriority() {
+        return priority;
+    }
 
+    public void setPriority(Priority priority) {
+        this.priority = priority;
+    }
+
+    public void setInitiator(String initiator) {
+        this.initiator = initiator;
+    }
+
+    public String getInitiator() {
+        return initiator;
+    }
 }
