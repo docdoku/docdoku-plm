@@ -131,7 +131,6 @@ public class PartRevision implements Serializable, Comparable<PartRevision>, Clo
     private boolean publicShared;
 
     public PartRevision(){
-
     }
 
     public PartRevision(PartMaster pPartMaster,
@@ -162,8 +161,8 @@ public class PartRevision implements Serializable, Comparable<PartRevision>, Clo
 
     public void setPartMaster(PartMaster partMaster) {
         this.partMaster = partMaster;
-        partMasterNumber=partMaster.getNumber();
-        partMasterWorkspaceId=partMaster.getWorkspaceId();
+        setPartMasterNumber(partMaster.getNumber());
+        setPartMasterWorkspaceId(partMaster.getWorkspaceId());
     }
 
     @XmlTransient
@@ -321,8 +320,16 @@ public class PartRevision implements Serializable, Comparable<PartRevision>, Clo
         return partMasterNumber;
     }
 
+    public void setPartMasterNumber(String pPartMasterNumber) {
+        partMasterNumber=pPartMasterNumber;
+    }
+
     public String getPartMasterWorkspaceId() {
         return partMasterWorkspaceId;
+    }
+
+    public void setPartMasterWorkspaceId(String pPartMasterWorkspaceId) {
+        partMasterWorkspaceId = pPartMasterWorkspaceId;
     }
 
 

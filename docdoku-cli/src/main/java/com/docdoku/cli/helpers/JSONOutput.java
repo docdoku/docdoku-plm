@@ -97,6 +97,7 @@ public class JSONOutput {
     }
 
     public static JSONObject getPartRevision(PartRevision pr, long lastModified) throws JSONException {
+
         JSONObject status = new JSONObject();
 
         User user = pr.getCheckOutUser();
@@ -165,7 +166,7 @@ public class JSONOutput {
         return wks.toString();
     }
 
-    public static String printPartMastersCount(int partMastersCount) throws JSONException {
+    public static String printPartRevisionsCount(int partMastersCount) throws JSONException {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("count",partMastersCount);
         return jsonObject.toString();
