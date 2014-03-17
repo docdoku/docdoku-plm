@@ -20,6 +20,7 @@
 package com.docdoku.core.product;
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
@@ -111,6 +112,7 @@ public class PartUsageLink implements Serializable, Cloneable {
         this.component = component;
     }
 
+    @XmlTransient
     public PartMaster getComponent() {
         return component;
     }

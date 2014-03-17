@@ -22,7 +22,7 @@ package com.docdoku.cli.commands;
 
 import com.docdoku.cli.ScriptingTools;
 import com.docdoku.cli.helpers.JSONOutput;
-import com.docdoku.core.product.PartMaster;
+import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.services.IProductManagerWS;
 import org.kohsuke.args4j.Option;
 
@@ -51,11 +51,11 @@ public class PartListCommand extends AbstractCommandLine {
         IProductManagerWS productS = ScriptingTools.createProductService(getServerURL(), user, password);
 
         if(count){
-            int partMastersCount = productS.getTotalNumberOfParts(workspace);
-            return JSONOutput.printPartMastersCount(partMastersCount);
+            int partRevisionsCount = productS.getPartsInWorkspaceCount(workspace);
+            return JSONOutput.printPartRevisionsCount(partRevisionsCount);
         }else{
-            List<PartMaster> partMasters = productS.getPartMasters(workspace, start, max);
-            return JSONOutput.printPartMasters(partMasters);
+            List<PartRevision> partRevisions = productS.getPartRevisions(workspace, start, max);
+            return JSONOutput.printPartRevisions(partRevisions);
         }
     }
 
