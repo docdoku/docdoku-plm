@@ -56,7 +56,7 @@ public class AdminStateBean implements Serializable {
     public AdminStateBean() {
     }
 
-    public User[] getUsers() throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException {
+    public User[] getUsers() throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException {
         return documentService.getUsers(selectedWorkspace);
     }
     
@@ -118,7 +118,7 @@ public class AdminStateBean implements Serializable {
         return usersGroups;
     }
 
-    public int getUsersCount() throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException {
+    public int getUsersCount() throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException {
         return documentService.getUsers(selectedWorkspace).length;
     }
 
@@ -194,7 +194,7 @@ public class AdminStateBean implements Serializable {
 
 
 
-    public JsonArray getUsersInWorkspace() throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException {
+    public JsonArray getUsersInWorkspace() throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException {
 
         JsonArrayBuilder usersJSONArrayBuilder = Json.createArrayBuilder();
         User[] users = documentService.getUsers(selectedWorkspace);

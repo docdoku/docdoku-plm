@@ -70,10 +70,10 @@ public class BaselineDAO {
     }
 
     public boolean existBaselinedPart(String workspaceId, String partNumber) {
-        return em.createNamedQuery("BaselinedPart.existBaselinedPart", BaselinedPart.class)
+        return em.createNamedQuery("BaselinedPart.existBaselinedPart", Long.class)
             .setParameter("partNumber", partNumber)
             .setParameter("workspaceId", workspaceId)
-            .executeUpdate() > 0;
+            .getSingleResult() > 0;
     }
 
     public void flushBaselinedParts(Baseline baseline) {
