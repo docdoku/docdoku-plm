@@ -1509,9 +1509,9 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
     @RolesAllowed({"users","admin"})
     @Override
-    public User[] getUsers(String pWorkspaceId) throws WorkspaceNotFoundException, AccessRightException, AccountNotFoundException {
-        Account account = userManager.checkAdmin(pWorkspaceId);
-        return new UserDAO(new Locale(account.getLanguage()), em).findAllUsers(pWorkspaceId);
+    public User[] getUsers(String pWorkspaceId) throws WorkspaceNotFoundException, AccessRightException, AccountNotFoundException, UserNotFoundException, UserNotActiveException {
+        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
+        return new UserDAO(new Locale(user.getLanguage()), em).findAllUsers(pWorkspaceId);
     }
 
     @RolesAllowed("users")
