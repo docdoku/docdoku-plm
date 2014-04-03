@@ -1,6 +1,6 @@
 define([
 	"require",
-	"views/collapsible_list"
+	"common-objects/views/components/collapsible_list"
 ], function (
 	require,
 	CollapsibleListView

@@ -67,6 +67,9 @@ public class WorkspaceResource {
     private WorkflowResource workflows;
 
     @EJB
+    private ChangeItemsResource changeItems;
+
+    @EJB
     private UserResource users;
 
     @EJB
@@ -147,5 +150,11 @@ public class WorkspaceResource {
     public WorkspaceMembershipResource workspaceMemberships() {
         return workspaceMemberships;
     }
+
+    @Path("/changes")
+    public ChangeItemsResource changeItemsResource(){
+        return changeItems;
+    }
+
 
 }

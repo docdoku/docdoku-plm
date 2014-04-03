@@ -99,7 +99,7 @@ define(    [
             this.remove();
         },
 
-        onSubmitForm: function(e) {
+        onSubmitForm: function() {
             var queryString = this.constructQueryString() ;
             if(queryString){
                 this.router.navigate("search/"+queryString, {trigger: true});

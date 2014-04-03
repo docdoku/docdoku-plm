@@ -58,8 +58,7 @@ public abstract class ApplicationException extends Exception{
         super(pCause);
         mResourceBundle=ResourceBundle.getBundle(DEFAULT_BUNDLE_NAME, pLocale);
     }
-    
-    public void setLocale(Locale pLocale){
+     public void setLocale(Locale pLocale){
         mResourceBundle=ResourceBundle.getBundle(DEFAULT_BUNDLE_NAME, pLocale);
     }
     

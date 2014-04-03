@@ -53,7 +53,7 @@ define([
         },
 
         getReference : function(){
-            console.log("deprecated use getId")
+            console.log("deprecated use getId");
             return this.getId();
         },
         getId : function(){

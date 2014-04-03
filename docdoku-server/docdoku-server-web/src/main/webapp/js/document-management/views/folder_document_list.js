@@ -2,31 +2,34 @@ define([
 	"collections/folder_document",
 	"views/content_document_list",
 	"views/document/document_new",
-	"text!templates/content_document_list_checkout_button_group.html",
-	"text!templates/content_document_list_tags_button.html",
-    "text!templates/content_document_list_new_version_button.html",
-    "text!templates/content_document_list_acl_button.html",
+    "text!common-objects/templates/buttons/delete_button.html",
+    "text!common-objects/templates/buttons/checkout_button_group.html",
+    "text!common-objects/templates/buttons/tags_button.html",
+    "text!common-objects/templates/buttons/new_version_button.html",
+    "text!common-objects/templates/buttons/ACL_button.html",
 	"text!templates/search_document_form.html",
 	"text!templates/folder_document_list.html"
 ], function (
 	FolderDocumentList,
 	ContentDocumentListView,
 	DocumentNewView,
+    delete_button,
 	checkout_button_group,
 	tags_button,
     new_version_button,
-    acl_button,
+    ACL_button,
     search_form,
 	template
 ) {
 	var FolderDocumentListView = ContentDocumentListView.extend({
 		template: Mustache.compile(template),
 		partials: {
+            delete_button: delete_button,
 			checkout_button_group: checkout_button_group,
             tags_button: tags_button,
             new_version_button: new_version_button,
             search_form: search_form,
-            acl_button: acl_button
+            ACL_button:ACL_button
 		},
 		collection: function () {
 			return new FolderDocumentList();
@@ -40,7 +43,7 @@ define([
 		},
 
 		actionNew: function () {
-			var view = this.addSubView(
+			this.addSubView(
 				new DocumentNewView({
 					collection: this.collection
 				})

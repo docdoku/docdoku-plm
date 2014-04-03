@@ -23,7 +23,8 @@ import com.docdoku.core.product.ConfigurationItem;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class is an instance of a product, its main attributes are

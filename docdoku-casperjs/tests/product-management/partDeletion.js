@@ -20,8 +20,8 @@ casper.test.begin('Delete a part is available',5, function(){
         this.test.assertExists('#part_table tbody tr:first-child td:first-child input', 'Checkbox found');
         this.click("#part_table tbody tr:first-child td:first-child input");
         this.wait(500, function(){
-            this.test.assertExists('.delete-part', 'Delete part button found');
-            this.click(".delete-part");
+            this.test.assertExists('.delete', 'Delete part button found');
+            this.click(".delete");
         });
         // Popup handled auto.
     });

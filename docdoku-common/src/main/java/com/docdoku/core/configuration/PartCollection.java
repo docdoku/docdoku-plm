@@ -20,7 +20,6 @@
 package com.docdoku.core.configuration;
 
 import com.docdoku.core.common.User;
-import com.docdoku.core.product.ConfigurationItem;
 import com.docdoku.core.product.PartIteration;
 
 import javax.persistence.*;

@@ -8,27 +8,11 @@
     <class>com.docdoku.core.common.User</class>
     <class>com.docdoku.core.common.UserGroup</class>
     <class>com.docdoku.core.common.Workspace</class>
-    <class>com.docdoku.core.document.DocumentIteration</class>
-    <class>com.docdoku.core.document.DocumentLink</class>
-    <class>com.docdoku.core.document.DocumentMaster</class>
-    <class>com.docdoku.core.document.DocumentMasterTemplate</class>
-    <class>com.docdoku.core.document.DocumentRevision</class>
-    <class>com.docdoku.core.document.Folder</class>
-    <class>com.docdoku.core.document.IterationChangeSubscription</class>
-    <class>com.docdoku.core.document.StateChangeSubscription</class>
-    <class>com.docdoku.core.log.DocumentLog</class>
-    <class>com.docdoku.core.log.PartLog</class>
-    <class>com.docdoku.core.log.WorkspaceLog</class>
-    <class>com.docdoku.core.meta.Tag</class>
-    <class>com.docdoku.core.meta.InstanceAttribute</class>
-    <class>com.docdoku.core.meta.InstanceBooleanAttribute</class>
-    <class>com.docdoku.core.meta.InstanceDateAttribute</class>
-    <class>com.docdoku.core.meta.InstanceNumberAttribute</class>
-    <class>com.docdoku.core.meta.InstanceTextAttribute</class>
-    <class>com.docdoku.core.meta.InstanceURLAttribute</class>
-    <class>com.docdoku.core.meta.InstanceAttributeTemplate</class>
-    <class>com.docdoku.core.product.ConfigurationItem</class>
-    <class>com.docdoku.core.product.DateBasedEffectivity</class>
+    <class>com.docdoku.core.change.ChangeItem</class>
+    <class>com.docdoku.core.change.ChangeIssue</class>
+    <class>com.docdoku.core.change.ChangeOrder</class>
+    <class>com.docdoku.core.change.ChangeRequest</class>
+    <class>com.docdoku.core.change.Milestone</class>
     <class>com.docdoku.core.configuration.Baseline</class>
     <class>com.docdoku.core.configuration.BaselineConfigSpec</class>
     <class>com.docdoku.core.configuration.BaselinedPart</class>
@@ -41,6 +25,28 @@
     <class>com.docdoku.core.configuration.ProductInstanceIteration</class>
     <class>com.docdoku.core.configuration.ProductInstanceMaster</class>
     <class>com.docdoku.core.configuration.SerialNumberBasedEffectivityConfigSpec</class>
+    <class>com.docdoku.core.document.DocumentIteration</class>
+    <class>com.docdoku.core.document.DocumentLink</class>
+    <class>com.docdoku.core.document.DocumentMaster</class>
+    <class>com.docdoku.core.document.DocumentMasterTemplate</class>
+    <class>com.docdoku.core.document.DocumentRevision</class>
+    <class>com.docdoku.core.document.Folder</class>
+    <class>com.docdoku.core.document.IterationChangeSubscription</class>
+    <class>com.docdoku.core.document.StateChangeSubscription</class>
+    <class>com.docdoku.core.gcm.GCMAccount</class>
+    <class>com.docdoku.core.log.DocumentLog</class>
+    <class>com.docdoku.core.log.PartLog</class>
+    <class>com.docdoku.core.log.WorkspaceLog</class>
+    <class>com.docdoku.core.meta.InstanceAttribute</class>
+    <class>com.docdoku.core.meta.InstanceBooleanAttribute</class>
+    <class>com.docdoku.core.meta.InstanceDateAttribute</class>
+    <class>com.docdoku.core.meta.InstanceNumberAttribute</class>
+    <class>com.docdoku.core.meta.InstanceTextAttribute</class>
+    <class>com.docdoku.core.meta.InstanceURLAttribute</class>
+    <class>com.docdoku.core.meta.InstanceAttributeTemplate</class>
+    <class>com.docdoku.core.meta.Tag</class>
+    <class>com.docdoku.core.product.ConfigurationItem</class>
+    <class>com.docdoku.core.product.DateBasedEffectivity</class>
     <class>com.docdoku.core.product.Effectivity</class>
     <class>com.docdoku.core.product.Geometry</class>
     <class>com.docdoku.core.product.LotBasedEffectivity</class>
@@ -62,6 +68,9 @@
     <class>com.docdoku.core.security.UserGroupMapping</class>
     <class>com.docdoku.core.security.WorkspaceUserGroupMembership</class>
     <class>com.docdoku.core.security.WorkspaceUserMembership</class>
+    <class>com.docdoku.core.sharing.SharedEntity</class>
+    <class>com.docdoku.core.sharing.SharedPart</class>
+    <class>com.docdoku.core.sharing.SharedDocument</class>
     <class>com.docdoku.core.workflow.Activity</class>
     <class>com.docdoku.core.workflow.ActivityModel</class>
     <class>com.docdoku.core.workflow.ParallelActivity</class>
@@ -73,15 +82,6 @@
     <class>com.docdoku.core.workflow.Workflow</class>
     <class>com.docdoku.core.workflow.WorkflowModel</class>
     <class>com.docdoku.core.workflow.Role</class>
-    <class>com.docdoku.core.sharing.SharedEntity</class>
-    <class>com.docdoku.core.sharing.SharedPart</class>
-    <class>com.docdoku.core.sharing.SharedDocument</class>
-    <class>com.docdoku.core.gcm.GCMAccount</class>
-    <class>com.docdoku.core.change.ChangeItem</class>
-    <class>com.docdoku.core.change.ChangeIssue</class>
-    <class>com.docdoku.core.change.ChangeOrder</class>
-    <class>com.docdoku.core.change.ChangeRequest</class>
-    <class>com.docdoku.core.change.Milestone</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <property name="eclipselink.logging.level" value="SEVERE"/>

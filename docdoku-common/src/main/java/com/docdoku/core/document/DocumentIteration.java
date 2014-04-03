@@ -71,7 +71,7 @@ public class DocumentIteration implements Serializable, FileHolder, Comparable<D
         @JoinColumn(name = "DOCUMENTREVISION_VERSION", referencedColumnName = "DOCUMENTREVISION_VERSION"),
         @JoinColumn(name = "ITERATION", referencedColumnName = "ITERATION")
     })
-    private Set<BinaryResource> attachedFiles = new HashSet<BinaryResource>();
+    private Set<BinaryResource> attachedFiles = new HashSet<>();
     private String revisionNote;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumns({
@@ -94,7 +94,7 @@ public class DocumentIteration implements Serializable, FileHolder, Comparable<D
         @JoinColumn(name = "DOCUMENTREVISION_VERSION", referencedColumnName = "DOCUMENTREVISION_VERSION"),
         @JoinColumn(name = "ITERATION", referencedColumnName = "ITERATION")
     })
-    private Set<DocumentLink> linkedDocuments = new HashSet<DocumentLink>();
+    private Set<DocumentLink> linkedDocuments = new HashSet<>();
     
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @MapKey(name = "name")
@@ -108,7 +108,7 @@ public class DocumentIteration implements Serializable, FileHolder, Comparable<D
         @JoinColumn(name = "DOCUMENTREVISION_VERSION", referencedColumnName = "DOCUMENTREVISION_VERSION"),
         @JoinColumn(name = "ITERATION", referencedColumnName = "ITERATION")
     })
-    private Map<String, InstanceAttribute> instanceAttributes = new HashMap<String, InstanceAttribute>();
+    private Map<String, InstanceAttribute> instanceAttributes = new HashMap<>();
 
     public DocumentIteration() {
     }
@@ -285,9 +285,9 @@ public class DocumentIteration implements Serializable, FileHolder, Comparable<D
             throw new InternalError();
         }
         //perform a deep copy
-        clone.attachedFiles = new HashSet<BinaryResource>(attachedFiles);
+        clone.attachedFiles = new HashSet<>(attachedFiles);
 
-        Set<DocumentLink> clonedLinks = new HashSet<DocumentLink>();
+        Set<DocumentLink> clonedLinks = new HashSet<>();
         for (DocumentLink link : linkedDocuments) {
             DocumentLink clonedLink = link.clone();
             clonedLinks.add(clonedLink);
@@ -295,7 +295,7 @@ public class DocumentIteration implements Serializable, FileHolder, Comparable<D
         clone.linkedDocuments = clonedLinks;
 
         //perform a deep copy
-        Map<String, InstanceAttribute> clonedInstanceAttributes = new HashMap<String, InstanceAttribute>();
+        Map<String, InstanceAttribute> clonedInstanceAttributes = new HashMap<>();
         for (InstanceAttribute attribute : instanceAttributes.values()) {
             InstanceAttribute clonedAttribute = attribute.clone();
             clonedInstanceAttributes.put(clonedAttribute.getName(), clonedAttribute);

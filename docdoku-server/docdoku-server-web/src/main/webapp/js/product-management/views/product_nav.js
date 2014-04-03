@@ -25,7 +25,9 @@ define([
         },
 
         setActive: function () {
-            $("#product-management-menu .active").removeClass("active");
+            if(APP_VIEW.$productManagementMenu){
+                APP_VIEW.$productManagementMenu.find(".active").removeClass("active");
+            }
             this.$el.find(".nav-list-entry").first().addClass("active");
         },
 

@@ -48,7 +48,7 @@ public class ChangeRequestNotFoundException extends ApplicationException {
     }
     
     public String getLocalizedMessage() {
-        String message = getBundleDefaultMessage();
+        String message = getBundleMessage("ChangeRequestNotFoundException");
         return MessageFormat.format(message, mChange);
     }
 }

@@ -74,9 +74,8 @@ public class DocumentMasterDAO {
 
 
     public List<DocumentMaster> getAllByWorkspace(String workspaceId) {
-        List<DocumentMaster> documentMasters = em.createNamedQuery("DocumentMaster.findByWorkspace")
-                .setParameter("workspaceId",workspaceId)
-                .getResultList();
-        return documentMasters;
+        return em.createNamedQuery("DocumentMaster.findByWorkspace")
+                                                 .setParameter("workspaceId",workspaceId)
+                                                 .getResultList();
     }
 }

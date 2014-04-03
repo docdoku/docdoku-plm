@@ -1,5 +1,4 @@
-define(
-    [
+define([
         "text!templates/part_creation_view.html",
         "i18n!localization/nls/product-creation-strings",
         "common-objects/models/part",

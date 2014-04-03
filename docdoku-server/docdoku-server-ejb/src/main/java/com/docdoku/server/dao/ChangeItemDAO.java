@@ -26,8 +26,7 @@ import com.docdoku.core.change.ChangeRequest;
 import com.docdoku.core.exceptions.ChangeIssueNotFoundException;
 import com.docdoku.core.exceptions.ChangeOrderNotFoundException;
 import com.docdoku.core.exceptions.ChangeRequestNotFoundException;
-import com.docdoku.core.exceptions.LayerNotFoundException;
-import com.docdoku.core.product.Layer;
+import com.docdoku.core.meta.Tag;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
@@ -96,6 +95,11 @@ public class ChangeItemDAO {
     }
 
     public void createChangeItem(ChangeItem pChange) {
+        if(pChange.getACL()!=null){
+            ACLDAO aclDAO = new ACLDAO(em);
+            aclDAO.createACL(pChange.getACL());
+        }
+
         em.persist(pChange);
         em.flush();
     }
@@ -104,5 +108,21 @@ public class ChangeItemDAO {
     public void deleteChangeItem(ChangeItem pChange) {
         em.remove(pChange);
         em.flush();
+    }
+
+    public ChangeItem removeTag(ChangeItem pChange, String tagName){
+        Tag tagToRemove = new Tag(pChange.getWorkspace(), tagName);
+        pChange.getTags().remove(tagToRemove);
+        return pChange;
+    }
+
+    public List<ChangeIssue> findAllChangeIssuesWithReferenceLike(String pWorkspaceId, String reference, int maxResults) {
+        return em.createNamedQuery("ChangeIssue.findByReference",ChangeIssue.class)
+                .setParameter("workspaceId", pWorkspaceId).setParameter("name", "%" + reference + "%").setMaxResults(maxResults).getResultList();
+    }
+
+    public List<ChangeRequest> findAllChangeRequestsWithReferenceLike(String pWorkspaceId, String reference, int maxResults) {
+        return em.createNamedQuery("ChangeRequest.findByReference",ChangeRequest.class)
+                .setParameter("workspaceId", pWorkspaceId).setParameter("name", "%" + reference + "%").setMaxResults(maxResults).getResultList();
     }
 }

@@ -1,25 +1,60 @@
 define([
 	"common-objects/common/singleton_decorator",
-	"views/workflow_nav",
-    "views/workflow_model_editor"
+	"views/nav/workflow_nav",
+    "views/nav/milestone_nav",
+    "views/nav/change_issue_nav",
+    "views/nav/change_request_nav",
+    "views/nav/change_order_nav",
+    "views/workflows/workflow_model_editor"
 ],
 function (
 	singletonDecorator,
 	WorkflowNavView,
+	MilestoneNavView,
+    ChangeIssueNavView,
+    ChangeRequestNavView,
+    ChangeOrderNavView,
     WorkflowModelEditorView
 ) {
 	var Router = Backbone.Router.extend({
+        contentSelector: "#change-management-content",
 		routes: {
-			"workflows":		"workflows",
-            "workflow-model-editor/:workflowModelId":  "workflowModelEditor",
-            "workflow-model-editor":  "workflowModelEditorNew",
-			"":					"defaults"
+			"workflows":"workflows",
+            "milestones":"milestones",
+            "issues":"issues",
+            "requests":"requests",
+            "orders":"orders",
+            "workflow-model-editor/:workflowModelId":"workflowModelEditor",
+            "workflow-model-editor":"workflowModelEditorNew",
+			"":"defaults"
 		},
+
 		workflows: function() {
 			this.defaults();
-			var view = WorkflowNavView.getInstance();
-			view.showContent();
+			WorkflowNavView.getInstance().showContent();
 		},
+
+        milestones: function() {
+            this.defaults();
+            MilestoneNavView.getInstance().showContent(this.contentSelector);
+        },
+
+        issues: function() {
+            this.defaults();
+            this.cleanContent();
+            ChangeIssueNavView.getInstance().showContent(this.contentSelector);
+        },
+        requests: function() {
+            this.defaults();
+            this.cleanContent();
+            ChangeRequestNavView.getInstance().showContent(this.contentSelector);
+        },
+        orders: function() {
+            this.defaults();
+            this.cleanContent();
+            ChangeOrderNavView.getInstance().showContent(this.contentSelector);
+        },
+
         workflowModelEditor: function(workflowModelId) {
             this.defaults();
 
@@ -33,6 +68,7 @@ function (
 
             this.workflowModelEditorView.render();
         },
+
         workflowModelEditorNew: function() {
             this.defaults();
 
@@ -44,9 +80,21 @@ function (
 
             this.workflowModelEditorView.render();
         },
+
 		defaults: function() {
 			WorkflowNavView.getInstance();
-		}
+            MilestoneNavView.getInstance();
+            ChangeIssueNavView.getInstance();
+            ChangeOrderNavView.getInstance();
+            ChangeRequestNavView.getInstance();
+		},
+
+        cleanContent: function() {
+            MilestoneNavView.getInstance().cleanView();
+            ChangeIssueNavView.getInstance().cleanView();
+            ChangeOrderNavView.getInstance().cleanView();
+            ChangeRequestNavView.getInstance().cleanView();
+        }
 	});
 	Router = singletonDecorator(Router);
 	return Router;

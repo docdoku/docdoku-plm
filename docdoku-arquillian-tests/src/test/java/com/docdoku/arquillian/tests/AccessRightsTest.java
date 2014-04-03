@@ -60,6 +60,8 @@ import java.util.logging.Logger;
 public class AccessRightsTest {
 
     @EJB
+    private ESIndexer esIndexer;
+    @EJB
     private TestEJBBean testBean;
 
     @PersistenceContext
@@ -78,39 +80,33 @@ public class AccessRightsTest {
                 .addClasses(
                         Account.class,
                         Credential.class,
-                        GCMAccount.class,
-                        Workspace.class,
-                        TestEJBBean.class,
-                        IUserManagerLocal.class,
-                        UserManagerBean.class,
-                        IMailerLocal.class,
-                        MailerBean.class,
-                        IGCMSenderLocal.class,
-                        GCMSenderBean.class,
-                        IDocumentManagerLocal.class,
-                        DocumentManagerBean.class,
                         DataManagerBean.class,
+                        DocumentManagerBean.class,
+                        ESIndexer.class,
+                        GCMAccount.class,
+                        GCMSenderBean.class,
                         IDataManagerLocal.class,
-                        WorkspaceUserMembership.class,
+                        IDocumentManagerLocal.class,
+                        IGCMSenderLocal.class,
+                        IMailerLocal.class,
+                        IUserManagerLocal.class,
                         IWorkspaceManagerLocal.class,
-                        WorkspaceManagerBean.class,
                         JsonValue.class,
-                        ESIndexer.class
+                        MailerBean.class,
+                        TestEJBBean.class,
+                        UserManagerBean.class,
+                        Workspace.class,
+                        WorkspaceManagerBean.class,
+                        WorkspaceUserMembership.class
                 )
                 .addAsResource("test-persistence.xml", "META-INF/persistence.xml")
                 .addAsWebInfResource("WEB-INF/sun-web.xml")
                 .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
-
-    //@After
-    public void clearData() throws Exception {
-        utx.begin();
-        em.joinTransaction();
-        em.createQuery("delete from UserGroupMapping").executeUpdate();
-        em.createQuery("delete from Account").executeUpdate();
-        em.createQuery("delete from Credential").executeUpdate();
-        utx.commit();
+    @Before
+    public void clearIndex(){
+        esIndexer.deleteWorkspace("TEST_WORKSPACE");
     }
 
     @Before

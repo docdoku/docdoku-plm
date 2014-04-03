@@ -308,13 +308,14 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @Override
     public void updateDocumentACL(String pWorkspaceId, DocumentRevisionKey docKey, Map<String,String> pACLUserEntries, Map<String,String> pACLUserGroupEntries) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentRevisionNotFoundException, AccessRightException {
 
-        User user = checkDocumentRevisionWriteAccess(docKey);
+        User user = checkDocumentRevisionWriteAccess(docKey);                                                           // Todo Just check if the user is document's or workspace's owner
 
         DocumentRevisionDAO documentRevisionDAO = new DocumentRevisionDAO(new Locale(user.getLanguage()), em);
-        DocumentRevision docR = documentRevisionDAO.getDocRRef(docKey);
+        DocumentRevision docR = documentRevisionDAO.loadDocR(docKey);
         Workspace wks = new WorkspaceDAO(em).loadWorkspace(pWorkspaceId);
 
-        if (docR.getAuthor().getLogin().equals(user.getLogin()) || wks.getAdmin().getLogin().equals(user.getLogin())) {
+        if (docR.getAuthor().getLogin().equals(user.getLogin())                                                         // Check if the user is the document owner
+            || wks.getAdmin().getLogin().equals(user.getLogin())) {                                                     // Check if the user is the workspace owner
 
             if (docR.getACL() == null) {
                 ACL acl = new ACL();
@@ -362,7 +363,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @Override
     public void removeACLFromDocumentRevision(DocumentRevisionKey documentRevisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentRevisionNotFoundException, AccessRightException {
 
-        User user = userManager.checkWorkspaceReadAccess(documentRevisionKey.getDocumentMaster().getWorkspace());
+        User user = userManager.checkWorkspaceReadAccess(documentRevisionKey.getDocumentMaster().getWorkspace());       // Todo Just check if the user is document's or workspace's owner
 
         DocumentRevisionDAO documentRevisionDAO = new DocumentRevisionDAO(new Locale(user.getLanguage()), em);
         DocumentRevision docR = documentRevisionDAO.getDocRRef(documentRevisionKey);
@@ -926,7 +927,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         DocumentRevision docR = docRDAO.loadDocR(pDocRPK);
         //Check access rights on docR
         Workspace wks = new WorkspaceDAO(new Locale(user.getLanguage()), em).loadWorkspace(pDocRPK.getWorkspaceId());
-        boolean isAdmin = wks.getAdmin().getLogin().equals(user.getLogin());
+        boolean isAdmin = wks.getAdmin().getLogin().equals(user.getLogin());                                            // TODO Unuse variable... why?
 
         String owner = docR.getLocation().getOwner();
         if ((owner != null) && (!owner.equals(user.getLogin()))) {
@@ -1509,16 +1510,9 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
     @RolesAllowed({"users","admin"})
     @Override
-    public User[] getUsers(String pWorkspaceId) throws WorkspaceNotFoundException, AccessRightException, AccountNotFoundException, UserNotFoundException, UserNotActiveException {
-        Locale locale;
-        if(userManager.isCallerInRole("admin")){
-            Account account = userManager.checkAdmin(pWorkspaceId);
-            locale = new Locale(account.getLanguage());
-        }else{
-            User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
-            locale = new Locale(user.getLanguage());
-        }
-        return new UserDAO(locale, em).findAllUsers(pWorkspaceId);
+    public User[] getUsers(String pWorkspaceId) throws WorkspaceNotFoundException, AccessRightException, AccountNotFoundException {
+        Account account = userManager.checkAdmin(pWorkspaceId);
+        return new UserDAO(new Locale(account.getLanguage()), em).findAllUsers(pWorkspaceId);
     }
 
     @RolesAllowed("users")
@@ -1612,22 +1606,15 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     }
 
     private User checkDocumentRevisionReadAccess(DocumentRevisionKey documentRevisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, DocumentRevisionNotFoundException {
-
         User user = userManager.checkWorkspaceReadAccess(documentRevisionKey.getDocumentMaster().getWorkspace());
-        if(user.isAdministrator()){
+        if(user.isAdministrator()){                                                                                     // If it is the workspace's owner, give it access
             return user;
         }
         DocumentRevision documentRevision = new DocumentRevisionDAO(em).loadDocR(documentRevisionKey);
-
-        if(documentRevision.getACL()==null){
+        if((documentRevision.getACL()==null) || (documentRevision.getACL().hasReadAccess(user))){                       // If the document haven't ACL, give it access or if there is a read access
             return user;
-        }else{
-            if(documentRevision.getACL().hasReadAccess(user)){
-                return user;
-            }else{
-                throw new AccessRightException(new Locale(user.getLanguage()),user);
-            }
+        }else{                                                                                                          // Else throw a AccessRightException
+            throw new AccessRightException(new Locale(user.getLanguage()),user);
         }
-
     }
 }

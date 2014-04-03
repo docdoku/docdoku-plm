@@ -6,8 +6,8 @@ define(
     'i18n!localization/nls/product-structure-strings',
     "common-objects/views/attributes/attributes",
     "common-objects/views/part/parts_management_view",
-    "common-objects/views/linked_document/linked_documents",
-    "common-objects/collections/linked_document_collection",
+    "common-objects/views/linked/linked_documents",
+    "common-objects/collections/linked/linked_document_collection",
     "common-objects/views/workflow/lifecycle",
     "common-objects/utils/date"
     ],

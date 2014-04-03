@@ -101,11 +101,7 @@ public class DataManagerBean implements IDataManagerLocal {
             return true;
         } else {
             BinaryResource previous = binaryResource.getPrevious();
-            if (previous != null) {
-                return exists(previous, subResourceVirtualPath);
-            } else {
-                return false;
-            }
+            return previous != null && exists(previous, subResourceVirtualPath);
         }
     }
 

@@ -42,6 +42,13 @@ public class PartIterationDTO implements Serializable {
     public PartIterationDTO() {
     }
 
+    public PartIterationDTO(String pWorkspaceId, String pNumber, String pVersion, int pIteration) {
+        workspaceId = pWorkspaceId;
+        number = pNumber;
+        version = pVersion;
+        iteration = pIteration;
+    }
+
     public String getWorkspaceId() {
         return workspaceId;
     }

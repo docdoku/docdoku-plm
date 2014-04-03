@@ -22,6 +22,7 @@
                     workspaceAdmin:"${workspaceAdmin}",
                     groups: [${groups}]
                 };
+                var APP_VIEW;
                 $(document).ready(function() {
                     require.config({
                         baseUrl: "${request.contextPath}/js/document-management",
@@ -41,7 +42,11 @@
                         urlArgs:'v=${BUILD_NUMBER}'
                     });
 
-                    require(["app"]);
+                    require(["app","router"], function(AppView,Router){
+                        APP_VIEW = new AppView().render();
+                        Router.getInstance();
+                        Backbone.history.start();
+                    });
 
                     require(["modules/user-popover-module/app",
                              "modules/chat-module/app",

@@ -143,4 +143,8 @@ public class DocumentIterationDTO implements Serializable {
     public void setIteration(int pIteration) {
         iteration = pIteration;
     }
+
+    public DocumentRevisionDTO getDocumentRevision() {
+        return new DocumentRevisionDTO(workspaceId, id+"-"+documentRevisionVersion, documentRevisionVersion);
+    }
 }

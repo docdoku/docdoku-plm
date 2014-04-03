@@ -1,7 +1,7 @@
 define([
 	"i18n!localization/nls/document-management-strings",
 	"common-objects/utils/date",
-	"views/checkbox_list_item",
+    "common-objects/views/documents/checkbox_list_item",
     "views/iteration/document_iteration",
 	"text!templates/document_list_item.html"
 ], function (
@@ -63,8 +63,6 @@ define([
 		},
 
         rendered: function() {
-            var that = this;
-
             CheckboxListItemView.prototype.rendered.apply(this, arguments);
 
             if(this.model.isStateChangedSubscribed()){
@@ -116,7 +114,7 @@ define([
             }
         },
 
-		actionEdit: function (evt) {
+		actionEdit: function () {
 			var that = this;
 			this.model.fetch().success(function () {
                 new IterationView({
@@ -125,11 +123,11 @@ define([
             });
         },
 
-        toggleStateSubscription:function(evt){
+        toggleStateSubscription:function(){
             this.model.toggleStateSubscribe(this.model.isStateChangedSubscribed());
         },
 
-        toggleIterationSubscription:function(evt){
+        toggleIterationSubscription:function(){
             this.model.toggleIterationSubscribe(this.model.isIterationChangedSubscribed());
         },
 

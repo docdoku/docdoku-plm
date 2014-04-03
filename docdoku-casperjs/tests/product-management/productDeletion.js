@@ -22,9 +22,9 @@ casper.test.begin('Delete a product is available',5, function(){
                 this.test.assertExists('#product_table tbody tr:first-child td:first-child input', 'Checkbox found');
                 this.click("#product_table tbody tr:first-child td:first-child input");
                 this.wait(500, function(){
-                    this.test.assertExists('.delete-product', 'Delete product button found');
-                    this.click(".delete-product");
-                })
+                    this.test.assertExists('.delete', 'Delete product button found');
+                    this.click(".delete");
+                });
                 // Popup handled auto.
             }
         );

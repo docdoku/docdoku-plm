@@ -19,7 +19,9 @@ define([
         },
 
         setActive: function () {
-            $("#document-menu .active").removeClass("active");
+            if(APP_VIEW.$documentManagementMenu){
+                APP_VIEW.$documentManagementMenu.find(".active").removeClass("active");
+            }
             this.$el.find(".nav-list-entry").first().addClass("active");
         },
 

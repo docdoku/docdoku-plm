@@ -8,7 +8,11 @@ define([
     "views/part_new_version",
     "common-objects/views/prompt",
     "common-objects/views/security/acl_edit",
-    "views/advanced_search"
+    "views/advanced_search",
+    "text!common-objects/templates/buttons/delete_button.html",
+    "text!common-objects/templates/buttons/checkout_button_group.html",
+    "text!common-objects/templates/buttons/new_version_button.html",
+    "text!common-objects/templates/buttons/ACL_button.html"
 ], function (
     PartCollection,
     PartSearchCollection,
@@ -19,7 +23,11 @@ define([
     PartNewVersionView,
     PromptView,
     ACLEditView,
-    AdvancedSearchView
+    AdvancedSearchView,
+    delete_button,
+    checkout_button_group,
+    new_version_button,
+    ACL_button
     ) {
     var PartContentView = Backbone.View.extend({
 
@@ -29,7 +37,7 @@ define([
 
         events:{
             "click button.new-part":"newPart",
-            "click button.delete-part":"deletePart",
+            "click button.delete":"deletePart",
             "click button.checkout":"checkout",
             "click button.undocheckout":"undocheckout",
             "click button.checkin":"checkin",
@@ -42,6 +50,13 @@ define([
             "click button.current-page":"goToPage",
             "submit #part-search-form":"onQuickSearch",
             "click .advanced-search-button":"onAdvancedSearch"
+        },
+
+        partials:{
+            delete_button: delete_button,
+            ACL_button: ACL_button,
+            checkout_button_group: checkout_button_group,
+            new_version_button: new_version_button
         },
 
         initialize: function () {
@@ -57,7 +72,7 @@ define([
         },
 
         render:function(){
-            this.$el.html(this.template({i18n:i18n}));
+            this.$el.html(this.template({i18n:i18n}, this.partials));
 
             this.bindDomElements();
 
@@ -99,7 +114,7 @@ define([
             this.pageControls =this.$(".page-controls");
         },
 
-        newPart:function(e){
+        newPart:function(){
             var partCreationView = new PartCreationView();
             this.listenTo(partCreationView, 'part:created', this.fetchPartAndAdd);
             $("body").append(partCreationView.render().el);

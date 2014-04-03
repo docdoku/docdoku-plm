@@ -22,6 +22,7 @@
                     workspaceAdmin:"${workspaceAdmin}",
                     groups: [${groups}]
                 };
+                var APP_VIEW;
                 $(document).ready(function() {
                     require.config({
                         baseUrl: "${request.contextPath}/js/change-management",
@@ -41,7 +42,11 @@
                         urlArgs:'v=${BUILD_NUMBER}'
                     });
 
-                    require(["app"]);
+                    require(["app","router"], function(AppView,Router){
+                        APP_VIEW = new AppView().render();
+                        APP_ROUTER = Router.getInstance();
+                        Backbone.history.start();
+                    });
 
                     require(["modules/user-popover-module/app",
                              "modules/chat-module/app",
@@ -52,7 +57,7 @@
             </script>
         </ui:define>
         <ui:define name="header">
-            <em:header moduleName="change-management" moduleIcon="icon-refresh" moduleTranslate="#{i18nTemplate['toplinks.workflow']}" breadcrumbDept="2" />
+            <em:header moduleName="change-management" moduleIcon="icon-refresh" moduleTranslate="#{i18nTemplate['toplinks.change']}" breadcrumbDept="2" />
         </ui:define>
         <ui:define name="content">
             <div id="workspace"></div>

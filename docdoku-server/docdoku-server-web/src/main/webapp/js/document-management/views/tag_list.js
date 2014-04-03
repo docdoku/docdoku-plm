@@ -1,6 +1,6 @@
 define([
-	"collections/tag",
-	"views/collapsible_list",
+	"common-objects/collections/tag",
+    "common-objects/views/components/collapsible_list",
 	"views/tag_list_item"
 ], function (
 	TagList,

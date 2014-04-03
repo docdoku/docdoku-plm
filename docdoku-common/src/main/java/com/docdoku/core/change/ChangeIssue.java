@@ -24,14 +24,12 @@ package com.docdoku.core.change;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
 
-import javax.persistence.Entity;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.Date;
 
 /**
- * Represents an identified issue.
- * The issue may result in one or more <a href="ChangeRequest.html">ChangeRequest</a>.
+ * Represents an identified order.
+ * The order may result in one or more <a href="ChangeRequest.html">ChangeRequest</a>.
  *
  * @author Florent Garin
  * @version 2.0, 06/01/14
@@ -39,8 +37,51 @@ import javax.persistence.Table;
  */
 @Table(name="CHANGEISSUE")
 @Entity
+@AssociationOverrides({
+        @AssociationOverride(
+            name="tags",
+            joinTable = @JoinTable(name="CHANGEISSUE_TAG",
+                                    inverseJoinColumns={
+                                            @JoinColumn(name="TAG_LABEL", referencedColumnName="LABEL"),
+                                            @JoinColumn(name="TAG_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID")
+                                    },
+                                    joinColumns={
+                                            @JoinColumn(name="CHANGEISSUE_ID", referencedColumnName="ID")
+                                    }
+            )
+        ),
+        @AssociationOverride(
+            name="affectedDocuments",
+            joinTable = @JoinTable(name="CHANGEISSUE_AFFECTED_DOCUMENT",
+                                    inverseJoinColumns={
+                                            @JoinColumn(name="DOCUMENTMASTER_ID", referencedColumnName="DOCUMENTMASTER_ID"),
+                                            @JoinColumn(name="DOCUMENTREVISION_VERSION", referencedColumnName="DOCUMENTREVISION_VERSION"),
+                                            @JoinColumn(name="DOCUMENTMASTER_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
+                                            @JoinColumn(name = "ITERATION", referencedColumnName = "ITERATION")
+                                    },
+                                    joinColumns={
+                                            @JoinColumn(name="CHANGEISSUE_ID", referencedColumnName="ID")
+                                    }
+            )
+        ),
+        @AssociationOverride(
+            name="affectedParts",
+            joinTable = @JoinTable(name="CHANGEISSUE_AFFECTED_PART",
+                                    inverseJoinColumns={
+                                            @JoinColumn(name="PARTMASTER_PARTNUMBER", referencedColumnName="PARTMASTER_PARTNUMBER"),
+                                            @JoinColumn(name="PARTREVISION_VERSION", referencedColumnName="PARTREVISION_VERSION"),
+                                            @JoinColumn(name="PARTMASTER_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
+                                            @JoinColumn(name = "ITERATION", referencedColumnName = "ITERATION")
+                                    },
+                                    joinColumns={
+                                            @JoinColumn(name="CHANGEISSUE_ID", referencedColumnName="ID")
+                                    }
+            )
+        )
+})
 @NamedQueries({
         @NamedQuery(name="ChangeIssue.findChangeIssuesByWorkspace",query="SELECT DISTINCT c FROM ChangeIssue c WHERE c.workspace.id = :workspaceId"),
+        @NamedQuery(name="ChangeIssue.findByReference", query="SELECT c FROM ChangeIssue c WHERE c.name LIKE :name AND c.workspace.id = :workspaceId")
 })
 public class ChangeIssue extends ChangeItem {
 
@@ -50,10 +91,6 @@ public class ChangeIssue extends ChangeItem {
      */
     private String initiator;
 
-    private Priority priority;
-
-
-
     public ChangeIssue() {
     }
 
@@ -61,16 +98,12 @@ public class ChangeIssue extends ChangeItem {
         super(pWorkspace, pName, pAuthor);
     }
 
-
-    public Priority getPriority() {
-        return priority;
+    public ChangeIssue(String name, Workspace workspace, User author, User assignee, Date creationDate, String description, Priority priority, Category category, String initiator) {
+        super(name, workspace, author, assignee, creationDate, description, priority, category);
+        this.initiator = initiator;
     }
 
-    public void setPriority(Priority priority) {
-        this.priority = priority;
-    }
-
-    public void setInitiator(String initiator) {
+    public void setInitiator(String initiator) {                                                                        // TODO Find utility of this attribute
         this.initiator = initiator;
     }
 

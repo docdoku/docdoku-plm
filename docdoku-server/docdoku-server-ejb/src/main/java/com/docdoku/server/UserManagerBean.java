@@ -205,6 +205,13 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
         }
     }
 
+    @RolesAllowed({"users"})
+    @Override
+    public WorkspaceUserMembership getWorkspaceSpecificUserMemberships(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+        User user = checkWorkspaceReadAccess(pWorkspaceId);
+        return new UserDAO(new Locale(user.getLanguage()), em).loadUserMembership(new WorkspaceUserMembershipKey(pWorkspaceId, pWorkspaceId, user.getLogin()));
+    }
+
     @RolesAllowed({"users","admin"})
     @Override
     public WorkspaceUserMembership[] getWorkspaceUserMemberships(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccountNotFoundException {
@@ -215,6 +222,19 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
             User user = checkWorkspaceReadAccess(pWorkspaceId);
             return new UserDAO(new Locale(user.getLanguage()), em).findAllWorkspaceUserMemberships(pWorkspaceId);
         }
+    }
+
+    @RolesAllowed({"users"})
+    @Override
+    public WorkspaceUserGroupMembership[] getWorkspaceSpecificUserGroupMemberships(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+        User user = checkWorkspaceReadAccess(pWorkspaceId);
+        UserGroupDAO userGroupDAO = new UserGroupDAO(new Locale(user.getLanguage()),em);
+        List<UserGroup> userGroups = userGroupDAO.getUserGroups(pWorkspaceId, user);
+        WorkspaceUserGroupMembership[] workspaceUserGroupMembership = new WorkspaceUserGroupMembership[userGroups.size()];
+        for(int i=0; i < userGroups.size(); i++){
+            workspaceUserGroupMembership[i] = userGroupDAO.loadUserGroupMembership(new WorkspaceUserGroupMembershipKey(pWorkspaceId,pWorkspaceId,userGroups.get(i).getId()));
+        }
+        return workspaceUserGroupMembership;
     }
 
     @RolesAllowed({"users","admin"})

@@ -21,13 +21,11 @@
 package com.docdoku.core.configuration;
 
 
-import com.docdoku.core.common.User;
 import com.docdoku.core.product.PartIteration;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * Class link that gathers a part collection and a given part iteration.

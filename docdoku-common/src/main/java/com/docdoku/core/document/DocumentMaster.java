@@ -42,7 +42,7 @@ import java.util.List;
 @Table(name="DOCUMENTMASTER")
 @javax.persistence.IdClass(com.docdoku.core.document.DocumentMasterKey.class)
 @javax.persistence.Entity
-@NamedQueries ({
+@javax.persistence.NamedQueries ({
         @NamedQuery(name="DocumentMaster.findByWorkspace", query="SELECT dm FROM DocumentMaster dm WHERE dm.workspace.id = :workspaceId")
 })
 public class DocumentMaster implements Serializable, Comparable<DocumentMaster>, Cloneable {
@@ -233,7 +233,7 @@ public class DocumentMaster implements Serializable, Comparable<DocumentMaster>,
      */
     @Override
     public DocumentMaster clone() {
-        DocumentMaster clone = null;
+        DocumentMaster clone;
         try {
             clone = (DocumentMaster) super.clone();
         } catch (CloneNotSupportedException e) {

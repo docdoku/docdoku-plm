@@ -4,7 +4,7 @@ define([
 	BaseView
 ) {
 	var ContentView = BaseView.extend({
-		el: "#document-content",
+		el: "#change-management-content",
 		initialize: function () {
 			BaseView.prototype.initialize.apply(this, arguments);
 			// destroy previous content view if any

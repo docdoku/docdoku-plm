@@ -3,13 +3,15 @@ define([
     "text!templates/part_template_content.html",
     "i18n!localization/nls/product-management-strings",
     "views/part_template_list",
-    "views/part_template_creation_view"
+    "views/part_template_creation_view",
+    "text!common-objects/templates/buttons/delete_button.html"
 ], function (
     PartTemplateCollection,
     template,
     i18n,
     PartTemplateListView,
-    PartTemplateCreationView
+    PartTemplateCreationView,
+    delete_button
     ) {
     var PartTemplateContentView = Backbone.View.extend({
 
@@ -17,9 +19,13 @@ define([
 
         el: "#product-management-content",
 
+        partials: {
+            delete_button: delete_button
+        },
+
         events:{
             "click button.new-template":"newPartTemplate",
-            "click button.delete-part-template":"deletePartTemplate"
+            "click button.delete":"deletePartTemplate"
         },
 
         initialize: function () {
@@ -27,7 +33,7 @@ define([
         },
 
         render:function(){
-            this.$el.html(this.template({i18n:i18n}));
+            this.$el.html(this.template({i18n:i18n}, this.partials));
 
             this.bindDomElements();
 
@@ -44,7 +50,7 @@ define([
             this.deleteButton = this.$(".delete");
         },
 
-        newPartTemplate:function(e){
+        newPartTemplate:function(){
             var partTemplateCreationView = new PartTemplateCreationView().render();
             this.listenTo(partTemplateCreationView, 'part-template:created', this.fetchPartTemplateAndAdd);
             partTemplateCreationView.show();

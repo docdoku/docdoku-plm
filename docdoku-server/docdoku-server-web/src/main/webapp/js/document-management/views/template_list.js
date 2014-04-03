@@ -1,5 +1,5 @@
 define([
-	"views/checkbox_list",
+    "common-objects/views/documents/checkbox_list",
 	"views/template_list_item",
 	"text!templates/template_list.html",
     "i18n!localization/nls/datatable-strings"

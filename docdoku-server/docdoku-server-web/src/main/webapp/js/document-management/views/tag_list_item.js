@@ -26,7 +26,9 @@ define([
 			this.$(".header .btn-group").first().removeClass("open");
 		},
 		setActive: function () {
-			$("#document-menu .active").removeClass("active");
+            if(APP_VIEW.$documentManagementMenu){
+                APP_VIEW.$documentManagementMenu.find(".active").removeClass("active");
+            }
 			this.$(".nav-list-entry").first().addClass("active");
 		},
 		showContent: function () {

@@ -48,7 +48,7 @@ public class ChangeIssueNotFoundException extends ApplicationException {
     }
     
     public String getLocalizedMessage() {
-        String message = getBundleDefaultMessage();
+        String message = getBundleMessage("ChangeIssueNotFoundException");
         return MessageFormat.format(message, mChange);
     }
 }

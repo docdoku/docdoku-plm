@@ -28,7 +28,10 @@ import com.docdoku.core.exceptions.*;
 import com.docdoku.core.security.WorkspaceUserMembership;
 import com.docdoku.core.security.WorkspaceUserMembershipKey;
 
-import javax.persistence.*;
+import javax.persistence.EntityExistsException;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceException;
+import javax.persistence.Query;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -181,7 +184,7 @@ public class UserDAO {
 
     public User[] findReachableUsersForCaller(String callerLogin) {
 
-        List<User> users = new ArrayList<User>();
+        List<User> users = new ArrayList<>();
 
         List<String> listWorkspaceId = em.createQuery("SELECT u.workspaceId FROM User u WHERE u.login = :login")
                 .setParameter("login", callerLogin).getResultList();
@@ -189,12 +192,12 @@ public class UserDAO {
         List<User> listUsers = em.createQuery("SELECT u FROM User u where u.workspaceId IN :workspacesId")
                 .setParameter("workspacesId", listWorkspaceId).getResultList();
 
-        List<String> loginsAdded = new ArrayList<String>();
+        List<String> loginsAdded = new ArrayList<>();
 
-        for (int i = 0; i < listUsers.size(); i++) {
-            if(!loginsAdded.contains( ((User)listUsers.get(i)).getLogin()) ){
-                loginsAdded.add(((User)listUsers.get(i)).getLogin());
-                users.add((User) listUsers.get(i));
+        for (User listUser : listUsers) {
+            if (!loginsAdded.contains((listUser).getLogin())) {
+                loginsAdded.add((listUser).getLogin());
+                users.add(listUser);
             }
         }
 

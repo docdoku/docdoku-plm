@@ -9,29 +9,10 @@
         <span class="icon"></span>
     </button>
 
-    <button class="btn delete delete-part" title="{{i18n.DELETE_SELECTION}}">
-        <span class="icon"></span>
-    </button>
-
-    <span class="btn-group checkout-group">
-        <button class="btn checkout" title="{{i18n.CHECKOUT}}">
-            <span class="icon"></span>
-        </button>
-        <button class="btn undocheckout" title="{{i18n.UNDO_CHECKOUT}}" disabled="">
-            <span class="icon"></span>
-        </button>
-        <button class="btn checkin" title="{{i18n.CHECKIN}}" disabled="">
-            <span class="icon"></span>
-        </button>
-    </span>
-
-    <button class="btn edit-acl" title="{{i18n.ACL}}">
-        <span class="icon"></span>
-    </button>
-
-    <button class="btn new-version" title="{{i18n.NEW_VERSION}}">
-        <span class="icon"></span>
-    </button>
+    {{> delete_button}}
+    {{> checkout_button_group}}
+    {{> ACL_button}}
+    {{> new_version_button}}
 </div>
 
 <div class="page-controls">

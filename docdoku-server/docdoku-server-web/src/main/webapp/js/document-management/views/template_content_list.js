@@ -4,17 +4,23 @@ define([
 	"views/content",
 	"views/template_list",
 	"views/template_new",
-	"text!templates/template_content_list.html"
+	"text!templates/template_content_list.html",
+    "text!common-objects/templates/buttons/delete_button.html"
 ], function (
 	i18n,
 	TemplateList,
 	ContentView,
 	TemplateListView,
 	TemplateNewView,
-	template
+	template,
+    delete_button
 ) {
 	var TemplateContentListView = ContentView.extend({
 		template: Mustache.compile(template),
+        partials: {
+            delete_button: delete_button
+        },
+
 		collection: function () {
 			return TemplateList.getInstance();
 		},
@@ -38,7 +44,7 @@ define([
 			this.$el.find(".actions .delete")[action]();
 		},
 		actionNew : function () {
-			var view = this.addSubView(
+			this.addSubView(
 				new TemplateNewView({
 					collection: this.collection
 				})

@@ -4,14 +4,16 @@ define([
     "i18n!localization/nls/product-management-strings",
     "views/product_list",
     "views/product_creation_view",
-    "views/baseline_creation_view"
+    "views/baseline_creation_view",
+    "text!common-objects/templates/buttons/delete_button.html"
 ], function (
     ConfigurationItemCollection,
     template,
     i18n,
     ProductListView,
     ProductCreationView,
-    BaselineCreationView
+    BaselineCreationView,
+    delete_button
     ) {
     var ProductContentView = Backbone.View.extend({
 
@@ -19,9 +21,13 @@ define([
 
         el: "#product-management-content",
 
+        partials:{
+            delete_button: delete_button
+        },
+
         events:{
             "click button.new-product":"newProduct",
-            "click button.delete-product":"deleteProduct",
+            "click button.delete":"deleteProduct",
             "click button.create-baseline":"createBaseline"
         },
 
@@ -30,7 +36,7 @@ define([
         },
 
         render:function(){
-            this.$el.html(this.template({i18n:i18n}));
+            this.$el.html(this.template({i18n:i18n},this.partials));
 
             this.bindDomElements();
 
@@ -50,7 +56,7 @@ define([
             this.createBaselineButton = this.$(".create-baseline");
         },
 
-        newProduct:function(e){
+        newProduct:function(){
             var productCreationView = new ProductCreationView();
             this.listenTo(productCreationView, 'product:created', this.addProductInList);
             $("body").append(productCreationView.render().el);

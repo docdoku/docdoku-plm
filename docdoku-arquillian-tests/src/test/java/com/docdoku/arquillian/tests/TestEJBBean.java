@@ -41,7 +41,6 @@ import javax.ejb.Stateless;
  * @author Asmae CHADID
  */
 
-
 @LocalBean
 @Stateless
 public class TestEJBBean {

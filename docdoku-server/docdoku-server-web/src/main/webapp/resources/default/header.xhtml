@@ -98,7 +98,7 @@
                                                             <ul class="dropdown-menu">
                                                                 <li><a href="#{request.contextPath}/document-management/${item.value.id}#folders">#{i18nTemplate['toplinks.document']}</a></li>
                                                                 <li><a href="#{request.contextPath}/product-management/${item.value.id}#products">#{i18nTemplate['toplinks.product']}</a></li>
-                                                                <li><a href="#{request.contextPath}/change-management/${item.value.id}#workflows">#{i18nTemplate['toplinks.workflow']}</a></li>
+                                                                <li><a href="#{request.contextPath}/change-management/${item.value.id}#workflows">#{i18nTemplate['toplinks.change']}</a></li>
                                                                 <!--li><a href="#{request.contextPath}/search/${item.value.id}">#{i18nTemplate['toplinks.search']}</a></li-->
                                                             </ul>
                                                         </li>
@@ -122,7 +122,7 @@
                                                             <ul class="dropdown-menu">
                                                                 <li><a href="#{request.contextPath}/document-management/${item.id}#folders">#{i18nTemplate['toplinks.document']}</a></li>
                                                                 <li><a href="#{request.contextPath}/product-management/${item.id}#products">#{i18nTemplate['toplinks.product']}</a></li>
-                                                                <li><a href="#{request.contextPath}/change-management/${item.id}#workflows">#{i18nTemplate['toplinks.workfchangelow']}</a></li>
+                                                                <li><a href="#{request.contextPath}/change-management/${item.id}#workflows">#{i18nTemplate['toplinks.change']}</a></li>
                                                                 <!--li><a href="#{request.contextPath}/search/${item.id}">#{i18nTemplate['toplinks.search']}</a></li-->
                                                             </ul>
                                                         </li>
@@ -155,7 +155,7 @@
                                                             <c:if test="#{cc.attrs.moduleName =='change-management'}">
                                                                 <i class="icon-ok"></i>
                                                             </c:if>
-                                                            #{i18nTemplate['toplinks.workflow']}
+                                                            #{i18nTemplate['toplinks.change']}
                                                         </a></li>
                                                         <!--li><a href="#{request.contextPath}/search/${workspaceID}">
                                                             <c:if test="#{cc.attrs.moduleName =='search'}">

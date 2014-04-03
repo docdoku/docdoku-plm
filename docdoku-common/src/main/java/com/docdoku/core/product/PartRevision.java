@@ -45,7 +45,8 @@ import java.util.*;
         @NamedQuery(name="PartRevision.findByWorkspace", query="SELECT pr FROM PartRevision pr WHERE pr.partMaster.workspace.id = :workspaceId ORDER BY pr.partMaster.number ASC"),
         @NamedQuery(name="PartRevision.findByWorkspace.filterUserACLEntry", query="SELECT pr FROM PartRevision pr WHERE pr.partMaster.workspace.id = :workspaceId and (pr.acl is null or exists(SELECT au from ACLUserEntry au WHERE au.principal = :user AND au.permission not like com.docdoku.core.security.ACL.Permission.FORBIDDEN AND au.acl = pr.acl)) ORDER BY pr.partMaster.number ASC"),
         @NamedQuery(name="PartRevision.countByWorkspace.filterUserACLEntry", query="SELECT count(pr) FROM PartRevision pr WHERE pr.partMaster.workspace.id = :workspaceId and (pr.acl is null or exists(SELECT au from ACLUserEntry au WHERE au.principal = :user AND au.permission not like com.docdoku.core.security.ACL.Permission.FORBIDDEN AND au.acl = pr.acl))"),
-        @NamedQuery(name="PartRevision.countByWorkspace", query="SELECT count(pr) FROM PartRevision pr WHERE pr.partMasterWorkspaceId = :workspaceId")
+        @NamedQuery(name="PartRevision.countByWorkspace", query="SELECT count(pr) FROM PartRevision pr WHERE pr.partMasterWorkspaceId = :workspaceId"),
+        @NamedQuery(name="PartRevision.findByReference", query="SELECT pr FROM PartRevision pr WHERE pr.partMaster.number LIKE :partNumber AND pr.partMaster.workspace.id = :workspaceId")
 })
 public class PartRevision implements Serializable, Comparable<PartRevision>, Cloneable {
 
@@ -86,12 +87,12 @@ public class PartRevision implements Serializable, Comparable<PartRevision>, Clo
         @JoinColumn(name="PARTMASTER_PARTNUMBER", referencedColumnName="PARTMASTER_PARTNUMBER"),
         @JoinColumn(name="PARTREVISION_VERSION", referencedColumnName="VERSION")
     })
-    private Set<Effectivity> effectivities = new HashSet<Effectivity>();
+    private Set<Effectivity> effectivities = new HashSet<>();
     
     
     @OneToMany(mappedBy = "partRevision", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @OrderBy("iteration ASC")
-    private List<PartIteration> partIterations = new ArrayList<PartIteration>();
+    private List<PartIteration> partIterations = new ArrayList<>();
    
  
     @ManyToOne(fetch=FetchType.EAGER)
@@ -392,14 +393,14 @@ public class PartRevision implements Serializable, Comparable<PartRevision>, Clo
      */
     @Override
     public PartRevision clone() {
-        PartRevision clone = null;
+        PartRevision clone;
         try {
             clone = (PartRevision) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new InternalError();
         }
         //perform a deep copy
-        List<PartIteration> clonedPartIterations = new ArrayList<PartIteration>();
+        List<PartIteration> clonedPartIterations = new ArrayList<>();
         for (PartIteration part : partIterations) {
             PartIteration clonedPart=part.clone();
             clonedPart.setPartRevision(clone);

@@ -48,7 +48,7 @@ public class ChangeOrderNotFoundException extends ApplicationException {
     }
 
     public String getLocalizedMessage() {
-        String message = getBundleDefaultMessage();
+        String message = getBundleMessage("ChangeOrderNotFoundException");
         return MessageFormat.format(message, mChange);
     }
 }

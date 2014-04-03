@@ -8,14 +8,20 @@
         <class>com.docdoku.core.common.User</class>
         <class>com.docdoku.core.common.UserGroup</class>
         <class>com.docdoku.core.common.Workspace</class>
+        <class>com.docdoku.core.change.ChangeItem</class>
+        <class>com.docdoku.core.change.ChangeIssue</class>
+        <class>com.docdoku.core.change.ChangeOrder</class>
+        <class>com.docdoku.core.change.ChangeRequest</class>
+        <class>com.docdoku.core.change.Milestone</class>
         <class>com.docdoku.core.document.DocumentIteration</class>
         <class>com.docdoku.core.document.DocumentRevision</class>
         <class>com.docdoku.core.document.DocumentMaster</class>
+        <class>com.docdoku.core.document.DocumentMasterTemplate</class>
         <class>com.docdoku.core.document.DocumentLink</class>
         <class>com.docdoku.core.document.Folder</class>
         <class>com.docdoku.core.document.IterationChangeSubscription</class>
         <class>com.docdoku.core.document.StateChangeSubscription</class>
-        <class>com.docdoku.core.meta.Tag</class>
+        <class>com.docdoku.core.gcm.GCMAccount</class>
         <class>com.docdoku.core.log.DocumentLog</class>
         <class>com.docdoku.core.log.PartLog</class>
         <class>com.docdoku.core.log.WorkspaceLog</class>
@@ -26,17 +32,15 @@
         <class>com.docdoku.core.meta.InstanceTextAttribute</class>
         <class>com.docdoku.core.meta.InstanceURLAttribute</class>
         <class>com.docdoku.core.meta.InstanceAttributeTemplate</class>
-        <class>com.docdoku.core.document.DocumentMasterTemplate</class>
-
+        <class>com.docdoku.core.meta.Tag</class>
+        <class>com.docdoku.core.product.CADInstance</class>
         <class>com.docdoku.core.product.ConfigurationItem</class>
         <class>com.docdoku.core.product.DateBasedEffectivity</class>
-
         <class>com.docdoku.core.product.Effectivity</class>
-
         <class>com.docdoku.core.product.Geometry</class>
-
+        <class>com.docdoku.core.product.Layer</class>
         <class>com.docdoku.core.product.LotBasedEffectivity</class>
-
+        <class>com.docdoku.core.product.Marker</class>
         <class>com.docdoku.core.product.PartIteration</class>
         <class>com.docdoku.core.product.PartMaster</class>
         <class>com.docdoku.core.product.PartMasterTemplate</class>
@@ -44,7 +48,6 @@
         <class>com.docdoku.core.product.PartSubstituteLink</class>
         <class>com.docdoku.core.product.PartUsageLink</class>
         <class>com.docdoku.core.product.SerialNumberBasedEffectivity</class>
-
         <class>com.docdoku.core.security.ACL</class>
         <class>com.docdoku.core.security.ACLUserEntry</class>
         <class>com.docdoku.core.security.ACLUserGroupEntry</class>
@@ -54,18 +57,10 @@
         <class>com.docdoku.core.security.WorkspaceUserGroupMembership</class>
         <class>com.docdoku.core.security.WorkspaceUserMembership</class>
         <class>com.docdoku.core.workflow.Activity</class>
-
         <class>com.docdoku.core.workflow.ParallelActivity</class>
-
         <class>com.docdoku.core.workflow.SerialActivity</class>
         <class>com.docdoku.core.workflow.Task</class>
-
         <class>com.docdoku.core.workflow.Workflow</class>
-
-        <class>com.docdoku.core.product.Marker</class>
-        <class>com.docdoku.core.product.Layer</class>
-        <class>com.docdoku.core.product.CADInstance</class>
-        <class>com.docdoku.core.gcm.GCMAccount</class>
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
         <properties>
             <property name="eclipselink.logging.level" value="FINE"/>

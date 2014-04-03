@@ -22,7 +22,9 @@ define([
         },
 
         setActive: function () {
-            $("#document-menu .active").removeClass("active");
+            if(APP_VIEW.$searchMenu){
+                APP_VIEW.$searchMenu.find(".active").removeClass("active");
+            }
             this.$el.find(".nav-list-entry").first().addClass("active");
         },
 

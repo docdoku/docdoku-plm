@@ -106,8 +106,8 @@ public class UserGroupDAO {
     public void removeUserFromAllGroups(User pUser) {
         Query query = em.createQuery("SELECT DISTINCT g FROM UserGroup g WHERE g.workspaceId = :workspaceId");
         List listUserGroups = query.setParameter("workspaceId", pUser.getWorkspaceId()).getResultList();
-        for (int i = 0; i < listUserGroups.size(); i++) {
-            ((UserGroup) listUserGroups.get(i)).removeUser(pUser);
+        for (Object listUserGroup : listUserGroups) {
+            ((UserGroup) listUserGroup).removeUser(pUser);
         }
     }
 

@@ -45,6 +45,8 @@
         <url-pattern>/document-management/*</url-pattern>
         <url-pattern>/product-management/*</url-pattern>
         <url-pattern>/product-structure/*</url-pattern>
+        <url-pattern>/change-management/*</url-pattern>
+        <url-pattern>/search/*</url-pattern>
         <url-pattern>/visualization/*</url-pattern>
         <url-pattern>/home</url-pattern>
     </filter-mapping>

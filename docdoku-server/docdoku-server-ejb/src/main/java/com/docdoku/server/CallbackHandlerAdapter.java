@@ -36,16 +36,16 @@ public class CallbackHandlerAdapter implements CallbackHandler {
     @Override
     public void handle(Callback[] pCallbacks)
             throws IOException, UnsupportedCallbackException {
-        for (int i = 0; i < pCallbacks.length; i++) {
-            if (pCallbacks[i] instanceof NameCallback) {
-                NameCallback nc = (NameCallback) pCallbacks[i];
+        for (Callback pCallback : pCallbacks) {
+            if (pCallback instanceof NameCallback) {
+                NameCallback nc = (NameCallback) pCallback;
                 nc.setName(mLogin);
-            } else if (pCallbacks[i] instanceof PasswordCallback) {
-                PasswordCallback pc = (PasswordCallback) pCallbacks[i];
+            } else if (pCallback instanceof PasswordCallback) {
+                PasswordCallback pc = (PasswordCallback) pCallback;
                 pc.setPassword(mPassword);
             } else {
                 throw new UnsupportedCallbackException(
-                        pCallbacks[i],
+                        pCallback,
                         "Unrecognized callback");
             }
         }

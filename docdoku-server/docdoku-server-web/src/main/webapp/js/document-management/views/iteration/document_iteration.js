@@ -3,10 +3,10 @@ define([
     "common-objects/views/file/file_list",
     "common-objects/views/attributes/attributes",
     "common-objects/views/workflow/lifecycle",
-    "common-objects/views/linked_document/linked_documents",
-    "models/tag",
-    "views/document/document_tag",
-    "common-objects/collections/linked_document_collection",
+    "common-objects/views/linked/linked_documents",
+    "common-objects/models/tag",
+    "common-objects/views/tags/tag",
+    "common-objects/collections/linked/linked_document_collection",
     "text!templates/iteration/document_iteration.html",
     "i18n!localization/nls/document-management-strings",
     "common-objects/utils/date"
@@ -250,8 +250,7 @@ define([
         },
 
         getPrimaryButton: function() {
-            var button = this.$("div.modal-footer button.btn-primary");
-            return button;
+            return this.$("div.modal-footer button.btn-primary");
         },
 
         tagsManagement: function (editMode) {
@@ -309,7 +308,7 @@ define([
             }
         },
 
-        onFolderPathClicked:function(e){
+        onFolderPathClicked:function(){
             var redirectPath = this.folderPath ? "folders/" + encodeURIComponent(this.folderPath) : "folders";
             this.router.navigate(redirectPath, {trigger: true});
             ModalView.prototype.cancelAction.call(this);

@@ -69,7 +69,6 @@ public class DocumentRevisionDTO implements Serializable, Comparable<DocumentRev
         this.workspaceId = workspaceId;
         this.id = id;
         this.version = version;
-
     }
 
     public UserDTO getAuthor() {

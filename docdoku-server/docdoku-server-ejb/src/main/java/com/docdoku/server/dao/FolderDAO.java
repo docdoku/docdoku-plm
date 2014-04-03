@@ -88,7 +88,7 @@ public class FolderDAO {
     
     //TODO performance should be improved
     private Set<Folder> getAllSubFolders(Folder pFolder){
-        Set<Folder> allSubFolders = new HashSet<Folder>();
+        Set<Folder> allSubFolders = new HashSet<>();
         Folder[] subFolders = getSubFolders(pFolder);
         allSubFolders.addAll(Arrays.asList(subFolders));
         

@@ -25,7 +25,6 @@ import com.docdoku.core.common.Workspace;
 import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.document.DocumentRevisionKey;
-import com.docdoku.core.meta.Tag;
 import com.docdoku.core.exceptions.ApplicationException;
 import com.docdoku.core.meta.*;
 import com.docdoku.core.security.ACL;
@@ -340,7 +339,6 @@ public class DocumentResource {
         } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
-
     }
 
     @DELETE

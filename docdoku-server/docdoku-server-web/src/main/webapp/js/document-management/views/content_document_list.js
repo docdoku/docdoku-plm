@@ -2,12 +2,11 @@ define([
     "i18n!localization/nls/document-management-strings",
     "views/content",
     "views/document_list",
-    "views/document/documents_tags",
     "views/document/document_new_version",
     "views/advanced_search",
     "common-objects/views/prompt",
     "common-objects/views/security/acl_edit"
-], function(i18n, ContentView, DocumentListView, DocumentsTagsView, DocumentNewVersionView, AdvancedSearchView, PromptView, ACLEditView) {
+], function(i18n, ContentView, DocumentListView, DocumentNewVersionView, AdvancedSearchView, PromptView, ACLEditView) {
     var ContentDocumentListView = ContentView.extend({
 
         initialize: function() {
@@ -128,8 +127,8 @@ define([
                 this.listView.eachChecked(function(view) {
                     view.model.undocheckout();
                 });
-                return false;
             }
+            return false;
         },
 
         actionCheckin: function() {
@@ -177,7 +176,7 @@ define([
         },
 
         actionTags: function() {
-
+            var self = this;
             var documentsChecked = new Backbone.Collection();
 
 
@@ -185,11 +184,13 @@ define([
                 documentsChecked.push(view.model);
             });
 
-            this.addSubView(
-                new DocumentsTagsView({
-                    collection: documentsChecked
-                })
-            ).show();
+            require(["common-objects/views/tags/tags_management"],function(TagsManagementView){
+                self.addSubView(
+                    new TagsManagementView({
+                        collection: documentsChecked
+                    })
+                ).show();
+            });
 
             return false;
 

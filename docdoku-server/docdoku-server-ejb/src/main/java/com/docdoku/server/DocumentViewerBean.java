@@ -49,7 +49,7 @@ public class DocumentViewerBean implements IDocumentViewerManagerLocal {
 
     @Override
     public String getHtmlForViewer(BinaryResource binaryResource, String uuid) {
-        String template = "";
+        String template;
         DocumentViewer documentViewerSelected = selectViewerForTemplate(binaryResource);
 
         try {
@@ -87,9 +87,7 @@ public class DocumentViewerBean implements IDocumentViewerManagerLocal {
         StringWriter templateWriter = new StringWriter();
         mustache.execute(templateWriter, scopes).flush();
 
-        String html = ViewerUtils.getViewerTemplate(dataManager, binaryResource, uuid, templateWriter.toString());
-
-        return html;
+        return ViewerUtils.getViewerTemplate(dataManager, binaryResource, uuid, templateWriter.toString());
     }
 
 }

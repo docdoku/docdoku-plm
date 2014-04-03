@@ -46,7 +46,7 @@ public class ActivityModelDozerConverter extends DozerConverter<ActivityModel, A
     @Override
     public ActivityModelDTO convertTo(ActivityModel activityModel, ActivityModelDTO activityModelDTO) {
 
-        List<TaskModelDTO> taskModelsDTO = new ArrayList<TaskModelDTO>();
+        List<TaskModelDTO> taskModelsDTO = new ArrayList<>();
         for(int i=0; i<activityModel.getTaskModels().size(); i++){
             taskModelsDTO.add(mapper.map(activityModel.getTaskModels().get(i), TaskModelDTO.class));
         }
@@ -74,7 +74,7 @@ public class ActivityModelDozerConverter extends DozerConverter<ActivityModel, A
     @Override
     public ActivityModel convertFrom(ActivityModelDTO activityModelDTO, ActivityModel activityModel) {
 
-        List<TaskModel> taskModels = new ArrayList<TaskModel>();
+        List<TaskModel> taskModels = new ArrayList<>();
         for(int i=0; i<activityModelDTO.getTaskModels().size(); i++){
             taskModels.add(mapper.map(activityModelDTO.getTaskModels().get(i), TaskModel.class));
         }

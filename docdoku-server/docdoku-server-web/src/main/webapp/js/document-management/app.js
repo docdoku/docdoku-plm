@@ -1,25 +1,37 @@
 define([
-	"router",
-	"common-objects/models/workspace",
-	"views/workspace",
-    "modules/navbar-module/views/navbar_view"
-], function (
-	Router,
-	Workspace,
-	WorkspaceView,
-    NavBarView
-) {
-	var workspace = new Workspace({
-		id: APP_CONFIG.workspaceId
-	});
+    "common-objects/models/workspace",
+    "text!templates/content.html",
+    "i18n!localization/nls/document-management-strings"
+], function (Workspace, template, i18n) {
+    var AppView = Backbone.View.extend({
 
-    new WorkspaceView({
-		el: "#content",
-		model: workspace
-	}).render().menuResizable();
+        el: $("#content"),
 
-    new NavBarView();
+        events: {},
 
-	Router.getInstance();
-	Backbone.history.start();
+        template:Mustache.compile(template),
+
+        initialize: function() {
+            this.model = new Workspace({id: APP_CONFIG.workspaceId});
+        },
+
+        render:function(){
+            this.$el.html(
+                this.template({model: this.model,
+                               i18n:i18n})
+            );
+            this.bindDomElements();
+            this.$documentManagementMenu.customResizable({
+                containment: this.$el
+            });
+            return this;
+        },
+
+        bindDomElements:function(){
+            this.$documentManagementMenu = this.$("#document-management-menu");
+        }
+
+    });
+
+    return AppView;
 });

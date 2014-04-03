@@ -143,7 +143,9 @@ define([
 			this.router.navigate("folders" + path, {trigger: false});
 		},
 		setActive: function () {
-			$("#document-menu .active").removeClass("active");
+            if(APP_VIEW.$documentManagementMenu){
+                APP_VIEW.$documentManagementMenu.find(".active").removeClass("active");
+            }
 			this.$el.find(".header").first().addClass("active");
 		},
         isActive: function () {
@@ -162,7 +164,6 @@ define([
 		},
 		traverse: function () {
 			if (this.routePath) {
-				var modelPath = this.modelPath;
 				var routePath = this.routePath;
 				_.each(this.foldersView.subViews, function (view) {
 					var pattern = new RegExp("^" + view.modelPath);
@@ -172,9 +173,9 @@ define([
 				});
 			}
 		},
-		actionNewFolder: function (evt) {
+		actionNewFolder: function () {
 			this.hideActions();
-			var view = this.addSubView(
+			this.addSubView(
 				new FolderNewView({
 					collection: this.collection
 				})
@@ -183,7 +184,7 @@ define([
 		},
 		actionEdit: function () {
 			this.hideActions();
-			var view = this.addSubView(
+			this.addSubView(
 				new FolderEditView({
 					model: this.model
 				})
@@ -198,7 +199,7 @@ define([
 			return false;
 		},
 
-        onDragEnter: function(e) {
+        onDragEnter: function() {
             var that = this;
 
             if(!this.isOpen){

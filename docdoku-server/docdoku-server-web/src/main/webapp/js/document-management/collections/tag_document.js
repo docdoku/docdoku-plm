@@ -10,8 +10,8 @@ define([
         className:"TagDocumentList",
 
         url: function() {
-            var baseUrl = "/api/workspaces/" + APP_CONFIG.workspaceId + "/tags";
-            return baseUrl + "/" + this.parent.get("label") + "/documents";
+            var tagsUrl = "/api/workspaces/" + APP_CONFIG.workspaceId + "/tags";
+            return tagsUrl + "/" + this.parent.get("label") + "/documents";
         },
 
         comparator: function(document) {

@@ -75,7 +75,7 @@ public class GoogleStorageProvider implements StorageProvider {
 
     @Override
     public void deleteWorkspaceFolder(String workspaceId, List<BinaryResource> binaryResourcesInWorkspace) throws StorageException {
-        if(workspaceId != null && workspaceId != ""){
+        if(workspaceId != null && !workspaceId.equals("")){
             for(BinaryResource br : binaryResourcesInWorkspace) {
                 delData(br);
             }
@@ -97,8 +97,7 @@ public class GoogleStorageProvider implements StorageProvider {
                 try {
                     getBinaryResourceInputStream(br);
                     return baseUrl + getVirtualPath(br);
-                } catch (FileNotFoundException e1) {
-                } catch (StorageException e1) {
+                } catch (FileNotFoundException | StorageException e1) {
                 }
             }
         } catch (StorageException e) {

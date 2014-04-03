@@ -72,7 +72,7 @@ public class ConverterBean implements IConverterManagerLocal {
 
             convertedFile = selectedConverter.convert(partI, cadBinaryResource);
         }
-        return new AsyncResult<File>(convertedFile);
+        return new AsyncResult<>(convertedFile);
     }
 
 
