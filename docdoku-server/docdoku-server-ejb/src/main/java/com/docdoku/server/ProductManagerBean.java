@@ -116,7 +116,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             rootUsageLink = new PartUsageLinkDAO(new Locale(user.getLanguage()), em).loadPartUsageLink(partUsageLink);
         }
 
-        depth = depth == null ? -1 : depth;
+        depth = (depth == null) ? -1 : depth;
 
         if(configSpec != null){
             filterConfigSpec(configSpec,rootUsageLink.getComponent(),depth);

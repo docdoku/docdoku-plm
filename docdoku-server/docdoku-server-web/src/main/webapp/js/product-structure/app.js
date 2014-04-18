@@ -1,6 +1,43 @@
 var sceneManager;
 var instancesManager;
 
+// Global Namespace for the application
+var App = {
+    debug: false,
+
+    WorkerManagedValues: {
+        distanceRating: 0.7,
+        angleRating: 0.7,
+        volRating: 1.0,
+        maxFaces: 200000,
+        maxInstances: 200,
+        maxAngle: Math.PI / 4,
+        minProjectedSize: 0.000001,
+        maxDist: 100000,
+        envFilters: [10, 7, 5, 3, 1, 0],
+        statusFilters: [10, 5]
+    },
+
+    SceneOptions: {
+        postProcessing: false,
+        grid: false,
+        clouds: false,
+        skydome: false,
+        ground: false,
+        debugColors: false,
+        skeleton: true,
+        zoomSpeed: 2,
+        rotateSpeed: 1,
+        panSpeed: 2,
+        cameraNear: 10,
+        cameraFar: 5E5,
+        showLayers: true,
+        defaultCameraPosition: {x: -21262.730734573677, y: 13214.484586955678, z: 9104.792300874204},
+        defaultTargetPosition: {x: -20486.55024906156, y: 12882.929921870797, z: 8910.845509277657}
+    }
+
+};
+
 define(
     [
         "router",
@@ -89,14 +126,15 @@ define(
                 this.$ControlsContainer.append(new ControlMarkersView().render().$el);
                 this.$ControlsContainer.append(new ControlLayersView().render().$el);
                 this.$ControlsContainer.append(new ControlMeasureView().render().$el);
-                instancesManager.init();
                 sceneManager.init();
+                instancesManager.start();
             }catch(ex){
                 console.log("Got exception in dmu");
                 this.onNoWebGLSupport();
             }
 
             this.listenEvents();
+            this.bindDatGUIControls();
 
         },
 
@@ -267,6 +305,37 @@ define(
             if(!this.isInBomMode() && this.partMetadataView != undefined ){
                 this.partMetadataView.reset();
             }
+        },
+
+        bindDatGUIControls:function(){
+            // Dat.gui controls
+            var gui = new dat.GUI({ autoPlace: false });
+            var valuesControllers = [];
+            this.$el.append(gui.domElement);
+
+            valuesControllers.push(gui.add(App.WorkerManagedValues, 'angleRating').min(0).max(1).step(0.01));
+            valuesControllers.push(gui.add(App.WorkerManagedValues, 'distanceRating').min(0).max(1).step(0.01));
+            valuesControllers.push(gui.add(App.WorkerManagedValues, 'volRating').min(0).max(1).step(0.01));
+            valuesControllers.push(gui.add(App.WorkerManagedValues, 'maxFaces').min(0).max(1000000).step(10));
+            valuesControllers.push(gui.add(App.WorkerManagedValues, 'maxInstances').min(0).max(1000).step(1));
+            valuesControllers.push(gui.add(App.WorkerManagedValues, 'maxAngle').min(0).max(Math.PI).step(0.01));
+            valuesControllers.push(gui.add(App.WorkerManagedValues, 'maxDist').min(1).max(100000).step(100));
+            valuesControllers.push(gui.add(App.WorkerManagedValues, 'minProjectedSize').min(0).max(window.innerHeight).step(1));
+
+            valuesControllers.push(gui.add(App.SceneOptions,        'postProcessing'));
+            valuesControllers.push(gui.add(App.SceneOptions,        'grid'));
+            valuesControllers.push(gui.add(App.SceneOptions,        'clouds'));
+            valuesControllers.push(gui.add(App.SceneOptions,        'ground'));
+            valuesControllers.push(gui.add(App.SceneOptions,        'skydome'));
+            valuesControllers.push(gui.add(App.SceneOptions,        'debugColors'));
+            valuesControllers.push(gui.add(App.SceneOptions,        'skeleton'));
+            valuesControllers.push(gui.add(App.SceneOptions,        'rotateSpeed').min(0).max(10).step(0.01));
+            valuesControllers.push(gui.add(App.SceneOptions,        'zoomSpeed').min(0).max(10).step(0.01));
+            valuesControllers.push(gui.add(App.SceneOptions,        'panSpeed').min(0).max(10).step(0.01));
+            valuesControllers.push(gui.add(App.SceneOptions,        'showLayers'));
+
+
+            return this;
         }
 
     });

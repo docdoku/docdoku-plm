@@ -1,10 +1,7 @@
-define(
-    [
-        "text!modules/coworkers-access-module/templates/coworker_item_template.html",
-        "i18n!localization/nls/coworkers-access-module-strings"
-    ],
-
-    function(template, i18n){
+define([
+    "text!modules/coworkers-access-module/templates/coworker_item_template.html",
+    "i18n!localization/nls/coworkers-access-module-strings"
+],function(template, i18n){
 
         var CoWorkersItemView = Backbone.View.extend({
 
@@ -43,15 +40,15 @@ define(
                 Backbone.Events.trigger('UserStatusRequest', that.model.login);
             },
 
-            onVideoButtonClick:function(e){
+            onVideoButtonClick:function(){
                 Backbone.Events.trigger('NewOutgoingCall', { remoteUser : this.model.login , context: APP_CONFIG.workspaceId });
             },
 
-            onChatButtonClick:function(e){
+            onChatButtonClick:function(){
                 Backbone.Events.trigger('NewChatSession', { remoteUser : this.model.login , context: APP_CONFIG.workspaceId });
             },
 
-            onMailButtonClick:function(e){
+            onMailButtonClick:function(){
                 window.location.href = encodeURI("mailto:"+this.model.email + "?subject="+APP_CONFIG.workspaceId);
             }
 

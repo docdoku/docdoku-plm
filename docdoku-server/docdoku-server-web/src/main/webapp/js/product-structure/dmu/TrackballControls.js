@@ -35,6 +35,8 @@ THREE.TrackballControls = function ( object, domElement ) {
 
 	var lastPosition = new THREE.Vector3();
 
+    var epsilon = 0.0001;
+
 	var _state = STATE.NONE,
 	_prevState = STATE.NONE,
 
@@ -311,7 +313,7 @@ THREE.TrackballControls = function ( object, domElement ) {
 
 		_this.object.lookAt( _this.target );
 
-		if ( lastPosition.distanceToSquared( _this.object.position ) > 0 ) {
+		if ( lastPosition.distanceToSquared( _this.object.position ) > epsilon ) {
 
 			_this.dispatchEvent( changeEvent );
 
