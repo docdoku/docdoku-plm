@@ -99,10 +99,6 @@
         <servlet-class>com.docdoku.server.http.VisualizationServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>CalendarServlet</servlet-name>
-        <servlet-class>com.docdoku.server.http.CalendarServlet</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>UploadDownloadServlet</servlet-name>
         <servlet-class>com.docdoku.server.http.UploadDownloadServlet</servlet-class>
     </servlet>
@@ -147,10 +143,6 @@
         <url-pattern>/visualization/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>CalendarServlet</servlet-name>
-        <url-pattern>/calendar/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>UploadDownloadServlet</servlet-name>
         <url-pattern>/upload/*</url-pattern>
         <url-pattern>/files/*</url-pattern>
@@ -179,8 +171,18 @@
         <display-name>REST Resources</display-name>
         <web-resource-collection>
             <web-resource-name>Resources</web-resource-name>
-            <url-pattern>/calendar/*</url-pattern>
             <url-pattern>/api/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <description/>
+            <role-name>users</role-name>
+        </auth-constraint>
+    </security-constraint>
+    <security-constraint>
+        <display-name>WebSocket channels</display-name>
+        <web-resource-collection>
+            <web-resource-name>Main Channel</web-resource-name>
+            <url-pattern>/mainChannelSocket</url-pattern>
         </web-resource-collection>
         <auth-constraint>
             <description/>

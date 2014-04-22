@@ -19,8 +19,7 @@ var ChannelMessagesType = {
     CHAT_MESSAGE: "CHAT_MESSAGE",
     CHAT_MESSAGE_ACK: "CHAT_MESSAGE_ACK",
 
-    USER_STATUS : "USER_STATUS",
-    PEER_DECLARATION : "PEER_DECLARATION"
+    USER_STATUS : "USER_STATUS"
 
 };
 
@@ -65,11 +64,10 @@ var REJECT_CALL_REASON = {
  * create a new websocket
  **/
 
-function Channel(url,messageToSendOnOpen){
+function Channel(url){
     this.status = ChannelStatus.CLOSED;
     this.url = url;
     this.listeners = [];
-    this.messageToSendOnOpen = messageToSendOnOpen;
     this.create();
 }
 
@@ -118,10 +116,6 @@ Channel.prototype = {
     onopen:function(event){
 
         this.status = ChannelStatus.OPENED;
-
-        if(this.messageToSendOnOpen){            
-            this.send(this.messageToSendOnOpen);
-        }
         
         _.each(this.listeners,function(listener){
             listener.handlers.onStatusChanged(ChannelStatus.OPENED);            

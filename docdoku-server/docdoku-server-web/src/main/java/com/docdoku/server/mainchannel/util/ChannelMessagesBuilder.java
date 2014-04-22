@@ -25,13 +25,11 @@ import javax.json.Json;
 public class ChannelMessagesBuilder {
 
     // Peer declaration
-    public static String BuildWelcomeMessage(String userLogin) {
+    public static String buildWelcomeMessage(String userLogin) {
         return Json.createObjectBuilder()
                 .add("type", "listen")
                 .add("text", "welcome " + userLogin).build().toString();
     }
 
-    public static String BuildJsonExMessage() {
-        return Json.createObjectBuilder().add("error", "JSON_EXCEPTION").build().toString();
-    }
+
 }

@@ -53,6 +53,8 @@ public class Room {
     
     /** Retrieve a {@link com.docdoku.server.mainchannel.util.Room} instance from database */
     public static Room getByKeyName(String roomKey) {
+        if(roomKey==null)
+            return null;
         return DB.get(roomKey);
     }
 

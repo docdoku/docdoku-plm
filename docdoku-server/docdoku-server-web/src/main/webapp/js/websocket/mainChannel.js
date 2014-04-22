@@ -1,5 +1,5 @@
 /*global Channel,ChannelListener,ChannelMessagesType*/
-var mainChannel = new Channel("ws://"+window.location.host+"/mainChannelSocket", ChannelMessagesType.PEER_DECLARATION);
+var mainChannel = new Channel("ws://"+window.location.host+"/mainChannelSocket");
 
 function onUserStatusRequest(remoteUser){
     mainChannel.sendJSON({
