@@ -48,7 +48,6 @@ define([
             this.initAmbientLight();
             this.initRenderer();
             this.initStats();
-            this.loadWindowResize();
             this.bindMouseAndKeyEvents();
 
             // Choose here which controls are enabled at scene load
@@ -78,7 +77,6 @@ define([
             }, 200);
 
             animate();
-
         },
 
         reFrame:function(){
@@ -91,11 +89,13 @@ define([
         },
 
         initDOM: function () {
+            var self = this;
             this.$container = $('div#container');
             this.$container[0].setAttribute( 'tabindex', -1 );
             this.$sceneContainer = $("#scene_container");
             this.$blocker = new BlockerView().render().$el;
             this.$container.append(this.$blocker);
+            window.addEventListener('resize', self.handleResize, false);
         },
 
         initRenderer: function () {
@@ -195,8 +195,12 @@ define([
             this.reFrame();
         },
 
-        loadWindowResize: function () {
-            THREEx.WindowResize(this.renderer, this.cameraObject, this.$container);
+        handleResize: function() {
+            this.cameraObject.aspect = this.$container.innerWidth() / this.$container.innerHeight();
+            this.cameraObject.updateProjectionMatrix();
+            this.renderer.setSize(this.$container.innerWidth(), this.$container.innerHeight());
+            this.controlsObject.handleResize();
+            this.reFrame();
         },
 
         /*
@@ -292,12 +296,8 @@ define([
 
             if (havePointerLock) {
                 var self = this;
-                var pointerLockChange = function (event) {
-                    if (document.pointerLockElement === self.$container[0] || document.mozPointerLockElement === self.$container[0] || document.webkitPointerLockElement === self.$container[0]) {
-                        self.pointerLockControls.enabled = true;
-                    } else {
-                        self.pointerLockControls.enabled = false;
-                    }
+                var pointerLockChange = function () {
+                    self.pointerLockControls.enabled = document.pointerLockElement === self.$container[0] || document.mozPointerLockElement === self.$container[0] || document.webkitPointerLockElement === self.$container[0];
                 };
                 // Hook pointer lock state change events
                 document.addEventListener('pointerlockchange', pointerLockChange, false);
@@ -311,7 +311,7 @@ define([
             this.addLightsToCamera(this.pointerLockCamera);
         },
 
-        bindPointerLock: function (event) {
+        bindPointerLock: function () {
 
             if (this.stateControl != this.STATECONTROL.PLC) {
                 return;
@@ -364,7 +364,7 @@ define([
             this.renderer.domElement.parentNode.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
         },
 
-        onFullScreenChange: function (event) {
+        onFullScreenChange: function () {
             if (document.fullscreenElement === this.$container[0] || document.mozFullscreenElement === this.$container[0] || document.mozFullScreenElement === this.$container[0]) {
 
                 document.removeEventListener('fullscreenchange', this.onFullScreenChange);
