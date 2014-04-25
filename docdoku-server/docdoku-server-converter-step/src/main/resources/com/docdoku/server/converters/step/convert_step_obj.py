@@ -6,7 +6,7 @@ parser = OptionParser();
 
 parser.add_option("-l", "--freeCadLibPath", dest="l", help ="");
 parser.add_option("-i", "--inputFile", dest="i", help ="");
-parser.add_option("-o", "--outputFile", dest=Mesh;"o", help ="");
+parser.add_option("-o", "--outputFile", dest="o", help ="");
 
 (options, args) = parser.parse_args();
 
