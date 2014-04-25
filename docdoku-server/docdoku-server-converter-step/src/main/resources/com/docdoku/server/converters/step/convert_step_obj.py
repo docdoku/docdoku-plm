@@ -6,7 +6,7 @@ parser = OptionParser();
 
 parser.add_option("-l", "--freeCadLibPath", dest="l", help ="");
 parser.add_option("-i", "--inputFile", dest="i", help ="");
-parser.add_option("-o", "--outputFile", dest="o", help ="");
+parser.add_option("-o", "--outputFile", dest=Mesh;"o", help ="");
 
 (options, args) = parser.parse_args();
 
@@ -17,7 +17,7 @@ outputFile = options.o;
 sys.path.append(freeCadLibPath);
 
 import FreeCAD;
-from FreeCAD import Part, Base, Mesh;
+import Part, Mesh;
 
 def explodeOBJS():
 	if not inputFile or not outputFile:
