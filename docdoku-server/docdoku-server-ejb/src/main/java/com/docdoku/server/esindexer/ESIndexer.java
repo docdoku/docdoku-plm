@@ -50,6 +50,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.elasticsearch.ElasticsearchException;
+import org.elasticsearch.action.ActionRequestValidationException;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.delete.DeleteRequestBuilder;
@@ -108,6 +109,7 @@ public class ESIndexer{
     private static final String INDEX_ERROR_LOG_1 = "Indexing can't be done. The ElasticSearch server doesn't seem to respond.";
     private static final String INDEX_ERROR_LOG_2 = "Multiple indexing can't be done. The ElasticSearch server doesn't seem to respond.";
     private static final String INDEX_ERROR_LOG_3 = "Multiple indexing meet some problem: ";
+    private static final String INDEX_ERROR_LOG_4 = "Nothing to index";
     private static final String MAIL_ERROR_LOG_1 = "Application can't send a ElasticSearch response mail";
 
     static{
@@ -280,6 +282,9 @@ public class ESIndexer{
                 hasSuccess = false;
                 failureMessage = bulkResponse.buildFailureMessage();
             }
+        }catch (ActionRequestValidationException e){
+            hasSuccess = false;
+            failureMessage = INDEX_ERROR_LOG_4;
         }catch (ESIndexNamingException e){
             hasSuccess = false;
             failureMessage = INDEX_CREATION_ERROR_LOG_2 + workspaceId ;
@@ -290,6 +295,8 @@ public class ESIndexer{
 
         if(!hasSuccess){
             Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, INDEX_ERROR_LOG_3+" \n "+failureMessage);
+        }else{
+            Logger.getLogger(ESIndexer.class.getName()).log(Level.INFO, "The workspace "+workspaceId+" have been indexed");
         }
 
         try{
@@ -859,7 +866,7 @@ public class ESIndexer{
                         tmp.startObject("attributes");
                             Collection<InstanceAttribute> listAttr = doc.getInstanceAttributes().values();
                             for(InstanceAttribute attr:listAttr){
-                                setField(tmp,attr.getNameWithoutWhiteSpace(),attr.getValue(),1f);
+                                setField(tmp,attr.getNameWithoutWhiteSpace(),""+attr.getValue(),1f);
                             }
                         tmp.endObject();
                     }
@@ -872,7 +879,7 @@ public class ESIndexer{
                                     setField(tmp, "content", streamToString(bin.getFullName(), dataManager.getBinaryResourceInputStream(bin)), 1f);
                                 tmp.endObject();
                             } catch (StorageException e) {
-                                e.printStackTrace();
+//                                e.printStackTrace();
                             }
                         }
                         tmp.endObject();
@@ -919,22 +926,8 @@ public class ESIndexer{
                         tmp.startObject("attributes");
                             Collection<InstanceAttribute> listAttr = part.getInstanceAttributes().values();
                             for(InstanceAttribute attr:listAttr){
-                                setField(tmp,attr.getNameWithoutWhiteSpace(),attr.getValue(),1f);
+                                setField(tmp,attr.getNameWithoutWhiteSpace(),""+attr.getValue(),1f);
                             }
-                        tmp.endObject();
-                    }
-                    if(! part.getAttachedFiles().isEmpty()){
-                        tmp.startObject("files");
-                        for (BinaryResource bin : part.getAttachedFiles()) {
-                            try {
-                                tmp.startObject(bin.getName());
-                                setField(tmp,"name",bin.getName(),1f);
-                                setField(tmp, "content", streamToString(bin.getFullName(), dataManager.getBinaryResourceInputStream(bin)), 1f);
-                                tmp.endObject();
-                            } catch (StorageException e) {
-                                e.printStackTrace();
-                            }
-                        }
                         tmp.endObject();
                     }
                     setField(tmp, "negative_boost_value", "", coef);                                                       // Set the decrease factor

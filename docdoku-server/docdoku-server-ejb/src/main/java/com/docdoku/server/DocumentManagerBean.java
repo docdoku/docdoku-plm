@@ -88,7 +88,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @RolesAllowed("users")
     @Override
     public BinaryResource saveFileInTemplate(DocumentMasterTemplateKey pDocMTemplateKey, String pName, long pSize) throws WorkspaceNotFoundException, NotAllowedException, DocumentMasterTemplateNotFoundException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException, CreationException, AccessRightException {
-        User user = userManager.checkWorkspaceWriteAccess(pDocMTemplateKey.getWorkspaceId());
+        userManager.checkWorkspaceWriteAccess(pDocMTemplateKey.getWorkspaceId());
 
         if (!NamingConvention.correctNameFile(pName)) {
             throw new NotAllowedException(Locale.getDefault(), "NotAllowedException9");
@@ -1510,8 +1510,15 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @RolesAllowed({"users","admin"})
     @Override
     public User[] getUsers(String pWorkspaceId) throws WorkspaceNotFoundException, AccessRightException, AccountNotFoundException, UserNotFoundException, UserNotActiveException {
-        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
-        return new UserDAO(new Locale(user.getLanguage()), em).findAllUsers(pWorkspaceId);
+        Locale locale;
+        if(userManager.isCallerInRole("admin")){
+            Account account = userManager.checkAdmin(pWorkspaceId);
+            locale = new Locale(account.getLanguage());
+        }else{
+            User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
+            locale = new Locale(user.getLanguage());
+        }
+        return new UserDAO(locale, em).findAllUsers(pWorkspaceId);
     }
 
     @RolesAllowed("users")

@@ -75,10 +75,10 @@ public class WorkspaceBean {
     }
 
 
-    public void synchronizeIndexer() throws WorkspaceNotFoundException {
-        Workspace wks = adminState.getCurrentWorkspace();
+    public void synchronizeIndexer() {
         if(userManager.isCallerInRole("admin")){
-            workspaceManager.synchronizeIndexer(wks.getId());
+            String wksId = adminState.getSelectedWorkspace();
+            workspaceManager.synchronizeIndexer(wksId);
         }
     }
 
