@@ -25,9 +25,9 @@ define(
         gridSwitch:function(){
             $("#gridSwitch").toggleClass("active");
             if ($("#gridSwitch").hasClass("active")) {
-                sceneManager.showGrid();
+                App.SceneOptions.grid=true;
             } else {
-                sceneManager.removeGrid();
+                App.SceneOptions.grid=false;
             }
         },
 

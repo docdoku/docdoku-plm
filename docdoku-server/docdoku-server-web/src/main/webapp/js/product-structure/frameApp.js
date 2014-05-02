@@ -3,15 +3,13 @@ var sceneManager, instancesManager;
 // Global Namespace for the application
 var App = {
     WorkerManagedValues: {
-        distanceRating: 0.7,
-        angleRating: 0.7,
-        volRating: 1.0,
         maxInstances: 200,
         maxAngle: Math.PI / 4,
-        minProjectedSize: 0.000001,
         maxDist: 100000,
-        envFilters: [10, 7, 5, 3, 1, 0],
-        statusFilters: [10, 5]
+        minProjectedSize: 0.000001,
+        distanceRating: 0.7,
+        angleRating: 0.7,
+        volRating: 1.0
     },
 
     SceneOptions: {

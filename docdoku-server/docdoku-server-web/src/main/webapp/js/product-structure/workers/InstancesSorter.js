@@ -47,22 +47,6 @@ var InstancesSorter = {};
             }
 
             /*
-            * Filtering
-            * */
-
-            /*if(instance.ENV && !_(WorkerManagedValues.envFilters).contains(instance.ENV)){
-                instance.globalRating = -1; // eliminated
-                result.eliminated++;
-                return;
-            }
-
-            if(instance.STATUS && !_(WorkerManagedValues.statusFilters).contains(instance.STATUS)){
-                instance.globalRating = -1; // eliminated
-                result.eliminated++;
-                return;
-            }*/
-
-            /*
             * Max distance/angle/projectedSize filtering
             * */
 
@@ -80,7 +64,7 @@ var InstancesSorter = {};
                 return;
             }
 
-            var projectedSize = Math.pow(instance.radius*2,1/3) / dist;
+            var projectedSize = (instance.radius*2) / dist;
 
 
             if (projectedSize < minProjectedSize ) {
@@ -89,11 +73,11 @@ var InstancesSorter = {};
                 return;
             }
 
-            result.minDist = Math.min(result.minDist,dist);
+            result.minDist = (result.minDist==0) ? dist : Math.min(result.minDist,dist);
             result.maxDist = Math.max(result.maxDist,dist);
-            result.minAngle = Math.min(result.minAngle,angle);
+            result.minAngle = (result.minAngle==0) ? angle : Math.min(result.minAngle,angle);
             result.maxAngle = Math.max(result.maxAngle,angle);
-            result.minPSize = Math.min(result.minPSize,projectedSize);
+            result.minPSize = (result.minPSize==0) ? projectedSize : Math.min(result.minPSize,projectedSize);
             result.maxPSize = Math.max(result.maxPSize,projectedSize);
 
             instance.dist=dist;
@@ -110,8 +94,14 @@ var InstancesSorter = {};
             if(instance.globalRating>-1){
 
                 var angleRating =  1 - instance.angle/WorkerManagedValues.maxAngle;
-                var distanceRating = 1 - instance.dist / result.maxDist;
-                var volRating = instance.projectedSize / result.maxPSize;
+                var distanceRating = 1 - (instance.dist-result.minDist) / (result.maxDist-result.minDist);
+                var volRating = (instance.projectedSize-result.minPSize) / (result.maxPSize-result.minPSize);
+
+                if(instance.id=="194037-194020-193988-193980"){
+                    console.log("Plank : \n\tangle:"+angleRating+"\n\tdistance:"+distanceRating+"\n\tvol:"+volRating+"\n\tdist:"+instance.radius);
+                }else if(instance.id=="194037-194020-193988-193982"){
+                    console.log("Nail : \n\tangle:"+angleRating+"\n\tdistance:"+distanceRating+"\n\tvol:"+volRating+"\n\tdist:"+instance.radius);
+                }
 
                 angleRating *= WorkerManagedValues.angleRating;
                 distanceRating *= WorkerManagedValues.distanceRating;
@@ -123,14 +113,18 @@ var InstancesSorter = {};
                 // Arithmetic mean
                 instance.globalRating = angleRating + distanceRating + volRating ;
 
+                if(instance.id=="194037-194020-193988-193980"){
+                    console.log("Plank : "+instance.globalRating);
+                }else if(instance.id=="194037-194020-193988-193982"){
+                    console.log("Nail : "+instance.globalRating);
+                }
+
                 result.minRating = Math.min(result.minRating,instance.globalRating);
                 result.maxRating = Math.max(result.maxRating,instance.globalRating);
 
             }
 
         });
-
-        if(debug){console.log("[InstancesSorter] " + JSON.stringify(result))}
 
         // Sort instances on their global rating, descending
         var sortedInstances = _.values(instances);
@@ -140,6 +134,8 @@ var InstancesSorter = {};
         });
 
         result.sortedInstances = sortedInstances;
+
+        if(debug){console.log("[InstancesSorter] " + JSON.stringify(result))}
 
         return result;
 

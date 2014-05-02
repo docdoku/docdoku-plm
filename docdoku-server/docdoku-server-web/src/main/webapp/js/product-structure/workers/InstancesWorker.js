@@ -96,20 +96,6 @@ var Context = {
             newData = false;
             return true;
         }
-        if(_target.x!=target.x){
-            return true;
-        }
-        if(_target.y!=target.y){
-            return true;
-        }
-        if(_target.z!=target.z){
-            return true;
-        }
-
-        if(_meshCount != _oldMeshCount){
-            return true;
-        }
-
         return false;
     },
 
@@ -144,121 +130,47 @@ var Context = {
             stats.totalChecked = totalChecked;
             //stats.onScene = dlbResult.onScene;
 
-};
-
-
-function ComputeMeshesRatings(){
-
-    var totalRating = 0;
-
-    _(meshes).each(function(mesh){
-
-        if(mesh.checked){
-
-            var dist = Context.cameraDist(mesh);
-            var angle = Context.cameraAngle(mesh);
-            var radius = mesh.radius;
-
-            mesh.dist=dist;
-            mesh.angle=angle;
-
-            var maxAngle = Math.PI/4;
-
-            var distanceRating = radius/dist;
-            var angleRating =  angle > maxAngle ?  0 : maxAngle/angle ;
-
-            mesh.globalRating = distanceRating * angleRating;
-
-            // console.log("------- dist / angle / rating --- " + dist  + "   " + angle + "   " + distanceRating);
-        }else{
-            mesh.globalRating = 0;
+            // Send stats to main thread
+            self.postMessage({fn: "stats", obj: stats});
+            // Send directives
+            self.postMessage({fn:"directives",obj:directives});
+            if(debug){console.log("[Worker] Cycle duration : " + (Date.now() - start) + " ms");}
+        } else {
+            if(debug){console.log("[Worker] Context didn't changed since last call");}
+            self.postMessage({fn:"directives",obj:[]});
         }
     }
 };
 
-}
-
-function SendMeshes(){
-
-    // Take out 500 first
-    var bestRatingsMeshes = sortedMeshes.splice(0,maxMeshesOnScene);
-
-    bestRatingsMeshes.sort(function(a,b){
-        return a.dist>b.dist?1:a.dist< b.dist?-1:0;
-    });
-
-    // Need to be sure to remove all other meshes
-    sendMeshesWithQuality(sortedMeshes,null);
-
-    // split into arrays - spread qualities
-    var arrays = splitArrayIntoArrays(bestRatingsMeshes,maxQualities);
-
-    // Load the bestRatingMeshes
-    for(var i = 0; i < maxQualities; i++){
-        sendMeshesWithQuality(arrays[i],i);
-    }
-
-}
-
-// Tells the scene to load a mesh in given quality
-function sendMesh(mesh,quality){
-    // If quality has change, tell the main thread to change it
-    if(mesh.currentQuality != quality){
-        mesh.currentQuality = quality;
-        self.postMessage({uuid:mesh.uuid,quality:quality,overall:mesh.globalRating/bestRating});
-    }
-}
-
-function sendMeshesWithQuality(_meshes,quality){
-    _(_meshes).each(function(mesh){
-        if(mesh.checked){
-            if(quality === null){
-                sendMesh(mesh,null);
-            }
-            else if(mesh.qualities[quality]){
-                sendMesh(mesh,mesh.qualities[quality]);
-            }else{
-                sendMesh(mesh,null);
-            }
-        }else{
-            sendMesh(mesh,null);
-        }
-    });
-}
-
-
-function splitArrayIntoArrays(a, n) {
-    var len = a.length,out = [], i = 0;
-    while (i < len) {
-        var size = Math.ceil((len - i) / n--);
-        out.push(a.slice(i, i += size));
-    }
-    return out;
-}
-
-
-self.addEventListener('message', function(message) {
-
-    if(message.data.context){
-        Context.setFromMessage(message.data.context);
-        if(Context.changed()){
-            ComputeMeshesRatings();
-            SortMeshes();
-            SendMeshes();
-        }
-        _oldMeshCount=_meshCount;
-    }
-    else if(message.data.mesh){
-        Context.addMesh(message.data.mesh);
-    }
-    else if(message.data.unCheck){
-        Context.unCheckMesh(message.data.unCheck);
-    }
-    else if(message.data.check){
-        Context.checkMesh(message.data.check);
-    }
-    else if(message.data.clear){
+// Lookup table for parent messages
+var ParentMessages = {
+    context: function (context) {
+        Context.evalContext(context);
+    },
+    unCheck: function (nodeId) {
+        Context.unCheckInstance(nodeId);
+    },
+    check: function (nodeId) {
+        Context.checkInstance(nodeId);
+    },
+    clear: function () {
         Context.clear();
+    },
+    abort:function(directive){
+        instances[directive.id].currentQuality=directive.quality;
+    },
+    addInstance: function (instance) {
+        Context.addInstance(instance);
     }
+};
 
+self.addEventListener('message', function (message) {
+    if (typeof  ParentMessages[message.data.fn] == "function") {
+        ParentMessages[message.data.fn](message.data.obj);
+    } else {
+        if(debug){
+            console.log("[Worker] Unrecognized command  : ");
+            console.log(message.data);
+        }
+    }
 }, false);

@@ -5,21 +5,26 @@ var instancesManager;
 var App = {
     debug: false,
 
+    setDebug:function(state){
+        App.debug = state;
+        if(state){
+            $("body").addClass("debug");
+        }else{
+            $("body").removeClass("debug");
+        }
+    },
+
     WorkerManagedValues: {
-        distanceRating: 0.7,
-        angleRating: 0.7,
-        volRating: 1.0,
-        maxFaces: 200000,
-        maxInstances: 200,
+        maxInstances: 500,
         maxAngle: Math.PI / 4,
-        minProjectedSize: 0.000001,
         maxDist: 100000,
-        envFilters: [10, 7, 5, 3, 1, 0],
-        statusFilters: [10, 5]
+        minProjectedSize: 0.000001,
+        distanceRating: 0.7,
+        angleRating: 0.5,
+        volRating: 1.0
     },
 
     SceneOptions: {
-        postProcessing: false,
         grid: false,
         clouds: false,
         skydome: false,
@@ -313,16 +318,15 @@ define(
             var valuesControllers = [];
             this.$el.append(gui.domElement);
 
-            valuesControllers.push(gui.add(App.WorkerManagedValues, 'angleRating').min(0).max(1).step(0.01));
-            valuesControllers.push(gui.add(App.WorkerManagedValues, 'distanceRating').min(0).max(1).step(0.01));
-            valuesControllers.push(gui.add(App.WorkerManagedValues, 'volRating').min(0).max(1).step(0.01));
-            valuesControllers.push(gui.add(App.WorkerManagedValues, 'maxFaces').min(0).max(1000000).step(10));
             valuesControllers.push(gui.add(App.WorkerManagedValues, 'maxInstances').min(0).max(1000).step(1));
             valuesControllers.push(gui.add(App.WorkerManagedValues, 'maxAngle').min(0).max(Math.PI).step(0.01));
             valuesControllers.push(gui.add(App.WorkerManagedValues, 'maxDist').min(1).max(100000).step(100));
             valuesControllers.push(gui.add(App.WorkerManagedValues, 'minProjectedSize').min(0).max(window.innerHeight).step(1));
 
-            valuesControllers.push(gui.add(App.SceneOptions,        'postProcessing'));
+            valuesControllers.push(gui.add(App.WorkerManagedValues, 'angleRating').min(0).max(1).step(0.01));
+            valuesControllers.push(gui.add(App.WorkerManagedValues, 'distanceRating').min(0).max(1).step(0.01));
+            valuesControllers.push(gui.add(App.WorkerManagedValues, 'volRating').min(0).max(1).step(0.01));
+
             valuesControllers.push(gui.add(App.SceneOptions,        'grid'));
             valuesControllers.push(gui.add(App.SceneOptions,        'clouds'));
             valuesControllers.push(gui.add(App.SceneOptions,        'ground'));

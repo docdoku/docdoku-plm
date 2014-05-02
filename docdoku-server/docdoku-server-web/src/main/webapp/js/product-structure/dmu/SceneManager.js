@@ -242,6 +242,29 @@ define([
                 mesh.material.opacity = _this.measureState ? 0.5 : 1;
             }
         }
+        function showGrid(){
+            if (_this.grid.added) {
+                return;
+            }
+            _this.grid.added = true;
+            _this.scene.add(_this.grid);
+            _this.reFrame();
+        }
+        function removeGrid () {
+            if (!_this.grid.added) {
+                return;
+            }
+            _this.grid.added = false;
+            _this.scene.remove(_this.grid);
+            _this.reFrame();
+        }
+        function watchSceneOptions() {
+            if (App.SceneOptions.grid) {
+                showGrid();
+            } else {
+                removeGrid();
+            }
+        }
 
         /**
          * Scene mouse events
@@ -414,6 +437,9 @@ define([
                 processLoadedStuff();
             }
 
+            // Update with SceneOptions
+            watchSceneOptions();
+
             // Sometimes needs a reFrame
             if(needsReframe){
                 needsReframe = false;
@@ -465,14 +491,6 @@ define([
         };
         this.reFrame = function(){
             needsReframe = true;
-        };
-        this.showGrid = function() {
-            _this.scene.add(_this.grid);
-            _this.reFrame();
-        };
-        this.removeGrid = function(){
-            _this.scene.remove(_this.grid);
-            _this.reFrame();
         };
         /*this.placeCamera = function(cog,diameter) {
             var controls = controlsObject;
