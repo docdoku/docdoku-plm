@@ -19,34 +19,41 @@
  */
 package com.docdoku.loaders;
 
-import com.docdoku.client.ScriptingTools;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.meta.InstanceNumberAttribute;
+import com.docdoku.core.product.*;
+import com.docdoku.core.services.IProductManagerWS;
+import com.docdoku.core.services.IUploadDownloadWS;
 
 import javax.activation.DataHandler;
 import java.io.Console;
-import java.io.File;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ProductStructureSampleLoader {
 
-    private static String login;
-    private static String password;
     private static String workspace;
     private static IProductManagerWS pm;
     private static IUploadDownloadWS fm;
 
-    public static void main(String[] args) throws MalformedURLException, Exception {
-        Console c = System.console();
-        login = c.readLine("Please enter your login: ");
-        password = new String(c.readPassword("Please enter your password: "));
-        workspace = c.readLine("Please enter the workspace into which the sample data will be imported: ");
-        String serverURL = c.readLine("Please enter the URL of your DocDokuPLM server, http://localhost:8080 for example: ");
+    public static void main(String[] args) throws Exception {
+        String serverURL;
+        String login;
+        String password;
+        if (args.length >= 3) {
+            login =args[0];
+            password =args[1];
+            workspace=args[2];
+            serverURL= (args.length==4) ? args[3] : "http://localhost:8080";
+        }else{
+            Console c = System.console();
+            login = c.readLine("Please enter your login: ");
+            password = new String(c.readPassword("Please enter your password: "));
+            workspace = c.readLine("Please enter the workspace into which the sample data will be imported: ");
+            serverURL = c.readLine("Please enter the URL of your DocDokuPLM server, http://localhost:8080 for example: ");
+        }
+
         pm = ScriptingTools.createProductService(serverURL + "/services/product?wsdl", login, password);
         fm = ScriptingTools.createFileManagerService(serverURL + "/services/UploadDownload?wsdl", login, password);
 
@@ -56,8 +63,8 @@ public class ProductStructureSampleLoader {
         System.out.println("...done!");
     }
 
+/*
     private static void createBuildingSampleProduct() throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, ConfigurationItemAlreadyExistsException, CreationException, WorkflowModelNotFoundException, PartMasterAlreadyExistsException, PartRevisionNotFoundException, UserNotActiveException, FileAlreadyExistsException, IOException {
-        /*
         pm.createPartMaster(workspace, "modiffinal", "modiffinal", "", false, null, "created by loader");
         pm.createConfigurationItem(workspace, "modiffinal", "modiffinal Building", "modiffinal");
 
@@ -91,11 +98,9 @@ public class ProductStructureSampleLoader {
 
         dh = new DataHandler(binURL);
         fm.uploadToPart(workspace, "Building-modiffinal", "A", 1, "modiffinal.bin", dh);
-        */
-        //uploadMaterials(new File("/Users/flo/Documents/amsycom/exemple_sketchup/OBJ/modiffinal/"),"Building-modiffinal", "A", 1);
 
+        //uploadMaterials(new File("/Users/flo/Documents/amsycom/exemple_sketchup/OBJ/modiffinal/"),"Building-modiffinal", "A", 1);
     }
-    
             
     private static void uploadMaterials(File folder, String partNumber, String partVersion, int iteration) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, PartRevisionNotFoundException, FileAlreadyExistsException, CreationException, IOException{
         String[] mats = folder.list(new FilenameFilter() {
@@ -111,30 +116,27 @@ public class ProductStructureSampleLoader {
             fm.uploadToPart(workspace, partNumber, partVersion, iteration, mat, dh);
         }
     }
-    
+*/
+
     private static void createBikeSampleProduct() throws Exception {
 
-        PartMaster rootBMX = pm.createPartMaster(workspace, "BMX", "BMX", "", false, null, "created by loader",null,null,null,null);
+        pm.createPartMaster(workspace, "BMX", "BMX", false, null, "created by loader",null,null,null,null);
         pm.createConfigurationItem(workspace, "Bike", "Bicycle Motocross", "BMX");
 
-        PartMaster componentM = pm.createPartMaster(workspace, "BPM12VTX", "", "", false, null, "",null,null,null,null);
-        List<PartUsageLink> subParts = new ArrayList<PartUsageLink>();
+        PartMaster componentM = pm.createPartMaster(workspace, "BPM12VTX", "", false, null, "",null,null,null,null);
+        List<PartUsageLink> subParts = new ArrayList<>();
         PartUsageLink link = new PartUsageLink();
         link.setAmount(1);
         link.setComponent(componentM);
-        List<CADInstance> cads = new ArrayList<CADInstance>();
+        List<CADInstance> cads = new ArrayList<>();
         cads.add(new CADInstance(0D, 0D, 0D, 0D, 0D, 0D));
         link.setCadInstances(cads);
         subParts.add(link);
 
         pm.updatePartIteration(new PartIterationKey(new PartRevisionKey(new PartMasterKey(workspace, "BMX"), "A"), 1), "created by loader", PartIteration.Source.MAKE, subParts, null, null);
 
-
-        PartRevision componentR = componentM.getLastRevision();
-        PartIteration componentI = componentR.getLastIteration();
-
-        List<InstanceAttribute> attrs = new ArrayList<InstanceAttribute>();
-        InstanceNumberAttribute instanceAttribute = new InstanceNumberAttribute("radius", 9000000000f);
+        List<InstanceAttribute> attrs = new ArrayList<>();
+        InstanceNumberAttribute instanceAttribute = new InstanceNumberAttribute("radius", 9000000000f, false);
         attrs.add(instanceAttribute);
         pm.updatePartIteration(new PartIterationKey(new PartRevisionKey(new PartMasterKey(workspace, "BPM12VTX"), "A"), 1), "created by loader", PartIteration.Source.MAKE, null, attrs, null);
 

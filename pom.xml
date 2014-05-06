@@ -39,6 +39,7 @@
         <module>docdoku-cli</module>
         <module>docdoku-smoke-tests</module>
         <module>docdoku-arquillian-tests</module>
+        <module>docdoku-sample-loader</module>
     </modules>
     <build>
         <plugins>

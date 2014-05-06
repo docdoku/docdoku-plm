@@ -20,7 +20,6 @@
 package com.docdoku.core.product;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
@@ -68,7 +67,7 @@ public class PartUsageLink implements Serializable, Cloneable {
     joinColumns = {
         @JoinColumn(name = "PARTUSAGELINK_ID", referencedColumnName = "ID")
     })
-    private List<PartSubstituteLink> substitutes = new LinkedList<PartSubstituteLink>();
+    private List<PartSubstituteLink> substitutes = new LinkedList<>();
     
     @OrderColumn(name = "CADINSTANCE_ORDER")
     @JoinTable(name = "PARTUSAGELINK_CADINSTANCE",
@@ -79,7 +78,7 @@ public class PartUsageLink implements Serializable, Cloneable {
         @JoinColumn(name = "PARTUSAGELINK_ID", referencedColumnName = "ID")
     })
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<CADInstance> cadInstances = new LinkedList<CADInstance>();
+    private List<CADInstance> cadInstances = new LinkedList<>();
 
     public PartUsageLink() {
     }
@@ -112,7 +111,6 @@ public class PartUsageLink implements Serializable, Cloneable {
         this.component = component;
     }
 
-    @XmlTransient
     public PartMaster getComponent() {
         return component;
     }
@@ -151,7 +149,7 @@ public class PartUsageLink implements Serializable, Cloneable {
 
     @Override
     public PartUsageLink clone() {
-        PartUsageLink clone = null;
+        PartUsageLink clone;
         try {
             clone = (PartUsageLink) super.clone();
         } catch (CloneNotSupportedException e) {
@@ -159,14 +157,14 @@ public class PartUsageLink implements Serializable, Cloneable {
         }
 
         //perform a deep copy
-        List<PartSubstituteLink> clonedSubstitutes = new LinkedList<PartSubstituteLink>();
+        List<PartSubstituteLink> clonedSubstitutes = new LinkedList<>();
         for (PartSubstituteLink substitute : substitutes) {
             PartSubstituteLink clonedSubstitute = substitute.clone();
             clonedSubstitutes.add(clonedSubstitute);
         }
         clone.substitutes = clonedSubstitutes;
 
-        List<CADInstance> clonedCADInstances = new LinkedList<CADInstance>();
+        List<CADInstance> clonedCADInstances = new LinkedList<>();
         for (CADInstance cadInstance : cadInstances) {
             CADInstance clonedCADInstance = cadInstance.clone();
             clonedCADInstances.add(clonedCADInstance);
