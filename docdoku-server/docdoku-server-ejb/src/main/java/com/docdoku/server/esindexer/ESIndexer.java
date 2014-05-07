@@ -207,9 +207,7 @@ public class ESIndexer{
                 try{
                     try{
                         createIndex(formatIndexName(w.getId()), client);
-                    }catch (ESIndexAlreadyExistsException e){
-                        // When the index name already exists
-                    }
+                    }catch (ESIndexAlreadyExistsException ignored){}
 
                     for(DocumentMaster docM : docMasterDAO.getAllByWorkspace(w.getId())){
                         for(DocumentRevision docR : docM.getDocumentRevisions()){
@@ -225,9 +223,7 @@ public class ESIndexer{
                             }
                         }
                     }
-                }catch (ESIndexNamingException e){
-                    // When the index name is invalid
-                }
+                }catch (ESIndexNamingException ignored){}
             }
 
             BulkResponse bulkResponse = bulkRequest.execute().actionGet();
@@ -254,9 +250,7 @@ public class ESIndexer{
             Client client = createClient();
             try{
                 createIndex(formatIndexName(workspaceId), client);
-            }catch (ESIndexAlreadyExistsException e){
-                // When the index name already exists
-            }
+            }catch (ESIndexAlreadyExistsException ignored){}
             BulkRequestBuilder bulkRequest = client.prepareBulk();
             DocumentMasterDAO docMasterDAO = new DocumentMasterDAO(em);
             PartMasterDAO partMasterDAO = new PartMasterDAO(em);

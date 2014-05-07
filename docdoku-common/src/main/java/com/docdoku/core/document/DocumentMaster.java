@@ -43,7 +43,7 @@ import java.util.List;
 @javax.persistence.IdClass(com.docdoku.core.document.DocumentMasterKey.class)
 @javax.persistence.Entity
 @javax.persistence.NamedQueries ({
-        @NamedQuery(name="DocumentMaster.findByWorkspace", query="SELECT dm FROM DocumentMaster dm WHERE dm.workspace.id = :workspaceId")
+        @NamedQuery(name="DocumentMaster.findByWorkspace", query="SELECT dm FROM DocumentMaster dm WHERE dm.workspace.id = :workspaceId ORDER BY dm.creationDate DESC")
 })
 public class DocumentMaster implements Serializable, Comparable<DocumentMaster>, Cloneable {
 

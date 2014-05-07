@@ -45,7 +45,7 @@ import java.util.List;
 @Entity
 @NamedQueries({
     @NamedQuery(name="PartMaster.findByNumber", query="SELECT pm FROM PartMaster pm WHERE pm.number LIKE :partNumber AND pm.workspace.id = :workspaceId"),
-    @NamedQuery(name="PartMaster.findByWorkspace", query="SELECT pm FROM PartMaster pm WHERE pm.workspace.id = :workspaceId ORDER BY pm.number"),
+    @NamedQuery(name="PartMaster.findByWorkspace", query="SELECT pm FROM PartMaster pm WHERE pm.workspace.id = :workspaceId ORDER BY pm.creationDate DESC")
 })
 public class PartMaster implements Serializable {
 
@@ -71,7 +71,7 @@ public class PartMaster implements Serializable {
         @JoinColumn(name="PARTMASTER_PARTNUMBER", referencedColumnName="PARTNUMBER")
     })    
     @ElementCollection(fetch = FetchType.LAZY)
-    private List<PartAlternateLink> alternates = new LinkedList<PartAlternateLink>();
+    private List<PartAlternateLink> alternates = new LinkedList<>();
     
     @Temporal(TemporalType.TIMESTAMP)
     private java.util.Date creationDate;
@@ -84,7 +84,7 @@ public class PartMaster implements Serializable {
     
     @OneToMany(mappedBy = "partMaster", cascade = CascadeType.ALL, fetch = FetchType.EAGER)    
     @OrderBy("version ASC")
-    private List<PartRevision> partRevisions = new ArrayList<PartRevision>();
+    private List<PartRevision> partRevisions = new ArrayList<>();
 
     private boolean standardPart;
 

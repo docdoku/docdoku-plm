@@ -75,10 +75,14 @@ public class WorkspaceBean {
     }
 
 
-    public void synchronizeIndexer() {
+    public String synchronizeIndexer() throws AccessRightException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         if(userManager.isCallerInRole("admin")){
             String wksId = adminState.getSelectedWorkspace();
             workspaceManager.synchronizeIndexer(wksId);
+            return "/admin/workspace/workspaceIndexed.xhtml";
+        }else{
+            User user = userManager.checkWorkspaceReadAccess(adminState.getSelectedWorkspace());
+            throw new AccessRightException(new Locale(user.getLanguage()),user);
         }
     }
 

@@ -67,7 +67,7 @@ public class AdminStateBean implements Serializable {
     
     public User[] getUsersToManage() throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException {
         User[] users = documentService.getUsers(selectedWorkspace);
-        List<User> usersToManage=new ArrayList<User>();
+        List<User> usersToManage=new ArrayList<>();
         Map<String, List<UserGroup>> usersGroups = getUsersGroups();
         Map<String, WorkspaceUserMembership> userMembers = getUserMembers();
         for(User u:users){
@@ -85,7 +85,7 @@ public class AdminStateBean implements Serializable {
     public Map<String, WorkspaceUserMembership> getUserMembers() throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccountNotFoundException {
 
         WorkspaceUserMembership[] userMemberships = userManager.getWorkspaceUserMemberships(selectedWorkspace);
-        Map<String, WorkspaceUserMembership> userMembersMap = new HashMap<String, WorkspaceUserMembership>();
+        Map<String, WorkspaceUserMembership> userMembersMap = new HashMap<>();
         for (WorkspaceUserMembership membership : userMemberships) {
             userMembersMap.put(membership.getMemberLogin(), membership);
         }
@@ -94,7 +94,7 @@ public class AdminStateBean implements Serializable {
 
     public Map<String, WorkspaceUserGroupMembership> getGroupMembers() throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccountNotFoundException {
         WorkspaceUserGroupMembership[] groupMemberships = userManager.getWorkspaceUserGroupMemberships(selectedWorkspace);
-        Map<String, WorkspaceUserGroupMembership> groupMembersMap = new HashMap<String, WorkspaceUserGroupMembership>();
+        Map<String, WorkspaceUserGroupMembership> groupMembersMap = new HashMap<>();
         for (WorkspaceUserGroupMembership membership : groupMemberships) {
             groupMembersMap.put(membership.getMemberId(), membership);
         }
@@ -103,13 +103,13 @@ public class AdminStateBean implements Serializable {
     }
 
     public Map<String, List<UserGroup>> getUsersGroups() throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccountNotFoundException {
-        Map<String, List<UserGroup>> usersGroups = new HashMap<String, List<UserGroup>>();
+        Map<String, List<UserGroup>> usersGroups = new HashMap<>();
         UserGroup[] groups = getGroups();
         for (UserGroup group : groups) {
             for (User user : group.getUsers()) {
                 List<UserGroup> lstGroups = usersGroups.get(user.getLogin());
                 if (lstGroups == null) {
-                    lstGroups = new LinkedList<UserGroup>();
+                    lstGroups = new LinkedList<>();
                     usersGroups.put(user.getLogin(), lstGroups);
                 }
                 lstGroups.add(group);
@@ -198,8 +198,8 @@ public class AdminStateBean implements Serializable {
 
         JsonArrayBuilder usersJSONArrayBuilder = Json.createArrayBuilder();
         User[] users = documentService.getUsers(selectedWorkspace);
-        for(int i = 0 ; i< users.length ; i++ ){
-            usersJSONArrayBuilder.add(users[i].getLogin());
+        for (User user : users) {
+            usersJSONArrayBuilder.add(user.getLogin());
         }
         return usersJSONArrayBuilder.build();
 

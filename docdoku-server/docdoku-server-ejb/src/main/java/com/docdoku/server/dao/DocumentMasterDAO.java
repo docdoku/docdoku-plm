@@ -45,9 +45,6 @@ public class DocumentMasterDAO {
         mLocale = Locale.getDefault();
     }
 
-
-
-
     public void createDocM(DocumentMaster pDocumentMaster) throws DocumentMasterAlreadyExistsException, CreationException {
         try {
             //the EntityExistsException is thrown only when flush occurs
