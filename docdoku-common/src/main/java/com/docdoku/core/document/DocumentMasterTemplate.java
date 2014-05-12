@@ -48,11 +48,11 @@ import java.util.Set;
 @javax.persistence.Entity
 public class DocumentMasterTemplate implements Serializable, FileHolder, Comparable<DocumentMasterTemplate> {
 
-    @Column(length=255)
+    @Column(length=100)
     @javax.persistence.Id
     private String id="";
     
-    @javax.persistence.Column(name = "WORKSPACE_ID", length=255, nullable = false, insertable = false, updatable = false)
+    @javax.persistence.Column(name = "WORKSPACE_ID", length=100, nullable = false, insertable = false, updatable = false)
     @javax.persistence.Id
     private String workspaceId="";
     
@@ -72,7 +72,7 @@ public class DocumentMasterTemplate implements Serializable, FileHolder, Compara
             @JoinColumn(name="DOCUMENTMASTERTEMPLATE_ID", referencedColumnName="ID")
         }
     )
-    private Set<BinaryResource> attachedFiles = new HashSet<BinaryResource>();
+    private Set<BinaryResource> attachedFiles = new HashSet<>();
 
 
     @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
@@ -85,7 +85,7 @@ public class DocumentMasterTemplate implements Serializable, FileHolder, Compara
                     @JoinColumn(name="DOCUMENTMASTERTEMPLATE_ID", referencedColumnName="ID")
             }
     )
-    private Set<InstanceAttributeTemplate> attributeTemplates=new HashSet<InstanceAttributeTemplate>();
+    private Set<InstanceAttributeTemplate> attributeTemplates=new HashSet<>();
 
     private boolean attributesLocked;
     

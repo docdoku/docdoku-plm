@@ -49,7 +49,7 @@ import java.io.Serializable;
 public class ConfigurationItem implements Serializable {
 
 
-    @Column(length = 255)
+    @Column(length = 100)
     @Id
     private String id = "";
     

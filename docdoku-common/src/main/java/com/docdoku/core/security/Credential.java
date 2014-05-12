@@ -37,7 +37,7 @@ import java.security.NoSuchAlgorithmException;
 @javax.persistence.Entity
 public class Credential implements java.io.Serializable {
 
-    @Column(length = 255)
+    @Column(length = 50)
     @javax.persistence.Id
     private String login="";
     
@@ -61,8 +61,8 @@ public class Credential implements java.io.Serializable {
     private static String md5Sum(String pText) throws NoSuchAlgorithmException{
         byte[] digest = MessageDigest.getInstance("MD5").digest(pText.getBytes());
         StringBuffer hexString = new StringBuffer();
-        for (int i=0; i < digest.length; i++) {
-            String hex = Integer.toHexString(0xFF & digest[i]);
+        for (byte aDigest : digest) {
+            String hex = Integer.toHexString(0xFF & aDigest);
             if (hex.length() == 1) {
                 hexString.append("0" + hex);
             } else {

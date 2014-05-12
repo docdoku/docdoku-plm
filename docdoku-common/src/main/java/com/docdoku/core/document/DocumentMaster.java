@@ -47,7 +47,7 @@ import java.util.List;
 })
 public class DocumentMaster implements Serializable, Comparable<DocumentMaster>, Cloneable {
 
-    @Column(name="ID", length=255)
+    @Column(name="ID", length=100)
     @Id
     private String id="";
 

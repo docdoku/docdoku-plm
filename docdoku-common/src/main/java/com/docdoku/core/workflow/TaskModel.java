@@ -60,11 +60,11 @@ public class TaskModel implements Serializable, Cloneable {
     @javax.persistence.Id
     private int activityModelStep;
     
-    @javax.persistence.Column(name = "WORKFLOWMODEL_ID", length=255, nullable = false, insertable = false, updatable = false)
+    @javax.persistence.Column(name = "WORKFLOWMODEL_ID", length=100, nullable = false, insertable = false, updatable = false)
     @javax.persistence.Id
     private String workflowModelId="";
     
-    @javax.persistence.Column(name = "WORKSPACE_ID", length=255, nullable = false, insertable = false, updatable = false)
+    @javax.persistence.Column(name = "WORKSPACE_ID", length=100, nullable = false, insertable = false, updatable = false)
     @javax.persistence.Id
     private String workspaceId="";
     
@@ -197,7 +197,7 @@ public class TaskModel implements Serializable, Cloneable {
 
     @Override
     public TaskModel clone() {
-        TaskModel clone = null;
+        TaskModel clone;
         try {
             clone = (TaskModel) super.clone();
         } catch (CloneNotSupportedException e) {

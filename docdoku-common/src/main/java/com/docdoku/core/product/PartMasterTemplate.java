@@ -47,11 +47,11 @@ import java.util.Set;
 @Entity
 public class PartMasterTemplate implements Serializable, Comparable<PartMasterTemplate> {
 
-    @Column(length=255)
+    @Column(length=100)
     @Id
     private String id="";
 
-    @Column(name = "WORKSPACE_ID", length=255, nullable = false, insertable = false, updatable = false)
+    @Column(name = "WORKSPACE_ID", length=100, nullable = false, insertable = false, updatable = false)
     @Id
     private String workspaceId="";
 
@@ -74,7 +74,7 @@ public class PartMasterTemplate implements Serializable, Comparable<PartMasterTe
                     @JoinColumn(name="PARTMASTERTEMPLATE_ID", referencedColumnName="ID")
             }
     )
-    private Set<InstanceAttributeTemplate> attributeTemplates=new HashSet<InstanceAttributeTemplate>();
+    private Set<InstanceAttributeTemplate> attributeTemplates=new HashSet<>();
 
     private boolean attributesLocked;
 

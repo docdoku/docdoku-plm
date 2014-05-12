@@ -53,16 +53,16 @@ public abstract class ActivityModel implements Serializable, Cloneable {
     
     @OneToMany(mappedBy = "activityModel", cascade=CascadeType.ALL, fetch=FetchType.EAGER)
     @OrderBy("num")
-    protected List<TaskModel> taskModels=new LinkedList<TaskModel>();
+    protected List<TaskModel> taskModels=new LinkedList<>();
     
     @javax.persistence.Id
     protected int step;
     
-    @javax.persistence.Column(name = "WORKFLOWMODEL_ID", length=255, nullable = false, insertable = false, updatable = false)
+    @javax.persistence.Column(name = "WORKFLOWMODEL_ID", length=100, nullable = false, insertable = false, updatable = false)
     @javax.persistence.Id
     private String workflowModelId="";
     
-    @javax.persistence.Column(name = "WORKSPACE_ID", length=255, nullable = false, insertable = false, updatable = false)
+    @javax.persistence.Column(name = "WORKSPACE_ID", length=100, nullable = false, insertable = false, updatable = false)
     @javax.persistence.Id
     private String workspaceId="";
 
@@ -173,14 +173,14 @@ public abstract class ActivityModel implements Serializable, Cloneable {
      */
     @Override
     public ActivityModel clone() {
-        ActivityModel clone = null;
+        ActivityModel clone;
         try {
             clone = (ActivityModel) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new InternalError();
         }
         //perform a deep copy
-        List<TaskModel> clonedTaskModels = new LinkedList<TaskModel>();
+        List<TaskModel> clonedTaskModels = new LinkedList<>();
         for (TaskModel taskModel : taskModels) {
             TaskModel clonedTaskModel=taskModel.clone();
             clonedTaskModel.setActivityModel(clone);

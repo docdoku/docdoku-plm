@@ -41,11 +41,11 @@ import java.util.*;
 public class WorkflowModel implements Serializable, Cloneable {
     
 
-    @Column(length=255)
+    @Column(length=100)
     @javax.persistence.Id
     private String id="";
     
-    @javax.persistence.Column(name = "WORKSPACE_ID", length=255, nullable = false, insertable = false, updatable = false)
+    @javax.persistence.Column(name = "WORKSPACE_ID", length=100, nullable = false, insertable = false, updatable = false)
     @javax.persistence.Id
     private String workspaceId="";
     
@@ -53,7 +53,7 @@ public class WorkflowModel implements Serializable, Cloneable {
     
     @OneToMany(mappedBy = "workflowModel", cascade=CascadeType.ALL, fetch=FetchType.EAGER)
     @OrderBy("step ASC")
-    private List<ActivityModel> activityModels=new LinkedList<ActivityModel>();
+    private List<ActivityModel> activityModels=new LinkedList<>();
     
     private String finalLifeCycleState;
     
@@ -81,7 +81,7 @@ public class WorkflowModel implements Serializable, Cloneable {
     }
     
     public WorkflowModel(Workspace pWorkspace, String pId, User pAuthor, String pFinalLifeCycleState, ActivityModel[] pActivityModels) {
-        this(pWorkspace, pId, pAuthor, pFinalLifeCycleState,new ArrayList<ActivityModel>(Arrays.asList(pActivityModels)));
+        this(pWorkspace, pId, pAuthor, pFinalLifeCycleState,new ArrayList<>(Arrays.asList(pActivityModels)));
     }
     public WorkflowModel(Workspace pWorkspace, String pId, User pAuthor, String pFinalLifeCycleState, List<ActivityModel> pActivityModels) {
         id=pId;
@@ -197,7 +197,7 @@ public class WorkflowModel implements Serializable, Cloneable {
     }
     
     public List<String> getLifeCycle(){
-        List<String> lc=new LinkedList<String>();
+        List<String> lc=new LinkedList<>();
         for(ActivityModel activityModel:activityModels)
             lc.add(activityModel.getLifeCycleState());
         
@@ -237,14 +237,14 @@ public class WorkflowModel implements Serializable, Cloneable {
      */
     @Override
     public WorkflowModel clone() {
-        WorkflowModel clone = null;
+        WorkflowModel clone;
         try {
             clone = (WorkflowModel) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new InternalError();
         }
         //perform a deep copy
-        List<ActivityModel> clonedActivityModels = new LinkedList<ActivityModel>();
+        List<ActivityModel> clonedActivityModels = new LinkedList<>();
         for (ActivityModel activityModel : activityModels) {
             ActivityModel clonedActivityModel=activityModel.clone();
             clonedActivityModel.setWorkflowModel(clone);

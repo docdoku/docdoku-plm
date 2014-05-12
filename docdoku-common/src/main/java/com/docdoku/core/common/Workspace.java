@@ -40,7 +40,7 @@ import java.io.Serializable;
 })
 public class Workspace implements Serializable, Cloneable {
 
-    @Column(length=255)
+    @Column(length=100)
     @javax.persistence.Id
     private String id="";
     

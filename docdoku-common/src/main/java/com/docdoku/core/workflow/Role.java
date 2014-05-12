@@ -40,7 +40,7 @@ import java.io.Serializable;
 })
 public class Role implements Serializable {
 
-    @Column(length = 255)
+    @Column(length = 100)
     @Id
     private String name = "";
 

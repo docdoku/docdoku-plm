@@ -49,7 +49,7 @@ import java.util.List;
 })
 public class PartMaster implements Serializable {
 
-    @Column(name="PARTNUMBER", length = 255)
+    @Column(name="PARTNUMBER", length = 100)
     @Id
     private String number = "";
     

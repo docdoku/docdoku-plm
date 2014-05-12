@@ -40,11 +40,11 @@ import java.util.Set;
 })
 public class UserGroup implements Serializable, Cloneable {
 
-    @Column(length=255)
+    @Column(length=100)
     @javax.persistence.Id
     private String id="";
 
-    @javax.persistence.Column(name = "WORKSPACE_ID", length=255, nullable = false, insertable = false, updatable = false)
+    @javax.persistence.Column(name = "WORKSPACE_ID", length=100, nullable = false, insertable = false, updatable = false)
     @javax.persistence.Id
     private String workspaceId="";
 
@@ -61,7 +61,7 @@ public class UserGroup implements Serializable, Cloneable {
         @JoinColumn(name="USERGROUP_ID", referencedColumnName="ID"),
         @JoinColumn(name="USERGROUP_ID_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID")
     })
-    private Set<User> users=new HashSet<User>();
+    private Set<User> users=new HashSet<>();
 
     public UserGroup(){
 

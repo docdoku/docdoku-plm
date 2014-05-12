@@ -39,11 +39,11 @@ import java.io.Serializable;
 @javax.persistence.Entity
 public class Tag implements Serializable {
     
-    @javax.persistence.Column(name = "WORKSPACE_ID", length=255, nullable = false, insertable = false, updatable = false)
+    @javax.persistence.Column(name = "WORKSPACE_ID", length=100, nullable = false, insertable = false, updatable = false)
     @javax.persistence.Id
     private String workspaceId="";
 
-    @Column(length=255)
+    @Column(length=100)
     @javax.persistence.Id
     private String label="";
     

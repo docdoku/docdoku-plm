@@ -44,7 +44,7 @@ import java.util.List;
 public class ProductInstanceMaster implements Serializable {
 
 
-    @Column(name="SERIALNUMBER", length = 255)
+    @Column(name="SERIALNUMBER", length = 100)
     @Id
     private String serialNumber;
 
