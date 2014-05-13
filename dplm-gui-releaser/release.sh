@@ -12,7 +12,7 @@
 
 # Vars init
 VERSION=$1;
-RELEASER_DIR=$(dirname "$0");
+RELEASER_DIR=$(pwd);
 SOURCE="$RELEASER_DIR/../docdoku-gui/*";
 TMP_DIR="$RELEASER_DIR/tmp";
 NWVERSION="0.8.4";
@@ -68,6 +68,7 @@ zip dplm-linux-32-$VERSION.zip *;
 
 # Move the resulting archive in the output dir
 mv dplm-linux-32-$VERSION.zip $OUT_DIR_LINUX_32;
+cp $OUT_DIR_LINUX_32/dplm-linux-32-$VERSION.zip $OUT_DIR_LINUX_32/dplm-linux-32-latest.zip
 
 #Clean the tmp dir
 rm -rf $TMP_DIR/*;
@@ -93,6 +94,7 @@ zip dplm-linux-64-$VERSION.zip *;
 
 # Move the resulting archive in the output dir
 mv dplm-linux-64-$VERSION.zip $OUT_DIR_LINUX_64;
+cp $OUT_DIR_LINUX_64/dplm-linux-64-$VERSION.zip $OUT_DIR_LINUX_64/dplm-linux-64-latest.zip
 
 #Clean the tmp dir
 rm -rf $TMP_DIR/*;
@@ -118,6 +120,7 @@ zip dplm-win32-$VERSION.zip *;
 
 # Move the resulting archive in the output dir
 mv dplm-win32-$VERSION.zip $OUT_DIR_WIN32;
+cp $OUT_DIR_WIN32/dplm-win-32-$VERSION.zip $OUT_DIR_WIN32/dplm-win-32-latest.zip
 
 #Clean the tmp dir
 rm -rf $TMP_DIR/*;
@@ -153,6 +156,7 @@ chmod -R 0775 "$OUT_DIR_OSX/dplm-$VERSION.app/";
 # zip the .app
 cd $OUT_DIR_OSX;
 zip -r dplm-$VERSION.zip dplm-$VERSION.app;
+cp dplm-$VERSION.zip dplm-latest.zip
 rm -rf dplm-$VERSION.app;
 echo "... done";
 
