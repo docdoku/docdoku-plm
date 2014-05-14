@@ -130,7 +130,7 @@ define({
     "RENAME":						"Renommer",
     "RENAME_WORKFLOW_COPY":         "Nom de la copie",
     "REQUESTS":                     "Demandes",
-    "REQUESTS_NUMBER":              "Demandes associ\u00e9s",
+    "REQUESTS_NUMBER":              "Demandes associ\u00e9es",
     "RELAUCNH_ACTIVITY_SELECTOR":   "Retour à l'activit\u00e9 en cas de rejet",
     "REVISION_NOTE":				"Note de r\u00e9vision",
     "REVISION_NOTE_PROMPT_CANCEL":  "Ignorer",
