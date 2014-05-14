@@ -47,7 +47,7 @@ import java.util.Set;
  */
 public class Tools {
     
-    private Tools(){};
+    private Tools(){}
     
     public static String stripTrailingSlash(String completePath){
         if(completePath.charAt(completePath.length()-1)=='/')
@@ -75,7 +75,7 @@ public class Tools {
        
        if (docRsDTO.getLastIteration() != null) {
            DocumentIterationDTO lastIteration = docRsDTO.getLastIteration();
-           List<DocumentIterationDTO> iterations = new ArrayList<DocumentIterationDTO>();
+           List<DocumentIterationDTO> iterations = new ArrayList<>();
            iterations.add(lastIteration);
            docRsDTO.setDocumentIterations(iterations);
        }
@@ -116,7 +116,8 @@ public class Tools {
         partDTO.setStandardPart(partRevision.getPartMaster().isStandardPart());
         partDTO.setVersion(partRevision.getVersion());
         partDTO.setDescription(partRevision.getDescription());
-        List<PartIterationDTO> partIterationDTOs = new ArrayList<PartIterationDTO>();
+        partDTO.setStatus(partRevision.getStatus());
+        List<PartIterationDTO> partIterationDTOs = new ArrayList<>();
         for(PartIteration partIteration : partRevision.getPartIterations()){
             partIterationDTOs.add(mapPartIterationToPartIterationDTO(partIteration));
         }
@@ -146,12 +147,12 @@ public class Tools {
     public static PartIterationDTO mapPartIterationToPartIterationDTO(PartIteration partIteration){
         Mapper mapper = DozerBeanMapperSingletonWrapper.getInstance();
 
-        List<PartUsageLinkDTO> usageLinksDTO = new ArrayList<PartUsageLinkDTO>();
+        List<PartUsageLinkDTO> usageLinksDTO = new ArrayList<>();
         PartIterationDTO partIterationDTO = mapper.map(partIteration, PartIterationDTO.class);
 
         for(PartUsageLink partUsageLink : partIteration.getComponents()){
             PartUsageLinkDTO partUsageLinkDTO = mapper.map(partUsageLink, PartUsageLinkDTO.class);
-            List<CADInstanceDTO> cadInstancesDTO = new ArrayList<CADInstanceDTO>();
+            List<CADInstanceDTO> cadInstancesDTO = new ArrayList<>();
             for(CADInstance cadInstance : partUsageLink.getCadInstances()){
                 CADInstanceDTO cadInstanceDTO = mapper.map(cadInstance,CADInstanceDTO.class);
                 cadInstancesDTO.add(cadInstanceDTO);
@@ -167,7 +168,7 @@ public class Tools {
     }
 
     public static List<BaselinedPartDTO> mapBaselinedPartsToBaselinedPartDTO(Baseline baseline){
-        List<BaselinedPartDTO> baselinedPartDTOs = new ArrayList<BaselinedPartDTO>();
+        List<BaselinedPartDTO> baselinedPartDTOs = new ArrayList<>();
         Set<Map.Entry<BaselinedPartKey,BaselinedPart>> entries = baseline.getBaselinedParts().entrySet();
 
         for(Map.Entry<BaselinedPartKey,BaselinedPart> entry : entries){
@@ -185,6 +186,8 @@ public class Tools {
         baselinedPartDTO.setIteration(partI.getIteration());
         baselinedPartDTO.setLastIteration(partI.getPartRevision().getLastIteration().getIteration());
         baselinedPartDTO.setLastVersion(partI.getPartRevision().getPartMaster().getLastRevision().getVersion());
+        PartRevision lastReleased = partI.getPartRevision().getPartMaster().getLastReleasedRevision();
+        baselinedPartDTO.setLastReleasedVersion(lastReleased==null?null:lastReleased.getVersion());
         return baselinedPartDTO;
     }
 }

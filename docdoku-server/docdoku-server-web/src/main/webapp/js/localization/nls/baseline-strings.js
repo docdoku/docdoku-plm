@@ -1,19 +1,23 @@
 define({
     root: {
-        NEW_BASELINE: "New baseline",
-        BASELINE_NAME:"Name",
-        BASELINE_DESCRIPTION:"Description",
-        CREATE_BASELINE:"Create baseline",
-        CANCEL:"Cancel",
-        CLOSE:"Close",
-        DUPLICATE_BASELINE:"Duplicate baseline",
-        DUPLICATE:"Duplicate",
-        EDIT_BASELINE:"Edit baseline",
-        SAVE:"Save",
-        EXCLUDE:"Exclude part from baseline",
-        NUMBER:"Part number",
-        VERSION:"Part version",
-        ITERATION:"Part iteration"
+        "BASELINE_DESCRIPTION":         "Description",
+        "BASELINE_NAME":                "Name",
+        "CANCEL":                       "Cancel",
+        "CLOSE":                        "Close",
+        "CREATE_BASELINE":              "Create baseline",
+        "CREATION_ERROR":               "Error on baseline creation",
+        "DUPLICATE":                    "Duplicate",
+        "DUPLICATE_BASELINE":           "Duplicate baseline",
+        "EDIT_BASELINE":                "Edit baseline",
+        "EXCLUDE":                      "Exclude part from baseline",
+        "ITERATION":                    "Part iteration",
+        "LATEST":                       "Latest version",
+        "NEW_BASELINE":                 "New baseline",
+        "NUMBER":                       "Part number",
+        "RELEASED":                     "Only released",
+        "SAVE":                         "Save",
+        "TYPE":                         "Type",
+        "VERSION":                      "Part version"
     },
     "fr": true
 });

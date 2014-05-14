@@ -1,6 +1,14 @@
 <td><input type="checkbox"/></td>
 <td class="part_number">
-    {{#model.isCheckout}}{{#model.isCheckoutByConnectedUser}}<i class="icon-pencil"></i>{{/model.isCheckoutByConnectedUser}}{{^model.isCheckoutByConnectedUser}}<i class="icon-lock"></i>{{/model.isCheckoutByConnectedUser}}{{/model.isCheckout}}{{^model.isCheckout}}<i class="icon-eye-open"></i>{{/model.isCheckout}}{{model.getNumber}}
+    {{#model.isCheckout}}
+        {{#model.isCheckoutByConnectedUser}}<i class="icon-pencil"></i>{{/model.isCheckoutByConnectedUser}}
+        {{^model.isCheckoutByConnectedUser}}<i class="icon-lock"></i>{{/model.isCheckoutByConnectedUser}}
+    {{/model.isCheckout}}
+    {{^model.isCheckout}}
+        {{#model.isReleased}}<i class="icon-ok"></i>{{/model.isReleased}}
+        {{^model.isReleased}}<i class="icon-eye-open"></i>{{/model.isReleased}}
+    {{/model.isCheckout}}
+    {{model.getNumber}}
 </td>
 <td>{{model.getVersion}}</td>
 <td>{{#model.getLastIteration}}{{id}}{{/model.getLastIteration}}{{^model.getLastIteration}}-{{/model.getLastIteration}}</td>

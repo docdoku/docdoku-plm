@@ -21,7 +21,7 @@ define([
         },
 
         render:function(){
-            this.$el.html(this.template({model:this.model,i18n:i18n}));
+            this.$el.html(this.template({model:this.model,i18n:i18n, released: this.options.released}));
             this.bindDomElements();
             return this;
         },

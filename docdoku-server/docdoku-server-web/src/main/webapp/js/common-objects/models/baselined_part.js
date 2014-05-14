@@ -18,6 +18,10 @@ define([],function(){
             return this.get("lastVersion");
         },
 
+        getLastReleasedVersion:function(){
+            return this.get("lastReleasedVersion");
+        },
+
         getIteration:function(){
             return this.get("iteration");
         },

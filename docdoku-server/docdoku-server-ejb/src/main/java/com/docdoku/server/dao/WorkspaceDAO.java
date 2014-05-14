@@ -106,16 +106,15 @@ public class WorkspaceDAO {
     }
 
     public List<Workspace> findWorkspacesWhereUserIsActive(String userLogin){
-        List<Workspace> workspaces = em.createNamedQuery("Workspace.findWorkspacesWhereUserIsActive", Workspace.class)
+        return em.createNamedQuery("Workspace.findWorkspacesWhereUserIsActive", Workspace.class)
                 .setParameter("userLogin", userLogin)
                 .getResultList();
-        return workspaces;
     }
 
     public void removeWorkspace(Workspace workspace) throws IOException, StorageException {
 
         String workspaceId = workspace.getId();
-        String pathToMatch = workspaceId+"/%";
+        String pathToMatch = workspaceId.replace("_","\\_").replace("%","\\%")+"/%";
 
         // Keep binaries in memory to delete them if google storage is the default storage provider
         // We also could enhance the way we delete files by using gsutils from google api
@@ -272,8 +271,7 @@ public class WorkspaceDAO {
     }
 
     public List<Workspace> getAll() {
-        List<Workspace> workspaces = em.createNamedQuery("Workspace.findAllWorkspaces")
+        return em.createNamedQuery("Workspace.findAllWorkspaces")
                 .getResultList();
-        return workspaces;
     }
 }

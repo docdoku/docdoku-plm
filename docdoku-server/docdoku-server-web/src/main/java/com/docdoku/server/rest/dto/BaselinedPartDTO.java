@@ -27,6 +27,7 @@ public class BaselinedPartDTO {
     private int iteration;
     private int lastIteration;
     private String lastVersion;
+    private String lastReleasedVersion;
 
     public BaselinedPartDTO() {
     }
@@ -40,7 +41,6 @@ public class BaselinedPartDTO {
     public String getNumber() {
         return number;
     }
-
     public void setNumber(String number) {
         this.number = number;
     }
@@ -48,7 +48,6 @@ public class BaselinedPartDTO {
     public String getVersion() {
         return version;
     }
-
     public void setVersion(String version) {
         this.version = version;
     }
@@ -56,7 +55,6 @@ public class BaselinedPartDTO {
     public int getIteration() {
         return iteration;
     }
-
     public void setIteration(int iteration) {
         this.iteration = iteration;
     }
@@ -64,7 +62,6 @@ public class BaselinedPartDTO {
     public int getLastIteration() {
         return lastIteration;
     }
-
     public void setLastIteration(int lastIteration) {
         this.lastIteration = lastIteration;
     }
@@ -73,8 +70,10 @@ public class BaselinedPartDTO {
     public String getLastVersion() {
         return lastVersion;
     }
-
     public void setLastVersion(String lastVersion) {
         this.lastVersion = lastVersion;
     }
+
+    public String getLastReleasedVersion() {return lastReleasedVersion;}
+    public void setLastReleasedVersion(String lastReleasedVersion) {this.lastReleasedVersion = lastReleasedVersion;}
 }

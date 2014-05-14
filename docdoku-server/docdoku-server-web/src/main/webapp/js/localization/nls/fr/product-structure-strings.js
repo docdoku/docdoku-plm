@@ -84,7 +84,10 @@ define({
     "REFERENCE":"Référence",
     "REVISION_NOTE":"Note de révision",
     "MODIFICATION_DATE":"Date de modification",
-    EXPLODE:"Eclater",
-    CUTPLAN:"Plan de coupe",
-    MEASURE:"Mesure"
+    "CUTPLAN":                      "Plan de coupe",
+    "EXPLODE":                      "Eclater",
+    "IN_PROGRESS":                  "En cour",
+    "RELEASE":                      "D\u00e9livrer",
+    "RELEASED":                     "D\u00e9livr\u00e9",
+    "MEASURE":                      "Mesure"
 });

@@ -108,7 +108,6 @@ public class PartMaster implements Serializable {
     public User getAuthor() {
         return author;
     }
-
     public void setAuthor(User author) {
         this.author = author;
     }
@@ -116,7 +115,6 @@ public class PartMaster implements Serializable {
     public Date getCreationDate() {
         return creationDate;
     }
-
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
     }
@@ -124,25 +122,18 @@ public class PartMaster implements Serializable {
     public String getNumber() {
         return number;
     }
-
     public void setNumber(String number) {
         this.number = number;
     }
-
   
     public List<PartAlternateLink> getAlternates() {
         return alternates;
     }
-
-    public void setAlternates(List<PartAlternateLink> alternates) {
-        this.alternates = alternates;
-    }
-
+    public void setAlternates(List<PartAlternateLink> alternates) {this.alternates = alternates;}
 
     public List<PartRevision> getPartRevisions() {
         return partRevisions;
     }
-
     public void setPartRevisions(List<PartRevision> partRevisions) {
         this.partRevisions = partRevisions;
     }
@@ -150,7 +141,6 @@ public class PartMaster implements Serializable {
     public boolean isStandardPart() {
         return standardPart;
     }
-
     public void setStandardPart(boolean standardPart) {
         this.standardPart = standardPart;
     }
@@ -163,13 +153,22 @@ public class PartMaster implements Serializable {
         else
             return partRevisions.get(index);
     }
-    
     public PartRevision removeLastRevision() {
         int index = partRevisions.size()-1;
         if(index < 0)
             return null;
         else
             return partRevisions.remove(index);
+    }
+
+    public PartRevision getLastReleasedRevision(){
+        for(int index = partRevisions.size()-1; index>=0; index--){
+            PartRevision partRevision = partRevisions.get(index);
+            if(partRevision.isReleased()){
+                return partRevision;
+            }
+        }
+        return null;
     }
 
     public void removeRevision(PartRevision partR) {
@@ -194,7 +193,6 @@ public class PartMaster implements Serializable {
     public Workspace getWorkspace() {
         return workspace;
     }
-
     public void setWorkspace(Workspace workspace) {
         this.workspace = workspace;
     }
@@ -202,7 +200,6 @@ public class PartMaster implements Serializable {
     public String getName() {
         return name;
     }
-
     public void setName(String name) {
         this.name = name;
     }
@@ -219,7 +216,6 @@ public class PartMaster implements Serializable {
     public String getType() {
         return type;
     }
-
     public void setType(String type) {
         this.type = type;
     }
@@ -227,7 +223,6 @@ public class PartMaster implements Serializable {
     public boolean isAttributesLocked() {
         return attributesLocked;
     }
-
     public void setAttributesLocked(boolean attributesLocked) {
         this.attributesLocked = attributesLocked;
     }

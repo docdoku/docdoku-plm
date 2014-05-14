@@ -12,6 +12,7 @@ define([
     "text!common-objects/templates/buttons/delete_button.html",
     "text!common-objects/templates/buttons/checkout_button_group.html",
     "text!common-objects/templates/buttons/new_version_button.html",
+    "text!common-objects/templates/buttons/release_button.html",
     "text!common-objects/templates/buttons/ACL_button.html"
 ], function (
     PartCollection,
@@ -27,6 +28,7 @@ define([
     delete_button,
     checkout_button_group,
     new_version_button,
+    release_button,
     ACL_button
     ) {
     var PartContentView = Backbone.View.extend({
@@ -43,6 +45,7 @@ define([
             "click button.checkin":"checkin",
             "click button.edit-acl":"updateACL",
             "click button.new-version":"newVersion",
+            "click button.new-release":"releasePart",
             "click button.next-page":"toNextPage",
             "click button.previous-page":"toPreviousPage",
             "click button.first-page":"toFirstPage",
@@ -56,7 +59,8 @@ define([
             delete_button: delete_button,
             ACL_button: ACL_button,
             checkout_button_group: checkout_button_group,
-            new_version_button: new_version_button
+            new_version_button: new_version_button,
+            release_button: release_button
         },
 
         initialize: function () {
@@ -98,6 +102,7 @@ define([
             this.partListView.on("checkout-group:update", this.updateCheckoutButtons);
             this.partListView.on("acl-edit-button:display", this.changeACLButtonDisplay);
             this.partListView.on("new-version-button:display",this.changeVersionButtonDisplay);
+            this.partListView.on("release-button:display",this.changeReleaseButtonDisplay);
 
             return this;
         },
@@ -110,6 +115,7 @@ define([
             this.aclButton = this.$(".edit-acl");
             this.checkinButton = this.$(".checkin");
             this.newVersionButton = this.$(".new-version");
+            this.releaseButton = this.$(".new-release");
             this.currentPageIndicator =this.$(".current-page");
             this.pageControls =this.$(".page-controls");
         },
@@ -167,6 +173,14 @@ define([
                 this.newVersionButton.show();
             }else{
                 this.newVersionButton.hide();
+            }
+        },
+
+        changeReleaseButtonDisplay:function(state){
+            if(state){
+                this.releaseButton.show();
+            }else{
+                this.releaseButton.hide();
             }
         },
 
@@ -256,6 +270,10 @@ define([
                     model: this.partListView.getSelectedPart()
                 }).render().$el
             );
+        },
+
+        releasePart:function(){
+            this.partListView.getSelectedPart().release();
         },
 
         resetCollection:function(){

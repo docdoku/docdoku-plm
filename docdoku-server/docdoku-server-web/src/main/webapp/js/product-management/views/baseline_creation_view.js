@@ -27,6 +27,7 @@ define(
             bindDomElements:function(){
                 this.$modal = this.$('#baseline_creation_modal');
                 this.$inputBaselineName = this.$('#inputBaselineName');
+                this.$inputBaselineType = this.$('#inputBaselineType');
                 this.$inputBaselineDescription = this.$('#inputBaselineDescription');
             },
 
@@ -34,6 +35,7 @@ define(
                 this.model.createBaseline(
                     {
                         name:this.$inputBaselineName.val(),
+                        type:this.$inputBaselineType.val(),
                         description:this.$inputBaselineDescription.val()
                     },
                     {
@@ -50,7 +52,7 @@ define(
                 this.closeModal();
             },
 
-            onError: function(model, error) {
+            onError: function(error) {
                 alert(i18n.CREATION_ERROR + " : " + error.responseText);
             },
 

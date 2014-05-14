@@ -131,6 +131,12 @@ public class PartRevision implements Serializable, Comparable<PartRevision>, Clo
 
     private boolean publicShared;
 
+    private RevisionStatus status=RevisionStatus.WIP;
+
+    public enum RevisionStatus {
+        WIP, RELEASED
+    }
+
     public PartRevision(){
     }
 
@@ -348,6 +354,18 @@ public class PartRevision implements Serializable, Comparable<PartRevision>, Clo
 
     public void setPublicShared(boolean publicShared) {
         this.publicShared = publicShared;
+    }
+
+    public RevisionStatus getStatus() {
+        return status;
+    }
+
+    public boolean isReleased(){
+        return status==RevisionStatus.RELEASED;
+    }
+
+    public void release(){
+        this.status=RevisionStatus.RELEASED;
     }
 
     @Override

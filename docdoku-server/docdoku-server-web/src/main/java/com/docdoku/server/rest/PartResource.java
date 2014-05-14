@@ -178,8 +178,8 @@ public class PartResource {
 
             if (acl.getGroupEntries().size() > 0 || acl.getUserEntries().size() > 0) {
 
-                Map<String,String> userEntries = new HashMap<String,String>();
-                Map<String,String> groupEntries = new HashMap<String,String>();
+                Map<String,String> userEntries = new HashMap<>();
+                Map<String,String> groupEntries = new HashMap<>();
 
                 for (Map.Entry<String, ACL.Permission> entry : acl.getUserEntries().entrySet()) {
                     userEntries.put(entry.getKey(), entry.getValue().name());
@@ -245,6 +245,20 @@ public class PartResource {
 
             return Response.ok().build();
 
+        } catch (ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
+    }
+
+    @PUT
+    @Path("/release")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response releasePartRevision(@PathParam("workspaceId") String workspaceId, @PathParam("partNumber") String partNumber , @PathParam("partVersion") String partVersion) {
+        PartRevisionKey revisionKey = new PartRevisionKey(workspaceId,partNumber,partVersion);
+        try {
+            productService.releasePartRevision(revisionKey);
+            return Response.ok().build();
         } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
@@ -333,7 +347,7 @@ public class PartResource {
             PartRevision partRevision = productService.getPartRevision(revisionKey);
 
             List<Workflow> abortedWorkflows = partRevision.getAbortedWorkflows();
-            List<WorkflowDTO> abortedWorkflowsDTO = new ArrayList<WorkflowDTO>();
+            List<WorkflowDTO> abortedWorkflowsDTO = new ArrayList<>();
 
             for(Workflow abortedWorkflow:abortedWorkflows){
                 abortedWorkflowsDTO.add(mapper.map(abortedWorkflow,WorkflowDTO.class));
@@ -350,8 +364,7 @@ public class PartResource {
         if (dtos == null) {
             return null;
         }
-        List<InstanceAttribute> data = new ArrayList<InstanceAttribute>();
-        int i = 0;
+        List<InstanceAttribute> data = new ArrayList<>();
         for (InstanceAttributeDTO dto : dtos) {
             data.add(createObject(dto));
         }
@@ -401,7 +414,7 @@ public class PartResource {
 
     private List<PartUsageLink> createComponents(String workspaceId, List<PartUsageLinkDTO> pComponents) throws AccessRightException, NotAllowedException, WorkspaceNotFoundException, CreationException, UserNotFoundException, PartMasterAlreadyExistsException, UserNotActiveException, WorkflowModelNotFoundException, PartMasterTemplateNotFoundException, FileAlreadyExistsException, RoleNotFoundException {
 
-        List<PartUsageLink> components = new ArrayList<PartUsageLink>();
+        List<PartUsageLink> components = new ArrayList<>();
         for(PartUsageLinkDTO partUsageLinkDTO : pComponents){
 
             PartMaster component = findOrCreatePartMaster(workspaceId, partUsageLinkDTO.getComponent());
@@ -409,7 +422,7 @@ public class PartResource {
             if(component != null){
                 PartUsageLink partUsageLink = new PartUsageLink();
 
-                List<CADInstance> cadInstances = new ArrayList<CADInstance>();
+                List<CADInstance> cadInstances = new ArrayList<>();
 
                 if( partUsageLinkDTO.getCadInstances() != null){
                     for(CADInstanceDTO cadInstanceDTO : partUsageLinkDTO.getCadInstances()){

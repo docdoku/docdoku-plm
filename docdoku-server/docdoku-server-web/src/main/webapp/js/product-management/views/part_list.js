@@ -106,7 +106,7 @@ define([
             this.onSelectionChanged();
         },
 
-        onSelectionChanged:function(view){
+        onSelectionChanged:function(){
 
             var checkedViews = _(this.listItemViews).select(function(itemView){
                 return itemView.isChecked();
@@ -139,14 +139,16 @@ define([
             this.trigger("checkout-group:display",false);
             this.trigger("acl-edit-button:display",false);
             this.trigger("new-version-button:display",false);
+            this.trigger("release-button:display",false);
         },
 
         onOnePartSelected:function(){
             this.trigger("delete-button:display",true);
-            this.trigger("checkout-group:display",true);
             var partSelected = this.getSelectedPart();
+            this.trigger("checkout-group:display",!partSelected.isReleased());
             this.trigger("acl-edit-button:display", partSelected ? (APP_CONFIG.workspaceAdmin || partSelected.getAuthorLogin() == APP_CONFIG.login) : false);
-            this.trigger("new-version-button:display", !this.getSelectedPart().isCheckout());
+            this.trigger("new-version-button:display", !partSelected.isCheckout());
+            this.trigger("release-button:display", (!partSelected.isCheckout() && !partSelected.isReleased()));
         },
 
         onSeveralPartsSelected:function(){
@@ -154,6 +156,7 @@ define([
             this.trigger("checkout-group:display",false);
             this.trigger("acl-edit-button:display",false);
             this.trigger("new-version-button:display",false);
+            this.trigger("release-button:display",false);
         },
 
         deleteSelectedParts:function(){
@@ -181,7 +184,7 @@ define([
             if(checkedView){
                 return checkedView.model;
             }
-
+            return null;
         },
         redraw:function(){
             this.dataTable();

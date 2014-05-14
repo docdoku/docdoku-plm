@@ -20,6 +20,8 @@
 
 package com.docdoku.server.rest.dto;
 
+import com.docdoku.core.configuration.Baseline;
+
 import java.util.Date;
 import java.util.List;
 
@@ -27,6 +29,7 @@ public class BaselineDTO {
 
     private int id;
     private String name;
+    private Baseline.BaselineType type;
     private String description;
     private Date creationDate;
     private List<BaselinedPartDTO> baselinedParts;
@@ -44,7 +47,6 @@ public class BaselineDTO {
     public int getId() {
         return id;
     }
-
     public void setId(int id) {
         this.id = id;
     }
@@ -52,7 +54,6 @@ public class BaselineDTO {
     public String getName() {
         return name;
     }
-
     public void setName(String name) {
         this.name = name;
     }
@@ -60,7 +61,6 @@ public class BaselineDTO {
     public String getDescription() {
         return description;
     }
-
     public void setDescription(String description) {
         this.description = description;
     }
@@ -68,7 +68,6 @@ public class BaselineDTO {
     public Date getCreationDate() {
         return creationDate;
     }
-
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
     }
@@ -76,8 +75,10 @@ public class BaselineDTO {
     public List<BaselinedPartDTO> getBaselinedParts() {
         return baselinedParts;
     }
-
     public void setBaselinedParts(List<BaselinedPartDTO> baselinedParts) {
         this.baselinedParts = baselinedParts;
     }
+
+    public Baseline.BaselineType getType() {return type;}
+    public void setType(Baseline.BaselineType type) {this.type = type;}
 }

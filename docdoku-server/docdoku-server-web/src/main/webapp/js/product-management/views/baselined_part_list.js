@@ -30,7 +30,7 @@ define([
 
             _.each(this.model.getBaselinedParts(),function(bpData){
                 var baselinedPart = new BaselinedPart(bpData);
-                var baselinedPartItemView = new BaselinedPartListItemView({model:baselinedPart}).render();
+                var baselinedPartItemView = new BaselinedPartListItemView({model:baselinedPart,released: that.model.isReleased()}).render();
                 that.baselinedParts.push(baselinedPart);
                 that.baselinedPartsViews.push(baselinedPartItemView);
                 that.$el.append(baselinedPartItemView.$el);
@@ -38,7 +38,6 @@ define([
         },
 
         getBaselinedParts:function(){
-
             var baselinedParts = [];
 
             _.each(this.baselinedParts,function(baselinedPart){

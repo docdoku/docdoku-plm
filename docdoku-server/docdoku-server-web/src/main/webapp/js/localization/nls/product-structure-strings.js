@@ -92,8 +92,11 @@ define({
         EXPLODE:"Explode",
         CUTPLAN:"Cut plan",
         ABSOLUTE:"Absolute",
-        RELATIVE:"Relative",
-        MEASURE:"Measure"
+        "IN_PROGRESS":                  "Work in progress",
+        "RELATIVE":                     "Relative",
+        "RELEASE":                      "Release",
+        "RELEASED":                     "Released",
+        "MEASURE":                      "Measure"
     },
     "fr": true,
     "es": true

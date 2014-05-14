@@ -8,6 +8,12 @@ define([],function(){
         getName:function(){
             return this.get("name");
         },
+        getType:function(){
+            return this.get("type");
+        },
+        isReleased:function(){
+            return this.get("type")=="RELEASED";
+        },
         getDescription:function(){
             return this.get("description");
         },

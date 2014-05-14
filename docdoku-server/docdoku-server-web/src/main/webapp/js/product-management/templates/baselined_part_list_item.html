@@ -1,6 +1,11 @@
 <div class="well">
-    <input name="number" type="text" value="{{model.getNumber}}"  title="{{i18n.NUMBER}}" readonly required />
-    <input name="version" type="text" class="input-small" value="{{model.getVersion}}"  title="{{i18n.VERSION}} : A -> {{model.getLastVersion}}"  pattern="[A-{{model.getLastVersion}}]{1}" required />
-    <input name="iteration" class="input-small" type="number" min="1" max="{{model.getLastIteration}}"  title="{{i18n.ITERATION}}" range="1" value="{{model.getIteration}}" required />
+    <input name="number" type="text" value="{{model.getNumber}}{{#released}} ({{i18n.RELEASED}}){{/released}}"  title="{{i18n.NUMBER}}{{#released}} ({{i18n.RELEASED}}){{/released}}" readonly required />
+    {{#released}}
+        <input name="version" type="text" class="input-small" value="{{model.getVersion}}"  title="{{i18n.VERSION}} : A -> {{model.getLastReleasedVersion}}"  pattern="[A-{{model.getLastReleasedVersion}}]{1}" required />
+    {{/released}}
+    {{^released}}
+        <input name="version" type="text" class="input-small" value="{{model.getVersion}}"  title="{{i18n.VERSION}} : A -> {{model.getLastVersion}}"  pattern="[A-{{model.getLastVersion}}]{1}" required />
+    {{/released}}
+    <input name="iteration" class="input-small" type="number" min="1" max="{{model.getLastIteration}}"  title="{{i18n.ITERATION}}" step="1" value="{{model.getIteration}}" required />
     <input  name="exclude" type="checkbox" title="{{i18n.EXCLUDE}}" />
 </div>

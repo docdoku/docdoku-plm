@@ -60,6 +60,8 @@ public class Baseline implements Serializable {
     @Column(nullable = false)
     private String name;
 
+    private BaselineType type=BaselineType.LATEST;
+
     @Lob
     private String description;
 
@@ -69,12 +71,15 @@ public class Baseline implements Serializable {
     @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY, orphanRemoval = true)
     private PartCollection partCollection=new PartCollection();
 
+    public enum BaselineType {LATEST, RELEASED}
+
     public Baseline() {
     }
 
-    public Baseline(ConfigurationItem configurationItem, String name, String description) {
+    public Baseline(ConfigurationItem configurationItem, String name, BaselineType type, String description) {
         this.configurationItem = configurationItem;
         this.name = name;
+        this.type = type;
         this.description = description;
         this.creationDate = new Date();
     }
@@ -82,7 +87,6 @@ public class Baseline implements Serializable {
     public Map<BaselinedPartKey, BaselinedPart> getBaselinedParts() {
         return partCollection.getBaselinedParts();
     }
-
     public void removeAllBaselinedParts() {
         partCollection.removeAllBaselinedParts();
     }
@@ -90,11 +94,9 @@ public class Baseline implements Serializable {
     public void addBaselinedPart(PartIteration targetPart){
         partCollection.addBaselinedPart(targetPart);
     }
-
     public boolean hasBasedLinedPart(String targetPartWorkspaceId, String targetPartNumber){
         return partCollection.hasBasedLinedPart(new BaselinedPartKey(partCollection.getId(),targetPartWorkspaceId,targetPartNumber));
     }
-
     public BaselinedPart getBaselinedPart(BaselinedPartKey baselinedPartKey){
         return partCollection.getBaselinedPart(baselinedPartKey);
     }
@@ -102,15 +104,16 @@ public class Baseline implements Serializable {
     public String getName() {
         return name;
     }
-
     public void setName(String name) {
         this.name = name;
     }
 
+    public BaselineType getType() {return type;}
+    public void setType(BaselineType type) {this.type = type;}
+
     public Date getCreationDate() {
         return creationDate;
     }
-
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
     }
@@ -118,7 +121,6 @@ public class Baseline implements Serializable {
     public String getDescription() {
         return description;
     }
-
     public void setDescription(String description) {
         this.description = description;
     }
@@ -127,11 +129,9 @@ public class Baseline implements Serializable {
         return partCollection;
     }
 
-
     public int getId() {
         return id;
     }
-
     public void setId(int id) {
         this.id = id;
     }
@@ -139,7 +139,6 @@ public class Baseline implements Serializable {
     public ConfigurationItem getConfigurationItem() {
         return configurationItem;
     }
-
     public void setConfigurationItem(ConfigurationItem configurationItem) {
         this.configurationItem = configurationItem;
     }

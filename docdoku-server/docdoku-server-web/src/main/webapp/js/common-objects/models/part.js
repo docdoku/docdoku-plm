@@ -45,6 +45,10 @@ define(["i18n!localization/nls/product-structure-strings","common-objects/utils/
             return this.get('checkOutUser');
         },
 
+        isReleased: function(){
+            return this.get('status')=="RELEASED";
+        },
+
         getFormattedCheckoutDate: function() {
             if(this.isCheckout()){
                 return Date.formatTimestamp(
@@ -52,6 +56,7 @@ define(["i18n!localization/nls/product-structure-strings","common-objects/utils/
                     this.getCheckoutDate()
                 );
             }
+            return null;
         },
 
         getFormattedCreationDate: function() {
@@ -102,12 +107,14 @@ define(["i18n!localization/nls/product-structure-strings","common-objects/utils/
             if(this.isCheckout()){
                 return this.getCheckoutUser().name;
             }
+            return null;
         },
 
         getCheckOutUserLogin:function(){
             if(this.isCheckout()){
                 return this.getCheckoutUser().login;
             }
+            return null;
         },
 
         isStandardPart:function(){
@@ -145,7 +152,7 @@ define(["i18n!localization/nls/product-structure-strings","common-objects/utils/
                 success: function() {
                     this.fetch();
                 },
-                error:function(xhr,status,errorThrown){
+                error:function(xhr){
                     alert(xhr.responseText);
                 }
             });
@@ -262,8 +269,18 @@ define(["i18n!localization/nls/product-structure-strings","common-objects/utils/
                     this.collection.fetch({reset:true});
                 }
             });
-        }
+        },
 
+        release: function() {
+            $.ajax({
+                context: this,
+                type: "PUT",
+                url: this.url() + "/release",
+                success: function() {
+                    this.fetch();
+                }
+            });
+        }
 
     });
 

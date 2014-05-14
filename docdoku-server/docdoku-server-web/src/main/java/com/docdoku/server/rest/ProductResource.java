@@ -174,7 +174,7 @@ public class ProductResource {
             ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
             List<PartUsageLink[]> usagePaths = productService.findPartUsages(ciKey, new PartMasterKey(workspaceId,partNumber));
 
-            List<PathDTO> pathsDTO = new ArrayList<PathDTO>();
+            List<PathDTO> pathsDTO = new ArrayList<>();
 
             for(PartUsageLink[] usagePath : usagePaths){
                 StringBuilder sb=new StringBuilder();
@@ -216,8 +216,8 @@ public class ProductResource {
         dto.setAuthorLogin(pm.getAuthor().getLogin());
         dto.setAmount(usageLink.getCadInstances().size());
 
-        List<InstanceAttributeDTO> lstAttributes = new ArrayList<InstanceAttributeDTO>();
-        List<ComponentDTO> components = new ArrayList<ComponentDTO>();
+        List<InstanceAttributeDTO> lstAttributes = new ArrayList<>();
+        List<ComponentDTO> components = new ArrayList<>();
 
 
         PartIteration partI = null;
@@ -282,12 +282,12 @@ public class ProductResource {
                 }
 
                 PartUsageLink rootUsageLink;
-                List<Integer> usageLinkPaths = new ArrayList<Integer>();
+                List<Integer> usageLinkPaths = new ArrayList<>();
                 if(path != null && !path.equals("null")){
                     String[] partUsageIdsString = path.split("-");
 
-                    for (int i = 0; i < partUsageIdsString.length; i++) {
-                        usageLinkPaths.add(Integer.parseInt(partUsageIdsString[i]));
+                    for (String partUsageIdString : partUsageIdsString) {
+                        usageLinkPaths.add(Integer.parseInt(partUsageIdString));
                     }
 
                     rootUsageLink = productService.filterProductStructure(ciKey, cs, usageLinkPaths.get(0), 0);
@@ -323,7 +323,7 @@ public class ProductResource {
         try {
             ConfigurationItemKey configurationItemKey = new ConfigurationItemKey(workspaceId,ciId);
             List<Baseline> baselines = productService.getBaselines(configurationItemKey);
-            List<BaselineDTO> baselinesDTO = new ArrayList<BaselineDTO>();
+            List<BaselineDTO> baselinesDTO = new ArrayList<>();
             for(Baseline baseline:baselines){
                 baselinesDTO.add(mapper.map(baseline,BaselineDTO.class));
             }
@@ -338,7 +338,6 @@ public class ProductResource {
     @Produces(MediaType.APPLICATION_JSON)
     public BaselineDTO getBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @PathParam("baselineId") int baselineId){
         try {
-            ConfigurationItemKey configurationItemKey = new ConfigurationItemKey(workspaceId,ciId);
             Baseline baseline = productService.getBaseline(baselineId);
             BaselineDTO baselineDTO = mapper.map(baseline,BaselineDTO.class);
             baselineDTO.setBaselinedParts(Tools.mapBaselinedPartsToBaselinedPartDTO(baseline));
@@ -353,7 +352,7 @@ public class ProductResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response createBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, BaselineCreationDTO baselineCreationDTO){
         try {
-            productService.createBaseline(new ConfigurationItemKey(workspaceId,ciId),baselineCreationDTO.getName(),baselineCreationDTO.getDescription());
+            productService.createBaseline(new ConfigurationItemKey(workspaceId,ciId),baselineCreationDTO.getName(),baselineCreationDTO.getType(),baselineCreationDTO.getDescription());
             return Response.ok().build();
         } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
@@ -366,13 +365,13 @@ public class ProductResource {
     public Response updateBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @PathParam("baselineId") String baselineId, BaselineDTO baselineDTO){
         try {
 
-            List<PartIterationKey> partIterationKeys = new ArrayList<PartIterationKey>();
+            List<PartIterationKey> partIterationKeys = new ArrayList<>();
 
             for(BaselinedPartDTO baselinedPartDTO : baselineDTO.getBaselinedParts()){
                 partIterationKeys.add(new PartIterationKey(workspaceId, baselinedPartDTO.getNumber(),baselinedPartDTO.getVersion(),baselinedPartDTO.getIteration()));
             }
 
-            productService.updateBaseline(new ConfigurationItemKey(workspaceId,ciId),Integer.parseInt(baselineId),baselineDTO.getName(),baselineDTO.getDescription(),partIterationKeys);
+            productService.updateBaseline(new ConfigurationItemKey(workspaceId,ciId),Integer.parseInt(baselineId),baselineDTO.getName(),baselineDTO.getType(),baselineDTO.getDescription(),partIterationKeys);
             return Response.ok().build();
         } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
@@ -385,7 +384,7 @@ public class ProductResource {
     @Produces(MediaType.APPLICATION_JSON)
     public BaselineDTO duplicateBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @PathParam("baselineId") int baselineId,  BaselineCreationDTO baselineCreationDTO){
         try {
-            Baseline baseline = productService.duplicateBaseline(baselineId, baselineCreationDTO.getName(), baselineCreationDTO.getDescription());
+            Baseline baseline = productService.duplicateBaseline(baselineId, baselineCreationDTO.getName(), baselineCreationDTO.getType(), baselineCreationDTO.getDescription());
             return mapper.map(baseline, BaselineDTO.class);
         } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
