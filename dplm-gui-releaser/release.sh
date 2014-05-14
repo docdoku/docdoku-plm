@@ -12,7 +12,7 @@
 
 # Vars init
 VERSION=$1;
-RELEASER_DIR=$(pwd);
+RELEASER_DIR=$(dirname "$0");
 SOURCE="$RELEASER_DIR/../docdoku-gui/*";
 TMP_DIR="$RELEASER_DIR/tmp";
 NWVERSION="0.8.4";
