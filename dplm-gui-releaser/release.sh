@@ -11,7 +11,30 @@
 #
 
 # Vars init
-VERSION=$1;
+BRANCH="dev";
+while :
+do
+    case "$1" in
+        -c | --cloud)
+            BRANCH="public-cloud"
+            shift
+            ;;
+        -v | --version)
+            BRANCH=$2
+            shift 2
+            ;;
+        --) shift
+            break
+            ;;
+        -*) echo "Erro: Unknown option : $1" >&2
+            exit 1
+            ;;
+        *) break
+            ;;
+    esac
+done
+
+VERSION="$BRANCH-$1";
 RELEASER_DIR=$(dirname "$0");
 SOURCE="$RELEASER_DIR/../docdoku-gui/*";
 TMP_DIR="$RELEASER_DIR/tmp";
@@ -68,7 +91,7 @@ zip dplm-linux-32-$VERSION.zip *;
 
 # Move the resulting archive in the output dir
 mv dplm-linux-32-$VERSION.zip $OUT_DIR_LINUX_32;
-cp $OUT_DIR_LINUX_32/dplm-linux-32-$VERSION.zip $OUT_DIR_LINUX_32/dplm-linux-32-latest.zip
+cp $OUT_DIR_LINUX_32/dplm-linux-32-$VERSION.zip $OUT_DIR_LINUX_32/dplm-linux-32-$BRANCH.zip;
 
 #Clean the tmp dir
 rm -rf $TMP_DIR/*;
@@ -94,7 +117,7 @@ zip dplm-linux-64-$VERSION.zip *;
 
 # Move the resulting archive in the output dir
 mv dplm-linux-64-$VERSION.zip $OUT_DIR_LINUX_64;
-cp $OUT_DIR_LINUX_64/dplm-linux-64-$VERSION.zip $OUT_DIR_LINUX_64/dplm-linux-64-latest.zip
+cp $OUT_DIR_LINUX_64/dplm-linux-64-$VERSION.zip $OUT_DIR_LINUX_64/dplm-linux-64-$BRANCH.zip
 
 #Clean the tmp dir
 rm -rf $TMP_DIR/*;
@@ -120,7 +143,7 @@ zip dplm-win32-$VERSION.zip *;
 
 # Move the resulting archive in the output dir
 mv dplm-win32-$VERSION.zip $OUT_DIR_WIN32;
-cp $OUT_DIR_WIN32/dplm-win-32-$VERSION.zip $OUT_DIR_WIN32/dplm-win-32-latest.zip
+cp $OUT_DIR_WIN32/dplm-win32-$VERSION.zip $OUT_DIR_WIN32/dplm-win32-$BRANCH.zip
 
 #Clean the tmp dir
 rm -rf $TMP_DIR/*;
@@ -156,7 +179,7 @@ chmod -R 0775 "$OUT_DIR_OSX/dplm-$VERSION.app/";
 # zip the .app
 cd $OUT_DIR_OSX;
 zip -r dplm-$VERSION.zip dplm-$VERSION.app;
-cp dplm-$VERSION.zip dplm-latest.zip
+cp dplm-$VERSION.zip dplm-$BRANCH.zip
 rm -rf dplm-$VERSION.app;
 echo "... done";
 
