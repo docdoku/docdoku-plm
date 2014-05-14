@@ -21,19 +21,23 @@
 
             <h3>#{i18nDownload['section1.title1']}</h3>
 
-            <p>
-                #{i18nDownload['section.supported']}<br/>
-                <img src="#{request.contextPath}/images/windows.gif" alt="Windows"/> windows<br/>
-                <img src="#{request.contextPath}/images/linux.gif" alt="Linux"/> linux<br/>
-                <img src="#{request.contextPath}/images/apple.gif" alt="Mac"/> mac<br/>
-            </p>
             <p><h:outputText value="#{i18nDownload['section1.text1']}" escape="false" /></p>
-            <p>#{i18nDownload['section1.text2']}</p>
 
-            <br/>
-            <a href="#{request.contextPath}/apps/docdoku_clientJ7.jnlp">Java 7</a>
-
-
+            <h4>#{i18nDownload['section.supported']}</h4>
+            <ul class="download-dplm-plateform-list">
+                <li>
+                    <a href="/download/dplm/dplm-win32.zip"><img src="#{request.contextPath}/images/windows.gif" alt="Windows"/> Windows</a>
+                </li>
+                <li>
+                    <a href="/download/dplm/dplm-linux-32.zip"><img src="#{request.contextPath}/images/linux.gif" alt="Linux"/>Linux (32bit)</a>
+                </li>
+                <li>
+                    <a href="/download/dplm/dplm-linux-64.zip"><img src="#{request.contextPath}/images/linux.gif" alt="Linux"/>Linux(64bit)</a>
+                </li>
+                <li>
+                    <a href="/download/dplm/dplm-osx.zip"><img src="#{request.contextPath}/images/apple.gif" alt="Mac"/> Mac</a>
+                </li>
+            </ul>
         </ui:define>
 
     </ui:composition>
