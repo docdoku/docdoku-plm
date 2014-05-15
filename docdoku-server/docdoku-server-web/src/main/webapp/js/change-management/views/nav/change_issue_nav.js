@@ -1,3 +1,4 @@
+/*global APP_VIEW*/
 define([
 	"common-objects/common/singleton_decorator",
     "text!templates/nav/change_issue_nav.html",

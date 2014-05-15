@@ -103,7 +103,7 @@ define([
         },
 
         getBaseName : function(){
-            return this.getWorkspace() + "/documents/" + this.getDocumentMasterId() + "/" + this.getDocumentRevisionVersion() + "/" + this.getIteration()
+            return this.getWorkspace() + "/documents/" + this.getDocumentMasterId() + "/" + this.getDocumentRevisionVersion() + "/" + this.getIteration();
         }
 	});
 	return DocumentIteration;

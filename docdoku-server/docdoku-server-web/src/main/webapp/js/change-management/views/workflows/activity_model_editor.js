@@ -117,7 +117,7 @@ define([
         },
 
         tasksToCompleteChanged: function(){
-            var tasksToCompleteValue = parseInt(this.inputTasksToComplete.val());
+            var tasksToCompleteValue = parseInt(this.inputTasksToComplete.val(),10);
             if(tasksToCompleteValue > 0){
                 this.model.set({
                     tasksToComplete: tasksToCompleteValue

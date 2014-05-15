@@ -33,7 +33,7 @@ define([
 
         initialize: function () {
             _.bindAll(this);
-            this.collection = new ChangeIssueCollection()
+            this.collection = new ChangeIssueCollection();
         },
 
         render:function(){

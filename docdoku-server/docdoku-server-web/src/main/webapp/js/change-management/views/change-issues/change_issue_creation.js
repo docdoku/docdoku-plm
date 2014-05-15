@@ -43,13 +43,13 @@ define([
             });
         },
         fillPriorityList:function(){
-            for(priority in this.model.priorities){
-                this.$inputIssuePriority.append("<option value='"+priority+"'"+">"+priority+"</option>")
+            for(var priority in this.model.priorities){
+                this.$inputIssuePriority.append("<option value='"+priority+"'"+">"+priority+"</option>");
             }
         },
         fillCategoryList:function(){
-            for(category in this.model.categories){
-                this.$inputIssueCategory.append("<option value='"+category+"'"+">"+category+"</option>")
+            for(var category in this.model.categories){
+                this.$inputIssueCategory.append("<option value='"+category+"'"+">"+category+"</option>");
             }
         },
 
@@ -137,13 +137,13 @@ define([
 
         updateAffectedDocuments: function (model) {
             if(this._affectedDocumentsCollection.length){
-                model.saveAffectedDocuments(this._affectedDocumentsCollection)
+                model.saveAffectedDocuments(this._affectedDocumentsCollection);
             }
         },
 
         updateAffectedParts: function (model) {
             if(this._affectedPartsCollection.length){
-                model.saveAffectedParts(this._affectedPartsCollection)
+                model.saveAffectedParts(this._affectedPartsCollection);
             }
         }
     });

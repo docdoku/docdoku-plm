@@ -91,7 +91,7 @@ define([
             $existingTabs.empty();
             var that=this;
             _.each(this._existingTagsCollection.models,function(model){
-                that.addTagViewToExistingTagsList(model)
+                that.addTagViewToExistingTagsList(model);
             });
         },
 
@@ -106,7 +106,7 @@ define([
                         that.removeTagViewFromExistingTagsList(model);
                     }
                 });
-            })
+            });
         },
 
         onNewTagButton:function(){
@@ -278,7 +278,7 @@ define([
                         callbackSuccess();
                         Backbone.Events.trigger("refreshTagNavViewCollection");
                     }
-                )
+                );
             }else{
                 callbackSuccess();
             }
@@ -300,7 +300,7 @@ define([
                             }
                         }
                     });
-                })
+                });
             }else{
                 callbackSuccess();
             }

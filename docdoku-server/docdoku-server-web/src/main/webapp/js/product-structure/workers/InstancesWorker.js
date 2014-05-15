@@ -98,12 +98,7 @@ var Context = {
         if(_target.z!=target.z){
             return true;
         }
-
-        if(_meshCount != _oldMeshCount){
-            return true;
-        }
-
-        return false;
+        return _meshCount != _oldMeshCount;
     },
 
     cameraDist:function(mesh){
@@ -122,11 +117,16 @@ var Context = {
 
 };
 
+function splitArrayIntoArrays(a, n) {
+    var len = a.length,out = [], i = 0;
+    while (i < len) {
+        var size = Math.ceil((len - i) / n--);
+        out.push(a.slice(i, i += size));
+    }
+    return out;
+}
 
 function ComputeMeshesRatings(){
-
-    var totalRating = 0;
-
     _(meshes).each(function(mesh){
 
         if(mesh.checked){
@@ -144,8 +144,6 @@ function ComputeMeshesRatings(){
             var angleRating =  angle > maxAngle ?  0 : maxAngle/angle ;
 
             mesh.globalRating = distanceRating * angleRating;
-
-            // console.log("------- dist / angle / rating --- " + dist  + "   " + angle + "   " + distanceRating);
         }else{
             mesh.globalRating = 0;
         }
@@ -166,28 +164,6 @@ function SortMeshes(){
     }
     else{
         bestRating = 1;
-    }
-
-}
-
-function SendMeshes(){
-
-    // Take out 500 first
-    var bestRatingsMeshes = sortedMeshes.splice(0,maxMeshesOnScene);
-
-    bestRatingsMeshes.sort(function(a,b){
-        return a.dist>b.dist?1:a.dist< b.dist?-1:0;
-    });
-
-    // Need to be sure to remove all other meshes
-    sendMeshesWithQuality(sortedMeshes,null);
-
-    // split into arrays - spread qualities
-    var arrays = splitArrayIntoArrays(bestRatingsMeshes,maxQualities);
-
-    // Load the bestRatingMeshes
-    for(var i = 0; i < maxQualities; i++){
-        sendMeshesWithQuality(arrays[i],i);
     }
 
 }
@@ -218,16 +194,26 @@ function sendMeshesWithQuality(_meshes,quality){
     });
 }
 
+function SendMeshes(){
 
-function splitArrayIntoArrays(a, n) {
-    var len = a.length,out = [], i = 0;
-    while (i < len) {
-        var size = Math.ceil((len - i) / n--);
-        out.push(a.slice(i, i += size));
+    // Take out 500 first
+    var bestRatingsMeshes = sortedMeshes.splice(0,maxMeshesOnScene);
+
+    bestRatingsMeshes.sort(function(a,b){
+        return a.dist>b.dist?1:a.dist< b.dist?-1:0;
+    });
+
+    // Need to be sure to remove all other meshes
+    sendMeshesWithQuality(sortedMeshes,null);
+
+    // split into arrays - spread qualities
+    var arrays = splitArrayIntoArrays(bestRatingsMeshes,maxQualities);
+
+    // Load the bestRatingMeshes
+    for(var i = 0; i < maxQualities; i++){
+        sendMeshesWithQuality(arrays[i],i);
     }
-    return out;
 }
-
 
 self.addEventListener('message', function(message) {
 

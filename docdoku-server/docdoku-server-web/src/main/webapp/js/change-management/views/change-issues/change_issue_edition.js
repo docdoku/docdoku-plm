@@ -47,13 +47,13 @@ define([
             this.$inputIssueAssignee.val(this.model.getAssignee());
         },
         fillPriorityList:function(){
-            for(priority in this.model.priorities){
+            for(var priority in this.model.priorities){
                 this.$inputIssuePriority.append("<option value='"+priority+"'"+">"+priority+"</option>")
             }
             this.$inputIssuePriority.val(this.model.getPriority());
         },
         fillCategoryList:function(){
-            for(category in this.model.categories){
+            for(var category in this.model.categories){
                 this.$inputIssueCategory.append("<option value='"+category+"'"+">"+category+"</option>")
             }
             this.$inputIssueCategory.val(this.model.getCategory());

@@ -1,3 +1,4 @@
+/*global APP_VIEW*/
 define([
 	"i18n!localization/nls/document-management-strings",
 	"common-objects/views/components/list_item",

@@ -1,3 +1,4 @@
+/*global APP_VIEW*/
 define([
     "common-objects/common/singleton_decorator",
     "common-objects/views/base",

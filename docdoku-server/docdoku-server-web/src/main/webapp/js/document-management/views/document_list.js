@@ -32,7 +32,7 @@ define([
                 try{
                     this.oTable.fnDestroy();
                 }catch(e){
-                    console.error(e)
+                    console.error(e);
                 }
 
             }

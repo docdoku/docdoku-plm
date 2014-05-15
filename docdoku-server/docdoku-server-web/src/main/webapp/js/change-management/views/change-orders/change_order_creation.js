@@ -55,13 +55,13 @@ function (template, i18n, ChangeOrderModel ,UserList, MilestoneList) {
             }
         },
         fillPriorityList:function(){
-            for(priority in this.model.priorities){
-                this.$inputOrderPriority.append("<option value='"+priority+"'"+">"+priority+"</option>")
+            for(var priority in this.model.priorities){
+                this.$inputOrderPriority.append("<option value='"+priority+"'"+">"+priority+"</option>");
             }
         },
         fillCategoryList:function(){
-            for(category in this.model.categories){
-                this.$inputOrderCategory.append("<option value='"+category+"'"+">"+category+"</option>")
+            for(var category in this.model.categories){
+                this.$inputOrderCategory.append("<option value='"+category+"'"+">"+category+"</option>");
             }
         },
 
@@ -125,7 +125,7 @@ function (template, i18n, ChangeOrderModel ,UserList, MilestoneList) {
                 assignee:this.$inputOrderAssignee.val(),
                 priority:this.$inputOrderPriority.val(),
                 category:this.$inputOrderCategory.val(),
-                milestoneId:parseInt(this.$inputOrderMilestone.val())
+                milestoneId:parseInt(this.$inputOrderMilestone.val(),10)
             };
 
             new ChangeOrderModel().save(data,{
@@ -165,19 +165,19 @@ function (template, i18n, ChangeOrderModel ,UserList, MilestoneList) {
 
         updateAffectedDocuments: function (model) {
             if(this._affectedDocumentsCollection.length){
-                model.saveAffectedDocuments(this._affectedDocumentsCollection)
+                model.saveAffectedDocuments(this._affectedDocumentsCollection);
             }
         },
 
         updateAffectedParts: function (model) {
             if(this._affectedPartsCollection.length){
-                model.saveAffectedParts(this._affectedPartsCollection)
+                model.saveAffectedParts(this._affectedPartsCollection);
             }
         },
 
         updateAffectedRequests: function (model) {
             if(this._affectedRequestsCollection.length){
-                model.saveAffectedRequests(this._affectedRequestsCollection)
+                model.saveAffectedRequests(this._affectedRequestsCollection);
             }
         }
     });

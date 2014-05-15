@@ -156,7 +156,7 @@ define([
             this.dataTable();
             this.eachChecked(function(view){
                 view.unCheck();
-            })
+            });
         },
 
         dataTable:function(){
