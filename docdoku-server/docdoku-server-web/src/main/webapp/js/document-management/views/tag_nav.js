@@ -64,10 +64,10 @@ define([
             }else {
                 this.show();
             }
-            if(APP_VIEW.$documentManagementMenu){
+            /*if(APP_VIEW.$documentManagementMenu){
                 APP_VIEW.$documentManagementMenu.find(".active").removeClass("active");
             }
-			this.$el.find(".header").first().addClass("active");
+			this.$el.find(".header").first().addClass("active");*/
 			return false;
 		}
 	});
