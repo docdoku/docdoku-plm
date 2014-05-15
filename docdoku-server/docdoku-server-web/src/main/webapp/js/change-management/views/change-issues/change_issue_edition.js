@@ -48,13 +48,13 @@ define([
         },
         fillPriorityList:function(){
             for(var priority in this.model.priorities){
-                this.$inputIssuePriority.append("<option value='"+priority+"'"+">"+priority+"</option>")
+                this.$inputIssuePriority.append("<option value='"+priority+"'"+">"+priority+"</option>");
             }
             this.$inputIssuePriority.val(this.model.getPriority());
         },
         fillCategoryList:function(){
             for(var category in this.model.categories){
-                this.$inputIssueCategory.append("<option value='"+category+"'"+">"+category+"</option>")
+                this.$inputIssueCategory.append("<option value='"+category+"'"+">"+category+"</option>");
             }
             this.$inputIssueCategory.val(this.model.getCategory());
         },

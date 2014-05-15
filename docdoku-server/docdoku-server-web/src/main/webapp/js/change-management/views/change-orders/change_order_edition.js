@@ -60,13 +60,13 @@ define([
         },
         fillPriorityList:function(){
             for(var priority in this.model.priorities){
-                this.$inputOrderPriority.append("<option value='"+priority+"'"+">"+priority+"</option>")
+                this.$inputOrderPriority.append("<option value='"+priority+"'"+">"+priority+"</option>");
             }
             this.$inputOrderPriority.val(this.model.getPriority());
         },
         fillCategoryList:function(){
             for(var category in this.model.categories){
-                this.$inputOrderCategory.append("<option value='"+category+"'"+">"+category+"</option>")
+                this.$inputOrderCategory.append("<option value='"+category+"'"+">"+category+"</option>");
             }
             this.$inputOrderCategory.val(this.model.getCategory());
         },
@@ -166,7 +166,7 @@ define([
                 assignee:this.$inputOrderAssignee.val(),
                 priority:this.$inputOrderPriority.val(),
                 category:this.$inputOrderCategory.val(),
-                milestoneId:parseInt(this.$inputOrderMilestone.val())
+                milestoneId:parseInt(this.$inputOrderMilestone.val(),10)
             };
 
             this.model.save(data,{
