@@ -1,3 +1,0 @@
-name: Documentation
-exclude: [bower_components]
-languages: ["en", "fr"]
