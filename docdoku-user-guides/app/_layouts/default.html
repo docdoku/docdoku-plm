@@ -1,3 +1,8 @@
+{% if site.lang == "en" %}
+    {% assign baseURL = page.relative %}
+{% else %}
+    {% assign baseURL = page.relative|add:'../' %}
+{% endif %}
 <!DOCTYPE html>
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
@@ -12,80 +17,48 @@
 
         <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
         <!-- build:js assets/scripts/vendor/modernizr.js -->
-        <script src="{{ site.baseurl_root }}/bower_components/modernizr/modernizr.js"></script>
+        <script src="{{ baseURL }}bower_components/modernizr/modernizr.js"></script>
         <!-- endbuild -->
 
         <!-- build:css assets/styles/main.css -->
-        <link rel="stylesheet" href="{{ site.baseurl_root }}/assets/styles/main.css">
+        <link rel="stylesheet" href="{{ baseURL }}assets/styles/main.css">
         <!-- endbuild -->
 </head>
     <body>
+    {{ site.lang }}<br />
+    {{ page.relative }}<br />
+    {{ baseURL }}
         <!--[if lt IE 7]>
             <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
         <![endif]-->
 
-        <!--
-        <header role="banner">
-            <h1>DocDokuPLM</h1>
-        </header>
-          -->
-
-        <div id="header" class="navbar navbar-fixed-top">
-            <div class="navbar-inner">
-                <div class="nav-collapse collapse">
-                    <div class="container-fluid">
-                        <img id="brand-logo" alt="docdoku_plm" src="assets/images/plm_logo2.png">
-                        <a class="brand" href="/">DocDoku<strong>PLM</strong></a>
-                    </div>
-                </div>
+        <nav id="header" class="navbar navbar-default" role="navigation">
+          <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+             <img id="brand-logo" alt="docdoku_plm" src="{{ page.relative }}assets/images/plm_logo2.png">
+            <a class="brand" href="/">DocDoku<strong>PLM</strong></a>
             </div>
+          </div>
+        </nav>
+       
+        <div id="page">
+            <h3>{{ page.title }}</h3>
+            <div id="content">
+                {{ content }}
+            </div>
+             <a href="{{ baseURL }}fr{{ page.url}}">{% t global.french %}</a> - 
+             <a href="{{ baseURL }}{{ page.url}}">{% t global.english %}</a>
         </div>
 
-        <div id="page">
-
-            <h3>{{ page.title }}</h3>
-            <!--
-                        <div id="menu">
-                            {% include navigation.html %}
-                        </div>
-            -->
-                        <div id="content">
-                            {{ content }}
-                        </div>
-
-
-                 <a href="{{ site.baseurl_root }}/fr{{ page.url}}">{% t global.french %}</a> - <a href="{{ site.baseurl_root }}{{ page.url}}">{% t global.english %}</a>
-
-                    </div>
-
-
-                            <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
-        <script>
-            var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];
-            (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
-            g.src='//www.google-analytics.com/ga.js';
-            s.parentNode.insertBefore(g,s)}(document,'script'));
-        </script>
-
         <!-- build:js assets/scripts/main.js -->
-        <script src="bower_components/jquery/jquery.js"></script>
-        <script src="assets/scripts/main.js"></script>
+        <script src="{{ baseURL }}bower_components/jquery/jquery.js"></script>
+        <script src="{{ baseURL }}assets/scripts/main.js"></script>
         <!-- endbuild -->
 
         <!-- build:js assets/scripts/vendor/bootstrap.js -->
-        <script src="bower_components/bootstrap/js/bootstrap-affix.js"></script>
-        <script src="bower_components/bootstrap/js/bootstrap-alert.js"></script>
-        <script src="bower_components/bootstrap/js/bootstrap-dropdown.js"></script>
-        <script src="bower_components/bootstrap/js/bootstrap-tooltip.js"></script>
-        <script src="bower_components/bootstrap/js/bootstrap-modal.js"></script>
-        <script src="bower_components/bootstrap/js/bootstrap-transition.js"></script>
-        <script src="bower_components/bootstrap/js/bootstrap-button.js"></script>
-        <script src="bower_components/bootstrap/js/bootstrap-popover.js"></script>
-        <script src="bower_components/bootstrap/js/bootstrap-typeahead.js"></script>
-        <script src="bower_components/bootstrap/js/bootstrap-carousel.js"></script>
-        <script src="bower_components/bootstrap/js/bootstrap-scrollspy.js"></script>
-        <script src="bower_components/bootstrap/js/bootstrap-collapse.js"></script>
-        <script src="bower_components/bootstrap/js/bootstrap-tab.js"></script>
+        <script src="{{ baseURL }}bower_components/bootstrap/js/affix.js"></script>
+        <script src="{{ baseURL}}bower_components/bootstrap/js/alert.js"></script>
         <!-- endbuild -->
 
 </body>

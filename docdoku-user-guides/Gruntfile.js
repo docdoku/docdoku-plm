@@ -33,21 +33,25 @@ module.exports = function (grunt) {
     // plugins configuration
     grunt.initConfig({
         yeoman: yeomanConfig,
-        watch: {
-            less: {
-                files: ['<%= yeoman.app %>/assets/styles/{,*/}*.less'],
-                tasks: ['less']
-            },
+        watch: {           
             livereload: {
                 files: [
-                    '<%= yeoman.app %>/*.md',
-                    '<%= yeoman.app %>/_i18n/{en,fr}/*.md',
+                    '<%= yeoman.app %>/**/*.md',
+                    '<%= yeoman.app %>/*.yml',
                     '<%= yeoman.app %>/{,*/}*.html',
+                    '<%= yeoman.app %>/_plugins/*.rb',
                     '{.tmp,<%= yeoman.app %>}/assets/styles/{,*/}*.css',
                     '{.tmp,<%= yeoman.app %>}/assets/scripts/{,*/}*.js',
-                    '<%= yeoman.app %>/assets/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
+                    '<%= yeoman.app %>/assets/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}',
+                    '<%= yeoman.app %>/assets/styles/{,*/}*.{scss,sass}'
                 ],
-                tasks: ['jekyll', 'livereload']
+                tasks: ['jekyll:jkl','less', 'copy:server','livereload']
+            },
+            less:{
+                files:[
+                    '<%= yeoman.app %>/assets/styles/main.less',    
+                ],
+                tasks:['less','livereload']
             }
         },
         connect: {
@@ -95,74 +99,68 @@ module.exports = function (grunt) {
             },
             server: '.tmp'
         },
-        jshint: {
-            options: {
-                jshintrc: '.jshintrc'
-            },
-            all: [
-                'Gruntfile.js',
-                '<%= yeoman.app %>/assets/scripts/{,*/}*.js',
-                '!<%= yeoman.app %>/assets/scripts/vendor/*'
-            ]
-        },
-        mocha: {
-            all: {
-                options: {
-                    run: true,
-                    urls: ['http://localhost:<%= connect.options.port %>/index.html']
-                }
-            }
-        },
-        recess: {
-            dist: {
-                options: {
-                    compile: true
-                },
-                files: {
-                    '<%= yeoman.app %>/assets/styles/main.css': ['<%= yeoman.app %>/assets/styles/main.less']
-                }
-            }
-        },
-        less: {
-          server: {           
+        less: {  
+        dist:{
+
+
             files: {
-              '<%= yeoman.jkl %>/assets/styles/main.css': ['<%= yeoman.app %>/assets/styles/main.less']
+              './.tmp/styles/main.css': ['<%= yeoman.app %>/assets/styles/main.less']
             }
-          },
-          dist: {
-            files: {
-              '<%= yeoman.dist %>/assets/styles/main.css': ['<%= yeoman.app %>/assets/styles/main.less']
-            }
-          }
+        }
         },
         jekyll: {
-            dist: {
+            jkl: {
                 src: '<%= yeoman.app %>',
                 dest: '<%= yeoman.jkl %>'
+            },
+            dist: {
+                src: '<%= yeoman.app %>',
+                dest: '<%= yeoman.dist %>'
             }
         },
-      
         copy: {
             dist: {
                 files: [{
                     expand: true,
                     dot: true,
-                    cwd: '<%= yeoman.jkl %>',
+                    cwd: '<%= yeoman.app%>',
                     dest: '<%= yeoman.dist %>',
                     src: [
                         '*.{ico,txt}',
                         '.htaccess',
                         'assets/images/{,*/}*.{webp,gif}',
+                        'bower_components/bootstrap/fonts/*',
                         'assets/fonts/*'
                     ]
+                },{
+                    expand: true,
+                    dot: true,
+                    cwd: '.tmp/styles/',
+                    dest: '<%= yeoman.dist %>/assets/styles/',
+                    src: ['*']
                 }]
             },
             server: {
                 files: [{
                     expand: true,
                     dot: true,
-                    cwd: '<%= yeoman.app %>/bower_components/font-awesome/build/assets/font-awesome/font/',
-                    dest: '<%= yeoman.app %>/assets/fonts/',
+                    cwd: '<%= yeoman.app%>',
+                    dest: '<%= yeoman.jkl %>',
+                    src: [
+                        '*.{ico,txt}',
+                        '.htaccess',
+                        'assets/images/{,*/}*.{webp,gif}',
+                        'bower_components/bootstrap/fonts/*',
+                        'bower_components/modernizr/modernizr.js',
+                        'bower_components/bootstrap/js/*.js ',
+                        'bower_components/jquery/jquery.js ',
+                        'assets/fonts/*'
+                    ]
+                },{
+                    expand: true,
+                    dot: true,
+                    cwd: '.tmp/styles/',
+                    dest: '<%= yeoman.dist %>/assets/styles/',
                     src: ['*']
                 }]
             }
@@ -180,7 +178,7 @@ module.exports = function (grunt) {
     grunt.renameTask('regarde', 'watch');
 
     // Server
-    grunt.registerTask('server', function (target) {
+    grunt.registerTask('serve', function (target) {
 
         if (target === 'dist') {
             return grunt.task.run(['build', 'open', 'connect:dist:keepalive']);
@@ -188,25 +186,21 @@ module.exports = function (grunt) {
 
         grunt.task.run([
             'clean:server',
+            'jekyll:jkl',
             'less',
             'copy:server',
-            'jekyll',
-            'copy:bower',
             'livereload-start',
             'connect:livereload',
-            'open',
+            'open:server',
             'watch'
         ]);
     });
 
-
-    // Build
     grunt.registerTask('build', [
         'clean:dist',
-        'clean:server',
+        'jekyll:dist',
         'less',
-        'copy:dist',        
-        'jekyll:dist'
+        'copy:dist'
     ]);
 
     
