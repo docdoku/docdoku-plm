@@ -1,0 +1,7 @@
+name: Documentation
+exclude: [bower_components]
+languages: ["en", "fr"]
+relative_permalinks: true
+baseurl: "http://localhost/wordpress/docdoku-plm/user-guides"
+
+

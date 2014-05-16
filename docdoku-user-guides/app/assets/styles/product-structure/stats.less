@@ -1,0 +1,47 @@
+#statsWin {
+    position: absolute;
+    right: 0px;
+    bottom: 0px;
+    overflow: hidden;
+    transition: width 0.5s, height 0.5s;
+    -moz-transition: width 0.5s, height 0.5s;
+    -webkit-transition: width 0.5s ease, height 0.5s ease;
+    -o-transition: width 0.5s, height 0.5s;
+
+    i#statsArrow {
+        float: left;
+        top: 0px;
+        left: 0px;
+        color: white;
+        margin-right: 2px;
+        font-size: 11px;
+    }
+
+    &.statsWinMinimized {
+        width: 15px;
+        height: 13px;
+
+        > #statsArrow {
+            -moz-transform: rotate(135deg);
+            -webkit-transform: rotate(135deg);
+            -o-transform: rotate(135deg);
+            margin-left: 0px;
+            margin-top: 0px;
+        }
+
+    }
+
+    &.statsWinMaximized {
+        width: 80px;
+        height: 48px;
+
+        > #statsArrow {
+            -moz-transform: rotate(-45deg);
+            -webkit-transform: rotate(-45deg);
+            -o-transform: rotate(-45deg);
+            margin-left: 2px;
+            margin-top: 2px;
+        }
+
+    }
+}

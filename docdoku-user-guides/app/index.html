@@ -1,0 +1,16 @@
+---
+layout: default
+title: "Index.html"
+---
+
+<p>  Lorem corpus ... </p>
+
+<p> Langue : {{ site.lang }}
+</p>
+
+<p> Liste des pages :<br>
+    {% for page in site.pages %}
+    <a href=".{{ page.url}}">{{ page.title }}</a> <br>
+
+    {% endfor %}
+</p>
