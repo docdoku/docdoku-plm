@@ -12,7 +12,6 @@ define([
         var options = pOptions || {};
         _.extend(this, options);
         var isMoving = false;
-        var defaultCameraPosition = new THREE.Vector3(-1000, 800, 1100);
         var currentLayer = null;
         var explosionCoeff = 0;
         var wireframe = false;
@@ -155,7 +154,7 @@ define([
         }
         function createTrackBallControls() {
             _this.trackBallCamera = new THREE.PerspectiveCamera(45, _this.$container.width() / _this.$container.height(), 1, 50000);
-            _this.trackBallCamera.position.set(defaultCameraPosition.x, defaultCameraPosition.y, defaultCameraPosition.z);
+            _this.trackBallCamera.position.set(App.SceneOptions.defaultCameraPosition.x, App.SceneOptions.defaultCameraPosition.y, App.SceneOptions.defaultCameraPosition.z);
             addLightsToCamera(_this.trackBallCamera);
             _this.trackBallControls = new THREE.TrackballControls(_this.trackBallCamera, _this.$container[0]);
             _this.trackBallControls.keys = [ 65 /*A*/, 83 /*S*/, 68 /*D*/ ];

@@ -19,26 +19,20 @@ var App = {
         maxAngle: Math.PI / 4,
         maxDist: 100000,
         minProjectedSize: 0.000001,
-        distanceRating: 0.7,
-        angleRating: 0.5,
-        volRating: 1.0
+        distanceRating: 0.7,//0.7,
+        angleRating: 0.6,//0.5,
+        volRating: 0.7//1.0
     },
 
     SceneOptions: {
         grid: false,
-        clouds: false,
-        skydome: false,
-        ground: false,
-        debugColors: false,
         skeleton: true,
-        zoomSpeed: 2,
-        rotateSpeed: 1,
-        panSpeed: 2,
+        zoomSpeed: 1.2,
+        rotateSpeed: 1.0,
+        panSpeed: 0.3,
         cameraNear: 10,
         cameraFar: 5E5,
-        showLayers: true,
-        defaultCameraPosition: {x: -21262.730734573677, y: 13214.484586955678, z: 9104.792300874204},
-        defaultTargetPosition: {x: -20486.55024906156, y: 12882.929921870797, z: 8910.845509277657}
+        defaultCameraPosition: {x: -1000, y: 800, z: 1100}//{x: -21262.730734573677, y: 13214.484586955678, z: 9104.792300874204}
     }
 
 };
@@ -328,16 +322,10 @@ define(
             valuesControllers.push(gui.add(App.WorkerManagedValues, 'volRating').min(0).max(1).step(0.01));
 
             valuesControllers.push(gui.add(App.SceneOptions,        'grid'));
-            valuesControllers.push(gui.add(App.SceneOptions,        'clouds'));
-            valuesControllers.push(gui.add(App.SceneOptions,        'ground'));
-            valuesControllers.push(gui.add(App.SceneOptions,        'skydome'));
-            valuesControllers.push(gui.add(App.SceneOptions,        'debugColors'));
             valuesControllers.push(gui.add(App.SceneOptions,        'skeleton'));
             valuesControllers.push(gui.add(App.SceneOptions,        'rotateSpeed').min(0).max(10).step(0.01));
             valuesControllers.push(gui.add(App.SceneOptions,        'zoomSpeed').min(0).max(10).step(0.01));
             valuesControllers.push(gui.add(App.SceneOptions,        'panSpeed').min(0).max(10).step(0.01));
-            valuesControllers.push(gui.add(App.SceneOptions,        'showLayers'));
-
 
             return this;
         }

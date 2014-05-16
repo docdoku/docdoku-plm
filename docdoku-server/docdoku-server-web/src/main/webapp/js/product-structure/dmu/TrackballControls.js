@@ -12,10 +12,6 @@ THREE.TrackballControls = function ( object, domElement ) {
 
 	this.screen = { left: 0, top: 0, width: 0, height: 0 };
 
-	this.rotateSpeed = 1.0;
-	this.zoomSpeed = 1.2;
-	this.panSpeed = 0.3;
-
 	this.noRotate = false;
 	this.noZoom = false;
 	this.noPan = false;
@@ -171,7 +167,7 @@ THREE.TrackballControls = function ( object, domElement ) {
 
 				axis.crossVectors( _rotateStart, _rotateEnd ).normalize();
 
-				angle *= _this.rotateSpeed;
+				angle *= App.SceneOptions.rotateSpeed;
 
 				quaternion.setFromAxisAngle( axis, -angle );
 
@@ -208,7 +204,7 @@ THREE.TrackballControls = function ( object, domElement ) {
 
 		} else {
 
-			factor = 1.0 + ( _zoomEnd.y - _zoomStart.y ) * _this.zoomSpeed;
+			factor = 1.0 + ( _zoomEnd.y - _zoomStart.y ) * App.SceneOptions.zoomSpeed;
 
 			if ( factor !== 1.0 && factor > 0.0 ) {
 
@@ -242,7 +238,7 @@ THREE.TrackballControls = function ( object, domElement ) {
 
 			if ( mouseChange.lengthSq() ) {
 
-				mouseChange.multiplyScalar( _eye.length() * _this.panSpeed );
+				mouseChange.multiplyScalar( _eye.length() * App.SceneOptions.panSpeed );
 
 				pan.copy( _eye ).cross( _this.object.up ).setLength( mouseChange.x );
 				pan.add( objectUp.copy( _this.object.up ).setLength( mouseChange.y ) );

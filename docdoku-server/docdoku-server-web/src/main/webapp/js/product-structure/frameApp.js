@@ -8,24 +8,19 @@ var App = {
         maxDist: 100000,
         minProjectedSize: 0.000001,
         distanceRating: 0.7,
-        angleRating: 0.7,
-        volRating: 1.0
+        angleRating: 0.6,
+        volRating: 0.7
     },
 
     SceneOptions: {
         postProcessing: false,
         grid: false,
-        ground: false,
-        debugColors: false,
-        skeleton: true,
         zoomSpeed: 2,
         rotateSpeed: 1,
         panSpeed: 2,
         cameraNear: 10,
         cameraFar: 5E5,
-        showLayers: true,
-        defaultCameraPosition: {x: -21262.730734573677, y: 13214.484586955678, z: 9104.792300874204},
-        defaultTargetPosition: {x: -20486.55024906156, y: 12882.929921870797, z: 8910.845509277657}
+        defaultCameraPosition: {x: -1000, y: 800, z: 1100}
     }
 
 };
