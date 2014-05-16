@@ -29,3 +29,7 @@ docdoku-client/build
 docdoku-cli/target
 docdoku-casperjs/*.png
 docdoku-casperjs/testsResults.xml
+
+docdoku-user-guides/dist/
+docdoku-user-guides/jkl/
+docdoku-user-guides/node_modules/
