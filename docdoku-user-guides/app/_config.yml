@@ -1,7 +1,5 @@
-name: Documentation
+encoding: utf-8
+name: "DocDoku user guides"
 exclude: [bower_components]
 languages: ["en", "fr"]
 relative_permalinks: true
-baseurl: "http://localhost/wordpress/docdoku-plm/user-guides"
-
-

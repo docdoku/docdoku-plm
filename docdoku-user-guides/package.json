@@ -1,7 +1,7 @@
 {
     "name": "jekyll-yo",
     "version": "1.0.0",
-    "dependencies": {},
+    "dependencies":{},
     "devDependencies": {
         "grunt": "~0.4.1",
         "grunt-contrib-copy": "~0.4.1",
@@ -22,8 +22,8 @@
         "grunt-svgmin": "0.1.0",
         "grunt-concurrent": "~0.1.0",
         "grunt-jekyll": "~0.3.6",
-        "grunt-recess": "~0.6.1",
-	"grunt-markdown-pdf" : "2.1.1",
+        "grunt-contrib-less" : "~0.6.1",
+	    "grunt-markdown-pdf" : "2.1.1",
         "matchdep": "~0.1.1"
         },
     "engines": {
