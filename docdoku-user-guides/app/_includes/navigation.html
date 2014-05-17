@@ -5,20 +5,19 @@
         <li><a href="{{ site.baseurl_root }}">{% t global.english %}</a></li>
 
 
-    {% if site.lang == "fr" %}
-    <li class="nav-header">Liens</li>
+    {% if site.lang == site.defaultlanguage %}
+        
+        <li class="nav-header">Links</li>
         {% for page in site.pages %}
-        {% capture link1 %}/fr{{ page.url}}{% endcapture %}
-        <li><a href="http://localhost:9000{{ link1 }}">{{ page.title }}</a></li>
+            <li><a href="{{ site.url }}{{ page.url}}">{{ page.title }}</a></li>
         {% endfor %}
 
-    {% else if site.lang == "en" %}
-    <li class="nav-header">Links</li>
+    {% else  %}
+    
+        <li class="nav-header">Liens</li>
         {% for page in site.pages %}
-        {% capture link2 %}{{ page.url  }}{% endcapture %}
-        <li><a href="http://localhost:9000{{ link2 }}">{{ page.title }}</a></li>
+            <li><a href="{{ site.url }}{{ site.lang }}{{ page.url}}">{{ page.title }}</a></li>
         {% endfor %}
-
 
     {% endif %}
 

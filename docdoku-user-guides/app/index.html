@@ -1,16 +1,17 @@
 ---
-layout: default
-title: "Index.html"
+layout: home
+title: "DocdokuPLM User guides"
+id: home
 ---
 
-<p>  Lorem corpus ... </p>
+Liste des guides
 
-<p> Langue : {{ site.lang }}
-</p>
-
-<p> Liste des pages :<br>
-    {% for page in site.pages %}
-    <a href=".{{ page.url}}">{{ page.title }}</a> <br>
-
-    {% endfor %}
+<p>
+	<ul>
+	    {% for page in site.pages %}
+	    	{% if page.id != 'home' %}
+    			<li><a href="{{site.url}}{{ site.lang }}{{ page.url }}">{{ page.title }}</a></li>
+    		{% endif %}
+	    {% endfor %}
+	</ul>
 </p>

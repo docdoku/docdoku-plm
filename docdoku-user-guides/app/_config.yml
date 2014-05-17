@@ -1,5 +1,7 @@
 encoding: utf-8
 name: "DocDoku user guides"
 exclude: [bower_components]
-languages: ["en", "fr"]
+languages: ["en", "en", "fr"]
+defaultlanguage: ["en"]
 relative_permalinks: true
+url: http://localhost:8080/docdoku-plm/user-guide/
