@@ -1,4 +1,8 @@
 #!/bin/sh
-
 # Usage release.sh  tagname
-tagname=$1
+cd $(dirname "$0");
+cd app;
+bower install;
+cd ..;
+npm install;
+grunt build;
