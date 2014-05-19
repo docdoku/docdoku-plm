@@ -1,26 +1,26 @@
+<h4>{% t global.navigation %}</h4>
 
-<ul class="nav well">
+<ul class="nav nav-pills nav-stacked">
+    <li class="dropdown">
+    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+    {% t global.version %} <span class="caret"></span>
+    </a>
+    <ul class="dropdown-menu">
+    {% for page in site.pages %}
+        <li><a href="{{ site.url }}{{ site.lang }}{{ page.url }}">{{ page.title }}</a></li>
+    {% endfor %}
+    </ul>
+    </li>
 
-        <li><a href="{{ site.baseurl_root }}fr">{% t global.french %}</a></li>
-        <li><a href="{{ site.baseurl_root }}">{% t global.english %}</a></li>
-
-
-    {% if site.lang == site.defaultlanguage %}
-        
-        <li class="nav-header">Links</li>
-        {% for page in site.pages %}
-            <li><a href="{{ site.url }}{{ page.url}}">{{ page.title }}</a></li>
+    <li class="dropdown">
+    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+    {% t global.languages %} <span class="caret"></span>
+    </a>
+    <ul class="dropdown-menu">
+        {% for lang in site.languages %}
+            <li><a href="{{ site.url }}{{ lang }}{{ page.url }}">{{ lang }}</a></li>
         {% endfor %}
-
-    {% else  %}
+    </ul>
+    </li>
     
-        <li class="nav-header">Liens</li>
-        {% for page in site.pages %}
-            <li><a href="{{ site.url }}{{ site.lang }}{{ page.url}}">{{ page.title }}</a></li>
-        {% endfor %}
-
-    {% endif %}
-
-   </ul>
-
-
+</ul> 

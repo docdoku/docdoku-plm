@@ -45,13 +45,13 @@ module.exports = function (grunt) {
                     '<%= yeoman.app %>/assets/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}',
                     '<%= yeoman.app %>/assets/styles/{,*/}*.{scss,sass}'
                 ],
-                tasks: ['jekyll:jkl','less', 'copy:server','livereload']
+                tasks: ['jekyll:jkl','less:server', 'copy:server','livereload']
             },
             less:{
                 files:[
-                    '<%= yeoman.app %>/assets/styles/main.less',    
+                    '<%= yeoman.app %>/assets/styles/*.less',    
                 ],
-                tasks:['less','livereload']
+                tasks:['less:server','livereload']
             }
         },
         connect: {
@@ -100,13 +100,16 @@ module.exports = function (grunt) {
             server: '.tmp'
         },
         less: {  
-        dist:{
-
-
-            files: {
-              './.tmp/styles/main.css': ['<%= yeoman.app %>/assets/styles/main.less']
+            server:{
+                files: {
+                  './jkl/assets/styles/main.css': ['<%= yeoman.app %>/assets/styles/main.less']
+                }
+            },
+            dist:{
+                files: {
+                  './.tmp/styles/main.css': ['<%= yeoman.app %>/assets/styles/main.less']
+                }
             }
-        }
         },
         jekyll: {
             jkl: {
@@ -137,7 +140,7 @@ module.exports = function (grunt) {
                     dot: true,
                     cwd: '.tmp/styles/',
                     dest: '<%= yeoman.dist %>/assets/styles/',
-                    src: ['*']
+                    src: ['*.css']
                 }]
             },
             server: {
@@ -156,12 +159,6 @@ module.exports = function (grunt) {
                         'bower_components/jquery/jquery.js ',
                         'assets/fonts/*'
                     ]
-                },{
-                    expand: true,
-                    dot: true,
-                    cwd: '.tmp/styles/',
-                    dest: '<%= yeoman.dist %>/assets/styles/',
-                    src: ['*']
                 }]
             }
         },

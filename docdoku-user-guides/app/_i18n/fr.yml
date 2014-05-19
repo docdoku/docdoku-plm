@@ -1,5 +1,9 @@
 global:
-  english: Anglais
-  french: Français
+  en: Anglais
+  fr: Français
+  navigation: Navigation
+  version: Version
+  languages: Langues
+  home: Home
 pages:
   home: Home
