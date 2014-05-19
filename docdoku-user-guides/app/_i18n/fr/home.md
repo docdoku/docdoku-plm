@@ -1,1 +1,1 @@
-Bienvenue sur la page de documentation de DocdokuPLM. Ce site a pour but de décrire les composants de l'interface et les aspets métiers.
+Bienvenue sur la page de documentation de DocdokuPLM. Ce site a pour but de décrire les composants de l'interface et les aspets métiers pour les différentes versions de l'application.

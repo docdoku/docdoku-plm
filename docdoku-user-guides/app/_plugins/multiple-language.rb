@@ -23,7 +23,7 @@ module Jekyll
       puts
       puts "Building site for default language: \"#{self.config['lang']}\" to: #{self.dest}"
       process_org
-      languages.drop(1).each do |lang|
+      languages.each do |lang|
 
         # Build site for language lang
         self.dest = self.dest + "/" + lang
