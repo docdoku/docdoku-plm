@@ -4,6 +4,8 @@ global:
   navigation: Navigation
   version: Version
   languages: Language
-  home: Accueil
+  home: Home
+  available_versions: Available versions
+  user_guide: User guide
 pages:
   home: Home

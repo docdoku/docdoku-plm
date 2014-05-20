@@ -8,9 +8,11 @@
 		
 		{% tf home.md %}
 		
+		<h4>{% t global.available_versions %}</h4>
+
 		<ul>
-		    {% for page in site.pages %}
-				<li><a href="{{site.url}}{{ site.lang }}{{ page.url }}">{{ page.title }}</a></li>	
+		    {% for version in site.versions %}
+				<li><a href="{{site.url}}{{ site.lang }}/{{ version }}/">{{ version }}</a></li>	
 		    {% endfor %}
 		</ul>
 
