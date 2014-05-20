@@ -195,7 +195,6 @@ The product management module offers, among others, the following features:
 * 3D digital mock-up visualization
 * Parts metadata
 * Part-document links
-* ...
 
 ##Product structure
 The product structure is a breakdown showing the various items that compose a product.
@@ -228,9 +227,16 @@ The assembly tab allows to edit the composition of the assembly if obviously the
 
 ###Product creation
 The creation of a product involves supplying an identifier and a part number, filling a description is optional.
+
 The part number designates the root part of your product.
 
 {% image /assets/images/documentation/en/product_creation.png "Product creation form"%}
+
+The new product will be added to the product list. Selecting an item from that list proposes two actions: deletion and baseline creation.
+
+Baselines are kinds of snapshots of the entire product structure at a given version.
+
+{% image /assets/images/documentation/en/image40.png "Baseline creation form"%}
 
 ##Product explorer
 The product structure is displayed as a tree view where each node represents an assembly which is expandable.
@@ -305,7 +311,7 @@ The arrows at the bottom left are used to visualize the different changes done i
 
 Each document provides a permanent link where you see details of its latest revision. To get there, you should simply click on the title of the document window.
 
-{% image /assets/images/documentation/en/image22.png "Document details window"%}
+{% image /assets/images/documentation/en/image22.png %}
 
 You can explore all properties of the document as well as visualize their attached files.The viewer supports a large number of formats: pdf, jpg, mp4, doc...
 
