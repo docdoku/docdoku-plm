@@ -184,7 +184,6 @@ public class PartRevision implements Serializable, Comparable<PartRevision>, Clo
     public boolean isCheckedOut() {
         return (checkOutUser != null);
     }
-
     
     public User getAuthor() {
         return author;
@@ -360,6 +359,8 @@ public class PartRevision implements Serializable, Comparable<PartRevision>, Clo
         return status;
     }
 
+    public void setStatus(RevisionStatus status) { this.status = status; }
+
     public boolean isReleased(){
         return status==RevisionStatus.RELEASED;
     }
@@ -370,7 +371,7 @@ public class PartRevision implements Serializable, Comparable<PartRevision>, Clo
 
     @Override
     public String toString() {
-        return partMaster.getNumber() + "-" + version;
+        return getPartNumber() + "-" + version;
     }
 
     @Override

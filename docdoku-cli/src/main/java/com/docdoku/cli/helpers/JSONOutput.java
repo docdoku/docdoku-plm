@@ -105,6 +105,7 @@ public class JSONOutput {
         Date checkoutDate = pr.getCheckOutDate();
         Long timeStamp = checkoutDate != null ? checkoutDate.getTime() : null;
 
+        status.put("isReleased", pr.isReleased());
         status.put("isCheckedOut", pr.isCheckedOut());
         status.put("partNumber", pr.getPartMasterNumber());
         status.put("checkoutUser", login);
