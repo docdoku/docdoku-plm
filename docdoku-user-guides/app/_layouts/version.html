@@ -6,8 +6,17 @@
         <h3>{% t global.user_guide %} : {{ page.title }}</h3>
         <div id="content">{{ content }}</div>
       </div>
-      <div class="col-xs-6 col-md-4">{% include navigation.html %}</div>
+      <div class="col-xs-6 col-md-4">{% include navigation_version.html %}</div>
     </div>
 </div>
+
+<script type="text/javascript">
+window.onload = function (){
+	var $toc = $("#markdown-toc");
+	$toc.remove();
+	$("#index-title").after($toc);
+	$toc.addClass("nav");
+};
+</script>
 
 {% include footer.html %}
