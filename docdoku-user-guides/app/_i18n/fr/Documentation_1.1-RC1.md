@@ -154,317 +154,322 @@ Quand des droits sont appliqués sur un élément, un cadenas est visible en fin
 {% image /assets/images/documentation/fr/image15.png "accès complet"%}
 {% image /assets/images/documentation/fr/image21.png "lecture seule "%}
 
-##Combined Access Rights
+##Combinaison et priorité des droits
 
-Important concepts:
+Une notion importante à retenir : les droits définis sur une entité pour un utilisateur prime sur tous les autres droits (à l’exception de l’utilisateur désactivé).
 
-* Access rights priority order:
-1. User rights on a document / part
-2. Group rights on a document / part
-3. User rights on the workspace
-4. Group rights on the workspace
-5. Rights of the most permissive group
-* Access rights are not use for users disable on workspace.
-* The administrator of the workspace exceeds these rights.
+De plus, l’administrateur de l’espace de travail outrepasse ces droits.
 
-Below the summary tables of possible combinations.
+Ci-après les tableaux récapitulatifs des combinaisons possibles.
 
-###User present in one groups
+###Utilisateur présent directement dans l’espace de travail ET dans un groupe
 
-| Group rights | User rights on Workspace | Effective rights |
-| ------------ | ------------------------ | ---------------- |
-| full access  | read only                | read only        |
-| full access  | full access              |  full access     |
-| read only    | read only                |  read only       |
-| read only    | full access              | full access
+| Groupe        | Utilisateur       | Droits effectifs |
+| ------------- | ----------------- | ---------------- |
+| accès complet | lecture seule     | lecture seule    |
+| accès complet | accès complet     |  accès complet   |
+| lecture seule | lecture seule     |  read only       |
+| lecture seule | accès complet     | accès complet
 
 
-###User present in several groups
+###Utilisateur présent dans plusieurs groupes
 
-| Group I rights | Group II rights | Effective rights |
+| Groupe I       | Groupe II       | Droits effectifs |
 | -------------- | --------------- | ---------------- |
-| full access    | full access     | full access      |
-| full access    | read only       | full access      |
-| full access    | disable         | full access      |
-| read only      | disable         | read only        |
-| read only      | read only       | read only
+| accès complet  | accès complet   | accès complet    |
+| accès complet  | lecture seule   | accès complet    |
+| accès complet  | désactivé       | accès complet    |
+| lecture seule  | désactivé       | lecture seule    |
+| lecture seule  | lecture seule   | lecture seule
 
-###User access rights for a document/part
+###Droits définis au niveau entité (document/article) pour un utilisateur (présent directement dans l’espace de travail)
 
-| User rights on Workspace | User Rights on Document/Part | Effective Rights |
-| ------------------------ | ---------------------------- | ---------------- |
-| full access              | full access                  | full access      |
-| full access              | read only                    | read only        |
-| full access              | forbidden                    | forbidden        |
-| read only                | full access                  | full access      |
-| read only                | read only                    | read only        |
-| read only                | forbidden                    | forbidden
+| Utilisateur    | Droit d’accès entité | Droits effectifs |
+| -------------- | -------------------- | ---------------- |
+| accès complet  | accès complet        | accès complet    |
+| accès complet  | lecture seule        | lecture seule    |
+| accès complet  | interdit             | interdit         |
+| lecture seule  | accès complet        | accès complet    |
+| lecture seule  | lecture seule        | lecture seule    |
+| lecture seule  | interdit             | interdit
 
-###Group access rights for a document/part
+###Droits définis au niveau entité pour un groupe
 
-| Group rights on Workspace | Group Rights on Document/Part | Effective Rights |
-| ------------------------- | ----------------------------- | ---------------- |
-| full access               | full access                   | full access      |
-| full access               | read only                     | read only        |
-| full access               | forbidden                     | forbidden        |
-| read only                 | full access                   | full access      |
-| read only                 | read only                     | read only        |
-| read only                 | forbidden                     | forbidden        |
+| Groupe          | Droit d’accès entité  | Résultat         |
+| --------------- | --------------------- | ---------------- |
+| accès complet   | accès complet         | accès complet    |
+| accès complet   | lecture seule         | lecture seule    |
+| accès complet   | interdit              | interdit         |
+| lecture seule   | accès complet         | accès complet    |
+| lecture seule   | lecture seule         | lecture seule    |
+| lecture seule   | interdit              | interdit
 
-#Product Management
-DocDokuPLM is a management system for collaborative product development which purpose is to help members of the same organization create and exchange data around products.
+#Gestion des produits
+DocDokuPLM est donc un système de gestion collaborative de produits dont le but est d’aider les membres d’une même organisation à gérer et partager l'ensemble des actions et des itérations apportées à un produit tout au long de son cycle.
 
-The product management module offers, among others, the following features:
+Vous retrouvez, entre autres, les fonctionnalités suivantes :
 
-* Configuration management
-* Product structure exploration
-* 3D digital mock-up visualization
-* Parts metadata
-* Part-document links
-* ...
+* Gestion des versions successives d'un même produit (notion de ligne de base) permettant la prise en compte des demandes de modifications ou d’évolutions
+* Recherche d'un produit
+* Visualisation 3D d’un produit
+* Partage de documents liés à des produits
 
-##Product structure
-The product structure is a breakdown showing the various items that compose a product.
-These components are named parts, they are assemblies if they are made of other parts. Within DocDokuPLM parts can be created from scratch or imported from CAD tools.
+La création d’articles et de produits est expliquée dans le paragraphe qui suit.
 
-###Part template creation
-Sometimes, it’s interesting to ensure that parts are always filled with predefined properties or their reference number respects a given formalism. To enforce such constraints you have to create parts from templates.
+##La structure produit
+Il s'agit de rendre compte de la structure d'un produit et de l'organisation de ses composants.
+Les composants sont appelés articles. DocDokuPLM permet de créer des articles à partir de rien ou bien à partir de modèles existants.
 
-###Part creation
-As seen, part creation panel has an optional template property but there are also several other input fields like name, description, attributes, workflow (see paragraph below) or ACL (Access Control List).
+###Création de modèle d’article
+DocdokuPLM offre la possibilité de créer des modèles types d’article et de leur associer des attributs, des fichiers et un masque de saisie permettant de faciliter la gestion de nomenclature des articles qui auront ce modèle.
+Cette opération permet par la suite de créer des articles reposant sur ces modèles.
 
-{% image /assets/images/documentation/fr/part.png "Part creation"%}
+###Création d’article
+Lors de la création d’un article, vous pouvez donc renseigner un modèle d’article. L’article ainsi créé aura les mêmes propriétés que celles du modèle (fichiers, attributs et liens).
 
-The newly created part will be added to the list.
+Vous pouvez tout aussi bien lui associer de façon individuelle des attributs, un workflow afin de gérer le cycle de vie de l’article et régir l'accès à cet article pour les autres collaborateurs de l’espace de travail.
 
-{% image /assets/images/documentation/fr/part_list.png "Part list"%}
+{% image /assets/images/documentation/fr/image05.png "Création d'un article"%}
 
-From the list, a click on the part number will bring the details window to the front. From that screen, you could modify (if you checked out the part) the following elements: attributes, the CAD file and links to documents.
+L’article créé sera rajouté à la liste des articles déjà présents.
 
-By selecting a part, you can apply a set of actions including:
+{% image /assets/images/documentation/fr/image19.png "Liste des articles"%}
 
-* Deletion
-* check-out / undo check-out / check-in
-* Access rights management
+En cliquant sur le numéro d’un article, une fenêtre affichera ses détails. Vous pouvez en modifier les éléments suivants : les attributs, le fichier CAD ou encore les liens vers des documents.
 
-###Part assembly
-The assembly tab allows to edit the composition of the assembly if obviously the part is not a leaf of the product structure.
+En sélectionnant un article, vous pouvez lui appliquer un ensemble d’actions à savoir :
 
-{% image /assets/images/documentation/fr/part_assembly.png "Part Assembly"%}
+* Suppression
+* Réservation  / annulation de la réservation / libération
+* Gestion de ses droits d’accès
 
-###Product creation
-The creation of a product involves supplying an identifier and a part number, filling a description is optional.
-The part number designates the root part of your product.
+###Assemblage d’articles
+Lors de la modification d’un article vous pouvez définir son assemblage.
 
-{% image /assets/images/documentation/fr/product_creation.png "Product creation form"%}
+Un assemblage est composé d'autres articles.
+{% image /assets/images/documentation/fr/image24.png "Définition de l’assemblage"%}
 
-##Product explorer
-The product structure is displayed as a tree view where each node represents an assembly which is expandable.
+###Création de produit
+Au moment de la création d’un produit l’identifiant du produit ainsi que le numéro de l’article sont obligatoires, la description est par contre optionnelle.
 
-{% image /assets/images/documentation/fr/tree_structure.png "Tree structure of the product"%}
+Le numéro d’article est l’élément de tête de votre produit. Celui-ci peut être un simple article ou un assemblage d’articles.
 
-The node itself is clickable which has the effect to display its main properties on the bottom right. Sometimes, especially for complex products, locating a part in the tree could be cumbersome. To facilitate this operation, there is a search bar on the top left that allows to easily find a part from its number.
+{% image /assets/images/documentation/fr/image12.png "Formulaire de création de produit"%}
 
-{% image /assets/images/documentation/fr/search_bar.png "Search bar"%}
+Le produit créé sera rajouté à la liste des produits. En sélectionnant un produit dans la liste, les actions possibles sont sa suppression et la création d’une ligne de base.
 
-As an alternative, you can select the part directly on the 3D scene.
+La création d’une ligne de base permet d’enregistrer à un instant donné une version du produit et donc de gérer différentes versions d’un même produit.
 
-{% image /assets/images/documentation/fr/visualization.png "3D model visualization"%}
+{% image /assets/images/documentation/fr/image02.png "Création d’une ligne de base"%}
 
-One click on a 3D object select the part on the structure (part properties are displayed in the right hand panel) and all its ancestors will be highlighted in yellow.
-This feature is useful when the user wants to find a part which he ignores the part number.
+##Explorateur produit
+Via la structure produit, la possibilité vous est offerte de rechercher et localiser l'information relative à un article donné. Cependant, pour les produits complexes comprenant un très grand nombre d'articles, la tâche peut s'avérer fastidieuse.
 
-The possible actions in the 3D visualization mode are:
+Prenez l'exemple du parcours de la structure produit représentée ci-dessous.
+
+{% image /assets/images/documentation/fr/image08.png "Structure produit"%}
+
+Afin de facilite l'opération, DocDokuPLM intègre une barre de recherche qui permet de trouver facilement un article à partir de son numéro.
+
+Une alternative au moteur de recherche est la navigation dans le modèle géométrique 3D permettant ainsi de localiser rapidement un article. En cliquant sur une pièce, les résultats s’affichent sur la partie gauche de la page. L’article associé à cette pièce sera mis en valeur (surligné en jaune) ainsi que tous ses ascendants. Les informations relatives à cet article sont aussi affichées dans le menu de droite.
+
+Cette solution peut s’avérer utile dans le cas où l’utilisateur ne connaît pas l’identifant de l’article, dans ce cas l’utilisateur peut cliquer directement sur la pièce dans le rendu 3D.
+
+{% image /assets/images/documentation/fr/image22.png "Navigation dans le modèle 3D"%}
+
+Parmi les actions possibles dans le mode de visualisation en 3D, vous retrouverez :
 
 * Creating markers for example to report a design issue
-* Creating layers that hold a set of markers
-* Export 3D visualization of a part. Produces the html code to embed in other web pages (like YouTube, or Google Maps)
+* La création de marqueurs permettant par exemple de rapporter un dysfonctionnement d’une pièce sur le schéma 3D. Notez qu’un calque peut comporter plusieurs marqueurs.
+* Export de l’article qui produit le code html à intégrer dans d’autres pages web.
 
-#Document Management
-DocDokuPLM has a document management module that includes a comprehensive versioning system (master, revision and iteration), functions for sharing, publishing documents, treeview and tags organisation...
-In the following paragraph, we will detail all of these functionalities.
+#Gestion des documents
+DocDokuPLM offre aussi une gestion complète de documents avec prise en compte des versions, le partage et la publication, une organisation arborescente ainsi qu'une configuration fine des droits d’accès.
 
-{% image /assets/images/documentation/fr/image00.png "Document management menu"%}
+Dans ce qui suit nous détaillons l’ensemble de ces fonctions.
 
-##Document template
+{% image /assets/images/documentation/fr/image09.png "Menu de gestion de documents"%}
 
-###Document template creation
+##Modèles de document
 
-You can create templates that will be used to instantiate documents. You can choose to restrict document name by filling a mask format and selecting the identifier generation option. This will lead to an automatic creation of identifiers for documents that use the template.
+###Création d’un modèle de document
 
-{% image /assets/images/documentation/fr/image25.png "Document template creation form"%}
+Vous pouvez créer des modèles de documents qui serviront à la création des documents. Au moment de la création d’un modèle vous pouvez choisir de gérer la nomenclature des documents en déterminant un masque de saisie et en cochant la génération de l’identifiant. Ceci entraînera la création automatique d’identifiants pour les documents qui utiliseront ce modèle.
 
-###Adding files and attributes
+{% image /assets/images/documentation/fr/image31.png "Formulaire de création de modèle de document"%}
 
-You can define attribute types in the template as well as attach files to it. All documents created using the same template will have the same attribute set and attached files. Attribute values will be set on those documents and obviously files will evolve as they are simply themselves template files.
+###Ajout de fichiers et d’attributs
 
-{% image /assets/images/documentation/fr/image42.png "Attaching files to the template"%}
+Vous pouvez définir des types d’attributs dans le modèle et lui associer des fichiers. Tous les documents qui seront créés avec ce modèle auront ces mêmes attributs, il faudra alors renseigner leur valeur, et fichiers. Ces derniers pourront bien sûr évoluer, le fichier positionné au niveau du modèle n’étant qu’un squelette.
 
-## Document creation
+{% image /assets/images/documentation/fr/image41.png "Rattachement de fichiers au modèle"%}
 
-All documents must belong to a folder. To create a new document in a specific directory, you must select first the directory then click on the ‘new document’ button.
+## Création de document
 
-{% image /assets/images/documentation/fr/image09.png "Document creation form"%}
+Tout document doit appartenir à un dossier. Afin de créer un document dans un répertoire spécifique, il faut se placer dessus en cliquant sur son nom dans le menu de gauche.
 
-When creating a document, you can edit its attributes, specify a workflow and set access rights. Note that you will not be able to upload files or link the current document to another one until you finish the creation process.
+{% image /assets/images/documentation/fr/image35.png "Formulaire de création de document"%}
 
-Once the document created you can perform the following actions:
+Vous pouvez éditer les attributs, spécifier un workflow et définir des droits d’accès dès la création du document. Le chargement des fichiers et l’édition des liens vers d’autres documents ne pourra se faire qu’une fois le document créé.
 
-* Check in / check out the document
-* Delete the document
-* Subscribe to document state change notifications. In this case the user receives an email each time a change is made on the document by other users
-* Subscribe to iteration change notifications. The user receives a notification when there is a new iteration on the document
-* Adding tag to documents, for example, classifying a document as important
-* Enabling access rights to documents
-* Creating a new version of document
-* Public or private document publishing
+Une fois créé vous pourrez effectuer les actions suivantes :
 
-##Modifying document
+* Réservation du document / annulation de la réservation/ libération du document
+* Suppression du document
+* Abonnement aux changements d’état du document. Dans ce cas l’utilisateur reçoit un mail à chaque fois qu’une modification est apportée sur le document par d'autres utilisateurs
+* Abonnement aux changements d’itération du document. L’utilisateur reçoit également un mail de notification  en cas de nouvelle itération sur le document
+* Ajout d'un libellé au document, par exemple         le classer comme important
+* Activation des droits d’accès à ce document
+* Création d’une nouvelle version du document
+* Publication du document selon deux modes public ou privé
 
-In order to modify a document, you must first reserve it. You can access the document modification window by clicking on its name.
+##Modification d’un document
 
-The arrows at the bottom left are used to visualize the different changes done in previous iterations.
+Pour modifier un document, il vous faut d'abord le réserver. Vous pouvez accéder à la fenêtre de modification en cliquant sur le nom d’un document dans une liste.
 
-{% image /assets/images/documentation/fr/image10.png "Document details window"%}
+Les flèches situées en bas à gauche servent à visualiser les différents changements apportés lors des itérations précédentes.
 
-##Document viewer
+Vous pouvez accéder au dossier qui contient le document en cliquant sur le lien à droite de “Dossier”.
 
-Each document provides a permanent link where you see details of its latest revision. To get there, you should simply click on the title of the document window.
+{% image /assets/images/documentation/fr/image28.png "Fenêtre d’informations relatives à un document"%}
 
-{% image /assets/images/documentation/fr/image22.png "Document details window"%}
+##Visualisation de document
 
-You can explore all properties of the document as well as visualize their attached files.The viewer supports a large number of formats: pdf, jpg, mp4, doc...
+Pour chaque document, il est possible d’ouvrir un nouvel onglet contenant les détails de sa dernière révision. Pour y accéder, il vous suffit de cliquer sur le titre contenu dans la fenêtre de détails.
 
-{% image /assets/images/documentation/fr/image02.png "Document viewer"%}
+{% image /assets/images/documentation/fr/image06.png %}
 
-Files not supported by the viewer will be downloaded.
+Vous pouvez visualiser les différents documents créés ainsi que les fichiers qui leur sont rattachés. La visionneuse prend en charge un nombre important de formats : pdf, jpg, mp4, doc…
 
-##Document conversion
+{% image /assets/images/documentation/fr/image30.png "Visionneur de document"%}
 
-In addition to the mentioned features, DocDokuPLM can convert documents into pdf. The majority of word processing formats are supported.
+Les fichiers non pris en charge par la visionneuse seront téléchargés.
 
-##Document checkout/checkin
+##Conversion de document
 
-To lock a document for modification, just select it and then push the checkout button:
+Outre les fonctionnalités citées, DocDokuPLM peut convertir les documents en pdf. La majorité des formats utilisés avec les logiciels de traitement de texte sont pris en charge.
 
-{% image /assets/images/documentation/fr/image16.png "Document lock : check-out / undo check-out / check-in"%}
+##Réservation des documents
 
-A checked out document cannot be edited by other users. To validate the modifications you will have to check in it. Otherwise, you can cancel the change with the help of the undo check-out action.
+En sélectionnant un document via sa case à cocher, vous pouvez le réserver.
 
-When releasing (check-in operation) the document, you have the opportunity to enter an optional revision note.
+{% image /assets/images/documentation/fr/image14.png "Réservation d’un document : réserver / annuler la réservation / libérer"%}
 
-{% image /assets/images/documentation/fr/image19.png "Window of revision note"%}
+Une fois réservé le document ne sera pas éditable par les autres utilisateurs. Il vous faudra alors le libérer une fois les modifications effectuées, ou annuler la réservation si vous ne souhaitez pas enregistrer les changements apportés.
 
-##Search a document
+Si vous choisissez de libérer le document, une fenêtre vous proposera d’entrer la note de révision. Cette information n’est pas obligatoire, vous pouvez passer cette étape en cliquant sur “Ignorer”.
 
-We distinguish two types of search:
+{% image /assets/images/documentation/fr/image03.png "Fenêtre de note de révision"%}
 
-###Quick search
+##Recherche de document
 
-The quick search bar appears on top of the document list. It lets you quickly find a document from its name.
+Nous distinguons deux types de recherche :
 
-{% image /assets/images/documentation/fr/image08.png "Quick search bar"%}
+###Recherche rapide
 
-###Advanced search
+La barre de recherche rapide se présente au-dessus de la liste des documents. Elle permet de trouver rapidement un document à partir de son nom.
 
-You can access the advanced search in two ways:
+{% image /assets/images/documentation/fr/image42.png "Barre de recherche rapide"%}
 
-* Through the “Search” link from the left menu
-* Through the small arrow from the quick search bar
+###Recherche avancée
 
-{% image /assets/images/documentation/fr/image30.png "Advanced search of documents"%}
+Vous pouvez accéder à la recherche avancée de deux manières :
 
-This advanced search allows you to find a document from its title, type, reference, version, author, creation date or content files.
+* En cliquant sur le lien ‘Rechercher’ présent sur le menu gauche.
+* En cliquant sur la petite flèche sur la barre de ‘Recherche Rapide’.
 
-##Tags
+{% image /assets/images/documentation/fr/image25.png "Recherche avancée de documents"%}
 
-You have the possibility to tag documents. To do so, select one or more documents and push the tag icon:
+Cette recherche avancée permet de trouver un document à partir de son titre, son type, sa référence, sa version, son auteur, sa date de création ou encore le contenu des fichiers chargés.
 
-{% image /assets/images/documentation/fr/image27.png %}
+##Libellés
 
-From the tag management window, you can affect existing tags or create new ones.
+Vous pouvez associer des libellés à vos documents. En sélectionnant un document via sa case à cocher l’icône suivante apparaît :
 
-{% image /assets/images/documentation/fr/image34.png "Tag window"%}
+{% image /assets/images/documentation/fr/image26.png %}
 
-To display the documents which have been tagged, select the given tag from the left menu.
+Une fois cliqué, une fenêtre s’affiche et vous pouvez associer des libellés à ce document. Vous pouvez choisir parmi les libellés existants, ou en créer de nouveaux.
 
-{% image /assets/images/documentation/fr/image37.png "Selection of a tag"%}
+{% image /assets/images/documentation/fr/image11.png "Fenêtre des libellés"%}
 
-You can delete a tag by clicking on the right arrow into the area of the tag, then click on “Delete”. Only the tag will be removed, the associated documents will remain unchanged.
+Pour afficher tous les documents liés à un libellé, il vous suffit de choisir le libellé en question dans le menu de gauche.
 
-{% image /assets/images/documentation/fr/image39.png "Delete a label"%}
+{% image /assets/images/documentation/fr/image34.png "Sélection d’un libellé"%}
 
-##“Checked out” and “Tasks” links
+Vous pouvez supprimer un libellé en cliquant sur la flèche dans la zone du libellé, puis sur “Supprimer”. Les documents associés à ce libellé ne seront pas supprimés.
 
-To ensure fast access to documents, you will find from the left menu two shortcut links:
+{% image /assets/images/documentation/fr/image38.png "Suppression d’un libellé"%}
 
-* Checked out: this link displays all the documents reserved by the current user
-* Tasks: Shows the documents on which the user is directly involved in a workflow
+##Liens réservés et tâches
 
-{% image /assets/images/documentation/fr/image06.png "Checked out and Tasks links"%}
+Afin d’assurer un accès rapide aux documents qui concerne un utilisateur donné, vous trouverez dans le menu de gauche deux liens :
 
-#Workflow Management
+* Réservés : ce lien affichera l’ensemble des documents réservés par l’utilisateur.
+* Tâches : sert à visualiser les différents documents sur lesquels l’utilisateur est directement impliqué dans un workflow.
 
-A workflow is a representation of the various tasks that need to be completed and their interactions. These operations are assigned to different users of the same workspace and are related to an identified document or part.
+#Gestion des workflows
 
-##Roles
+Un workflow, ou flux des travaux, est la représentation des opérations affectées à un document ou un article. Ces opérations peuvent être effectuées par différents utilisateurs d’un même espace de travail.
 
-DocDokuPLM Workflows are role-based. That means to increase the applicability of any workflow models, task assignees are not expressed directly by user names but rather by roles.
+##Les rôles
 
-Thus, the first step involved in workflow creations is to define the roles used inside the workspace. These roles can optionally be mapped to a default user assignee. Anyway when the workflow model will be instantiated and attached to a document or a part we will have the opportunity to refine those mappings.
+Pour créer un modèle de workflow, il faut au préalable créer des rôles dans l’espace de travail. Ces rôles peuvent être assignés par défaut à des utilisateurs, mais peuvent être redéfinis lors de l'affectation du workflow à la création d'un document ou d'un article.
 
-{% image /assets/images/documentation/fr/image32.png "Roles definition panel"%}
+{% image /assets/images/documentation/fr/image00.png "Création des rôles"%}
 
-##Workflow template
+##Modèle de workflow
 
-A workflow template or model consists of a serie of activities. Each activity contains tasks to be done and an associated label which represents the state the entity when the workflow current step will be the activity. Those tasks can be performed in series or in parallel.
+Un modèle de workflow est composé d'un état initial, d'une série d'activités et d'un état final. Chaque activité contient des tâches à effectuer. Ces tâches peuvent être effectuées en série, ou en parallèle.
 
-For a serial activity, the tasks are performed sequentially. If one task is rejected, the current activity is stopped.
+Pour une activité de type série, les tâches sont réalisées dans l'ordre et le rejet d'une tâche entraîne l'arrêt de l'activité courante.
 
-For a parallel activity, the tasks are open simultaneously and as a consequence can be closed in any order. A rejected task does not necessarily lead to stop the current activity. In effect, parallel activities have an additional property which is the number of done tasks needed to progress to the next activity. This number ranges from 1 to the total number of tasks.
+Pour une activité en parallèle, les tâches sont déroulées indépendamment de l'ordre dans lequel elles ont été créées. Il faut alors définir un nombre de tâche à compléter validant l’activité.
 
-A validated activity results to start the next one. An unvalidated activity results in the suspension of the entire workflow.
+Une activité validée entraîne le démarrage de la suivante. Une activité invalidée entraînera la suspension du workflow.
 
-In case of an unvalidated activity, the workflow will continue to the recovery activity if this one has been previously defined on the template.
+En cas d’invalidation, le workflow reprendra à l’activité de relance si celle ci a été auparavant définie.
 
-A workflow template can be changed at any time, but that will not have any incidence to the already instantiated workflows.
+Un modèle de workflow peut être modifié à n’importe quel instant mais cela n’entrainera pas la modification des workflows instanciés depuis celui-ci.
 
-{% image /assets/images/documentation/fr/image12.png "Creation of a workflow template"%}
+{% image /assets/images/documentation/fr/image20.png "Création d'un modèle de workflow"%}
 
-##Workflow instance
+##Instance de workflow
 
-When creating a document or a part, the author can choose the workflow template to apply. All the roles implied have then to be resolved.
+Chaque modèle de workflow créé peut être instancié à la création d'un document ou d'un article. Les rôles peuvent être alors redéfinis.
 
-{% image /assets/images/documentation/fr/image41.png "Definition of the roles during the creation of a document"%}
+{% image /assets/images/documentation/fr/image23.png "Définition des rôles à la création d’un document"%}
 
-Immediately after the creation of a document (or a part), the associated workflow (if any) starts on the first activity.
+Une fois le document (ou l’article) créé, le workflow démarre sur la première activité. Lorsqu'une tâche est ouverte, un mail est envoyé au responsable de la tâche en cours. Le responsable peut alors l'approuver ou la rejeter et signer.
 
-##Lifecycle state
+##Etat du cycle de vie
 
-Once an activity is started, every task assignee receives a mail which includes a full description of the task to complete.
+Une fois la première activité démarrée, les utilisateurs désignés effectuent les opérations renseignées.
 
-{% image /assets/images/documentation/fr/image46.png "Workflow instantiated on a document"%}
+{% image /assets/images/documentation/fr/image43.png "Workflow instancié sur un document"%}
 
-A running task can be marked as done or rejected if:
+Les autres utilisateurs peuvent aussi s'abonner aux changements d'état du workflow[m], un mail de notification leur est alors envoyé.
 
-* the responsible of the task has downloaded at least once the document file
-* the document or the part is released (not checked out)
+Une tâche peut être approuvée ou rejetée si :
 
-All the users who have subscribed to state change notification will be informed.
+* Le responsable a téléchargé au moins une fois un fichier associé
+* Le document ou l'article est libéré.
 
-#Sharing and publishing
 
-##Publishing
+#Options de partage et de publication
 
-Each document and part can be published. To do so, click on the  icon to the right of the table line, then the following window will appear.
+##Publication
 
-{% image /assets/images/documentation/fr/image21.png "Publishing window"%}
+Chaque document et article peut être publié. Pour cela il faut cliquer sur l’icône située à droite de chaque ligne, la fenêtre suivante apparaît alors.
 
-As soon as the ON/OFF button will be pressed, the document or part will be publicly accessible from the Internet.
+{% image /assets/images/documentation/fr/image45.png "Fenêtre de publication d’un document"%}
 
-##Private access
+Une fois le document publié en cliquant sur le bouton ON/OFF, il sera accessible depuis internet sans qu’une authentification soit nécessaire.
 
-You may also want to generate a private link protected by a password and with an optional expiration date. For that, just fill the password and/or expiration date and push the share button.
+##Accès privé
 
-{% image /assets/images/documentation/fr/image07.png "Private share"%}
+Vous pouvez aussi protéger vos publications en utilisant l’accès privé. L’opération se fait dans la même fenêtre que le partage publique. Vous pouvez choisir une date d’expiration et un mot de passe. Ces deux champs ne sont pas obligatoires, mais seront vérifiés à l’accès si vous les renseignés.
+
+Ensuite vous devez cliquer sur “Partager” pour générer un lien. Ce lien est offusqué, il n’est pas devinable.
+
+{% image /assets/images/documentation/fr/image40.png "Lien généré lors d’un partage privé"%}
 
