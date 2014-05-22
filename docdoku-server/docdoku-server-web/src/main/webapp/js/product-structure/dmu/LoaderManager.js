@@ -48,7 +48,7 @@ define(["views/progress_bar_view"], function (ProgressBarView) {
                         totalLoaded = 0,
                         xhrLength = 0;
 
-                    this.addEventListener("loadstart", function (pe) {
+                    this.addEventListener("loadstart", function () {
                         xhrCount++;
                     }, false);
 
@@ -80,7 +80,7 @@ define(["views/progress_bar_view"], function (ProgressBarView) {
             };
         },
 
-        parseFile: function (filename, texturePath, callback) {
+        parseFile: function (filename, texturePath, callbacks) {
 
             var material = this.material;
 
@@ -108,7 +108,7 @@ define(["views/progress_bar_view"], function (ProgressBarView) {
 
                         combined.computeBoundingSphere();
 
-                        callback(new THREE.Mesh(combined, material));
+                        callbacks.success(combined, material);
 
                     });
 
@@ -122,7 +122,7 @@ define(["views/progress_bar_view"], function (ProgressBarView) {
 
                     this.StlLoader.addEventListener('load', function (stl) {
                         var geometry = stl.content;
-                        callback(new THREE.Mesh(geometry, material));
+                        callbacks.success(geometry, material);
                     });
                     this.StlLoader.load(filename);
 
@@ -130,17 +130,14 @@ define(["views/progress_bar_view"], function (ProgressBarView) {
 
                 case 'js':
                 case 'json':
-
                     if (this.BinaryLoader == null) {
                         this.BinaryLoader = new THREE.BinaryLoader();
                     }
 
-
-
                     this.BinaryLoader.load(filename, function (geometry, materials) {
                         var _material = new THREE.MeshPhongMaterial( {color: materials[0].color,  overdraw: true } );
                         geometry.dynamic = false;
-                        callback(new THREE.Mesh(geometry, _material));
+                        callbacks.success(geometry, _material);
                     }, texturePath);
 
                     break;

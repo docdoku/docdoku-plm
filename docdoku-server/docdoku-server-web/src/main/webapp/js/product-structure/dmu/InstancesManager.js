@@ -31,7 +31,7 @@ function (LoaderManager, async) {
             }
         }, false);
 
-        this.loadedInstances = [];                                                                                      // Store all loaded geometries and materials
+
         this.trashInstances = [];                                                                                       // Index isntances for removal
         this.xhrQueue=null;
         // Stat to show
@@ -41,6 +41,7 @@ function (LoaderManager, async) {
         this.xhrsDone = 0;
 
         this.partIterations = [];
+        var loadedInstances = [];                                                                                       // Store all loaded geometries and materials
         var loaderManager = new LoaderManager({progressBar: true});
         var loaderIndicator = $("#product_title > img.loader");
 
@@ -110,19 +111,18 @@ function (LoaderManager, async) {
             // Else : load the instance
             var quality = instance.qualities[directive.quality];
             var texturePath = quality.substring(0, quality.lastIndexOf('/'));
-            loaderManager.parseFile(quality,texturePath,function(mesh){
-                _this.xhrsDone++;
+            loaderManager.parseFile(quality,texturePath,{
+                success:function(geometry, material){
+                    _this.xhrsDone++;
 
-                mesh.uuid = instance.id;
-                mesh.geometry.verticesNeedUpdate=true;
-                mesh.partIterationId = instance.partIterationId;
-                applyMatrix(mesh,instance.matrix);
-                _this.loadedInstances.push({
-                    id: directive.id,
-                    quality: directive.quality,
-                    mesh: mesh
-                });
-                callback();
+                    loadedInstances.push({
+                        id: directive.id,
+                        quality: directive.quality,
+                        geometry: geometry,//THREE.BufferGeometryUtils.fromGeometry(geometry),
+                        materials: material
+                    });
+                    callback();
+                }
             });
         }
 
@@ -146,11 +146,13 @@ function (LoaderManager, async) {
             sceneManager.scene.remove(object);
         }
         function applyMatrix(mesh,matrix){
-            var m = new THREE.Matrix4(matrix[0],matrix[1],matrix[2],matrix[3],
-                                      matrix[4],matrix[5],matrix[6],matrix[7],
-                                      matrix[8],matrix[9],matrix[10],matrix[11],
-                                      matrix[12],matrix[13],matrix[14],matrix[15]);
-            mesh.applyMatrix(m);
+            mesh.applyMatrix(adaptMatrix(matrix));
+        }
+        function adaptMatrix(matrix){
+            return new THREE.Matrix4(matrix[0],matrix[1],matrix[2],matrix[3],
+                matrix[4],matrix[5],matrix[6],matrix[7],
+                matrix[8],matrix[9],matrix[10],matrix[11],
+                matrix[12],matrix[13],matrix[14],matrix[15]);
         }
         /**
          * Update worker context
@@ -173,7 +175,7 @@ function (LoaderManager, async) {
         function tick(){
             if(!needsWorkerEval || evalRunning){return;}                                                                // Nothing to load or eval is currently running
 
-            var allFinished = !_this.xhrQueue.running() && !_this.xhrQueue.length() && !_this.loadedInstances.length;
+            var allFinished = !_this.xhrQueue.running() && !_this.xhrQueue.length() && !loadedInstances.length;
             // Wait for abort
             if(aborting){
                 aborting = !allFinished;
@@ -201,7 +203,7 @@ function (LoaderManager, async) {
             }
         }
 
-        this.getLoadedGeometries = function (n) { return _this.loadedInstances.splice(0, n || 1); };
+        this.getLoadedGeometries = function (n) { return loadedInstances.splice(0, n || 1); };
         this.getTrash = function () { return _this.trashInstances; };
         this.clearTrash = function () { _this.trashInstances = [];};
 
@@ -212,7 +214,11 @@ function (LoaderManager, async) {
         };
         this.loadMeshFromFile = function(fileName, callback){
             var texturePath = fileName.substring(0, fileName.lastIndexOf('/'));
-            loaderManager.parseFile(fileName, texturePath, callback);
+            loaderManager.parseFile(fileName, texturePath, {
+                success:function(geometry, material){
+                    callback(new THREE.Mesh(geometry, material));
+                }
+            });
         };
         this.loadFromTree = function(component) {
             loaderIndicator.show();
@@ -221,8 +227,9 @@ function (LoaderManager, async) {
                 _.each(instances, function (instanceRaw) {
                     if(instancesIndexed[instanceRaw.id]){
                         worker.postMessage({fn: "check", obj: instanceRaw.id});
-                        //worker.postMessage({check:instanceRaw.id});
                         return ;
+                    }else{
+                        instanceRaw.matrix = adaptMatrix(instanceRaw.matrix);
                     }
                     instancesIndexed[instanceRaw.id]=instanceRaw;
                     /*
@@ -232,9 +239,7 @@ function (LoaderManager, async) {
                     instanceRaw.mesh = mesh;
                     instanceRaw.currentQuality = null;
                     instanceRaw.mesh.partIterationId = instanceRaw.partIterationId;
-
-                    applyMatrix(instanceRaw.mesh,instanceRaw.matrix);
-
+                    instanceRaw.mesh.applyMatrix(instanceRaw.matrix);
                     instanceRaw.position=mesh.position.clone();
                     instanceRaw.qualities =  findQualities(instanceRaw.files);
                     var radius =  findRadius(instanceRaw.files);
@@ -272,7 +277,6 @@ function (LoaderManager, async) {
         };
         this.clear = function(){
             worker.postMessage({fn: "clear", obj: null});
-            //worker.postMessage({clear:true});
             for(var i in instancesIndexed){
                 var instance = instancesIndexed[i];
                 cleanAndRemoveMesh(instance.mesh);

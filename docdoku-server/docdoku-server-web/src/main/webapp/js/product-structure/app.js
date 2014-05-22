@@ -16,7 +16,7 @@ var App = {
 
     WorkerManagedValues: {
         maxInstances: 500,
-        maxAngle: Math.PI / 4,
+        maxAngle: Math.PI / 6,
         maxDist: 100000,
         minProjectedSize: 0.000001,
         distanceRating: 0.7,//0.7,
@@ -312,7 +312,7 @@ define(
             var valuesControllers = [];
             this.$el.append(gui.domElement);
 
-            valuesControllers.push(gui.add(App.WorkerManagedValues, 'maxInstances').min(0).max(1000).step(1));
+            valuesControllers.push(gui.add(App.WorkerManagedValues, 'maxInstances').min(0).max(5000).step(1));
             valuesControllers.push(gui.add(App.WorkerManagedValues, 'maxAngle').min(0).max(Math.PI).step(0.01));
             valuesControllers.push(gui.add(App.WorkerManagedValues, 'maxDist').min(1).max(100000).step(100));
             valuesControllers.push(gui.add(App.WorkerManagedValues, 'minProjectedSize').min(0).max(window.innerHeight).step(1));

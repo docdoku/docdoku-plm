@@ -365,7 +365,7 @@ define([
             loadedStuff.forEach(function(stuff){
                 var instance = instancesManager.getInstance(stuff.id);
                 var oldMesh = meshesIndexed[stuff.id];
-                var newMesh = stuff.mesh;
+                var newMesh = createMeshFromLoadedStuff(stuff);
                 if(oldMesh){
                     _this.switches++;
                     _this.scene.remove(oldMesh);
@@ -387,6 +387,16 @@ define([
                 applyMeasureStateOpacity(newMesh);
                 _this.reFrame();
             });
+        }
+
+        function createMeshFromLoadedStuff(stuff){
+            var mesh = new THREE.Mesh(stuff.geometry,stuff.materials);
+            mesh.uuid = stuff.id;
+            mesh.partIterationId = stuff.partIterationId;
+            mesh.geometry.verticesNeedUpdate=true;
+            var instance = instancesManager.getInstance(stuff.id);
+            mesh.applyMatrix(instance.matrix);
+            return mesh;
         }
 
         /**
