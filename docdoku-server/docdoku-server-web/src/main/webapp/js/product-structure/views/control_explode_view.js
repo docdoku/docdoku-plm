@@ -1,4 +1,4 @@
-/*global sceneManager*/
+/*global App*/
 define(
     [
         "text!templates/control_explode.html",
@@ -25,7 +25,7 @@ define(
         },
 
         explode:function(e){
-            sceneManager.explodeScene(e.target.value);
+            App.sceneManager.explodeScene(e.target.value);
         }
 
     });

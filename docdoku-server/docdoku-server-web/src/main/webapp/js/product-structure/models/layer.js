@@ -1,4 +1,4 @@
-/*global sceneManager*/
+/*global App*/
 define([
     "models/marker",
     "collections/marker_collection",
@@ -38,9 +38,9 @@ define([
         setEditingMarkers: function(editingMarkers) {
             this.set('editingMarkers', editingMarkers);
             if(editingMarkers){
-                sceneManager.startMarkerCreationMode(this);
+                App.sceneManager.startMarkerCreationMode(this);
             }else{
-                sceneManager.stopMarkerCreationMode(this);
+                App.sceneManager.stopMarkerCreationMode(this);
             }
         },
 
@@ -129,7 +129,7 @@ define([
         },
 
         _addMarkerToScene: function(marker) {
-            sceneManager.layerManager.addMeshFromMarker(marker, this.material);
+            App.sceneManager.layerManager.addMeshFromMarker(marker, this.material);
         },
 
         _removeAllMarkersFromScene: function() {
@@ -137,7 +137,7 @@ define([
         },
 
         _removeMarkerFromScene: function(marker) {
-            sceneManager.layerManager.removeMeshFromMarker(marker);
+            App.sceneManager.layerManager.removeMeshFromMarker(marker);
         },
 
         getHexaColor: function() {

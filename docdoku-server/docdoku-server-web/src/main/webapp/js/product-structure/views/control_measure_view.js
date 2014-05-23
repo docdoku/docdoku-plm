@@ -1,4 +1,4 @@
-/*global sceneManager*/
+/*global App*/
 define(
     [
         "text!templates/control_measure.html",
@@ -21,7 +21,7 @@ define(
             this.points=[];
             this.line=null;
             var that = this ;
-            sceneManager.setMeasureListener(function(point){
+            App.sceneManager.setMeasureListener(function(point){
                 that.onSceneClick(point);
             });
             this.geometry = new THREE.SphereGeometry(10, 10, 10);
@@ -49,7 +49,7 @@ define(
             var sphere = new THREE.Mesh(this.geometry,this.material);
             sphere.overdraw = true;
             sphere.position.set(point.x,point.y,point.z);
-            sceneManager.scene.add(sphere);
+            App.sceneManager.scene.add(sphere);
             return sphere;
         },
 
@@ -66,10 +66,10 @@ define(
                 new THREE.Vector3(this.points[0].point.x,this.points[0].point.y,this.points[0].point.z),
                 new THREE.Vector3(this.points[1].point.x,this.points[1].point.y,this.points[1].point.z)
             ];
-            sceneManager.scene.remove(this.line);
+            App.sceneManager.scene.remove(this.line);
             this.line = new THREE.Line(geometry,material);
             this.line.overdraw = true;
-            sceneManager.scene.add(this.line);
+            App.sceneManager.scene.add(this.line);
         },
 
         showResult:function(){
@@ -111,13 +111,13 @@ define(
         clear:function(){
             this.$result.html("");
             if(this.points[0] && this.points[0].mesh){
-                sceneManager.scene.remove(this.points[0].mesh);
+                App.sceneManager.scene.remove(this.points[0].mesh);
             }
             if(this.points[1] && this.points[1].mesh){
-                sceneManager.scene.remove(this.points[1].mesh);
+                App.sceneManager.scene.remove(this.points[1].mesh);
             }
             if(this.line){
-                sceneManager.scene.remove(this.line);
+                App.sceneManager.scene.remove(this.line);
                 this.line = null;
             }
             this.points=[];
@@ -128,12 +128,12 @@ define(
             if(!this.state){
                 this.clear();
             }
-            sceneManager.setMeasureState(data.value);
+            App.sceneManager.setMeasureState(data.value);
         },
 
         lineDistance:function(){
-            var xs = 0;
-            var ys = 0;
+            var xs;
+            var ys;
 
             xs = this.points[1].point.x - this.points[0].point.x;
             xs = xs * xs;

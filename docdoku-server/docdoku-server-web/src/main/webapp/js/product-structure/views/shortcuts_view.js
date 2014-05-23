@@ -25,11 +25,11 @@ define(
 
         clicked:function(){
             var cimv;
-            switch (sceneManager.stateControl) {
-                case sceneManager.STATECONTROL.PLC:
+            switch (App.sceneManager.stateControl) {
+                case App.sceneManager.STATECONTROL.PLC:
                     cimv = new ControlsInfosModalView({isPLC:true, isTBC:false});
                     break;
-                case sceneManager.STATECONTROL.TBC:
+                case App.sceneManager.STATECONTROL.TBC:
                     cimv = new ControlsInfosModalView({isPLC:false, isTBC:true});
                     break;
             }

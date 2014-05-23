@@ -1,4 +1,4 @@
-/*global sceneManager*/
+/*global App*/
 define(["text!templates/control_markers.html","i18n!localization/nls/product-structure-strings"],function(template,i18n){
 
     var ControlMarkersView = Backbone.View.extend({
@@ -17,18 +17,18 @@ define(["text!templates/control_markers.html","i18n!localization/nls/product-str
         },
 
         markerZoomLess:function(){
-            if(sceneManager.layerManager.markerScale.x>0.2) {
-                sceneManager.layerManager.markerScale.addScalar(-0.1);
-                sceneManager.layerManager.rescaleMarkers();
+            if(App.sceneManager.layerManager.markerScale.x>0.2) {
+                App.sceneManager.layerManager.markerScale.addScalar(-0.1);
+                App.sceneManager.layerManager.rescaleMarkers();
             }
         },
         markerState:function(){
-            sceneManager.layerManager.changeMarkerState();
+            App.sceneManager.layerManager.changeMarkerState();
         },
 
         markerZoomMore:function(){
-            sceneManager.layerManager.markerScale.addScalar(0.1);
-            sceneManager.layerManager.rescaleMarkers();
+            App.sceneManager.layerManager.markerScale.addScalar(0.1);
+            App.sceneManager.layerManager.rescaleMarkers();
         },
 
         render:function(){

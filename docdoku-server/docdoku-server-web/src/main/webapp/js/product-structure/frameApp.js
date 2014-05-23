@@ -1,7 +1,20 @@
-var sceneManager, instancesManager;
+var sceneManager;
 
 // Global Namespace for the application
 var App = {
+    debug: false,
+    instancesManager : null,
+    sceneManager : null,
+
+    setDebug:function(state){
+        App.debug = state;
+        if(state){
+            $("body").addClass("debug");
+        }else{
+            $("body").removeClass("debug");
+        }
+    },
+
     WorkerManagedValues: {
         maxInstances: 200,
         maxAngle: Math.PI / 4,
@@ -36,13 +49,13 @@ define(["dmu/SceneManager","dmu/InstancesManager"],
 
             window.config_spec = "latest";
 
-            instancesManager = new InstancesManager();
-            sceneManager = new SceneManager();
-            sceneManager.init();
+            App.instancesManager = new InstancesManager();
+            App.sceneManager = new SceneManager();
+            App.sceneManager.init();
             if (!_.isUndefined(SCENE_INIT.pathForIFrame)) {
                 var instancesUrl = "/api/workspaces/" + APP_CONFIG.workspaceId + "/products/" + APP_CONFIG.productId + "/instances?configSpec=" + window.config_spec + "&path=" + SCENE_INIT.pathForIFrame;
-                instancesManager.start();
-                instancesManager.loadFromTree({
+                App.instancesManager.start();
+                App.instancesManager.loadFromTree({
                     getInstancesUrl:function (){
                         return instancesUrl;
                     }

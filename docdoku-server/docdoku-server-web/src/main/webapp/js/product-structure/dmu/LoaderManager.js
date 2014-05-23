@@ -1,4 +1,4 @@
-/*global sceneManager, ColladaLoader2*/
+/*global ColladaLoader2*/
 define(["views/progress_bar_view"], function (ProgressBarView) {
 
     var LoaderManager = function (options) {
