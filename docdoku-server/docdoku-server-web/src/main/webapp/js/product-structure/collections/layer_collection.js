@@ -29,7 +29,7 @@ define([
         },
 
         onEmpty:function(){
-            sceneManager.stopMarkerCreationMode();
+            App.sceneManager.stopMarkerCreationMode();
         }
 
     });

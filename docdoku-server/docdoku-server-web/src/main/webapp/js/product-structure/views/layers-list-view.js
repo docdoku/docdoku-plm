@@ -1,4 +1,4 @@
-/*global sceneManager*/
+/*global App*/
 define([
     "views/layer-item-view",
     "views/layer-header-view",
@@ -70,7 +70,7 @@ define([
 
         addLayer: function(e) {
             e.stopPropagation();
-            var layer = sceneManager.layerManager.createLayer();
+            var layer = App.sceneManager.layerManager.createLayer();
             layer.set('editingName', true);
         }
 

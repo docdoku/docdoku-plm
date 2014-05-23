@@ -1,4 +1,4 @@
-/*global sceneManager, APP*/
+/*global App*/
 
 define(["dmu/LoaderManager","lib/async"],
 function (LoaderManager, async) {
@@ -40,15 +40,14 @@ function (LoaderManager, async) {
         this.errors = 0;
         this.xhrsDone = 0;
 
-        this.partIterations = [];
+        var instancesIndexed=[];
         var loadedInstances = [];                                                                                       // Store all loaded geometries and materials
         var loaderManager = new LoaderManager({progressBar: true});
-        var loaderIndicator = $("#product_title > img.loader");
+        var loaderIndicator = $("#product_title").find("img.loader");
 
         var currentDirectivesCount = 0;
         var needsWorkerEval = false;
         var evalRunning = false;
-        var instancesIndexed=[];
         var timer = null;
         var ticker = null;                                                                                              // Timer for ticker
         var aborting = false;
@@ -91,6 +90,10 @@ function (LoaderManager, async) {
          */
         function loadProcess(directive, callback){
             var instance = _this.getInstance(directive.id);
+            if(!instance){
+                setTimeout(callback,0);
+                return;
+            }
             if (directive.quality == undefined) {
                 _this.trashInstances.push(instance);
                 setTimeout(callback,0);
@@ -114,9 +117,12 @@ function (LoaderManager, async) {
             loaderManager.parseFile(quality,texturePath,{
                 success:function(geometry, material){
                     _this.xhrsDone++;
+                    geometry.computeFaceNormals();
+                    geometry.computeVertexNormals();
 
                     loadedInstances.push({
                         id: directive.id,
+                        partIterationId: instance.partIterationId,
                         quality: directive.quality,
                         geometry: geometry,//THREE.BufferGeometryUtils.fromGeometry(geometry),
                         materials: material
@@ -143,16 +149,13 @@ function (LoaderManager, async) {
             return r || 1;
         }
         function cleanAndRemoveMesh(object){
-            sceneManager.scene.remove(object);
-        }
-        function applyMatrix(mesh,matrix){
-            mesh.applyMatrix(adaptMatrix(matrix));
+            App.sceneManager.scene.remove(object);
         }
         function adaptMatrix(matrix){
             return new THREE.Matrix4(matrix[0],matrix[1],matrix[2],matrix[3],
-                matrix[4],matrix[5],matrix[6],matrix[7],
-                matrix[8],matrix[9],matrix[10],matrix[11],
-                matrix[12],matrix[13],matrix[14],matrix[15]);
+                                    matrix[4],matrix[5],matrix[6],matrix[7],
+                                    matrix[8],matrix[9],matrix[10],matrix[11],
+                                    matrix[12],matrix[13],matrix[14],matrix[15]);
         }
         /**
          * Update worker context
@@ -160,7 +163,7 @@ function (LoaderManager, async) {
         function updateWorker() {
             evalRunning=true;
             currentDirectivesCount=0;
-            var sceneContext = sceneManager.getSceneContext();
+            var sceneContext = App.sceneManager.getSceneContext();
             if(App.debug){console.log("[InstancesManager] Updating worker");}
             worker.postMessage({fn: "context", obj: {
                 camera: sceneContext.camPos,
@@ -168,9 +171,6 @@ function (LoaderManager, async) {
                 WorkerManagedValues: App.WorkerManagedValues,
                 debug: App.debug
             }});
-            /*worker.postMessage({context:
-                                        {camera: sceneContext.camPos,
-                                            target: sceneContext.target || {} }});*/
         }
         function tick(){
             if(!needsWorkerEval || evalRunning){return;}                                                                // Nothing to load or eval is currently running
@@ -276,11 +276,12 @@ function (LoaderManager, async) {
             });
         };
         this.clear = function(){
-            worker.postMessage({fn: "clear", obj: null});
             for(var i in instancesIndexed){
                 var instance = instancesIndexed[i];
-                cleanAndRemoveMesh(instance.mesh);
+                _this.trashInstances.push(instance);
+                //cleanAndRemoveMesh(instance.mesh);
             }
+            worker.postMessage({fn: "clear", obj: null});
             instancesIndexed=[];
         };
         this.planNewEval= function(){                                                                                   // Launch a new eval on the worker when you can

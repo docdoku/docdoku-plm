@@ -1,4 +1,3 @@
-/*global instancesManager,Instance*/
 define(["common-objects/utils/date", "i18n!localization/nls/product-structure-strings"],
 function (date, i18n) {
 

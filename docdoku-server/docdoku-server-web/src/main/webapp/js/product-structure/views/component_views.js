@@ -81,10 +81,10 @@ define(function() {
 
         onChangeCheckbox: function(event) {
             if (event.target.checked){
-                instancesManager.loadFromTree(this.model);
+                App.instancesManager.loadFromTree(this.model);
             }
             else{
-                instancesManager.unLoadFromTree(this.model);
+                App.instancesManager.unLoadFromTree(this.model);
             }
         },
 
@@ -152,10 +152,10 @@ define(function() {
 
         onChangeCheckbox: function(event) {
             if (event.target.checked){
-                instancesManager.loadFromTree(this.model);
+                App.instancesManager.loadFromTree(this.model);
             }
             else{
-                instancesManager.unLoadFromTree(this.model);
+                App.instancesManager.unLoadFromTree(this.model);
             }
         },
 

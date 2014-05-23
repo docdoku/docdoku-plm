@@ -1,4 +1,4 @@
-/*global App,sceneManager,Instance,instancesManager,requestAnimationFrame*/
+/*global App,Instance,requestAnimationFrame*/
 define([
     "views/marker_create_modal_view",
     "views/blocker_view",
@@ -24,8 +24,9 @@ define([
         var meshMarkedForSelection = null;
 
         this.stateControl = null;
-        this.STATECONTROL = { PLC: 0, TBC: 1};
+        this.STATECONTROL = { PLC: 0, TBC: 1, ORB: 2};
         this.scene = new THREE.Scene();
+        this.renderer = null;
         this.cameraObject = null;                                                                                       // Represent the eye
         this.layerManager = null;
 
@@ -41,7 +42,7 @@ define([
 
         function initDOM() {
             _this.$container = $('div#container');
-            _this.$container[0].setAttribute( 'tabindex', -1 );
+            _this.$container[0].setAttribute( 'tabindex', -1);
             _this.$sceneContainer = $("#scene_container");
             _this.$blocker = new BlockerView().render().$el;
             _this.$container.append(_this.$blocker);
@@ -133,6 +134,7 @@ define([
         function initControls() {
             createPointerLockControls();
             createTrackBallControls();
+            createOrbitControls();
         }
         function pointerLockChange(){
             _this.pointerLockControls.enabled = (document.pointerLockElement === _this.$container[0]) ||
@@ -140,21 +142,19 @@ define([
                                                 (document.webkitPointerLockElement === _this.$container[0]);
         }
         function createPointerLockControls() {
-            if (havePointerLock) {
-                // Hook pointer lock state change events
-                document.addEventListener('pointerlockchange', pointerLockChange, false);
-                document.addEventListener('mozpointerlockchange', pointerLockChange, false);
-                document.addEventListener('webkitpointerlockchange', pointerLockChange, false);
-                _this.$container[0].addEventListener('dblclick', bindPointerLock, false);
-            }
-
-            _this.pointerLockCamera = new THREE.PerspectiveCamera(45, _this.$container.width() / _this.$container.height(), 1, 50000);
+            _this.pointerLockCamera = new THREE.PerspectiveCamera(45, _this.$container.width() / _this.$container.height(), App.SceneOptions.cameraNear, App.SceneOptions.cameraFar);
             _this.pointerLockControls = new THREE.PointerLockControls(_this.pointerLockCamera);
             addLightsToCamera(_this.pointerLockCamera);
         }
+        function createOrbitControls() {
+            _this.orbitCamera = new THREE.PerspectiveCamera(45, _this.$container.innerWidth / _this.$container.innerHeight, App.SceneOptions.cameraNear, App.SceneOptions.cameraFar);
+            _this.orbitCamera.position.copy(App.SceneOptions.defaultCameraPosition);
+            addLightsToCamera(_this.orbitCamera);
+            _this.orbitControls = new THREE.OrbitControls(_this.orbitCamera, _this.$container[0]);
+        }
         function createTrackBallControls() {
-            _this.trackBallCamera = new THREE.PerspectiveCamera(45, _this.$container.width() / _this.$container.height(), 1, 50000);
-            _this.trackBallCamera.position.set(App.SceneOptions.defaultCameraPosition.x, App.SceneOptions.defaultCameraPosition.y, App.SceneOptions.defaultCameraPosition.z);
+            _this.trackBallCamera = new THREE.PerspectiveCamera(45, _this.$container.width() / _this.$container.height(), App.SceneOptions.cameraNear, App.SceneOptions.cameraFar);
+            _this.trackBallCamera.position.copy(App.SceneOptions.defaultCameraPosition);
             addLightsToCamera(_this.trackBallCamera);
             _this.trackBallControls = new THREE.TrackballControls(_this.trackBallCamera, _this.$container[0]);
             _this.trackBallControls.keys = [ 65 /*A*/, 83 /*S*/, 68 /*D*/ ];
@@ -184,13 +184,37 @@ define([
                 _this.$container[0].requestPointerLock();
             }
         }
+        function deleteAllControls(){
+            _this.trackBallControls.removeEventListener("change");
+            _this.trackBallControls.unbindEvents();
+            _this.scene.remove(_this.trackBallCamera);
+            _this.trackBallControls.enabled = false;
+
+            _this.pointerLockControls.removeEventListener("change");
+            _this.scene.remove(_this.pointerLockControls.getObject());
+            _this.pointerLockControls.enabled = false;
+            _this.pointerLockControls.unbindEvents();
+            if (havePointerLock) {
+                // Hook pointer lock state change events
+                document.removeEventListener('pointerlockchange', pointerLockChange, false);
+                document.removeEventListener('mozpointerlockchange', pointerLockChange, false);
+                document.removeEventListener('webkitpointerlockchange', pointerLockChange, false);
+                _this.$container[0].removeEventListener('dblclick', bindPointerLock, false);
+            }
+            /*
+            _this.orbitControls.removeEventListener("change");
+            _this.scene.remove(_this.orbitControls.object);
+            _this.orbitControls.enabled = false;
+            _this.orbitControls.unbindEvents();
+            */
+        }
 
         /**
          * Scene options control
          */
         function onControlChange(){
-            if(instancesManager){
-                instancesManager.planNewEval();
+            if(App.instancesManager){
+                App.instancesManager.planNewEval();
             }
             _this.reFrame();
         }
@@ -264,6 +288,7 @@ define([
                 removeGrid();
             }
         }
+
 
         /**
          * Scene mouse events
@@ -353,49 +378,50 @@ define([
             _this.reFrame();
         }
         function processTrash () {
-            var instanceList = instancesManager.getTrash();
+            var instanceList = App.instancesManager.getTrash();
             instanceList.forEach(function(instance){
                 removeMesh(instance.id);
                 instance.qualityLoaded=undefined;
             });
-            instancesManager.clearTrash();
+            App.instancesManager.clearTrash();
         }
         function processLoadedStuff () {
-            var loadedStuff =instancesManager.getLoadedGeometries(10);
+            var loadedStuff =App.instancesManager.getLoadedGeometries(10);
             loadedStuff.forEach(function(stuff){
-                var instance = instancesManager.getInstance(stuff.id);
-                var oldMesh = meshesIndexed[stuff.id];
-                var newMesh = createMeshFromLoadedStuff(stuff);
-                if(oldMesh){
-                    _this.switches++;
-                    _this.scene.remove(oldMesh);
-                    oldMesh.geometry.dispose();
-                    oldMesh.material.dispose();
-                }else{
-                    _this.adds++;
-                    _this.onScene++;
+                var instance = App.instancesManager.getInstance(stuff.id);
+                if(instance){
+                    var oldMesh = meshesIndexed[stuff.id];
+                    instance.qualityLoaded=stuff.quality;
+                    var newMesh = createMeshFromLoadedStuff(stuff, instance.matrix);
+                    if(oldMesh){
+                        _this.switches++;
+                        _this.scene.remove(oldMesh);
+                        oldMesh.geometry.dispose();
+                        oldMesh.material.dispose();
+                    }else{
+                        _this.adds++;
+                        _this.onScene++;
+                    }
+                    meshesIndexed[newMesh.uuid]=newMesh;
+                    newMesh.initialPosition = {x:newMesh.position.x,y:newMesh.position.y,z:newMesh.position.z};
+                    _this.scene.add(newMesh);
+                    if(meshMarkedForSelection == stuff.id){
+                        setSelectionBoxOnMesh(newMesh);
+                    }
+                    applyExplosionCoeff(newMesh);
+                    applyWireFrame(newMesh);
+                    applyMeasureStateOpacity(newMesh);
                 }
-                meshesIndexed[newMesh.uuid]=newMesh;
-                newMesh.initialPosition = {x:newMesh.position.x,y:newMesh.position.y,z:newMesh.position.z};
-                _this.scene.add(newMesh);
-                instance.qualityLoaded=stuff.quality;
-                if(meshMarkedForSelection == stuff.id){
-                    setSelectionBoxOnMesh(newMesh);
-                }
-                applyExplosionCoeff(newMesh);
-                applyWireFrame(newMesh);
-                applyMeasureStateOpacity(newMesh);
                 _this.reFrame();
             });
         }
 
-        function createMeshFromLoadedStuff(stuff){
+        function createMeshFromLoadedStuff(stuff, matrix){
             var mesh = new THREE.Mesh(stuff.geometry,stuff.materials);
             mesh.uuid = stuff.id;
             mesh.partIterationId = stuff.partIterationId;
             mesh.geometry.verticesNeedUpdate=true;
-            var instance = instancesManager.getInstance(stuff.id);
-            mesh.applyMatrix(instance.matrix);
+            mesh.applyMatrix(matrix);
             return mesh;
         }
 
@@ -438,10 +464,10 @@ define([
         function animate() {
             requestAnimationFrame(animate,null);
             // Update controls
-            controlsObject.update(clock.getDelta());                                                                // Update controls
+            controlsObject.update(clock.getDelta());                                                                    // Update controls
 
             // Update scene elements
-            if(instancesManager){
+            if(App.instancesManager){
                 processTrash();
                 processLoadedStuff();
             }
@@ -475,29 +501,7 @@ define([
             _this.setTrackBallControls();
             animate();
         };
-        this.setTrackBallControls = function(){
-            if (_this.stateControl == _this.STATECONTROL.TBC) {
-                return;
-            }
 
-            _this.stateControl = _this.STATECONTROL.TBC;
-
-            // Remove pointerLock controls
-            _this.pointerLockControls.removeEventListener("change", onControlChange);
-            _this.scene.remove(_this.pointerLockControls.getObject());
-            _this.pointerLockControls.enabled = false;
-
-            $('#tracking_mode_view_btn').addClass("active");
-            _this.$blocker.hide();
-
-            controlsObject = _this.trackBallControls;
-            _this.cameraObject = _this.trackBallCamera;
-
-            _this.trackBallControls.enabled = true;
-            _this.trackBallControls.addEventListener("change", onControlChange);
-
-            _this.scene.add(_this.trackBallCamera);
-        };
         this.reFrame = function(){
             needsReframe = true;
         };
@@ -529,13 +533,7 @@ define([
             }
 
             _this.stateControl = _this.STATECONTROL.PLC;
-
-            // Remove trackball controls
-            _this.trackBallControls.removeEventListener("change", _this.render);
-            _this.scene.remove(this.trackBallCamera);
-            _this.trackBallControls.enabled = false;
-
-            _this.scene.remove(this.camera);
+            deleteAllControls();
 
             $('#flying_mode_view_btn').addClass("active");
             _this.$blocker.show();
@@ -543,9 +541,54 @@ define([
             _this.cameraObject = _this.pointerLockCamera;
             controlsObject = _this.pointerLockControls;
 
-            _this.pointerLockControls.addEventListener("change", _this.render);
+            _this.pointerLockControls.addEventListener("change", onControlChange);
+            if (havePointerLock) {
+                // Hook pointer lock state change events
+                document.addEventListener('pointerlockchange', pointerLockChange, false);
+                document.addEventListener('mozpointerlockchange', pointerLockChange, false);
+                document.addEventListener('webkitpointerlockchange', pointerLockChange, false);
+                _this.$container[0].addEventListener('dblclick', bindPointerLock, false);
+            }
+            _this.pointerLockControls.bindEvents();
             _this.scene.add(_this.pointerLockControls.getObject());
         };
+        this.setTrackBallControls = function(){
+            if (_this.stateControl == _this.STATECONTROL.TBC) {
+                return;
+            }
+
+            _this.stateControl = _this.STATECONTROL.TBC;
+            deleteAllControls();
+
+            $('#tracking_mode_view_btn').addClass("active");
+            _this.$blocker.hide();
+
+            controlsObject = _this.trackBallControls;
+            _this.cameraObject = _this.trackBallCamera;
+
+            _this.trackBallControls.enabled = true;
+            _this.trackBallControls.addEventListener("change", onControlChange);
+            _this.trackBallControls.bindEvents();
+            _this.scene.add(_this.trackBallCamera);
+        };
+        function setOrbitControls() {
+
+            if (_this.stateControl == _this.STATECONTROL.ORB) {
+                return;
+            }
+
+            _this.stateControl = _this.STATECONTROL.ORB;
+            deleteAllControls();
+
+            controlsObject = _this.orbitControls;
+            controlsObject.enabled = true;
+
+            _this.cameraObject = _this.orbitCamera;
+
+            controlsObject.addEventListener("change", onControlChange);
+            controlsObject.bindEvents();
+            _this.scene.add(_this.orbitCamera);
+        }
 
         /**
          * Scene option control
@@ -612,7 +655,7 @@ define([
             _this.pathForIFrameLink = pathForIFrame;
         };
         this.clear = function (){
-            instancesManager.clear();
+            App.instancesManager.clear();
         };
 
     };

@@ -1,4 +1,4 @@
-/*global sceneManager*/
+/*global App*/
 define(
     [
         "views/shortcuts_view",
@@ -18,11 +18,11 @@ define(
         },
 
         flyingView:function(){
-            sceneManager.setPointerLockControls();
+            App.sceneManager.setPointerLockControls();
         },
 
         trackingView:function(){
-            sceneManager.setTrackBallControls();
+            App.sceneManager.setTrackBallControls();
         },
 
         render:function(){
