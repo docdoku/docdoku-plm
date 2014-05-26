@@ -25,7 +25,6 @@ define([
         },
 
         createTags : function(tags, callbackSuccess, callbackError){
-
             $.ajax({
                 context: this,
                 type: "POST",

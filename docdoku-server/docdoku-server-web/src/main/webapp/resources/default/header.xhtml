@@ -48,14 +48,14 @@
                                             class="icon-home"></i>#{i18nTemplate['toplinks.home']}</a>
                                     </li>
                                     <li>
-                                        <a href="http://www.docdokuplm.com/"><i
+                                        <a href="http://www.docdokuplm.com/" target="_blank"><i
                                                 class="icon-cloud"></i>#{i18nTemplate['toplinks.community']}</a>
                                     </li>
-
-                                    <li>
-                                        <!--<h:link outcome="/download.xhtml"><i
-                                                class="icon-download-alt"></i>#{i18nTemplate['menu.download']}
-                                        </h:link>-->
+                                    <li class="dplm_download_link">
+                                        <h:link outcome="/download.xhtml">
+                                            <i class="icon-download-alt"></i>
+                                            #{i18nTemplate['toplinks.downloadDPLM']}
+                                        </h:link>
                                     </li>
                                 </ul>
                                 <ul class="nav pull-right">
@@ -216,9 +216,17 @@
                                                 </h:link>
                                             </li>
                                             <li class="divider"></li>
+                                            <li class="dplm_download_link">
+                                                <h:link outcome="/download.xhtml">
+                                                    <i class="icon-download-alt"></i>
+                                                    #{i18nTemplate['toplinks.downloadDPLM']}
+                                                </h:link>
+                                            </li>
                                             <li id="community_link">
-                                                <a href="http://www.docdokuplm.com/"><i
-                                                        class="icon-question"></i> #{i18nTemplate['toplinks.aboutus']}</a>
+                                                <a href="http://www.docdokuplm.com/" target="_blank">
+                                                    <i class="icon-question"></i>
+                                                    #{i18nTemplate['toplinks.aboutus']}
+                                                </a>
                                             </li>
                                             <li class="divider"></li>
                                             <li id="logout_link">

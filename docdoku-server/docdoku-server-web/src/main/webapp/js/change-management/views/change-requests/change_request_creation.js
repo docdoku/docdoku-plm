@@ -55,13 +55,13 @@ define([
             }
         },
         fillPriorityList:function(){
-            for(priority in this.model.priorities){
-                this.$inputRequestPriority.append("<option value='"+priority+"'"+">"+priority+"</option>")
+            for(var priority in this.model.priorities){
+                this.$inputRequestPriority.append("<option value='"+priority+"'"+">"+priority+"</option>");
             }
         },
         fillCategoryList:function(){
-            for(category in this.model.categories){
-                this.$inputRequestCategory.append("<option value='"+category+"'"+">"+category+"</option>")
+            for(var category in this.model.categories){
+                this.$inputRequestCategory.append("<option value='"+category+"'"+">"+category+"</option>");
             }
         },
 
@@ -125,7 +125,7 @@ define([
                 assignee:this.$inputRequestAssignee.val(),
                 priority:this.$inputRequestPriority.val(),
                 category:this.$inputRequestCategory.val(),
-                milestoneId:parseInt(this.$inputRequestMilestone.val())
+                milestoneId:parseInt(this.$inputRequestMilestone.val(),10)
             };
 
             new ChangeRequestModel().save(data,{
@@ -165,19 +165,19 @@ define([
 
         updateAffectedDocuments: function (model) {
             if(this._affectedDocumentsCollection.length){
-                model.saveAffectedDocuments(this._affectedDocumentsCollection)
+                model.saveAffectedDocuments(this._affectedDocumentsCollection);
             }
         },
 
         updateAffectedParts: function (model) {
             if(this._affectedPartsCollection.length){
-                model.saveAffectedParts(this._affectedPartsCollection)
+                model.saveAffectedParts(this._affectedPartsCollection);
             }
         },
 
         updateAffectedIssues: function (model) {
             if(this._affectedIssuesCollection.length){
-                model.saveAffectedIssues(this._affectedIssuesCollection)
+                model.saveAffectedIssues(this._affectedIssuesCollection);
             }
         }
     });

@@ -1,0 +1,29 @@
+<h4>{% t global.navigation %}</h4>
+
+<ul id="navigation-menu" class="nav nav-pills nav-stacked">
+    <li><a href="{{ site.url }}{{ site.lang }}/">{% t global.home %}</a></li>
+    <li class="dropdown">
+    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+    {% t global.version %} <span class="caret"></span>
+    </a>
+    <ul class="dropdown-menu">
+    {% for version in site.versions %}
+        <li><a href="{{ site.url }}{{ site.lang }}/{{ version }}/">{{ version }}</a></li>
+    {% endfor %}
+    </ul>
+    </li>
+
+    <li class="dropdown">
+    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+    {% t global.languages %} <span class="caret"></span>
+    </a>
+    <ul class="dropdown-menu">
+        {% for lang in site.languages %}
+            <li><a href="{{ site.url }}{{ lang }}{{ page.url }}">{{ lang }}</a></li>
+        {% endfor %}
+    </ul>
+    </li>
+    
+</ul> 
+
+<h4 id="index-title">{% t global.toc %}</h4>

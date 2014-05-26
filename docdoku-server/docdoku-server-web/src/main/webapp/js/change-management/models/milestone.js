@@ -81,7 +81,7 @@ define([
         },
 
         isWritable:function(){
-            return this.get("writable")
+            return this.get("writable");
         }
     });
 

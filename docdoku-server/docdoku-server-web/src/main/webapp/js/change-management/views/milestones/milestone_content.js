@@ -29,7 +29,7 @@ define([
 
         initialize: function () {
             _.bindAll(this);
-            this.collection = new MilestoneCollection()
+            this.collection = new MilestoneCollection();
         },
 
         render:function(){

@@ -17,7 +17,7 @@ define(function () {
         },
 
         getCategory: function() {
-            return this.get("category")
+            return this.get("category");
         },
 
         getAffectedDocuments:function () {

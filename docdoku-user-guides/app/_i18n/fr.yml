@@ -1,0 +1,12 @@
+global:
+  en: Anglais
+  fr: Français
+  navigation: Navigation
+  toc: Index
+  version: Version
+  languages: Langues
+  home: Accueil
+  available_versions: Versions disponibles
+  user_guide: Guide utilisateur
+pages:
+  home: Accueil

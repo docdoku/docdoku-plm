@@ -59,14 +59,14 @@ define([
             this.$inputOrderAssignee.val(this.model.getAssignee());
         },
         fillPriorityList:function(){
-            for(priority in this.model.priorities){
-                this.$inputOrderPriority.append("<option value='"+priority+"'"+">"+priority+"</option>")
+            for(var priority in this.model.priorities){
+                this.$inputOrderPriority.append("<option value='"+priority+"'"+">"+priority+"</option>");
             }
             this.$inputOrderPriority.val(this.model.getPriority());
         },
         fillCategoryList:function(){
-            for(category in this.model.categories){
-                this.$inputOrderCategory.append("<option value='"+category+"'"+">"+category+"</option>")
+            for(var category in this.model.categories){
+                this.$inputOrderCategory.append("<option value='"+category+"'"+">"+category+"</option>");
             }
             this.$inputOrderCategory.val(this.model.getCategory());
         },
@@ -166,7 +166,7 @@ define([
                 assignee:this.$inputOrderAssignee.val(),
                 priority:this.$inputOrderPriority.val(),
                 category:this.$inputOrderCategory.val(),
-                milestoneId:parseInt(this.$inputOrderMilestone.val())
+                milestoneId:parseInt(this.$inputOrderMilestone.val(),10)
             };
 
             this.model.save(data,{
@@ -215,15 +215,15 @@ define([
         },
 
         updateAffectedDocuments: function () {
-            this.model.saveAffectedDocuments(this._affectedDocumentsCollection)
+            this.model.saveAffectedDocuments(this._affectedDocumentsCollection);
         },
 
         updateAffectedParts: function () {
-            this.model.saveAffectedParts(this._affectedPartsCollection)
+            this.model.saveAffectedParts(this._affectedPartsCollection);
         },
 
         updateAffectedRequests: function () {
-            this.model.saveAffectedRequests(this._affectedRequestsCollection)
+            this.model.saveAffectedRequests(this._affectedRequestsCollection);
         }
     });
 

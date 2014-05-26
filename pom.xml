@@ -35,8 +35,9 @@
     </scm>
     <modules>
         <module>docdoku-common</module>
-        <module>docdoku-server</module>
         <module>docdoku-cli</module>
+        <module>dplm-gui-releaser</module>
+        <module>docdoku-server</module>
         <module>docdoku-smoke-tests</module>
         <module>docdoku-arquillian-tests</module>
         <module>docdoku-sample-loader</module>

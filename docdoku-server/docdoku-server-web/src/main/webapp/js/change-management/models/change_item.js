@@ -63,7 +63,7 @@ define([
         },
 
         getCategory: function() {
-            return this.get("category")
+            return this.get("category");
         },
 
         getAffectedDocuments:function () {
@@ -188,7 +188,7 @@ define([
         },
 
         isWritable:function(){
-            return this.get("writable")
+            return this.get("writable");
         }
 
     });

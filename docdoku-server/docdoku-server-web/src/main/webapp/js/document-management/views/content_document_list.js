@@ -134,7 +134,7 @@ define([
         actionCheckin: function() {
             var self = this;
             this.listView.eachChecked(function(view) {
-                if (!view.model.getLastIteration().get("iterationNote")) {
+                if (!view.model.getLastIteration().get("revisionNote")) {
                     var promptView = new PromptView();
                     promptView.setPromptOptions(i18n.REVISION_NOTE, i18n.REVISION_NOTE_PROMPT_LABEL, i18n.REVISION_NOTE_PROMPT_OK, i18n.REVISION_NOTE_PROMPT_CANCEL);
                     $("body").append(promptView.render().el);

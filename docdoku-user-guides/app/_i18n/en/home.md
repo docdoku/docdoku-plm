@@ -1,0 +1,1 @@
+Welcome on the DocdokuPLM's documentation page. This site aims to describe the GUI interface and its business logic for every available versions of the application.

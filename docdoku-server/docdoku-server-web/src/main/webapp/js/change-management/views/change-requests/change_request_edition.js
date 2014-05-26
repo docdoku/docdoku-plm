@@ -59,14 +59,14 @@ define([
             this.$inputRequestAssignee.val(this.model.getAssignee());
         },
         fillPriorityList:function(){
-            for(priority in this.model.priorities){
-                this.$inputRequestPriority.append("<option value='"+priority+"'"+">"+priority+"</option>")
+            for(var priority in this.model.priorities){
+                this.$inputRequestPriority.append("<option value='"+priority+"'"+">"+priority+"</option>");
             }
             this.$inputRequestPriority.val(this.model.getPriority());
         },
         fillCategoryList:function(){
-            for(category in this.model.categories){
-                this.$inputRequestCategory.append("<option value='"+category+"'"+">"+category+"</option>")
+            for(var category in this.model.categories){
+                this.$inputRequestCategory.append("<option value='"+category+"'"+">"+category+"</option>");
             }
             this.$inputRequestCategory.val(this.model.getCategory());
         },
@@ -166,7 +166,7 @@ define([
                 assignee:this.$inputRequestAssignee.val(),
                 priority:this.$inputRequestPriority.val(),
                 category:this.$inputRequestCategory.val(),
-                milestoneId:parseInt(this.$inputRequestMilestone.val())
+                milestoneId:parseInt(this.$inputRequestMilestone.val(),10)
             };
 
             this.model.save(data,{

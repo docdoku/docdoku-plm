@@ -1,0 +1,13 @@
+{% include header.html %}
+
+<div class="container">
+    <div class="row">
+      <div class="col-xs-12 col-md-8">
+        <h3>{{ page.title }}</h3>
+        <div id="content">{{ content }}</div>
+      </div>
+      <div class="col-xs-6 col-md-4">{% include navigation.html %}</div>
+    </div>
+</div>
+
+{% include footer.html %}

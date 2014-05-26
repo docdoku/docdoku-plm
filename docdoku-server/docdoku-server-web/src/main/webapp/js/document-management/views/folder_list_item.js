@@ -1,3 +1,4 @@
+/*global APP_VIEW*/
 define([
 	"require",
 	"i18n!localization/nls/document-management-strings",

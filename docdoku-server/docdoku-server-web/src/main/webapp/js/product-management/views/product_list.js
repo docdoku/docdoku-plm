@@ -106,7 +106,7 @@ define([
             this.onSelectionChanged();
         },
 
-        onSelectionChanged:function(view){
+        onSelectionChanged:function(){
 
             var checkedViews = _(this.listItemViews).select(function(view){
                 return view.isChecked();
@@ -149,7 +149,7 @@ define([
 
         deleteSelectedProducts:function(){
             var that = this;
-            if(confirm("Delete Products")){
+            if(confirm(i18n["DELETE_SELECTION_?"])){
                 _(this.listItemViews).each(function(view){
                     if(view.isChecked()){
                         view.model.destroy({success:function(){

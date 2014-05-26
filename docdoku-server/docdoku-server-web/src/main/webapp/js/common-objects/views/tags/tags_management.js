@@ -79,7 +79,7 @@ define([
                 success:function(){
                     var oldTags=singleModel.getTags();
                     if(!_.isEmpty(oldTags)){
-                        that.createOldTags(oldTags);
+                        that.createPreviousTags(oldTags);
                     }
                     that.launchEventBind();
                 }
@@ -91,11 +91,11 @@ define([
             $existingTabs.empty();
             var that=this;
             _.each(this._existingTagsCollection.models,function(model){
-                that.addTagViewToExistingTagsList(model)
+                that.addTagViewToExistingTagsList(model);
             });
         },
 
-        createOldTags:function(tags){
+        createPreviousTags:function(tags){
             var that = this ;
             _.each(tags,function(tagLabel){
                 _.each(that._existingTagsCollection.models,function(model){
@@ -106,7 +106,7 @@ define([
                         that.removeTagViewFromExistingTagsList(model);
                     }
                 });
-            })
+            });
         },
 
         onNewTagButton:function(){
@@ -143,7 +143,7 @@ define([
             this.addTagViewToExistingTagsList(model);
         },
         onTagDelete: function(model){
-            var isInCreateList = _.contains(this._tagsToCreate.models,model);
+            var isInCreateList = _.contains(this._tagsToCreate,model);
             if(isInCreateList){
                 this._tagsToCreate = _(this._tagsToCreate).without(model);
             }else{
@@ -172,16 +172,21 @@ define([
         onTagRemoved:function(model){
             var isInOldTag = false ;
             var isInTagsToAdd = _.contains(this._tagsToAddCollection,model);
+            var isInTagsToCreate = _.contains(this._tagsToCreate,model);
             if(this._oldTagsCollection){
                 isInOldTag = _.contains(this._oldTagsCollection, model);
             }
             if(isInTagsToAdd){
-                this._tagsToAddCollection= this._tagsToAddCollection.without(model);
+                this._tagsToAddCollection= _.without(this._tagsToAddCollection,model);
             }
             if(isInOldTag){
                 this._tagsToRemoveCollection.push(model);
             }
-            this.addTagViewToExistingTagsList(model);
+            if(isInTagsToCreate){                                                                                       // It's a new tag that you remove from resource
+                this.addTagViewToExistingTagsList(model,true);
+            }else{
+                this.addTagViewToExistingTagsList(model);
+            }
             this.removeTagViewFromResourceTagsList(model);
         },
 
@@ -193,20 +198,20 @@ define([
                     if(that._collectionSize!=0){
                         that.addTagsToResources();
                         that.removeTagsToResource();
-                        that.hide();
                     }
+                    that.hide();
                 });
             });
             return false;
         },
 
 
-        addTagViewToExistingTagsList : function(model){
+        addTagViewToExistingTagsList : function(model,editmode){
             var $existingTags = this.$(".existing-tags-list");
             var that = this ;
             var tagView =  null;
 
-            if(this._collectionSize==0){
+            if(this._collectionSize==0 || editmode==true){
                 tagView = new TagView({
                     model:model,
                     isAdded:false,
@@ -229,7 +234,7 @@ define([
                 }).render();
             }
 
-             $existingTags.append($(tagView.el));
+            $existingTags.append($(tagView.el));
             this._existingTagsViews.push(tagView);
         },
         removeTagViewFromExistingTagsList : function(model){
@@ -273,7 +278,7 @@ define([
                         callbackSuccess();
                         Backbone.Events.trigger("refreshTagNavViewCollection");
                     }
-                )
+                );
             }else{
                 callbackSuccess();
             }
@@ -295,7 +300,7 @@ define([
                             }
                         }
                     });
-                })
+                });
             }else{
                 callbackSuccess();
             }

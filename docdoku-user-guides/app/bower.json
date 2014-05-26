@@ -1,0 +1,11 @@
+{
+    "name": "docdokup-user-guides",
+    "version": "1.0.0",
+    "dependencies": {
+        "modernizr": "~2.6.2",
+        "jquery": "~2.0.0",
+        "font-awesome": "~3.1.1",
+        "bootstrap": "~3.1.0",
+        "normalize-css": "~2.1.2"
+    }
+}

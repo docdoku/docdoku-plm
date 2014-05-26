@@ -1,0 +1,18 @@
+{% assign lvl = page.url | append:'X' | split:'/' | size %}
+{% capture relative %}{% for i in (3..lvl) %}../{% endfor %}{% endcapture %}
+
+{% include header.html %}
+
+{% include debug.html %}
+
+<div id="page">
+    <h3>{{ page.title }}</h3>
+    <div id="content">
+        {{ content }}
+    </div>
+     <a href="{{ site.url }}fr{{ page.url}}">{% t global.french %}</a> - 
+     <a href="{{ site.url }}{{ page.url}}">{% t global.english %}</a>
+</div>
+
+
+{% include footer.html %}
