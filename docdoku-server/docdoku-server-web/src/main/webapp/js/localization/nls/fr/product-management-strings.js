@@ -31,7 +31,7 @@ define({
     "ITERATION_NOTE_PROMPT_LABEL":  "La note d'it\u00e9ration n'a pas \u00e9t\u00e9 d\u00e9finie. Souhaitez-vous l'ajouter ?",
     "ITERATION_NOTE_PROMPT_CANCEL": "Ignorer",
     "ITERATION_NOTE_PROMPT_OK":     "Ajouter la note d'it\u00e9ration",
-    "IN_PROGRESS":                  "En cour",
+    "IN_PROGRESS":                  "En cours",
     "LAST_PAGE":                    "Dernière page",
     "LIFECYCLE_STATE":              "Etat du cycle de vie",
     "MASK":                         "Masque",

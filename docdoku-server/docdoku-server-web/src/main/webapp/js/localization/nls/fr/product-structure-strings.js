@@ -86,7 +86,7 @@ define({
     "MODIFICATION_DATE":"Date de modification",
     "CUTPLAN":                      "Plan de coupe",
     "EXPLODE":                      "Eclater",
-    "IN_PROGRESS":                  "En cour",
+    "IN_PROGRESS":                  "En cours",
     "RELEASE":                      "D\u00e9livrer",
     "RELEASED":                     "D\u00e9livr\u00e9",
     "MEASURE":                      "Mesure"
