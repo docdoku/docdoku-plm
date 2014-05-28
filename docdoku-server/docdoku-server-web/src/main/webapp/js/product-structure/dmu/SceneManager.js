@@ -426,9 +426,9 @@ define([
         /**
          *  Animation
          */
-        /*function cameraAnimation(position,target,duration){
+        function cameraAnimation(position,target,duration){
             var controls = controlsObject;
-            var camera = controls.object;
+            var camera = _this.cameraObject;
             var curCamPos = camera.position;
             var curTar = controls.target;
             var endCamPos = position;
@@ -451,7 +451,7 @@ define([
                     _this.reFrame();
                 })
                 .start();
-        }*/
+        }
 
         /**
          * Animation loop :
@@ -473,6 +473,8 @@ define([
             // Update with SceneOptions
             watchSceneOptions();
 
+            // Update potential animation
+            TWEEN.update();
             // Sometimes needs a reFrame
             if(needsReframe){
                 needsReframe = false;
@@ -503,15 +505,19 @@ define([
         this.reFrame = function(){
             needsReframe = true;
         };
-        /*this.placeCamera = function(cog,diameter) {
-            var controls = controlsObject;
-            var camera = controls.object;
+
+        this.flyTo = function(mesh){
+            var boundingBox = mesh.geometry.boundingBox;
+            var cog = new THREE.Vector3().copy(boundingBox.centroid).applyMatrix4(mesh.matrix);
+            var size = boundingBox.size();
+            var radius = Math.max(size.x,size.y,size.z);
+            var camera = _this.cameraObject;
             var dir = new THREE.Vector3().copy(cog).sub(camera.position).normalize();
-            var distance = diameter ? diameter*2 : 1000;
+            var distance = radius ? radius*2 : 1000;
             distance = distance < App.SceneOptions.cameraNear ? App.SceneOptions.cameraNear + 100 : distance;
             var endCamPos = new THREE.Vector3().copy(cog).sub(dir.multiplyScalar(distance));
             cameraAnimation(endCamPos,cog, 2000);
-        };*/
+        };
         /**
          * Context API
          */
