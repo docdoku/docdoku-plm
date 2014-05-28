@@ -124,7 +124,7 @@ function (LoaderManager, async) {
                         id: directive.id,
                         partIterationId: instance.partIterationId,
                         quality: directive.quality,
-                        geometry: geometry,//THREE.BufferGeometryUtils.fromGeometry(geometry),
+                        geometry: THREE.BufferGeometryUtils.fromGeometry(geometry),
                         materials: material
                     });
                     callback();
@@ -147,9 +147,6 @@ function (LoaderManager, async) {
                 }
             });
             return r || 1;
-        }
-        function cleanAndRemoveMesh(object){
-            App.sceneManager.scene.remove(object);
         }
         function adaptMatrix(matrix){
             return new THREE.Matrix4(matrix[0],matrix[1],matrix[2],matrix[3],
@@ -279,7 +276,6 @@ function (LoaderManager, async) {
             for(var i in instancesIndexed){
                 var instance = instancesIndexed[i];
                 _this.trashInstances.push(instance);
-                //cleanAndRemoveMesh(instance.mesh);
             }
             worker.postMessage({fn: "clear", obj: null});
             instancesIndexed=[];
