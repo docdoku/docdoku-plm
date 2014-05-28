@@ -87,7 +87,7 @@ define({
     "CUTPLAN":                      "Plan de coupe",
     "EXPLODE":                      "Eclater",
     "IN_PROGRESS":                  "En cours",
-    "RELEASE":                      "D\u00e9livrer",
-    "RELEASED":                     "D\u00e9livr\u00e9",
+    "RELEASE":                      "Finaliser",
+    "RELEASED":                     "Finalis\u00e9",
     "MEASURE":                      "Mesure"
 });

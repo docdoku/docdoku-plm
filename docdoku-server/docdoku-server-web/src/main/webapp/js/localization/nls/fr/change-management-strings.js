@@ -106,7 +106,7 @@ define({
     "NEW_ISSUE":                    "Nouveau rapport d'anomalie",
     "NEW_MILESTONE":                "Nouveau jalon",
     "NEW_ORDER":                    "Nouvel ordre de modification",
-    "NEW_REQUEST":                  "Nouveau demande de modification",
+    "NEW_REQUEST":                  "Nouvelle demande de modification",
     "NEW_PART_TEMPLATE":			"Nouveau modèle d'article",
     "NEW_TAG":						"Nouveau libell\u00e9",
     "NEW_TEMPLATE":					"Nouveau modèle de document",

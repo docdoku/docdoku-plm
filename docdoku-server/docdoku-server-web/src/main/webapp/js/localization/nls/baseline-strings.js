@@ -11,10 +11,10 @@ define({
         "EDIT_BASELINE":                "Edit baseline",
         "EXCLUDE":                      "Exclude part from baseline",
         "ITERATION":                    "Part iteration",
-        "LATEST":                       "Latest version",
+        "LATEST":                       "Very latest versions of parts",
         "NEW_BASELINE":                 "New baseline",
         "NUMBER":                       "Part number",
-        "RELEASED":                     "Only released",
+        "RELEASED":                     "Only released parts",
         "SAVE":                         "Save",
         "TYPE":                         "Type",
         "VERSION":                      "Part version"

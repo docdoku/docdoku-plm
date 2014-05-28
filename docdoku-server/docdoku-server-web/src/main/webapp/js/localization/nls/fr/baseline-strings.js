@@ -10,10 +10,10 @@ define({
     "EDIT_BASELINE":                "Editer la baseline",
     "EXCLUDE":                      "Exclure l'article de la baseline",
     "ITERATION":                    "It\u00e9ration",
-    "LATEST":                       "Dernière version",
+    "LATEST":                       "Toutes dernières versions des articles",
     "NEW_BASELINE":                 "Nouvelle baseline",
     "NUMBER":                       "Num\u00e9ro de l'article",
-    "RELEASED":                     "D\u00e9livr\u00e9 uniquement",
+    "RELEASED":                     "Uniquement les articles finalis\u00e9s",
     "SAVE":                         "Enregistrer",
     "TYPE":                         "Type",
     "VERSION":                      "Version"
