@@ -46,6 +46,7 @@ define(
         "views/parts_tree_view",
         "views/bom_view",
         "views/part_metadata_view",
+        "views/part_instance_view",
         "views/export_scene_modal_view",
         "views/control_modes_view",
         "views/control_markers_view",
@@ -65,6 +66,7 @@ define(
                  PartsTreeView,
                  BomView,
                  PartMetadataView,
+                 PartInstanceView,
                  ExportSceneModalView,
                  ControlModesView,
                  ControlMarkersView,
@@ -296,6 +298,12 @@ define(
                     }else{
                         self.partMetadataView.setModel(part).render();
                     }
+                    if (self.partInstanceView == undefined) {
+                        self.partInstanceView = new PartInstanceView().setMesh(mesh).render();
+                        self.$ControlsContainer.append(self.partInstanceView.$el);
+                    }else{
+                        self.partInstanceView.setMesh(mesh).render();
+                    }
                 }
             }});
         },
@@ -304,6 +312,7 @@ define(
             this.searchView.trigger("selection:reset");
             if(!this.isInBomMode() && this.partMetadataView != undefined ){
                 this.partMetadataView.reset();
+                this.partInstanceView.reset();
             }
         },
 

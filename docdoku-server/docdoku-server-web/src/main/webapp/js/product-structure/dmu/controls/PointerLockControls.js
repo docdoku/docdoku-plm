@@ -17,57 +17,61 @@ THREE.PointerLockControls = function ( camera ) {
         DOWN : 17 // CTRL
     };
 
-    var scope = this;
+	var scope = this;
     var moveSpeed = 1;
 
     var changeEvent = { type: 'change' };
 
-    camera.rotation.set( 0, 0, 0 );
+	camera.rotation.set( 0, 0, 0 );
 
-    var pitchObject = new THREE.Object3D();
-    pitchObject.add( camera );
+	var pitchObject = new THREE.Object3D();
+	pitchObject.add( camera );
 
-    var yawObject = new THREE.Object3D();
-    yawObject.position.y = 10;
-    yawObject.add( pitchObject );
+	var yawObject = new THREE.Object3D();
+	yawObject.position.y = 10;
+	yawObject.add( pitchObject );
 
-    var moveForward = false;
-    var moveBackward = false;
-    var moveLeft = false;
-    var moveRight = false;
+	var moveForward = false;
+	var moveBackward = false;
+	var moveLeft = false;
+	var moveRight = false;
     var moveUp = false;
     var moveDown = false;
 
-    var isOnObject = false;
-    var canJump = false;
+	var velocity = new THREE.Vector3();
 
-    var prevTime = performance.now();
+	this.target = new THREE.Vector3();
 
-    var velocity = new THREE.Vector3();
+	var PI_2 = Math.PI / 2;
 
-    var PI_2 = Math.PI / 2;
+	var onMouseMove = function ( event ) {
 
-    var onMouseMove = function ( event ) {
-
-        if ( scope.enabled === false ){return;}
-
-        var movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
-        var movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
-
-        yawObject.rotation.y -= movementX * 0.002;
-        pitchObject.rotation.x -= movementY * 0.002;
-
-        pitchObject.rotation.x = Math.max( - PI_2, Math.min( PI_2, pitchObject.rotation.x ) );
-
-    };
-
-    var onKeyDown = function ( event ) {
-
-        if ( scope.enabled === false ){return;}
+		if ( scope.enabled === false ){
+            return;
+        }
 
         event.preventDefault();
 
-        switch ( event.keyCode ) {
+		var movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
+		var movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
+
+		yawObject.rotation.y -= movementX * 0.002;
+		pitchObject.rotation.x -= movementY * 0.002;
+
+		pitchObject.rotation.x = Math.max( - PI_2, Math.min( PI_2, pitchObject.rotation.x ) );
+
+	};
+
+	var onKeyDown = function ( event ) {
+
+        if ( scope.enabled === false ){
+            return;
+        }
+
+        event.preventDefault();
+
+		switch ( event.keyCode ) {
+
             case keyCodes.FORWARD:
             case keyCodes.FORWARD_2:
                 moveForward = true;
@@ -75,7 +79,8 @@ THREE.PointerLockControls = function ( camera ) {
 
             case keyCodes.LEFT:
             case keyCodes.LEFT_2:
-                moveLeft = true; break;
+                moveLeft = true;
+                break;
 
             case keyCodes.BACKWARD:
             case keyCodes.BACKWARD_2:
@@ -89,21 +94,25 @@ THREE.PointerLockControls = function ( camera ) {
 
             case keyCodes.UP:
                 moveUp = true;
-                if ( canJump === true ) velocity.y += 350;
-                canJump = false;
                 break;
 
             case keyCodes.DOWN:
                 moveDown = true;
                 break;
+
+		}
+	};
+
+	var onKeyUp = function ( event ) {
+
+        if ( scope.enabled === false ){
+            return;
         }
-    };
 
-    var onKeyUp = function ( event ) {
+        event.preventDefault();
 
-        if ( scope.enabled === false ){return;}
+		switch( event.keyCode ) {
 
-        switch( event.keyCode ) {
             case keyCodes.FORWARD:
             case keyCodes.FORWARD_2:
                 moveForward = false;
@@ -131,12 +140,10 @@ THREE.PointerLockControls = function ( camera ) {
             case keyCodes.DOWN:
                 moveDown = false;
                 break;
-        }
-    };
 
-    document.addEventListener( 'mousemove', onMouseMove, false );
-    document.addEventListener( 'keydown', onKeyDown, false );
-    document.addEventListener( 'keyup', onKeyUp, false );
+		}
+
+	};
 
     this.unbindEvents = function(){
         document.removeEventListener( 'mousemove', onMouseMove, false );
@@ -150,60 +157,56 @@ THREE.PointerLockControls = function ( camera ) {
         document.addEventListener( 'keyup', onKeyUp, false );
     };
 
-    this.enabled = false;
+	this.enabled = false;
 
-    this.getObject = function () {
-        return yawObject;
-    };
-
-    this.isOnObject = function ( boolean ) {
-        isOnObject = boolean;
-        canJump = boolean;
-    };
+	this.getObject = function () {
+		return yawObject;
+	};
 
     this.getTarget = function(){
-        var target = scope.getDirection(scope.target).multiplyScalar(1000);
-        target.x += yawObject.position.x;
-        target.y += yawObject.position.y;
-        target.z += yawObject.position.z;
-        return target;
+        /*var target = scope.getDirection(scope.target).multiplyScalar(1000);
+         target.x += yawObject.position.x;
+         target.y += yawObject.position.y;
+         target.z += yawObject.position.z;
+         return target.clone();*/
+        return scope.getDirection(scope.target).multiplyScalar(2000).add(yawObject.position);
     };
 
     this.getCamPos = function(){
-        return yawObject.position;
+        return yawObject.position.clone();
     };
 
-    this.getDirection = function() {
+	this.getDirection = function() {
 
-        // assumes the camera itself is not rotated
+		// assumes the camera itself is not rotated
 
-        var direction = new THREE.Vector3( 0, 0, -1 );
-        var rotation = new THREE.Euler( 0, 0, 0, "YXZ" );
+		var direction = new THREE.Vector3( 0, 0, -1 );
+		var rotation = new THREE.Euler( 0, 0, 0, "YXZ" );
 
-        return function( v ) {
+		return function( v ) {
 
-            rotation.set( pitchObject.rotation.x, yawObject.rotation.y, 0 );
+			rotation.set( pitchObject.rotation.x, yawObject.rotation.y, 0 );
 
-            v.copy( direction ).applyEuler( rotation );
+			v.copy( direction ).applyEuler( rotation );
 
-            return v;
+			return v;
 
+		};
+
+	}();
+
+	this.update = function ( delta ) {
+
+        if ( scope.enabled === false ){
+            return;
         }
 
-    }();
+		delta *= 0.1;
 
-    this.update = function () {
+        velocity.x += ( - velocity.x ) * 0.08 * delta;
+        velocity.y += ( - velocity.y ) * 0.08 * delta;
+        velocity.z += ( - velocity.z ) * 0.08 * delta;
 
-        if ( scope.enabled === false ) return;
-
-        var time = performance.now();
-        //var delta = ( time - prevTime ) / 1000;
-        delta *= 0.1;
-
-        velocity.x -= velocity.x * 0.08 * delta;
-        //velocity.y -= 9.8 * 100.0 * delta; // 100.0 = mass
-        velocity.y -= velocity.y * 0.08 * delta;
-        velocity.z -= velocity.z * 0.08 * delta;
 
         if ( moveForward ) {
             velocity.z -= moveSpeed * delta;
@@ -225,35 +228,20 @@ THREE.PointerLockControls = function ( camera ) {
         if ( moveRight ){
             velocity.x += moveSpeed * delta;
         }
-/*
-        if ( isOnObject === true ) {
-            velocity.y = Math.max( 0, velocity.y );
-        }
 
-        yawObject.translateX( velocity.x * delta );
-        yawObject.translateY( velocity.y * delta );
-        yawObject.translateZ( velocity.z * delta );
-
-        if ( yawObject.position.y < 10 ) {
-            velocity.y = 0;
-            yawObject.position.y = 10;
-            canJump = true;
-        }
-*/
-
-        yawObject.translateX( velocity.x );
-		yawObject.translateY( velocity.y );
+		yawObject.translateX( velocity.x );
+		yawObject.translateY( velocity.y ); 
 		yawObject.translateZ( velocity.z );
 
         scope.dispatchEvent( changeEvent );
-        prevTime = time;
-
-    };
+	};
 
     this.moveToPosition = function ( vector ) {
-        yawObject.translateX( vector.x );
-        yawObject.translateY( vector.y );
-        yawObject.translateZ( vector.z );
+        yawObject.position.copy(vector);
+    };
+
+    this.lookAt = function (vector) {
+        camera.lookAt(vector);
     };
 
     this.resetCamera = function(camera){

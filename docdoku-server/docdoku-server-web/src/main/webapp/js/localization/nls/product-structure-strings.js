@@ -77,6 +77,8 @@ define({
         VIEW_MODE:"View mode",
         MARKERS:"Markers",
         COMPONENT_SELECTED:"Selected part",
+        INSTANCE_SELECTED:"Selected instance",
+        FLY_TO:"Fly to",
         TOGGLE_ALL_LAYERS:"Toggle all layers",
         APPEND_LAYER:"Create a new layer",
         SCENE_VIEW:"Scene view",

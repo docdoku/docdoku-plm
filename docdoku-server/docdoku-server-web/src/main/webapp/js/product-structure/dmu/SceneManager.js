@@ -134,7 +134,7 @@ define([
         function initControls() {
             createPointerLockControls();
             createTrackBallControls();
-            createOrbitControls();
+            //createOrbitControls();
         }
         function pointerLockChange(){
             _this.pointerLockControls.enabled = (document.pointerLockElement === _this.$container[0]) ||
@@ -150,7 +150,7 @@ define([
             _this.orbitCamera = new THREE.PerspectiveCamera(45, _this.$container.innerWidth / _this.$container.innerHeight, App.SceneOptions.cameraNear, App.SceneOptions.cameraFar);
             _this.orbitCamera.position.copy(App.SceneOptions.defaultCameraPosition);
             addLightsToCamera(_this.orbitCamera);
-            _this.orbitControls = new THREE.OrbitControls(_this.orbitCamera, _this.$container[0]);
+           // _this.orbitControls = new THREE.OrbitControls(_this.orbitCamera, _this.$container[0]);
         }
         function createTrackBallControls() {
             _this.trackBallCamera = new THREE.PerspectiveCamera(45, _this.$container.width() / _this.$container.height(), App.SceneOptions.cameraNear, App.SceneOptions.cameraFar);
@@ -289,7 +289,6 @@ define([
             }
         }
 
-
         /**
          * Scene mouse events
          */
@@ -347,6 +346,7 @@ define([
                     meshMarkedForSelection = intersects[0].object.uuid;
                     setSelectionBoxOnMesh(intersects[0].object);
                     Backbone.Events.trigger("mesh:selected", intersects[0].object);
+                    //_this.flyTo(intersects[0].object);
                 }
             }
             else if (intersects.length > 0 && intersects[0].object.markerId) {
@@ -428,9 +428,9 @@ define([
         /**
          *  Animation
          */
-        /*function cameraAnimation(position,target,duration){
+        function cameraAnimation(position,target,duration){
             var controls = controlsObject;
-            var camera = controls.object;
+            var camera = _this.cameraObject;
             var curCamPos = camera.position;
             var curTar = controls.target;
             var endCamPos = position;
@@ -453,7 +453,7 @@ define([
                     _this.reFrame();
                 })
                 .start();
-        }*/
+        }
 
         /**
          * Animation loop :
@@ -475,6 +475,8 @@ define([
             // Update with SceneOptions
             watchSceneOptions();
 
+            // Update potential animation
+            TWEEN.update();
             // Sometimes needs a reFrame
             if(needsReframe){
                 needsReframe = false;
@@ -505,15 +507,19 @@ define([
         this.reFrame = function(){
             needsReframe = true;
         };
-        /*this.placeCamera = function(cog,diameter) {
-            var controls = controlsObject;
-            var camera = controls.object;
+
+        this.flyTo = function(mesh){
+            var boundingBox = mesh.geometry.boundingBox;
+            var cog = new THREE.Vector3().copy(boundingBox.centroid).applyMatrix4(mesh.matrix);
+            var size = boundingBox.size();
+            var radius = Math.max(size.x,size.y,size.z);
+            var camera = _this.cameraObject;
             var dir = new THREE.Vector3().copy(cog).sub(camera.position).normalize();
-            var distance = diameter ? diameter*2 : 1000;
+            var distance = radius ? radius*2 : 1000;
             distance = distance < App.SceneOptions.cameraNear ? App.SceneOptions.cameraNear + 100 : distance;
             var endCamPos = new THREE.Vector3().copy(cog).sub(dir.multiplyScalar(distance));
             cameraAnimation(endCamPos,cog, 2000);
-        };*/
+        };
         /**
          * Context API
          */

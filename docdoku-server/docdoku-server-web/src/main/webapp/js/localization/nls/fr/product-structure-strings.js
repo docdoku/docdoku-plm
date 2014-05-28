@@ -72,6 +72,8 @@ define({
     VIEW_MODE:"Mode de vue",
     MARKERS:"Marqueurs",
     COMPONENT_SELECTED:"Article sélectionné",
+    INSTANCE_SELECTED:"Instance sélectionnée",
+    FLY_TO:"Atteindre",
     TOGGLE_ALL_LAYERS:"Basculer la visibilité des calques",
     APPEND_LAYER:"Créer un nouveau calque",
     SCENE_VIEW:"Scène",
