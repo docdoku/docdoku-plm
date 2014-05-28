@@ -134,23 +134,22 @@ define([
         function initControls() {
             createPointerLockControls();
             createTrackBallControls();
-            //createOrbitControls();
+            createOrbitControls();
         }
         function pointerLockChange(){
-            _this.pointerLockControls.enabled = (document.pointerLockElement === _this.$container[0]) ||
-                                                (document.mozPointerLockElement === _this.$container[0]) ||
-                                                (document.webkitPointerLockElement === _this.$container[0]);
+            _this.pointerLockControls.enabled = !_this.pointerLockControls.enabled;
         }
         function createPointerLockControls() {
             _this.pointerLockCamera = new THREE.PerspectiveCamera(45, _this.$container.width() / _this.$container.height(), App.SceneOptions.cameraNear, App.SceneOptions.cameraFar);
             _this.pointerLockControls = new THREE.PointerLockControls(_this.pointerLockCamera);
+            //_this.pointerLockControls.moveToPosition(App.SceneOptions.defaultCameraPosition);
             addLightsToCamera(_this.pointerLockCamera);
         }
         function createOrbitControls() {
-            _this.orbitCamera = new THREE.PerspectiveCamera(45, _this.$container.innerWidth / _this.$container.innerHeight, App.SceneOptions.cameraNear, App.SceneOptions.cameraFar);
+            _this.orbitCamera = new THREE.PerspectiveCamera(45, _this.$container.width() / _this.$container.height(), App.SceneOptions.cameraNear, App.SceneOptions.cameraFar);
             _this.orbitCamera.position.copy(App.SceneOptions.defaultCameraPosition);
             addLightsToCamera(_this.orbitCamera);
-           // _this.orbitControls = new THREE.OrbitControls(_this.orbitCamera, _this.$container[0]);
+            _this.orbitControls = new THREE.OrbitControls(_this.orbitCamera, _this.$container[0]);
         }
         function createTrackBallControls() {
             _this.trackBallCamera = new THREE.PerspectiveCamera(45, _this.$container.width() / _this.$container.height(), App.SceneOptions.cameraNear, App.SceneOptions.cameraFar);
@@ -160,7 +159,7 @@ define([
             _this.trackBallControls.keys = [ 65 /*A*/, 83 /*S*/, 68 /*D*/ ];
         }
         function bindPointerLock(){
-            if (_this.stateControl != _this.STATECONTROL.PLC) {
+            if (_this.stateControl != _this.STATECONTROL.PLC || _this.pointerLockControls.enabled) {
                 return;
             }
             _this.$blocker.hide();
@@ -201,12 +200,11 @@ define([
                 document.removeEventListener('webkitpointerlockchange', pointerLockChange, false);
                 _this.$container[0].removeEventListener('dblclick', bindPointerLock, false);
             }
-            /*
+
             _this.orbitControls.removeEventListener("change");
             _this.scene.remove(_this.orbitControls.object);
             _this.orbitControls.enabled = false;
             _this.orbitControls.unbindEvents();
-            */
         }
 
         /**
@@ -345,8 +343,8 @@ define([
                 else {
                     meshMarkedForSelection = intersects[0].object.uuid;
                     setSelectionBoxOnMesh(intersects[0].object);
+
                     Backbone.Events.trigger("mesh:selected", intersects[0].object);
-                    //_this.flyTo(intersects[0].object);
                 }
             }
             else if (intersects.length > 0 && intersects[0].object.markerId) {
@@ -577,7 +575,7 @@ define([
             _this.trackBallControls.bindEvents();
             _this.scene.add(_this.trackBallCamera);
         };
-        function setOrbitControls() {
+        this.setOrbitControls= function() {
 
             if (_this.stateControl == _this.STATECONTROL.ORB) {
                 return;
@@ -594,7 +592,7 @@ define([
             controlsObject.addEventListener("change", onControlChange);
             controlsObject.bindEvents();
             _this.scene.add(_this.orbitCamera);
-        }
+        };
 
         /**
          * Scene option control

@@ -14,7 +14,8 @@ define(
 
         events:{
             "click button#flying_mode_view_btn": "flyingView",
-            "click button#tracking_mode_view_btn": "trackingView"
+            "click button#tracking_mode_view_btn": "trackingView",
+            "click button#orbit_mode_view_btn": "orbitView"
         },
 
         flyingView:function(){
@@ -23,6 +24,10 @@ define(
 
         trackingView:function(){
             App.sceneManager.setTrackBallControls();
+        },
+
+        orbitView:function(){
+            App.sceneManager.setOrbitControls();
         },
 
         render:function(){

@@ -36,6 +36,7 @@ var App = {
         defaultCameraPosition: {x: -1000, y: 800, z: 1100},
         defaultTargetPosition: {x: 0, y: 0, z: 0}
     }
+
 };
 
 define(
@@ -223,7 +224,7 @@ define(
                 this.exportSceneButton.show();
             }
             this.showPartMetadata();
-            App.App.sceneManager.setPathForIFrame(this.partsTreeView.componentSelected.getPath());
+            App.sceneManager.setPathForIFrame(this.partsTreeView.componentSelected.getPath());
         },
 
         exportScene:function(){
