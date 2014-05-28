@@ -129,7 +129,7 @@ THREE.OrbitControls = function (object, domElement) {
     // pass in distance in world space to move left
     this.panLeft = function (distance) {
 
-        distance *= App.SceneOptions.panSpeed/10;
+        distance *= App.SceneOptions.panSpeed;
 
         var panOffset = new THREE.Vector3();
         var te = this.object.matrix.elements;
@@ -144,7 +144,7 @@ THREE.OrbitControls = function (object, domElement) {
     // pass in distance in world space to move up
     this.panUp = function (distance) {
 
-        distance *= App.SceneOptions.panSpeed/10;
+        distance *= App.SceneOptions.panSpeed;
 
         var panOffset = new THREE.Vector3();
         var te = this.object.matrix.elements;
@@ -288,9 +288,7 @@ THREE.OrbitControls = function (object, domElement) {
 
     function onMouseDown(event) {
 
-        if (scope.enabled === false) {
-            return;
-        }
+        if (scope.enabled === false) { return;}
         event.preventDefault();
 
         if (event.button === 0) {
@@ -330,7 +328,7 @@ THREE.OrbitControls = function (object, domElement) {
 
     function onMouseMove(event) {
 
-        if (scope.enabled === false) return;
+        if (scope.enabled === false) { return;}
 
         event.preventDefault();
 
@@ -389,7 +387,7 @@ THREE.OrbitControls = function (object, domElement) {
 
     function onMouseUp(/* event */) {
 
-        if (scope.enabled === false) return;
+        if (scope.enabled === false) { return;}
 
         // Greggman fix: https://github.com/greggman/three.js/commit/fde9f9917d6d8381f06bf22cdff766029d1761be
         scope.domElement.removeEventListener('mousemove', onMouseMove, false);
@@ -401,7 +399,7 @@ THREE.OrbitControls = function (object, domElement) {
 
     function onMouseWheel(event) {
 
-        if (scope.enabled === false || scope.noZoom === true) return;
+        if (scope.enabled === false || scope.noZoom === true) {return;}
 
         var delta = 0;
 
@@ -450,19 +448,19 @@ THREE.OrbitControls = function (object, domElement) {
         switch (event.keyCode) {
 
             case scope.keys.UP:
-                scope.pan(new THREE.Vector2(0, scope.keyPanSpeed * App.SceneOptions.panSpeed/10));
+                scope.pan(new THREE.Vector2(0, scope.keyPanSpeed * App.SceneOptions.panSpeed));
                 needUpdate = true;
                 break;
             case scope.keys.BOTTOM:
-                scope.pan(new THREE.Vector2(0, -scope.keyPanSpeed * App.SceneOptions.panSpeed/10));
+                scope.pan(new THREE.Vector2(0, -scope.keyPanSpeed * App.SceneOptions.panSpeed));
                 needUpdate = true;
                 break;
             case scope.keys.LEFT:
-                scope.pan(new THREE.Vector2(scope.keyPanSpeed * App.SceneOptions.panSpeed/10, 0));
+                scope.pan(new THREE.Vector2(scope.keyPanSpeed * App.SceneOptions.panSpeed, 0));
                 needUpdate = true;
                 break;
             case scope.keys.RIGHT:
-                scope.pan(new THREE.Vector2(-scope.keyPanSpeed * App.SceneOptions.panSpeed/10, 0));
+                scope.pan(new THREE.Vector2(-scope.keyPanSpeed * App.SceneOptions.panSpeed, 0));
                 needUpdate = true;
                 break;
         }
@@ -478,9 +476,7 @@ THREE.OrbitControls = function (object, domElement) {
 
     function touchstart(event) {
 
-        if (scope.enabled === false) {
-            return;
-        }
+        if (scope.enabled === false) { return;}
 
         switch (event.touches.length) {
 
@@ -525,9 +521,7 @@ THREE.OrbitControls = function (object, domElement) {
 
     function touchmove(event) {
 
-        if (scope.enabled === false) {
-            return;
-        }
+        if (scope.enabled === false) { return;}
 
         event.preventDefault();
         event.stopPropagation();
@@ -613,9 +607,7 @@ THREE.OrbitControls = function (object, domElement) {
 
     function touchend(/* event */) {
 
-        if (scope.enabled === false) {
-            return;
-        }
+        if (scope.enabled === false) { return;}
 
         state = STATE.NONE;
     }

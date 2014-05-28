@@ -134,7 +134,7 @@ define([
         function initControls() {
             createPointerLockControls();
             createTrackBallControls();
-            //createOrbitControls();
+            createOrbitControls();
         }
         function pointerLockChange(){
             _this.pointerLockControls.enabled = !_this.pointerLockControls.enabled;
@@ -146,7 +146,7 @@ define([
             addLightsToCamera(_this.pointerLockCamera);
         }
         function createOrbitControls() {
-            _this.orbitCamera = new THREE.PerspectiveCamera(45, _this.$container.innerWidth / _this.$container.innerHeight, App.SceneOptions.cameraNear, App.SceneOptions.cameraFar);
+            _this.orbitCamera = new THREE.PerspectiveCamera(45, _this.$container.width() / _this.$container.height(), App.SceneOptions.cameraNear, App.SceneOptions.cameraFar);
             _this.orbitCamera.position.copy(App.SceneOptions.defaultCameraPosition);
             addLightsToCamera(_this.orbitCamera);
             _this.orbitControls = new THREE.OrbitControls(_this.orbitCamera, _this.$container[0]);
@@ -200,12 +200,11 @@ define([
                 document.removeEventListener('webkitpointerlockchange', pointerLockChange, false);
                 _this.$container[0].removeEventListener('dblclick', bindPointerLock, false);
             }
-            /*
+
             _this.orbitControls.removeEventListener("change");
             _this.scene.remove(_this.orbitControls.object);
             _this.orbitControls.enabled = false;
             _this.orbitControls.unbindEvents();
-            */
         }
 
         /**
@@ -570,7 +569,7 @@ define([
             _this.trackBallControls.bindEvents();
             _this.scene.add(_this.trackBallCamera);
         };
-        function setOrbitControls() {
+        this.setOrbitControls= function() {
 
             if (_this.stateControl == _this.STATECONTROL.ORB) {
                 return;
@@ -587,7 +586,7 @@ define([
             controlsObject.addEventListener("change", onControlChange);
             controlsObject.bindEvents();
             _this.scene.add(_this.orbitCamera);
-        }
+        };
 
         /**
          * Scene option control
