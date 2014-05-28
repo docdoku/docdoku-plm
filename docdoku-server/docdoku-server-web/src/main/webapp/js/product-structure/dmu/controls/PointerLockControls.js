@@ -3,7 +3,6 @@
  */
 
 THREE.PointerLockControls = function ( camera ) {
-
     var keyCodes = {
         FORWARD : 90, // Z
         FORWARD_2 : 38, // Up
@@ -201,7 +200,7 @@ THREE.PointerLockControls = function ( camera ) {
             return;
         }
 
-        delta *= 0.1;
+        delta *= 100;
 
         velocity.x += ( - velocity.x ) * 0.08 * delta;
         velocity.y += ( - velocity.y ) * 0.08 * delta;

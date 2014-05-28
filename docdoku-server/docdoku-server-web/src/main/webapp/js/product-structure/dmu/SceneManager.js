@@ -137,13 +137,12 @@ define([
             //createOrbitControls();
         }
         function pointerLockChange(){
-            _this.pointerLockControls.enabled = (document.pointerLockElement === _this.$container[0]) ||
-                                                (document.mozPointerLockElement === _this.$container[0]) ||
-                                                (document.webkitPointerLockElement === _this.$container[0]);
+            _this.pointerLockControls.enabled = !_this.pointerLockControls.enabled;
         }
         function createPointerLockControls() {
             _this.pointerLockCamera = new THREE.PerspectiveCamera(45, _this.$container.width() / _this.$container.height(), App.SceneOptions.cameraNear, App.SceneOptions.cameraFar);
             _this.pointerLockControls = new THREE.PointerLockControls(_this.pointerLockCamera);
+            //_this.pointerLockControls.moveToPosition(App.SceneOptions.defaultCameraPosition);
             addLightsToCamera(_this.pointerLockCamera);
         }
         function createOrbitControls() {
@@ -160,7 +159,7 @@ define([
             _this.trackBallControls.keys = [ 65 /*A*/, 83 /*S*/, 68 /*D*/ ];
         }
         function bindPointerLock(){
-            if (_this.stateControl != _this.STATECONTROL.PLC) {
+            if (_this.stateControl != _this.STATECONTROL.PLC || _this.pointerLockControls.enabled) {
                 return;
             }
             _this.$blocker.hide();
@@ -345,6 +344,7 @@ define([
                 else {
                     meshMarkedForSelection = intersects[0].object.uuid;
                     setSelectionBoxOnMesh(intersects[0].object);
+
                     Backbone.Events.trigger("mesh:selected", intersects[0].object);
                 }
             }

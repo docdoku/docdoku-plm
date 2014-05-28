@@ -221,7 +221,7 @@ define(
                 this.exportSceneButton.show();
             }
             this.showPartMetadata();
-            App.App.sceneManager.setPathForIFrame(this.partsTreeView.componentSelected.getPath());
+            App.sceneManager.setPathForIFrame(this.partsTreeView.componentSelected.getPath());
         },
 
         exportScene:function(){
