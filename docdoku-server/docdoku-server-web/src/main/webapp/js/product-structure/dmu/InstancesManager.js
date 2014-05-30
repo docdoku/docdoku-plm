@@ -124,7 +124,7 @@ function (LoaderManager, async) {
                         id: directive.id,
                         partIterationId: instance.partIterationId,
                         quality: directive.quality,
-                        geometry: THREE.BufferGeometryUtils.fromGeometry(geometry),
+                        geometry: THREE.BufferGeometryUtils.fromGeometry(geometry),//geometry,
                         materials: material
                     });
                     callback();

@@ -138,11 +138,17 @@ define([
         }
         function pointerLockChange(){
             _this.pointerLockControls.enabled = !_this.pointerLockControls.enabled;
+            if (_this.pointerLockControls.enabled) {
+                _this.$blocker.hide();
+                _this.pointerLockControls.bindEvents();
+            }else{
+                _this.$blocker.show();
+                _this.pointerLockControls.unbindEvents();
+            }
         }
         function createPointerLockControls() {
             _this.pointerLockCamera = new THREE.PerspectiveCamera(45, _this.$container.width() / _this.$container.height(), App.SceneOptions.cameraNear, App.SceneOptions.cameraFar);
             _this.pointerLockControls = new THREE.PointerLockControls(_this.pointerLockCamera);
-            //_this.pointerLockControls.moveToPosition(App.SceneOptions.defaultCameraPosition);
             addLightsToCamera(_this.pointerLockCamera);
         }
         function createOrbitControls() {
@@ -193,12 +199,13 @@ define([
             _this.scene.remove(_this.pointerLockControls.getObject());
             _this.pointerLockControls.enabled = false;
             _this.pointerLockControls.unbindEvents();
+            _this.$blocker.hide();
             if (havePointerLock) {
                 // Hook pointer lock state change events
                 document.removeEventListener('pointerlockchange', pointerLockChange, false);
                 document.removeEventListener('mozpointerlockchange', pointerLockChange, false);
                 document.removeEventListener('webkitpointerlockchange', pointerLockChange, false);
-                _this.$container[0].removeEventListener('dblclick', bindPointerLock, false);
+                _this.$container[0].removeEventListener('click', bindPointerLock, false);
             }
 
             _this.orbitControls.removeEventListener("change");
@@ -219,10 +226,11 @@ define([
         function onFullScreenChange(){
             if (document.fullscreenElement === _this.$container[0] ||
                 document.mozFullscreenElement === _this.$container[0] ||
-                document.mozFullScreenElement === _this.$container[0]) {
+                document.webkitFullScreenElement === _this.$container[0]) {
 
                 document.removeEventListener('fullscreenchange', onFullScreenChange);
                 document.removeEventListener('mozfullscreenchange', onFullScreenChange);
+                document.removeEventListener('webkitfullscreenchange', onFullScreenChange);
 
                 _this.$container[0].requestPointerLock();
             }
@@ -551,9 +559,8 @@ define([
                 document.addEventListener('pointerlockchange', pointerLockChange, false);
                 document.addEventListener('mozpointerlockchange', pointerLockChange, false);
                 document.addEventListener('webkitpointerlockchange', pointerLockChange, false);
-                _this.$container[0].addEventListener('dblclick', bindPointerLock, false);
+                _this.$container[0].addEventListener('click', bindPointerLock, false);
             }
-            _this.pointerLockControls.bindEvents();
             _this.scene.add(_this.pointerLockControls.getObject());
         };
         this.setTrackBallControls = function(){
@@ -565,7 +572,6 @@ define([
             deleteAllControls();
 
             $('#tracking_mode_view_btn').addClass("active");
-            _this.$blocker.hide();
 
             controlsObject = _this.trackBallControls;
             _this.cameraObject = _this.trackBallCamera;

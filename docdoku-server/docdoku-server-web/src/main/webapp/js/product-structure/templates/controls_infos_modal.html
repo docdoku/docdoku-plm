@@ -81,6 +81,26 @@
             <dd>{{i18n.MOVE_BACKWARD}}</dd>
         </dl>
         {{/isTBC}}
+
+        {{#isORC}}
+        <h4>{{i18n.MOUSE_CONTROLS}}</h4>
+        <dl class="keyboard-ps-controls">
+            <dt>{{i18n.LEFT_CLICK}} <em>+</em> {{i18n.MOVE}}</dt>
+            <dd>{{i18n.ROTATE_SCENE}}</dd>
+        </dl>
+        <dl class="keyboard-ps-controls">
+            <dt>{{i18n.RIGHT_CLICK}} <em>+</em> {{i18n.MOVE}}</dt>
+            <dd>{{i18n.MOVE_SCENE}}</dd>
+        </dl>
+        <dl class="keyboard-ps-controls">
+            <dt>{{i18n.SCROLL_UP}}</dt>
+            <dd>{{i18n.MOVE_FORWARD}}</dd>
+        </dl>
+        <dl class="keyboard-ps-controls">
+            <dt>{{i18n.SCROLL_DOWN}}</dt>
+            <dd>{{i18n.MOVE_BACKWARD}}</dd>
+        </dl>
+        {{/isORC}}
     </div>
     <div class="modal-footer">
         <a href="#" class="btn" data-dismiss="modal">{{i18n.CLOSE}}</a>

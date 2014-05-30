@@ -65,6 +65,7 @@ define({
     SEARCH_PART_ENDING:"Article finissant par",
     FLYING_MODE:"Mode libre",
     TRACKBALL_MODE:"Mode trackball",
+    "ORBIT_MODE":       "Mode orbit",
     FIT_VIEW:"Centrer les objets visibles",
     MARKERS_SIZE_MIN:"Diminuer la taille des marqueurs",
     MARKERS_OPACITY:"Changer l'opacité des marqueurs",

@@ -70,6 +70,7 @@ define({
         SEARCH_PART_ENDING:"Search part ending by ",
         FLYING_MODE:"Fly mode",
         TRACKBALL_MODE:"Trackball mode",
+        "ORBIT_MODE":       "Orbit mode",
         FIT_VIEW:"Fit view",
         MARKERS_SIZE_MIN:"Reduce markers size",
         MARKERS_OPACITY:"Change markers opacity",

@@ -27,10 +27,13 @@ define(
             var cimv;
             switch (App.sceneManager.stateControl) {
                 case App.sceneManager.STATECONTROL.PLC:
-                    cimv = new ControlsInfosModalView({isPLC:true, isTBC:false});
+                    cimv = new ControlsInfosModalView({isPLC:true, isTBC:false, isORB:false});
                     break;
                 case App.sceneManager.STATECONTROL.TBC:
-                    cimv = new ControlsInfosModalView({isPLC:false, isTBC:true});
+                    cimv = new ControlsInfosModalView({isPLC:false, isTBC:true, isORB:false});
+                    break;
+                case App.sceneManager.STATECONTROL.ORB:
+                    cimv = new ControlsInfosModalView({isPLC:false, isTBC:false, isORB:true});
                     break;
             }
             $("body").append(cimv.render().el);

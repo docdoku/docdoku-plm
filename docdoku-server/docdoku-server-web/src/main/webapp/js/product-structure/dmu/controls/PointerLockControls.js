@@ -59,6 +59,8 @@ THREE.PointerLockControls = function ( camera ) {
 
         pitchObject.rotation.x = Math.max( - PI_2, Math.min( PI_2, pitchObject.rotation.x ) );
 
+        scope.dispatchEvent( changeEvent );
+
     };
 
     var onKeyDown = function ( event ) {
@@ -228,11 +230,24 @@ THREE.PointerLockControls = function ( camera ) {
             velocity.x += moveSpeed * delta;
         }
 
+        if(velocity.x < 1 && velocity.x > -1){
+            velocity.x = 0;
+        }
+        if(velocity.y < 1 && velocity.y > -1){
+            velocity.y = 0;
+        }
+        if(velocity.z < 1 && velocity.z > -1){
+            velocity.z = 0;
+        }
+
         yawObject.translateX( velocity.x );
         yawObject.translateY( velocity.y );
         yawObject.translateZ( velocity.z );
-
-        scope.dispatchEvent( changeEvent );
+        console.log(yawObject.position);
+        console.log(yawObject.rotation);
+        if(velocity.x || velocity.y || velocity.z){
+            scope.dispatchEvent( changeEvent );
+        }
     };
 
     this.moveToPosition = function ( vector ) {
