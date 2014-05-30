@@ -53,6 +53,7 @@ define(
         "views/control_markers_view",
         "views/control_layers_view",
         "views/control_options_view",
+        "views/control_clipping_view",
         "views/control_explode_view",
         "views/control_measure_view",
         "views/baseline_select_view",
@@ -73,6 +74,7 @@ define(
                  ControlMarkersView,
                  ControlLayersView,
                  ControlOptionsView,
+                 ControlClippingView,
                  ControlExplodeView,
                  ControlMeasureView,
                  BaselineSelectView,
@@ -125,6 +127,7 @@ define(
                 App.sceneManager = new SceneManager();
                 this.$ControlsContainer.append(new ControlModesView().render().$el);
                 this.$ControlsContainer.append(new ControlOptionsView().render().$el);
+                this.$ControlsContainer.append(new ControlClippingView().render().$el);
                 this.$ControlsContainer.append(new ControlExplodeView().render().$el);
                 this.$ControlsContainer.append(new ControlMarkersView().render().$el);
                 this.$ControlsContainer.append(new ControlLayersView().render().$el);

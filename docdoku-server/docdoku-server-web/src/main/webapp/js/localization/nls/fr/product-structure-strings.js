@@ -74,6 +74,8 @@ define({
     COMPONENT_SELECTED:"Article sélectionné",
     INSTANCE_SELECTED:"Instance sélectionnée",
     FLY_TO:"Atteindre",
+    LOOK_AT:"Regarder",
+    CLIPPING:"Couper",
     TOGGLE_ALL_LAYERS:"Basculer la visibilité des calques",
     APPEND_LAYER:"Créer un nouveau calque",
     SCENE_VIEW:"Scène",
