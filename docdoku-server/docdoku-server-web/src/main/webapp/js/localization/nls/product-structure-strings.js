@@ -80,6 +80,8 @@ define({
         COMPONENT_SELECTED:"Selected part",
         INSTANCE_SELECTED:"Selected instance",
         FLY_TO:"Fly to",
+        LOOK_AT:"Look at",
+        CLIPPING:"Clipping",
         TOGGLE_ALL_LAYERS:"Toggle all layers",
         APPEND_LAYER:"Create a new layer",
         SCENE_VIEW:"Scene view",

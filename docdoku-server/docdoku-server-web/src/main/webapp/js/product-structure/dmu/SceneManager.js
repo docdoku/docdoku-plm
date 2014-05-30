@@ -434,12 +434,9 @@ define([
         /**
          *  Animation
          */
-        function cameraAnimation(position,target,duration){
+        function cameraAnimation(target,duration,position){
             var controls = controlsObject;
-            var camera = _this.cameraObject;
-            var curCamPos = camera.position;
             var curTar = controls.target;
-            var endCamPos = position;
             var endTarPos = target;
 
             new TWEEN.Tween(curTar)
@@ -451,14 +448,20 @@ define([
                 })
                 .start();
 
-            new TWEEN.Tween(curCamPos)
-                .to({ x: endCamPos.x, y: endCamPos.y, z: endCamPos.z }, duration)
-                .interpolation(TWEEN.Interpolation.CatmullRom)
-                .easing(TWEEN.Easing.Quintic.InOut)
-                .onUpdate(function () {
-                    _this.reFrame();
-                })
-                .start();
+            if (position) {
+                var endCamPos = position;
+                var camera = _this.cameraObject;
+                var curCamPos = camera.position;
+
+                new TWEEN.Tween(curCamPos)
+                    .to({ x: endCamPos.x, y: endCamPos.y, z: endCamPos.z }, duration)
+                    .interpolation(TWEEN.Interpolation.CatmullRom)
+                    .easing(TWEEN.Easing.Quintic.InOut)
+                    .onUpdate(function () {
+                        _this.reFrame();
+                    })
+                    .start();
+            }
         }
 
         /**
@@ -524,7 +527,13 @@ define([
             var distance = radius ? radius*2 : 1000;
             distance = distance < App.SceneOptions.cameraNear ? App.SceneOptions.cameraNear + 100 : distance;
             var endCamPos = new THREE.Vector3().copy(cog).sub(dir.multiplyScalar(distance));
-            cameraAnimation(endCamPos,cog, 2000);
+            cameraAnimation(cog, 2000,endCamPos);
+        };
+
+        this.lookAt = function(mesh){
+            var boundingBox = mesh.geometry.boundingBox;
+            var cog = new THREE.Vector3().copy(boundingBox.centroid).applyMatrix4(mesh.matrix);
+            cameraAnimation(cog, 2000);
         };
         /**
          * Context API
@@ -656,6 +665,14 @@ define([
             pom.setAttribute('href', this.renderer.domElement.toDataURL('image/png'));
             pom.setAttribute('download', filename);
             pom.click();
+        };
+
+        this.setCameraNearFar=function(n,f){
+            _this.cameraObject.near = n;
+            _this.cameraObject.far = f;
+            _this.cameraObject.updateProjectionMatrix();
+            _this.reFrame();
+
         };
 
         /**

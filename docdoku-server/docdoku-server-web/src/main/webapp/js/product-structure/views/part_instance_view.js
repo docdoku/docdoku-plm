@@ -8,7 +8,8 @@ define (["text!templates/part_instance.html","i18n!localization/nls/product-stru
         template: Mustache.compile(template),
 
         events:{
-            "click button#focus":"focus"
+            "click button#fly_to":"fly_to",
+            "click button#look_at":"look_at"
         },
 
         className:"side_control_group",
@@ -31,8 +32,12 @@ define (["text!templates/part_instance.html","i18n!localization/nls/product-stru
             this.$el.empty();
         },
 
-        focus:function(){
+        fly_to:function(){
             App.sceneManager.flyTo(this.mesh);
+        },
+
+        look_at:function(){
+            App.sceneManager.lookAt(this.mesh);
         }
         
     });
