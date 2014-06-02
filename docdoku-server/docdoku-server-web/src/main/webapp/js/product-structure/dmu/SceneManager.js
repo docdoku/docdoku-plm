@@ -18,7 +18,7 @@ define([
         var projector = new THREE.Projector();
         var controlsObject = null;                                                                                      // Switching controls means different camera management
         var clock = new THREE.Clock();
-        var needsReframe = false;
+        var needsRedraw = false;
         var meshesIndexed={};
         var selectionBox = null;
         var meshMarkedForSelection = null;
@@ -118,7 +118,7 @@ define([
             _this.cameraObject.updateProjectionMatrix();
             _this.renderer.setSize(_this.$container.innerWidth(),_this.$container.innerHeight());
             controlsObject.handleResize();
-            _this.reFrame();
+            _this.reDraw();
         }
         function setSelectionBoxOnMesh(mesh) {
             selectionBox.update(mesh);
@@ -221,7 +221,7 @@ define([
             if(App.instancesManager){
                 App.instancesManager.planNewEval();
             }
-            _this.reFrame();
+            _this.reDraw();
         }
         function onFullScreenChange(){
             if (document.fullscreenElement === _this.$container[0] ||
@@ -277,7 +277,7 @@ define([
             }
             _this.grid.added = true;
             _this.scene.add(_this.grid);
-            _this.reFrame();
+            _this.reDraw();
         }
         function removeGrid () {
             if (!_this.grid.added) {
@@ -285,7 +285,7 @@ define([
             }
             _this.grid.added = false;
             _this.scene.remove(_this.grid);
-            _this.reFrame();
+            _this.reDraw();
         }
         function watchSceneOptions() {
             if (App.SceneOptions.grid) {
@@ -367,7 +367,7 @@ define([
                     _this.measureCallback(-1);
                 }
             }
-            _this.reFrame();
+            _this.reDraw();
         }
 
         /**
@@ -381,7 +381,7 @@ define([
             mesh.geometry.dispose();
             mesh.material.dispose();
             mesh = null;
-            _this.reFrame();
+            _this.reDraw();
         }
         function processTrash () {
             var instanceList = App.instancesManager.getTrash();
@@ -418,7 +418,7 @@ define([
                     applyWireFrame(newMesh);
                     applyMeasureStateOpacity(newMesh);
                 }
-                _this.reFrame();
+                _this.reDraw();
             });
         }
 
@@ -435,8 +435,7 @@ define([
          *  Animation
          */
         function cameraAnimation(target,duration,position){
-            var controls = controlsObject;
-            var curTar = controls.target;
+            var curTar = controlsObject.target;
             var endTarPos = target;
 
             new TWEEN.Tween(curTar)
@@ -444,7 +443,7 @@ define([
                 .interpolation(TWEEN.Interpolation.CatmullRom)
                 .easing(TWEEN.Easing.Quintic.InOut)
                 .onUpdate(function () {
-                    _this.reFrame();
+                    _this.reDraw();
                 })
                 .start();
 
@@ -458,7 +457,7 @@ define([
                     .interpolation(TWEEN.Interpolation.CatmullRom)
                     .easing(TWEEN.Easing.Quintic.InOut)
                     .onUpdate(function () {
-                        _this.reFrame();
+                        _this.reDraw();
                     })
                     .start();
             }
@@ -487,8 +486,8 @@ define([
             // Update potential animation
             TWEEN.update();
             // Sometimes needs a reFrame
-            if(needsReframe){
-                needsReframe = false;
+            if(needsRedraw){
+                needsRedraw = false;
                 _this.stats.update();
                 render();
             }
@@ -513,8 +512,8 @@ define([
             animate();
         };
 
-        this.reFrame = function(){
-            needsReframe = true;
+        this.reDraw = function(){
+            needsRedraw = true;
         };
 
         this.flyTo = function(mesh){
@@ -632,7 +631,7 @@ define([
                     applyWireFrame(child);
                 }
             });
-            _this.reFrame();
+            _this.reDraw();
         };
         this.explodeScene = function(v) {
             // this could be adjusted
@@ -642,7 +641,7 @@ define([
                     applyExplosionCoeff(child);
                 }
             });
-            _this.reFrame();
+            _this.reDraw();
         };
         this.setMeasureListener = function(callback) {
             _this.measureCallback = callback;
@@ -671,7 +670,7 @@ define([
             _this.cameraObject.near = n;
             _this.cameraObject.far = f;
             _this.cameraObject.updateProjectionMatrix();
-            _this.reFrame();
+            _this.reDraw();
 
         };
 

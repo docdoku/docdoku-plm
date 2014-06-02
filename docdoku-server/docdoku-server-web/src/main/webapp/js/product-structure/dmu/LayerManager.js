@@ -48,7 +48,7 @@ define([
 
             // add the sphere to the scene
             App.sceneManager.scene.add( markerMesh );
-            App.sceneManager.reFrame();
+            App.sceneManager.reDraw();
 
             // rescale the marker to the others markers scale
             markerMesh.scale = this.markerScale;
@@ -74,7 +74,7 @@ define([
 
         _removeMesh: function(cid) {
             App.sceneManager.scene.remove(this.meshs[cid]);
-            App.sceneManager.reFrame();
+            App.sceneManager.reDraw();
             delete this.meshs[cid];
         },
 
