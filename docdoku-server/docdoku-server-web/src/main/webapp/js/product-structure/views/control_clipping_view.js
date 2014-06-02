@@ -24,10 +24,12 @@ define(
 
             this.slider = this.$('.slider');
             this.slider.noUiSlider({
-                start: [ 1, 1e5 ],
+                start: [ 1, 1e4 ],
+                behaviour: 'extend-drag-snap',
+                connect: true,
                 range: {
                     'min': 1,
-                    'max': 1e5
+                    'max': 1e4
                 }
             });
 
@@ -36,7 +38,7 @@ define(
 
         clipping:function(e){
             var values = this.slider.val();
-            var near = parseFloat(values[0])/10 +1;
+            var near = parseFloat(values[0]);
             var far = parseFloat(values[1]);
             App.sceneManager.setCameraNearFar(near,far);
         }

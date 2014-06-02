@@ -97,12 +97,6 @@ var InstancesSorter = {};
                 var distanceRating = 1 - (instance.dist-result.minDist) / (result.maxDist-result.minDist);
                 var volRating = (instance.projectedSize-result.minPSize) / (result.maxPSize-result.minPSize);
 
-                if(instance.id=="194037-194020-193988-193980"){
-                    console.log("Plank : \n\tangle:"+angleRating+"\n\tdistance:"+distanceRating+"\n\tvol:"+volRating+"\n\tdist:"+instance.radius);
-                }else if(instance.id=="194037-194020-193988-193982"){
-                    console.log("Nail : \n\tangle:"+angleRating+"\n\tdistance:"+distanceRating+"\n\tvol:"+volRating+"\n\tdist:"+instance.radius);
-                }
-
                 angleRating *= WorkerManagedValues.angleRating;
                 distanceRating *= WorkerManagedValues.distanceRating;
                 volRating *= WorkerManagedValues.volRating;
@@ -112,12 +106,6 @@ var InstancesSorter = {};
 
                 // Arithmetic mean
                 instance.globalRating = angleRating + distanceRating + volRating ;
-
-                if(instance.id=="194037-194020-193988-193980"){
-                    console.log("Plank : "+instance.globalRating);
-                }else if(instance.id=="194037-194020-193988-193982"){
-                    console.log("Nail : "+instance.globalRating);
-                }
 
                 result.minRating = Math.min(result.minRating,instance.globalRating);
                 result.maxRating = Math.max(result.maxRating,instance.globalRating);
