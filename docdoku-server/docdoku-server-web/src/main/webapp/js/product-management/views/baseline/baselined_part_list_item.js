@@ -1,5 +1,5 @@
 define([
-    "text!templates/baselined_part_list_item.html",
+    "text!templates/baseline/baselined_part_list_item.html",
     "i18n!localization/nls/baseline-strings"
 ],function(template,i18n){
 

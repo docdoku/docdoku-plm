@@ -1,7 +1,7 @@
 /*global APP_VIEW*/
 define([
     "common-objects/common/singleton_decorator",
-    "text!templates/product_nav.html",
+    "text!templates/nav/product_nav.html",
     "i18n!localization/nls/product-management-strings",
     "views/product_content"
 ], function (

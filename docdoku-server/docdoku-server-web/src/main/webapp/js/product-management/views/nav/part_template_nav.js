@@ -1,6 +1,6 @@
 define([
     "common-objects/common/singleton_decorator",
-    "text!templates/part_template_nav.html",
+    "text!templates/nav/part_template_nav.html",
     "i18n!localization/nls/product-management-strings",
     "views/part_template_content"
 ], function (
@@ -24,7 +24,7 @@ define([
         },
 
         setActive: function () {
-            $("#product-management-menu .active").removeClass("active");
+            $("#product-management-menu").find(".active").removeClass("active");
             this.$el.find(".nav-list-entry").first().addClass("active");
         },
 

@@ -1,6 +1,6 @@
 define([
-    "text!templates/baselined_part_list.html",
-    "views/baselined_part_list_item",
+    "text!templates/baseline/baselined_part_list.html",
+    "views/baseline/baselined_part_list_item",
     "common-objects/models/baselined_part"
 ],function(template,BaselinedPartListItemView,BaselinedPart){
 

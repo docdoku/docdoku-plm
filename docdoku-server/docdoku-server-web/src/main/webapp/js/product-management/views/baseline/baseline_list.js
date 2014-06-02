@@ -1,7 +1,7 @@
 define([
-    "text!templates/baseline_list.html",
+    "text!templates/baseline/baseline_list.html",
     "common-objects/collections/baselines",
-    "views/baseline_list_item"
+    "views/baseline/baseline_list_item"
 ],function(template,Baselines,BaselineListItemView){
 
     var BaselineListView = Backbone.View.extend({

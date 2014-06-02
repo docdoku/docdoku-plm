@@ -1,8 +1,8 @@
 define([
     "common-objects/common/singleton_decorator",
-    "views/product_nav",
-    "views/part_nav",
-    "views/part_template_nav"
+    "views/nav/product_nav",
+    "views/nav/part_nav",
+    "views/nav/part_template_nav"
 ],
     function (
         singletonDecorator,

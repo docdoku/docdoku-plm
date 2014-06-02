@@ -2,7 +2,7 @@ define(
     [
         "text!templates/product_details.html",
         "i18n!localization/nls/product-management-strings",
-        "views/baseline_list"
+        "views/baseline/baseline_list"
     ],function(
         template,
         i18n,
@@ -57,8 +57,8 @@ define(
             this.$tabBaselines.append(this.baselineListView.$el);
             this.listenToOnce(this.baselineListView,"baseline:to-edit-modal",function(baseline){
                 that.closeModal();
-                require(["views/baseline_edit_view"],function(BaselineEditView){
-                    var baselineEditView = new BaselineEditView({model:baseline},{productId:that.model.getId()}).render();
+                require(["views/baseline/baseline_edit_view"],function(BaselineEditView){
+                    new BaselineEditView({model:baseline},{productId:that.model.getId()}).render();
                 });
             });
         },

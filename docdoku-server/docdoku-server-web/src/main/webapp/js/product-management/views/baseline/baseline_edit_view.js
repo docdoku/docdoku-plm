@@ -1,8 +1,8 @@
 define(
     [
-        "text!templates/baseline_edit.html",
+        "text!templates/baseline/baseline_edit.html",
         "i18n!localization/nls/baseline-strings",
-        "views/baselined_part_list",
+        "views/baseline/baselined_part_list",
         "common-objects/models/baseline"
     ],function(
         template,

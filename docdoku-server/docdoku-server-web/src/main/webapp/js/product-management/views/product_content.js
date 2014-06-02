@@ -4,7 +4,7 @@ define([
     "i18n!localization/nls/product-management-strings",
     "views/product_list",
     "views/product_creation_view",
-    "views/baseline_creation_view",
+    "views/baseline/baseline_creation_view",
     "text!common-objects/templates/buttons/delete_button.html"
 ], function (
     ConfigurationItemCollection,

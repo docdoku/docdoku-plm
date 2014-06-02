@@ -1,4 +1,4 @@
-define(["text!templates/baseline_list_item.html"],function(template){
+define(["text!templates/baseline/baseline_list_item.html"],function(template){
 
     var BaselineItemView = Backbone.View.extend({
 
