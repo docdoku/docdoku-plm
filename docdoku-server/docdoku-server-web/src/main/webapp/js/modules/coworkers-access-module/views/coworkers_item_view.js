@@ -32,7 +32,7 @@ define([
                         if(message.status == "OFFLINE"){
                             that.$(".icon-user").addClass("user-offline").removeClass("user-online").attr("title",i18n.OFFLINE);
                         }else if(message.status == "ONLINE"){
-                            that.$(".icon-user").toggleClass("user-online").removeClass("user-offline").attr("title",i18n.ONLINE);
+                            that.$(".icon-user").addClass("user-online").removeClass("user-offline").attr("title",i18n.ONLINE);
                         }
                     }
                 });
