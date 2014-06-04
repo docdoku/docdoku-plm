@@ -21,13 +21,12 @@
 package com.docdoku.server.dao;
 
 import com.docdoku.core.configuration.Baseline;
-import com.docdoku.core.configuration.BaselinedPart;
 import com.docdoku.core.exceptions.BaselineNotFoundException;
 import com.docdoku.core.product.PartRevision;
 
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import java.util.*;
+import java.util.List;
+import java.util.Locale;
 
 public class BaselineDAO {
 
@@ -41,6 +40,12 @@ public class BaselineDAO {
     public BaselineDAO(Locale pLocale, EntityManager pEM) {
         em = pEM;
         mLocale = pLocale;
+    }
+
+    public List<Baseline> findBaselines(String workspaceId) {
+        return em.createQuery("SELECT b FROM Baseline b WHERE b.configurationItem.workspace.id = :workspaceId", Baseline.class)
+                .setParameter("workspaceId",workspaceId)
+                .getResultList();
     }
 
     public List<Baseline> findBaselines(String ciId, String workspaceId){

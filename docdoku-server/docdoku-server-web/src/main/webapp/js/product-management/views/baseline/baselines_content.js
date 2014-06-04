@@ -41,7 +41,8 @@ define([
             this.bindDomElements();
             new ConfigurationItemCollection().fetch({success: this.fillProductList});
             var self = this ;
-            this.$inputProductId.change(function(){self.onProductChange()});
+            this.$inputProductId.change(function(){self.createBaselineView()});
+            self.createBaselineView();
             return this;
         },
 
@@ -61,23 +62,24 @@ define([
             }
         },
 
-        onProductChange: function(){
+        createBaselineView: function(){
             if(this.listView){
                 this.listView.remove();
+                this.changeDeleteButtonDisplay(false);
+                this.changeDuplicateButtonDisplay(false);
             }
             if(this.$inputProductId.val()){
                 this.listView = new BaselinesListView({
                     collection:new BaselinesCollection({},{productId:this.$inputProductId.val()})
                 }).render();
-                this.$el.append(this.listView.el);
-                this.listView.on("delete-button:display", this.changeDeleteButtonDisplay);
-                this.listView.on("duplicate-button:display", this.changeDuplicateButtonDisplay);
             }else{
-                /*this.listView = new BaselinesListView({
-                    el:this.$("#baseline_table"),
+                this.listView = new BaselinesListView({
                     collection:new BaselinesCollection({})
-                }).render();*/
+                }).render();
             }
+            this.$el.append(this.listView.el);
+            this.listView.on("delete-button:display", this.changeDeleteButtonDisplay);
+            this.listView.on("duplicate-button:display", this.changeDuplicateButtonDisplay);
         },
 
         deleteBaseline:function(){

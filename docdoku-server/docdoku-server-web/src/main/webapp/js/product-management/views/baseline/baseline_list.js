@@ -26,14 +26,11 @@ define([
         },
 
         onCollectionReset:function(){
-
             var that = this ;
-
             this.$el.empty();
             this.subViews = [];
 
             this.collection.each(function(baseline){
-
                 var view = new BaselineListItemView({model:baseline}).render();
 
                 that.subViews.push(view);
@@ -42,9 +39,7 @@ define([
                 that.listenToOnce(view,"baseline:to-edit-modal",function(baseline){
                     that.trigger("baseline:to-edit-modal",baseline);
                 });
-
             });
-
         },
 
         getCheckedBaselines:function(){

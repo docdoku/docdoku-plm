@@ -51,10 +51,8 @@ define([
             require(["views/baseline/baseline_edit_view"],function(BaselineEditView){
                 var view = new BaselineEditView({model:that.model});
                 $("body").append(view.render().el);
-                view.openModal();
             });
         }
-
     });
 
     return ProductListItemView;

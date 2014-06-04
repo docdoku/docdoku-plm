@@ -20,7 +20,6 @@
 package com.docdoku.server.rest;
 
 import com.docdoku.core.common.User;
-import com.docdoku.core.configuration.Baseline;
 import com.docdoku.core.configuration.ConfigSpec;
 import com.docdoku.core.configuration.LatestConfigSpec;
 import com.docdoku.core.exceptions.ApplicationException;
@@ -58,6 +57,9 @@ public class ProductResource {
 
     @EJB
     private LayerResource layerResource;
+
+    @EJB
+    private BaselinesResource baselinesResource;
 
     private Mapper mapper;
 
@@ -315,94 +317,13 @@ public class ProductResource {
         }
     }
 
-    @GET
-    @Path("{ciId}/baseline")
-    @Produces(MediaType.APPLICATION_JSON)
-    public List<BaselineDTO> getBaselines(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId){
-        try {
-            ConfigurationItemKey configurationItemKey = new ConfigurationItemKey(workspaceId,ciId);
-            List<Baseline> baselines = productService.getBaselines(configurationItemKey);
-            List<BaselineDTO> baselinesDTO = new ArrayList<>();
-            for(Baseline baseline:baselines){
-                BaselineDTO baselineDTO = mapper.map(baseline,BaselineDTO.class);
-                baselineDTO.setConfigurationItemId(baseline.getConfigurationItem().getId());
-                baselinesDTO.add(baselineDTO);
-            }
-            return baselinesDTO;
-        } catch (ApplicationException ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
-        }
+    @Path("baselines")
+    public BaselinesResource getAllBaselines(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId){
+        return baselinesResource;
     }
 
-    @GET
-    @Path("{ciId}/baseline/{baselineId}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public BaselineDTO getBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @PathParam("baselineId") int baselineId){
-        try {
-            Baseline baseline = productService.getBaseline(baselineId);
-            BaselineDTO baselineDTO = mapper.map(baseline,BaselineDTO.class);
-            baselineDTO.setConfigurationItemId(baseline.getConfigurationItem().getId());
-            baselineDTO.setBaselinedParts(Tools.mapBaselinedPartsToBaselinedPartDTO(baseline));
-            return baselineDTO;
-        } catch (ApplicationException ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
-        }
+    @Path("{ciId}/baselines")
+    public BaselinesResource getBaselines(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId){
+        return baselinesResource;
     }
-
-    @POST
-    @Path("{ciId}/baseline")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response createBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, BaselineCreationDTO baselineCreationDTO){
-        try {
-            productService.createBaseline(new ConfigurationItemKey(workspaceId,ciId),baselineCreationDTO.getName(),baselineCreationDTO.getType(),baselineCreationDTO.getDescription());
-            return Response.ok().build();
-        } catch (ApplicationException ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
-        }
-    }
-
-    @PUT
-    @Path("{ciId}/baseline/{baselineId}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @PathParam("baselineId") String baselineId, BaselineDTO baselineDTO){
-        try {
-
-            List<PartIterationKey> partIterationKeys = new ArrayList<>();
-
-            for(BaselinedPartDTO baselinedPartDTO : baselineDTO.getBaselinedParts()){
-                partIterationKeys.add(new PartIterationKey(workspaceId, baselinedPartDTO.getNumber(),baselinedPartDTO.getVersion(),baselinedPartDTO.getIteration()));
-            }
-
-            productService.updateBaseline(new ConfigurationItemKey(workspaceId,ciId),Integer.parseInt(baselineId),baselineDTO.getName(),baselineDTO.getType(),baselineDTO.getDescription(),partIterationKeys);
-            return Response.ok().build();
-        } catch (ApplicationException ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
-        }
-    }
-
-    @POST
-    @Path("{ciId}/baseline/{baselineId}/duplicate")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public BaselineDTO duplicateBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @PathParam("baselineId") int baselineId,  BaselineCreationDTO baselineCreationDTO){
-        try {
-            Baseline baseline = productService.duplicateBaseline(baselineId, baselineCreationDTO.getName(), baselineCreationDTO.getType(), baselineCreationDTO.getDescription());
-            return mapper.map(baseline, BaselineDTO.class);
-        } catch (ApplicationException ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
-        }
-    }
-
-    @DELETE
-    @Path("{ciId}/baseline/{baselineId}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response deleteBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @PathParam("baselineId") int baselineId){
-        try {
-            productService.deleteBaseline(baselineId);
-            return Response.ok().build();
-        } catch (ApplicationException ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
-        }
-    }
-
 }

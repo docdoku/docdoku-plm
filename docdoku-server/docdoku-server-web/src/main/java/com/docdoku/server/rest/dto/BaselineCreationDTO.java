@@ -28,6 +28,7 @@ public class BaselineCreationDTO implements Serializable {
 
     private String name;
     private Baseline.BaselineType type;
+    private String configurationItemId;
     private String description;
 
     public String getName() {
@@ -46,4 +47,7 @@ public class BaselineCreationDTO implements Serializable {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    public String getConfigurationItemId() {return configurationItemId;}
+    public void setConfigurationItemId(String configurationItemId) {this.configurationItemId = configurationItemId;}
 }

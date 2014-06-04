@@ -5,12 +5,14 @@ define(["common-objects/models/baseline"],function(Baseline){
         model: Baseline,
 
         initialize:function(attributes, options){
-            this.productId = options.productId;
+            if(options){
+                this.productId = options.productId;
+            }
         },
 
         url: function(){
             if(this.productId){
-                return "/api/workspaces/" + APP_CONFIG.workspaceId + "/products/" + this.productId + "/baseline";
+                return "/api/workspaces/" + APP_CONFIG.workspaceId + "/products/" + this.productId + "/baselines";
             }
             return "/api/workspaces/" + APP_CONFIG.workspaceId + "/products/baselines";
         }
