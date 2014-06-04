@@ -927,7 +927,6 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         DocumentRevision docR = docRDAO.loadDocR(pDocRPK);
         //Check access rights on docR
         Workspace wks = new WorkspaceDAO(new Locale(user.getLanguage()), em).loadWorkspace(pDocRPK.getWorkspaceId());
-        boolean isAdmin = wks.getAdmin().getLogin().equals(user.getLogin());                                            // TODO Unuse variable... why?
 
         String owner = docR.getLocation().getOwner();
         if ((owner != null) && (!owner.equals(user.getLogin()))) {
@@ -1510,9 +1509,13 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
     @RolesAllowed({"users","admin"})
     @Override
-    public User[] getUsers(String pWorkspaceId) throws WorkspaceNotFoundException, AccessRightException, AccountNotFoundException {
-        Account account = userManager.checkAdmin(pWorkspaceId);
-        return new UserDAO(new Locale(account.getLanguage()), em).findAllUsers(pWorkspaceId);
+    public User[] getUsers(String pWorkspaceId) throws WorkspaceNotFoundException, AccessRightException, AccountNotFoundException, UserNotFoundException, UserNotActiveException {
+        if(userManager.isCallerInRole("admin")){
+            Account account = new AccountDAO(em).loadAccount(ctx.getCallerPrincipal().toString());
+            return new UserDAO(new Locale(account.getLanguage()), em).findAllUsers(pWorkspaceId);
+        }
+        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
+        return new UserDAO(new Locale(user.getLanguage()), em).findAllUsers(pWorkspaceId);
     }
 
     @RolesAllowed("users")
