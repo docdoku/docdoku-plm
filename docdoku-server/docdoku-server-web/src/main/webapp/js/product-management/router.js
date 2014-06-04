@@ -1,28 +1,36 @@
 define([
     "common-objects/common/singleton_decorator",
     "views/nav/product_nav",
+    "views/nav/baselines_nav",
     "views/nav/part_nav",
     "views/nav/part_template_nav"
 ],
     function (
         singletonDecorator,
         ProductNavView,
+        BaselinesNavView,
         PartNavView,
         PartTemplateNavView
         ) {
         var Router = Backbone.Router.extend({
-
+            contentSelector: "#product-management-content",
             routes: {
-                "products":"products",
-                "parts":"parts",
-                "part-templates":"partsTemplate",
+                "products"          : "products",
+                "baselines"         : "baselines",
+                "parts"             : "parts",
+                "part-templates"    : "partsTemplate",
                 "parts-search/:query":"search",
-                "":	"defaults"
+                ""                  : "defaults"
             },
 
             products:function(){
                 this.defaults();
                 ProductNavView.getInstance().showContent();
+            },
+
+            baselines: function(){
+                this.defaults();
+                BaselinesNavView.getInstance().showContent(this.contentSelector);
             },
 
             parts:function(){
@@ -41,6 +49,7 @@ define([
 
             defaults: function() {
                 ProductNavView.getInstance();
+                BaselinesNavView.getInstance();
                 PartNavView.getInstance();
                 PartTemplateNavView.getInstance();
             }

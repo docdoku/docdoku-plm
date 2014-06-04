@@ -1,18 +1,16 @@
 define([
-    "text!templates/product_list.html",
-    "i18n!localization/nls/product-management-strings",
-    "views/product_list_item",
+    "text!templates/baseline/baselines_list.html",
+    "i18n!localization/nls/baseline-strings",
+    "views/baseline/baselines_list_item",
     "i18n!localization/nls/datatable-strings"
 ], function (
     template,
     i18n,
-    ProductListItemView,
+    BaselinesListItemView,
     i18nDt
     ) {
-    var ProductListView = Backbone.View.extend({
-
+    var BaselinesListView = Backbone.View.extend({
         template: Mustache.compile(template),
-
         events:{
             "click .toggle-checkboxes":"toggleSelection"
         },
@@ -20,7 +18,7 @@ define([
         initialize: function () {
             _.bindAll(this);
             this.listenTo(this.collection, "reset", this.resetList);
-            this.listenTo(this.collection, 'add', this.addNewProduct);
+            this.listenTo(this.collection, 'add', this.addNewBaseline);
             this.listItemViews = [];
         },
 
@@ -30,6 +28,7 @@ define([
         },
 
         bindDomElements:function(){
+            this.$table = this.$("#baseline_table");
             this.$items = this.$(".items");
             this.$checkbox = this.$(".toggle-checkboxes");
         },
@@ -43,33 +42,29 @@ define([
             this.listItemViews=[];
             var that = this;
             this.collection.each(function(model){
-                that.addProduct(model);
+                that.addBaseline(model);
             });
             this.dataTable();
         },
 
-        pushProduct:function(product){
-            this.collection.push(product);
-        },
-
-        addNewProduct:function(model){
-            this.addProduct(model,true);
+        addNewBaseline:function(model){
+            this.addBaseline(model,true);
             this.redraw();
         },
 
-        addProduct:function(model,effect){
-            var view = this.addProductView(model);
+        addBaseline:function(model,effect){
+            var view = this.addBaselineView(model);
             if(effect){
                 view.$el.highlightEffect();
             }
         },
 
-        removeProduct:function(model){
-            this.removeProductView(model);
+        removeBaseline:function(model){
+            this.removeBaselineView(model);
             this.redraw();
         },
 
-        removeProductView:function(model){
+        removeBaselineView:function(model){
 
             var viewToRemove = _(this.listItemViews).select(function(view){
                 return view.model == model;
@@ -84,8 +79,8 @@ define([
 
         },
 
-        addProductView:function(model){
-            var view = new ProductListItemView({model:model}).render();
+        addBaselineView:function(model){
+            var view = new BaselinesListItemView({model:model}).render();
             this.listItemViews.push(view);
             this.$items.append(view.$el);
             view.on("selectionChanged",this.onSelectionChanged);
@@ -113,34 +108,31 @@ define([
             });
 
             if (checkedViews.length <= 0){
-                this.onNoProductSelected();
+                this.onNoBaselineSelected();
             }else if(checkedViews.length == 1){
-                this.onOneProductSelected();
+                this.onOneBaselineSelected();
             }else {
-                this.onSeveralProductsSelected();
+                this.onSeveralBaselinesSelected();
             }
 
         },
 
-        onNoProductSelected:function(){
+        onNoBaselineSelected:function(){
             this.trigger("delete-button:display",false);
-            this.trigger("snap-latest-baseline-button:display",false);
-            this.trigger("snap-released-baseline-button:display",false);
+            this.trigger("duplicate-button:display",false);
         },
 
-        onOneProductSelected:function(){
+        onOneBaselineSelected:function(){
             this.trigger("delete-button:display",true);
-            this.trigger("snap-latest-baseline-button:display",true);
-            this.trigger("snap-released-baseline-button:display",true);
+            this.trigger("duplicate-button:display",true);
         },
 
-        onSeveralProductsSelected:function(){
+        onSeveralBaselinesSelected:function(){
             this.trigger("delete-button:display",true);
-            this.trigger("snap-latest-baseline-button:display",false);
-            this.trigger("snap-released-baseline-button:display",false);
+            this.trigger("duplicate-button:display",false);
         },
 
-        getSelectedProduct:function(){
+        getSelectedBaseline:function(){
             var model = null;
             _(this.listItemViews).each(function(view){
                 if(view.isChecked()){
@@ -150,13 +142,13 @@ define([
             return model;
         },
 
-        deleteSelectedProducts:function(){
+        deleteSelectedBaselines:function(){
             var that = this;
             if(confirm(i18n["DELETE_SELECTION_?"])){
                 _(this.listItemViews).each(function(view){
                     if(view.isChecked()){
                         view.model.destroy({success:function(){
-                            that.removeProduct(view.model);
+                            that.removeBaseline(view.model);
                             that.onSelectionChanged();
                         },error:function(model,err){
                             alert(err.responseText);
@@ -175,7 +167,7 @@ define([
                 oldSort = this.oTable.fnSettings().aaSorting;
                 this.oTable.fnDestroy();
             }
-            this.oTable = this.$el.dataTable({
+            this.oTable = this.$table.dataTable({
                 aaSorting:oldSort,
                 bDestroy:true,
                 iDisplayLength:-1,
@@ -189,11 +181,10 @@ define([
                     { "bSortable": false, "aTargets": [ 0,3 ] }
                 ]
             });
-            this.$el.parent().find(".dataTables_filter input").attr("placeholder",i18nDt.FILTER);
+            this.$el.find(".dataTables_filter input").attr("placeholder",i18nDt.FILTER);
         }
 
     });
 
-    return ProductListView;
-
+    return BaselinesListView;
 });

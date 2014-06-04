@@ -5,6 +5,9 @@ define([
     "views/product_list",
     "views/product_creation_view",
     "views/baseline/baseline_creation_view",
+    "common-objects/views/baselines/snap_baseline_view",
+    "text!common-objects/templates/buttons/snap_latest_button.html",
+    "text!common-objects/templates/buttons/snap_released_button.html",
     "text!common-objects/templates/buttons/delete_button.html"
 ], function (
     ConfigurationItemCollection,
@@ -13,6 +16,9 @@ define([
     ProductListView,
     ProductCreationView,
     BaselineCreationView,
+    SnapBaselineView,
+    snap_latest_button,
+    snap_released_button,
     delete_button
     ) {
     var ProductContentView = Backbone.View.extend({
@@ -22,13 +28,16 @@ define([
         el: "#product-management-content",
 
         partials:{
+            snap_latest_button: snap_latest_button,
+            snap_released_button: snap_released_button,
             delete_button: delete_button
         },
 
         events:{
             "click button.new-product":"newProduct",
             "click button.delete":"deleteProduct",
-            "click button.create-baseline":"createBaseline"
+            "click button.new-latest-baseline":"createLatestBaseline",
+            "click button.new-released-baseline":"createReleasedBaseline"
         },
 
         initialize: function () {
@@ -46,14 +55,16 @@ define([
             }).render();
 
             this.productListView.on("delete-button:display", this.changeDeleteButtonDisplay);
-            this.productListView.on("create-baseline-button:display", this.changeCreateBaselineButtonDisplay);
+            this.productListView.on("snap-latest-baseline-button:display", this.changeSnapLatestBaselineButtonDisplay);
+            this.productListView.on("snap-released-baseline-button:display", this.changeSnapReleasedBaselineButtonDisplay);
 
             return this;
         },
 
         bindDomElements:function(){
             this.deleteButton = this.$(".delete");
-            this.createBaselineButton = this.$(".create-baseline");
+            this.snapLatestBaselineButton = this.$(".new-latest-baseline");
+            this.snapReleasedBaselineButton = this.$(".new-released-baseline");
         },
 
         newProduct:function(){
@@ -67,10 +78,24 @@ define([
             this.productListView.deleteSelectedProducts();
         },
 
-        createBaseline:function(){
-            var baselineCreationView = new BaselineCreationView({model:this.productListView.getSelectedProduct()});
-            $("body").append(baselineCreationView.render().el);
-            baselineCreationView.openModal();
+        createLatestBaseline:function(){
+            var snapBaselineView = new SnapBaselineView(
+                {
+                    model:this.productListView.getSelectedProduct(),
+                    type: "LATEST"
+                });
+            $("body").append(snapBaselineView.render().el);
+            snapBaselineView.openModal();
+        },
+
+        createReleasedBaseline:function(){
+            var snapBaselineView = new SnapBaselineView(
+                {
+                    model:this.productListView.getSelectedProduct(),
+                    type: "RELEASED"
+                });
+            $("body").append(snapBaselineView.render().el);
+            snapBaselineView.openModal();
         },
 
         addProductInList:function(product){
@@ -84,11 +109,18 @@ define([
                 this.deleteButton.hide();
             }
         },
-        changeCreateBaselineButtonDisplay:function(state){
+        changeSnapLatestBaselineButtonDisplay:function(state){
             if(state){
-                this.createBaselineButton.show();
+                this.snapLatestBaselineButton.show();
             }else{
-                this.createBaselineButton.hide();
+                this.snapLatestBaselineButton.hide();
+            }
+        },
+        changeSnapReleasedBaselineButtonDisplay:function(state){
+            if(state){
+                this.snapReleasedBaselineButton.show();
+            }else{
+                this.snapReleasedBaselineButton.hide();
             }
         }
 

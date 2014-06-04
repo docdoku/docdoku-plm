@@ -209,7 +209,6 @@ public class ProductResource {
         ComponentDTO dto = new ComponentDTO();
         dto.setNumber(pm.getNumber());
         dto.setPartUsageLinkId(usageLink.getId());
-        dto.setDescription(partR.getDescription());
         dto.setName(pm.getName());
         dto.setStandardPart(pm.isStandardPart());
         dto.setAuthor(pm.getAuthor().getName());
@@ -219,9 +218,9 @@ public class ProductResource {
         List<InstanceAttributeDTO> lstAttributes = new ArrayList<>();
         List<ComponentDTO> components = new ArrayList<>();
 
-
         PartIteration partI = null;
         if (partR != null) {
+            dto.setDescription(partR.getDescription());
             partI = partR.getLastIteration();
 
             User checkoutUser = pm.getLastRevision().getCheckOutUser();
@@ -325,7 +324,9 @@ public class ProductResource {
             List<Baseline> baselines = productService.getBaselines(configurationItemKey);
             List<BaselineDTO> baselinesDTO = new ArrayList<>();
             for(Baseline baseline:baselines){
-                baselinesDTO.add(mapper.map(baseline,BaselineDTO.class));
+                BaselineDTO baselineDTO = mapper.map(baseline,BaselineDTO.class);
+                baselineDTO.setConfigurationItemId(baseline.getConfigurationItem().getId());
+                baselinesDTO.add(baselineDTO);
             }
             return baselinesDTO;
         } catch (ApplicationException ex) {
@@ -340,6 +341,7 @@ public class ProductResource {
         try {
             Baseline baseline = productService.getBaseline(baselineId);
             BaselineDTO baselineDTO = mapper.map(baseline,BaselineDTO.class);
+            baselineDTO.setConfigurationItemId(baseline.getConfigurationItem().getId());
             baselineDTO.setBaselinedParts(Tools.mapBaselinedPartsToBaselinedPartDTO(baseline));
             return baselineDTO;
         } catch (ApplicationException ex) {

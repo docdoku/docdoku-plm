@@ -1389,6 +1389,9 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         Locale locale = new Locale(user.getLanguage());
         ConfigurationItem configurationItem = new ConfigurationItemDAO(locale,em).loadConfigurationItem(configurationItemKey);
 
+        if(type == null){
+            type = Baseline.BaselineType.LATEST;
+        }
         Baseline baseline = new Baseline(configurationItem, name, type, description);
         Date now = new Date();
         baseline.getPartCollection().setCreationDate(now);
@@ -1416,10 +1419,16 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         BaselineDAO baselineDAO = new BaselineDAO(em);
         Baseline baseline = baselineDAO.loadBaseline(baselineId);
         ConfigurationItem configurationItem =baseline.getConfigurationItem();
-        userManager.checkWorkspaceWriteAccess(configurationItem.getWorkspaceId());
+        User user = userManager.checkWorkspaceWriteAccess(configurationItem.getWorkspaceId());
 
+        if(type == null){
+            type = Baseline.BaselineType.LATEST;
+        }
         Baseline duplicatedBaseline = new Baseline(configurationItem,name, type, description);
         baselineDAO.createBaseline(duplicatedBaseline);
+        Date now = new Date();
+        baseline.getPartCollection().setCreationDate(now);
+        baseline.getPartCollection().setAuthor(user);
 
         // copy partIterations
         Set<Map.Entry<BaselinedPartKey, BaselinedPart>> entries = baseline.getBaselinedParts().entrySet();

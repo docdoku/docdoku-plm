@@ -1,0 +1,111 @@
+define([
+    "common-objects/collections/baselines",
+    "common-objects/collections/configuration_items",
+    "text!templates/baseline/baselines_content.html",
+    "i18n!localization/nls/baseline-strings",
+    "views/baseline/baselines_list",
+    "views/baseline/baseline_duplicate_view",
+    "text!common-objects/templates/buttons/delete_button.html",
+    "text!common-objects/templates/buttons/duplicate_button.html"
+], function (
+    BaselinesCollection,
+    ConfigurationItemCollection,
+    template,
+    i18n,
+    BaselinesListView,
+    BaselineDuplicateView,
+    delete_button,
+    duplicate_button
+    ) {
+    var BaselinesContentView = Backbone.View.extend({
+
+        template: Mustache.compile(template),
+
+        partials:{
+            delete_button: delete_button,
+            duplicate_button: duplicate_button
+        },
+
+        events:{
+            "click button.delete":"deleteBaseline",
+            "click button.duplicate": "duplicateBaseline"
+        },
+
+        initialize: function () {
+            _.bindAll(this);
+        },
+
+        render:function(){
+            this.$el.html(this.template({i18n:i18n},this.partials));
+
+            this.bindDomElements();
+            new ConfigurationItemCollection().fetch({success: this.fillProductList});
+            var self = this ;
+            this.$inputProductId.change(function(){self.onProductChange()});
+            return this;
+        },
+
+        bindDomElements:function(){
+            this.deleteButton = this.$(".delete");
+            this.duplicateButton = this.$(".duplicate");
+            this.$inputProductId = this.$("#inputProductId");
+        },
+
+        fillProductList: function(list){
+            var self = this ;
+            if(list){
+                list.each(function(product){
+                    self.$inputProductId.append("<option value='"+product.getId()+"'"+">"+product.getId()+"</option>");
+                });
+                this.$inputProductId.combobox({bsVersion: '2'});
+            }
+        },
+
+        onProductChange: function(){
+            if(this.listView){
+                this.listView.remove();
+            }
+            if(this.$inputProductId.val()){
+                this.listView = new BaselinesListView({
+                    collection:new BaselinesCollection({},{productId:this.$inputProductId.val()})
+                }).render();
+                this.$el.append(this.listView.el);
+                this.listView.on("delete-button:display", this.changeDeleteButtonDisplay);
+                this.listView.on("duplicate-button:display", this.changeDuplicateButtonDisplay);
+            }else{
+                /*this.listView = new BaselinesListView({
+                    el:this.$("#baseline_table"),
+                    collection:new BaselinesCollection({})
+                }).render();*/
+            }
+        },
+
+        deleteBaseline:function(){
+            this.listView.deleteSelectedBaselines();
+        },
+
+        duplicateBaseline:function(){
+            var baselineDuplicateView = new BaselineDuplicateView({model: this.listView.getSelectedBaseline()});
+            $("body").append(baselineDuplicateView.render().el);
+            baselineDuplicateView.openModal();
+        },
+
+        changeDeleteButtonDisplay:function(state){
+            if(state){
+                this.deleteButton.show();
+            }else{
+                this.deleteButton.hide();
+            }
+        },
+
+        changeDuplicateButtonDisplay:function(state){
+            if(state){
+                this.duplicateButton.show();
+            }else{
+                this.duplicateButton.hide();
+            }
+        }
+    });
+
+    return BaselinesContentView;
+});

@@ -15,6 +15,8 @@ define({
     "CLOSE":                        "Fermer",
     "CREATE":                       "Cr\u00e9er",
     "CREATE_BASELINE":              "Cr\u00e9er une baseline",
+    "CREATE_BASELINE_LATEST":       "Cr\u00e9er la baseline avec les derniers articles",
+    "CREATE_BASELINE_RELEASED":      "Cr\u00e9er la baseline avec les derniers articles finalisés",
     "CREATE_NEW_VERSION":           "Cr\u00e9er une nouvelle version",
     "CREATION_DATE":                "Date de cr\u00e9ation",
     "DELETE":						"Supprimer",

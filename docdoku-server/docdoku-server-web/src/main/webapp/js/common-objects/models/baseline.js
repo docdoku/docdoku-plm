@@ -23,20 +23,28 @@ define([],function(){
         getBaselinedParts:function(){
             return this.get("baselinedParts");
         },
-        setBaselinedParts:function(baselinedParts){
-            this.set("baselinedParts",baselinedParts);
+        getConfigurationItemId: function(){
+            return this.get("configurationItemId");
+        },
+        setConfigurationItemId: function(configurationItemId){
+            this.set("configurationItemId",configurationItemId);
         },
         duplicate:function(args){
+            var _this = this;
             $.ajax({
                 type: "POST",
                 url: this.url()+"/duplicate",
                 data: JSON.stringify(args.data),
                 contentType: "application/json; charset=utf-8",
-                success: args.success,
+                success: function(data){
+                    var duplicatedBaseline = new Baseline(data);
+                    duplicatedBaseline.setConfigurationItemId(_this.getConfigurationItemId());
+                    _this.collection.add(duplicatedBaseline);
+                    args.success(duplicatedBaseline);
+                },
                 error: args.error
             });
         }
-
     });
 
     return Baseline;

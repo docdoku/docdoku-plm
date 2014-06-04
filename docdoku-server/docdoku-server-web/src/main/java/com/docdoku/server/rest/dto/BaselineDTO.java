@@ -29,6 +29,7 @@ public class BaselineDTO {
 
     private int id;
     private String name;
+    private String configurationItemId;
     private Baseline.BaselineType type;
     private String description;
     private Date creationDate;
@@ -81,4 +82,7 @@ public class BaselineDTO {
 
     public Baseline.BaselineType getType() {return type;}
     public void setType(Baseline.BaselineType type) {this.type = type;}
+
+    public String getConfigurationItemId() {return configurationItemId;}
+    public void setConfigurationItemId(String configurationItemId) {this.configurationItemId = configurationItemId;}
 }

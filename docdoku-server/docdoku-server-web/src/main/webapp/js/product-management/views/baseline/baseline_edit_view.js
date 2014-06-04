@@ -2,13 +2,11 @@ define(
     [
         "text!templates/baseline/baseline_edit.html",
         "i18n!localization/nls/baseline-strings",
-        "views/baseline/baselined_part_list",
-        "common-objects/models/baseline"
+        "views/baseline/baselined_part_list"
     ],function(
         template,
         i18n,
-        BaselinePartListView,
-        Baseline
+        BaselinePartListView
         ){
 
     var BaselineEditView = Backbone.View.extend({
@@ -61,9 +59,7 @@ define(
                 data:data,
                 success:function(data){
                     that.closeModal();
-                    var baseline = new Baseline(data);
-                    that.model.collection.add(baseline);
-                    that.model = baseline;
+                    that.model = data;
                     that.render();
                 },
                 error:function(status,err){

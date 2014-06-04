@@ -9,7 +9,10 @@ define(["common-objects/models/baseline"],function(Baseline){
         },
 
         url: function(){
-            return "/api/workspaces/" + APP_CONFIG.workspaceId + "/products/" + this.productId + "/baseline";
+            if(this.productId){
+                return "/api/workspaces/" + APP_CONFIG.workspaceId + "/products/" + this.productId + "/baseline";
+            }
+            return "/api/workspaces/" + APP_CONFIG.workspaceId + "/products/baselines";
         }
 
     });
