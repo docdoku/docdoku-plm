@@ -175,6 +175,10 @@ public abstract class ChangeItem implements Serializable {
         this.author = author;
     }
 
+    public String getAuthorName() {
+        return author.getName();
+    }
+
     public Workspace getWorkspace() {
         return workspace;
     }

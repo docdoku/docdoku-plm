@@ -24,6 +24,7 @@ define([
         render:function(){
             this.$el.html(this.template({model:this.model, i18n:i18n}));
             this.$checkbox = this.$("input[type=checkbox]");
+            this.bindUserPopover();
             this.trigger("rendered",this);
             return this;
         },
@@ -47,6 +48,10 @@ define([
             this.$checkbox.prop("checked", false);
             this._isChecked = false;
             this.trigger("selectionChanged",this);
+        },
+
+        bindUserPopover:function(){
+            this.$(".author-popover").userPopover(this.model.getAuthor(),this.model.getName(),"left");
         },
 
         openEditionView:function(){

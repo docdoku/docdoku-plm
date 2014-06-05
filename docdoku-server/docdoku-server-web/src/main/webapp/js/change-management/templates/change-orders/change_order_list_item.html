@@ -1,9 +1,9 @@
 <td><input type="checkbox"/></td>
 <td class="reference change_order_name"><i class="icon-archive"></i>{{model.getName}}</td>
-<td>{{model.getAssignee}}</td>
+<td><a class="assigned-user-popover">{{model.getAssignee}}</a></td>
 <td>{{model.getPriority}}</td>
 <td>{{model.getCategory}}</td>
-<td>{{model.getAuthor}}</td>
+<td><a class="author-popover">{{model.getAuthorName}}</a></td>
 <td>{{model.getFormattedCreationDate}}</td>
 <td class="acl-info">
     {{#model.isReadOnly}}

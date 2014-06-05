@@ -31,6 +31,7 @@ define([
                 this.check();
                 this.trigger("selectionChanged",this);
             }
+            this.bindUserPopover();
             this.trigger("rendered",this);
             return this;
         },
@@ -52,6 +53,10 @@ define([
         unCheck:function(){
             this.$checkbox.prop("checked", false);
             this._isChecked = false;
+        },
+
+        bindUserPopover:function(){
+            this.$(".author-popover").userPopover(this.model.getAuthorLogin(),this.model.getNumber(),"left");
         },
 
         toPartTemplateEditModal:function(){

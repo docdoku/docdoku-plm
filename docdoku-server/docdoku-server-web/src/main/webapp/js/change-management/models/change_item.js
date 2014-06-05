@@ -35,6 +35,10 @@ define([
             return this.get("author");
         },
 
+        getAuthorName: function() {
+            return this.get("authorName");
+        },
+
         getAssignee: function() {
             return this.get("assignee");
         },

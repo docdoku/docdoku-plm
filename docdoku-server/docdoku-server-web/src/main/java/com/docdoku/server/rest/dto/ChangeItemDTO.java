@@ -34,6 +34,7 @@ public class ChangeItemDTO implements Serializable {
     private String name;
     private String workspaceId;
     private String author;
+    private String authorName;
     private String assignee;
     private Date creationDate;
     private String description;
@@ -89,4 +90,7 @@ public class ChangeItemDTO implements Serializable {
 
     public boolean isWritable() {return writable;}
     public void setWritable(boolean writable) {this.writable = writable;}
+
+    public String getAuthorName() {return authorName;}
+    public void setAuthorName(String authorName) {this.authorName = authorName;}
 }
