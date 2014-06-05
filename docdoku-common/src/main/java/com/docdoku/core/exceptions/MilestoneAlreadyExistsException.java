@@ -46,7 +46,7 @@ public class MilestoneAlreadyExistsException extends ApplicationException {
     }
     
     public String getLocalizedMessage() {
-        String message = getBundleMessage("MilestoneAlreadyExistException");
+        String message = getBundleDefaultMessage();
         return MessageFormat.format(message,mTitle);
     }
 }

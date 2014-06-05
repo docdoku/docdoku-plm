@@ -30,7 +30,7 @@ public class ESIndexAlreadyExistsException extends ApplicationException {
 
     public ESIndexAlreadyExistsException(Locale pLocale) {
         super(pLocale);
-        mKey="IndexAlreadyExistException1";
+        mKey="IndexAlreadyExistsException";
     }
     public String getLocalizedMessage() {
         return mKey==null?null:getBundleMessage(mKey);
