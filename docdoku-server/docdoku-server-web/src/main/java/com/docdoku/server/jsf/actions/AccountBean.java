@@ -52,7 +52,7 @@ public class AccountBean {
                 
         userManager.updateAccount(account.getName(), account.getEmail(), account.getLanguage(), password);
 
-        return "/admin/editAccount.xhtml";
+        return "/login.xhtml";
     }
 
     public String getPassword() {

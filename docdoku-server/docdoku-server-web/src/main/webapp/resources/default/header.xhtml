@@ -66,12 +66,10 @@
                                 </ul>
                             </c:when>
                             <c:otherwise>
-
                                 <c:choose>
                                     <c:when test="${isSuperAdmin==true}">
                                     </c:when>
                                     <c:otherwise>
-
                                         <ul class="nav breadcrumb-menu" id="header_left_menu">
 
                                             <!-- current workspace & workspaces dropdown menu-->
@@ -84,13 +82,19 @@
                                                 </a>
                                                 <ul class="dropdown-menu">
                                                     <c:forEach var="item" items="${administeredWorkspaces}">
-                                                        <li class="visible-desktop">
+                                                        <li class="dropdown-submenu visible-desktop">
                                                             <a href="#{request.contextPath}/document-management/${item.value.id}#folders">
                                                                 <c:if test="${workspaceID==item.value.id}">
                                                                     <i class="icon-ok"></i>
                                                                 </c:if>
                                                                 ${item.value.id}
                                                             </a>
+                                                            <ul class="dropdown-menu">
+                                                                <li><a href="#{request.contextPath}/document-management/${item.value.id}#folders">#{i18nTemplate['toplinks.document']}</a></li>
+                                                                <li><a href="#{request.contextPath}/product-management/${item.value.id}#products">#{i18nTemplate['toplinks.product']}</a></li>
+                                                                <li><a href="#{request.contextPath}/change-management/${item.value.id}#workflows">#{i18nTemplate['toplinks.change']}</a></li>
+                                                                <!--li><a href="#{request.contextPath}/search/${item.value.id}">#{i18nTemplate['toplinks.search']}</a></li-->
+                                                            </ul>
                                                         </li>
                                                         <li class="dropdown-submenu hidden-desktop">
                                                             <a href="#">
@@ -108,13 +112,19 @@
                                                         </li>
                                                     </c:forEach>
                                                     <c:forEach var="item" items="${regularWorkspaces}">
-                                                        <li class="visible-desktop">
+                                                        <li class="dropdown-submenu visible-desktop">
                                                             <a href="#{request.contextPath}/document-management/${item.id}#folders">
                                                                 <c:if test="${workspaceID==item.id}">
                                                                     <i class="icon-ok"></i>
                                                                 </c:if>
                                                                 ${item.id}
                                                             </a>
+                                                            <ul class="dropdown-menu">
+                                                                <li><a href="#{request.contextPath}/document-management/${item.id}#folders">#{i18nTemplate['toplinks.document']}</a></li>
+                                                                <li><a href="#{request.contextPath}/product-management/${item.id}#products">#{i18nTemplate['toplinks.product']}</a></li>
+                                                                <li><a href="#{request.contextPath}/change-management/${item.id}#workflows">#{i18nTemplate['toplinks.change']}</a></li>
+                                                                <!--li><a href="#{request.contextPath}/search/${item.id}">#{i18nTemplate['toplinks.search']}</a></li-->
+                                                            </ul>
                                                         </li>
                                                         <li class="dropdown-submenu hidden-desktop">
                                                             <a href="#">
@@ -171,20 +181,14 @@
                                                 </li>
                                             </c:if>
                                         </ul>
-
-
                                     </c:otherwise>
                                 </c:choose>
-
-
                                 <ul class="nav pull-right">
-
                                     <li>
                                         <!--<h:link outcome="/download.xhtml"><i
                                                 class="icon-download-alt"></i>#{i18nTemplate['menu.download']}
                                         </h:link>-->
                                     </li>
-
                                     <li class="dropdown" id="coworkers_access_module" style="display: none;">
                                         <a class="dropdown-toggle" id="coworkers_access_module_toggler" href="#"
                                            data-toggle="dropdown" title="#{i18nTemplate['toplinks.coworkers']}">
@@ -194,7 +198,6 @@
                                         </a>
                                         <ul class="dropdown-menu" id="coworkers_access_module_entries"></ul>
                                     </li>
-
                                     <li class="dropdown" id="account_name_node">
                                         <a href="#" class="dropdown-toggle" id="account_name_link"
                                            data-toggle="dropdown">
@@ -237,9 +240,7 @@
                                             </li>
                                         </ul>
                                     </li>
-
                                 </ul>
-
                             </c:otherwise>
                         </c:choose>
                     </div>
