@@ -1,4 +1,18 @@
 /*global Detector,requestAnimationFrame*/
+// Application option for DMU
+var App = {
+    SceneOptions: {
+        zoomSpeed: 3,
+        rotateSpeed: 3.0,
+        panSpeed: 0.3,
+        cameraNear: 1,
+        cameraFar: 5E4,
+        defaultCameraPosition: {x: -1000, y: 800, z: 1100},
+        defaultTargetPosition: {x: 0, y: 0, z: 0}
+    }
+
+};
+
 window.onload = function() {
 
     var info_panel = document.getElementById("demo-scene");
@@ -87,7 +101,7 @@ window.onload = function() {
 
     function animate()
     {
-        requestAnimationFrame( animate );
+        requestAnimationFrame(animate);
         render();
         update();
     }
