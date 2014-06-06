@@ -41,15 +41,20 @@
           position: relative;
 
           input {
-            width:auto;
             position: absolute;
             top:0;
             left:15px;
             right:15px;
 
+            width:-moz-calc(~"100% - 105px");
+            width:-webkit-calc(~"100% - 105px");
+            width:calc(~"100% - 105px");
+            padding-right: 30px;
+
             border-top-right-radius: 0px;
             border-bottom-right-radius: 0px;
             -webkit-appearance: none;
+            text-overflow: ellipsis;
           }
 
           span {
