@@ -41,7 +41,7 @@ define([
             this.bindDomElements();
             new ConfigurationItemCollection().fetch({success: this.fillProductList});
             var self = this ;
-            this.$inputProductId.change(function(){self.createBaselineView()});
+            this.$inputProductId.change(function(){self.createBaselineView();});
             self.createBaselineView();
             return this;
         },

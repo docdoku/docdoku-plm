@@ -20,6 +20,8 @@
 
 package com.docdoku.arquillian.tests;
 
+import com.docdoku.arquillian.tests.services.TestDocumentManagerBean;
+import com.docdoku.arquillian.tests.services.TestUserManagerBean;
 import com.docdoku.core.common.*;
 import com.docdoku.core.document.DocumentMasterKey;
 import com.docdoku.core.document.DocumentRevisionKey;
@@ -61,8 +63,11 @@ public class AccessRightsTest {
 
     @EJB
     private ESIndexer esIndexer;
+
     @EJB
-    private TestEJBBean testBean;
+    private TestDocumentManagerBean documentManagerBean;
+    @EJB
+    private TestUserManagerBean userManagerBean;
 
     @PersistenceContext
     private EntityManager em;
@@ -93,7 +98,8 @@ public class AccessRightsTest {
                         IWorkspaceManagerLocal.class,
                         JsonValue.class,
                         MailerBean.class,
-                        TestEJBBean.class,
+                        TestDocumentManagerBean.class,
+                        TestUserManagerBean.class,
                         UserManagerBean.class,
                         Workspace.class,
                         WorkspaceManagerBean.class,
@@ -102,11 +108,6 @@ public class AccessRightsTest {
                 .addAsResource("test-persistence.xml", "META-INF/persistence.xml")
                 .addAsWebInfResource("WEB-INF/sun-web.xml")
                 .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
-    }
-
-    @Before
-    public void clearIndex(){
-        esIndexer.deleteWorkspace("TEST_WORKSPACE");
     }
 
     @Before
@@ -126,64 +127,64 @@ public class AccessRightsTest {
     @Test
     public void Test1_testSimpleCreation() throws Exception {
         Logger.getLogger(AccessRightsTest.class.getName()).log(Level.INFO, "Test method : testSimpleCreation");
-        testBean.testWorkspaceCreation("user1", "TEST_WORKSPACE");
-        testBean.testFolderCreation("user1", "TEST_WORKSPACE", "TEST_FOLDER");
-        testBean.testAddingUserInWorkspace("user1", "user2", "TEST_WORKSPACE");
-        testBean.testDocumentCreation("user2", "TEST_WORKSPACE/TEST_FOLDER", "DOCUMENT0", null, null);
+        userManagerBean.testWorkspaceCreation("user1", "TEST_WORKSPACE");
+        documentManagerBean.testFolderCreation("user1", "TEST_WORKSPACE", "TEST_FOLDER");
+        userManagerBean.testAddingUserInWorkspace("user1", "user2", "TEST_WORKSPACE");
+        documentManagerBean.testDocumentCreation("user2", "TEST_WORKSPACE/TEST_FOLDER", "DOCUMENT0", null, null);
 
     }
 
     @Test
     public void Test2_testMatrixRights1() throws Exception {
         Logger.getLogger(AccessRightsTest.class.getName()).log(Level.INFO, "Test method : testMatrixRights1");
-        testBean.testGrantingUserAccessInWorkspace("user1", new String[]{"user2"}, "TEST_WORKSPACE", false);
-        testBean.testDocumentCreation("user2", "TEST_WORKSPACE/TEST_FOLDER", "DOCUMENT1", null, null);
+        userManagerBean.testGrantingUserAccessInWorkspace("user1", new String[]{"user2"}, "TEST_WORKSPACE", false);
+        documentManagerBean.testDocumentCreation("user2", "TEST_WORKSPACE/TEST_FOLDER", "DOCUMENT1", null, null);
     }
 
     @Test
     public void Test3_testMatrixRights2() throws Exception {
         Logger.getLogger(AccessRightsTest.class.getName()).log(Level.INFO, "Test method : testMatrixRights2");
-        testBean.testGroupCreation("user1", "TEST_WORKSPACE", "group1");
-        testBean.testGrantingUserGroupAccessInWorkspace("user1", new String[]{"group1"}, "TEST_WORKSPACE", true);
-        testBean.testAddingUserInGroup("user1", "group1", "TEST_WORKSPACE", "user3");
-        testBean.testAddingUserInWorkspace("user1", "user3", "TEST_WORKSPACE");
-        testBean.testGrantingUserAccessInWorkspace("user1", new String[]{"user3"}, "TEST_WORKSPACE", false);
-        testBean.testDocumentCreation("user3", "TEST_WORKSPACE/TEST_FOLDER", "DOCUMENT3", null, null);
+        userManagerBean.testGroupCreation("user1", "TEST_WORKSPACE", "group1");
+        userManagerBean.testGrantingUserGroupAccessInWorkspace("user1", new String[]{"group1"}, "TEST_WORKSPACE", true);
+        userManagerBean.testAddingUserInGroup("user1", "group1", "TEST_WORKSPACE", "user3");
+        userManagerBean.testAddingUserInWorkspace("user1", "user3", "TEST_WORKSPACE");
+        userManagerBean.testGrantingUserAccessInWorkspace("user1", new String[]{"user3"}, "TEST_WORKSPACE", false);
+        documentManagerBean.testDocumentCreation("user3", "TEST_WORKSPACE/TEST_FOLDER", "DOCUMENT3", null, null);
     }
 
     @Test
     public void Test4_testMatrixRights3() throws Exception {
         Logger.getLogger(AccessRightsTest.class.getName()).log(Level.INFO, "Test method : testMatrixRights3");
-        testBean.testGroupCreation("user1", "TEST_WORKSPACE", "group2");
-        testBean.testGrantingUserGroupAccessInWorkspace("user1", new String[]{"group2"}, "TEST_WORKSPACE", false);
-        testBean.testGrantingUserGroupAccessInWorkspace("user1", new String[]{"group1"}, "TEST_WORKSPACE", true);
-        testBean.testAddingUserInGroup("user1", "group1", "TEST_WORKSPACE", "user3");
-        testBean.testAddingUserInGroup("user1", "group2", "TEST_WORKSPACE", "user3");
-        testBean.testDocumentCreation("user3", "TEST_WORKSPACE/TEST_FOLDER", "DOCUMENT4", null, null);
+        userManagerBean.testGroupCreation("user1", "TEST_WORKSPACE", "group2");
+        userManagerBean.testGrantingUserGroupAccessInWorkspace("user1", new String[]{"group2"}, "TEST_WORKSPACE", false);
+        userManagerBean.testGrantingUserGroupAccessInWorkspace("user1", new String[]{"group1"}, "TEST_WORKSPACE", true);
+        userManagerBean.testAddingUserInGroup("user1", "group1", "TEST_WORKSPACE", "user3");
+        userManagerBean.testAddingUserInGroup("user1", "group2", "TEST_WORKSPACE", "user3");
+        documentManagerBean.testDocumentCreation("user3", "TEST_WORKSPACE/TEST_FOLDER", "DOCUMENT4", null, null);
     }
 
     @Test
     public void Test5_testMatrixRights4() throws Exception {
         Logger.getLogger(AccessRightsTest.class.getName()).log(Level.INFO, "Test method : testMatrixRights4");
-        testBean.testAddingUserInWorkspace("user1", "user4", "TEST_WORKSPACE");
-        testBean.testGrantingUserAccessInWorkspace("user1", new String[]{"user4"}, "TEST_WORKSPACE", true);
+        userManagerBean.testAddingUserInWorkspace("user1", "user4", "TEST_WORKSPACE");
+        userManagerBean.testGrantingUserAccessInWorkspace("user1", new String[]{"user4"}, "TEST_WORKSPACE", true);
         User user = em.find(User.class, new UserKey("TEST_WORKSPACE", "user4"));
         ACLUserEntry[] aclUserEntries = new ACLUserEntry[1];
         aclUserEntries[0] = new ACLUserEntry(new ACL(), user, ACL.Permission.FULL_ACCESS);
 
-        testBean.testAddingUserInGroup("user1", "group1", "TEST_WORKSPACE", "user4");
+        userManagerBean.testAddingUserInGroup("user1", "group1", "TEST_WORKSPACE", "user4");
         UserGroup userGroup = em.find(UserGroup.class, new UserGroupKey("TEST_WORKSPACE", "group1"));
         ACLUserGroupEntry[] aclUserGroupEntries = new ACLUserGroupEntry[1];
         aclUserGroupEntries[0] = new ACLUserGroupEntry(new ACL(), userGroup, ACL.Permission.FULL_ACCESS);
 
-        testBean.testDocumentCreation("user1", "TEST_WORKSPACE/TEST_FOLDER", "DOCUMENT5", aclUserEntries, aclUserGroupEntries);
+        documentManagerBean.testDocumentCreation("user1", "TEST_WORKSPACE/TEST_FOLDER", "DOCUMENT5", aclUserEntries, aclUserGroupEntries);
     }
 
     @Test
     public void Test6_testCheckInCheckOut() throws Exception {
         Logger.getLogger(AccessRightsTest.class.getName()).log(Level.INFO, "Test method : testCheckInCheckOut");
-        testBean.testDocumentCheckIn("user1", new DocumentRevisionKey(new DocumentMasterKey("TEST_WORKSPACE", "DOCUMENT5"), "A"));
-        testBean.testDocumentCheckOut("user4", new DocumentRevisionKey(new DocumentMasterKey("TEST_WORKSPACE", "DOCUMENT5"), "A"));
+        documentManagerBean.testDocumentCheckIn("user1", new DocumentRevisionKey(new DocumentMasterKey("TEST_WORKSPACE", "DOCUMENT5"), "A"));
+        documentManagerBean.testDocumentCheckOut("user4", new DocumentRevisionKey(new DocumentMasterKey("TEST_WORKSPACE", "DOCUMENT5"), "A"));
     }
 
 }
