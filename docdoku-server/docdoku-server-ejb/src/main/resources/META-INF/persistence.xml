@@ -84,8 +84,7 @@
     <class>com.docdoku.core.workflow.Role</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
-      <property name="eclipselink.logging.level" value="SEVERE"/>
-      <property name="eclipselink.ddl-generation" value="create-tables"/>
+      <property name="javax.persistence.schema-generation.database.action" value="create"/>
     </properties>
   </persistence-unit>
 </persistence>
