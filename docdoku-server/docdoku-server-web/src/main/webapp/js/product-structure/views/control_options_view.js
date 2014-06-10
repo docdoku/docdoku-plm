@@ -1,4 +1,4 @@
-/*global sceneManager*/
+/*global App*/
 define(
     [
         "text!templates/control_options.html",
@@ -23,25 +23,23 @@ define(
         },
 
         gridSwitch:function(){
-            $("#gridSwitch").toggleClass("active");
-            if ($("#gridSwitch").hasClass("active")) {
-                sceneManager.showGrid();
-            } else {
-                sceneManager.removeGrid();
-            }
+            var gridSwitch =$("#gridSwitch");
+            gridSwitch.toggleClass("active");
+            App.SceneOptions.grid = !!gridSwitch.hasClass("active");
         },
 
         materialsSwitch:function(){
-            $("#materialsSwitch").toggleClass("active");
-            if ($("#materialsSwitch").hasClass("active")) {
-                sceneManager.switchWireFrame(true);
+            var materialsSwitch = $("#materialsSwitch");
+            materialsSwitch.toggleClass("active");
+            if (materialsSwitch.hasClass("active")) {
+                App.sceneManager.switchWireFrame(true);
             } else {
-                sceneManager.switchWireFrame(false);
+                App.sceneManager.switchWireFrame(false);
             }
         },
 
         takeScreenShot:function(){
-            sceneManager.takeScreenShot();
+            App.sceneManager.takeScreenShot();
         },
 
         render:function(){

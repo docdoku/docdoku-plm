@@ -1,4 +1,3 @@
-/*global sceneManager*/
 define(
     [
         "text!templates/control_layers.html",

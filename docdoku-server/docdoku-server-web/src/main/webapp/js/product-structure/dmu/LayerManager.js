@@ -16,7 +16,7 @@ define([
     var LayerManager = function() {
         this.meshs = [];
         this.state = STATE.FULL;
-        this.markerStateControl = $('#markerState i');
+        this.markerStateControl = $("#markerState").find("i");
         this.layersCollection = new LayerCollection();
         this.markerScale = new THREE.Vector3(1,1,1);
         this.markers = [];
@@ -47,8 +47,8 @@ define([
             markerMesh.markerId  = marker.cid;
 
             // add the sphere to the scene
-            sceneManager.scene.add( markerMesh );
-            sceneManager.reFrame();
+            App.sceneManager.scene.add( markerMesh );
+            App.sceneManager.reDraw();
 
             // rescale the marker to the others markers scale
             markerMesh.scale = this.markerScale;
@@ -73,8 +73,8 @@ define([
         },
 
         _removeMesh: function(cid) {
-            sceneManager.scene.remove(this.meshs[cid]);
-            sceneManager.reFrame();
+            App.sceneManager.scene.remove(this.meshs[cid]);
+            App.sceneManager.reDraw();
             delete this.meshs[cid];
         },
 

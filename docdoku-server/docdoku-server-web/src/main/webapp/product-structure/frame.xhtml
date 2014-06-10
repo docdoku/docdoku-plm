@@ -13,7 +13,7 @@
         <link rel="stylesheet" type="text/css" href="#{request.contextPath}/css/jquery.treeview.css?v=${BUILD_NUMBER}"/>
         <link rel="stylesheet/less" type="text/css" href="#{request.contextPath}/less/product-structure/styleFrame.less?v=${BUILD_NUMBER}"/>
         </ui:define>
-        <ui:define name="scripts"> 
+        <ui:define name="scripts">
 
         <script type="text/javascript" src="#{request.contextPath}/js/lib/modernizr.custom.js?v=${BUILD_NUMBER}"></script>
 
@@ -25,11 +25,9 @@
         <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/threex.domevent.js?v=${BUILD_NUMBER}"></script>
         <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/VisualizationUtils.js?v=${BUILD_NUMBER}"></script>
 
-        <script type="text/javascript" src="#{request.contextPath}/js/product-structure/dmu/TrackballControls.js?v=${BUILD_NUMBER}"></script>
-        <script type="text/javascript" src="#{request.contextPath}/js/product-structure/dmu/PointerLockControls.js?v=${BUILD_NUMBER}"></script>
-
-        <script type="text/javascript" src="#{request.contextPath}/js/product-structure/models/instance.js?v=${BUILD_NUMBER}"></script>
-        <script type="text/javascript" src="#{request.contextPath}/js/product-structure/models/levelGeometry.js?v=${BUILD_NUMBER}"></script>
+        <script type="text/javascript" src="#{request.contextPath}/js/product-structure/dmu/controls/TrackballControls.js?v=${BUILD_NUMBER}"></script>
+        <script type="text/javascript" src="#{request.contextPath}/js/product-structure/dmu/controls/PointerLockControls.js?v=${BUILD_NUMBER}"></script>
+        <script type="text/javascript" src="#{request.contextPath}/js/product-structure/dmu/controls/OrbitControls.js?v=${BUILD_NUMBER}"></script>
 
         <script type="text/javascript">
             var APP_CONFIG = {
@@ -57,7 +55,8 @@
                         "require": "../lib/require/require.min-2.1.2",
                         "text": "../lib/require/text-2.0.3",
                         "i18n": "../lib/require/i18n-2.0.1",
-                        "localization": "../localization"
+                        "localization": "../localization",
+                        "lib": "../lib"
                     },
                     config: {
                         i18n: {

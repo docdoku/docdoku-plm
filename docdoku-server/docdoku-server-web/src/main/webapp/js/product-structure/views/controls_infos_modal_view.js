@@ -22,6 +22,8 @@ define(    [
                     this.$el.html(this.template({i18n: i18n, isPLC:true}));
                 } else if (this.options.isTBC) {
                     this.$el.html(this.template({i18n: i18n, isTBC:true}));
+                } else if (this.options.isORB) {
+                    this.$el.html(this.template({i18n: i18n, isORC:true}));
                 }
 
                 this.$modal = this.$("#controlsInfosModal");

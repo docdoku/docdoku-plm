@@ -12,12 +12,16 @@
     </ui:define>
     <ui:define name="styles">
         <link rel="stylesheet" type="text/css" href="#{request.contextPath}/css/jquery.treeview.css?v=${BUILD_NUMBER}"/>
+        <link rel="stylesheet" type="text/css" href="#{request.contextPath}/css/modules/jquery.nouislider.css?v=${BUILD_NUMBER}"/>
+
         <link rel="stylesheet/less" type="text/css" href="#{request.contextPath}/less/product-structure/style.less?v=${BUILD_NUMBER}"/>
     </ui:define>
     <ui:define name="scripts">
 
+        <script type="text/javascript" src="#{request.contextPath}/js/lib/dat.gui.min.js?v=${BUILD_NUMBER}"></script>
         <script type="text/javascript" src="#{request.contextPath}/js/lib/modernizr.custom.js?v=${BUILD_NUMBER}"></script>
-
+        <script type="text/javascript" src="#{request.contextPath}/js/lib/jquery.nouislider.min.js?v=${BUILD_NUMBER}"></script>
+        <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/tween.min.js?v=${BUILD_NUMBER}"></script>
         <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/three.min.js?v=${BUILD_NUMBER}"></script>
         <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/BinaryLoader.js?v=${BUILD_NUMBER}"></script>
         <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/ColladaLoader.js?v=${BUILD_NUMBER}"></script>
@@ -26,11 +30,9 @@
         <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/threex.domevent.js?v=${BUILD_NUMBER}"></script>
         <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/VisualizationUtils.js?v=${BUILD_NUMBER}"></script>
 
-        <script type="text/javascript" src="#{request.contextPath}/js/product-structure/dmu/PointerLockControls.js?v=${BUILD_NUMBER}"></script>
-        <script type="text/javascript" src="#{request.contextPath}/js/product-structure/dmu/TrackballControls.js?v=${BUILD_NUMBER}"></script>
-
-        <script type="text/javascript" src="#{request.contextPath}/js/product-structure/models/instance.js?v=${BUILD_NUMBER}"></script>
-        <script type="text/javascript" src="#{request.contextPath}/js/product-structure/models/levelGeometry.js?v=${BUILD_NUMBER}"></script>
+        <script type="text/javascript" src="#{request.contextPath}/js/product-structure/dmu/controls/TrackballControls.js?v=${BUILD_NUMBER}"></script>
+        <script type="text/javascript" src="#{request.contextPath}/js/product-structure/dmu/controls/PointerLockControls.js?v=${BUILD_NUMBER}"></script>
+        <script type="text/javascript" src="#{request.contextPath}/js/product-structure/dmu/controls/OrbitControls.js?v=${BUILD_NUMBER}"></script>
 
         <script type="text/javascript">
             var APP_CONFIG = {
@@ -56,7 +58,8 @@
                         "i18n": "../lib/require/i18n-2.0.1",
                         "localization": "../localization",
                         "modules": "../modules",
-                        "common-objects": "../common-objects"
+                        "common-objects": "../common-objects",
+                        "lib": "../lib"
                     },
                     config: {
                         i18n: {
@@ -75,6 +78,8 @@
                     "modules/webrtc-module/app",
                     "modules/coworkers-access-module/app"
                 ]);
+
+                require(["lib/visualization/BufferGeometryUtils"]);
 
             });
         </script>

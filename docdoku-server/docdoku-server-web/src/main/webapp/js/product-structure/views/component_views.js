@@ -48,7 +48,6 @@ define(function() {
         },
 
         fetchAll:function(){
-            var that = this ;
             this.$el.empty();
             this.collection.fetch({reset:true});
         }
@@ -82,10 +81,10 @@ define(function() {
 
         onChangeCheckbox: function(event) {
             if (event.target.checked){
-                this.model.putOnScene();
+                App.instancesManager.loadFromTree(this.model);
             }
             else{
-                this.model.removeFromScene();
+                App.instancesManager.unLoadFromTree(this.model);
             }
         },
 
@@ -153,10 +152,10 @@ define(function() {
 
         onChangeCheckbox: function(event) {
             if (event.target.checked){
-                this.model.putOnScene();
+                App.instancesManager.loadFromTree(this.model);
             }
             else{
-                this.model.removeFromScene();
+                App.instancesManager.unLoadFromTree(this.model);
             }
         },
 

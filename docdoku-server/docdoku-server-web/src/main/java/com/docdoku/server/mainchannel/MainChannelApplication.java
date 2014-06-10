@@ -20,6 +20,7 @@
 
 package com.docdoku.server.mainchannel;
 
+import com.docdoku.core.common.Account;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.mainchannel.module.*;
 import com.docdoku.server.mainchannel.util.ChannelMessagesBuilder;
@@ -31,12 +32,17 @@ import javax.ejb.Stateless;
 import javax.json.Json;
 import javax.json.JsonException;
 import javax.json.JsonObject;
+import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpSessionEvent;
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
+import java.io.IOException;
 import java.io.StringReader;
 import java.security.Principal;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.logging.Level;
@@ -67,6 +73,17 @@ public class MainChannelApplication {
         return CHANNELS.get(userLogin);
     }
 
+    public static void sessionDestroyed(String account) {
+        Map<String, Session> sessionMap = CHANNELS.get(account);
+
+            for (Session session : sessionMap.values()){
+                try {
+                    session.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+    }
 
     @OnError
     public void error(Session session, Throwable error) {
@@ -82,8 +99,7 @@ public class MainChannelApplication {
     @OnOpen
     public void open(Session session) {
 
-        Principal userPrincipal = session.getUserPrincipal();
-        String callerLogin = userPrincipal.getName();
+            Principal userPrincipal = session.getUserPrincipal(); String callerLogin = userPrincipal.getName();
         String sessionId = session.getId();
 
         if (callerLogin != null && sessionId != null) {

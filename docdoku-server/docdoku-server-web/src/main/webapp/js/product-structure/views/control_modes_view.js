@@ -1,4 +1,4 @@
-/*global sceneManager*/
+/*global App*/
 define(
     [
         "views/shortcuts_view",
@@ -14,15 +14,20 @@ define(
 
         events:{
             "click button#flying_mode_view_btn": "flyingView",
-            "click button#tracking_mode_view_btn": "trackingView"
+            "click button#tracking_mode_view_btn": "trackingView",
+            "click button#orbit_mode_view_btn": "orbitView"
         },
 
         flyingView:function(){
-            sceneManager.setPointerLockControls();
+            App.sceneManager.setPointerLockControls();
         },
 
         trackingView:function(){
-            sceneManager.setTrackBallControls();
+            App.sceneManager.setTrackBallControls();
+        },
+
+        orbitView:function(){
+            App.sceneManager.setOrbitControls();
         },
 
         render:function(){

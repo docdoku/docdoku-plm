@@ -1,5 +1,43 @@
 var sceneManager;
-var instancesManager;
+
+// Global Namespace for the application
+var App = {
+    debug: false,
+    instancesManager : null,
+    sceneManager : null,
+
+    setDebug:function(state){
+        App.debug = state;
+        if(state){
+            $("body").addClass("debug");
+        }else{
+            $("body").removeClass("debug");
+        }
+    },
+
+    WorkerManagedValues: {
+        maxInstances: 500,
+        maxAngle: Math.PI / 4,
+        maxDist: 100000,
+        minProjectedSize: 0.000001,//100,
+        distanceRating: 0.6,//0.7,
+        angleRating: 0.4,//0.6,//0.5,
+        volRating: 1.0//0.7
+    },
+
+    SceneOptions: {
+        grid: false,
+        skeleton: true,
+        zoomSpeed: 1.2,
+        rotateSpeed: 1.0,
+        panSpeed: 0.3,
+        cameraNear: 1,
+        cameraFar: 5E4,
+        defaultCameraPosition: {x: -1000, y: 800, z: 1100},
+        defaultTargetPosition: {x: 0, y: 0, z: 0}
+    }
+
+};
 
 define(
     [
@@ -9,11 +47,13 @@ define(
         "views/parts_tree_view",
         "views/bom_view",
         "views/part_metadata_view",
+        "views/part_instance_view",
         "views/export_scene_modal_view",
         "views/control_modes_view",
         "views/control_markers_view",
         "views/control_layers_view",
         "views/control_options_view",
+        "views/control_clipping_view",
         "views/control_explode_view",
         "views/control_measure_view",
         "views/baseline_select_view",
@@ -28,11 +68,13 @@ define(
                  PartsTreeView,
                  BomView,
                  PartMetadataView,
+                 PartInstanceView,
                  ExportSceneModalView,
                  ControlModesView,
                  ControlMarkersView,
                  ControlLayersView,
                  ControlOptionsView,
+                 ControlClippingView,
                  ControlExplodeView,
                  ControlMeasureView,
                  BaselineSelectView,
@@ -81,22 +123,24 @@ define(
             this.baselineSelectView = new BaselineSelectView({el:"#config_spec_container"}).render();
 
             try{
-                instancesManager = new InstancesManager();
-                sceneManager = new SceneManager();
+                App.instancesManager = new InstancesManager();
+                App.sceneManager = new SceneManager();
                 this.$ControlsContainer.append(new ControlModesView().render().$el);
                 this.$ControlsContainer.append(new ControlOptionsView().render().$el);
+                this.$ControlsContainer.append(new ControlClippingView().render().$el);
                 this.$ControlsContainer.append(new ControlExplodeView().render().$el);
                 this.$ControlsContainer.append(new ControlMarkersView().render().$el);
                 this.$ControlsContainer.append(new ControlLayersView().render().$el);
                 this.$ControlsContainer.append(new ControlMeasureView().render().$el);
-                instancesManager.init();
-                sceneManager.init();
+                App.sceneManager.init();
+                App.instancesManager.start();
             }catch(ex){
                 console.log("Got exception in dmu");
                 this.onNoWebGLSupport();
             }
 
             this.listenEvents();
+            this.bindDatGUIControls();
 
         },
 
@@ -183,7 +227,7 @@ define(
                 this.exportSceneButton.show();
             }
             this.showPartMetadata();
-            sceneManager.setPathForIFrame(this.partsTreeView.componentSelected.getPath());
+            App.sceneManager.setPathForIFrame(this.partsTreeView.componentSelected.getPath());
         },
 
         exportScene:function(){
@@ -192,9 +236,9 @@ define(
             var urlRoot = splitUrl[0] + "//" + splitUrl[2];
 
             var iframeSrc = urlRoot + '/visualization/' + APP_CONFIG.workspaceId + '/' + APP_CONFIG.productId
-                + '?cameraX=' + sceneManager.cameraObject.position.x
-                + '&cameraY=' + sceneManager.cameraObject.position.y
-                + '&cameraZ=' + sceneManager.cameraObject.position.z;
+                + '?cameraX=' + App.sceneManager.cameraObject.position.x
+                + '&cameraY=' + App.sceneManager.cameraObject.position.y
+                + '&cameraZ=' + App.sceneManager.cameraObject.position.z;
 
             if(this.partsTreeView.componentSelected.getPath()){
                 iframeSrc += '&pathToLoad=' + this.partsTreeView.componentSelected.getPath();
@@ -209,7 +253,7 @@ define(
         },
 
         fullScreenScene:function(){
-            sceneManager.requestFullScreen();
+            App.sceneManager.requestFullScreen();
         },
 
         onRefreshTree:function(){
@@ -241,7 +285,7 @@ define(
         onConfigSpecChange:function(configSpec){
             window.config_spec = configSpec;
             Backbone.Events.trigger("refresh_tree");
-            sceneManager.clear();
+            App.sceneManager.clear();
         },
 
         onMeshSelected:function(mesh){
@@ -258,6 +302,12 @@ define(
                     }else{
                         self.partMetadataView.setModel(part).render();
                     }
+                    if (self.partInstanceView == undefined) {
+                        self.partInstanceView = new PartInstanceView().setMesh(mesh).render();
+                        self.$ControlsContainer.append(self.partInstanceView.$el);
+                    }else{
+                        self.partInstanceView.setMesh(mesh).render();
+                    }
                 }
             }});
         },
@@ -266,7 +316,32 @@ define(
             this.searchView.trigger("selection:reset");
             if(!this.isInBomMode() && this.partMetadataView != undefined ){
                 this.partMetadataView.reset();
+                this.partInstanceView.reset();
             }
+        },
+
+        bindDatGUIControls:function(){
+            // Dat.gui controls
+            var gui = new dat.GUI({ autoPlace: false });
+            var valuesControllers = [];
+            this.$el.append(gui.domElement);
+
+            valuesControllers.push(gui.add(App.WorkerManagedValues, 'maxInstances').min(0).max(5000).step(1));
+            valuesControllers.push(gui.add(App.WorkerManagedValues, 'maxAngle').min(0).max(Math.PI).step(0.01));
+            valuesControllers.push(gui.add(App.WorkerManagedValues, 'maxDist').min(1).max(100000).step(100));
+            valuesControllers.push(gui.add(App.WorkerManagedValues, 'minProjectedSize').min(0).max(window.innerHeight).step(1));
+
+            valuesControllers.push(gui.add(App.WorkerManagedValues, 'angleRating').min(0).max(1).step(0.01));
+            valuesControllers.push(gui.add(App.WorkerManagedValues, 'distanceRating').min(0).max(1).step(0.01));
+            valuesControllers.push(gui.add(App.WorkerManagedValues, 'volRating').min(0).max(1).step(0.01));
+
+            valuesControllers.push(gui.add(App.SceneOptions,        'grid'));
+            valuesControllers.push(gui.add(App.SceneOptions,        'skeleton'));
+            valuesControllers.push(gui.add(App.SceneOptions,        'rotateSpeed').min(0).max(10).step(0.01));
+            valuesControllers.push(gui.add(App.SceneOptions,        'zoomSpeed').min(0).max(10).step(0.01));
+            valuesControllers.push(gui.add(App.SceneOptions,        'panSpeed').min(0).max(10).step(0.01));
+
+            return this;
         }
 
     });

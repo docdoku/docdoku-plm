@@ -1,5 +1,5 @@
-/*global instancesManager,Instance*/
-define(["models/part_iteration_visualization", "common-objects/utils/date", "i18n!localization/nls/product-structure-strings"], function (PartIterationVisualization, date, i18n) {
+define(["common-objects/utils/date", "i18n!localization/nls/product-structure-strings"],
+function (date, i18n) {
 
     var ComponentModule = {};
 
@@ -25,6 +25,10 @@ define(["models/part_iteration_visualization", "common-objects/utils/date", "i18
 
         isCheckout: function() {
             return !_.isNull(this.attributes.checkOutDate);
+        },
+
+        getId: function(){
+            return getNumber()+"-"+getVersion()+"-"+getIteration();
         },
 
         getCheckoutUser: function() {
@@ -112,14 +116,6 @@ define(["models/part_iteration_visualization", "common-objects/utils/date", "i18
 
         getInstancesUrl: function() {
             return "/api/workspaces/" + APP_CONFIG.workspaceId + "/products/" + APP_CONFIG.productId + "/instances?configSpec="+window.config_spec+"&path=" + this.getPath();
-        },
-
-        putOnScene: function() {
-            instancesManager.loadFromTree(this);
-        },
-
-        removeFromScene: function() {
-            instancesManager.unLoadFromTree(this);
         },
 
         getUrlForBom: function() {

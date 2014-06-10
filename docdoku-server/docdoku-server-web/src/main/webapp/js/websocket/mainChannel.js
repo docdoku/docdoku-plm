@@ -1,5 +1,11 @@
 /*global Channel,ChannelListener,ChannelMessagesType*/
 var mainChannel = new Channel("ws://"+window.location.host+"/mainChannelSocket");
+window.addEventListener("beforeunload", page_unload, false);
+function page_unload(){
+
+        mainChannel.ws.onclose=function(){};
+        mainChannel.ws.close();
+};
 
 function onUserStatusRequest(remoteUser){
     mainChannel.sendJSON({
@@ -7,7 +13,6 @@ function onUserStatusRequest(remoteUser){
         remoteUser:remoteUser
     });
 }
-
 Backbone.Events.on('UserStatusRequest', onUserStatusRequest);
 
 var userStatusListener = new ChannelListener({
