@@ -73,21 +73,8 @@ public class MainChannelApplication {
         return CHANNELS.get(userLogin);
     }
 
-    public static void sessionDestroyed(HttpSessionEvent httpSessionEvent) {
-        HttpSession httpSession = httpSessionEvent.getSession();
-        //Account account = httpSession.getAttribute("account");
-        String account = ((Account) httpSession.getAttribute("account")).getLogin();
+    public static void sessionDestroyed(String account) {
         Map<String, Session> sessionMap = CHANNELS.get(account);
-
-        /*Session session = (Session) httpSession;
-        Principal userPrincipal = session.getUserPrincipal();
-        String callerLogin = userPrincipal.getName();*/
-
-            /*Map<String, Session> userChannels = getUserChannels(callerLogin);
-            Set chanKey = ConcurrentMap.keySet();
-            for (Object aChanKey : chanKey) {
-                userChannels.get(aChanKey).close();
-            }*/
 
             for (Session session : sessionMap.values()){
                 try {

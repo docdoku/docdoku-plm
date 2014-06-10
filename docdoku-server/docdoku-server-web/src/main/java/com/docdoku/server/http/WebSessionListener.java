@@ -1,7 +1,9 @@
 package com.docdoku.server.http;
 
+import com.docdoku.core.common.Account;
 import com.docdoku.server.mainchannel.MainChannelApplication;
 
+import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
@@ -18,7 +20,9 @@ public class WebSessionListener implements HttpSessionListener {
     //Notification that a session is about to be invalidated.
     @Override
     public void sessionDestroyed(HttpSessionEvent httpSessionDestroyedEvent) {
-        MainChannelApplication.sessionDestroyed(httpSessionDestroyedEvent);
+        HttpSession httpSession = httpSessionDestroyedEvent.getSession();
+        String account = ((Account) httpSession.getAttribute("account")).getLogin();
+        MainChannelApplication.sessionDestroyed(account);
     }
 
 }
