@@ -22,6 +22,9 @@ define([
         var meshesIndexed={};
         var selectionBox = null;
         var meshMarkedForSelection = null;
+        var controlsChanged = false;
+        var isCollaborativeMaster = false;
+        var collaborativeUsers = [];
 
         this.stateControl = null;
         this.STATECONTROL = { PLC: 0, TBC: 1, ORB: 2};
@@ -217,10 +220,12 @@ define([
         /**
          * Scene options control
          */
+
         function onControlChange(){
             if(App.instancesManager){
                 App.instancesManager.planNewEval();
             }
+            controlsChanged= true;
             _this.reDraw();
         }
         function onFullScreenChange(){
@@ -333,6 +338,7 @@ define([
                 0.5
             );
             var cameraPosition = controlsObject.getObject().position;
+
             var object = _this.cameraObject;
             projector.unprojectVector(vector, object);
 
@@ -367,6 +373,7 @@ define([
                     _this.measureCallback(-1);
                 }
             }
+
             _this.reDraw();
         }
 
@@ -489,7 +496,12 @@ define([
             if(needsRedraw){
                 needsRedraw = false;
                 _this.stats.update();
+
                 render();
+            }
+            if(controlsChanged){
+                updateMaster();
+                controlsChanged=false;
             }
         }
 
@@ -544,6 +556,21 @@ define([
             };
         };
 
+        this.getControlsContext = function(){
+            return {
+                target: controlsObject.getTarget(),
+                camPos: controlsObject.getCamPos(),
+                camOrientation: _this.cameraObject.up
+            };
+        };
+
+        this.setControlsContext = function(context){
+            _this.cameraObject.position.copy(context.camPos);
+            controlsObject.target.copy(context.target);
+            _this.cameraObject.up.copy(context.camOrientation);
+            _this.reDraw();
+        };
+
         /**
          * Controls management
          */
@@ -570,6 +597,7 @@ define([
                 _this.$container[0].addEventListener('click', bindPointerLock, false);
             }
             _this.scene.add(_this.pointerLockControls.getObject());
+            _this.reDraw();
         };
         this.setTrackBallControls = function(){
             if (_this.stateControl == _this.STATECONTROL.TBC) {
@@ -588,6 +616,7 @@ define([
             _this.trackBallControls.addEventListener("change", onControlChange);
             _this.trackBallControls.bindEvents();
             _this.scene.add(_this.trackBallCamera);
+            _this.reDraw();
         };
         this.setOrbitControls= function() {
 
@@ -606,6 +635,7 @@ define([
             controlsObject.addEventListener("change", onControlChange);
             controlsObject.bindEvents();
             _this.scene.add(_this.orbitCamera);
+            _this.reDraw();
         };
 
         /**
@@ -673,6 +703,53 @@ define([
             _this.reDraw();
 
         };
+
+        /**
+         * Collaborative mode
+         */
+
+        function updateMaster(){
+            if(isCollaborativeMaster){
+                var message = {
+                    type: ChannelMessagesType.CHAT_MESSAGE,
+                    remoteUser: collaborativeUsers[0],
+                    message:'/animate/'+JSON.stringify(_this.getControlsContext()),
+                    context: APP_CONFIG.workspaceId+' '+APP_CONFIG.productId,
+                    sender:APP_CONFIG.login
+                };
+                mainChannel.sendJSON(message);
+            }
+        }
+
+        this.handleInvite=function(message){
+            var room = message.message.substr(13);
+            window.location.hash = "share-view/"+room;
+            controlsObject.enabled = false;
+            console.log(message);
+        };
+
+        this.setCollaborativeMode=function(remoteUser){
+            isCollaborativeMaster = true;
+            collaborativeUsers.push(remoteUser);
+            updateMaster();
+        }
+
+        this.stopCollaborativeMaster=function(){
+            isCollaborativeMaster = false;
+            var message = {
+                type: ChannelMessagesType.CHAT_MESSAGE,
+                remoteUser: collaborativeUsers[0],
+                message: "/stop",
+                context: APP_CONFIG.workspaceId+' '+APP_CONFIG.productId,
+                sender:APP_CONFIG.login
+            };
+            mainChannel.sendJSON(message);
+        };
+
+        this.stopCollaborativeUsers=function(){
+            //$.each(collaborativeUsers,App.appView.stopCollaborativeMode());
+            controlsObject.enabled = true;
+        }
 
         /**
          * Scene mouse events

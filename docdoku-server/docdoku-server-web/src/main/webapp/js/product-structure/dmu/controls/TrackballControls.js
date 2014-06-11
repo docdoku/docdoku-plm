@@ -31,7 +31,7 @@ THREE.TrackballControls = function ( object, domElement ) {
 
 	var lastPosition = new THREE.Vector3();
 
-    var epsilon = 0.0001;
+    var epsilon = 0.001;
 
 	var _state = STATE.NONE,
 	_prevState = STATE.NONE,

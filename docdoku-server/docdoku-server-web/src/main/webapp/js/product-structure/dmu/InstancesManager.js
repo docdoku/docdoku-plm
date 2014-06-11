@@ -32,7 +32,7 @@ function (LoaderManager, async) {
         }, false);
 
 
-        this.trashInstances = [];                                                                                       // Index isntances for removal
+        this.trashInstances = [];                                                                                       // Index instances for removal
         this.xhrQueue=null;
         // Stat to show
         this.aborted = 0;

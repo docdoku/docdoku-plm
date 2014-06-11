@@ -262,7 +262,7 @@ THREE.OrbitControls = function (object, domElement) {
         scale = 1;
         pan.set(0, 0, 0);
 
-        if (lastPosition.distanceTo(this.object.position) > 0.00001) {
+        if (lastPosition.distanceTo(this.object.position) > 0.001) {
 
             this.dispatchEvent(changeEvent);
 

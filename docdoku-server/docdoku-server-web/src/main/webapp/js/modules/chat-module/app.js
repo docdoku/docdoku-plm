@@ -36,6 +36,11 @@ define([
 
         // onMessage handler
         onMessage: function (message) {
+
+            if(APP_CONFIG.login!=message.sender && message.message.match(/^\//)){
+               chatListener.handleCommand(message);
+            }
+
             Backbone.Events.trigger('NewChatMessage', message);
         },
 
@@ -46,6 +51,26 @@ define([
 
     });
 
+    chatListener.handleCommand = function(message){
+
+        if(message.message.match(/inviteScene/)){
+            //var url = message.message.substr(0 ,13);
+            App.sceneManager.handleInvite(message);
+            //Backbone.Events.trigger('NewChatMessage', url);
+        }else if(message.message.match(/animate/)){
+            var contextString = message.message.substring(9);
+            var context = JSON.parse(contextString);
+            console.log(context);
+            App.sceneManager.setControlsContext(context);
+        } else if(message.message.match(/stop/)){
+            App.appView.stopCollaborativeMode();
+            App.sceneManager.stopCollaborativeUsers();
+        }
+    };
+
+
     mainChannel.addChannelListener(chatListener);
 
 });
+
+

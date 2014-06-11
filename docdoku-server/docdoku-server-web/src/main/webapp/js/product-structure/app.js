@@ -1,47 +1,5 @@
-var sceneManager;
-
-// Global Namespace for the application
-var App = {
-    debug: false,
-    instancesManager : null,
-    sceneManager : null,
-
-    setDebug:function(state){
-        App.debug = state;
-        if(state){
-            $("body").addClass("debug");
-        }else{
-            $("body").removeClass("debug");
-        }
-    },
-
-    WorkerManagedValues: {
-        maxInstances: 500,
-        maxAngle: Math.PI / 4,
-        maxDist: 100000,
-        minProjectedSize: 0.000001,//100,
-        distanceRating: 0.6,//0.7,
-        angleRating: 0.4,//0.6,//0.5,
-        volRating: 1.0//0.7
-    },
-
-    SceneOptions: {
-        grid: false,
-        skeleton: true,
-        zoomSpeed: 1.2,
-        rotateSpeed: 1.0,
-        panSpeed: 0.3,
-        cameraNear: 1,
-        cameraFar: 5E4,
-        defaultCameraPosition: {x: -1000, y: 800, z: 1100},
-        defaultTargetPosition: {x: 0, y: 0, z: 0}
-    }
-
-};
-
 define(
     [
-        "router",
         "modules/navbar-module/views/navbar_view",
         "views/search_view",
         "views/parts_tree_view",
@@ -62,8 +20,7 @@ define(
         "text!templates/content.html",
         "i18n!localization/nls/product-structure-strings",
         "models/part"
-    ], function (Router,
-                 NavBarView,
+    ], function (NavBarView,
                  SearchView,
                  PartsTreeView,
                  BomView,
@@ -142,6 +99,7 @@ define(
             this.listenEvents();
             this.bindDatGUIControls();
 
+            return this;
         },
 
         menuResizable:function(){
@@ -218,6 +176,22 @@ define(
 
         isInBomMode: function() {
             return this.inBomMode;
+        },
+
+        collaborativeMode: function() {
+            //this.inCollaborativeMode = true;
+            this.$ControlsContainer.find("button").attr("disabled","disabled");
+
+            //this.$ControlsContainer.find("#collaborative_view").append('<a id="end_collaborative" href="#">Leave collaborative view</a>');
+
+        },
+
+        stopCollaborativeMode: function() {
+            //this.inCollaborativeMode = true;
+            this.$ControlsContainer.find("button").removeAttr("disabled");
+
+            //this.$ControlsContainer.find("#collaborative_view").append('<a id="end_collaborative" href="#">Leave collaborative view</a>');
+
         },
 
         onComponentSelected: function(showRoot) {
@@ -344,10 +318,8 @@ define(
             return this;
         }
 
-    });
 
-    Router.getInstance();
-    Backbone.history.start();
+    });
 
     return AppView;
 });
