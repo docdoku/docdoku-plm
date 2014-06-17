@@ -79,7 +79,7 @@ define(
 
             this.baselineSelectView = new BaselineSelectView({el:"#config_spec_container"}).render();
 
-            try{
+            //try{
                 App.instancesManager = new InstancesManager();
                 App.sceneManager = new SceneManager();
                 this.$ControlsContainer.append(new ControlModesView().render().$el);
@@ -91,10 +91,10 @@ define(
                 this.$ControlsContainer.append(new ControlMeasureView().render().$el);
                 App.sceneManager.init();
                 App.instancesManager.start();
-            }catch(ex){
-                console.log("Got exception in dmu");
-                this.onNoWebGLSupport();
-            }
+            //}catch(ex){
+               // console.log("Got exception in dmu");
+               // this.onNoWebGLSupport();
+            //}
 
             this.listenEvents();
             this.bindDatGUIControls();
@@ -186,12 +186,20 @@ define(
 
         },
 
-        stopCollaborativeMode: function() {
+        leaveCollaborativeMode: function() {
             //this.inCollaborativeMode = true;
             this.$ControlsContainer.find("button").removeAttr("disabled");
 
             //this.$ControlsContainer.find("#collaborative_view").append('<a id="end_collaborative" href="#">Leave collaborative view</a>');
 
+        },
+
+        transformControlMode: function() {
+            this.$("#view_buttons").find("button").removeClass("active");
+        },
+
+        leaveTransformControlMode: function() {
+            this.$("#transform_mode_view_btn").removeClass("active");
         },
 
         onComponentSelected: function(showRoot) {

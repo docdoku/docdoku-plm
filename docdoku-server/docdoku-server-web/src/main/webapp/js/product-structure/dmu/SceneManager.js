@@ -22,12 +22,21 @@ define([
         var meshesIndexed={};
         var selectionBox = null;
         var meshMarkedForSelection = null;
-        var controlsChanged = false;
+        var controlChanged = false;
         var isCollaborativeMaster = false;
         var collaborativeUsers = [];
 
+        var transformControls = null;
+
+        // test transform avec une boite
+        var geometryBoite = new THREE.BoxGeometry(20, 20, 20);
+        var materialBoite = new THREE.MeshBasicMaterial({
+            color: 0x00ff00
+        });
+        var boite = new THREE.Mesh(geometryBoite, materialBoite);
+
         this.stateControl = null;
-        this.STATECONTROL = { PLC: 0, TBC: 1, ORB: 2};
+        this.STATECONTROL = { PLC: 0, TBC: 1, ORB: 2, TSF: 3};
         this.scene = new THREE.Scene();
         this.renderer = null;
         this.cameraObject = null;                                                                                       // Represent the eye
@@ -69,6 +78,9 @@ define([
             var arrow = new THREE.ArrowHelper(new THREE.Vector3(0, 1, 0), new THREE.Vector3(0, 0, 0), 100);
             arrow.position.set(200, 0, 400);
             _this.scene.add(arrow);
+
+            // test avec une boite
+            _this.scene.add(boite);
         }
         function initStats() {
             _this.stats = new Stats();
@@ -167,6 +179,33 @@ define([
             _this.trackBallControls = new THREE.TrackballControls(_this.trackBallCamera, _this.$container[0]);
             _this.trackBallControls.keys = [ 65 /*A*/, 83 /*S*/, 68 /*D*/ ];
         }
+        function createTransformControls() {
+            transformControls = new THREE.TransformControls(_this.$container[0]);
+
+            window.addEventListener( 'keyup', function ( event ) {
+                console.log(event.which);
+                switch (event.keyCode) {
+                    case 90: // Z
+                        transformControls.setMode("translate");
+                        break;
+                    case 69: // E
+                        transformControls.setMode("rotate");
+                        break;
+                    case 82: // R
+                        transformControls.setMode("scale");
+                        break;
+                    case 187:
+                    case 107: // +,=,num+
+                        transformControls.setSize(transformControls.size + 0.1);
+                        break;
+                    case 189:
+                    case 109: // -,_,num-
+                        transformControls.setSize(Math.max(transformControls.size - 0.1, 0.1));
+                        break;
+                }
+            });
+           transformControls.addEventListener('change',_this.reDraw);
+        }
         function bindPointerLock(){
             if (_this.stateControl != _this.STATECONTROL.PLC || _this.pointerLockControls.enabled) {
                 return;
@@ -212,10 +251,129 @@ define([
             }
 
             _this.orbitControls.removeEventListener("change");
-            _this.scene.remove(_this.orbitControls.object);
+            _this.scene.remove(_this.orbitControls.getObject());
             _this.orbitControls.enabled = false;
             _this.orbitControls.unbindEvents();
+
+            if (transformControls != null && transformControls.enabled) {
+                App.appView.leaveTransformControlMode();
+                _this.scene.remove(transformControls);
+                transformControls.unbindEvents();
+                transformControls.detach(boite);
+                transformControls.enabled = false;
+            }
         }
+        // example arg : _this.pointerLockControls,_this.pointerLockCamera
+        function updateControlsContext(controls,camera){
+
+            if(!controlsObject){
+                return;
+            }
+            //camera.up.copy(controlsObject.getCamUp());
+            //camera.position.copy(controlsObject.getCamPos());
+            controls.setCamPos(controlsObject.getCamPos());
+            controls.setCamUp(controlsObject.getCamUp());
+            controls.setTarget(controlsObject.getTarget());
+
+        }
+        this.setPointerLockControls = function() {
+            if (_this.stateControl == _this.STATECONTROL.PLC) {
+                return;
+            }
+
+            _this.stateControl = _this.STATECONTROL.PLC;
+            deleteAllControls();
+            updateControlsContext(_this.pointerLockControls,_this.pointerLockCamera);
+            $('#flying_mode_view_btn').addClass("active");
+            _this.$blocker.show();
+
+            _this.cameraObject = _this.pointerLockCamera;
+            controlsObject = _this.pointerLockControls;
+
+            _this.pointerLockControls.addEventListener("change", onControlChange);
+            if (havePointerLock) {
+                // Hook pointer lock state change events
+                document.addEventListener('pointerlockchange', pointerLockChange, false);
+                document.addEventListener('mozpointerlockchange', pointerLockChange, false);
+                document.addEventListener('webkitpointerlockchange', pointerLockChange, false);
+                _this.$container[0].addEventListener('click', bindPointerLock, false);
+            }
+            _this.scene.add(_this.pointerLockControls.getObject());
+
+            _this.reDraw();
+        };
+        this.setTrackBallControls = function(){
+            if (_this.stateControl == _this.STATECONTROL.TBC) {
+                return;
+            }
+
+            _this.stateControl = _this.STATECONTROL.TBC;
+            deleteAllControls();
+
+            //$('#tracking_mode_view_btn').addClass("active");
+
+            updateControlsContext(_this.trackBallControls,_this.trackBallCamera);
+
+            controlsObject = _this.trackBallControls;
+            _this.cameraObject = _this.trackBallCamera;
+
+            _this.trackBallControls.enabled = true;
+            _this.trackBallControls.addEventListener("change", onControlChange);
+            _this.trackBallControls.bindEvents();
+            _this.scene.add(_this.trackBallCamera);
+            _this.reDraw();
+        };
+        this.setOrbitControls= function() {
+
+            if (_this.stateControl == _this.STATECONTROL.ORB) {
+                return;
+            }
+
+            _this.stateControl = _this.STATECONTROL.ORB;
+            deleteAllControls();
+
+            //$('#orbit_mode_view_btn').addClass("active");
+
+            updateControlsContext(_this.orbitControls);
+
+            controlsObject = _this.orbitControls;
+            controlsObject.enabled = true;
+
+            _this.cameraObject = _this.orbitCamera;
+
+            controlsObject.addEventListener("change", onControlChange);
+            controlsObject.bindEvents();
+            _this.scene.add(_this.orbitCamera);
+            _this.reDraw();
+        };
+        this.setTransformControls= function() {
+            /*
+            if (_this.stateControl == _this.STATECONTROL.TSF) {
+                return;
+            }*/
+
+            _this.stateControl = _this.STATECONTROL.TSF;
+            App.appView.transformControlMode();
+            //_this.addEventListener("change", onControlChange);
+            transformControls.setCamera(_this.cameraObject);
+
+
+            controlsObject.enabled = false;
+            transformControls.enabled = true;
+
+
+                //var control = new THREE.TransformControls(camera, renderer.domElement);
+                //control.addEventListener('change', render);
+            transformControls.attach(boite);
+              //  _this.scene.add(control);
+
+
+
+            //controlsObject.addEventListener("change", onControlChange);
+            transformControls.bindEvents();
+            _this.scene.add(transformControls);
+            _this.reDraw();
+        };
 
         /**
          * Scene options control
@@ -225,7 +383,9 @@ define([
             if(App.instancesManager){
                 App.instancesManager.planNewEval();
             }
-            controlsChanged= true;
+            controlChanged= true;
+            //console.log(controlsObject.getTarget());
+            //console.log(controlsObject.getCamUp());
             _this.reDraw();
         }
         function onFullScreenChange(){
@@ -318,7 +478,9 @@ define([
             isMoving = false;
         }
         function onKeyDown() {}
-        function onKeyUp () {}
+        function onKeyUp () {
+
+        }
         function onMouseDown () {
             isMoving = false;
         }
@@ -499,9 +661,9 @@ define([
 
                 render();
             }
-            if(controlsChanged){
-                updateMaster();
-                controlsChanged=false;
+            if(controlChanged){
+                sendControlsContextMessage();
+                controlChanged=false;
             }
         }
 
@@ -520,7 +682,10 @@ define([
             window.addEventListener('resize', handleResize, false);
             bindMouseAndKeyEvents();
             // Choose here which controls are enabled at scene load
+            createTransformControls();
             _this.setTrackBallControls();
+
+
             animate();
         };
 
@@ -559,7 +724,7 @@ define([
         this.getControlsContext = function(){
             return {
                 target: controlsObject.getTarget(),
-                camPos: controlsObject.getCamPos(),
+                camPos: controlsObject.getCamPos(), // utiliser _this.cameraObject.position ??
                 camOrientation: _this.cameraObject.up
             };
         };
@@ -571,72 +736,7 @@ define([
             _this.reDraw();
         };
 
-        /**
-         * Controls management
-         */
-        this.setPointerLockControls = function() {
-            if (_this.stateControl == _this.STATECONTROL.PLC) {
-                return;
-            }
 
-            _this.stateControl = _this.STATECONTROL.PLC;
-            deleteAllControls();
-
-            $('#flying_mode_view_btn').addClass("active");
-            _this.$blocker.show();
-
-            _this.cameraObject = _this.pointerLockCamera;
-            controlsObject = _this.pointerLockControls;
-
-            _this.pointerLockControls.addEventListener("change", onControlChange);
-            if (havePointerLock) {
-                // Hook pointer lock state change events
-                document.addEventListener('pointerlockchange', pointerLockChange, false);
-                document.addEventListener('mozpointerlockchange', pointerLockChange, false);
-                document.addEventListener('webkitpointerlockchange', pointerLockChange, false);
-                _this.$container[0].addEventListener('click', bindPointerLock, false);
-            }
-            _this.scene.add(_this.pointerLockControls.getObject());
-            _this.reDraw();
-        };
-        this.setTrackBallControls = function(){
-            if (_this.stateControl == _this.STATECONTROL.TBC) {
-                return;
-            }
-
-            _this.stateControl = _this.STATECONTROL.TBC;
-            deleteAllControls();
-
-            $('#tracking_mode_view_btn').addClass("active");
-
-            controlsObject = _this.trackBallControls;
-            _this.cameraObject = _this.trackBallCamera;
-
-            _this.trackBallControls.enabled = true;
-            _this.trackBallControls.addEventListener("change", onControlChange);
-            _this.trackBallControls.bindEvents();
-            _this.scene.add(_this.trackBallCamera);
-            _this.reDraw();
-        };
-        this.setOrbitControls= function() {
-
-            if (_this.stateControl == _this.STATECONTROL.ORB) {
-                return;
-            }
-
-            _this.stateControl = _this.STATECONTROL.ORB;
-            deleteAllControls();
-
-            controlsObject = _this.orbitControls;
-            controlsObject.enabled = true;
-
-            _this.cameraObject = _this.orbitCamera;
-
-            controlsObject.addEventListener("change", onControlChange);
-            controlsObject.bindEvents();
-            _this.scene.add(_this.orbitCamera);
-            _this.reDraw();
-        };
 
         /**
          * Scene option control
@@ -708,22 +808,25 @@ define([
          * Collaborative mode
          */
 
-        function updateMaster(){
+        function sendControlsContextMessage(){
             if(isCollaborativeMaster){
-                var message = {
-                    type: ChannelMessagesType.CHAT_MESSAGE,
-                    remoteUser: collaborativeUsers[0],
-                    message:'/animate/'+JSON.stringify(_this.getControlsContext()),
-                    context: APP_CONFIG.workspaceId+' '+APP_CONFIG.productId,
-                    sender:APP_CONFIG.login
-                };
-                mainChannel.sendJSON(message);
+                $.each(collaborativeUsers,function(key,val){
+                    var message = {
+                        type: ChannelMessagesType.CHAT_MESSAGE,
+                        remoteUser: val,
+                        message:'/animate/'+JSON.stringify(_this.getControlsContext()),
+                        context: APP_CONFIG.workspaceId+' '+APP_CONFIG.productId,
+                        sender:APP_CONFIG.login
+                    };
+                    mainChannel.sendJSON(message);
+                });
             }
         }
 
         this.handleInvite=function(message){
             var room = message.message.substr(13);
-            window.location.hash = "share-view/"+room;
+            //window.location.hash = "share-view/"+room;
+            App.router.navigate("share-view/"+room,true);
             controlsObject.enabled = false;
             console.log(message);
         };
@@ -731,23 +834,26 @@ define([
         this.setCollaborativeMode=function(remoteUser){
             isCollaborativeMaster = true;
             collaborativeUsers.push(remoteUser);
-            updateMaster();
+            sendControlsContextMessage();
         }
 
         this.stopCollaborativeMaster=function(){
             isCollaborativeMaster = false;
-            var message = {
-                type: ChannelMessagesType.CHAT_MESSAGE,
-                remoteUser: collaborativeUsers[0],
-                message: "/stop",
-                context: APP_CONFIG.workspaceId+' '+APP_CONFIG.productId,
-                sender:APP_CONFIG.login
-            };
-            mainChannel.sendJSON(message);
+            $.each(collaborativeUsers,function(key,val) {
+                var message = {
+                    type: ChannelMessagesType.CHAT_MESSAGE,
+                    remoteUser: val,
+                    message: "/stop",
+                    context: APP_CONFIG.workspaceId + ' ' + APP_CONFIG.productId,
+                    sender: APP_CONFIG.login
+                };
+                mainChannel.sendJSON(message);
+            });
+            collaborativeUsers=[];
         };
 
         this.stopCollaborativeUsers=function(){
-            //$.each(collaborativeUsers,App.appView.stopCollaborativeMode());
+
             controlsObject.enabled = true;
         }
 

@@ -618,10 +618,25 @@ THREE.TrackballControls = function ( object, domElement ) {
         return _this.object.position;
     };
 
+    this.getCamUp = function () {
+        return _this.object.up;
+    }
+
     this.getObject = function(){
         return _this.object;
     };
 
+    this.setCamPos = function(camPos){
+        _this.object.position.copy(camPos);
+    };
+
+    this.setCamUp = function(camUp) {
+        _this.object.up.copy(camUp);
+    }
+
+    this.setTarget = function(target) {
+        _this.target.copy(target);
+    }
 };
 
 THREE.TrackballControls.prototype = Object.create( THREE.EventDispatcher.prototype );

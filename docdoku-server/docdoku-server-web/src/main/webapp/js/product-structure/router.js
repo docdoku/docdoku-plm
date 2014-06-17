@@ -8,12 +8,12 @@ define([
         var Router = Backbone.Router.extend({
             routes: {
                 "":	"defaults",
-                "share-view/:uuid":"shareView"
+                "share-view/:uuid":"enterCollaborativeModeAsSlave"
             },
             defaults: function() {
 
             },
-            shareView:function(uuid){
+            enterCollaborativeModeAsSlave:function(uuid){
                 //App.sceneManager.handleCollaborative(uuid);
                 App.appView.collaborativeMode();
             }

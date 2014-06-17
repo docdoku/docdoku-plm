@@ -9,7 +9,8 @@ define (["text!templates/part_instance.html","i18n!localization/nls/product-stru
 
         events:{
             "click button#fly_to":"fly_to",
-            "click button#look_at":"look_at"
+            "click button#look_at":"look_at",
+            "click button#transform_mode_view_btn": "transformView"
         },
 
         className:"side_control_group",
@@ -38,6 +39,11 @@ define (["text!templates/part_instance.html","i18n!localization/nls/product-stru
 
         look_at:function(){
             App.sceneManager.lookAt(this.mesh);
+        },
+
+        transformView:function(){
+            $('#transform_mode_view_btn').addClass("active");
+            App.sceneManager.setTransformControls();
         }
         
     });

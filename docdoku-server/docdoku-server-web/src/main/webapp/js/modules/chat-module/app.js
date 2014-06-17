@@ -63,7 +63,7 @@ define([
             console.log(context);
             App.sceneManager.setControlsContext(context);
         } else if(message.message.match(/stop/)){
-            App.appView.stopCollaborativeMode();
+            App.appView.leaveCollaborativeMode();
             App.sceneManager.stopCollaborativeUsers();
         }
     };

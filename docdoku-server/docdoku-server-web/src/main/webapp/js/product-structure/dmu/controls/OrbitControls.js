@@ -666,6 +666,21 @@ THREE.OrbitControls = function (object, domElement) {
         return scope.object;
     };
 
+    this.getCamUp = function () {
+        return scope.object.up;
+    }
+
+    this.setCamPos = function(camPos){
+        scope.object.position.copy(camPos);
+    };
+
+    this.setCamUp = function(camUp) {
+        scope.object.up.copy(camUp);
+    }
+
+    this.setTarget = function(target) {
+        scope.target.copy(target);
+    }
 
 };
 

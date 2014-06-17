@@ -164,8 +164,14 @@ THREE.PointerLockControls = function ( camera ) {
         return yawObject;
     };
 
+    this.getCamUp = function () {
+       //return new THREE.Vector3(0,1,0).applyQuaternion(pitchObject.quaternion).applyQuaternion(yawObject);
+        return yawObject.up;
+    }
+
     this.getTarget = function(){
-        /*var target = scope.getDirection(scope.target).multiplyScalar(1000);
+        /*
+        var target = scope.getDirection(scope.target).multiplyScalar(1000);
          target.x += yawObject.position.x;
          target.y += yawObject.position.y;
          target.z += yawObject.position.z;
@@ -176,6 +182,25 @@ THREE.PointerLockControls = function ( camera ) {
     this.getCamPos = function(){
         return yawObject.position.clone();
     };
+
+
+    var worldX = new THREE.Vector3(1,0,0);
+    var worldY = new THREE.Vector3(0,1,0);
+    this.setCamUp = function(camUp) {
+        var xAngle = camUp.angleTo(worldX);
+        var yAngle = camUp.angleTo(worldY);
+        pitchObject.rotation.x = xAngle;
+        yawObject.rotation.y = yAngle;
+    }
+
+    this.setCamPos = function(camPos){
+        yawObject.position.copy(camPos);
+    }
+
+    this.setTarget = function(target) {
+        // nothing to do ?
+        //scope.target = target;
+    }
 
     this.getDirection = function() {
 
@@ -243,8 +268,8 @@ THREE.PointerLockControls = function ( camera ) {
         yawObject.translateX( velocity.x );
         yawObject.translateY( velocity.y );
         yawObject.translateZ( velocity.z );
-        console.log(yawObject.position);
-        console.log(yawObject.rotation);
+        //console.log(yawObject.position);
+        //console.log(yawObject.rotation);
         if(velocity.x || velocity.y || velocity.z){
             scope.dispatchEvent( changeEvent );
         }
