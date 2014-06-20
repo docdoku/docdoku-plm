@@ -686,6 +686,10 @@
 
 		};
 
+        this.getMode = function () {
+            return _mode;
+        };
+
 		this.setSnap = function ( snap ) {
 
 			scope.snap = snap;
@@ -819,6 +823,9 @@
 			var pointer = event.touches? event.touches[0] : event;
 
 			var planeIntersect = intersectObjects( pointer, [scope.gizmo[_mode].activePlane] );
+
+            //TODO : Fix a limit when moving the instance
+            //console.log(point);
 
 			point.copy( planeIntersect.point );
 

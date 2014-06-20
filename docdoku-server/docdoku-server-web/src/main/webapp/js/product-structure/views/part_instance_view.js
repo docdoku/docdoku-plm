@@ -10,7 +10,8 @@ define (["text!templates/part_instance.html","i18n!localization/nls/product-stru
         events:{
             "click button#fly_to":"fly_to",
             "click button#look_at":"look_at",
-            "click button#transform_mode_view_btn": "transformView"
+            "click #transform_mode_view_btn > button": "transformView",
+            "click button#cancel_transformation": "cancelTransformation"
         },
 
         className:"side_control_group",
@@ -21,16 +22,30 @@ define (["text!templates/part_instance.html","i18n!localization/nls/product-stru
 
         setMesh:function(mesh){
             this.mesh=mesh;
+            if (App.sceneManager.stateControl == App.sceneManager.STATECONTROL.TSF){
+                App.sceneManager.deleteTransformControls();
+                App.sceneManager.setTransformControls(mesh);
+
+            }
             return this;
         },
 
         render: function() {
             this.$el.html(this.template({mesh:this.mesh, i18n:i18n}));
+            if (App.sceneManager.stateControl == App.sceneManager.STATECONTROL.TSF){
+                var mode = App.sceneManager.getTransformControlsMode();
+                this.$("button#"+mode).addClass("active");
+
+            }
             return this;
         },
 
         reset:function(){
-            this.$el.empty();
+            if (App.sceneManager.stateControl == App.sceneManager.STATECONTROL.TSF){
+                //App.sceneManager.deleteTransformControls();
+            } else{
+                this.$el.empty();
+            }
         },
 
         fly_to:function(){
@@ -41,9 +56,15 @@ define (["text!templates/part_instance.html","i18n!localization/nls/product-stru
             App.sceneManager.lookAt(this.mesh);
         },
 
-        transformView:function(){
-            $('#transform_mode_view_btn').addClass("active");
-            App.sceneManager.setTransformControls();
+        transformView:function(e){
+            //$('#transform_mode_view_btn').addClass("active");
+            console.log(e.currentTarget.id); // :/
+            App.sceneManager.setTransformControls(this.mesh,e.currentTarget.id);
+        },
+
+        cancelTransformation:function(){
+            //$('#transform_mode_view_btn').removeClass("active");
+            App.sceneManager.cancelTransformation(this.mesh);
         }
         
     });

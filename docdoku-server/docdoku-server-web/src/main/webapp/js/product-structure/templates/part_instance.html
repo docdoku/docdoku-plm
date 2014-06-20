@@ -5,6 +5,17 @@
     </button>
     <button class="btn btn-custom" id="fly_to" title="{{i18n.FLY_TO}}"><i class="icon-level-up"></i>
     </button>
-    <button class="btn btn-custom" id="transform_mode_view_btn"  title="{{i18n.ORBIT_MODE}}"><span class="camera-mode-label">Transform</span></button>
+
 
 </div>
+
+
+<div class="nav-header">{{i18n.EDIT_INSTANCE}}</div>
+
+<div class="btn-group" data-toggle="buttons-radio" id="transform_mode_view_btn">
+    <button class="btn btn-custom" id="translate"  title="{{i18n.MOVE}} (z)"><i class="icon-move"></i></button>
+    <button class="btn btn-custom" id="rotate"  title="{{i18n.ROTATE}} (e)"><i class="icon-repeat"></i></button>
+    <button class="btn btn-custom" id="scale"  title="{{i18n.SCALE}} (r)"><i class="icon-resize-full"></i></button>
+</div>
+
+<button class="btn btn-custom" id="cancel_transformation"  title="{{i18n.REPLACE}}"><i class="icon-magic"></i></button>

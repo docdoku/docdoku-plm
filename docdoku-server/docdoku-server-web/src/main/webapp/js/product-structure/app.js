@@ -196,10 +196,11 @@ define(
 
         transformControlMode: function() {
             this.$("#view_buttons").find("button").removeClass("active");
+            //this.$("button#"+mode).addClass("active");
         },
 
         leaveTransformControlMode: function() {
-            this.$("#transform_mode_view_btn").removeClass("active");
+            this.$("#transform_mode_view_btn > button").removeClass("active");
         },
 
         onComponentSelected: function(showRoot) {

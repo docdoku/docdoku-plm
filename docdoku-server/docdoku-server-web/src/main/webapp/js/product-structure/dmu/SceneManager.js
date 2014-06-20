@@ -28,13 +28,6 @@ define([
 
         var transformControls = null;
 
-        // test transform avec une boite
-        var geometryBoite = new THREE.BoxGeometry(20, 20, 20);
-        var materialBoite = new THREE.MeshBasicMaterial({
-            color: 0x00ff00
-        });
-        var boite = new THREE.Mesh(geometryBoite, materialBoite);
-
         this.stateControl = null;
         this.STATECONTROL = { PLC: 0, TBC: 1, ORB: 2, TSF: 3};
         this.scene = new THREE.Scene();
@@ -78,9 +71,6 @@ define([
             var arrow = new THREE.ArrowHelper(new THREE.Vector3(0, 1, 0), new THREE.Vector3(0, 0, 0), 100);
             arrow.position.set(200, 0, 400);
             _this.scene.add(arrow);
-
-            // test avec une boite
-            _this.scene.add(boite);
         }
         function initStats() {
             _this.stats = new Stats();
@@ -255,13 +245,7 @@ define([
             _this.orbitControls.enabled = false;
             _this.orbitControls.unbindEvents();
 
-            if (transformControls != null && transformControls.enabled) {
-                App.appView.leaveTransformControlMode();
-                _this.scene.remove(transformControls);
-                transformControls.unbindEvents();
-                transformControls.detach(boite);
-                transformControls.enabled = false;
-            }
+            _this.deleteTransformControls();
         }
         // example arg : _this.pointerLockControls,_this.pointerLockCamera
         function updateControlsContext(controls,camera){
@@ -274,6 +258,7 @@ define([
             controls.setCamPos(controlsObject.getCamPos());
             controls.setCamUp(controlsObject.getCamUp());
             controls.setTarget(controlsObject.getTarget());
+
 
         }
         this.setPointerLockControls = function() {
@@ -321,6 +306,8 @@ define([
             _this.trackBallControls.addEventListener("change", onControlChange);
             _this.trackBallControls.bindEvents();
             _this.scene.add(_this.trackBallCamera);
+
+            handleResize();
             _this.reDraw();
         };
         this.setOrbitControls= function() {
@@ -344,37 +331,86 @@ define([
             controlsObject.addEventListener("change", onControlChange);
             controlsObject.bindEvents();
             _this.scene.add(_this.orbitCamera);
+
+            handleResize();
             _this.reDraw();
         };
-        this.setTransformControls= function() {
-            /*
-            if (_this.stateControl == _this.STATECONTROL.TSF) {
-                return;
-            }*/
+        this.setTransformControls= function(mesh,mode) {
+
+            //if (_this.stateControl != _this.STATECONTROL.TSF) {}
 
             _this.stateControl = _this.STATECONTROL.TSF;
-            App.appView.transformControlMode();
-            //_this.addEventListener("change", onControlChange);
             transformControls.setCamera(_this.cameraObject);
-
-
             controlsObject.enabled = false;
             transformControls.enabled = true;
-
-
-                //var control = new THREE.TransformControls(camera, renderer.domElement);
-                //control.addEventListener('change', render);
-            transformControls.attach(boite);
-              //  _this.scene.add(control);
-
-
-
-            //controlsObject.addEventListener("change", onControlChange);
+            //transformControls.detach();
+            transformControls.attach(mesh);
             transformControls.bindEvents();
+            if(mode !== undefined){
+                switch (mode) {
+                    case "translate" :
+                        transformControls.setMode("translate");
+                        break;
+                    case "rotate":
+                        transformControls.setMode("rotate");
+                        break;
+                    case "scale":
+                        transformControls.setMode("scale");
+                }
+            }
+            App.appView.transformControlMode();
             _this.scene.add(transformControls);
             _this.reDraw();
         };
+        this.getTransformControlsMode = function() {
+            return transformControls.getMode();
+        }
+        this.deleteTransformControls = function(){
+            if (transformControls != null && transformControls.enabled) {
+                App.appView.leaveTransformControlMode();
+                _this.scene.remove(transformControls);
+                transformControls.unbindEvents();
+                transformControls.detach();
+                transformControls.enabled = false;
+                _this.reDraw();
+            }
+        }
+        this.cancelTransformation = function(mesh) {
 
+            new TWEEN.Tween(mesh.position)
+                .to({ x: mesh.initialPosition.x, y: mesh.initialPosition.y, z: mesh.initialPosition.z }, 2000)
+                .interpolation(TWEEN.Interpolation.CatmullRom)
+                .easing(TWEEN.Easing.Quintic.InOut)
+                .onUpdate(function () {
+                    _this.reDraw();
+                    transformControls.update();
+                })
+                .start();
+            new TWEEN.Tween(mesh.rotation)
+                .to({ x: mesh.initialRotation.x, y: mesh.initialRotation.y, z: mesh.initialRotation.z }, 2000)
+                .interpolation(TWEEN.Interpolation.CatmullRom)
+                .easing(TWEEN.Easing.Quintic.InOut)
+                .onUpdate(function () {
+                    _this.reDraw();
+                    transformControls.update();
+                })
+                .start();
+            new TWEEN.Tween(mesh.scale)
+                .to({ x: mesh.initialScale.x, y: mesh.initialScale.y, z: mesh.initialScale.z }, 2000)
+                .interpolation(TWEEN.Interpolation.CatmullRom)
+                .easing(TWEEN.Easing.Quintic.InOut)
+                .onUpdate(function () {
+                    _this.reDraw();
+                    transformControls.update();
+                })
+                .start();
+            /*
+            mesh.position.x = mesh.initialPosition.x;
+            mesh.position.y = mesh.initialPosition.y;
+            mesh.position.z = mesh.initialPosition.z;*/
+
+            _this.reDraw();
+        }
         /**
          * Scene options control
          */
@@ -531,6 +567,7 @@ define([
                 meshMarkedForSelection=null;
                 unsetSelectionBox();
 
+
                 if (_this.measureState) {
                     _this.measureCallback(-1);
                 }
@@ -579,6 +616,8 @@ define([
                     }
                     meshesIndexed[newMesh.uuid]=newMesh;
                     newMesh.initialPosition = {x:newMesh.position.x,y:newMesh.position.y,z:newMesh.position.z};
+                    newMesh.initialRotation = {x:newMesh.rotation.x,y:newMesh.rotation.y,z:newMesh.rotation.z};
+                    newMesh.initialScale = {x:newMesh.scale.x,y:newMesh.scale.y,z:newMesh.scale.z};
                     _this.scene.add(newMesh);
                     if(meshMarkedForSelection == stuff.id){
                         setSelectionBoxOnMesh(newMesh);
