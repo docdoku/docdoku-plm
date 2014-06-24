@@ -95,8 +95,10 @@ define({
     RELEASE: "Finaliser",
     RELEASED: "Finalis\u00e9",
     MEASURE: "Mesure",
-    EDIT_INSTANCE: "Modifier l'instance",
+    NAVIGATION: "Navigation",
+    TRANSFORM_CONTROLS: "Transformation",
     ROTATE: "Rotation",
     SCALE: "Echelle",
-    REPLACE: "Replacer"
+    REPLACE: "Réinitialiser",
+    RESET_CAMERA: "Repositionner la caméra"
 });

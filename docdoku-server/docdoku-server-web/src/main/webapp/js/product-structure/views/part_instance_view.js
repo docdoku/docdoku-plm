@@ -21,18 +21,18 @@ define (["text!templates/part_instance.html","i18n!localization/nls/product-stru
         },
 
         setMesh:function(mesh){
-            this.mesh=mesh;
-            if (App.sceneManager.stateControl == App.sceneManager.STATECONTROL.TSF){
-                App.sceneManager.deleteTransformControls();
+            if (App.sceneManager.transformControlsEnabled()){
+                App.sceneManager.deleteTransformControls(this.mesh);
                 App.sceneManager.setTransformControls(mesh);
 
             }
+            this.mesh=mesh;
             return this;
         },
 
         render: function() {
             this.$el.html(this.template({mesh:this.mesh, i18n:i18n}));
-            if (App.sceneManager.stateControl == App.sceneManager.STATECONTROL.TSF){
+            if (App.sceneManager.transformControlsEnabled()){
                 var mode = App.sceneManager.getTransformControlsMode();
                 this.$("button#"+mode).addClass("active");
 
@@ -41,7 +41,7 @@ define (["text!templates/part_instance.html","i18n!localization/nls/product-stru
         },
 
         reset:function(){
-            if (App.sceneManager.stateControl == App.sceneManager.STATECONTROL.TSF){
+            if (App.sceneManager.transformControlsEnabled()){
                 //App.sceneManager.deleteTransformControls();
             } else{
                 this.$el.empty();

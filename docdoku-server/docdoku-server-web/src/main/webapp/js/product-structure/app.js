@@ -7,7 +7,9 @@ define(
         "views/part_metadata_view",
         "views/part_instance_view",
         "views/export_scene_modal_view",
+        "views/control_navigation_view",
         "views/control_modes_view",
+        "views/control_transform_view",
         "views/control_markers_view",
         "views/control_layers_view",
         "views/control_options_view",
@@ -27,7 +29,9 @@ define(
                  PartMetadataView,
                  PartInstanceView,
                  ExportSceneModalView,
+                 ControlNavigationView,
                  ControlModesView,
+                 ControlTransformView,
                  ControlMarkersView,
                  ControlLayersView,
                  ControlOptionsView,
@@ -79,10 +83,14 @@ define(
 
             this.baselineSelectView = new BaselineSelectView({el:"#config_spec_container"}).render();
 
-            //try{
+            try{
                 App.instancesManager = new InstancesManager();
                 App.sceneManager = new SceneManager();
+                this.controlNavigationView = new ControlNavigationView().render();
+                this.$ControlsContainer.append(this.controlNavigationView.$el);
                 this.$ControlsContainer.append(new ControlModesView().render().$el);
+                this.controlTransformView = new ControlTransformView().render();
+                this.$ControlsContainer.append(this.controlTransformView.$el);
                 this.$ControlsContainer.append(new ControlOptionsView().render().$el);
                 this.$ControlsContainer.append(new ControlClippingView().render().$el);
                 this.$ControlsContainer.append(new ControlExplodeView().render().$el);
@@ -91,10 +99,10 @@ define(
                 this.$ControlsContainer.append(new ControlMeasureView().render().$el);
                 App.sceneManager.init();
                 App.instancesManager.start();
-            //}catch(ex){
-               // console.log("Got exception in dmu");
-               // this.onNoWebGLSupport();
-            //}
+            }catch(ex){
+                console.log("Got exception in dmu");
+                this.onNoWebGLSupport();
+            }
 
             this.listenEvents();
             this.bindDatGUIControls();
@@ -200,7 +208,8 @@ define(
         },
 
         leaveTransformControlMode: function() {
-            this.$("#transform_mode_view_btn > button").removeClass("active");
+            //this.$("#transform_mode_view_btn > button").removeClass("active");
+            this.controlTransformView.render();
         },
 
         onComponentSelected: function(showRoot) {
@@ -279,28 +288,36 @@ define(
                 // Search the part in the tree
                 self.searchView.trigger("instance:selected", part.getNumber());
                 if(!self.isInBomMode()){
+                    self.controlNavigationView.setMesh(mesh);
+                    self.controlTransformView.setMesh(mesh).render();
                     if(self.partMetadataView == undefined){
                         self.partMetadataView = new PartMetadataView({model:part}).render();
                         self.$ControlsContainer.append(self.partMetadataView.$el);
                     }else{
                         self.partMetadataView.setModel(part).render();
                     }
+                    /*
                     if (self.partInstanceView == undefined) {
                         self.partInstanceView = new PartInstanceView().setMesh(mesh).render();
                         self.$ControlsContainer.append(self.partInstanceView.$el);
                     }else{
                         self.partInstanceView.setMesh(mesh).render();
-                    }
+                    }*/
                 }
             }});
         },
 
         onResetSelection:function(){
             this.searchView.trigger("selection:reset");
-            if(!this.isInBomMode() && this.partMetadataView != undefined ){
+            if (!this.isInBomMode() && this.partMetadataView != undefined) {
                 this.partMetadataView.reset();
-                this.partInstanceView.reset();
+                //this.partInstanceView.reset();
+                this.controlNavigationView.reset();
+                this.controlTransformView.mesh = null;
+                // TODO : faire une méthode removeMesh()? ou dans reset() chercher meshMarkedForSelection qui est reset dans onMouseUp
+                this.controlTransformView.reset();
             }
+
         },
 
         bindDatGUIControls:function(){

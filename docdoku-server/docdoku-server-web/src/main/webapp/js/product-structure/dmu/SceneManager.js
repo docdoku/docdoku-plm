@@ -29,11 +29,12 @@ define([
         var transformControls = null;
 
         this.stateControl = null;
-        this.STATECONTROL = { PLC: 0, TBC: 1, ORB: 2, TSF: 3};
+        this.STATECONTROL = { PLC: 0, TBC: 1, ORB: 2};
         this.scene = new THREE.Scene();
         this.renderer = null;
         this.cameraObject = null;                                                                                       // Represent the eye
         this.layerManager = null;
+        this.meshesEdited = [];
 
         // Stat
         this.switches = 0;
@@ -288,14 +289,14 @@ define([
             _this.reDraw();
         };
         this.setTrackBallControls = function(){
-            if (_this.stateControl == _this.STATECONTROL.TBC) {
+            if (_this.stateControl == _this.STATECONTROL.TBC && controlsObject.enabled) {
                 return;
             }
 
             _this.stateControl = _this.STATECONTROL.TBC;
             deleteAllControls();
 
-            //$('#tracking_mode_view_btn').addClass("active");
+            $('#tracking_mode_view_btn').addClass("active");
 
             updateControlsContext(_this.trackBallControls,_this.trackBallCamera);
 
@@ -312,14 +313,14 @@ define([
         };
         this.setOrbitControls= function() {
 
-            if (_this.stateControl == _this.STATECONTROL.ORB) {
+            if (_this.stateControl == _this.STATECONTROL.ORB && controlsObject.enabled) {
                 return;
             }
 
             _this.stateControl = _this.STATECONTROL.ORB;
             deleteAllControls();
 
-            //$('#orbit_mode_view_btn').addClass("active");
+            $('#orbit_mode_view_btn').addClass("active");
 
             updateControlsContext(_this.orbitControls);
 
@@ -336,15 +337,30 @@ define([
             _this.reDraw();
         };
         this.setTransformControls= function(mesh,mode) {
+            if (mode == this.getTransformControlsMode() ){
+                console.log("On quitte le mode TSF !");
+                if (_this.stateControl == _this.STATECONTROL.TBC) {
+                    _this.setTrackBallControls();
 
-            //if (_this.stateControl != _this.STATECONTROL.TSF) {}
+                    //$("#tracking_mode_view_btn").click();
+                    //Backbone.Events.trigger("click #tracking_mode_view_btn");
+                    return;
+                } else if (_this.stateControl == _this.STATECONTROL.ORB) {
+                    _this.setOrbitControls();
+                    return;
+                }
+            }
 
-            _this.stateControl = _this.STATECONTROL.TSF;
             transformControls.setCamera(_this.cameraObject);
             controlsObject.enabled = false;
             transformControls.enabled = true;
             //transformControls.detach();
             transformControls.attach(mesh);
+            if ($.inArray(mesh, this.meshesEdited) == -1) {
+                this.meshesEdited.push(mesh);
+            }
+            console.log("mesh added : ");
+            console.log(this.meshesEdited);
             transformControls.bindEvents();
             if(mode !== undefined){
                 switch (mode) {
@@ -363,16 +379,28 @@ define([
             _this.reDraw();
         };
         this.getTransformControlsMode = function() {
-            return transformControls.getMode();
+            if (transformControls.enabled) {
+                return transformControls.getMode();
+            } else {
+                return false;
+            }
+        }
+        this.transformControlsEnabled = function() {
+            var enabled = false;
+            if (transformControls != null && transformControls.enabled){
+                enabled = true;
+            }
+            return enabled;
         }
         this.deleteTransformControls = function(){
             if (transformControls != null && transformControls.enabled) {
-                App.appView.leaveTransformControlMode();
                 _this.scene.remove(transformControls);
                 transformControls.unbindEvents();
                 transformControls.detach();
                 transformControls.enabled = false;
+                App.appView.leaveTransformControlMode();
                 _this.reDraw();
+                //meshMarkedForSelection
             }
         }
         this.cancelTransformation = function(mesh) {
@@ -404,6 +432,10 @@ define([
                     transformControls.update();
                 })
                 .start();
+
+            this.meshesEdited.splice($.inArray(mesh, this.meshesEdited),1);
+            console.log("mesh removed"+this.meshesEdited);
+
             /*
             mesh.position.x = mesh.initialPosition.x;
             mesh.position.y = mesh.initialPosition.y;
@@ -563,10 +595,11 @@ define([
                 _this.layerManager.onMarkerClicked(intersects[0].object.markerId);
             }
             else {
-                Backbone.Events.trigger("selection:reset");
-                meshMarkedForSelection=null;
-                unsetSelectionBox();
-
+                if (!App.sceneManager.transformControlsEnabled()) {
+                    Backbone.Events.trigger("selection:reset");
+                    meshMarkedForSelection = null;
+                    unsetSelectionBox();
+                }
 
                 if (_this.measureState) {
                     _this.measureCallback(-1);
@@ -671,6 +704,52 @@ define([
             }
         }
 
+        function resetCameraAnimation(target,duration,position, camUp){
+            var curTar = controlsObject.target;
+            var curCamUp = _this.cameraObject.up;
+            var endTarPos = target;
+
+
+            var endCamPos = position;
+            var camera = _this.cameraObject;
+            var curCamPos = camera.position;
+
+            var tween1 = new TWEEN.Tween(curTar)
+                    .to({ x: endTarPos.x, y: endTarPos.y, z: endTarPos.z }, duration)
+                    .interpolation(TWEEN.Interpolation.CatmullRom)
+                    .easing(TWEEN.Easing.Linear.None)
+                    .onUpdate(function () {
+                        _this.reDraw();
+                    })
+                ;
+
+
+            var tween2 = new TWEEN.Tween(curCamPos)
+                    .to({ x: endCamPos.x, y: endCamPos.y, z: endCamPos.z }, duration)
+                    .interpolation(TWEEN.Interpolation.CatmullRom)
+                    .easing(TWEEN.Easing.Linear.None)
+                    .onUpdate(function () {
+                        _this.reDraw();
+                    })
+                ;
+
+            var tween3 = new TWEEN.Tween(curCamUp)
+                .to({x : camUp.x, y  : camUp.y, z : camUp.z}, duration)
+                .interpolation(TWEEN.Interpolation.CatmullRom)
+                .easing(TWEEN.Easing.Linear.None)
+                .onUpdate(function () {
+                    _this.reDraw();
+                });
+
+
+            tween1.start();
+
+            //tween2.chain(tween3);
+            tween2.start();
+            tween3.start();
+
+    }
+
         /**
          * Animation loop :
          *  Update controls, scene objects and animations
@@ -749,6 +828,15 @@ define([
             var boundingBox = mesh.geometry.boundingBox;
             var cog = new THREE.Vector3().copy(boundingBox.centroid).applyMatrix4(mesh.matrix);
             cameraAnimation(cog, 2000);
+        };
+
+        this.resetCameraPlace = function(){
+            var camPos = App.SceneOptions.defaultCameraPosition;
+            //cameraAnimation(new THREE.Vector3(0,0,0), 1000, camPos);
+            resetCameraAnimation(new THREE.Vector3(0,0,0), 1000, camPos, new THREE.Vector3(0,1,0));
+
+            //controlsObject.object.up = (0,1,0);
+            //controlsObject.setCamUp(new THREE.Vector3(0,1,0));
         };
         /**
          * Context API
