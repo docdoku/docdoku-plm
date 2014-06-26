@@ -100,5 +100,6 @@ define({
     ROTATE: "Rotation",
     SCALE: "Echelle",
     REPLACE: "Réinitialiser",
-    RESET_CAMERA: "Repositionner la caméra"
+    RESET_CAMERA: "Repositionner la caméra",
+    SHOW_EDITED_MESHES: "Surligner les objets modifiés"
 });

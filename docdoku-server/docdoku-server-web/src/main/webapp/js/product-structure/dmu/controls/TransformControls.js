@@ -823,17 +823,17 @@
 			var pointer = event.touches? event.touches[0] : event;
 
 			var planeIntersect = intersectObjects( pointer, [scope.gizmo[_mode].activePlane] );
-
-            //TODO : Fix a limit when moving the instance
-            //console.log(point);
-
 			point.copy( planeIntersect.point );
 
 			if ( _mode == "translate" ) {
-
-				point.sub( offset );
+                point.sub(offset);
 				point.multiply(parentScale);
 
+                // limit the translation
+                if (Math.abs(point.x) > 1000 || Math.abs(point.y) > 1000 || Math.abs(point.z) > 1000){
+                    _dragging = false;
+                    return;
+                }
 				if ( scope.space == "local" ) {
 
 					point.applyMatrix4( tempMatrix.getInverse( worldRotationMatrix ) );

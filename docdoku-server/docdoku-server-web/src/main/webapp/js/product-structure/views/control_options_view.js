@@ -15,7 +15,8 @@ define(
         events:{
             "click button#gridSwitch": "gridSwitch",
             "click button#materialsSwitch": "materialsSwitch",
-            "click button#screenshot": "takeScreenShot"
+            "click button#screenshot": "takeScreenShot",
+            "click button#show_edited_meshes": "show_edited_meshes"
         },
 
         initialize:function(){
@@ -45,6 +46,15 @@ define(
         render:function(){
             this.$el.html(this.template({i18n:i18n}));
             return this;
+        },
+
+        show_edited_meshes:function(){
+            $('#show_edited_meshes').toggleClass("active");
+            if ($('#show_edited_meshes').hasClass("active")){
+                App.sceneManager.showEditedMeshes(true);
+            } else {
+                App.sceneManager.showEditedMeshes(false);
+            }
         }
 
 

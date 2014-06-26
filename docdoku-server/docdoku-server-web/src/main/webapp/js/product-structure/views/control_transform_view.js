@@ -12,10 +12,12 @@ define (
 
         events:{
             "click #transform_mode_view_btn > button": "transformView",
+            "click button#cancel_transformation": "cancelTransformation",
             "click button#cancel_transformation": "cancelTransformation"
         },
 
         initialize: function() {
+            this.mesh = undefined;
         },
 
         setMesh:function(mesh){
@@ -35,7 +37,7 @@ define (
                 var mode = App.sceneManager.getTransformControlsMode();
                 this.$("button#"+mode).addClass("active");
             } // A mesh is selected
-            else if (this.mesh !== undefined && this.mesh != null) {
+            else if (this.mesh) {
 
             } //  No mesh selected
             else {
@@ -51,19 +53,12 @@ define (
 
         transformView:function(e){
             var modeSelected = e.currentTarget.id;
-            //$('#transform_mode_view_btn').addClass("active");
-            //console.log(e.currentTarget.id);
-            var transformControlsMode = App.sceneManager.getTransformControlsMode();
 
-            App.sceneManager.setTransformControls(this.mesh, modeSelected);
-
-            /*
-            if (modeSelected == transformControlsMode ) {
-                // leave Transform mode
-                Backbone.Events.trigger("click button#tracking_mode_view_btn");
+            if (modeSelected === App.sceneManager.getTransformControlsMode() ){
+                App.sceneManager.leaveTransformMode();
             } else {
                 App.sceneManager.setTransformControls(this.mesh, modeSelected);
-            }*/
+            }
         },
 
         cancelTransformation:function(){

@@ -313,8 +313,7 @@ define(
                 this.partMetadataView.reset();
                 //this.partInstanceView.reset();
                 this.controlNavigationView.reset();
-                this.controlTransformView.mesh = null;
-                // TODO : faire une méthode removeMesh()? ou dans reset() chercher meshMarkedForSelection qui est reset dans onMouseUp
+                this.controlTransformView.mesh = undefined;
                 this.controlTransformView.reset();
             }
 

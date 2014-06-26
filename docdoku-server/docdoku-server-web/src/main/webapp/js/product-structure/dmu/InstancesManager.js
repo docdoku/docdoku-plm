@@ -94,6 +94,17 @@ function (LoaderManager, async) {
                 setTimeout(callback,0);
                 return;
             }
+
+            var meshes = _(App.sceneManager.meshesEdited).select(function(mesh){ return mesh.uuid === instance.id});
+
+            if (meshes.length) {
+                _this.aborted++;
+                worker.postMessage({fn:"abort",obj:{id:instance.id,quality:instance.qualityLoaded}});
+
+                setTimeout(callback,0);
+                return;
+            }
+
             if (directive.quality == undefined) {
                 _this.trashInstances.push(instance);
                 setTimeout(callback,0);
@@ -104,6 +115,7 @@ function (LoaderManager, async) {
                 setTimeout(callback,0);
                 return;
             }
+
             if (aborting) {
                 _this.aborted++;
                 worker.postMessage({fn:"abort",obj:{id:instance.id,quality:instance.qualityLoaded}});

@@ -12,8 +12,7 @@ define (
 
         events:{
             "click button#fly_to":"fly_to",
-            "click button#look_at":"look_at",
-            "click button#reset_camera":"reset_camera"
+            "click button#look_at":"look_at"
         },
 
         initialize: function() {

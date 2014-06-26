@@ -25,7 +25,7 @@ define([
         var controlChanged = false;
         var isCollaborativeMaster = false;
         var collaborativeUsers = [];
-
+        var editedMeshesDisplayed = false;
         var transformControls = null;
 
         this.stateControl = null;
@@ -337,30 +337,17 @@ define([
             _this.reDraw();
         };
         this.setTransformControls= function(mesh,mode) {
-            if (mode == this.getTransformControlsMode() ){
-                console.log("On quitte le mode TSF !");
-                if (_this.stateControl == _this.STATECONTROL.TBC) {
-                    _this.setTrackBallControls();
-
-                    //$("#tracking_mode_view_btn").click();
-                    //Backbone.Events.trigger("click #tracking_mode_view_btn");
-                    return;
-                } else if (_this.stateControl == _this.STATECONTROL.ORB) {
-                    _this.setOrbitControls();
-                    return;
-                }
-            }
-
             transformControls.setCamera(_this.cameraObject);
             controlsObject.enabled = false;
             transformControls.enabled = true;
             //transformControls.detach();
             transformControls.attach(mesh);
             if ($.inArray(mesh, this.meshesEdited) == -1) {
-                this.meshesEdited.push(mesh);
+                _this.meshesEdited.push(mesh);
+                _this.showEditedMeshes(editedMeshesDisplayed);
+                console.log("mesh added : ");
+                console.log(this.meshesEdited);
             }
-            console.log("mesh added : ");
-            console.log(this.meshesEdited);
             transformControls.bindEvents();
             if(mode !== undefined){
                 switch (mode) {
@@ -378,19 +365,12 @@ define([
             _this.scene.add(transformControls);
             _this.reDraw();
         };
-        this.getTransformControlsMode = function() {
-            if (transformControls.enabled) {
-                return transformControls.getMode();
-            } else {
-                return false;
+        this.leaveTransformMode = function(){
+            if (_this.stateControl == _this.STATECONTROL.TBC) {
+                _this.setTrackBallControls();
+            } else if (_this.stateControl == _this.STATECONTROL.ORB) {
+                _this.setOrbitControls();
             }
-        }
-        this.transformControlsEnabled = function() {
-            var enabled = false;
-            if (transformControls != null && transformControls.enabled){
-                enabled = true;
-            }
-            return enabled;
         }
         this.deleteTransformControls = function(){
             if (transformControls != null && transformControls.enabled) {
@@ -433,8 +413,9 @@ define([
                 })
                 .start();
 
-            this.meshesEdited.splice($.inArray(mesh, this.meshesEdited),1);
-            console.log("mesh removed"+this.meshesEdited);
+            _this.meshesEdited.splice($.inArray(mesh, this.meshesEdited),1);
+            mesh.material = new THREE.MeshPhongMaterial( { transparent:true, color: new THREE.Color(0xbbbbbb) } );
+            console.log("mesh removed");
 
             /*
             mesh.position.x = mesh.initialPosition.x;
@@ -442,6 +423,7 @@ define([
             mesh.position.z = mesh.initialPosition.z;*/
 
             _this.reDraw();
+            _this.leaveTransformMode();
         }
         /**
          * Scene options control
@@ -648,9 +630,6 @@ define([
                         _this.onScene++;
                     }
                     meshesIndexed[newMesh.uuid]=newMesh;
-                    newMesh.initialPosition = {x:newMesh.position.x,y:newMesh.position.y,z:newMesh.position.z};
-                    newMesh.initialRotation = {x:newMesh.rotation.x,y:newMesh.rotation.y,z:newMesh.rotation.z};
-                    newMesh.initialScale = {x:newMesh.scale.x,y:newMesh.scale.y,z:newMesh.scale.z};
                     _this.scene.add(newMesh);
                     if(meshMarkedForSelection == stuff.id){
                         setSelectionBoxOnMesh(newMesh);
@@ -669,6 +648,18 @@ define([
             mesh.partIterationId = stuff.partIterationId;
             mesh.geometry.verticesNeedUpdate=true;
             mesh.applyMatrix(matrix);
+            mesh.initialPosition = {x:mesh.position.x,y:mesh.position.y,z:mesh.position.z};
+            mesh.initialRotation = {x:mesh.rotation.x,y:mesh.rotation.y,z:mesh.rotation.z};
+            mesh.initialScale = {x:mesh.scale.x,y:mesh.scale.y,z:mesh.scale.z};
+            var positionMeshEdited = $.inArray(mesh, _this.meshesEdited);
+            if (positionMeshEdited != -1) {
+                meshEdited = this.meshesEdited[positionMeshEdited];
+                mesh.position = {x:meshEdited.position.x,y:meshEdited.position.y,z:meshEdited.position.z};
+                mesh.rotation = {x:meshEdited.rotation.x,y:meshEdited.rotation.y,z:meshEdited.rotation.z};
+                mesh.scale = {x:meshEdited.scale.x,y:meshEdited.scale.y,z:meshEdited.scale.z};
+                console.log("restauration de la position de l'instance transformée.");
+                console.log(this.mesh);
+            }
             return mesh;
         }
 
@@ -747,7 +738,6 @@ define([
             //tween2.chain(tween3);
             tween2.start();
             tween3.start();
-
     }
 
         /**
@@ -775,6 +765,9 @@ define([
             // Sometimes needs a reFrame
             if(needsRedraw){
                 needsRedraw = false;
+                if (_this.transformControlsEnabled()){
+                    transformControls.update();
+                }
                 _this.stats.update();
 
                 render();
@@ -863,6 +856,21 @@ define([
             _this.reDraw();
         };
 
+        this.getTransformControlsMode = function() {
+            if (transformControls.enabled) {
+                return transformControls.getMode();
+            } else {
+                return null;
+            }
+        }
+
+        this.transformControlsEnabled = function() {
+            var enabled = false;
+            if (transformControls != null && transformControls.enabled){
+                enabled = true;
+            }
+            return enabled;
+        }
 
 
         /**
@@ -922,13 +930,25 @@ define([
             pom.setAttribute('download', filename);
             pom.click();
         };
-
-        this.setCameraNearFar=function(n,f){
+        this.setCameraNearFar = function(n,f){
             _this.cameraObject.near = n;
             _this.cameraObject.far = f;
             _this.cameraObject.updateProjectionMatrix();
             _this.reDraw();
 
+        };
+        this.showEditedMeshes = function(display) {
+            editedMeshesDisplayed = display;
+            if (editedMeshesDisplayed) {
+                for (var i = 0; i < this.meshesEdited.length; i++) {
+                    _this.meshesEdited[i].material = new THREE.MeshPhongMaterial({ transparent: false, color: new THREE.Color(0x08B000) });
+                }
+            } else {
+                for (var i = 0; i < this.meshesEdited.length; i++) {
+                    _this.meshesEdited[i].material = new THREE.MeshPhongMaterial( { transparent:true, color: new THREE.Color(0xbbbbbb) } );
+                }
+            }
+            _this.reDraw();
         };
 
         /**

@@ -107,7 +107,8 @@ define({
         ROTATE: "Rotate",
         SCALE: "Scale",
         REPLACE: "Reset",
-        RESET_CAMERA: "Reset camera"
+        RESET_CAMERA: "Reset camera",
+        SHOW_EDITED_MESHES: "Highlight edited meshes"
     },
     "fr": true,
     "es": true
