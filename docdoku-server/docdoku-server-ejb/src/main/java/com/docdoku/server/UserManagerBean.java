@@ -60,6 +60,7 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
     @EJB
     private IDataManagerLocal dataManager;
 
+
     @Override
     public Account createAccount(String pLogin, String pName, String pEmail, String pLanguage, String pPassword) throws AccountAlreadyExistsException, CreationException {
         Date now = new Date();
@@ -122,6 +123,41 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
         groupDAO.createUserGroup(groupToCreate);
         groupDAO.addUserGroupMembership(pWorkspace, groupToCreate);
         return groupToCreate;
+    }
+
+    @RolesAllowed({"users","admin"})
+    @Override
+    public Organization createOrganization(String pName, Account pOwner, String pDescription) throws OrganizationAlreadyExistsException, CreationException, NotAllowedException {
+        if(pOwner.getOrganization()==null) {
+            Organization organization = new Organization(pName, pOwner, pDescription);
+            new OrganizationDAO(em).createOrganization(organization);
+            pOwner.setOrganization(organization);
+            organization.addMember(pOwner);
+            em.merge(pOwner);
+            return organization;
+        }else{
+            throw new NotAllowedException(Locale.getDefault(), "NotAllowedException11");
+        }
+    }
+
+    @Override
+    @RolesAllowed({"users","admin"})
+    public void deleteOrganization(String pName) throws OrganizationNotFoundException, AccountNotFoundException, AccessRightException {
+        OrganizationDAO organizationDAO = new OrganizationDAO(em);
+        Organization organization = organizationDAO.loadOrganization(pName);
+
+        if(isCallerInRole("admin")){
+            organizationDAO.deleteOrganization(organization);
+        }else{
+            Account account = new AccountDAO(em).loadAccount(ctx.getCallerPrincipal().toString());
+            if(organization.getOwner().getLogin().equals(ctx.getCallerPrincipal().getName())){
+                organizationDAO.deleteOrganization(organization);
+            }else{
+                throw new AccessRightException(new Locale(account.getLanguage()),account);
+            }
+        }
+
+
     }
 
     @RolesAllowed({"users","admin"})

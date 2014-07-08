@@ -42,7 +42,6 @@ public class WorkflowDAO {
         List<Activity> activities = pWf.getActivities();
         pWf.setActivities(null);
         em.persist(pWf);
-        em.flush();
         pWf.setActivities(activities);
     }
 

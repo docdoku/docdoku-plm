@@ -5,6 +5,7 @@
     <jta-data-source>jdbc/docdokuPU</jta-data-source>
     <class>com.docdoku.core.common.Account</class>
     <class>com.docdoku.core.common.BinaryResource</class>
+      <class>com.docdoku.core.common.Organization</class>
     <class>com.docdoku.core.common.User</class>
     <class>com.docdoku.core.common.UserGroup</class>
     <class>com.docdoku.core.common.Workspace</class>

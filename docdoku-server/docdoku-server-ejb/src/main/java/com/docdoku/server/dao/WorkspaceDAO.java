@@ -45,8 +45,6 @@ import java.util.Locale;
 
 public class WorkspaceDAO {
 
-    @Resource(name = "vaultPath")
-    private String vaultPath;
 
     private EntityManager em;
     private Locale mLocale;

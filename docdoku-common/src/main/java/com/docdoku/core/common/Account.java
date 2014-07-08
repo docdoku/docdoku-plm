@@ -20,13 +20,15 @@
 
 package com.docdoku.core.common;
 
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.Date;
 
 /**
- * The <a href="Account.html">Account</a> class represents a user
- * of the application but not attached to a particular workspace.
+ * The Account class holds personal user data applicable inside the whole application.
+ * However <a href="User.html">User</a> objects encapsulate personal information
+ * only in the context of a particular workspace.
  * 
  * @author Florent Garin
  * @version 1.0, 02/06/08
@@ -43,7 +45,9 @@ public class Account implements Serializable, Cloneable {
     private String email;
     private String language;
     
-  
+    @ManyToOne
+    private Organization organization;
+
     @javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date creationDate;
 
@@ -96,6 +100,14 @@ public class Account implements Serializable, Cloneable {
     @Override
     public String toString() {
         return login;
+    }
+
+    public Organization getOrganization() {
+        return organization;
+    }
+
+    public void setOrganization(Organization organization) {
+        this.organization = organization;
     }
 
     public void setCreationDate(Date pCreationDate) {

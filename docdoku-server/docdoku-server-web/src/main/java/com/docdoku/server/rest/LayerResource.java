@@ -128,7 +128,7 @@ public class LayerResource {
             Layer layer = productService.getLayer(layerId);
             Set<Marker> markers = layer.getMarkers();
             Marker[] markersArray = markers.toArray(new Marker[0]);
-            MarkerDTO[] markersDTO = new MarkerDTO[markers.size()];
+                MarkerDTO[] markersDTO = new MarkerDTO[markers.size()];
             for (int i = 0; i < markersArray.length; i++) {
                 markersDTO[i] = new MarkerDTO(markersArray[i].getId(), markersArray[i].getTitle(),markersArray[i].getDescription(), markersArray[i].getX(), markersArray[i].getY(), markersArray[i].getZ());
             }
