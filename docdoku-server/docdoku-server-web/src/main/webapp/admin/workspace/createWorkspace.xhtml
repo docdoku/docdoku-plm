@@ -18,7 +18,7 @@
                 <li class="active">#{i18nCreateWorkspace['main.title']}</li>
             </ol>
 
-            <c:if test="#{isSuperAdmin==false}">
+            <c:if test="#{accountBean.superAdmin==false}">
                 <div id="sidebar" class="well well-large">
                     <h3>#{i18nCreateWorkspace['sidebar.title']}</h3>
                     <h:outputFormat value="#{i18nCreateWorkspace['sidebar.text']}" escape="false">
@@ -31,7 +31,7 @@
             <h3>#{i18nCreateWorkspace['section.title']}</h3>
 
             <c:choose>
-                <c:when test="${isSuperAdmin==true}">
+                <c:when test="#{accountBean.superAdmin==true}">
                     <p>
                         #{i18nCreateWorkspace['section.admin.text1']}<br/>
                         <h:outputFormat value="#{i18nCreateWorkspace['section.admin.text2']}" escape="false">

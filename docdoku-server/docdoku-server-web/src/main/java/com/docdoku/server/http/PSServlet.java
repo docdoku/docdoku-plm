@@ -50,11 +50,7 @@ public class PSServlet extends HttpServlet {
             HttpServletResponse pResponse)
             throws ServletException, IOException {
 
-        HttpSession sessionHTTP = pRequest.getSession();
         String login = pRequest.getRemoteUser();
-
-        Map<String, Workspace> administeredWorkspaces = (Map<String, Workspace>) sessionHTTP.getAttribute("administeredWorkspaces");
-
         String[] pathInfos = Pattern.compile("/").split(pRequest.getRequestURI());
 
         int offset;
@@ -87,16 +83,19 @@ public class PSServlet extends HttpServlet {
             
         }
         else {
+            boolean workspaceAdmin;
             try{
                 UserGroup[] userGroups = userManager.getUserGroupsForUser(new UserKey(workspaceID, login));
+                workspaceAdmin = login.equals(userManager.getWorkspace(workspaceID).getAdmin().getLogin());
                 String[] groups = new String[userGroups.length];
                 for(int i = 0 ; i< userGroups.length;i++){
                     groups[i] = "\""+userGroups[i].toString()+"\"";
                 }
                 pRequest.setAttribute("groups",StringUtils.join(groups,","));
-            } catch (UserNotFoundException e) {
+            } catch (Exception ex) {
+                throw new ServletException("error while fetching user data.", ex);
             }
-            pRequest.setAttribute("workspaceAdmin", administeredWorkspaces.containsKey(workspaceID));
+            pRequest.setAttribute("workspaceAdmin", workspaceAdmin);
             pRequest.setAttribute("urlRoot", getUrlRoot(pRequest));
             pRequest.setAttribute("workspaceID", workspaceID);
             pRequest.setAttribute("productID", productID);

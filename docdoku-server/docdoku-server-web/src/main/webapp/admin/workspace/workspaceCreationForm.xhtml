@@ -25,7 +25,7 @@
                     <h:outputLabel value="#{i18nWorkspaceCreation['section.id']}*:" for="id"/>
                     <h:inputText label="#{i18nWorkspaceCreation['section.id']}" required="true" id="id" value="#{workspaceBean.workspaceId}" size="20" maxlength="50"/>
 
-                    <c:if test="#{isSuperAdmin==true}">
+                    <c:if test="#{accountBean.superAdmin==true}">
                         <h:outputLabel value="#{i18nWorkspaceCreation['section.login']}*:" for="login"/>
                         <h:inputText required ="true" id="login" value="#{workspaceBean.loginToAdd}" size="20" maxlength="50"/>
                     </c:if>

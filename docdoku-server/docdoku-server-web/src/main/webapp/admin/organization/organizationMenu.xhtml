@@ -24,11 +24,14 @@
             <h3>#{i18nOrganizationMenu['section.title']}</h3>
             <h:form>
                 <fieldset id="admin">
-
-                    <c:if test="#{empty account.organization}"><h:link value="#{i18nOrganizationMenu['section.create']}" outcome="/admin/organization/organizationCreationForm.xhtml"/> | </c:if>
-                    <h:link value="#{i18nOrganizationMenu['section.edit']}" action="#{workspaceBean.editWorkspace}"/> |
-                    <h:link value="#{i18nOrganizationMenu['section.manage']}" action="/admin/organization/manageAccounts.xhtml"/> |
-                    <h:commandLink rendered="#{not empty account.organization}" value="#{i18nOrganizationMenu['section.delete']}" action="#{organizationBean.deleteOrganization}" onclick="return prompt('#{i18nOrganizationMenu['section.deleteConfirm']}') == '#{i18nOrganizationMenu['section.deleteConfirmPromptValue']}'" />
+                    <c:choose>
+                        <c:when test="#{empty account.organization}"><h:link value="#{i18nOrganizationMenu['section.create']}" outcome="/admin/organization/organizationCreationForm.xhtml"/></c:when>
+                        <c:otherwise>
+                            | <h:link value="#{i18nOrganizationMenu['section.edit']}" action="#{workspaceBean.editWorkspace}"/> |
+                            <h:link value="#{i18nOrganizationMenu['section.manage']}" action="/admin/organization/manageAccounts.xhtml"/> |
+                            <h:commandLink value="#{i18nOrganizationMenu['section.delete']}" action="#{organizationBean.deleteOrganization}" onclick="return prompt('#{i18nOrganizationMenu['section.deleteConfirm']}') == '#{i18nOrganizationMenu['section.deleteConfirmPromptValue']}'" />
+                        </c:otherwise>
+                    </c:choose>
                 </fieldset>
             </h:form>
         </ui:define>

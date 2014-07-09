@@ -28,7 +28,7 @@
                 <img id="brand-logo" alt="docdoku_plm" src="/images/plm_logo2.png"/>
 
                 <c:choose>
-                    <c:when test="${isSuperAdmin==true}">
+                    <c:when test="#{accountBean.superAdmin==true}">
                         <a id="brand-title" class="brand" href="/faces/admin/workspace/workspacesMenu.xhtml">
                             DocDoku<strong>PLM</strong>
                         </a>
@@ -42,7 +42,7 @@
                 <div class="nav-collapse collapse">
                     <div class="container-fluid">
                         <c:choose>
-                            <c:when test="${sessionScope.account==null}">
+                            <c:when test="#{request.remoteUser==null}">
                                 <ul class="nav">
                                     <li><a href="#{request.contextPath}/"><i
                                             class="icon-home"></i>#{i18nTemplate['toplinks.home']}</a>
@@ -67,7 +67,7 @@
                             </c:when>
                             <c:otherwise>
                                 <c:choose>
-                                    <c:when test="${isSuperAdmin==true}">
+                                    <c:when test="#{accountBean.superAdmin==true}">
                                     </c:when>
                                     <c:otherwise>
                                         <ul class="nav breadcrumb-menu" id="header_left_menu">
@@ -81,7 +81,7 @@
                                                     <span class="caret hidden-desktop"></span>
                                                 </a>
                                                 <ul class="dropdown-menu">
-                                                    <c:forEach var="item" items="${administeredWorkspaces}">
+                                                    <c:forEach var="item" items="#{accountBean.administeredWorkspaces}">
                                                         <li class="dropdown-submenu visible-desktop">
                                                             <a href="#{request.contextPath}/document-management/${item.value.id}#folders">
                                                                 <c:if test="${workspaceID==item.value.id}">
@@ -111,7 +111,7 @@
                                                             </ul>
                                                         </li>
                                                     </c:forEach>
-                                                    <c:forEach var="item" items="${regularWorkspaces}">
+                                                    <c:forEach var="item" items="#{accountBean.regularWorkspaces}">
                                                         <li class="dropdown-submenu visible-desktop">
                                                             <a href="#{request.contextPath}/document-management/${item.id}#folders">
                                                                 <c:if test="${workspaceID==item.id}">
@@ -202,7 +202,7 @@
                                         <a href="#" class="dropdown-toggle" id="account_name_link"
                                            data-toggle="dropdown">
                                             <i class="icon-user"></i>
-                                            ${sessionScope.account.name}
+                                            #{accountBean.name}
                                             <span class="caret"></span>
                                         </a>
                                         <ul class="dropdown-menu">

@@ -73,16 +73,18 @@ public class MainChannelApplication {
         return CHANNELS.get(userLogin);
     }
 
-    public static void sessionDestroyed(String account) {
-        Map<String, Session> sessionMap = CHANNELS.get(account);
+    public static void sessionDestroyed(String userLogin) {
+        if(hasChannels(userLogin)) {
+            Map<String, Session> sessionMap = CHANNELS.get(userLogin);
 
-            for (Session session : sessionMap.values()){
+            for (Session session : sessionMap.values()) {
                 try {
                     session.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
+        }
     }
 
     @OnError

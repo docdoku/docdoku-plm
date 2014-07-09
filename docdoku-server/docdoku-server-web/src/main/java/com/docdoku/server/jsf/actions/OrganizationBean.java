@@ -21,19 +21,13 @@ package com.docdoku.server.jsf.actions;
 
 import com.docdoku.core.common.Account;
 import com.docdoku.core.common.Organization;
-import com.docdoku.core.common.Workspace;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.services.IUserManagerLocal;
-import com.docdoku.core.services.IWorkspaceManagerLocal;
-import com.docdoku.core.util.NamingConvention;
 
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.io.IOException;
 import java.util.*;
 
 @Named("organizationBean")
@@ -54,78 +48,12 @@ public class OrganizationBean {
     public OrganizationBean() {
     }
 
-    /*
-    public String editOrganization() throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
-        Workspace wks = adminState.getCurrentWorkspace();
-        this.workspaceId = wks.getId();
-        this.workspaceDescription = wks.getDescription();
-        //this.workspaceAdmin = new User();
-        this.workspaceAdmin = wks.getAdmin().getLogin();
 
-        return "/admin/workspace/workspaceEditionForm.xhtml";
-    }
-
-
-
-    
-    public String addUser() throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException, UserGroupNotFoundException, NotAllowedException, AccountNotFoundException, UserAlreadyExistsException, FolderAlreadyExistsException, CreationException {
-        Workspace workspace = adminState.getCurrentWorkspace();
-        //TODO switch to a more JSF style code
-        HttpServletRequest request = (HttpServletRequest) (FacesContext.getCurrentInstance().getExternalContext().getRequest());
-        
-        if (adminState.getSelectedGroup() != null && !adminState.getSelectedGroup().equals("")) {
-            userManager.addUserInGroup(new UserGroupKey(workspace.getId(), adminState.getSelectedGroup()), loginToAdd);
-            return "/admin/workspace/manageUsersGroup.xhtml?group=" + adminState.getSelectedGroup();
-        } else {
-            userManager.addUserInWorkspace(workspace.getId(), loginToAdd);
-            return "/admin/workspace/manageUsers.xhtml";
-        }
-
-    }
-
-    public String updateWorkspace() throws AccountNotFoundException, AccessRightException, WorkspaceNotFoundException {
-
-        //TODO switch to a more JSF style code
-        HttpServletRequest request = (HttpServletRequest) (FacesContext.getCurrentInstance().getExternalContext().getRequest());
-        HttpSession sessionHTTP = request.getSession();
-
-        Workspace workspace = adminState.getCurrentWorkspace();
-
-        Workspace clone = workspace.clone();
-
-        clone.setFolderLocked(freezeFolders);
-        clone.setDescription(workspaceDescription);
-
-
-        Account newAdmin = null;
-        if (!clone.getAdmin().getLogin().equals(workspaceAdmin)) {
-            newAdmin = userManager.getAccount(workspaceAdmin);
-            clone.setAdmin(newAdmin);
-        }
-        userManager.updateWorkspace(clone);
-
-        workspace.setDescription(workspaceDescription);
-        workspace.setFolderLocked(freezeFolders);
-        if (newAdmin != null) {
-            workspace.setAdmin(newAdmin);
-            if(!userManager.isCallerInRole("admin")){
-                Map<String, Workspace> administeredWorkspaces = (Map<String, Workspace>) sessionHTTP.getAttribute("administeredWorkspaces");
-                administeredWorkspaces.remove(workspace.getId());
-                Set<Workspace> regularWorkspaces = (Set<Workspace>) sessionHTTP.getAttribute("regularWorkspaces");
-                regularWorkspaces.add(workspace);
-            }
-        }
-
-        return "/admin/workspace/editWorkspace.xhtml";
-    }
-    */
 
     public String deleteOrganization() throws AccountNotFoundException, AccessRightException, OrganizationNotFoundException {
-        //TODO switch to a more JSF style code
-        HttpServletRequest request = (HttpServletRequest) (FacesContext.getCurrentInstance().getExternalContext().getRequest());
-        HttpSession sessionHTTP = request.getSession();
+        String remoteUser = FacesContext.getCurrentInstance().getExternalContext().getRemoteUser();
+        Account account = userManager.getAccount(remoteUser);
 
-        Account account = (Account) sessionHTTP.getAttribute("account");
         Organization organization = account.getOrganization();
         if(organization!=null) {
             userManager.deleteOrganization(organization.getName());
@@ -135,15 +63,13 @@ public class OrganizationBean {
     }
 
     public String createOrganization() throws OrganizationAlreadyExistsException, CreationException, AccountNotFoundException, NotAllowedException {
-        //TODO switch to a more JSF style code
-        HttpServletRequest request = (HttpServletRequest) (FacesContext.getCurrentInstance().getExternalContext().getRequest());
-        HttpSession sessionHTTP = request.getSession();
+        String remoteUser = FacesContext.getCurrentInstance().getExternalContext().getRemoteUser();
 
         Account account;
         if(userManager.isCallerInRole("admin")){
             account = userManager.getAccount(loginToAdd);
         }else{
-            account = (Account) sessionHTTP.getAttribute("account");
+            account = userManager.getAccount(remoteUser);
         }
 
         Organization organization = userManager.createOrganization(organizationName, account, organizationDescription);
@@ -152,16 +78,6 @@ public class OrganizationBean {
     }
 
 
-    /*
-    public void remove() throws UserGroupNotFoundException, AccessRightException, UserNotFoundException, NotAllowedException, AccountNotFoundException, WorkspaceNotFoundException, FolderNotFoundException, ESServerException {
-        if (!selectedLogins.isEmpty()) {
-            userManager.removeUsers(adminState.getSelectedWorkspace(), getLogins());
-        }
-
-        selectedLogins.clear();
-    }
-
-*/
 
     private String[] getLogins() {
         List<String> logins = new ArrayList<>();

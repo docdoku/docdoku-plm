@@ -20,22 +20,21 @@
 package com.docdoku.server.jsf.actions;
 
 import com.docdoku.core.common.Account;
-import com.docdoku.core.common.Workspace;
 import com.docdoku.core.exceptions.AccountNotFoundException;
 import com.docdoku.core.services.IUserManagerLocal;
 
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
-import javax.faces.bean.ManagedBean;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.inject.Named;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.*;
 
-@ManagedBean(name = "connectionBean")
+@Named("connectionBean")
 @RequestScoped
 public class ConnectionBean {
     
@@ -51,21 +50,13 @@ public class ConnectionBean {
     }
 
     public String logOut() throws ServletException {
-
-        //TODO switch to a more JSF style code
         HttpServletRequest request = (HttpServletRequest) (FacesContext.getCurrentInstance().getExternalContext().getRequest());
-        HttpSession session = request.getSession();
-        session.removeAttribute("account");
-        session.removeAttribute("administeredWorkspaces");
-        session.removeAttribute("regularWorkspaces");
-        session.removeAttribute("isSuperAdmin");
         request.logout();
         return "/admin/logout.xhtml";
     }
 
     public void logIn() throws ServletException, AccountNotFoundException, IOException {
-        //TODO switch to a more JSF style code
-        HttpServletRequest request = (HttpServletRequest) (FacesContext.getCurrentInstance().getExternalContext().getRequest());     
+        HttpServletRequest request = (HttpServletRequest) (FacesContext.getCurrentInstance().getExternalContext().getRequest());
         HttpSession session = request.getSession();
 
         //Logout in case of user is already logged in,
@@ -73,40 +64,31 @@ public class ConnectionBean {
         request.logout();
         request.login(login, password);
 
-        Account account = userManager.getAccount(login);
+        String accountLogin=null;
+        Locale accountLocale=Locale.getDefault();
+        try {
+            Account account = userManager.getAccount(login);
+            if(account!=null) {
+                accountLogin = account.getLogin();
+                accountLocale = new Locale(account.getLanguage());
+            }
+        }catch(AccountNotFoundException ex){
 
+        }
         //case insensitive fix
-        if(!login.equals(account.getLogin())){
+        if(!login.equals(accountLogin)){
             request.logout();
-            throw new AccountNotFoundException(new Locale(account.getLanguage()),login);
+            throw new AccountNotFoundException(accountLocale,login);
         }
-
-        session.setAttribute("account", account);
-
-        Map<String, Workspace> administeredWorkspaces = new HashMap<>();
-        for (Workspace wks : userManager.getAdministratedWorkspaces()) {
-            administeredWorkspaces.put(wks.getId(), wks);
-        }
-        session.setAttribute("administeredWorkspaces", administeredWorkspaces);
-
+        session.setAttribute("remoteUser",login);
         boolean isAdmin=userManager.isCallerInRole("admin");
-
-        if(!isAdmin){
-            Set<Workspace> regularWorkspaces = new HashSet<>();
-            Workspace[] workspaces = userManager.getWorkspacesWhereCallerIsActive();
-            regularWorkspaces.addAll(Arrays.asList(workspaces));
-            regularWorkspaces.removeAll(administeredWorkspaces.values());
-            session.setAttribute("regularWorkspaces", regularWorkspaces);
-        }
 
         FacesContext fc = FacesContext.getCurrentInstance();
         ExternalContext ec = fc.getExternalContext();
 
         if(isAdmin){
             ec.redirect(request.getContextPath() + "/faces/admin/workspace/workspacesMenu.xhtml");
-            session.setAttribute("isSuperAdmin",true);
         }else{
-            session.setAttribute("isSuperAdmin",false);
             if(originURL!=null && originURL.length()>1)
                 ec.redirect(originURL);
             else

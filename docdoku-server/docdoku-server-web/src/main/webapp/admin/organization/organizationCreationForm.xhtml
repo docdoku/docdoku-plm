@@ -25,7 +25,7 @@
                     <h:outputLabel value="#{i18nOrganizationCreation['section.id']}*:" for="id"/>
                     <h:inputText label="#{i18nOrganizationCreation['section.id']}" required="true" id="id" value="#{organizationBean.organizationName}" size="20" maxlength="50"/>
 
-                    <c:if test="#{isSuperAdmin==true}">
+                    <c:if test="#{accountBean.superAdmin==true}">
                         <h:outputLabel value="#{i18nOrganizationCreation['section.login']}*:" for="login"/>
                         <h:inputText required ="true" id="login" value="#{organizationBean.loginToAdd}" size="20" maxlength="50"/>
                     </c:if>

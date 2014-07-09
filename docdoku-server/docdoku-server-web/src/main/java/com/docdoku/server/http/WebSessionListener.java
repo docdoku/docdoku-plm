@@ -21,8 +21,8 @@ public class WebSessionListener implements HttpSessionListener {
     @Override
     public void sessionDestroyed(HttpSessionEvent httpSessionDestroyedEvent) {
         HttpSession httpSession = httpSessionDestroyedEvent.getSession();
-        String account = ((Account) httpSession.getAttribute("account")).getLogin();
-        MainChannelApplication.sessionDestroyed(account);
+        String remoteUser = (String)httpSession.getAttribute("remoteUser");
+        MainChannelApplication.sessionDestroyed(remoteUser);
     }
 
 }

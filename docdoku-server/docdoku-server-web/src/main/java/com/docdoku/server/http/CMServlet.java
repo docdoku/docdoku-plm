@@ -65,15 +65,11 @@ public class CMServlet extends HttpServlet{
             //we'll try to switch to default workspace
         }
 
-        HttpSession sessionHTTP = pRequest.getSession();
-        Map<String, Workspace> administeredWorkspaces = (Map<String, Workspace>) sessionHTTP.getAttribute("administeredWorkspaces");
 
         if (workspaceID == null) {
-            Set<Workspace> regularWorkspaces = (Set<Workspace>) sessionHTTP.getAttribute("regularWorkspaces");
-            if (administeredWorkspaces != null && !administeredWorkspaces.isEmpty()) {
-                workspaceID = administeredWorkspaces.values().iterator().next().getId();
-            } else if (regularWorkspaces != null && !regularWorkspaces.isEmpty()) {
-                workspaceID = regularWorkspaces.iterator().next().getId();
+            Workspace[] workspaces = userManager.getWorkspacesWhereCallerIsActive();
+            if (workspaces != null && workspaces.length > 0) {
+                workspaceID = workspaces[0].getId();
             }
 
             if(workspaceID == null){
@@ -82,17 +78,20 @@ public class CMServlet extends HttpServlet{
                 pResponse.sendRedirect(pRequest.getContextPath() + "/change-management/" + workspaceID);
             }
         } else {
+            boolean workspaceAdmin;
             try{
                 UserGroup[] userGroups = userManager.getUserGroupsForUser(new UserKey(workspaceID, login));
+                workspaceAdmin = login.equals(userManager.getWorkspace(workspaceID).getAdmin().getLogin());
                 String[] groups = new String[userGroups.length];
                 for(int i = 0 ; i< userGroups.length;i++){
                     groups[i] = "\""+userGroups[i].toString()+"\"";
                 }
                 pRequest.setAttribute("groups", StringUtils.join(groups, ","));
-            } catch (UserNotFoundException e) {
+            } catch (Exception ex) {
+                throw new ServletException("error while fetching user data.", ex);
             }
 
-            pRequest.setAttribute("workspaceAdmin", administeredWorkspaces.containsKey(workspaceID));
+            pRequest.setAttribute("workspaceAdmin", workspaceAdmin);
             pRequest.setAttribute("workspaceID", workspaceID);
             pRequest.setAttribute("login", login);
             pRequest.getRequestDispatcher("/faces/change-management/index.xhtml").forward(pRequest, pResponse);
