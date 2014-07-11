@@ -55,7 +55,7 @@ define([
 
         if(message.message.match(/inviteScene/)){
             //var url = message.message.substr(0 ,13);
-            App.sceneManager.handleInvite(message);
+            //App.sceneManager.handleInvite(message);
             //Backbone.Events.trigger('NewChatMessage', url);
         }else if(message.message.match(/animate/)){
             var contextString = message.message.substring(9);
@@ -63,7 +63,7 @@ define([
             console.log(context);
             App.sceneManager.setControlsContext(context);
         } else if(message.message.match(/stop/)){
-            App.appView.leaveCollaborativeMode();
+            App.appView.leaveSpectatorView();
             App.sceneManager.stopCollaborativeUsers();
         }
     };

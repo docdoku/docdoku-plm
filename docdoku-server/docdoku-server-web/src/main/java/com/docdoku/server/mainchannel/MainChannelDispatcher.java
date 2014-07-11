@@ -21,6 +21,7 @@
 package com.docdoku.server.mainchannel;
 
 import com.docdoku.server.mainchannel.module.ChatMessage;
+import com.docdoku.server.mainchannel.module.CollaborativeMessage;
 import com.docdoku.server.mainchannel.module.StatusMessage;
 import com.docdoku.server.mainchannel.module.WebRTCMessage;
 
@@ -48,6 +49,18 @@ public final class MainChannelDispatcher {
 
     /* Send a message to multiple channels */
     public static void sendToAllUserChannels(String userLogin, WebRTCMessage message){
+        if(userLogin != null && !userLogin.equals("") ){
+            if(MainChannelApplication.getUserChannels(userLogin) != null) {
+                Collection<Session> sessions = MainChannelApplication.getUserChannels(userLogin).values();
+                for(Session session:sessions){
+                    send(session, message);
+                }
+            }
+        }
+    }
+
+    /* Send a message to multiple channels */
+    public static void sendToAllUserChannels(String userLogin, CollaborativeMessage message){
         if(userLogin != null && !userLogin.equals("") ){
             if(MainChannelApplication.getUserChannels(userLogin) != null) {
                 Collection<Session> sessions = MainChannelApplication.getUserChannels(userLogin).values();
@@ -93,5 +106,14 @@ public final class MainChannelDispatcher {
         }
         return false;
     }
+
+    public static boolean send(Session session, CollaborativeMessage message) {
+        if (session != null) {
+            session.getAsyncRemote().sendObject(message);
+            return true;
+        }
+        return false;
+    }
+
 
 }

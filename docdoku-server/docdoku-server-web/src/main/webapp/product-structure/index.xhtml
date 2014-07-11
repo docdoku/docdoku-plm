@@ -57,6 +57,7 @@
                 instancesManager : null,
                 sceneManager : null,
 
+
                 setDebug:function(state){
                     App.debug = state;
                     if(state){
@@ -115,6 +116,7 @@
                 require(["app","router"], function (AppView,Router) {
                     App.appView = new AppView().render();
                     App.router = Router.getInstance();
+
                     Backbone.history.start();
                 });
 

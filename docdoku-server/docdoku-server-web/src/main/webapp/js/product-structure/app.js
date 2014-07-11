@@ -4,6 +4,7 @@ define(
         "views/search_view",
         "views/parts_tree_view",
         "views/bom_view",
+        "views/collaborative_view",
         "views/part_metadata_view",
         "views/part_instance_view",
         "views/export_scene_modal_view",
@@ -18,6 +19,7 @@ define(
         "views/control_measure_view",
         "views/baseline_select_view",
         "dmu/SceneManager",
+        "dmu/collaborativeController",
         "dmu/InstancesManager",
         "text!templates/content.html",
         "i18n!localization/nls/product-structure-strings",
@@ -26,6 +28,7 @@ define(
                  SearchView,
                  PartsTreeView,
                  BomView,
+                 CollaborativeView,
                  PartMetadataView,
                  PartInstanceView,
                  ExportSceneModalView,
@@ -40,6 +43,7 @@ define(
                  ControlMeasureView,
                  BaselineSelectView,
                  SceneManager,
+                 CollaborativeController,
                  InstancesManager,
                  template,
                  i18n,
@@ -86,6 +90,10 @@ define(
             try{
                 App.instancesManager = new InstancesManager();
                 App.sceneManager = new SceneManager();
+                App.collaborativeView = new CollaborativeView({roomKey:"beurk"}).render();
+                this.$ControlsContainer.append(App.collaborativeView.$el);
+                App.collaborativeController = new CollaborativeController(this.collaborativeView);
+
                 this.controlNavigationView = new ControlNavigationView().render();
                 this.$ControlsContainer.append(this.controlNavigationView.$el);
                 this.$ControlsContainer.append(new ControlModesView().render().$el);
@@ -97,6 +105,9 @@ define(
                 this.$ControlsContainer.append(new ControlMarkersView().render().$el);
                 this.$ControlsContainer.append(new ControlLayersView().render().$el);
                 this.$ControlsContainer.append(new ControlMeasureView().render().$el);
+
+                //mainChannel.addChannelListener(chatListener);
+
                 App.sceneManager.init();
                 App.instancesManager.start();
             }catch(ex){
@@ -186,15 +197,12 @@ define(
             return this.inBomMode;
         },
 
-        collaborativeMode: function() {
-            //this.inCollaborativeMode = true;
+        setSpectatorView: function() {
             this.$ControlsContainer.find("button").attr("disabled","disabled");
-
-            //this.$ControlsContainer.find("#collaborative_view").append('<a id="end_collaborative" href="#">Leave collaborative view</a>');
 
         },
 
-        leaveCollaborativeMode: function() {
+        leaveSpectatorView: function() {
             //this.inCollaborativeMode = true;
             this.$ControlsContainer.find("button").removeAttr("disabled");
 

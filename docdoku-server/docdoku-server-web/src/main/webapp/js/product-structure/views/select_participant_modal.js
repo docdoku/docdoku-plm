@@ -1,8 +1,8 @@
 define(    [
-    "common-objects/collections/users",
-    "text!templates/select_participant_modal.html",
-    "i18n!localization/nls/product-structure-strings"
-],
+        "common-objects/collections/users",
+        "text!templates/select_participant_modal.html",
+        "i18n!localization/nls/product-structure-strings"
+    ],
 
     function (Users,template, i18n) {
 
@@ -19,28 +19,41 @@ define(    [
                 _.bindAll(this);
             },
 
+            setRoomKey: function(key){
+                this.roomKey = key;
+            },
+
             render: function() {
                 this.$el.html(this.template({i18n: i18n}));
                 this.$modal = this.$("#selectParticipantModal");
                 var $form = this.$("form");
                 var users = new Users();
 
-                users.fetch({reset: true, success: function () {
+                // Listen for the status request done
+                Backbone.Events.on('UserStatusRequestDone', function(message){
+                    if(message.status != null){
+                        if(message.status == "OFFLINE"){
+                            $form.prepend('<label class="radio">  <input type="checkbox" name="user" value="'+message.remoteUser+'"/>'+message.remoteUser+' <i class="icon-user user-offline" title="offline"></i></label>');
+                        }else if(message.status == "ONLINE"){
+                            $form.prepend('<label class="radio">  <input type="checkbox" name="user" value="'+message.remoteUser+'"/>'+message.remoteUser+' <i class="icon-user user-online" title="online"></i></label>');
+                        }
+                    }
+                });
 
+                users.fetch({reset: true, success: function () {
                     _.each(users.models, function(user){
-                        var userName = user.attributes.login;
-                        if(userName != APP_CONFIG.login){
-                            $form.append('<label class="radio">  <input type="radio" name="user" value="'+userName+'"/>'+userName+'</label>');
+                        var login = user.attributes.login;
+                        if (login != APP_CONFIG.login) { // trigger the status request
+                            Backbone.Events.trigger('UserStatusRequest', login);
                         }
                     });
-                    $form.append('<button type="submit" class="btn btn-primary">Share my view</button>');
                 }});
+
+                $form.append('<button type="submit" class="btn btn-primary">Share my view</button>');
                 return this;
             },
 
             openModal: function() {
-                var that = this ;
-
                 this.$modal.modal('show');
             },
 
@@ -52,21 +65,24 @@ define(    [
                 this.remove();
             } ,
             onSubmit:function(e){
-                var remoteUser = this.$("input:checked").val();
+                var remoteUsers = this.$("input:checked");
+                var that = this;
                 //window.location.hash = "share-view/"+THREE.Math.generateUUID();
                 //var path = document.location.href;
                 //var pathHash  = path.substring( 0 ,path.lastIndexOf( "#" ) ); // THREE.Math.generateUUID()
-                console.log(remoteUser);
-                var message = {
-                    type: ChannelMessagesType.CHAT_MESSAGE,
-                    remoteUser: remoteUser,
-                    message: "/inviteScene="+THREE.Math.generateUUID(),
-                    context: APP_CONFIG.workspaceId+' '+APP_CONFIG.productId,
-                    sender:APP_CONFIG.login
-                };
-                mainChannel.sendJSON(message);
+
+                remoteUsers.each(function(index, element){
+                    mainChannel.sendJSON({
+                        type: ChannelMessagesType.COLLABORATIVE_INVITE,
+                        key: that.roomKey,
+                        messageBroadcast: APP_CONFIG.workspaceId+'/'+APP_CONFIG.productId,
+                        remoteUser: element.value
+                    });
+                });
+
+
                 this.closeModal();
-                App.sceneManager.setCollaborativeMode(remoteUser);
+                //App.sceneManager.setCollaborativeMode(remoteUser);
                 return false;
             }
 

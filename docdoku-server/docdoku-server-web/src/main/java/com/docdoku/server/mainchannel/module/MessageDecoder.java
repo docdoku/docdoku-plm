@@ -62,6 +62,28 @@ public class MessageDecoder implements Decoder.Text<AbstractMessage>{
                 webRTCMsg.setReason(reason);
                 webRTCMsg.setRoomKey(roomKey);
                 message=webRTCMsg;
+                break;
+            case ChannelMessagesType.COLLABORATIVE_CREATE:
+            case ChannelMessagesType.COLLABORATIVE_INFO:
+            case ChannelMessagesType.COLLABORATIVE_INVITE:
+            case ChannelMessagesType.COLLABORATIVE_COMMANDS:
+            case ChannelMessagesType.COLLABORATIVE_CONTEXT:
+            case ChannelMessagesType.COLLABORATIVE_EXIT:
+            case ChannelMessagesType.COLLABORATIVE_GIVE_HAND:
+            case ChannelMessagesType.COLLABORATIVE_JOIN:
+            case ChannelMessagesType.COLLABORATIVE_KICK_USER:
+            case ChannelMessagesType.COLLABORATIVE_KILL:
+            case ChannelMessagesType.COLLABORATIVE_REQUEST_HAND:
+            case ChannelMessagesType.COLLABORATIVE_WITHDRAW_INVITATION:
+                CollaborativeMessage collaborativeMessage = new CollaborativeMessage(type,remoteUser);
+                String key = jsObj.containsKey("key")?jsObj.getString("key"):null;
+                String messageBroadcast = jsObj.containsKey("messageBroadcast")?jsObj.getString("messageBroadcast"):null;
+                collaborativeMessage.setMessageBroadcast(messageBroadcast);
+                collaborativeMessage.setKey(key);
+                message=collaborativeMessage;
+                break;
+            default :
+                System.out.println("Type of message not recognized."+type);
         }
         return message;
     }

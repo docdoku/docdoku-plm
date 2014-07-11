@@ -16,6 +16,20 @@ var ChannelMessagesType = {
     WEBRTC_CANDIDATE: "candidate",
     WEBRTC_BYE: "bye",
 
+
+    COLLABORATIVE_CREATE : "COLLABORATIVE_CREATE",
+    COLLABORATIVE_INVITE : "COLLABORATIVE_INVITE",
+    COLLABORATIVE_JOIN : "COLLABORATIVE_JOIN",
+    COLLABORATIVE_INFO : "COLLABORATIVE_INFO",
+    COLLABORATIVE_CONTEXT : "COLLABORATIVE_CONTEXT",
+    COLLABORATIVE_COMMANDS : "COLLABORATIVE_COMMANDS",
+    COLLABORATIVE_EXIT : "COLLABORATIVE_EXIT",
+    COLLABORATIVE_KILL : "COLLABORATIVE_KILL",
+    COLLABORATIVE_REQUEST_HAND : "COLLABORATIVE_REQUEST_HAND",
+    COLLABORATIVE_GIVE_HAND : "COLLABORATIVE_GIVE_HAND",
+    COLLABORATIVE_KICK_USER : "COLLABORATIVE_KICK_USER",
+    COLLABORATIVE_WITHDRAW_INVITATION : "COLLABORATIVE_WITHDRAW_INVITATION",
+
     CHAT_MESSAGE: "CHAT_MESSAGE",
     CHAT_MESSAGE_ACK: "CHAT_MESSAGE_ACK",
 
@@ -80,6 +94,7 @@ Channel.prototype = {
         this.ws = new WebSocket(this.url);
         
         this.ws.onopen = function(event){
+            console.log("Websocket created");
             self.onopen(event);
         };
         
@@ -139,7 +154,6 @@ Channel.prototype = {
     },
     
     onclose:function(event){
-
         this.status = ChannelStatus.CLOSED;
 
         console.log("Websocket closed");

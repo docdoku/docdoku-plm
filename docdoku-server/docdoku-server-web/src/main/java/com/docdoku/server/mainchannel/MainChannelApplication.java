@@ -20,8 +20,9 @@
 
 package com.docdoku.server.mainchannel;
 
-import com.docdoku.core.common.Account;
 import com.docdoku.core.services.IUserManagerLocal;
+import com.docdoku.server.mainchannel.collaborative.CollaborativeRoom;
+import com.docdoku.server.mainchannel.collaborative.CollaborativeRoomController;
 import com.docdoku.server.mainchannel.module.*;
 import com.docdoku.server.mainchannel.util.ChannelMessagesBuilder;
 import com.docdoku.server.mainchannel.util.ChannelMessagesType;
@@ -29,27 +30,18 @@ import com.docdoku.server.mainchannel.util.Room;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.json.Json;
-import javax.json.JsonException;
-import javax.json.JsonObject;
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpSessionEvent;
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
-import java.io.StringReader;
 import java.security.Principal;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @Stateless
-@ServerEndpoint(value = "/mainChannelSocket", decoders = {MessageDecoder.class}, encoders = {WebRTCMessageEncoder.class, StatusMessageEncoder.class, ChatMessageEncoder.class})
+@ServerEndpoint(value = "/mainChannelSocket", decoders = {MessageDecoder.class}, encoders = {WebRTCMessageEncoder.class, StatusMessageEncoder.class, ChatMessageEncoder.class, CollaborativeMessageEncoder.class})
 public class MainChannelApplication {
 
     // Users WebSockets Map : <UserLogin, <SessionId, Session>>
@@ -75,7 +67,6 @@ public class MainChannelApplication {
 
     public static void sessionDestroyed(String account) {
         Map<String, Session> sessionMap = CHANNELS.get(account);
-
             for (Session session : sessionMap.values()){
                 try {
                     session.close();
@@ -99,7 +90,8 @@ public class MainChannelApplication {
     @OnOpen
     public void open(Session session) {
 
-            Principal userPrincipal = session.getUserPrincipal(); String callerLogin = userPrincipal.getName();
+        Principal userPrincipal = session.getUserPrincipal();
+        String callerLogin = userPrincipal.getName();
         String sessionId = session.getId();
 
         if (callerLogin != null && sessionId != null) {
@@ -123,17 +115,21 @@ public class MainChannelApplication {
         Principal userPrincipal = session.getUserPrincipal();
         String callerLogin = userPrincipal.getName();
 
-        // Exit if remote user is null or caller tries to join himself
-        if (message.getRemoteUser() == null || message.getRemoteUser().equals(callerLogin)) {
-            return;
-        }
-        // Exit if caller cannot reach callee (business)
-        if (!callerIsAllowToReachCallee(callerLogin, message.getRemoteUser())) {
-            return;
-        }
+        // TODO : remettre les tests
+        /*
+            // Exit if remote user is null or caller tries to join himself
+            if (message.getRemoteUser() == null || message.getRemoteUser().equals(callerLogin)) {
+                return;
+            }
+            // Exit if caller is not allowed to reach callee (business)
+            if (!callerIsAllowToReachCallee(callerLogin, message.getRemoteUser())) {
+                return;
+            }
+        */
         WebRTCMessage webRTC;
         switch (message.getType()) {
             case ChannelMessagesType.USER_STATUS:
+
                 StatusMessage status = (StatusMessage) message;
                 process(session, callerLogin, status);
                 break;
@@ -167,12 +163,56 @@ public class MainChannelApplication {
                 process(session, callerLogin, chat);
                 break;
 
+            case ChannelMessagesType.COLLABORATIVE_CREATE:
+                CollaborativeRoomController.processCreate(session, callerLogin);
+                break;
+            case ChannelMessagesType.COLLABORATIVE_INVITE:
+                CollaborativeMessage inviteMessage = (CollaborativeMessage) message;
+                CollaborativeRoomController.processInvite(session, callerLogin, inviteMessage);
+                break;
+            case ChannelMessagesType.COLLABORATIVE_JOIN:
+                CollaborativeMessage joinMessage = (CollaborativeMessage) message;
+                CollaborativeRoomController.processJoin(session, callerLogin, joinMessage);
+                break;
+            case ChannelMessagesType.COLLABORATIVE_INFO:
+                CollaborativeMessage infoMessage = (CollaborativeMessage) message;
+                CollaborativeRoomController.processInfo(session, callerLogin, infoMessage);
+                break;
+            case ChannelMessagesType.COLLABORATIVE_COMMANDS:
+                CollaborativeMessage commandsMessage = (CollaborativeMessage) message;
+                CollaborativeRoomController.processCommands(session, callerLogin, commandsMessage);
+                break;
+            case ChannelMessagesType.COLLABORATIVE_EXIT:
+                CollaborativeMessage exitMessage = (CollaborativeMessage) message;
+                CollaborativeRoomController.processExit(session, callerLogin, exitMessage);
+                break;
+            case ChannelMessagesType.COLLABORATIVE_KILL:
+                CollaborativeMessage killMessage = (CollaborativeMessage) message;
+                CollaborativeRoomController.processKill(session, callerLogin, killMessage);
+                break;
+            case ChannelMessagesType.COLLABORATIVE_REQUEST_HAND:
+                CollaborativeMessage requestHandMessage = (CollaborativeMessage) message;
+                CollaborativeRoomController.processRequestHand(session, callerLogin, requestHandMessage);
+                break;
+            case ChannelMessagesType.COLLABORATIVE_GIVE_HAND:
+                CollaborativeMessage giveHandMessage = (CollaborativeMessage) message;
+                CollaborativeRoomController.processGiveHand(session, callerLogin, giveHandMessage);
+                break;
+            case ChannelMessagesType.COLLABORATIVE_KICK_USER:
+                CollaborativeMessage kickUserMessage = (CollaborativeMessage) message;
+                CollaborativeRoomController.processKickUser(session, callerLogin, kickUserMessage);
+                break;
+            case ChannelMessagesType.COLLABORATIVE_WITHDRAW_INVITATION:
+                CollaborativeMessage withdrawInvitationMessage = (CollaborativeMessage) message;
+                CollaborativeRoomController.processWithdrawInvitation(session, callerLogin, withdrawInvitationMessage);
+                break;
             default:
                 break;
         }
 
 
     }
+
 
     private void closeSession(Session session) {
         Principal userPrincipal = session.getUserPrincipal();

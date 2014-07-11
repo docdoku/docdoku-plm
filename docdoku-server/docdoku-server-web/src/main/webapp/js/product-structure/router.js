@@ -8,14 +8,20 @@ define([
         var Router = Backbone.Router.extend({
             routes: {
                 "":	"defaults",
-                "share-view/:uuid":"enterCollaborativeModeAsSlave"
+                "room=:key":"joinCollaborative",
+                //"share-view/:uuid":"enterCollaborativeModeAsSlave"
             },
             defaults: function() {
 
             },
+            /*
             enterCollaborativeModeAsSlave:function(uuid){
                 //App.sceneManager.handleCollaborative(uuid);
-                App.appView.collaborativeMode();
+                App.appView.setSpectatorView();
+            },*/
+            joinCollaborative:function(key){
+                App.sceneManager.joinRoom(key);
+
             }
         });
         Router = singletonDecorator(Router);

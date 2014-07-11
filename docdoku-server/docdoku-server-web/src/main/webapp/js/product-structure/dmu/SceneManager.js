@@ -27,6 +27,8 @@ define([
         var collaborativeUsers = [];
         var editedMeshesDisplayed = false;
         var transformControls = null;
+        var collaborativeMode = false;
+        this.collaborativeKey = null;
 
         this.stateControl = null;
         this.STATECONTROL = { PLC: 0, TBC: 1, ORB: 2};
@@ -174,7 +176,6 @@ define([
             transformControls = new THREE.TransformControls(_this.$container[0]);
 
             window.addEventListener( 'keyup', function ( event ) {
-                console.log(event.which);
                 switch (event.keyCode) {
                     case 90: // Z
                         transformControls.setMode("translate");
@@ -773,7 +774,8 @@ define([
                 render();
             }
             if(controlChanged){
-                sendControlsContextMessage();
+                //sendControlsContextMessage();
+                sendCommands();
                 controlChanged=false;
             }
         }
@@ -955,54 +957,88 @@ define([
          * Collaborative mode
          */
 
-        function sendControlsContextMessage(){
-            if(isCollaborativeMaster){
-                $.each(collaborativeUsers,function(key,val){
+        function sendCommands(){
+            if(App.collaborativeView.isMaster){
+                $.each(App.collaborativeView.users,function(user,val){
                     var message = {
-                        type: ChannelMessagesType.CHAT_MESSAGE,
+                        type: ChannelMessagesType.COLLABORATIVE_COMMANDS,
+                        key: App.collaborativeView.roomKey,
                         remoteUser: val,
-                        message:'/animate/'+JSON.stringify(_this.getControlsContext()),
-                        context: APP_CONFIG.workspaceId+' '+APP_CONFIG.productId,
-                        sender:APP_CONFIG.login
+                        messageBroadcast: JSON.stringify(_this.getControlsContext())
                     };
                     mainChannel.sendJSON(message);
                 });
             }
         }
 
-        this.handleInvite=function(message){
-            var room = message.message.substr(13);
-            //window.location.hash = "share-view/"+room;
-            App.router.navigate("share-view/"+room,true);
-            controlsObject.enabled = false;
-            console.log(message);
-        };
+        this.joinRoom=function(key){
 
-        this.setCollaborativeMode=function(remoteUser){
-            isCollaborativeMaster = true;
-            collaborativeUsers.push(remoteUser);
-            sendControlsContextMessage();
-        }
-
-        this.stopCollaborativeMaster=function(){
-            isCollaborativeMaster = false;
-            $.each(collaborativeUsers,function(key,val) {
-                var message = {
-                    type: ChannelMessagesType.CHAT_MESSAGE,
-                    remoteUser: val,
-                    message: "/stop",
-                    context: APP_CONFIG.workspaceId + ' ' + APP_CONFIG.productId,
-                    sender: APP_CONFIG.login
-                };
-                mainChannel.sendJSON(message);
-            });
-            collaborativeUsers=[];
+            // TODO check if setTimeout is correct
+            console.log(mainChannel.status);
+            if (mainChannel.status != ChannelStatus.OPENED){
+                console.log("******* Pas encore connecté, nouvel essai dans 500ms ********");
+                var _this = this;
+                setTimeout(function(){
+                    _this.joinRoom(key);
+                },500);
+            } else {
+                //if (!collaborativeMode){
+                    //collaborativeMode = true;
+                    controlsObject.enabled = false;
+                //this.collaborativeKey = key;
+                App.collaborativeView.setRoomKey(key);
+                    App.appView.setSpectatorView();
+                    mainChannel.sendJSON({
+                        type: ChannelMessagesType.COLLABORATIVE_JOIN,
+                        key: key,
+                        remoteUser: "null"
+                    });
+               // } else{
+                //    console.log("You are already in collaborative mode.");
+               // }
+            }
         };
 
         this.stopCollaborativeUsers=function(){
+            mainChannel.sendJSON({
+                type: ChannelMessagesType.COLLABORATIVE_EXIT,
+                key: App.collaborativeView.roomKey,
+                remoteUser: "null"
+            });
+            App.appView.leaveSpectatorView();
+            App.collaborativeView.reset();
+            controlsObject.enabled = true;
+            //this.collaborativeKey = null;
+        }
 
+        this.kickedFromCollaborative=function(){
+            App.appView.leaveSpectatorView();
+            App.collaborativeView.reset();
             controlsObject.enabled = true;
         }
+
+        this.setCollaborativeMaster=function(key){
+            //isCollaborativeMaster = true;
+            //this.collaborativeKey = key;
+            //sendControlsContextMessage();
+            App.appView.leaveSpectatorView();
+            controlsObject.enabled = true;
+        }
+
+        this.stopCollaborativeMaster=function(){
+            //isCollaborativeMaster = false;
+            //collaborativeUsers=[];
+
+            /*mainChannel.sendJSON({
+                type: ChannelMessagesType.COLLABORATIVE_KILL,
+                key: this.collaborativeKey,
+                remoteUser: "null"
+            });*/
+            //this.collaborativeKey = null;
+            App.appView.setSpectatorView();
+            controlsObject.enabled = false;
+        };
+
 
         /**
          * Scene mouse events

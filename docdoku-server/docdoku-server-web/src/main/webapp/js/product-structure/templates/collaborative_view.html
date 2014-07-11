@@ -1,0 +1,30 @@
+<div class="nav-header">Collaborative</div>
+
+<div id="collaborative_view">
+    <div> <a id="collaborative_create" href="#">Create Room</a></div>
+    <table style="margin:0 0 10px 0;">
+        <thead>
+           <tr> <th style="font-size:90%;"><span title="{{roomKey}}">Room</span> led by <em>{{master}}</em>
+
+               <a id="collaborative_invite" href="#" style="color:white;" title="Invite">(+)</a>
+               <a id="collaborative_exit" href="#" style="color:white;" title="Exit">(x)</a>
+           </th></tr>
+        </thead>
+        <tbody>
+            {{#users}}
+            <tr><td>
+                {{ . }}
+                <a class="collaborative_kick" href="#" name="{{ . }}" title="Kick {{ . }}">(x)</a>
+                <a class="collaborative_give_hand" href="#" name="{{ . }}">(give the hand)</a>
+            </td></tr>
+            {{/users}}
+
+            {{#pendingUsers}}
+            <tr><td><em>
+                {{ . }} (pending)
+                <a class="collaborative_withdraw_invitation" href="#" name="{{ . }}" title="Withdraw invitation">(x)</a>
+            </em></td></tr>
+            {{/pendingUsers}}
+        </tbody>
+    </table>
+</div>

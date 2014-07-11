@@ -20,33 +20,40 @@
 
 package com.docdoku.server.mainchannel.module;
 
-import java.io.Serializable;
 
-public class AbstractMessage implements Serializable{
-    protected String type;
-    protected String remoteUser;
 
-    public AbstractMessage(){
+public class CollaborativeMessage extends AbstractMessage{
 
+    private String key;
+    private String messageBroadcast;
+
+    public CollaborativeMessage(String type, String remoteUser) {
+        super(type,remoteUser);
     }
-    public AbstractMessage(String type, String remoteUser) {
-        this.type = type;
-        this.remoteUser = remoteUser;
+
+    public CollaborativeMessage(String type, String key, String messageBroadcast, String remoteUser) {
+        super(type,remoteUser);
+        this.messageBroadcast = messageBroadcast;
+        this.key = key;
+    }
+
+    public String getMessageBroadcast() {
+        return messageBroadcast;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public void setMessageBroadcast(String messageBroadcast) {
+        this.messageBroadcast = messageBroadcast;
     }
 
     public String getType() {
         return type;
     }
 
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getRemoteUser() {
-        return remoteUser;
-    }
-
-    public void setRemoteUser(String remoteUser) {
-        this.remoteUser = remoteUser;
+    public String getKey() {
+        return key;
     }
 }
