@@ -127,6 +127,7 @@ public class MainChannelApplication {
             }
         */
         WebRTCMessage webRTC;
+        CollaborativeRoom room;
         switch (message.getType()) {
             case ChannelMessagesType.USER_STATUS:
 
@@ -168,23 +169,30 @@ public class MainChannelApplication {
                 break;
             case ChannelMessagesType.COLLABORATIVE_INVITE:
                 CollaborativeMessage inviteMessage = (CollaborativeMessage) message;
-                CollaborativeRoomController.processInvite(session, callerLogin, inviteMessage);
+                room = CollaborativeRoom.getByKeyName(inviteMessage.getKey());
+                String invitedUser = inviteMessage.getRemoteUser();
+                String context = inviteMessage.getMessageBroadcast().getString("context");
+                CollaborativeRoomController.processInvite(callerLogin, invitedUser, room, context);
                 break;
             case ChannelMessagesType.COLLABORATIVE_JOIN:
                 CollaborativeMessage joinMessage = (CollaborativeMessage) message;
-                CollaborativeRoomController.processJoin(session, callerLogin, joinMessage);
+                room = CollaborativeRoom.getByKeyName(joinMessage.getKey());
+                CollaborativeRoomController.processJoin(session, callerLogin, room);
                 break;
             case ChannelMessagesType.COLLABORATIVE_COMMANDS:
                 CollaborativeMessage commandsMessage = (CollaborativeMessage) message;
-                CollaborativeRoomController.processCommands(session, callerLogin, commandsMessage);
+                room = CollaborativeRoom.getByKeyName(commandsMessage.getKey());
+                CollaborativeRoomController.processCommands(callerLogin, room, commandsMessage);
                 break;
             case ChannelMessagesType.COLLABORATIVE_EXIT:
                 CollaborativeMessage exitMessage = (CollaborativeMessage) message;
-                CollaborativeRoomController.processExit(session, callerLogin, exitMessage);
+                room = CollaborativeRoom.getByKeyName(exitMessage.getKey());
+                CollaborativeRoomController.processExit(session, room);
                 break;
             case ChannelMessagesType.COLLABORATIVE_KILL:
                 CollaborativeMessage killMessage = (CollaborativeMessage) message;
-                CollaborativeRoomController.processKill(session, callerLogin, killMessage);
+                room = CollaborativeRoom.getByKeyName(killMessage.getKey());
+                CollaborativeRoomController.processKill(callerLogin, room);
                 break;
             case ChannelMessagesType.COLLABORATIVE_REQUEST_HAND:
                 CollaborativeMessage requestHandMessage = (CollaborativeMessage) message;
@@ -192,15 +200,22 @@ public class MainChannelApplication {
                 break;
             case ChannelMessagesType.COLLABORATIVE_GIVE_HAND:
                 CollaborativeMessage giveHandMessage = (CollaborativeMessage) message;
-                CollaborativeRoomController.processGiveHand(session, callerLogin, giveHandMessage);
+                room = CollaborativeRoom.getByKeyName(giveHandMessage.getKey());
+                String promotedUser = giveHandMessage.getRemoteUser();
+                CollaborativeRoomController.processGiveHand(callerLogin, promotedUser, room, giveHandMessage);
                 break;
             case ChannelMessagesType.COLLABORATIVE_KICK_USER:
                 CollaborativeMessage kickUserMessage = (CollaborativeMessage) message;
-                CollaborativeRoomController.processKickUser(session, callerLogin, kickUserMessage);
+                room = CollaborativeRoom.getByKeyName(kickUserMessage.getKey());
+                String kickedUser = kickUserMessage.getRemoteUser();
+                CollaborativeRoomController.processKickUser(callerLogin, kickedUser, room, kickUserMessage);
                 break;
             case ChannelMessagesType.COLLABORATIVE_WITHDRAW_INVITATION:
                 CollaborativeMessage withdrawInvitationMessage = (CollaborativeMessage) message;
-                CollaborativeRoomController.processWithdrawInvitation(session, callerLogin, withdrawInvitationMessage);
+                room = CollaborativeRoom.getByKeyName(withdrawInvitationMessage.getKey());
+                String messageContext = withdrawInvitationMessage.getMessageBroadcast().getString("context");
+                String pendingUser = withdrawInvitationMessage.getRemoteUser();
+                CollaborativeRoomController.processWithdrawInvitation(callerLogin, pendingUser, room, messageContext);
                 break;
             default:
                 break;

@@ -962,15 +962,13 @@ define([
 
         function sendCommands(){
             if(App.collaborativeView.isMaster){
-                $.each(App.collaborativeView.users,function(user,val){
-                    var message = {
-                        type: ChannelMessagesType.COLLABORATIVE_COMMANDS,
-                        key: App.collaborativeView.roomKey,
-                        remoteUser: val,
-                        messageBroadcast: _this.getControlsContext()
-                    };
-                    mainChannel.sendJSON(message);
-                });
+                var message = {
+                    type: ChannelMessagesType.COLLABORATIVE_COMMANDS,
+                    key: App.collaborativeView.roomKey,
+                    messageBroadcast: _this.getControlsContext(),
+                    remoteUser: "null"
+                };
+                mainChannel.sendJSON(message);
             }
         }
 

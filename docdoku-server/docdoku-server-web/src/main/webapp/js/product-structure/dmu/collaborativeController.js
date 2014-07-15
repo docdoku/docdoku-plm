@@ -30,7 +30,6 @@ define(function(){
                 }
 
                 if (message.type == ChannelMessagesType.COLLABORATIVE_CONTEXT && collaborativeView.roomKey == message.key) {
-                    console.log(message.messageBroadcast);
                     collaborativeView.setMaster(message.messageBroadcast.master);
                     collaborativeView.setUsers(message.messageBroadcast.users);
                     collaborativeView.setPendingUsers(message.messageBroadcast.pendingUsers);
