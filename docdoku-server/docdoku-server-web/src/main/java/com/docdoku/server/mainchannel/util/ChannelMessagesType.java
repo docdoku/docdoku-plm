@@ -43,7 +43,6 @@ public class ChannelMessagesType {
     public static final String COLLABORATIVE_CREATE = "COLLABORATIVE_CREATE";
     public static final String COLLABORATIVE_INVITE = "COLLABORATIVE_INVITE";
     public static final String COLLABORATIVE_JOIN = "COLLABORATIVE_JOIN";
-    public static final String COLLABORATIVE_INFO = "COLLABORATIVE_INFO";
     public static final String COLLABORATIVE_CONTEXT = "COLLABORATIVE_CONTEXT";
     public static final String COLLABORATIVE_COMMANDS = "COLLABORATIVE_COMMANDS";
     public static final String COLLABORATIVE_EXIT = "COLLABORATIVE_EXIT";
@@ -51,5 +50,6 @@ public class ChannelMessagesType {
     public static final String COLLABORATIVE_REQUEST_HAND = "COLLABORATIVE_REQUEST_HAND";
     public static final String COLLABORATIVE_GIVE_HAND = "COLLABORATIVE_GIVE_HAND";
     public static final String COLLABORATIVE_KICK_USER = "COLLABORATIVE_KICK_USER";
+    public static final String COLLABORATIVE_KICK_NOT_INVITED= "COLLABORATIVE_KICK_NOT_INVITED";
     public static final String COLLABORATIVE_WITHDRAW_INVITATION = "COLLABORATIVE_WITHDRAW_INVITATION";
 }

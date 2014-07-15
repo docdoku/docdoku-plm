@@ -1,24 +1,17 @@
 define([
-    "common-objects/common/singleton_decorator",
+    "common-objects/common/singleton_decorator"
 ],
     function (
-        singletonDecorator,
-        controlModeView
+        singletonDecorator
         ) {
         var Router = Backbone.Router.extend({
             routes: {
                 "":	"defaults",
-                "room=:key":"joinCollaborative",
-                //"share-view/:uuid":"enterCollaborativeModeAsSlave"
+                "room=:key":"joinCollaborative"
             },
             defaults: function() {
 
             },
-            /*
-            enterCollaborativeModeAsSlave:function(uuid){
-                //App.sceneManager.handleCollaborative(uuid);
-                App.appView.setSpectatorView();
-            },*/
             joinCollaborative:function(key){
                 App.sceneManager.joinRoom(key);
 

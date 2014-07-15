@@ -67,22 +67,20 @@ define(    [
             onSubmit:function(e){
                 var remoteUsers = this.$("input:checked");
                 var that = this;
-                //window.location.hash = "share-view/"+THREE.Math.generateUUID();
                 //var path = document.location.href;
-                //var pathHash  = path.substring( 0 ,path.lastIndexOf( "#" ) ); // THREE.Math.generateUUID()
 
                 remoteUsers.each(function(index, element){
                     mainChannel.sendJSON({
                         type: ChannelMessagesType.COLLABORATIVE_INVITE,
                         key: that.roomKey,
-                        messageBroadcast: APP_CONFIG.workspaceId+'/'+APP_CONFIG.productId,
+                        messageBroadcast: {
+                            context:APP_CONFIG.workspaceId+'/'+APP_CONFIG.productId
+                        },
                         remoteUser: element.value
                     });
                 });
 
-
                 this.closeModal();
-                //App.sceneManager.setCollaborativeMode(remoteUser);
                 return false;
             }
 

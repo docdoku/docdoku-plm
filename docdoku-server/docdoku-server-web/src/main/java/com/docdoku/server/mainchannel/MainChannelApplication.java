@@ -174,10 +174,6 @@ public class MainChannelApplication {
                 CollaborativeMessage joinMessage = (CollaborativeMessage) message;
                 CollaborativeRoomController.processJoin(session, callerLogin, joinMessage);
                 break;
-            case ChannelMessagesType.COLLABORATIVE_INFO:
-                CollaborativeMessage infoMessage = (CollaborativeMessage) message;
-                CollaborativeRoomController.processInfo(session, callerLogin, infoMessage);
-                break;
             case ChannelMessagesType.COLLABORATIVE_COMMANDS:
                 CollaborativeMessage commandsMessage = (CollaborativeMessage) message;
                 CollaborativeRoomController.processCommands(session, callerLogin, commandsMessage);

@@ -11,7 +11,6 @@ define(    [
             events: {
                 "click a#collaborative_create" : "create",
                 "click a#collaborative_invite" : "invite",
-                "click a#collaborative_infos": "getInfos",
                 "click a.collaborative_kick": "kick",
                 "click a.collaborative_give_hand": "giveHand",
                 "click a.collaborative_withdraw_invitation": "withdrawInvitation",
@@ -60,20 +59,11 @@ define(    [
                 spmv.openModal();
             },
 
-            getInfos: function() {
-                mainChannel.sendJSON({
-                    type: ChannelMessagesType.COLLABORATIVE_INFO,
-                    key: this.roomKey,
-                    remoteUser: "null"
-                });
-            },
-
             kick: function(e){
                 mainChannel.sendJSON({
                     type: ChannelMessagesType.COLLABORATIVE_KICK_USER,
                     key: this.roomKey,
-                    remoteUser: e.currentTarget.name,
-                    messageBroadcast: "You've been kicked. Reason : Master-kick !"
+                    remoteUser: e.currentTarget.name
                 });
             },
 
@@ -82,7 +72,9 @@ define(    [
                     type: ChannelMessagesType.COLLABORATIVE_WITHDRAW_INVITATION,
                     key: this.roomKey,
                     remoteUser: e.currentTarget.name,
-                    messageBroadcast: APP_CONFIG.workspaceId+'/'+APP_CONFIG.productId
+                    messageBroadcast: {
+                        context:APP_CONFIG.workspaceId+'/'+APP_CONFIG.productId
+                    }
                 });
             },
 
@@ -90,10 +82,10 @@ define(    [
                 mainChannel.sendJSON({
                     type: ChannelMessagesType.COLLABORATIVE_GIVE_HAND,
                     key: this.roomKey,
-                    messageBroadcast:"coucou",
                     remoteUser: e.currentTarget.name
                 });
-                App.sceneManager.stopCollaborativeMaster();
+                App.sceneManager.disableControlsObject();
+                App.appView.setSpectatorView();
             },
 
             exit: function() {
@@ -104,7 +96,13 @@ define(    [
                         remoteUser: "null"
                     });
                 } else {
-                    App.sceneManager.stopCollaborativeUsers();
+                    mainChannel.sendJSON({
+                        type: ChannelMessagesType.COLLABORATIVE_EXIT,
+                        key: this.roomKey,
+                        remoteUser: "null"
+                    });
+                    App.appView.leaveSpectatorView();
+                    App.sceneManager.enableControlsObject();
                 }
                 this.reset();
             },
@@ -112,7 +110,6 @@ define(    [
             roomCreated : function(key,master){
                 this.setRoomKey(key);
                 this.setMaster(master);
-                //App.sceneManager.setCollaborativeMaster(key);
                 this.invite();
             },
 
@@ -131,7 +128,7 @@ define(    [
 
             setMaster: function(master) {
                 this.master = master;
-                this.isMaster = (this.master == APP_CONFIG.login)?true:false;
+                this.isMaster = (this.master == APP_CONFIG.login);
                 this.render();
             },
 

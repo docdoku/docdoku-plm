@@ -23,6 +23,7 @@ package com.docdoku.server.mainchannel.module;
 
 import javax.json.Json;
 import javax.json.JsonObjectBuilder;
+import javax.json.JsonValue;
 import javax.websocket.EncodeException;
 import javax.websocket.Encoder;
 import javax.websocket.EndpointConfig;
@@ -35,8 +36,12 @@ public class CollaborativeMessageEncoder implements Encoder.Text<CollaborativeMe
         JsonObjectBuilder b = Json.createObjectBuilder()
                 .add("type", collaborativeMessage.getType())
                 .add("remoteUser", collaborativeMessage.getRemoteUser())
-                .add("messageBroadcast", collaborativeMessage.getMessageBroadcast())
                 .add("key", collaborativeMessage.getKey());
+        if(collaborativeMessage.getMessageBroadcast()==null){
+            b.add("messageBroadcast", JsonValue.NULL);
+        } else {
+            b.add("messageBroadcast", collaborativeMessage.getMessageBroadcast());
+        }
         String a = b.build().toString();
         return a;
 

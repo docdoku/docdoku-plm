@@ -19,54 +19,50 @@ define(function(){
                     return;
                 }
 
-                if (message.type == ChannelMessagesType.COLLABORATIVE_INFO) {
-                    alert(message.messageBroadcast);
-                    return;
-                }
-
                 if (message.type == ChannelMessagesType.COLLABORATIVE_JOIN && collaborativeView.roomKey == message.key) {
                     collaborativeView.onCallAcceptedByRemoteUser(message);
                     mainChannel.sendJSON({
                         type: ChannelMessagesType.COLLABORATIVE_INVITE,
                         roomKey: message.roomKey,
-                        remoteUser: message.remoteUser,
-                        reason: REJECT_CALL_REASON.BUSY
+                        remoteUser: message.remoteUser
                     });
                     return;
                 }
 
                 if (message.type == ChannelMessagesType.COLLABORATIVE_CONTEXT && collaborativeView.roomKey == message.key) {
-
-                    var jsonContext = JSON.parse(message.messageBroadcast);
-                    console.log(jsonContext);
-                    collaborativeView.setMaster(jsonContext.master);
-                    collaborativeView.setUsers(jsonContext.users);
-                    collaborativeView.setPendingUsers(jsonContext.pendingUsers);
-
-                    //alert(message.messageBroadcast);
+                    console.log(message.messageBroadcast);
+                    collaborativeView.setMaster(message.messageBroadcast.master);
+                    collaborativeView.setUsers(message.messageBroadcast.users);
+                    collaborativeView.setPendingUsers(message.messageBroadcast.pendingUsers);
                     return;
                 }
 
                 if (message.type == ChannelMessagesType.COLLABORATIVE_KICK_USER && collaborativeView.roomKey == message.key) {
-                    alert(message.messageBroadcast);
-                    App.sceneManager.kickedFromCollaborative();
+                    alert("You've been kicked");
+                    App.appView.leaveSpectatorView();
+                    App.sceneManager.enableControlsObject();
+                    collaborativeView.reset();
+                    return;
+                }
+
+                if (message.type == ChannelMessagesType.COLLABORATIVE_KICK_NOT_INVITED && collaborativeView.roomKey == message.key) {
+                    alert("You are not invited to join this room.");
+                    App.appView.leaveSpectatorView();
+                    App.sceneManager.enableControlsObject();
                     collaborativeView.reset();
                     return;
                 }
 
                 if (message.type == ChannelMessagesType.COLLABORATIVE_COMMANDS && collaborativeView.roomKey == message.key) {
-                    var jsonContext = JSON.parse(message.messageBroadcast);
-                    //console.log(jsonContext);
-                    App.sceneManager.setControlsContext(jsonContext);
+                    App.sceneManager.setControlsContext(message.messageBroadcast);
                     return;
                 }
 
                 if (message.type == ChannelMessagesType.COLLABORATIVE_GIVE_HAND && collaborativeView.roomKey == message.key) {
-                    //collaborativeView.setMaster()
-                    App.sceneManager.setCollaborativeMaster();
+                    App.appView.leaveSpectatorView();
+                    App.sceneManager.enableControlsObject();
                     return;
                 }
-                //Backbone.Events.trigger('', message);
             },
 
             onStatusChanged: function (status) {
@@ -77,11 +73,6 @@ define(function(){
 
         mainChannel.addChannelListener(collaborativeListener);
     };
-
-    /*
-    CollaborativeController.prototype = {
-
-    };*/
 
     return CollaborativeController;
 });

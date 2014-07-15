@@ -199,15 +199,10 @@ define(
 
         setSpectatorView: function() {
             this.$ControlsContainer.find("button").attr("disabled","disabled");
-
         },
 
         leaveSpectatorView: function() {
-            //this.inCollaborativeMode = true;
             this.$ControlsContainer.find("button").removeAttr("disabled");
-
-            //this.$ControlsContainer.find("#collaborative_view").append('<a id="end_collaborative" href="#">Leave collaborative view</a>');
-
         },
 
         transformControlMode: function() {

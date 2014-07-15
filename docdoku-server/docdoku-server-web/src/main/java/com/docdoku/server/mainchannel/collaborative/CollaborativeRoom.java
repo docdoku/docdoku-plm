@@ -1,9 +1,6 @@
 package com.docdoku.server.mainchannel.collaborative;
 
-import javax.json.Json;
-import javax.json.JsonArray;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonObjectBuilder;
+import javax.json.*;
 import javax.websocket.Session;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -40,21 +37,10 @@ public class CollaborativeRoom {
     }
 
     public String toString() {
-        String str = "{\"master\":\"" + this.master.getUserPrincipal().getName() +
-                "\", \"users\":[";
-
-        for (Iterator<Session> iter = this.getSlaves().listIterator(); iter.hasNext(); ) {
-            Session s = iter.next();
-            str += "{\"user\":\"" +s.getUserPrincipal().getName()+ "\"},";
-        }
-        str = str.substring(0, str.length()-1);
-        str += "]}";
-
-        //str += "\n Pending Users : " + this.pendingUsers.toString();
-        return str;
+        return this.getContext().toString();
     }
 
-    public String getContext() {
+    public JsonObject getContext() {
         JsonArrayBuilder slaves = Json.createArrayBuilder();
         for (Iterator<Session> iter = this.getSlaves().listIterator(); iter.hasNext(); ) {
             Session s = iter.next();
@@ -67,12 +53,10 @@ public class CollaborativeRoom {
             pendingUsers.add(s);
         }
 
-        JsonObjectBuilder context = Json.createObjectBuilder()
+        return Json.createObjectBuilder()
                 .add("master", this.getMaster().getUserPrincipal().getName())
                 .add("users", slaves)
-                .add("pendingUsers", pendingUsers);
-        String contextString = context.build().toString();
-        return contextString;
+                .add("pendingUsers", pendingUsers).build();
     }
 
     /** Store current instance into database */

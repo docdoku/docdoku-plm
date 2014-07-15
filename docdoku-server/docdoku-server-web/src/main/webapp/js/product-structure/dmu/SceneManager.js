@@ -23,12 +23,8 @@ define([
         var selectionBox = null;
         var meshMarkedForSelection = null;
         var controlChanged = false;
-        var isCollaborativeMaster = false;
-        var collaborativeUsers = [];
         var editedMeshesDisplayed = false;
         var transformControls = null;
-        var collaborativeMode = false;
-        this.collaborativeKey = null;
 
         this.stateControl = null;
         this.STATECONTROL = { PLC: 0, TBC: 1, ORB: 2};
@@ -372,7 +368,7 @@ define([
             } else if (_this.stateControl == _this.STATECONTROL.ORB) {
                 _this.setOrbitControls();
             }
-        }
+        };
         this.deleteTransformControls = function(){
             if (transformControls != null && transformControls.enabled) {
                 _this.scene.remove(transformControls);
@@ -383,7 +379,7 @@ define([
                 _this.reDraw();
                 //meshMarkedForSelection
             }
-        }
+        };
         this.cancelTransformation = function(mesh) {
 
             new TWEEN.Tween(mesh.position)
@@ -425,7 +421,7 @@ define([
 
             _this.reDraw();
             _this.leaveTransformMode();
-        }
+        };
         /**
          * Scene options control
          */
@@ -864,7 +860,7 @@ define([
             } else {
                 return null;
             }
-        }
+        };
 
         this.transformControlsEnabled = function() {
             var enabled = false;
@@ -872,8 +868,15 @@ define([
                 enabled = true;
             }
             return enabled;
-        }
+        };
 
+        this.enableControlsObject=function(){
+            controlsObject.enabled = true;
+        };
+
+        this.disableControlsObject=function(){
+            controlsObject.enabled = false;
+        };
 
         /**
          * Scene option control
@@ -964,7 +967,7 @@ define([
                         type: ChannelMessagesType.COLLABORATIVE_COMMANDS,
                         key: App.collaborativeView.roomKey,
                         remoteUser: val,
-                        messageBroadcast: JSON.stringify(_this.getControlsContext())
+                        messageBroadcast: _this.getControlsContext()
                     };
                     mainChannel.sendJSON(message);
                 });
@@ -972,73 +975,25 @@ define([
         }
 
         this.joinRoom=function(key){
-
             // TODO check if setTimeout is correct
             console.log(mainChannel.status);
             if (mainChannel.status != ChannelStatus.OPENED){
-                console.log("******* Pas encore connecté, nouvel essai dans 500ms ********");
+                console.log("Websocket is not yet connected. Retry in 500ms.");
                 var _this = this;
                 setTimeout(function(){
                     _this.joinRoom(key);
                 },500);
             } else {
-                //if (!collaborativeMode){
-                    //collaborativeMode = true;
-                    controlsObject.enabled = false;
-                //this.collaborativeKey = key;
+                controlsObject.enabled = false;
                 App.collaborativeView.setRoomKey(key);
-                    App.appView.setSpectatorView();
-                    mainChannel.sendJSON({
-                        type: ChannelMessagesType.COLLABORATIVE_JOIN,
-                        key: key,
-                        remoteUser: "null"
-                    });
-               // } else{
-                //    console.log("You are already in collaborative mode.");
-               // }
+                App.appView.setSpectatorView();
+                mainChannel.sendJSON({
+                    type: ChannelMessagesType.COLLABORATIVE_JOIN,
+                    key: key,
+                    remoteUser: "null"
+                });
             }
         };
-
-        this.stopCollaborativeUsers=function(){
-            mainChannel.sendJSON({
-                type: ChannelMessagesType.COLLABORATIVE_EXIT,
-                key: App.collaborativeView.roomKey,
-                remoteUser: "null"
-            });
-            App.appView.leaveSpectatorView();
-            App.collaborativeView.reset();
-            controlsObject.enabled = true;
-            //this.collaborativeKey = null;
-        }
-
-        this.kickedFromCollaborative=function(){
-            App.appView.leaveSpectatorView();
-            App.collaborativeView.reset();
-            controlsObject.enabled = true;
-        }
-
-        this.setCollaborativeMaster=function(key){
-            //isCollaborativeMaster = true;
-            //this.collaborativeKey = key;
-            //sendControlsContextMessage();
-            App.appView.leaveSpectatorView();
-            controlsObject.enabled = true;
-        }
-
-        this.stopCollaborativeMaster=function(){
-            //isCollaborativeMaster = false;
-            //collaborativeUsers=[];
-
-            /*mainChannel.sendJSON({
-                type: ChannelMessagesType.COLLABORATIVE_KILL,
-                key: this.collaborativeKey,
-                remoteUser: "null"
-            });*/
-            //this.collaborativeKey = null;
-            App.appView.setSpectatorView();
-            controlsObject.enabled = false;
-        };
-
 
         /**
          * Scene mouse events

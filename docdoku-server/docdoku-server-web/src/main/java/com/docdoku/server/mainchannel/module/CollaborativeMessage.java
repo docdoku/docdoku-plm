@@ -20,24 +20,24 @@
 
 package com.docdoku.server.mainchannel.module;
 
-
+import javax.json.JsonObject;
 
 public class CollaborativeMessage extends AbstractMessage{
 
     private String key;
-    private String messageBroadcast;
+    private JsonObject messageBroadcast;
 
     public CollaborativeMessage(String type, String remoteUser) {
         super(type,remoteUser);
     }
 
-    public CollaborativeMessage(String type, String key, String messageBroadcast, String remoteUser) {
+    public CollaborativeMessage(String type, String key, JsonObject messageBroadcast, String remoteUser) {
         super(type,remoteUser);
         this.messageBroadcast = messageBroadcast;
         this.key = key;
     }
 
-    public String getMessageBroadcast() {
+    public JsonObject getMessageBroadcast() {
         return messageBroadcast;
     }
 
@@ -45,7 +45,7 @@ public class CollaborativeMessage extends AbstractMessage{
         this.key = key;
     }
 
-    public void setMessageBroadcast(String messageBroadcast) {
+    public void setMessageBroadcast(JsonObject messageBroadcast) {
         this.messageBroadcast = messageBroadcast;
     }
 
