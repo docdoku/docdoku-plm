@@ -30,6 +30,7 @@ import com.docdoku.server.mainchannel.util.Room;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.json.JsonObject;
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
@@ -165,14 +166,18 @@ public class MainChannelApplication {
                 break;
 
             case ChannelMessagesType.COLLABORATIVE_CREATE:
-                CollaborativeRoomController.processCreate(session, callerLogin);
+                CollaborativeMessage createMessage = (CollaborativeMessage) message;
+                JsonObject sceneInfos = createMessage.getMessageBroadcast();
+                CollaborativeRoomController.processCreate(session, callerLogin, sceneInfos);
                 break;
             case ChannelMessagesType.COLLABORATIVE_INVITE:
                 CollaborativeMessage inviteMessage = (CollaborativeMessage) message;
                 room = CollaborativeRoom.getByKeyName(inviteMessage.getKey());
                 String invitedUser = inviteMessage.getRemoteUser();
                 String context = inviteMessage.getMessageBroadcast().getString("context");
-                CollaborativeRoomController.processInvite(callerLogin, invitedUser, room, context);
+                if (callerIsAllowToReachCallee(callerLogin,invitedUser)) {
+                    CollaborativeRoomController.processInvite(callerLogin, invitedUser, room, context);
+                }
                 break;
             case ChannelMessagesType.COLLABORATIVE_JOIN:
                 CollaborativeMessage joinMessage = (CollaborativeMessage) message;
@@ -234,6 +239,7 @@ public class MainChannelApplication {
         if (sessionId != null && userLogin != null) {
             // find whom the session belongs
             Room.removeUserFromAllRoom(userLogin);
+            CollaborativeRoom.removeSessionFromCollaborativeRoom(session);
             // remove the session from the user hash map
             CHANNELS.get(userLogin).remove(sessionId);
         }

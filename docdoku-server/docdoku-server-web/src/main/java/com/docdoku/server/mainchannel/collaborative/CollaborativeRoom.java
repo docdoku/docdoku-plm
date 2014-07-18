@@ -18,14 +18,16 @@ public class CollaborativeRoom {
     private List<Session> slaves;
     private List<String> pendingUsers;
     private Date creationDate;
+    private JsonObject sceneInfos;
+    private String instancesId;
 
-    public CollaborativeRoom(Session master) {
+    public CollaborativeRoom(Session master, JsonObject sceneInfos) {
         this.key = UUID.randomUUID().toString();
         this.master = master;
         this.pendingUsers = new LinkedList<>();
         this.creationDate = new Date();
         this.slaves = new LinkedList<>();
-
+        this.sceneInfos = sceneInfos;
         put();
     }
 
@@ -34,6 +36,24 @@ public class CollaborativeRoom {
         if(roomKey==null)
             return null;
         return DB.get(roomKey);
+    }
+
+    public static void removeSessionFromCollaborativeRoom(Session userSession) {
+        Set<Map.Entry<String, CollaborativeRoom>> roomsEntries = new HashSet<>(DB.entrySet());
+        for (Map.Entry<String, CollaborativeRoom> entry : roomsEntries) {
+            CollaborativeRoom room = entry.getValue();
+            if (room.getSlaves().contains(userSession)){
+                CollaborativeRoomController.processExit(userSession,room);
+            }
+        }
+    }
+
+    public JsonObject getSceneInfos() {
+        return sceneInfos;
+    }
+
+    public void setSceneInfos(JsonObject sceneInfos) {
+        this.sceneInfos = sceneInfos;
     }
 
     public String toString() {
@@ -96,8 +116,8 @@ public class CollaborativeRoom {
         this.slaves.add(slave);
     }
 
-    public void removeSlave(Session slave) {
-        this.slaves.remove(slave);
+    public boolean removeSlave(Session slave) {
+        return this.slaves.remove(slave);
     }
 
     public List<String> getPendingUsers() {

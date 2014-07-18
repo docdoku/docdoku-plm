@@ -48,7 +48,11 @@ define(    [
             create : function(){
                 mainChannel.sendJSON({
                     type: ChannelMessagesType.COLLABORATIVE_CREATE,
-                    remoteUser: "null"
+                    remoteUser: "null",
+                    messageBroadcast:
+                    {
+                        contextInfos: App.sceneManager.getControlsContext()
+                    }
                 });
             },
 

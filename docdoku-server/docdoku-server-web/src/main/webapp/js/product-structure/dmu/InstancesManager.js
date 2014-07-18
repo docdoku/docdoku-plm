@@ -229,18 +229,37 @@ function (LoaderManager, async) {
                 }
             });
         };
+
         this.loadFromTree = function(component) {
             loaderIndicator.show();
 
-            $.getJSON(component.getInstancesUrl(), function (instances) {
+            if(App.collaborativeView.isMaster){
+                var message = {
+                    type: ChannelMessagesType.COLLABORATIVE_COMMANDS,
+                    key: App.collaborativeView.roomKey,
+                    messageBroadcast: {loadInfos:component.getInstancesUrl()},
+                    remoteUser: null
+                };
+                mainChannel.sendJSON(message);
+            }
+
+            this.loadFromUrl(component.getInstancesUrl());
+        };
+        this.loadFromUrl = function(url){
+            $.getJSON(url, function (instances) {
+
                 _.each(instances, function (instanceRaw) {
                     if(instancesIndexed[instanceRaw.id]){
+                        //instancesIndexed[instanceRaw.id].checked = true;
                         worker.postMessage({fn: "check", obj: instanceRaw.id});
                         return ;
                     }else{
                         instanceRaw.matrix = adaptMatrix(instanceRaw.matrix);
                     }
+                    //var obj = [ {a:2,B:3},{a:222,B:3}]
+                    //_(obj).pluck('a')
                     instancesIndexed[instanceRaw.id]=instanceRaw;
+                    //instancesIndexed[instanceRaw.id].checked = true;
                     /*
                      * Init the mesh with empty geometry
                      * */
@@ -275,9 +294,22 @@ function (LoaderManager, async) {
             });
         };
         this.unLoadFromTree = function(component) {
-            $.getJSON(component.getInstancesUrl(), function (instances) {
+            if(App.collaborativeView.isMaster){
+                var message = {
+                    type: ChannelMessagesType.COLLABORATIVE_COMMANDS,
+                    key: App.collaborativeView.roomKey,
+                    messageBroadcast: {unloadInfos:component.getInstancesUrl()},
+                    remoteUser: "null"
+                };
+                mainChannel.sendJSON(message);
+            }
+
+            this.unloadFromUrl(component.getInstancesUrl());
+        };
+        this.unloadFromUrl = function(url) {
+            $.getJSON(url, function (instances) {
                 _.each(instances, function (instanceRaw) {
-                    instanceRaw.checked = false;
+                    //instanceRaw.checked = false;
                     _this.trashInstances.push(instanceRaw);
                     worker.postMessage({fn: "unCheck", obj: instanceRaw.id});
                 });

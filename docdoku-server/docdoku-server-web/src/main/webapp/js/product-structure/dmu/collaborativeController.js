@@ -53,7 +53,13 @@ define(function(){
                 }
 
                 if (message.type == ChannelMessagesType.COLLABORATIVE_COMMANDS && collaborativeView.roomKey == message.key) {
-                    App.sceneManager.setControlsContext(message.messageBroadcast);
+                    if(message.messageBroadcast.loadInfos){
+                        App.instancesManager.loadFromUrl(message.messageBroadcast.loadInfos);
+                    } else if(message.messageBroadcast.unloadInfos) {
+                        App.instancesManager.unloadFromUrl(message.messageBroadcast.unloadInfos);
+                    } else if(message.messageBroadcast.contextInfos) {
+                        App.sceneManager.setControlsContext(message.messageBroadcast.contextInfos);
+                    }
                     return;
                 }
 

@@ -965,7 +965,9 @@ define([
                 var message = {
                     type: ChannelMessagesType.COLLABORATIVE_COMMANDS,
                     key: App.collaborativeView.roomKey,
-                    messageBroadcast: _this.getControlsContext(),
+                    messageBroadcast: {
+                        contextInfos: _this.getControlsContext()
+                    },
                     remoteUser: "null"
                 };
                 mainChannel.sendJSON(message);
@@ -974,7 +976,21 @@ define([
 
         this.joinRoom=function(key){
             // TODO check if setTimeout is correct
-            console.log(mainChannel.status);
+            //console.log(mainChannel.status);
+           // $.getJSON(url,function(instances){
+
+                // stock instances in indexedInstances unchecked
+                // send to worker unchecked
+
+                // Join the room
+
+
+
+             //listen server instances id loaded
+                // => send worker check
+           // });
+
+
             if (mainChannel.status != ChannelStatus.OPENED){
                 console.log("Websocket is not yet connected. Retry in 500ms.");
                 var _this = this;

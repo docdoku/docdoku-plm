@@ -4,6 +4,8 @@ import com.docdoku.server.mainchannel.MainChannelDispatcher;
 import com.docdoku.server.mainchannel.module.ChatMessage;
 import com.docdoku.server.mainchannel.module.CollaborativeMessage;
 import com.docdoku.server.mainchannel.util.ChannelMessagesType;
+
+import javax.json.JsonObject;
 import javax.websocket.Session;
 /**
  * Created by docdoku on 30/06/14.
@@ -21,26 +23,34 @@ public class CollaborativeRoomController {
         }
     }
 
-    public static void processCreate(Session session, String callerLogin){
-        CollaborativeRoom room = new CollaborativeRoom(session);
+    public static void processCreate(Session session, String callerLogin, JsonObject contextInfos){
+        CollaborativeRoom room = new CollaborativeRoom(session, contextInfos);
         CollaborativeMessage message = new CollaborativeMessage(ChannelMessagesType.COLLABORATIVE_CREATE,room.getKey(),null,callerLogin);
         MainChannelDispatcher.send(session, message);
     }
 
     public static void processInvite(String callerLogin, String invitedUser, CollaborativeRoom room, String context){
-        // if the master sent the invitation
         if (room.getMaster().getUserPrincipal().toString().equals(callerLogin)){
-            //TODO : check if the user exists and has access to this workspace
-            room.addPendingUser(invitedUser);
-            // Chat message
-            ChatMessage chatMessage = new ChatMessage(ChannelMessagesType.CHAT_MESSAGE,invitedUser);
-            String url = "Vous êtes invités à rejoindre une salle collaborative : http://localhost:8080/product-structure/" + context + "#room=" + room.getKey();
-            chatMessage.setMessage(url);
-            chatMessage.setContext(context);
-            chatMessage.setSender(callerLogin);
-            MainChannelDispatcher.sendToAllUserChannels(invitedUser,chatMessage);
+            // the master sent the invitation
 
-            CollaborativeRoomController.broadcastNewContext(room);
+            if (room.findUserSession(invitedUser)==null) {
+                // the user is not already in the room
+                if (!room.getPendingUsers().contains(invitedUser)) {
+                    // the user is not yet in the pending list, add him.
+                    room.addPendingUser(invitedUser);
+                }
+                // Chat message
+                ChatMessage chatMessage = new ChatMessage(ChannelMessagesType.CHAT_MESSAGE,invitedUser);
+                String url = "Vous êtes invités à rejoindre une salle collaborative : http://localhost:8080/product-structure/" + context + "#room=" + room.getKey();
+                chatMessage.setMessage(url);
+                chatMessage.setContext(context);
+                chatMessage.setSender(callerLogin);
+                MainChannelDispatcher.sendToAllUserChannels(invitedUser,chatMessage);
+
+                CollaborativeRoomController.broadcastNewContext(room);
+            } else {
+                System.out.println("Invite not allowed for '"+invitedUser+"'.");
+            }
         }
 
     }
@@ -48,7 +58,7 @@ public class CollaborativeRoomController {
     public static void processJoin(Session callerSession, String callerLogin, CollaborativeRoom room){
         if (room == null){
             System.out.println("Room not found");
-            //TODO : Il vaudrait peut-être mieux ne pas appeler les process si la room n'est pas trouvée.
+            //TODO : faire le test en amont?
             return;
         }
         // if the user is not in the pending list reject him
@@ -59,12 +69,16 @@ public class CollaborativeRoomController {
         } else {
             room.addSlave(callerSession);
             CollaborativeRoomController.broadcastNewContext(room);
+            // send the last context scene
+            CollaborativeMessage message = new CollaborativeMessage(ChannelMessagesType.COLLABORATIVE_COMMANDS,room.getKey(),room.getSceneInfos(),callerLogin);
+            MainChannelDispatcher.send(callerSession, message);
         }
     }
 
     public static void processCommands(String callerLogin, CollaborativeRoom room, CollaborativeMessage collaborativeMessage){
         // if the master sent the invitation
         if (room.getMaster().getUserPrincipal().toString().equals(callerLogin)) {
+            room.setSceneInfos(collaborativeMessage.getMessageBroadcast());
             for (Session slave : room.getSlaves()) {
                 MainChannelDispatcher.send(slave, collaborativeMessage);
             }
@@ -73,6 +87,10 @@ public class CollaborativeRoomController {
 
     public static void processExit(Session session, CollaborativeRoom room){
         room.getSlaves().remove(session);
+        // if the user is not yet in the pending list
+        if (!room.getPendingUsers().contains(session.getUserPrincipal().getName())) {
+            room.addPendingUser(session.getUserPrincipal().getName());
+        }
 
         CollaborativeRoomController.broadcastNewContext(room);
     }
@@ -101,22 +119,25 @@ public class CollaborativeRoomController {
         if (room.getMaster().getUserPrincipal().toString().equals(callerLogin)) {
             room.addSlave(room.getMaster());
             Session userSession = room.findUserSession(promotedUser);
-            room.removeSlave(userSession);
-            room.setMaster(userSession);
-            MainChannelDispatcher.send(room.getMaster(), collaborativeMessage);
+            if(room.removeSlave(userSession)){
+                room.setMaster(userSession);
+                MainChannelDispatcher.send(room.getMaster(), collaborativeMessage);
 
-            CollaborativeRoomController.broadcastNewContext(room);
+                CollaborativeRoomController.broadcastNewContext(room);
+            }
         }
     }
     public static void processKickUser(String callerLogin, String kickedUser, CollaborativeRoom room, CollaborativeMessage collaborativeMessage){
         // if the master sent the invitation
         if (room.getMaster().getUserPrincipal().toString().equals(callerLogin)) {
-            // TODO : we can have multiple sessions for one UserName ! Kick them all or specify the session to kick ?
             Session userSession = room.findUserSession(kickedUser);
-            room.removeSlave(userSession);
-            MainChannelDispatcher.send(userSession, collaborativeMessage);
+            if(room.removeSlave(userSession)) {
+                MainChannelDispatcher.send(userSession, collaborativeMessage);
 
-            CollaborativeRoomController.broadcastNewContext(room);
+                CollaborativeRoomController.broadcastNewContext(room);
+            } else {
+                System.out.println("Error : can't remove the user "+kickedUser);
+            }
         }
     }
     public static void processWithdrawInvitation(String callerLogin, String pendingUser, CollaborativeRoom room, String context){
