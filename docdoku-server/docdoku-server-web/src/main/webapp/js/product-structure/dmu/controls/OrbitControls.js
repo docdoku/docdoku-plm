@@ -111,46 +111,6 @@ THREE.OrbitControls = function (object, domElement) {
 
     }
 
-    function onMouseDown(event) {
-
-        if (scope.enabled === false) { return;}
-        event.preventDefault();
-
-        if (event.button === 0) {
-            if (scope.noRotate === true) {
-                return;
-            }
-
-            state = STATE.ROTATE;
-
-            rotateStart.set(event.clientX, event.clientY);
-
-        } else if (event.button === 1) {
-            if (scope.noZoom === true) {
-                return;
-            }
-
-            state = STATE.DOLLY;
-
-            dollyStart.set(event.clientX, event.clientY);
-
-        } else if (event.button === 2) {
-            if (scope.noPan === true) {
-                return;
-            }
-
-            state = STATE.PAN;
-
-            panStart.set(event.clientX, event.clientY);
-
-        }
-
-        // Greggman fix: https://github.com/greggman/three.js/commit/fde9f9917d6d8381f06bf22cdff766029d1761be
-        scope.domElement.addEventListener('mousemove', onMouseMove, false);
-        scope.domElement.addEventListener('mouseup', onMouseUp, false);
-
-    }
-
     function onMouseMove(event) {
 
         if (scope.enabled === false) { return;}
@@ -219,6 +179,46 @@ THREE.OrbitControls = function (object, domElement) {
         scope.domElement.removeEventListener('mouseup', onMouseUp, false);
 
         state = STATE.NONE;
+
+    }
+
+    function onMouseDown(event) {
+
+        if (scope.enabled === false) { return;}
+        event.preventDefault();
+
+        if (event.button === 0) {
+            if (scope.noRotate === true) {
+                return;
+            }
+
+            state = STATE.ROTATE;
+
+            rotateStart.set(event.clientX, event.clientY);
+
+        } else if (event.button === 1) {
+            if (scope.noZoom === true) {
+                return;
+            }
+
+            state = STATE.DOLLY;
+
+            dollyStart.set(event.clientX, event.clientY);
+
+        } else if (event.button === 2) {
+            if (scope.noPan === true) {
+                return;
+            }
+
+            state = STATE.PAN;
+
+            panStart.set(event.clientX, event.clientY);
+
+        }
+
+        // Greggman fix: https://github.com/greggman/three.js/commit/fde9f9917d6d8381f06bf22cdff766029d1761be
+        scope.domElement.addEventListener('mousemove', onMouseMove, false);
+        scope.domElement.addEventListener('mouseup', onMouseUp, false);
 
     }
 

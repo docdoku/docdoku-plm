@@ -27,10 +27,6 @@ function (date, i18n) {
             return !_.isNull(this.attributes.checkOutDate);
         },
 
-        getId: function(){
-            return getNumber()+"-"+getVersion()+"-"+getIteration();
-        },
-
         getCheckoutUser: function() {
             return this.get('checkOutUser');
         },
@@ -108,6 +104,10 @@ function (date, i18n) {
 
         getIteration: function() {
             return this.get('iteration') != 0 ?  this.get('iteration') : null;
+        },
+
+        getId: function(){
+            return getNumber()+"-"+getVersion()+"-"+getIteration();
         },
 
         isStandardPart: function() {

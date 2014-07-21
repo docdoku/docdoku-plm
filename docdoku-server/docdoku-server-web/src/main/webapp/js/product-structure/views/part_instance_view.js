@@ -1,3 +1,4 @@
+/*global App*/
 define (["text!templates/part_instance.html","i18n!localization/nls/product-structure-strings"],function(template,i18n) {
     var PartMetadataView = Backbone.View.extend({
 

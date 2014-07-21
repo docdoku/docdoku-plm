@@ -1,3 +1,4 @@
+/*global mainChannel,ChannelMessagesType*/
 define(    [
         "common-objects/collections/users",
         "text!templates/select_participant_modal.html",

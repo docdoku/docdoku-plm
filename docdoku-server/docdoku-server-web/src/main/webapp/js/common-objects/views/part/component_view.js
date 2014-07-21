@@ -1,3 +1,4 @@
+/*global App,ChannelMessagesType */
 define(  [
     "text!common-objects/templates/part/component_view.html",
     "common-objects/views/part/cad_instance_view",

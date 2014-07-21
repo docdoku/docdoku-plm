@@ -1,4 +1,4 @@
-/*global self*/
+/*global self,InstancesSorter,DegradationLevelBalancer*/
 importScripts(
     "/js/lib/underscore-1.4.2.min.js",
     "/js/lib/visualization/three.min.js",

@@ -1,4 +1,4 @@
-/*global sceneManager*/
+/*global App*/
 define(
     [
         "text!templates/shortcuts.html",

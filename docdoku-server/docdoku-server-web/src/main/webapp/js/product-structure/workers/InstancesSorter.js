@@ -1,3 +1,4 @@
+/*global WorkerManagedValues,Context*/
 var InstancesSorter = {};
 
 (function (IS) {

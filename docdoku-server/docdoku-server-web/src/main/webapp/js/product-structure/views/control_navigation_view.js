@@ -1,3 +1,4 @@
+/*global App*/
 define (
     [
         "text!templates/control_navigation.html",

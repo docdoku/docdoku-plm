@@ -1,3 +1,4 @@
+/*global debug,WorkerManagedValues*/
 var DegradationLevelBalancer = {};
 
 // Restrict the number of qualities asked to ADS
@@ -50,7 +51,7 @@ var availableLevels  = [0, 1];
         var explodedShortenList = splitArrayIntoArrays(shortenList,availableLevels.length);
 
         function getBestQuality(instance, i) {
-                while(instance.qualities[i] === undefined && i > 0){i--}
+                while(instance.qualities[i] === undefined && i > 0){i--;}
                 return i;
         }
 
