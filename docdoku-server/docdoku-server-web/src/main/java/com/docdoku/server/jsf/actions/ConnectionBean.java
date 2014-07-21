@@ -60,7 +60,7 @@ public class ConnectionBean {
         session.removeAttribute("regularWorkspaces");
         session.removeAttribute("isSuperAdmin");
         request.logout();
-        return "/admin/logout.xhtml";
+        return "/login.xhtml";
     }
 
     public void logIn() throws ServletException, AccountNotFoundException, IOException {
