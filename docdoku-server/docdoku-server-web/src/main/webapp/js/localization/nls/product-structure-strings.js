@@ -5,7 +5,7 @@ define({
         NO_LAYERS: "No layers",
         SAVE: "Save",
         CANCEL: "Cancel",
-        CLOSE: "Fermer",
+        CLOSE: "Close",
         PART_NUMBER: "Part Number",
         PART_NAME: "Part Name",
         VERSION: "Version",
