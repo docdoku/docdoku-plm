@@ -61,6 +61,7 @@ define({
         "QUICK_SEARCH":                 "Quick search",
         "REFERENCE":                    "Reference",
         "RELEASE":                      "Release",
+        "RELEASE_SELECTION_?":          "Release selection?",
         "RELEASED":                     "Released",
         "ROOT_PART":                    "Root part",
         "SAVE":                         "Save",

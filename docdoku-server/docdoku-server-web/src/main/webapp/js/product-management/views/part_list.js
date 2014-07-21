@@ -156,11 +156,11 @@ define([
             this.trigger("checkout-group:display",false);
             this.trigger("acl-edit-button:display",false);
             this.trigger("new-version-button:display",false);
-            this.trigger("release-button:display",false);
+            this.trigger("release-button:display",this.isSelectedPartsReleasable());
         },
 
         deleteSelectedParts:function(){
-            var that = this ;
+            var that = this;
             if(confirm(i18n["DELETE_SELECTION_?"])){
                 _(this.listItemViews).each(function(view){
                     if(view.isChecked()){
@@ -176,6 +176,16 @@ define([
             }
         },
 
+        releaseSelectedParts:function(){
+            if(confirm(i18n["RELEASE_SELECTION_?"])){
+                _(this.listItemViews).each(function(view){
+                    if(view.isChecked()){
+                        view.model.release();
+                    }
+                });
+            }
+        },
+
         getSelectedPart:function(){
             var checkedView = _(this.listItemViews).select(function(itemView){
                 return itemView.isChecked();
@@ -186,9 +196,21 @@ define([
             }
             return null;
         },
+
+        isSelectedPartsReleasable:function(){
+            var isPartReleasable = true;
+            _(this.listItemViews).each(function(view){
+                if(view.isChecked() && (view.model.isCheckout() || view.model.isReleased())){
+                    isPartReleasable = false;
+                }
+            });
+            return isPartReleasable;
+        },
+
         redraw:function(){
             this.dataTable();
         },
+
         dataTable:function(){
             var oldSort = [[0,"asc"]];
             if(this.oTable){
