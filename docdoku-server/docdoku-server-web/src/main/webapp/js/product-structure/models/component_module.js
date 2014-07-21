@@ -23,6 +23,10 @@ function (date, i18n) {
             checkOutUser: null
         },
 
+        getId: function(){
+            return this.getNumber()+"-"+this.getVersion()+"-"+this.getIteration();
+        },
+
         isCheckout: function() {
             return !_.isNull(this.attributes.checkOutDate);
         },
@@ -104,10 +108,6 @@ function (date, i18n) {
 
         getIteration: function() {
             return this.get('iteration') != 0 ?  this.get('iteration') : null;
-        },
-
-        getId: function(){
-            return getNumber()+"-"+getVersion()+"-"+getIteration();
         },
 
         isStandardPart: function() {

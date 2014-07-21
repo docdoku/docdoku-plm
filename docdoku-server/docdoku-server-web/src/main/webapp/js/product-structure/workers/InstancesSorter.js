@@ -1,4 +1,4 @@
-/*global WorkerManagedValues,Context*/
+/*global WorkerManagedValues,Context,debug*/
 var InstancesSorter = {};
 
 (function (IS) {
@@ -124,11 +124,11 @@ var InstancesSorter = {};
 
         result.sortedInstances = sortedInstances;
 
-        if(debug){console.log("[InstancesSorter] " + JSON.stringify(result))}
+        if(debug){console.log("[InstancesSorter] " + JSON.stringify(result));}
 
         return result;
 
-    }
+    };
 
 
 })(InstancesSorter);

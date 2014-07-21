@@ -1,4 +1,4 @@
-/*global App,Instance,requestAnimationFrame,TWEEN*/
+/*global App,Instance,requestAnimationFrame,TWEEN,ChannelMessagesType,mainChannel,ChannelStatus*/
 define([
     "views/marker_create_modal_view",
     "views/blocker_view",
@@ -353,16 +353,6 @@ define([
         /**
          * Scene mouse events
          */
-        function bindMouseAndKeyEvents() {
-            _this.$container[0].addEventListener('mousedown', onMouseDown, false);
-            _this.$container[0].addEventListener('mouseup', onMouseUp, false);
-            _this.$container[0].addEventListener('mouseover', onMouseEnter, false);
-            _this.$container[0].addEventListener('mouseout', onMouseLeave, false);
-            _this.$container[0].addEventListener('keydown', onKeyDown, false);
-            _this.$container[0].addEventListener('keyup', onKeyUp, false);
-            _this.$container[0].addEventListener('mousemove', onSceneMouseMove, false);
-            _this.$container[0].addEventListener('mousewheel', onSceneMouseWheel, false);
-        }
         function onMouseEnter() {}
         function onMouseLeave() {
             isMoving = false;
@@ -430,10 +420,40 @@ define([
 
             _this.reDraw();
         }
+        function bindMouseAndKeyEvents() {
+            _this.$container[0].addEventListener('mousedown', onMouseDown, false);
+            _this.$container[0].addEventListener('mouseup', onMouseUp, false);
+            _this.$container[0].addEventListener('mouseover', onMouseEnter, false);
+            _this.$container[0].addEventListener('mouseout', onMouseLeave, false);
+            _this.$container[0].addEventListener('keydown', onKeyDown, false);
+            _this.$container[0].addEventListener('keyup', onKeyUp, false);
+            _this.$container[0].addEventListener('mousemove', onSceneMouseMove, false);
+            _this.$container[0].addEventListener('mousewheel', onSceneMouseWheel, false);
+        }
 
         /**
          * Meshes
          */
+        function createMeshFromLoadedStuff(stuff, matrix){
+            var mesh = new THREE.Mesh(stuff.geometry,stuff.materials);
+            mesh.uuid = stuff.id;
+            mesh.partIterationId = stuff.partIterationId;
+            mesh.geometry.verticesNeedUpdate=true;
+            mesh.applyMatrix(matrix);
+            mesh.initialPosition = {x:mesh.position.x,y:mesh.position.y,z:mesh.position.z};
+            mesh.initialRotation = {x:mesh.rotation.x,y:mesh.rotation.y,z:mesh.rotation.z};
+            mesh.initialScale = {x:mesh.scale.x,y:mesh.scale.y,z:mesh.scale.z};
+            var positionMeshEdited = $.inArray(mesh, _this.meshesEdited);
+            if (positionMeshEdited != -1) {
+                meshEdited = _this.meshesEdited[positionMeshEdited];
+                mesh.position = {x:meshEdited.position.x,y:meshEdited.position.y,z:meshEdited.position.z};
+                mesh.rotation = {x:meshEdited.rotation.x,y:meshEdited.rotation.y,z:meshEdited.rotation.z};
+                mesh.scale = {x:meshEdited.scale.x,y:meshEdited.scale.y,z:meshEdited.scale.z};
+                console.log("restauration de la position de l'instance transformée.");
+                console.log(this.mesh);
+            }
+            return mesh;
+        }
         function removeMesh(meshId){
             var mesh = meshesIndexed[meshId];
             delete meshesIndexed[meshId];
@@ -481,28 +501,6 @@ define([
                 _this.reDraw();
             });
         }
-
-        function createMeshFromLoadedStuff(stuff, matrix){
-            var mesh = new THREE.Mesh(stuff.geometry,stuff.materials);
-            mesh.uuid = stuff.id;
-            mesh.partIterationId = stuff.partIterationId;
-            mesh.geometry.verticesNeedUpdate=true;
-            mesh.applyMatrix(matrix);
-            mesh.initialPosition = {x:mesh.position.x,y:mesh.position.y,z:mesh.position.z};
-            mesh.initialRotation = {x:mesh.rotation.x,y:mesh.rotation.y,z:mesh.rotation.z};
-            mesh.initialScale = {x:mesh.scale.x,y:mesh.scale.y,z:mesh.scale.z};
-            var positionMeshEdited = $.inArray(mesh, _this.meshesEdited);
-            if (positionMeshEdited != -1) {
-                meshEdited = this.meshesEdited[positionMeshEdited];
-                mesh.position = {x:meshEdited.position.x,y:meshEdited.position.y,z:meshEdited.position.z};
-                mesh.rotation = {x:meshEdited.rotation.x,y:meshEdited.rotation.y,z:meshEdited.rotation.z};
-                mesh.scale = {x:meshEdited.scale.x,y:meshEdited.scale.y,z:meshEdited.scale.z};
-                console.log("restauration de la position de l'instance transformée.");
-                console.log(this.mesh);
-            }
-            return mesh;
-        }
-
         /**
          *  Animation
          */
@@ -581,6 +579,23 @@ define([
     }
 
         /**
+         * Colaborative Mode
+         */
+        function sendCommands(){
+            if(App.collaborativeView.isMaster){
+                var message = {
+                    type: ChannelMessagesType.COLLABORATIVE_COMMANDS,
+                    key: App.collaborativeView.roomKey,
+                    messageBroadcast: {
+                        contextInfos: _this.getControlsContext()
+                    },
+                    remoteUser: "null"
+                };
+                mainChannel.sendJSON(message);
+            }
+        }
+
+        /**
          * Animation loop :
          *  Update controls, scene objects and animations
          *  Render at the end
@@ -619,22 +634,7 @@ define([
             }
         }
 
-        /**
-         * Colaborative Mode
-         */
-        function sendCommands(){
-            if(App.collaborativeView.isMaster){
-                var message = {
-                    type: ChannelMessagesType.COLLABORATIVE_COMMANDS,
-                    key: App.collaborativeView.roomKey,
-                    messageBroadcast: {
-                        contextInfos: _this.getControlsContext()
-                    },
-                    remoteUser: "null"
-                };
-                mainChannel.sendJSON(message);
-            }
-        }
+
 
 
         this.init = function (){

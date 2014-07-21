@@ -113,7 +113,7 @@ THREE.OrbitControls = function (object, domElement) {
 
     function onMouseMove(event) {
 
-        if (scope.enabled === false) { return;}
+        if (scope.enabled === false) { return null;}
 
         event.preventDefault();
 
@@ -121,7 +121,7 @@ THREE.OrbitControls = function (object, domElement) {
 
         if (state === STATE.ROTATE) {
 
-            if (scope.noRotate === true) return;
+            if (scope.noRotate === true) return null;
 
             rotateEnd.set(event.clientX, event.clientY);
             rotateDelta.subVectors(rotateEnd, rotateStart);
@@ -135,7 +135,7 @@ THREE.OrbitControls = function (object, domElement) {
 
         } else if (state === STATE.DOLLY) {
 
-            if (scope.noZoom === true) return;
+            if (scope.noZoom === true) return null;
 
             dollyEnd.set(event.clientX, event.clientY);
             dollyDelta.subVectors(dollyEnd, dollyStart);
@@ -672,7 +672,7 @@ THREE.OrbitControls = function (object, domElement) {
 
     this.setTarget = function(target) {
         scope.target.copy(target);
-    }
+    };
 
 };
 
