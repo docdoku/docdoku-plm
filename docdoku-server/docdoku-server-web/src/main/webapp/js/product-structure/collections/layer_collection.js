@@ -1,5 +1,4 @@
-/*global sceneManager*/
-
+/*global App*/
 define([
     "models/layer"
 ], function (

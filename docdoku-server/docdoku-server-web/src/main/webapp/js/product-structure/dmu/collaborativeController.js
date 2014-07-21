@@ -1,3 +1,4 @@
+/*global App,ChannelListener,ChannelMessagesType,mainChannel*/
 define(function(){
 
     function CollaborativeController () {
@@ -67,7 +68,6 @@ define(function(){
                 if (message.type == ChannelMessagesType.COLLABORATIVE_GIVE_HAND && collaborativeView.roomKey == message.key) {
                     App.appView.leaveSpectatorView();
                     App.sceneManager.enableControlsObject();
-                    return;
                 }
             },
 
@@ -78,7 +78,7 @@ define(function(){
         });
 
         mainChannel.addChannelListener(collaborativeListener);
-    };
+    }
 
     return CollaborativeController;
 });

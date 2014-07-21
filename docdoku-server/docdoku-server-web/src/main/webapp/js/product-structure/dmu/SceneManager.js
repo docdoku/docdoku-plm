@@ -1,4 +1,4 @@
-/*global App,Instance,requestAnimationFrame*/
+/*global App,Instance,requestAnimationFrame,TWEEN*/
 define([
     "views/marker_create_modal_view",
     "views/blocker_view",
@@ -46,7 +46,7 @@ define([
 
         function initDOM() {
             _this.$container = $('div#container');
-            _this.$container[0].setAttribute( 'tabindex', -1);
+            _this.$container[0].setAttribute( 'tabindex', "-1");
             _this.$sceneContainer = $("#scene_container");
             _this.$blocker = new BlockerView().render().$el;
             _this.$container.append(_this.$blocker);
@@ -135,21 +135,6 @@ define([
         /**
          * Controls management
          */
-        function initControls() {
-            createPointerLockControls();
-            createTrackBallControls();
-            createOrbitControls();
-        }
-        function pointerLockChange(){
-            _this.pointerLockControls.enabled = !_this.pointerLockControls.enabled;
-            if (_this.pointerLockControls.enabled) {
-                _this.$blocker.hide();
-                _this.pointerLockControls.bindEvents();
-            }else{
-                _this.$blocker.show();
-                _this.pointerLockControls.unbindEvents();
-            }
-        }
         function createPointerLockControls() {
             _this.pointerLockCamera = new THREE.PerspectiveCamera(45, _this.$container.width() / _this.$container.height(), App.SceneOptions.cameraNear, App.SceneOptions.cameraFar);
             _this.pointerLockControls = new THREE.PointerLockControls(_this.pointerLockCamera);
@@ -168,6 +153,22 @@ define([
             _this.trackBallControls = new THREE.TrackballControls(_this.trackBallCamera, _this.$container[0]);
             _this.trackBallControls.keys = [ 65 /*A*/, 83 /*S*/, 68 /*D*/ ];
         }
+        function initControls() {
+            createPointerLockControls();
+            createTrackBallControls();
+            createOrbitControls();
+        }
+        function pointerLockChange(){
+            _this.pointerLockControls.enabled = !_this.pointerLockControls.enabled;
+            if (_this.pointerLockControls.enabled) {
+                _this.$blocker.hide();
+                _this.pointerLockControls.bindEvents();
+            }else{
+                _this.$blocker.show();
+                _this.pointerLockControls.unbindEvents();
+            }
+        }
+
         function createTransformControls() {
             transformControls = new THREE.TransformControls(_this.$container[0]);
 
@@ -194,6 +195,20 @@ define([
             });*/
            transformControls.addEventListener('change',_this.reDraw);
         }
+
+        function onFullScreenChange(){
+            if (document.fullscreenElement === _this.$container[0] ||
+                document.mozFullscreenElement === _this.$container[0] ||
+                document.webkitFullScreenElement === _this.$container[0]) {
+
+                document.removeEventListener('fullscreenchange', onFullScreenChange);
+                document.removeEventListener('mozfullscreenchange', onFullScreenChange);
+                document.removeEventListener('webkitfullscreenchange', onFullScreenChange);
+
+                _this.$container[0].requestPointerLock();
+            }
+        }
+
         function bindPointerLock(){
             if (_this.stateControl != _this.STATECONTROL.PLC || _this.pointerLockControls.enabled) {
                 return;
@@ -245,6 +260,7 @@ define([
 
             _this.deleteTransformControls();
         }
+
         // example arg : _this.pointerLockControls,_this.pointerLockCamera
         function updateControlsContext(controls,camera){
 
@@ -435,18 +451,7 @@ define([
             //console.log(controlsObject.getCamUp());
             _this.reDraw();
         }
-        function onFullScreenChange(){
-            if (document.fullscreenElement === _this.$container[0] ||
-                document.mozFullscreenElement === _this.$container[0] ||
-                document.webkitFullScreenElement === _this.$container[0]) {
 
-                document.removeEventListener('fullscreenchange', onFullScreenChange);
-                document.removeEventListener('mozfullscreenchange', onFullScreenChange);
-                document.removeEventListener('webkitfullscreenchange', onFullScreenChange);
-
-                _this.$container[0].requestPointerLock();
-            }
-        }
         function applyWireFrame(mesh) {
             mesh.material.wireframe = wireframe;
             if ((mesh.material.materials)) {
@@ -944,12 +949,13 @@ define([
         };
         this.showEditedMeshes = function(display) {
             editedMeshesDisplayed = display;
+            var i;
             if (editedMeshesDisplayed) {
-                for (var i = 0; i < this.meshesEdited.length; i++) {
+                for (i = 0; i < this.meshesEdited.length; i++) {
                     _this.meshesEdited[i].material = new THREE.MeshPhongMaterial({ transparent: false, color: new THREE.Color(0x08B000) });
                 }
             } else {
-                for (var i = 0; i < this.meshesEdited.length; i++) {
+                for (i = 0; i < this.meshesEdited.length; i++) {
                     _this.meshesEdited[i].material = new THREE.MeshPhongMaterial( { transparent:true, color: new THREE.Color(0xbbbbbb) } );
                 }
             }

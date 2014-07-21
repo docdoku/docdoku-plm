@@ -1,4 +1,4 @@
-/*global App*/
+/*global App,ChannelMessagesType,mainChannel*/
 
 define(["dmu/LoaderManager","lib/async"],
 function (LoaderManager, async) {
@@ -19,18 +19,6 @@ function (LoaderManager, async) {
      * */
     var InstancesManager = function () {
         var _this = this;
-        var worker = new Worker("/js/product-structure/workers/InstancesWorker.js");
-        worker.addEventListener("message", function (message) {
-            if (typeof  workerMessages[message.data.fn] == "function") {
-                workerMessages[message.data.fn](message.data.obj);
-            } else {
-                if(App.debug){
-                    console.log("[InstancesManager] Unrecognized command  : ");
-                    console.log(message.data);
-                }
-            }
-        }, false);
-
 
         this.trashInstances = [];                                                                                       // Index instances for removal
         this.xhrQueue=null;
@@ -73,17 +61,17 @@ function (LoaderManager, async) {
             }
         };
 
-        this.xhrQueue=async.queue(loadProcess,4);
-        this.xhrQueue.drain = function () {
-            if(App.debug){console.log('[InstancesManager] All items have been processed');}
-            currentDirectivesCount=0;
-        };
-        this.xhrQueue.empty = function () {
-            if(App.debug){console.log('[InstancesManager] Queue is empty');}
-        };
-        this.xhrQueue.saturated = function () {
-            if(App.debug){console.log('[InstancesManager] Queue is saturated');}
-        };
+        var worker = new Worker("/js/product-structure/workers/InstancesWorker.js");
+        worker.addEventListener("message", function (message) {
+            if (typeof  workerMessages[message.data.fn] == "function") {
+                workerMessages[message.data.fn](message.data.obj);
+            } else {
+                if(App.debug){
+                    console.log("[InstancesManager] Unrecognized command  : ");
+                    console.log(message.data);
+                }
+            }
+        }, false);
 
         /**
          * Load process : xhr + store geometry and materials in array
@@ -95,7 +83,7 @@ function (LoaderManager, async) {
                 return;
             }
 
-            var meshes = _(App.sceneManager.meshesEdited).select(function(mesh){ return mesh.uuid === instance.id});
+            var meshes = _(App.sceneManager.meshesEdited).select(function(mesh){ return mesh.uuid === instance.id;});
 
             if (meshes.length) {
                 _this.aborted++;
@@ -144,6 +132,19 @@ function (LoaderManager, async) {
             });
         }
 
+
+        this.xhrQueue=async.queue(loadProcess,4);
+        this.xhrQueue.drain = function () {
+            if(App.debug){console.log('[InstancesManager] All items have been processed');}
+            currentDirectivesCount=0;
+        };
+        this.xhrQueue.empty = function () {
+            if(App.debug){console.log('[InstancesManager] Queue is empty');}
+        };
+        this.xhrQueue.saturated = function () {
+            if(App.debug){console.log('[InstancesManager] Queue is saturated');}
+        };
+
         function findQualities(files) {
             var q = [];
             _(files).each(function (f) {
@@ -151,6 +152,7 @@ function (LoaderManager, async) {
             });
             return q;
         }
+
         function findRadius(files) {
             var r = 0;
             _(files).each(function (f) {
@@ -290,13 +292,12 @@ function (LoaderManager, async) {
             loaderIndicator.show();
             this.loadFromUrl(component.getInstancesUrl());
         };
-        this.getCheckedInstancesId = function() {
 
+        this.getCheckedInstancesId = function() {
             var checkedInstances = _.filter(instancesIndexed,function(instance){
                 return instance.checked == true;
             });
-            var checkedInstancesId = _(checkedInstances).pluck('id');
-            return checkedInstancesId;
+            return _(checkedInstances).pluck('id');
         };
 
         this.initStructure = function(url, callback){

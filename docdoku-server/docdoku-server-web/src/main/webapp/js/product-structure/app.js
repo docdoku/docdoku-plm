@@ -1,3 +1,4 @@
+/*global App, dat*/
 define(
     [
         "modules/navbar-module/views/navbar_view",
