@@ -157,6 +157,15 @@ define(function() {
             else{
                 App.instancesManager.unLoadFromTree(this.model);
             }
+            if (App.collaborativeView.isMaster) {
+                var message = {
+                    type: ChannelMessagesType.COLLABORATIVE_COMMANDS,
+                    key: App.collaborativeView.roomKey,
+                    messageBroadcast: {instancesId: App.instancesManager.getCheckedInstancesId()},
+                    remoteUser: "null"
+                };
+                mainChannel.sendJSON(message);
+            }
         },
 
         render: function() {

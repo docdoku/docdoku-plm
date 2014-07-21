@@ -229,28 +229,13 @@ function (LoaderManager, async) {
                 }
             });
         };
-
-        this.loadFromTree = function(component) {
-            loaderIndicator.show();
-
-            if(App.collaborativeView.isMaster){
-                var message = {
-                    type: ChannelMessagesType.COLLABORATIVE_COMMANDS,
-                    key: App.collaborativeView.roomKey,
-                    messageBroadcast: {loadInfos:component.getInstancesUrl()},
-                    remoteUser: null
-                };
-                mainChannel.sendJSON(message);
-            }
-
-            this.loadFromUrl(component.getInstancesUrl());
-        };
-        this.loadFromUrl = function(url){
+        this.preloadAll = function(){
+            var url = "api/workspaces/Sandbox/products/Nailed_Plank/instances?configSpec=latest&path=null";
             $.getJSON(url, function (instances) {
 
                 _.each(instances, function (instanceRaw) {
                     if(instancesIndexed[instanceRaw.id]){
-                        //instancesIndexed[instanceRaw.id].checked = true;
+                        instancesIndexed[instanceRaw.id].checked = false;
                         worker.postMessage({fn: "check", obj: instanceRaw.id});
                         return ;
                     }else{
@@ -259,7 +244,7 @@ function (LoaderManager, async) {
                     //var obj = [ {a:2,B:3},{a:222,B:3}]
                     //_(obj).pluck('a')
                     instancesIndexed[instanceRaw.id]=instanceRaw;
-                    //instancesIndexed[instanceRaw.id].checked = true;
+                    instancesIndexed[instanceRaw.id].checked = false;
                     /*
                      * Init the mesh with empty geometry
                      * */
@@ -293,28 +278,155 @@ function (LoaderManager, async) {
                 loaderIndicator.hide();
             });
         };
-        this.unLoadFromTree = function(component) {
-            if(App.collaborativeView.isMaster){
-                var message = {
-                    type: ChannelMessagesType.COLLABORATIVE_COMMANDS,
-                    key: App.collaborativeView.roomKey,
-                    messageBroadcast: {unloadInfos:component.getInstancesUrl()},
-                    remoteUser: "null"
-                };
-                mainChannel.sendJSON(message);
-            }
+        this.loadFromId = function(arrayId){
+            _.each(arrayId, function (instanceId) {
+                instancesIndexed[instanceId].checked = true;
+                worker.postMessage({fn: "check", obj: instanceId});
+            });
+            _this.planNewEval();
+        };
 
+        this.loadFromTree = function(component) {
+            loaderIndicator.show();
+            this.loadFromUrl(component.getInstancesUrl());
+        };
+        this.getCheckedInstancesId = function() {
+
+            var checkedInstances = _.filter(instancesIndexed,function(instance){
+                return instance.checked == true;
+            });
+            var checkedInstancesId = _(checkedInstances).pluck('id');
+            return checkedInstancesId;
+        };
+
+        this.initStructure = function(url, callback){
+            $.getJSON(url, function (instances) {
+
+                _.each(instances, function (instanceRaw) {
+
+                    instancesIndexed[instanceRaw.id]=instanceRaw;
+                    instanceRaw.matrix = adaptMatrix(instanceRaw.matrix);
+                    instancesIndexed[instanceRaw.id].checked = false;
+                    var mesh = new THREE.Mesh(new THREE.Geometry(),new THREE.MeshPhongMaterial());
+                    instanceRaw.mesh = mesh;
+                    instanceRaw.currentQuality = null;
+                    instanceRaw.mesh.partIterationId = instanceRaw.partIterationId;
+                    instanceRaw.mesh.applyMatrix(instanceRaw.matrix);
+                    instanceRaw.position=mesh.position.clone();
+                    instanceRaw.qualities =  findQualities(instanceRaw.files);
+                    var radius =  findRadius(instanceRaw.files);
+
+                    var cog = {
+                        x:mesh.position.x+radius,
+                        y:mesh.position.y+radius,
+                        z:mesh.position.z+radius
+                    };
+
+                    worker.postMessage({
+                        fn: "addInstance",
+                        obj: {
+                            id: instanceRaw.id,
+                            cog: cog,
+                            radius: radius,
+                            qualities: instanceRaw.qualities,
+                            checked: instanceRaw.checked
+                        }
+                    });
+                });
+                loaderIndicator.hide();
+                callback();
+            });
+
+        };
+
+
+        this.loadFromUrl = function(url){
+            $.getJSON(url, function (instances) {
+
+                _.each(instances, function (instanceRaw) {
+                    if(instancesIndexed[instanceRaw.id]){
+                        instancesIndexed[instanceRaw.id].checked = true;
+                        worker.postMessage({fn: "check", obj: instanceRaw.id});
+                        return ;
+                    }else{
+                        instanceRaw.matrix = adaptMatrix(instanceRaw.matrix);
+                    }
+                    instancesIndexed[instanceRaw.id]=instanceRaw;
+                    instancesIndexed[instanceRaw.id].checked = true;
+                    /*
+                     * Init the mesh with empty geometry
+                     * */
+                    var mesh = new THREE.Mesh(new THREE.Geometry(),new THREE.MeshPhongMaterial());
+                    instanceRaw.mesh = mesh;
+                    instanceRaw.currentQuality = null;
+                    instanceRaw.mesh.partIterationId = instanceRaw.partIterationId;
+                    instanceRaw.mesh.applyMatrix(instanceRaw.matrix);
+                    instanceRaw.position=mesh.position.clone();
+                    instanceRaw.qualities =  findQualities(instanceRaw.files);
+                    var radius =  findRadius(instanceRaw.files);
+
+                    var cog = {
+                        x:mesh.position.x+radius,
+                        y:mesh.position.y+radius,
+                        z:mesh.position.z+radius
+                    };
+
+                    worker.postMessage({
+                        fn: "addInstance",
+                        obj: {
+                            id: instanceRaw.id,
+                            cog: cog,
+                            radius: radius,
+                            qualities: instanceRaw.qualities,
+                            checked: true
+                        }
+                    });
+                });
+                _this.planNewEval();
+                loaderIndicator.hide();
+
+                if (App.collaborativeView.isMaster) {
+                    var instancesChecked = _(instances).pluck('id');
+                    var message = {
+                        type: ChannelMessagesType.COLLABORATIVE_COMMANDS,
+                        key: App.collaborativeView.roomKey,
+                        messageBroadcast: {instancesId: instancesChecked},
+                        remoteUser: "null"
+                    };
+                    mainChannel.sendJSON(message);
+                }
+            });
+        };
+        this.unLoadFromTree = function(component) {
             this.unloadFromUrl(component.getInstancesUrl());
         };
         this.unloadFromUrl = function(url) {
             $.getJSON(url, function (instances) {
                 _.each(instances, function (instanceRaw) {
-                    //instanceRaw.checked = false;
+                    instancesIndexed[instanceRaw.id].checked = false;
                     _this.trashInstances.push(instanceRaw);
                     worker.postMessage({fn: "unCheck", obj: instanceRaw.id});
                 });
                 _this.planNewEval();
+                if (App.collaborativeView.isMaster) {
+                    var instancesUnChecked = _(instances).pluck('id');
+                    var message = {
+                        type: ChannelMessagesType.COLLABORATIVE_COMMANDS,
+                        key: App.collaborativeView.roomKey,
+                        messageBroadcast: {instancesUnChecked: instancesUnChecked},
+                        remoteUser: "null"
+                    };
+                    mainChannel.sendJSON(message);
+                }
             });
+        };
+        this.unloadFromId = function(arrayId){
+            _.each(arrayId, function (instanceId) {
+                instancesIndexed[instanceId].checked = false;
+                _this.trashInstances.push(instancesIndexed[instanceId]);
+                worker.postMessage({fn: "unCheck", obj: instanceId});
+            });
+            _this.planNewEval();
         };
         this.clear = function(){
             for(var i in instancesIndexed){

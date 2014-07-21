@@ -171,7 +171,7 @@ define([
         function createTransformControls() {
             transformControls = new THREE.TransformControls(_this.$container[0]);
 
-            window.addEventListener( 'keyup', function ( event ) {
+            /*window.addEventListener( 'keyup', function ( event ) {
                 switch (event.keyCode) {
                     case 90: // Z
                         transformControls.setMode("translate");
@@ -191,7 +191,7 @@ define([
                         transformControls.setSize(Math.max(transformControls.size - 0.1, 0.1));
                         break;
                 }
-            });
+            });*/
            transformControls.addEventListener('change',_this.reDraw);
         }
         function bindPointerLock(){
@@ -266,7 +266,7 @@ define([
 
             _this.stateControl = _this.STATECONTROL.PLC;
             deleteAllControls();
-            updateControlsContext(_this.pointerLockControls,_this.pointerLockCamera);
+            //updateControlsContext(_this.pointerLockControls,_this.pointerLockCamera);
             $('#flying_mode_view_btn').addClass("active");
             _this.$blocker.show();
 
@@ -295,7 +295,7 @@ define([
 
             $('#tracking_mode_view_btn').addClass("active");
 
-            updateControlsContext(_this.trackBallControls,_this.trackBallCamera);
+            //updateControlsContext(_this.trackBallControls,_this.trackBallCamera);
 
             controlsObject = _this.trackBallControls;
             _this.cameraObject = _this.trackBallCamera;
@@ -319,7 +319,7 @@ define([
 
             $('#orbit_mode_view_btn').addClass("active");
 
-            updateControlsContext(_this.orbitControls);
+            //updateControlsContext(_this.orbitControls);
 
             controlsObject = _this.orbitControls;
             controlsObject.enabled = true;
@@ -975,23 +975,8 @@ define([
         }
 
         this.joinRoom=function(key){
-            // TODO check if setTimeout is correct
-            //console.log(mainChannel.status);
-           // $.getJSON(url,function(instances){
-
-                // stock instances in indexedInstances unchecked
-                // send to worker unchecked
-
-                // Join the room
-
-
-
-             //listen server instances id loaded
-                // => send worker check
-           // });
-
-
             if (mainChannel.status != ChannelStatus.OPENED){
+                // Retry to connect every 500ms
                 console.log("Websocket is not yet connected. Retry in 500ms.");
                 var _this = this;
                 setTimeout(function(){
@@ -1001,10 +986,14 @@ define([
                 controlsObject.enabled = false;
                 App.collaborativeView.setRoomKey(key);
                 App.appView.setSpectatorView();
-                mainChannel.sendJSON({
-                    type: ChannelMessagesType.COLLABORATIVE_JOIN,
-                    key: key,
-                    remoteUser: "null"
+
+                // /api/workspaces/Sandbox/products/Nailed_Plank/instances?configSpec=latest&path=null
+                App.instancesManager.initStructure("/api/workspaces/"+APP_CONFIG.workspaceId+'/products/'+APP_CONFIG.productId+"/instances?configSpec=latest&path=null",function(){
+                    mainChannel.sendJSON({
+                        type: ChannelMessagesType.COLLABORATIVE_JOIN,
+                        key: key,
+                        remoteUser: "null"
+                    });
                 });
             }
         };

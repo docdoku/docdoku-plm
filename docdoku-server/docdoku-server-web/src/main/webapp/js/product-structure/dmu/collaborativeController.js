@@ -53,12 +53,13 @@ define(function(){
                 }
 
                 if (message.type == ChannelMessagesType.COLLABORATIVE_COMMANDS && collaborativeView.roomKey == message.key) {
-                    if(message.messageBroadcast.loadInfos){
-                        App.instancesManager.loadFromUrl(message.messageBroadcast.loadInfos);
-                    } else if(message.messageBroadcast.unloadInfos) {
-                        App.instancesManager.unloadFromUrl(message.messageBroadcast.unloadInfos);
-                    } else if(message.messageBroadcast.contextInfos) {
+                    if(message.messageBroadcast.contextInfos) {
                         App.sceneManager.setControlsContext(message.messageBroadcast.contextInfos);
+                    } else if(message.messageBroadcast.instancesId) {
+                        console.log(message.messageBroadcast.instancesId);
+                        App.instancesManager.loadFromId(message.messageBroadcast.instancesId);
+                    } else if (message.messageBroadcast.instancesUnChecked){
+                        App.instancesManager.unloadFromId(message.messageBroadcast.instancesUnChecked);
                     }
                     return;
                 }
