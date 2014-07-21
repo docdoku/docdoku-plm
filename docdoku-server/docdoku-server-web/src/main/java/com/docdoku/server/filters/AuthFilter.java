@@ -21,6 +21,7 @@
 package com.docdoku.server.filters;
 
 import com.docdoku.core.common.Account;
+import com.docdoku.core.common.Organization;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.exceptions.AccountNotFoundException;
 import com.docdoku.core.services.IUserManagerLocal;
@@ -58,7 +59,12 @@ public class AuthFilter implements Filter {
                 accountBean.setEmail(user.getEmail());
                 accountBean.setLanguage(user.getLanguage());
                 accountBean.setName(user.getName());
-                accountBean.setOrganizationName(user.getOrganization() == null ? null : user.getOrganization().getName());
+                Organization organization = user.getOrganization();
+                if(organization!=null){
+                    accountBean.setOrganizationName(user.getOrganization().getName());
+                    accountBean.setOrganizationAdmin(organization.getOwner().getLogin());
+                }
+
                 accountBean.setSuperAdmin(isAdmin);
 
                 Map<String, Workspace> administeredWorkspaces = new HashMap<>();

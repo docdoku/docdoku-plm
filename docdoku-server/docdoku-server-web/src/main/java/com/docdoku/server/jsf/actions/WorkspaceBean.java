@@ -66,7 +66,6 @@ public class WorkspaceBean {
         this.workspaceId = wks.getId();
         this.workspaceDescription = wks.getDescription();
         this.freezeFolders = wks.isFolderLocked();
-        //this.workspaceAdmin = new User();
         this.workspaceAdmin = wks.getAdmin().getLogin();
 
         return "/admin/workspace/workspaceEditionForm.xhtml";
@@ -85,24 +84,9 @@ public class WorkspaceBean {
     }
 
     public String deleteWorkspace() throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException, IOException, StorageException, AccountNotFoundException {
-
         Workspace wks = adminState.getCurrentWorkspace();
-        User user = null;
-        boolean isRoot = userManager.isCallerInRole("admin");
-        boolean canAccess = isRoot;
-
-        if(!isRoot){
-            user = userManager.checkWorkspaceReadAccess(wks.getId());
-            canAccess = wks.getAdmin().getLogin().equals(user.getLogin());
-        }
-
-        if(canAccess){
-            workspaceManager.deleteWorkspace(wks.getId());
-            return "/admin/workspace/workspaceDeleted.xhtml";
-
-        }else{
-            throw new AccessRightException(new Locale(user.getLanguage()),user);
-        }
+        workspaceManager.deleteWorkspace(wks.getId());
+        return "/admin/workspace/workspaceDeleted.xhtml";
     }
 
     public String createGroup() throws UserGroupAlreadyExistsException, AccessRightException, AccountNotFoundException, CreationException, WorkspaceNotFoundException {
@@ -135,28 +119,18 @@ public class WorkspaceBean {
         return "/admin/workspace/editWorkspace.xhtml";
     }
 
-    public String createWorkspace() throws FolderAlreadyExistsException, UserAlreadyExistsException, WorkspaceAlreadyExistsException, CreationException, NotAllowedException, AccountNotFoundException {
+    public String createWorkspace() throws FolderAlreadyExistsException, UserAlreadyExistsException, WorkspaceAlreadyExistsException, CreationException, NotAllowedException, AccountNotFoundException, ESIndexNamingException {
         String remoteUser = FacesContext.getCurrentInstance().getExternalContext().getRemoteUser();
-
         Account account;
         if(userManager.isCallerInRole("admin")){
             account = userManager.getAccount(loginToAdd);
         }else{
             account = userManager.getAccount(remoteUser);
         }
+        Workspace workspace = userManager.createWorkspace(workspaceId, account, workspaceDescription, freezeFolders);
+        adminState.setSelectedWorkspace(workspace.getId());
+        adminState.setSelectedGroup(null);
 
-        if (!NamingConvention.correct(workspaceId)) {
-            throw new NotAllowedException(new Locale(account.getLanguage()), "NotAllowedException9");
-        }
-
-        try {
-            Workspace workspace = userManager.createWorkspace(workspaceId, account, workspaceDescription, freezeFolders);
-            adminState.setSelectedWorkspace(workspace.getId());
-            adminState.setSelectedGroup(null);
-
-        } catch (ESIndexNamingException e) {
-            throw new NotAllowedException(new Locale(account.getLanguage()), "NotAllowedException9");
-        }
         return "/admin/workspace/createWorkspace.xhtml";
     }
 

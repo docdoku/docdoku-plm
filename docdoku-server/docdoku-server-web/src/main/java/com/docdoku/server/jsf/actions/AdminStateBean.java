@@ -77,7 +77,7 @@ public class AdminStateBean implements Serializable {
         }
         return usersToManage.toArray(new User[usersToManage.size()]);
     }
-    
+        
     public UserGroup[] getGroups() throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccountNotFoundException {
         return userManager.getUserGroups(selectedWorkspace);
     }

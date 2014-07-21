@@ -52,15 +52,14 @@ public class AccountBean {
     private Set<Workspace> regularWorkspaces = new HashSet<>();
 
     private String organizationName;
+    private String organizationAdmin;
 
     public AccountBean() {
     }
 
     public String updateAccount() throws AccountNotFoundException {
-
         language = FacesContext.getCurrentInstance().getViewRoot().getLocale().getLanguage();
         userManager.updateAccount(name, email, language, password);
-
         return "/login.xhtml";
     }
 
@@ -134,5 +133,13 @@ public class AccountBean {
 
     public void setRegularWorkspaces(Set<Workspace> regularWorkspaces) {
         this.regularWorkspaces = regularWorkspaces;
+    }
+
+    public String getOrganizationAdmin() {
+        return organizationAdmin;
+    }
+
+    public void setOrganizationAdmin(String organizationAdmin) {
+        this.organizationAdmin = organizationAdmin;
     }
 }

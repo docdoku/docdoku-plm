@@ -40,15 +40,66 @@ public class OrganizationBean {
 
 
     private Map<String, Boolean> selectedLogins = new HashMap<>();
-    private String loginToAdd;
-    private String organizationAdmin;
+
     private String organizationName;
     private String organizationDescription;
+
 
     public OrganizationBean() {
     }
 
+    public void removeAccounts() {
+        if (!selectedLogins.isEmpty()) {
+            //userManager.removeUsers(adminState.getSelectedWorkspace(), getLogins());
+        }
 
+        selectedLogins.clear();
+    }
+
+    public List<Account> getAccountsToManage() {
+        List<Account> accountsToManage=new ArrayList<>();
+
+        return accountsToManage;
+    }
+
+    public String manageOrganization() throws AccountNotFoundException {
+        String remoteUser = FacesContext.getCurrentInstance().getExternalContext().getRemoteUser();
+        Account account = userManager.getAccount(remoteUser);
+
+        Organization organization = account.getOrganization();
+        if(organization!=null) {
+            organizationName=organization.getName();
+            organizationDescription=organization.getDescription();
+        }
+
+        return "/admin/organization/manageAccounts.xhtml";
+    }
+
+
+    public String editOrganization() throws AccountNotFoundException {
+        String remoteUser = FacesContext.getCurrentInstance().getExternalContext().getRemoteUser();
+        Account account = userManager.getAccount(remoteUser);
+
+        Organization organization = account.getOrganization();
+        if(organization!=null) {
+            organizationName=organization.getName();
+            organizationDescription=organization.getDescription();
+        }
+
+        return "/admin/organization/organizationEditionForm.xhtml";
+    }
+
+    public String updateOrganization() throws AccountNotFoundException, AccessRightException, OrganizationNotFoundException {
+        String remoteUser = FacesContext.getCurrentInstance().getExternalContext().getRemoteUser();
+        Account account = userManager.getAccount(remoteUser);
+
+        Organization organization = account.getOrganization();
+        if(organization!=null) {
+            organization.setDescription(organizationDescription);
+            userManager.updateOrganization(organization);
+        }
+        return "/admin/organization/organizationMenu.xhtml";
+    }
 
     public String deleteOrganization() throws AccountNotFoundException, AccessRightException, OrganizationNotFoundException {
         String remoteUser = FacesContext.getCurrentInstance().getExternalContext().getRemoteUser();
@@ -58,23 +109,16 @@ public class OrganizationBean {
         if(organization!=null) {
             userManager.deleteOrganization(organization.getName());
         }
-        return "/admin/organization/organizationMenu.xhtml";
-
+        return "/admin/organization/organizationMenu.xhtml?faces-redirect=true";
     }
 
     public String createOrganization() throws OrganizationAlreadyExistsException, CreationException, AccountNotFoundException, NotAllowedException {
         String remoteUser = FacesContext.getCurrentInstance().getExternalContext().getRemoteUser();
-
-        Account account;
-        if(userManager.isCallerInRole("admin")){
-            account = userManager.getAccount(loginToAdd);
-        }else{
-            account = userManager.getAccount(remoteUser);
-        }
+        Account account = userManager.getAccount(remoteUser);
 
         Organization organization = userManager.createOrganization(organizationName, account, organizationDescription);
 
-        return "/admin/organization/organizationMenu.xhtml";
+        return "/admin/organization/organizationMenu.xhtml?faces-redirect=true";
     }
 
 
@@ -87,14 +131,6 @@ public class OrganizationBean {
             }
         }
         return logins.toArray(new String[logins.size()]);
-    }
-
-    public String getOrganizationAdmin() {
-        return organizationAdmin;
-    }
-
-    public void setOrganizationAdmin(String organizationAdmin) {
-        this.organizationAdmin = organizationAdmin;
     }
 
     public String getOrganizationDescription() {
@@ -113,6 +149,7 @@ public class OrganizationBean {
         this.organizationName = organizationName;
     }
 
+
     public Map<String, Boolean> getSelectedLogins() {
         return selectedLogins;
     }
@@ -121,13 +158,4 @@ public class OrganizationBean {
         this.selectedLogins = selectedLogins;
     }
 
-    public String getLoginToAdd() {
-        return loginToAdd;
-    }
-
-    public void setLoginToAdd(String loginToAdd) {
-        this.loginToAdd = loginToAdd;
-    }
-
-    
 }
