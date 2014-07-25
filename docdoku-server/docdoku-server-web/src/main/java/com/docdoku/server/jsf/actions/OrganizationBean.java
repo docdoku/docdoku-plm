@@ -44,37 +44,21 @@ public class OrganizationBean {
     private String organizationName;
     private String organizationDescription;
 
+    private String loginToAdd;
 
     public OrganizationBean() {
     }
 
-    public void removeAccounts() {
-        if (!selectedLogins.isEmpty()) {
-            //userManager.removeUsers(adminState.getSelectedWorkspace(), getLogins());
-        }
 
-        selectedLogins.clear();
-    }
 
-    public List<Account> getAccountsToManage() {
-        List<Account> accountsToManage=new ArrayList<>();
-
-        return accountsToManage;
-    }
-
-    public String manageOrganization() throws AccountNotFoundException {
+    public Set<Account> getAccountsToManage() throws AccountNotFoundException {
         String remoteUser = FacesContext.getCurrentInstance().getExternalContext().getRemoteUser();
         Account account = userManager.getAccount(remoteUser);
 
         Organization organization = account.getOrganization();
-        if(organization!=null) {
-            organizationName=organization.getName();
-            organizationDescription=organization.getDescription();
-        }
 
-        return "/admin/organization/manageAccounts.xhtml";
+        return organization.getMembers();
     }
-
 
     public String editOrganization() throws AccountNotFoundException {
         String remoteUser = FacesContext.getCurrentInstance().getExternalContext().getRemoteUser();
@@ -88,6 +72,31 @@ public class OrganizationBean {
 
         return "/admin/organization/organizationEditionForm.xhtml";
     }
+
+    public String addAccount() throws AccountNotFoundException, NotAllowedException, AccessRightException, OrganizationNotFoundException {
+        String remoteUser = FacesContext.getCurrentInstance().getExternalContext().getRemoteUser();
+        Account account = userManager.getAccount(remoteUser);
+        Organization organization = account.getOrganization();
+
+        userManager.addAccountInOrganization(organization.getName(), loginToAdd);
+        return "/admin/organization/manageAccounts.xhtml";
+    }
+
+
+    public void removeAccounts() throws AccountNotFoundException, AccessRightException, OrganizationNotFoundException {
+        if (!selectedLogins.isEmpty()) {
+            String remoteUser = FacesContext.getCurrentInstance().getExternalContext().getRemoteUser();
+            Account account = userManager.getAccount(remoteUser);
+            Organization organization = account.getOrganization();
+
+            userManager.removeAccountFromOrganization(organization.getName(), getLogins());
+        }
+
+        selectedLogins.clear();
+    }
+
+
+
 
     public String updateOrganization() throws AccountNotFoundException, AccessRightException, OrganizationNotFoundException {
         String remoteUser = FacesContext.getCurrentInstance().getExternalContext().getRemoteUser();
@@ -158,4 +167,11 @@ public class OrganizationBean {
         this.selectedLogins = selectedLogins;
     }
 
+    public String getLoginToAdd() {
+        return loginToAdd;
+    }
+
+    public void setLoginToAdd(String loginToAdd) {
+        this.loginToAdd = loginToAdd;
+    }
 }

@@ -31,7 +31,7 @@
                         <c:otherwise>
                             <c:if test="#{accountBean.superAdmin or accountBean.organizationAdmin eq accountBean.login}">
                                 <h:commandLink value="#{i18nOrganizationMenu['section.edit']}" action="#{organizationBean.editOrganization}"/> |
-                                <h:commandLink value="#{i18nOrganizationMenu['section.manage']}" action="#{organizationBean.manageOrganization}"/> |
+                                <h:link value="#{i18nOrganizationMenu['section.manage']}" outcome="/admin/organization/manageAccounts.xhtml"/> |
                                 <h:commandLink value="#{i18nOrganizationMenu['section.delete']}" action="#{organizationBean.deleteOrganization}" onclick="return prompt('#{i18nOrganizationMenu['section.deleteConfirm']}') == '#{i18nOrganizationMenu['section.deleteConfirmPromptValue']}'" />
                             </c:if>
                         </c:otherwise>

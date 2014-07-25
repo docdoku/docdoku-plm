@@ -145,6 +145,48 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
         }
     }
 
+    @Override
+    public void addAccountInOrganization(String pOrganizationName, String pLogin) throws OrganizationNotFoundException, AccountNotFoundException, AccessRightException, NotAllowedException {
+        OrganizationDAO organizationDAO = new OrganizationDAO(em);
+        Organization organization = organizationDAO.loadOrganization(pOrganizationName);
+
+        if(!isCallerInRole("admin")){
+            Account account = new AccountDAO(em).loadAccount(ctx.getCallerPrincipal().toString());
+            if(!organization.getOwner().getLogin().equals(ctx.getCallerPrincipal().toString())){
+                throw new AccessRightException(new Locale(account.getLanguage()),account);
+            }
+        }
+
+        Account accountToAdd = new AccountDAO(em).loadAccount(pLogin);
+        if(accountToAdd.getOrganization()!=null){
+            throw new NotAllowedException(Locale.getDefault(), "NotAllowedException12");
+        }else {
+            accountToAdd.setOrganization(organization);
+            organization.addMember(accountToAdd);
+        }
+    }
+
+    @Override
+    public void removeAccountFromOrganization(String pOrganizationName, String[] pLogins) throws AccessRightException, OrganizationNotFoundException, AccountNotFoundException {
+        OrganizationDAO organizationDAO = new OrganizationDAO(em);
+        Organization organization = organizationDAO.loadOrganization(pOrganizationName);
+
+        if(!isCallerInRole("admin")){
+            Account account = new AccountDAO(em).loadAccount(ctx.getCallerPrincipal().toString());
+            if(!organization.getOwner().getLogin().equals(ctx.getCallerPrincipal().toString())){
+                throw new AccessRightException(new Locale(account.getLanguage()),account);
+            }
+        }
+
+        for (String login : pLogins) {
+            Account accountToRemove = new AccountDAO(em).loadAccount(login);
+            accountToRemove.setOrganization(null);
+            organization.removeMember(accountToRemove);
+        }
+
+
+    }
+
     @RolesAllowed({"users","admin"})
     @Override
     public Organization createOrganization(String pName, Account pOwner, String pDescription) throws OrganizationAlreadyExistsException, CreationException, NotAllowedException {
