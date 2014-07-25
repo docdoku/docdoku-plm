@@ -1,3 +1,4 @@
+/*global App*/
 define (
     [
         "text!templates/control_transform.html",
@@ -12,7 +13,6 @@ define (
 
         events:{
             "click #transform_mode_view_btn > button": "transformView",
-            "click button#cancel_transformation": "cancelTransformation",
             "click button#cancel_transformation": "cancelTransformation"
         },
 

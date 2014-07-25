@@ -1,3 +1,4 @@
+/*global App,mainChannel,ChannelMessagesType*/
 define(    [
         "views/select_participant_modal",
         "text!templates/collaborative_view.html",

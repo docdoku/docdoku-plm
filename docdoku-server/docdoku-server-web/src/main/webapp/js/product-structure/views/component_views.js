@@ -1,3 +1,4 @@
+/*global App,ChannelMessagesType,mainChannel*/
 define(function() {
 
     var expandedViews = [];

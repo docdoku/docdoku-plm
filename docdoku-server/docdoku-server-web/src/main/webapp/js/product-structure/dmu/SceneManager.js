@@ -1,4 +1,4 @@
-/*global App,Instance,requestAnimationFrame*/
+/*global App,Instance,requestAnimationFrame,TWEEN,ChannelMessagesType,mainChannel,ChannelStatus*/
 define([
     "views/marker_create_modal_view",
     "views/blocker_view",
@@ -46,7 +46,7 @@ define([
 
         function initDOM() {
             _this.$container = $('div#container');
-            _this.$container[0].setAttribute( 'tabindex', -1);
+            _this.$container[0].setAttribute( 'tabindex', "-1");
             _this.$sceneContainer = $("#scene_container");
             _this.$blocker = new BlockerView().render().$el;
             _this.$container.append(_this.$blocker);
@@ -135,21 +135,6 @@ define([
         /**
          * Controls management
          */
-        function initControls() {
-            createPointerLockControls();
-            createTrackBallControls();
-            createOrbitControls();
-        }
-        function pointerLockChange(){
-            _this.pointerLockControls.enabled = !_this.pointerLockControls.enabled;
-            if (_this.pointerLockControls.enabled) {
-                _this.$blocker.hide();
-                _this.pointerLockControls.bindEvents();
-            }else{
-                _this.$blocker.show();
-                _this.pointerLockControls.unbindEvents();
-            }
-        }
         function createPointerLockControls() {
             _this.pointerLockCamera = new THREE.PerspectiveCamera(45, _this.$container.width() / _this.$container.height(), App.SceneOptions.cameraNear, App.SceneOptions.cameraFar);
             _this.pointerLockControls = new THREE.PointerLockControls(_this.pointerLockCamera);
@@ -168,6 +153,22 @@ define([
             _this.trackBallControls = new THREE.TrackballControls(_this.trackBallCamera, _this.$container[0]);
             _this.trackBallControls.keys = [ 65 /*A*/, 83 /*S*/, 68 /*D*/ ];
         }
+        function initControls() {
+            createPointerLockControls();
+            createTrackBallControls();
+            createOrbitControls();
+        }
+        function pointerLockChange(){
+            _this.pointerLockControls.enabled = !_this.pointerLockControls.enabled;
+            if (_this.pointerLockControls.enabled) {
+                _this.$blocker.hide();
+                _this.pointerLockControls.bindEvents();
+            }else{
+                _this.$blocker.show();
+                _this.pointerLockControls.unbindEvents();
+            }
+        }
+
         function createTransformControls() {
             transformControls = new THREE.TransformControls(_this.$container[0]);
 
@@ -194,6 +195,20 @@ define([
             });*/
            transformControls.addEventListener('change',_this.reDraw);
         }
+
+        function onFullScreenChange(){
+            if (document.fullscreenElement === _this.$container[0] ||
+                document.mozFullscreenElement === _this.$container[0] ||
+                document.webkitFullScreenElement === _this.$container[0]) {
+
+                document.removeEventListener('fullscreenchange', onFullScreenChange);
+                document.removeEventListener('mozfullscreenchange', onFullScreenChange);
+                document.removeEventListener('webkitfullscreenchange', onFullScreenChange);
+
+                _this.$container[0].requestPointerLock();
+            }
+        }
+
         function bindPointerLock(){
             if (_this.stateControl != _this.STATECONTROL.PLC || _this.pointerLockControls.enabled) {
                 return;
@@ -245,6 +260,7 @@ define([
 
             _this.deleteTransformControls();
         }
+
         // example arg : _this.pointerLockControls,_this.pointerLockCamera
         function updateControlsContext(controls,camera){
 
@@ -259,169 +275,7 @@ define([
 
 
         }
-        this.setPointerLockControls = function() {
-            if (_this.stateControl == _this.STATECONTROL.PLC) {
-                return;
-            }
 
-            _this.stateControl = _this.STATECONTROL.PLC;
-            deleteAllControls();
-            //updateControlsContext(_this.pointerLockControls,_this.pointerLockCamera);
-            $('#flying_mode_view_btn').addClass("active");
-            _this.$blocker.show();
-
-            _this.cameraObject = _this.pointerLockCamera;
-            controlsObject = _this.pointerLockControls;
-
-            _this.pointerLockControls.addEventListener("change", onControlChange);
-            if (havePointerLock) {
-                // Hook pointer lock state change events
-                document.addEventListener('pointerlockchange', pointerLockChange, false);
-                document.addEventListener('mozpointerlockchange', pointerLockChange, false);
-                document.addEventListener('webkitpointerlockchange', pointerLockChange, false);
-                _this.$container[0].addEventListener('click', bindPointerLock, false);
-            }
-            _this.scene.add(_this.pointerLockControls.getObject());
-
-            _this.reDraw();
-        };
-        this.setTrackBallControls = function(){
-            if (_this.stateControl == _this.STATECONTROL.TBC && controlsObject.enabled) {
-                return;
-            }
-
-            _this.stateControl = _this.STATECONTROL.TBC;
-            deleteAllControls();
-
-            $('#tracking_mode_view_btn').addClass("active");
-
-            //updateControlsContext(_this.trackBallControls,_this.trackBallCamera);
-
-            controlsObject = _this.trackBallControls;
-            _this.cameraObject = _this.trackBallCamera;
-
-            _this.trackBallControls.enabled = true;
-            _this.trackBallControls.addEventListener("change", onControlChange);
-            _this.trackBallControls.bindEvents();
-            _this.scene.add(_this.trackBallCamera);
-
-            handleResize();
-            _this.reDraw();
-        };
-        this.setOrbitControls= function() {
-
-            if (_this.stateControl == _this.STATECONTROL.ORB && controlsObject.enabled) {
-                return;
-            }
-
-            _this.stateControl = _this.STATECONTROL.ORB;
-            deleteAllControls();
-
-            $('#orbit_mode_view_btn').addClass("active");
-
-            //updateControlsContext(_this.orbitControls);
-
-            controlsObject = _this.orbitControls;
-            controlsObject.enabled = true;
-
-            _this.cameraObject = _this.orbitCamera;
-
-            controlsObject.addEventListener("change", onControlChange);
-            controlsObject.bindEvents();
-            _this.scene.add(_this.orbitCamera);
-
-            handleResize();
-            _this.reDraw();
-        };
-        this.setTransformControls= function(mesh,mode) {
-            transformControls.setCamera(_this.cameraObject);
-            controlsObject.enabled = false;
-            transformControls.enabled = true;
-            //transformControls.detach();
-            transformControls.attach(mesh);
-            if ($.inArray(mesh, this.meshesEdited) == -1) {
-                _this.meshesEdited.push(mesh);
-                _this.showEditedMeshes(editedMeshesDisplayed);
-                console.log("mesh added : ");
-                console.log(this.meshesEdited);
-            }
-            transformControls.bindEvents();
-            if(mode !== undefined){
-                switch (mode) {
-                    case "translate" :
-                        transformControls.setMode("translate");
-                        break;
-                    case "rotate":
-                        transformControls.setMode("rotate");
-                        break;
-                    case "scale":
-                        transformControls.setMode("scale");
-                }
-            }
-            App.appView.transformControlMode();
-            _this.scene.add(transformControls);
-            _this.reDraw();
-        };
-        this.leaveTransformMode = function(){
-            if (_this.stateControl == _this.STATECONTROL.TBC) {
-                _this.setTrackBallControls();
-            } else if (_this.stateControl == _this.STATECONTROL.ORB) {
-                _this.setOrbitControls();
-            }
-        };
-        this.deleteTransformControls = function(){
-            if (transformControls != null && transformControls.enabled) {
-                _this.scene.remove(transformControls);
-                transformControls.unbindEvents();
-                transformControls.detach();
-                transformControls.enabled = false;
-                App.appView.leaveTransformControlMode();
-                _this.reDraw();
-                //meshMarkedForSelection
-            }
-        };
-        this.cancelTransformation = function(mesh) {
-
-            new TWEEN.Tween(mesh.position)
-                .to({ x: mesh.initialPosition.x, y: mesh.initialPosition.y, z: mesh.initialPosition.z }, 2000)
-                .interpolation(TWEEN.Interpolation.CatmullRom)
-                .easing(TWEEN.Easing.Quintic.InOut)
-                .onUpdate(function () {
-                    _this.reDraw();
-                    transformControls.update();
-                })
-                .start();
-            new TWEEN.Tween(mesh.rotation)
-                .to({ x: mesh.initialRotation.x, y: mesh.initialRotation.y, z: mesh.initialRotation.z }, 2000)
-                .interpolation(TWEEN.Interpolation.CatmullRom)
-                .easing(TWEEN.Easing.Quintic.InOut)
-                .onUpdate(function () {
-                    _this.reDraw();
-                    transformControls.update();
-                })
-                .start();
-            new TWEEN.Tween(mesh.scale)
-                .to({ x: mesh.initialScale.x, y: mesh.initialScale.y, z: mesh.initialScale.z }, 2000)
-                .interpolation(TWEEN.Interpolation.CatmullRom)
-                .easing(TWEEN.Easing.Quintic.InOut)
-                .onUpdate(function () {
-                    _this.reDraw();
-                    transformControls.update();
-                })
-                .start();
-
-            _this.meshesEdited.splice($.inArray(mesh, this.meshesEdited),1);
-            mesh.material = new THREE.MeshPhongMaterial( { transparent:true, color: new THREE.Color(0xbbbbbb) } );
-            console.log("mesh removed");
-
-            /*
-            mesh.position.x = mesh.initialPosition.x;
-            mesh.position.y = mesh.initialPosition.y;
-            mesh.position.z = mesh.initialPosition.z;*/
-
-            _this.reDraw();
-            _this.leaveTransformMode();
-        };
         /**
          * Scene options control
          */
@@ -435,18 +289,7 @@ define([
             //console.log(controlsObject.getCamUp());
             _this.reDraw();
         }
-        function onFullScreenChange(){
-            if (document.fullscreenElement === _this.$container[0] ||
-                document.mozFullscreenElement === _this.$container[0] ||
-                document.webkitFullScreenElement === _this.$container[0]) {
 
-                document.removeEventListener('fullscreenchange', onFullScreenChange);
-                document.removeEventListener('mozfullscreenchange', onFullScreenChange);
-                document.removeEventListener('webkitfullscreenchange', onFullScreenChange);
-
-                _this.$container[0].requestPointerLock();
-            }
-        }
         function applyWireFrame(mesh) {
             mesh.material.wireframe = wireframe;
             if ((mesh.material.materials)) {
@@ -510,16 +353,6 @@ define([
         /**
          * Scene mouse events
          */
-        function bindMouseAndKeyEvents() {
-            _this.$container[0].addEventListener('mousedown', onMouseDown, false);
-            _this.$container[0].addEventListener('mouseup', onMouseUp, false);
-            _this.$container[0].addEventListener('mouseover', onMouseEnter, false);
-            _this.$container[0].addEventListener('mouseout', onMouseLeave, false);
-            _this.$container[0].addEventListener('keydown', onKeyDown, false);
-            _this.$container[0].addEventListener('keyup', onKeyUp, false);
-            _this.$container[0].addEventListener('mousemove', onSceneMouseMove, false);
-            _this.$container[0].addEventListener('mousewheel', onSceneMouseWheel, false);
-        }
         function onMouseEnter() {}
         function onMouseLeave() {
             isMoving = false;
@@ -587,10 +420,40 @@ define([
 
             _this.reDraw();
         }
+        function bindMouseAndKeyEvents() {
+            _this.$container[0].addEventListener('mousedown', onMouseDown, false);
+            _this.$container[0].addEventListener('mouseup', onMouseUp, false);
+            _this.$container[0].addEventListener('mouseover', onMouseEnter, false);
+            _this.$container[0].addEventListener('mouseout', onMouseLeave, false);
+            _this.$container[0].addEventListener('keydown', onKeyDown, false);
+            _this.$container[0].addEventListener('keyup', onKeyUp, false);
+            _this.$container[0].addEventListener('mousemove', onSceneMouseMove, false);
+            _this.$container[0].addEventListener('mousewheel', onSceneMouseWheel, false);
+        }
 
         /**
          * Meshes
          */
+        function createMeshFromLoadedStuff(stuff, matrix){
+            var mesh = new THREE.Mesh(stuff.geometry,stuff.materials);
+            mesh.uuid = stuff.id;
+            mesh.partIterationId = stuff.partIterationId;
+            mesh.geometry.verticesNeedUpdate=true;
+            mesh.applyMatrix(matrix);
+            mesh.initialPosition = {x:mesh.position.x,y:mesh.position.y,z:mesh.position.z};
+            mesh.initialRotation = {x:mesh.rotation.x,y:mesh.rotation.y,z:mesh.rotation.z};
+            mesh.initialScale = {x:mesh.scale.x,y:mesh.scale.y,z:mesh.scale.z};
+            var positionMeshEdited = $.inArray(mesh, _this.meshesEdited);
+            if (positionMeshEdited != -1) {
+                meshEdited = _this.meshesEdited[positionMeshEdited];
+                mesh.position = {x:meshEdited.position.x,y:meshEdited.position.y,z:meshEdited.position.z};
+                mesh.rotation = {x:meshEdited.rotation.x,y:meshEdited.rotation.y,z:meshEdited.rotation.z};
+                mesh.scale = {x:meshEdited.scale.x,y:meshEdited.scale.y,z:meshEdited.scale.z};
+                console.log("restauration de la position de l'instance transformée.");
+                console.log(this.mesh);
+            }
+            return mesh;
+        }
         function removeMesh(meshId){
             var mesh = meshesIndexed[meshId];
             delete meshesIndexed[meshId];
@@ -638,28 +501,6 @@ define([
                 _this.reDraw();
             });
         }
-
-        function createMeshFromLoadedStuff(stuff, matrix){
-            var mesh = new THREE.Mesh(stuff.geometry,stuff.materials);
-            mesh.uuid = stuff.id;
-            mesh.partIterationId = stuff.partIterationId;
-            mesh.geometry.verticesNeedUpdate=true;
-            mesh.applyMatrix(matrix);
-            mesh.initialPosition = {x:mesh.position.x,y:mesh.position.y,z:mesh.position.z};
-            mesh.initialRotation = {x:mesh.rotation.x,y:mesh.rotation.y,z:mesh.rotation.z};
-            mesh.initialScale = {x:mesh.scale.x,y:mesh.scale.y,z:mesh.scale.z};
-            var positionMeshEdited = $.inArray(mesh, _this.meshesEdited);
-            if (positionMeshEdited != -1) {
-                meshEdited = this.meshesEdited[positionMeshEdited];
-                mesh.position = {x:meshEdited.position.x,y:meshEdited.position.y,z:meshEdited.position.z};
-                mesh.rotation = {x:meshEdited.rotation.x,y:meshEdited.rotation.y,z:meshEdited.rotation.z};
-                mesh.scale = {x:meshEdited.scale.x,y:meshEdited.scale.y,z:meshEdited.scale.z};
-                console.log("restauration de la position de l'instance transformée.");
-                console.log(this.mesh);
-            }
-            return mesh;
-        }
-
         /**
          *  Animation
          */
@@ -738,6 +579,23 @@ define([
     }
 
         /**
+         * Colaborative Mode
+         */
+        function sendCommands(){
+            if(App.collaborativeView.isMaster){
+                var message = {
+                    type: ChannelMessagesType.COLLABORATIVE_COMMANDS,
+                    key: App.collaborativeView.roomKey,
+                    messageBroadcast: {
+                        contextInfos: _this.getControlsContext()
+                    },
+                    remoteUser: "null"
+                };
+                mainChannel.sendJSON(message);
+            }
+        }
+
+        /**
          * Animation loop :
          *  Update controls, scene objects and animations
          *  Render at the end
@@ -775,6 +633,8 @@ define([
                 controlChanged=false;
             }
         }
+
+
 
 
         this.init = function (){
@@ -945,36 +805,185 @@ define([
         };
         this.showEditedMeshes = function(display) {
             editedMeshesDisplayed = display;
+            var i;
             if (editedMeshesDisplayed) {
-                for (var i = 0; i < this.meshesEdited.length; i++) {
+                for (i = 0; i < this.meshesEdited.length; i++) {
                     _this.meshesEdited[i].material = new THREE.MeshPhongMaterial({ transparent: false, color: new THREE.Color(0x08B000) });
                 }
             } else {
-                for (var i = 0; i < this.meshesEdited.length; i++) {
+                for (i = 0; i < this.meshesEdited.length; i++) {
                     _this.meshesEdited[i].material = new THREE.MeshPhongMaterial( { transparent:true, color: new THREE.Color(0xbbbbbb) } );
                 }
             }
             _this.reDraw();
         };
+        this.setPointerLockControls = function() {
+            if (_this.stateControl == _this.STATECONTROL.PLC) {
+                return;
+            }
+
+            _this.stateControl = _this.STATECONTROL.PLC;
+            deleteAllControls();
+            //updateControlsContext(_this.pointerLockControls,_this.pointerLockCamera);
+            $('#flying_mode_view_btn').addClass("active");
+            _this.$blocker.show();
+
+            _this.cameraObject = _this.pointerLockCamera;
+            controlsObject = _this.pointerLockControls;
+
+            _this.pointerLockControls.addEventListener("change", onControlChange);
+            if (havePointerLock) {
+                // Hook pointer lock state change events
+                document.addEventListener('pointerlockchange', pointerLockChange, false);
+                document.addEventListener('mozpointerlockchange', pointerLockChange, false);
+                document.addEventListener('webkitpointerlockchange', pointerLockChange, false);
+                _this.$container[0].addEventListener('click', bindPointerLock, false);
+            }
+            _this.scene.add(_this.pointerLockControls.getObject());
+
+            _this.reDraw();
+        };
+        this.setTrackBallControls = function(){
+            if (_this.stateControl == _this.STATECONTROL.TBC && controlsObject.enabled) {
+                return;
+            }
+
+            _this.stateControl = _this.STATECONTROL.TBC;
+            deleteAllControls();
+
+            $('#tracking_mode_view_btn').addClass("active");
+
+            //updateControlsContext(_this.trackBallControls,_this.trackBallCamera);
+
+            controlsObject = _this.trackBallControls;
+            _this.cameraObject = _this.trackBallCamera;
+
+            _this.trackBallControls.enabled = true;
+            _this.trackBallControls.addEventListener("change", onControlChange);
+            _this.trackBallControls.bindEvents();
+            _this.scene.add(_this.trackBallCamera);
+
+            handleResize();
+            _this.reDraw();
+        };
+        this.setOrbitControls= function() {
+
+            if (_this.stateControl == _this.STATECONTROL.ORB && controlsObject.enabled) {
+                return;
+            }
+
+            _this.stateControl = _this.STATECONTROL.ORB;
+            deleteAllControls();
+
+            $('#orbit_mode_view_btn').addClass("active");
+
+            //updateControlsContext(_this.orbitControls);
+
+            controlsObject = _this.orbitControls;
+            controlsObject.enabled = true;
+
+            _this.cameraObject = _this.orbitCamera;
+
+            controlsObject.addEventListener("change", onControlChange);
+            controlsObject.bindEvents();
+            _this.scene.add(_this.orbitCamera);
+
+            handleResize();
+            _this.reDraw();
+        };
+        this.setTransformControls= function(mesh,mode) {
+            transformControls.setCamera(_this.cameraObject);
+            controlsObject.enabled = false;
+            transformControls.enabled = true;
+            //transformControls.detach();
+            transformControls.attach(mesh);
+            if ($.inArray(mesh, this.meshesEdited) == -1) {
+                _this.meshesEdited.push(mesh);
+                _this.showEditedMeshes(editedMeshesDisplayed);
+                console.log("mesh added : ");
+                console.log(this.meshesEdited);
+            }
+            transformControls.bindEvents();
+            if(mode !== undefined){
+                switch (mode) {
+                    case "translate" :
+                        transformControls.setMode("translate");
+                        break;
+                    case "rotate":
+                        transformControls.setMode("rotate");
+                        break;
+                    case "scale":
+                        transformControls.setMode("scale");
+                }
+            }
+            App.appView.transformControlMode();
+            _this.scene.add(transformControls);
+            _this.reDraw();
+        };
+        this.leaveTransformMode = function(){
+            if (_this.stateControl == _this.STATECONTROL.TBC) {
+                _this.setTrackBallControls();
+            } else if (_this.stateControl == _this.STATECONTROL.ORB) {
+                _this.setOrbitControls();
+            }
+        };
+        this.deleteTransformControls = function(){
+            if (transformControls != null && transformControls.enabled) {
+                _this.scene.remove(transformControls);
+                transformControls.unbindEvents();
+                transformControls.detach();
+                transformControls.enabled = false;
+                App.appView.leaveTransformControlMode();
+                _this.reDraw();
+                //meshMarkedForSelection
+            }
+        };
+        this.cancelTransformation = function(mesh) {
+
+            new TWEEN.Tween(mesh.position)
+                .to({ x: mesh.initialPosition.x, y: mesh.initialPosition.y, z: mesh.initialPosition.z }, 2000)
+                .interpolation(TWEEN.Interpolation.CatmullRom)
+                .easing(TWEEN.Easing.Quintic.InOut)
+                .onUpdate(function () {
+                    _this.reDraw();
+                    transformControls.update();
+                })
+                .start();
+            new TWEEN.Tween(mesh.rotation)
+                .to({ x: mesh.initialRotation.x, y: mesh.initialRotation.y, z: mesh.initialRotation.z }, 2000)
+                .interpolation(TWEEN.Interpolation.CatmullRom)
+                .easing(TWEEN.Easing.Quintic.InOut)
+                .onUpdate(function () {
+                    _this.reDraw();
+                    transformControls.update();
+                })
+                .start();
+            new TWEEN.Tween(mesh.scale)
+                .to({ x: mesh.initialScale.x, y: mesh.initialScale.y, z: mesh.initialScale.z }, 2000)
+                .interpolation(TWEEN.Interpolation.CatmullRom)
+                .easing(TWEEN.Easing.Quintic.InOut)
+                .onUpdate(function () {
+                    _this.reDraw();
+                    transformControls.update();
+                })
+                .start();
+
+            _this.meshesEdited.splice($.inArray(mesh, this.meshesEdited),1);
+            mesh.material = new THREE.MeshPhongMaterial( { transparent:true, color: new THREE.Color(0xbbbbbb) } );
+            console.log("mesh removed");
+
+            /*
+             mesh.position.x = mesh.initialPosition.x;
+             mesh.position.y = mesh.initialPosition.y;
+             mesh.position.z = mesh.initialPosition.z;*/
+
+            _this.reDraw();
+            _this.leaveTransformMode();
+        };
 
         /**
          * Collaborative mode
          */
-
-        function sendCommands(){
-            if(App.collaborativeView.isMaster){
-                var message = {
-                    type: ChannelMessagesType.COLLABORATIVE_COMMANDS,
-                    key: App.collaborativeView.roomKey,
-                    messageBroadcast: {
-                        contextInfos: _this.getControlsContext()
-                    },
-                    remoteUser: "null"
-                };
-                mainChannel.sendJSON(message);
-            }
-        }
-
         this.joinRoom=function(key){
             if (mainChannel.status != ChannelStatus.OPENED){
                 // Retry to connect every 500ms

@@ -1,3 +1,4 @@
+/*global App*/
 define([
     "common-objects/common/singleton_decorator"
 ],

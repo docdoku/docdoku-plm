@@ -1,3 +1,4 @@
+/*global App*/
 THREE.TrackballControls = function ( object, domElement ) {
 
 	var _this = this;
@@ -620,7 +621,7 @@ THREE.TrackballControls = function ( object, domElement ) {
 
     this.getCamUp = function () {
         return _this.object.up;
-    }
+    };
 
     this.getObject = function(){
         return _this.object;
@@ -632,11 +633,11 @@ THREE.TrackballControls = function ( object, domElement ) {
 
     this.setCamUp = function(camUp) {
         _this.object.up.copy(camUp);
-    }
+    };
 
     this.setTarget = function(target) {
         _this.target.copy(target);
-    }
+    };
 };
 
 THREE.TrackballControls.prototype = Object.create( THREE.EventDispatcher.prototype );

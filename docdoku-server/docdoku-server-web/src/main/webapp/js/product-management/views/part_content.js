@@ -273,7 +273,7 @@ define([
         },
 
         releasePart:function(){
-            this.partListView.getSelectedPart().release();
+            this.partListView.releaseSelectedParts();
         },
 
         resetCollection:function(){

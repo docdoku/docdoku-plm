@@ -167,7 +167,7 @@ THREE.PointerLockControls = function ( camera ) {
     this.getCamUp = function () {
        //return new THREE.Vector3(0,1,0).applyQuaternion(pitchObject.quaternion).applyQuaternion(yawObject);
         return yawObject.up;
-    }
+    };
 
     this.getTarget = function(){
         /*
@@ -191,16 +191,16 @@ THREE.PointerLockControls = function ( camera ) {
         var yAngle = camUp.angleTo(worldY);
         pitchObject.rotation.x = xAngle;
         yawObject.rotation.y = yAngle;
-    }
+    };
 
     this.setCamPos = function(camPos){
         yawObject.position.copy(camPos);
-    }
+    };
 
     this.setTarget = function(target) {
         // nothing to do ?
         //scope.target = target;
-    }
+    };
 
     this.getDirection = function() {
 

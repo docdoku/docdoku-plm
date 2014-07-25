@@ -60,6 +60,7 @@ define({
     "QUICK_SEARCH":                 "Recherche rapide",
     "REFERENCE":                    "R\u00e9ference",
     "RELEASE":                      "Finaliser",
+    "RELEASE_SELECTION_?":          "Finaliser la s\u00e9lection ?",
     "RELEASED":                     "Finalis\u00e9",
     "ROOT_PART":                    "Article de tête",
     "SAVE":                         "Enregistrer",

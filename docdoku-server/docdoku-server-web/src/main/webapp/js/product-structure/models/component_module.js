@@ -23,12 +23,12 @@ function (date, i18n) {
             checkOutUser: null
         },
 
-        isCheckout: function() {
-            return !_.isNull(this.attributes.checkOutDate);
+        getId: function(){
+            return this.getNumber()+"-"+this.getVersion()+"-"+this.getIteration();
         },
 
-        getId: function(){
-            return getNumber()+"-"+getVersion()+"-"+getIteration();
+        isCheckout: function() {
+            return !_.isNull(this.attributes.checkOutDate);
         },
 
         getCheckoutUser: function() {
