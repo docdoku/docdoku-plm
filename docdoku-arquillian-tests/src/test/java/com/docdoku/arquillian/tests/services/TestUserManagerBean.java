@@ -48,7 +48,7 @@ public class TestUserManagerBean {
     private ProgrammaticLogin loginP = new ProgrammaticLogin();
     private String password = "password";
 
-    public Workspace testWorkspaceCreation(String login, String pWorkspace) throws AccountNotFoundException, UserAlreadyExistsException, CreationException, WorkspaceAlreadyExistsException, FolderAlreadyExistsException, ESIndexNamingException {
+    public Workspace testWorkspaceCreation(String login, String pWorkspace) throws AccountNotFoundException, UserAlreadyExistsException, CreationException, WorkspaceAlreadyExistsException, FolderAlreadyExistsException, ESIndexNamingException, NotAllowedException {
         loginP.login(login, password.toCharArray());
         try{
             esIndexer.deleteWorkspace(pWorkspace);

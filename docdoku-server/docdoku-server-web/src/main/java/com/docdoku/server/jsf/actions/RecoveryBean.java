@@ -29,9 +29,9 @@ import com.docdoku.core.services.IUserManagerLocal;
 
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
-import javax.faces.bean.ManagedBean;
+import javax.inject.Named;
 
-@ManagedBean(name= "recoveryBean")
+@Named("recoveryBean")
 @RequestScoped
 public class RecoveryBean {
 

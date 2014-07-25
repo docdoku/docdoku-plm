@@ -364,7 +364,6 @@ public class UploadDownloadServlet extends HttpServlet {
             }
 
         } catch (Exception pEx) {
-            pEx.printStackTrace();
             pResponse.setHeader("Reason-Phrase", pEx.getMessage());
             throw new ServletException("Error while downloading the file.", pEx);
         }

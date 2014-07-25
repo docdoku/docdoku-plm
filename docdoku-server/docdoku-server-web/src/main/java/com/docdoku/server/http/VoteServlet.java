@@ -86,9 +86,6 @@ public class VoteServlet extends HttpServlet {
 
             }
 
-
-
-
         } catch (Exception pEx) {
             throw new ServletException("Error while voting.", pEx);
         }

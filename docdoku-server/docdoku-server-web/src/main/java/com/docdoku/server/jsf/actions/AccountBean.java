@@ -19,17 +19,20 @@
  */
 package com.docdoku.server.jsf.actions;
 
-import com.docdoku.core.common.Account;
+import com.docdoku.core.common.Workspace;
 import com.docdoku.core.exceptions.AccountNotFoundException;
 import com.docdoku.core.services.IUserManagerLocal;
 
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
-import javax.faces.bean.ManagedBean;
 import javax.faces.context.FacesContext;
-import javax.servlet.http.HttpServletRequest;
+import javax.inject.Named;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
-@ManagedBean(name = "accountBean")
+@Named("accountBean")
 @RequestScoped
 public class AccountBean {
 
@@ -38,20 +41,25 @@ public class AccountBean {
     
     private String password;
 
+    private String login;
+    private String name;
+    private String email;
+    private String language;
+
+    private boolean superAdmin;
+
+    private Map<String, Workspace> administeredWorkspaces = new HashMap<>();
+    private Set<Workspace> regularWorkspaces = new HashSet<>();
+
+    private String organizationName;
+    private String organizationAdmin;
+
     public AccountBean() {
     }
 
     public String updateAccount() throws AccountNotFoundException {
-
-        //TODO switch to a more JSF style code
-        HttpServletRequest request = (HttpServletRequest) (FacesContext.getCurrentInstance().getExternalContext().getRequest());
-        Account account = (Account) request.getSession().getAttribute("account");
-        //Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-        String language = FacesContext.getCurrentInstance().getViewRoot().getLocale().getLanguage();
-        account.setLanguage(language);
-                
-        userManager.updateAccount(account.getName(), account.getEmail(), account.getLanguage(), password);
-
+        language = FacesContext.getCurrentInstance().getViewRoot().getLocale().getLanguage();
+        userManager.updateAccount(name, email, language, password);
         return "/login.xhtml";
     }
 
@@ -61,5 +69,77 @@ public class AccountBean {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getLogin() {
+        return login;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+
+    public String getOrganizationName() {
+        return organizationName;
+    }
+
+    public void setOrganizationName(String organizationName) {
+        this.organizationName = organizationName;
+    }
+
+    public boolean isSuperAdmin() {
+        return superAdmin;
+    }
+
+    public void setSuperAdmin(boolean superAdmin) {
+        this.superAdmin = superAdmin;
+    }
+
+    public Map<String, Workspace> getAdministeredWorkspaces() {
+        return administeredWorkspaces;
+    }
+
+    public void setAdministeredWorkspaces(Map<String, Workspace> administeredWorkspaces) {
+        this.administeredWorkspaces = administeredWorkspaces;
+    }
+
+    public Set<Workspace> getRegularWorkspaces() {
+        return regularWorkspaces;
+    }
+
+    public void setRegularWorkspaces(Set<Workspace> regularWorkspaces) {
+        this.regularWorkspaces = regularWorkspaces;
+    }
+
+    public String getOrganizationAdmin() {
+        return organizationAdmin;
+    }
+
+    public void setOrganizationAdmin(String organizationAdmin) {
+        this.organizationAdmin = organizationAdmin;
     }
 }

@@ -56,10 +56,9 @@ public class PartPermalinkServlet extends HttpServlet {
                 PartRevision partRevision = (PartRevision) pRequest.getAttribute("publicPartRevision");
                 handleSuccess(pRequest,pResponse,partRevision);
             }else{
-                HttpServletRequest httpRequest = (HttpServletRequest) pRequest;
-                String requestURI = httpRequest.getRequestURI();
+                String requestURI = pRequest.getRequestURI();
                 String[] pathInfos = Pattern.compile("/").split(requestURI);
-                int offset = httpRequest.getContextPath().equals("") ? 2 : 3;
+                int offset = pRequest.getContextPath().equals("") ? 2 : 3;
 
                 String workspaceId = URLDecoder.decode(pathInfos[offset], "UTF-8");
                 String partNumber = URLDecoder.decode(pathInfos[offset+1],"UTF-8");
