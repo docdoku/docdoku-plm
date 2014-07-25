@@ -351,16 +351,24 @@ public class ProductResource {
                 List<InstanceCollection> instanceCollections = new ArrayList<>();
 
                 for(String path : pathsDTO.getPaths()){
-                    String[] partUsageIdsString = path.split("-");
-                    List<Integer> usageLinkPaths = new ArrayList<>();
+                    if(path != null && !path.equals("null")){
+                        String[] partUsageIdsString = path.split("-");
+                        List<Integer> usageLinkPaths = new ArrayList<>();
 
-                    for (String partUsageIdString : partUsageIdsString) {
-                        usageLinkPaths.add(Integer.parseInt(partUsageIdString));
+                        for (String partUsageIdString : partUsageIdsString) {
+                            usageLinkPaths.add(Integer.parseInt(partUsageIdString));
+                        }
+
+                        PartUsageLink rootUsageLink = productService.filterProductStructure(ciKey, cs, usageLinkPaths.get(0), 0);
+                        usageLinkPaths.remove(0);
+                        instanceCollections.add(new InstanceCollection(rootUsageLink, usageLinkPaths, cs));
+                    }else{
+                        List<Integer> usageLinkPaths = new ArrayList<>();
+                        PartUsageLink rootUsageLink = productService.filterProductStructure(ciKey, cs, null, 0);
+                        instanceCollections.clear();
+                        instanceCollections.add(new InstanceCollection(rootUsageLink, usageLinkPaths, cs));
                     }
 
-                    PartUsageLink rootUsageLink = productService.filterProductStructure(ciKey, cs, usageLinkPaths.get(0), 0);
-                    usageLinkPaths.remove(0);
-                    instanceCollections.add(new InstanceCollection(rootUsageLink, usageLinkPaths, cs));
                 }
 
                 return Response.ok().lastModified(new Date()).cacheControl(cc).entity(new PathFilteredListInstanceCollection(instanceCollections, cs)).build();
