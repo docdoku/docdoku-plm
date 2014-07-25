@@ -36,6 +36,7 @@ import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.io.UnsupportedEncodingException;
@@ -52,13 +53,13 @@ import java.util.*;
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class ProductResource {
 
-    @EJB
+    @Inject
     private IProductManagerLocal productService;
 
-    @EJB
+    @Inject
     private LayerResource layerResource;
 
-    @EJB
+    @Inject
     private BaselinesResource baselinesResource;
 
     private Mapper mapper;
@@ -89,6 +90,19 @@ public class ProductResource {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
 
+    }
+
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response createConfigurationItem(ConfigurationItemDTO configurationItemDTO) throws UnsupportedEncodingException {
+        try {
+            ConfigurationItem configurationItem = productService.createConfigurationItem(configurationItemDTO.getWorkspaceId(), configurationItemDTO.getId(), configurationItemDTO.getDescription(), configurationItemDTO.getDesignItemNumber());
+            ConfigurationItemDTO configurationItemDTOCreated = mapper.map(configurationItem, ConfigurationItemDTO.class);
+            configurationItemDTOCreated.setDesignItemNumber(configurationItem.getDesignItem().getNumber());
+            return Response.created(URI.create(URLEncoder.encode(configurationItemDTOCreated.getId(),"UTF-8"))).entity(configurationItemDTOCreated).build();
+        } catch (ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
     }
 
     @GET
@@ -305,13 +319,52 @@ public class ProductResource {
     }
 
     @POST
+    @Path("{ciId}/instances")
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createConfigurationItem(ConfigurationItemDTO configurationItemDTO) throws UnsupportedEncodingException {
+    public Response getInstancesPathFiltered(@Context Request request, @PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("configSpec") String configSpecType, PathListDTO pathsDTO) {
         try {
-            ConfigurationItem configurationItem = productService.createConfigurationItem(configurationItemDTO.getWorkspaceId(), configurationItemDTO.getId(), configurationItemDTO.getDescription(), configurationItemDTO.getDesignItemNumber());
-            ConfigurationItemDTO configurationItemDTOCreated = mapper.map(configurationItem, ConfigurationItemDTO.class);
-            configurationItemDTOCreated.setDesignItemNumber(configurationItem.getDesignItem().getNumber());
-            return Response.created(URI.create(URLEncoder.encode(configurationItemDTOCreated.getId(),"UTF-8"))).entity(configurationItemDTOCreated).build();
+            //Because some AS (like Glassfish) forbids the use of CacheControl
+            //when authenticated we use the LastModified header to fake
+            //a similar behavior (15 minutes of cache)
+            Calendar cal = new GregorianCalendar();
+            cal.add(Calendar.MINUTE, -15);
+            Response.ResponseBuilder rb = request.evaluatePreconditions(cal.getTime());
+            if (rb != null) {
+                return rb.build();
+            } else {
+
+                CacheControl cc = new CacheControl();
+                //this request is resources consuming so we cache the response for 30 minutes
+                cc.setMaxAge(60 * 15);
+
+                ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
+
+                ConfigSpec cs;
+
+                if(configSpecType == null || configSpecType.equals("latest") || configSpecType.equals("undefined")){
+                    cs = new LatestConfigSpec();
+                }else{
+                    cs = productService.getConfigSpecForBaseline(Integer.parseInt(configSpecType));
+                }
+
+                List<InstanceCollection> instanceCollections = new ArrayList<>();
+
+                for(String path : pathsDTO.getPaths()){
+                    String[] partUsageIdsString = path.split("-");
+                    List<Integer> usageLinkPaths = new ArrayList<>();
+
+                    for (String partUsageIdString : partUsageIdsString) {
+                        usageLinkPaths.add(Integer.parseInt(partUsageIdString));
+                    }
+
+                    PartUsageLink rootUsageLink = productService.filterProductStructure(ciKey, cs, usageLinkPaths.get(0), 0);
+                    usageLinkPaths.remove(0);
+                    instanceCollections.add(new InstanceCollection(rootUsageLink, usageLinkPaths, cs));
+                }
+
+                return Response.ok().lastModified(new Date()).cacheControl(cc).entity(new PathFilteredListInstanceCollection(instanceCollections, cs)).build();
+            }
         } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
