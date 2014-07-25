@@ -34,6 +34,7 @@ function (LoaderManager, async) {
 
         this.trashInstances = [];                                                                                       // Index instances for removal
         this.xhrQueue=null;
+        this.loadQueue=null;
         // Stat to show
         this.aborted = 0;
         this.alreadySameQuality = 0;
@@ -57,6 +58,7 @@ function (LoaderManager, async) {
                 _this.workerStats = stats;
             },
             directives: function (directives) {
+                console.log('New 3D directives');
                 currentDirectivesCount = directives.length;
                 if (currentDirectivesCount) {
                     directives.forEach(function (directive) {
@@ -85,6 +87,17 @@ function (LoaderManager, async) {
             if(App.debug){console.log('[InstancesManager] Queue is saturated');}
         };
 
+        this.loadQueue=async.queue(loadQueue,1);
+        this.loadQueue.drain = function () {
+            if(App.debug){console.log('[InstancesManager - loadQueue] All instances have been processed');}
+        };
+        this.loadQueue.empty = function () {
+            if(App.debug){console.log('[InstancesManager - loadQueue] Queue is empty');}
+        };
+        this.loadQueue.saturated = function () {
+            if(App.debug){console.log('[InstancesManager - loadQueue] Queue is saturated');}
+        };
+
         /**
          * Load process : xhr + store geometry and materials in array
          */
@@ -106,6 +119,7 @@ function (LoaderManager, async) {
             }
 
             if (directive.quality == undefined) {
+                // TODO move check for edited parts here
                 _this.trashInstances.push(instance);
                 setTimeout(callback,0);
                 return;
@@ -229,55 +243,6 @@ function (LoaderManager, async) {
                 }
             });
         };
-        this.preloadAll = function(){
-            var url = "api/workspaces/Sandbox/products/Nailed_Plank/instances?configSpec=latest&path=null";
-            $.getJSON(url, function (instances) {
-
-                _.each(instances, function (instanceRaw) {
-                    if(instancesIndexed[instanceRaw.id]){
-                        instancesIndexed[instanceRaw.id].checked = false;
-                        worker.postMessage({fn: "check", obj: instanceRaw.id});
-                        return ;
-                    }else{
-                        instanceRaw.matrix = adaptMatrix(instanceRaw.matrix);
-                    }
-                    //var obj = [ {a:2,B:3},{a:222,B:3}]
-                    //_(obj).pluck('a')
-                    instancesIndexed[instanceRaw.id]=instanceRaw;
-                    instancesIndexed[instanceRaw.id].checked = false;
-                    /*
-                     * Init the mesh with empty geometry
-                     * */
-                    var mesh = new THREE.Mesh(new THREE.Geometry(),new THREE.MeshPhongMaterial());
-                    instanceRaw.mesh = mesh;
-                    instanceRaw.currentQuality = null;
-                    instanceRaw.mesh.partIterationId = instanceRaw.partIterationId;
-                    instanceRaw.mesh.applyMatrix(instanceRaw.matrix);
-                    instanceRaw.position=mesh.position.clone();
-                    instanceRaw.qualities =  findQualities(instanceRaw.files);
-                    var radius =  findRadius(instanceRaw.files);
-
-                    var cog = {
-                        x:mesh.position.x+radius,
-                        y:mesh.position.y+radius,
-                        z:mesh.position.z+radius
-                    };
-
-                    worker.postMessage({
-                        fn: "addInstance",
-                        obj: {
-                            id: instanceRaw.id,
-                            cog: cog,
-                            radius: radius,
-                            qualities: instanceRaw.qualities,
-                            checked: true
-                        }
-                    });
-                });
-                _this.planNewEval();
-                loaderIndicator.hide();
-            });
-        };
         this.loadFromId = function(arrayId){
             _.each(arrayId, function (instanceId) {
                 instancesIndexed[instanceId].checked = true;
@@ -288,7 +253,8 @@ function (LoaderManager, async) {
 
         this.loadFromTree = function(component) {
             loaderIndicator.show();
-            this.loadFromUrl(component.getInstancesUrl());
+            _this.loadQueue.push({"process":"load","path":component.getInstancesUrl()});
+            //this.loadFromUrl(component.getInstancesUrl());
         };
         this.getCheckedInstancesId = function() {
 
@@ -339,20 +305,28 @@ function (LoaderManager, async) {
 
         };
 
+        function loadQueue(directive, callback){
+            if (directive.process == "load"){
+                _this.loadFromUrl(directive.path, callback);
+            }else {
+                _this.unloadFromUrl(directive.path, callback);
+            }
+        }
 
-        this.loadFromUrl = function(url){
+        this.loadFromUrl = function(url, callback){
+            console.log("entrée get json loadfromurl");
             $.getJSON(url, function (instances) {
-
+                console.log("sortie get json loadfromurl");
                 _.each(instances, function (instanceRaw) {
                     if(instancesIndexed[instanceRaw.id]){
-                        instancesIndexed[instanceRaw.id].checked = true;
+                        //instancesIndexed[instanceRaw.id].checked = true;
                         worker.postMessage({fn: "check", obj: instanceRaw.id});
                         return ;
                     }else{
                         instanceRaw.matrix = adaptMatrix(instanceRaw.matrix);
                     }
                     instancesIndexed[instanceRaw.id]=instanceRaw;
-                    instancesIndexed[instanceRaw.id].checked = true;
+                    //instancesIndexed[instanceRaw.id].checked = true;
                     /*
                      * Init the mesh with empty geometry
                      * */
@@ -385,7 +359,7 @@ function (LoaderManager, async) {
                 _this.planNewEval();
                 loaderIndicator.hide();
 
-                if (App.collaborativeView.isMaster) {
+                /*if (App.collaborativeView.isMaster) {
                     var instancesChecked = _(instances).pluck('id');
                     var message = {
                         type: ChannelMessagesType.COLLABORATIVE_COMMANDS,
@@ -394,21 +368,25 @@ function (LoaderManager, async) {
                         remoteUser: "null"
                     };
                     mainChannel.sendJSON(message);
-                }
+                }*/
+                callback();
             });
         };
         this.unLoadFromTree = function(component) {
-            this.unloadFromUrl(component.getInstancesUrl());
+            //this.unloadFromUrl(component.getInstancesUrl());
+            _this.loadQueue.push({"process":"unload","path":component.getInstancesUrl()});
         };
-        this.unloadFromUrl = function(url) {
+        this.unloadFromUrl = function(url, callback) {
+            console.log("entrée get json unloadfromurl");
             $.getJSON(url, function (instances) {
+                console.log("sortie get json unloadfromurl");
                 _.each(instances, function (instanceRaw) {
-                    instancesIndexed[instanceRaw.id].checked = false;
-                    _this.trashInstances.push(instanceRaw);
+                    //instancesIndexed[instanceRaw.id].checked = false;
+                    //_this.trashInstances.push(instanceRaw);
                     worker.postMessage({fn: "unCheck", obj: instanceRaw.id});
                 });
                 _this.planNewEval();
-                if (App.collaborativeView.isMaster) {
+                /*if (App.collaborativeView.isMaster) {
                     var instancesUnChecked = _(instances).pluck('id');
                     var message = {
                         type: ChannelMessagesType.COLLABORATIVE_COMMANDS,
@@ -417,7 +395,8 @@ function (LoaderManager, async) {
                         remoteUser: "null"
                     };
                     mainChannel.sendJSON(message);
-                }
+                }*/
+                callback();
             });
         };
         this.unloadFromId = function(arrayId){

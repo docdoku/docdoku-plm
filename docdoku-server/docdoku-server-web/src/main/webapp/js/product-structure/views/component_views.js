@@ -39,7 +39,7 @@ define(function() {
 
             this.$el.append(componentView.render().el);
 
-            // expand the assembly if it was expanded before redraw
+            // expand the assembly if it was expanded before redraw && _.contains(expandedViews,component.attributes.number)
             if(component.isAssembly() && _.contains(expandedViews,component.attributes.number)){
                 componentView.onToggleExpand();
             }
@@ -58,6 +58,8 @@ define(function() {
 
         tagName:'li',
 
+        id:'path',
+
         template: _.template("<input type='checkbox' <%if (checkedAtInit) {%>checked='checked'<%}%>><a><label class='checkbox'><%= number %> (<%= amount %>)</label></a><i class='icon-file'></i>"),
 
         events: {
@@ -69,6 +71,7 @@ define(function() {
         initialize: function() {
             _.bindAll(this, ["onChangeCheckbox"]);
             this.listenTo(this.options.resultPathCollection, 'reset', this.onAllResultPathAdded);
+            this.$el.attr("id","path_"+String(this.model.attributes.path));
         },
 
         onAllResultPathAdded: function() {
@@ -80,6 +83,7 @@ define(function() {
         },
 
         onChangeCheckbox: function(event) {
+            //external node
             if (event.target.checked){
                 App.instancesManager.loadFromTree(this.model);
             }
@@ -125,6 +129,8 @@ define(function() {
 
         tagName:'li',
 
+        id:'path',
+
         className: 'expandable',
 
         template: _.template("<div class=\"hitarea expandable-hitarea\"></div><input type='checkbox' <%if (checkedAtInit) {%>checked='checked'<%}%>><a><label class='checkbox isNode'><%= number %> (<%= amount %>)</label></a><i class='icon-file'></i>"),
@@ -140,6 +146,7 @@ define(function() {
             this.isExpanded = false;
             _.bindAll(this, ["onChangeCheckbox"]);
             this.listenTo(this.options.resultPathCollection, 'reset', this.onAllResultPathAdded);
+            this.$el.attr("id","path_"+String(this.model.attributes.path));
         },
 
         onAllResultPathAdded: function() {
@@ -151,20 +158,12 @@ define(function() {
         },
 
         onChangeCheckbox: function(event) {
+            // noeud
             if (event.target.checked){
                 App.instancesManager.loadFromTree(this.model);
             }
             else{
                 App.instancesManager.unLoadFromTree(this.model);
-            }
-            if (App.collaborativeView.isMaster) {
-                var message = {
-                    type: ChannelMessagesType.COLLABORATIVE_COMMANDS,
-                    key: App.collaborativeView.roomKey,
-                    messageBroadcast: {instancesId: App.instancesManager.getCheckedInstancesId()},
-                    remoteUser: "null"
-                };
-                mainChannel.sendJSON(message);
             }
         },
 

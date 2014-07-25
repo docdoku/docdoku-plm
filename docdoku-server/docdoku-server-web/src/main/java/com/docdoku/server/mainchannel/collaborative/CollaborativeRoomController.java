@@ -78,7 +78,12 @@ public class CollaborativeRoomController {
     public static void processCommands(String callerLogin, CollaborativeRoom room, CollaborativeMessage collaborativeMessage){
         // if the master sent the invitation
         if (room.getMaster().getUserPrincipal().toString().equals(callerLogin)) {
-            room.setSceneInfos(collaborativeMessage.getMessageBroadcast());
+            // save camera infos
+            JsonObject command = collaborativeMessage.getMessageBroadcast();
+            if (command.containsKey("contextInfos")) {
+                // save the last informations on the scene
+                room.setSceneInfos(collaborativeMessage.getMessageBroadcast());
+            }
             for (Session slave : room.getSlaves()) {
                 MainChannelDispatcher.send(slave, collaborativeMessage);
             }
