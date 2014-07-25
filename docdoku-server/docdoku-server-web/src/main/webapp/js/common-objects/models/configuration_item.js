@@ -30,7 +30,7 @@ define(function() {
         createBaseline:function(baselineArgs,callbacks){
             $.ajax({
                 type: "POST",
-                url: this.urlRoot + "/" + this.getId() + "/baseline",
+                url: this.urlRoot + "/" + this.getId() + "/baselines",
                 data: JSON.stringify(baselineArgs),
                 contentType: "application/json; charset=utf-8",
                 success:callbacks.success,
@@ -53,7 +53,7 @@ define(function() {
             $.ajax({
                 type: "DELETE",
                 async:false,
-                url: this.urlRoot + "/" + this.getId() + "/baseline/"+baselineId,
+                url: this.urlRoot + "/" + this.getId() + "/baselines/"+baselineId,
                 contentType: "application/json; charset=utf-8",
                 success:callbacks.success,
                 error:callbacks.error

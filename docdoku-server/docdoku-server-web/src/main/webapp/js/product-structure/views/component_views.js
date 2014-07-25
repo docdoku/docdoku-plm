@@ -59,8 +59,6 @@ define(function() {
 
         tagName:'li',
 
-        id:'path',
-
         template: _.template("<input type='checkbox' <%if (checkedAtInit) {%>checked='checked'<%}%>><a><label class='checkbox'><%= number %> (<%= amount %>)</label></a><i class='icon-file'></i>"),
 
         events: {
@@ -129,8 +127,6 @@ define(function() {
     ComponentViews.Assembly = Backbone.View.extend({
 
         tagName:'li',
-
-        id:'path',
 
         className: 'expandable',
 

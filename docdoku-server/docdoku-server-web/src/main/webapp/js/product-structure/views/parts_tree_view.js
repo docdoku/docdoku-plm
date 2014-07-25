@@ -59,33 +59,11 @@ define(["models/component_module", "views/component_views"], function (Component
             var mainElement = this.el.querySelector('li#path_'+path);
             // if element is already load in the Tree
             if (mainElement) {
-                $('li#path_'+path+' input').trigger("click");
-                /*
                 mainElement.checked = checked;
                 var inputs = mainElement.parentNode.querySelectorAll('input');
                 for (var i = 0; i < inputs.length; i++) {
                     inputs[i].checked = checked;
-                }*/
-            } else {
-                // toggle parents
-                //var parentElement = this.el.querySelector('input#path_'+path);
-                console.log("expand requis");
-                this.expandToPath(path);
-
-
-                /*
-                var parents = path.split("-");
-                // si l'id du chemin n'existe pas on expand le parent
-                if(
-                // clic sur la racine
-                var pathParent = parents[0];
-                for (var i=1; i < parents.length ; i++){
-
-                    path = pathParent+"-"+parents[i];
-                    // si path n'existe pas on expand le parent
-                    var parentElement = this.el.querySelector('input#path_'+path);
-                .trigger("click .hitarea:first");
-                }*/
+                }
             }
         },
 
@@ -131,11 +109,11 @@ define(["models/component_module", "views/component_views"], function (Component
                 // s'ils sont tous cochés
                 if (inputsChecked == childrenUl.childNodes.length) {
                     // on essaye d'ajouter le noeud
-                    this.addToSmartPath(relativeInput.id.substring(5));
+                    this.addToSmartPath(relativeInput.parentNode.id.substring(5));
                 } else {
                     relativeInput.checked = false;
                     // on essaye de retirer le noeud et d'ajouter les fils cochés
-                    this.removeFromSmartPath(relativeInput.id.substring(5));
+                    this.removeFromSmartPath(relativeInput.parentNode.id.substring(5));
                     if (App.collaborativeView.isMaster) {
                         this.smartPath = this.smartPath.concat(tempArray);
                     }
@@ -143,14 +121,14 @@ define(["models/component_module", "views/component_views"], function (Component
             } else {
                 if (relativeInput.checked) {
                     // si on coche -> ajoute la feuille
-                    this.addToSmartPath(relativeInput.id.substring(5));
+                    this.addToSmartPath(relativeInput.parentNode.id.substring(5));
                 } else {
                     // si on décoche -> on essayer de retirer la feuille
-                    this.removeFromSmartPath(relativeInput.id.substring(5));
+                    this.removeFromSmartPath(relativeInput.parentNode.id.substring(5));
                 }
             }
 
-            if (relativeInput.id == "path_null"){
+            if (relativeInput.parentNode.id == "path_null"){
                 if (App.collaborativeView.isMaster) {
                     mainChannel.sendJSON({
                         type: ChannelMessagesType.COLLABORATIVE_COMMANDS,
@@ -188,10 +166,11 @@ define(["models/component_module", "views/component_views"], function (Component
                 console.log(pathToUnload);
                 pathToUnload.forEach(function (y) {
                     self.checkPath(y, false);
-                    /*App.instancesManager.unloadFromUrl(
-                       "/api/workspaces/" + APP_CONFIG.workspaceId + "/products/" + APP_CONFIG.productId + "/instances?configSpec="+window.config_spec+"&path="
-                       + y);*/
                 });
+                App.instancesManager.loadQueue.push({"process":"unload","path":pathToUnload});
+                /*App.instancesManager.unloadFromUrl(
+                 "/api/workspaces/" + APP_CONFIG.workspaceId + "/products/" + APP_CONFIG.productId + "/instances?configSpec="+window.config_spec+"&path="
+                 + y);*/
             }
 
             var pathToLoad = _.difference(arrayPaths, this.smartPath);
@@ -200,10 +179,11 @@ define(["models/component_module", "views/component_views"], function (Component
                 console.log(pathToLoad);
                 pathToLoad.forEach(function (y) {
                     self.checkPath(y, true);
-                    /*App.instancesManager.loadFromUrl(
-                        "/api/workspaces/" + APP_CONFIG.workspaceId + "/products/" + APP_CONFIG.productId + "/instances?configSpec=" + window.config_spec + "&path="
-                            + y);*/
                 });
+                App.instancesManager.loadQueue.push({"process":"load","path":pathToLoad});
+                /*App.instancesManager.loadFromUrl(
+                 "/api/workspaces/" + APP_CONFIG.workspaceId + "/products/" + APP_CONFIG.productId + "/instances?configSpec=" + window.config_spec + "&path="
+                 + y);*/
             }
 
             this.smartPath = arrayPaths;

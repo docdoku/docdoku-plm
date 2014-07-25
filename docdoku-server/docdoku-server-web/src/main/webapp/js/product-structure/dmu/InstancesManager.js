@@ -125,6 +125,8 @@ function (LoaderManager, async) {
                 return;
             }
 
+            // todo check if not available in memory
+
             // Else : load the instance
             var quality = instance.qualities[directive.quality];
             var texturePath = quality.substring(0, quality.lastIndexOf('/'));
@@ -255,7 +257,7 @@ function (LoaderManager, async) {
 
         this.loadFromTree = function(component) {
             loaderIndicator.show();
-            _this.loadQueue.push({"process":"load","path":component.getInstancesUrl()});
+            _this.loadQueue.push({"process":"load","path":[component.getPath()]});
             //this.loadFromUrl(component.getInstancesUrl());
         };
 
@@ -314,8 +316,75 @@ function (LoaderManager, async) {
             }
         }
 
-        this.loadFromUrl = function(url, callback){
+        this.loadFromUrl = function(paths, callback){
             console.log("entrée get json loadfromurl");
+            $.ajax({
+                url:"/api/workspaces/" + APP_CONFIG.workspaceId + "/products/" + APP_CONFIG.productId + "/instances?configSpec="+window.config_spec,
+                type:'POST',
+                contentType:'application/json',
+                dataType:'json',
+                data:JSON.stringify({
+                    paths:paths
+                }),
+                success:function(instances){
+                    console.log("sortie get json loadfromurl");
+                    _.each(instances, function (instanceRaw) {
+                        if(instancesIndexed[instanceRaw.id]){
+                            //instancesIndexed[instanceRaw.id].checked = true;
+                            worker.postMessage({fn: "check", obj: instanceRaw.id});
+                            return ;
+                        }else{
+                            instanceRaw.matrix = adaptMatrix(instanceRaw.matrix);
+                        }
+                        instancesIndexed[instanceRaw.id]=instanceRaw;
+                        //instancesIndexed[instanceRaw.id].checked = true;
+                        /*
+                         * Init the mesh with empty geometry
+                         * */
+                        var mesh = new THREE.Mesh(new THREE.Geometry(),new THREE.MeshPhongMaterial());
+                        instanceRaw.mesh = mesh;
+                        instanceRaw.currentQuality = null;
+                        instanceRaw.mesh.partIterationId = instanceRaw.partIterationId;
+                        instanceRaw.mesh.applyMatrix(instanceRaw.matrix);
+                        instanceRaw.position=mesh.position.clone();
+                        instanceRaw.qualities =  findQualities(instanceRaw.files);
+                        var radius =  findRadius(instanceRaw.files);
+
+                        var cog = {
+                            x:mesh.position.x+radius,
+                            y:mesh.position.y+radius,
+                            z:mesh.position.z+radius
+                        };
+
+                        worker.postMessage({
+                            fn: "addInstance",
+                            obj: {
+                                id: instanceRaw.id,
+                                cog: cog,
+                                radius: radius,
+                                qualities: instanceRaw.qualities,
+                                checked: true
+                            }
+                        });
+                    });
+                    _this.planNewEval();
+                    loaderIndicator.hide();
+
+                    /*if (App.collaborativeView.isMaster) {
+                     var instancesChecked = _(instances).pluck('id');
+                     var message = {
+                     type: ChannelMessagesType.COLLABORATIVE_COMMANDS,
+                     key: App.collaborativeView.roomKey,
+                     messageBroadcast: {instancesId: instancesChecked},
+                     remoteUser: "null"
+                     };
+                     mainChannel.sendJSON(message);
+                     }*/
+                    callback();
+                }
+            });
+
+            /*
             $.getJSON(url, function (instances) {
                 console.log("sortie get json loadfromurl");
                 _.each(instances, function (instanceRaw) {
@@ -328,9 +397,9 @@ function (LoaderManager, async) {
                     }
                     instancesIndexed[instanceRaw.id]=instanceRaw;
                     //instancesIndexed[instanceRaw.id].checked = true;
-                    /*
+                    *//*
                      * Init the mesh with empty geometry
-                     * */
+                     * *//*
                     var mesh = new THREE.Mesh(new THREE.Geometry(),new THREE.MeshPhongMaterial());
                     instanceRaw.mesh = mesh;
                     instanceRaw.currentQuality = null;
@@ -360,7 +429,7 @@ function (LoaderManager, async) {
                 _this.planNewEval();
                 loaderIndicator.hide();
 
-                /*if (App.collaborativeView.isMaster) {
+                *//*if (App.collaborativeView.isMaster) {
                     var instancesChecked = _(instances).pluck('id');
                     var message = {
                         type: ChannelMessagesType.COLLABORATIVE_COMMANDS,
@@ -369,16 +438,48 @@ function (LoaderManager, async) {
                         remoteUser: "null"
                     };
                     mainChannel.sendJSON(message);
-                }*/
+                }*//*
                 callback();
-            });
+            });*/
         };
         this.unLoadFromTree = function(component) {
             //this.unloadFromUrl(component.getInstancesUrl());
-            _this.loadQueue.push({"process":"unload","path":component.getInstancesUrl()});
+            _this.loadQueue.push({"process":"unload","path":[component.getPath()]});
         };
-        this.unloadFromUrl = function(url, callback) {
+        this.unloadFromUrl = function(paths, callback) {
             console.log("entrée get json unloadfromurl");
+
+            $.ajax({
+                url:"/api/workspaces/" + APP_CONFIG.workspaceId + "/products/" + APP_CONFIG.productId + "/instances?configSpec="+window.config_spec,
+                type:'POST',
+                contentType:'application/json',
+                data:JSON.stringify({
+                    paths:paths
+                }),
+                success:function(instances){
+
+                    _.each(instances, function (instanceRaw) {
+                        //instancesIndexed[instanceRaw.id].checked = false;
+                        //_this.trashInstances.push(instanceRaw);
+                        worker.postMessage({fn: "unCheck", obj: instanceRaw.id});
+                    });
+                    _this.planNewEval();
+                    /*if (App.collaborativeView.isMaster) {
+                     var instancesUnChecked = _(instances).pluck('id');
+                     var message = {
+                     type: ChannelMessagesType.COLLABORATIVE_COMMANDS,
+                     key: App.collaborativeView.roomKey,
+                     messageBroadcast: {instancesUnChecked: instancesUnChecked},
+                     remoteUser: "null"
+                     };
+                     mainChannel.sendJSON(message);
+                     }*/
+                    callback();
+
+                }});
+
+            /*
+
             $.getJSON(url, function (instances) {
                 console.log("sortie get json unloadfromurl");
                 _.each(instances, function (instanceRaw) {
@@ -387,7 +488,7 @@ function (LoaderManager, async) {
                     worker.postMessage({fn: "unCheck", obj: instanceRaw.id});
                 });
                 _this.planNewEval();
-                /*if (App.collaborativeView.isMaster) {
+                *//*if (App.collaborativeView.isMaster) {
                     var instancesUnChecked = _(instances).pluck('id');
                     var message = {
                         type: ChannelMessagesType.COLLABORATIVE_COMMANDS,
@@ -396,9 +497,9 @@ function (LoaderManager, async) {
                         remoteUser: "null"
                     };
                     mainChannel.sendJSON(message);
-                }*/
+                }*//*
                 callback();
-            });
+            });*/
         };
         this.unloadFromId = function(arrayId){
             _.each(arrayId, function (instanceId) {
