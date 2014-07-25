@@ -714,6 +714,7 @@ define([
             _this.reDraw();
         };
 
+        // If transformControls are enabled return the mode (translation, rotation, scaling), null otherwise
         this.getTransformControlsMode = function() {
             if (transformControls.enabled) {
                 return transformControls.getMode();
@@ -997,12 +998,18 @@ define([
                 App.appView.setSpectatorView();
 
                 // /api/workspaces/Sandbox/products/Nailed_Plank/instances?configSpec=latest&path=null
-                App.instancesManager.initStructure("/api/workspaces/"+APP_CONFIG.workspaceId+'/products/'+APP_CONFIG.productId+"/instances?configSpec=latest&path=null",function(){
+                /*App.instancesManager.initStructure("/api/workspaces/"+APP_CONFIG.workspaceId+'/products/'+APP_CONFIG.productId+"/instances?configSpec=latest&path=null",function(){
                     mainChannel.sendJSON({
                         type: ChannelMessagesType.COLLABORATIVE_JOIN,
                         key: key,
                         remoteUser: "null"
                     });
+                });*/
+
+                mainChannel.sendJSON({
+                    type: ChannelMessagesType.COLLABORATIVE_JOIN,
+                    key: key,
+                    remoteUser: "null"
                 });
             }
         };

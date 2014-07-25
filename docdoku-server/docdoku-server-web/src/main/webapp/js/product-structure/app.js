@@ -200,6 +200,7 @@ define(
 
         setSpectatorView: function() {
             this.$ControlsContainer.find("button").attr("disabled","disabled");
+            //this.$productMenu.find("input[type=checkbox]").attr("disabled",true);
         },
 
         leaveSpectatorView: function() {
@@ -214,6 +215,10 @@ define(
         leaveTransformControlMode: function() {
             //this.$("#transform_mode_view_btn > button").removeClass("active");
             this.controlTransformView.render();
+        },
+
+        updateTreeView: function(arrayPaths){
+             this.partsTreeView.compareSmartPath(arrayPaths);
         },
 
         onComponentSelected: function(showRoot) {

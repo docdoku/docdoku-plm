@@ -26,6 +26,8 @@ define(["models/component_module", "views/component_views"], function (Component
 
             var rootCollection = new ComponentModule.Collection([], { isRoot: true });
 
+            this.smartPath = [];
+
             this.rootComponent = undefined;
 
             this.listenTo(rootCollection, 'reset', function(collection) {
@@ -48,28 +50,163 @@ define(["models/component_module", "views/component_views"], function (Component
             var inputs = event.target.parentNode.querySelectorAll('input');
             for (var i = 0; i < inputs.length; i++) {
                 inputs[i].checked = event.target.checked;
+                // on retire les fils du smartPath
+                this.removeFromSmartPath(inputs[i].id.substring(5));
+            }
+        },
+
+        checkPath: function(path, checked) {
+            var mainElement = this.el.querySelector('li#path_'+path);
+            // if element is already load in the Tree
+            if (mainElement) {
+                $('li#path_'+path+' input').trigger("click");
+                /*
+                mainElement.checked = checked;
+                var inputs = mainElement.parentNode.querySelectorAll('input');
+                for (var i = 0; i < inputs.length; i++) {
+                    inputs[i].checked = checked;
+                }*/
+            } else {
+                // toggle parents
+                //var parentElement = this.el.querySelector('input#path_'+path);
+                console.log("expand requis");
+                this.expandToPath(path);
+
+
+                /*
+                var parents = path.split("-");
+                // si l'id du chemin n'existe pas on expand le parent
+                if(
+                // clic sur la racine
+                var pathParent = parents[0];
+                for (var i=1; i < parents.length ; i++){
+
+                    path = pathParent+"-"+parents[i];
+                    // si path n'existe pas on expand le parent
+                    var parentElement = this.el.querySelector('input#path_'+path);
+                .trigger("click .hitarea:first");
+                }*/
+            }
+        },
+
+        expandToPath: function(path) {
+            var depth = path.lastIndexOf("-");
+            if (depth == -1){
+                // first child, expand rooth (path = null)
+                var root = this.el.querySelector('li#path_null div');
+                $(root).click(); // .hitarea:first
+                //setTimeout(function(){$(root).trigger("click")},500);
+            } else {
+                //extract parent path
+                var parentPath = path.substring(0,depth);
+                console.log(parentPath);
+                var parentElement = this.el.querySelector('li#path_'+parentPath+' div');
+                if (!parentElement) {
+                    this.expandToPath(parentPath);
+                }
+                $(parentElement).click();//  .hitarea:first
             }
         },
 
         checkParentsInputs: function(event) {
             var relativeInput = event.currentTarget.querySelector('input');
             relativeInput.checked = event.target.checked;
+            var childrenUl = event.currentTarget.querySelector('ul');
+            // si c'est un noeud
+            if (childrenUl != null) {
+                var tempArray = [];
+                var inputsChecked = 0;
 
-            if (event.target.checked) {
-                var childrenUl = event.currentTarget.querySelector('ul');
-                if (childrenUl != null) {
-                    var inputsChecked = 0;
-                    for (var i = 0; i < childrenUl.childNodes.length; i++) {
-                        var li = childrenUl.childNodes[i];
-                        if (li.querySelector('input').checked) {
-                            inputsChecked++;
-                        }
+                // on regarde regarde l'état des fils
+                for (var i = 0; i < childrenUl.childNodes.length; i++) {
+                    var li = childrenUl.childNodes[i];
+                    if (li.querySelector('input').checked) {
+                        inputsChecked++;
+                        // on ajoute le fils dans un tableau temp
+                        tempArray.push(li.id.substring(5));
                     }
-                    if (inputsChecked != childrenUl.childNodes.length) {
-                        relativeInput.checked = false;
+                    // on retire les fils (on les ré-ajoutera après si le parent n'est pas coché)
+                    this.removeFromSmartPath(li.id.substring(5));
+                }
+                // s'ils sont tous cochés
+                if (inputsChecked == childrenUl.childNodes.length) {
+                    // on essaye d'ajouter le noeud
+                    this.addToSmartPath(relativeInput.id.substring(5));
+                } else {
+                    relativeInput.checked = false;
+                    // on essaye de retirer le noeud et d'ajouter les fils cochés
+                    this.removeFromSmartPath(relativeInput.id.substring(5));
+                    if (App.collaborativeView.isMaster) {
+                        this.smartPath = this.smartPath.concat(tempArray);
                     }
                 }
+            } else {
+                if (relativeInput.checked) {
+                    // si on coche -> ajoute la feuille
+                    this.addToSmartPath(relativeInput.id.substring(5));
+                } else {
+                    // si on décoche -> on essayer de retirer la feuille
+                    this.removeFromSmartPath(relativeInput.id.substring(5));
+                }
             }
+
+            if (relativeInput.id == "path_null"){
+                if (App.collaborativeView.isMaster) {
+                    mainChannel.sendJSON({
+                        type: ChannelMessagesType.COLLABORATIVE_COMMANDS,
+                        key: App.collaborativeView.roomKey,
+                        messageBroadcast: {smartPath: this.smartPath},
+                        remoteUser: "null"
+                    });
+                    console.log(this.smartPath);
+                }
+            }
+
+        },
+
+        addToSmartPath: function(p){
+            if (App.collaborativeView.isMaster) {
+                this.removeFromSmartPath(p);
+                this.smartPath.push(p);
+            }
+        },
+
+        removeFromSmartPath: function(p){
+            if (App.collaborativeView.isMaster) {
+                this.smartPath = _.filter(this.smartPath, function (e) {
+                    return e != p;
+                });
+            }
+        },
+
+        compareSmartPath: function (arrayPaths) {
+            var self = this;
+
+            var pathToUnload = _.difference(this.smartPath, arrayPaths);
+            if (pathToUnload.length != 0) {
+                console.log("path to unload : ");
+                console.log(pathToUnload);
+                pathToUnload.forEach(function (y) {
+                    self.checkPath(y, false);
+                    /*App.instancesManager.unloadFromUrl(
+                       "/api/workspaces/" + APP_CONFIG.workspaceId + "/products/" + APP_CONFIG.productId + "/instances?configSpec="+window.config_spec+"&path="
+                       + y);*/
+                });
+            }
+
+            var pathToLoad = _.difference(arrayPaths, this.smartPath);
+            if (pathToLoad.length != 0) {
+                console.log("path to load : ");
+                console.log(pathToLoad);
+                pathToLoad.forEach(function (y) {
+                    self.checkPath(y, true);
+                    /*App.instancesManager.loadFromUrl(
+                        "/api/workspaces/" + APP_CONFIG.workspaceId + "/products/" + APP_CONFIG.productId + "/instances?configSpec=" + window.config_spec + "&path="
+                            + y);*/
+                });
+            }
+
+            this.smartPath = arrayPaths;
         },
 
         onComponentSelected: function(e, componentModel, li) {
