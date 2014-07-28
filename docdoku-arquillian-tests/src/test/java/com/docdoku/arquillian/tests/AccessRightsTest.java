@@ -84,6 +84,7 @@ public class AccessRightsTest {
                 .addPackage(Workspace.class.getPackage())
                 .addClasses(
                         Account.class,
+                        Organization.class,
                         Credential.class,
                         DataManagerBean.class,
                         DocumentManagerBean.class,
