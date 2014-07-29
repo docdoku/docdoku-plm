@@ -9,9 +9,6 @@ importScripts(
 // Index instances
 var newData = false;
 var instances = {};
-var totalChecked = 0;
-var nChecked = 0;
-var messagesCount = 0;
 var instancesCount = 0;
 var WorkerManagedValues = {};
 var debug = null;
@@ -21,12 +18,7 @@ function fixPrecision(v) {
     v.y = parseFloat(v.y).toFixed(2);
     v.z = parseFloat(v.z).toFixed(2);
 }
-// Each cycle has these stats
-var stats = {
-    errors: 0,
-    cycles: 0,
-    onScene: 0
-};
+
 var Context = {
     // Previous camera
     _camera:new THREE.Vector3(),
@@ -38,33 +30,23 @@ var Context = {
     ct: new THREE.Vector3(),
 
     clear:function(){
-        nChecked = 0;
         instances = {};
-        messagesCount = 0;
         instancesCount = 0;
     },
     addInstance: function (instance) {
         if (instances[instance.id] == undefined) {
             instancesCount++;
-            totalChecked += instance.checked ? 1 : 0;
         }
         instances[instance.id] = instance;
         newData = true;
     },
     unCheckInstance: function (instanceId) {
-        if (instances[instanceId].checked) {
-            totalChecked--;
-        }
         instances[instanceId].checked = false;
-        nChecked++;
-
+        newData = true;
     },
     checkInstance: function (instanceId) {
-        if (!instances[instanceId].checked) {
-            totalChecked++;
-        }
         instances[instanceId].checked = true;
-        nChecked++;
+        newData = true;
     },
     hasChanged: function (newContext) {
         debug = newContext.debug;
@@ -87,16 +69,15 @@ var Context = {
             Context.ct.subVectors(Context.target, Context.camera).normalize();
             return true;
         }
-        if (nChecked > 0) {
-            if(debug){console.log("[Worker] Check changed");}
-            nChecked = 0;
-            return true;
-        }
         if(newData){
             newData = false;
             return true;
         }
         return false;
+    },
+
+    setQuality:function(instance){
+        instances[instance.id].qualityLoaded = instance.quality;
     },
 
     cameraDist: function (instance) {
@@ -107,17 +88,19 @@ var Context = {
     },
     evalContext:function(context){
         if (Context.hasChanged(context)) {
+
             if(debug){console.log("[Worker] Start a cycle");}
             var start = Date.now();
             // Apply ratings, determine which instances must be displayed in this context
             var sorterResult = InstancesSorter.sort(instances);
+
             // Balancer will spread qualities and determine which instances will need to display first
             var dlbResult = DegradationLevelBalancer.apply(sorterResult);
             var directives=[];
+
             _.each(dlbResult.directives, function (directive) {
                 var instance = instances[directive.instance.id];
-                if (instance.currentQuality != directive.quality) {
-                    instance.currentQuality=directive.quality;
+                if (instance.qualityLoaded != directive.quality) {
                     directives.push({
                         id:instance.id,
                         quality:directive.quality
@@ -125,15 +108,9 @@ var Context = {
                 }
             });
 
-            stats.cycles++;
-            //stats.faces = dlbResult.faces;
-            stats.totalChecked = totalChecked;
-            //stats.onScene = dlbResult.onScene;
-
-            // Send stats to main thread
-            self.postMessage({fn: "stats", obj: stats});
             // Send directives
             self.postMessage({fn:"directives",obj:directives});
+
             if(debug){console.log("[Worker] Cycle duration : " + (Date.now() - start) + " ms");}
         } else {
             if(debug){console.log("[Worker] Context didn't changed since last call");}
@@ -156,8 +133,8 @@ var ParentMessages = {
     clear: function () {
         Context.clear();
     },
-    abort:function(directive){
-        instances[directive.id].currentQuality=directive.quality;
+    setQuality: function (instance) {
+        Context.setQuality(instance);
     },
     addInstance: function (instance) {
         Context.addInstance(instance);

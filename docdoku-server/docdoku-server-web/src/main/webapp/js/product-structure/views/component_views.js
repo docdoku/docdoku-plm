@@ -84,10 +84,10 @@ define(function() {
         onChangeCheckbox: function(event) {
             //external node
             if (event.target.checked){
-                App.instancesManager.loadFromTree(this.model);
+                App.instancesManager.loadComponent(this.model);
             }
             else{
-                App.instancesManager.unLoadFromTree(this.model);
+                App.instancesManager.unLoadComponent(this.model);
             }
         },
 
@@ -155,12 +155,11 @@ define(function() {
         },
 
         onChangeCheckbox: function(event) {
-            // noeud
             if (event.target.checked){
-                App.instancesManager.loadFromTree(this.model);
+                App.instancesManager.loadComponent(this.model);
             }
             else{
-                App.instancesManager.unLoadFromTree(this.model);
+                App.instancesManager.unLoadComponent(this.model);
             }
         },
 
