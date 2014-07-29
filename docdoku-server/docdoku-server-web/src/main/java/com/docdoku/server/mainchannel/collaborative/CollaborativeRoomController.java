@@ -23,8 +23,8 @@ public class CollaborativeRoomController {
         }
     }
 
-    public static void processCreate(Session session, String callerLogin, JsonObject contextInfos){
-        CollaborativeRoom room = new CollaborativeRoom(session, contextInfos);
+    public static void processCreate(Session session, String callerLogin){
+        CollaborativeRoom room = new CollaborativeRoom(session);
         CollaborativeMessage message = new CollaborativeMessage(ChannelMessagesType.COLLABORATIVE_CREATE,room.getKey(),null,callerLogin);
         MainChannelDispatcher.send(session, message);
     }
@@ -70,19 +70,21 @@ public class CollaborativeRoomController {
             room.addSlave(callerSession);
             CollaborativeRoomController.broadcastNewContext(room);
             // send the last context scene
-            CollaborativeMessage message = new CollaborativeMessage(ChannelMessagesType.COLLABORATIVE_COMMANDS,room.getKey(),room.getSceneInfos(),callerLogin);
-            MainChannelDispatcher.send(callerSession, message);
+            MainChannelDispatcher.send(callerSession, room.getCameraInfos());
+            MainChannelDispatcher.send(callerSession, room.getSmartPath());
         }
     }
 
     public static void processCommands(String callerLogin, CollaborativeRoom room, CollaborativeMessage collaborativeMessage){
-        // if the master sent the invitation
+        // if the master sent the command
         if (room.getMaster().getUserPrincipal().toString().equals(callerLogin)) {
             // save camera infos
             JsonObject command = collaborativeMessage.getMessageBroadcast();
-            if (command.containsKey("contextInfos")) {
-                // save the last informations on the scene
-                room.setSceneInfos(collaborativeMessage.getMessageBroadcast());
+            if (command.containsKey("cameraInfos")) {
+                room.setCameraInfos(collaborativeMessage);
+            }
+            if (command.containsKey("smartPath")) {
+                room.setSmartPath(collaborativeMessage);
             }
             for (Session slave : room.getSlaves()) {
                 MainChannelDispatcher.send(slave, collaborativeMessage);

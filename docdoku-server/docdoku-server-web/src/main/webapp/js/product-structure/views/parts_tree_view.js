@@ -46,6 +46,10 @@ define(["models/component_module", "views/component_views"], function (Component
             return this;
         },
 
+        getSmartPath: function() {
+            return this.smartPath;
+        },
+
         checkChildrenInputs: function(event) {
             var inputs = event.target.parentNode.querySelectorAll('input');
             for (var i = 0; i < inputs.length; i++) {
@@ -114,9 +118,9 @@ define(["models/component_module", "views/component_views"], function (Component
                     relativeInput.checked = false;
                     // on essaye de retirer le noeud et d'ajouter les fils cochés
                     this.removeFromSmartPath(relativeInput.parentNode.id.substring(5));
-                    if (App.collaborativeView.isMaster) {
+                    //if (App.collaborativeView.isMaster) {
                         this.smartPath = this.smartPath.concat(tempArray);
-                    }
+                    //}
                 }
             } else {
                 if (relativeInput.checked) {
@@ -136,25 +140,24 @@ define(["models/component_module", "views/component_views"], function (Component
                         messageBroadcast: {smartPath: this.smartPath},
                         remoteUser: "null"
                     });
-                    console.log(this.smartPath);
                 }
             }
 
         },
 
         addToSmartPath: function(p){
-            if (App.collaborativeView.isMaster) {
+            //if (App.collaborativeView.isMaster) {
                 this.removeFromSmartPath(p);
                 this.smartPath.push(p);
-            }
+            //}
         },
 
         removeFromSmartPath: function(p){
-            if (App.collaborativeView.isMaster) {
+            //if (App.collaborativeView.isMaster) {
                 this.smartPath = _.filter(this.smartPath, function (e) {
                     return e != p;
                 });
-            }
+            //}
         },
 
         compareSmartPath: function (arrayPaths) {
@@ -164,9 +167,9 @@ define(["models/component_module", "views/component_views"], function (Component
             if (pathToUnload.length != 0) {
                 console.log("path to unload : ");
                 console.log(pathToUnload);
-                pathToUnload.forEach(function (y) {
+               /* pathToUnload.forEach(function (y) {
                     self.checkPath(y, false);
-                });
+                });*/
                 App.instancesManager.loadQueue.push({"process":"unload","path":pathToUnload});
                 /*App.instancesManager.unloadFromUrl(
                  "/api/workspaces/" + APP_CONFIG.workspaceId + "/products/" + APP_CONFIG.productId + "/instances?configSpec="+window.config_spec+"&path="
@@ -177,16 +180,24 @@ define(["models/component_module", "views/component_views"], function (Component
             if (pathToLoad.length != 0) {
                 console.log("path to load : ");
                 console.log(pathToLoad);
-                pathToLoad.forEach(function (y) {
+                /*pathToLoad.forEach(function (y) {
                     self.checkPath(y, true);
-                });
+                });*/
                 App.instancesManager.loadQueue.push({"process":"load","path":pathToLoad});
                 /*App.instancesManager.loadFromUrl(
                  "/api/workspaces/" + APP_CONFIG.workspaceId + "/products/" + APP_CONFIG.productId + "/instances?configSpec=" + window.config_spec + "&path="
                  + y);*/
             }
-
             this.smartPath = arrayPaths;
+            this.setCheckboxes();
+        },
+
+        setCheckboxes: function() {
+            this.$("li input").prop('checked',false);
+
+            _.each(this.smartPath, function(path){
+                this.$('li[id^="path_'+path+'"] input').prop('checked',true);
+            });
         },
 
         onComponentSelected: function(e, componentModel, li) {

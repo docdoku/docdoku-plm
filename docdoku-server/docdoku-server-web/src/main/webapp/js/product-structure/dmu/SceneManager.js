@@ -7,7 +7,7 @@ define([
 
     var SceneManager = function (pOptions) {
         var _this = this;
-        
+
         var havePointerLock = 'pointerLockElement' in document || 'mozPointerLockElement' in document || 'webkitPointerLockElement' in document;
         var options = pOptions || {};
         _.extend(this, options);
@@ -32,7 +32,7 @@ define([
         this.renderer = null;
         this.cameraObject = null;                                                                                       // Represent the eye
         this.layerManager = null;
-        this.meshesEdited = [];
+        this.editedMeshes = [];
 
         // Stat
         this.switches = 0;
@@ -173,27 +173,27 @@ define([
             transformControls = new THREE.TransformControls(_this.$container[0]);
 
             /*window.addEventListener( 'keyup', function ( event ) {
-                switch (event.keyCode) {
-                    case 90: // Z
-                        transformControls.setMode("translate");
-                        break;
-                    case 69: // E
-                        transformControls.setMode("rotate");
-                        break;
-                    case 82: // R
-                        transformControls.setMode("scale");
-                        break;
-                    case 187:
-                    case 107: // +,=,num+
-                        transformControls.setSize(transformControls.size + 0.1);
-                        break;
-                    case 189:
-                    case 109: // -,_,num-
-                        transformControls.setSize(Math.max(transformControls.size - 0.1, 0.1));
-                        break;
-                }
-            });*/
-           transformControls.addEventListener('change',_this.reDraw);
+             switch (event.keyCode) {
+             case 90: // Z
+             transformControls.setMode("translate");
+             break;
+             case 69: // E
+             transformControls.setMode("rotate");
+             break;
+             case 82: // R
+             transformControls.setMode("scale");
+             break;
+             case 187:
+             case 107: // +,=,num+
+             transformControls.setSize(transformControls.size + 0.1);
+             break;
+             case 189:
+             case 109: // -,_,num-
+             transformControls.setSize(Math.max(transformControls.size - 0.1, 0.1));
+             break;
+             }
+             });*/
+            transformControls.addEventListener('change',_this.reDraw);
         }
 
         function onFullScreenChange(){
@@ -217,17 +217,17 @@ define([
 
             // Ask the browser to lock the pointer
             _this.$container[0].requestPointerLock = (_this.$container[0].requestPointerLock) ||
-                                                     (_this.$container[0].mozRequestPointerLock) ||
-                                                     (_this.$container[0].webkitRequestPointerLock);
+                (_this.$container[0].mozRequestPointerLock) ||
+                (_this.$container[0].webkitRequestPointerLock);
 
             if (/Firefox/i.test(navigator.userAgent)) {
                 document.addEventListener('fullscreenchange', onFullScreenChange, false);
                 document.addEventListener('mozfullscreenchange', onFullScreenChange, false);
 
                 _this.$container[0].requestFullscreen = (_this.$container[0].requestFullscreen) ||
-                                                        (_this.$container[0].mozRequestFullscreen) ||
-                                                        (_this.$container[0].mozRequestFullScreen) ||
-                                                        (_this.$container[0].webkitRequestFullscreen);
+                    (_this.$container[0].mozRequestFullscreen) ||
+                    (_this.$container[0].mozRequestFullScreen) ||
+                    (_this.$container[0].webkitRequestFullscreen);
                 _this.$container[0].requestFullscreen();
 
             } else {
@@ -303,9 +303,9 @@ define([
                 mesh.geometry.computeBoundingBox();
                 mesh.geometry.computeBoundingSphere();
                 mesh.geometry.boundingBox.centroid = new THREE.Vector3(
-                    (mesh.geometry.boundingBox.max.x + mesh.geometry.boundingBox.min.x) * 0.5,
-                    (mesh.geometry.boundingBox.max.y + mesh.geometry.boundingBox.min.y) * 0.5,
-                    (mesh.geometry.boundingBox.max.z + mesh.geometry.boundingBox.min.z) * 0.5
+                        (mesh.geometry.boundingBox.max.x + mesh.geometry.boundingBox.min.x) * 0.5,
+                        (mesh.geometry.boundingBox.max.y + mesh.geometry.boundingBox.min.y) * 0.5,
+                        (mesh.geometry.boundingBox.max.z + mesh.geometry.boundingBox.min.z) * 0.5
                 );
             }
 
@@ -375,8 +375,8 @@ define([
             }
             // RayCaster to get the clicked mesh
             var vector = new THREE.Vector3(
-                ((event.clientX - _this.$container.offset().left) / _this.$container[0].offsetWidth ) * 2 - 1,
-                -((event.clientY - _this.$container.offset().top) / _this.$container[0].offsetHeight ) * 2 + 1,
+                    ((event.clientX - _this.$container.offset().left) / _this.$container[0].offsetWidth ) * 2 - 1,
+                    -((event.clientY - _this.$container.offset().top) / _this.$container[0].offsetHeight ) * 2 + 1,
                 0.5
             );
             var cameraPosition = controlsObject.getObject().position;
@@ -443,9 +443,9 @@ define([
             mesh.initialPosition = {x:mesh.position.x,y:mesh.position.y,z:mesh.position.z};
             mesh.initialRotation = {x:mesh.rotation.x,y:mesh.rotation.y,z:mesh.rotation.z};
             mesh.initialScale = {x:mesh.scale.x,y:mesh.scale.y,z:mesh.scale.z};
-            var positionMeshEdited = $.inArray(mesh, _this.meshesEdited);
+            var positionMeshEdited = $.inArray(mesh, _this.editedMeshes);
             if (positionMeshEdited != -1) {
-                meshEdited = _this.meshesEdited[positionMeshEdited];
+                meshEdited = _this.editedMeshes[positionMeshEdited];
                 mesh.position = {x:meshEdited.position.x,y:meshEdited.position.y,z:meshEdited.position.z};
                 mesh.rotation = {x:meshEdited.rotation.x,y:meshEdited.rotation.y,z:meshEdited.rotation.z};
                 mesh.scale = {x:meshEdited.scale.x,y:meshEdited.scale.y,z:meshEdited.scale.z};
@@ -576,7 +576,7 @@ define([
             //tween2.chain(tween3);
             tween2.start();
             tween3.start();
-    }
+        }
 
         /**
          * Colaborative Mode
@@ -587,7 +587,7 @@ define([
                     type: ChannelMessagesType.COLLABORATIVE_COMMANDS,
                     key: App.collaborativeView.roomKey,
                     messageBroadcast: {
-                        contextInfos: _this.getControlsContext()
+                        cameraInfos: _this.getControlsContext()
                     },
                     remoteUser: "null"
                 };
@@ -595,12 +595,65 @@ define([
             }
         }
 
+        this.sendEditedMeshes = function(){
+            var arrayIds = {};
+            _.each(this.editedMeshes, function(y){
+                arrayIds[y.uuid] = {
+                    position: y.position,
+                    scale: y.scale,
+                    rotation: y.rotation
+                };
+            });
+            if(App.collaborativeView.isMaster){
+                var message = {
+                    type: ChannelMessagesType.COLLABORATIVE_COMMANDS,
+                    key: App.collaborativeView.roomKey,
+                    messageBroadcast: {
+                        editedMeshes: arrayIds
+                    },
+                    remoteUser: ""
+                };
+                mainChannel.sendJSON(message);
+            }
+        };
+
+        this.setEditedMeshes = function (editedMeshesInfos) {
+//            if ($.inArray(mesh, this.editedMeshes) == -1) {
+//                _this.editedMeshes.push(mesh);
+//                _this.showEditedMeshes(editedMeshesDisplayed);
+//                console.log("mesh added : ");
+//                console.log(this.editedMeshes);
+//                this.sendEditedMeshes();
+//            }
+
+            /*var diff = _.difference(_this.editedMeshes,editedMeshesInfos);
+            console.log(diff);
+//            for (var i = 0; i < _this.editedMeshes.length; i++) {
+//                _this.editedMeshes.shift(i);
+//                if(editedMeshesInfos[_this.editedMeshes[i].material = new THREE.MeshPhongMaterial({ transparent: false, color: new THREE.Color(0x08B000) });
+//            }
+            _.each(editedMeshesInfos, function(val,meshId){
+                var mesh = meshesIndexed[meshId];
+                if(!mesh){
+                    console.log("Error : can't set edited mesh. Mesh not found");
+                    return;
+                }
+                _this.editedMeshes.push(mesh);
+                mesh.position = {x: val.position.x, y: val.position.y, z: val.position.z};
+                mesh.rotation.x=val.rotation._x;
+                mesh.rotation.y=val.rotation._y;
+                mesh.rotation.z= val.rotation._z;
+                //mesh.scale = {x: val.scale.x, y: val.scale.y, z: val.scale.z};
+            });
+            _this.reDraw();*/
+        };
+
         /**
          * Animation loop :
          *  Update controls, scene objects and animations
          *  Render at the end
          * */
-        //Main UI loop
+            //Main UI loop
         function animate() {
             requestAnimationFrame(animate,null);
             // Update controls
@@ -807,12 +860,12 @@ define([
             editedMeshesDisplayed = display;
             var i;
             if (editedMeshesDisplayed) {
-                for (i = 0; i < this.meshesEdited.length; i++) {
-                    _this.meshesEdited[i].material = new THREE.MeshPhongMaterial({ transparent: false, color: new THREE.Color(0x08B000) });
+                for (i = 0; i < this.editedMeshes.length; i++) {
+                    _this.editedMeshes[i].material = new THREE.MeshPhongMaterial({ transparent: false, color: new THREE.Color(0x08B000) });
                 }
             } else {
-                for (i = 0; i < this.meshesEdited.length; i++) {
-                    _this.meshesEdited[i].material = new THREE.MeshPhongMaterial( { transparent:true, color: new THREE.Color(0xbbbbbb) } );
+                for (i = 0; i < this.editedMeshes.length; i++) {
+                    _this.editedMeshes[i].material = new THREE.MeshPhongMaterial( { transparent:true, color: new THREE.Color(0xbbbbbb) } );
                 }
             }
             _this.reDraw();
@@ -897,11 +950,12 @@ define([
             transformControls.enabled = true;
             //transformControls.detach();
             transformControls.attach(mesh);
-            if ($.inArray(mesh, this.meshesEdited) == -1) {
-                _this.meshesEdited.push(mesh);
+            if ($.inArray(mesh, this.editedMeshes) == -1) {
+                _this.editedMeshes.push(mesh);
                 _this.showEditedMeshes(editedMeshesDisplayed);
                 console.log("mesh added : ");
-                console.log(this.meshesEdited);
+                console.log(this.editedMeshes);
+                this.sendEditedMeshes();
             }
             transformControls.bindEvents();
             if(mode !== undefined){
@@ -967,10 +1021,10 @@ define([
                     transformControls.update();
                 })
                 .start();
-
-            _this.meshesEdited.splice($.inArray(mesh, this.meshesEdited),1);
+            _this.editedMeshes.splice($.inArray(mesh, this.editedMeshes),1);
             mesh.material = new THREE.MeshPhongMaterial( { transparent:true, color: new THREE.Color(0xbbbbbb) } );
             console.log("mesh removed");
+            App.sceneManager.sendEditedMeshes();
 
             /*
              mesh.position.x = mesh.initialPosition.x;
@@ -999,17 +1053,17 @@ define([
 
                 // /api/workspaces/Sandbox/products/Nailed_Plank/instances?configSpec=latest&path=null
                 /*App.instancesManager.initStructure("/api/workspaces/"+APP_CONFIG.workspaceId+'/products/'+APP_CONFIG.productId+"/instances?configSpec=latest&path=null",function(){
-                    mainChannel.sendJSON({
-                        type: ChannelMessagesType.COLLABORATIVE_JOIN,
-                        key: key,
-                        remoteUser: "null"
-                    });
-                });*/
+                 mainChannel.sendJSON({
+                 type: ChannelMessagesType.COLLABORATIVE_JOIN,
+                 key: key,
+                 remoteUser: "null"
+                 });
+                 });*/
 
                 mainChannel.sendJSON({
                     type: ChannelMessagesType.COLLABORATIVE_JOIN,
                     key: key,
-                    remoteUser: "null"
+                    remoteUser: ""
                 });
             }
         };

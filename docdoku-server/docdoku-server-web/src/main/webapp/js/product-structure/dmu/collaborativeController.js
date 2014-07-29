@@ -54,10 +54,12 @@ define(function(){
                 }
 
                 if (message.type == ChannelMessagesType.COLLABORATIVE_COMMANDS && collaborativeView.roomKey == message.key) {
-                    if(message.messageBroadcast.contextInfos) {
-                        App.sceneManager.setControlsContext(message.messageBroadcast.contextInfos);
+                    if(message.messageBroadcast.cameraInfos) {
+                        App.sceneManager.setControlsContext(message.messageBroadcast.cameraInfos);
                     } else if (message.messageBroadcast.smartPath){
                         App.appView.updateTreeView(message.messageBroadcast.smartPath);
+                    } else if (message.messageBroadcast.editedMeshes){
+                        App.sceneManager.setEditedMeshes(message.messageBroadcast.editedMeshes);
                     }
                     return;
                 }
