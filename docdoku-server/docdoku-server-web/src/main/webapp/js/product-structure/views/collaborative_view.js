@@ -130,6 +130,8 @@ define(    [
                     }
                 });
 
+                App.sceneManager.sendEditedMeshes();
+
                 this.invite();
             },
 

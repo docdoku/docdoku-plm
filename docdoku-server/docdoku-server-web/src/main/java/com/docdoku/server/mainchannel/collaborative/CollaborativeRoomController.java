@@ -72,6 +72,7 @@ public class CollaborativeRoomController {
             // send the last context scene
             MainChannelDispatcher.send(callerSession, room.getCameraInfos());
             MainChannelDispatcher.send(callerSession, room.getSmartPath());
+            MainChannelDispatcher.send(callerSession, room.getEditedMeshes());
         }
     }
 
@@ -85,6 +86,9 @@ public class CollaborativeRoomController {
             }
             if (command.containsKey("smartPath")) {
                 room.setSmartPath(collaborativeMessage);
+            }
+            if (command.containsKey("editedMeshes")) {
+                room.setEditedMeshes(collaborativeMessage);
             }
             for (Session slave : room.getSlaves()) {
                 MainChannelDispatcher.send(slave, collaborativeMessage);
