@@ -281,12 +281,8 @@ define([
          */
 
         function onControlChange(){
-            if(App.instancesManager){
-                App.instancesManager.planNewEval();
-            }
+            App.instancesManager.planNewEval();
             controlChanged= true;
-            //console.log(controlsObject.getTarget());
-            //console.log(controlsObject.getCamUp());
             _this.reDraw();
         }
 
@@ -457,37 +453,25 @@ define([
             }
             return mesh;
         }
+
         function removeMesh(meshId){
             var mesh = meshesIndexed[meshId];
             delete meshesIndexed[meshId];
             if(!mesh){return;}
             _this.scene.remove(mesh);
-            mesh.geometry.dispose();
-            mesh.material.dispose();
-            mesh = null;
             _this.reDraw();
         }
-        function processTrash () {
-            var instanceList = App.instancesManager.getTrash();
-            instanceList.forEach(function(instance){
-                removeMesh(instance.id);
-                instance.qualityLoaded=undefined;
-            });
-            App.instancesManager.clearTrash();
-        }
+
         function processLoadedStuff () {
             var loadedStuff =App.instancesManager.getLoadedGeometries(10);
             loadedStuff.forEach(function(stuff){
                 var instance = App.instancesManager.getInstance(stuff.id);
                 if(instance){
                     var oldMesh = meshesIndexed[stuff.id];
-                    instance.qualityLoaded=stuff.quality;
                     var newMesh = createMeshFromLoadedStuff(stuff, instance.matrix);
                     if(oldMesh){
                         _this.switches++;
                         _this.scene.remove(oldMesh);
-                        oldMesh.geometry.dispose();
-                        oldMesh.material.dispose();
                     }else{
                         _this.adds++;
                         _this.onScene++;
@@ -663,13 +647,10 @@ define([
         function animate() {
             requestAnimationFrame(animate,null);
             // Update controls
-            controlsObject.update(clock.getDelta());                                                                    // Update controls
+            controlsObject.update(clock.getDelta());
 
-            // Update scene elements
-            if(App.instancesManager){
-                processTrash();
-                processLoadedStuff();
-            }
+            processLoadedStuff();
+
 
             // Update with SceneOptions
             watchSceneOptions();
@@ -1085,6 +1066,10 @@ define([
         };
         this.clear = function (){
             App.instancesManager.clear();
+        };
+
+        this.removeMeshById = function(meshId){
+            removeMesh(meshId);
         };
 
     };

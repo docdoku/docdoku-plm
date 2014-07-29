@@ -161,32 +161,19 @@ define(["models/component_module", "views/component_views"], function (Component
         },
 
         compareSmartPath: function (arrayPaths) {
-            var self = this;
 
             var pathToUnload = _.difference(this.smartPath, arrayPaths);
             if (pathToUnload.length != 0) {
                 console.log("path to unload : ");
                 console.log(pathToUnload);
-               /* pathToUnload.forEach(function (y) {
-                    self.checkPath(y, false);
-                });*/
                 App.instancesManager.loadQueue.push({"process":"unload","path":pathToUnload});
-                /*App.instancesManager.unloadFromUrl(
-                 "/api/workspaces/" + APP_CONFIG.workspaceId + "/products/" + APP_CONFIG.productId + "/instances?configSpec="+window.config_spec+"&path="
-                 + y);*/
             }
 
             var pathToLoad = _.difference(arrayPaths, this.smartPath);
             if (pathToLoad.length != 0) {
                 console.log("path to load : ");
                 console.log(pathToLoad);
-                /*pathToLoad.forEach(function (y) {
-                    self.checkPath(y, true);
-                });*/
                 App.instancesManager.loadQueue.push({"process":"load","path":pathToLoad});
-                /*App.instancesManager.loadFromUrl(
-                 "/api/workspaces/" + APP_CONFIG.workspaceId + "/products/" + APP_CONFIG.productId + "/instances?configSpec=" + window.config_spec + "&path="
-                 + y);*/
             }
             this.smartPath = arrayPaths;
             this.setCheckboxes();

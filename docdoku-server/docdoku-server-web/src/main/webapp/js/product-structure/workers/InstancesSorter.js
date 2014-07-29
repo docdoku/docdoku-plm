@@ -122,9 +122,10 @@ var InstancesSorter = {};
             return (b.globalRating - a.globalRating);
         });
 
+        if(debug){console.log("[InstancesSorter] " + JSON.stringify(result));}
+
         result.sortedInstances = sortedInstances;
 
-        if(debug){console.log("[InstancesSorter] " + JSON.stringify(result));}
 
         return result;
 

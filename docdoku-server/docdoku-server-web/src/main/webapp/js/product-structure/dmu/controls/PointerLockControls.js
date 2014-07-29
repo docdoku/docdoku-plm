@@ -287,6 +287,9 @@ THREE.PointerLockControls = function ( camera ) {
         pitchObject.add( camera );
     };
 
+    this.handleResize = function () {
+    };
+
 };
 
 THREE.PointerLockControls.prototype = Object.create( THREE.EventDispatcher.prototype );

@@ -54,8 +54,7 @@ define(["dmu/SceneManager","dmu/InstancesManager"],
             App.sceneManager.init();
             if (!_.isUndefined(SCENE_INIT.pathForIFrame)) {
                 var instancesUrl = "/api/workspaces/" + APP_CONFIG.workspaceId + "/products/" + APP_CONFIG.productId + "/instances?configSpec=" + window.config_spec + "&path=" + SCENE_INIT.pathForIFrame;
-                App.instancesManager.start();
-                App.instancesManager.loadFromTree({
+                App.instancesManager.loadComponent({
                     getInstancesUrl:function (){
                         return instancesUrl;
                     }
