@@ -49,11 +49,7 @@ define(    [
             create : function(){
                 mainChannel.sendJSON({
                     type: ChannelMessagesType.COLLABORATIVE_CREATE,
-                    remoteUser: "null",
-                    messageBroadcast:
-                    {
-                        contextInfos: App.sceneManager.getControlsContext()
-                    }
+                    remoteUser: ""
                 });
             },
 
@@ -115,6 +111,25 @@ define(    [
             roomCreated : function(key,master){
                 this.setRoomKey(key);
                 this.setMaster(master);
+
+                mainChannel.sendJSON({
+                    type: ChannelMessagesType.COLLABORATIVE_COMMANDS,
+                    remoteUser: "",
+                    key: this.roomKey,
+                    messageBroadcast: {
+                        cameraInfos: App.sceneManager.getControlsContext()
+                    }
+                });
+
+                mainChannel.sendJSON({
+                    type: ChannelMessagesType.COLLABORATIVE_COMMANDS,
+                    remoteUser: "",
+                    key: this.roomKey,
+                    messageBroadcast: {
+                        smartPath: App.partsTreeView.getSmartPath()
+                    }
+                });
+
                 this.invite();
             },
 

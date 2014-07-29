@@ -80,7 +80,7 @@ define(
 
             this.searchView = new SearchView().render();
 
-            this.partsTreeView = new PartsTreeView({
+            App.partsTreeView = new PartsTreeView({
                 resultPathCollection: this.searchView.collection
             }).render();
 
@@ -140,7 +140,7 @@ define(
         },
 
         listenEvents:function(){
-            this.partsTreeView.on("component_selected", this.onComponentSelected, this);
+            App.partsTreeView.on("component_selected", this.onComponentSelected, this);
             Backbone.Events.on("refresh_tree", this.onRefreshTree, this);
             this.baselineSelectView.on("config_spec:changed",this.onConfigSpecChange,this);
             Backbone.Events.on("mesh:selected", this.onMeshSelected, this);
@@ -161,9 +161,9 @@ define(
 
         updateBom: function(showRoot) {
             if(showRoot){
-                this.bomView.showRoot(this.partsTreeView.componentSelected);
+                this.bomView.showRoot(App.partsTreeView.componentSelected);
             }else{
-                this.bomView.updateContent(this.partsTreeView.componentSelected);
+                this.bomView.updateContent(App.partsTreeView.componentSelected);
             }
         },
 
@@ -176,7 +176,7 @@ define(
             this.fullScreenSceneButton.show();
             this.bomView.bomHeaderView.hideCheckGroup();
 
-            if(this.partsTreeView.componentSelected){
+            if(App.partsTreeView.componentSelected){
                 this.exportSceneButton.show();
             }
 
@@ -218,7 +218,7 @@ define(
         },
 
         updateTreeView: function(arrayPaths){
-             this.partsTreeView.compareSmartPath(arrayPaths);
+            App.partsTreeView.compareSmartPath(arrayPaths);
         },
 
         onComponentSelected: function(showRoot) {
@@ -228,7 +228,7 @@ define(
                 this.exportSceneButton.show();
             }
             this.showPartMetadata();
-            App.sceneManager.setPathForIFrame(this.partsTreeView.componentSelected.getPath());
+            App.sceneManager.setPathForIFrame(App.partsTreeView.componentSelected.getPath());
         },
 
         exportScene:function(){
@@ -241,8 +241,8 @@ define(
                 + '&cameraY=' + App.sceneManager.cameraObject.position.y
                 + '&cameraZ=' + App.sceneManager.cameraObject.position.z;
 
-            if(this.partsTreeView.componentSelected.getPath()){
-                iframeSrc += '&pathToLoad=' + this.partsTreeView.componentSelected.getPath();
+            if(App.partsTreeView.componentSelected.getPath()){
+                iframeSrc += '&pathToLoad=' + App.partsTreeView.componentSelected.getPath();
             }else{
                 iframeSrc+= "&pathToLoad=null";
             }
@@ -261,20 +261,20 @@ define(
             if (this.isInBomMode()) {
                 this.updateBom();
             }
-            this.partsTreeView.refreshAll();
+            App.partsTreeView.refreshAll();
         },
 
         onRefreshComponent:function(partKey){
-          this.partsTreeView.onRefreshComponent(partKey);
+            App.partsTreeView.onRefreshComponent(partKey);
         },
 
         showPartMetadata:function() {
             if(!this.isInBomMode()){
                 if(this.partMetadataView == undefined){
-                    this.partMetadataView = new PartMetadataView({model:this.partsTreeView.componentSelected}).render();
+                    this.partMetadataView = new PartMetadataView({model:App.partsTreeView.componentSelected}).render();
                     this.$ControlsContainer.append(this.partMetadataView.$el);
                 }else{
-                    this.partMetadataView.setModel(this.partsTreeView.componentSelected).render();
+                    this.partMetadataView.setModel(App.partsTreeView.componentSelected).render();
                 }
             }
         },

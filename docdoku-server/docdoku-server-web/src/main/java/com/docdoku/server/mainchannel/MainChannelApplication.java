@@ -30,7 +30,6 @@ import com.docdoku.server.mainchannel.util.Room;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.json.JsonObject;
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
@@ -166,9 +165,7 @@ public class MainChannelApplication {
                 break;
 
             case ChannelMessagesType.COLLABORATIVE_CREATE:
-                CollaborativeMessage createMessage = (CollaborativeMessage) message;
-                JsonObject sceneInfos = createMessage.getMessageBroadcast();
-                CollaborativeRoomController.processCreate(session, callerLogin, sceneInfos);
+                CollaborativeRoomController.processCreate(session, callerLogin);
                 break;
             case ChannelMessagesType.COLLABORATIVE_INVITE:
                 CollaborativeMessage inviteMessage = (CollaborativeMessage) message;

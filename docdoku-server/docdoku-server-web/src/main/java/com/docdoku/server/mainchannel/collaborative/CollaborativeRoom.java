@@ -1,5 +1,7 @@
 package com.docdoku.server.mainchannel.collaborative;
 
+import com.docdoku.server.mainchannel.module.CollaborativeMessage;
+
 import javax.json.*;
 import javax.websocket.Session;
 import java.util.*;
@@ -18,16 +20,15 @@ public class CollaborativeRoom {
     private List<Session> slaves;
     private List<String> pendingUsers;
     private Date creationDate;
-    private JsonObject sceneInfos;
-    private String instancesId;
+    private CollaborativeMessage cameraInfos;
+    private CollaborativeMessage smartPath;
 
-    public CollaborativeRoom(Session master, JsonObject sceneInfos) {
+    public CollaborativeRoom(Session master) {
         this.key = UUID.randomUUID().toString();
         this.master = master;
         this.pendingUsers = new LinkedList<>();
         this.creationDate = new Date();
         this.slaves = new LinkedList<>();
-        this.sceneInfos = sceneInfos;
         put();
     }
 
@@ -48,12 +49,20 @@ public class CollaborativeRoom {
         }
     }
 
-    public JsonObject getSceneInfos() {
-        return sceneInfos;
+    public CollaborativeMessage getCameraInfos() {
+        return cameraInfos;
     }
 
-    public void setSceneInfos(JsonObject sceneInfos) {
-        this.sceneInfos = sceneInfos;
+    public void setCameraInfos(CollaborativeMessage cameraInfos) {
+        this.cameraInfos = cameraInfos;
+    }
+
+    public CollaborativeMessage getSmartPath() {
+        return smartPath;
+    }
+
+    public void setSmartPath(CollaborativeMessage smartPath) {
+        this.smartPath = smartPath;
     }
 
     public String toString() {

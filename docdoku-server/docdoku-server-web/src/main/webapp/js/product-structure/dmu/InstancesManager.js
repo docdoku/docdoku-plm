@@ -46,7 +46,6 @@ function (LoaderManager, async) {
                 _this.workerStats = stats;
             },
             directives: function (directives) {
-                console.log('New 3D directives');
                 currentDirectivesCount = directives.length;
                 if (currentDirectivesCount) {
                     directives.forEach(function (directive) {
@@ -96,7 +95,7 @@ function (LoaderManager, async) {
                 return;
             }
 
-            var meshes = _(App.sceneManager.meshesEdited).select(function(mesh){ return mesh.uuid === instance.id;});
+            var meshes = _(App.sceneManager.editedMeshes).select(function(mesh){ return mesh.uuid === instance.id;});
 
             if (meshes.length) {
                 _this.aborted++;
@@ -317,7 +316,6 @@ function (LoaderManager, async) {
         }
 
         this.loadFromUrl = function(paths, callback){
-            console.log("entrée get json loadfromurl");
             $.ajax({
                 url:"/api/workspaces/" + APP_CONFIG.workspaceId + "/products/" + APP_CONFIG.productId + "/instances?configSpec="+window.config_spec,
                 type:'POST',
@@ -327,7 +325,6 @@ function (LoaderManager, async) {
                     paths:paths
                 }),
                 success:function(instances){
-                    console.log("sortie get json loadfromurl");
                     _.each(instances, function (instanceRaw) {
                         if(instancesIndexed[instanceRaw.id]){
                             //instancesIndexed[instanceRaw.id].checked = true;
@@ -447,8 +444,6 @@ function (LoaderManager, async) {
             _this.loadQueue.push({"process":"unload","path":[component.getPath()]});
         };
         this.unloadFromUrl = function(paths, callback) {
-            console.log("entrée get json unloadfromurl");
-
             $.ajax({
                 url:"/api/workspaces/" + APP_CONFIG.workspaceId + "/products/" + APP_CONFIG.productId + "/instances?configSpec="+window.config_spec,
                 type:'POST',

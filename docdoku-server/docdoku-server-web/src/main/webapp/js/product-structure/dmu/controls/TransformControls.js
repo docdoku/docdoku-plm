@@ -848,6 +848,8 @@
 
             }
 
+            App.sceneManager.sendEditedMeshes();
+
             scope.update();
             scope.dispatchEvent( changeEvent );
 
