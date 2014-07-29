@@ -107,10 +107,8 @@ define(
                 this.$ControlsContainer.append(new ControlLayersView().render().$el);
                 this.$ControlsContainer.append(new ControlMeasureView().render().$el);
 
-                //mainChannel.addChannelListener(chatListener);
-
                 App.sceneManager.init();
-                App.instancesManager.start();
+
             }catch(ex){
                 console.log("Got exception in dmu");
                 this.onNoWebGLSupport();

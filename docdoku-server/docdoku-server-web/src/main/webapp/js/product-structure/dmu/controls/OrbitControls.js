@@ -641,10 +641,7 @@ THREE.OrbitControls = function (object, domElement) {
     };
 
     this.handleResize = function () {
-
     };
-
-    this.handleResize();
 
     this.getTarget = function () {
         return scope.target;
