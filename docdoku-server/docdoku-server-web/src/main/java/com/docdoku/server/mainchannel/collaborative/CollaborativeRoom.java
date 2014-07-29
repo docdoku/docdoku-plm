@@ -22,6 +22,7 @@ public class CollaborativeRoom {
     private Date creationDate;
     private CollaborativeMessage cameraInfos;
     private CollaborativeMessage smartPath;
+    private CollaborativeMessage editedMeshes;
 
     public CollaborativeRoom(Session master) {
         this.key = UUID.randomUUID().toString();
@@ -63,6 +64,14 @@ public class CollaborativeRoom {
 
     public void setSmartPath(CollaborativeMessage smartPath) {
         this.smartPath = smartPath;
+    }
+
+    public CollaborativeMessage getEditedMeshes() {
+        return editedMeshes;
+    }
+
+    public void setEditedMeshes(CollaborativeMessage editedMeshes) {
+        this.editedMeshes = editedMeshes;
     }
 
     public String toString() {

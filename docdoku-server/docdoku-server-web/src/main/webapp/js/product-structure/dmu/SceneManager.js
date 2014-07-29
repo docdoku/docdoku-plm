@@ -443,14 +443,17 @@ define([
             mesh.initialPosition = {x:mesh.position.x,y:mesh.position.y,z:mesh.position.z};
             mesh.initialRotation = {x:mesh.rotation.x,y:mesh.rotation.y,z:mesh.rotation.z};
             mesh.initialScale = {x:mesh.scale.x,y:mesh.scale.y,z:mesh.scale.z};
-            var positionMeshEdited = $.inArray(mesh, _this.editedMeshes);
+            var positionMeshEdited = _.indexOf(_this.editedMeshes,mesh.uuid);
             if (positionMeshEdited != -1) {
-                meshEdited = _this.editedMeshes[positionMeshEdited];
-                mesh.position = {x:meshEdited.position.x,y:meshEdited.position.y,z:meshEdited.position.z};
-                mesh.rotation = {x:meshEdited.rotation.x,y:meshEdited.rotation.y,z:meshEdited.rotation.z};
-                mesh.scale = {x:meshEdited.scale.x,y:meshEdited.scale.y,z:meshEdited.scale.z};
-                console.log("restauration de la position de l'instance transformée.");
-                console.log(this.mesh);
+                var meshEdited = meshesIndexed[positionMeshEdited];
+                if (meshEdited) {
+                    mesh.position = {x:meshEdited.position.x,y:meshEdited.position.y,z:meshEdited.position.z};
+                    mesh.rotation = {x:meshEdited.rotation.x,y:meshEdited.rotation.y,z:meshEdited.rotation.z};
+                    mesh.scale = {x:meshEdited.scale.x,y:meshEdited.scale.y,z:meshEdited.scale.z};
+                    console.log("restauration de la position de l'instance transformée.");
+                    console.log(this.mesh);
+                }
+
             }
             return mesh;
         }
@@ -596,13 +599,15 @@ define([
         }
 
         this.sendEditedMeshes = function(){
-            var arrayIds = {};
-            _.each(this.editedMeshes, function(y){
-                arrayIds[y.uuid] = {
-                    position: y.position,
-                    scale: y.scale,
-                    rotation: y.rotation
-                };
+            var arrayIds = [];
+            _.each(this.editedMeshes, function(val){
+                var mesh=meshesIndexed[val];
+                arrayIds.push ( {
+                    uuid:val,
+                    position: mesh.position,
+                    scale: mesh.scale,
+                    rotation: mesh.rotation
+                });
             });
             if(App.collaborativeView.isMaster){
                 var message = {
@@ -618,34 +623,35 @@ define([
         };
 
         this.setEditedMeshes = function (editedMeshesInfos) {
-//            if ($.inArray(mesh, this.editedMeshes) == -1) {
-//                _this.editedMeshes.push(mesh);
-//                _this.showEditedMeshes(editedMeshesDisplayed);
-//                console.log("mesh added : ");
-//                console.log(this.editedMeshes);
-//                this.sendEditedMeshes();
-//            }
 
-            /*var diff = _.difference(_this.editedMeshes,editedMeshesInfos);
+            var arrayId = _.pluck(editedMeshesInfos, 'uuid');
+
+            // on replace les éléments qui ne sont plus modifiés
+            var diff = _.difference(_this.editedMeshes,arrayId);
             console.log(diff);
-//            for (var i = 0; i < _this.editedMeshes.length; i++) {
-//                _this.editedMeshes.shift(i);
-//                if(editedMeshesInfos[_this.editedMeshes[i].material = new THREE.MeshPhongMaterial({ transparent: false, color: new THREE.Color(0x08B000) });
-//            }
-            _.each(editedMeshesInfos, function(val,meshId){
-                var mesh = meshesIndexed[meshId];
+            _.each(diff, function(uuid){
+                var mesh = meshesIndexed[uuid];
+                _this.cancelTransformation(mesh);
+            });
+
+            // on met à jour la liste des éléments modifiés
+            _this.editedMeshes = arrayId;
+
+            // on met à jour les propriétés des pièces modifiées
+            _.each(editedMeshesInfos, function(val){
+                var mesh = meshesIndexed[val.uuid];
                 if(!mesh){
                     console.log("Error : can't set edited mesh. Mesh not found");
+                    _this.editedMeshes = _.without(_this.editedMeshes, val.uuid);
                     return;
                 }
-                _this.editedMeshes.push(mesh);
                 mesh.position = {x: val.position.x, y: val.position.y, z: val.position.z};
-                mesh.rotation.x=val.rotation._x;
-                mesh.rotation.y=val.rotation._y;
-                mesh.rotation.z= val.rotation._z;
+                mesh.rotation.x = val.rotation._x;
+                mesh.rotation.y = val.rotation._y;
+                mesh.rotation.z = val.rotation._z;
                 //mesh.scale = {x: val.scale.x, y: val.scale.y, z: val.scale.z};
             });
-            _this.reDraw();*/
+            _this.reDraw();
         };
 
         /**
@@ -860,13 +866,15 @@ define([
             editedMeshesDisplayed = display;
             var i;
             if (editedMeshesDisplayed) {
-                for (i = 0; i < this.editedMeshes.length; i++) {
-                    _this.editedMeshes[i].material = new THREE.MeshPhongMaterial({ transparent: false, color: new THREE.Color(0x08B000) });
-                }
+                _.each(_this.editedMeshes, function(y){
+                    var mesh = meshesIndexed[y];
+                    mesh.material = new THREE.MeshPhongMaterial({ transparent: false, color: new THREE.Color(0x08B000) });
+                });
             } else {
-                for (i = 0; i < this.editedMeshes.length; i++) {
-                    _this.editedMeshes[i].material = new THREE.MeshPhongMaterial( { transparent:true, color: new THREE.Color(0xbbbbbb) } );
-                }
+                _.each(_this.editedMeshes, function(y){
+                    var mesh = meshesIndexed[y];
+                    mesh.material = new THREE.MeshPhongMaterial({ transparent: false, color: new THREE.Color(0xbbbbbb) });
+                });
             }
             _this.reDraw();
         };
@@ -950,8 +958,8 @@ define([
             transformControls.enabled = true;
             //transformControls.detach();
             transformControls.attach(mesh);
-            if ($.inArray(mesh, this.editedMeshes) == -1) {
-                _this.editedMeshes.push(mesh);
+            if (!_.contains(_this.editedMeshes,mesh.uuid)) {
+                _this.editedMeshes.push(mesh.uuid);
                 _this.showEditedMeshes(editedMeshesDisplayed);
                 console.log("mesh added : ");
                 console.log(this.editedMeshes);
@@ -1021,7 +1029,8 @@ define([
                     transformControls.update();
                 })
                 .start();
-            _this.editedMeshes.splice($.inArray(mesh, this.editedMeshes),1);
+            //_this.editedMeshes.splice(_.indexOf(_this.editedMeshes, mesh.uuid),1);
+            _this.editedMeshes = _.without(_this.editedMeshes, mesh.uuid);
             mesh.material = new THREE.MeshPhongMaterial( { transparent:true, color: new THREE.Color(0xbbbbbb) } );
             console.log("mesh removed");
             App.sceneManager.sendEditedMeshes();
