@@ -53,13 +53,13 @@ import java.util.*;
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class ProductResource {
 
-    @Inject
+    @EJB
     private IProductManagerLocal productService;
 
-    @Inject
+    @EJB
     private LayerResource layerResource;
 
-    @Inject
+    @EJB
     private BaselinesResource baselinesResource;
 
     private Mapper mapper;
