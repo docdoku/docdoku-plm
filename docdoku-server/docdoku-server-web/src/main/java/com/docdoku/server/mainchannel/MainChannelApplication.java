@@ -179,7 +179,7 @@ public class MainChannelApplication {
             case ChannelMessagesType.COLLABORATIVE_JOIN:
                 CollaborativeMessage joinMessage = (CollaborativeMessage) message;
                 room = CollaborativeRoom.getByKeyName(joinMessage.getKey());
-                CollaborativeRoomController.processJoin(session, callerLogin, room);
+                CollaborativeRoomController.processJoin(session, callerLogin, room, joinMessage);
                 break;
             case ChannelMessagesType.COLLABORATIVE_COMMANDS:
                 CollaborativeMessage commandsMessage = (CollaborativeMessage) message;
@@ -189,7 +189,7 @@ public class MainChannelApplication {
             case ChannelMessagesType.COLLABORATIVE_EXIT:
                 CollaborativeMessage exitMessage = (CollaborativeMessage) message;
                 room = CollaborativeRoom.getByKeyName(exitMessage.getKey());
-                CollaborativeRoomController.processExit(session, room);
+                CollaborativeRoomController.processExit(session, callerLogin, room);
                 break;
             case ChannelMessagesType.COLLABORATIVE_KILL:
                 CollaborativeMessage killMessage = (CollaborativeMessage) message;

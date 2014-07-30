@@ -13,7 +13,7 @@ import javax.websocket.Session;
 public class CollaborativeRoomController {
 
     public static void broadcastNewContext(CollaborativeRoom room){
-        String master = room.getMaster().getUserPrincipal().getName();
+        String master = room.getMasterName();
         CollaborativeMessage message = new CollaborativeMessage(ChannelMessagesType.COLLABORATIVE_CONTEXT,room.getKey(),room.getContext(),master);
         MainChannelDispatcher.sendToAllUserChannels(master,message);
         for(Session slave : room.getSlaves()){
@@ -30,7 +30,7 @@ public class CollaborativeRoomController {
     }
 
     public static void processInvite(String callerLogin, String invitedUser, CollaborativeRoom room, String context){
-        if (room.getMaster().getUserPrincipal().toString().equals(callerLogin)){
+        if (room.getMasterName().equals(callerLogin)){
             // the master sent the invitation
 
             if (room.findUserSession(invitedUser)==null) {
@@ -55,7 +55,7 @@ public class CollaborativeRoomController {
 
     }
 
-    public static void processJoin(Session callerSession, String callerLogin, CollaborativeRoom room){
+    public static void processJoin(Session callerSession, String callerLogin, CollaborativeRoom room, CollaborativeMessage collaborativeMessage){
         if (room == null){
             System.out.println("Room not found");
             //TODO : faire le test en amont?
@@ -67,7 +67,23 @@ public class CollaborativeRoomController {
             CollaborativeMessage message = new CollaborativeMessage(ChannelMessagesType.COLLABORATIVE_KICK_NOT_INVITED,room.getKey(),null,callerLogin);
             MainChannelDispatcher.send(callerSession, message);
         } else {
+            // if the room has no master, allow the last one to take the lead
+            if (room.getMasterName().equals("")){
+                if (room.getLastMaster().equals(callerLogin)) {
+                    room.setMaster(callerSession);
+
+                    MainChannelDispatcher.send(callerSession, collaborativeMessage); // notify the user that he joined the room
+                    CollaborativeRoomController.broadcastNewContext(room);
+                    // send the last context scene
+                    MainChannelDispatcher.send(callerSession, room.getCameraInfos());
+                    MainChannelDispatcher.send(callerSession, room.getSmartPath());
+                    MainChannelDispatcher.send(callerSession, room.getEditedMeshes());
+                    return;
+                }
+            }
+
             room.addSlave(callerSession);
+            MainChannelDispatcher.send(callerSession, collaborativeMessage); // notify the user that he joined the room
             CollaborativeRoomController.broadcastNewContext(room);
             // send the last context scene
             MainChannelDispatcher.send(callerSession, room.getCameraInfos());
@@ -78,7 +94,7 @@ public class CollaborativeRoomController {
 
     public static void processCommands(String callerLogin, CollaborativeRoom room, CollaborativeMessage collaborativeMessage){
         // if the master sent the command
-        if (room.getMaster().getUserPrincipal().toString().equals(callerLogin)) {
+        if (room.getMasterName().equals(callerLogin)) {
             // save camera infos
             JsonObject command = collaborativeMessage.getMessageBroadcast();
             if (command.containsKey("cameraInfos")) {
@@ -96,19 +112,29 @@ public class CollaborativeRoomController {
         }
     }
 
-    public static void processExit(Session session, CollaborativeRoom room){
-        room.getSlaves().remove(session);
-        // if the user is not yet in the pending list
-        if (!room.getPendingUsers().contains(session.getUserPrincipal().getName())) {
-            room.addPendingUser(session.getUserPrincipal().getName());
-        }
+    public static void processExit(Session session, String callerLogin, CollaborativeRoom room){
 
+        if (room.getMasterName().equals(callerLogin)) {
+            // exit for the master
+            room.setMaster(null);
+            room.setLastMaster(callerLogin);
+            // add the user in the pending list
+            if (!room.getPendingUsers().contains(callerLogin)) {
+                room.addPendingUser(callerLogin);
+            }
+        } else {
+            room.getSlaves().remove(session);
+            // add the user in the pending list
+            if (!room.getPendingUsers().contains(callerLogin)) {
+                room.addPendingUser(callerLogin);
+            }
+        }
         CollaborativeRoomController.broadcastNewContext(room);
     }
 
     public static void processKill(String callerLogin, CollaborativeRoom room){
         // if the master sent the invitation
-        if (room.getMaster().getUserPrincipal().toString().equals(callerLogin)) {
+        if (room.getMasterName().equals(callerLogin)) {
             String roomKey = room.getKey();
             CollaborativeMessage kickMessage;
             for (Session slave : room.getSlaves()) {
@@ -127,7 +153,7 @@ public class CollaborativeRoomController {
 
     public static void processGiveHand(String callerLogin, String promotedUser, CollaborativeRoom room, CollaborativeMessage collaborativeMessage){
         // if the master sent the invitation
-        if (room.getMaster().getUserPrincipal().toString().equals(callerLogin)) {
+        if (room.getMasterName().equals(callerLogin)) {
             room.addSlave(room.getMaster());
             Session userSession = room.findUserSession(promotedUser);
             if(room.removeSlave(userSession)){
@@ -140,7 +166,7 @@ public class CollaborativeRoomController {
     }
     public static void processKickUser(String callerLogin, String kickedUser, CollaborativeRoom room, CollaborativeMessage collaborativeMessage){
         // if the master sent the invitation
-        if (room.getMaster().getUserPrincipal().toString().equals(callerLogin)) {
+        if (room.getMasterName().equals(callerLogin)) {
             Session userSession = room.findUserSession(kickedUser);
             if(room.removeSlave(userSession)) {
                 MainChannelDispatcher.send(userSession, collaborativeMessage);
@@ -153,7 +179,7 @@ public class CollaborativeRoomController {
     }
     public static void processWithdrawInvitation(String callerLogin, String pendingUser, CollaborativeRoom room, String context){
         // if the master sent the invitation
-        if (room.getMaster().getUserPrincipal().toString().equals(callerLogin)) {
+        if (room.getMasterName().equals(callerLogin)) {
             room.removePendingUser(pendingUser);
             // Chat message
             ChatMessage chatMessage = new ChatMessage(ChannelMessagesType.CHAT_MESSAGE, pendingUser);

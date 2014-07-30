@@ -10,34 +10,33 @@ define(function(){
             messagePattern: /^COLLABORATIVE_.+/,
 
             isApplicable: function (messageType) {
-                return messageType.match(this.messagePattern) != null;
+                return messageType.match(this.messagePattern) !== null;
             },
 
             onMessage: function (message) {
 
-                if (message.type == ChannelMessagesType.COLLABORATIVE_CREATE) {
+                if (message.type === ChannelMessagesType.COLLABORATIVE_CREATE) {
                     collaborativeView.roomCreated(message.key, message.remoteUser);
                     return;
                 }
 
-                if (message.type == ChannelMessagesType.COLLABORATIVE_JOIN && collaborativeView.roomKey == message.key) {
-                    collaborativeView.onCallAcceptedByRemoteUser(message);
-                    mainChannel.sendJSON({
-                        type: ChannelMessagesType.COLLABORATIVE_INVITE,
-                        roomKey: message.roomKey,
-                        remoteUser: message.remoteUser
-                    });
+                if (message.type === ChannelMessagesType.COLLABORATIVE_JOIN) {
+                    App.sceneManager.joinRoom(message.key);
                     return;
                 }
 
-                if (message.type == ChannelMessagesType.COLLABORATIVE_CONTEXT && collaborativeView.roomKey == message.key) {
-                    collaborativeView.setMaster(message.messageBroadcast.master);
+                if (message.type === ChannelMessagesType.COLLABORATIVE_CONTEXT && collaborativeView.roomKey === message.key) {
+                    if (message.messageBroadcast.master === ''){
+                        collaborativeView.setMaster("nobody");
+                    } else {
+                        collaborativeView.setMaster(message.messageBroadcast.master);
+                    }
                     collaborativeView.setUsers(message.messageBroadcast.users);
                     collaborativeView.setPendingUsers(message.messageBroadcast.pendingUsers);
                     return;
                 }
 
-                if (message.type == ChannelMessagesType.COLLABORATIVE_KICK_USER && collaborativeView.roomKey == message.key) {
+                if (message.type === ChannelMessagesType.COLLABORATIVE_KICK_USER) {
                     alert("You've been kicked");
                     App.appView.leaveSpectatorView();
                     App.sceneManager.enableControlsObject();
@@ -45,7 +44,7 @@ define(function(){
                     return;
                 }
 
-                if (message.type == ChannelMessagesType.COLLABORATIVE_KICK_NOT_INVITED && collaborativeView.roomKey == message.key) {
+                if (message.type === ChannelMessagesType.COLLABORATIVE_KICK_NOT_INVITED) {
                     alert("You are not invited to join this room.");
                     App.appView.leaveSpectatorView();
                     App.sceneManager.enableControlsObject();
@@ -53,7 +52,7 @@ define(function(){
                     return;
                 }
 
-                if (message.type == ChannelMessagesType.COLLABORATIVE_COMMANDS && collaborativeView.roomKey == message.key) {
+                if (message.type === ChannelMessagesType.COLLABORATIVE_COMMANDS && collaborativeView.roomKey === message.key) {
                     if(message.messageBroadcast.cameraInfos) {
                         App.sceneManager.setControlsContext(message.messageBroadcast.cameraInfos);
                     } else if (message.messageBroadcast.smartPath){
@@ -64,9 +63,9 @@ define(function(){
                     return;
                 }
 
-                if (message.type == ChannelMessagesType.COLLABORATIVE_GIVE_HAND && collaborativeView.roomKey == message.key) {
-                    App.appView.leaveSpectatorView();
-                    App.sceneManager.enableControlsObject();
+                if (message.type === ChannelMessagesType.COLLABORATIVE_GIVE_HAND && collaborativeView.roomKey === message.key) {
+                    //App.appView.leaveSpectatorView();
+                    //App.sceneManager.enableControlsObject();
                 }
             },
 

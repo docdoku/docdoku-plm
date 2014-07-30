@@ -14,8 +14,9 @@ define([
 
             },
             joinCollaborative:function(key){
-                App.sceneManager.joinRoom(key);
-
+                if (!App.collaborativeView.isMaster) {
+                    App.sceneManager.requestJoinRoom(key);
+                }
             }
         });
         Router = singletonDecorator(Router);

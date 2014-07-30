@@ -32,11 +32,15 @@ define(    [
                     this.$("a#collaborative_create").hide();
                     this.$("table").show();
                     if (this.isMaster){
+                        App.appView.leaveSpectatorView();
+                        App.sceneManager.enableControlsObject();
                         this.$("a.collaborative_kick").show();
                         this.$("a.collaborative_give_hand").show();
                         this.$("a.collaborative_withdraw_invitation").show();
                         this.$("a#collaborative_invite").show();
                     } else {
+                        App.sceneManager.disableControlsObject();
+                        App.appView.setSpectatorView();
                         this.$("a.collaborative_kick").hide();
                         this.$("a.collaborative_give_hand").hide();
                         this.$("a.collaborative_withdraw_invitation").hide();
@@ -85,8 +89,8 @@ define(    [
                     key: this.roomKey,
                     remoteUser: e.currentTarget.name
                 });
-                App.sceneManager.disableControlsObject();
-                App.appView.setSpectatorView();
+               // App.sceneManager.disableControlsObject();
+                //App.appView.setSpectatorView();
             },
 
             exit: function() {
@@ -132,6 +136,8 @@ define(    [
 
                 App.sceneManager.sendEditedMeshes();
 
+                window.location.hash = "room="+this.roomKey;
+
                 this.invite();
             },
 
@@ -150,7 +156,7 @@ define(    [
 
             setMaster: function(master) {
                 this.master = master;
-                this.isMaster = (this.master == APP_CONFIG.login);
+                this.isMaster = (this.master === APP_CONFIG.login);
                 this.render();
             },
 

@@ -23,6 +23,7 @@ public class CollaborativeRoom {
     private CollaborativeMessage cameraInfos;
     private CollaborativeMessage smartPath;
     private CollaborativeMessage editedMeshes;
+    private String lastMaster;
 
     public CollaborativeRoom(Session master) {
         this.key = UUID.randomUUID().toString();
@@ -45,9 +46,20 @@ public class CollaborativeRoom {
         for (Map.Entry<String, CollaborativeRoom> entry : roomsEntries) {
             CollaborativeRoom room = entry.getValue();
             if (room.getSlaves().contains(userSession)){
-                CollaborativeRoomController.processExit(userSession,room);
+                CollaborativeRoomController.processExit(userSession,userSession.getUserPrincipal().getName(),room);
+            }
+            if (room.getMaster()==userSession){
+                CollaborativeRoomController.processExit(userSession,userSession.getUserPrincipal().getName(),room);
             }
         }
+    }
+
+    public String getLastMaster() {
+        return lastMaster;
+    }
+
+    public void setLastMaster(String lastMaster) {
+        this.lastMaster = lastMaster;
     }
 
     public CollaborativeMessage getCameraInfos() {
@@ -92,7 +104,7 @@ public class CollaborativeRoom {
         }
 
         return Json.createObjectBuilder()
-                .add("master", this.getMaster().getUserPrincipal().getName())
+                .add("master", this.getMasterName())
                 .add("users", slaves)
                 .add("pendingUsers", pendingUsers).build();
     }
@@ -112,6 +124,10 @@ public class CollaborativeRoom {
 
     public Session getMaster() {
         return master;
+    }
+
+    public String getMasterName() {
+        return (master==null)?"":master.getUserPrincipal().getName();
     }
 
     public void setMaster(Session master) {
