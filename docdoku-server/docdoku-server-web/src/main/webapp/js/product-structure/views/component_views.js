@@ -32,7 +32,7 @@ define(function() {
             var optionsForComponentView = {
                 model: component,
                 isLast: isLast,
-                checkedAtInit: this.options.parentChecked,
+                checkedAtInit: this.options.parentChecked || App.partsTreeView.smartPath.indexOf(component.getPath()) !== -1,
                 resultPathCollection: this.options.resultPathCollection
             };
 
@@ -191,7 +191,7 @@ define(function() {
                 new ComponentViews.Components({
                     collection: this.model.children,
                     parentView: this.$el,
-                    parentChecked: this.isChecked(),
+                    parentChecked: this.isChecked(),// || App.partsTreeView.smartPath.indexOf(this.model.getPath()) !== -1,
                     resultPathCollection: this.options.resultPathCollection
                 });
             }

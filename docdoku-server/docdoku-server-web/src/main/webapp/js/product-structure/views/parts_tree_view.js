@@ -181,9 +181,9 @@ define(["models/component_module", "views/component_views"], function (Component
 
         setCheckboxes: function() {
             this.$("li input").prop('checked',false);
-
+            var self = this ;
             _.each(this.smartPath, function(path){
-                this.$('li[id^="path_'+path+'"] input').prop('checked',true);
+                self.$('li[id^="path_'+path+'"] input').prop('checked',true);
             });
         },
 
