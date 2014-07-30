@@ -88,10 +88,10 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @RolesAllowed("users")
     @Override
     public BinaryResource saveFileInTemplate(DocumentMasterTemplateKey pDocMTemplateKey, String pName, long pSize) throws WorkspaceNotFoundException, NotAllowedException, DocumentMasterTemplateNotFoundException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException, CreationException, AccessRightException {
-        userManager.checkWorkspaceWriteAccess(pDocMTemplateKey.getWorkspaceId());
+        User user = userManager.checkWorkspaceWriteAccess(pDocMTemplateKey.getWorkspaceId());
 
         if (!NamingConvention.correctNameFile(pName)) {
-            throw new NotAllowedException(Locale.getDefault(), "NotAllowedException9");
+            throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException9");
         }
 
         DocumentMasterTemplateDAO templateDAO = new DocumentMasterTemplateDAO(em);
@@ -122,7 +122,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     public BinaryResource saveFileInDocument(DocumentIterationKey pDocPK, String pName, long pSize) throws WorkspaceNotFoundException, NotAllowedException, DocumentRevisionNotFoundException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException, CreationException, AccessRightException {
         User user = checkDocumentRevisionWriteAccess(new DocumentRevisionKey(pDocPK.getWorkspaceId(), pDocPK.getDocumentMasterId(), pDocPK.getDocumentRevisionVersion()));
         if (!NamingConvention.correctNameFile(pName)) {
-            throw new NotAllowedException(Locale.getDefault(), "NotAllowedException9");
+            throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException9");
         }
 
         DocumentRevisionDAO docRDAO = new DocumentRevisionDAO(em);

@@ -72,15 +72,16 @@ public class FilesFilter implements Filter {
 
 
         HttpServletRequest httpRequest = (HttpServletRequest) pRequest;
+        String remoteUser = httpRequest.getRemoteUser();
 
         String qs = httpRequest.getQueryString();
         String originURL = httpRequest.getRequestURI() + (qs == null ? "" : "?" + qs);
 
         HttpSession sessionHTTP = httpRequest.getSession();
-        Account account = (Account) sessionHTTP.getAttribute("account");
+
 
         // Check headers for Authorization
-        if(account == null){
+        if(remoteUser == null){
 
             String authorization = httpRequest.getHeader("Authorization");
 
@@ -92,13 +93,28 @@ public class FilesFilter implements Filter {
                     String[] splitCredentials = credentials.split(":");
                     String userLogin = splitCredentials[0];
                     String userPassword = splitCredentials[1];
+
+                    //Logout in case of user is already logged in,
+                    //that could happen when using multiple tabs
+                    httpRequest.logout();
                     httpRequest.login(userLogin, userPassword);
+
+                    String accountLogin=null;
                     try {
-                        account = userManager.getAccount(userLogin);
-                    } catch (AccountNotFoundException e) {
+                        Account account = userManager.getAccount(userLogin);
+                        if(account!=null) {
+                            accountLogin = account.getLogin();
+                        }
+                    }catch(AccountNotFoundException ex){
+
+                    }
+                    //case insensitive fix
+                    if(!userLogin.equals(accountLogin)){
+                        httpRequest.logout();
                         httpRequest.getRequestDispatcher("/faces/login.xhtml?originURL=" + URLEncoder.encode(originURL, "UTF-8")).forward(pRequest, pResponse);
                         return;
                     }
+                    sessionHTTP.setAttribute("remoteUser",userLogin);
                 }
             }
 
@@ -150,7 +166,7 @@ public class FilesFilter implements Filter {
 
                     fullName = workspaceId + "/" + elementType + "/" + docMId + "/" + docMVersion + "/" + iteration + "/" + fileName;
 
-                    if(account != null){
+                    if(remoteUser != null){
                         binaryResource = documentService.getBinaryResource(fullName);
                         docI = documentService.findDocumentIterationByBinaryResource(binaryResource);
                         user = documentService.whoAmI(workspaceId);
@@ -184,7 +200,7 @@ public class FilesFilter implements Filter {
                         fileName = URLDecoder.decode(pathInfo[offset + 5], "UTF-8");
                         fullName = workspaceId + "/" + elementType + "/" + partNumber + "/" + version + "/" + iteration + "/" + fileName;
                     }
-                    if(account != null){
+                    if(remoteUser != null){
                         binaryResource = productService.getBinaryResource(fullName);
                     }else{
                         PartRevisionKey partK = new PartRevisionKey(workspaceId, partNumber, version);
@@ -251,7 +267,7 @@ public class FilesFilter implements Filter {
                     fileName = URLDecoder.decode(pathInfo[offset + 2], "UTF-8");
                     fullName = workspaceId + "/" + "documents" + "/" + id + "/" + version + "/" + iteration + "/" + fileName;
 
-                    if(account != null){
+                    if(remoteUser != null){
                         binaryResource = documentService.getBinaryResource(fullName);
                         docI = documentService.findDocumentIterationByBinaryResource(binaryResource);
                         user = documentService.whoAmI(workspaceId);
@@ -282,7 +298,7 @@ public class FilesFilter implements Filter {
                         fileName = URLDecoder.decode(pathInfo[offset + 2], "UTF-8");
                         fullName = workspaceId + "/" + "parts" + "/" + partNumber + "/" + version + "/" + iteration + "/" + fileName;
                     }
-                    if(account != null){
+                    if(remoteUser != null){
                         binaryResource = productService.getBinaryResource(fullName);
                     }else{
                         binaryResource = guestProxy.getBinaryResourceForSharedPart(fullName);

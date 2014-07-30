@@ -28,14 +28,14 @@ import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.core.services.IWorkspaceManagerLocal;
 
 import javax.ejb.EJB;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.SessionScoped;
+import javax.enterprise.context.SessionScoped;
+import javax.inject.Named;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import java.io.Serializable;
 
-@ManagedBean(name = "superAdminStateBean")
+@Named("superAdminStateBean")
 @SessionScoped
 public class SuperAdminStateBean implements Serializable {
 

@@ -86,7 +86,7 @@ public class PrivateShareServlet extends HttpServlet {
             // check shared entity password and provided password
 
             if(sharedEntity.getPassword() != null){
-                String providedPassword = (String) pRequest.getParameter("password");
+                String providedPassword = pRequest.getParameter("password");
                 if(providedPassword != null && md5sum(providedPassword).equals(sharedEntity.getPassword())){
                     handleOnCheckSuccess(pRequest,pResponse,sharedEntity);
                 }else{
@@ -98,7 +98,7 @@ public class PrivateShareServlet extends HttpServlet {
 
         } catch (Exception pEx) {
             pEx.printStackTrace();
-            throw new ServletException("error while fetching your document.", pEx);
+            throw new ServletException("error while fetching your data.", pEx);
         }
 
     }
@@ -139,7 +139,6 @@ public class PrivateShareServlet extends HttpServlet {
             }
 
         } catch (Exception pEx) {
-            pEx.printStackTrace();
             throw new ServletException("error while processing the request.", pEx);
         }
     }

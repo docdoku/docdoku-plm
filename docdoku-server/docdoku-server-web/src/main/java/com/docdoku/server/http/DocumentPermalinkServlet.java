@@ -69,7 +69,6 @@ public class DocumentPermalinkServlet extends HttpServlet {
                 handleSuccess(pRequest,pResponse,documentRevision);
             }
         }  catch (Exception pEx) {
-            pEx.printStackTrace();
             throw new ServletException("error while fetching your document.", pEx);
         }
     }

@@ -33,13 +33,13 @@ import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 
 import javax.ejb.EJB;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.SessionScoped;
+import javax.enterprise.context.SessionScoped;
+import javax.inject.Named;
 import javax.json.*;
 import java.io.Serializable;
 import java.util.*;
 
-@ManagedBean(name = "adminStateBean")
+@Named("adminStateBean")
 @SessionScoped
 public class AdminStateBean implements Serializable {
 
@@ -77,7 +77,7 @@ public class AdminStateBean implements Serializable {
         }
         return usersToManage.toArray(new User[usersToManage.size()]);
     }
-    
+
     public UserGroup[] getGroups() throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccountNotFoundException {
         return userManager.getUserGroups(selectedWorkspace);
     }

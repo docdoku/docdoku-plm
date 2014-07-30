@@ -28,6 +28,7 @@ import com.docdoku.core.security.*;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.core.services.IUserManagerWS;
+import com.docdoku.core.util.NamingConvention;
 import com.docdoku.server.dao.*;
 import com.docdoku.server.esindexer.ESIndexer;
 
@@ -59,6 +60,7 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
     private ESIndexer esIndexer;
     @EJB
     private IDataManagerLocal dataManager;
+
 
     @Override
     public Account createAccount(String pLogin, String pName, String pEmail, String pLanguage, String pPassword) throws AccountAlreadyExistsException, CreationException {
@@ -126,7 +128,106 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
 
     @RolesAllowed({"users","admin"})
     @Override
-    public Workspace createWorkspace(String pID, Account pAdmin, String pDescription, boolean pFolderLocked) throws WorkspaceAlreadyExistsException, FolderAlreadyExistsException, UserAlreadyExistsException, CreationException, ESIndexNamingException {
+    public void updateOrganization(Organization pOrganization) throws AccountNotFoundException, OrganizationNotFoundException, AccessRightException {
+
+        OrganizationDAO organizationDAO = new OrganizationDAO(em);
+        Organization oldOrganization = organizationDAO.loadOrganization(pOrganization.getName());
+
+        if(isCallerInRole("admin")){
+            organizationDAO.updateOrganization(pOrganization);
+        }else{
+            Account account = new AccountDAO(em).loadAccount(ctx.getCallerPrincipal().toString());
+            if(oldOrganization.getOwner().equals(account)){
+                organizationDAO.updateOrganization(pOrganization);
+            }else{
+                throw new AccessRightException(new Locale(account.getLanguage()),account);
+            }
+        }
+    }
+
+    @Override
+    public void addAccountInOrganization(String pOrganizationName, String pLogin) throws OrganizationNotFoundException, AccountNotFoundException, AccessRightException, NotAllowedException {
+        OrganizationDAO organizationDAO = new OrganizationDAO(em);
+        Organization organization = organizationDAO.loadOrganization(pOrganizationName);
+
+        if(!isCallerInRole("admin")){
+            Account account = new AccountDAO(em).loadAccount(ctx.getCallerPrincipal().toString());
+            if(!organization.getOwner().getLogin().equals(ctx.getCallerPrincipal().toString())){
+                throw new AccessRightException(new Locale(account.getLanguage()),account);
+            }
+        }
+
+        Account accountToAdd = new AccountDAO(em).loadAccount(pLogin);
+        if(accountToAdd.getOrganization()!=null){
+            throw new NotAllowedException(Locale.getDefault(), "NotAllowedException12");
+        }else {
+            accountToAdd.setOrganization(organization);
+            organization.addMember(accountToAdd);
+        }
+    }
+
+    @Override
+    public void removeAccountFromOrganization(String pOrganizationName, String[] pLogins) throws AccessRightException, OrganizationNotFoundException, AccountNotFoundException {
+        OrganizationDAO organizationDAO = new OrganizationDAO(em);
+        Organization organization = organizationDAO.loadOrganization(pOrganizationName);
+
+        if(!isCallerInRole("admin")){
+            Account account = new AccountDAO(em).loadAccount(ctx.getCallerPrincipal().toString());
+            if(!organization.getOwner().getLogin().equals(ctx.getCallerPrincipal().toString())){
+                throw new AccessRightException(new Locale(account.getLanguage()),account);
+            }
+        }
+
+        for (String login : pLogins) {
+            Account accountToRemove = new AccountDAO(em).loadAccount(login);
+            accountToRemove.setOrganization(null);
+            organization.removeMember(accountToRemove);
+        }
+
+
+    }
+
+    @RolesAllowed({"users","admin"})
+    @Override
+    public Organization createOrganization(String pName, Account pOwner, String pDescription) throws OrganizationAlreadyExistsException, CreationException, NotAllowedException {
+        if(pOwner.getOrganization()==null) {
+            Organization organization = new Organization(pName, pOwner, pDescription);
+            new OrganizationDAO(em).createOrganization(organization);
+            pOwner.setOrganization(organization);
+            organization.addMember(pOwner);
+            em.merge(pOwner);
+            return organization;
+        }else{
+            throw new NotAllowedException(Locale.getDefault(), "NotAllowedException11");
+        }
+    }
+
+    @Override
+    @RolesAllowed({"users","admin"})
+    public void deleteOrganization(String pName) throws OrganizationNotFoundException, AccountNotFoundException, AccessRightException {
+        OrganizationDAO organizationDAO = new OrganizationDAO(em);
+        Organization organization = organizationDAO.loadOrganization(pName);
+
+        if(isCallerInRole("admin")){
+            organizationDAO.deleteOrganization(organization);
+        }else{
+            Account account = new AccountDAO(em).loadAccount(ctx.getCallerPrincipal().toString());
+            if(organization.getOwner().getLogin().equals(ctx.getCallerPrincipal().toString())){
+                organizationDAO.deleteOrganization(organization);
+            }else{
+                throw new AccessRightException(new Locale(account.getLanguage()),account);
+            }
+        }
+
+
+    }
+
+    @RolesAllowed({"users","admin"})
+    @Override
+    public Workspace createWorkspace(String pID, Account pAdmin, String pDescription, boolean pFolderLocked) throws WorkspaceAlreadyExistsException, FolderAlreadyExistsException, UserAlreadyExistsException, CreationException, ESIndexNamingException, NotAllowedException {
+        if (!NamingConvention.correct(pID)) {
+            throw new NotAllowedException(new Locale(pAdmin.getLanguage()), "NotAllowedException9");
+        }
         Workspace workspace = new Workspace(pID, pAdmin, pDescription, pFolderLocked);
         new WorkspaceDAO(em).createWorkspace(workspace);
         User userToCreate = new User(workspace, pAdmin.getLogin(), pAdmin.getName(), pAdmin.getEmail(), pAdmin.getLanguage());
@@ -480,7 +581,7 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
     @RolesAllowed("users")
     @Override
     public Workspace[] getWorkspacesWhereCallerIsActive() {
-        String callerLogin = ctx.getCallerPrincipal().getName();
+        String callerLogin = ctx.getCallerPrincipal().toString();
         List<Workspace> workspaces = new WorkspaceDAO(em).findWorkspacesWhereUserIsActive(callerLogin);
         return workspaces.toArray(new Workspace[workspaces.size()]);
     }
@@ -489,7 +590,7 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
     @Override
     public void setGCMAccount(String gcmId) throws AccountNotFoundException, GCMAccountAlreadyExistsException, CreationException {
 
-        String callerLogin = ctx.getCallerPrincipal().getName();
+        String callerLogin = ctx.getCallerPrincipal().toString();
         Account account = getAccount(callerLogin);
         GCMAccountDAO gcmAccountDAO = new GCMAccountDAO(em);
 
@@ -505,7 +606,7 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
     @RolesAllowed("users")
     @Override
     public void deleteGCMAccount() throws AccountNotFoundException, GCMAccountNotFoundException {
-        String callerLogin = ctx.getCallerPrincipal().getName();
+        String callerLogin = ctx.getCallerPrincipal().toString();
         Account account = getAccount(callerLogin);
         GCMAccountDAO gcmAccountDAO = new GCMAccountDAO(em);
         GCMAccount gcmAccount = gcmAccountDAO.loadGCMAccount(account);
