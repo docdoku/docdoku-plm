@@ -96,7 +96,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed("users")
     @Override
-    public PartUsageLink filterProductStructure(ConfigurationItemKey pKey, ConfigSpec configSpec, Integer partUsageLink, Integer depth) throws ConfigurationItemNotFoundException, WorkspaceNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException, PartUsageLinkNotFoundException {
+    public PartUsageLink filterProductStructure(ConfigurationItemKey pKey, ConfigSpec configSpec, Integer partUsageLink, Integer depth) throws ConfigurationItemNotFoundException, WorkspaceNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException, PartUsageLinkNotFoundException, AccessRightException {
         User user = userManager.checkWorkspaceReadAccess(pKey.getWorkspace());
         PartUsageLink rootUsageLink;
 
@@ -116,13 +116,22 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             rootUsageLink = new PartUsageLinkDAO(new Locale(user.getLanguage()), em).loadPartUsageLink(partUsageLink);
         }
 
-        depth = (depth == null) ? -1 : depth;
+        PartMaster component = rootUsageLink.getComponent();
 
-        if(configSpec != null){
-            filterConfigSpec(configSpec,rootUsageLink.getComponent(),depth);
+        if(component.getWorkspaceId().equals(pKey.getWorkspace())){
+
+            depth = (depth == null) ? -1 : depth;
+
+            if(configSpec != null){
+                filterConfigSpec(configSpec,rootUsageLink.getComponent(),depth);
+            }
+
+            return rootUsageLink;
+
+        }else{
+            throw new AccessRightException(new Locale(user.getLanguage()), user);
         }
 
-        return rootUsageLink;
     }
 
     private void filterConfigSpec(ConfigSpec configSpec, PartMaster partMaster, int depth){
