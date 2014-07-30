@@ -474,9 +474,9 @@ define([
             if (positionMeshEdited !== -1) {
                 var meshEdited = meshesIndexed[positionMeshEdited];
                 if (meshEdited) {
-                    mesh.position = {x: meshEdited.position.x, y: meshEdited.position.y, z: meshEdited.position.z};
-                    mesh.rotation = {x: meshEdited.rotation.x, y: meshEdited.rotation.y, z: meshEdited.rotation.z};
-                    mesh.scale = {x: meshEdited.scale.x, y: meshEdited.scale.y, z: meshEdited.scale.z};
+                    mesh.position.copy(meshEdited.position);
+                    mesh.rotation.copy(meshEdited.rotation);
+                    mesh.scale.copy(meshEdited.scale);
                     console.log("restauration de la position de l'instance transformée.");
                     console.log(this.mesh);
                 }
@@ -663,11 +663,9 @@ define([
                     _this.editedMeshes = _.without(_this.editedMeshes, val.uuid);
                     return;
                 }
-                mesh.position = {x: val.position.x, y: val.position.y, z: val.position.z};
-                mesh.rotation.x = val.rotation._x;
-                mesh.rotation.y = val.rotation._y;
-                mesh.rotation.z = val.rotation._z;
-                //mesh.scale = {x: val.scale.x, y: val.scale.y, z: val.scale.z};
+                mesh.position.copy(val.position);
+                mesh.rotation.copy(val.rotation);
+                mesh.scale.copy(val.scale);
             });
             _this.reDraw();
         };
