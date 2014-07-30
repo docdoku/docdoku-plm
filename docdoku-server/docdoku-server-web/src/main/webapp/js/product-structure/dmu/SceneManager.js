@@ -26,6 +26,8 @@ define([
         var editedMeshesDisplayed = false;
         var transformControls = null;
 
+        var materialEditedMesh = new THREE.MeshPhongMaterial({ transparent: false, color: new THREE.Color(0x08B000) });
+
         this.stateControl = null;
         this.STATECONTROL = { PLC: 0, TBC: 1, ORB: 2};
         this.scene = new THREE.Scene();
@@ -33,6 +35,7 @@ define([
         this.cameraObject = null;                                                                                       // Represent the eye
         this.layerManager = null;
         this.editedMeshes = [];
+        this.editedMeshesLeft = [];
 
         // Stat
         this.switches = 0;
@@ -470,6 +473,7 @@ define([
             mesh.initialPosition = {x: mesh.position.x, y: mesh.position.y, z: mesh.position.z};
             mesh.initialRotation = {x: mesh.rotation.x, y: mesh.rotation.y, z: mesh.rotation.z};
             mesh.initialScale = {x: mesh.scale.x, y: mesh.scale.y, z: mesh.scale.z};
+            mesh.initialMaterial = mesh.material;
             var positionMeshEdited = _.indexOf(_this.editedMeshes, mesh.uuid);
             if (positionMeshEdited !== -1) {
                 var meshEdited = meshesIndexed[positionMeshEdited];
@@ -517,6 +521,14 @@ define([
                     applyExplosionCoeff(newMesh);
                     applyWireFrame(newMesh);
                     applyMeasureStateOpacity(newMesh);
+
+                    var potentiallyEdited = _(_this.editedMeshesLeft).where({uuid:newMesh.uuid});
+                    if(potentiallyEdited.length){
+                        newMesh.position.copy(potentiallyEdited[0].position);
+                        newMesh.rotation.copy(potentiallyEdited[0].rotation);
+                        newMesh.scale.copy(potentiallyEdited[0].scale);
+                    }
+
                 }
                 _this.reDraw();
             });
@@ -659,13 +671,13 @@ define([
             _.each(editedMeshesInfos, function (val) {
                 var mesh = meshesIndexed[val.uuid];
                 if (!mesh) {
-                    console.log("Error : can't set edited mesh. Mesh not found");
                     _this.editedMeshes = _.without(_this.editedMeshes, val.uuid);
-                    return;
+                    _this.editedMeshesLeft.push(val);
+                }else{
+                    mesh.position.copy(val.position);
+                    mesh.rotation.copy(val.rotation);
+                    mesh.scale.copy(val.scale);
                 }
-                mesh.position.copy(val.position);
-                mesh.rotation.copy(val.rotation);
-                mesh.scale.copy(val.scale);
             });
             _this.reDraw();
         };
@@ -875,16 +887,15 @@ define([
         };
         this.showEditedMeshes = function (display) {
             editedMeshesDisplayed = display;
-            var i;
             if (editedMeshesDisplayed) {
                 _.each(_this.editedMeshes, function (y) {
                     var mesh = meshesIndexed[y];
-                    mesh.material = new THREE.MeshPhongMaterial({ transparent: false, color: new THREE.Color(0x08B000) });
+                    mesh.material = materialEditedMesh;
                 });
             } else {
                 _.each(_this.editedMeshes, function (y) {
                     var mesh = meshesIndexed[y];
-                    mesh.material = new THREE.MeshPhongMaterial({ transparent: false, color: new THREE.Color(0xbbbbbb) });
+                    mesh.material = mesh.initialMaterial;
                 });
             }
             _this.reDraw();
@@ -1042,7 +1053,7 @@ define([
                 .start();
             //_this.editedMeshes.splice(_.indexOf(_this.editedMeshes, mesh.uuid),1);
             _this.editedMeshes = _.without(_this.editedMeshes, mesh.uuid);
-            mesh.material = new THREE.MeshPhongMaterial({ transparent: true, color: new THREE.Color(0xbbbbbb) });
+            mesh.material = mesh.initialMaterial;
             console.log("mesh removed");
             App.sceneManager.sendEditedMeshes();
 

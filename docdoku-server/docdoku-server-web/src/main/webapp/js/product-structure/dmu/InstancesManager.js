@@ -78,16 +78,16 @@ function (LoaderManager, async) {
                 return;
             }
 
-            var meshes = _(App.sceneManager.editedMeshes).select(function(mesh){ return mesh.uuid === instance.id;});
-
-            if (meshes.length) {
-                _this.aborted++;
-                worker.postMessage({fn:"setQuality",obj:{id:instance.id,quality:instance.qualityLoaded}});
-                setTimeout(callback,0);
-                return;
-            }
-
             if (directive.quality == undefined) {
+
+                // don't unload edited meshes
+                if (App.sceneManager.editedMeshes.indexOf(instance.id) !== -1) {
+                    _this.aborted++;
+                    worker.postMessage({fn:"setQuality",obj:{id:instance.id,quality:instance.qualityLoaded}});
+                    setTimeout(callback,0);
+                    return;
+                }
+
                 App.sceneManager.removeMeshById(instance.id);
                 if(loadCache[instance.partIterationId+'-'+instance.qualityLoaded]){
                     if( loadCache[instance.partIterationId+'-'+instance.qualityLoaded].count === 1){
