@@ -59,7 +59,13 @@ define(function(){
                         App.appView.updateTreeView(message.messageBroadcast.smartPath);
                     } else if (message.messageBroadcast.editedMeshes){
                         App.sceneManager.setEditedMeshes(message.messageBroadcast.editedMeshes);
+                    }else if (message.messageBroadcast.colourEditedMeshes !== undefined){
+                        App.sceneManager.setColourEditedMeshes(message.messageBroadcast.colourEditedMeshes);
+                    }else if (message.messageBroadcast.explode){
+                        document.getElementById("slider-explode").value = message.messageBroadcast.explode;
+                        App.sceneManager.explodeScene(message.messageBroadcast.explode);
                     }
+
                     return;
                 }
 

@@ -44,10 +44,28 @@ function (LoaderManager, async) {
                 _this.xhrQueue.kill();
 
                 _(directives).each(function(directive){
-                    var instance = _this.getInstance(directive.id);
-                    instance.directiveQuality = directive.quality;
-                    _this.xhrQueue.push(directive);
+                    if(directive.nowait && directive.quality === undefined){
+                        var instance = _this.getInstance(directive.id);
+                        App.sceneManager.removeMeshById(directive.id);
+                        if(loadCache[instance.partIterationId+'-'+instance.qualityLoaded]){
+                            if( loadCache[instance.partIterationId+'-'+instance.qualityLoaded].count === 1){
+                                loadCache[instance.partIterationId+'-'+instance.qualityLoaded].geometry.dispose();
+                                loadCache[instance.partIterationId+'-'+instance.qualityLoaded].material.dispose();
+                                loadCache[instance.partIterationId+'-'+instance.qualityLoaded] = null;
+                                delete loadCache[instance.partIterationId+'-'+instance.qualityLoaded];
+                            }else{
+                                loadCache[instance.partIterationId+'-'+instance.qualityLoaded].count--;
+                            }
+                        }
+                        instance.qualityLoaded = undefined;
+                        worker.postMessage({fn: 'setQuality', obj: {id: instance.id, quality: instance.qualityLoaded}});
+                    }else{
+                        var instance = _this.getInstance(directive.id);
+                        instance.directiveQuality = directive.quality;
+                        _this.xhrQueue.push(directive);
+                    }
                 });
+
 
                 setTimeout(function(){
                     evalRunning = false;

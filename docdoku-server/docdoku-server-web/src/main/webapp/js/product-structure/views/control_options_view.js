@@ -51,9 +51,9 @@ define(
         show_edited_meshes:function(){
             $('#show_edited_meshes').toggleClass("active");
             if ($('#show_edited_meshes').hasClass("active")){
-                App.sceneManager.showEditedMeshes(true);
+                App.sceneManager.colourEditedMeshes();
             } else {
-                App.sceneManager.showEditedMeshes(false);
+                App.sceneManager.cancelColourEditedMeshes();
             }
         }
 

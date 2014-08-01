@@ -23,7 +23,7 @@ define([
         var selectionBox = null;
         var meshMarkedForSelection = null;
         var controlChanged = false;
-        var editedMeshesDisplayed = false;
+        var editedMeshesColoured = false;
         var transformControls = null;
 
         var materialEditedMesh = new THREE.MeshPhongMaterial({ transparent: false, color: new THREE.Color(0x08B000) });
@@ -492,8 +492,25 @@ define([
         function removeMesh(meshId) {
             var mesh = meshesIndexed[meshId];
             delete meshesIndexed[meshId];
+            if(_this.editedMeshes.indexOf(meshId) !== -1){
+                _this.editedMeshesLeft.push({
+                    uuid:meshId,
+                    position:mesh.position.clone(),
+                    rotation:mesh.rotation.clone(),
+                    scale:mesh.scale.clone()
+                });
+                _this.editedMeshes = _(_this.editedMeshes).without(meshId);
+                if (transformControls !== null && transformControls.enabled && transformControls.getObject()===mesh) {
+                    _this.deleteTransformControls();
+                }
+            }
             if (!mesh) {
                 return;
+            }
+            if (meshMarkedForSelection === meshId) {
+                Backbone.Events.trigger("selection:reset");
+                meshMarkedForSelection = null;
+                unsetSelectionBox();
             }
             _this.scene.remove(mesh);
             _this.reDraw();
@@ -527,6 +544,11 @@ define([
                         newMesh.position.copy(potentiallyEdited[0].position);
                         newMesh.rotation.copy(potentiallyEdited[0].rotation);
                         newMesh.scale.copy(potentiallyEdited[0].scale);
+                        if (editedMeshesColoured){
+                            newMesh.material = materialEditedMesh;
+                        }
+                        _this.editedMeshesLeft = _(_this.editedMeshesLeft).without(potentiallyEdited[0]);
+                        _this.editedMeshes.push(potentiallyEdited[0].uuid);
                     }
 
                 }
@@ -614,7 +636,7 @@ define([
         /**
          * Colaborative Mode
          */
-        function sendCommands() {
+        this.sendCameraInfos = function () {
             if (App.collaborativeView.isMaster) {
                 var message = {
                     type: ChannelMessagesType.COLLABORATIVE_COMMANDS,
@@ -622,24 +644,24 @@ define([
                     messageBroadcast: {
                         cameraInfos: _this.getControlsContext()
                     },
-                    remoteUser: "null"
+                    remoteUser: ""
                 };
                 mainChannel.sendJSON(message);
             }
         }
 
         this.sendEditedMeshes = function () {
-            var arrayIds = [];
-            _.each(this.editedMeshes, function (val) {
-                var mesh = meshesIndexed[val];
-                arrayIds.push({
-                    uuid: val,
-                    position: mesh.position,
-                    scale: mesh.scale,
-                    rotation: mesh.rotation
-                });
-            });
             if (App.collaborativeView.isMaster) {
+                var arrayIds = [];
+                _.each(this.editedMeshes, function (val) {
+                        var mesh = meshesIndexed[val];
+                        arrayIds.push({
+                            uuid: val,
+                            position: mesh.position,
+                            scale: mesh.scale,
+                            rotation: mesh.rotation
+                        });
+                });
                 var message = {
                     type: ChannelMessagesType.COLLABORATIVE_COMMANDS,
                     key: App.collaborativeView.roomKey,
@@ -661,7 +683,9 @@ define([
             console.log(diff);
             _.each(diff, function (uuid) {
                 var mesh = meshesIndexed[uuid];
-                _this.cancelTransformation(mesh);
+                if(_this.editedMeshes.lastIndexOf(uuid)!=-1) {
+                    _this.cancelTransformation(mesh);
+                }
             });
 
             // on met à jour la liste des éléments modifiés
@@ -677,9 +701,50 @@ define([
                     mesh.position.copy(val.position);
                     mesh.rotation.copy(val.rotation);
                     mesh.scale.copy(val.scale);
+                    if (editedMeshesColoured){
+                        mesh.material = materialEditedMesh;
+                    }
                 }
             });
             _this.reDraw();
+        };
+
+        this.sendColourEditedMeshes = function () {
+            if (App.collaborativeView.isMaster) {
+                var message = {
+                    type: ChannelMessagesType.COLLABORATIVE_COMMANDS,
+                    key: App.collaborativeView.roomKey,
+                    messageBroadcast: {
+                        colourEditedMeshes: editedMeshesColoured
+                    },
+                    remoteUser: ""
+                };
+                mainChannel.sendJSON(message);
+            }
+        };
+
+        this.setColourEditedMeshes = function (colour) {
+            if (editedMeshesColoured !== colour){
+                if(editedMeshesColoured){
+                    _this.cancelColourEditedMeshes();
+                } else {
+                    _this.colourEditedMeshes();
+                }
+            }
+        };
+
+        this.sendExplodeValue = function (value) {
+            if (App.collaborativeView.isMaster) {
+                var message = {
+                    type: ChannelMessagesType.COLLABORATIVE_COMMANDS,
+                    key: App.collaborativeView.roomKey,
+                    messageBroadcast: {
+                        explode: value
+                    },
+                    remoteUser: ""
+                };
+                mainChannel.sendJSON(message);
+            }
         };
 
         /**
@@ -713,7 +778,7 @@ define([
             }
             if (controlChanged) {
                 //sendControlsContextMessage();
-                sendCommands();
+                _this.sendCameraInfos();
                 controlChanged = false;
             }
         }
@@ -847,6 +912,7 @@ define([
             _this.reDraw();
         };
         this.explodeScene = function (v) {
+            _this.sendExplodeValue(v);
             // this could be adjusted
             explosionCoeff = v * 0.1;
             _(_this.scene.children).each(function (child) {
@@ -885,21 +951,24 @@ define([
             _this.reDraw();
 
         };
-        this.showEditedMeshes = function (display) {
-            editedMeshesDisplayed = display;
-            if (editedMeshesDisplayed) {
-                _.each(_this.editedMeshes, function (y) {
-                    var mesh = meshesIndexed[y];
-                    mesh.material = materialEditedMesh;
-                });
-            } else {
-                _.each(_this.editedMeshes, function (y) {
-                    var mesh = meshesIndexed[y];
-                    mesh.material = mesh.initialMaterial;
-                });
-            }
+        this.colourEditedMeshes = function () {
+            editedMeshesColoured = true;
+            _.each(_this.editedMeshes, function (y) {
+                var mesh = meshesIndexed[y];
+                mesh.material = materialEditedMesh;
+            });
+            _this.sendColourEditedMeshes();
             _this.reDraw();
         };
+        this.cancelColourEditedMeshes = function () {
+            editedMeshesColoured = false;
+            _.each(_this.editedMeshes, function (y) {
+                var mesh = meshesIndexed[y];
+                mesh.material = mesh.initialMaterial;
+            });
+            _this.sendColourEditedMeshes();
+            _this.reDraw();
+        }
         this.setPointerLockControls = function () {
             if (_this.stateControl === _this.STATECONTROL.PLC) {
                 return;
@@ -982,7 +1051,9 @@ define([
             transformControls.attach(mesh);
             if (!_.contains(_this.editedMeshes, mesh.uuid)) {
                 _this.editedMeshes.push(mesh.uuid);
-                _this.showEditedMeshes(editedMeshesDisplayed);
+                if (editedMeshesColoured){
+                    _this.colourEditedMeshes();
+                }
                 console.log("mesh added : ");
                 console.log(this.editedMeshes);
                 this.sendEditedMeshes();

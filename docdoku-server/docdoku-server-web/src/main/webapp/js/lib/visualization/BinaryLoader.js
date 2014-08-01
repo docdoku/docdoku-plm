@@ -66,8 +66,7 @@ THREE.BinaryLoader.prototype.loadAjaxJSON = function ( context, url, callback, t
 THREE.BinaryLoader.prototype.loadAjaxBuffers = function ( json, callback, binaryPath, texturePath, callbackProgress ) {
 
     var xhr = new XMLHttpRequest(),
-        url = binaryPath + "/" + json.buffers;
-
+        url = binaryPath + json.buffers;
     var length = 0;
 
     xhr.onreadystatechange = function () {

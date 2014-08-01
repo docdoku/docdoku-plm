@@ -13,7 +13,7 @@ define(
         className:"side_control_group",
 
         events:{
-            "change input#slider-explode":"explode"
+            "input input#slider-explode":"explode"
         },
 
         initialize:function(){

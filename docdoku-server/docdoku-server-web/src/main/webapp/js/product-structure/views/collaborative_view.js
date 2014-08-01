@@ -121,20 +121,13 @@ define(    [
                     remoteUser: "",
                     key: this.roomKey,
                     messageBroadcast: {
-                        cameraInfos: App.sceneManager.getControlsContext()
-                    }
-                });
-
-                mainChannel.sendJSON({
-                    type: ChannelMessagesType.COLLABORATIVE_COMMANDS,
-                    remoteUser: "",
-                    key: this.roomKey,
-                    messageBroadcast: {
                         smartPath: App.partsTreeView.getSmartPath()
                     }
                 });
-
+                App.sceneManager.sendCameraInfos();
                 App.sceneManager.sendEditedMeshes();
+                App.sceneManager.sendColourEditedMeshes();
+                App.sceneManager.sendExplodeValue(document.getElementById("slider-explode").value);
 
                 window.location.hash = "room="+this.roomKey;
 

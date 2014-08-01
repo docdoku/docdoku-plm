@@ -78,6 +78,8 @@ public class CollaborativeRoomController {
                     MainChannelDispatcher.send(callerSession, room.getCameraInfos());
                     MainChannelDispatcher.send(callerSession, room.getSmartPath());
                     MainChannelDispatcher.send(callerSession, room.getEditedMeshes());
+                    MainChannelDispatcher.send(callerSession, room.getColourEditedMeshes());
+                    MainChannelDispatcher.send(callerSession, room.getExplode());
                     return;
                 }
             }
@@ -89,6 +91,8 @@ public class CollaborativeRoomController {
             MainChannelDispatcher.send(callerSession, room.getCameraInfos());
             MainChannelDispatcher.send(callerSession, room.getSmartPath());
             MainChannelDispatcher.send(callerSession, room.getEditedMeshes());
+            MainChannelDispatcher.send(callerSession, room.getColourEditedMeshes());
+            MainChannelDispatcher.send(callerSession, room.getExplode());
         }
     }
 
@@ -105,6 +109,12 @@ public class CollaborativeRoomController {
             }
             if (command.containsKey("editedMeshes")) {
                 room.setEditedMeshes(collaborativeMessage);
+            }
+            if (command.containsKey("colourEditedMeshes")) {
+                room.setColourEditedMeshes(collaborativeMessage);
+            }
+            if (command.containsKey("explode")) {
+                room.setExplode(collaborativeMessage);
             }
             for (Session slave : room.getSlaves()) {
                 MainChannelDispatcher.send(slave, collaborativeMessage);

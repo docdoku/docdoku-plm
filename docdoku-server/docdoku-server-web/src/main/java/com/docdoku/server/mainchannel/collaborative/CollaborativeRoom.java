@@ -23,6 +23,8 @@ public class CollaborativeRoom {
     private CollaborativeMessage cameraInfos;
     private CollaborativeMessage smartPath;
     private CollaborativeMessage editedMeshes;
+    private CollaborativeMessage colourEditedMeshes;
+    private CollaborativeMessage explode;
     private String lastMaster;
 
     public CollaborativeRoom(Session master) {
@@ -84,6 +86,22 @@ public class CollaborativeRoom {
 
     public void setEditedMeshes(CollaborativeMessage editedMeshes) {
         this.editedMeshes = editedMeshes;
+    }
+
+    public CollaborativeMessage getColourEditedMeshes() {
+        return colourEditedMeshes;
+    }
+
+    public void setColourEditedMeshes(CollaborativeMessage colourEditedMeshes) {
+        this.colourEditedMeshes = colourEditedMeshes;
+    }
+
+    public CollaborativeMessage getExplode() {
+        return explode;
+    }
+
+    public void setExplode(CollaborativeMessage explode) {
+        this.explode = explode;
     }
 
     public String toString() {

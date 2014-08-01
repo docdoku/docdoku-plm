@@ -935,6 +935,10 @@
 
 		};
 
+        this.getObject = function () {
+            return scope.object;
+        };
+
 		this.setMode = function ( mode ) {
 
 			_mode = mode ? mode : _mode;

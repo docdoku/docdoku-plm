@@ -103,7 +103,8 @@ var Context = {
                 if (instance.qualityLoaded != directive.quality) {
                     directives.push({
                         id:instance.id,
-                        quality:directive.quality
+                        quality:directive.quality,
+                        nowait:directive.quality===undefined && !instance.checked
                     });
                 }
             });
