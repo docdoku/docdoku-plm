@@ -61,7 +61,7 @@ public class PartCollection implements Serializable {
 
     @MapKey(name="baselinedPartKey")
     @OneToMany(mappedBy="partCollection", cascade=CascadeType.ALL, fetch=FetchType.LAZY, orphanRemoval=true)
-    private Map<BaselinedPartKey, BaselinedPart> baselinedParts=new HashMap<BaselinedPartKey, BaselinedPart>();
+    private Map<BaselinedPartKey, BaselinedPart> baselinedParts=new HashMap<>();
 
     public PartCollection() {
     }
@@ -76,6 +76,8 @@ public class PartCollection implements Serializable {
 
     public void addBaselinedPart(PartIteration targetPart){
         BaselinedPart baselinedPart = new BaselinedPart(this, targetPart);
+        baselinedPart.setTargetPartIteration(targetPart.getIteration());
+        baselinedPart.setTargetPartVersion(targetPart.getVersion());
         baselinedParts.put(baselinedPart.getBaselinedPartKey(),baselinedPart);
     }
 

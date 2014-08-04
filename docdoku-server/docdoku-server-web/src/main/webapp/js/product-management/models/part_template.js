@@ -58,6 +58,10 @@ define([
             return this.get("author").name;
         },
 
+        getAuthorLogin:function(){
+            return this.get("author").login;
+        },
+
         getCreationDate:function(){
             return this.get("creationDate");
         },

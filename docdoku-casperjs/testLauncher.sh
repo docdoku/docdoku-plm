@@ -41,7 +41,7 @@ done
 
 casperjs test   --pre=pre.js \
                 --post=logout.js \
-                --includes=conf.js \
+                --includes=conf.js,Tools.js \
                 --fail-fast \
                 --xunit=testsResults.xml \
                 --domain=$domain \
@@ -49,10 +49,12 @@ casperjs test   --pre=pre.js \
                 --login=$login \
                 --pass=$pass \
                 --workspace=$workspace \
-                tests/product-management/partCreation.js \
-                tests/product-management/showPartDetails.js \
-                tests/product-management/productCreation.js \
-                tests/product-management/productDeletion.js \
-                tests/product-management/partDeletion.js \
+                --verbose \
+                --log-level=error \
+                tests/product-management/part/partCreation.js \
+                tests/product-management/part/showPartDetails.js \
+                tests/product-management/product/productCreation.js \
+                tests/product-management/product/productDeletion.js \
+                tests/product-management/part/partDeletion.js \
                 tests/document-management/folderCreation.js \
                 tests/document-management/folderDeletion.js

@@ -8,7 +8,7 @@
         {{#model.isReleased}}<i class="icon-ok"></i>{{/model.isReleased}}
         {{^model.isReleased}}<i class="icon-eye-open"></i>{{/model.isReleased}}
     {{/model.isCheckout}}
-    {{model.getNumber}}
+    <span class="part_number_value">{{model.getNumber}}</span>
 </td>
 <td>{{model.getVersion}}</td>
 <td>{{#model.getLastIteration}}{{id}}{{/model.getLastIteration}}{{^model.getLastIteration}}-{{/model.getLastIteration}}</td>

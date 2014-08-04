@@ -5,7 +5,7 @@ define([
     template,
     i18n
     ) {
-    var ProductListItemView = Backbone.View.extend({
+    var BaselineListItemView = Backbone.View.extend({
 
         template: Mustache.compile(template),
 
@@ -49,11 +49,10 @@ define([
         openEditView:function(){
             var that = this ;
             require(["views/baseline/baseline_edit_view"],function(BaselineEditView){
-                var view = new BaselineEditView({model:that.model});
-                $("body").append(view.render().el);
+                var view = new BaselineEditView({model:that.model, isForBaseline:true}).render();
             });
         }
     });
 
-    return ProductListItemView;
+    return BaselineListItemView;
 });

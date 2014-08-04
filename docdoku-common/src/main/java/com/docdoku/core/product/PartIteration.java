@@ -200,13 +200,8 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
         this.author = author;
     }
 
-    public String getIterationNote() {
-        return iterationNote;
-    }
-
-    public void setIterationNote(String iterationNote) {
-        this.iterationNote = iterationNote;
-    }
+    public String getIterationNote() {return iterationNote;}
+    public void setIterationNote(String iterationNote) {this.iterationNote = iterationNote;}
 
     public BinaryResource getNativeCADFile() {
         return nativeCADFile;

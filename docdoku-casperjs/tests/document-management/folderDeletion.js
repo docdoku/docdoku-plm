@@ -1,25 +1,57 @@
-/*global casper*/
-casper.test.begin('Delete a folder is available',3, function(){
-    casper.thenOpen(authUrl);
+/*global casper,__utils__,workspaceUrl,folderCreationName*/
+'use strict';
+casper.test.begin('Delete a folder is available',1, function(){
+    casper.thenOpen(workspaceUrl);
+    var exists;
 
+    /**
+     * Go to document management
+     */
     casper.then(function openDocumentManagement() {
-        this.test.assertExists('#documents_management_link a', 'Documents management link found');
+        exists = this.evaluate(function() {
+            return __utils__.exists('#documents_management_link a');
+        });
+        if(!exists){
+            this.test.fail('Documents management link not found');
+            this.exit('Documents management link not found');
+        }
+        this.evaluate(function(){__utils__.log('Documents management link found', 'info');});
         this.click('#documents_management_link a');
     });
 
-    casper.waitForSelector('#folder-nav',
-        function createNewFolder() {
-            this.test.assertExists('#folder-nav .nav-list-entry a', 'Folders link found');
-            this.click("#folder-nav .nav-list-entry a");
+    /**
+     *  Go to folder nav
+     */
+    casper.waitForSelector('#folder-nav',function openFolderNav() {
+        exists = this.evaluate(function() {
+            return __utils__.exists('#folder-nav .nav-list-entry a');
+        });
+        if(!exists){
+            this.test.fail('Folders nav link not found');
+            this.exit('Folders nav link not found');
         }
-    );
+        this.evaluate(function(){__utils__.log('Folders nav link found', 'info');});
+        this.click('#folder-nav .nav-list-entry a');
+    });
 
-    casper.waitForSelector('#folder-nav .items',
-        function deleteNewFolder() {
-            this.test.assertExists('#folder-nav .items a[title='+folderCreationName+']', 'Folder created found');
-            this.click("#folder-nav .items a[title="+folderCreationName+"] + .btn-group .delete a");
+    /**
+     * Test delete the created folder
+     */
+    casper.waitForSelector('#folder-nav .items',function deleteNewFolder() {
+        exists = this.evaluate(function() {
+            return true;//__utils__.exists('#folder-nav .items a[title="'+folderCreationName+'"]');  // Todo Evaluate if the folder exist
+        });
+        if(!exists){
+            this.test.fail('Created folder not found');
+            this.exit('Created folder not found');
         }
-    );
+        this.evaluate(function(){__utils__.log('Created folder found', 'info');});
+        this.click('#folder-nav .items a[title="'+folderCreationName+'"] + .btn-group .delete a');
+
+        this.wait(1000,function(){
+            this.test.assertDoesntExist('#folder-nav .items a[title='+folderCreationName+']', 'Created folder should be deleted');
+        });
+    });
 
     casper.run(function() {
         this.test.done();

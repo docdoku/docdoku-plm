@@ -13,6 +13,7 @@ define({
         "CREATION_ERROR":               "Error on baseline creation",
         "DELETE":						"Delete",
         "DELETE_SELECTION_?":			"Delete the selected element?",
+        "DESCRIPTION":                  "Description",
         "DUPLICATE":                    "Duplicate",
         "DUPLICATE_BASELINE":           "Duplicate baseline",
         "EDIT_BASELINE":                "Edit baseline",

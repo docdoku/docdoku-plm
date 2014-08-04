@@ -162,7 +162,7 @@ define([
             this.dataTable();
         },
         dataTable:function(){
-            var oldSort = [[0,"asc"]];
+            var oldSort = [[1,"asc"]];
             if(this.oTable){
                 oldSort = this.oTable.fnSettings().aaSorting;
                 this.oTable.fnDestroy();
@@ -178,7 +178,7 @@ define([
                 },
                 sDom : 'ft',
                 aoColumnDefs: [
-                    { "bSortable": false, "aTargets": [ 0,3 ] }
+                    { "bSortable": false, "aTargets": [ 0 ] }
                 ]
             });
             this.$el.find(".dataTables_filter input").attr("placeholder",i18nDt.FILTER);

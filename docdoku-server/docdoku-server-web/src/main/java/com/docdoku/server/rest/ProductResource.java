@@ -62,6 +62,9 @@ public class ProductResource {
     @EJB
     private BaselinesResource baselinesResource;
 
+    @EJB
+    private ProductInstancesResource productInstancesResource;
+
     private Mapper mapper;
 
     public ProductResource() {
@@ -379,12 +382,22 @@ public class ProductResource {
     }
 
     @Path("baselines")
-    public BaselinesResource getAllBaselines(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId){
+    public BaselinesResource getAllBaselines(@PathParam("workspaceId") String workspaceId){
         return baselinesResource;
     }
 
     @Path("{ciId}/baselines")
     public BaselinesResource getBaselines(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId){
         return baselinesResource;
+    }
+
+    @Path("product-instances")
+    public ProductInstancesResource getAllProductInstances(@PathParam("workspaceId") String workspaceId){
+        return productInstancesResource;
+    }
+
+    @Path("{ciId}/product-instances")
+    public ProductInstancesResource getProductInstances(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId){
+        return productInstancesResource;
     }
 }
