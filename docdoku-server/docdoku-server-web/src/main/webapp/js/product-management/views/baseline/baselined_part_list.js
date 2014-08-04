@@ -1,8 +1,7 @@
 define([
-    "text!templates/baseline/baselined_part_list.html",
     "views/baseline/baselined_part_list_item",
     "common-objects/models/baselined_part"
-],function(template,BaselinedPartListItemView,BaselinedPart){
+],function(BaselinedPartListItemView,BaselinedPart){
 
     var BaselinedPartsView = Backbone.View.extend({
 
@@ -10,13 +9,12 @@ define([
 
         className:"baselined-parts",
 
-        template:Mustache.compile(template),
-
         initialize:function(){
+            this.isForBaseline = (this.options.isForBaseline) ? this.options.isForBaseline : false;
+            this.isLocked = (this.options.isLocked) ? this.options.isLocked : false;
         },
 
         render:function(){
-            this.$el.html(this.template());
             this.initItemViews();
             return this;
         },
@@ -28,18 +26,28 @@ define([
 
             this.$el.empty();
 
-            _.each(this.model.getBaselinedParts(),function(bpData){
-                var baselinedPart = new BaselinedPart(bpData);
-                var baselinedPartItemView = new BaselinedPartListItemView({model:baselinedPart,released: that.model.isReleased()}).render();
-                that.baselinedParts.push(baselinedPart);
-                that.baselinedPartsViews.push(baselinedPartItemView);
-                that.$el.append(baselinedPartItemView.$el);
-            });
+            if(this.model) {
+                _.each(this.model.getBaselinedParts(), function (bpData) {
+                    var baselinedPart = new BaselinedPart(bpData);
+                    var data = {
+                        model: baselinedPart
+                    };
+                    if (that.isForBaseline) {
+                        data.released = that.model.isReleased();
+                        data.isForBaseline = that.isForBaseline;
+                    }else{
+                        data.isLocked =that.isLocked;
+                    }
+                    var baselinedPartItemView = new BaselinedPartListItemView(data).render();
+                    that.baselinedParts.push(baselinedPart);
+                    that.baselinedPartsViews.push(baselinedPartItemView);
+                    that.$el.append(baselinedPartItemView.$el);
+                });
+            }
         },
 
         getBaselinedParts:function(){
             var baselinedParts = [];
-
             _.each(this.baselinedParts,function(baselinedPart){
                 if(!baselinedPart.isExcluded()){
                     baselinedParts.push({
@@ -49,13 +57,9 @@ define([
                     });
                 }
             });
-
             return baselinedParts ;
-
         }
-
     });
 
     return BaselinedPartsView;
-
 });

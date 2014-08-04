@@ -24,7 +24,6 @@ import com.docdoku.core.common.User;
 import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.configuration.Baseline;
 import com.docdoku.core.configuration.BaselinedPart;
-import com.docdoku.core.configuration.BaselinedPartKey;
 import com.docdoku.core.product.CADInstance;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartRevision;
@@ -39,7 +38,6 @@ import org.dozer.Mapper;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  *
@@ -169,25 +167,13 @@ public class Tools {
 
     public static List<BaselinedPartDTO> mapBaselinedPartsToBaselinedPartDTO(Baseline baseline){
         List<BaselinedPartDTO> baselinedPartDTOs = new ArrayList<>();
-        Set<Map.Entry<BaselinedPartKey,BaselinedPart>> entries = baseline.getBaselinedParts().entrySet();
-
-        for(Map.Entry<BaselinedPartKey,BaselinedPart> entry : entries){
-            baselinedPartDTOs.add(mapBaselinedPartToBaselinedPartDTO(entry.getValue()));
+        for(BaselinedPart baselinedPart : baseline.getBaselinedParts().values()){
+            baselinedPartDTOs.add(mapBaselinedPartToBaselinedPartDTO(baselinedPart));
         }
-
         return baselinedPartDTOs;
     }
 
     public static BaselinedPartDTO mapBaselinedPartToBaselinedPartDTO(BaselinedPart baselinedPart){
-        BaselinedPartDTO baselinedPartDTO = new BaselinedPartDTO();
-        PartIteration partI = baselinedPart.getTargetPart();
-        baselinedPartDTO.setNumber(partI.getPartNumber());
-        baselinedPartDTO.setVersion(partI.getPartVersion());
-        baselinedPartDTO.setIteration(partI.getIteration());
-        baselinedPartDTO.setLastIteration(partI.getPartRevision().getLastIteration().getIteration());
-        baselinedPartDTO.setLastVersion(partI.getPartRevision().getPartMaster().getLastRevision().getVersion());
-        PartRevision lastReleased = partI.getPartRevision().getPartMaster().getLastReleasedRevision();
-        baselinedPartDTO.setLastReleasedVersion(lastReleased==null?null:lastReleased.getVersion());
-        return baselinedPartDTO;
+        return new BaselinedPartDTO(baselinedPart.getTargetPart());
     }
 }

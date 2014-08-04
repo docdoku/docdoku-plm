@@ -20,9 +20,16 @@
 package com.docdoku.core.configuration;
 
 
+import com.docdoku.core.common.User;
+import com.docdoku.core.product.PartIteration;
+
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This class represents a state, identified by its iteration, of an instance of
@@ -50,6 +57,7 @@ public class ProductInstanceIteration implements Serializable {
     @Id
     private int iteration;
 
+    private String iterationNote;
 
     @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY, orphanRemoval = true)
     private PartCollection partCollection;
@@ -63,27 +71,42 @@ public class ProductInstanceIteration implements Serializable {
     }
 
     @XmlTransient
-    public ProductInstanceMaster getProductInstanceMaster() {
-        return productInstanceMaster;
-    }
+    public ProductInstanceMaster getProductInstanceMaster() {return productInstanceMaster;}
+    public void setProductInstanceMaster(ProductInstanceMaster productInstanceMaster) {this.productInstanceMaster = productInstanceMaster;}
 
-    public void setProductInstanceMaster(ProductInstanceMaster productInstanceMaster) {
-        this.productInstanceMaster = productInstanceMaster;
-    }
+    public String getSerialNumber(){return this.productInstanceMaster.getSerialNumber();}
+    public String getConfigurationItemId(){return this.productInstanceMaster.getInstanceOf().getId();}
 
-    public int getIteration() {
-        return iteration;
-    }
+    public int getIteration() {return iteration;}
+    public void setIteration(int iteration) {this.iteration = iteration;}
 
-    public void setIteration(int iteration) {
-        this.iteration = iteration;
-    }
+    public String getIterationNote() {return iterationNote;}
+    public void setIterationNote(String iterationNote) {this.iterationNote = iterationNote;}
 
-    public PartCollection getPartCollection() {
-        return partCollection;
-    }
+    public PartCollection getPartCollection() {return partCollection;}
+    public void setPartCollection(PartCollection partCollection) {this.partCollection = partCollection;}
 
-    public void setPartCollection(PartCollection partCollection) {
-        this.partCollection = partCollection;
+    public Map<BaselinedPartKey, BaselinedPart> getBaselinedParts() {return partCollection.getBaselinedParts();}
+    public void addBaselinedPart(PartIteration targetPart){
+        partCollection.addBaselinedPart(targetPart);
     }
+    public boolean hasBasedLinedPart(String targetPartWorkspaceId, String targetPartNumber){
+        return partCollection.hasBasedLinedPart(new BaselinedPartKey(partCollection.getId(),targetPartWorkspaceId,targetPartNumber));
+    }
+    public BaselinedPart getBaselinedPart(BaselinedPartKey baselinedPartKey){return partCollection.getBaselinedPart(baselinedPartKey);}
+
+    public User getUpdateAuthor(){
+        return this.getPartCollection().getAuthor();
+    }
+    public String getUpdateAuthorName(){
+        User author = getUpdateAuthor();
+        if(author==null){
+            return null;
+        }
+        return author.getName();
+    }
+    public Date getUpdateDate(){
+        return this.getPartCollection().getCreationDate();
+    }
+    public List<BaselinedPart> getBaselinedPartsList(){return new ArrayList<>(this.getBaselinedParts().values());}
 }

@@ -293,9 +293,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             new ACLDAO(em).createACL(acl);
         }
 
-        PartMasterDAO partMDAO = new PartMasterDAO(new Locale(user.getLanguage()), em);
-        partMDAO.createPartM(pm);
-
+        new PartMasterDAO(new Locale(user.getLanguage()), em).createPartM(pm);
         return pm;
     }
 
@@ -924,6 +922,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     }
 
+    @RolesAllowed("users")
     @Override
     public PartRevision[] getPartRevisionsWithReference(String pWorkspaceId, String reference, int maxResults) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
@@ -955,8 +954,112 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     @Override
     public List<Baseline> getAllBaselines(String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         userManager.checkWorkspaceReadAccess(workspaceId);
-        BaselineDAO baselineDAO = new BaselineDAO(em);
-        return baselineDAO.findBaselines(workspaceId);
+        return new BaselineDAO(em).findBaselines(workspaceId);
+    }
+
+    @RolesAllowed("users")
+    @Override
+    public List<ProductInstanceMaster> getProductInstanceMasters(String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+        userManager.checkWorkspaceReadAccess(workspaceId);
+        return new ProductInstanceMasterDAO(em).findProductInstanceMasters(workspaceId);
+    }
+
+    @RolesAllowed("users")
+    @Override
+    public List<ProductInstanceMaster> getProductInstanceMasters(ConfigurationItemKey configurationItemKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+        userManager.checkWorkspaceReadAccess(configurationItemKey.getWorkspace());
+        return new ProductInstanceMasterDAO(em).findProductInstanceMasters(configurationItemKey.getId(), configurationItemKey.getWorkspace());
+    }
+
+    @RolesAllowed("users")
+    @Override
+    public ProductInstanceMaster getProductInstanceMaster(ProductInstanceMasterKey productInstanceMasterKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductInstanceMasterNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(productInstanceMasterKey.getInstanceOf().getWorkspace());
+        Locale userLocal = new Locale(user.getLanguage());
+        return new ProductInstanceMasterDAO(userLocal,em).loadProductInstanceMaster(productInstanceMasterKey);
+    }
+
+    @RolesAllowed("users")
+    @Override
+    public List<ProductInstanceIteration> getProductInstanceIterations(ProductInstanceMasterKey productInstanceMasterKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+        userManager.checkWorkspaceReadAccess(productInstanceMasterKey.getInstanceOf().getWorkspace());
+        return new ProductInstanceIterationDAO(em).findProductInstanceIterationsByMaster(productInstanceMasterKey);
+    }
+
+    @RolesAllowed("users")
+    @Override
+    public ProductInstanceIteration getProductInstanceIteration(ProductInstanceIterationKey productInstanceIterationKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductInstanceIterationNotFoundException, ProductInstanceMasterNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(productInstanceIterationKey.getProductInstanceMaster().getInstanceOf().getWorkspace());
+        Locale userLocal = new Locale(user.getLanguage());
+        return new ProductInstanceIterationDAO(userLocal,em).loadProductInstanceIteration(productInstanceIterationKey);
+    }
+
+    @RolesAllowed("users")
+    @Override
+    public List<BaselinedPart> getProductInstanceIterationBaselinedPart(ProductInstanceIterationKey productInstanceIterationKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductInstanceIterationNotFoundException, ProductInstanceMasterNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(productInstanceIterationKey.getProductInstanceMaster().getInstanceOf().getWorkspace());
+        Locale userLocal = new Locale(user.getLanguage());
+        ProductInstanceIteration productInstanceIteration = new ProductInstanceIterationDAO(userLocal,em).loadProductInstanceIteration(productInstanceIterationKey);
+        return new ArrayList<>(productInstanceIteration.getPartCollection().getBaselinedParts().values());
+    }
+
+    @RolesAllowed("users")
+    @Override
+    public ProductInstanceMaster createProductInstance(ConfigurationItemKey configurationItemKey, String serialNumber, int baselineId) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, BaselineNotFoundException, CreationException, ProductInstanceAlreadyExistsException {
+        User user = userManager.checkWorkspaceWriteAccess(configurationItemKey.getWorkspace());
+        Locale userLocal = new Locale(user.getLanguage());
+        ProductInstanceMasterDAO productInstanceMasterDAO = new ProductInstanceMasterDAO(userLocal,em);
+
+        try{                                                                                                            // Check if ths product instance already exist
+            ProductInstanceMaster productInstanceMaster= productInstanceMasterDAO.loadProductInstanceMaster(new ProductInstanceMasterKey(serialNumber,configurationItemKey.getWorkspace(),configurationItemKey.getId()));
+            throw new ProductInstanceAlreadyExistsException(userLocal, productInstanceMaster);
+        }catch (ProductInstanceMasterNotFoundException ignored){}
+
+        ConfigurationItem configurationItem = new ConfigurationItemDAO(em).loadConfigurationItem(configurationItemKey);
+        ProductInstanceMaster productInstanceMaster = new ProductInstanceMaster(configurationItem,serialNumber);
+
+        ProductInstanceIteration productInstanceIteration = productInstanceMaster.createNextIteration();
+        productInstanceIteration.setIterationNote("Initial");
+        PartCollection partCollection = new PartCollection();
+        partCollection.setAuthor(user);
+        partCollection.setCreationDate(new Date());
+
+        Baseline baseline = new BaselineDAO(em).loadBaseline(baselineId);
+        for(BaselinedPart baselinedPart : baseline.getBaselinedParts().values()){
+            partCollection.addBaselinedPart(baselinedPart.getTargetPart());
+        }
+        productInstanceIteration.setPartCollection(partCollection);
+
+        productInstanceMasterDAO.createProductInstanceMaster(productInstanceMaster);
+        return productInstanceMaster;
+    }
+
+    @Override
+    public ProductInstanceIteration updateProductInstance(ConfigurationItemKey configurationItemKey, String serialNumber, String iterationNote, List<PartIterationKey> partIterationKeys) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ProductInstanceMasterNotFoundException, PartIterationNotFoundException {
+        User user = userManager.checkWorkspaceWriteAccess(configurationItemKey.getWorkspace());
+        Locale userLocal = new Locale(user.getLanguage());
+        ProductInstanceMasterDAO productInstanceMasterDAO = new ProductInstanceMasterDAO(userLocal,em);
+        ProductInstanceMaster productInstanceMaster= productInstanceMasterDAO.loadProductInstanceMaster(new ProductInstanceMasterKey(serialNumber,configurationItemKey.getWorkspace(),configurationItemKey.getId()));
+        ProductInstanceIteration productInstanceIteration = productInstanceMaster.createNextIteration();
+        productInstanceIteration.setIterationNote(iterationNote);
+        PartCollection partCollection = new PartCollection();
+        partCollection.setAuthor(user);
+        partCollection.setCreationDate(new Date());
+        for(PartIterationKey partIterationKey : partIterationKeys){
+            partCollection.addBaselinedPart(new PartIterationDAO(userLocal,em).loadPartI(partIterationKey));
+        }
+        productInstanceIteration.setPartCollection(partCollection);
+        return productInstanceIteration;
+    }
+
+    @RolesAllowed("users")
+    @Override
+    public void deleteProductInstance(String workspaceId, String configurationItemId, String serialNumber) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, UserNotActiveException, ProductInstanceMasterNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+        Locale userLocal = new Locale(user.getLanguage());
+        ProductInstanceMasterDAO productInstanceMasterDAO = new ProductInstanceMasterDAO(userLocal,em);
+        ProductInstanceMaster prodInstM = productInstanceMasterDAO.loadProductInstanceMaster(new ProductInstanceMasterKey(serialNumber,workspaceId,configurationItemId));
+        productInstanceMasterDAO.deleteProductInstanceMaster(prodInstM);
     }
 
     @RolesAllowed("users")
@@ -1461,8 +1564,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     @Override
     public List<Baseline> getBaselines(ConfigurationItemKey configurationItemKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         userManager.checkWorkspaceReadAccess(configurationItemKey.getWorkspace());
-        BaselineDAO baselineDAO = new BaselineDAO(em);
-        return baselineDAO.findBaselines(configurationItemKey.getId(), configurationItemKey.getWorkspace());
+        return new BaselineDAO(em).findBaselines(configurationItemKey.getId(), configurationItemKey.getWorkspace());
     }
 
     @RolesAllowed("users")

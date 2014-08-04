@@ -6,6 +6,7 @@ define([
 
     var BaselineListView = Backbone.View.extend({
 
+
         tagName:"ul",
 
         className:"baselines-list",

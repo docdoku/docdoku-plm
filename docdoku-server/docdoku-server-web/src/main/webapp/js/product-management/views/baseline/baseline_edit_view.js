@@ -1,3 +1,4 @@
+'use strict';
 define(
     [
         "text!templates/baseline/baseline_edit.html",
@@ -43,7 +44,7 @@ define(
         },
 
         initBaselinedPartListView:function(){
-            this.baselinePartListView = new BaselinePartListView({model:this.model}).render();
+            this.baselinePartListView = new BaselinePartListView({model:this.model, isForBaseline:true}).render();
             this.$baselinedPartListArea.html(this.baselinePartListView.$el);
         },
 
@@ -52,7 +53,9 @@ define(
             var that = this ;
 
             var data = {
-                name : this.$duplicateNameInput.val()
+                name : this.$duplicateNameInput.val(),
+                type : this.model.getType(),
+                description: "Fast duplication of "+this.model.getName()
             };
 
             this.model.duplicate({
@@ -109,5 +112,4 @@ define(
     });
 
     return BaselineEditView;
-
 });

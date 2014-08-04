@@ -19,11 +19,13 @@
  */
 package com.docdoku.core.configuration;
 
+import com.docdoku.core.common.User;
 import com.docdoku.core.product.ConfigurationItem;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -41,6 +43,9 @@ import java.util.List;
 @Table(name="PRODUCTINSTANCEMASTER")
 @IdClass(com.docdoku.core.configuration.ProductInstanceMasterKey.class)
 @Entity
+@NamedQueries({
+        @NamedQuery(name="ProductInstanceMaster.findByConfigurationItemId", query="SELECT pim FROM ProductInstanceMaster pim WHERE pim.instanceOf.id = :ciId AND pim.instanceOf.workspace.id = :workspaceId")
+})
 public class ProductInstanceMaster implements Serializable {
 
 
@@ -56,7 +61,6 @@ public class ProductInstanceMaster implements Serializable {
     })
     private ConfigurationItem instanceOf;
 
-
     @OneToMany(mappedBy = "productInstanceMaster", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @OrderBy("iteration ASC")
     private List<ProductInstanceIteration> productInstanceIterations = new ArrayList<>();
@@ -69,24 +73,60 @@ public class ProductInstanceMaster implements Serializable {
         this.serialNumber = serialNumber;
     }
 
-    public ConfigurationItem getInstanceOf() {
-        return instanceOf;
+    public ConfigurationItem getInstanceOf() {return instanceOf;}
+    public void setInstanceOf(ConfigurationItem instanceOf) {this.instanceOf = instanceOf;}
+
+    public String getSerialNumber() {return serialNumber;}
+    public void setSerialNumber(String serialNumber) {this.serialNumber = serialNumber;}
+
+    public List<ProductInstanceIteration> getProductInstanceIterations() {return productInstanceIterations;}
+
+    public ProductInstanceIteration createNextIteration() {
+        ProductInstanceIteration lastProductInstanceIteration = getLastIteration();
+        int iteration;
+        if(lastProductInstanceIteration==null){
+            iteration = 1;
+        }else{
+            iteration = lastProductInstanceIteration.getIteration()+1;
+        }
+        ProductInstanceIteration productInstanceIteration = new ProductInstanceIteration(this,iteration);
+        this.productInstanceIterations.add(productInstanceIteration);
+        return productInstanceIteration;
+    }
+    public void removeIteration(ProductInstanceIteration prodInstI){
+        this.productInstanceIterations.remove(prodInstI);
     }
 
-    public void setInstanceOf(ConfigurationItem instanceOf) {
-        this.instanceOf = instanceOf;
+    public ProductInstanceIteration getLastIteration() {
+        int index = productInstanceIterations.size()-1;
+        if(index < 0)
+            return null;
+        else
+            return productInstanceIterations.get(index);
     }
 
-    public String getSerialNumber() {
-        return serialNumber;
+    public User getUpdateAuthor(){
+        ProductInstanceIteration productInstanceIteration = getLastIteration();
+        if(productInstanceIteration==null){
+            return null;
+        }
+        return getLastIteration().getUpdateAuthor();
     }
 
-    public void setSerialNumber(String serialNumber) {
-        this.serialNumber = serialNumber;
+    public String getUpdateAuthorName(){
+        User author = getUpdateAuthor();
+        if(author==null){
+            return null;
+        }
+        return author.getName();
     }
 
-
-
-
-
+    public Date getUpdateDate(){
+        ProductInstanceIteration productInstanceIteration = getLastIteration();
+        if(productInstanceIteration==null){
+            return null;
+        }else{
+            return getLastIteration().getUpdateDate();
+        }
+    }
 }

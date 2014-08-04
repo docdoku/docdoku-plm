@@ -20,16 +20,34 @@
 
 package com.docdoku.server.rest.dto;
 
+import com.docdoku.core.product.PartIteration;
+import com.docdoku.core.product.PartRevision;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class BaselinedPartDTO {
 
     private String number;
     private String version;
     private int iteration;
-    private int lastIteration;
-    private String lastVersion;
-    private String lastReleasedVersion;
+    private List<BaselinedPartOptionDTO> availableIterations;
 
     public BaselinedPartDTO() {
+    }
+
+    public BaselinedPartDTO(PartIteration partIteration){
+        this.number = partIteration.getPartNumber();
+        this.version = partIteration.getVersion();
+        this.iteration = partIteration.getIteration();
+
+        this.availableIterations = new ArrayList<>();
+        for(PartRevision partRevision : partIteration.getPartRevision().getPartMaster().getPartRevisions()){
+            BaselinedPartOptionDTO option = new BaselinedPartOptionDTO(partRevision.getVersion(),
+                                                                       partRevision.getLastIteration().getIteration(),
+                                                                       partRevision.isReleased());
+            this.availableIterations.add(option);
+        }
     }
 
     public BaselinedPartDTO(String number, String version, int iteration) {
@@ -38,42 +56,17 @@ public class BaselinedPartDTO {
         this.iteration = iteration;
     }
 
-    public String getNumber() {
-        return number;
-    }
-    public void setNumber(String number) {
-        this.number = number;
-    }
+    public String getNumber() {return number;}
+    public void setNumber(String number) {this.number = number;}
 
-    public String getVersion() {
-        return version;
-    }
-    public void setVersion(String version) {
-        this.version = version;
-    }
+    public String getVersion() {return version;}
+    public void setVersion(String version) {this.version = version;}
 
-    public int getIteration() {
-        return iteration;
-    }
-    public void setIteration(int iteration) {
-        this.iteration = iteration;
-    }
-
-    public int getLastIteration() {
-        return lastIteration;
-    }
-    public void setLastIteration(int lastIteration) {
-        this.lastIteration = lastIteration;
-    }
+    public int getIteration() {return iteration;}
+    public void setIteration(int iteration) {this.iteration = iteration;}
 
 
-    public String getLastVersion() {
-        return lastVersion;
-    }
-    public void setLastVersion(String lastVersion) {
-        this.lastVersion = lastVersion;
-    }
+    public List<BaselinedPartOptionDTO> getAvailableIterations() {return availableIterations;}
+    public void setAvailableIterations(List<BaselinedPartOptionDTO> availableIterations) {this.availableIterations = availableIterations;}
 
-    public String getLastReleasedVersion() {return lastReleasedVersion;}
-    public void setLastReleasedVersion(String lastReleasedVersion) {this.lastReleasedVersion = lastReleasedVersion;}
 }

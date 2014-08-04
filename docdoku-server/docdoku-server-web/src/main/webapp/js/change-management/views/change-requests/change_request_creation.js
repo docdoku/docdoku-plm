@@ -128,7 +128,7 @@ define([
                 milestoneId:parseInt(this.$inputRequestMilestone.val(),10)
             };
 
-            new ChangeRequestModel().save(data,{
+            this.model.save(data,{
                 success: this.onRequestCreated,
                 error: this.error,
                 wait: true
