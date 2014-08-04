@@ -176,8 +176,9 @@ public class MainChannelApplication {
                 room = CollaborativeRoom.getByKeyName(inviteMessage.getKey());
                 String invitedUser = inviteMessage.getRemoteUser();
                 String context = inviteMessage.getMessageBroadcast().getString("context");
+                String url = inviteMessage.getMessageBroadcast().getString("url");
                 if (callerIsAllowToReachCallee(callerLogin,invitedUser)) {
-                    CollaborativeRoomController.processInvite(callerLogin, invitedUser, room, context);
+                    CollaborativeRoomController.processInvite(callerLogin, invitedUser, room, context, url);
                 }
                 break;
             case ChannelMessagesType.COLLABORATIVE_JOIN:

@@ -100,5 +100,12 @@ define({
     SCALE: "Echelle",
     REPLACE: "Réinitialiser",
     RESET_CAMERA: "Repositionner la caméra",
-    SHOW_EDITED_MESHES: "Surligner les objets modifiés"
+    SHOW_EDITED_MESHES: "Surligner les objets modifiés",
+    COLLABORATIVE_LEAD: "Salle dirigée par",
+    PENDING: "en attente",
+    CREATE_ROOM: "Créer une salle",
+    INVITE: "Inviter",
+    EXIT: "Quitter",
+    WITHDRAW_INVITATION : "Annuler l'invitation",
+    GIVE_HAND: "Donner la main"
 });

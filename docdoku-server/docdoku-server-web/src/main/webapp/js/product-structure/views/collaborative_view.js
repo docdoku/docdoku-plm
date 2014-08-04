@@ -78,7 +78,7 @@ define(    [
                     key: this.roomKey,
                     remoteUser: e.currentTarget.name,
                     messageBroadcast: {
-                        context:APP_CONFIG.workspaceId+'/'+APP_CONFIG.productId
+                        context:APP_CONFIG.workspaceId
                     }
                 });
             },

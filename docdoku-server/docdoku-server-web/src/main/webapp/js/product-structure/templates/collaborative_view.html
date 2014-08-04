@@ -1,13 +1,13 @@
 <div class="nav-header">Collaborative</div>
 
 <div id="collaborative_view">
-    <div> <a id="collaborative_create" href="#">Create Room</a></div>
+    <div> <a id="collaborative_create" href="#">{{i18nn.CREATE_ROOM}}</a></div>
     <table style="margin:0 0 10px 0;">
         <thead>
-           <tr> <th style="font-size:90%;"><span title="{{roomKey}}">Room</span> led by <em>{{master}}</em>
+           <tr> <th style="font-size:90%;">{{i18n.COLLABORATIVE_LEAD}} <em>{{master}}</em>
 
-               <a id="collaborative_invite" href="#" style="color:white;" title="Invite">(+)</a>
-               <a id="collaborative_exit" href="#" style="color:white;" title="Exit">(x)</a>
+               <a id="collaborative_invite" href="#" style="color:white;" title="{{i18n.INVITE}}">(+)</a>
+               <a id="collaborative_exit" href="#" style="color:white;" title="{{i18n.EXIT}}">(x)</a>
            </th></tr>
         </thead>
         <tbody>
@@ -15,14 +15,14 @@
             <tr><td>
                 {{ . }}
                 <a class="collaborative_kick" href="#" name="{{ . }}" title="Kick {{ . }}">(x)</a>
-                <a class="collaborative_give_hand" href="#" name="{{ . }}">(give the hand)</a>
+                <a class="collaborative_give_hand" href="#" name="{{ . }}">({{i18n.GIVE_HAND}})</a>
             </td></tr>
             {{/users}}
 
             {{#pendingUsers}}
             <tr><td><em>
-                {{ . }} (pending)
-                <a class="collaborative_withdraw_invitation" href="#" name="{{ . }}" title="Withdraw invitation">(x)</a>
+                {{ . }} ({{i18n.PENDING}})
+                <a class="collaborative_withdraw_invitation" href="#" name="{{ . }}" title="{{i18n.WITHDRAW_INVITATION}}">(x)</a>
             </em></td></tr>
             {{/pendingUsers}}
         </tbody>

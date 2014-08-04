@@ -5,5 +5,7 @@ define({
     "CHANNEL_NOT_READY_ERROR":  "Impossible de se connecter au serveur de communication, vérifiez que votre navigateur supporte les websocket, ou que votre FAI ne les bloque pas",
     "VIDEO_INVITE_TEXT":		"vous invite à démarrer une session vidéo.",
     "VIDEO_INVITE_ACCEPT":		"Accepter",
-    "VIDEO_INVITE_REJECT":		"Refuser"
+    "VIDEO_INVITE_REJECT":		"Refuser",
+    "COLLABORATIVE_INVITE":     "Vous êtes invité à rejoindre une salle collaborative",
+    "COLLABORATIVE_WITHDRAW_INVITATION" : "Invitation annulée"
 });

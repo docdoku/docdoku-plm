@@ -107,7 +107,14 @@ define({
         SCALE: "Scale",
         REPLACE: "Reset",
         RESET_CAMERA: "Reset camera",
-        SHOW_EDITED_MESHES: "Highlight edited meshes"
+        SHOW_EDITED_MESHES: "Highlight edited meshes",
+        COLLABORATIVE_LEAD: "Room led by",
+        PENDING: "pending",
+        CREATE_ROOM: "Create room",
+        INVITE: "Invite",
+        EXIT: "Exit",
+        WITHDRAW_INVITATION : "Withdraw invitation",
+        GIVE_HAND: "Give the hand"
     },
     "fr": true,
     "es": true

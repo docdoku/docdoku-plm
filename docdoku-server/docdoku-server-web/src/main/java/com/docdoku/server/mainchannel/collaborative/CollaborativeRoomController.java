@@ -29,7 +29,7 @@ public class CollaborativeRoomController {
         MainChannelDispatcher.send(session, message);
     }
 
-    public static void processInvite(String callerLogin, String invitedUser, CollaborativeRoom room, String context){
+    public static void processInvite(String callerLogin, String invitedUser, CollaborativeRoom room, String context, String url){
         if (room.getMasterName().equals(callerLogin)){
             // the master sent the invitation
 
@@ -41,9 +41,10 @@ public class CollaborativeRoomController {
                 }
                 // Chat message
                 ChatMessage chatMessage = new ChatMessage(ChannelMessagesType.CHAT_MESSAGE,invitedUser);
-                String url = "Vous êtes invités à rejoindre une salle collaborative : http://localhost:8080/product-structure/" + context + "#room=" + room.getKey();
-                chatMessage.setMessage(url);
+                String invite = "/invite " + url + "#room=" + room.getKey();
+                chatMessage.setMessage(invite);
                 chatMessage.setContext(context);
+                chatMessage.setRemoteUser(callerLogin);
                 chatMessage.setSender(callerLogin);
                 MainChannelDispatcher.sendToAllUserChannels(invitedUser,chatMessage);
 
@@ -193,8 +194,9 @@ public class CollaborativeRoomController {
             room.removePendingUser(pendingUser);
             // Chat message
             ChatMessage chatMessage = new ChatMessage(ChannelMessagesType.CHAT_MESSAGE, pendingUser);
-            chatMessage.setMessage("Invitation annulée.");
+            chatMessage.setMessage("/withdrawInvitation");
             chatMessage.setContext(context);
+            chatMessage.setRemoteUser(callerLogin);
             chatMessage.setSender(callerLogin);
             MainChannelDispatcher.sendToAllUserChannels(pendingUser, chatMessage);
 
