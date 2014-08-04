@@ -191,7 +191,7 @@ define(function() {
                 new ComponentViews.Components({
                     collection: this.model.children,
                     parentView: this.$el,
-                    parentChecked: this.isChecked(),// || App.partsTreeView.smartPath.indexOf(this.model.getPath()) !== -1,
+                    parentChecked: this.isChecked(),
                     resultPathCollection: this.options.resultPathCollection
                 });
             }

@@ -648,7 +648,7 @@ define([
                 };
                 mainChannel.sendJSON(message);
             }
-        }
+        };
 
         this.sendEditedMeshes = function () {
             if (App.collaborativeView.isMaster) {
@@ -678,7 +678,7 @@ define([
 
             var arrayId = _.pluck(editedMeshesInfos, 'uuid');
 
-            // on replace les éléments qui ne sont plus modifiés
+            // cancel transformations for mesh wich are no longer edited
             var diff = _.difference(_this.editedMeshes, arrayId);
             console.log(diff);
             _.each(diff, function (uuid) {
@@ -688,10 +688,10 @@ define([
                 }
             });
 
-            // on met à jour la liste des éléments modifiés
+            // update the list
             _this.editedMeshes = arrayId;
 
-            // on met à jour les propriétés des pièces modifiées
+            // update properties of edited Meshes
             _.each(editedMeshesInfos, function (val) {
                 var mesh = meshesIndexed[val.uuid];
                 if (!mesh) {
@@ -902,15 +902,6 @@ define([
         this.requestFullScreen = function () {
             _this.renderer.domElement.parentNode.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
         };
-        this.switchWireFrame = function (pWireframe) {
-            wireframe = pWireframe;
-            _(_this.scene.children).each(function (child) {
-                if (child instanceof THREE.Mesh && child.partIterationId) {
-                    applyWireFrame(child);
-                }
-            });
-            _this.reDraw();
-        };
         this.explodeScene = function (v) {
             _this.sendExplodeValue(v);
             // this could be adjusted
@@ -1090,7 +1081,6 @@ define([
                 transformControls.enabled = false;
                 App.appView.leaveTransformControlMode();
                 _this.reDraw();
-                //meshMarkedForSelection
             }
         };
         this.cancelTransformation = function (mesh) {
@@ -1159,15 +1149,6 @@ define([
 
         this.joinRoom = function (key){
             App.collaborativeView.setRoomKey(key);
-
-            // /api/workspaces/Sandbox/products/Nailed_Plank/instances?configSpec=latest&path=null
-            /*App.instancesManager.initStructure("/api/workspaces/"+APP_CONFIG.workspaceId+'/products/'+APP_CONFIG.productId+"/instances?configSpec=latest&path=null",function(){
-             mainChannel.sendJSON({
-             type: ChannelMessagesType.COLLABORATIVE_JOIN,
-             key: key,
-             remoteUser: "null"
-             });
-             });*/
         }
 
         /**

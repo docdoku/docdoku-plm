@@ -87,7 +87,6 @@ define({
         SCENE_VIEW: "Scene view",
         BOM_VIEW: "Bom View",
         OPTIONS: "Options",
-        MATERIALS_SWITCH: "Show/Hide materials",
         TAKE_SCREENSHOT: "Take screenshot",
         GRID_SWITCH: "Show/Hide the grid",
         LIFECYCLE_STATE: "Life cycle state",

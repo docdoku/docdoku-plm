@@ -216,7 +216,7 @@ define(
         },
 
         updateTreeView: function(arrayPaths){
-            App.partsTreeView.compareSmartPath(arrayPaths);
+            App.partsTreeView.setSmartPaths(arrayPaths);
         },
 
         onComponentSelected: function(showRoot) {
