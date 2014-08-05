@@ -1,4 +1,5 @@
-/*global App,Instance,requestAnimationFrame,TWEEN,ChannelMessagesType,mainChannel,ChannelStatus*/
+/*global App,APP_CONFIG,Stats,Instance,requestAnimationFrame,TWEEN,ChannelMessagesType,mainChannel,ChannelStatus*/
+'use strict';
 define([
     "views/marker_create_modal_view",
     "views/blocker_view",
@@ -8,7 +9,8 @@ define([
     var SceneManager = function (pOptions) {
         var _this = this;
 
-        var havePointerLock = 'pointerLockElement' in document || 'mozPointerLockElement' in document || 'webkitPointerLockElement' in document;
+        var browserSupportPointerLock = 'pointerLockElement' in document ||
+            'mozPointerLockElement' in document || 'webkitPointerLockElement' in document;
         var options = pOptions || {};
         _.extend(this, options);
         var isMoving = false;
@@ -84,7 +86,7 @@ define([
             _this.$stats = $(_this.stats.domElement);
             _this.$stats.attr('id', 'statsWin');
             _this.$stats.attr('class', 'statsWinMaximized');
-            _this.$statsArrow = $("<i id=\"statsArrow\" class=\"icon-chevron-down\"></i>");
+            _this.$statsArrow = $("<i id=\"statsArrow\" class=\"fa fa-chevron-down\"></i>");
             _this.$stats.prepend(_this.$statsArrow);
             _this.$statsArrow.bind('click', function () {
                 _this.$stats.toggleClass('statsWinMinimized statsWinMaximized');
@@ -175,17 +177,6 @@ define([
             createOrbitControls();
         }
 
-        function pointerLockChange() {
-            _this.pointerLockControls.enabled = !_this.pointerLockControls.enabled;
-            if (_this.pointerLockControls.enabled) {
-                _this.$blocker.hide();
-                _this.pointerLockControls.bindEvents();
-            } else {
-                _this.$blocker.show();
-                _this.pointerLockControls.unbindEvents();
-            }
-        }
-
         function createTransformControls() {
             transformControls = new THREE.TransformControls(_this.$container[0]);
 
@@ -213,21 +204,28 @@ define([
             transformControls.addEventListener('change', _this.reDraw);
         }
 
-        function onFullScreenChange() {
-            if (document.fullscreenElement === _this.$container[0] ||
-                document.mozFullscreenElement === _this.$container[0] ||
-                document.webkitFullScreenElement === _this.$container[0]) {
-
-                document.removeEventListener('fullscreenchange', onFullScreenChange);
-                document.removeEventListener('mozfullscreenchange', onFullScreenChange);
-                document.removeEventListener('webkitfullscreenchange', onFullScreenChange);
-
-                _this.$container[0].requestPointerLock();
-            }
+        function isPointerLock() {
+            return (document.pointerLockElement === _this.$container[0] ||
+                document.mozPointerLockElement === _this.$container[0] ||
+                document.webkitPointerLockElement === _this.$container[0]);
         }
 
+        function pointerLockChange() {
+            _this.pointerLockControls.enabled = isPointerLock();
+             if (_this.pointerLockControls.enabled) {
+                 _this.$blocker.hide();
+                 _this.pointerLockControls.bindEvents();
+             } else {
+                 _this.$blocker.show();
+                 _this.pointerLockControls.unbindEvents();
+             }
+        }
+
+        /**
+         * Lock the pointer (when you click on container) and Hide the gray screen
+         */
         function bindPointerLock() {
-            if (_this.stateControl != _this.STATECONTROL.PLC || _this.pointerLockControls.enabled) {
+            if (_this.stateControl !== _this.STATECONTROL.PLC || _this.pointerLockControls.enabled || isPointerLock()) {
                 return;
             }
             _this.$blocker.hide();
@@ -237,19 +235,7 @@ define([
                 (_this.$container[0].mozRequestPointerLock) ||
                 (_this.$container[0].webkitRequestPointerLock);
 
-            if (/Firefox/i.test(navigator.userAgent)) {
-                document.addEventListener('fullscreenchange', onFullScreenChange, false);
-                document.addEventListener('mozfullscreenchange', onFullScreenChange, false);
-
-                _this.$container[0].requestFullscreen = (_this.$container[0].requestFullscreen) ||
-                    (_this.$container[0].mozRequestFullscreen) ||
-                    (_this.$container[0].mozRequestFullScreen) ||
-                    (_this.$container[0].webkitRequestFullscreen);
-                _this.$container[0].requestFullscreen();
-
-            } else {
-                _this.$container[0].requestPointerLock();
-            }
+            _this.$container[0].requestPointerLock();
         }
 
         function deleteAllControls() {
@@ -263,7 +249,7 @@ define([
             _this.pointerLockControls.enabled = false;
             _this.pointerLockControls.unbindEvents();
             _this.$blocker.hide();
-            if (havePointerLock) {
+            if (browserSupportPointerLock) {
                 // Hook pointer lock state change events
                 document.removeEventListener('pointerlockchange', pointerLockChange, false);
                 document.removeEventListener('mozpointerlockchange', pointerLockChange, false);
@@ -280,7 +266,7 @@ define([
         }
 
         // example arg : _this.pointerLockControls,_this.pointerLockCamera
-        function updateControlsContext(controls, camera) {
+        /*function updateControlsContext(controls, camera) {
 
             if (!controlsObject) {
                 return;
@@ -292,7 +278,7 @@ define([
             controls.setTarget(controlsObject.getTarget());
 
 
-        }
+        }*/
 
         /**
          * Scene options control
@@ -329,7 +315,7 @@ define([
             mesh.position.y = mesh.initialPosition.y;
             mesh.position.z = mesh.initialPosition.z;
             // Translate instance
-            if (explosionCoeff != 0) {
+            if (explosionCoeff !== 0) {
                 mesh.translateX(mesh.geometry.boundingBox.centroid.x * explosionCoeff);
                 mesh.translateY(mesh.geometry.boundingBox.centroid.y * explosionCoeff);
                 mesh.translateZ(mesh.geometry.boundingBox.centroid.z * explosionCoeff);
@@ -482,7 +468,7 @@ define([
                     mesh.rotation.copy(meshEdited.rotation);
                     mesh.scale.copy(meshEdited.scale);
                     console.log("restauration de la position de l'instance transformée.");
-                    console.log(this.mesh);
+                    console.log(_this.mesh);
                 }
 
             }
@@ -532,7 +518,7 @@ define([
                     }
                     meshesIndexed[newMesh.uuid] = newMesh;
                     _this.scene.add(newMesh);
-                    if (meshMarkedForSelection == stuff.id) {
+                    if (meshMarkedForSelection === stuff.id) {
                         setSelectionBoxOnMesh(newMesh);
                     }
                     applyExplosionCoeff(newMesh);
@@ -683,7 +669,7 @@ define([
             console.log(diff);
             _.each(diff, function (uuid) {
                 var mesh = meshesIndexed[uuid];
-                if(_this.editedMeshes.lastIndexOf(uuid)!=-1) {
+                if(_this.editedMeshes.lastIndexOf(uuid)!==-1) {
                     _this.cancelTransformation(mesh);
                 }
             });
@@ -900,7 +886,11 @@ define([
             _this.$sceneContainer.removeClass("markersCreationMode");
         };
         this.requestFullScreen = function () {
-            _this.renderer.domElement.parentNode.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
+            _this.renderer.domElement.parentNode.requestFullscreen =
+                (_this.renderer.domElement.parentNode.requestFullscreen) ||
+                (_this.renderer.domElement.parentNode.mozRequestFullScreen) ||
+                (_this.renderer.domElement.parentNode.webkitRequestFullScreen);
+            _this.renderer.domElement.parentNode.requestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
         };
         this.explodeScene = function (v) {
             _this.sendExplodeValue(v);
@@ -959,9 +949,9 @@ define([
             });
             _this.sendColourEditedMeshes();
             _this.reDraw();
-        }
+        };
         this.setPointerLockControls = function () {
-            if (_this.stateControl === _this.STATECONTROL.PLC) {
+            if (_this.stateControl === _this.STATECONTROL.PLC || !browserSupportPointerLock) {
                 return;
             }
 
@@ -975,15 +965,14 @@ define([
             controlsObject = _this.pointerLockControls;
 
             _this.pointerLockControls.addEventListener("change", onControlChange);
-            if (havePointerLock) {
-                // Hook pointer lock state change events
-                document.addEventListener('pointerlockchange', pointerLockChange, false);
-                document.addEventListener('mozpointerlockchange', pointerLockChange, false);
-                document.addEventListener('webkitpointerlockchange', pointerLockChange, false);
-                _this.$container[0].addEventListener('click', bindPointerLock, false);
-            }
-            _this.scene.add(_this.pointerLockControls.getObject());
 
+            // Hook pointer lock state change events
+            document.addEventListener('pointerlockchange', pointerLockChange, false);
+            document.addEventListener('mozpointerlockchange', pointerLockChange, false);
+            document.addEventListener('webkitpointerlockchange', pointerLockChange, false);
+            _this.$container[0].addEventListener('click', bindPointerLock, false);
+
+            _this.scene.add(_this.pointerLockControls.getObject());
             _this.reDraw();
         };
         this.setTrackBallControls = function () {
@@ -1149,7 +1138,7 @@ define([
 
         this.joinRoom = function (key){
             App.collaborativeView.setRoomKey(key);
-        }
+        };
 
         /**
          * Scene mouse events

@@ -16,7 +16,7 @@ define([
         events: {
             "click button.delete-task" : "deleteTaskAction",
             "click p.task-name" : "gotoUnfoldState",
-            "click i.icon-minus" : "gotoFoldState",
+            "click i.fa-minus" : "gotoFoldState",
             "change input.task-name" : "titleChanged",
             "change textarea.instructions" : "instructionsChanged",
             "change select.role": "roleSelected"

@@ -13,7 +13,7 @@ define([
 			ListItemView.prototype.initialize.apply(this, arguments);
 			this.events["change .type"] = "typeChanged";
 			this.events["change .name"] = "updateName";
-			this.events["click .icon-remove"] = "removeAction";
+			this.events["click .fa-times"] = "removeAction";
             this.events["change .attribute-mandatory input"] = "mandatoryChanged";
 		},
 		rendered: function () {

@@ -1,11 +1,11 @@
 <div class="modal document-modal">
     <div class="modal-header">
         {{#isCheckout}}
-            {{#isCheckoutByConnectedUser}}<i class="icon-pencil"></i>{{/isCheckoutByConnectedUser}}
-            {{^isCheckoutByConnectedUser}}<i class="icon-lock"></i>{{/isCheckoutByConnectedUser}}
+            {{#isCheckoutByConnectedUser}}<i class="fa fa-pencil"></i>{{/isCheckoutByConnectedUser}}
+            {{^isCheckoutByConnectedUser}}<i class="fa fa-lock"></i>{{/isCheckoutByConnectedUser}}
         {{/isCheckout}}
         {{^isCheckout}}
-            <i class="icon-eye-open"></i>
+            <i class="fa fa-eye"></i>
         {{/isCheckout}}
 
         <a class="close" data-dismiss="modal">×</a>
@@ -31,7 +31,7 @@
                             <div class="control-group">
                                 <label class="control-label">{{i18n.PATH}}</label>
                                 <div class="controls">
-                                    <span class="help-inline"><a class="document-path"><i class="icon-folder-close"></i> {{master.path}}</a></span>
+                                    <span class="help-inline"><a class="document-path"><i class="fa fa-folder"></i> {{master.path}}</a></span>
                                 </div>
                             </div>
                             <div class="control-group">
@@ -143,11 +143,11 @@
         {{#iteration}}
         <ul id="switch-iteration" class="pager">
             <li class="{{^hasPreviousIteration}}disabled{{/hasPreviousIteration}}">
-                <a href="#" id="previous-iteration"><i class="icon-angle-left icon-large"></i></a>
+                <a href="#" id="previous-iteration"><i class="fa fa-angle-left icon-large"></i></a>
             </li>
             <li>{{iteration}}</li>
             <li class="{{^hasNextIteration}}disabled{{/hasNextIteration}}">
-                <a href="#" id="next-iteration"><i class="icon-angle-right icon-large"></i></a>
+                <a href="#" id="next-iteration"><i class="fa fa-angle-right icon-large"></i></a>
             </li>
         </ul>
         {{/iteration}}

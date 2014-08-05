@@ -112,12 +112,12 @@ define([
         changeMarkerState: function() {
             switch(this.state) {
                 case STATE.FULL  :
-                    this.markerStateControl.removeClass('icon-circle').addClass('icon-circle-blank');
+                    this.markerStateControl.removeClass('fa-circle').addClass('fa-circle-o');
                     this.changeOpacityOnMarker(0.4);
                     this.state = STATE.TRANSPARENT;
                     break;
                 case STATE.TRANSPARENT :
-                    this.markerStateControl.removeClass('icon-circle-blank').addClass('icon-circle');
+                    this.markerStateControl.removeClass('fa-circle-o').addClass('fa-circle');
                     this.changeOpacityOnMarker(1);
                     this.state = STATE.FULL;
                     break;

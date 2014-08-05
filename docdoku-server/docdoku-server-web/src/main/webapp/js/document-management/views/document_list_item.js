@@ -66,15 +66,15 @@ define([
             CheckboxListItemView.prototype.rendered.apply(this, arguments);
 
             if(this.model.isStateChangedSubscribed()){
-                this.$(".state-subscription").addClass("icon-bell-alt").attr("title",i18n.UNSUBSCRIBE_STATE_CHANGE);
+                this.$(".state-subscription").addClass("fa-bell").attr("title",i18n.UNSUBSCRIBE_STATE_CHANGE);
             }else{
-                this.$(".state-subscription").addClass("icon-bell").attr("title",i18n.SUBSCRIBE_STATE_CHANGE);
+                this.$(".state-subscription").addClass("fa-bell-o").attr("title",i18n.SUBSCRIBE_STATE_CHANGE);
             }
 
             if(this.model.isIterationChangedSubscribed()){
-                this.$(".iteration-subscription").addClass("icon-bell-alt").attr("title",i18n.UNSUBSCRIBE_ITERATION_CHANGE);
+                this.$(".iteration-subscription").addClass("fa-bell").attr("title",i18n.UNSUBSCRIBE_ITERATION_CHANGE);
             }else{
-                this.$(".iteration-subscription").addClass("icon-bell").attr("title",i18n.SUBSCRIBE_ITERATION_CHANGE);
+                this.$(".iteration-subscription").addClass("fa-bell-o").attr("title",i18n.SUBSCRIBE_ITERATION_CHANGE);
             }
 
             this.$(".author-popover").userPopover(this.model.attributes.author.login, this.model.id, "left");

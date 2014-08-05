@@ -6,17 +6,17 @@ define([
     function (i18n,Users) {
 
         var statusHtml = {
-            OFFLINE : "<i class='icon-user user-offline'></i> "+i18n.OFFLINE,
-            ONLINE  : "<i class='icon-user user-online'></i> "+i18n.ONLINE
+            OFFLINE : "<i class='fa fa-user user-offline'></i> "+i18n.OFFLINE,
+            ONLINE  : "<i class='fa fa-user user-online'></i> "+i18n.ONLINE
         };
 
         // popover content template
         var tipContent = "<div>"
             + "<span class='user-status'></span>"
             + "<hr />"
-            + "<span class='btn webRTC_invite_button'><i class='icon-facetime-video'></i> Video </span> "
-            + "<span class='btn new_chat_session_button'><i class='icon-comments'></i> Chat </span> "
-            + "<a class='btn mailto_button' href='' target='_blank'><i class='icon-envelope'></i> Mail </a>"
+            + "<span class='btn webRTC_invite_button'><i class='fa fa-video-camera'></i> Video </span> "
+            + "<span class='btn new_chat_session_button'><i class='fa fa-comments'></i> Chat </span> "
+            + "<a class='btn mailto_button' href='' target='_blank'><i class='fa fa-envelope'></i> Mail </a>"
             + "</div>";
 
         var users = new Users();

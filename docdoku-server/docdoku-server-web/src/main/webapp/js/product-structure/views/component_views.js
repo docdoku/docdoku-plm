@@ -59,12 +59,12 @@ define(function() {
 
         tagName:'li',
 
-        template: _.template("<input type='checkbox' <%if (checkedAtInit) {%>checked='checked'<%}%>><a><label class='checkbox'><%= number %> (<%= amount %>)</label></a><i class='icon-file'></i>"),
+        template: _.template("<input type='checkbox' <%if (checkedAtInit) {%>checked='checked'<%}%>><a><label class='checkbox'><%= number %> (<%= amount %>)</label></a><i class='fa fa-file'></i>"),
 
         events: {
             "click a": "onComponentSelected",
             "change input:first": "onChangeCheckbox",
-            "click .icon-file:first": "onEditPart"
+            "click .fa-file:first": "onEditPart"
         },
 
         initialize: function() {
@@ -130,11 +130,11 @@ define(function() {
 
         className: 'expandable',
 
-        template: _.template("<div class=\"hitarea expandable-hitarea\"></div><input type='checkbox' <%if (checkedAtInit) {%>checked='checked'<%}%>><a><label class='checkbox isNode'><%= number %> (<%= amount %>)</label></a><i class='icon-file'></i>"),
+        template: _.template("<div class=\"hitarea expandable-hitarea\"></div><input type='checkbox' <%if (checkedAtInit) {%>checked='checked'<%}%>><a><label class='checkbox isNode'><%= number %> (<%= amount %>)</label></a><i class='fa fa-file'></i>"),
 
         events: {
             "click a:first": "onComponentSelected",
-            "click .icon-file:first": "onEditPart",
+            "click .fa-file:first": "onEditPart",
             "change input:first": "onChangeCheckbox",
             "click .hitarea:first": "onToggleExpand"
         },

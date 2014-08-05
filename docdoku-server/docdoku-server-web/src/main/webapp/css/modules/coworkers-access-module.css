@@ -4,7 +4,7 @@
 #coworkers_access_module_entries span {
     float:left;
 }
-#coworkers_access_module_entries .icon-user{
+#coworkers_access_module_entries .fa-user{
     margin: 4px 4px 0 -10px;
     float:left;
 }
