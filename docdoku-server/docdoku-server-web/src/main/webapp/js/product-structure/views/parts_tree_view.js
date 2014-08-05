@@ -1,4 +1,4 @@
-/* global App,ChannelMessagesType,mainChannel*/
+/*global App,ChannelMessagesType,mainChannel*/
 'use strict';
 define(["models/component_module", "views/component_views"], function (ComponentModule, ComponentViews) {
 

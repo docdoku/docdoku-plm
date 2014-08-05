@@ -1,4 +1,4 @@
-/* global requestAnimationFrame*/
+/*global requestAnimationFrame*/
 'use strict';
 var sceneManager;
 
