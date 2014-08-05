@@ -41,13 +41,13 @@
     width: 100%;
     margin-bottom: 10px;
 }
-#chat_module > .chat_session > .chat_session_header > .icon-remove{
+#chat_module > .chat_session > .chat_session_header > .fa-times{
     position: absolute;
     top: 6px;
     right: 7px;
     cursor:pointer;
 }
-#chat_module > .chat_session > .chat_session_header > .icon-facetime-video{
+#chat_module > .chat_session > .chat_session_header > .fa-video-camera{
     position: absolute;
     top: 6px;
     right: 27px;

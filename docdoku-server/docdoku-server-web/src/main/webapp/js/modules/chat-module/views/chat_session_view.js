@@ -9,14 +9,14 @@ define(["i18n!localization/nls/chat-module-strings",
         template: _.template(
             "<div class='chat_session'>"
             +"<div class='chat_session_header'>"
-            +"<span class='chat_session_title'><i class='icon-comments'></i>  <%= chatSession.remoteUser %> | <%= chatSession.context %></span>"
-            +"<i class='icon-remove'></i>"
-            +"<i class='icon-facetime-video'></i>"
+            +"<span class='chat_session_title'><i class='fa fa-comments'></i>  <%= chatSession.remoteUser %> | <%= chatSession.context %></span>"
+            +"<i class='fa fa-times'></i>"
+            +"<i class='fa fa-video-camera'></i>"
             +"</div>"
             +"<ul class='chat_session_messages'></ul>"
             +"<div class='chat_webrtc_invite'>"
                 +"<span><b></b><%= chatSession.remoteUser %></b> "+i18n.VIDEO_INVITE_TEXT+"</span>"
-                +"<a class='btn btn btn-success accept-webrtc'> <i class='icon-facetime-video'></i> "+i18n.VIDEO_INVITE_ACCEPT+"</a><a class='btn btn-danger reject-webrtc'> <i class='icon-remove'></i> "+i18n.VIDEO_INVITE_REJECT+"</a></div>"
+                +"<a class='btn btn btn-success accept-webrtc'> <i class='fa fa-video-camera'></i> "+i18n.VIDEO_INVITE_ACCEPT+"</a><a class='btn btn-danger reject-webrtc'> <i class='fa fa-times'></i> "+i18n.VIDEO_INVITE_REJECT+"</a></div>"
             +"<div class='chat_session_reply'>"
                 +"<form class='chat_session_reply_form'>"
                     +"<input type='text' name='chat_message_session_input'/> "
@@ -28,8 +28,8 @@ define(["i18n!localization/nls/chat-module-strings",
 
         events : {
             "submit form" : "onSubmitForm",
-            "click .icon-remove" : "onClose",
-            "click .icon-facetime-video" : "onVideoButtonClick",
+            "click .fa-times" : "onClose",
+            "click .fa-video-camera" : "onVideoButtonClick",
             "click .chat_session_title":"onGlobalClick",
             "click .chat_session_messages":"onGlobalClick",
             "click input[name=chat_message_session_input]":"onGlobalClick",
@@ -82,7 +82,7 @@ define(["i18n!localization/nls/chat-module-strings",
         },
 
         refreshTitle:function(){
-            this.$(".chat_session_title").html("<i class='icon-envelope'></i> "+this.remoteUser + " | " + this.context);
+            this.$(".chat_session_title").html("<i class='fa fa-envelope'></i> "+this.remoteUser + " | " + this.context);
             return this;
         },
 

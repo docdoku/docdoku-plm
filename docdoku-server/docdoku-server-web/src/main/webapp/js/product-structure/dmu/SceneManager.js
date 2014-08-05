@@ -86,7 +86,7 @@ define([
             _this.$stats = $(_this.stats.domElement);
             _this.$stats.attr('id', 'statsWin');
             _this.$stats.attr('class', 'statsWinMaximized');
-            _this.$statsArrow = $("<i id=\"statsArrow\" class=\"icon-chevron-down\"></i>");
+            _this.$statsArrow = $("<i id=\"statsArrow\" class=\"fa fa-chevron-down\"></i>");
             _this.$stats.prepend(_this.$statsArrow);
             _this.$statsArrow.bind('click', function () {
                 _this.$stats.toggleClass('statsWinMinimized statsWinMaximized');
