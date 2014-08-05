@@ -46,13 +46,12 @@ casper.test.begin('Create a part is available',2, function(){
             this.exit('New part button not found');
         }
         this.evaluate(function(){__utils__.log('New part button found', 'info');});
-        this.click('.new-part');
     });
 
     /**
      * Test create a part without fill the input
      */
-    casper.then(function createPartWithEmptyField() {
+    casper.thenClick('.new-part', function createPartWithEmptyField() {
         this.wait(1000, function (){
             exists = this.evaluate(function() {
                 return __utils__.exists('#part_creation_modal .btn-primary');
@@ -62,8 +61,9 @@ casper.test.begin('Create a part is available',2, function(){
                 this.exit('New part submit button not found');
             }
             this.evaluate(function(){__utils__.log('New part submit button found', 'info');});
-            this.click('#part_creation_modal .btn-primary');
         });
+    });
+    casper.thenClick('#part_creation_modal .btn-primary',function(){
         this.wait(1000, function (){
             this.test.assertExists('#part_creation_modal .btn-primary', 'Should not create a empty part');
         });
@@ -73,43 +73,44 @@ casper.test.begin('Create a part is available',2, function(){
      * Test create a part with its partNumber and its partName
      */
     casper.then(function createPartWithFilledField() {
-            this.wait(1000, function (){
-                // Search Part Number Input
-                exists = this.evaluate(function() {
-                    return __utils__.exists('#inputPartNumber');
-                });
-                if(!exists){
-                    this.test.fail('Part number input not found');
-                    this.exit('Part number input not found');
-                }
-                this.evaluate(function(){__utils__.log('Part number input found', 'info');});
-                this.sendKeys('#inputPartNumber', partCreationNumber, {reset:true});
-
-                // Search Part Name Input
-                exists = this.evaluate(function() {
-                    return __utils__.exists('#inputPartName');
-                });
-                if(!exists){
-                    this.test.fail('Part number name not found');
-                    this.exit('Part number name not found');
-                }
-                this.evaluate(function(){__utils__.log('Part name input found', 'info');});
-                this.sendKeys('#inputPartName', partCreationName, {reset:true});
-
-                // Search Part Creation Submit Button
-                exists = this.evaluate(function() {
-                    return __utils__.exists('#part_creation_modal .btn-primary');
-                });
-                if(!exists){
-                    this.test.fail('Part creation submit button disappear');
-                    this.exit('Part creation submit button disappear');
-                }
-                this.evaluate(function(){__utils__.log('Part creation submit button still found', 'info');});
-                this.click('#part_creation_modal .btn-primary');
+        this.wait(1000, function (){
+            // Search Part Number Input
+            exists = this.evaluate(function() {
+                return __utils__.exists('#inputPartNumber');
             });
-            this.wait(1000, function (){
-                this.test.assertDoesntExist('#part_creation_modal .btn-primary', 'Should creating the part '+partCreationName);
+            if(!exists){
+                this.test.fail('Part number input not found');
+                this.exit('Part number input not found');
+            }
+            this.evaluate(function(){__utils__.log('Part number input found', 'info');});
+            this.sendKeys('#inputPartNumber', partCreationNumber, {reset:true});
+
+            // Search Part Name Input
+            exists = this.evaluate(function() {
+                return __utils__.exists('#inputPartName');
             });
+            if(!exists){
+                this.test.fail('Part number name not found');
+                this.exit('Part number name not found');
+            }
+            this.evaluate(function(){__utils__.log('Part name input found', 'info');});
+            this.sendKeys('#inputPartName', partCreationName, {reset:true});
+
+            // Search Part Creation Submit Button
+            exists = this.evaluate(function() {
+                return __utils__.exists('#part_creation_modal .btn-primary');
+            });
+            if(!exists){
+                this.test.fail('Part creation submit button disappear');
+                this.exit('Part creation submit button disappear');
+            }
+            this.evaluate(function(){__utils__.log('Part creation submit button still found', 'info');});
+        });
+    });
+    casper.thenClick('#part_creation_modal .btn-primary',function(){
+        this.wait(1000, function (){
+            this.test.assertDoesntExist('#part_creation_modal .btn-primary', 'Should creating the part '+partCreationName);
+        });
     });
 
     // screenshot

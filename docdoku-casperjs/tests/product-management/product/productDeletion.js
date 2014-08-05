@@ -39,40 +39,47 @@ casper.test.begin('Delete a product is available',1, function(){
      */
     casper.waitForSelector('#product_table tbody tr:first-child',function deleteProduct() {
         // Search the created product
-        var goodProduct = this.evaluate(function(productNumber,partNumber){
-            var $productTable =$('#product_table');
-            var bool = $productTable.find('tbody tr:first-child td:nth-child(3)').html()===partNumber;
-            return bool && $productTable.find('tbody tr:first-child td:nth-child(2)').html()===productNumber;
-        },productCreationNumber,partCreationNumber);
-        if(!goodProduct){
+        var goodProduct = this.evaluate(function (productNumber, partNumber) {
+            var $productTable = $('#product_table');
+            var bool = $productTable.find('tbody tr:first-child td:nth-child(3)').html() === partNumber;
+            return bool && $productTable.find('tbody tr:first-child td:nth-child(2)').html() === productNumber;
+        }, productCreationNumber, partCreationNumber);
+        if (!goodProduct) {
             this.test.fail('Created product not found');
             this.exit('Created product not found');
         }
-        this.evaluate(function(){__utils__.log('Created product found', 'info');});
+        this.evaluate(function () {
+            __utils__.log('Created product found', 'info');
+        });
 
         // Search the created product checkbox
-        exists = this.evaluate(function() {
+        exists = this.evaluate(function () {
             return __utils__.exists('#product_table tbody tr:first-child td:first-child input');
         });
-        if(!exists){
+        if (!exists) {
             this.test.fail('Checkbox not found');
             this.exit('Checkbox not found');
         }
-        this.evaluate(function(){__utils__.log('Checkbox found', 'info');});
-        this.click('#product_table tbody tr:first-child td:first-child input');
-
+        this.evaluate(function () {
+            __utils__.log('Checkbox found', 'info');
+        });
+    });
+    casper.thenClick('#product_table tbody tr:first-child td:first-child input',function(){
         // Delete the product
-        this.wait(500, function(){
-            exists = this.evaluate(function() {
+        this.wait(500, function() {
+            exists = this.evaluate(function () {
                 return __utils__.exists('.delete');
             });
-            if(!exists){
+            if (!exists) {
                 this.test.fail('Delete product button not found');
                 this.exit('Delete product button not found');
             }
-            this.evaluate(function(){__utils__.log('Delete product button found', 'info');});
-            this.click('.delete');
+            this.evaluate(function () {
+                __utils__.log('Delete product button found', 'info');
+            });
         });
+    });
+    casper.thenClick('.delete',function(){
         // Popup handled auto.
         // Check if the created product still here
         this.wait(1000, function(){

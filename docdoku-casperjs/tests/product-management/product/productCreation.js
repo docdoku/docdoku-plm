@@ -46,13 +46,12 @@ casper.test.begin('Create a product is available',3, function(){
             this.exit('New product button not found');
         }
         this.evaluate(function(){__utils__.log('New product button found', 'info');});
-        this.click('.new-product');
     });
 
     /**
      * Test create a product without fill productCreationNumber
      */
-    casper.then(function createProductWithEmptyProductNumber() {
+    casper.thenClick('.new-product', function createProductWithEmptyProductNumber() {
         this.wait(1000, function(){
             // Search Product Name Input
             exists = this.evaluate(function() {
@@ -85,8 +84,9 @@ casper.test.begin('Create a product is available',3, function(){
                 this.exit('Product creation submit button not found');
             }
             this.evaluate(function(){__utils__.log('Product creation submit button found', 'info');});
-            this.click('#product_creation_modal .btn-primary');
         });
+    });
+    casper.thenClick('#product_creation_modal .btn-primary',function(){
         this.wait(1000, function (){
             this.test.assertExist('#product_creation_modal .btn-primary', 'Should not create product '+productCreationName+" without its productNumber");
         });
@@ -139,12 +139,14 @@ casper.test.begin('Create a product is available',3, function(){
                 this.exit('Product creation submit button not found');
             }
             this.evaluate(function(){__utils__.log('Product creation submit button found', 'info');});
-            this.click('#product_creation_modal .btn-primary');
         });
+    });
+    casper.thenClick('#product_creation_modal .btn-primary',function(){
         this.wait(1000, function (){
             this.test.assertExist('#product_creation_modal .btn-primary', 'Should not create product '+productCreationName+" without its partNumber");
         });
     });
+
 
     /**
      * Test create a product with its productNumber, its productName and its partNumber
@@ -193,8 +195,9 @@ casper.test.begin('Create a product is available',3, function(){
                 this.exit('Product creation submit button disappear');
             }
             this.evaluate(function(){__utils__.log('Product creation submit button still found', 'info');});
-            this.click('#product_creation_modal .btn-primary');
         });
+    });
+    casper.thenClick('#product_creation_modal .btn-primary', function(){
         this.wait(1000, function (){
             this.test.assertDoesntExist('#product_creation_modal .btn-primary', 'Should create product '+productCreationName);
         });

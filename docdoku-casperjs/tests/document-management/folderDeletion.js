@@ -46,8 +46,8 @@ casper.test.begin('Delete a folder is available',1, function(){
             this.exit('Created folder not found');
         }
         this.evaluate(function(){__utils__.log('Created folder found', 'info');});
-        this.click('#folder-nav .items a[title="'+folderCreationName+'"] + .btn-group .delete a');
-
+    });
+    casper.thenClick('#folder-nav .items a[title="'+folderCreationName+'"] + .btn-group .delete a',function(){
         this.wait(1000,function(){
             this.test.assertDoesntExist('#folder-nav .items a[title='+folderCreationName+']', 'Created folder should be deleted');
         });
