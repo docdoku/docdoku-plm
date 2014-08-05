@@ -34,9 +34,9 @@ define(    [
                 Backbone.Events.on('UserStatusRequestDone', function(message){
                     if(message.status != null){
                         if(message.status == "OFFLINE"){
-                            $form.prepend('<label class="radio">  <input type="checkbox" name="user" value="'+message.remoteUser+'"/>'+message.remoteUser+' <i class="icon-user user-offline" title="offline"></i></label>');
+                            $form.prepend('<label class="radio">  <input type="checkbox" name="user" value="'+message.remoteUser+'"/>'+message.remoteUser+' <i class="fa fa-user user-offline" title="offline"></i></label>');
                         }else if(message.status == "ONLINE"){
-                            $form.prepend('<label class="radio">  <input type="checkbox" name="user" value="'+message.remoteUser+'"/>'+message.remoteUser+' <i class="icon-user user-online" title="online"></i></label>');
+                            $form.prepend('<label class="radio">  <input type="checkbox" name="user" value="'+message.remoteUser+'"/>'+message.remoteUser+' <i class="fa fa-user user-online" title="online"></i></label>');
                         }
                     }
                 });

@@ -12,7 +12,7 @@ define(
             "blur .edit"      : "stopEditingName",
             "keypress .edit"  : "stopEditingNameOnEnter",
             "click i.end"     : "toggleEditingMarkers",
-            "click i.icon-remove"  : "removeLayer"
+            "click i.fa-times"  : "removeLayer"
         },
 
         initialize: function() {

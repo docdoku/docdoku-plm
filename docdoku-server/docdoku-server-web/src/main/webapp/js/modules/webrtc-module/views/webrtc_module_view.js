@@ -150,7 +150,7 @@ define(
             },
 
             setTitle: function (title) {
-                this.$("#webrtc_module_title").html("<i class='icon-facetime-video'></i> " +i18n.CALL_TO_TITLE + " : " + title);
+                this.$("#webrtc_module_title").html("<i class='fa fa-video-camera'></i> " +i18n.CALL_TO_TITLE + " : " + title);
             },
 
             makeDraggable: function () {

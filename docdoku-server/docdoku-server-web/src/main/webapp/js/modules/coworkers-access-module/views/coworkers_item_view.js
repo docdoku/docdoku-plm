@@ -8,9 +8,9 @@ define([
             tagName : 'li',
 
             events : {
-                "click .icon-facetime-video" : "onVideoButtonClick",
-                "click .icon-comments" : "onChatButtonClick",
-                "click .icon-envelope" : "onMailButtonClick"
+                "click .fa-video-camera" : "onVideoButtonClick",
+                "click .fa-comments" : "onChatButtonClick",
+                "click .fa-envelope" : "onMailButtonClick"
             },
 
             initialize:function(){
@@ -30,9 +30,9 @@ define([
                 Backbone.Events.on('UserStatusRequestDone', function(message){
                     if(message.remoteUser == that.model.login && message.status != null){
                         if(message.status == "OFFLINE"){
-                            that.$(".icon-user").addClass("user-offline").removeClass("user-online").attr("title",i18n.OFFLINE);
+                            that.$(".fa-user").addClass("user-offline").removeClass("user-online").attr("title",i18n.OFFLINE);
                         }else if(message.status == "ONLINE"){
-                            that.$(".icon-user").addClass("user-online").removeClass("user-offline").attr("title",i18n.ONLINE);
+                            that.$(".fa-user").addClass("user-online").removeClass("user-offline").attr("title",i18n.ONLINE);
                         }
                     }
                 });

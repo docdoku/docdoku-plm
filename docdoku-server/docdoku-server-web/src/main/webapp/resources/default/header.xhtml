@@ -45,15 +45,15 @@
                             <c:when test="#{request.remoteUser==null}">
                                 <ul class="nav">
                                     <li><a href="#{request.contextPath}/"><i
-                                            class="icon-home"></i>#{i18nTemplate['toplinks.home']}</a>
+                                            class="fa fa-home"></i>#{i18nTemplate['toplinks.home']}</a>
                                     </li>
                                     <li>
                                         <a href="http://www.docdokuplm.com/" target="_blank"><i
-                                                class="icon-cloud"></i>#{i18nTemplate['toplinks.community']}</a>
+                                                class="fa fa-cloud"></i>#{i18nTemplate['toplinks.community']}</a>
                                     </li>
                                     <li class="dplm_download_link">
                                         <h:link outcome="/download.xhtml">
-                                            <i class="icon-download-alt"></i>
+                                            <i class="fa fa-download"></i>
                                             #{i18nTemplate['toplinks.downloadDPLM']}
                                         </h:link>
                                     </li>
@@ -75,7 +75,7 @@
                                             <!-- current workspace & workspaces dropdown menu-->
                                             <li class="dropdown" id="workspace_container">
                                                 <a href="#" id="workspace_choose_menu" class="dropdown-toggle" data-toggle="dropdown">
-                                                    <i class="icon-home"></i>
+                                                    <i class="fa fa-home"></i>
                                                     #{i18nTemplate['toplinks.workspace']}
                                                     <c:if test="#{cc.attrs.breadcrumbDept gt 1}"> : ${workspaceID} </c:if>
                                                     <span class="caret hidden-desktop"></span>
@@ -85,7 +85,7 @@
                                                         <li class="dropdown-submenu visible-desktop">
                                                             <a href="#{request.contextPath}/document-management/${item.value.id}#folders">
                                                                 <c:if test="${workspaceID==item.value.id}">
-                                                                    <i class="icon-ok"></i>
+                                                                    <i class="fa fa-check"></i>
                                                                 </c:if>
                                                                 ${item.value.id}
                                                             </a>
@@ -99,7 +99,7 @@
                                                         <li class="dropdown-submenu hidden-desktop">
                                                             <a href="#">
                                                                 <c:if test="${workspaceID==item.value.id}">
-                                                                    <i class="icon-ok"></i>
+                                                                    <i class="fa fa-check"></i>
                                                                 </c:if>
                                                                 ${item.value.id}
                                                             </a>
@@ -115,7 +115,7 @@
                                                         <li class="dropdown-submenu visible-desktop">
                                                             <a href="#{request.contextPath}/document-management/${item.id}#folders">
                                                                 <c:if test="${workspaceID==item.id}">
-                                                                    <i class="icon-ok"></i>
+                                                                    <i class="fa fa-check"></i>
                                                                 </c:if>
                                                                 ${item.id}
                                                             </a>
@@ -129,7 +129,7 @@
                                                         <li class="dropdown-submenu hidden-desktop">
                                                             <a href="#">
                                                                 <c:if test="${workspaceID==item.id}">
-                                                                    <i class="icon-ok"></i>
+                                                                    <i class="fa fa-check"></i>
                                                                 </c:if>
                                                                 ${item.id}
                                                             </a>
@@ -155,25 +155,25 @@
                                                     <ul class="dropdown-menu">
                                                         <li id="documents_management_link"><a href="#{request.contextPath}/document-management/${workspaceID}#folders">
                                                             <c:if test="#{cc.attrs.moduleName == 'document-management'}">
-                                                                <i class="icon-ok"></i>
+                                                                <i class="fa fa-check"></i>
                                                             </c:if>
                                                             #{i18nTemplate['toplinks.document']}
                                                         </a></li>
                                                         <li id="products_management_link"><a href="#{request.contextPath}/product-management/${workspaceID}#products">
                                                             <c:if test="#{cc.attrs.moduleName =='product-management' or cc.attrs.moduleName =='product-structure'}">
-                                                                <i class="icon-ok"></i>
+                                                                <i class="fa fa-check"></i>
                                                             </c:if>
                                                             #{i18nTemplate['toplinks.product']}
                                                         </a></li>
                                                         <li><a href="#{request.contextPath}/change-management/${workspaceID}#workflows">
                                                             <c:if test="#{cc.attrs.moduleName =='change-management'}">
-                                                                <i class="icon-ok"></i>
+                                                                <i class="fa fa-check"></i>
                                                             </c:if>
                                                             #{i18nTemplate['toplinks.change']}
                                                         </a></li>
                                                         <!--li><a href="#{request.contextPath}/search/${workspaceID}">
                                                             <c:if test="#{cc.attrs.moduleName =='search'}">
-                                                                <i class="icon-ok"></i>
+                                                                <i class="fa fa-check"></i>
                                                             </c:if>
                                                             #{i18nTemplate['toplinks.search']}
                                                         </a></li-->
@@ -186,13 +186,13 @@
                                 <ul class="nav pull-right">
                                     <li>
                                         <!--<h:link outcome="/download.xhtml"><i
-                                                class="icon-download-alt"></i>#{i18nTemplate['menu.download']}
+                                                class="fa fa-download"></i>#{i18nTemplate['menu.download']}
                                         </h:link>-->
                                     </li>
                                     <li class="dropdown" id="coworkers_access_module" style="display: none;">
                                         <a class="dropdown-toggle" id="coworkers_access_module_toggler" href="#"
                                            data-toggle="dropdown" title="#{i18nTemplate['toplinks.coworkers']}">
-                                            <i class="icon-group"></i>
+                                            <i class="fa fa-users"></i>
                                             #{i18nTemplate['toplinks.coworkers']}
                                             <span class="caret"></span>
                                         </a>
@@ -201,46 +201,46 @@
                                     <li class="dropdown" id="account_name_node">
                                         <a href="#" class="dropdown-toggle" id="account_name_link"
                                            data-toggle="dropdown">
-                                            <i class="icon-user"></i>
+                                            <i class="fa fa-user"></i>
                                             #{accountBean.name}
                                             <span class="caret"></span>
                                         </a>
                                         <ul class="dropdown-menu">
                                             <li>
                                                 <h:link outcome="/admin/accountEditionForm.xhtml">
-                                                    <i class="icon-user"></i>
+                                                    <i class="fa fa-user"></i>
                                                     #{i18nTemplate['toplinks.account']}
                                                 </h:link>
                                             </li>
                                             <li>
                                                 <h:link outcome="/admin/organization/organizationMenu.xhtml">
-                                                    <i class="icon-building"></i>
+                                                    <i class="fa fa-building-o"></i>
                                                     #{i18nTemplate['toplinks.organization']}
                                                 </h:link>
                                             </li>
                                             <li>
                                                 <h:link outcome="/admin/workspace/workspacesMenu.xhtml">
-                                                    <i class="icon-cog"></i>
+                                                    <i class="fa fa-cog"></i>
                                                     #{i18nTemplate['toplinks.admin']}
                                                 </h:link>
                                             </li>
                                             <li class="divider"></li>
                                             <li class="dplm_download_link">
                                                 <h:link outcome="/download.xhtml">
-                                                    <i class="icon-download-alt"></i>
+                                                    <i class="fa fa-download"></i>
                                                     #{i18nTemplate['toplinks.downloadDPLM']}
                                                 </h:link>
                                             </li>
                                             <li id="community_link">
                                                 <a href="http://www.docdokuplm.com/" target="_blank">
-                                                    <i class="icon-question"></i>
+                                                    <i class="fa fa-question"></i>
                                                     #{i18nTemplate['toplinks.aboutus']}
                                                 </a>
                                             </li>
                                             <li class="divider"></li>
                                             <li id="logout_link">
                                                 <h:commandLink action="#{connectionBean.logOut}">
-                                                    <i class="icon-off"></i>
+                                                    <i class="fa fa-power-off"></i>
                                                     #{i18nTemplate['toplinks.logout']}
                                                 </h:commandLink>
                                             </li>
