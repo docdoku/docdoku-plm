@@ -36,7 +36,7 @@ define([
             this.bindDomElements();
             new ConfigurationItemCollection().fetch({success: this.fillProductList});
             var self = this ;
-            this.$inputProductId.change(function(){self.createProductInstancesView()});
+            this.$inputProductId.change(function(){self.createProductInstancesView();});
             this.createProductInstancesView();
             return this;
         },

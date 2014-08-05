@@ -1,4 +1,6 @@
-var sceneManager,instancesManager;
+/* global requestAnimationFrame*/
+'use strict';
+var sceneManager;
 
 // Global Namespace for the application
 var App = {
@@ -33,30 +35,9 @@ function(SceneManager,LoaderManager){
         var container = $("#container");
         var scene = new THREE.Scene();
         var camera = new THREE.PerspectiveCamera(45, container.width() / container.height(), App.SceneOptions.cameraNear, App.SceneOptions.cameraFar);
-        camera.position.copy(App.SceneOptions.defaultCameraPosition);
-        addLightsToCamera(camera);
+        var control;
         var renderer = new THREE.WebGLRenderer({alpha: true});
-        renderer.setSize(width, height);
-        container.append(renderer.domElement);
-        scene.add(camera);
-        scene.updateMatrixWorld();
-
-        var control = new THREE.TrackballControls(camera, container[0]);
         var texturePath = fileName.substring(0, fileName.lastIndexOf('/'));
-        loaderManager.parseFile(fileName,texturePath,{
-            success: function(geometry, material){
-                THREE.GeometryUtils.center(geometry);
-                var mesh = new THREE.Mesh(geometry, material);
-                scene.add(mesh);
-                centerOn(mesh);
-            }
-        });
-
-        control.addEventListener('change',function(){
-            render();
-        });
-
-        animate();
 
         function centerOn (mesh) {
             var boundingBox = mesh.geometry.boundingBox;
@@ -87,6 +68,33 @@ function(SceneManager,LoaderManager){
             camera.add(dirLight);
             camera.add(dirLight.target);
         }
+
+
+        camera.position.copy(App.SceneOptions.defaultCameraPosition);
+        addLightsToCamera(camera);
+
+        renderer.setSize(width, height);
+        container.append(renderer.domElement);
+        scene.add(camera);
+        scene.updateMatrixWorld();
+        control = new THREE.TrackballControls(camera, container[0]);
+
+        loaderManager.parseFile(fileName,texturePath,{
+            success: function(geometry, material){
+                THREE.GeometryUtils.center(geometry);
+                var mesh = new THREE.Mesh(geometry, material);
+                scene.add(mesh);
+                centerOn(mesh);
+            }
+        });
+
+        control.addEventListener('change',function(){
+            render();
+        });
+
+        animate();
+
+
 
     }
     return PermalinkApp;

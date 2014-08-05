@@ -1,5 +1,5 @@
-/*global App,ChannelMessagesType,mainChannel*/
-
+/*global App,APP_CONFIG,worker*/
+'use strict';
 define(["dmu/LoaderManager","lib/async"],
 function (LoaderManager, async) {
 
@@ -39,13 +39,12 @@ function (LoaderManager, async) {
                 _this.workerStats = stats;
             },
             directives: function (directives) {
-
                 _this.aborted+=_this.xhrQueue.tasks.length;
                 _this.xhrQueue.kill();
 
                 _(directives).each(function(directive){
+                    var instance = _this.getInstance(directive.id);
                     if(directive.nowait && directive.quality === undefined){
-                        var instance = _this.getInstance(directive.id);
                         App.sceneManager.removeMeshById(directive.id);
                         if(loadCache[instance.partIterationId+'-'+instance.qualityLoaded]){
                             if( loadCache[instance.partIterationId+'-'+instance.qualityLoaded].count === 1){
@@ -60,7 +59,6 @@ function (LoaderManager, async) {
                         instance.qualityLoaded = undefined;
                         worker.postMessage({fn: 'setQuality', obj: {id: instance.id, quality: instance.qualityLoaded}});
                     }else{
-                        var instance = _this.getInstance(directive.id);
                         instance.directiveQuality = directive.quality;
                         _this.xhrQueue.push(directive);
                     }
@@ -76,7 +74,7 @@ function (LoaderManager, async) {
         var worker = new Worker("/js/product-structure/workers/InstancesWorker.js");
 
         worker.addEventListener("message", function (message) {
-            if (typeof  workerMessages[message.data.fn] == "function") {
+            if (typeof  workerMessages[message.data.fn] === "function") {
                 workerMessages[message.data.fn](message.data.obj);
             } else {
                 if(App.debug){
@@ -96,7 +94,7 @@ function (LoaderManager, async) {
                 return;
             }
 
-            if (directive.quality == undefined) {
+            if (directive.quality === undefined) {
 
                 // don't unload edited meshes
                 if (App.sceneManager.editedMeshes.indexOf(instance.id) !== -1) {
@@ -123,7 +121,7 @@ function (LoaderManager, async) {
                 return;
             }
 
-            if (directive.quality == instance.qualityLoaded) {
+            if (directive.quality === instance.qualityLoaded) {
                 _this.alreadySameQuality++;
                 setTimeout(callback,0);
                 return;

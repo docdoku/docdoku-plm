@@ -1,4 +1,5 @@
 /*global App*/
+'use strict';
 THREE.TrackballControls = function ( object, domElement ) {
 
 	var _this = this;
@@ -89,7 +90,7 @@ THREE.TrackballControls = function ( object, domElement ) {
 
 	this.handleEvent = function ( event ) {
 
-		if ( typeof this[ event.type ] == 'function' ) {
+		if ( typeof this[ event.type ] === 'function' ) {
 
 			this[ event.type ]( event );
 
@@ -355,14 +356,15 @@ THREE.TrackballControls = function ( object, domElement ) {
 
 		_prevState = _state;
 
-		if ( _state !== STATE.NONE ) {
-		} else if ( event.keyCode === _this.keys[ STATE.ROTATE ] && !_this.noRotate ) {
-			_state = STATE.ROTATE;
-		} else if ( event.keyCode === _this.keys[ STATE.ZOOM ] && !_this.noZoom ) {
-			_state = STATE.ZOOM;
-		} else if ( event.keyCode === _this.keys[ STATE.PAN ] && !_this.noPan ) {
-			_state = STATE.PAN;
-		}
+		if ( _state === STATE.NONE ) {
+            if (event.keyCode === _this.keys[ STATE.ROTATE ] && !_this.noRotate) {
+                _state = STATE.ROTATE;
+            } else if (event.keyCode === _this.keys[ STATE.ZOOM ] && !_this.noZoom) {
+                _state = STATE.ZOOM;
+            } else if (event.keyCode === _this.keys[ STATE.PAN ] && !_this.noPan) {
+                _state = STATE.PAN;
+            }
+        }
 
 	}
 
