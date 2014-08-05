@@ -20,9 +20,8 @@
 
 package com.docdoku.server.mainchannel.module;
 
-import com.docdoku.server.mainchannel.util.ChannelMessagesType;
-
 import javax.json.Json;
+import javax.json.JsonObjectBuilder;
 import javax.websocket.EncodeException;
 import javax.websocket.Encoder;
 import javax.websocket.EndpointConfig;
@@ -34,15 +33,40 @@ public class WebRTCMessageEncoder implements Encoder.Text<WebRTCMessage> {
 
     @Override
     public String encode(WebRTCMessage webRTCMessage) throws EncodeException {
-            return Json.createObjectBuilder()
-                    .add("type", webRTCMessage.getType())
-                    .add("remoteUser", webRTCMessage.getRemoteUser())
-                    .add("roomKey", webRTCMessage.getRoomKey())
-                    .add("reason", webRTCMessage.getReason())
-                    .add("context", webRTCMessage.getContext())
-                    .add("roomOccupancy", webRTCMessage.getRoomOccupancy())
-                    .add("userLogin", webRTCMessage.getUserLogin()).build().toString();
+        JsonObjectBuilder jsonObject = Json.createObjectBuilder();
+        jsonObject.add("type", webRTCMessage.getType());
+        if(webRTCMessage.getRemoteUser()!=null){
+            jsonObject.add("remoteUser", webRTCMessage.getRemoteUser());
+        }
+        if(webRTCMessage.getRoomKey()!=null){
+            jsonObject.add("roomKey", webRTCMessage.getRoomKey());
+        }
+        if(webRTCMessage.getReason()!=null){
+            jsonObject.add("reason", webRTCMessage.getReason());
+        }
+        if(webRTCMessage.getContext()!=null){
+            jsonObject.add("context", webRTCMessage.getContext());
+        }
+        if(webRTCMessage.getRoomOccupancy()!=null){
+            jsonObject.add("roomOccupancy", webRTCMessage.getRoomOccupancy());
+        }
+        if(webRTCMessage.getUserLogin()!=null){
+            jsonObject.add("userLogin", webRTCMessage.getUserLogin());
+        }
+        if(webRTCMessage.getSdp()!=null){
+            jsonObject.add("sdp", webRTCMessage.getSdp());
+        }
+        if(webRTCMessage.getId()!=null){
+            jsonObject.add("id", webRTCMessage.getId());
+        }
+        if(webRTCMessage.getCandidate()!=null){
+            jsonObject.add("candidate", webRTCMessage.getCandidate());
+        }
+        if(webRTCMessage.getLabel()!=null){
+            jsonObject.add("label", webRTCMessage.getLabel());
+        }
 
+        return jsonObject.build().toString();
     }
 
     @Override

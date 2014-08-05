@@ -32,7 +32,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.*;
+import java.util.Locale;
 
 @Named("connectionBean")
 @RequestScoped
@@ -52,6 +52,7 @@ public class ConnectionBean {
     public String logOut() throws ServletException {
         HttpServletRequest request = (HttpServletRequest) (FacesContext.getCurrentInstance().getExternalContext().getRequest());
         request.logout();
+        request.getSession().invalidate();
         return "/login.xhtml";
     }
 
@@ -72,9 +73,7 @@ public class ConnectionBean {
                 accountLogin = account.getLogin();
                 accountLocale = new Locale(account.getLanguage());
             }
-        }catch(AccountNotFoundException ex){
-
-        }
+        }catch(AccountNotFoundException ignored){}
         //case insensitive fix
         if(!login.equals(accountLogin)){
             request.logout();
