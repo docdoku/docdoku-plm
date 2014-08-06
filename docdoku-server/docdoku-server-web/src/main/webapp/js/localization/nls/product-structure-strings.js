@@ -107,7 +107,19 @@ define({
         SCALE: "Scale",
         REPLACE: "Reset",
         RESET_CAMERA: "Reset camera",
-        SHOW_EDITED_MESHES: "Highlight edited meshes"
+        SHOW_EDITED_MESHES: "Highlight edited meshes",
+        COLLABORATIVE_LEAD: "Presenter",
+        PENDING: "Absent participant",
+        PARTICIPANT: "Participant",
+        CREATE_ROOM: "Start a digital mockup review",
+        INVITE: "Invite coworkers",
+        EXIT: "Leave digital mockup review",
+        WITHDRAW_INVITATION : "Withdraw invitation",
+        GIVE_HAND: "Give the hand",
+        COLLABORATIVE_NO_MASTER: "absent",
+        COLLABORATIVE:"Co-browsing",
+        NO_PARTICIPANT:"No participant",
+        USERS_CONNECTED:"users connected"
     },
     "fr": true,
     "es": true

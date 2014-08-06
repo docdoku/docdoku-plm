@@ -20,7 +20,8 @@
                     login: "${login}",
                     sessionId : "${session.id}",
                     workspaceAdmin:"${workspaceAdmin}",
-                    groups: [${groups}]
+                    groups: [${groups}],
+                    contextPath: "#{request.contextPath}"
                 };
                 var APP_VIEW;
                 $(document).ready(function() {

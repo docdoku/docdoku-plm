@@ -68,14 +68,14 @@ define(    [
             onSubmit:function(e){
                 var remoteUsers = this.$("input:checked");
                 var that = this;
-                //var path = document.location.href;
 
                 remoteUsers.each(function(index, element){
                     mainChannel.sendJSON({
                         type: ChannelMessagesType.COLLABORATIVE_INVITE,
                         key: that.roomKey,
                         messageBroadcast: {
-                            context:APP_CONFIG.workspaceId+'/'+APP_CONFIG.productId
+                            url: APP_CONFIG.workspaceId + '/' + APP_CONFIG.productId,
+                            context: APP_CONFIG.workspaceId
                         },
                         remoteUser: element.value
                     });

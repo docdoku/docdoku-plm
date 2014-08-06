@@ -27,7 +27,7 @@ define(function(){
 
                 if (message.type === ChannelMessagesType.COLLABORATIVE_CONTEXT && collaborativeView.roomKey === message.key) {
                     if (message.messageBroadcast.master === ''){
-                        collaborativeView.setMaster("nobody");
+                        collaborativeView.setLastMaster(message.messageBroadcast.lastMaster);
                     } else {
                         collaborativeView.setMaster(message.messageBroadcast.master);
                     }

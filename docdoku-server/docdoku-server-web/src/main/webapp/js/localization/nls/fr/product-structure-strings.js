@@ -100,5 +100,17 @@ define({
     SCALE: "Echelle",
     REPLACE: "Réinitialiser",
     RESET_CAMERA: "Repositionner la caméra",
-    SHOW_EDITED_MESHES: "Surligner les objets modifiés"
+    SHOW_EDITED_MESHES: "Surligner les objets modifiés",
+    COLLABORATIVE_LEAD: "Présentateur",
+    PENDING: "Participant absent",
+    PARTICIPANT: "Participant",
+    CREATE_ROOM: "Démarrer une revue de maquette",
+    INVITE: "Inviter des collaborateurs",
+    EXIT: "Quitter la revue de maquette",
+    WITHDRAW_INVITATION : "Retirer l'invitation",
+    GIVE_HAND: "Donner la main",
+    COLLABORATIVE_NO_MASTER: "absent",
+    COLLABORATIVE:"Co-browsing",
+    NO_PARTICIPANT:"Aucun participant",
+    USERS_CONNECTED:"utilisateurs connectés"
 });

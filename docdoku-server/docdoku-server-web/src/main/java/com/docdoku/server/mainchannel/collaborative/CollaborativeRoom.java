@@ -33,6 +33,7 @@ public class CollaborativeRoom {
         this.pendingUsers = new LinkedList<>();
         this.creationDate = new Date();
         this.slaves = new LinkedList<>();
+        this.lastMaster = getMasterName();
         put();
     }
 
@@ -123,6 +124,7 @@ public class CollaborativeRoom {
 
         return Json.createObjectBuilder()
                 .add("master", this.getMasterName())
+                .add("lastMaster", this.getLastMaster())
                 .add("users", slaves)
                 .add("pendingUsers", pendingUsers).build();
     }

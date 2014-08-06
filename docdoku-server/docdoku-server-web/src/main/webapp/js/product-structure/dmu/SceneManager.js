@@ -767,7 +767,7 @@ define([
                 _this.sendCameraInfos();
                 controlChanged = false;
             }
-        }
+        };
 
 
         this.init = function () {
