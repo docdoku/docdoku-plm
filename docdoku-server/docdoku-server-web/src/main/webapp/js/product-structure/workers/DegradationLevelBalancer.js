@@ -56,25 +56,27 @@ var availableLevels  = [0, 1];
                 return i;
         }
 
-        function degradeLevel(instance){
-            var q = getBestQuality(instance,i);
-            if (q !== undefined && instance.globalRating !== -1) {
-                onScene++;
-                directives[instance.id] = {
-                    instance: instance,
-                    quality: q
-                };
-            } else {
-                // Else it must be unloaded
-                directives[instance.id] = {
-                    instance: instance,
-                    quality: undefined
-                };
-            }
+        function degradeLevel(explodedListElements){
+            _.each(explodedListElements,function(instance){
+                var q = getBestQuality(instance,i);
+                if (q !== undefined && instance.globalRating !== -1) {
+                    onScene++;
+                    directives[instance.id] = {
+                        instance: instance,
+                        quality: q
+                    };
+                } else {
+                    // Else it must be unloaded
+                    directives[instance.id] = {
+                        instance: instance,
+                        quality: undefined
+                    };
+                }
+            });
         }
 
         for(var i = 0, l=explodedShortenList.length; i<l; i++){
-            _.each(explodedShortenList[i], degradeLevel);
+            degradeLevel(explodedShortenList[i]);
         }
 
         if(debug){console.log("[Worker] Instances: " + onScene );}
