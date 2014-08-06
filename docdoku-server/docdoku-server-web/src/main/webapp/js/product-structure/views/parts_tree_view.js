@@ -1,3 +1,5 @@
+/*global App,ChannelMessagesType,mainChannel*/
+'use strict';
 define(["models/component_module", "views/component_views"], function (ComponentModule, ComponentViews) {
 
     var PartsTreeView = Backbone.View.extend({
@@ -65,7 +67,7 @@ define(["models/component_module", "views/component_views"], function (Component
             relativeInput.checked = event.target.checked;
             var childrenUl = event.currentTarget.querySelector('ul');
 
-            if (childrenUl != null) {
+            if (childrenUl !== null) {
                 // Check children
                 var tempArray = [];
                 var inputsChecked = 0;
@@ -80,7 +82,7 @@ define(["models/component_module", "views/component_views"], function (Component
                     // remove children from path
                     this.removeFromSmartPath(li.id.substring(5));
                 }
-                if (inputsChecked == childrenUl.childNodes.length) {
+                if (inputsChecked === childrenUl.childNodes.length) {
                     // if all children are checked add the node
                     this.addToSmartPath(relativeInput.parentNode.id.substring(5));
                 } else {
@@ -100,7 +102,7 @@ define(["models/component_module", "views/component_views"], function (Component
                 }
             }
 
-            if (relativeInput.parentNode.id == "path_null"){
+            if (relativeInput.parentNode.id === "path_null"){
                 // Root node : master send the new smartPaths
                 if (App.collaborativeView.isMaster) {
                     mainChannel.sendJSON({
@@ -121,20 +123,20 @@ define(["models/component_module", "views/component_views"], function (Component
 
         removeFromSmartPath: function(p){
             this.smartPath = _.filter(this.smartPath, function (e) {
-                return e != p;
+                return e !== p;
             });
         },
 
         setSmartPaths: function (arrayPaths) {
             var pathToUnload = _.difference(this.smartPath, arrayPaths);
-            if (pathToUnload.length != 0) {
+            if (pathToUnload.length !== 0) {
                 console.log("path to unload : ");
                 console.log(pathToUnload);
                 App.instancesManager.loadQueue.push({"process":"unload","path":pathToUnload});
             }
 
             var pathToLoad = _.difference(arrayPaths, this.smartPath);
-            if (pathToLoad.length != 0) {
+            if (pathToLoad.length !== 0) {
                 console.log("path to load : ");
                 console.log(pathToLoad);
                 App.instancesManager.loadQueue.push({"process":"load","path":pathToLoad});
@@ -170,5 +172,4 @@ define(["models/component_module", "views/component_views"], function (Component
     });
 
     return PartsTreeView;
-
 });

@@ -25,7 +25,6 @@ import com.docdoku.server.mainchannel.util.ChannelMessagesType;
 
 import javax.json.Json;
 import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
 import javax.websocket.DecodeException;
 import javax.websocket.Decoder;
 import javax.websocket.EndpointConfig;
@@ -55,13 +54,25 @@ public class MessageDecoder implements Decoder.Text<AbstractMessage>{
                 chatMsg.setMessage(contentMessage);
                 message=chatMsg;
                 break;
+            case ChannelMessagesType.WEBRTC_INVITE:
             case ChannelMessagesType.WEBRTC_ACCEPT:
+            case ChannelMessagesType.WEBRTC_REJECT:
+            case ChannelMessagesType.WEBRTC_HANGUP:
+            case ChannelMessagesType.WEBRTC_ANSWER:
+            case ChannelMessagesType.WEBRTC_BYE:
+            case ChannelMessagesType.WEBRTC_CANDIDATE:
+            case ChannelMessagesType.WEBRTC_OFFER:
                 WebRTCMessage webRTCMsg=new WebRTCMessage(type,remoteUser);
                 String roomKey = jsObj.containsKey("roomKey")?jsObj.getString("roomKey"):null;
                 String reason = jsObj.containsKey("reason")?jsObj.getString("reason"):null;
+                String sdp = jsObj.containsKey("sdp")?jsObj.getString("sdp"):null;
+                String id = jsObj.containsKey("id")?jsObj.getString("id"):null;
+                String candidate = jsObj.containsKey("candidate")?jsObj.getString("candidate"):null;
+                Integer label = jsObj.containsKey("label")?jsObj.getInt("label"):null;
                 webRTCMsg.setContext(context);
                 webRTCMsg.setReason(reason);
                 webRTCMsg.setRoomKey(roomKey);
+                webRTCMsg.setSignals(sdp,id,candidate,label);
                 message=webRTCMsg;
                 break;
             case ChannelMessagesType.COLLABORATIVE_CREATE:

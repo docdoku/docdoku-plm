@@ -20,7 +20,7 @@
 //      controls = new THREE.TrackballControls(camera);
 //      controls.target.z = 150;
 // Simple substitute "OrbitControls" and the control should work as-is.
-
+'use strict';
 THREE.OrbitControls = function (object, domElement) {
 
     this.object = object;
@@ -121,7 +121,7 @@ THREE.OrbitControls = function (object, domElement) {
 
         if (state === STATE.ROTATE) {
 
-            if (scope.noRotate === true) return null;
+            if (scope.noRotate === true){return null;}
 
             rotateEnd.set(event.clientX, event.clientY);
             rotateDelta.subVectors(rotateEnd, rotateStart);
@@ -135,7 +135,7 @@ THREE.OrbitControls = function (object, domElement) {
 
         } else if (state === STATE.DOLLY) {
 
-            if (scope.noZoom === true) return null;
+            if (scope.noZoom === true){return null;}
 
             dollyEnd.set(event.clientX, event.clientY);
             dollyDelta.subVectors(dollyEnd, dollyStart);
@@ -154,7 +154,7 @@ THREE.OrbitControls = function (object, domElement) {
 
         } else if (state === STATE.PAN) {
 
-            if (scope.noPan === true) return;
+            if (scope.noPan === true){return;}
 
             panEnd.set(event.clientX, event.clientY);
             panDelta.subVectors(panEnd, panStart);

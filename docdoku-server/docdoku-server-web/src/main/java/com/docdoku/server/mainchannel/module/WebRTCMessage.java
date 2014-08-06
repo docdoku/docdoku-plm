@@ -29,8 +29,12 @@ public class WebRTCMessage extends AbstractMessage{
     private String roomKey;
     private String reason;
     private String context;
-    private int roomOccupancy;
+    private Integer roomOccupancy;
     private String userLogin;
+    private String sdp;
+    private Integer label;
+    private String id;
+    private String candidate;
 
     public WebRTCMessage(){
 
@@ -39,7 +43,7 @@ public class WebRTCMessage extends AbstractMessage{
     public WebRTCMessage(String type, String remoteUser){
         super(type,remoteUser);
     }
-    public WebRTCMessage(String type, String remoteUser, String roomKey, String reason, String context, int roomOccupancy, String userLogin) {
+    public WebRTCMessage(String type, String remoteUser, String roomKey, String reason, String context, Integer roomOccupancy, String userLogin) {
         super(type,remoteUser);
         this.roomKey = roomKey;
         this.reason = reason;
@@ -52,7 +56,6 @@ public class WebRTCMessage extends AbstractMessage{
     public String getRoomKey() {
         return roomKey;
     }
-
     public void setRoomKey(String roomKey) {
         this.roomKey = roomKey;
     }
@@ -60,7 +63,6 @@ public class WebRTCMessage extends AbstractMessage{
     public String getReason() {
         return reason;
     }
-
     public void setReason(String reason) {
         this.reason = reason;
     }
@@ -68,24 +70,60 @@ public class WebRTCMessage extends AbstractMessage{
     public String getContext() {
         return context;
     }
-
     public void setContext(String context) {
         this.context = context;
     }
 
-    public int getRoomOccupancy() {
+    public Integer getRoomOccupancy() {
         return roomOccupancy;
     }
-
-    public void setRoomOccupancy(int roomOccupancy) {
+    public void setRoomOccupancy(Integer roomOccupancy) {
         this.roomOccupancy = roomOccupancy;
     }
 
     public String getUserLogin() {
         return userLogin;
     }
-
     public void setUserLogin(String userLogin) {
         this.userLogin = userLogin;
+    }
+
+    public static String getWebrtcOffline() {
+        return WEBRTC_OFFLINE;
+    }
+
+    public String getSdp() {
+        return sdp;
+    }
+    public void setSdp(String sdp) {
+        this.sdp = sdp;
+    }
+
+    public Integer getLabel() {
+        return label;
+    }
+    public void setLabel(Integer label) {
+        this.label = label;
+    }
+
+    public String getId() {
+        return id;
+    }
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getCandidate() {
+        return candidate;
+    }
+    public void setCandidate(String candidate) {
+        this.candidate = candidate;
+    }
+
+    public void setSignals(String sdp, String id, String candidate, Integer label){
+        this.sdp=sdp;
+        this.id=id;
+        this.candidate=candidate;
+        this.label=label;
     }
 }
