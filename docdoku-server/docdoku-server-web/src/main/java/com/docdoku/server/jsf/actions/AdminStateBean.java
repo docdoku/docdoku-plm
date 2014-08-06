@@ -130,7 +130,7 @@ public class AdminStateBean implements Serializable {
         return productService.getConfigurationItems(selectedWorkspace).size();
     }
 
-    public int getPartsCount() throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException {
+    public int getPartsCount() throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException {
         return productService.getTotalNumberOfParts(selectedWorkspace);
     }
 

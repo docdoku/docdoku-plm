@@ -279,7 +279,7 @@ function (LoaderManager, async) {
 
 
         this.loadQueue=async.queue(function (directive, callback){
-            if (directive.process == "load"){
+            if (directive.process === "load"){
                 loadPath(directive.path, callback);
             }else {
                 unLoadPath(directive.path, callback);

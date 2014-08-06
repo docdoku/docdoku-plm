@@ -1388,9 +1388,14 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed({"users","admin"})
     @Override
-    public int getTotalNumberOfParts(String pWorkspaceId) throws AccessRightException, WorkspaceNotFoundException, AccountNotFoundException {
-        Account account = userManager.checkAdmin(pWorkspaceId);
-        return new PartRevisionDAO(new Locale(account.getLanguage()), em).getTotalNumberOfParts(pWorkspaceId);
+    public int getTotalNumberOfParts(String pWorkspaceId) throws AccessRightException, WorkspaceNotFoundException, AccountNotFoundException, UserNotFoundException, UserNotActiveException {
+        Locale locale = Locale.getDefault();
+        if(!userManager.isCallerInRole("admin")){
+            User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
+            locale = new Locale(user.getLanguage());
+        }
+        //Todo count only part you can see
+        return new PartRevisionDAO(locale, em).getTotalNumberOfParts(pWorkspaceId);
     }
 
     @RolesAllowed("users")
@@ -1973,18 +1978,6 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             return userManager.checkWorkspaceWriteAccess(workspaceId);
         }
         if(partRevision.getACL().hasWriteAccess(user)){                                                                 // Check if the ACL grant write access
-            return user;
-        }
-        throw new AccessRightException(new Locale(user.getLanguage()),user);                                            // Else throw a AccessRightException
-    }
-
-    private User checkPartRevisionReadAccess(PartRevisionKey partRevisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException, AccessRightException {
-        User user = userManager.checkWorkspaceReadAccess(partRevisionKey.getPartMaster().getWorkspace());
-        if(user.isAdministrator()){                                                                                     // Check if it is the workspace's administrator
-            return user;
-        }
-        PartRevision partRevision = new PartRevisionDAO(em).loadPartR(partRevisionKey);
-        if(partRevision.getACL()==null || partRevision.getACL().hasReadAccess(user)){                                   // Check if there haven't ACL or if the ACL grant read access
             return user;
         }
         throw new AccessRightException(new Locale(user.getLanguage()),user);                                            // Else throw a AccessRightException

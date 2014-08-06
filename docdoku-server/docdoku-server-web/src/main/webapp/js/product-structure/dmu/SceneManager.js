@@ -1039,7 +1039,7 @@ define([
                 this.sendEditedMeshes();
             }
             transformControls.bindEvents();
-            if (mode !== undefined) {
+            if (typeof(mode) !== 'undefined') {
                 switch (mode) {
                     case "translate" :
                         transformControls.setMode("translate");

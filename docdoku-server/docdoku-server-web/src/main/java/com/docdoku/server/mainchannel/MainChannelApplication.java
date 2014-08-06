@@ -65,6 +65,7 @@ public class MainChannelApplication {
         if(hasChannels(userLogin)) {
             Map<String, Session> sessionMap = CHANNELS.get(userLogin);
 
+
             for (Session session : sessionMap.values()) {
                 try {
                     session.close();

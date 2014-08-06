@@ -1,4 +1,5 @@
 /*global self,InstancesSorter,DegradationLevelBalancer*/
+'use strict';
 importScripts(
     "/js/lib/underscore-1.4.2.min.js",
     "/js/lib/visualization/three.min.js",
@@ -34,7 +35,7 @@ var Context = {
         instancesCount = 0;
     },
     addInstance: function (instance) {
-        if (instances[instance.id] == undefined) {
+        if (typeof(instances[instance.id]) === 'undefined') {
             instancesCount++;
         }
         instances[instance.id] = instance;
@@ -100,7 +101,7 @@ var Context = {
 
             _.each(dlbResult.directives, function (directive) {
                 var instance = instances[directive.instance.id];
-                if (instance.qualityLoaded != directive.quality) {
+                if (instance.qualityLoaded !== directive.quality) {
                     directives.push({
                         id:instance.id,
                         quality:directive.quality,
@@ -143,7 +144,7 @@ var ParentMessages = {
 };
 
 self.addEventListener('message', function (message) {
-    if (typeof  ParentMessages[message.data.fn] == "function") {
+    if (typeof  ParentMessages[message.data.fn] === "function") {
         ParentMessages[message.data.fn](message.data.obj);
     } else {
         if(debug){

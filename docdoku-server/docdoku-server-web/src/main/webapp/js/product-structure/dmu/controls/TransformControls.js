@@ -1,7 +1,7 @@
 /**
  * @author arodic / https://github.com/arodic
  */
-/*global App*/
+/*global App,intersectObjects*/
  /*jshint sub:true*/
 'use strict';
 (function () {

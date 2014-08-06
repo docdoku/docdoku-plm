@@ -1,4 +1,5 @@
-/*global App, dat*/
+/*global App,APP_CONFIG,dat*/
+'use strict';
 define(
     [
         "modules/navbar-module/views/navbar_view",
@@ -234,10 +235,10 @@ define(
             var splitUrl = window.location.href.split("/");
             var urlRoot = splitUrl[0] + "//" + splitUrl[2];
 
-            var iframeSrc = urlRoot + '/visualization/' + APP_CONFIG.workspaceId + '/' + APP_CONFIG.productId
-                + '?cameraX=' + App.sceneManager.cameraObject.position.x
-                + '&cameraY=' + App.sceneManager.cameraObject.position.y
-                + '&cameraZ=' + App.sceneManager.cameraObject.position.z;
+            var iframeSrc = urlRoot + '/visualization/' + APP_CONFIG.workspaceId + '/' + APP_CONFIG.productId +
+                '?cameraX=' + App.sceneManager.cameraObject.position.x +
+                '&cameraY=' + App.sceneManager.cameraObject.position.y +
+                '&cameraZ=' + App.sceneManager.cameraObject.position.z;
 
             if(App.partsTreeView.componentSelected.getPath()){
                 iframeSrc += '&pathToLoad=' + App.partsTreeView.componentSelected.getPath();
@@ -268,7 +269,7 @@ define(
 
         showPartMetadata:function() {
             if(!this.isInBomMode()){
-                if(this.partMetadataView == undefined){
+                if(this.partMetadataView === undefined){
                     this.partMetadataView = new PartMetadataView({model:App.partsTreeView.componentSelected}).render();
                     this.$ControlsContainer.append(this.partMetadataView.$el);
                 }else{
@@ -297,7 +298,7 @@ define(
                 if(!self.isInBomMode()){
                     self.controlNavigationView.setMesh(mesh);
                     self.controlTransformView.setMesh(mesh).render();
-                    if(self.partMetadataView == undefined){
+                    if(self.partMetadataView === undefined){
                         self.partMetadataView = new PartMetadataView({model:part}).render();
                         self.$ControlsContainer.append(self.partMetadataView.$el);
                     }else{
@@ -316,7 +317,7 @@ define(
 
         onResetSelection:function(){
             this.searchView.trigger("selection:reset");
-            if (!this.isInBomMode() && this.partMetadataView != undefined) {
+            if (!this.isInBomMode() && this.partMetadataView !== undefined) {
                 this.partMetadataView.reset();
                 //this.partInstanceView.reset();
                 this.controlNavigationView.reset();

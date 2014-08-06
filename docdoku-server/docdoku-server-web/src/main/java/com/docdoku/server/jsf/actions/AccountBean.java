@@ -27,10 +27,7 @@ import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Named("accountBean")
 @RequestScoped
@@ -66,7 +63,6 @@ public class AccountBean {
     public String getPassword() {
         return password;
     }
-
     public void setPassword(String password) {
         this.password = password;
     }
@@ -74,7 +70,6 @@ public class AccountBean {
     public String getLogin() {
         return login;
     }
-
     public void setLogin(String login) {
         this.login = login;
     }
@@ -82,7 +77,6 @@ public class AccountBean {
     public String getName() {
         return name;
     }
-
     public void setName(String name) {
         this.name = name;
     }
@@ -90,7 +84,6 @@ public class AccountBean {
     public String getEmail() {
         return email;
     }
-
     public void setEmail(String email) {
         this.email = email;
     }
@@ -98,7 +91,6 @@ public class AccountBean {
     public String getLanguage() {
         return language;
     }
-
     public void setLanguage(String language) {
         this.language = language;
     }
@@ -106,7 +98,6 @@ public class AccountBean {
     public String getOrganizationName() {
         return organizationName;
     }
-
     public void setOrganizationName(String organizationName) {
         this.organizationName = organizationName;
     }
@@ -114,7 +105,6 @@ public class AccountBean {
     public boolean isSuperAdmin() {
         return superAdmin;
     }
-
     public void setSuperAdmin(boolean superAdmin) {
         this.superAdmin = superAdmin;
     }
@@ -122,7 +112,6 @@ public class AccountBean {
     public Map<String, Workspace> getAdministeredWorkspaces() {
         return administeredWorkspaces;
     }
-
     public void setAdministeredWorkspaces(Map<String, Workspace> administeredWorkspaces) {
         this.administeredWorkspaces = administeredWorkspaces;
     }
@@ -130,7 +119,6 @@ public class AccountBean {
     public Set<Workspace> getRegularWorkspaces() {
         return regularWorkspaces;
     }
-
     public void setRegularWorkspaces(Set<Workspace> regularWorkspaces) {
         this.regularWorkspaces = regularWorkspaces;
     }
@@ -138,8 +126,18 @@ public class AccountBean {
     public String getOrganizationAdmin() {
         return organizationAdmin;
     }
-
     public void setOrganizationAdmin(String organizationAdmin) {
         this.organizationAdmin = organizationAdmin;
+    }
+
+    public Set<Workspace> getWorkspaces(){
+        Set<Workspace> workspaces = new TreeSet<>();
+        for(Workspace wk : administeredWorkspaces.values()){
+            workspaces.add(wk);
+        }
+        for(Workspace wk : regularWorkspaces){
+            workspaces.add(wk);
+        }
+        return workspaces;
     }
 }
