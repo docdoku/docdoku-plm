@@ -51,7 +51,7 @@ define([
             App.sceneManager.reDraw();
 
             // rescale the marker to the others markers scale
-            markerMesh.scale = this.markerScale;
+            markerMesh.scale.copy(this.markerScale);
 
             //save the mesh for further reuse
             this.meshs[marker.cid] = markerMesh;
@@ -105,8 +105,9 @@ define([
         rescaleMarkers: function() {
             for (var cid in this.meshs) {
                 var currentMesh = this.meshs[cid];
-                currentMesh.scale = this.markerScale;
+                currentMesh.scale.copy(this.markerScale);
             }
+            App.sceneManager.reDraw();
         },
 
         changeMarkerState: function() {
@@ -128,6 +129,7 @@ define([
             for (var cid in this.meshs) {
                 this.meshs[cid].material.opacity = opacity;
             }
+            App.sceneManager.reDraw();
         },
 
 
