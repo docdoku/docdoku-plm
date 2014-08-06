@@ -42,8 +42,8 @@ var WEBRTC_CONFIG = {
     PLAY_SOUND : true
 };
 
-var notificationSound = new buzz.sound("../sounds/notification.ogg");
-var incomingCallSound = new buzz.sound("../sounds/incoming-call.ogg");
+var notificationSound = new buzz.sound(APP_CONFIG.contextPath + "/sounds/notification.ogg");
+var incomingCallSound = new buzz.sound(APP_CONFIG.contextPath + "/sounds/incoming-call.ogg");
 
 Backbone.Events.on("NotificationSound",function(){
     notificationSound.play();
