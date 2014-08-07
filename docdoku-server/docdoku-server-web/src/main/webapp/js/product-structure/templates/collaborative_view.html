@@ -20,23 +20,23 @@
         {{/users}}
 
         {{#users}}
-        <li>
+        <li id="participant_{{.}}">
             <i class="fa fa-user participant-online" title="{{i18n.PARTICIPANT}}"></i>
             <span>{{ . }}</span>
             <i class="fa fa-chevron-right"></i>
             <i class="fa fa-chevron-left"></i>
-            <a class="collaborative_give_hand" href="#" name="{{ . }}"  title="{{i18n.GIVE_HAND}}"><i class="fa fa-graduation-cap"></i></a>
-            <a class="collaborative_kick" href="#" name="{{ . }}" title="{{i18n.WITHDRAW_INVITATION}}"><i class="fa fa-sign-out"></i></a>
+            <i class="collaborative_give_hand fa fa-graduation-cap" title="{{i18n.GIVE_HAND}}"></i>
+            <i class="collaborative_kick fa fa-sign-out" title="{{i18n.WITHDRAW_INVITATION}}"></i>
         </li>
         {{/users}}
 
         {{#pendingUsers}}
-        <li>
+        <li id="participant_{{.}}">
             <i class="fa fa-user participant-offline" title="{{i18n.PENDING}}"></i>
             <span>{{ . }} </span>
             <i class="fa fa-chevron-right"></i>
             <i class="fa fa-chevron-left"></i>
-            <a class="collaborative_withdraw_invitation" href="#" name="{{ . }}" title="{{i18n.WITHDRAW_INVITATION}}"><i class="fa fa-sign-out"></i></a>
+            <i id="collaborative_withdraw_invitation" class="fa fa-sign-out"></i>
         </li>
         {{/pendingUsers}}
         </div>

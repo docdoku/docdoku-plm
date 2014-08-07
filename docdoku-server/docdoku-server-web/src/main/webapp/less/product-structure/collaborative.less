@@ -49,6 +49,10 @@
     li{
       padding: 2px 5px 0 5px;
 
+      &:hover {
+        background-color: rgba(118, 188, 255, 0.48);
+      }
+
       .fa-chevron-right,
       .fa-chevron-left {
         font-size: 0.8em;
@@ -56,8 +60,14 @@
         line-height: 18px;
         color: grey;
       }
-      &:hover {
-        background-color: rgba(118, 188, 255, 0.48);
+      .collaborative_give_hand,
+      .collaborative_kick,
+      .collaborative_withdraw_invitation {
+        color: @linkColor;
+        &:hover {
+          color: @linkColorHover;
+          cursor: pointer;
+        }
       }
     }
   }

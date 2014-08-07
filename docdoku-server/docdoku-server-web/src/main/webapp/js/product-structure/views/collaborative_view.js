@@ -12,9 +12,9 @@ define(    [
             events: {
                 "click a#collaborative_create" : "create",
                 "click a#collaborative_invite" : "invite",
-                "click a.collaborative_kick": "kick",
-                "click a.collaborative_give_hand": "giveHand",
-                "click a.collaborative_withdraw_invitation": "withdrawInvitation",
+                "click i.collaborative_kick": "kick",
+                "click i.collaborative_give_hand": "giveHand",
+                "click i.collaborative_withdraw_invitation": "withdrawInvitation",
                 "click a#collaborative_exit": "exit",
                 "click li": "toggleExpand"
             },
@@ -42,9 +42,9 @@ define(    [
                         App.appView.setSpectatorView();
                         this.$(".fa-chevron-right").hide();
                         this.$(".fa-chevron-left").hide();
-                        this.$("a.collaborative_kick").hide();
-                        this.$("a.collaborative_give_hand").hide();
-                        this.$("a.collaborative_withdraw_invitation").hide();
+                        this.$(".collaborative_kick").hide();
+                        this.$(".collaborative_give_hand").hide();
+                        this.$(".collaborative_withdraw_invitation").hide();
                         this.$("a#collaborative_invite").hide();
                         if (this.noMaster){
                             this.$("i#collaborative_master").removeClass("master");
@@ -69,18 +69,20 @@ define(    [
             },
 
             kick: function(e){
+                var name = e.currentTarget.parentElement.id.substr(12);
                 mainChannel.sendJSON({
                     type: ChannelMessagesType.COLLABORATIVE_KICK_USER,
                     key: this.roomKey,
-                    remoteUser: e.currentTarget.name
+                    remoteUser: name
                 });
             },
 
             withdrawInvitation: function(e){
+                var name = e.currentTarget.parentElement.id.substr(12);
                 mainChannel.sendJSON({
                     type: ChannelMessagesType.COLLABORATIVE_WITHDRAW_INVITATION,
                     key: this.roomKey,
-                    remoteUser: e.currentTarget.name,
+                    remoteUser: name,
                     messageBroadcast: {
                         context:APP_CONFIG.workspaceId
                     }
@@ -88,12 +90,14 @@ define(    [
             },
 
             giveHand: function(e){
+                var name = e.currentTarget.parentElement.id.substr(12);
                 mainChannel.sendJSON({
                     type: ChannelMessagesType.COLLABORATIVE_GIVE_HAND,
                     key: this.roomKey,
-                    remoteUser: e.currentTarget.name
+                    remoteUser: name
                 });
-                this.setMaster(e.currentTarget.name);
+                this.setMaster(name);
+
                // App.sceneManager.disableControlsObject();
                 //App.appView.setSpectatorView();
             },
@@ -198,16 +202,16 @@ define(    [
             reduce : function(el){
                 this.$(el).find(".fa-chevron-right").show();
                 this.$(el).find(".fa-chevron-left").hide();
-                this.$(el).find("a.collaborative_give_hand").hide();
-                this.$(el).find("a.collaborative_kick").hide();
+                this.$(el).find(".collaborative_give_hand").hide();
+                this.$(el).find(".collaborative_kick").hide();
                 this.$(el).find(".collaborative_withdraw_invitation").hide();
             },
 
             reduceAll : function(){
                 this.$(".fa-chevron-right").show();
                 this.$(".fa-chevron-left").hide();
-                this.$("a.collaborative_give_hand").hide();
-                this.$("a.collaborative_kick").hide();
+                this.$(".collaborative_give_hand").hide();
+                this.$(".collaborative_kick").hide();
                 this.$(".collaborative_withdraw_invitation").hide();
             }
 
