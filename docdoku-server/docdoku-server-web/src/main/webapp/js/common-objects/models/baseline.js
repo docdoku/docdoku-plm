@@ -1,41 +1,63 @@
+'use strict';
 define([],function(){
 
     var Baseline = Backbone.Model.extend({
 
         getId:function(){
-            return this.get("id");
+            return this.get('id');
         },
         getName:function(){
-            return this.get("name");
+            return this.get('name');
         },
         getType:function(){
-            return this.get("type");
+            return this.get('type');
         },
         isReleased:function(){
-            return this.get("type")=="RELEASED";
+            return this.get('type')==='RELEASED';
         },
         getDescription:function(){
-            return this.get("description");
+            return this.get('description');
         },
         getCreationDate:function(){
-            return this.get("creationDate");
+            return this.get('creationDate');
         },
         getBaselinedParts:function(){
-            return this.get("baselinedParts");
+            return this.get('baselinedParts');
         },
         getConfigurationItemId: function(){
-            return this.get("configurationItemId");
+            return this.get('configurationItemId');
         },
         setConfigurationItemId: function(configurationItemId){
-            this.set("configurationItemId",configurationItemId);
+            this.set('configurationItemId',configurationItemId);
         },
+        getBaselinePartsWithReference:function(ref,callback){
+            var baselinedParts=null;
+            $.ajax({
+                type: 'GET',
+                url: this.url()+'/parts?q='+ref,
+                contentType: 'application/json; charset=utf-8',
+                success: function(data){
+                    baselinedParts=data;
+                    if(callback && callback.success){
+                        callback.success(data);
+                    }
+                },
+                error: function(data){
+                    if(callback && callback.error){
+                        callback.error(data);
+                    }
+                }
+            });
+            return baselinedParts;
+        },
+
         duplicate:function(args){
             var _this = this;
             $.ajax({
-                type: "POST",
-                url: this.url()+"/duplicate",
+                type: 'POST',
+                url: this.url()+'/duplicate',
                 data: JSON.stringify(args.data),
-                contentType: "application/json; charset=utf-8",
+                contentType: 'application/json; charset=utf-8',
                 success: function(data){
                     var duplicatedBaseline = new Baseline(data);
                     duplicatedBaseline.setConfigurationItemId(_this.getConfigurationItemId());

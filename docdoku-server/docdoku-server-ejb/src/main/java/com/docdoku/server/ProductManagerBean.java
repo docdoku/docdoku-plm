@@ -1003,6 +1003,14 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         return new ArrayList<>(productInstanceIteration.getPartCollection().getBaselinedParts().values());
     }
 
+    @Override
+    public List<BaselinedPart> getProductInstanceIterationPartWithReference(ProductInstanceIterationKey productInstanceIterationKey, String q, int maxResults) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductInstanceIterationNotFoundException, ProductInstanceMasterNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(productInstanceIterationKey.getProductInstanceMaster().getInstanceOf().getWorkspace());
+        ProductInstanceIterationDAO productInstanceIterationDAO = new ProductInstanceIterationDAO(new Locale(user.getLanguage()),em);
+        ProductInstanceIteration productInstanceIteration = productInstanceIterationDAO.loadProductInstanceIteration(productInstanceIterationKey);
+        return productInstanceIterationDAO.findBaselinedPartWithReferenceLike(productInstanceIteration.getPartCollection().getId(), q, maxResults);
+    }
+
     @RolesAllowed("users")
     @Override
     public ProductInstanceMaster createProductInstance(ConfigurationItemKey configurationItemKey, String serialNumber, int baselineId) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, BaselineNotFoundException, CreationException, ProductInstanceAlreadyExistsException {
@@ -1612,6 +1620,15 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 throw new ConfigurationItemNotReleasedException(locale,partIteration.getPartRevisionKey().toString());
             }
         }
+    }
+
+    @RolesAllowed("users")
+    @Override
+    public List<BaselinedPart> getBaselinedPartWithReference(int baselineId, String q, int maxResults) throws BaselineNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+        BaselineDAO baselineDAO = new BaselineDAO(em);
+        Baseline baseline = baselineDAO.loadBaseline(baselineId);
+        User user = userManager.checkWorkspaceReadAccess(baseline.getConfigurationItem().getWorkspaceId());
+        return new BaselineDAO(new Locale(user.getLanguage()), em).findBaselinedPartWithReferenceLike(baseline.getPartCollection().getId(), q, maxResults);
     }
 
     @RolesAllowed("users")

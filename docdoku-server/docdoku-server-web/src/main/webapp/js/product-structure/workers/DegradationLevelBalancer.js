@@ -56,7 +56,7 @@ var availableLevels  = [0, 1];
                 return i;
         }
 
-        function degradeLevel(explodedListElements){
+        function degradeLevel(explodedListElements,i){
             _.each(explodedListElements,function(instance){
                 var q = getBestQuality(instance,i);
                 if (q !== undefined && instance.globalRating !== -1) {
@@ -76,7 +76,7 @@ var availableLevels  = [0, 1];
         }
 
         for(var i = 0, l=explodedShortenList.length; i<l; i++){
-            degradeLevel(explodedShortenList[i]);
+            degradeLevel(explodedShortenList[i],i);
         }
 
         if(debug){console.log("[Worker] Instances: " + onScene );}

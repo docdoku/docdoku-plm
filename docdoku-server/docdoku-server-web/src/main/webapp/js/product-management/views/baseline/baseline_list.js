@@ -1,8 +1,8 @@
+'use strict';
 define([
-    "text!templates/baseline/baseline_list.html",
     "common-objects/collections/baselines",
     "views/baseline/baseline_list_item"
-],function(template,Baselines,BaselineListItemView){
+],function(Baselines,BaselineListItemView){
 
     var BaselineListView = Backbone.View.extend({
 

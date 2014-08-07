@@ -77,7 +77,7 @@ define(
 
             this.bindDomElements();
             this.menuResizable();
-            new NavBarView();
+            App.navBar = new NavBarView();
 
             this.searchView = new SearchView().render();
 

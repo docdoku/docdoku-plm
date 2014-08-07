@@ -11,9 +11,9 @@ define([
         className:"baselined-part-item",
 
         events:{
-            "change input[name=iteration]":"changeIteration",
-            "change input[name=version]":"changeVersion",
-            "change input[name=exclude]":"excludePart"
+            "change .iteration-input":"changeIteration",
+            "change .version-input":"changeVersion",
+            "change input.exclude-input":"excludePart"
         },
 
         template:Mustache.compile(template),

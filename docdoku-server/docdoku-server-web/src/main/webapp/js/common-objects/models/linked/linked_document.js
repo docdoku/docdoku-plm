@@ -1,3 +1,4 @@
+'use strict';
 define(function () {
     var linkedDocument = Backbone.Model.extend({
 
@@ -34,13 +35,13 @@ define(function () {
 
         getDocumentMasterPermalink : function(){
             return encodeURI(
-                window.location.origin
-                    + "/documents/"
-                    + this.getWorkspace()
-                    + "/"
-                    + this.getDocumentMasterId()
-                    + "/"
-                    + this.getDocumentRevisionVersion()
+                window.location.origin +
+                    "/documents/" +
+                    this.getWorkspace() +
+                    "/" +
+                    this.getDocumentMasterId() +
+                    "/" +
+                    this.getDocumentRevisionVersion()
             );
         }
     });

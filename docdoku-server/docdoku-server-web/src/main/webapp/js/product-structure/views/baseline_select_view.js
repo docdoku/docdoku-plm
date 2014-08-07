@@ -1,20 +1,22 @@
+/*global APP_CONFIG*/
+'use strict';
 define([
-    "common-objects/collections/baselines",
-    "text!templates/baseline_select.html",
-    "i18n!localization/nls/product-structure-strings"
-],function(Baselines,template,i18n){
+    'common-objects/collections/baselines',
+    'text!templates/baseline_select.html',
+    'i18n!localization/nls/product-structure-strings'
+], function (Baselines, template, i18n) {
 
     var BaselineSelectView = Backbone.View.extend({
 
         template : Mustache.compile(template),
 
         events:{
-            "change select" : "onSelectorChanged"
+            'change select' : 'onSelectorChanged'
         },
 
         initialize:function(){
             this.collection = new Baselines({},{productId:APP_CONFIG.productId});
-            this.listenToOnce(this.collection,"reset",this.onCollectionReset);
+            this.listenToOnce(this.collection,'reset',this.onCollectionReset);
         },
 
         render:function(){
@@ -25,18 +27,18 @@ define([
         },
 
         bindDomElements:function(){
-            this.$select = this.$("select");
+            this.$select = this.$('select');
         },
 
         onCollectionReset:function(){
             var that = this ;
             this.collection.each(function(baseline){
-                that.$select.append("<option value='"+baseline.getId()+"'>"+baseline.getName()+"</option>");
+                that.$select.append('<option value="'+baseline.getId()+'">'+baseline.getName()+'</option>');
             });
         },
 
         onSelectorChanged:function(e){
-            this.trigger("config_spec:changed", e.target.value);
+            this.trigger('config_spec:changed', e.target.value);
         }
 
     });

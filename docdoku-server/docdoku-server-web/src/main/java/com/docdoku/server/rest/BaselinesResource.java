@@ -20,6 +20,7 @@
 package com.docdoku.server.rest;
 
 import com.docdoku.core.configuration.Baseline;
+import com.docdoku.core.configuration.BaselinedPart;
 import com.docdoku.core.exceptions.ApplicationException;
 import com.docdoku.core.product.ConfigurationItemKey;
 import com.docdoku.core.product.PartIterationKey;
@@ -36,7 +37,6 @@ import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -139,6 +139,24 @@ public class BaselinesResource {
             baselineDTO.setConfigurationItemId(baseline.getConfigurationItem().getId());
             baselineDTO.setBaselinedParts(Tools.mapBaselinedPartsToBaselinedPartDTO(baseline));
             return baselineDTO;
+        } catch (ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
+    }
+
+    @GET
+    @Path("{baselineId}/parts")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<BaselinedPartDTO> getBaselineParts(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @PathParam("baselineId") int baselineId, @QueryParam("q") String q){
+        try {
+            int maxResults = 8;
+            List<BaselinedPart> baselinedPartList = productService.getBaselinedPartWithReference(baselineId, q, maxResults);
+
+            List<BaselinedPartDTO> baselinedPartDTOList = new ArrayList<>();
+            for(BaselinedPart baselinedPart:baselinedPartList){
+                baselinedPartDTOList.add(Tools.mapBaselinedPartToBaselinedPartDTO(baselinedPart));
+            }
+            return baselinedPartDTOList;
         } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }

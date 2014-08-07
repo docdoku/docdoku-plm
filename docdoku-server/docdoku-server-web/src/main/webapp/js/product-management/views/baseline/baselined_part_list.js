@@ -1,49 +1,93 @@
+'use strict';
 define([
+    "text!templates/baseline/baselined_part_list.html",
+    "i18n!localization/nls/baseline-strings",
     "views/baseline/baselined_part_list_item",
     "common-objects/models/baselined_part"
-],function(BaselinedPartListItemView,BaselinedPart){
+],function(template,i18n,BaselinedPartListItemView,BaselinedPart){
 
     var BaselinedPartsView = Backbone.View.extend({
+        tagName: 'div',
 
-        tagName:"ul",
+        className:'baselined-parts-list',
+        template: Mustache.compile(template),
 
-        className:"baselined-parts",
+        removeSubviews: function(){
+            _(this.baselinedPartsViews).invoke('remove');
+        },
 
         initialize:function(){
+            _.bindAll(this);
             this.isForBaseline = (this.options.isForBaseline) ? this.options.isForBaseline : false;
             this.isLocked = (this.options.isLocked) ? this.options.isLocked : false;
+            this.$el.on('remove',this.removeSubviews());
+            this.initPartsList();
         },
 
         render:function(){
-            this.initItemViews();
+            var _this = this ;
+            this.$el.html(this.template({i18n:i18n}));
+            this.bindDomElements();
+            this.resetList();
+            this.partReferenceInput.on('input',function(){
+                _this.resetList();
+            });
             return this;
         },
 
-        initItemViews:function(){
-            var that = this ;
+        bindDomElements: function() {
+            this.partReferenceInput = this.$('.baselined-parts-reference-typehead');
+            this.partsUL = this.$('.baselined-parts');
+        },
+
+        initPartsList: function(){
+            var _this = this;
+            var collection = this.model.getBaselinedParts();
             this.baselinedParts = [];
-            this.baselinedPartsViews = [];
+            _.each(collection, function (bpData) {
+                var baselinedPart = new BaselinedPart(bpData);
+                _this.baselinedParts.push(baselinedPart);
+            });
+        },
 
-            this.$el.empty();
-
+        resetList: function(){
+            var _this = this ;
             if(this.model) {
-                _.each(this.model.getBaselinedParts(), function (bpData) {
-                    var baselinedPart = new BaselinedPart(bpData);
+                if(this.partReferenceInput.val()){
+                    this.model.getBaselinePartsWithReference(this.partReferenceInput.val(),{
+                        success: _this.updateList
+                    });
+                }else{
+                    this.updateList(this.model.getBaselinedParts());
+                }
+            }
+        },
+
+        updateList: function(collection){
+            var _this = this ;
+            this.removeSubviews();
+
+            this.baselinedPartsViews = [];
+            _.each(collection, function (bpData) {
+                var baselinedPart = _.find(_this.baselinedParts,function(bp){
+                    return bp.getNumber() === bpData.number;
+                });
+                if(baselinedPart){
                     var data = {
                         model: baselinedPart
                     };
-                    if (that.isForBaseline) {
-                        data.released = that.model.isReleased();
-                        data.isForBaseline = that.isForBaseline;
+                    if (_this.isForBaseline) {
+                        data.released = _this.model.isReleased();
+                        data.isForBaseline = _this.isForBaseline;
                     }else{
-                        data.isLocked =that.isLocked;
+                        data.isLocked =_this.isLocked;
                     }
+
                     var baselinedPartItemView = new BaselinedPartListItemView(data).render();
-                    that.baselinedParts.push(baselinedPart);
-                    that.baselinedPartsViews.push(baselinedPartItemView);
-                    that.$el.append(baselinedPartItemView.$el);
-                });
-            }
+                    _this.baselinedPartsViews.push(baselinedPartItemView);
+                    _this.partsUL.append(baselinedPartItemView.$el);
+                }
+            });
         },
 
         getBaselinedParts:function(){
