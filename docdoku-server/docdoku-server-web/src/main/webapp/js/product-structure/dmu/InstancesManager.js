@@ -325,8 +325,9 @@ function (LoaderManager, async) {
         };
 
         this.clear = function(){
-
-            console.log('clearing');
+            if(App.debug){
+	            console.log('[InstanceManager] Clearing Scene');
+            }
 
             _this.xhrQueue.kill();
             _this.loadQueue.kill();

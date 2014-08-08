@@ -34,7 +34,10 @@ var Context = {
         instances = {};
         instancesCount = 0;
         newData = true;
-        console.log('CLEARED')
+        if(debug){
+		    console.log('[Worker] CLEARED');
+        }
+
     },
     addInstance: function (instance) {
         if (typeof(instances[instance.id]) === 'undefined') {

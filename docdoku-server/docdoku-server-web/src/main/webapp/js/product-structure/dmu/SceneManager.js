@@ -499,7 +499,11 @@ define([
                 unsetSelectionBox();
             }
             _this.scene.remove(mesh);
-            console.log('removed    ')
+
+            if(App.debug){
+		        console.log('[SceneManager] mesh removed');
+            }
+
             _this.reDraw();
         }
 
