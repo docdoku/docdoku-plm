@@ -284,8 +284,9 @@ define(
 
         onConfigSpecChange:function(configSpec){
             window.config_spec = configSpec;
-            Backbone.Events.trigger("refresh_tree");
             App.sceneManager.clear();
+            App.instancesManager.clear();
+            Backbone.Events.trigger("refresh_tree");
         },
 
         onMeshSelected:function(mesh){

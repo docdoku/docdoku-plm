@@ -300,14 +300,11 @@ define([
         }
 
         function applyExplosionCoeff(mesh) {
-            if (!mesh.geometry.boundingBox) {
+            if (!mesh.absoluteCentroid) {
                 mesh.geometry.computeBoundingBox();
                 mesh.geometry.computeBoundingSphere();
-                mesh.geometry.boundingBox.centroid = new THREE.Vector3(
-                        (mesh.geometry.boundingBox.max.x + mesh.geometry.boundingBox.min.x) * 0.5,
-                        (mesh.geometry.boundingBox.max.y + mesh.geometry.boundingBox.min.y) * 0.5,
-                        (mesh.geometry.boundingBox.max.z + mesh.geometry.boundingBox.min.z) * 0.5
-                );
+                var instance = App.instancesManager.getInstance(mesh.uuid);
+                mesh.absoluteCentroid = mesh.geometry.boundingBox.center().clone().applyMatrix4(instance.matrix);
             }
 
             // Replace before translating
@@ -316,9 +313,9 @@ define([
             mesh.position.z = mesh.initialPosition.z;
             // Translate instance
             if (explosionCoeff !== 0) {
-                mesh.translateX(mesh.geometry.boundingBox.centroid.x * explosionCoeff);
-                mesh.translateY(mesh.geometry.boundingBox.centroid.y * explosionCoeff);
-                mesh.translateZ(mesh.geometry.boundingBox.centroid.z * explosionCoeff);
+                mesh.translateX(mesh.absoluteCentroid.x * explosionCoeff);
+                mesh.translateY(mesh.absoluteCentroid.y * explosionCoeff);
+                mesh.translateZ(mesh.absoluteCentroid.z * explosionCoeff);
             }
             mesh.updateMatrix();
         }
@@ -478,6 +475,7 @@ define([
         function removeMesh(meshId) {
             var mesh = meshesIndexed[meshId];
             delete meshesIndexed[meshId];
+
             if(_this.editedMeshes.indexOf(meshId) !== -1){
                 _this.editedMeshesLeft.push({
                     uuid:meshId,
@@ -490,15 +488,18 @@ define([
                     _this.deleteTransformControls();
                 }
             }
+
             if (!mesh) {
                 return;
             }
+
             if (meshMarkedForSelection === meshId) {
                 Backbone.Events.trigger("selection:reset");
                 meshMarkedForSelection = null;
                 unsetSelectionBox();
             }
             _this.scene.remove(mesh);
+            console.log('removed    ')
             _this.reDraw();
         }
 
@@ -1147,7 +1148,7 @@ define([
             _this.pathForIFrameLink = pathForIFrame;
         };
         this.clear = function () {
-            App.instancesManager.clear();
+
         };
 
         this.removeMeshById = function (meshId) {
