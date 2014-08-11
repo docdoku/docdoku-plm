@@ -57,16 +57,8 @@
                 debug: false,
                 instancesManager : null,
                 sceneManager : null,
-
-
-                setDebug:function(state){
-                    App.debug = state;
-                    if(state){
-                        $("body").addClass("debug");
-                    }else{
-                        $("body").removeClass("debug");
-                    }
-                },
+                logLevel: {ALL:-1, DEBUG:0,INFO:1,WARN:2,ERROR:3,FATAL:4,OFF:5},
+                logType: {ALL:-1, DEFAULT:0, WORKER:1, WEBSOCKET:2},
 
                 WorkerManagedValues: {
                     maxInstances: 500,
@@ -91,7 +83,42 @@
                 }
 
             };
+            App.currentLogLevel = App.logType.ERROR;
+            App.currentLogType  = App.logType.DEFAULT;
+            App.setDebug = function(state, logLevel, logType){
+                if(typeof(logLevel)==='undefined') logLevel = App.logType.DEBUG;
+                if(typeof(logType)==='undefined') logType = App.logType.DEFAULT;
 
+                App.debug = state;
+                App.currentLogLevel=logLevel;
+                App.currentLogType=logType;
+                if(state){
+                    $("body").addClass("debug");
+                }else{
+                    $("body").removeClass("debug");
+                }
+            };
+
+            App.log = function(message, logLevel, logType){
+                if(typeof(logLevel)==='undefined' || logLevel===App.logLevel.ALL) logLevel = App.logType.INFO;
+                if(typeof(logType)==='undefined'|| logType===App.logType.ALL) logType = App.logType.DEFAULT;
+
+                if(logLevel > App.logLevel &amp;&amp; (App.currentLogType===App.logType.ALL || logType===App.logType.DEFAULT || logType===App.currentLogType )){
+                    var logPrefix;
+                    switch(logType){
+                        case App.logType.WEBSOCKET: logPrefix="DocdokuPLM (Websocket):";break;
+                        case App.logType.WORKER: logPrefix="DocdokuPLM (Worker):";break;
+                        default : logPrefix="DocdokuPLM :";break;
+                    }
+                    switch(logLevel){
+                        case App.logLevel.DEBUG : console.log("[DEBUG] "+logPrefix+" "+message, 'color:#0088cc');break;
+                        case App.logLevel.INFO : console.log("[INFO] "+logPrefix+" "+message);break;
+                        case App.logLevel.WARN : console.log("[WARN] "+logPrefix+" "+message, 'color:#FAFFBD');break;
+                        case App.logLevel.ERROR : console.log("[ERROR] "+logPrefix+" "+message,'color:#FF9933' );break;
+                        case App.logLevel.FATAL : console.log("[FATAL] "+logPrefix+" "+message, 'color:#FF0000');break;
+                    }
+                }
+            };
 
             $(document).ready(function () {
 

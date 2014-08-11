@@ -1,4 +1,5 @@
-/*global debug,WorkerManagedValues*/
+/*global App,debug,WorkerManagedValues*/
+'use strict';
 var DegradationLevelBalancer = {};
 
 // Restrict the number of qualities asked to ADS
@@ -55,10 +56,10 @@ var availableLevels  = [0, 1];
                 return i;
         }
 
-        for(var i = 0, l=explodedShortenList.length; i<l; i++){
-            _.each(explodedShortenList[i], function(instance){
+        function degradeLevel(explodedListElements,i){
+            _.each(explodedListElements,function(instance){
                 var q = getBestQuality(instance,i);
-                if (q !== undefined && instance.globalRating != -1) {
+                if (q !== undefined && instance.globalRating !== -1) {
                     onScene++;
                     directives[instance.id] = {
                         instance: instance,
@@ -73,6 +74,11 @@ var availableLevels  = [0, 1];
                 }
             });
         }
+
+        for(var i = 0, l=explodedShortenList.length; i<l; i++){
+            degradeLevel(explodedShortenList[i],i);
+        }
+
         if(debug){console.log("[Worker] Instances: " + onScene );}
 
         return {

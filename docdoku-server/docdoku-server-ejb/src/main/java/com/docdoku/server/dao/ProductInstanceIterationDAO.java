@@ -20,6 +20,7 @@
 
 package com.docdoku.server.dao;
 
+import com.docdoku.core.configuration.BaselinedPart;
 import com.docdoku.core.configuration.ProductInstanceIteration;
 import com.docdoku.core.configuration.ProductInstanceIterationKey;
 import com.docdoku.core.configuration.ProductInstanceMasterKey;
@@ -27,6 +28,7 @@ import com.docdoku.core.exceptions.ProductInstanceIterationNotFoundException;
 import com.docdoku.core.exceptions.ProductInstanceMasterNotFoundException;
 
 import javax.persistence.EntityManager;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -61,5 +63,19 @@ public class ProductInstanceIterationDAO {
         } else {
             return productInstanceIteration;
         }
+    }
+
+    public List<BaselinedPart> findBaselinedPartWithReferenceLike(int collectionId, String q, int maxResults) {
+        List<BaselinedPart> baselinedPartList = em.createNamedQuery("BaselinedPart.findByReference",BaselinedPart.class)
+                .setParameter("id", "%" + q + "%")
+                .getResultList();
+        List<BaselinedPart> returnList = new ArrayList<>();
+        for(BaselinedPart baselinedPart : baselinedPartList){
+            if(baselinedPart.getPartCollection().getId()==collectionId){
+                returnList.add(baselinedPart);
+                if(returnList.size()>=maxResults){break;}
+            }
+        }
+        return returnList;
     }
 }

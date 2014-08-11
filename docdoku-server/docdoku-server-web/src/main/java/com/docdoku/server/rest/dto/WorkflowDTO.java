@@ -33,7 +33,7 @@ public class WorkflowDTO implements Serializable, Comparable<WorkflowDTO> {
     private Date abortedDate;
 
     public WorkflowDTO() {
-        activities = new ArrayList<ActivityDTO>();
+        activities = new ArrayList<>();
     }
 
     public List<ActivityDTO> getActivities() {
@@ -94,5 +94,17 @@ public class WorkflowDTO implements Serializable, Comparable<WorkflowDTO> {
     @Override
     public int compareTo(WorkflowDTO o) {
         return o.getAbortedDate().compareTo(this.getAbortedDate());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        WorkflowDTO that = (WorkflowDTO) o;
+        return id == that.id
+                && !(abortedDate != null ? !abortedDate.equals(that.abortedDate) : that.abortedDate != null)
+                && !(activities != null ? !activities.equals(that.activities) : that.activities != null)
+                && !(finalLifeCycleState != null ? !finalLifeCycleState.equals(that.finalLifeCycleState) : that.finalLifeCycleState != null);
+
     }
 }

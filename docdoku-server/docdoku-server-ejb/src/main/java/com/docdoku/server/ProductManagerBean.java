@@ -1003,6 +1003,14 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         return new ArrayList<>(productInstanceIteration.getPartCollection().getBaselinedParts().values());
     }
 
+    @Override
+    public List<BaselinedPart> getProductInstanceIterationPartWithReference(ProductInstanceIterationKey productInstanceIterationKey, String q, int maxResults) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductInstanceIterationNotFoundException, ProductInstanceMasterNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(productInstanceIterationKey.getProductInstanceMaster().getInstanceOf().getWorkspace());
+        ProductInstanceIterationDAO productInstanceIterationDAO = new ProductInstanceIterationDAO(new Locale(user.getLanguage()),em);
+        ProductInstanceIteration productInstanceIteration = productInstanceIterationDAO.loadProductInstanceIteration(productInstanceIterationKey);
+        return productInstanceIterationDAO.findBaselinedPartWithReferenceLike(productInstanceIteration.getPartCollection().getId(), q, maxResults);
+    }
+
     @RolesAllowed("users")
     @Override
     public ProductInstanceMaster createProductInstance(ConfigurationItemKey configurationItemKey, String serialNumber, int baselineId) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, BaselineNotFoundException, CreationException, ProductInstanceAlreadyExistsException {
@@ -1389,9 +1397,14 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed({"users","admin"})
     @Override
-    public int getTotalNumberOfParts(String pWorkspaceId) throws AccessRightException, WorkspaceNotFoundException, AccountNotFoundException {
-        Account account = userManager.checkAdmin(pWorkspaceId);
-        return new PartRevisionDAO(new Locale(account.getLanguage()), em).getTotalNumberOfParts(pWorkspaceId);
+    public int getTotalNumberOfParts(String pWorkspaceId) throws AccessRightException, WorkspaceNotFoundException, AccountNotFoundException, UserNotFoundException, UserNotActiveException {
+        Locale locale = Locale.getDefault();
+        if(!userManager.isCallerInRole("admin")){
+            User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
+            locale = new Locale(user.getLanguage());
+        }
+        //Todo count only part you can see
+        return new PartRevisionDAO(locale, em).getTotalNumberOfParts(pWorkspaceId);
     }
 
     @RolesAllowed("users")
@@ -1608,6 +1621,15 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 throw new ConfigurationItemNotReleasedException(locale,partIteration.getPartRevisionKey().toString());
             }
         }
+    }
+
+    @RolesAllowed("users")
+    @Override
+    public List<BaselinedPart> getBaselinedPartWithReference(int baselineId, String q, int maxResults) throws BaselineNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+        BaselineDAO baselineDAO = new BaselineDAO(em);
+        Baseline baseline = baselineDAO.loadBaseline(baselineId);
+        User user = userManager.checkWorkspaceReadAccess(baseline.getConfigurationItem().getWorkspaceId());
+        return new BaselineDAO(new Locale(user.getLanguage()), em).findBaselinedPartWithReferenceLike(baseline.getPartCollection().getId(), q, maxResults);
     }
 
     @RolesAllowed("users")
@@ -1974,18 +1996,6 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             return userManager.checkWorkspaceWriteAccess(workspaceId);
         }
         if(partRevision.getACL().hasWriteAccess(user)){                                                                 // Check if the ACL grant write access
-            return user;
-        }
-        throw new AccessRightException(new Locale(user.getLanguage()),user);                                            // Else throw a AccessRightException
-    }
-
-    private User checkPartRevisionReadAccess(PartRevisionKey partRevisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException, AccessRightException {
-        User user = userManager.checkWorkspaceReadAccess(partRevisionKey.getPartMaster().getWorkspace());
-        if(user.isAdministrator()){                                                                                     // Check if it is the workspace's administrator
-            return user;
-        }
-        PartRevision partRevision = new PartRevisionDAO(em).loadPartR(partRevisionKey);
-        if(partRevision.getACL()==null || partRevision.getACL().hasReadAccess(user)){                                   // Check if there haven't ACL or if the ACL grant read access
             return user;
         }
         throw new AccessRightException(new Locale(user.getLanguage()),user);                                            // Else throw a AccessRightException

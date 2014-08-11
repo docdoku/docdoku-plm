@@ -265,18 +265,22 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
     @RolesAllowed({"users","admin"})
     @Override
     public Workspace getWorkspace(String workspaceId) throws WorkspaceNotFoundException {
-
+        Locale locale= Locale.getDefault();
         if(ctx.isCallerInRole("admin")){
-            return new WorkspaceDAO(em).loadWorkspace(workspaceId);
+            return new WorkspaceDAO(locale,em).loadWorkspace(workspaceId);
         }
 
-        User[] users = new UserDAO(em).getUsers(ctx.getCallerPrincipal().toString());
+        User[] users = new UserDAO(locale,em).getUsers(ctx.getCallerPrincipal().toString());
         Workspace workspace=null;
         for (User user : users) {
             if (user.getWorkspace().getId().equals(workspaceId)) {
                 workspace = user.getWorkspace();
                 break;
             }
+        }
+
+        if(workspace==null){
+            throw new WorkspaceNotFoundException(locale,workspaceId);
         }
 
         return workspace;

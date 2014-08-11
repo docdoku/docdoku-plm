@@ -176,9 +176,16 @@ public class ProductInstancesResource {
     @GET
     @Path("{serialNumber}/iterations/{iteration}/baselined-parts")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<BaselinedPartDTO> getProductInstanceBaselinedPart(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, @PathParam("iteration") int iteration){
+    public List<BaselinedPartDTO> getProductInstanceBaselinedPart(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, @PathParam("iteration") int iteration, @QueryParam("q") String q){
         try {
-            List<BaselinedPart> baselinedParts = productService.getProductInstanceIterationBaselinedPart(new ProductInstanceIterationKey(serialNumber, workspaceId, configurationItemId, iteration));
+            List<BaselinedPart> baselinedParts;
+            if(q!=null){
+                int maxResults = 8;
+                baselinedParts = productService.getProductInstanceIterationPartWithReference(new ProductInstanceIterationKey(serialNumber, workspaceId, configurationItemId, iteration), q, maxResults);
+            }else{
+                baselinedParts = productService.getProductInstanceIterationBaselinedPart(new ProductInstanceIterationKey(serialNumber, workspaceId, configurationItemId, iteration));
+            }
+
             List<BaselinedPartDTO> baselinedPartDTOList = new ArrayList<>();
             for(BaselinedPart baselinedPart : baselinedParts){
                 baselinedPartDTOList.add(Tools.mapBaselinedPartToBaselinedPartDTO(baselinedPart));

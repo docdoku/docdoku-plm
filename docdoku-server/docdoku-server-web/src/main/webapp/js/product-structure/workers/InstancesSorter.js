@@ -1,4 +1,5 @@
-/*global WorkerManagedValues,Context,debug*/
+/*global App,WorkerManagedValues,Context,debug*/
+'use strict';
 var InstancesSorter = {};
 
 (function (IS) {
@@ -74,11 +75,11 @@ var InstancesSorter = {};
                 return;
             }
 
-            result.minDist = (result.minDist==0) ? dist : Math.min(result.minDist,dist);
+            result.minDist = (result.minDist===0) ? dist : Math.min(result.minDist,dist);
             result.maxDist = Math.max(result.maxDist,dist);
-            result.minAngle = (result.minAngle==0) ? angle : Math.min(result.minAngle,angle);
+            result.minAngle = (result.minAngle===0) ? angle : Math.min(result.minAngle,angle);
             result.maxAngle = Math.max(result.maxAngle,angle);
-            result.minPSize = (result.minPSize==0) ? projectedSize : Math.min(result.minPSize,projectedSize);
+            result.minPSize = (result.minPSize===0) ? projectedSize : Math.min(result.minPSize,projectedSize);
             result.maxPSize = Math.max(result.maxPSize,projectedSize);
 
             instance.dist=dist;

@@ -20,6 +20,9 @@
 
 package com.docdoku.server.http;
 
+import com.docdoku.server.jsf.actions.AccountBean;
+
+import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -29,12 +32,17 @@ import java.io.IOException;
 
 @WebServlet(name = "HomePageServlet", urlPatterns = {"/home"})
 public class HomePageServlet extends HttpServlet {
-
+    @Inject
+    private AccountBean accountBean;
 
     private void handleRequest(HttpServletRequest pRequest,
             HttpServletResponse pResponse)
             throws ServletException, IOException {
-        pResponse.sendRedirect(pRequest.getContextPath() + "/document-management/");
+        if(accountBean.isSuperAdmin()){
+            pResponse.sendRedirect(pRequest.getContextPath() + "/faces/admin/workspace/workspacesMenu.xhtml");
+        }else{
+            pResponse.sendRedirect(pRequest.getContextPath() + "/document-management/");
+        }
     }
     @Override
     protected void doGet(HttpServletRequest pRequest,

@@ -24,6 +24,7 @@ import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.common.UserKey;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.exceptions.UserNotFoundException;
+import com.docdoku.core.exceptions.WorkspaceNotFoundException;
 import com.docdoku.core.services.IUserManagerLocal;
 import org.apache.commons.lang.StringUtils;
 
@@ -32,13 +33,12 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
-import java.util.Map;
-import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 public class PMServlet extends HttpServlet {
@@ -64,8 +64,7 @@ public class PMServlet extends HttpServlet {
 
         try {
             workspaceID = URLDecoder.decode(pathInfos[offset], "UTF-8");
-        } catch (IndexOutOfBoundsException ex) {
-        }
+        } catch (IndexOutOfBoundsException ignored) {}
 
         if (workspaceID == null) {
             Workspace[] workspaces = userManager.getWorkspacesWhereCallerIsActive();
@@ -89,19 +88,22 @@ public class PMServlet extends HttpServlet {
                     groups[i] = "\""+userGroups[i].toString()+"\"";
                 }
                 pRequest.setAttribute("groups", StringUtils.join(groups, ","));
-            } catch (Exception ex) {
+                pRequest.setAttribute("workspaceAdmin", workspaceAdmin);
+                pRequest.setAttribute("urlRoot", getUrlRoot(pRequest));
+                pRequest.setAttribute("workspaceID", workspaceID);
+                pRequest.setAttribute("login", login);
+                pRequest.getRequestDispatcher("/faces/product-management/index.xhtml").forward(pRequest, pResponse);
+            }catch(UserNotFoundException | WorkspaceNotFoundException ex){
+                Logger.getLogger(PSServlet.class.getName()).log(Level.WARNING, String.valueOf(ex));
+                pResponse.sendRedirect(pRequest.getContextPath() + "/faces/admin/workspace/workspacesMenu.xhtml");
+            }catch (Exception ex) {
                 throw new ServletException("error while fetching user data.", ex);
             }
-            pRequest.setAttribute("workspaceAdmin", workspaceAdmin);
-            pRequest.setAttribute("urlRoot", getUrlRoot(pRequest));
-            pRequest.setAttribute("workspaceID", workspaceID);
-            pRequest.setAttribute("login", login);
-            pRequest.getRequestDispatcher("/faces/product-management/index.xhtml").forward(pRequest, pResponse);
         }
     }
 
     private static String getUrlRoot(HttpServletRequest pRequest) {
-        URL url = null;
+        URL url;
         try {
             url = new URL(new URL(pRequest.getRequestURL().toString()),"/");
         } catch (MalformedURLException e) {

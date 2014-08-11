@@ -17,7 +17,7 @@
 <composite:implementation>
     <h:form style="#{cc.attrs.formStyle}">
         <div id="header" class="navbar navbar-fixed-top">
-
+            <!-- Collapse Button For Responsive View -->
             <a class="btn btn-navbar" id="collapseButton" data-toggle="collapse" data-target=".nav-collapse">
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
@@ -25,23 +25,15 @@
             </a>
 
             <div class="navbar-inner">
-                <img id="brand-logo" alt="docdoku_plm" src="/images/plm_logo2.png"/>
+                <a id="brand-title" class="brand" href="/">
+                    <img id="brand-logo" alt="docdoku_plm" src="/images/plm_logo2.png"/>
+                    <span id="brand-name">DocDoku<strong>PLM</strong></span>
+                </a>
 
-                <c:choose>
-                    <c:when test="#{accountBean.superAdmin==true}">
-                        <a id="brand-title" class="brand" href="/faces/admin/workspace/workspacesMenu.xhtml">
-                            DocDoku<strong>PLM</strong>
-                        </a>
-                    </c:when>
-                    <c:otherwise>
-                        <a id="brand-title" class="brand" href="/">
-                            DocDoku<strong>PLM</strong>
-                        </a>
-                    </c:otherwise>
-                </c:choose>
                 <div class="nav-collapse collapse">
                     <div class="container-fluid">
                         <c:choose>
+                            <!-- When no user connected -->
                             <c:when test="#{request.remoteUser==null}">
                                 <ul class="nav">
                                     <li><a href="#{request.contextPath}/"><i
@@ -65,13 +57,15 @@
                                     </li>
                                 </ul>
                             </c:when>
+                            <!-- A user is connected -->
                             <c:otherwise>
                                 <c:choose>
+                                    <!-- The user is root -->
                                     <c:when test="#{accountBean.superAdmin==true}">
                                     </c:when>
+                                    <!-- The user is a common user -->
                                     <c:otherwise>
                                         <ul class="nav breadcrumb-menu" id="header_left_menu">
-
                                             <!-- current workspace & workspaces dropdown menu-->
                                             <li class="dropdown" id="workspace_container">
                                                 <a href="#" id="workspace_choose_menu" class="dropdown-toggle" data-toggle="dropdown">
@@ -81,6 +75,10 @@
                                                     <span class="caret hidden-desktop"></span>
                                                 </a>
                                                 <ul class="dropdown-menu">
+                                                    <li class="dropdown-section-title"><h5>
+                                                        <i class="fa fa-graduation-cap"></i>
+                                                        #{i18nTemplate['toplinks.workspaces.admin']}
+                                                    </h5></li>
                                                     <c:forEach var="item" items="#{accountBean.administeredWorkspaces}">
                                                         <li class="dropdown-submenu visible-desktop">
                                                             <a href="#{request.contextPath}/document-management/${item.value.id}#folders">
@@ -96,21 +94,26 @@
                                                                 <!--li><a href="#{request.contextPath}/search/${item.value.id}">#{i18nTemplate['toplinks.search']}</a></li-->
                                                             </ul>
                                                         </li>
-                                                        <li class="dropdown-submenu hidden-desktop">
-                                                            <a href="#">
+                                                        <li class="dropdown-sub-menu hidden-desktop">
+                                                            <div class="dropdown-sub-menu-title">
                                                                 <c:if test="${workspaceID==item.value.id}">
                                                                     <i class="fa fa-check"></i>
                                                                 </c:if>
-                                                                ${item.value.id}
-                                                            </a>
-                                                            <ul class="dropdown-menu">
-                                                                <li><a href="#{request.contextPath}/document-management/${item.value.id}#folders">#{i18nTemplate['toplinks.document']}</a></li>
-                                                                <li><a href="#{request.contextPath}/product-management/${item.value.id}#products">#{i18nTemplate['toplinks.product']}</a></li>
-                                                                <li><a href="#{request.contextPath}/change-management/${item.value.id}#workflows">#{i18nTemplate['toplinks.change']}</a></li>
-                                                                <!--li><a href="#{request.contextPath}/search/${item.value.id}">#{i18nTemplate['toplinks.search']}</a></li-->
+                                                                <span>${item.value.id}</span>
+                                                                <i class="fa fa-graduation-cap"></i>
+                                                            </div>
+                                                            <ul class="dropdown-inline-menu">
+                                                                <li><a href="#{request.contextPath}/document-management/${item.value.id}#folders" title="#{i18nTemplate['toplinks.document']}"><i class="fa fa-folder-open"></i></a></li>
+                                                                <li><a href="#{request.contextPath}/product-management/${item.value.id}#products" title="#{i18nTemplate['toplinks.product']}"><i class="fa fa-briefcase"></i></a></li>
+                                                                <li><a href="#{request.contextPath}/change-management/${item.value.id}#workflows" title="#{i18nTemplate['toplinks.change']}"><i class="fa fa-history"></i></a></li>
+                                                                <!--li><a href="#{request.contextPath}/search/${item.value.id}" title="#{i18nTemplate['toplinks.search']}"><i class="fa fa-search"></i></a></li-->
                                                             </ul>
                                                         </li>
                                                     </c:forEach>
+                                                    <li class="dropdown-hr"><hr/></li>
+                                                    <li class="dropdown-section-title"><h5>
+                                                        #{i18nTemplate['toplinks.workspaces.other']}
+                                                    </h5></li>
                                                     <c:forEach var="item" items="#{accountBean.regularWorkspaces}">
                                                         <li class="dropdown-submenu visible-desktop">
                                                             <a href="#{request.contextPath}/document-management/${item.id}#folders">
@@ -126,20 +129,21 @@
                                                                 <!--li><a href="#{request.contextPath}/search/${item.id}">#{i18nTemplate['toplinks.search']}</a></li-->
                                                             </ul>
                                                         </li>
-                                                        <li class="dropdown-submenu hidden-desktop">
-                                                            <a href="#">
+                                                        <li class="dropdown-sub-menu hidden-desktop">
+                                                            <div class="dropdown-sub-menu-title">
                                                                 <c:if test="${workspaceID==item.id}">
                                                                     <i class="fa fa-check"></i>
                                                                 </c:if>
-                                                                ${item.id}
-                                                            </a>
-                                                            <ul class="dropdown-menu">
-                                                                <li><a href="#{request.contextPath}/document-management/${item.id}#folders">#{i18nTemplate['toplinks.document']}</a></li>
-                                                                <li><a href="#{request.contextPath}/product-management/${item.id}#products">#{i18nTemplate['toplinks.product']}</a></li>
-                                                                <li><a href="#{request.contextPath}/change-management/${item.id}#workflows">#{i18nTemplate['toplinks.change']}</a></li>
-                                                                <!--li><a href="#{request.contextPath}/search/${item.id}">#{i18nTemplate['toplinks.search']}</a></li-->
+                                                                <span>${item.id}</span>
+                                                            </div>
+                                                            <ul class="dropdown-inline-menu">
+                                                                <li><a href="#{request.contextPath}/document-management/${item.id}#folders" title="#{i18nTemplate['toplinks.document']}"><i class="fa fa-folder-open"></i></a></li>
+                                                                <li><a href="#{request.contextPath}/product-management/${item.id}#products" title="#{i18nTemplate['toplinks.product']}"><i class="fa fa-briefcase"></i></a></li>
+                                                                <li><a href="#{request.contextPath}/change-management/${item.id}#workflows" title="#{i18nTemplate['toplinks.change']}"><i class="fa fa-history"></i></a></li>
+                                                                <!--li><a href="#{request.contextPath}/search/${item.id}" title="#{i18nTemplate['toplinks.search']}"><i class="fa fa-search"></i></a></li-->
                                                             </ul>
                                                         </li>
+
                                                     </c:forEach>
                                                 </ul>
                                             </li>

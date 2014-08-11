@@ -1,12 +1,14 @@
-define(["common-objects/collections/product_instance_iterations"
+/*global APP_CONFIG*/
+'use strict';
+define(['common-objects/collections/product_instance_iterations'
 ],function(ProductInstanceList){
     var ProductInstance = Backbone.Model.extend({
-        idAttribute: "serialNumber",
+        idAttribute: 'serialNumber',
         urlRoot:function() {
             if (this.getConfigurationItemId()) {
-                return "/api/workspaces/" + APP_CONFIG.workspaceId + "/products/" + this.getConfigurationItemId() + "/product-instances";
+                return '/api/workspaces/' + APP_CONFIG.workspaceId + '/products/' + this.getConfigurationItemId() + '/product-instances';
             } else {
-                return "/api/workspaces/" + APP_CONFIG.workspaceId + "/products/product-instances";
+                return '/api/workspaces/' + APP_CONFIG.workspaceId + '/products/product-instances';
             }
         },
         parse: function(data){
@@ -18,13 +20,13 @@ define(["common-objects/collections/product_instance_iterations"
             }
         },
         getSerialNumber:function(){
-            return this.get("serialNumber");
+            return this.get('serialNumber');
         },
         getConfigurationItemId: function(){
-            return this.get("configurationItemId");
+            return this.get('configurationItemId');
         },
         setConfigurationItemId: function(configurationItemId){
-            this.set("configurationItemId",configurationItemId);
+            this.set('configurationItemId',configurationItemId);
         },
         getIterations: function(){
             return this.iterations;
@@ -39,13 +41,13 @@ define(["common-objects/collections/product_instance_iterations"
             return !this.getIterations().isEmpty();
         },
         getUpdateAuthor: function(){
-            return this.get("updateAuthor");
+            return this.get('updateAuthor');
         },
         getUpdateAuthorName: function(){
-            return this.get("updateAuthorName");
+            return this.get('updateAuthorName');
         },
         getUpdateDate: function(){
-            return this.get("updateDate");
+            return this.get('updateDate');
         }
     });
 

@@ -26,8 +26,8 @@ function (LoaderManager, async) {
         this.alreadySameQuality = 0;
         this.xhrsDone = 0;
 
-        var instancesIndexed=[];
-        var loadCache=[];
+        var instancesIndexed={};
+        var loadCache={};
         var loadedInstances = [];                                                                                       // Store all loaded geometries and materials
         var loaderManager = new LoaderManager({progressBar: true});
         var loaderIndicator = $("#product_title").find("img.loader");
@@ -279,7 +279,7 @@ function (LoaderManager, async) {
 
 
         this.loadQueue=async.queue(function (directive, callback){
-            if (directive.process == "load"){
+            if (directive.process === "load"){
                 loadPath(directive.path, callback);
             }else {
                 unLoadPath(directive.path, callback);
@@ -325,15 +325,25 @@ function (LoaderManager, async) {
         };
 
         this.clear = function(){
-            _(instancesIndexed).each(function(instance){
-                App.sceneManager.removeMeshById(instance.id);
-            });
+            if(App.debug){
+	            console.log('[InstanceManager] Clearing Scene');
+            }
+
+            _this.xhrQueue.kill();
+            _this.loadQueue.kill();
+
+            _(_(instancesIndexed).pluck('id')).map(App.sceneManager.removeMeshById);
+
             _(loadCache).each(function(cache){
                 cache.geometry.dispose();
                 cache.material.dispose();
             });
+
             worker.postMessage({fn: "clear", obj: null});
-            instancesIndexed=[];
+
+            instancesIndexed={};
+            loadCache={};
+            loadedInstances = [];
         };
 
         this.planNewEval= function(){

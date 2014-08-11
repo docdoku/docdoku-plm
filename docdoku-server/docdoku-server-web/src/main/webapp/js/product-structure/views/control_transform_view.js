@@ -1,4 +1,5 @@
 /*global App*/
+'use strict';
 define (
     [
         "text!templates/control_transform.html",
@@ -37,10 +38,7 @@ define (
                 var mode = App.sceneManager.getTransformControlsMode();
                 this.$("button#"+mode).addClass("active");
             } // A mesh is selected
-            else if (this.mesh) {
-
-            } //  No mesh selected
-            else {
+            else if(!this.mesh) {
                 this.$("button").attr("disabled","disabled");
             }
         },

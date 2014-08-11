@@ -21,10 +21,12 @@
 package com.docdoku.server.dao;
 
 import com.docdoku.core.configuration.Baseline;
+import com.docdoku.core.configuration.BaselinedPart;
 import com.docdoku.core.exceptions.BaselineNotFoundException;
 import com.docdoku.core.product.PartRevision;
 
 import javax.persistence.EntityManager;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -94,5 +96,19 @@ public class BaselineDAO {
 
     public Baseline findBaselineById(int baselineId) {
         return em.find(Baseline.class,baselineId);
+    }
+
+    public List<BaselinedPart> findBaselinedPartWithReferenceLike(int collectionId, String q, int maxResults) throws BaselineNotFoundException {
+        List<BaselinedPart> baselinedPartList = em.createNamedQuery("BaselinedPart.findByReference",BaselinedPart.class)
+                                                  .setParameter("id", "%" + q + "%")
+                                                  .getResultList();
+        List<BaselinedPart> returnList = new ArrayList<>();
+        for(BaselinedPart baselinedPart : baselinedPartList){
+            if(baselinedPart.getPartCollection().getId()==collectionId){
+                returnList.add(baselinedPart);
+                if(returnList.size()>=maxResults){break;}
+            }
+        }
+        return returnList;
     }
 }

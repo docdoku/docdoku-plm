@@ -1,8 +1,10 @@
+/*global APP_CONFIG*/
+'use strict';
 define([
-    "common-objects/collections/linked/linked_part_collection",
-    "common-objects/views/linked/linked_part",
-    "text!common-objects/templates/linked/linked_items.html",
-    "i18n!localization/nls/product-management-strings"
+    'common-objects/collections/linked/linked_part_collection',
+    'common-objects/views/linked/linked_part',
+    'text!common-objects/templates/linked/linked_items.html',
+    'i18n!localization/nls/product-management-strings'
 ], function(LinkedPartCollection, LinkedPartView, template, i18n) {
     var LinkedPartsView = Backbone.View.extend({
 
@@ -13,8 +15,8 @@ define([
             this.searchResults = [];
             this._subViews = [];
             var self = this;
-            this.$el.on("remove",function(){
-                _(self._subViews).invoke("remove");
+            this.$el.on('remove',function(){
+                _(self._subViews).invoke('remove');
             });
         },
 
@@ -41,8 +43,8 @@ define([
         },
 
         bindDomElements: function() {
-            this.partReferenceInput = this.$(".linked-items-reference-typehead");
-            this.linksUL = this.$("#linked-items-" + this.cid);
+            this.partReferenceInput = this.$('.linked-items-reference-typehead');
+            this.linksUL = this.$('#linked-items-' + this.cid);
         },
 
         addLinkView: function(linkedPart) {
@@ -70,7 +72,7 @@ define([
                             function(partIteration) {
                                 var linkedPart = self.collection.find(
                                     function(linkedPart) {
-                                        return linkedPart.getPartKey() == partIteration.getPartKey();
+                                        return linkedPart.getPartKey() === partIteration.getPartKey();
                                     });
                                 if(!_.isUndefined(linkedPart)){
                                     partsToRemove.push(partIteration);
@@ -91,7 +93,7 @@ define([
 
                 updater: function(partLastIterPartKey) {
                     var linkedPart = self.searchResults.find(function(partLastIter) {
-                        return partLastIter.getPartKey() == partLastIterPartKey;
+                        return partLastIter.getPartKey() === partLastIterPartKey;
                     });
                     linkedPart.collection.remove(linkedPart);
                     self.collection.add(linkedPart);
