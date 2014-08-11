@@ -1,6 +1,8 @@
+/*global App*/
+'use strict';
 define(    [
-        "text!templates/marker_info_modal.html",
-        "i18n!localization/nls/product-structure-strings"
+        'text!templates/marker_info_modal.html',
+        'i18n!localization/nls/product-structure-strings'
     ],
 
     function (template, i18n) {
@@ -8,8 +10,8 @@ define(    [
         var MarkerInfoModalView = Backbone.View.extend({
 
             events: {
-                "click .destroy-marker-btn" : "destroyMarker",
-                "hidden #markerModal": "onHidden"
+                'click .destroy-marker-btn' : 'destroyMarker',
+                'hidden #markerModal': 'onHidden'
             },
 
             template: Mustache.compile(template),
@@ -20,7 +22,7 @@ define(    [
 
             render: function() {
                 this.$el.html(this.template({i18n: i18n, title:this.model.getTitle()}));
-                this.$modal = this.$("#markerModal");
+                this.$modal = this.$('#markerModal');
                 this.$('#markerDesc').html(this.model.getDescription().nl2br());
 
                 return this;
@@ -28,7 +30,7 @@ define(    [
 
             destroyMarker: function() {
                 if(this.model){
-                    this.model.destroy({success:function(){App.collaborativeController.sendMarkersRefresh("remove marker")}});
+                    this.model.destroy({success:function(){App.collaborativeController.sendMarkersRefresh('remove marker');}});
                 }
                 this.closeModal();
             },

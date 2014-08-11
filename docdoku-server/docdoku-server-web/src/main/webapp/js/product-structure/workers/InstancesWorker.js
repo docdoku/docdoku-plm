@@ -66,7 +66,7 @@ var Context = {
         Context._target.copy(Context.target);
         // Detect camera move
         var cameraMoved = !Context.camera.equals(newContext.camera) || !Context.target.equals(newContext.target);
-        if (newData || cameraMoved) {
+        if (newData || cameraMoved) {
             // Set newContext as current
             Context.camera.copy(newContext.camera);
             Context.target.copy(newContext.target);

@@ -1,4 +1,5 @@
 /*global App*/
+'use strict';
 define([
     "models/marker",
     "collections/marker_collection",
@@ -67,12 +68,12 @@ define([
 
         initialize: function() {
             if (!this.has('color')) {
-              var  randomColor = Math.ceil((Math.random()*(0xF))).toString(16)
-                            + Math.ceil((Math.random()*(0xF))).toString(16)
-                            + Math.ceil((Math.random()*(0xF))).toString(16)
-                            + Math.ceil((Math.random()*(0xF))).toString(16)
-                            + Math.ceil((Math.random()*(0xF))).toString(16)
-                            + Math.ceil((Math.random()*(0xF))).toString(16);
+              var  randomColor = Math.ceil((Math.random()*(0xF))).toString(16) +
+                            Math.ceil((Math.random()*(0xF))).toString(16) +
+                            Math.ceil((Math.random()*(0xF))).toString(16) +
+                            Math.ceil((Math.random()*(0xF))).toString(16) +
+                            Math.ceil((Math.random()*(0xF))).toString(16) +
+                            Math.ceil((Math.random()*(0xF))).toString(16);
 
                 this.set('color', randomColor);
                 this.save();
@@ -118,7 +119,7 @@ define([
                 y: y,
                 z: z
             });
-            this.getMarkers().create(marker,{success:function(){App.collaborativeController.sendMarkersRefresh("create marker")}});
+            this.getMarkers().create(marker,{success:function(){App.collaborativeController.sendMarkersRefresh("create marker");}});
 
             return marker;
         },

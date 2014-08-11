@@ -1,8 +1,16 @@
 <div id="part-modal" class="modal">
 
     <div class="modal-header">
+        {{#part.isCheckout}}
+            {{#part.isCheckoutByConnectedUser}}<i class="fa fa-pencil"></i>{{/part.isCheckoutByConnectedUser}}
+            {{^part.isCheckoutByConnectedUser}}<i class="fa fa-lock"></i>{{/part.isCheckoutByConnectedUser}}
+        {{/part.isCheckout}}
+        {{^part.isCheckout}}
+            <i class="fa fa-eye"></i>
+        {{/part.isCheckout}}
+
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3><span class="icon"></span><a target="_blank" href="{{permalink}}">
+         <h3><span class="icon"></span><a target="_blank" href="{{permalink}}">
             {{part.getPartKey}} ({{#part.isReleased}}{{i18n.RELEASED}}{{/part.isReleased}}{{^part.isReleased}}{{i18n.IN_PROGRESS}}{{/part.isReleased}})
         </a></h3>
     </div>
@@ -11,12 +19,14 @@
         <div class="tabs">
             <ul class="nav nav-tabs">
                 <li class="active"><a href="#tab-part-general" data-toggle="tab">{{i18n.GENERAL}}</a></li>
+                {{^isLockedMode}}
                 <li><a href="#tab-part-iteration" data-toggle="tab">{{i18n.ITERATION}}</a></li>
                 <li><a href="#tab-part-attributes" data-toggle="tab">{{i18n.ATTRIBUTES}}</a></li>
                 <li><a href="#tab-part-files" data-toggle="tab">{{i18n.CAD_FILE}}</a></li>
                 <li><a href="#tab-part-sub-parts" data-toggle="tab">{{i18n.SUB_PARTS}}</a></li>
                 <li><a href="#tab-part-links" data-toggle="tab">{{i18n.LINKS}}</a></li>
                 <li><a href="#tab-iteration-lifecycle" data-toggle="tab">{{i18n.LIFECYCLE_STATE}}</a></li>
+                {{/isLockedMode}}
             </ul>
 
             <form id="form-part" class="form-horizontal">
@@ -79,6 +89,7 @@
                         </div>
                 </div>
 
+                {{^isLockedMode}}
                 <div id="tab-part-iteration" class="tab-pane">
                         <div class="control-group">
                             <label class="control-label">{{i18n.REFERENCE}}</label>
@@ -126,6 +137,7 @@
                 <div id="tab-iteration-lifecycle" class="tab-pane ">
                     <div id="iteration-lifecycle"></div>
                 </div>
+                {{/isLockedMode}}
             </div>
             </form>
         </div>

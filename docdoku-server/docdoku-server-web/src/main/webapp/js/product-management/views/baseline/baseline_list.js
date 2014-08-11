@@ -6,12 +6,9 @@ define([
 
     var BaselineListView = Backbone.View.extend({
 
-
         tagName:"ul",
 
         className:"baselines-list",
-
-        template:Mustache.compile(template),
 
         initialize:function(attributes,options){
             _.bindAll(this);
@@ -57,5 +54,4 @@ define([
     });
 
     return BaselineListView;
-
 });
