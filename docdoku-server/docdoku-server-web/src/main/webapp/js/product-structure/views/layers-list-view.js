@@ -26,11 +26,22 @@ define([
             this.collection.fetch({reset:true});
         },
 
+        refreshLayers: function(){
+            App.layersListView.collection.fetch({reset:true});
+        },
+
+        refreshMarkers: function(){
+            App.layersListView.collection.invoke('_removeAllMarkersFromScene');
+            App.layersListView.collection.fetch({reset:true});
+        },
+
         addAll: function() {
+            this.listContainer.empty();
             if (this.collection.length > 0) {
-                this.listContainer.empty();
+                this.collection.each(this.addOne, this);
+            } else {
+                this.addEmptyView();
             }
-            this.collection.each(this.addOne, this);
         },
 
         onRemove:function(){

@@ -25,7 +25,17 @@ define([
     LayerManager.prototype = {
 
         renderList: function() {
-            new LayersListView({collection: this.layersCollection}).render();
+            App.layersListView = new LayersListView({collection: this.layersCollection});
+            App.layersListView.render();
+        },
+
+        removeAllMeshesFromMarkers: function(){
+            for (var cid in this.meshs) {
+                var currentMesh = this.meshs[cid];
+                App.sceneManager.scene.remove(currentMesh);
+            }
+
+            App.sceneManager.reDraw();
         },
 
         addMeshFromMarker: function(marker, material) {
@@ -80,14 +90,26 @@ define([
 
         createLayer: function(name) {
             var layer;
+
+            var  randomColor = Math.ceil((Math.random()*(0xF))).toString(16)
+                + Math.ceil((Math.random()*(0xF))).toString(16)
+                + Math.ceil((Math.random()*(0xF))).toString(16)
+                + Math.ceil((Math.random()*(0xF))).toString(16)
+                + Math.ceil((Math.random()*(0xF))).toString(16)
+                + Math.ceil((Math.random()*(0xF))).toString(16);
+
             if (name) {
                 layer = new Layer({
-                    name : name
+                    name : name,
+                    color: randomColor
                 });
             } else {
-                layer = new Layer();
+                layer = new Layer({
+                    color: randomColor
+                });
             }
-            this.layersCollection.create(layer);
+
+            this.layersCollection.create(layer,{success:function(){App.collaborativeController.sendLayersRefresh("create layer")}});
             return layer;
         },
 

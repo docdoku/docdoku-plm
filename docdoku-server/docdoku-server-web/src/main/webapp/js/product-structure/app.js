@@ -93,7 +93,7 @@ define(
                 App.sceneManager = new SceneManager();
                 App.collaborativeView = new CollaborativeView({roomKey:"beurk"}).render();
                 this.$ControlsContainer.append(App.collaborativeView.$el);
-                App.collaborativeController = new CollaborativeController(this.collaborativeView);
+                App.collaborativeController = new CollaborativeController();
 
                 this.controlNavigationView = new ControlNavigationView().render();
                 this.$ControlsContainer.append(this.controlNavigationView.$el);
@@ -108,6 +108,7 @@ define(
                 this.$ControlsContainer.append(new ControlMeasureView().render().$el);
 
                 App.sceneManager.init();
+
 
             }catch(ex){
                 console.log("Got exception in dmu");

@@ -71,7 +71,7 @@ public class LayerResource {
             List<Layer> layers = productService.getLayers(ciKey);
             LayerDTO[] layerDtos = new LayerDTO[layers.size()];
             for (int i = 0; i < layers.size(); i++) {                
-                layerDtos[i] = new LayerDTO(layers.get(i).getId(), layers.get(i).getName());
+                layerDtos[i] = new LayerDTO(layers.get(i).getId(), layers.get(i).getName(),layers.get(i).getColor());
             }
             return layerDtos;
         } catch (ApplicationException ex) {
@@ -86,8 +86,8 @@ public class LayerResource {
     public LayerDTO createLayer(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, LayerDTO layer) {
         try {
             ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
-            Layer l = productService.createLayer(ciKey, layer.getName());
-            return new LayerDTO(l.getId(), l.getName());
+            Layer l = productService.createLayer(ciKey, layer.getName(),layer.getColor());
+            return new LayerDTO(l.getId(), l.getName(),l.getColor());
             
         } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
@@ -101,8 +101,8 @@ public class LayerResource {
     public LayerDTO updateLayer(@PathParam("layerId") int layerId, @PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, LayerDTO layer) {
         try {
             ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
-            Layer l = productService.updateLayer(ciKey, layerId, layer.getName());
-            return new LayerDTO(l.getId(), l.getName());
+            Layer l = productService.updateLayer(ciKey, layerId, layer.getName(),layer.getColor());
+            return new LayerDTO(l.getId(), l.getName(),l.getColor());
         } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }

@@ -28,7 +28,7 @@ define(    [
 
             destroyMarker: function() {
                 if(this.model){
-                    this.model.destroy();
+                    this.model.destroy({success:function(){App.collaborativeController.sendMarkersRefresh("remove marker")}});
                 }
                 this.closeModal();
             },

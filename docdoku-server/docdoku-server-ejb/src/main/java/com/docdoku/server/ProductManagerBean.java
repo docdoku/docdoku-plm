@@ -1181,10 +1181,10 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed("users")
     @Override
-    public Layer createLayer(ConfigurationItemKey pKey, String pName) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, ConfigurationItemNotFoundException {
+    public Layer createLayer(ConfigurationItemKey pKey, String pName, String color) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, ConfigurationItemNotFoundException {
         User user = userManager.checkWorkspaceWriteAccess(pKey.getWorkspace());
         ConfigurationItem ci = new ConfigurationItemDAO(new Locale(user.getLanguage()), em).loadConfigurationItem(pKey);
-        Layer layer = new Layer(pName, user, ci);
+        Layer layer = new Layer(pName, user, ci, color);
         Date now = new Date();
         layer.setCreationDate(now);
 
@@ -1194,10 +1194,11 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed("users")
     @Override
-    public Layer updateLayer(ConfigurationItemKey pKey, int pId, String pName) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, ConfigurationItemNotFoundException, LayerNotFoundException, UserNotActiveException {
+    public Layer updateLayer(ConfigurationItemKey pKey, int pId, String pName, String color) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, ConfigurationItemNotFoundException, LayerNotFoundException, UserNotActiveException {
         Layer layer = getLayer(pId);
         userManager.checkWorkspaceWriteAccess(layer.getConfigurationItem().getWorkspaceId());
         layer.setName(pName);
+        layer.setColor(color);
         return layer;
     }
 

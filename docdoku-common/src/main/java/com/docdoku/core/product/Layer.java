@@ -78,14 +78,17 @@ public class Layer implements Serializable{
         @JoinColumn(name = "CONFIGURATIONITEM_WORKSPACE_ID", referencedColumnName = "WORKSPACE_ID")
     })
     private ConfigurationItem configurationItem;
-        
+
+    private String color;
+
     public Layer() {
     }
 
-    public Layer(String pName, User pAuthor, ConfigurationItem pConfigurationItem) {
+    public Layer(String pName, User pAuthor, ConfigurationItem pConfigurationItem, String color) {
         this.name=pName;
         this.author=pAuthor;
         this.configurationItem=pConfigurationItem;
+        this.color=color;
     }
     
     public User getAuthor() {
@@ -145,4 +148,11 @@ public class Layer implements Serializable{
         this.markers.remove(marker);
     }
 
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
 }

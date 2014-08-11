@@ -461,7 +461,7 @@ public interface IProductManagerWS{
      * @throws AccessRightException
      * @throws ConfigurationItemNotFoundException
      */
-    Layer createLayer(ConfigurationItemKey key, String name) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, ConfigurationItemNotFoundException;
+    Layer createLayer(ConfigurationItemKey key, String name, String color) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, ConfigurationItemNotFoundException;
     
     /**
      * Creates a new marker that will be a member of the given layer.

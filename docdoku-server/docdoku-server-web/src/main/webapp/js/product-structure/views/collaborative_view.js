@@ -11,11 +11,11 @@ define(    [
 
             events: {
                 "click a#collaborative_create" : "create",
-                "click a#collaborative_invite" : "invite",
+                "click i#collaborative_invite" : "invite",
                 "click i.collaborative_kick": "kick",
                 "click i.collaborative_give_hand": "giveHand",
                 "click i.collaborative_withdraw_invitation": "withdrawInvitation",
-                "click a#collaborative_exit": "exit",
+                "click i#collaborative_exit": "exit",
                 "click li": "toggleExpand"
             },
 
@@ -35,7 +35,7 @@ define(    [
                     if (this.isMaster){
                         App.appView.leaveSpectatorView();
                         App.sceneManager.enableControlsObject();
-                        this.$("a#collaborative_invite").show();
+                        this.$("i#collaborative_invite").show();
                         this.reduceAll();
                     } else {
                         App.sceneManager.disableControlsObject();
@@ -45,7 +45,7 @@ define(    [
                         this.$(".collaborative_kick").hide();
                         this.$(".collaborative_give_hand").hide();
                         this.$(".collaborative_withdraw_invitation").hide();
-                        this.$("a#collaborative_invite").hide();
+                        this.$("i#collaborative_invite").hide();
                         if (this.noMaster){
                             this.$("i#collaborative_master").removeClass("master");
                             this.$("i#collaborative_master").addClass("no-master");

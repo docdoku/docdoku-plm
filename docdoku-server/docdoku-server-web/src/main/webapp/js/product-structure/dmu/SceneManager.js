@@ -733,6 +733,10 @@ define([
             }
         };
 
+        this.setMarkers = function () {
+            _this.layerManager.removeAllLayers();
+        }
+
         /**
          * Animation loop :
          *  Update controls, scene objects and animations

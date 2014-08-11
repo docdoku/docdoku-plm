@@ -4,8 +4,8 @@
     <div><a id="collaborative_create" href="#">{{i18n.CREATE_ROOM}}</a> </div>
     <ul id="collaborative_room">
         <h4>
-            <a id="collaborative_invite" href="#" title="{{i18n.INVITE}}"><i class="fa fa-users"></i></a>
-            <a id="collaborative_exit" href="#" title="{{i18n.EXIT}}"><i class="fa fa-times"></i></a>
+            <i id="collaborative_invite" class="fa fa-users" title="{{i18n.INVITE}}"></i>
+            <i id="collaborative_exit" class="fa fa-times" title="{{i18n.EXIT}}"></i>
         </h4>
         <div id="room_wrapper">
         <li>
@@ -36,7 +36,7 @@
             <span>{{ . }} </span>
             <i class="fa fa-chevron-right"></i>
             <i class="fa fa-chevron-left"></i>
-            <i id="collaborative_withdraw_invitation" class="fa fa-sign-out"></i>
+            <i class="collaborative_withdraw_invitation fa fa-sign-out" title="{{i18n.WITHDRAW_INVITATION}}"></i>
         </li>
         {{/pendingUsers}}
         </div>

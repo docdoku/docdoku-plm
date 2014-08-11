@@ -1,10 +1,10 @@
 /*global App,ChannelListener,ChannelMessagesType,mainChannel*/
+'use strict';
 define(function(){
 
     function CollaborativeController () {
-
+        var _this = this;
         var collaborativeView = App.collaborativeView;
-
         var collaborativeListener = new ChannelListener({
 
             messagePattern: /^COLLABORATIVE_.+/,
@@ -64,6 +64,16 @@ define(function(){
                     }else if (message.messageBroadcast.explode){
                         document.getElementById("slider-explode").value = message.messageBroadcast.explode;
                         App.sceneManager.explodeScene(message.messageBroadcast.explode);
+                    }else if (message.messageBroadcast.layers){
+                        if(message.messageBroadcast.layers === "remove layer"){
+                            App.sceneManager.layerManager.removeAllMeshesFromMarkers();
+                        }
+                        App.layersListView.refreshLayers();
+                    }else if (message.messageBroadcast.markers){
+                        if(message.messageBroadcast.markers === "remove marker"){
+                            App.sceneManager.layerManager.removeAllMeshesFromMarkers();
+                        }
+                        App.layersListView.refreshLayers();
                     }
 
                     return;
@@ -82,6 +92,36 @@ define(function(){
         });
 
         mainChannel.addChannelListener(collaborativeListener);
+
+        this.sendLayersRefresh = function(subject){
+            _this = this;
+            if (App.collaborativeView.isMaster) {
+                var message = {
+                    type: ChannelMessagesType.COLLABORATIVE_COMMANDS,
+                    key: App.collaborativeView.roomKey,
+                    messageBroadcast: {
+                        layers: subject
+                    },
+                    remoteUser: ""
+                };
+                mainChannel.sendJSON(message);
+            }
+        };
+
+        this.sendMarkersRefresh = function(subject){
+            _this = this;
+            if (App.collaborativeView.isMaster) {
+                var message = {
+                    type: ChannelMessagesType.COLLABORATIVE_COMMANDS,
+                    key: App.collaborativeView.roomKey,
+                    messageBroadcast: {
+                        markers: subject
+                    },
+                    remoteUser: ""
+                };
+                mainChannel.sendJSON(message);
+            }
+        };
     }
 
     return CollaborativeController;

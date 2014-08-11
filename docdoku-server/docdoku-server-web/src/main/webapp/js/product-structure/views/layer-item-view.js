@@ -53,9 +53,11 @@ define(
             var value = this.input.val();
             if (this.model.get("name") != value) {
                 this.model.save({
-                    name: value,
-                    editingName: false
-                });
+                        name: value,
+                        editingName: false
+                    },
+                    {success:function(){App.collaborativeController.sendLayersRefresh("edit layer name")}}
+                );
             } else {
                 this.model.set('editingName', false);
             }
@@ -69,10 +71,12 @@ define(
 
         removeLayer:function(){
             var collection = this.model.collection;
-            this.model.destroy();
+            this.model.setEditingMarkers(false);
+            this.model.destroy({success:function(){App.collaborativeController.sendLayersRefresh("remove layer")}});
             if(collection.length == 0){
                 collection.onEmpty();
             }
+
         }
 
     });
