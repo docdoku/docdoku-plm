@@ -210,12 +210,13 @@ define(
         },
 
         setSpectatorView: function() {
-            this.$ControlsContainer.find("button").attr("disabled","disabled");
-            //this.$productMenu.find("input[type=checkbox]").attr("disabled",true);
+            //this.$ControlsContainer.find("button").attr("disabled","disabled");
+            this.$(".side_control_group:not(#part_metadata_container)").hide();
         },
 
         leaveSpectatorView: function() {
-            this.$ControlsContainer.find("button").removeAttr("disabled");
+            //this.$ControlsContainer.find("button").removeAttr("disabled");
+            this.$(".side_control_group:not(#part_metadata_container)").show();
         },
 
         transformControlMode: function() {

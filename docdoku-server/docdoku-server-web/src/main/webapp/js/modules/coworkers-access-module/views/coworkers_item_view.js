@@ -15,10 +15,17 @@ define([
             },
 
             initialize:function(){
-                var data = {
-                    user :  this.model.login,
-                    displayCobrowsingButton : this.model.workspaceId === APP_CONFIG.workspaceId
-                };
+                var data;
+                if (typeof(App) !== 'undefined' && App.sceneManager) {
+                    data = {
+                        user: this.model.login,
+                        displayCobrowsingButton: this.model.workspaceId === APP_CONFIG.workspaceId
+                    };
+                } else {
+                    data = {
+                        user: this.model.login
+                    };
+                }
                 this.template =  Mustache.render(template, data);
                 _.bindAll(this);
                 //Backbone.Events.on('EnableCollaborativeInvite',this.collaborativeInvite);
