@@ -1,15 +1,16 @@
+'use strict';
 define(
     [
-    "common-objects/views/components/modal",
-    "common-objects/views/file/file_list",
+    'common-objects/views/components/modal',
+    'common-objects/views/file/file_list',
     'text!common-objects/templates/part/part_modal.html',
     'i18n!localization/nls/product-structure-strings',
-    "common-objects/views/attributes/attributes",
-    "common-objects/views/part/parts_management_view",
-    "common-objects/views/linked/linked_documents",
-    "common-objects/collections/linked/linked_document_collection",
-    "common-objects/views/workflow/lifecycle",
-    "common-objects/utils/date"
+    'common-objects/views/attributes/attributes',
+    'common-objects/views/part/parts_management_view',
+    'common-objects/views/linked/linked_documents',
+    'common-objects/collections/linked/linked_document_collection',
+    'common-objects/views/workflow/lifecycle',
+    'common-objects/utils/date'
     ],
     function(ModalView, FileListView, template, i18n, AttributesView, PartsManagementView, LinkedDocumentsView, LinkedDocumentCollection,LifecycleView , date) {
 
@@ -23,9 +24,9 @@ define(
             this.iterations = this.model.getIterations();
 
             ModalView.prototype.initialize.apply(this, arguments);
-            this.events["click a#previous-iteration"] = "onPreviousIteration";
-            this.events["click a#next-iteration"] = "onNextIteration";
-            this.events["submit #form-part"] = "onSubmitForm";
+            this.events['click a#previous-iteration'] = 'onPreviousIteration';
+            this.events['click a#next-iteration'] = 'onNextIteration';
+            this.events['submit #form-part'] = 'onSubmitForm';
         },
 
         onPreviousIteration: function() {
@@ -65,9 +66,9 @@ define(
                 permalink : this.model.getPermalink()
             };
 
-            this.editMode = this.model.isCheckoutByConnectedUser() && this.iterations.isLast(this.iteration);
-
-            data.editMode = this.editMode ;
+	        this.editMode = this.model.isCheckoutByConnectedUser() && this.iterations.isLast(this.iteration);
+	        data.editMode = this.editMode ;
+	        data.isLockedMode = this.model.isCheckout() && !this.model.isCheckoutByConnectedUser();
 
             if (this.model.hasIterations()) {
                 var hasNextIteration = this.iterations.hasNextIteration(this.iteration);
@@ -91,20 +92,21 @@ define(
             this.$tabs = this.$('.nav-tabs li');
 
             this.bindUserPopover();
-            this.initCadFileUploadView();
-            this.initAttributesView();
+	        if(this.iteration){
+		        this.initCadFileUploadView();
+		        this.initAttributesView();
 
-            this.initPartsManagementView();
-            this.initLinkedDocumentsView();
-            this.initLifeCycleView();
-
+		        this.initPartsManagementView();
+		        this.initLinkedDocumentsView();
+		        this.initLifeCycleView();
+	        }
             return this;
         },
 
         bindUserPopover: function() {
-            this.$authorLink.userPopover(this.model.getAuthorLogin(), this.model.getNumber(), "right");
+            this.$authorLink.userPopover(this.model.getAuthorLogin(), this.model.getNumber(), 'right');
             if(this.model.isCheckout()){
-                this.$checkoutUserLink.userPopover(this.model.getCheckOutUserLogin(), this.model.getNumber(),"right");
+                this.$checkoutUserLink.userPopover(this.model.getCheckOutUserLogin(), this.model.getNumber(),'right');
             }
         },
 
@@ -115,7 +117,7 @@ define(
             this.attributes = new Backbone.Collection();
 
             this.attributesView = new AttributesView({
-                el:this.$("#attributes-list")
+                el:this.$('#attributes-list')
             });
 
             this.attributesView.setAttributesLocked(this.model.isAttributesLocked());
@@ -134,9 +136,9 @@ define(
             // cannot pass a collection of cad file to server.
             var cadFile = this.fileListView.collection.first();
             if(cadFile){
-                this.iteration.set("nativeCADFile", cadFile.get("fullName"));
+                this.iteration.set('nativeCADFile', cadFile.get('fullName'));
             }else{
-                this.iteration.set("nativeCADFile","");
+                this.iteration.set('nativeCADFile','');
             }
 
             this.iteration.save({
@@ -145,7 +147,7 @@ define(
                 instanceAttributes: this.attributesView.collection.toJSON(),
                 linkedDocuments: this.linkedDocumentsView.collection.toJSON()
             }, {success:function(){
-                Backbone.Events.trigger("refresh_tree");
+                Backbone.Events.trigger('refresh_tree');
             }});
 
 
@@ -170,13 +172,13 @@ define(
                 singleFile: true
             }).render();
 
-            this.$("#iteration-files").html(this.fileListView.el);
+            this.$('#iteration-files').html(this.fileListView.el);
 
         },
 
         initPartsManagementView:function(){
             this.partsManagementView = new PartsManagementView({
-                el:"#iteration-components",
+                el:'#iteration-components',
                 collection: new Backbone.Collection(this.iteration.getComponents()),
                 editMode:this.editMode,
                 model: this.model
@@ -191,25 +193,25 @@ define(
             }).render();
 
             /* Add the documentLinksView to the tab */
-            this.$("#iteration-links").html(this.linkedDocumentsView.el);
+            this.$('#iteration-links').html(this.linkedDocumentsView.el);
         },
 
         initLifeCycleView : function () {
             var that = this ;
-            if(this.model.get("workflow")){
+            if(this.model.get('workflow')){
 
                 this.lifecycleView =  new LifecycleView({
-                    el:"#tab-iteration-lifecycle"
-                }).setAbortedWorkflowsUrl(this.model.getUrl()+"/aborted-workflows").setWorkflow(this.model.get("workflow")).setEntityType("parts").render();
+                    el:'#tab-iteration-lifecycle'
+                }).setAbortedWorkflowsUrl(this.model.getUrl()+'/aborted-workflows').setWorkflow(this.model.get('workflow')).setEntityType('parts').render();
 
-                this.lifecycleView.on("lifecycle:change",function(){
+                this.lifecycleView.on('lifecycle:change',function(){
                     that.model.fetch({success:function(){
-                        that.lifecycleView.setAbortedWorkflowsUrl(that.model.getUrl()+"/aborted-workflows").setWorkflow(that.model.get("workflow")).setEntityType("parts").render();
+                        that.lifecycleView.setAbortedWorkflowsUrl(that.model.getUrl()+'/aborted-workflows').setWorkflow(that.model.get('workflow')).setEntityType('parts').render();
                     }});
                 });
 
             }else{
-                this.$("a[href=#tab-iteration-lifecycle]").hide();
+                this.$('a[href=#tab-iteration-lifecycle]').hide();
             }
         }
 

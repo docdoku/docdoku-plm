@@ -1,4 +1,5 @@
 /*global App,ChannelMessagesType,mainChannel*/
+'use strict';
 define(function() {
 
     var expandedViews = [];
@@ -27,7 +28,7 @@ define(function() {
 
         addComponentView: function(component) {
 
-            var isLast = component == this.collection.last();
+            var isLast = component ===this.collection.last();
 
             var optionsForComponentView = {
                 model: component,
@@ -49,8 +50,16 @@ define(function() {
         },
 
         fetchAll:function(){
+	        var _this = this;
             this.$el.empty();
-            this.collection.fetch({reset:true});
+            this.collection.fetch({
+	            reset:true,
+                success: function() {
+					_this.componentViews.each(function(component){
+						component.onChangeCheckbox();
+	                });
+	            }
+            });
         }
 
     });

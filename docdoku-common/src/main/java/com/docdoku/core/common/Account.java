@@ -29,7 +29,7 @@ import java.util.Date;
  * The Account class holds personal user data applicable inside the whole application.
  * However <a href="User.html">User</a> objects encapsulate personal information
  * only in the context of a particular workspace.
- * 
+ *
  * @author Florent Garin
  * @version 1.0, 02/06/08
  * @since   V1.0
@@ -40,11 +40,11 @@ public class Account implements Serializable, Cloneable {
 
     @javax.persistence.Id
     private String login="";
-    
+
     private String name;
     private String email;
     private String language;
-    
+
     @ManyToOne
     private Organization organization;
 
@@ -54,7 +54,7 @@ public class Account implements Serializable, Cloneable {
     public Account(){
 
     }
-    
+
 
     public Account(String pLogin, String pName, String pEmail, String pLanguage, Date pCreationDate) {
         login = pLogin;
@@ -64,7 +64,7 @@ public class Account implements Serializable, Cloneable {
         creationDate = pCreationDate;
     }
 
-    
+
     public String getLogin() {
         return login;
     }
@@ -88,7 +88,7 @@ public class Account implements Serializable, Cloneable {
     public String getEmail() {
         return email;
     }
-    
+
     public void setLanguage(String pLanguage) {
         language = pLanguage;
     }
@@ -140,7 +140,7 @@ public class Account implements Serializable, Cloneable {
      */
     @Override
     public Account clone() {
-        Account clone = null;
+        Account clone;
         try {
             clone = (Account) super.clone();
         } catch (CloneNotSupportedException e) {

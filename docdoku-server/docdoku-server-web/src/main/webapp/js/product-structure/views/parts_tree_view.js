@@ -162,6 +162,7 @@ define(["models/component_module", "views/component_views"], function (Component
         },
 
         refreshAll:function(){
+	       App.instancesManager.clear();
             this.componentViews.fetchAll();
         },
 

@@ -1,9 +1,10 @@
 /*global App*/
+'use strict';
 define([
-    "collections/layer_collection",
-    "models/layer",
-    "views/layers-list-view",
-    "views/marker_info_modal_view"
+    'collections/layer_collection',
+    'models/layer',
+    'views/layers-list-view',
+    'views/marker_info_modal_view'
 ], function (
     LayerCollection,
     Layer,
@@ -16,7 +17,7 @@ define([
     var LayerManager = function() {
         this.meshs = [];
         this.state = STATE.FULL;
-        this.markerStateControl = $("#markerState").find("i");
+        this.markerStateControl = $('#markerState').find('i');
         this.layersCollection = new LayerCollection();
         this.markerScale = new THREE.Vector3(1,1,1);
         this.markers = [];
@@ -93,12 +94,11 @@ define([
         createLayer: function(name) {
             var layer;
 
-            var  randomColor = Math.ceil((Math.random()*(0xF))).toString(16)
-                + Math.ceil((Math.random()*(0xF))).toString(16)
-                + Math.ceil((Math.random()*(0xF))).toString(16)
-                + Math.ceil((Math.random()*(0xF))).toString(16)
-                + Math.ceil((Math.random()*(0xF))).toString(16)
-                + Math.ceil((Math.random()*(0xF))).toString(16);
+            var  randomColor = Math.ceil((Math.random()*(0xF))).toString(16) +
+	            Math.ceil((Math.random()*(0xF))).toString(16) +
+                Math.ceil((Math.random()*(0xF))).toString(16) +
+                Math.ceil((Math.random()*(0xF))).toString(16) +
+                Math.ceil((Math.random()*(0xF))).toString(16);
 
             if (name) {
                 layer = new Layer({
@@ -159,7 +159,7 @@ define([
 
         showPopup: function(marker) {
             var mimv = new MarkerInfoModalView({model:marker});
-            $("body").append(mimv.render().el);
+            $('body').append(mimv.render().el);
             mimv.openModal();
         }
 

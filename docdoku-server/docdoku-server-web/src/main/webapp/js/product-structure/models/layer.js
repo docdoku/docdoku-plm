@@ -68,12 +68,12 @@ define([
 
         initialize: function() {
             if (!this.has('color')) {
-              var  randomColor = Math.ceil((Math.random()*(0xF))).toString(16)
-                            + Math.ceil((Math.random()*(0xF))).toString(16)
-                            + Math.ceil((Math.random()*(0xF))).toString(16)
-                            + Math.ceil((Math.random()*(0xF))).toString(16)
-                            + Math.ceil((Math.random()*(0xF))).toString(16)
-                            + Math.ceil((Math.random()*(0xF))).toString(16);
+              var  randomColor = Math.ceil((Math.random()*(0xF))).toString(16) +
+                            Math.ceil((Math.random()*(0xF))).toString(16) +
+                            Math.ceil((Math.random()*(0xF))).toString(16) +
+                            Math.ceil((Math.random()*(0xF))).toString(16) +
+                            Math.ceil((Math.random()*(0xF))).toString(16) +
+                            Math.ceil((Math.random()*(0xF))).toString(16);
 
                 this.set('color', randomColor);
                 this.save();
