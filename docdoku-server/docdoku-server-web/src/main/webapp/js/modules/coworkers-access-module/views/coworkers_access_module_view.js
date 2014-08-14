@@ -44,7 +44,7 @@ define(
                 }
             });
 
-            Backbone.Events.on('collaborative_invite_coworkers',this.collaborativeInvite, this);
+            Backbone.Events.on('EnableCollaborativeInvite',this.collaborativeInvite, this);
 
             return this ;
 
@@ -65,6 +65,7 @@ define(
 
         collaborativeInvite:function(){
             this.$("#coworkers_access_module_toggler").click();
+            this.$(".fa-globe").removeClass("corworker-action-disable").addClass("corworker-action");
         }
 
     });

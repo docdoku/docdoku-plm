@@ -14,6 +14,12 @@
     margin: 4px 0 0 0;
     padding-right: 3px;
 }
+#coworkers_access_module_entries .corworker-action-disable{
+    opacity:0.2;
+    float:right;
+    margin: 4px 0 0 0;
+    padding-right: 3px;
+}
 #coworkers_access_module_entries > li > a > i.corworker-action:hover{
     opacity:1;
     color: white;

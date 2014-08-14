@@ -16,11 +16,12 @@ define([
 
             initialize:function(){
                 var data = {
-                    user :  this.model.login
+                    user :  this.model.login,
+                    displayCobrowsingButton : this.model.workspaceId === APP_CONFIG.workspaceId
                 };
                 this.template =  Mustache.render(template, data);
                 _.bindAll(this);
-                Backbone.Events.on('collaborative_invite_coworkers',this.collaborativeInvite);
+                //Backbone.Events.on('EnableCollaborativeInvite',this.collaborativeInvite);
                 return this ;
             },
 
@@ -59,16 +60,15 @@ define([
 
             onCobrowsingButtonClick:function(e){
                 Backbone.Events.trigger('SendCollaborativeInvite',this.model.login);
-                e.preventDefault();
             },
 
             collaborativeInvite:function(){
-                var data = {
+                /*var data = {
                     user :  this.model.login,
                     displayCobrowsingButton : this.model.workspaceId === APP_CONFIG.workspaceId
                 };
                 this.template =  Mustache.render(template, data);
-                this.render();
+                this.render();*/
             }
 
         });

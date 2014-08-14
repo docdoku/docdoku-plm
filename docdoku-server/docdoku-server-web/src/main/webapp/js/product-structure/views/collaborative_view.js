@@ -1,22 +1,20 @@
 /*global App,mainChannel,ChannelMessagesType*/
 define(    [
-        "views/select_participant_modal",
         "text!templates/collaborative_view.html",
         "i18n!localization/nls/product-structure-strings"
     ],
 
-    function (SelectParticipantModalView, template, i18n) {
+    function (template, i18n) {
 
         var CollaborativeView = Backbone.View.extend({
 
             events: {
                 "click a#collaborative_create" : "create",
-                "click i#collaborative_invite" : "invite",
                 "click i.collaborative_kick": "kick",
                 "click i.collaborative_give_hand": "giveHand",
                 "click i.collaborative_withdraw_invitation": "withdrawInvitation",
                 "click i#collaborative_exit": "exit",
-                "click li": "toggleExpand"
+                "click li": "toggleExpandCommandsOnParticipant"
             },
 
             template: Mustache.compile(template),
@@ -34,11 +32,12 @@ define(    [
                     this.$("a#collaborative_create").hide();
                     this.$("ul").show();
                     if (this.isMaster){
+                        $("#coworkers_access_module_entries").find(".fa-globe").removeClass("corworker-action-disable").addClass("corworker-action");
                         App.appView.leaveSpectatorView();
                         App.sceneManager.enableControlsObject();
-                        this.$("i#collaborative_invite").show();
-                        this.reduceAll();
+                        this.reduceAllCommands();
                     } else {
+                        $("#coworkers_access_module_entries").find(".fa-globe").removeClass("corworker-action").addClass("corworker-action-disable");
                         App.sceneManager.disableControlsObject();
                         App.appView.setSpectatorView();
                         this.$(".fa-chevron-right").hide();
@@ -46,7 +45,6 @@ define(    [
                         this.$(".collaborative_kick").hide();
                         this.$(".collaborative_give_hand").hide();
                         this.$(".collaborative_withdraw_invitation").hide();
-                        this.$("i#collaborative_invite").hide();
                         if (this.noMaster){
                             this.$("i#collaborative_master").removeClass("master");
                             this.$("i#collaborative_master").addClass("no-master");
@@ -63,24 +61,21 @@ define(    [
             },
 
             sendInvite : function(user) {
-                mainChannel.sendJSON({
-                    type: ChannelMessagesType.COLLABORATIVE_INVITE,
-                    key: this.roomKey,
-                    messageBroadcast: {
-                        url: APP_CONFIG.workspaceId + '/' + APP_CONFIG.productId,
-                        context: APP_CONFIG.workspaceId
-                    },
-                    remoteUser: user
-                });
+                if (this.isMaster) {
+                    mainChannel.sendJSON({
+                        type: ChannelMessagesType.COLLABORATIVE_INVITE,
+                        key: this.roomKey,
+                        messageBroadcast: {
+                            url: APP_CONFIG.workspaceId + '/' + APP_CONFIG.productId,
+                            context: APP_CONFIG.workspaceId
+                        },
+                        remoteUser: user
+                    });
+                }
             },
 
             invite : function(){
-                /*
-                var spmv = new SelectParticipantModalView();
-                spmv.setRoomKey(this.roomKey);
-                $("body").append(spmv.render().el);
-                spmv.openModal();*/
-                Backbone.Events.trigger("collaborative_invite_coworkers");
+                Backbone.Events.trigger("EnableCollaborativeInvite");
             },
 
             kick: function(e){
@@ -195,18 +190,18 @@ define(    [
                 this.render();
             },
 
-            toggleExpand : function(e) {
+            toggleExpandCommandsOnParticipant : function(e) {
                 if (this.isMaster){
                     var el = e.currentTarget;
                     if (this.$(el).find(".fa-chevron-right").is(":visible")) {
-                        this.expand(el);
+                        this.expandCommandsOnParticipant(el);
                     } else {
-                        this.reduce(el);
+                        this.reduceCommandsOnParticipant(el);
                     }
                 }
             },
 
-            expand : function(el){
+            expandCommandsOnParticipant : function(el){
                 this.$(el).find(".fa-chevron-right").hide();
                 this.$(el).find(".fa-chevron-left").show();
                 this.$(el).find(".collaborative_give_hand").show();
@@ -214,7 +209,7 @@ define(    [
                 this.$(el).find(".collaborative_withdraw_invitation").show();
             },
 
-            reduce : function(el){
+            reduceCommandsOnParticipant : function(el){
                 this.$(el).find(".fa-chevron-right").show();
                 this.$(el).find(".fa-chevron-left").hide();
                 this.$(el).find(".collaborative_give_hand").hide();
@@ -222,7 +217,7 @@ define(    [
                 this.$(el).find(".collaborative_withdraw_invitation").hide();
             },
 
-            reduceAll : function(){
+            reduceAllCommands : function(){
                 this.$(".fa-chevron-right").show();
                 this.$(".fa-chevron-left").hide();
                 this.$(".collaborative_give_hand").hide();

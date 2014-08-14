@@ -99,7 +99,7 @@ public class UserResource {
     public UserDTO[] getReachableUsersForCaller(@PathParam("workspaceId") String workspaceId) {
         try {
 
-            User[] users = documentService.getReachableUsers();
+            User[] users = documentService.getReachableUsers(workspaceId);
             UserDTO[] dtos = new UserDTO[users.length];
 
             for(int i=0; i<users.length; i++){

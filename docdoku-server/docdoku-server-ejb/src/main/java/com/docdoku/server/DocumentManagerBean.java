@@ -1520,10 +1520,10 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
     @RolesAllowed("users")
     @Override
-    public User[] getReachableUsers() throws AccountNotFoundException {
+    public User[] getReachableUsers(String workspaceId) throws AccountNotFoundException {
         String callerLogin = ctx.getCallerPrincipal().getName();
         Account account = new AccountDAO(em).loadAccount(callerLogin);
-        return new UserDAO(new Locale(account.getLanguage()), em).findReachableUsersForCaller(callerLogin);
+        return new UserDAO(new Locale(account.getLanguage()), em).findReachableUsersForCaller(callerLogin, workspaceId);
     }
 
     @RolesAllowed("users")

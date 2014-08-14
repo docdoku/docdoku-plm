@@ -118,7 +118,7 @@ define({
         GIVE_HAND: "Give the hand",
         COLLABORATIVE_NO_MASTER: "absent",
         COLLABORATIVE:"Co-browsing",
-        NO_PARTICIPANT:"No participant",
+        NO_PARTICIPANT:"No participant. Invite users from Coworkers menu.",
         USERS_CONNECTED:"users connected"
     },
     "fr": true,
