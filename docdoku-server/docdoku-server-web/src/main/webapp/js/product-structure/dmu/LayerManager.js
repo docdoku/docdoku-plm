@@ -30,8 +30,10 @@ define([
         },
 
         removeAllMeshesFromMarkers: function(){
-            for (var cid in this.meshs) {
-                var currentMesh = this.meshs[cid];
+            var cid;
+            var currentMesh;
+            for (cid in this.meshs) {
+                currentMesh = this.meshs[cid];
                 App.sceneManager.scene.remove(currentMesh);
             }
 
@@ -109,7 +111,7 @@ define([
                 });
             }
 
-            this.layersCollection.create(layer,{success:function(){App.collaborativeController.sendLayersRefresh("create layer")}});
+            this.layersCollection.create(layer,{success:function(){App.collaborativeController.sendLayersRefresh("create layer");}});
             return layer;
         },
 

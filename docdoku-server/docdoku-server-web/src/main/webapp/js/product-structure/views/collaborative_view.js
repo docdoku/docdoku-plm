@@ -22,6 +22,7 @@ define(    [
             template: Mustache.compile(template),
 
             initialize: function() {
+                Backbone.Events.on('SendCollaborativeInvite',this.sendInvite,this);
             },
 
             render: function() {
@@ -61,11 +62,25 @@ define(    [
                 });
             },
 
+            sendInvite : function(user) {
+                mainChannel.sendJSON({
+                    type: ChannelMessagesType.COLLABORATIVE_INVITE,
+                    key: this.roomKey,
+                    messageBroadcast: {
+                        url: APP_CONFIG.workspaceId + '/' + APP_CONFIG.productId,
+                        context: APP_CONFIG.workspaceId
+                    },
+                    remoteUser: user
+                });
+            },
+
             invite : function(){
+                /*
                 var spmv = new SelectParticipantModalView();
                 spmv.setRoomKey(this.roomKey);
                 $("body").append(spmv.render().el);
-                spmv.openModal();
+                spmv.openModal();*/
+                Backbone.Events.trigger("collaborative_invite_coworkers");
             },
 
             kick: function(e){

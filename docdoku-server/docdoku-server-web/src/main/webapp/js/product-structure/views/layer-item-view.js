@@ -1,3 +1,4 @@
+/*global App*/
 define(
     ["text!templates/layer_item.html"],
     function(template) {
@@ -56,7 +57,7 @@ define(
                         name: value,
                         editingName: false
                     },
-                    {success:function(){App.collaborativeController.sendLayersRefresh("edit layer name")}}
+                    {success:function(){App.collaborativeController.sendLayersRefresh("edit layer name");}}
                 );
             } else {
                 this.model.set('editingName', false);
@@ -72,7 +73,7 @@ define(
         removeLayer:function(){
             var collection = this.model.collection;
             this.model.setEditingMarkers(false);
-            this.model.destroy({success:function(){App.collaborativeController.sendLayersRefresh("remove layer")}});
+            this.model.destroy({success:function(){App.collaborativeController.sendLayersRefresh("remove layer");}});
             if(collection.length == 0){
                 collection.onEmpty();
             }

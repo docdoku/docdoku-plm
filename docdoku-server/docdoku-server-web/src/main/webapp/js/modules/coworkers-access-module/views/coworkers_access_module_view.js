@@ -44,6 +44,8 @@ define(
                 }
             });
 
+            Backbone.Events.on('collaborative_invite_coworkers',this.collaborativeInvite, this);
+
             return this ;
 
         },
@@ -59,8 +61,11 @@ define(
         render:function(){
 
             return this ;
-        }
+        },
 
+        collaborativeInvite:function(){
+            this.$("#coworkers_access_module_toggler").click();
+        }
 
     });
 

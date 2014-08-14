@@ -1,3 +1,4 @@
+/*global App*/
 define(    [
         "text!templates/marker_info_modal.html",
         "i18n!localization/nls/product-structure-strings"
@@ -28,7 +29,7 @@ define(    [
 
             destroyMarker: function() {
                 if(this.model){
-                    this.model.destroy({success:function(){App.collaborativeController.sendMarkersRefresh("remove marker")}});
+                    this.model.destroy({success:function(){App.collaborativeController.sendMarkersRefresh("remove marker");}});
                 }
                 this.closeModal();
             },

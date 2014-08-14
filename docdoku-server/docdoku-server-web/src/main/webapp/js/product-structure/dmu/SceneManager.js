@@ -738,10 +738,6 @@ define([
             }
         };
 
-        this.setMarkers = function () {
-            _this.layerManager.removeAllLayers();
-        }
-
         /**
          * Animation loop :
          *  Update controls, scene objects and animations
@@ -1123,30 +1119,6 @@ define([
 
             _this.reDraw();
             _this.leaveTransformMode();
-        };
-
-        /**
-         * Collaborative mode
-         */
-        this.requestJoinRoom = function (key) {
-            if (mainChannel.status !== ChannelStatus.OPENED) {
-                // Retry to connect every 500ms
-                console.log("Websocket is not yet connected. Retry in 500ms.");
-                var _this = this;
-                setTimeout(function () {
-                    _this.requestJoinRoom(key);
-                }, 500);
-            } else {
-                mainChannel.sendJSON({
-                    type: ChannelMessagesType.COLLABORATIVE_JOIN,
-                    key: key,
-                    remoteUser: ""
-                });
-            }
-        };
-
-        this.joinRoom = function (key){
-            App.collaborativeView.setRoomKey(key);
         };
 
         /**

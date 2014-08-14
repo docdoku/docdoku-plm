@@ -92,7 +92,7 @@ define(
             try{
                 App.instancesManager = new InstancesManager();
                 App.sceneManager = new SceneManager();
-                App.collaborativeView = new CollaborativeView({roomKey:"beurk"}).render();
+                App.collaborativeView = new CollaborativeView().render();
                 this.$ControlsContainer.append(App.collaborativeView.$el);
                 App.collaborativeController = new CollaborativeController();
 
@@ -109,8 +109,6 @@ define(
                 this.$ControlsContainer.append(new ControlMeasureView().render().$el);
 
                 App.sceneManager.init();
-
-
             }catch(ex){
                 console.log("Got exception in dmu");
                 this.onNoWebGLSupport();
@@ -120,6 +118,19 @@ define(
             this.bindDatGUIControls();
 
             return this;
+        },
+
+        requestJoinRoom:function (key) {
+            if (mainChannel.status !== ChannelStatus.OPENED) {
+                // Retry to connect every 500ms
+                console.log("!!!!!!!!!!! Websocket is not yet connected !!!!!!!!!!!!");
+                var _this = this;
+                setTimeout(function () {
+                    _this.requestJoinRoom(key);
+                }, 500);
+            } else {
+                App.collaborativeController.sendJoinRequest(key);
+            }
         },
 
         menuResizable:function(){

@@ -1,4 +1,5 @@
 /*global App*/
+'use strict';
 define([
     "models/marker",
     "collections/marker_collection",
@@ -118,7 +119,7 @@ define([
                 y: y,
                 z: z
             });
-            this.getMarkers().create(marker,{success:function(){App.collaborativeController.sendMarkersRefresh("create marker")}});
+            this.getMarkers().create(marker,{success:function(){App.collaborativeController.sendMarkersRefresh("create marker");}});
 
             return marker;
         },

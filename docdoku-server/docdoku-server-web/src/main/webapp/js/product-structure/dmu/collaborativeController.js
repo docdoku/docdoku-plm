@@ -21,7 +21,7 @@ define(function(){
                 }
 
                 if (message.type === ChannelMessagesType.COLLABORATIVE_JOIN) {
-                    App.sceneManager.joinRoom(message.key);
+                    App.collaborativeView.setRoomKey(message.key);
                     return;
                 }
 
@@ -83,15 +83,20 @@ define(function(){
                     //App.appView.leaveSpectatorView();
                     //App.sceneManager.enableControlsObject();
                 }
-            },
-
-            onStatusChanged: function (status) {
-                Backbone.Events.trigger('ChatStatusChanged', status);
             }
-
         });
 
         mainChannel.addChannelListener(collaborativeListener);
+
+
+
+        this.sendJoinRequest = function(key) {
+            mainChannel.sendJSON({
+                type: ChannelMessagesType.COLLABORATIVE_JOIN,
+                key: key,
+                remoteUser: ""
+            });
+        };
 
         this.sendLayersRefresh = function(subject){
             _this = this;

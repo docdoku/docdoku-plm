@@ -10,12 +10,17 @@ define([
             events : {
                 "click .fa-video-camera" : "onVideoButtonClick",
                 "click .fa-comments" : "onChatButtonClick",
-                "click .fa-envelope" : "onMailButtonClick"
+                "click .fa-envelope" : "onMailButtonClick",
+                "click .fa-globe" : "onCobrowsingButtonClick"
             },
 
             initialize:function(){
-                this.template =  Mustache.render(template, {user : this.model});
+                var data = {
+                    user :  this.model.login
+                };
+                this.template =  Mustache.render(template, data);
                 _.bindAll(this);
+                Backbone.Events.on('collaborative_invite_coworkers',this.collaborativeInvite);
                 return this ;
             },
 
@@ -50,6 +55,20 @@ define([
 
             onMailButtonClick:function(){
                 window.location.href = encodeURI("mailto:"+this.model.email + "?subject="+APP_CONFIG.workspaceId);
+            },
+
+            onCobrowsingButtonClick:function(e){
+                Backbone.Events.trigger('SendCollaborativeInvite',this.model.login);
+                e.preventDefault();
+            },
+
+            collaborativeInvite:function(){
+                var data = {
+                    user :  this.model.login,
+                    displayCobrowsingButton : this.model.workspaceId === APP_CONFIG.workspaceId
+                };
+                this.template =  Mustache.render(template, data);
+                this.render();
             }
 
         });
