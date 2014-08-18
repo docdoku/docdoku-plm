@@ -20,6 +20,7 @@
 package com.docdoku.server.rest;
 
 import com.docdoku.core.configuration.Baseline;
+import com.docdoku.core.configuration.BaselineCreation;
 import com.docdoku.core.configuration.BaselinedPart;
 import com.docdoku.core.exceptions.ApplicationException;
 import com.docdoku.core.product.ConfigurationItemKey;
@@ -40,6 +41,9 @@ import javax.ejb.Stateless;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -93,9 +97,18 @@ public class BaselinesResource {
     public Response createBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, BaselineCreationDTO baselineCreationDTO){
         try {
             ciId = (ciId != null) ? ciId : baselineCreationDTO.getConfigurationItemId();
-            productService.createBaseline(new ConfigurationItemKey(workspaceId,ciId),baselineCreationDTO.getName(),baselineCreationDTO.getType(),baselineCreationDTO.getDescription());
-            return Response.ok().build();
-        } catch (ApplicationException ex) {
+            BaselineCreation baselineCreation = productService.createBaseline(new ConfigurationItemKey(workspaceId,ciId),baselineCreationDTO.getName(),baselineCreationDTO.getType(),baselineCreationDTO.getDescription());
+            BaselineDTO baselineDTO= mapper.map(baselineCreation.getBaseline(),BaselineDTO.class);
+            if(baselineCreation.getConflit().size()>0){
+                return Response.status(202).entity(baselineCreation.getMessage()).type("text/plain").build();
+            }
+
+            try {
+                return Response.created(URI.create(URLEncoder.encode(String.valueOf(baselineDTO.getId()),"UTF-8"))).entity(baselineDTO).build();
+            } catch (UnsupportedEncodingException ignored) {
+                return Response.ok().build();
+            }
+        } catch(ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }

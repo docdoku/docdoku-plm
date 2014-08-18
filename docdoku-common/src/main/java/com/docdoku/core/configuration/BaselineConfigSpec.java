@@ -19,8 +19,10 @@
  */
 package com.docdoku.core.configuration;
 
+import com.docdoku.core.common.User;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartMaster;
+import com.docdoku.core.product.PartRevision;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -33,31 +35,37 @@ public class BaselineConfigSpec extends ConfigSpec {
 
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private Baseline baseline;
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    private User user;
 
     public BaselineConfigSpec(){
     }
 
-    public BaselineConfigSpec(Baseline baseline) {
+    public BaselineConfigSpec(Baseline baseline, User user) {
         this.baseline = baseline;
+        this.user = user;
     }
 
-    public Baseline getBaseline() {
-        return baseline;
-    }
+    public Baseline getBaseline() {return baseline;}
+    public void setBaseline(Baseline baseline) {this.baseline = baseline;}
 
-    public void setBaseline(Baseline baseline) {
-        this.baseline = baseline;
-    }
+    public User getUser() {return user;}
+    public void setUser(User user) {this.user = user;}
 
     @Override
     public PartIteration filterConfigSpec(PartMaster part) {
-        BaselinedPartKey baselinedRootPartKey = new BaselinedPartKey(baseline.getId(),part.getWorkspaceId(),part.getNumber());
+        BaselinedPartKey baselinedRootPartKey = new BaselinedPartKey(baseline.getPartCollection().getId(),part.getWorkspaceId(),part.getNumber());
         BaselinedPart baselinedRootPart = baseline.getBaselinedPart(baselinedRootPartKey);
         if(baselinedRootPart != null){
             return baselinedRootPart.getTargetPart();
         }else{
-            // the part isn't in baseline, choose the latest version-iteration
-            return part.getLastRevision().getLastIteration();
+            // the part isn't in baseline, choose the latest version-iteration uncheckouted
+            PartIteration partI = part.getLastRevision().getLastIteration();
+            PartRevision partRevision = partI.getPartRevision();
+            if(partRevision.isCheckedOut() && !partRevision.getCheckOutUser().equals(user)){
+                partI = partRevision.getLastUncheckoutedIteration();
+            }
+            return partI;
         }
     }
 }

@@ -54,6 +54,8 @@ public class PartDTO implements Serializable {
     private boolean attributesLocked;
     @XmlElement(nillable = true)
     private PartRevision.RevisionStatus status;
+    @XmlElement(nillable = true)
+    int lastIterationNumber;
 
     public PartDTO() {
     }
@@ -179,4 +181,7 @@ public class PartDTO implements Serializable {
 
     public PartRevision.RevisionStatus getStatus() {return status;}
     public void setStatus(PartRevision.RevisionStatus status) {this.status = status;}
+
+    public int getLastIterationNumber() {return lastIterationNumber;}
+    public void setLastIterationNumber(int lastIterationNumber) {this.lastIterationNumber = lastIterationNumber;}
 }

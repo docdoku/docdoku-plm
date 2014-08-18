@@ -1,4 +1,6 @@
-define(["common-objects/utils/date", "i18n!localization/nls/product-structure-strings"],
+/*global APP_CONFIG*/
+'use strict';
+define(['common-objects/utils/date', 'i18n!localization/nls/product-structure-strings'],
 function (date, i18n) {
 
     var ComponentModule = {};
@@ -24,7 +26,7 @@ function (date, i18n) {
         },
 
         getId: function(){
-            return this.getNumber()+"-"+this.getVersion()+"-"+this.getIteration();
+            return this.getNumber()+'-'+this.getVersion()+'-'+this.getIteration();
         },
 
         isCheckout: function() {
@@ -51,7 +53,7 @@ function (date, i18n) {
         },
 
         isCheckoutByConnectedUser: function() {
-            return this.isCheckout() ? this.getCheckoutUser().login == APP_CONFIG.login : false;
+            return this.isCheckout() ? this.getCheckoutUser().login === APP_CONFIG.login : false;
         },
 
         isAssembly: function() {
@@ -107,29 +109,38 @@ function (date, i18n) {
         },
 
         getIteration: function() {
-            return this.get('iteration') != 0 ?  this.get('iteration') : null;
+            return this.get('iteration') !== 0 ?  this.get('iteration') : null;
+        },
+
+        isLastIteration: function(iterationNumber){
+            // return TRUE if the iteration is the very last (check or uncheck)
+            return this.get('lastIterationNumber') === iterationNumber;
         },
 
         isStandardPart: function() {
             return this.get('standardPart');
         },
 
+	    isForbidden:function(){
+		    return this.get('isForbidden');
+	    },
+
         getInstancesUrl: function() {
-            return "/api/workspaces/" + APP_CONFIG.workspaceId + "/products/" + APP_CONFIG.productId + "/instances?configSpec="+window.config_spec+"&path=" + this.getPath();
+            return '/api/workspaces/' + APP_CONFIG.workspaceId + '/products/' + APP_CONFIG.productId + '/instances?configSpec='+window.configSpec+'&path=' + this.getPath();
         },
 
         getUrlForBom: function() {
 
             if(this.isAssembly()) {
-                return "/api/workspaces/" + APP_CONFIG.workspaceId + "/products/" + APP_CONFIG.productId + "/bom?configSpec="+window.config_spec+"&partUsageLink=" + this.getPartUsageLinkId();
+                return '/api/workspaces/' + APP_CONFIG.workspaceId + '/products/' + APP_CONFIG.productId + '/bom?configSpec='+window.configSpec+'&partUsageLink=' + this.getPartUsageLinkId();
             } else {
-                return "/api/workspaces/" + APP_CONFIG.workspaceId + "/parts/" + this.getNumber()+ "-" + this.getVersion();
+                return '/api/workspaces/' + APP_CONFIG.workspaceId + '/parts/' + this.getNumber()+ '-' + this.getVersion();
             }
 
         },
 
         getRootUrlForBom: function() {
-            return "/api/workspaces/" + APP_CONFIG.workspaceId + "/parts/" + this.getNumber()+ "-" + this.getVersion();
+            return '/api/workspaces/' + APP_CONFIG.workspaceId + '/parts/' + this.getNumber()+ '-' + this.getVersion();
         }
 
     });
@@ -148,13 +159,13 @@ function (date, i18n) {
 
         url: function() {
             if (this.isRoot) {
-                return this.urlBase + "?configSpec="+window.config_spec+"&depth=0";
+                return this.urlBase + '?configSpec='+window.configSpec+'&depth=0';
             } else {
-                return this.urlBase + "?configSpec="+window.config_spec+"&partUsageLink=" + this.parentUsageLinkId + "&depth=1";
+                return this.urlBase + '?configSpec='+window.configSpec+'&partUsageLink=' + this.parentUsageLinkId + '&depth=1';
             }
         },
 
-        urlBase: "/api/workspaces/" + APP_CONFIG.workspaceId + "/products/" + APP_CONFIG.productId,
+        urlBase: '/api/workspaces/' + APP_CONFIG.workspaceId + '/products/' + APP_CONFIG.productId,
 
         parse: function(response) {
             if (this.isRoot) {
@@ -163,7 +174,7 @@ function (date, i18n) {
             } else {
                 var self = this;
                 return _.map(response.components, function(component) {
-                    var path = self.path == null ? component.partUsageLinkId : self.path + '-' + component.partUsageLinkId;
+                    var path = self.path === null ? component.partUsageLinkId : self.path + '-' + component.partUsageLinkId;
                     return _.extend(component, {path: path});
                 });
             }

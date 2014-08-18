@@ -1,3 +1,5 @@
+/*global APP_CONFIG*/
+'use strict';
 define(["i18n!localization/nls/product-structure-strings","common-objects/utils/date","common-objects/collections/part_iteration_collection","common-objects/utils/acl-checker"], function(i18n, Date, PartIterationList,ACLChecker) {
 
     var Part = Backbone.Model.extend({
@@ -46,7 +48,7 @@ define(["i18n!localization/nls/product-structure-strings","common-objects/utils/
         },
 
         isReleased: function(){
-            return this.get('status')=="RELEASED";
+            return this.get('status')==='RELEASED';
         },
 
         getFormattedCheckoutDate: function() {
@@ -76,7 +78,7 @@ define(["i18n!localization/nls/product-structure-strings","common-objects/utils/
 
 
         isCheckoutByConnectedUser: function() {
-            return this.isCheckout() ? this.getCheckOutUserLogin() == APP_CONFIG.login : false;
+            return this.isCheckout() ? this.getCheckOutUserLogin() === APP_CONFIG.login : false;
         },
 
         getUrl: function() {
@@ -91,16 +93,21 @@ define(["i18n!localization/nls/product-structure-strings","common-objects/utils/
             return this.getIterations().last();
         },
 
+	    isLastIteration: function(iterationNumber){
+		    // return TRUE if the iteration is the very last (check or uncheck)
+			return this.get('lastIterationNumber') === iterationNumber;
+		},
+
         getIterations: function() {
             return this.iterations;
         },
 
         getAuthorLogin:function(){
-            return this.get("author").login;
+            return this.get('author').login;
         },
 
         getAuthorName:function(){
-            return this.get("author").name;
+            return this.get('author').name;
         },
 
         getCheckOutUserName:function(){
@@ -118,26 +125,26 @@ define(["i18n!localization/nls/product-structure-strings","common-objects/utils/
         },
 
         isStandardPart:function(){
-          return this.get("standardPart") ? 1:0;
+          return this.get('standardPart') ? 1:0;
         },
 
         isStandardPartReadable:function(){
-            return this.get("standardPart") ? i18n.TRUE:i18n.FALSE;
+            return this.get('standardPart') ? i18n.TRUE:i18n.FALSE;
         },
 
         getLifeCycleState:function(){
-            return this.get("lifeCycleState");
+            return this.get('lifeCycleState');
         },
 
         isAttributesLocked:function(){
-            return this.get("attributesLocked");
+            return this.get('attributesLocked');
         },
 
         checkout: function() {
             $.ajax({
                 context: this,
-                type: "PUT",
-                url: this.url() + "/checkout",
+                type: 'PUT',
+                url: this.url() + '/checkout',
                 success: function() {
                     this.fetch();
                 }
@@ -147,8 +154,8 @@ define(["i18n!localization/nls/product-structure-strings","common-objects/utils/
         undocheckout: function() {
             $.ajax({
                 context: this,
-                type: "PUT",
-                url: this.url() + "/undocheckout",
+                type: 'PUT',
+                url: this.url() + '/undocheckout',
                 success: function() {
                     this.fetch();
                 },
@@ -161,8 +168,8 @@ define(["i18n!localization/nls/product-structure-strings","common-objects/utils/
         checkin: function() {
             $.ajax({
                 context: this,
-                type: "PUT",
-                url: this.url() + "/checkin",
+                type: 'PUT',
+                url: this.url() + '/checkin',
                 success: function() {
                     this.fetch();
                 }
@@ -170,101 +177,101 @@ define(["i18n!localization/nls/product-structure-strings","common-objects/utils/
         },
 
         isCheckout:function(){
-            return !_.isNull(this.get("checkOutDate"));
+            return !_.isNull(this.get('checkOutDate'));
         },
 
         url:function(){
             if(this.getPartKey()){
-                return "/api/workspaces/" + APP_CONFIG.workspaceId + "/parts/" + this.getPartKey();
+                return '/api/workspaces/' + APP_CONFIG.workspaceId + '/parts/' + this.getPartKey();
             }
-            return "/api/workspaces/" + APP_CONFIG.workspaceId + "/parts/";
+            return '/api/workspaces/' + APP_CONFIG.workspaceId + '/parts/';
         },
 
 
         getPermalink: function() {
             return encodeURI(
-                window.location.origin
-                    + "/parts/"
-                    + this.getWorkspace()
-                    + "/"
-                    + this.getNumber()
-                    + "/"
-                    + this.getVersion()
+                window.location.origin +
+                    '/parts/' +
+                    this.getWorkspace() +
+                    '/' +
+                    this.getNumber() +
+                    '/' +
+                    this.getVersion()
             );
         },
 
         createShare:function(args){
             $.ajax({
-                type: "POST",
-                url: this.url() + "/share",
+                type: 'POST',
+                url: this.url() + '/share',
                 data: JSON.stringify(args.data),
-                contentType: "application/json; charset=utf-8",
+                contentType: 'application/json; charset=utf-8',
                 success: args.success
             });
         },
 
         publish:function(args){
             $.ajax({
-                type: "PUT",
-                url: this.url() + "/publish",
+                type: 'PUT',
+                url: this.url() + '/publish',
                 success: args.success
             });
         },
 
         unpublish:function(args){
             $.ajax({
-                type: "PUT",
-                url: this.url() + "/unpublish",
+                type: 'PUT',
+                url: this.url() + '/unpublish',
                 success: args.success
             });
         },
 
         updateACL:function(args){
             $.ajax({
-                type: "PUT",
-                url: this.url() + "/acl",
+                type: 'PUT',
+                url: this.url() + '/acl',
                 data: JSON.stringify(args.acl),
-                contentType: "application/json; charset=utf-8",
+                contentType: 'application/json; charset=utf-8',
                 success: args.success,
                 error : args.error
             });
         },
 
         hasACLForCurrentUser:function(){
-            return this.getACLPermissionForCurrentUser() != false;
+            return this.getACLPermissionForCurrentUser() !== false;
         },
 
         isForbidden:function(){
-            return this.getACLPermissionForCurrentUser() == "FORBIDDEN";
+            return this.getACLPermissionForCurrentUser() === 'FORBIDDEN';
         },
 
         isReadOnly:function(){
-            return this.getACLPermissionForCurrentUser() == "READ_ONLY";
+            return this.getACLPermissionForCurrentUser() === 'READ_ONLY';
         },
 
         isFullAccess:function(){
-            return this.getACLPermissionForCurrentUser() == "FULL_ACCESS";
+            return this.getACLPermissionForCurrentUser() === 'FULL_ACCESS';
         },
 
         getACLPermissionForCurrentUser:function(){
-            return ACLChecker.getPermission(this.get("acl"));
+            return ACLChecker.getPermission(this.get('acl'));
         },
 
         createNewVersion: function(description, workflow, roleMappingList, aclList) {
 
             var data = {
                 description: description,
-                workflowModelId: workflow ? workflow.get("id") : null,
+                workflowModelId: workflow ? workflow.get('id') : null,
                 roleMapping:workflow? roleMappingList: null,
                 acl:aclList
             };
 
             $.ajax({
                 context: this,
-                type: "PUT",
-                url: this.url() + "/newVersion",
+                type: 'PUT',
+                url: this.url() + '/newVersion',
                 data: JSON.stringify(data),
-                contentType: "application/json; charset=utf-8",
+                contentType: 'application/json; charset=utf-8',
                 success: function() {
                     this.collection.fetch({reset:true});
                 }
@@ -274,8 +281,8 @@ define(["i18n!localization/nls/product-structure-strings","common-objects/utils/
         release: function() {
             $.ajax({
                 context: this,
-                type: "PUT",
-                url: this.url() + "/release",
+                type: 'PUT',
+                url: this.url() + '/release',
                 success: function() {
                     this.fetch();
                 }

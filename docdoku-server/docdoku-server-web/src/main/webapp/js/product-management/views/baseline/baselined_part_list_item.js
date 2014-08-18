@@ -78,8 +78,8 @@ define([
             this.$iterationInput.html("");
             this.availableIterations.each(function (optionI) {
                 if (optionI.version === version) {
-                    iteration = optionI.lastIteration;
-                    if (_this.isForBaseline && _this.options.released) {
+	                iteration = optionI.lastIteration;
+	                if (_this.isForBaseline && _this.options.released) {
                         _this.$iterationInput.append('<option value="' + iteration + '">' + iteration + '</option>');
                     }else{
                         _(_.range(1, iteration+1)).each(function(value){
@@ -88,7 +88,7 @@ define([
                     }
                 }
             });
-            this.$iterationInput.val(iteration);
+            this.$iterationInput.val(_this.model.getIteration());
         },
 
         changeIteration:function(e){

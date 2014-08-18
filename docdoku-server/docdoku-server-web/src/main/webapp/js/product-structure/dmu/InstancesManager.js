@@ -1,6 +1,6 @@
 /*global App,APP_CONFIG,worker*/
 'use strict';
-define(["dmu/LoaderManager","lib/async"],
+define(['dmu/LoaderManager','lib/async'],
 function (LoaderManager, async) {
 
     /**
@@ -30,7 +30,7 @@ function (LoaderManager, async) {
         var loadCache={};
         var loadedInstances = [];                                                                                       // Store all loaded geometries and materials
         var loaderManager = new LoaderManager({progressBar: true});
-        var loaderIndicator = $("#product_title").find("img.loader");
+        var loaderIndicator = $('#product_title').find('img.loader');
         var timer = null;
         var evalRunning = false;
 
@@ -71,14 +71,14 @@ function (LoaderManager, async) {
             }
         };
 
-        var worker = new Worker("/js/product-structure/workers/InstancesWorker.js");
+        var worker = new Worker('/js/product-structure/workers/InstancesWorker.js');
 
-        worker.addEventListener("message", function (message) {
-            if (typeof  workerMessages[message.data.fn] === "function") {
+        worker.addEventListener('message', function (message) {
+            if (typeof  workerMessages[message.data.fn] === 'function') {
                 workerMessages[message.data.fn](message.data.obj);
             } else {
                 if(App.debug){
-                    console.log("[InstancesManager] Unrecognized command  : ");
+                    console.log('[InstancesManager] Unrecognized command  : ');
                     console.log(message.data);
                 }
             }
@@ -99,7 +99,7 @@ function (LoaderManager, async) {
                 // don't unload edited meshes
                 if (App.sceneManager.editedMeshes.indexOf(instance.id) !== -1) {
                     _this.aborted++;
-                    worker.postMessage({fn:"setQuality",obj:{id:instance.id,quality:instance.qualityLoaded}});
+                    worker.postMessage({fn:'setQuality',obj:{id:instance.id,quality:instance.qualityLoaded}});
                     setTimeout(callback,0);
                     return;
                 }
@@ -178,7 +178,7 @@ function (LoaderManager, async) {
         function findQualities(files) {
             var q = [];
             _(files).each(function (f) {
-                q[f.quality] = "/files/" + f.fullName;
+                q[f.quality] = '/files/' + f.fullName;
             });
             return q;
         }
@@ -206,8 +206,8 @@ function (LoaderManager, async) {
             }
             evalRunning=true;
             var sceneContext = App.sceneManager.getSceneContext();
-            if(App.debug){console.log("[InstancesManager] Updating worker");}
-            worker.postMessage({fn: "context", obj: {
+            if(App.debug){console.log('[InstancesManager] Updating worker');}
+            worker.postMessage({fn: 'context', obj: {
                 camera: sceneContext.camPos,
                 target: sceneContext.target || {},
                 WorkerManagedValues: App.WorkerManagedValues,
@@ -217,7 +217,7 @@ function (LoaderManager, async) {
 
         function loadPath(paths, callback){
             $.ajax({
-                url:"/api/workspaces/" + APP_CONFIG.workspaceId + "/products/" + APP_CONFIG.productId + "/instances?configSpec="+window.config_spec,
+                url:'/api/workspaces/' + APP_CONFIG.workspaceId + '/products/' + APP_CONFIG.productId + '/instances?configSpec='+window.configSpec,
                 type:'POST',
                 contentType:'application/json',
                 dataType:'json',
@@ -229,7 +229,7 @@ function (LoaderManager, async) {
                     _.each(instances, function (instance) {
 
                         if(instancesIndexed[instance.id]){
-                            worker.postMessage({fn: "check", obj: instance.id});
+                            worker.postMessage({fn: 'check', obj: instance.id});
                         }else{
                             instancesIndexed[instance.id]=instance;
                             instance.matrix = adaptMatrix(instance.matrix);
@@ -240,7 +240,7 @@ function (LoaderManager, async) {
                             instance.qualities =  findQualities(instance.files);
 
                             worker.postMessage({
-                                fn: "addInstance",
+                                fn: 'addInstance',
                                 obj: {
                                     id: instance.id,
                                     cog: cog,
@@ -262,7 +262,7 @@ function (LoaderManager, async) {
 
         function unLoadPath(paths, callback) {
             $.ajax({
-                url:"/api/workspaces/" + APP_CONFIG.workspaceId + "/products/" + APP_CONFIG.productId + "/instances?configSpec="+window.config_spec,
+                url:'/api/workspaces/' + APP_CONFIG.workspaceId + '/products/' + APP_CONFIG.productId + '/instances?configSpec='+window.configSpec,
                 type:'POST',
                 contentType:'application/json',
                 data:JSON.stringify({
@@ -270,7 +270,7 @@ function (LoaderManager, async) {
                 }),
                 success:function(instances){
                     _.each(instances, function (instance) {
-                        worker.postMessage({fn: "unCheck", obj: instance.id});
+                        worker.postMessage({fn: 'unCheck', obj: instance.id});
                     });
                     _this.planNewEval();
                     callback();
@@ -279,7 +279,7 @@ function (LoaderManager, async) {
 
 
         this.loadQueue=async.queue(function (directive, callback){
-            if (directive.process === "load"){
+            if (directive.process === 'load'){
                 loadPath(directive.path, callback);
             }else {
                 unLoadPath(directive.path, callback);
@@ -317,11 +317,11 @@ function (LoaderManager, async) {
 
         this.loadComponent = function(component) {
             loaderIndicator.show();
-            _this.loadQueue.push({"process":"load","path":[component.getPath()]});
+            _this.loadQueue.push({'process':'load','path':[component.getPath()]});
         };
 
         this.unLoadComponent = function(component) {
-            _this.loadQueue.push({"process":"unload","path":[component.getPath()]});
+            _this.loadQueue.push({'process':'unload','path':[component.getPath()]});
         };
 
         this.clear = function(){
@@ -339,7 +339,7 @@ function (LoaderManager, async) {
                 cache.material.dispose();
             });
 
-            worker.postMessage({fn: "clear", obj: null});
+            worker.postMessage({fn: 'clear', obj: null});
 
             instancesIndexed={};
             loadCache={};

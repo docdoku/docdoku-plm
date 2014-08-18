@@ -97,7 +97,7 @@ define([
                     baselinedParts.push({
                         number:baselinedPart.getNumber(),
                         version:baselinedPart.getVersion(),
-                        iteration:baselinedPart.getIteration()
+                        iteration:parseInt(baselinedPart.getIteration())
                     });
                 }
             });

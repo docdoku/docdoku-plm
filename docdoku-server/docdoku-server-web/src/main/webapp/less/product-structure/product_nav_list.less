@@ -111,8 +111,36 @@
 
       &:hover {
         opacity: 0.8;
+
+        + i.fa-lock,
+        + i.fa-pencil,
+        + i.fa-eye,
+        + i.fa-ban{
+          margin-left: -2px;
+          opacity: 1;
+        }
       }
 
+    }
+
+    i.fa-lock,
+    i.fa-pencil,
+    i.fa-eye,
+    i.fa-ban{
+      font-size: x-small;
+      margin-left: -8px;
+      vertical-align: bottom;
+    }
+
+    i.fa-ban{
+      color: red;
+    }
+
+    i.fa-lock,
+    i.fa-ban{
+      + ul{
+        display: none;
+      }
     }
 
   }

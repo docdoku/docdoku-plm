@@ -16,7 +16,6 @@ define([
         },
 
         render:function(){
-            this.$el.html(this.template());
             this.collection = new Baselines({},{productId:this.productId});
             this.listenToOnce(this.collection,"reset",this.onCollectionReset);
             this.collection.fetch({reset:true});

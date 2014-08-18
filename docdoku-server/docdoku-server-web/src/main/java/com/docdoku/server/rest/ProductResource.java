@@ -21,8 +21,7 @@ package com.docdoku.server.rest;
 
 import com.docdoku.core.common.User;
 import com.docdoku.core.configuration.ConfigSpec;
-import com.docdoku.core.configuration.LatestConfigSpec;
-import com.docdoku.core.exceptions.ApplicationException;
+import com.docdoku.core.exceptions.*;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.product.*;
 import com.docdoku.core.security.UserGroupMapping;
@@ -36,7 +35,6 @@ import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.io.UnsupportedEncodingException;
@@ -117,7 +115,7 @@ public class ProductResource {
             ConfigSpec cs;
 
             if(configSpecType == null || configSpecType.equals("latest")){
-                cs = new LatestConfigSpec();
+                cs = productService.getLatestConfigSpec(workspaceId);
             }else{
                 cs = productService.getConfigSpecForBaseline(Integer.parseInt(configSpecType));
             }
@@ -153,7 +151,7 @@ public class ProductResource {
             ConfigSpec cs ;
 
             if(configSpecType == null || configSpecType.equals("latest")){
-                cs = new LatestConfigSpec();
+                cs = productService.getLatestConfigSpec(workspaceId);
             }else{
                 cs = productService.getConfigSpecForBaseline(Integer.parseInt(configSpecType));
             }
@@ -221,7 +219,7 @@ public class ProductResource {
         return layerResource;
     }
 
-    private ComponentDTO createDTO(PartUsageLink usageLink, int depth) {
+    private ComponentDTO createDTO(PartUsageLink usageLink, int depth) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
         PartMaster pm = usageLink.getComponent();
         PartRevision partR = pm.getLastRevision();
 
@@ -237,10 +235,9 @@ public class ProductResource {
         List<InstanceAttributeDTO> lstAttributes = new ArrayList<>();
         List<ComponentDTO> components = new ArrayList<>();
 
-        PartIteration partI = null;
         if (partR != null) {
             dto.setDescription(partR.getDescription());
-            partI = partR.getLastIteration();
+            PartIteration partI = partR.getLastIteration();
 
             User checkoutUser = pm.getLastRevision().getCheckOutUser();
             if (checkoutUser != null) {
@@ -249,20 +246,22 @@ public class ProductResource {
             }
 
             dto.setVersion(partR.getVersion());
-        }
 
-        if (partI != null) {
-            for (InstanceAttribute attr : partI.getInstanceAttributes().values()) {
-                lstAttributes.add(mapper.map(attr, InstanceAttributeDTO.class));
-            }
-            if (depth != 0) {
-                depth--;
-                for (PartUsageLink component : partI.getComponents()) {
-                    components.add(createDTO(component, depth));
+            if (partI != null) {
+                for (InstanceAttribute attr : partI.getInstanceAttributes().values()) {
+                    lstAttributes.add(mapper.map(attr, InstanceAttributeDTO.class));
                 }
+                if (depth != 0) {
+                    depth--;
+                    for (PartUsageLink component : partI.getComponents()) {
+                        components.add(createDTO(component, depth));
+                    }
+                }
+                dto.setAssembly(partI.isAssembly());
+                dto.setIteration(partI.getIteration());
             }
-            dto.setAssembly(partI.isAssembly());
-            dto.setIteration(partI.getIteration());
+
+            dto.setLastIterationNumber(productService.getNumberOfIteration(partR.getKey()));
         }
 
         dto.setAttributes(lstAttributes);
@@ -294,7 +293,7 @@ public class ProductResource {
                 ConfigSpec cs;
 
                 if(configSpecType == null || configSpecType.equals("latest") || configSpecType.equals("undefined")){
-                    cs = new LatestConfigSpec();
+                    cs = productService.getLatestConfigSpec(workspaceId);
                 }else{
                     cs = productService.getConfigSpecForBaseline(Integer.parseInt(configSpecType));
                 }
@@ -345,8 +344,8 @@ public class ProductResource {
 
                 ConfigSpec cs;
 
-                if(configSpecType == null || configSpecType.equals("latest") || configSpecType.equals("undefined")){
-                    cs = new LatestConfigSpec();
+                if(configSpecType == null || configSpecType.equals("latest") || configSpecType.equals("undefined")) {
+                    cs = productService.getLatestConfigSpec(workspaceId);
                 }else{
                     cs = productService.getConfigSpecForBaseline(Integer.parseInt(configSpecType));
                 }

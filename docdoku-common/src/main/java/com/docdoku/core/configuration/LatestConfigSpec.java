@@ -21,11 +21,14 @@
 
 package com.docdoku.core.configuration;
 
+import com.docdoku.core.common.User;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartMaster;
 import com.docdoku.core.product.PartRevision;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /**
@@ -39,14 +42,27 @@ import javax.persistence.Table;
 @Entity
 public class LatestConfigSpec extends ConfigSpec {
 
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    private User user;
     
     public LatestConfigSpec() {
     }
 
+    public LatestConfigSpec(User user) {
+        this.user = user;
+    }
+
+    public User getUser() {return user;}
+    public void setUser(User user) {this.user = user;}
+
     @Override
     public PartIteration filterConfigSpec(PartMaster part) {
-        PartRevision partR = part.getLastRevision();
-        return partR.getLastIteration();
+         PartIteration partI = part.getLastRevision().getLastIteration();
+        PartRevision partRevision = partI.getPartRevision();
+        if(partRevision.isCheckedOut() && !partRevision.getCheckOutUser().equals(user)){
+            partI = partRevision.getLastUncheckoutedIteration();
+        }
+        return partI;
     }
 
 }

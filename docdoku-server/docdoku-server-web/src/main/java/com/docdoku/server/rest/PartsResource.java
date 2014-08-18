@@ -184,8 +184,7 @@ public class PartsResource {
             }
 
             PartMaster partMaster = productService.createPartMaster(workspaceId, partCreationDTO.getNumber(), partCreationDTO.getName(), partCreationDTO.isStandardPart(), pWorkflowModelId, partCreationDTO.getDescription(), partCreationDTO.getTemplateId(), roleMappings, userEntries, userGroupEntries);
-            PartDTO partDTO = Tools.mapPartRevisionToPartDTO(partMaster.getLastRevision());
-            return partDTO;
+            return Tools.mapPartRevisionToPartDTO(partMaster.getLastRevision());
 
         } catch (Exception ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());

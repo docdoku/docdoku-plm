@@ -54,6 +54,7 @@ import javax.jws.WebService;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import java.text.MessageFormat;
 import java.text.ParseException;
 import java.util.*;
 
@@ -100,7 +101,6 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         User user = userManager.checkWorkspaceReadAccess(pKey.getWorkspace());
         PartUsageLink rootUsageLink;
 
-
         if (partUsageLink == null || partUsageLink == -1) {
             ConfigurationItem ci = new ConfigurationItemDAO(new Locale(user.getLanguage()), em).loadConfigurationItem(pKey);
             rootUsageLink = new PartUsageLink();
@@ -124,10 +124,11 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
             if(configSpec != null){
                 filterConfigSpec(configSpec,rootUsageLink.getComponent(),depth);
+            }else{
+                filterConfigSpec(new LatestConfigSpec(user),rootUsageLink.getComponent(),depth);
             }
 
             return rootUsageLink;
-
         }else{
             throw new AccessRightException(new Locale(user.getLanguage()), user);
         }
@@ -135,7 +136,6 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     }
 
     private void filterConfigSpec(ConfigSpec configSpec, PartMaster partMaster, int depth){
-
         PartIteration partI = configSpec.filterConfigSpec(partMaster);
 
         if (partI != null) {
@@ -168,7 +168,6 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             }
         }
     }
-
 
     @RolesAllowed("users")
     @Override
@@ -1385,7 +1384,15 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     @Override
     public List<PartRevision> getPartRevisions(String pWorkspaceId, int start, int pMaxResults) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, UserNotActiveException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
-        return new PartRevisionDAO(new Locale(user.getLanguage()), em).getPartRevisionsFiltered(user, pWorkspaceId, start, pMaxResults);
+        List<PartRevision> partRevisions = new PartRevisionDAO(new Locale(user.getLanguage()), em).getPartRevisions(pWorkspaceId, start, pMaxResults);
+        List<PartRevision> filtredPartRevisions = new ArrayList<>();
+        for(PartRevision partRevision : partRevisions){
+            try{
+                checkPartRevisionReadAccess(partRevision.getKey());
+                filtredPartRevisions.add(partRevision);
+            } catch (AccessRightException | PartRevisionNotFoundException ignored) {}
+        }
+        return filtredPartRevisions;
     }
 
     @RolesAllowed({"users"})
@@ -1517,7 +1524,14 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed("users")
     @Override
-    public void createBaseline(ConfigurationItemKey configurationItemKey, String name, Baseline.BaselineType type, String description) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, ConfigurationItemNotReleasedException {
+    public int getNumberOfIteration(PartRevisionKey partRevisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(partRevisionKey.getPartMaster().getWorkspace());
+        return new PartRevisionDAO(new Locale(user.getLanguage()), em).loadPartR(partRevisionKey).getLastIterationNumber();
+    }
+
+    @RolesAllowed("users")
+    @Override
+    public BaselineCreation createBaseline(ConfigurationItemKey configurationItemKey, String name, Baseline.BaselineType type, String description) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, ConfigurationItemNotReleasedException, PartIterationNotFoundException, UserNotActiveException, NotAllowedException{
 
         User user = userManager.checkWorkspaceWriteAccess(configurationItemKey.getWorkspace());
         Locale locale = new Locale(user.getLanguage());
@@ -1533,23 +1547,64 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
         new BaselineDAO(em).createBaseline(baseline);
 
+        BaselineCreation baselineCreation = new BaselineCreation(baseline);
+
         PartRevision lastRevision;
+        PartIteration baselinedIteration = null;
+
         switch(type){
             case RELEASED:
                 lastRevision = configurationItem.getDesignItem().getLastReleasedRevision();
+                if(lastRevision==null){
+                    throw new ConfigurationItemNotReleasedException(locale, configurationItemKey.getId());
+                }
+                baselinedIteration = lastRevision.getLastIteration();
                 break;
             case LATEST:
             default:
-                lastRevision = configurationItem.getDesignItem().getLastRevision();
+                List<PartRevision> partRevisions = configurationItem.getDesignItem().getPartRevisions();
+                boolean isPartFinded = false;
+
+                lastRevision =configurationItem.getDesignItem().getLastRevision();
+                if(lastRevision.isCheckedOut()){
+                    baselineCreation.addConflit(lastRevision);
+                }
+
+                for(int j= partRevisions.size()-1; j>=0 && !isPartFinded;j--){
+                    lastRevision = partRevisions.get(j);
+
+                    for(int i= lastRevision.getLastIteration().getIteration(); i>0 && !isPartFinded; i--){
+                        try{
+                            checkPartIterationForBaseline(new PartIterationKey(lastRevision.getKey(),i));
+                            baselinedIteration = lastRevision.getIteration(i);
+                            isPartFinded=true;
+                        }catch (AccessRightException e){
+                            if(!baselineCreation.getConflit().contains(lastRevision)){
+                                baselineCreation.addConflit(lastRevision);
+                            }
+                        }
+                    }
+                }
+                if(baselinedIteration==null){
+                    throw new NotAllowedException(locale, "NotAllowedException1");
+                }
                 break;
         }
-        if(lastRevision==null){ throw new ConfigurationItemNotReleasedException(locale, configurationItemKey.getId());}
-        fillBaselineParts(baseline, lastRevision.getLastIteration(),type, locale);
+
+        baselineCreation.addConflit(fillBaselineParts(baseline, baselinedIteration, type, locale));
+
+        if(baselineCreation.getConflit().size()>0){
+            String message = ResourceBundle.getBundle("com.docdoku.core.i18n.LocalStrings", locale).getString("BaselineWarningException1");
+            baselineCreation.setMessage(MessageFormat.format(message, baseline.getName()));
+        }
+
+
+        return baselineCreation;
     }
 
     @RolesAllowed("users")
     @Override
-    public Baseline duplicateBaseline(int baselineId, String name, Baseline.BaselineType type, String description) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, BaselineNotFoundException {
+    public Baseline duplicateBaseline(int baselineId, String name, Baseline.BaselineType type, String description) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, BaselineNotFoundException{
         BaselineDAO baselineDAO = new BaselineDAO(em);
         Baseline baseline = baselineDAO.loadBaseline(baselineId);
         ConfigurationItem configurationItem =baseline.getConfigurationItem();
@@ -1792,11 +1847,18 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed("users")
     @Override
+    public ConfigSpec getLatestConfigSpec(String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException{
+        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+        return new LatestConfigSpec(user);
+    }
+
+    @RolesAllowed("users")
+    @Override
     public ConfigSpec getConfigSpecForBaseline(int baselineId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, BaselineNotFoundException {
         BaselineDAO baselineDAO = new BaselineDAO(em);
         Baseline baseline = baselineDAO.loadBaseline(baselineId);
-        userManager.checkWorkspaceReadAccess(baseline.getConfigurationItem().getWorkspaceId());
-        return new BaselineConfigSpec(baseline);
+        User user = userManager.checkWorkspaceReadAccess(baseline.getConfigurationItem().getWorkspaceId());
+        return new BaselineConfigSpec(baseline, user);
     }
 
     @RolesAllowed("users")
@@ -1808,24 +1870,55 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         baselineDAO.deleteBaseline(baseline);
     }
 
-    private void fillBaselineParts(Baseline baseline, PartIteration lastIteration, Baseline.BaselineType type, Locale locale) throws ConfigurationItemNotReleasedException {
-        if(baseline.hasBasedLinedPart(lastIteration.getWorkspaceId(), lastIteration.getPartNumber())) return;
+    private List<PartRevision> fillBaselineParts(Baseline baseline, PartIteration lastIteration, Baseline.BaselineType type, Locale locale) throws ConfigurationItemNotReleasedException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartIterationNotFoundException, NotAllowedException{
+        List<PartRevision> ignoredRevisions = new ArrayList<>();
+        if(baseline.hasBasedLinedPart(lastIteration.getWorkspaceId(), lastIteration.getPartNumber())) return ignoredRevisions;
         baseline.addBaselinedPart(lastIteration);
 
         for(PartUsageLink partUsageLink : lastIteration.getComponents()){
             PartRevision lastRevision;
+            PartIteration baselinedIteration = null;
             switch(type){
                 case RELEASED:
                     lastRevision = partUsageLink.getComponent().getLastReleasedRevision();
+                    if(lastRevision==null){
+                        throw new ConfigurationItemNotReleasedException(locale, partUsageLink.getComponent().getNumber());
+                    }
+                    baselinedIteration = lastRevision.getLastIteration();
                     break;
                 case LATEST:
                 default:
-                    lastRevision = partUsageLink.getComponent().getLastRevision();
+                    List<PartRevision> partRevisions = partUsageLink.getComponent().getPartRevisions();
+                    boolean isPartFinded = false;
+
+                    lastRevision =partUsageLink.getComponent().getLastRevision();
+                    if(lastRevision.isCheckedOut()){
+                        ignoredRevisions.add(lastRevision);
+                    }
+
+                    for(int j= partRevisions.size()-1; j>=0 && !isPartFinded;j--){
+                        lastRevision = partRevisions.get(j);
+                        for(int i= lastRevision.getLastIteration().getIteration(); i>0 && !isPartFinded; i--){
+                            try{
+                                checkPartIterationForBaseline(new PartIterationKey(lastRevision.getKey(), i));
+                                baselinedIteration = lastRevision.getIteration(i);
+                                isPartFinded=true;
+                            }catch (AccessRightException e){
+                                if(!ignoredRevisions.contains(lastRevision)){
+                                    ignoredRevisions.add(lastRevision);
+                                }
+                            }
+                        }
+                    }
+                    if(baselinedIteration==null){
+                        throw new NotAllowedException(Locale.getDefault(), "NotAllowedException1");
+                    }
                     break;
             }
-            if(lastRevision==null){ throw new ConfigurationItemNotReleasedException(locale, partUsageLink.getComponent().getNumber());}
-            fillBaselineParts(baseline, lastRevision.getLastIteration(),type, locale);
+            List<PartRevision> ignoredUsageLinkRevisions = fillBaselineParts(baseline, baselinedIteration, type, locale);
+            ignoredRevisions.addAll(ignoredUsageLinkRevisions);
         }
+        return ignoredRevisions;
     }
 
     @RolesAllowed("users")
@@ -1999,6 +2092,33 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             return user;
         }
         throw new AccessRightException(new Locale(user.getLanguage()),user);                                            // Else throw a AccessRightException
+    }
+
+    private User checkPartRevisionReadAccess(PartRevisionKey partRevisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException, AccessRightException {
+        String workspaceId = partRevisionKey.getPartMaster().getWorkspace();
+        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+        Locale locale = new Locale(user.getLanguage());
+        if(user.isAdministrator()){                                                                                     // Check if it is the workspace's administrator
+            return user;
+        }
+        PartRevision partRevision = new PartRevisionDAO(locale,em).loadPartR(partRevisionKey);
+        if(partRevision.getACL()==null || partRevision.getACL().hasReadAccess(user)){                                   // Check if there are no ACL or if they grant read access
+            return user;
+        }
+        throw new AccessRightException(locale,user);                                                                    // Else throw a AccessRightException
+    }
+
+    private User checkPartIterationForBaseline(PartIterationKey partIterationKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartIterationNotFoundException, AccessRightException {
+        User user = userManager.checkWorkspaceReadAccess(partIterationKey.getWorkspaceId());
+        Locale locale = new Locale(user.getLanguage());
+        PartIteration partIteration = new PartIterationDAO(locale,em).loadPartI(partIterationKey);
+        PartRevision partRevision = partIteration.getPartRevision();
+        if(partRevision.getACL()==null || partRevision.getACL().hasReadAccess(user)){                                   // Check if the ACL grant write access
+            if(!partRevision.isCheckedOut()){
+                return user;
+            }
+        }
+        throw new AccessRightException(locale,user);                                                                    // Else throw a AccessRightException
     }
 }
 //TODO when using layers and markers, check for concordance

@@ -25,7 +25,6 @@ import com.docdoku.cli.helpers.FileHelper;
 import com.docdoku.cli.helpers.MetaDirectoryManager;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.Version;
-import com.docdoku.core.configuration.BaselineConfigSpec;
 import com.docdoku.core.configuration.ConfigSpec;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.*;
@@ -82,7 +81,7 @@ public class CheckOutCommand extends AbstractCommandLine{
         ConfigSpec cs = null;
 
         if(baselineId != 0){
-            cs = new BaselineConfigSpec(productS.getBaselineById(baselineId));
+            cs = productS.getConfigSpecForBaseline(baselineId);
         }
 
         checkoutPart(partNumber,strRevision,0,cs);
