@@ -132,21 +132,18 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         }else{
             throw new AccessRightException(new Locale(user.getLanguage()), user);
         }
-
     }
 
     private void filterConfigSpec(ConfigSpec configSpec, PartMaster partMaster, int depth){
         PartIteration partI = configSpec.filterConfigSpec(partMaster);
 
-        if (partI != null) {
-            if (depth != 0) {
-                depth--;
-                for (PartUsageLink usageLink : partI.getComponents()) {
-                    filterConfigSpec(configSpec, usageLink.getComponent(), depth);
+        if (partI != null && depth != 0) {
+            depth--;
+            for (PartUsageLink usageLink : partI.getComponents()) {
+                filterConfigSpec(configSpec, usageLink.getComponent(), depth);
 
-                    for (PartSubstituteLink subLink : usageLink.getSubstitutes()) {
-                        filterConfigSpec(configSpec, subLink.getSubstitute(), 0);
-                    }
+                for (PartSubstituteLink subLink : usageLink.getSubstitutes()) {
+                    filterConfigSpec(configSpec, subLink.getSubstitute(), 0);
                 }
             }
         }
@@ -159,7 +156,6 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
         if(partI!=null){
             PartRevision partRevision = partI.getPartRevision();
-
             if (partMaster.getPartRevisions().size() > 1) {
                 partMaster.getPartRevisions().retainAll(Collections.singleton(partRevision));
             }

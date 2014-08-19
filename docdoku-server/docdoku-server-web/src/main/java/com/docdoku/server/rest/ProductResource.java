@@ -307,10 +307,10 @@ public class ProductResource {
                         usageLinkPaths.add(Integer.parseInt(partUsageIdString));
                     }
 
-                    rootUsageLink = productService.filterProductStructure(ciKey, cs, usageLinkPaths.get(0), 0);
+                    rootUsageLink = productService.filterProductStructure(ciKey, cs, usageLinkPaths.get(0), -1);
                     usageLinkPaths.remove(0);
                 }else{
-                    rootUsageLink = productService.filterProductStructure(ciKey, cs, null, 0);                  
+                    rootUsageLink = productService.filterProductStructure(ciKey, cs, null, -1);
                 }
                 
                 return Response.ok().lastModified(new Date()).cacheControl(cc).entity(new InstanceCollection(rootUsageLink, usageLinkPaths, cs)).build();
@@ -361,12 +361,12 @@ public class ProductResource {
                             usageLinkPaths.add(Integer.parseInt(partUsageIdString));
                         }
 
-                        PartUsageLink rootUsageLink = productService.filterProductStructure(ciKey, cs, usageLinkPaths.get(0), 0);
+                        PartUsageLink rootUsageLink = productService.filterProductStructure(ciKey, cs, usageLinkPaths.get(0), -1);
                         usageLinkPaths.remove(0);
                         instanceCollections.add(new InstanceCollection(rootUsageLink, usageLinkPaths, cs));
                     }else{
                         List<Integer> usageLinkPaths = new ArrayList<>();
-                        PartUsageLink rootUsageLink = productService.filterProductStructure(ciKey, cs, null, 0);
+                        PartUsageLink rootUsageLink = productService.filterProductStructure(ciKey, cs, null, -1);
                         instanceCollections.clear();
                         instanceCollections.add(new InstanceCollection(rootUsageLink, usageLinkPaths, cs));
                     }
