@@ -34,7 +34,6 @@ import com.docdoku.core.product.PartMaster;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.workflow.WorkflowModel;
 
-import javax.annotation.Resource;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
@@ -131,6 +130,15 @@ public class WorkspaceDAO {
         em.createQuery("DELETE FROM StateChangeSubscription s where s.observedDocumentRevisionWorkspaceId = :workspaceId")
                 .setParameter("workspaceId",workspaceId).executeUpdate();
 
+        // BaselinedPart
+        em.createQuery("DELETE FROM BaselinedPart bp where bp.targetPart.partRevision.partMasterWorkspaceId = :workspaceId")
+                .setParameter("workspaceId", workspaceId).executeUpdate();
+
+        // ProductInstances
+        em.createQuery("DELETE FROM ProductInstanceIteration pii where pii.productInstanceMaster.instanceOf.workspace = :workspace")
+                .setParameter("workspace",workspace).executeUpdate();
+        em.createQuery("DELETE FROM ProductInstanceMaster pim where pim.instanceOf.workspace = :workspace")
+                .setParameter("workspace",workspace).executeUpdate();
         // Baselines
         em.createQuery("DELETE FROM Baseline b where b.configurationItem.workspace = :workspace")
                 .setParameter("workspace",workspace).executeUpdate();
@@ -142,6 +150,10 @@ public class WorkspaceDAO {
         // Effectivity
         em.createQuery("DELETE FROM Effectivity e where e.configurationItem.workspace = :workspace")
                 .setParameter("workspace",workspace).executeUpdate();
+
+        // PartCollection
+        em.createQuery("DELETE FROM PartCollection pc where pc.author.workspaceId = :workspaceId")
+                .setParameter("workspaceId",workspaceId).executeUpdate();
 
         // Layers
         em.createQuery("DELETE FROM Layer l where l.configurationItem.workspace = :workspace")
