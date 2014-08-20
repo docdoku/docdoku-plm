@@ -123,9 +123,9 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             depth = (depth == null) ? -1 : depth;
 
             if(configSpec != null){
-                filterConfigSpec(configSpec,rootUsageLink.getComponent(),depth);
+                filterConfigSpec(configSpec,rootUsageLink.getComponent(),depth, user);
             }else{
-                filterConfigSpec(new LatestConfigSpec(user),rootUsageLink.getComponent(),depth);
+                filterConfigSpec(new LatestConfigSpec(user),rootUsageLink.getComponent(),depth, user);
             }
 
             return rootUsageLink;
@@ -134,22 +134,37 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         }
     }
 
-    private void filterConfigSpec(ConfigSpec configSpec, PartMaster partMaster, int depth){
+    private void filterConfigSpec(ConfigSpec configSpec, PartMaster partMaster, int depth, User user){
         PartIteration partI = configSpec.filterConfigSpec(partMaster);
+        boolean canRead = true;
 
-        if (partI != null && depth != 0) {
-            depth--;
-            for (PartUsageLink usageLink : partI.getComponents()) {
-                filterConfigSpec(configSpec, usageLink.getComponent(), depth);
+        if(partI!=null){
+            PartRevision partR = partI.getPartRevision();
 
-                for (PartSubstituteLink subLink : usageLink.getSubstitutes()) {
-                    filterConfigSpec(configSpec, subLink.getSubstitute(), 0);
+            try {
+                checkPartRevisionReadAccess(partR.getKey());
+                int numberOfIteration = getNumberOfIteration(partR.getKey());
+                if ((partR.isCheckedOut()) && (!partR.getCheckOutUser().equals(user)) && partI.getIteration()==numberOfIteration) {
+                    canRead = false;
+                }
+            } catch (UserNotFoundException | UserNotActiveException | WorkspaceNotFoundException | PartRevisionNotFoundException |AccessRightException ignored) {
+                canRead = false;
+            }
+
+            if (canRead && depth != 0) {
+                depth--;
+                for (PartUsageLink usageLink : partI.getComponents()) {
+                    filterConfigSpec(configSpec, usageLink.getComponent(), depth, user);
+
+                    for (PartSubstituteLink subLink : usageLink.getSubstitutes()) {
+                        filterConfigSpec(configSpec, subLink.getSubstitute(), 0, user);
+                    }
                 }
             }
         }
 
         for (PartAlternateLink alternateLink : partMaster.getAlternates()) {
-            filterConfigSpec(configSpec,alternateLink.getAlternate(), 0);
+            filterConfigSpec(configSpec,alternateLink.getAlternate(), 0, user);
         }
 
         em.detach(partMaster);
@@ -161,6 +176,9 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             }
             if (partRevision != null && partRevision.getNumberOfIterations() > 1) {
                 partRevision.getPartIterations().retainAll(Collections.singleton(partI));
+            }
+            if(!canRead){
+                partI.getComponents().clear();
             }
         }
     }
@@ -758,7 +776,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed({"users","guest-proxy"})
     @Override
-    public PartRevision getPartRevision(PartRevisionKey pPartRPK) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException {
+    public PartRevision getPartRevision(PartRevisionKey pPartRPK) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException, AccessRightException {
 
         if(ctx.isCallerInRole("guest-proxy")){
             PartRevision partRevision = new PartRevisionDAO(em).loadPartR(pPartRPK);
@@ -769,7 +787,8 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             return partRevision;
         }
 
-        User user = userManager.checkWorkspaceReadAccess(pPartRPK.getPartMaster().getWorkspace());
+        User user = checkPartRevisionReadAccess(pPartRPK);
+
         PartRevision partR = new PartRevisionDAO(new Locale(user.getLanguage()), em).loadPartR(pPartRPK);
 
         if ((partR.isCheckedOut()) && (!partR.getCheckOutUser().equals(user))) {
@@ -2090,7 +2109,9 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         throw new AccessRightException(new Locale(user.getLanguage()),user);                                            // Else throw a AccessRightException
     }
 
-    private User checkPartRevisionReadAccess(PartRevisionKey partRevisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException, AccessRightException {
+    @RolesAllowed({"users","admin"})
+    @Override
+    public User checkPartRevisionReadAccess(PartRevisionKey partRevisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException, AccessRightException {
         String workspaceId = partRevisionKey.getPartMaster().getWorkspace();
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         Locale locale = new Locale(user.getLanguage());

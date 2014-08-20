@@ -246,6 +246,14 @@ public class ProductResource {
             }
 
             dto.setVersion(partR.getVersion());
+            try {
+                productService.checkPartRevisionReadAccess(partR.getKey());
+                dto.setAccessDeny(false);
+                dto.setLastIterationNumber(productService.getNumberOfIteration(partR.getKey()));
+            }catch (Exception ignored){
+                dto.setLastIterationNumber(-1);
+                dto.setAccessDeny(true);
+            }
 
             if (partI != null) {
                 for (InstanceAttribute attr : partI.getInstanceAttributes().values()) {
@@ -260,8 +268,6 @@ public class ProductResource {
                 dto.setAssembly(partI.isAssembly());
                 dto.setIteration(partI.getIteration());
             }
-
-            dto.setLastIterationNumber(productService.getNumberOfIteration(partR.getKey()));
         }
 
         dto.setAttributes(lstAttributes);

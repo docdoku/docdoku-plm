@@ -525,7 +525,7 @@ public interface IProductManagerWS{
      * @throws WorkspaceNotFoundException
      * @throws PartRevisionNotFoundException
      */
-    PartRevision getPartRevision(PartRevisionKey partRPK) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException;
+    PartRevision getPartRevision(PartRevisionKey partRPK) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException, AccessRightException;
 
     /**
      * Finds part masters by their part number using like style query.

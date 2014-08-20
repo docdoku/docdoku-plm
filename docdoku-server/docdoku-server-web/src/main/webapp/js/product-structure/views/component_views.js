@@ -60,31 +60,38 @@ define(function() {
 
         tagName:'li',
 
-        template: _.template('<%if(!isLock) {%>' +
-	                            '<input type="checkbox" <%if (checkedAtInit) {%>checked="checked"<%}%>>' +
-	                         ' <%}%>' +
+        template: _.template('<%if(!isLock && !isForbidden) {%>' +
+	                            '<input type="checkbox" class="available" <%if (checkedAtInit) {%>checked="checked"<%}%>>' +
+	                         '<%} else {%>' +
+	                            '<input type="checkbox" disabled <%if (checkedAtInit) {%>checked="checked"<%}%>>' +
+	                         '<%}%>' +
 	                         '<a><label class="checkbox"><%= number %> (<%= amount %>)</label></a>' +
-	                         '<i class="fa fa-file"></i>' +
 	                         '<%if(isForbidden) {%> ' +
+	                            '<i class="fa fa-file"></i>' +
 	                            '<i class="fa fa-ban"></i>' +
-	                         '<%} else if(isLock) {%> ' +
+	                         '<%} else if(isCheckoutByAnotherUser) {%> ' +
+	                            '<i class="fa fa-file openModal"></i>' +
 	                            '<i class="fa fa-lock"></i>' +
 	                         '<%} else if(isCheckoutByConnectedUser) {%> ' +
+	                            '<i class="fa fa-file openModal"></i>' +
 	                            '<i class="fa fa-pencil"></i>' +
 	                         '<%} else{%> ' +
+	                            '<i class="fa fa-file openModal"></i>' +
 	                            '<i class="fa fa-eye"></i>' +
 	                         '<%}%>'),
 
         events: {
             'click a': 'onComponentSelected',
             'change input:first': 'onChangeCheckbox',
-            'click .fa-file:first': 'onEditPart'
+            'click .openModal:first': 'onEditPart'
         },
 
         initialize: function() {
             _.bindAll(this, ['onChangeCheckbox']);
             this.listenTo(this.options.resultPathCollection, 'reset', this.onAllResultPathAdded);
             this.$el.attr('id','path_'+String(this.model.attributes.path));
+	        this.isForbidden= this.model.isForbidden();
+	        this.isLock=this.model.isCheckout() && this.model.isLastIteration(this.model.get('iteration')) && !this.model.isCheckoutByConnectedUser();
         },
 
         onAllResultPathAdded: function() {
@@ -96,13 +103,12 @@ define(function() {
         },
 
         onChangeCheckbox: function(event) {
-            //external node
-            if (event.target.checked){
-                App.instancesManager.loadComponent(this.model);
-            }
-            else{
-                App.instancesManager.unLoadComponent(this.model);
-            }
+	        if (event.target.checked){
+		        App.instancesManager.loadComponent(this.model);
+	        }
+	        else{
+		        App.instancesManager.unLoadComponent(this.model);
+	        }
         },
 
         render: function() {
@@ -111,11 +117,14 @@ define(function() {
 				amount: this.model.getAmount(),
 				checkedAtInit: this.options.checkedAtInit,
 				isForbidden: this.model.isForbidden(),
-				isLock: this.model.isCheckout() && this.model.isLastIteration(this.model.get('iteration')) && !this.model.isCheckoutByConnectedUser(),
-				isCheckoutByConnectedUser: this.model.isCheckout() && this.model.isCheckoutByConnectedUser()
+				isCheckoutByAnotherUser: this.model.isCheckout() && !this.model.isCheckoutByConnectedUser(),
+				isCheckoutByConnectedUser: this.model.isCheckout() && this.model.isCheckoutByConnectedUser(),
+				isLock: this.isLock
 			};
 
             this.$el.html(this.template(data));
+
+	        this.input = this.$('>input');
 
             if (this.options.isLast) {
                 this.$el.addClass('last');
@@ -152,25 +161,30 @@ define(function() {
 
         className: 'expandable',
 
-        template: _.template('<%if(!isLock) {%>' +
+        template: _.template('<%if(!isLock && !isForbidden) {%>' +
 	                            '<div class="hitarea expandable-hitarea"></div>' +
-	                            '<input type="checkbox" <%if (checkedAtInit) {%>checked="checked"<%}%>>' +
-	                         '<%}%>' +
+						        '<input type="checkbox" class="available" <%if (checkedAtInit) {%>checked="checked"<%}%>>' +
+					         '<%} else {%>' +
+						        '<input type="checkbox" disabled <%if (checkedAtInit) {%>checked="checked"<%}%>>' +
+					         '<%}%>' +
 	                         '<a><label class="checkbox isNode"><%= number %> (<%= amount %>)</label></a>' +
-	                         '<i class="fa fa-file"></i>' +
 					         '<%if(isForbidden) {%> ' +
+	                            '<i class="fa fa-file"></i>' +
 					            '<i class="fa fa-ban"></i>' +
-	                         '<%} else if(isLock) {%> ' +
+	                         '<%} else if(isCheckoutByAnotherUser) {%> ' +
+	                            '<i class="fa fa-file openModal"></i>' +
 	                            '<i class="fa fa-lock"></i>' +
 					         '<%} else if(isCheckoutByConnectedUser) {%> ' +
+	                            '<i class="fa fa-file openModal"></i>' +
 	                            '<i class="fa fa-pencil"></i> ' +
 					         '<%} else{%> ' +
+	                            '<i class="fa fa-file openModal"></i>' +
 	                            '<i class="fa fa-eye"></i> ' +
 	                         '<%}%>'),
 
         events: {
             'click a:first': 'onComponentSelected',
-            'click .fa-file:first': 'onEditPart',
+            'click .openModal:first': 'onEditPart',
             'change input:first': 'onChangeCheckbox',
             'click .hitarea:first': 'onToggleExpand'
         },
@@ -180,6 +194,8 @@ define(function() {
             _.bindAll(this, ['onChangeCheckbox']);
             this.listenTo(this.options.resultPathCollection, 'reset', this.onAllResultPathAdded);
             this.$el.attr('id','path_'+String(this.model.attributes.path));
+	        this.isForbidden= this.model.isForbidden();
+		    this.isLock= this.model.isCheckout() && this.model.isLastIteration(this.model.get('iteration')) && !this.model.isCheckoutByConnectedUser();
         },
 
         onAllResultPathAdded: function() {
@@ -191,11 +207,11 @@ define(function() {
         },
 
         onChangeCheckbox: function(event) {
-	        if(event){
-		        if (event.target.checked){
+	        if (event) {
+		        if (event.target.checked) {
 			        App.instancesManager.loadComponent(this.model);
 		        }
-		        else{
+		        else {
 			        App.instancesManager.unLoadComponent(this.model);
 		        }
 	        }
@@ -207,19 +223,23 @@ define(function() {
 		        number: this.model.attributes.number,
 		        amount: this.model.getAmount(),
 		        checkedAtInit: this.options.checkedAtInit,
-		        isForbidden: this.model.isForbidden(),
-		        isLock: this.model.isCheckout() && this.model.isLastIteration(this.model.get('iteration')) && !this.model.isCheckoutByConnectedUser(),
-		        isCheckoutByConnectedUser: this.model.isCheckout() && this.model.isCheckoutByConnectedUser()
+		        isForbidden: this.isForbidden,
+		        isCheckoutByAnotherUser: this.model.isCheckout() && !this.model.isCheckoutByConnectedUser(),
+		        isCheckoutByConnectedUser: this.model.isCheckout() && this.model.isCheckoutByConnectedUser(),
+		        isLock: this.isLock
 	        };
 
 	        this.$el.html(this.template(data));
 
             this.input = this.$('>input');
 
+	        if(data.isForbidden || data.isLock){
+		        this.$el.removeClass('expandable');
+	        }
+
             if (this.options.isLast) {
 	            if(data.isForbidden || data.isLock){
-					this.$el.addClass('last')
-						.removeClass('expandable');
+					this.$el.addClass('last');
 	            }else{
 		            this.$el.addClass('lastExpandable')
 			            .children('.hitarea')
@@ -238,7 +258,6 @@ define(function() {
         },
 
         onToggleExpand: function() {
-            this.toggleExpand();
             if (!this.hasChildrenNodes()) {
                 new ComponentViews.Components({
                     collection: this.model.children,
@@ -247,30 +266,33 @@ define(function() {
                     resultPathCollection: this.options.resultPathCollection
                 });
             }
+	        this.toggleExpand();
         },
 
         toggleExpand: function() {
-            this.$el.toggleClass('expandable collapsable')
-                .children('.hitarea')
-                .toggleClass('expandable-hitarea collapsable-hitarea');
+	        if(!this.isForbidden && !this.isLock) {
+		        this.$el.toggleClass('expandable collapsable')
+			        .children('.hitarea')
+			        .toggleClass('expandable-hitarea collapsable-hitarea');
 
-            if (this.options.isLast) {
-                this.$el.toggleClass('lastExpandable lastCollapsable')
-                    .children('.hitarea')
-                    .toggleClass('lastExpandable-hitarea lastCollapsable-hitarea');
-            }
+		        if (this.options.isLast) {
+			        this.$el.toggleClass('lastExpandable lastCollapsable')
+				        .children('.hitarea')
+				        .toggleClass('lastExpandable-hitarea lastCollapsable-hitarea');
+		        }
 
-            this.isExpanded = !this.isExpanded;
+	            this.isExpanded = !this.isExpanded;
 
-            var childrenNode = this.$('>ul');
+	            var childrenNode = this.$('>ul');
 
-            if(this.isExpanded){
-                childrenNode.show();
-                expandedViews.push(this.model.attributes.number);
-            }else{
-                childrenNode.hide();
-                expandedViews = _(expandedViews).without(this.model.attributes.number);
-            }
+	            if(this.isExpanded){
+	                childrenNode.show();
+	                expandedViews.push(this.model.attributes.number);
+	            }else{
+	                childrenNode.hide();
+	                expandedViews = _(expandedViews).without(this.model.attributes.number);
+	            }
+	        }
         },
 
         hasChildrenNodes: function() {

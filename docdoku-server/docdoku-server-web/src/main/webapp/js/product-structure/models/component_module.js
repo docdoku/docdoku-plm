@@ -122,7 +122,7 @@ function (date, i18n) {
         },
 
 	    isForbidden:function(){
-		    return this.get('isForbidden');
+		    return this.get('accessDeny');
 	    },
 
         getInstancesUrl: function() {

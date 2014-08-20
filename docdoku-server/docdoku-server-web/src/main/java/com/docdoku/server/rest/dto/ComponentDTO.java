@@ -47,7 +47,9 @@ public class ComponentDTO implements Serializable{
     private UserDTO checkOutUser;
     private Date checkOutDate;
     @XmlElement(nillable = true)
-    int lastIterationNumber;
+    private int lastIterationNumber;
+    @XmlElement(nillable = true)
+    private boolean accessDeny;
 
     public ComponentDTO() {}
 
@@ -147,4 +149,7 @@ public class ComponentDTO implements Serializable{
 
     public int getLastIterationNumber() {return lastIterationNumber;}
     public void setLastIterationNumber(int lastIterationNumber) {this.lastIterationNumber = lastIterationNumber;}
+
+    public boolean isAccessDeny() {return accessDeny;}
+    public void setAccessDeny(boolean accessDeny) {this.accessDeny = accessDeny;}
 }

@@ -53,7 +53,7 @@ define(['models/component_module', 'views/component_views'], function (Component
         },
 
         checkChildrenInputs: function(event) {
-            var inputs = event.target.parentNode.querySelectorAll('input');
+            var inputs = event.target.parentNode.querySelectorAll('input.available');
             for (var i = 0; i < inputs.length; i++) {
                 inputs[i].checked = event.target.checked;
                 // on retire les fils du smartPath
