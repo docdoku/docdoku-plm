@@ -109,7 +109,7 @@ public class GetCommand extends AbstractCommandLine{
         path=path.getParentFile();
     }
 
-    private void getPart(String pPartNumber, String pRevision, int pIteration,ConfigSpec cs) throws IOException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartMasterNotFoundException, PartRevisionNotFoundException, LoginException, NoSuchAlgorithmException, PartIterationNotFoundException, NotAllowedException {
+    private void getPart(String pPartNumber, String pRevision, int pIteration,ConfigSpec cs) throws IOException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartMasterNotFoundException, PartRevisionNotFoundException, LoginException, NoSuchAlgorithmException, PartIterationNotFoundException, NotAllowedException, AccessRightException {
         PartRevision pr;
         PartIteration pi;
         PartMaster pm = productS.getPartMaster(new PartMasterKey(workspace, pPartNumber));
