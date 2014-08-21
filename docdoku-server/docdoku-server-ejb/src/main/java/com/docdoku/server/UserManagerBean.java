@@ -45,6 +45,8 @@ import javax.persistence.PersistenceContext;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @DeclareRoles({"users","admin"})
 @Local(IUserManagerLocal.class)
@@ -437,7 +439,7 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
                         try {
                             dataManager.deleteData(file);
                         } catch (StorageException e) {
-                            e.printStackTrace();
+                            Logger.getLogger(UserManagerBean.class.getName()).log(Level.INFO, null, e);
                         }
                     }
 

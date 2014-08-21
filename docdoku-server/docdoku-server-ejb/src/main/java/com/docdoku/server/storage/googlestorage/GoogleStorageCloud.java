@@ -31,6 +31,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -38,7 +39,7 @@ import java.util.logging.Logger;
  */
 public class GoogleStorageCloud {
 
-    private GoogleStorageCloud(){};
+    private GoogleStorageCloud(){}
 
     private final static GoogleStorageProperties properties = new GoogleStorageProperties();
     private final static Logger LOGGER = Logger.getLogger(GoogleStorageCloud.class.getName());
@@ -147,7 +148,7 @@ public class GoogleStorageCloud {
                 throw new StorageException(new StringBuilder().append("Error copying ").append(sourcePath).append(" to ").append(pathToObject).append(" on Google Cloud Storage, server respond code ").append(responseCode).append(" : ").append(message).toString());
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            Logger.getLogger(GoogleStorageCloud.class.getName()).log(Level.INFO, null, e);
             throw new StorageException(new StringBuilder().append("Error copying ").append(sourcePath).append(" to ").append(pathToObject).append(" on Google Cloud Storage").toString(), e);
         }
     }
@@ -184,19 +185,31 @@ public class GoogleStorageCloud {
         wr.flush();
         wr.close();
 
-        BufferedReader br = new BufferedReader(new InputStreamReader(httpConnection.getInputStream()));
-        String line = null;
-        StringBuilder sb = new StringBuilder();
+        String shortenURI = "";
+        InputStreamReader inputStream = null;
+        BufferedReader br = null;
+        try{
+            inputStream = new InputStreamReader(httpConnection.getInputStream());
+            br = new BufferedReader(inputStream);
+            String line;
+            StringBuilder sb = new StringBuilder();
 
-        while ((line = br.readLine()) != null) {
-            sb.append(line);
+            while ((line = br.readLine()) != null) {
+                sb.append(line);
+            }
+
+            JsonParser parser = new JsonParser();
+            JsonObject jsonResponse = (JsonObject)parser.parse(sb.toString());
+            shortenURI =jsonResponse.get("id").getAsString();
+        }finally {
+            try{if(inputStream!=null){
+                    inputStream.close();
+            }}catch (IOException ignored){}
+            try{if(br!=null){
+                br.close();
+            }}catch (IOException ignored){}
         }
 
-        JsonParser parser = new JsonParser();
-        JsonObject jsonResponse = (JsonObject)parser.parse(sb.toString());
-
-        String shortenUrl = jsonResponse.get("id").getAsString();
-
-        return shortenUrl;
+        return shortenURI;
     }
 }

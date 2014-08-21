@@ -156,7 +156,7 @@ public class CollaborativeRoomController {
     }
 
     public static void processRequestHand(Session session, String callerLogin, CollaborativeMessage collaborativeMessage){
-        CollaborativeRoom collaborativeRoom = CollaborativeRoom.getByKeyName(collaborativeMessage.getKey());
+        CollaborativeRoom.getByKeyName(collaborativeMessage.getKey());
         //TODO master has to confirm/cancel a request to take the hand
     }
 

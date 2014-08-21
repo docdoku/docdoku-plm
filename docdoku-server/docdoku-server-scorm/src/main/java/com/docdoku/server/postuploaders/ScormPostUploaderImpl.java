@@ -30,6 +30,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -44,7 +46,7 @@ public class ScormPostUploaderImpl implements DocumentPostUploader {
             InputStream binaryContentInputStream = dataManager.getBinaryResourceInputStream(binaryResource);
             return ScormUtil.isScormArchive(binaryResource.getName(), binaryContentInputStream);
         } catch (StorageException e) {
-            e.printStackTrace();
+            Logger.getLogger(ScormPostUploaderImpl.class.getName()).log(Level.INFO, null, e);
             return false;
         }
     }
@@ -68,18 +70,22 @@ public class ScormPostUploaderImpl implements DocumentPostUploader {
                         outputStream = dataManager.getBinarySubResourceOutputStream(archiveBinaryResource, subResourceVirtualPath);
                         ByteStreams.copy(zipInputStream, outputStream);
                     } finally {
-                        outputStream.flush();
-                        outputStream.close();
+                        if(outputStream!=null) {
+                            outputStream.flush();
+                            outputStream.close();
+                        }
                     }
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.getLogger(ScormPostUploaderImpl.class.getName()).log(Level.INFO, null, e);
         } finally {
             try {
-                zipInputStream.close();
+                if (zipInputStream != null) {
+                    zipInputStream.close();
+                }
             } catch (IOException e) {
-                e.printStackTrace();
+                Logger.getLogger(ScormPostUploaderImpl.class.getName()).log(Level.INFO, null, e);
             }
         }
     }

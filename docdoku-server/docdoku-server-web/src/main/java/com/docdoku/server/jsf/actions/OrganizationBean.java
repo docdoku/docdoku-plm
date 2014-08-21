@@ -125,7 +125,7 @@ public class OrganizationBean {
         String remoteUser = FacesContext.getCurrentInstance().getExternalContext().getRemoteUser();
         Account account = userManager.getAccount(remoteUser);
 
-        Organization organization = userManager.createOrganization(organizationName, account, organizationDescription);
+        userManager.createOrganization(organizationName, account, organizationDescription);
 
         return "/admin/organization/organizationMenu.xhtml?faces-redirect=true";
     }

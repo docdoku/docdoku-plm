@@ -1,8 +1,9 @@
+'use strict';
 define([
-    "text!templates/change_item_list.html",
-    "i18n!localization/nls/change-management-strings",
-    "views/change-orders/change_order_list_item",
-    "i18n!localization/nls/datatable-strings"
+    'text!templates/change_item_list.html',
+    'i18n!localization/nls/change-management-strings',
+    'views/change-orders/change_order_list_item',
+    'i18n!localization/nls/datatable-strings'
 ], function (
     template,
     i18n,
@@ -14,19 +15,19 @@ define([
         template: Mustache.compile(template),
 
         events:{
-            "click .toggle-checkboxes":"toggleSelection"
+            'click .toggle-checkboxes':'toggleSelection'
         },
 
         removeSubviews: function () {
-            _(this.listItemViews).invoke("remove");                                                                     // Invoke remove for each views in listItemViews
+            _(this.listItemViews).invoke('remove');                                                                     // Invoke remove for each views in listItemViews
         },
 
         initialize: function () {
             _.bindAll(this);
-            this.listenTo(this.collection, "reset", this.resetList);
+            this.listenTo(this.collection, 'reset', this.resetList);
             this.listenTo(this.collection, 'add', this.addNewOrder);
             this.listItemViews = [];
-            this.$el.on("remove",this.removeSubviews);
+            this.$el.on('remove',this.removeSubviews);
         },
 
         render:function(){
@@ -35,8 +36,8 @@ define([
         },
 
         bindDomElements:function(){
-            this.$items = this.$(".items");
-            this.$checkbox = this.$(".toggle-checkboxes");
+            this.$items = this.$('.items');
+            this.$checkbox = this.$('.toggle-checkboxes');
         },
 
         resetList:function(){
@@ -60,8 +61,8 @@ define([
             var view = new ChangeOrderListItemView({model:model}).render();
             this.listItemViews.push(view);
             this.$items.append(view.$el);
-            view.on("selectionChanged",this.onSelectionChanged);
-            view.on("rendered",this.redraw);
+            view.on('selectionChanged',this.onSelectionChanged);
+            view.on('rendered',this.redraw);
             if(effect){
                 view.$el.highlightEffect();
             }
@@ -69,7 +70,7 @@ define([
 
         removeOrder:function(model){
             var viewToRemove = _(this.listItemViews).select(function(view){
-                return view.model == model;
+                return view.model === model;
             })[0];
 
             if(viewToRemove){
@@ -82,7 +83,7 @@ define([
         },
 
         toggleSelection:function(){
-            _(this.listItemViews).invoke((this.$checkbox.is(":checked"))? "check" : "unCheck");                         // Check a list item view if its checkbox is checked
+            _(this.listItemViews).invoke((this.$checkbox.is(':checked'))? 'check' : 'unCheck');                         // Check a list item view if its checkbox is checked
             this.onSelectionChanged();
         },
 
@@ -92,14 +93,14 @@ define([
             });
 
             if (checkedViews.length <= 0){                                                                              // No Order Selected
-                this.trigger("delete-button:display",false);
-                this.trigger("acl-button:display",false);
-            }else if(checkedViews.length == 1){                                                                         // One Order Selected
-                this.trigger("delete-button:display",true);
-                this.trigger("acl-button:display",true);
+                this.trigger('delete-button:display',false);
+                this.trigger('acl-button:display',false);
+            }else if(checkedViews.length === 1){                                                                         // One Order Selected
+                this.trigger('delete-button:display',true);
+                this.trigger('acl-button:display',true);
             }else {                                                                                                     // Several Order Selected
-                this.trigger("delete-button:display",true);
-                this.trigger("acl-button:display",false);
+                this.trigger('delete-button:display',true);
+                this.trigger('acl-button:display',false);
             }
         },
 
@@ -123,7 +124,7 @@ define([
 
         deleteSelectedOrders:function(){
             var that = this;
-            if(confirm("Delete Orders")){
+            if(confirm('Delete Orders')){
                 _(this.listItemViews).each(function(view){
                     if(view.isChecked()){
                         view.model.destroy({success:function(){
@@ -146,7 +147,7 @@ define([
         },
 
         dataTable:function(){
-            var oldSort = [[1,"asc"]];
+            var oldSort = [[1,'asc']];
             if(this.oTable){
                 oldSort = this.oTable.fnSettings().aaSorting;
                 this.oTable.fnDestroy();
@@ -156,16 +157,16 @@ define([
                 bDestroy:true,
                 iDisplayLength:-1,
                 oLanguage:{
-                    sSearch: "<i class='fa fa-search'></i>",
+                    sSearch: '<i class="fa fa-search"></i>',
                     sEmptyTable:i18nDt.NO_DATA,
                     sZeroRecords:i18nDt.NO_FILTERED_DATA
                 },
                 sDom : 'ft',
                 aoColumnDefs: [
-                    { "bSortable": false, "aTargets": [ 0,5 ] }
+                    { 'bSortable': false, 'aTargets': [ 0,5 ] }
                 ]
             });
-            this.$el.parent().find(".dataTables_filter input").attr("placeholder",i18nDt.FILTER);
+            this.$el.parent().find('.dataTables_filter input').attr('placeholder',i18nDt.FILTER);
         }
     });
 

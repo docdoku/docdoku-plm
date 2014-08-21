@@ -1,5 +1,6 @@
+'use strict';
 define([
-	"models/document_iteration"
+	'models/document_iteration'
 ], function (
 	DocumentIteration
 ) {
@@ -12,7 +13,7 @@ define([
         },
 
 		url: function() {
-		    return this.document.url() + "/iterations";
+		    return this.document.url() + '/iterations';
 		},
 
         comparator: function(documentIteration) {
@@ -38,7 +39,7 @@ define([
         },
 
         isLast: function(iteration) {
-            return this.last() == iteration;
+            return this.last() === iteration;
         }
 
 	});

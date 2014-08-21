@@ -27,6 +27,8 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class SearchQueryParser {
 
@@ -39,7 +41,7 @@ public class SearchQueryParser {
         String pType = null;
         Date pCreationDateFrom = null;
         Date pCreationDateTo = null;
-        ArrayList<DocumentSearchQuery.AbstractAttributeQuery> pAttributes = new ArrayList<DocumentSearchQuery.AbstractAttributeQuery>();
+        ArrayList<DocumentSearchQuery.AbstractAttributeQuery> pAttributes = new ArrayList<>();
         String[] pTags = null;
         String pContent = null;
 
@@ -93,7 +95,7 @@ public class SearchQueryParser {
                                             DocumentSearchQuery.NumberAttributeQuery naq = new DocumentSearchQuery.NumberAttributeQuery(attribute[1], NumberFormat.getInstance().parse(attribute[2]).floatValue());
                                             pAttributes.add(naq);
                                         } catch (ParseException e) {
-                                            e.printStackTrace();
+                                            Logger.getLogger(SearchQueryParser.class.getName()).log(Level.INFO, null, e);
                                         }
                                         break;
                                     case "URL" :
@@ -132,7 +134,7 @@ public class SearchQueryParser {
         String pType = null;
         Date pCreationDateFrom = null;
         Date pCreationDateTo = null;
-        ArrayList<PartSearchQuery.AbstractAttributeQuery> pAttributes = new ArrayList<PartSearchQuery.AbstractAttributeQuery>();
+        ArrayList<PartSearchQuery.AbstractAttributeQuery> pAttributes = new ArrayList<>();
         Boolean standardPart = null;
 
         String[] query = pQuery.split("&");
@@ -184,7 +186,7 @@ public class SearchQueryParser {
                                             PartSearchQuery.NumberAttributeQuery naq = new PartSearchQuery.NumberAttributeQuery(attribute[1], NumberFormat.getInstance().parse(attribute[2]).floatValue());
                                             pAttributes.add(naq);
                                         } catch (ParseException e) {
-                                            e.printStackTrace();
+                                            Logger.getLogger(SearchQueryParser.class.getName()).log(Level.INFO, null, e);
                                         }
                                         break;
                                     case "URL" :

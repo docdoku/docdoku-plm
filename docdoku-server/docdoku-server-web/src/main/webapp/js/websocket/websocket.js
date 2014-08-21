@@ -1,39 +1,41 @@
+/*global buzz*/
+'use strict';
 var ChannelStatus = {
-    OPENED : "opened",
-    CLOSED : "closed"
+    OPENED : 'opened',
+    CLOSED : 'closed'
 };
 
 var ChannelMessagesType = {
 
-    WEBRTC_INVITE: "WEBRTC_INVITE",
-    WEBRTC_ACCEPT: "WEBRTC_ACCEPT",
-    WEBRTC_REJECT: "WEBRTC_REJECT",
-    WEBRTC_HANGUP: "WEBRTC_HANGUP",
-    WEBRTC_ROOM_JOIN_EVENT: "WEBRTC_ROOM_JOIN_EVENT",
-    WEBRTC_ROOM_REJECT_EVENT: "WEBRTC_ROOM_REJECT_EVENT",
-    WEBRTC_OFFER: "offer",
-    WEBRTC_ANSWER: "answer",
-    WEBRTC_CANDIDATE: "candidate",
-    WEBRTC_BYE: "bye",
+    WEBRTC_INVITE: 'WEBRTC_INVITE',
+    WEBRTC_ACCEPT: 'WEBRTC_ACCEPT',
+    WEBRTC_REJECT: 'WEBRTC_REJECT',
+    WEBRTC_HANGUP: 'WEBRTC_HANGUP',
+    WEBRTC_ROOM_JOIN_EVENT: 'WEBRTC_ROOM_JOIN_EVENT',
+    WEBRTC_ROOM_REJECT_EVENT: 'WEBRTC_ROOM_REJECT_EVENT',
+    WEBRTC_OFFER: 'offer',
+    WEBRTC_ANSWER: 'answer',
+    WEBRTC_CANDIDATE: 'candidate',
+    WEBRTC_BYE: 'bye',
 
 
-    COLLABORATIVE_CREATE : "COLLABORATIVE_CREATE",
-    COLLABORATIVE_INVITE : "COLLABORATIVE_INVITE",
-    COLLABORATIVE_JOIN : "COLLABORATIVE_JOIN",
-    COLLABORATIVE_CONTEXT : "COLLABORATIVE_CONTEXT",
-    COLLABORATIVE_COMMANDS : "COLLABORATIVE_COMMANDS",
-    COLLABORATIVE_EXIT : "COLLABORATIVE_EXIT",
-    COLLABORATIVE_KILL : "COLLABORATIVE_KILL",
-    COLLABORATIVE_REQUEST_HAND : "COLLABORATIVE_REQUEST_HAND",
-    COLLABORATIVE_GIVE_HAND : "COLLABORATIVE_GIVE_HAND",
-    COLLABORATIVE_KICK_USER : "COLLABORATIVE_KICK_USER",
-    COLLABORATIVE_KICK_NOT_INVITED : "COLLABORATIVE_KICK_NOT_INVITED",
-    COLLABORATIVE_WITHDRAW_INVITATION : "COLLABORATIVE_WITHDRAW_INVITATION",
+    COLLABORATIVE_CREATE : 'COLLABORATIVE_CREATE',
+    COLLABORATIVE_INVITE : 'COLLABORATIVE_INVITE',
+    COLLABORATIVE_JOIN : 'COLLABORATIVE_JOIN',
+    COLLABORATIVE_CONTEXT : 'COLLABORATIVE_CONTEXT',
+    COLLABORATIVE_COMMANDS : 'COLLABORATIVE_COMMANDS',
+    COLLABORATIVE_EXIT : 'COLLABORATIVE_EXIT',
+    COLLABORATIVE_KILL : 'COLLABORATIVE_KILL',
+    COLLABORATIVE_REQUEST_HAND : 'COLLABORATIVE_REQUEST_HAND',
+    COLLABORATIVE_GIVE_HAND : 'COLLABORATIVE_GIVE_HAND',
+    COLLABORATIVE_KICK_USER : 'COLLABORATIVE_KICK_USER',
+    COLLABORATIVE_KICK_NOT_INVITED : 'COLLABORATIVE_KICK_NOT_INVITED',
+    COLLABORATIVE_WITHDRAW_INVITATION : 'COLLABORATIVE_WITHDRAW_INVITATION',
 
-    CHAT_MESSAGE: "CHAT_MESSAGE",
-    CHAT_MESSAGE_ACK: "CHAT_MESSAGE_ACK",
+    CHAT_MESSAGE: 'CHAT_MESSAGE',
+    CHAT_MESSAGE_ACK: 'CHAT_MESSAGE_ACK',
 
-    USER_STATUS : "USER_STATUS"
+    USER_STATUS : 'USER_STATUS'
 
 };
 
@@ -42,33 +44,33 @@ var WEBRTC_CONFIG = {
     PLAY_SOUND : true
 };
 
-var notificationSound = new buzz.sound(APP_CONFIG.contextPath + "/sounds/notification.ogg");
-var incomingCallSound = new buzz.sound(APP_CONFIG.contextPath + "/sounds/incoming-call.ogg");
+var notificationSound = new buzz.sound(APP_CONFIG.contextPath + '/sounds/notification.ogg');
+var incomingCallSound = new buzz.sound(APP_CONFIG.contextPath + '/sounds/incoming-call.ogg');
 
-Backbone.Events.on("NotificationSound",function(){
+Backbone.Events.on('NotificationSound',function(){
     notificationSound.play();
 });
 
-Backbone.Events.on("IncomingCallSound",function(){
+Backbone.Events.on('IncomingCallSound',function(){
     if(WEBRTC_CONFIG.PLAY_SOUND){
         incomingCallSound.play();
     }
 });
 
 var CALL_STATE = {
-    NO_CALL:    "NO_CALL",
-    INCOMING:   "INCOMING",
-    OUTGOING:   "OUTGOING",
-    NEGOTIATING:"NEGOTIATING",
-    RUNNING:    "RUNNING",
-    ENDED:      "ENDED"
+    NO_CALL:    'NO_CALL',
+    INCOMING:   'INCOMING',
+    OUTGOING:   'OUTGOING',
+    NEGOTIATING:'NEGOTIATING',
+    RUNNING:    'RUNNING',
+    ENDED:      'ENDED'
 };
 
 var REJECT_CALL_REASON = {
-    REJECTED:"REJECTED",
-    BUSY:"BUSY",
-    TIMEOUT:"TIMEOUT",
-    OFFLINE:"OFFLINE"
+    REJECTED:'REJECTED',
+    BUSY:'BUSY',
+    TIMEOUT:'TIMEOUT',
+    OFFLINE:'OFFLINE'
 };
 
 
@@ -94,7 +96,7 @@ Channel.prototype = {
         this.ws = new WebSocket(this.url);
         
         this.ws.onopen = function(event){
-            console.log("Websocket created");
+            console.log('Websocket created');
             self.onopen(event);
         };
         
@@ -116,7 +118,7 @@ Channel.prototype = {
     send:function(message) {
 
         console.log('C->S: ' + message);
-        var sent = this.ws.send(message);
+        this.ws.send(message);
         
     },
 
@@ -128,7 +130,7 @@ Channel.prototype = {
         
     },    
     
-    onopen:function(event){
+    onopen:function(){
 
         this.status = ChannelStatus.OPENED;
         
@@ -156,7 +158,7 @@ Channel.prototype = {
     onclose:function(event){
         this.status = ChannelStatus.CLOSED;
 
-        console.log("Websocket closed");
+        console.log('Websocket closed');
         console.log(event);
 
         _.each(this.listeners,function(listener){            
@@ -166,7 +168,7 @@ Channel.prototype = {
     },
     
     onerror:function(event){
-        console.log("Websocket error");
+        console.log('Websocket error');
         console.log(event);
     },
     
@@ -175,7 +177,7 @@ Channel.prototype = {
     },
 
     isReady : function(){
-        return  this.status == ChannelStatus.OPENED;
+        return  this.status === ChannelStatus.OPENED;
     }
 
 };

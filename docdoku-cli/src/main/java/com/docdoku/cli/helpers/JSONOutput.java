@@ -100,34 +100,36 @@ public class JSONOutput {
 
         JSONObject status = new JSONObject();
 
-        User user = pr.getCheckOutUser();
-        String login = user != null ? user.getLogin() : "";
-        Date checkoutDate = pr.getCheckOutDate();
-        Long timeStamp = checkoutDate != null ? checkoutDate.getTime() : null;
+        if(pr != null){
+            User user = pr.getCheckOutUser();
+            String login = user != null ? user.getLogin() : "";
+            Date checkoutDate = pr.getCheckOutDate();
+            Long timeStamp = checkoutDate != null ? checkoutDate.getTime() : null;
 
-        status.put("isReleased", pr.isReleased());
-        status.put("isCheckedOut", pr.isCheckedOut());
-        status.put("partNumber", pr.getPartMasterNumber());
-        status.put("checkoutUser", login);
-        status.put("checkoutDate", timeStamp);
-        status.put("workspace", pr.getPartMasterWorkspaceId());
-        status.put("version", pr.getVersion());
-        status.put("description", pr.getDescription());
-        status.put("lastModified", lastModified);
+            status.put("isReleased", pr.isReleased());
+            status.put("isCheckedOut", pr.isCheckedOut());
+            status.put("partNumber", pr.getPartMasterNumber());
+            status.put("checkoutUser", login);
+            status.put("checkoutDate", timeStamp);
+            status.put("workspace", pr.getPartMasterWorkspaceId());
+            status.put("version", pr.getVersion());
+            status.put("description", pr.getDescription());
+            status.put("lastModified", lastModified);
 
-        if(pr != null && pr.getLastIteration() != null && pr.getLastIteration().getNativeCADFile() != null) {
-            String nativeCADFileName  = pr.getLastIteration().getNativeCADFile().getName();
-            status.put("cadFileName", nativeCADFileName);
-        }
-
-        List<PartIteration> partIterations = pr.getPartIterations();
-        JSONArray partIterationJSonArray;
-        if (partIterations != null) {
-            partIterationJSonArray = new JSONArray();
-            for(PartIteration partIteration : partIterations) {
-                partIterationJSonArray.put(partIteration.getIteration());
+            if(pr.getLastIteration() != null && pr.getLastIteration().getNativeCADFile() != null) {
+                String nativeCADFileName  = pr.getLastIteration().getNativeCADFile().getName();
+                status.put("cadFileName", nativeCADFileName);
             }
-            status.put("iterations", partIterationJSonArray);
+
+            List<PartIteration> partIterations = pr.getPartIterations();
+            JSONArray partIterationJSonArray;
+            if (partIterations != null) {
+                partIterationJSonArray = new JSONArray();
+                for(PartIteration partIteration : partIterations) {
+                    partIterationJSonArray.put(partIteration.getIteration());
+                }
+                status.put("iterations", partIterationJSonArray);
+            }
         }
 
         return status;

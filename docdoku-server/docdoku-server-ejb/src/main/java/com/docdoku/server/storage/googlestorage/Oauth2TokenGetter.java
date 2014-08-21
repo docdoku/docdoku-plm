@@ -23,7 +23,6 @@ package com.docdoku.server.storage.googlestorage;
 import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
 import com.google.api.client.auth.oauth2.AuthorizationCodeRequestUrl;
 import com.google.api.client.auth.oauth2.Credential;
-import com.google.api.client.auth.oauth2.TokenResponse;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
@@ -67,15 +66,13 @@ public class Oauth2TokenGetter {
     }
 
     private void generateTokenResponse() throws IOException {
-
         String authorisationCode = properties.getAuthorisationCode();
 
         AuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(HTTP_TRANSPORT, JSON_FACTORY, properties.getClientId(), properties.getClientSecret(), Arrays.asList(properties.getScope()))
                 .setAccessType("offline")
                 .setApprovalPrompt("force").build();
 
-        TokenResponse tokenResponse = flow.newTokenRequest(authorisationCode).setRedirectUri(properties.getRedirectUri()).execute();
-
+        flow.newTokenRequest(authorisationCode).setRedirectUri(properties.getRedirectUri()).execute();
     }
 
     public String getToken() throws IOException{

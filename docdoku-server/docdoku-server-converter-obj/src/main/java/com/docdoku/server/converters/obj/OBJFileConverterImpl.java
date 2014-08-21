@@ -38,6 +38,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 @OBJFileConverter
@@ -54,10 +56,16 @@ public class OBJFileConverterImpl implements CADConverter{
     private IDataManagerLocal dataManager;
 
     static{
+        InputStream inputStream = null;
         try {
-            CONF.load(OBJFileConverterImpl.class.getResourceAsStream(CONF_PROPERTIES));
+            inputStream = OBJFileConverterImpl.class.getResourceAsStream(CONF_PROPERTIES);
+            CONF.load(inputStream);
         } catch (IOException e) {
-            e.printStackTrace();
+            Logger.getLogger(OBJFileConverterImpl.class.getName()).log(Level.WARNING, null, e);
+        } finally {
+            try{if(inputStream!=null){
+                inputStream.close();
+            }}catch (IOException ignored){}
         }
     }
 
@@ -80,7 +88,7 @@ public class OBJFileConverterImpl implements CADConverter{
                     try {
                         return dataManager.getBinaryResourceInputStream(cadFile);
                     } catch (StorageException e) {
-                        e.printStackTrace();
+                        Logger.getLogger(OBJFileConverterImpl.class.getName()).log(Level.INFO, null, e);
                         throw new IOException(e);
                     }
                 }
@@ -100,8 +108,10 @@ public class OBJFileConverterImpl implements CADConverter{
                     binOutputStream = dataManager.getBinaryResourceOutputStream(binBinaryResource);
                     Files.copy(tmpBINFile, binOutputStream);
                 } finally {
-                    binOutputStream.flush();
-                    binOutputStream.close();
+                    if(binOutputStream!=null){
+                        binOutputStream.flush();
+                        binOutputStream.close();
+                    }
                 }
 
                 // Calculate radius
@@ -113,10 +123,11 @@ public class OBJFileConverterImpl implements CADConverter{
                     jsOutputStream = dataManager.getBinaryResourceOutputStream(jsBinaryResource);
                     Files.copy(tmpJSFile, jsOutputStream);
                 } finally {
-                    jsOutputStream.flush();
-                    jsOutputStream.close();
+                    if(jsOutputStream!=null){
+                        jsOutputStream.flush();
+                        jsOutputStream.close();
+                    }
                 }
-
             }
             return jsFile;
         } finally {

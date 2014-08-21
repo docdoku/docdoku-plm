@@ -70,7 +70,7 @@ public class MainChannelApplication {
                 try {
                     session.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Logger.getLogger(MainChannelApplication.class.getName()).log(Level.INFO, null, e);
                 }
             }
         }

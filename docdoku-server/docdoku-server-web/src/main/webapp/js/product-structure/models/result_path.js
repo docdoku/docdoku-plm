@@ -1,9 +1,10 @@
+'use strict';
 define(function () {
 
     var ResultPath = Backbone.Model.extend({
 
         contains: function(partUsageLinkId) {
-            return _.indexOf(this.partUsageLinks, partUsageLinkId) != -1;
+            return _.indexOf(this.partUsageLinks, partUsageLinkId) !== -1;
         },
 
         parse: function(response) {

@@ -1,5 +1,6 @@
 /*global ColladaLoader2*/
-define(["views/progress_bar_view"], function (ProgressBarView) {
+'use strict';
+define(['views/progress_bar_view'], function (ProgressBarView) {
 
     var LoaderManager = function (options) {
 
@@ -42,23 +43,23 @@ define(["views/progress_bar_view"], function (ProgressBarView) {
 
             XMLHttpRequest.prototype.open = function () {
 
-                if (arguments[1].indexOf("/files/") === 0) {
+                if (arguments[1].indexOf('/files/') === 0) {
 
                     var totalAdded = false,
                         totalLoaded = 0,
                         xhrLength = 0;
 
-                    this.addEventListener("loadstart", function () {
+                    this.addEventListener('loadstart', function () {
                         xhrCount++;
                     }, false);
 
-                    this.addEventListener("progress", function (pe) {
+                    this.addEventListener('progress', function (pe) {
 
-                        if (xhrLength == 0) {
+                        if (xhrLength === 0) {
                             xhrLength = pe.total;
                         }
 
-                        if (totalAdded == false) {
+                        if (totalAdded === false) {
                             pbv.addTotal(xhrLength);
                             totalAdded = true;
                         }
@@ -68,7 +69,7 @@ define(["views/progress_bar_view"], function (ProgressBarView) {
 
                     }, false);
 
-                    this.addEventListener("loadend", function () {
+                    this.addEventListener('loadend', function () {
                         xhrCount--;
                         setTimeout(function () {
                             pbv.removeXHRData(xhrLength);
@@ -89,7 +90,7 @@ define(["views/progress_bar_view"], function (ProgressBarView) {
             switch (extension) {
                 case 'dae':
 
-                    if (this.ColladaLoader == null) {
+                    if (this.ColladaLoader === null) {
                         this.ColladaLoader = new ColladaLoader2();
                     }
 
@@ -116,7 +117,7 @@ define(["views/progress_bar_view"], function (ProgressBarView) {
 
                 case 'stl':
 
-                    if (this.StlLoader == null) {
+                    if (this.StlLoader === null) {
                         this.StlLoader = new THREE.STLLoader();
                     }
 
@@ -130,7 +131,7 @@ define(["views/progress_bar_view"], function (ProgressBarView) {
 
                 case 'js':
                 case 'json':
-                    if (this.BinaryLoader == null) {
+                    if (this.BinaryLoader === null) {
                         this.BinaryLoader = new THREE.BinaryLoader();
                     }
 

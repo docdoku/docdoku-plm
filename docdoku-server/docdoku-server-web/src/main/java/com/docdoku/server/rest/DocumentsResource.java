@@ -51,6 +51,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Stateless
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
@@ -63,6 +65,7 @@ public class DocumentsResource {
     @EJB
     private DocumentResource document;
 
+    private final static Logger LOGGER = Logger.getLogger(DocumentsResource.class.getName());
     private Mapper mapper;
 
     public DocumentsResource() {
@@ -88,14 +91,11 @@ public class DocumentsResource {
         }
         if(query != null){
             return getDocumentsWithSearchQuery(workspaceId, query);
-        }
-        else if(tagId != null){
+        }else if(tagId != null){
             return getDocumentsWithGivenTagIdAndWorkspaceId(workspaceId,tagId);
-        }
-        else if(assignedUserLogin !=null){
+        }else if(assignedUserLogin !=null){
             return getDocumentsWhereGivenUserHasAssignedTasks(workspaceId, assignedUserLogin, filter);
-        }
-        else if(folderId != null){
+        }else if(folderId != null){
             return getDocumentsWithGivenFolderIdAndWorkspaceId(workspaceId,folderId);
         }else{
             return getDocumentsInWorkspace(workspaceId, start);
@@ -110,6 +110,7 @@ public class DocumentsResource {
         try {
             return documentService.getDocumentsInWorkspaceCount(Tools.stripTrailingSlash(workspaceId));
         } catch (com.docdoku.core.exceptions.ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -131,6 +132,7 @@ public class DocumentsResource {
             return docRsDTOs;
 
         } catch (com.docdoku.core.exceptions.ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -151,6 +153,7 @@ public class DocumentsResource {
 
             return docRsDTOs;
         } catch (com.docdoku.core.exceptions.ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
 
@@ -173,6 +176,7 @@ public class DocumentsResource {
 
             return docRsDTOs;
         } catch (com.docdoku.core.exceptions.ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -192,6 +196,7 @@ public class DocumentsResource {
 
             return docRsDTOs;
         } catch (com.docdoku.core.exceptions.ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -202,8 +207,7 @@ public class DocumentsResource {
 
             if(filter == null){
                 docRs = documentService.getDocumentRevisionsWithAssignedTasksForGivenUser(workspaceId, assignedUserLogin);
-            }
-            else{
+            }else{
                 switch (filter){
                     case "in_progress":
                         docRs = documentService.getDocumentRevisionsWithOpenedTasksForGivenUser(workspaceId, assignedUserLogin);
@@ -214,7 +218,7 @@ public class DocumentsResource {
                 }
             }
 
-            ArrayList<DocumentRevisionDTO> docRsDTOs = new ArrayList<>();
+            List<DocumentRevisionDTO> docRsDTOs = new ArrayList<>();
 
             for (DocumentRevision docR : docRs) {
 
@@ -230,6 +234,7 @@ public class DocumentsResource {
             return docRsDTOs.toArray(new DocumentRevisionDTO[docRsDTOs.size()]);
 
         } catch (com.docdoku.core.exceptions.ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -250,6 +255,7 @@ public class DocumentsResource {
 
             return docRsDTOs;
         } catch (com.docdoku.core.exceptions.ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -308,6 +314,7 @@ public class DocumentsResource {
             return Response.created(URI.create(URLEncoder.encode(pDocMID + "-" + createdDocRs.getVersion(),"UTF-8"))).entity(docRsDTO).build();
 
         } catch (com.docdoku.core.exceptions.ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
 
@@ -337,6 +344,7 @@ public class DocumentsResource {
             return checkedOutdocRsDTO;
 
         } catch (com.docdoku.core.exceptions.ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -354,15 +362,16 @@ public class DocumentsResource {
             List<DocumentIterationDTO> docsLastIter = new ArrayList<>();
             for (DocumentRevision docR : docRs) {
                 DocumentIteration docLastIter = docR.getLastIteration();
-                if (docLastIter != null)
+                if (docLastIter != null) {
                     docsLastIter.add(new DocumentIterationDTO(docLastIter.getWorkspaceId(), docLastIter.getId(), docLastIter.getDocumentVersion(), docLastIter.getIteration()));
+                }
             }
 
             return docsLastIter.toArray(new DocumentIterationDTO[docsLastIter.size()]);
 
         } catch (com.docdoku.core.exceptions.ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
-
 }

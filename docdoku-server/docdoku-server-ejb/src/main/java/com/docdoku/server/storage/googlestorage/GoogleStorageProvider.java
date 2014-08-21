@@ -30,6 +30,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author Asmae Chadid
@@ -98,6 +100,7 @@ public class GoogleStorageProvider implements StorageProvider {
                     getBinaryResourceInputStream(br);
                     return baseUrl + getVirtualPath(br);
                 } catch (FileNotFoundException | StorageException e1) {
+                    Logger.getLogger(GoogleStorageProvider.class.getName()).log(Level.INFO, null, e1);
                 }
             }
         } catch (StorageException e) {
@@ -117,7 +120,7 @@ public class GoogleStorageProvider implements StorageProvider {
             try {
                 shortenExternalResourceURI = GoogleStorageCloud.getShortenURI(externalResourceURI);
             } catch (IOException e) {
-                e.printStackTrace();
+                Logger.getLogger(GoogleStorageProvider.class.getName()).log(Level.INFO, null, e);
             }
         }
 

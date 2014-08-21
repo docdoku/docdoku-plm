@@ -40,6 +40,8 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Stateless
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
@@ -49,6 +51,7 @@ public class ChangeRequestsResource {
     @EJB
     private IChangeManagerLocal changeManager;
 
+    private final static Logger LOGGER = Logger.getLogger(ChangeRequestsResource.class.getName());
     private Mapper mapper;
 
     public ChangeRequestsResource() {}
@@ -71,6 +74,7 @@ public class ChangeRequestsResource {
             }
             return changeRequestDTOs;
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -83,6 +87,7 @@ public class ChangeRequestsResource {
             ChangeRequest changeRequest = changeManager.createChangeRequest(workspaceId, changeRequestDTO.getName(), changeRequestDTO.getDescription(), changeRequestDTO.getMilestoneId(), changeRequestDTO.getPriority(), changeRequestDTO.getAssignee(), changeRequestDTO.getCategory());
             return mapper.map(changeRequest, ChangeRequestDTO.class);
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -102,6 +107,7 @@ public class ChangeRequestsResource {
             }
             return requestDTOs.toArray(new ChangeRequestDTO[requestDTOs.size()]);
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -116,6 +122,7 @@ public class ChangeRequestsResource {
             changeRequestDTO.setWritable(changeManager.isChangeItemWritable(changeRequest));
             return changeRequestDTO;
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -131,6 +138,7 @@ public class ChangeRequestsResource {
             changeRequestDTO.setWritable(changeManager.isChangeItemWritable(changeRequest));
             return changeRequestDTO;
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -143,6 +151,7 @@ public class ChangeRequestsResource {
             changeManager.deleteChangeRequest(requestId);
             return Response.ok().build();
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -164,6 +173,7 @@ public class ChangeRequestsResource {
             changeRequestDTO.setWritable(changeManager.isChangeItemWritable(changeRequest));
             return changeRequestDTO;
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -192,6 +202,7 @@ public class ChangeRequestsResource {
             return changeRequestDTO;
 
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -203,6 +214,7 @@ public class ChangeRequestsResource {
             changeManager.removeChangeRequestTag(workspaceId, requestId, tagName);
             return Response.ok().build();
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -223,6 +235,7 @@ public class ChangeRequestsResource {
             changeRequestDTO.setWritable(changeManager.isChangeItemWritable(changeRequest));
             return changeRequestDTO;
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -242,6 +255,7 @@ public class ChangeRequestsResource {
             changeRequestDTO.setWritable(changeManager.isChangeItemWritable(changeRequest));
             return changeRequestDTO;
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -251,12 +265,15 @@ public class ChangeRequestsResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public ChangeItemDTO saveAffectedIssues(@PathParam("workspaceId") String workspaceId, @PathParam("requestId") int requestId, List<ChangeIssueDTO> changeIssueDTOs) {
-        int[] links = new int[changeIssueDTOs.size()];
+        int[] links;
         if (changeIssueDTOs != null) {
+            links = new int[changeIssueDTOs.size()];
             int i = 0;
             for(ChangeIssueDTO changeIssueDTO : changeIssueDTOs){
                 links[i++] = changeIssueDTO.getId();
             }
+        }else{
+            links = new int[0];
         }
         try {
             ChangeRequest changeRequest = changeManager.saveChangeRequestAffectedIssues(workspaceId, requestId, links);
@@ -264,6 +281,7 @@ public class ChangeRequestsResource {
             changeRequestDTO.setWritable(changeManager.isChangeItemWritable(changeRequest));
             return changeRequestDTO;
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -273,7 +291,7 @@ public class ChangeRequestsResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateACL(@PathParam("workspaceId") String pWorkspaceId, @PathParam("requestId") int requestId, ACLDTO acl) {
         try {
-            if (acl.getGroupEntries().size() > 0 || acl.getUserEntries().size() > 0) {
+            if (!acl.getGroupEntries().isEmpty() || !acl.getUserEntries().isEmpty()) {
 
                 Map<String,String> userEntries = new HashMap<>();
                 Map<String,String> groupEntries = new HashMap<>();
@@ -292,6 +310,7 @@ public class ChangeRequestsResource {
             }
             return Response.ok().build();
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }

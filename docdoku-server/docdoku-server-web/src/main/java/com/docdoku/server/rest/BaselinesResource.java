@@ -46,6 +46,8 @@ import java.net.URI;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -59,6 +61,7 @@ public class BaselinesResource {
     @EJB
     private IProductManagerLocal productService;
 
+    private final static Logger LOGGER = Logger.getLogger(BaselinesResource.class.getName());
     private Mapper mapper;
 
     public BaselinesResource() {
@@ -88,6 +91,7 @@ public class BaselinesResource {
                 }
                 return baselinesDTO;
             } catch (ApplicationException ex) {
+                LOGGER.log(Level.WARNING,null,ex);
                 throw new RestApiException(ex.toString(), ex.getMessage());
             }
     }
@@ -109,6 +113,7 @@ public class BaselinesResource {
                 return Response.ok().build();
             }
         } catch(ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -126,6 +131,7 @@ public class BaselinesResource {
             productService.updateBaseline(new ConfigurationItemKey(workspaceId,ciId),Integer.parseInt(baselineId),baselineDTO.getName(),baselineDTO.getType(),baselineDTO.getDescription(),partIterationKeys);
             return Response.ok().build();
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -138,6 +144,7 @@ public class BaselinesResource {
             productService.deleteBaseline(baselineId);
             return Response.ok().build();
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -153,6 +160,7 @@ public class BaselinesResource {
             baselineDTO.setBaselinedParts(Tools.mapBaselinedPartsToBaselinedPartDTO(baseline));
             return baselineDTO;
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -171,6 +179,7 @@ public class BaselinesResource {
             }
             return baselinedPartDTOList;
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -184,6 +193,7 @@ public class BaselinesResource {
             Baseline baseline = productService.duplicateBaseline(baselineId, baselineCreationDTO.getName(), baselineCreationDTO.getType(), baselineCreationDTO.getDescription());
             return mapper.map(baseline, BaselineDTO.class);
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }

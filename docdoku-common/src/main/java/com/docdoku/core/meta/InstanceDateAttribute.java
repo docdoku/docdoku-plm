@@ -48,17 +48,19 @@ public class InstanceDateAttribute extends InstanceAttribute{
     }
 
     @Override
-    public Date getValue() {
-        return dateValue;
+    public Date getValue() {return dateValue;}
+    @Override
+    public boolean setValue(Object pValue) {
+        if(pValue instanceof Date){
+            dateValue=(Date)pValue;
+            return true;
+        }else
+            dateValue=null;
+            return false;
     }
 
-    public Date getDateValue() {
-        return dateValue;
-    }
-
-    public void setDateValue(Date dateValue) {
-        this.dateValue = dateValue;
-    }
+    public Date getDateValue() {return dateValue;}
+    public void setDateValue(Date dateValue) {this.dateValue = dateValue;}
     
     
     /**
@@ -66,21 +68,11 @@ public class InstanceDateAttribute extends InstanceAttribute{
      */
     @Override
     public InstanceDateAttribute clone() {
-        InstanceDateAttribute clone = null;
+        InstanceDateAttribute clone;
         clone = (InstanceDateAttribute) super.clone();
         
         if(dateValue!=null)
             clone.dateValue = (Date) dateValue.clone();
         return clone;
     }
-
-    @Override
-    public boolean setValue(Object pValue) {
-        if(pValue instanceof Date){
-            dateValue=(Date)pValue;
-            return true;
-        }else
-            return false;
-    }
-
 }

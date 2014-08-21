@@ -42,6 +42,8 @@ import javax.xml.ws.soap.MTOM;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -117,10 +119,12 @@ public class UploadDownloadService implements IUploadDownloadWS {
             outputStream = dataManager.getBinaryResourceOutputStream(binaryResource);
             length = ByteStreams.copy(inputStream, outputStream);
         } catch (StorageException e) {
-            e.printStackTrace();
+            Logger.getLogger(UploadDownloadService.class.getName()).log(Level.INFO, null, e);
         } finally {
-            outputStream.flush();
-            outputStream.close();
+            if(outputStream!=null){
+                outputStream.flush();
+                outputStream.close();
+            }
         }
 
         documentService.saveFileInDocument(docPK, fileName, length);
@@ -141,10 +145,12 @@ public class UploadDownloadService implements IUploadDownloadWS {
             outputStream = dataManager.getBinaryResourceOutputStream(binaryResource);
             length = ByteStreams.copy(inputStream, outputStream);
         } catch (StorageException e) {
-            e.printStackTrace();
+            Logger.getLogger(UploadDownloadService.class.getName()).log(Level.INFO, null, e);
         } finally {
-            outputStream.flush();
-            outputStream.close();
+            if(outputStream!=null){
+                outputStream.flush();
+                outputStream.close();
+            }
         }
 
         productService.saveGeometryInPartIteration(partIPK, fileName, quality, length, 0);
@@ -166,10 +172,12 @@ public class UploadDownloadService implements IUploadDownloadWS {
             outputStream = dataManager.getBinaryResourceOutputStream(binaryResource);
             length = ByteStreams.copy(inputStream, outputStream);
         } catch (StorageException e) {
-            e.printStackTrace();
+            Logger.getLogger(UploadDownloadService.class.getName()).log(Level.INFO, null, e);
         } finally {
-            outputStream.flush();
-            outputStream.close();
+            if(outputStream!=null){
+                outputStream.flush();
+                outputStream.close();
+            }
         }
 
         productService.saveNativeCADInPartIteration(partIPK, fileName, length);
@@ -191,10 +199,12 @@ public class UploadDownloadService implements IUploadDownloadWS {
             outputStream = dataManager.getBinaryResourceOutputStream(binaryResource);
             length = ByteStreams.copy(inputStream, outputStream);
         } catch (StorageException e) {
-            e.printStackTrace();
+            Logger.getLogger(UploadDownloadService.class.getName()).log(Level.INFO, null, e);
         } finally {
-            outputStream.flush();
-            outputStream.close();
+            if(outputStream!=null){
+                outputStream.flush();
+                outputStream.close();
+            }
         }
 
         productService.saveFileInPartIteration(partIPK, fileName, length);
@@ -215,10 +225,12 @@ public class UploadDownloadService implements IUploadDownloadWS {
             outputStream = dataManager.getBinaryResourceOutputStream(binaryResource);
             length = ByteStreams.copy(inputStream, outputStream);
         } catch (StorageException e) {
-            e.printStackTrace();
+            Logger.getLogger(UploadDownloadService.class.getName()).log(Level.INFO, null, e);
         } finally {
-            outputStream.flush();
-            outputStream.close();
+            if(outputStream!=null){
+                outputStream.flush();
+                outputStream.close();
+            }
         }
 
         documentService.saveFileInTemplate(templatePK, fileName, length);
@@ -229,32 +241,26 @@ public class UploadDownloadService implements IUploadDownloadWS {
 
             final InputStream binaryContentInputStream = dataManager.getBinaryResourceInputStream(binaryResource);
 
-            DataSource binaryResourceDataSource = new DataSource() {
-                @Override
-                public InputStream getInputStream() throws IOException {
-                    return binaryContentInputStream;
-                }
-
-                @Override
-                public OutputStream getOutputStream() throws IOException {
-                    throw new UnsupportedOperationException("Not implemented");
-                }
-
-                @Override
-                public String getContentType() {
-                    return FileTypeMap.getDefaultFileTypeMap().getContentType(binaryResource.getName());
-                }
-
-                @Override
-                public String getName() {
-                    return binaryResource.getName();
-                }
-            };
-
-            return binaryResourceDataSource;
-
+            return new DataSource() {
+                            @Override
+                            public InputStream getInputStream() throws IOException {
+                                return binaryContentInputStream;
+                            }
+                            @Override
+                            public OutputStream getOutputStream() throws IOException {
+                                throw new UnsupportedOperationException("Not implemented");
+                            }
+                            @Override
+                            public String getContentType() {
+                                return FileTypeMap.getDefaultFileTypeMap().getContentType(binaryResource.getName());
+                            }
+                            @Override
+                            public String getName() {
+                                return binaryResource.getName();
+                            }
+                        };
         } catch (StorageException e) {
-            e.printStackTrace();
+            Logger.getLogger(UploadDownloadService.class.getName()).log(Level.INFO, null, e);
             return null;
         }
     }

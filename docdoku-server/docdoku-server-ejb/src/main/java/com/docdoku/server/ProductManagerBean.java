@@ -57,6 +57,8 @@ import javax.persistence.PersistenceContext;
 import java.text.MessageFormat;
 import java.text.ParseException;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @DeclareRoles({"users","admin","guest-proxy"})
 @Local(IProductManagerLocal.class)
@@ -283,7 +285,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 try {
                     dataManager.copyData(sourceFile, targetFile);
                 } catch (StorageException e) {
-                    e.printStackTrace();
+                    Logger.getLogger(ProductManagerBean.class.getName()).log(Level.INFO, null, e);
                 }
             }
 
@@ -335,7 +337,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 try {
                     dataManager.deleteData(file);
                 } catch (StorageException e) {
-                    e.printStackTrace();
+                    Logger.getLogger(ProductManagerBean.class.getName()).log(Level.INFO, null, e);
                 }
             }
 
@@ -343,7 +345,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 try {
                     dataManager.deleteData(file);
                 } catch (StorageException e) {
-                    e.printStackTrace();
+                    Logger.getLogger(ProductManagerBean.class.getName()).log(Level.INFO, null, e);
                 }
             }
 
@@ -352,7 +354,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 try {
                     dataManager.deleteData(nativeCAD);
                 } catch (StorageException e) {
-                    e.printStackTrace();
+                    Logger.getLogger(ProductManagerBean.class.getName()).log(Level.INFO, null, e);
                 }
             }
 
@@ -580,7 +582,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 try {
                     dataManager.deleteData(nativeCADBinaryResource);
                 } catch (StorageException e) {
-                    e.printStackTrace();
+                    Logger.getLogger(ProductManagerBean.class.getName()).log(Level.INFO, null, e);
                 }
                 partI.setNativeCADFile(null);
                 binDAO.removeBinaryResource(nativeCADBinaryResource);
@@ -590,7 +592,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                     try {
                         dataManager.deleteData(geometry);
                     } catch (StorageException e) {
-                        e.printStackTrace();
+                        Logger.getLogger(ProductManagerBean.class.getName()).log(Level.INFO, null, e);
                     }
                     partI.removeGeometry(geometry);
                 }
@@ -599,7 +601,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                     try {
                         dataManager.deleteData(attachedFile);
                     } catch (StorageException e) {
-                        e.printStackTrace();
+                        Logger.getLogger(ProductManagerBean.class.getName()).log(Level.INFO, null, e);
                     }
                     partI.removeFile(attachedFile);
                 }
@@ -1145,7 +1147,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             try {
                 dataManager.deleteData(br);
             } catch (StorageException e) {
-                e.printStackTrace();
+                Logger.getLogger(ProductManagerBean.class.getName()).log(Level.INFO, null, e);
             }
             partIteration.setNativeCADFile(null);
         }
@@ -1155,7 +1157,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             try {
                 dataManager.deleteData(geometry);
             } catch (StorageException e) {
-                e.printStackTrace();
+                Logger.getLogger(ProductManagerBean.class.getName()).log(Level.INFO, null, e);
             }
             partIteration.removeGeometry(geometry);
         }
@@ -1165,7 +1167,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             try {
                 dataManager.deleteData(attachedFile);
             } catch (StorageException e) {
-                e.printStackTrace();
+                Logger.getLogger(ProductManagerBean.class.getName()).log(Level.INFO, null, e);
             }
             partIteration.removeFile(attachedFile);
         }
@@ -1332,7 +1334,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             try {
                 dataManager.deleteData(file);
             } catch (StorageException e) {
-                e.printStackTrace();
+                Logger.getLogger(ProductManagerBean.class.getName()).log(Level.INFO, null, e);
             }
         }
     }
@@ -1381,7 +1383,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         try {
             dataManager.deleteData(file);
         } catch (StorageException e) {
-            e.printStackTrace();
+            Logger.getLogger(ProductManagerBean.class.getName()).log(Level.INFO, null, e);
         }
         template.setAttachedFile(null);
         binDAO.removeBinaryResource(file);
@@ -1462,7 +1464,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 try {
                     removeCADFileFromPartIteration(partIteration.getKey());
                 } catch (PartIterationNotFoundException e) {
-                    e.printStackTrace();
+                    Logger.getLogger(ProductManagerBean.class.getName()).log(Level.INFO, null, e);
                 }
             }
         }
@@ -1524,7 +1526,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             try {
                 removeCADFileFromPartIteration(partIteration.getKey());
             } catch (PartIterationNotFoundException e) {
-                e.printStackTrace();
+                Logger.getLogger(ProductManagerBean.class.getName()).log(Level.INFO, null, e);
             }
         }
 
@@ -1740,7 +1742,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 try {
                     dataManager.copyData(sourceFile, targetFile);
                 } catch (StorageException e) {
-                    e.printStackTrace();
+                    Logger.getLogger(ProductManagerBean.class.getName()).log(Level.INFO, null, e);
                 }
             }
 
@@ -1765,7 +1767,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 try {
                     dataManager.copyData(sourceFile, targetFile);
                 } catch (StorageException e) {
-                    e.printStackTrace();
+                    Logger.getLogger(ProductManagerBean.class.getName()).log(Level.INFO, null, e);
                 }
             }
 
@@ -1781,7 +1783,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 try {
                     dataManager.copyData(nativeCADFile, targetFile);
                 } catch (StorageException e) {
-                    e.printStackTrace();
+                    Logger.getLogger(ProductManagerBean.class.getName()).log(Level.INFO, null, e);
                 }
             }
 

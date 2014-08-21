@@ -1,5 +1,6 @@
+'use strict';
 define([
-	"models/folder"
+	'models/folder'
 ], function (
 	Folder
 ) {
@@ -8,12 +9,12 @@ define([
 
         model: Folder,
 
-        className:"FolderList",
+        className:'FolderList',
 
         url:function(){
-            var baseUrl = "/api/workspaces/" + APP_CONFIG.workspaceId + "/folders";
+            var baseUrl = '/api/workspaces/' + APP_CONFIG.workspaceId + '/folders';
             if (this.parent) {
-                return baseUrl + "/" + this.parent.get("id") + "/folders";
+                return baseUrl + '/' + this.parent.get('id') + '/folders';
             } else {
                 return  baseUrl;
             }
@@ -23,8 +24,8 @@ define([
 			if (!this.parent) {
 				// inject the user home folder
 				data.unshift({
-					id: APP_CONFIG.workspaceId + ":~" + APP_CONFIG.login,
-					name: "~" + APP_CONFIG.login,
+					id: APP_CONFIG.workspaceId + ':~' + APP_CONFIG.login,
+					name: '~' + APP_CONFIG.login,
 					path: APP_CONFIG.workspaceId,
 					home: true
 				});
@@ -33,16 +34,16 @@ define([
 		},
 		comparator: function (folderA, folderB) {
 			// sort folders by name
-			var nameA = folderA.get("name");
-			var nameB = folderB.get("name");
+			var nameA = folderA.get('name');
+			var nameB = folderB.get('name');
 
-			if (folderB.get("home")){
+			if (folderB.get('home')){
                 return 1;
             }
-			if (folderA.get("home")){
+			if (folderA.get('home')){
                 return -1;
             }
-			if (nameA == nameB){
+			if (nameA === nameB){
                 return 0;
             }
 			return (nameA < nameB) ? -1 : 1;
