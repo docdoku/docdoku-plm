@@ -12,7 +12,7 @@
         </ui:define>
         <ui:define name="content">
             <ol class="breadcrumb">
-                <li><a href="/faces/admin/organization/organizationMenu.xhtml">#{i18nTemplate['toplinks.organization']}</a>
+                <li><h:link value="#{i18nTemplate['toplinks.organization']}" outcome="/admin/organization/organizationMenu.xhtml" />
                     <span class="divider">/</span></li>
                 <li class="active">#{i18nOrganizationCreation['main.title']}</li>
             </ol>

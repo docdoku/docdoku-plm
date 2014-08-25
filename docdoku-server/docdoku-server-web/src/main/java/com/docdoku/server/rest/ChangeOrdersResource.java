@@ -232,9 +232,10 @@ public class ChangeOrdersResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public ChangeItemDTO saveAffectedRequests(@PathParam("workspaceId") String workspaceId, @PathParam("orderId") int orderId, List<ChangeRequestDTO> changeRequestDTOs) {
-        int[] links = new int[changeRequestDTOs.size()];
+        int[] links=null;
         if (changeRequestDTOs != null) {
             int i = 0;
+            links = new int[changeRequestDTOs.size()];
             for(ChangeRequestDTO changeRequestDTO : changeRequestDTOs){
                 links[i++] = changeRequestDTO.getId();
             }

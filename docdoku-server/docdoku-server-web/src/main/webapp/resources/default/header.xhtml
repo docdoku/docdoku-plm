@@ -15,7 +15,7 @@
 </composite:interface>
 
 <composite:implementation>
-    <h:form style="#{cc.attrs.formStyle}">
+    <h:form id="menu_form" prependId="false" style="#{cc.attrs.formStyle}">
         <div id="header" class="navbar navbar-fixed-top">
 
             <a class="btn btn-navbar" id="collapseButton" data-toggle="collapse" data-target=".nav-collapse">
@@ -25,8 +25,7 @@
             </a>
 
             <div class="navbar-inner">
-                <img id="brand-logo" alt="docdoku_plm" src="/images/plm_logo2.png"/>
-
+            <h:graphicImage id="brand-logo" alt="docdoku_plm" library="default" name="images/plm_logo2.png" />
                 <c:choose>
                     <c:when test="#{accountBean.superAdmin==true}">
                         <a id="brand-title" class="brand" href="/faces/admin/workspace/workspacesMenu.xhtml">

@@ -251,9 +251,10 @@ public class ChangeRequestsResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public ChangeItemDTO saveAffectedIssues(@PathParam("workspaceId") String workspaceId, @PathParam("requestId") int requestId, List<ChangeIssueDTO> changeIssueDTOs) {
-        int[] links = new int[changeIssueDTOs.size()];
+        int[] links = null;
         if (changeIssueDTOs != null) {
             int i = 0;
+            links = new int[changeIssueDTOs.size()];
             for(ChangeIssueDTO changeIssueDTO : changeIssueDTOs){
                 links[i++] = changeIssueDTO.getId();
             }

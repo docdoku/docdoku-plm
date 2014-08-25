@@ -26,7 +26,7 @@ import java.util.List;
 
 /**
  *
- * @author FMorgan Guimard
+ * @author Morgan Guimard
  */
 
 public class PathFilteredListInstanceCollection {

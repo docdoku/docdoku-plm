@@ -7,7 +7,7 @@
         >
     <ui:composition template="/WEB-INF/templates/moduleTemplate.xhtml">
         <ui:define name="styles">
-            <link rel="stylesheet/less" type="text/css" href="#{request.contextPath}/less/change-management/style.less?v=${BUILD_NUMBER}"/>
+            <link rel="stylesheet/less" type="text/css" href="#{request.contextPath}/less/change-management/style.less"/>
         </ui:define>
         <ui:define name="title">
             <f:loadBundle var="i18nDM" basename="com.docdoku.server.localization.explorer_resource"/>
@@ -57,7 +57,7 @@
             </script>
         </ui:define>
         <ui:define name="header">
-            <em:header moduleName="change-management" moduleIcon="icon-refresh" moduleTranslate="#{i18nTemplate['toplinks.change']}" breadcrumbDept="2" />
+            <em:header id="h" moduleName="change-management" moduleIcon="icon-refresh" moduleTranslate="#{i18nTemplate['toplinks.change']}" breadcrumbDept="2" />
         </ui:define>
         <ui:define name="content">
             <div id="workspace"></div>
