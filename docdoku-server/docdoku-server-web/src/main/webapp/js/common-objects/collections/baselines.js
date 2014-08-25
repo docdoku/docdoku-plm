@@ -1,3 +1,5 @@
+/*global APP_CONFIG*/
+'use strict';
 define(["common-objects/models/baseline"],function(Baseline){
 
     var Baselines = Backbone.Collection.extend({

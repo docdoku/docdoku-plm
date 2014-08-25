@@ -1,9 +1,10 @@
 /*global App*/
+'use strict';
 define([
-    "collections/layer_collection",
-    "models/layer",
-    "views/layers-list-view",
-    "views/marker_info_modal_view"
+    'collections/layer_collection',
+    'models/layer',
+    'views/layers-list-view',
+    'views/marker_info_modal_view'
 ], function (
     LayerCollection,
     Layer,
@@ -16,7 +17,7 @@ define([
     var LayerManager = function() {
         this.meshs = [];
         this.state = STATE.FULL;
-        this.markerStateControl = $("#markerState").find("i");
+        this.markerStateControl = $('#markerState').find('i');
         this.layersCollection = new LayerCollection();
         this.markerScale = new THREE.Vector3(1,1,1);
         this.markers = [];
@@ -25,7 +26,19 @@ define([
     LayerManager.prototype = {
 
         renderList: function() {
-            new LayersListView({collection: this.layersCollection}).render();
+            App.layersListView = new LayersListView({collection: this.layersCollection});
+            App.layersListView.render();
+        },
+
+        removeAllMeshesFromMarkers: function(){
+            var cid;
+            var currentMesh;
+            for (cid in this.meshs) {
+                currentMesh = this.meshs[cid];
+                App.sceneManager.scene.remove(currentMesh);
+            }
+
+            App.sceneManager.reDraw();
         },
 
         addMeshFromMarker: function(marker, material) {
@@ -51,7 +64,7 @@ define([
             App.sceneManager.reDraw();
 
             // rescale the marker to the others markers scale
-            markerMesh.scale = this.markerScale;
+            markerMesh.scale.copy(this.markerScale);
 
             //save the mesh for further reuse
             this.meshs[marker.cid] = markerMesh;
@@ -80,14 +93,25 @@ define([
 
         createLayer: function(name) {
             var layer;
+
+            var  randomColor = Math.ceil((Math.random()*(0xF))).toString(16) +
+	            Math.ceil((Math.random()*(0xF))).toString(16) +
+                Math.ceil((Math.random()*(0xF))).toString(16) +
+                Math.ceil((Math.random()*(0xF))).toString(16) +
+                Math.ceil((Math.random()*(0xF))).toString(16);
+
             if (name) {
                 layer = new Layer({
-                    name : name
+                    name : name,
+                    color: randomColor
                 });
             } else {
-                layer = new Layer();
+                layer = new Layer({
+                    color: randomColor
+                });
             }
-            this.layersCollection.create(layer);
+
+            this.layersCollection.create(layer,{success:function(){App.collaborativeController.sendLayersRefresh("create layer");}});
             return layer;
         },
 
@@ -105,19 +129,20 @@ define([
         rescaleMarkers: function() {
             for (var cid in this.meshs) {
                 var currentMesh = this.meshs[cid];
-                currentMesh.scale = this.markerScale;
+                currentMesh.scale.copy(this.markerScale);
             }
+            App.sceneManager.reDraw();
         },
 
         changeMarkerState: function() {
             switch(this.state) {
                 case STATE.FULL  :
-                    this.markerStateControl.removeClass('icon-circle').addClass('icon-circle-blank');
+                    this.markerStateControl.removeClass('fa-circle').addClass('fa-circle-o');
                     this.changeOpacityOnMarker(0.4);
                     this.state = STATE.TRANSPARENT;
                     break;
                 case STATE.TRANSPARENT :
-                    this.markerStateControl.removeClass('icon-circle-blank').addClass('icon-circle');
+                    this.markerStateControl.removeClass('fa-circle-o').addClass('fa-circle');
                     this.changeOpacityOnMarker(1);
                     this.state = STATE.FULL;
                     break;
@@ -128,12 +153,13 @@ define([
             for (var cid in this.meshs) {
                 this.meshs[cid].material.opacity = opacity;
             }
+            App.sceneManager.reDraw();
         },
 
 
         showPopup: function(marker) {
             var mimv = new MarkerInfoModalView({model:marker});
-            $("body").append(mimv.render().el);
+            $('body').append(mimv.render().el);
             mimv.openModal();
         }
 

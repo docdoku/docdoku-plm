@@ -9,7 +9,7 @@
     </button>
     {{#workflow.id}}
         <button id="copy-workflow" class="btn" title="{{i18n.COPY_WORKFLOW}}">
-            <i class="icon-copy"></i>
+            <i class="fa fa-files-o"></i>
         </button>
     {{/workflow.id}}
 </div>
@@ -17,18 +17,18 @@
     <ul id="activity-list">
         <li class="section">
             <div id="start">
-                <i class="icon-circle-blank"></i>
+                <i class="fa fa-circle-o"></i>
                 <input type="text" value="{{i18n.START}}" disabled>
             </div>
         </li>
         <li id="add-activity-section" class="section">
             <button id="add-activity" title="{{i18n.ADD_ACTIVITY}}">
-                <i class="icon-plus"></i>
+                <i class="fa fa-plus"></i>
             </button>
         </li>
         <li class="section">
             <div id="end">
-                <i class="icon-circle"></i>
+                <i class="fa fa-circle"></i>
                 <input id="final-state" type="text" placeholder="{{i18n.FINAL_STATE_PLACEHOLDER}}" value="{{workflow.finalLifeCycleState}}"/>
             </div>
         </li>

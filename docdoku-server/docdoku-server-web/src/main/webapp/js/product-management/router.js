@@ -2,6 +2,7 @@ define([
     "common-objects/common/singleton_decorator",
     "views/nav/product_nav",
     "views/nav/baselines_nav",
+    "views/nav/product_instances_nav",
     "views/nav/part_nav",
     "views/nav/part_template_nav"
 ],
@@ -9,6 +10,7 @@ define([
         singletonDecorator,
         ProductNavView,
         BaselinesNavView,
+        ProductInstancesNavView,
         PartNavView,
         PartTemplateNavView
         ) {
@@ -17,6 +19,7 @@ define([
             routes: {
                 "products"          : "products",
                 "baselines"         : "baselines",
+                "product-instances" : "productInstances",
                 "parts"             : "parts",
                 "part-templates"    : "partsTemplate",
                 "parts-search/:query":"search",
@@ -31,6 +34,11 @@ define([
             baselines: function(){
                 this.defaults();
                 BaselinesNavView.getInstance().showContent(this.contentSelector);
+            },
+
+            productInstances: function(){
+                this.defaults();
+                ProductInstancesNavView.getInstance().showContent(this.contentSelector);
             },
 
             parts:function(){
@@ -50,6 +58,7 @@ define([
             defaults: function() {
                 ProductNavView.getInstance();
                 BaselinesNavView.getInstance();
+                ProductInstancesNavView.getInstance();
                 PartNavView.getInstance();
                 PartTemplateNavView.getInstance();
             }

@@ -15,7 +15,7 @@ define([
             },
             joinCollaborative:function(key){
                 if (!App.collaborativeView.isMaster) {
-                    App.sceneManager.requestJoinRoom(key);
+                    App.appView.requestJoinRoom(key);
                 }
             }
         });

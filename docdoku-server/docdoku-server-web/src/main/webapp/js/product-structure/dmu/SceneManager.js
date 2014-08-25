@@ -1,4 +1,5 @@
-/*global App,Instance,requestAnimationFrame,TWEEN,ChannelMessagesType,mainChannel,ChannelStatus*/
+/*global App,APP_CONFIG,Stats,Instance,requestAnimationFrame,TWEEN,ChannelMessagesType,mainChannel,ChannelStatus*/
+'use strict';
 define([
     "views/marker_create_modal_view",
     "views/blocker_view",
@@ -8,7 +9,8 @@ define([
     var SceneManager = function (pOptions) {
         var _this = this;
 
-        var havePointerLock = 'pointerLockElement' in document || 'mozPointerLockElement' in document || 'webkitPointerLockElement' in document;
+        var browserSupportPointerLock = 'pointerLockElement' in document ||
+            'mozPointerLockElement' in document || 'webkitPointerLockElement' in document;
         var options = pOptions || {};
         _.extend(this, options);
         var isMoving = false;
@@ -23,7 +25,7 @@ define([
         var selectionBox = null;
         var meshMarkedForSelection = null;
         var controlChanged = false;
-        var editedMeshesDisplayed = false;
+        var editedMeshesColoured = false;
         var transformControls = null;
 
         var materialEditedMesh = new THREE.MeshPhongMaterial({ transparent: false, color: new THREE.Color(0x08B000) });
@@ -84,7 +86,7 @@ define([
             _this.$stats = $(_this.stats.domElement);
             _this.$stats.attr('id', 'statsWin');
             _this.$stats.attr('class', 'statsWinMaximized');
-            _this.$statsArrow = $("<i id=\"statsArrow\" class=\"icon-chevron-down\"></i>");
+            _this.$statsArrow = $("<i id=\"statsArrow\" class=\"fa fa-chevron-down\"></i>");
             _this.$stats.prepend(_this.$statsArrow);
             _this.$statsArrow.bind('click', function () {
                 _this.$stats.toggleClass('statsWinMinimized statsWinMaximized');
@@ -175,17 +177,6 @@ define([
             createOrbitControls();
         }
 
-        function pointerLockChange() {
-            _this.pointerLockControls.enabled = !_this.pointerLockControls.enabled;
-            if (_this.pointerLockControls.enabled) {
-                _this.$blocker.hide();
-                _this.pointerLockControls.bindEvents();
-            } else {
-                _this.$blocker.show();
-                _this.pointerLockControls.unbindEvents();
-            }
-        }
-
         function createTransformControls() {
             transformControls = new THREE.TransformControls(_this.$container[0]);
 
@@ -213,21 +204,28 @@ define([
             transformControls.addEventListener('change', _this.reDraw);
         }
 
-        function onFullScreenChange() {
-            if (document.fullscreenElement === _this.$container[0] ||
-                document.mozFullscreenElement === _this.$container[0] ||
-                document.webkitFullScreenElement === _this.$container[0]) {
-
-                document.removeEventListener('fullscreenchange', onFullScreenChange);
-                document.removeEventListener('mozfullscreenchange', onFullScreenChange);
-                document.removeEventListener('webkitfullscreenchange', onFullScreenChange);
-
-                _this.$container[0].requestPointerLock();
-            }
+        function isPointerLock() {
+            return (document.pointerLockElement === _this.$container[0] ||
+                document.mozPointerLockElement === _this.$container[0] ||
+                document.webkitPointerLockElement === _this.$container[0]);
         }
 
+        function pointerLockChange() {
+            _this.pointerLockControls.enabled = isPointerLock();
+             if (_this.pointerLockControls.enabled) {
+                 _this.$blocker.hide();
+                 _this.pointerLockControls.bindEvents();
+             } else {
+                 _this.$blocker.show();
+                 _this.pointerLockControls.unbindEvents();
+             }
+        }
+
+        /**
+         * Lock the pointer (when you click on container) and Hide the gray screen
+         */
         function bindPointerLock() {
-            if (_this.stateControl != _this.STATECONTROL.PLC || _this.pointerLockControls.enabled) {
+            if (_this.stateControl !== _this.STATECONTROL.PLC || _this.pointerLockControls.enabled || isPointerLock()) {
                 return;
             }
             _this.$blocker.hide();
@@ -237,19 +235,7 @@ define([
                 (_this.$container[0].mozRequestPointerLock) ||
                 (_this.$container[0].webkitRequestPointerLock);
 
-            if (/Firefox/i.test(navigator.userAgent)) {
-                document.addEventListener('fullscreenchange', onFullScreenChange, false);
-                document.addEventListener('mozfullscreenchange', onFullScreenChange, false);
-
-                _this.$container[0].requestFullscreen = (_this.$container[0].requestFullscreen) ||
-                    (_this.$container[0].mozRequestFullscreen) ||
-                    (_this.$container[0].mozRequestFullScreen) ||
-                    (_this.$container[0].webkitRequestFullscreen);
-                _this.$container[0].requestFullscreen();
-
-            } else {
-                _this.$container[0].requestPointerLock();
-            }
+            _this.$container[0].requestPointerLock();
         }
 
         function deleteAllControls() {
@@ -263,7 +249,7 @@ define([
             _this.pointerLockControls.enabled = false;
             _this.pointerLockControls.unbindEvents();
             _this.$blocker.hide();
-            if (havePointerLock) {
+            if (browserSupportPointerLock) {
                 // Hook pointer lock state change events
                 document.removeEventListener('pointerlockchange', pointerLockChange, false);
                 document.removeEventListener('mozpointerlockchange', pointerLockChange, false);
@@ -280,7 +266,7 @@ define([
         }
 
         // example arg : _this.pointerLockControls,_this.pointerLockCamera
-        function updateControlsContext(controls, camera) {
+        /*function updateControlsContext(controls, camera) {
 
             if (!controlsObject) {
                 return;
@@ -292,7 +278,7 @@ define([
             controls.setTarget(controlsObject.getTarget());
 
 
-        }
+        }*/
 
         /**
          * Scene options control
@@ -314,14 +300,11 @@ define([
         }
 
         function applyExplosionCoeff(mesh) {
-            if (!mesh.geometry.boundingBox) {
+            if (!mesh.absoluteCentroid) {
                 mesh.geometry.computeBoundingBox();
                 mesh.geometry.computeBoundingSphere();
-                mesh.geometry.boundingBox.centroid = new THREE.Vector3(
-                        (mesh.geometry.boundingBox.max.x + mesh.geometry.boundingBox.min.x) * 0.5,
-                        (mesh.geometry.boundingBox.max.y + mesh.geometry.boundingBox.min.y) * 0.5,
-                        (mesh.geometry.boundingBox.max.z + mesh.geometry.boundingBox.min.z) * 0.5
-                );
+                var instance = App.instancesManager.getInstance(mesh.uuid);
+                mesh.absoluteCentroid = mesh.geometry.boundingBox.center().clone().applyMatrix4(instance.matrix);
             }
 
             // Replace before translating
@@ -329,10 +312,10 @@ define([
             mesh.position.y = mesh.initialPosition.y;
             mesh.position.z = mesh.initialPosition.z;
             // Translate instance
-            if (explosionCoeff != 0) {
-                mesh.translateX(mesh.geometry.boundingBox.centroid.x * explosionCoeff);
-                mesh.translateY(mesh.geometry.boundingBox.centroid.y * explosionCoeff);
-                mesh.translateZ(mesh.geometry.boundingBox.centroid.z * explosionCoeff);
+            if (explosionCoeff !== 0) {
+                mesh.translateX(mesh.absoluteCentroid.x * explosionCoeff);
+                mesh.translateY(mesh.absoluteCentroid.y * explosionCoeff);
+                mesh.translateZ(mesh.absoluteCentroid.z * explosionCoeff);
             }
             mesh.updateMatrix();
         }
@@ -482,7 +465,7 @@ define([
                     mesh.rotation.copy(meshEdited.rotation);
                     mesh.scale.copy(meshEdited.scale);
                     console.log("restauration de la position de l'instance transformée.");
-                    console.log(this.mesh);
+                    console.log(_this.mesh);
                 }
 
             }
@@ -492,10 +475,35 @@ define([
         function removeMesh(meshId) {
             var mesh = meshesIndexed[meshId];
             delete meshesIndexed[meshId];
+
+            if(_this.editedMeshes.indexOf(meshId) !== -1){
+                _this.editedMeshesLeft.push({
+                    uuid:meshId,
+                    position:mesh.position.clone(),
+                    rotation:mesh.rotation.clone(),
+                    scale:mesh.scale.clone()
+                });
+                _this.editedMeshes = _(_this.editedMeshes).without(meshId);
+                if (transformControls !== null && transformControls.enabled && transformControls.getObject()===mesh) {
+                    _this.deleteTransformControls();
+                }
+            }
+
             if (!mesh) {
                 return;
             }
+
+            if (meshMarkedForSelection === meshId) {
+                Backbone.Events.trigger("selection:reset");
+                meshMarkedForSelection = null;
+                unsetSelectionBox();
+            }
             _this.scene.remove(mesh);
+
+            if(App.debug){
+		        console.log('[SceneManager] mesh removed');
+            }
+
             _this.reDraw();
         }
 
@@ -515,7 +523,7 @@ define([
                     }
                     meshesIndexed[newMesh.uuid] = newMesh;
                     _this.scene.add(newMesh);
-                    if (meshMarkedForSelection == stuff.id) {
+                    if (meshMarkedForSelection === stuff.id) {
                         setSelectionBoxOnMesh(newMesh);
                     }
                     applyExplosionCoeff(newMesh);
@@ -527,6 +535,11 @@ define([
                         newMesh.position.copy(potentiallyEdited[0].position);
                         newMesh.rotation.copy(potentiallyEdited[0].rotation);
                         newMesh.scale.copy(potentiallyEdited[0].scale);
+                        if (editedMeshesColoured){
+                            newMesh.material = materialEditedMesh;
+                        }
+                        _this.editedMeshesLeft = _(_this.editedMeshesLeft).without(potentiallyEdited[0]);
+                        _this.editedMeshes.push(potentiallyEdited[0].uuid);
                     }
 
                 }
@@ -614,7 +627,7 @@ define([
         /**
          * Colaborative Mode
          */
-        function sendCommands() {
+        this.sendCameraInfos = function () {
             if (App.collaborativeView.isMaster) {
                 var message = {
                     type: ChannelMessagesType.COLLABORATIVE_COMMANDS,
@@ -622,24 +635,24 @@ define([
                     messageBroadcast: {
                         cameraInfos: _this.getControlsContext()
                     },
-                    remoteUser: "null"
+                    remoteUser: ""
                 };
                 mainChannel.sendJSON(message);
             }
-        }
+        };
 
         this.sendEditedMeshes = function () {
-            var arrayIds = [];
-            _.each(this.editedMeshes, function (val) {
-                var mesh = meshesIndexed[val];
-                arrayIds.push({
-                    uuid: val,
-                    position: mesh.position,
-                    scale: mesh.scale,
-                    rotation: mesh.rotation
-                });
-            });
             if (App.collaborativeView.isMaster) {
+                var arrayIds = [];
+                _.each(this.editedMeshes, function (val) {
+                        var mesh = meshesIndexed[val];
+                        arrayIds.push({
+                            uuid: val,
+                            position: mesh.position,
+                            scale: mesh.scale,
+                            rotation: mesh.rotation
+                        });
+                });
                 var message = {
                     type: ChannelMessagesType.COLLABORATIVE_COMMANDS,
                     key: App.collaborativeView.roomKey,
@@ -656,18 +669,20 @@ define([
 
             var arrayId = _.pluck(editedMeshesInfos, 'uuid');
 
-            // on replace les éléments qui ne sont plus modifiés
+            // cancel transformations for mesh wich are no longer edited
             var diff = _.difference(_this.editedMeshes, arrayId);
             console.log(diff);
             _.each(diff, function (uuid) {
                 var mesh = meshesIndexed[uuid];
-                _this.cancelTransformation(mesh);
+                if(_this.editedMeshes.lastIndexOf(uuid)!==-1) {
+                    _this.cancelTransformation(mesh);
+                }
             });
 
-            // on met à jour la liste des éléments modifiés
+            // update the list
             _this.editedMeshes = arrayId;
 
-            // on met à jour les propriétés des pièces modifiées
+            // update properties of edited Meshes
             _.each(editedMeshesInfos, function (val) {
                 var mesh = meshesIndexed[val.uuid];
                 if (!mesh) {
@@ -677,9 +692,50 @@ define([
                     mesh.position.copy(val.position);
                     mesh.rotation.copy(val.rotation);
                     mesh.scale.copy(val.scale);
+                    if (editedMeshesColoured){
+                        mesh.material = materialEditedMesh;
+                    }
                 }
             });
             _this.reDraw();
+        };
+
+        this.sendColourEditedMeshes = function () {
+            if (App.collaborativeView.isMaster) {
+                var message = {
+                    type: ChannelMessagesType.COLLABORATIVE_COMMANDS,
+                    key: App.collaborativeView.roomKey,
+                    messageBroadcast: {
+                        colourEditedMeshes: editedMeshesColoured
+                    },
+                    remoteUser: ""
+                };
+                mainChannel.sendJSON(message);
+            }
+        };
+
+        this.setColourEditedMeshes = function (colour) {
+            if (editedMeshesColoured !== colour){
+                if(editedMeshesColoured){
+                    _this.cancelColourEditedMeshes();
+                } else {
+                    _this.colourEditedMeshes();
+                }
+            }
+        };
+
+        this.sendExplodeValue = function (value) {
+            if (App.collaborativeView.isMaster) {
+                var message = {
+                    type: ChannelMessagesType.COLLABORATIVE_COMMANDS,
+                    key: App.collaborativeView.roomKey,
+                    messageBroadcast: {
+                        explode: value
+                    },
+                    remoteUser: ""
+                };
+                mainChannel.sendJSON(message);
+            }
         };
 
         /**
@@ -713,7 +769,7 @@ define([
             }
             if (controlChanged) {
                 //sendControlsContextMessage();
-                sendCommands();
+                _this.sendCameraInfos();
                 controlChanged = false;
             }
         }
@@ -835,18 +891,14 @@ define([
             _this.$sceneContainer.removeClass("markersCreationMode");
         };
         this.requestFullScreen = function () {
-            _this.renderer.domElement.parentNode.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
-        };
-        this.switchWireFrame = function (pWireframe) {
-            wireframe = pWireframe;
-            _(_this.scene.children).each(function (child) {
-                if (child instanceof THREE.Mesh && child.partIterationId) {
-                    applyWireFrame(child);
-                }
-            });
-            _this.reDraw();
+            _this.renderer.domElement.parentNode.requestFullscreen =
+                (_this.renderer.domElement.parentNode.requestFullscreen) ||
+                (_this.renderer.domElement.parentNode.mozRequestFullScreen) ||
+                (_this.renderer.domElement.parentNode.webkitRequestFullScreen);
+            _this.renderer.domElement.parentNode.requestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
         };
         this.explodeScene = function (v) {
+            _this.sendExplodeValue(v);
             // this could be adjusted
             explosionCoeff = v * 0.1;
             _(_this.scene.children).each(function (child) {
@@ -885,23 +937,26 @@ define([
             _this.reDraw();
 
         };
-        this.showEditedMeshes = function (display) {
-            editedMeshesDisplayed = display;
-            if (editedMeshesDisplayed) {
-                _.each(_this.editedMeshes, function (y) {
-                    var mesh = meshesIndexed[y];
-                    mesh.material = materialEditedMesh;
-                });
-            } else {
-                _.each(_this.editedMeshes, function (y) {
-                    var mesh = meshesIndexed[y];
-                    mesh.material = mesh.initialMaterial;
-                });
-            }
+        this.colourEditedMeshes = function () {
+            editedMeshesColoured = true;
+            _.each(_this.editedMeshes, function (y) {
+                var mesh = meshesIndexed[y];
+                mesh.material = materialEditedMesh;
+            });
+            _this.sendColourEditedMeshes();
+            _this.reDraw();
+        };
+        this.cancelColourEditedMeshes = function () {
+            editedMeshesColoured = false;
+            _.each(_this.editedMeshes, function (y) {
+                var mesh = meshesIndexed[y];
+                mesh.material = mesh.initialMaterial;
+            });
+            _this.sendColourEditedMeshes();
             _this.reDraw();
         };
         this.setPointerLockControls = function () {
-            if (_this.stateControl === _this.STATECONTROL.PLC) {
+            if (_this.stateControl === _this.STATECONTROL.PLC || !browserSupportPointerLock) {
                 return;
             }
 
@@ -915,15 +970,14 @@ define([
             controlsObject = _this.pointerLockControls;
 
             _this.pointerLockControls.addEventListener("change", onControlChange);
-            if (havePointerLock) {
-                // Hook pointer lock state change events
-                document.addEventListener('pointerlockchange', pointerLockChange, false);
-                document.addEventListener('mozpointerlockchange', pointerLockChange, false);
-                document.addEventListener('webkitpointerlockchange', pointerLockChange, false);
-                _this.$container[0].addEventListener('click', bindPointerLock, false);
-            }
-            _this.scene.add(_this.pointerLockControls.getObject());
 
+            // Hook pointer lock state change events
+            document.addEventListener('pointerlockchange', pointerLockChange, false);
+            document.addEventListener('mozpointerlockchange', pointerLockChange, false);
+            document.addEventListener('webkitpointerlockchange', pointerLockChange, false);
+            _this.$container[0].addEventListener('click', bindPointerLock, false);
+
+            _this.scene.add(_this.pointerLockControls.getObject());
             _this.reDraw();
         };
         this.setTrackBallControls = function () {
@@ -982,13 +1036,15 @@ define([
             transformControls.attach(mesh);
             if (!_.contains(_this.editedMeshes, mesh.uuid)) {
                 _this.editedMeshes.push(mesh.uuid);
-                _this.showEditedMeshes(editedMeshesDisplayed);
+                if (editedMeshesColoured){
+                    _this.colourEditedMeshes();
+                }
                 console.log("mesh added : ");
                 console.log(this.editedMeshes);
                 this.sendEditedMeshes();
             }
             transformControls.bindEvents();
-            if (mode !== undefined) {
+            if (typeof(mode) !== 'undefined') {
                 switch (mode) {
                     case "translate" :
                         transformControls.setMode("translate");
@@ -1019,7 +1075,6 @@ define([
                 transformControls.enabled = false;
                 App.appView.leaveTransformControlMode();
                 _this.reDraw();
-                //meshMarkedForSelection
             }
         };
         this.cancelTransformation = function (mesh) {
@@ -1067,46 +1122,13 @@ define([
         };
 
         /**
-         * Collaborative mode
-         */
-        this.requestJoinRoom = function (key) {
-            if (mainChannel.status !== ChannelStatus.OPENED) {
-                // Retry to connect every 500ms
-                console.log("Websocket is not yet connected. Retry in 500ms.");
-                var _this = this;
-                setTimeout(function () {
-                    _this.requestJoinRoom(key);
-                }, 500);
-            } else {
-                mainChannel.sendJSON({
-                    type: ChannelMessagesType.COLLABORATIVE_JOIN,
-                    key: key,
-                    remoteUser: ""
-                });
-            }
-        };
-
-        this.joinRoom = function (key){
-            App.collaborativeView.setRoomKey(key);
-
-            // /api/workspaces/Sandbox/products/Nailed_Plank/instances?configSpec=latest&path=null
-            /*App.instancesManager.initStructure("/api/workspaces/"+APP_CONFIG.workspaceId+'/products/'+APP_CONFIG.productId+"/instances?configSpec=latest&path=null",function(){
-             mainChannel.sendJSON({
-             type: ChannelMessagesType.COLLABORATIVE_JOIN,
-             key: key,
-             remoteUser: "null"
-             });
-             });*/
-        }
-
-        /**
          * Scene mouse events
          */
         this.setPathForIFrame = function (pathForIFrame) {
             _this.pathForIFrameLink = pathForIFrame;
         };
         this.clear = function () {
-            App.instancesManager.clear();
+
         };
 
         this.removeMeshById = function (meshId) {

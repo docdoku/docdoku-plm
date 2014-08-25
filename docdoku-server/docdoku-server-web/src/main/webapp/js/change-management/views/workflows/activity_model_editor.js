@@ -170,7 +170,7 @@ define([
 
             this.tasksUL = this.$("ul.task-list");
             this.tasksUL.sortable({
-                handle: "i.icon-reorder",
+                handle: "i.fa.fa-bars",
                 tolerance: "pointer",
                 start: function(event, ui) {
                     ui.item.oldPosition = ui.item.index();

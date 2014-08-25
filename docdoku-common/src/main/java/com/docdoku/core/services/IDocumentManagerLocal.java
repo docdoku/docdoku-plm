@@ -47,7 +47,7 @@ public interface IDocumentManagerLocal {
 
     User[] getUsers(String pWorkspaceId) throws WorkspaceNotFoundException, AccessRightException, AccountNotFoundException, UserNotFoundException, UserNotActiveException;
 
-    User[] getReachableUsers() throws AccountNotFoundException;
+    User[] getReachableUsers(String workspaceId) throws AccountNotFoundException;
 
     DocumentRevision getDocumentRevision(DocumentRevisionKey pDocRPK) throws WorkspaceNotFoundException, DocumentRevisionNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException, AccessRightException;
 

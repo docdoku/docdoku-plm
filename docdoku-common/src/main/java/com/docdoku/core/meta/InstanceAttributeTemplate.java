@@ -92,26 +92,28 @@ public class InstanceAttributeTemplate implements Serializable {
 
     public InstanceAttribute createInstanceAttribute() {
         InstanceAttribute attr = null;
-        switch (attributeType) {
-            case TEXT:
-                attr = new InstanceTextAttribute();
-                break;
-            case NUMBER:
-                attr = new InstanceNumberAttribute();
-                break;
-            case BOOLEAN:
-                attr = new InstanceBooleanAttribute();
-                break;
-            case DATE:
-                attr = new InstanceDateAttribute();
-                break;
-            case URL :
-                attr = new InstanceURLAttribute();
-                break;
-        }
+        if(attributeType!=null){
+            switch (attributeType) {
+                case TEXT:
+                    attr = new InstanceTextAttribute();
+                    break;
+                case NUMBER:
+                    attr = new InstanceNumberAttribute();
+                    break;
+                case BOOLEAN:
+                    attr = new InstanceBooleanAttribute();
+                    break;
+                case DATE:
+                    attr = new InstanceDateAttribute();
+                    break;
+                case URL :
+                    attr = new InstanceURLAttribute();
+                    break;
+            }
 
-        attr.setName(name);
-        attr.setMandatory(mandatory);
+            attr.setName(name);
+            attr.setMandatory(mandatory);
+        }
 
         return attr;
     }
@@ -124,10 +126,8 @@ public class InstanceAttributeTemplate implements Serializable {
 
         InstanceAttributeTemplate that = (InstanceAttributeTemplate) o;
 
-        if (id != that.id) return false;
-        if (!name.equals(that.name)) return false;
+        return id == that.id && name.equals(that.name);
 
-        return true;
     }
 
     @Override

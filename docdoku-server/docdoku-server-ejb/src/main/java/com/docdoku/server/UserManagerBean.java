@@ -45,6 +45,8 @@ import javax.persistence.PersistenceContext;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @DeclareRoles({"users","admin"})
 @Local(IUserManagerLocal.class)
@@ -265,18 +267,22 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
     @RolesAllowed({"users","admin"})
     @Override
     public Workspace getWorkspace(String workspaceId) throws WorkspaceNotFoundException {
-
+        Locale locale= Locale.getDefault();
         if(ctx.isCallerInRole("admin")){
-            return new WorkspaceDAO(em).loadWorkspace(workspaceId);
+            return new WorkspaceDAO(locale,em).loadWorkspace(workspaceId);
         }
 
-        User[] users = new UserDAO(em).getUsers(ctx.getCallerPrincipal().toString());
+        User[] users = new UserDAO(locale,em).getUsers(ctx.getCallerPrincipal().toString());
         Workspace workspace=null;
         for (User user : users) {
             if (user.getWorkspace().getId().equals(workspaceId)) {
                 workspace = user.getWorkspace();
                 break;
             }
+        }
+
+        if(workspace==null){
+            throw new WorkspaceNotFoundException(locale,workspaceId);
         }
 
         return workspace;
@@ -433,7 +439,7 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
                         try {
                             dataManager.deleteData(file);
                         } catch (StorageException e) {
-                            e.printStackTrace();
+                            Logger.getLogger(UserManagerBean.class.getName()).log(Level.INFO, null, e);
                         }
                     }
 

@@ -1,7 +1,7 @@
 <div id="milestone_edition_modal" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-header">
-        <i class="icon-time"></i>
-        {{#model.isWritable}}<i class="icon-pencil"></i>{{/model.isWritable}}{{^model.isWritable}}<i class="icon-lock"></i>{{/model.isWritable}}
+        <i class="fa fa-clock-o"></i>
+        {{#model.isWritable}}<i class="fa fa-pencil"></i>{{/model.isWritable}}{{^model.isWritable}}<i class="fa fa-lock"></i>{{/model.isWritable}}
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
         <h3>{{#model.isWritable}}
             {{i18n.EDIT_MILESTONE}} :

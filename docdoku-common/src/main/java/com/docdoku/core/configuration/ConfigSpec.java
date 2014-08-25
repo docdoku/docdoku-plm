@@ -47,7 +47,6 @@ public abstract class ConfigSpec implements Serializable{
     @Id
     private int id;
 
-    
     public ConfigSpec() {
     }
 
@@ -60,5 +59,4 @@ public abstract class ConfigSpec implements Serializable{
     }
 
     public abstract PartIteration filterConfigSpec(PartMaster part);
-
 }

@@ -42,6 +42,8 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.*;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 @CatiaProductFileParser
@@ -57,19 +59,26 @@ public class CatiaProductFileParserImpl implements CADConverter {
     private IDataManagerLocal dataManager;
 
     static {
+        InputStream inputStream = null;
         try {
-            CONF.load(CatiaProductFileParserImpl.class.getResourceAsStream(CONF_PROPERTIES));
+            inputStream = CatiaProductFileParserImpl.class.getResourceAsStream(CONF_PROPERTIES);
+            CONF.load(inputStream);
         } catch (IOException e) {
-            e.printStackTrace();
+            Logger.getLogger(CatiaProductFileParserImpl.class.getName()).log(Level.WARNING, null, e);
+        } finally {
+            try{if(inputStream!=null){
+                    inputStream.close();
+            }}catch (IOException ignored){}
         }
     }
 
     @Override
     public File convert(PartIteration partToConvert, final BinaryResource cadFile) throws IOException, InterruptedException, UserNotActiveException, PartRevisionNotFoundException, WorkspaceNotFoundException, CreationException, UserNotFoundException, NotAllowedException, FileAlreadyExistsException, StorageException {
-        String woExName = FileIO.getFileNameWithoutExtension(cadFile.getName());
         File tmpDir = Files.createTempDir();
         File tmpCadFile;
         File tmpXMLFile = new File(tmpDir, cadFile.getName() + "_dtk.xml");
+        InputStreamReader isr = null;
+        BufferedReader br = null;
         try {
 
             String catProductReader = CONF.getProperty("catProductReader");
@@ -82,7 +91,7 @@ public class CatiaProductFileParserImpl implements CADConverter {
                     try {
                         return dataManager.getBinaryResourceInputStream(cadFile);
                     } catch (StorageException e) {
-                        e.printStackTrace();
+                        Logger.getLogger(CatiaProductFileParserImpl.class.getName()).log(Level.WARNING, null, e);
                         throw new IOException(e);
                     }
                 }
@@ -93,11 +102,10 @@ public class CatiaProductFileParserImpl implements CADConverter {
             ProcessBuilder pb = new ProcessBuilder(args);
             Process process = pb.start();
 
-            InputStreamReader isr = new InputStreamReader(process.getInputStream());
-            BufferedReader br = new BufferedReader(isr);
+            isr = new InputStreamReader(process.getInputStream());
+            br = new BufferedReader(isr);
 
-            String line = "";
-            while ((line = br.readLine()) != null);
+            while ((br.readLine()) != null);
 
             process.waitFor();
 
@@ -115,20 +123,22 @@ public class CatiaProductFileParserImpl implements CADConverter {
 
                         syncAssembly(handler.getComponent(), partToConvert);
 
-                    } catch (ParserConfigurationException pce) {
-                        pce.printStackTrace();
-                    } catch (SAXException se) {
-                        se.printStackTrace();
-                    } catch (IOException ioe) {
-                        ioe.printStackTrace();
+                    } catch (ParserConfigurationException | SAXException | IOException e) {
+                        Logger.getLogger(CatiaProductFileParserImpl.class.getName()).log(Level.INFO, null, e);
                     }
                 }
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.getLogger(CatiaProductFileParserImpl.class.getName()).log(Level.INFO, null, e);
         } finally {
             FileIO.rmDir(tmpDir);
+            try{if(isr!=null){
+                    isr.close();
+            }}catch (IOException ignored){}
+            try{if(br!=null){
+                br.close();
+            }}catch (IOException ignored){}
         }
 
         return null;
@@ -136,9 +146,9 @@ public class CatiaProductFileParserImpl implements CADConverter {
 
     private void syncAssembly(ComponentDTK component_dtk, PartIteration partToConvert) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
 
-        List<PartUsageLink> partUsageLinks = new ArrayList<PartUsageLink>();
+        List<PartUsageLink> partUsageLinks = new ArrayList<>();
 
-        Map<String, List<CADInstance>> mapInstances = new HashMap<String, List<CADInstance>>();
+        Map<String, List<CADInstance>> mapInstances = new HashMap<>();
 
         parseSubComponents(mapInstances, component_dtk);
 
@@ -176,7 +186,7 @@ public class CatiaProductFileParserImpl implements CADConverter {
                     List<CADInstance> cadInstances = mapInstances.get(component_dtk.getName());
 
                     if (cadInstances == null) {
-                        cadInstances = new LinkedList<CADInstance>();
+                        cadInstances = new LinkedList<>();
                         mapInstances.put(component_dtk.getName(),cadInstances);
                     }
 

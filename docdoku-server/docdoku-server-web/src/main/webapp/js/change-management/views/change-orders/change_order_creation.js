@@ -128,7 +128,7 @@ function (template, i18n, ChangeOrderModel ,UserList, MilestoneList) {
                 milestoneId:parseInt(this.$inputOrderMilestone.val(),10)
             };
 
-            new ChangeOrderModel().save(data,{
+            this.model.save(data,{
                 success: this.onOrderCreated,
                 error: this.error,
                 wait: true

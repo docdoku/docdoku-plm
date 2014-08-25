@@ -32,9 +32,10 @@ import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class UserDAO {
 
@@ -182,9 +183,9 @@ public class UserDAO {
         return users;
     }
 
-    public User[] findReachableUsersForCaller(String callerLogin) {
+    public User[] findReachableUsersForCaller(String callerLogin, String workspaceId) {
 
-        List<User> users = new ArrayList<>();
+        Map<String,User> users = new TreeMap<>();
 
         List<String> listWorkspaceId = em.createQuery("SELECT u.workspaceId FROM User u WHERE u.login = :login")
                 .setParameter("login", callerLogin).getResultList();
@@ -192,16 +193,18 @@ public class UserDAO {
         List<User> listUsers = em.createQuery("SELECT u FROM User u where u.workspaceId IN :workspacesId")
                 .setParameter("workspacesId", listWorkspaceId).getResultList();
 
-        List<String> loginsAdded = new ArrayList<>();
 
         for (User listUser : listUsers) {
-            if (!loginsAdded.contains((listUser).getLogin())) {
-                loginsAdded.add((listUser).getLogin());
-                users.add(listUser);
+            String loginUser = listUser.getLogin();
+            if (!users.keySet().contains(loginUser)) {
+                users.put(loginUser,listUser);
+            } else if(workspaceId.equals(listUser.getWorkspaceId())){
+                users.remove(loginUser);
+                users.put(loginUser,listUser);
             }
         }
 
-        return users.toArray(new User[users.size()]);
+        return users.values().toArray(new User[users.size()]);
 
     }
 

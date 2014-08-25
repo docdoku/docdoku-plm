@@ -1,10 +1,10 @@
 /*global App,ChannelListener,ChannelMessagesType,mainChannel*/
+'use strict';
 define(function(){
 
     function CollaborativeController () {
-
+        var _this = this;
         var collaborativeView = App.collaborativeView;
-
         var collaborativeListener = new ChannelListener({
 
             messagePattern: /^COLLABORATIVE_.+/,
@@ -21,13 +21,13 @@ define(function(){
                 }
 
                 if (message.type === ChannelMessagesType.COLLABORATIVE_JOIN) {
-                    App.sceneManager.joinRoom(message.key);
+                    App.collaborativeView.setRoomKey(message.key);
                     return;
                 }
 
                 if (message.type === ChannelMessagesType.COLLABORATIVE_CONTEXT && collaborativeView.roomKey === message.key) {
                     if (message.messageBroadcast.master === ''){
-                        collaborativeView.setMaster("nobody");
+                        collaborativeView.setLastMaster(message.messageBroadcast.lastMaster);
                     } else {
                         collaborativeView.setMaster(message.messageBroadcast.master);
                     }
@@ -59,7 +59,23 @@ define(function(){
                         App.appView.updateTreeView(message.messageBroadcast.smartPath);
                     } else if (message.messageBroadcast.editedMeshes){
                         App.sceneManager.setEditedMeshes(message.messageBroadcast.editedMeshes);
+                    }else if (message.messageBroadcast.colourEditedMeshes !== undefined){
+                        App.sceneManager.setColourEditedMeshes(message.messageBroadcast.colourEditedMeshes);
+                    }else if (message.messageBroadcast.explode){
+                        document.getElementById("slider-explode").value = message.messageBroadcast.explode;
+                        App.sceneManager.explodeScene(message.messageBroadcast.explode);
+                    }else if (message.messageBroadcast.layers){
+                        if(message.messageBroadcast.layers === "remove layer"){
+                            App.sceneManager.layerManager.removeAllMeshesFromMarkers();
+                        }
+                        App.layersListView.refreshLayers();
+                    }else if (message.messageBroadcast.markers){
+                        if(message.messageBroadcast.markers === "remove marker"){
+                            App.sceneManager.layerManager.removeAllMeshesFromMarkers();
+                        }
+                        App.layersListView.refreshLayers();
                     }
+
                     return;
                 }
 
@@ -67,15 +83,50 @@ define(function(){
                     //App.appView.leaveSpectatorView();
                     //App.sceneManager.enableControlsObject();
                 }
-            },
-
-            onStatusChanged: function (status) {
-                Backbone.Events.trigger('ChatStatusChanged', status);
             }
-
         });
 
         mainChannel.addChannelListener(collaborativeListener);
+
+
+
+        this.sendJoinRequest = function(key) {
+            mainChannel.sendJSON({
+                type: ChannelMessagesType.COLLABORATIVE_JOIN,
+                key: key,
+                remoteUser: ""
+            });
+        };
+
+        this.sendLayersRefresh = function(subject){
+            _this = this;
+            if (App.collaborativeView.isMaster) {
+                var message = {
+                    type: ChannelMessagesType.COLLABORATIVE_COMMANDS,
+                    key: App.collaborativeView.roomKey,
+                    messageBroadcast: {
+                        layers: subject
+                    },
+                    remoteUser: ""
+                };
+                mainChannel.sendJSON(message);
+            }
+        };
+
+        this.sendMarkersRefresh = function(subject){
+            _this = this;
+            if (App.collaborativeView.isMaster) {
+                var message = {
+                    type: ChannelMessagesType.COLLABORATIVE_COMMANDS,
+                    key: App.collaborativeView.roomKey,
+                    messageBroadcast: {
+                        markers: subject
+                    },
+                    remoteUser: ""
+                };
+                mainChannel.sendJSON(message);
+            }
+        };
     }
 
     return CollaborativeController;

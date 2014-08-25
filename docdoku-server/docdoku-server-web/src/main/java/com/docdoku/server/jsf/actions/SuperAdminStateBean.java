@@ -111,7 +111,7 @@ public class SuperAdminStateBean implements Serializable {
 
     }
 
-    public JsonObject getPartsStats() throws AccountNotFoundException, AccessRightException, WorkspaceNotFoundException {
+    public JsonObject getPartsStats() throws AccountNotFoundException, AccessRightException, WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
 
         JsonObjectBuilder partsStats = Json.createObjectBuilder();
 

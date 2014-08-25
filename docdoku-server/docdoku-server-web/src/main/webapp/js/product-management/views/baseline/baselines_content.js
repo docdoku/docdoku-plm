@@ -42,7 +42,7 @@ define([
             new ConfigurationItemCollection().fetch({success: this.fillProductList});
             var self = this ;
             this.$inputProductId.change(function(){self.createBaselineView();});
-            self.createBaselineView();
+            this.createBaselineView();
             return this;
         },
 

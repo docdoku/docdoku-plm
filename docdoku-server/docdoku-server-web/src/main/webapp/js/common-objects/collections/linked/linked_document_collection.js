@@ -1,3 +1,4 @@
+'use strict';
 define([
     "common-objects/models/linked/linked_document"
 ], function (

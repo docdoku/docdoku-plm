@@ -38,6 +38,8 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -92,8 +94,7 @@ public class WorkflowResource {
     public WorkflowModelDTO getWorkflowInWorkspace(@PathParam("workspaceId") String workspaceId, @PathParam("workflowModelId") String workflowModelId) {
         try{
             WorkflowModel workflowModel = workflowService.getWorkflowModel(new WorkflowModelKey(workspaceId, workflowModelId));
-            WorkflowModelDTO workflowModelDTO = mapper.map(workflowModel, WorkflowModelDTO.class);
-            return workflowModelDTO;
+            return mapper.map(workflowModel, WorkflowModelDTO.class);
         }  catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
@@ -121,7 +122,7 @@ public class WorkflowResource {
             return this.createWorkflowModelInWorkspace(workspaceId, workflowModelDTOToPersist);
 
         } catch (ApplicationException ex) {
-            ex.printStackTrace();
+            Logger.getLogger(WorkflowResource.class.getName()).log(Level.WARNING, null, ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -146,9 +147,9 @@ public class WorkflowResource {
                 List<TaskModel> taskModelList = activityModels[i].getTaskModels();
                 for(TaskModel taskModel : taskModelList){
                     String roleName = taskModel.getRole().getName();
-                    for(int j=0; j<roles.length; j++){
-                        if(roles[j].getName().equals(roleName)){
-                            taskModel.setRole(roles[j]);
+                    for (Role role : roles) {
+                        if (role.getName().equals(roleName)) {
+                            taskModel.setRole(role);
                             break;
                         }
                     }
@@ -157,11 +158,10 @@ public class WorkflowResource {
 
             WorkflowModel workflowModel = workflowService.createWorkflowModel(workspaceId, workflowModelDTOToPersist.getReference(), workflowModelDTOToPersist.getFinalLifeCycleState(), activityModels);
 
-            WorkflowModelDTO dto = mapper.map(workflowModel, WorkflowModelDTO.class);
-            return dto;
+            return mapper.map(workflowModel, WorkflowModelDTO.class);
 
         } catch (ApplicationException ex) {
-            ex.printStackTrace();
+            Logger.getLogger(WorkflowResource.class.getName()).log(Level.WARNING, null, ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }

@@ -87,7 +87,6 @@ define({
         SCENE_VIEW: "Scene view",
         BOM_VIEW: "Bom View",
         OPTIONS: "Options",
-        MATERIALS_SWITCH: "Show/Hide materials",
         TAKE_SCREENSHOT: "Take screenshot",
         GRID_SWITCH: "Show/Hide the grid",
         LIFECYCLE_STATE: "Life cycle state",
@@ -108,7 +107,19 @@ define({
         SCALE: "Scale",
         REPLACE: "Reset",
         RESET_CAMERA: "Reset camera",
-        SHOW_EDITED_MESHES: "Highlight edited meshes"
+        SHOW_EDITED_MESHES: "Highlight edited meshes",
+        COLLABORATIVE_LEAD: "Presenter",
+        PENDING: "Absent participant",
+        PARTICIPANT: "Participant",
+        CREATE_ROOM: "Start a digital mockup review",
+        INVITE: "Invite coworkers",
+        EXIT: "Leave digital mockup review",
+        WITHDRAW_INVITATION : "Withdraw invitation",
+        GIVE_HAND: "Give the hand",
+        COLLABORATIVE_NO_MASTER: "absent",
+        COLLABORATIVE:"Co-browsing",
+        NO_PARTICIPANT:"No participant. Invite users from Coworkers menu.",
+        USERS_CONNECTED:"users connected"
     },
     "fr": true,
     "es": true

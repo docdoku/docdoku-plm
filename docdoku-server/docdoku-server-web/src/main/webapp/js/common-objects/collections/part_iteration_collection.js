@@ -1,3 +1,4 @@
+'use strict';
 define([
     "common-objects/models/part_iteration"
 ], function (
@@ -34,7 +35,7 @@ define([
         },
 
         isLast: function(iteration) {
-            return this.last() == iteration;
+            return this.last() === iteration;
         }
 
     });

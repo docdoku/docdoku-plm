@@ -32,8 +32,7 @@ public abstract class ApplicationException extends Exception{
     
     private final static String DEFAULT_BUNDLE_NAME = "com.docdoku.core.i18n.LocalStrings";
     private ResourceBundle mResourceBundle;
-    
-    
+
     public ApplicationException(String pMessage, Throwable pCause, String pBundleName) {
         super(pMessage, pCause);
         mResourceBundle=ResourceBundle.getBundle(pBundleName, Locale.getDefault());

@@ -54,7 +54,7 @@ public class AuthFilter implements Filter {
         } else {
             try {
                 Account user = userManager.getAccount(httpRequest.getRemoteUser());
-                boolean isAdmin = httpRequest.isUserInRole("admin");
+                boolean isAdmin = userManager.isCallerInRole("admin");
                 accountBean.setLogin(user.getLogin());
                 accountBean.setEmail(user.getEmail());
                 accountBean.setLanguage(user.getLanguage());

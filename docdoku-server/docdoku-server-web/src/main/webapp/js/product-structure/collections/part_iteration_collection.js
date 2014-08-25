@@ -1,5 +1,6 @@
+'use strict';
 define([
-    "models/part_iteration"
+    'models/part_iteration'
 ], function (
     PartIteration
     ) {
@@ -12,7 +13,7 @@ define([
         },
 
         url: function() {
-            return this.part.url() + "/iterations";
+            return this.part.url() + '/iterations';
         },
 
         next: function(iteration) {
@@ -34,7 +35,7 @@ define([
         },
 
         isLast: function(iteration) {
-            return this.last() == iteration;
+            return this.last() === iteration;
         }
 
     });

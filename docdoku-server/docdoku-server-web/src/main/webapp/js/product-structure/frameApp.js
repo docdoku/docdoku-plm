@@ -1,3 +1,4 @@
+'use strict';
 var sceneManager;
 
 // Global Namespace for the application
@@ -9,9 +10,9 @@ var App = {
     setDebug:function(state){
         App.debug = state;
         if(state){
-            $("body").addClass("debug");
+            $('body').addClass('debug');
         }else{
-            $("body").removeClass("debug");
+            $('body').removeClass('debug');
         }
     },
 
@@ -38,22 +39,22 @@ var App = {
 
 };
 
-define(["dmu/SceneManager","dmu/InstancesManager"],
+define(['dmu/SceneManager','dmu/InstancesManager'],
     function (SceneManager,InstancesManager) {
 
     var FrameAppView = Backbone.View.extend({
 
-        el: $("#product-content"),
+        el: $('#product-content'),
 
         initialize: function() {
 
-            window.config_spec = "latest";
+            window.configSpec = 'latest';
 
             App.instancesManager = new InstancesManager();
             App.sceneManager = new SceneManager();
             App.sceneManager.init();
             if (!_.isUndefined(SCENE_INIT.pathForIFrame)) {
-                var instancesUrl = "/api/workspaces/" + APP_CONFIG.workspaceId + "/products/" + APP_CONFIG.productId + "/instances?configSpec=" + window.config_spec + "&path=" + SCENE_INIT.pathForIFrame;
+                var instancesUrl = '/api/workspaces/' + APP_CONFIG.workspaceId + '/products/' + APP_CONFIG.productId + '/instances?configSpec=' + window.configSpec + '&path=' + SCENE_INIT.pathForIFrame;
                 App.instancesManager.loadComponent({
                     getInstancesUrl:function (){
                         return instancesUrl;

@@ -34,7 +34,8 @@ import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import java.security.Principal;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.logging.Level;
@@ -52,13 +53,7 @@ public class MainChannelApplication {
     private IUserManagerLocal userManager;
 
     public static boolean hasChannels(String userLogin) {
-        if (CHANNELS.get(userLogin) == null) {
-            return false;
-        }
-        if (CHANNELS.get(userLogin).values() == null) {
-            return false;
-        }
-        return !CHANNELS.get(userLogin).values().isEmpty();
+        return CHANNELS.get(userLogin) != null && !CHANNELS.get(userLogin).values().isEmpty();
     }
 
     public static Map<String, Session> getUserChannels(String userLogin) {
@@ -70,11 +65,12 @@ public class MainChannelApplication {
         if(hasChannels(userLogin)) {
             Map<String, Session> sessionMap = CHANNELS.get(userLogin);
 
+
             for (Session session : sessionMap.values()) {
                 try {
                     session.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Logger.getLogger(MainChannelApplication.class.getName()).log(Level.INFO, null, e);
                 }
             }
         }
@@ -136,7 +132,7 @@ public class MainChannelApplication {
             case ChannelMessagesType.USER_STATUS:
 
                 StatusMessage status = (StatusMessage) message;
-                process(session, callerLogin, status);
+                process(session, status);
                 break;
 
             case ChannelMessagesType.WEBRTC_INVITE:
@@ -149,7 +145,7 @@ public class MainChannelApplication {
                 break;
             case ChannelMessagesType.WEBRTC_REJECT:
                 webRTC = (WebRTCMessage) message;
-                processWebRTCReject(session, callerLogin, webRTC);
+                processWebRTCReject(callerLogin, webRTC);
                 break;
             case ChannelMessagesType.WEBRTC_HANGUP:
                 webRTC = (WebRTCMessage) message;
@@ -176,8 +172,9 @@ public class MainChannelApplication {
                 room = CollaborativeRoom.getByKeyName(inviteMessage.getKey());
                 String invitedUser = inviteMessage.getRemoteUser();
                 String context = inviteMessage.getMessageBroadcast().getString("context");
+                String url = inviteMessage.getMessageBroadcast().getString("url");
                 if (callerIsAllowToReachCallee(callerLogin,invitedUser)) {
-                    CollaborativeRoomController.processInvite(callerLogin, invitedUser, room, context);
+                    CollaborativeRoomController.processInvite(callerLogin, invitedUser, room, context, url);
                 }
                 break;
             case ChannelMessagesType.COLLABORATIVE_JOIN:
@@ -243,6 +240,10 @@ public class MainChannelApplication {
             CollaborativeRoom.removeSessionFromCollaborativeRoom(session);
             // remove the session from the user hash map
             CHANNELS.get(userLogin).remove(sessionId);
+            // clean from memory when no more channel left
+            if(!hasChannels(userLogin)){
+                CHANNELS.remove(userLogin);
+            }
         }
     }
 
@@ -261,7 +262,7 @@ public class MainChannelApplication {
         }
     }
 
-    private void processWebRTCReject(Session session, String callerLogin, WebRTCMessage webRTC) {
+    private void processWebRTCReject(String callerLogin, WebRTCMessage webRTC) {
         Room room = Room.getByKeyName(webRTC.getRoomKey());
         if (room != null) {
             // send "room reject event" to caller, to remove invitations in other tabs if any
@@ -309,7 +310,7 @@ public class MainChannelApplication {
         MainChannelDispatcher.send(session, new WebRTCMessage(ChannelMessagesType.WEBRTC_ROOM_JOIN_EVENT, null, roomKey, null, null, room.getOccupancy(), callerLogin));
 
         // send invitation to the remote user sessions (all channels)
-        MainChannelDispatcher.sendToAllUserChannels(webRTC.getRemoteUser(), new WebRTCMessage(ChannelMessagesType.WEBRTC_INVITE, webRTC.getRemoteUser(), roomKey, null, webRTC.getContext(), 0, null));
+        MainChannelDispatcher.sendToAllUserChannels(webRTC.getRemoteUser(), new WebRTCMessage(ChannelMessagesType.WEBRTC_INVITE, callerLogin, roomKey, null, webRTC.getContext(), room.getOccupancy(), null));
     }
 
     private void processP2P(Session session, String callerLogin, WebRTCMessage webRTC) {
@@ -339,7 +340,7 @@ public class MainChannelApplication {
         //}
     }
 
-    private void process(Session session, String callerLogin, StatusMessage status) {
+    private void process(Session session, StatusMessage status) {
         if (!MainChannelApplication.hasChannels(status.getRemoteUser())) {
             MainChannelDispatcher.send(session, new StatusMessage(ChannelMessagesType.USER_STATUS, status.getRemoteUser(), StatusMessage.USER_STATUS_OFFLINE));
         } else {

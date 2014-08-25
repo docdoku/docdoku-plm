@@ -12,7 +12,7 @@ define(
             className:"well roles-item",
 
             events : {
-                "click .icon-remove":"removeAndNotify",
+                "click .fa-times":"removeAndNotify",
                 "change select":"changeModel"
             },
 

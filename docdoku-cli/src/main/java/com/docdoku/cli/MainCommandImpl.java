@@ -7,6 +7,8 @@ import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 
 import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 public class MainCommandImpl {
@@ -75,8 +77,7 @@ public class MainCommandImpl {
             parser.printUsage(System.err);
             return JSONOutput.printException(e);
         } catch (Exception e) {
-            e.printStackTrace();
-            System.err.println(e.getMessage());
+            Logger.getLogger(MainCommandImpl.class.getName()).log(Level.SEVERE, null, e);
             return JSONOutput.printException(e);
         }
     }

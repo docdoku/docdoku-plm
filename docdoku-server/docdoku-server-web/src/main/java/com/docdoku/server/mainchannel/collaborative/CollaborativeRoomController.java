@@ -29,7 +29,7 @@ public class CollaborativeRoomController {
         MainChannelDispatcher.send(session, message);
     }
 
-    public static void processInvite(String callerLogin, String invitedUser, CollaborativeRoom room, String context){
+    public static void processInvite(String callerLogin, String invitedUser, CollaborativeRoom room, String context, String url){
         if (room.getMasterName().equals(callerLogin)){
             // the master sent the invitation
 
@@ -41,9 +41,10 @@ public class CollaborativeRoomController {
                 }
                 // Chat message
                 ChatMessage chatMessage = new ChatMessage(ChannelMessagesType.CHAT_MESSAGE,invitedUser);
-                String url = "Vous êtes invités à rejoindre une salle collaborative : http://localhost:8080/product-structure/" + context + "#room=" + room.getKey();
-                chatMessage.setMessage(url);
+                String invite = "/invite " + url + "#room=" + room.getKey();
+                chatMessage.setMessage(invite);
                 chatMessage.setContext(context);
+                chatMessage.setRemoteUser(callerLogin);
                 chatMessage.setSender(callerLogin);
                 MainChannelDispatcher.sendToAllUserChannels(invitedUser,chatMessage);
 
@@ -61,35 +62,41 @@ public class CollaborativeRoomController {
             //TODO : faire le test en amont?
             return;
         }
-        // if the user is not in the pending list reject him
+
+        // Master
+        if (room.getMasterName().equals("")){
+            // if the room has no master, allow the last master to take the lead
+            if (room.getLastMaster().equals(callerLogin)) {
+                room.setMaster(callerSession);
+
+                MainChannelDispatcher.send(callerSession, collaborativeMessage); // notify the user that he joined the room
+                CollaborativeRoomController.broadcastNewContext(room);
+                sendAllCommands(callerSession,room);
+                return;
+            }
+        }
+
+        // User
         if (!room.removePendingUser(callerLogin))
         {
+            // if the user is not in the pending list reject him
             CollaborativeMessage message = new CollaborativeMessage(ChannelMessagesType.COLLABORATIVE_KICK_NOT_INVITED,room.getKey(),null,callerLogin);
             MainChannelDispatcher.send(callerSession, message);
         } else {
-            // if the room has no master, allow the last one to take the lead
-            if (room.getMasterName().equals("")){
-                if (room.getLastMaster().equals(callerLogin)) {
-                    room.setMaster(callerSession);
-
-                    MainChannelDispatcher.send(callerSession, collaborativeMessage); // notify the user that he joined the room
-                    CollaborativeRoomController.broadcastNewContext(room);
-                    // send the last context scene
-                    MainChannelDispatcher.send(callerSession, room.getCameraInfos());
-                    MainChannelDispatcher.send(callerSession, room.getSmartPath());
-                    MainChannelDispatcher.send(callerSession, room.getEditedMeshes());
-                    return;
-                }
-            }
-
             room.addSlave(callerSession);
             MainChannelDispatcher.send(callerSession, collaborativeMessage); // notify the user that he joined the room
             CollaborativeRoomController.broadcastNewContext(room);
-            // send the last context scene
-            MainChannelDispatcher.send(callerSession, room.getCameraInfos());
-            MainChannelDispatcher.send(callerSession, room.getSmartPath());
-            MainChannelDispatcher.send(callerSession, room.getEditedMeshes());
+            sendAllCommands(callerSession,room);
+
         }
+    }
+
+    public static void sendAllCommands(Session user, CollaborativeRoom room){
+        MainChannelDispatcher.send(user, room.getCameraInfos());
+        MainChannelDispatcher.send(user, room.getSmartPath());
+        MainChannelDispatcher.send(user, room.getEditedMeshes());
+        MainChannelDispatcher.send(user, room.getColourEditedMeshes());
+        MainChannelDispatcher.send(user, room.getExplode());
     }
 
     public static void processCommands(String callerLogin, CollaborativeRoom room, CollaborativeMessage collaborativeMessage){
@@ -106,6 +113,12 @@ public class CollaborativeRoomController {
             if (command.containsKey("editedMeshes")) {
                 room.setEditedMeshes(collaborativeMessage);
             }
+            if (command.containsKey("colourEditedMeshes")) {
+                room.setColourEditedMeshes(collaborativeMessage);
+            }
+            if (command.containsKey("explode")) {
+                room.setExplode(collaborativeMessage);
+            }
             for (Session slave : room.getSlaves()) {
                 MainChannelDispatcher.send(slave, collaborativeMessage);
             }
@@ -118,10 +131,6 @@ public class CollaborativeRoomController {
             // exit for the master
             room.setMaster(null);
             room.setLastMaster(callerLogin);
-            // add the user in the pending list
-            if (!room.getPendingUsers().contains(callerLogin)) {
-                room.addPendingUser(callerLogin);
-            }
         } else {
             room.getSlaves().remove(session);
             // add the user in the pending list
@@ -147,7 +156,7 @@ public class CollaborativeRoomController {
     }
 
     public static void processRequestHand(Session session, String callerLogin, CollaborativeMessage collaborativeMessage){
-        CollaborativeRoom collaborativeRoom = CollaborativeRoom.getByKeyName(collaborativeMessage.getKey());
+        CollaborativeRoom.getByKeyName(collaborativeMessage.getKey());
         //TODO master has to confirm/cancel a request to take the hand
     }
 
@@ -183,8 +192,9 @@ public class CollaborativeRoomController {
             room.removePendingUser(pendingUser);
             // Chat message
             ChatMessage chatMessage = new ChatMessage(ChannelMessagesType.CHAT_MESSAGE, pendingUser);
-            chatMessage.setMessage("Invitation annulée.");
+            chatMessage.setMessage("/withdrawInvitation");
             chatMessage.setContext(context);
+            chatMessage.setRemoteUser(callerLogin);
             chatMessage.setSender(callerLogin);
             MainChannelDispatcher.sendToAllUserChannels(pendingUser, chatMessage);
 

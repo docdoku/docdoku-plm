@@ -14,7 +14,6 @@ define(
 
         events:{
             "click button#gridSwitch": "gridSwitch",
-            "click button#materialsSwitch": "materialsSwitch",
             "click button#screenshot": "takeScreenShot",
             "click button#show_edited_meshes": "show_edited_meshes"
         },
@@ -29,16 +28,6 @@ define(
             App.SceneOptions.grid = !!gridSwitch.hasClass("active");
         },
 
-        materialsSwitch:function(){
-            var materialsSwitch = $("#materialsSwitch");
-            materialsSwitch.toggleClass("active");
-            if (materialsSwitch.hasClass("active")) {
-                App.sceneManager.switchWireFrame(true);
-            } else {
-                App.sceneManager.switchWireFrame(false);
-            }
-        },
-
         takeScreenShot:function(){
             App.sceneManager.takeScreenShot();
         },
@@ -51,9 +40,9 @@ define(
         show_edited_meshes:function(){
             $('#show_edited_meshes').toggleClass("active");
             if ($('#show_edited_meshes').hasClass("active")){
-                App.sceneManager.showEditedMeshes(true);
+                App.sceneManager.colourEditedMeshes();
             } else {
-                App.sceneManager.showEditedMeshes(false);
+                App.sceneManager.cancelColourEditedMeshes();
             }
         }
 

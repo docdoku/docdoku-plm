@@ -1,30 +1,43 @@
-<div class="nav-header">Collaborative</div>
+<div class="nav-header">{{i18n.COLLABORATIVE}}</div>
 
 <div id="collaborative_view">
-    <div> <a id="collaborative_create" href="#">Create Room</a></div>
-    <table style="margin:0 0 10px 0;">
-        <thead>
-           <tr> <th style="font-size:90%;"><span title="{{roomKey}}">Room</span> led by <em>{{master}}</em>
+    <div><a id="collaborative_create" href="#">{{i18n.CREATE_ROOM}}</a> </div>
+    <ul id="collaborative_room">
+        <h4>
+            <i id="collaborative_exit" class="fa fa-times" title="{{i18n.EXIT}}"></i>
+        </h4>
+        <div id="room_wrapper">
+        <li>
+            <i id="collaborative_master" class="fa fa-graduation-cap master" title="{{i18n.COLLABORATIVE_LEAD}}"></i>
+            <span>{{master}}</span>
+        </li>
 
-               <a id="collaborative_invite" href="#" style="color:white;" title="Invite">(+)</a>
-               <a id="collaborative_exit" href="#" style="color:white;" title="Exit">(x)</a>
-           </th></tr>
-        </thead>
-        <tbody>
-            {{#users}}
-            <tr><td>
-                {{ . }}
-                <a class="collaborative_kick" href="#" name="{{ . }}" title="Kick {{ . }}">(x)</a>
-                <a class="collaborative_give_hand" href="#" name="{{ . }}">(give the hand)</a>
-            </td></tr>
-            {{/users}}
+        {{^users}}
+        {{^pendingUsers}}
+        <li><em>{{i18n.NO_PARTICIPANT}}</em></li>
+        {{/pendingUsers}}
+        {{/users}}
 
-            {{#pendingUsers}}
-            <tr><td><em>
-                {{ . }} (pending)
-                <a class="collaborative_withdraw_invitation" href="#" name="{{ . }}" title="Withdraw invitation">(x)</a>
-            </em></td></tr>
-            {{/pendingUsers}}
-        </tbody>
-    </table>
+        {{#users}}
+        <li id="participant_{{.}}">
+            <i class="fa fa-user participant-online" title="{{i18n.PARTICIPANT}}"></i>
+            <span>{{ . }}</span>
+            <i class="fa fa-chevron-right"></i>
+            <i class="fa fa-chevron-left"></i>
+            <i class="collaborative_give_hand fa fa-graduation-cap" title="{{i18n.GIVE_HAND}}"></i>
+            <i class="collaborative_kick fa fa-sign-out" title="{{i18n.WITHDRAW_INVITATION}}"></i>
+        </li>
+        {{/users}}
+
+        {{#pendingUsers}}
+        <li id="participant_{{.}}">
+            <i class="fa fa-user participant-offline" title="{{i18n.PENDING}}"></i>
+            <span>{{ . }} </span>
+            <i class="fa fa-chevron-right"></i>
+            <i class="fa fa-chevron-left"></i>
+            <i class="collaborative_withdraw_invitation fa fa-sign-out" title="{{i18n.WITHDRAW_INVITATION}}"></i>
+        </li>
+        {{/pendingUsers}}
+        </div>
+    </ul>
 </div>

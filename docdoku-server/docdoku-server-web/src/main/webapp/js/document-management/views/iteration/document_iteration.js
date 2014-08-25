@@ -1,15 +1,16 @@
+'use strict';
 define([
-    "common-objects/views/components/modal",
-    "common-objects/views/file/file_list",
-    "common-objects/views/attributes/attributes",
-    "common-objects/views/workflow/lifecycle",
-    "common-objects/views/linked/linked_documents",
-    "common-objects/models/tag",
-    "common-objects/views/tags/tag",
-    "common-objects/collections/linked/linked_document_collection",
-    "text!templates/iteration/document_iteration.html",
-    "i18n!localization/nls/document-management-strings",
-    "common-objects/utils/date"
+    'common-objects/views/components/modal',
+    'common-objects/views/file/file_list',
+    'common-objects/views/attributes/attributes',
+    'common-objects/views/workflow/lifecycle',
+    'common-objects/views/linked/linked_documents',
+    'common-objects/models/tag',
+    'common-objects/views/tags/tag',
+    'common-objects/collections/linked/linked_document_collection',
+    'text!templates/iteration/document_iteration.html',
+    'i18n!localization/nls/document-management-strings',
+    'common-objects/utils/date'
 ], function (ModalView, FileListView, DocumentAttributesView, LifecycleView, LinkedDocumentsView, Tag, TagView, LinkedDocumentCollection, template, i18n, date) {
 
     var IterationView = ModalView.extend({
@@ -23,10 +24,10 @@ define([
 
             ModalView.prototype.initialize.apply(this, arguments);
 
-            this.events["click a#previous-iteration"] = "onPreviousIteration";
-            this.events["click a#next-iteration"] = "onNextIteration";
-            this.events["submit form"] = "onSubmitForm";
-            this.events["click a.document-path"] = "onFolderPathClicked";
+            this.events['click a#previous-iteration'] = 'onPreviousIteration';
+            this.events['click a#next-iteration'] = 'onNextIteration';
+            this.events['submit form'] = 'onSubmitForm';
+            this.events['click a.document-path'] = 'onFolderPathClicked';
 
             this.tagsToRemove = [];
 
@@ -72,9 +73,9 @@ define([
                 }
             });
             if (!ok) {
-                this.getPrimaryButton().attr("disabled", "disabled");
+                this.getPrimaryButton().attr('disabled', 'disabled');
             } else {
-                this.getPrimaryButton().removeAttr("disabled");
+                this.getPrimaryButton().removeAttr('disabled');
             }
         },
 
@@ -99,10 +100,10 @@ define([
 
 
             var fullPath = data.master.path;
-            var re = new RegExp(APP_CONFIG.workspaceId,"");
-            fullPath = fullPath.replace(re,"");
-            this.folderPath =fullPath.replace(/\//g, ":");
-            if(this.folderPath[0] == ":"){
+            var re = new RegExp(APP_CONFIG.workspaceId,'');
+            fullPath = fullPath.replace(re,'');
+            this.folderPath =fullPath.replace(/\//g, ':');
+            if(this.folderPath[0] === ':'){
                 this.folderPath = this.folderPath.substr(1,this.folderPath.length);
             }
 
@@ -137,7 +138,7 @@ define([
             this.attributesView =
                 this.addSubView(
                     new DocumentAttributesView({
-                        el:"#iteration-additional-attributes-container"
+                        el:'#iteration-additional-attributes-container'
                     })
             );
 
@@ -162,7 +163,7 @@ define([
                 }).render();
 
                 /* Add the fileListView to the tab */
-                this.$("#iteration-files").html(this.fileListView.el);
+                this.$('#iteration-files').html(this.fileListView.el);
 
 
                 this.linkedDocumentsView = new LinkedDocumentsView({
@@ -172,29 +173,29 @@ define([
                 }).render();
 
                 /* Add the documentLinksView to the tab */
-                this.$("#iteration-links").html(this.linkedDocumentsView.el);
+                this.$('#iteration-links').html(this.linkedDocumentsView.el);
             }
 
-            if(this.model.get("workflow")){
+            if(this.model.get('workflow')){
 
                 this.lifecycleView =  new LifecycleView({
-                    el:"#tab-iteration-lifecycle"
-                }).setAbortedWorkflowsUrl(this.model.getUrl()+"/aborted-workflows").setWorkflow(this.model.get("workflow")).setEntityType("documents").render();
+                    el:'#tab-iteration-lifecycle'
+                }).setAbortedWorkflowsUrl(this.model.getUrl()+'/aborted-workflows').setWorkflow(this.model.get('workflow')).setEntityType('documents').render();
 
-                this.lifecycleView.on("lifecycle:change",function(){
+                this.lifecycleView.on('lifecycle:change',function(){
                     that.model.fetch({success:function(){
-                        that.lifecycleView.setAbortedWorkflowsUrl(that.model.getUrl()+"/aborted-workflows").setWorkflow(that.model.get("workflow")).setEntityType("documents").render();
+                        that.lifecycleView.setAbortedWorkflowsUrl(that.model.getUrl()+'/aborted-workflows').setWorkflow(that.model.get('workflow')).setEntityType('documents').render();
                     }});
                 });
 
             }else{
-                this.$("a[href=#tab-iteration-lifecycle]").hide();
+                this.$('a[href=#tab-iteration-lifecycle]').hide();
             }
 
-            this.$(".author-popover").userPopover(this.model.attributes.author.login, this.model.id, "right");
+            this.$('.author-popover').userPopover(this.model.attributes.author.login, this.model.id, 'right');
 
             if (this.model.isCheckout()) {
-                this.$(".checkout-user-popover").userPopover(this.model.getCheckoutUser().login, this.model.id, "right");
+                this.$('.checkout-user-popover').userPopover(this.model.getCheckoutUser().login, this.model.id, 'right');
             }
 
             this.tagsManagement(editMode);
@@ -212,7 +213,7 @@ define([
             });
 
             /*There is a parsing problem at saving time*/
-            var files = this.iteration.get("attachedFiles");
+            var files = this.iteration.get('attachedFiles');
 
             /*tracking back files*/
             this.iteration.set({
@@ -250,12 +251,12 @@ define([
         },
 
         getPrimaryButton: function() {
-            return this.$("div.modal-footer button.btn-primary");
+            return this.$('div.modal-footer button.btn-primary');
         },
 
         tagsManagement: function (editMode) {
 
-            var $tagsZone = this.$(".master-tags-list");
+            var $tagsZone = this.$('.master-tags-list');
             var that = this;
 
             _.each(this.model.attributes.tags, function (tagLabel) {
@@ -309,7 +310,7 @@ define([
         },
 
         onFolderPathClicked:function(){
-            var redirectPath = this.folderPath ? "folders/" + encodeURIComponent(this.folderPath) : "folders";
+            var redirectPath = this.folderPath ? 'folders/' + encodeURIComponent(this.folderPath) : 'folders';
             this.router.navigate(redirectPath, {trigger: true});
             ModalView.prototype.cancelAction.call(this);
         }

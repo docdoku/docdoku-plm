@@ -1,4 +1,5 @@
 /*global App*/
+'use strict';
 define([
     "models/marker",
     "collections/marker_collection",
@@ -19,11 +20,18 @@ define([
         },
 
         toJSON: function() {
-            return _.pick(this.attributes, 'id', 'name');
+            return _.pick(this.attributes, 'id', 'name', 'color');
         },
 
         setEditingName: function(editingName) {
             this.set('editingName', editingName);
+        },
+
+        getColor: function(){
+            return this.get('color');
+        },
+        setColor: function(color) {
+            return this.set('color', color);
         },
 
         toggleEditingMarkers: function() {
@@ -60,15 +68,15 @@ define([
 
         initialize: function() {
             if (!this.has('color')) {
-
-              var  randomColor = Math.ceil((Math.random()*(0xF))).toString(16)
-                            + Math.ceil((Math.random()*(0xF))).toString(16)
-                            + Math.ceil((Math.random()*(0xF))).toString(16)
-                            + Math.ceil((Math.random()*(0xF))).toString(16)
-                            + Math.ceil((Math.random()*(0xF))).toString(16)
-                            + Math.ceil((Math.random()*(0xF))).toString(16);
+              var  randomColor = Math.ceil((Math.random()*(0xF))).toString(16) +
+                            Math.ceil((Math.random()*(0xF))).toString(16) +
+                            Math.ceil((Math.random()*(0xF))).toString(16) +
+                            Math.ceil((Math.random()*(0xF))).toString(16) +
+                            Math.ceil((Math.random()*(0xF))).toString(16) +
+                            Math.ceil((Math.random()*(0xF))).toString(16);
 
                 this.set('color', randomColor);
+                this.save();
             }
             this.material = new THREE.MeshLambertMaterial({
                 color:  parseInt('0x' + this.get('color'), 16),
@@ -111,7 +119,8 @@ define([
                 y: y,
                 z: z
             });
-            this.getMarkers().create(marker);
+            this.getMarkers().create(marker,{success:function(){App.collaborativeController.sendMarkersRefresh("create marker");}});
+
             return marker;
         },
 
@@ -145,6 +154,7 @@ define([
         },
 
         _onResetMarkers: function() {
+            this._removeAllMarkersFromScene();
             this.getMarkers().each(this._addMarkerToScene, this);
         }
 

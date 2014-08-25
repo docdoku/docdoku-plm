@@ -1,13 +1,14 @@
+'use strict';
 define(
     [
-        "common-objects/collections/reachable_users",
-        "modules/coworkers-access-module/views/coworkers_item_view"
+        'common-objects/collections/reachable_users',
+        'modules/coworkers-access-module/views/coworkers_item_view'
     ],
     function(Users,CoWorkersItemView){
 
     var CoWorkersAccessModuleView = Backbone.View.extend({
 
-        el: "#coworkers_access_module",
+        el: '#coworkers_access_module',
 
         initialize:function(){
 
@@ -15,13 +16,13 @@ define(
             var users = new Users();
             this._coworkersItemViews = [];
 
-            var $ul = this.$("#coworkers_access_module_entries");
+            var $ul = this.$('#coworkers_access_module_entries');
 
             users.fetch({reset: true, success: function () {
 
                 _.each(users.models, function(user){
 
-                    if(user.attributes.login != APP_CONFIG.login){
+                    if(user.attributes.login !== APP_CONFIG.login){
 
                         var cwiv = new CoWorkersItemView({
                             model : user.attributes
@@ -38,11 +39,13 @@ define(
 
             this.$el.show();
 
-            this.$("#coworkers_access_module_toggler").click(function(){
-                if( ! $ul.is(":visible") ){
+            this.$('#coworkers_access_module_toggler').click(function(){
+                if( ! $ul.is(':visible') ){
                     that.refreshAvailabilities();
                 }
             });
+
+            Backbone.Events.on('EnableCollaborativeInvite',this.collaborativeInvite, this);
 
             return this ;
 
@@ -59,8 +62,12 @@ define(
         render:function(){
 
             return this ;
-        }
+        },
 
+        collaborativeInvite:function(){
+            this.$('#coworkers_access_module_toggler').click();
+            this.$('.fa-globe').removeClass('corworker-action-disable').addClass('corworker-action');
+        }
 
     });
 

@@ -22,7 +22,8 @@
                 login: "${login}",
                 sessionId: "${session.id}",
                 workspaceAdmin:"${workspaceAdmin}",
-                groups: [${groups}]
+                groups: [${groups}],
+                contextPath: "#{request.contextPath}"
             };
             var APP_VIEW;
             $(document).ready(function () {
@@ -60,7 +61,7 @@
         </script>
     </ui:define>
     <ui:define name="header">
-        <em:header id="h" moduleName="product-management" moduleIcon="icon-briefcase" moduleTranslate="#{i18nTemplate['toplinks.product']}" breadcrumbDept="2" />
+        <em:header id="h" moduleName="product-management" moduleIcon="fa fa-briefcase" moduleTranslate="#{i18nTemplate['toplinks.product']}" breadcrumbDept="2" />
     </ui:define>
     <ui:define name="content"></ui:define>
 </ui:composition>

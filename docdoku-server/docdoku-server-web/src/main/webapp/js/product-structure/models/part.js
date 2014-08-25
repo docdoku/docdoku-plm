@@ -1,3 +1,5 @@
+/*global APP_CONFIG*/
+'use strict';
 define(["i18n!localization/nls/product-structure-strings","common-objects/utils/date","collections/part_iteration_collection"], function(i18n, Date, PartIterationList) {
 
     var Part = Backbone.Model.extend({
@@ -69,9 +71,8 @@ define(["i18n!localization/nls/product-structure-strings","common-objects/utils/
             return this.get('creationDate');
         },
 
-
         isCheckoutByConnectedUser: function() {
-            return this.isCheckout() ? this.getCheckOutUserLogin() == APP_CONFIG.login : false;
+            return this.isCheckout() ? this.getCheckOutUserLogin() === APP_CONFIG.login : false;
         },
 
         getUrl: function() {
@@ -93,6 +94,11 @@ define(["i18n!localization/nls/product-structure-strings","common-objects/utils/
         getIterations: function() {
             return this.iterations;
         },
+
+	    isLastIteration: function(iterationNumber){
+		    // return TRUE if the iteration is the very last (check or uncheck)
+		    return this.get('lastIterationNumber') === iterationNumber;
+	    },
 
         getAuthorLogin:function(){
             return this.get("author").login;
@@ -165,13 +171,13 @@ define(["i18n!localization/nls/product-structure-strings","common-objects/utils/
 
         getPermalink: function() {
             return encodeURI(
-                window.location.origin
-                    + "/parts/"
-                    + this.getWorkspace()
-                    + "/"
-                    + this.getNumber()
-                    + "/"
-                    + this.getVersion()
+                window.location.origin +
+                    "/parts/" +
+                    this.getWorkspace() +
+                    "/" +
+                    this.getNumber() +
+                    "/" +
+                    this.getVersion()
             );
         },
 

@@ -99,17 +99,16 @@ public class FilesFilter implements Filter {
                     httpRequest.logout();
                     httpRequest.login(userLogin, userPassword);
 
-                    String accountLogin=null;
                     try {
                         Account account = userManager.getAccount(userLogin);
                         if(account!=null) {
-                            accountLogin = account.getLogin();
+                            remoteUser = account.getLogin();
                         }
-                    }catch(AccountNotFoundException ex){
+                    }catch(AccountNotFoundException ignored){
 
                     }
                     //case insensitive fix
-                    if(!userLogin.equals(accountLogin)){
+                    if(!userLogin.equals(remoteUser)){
                         httpRequest.logout();
                         httpRequest.getRequestDispatcher("/faces/login.xhtml?originURL=" + URLEncoder.encode(originURL, "UTF-8")).forward(pRequest, pResponse);
                         return;
@@ -133,10 +132,10 @@ public class FilesFilter implements Filter {
         String[] pathInfo = FilesFilter.removeEmptyEntries(requestURI.split("/"));
 
         String fullName = "";
-        String workspaceId = "";
-        String elementType = "";
-        String fileName = "";
-        int iteration = 0;
+        String workspaceId;
+        String elementType;
+        String fileName;
+        int iteration;
         BinaryResource binaryResource = null;
         DocumentIteration docI = null;
         User user = null;
@@ -155,70 +154,76 @@ public class FilesFilter implements Filter {
                 workspaceId = URLDecoder.decode(pathInfo[offset], "UTF-8");
                 elementType = URLDecoder.decode(pathInfo[offset + 1], "UTF-8");
 
-                if (elementType.equals("documents")) {
+                switch (elementType) {
+                    case "documents":
 
-                    needsCacheHeaders = true;
+                        needsCacheHeaders = true;
 
-                    String docMId = URLDecoder.decode(pathInfo[offset + 2], "UTF-8");
-                    String docMVersion = pathInfo[offset + 3];
-                    iteration = Integer.parseInt(pathInfo[offset + 4]);
-                    fileName = URLDecoder.decode(pathInfo[offset + 5], "UTF-8");
-
-                    fullName = workspaceId + "/" + elementType + "/" + docMId + "/" + docMVersion + "/" + iteration + "/" + fileName;
-
-                    if(remoteUser != null){
-                        binaryResource = documentService.getBinaryResource(fullName);
-                        docI = documentService.findDocumentIterationByBinaryResource(binaryResource);
-                        user = documentService.whoAmI(workspaceId);
-                    }else{
-                        DocumentRevisionKey docRK = new DocumentRevisionKey(workspaceId, docMId, docMVersion);
-                        binaryResource = guestProxy.getPublicBinaryResourceForDocument(docRK,fullName);
-                        docI = guestProxy.findDocumentIterationByBinaryResource(binaryResource);
-                        user = guestProxy.whoAmI();
-                    }
-
-                    if (pathInfo.length > offset + 6) {
-                        String[] pathInfosExtra = Arrays.copyOfRange(pathInfo, offset + 6, pathInfo.length);
-                        isSubResource = true;
-                        subResourceVirtualPath = documentResourceGetterService.getSubResourceVirtualPath(binaryResource, StringUtils.join(pathInfosExtra, '/'));
-                    }
-
-
-                } else if (elementType.equals("parts")) {
-
-                    needsCacheHeaders = true;
-
-                    String partNumber = URLDecoder.decode(pathInfo[offset + 2], "UTF-8");
-                    String version = pathInfo[offset + 3];
-                    iteration = Integer.parseInt(pathInfo[offset + 4]);
-
-                    if (pathInfo.length == offset + 7) {
-                        fileName = URLDecoder.decode(pathInfo[offset + 6], "UTF-8");
-                        String subType = URLDecoder.decode(pathInfo[offset + 5], "UTF-8"); //subType may be nativecad
-                        fullName = workspaceId + "/" + elementType + "/" + partNumber + "/" + version + "/" + iteration + "/" + subType + "/" + fileName;
-                    } else {
+                        String docMId = URLDecoder.decode(pathInfo[offset + 2], "UTF-8");
+                        String docMVersion = pathInfo[offset + 3];
+                        iteration = Integer.parseInt(pathInfo[offset + 4]);
                         fileName = URLDecoder.decode(pathInfo[offset + 5], "UTF-8");
-                        fullName = workspaceId + "/" + elementType + "/" + partNumber + "/" + version + "/" + iteration + "/" + fileName;
-                    }
-                    if(remoteUser != null){
-                        binaryResource = productService.getBinaryResource(fullName);
-                    }else{
-                        PartRevisionKey partK = new PartRevisionKey(workspaceId, partNumber, version);
-                        binaryResource = guestProxy.getPublicBinaryResourceForPart(partK,fullName);
-                    }
-                }
 
-                // We don't serve these files to guests, no changes.
-                else if (elementType.equals("document-templates")) {
-                    String templateID = URLDecoder.decode(pathInfo[offset + 2], "UTF-8");
-                    fileName = URLDecoder.decode(pathInfo[offset + 3], "UTF-8");
-                    fullName = workspaceId + "/" + elementType + "/" + templateID + "/" + fileName;
-                    binaryResource = documentService.getBinaryResource(fullName);
-                } else if (elementType.equals("part-templates")) {
-                    String templateID = URLDecoder.decode(pathInfo[offset + 2], "UTF-8");
-                    fileName = URLDecoder.decode(pathInfo[offset + 3], "UTF-8");
-                    fullName = workspaceId + "/" + elementType + "/" + templateID + "/" + fileName;
-                    binaryResource = documentService.getBinaryResource(fullName);
+                        fullName = workspaceId + "/" + elementType + "/" + docMId + "/" + docMVersion + "/" + iteration + "/" + fileName;
+
+                        if (remoteUser != null) {
+                            binaryResource = documentService.getBinaryResource(fullName);
+                            docI = documentService.findDocumentIterationByBinaryResource(binaryResource);
+                            user = documentService.whoAmI(workspaceId);
+                        } else {
+                            DocumentRevisionKey docRK = new DocumentRevisionKey(workspaceId, docMId, docMVersion);
+                            binaryResource = guestProxy.getPublicBinaryResourceForDocument(docRK, fullName);
+                            docI = guestProxy.findDocumentIterationByBinaryResource(binaryResource);
+                            user = guestProxy.whoAmI();
+                        }
+
+                        if (pathInfo.length > offset + 6) {
+                            String[] pathInfosExtra = Arrays.copyOfRange(pathInfo, offset + 6, pathInfo.length);
+                            isSubResource = true;
+                            subResourceVirtualPath = documentResourceGetterService.getSubResourceVirtualPath(binaryResource, StringUtils.join(pathInfosExtra, '/'));
+                        }
+
+
+                        break;
+                    case "parts":
+
+                        needsCacheHeaders = true;
+
+                        String partNumber = URLDecoder.decode(pathInfo[offset + 2], "UTF-8");
+                        String version = pathInfo[offset + 3];
+                        iteration = Integer.parseInt(pathInfo[offset + 4]);
+
+                        if (pathInfo.length == offset + 7) {
+                            fileName = URLDecoder.decode(pathInfo[offset + 6], "UTF-8");
+                            String subType = URLDecoder.decode(pathInfo[offset + 5], "UTF-8"); //subType may be nativecad
+                            fullName = workspaceId + "/" + elementType + "/" + partNumber + "/" + version + "/" + iteration + "/" + subType + "/" + fileName;
+                        } else {
+                            fileName = URLDecoder.decode(pathInfo[offset + 5], "UTF-8");
+                            fullName = workspaceId + "/" + elementType + "/" + partNumber + "/" + version + "/" + iteration + "/" + fileName;
+                        }
+                        if (remoteUser != null) {
+                            binaryResource = productService.getBinaryResource(fullName);
+                        } else {
+                            PartRevisionKey partK = new PartRevisionKey(workspaceId, partNumber, version);
+                            binaryResource = guestProxy.getPublicBinaryResourceForPart(partK, fullName);
+                        }
+                        break;
+
+                    // We don't serve these files to guests, no changes.
+                    case "document-templates": {
+                        String templateID = URLDecoder.decode(pathInfo[offset + 2], "UTF-8");
+                        fileName = URLDecoder.decode(pathInfo[offset + 3], "UTF-8");
+                        fullName = workspaceId + "/" + elementType + "/" + templateID + "/" + fileName;
+                        binaryResource = documentService.getBinaryResource(fullName);
+                        break;
+                    }
+                    case "part-templates": {
+                        String templateID = URLDecoder.decode(pathInfo[offset + 2], "UTF-8");
+                        fileName = URLDecoder.decode(pathInfo[offset + 3], "UTF-8");
+                        fullName = workspaceId + "/" + elementType + "/" + templateID + "/" + fileName;
+                        binaryResource = documentService.getBinaryResource(fullName);
+                        break;
+                    }
                 }
 
 
@@ -259,10 +264,8 @@ public class FilesFilter implements Filter {
 
                 if(sharedEntity instanceof SharedDocument){
                     DocumentRevision documentRevision = ((SharedDocument) sharedEntity).getDocumentRevision();
-                    docI =  documentRevision.getLastIteration();
                     String id = documentRevision.getId();
                     String version = documentRevision.getVersion();
-                    iteration = Integer.valueOf(URLDecoder.decode(pathInfo[offset + 1], "UTF-8"));
 
                     fileName = URLDecoder.decode(pathInfo[offset + 2], "UTF-8");
                     fullName = workspaceId + "/" + "documents" + "/" + id + "/" + version + "/" + iteration + "/" + fileName;
@@ -288,7 +291,6 @@ public class FilesFilter implements Filter {
 
                     String partNumber = partRevision.getPartNumber();
                     String version =partRevision.getVersion();
-                    iteration = Integer.valueOf(URLDecoder.decode(pathInfo[offset + 1], "UTF-8"));
 
                     if (pathInfo.length == offset + 4) {
                         fileName = URLDecoder.decode(pathInfo[offset + 3], "UTF-8");
@@ -327,7 +329,7 @@ public class FilesFilter implements Filter {
     }
 
     private static String[] removeEmptyEntries(String[] entries) {
-        List<String> elements = new LinkedList<String>(Arrays.asList(entries));
+        List<String> elements = new LinkedList<>(Arrays.asList(entries));
 
         for (Iterator<String> it = elements.iterator(); it.hasNext(); ) {
             if (it.next().isEmpty()) {

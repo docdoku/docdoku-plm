@@ -20,6 +20,7 @@
 
 package com.docdoku.server.rest.dto;
 
+import javax.xml.bind.annotation.XmlElement;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -45,6 +46,10 @@ public class ComponentDTO implements Serializable{
     private List<InstanceAttributeDTO> attributes;
     private UserDTO checkOutUser;
     private Date checkOutDate;
+    @XmlElement(nillable = true)
+    private int lastIterationNumber;
+    @XmlElement(nillable = true)
+    private boolean accessDeny;
 
     public ComponentDTO() {}
 
@@ -124,52 +129,27 @@ public class ComponentDTO implements Serializable{
         this.standardPart = standardPart;
     }
 
-    public void setAttributes(List<InstanceAttributeDTO> attributes) {
-        this.attributes = attributes;
-    }
+    public void setAttributes(List<InstanceAttributeDTO> attributes) {this.attributes = attributes;}
+    public List<InstanceAttributeDTO> getAttributes() {return attributes;}
 
-    public List<InstanceAttributeDTO> getAttributes() {
-        return attributes;
-    }
+    public String getAuthor() {return author;}
+    public void setAuthor(String author) {this.author = author;}
 
-    public String getAuthor() {
-        return author;
-    }
+    public String getAuthorLogin() {return authorLogin;}
+    public void setAuthorLogin(String authorLogin) {this.authorLogin = authorLogin;}
 
-    public void setAuthor(String author) {
-        this.author = author;
-    }
+    public int getAmount() {return amount;}
+    public void setAmount(int amount) {this.amount = amount;}
 
-    public String getAuthorLogin() {
-        return authorLogin;
-    }
+    public UserDTO getCheckOutUser() {return checkOutUser;}
+    public void setCheckOutUser(UserDTO checkOutUser) {this.checkOutUser = checkOutUser;}
 
-    public void setAuthorLogin(String authorLogin) {
-        this.authorLogin = authorLogin;
-    }
+    public Date getCheckOutDate() {return checkOutDate;}
+    public void setCheckOutDate(Date checkOutDate) {this.checkOutDate = checkOutDate;}
 
-    public int getAmount() {
-        return amount;
-    }
+    public int getLastIterationNumber() {return lastIterationNumber;}
+    public void setLastIterationNumber(int lastIterationNumber) {this.lastIterationNumber = lastIterationNumber;}
 
-    public void setAmount(int amount) {
-        this.amount = amount;
-    }
-
-    public UserDTO getCheckOutUser() {
-        return checkOutUser;
-    }
-
-    public void setCheckOutUser(UserDTO checkOutUser) {
-        this.checkOutUser = checkOutUser;
-    }
-
-    public Date getCheckOutDate() {
-        return checkOutDate;
-    }
-
-    public void setCheckOutDate(Date checkOutDate) {
-        this.checkOutDate = checkOutDate;
-    }
-
+    public boolean isAccessDeny() {return accessDeny;}
+    public void setAccessDeny(boolean accessDeny) {this.accessDeny = accessDeny;}
 }

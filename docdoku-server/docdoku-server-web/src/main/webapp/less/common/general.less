@@ -21,13 +21,23 @@ select:focus:invalid {
   background-image: none;
 }
 
+[class^="fa-"] {
+  background-image: none;
+}
+
 a.is-connected-user{
   text-decoration: none;
   cursor:default;
 }
-.icon-user.user-online{
+.fa-user.user-online,
+.fa-user.participant-online,
+.fa-graduation-cap.master{
   color: #4ca300;
 }
-.icon-user.user-offline{
+.fa-user.user-offline{
   color:#708090;
+}
+.fa-graduation-cap.no-master,
+.fa-user.participant-offline{
+  color:#A30400;
 }

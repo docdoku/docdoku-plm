@@ -1,3 +1,5 @@
+/*global APP_CONFIG*/
+'use strict';
 define([
     "common-objects/collections/linked/linked_document_collection",
     "common-objects/views/linked/linked_document",
@@ -70,7 +72,7 @@ define([
                             function(documentIteration) {
                                 var linkedDoc = self.collection.find(
                                     function(linkedDocument) {
-                                        return linkedDocument.getDocKey() == documentIteration.getDocKey();
+                                        return linkedDocument.getDocKey() === documentIteration.getDocKey();
                                     });
                                 if(!_.isUndefined(linkedDoc)){
                                     docsToRemove.push(documentIteration);
@@ -91,7 +93,7 @@ define([
 
                 updater: function(docLastIterDocKey) {
                     var linkedDocument = self.searchResults.find(function(docLastIter) {
-                        return docLastIter.getDocKey() == docLastIterDocKey;
+                        return docLastIter.getDocKey() === docLastIterDocKey;
                     });
                     linkedDocument.collection.remove(linkedDocument);
                     self.collection.add(linkedDocument);

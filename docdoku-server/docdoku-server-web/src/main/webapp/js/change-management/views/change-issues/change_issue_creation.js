@@ -101,7 +101,7 @@ define([
                 initiator:APP_CONFIG.login
             };
 
-            new ChangeIssueModel().save(data,{
+            this.model.save(data,{
                 success: this.onIssueCreated,
                 error: this.error,
                 wait: true

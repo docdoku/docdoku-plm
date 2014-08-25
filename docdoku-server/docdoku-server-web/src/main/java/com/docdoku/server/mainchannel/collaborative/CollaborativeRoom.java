@@ -23,6 +23,8 @@ public class CollaborativeRoom {
     private CollaborativeMessage cameraInfos;
     private CollaborativeMessage smartPath;
     private CollaborativeMessage editedMeshes;
+    private CollaborativeMessage colourEditedMeshes;
+    private CollaborativeMessage explode;
     private String lastMaster;
 
     public CollaborativeRoom(Session master) {
@@ -31,6 +33,7 @@ public class CollaborativeRoom {
         this.pendingUsers = new LinkedList<>();
         this.creationDate = new Date();
         this.slaves = new LinkedList<>();
+        this.lastMaster = getMasterName();
         put();
     }
 
@@ -86,6 +89,22 @@ public class CollaborativeRoom {
         this.editedMeshes = editedMeshes;
     }
 
+    public CollaborativeMessage getColourEditedMeshes() {
+        return colourEditedMeshes;
+    }
+
+    public void setColourEditedMeshes(CollaborativeMessage colourEditedMeshes) {
+        this.colourEditedMeshes = colourEditedMeshes;
+    }
+
+    public CollaborativeMessage getExplode() {
+        return explode;
+    }
+
+    public void setExplode(CollaborativeMessage explode) {
+        this.explode = explode;
+    }
+
     public String toString() {
         return this.getContext().toString();
     }
@@ -105,6 +124,7 @@ public class CollaborativeRoom {
 
         return Json.createObjectBuilder()
                 .add("master", this.getMasterName())
+                .add("lastMaster", this.getLastMaster())
                 .add("users", slaves)
                 .add("pendingUsers", pendingUsers).build();
     }

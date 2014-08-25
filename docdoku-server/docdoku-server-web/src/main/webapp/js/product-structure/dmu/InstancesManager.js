@@ -1,6 +1,6 @@
-/*global App,ChannelMessagesType,mainChannel*/
-
-define(["dmu/LoaderManager","lib/async"],
+/*global App,APP_CONFIG,worker*/
+'use strict';
+define(['dmu/LoaderManager','lib/async'],
 function (LoaderManager, async) {
 
     /**
@@ -26,11 +26,11 @@ function (LoaderManager, async) {
         this.alreadySameQuality = 0;
         this.xhrsDone = 0;
 
-        var instancesIndexed=[];
-        var loadCache=[];
+        var instancesIndexed={};
+        var loadCache={};
         var loadedInstances = [];                                                                                       // Store all loaded geometries and materials
         var loaderManager = new LoaderManager({progressBar: true});
-        var loaderIndicator = $("#product_title").find("img.loader");
+        var loaderIndicator = $('#product_title').find('img.loader');
         var timer = null;
         var evalRunning = false;
 
@@ -39,15 +39,31 @@ function (LoaderManager, async) {
                 _this.workerStats = stats;
             },
             directives: function (directives) {
-
                 _this.aborted+=_this.xhrQueue.tasks.length;
                 _this.xhrQueue.kill();
 
                 _(directives).each(function(directive){
                     var instance = _this.getInstance(directive.id);
-                    instance.directiveQuality = directive.quality;
-                    _this.xhrQueue.push(directive);
+                    if(directive.nowait && directive.quality === undefined){
+                        App.sceneManager.removeMeshById(directive.id);
+                        if(loadCache[instance.partIterationId+'-'+instance.qualityLoaded]){
+                            if( loadCache[instance.partIterationId+'-'+instance.qualityLoaded].count === 1){
+                                loadCache[instance.partIterationId+'-'+instance.qualityLoaded].geometry.dispose();
+                                loadCache[instance.partIterationId+'-'+instance.qualityLoaded].material.dispose();
+                                loadCache[instance.partIterationId+'-'+instance.qualityLoaded] = null;
+                                delete loadCache[instance.partIterationId+'-'+instance.qualityLoaded];
+                            }else{
+                                loadCache[instance.partIterationId+'-'+instance.qualityLoaded].count--;
+                            }
+                        }
+                        instance.qualityLoaded = undefined;
+                        worker.postMessage({fn: 'setQuality', obj: {id: instance.id, quality: instance.qualityLoaded}});
+                    }else{
+                        instance.directiveQuality = directive.quality;
+                        _this.xhrQueue.push(directive);
+                    }
                 });
+
 
                 setTimeout(function(){
                     evalRunning = false;
@@ -55,14 +71,14 @@ function (LoaderManager, async) {
             }
         };
 
-        var worker = new Worker("/js/product-structure/workers/InstancesWorker.js");
+        var worker = new Worker('/js/product-structure/workers/InstancesWorker.js');
 
-        worker.addEventListener("message", function (message) {
-            if (typeof  workerMessages[message.data.fn] == "function") {
+        worker.addEventListener('message', function (message) {
+            if (typeof  workerMessages[message.data.fn] === 'function') {
                 workerMessages[message.data.fn](message.data.obj);
             } else {
                 if(App.debug){
-                    console.log("[InstancesManager] Unrecognized command  : ");
+                    console.log('[InstancesManager] Unrecognized command  : ');
                     console.log(message.data);
                 }
             }
@@ -78,12 +94,12 @@ function (LoaderManager, async) {
                 return;
             }
 
-            if (directive.quality == undefined) {
+            if (directive.quality === undefined) {
 
                 // don't unload edited meshes
                 if (App.sceneManager.editedMeshes.indexOf(instance.id) !== -1) {
                     _this.aborted++;
-                    worker.postMessage({fn:"setQuality",obj:{id:instance.id,quality:instance.qualityLoaded}});
+                    worker.postMessage({fn:'setQuality',obj:{id:instance.id,quality:instance.qualityLoaded}});
                     setTimeout(callback,0);
                     return;
                 }
@@ -105,7 +121,7 @@ function (LoaderManager, async) {
                 return;
             }
 
-            if (directive.quality == instance.qualityLoaded) {
+            if (directive.quality === instance.qualityLoaded) {
                 _this.alreadySameQuality++;
                 setTimeout(callback,0);
                 return;
@@ -162,7 +178,7 @@ function (LoaderManager, async) {
         function findQualities(files) {
             var q = [];
             _(files).each(function (f) {
-                q[f.quality] = "/files/" + f.fullName;
+                q[f.quality] = '/files/' + f.fullName;
             });
             return q;
         }
@@ -190,8 +206,8 @@ function (LoaderManager, async) {
             }
             evalRunning=true;
             var sceneContext = App.sceneManager.getSceneContext();
-            if(App.debug){console.log("[InstancesManager] Updating worker");}
-            worker.postMessage({fn: "context", obj: {
+            if(App.debug){console.log('[InstancesManager] Updating worker');}
+            worker.postMessage({fn: 'context', obj: {
                 camera: sceneContext.camPos,
                 target: sceneContext.target || {},
                 WorkerManagedValues: App.WorkerManagedValues,
@@ -201,7 +217,7 @@ function (LoaderManager, async) {
 
         function loadPath(paths, callback){
             $.ajax({
-                url:"/api/workspaces/" + APP_CONFIG.workspaceId + "/products/" + APP_CONFIG.productId + "/instances?configSpec="+window.config_spec,
+                url:'/api/workspaces/' + APP_CONFIG.workspaceId + '/products/' + APP_CONFIG.productId + '/instances?configSpec='+window.configSpec,
                 type:'POST',
                 contentType:'application/json',
                 dataType:'json',
@@ -213,7 +229,7 @@ function (LoaderManager, async) {
                     _.each(instances, function (instance) {
 
                         if(instancesIndexed[instance.id]){
-                            worker.postMessage({fn: "check", obj: instance.id});
+                            worker.postMessage({fn: 'check', obj: instance.id});
                         }else{
                             instancesIndexed[instance.id]=instance;
                             instance.matrix = adaptMatrix(instance.matrix);
@@ -224,7 +240,7 @@ function (LoaderManager, async) {
                             instance.qualities =  findQualities(instance.files);
 
                             worker.postMessage({
-                                fn: "addInstance",
+                                fn: 'addInstance',
                                 obj: {
                                     id: instance.id,
                                     cog: cog,
@@ -246,7 +262,7 @@ function (LoaderManager, async) {
 
         function unLoadPath(paths, callback) {
             $.ajax({
-                url:"/api/workspaces/" + APP_CONFIG.workspaceId + "/products/" + APP_CONFIG.productId + "/instances?configSpec="+window.config_spec,
+                url:'/api/workspaces/' + APP_CONFIG.workspaceId + '/products/' + APP_CONFIG.productId + '/instances?configSpec='+window.configSpec,
                 type:'POST',
                 contentType:'application/json',
                 data:JSON.stringify({
@@ -254,7 +270,7 @@ function (LoaderManager, async) {
                 }),
                 success:function(instances){
                     _.each(instances, function (instance) {
-                        worker.postMessage({fn: "unCheck", obj: instance.id});
+                        worker.postMessage({fn: 'unCheck', obj: instance.id});
                     });
                     _this.planNewEval();
                     callback();
@@ -263,7 +279,7 @@ function (LoaderManager, async) {
 
 
         this.loadQueue=async.queue(function (directive, callback){
-            if (directive.process == "load"){
+            if (directive.process === 'load'){
                 loadPath(directive.path, callback);
             }else {
                 unLoadPath(directive.path, callback);
@@ -301,23 +317,33 @@ function (LoaderManager, async) {
 
         this.loadComponent = function(component) {
             loaderIndicator.show();
-            _this.loadQueue.push({"process":"load","path":[component.getPath()]});
+            _this.loadQueue.push({'process':'load','path':[component.getPath()]});
         };
 
         this.unLoadComponent = function(component) {
-            _this.loadQueue.push({"process":"unload","path":[component.getPath()]});
+            _this.loadQueue.push({'process':'unload','path':[component.getPath()]});
         };
 
         this.clear = function(){
-            _(instancesIndexed).each(function(instance){
-                App.sceneManager.removeMeshById(instance.id);
-            });
+            if(App.debug){
+	            console.log('[InstanceManager] Clearing Scene');
+            }
+
+            _this.xhrQueue.kill();
+            _this.loadQueue.kill();
+
+            _(_(instancesIndexed).pluck('id')).map(App.sceneManager.removeMeshById);
+
             _(loadCache).each(function(cache){
                 cache.geometry.dispose();
                 cache.material.dispose();
             });
-            worker.postMessage({fn: "clear", obj: null});
-            instancesIndexed=[];
+
+            worker.postMessage({fn: 'clear', obj: null});
+
+            instancesIndexed={};
+            loadCache={};
+            loadedInstances = [];
         };
 
         this.planNewEval= function(){

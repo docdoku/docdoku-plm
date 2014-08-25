@@ -1,14 +1,14 @@
 <td><input type="checkbox"/></td>
 <td class="part_number">
     {{#model.isCheckout}}
-        {{#model.isCheckoutByConnectedUser}}<i class="icon-pencil"></i>{{/model.isCheckoutByConnectedUser}}
-        {{^model.isCheckoutByConnectedUser}}<i class="icon-lock"></i>{{/model.isCheckoutByConnectedUser}}
+        {{#model.isCheckoutByConnectedUser}}<i class="fa fa-pencil"></i>{{/model.isCheckoutByConnectedUser}}
+        {{^model.isCheckoutByConnectedUser}}<i class="fa fa-lock"></i>{{/model.isCheckoutByConnectedUser}}
     {{/model.isCheckout}}
     {{^model.isCheckout}}
-        {{#model.isReleased}}<i class="icon-ok"></i>{{/model.isReleased}}
-        {{^model.isReleased}}<i class="icon-eye-open"></i>{{/model.isReleased}}
+        {{#model.isReleased}}<i class="fa fa-check"></i>{{/model.isReleased}}
+        {{^model.isReleased}}<i class="fa fa-eye"></i>{{/model.isReleased}}
     {{/model.isCheckout}}
-    {{model.getNumber}}
+    <span class="part_number_value">{{model.getNumber}}</span>
 </td>
 <td>{{model.getVersion}}</td>
 <td>{{#model.getLastIteration}}{{id}}{{/model.getLastIteration}}{{^model.getLastIteration}}-{{/model.getLastIteration}}</td>
@@ -21,12 +21,12 @@
 <td><a class="checkout-user-popover">{{model.getCheckOutUserName}}</a></td>
 <td class="part-acl-info">
     {{#model.isReadOnly}}
-    <i class="icon-ban-circle read-only" title="{{i18n.READ_ONLY}}"></i>
+    <i class="fa fa-ban read-only" title="{{i18n.READ_ONLY}}"></i>
     {{/model.isReadOnly}}
     {{#model.isFullAccess}}
-    <i class="icon-ban-circle full-access" title="{{i18n.FULL_ACCESS}}"></i>
+    <i class="fa fa-ban full-access" title="{{i18n.FULL_ACCESS}}"></i>
     {{/model.isFullAccess}}
 </td>
 <td class="part-revision-share">
-    <i class="icon-globe" title="{{i18n.PUBLISH}}"></i>
+    <i class="fa fa-globe" title="{{i18n.PUBLISH}}"></i>
 </td>

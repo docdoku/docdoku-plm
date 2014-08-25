@@ -58,8 +58,7 @@ public class PartMasterDAO {
 
     public PartMaster getPartMRef(PartMasterKey pKey) throws PartMasterNotFoundException {
         try {
-            PartMaster partM = em.getReference(PartMaster.class, pKey);
-            return partM;
+            return em.getReference(PartMaster.class, pKey);
         } catch (EntityNotFoundException pENFEx) {
             throw new PartMasterNotFoundException(mLocale, pKey.getNumber());
         }
@@ -142,9 +141,8 @@ public class PartMasterDAO {
     }
 
     public List<PartMaster> getAllByWorkspace(String workspaceId) {
-        List<PartMaster> partMasters = em.createNamedQuery("PartMaster.findByWorkspace")
+        return em.createNamedQuery("PartMaster.findByWorkspace")
                 .setParameter("workspaceId",workspaceId)
                 .getResultList();
-        return partMasters;
     }
 }

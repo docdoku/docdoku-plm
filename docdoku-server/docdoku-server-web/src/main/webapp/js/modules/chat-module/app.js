@@ -1,10 +1,12 @@
 /*global App,ChannelListener,ChannelMessagesType,mainChannel*/
 define([
     "modules/chat-module/models/chat_message_model",
-    "modules/chat-module/views/chat_module_view"
+    "modules/chat-module/views/chat_module_view",
+    "i18n!localization/nls/chat-module-strings"
 ],function (
     ChatMessage,
-    ChatModuleView
+    ChatModuleView,
+    i18n
     ) {
 
     var cmv = new ChatModuleView().render();
@@ -37,8 +39,11 @@ define([
         // onMessage handler
         onMessage: function (message) {
 
-            if(APP_CONFIG.login!=message.sender && message.message.match(/^\//)){
-               chatListener.handleCommand(message);
+            if(APP_CONFIG.login!=message.sender && message.message.match(/^\/invite /)){
+                var url = 'http://' + window.location.host + '/product-structure/' + message.message.substring(8);
+                message.message = "<em>" + i18n.COLLABORATIVE_INVITE + " : </em>" + url;
+            } else if(APP_CONFIG.login!=message.sender && message.message.match(/^\/withdrawInvitation/)){
+                message.message = i18n.COLLABORATIVE_WITHDRAW_INVITATION;
             }
 
             Backbone.Events.trigger('NewChatMessage', message);
@@ -50,23 +55,6 @@ define([
         }
 
     });
-
-    chatListener.handleCommand = function(message){
-
-        if(message.message.match(/inviteScene/)){
-            //var url = message.message.substr(0 ,13);
-            //App.sceneManager.handleInvite(message);
-            //Backbone.Events.trigger('NewChatMessage', url);
-        }else if(message.message.match(/animate/)){
-            var contextString = message.message.substring(9);
-            var context = JSON.parse(contextString);
-            console.log(context);
-            App.sceneManager.setControlsContext(context);
-        } else if(message.message.match(/stop/)){
-            App.appView.leaveSpectatorView();
-            App.sceneManager.stopCollaborativeUsers();
-        }
-    };
 
 
     mainChannel.addChannelListener(chatListener);

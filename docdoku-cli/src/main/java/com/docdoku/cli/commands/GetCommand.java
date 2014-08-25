@@ -25,7 +25,6 @@ import com.docdoku.cli.helpers.FileHelper;
 import com.docdoku.cli.helpers.MetaDirectoryManager;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.Version;
-import com.docdoku.core.configuration.BaselineConfigSpec;
 import com.docdoku.core.configuration.ConfigSpec;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.*;
@@ -84,7 +83,7 @@ public class GetCommand extends AbstractCommandLine{
         ConfigSpec cs = null;
 
         if(baselineId != 0){
-            cs = new BaselineConfigSpec(productS.getBaselineById(baselineId));
+            cs = productS.getConfigSpecForBaseline(baselineId);
         }
 
         getPart(partNumber, strRevision, iteration, cs);
@@ -110,7 +109,7 @@ public class GetCommand extends AbstractCommandLine{
         path=path.getParentFile();
     }
 
-    private void getPart(String pPartNumber, String pRevision, int pIteration,ConfigSpec cs) throws IOException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartMasterNotFoundException, PartRevisionNotFoundException, LoginException, NoSuchAlgorithmException, PartIterationNotFoundException, NotAllowedException {
+    private void getPart(String pPartNumber, String pRevision, int pIteration,ConfigSpec cs) throws IOException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartMasterNotFoundException, PartRevisionNotFoundException, LoginException, NoSuchAlgorithmException, PartIterationNotFoundException, NotAllowedException, AccessRightException {
         PartRevision pr;
         PartIteration pi;
         PartMaster pm = productS.getPartMaster(new PartMasterKey(workspace, pPartNumber));

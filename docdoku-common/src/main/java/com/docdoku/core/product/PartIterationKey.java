@@ -69,28 +69,12 @@ public class PartIterationKey implements Serializable {
         return partRevision + "-" + iteration;
     }
 
-    public PartRevisionKey getPartRevision() {
-        return partRevision;
-    }
+    public PartRevisionKey getPartRevision() {return partRevision;}
+    public void setPartRevision(PartRevisionKey partRevision) {this.partRevision = partRevision;}
 
-    public void setPartRevision(PartRevisionKey partRevision) {
-        this.partRevision = partRevision;
-    }
+    public int getIteration(){return iteration;}
+    public void setIteration(int pIteration){iteration=pIteration;}
 
-    
-    public int getIteration(){
-        return iteration;
-    }
-    
-    public void setIteration(int pIteration){
-        iteration=pIteration;
-    }
-
-    public String getWorkspaceId() {
-        return partRevision.getPartMaster().getWorkspace();
-    }
-
-    public String getPartMasterNumber() {
-        return partRevision.getPartMaster().getNumber();
-    }
+    public String getWorkspaceId() {return partRevision.getPartMaster().getWorkspace();}
+    public String getPartMasterNumber() {return partRevision.getPartMaster().getNumber();}
 }

@@ -1,10 +1,10 @@
 <h5>{{task.title}}
     {{#task.isAcceptableOrRejectable}}
-    <i class="reject-task icon-remove" title="{{i18n.REJECT_TASK}}"></i>
-    <i class="approve-task icon-ok" title="{{i18n.APPROVE_TASK}}"></i>
+    <i class="reject-task fa fa-times" title="{{i18n.REJECT_TASK}}"></i>
+    <i class="approve-task fa fa-check" title="{{i18n.APPROVE_TASK}}"></i>
     {{/task.isAcceptableOrRejectable}}
     {{#task.closureDate}}
-    <i class="toggle-comment icon-comment" title="{{i18n.COMMENT}}"></i>
+    <i class="toggle-comment fa fa-comment" title="{{i18n.COMMENT}}"></i>
     {{/task.closureDate}}
 </h5>
 <p class="task-instructions">{{task.instructions}}</p>

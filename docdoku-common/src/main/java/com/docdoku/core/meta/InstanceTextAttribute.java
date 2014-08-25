@@ -47,22 +47,13 @@ public class InstanceTextAttribute extends InstanceAttribute{
     }
 
     @Override
-    public String getValue() {
-        return textValue;
-    }
-
-    public String getTextValue() {
-        return textValue;
-    }
-
-    public void setTextValue(String textValue) {
-        this.textValue = textValue;
-    }
-
+    public String getValue() {return textValue;}
     @Override
     public boolean setValue(Object pValue) {
         textValue=pValue + "";
         return true;
     }
 
+    public String getTextValue() {return textValue;}
+    public void setTextValue(String textValue) {this.textValue = textValue;}
 }

@@ -1,11 +1,12 @@
+'use strict';
 define([
-    "text!common-objects/templates/baselines/snap_baseline_view.html",
-    "i18n!localization/nls/baseline-strings"
+    'text!common-objects/templates/baselines/snap_baseline_view.html',
+    'i18n!localization/nls/baseline-strings'
 ], function (template, i18n) {
     var SnapLatestBaselineView = Backbone.View.extend({
         events: {
-            "submit #baseline_creation_form" : "onSubmitForm",
-            "hidden #baseline_creation_modal": "onHidden"
+            'submit #baseline_creation_form' : 'onSubmitForm',
+            'hidden #baseline_creation_modal': 'onHidden'
         },
 
         template: Mustache.compile(template),
@@ -15,7 +16,7 @@ define([
         },
 
         render: function() {
-            this.$el.html(this.template({i18n: i18n, model: this.model, isReleased: this.options.type=="RELEASED", isLatest: this.options.type=="LATEST" }));
+            this.$el.html(this.template({i18n: i18n, model: this.model, isReleased: this.options.type==='RELEASED', isLatest: this.options.type=='LATEST' }));
             this.bindDomElements();
             if(this.options.type){
                 this.$inputBaselineType.val(this.options.type);
@@ -52,7 +53,7 @@ define([
         },
 
         onError: function(error) {
-            alert(i18n.CREATION_ERROR + " : " + error.responseText);
+            alert(i18n.CREATION_ERROR + ' : ' + error.responseText);
         },
 
         openModal: function() {

@@ -1,11 +1,9 @@
 define([
     "models/part_template",
-    "text!templates/part_template_list_item.html",
-    "i18n!localization/nls/product-management-strings"
+    "text!templates/part_template_list_item.html"
 ], function (
     PartTemplate,
-    template,
-    i18n
+    template
     ) {
     var PartTemplateListItemView = Backbone.View.extend({
 
@@ -56,7 +54,7 @@ define([
         },
 
         bindUserPopover:function(){
-            this.$(".author-popover").userPopover(this.model.getAuthorLogin(),this.model.getNumber(),"left");
+            this.$(".author-popover").userPopover(this.model.getAuthorLogin(),this.model.getId(),"left");
         },
 
         toPartTemplateEditModal:function(){

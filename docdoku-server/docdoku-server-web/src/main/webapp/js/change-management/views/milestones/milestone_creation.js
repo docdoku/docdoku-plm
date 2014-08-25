@@ -39,7 +39,7 @@ define([
                 dueDate: this.$inputMilestoneDueDate.val()+"T00:00:00"
             };
 
-            new MilestoneModel().save(data,{
+            this.model.save(data,{
                 success: this.onMilestoneCreated,
                 error: this.onError,
                 wait: true

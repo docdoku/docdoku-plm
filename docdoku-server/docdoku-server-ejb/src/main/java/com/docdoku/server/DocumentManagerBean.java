@@ -666,7 +666,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
                 try {
                     dataManager.copyData(sourceFile, targetFile);
                 } catch (StorageException e) {
-                    e.printStackTrace();
+                    Logger.getLogger(DocumentManagerBean.class.getName()).log(Level.INFO, null, e);
                 }
             }
         }
@@ -926,7 +926,6 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         DocumentRevisionDAO docRDAO = new DocumentRevisionDAO(new Locale(user.getLanguage()), em);
         DocumentRevision docR = docRDAO.loadDocR(pDocRPK);
         //Check access rights on docR
-        Workspace wks = new WorkspaceDAO(new Locale(user.getLanguage()), em).loadWorkspace(pDocRPK.getWorkspaceId());
 
         String owner = docR.getLocation().getOwner();
         if ((owner != null) && (!owner.equals(user.getLogin()))) {
@@ -1065,7 +1064,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
                 try {
                     dataManager.deleteData(file);
                 } catch (StorageException e) {
-                    e.printStackTrace();
+                    Logger.getLogger(DocumentManagerBean.class.getName()).log(Level.INFO, null, e);
                 }
             }
 
@@ -1137,7 +1136,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
                         try {
                             dataManager.deleteData(file);
                         } catch (StorageException e) {
-                            e.printStackTrace();
+                            Logger.getLogger(DocumentManagerBean.class.getName()).log(Level.INFO, null, e);
                         }
                     }
                     esIndexer.delete(doc);
@@ -1196,7 +1195,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
                 try {
                     dataManager.deleteData(file);
                 } catch (StorageException e) {
-                    e.printStackTrace();
+                    Logger.getLogger(DocumentManagerBean.class.getName()).log(Level.INFO, null, e);
                 }
 
                 esIndexer.delete(doc);
@@ -1223,7 +1222,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             try {
                 dataManager.deleteData(file);
             } catch (StorageException e) {
-                e.printStackTrace();
+                Logger.getLogger(DocumentManagerBean.class.getName()).log(Level.INFO, null, e);
             }
         }
     }
@@ -1246,7 +1245,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             try {
                 dataManager.deleteData(file);
             } catch (StorageException e) {
-                e.printStackTrace();
+                Logger.getLogger(DocumentManagerBean.class.getName()).log(Level.INFO, null, e);
             }
             document.removeFile(file);
             binDAO.removeBinaryResource(file);
@@ -1268,7 +1267,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         try {
             dataManager.deleteData(file);
         } catch (StorageException e) {
-            e.printStackTrace();
+            Logger.getLogger(DocumentManagerBean.class.getName()).log(Level.INFO, null, e);
         }
         template.removeFile(file);
         binDAO.removeBinaryResource(file);
@@ -1381,7 +1380,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
                 try {
                     dataManager.copyData(sourceFile, targetFile);
                 } catch (StorageException e) {
-                    e.printStackTrace();
+                    Logger.getLogger(DocumentManagerBean.class.getName()).log(Level.INFO, null, e);
                 }
             }
 
@@ -1520,10 +1519,10 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
     @RolesAllowed("users")
     @Override
-    public User[] getReachableUsers() throws AccountNotFoundException {
+    public User[] getReachableUsers(String workspaceId) throws AccountNotFoundException {
         String callerLogin = ctx.getCallerPrincipal().getName();
         Account account = new AccountDAO(em).loadAccount(callerLogin);
-        return new UserDAO(new Locale(account.getLanguage()), em).findReachableUsersForCaller(callerLogin);
+        return new UserDAO(new Locale(account.getLanguage()), em).findReachableUsersForCaller(callerLogin, workspaceId);
     }
 
     @RolesAllowed("users")

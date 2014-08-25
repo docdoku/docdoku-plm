@@ -50,9 +50,11 @@ public class FileConverter {
 
     @PostConstruct
     private void init() {
+        InputStream inputStream = null;
         try {
             Properties properties = new Properties();
-            properties.load(FileConverter.class.getResourceAsStream(PROPERTIES_FILE));
+            inputStream = FileConverter.class.getResourceAsStream(PROPERTIES_FILE);
+            properties.load(inputStream);
             String ooHome = properties.getProperty(OO_HOME_KEY);
             int ooPort = Integer.parseInt(properties.getProperty(OO_PORT_KEY));
             officeManager = new DefaultOfficeManagerConfiguration()
@@ -63,6 +65,10 @@ public class FileConverter {
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, null, e);
             throw new RuntimeException(e);
+        } finally {
+            try{if(inputStream!=null){
+                inputStream.close();
+            }}catch (IOException ignored){}
         }
     }
 

@@ -23,8 +23,8 @@ package com.docdoku.client.actions;
 import com.docdoku.client.localization.I18N;
 import com.docdoku.client.ui.ExplorerFrame;
 import com.docdoku.client.ui.login.LoginFrame;
-import com.docdoku.core.services.UserNotActiveException;
-import com.docdoku.core.services.UserNotFoundException;
+import com.docdoku.core.exceptions.UserNotActiveException;
+import com.docdoku.core.exceptions.UserNotFoundException;
 
 import javax.swing.*;
 import javax.xml.ws.WebServiceException;
@@ -63,7 +63,6 @@ public class LoginActionListener implements ActionListener {
             String workspace = pSource.getWorkspace();
             MainController.getInstance().login(login, new String(password), workspace);
         } catch (WebServiceException pWSEx) {
-            Throwable cause=pWSEx.getCause();
             JOptionPane.showMessageDialog(pSource, I18N.BUNDLE.getString("Error_authentication"),
                     I18N.BUNDLE.getString("Error_title"), JOptionPane.ERROR_MESSAGE);
             return false;

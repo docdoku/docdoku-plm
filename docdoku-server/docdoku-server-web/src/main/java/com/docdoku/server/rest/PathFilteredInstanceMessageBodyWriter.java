@@ -44,8 +44,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  *
@@ -93,8 +91,8 @@ public class PathFilteredInstanceMessageBodyWriter implements MessageBodyWriter<
     private void generateInstanceStreamWithGlobalMatrix(PartUsageLink usageLink, Matrix4d matrix, List<Integer> filteredPath, ConfigSpec cs, List<Integer> instanceIds, JsonGenerator jg) {
 
         PartMaster pm = usageLink.getComponent();
-        PartIteration partI = cs.filterConfigSpec(pm);
-        PartRevision partR = partI.getPartRevision();
+        PartRevision partR = pm.getLastRevision();
+        PartIteration partI = partR.getLastIteration();
 
         String partIterationId = new StringBuilder().append(pm.getNumber())
                 .append("-")

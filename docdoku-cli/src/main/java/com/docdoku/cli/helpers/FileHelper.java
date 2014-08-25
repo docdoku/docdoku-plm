@@ -172,7 +172,7 @@ public class FileHelper {
         conn.setRequestProperty("Authorization", "Basic " + new String(encoded, "US-ASCII"));
         conn.setRequestMethod("HEAD");
         conn.connect();
-        int code = conn.getResponseCode();
+        //conn.getResponseCode();
     }
 
     public static String getPartURL(URL serverURL, PartIterationKey pPart, String pRemoteFileName) throws UnsupportedEncodingException, MalformedURLException {

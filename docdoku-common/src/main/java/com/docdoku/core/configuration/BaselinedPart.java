@@ -22,10 +22,14 @@ package com.docdoku.core.configuration;
 
 
 import com.docdoku.core.product.PartIteration;
+import com.docdoku.core.product.PartIterationKey;
+import com.docdoku.core.product.PartRevision;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Class link that gathers a part collection and a given part iteration.
@@ -38,7 +42,8 @@ import java.io.Serializable;
 @Table(name="BASELINEDPART")
 @Entity
 @NamedQueries({
-        @NamedQuery(name="BaselinedPart.existBaselinedPart", query="SELECT count(b) FROM BaselinedPart b WHERE b.baselinedPartKey.targetPartNumber = :partNumber AND b.baselinedPartKey.targetPartWorkspaceId = :workspaceId")
+        @NamedQuery(name="BaselinedPart.existBaselinedPart", query="SELECT count(b) FROM BaselinedPart b WHERE b.baselinedPartKey.targetPartNumber = :partNumber AND b.baselinedPartKey.targetPartWorkspaceId = :workspaceId"),
+        @NamedQuery(name="BaselinedPart.findByReference", query="SELECT b FROM BaselinedPart b WHERE b.baselinedPartKey.targetPartNumber LIKE :id")
 })
 public class BaselinedPart implements Serializable{
 
@@ -90,18 +95,23 @@ public class BaselinedPart implements Serializable{
         return targetPart;
     }
 
-    public String getTargetPartVersion() {
-        return targetPartVersion;
-    }
+    public String getTargetPartVersion() {return targetPartVersion;}
+    public void setTargetPartVersion(String targetPartVersion) {this.targetPartVersion = targetPartVersion;}
 
+    public String getTargetPartNumber() {return targetPart.getPartNumber();}
 
-    public String getTargetPartNumber() {
-        return targetPart.getPartNumber();
-    }
+    public int getTargetPartIteration() {return targetPartIteration;}
+    public void setTargetPartIteration(int targetPartIteration) {this.targetPartIteration = targetPartIteration;}
 
-
-    public int getTargetPartIteration() {
-        return targetPartIteration;
+    public List<PartIterationKey> getReleasedIterations(){
+        List<PartIterationKey> partIterationKeyList = new ArrayList<>();
+        for(PartRevision partRevision: targetPart.getPartRevision().getPartMaster().getPartRevisions()){
+            if(partRevision.isReleased()){
+                PartIterationKey partIterationKey = new PartIterationKey(partRevision.getWorkspaceId(),partRevision.getPartNumber(),partRevision.getVersion(),partRevision.getLastIteration().getIteration());
+                partIterationKeyList.add(partIterationKey);
+            }
+        }
+        return partIterationKeyList;
     }
 
     @Override
@@ -111,10 +121,7 @@ public class BaselinedPart implements Serializable{
 
         BaselinedPart that = (BaselinedPart) o;
 
-        if (baselinedPartKey != null ? !baselinedPartKey.equals(that.baselinedPartKey) : that.baselinedPartKey != null)
-            return false;
-
-        return true;
+        return !(baselinedPartKey != null ? !baselinedPartKey.equals(that.baselinedPartKey) : that.baselinedPartKey != null);
     }
 
     @Override

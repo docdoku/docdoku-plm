@@ -1,11 +1,11 @@
 <td><input type="checkbox"/></td>
 <td class="part_number">
     {{#isCheckout}}
-        {{#isCheckoutByConnectedUser}}<i class="icon-pencil"></i>{{/isCheckoutByConnectedUser}}
-        {{^isCheckoutByConnectedUser}}<i class="icon-lock"></i>{{/isCheckoutByConnectedUser}}
+        {{#isCheckoutByConnectedUser}}<i class="fa fa-pencil"></i>{{/isCheckoutByConnectedUser}}
+        {{^isCheckoutByConnectedUser}}<i class="fa fa-lock"></i>{{/isCheckoutByConnectedUser}}
     {{/isCheckout}}
     {{^isCheckout}}
-        <i class="icon-eye-open"></i>
+        <i class="fa fa-eye"></i>
     {{/isCheckout}}
     {{getNumber}}
 </td>
