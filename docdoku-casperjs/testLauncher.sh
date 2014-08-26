@@ -56,5 +56,5 @@ casperjs test   --pre=pre.js \
                 tests/product-management/product/productCreation.js \
                 tests/product-management/product/productDeletion.js \
                 tests/product-management/part/partDeletion.js \
-                tests/document-management/folderCreation.js \
-                tests/document-management/folderDeletion.js
+                tests/document-management/folder/folderCreation.js \
+                tests/document-management/folder/folderDeletion.js
