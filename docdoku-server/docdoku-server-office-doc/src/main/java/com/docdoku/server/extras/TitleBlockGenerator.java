@@ -26,10 +26,7 @@ import com.docdoku.core.meta.Tag;
 import com.docdoku.core.workflow.Activity;
 import com.docdoku.core.workflow.Task;
 import com.itextpdf.text.*;
-import com.itextpdf.text.pdf.PdfCopy;
-import com.itextpdf.text.pdf.PdfPCell;
-import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.*;
 import com.itextpdf.text.pdf.draw.LineSeparator;
 
 import javax.xml.bind.DatatypeConverter;
@@ -121,7 +118,7 @@ public class TitleBlockGenerator {
         String currentIteration = String.valueOf(docI.getIteration());
 
         Document document = new Document();
-//        PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(blockTitleFile));
+        PdfWriter.getInstance(document, new FileOutputStream(blockTitleFile));
         document.open();
 
         // Main paragraph
