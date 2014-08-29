@@ -15,7 +15,7 @@
 </composite:interface>
 
 <composite:implementation>
-    <h:form style="#{cc.attrs.formStyle}">
+    <h:form id="menu_form" prependId="false" style="#{cc.attrs.formStyle}">
         <div id="header" class="navbar navbar-fixed-top">
             <!-- Collapse Button For Responsive View -->
             <a class="btn btn-navbar" id="collapseButton" data-toggle="collapse" data-target=".nav-collapse">
@@ -25,10 +25,11 @@
             </a>
 
             <div class="navbar-inner">
-                <a id="brand-title" class="brand" href="/">
-                    <img id="brand-logo" alt="docdoku_plm" src="/images/plm_logo2.png"/>
-                    <span id="brand-name">DocDoku<strong>PLM</strong></span>
-                </a>
+
+            <a href="/" id="brand-title" class="brand">
+                <h:graphicImage id="brand-logo" alt="docdoku_plm" library="default" name="images/plm_logo2.png" />
+                <span id="brand-name">DocDoku<strong>PLM</strong></span>
+            </a>
 
                 <div class="nav-collapse collapse">
                     <div class="container-fluid">

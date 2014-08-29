@@ -50,16 +50,8 @@ define(function() {
         },
 
         fetchAll:function(){
-	        var _this = this;
             this.$el.empty();
-            this.collection.fetch({
-	            reset:true,
-                success: function() {
-					_this.componentViews.each(function(component){
-						component.onChangeCheckbox();
-	                });
-	            }
-            });
+            this.collection.fetch({reset:true});
         }
 
     });
@@ -68,41 +60,71 @@ define(function() {
 
         tagName:'li',
 
-        template: _.template("<input type='checkbox' <%if (checkedAtInit) {%>checked='checked'<%}%>><a><label class='checkbox'><%= number %> (<%= amount %>)</label></a><i class='fa fa-file'></i>"),
+        template: _.template('<%if(!isLock && !isForbidden) {%>' +
+	                            '<input type="checkbox" class="available" <%if (checkedAtInit) {%>checked="checked"<%}%>>' +
+	                         '<%} else {%>' +
+	                            '<input type="checkbox" disabled <%if (checkedAtInit) {%>checked="checked"<%}%>>' +
+	                         '<%}%>' +
+	                         '<a><label class="checkbox"><%= number %> (<%= amount %>)</label></a>' +
+	                         '<%if(isForbidden) {%> ' +
+	                            '<i class="fa fa-file"></i>' +
+	                            '<i class="fa fa-ban"></i>' +
+	                         '<%} else if(isCheckoutByAnotherUser) {%> ' +
+	                            '<i class="fa fa-file openModal"></i>' +
+	                            '<i class="fa fa-lock"></i>' +
+	                         '<%} else if(isCheckoutByConnectedUser) {%> ' +
+	                            '<i class="fa fa-file openModal"></i>' +
+	                            '<i class="fa fa-pencil"></i>' +
+	                         '<%} else{%> ' +
+	                            '<i class="fa fa-file openModal"></i>' +
+	                            '<i class="fa fa-eye"></i>' +
+	                         '<%}%>'),
 
         events: {
-            "click a": "onComponentSelected",
-            "change input:first": "onChangeCheckbox",
-            "click .fa-file:first": "onEditPart"
+            'click a': 'onComponentSelected',
+            'change input:first': 'onChangeCheckbox',
+            'click .openModal:first': 'onEditPart'
         },
 
         initialize: function() {
-            _.bindAll(this, ["onChangeCheckbox"]);
+            _.bindAll(this, ['onChangeCheckbox']);
             this.listenTo(this.options.resultPathCollection, 'reset', this.onAllResultPathAdded);
-            this.$el.attr("id","path_"+String(this.model.attributes.path));
+            this.$el.attr('id','path_'+String(this.model.attributes.path));
+	        this.isForbidden= this.model.isForbidden();
+	        this.isLock=this.model.isCheckout() && this.model.isLastIteration(this.model.get('iteration')) && !this.model.isCheckoutByConnectedUser();
         },
 
         onAllResultPathAdded: function() {
             if (this.options.resultPathCollection.contains(this.model.attributes.partUsageLinkId)) {
-                this.$el.addClass("resultPath");
+                this.$el.addClass('resultPath');
             } else {
-                this.$el.removeClass("resultPath");
+                this.$el.removeClass('resultPath');
             }
         },
 
         onChangeCheckbox: function(event) {
-            //external node
-            if (event.target.checked){
-                App.instancesManager.loadComponent(this.model);
-            }
-            else{
-                App.instancesManager.unLoadComponent(this.model);
-            }
+	        if (event.target.checked){
+		        App.instancesManager.loadComponent(this.model);
+	        }
+	        else{
+		        App.instancesManager.unLoadComponent(this.model);
+	        }
         },
 
         render: function() {
+			var data = {
+				number: this.model.attributes.number,
+				amount: this.model.getAmount(),
+				checkedAtInit: this.options.checkedAtInit,
+				isForbidden: this.model.isForbidden(),
+				isCheckoutByAnotherUser: this.model.isCheckout() && !this.model.isCheckoutByConnectedUser(),
+				isCheckoutByConnectedUser: this.model.isCheckout() && this.model.isCheckoutByConnectedUser(),
+				isLock: this.isLock
+			};
 
-            this.$el.html(this.template({number: this.model.attributes.number, amount: this.model.getAmount(), checkedAtInit: this.options.checkedAtInit}));
+            this.$el.html(this.template(data));
+
+	        this.input = this.$('>input');
 
             if (this.options.isLast) {
                 this.$el.addClass('last');
@@ -115,13 +137,13 @@ define(function() {
 
         onComponentSelected: function(e) {
             e.stopPropagation();
-            this.$(">a").trigger("component_selected", [this.model,this.$el]);
+            this.$('>a').trigger('component_selected', [this.model,this.$el]);
         },
 
         onEditPart:function(){
             var self = this;
             require(['models/part','common-objects/views/part/part_modal_view'], function(Part,PartModalView) {
-                var model = new Part({partKey:self.model.getNumber() + "-" + self.model.getVersion()});
+                var model = new Part({partKey:self.model.getNumber() + '-' + self.model.getVersion()});
                 model.fetch().success(function(){
                     new PartModalView({
                         model: model
@@ -139,49 +161,90 @@ define(function() {
 
         className: 'expandable',
 
-        template: _.template("<div class=\"hitarea expandable-hitarea\"></div><input type='checkbox' <%if (checkedAtInit) {%>checked='checked'<%}%>><a><label class='checkbox isNode'><%= number %> (<%= amount %>)</label></a><i class='fa fa-file'></i>"),
+        template: _.template('<%if(!isLock && !isForbidden) {%>' +
+	                            '<div class="hitarea expandable-hitarea"></div>' +
+						        '<input type="checkbox" class="available" <%if (checkedAtInit) {%>checked="checked"<%}%>>' +
+					         '<%} else {%>' +
+						        '<input type="checkbox" disabled <%if (checkedAtInit) {%>checked="checked"<%}%>>' +
+					         '<%}%>' +
+	                         '<a><label class="checkbox isNode"><%= number %> (<%= amount %>)</label></a>' +
+					         '<%if(isForbidden) {%> ' +
+	                            '<i class="fa fa-file"></i>' +
+					            '<i class="fa fa-ban"></i>' +
+	                         '<%} else if(isCheckoutByAnotherUser) {%> ' +
+	                            '<i class="fa fa-file openModal"></i>' +
+	                            '<i class="fa fa-lock"></i>' +
+					         '<%} else if(isCheckoutByConnectedUser) {%> ' +
+	                            '<i class="fa fa-file openModal"></i>' +
+	                            '<i class="fa fa-pencil"></i> ' +
+					         '<%} else{%> ' +
+	                            '<i class="fa fa-file openModal"></i>' +
+	                            '<i class="fa fa-eye"></i> ' +
+	                         '<%}%>'),
 
         events: {
-            "click a:first": "onComponentSelected",
-            "click .fa-file:first": "onEditPart",
-            "change input:first": "onChangeCheckbox",
-            "click .hitarea:first": "onToggleExpand"
+            'click a:first': 'onComponentSelected',
+            'click .openModal:first': 'onEditPart',
+            'change input:first': 'onChangeCheckbox',
+            'click .hitarea:first': 'onToggleExpand'
         },
 
         initialize: function() {
             this.isExpanded = false;
-            _.bindAll(this, ["onChangeCheckbox"]);
+            _.bindAll(this, ['onChangeCheckbox']);
             this.listenTo(this.options.resultPathCollection, 'reset', this.onAllResultPathAdded);
-            this.$el.attr("id","path_"+String(this.model.attributes.path));
+            this.$el.attr('id','path_'+String(this.model.attributes.path));
+	        this.isForbidden= this.model.isForbidden();
+		    this.isLock= this.model.isCheckout() && this.model.isLastIteration(this.model.get('iteration')) && !this.model.isCheckoutByConnectedUser();
         },
 
         onAllResultPathAdded: function() {
             if (this.options.resultPathCollection.contains(this.model.attributes.partUsageLinkId)) {
-                this.$el.addClass("resultPath");
+                this.$el.addClass('resultPath');
             } else {
-                this.$el.removeClass("resultPath");
+                this.$el.removeClass('resultPath');
             }
         },
 
         onChangeCheckbox: function(event) {
-            if (event.target.checked){
-                App.instancesManager.loadComponent(this.model);
-            }
-            else{
-                App.instancesManager.unLoadComponent(this.model);
-            }
+	        if (event) {
+		        if (event.target.checked) {
+			        App.instancesManager.loadComponent(this.model);
+		        }
+		        else {
+			        App.instancesManager.unLoadComponent(this.model);
+		        }
+	        }
         },
 
         render: function() {
 
-            this.$el.html(this.template({number: this.model.attributes.number, amount: this.model.getAmount(), checkedAtInit: this.options.checkedAtInit}));
+	        var data = {
+		        number: this.model.attributes.number,
+		        amount: this.model.getAmount(),
+		        checkedAtInit: this.options.checkedAtInit,
+		        isForbidden: this.isForbidden,
+		        isCheckoutByAnotherUser: this.model.isCheckout() && !this.model.isCheckoutByConnectedUser(),
+		        isCheckoutByConnectedUser: this.model.isCheckout() && this.model.isCheckoutByConnectedUser(),
+		        isLock: this.isLock
+	        };
 
-            this.input = this.$(">input");
+	        this.$el.html(this.template(data));
+
+            this.input = this.$('>input');
+
+	        if(data.isForbidden || data.isLock){
+		        this.$el.removeClass('expandable');
+	        }
 
             if (this.options.isLast) {
-                this.$el.addClass('lastExpandable')
-                    .children('.hitarea')
-                    .addClass('lastExpandable-hitarea');
+	            if(data.isForbidden || data.isLock){
+					this.$el.addClass('last');
+	            }else{
+		            this.$el.addClass('lastExpandable')
+			            .children('.hitarea')
+			            .addClass('lastExpandable-hitarea');
+	            }
             }
 
             this.onAllResultPathAdded();
@@ -195,7 +258,6 @@ define(function() {
         },
 
         onToggleExpand: function() {
-            this.toggleExpand();
             if (!this.hasChildrenNodes()) {
                 new ComponentViews.Components({
                     collection: this.model.children,
@@ -204,40 +266,43 @@ define(function() {
                     resultPathCollection: this.options.resultPathCollection
                 });
             }
+	        this.toggleExpand();
         },
 
         toggleExpand: function() {
-            this.$el.toggleClass('expandable collapsable')
-                .children('.hitarea')
-                .toggleClass('expandable-hitarea collapsable-hitarea');
+	        if(!this.isForbidden && !this.isLock) {
+		        this.$el.toggleClass('expandable collapsable')
+			        .children('.hitarea')
+			        .toggleClass('expandable-hitarea collapsable-hitarea');
 
-            if (this.options.isLast) {
-                this.$el.toggleClass('lastExpandable lastCollapsable')
-                    .children('.hitarea')
-                    .toggleClass('lastExpandable-hitarea lastCollapsable-hitarea');
-            }
+		        if (this.options.isLast) {
+			        this.$el.toggleClass('lastExpandable lastCollapsable')
+				        .children('.hitarea')
+				        .toggleClass('lastExpandable-hitarea lastCollapsable-hitarea');
+		        }
 
-            this.isExpanded = !this.isExpanded;
+	            this.isExpanded = !this.isExpanded;
 
-            var childrenNode = this.$(">ul");
+	            var childrenNode = this.$('>ul');
 
-            if(this.isExpanded){
-                childrenNode.show();
-                expandedViews.push(this.model.attributes.number);
-            }else{
-                childrenNode.hide();
-                expandedViews = _(expandedViews).without(this.model.attributes.number);
-            }
+	            if(this.isExpanded){
+	                childrenNode.show();
+	                expandedViews.push(this.model.attributes.number);
+	            }else{
+	                childrenNode.hide();
+	                expandedViews = _(expandedViews).without(this.model.attributes.number);
+	            }
+	        }
         },
 
         hasChildrenNodes: function() {
-            var childrenNode = this.$(">ul");
+            var childrenNode = this.$('>ul');
             return childrenNode.length > 0;
         },
 
         onComponentSelected: function(e) {
             e.stopPropagation();
-            this.$(">a").trigger("component_selected", [this.model,this.$el]);
+            this.$('>a').trigger('component_selected', [this.model,this.$el]);
         },
 
         isChecked: function() {
@@ -247,7 +312,7 @@ define(function() {
         onEditPart:function(){
             var self = this;
             require(['models/part','common-objects/views/part/part_modal_view'], function(Part,PartModalView) {
-                var model = new Part({partKey:self.model.getNumber() + "-" + self.model.getVersion()});
+                var model = new Part({partKey:self.model.getNumber() + '-' + self.model.getVersion()});
                 model.fetch().success(function(){
                     new PartModalView({
                         model: model

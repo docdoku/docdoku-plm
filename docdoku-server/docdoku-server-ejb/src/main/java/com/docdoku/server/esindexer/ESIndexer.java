@@ -86,6 +86,7 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.text.MessageFormat;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -100,23 +101,21 @@ import java.util.zip.ZipInputStream;
 public class ESIndexer{
     private final static String CONF_PROPERTIES="/com/docdoku/server/esindexer/conf.properties";
     private final static Properties CONF = new Properties();
-    private final static String SEARCH_ERROR_LOG_1 = "Search can't be done. The ElasticSearch server doesn't seem to respond.";
-    private static final String DELETE_ERROR_LOG_1 = "Delete index can't be done. The ElasticSearch server doesn't seem to respond.";
-    private static final String DELETE_ERROR_LOG_2 = "Multiple deleting index can't be done. The ElasticSearch server doesn't seem to respond.";
-    private static final Object DELETE_ERROR_LOG_3 = "Multiple deleting index meet some problem: ";
-    private static final String INDEX_CREATION_ERROR_LOG_1 = "Index can't be create. The following index name already exist: ";
-    private static final String INDEX_CREATION_ERROR_LOG_2 = "Index can't be create. The following index name is invalid: ";
-    private static final String INDEX_ERROR_LOG_1 = "Indexing can't be done. The ElasticSearch server doesn't seem to respond.";
-    private static final String INDEX_ERROR_LOG_2 = "Multiple indexing can't be done. The ElasticSearch server doesn't seem to respond.";
-    private static final String INDEX_ERROR_LOG_3 = "Multiple indexing meet some problem: ";
-    private static final String INDEX_ERROR_LOG_4 = "Nothing to index";
-    private static final String MAIL_ERROR_LOG_1 = "Application can't send a ElasticSearch response mail";
+    private final static String I18N_CONF="com.docdoku.core.i18n.LocalStrings";
+    private final static Logger LOGGER = Logger.getLogger(ESIndexer.class.getName());
 
     static{
+        InputStream inputStream = null;
         try {
-            CONF.load(ESIndexer.class.getResourceAsStream(CONF_PROPERTIES));
+            inputStream = ESIndexer.class.getResourceAsStream(CONF_PROPERTIES);
+            CONF.load(inputStream);
         } catch (IOException e) {
-            e.printStackTrace();
+            String message = ResourceBundle.getBundle(I18N_CONF,Locale.getDefault()).getString("ES_ConfWarning1");
+            Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING,message,e);
+        } finally {
+            try{if(inputStream!=null){
+                    inputStream.close();
+            }}catch (IOException ignored){}
         }
     }
 
@@ -156,10 +155,12 @@ public class ESIndexer{
                    .setSettings(ImmutableSettings.settingsBuilder().put("number_of_shards", CONF.getProperty("number_of_shards")).put("number_of_replicas", CONF.getProperty("number_of_replicas")))
                    .execute().actionGet();
         }catch (IndexAlreadyExistsException e){
-            Logger.getLogger(ESIndexer.class.getName()).log(Level.INFO, INDEX_CREATION_ERROR_LOG_1+pIndex);
+            String logMessage = ResourceBundle.getBundle(I18N_CONF,Locale.getDefault()).getString("ES_IndexCreationError1");
+            LOGGER.log(Level.INFO, logMessage+" "+pIndex);
             throw new ESIndexAlreadyExistsException(Locale.getDefault());
         }catch(InvalidIndexNameException e){
-            Logger.getLogger(ESIndexer.class.getName()).log(Level.INFO, INDEX_CREATION_ERROR_LOG_2+pIndex);
+            String logMessage = ResourceBundle.getBundle(I18N_CONF,Locale.getDefault()).getString("ES_IndexCreationError2");
+            LOGGER.log(Level.INFO, logMessage+" "+pIndex);
             throw new ESIndexNamingException(Locale.getDefault());
         }
     }
@@ -175,7 +176,7 @@ public class ESIndexer{
             createIndex(formatIndexName(workspaceId), client);
             client.close();
         }catch (NoNodeAvailableException e){
-            Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, "Error on creating: "+workspaceId+" index");
+            LOGGER.log(Level.WARNING, "Error on creating: "+workspaceId+" index");
         }
     }
 
@@ -184,12 +185,9 @@ public class ESIndexer{
             Client client = createClient();
             deleteIndex(formatIndexName(workspaceId), client);
             client.close();
-        } catch (ESServerException e) {
-            e.printStackTrace();
         }catch (NoNodeAvailableException e){
-            Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, "Error on deleting: "+workspaceId+" index");
-        }
-
+            LOGGER.log(Level.WARNING, "Error on deleting: "+workspaceId+" index");
+        } catch (ESServerException ignored) {}
     }
 
     /**
@@ -230,10 +228,12 @@ public class ESIndexer{
             client.close();
 
             if (bulkResponse.hasFailures()) {
-                Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, INDEX_ERROR_LOG_3+" \n "+bulkResponse.buildFailureMessage());
+                String logMessage = ResourceBundle.getBundle(I18N_CONF,Locale.getDefault()).getString("ES_IndexError3");
+                LOGGER.log(Level.WARNING, logMessage+" \n "+bulkResponse.buildFailureMessage());
             }
         }catch (ESServerException | NoNodeAvailableException e){
-            Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, INDEX_ERROR_LOG_2);
+            String logMessage = ResourceBundle.getBundle(I18N_CONF,Locale.getDefault()).getString("ES_IndexError2");
+            LOGGER.log(Level.WARNING, logMessage);
         }
     }
 
@@ -278,19 +278,20 @@ public class ESIndexer{
             }
         }catch (ActionRequestValidationException e){
             hasSuccess = false;
-            failureMessage = INDEX_ERROR_LOG_4;
+            failureMessage = ResourceBundle.getBundle(I18N_CONF,Locale.getDefault()).getString("ES_IndexError4");
         }catch (ESIndexNamingException e){
             hasSuccess = false;
-            failureMessage = INDEX_CREATION_ERROR_LOG_2 + workspaceId ;
+            failureMessage = ResourceBundle.getBundle(I18N_CONF,Locale.getDefault()).getString("ES_IndexCreationError2") +" "+ workspaceId ;
         }catch (ESServerException | NoNodeAvailableException e){
             hasSuccess = false;
-            failureMessage = INDEX_ERROR_LOG_2;
+            failureMessage = ResourceBundle.getBundle(I18N_CONF,Locale.getDefault()).getString("ES_IndexError2");
         }
 
         if(!hasSuccess){
-            Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, INDEX_ERROR_LOG_3+" \n "+failureMessage);
+            String logMessage = ResourceBundle.getBundle(I18N_CONF,Locale.getDefault()).getString("ES_IndexError3");
+            LOGGER.log(Level.WARNING, logMessage + " \n " + failureMessage);
         }else{
-            Logger.getLogger(ESIndexer.class.getName()).log(Level.INFO, "The workspace "+workspaceId+" have been indexed");
+            LOGGER.log(Level.INFO, "The workspace " + workspaceId + " have been indexed");
         }
 
         try{
@@ -298,7 +299,8 @@ public class ESIndexer{
             Account account = userManager.getAccount(login);
             mailer.sendIndexerResult(account,workspaceId,hasSuccess,failureMessage);
         }catch (AccountNotFoundException e){
-            Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, MAIL_ERROR_LOG_1);
+            String logMessage = ResourceBundle.getBundle(I18N_CONF,Locale.getDefault()).getString("ES_MailError1");
+            LOGGER.log(Level.WARNING, logMessage);
         }
     }
 
@@ -320,9 +322,11 @@ public class ESIndexer{
                                      .actionGet();
             client.close();
         }catch (NoNodeAvailableException | ESServerException e){
-            Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, "Error on : "+doc+" indexing\n Cause by : "+ INDEX_ERROR_LOG_1);
+            String logMessage = ResourceBundle.getBundle(I18N_CONF,Locale.getDefault()).getString("ES_IndexError1");
+            LOGGER.log(Level.WARNING, "Error on : "+doc+" indexing\n Cause by : "+logMessage);
         }catch(ESIndexNamingException e){
-            Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, "Error on : "+doc+" indexing\n Cause by : "+ INDEX_CREATION_ERROR_LOG_2 + workspaceId);
+            String logMessage = ResourceBundle.getBundle(I18N_CONF,Locale.getDefault()).getString("ES_IndexCreationError2");
+            LOGGER.log(Level.WARNING, "Error on : "+doc+" indexing\n Cause by : "+logMessage+" "+workspaceId);
         }
     }
 
@@ -344,9 +348,11 @@ public class ESIndexer{
                               .actionGet();
             client.close();
         }catch (NoNodeAvailableException | ESServerException e){
-            Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, "Error on : "+part+" indexing\n Cause by : "+ INDEX_ERROR_LOG_1);
+            String logMessage = ResourceBundle.getBundle(I18N_CONF,Locale.getDefault()).getString("ES_IndexError1");
+            LOGGER.log(Level.WARNING, "Error on : " + part + " indexing\n Cause by : " + logMessage);
         }catch(ESIndexNamingException e){
-            Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, "Error on : "+part+" indexing\n Cause by : "+ INDEX_CREATION_ERROR_LOG_2 + workspaceId);
+            String logMessage = ResourceBundle.getBundle(I18N_CONF,Locale.getDefault()).getString("ES_IndexCreationError2");
+            LOGGER.log(Level.WARNING, "Error on : " + part + " indexing\n Cause by : " + logMessage + " " + workspaceId);
         }
     }
 
@@ -362,7 +368,8 @@ public class ESIndexer{
                                      .actionGet();
             client.close();
         }catch (NoNodeAvailableException | ESServerException e){
-            Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, DELETE_ERROR_LOG_1);
+            String logMessage = ResourceBundle.getBundle(I18N_CONF,Locale.getDefault()).getString("ES_DeleteError1");
+            LOGGER.log(Level.WARNING, logMessage);
         }
     }
 
@@ -378,7 +385,8 @@ public class ESIndexer{
                                        .actionGet();
             client.close();
         }catch (NoNodeAvailableException | ESServerException e){
-            Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, DELETE_ERROR_LOG_1);
+            String logMessage = ResourceBundle.getBundle(I18N_CONF,Locale.getDefault()).getString("ES_DeleteError1");
+            LOGGER.log(Level.WARNING, logMessage);
         }
     }
 
@@ -397,8 +405,9 @@ public class ESIndexer{
             client.close();
         }catch (ESServerException | NoNodeAvailableException e){
             hasSuccess = false;
-            failureMessage = DELETE_ERROR_LOG_2;
-            Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, DELETE_ERROR_LOG_3+" \n "+failureMessage);
+            failureMessage = ResourceBundle.getBundle(I18N_CONF,Locale.getDefault()).getString("ES_DeleteError2");
+            String logMessage = ResourceBundle.getBundle(I18N_CONF,Locale.getDefault()).getString("ES_DeleteError3");
+            LOGGER.log(Level.WARNING, logMessage + " \n " + failureMessage);
         }
 
         try{
@@ -406,7 +415,8 @@ public class ESIndexer{
             Account account = userManager.getAccount(login);
             mailer.sendIndexerResult(account,workspaceId,hasSuccess,failureMessage);
         }catch (AccountNotFoundException e){
-            Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, MAIL_ERROR_LOG_1);
+            String logMessage = ResourceBundle.getBundle(I18N_CONF,Locale.getDefault()).getString("ES_MailError1");
+            LOGGER.log(Level.WARNING, logMessage);
         }
     }
 
@@ -434,14 +444,17 @@ public class ESIndexer{
                         listOfDocuments.add(docR);
                     }
                 } catch (DocumentRevisionNotFoundException e) {
-                    e.printStackTrace();                                                                                // TODO DocNotfound error
+                    String logMessage = ResourceBundle.getBundle(I18N_CONF,Locale.getDefault()).getString("DocumentRevisionNotFoundException");
+                    logMessage = MessageFormat.format(logMessage,docRevisionKey.getDocumentMasterId(),docRevisionKey.getVersion());
+                    LOGGER.log(Level.INFO, logMessage);
                 }
             }
 
             client.close();
             return listOfDocuments;
         }catch (NoNodeAvailableException e){
-            Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, SEARCH_ERROR_LOG_1);
+            String logMessage = ResourceBundle.getBundle(I18N_CONF,Locale.getDefault()).getString("ES_SearchError1");
+            LOGGER.log(Level.WARNING, logMessage);
             throw new ESServerException(Locale.getDefault(), "IndexerServerException1");
         }
     }
@@ -468,13 +481,16 @@ public class ESIndexer{
                         listOfParts.add(new PartRevisionDAO(em).loadPartR(partRevisionKey));
                     }
                 } catch (PartRevisionNotFoundException e) {
-                    e.printStackTrace();                                                                                    // TODO PartNotFound error
+                    String logMessage = ResourceBundle.getBundle(I18N_CONF,Locale.getDefault()).getString("PartRevisionNotFoundException");
+                    logMessage = MessageFormat.format(logMessage,partRevisionKey.getPartMaster().toString(),partRevisionKey.getVersion());
+                    LOGGER.log(Level.INFO, logMessage);
                 }
             }
             client.close();
             return listOfParts;
         }catch (NoNodeAvailableException e){
-            Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, SEARCH_ERROR_LOG_1);
+            String logMessage = ResourceBundle.getBundle(I18N_CONF,Locale.getDefault()).getString("ES_SearchError1");
+            LOGGER.log(Level.WARNING, logMessage);
             throw new ESServerException(Locale.getDefault(), "IndexerServerException1");
         }
 
@@ -507,7 +523,9 @@ public class ESIndexer{
                         ret.add(docR);
                     }
                 } catch (DocumentRevisionNotFoundException e) {
-                    e.printStackTrace();                                                                                    // TODO DocNotFound error
+                    String logMessage = ResourceBundle.getBundle(I18N_CONF,Locale.getDefault()).getString("DocumentRevisionNotFoundException");
+                    logMessage = MessageFormat.format(logMessage,documentRevisionKey.getDocumentMasterId(),documentRevisionKey.getVersion());
+                    LOGGER.log(Level.INFO, logMessage);
                 }
             }
 
@@ -522,13 +540,16 @@ public class ESIndexer{
                         ret.add(new PartRevisionDAO(em).loadPartR(partRevisionKey));
                     }
                 } catch (PartRevisionNotFoundException e) {
-                    e.printStackTrace();                                                                                // TODO PartNotFound error
+                    String logMessage = ResourceBundle.getBundle(I18N_CONF,Locale.getDefault()).getString("PartRevisionNotFoundException");
+                    logMessage = MessageFormat.format(logMessage,partRevisionKey.getPartMaster().toString(),partRevisionKey.getVersion());
+                    LOGGER.log(Level.INFO, logMessage);
                 }
             }
             client.close();
             return ret;
         }catch (NoNodeAvailableException e){
-            Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, SEARCH_ERROR_LOG_1);
+            String logMessage = ResourceBundle.getBundle(I18N_CONF,Locale.getDefault()).getString("ES_SearchError1");
+            LOGGER.log(Level.WARNING, logMessage);
             throw new ESServerException(Locale.getDefault(), "IndexerServerException1");
         }
     }
@@ -564,7 +585,9 @@ public class ESIndexer{
                                 listOfDocuments.add(docR);
                             }
                         } catch (DocumentRevisionNotFoundException e) {
-                            e.printStackTrace();                                                                        //TODO DocumentNotFound Error
+                            String logMessage = ResourceBundle.getBundle(I18N_CONF,Locale.getDefault()).getString("DocumentRevisionNotFoundException");
+                            logMessage = MessageFormat.format(logMessage,documentRevisionKey.getDocumentMasterId(),documentRevisionKey.getVersion());
+                            LOGGER.log(Level.INFO, logMessage);
                         }
                     }
                 }
@@ -572,7 +595,8 @@ public class ESIndexer{
             client.close();
             return listOfDocuments;
         }catch (NoNodeAvailableException e){
-            Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, SEARCH_ERROR_LOG_1);
+            String logMessage = ResourceBundle.getBundle(I18N_CONF,Locale.getDefault()).getString("ES_SearchError1");
+            LOGGER.log(Level.WARNING, logMessage);
             throw new ESServerException(Locale.getDefault(), "IndexerServerException1");
         }
     }
@@ -607,7 +631,9 @@ public class ESIndexer{
                                 listOfParts.add(new PartRevisionDAO(em).loadPartR(partRevisionKey));
                             }
                         } catch (PartRevisionNotFoundException e) {
-                            e.printStackTrace();                                                                            // TODO PartNotFound Error
+                            String logMessage = ResourceBundle.getBundle(I18N_CONF,Locale.getDefault()).getString("PartRevisionNotFoundException");
+                            logMessage = MessageFormat.format(logMessage,partRevisionKey.getPartMaster().toString(),partRevisionKey.getVersion());
+                            LOGGER.log(Level.INFO, logMessage);
                         }
                     }
                 }
@@ -616,20 +642,11 @@ public class ESIndexer{
             client.close();
             return listOfParts;
         }catch (NoNodeAvailableException e){
-            Logger.getLogger(ESIndexer.class.getName()).log(Level.WARNING, SEARCH_ERROR_LOG_1);
+            String logMessage = ResourceBundle.getBundle(I18N_CONF,Locale.getDefault()).getString("ES_SearchError1");
+            LOGGER.log(Level.WARNING, logMessage);
             throw new ESServerException(Locale.getDefault(), "IndexerServerException1");
         }
     }
-
-    /**
-     * Search a part
-     * @param query PartSearchQuery
-     * @return List of part revision
-     */
-    /*
-    public List<Object> searchInAllWorkspace(SearchQuery query) throws ESServerException {                                                       // TODO Optimize it
-        return null; //TODO
-    }*/
 
     /**
      * Get the Index request for a documentIteration in ElasticSearch Cluster
@@ -872,9 +889,7 @@ public class ESIndexer{
                                     setField(tmp,"name",bin.getName(),1f);
                                     setField(tmp, "content", streamToString(bin.getFullName(), dataManager.getBinaryResourceInputStream(bin)), 1f);
                                 tmp.endObject();
-                            } catch (StorageException e) {
-//                                e.printStackTrace();
-                            }
+                            } catch (StorageException ignored) {}
                         }
                         tmp.endObject();
                     }

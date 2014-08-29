@@ -38,6 +38,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 @AllFileConverter
@@ -59,7 +61,7 @@ public class AllFileConverterImpl implements CADConverter{
                 try {
                     return dataManager.getBinaryResourceInputStream(cadFile);
                 } catch (StorageException e) {
-                    e.printStackTrace();
+                    Logger.getLogger(AllFileConverterImpl.class.getName()).log(Level.WARNING, null, e);
                     throw new IOException(e);
                 }
             }
@@ -78,8 +80,10 @@ public class AllFileConverterImpl implements CADConverter{
                 daeOutputStream = dataManager.getBinaryResourceOutputStream(daeBinaryResource);
                 Files.copy(tmpCadFile, daeOutputStream);
             } finally {
-                daeOutputStream.flush();
-                daeOutputStream.close();
+                if(daeOutputStream!=null){
+                    daeOutputStream.flush();
+                    daeOutputStream.close();
+                }
             }
             return tmpCadFile;
         }

@@ -39,6 +39,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 @CatiaFileConverter
@@ -55,10 +57,16 @@ public class CatiaFileConverterImpl implements CADConverter{
     private IDataManagerLocal dataManager;
 
     static{
+        InputStream inputStream = null;
         try {
-            CONF.load(CatiaFileConverterImpl.class.getResourceAsStream(CONF_PROPERTIES));
+            inputStream = CatiaFileConverterImpl.class.getResourceAsStream(CONF_PROPERTIES);
+            CONF.load(inputStream);
         } catch (IOException e) {
-            e.printStackTrace();
+            Logger.getLogger(CatiaFileConverterImpl.class.getName()).log(Level.WARNING, null, e);
+        } finally {try{
+                if(inputStream!=null){
+                    inputStream.close();
+            }}catch (IOException ignored){}
         }
     }
 
@@ -81,7 +89,7 @@ public class CatiaFileConverterImpl implements CADConverter{
                     try {
                         return dataManager.getBinaryResourceInputStream(cadFile);
                     } catch (StorageException e) {
-                        e.printStackTrace();
+                        Logger.getLogger(CatiaFileConverterImpl.class.getName()).log(Level.INFO, null, e);
                         throw new IOException(e);
                     }
                 }
@@ -109,8 +117,10 @@ public class CatiaFileConverterImpl implements CADConverter{
                         daeOutputStream = dataManager.getBinaryResourceOutputStream(jsBinaryResource);
                         Files.copy(tmpDAEFile, daeOutputStream);
                     } finally {
-                        daeOutputStream.flush();
-                        daeOutputStream.close();
+                        if(daeOutputStream!=null){
+                            daeOutputStream.flush();
+                            daeOutputStream.close();
+                        }
                     }
                 }
             }
@@ -118,8 +128,7 @@ public class CatiaFileConverterImpl implements CADConverter{
             return daeFile;
 
         } catch(Exception e){
-
-            e.printStackTrace();
+            Logger.getLogger(CatiaFileConverterImpl.class.getName()).log(Level.INFO, null, e);
             return null;
         }
         finally {

@@ -123,7 +123,6 @@ public class UploadDownloadServlet extends HttpServlet {
 
             // Prepare some variables to process the response
             long lastModified = binaryResource.getLastModified().getTime();
-            long ifModified = pRequest.getDateHeader("If-Modified-Since");
             long length = binaryResource.getContentLength();
             String fileName = binaryResource.getName();
             String eTag = fileName + "_" + length + "_" + lastModified;
@@ -136,7 +135,7 @@ public class UploadDownloadServlet extends HttpServlet {
             fileName = URLEncoder.encode(fileName, "UTF-8");
             
             // Set content type
-            String contentType = "";
+            String contentType;
             if (isSubResource) {
                 contentType = FileTypeMap.getDefaultFileTypeMap().getContentType(subResourceVirtualPath);
             } else {
@@ -189,7 +188,7 @@ public class UploadDownloadServlet extends HttpServlet {
             // Validate and process range -------------------------------------------------------------
 
             Range full = new Range(0, length - 1, length);
-            List<Range> ranges = new ArrayList<Range>();
+            List<Range> ranges = new ArrayList<>();
 
             // Validate and process Range and If-Range headers.
             String range = pRequest.getHeader("Range");
@@ -246,7 +245,7 @@ public class UploadDownloadServlet extends HttpServlet {
 
             // Prepare and initialize response --------------------------------------------------------
 
-            boolean acceptsGzip = false;
+            boolean acceptsGzip;
             String disposition = "inline";
 
             // If client accepts gzip for the resource :
@@ -283,7 +282,7 @@ public class UploadDownloadServlet extends HttpServlet {
 
 
             // Prepare the input stream  --------------------------------------------------------
-            InputStream binaryContentInputStream = null;
+            InputStream binaryContentInputStream;
 
             if (isSubResource) {
                 binaryContentInputStream = dataManager.getBinarySubResourceInputStream(binaryResource, subResourceVirtualPath);
@@ -299,9 +298,9 @@ public class UploadDownloadServlet extends HttpServlet {
             OutputStream httpOut = pResponse.getOutputStream();
 
             try{
-
+                Range r;
                 if (ranges.isEmpty() || ranges.get(0) == full) {
-                    Range r = full;
+                    r = full;
                     pResponse.setContentType(contentType);
                     pResponse.setHeader("Content-Range", "bytes " + r.start + "-" + r.end + "/" + r.total);
                     if (content) {
@@ -315,8 +314,7 @@ public class UploadDownloadServlet extends HttpServlet {
                     }
 
                 } else if (ranges.size() == 1) {
-
-                    Range r = ranges.get(0);
+                    r = ranges.get(0);
                     pResponse.setContentType(contentType);
                     pResponse.setHeader("Content-Range", "bytes " + r.start + "-" + r.end + "/" + r.total);
                     pResponse.setContentLength((int) r.length);
@@ -337,15 +335,15 @@ public class UploadDownloadServlet extends HttpServlet {
                         ServletOutputStream sos = (ServletOutputStream) httpOut;
 
                         // Copy multi part range.
-                        for (Range r : ranges) {
+                        for (Range range1 : ranges) {
                             // Add multipart boundary and header fields for every range.
                             sos.println();
                             sos.println("--" + MULTIPART_BOUNDARY);
                             sos.println("Content-Type: " + contentType);
-                            sos.println("Content-Range: bytes " + r.start + "-" + r.end + "/" + r.total);
+                            sos.println("Content-Range: bytes " + range1.start + "-" + range1.end + "/" + range1.total);
 
                             // Copy single part range of multi part range.
-                            copy(binaryContentInputStream, httpOut, r.start, r.length,length);
+                            copy(binaryContentInputStream, httpOut, range1.start, range1.length,length);
                         }
 
                         // End with multipart boundary.
@@ -386,36 +384,46 @@ public class UploadDownloadServlet extends HttpServlet {
         PartMasterTemplateKey partTemplatePK = null;
         BinaryResource binaryResource = null;
 
+        ServletException rollbackFailException = null;
         try {
             utx.begin();
-            if (elementType.equals("documents")) {
-                String docMId = URLDecoder.decode(pathInfos[offset + 2], "UTF-8");
-                String docMVersion = pathInfos[offset + 3];
-                int iteration = Integer.parseInt(pathInfos[offset + 4]);
-                fileName = URLDecoder.decode(pathInfos[offset + 5], "UTF-8");
-                docPK = new DocumentIterationKey(workspaceId, docMId, docMVersion, iteration);
-                binaryResource = documentService.saveFileInDocument(docPK, fileName, 0);
-            } else if (elementType.equals("document-templates")) {
-                String templateID = URLDecoder.decode(pathInfos[offset + 2], "UTF-8");
-                fileName = URLDecoder.decode(pathInfos[offset + 3], "UTF-8");
-                templatePK = new DocumentMasterTemplateKey(workspaceId, templateID);
-                binaryResource = documentService.saveFileInTemplate(templatePK, fileName, 0);
-            } else if (elementType.equals("part-templates")) {
-                String templateID = URLDecoder.decode(pathInfos[offset + 2], "UTF-8");
-                fileName = URLDecoder.decode(pathInfos[offset + 3], "UTF-8");
-                partTemplatePK = new PartMasterTemplateKey(workspaceId, templateID);
-                binaryResource = productService.saveFileInTemplate(partTemplatePK, fileName, 0);
-            } else if (elementType.equals("parts")) {
-                String partMNumber = URLDecoder.decode(pathInfos[offset + 2], "UTF-8");
-                String partMVersion = pathInfos[offset + 3];
-                int iteration = Integer.parseInt(pathInfos[offset + 4]);
-                partPK = new PartIterationKey(workspaceId, partMNumber, partMVersion, iteration);
-                if (pathInfos.length==offset + 7) {
-                    fileName = URLDecoder.decode(pathInfos[offset + 6], "UTF-8");
-                    binaryResource = productService.saveNativeCADInPartIteration(partPK, fileName, 0);
-                } else {
+            switch (elementType) {
+                case "documents": {
+                    String docMId = URLDecoder.decode(pathInfos[offset + 2], "UTF-8");
+                    String docMVersion = pathInfos[offset + 3];
+                    int iteration = Integer.parseInt(pathInfos[offset + 4]);
                     fileName = URLDecoder.decode(pathInfos[offset + 5], "UTF-8");
-                    binaryResource = productService.saveFileInPartIteration(partPK, fileName, 0);
+                    docPK = new DocumentIterationKey(workspaceId, docMId, docMVersion, iteration);
+                    binaryResource = documentService.saveFileInDocument(docPK, fileName, 0);
+                    break;
+                }
+                case "document-templates": {
+                    String templateID = URLDecoder.decode(pathInfos[offset + 2], "UTF-8");
+                    fileName = URLDecoder.decode(pathInfos[offset + 3], "UTF-8");
+                    templatePK = new DocumentMasterTemplateKey(workspaceId, templateID);
+                    binaryResource = documentService.saveFileInTemplate(templatePK, fileName, 0);
+                    break;
+                }
+                case "part-templates": {
+                    String templateID = URLDecoder.decode(pathInfos[offset + 2], "UTF-8");
+                    fileName = URLDecoder.decode(pathInfos[offset + 3], "UTF-8");
+                    partTemplatePK = new PartMasterTemplateKey(workspaceId, templateID);
+                    binaryResource = productService.saveFileInTemplate(partTemplatePK, fileName, 0);
+                    break;
+                }
+                case "parts": {
+                    String partMNumber = URLDecoder.decode(pathInfos[offset + 2], "UTF-8");
+                    String partMVersion = pathInfos[offset + 3];
+                    int iteration = Integer.parseInt(pathInfos[offset + 4]);
+                    partPK = new PartIterationKey(workspaceId, partMNumber, partMVersion, iteration);
+                    if (pathInfos.length == offset + 7) {
+                        fileName = URLDecoder.decode(pathInfos[offset + 6], "UTF-8");
+                        binaryResource = productService.saveNativeCADInPartIteration(partPK, fileName, 0);
+                    } else {
+                        fileName = URLDecoder.decode(pathInfos[offset + 5], "UTF-8");
+                        binaryResource = productService.saveFileInPartIteration(partPK, fileName, 0);
+                    }
+                    break;
                 }
             }
 
@@ -434,6 +442,7 @@ public class UploadDownloadServlet extends HttpServlet {
                     outputStream.flush();
                     outputStream.close();
                 }
+                // TODO Check "Why use a loop if you break systematically?"
                 break;
             }
 
@@ -441,21 +450,26 @@ public class UploadDownloadServlet extends HttpServlet {
             * TODO: this next bloc update the content length on the BinaryResource,
             * It would be more readable to use a dedicated method
             */
-            if (elementType.equals("documents")) {
-                documentService.saveFileInDocument(docPK, fileName, length);
-                documentPostUploaderService.process(binaryResource);
-            } else if (elementType.equals("document-templates")) {
-                documentService.saveFileInTemplate(templatePK, fileName, length);
-            } else if (elementType.equals("part-templates")) {
-                productService.saveFileInTemplate(partTemplatePK, fileName, length);
-            } else if (elementType.equals("parts")) {
-                if (pathInfos.length==offset + 7) {
-                    productService.saveNativeCADInPartIteration(partPK, fileName, length);
-                    //TODO: Should be put in a DocumentPostUploader plugin
-                    converterService.convertCADFileToJSON(partPK, binaryResource);
-                } else {
-                    productService.saveFileInPartIteration(partPK, fileName, length);
-                }
+            switch (elementType) {
+                case "documents":
+                    documentService.saveFileInDocument(docPK, fileName, length);
+                    documentPostUploaderService.process(binaryResource);
+                    break;
+                case "document-templates":
+                    documentService.saveFileInTemplate(templatePK, fileName, length);
+                    break;
+                case "part-templates":
+                    productService.saveFileInTemplate(partTemplatePK, fileName, length);
+                    break;
+                case "parts":
+                    if (pathInfos.length == offset + 7) {
+                        productService.saveNativeCADInPartIteration(partPK, fileName, length);
+                        //TODO: Should be put in a DocumentPostUploader plugin
+                        converterService.convertCADFileToJSON(partPK, binaryResource);
+                    } else {
+                        productService.saveFileInPartIteration(partPK, fileName, length);
+                    }
+                    break;
             }
             utx.commit();
         } catch (Exception pEx) {
@@ -472,8 +486,11 @@ public class UploadDownloadServlet extends HttpServlet {
                 }
             } catch (Exception pRBEx) {
                 pResponse.setHeader("Reason-Phrase", pRBEx.getMessage());
-                throw new ServletException("Rollback failed.", pRBEx);
+                rollbackFailException = new ServletException("Rollback failed.", pRBEx);
             }
+        }
+        if(rollbackFailException != null){
+            throw rollbackFailException;
         }
     }
 

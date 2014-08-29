@@ -36,6 +36,8 @@ import javax.inject.Inject;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Stateless(name="DocumentViewerBean")
 public class DocumentViewerBean implements IDocumentViewerManagerLocal {
@@ -59,7 +61,7 @@ public class DocumentViewerBean implements IDocumentViewerManagerLocal {
                 template = getDefaultTemplate(binaryResource,uuid);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.getLogger(DocumentViewerBean.class.getName()).log(Level.INFO, null, e);
             template = new StringBuilder().append("<p>").append("Can't render ").append(binaryResource.getName()).append("</p>").toString();
         }
 

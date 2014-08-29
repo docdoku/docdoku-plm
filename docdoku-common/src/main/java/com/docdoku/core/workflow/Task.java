@@ -21,7 +21,6 @@
 package com.docdoku.core.workflow;
 
 import com.docdoku.core.common.User;
-import com.docdoku.core.util.Tools;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlTransient;
@@ -285,14 +284,14 @@ public class Task implements Serializable, Cloneable {
     }
 
     @Override
-    public boolean equals(Object pObj) {
-        if (this == pObj) {
-            return true;
-        }
-        if (!(pObj instanceof Task))
-            return false;
-        Task task = (Task) pObj;
-        return ((Tools.safeEquals(task.activity, activity)) && (task.num == num));
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Task task = (Task) o;
+
+        return num == task.num
+                && (activity != null ? activity.equals(task.activity) : task.activity == null);
     }
 
     @Override
@@ -306,7 +305,7 @@ public class Task implements Serializable, Cloneable {
      */
     @Override
     public Task clone() {
-        Task clone = null;
+        Task clone;
         try {
             clone = (Task) super.clone();
         } catch (CloneNotSupportedException e) {

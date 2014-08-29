@@ -19,7 +19,6 @@
  */
 package com.docdoku.server.jsf.actions;
 
-import com.docdoku.core.common.Account;
 import com.docdoku.core.exceptions.AccountAlreadyExistsException;
 import com.docdoku.core.exceptions.CreationException;
 import com.docdoku.core.services.IUserManagerLocal;
@@ -50,7 +49,7 @@ public class RegistrationBean {
         HttpServletRequest request = (HttpServletRequest) (FacesContext.getCurrentInstance().getExternalContext().getRequest());
         String language = FacesContext.getCurrentInstance().getViewRoot().getLocale().getLanguage();
 
-        Account account = userManager.createAccount(login, name, email, language, password);
+        userManager.createAccount(login, name, email, language, password);
         request.login(login, password);
 
         HttpSession session = request.getSession();

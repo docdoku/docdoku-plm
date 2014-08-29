@@ -48,6 +48,8 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Stateless
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
@@ -64,6 +66,7 @@ public class PartResource {
     public PartResource() {
     }
 
+    private final static Logger LOGGER = Logger.getLogger(PartResource.class.getName());
     private Mapper mapper;
 
     @PostConstruct
@@ -80,6 +83,7 @@ public class PartResource {
             PartDTO partDTO = Tools.mapPartRevisionToPartDTO(partRevision);
             return Response.ok(partDTO).build();
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -98,7 +102,7 @@ public class PartResource {
             List<InstanceAttributeDTO> instanceAttributes = data.getInstanceAttributes();
             List<InstanceAttribute> attributes = null;
             if (instanceAttributes != null) {
-                attributes = createInstanceAttribute(instanceAttributes);
+                attributes = createInstanceAttributes(instanceAttributes);
             }
 
             List<PartUsageLinkDTO> components = data.getComponents();
@@ -120,6 +124,7 @@ public class PartResource {
             PartDTO partDTO = Tools.mapPartRevisionToPartDTO(partRevisionUpdated);
             return Response.ok(partDTO).build();
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -135,6 +140,7 @@ public class PartResource {
             productService.checkInPart(revisionKey);
             return Response.ok().build();
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -149,6 +155,7 @@ public class PartResource {
             productService.checkOutPart(revisionKey);
             return Response.ok().build();
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -163,6 +170,7 @@ public class PartResource {
             productService.undoCheckOutPart(revisionKey);
             return Response.ok().build();
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -176,7 +184,7 @@ public class PartResource {
 
             PartRevisionKey revisionKey = new PartRevisionKey(workspaceId,partNumber,partVersion);
 
-            if (acl.getGroupEntries().size() > 0 || acl.getUserEntries().size() > 0) {
+            if (!acl.getGroupEntries().isEmpty() || !acl.getUserEntries().isEmpty()) {
 
                 Map<String,String> userEntries = new HashMap<>();
                 Map<String,String> groupEntries = new HashMap<>();
@@ -196,6 +204,7 @@ public class PartResource {
             }
             return Response.ok().build();
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -246,6 +255,7 @@ public class PartResource {
             return Response.ok().build();
 
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -260,6 +270,7 @@ public class PartResource {
             productService.releasePartRevision(revisionKey);
             return Response.ok().build();
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -272,6 +283,7 @@ public class PartResource {
             productService.deletePartRevision(revisionKey);
             return Response.ok().build();
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -286,6 +298,7 @@ public class PartResource {
             return Response.ok().build();
 
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -304,6 +317,7 @@ public class PartResource {
             SharedPartDTO sharedPartDTO = mapper.map(sharedPart,SharedPartDTO.class);
             return Response.ok().entity(sharedPartDTO).build();
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
 
@@ -318,6 +332,7 @@ public class PartResource {
             partRevision.setPublicShared(true);
             return Response.ok().build();
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
 
@@ -332,6 +347,7 @@ public class PartResource {
             partRevision.setPublicShared(false);
             return Response.ok().build();
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -356,59 +372,48 @@ public class PartResource {
             return abortedWorkflowsDTO;
 
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
 
-    private List<InstanceAttribute> createInstanceAttribute(List<InstanceAttributeDTO> dtos) {
+    private List<InstanceAttribute> createInstanceAttributes(List<InstanceAttributeDTO> dtos) {
         if (dtos == null) {
-            return null;
+            return new ArrayList<>();
         }
         List<InstanceAttribute> data = new ArrayList<>();
         for (InstanceAttributeDTO dto : dtos) {
-            data.add(createObject(dto));
+            data.add(createInstanceAttribute(dto));
         }
 
         return data;
     }
 
-    private InstanceAttribute createObject(InstanceAttributeDTO dto) {
-        if (dto.getType().equals(InstanceAttributeDTO.Type.BOOLEAN)) {
-            InstanceBooleanAttribute attr = new InstanceBooleanAttribute();
-            attr.setName(dto.getName());
-            attr.setBooleanValue(Boolean.parseBoolean(dto.getValue()));
-            return attr;
-        } else if (dto.getType().equals(InstanceAttributeDTO.Type.TEXT)) {
-            InstanceTextAttribute attr = new InstanceTextAttribute();
-            attr.setName(dto.getName());
-            attr.setTextValue(dto.getValue());
-            return attr;
-        } else if (dto.getType().equals(InstanceAttributeDTO.Type.NUMBER)) {
-            InstanceNumberAttribute attr = new InstanceNumberAttribute();
-            attr.setName(dto.getName());
-            try{
-                attr.setNumberValue(Float.parseFloat(dto.getValue()));
-            }catch(NumberFormatException ex){
-                attr.setNumberValue(0);
-            }
-            return attr;
-        } else if (dto.getType().equals(InstanceAttributeDTO.Type.DATE)) {
-            InstanceDateAttribute attr = new InstanceDateAttribute();
-            attr.setName(dto.getName());
-            try{
-                attr.setDateValue(new Date(Long.parseLong(dto.getValue())));
-            }catch(NumberFormatException ex){
-                attr.setDateValue(null);
-            }
-            return attr;
-        } else if (dto.getType().equals(InstanceAttributeDTO.Type.URL)) {
-            InstanceURLAttribute attr = new InstanceURLAttribute();
-            attr.setName(dto.getName());
-            attr.setUrlValue(dto.getValue());
-            return attr;
-        } else {
-            throw new IllegalArgumentException("Instance attribute not supported");
+    private InstanceAttribute createInstanceAttribute(InstanceAttributeDTO dto) {
+        InstanceAttribute attr;
+        switch (dto.getType()){
+            case BOOLEAN :
+                attr = new InstanceBooleanAttribute();
+                break;
+            case TEXT :
+                attr = new InstanceTextAttribute();
+                break;
+            case NUMBER :
+                attr = new InstanceNumberAttribute();
+                break;
+            case DATE :
+                attr = new InstanceDateAttribute();
+                break;
+            case URL :
+                attr = new InstanceURLAttribute();
+                break;
+            default:
+                throw new IllegalArgumentException("Instance attribute not supported");
         }
+
+        attr.setName(dto.getName());
+        attr.setValue(dto.getValue());
+        return attr;
     }
 
 

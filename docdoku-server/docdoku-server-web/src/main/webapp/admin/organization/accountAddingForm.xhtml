@@ -13,9 +13,9 @@
         <ui:define name="content">
             <f:loadBundle var="i18nManageAccounts" basename="com.docdoku.server.localization.admin.manageAccounts_resource"/>
             <ol class="breadcrumb">
-                <li><a href="/faces/admin/organization/organizationMenu.xhtml">#{i18nTemplate['toplinks.organization']}</a>
+                <li><h:link value="#{i18nTemplate['toplinks.organization']}" outcome="/admin/organization/organizationMenu.xhtml" />
                     <span class="divider">/</span></li>
-                <li><a href="/faces/admin/organization/manageAccounts.xhtml">#{i18nManageAccounts['main.title']}</a>
+                <li><h:link value="#{i18nManageAccounts['main.title']}" outcome="/admin/organization/manageAccounts.xhtml" />
                     <span class="divider">/</span></li>
                 <li class="active">#{i18nAccountAddingForm['main.title']}</li>
             </ol>

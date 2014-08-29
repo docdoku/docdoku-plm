@@ -15,9 +15,11 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.util.Properties;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
@@ -34,10 +36,16 @@ public class GCMSenderBean implements IGCMSenderLocal {
     private IUserManagerLocal userManager;
 
     static {
+        InputStream inputStream = null;
         try {
-            CONF.load(GCMSenderBean.class.getResourceAsStream(CONF_PROPERTIES));
+            inputStream = GCMSenderBean.class.getResourceAsStream(CONF_PROPERTIES);
+            CONF.load(inputStream);
         } catch (IOException e) {
-            e.printStackTrace();
+            Logger.getLogger(GCMSenderBean.class.getName()).log(Level.WARNING, null, e);
+        } finally {
+            try{if(inputStream!=null){
+                    inputStream.close();
+            }}catch (IOException ignored){}
         }
     }
 

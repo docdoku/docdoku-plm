@@ -105,6 +105,10 @@ public class WorkflowDTO implements Serializable, Comparable<WorkflowDTO> {
                 && !(abortedDate != null ? !abortedDate.equals(that.abortedDate) : that.abortedDate != null)
                 && !(activities != null ? !activities.equals(that.activities) : that.activities != null)
                 && !(finalLifeCycleState != null ? !finalLifeCycleState.equals(that.finalLifeCycleState) : that.finalLifeCycleState != null);
+    }
 
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 }

@@ -25,11 +25,11 @@ import com.docdoku.core.configuration.Baseline;
 import java.io.Serializable;
 
 public class BaselineCreationDTO implements Serializable {
-
     private String name;
-    private Baseline.BaselineType type;
     private String configurationItemId;
+    private Baseline.BaselineType type;
     private String description;
+    private String creationMessage;
 
     public String getName() {
         return name;
@@ -50,4 +50,7 @@ public class BaselineCreationDTO implements Serializable {
 
     public String getConfigurationItemId() {return configurationItemId;}
     public void setConfigurationItemId(String configurationItemId) {this.configurationItemId = configurationItemId;}
+
+    public String getCreationMessage() {return creationMessage;}
+    public void setCreationMessage(String creationMessage) {this.creationMessage = creationMessage;}
 }

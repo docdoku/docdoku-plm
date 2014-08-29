@@ -45,23 +45,13 @@ public class InstanceURLAttribute extends InstanceAttribute {
     }
 
     @Override
-    public Object getValue() {
-        return urlValue;
-    }
-
+    public Object getValue() {return urlValue;}
     @Override
     public boolean setValue(Object pValue) {
         urlValue = pValue + "";
         return true;
     }
 
-    public String getUrlValue() {
-        return urlValue;
-    }
-
-    public void setUrlValue(String urlValue) {
-        this.urlValue = urlValue;
-    }
-
-    
+    public String getUrlValue() {return urlValue;}
+    public void setUrlValue(String urlValue) {this.urlValue = urlValue;}
 }

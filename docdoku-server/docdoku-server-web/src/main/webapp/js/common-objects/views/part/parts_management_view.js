@@ -1,8 +1,9 @@
+'use strict';
 define (
     [
-        "text!common-objects/templates/part/parts_management.html",
-        "common-objects/views/part/component_view",
-        "i18n!localization/nls/product-structure-strings"
+        'text!common-objects/templates/part/parts_management.html',
+        'common-objects/views/part/component_view',
+        'i18n!localization/nls/product-structure-strings'
     ],
     function(template,ComponentView,i18n) {
         var PartsManagementView = Backbone.View.extend({
@@ -10,24 +11,24 @@ define (
             template: Mustache.compile(template),
 
             events: {
-                "click #createPart": "createPart"
+                'click #createPart': 'createPart'
             },
 
             initialize: function() {
-                this.collection.bind("add",this.addPart,this);
-                this.collection.bind("remove",this.removePart,this);
+                this.collection.bind('add',this.addPart,this);
+                this.collection.bind('remove',this.removePart,this);
             },
 
             bindTypeahead: function() {
 
                 var that = this;
 
-                this.$("#existingParts").typeahead({
+                this.$('#existingParts').typeahead({
                     source: function(query, process) {
                         $.getJSON('/api/workspaces/' + APP_CONFIG.workspaceId + '/parts/numbers?q=' + query, function(data) {
                             var partNumbers = [];
                             _(data).each(function(d){
-                                if((!that.model.getNumber()) || (that.model.getNumber() != d.partNumber)){
+                                if((!that.model.getNumber()) || (that.model.getNumber() !== d.partNumber)){
                                     partNumbers.push(d.partNumber);
                                 }
                             });
@@ -79,14 +80,14 @@ define (
                     return view.model === modelToRemove;
                 })[0];
 
-                if(viewToRemove != null){
+                if(viewToRemove !== null){
                     this.componentViews = _(this.componentViews).without(viewToRemove);
                     viewToRemove.remove();
                 }
             },
 
             addPart: function(model) {
-                model.set("cadInstances",[{tx:0,ty:0,tz:0,rx:0,ry:0,rz:0}]);
+                model.set('cadInstances',[{tx:0,ty:0,tz:0,rx:0,ry:0,rz:0}]);
                 this.addView(model);
             },
 
@@ -94,7 +95,7 @@ define (
                 var newPart = {
                     amount : 1,
                     component:{
-                        description:"",
+                        description:'',
                         standardPart:false
                     },
                     cadInstances:[

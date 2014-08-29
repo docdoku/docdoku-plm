@@ -12,7 +12,7 @@
         </ui:define>
         <ui:define name="content">
             <ol class="breadcrumb">
-                <li><a href="/faces/admin/workspace/workspacesMenu.xhtml">#{i18nTemplate['toplinks.admin']}</a>
+                <li><h:link value="#{i18nTemplate['toplinks.admin']}" outcome="/admin/workspace/workspacesMenu.xhtml" />
                     <span class="divider">/</span></li>
                 <li class="active">#{i18nWorkspaceIndexed['main.title']}</li>
             </ol>

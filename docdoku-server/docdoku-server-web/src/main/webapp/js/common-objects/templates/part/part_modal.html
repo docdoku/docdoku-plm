@@ -6,7 +6,8 @@
             {{^part.isCheckoutByConnectedUser}}<i class="fa fa-lock"></i>{{/part.isCheckoutByConnectedUser}}
         {{/part.isCheckout}}
         {{^part.isCheckout}}
-            <i class="fa fa-eye"></i>
+            {{#part.isReleased}}<i class="fa fa-check"></i>{{/part.isReleased}}
+            {{^part.isReleased}}<i class="fa fa-eye"></i>{{/part.isReleased}}
         {{/part.isCheckout}}
 
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>

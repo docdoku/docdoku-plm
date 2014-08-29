@@ -9,9 +9,9 @@ var App = {
     setDebug:function(state){
         App.debug = state;
         if(state){
-            $("body").addClass("debug");
+            $('body').addClass('debug');
         }else{
-            $("body").removeClass("debug");
+            $('body').removeClass('debug');
         }
     },
 
@@ -25,17 +25,6 @@ var App = {
         volRating: 0.7
     },
 
-    /*
-     SceneOptions: {
-     postProcessing: false,
-     grid: false,
-     zoomSpeed: 2,
-     rotateSpeed: 1,
-     panSpeed: 2,
-     cameraNear: 10,
-     cameraFar: 5E5,
-     defaultCameraPosition: {x: -1000, y: 800, z: 1100}
-     }*/
 
     SceneOptions: {
         grid: false,
@@ -51,12 +40,12 @@ var App = {
 
 };
 
-define(["dmu/SceneManager","dmu/InstancesManager"],
+define(['dmu/SceneManager','dmu/InstancesManager'],
     function (SceneManager,InstancesManager) {
 
         var FrameAppView = Backbone.View.extend({
 
-            el: $("#product-content"),
+        el: $('#product-content'),
 
             initialize: function() {
 

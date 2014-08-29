@@ -27,6 +27,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ScormManifestParser {
 
@@ -48,7 +50,7 @@ public class ScormManifestParser {
 
     public ScormManifestParser(InputStream manifestStream) {
         this.manifestStream = manifestStream;
-        this.activitiesByIdentifierRef = new HashMap<String, ScormActivity>();
+        this.activitiesByIdentifierRef = new HashMap<>();
     }
 
     public ScormOrganization parse() throws FileNotFoundException, XMLStreamException {
@@ -65,7 +67,7 @@ public class ScormManifestParser {
         try {
             this.manifestStream.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            Logger.getLogger(ScormManifestParser.class.getName()).log(Level.INFO, null, e);
         }
 
         return scormOrganization;

@@ -1,6 +1,6 @@
 /*global casper,__utils__,authUrl,login,pass,userInfoUrl,deleteDocumentUrl,deleteFolderUrl,deleteProductUrl,deletePartUrl,Tools*/
 'use strict';
-casper.test.begin('User can login',1, function LoginAndCleaningTest(){
+casper.test.begin('User should login',1, function LoginAndCleaningTest(){
     var exists;
 
     /**
@@ -32,8 +32,8 @@ casper.test.begin('User can login',1, function LoginAndCleaningTest(){
      */
     casper.then(function fillLoginForm(){
         this.fill('form[id="login_form"]', {
-            'login_form:login': login,
-            'login_form:password': pass
+            'login_form-login': login,
+            'login_form-password': pass
         }, false);
     });
 

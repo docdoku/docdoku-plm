@@ -33,6 +33,8 @@ import javax.ejb.EJB;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ScormViewerImpl implements DocumentViewer {
 
@@ -44,7 +46,7 @@ public class ScormViewerImpl implements DocumentViewer {
         try {
             return dataManager.exists(binaryResource, ScormUtil.getScormSubResourceVirtualPath(ScormUtil.IMS_MANIFEST));
         } catch (StorageException e) {
-            e.printStackTrace();
+            Logger.getLogger(ScormViewerImpl.class.getName()).log(Level.INFO, null, e);
             return false;
         }
     }
@@ -61,9 +63,7 @@ public class ScormViewerImpl implements DocumentViewer {
         StringWriter templateWriter = new StringWriter();
         mustache.execute(templateWriter, scopes).flush();
 
-        String html = ViewerUtils.getViewerTemplate(dataManager, scormResource, uuid, templateWriter.toString());
-
-        return html;
+        return ViewerUtils.getViewerTemplate(dataManager, scormResource, uuid, templateWriter.toString());
     }
 
 }

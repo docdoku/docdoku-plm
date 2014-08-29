@@ -68,7 +68,7 @@ define(
 
 	        this.editMode = this.model.isCheckoutByConnectedUser() && this.iterations.isLast(this.iteration);
 	        data.editMode = this.editMode ;
-	        data.isLockedMode = this.model.isCheckout() && !this.model.isCheckoutByConnectedUser();
+	        data.isLockedMode = !this.iteration || (this.model.isCheckout() && this.model.isLastIteration(this.iteration.getIteration()) && !this.model.isCheckoutByConnectedUser());
 
             if (this.model.hasIterations()) {
                 var hasNextIteration = this.iterations.hasNextIteration(this.iteration);

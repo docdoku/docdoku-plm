@@ -11,8 +11,8 @@
         #{i18nPM['title']} - #{workspaceID}
     </ui:define>
     <ui:define name="styles">
-        <link rel="stylesheet" type="text/css" href="#{request.contextPath}/css/jquery.treeview.css?v=${BUILD_NUMBER}"/>
-        <link rel="stylesheet/less" type="text/css" href="#{request.contextPath}/less/product-management/style.less?v=${BUILD_NUMBER}"/>
+        <link rel="stylesheet" type="text/css" href="#{request.contextPath}/css/jquery.treeview.css"/>
+        <link rel="stylesheet/less" type="text/css" href="#{request.contextPath}/less/product-management/style.less"/>
     </ui:define>
     <ui:define name="scripts">
 
@@ -41,8 +41,7 @@
                         i18n: {
                             locale: "#{request.locale.language}"
                         }
-                    },
-                    urlArgs:"v=${BUILD_NUMBER}"
+                    }
                 });
 
                 require(["app","router"],function(AppView, Router){
@@ -61,7 +60,7 @@
         </script>
     </ui:define>
     <ui:define name="header">
-        <em:header moduleName="product-management" moduleIcon="fa fa-briefcase" moduleTranslate="#{i18nTemplate['toplinks.product']}" breadcrumbDept="2" />
+        <em:header id="h" moduleName="product-management" moduleIcon="fa fa-briefcase" moduleTranslate="#{i18nTemplate['toplinks.product']}" breadcrumbDept="2" />
     </ui:define>
     <ui:define name="content"></ui:define>
 </ui:composition>

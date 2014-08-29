@@ -25,7 +25,6 @@ import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.exceptions.SharedEntityNotFoundException;
-import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.product.Geometry;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartRevision;
@@ -48,6 +47,8 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 /**
@@ -97,7 +98,7 @@ public class PrivateShareServlet extends HttpServlet {
             }
 
         } catch (Exception pEx) {
-            pEx.printStackTrace();
+            Logger.getLogger(PrivateShareServlet.class.getName()).log(Level.SEVERE, null, pEx);
             throw new ServletException("error while fetching your data.", pEx);
         }
 
@@ -139,6 +140,7 @@ public class PrivateShareServlet extends HttpServlet {
             }
 
         } catch (Exception pEx) {
+            Logger.getLogger(PrivateShareServlet.class.getName()).log(Level.SEVERE, null, pEx);
             throw new ServletException("error while processing the request.", pEx);
         }
     }
@@ -157,7 +159,7 @@ public class PrivateShareServlet extends HttpServlet {
             }
 
             pRequest.setAttribute("documentRevision", documentRevision);
-            pRequest.setAttribute("attr",  new ArrayList<InstanceAttribute>(documentIteration.getInstanceAttributes().values()));
+            pRequest.setAttribute("attr",  new ArrayList<>(documentIteration.getInstanceAttributes().values()));
             pRequest.getRequestDispatcher("/faces/documentPermalink.xhtml").forward(pRequest, pResponse);
 
         }else if(sharedEntity instanceof SharedPart){
@@ -184,7 +186,7 @@ public class PrivateShareServlet extends HttpServlet {
             }
 
             pRequest.setAttribute("partRevision", partRevision);
-            pRequest.setAttribute("attr",  new ArrayList<InstanceAttribute>(partIteration.getInstanceAttributes().values()));
+            pRequest.setAttribute("attr",  new ArrayList<>(partIteration.getInstanceAttributes().values()));
             pRequest.setAttribute("nativeCadFileURI",nativeCadFileURI);
             pRequest.setAttribute("geometryFileURI",geometryFileURI);
             pRequest.getRequestDispatcher("/faces/partPermalink.xhtml").forward(pRequest, pResponse);
@@ -197,8 +199,8 @@ public class PrivateShareServlet extends HttpServlet {
 
         byte[] digest = MessageDigest.getInstance("MD5").digest(pText.getBytes());
         StringBuffer hexString = new StringBuffer();
-        for (int i=0; i < digest.length; i++) {
-            String hex = Integer.toHexString(0xFF & digest[i]);
+        for (byte aDigest : digest) {
+            String hex = Integer.toHexString(0xFF & aDigest);
             if (hex.length() == 1) {
                 hexString.append("0" + hex);
             } else {

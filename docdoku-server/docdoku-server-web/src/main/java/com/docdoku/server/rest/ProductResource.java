@@ -21,8 +21,7 @@ package com.docdoku.server.rest;
 
 import com.docdoku.core.common.User;
 import com.docdoku.core.configuration.ConfigSpec;
-import com.docdoku.core.configuration.LatestConfigSpec;
-import com.docdoku.core.exceptions.ApplicationException;
+import com.docdoku.core.exceptions.*;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.product.*;
 import com.docdoku.core.security.UserGroupMapping;
@@ -36,13 +35,14 @@ import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -65,6 +65,7 @@ public class ProductResource {
     @EJB
     private ProductInstancesResource productInstancesResource;
 
+    private final static Logger LOGGER = Logger.getLogger(ProductResource.class.getName());
     private Mapper mapper;
 
     public ProductResource() {
@@ -79,7 +80,6 @@ public class ProductResource {
     @Produces(MediaType.APPLICATION_JSON)
     public ConfigurationItemDTO[] getRootProducts(@PathParam("workspaceId") String workspaceId) {
         try {
-
             String wksId = Tools.stripTrailingSlash(workspaceId);
             List<ConfigurationItem> cis = productService.getConfigurationItems(wksId);
             ConfigurationItemDTO[] dtos = new ConfigurationItemDTO[cis.size()];
@@ -90,6 +90,7 @@ public class ProductResource {
 
             return dtos;
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
 
@@ -104,6 +105,7 @@ public class ProductResource {
             configurationItemDTOCreated.setDesignItemNumber(configurationItem.getDesignItem().getNumber());
             return Response.created(URI.create(URLEncoder.encode(configurationItemDTOCreated.getId(),"UTF-8"))).entity(configurationItemDTOCreated).build();
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -114,13 +116,7 @@ public class ProductResource {
     public PartDTO[] filterPart(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("configSpec") String configSpecType, @QueryParam("partUsageLink") Integer partUsageLink) {
         try {
             ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
-            ConfigSpec cs;
-
-            if(configSpecType == null || configSpecType.equals("latest")){
-                cs = new LatestConfigSpec();
-            }else{
-                cs = productService.getConfigSpecForBaseline(Integer.parseInt(configSpecType));
-            }
+            ConfigSpec cs = getConfigSpec(workspaceId,configSpecType);
 
             PartUsageLink rootUsageLink = productService.filterProductStructure(ciKey, cs, partUsageLink, 1);
 
@@ -140,6 +136,7 @@ public class ProductResource {
             return partsDTO;
 
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -150,13 +147,7 @@ public class ProductResource {
     public ComponentDTO filterProductStructure(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("configSpec") String configSpecType, @QueryParam("partUsageLink") Integer partUsageLink, @QueryParam("depth") Integer depth) {
         try {
             ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
-            ConfigSpec cs ;
-
-            if(configSpecType == null || configSpecType.equals("latest")){
-                cs = new LatestConfigSpec();
-            }else{
-                cs = productService.getConfigSpecForBaseline(Integer.parseInt(configSpecType));
-            }
+            ConfigSpec cs = getConfigSpec(workspaceId,configSpecType);
 
             PartUsageLink rootUsageLink = productService.filterProductStructure(ciKey, cs, partUsageLink, depth);
 
@@ -167,6 +158,7 @@ public class ProductResource {
             }
 
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -180,6 +172,7 @@ public class ProductResource {
             productService.deleteConfigurationItem(ciKey);
             return Response.ok().build();
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -209,8 +202,8 @@ public class ProductResource {
 
 
             return pathsDTO;
-
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
 
@@ -221,9 +214,10 @@ public class ProductResource {
         return layerResource;
     }
 
-    private ComponentDTO createDTO(PartUsageLink usageLink, int depth) {
+    private ComponentDTO createDTO(PartUsageLink usageLink, int depth) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
         PartMaster pm = usageLink.getComponent();
         PartRevision partR = pm.getLastRevision();
+        int newdepth = depth;
 
         ComponentDTO dto = new ComponentDTO();
         dto.setNumber(pm.getNumber());
@@ -237,10 +231,9 @@ public class ProductResource {
         List<InstanceAttributeDTO> lstAttributes = new ArrayList<>();
         List<ComponentDTO> components = new ArrayList<>();
 
-        PartIteration partI = null;
         if (partR != null) {
             dto.setDescription(partR.getDescription());
-            partI = partR.getLastIteration();
+            PartIteration partI = partR.getLastIteration();
 
             User checkoutUser = pm.getLastRevision().getCheckOutUser();
             if (checkoutUser != null) {
@@ -249,20 +242,29 @@ public class ProductResource {
             }
 
             dto.setVersion(partR.getVersion());
-        }
+            try {
+                productService.checkPartRevisionReadAccess(partR.getKey());
+                dto.setAccessDeny(false);
+                dto.setLastIterationNumber(productService.getNumberOfIteration(partR.getKey()));
+            }catch (Exception e){
+                LOGGER.log(Level.FINEST,null,e);
+                dto.setLastIterationNumber(-1);
+                dto.setAccessDeny(true);
+            }
 
-        if (partI != null) {
-            for (InstanceAttribute attr : partI.getInstanceAttributes().values()) {
-                lstAttributes.add(mapper.map(attr, InstanceAttributeDTO.class));
-            }
-            if (depth != 0) {
-                depth--;
-                for (PartUsageLink component : partI.getComponents()) {
-                    components.add(createDTO(component, depth));
+            if (partI != null) {
+                for (InstanceAttribute attr : partI.getInstanceAttributes().values()) {
+                    lstAttributes.add(mapper.map(attr, InstanceAttributeDTO.class));
                 }
+                if (newdepth != 0) {
+                    newdepth--;
+                    for (PartUsageLink component : partI.getComponents()) {
+                        components.add(createDTO(component, newdepth));
+                    }
+                }
+                dto.setAssembly(partI.isAssembly());
+                dto.setIteration(partI.getIteration());
             }
-            dto.setAssembly(partI.isAssembly());
-            dto.setIteration(partI.getIteration());
         }
 
         dto.setAttributes(lstAttributes);
@@ -275,12 +277,7 @@ public class ProductResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getInstances(@Context Request request, @PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("configSpec") String configSpecType, @QueryParam("path") String path) {
         try {
-            //Because some AS (like Glassfish) forbids the use of CacheControl
-            //when authenticated we use the LastModified header to fake
-            //a similar behavior (15 minutes of cache)
-            Calendar cal = new GregorianCalendar();
-            cal.add(Calendar.MINUTE, -15);
-            Response.ResponseBuilder rb = request.evaluatePreconditions(cal.getTime());
+            Response.ResponseBuilder rb = fakeSimilarBehavior(request);
             if (rb != null) {
                 return rb.build();
             } else {
@@ -291,32 +288,27 @@ public class ProductResource {
 
                 ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
 
-                ConfigSpec cs;
-
-                if(configSpecType == null || configSpecType.equals("latest") || configSpecType.equals("undefined")){
-                    cs = new LatestConfigSpec();
-                }else{
-                    cs = productService.getConfigSpecForBaseline(Integer.parseInt(configSpecType));
-                }
+                ConfigSpec cs = getConfigSpec(workspaceId, configSpecType);
 
                 PartUsageLink rootUsageLink;
                 List<Integer> usageLinkPaths = new ArrayList<>();
-                if(path != null && !path.equals("null")){
+                if(path != null && !"null".equals(path)){
                     String[] partUsageIdsString = path.split("-");
 
                     for (String partUsageIdString : partUsageIdsString) {
                         usageLinkPaths.add(Integer.parseInt(partUsageIdString));
                     }
 
-                    rootUsageLink = productService.filterProductStructure(ciKey, cs, usageLinkPaths.get(0), 0);
+                    rootUsageLink = productService.filterProductStructure(ciKey, cs, usageLinkPaths.get(0), -1);
                     usageLinkPaths.remove(0);
                 }else{
-                    rootUsageLink = productService.filterProductStructure(ciKey, cs, null, 0);                  
+                    rootUsageLink = productService.filterProductStructure(ciKey, cs, null, -1);
                 }
                 
                 return Response.ok().lastModified(new Date()).cacheControl(cc).entity(new InstanceCollection(rootUsageLink, usageLinkPaths, cs)).build();
             }
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -327,12 +319,7 @@ public class ProductResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getInstancesPathFiltered(@Context Request request, @PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("configSpec") String configSpecType, PathListDTO pathsDTO) {
         try {
-            //Because some AS (like Glassfish) forbids the use of CacheControl
-            //when authenticated we use the LastModified header to fake
-            //a similar behavior (15 minutes of cache)
-            Calendar cal = new GregorianCalendar();
-            cal.add(Calendar.MINUTE, -15);
-            Response.ResponseBuilder rb = request.evaluatePreconditions(cal.getTime());
+            Response.ResponseBuilder rb = fakeSimilarBehavior(request);
             if (rb != null) {
                 return rb.build();
             } else {
@@ -342,41 +329,32 @@ public class ProductResource {
                 cc.setMaxAge(60 * 15);
 
                 ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
-
-                ConfigSpec cs;
-
-                if(configSpecType == null || configSpecType.equals("latest") || configSpecType.equals("undefined")){
-                    cs = new LatestConfigSpec();
-                }else{
-                    cs = productService.getConfigSpecForBaseline(Integer.parseInt(configSpecType));
-                }
+                ConfigSpec cs = getConfigSpec(workspaceId,configSpecType);
 
                 List<InstanceCollection> instanceCollections = new ArrayList<>();
 
                 for(String path : pathsDTO.getPaths()){
-                    if(path != null && !path.equals("null")){
-                        String[] partUsageIdsString = path.split("-");
-                        List<Integer> usageLinkPaths = new ArrayList<>();
+                    List<Integer> usageLinkPaths = new ArrayList<>();
+                    PartUsageLink rootUsageLink;
 
+                    if(path != null && !"null".equals(path)){
+                        String[] partUsageIdsString = path.split("-");
                         for (String partUsageIdString : partUsageIdsString) {
                             usageLinkPaths.add(Integer.parseInt(partUsageIdString));
                         }
-
-                        PartUsageLink rootUsageLink = productService.filterProductStructure(ciKey, cs, usageLinkPaths.get(0), 0);
+                        rootUsageLink = productService.filterProductStructure(ciKey, cs, usageLinkPaths.get(0), -1);
                         usageLinkPaths.remove(0);
-                        instanceCollections.add(new InstanceCollection(rootUsageLink, usageLinkPaths, cs));
                     }else{
-                        List<Integer> usageLinkPaths = new ArrayList<>();
-                        PartUsageLink rootUsageLink = productService.filterProductStructure(ciKey, cs, null, 0);
+                        rootUsageLink = productService.filterProductStructure(ciKey, cs, null, -1);
                         instanceCollections.clear();
-                        instanceCollections.add(new InstanceCollection(rootUsageLink, usageLinkPaths, cs));
                     }
-
+                    instanceCollections.add(new InstanceCollection(rootUsageLink, usageLinkPaths, cs));
                 }
 
                 return Response.ok().lastModified(new Date()).cacheControl(cc).entity(new PathFilteredListInstanceCollection(instanceCollections, cs)).build();
             }
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -399,5 +377,37 @@ public class ProductResource {
     @Path("{ciId}/product-instances")
     public ProductInstancesResource getProductInstances(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId){
         return productInstancesResource;
+    }
+
+    /**
+     * Get a configuration specification
+     * @param workspaceId The current workspace
+     * @param configSpecType The configuration specification type
+     * @return A configuration specification
+     * @throws UserNotFoundException If the user login-workspace doesn't exist
+     * @throws UserNotActiveException If the user is disabled
+     * @throws WorkspaceNotFoundException If the workspace doesn't exist
+     * @throws BaselineNotFoundException If the baseline doesn't exist
+     */
+    private ConfigSpec getConfigSpec(String workspaceId, String configSpecType) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, BaselineNotFoundException {
+        ConfigSpec cs;
+        if("latest".equals(configSpecType) || "undefined".equals(configSpecType)){
+            cs = productService.getLatestConfigSpec(workspaceId);
+        }else{
+            cs = productService.getConfigSpecForBaseline(Integer.parseInt(configSpecType));
+        }
+        return cs;
+    }
+
+    /**
+     * Because some AS (like Glassfish) forbids the use of CacheControl
+     * when authenticated we use the LastModified header to fake
+     * a similar behavior (15 minutes of cache)
+     * @return Nothing if there still have cache
+     */
+    private Response.ResponseBuilder fakeSimilarBehavior(Request request){
+        Calendar cal = new GregorianCalendar();
+        cal.add(Calendar.MINUTE, -15);
+        return request.evaluatePreconditions(cal.getTime());
     }
 }

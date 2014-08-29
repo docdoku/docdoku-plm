@@ -19,6 +19,7 @@
  */
 package com.docdoku.server.rest.dto;
 
+import javax.xml.bind.annotation.XmlElement;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -36,6 +37,7 @@ public class DocumentIterationDTO implements Serializable {
     private int iteration;
     private Date creationDate;
     private UserDTO author;
+    @XmlElement(nillable = true)
     private String revisionNote;
     private List<String> attachedFiles;
     private List<InstanceAttributeDTO> instanceAttributes;

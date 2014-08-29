@@ -1,16 +1,16 @@
 /*global App,ChannelMessagesType,mainChannel*/
 'use strict';
-define(["models/component_module", "views/component_views"], function (ComponentModule, ComponentViews) {
+define(['models/component_module', 'views/component_views'], function (ComponentModule, ComponentViews) {
 
     var PartsTreeView = Backbone.View.extend({
 
         el:'#product_nav_list',
 
         events: {
-            "change input": "checkChildrenInputs",
-            "change li": "checkParentsInputs",
-            "component_selected a": "onComponentSelected",
-            "click #product_title":"onProductRootNode"
+            'change input': 'checkChildrenInputs',
+            'change li': 'checkParentsInputs',
+            'component_selected a': 'onComponentSelected',
+            'click #product_title':'onProductRootNode'
         },
 
         setSelectedComponent: function(component) {
@@ -19,7 +19,7 @@ define(["models/component_module", "views/component_views"], function (Component
 
         onProductRootNode:function(){
             this.setSelectedComponent(this.rootComponent);
-            this.trigger("component_selected", true);
+            this.trigger('component_selected', true);
         },
 
         render: function() {
@@ -53,7 +53,7 @@ define(["models/component_module", "views/component_views"], function (Component
         },
 
         checkChildrenInputs: function(event) {
-            var inputs = event.target.parentNode.querySelectorAll('input');
+            var inputs = event.target.parentNode.querySelectorAll('input.available');
             for (var i = 0; i < inputs.length; i++) {
                 inputs[i].checked = event.target.checked;
                 // on retire les fils du smartPath
@@ -74,7 +74,7 @@ define(["models/component_module", "views/component_views"], function (Component
 
                 for (var i = 0; i < childrenUl.childNodes.length; i++) {
                     var li = childrenUl.childNodes[i];
-                    if (li.querySelector('input').checked) {
+                    if (li.querySelector('input') && li.querySelector('input').checked) {
                         inputsChecked++;
                         // add children into a temporary array
                         tempArray.push(li.id.substring(5));
@@ -102,14 +102,14 @@ define(["models/component_module", "views/component_views"], function (Component
                 }
             }
 
-            if (relativeInput.parentNode.id === "path_null"){
+            if (relativeInput.parentNode.id === 'path_null'){
                 // Root node : master send the new smartPaths
                 if (App.collaborativeView.isMaster) {
                     mainChannel.sendJSON({
                         type: ChannelMessagesType.COLLABORATIVE_COMMANDS,
                         key: App.collaborativeView.roomKey,
                         messageBroadcast: {smartPath: this.smartPath},
-                        remoteUser: "null"
+                        remoteUser: 'null'
                     });
                 }
             }
@@ -130,19 +130,19 @@ define(["models/component_module", "views/component_views"], function (Component
         setSmartPaths: function (arrayPaths) {
             var pathToUnload = _.difference(this.smartPath, arrayPaths);
             if (pathToUnload.length !== 0) {
-                App.instancesManager.loadQueue.push({"process":"unload","path":pathToUnload});
+                App.instancesManager.loadQueue.push({'process':'unload','path':pathToUnload});
             }
 
             var pathToLoad = _.difference(arrayPaths, this.smartPath);
             if (pathToLoad.length !== 0) {
-                App.instancesManager.loadQueue.push({"process":"load","path":pathToLoad});
+                App.instancesManager.loadQueue.push({'process':'load','path':pathToLoad});
             }
             this.smartPath = arrayPaths;
             this.setCheckboxes();
         },
 
         setCheckboxes: function() {
-            this.$("li input").prop('checked',false);
+            this.$('li input').prop('checked',false);
             var self = this ;
             _.each(this.smartPath, function(path){
                 self.$('li[id^="path_'+path+'"] input').prop('checked',true);
@@ -151,10 +151,10 @@ define(["models/component_module", "views/component_views"], function (Component
 
         onComponentSelected: function(e, componentModel, li) {
             e.stopPropagation();
-            this.$("li.active").removeClass("active");
-            li.addClass("active");
+            this.$('li.active').removeClass('active');
+            li.addClass('active');
             this.setSelectedComponent(componentModel);
-            this.trigger("component_selected");
+            this.trigger('component_selected');
         },
 
         refreshAll:function(){
