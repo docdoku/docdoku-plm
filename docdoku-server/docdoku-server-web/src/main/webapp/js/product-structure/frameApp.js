@@ -25,15 +25,28 @@ var App = {
         volRating: 0.7
     },
 
+    /*
+     SceneOptions: {
+     postProcessing: false,
+     grid: false,
+     zoomSpeed: 2,
+     rotateSpeed: 1,
+     panSpeed: 2,
+     cameraNear: 10,
+     cameraFar: 5E5,
+     defaultCameraPosition: {x: -1000, y: 800, z: 1100}
+     }*/
+
     SceneOptions: {
-        postProcessing: false,
         grid: false,
-        zoomSpeed: 2,
-        rotateSpeed: 1,
-        panSpeed: 2,
-        cameraNear: 10,
-        cameraFar: 5E5,
-        defaultCameraPosition: {x: -1000, y: 800, z: 1100}
+        skeleton: true,
+        zoomSpeed: 1.2,
+        rotateSpeed: 1.0,
+        panSpeed: 0.3,
+        cameraNear: 1,
+        cameraFar: 5E4,
+        defaultCameraPosition: {x: -1000, y: 800, z: 1100},
+        defaultTargetPosition: {x: 0, y: 0, z: 0}
     }
 
 };
@@ -41,28 +54,28 @@ var App = {
 define(["dmu/SceneManager","dmu/InstancesManager"],
     function (SceneManager,InstancesManager) {
 
-    var FrameAppView = Backbone.View.extend({
+        var FrameAppView = Backbone.View.extend({
 
-        el: $("#product-content"),
+            el: $("#product-content"),
 
-        initialize: function() {
+            initialize: function() {
 
-            window.config_spec = "latest";
-
-            App.instancesManager = new InstancesManager();
-            App.sceneManager = new SceneManager();
-            App.sceneManager.init();
-            if (!_.isUndefined(SCENE_INIT.pathForIFrame)) {
-                var instancesUrl = "/api/workspaces/" + APP_CONFIG.workspaceId + "/products/" + APP_CONFIG.productId + "/instances?configSpec=" + window.config_spec + "&path=" + SCENE_INIT.pathForIFrame;
-                App.instancesManager.loadComponent({
-                    getInstancesUrl:function (){
-                        return instancesUrl;
-                    }
-                });
+                window.config_spec = "latest";
+                try{
+                    App.frameApp = true;
+                    App.instancesManager = new InstancesManager();
+                    App.sceneManager = new SceneManager();
+                    App.sceneManager.init();
+                }catch(ex){
+                    console.log("Got exception in dmu");
+                    this.onNoWebGLSupport();
+                }
+                if (!_.isUndefined(SCENE_INIT.pathForIFrame)) {
+                    App.instancesManager.loadQueue.push({"process":"load","path":[SCENE_INIT.pathForIFrame]});
+                }
             }
-        }
 
+        });
+
+        return FrameAppView;
     });
-
-    return FrameAppView;
-});

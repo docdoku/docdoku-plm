@@ -28,7 +28,6 @@ define([
                 }
                 this.template =  Mustache.render(template, data);
                 _.bindAll(this);
-                //Backbone.Events.on('EnableCollaborativeInvite',this.collaborativeInvite);
                 return this ;
             },
 
@@ -65,17 +64,8 @@ define([
                 window.location.href = encodeURI("mailto:"+this.model.email + "?subject="+APP_CONFIG.workspaceId);
             },
 
-            onCobrowsingButtonClick:function(e){
+            onCobrowsingButtonClick:function(){
                 Backbone.Events.trigger('SendCollaborativeInvite',this.model.login);
-            },
-
-            collaborativeInvite:function(){
-                /*var data = {
-                    user :  this.model.login,
-                    displayCobrowsingButton : this.model.workspaceId === APP_CONFIG.workspaceId
-                };
-                this.template =  Mustache.render(template, data);
-                this.render();*/
             }
 
         });

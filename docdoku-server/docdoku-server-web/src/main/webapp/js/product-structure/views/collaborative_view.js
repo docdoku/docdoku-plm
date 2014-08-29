@@ -107,9 +107,6 @@ define(    [
                     remoteUser: name
                 });
                 this.setMaster(name);
-
-               // App.sceneManager.disableControlsObject();
-                //App.appView.setSpectatorView();
             },
 
             exit: function() {

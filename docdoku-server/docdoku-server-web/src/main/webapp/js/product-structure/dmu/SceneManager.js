@@ -179,28 +179,6 @@ define([
 
         function createTransformControls() {
             transformControls = new THREE.TransformControls(_this.$container[0]);
-
-            /*window.addEventListener( 'keyup', function ( event ) {
-             switch (event.keyCode) {
-             case 90: // Z
-             transformControls.setMode("translate");
-             break;
-             case 69: // E
-             transformControls.setMode("rotate");
-             break;
-             case 82: // R
-             transformControls.setMode("scale");
-             break;
-             case 187:
-             case 107: // +,=,num+
-             transformControls.setSize(transformControls.size + 0.1);
-             break;
-             case 189:
-             case 109: // -,_,num-
-             transformControls.setSize(Math.max(transformControls.size - 0.1, 0.1));
-             break;
-             }
-             });*/
             transformControls.addEventListener('change', _this.reDraw);
         }
 
@@ -615,11 +593,7 @@ define([
                 .onUpdate(function () {
                     _this.reDraw();
                 });
-
-
             tween1.start();
-
-            //tween2.chain(tween3);
             tween2.start();
             tween3.start();
         }
@@ -628,7 +602,7 @@ define([
          * Colaborative Mode
          */
         this.sendCameraInfos = function () {
-            if (App.collaborativeView.isMaster) {
+            if (App.collaborativeView !== undefined && App.collaborativeView.isMaster) {
                 var message = {
                     type: ChannelMessagesType.COLLABORATIVE_COMMANDS,
                     key: App.collaborativeView.roomKey,
@@ -738,6 +712,20 @@ define([
             }
         };
 
+        this.sendClippingValue = function (value) {
+            if (App.collaborativeView.isMaster) {
+                var message = {
+                    type: ChannelMessagesType.COLLABORATIVE_COMMANDS,
+                    key: App.collaborativeView.roomKey,
+                    messageBroadcast: {
+                        clipping: value
+                    },
+                    remoteUser: ""
+                };
+                mainChannel.sendJSON(message);
+            }
+        };
+
         /**
          * Animation loop :
          *  Update controls, scene objects and animations
@@ -768,7 +756,6 @@ define([
                 render();
             }
             if (controlChanged) {
-                //sendControlsContextMessage();
                 _this.sendCameraInfos();
                 controlChanged = false;
             }
@@ -788,8 +775,11 @@ define([
             initStats();
             window.addEventListener('resize', handleResize, false);
             bindMouseAndKeyEvents();
+            if (App.frameApp === undefined){
+                // frameApp doesn't need TransformsControls
+                createTransformControls();
+            }
             // Choose here which controls are enabled at scene load
-            createTransformControls();
             _this.setTrackBallControls();
 
 
@@ -802,7 +792,7 @@ define([
 
         this.flyTo = function (mesh) {
             var boundingBox = mesh.geometry.boundingBox;
-            var cog = new THREE.Vector3().copy(boundingBox.centroid).applyMatrix4(mesh.matrix);
+            var cog = new THREE.Vector3().copy(boundingBox.center()).applyMatrix4(mesh.matrix);
             var size = boundingBox.size();
             var radius = Math.max(size.x, size.y, size.z);
             var camera = _this.cameraObject;
@@ -815,17 +805,13 @@ define([
 
         this.lookAt = function (mesh) {
             var boundingBox = mesh.geometry.boundingBox;
-            var cog = new THREE.Vector3().copy(boundingBox.centroid).applyMatrix4(mesh.matrix);
+            var cog = new THREE.Vector3().copy(boundingBox.center()).applyMatrix4(mesh.matrix);
             cameraAnimation(cog, 2000);
         };
 
         this.resetCameraPlace = function () {
             var camPos = App.SceneOptions.defaultCameraPosition;
-            //cameraAnimation(new THREE.Vector3(0,0,0), 1000, camPos);
             resetCameraAnimation(new THREE.Vector3(0, 0, 0), 1000, camPos, new THREE.Vector3(0, 1, 0));
-
-            //controlsObject.object.up = (0,1,0);
-            //controlsObject.setCamUp(new THREE.Vector3(0,1,0));
         };
         /**
          * Context API
@@ -840,7 +826,7 @@ define([
         this.getControlsContext = function () {
             return {
                 target: controlsObject.getTarget(),
-                camPos: controlsObject.getCamPos(), // utiliser _this.cameraObject.position ??
+                camPos: controlsObject.getCamPos(),
                 camOrientation: _this.cameraObject.up
             };
         };
@@ -930,9 +916,8 @@ define([
             pom.setAttribute('download', filename);
             pom.click();
         };
-        this.setCameraNearFar = function (n, f) {
+        this.setCameraNear = function (n) {
             _this.cameraObject.near = n;
-            _this.cameraObject.far = f;
             _this.cameraObject.updateProjectionMatrix();
             _this.reDraw();
 
@@ -1106,16 +1091,10 @@ define([
                     transformControls.update();
                 })
                 .start();
-            //_this.editedMeshes.splice(_.indexOf(_this.editedMeshes, mesh.uuid),1);
             _this.editedMeshes = _.without(_this.editedMeshes, mesh.uuid);
             mesh.material = mesh.initialMaterial;
             console.log("mesh removed");
             App.sceneManager.sendEditedMeshes();
-
-            /*
-             mesh.position.x = mesh.initialPosition.x;
-             mesh.position.y = mesh.initialPosition.y;
-             mesh.position.z = mesh.initialPosition.z;*/
 
             _this.reDraw();
             _this.leaveTransformMode();

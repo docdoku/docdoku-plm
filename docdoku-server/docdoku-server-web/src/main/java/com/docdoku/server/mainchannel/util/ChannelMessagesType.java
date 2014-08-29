@@ -47,7 +47,6 @@ public class ChannelMessagesType {
     public static final String COLLABORATIVE_COMMANDS = "COLLABORATIVE_COMMANDS";
     public static final String COLLABORATIVE_EXIT = "COLLABORATIVE_EXIT";
     public static final String COLLABORATIVE_KILL = "COLLABORATIVE_KILL";
-    public static final String COLLABORATIVE_REQUEST_HAND = "COLLABORATIVE_REQUEST_HAND";
     public static final String COLLABORATIVE_GIVE_HAND = "COLLABORATIVE_GIVE_HAND";
     public static final String COLLABORATIVE_KICK_USER = "COLLABORATIVE_KICK_USER";
     public static final String COLLABORATIVE_KICK_NOT_INVITED= "COLLABORATIVE_KICK_NOT_INVITED";

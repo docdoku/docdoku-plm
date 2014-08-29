@@ -98,6 +98,7 @@ define([
 	            Math.ceil((Math.random()*(0xF))).toString(16) +
                 Math.ceil((Math.random()*(0xF))).toString(16) +
                 Math.ceil((Math.random()*(0xF))).toString(16) +
+                Math.ceil((Math.random()*(0xF))).toString(16) +
                 Math.ceil((Math.random()*(0xF))).toString(16);
 
             if (name) {

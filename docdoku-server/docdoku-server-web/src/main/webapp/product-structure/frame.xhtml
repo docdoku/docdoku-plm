@@ -15,19 +15,21 @@
         </ui:define>
         <ui:define name="scripts">
 
-        <script type="text/javascript" src="#{request.contextPath}/js/lib/modernizr.custom.js?v=${BUILD_NUMBER}"></script>
+            <script type="text/javascript" src="#{request.contextPath}/js/lib/dat.gui.min.js?v=${BUILD_NUMBER}"></script>
+            <script type="text/javascript" src="#{request.contextPath}/js/lib/modernizr.custom.js?v=${BUILD_NUMBER}"></script>
+            <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/tween.min.js?v=${BUILD_NUMBER}"></script>
+            <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/three.min.js?v=${BUILD_NUMBER}"></script>
+            <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/BinaryLoader.js?v=${BUILD_NUMBER}"></script>
+            <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/ColladaLoader.js?v=${BUILD_NUMBER}"></script>
+            <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/STLLoader.js?v=${BUILD_NUMBER}"></script>
+            <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/Stats.js?v=${BUILD_NUMBER}"></script>
+            <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/threex.domevent.js?v=${BUILD_NUMBER}"></script>
+            <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/VisualizationUtils.js?v=${BUILD_NUMBER}"></script>
 
-        <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/three.min.js?v=${BUILD_NUMBER}"></script>
-        <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/BinaryLoader.js?v=${BUILD_NUMBER}"></script>
-        <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/ColladaLoader.js?v=${BUILD_NUMBER}"></script>
-        <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/STLLoader.js?v=${BUILD_NUMBER}"></script>
-        <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/Stats.js?v=${BUILD_NUMBER}"></script>
-        <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/threex.domevent.js?v=${BUILD_NUMBER}"></script>
-        <script type="text/javascript" src="#{request.contextPath}/js/lib/visualization/VisualizationUtils.js?v=${BUILD_NUMBER}"></script>
-
-        <script type="text/javascript" src="#{request.contextPath}/js/product-structure/dmu/controls/TrackballControls.js?v=${BUILD_NUMBER}"></script>
-        <script type="text/javascript" src="#{request.contextPath}/js/product-structure/dmu/controls/PointerLockControls.js?v=${BUILD_NUMBER}"></script>
-        <script type="text/javascript" src="#{request.contextPath}/js/product-structure/dmu/controls/OrbitControls.js?v=${BUILD_NUMBER}"></script>
+            <script type="text/javascript" src="#{request.contextPath}/js/product-structure/dmu/controls/TrackballControls.js?v=${BUILD_NUMBER}"></script>
+            <script type="text/javascript" src="#{request.contextPath}/js/product-structure/dmu/controls/PointerLockControls.js?v=${BUILD_NUMBER}"></script>
+            <script type="text/javascript" src="#{request.contextPath}/js/product-structure/dmu/controls/OrbitControls.js?v=${BUILD_NUMBER}"></script>
+            <script type="text/javascript" src="#{request.contextPath}/js/product-structure/dmu/controls/TransformControls.js?v=${BUILD_NUMBER}"></script>
 
         <script type="text/javascript">
             var APP_CONFIG = {
@@ -70,6 +72,7 @@
                 require(["frameApp"], function(FrameView) {
                     new FrameView();
                 });
+                require(["lib/visualization/BufferGeometryUtils"]);
             });                
         </script>
 

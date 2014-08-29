@@ -24,7 +24,6 @@ var ChannelMessagesType = {
     COLLABORATIVE_COMMANDS : "COLLABORATIVE_COMMANDS",
     COLLABORATIVE_EXIT : "COLLABORATIVE_EXIT",
     COLLABORATIVE_KILL : "COLLABORATIVE_KILL",
-    COLLABORATIVE_REQUEST_HAND : "COLLABORATIVE_REQUEST_HAND",
     COLLABORATIVE_GIVE_HAND : "COLLABORATIVE_GIVE_HAND",
     COLLABORATIVE_KICK_USER : "COLLABORATIVE_KICK_USER",
     COLLABORATIVE_KICK_NOT_INVITED : "COLLABORATIVE_KICK_NOT_INVITED",
@@ -160,7 +159,7 @@ Channel.prototype = {
         console.log(event);
 
         _.each(this.listeners,function(listener){            
-            listener.handlers.onStatusChanged(ChannelStatus.CLOSED);            
+            listener.handlers.onStatusChanged(ChannelStatus.CLOSED);
         });
         
     },

@@ -13,7 +13,7 @@ define(
         className:"side_control_group",
 
         events:{
-            "slide .slider":"clipping"
+            "input input#slider-clipping":"clipping"
         },
 
         initialize:function(){
@@ -22,25 +22,16 @@ define(
         render:function(){
             this.$el.html(this.template({i18n:i18n}));
 
-            this.slider = this.$('.slider');
-            this.slider.noUiSlider({
-                start: [ 1, 1e4 ],
-                behaviour: 'extend-drag-snap',
-                connect: true,
-                range: {
-                    'min': 1,
-                    'max': 1e4
-                }
-            });
-
             return this;
         },
 
         clipping:function(e){
-            var values = this.slider.val();
-            var near = parseFloat(values[0]);
-            var far = parseFloat(values[1]);
-            App.sceneManager.setCameraNearFar(near,far);
+            var value = e.target.value;
+            App.sceneManager.sendClippingValue(value);
+            // I remove the clipping for the last quarter of the scene to be more accurate
+            var max = App.SceneOptions.cameraFar*3/4;
+            var percentage = value*Math.log(max)/100; // cross product to set a value to pass to the exponential function
+            App.sceneManager.setCameraNear(Math.exp(percentage));
         }
 
     });

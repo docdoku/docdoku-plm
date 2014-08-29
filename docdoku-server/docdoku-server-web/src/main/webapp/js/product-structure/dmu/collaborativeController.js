@@ -22,6 +22,14 @@ define(function(){
 
                 if (message.type === ChannelMessagesType.COLLABORATIVE_JOIN) {
                     App.collaborativeView.setRoomKey(message.key);
+                    App.appView.updateTreeView(message.messageBroadcast.smartPath);
+
+                    App.sceneManager.setControlsContext(message.messageBroadcast.cameraInfos);
+                    App.sceneManager.setEditedMeshes(message.messageBroadcast.editedMeshes);
+                    App.sceneManager.setColourEditedMeshes(message.messageBroadcast.colourEditedMeshes);
+                    document.getElementById("slider-explode").value = message.messageBroadcast.explode;
+                    App.sceneManager.explodeScene(message.messageBroadcast.explode);
+                    _this.setClippingValue(message.messageBroadcast.clipping);
                     return;
                 }
 
@@ -64,6 +72,8 @@ define(function(){
                     }else if (message.messageBroadcast.explode){
                         document.getElementById("slider-explode").value = message.messageBroadcast.explode;
                         App.sceneManager.explodeScene(message.messageBroadcast.explode);
+                    }else if (message.messageBroadcast.clipping){
+                        _this.setClippingValue(message.messageBroadcast.clipping);
                     }else if (message.messageBroadcast.layers){
                         if(message.messageBroadcast.layers === "remove layer"){
                             App.sceneManager.layerManager.removeAllMeshesFromMarkers();
@@ -75,20 +85,27 @@ define(function(){
                         }
                         App.layersListView.refreshLayers();
                     }
-
-                    return;
                 }
+            },
 
-                if (message.type === ChannelMessagesType.COLLABORATIVE_GIVE_HAND && collaborativeView.roomKey === message.key) {
-                    //App.appView.leaveSpectatorView();
-                    //App.sceneManager.enableControlsObject();
+            onStatusChanged: function (status) {
+                if (status === ChannelStatus.CLOSED){
+                    // close co-browsing session
+                    App.appView.leaveSpectatorView();
+                    App.sceneManager.enableControlsObject();
+                    collaborativeView.reset();
                 }
             }
         });
 
         mainChannel.addChannelListener(collaborativeListener);
 
-
+        this.setClippingValue = function(value){
+            document.getElementById("slider-clipping").value = value;
+            var max = App.SceneOptions.cameraFar*3/4;
+            var percentage = value*Math.log(max)/100; // cross product to set a value to pass to the exponential function
+            App.sceneManager.setCameraNear(Math.exp(percentage));
+        };
 
         this.sendJoinRequest = function(key) {
             mainChannel.sendJSON({
@@ -99,7 +116,6 @@ define(function(){
         };
 
         this.sendLayersRefresh = function(subject){
-            _this = this;
             if (App.collaborativeView.isMaster) {
                 var message = {
                     type: ChannelMessagesType.COLLABORATIVE_COMMANDS,
@@ -114,7 +130,6 @@ define(function(){
         };
 
         this.sendMarkersRefresh = function(subject){
-            _this = this;
             if (App.collaborativeView.isMaster) {
                 var message = {
                     type: ChannelMessagesType.COLLABORATIVE_COMMANDS,

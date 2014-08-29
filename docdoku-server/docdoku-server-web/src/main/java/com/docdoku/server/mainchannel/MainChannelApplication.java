@@ -115,8 +115,7 @@ public class MainChannelApplication {
         Principal userPrincipal = session.getUserPrincipal();
         String callerLogin = userPrincipal.getName();
 
-        // TODO : remettre les tests
-        /*
+        if(!(message instanceof CollaborativeMessage)){
             // Exit if remote user is null or caller tries to join himself
             if (message.getRemoteUser() == null || message.getRemoteUser().equals(callerLogin)) {
                 return;
@@ -125,16 +124,15 @@ public class MainChannelApplication {
             if (!callerIsAllowToReachCallee(callerLogin, message.getRemoteUser())) {
                 return;
             }
-        */
+        }
+
         WebRTCMessage webRTC;
         CollaborativeRoom room;
         switch (message.getType()) {
             case ChannelMessagesType.USER_STATUS:
-
                 StatusMessage status = (StatusMessage) message;
                 process(session, status);
                 break;
-
             case ChannelMessagesType.WEBRTC_INVITE:
                 webRTC = (WebRTCMessage) message;
                 processWebRTCInvite(session, callerLogin, webRTC);
@@ -197,15 +195,11 @@ public class MainChannelApplication {
                 room = CollaborativeRoom.getByKeyName(killMessage.getKey());
                 CollaborativeRoomController.processKill(callerLogin, room);
                 break;
-            case ChannelMessagesType.COLLABORATIVE_REQUEST_HAND:
-                CollaborativeMessage requestHandMessage = (CollaborativeMessage) message;
-                CollaborativeRoomController.processRequestHand(session, callerLogin, requestHandMessage);
-                break;
             case ChannelMessagesType.COLLABORATIVE_GIVE_HAND:
                 CollaborativeMessage giveHandMessage = (CollaborativeMessage) message;
                 room = CollaborativeRoom.getByKeyName(giveHandMessage.getKey());
                 String promotedUser = giveHandMessage.getRemoteUser();
-                CollaborativeRoomController.processGiveHand(callerLogin, promotedUser, room, giveHandMessage);
+                CollaborativeRoomController.processGiveHand(callerLogin, promotedUser, room);
                 break;
             case ChannelMessagesType.COLLABORATIVE_KICK_USER:
                 CollaborativeMessage kickUserMessage = (CollaborativeMessage) message;
@@ -245,6 +239,7 @@ public class MainChannelApplication {
                 CHANNELS.remove(userLogin);
             }
         }
+        System.out.println(session);
     }
 
     private boolean callerIsAllowToReachCallee(String caller, String callee) {

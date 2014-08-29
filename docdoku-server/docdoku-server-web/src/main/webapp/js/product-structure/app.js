@@ -122,8 +122,7 @@ define(
 
         requestJoinRoom:function (key) {
             if (mainChannel.status !== ChannelStatus.OPENED) {
-                // Retry to connect every 500ms
-                console.log("!!!!!!!!!!! Websocket is not yet connected !!!!!!!!!!!!");
+                console.log("Websocket is not yet connected ! Retry to connect in 500ms.");
                 var _this = this;
                 setTimeout(function () {
                     _this.requestJoinRoom(key);
@@ -210,22 +209,18 @@ define(
         },
 
         setSpectatorView: function() {
-            //this.$ControlsContainer.find("button").attr("disabled","disabled");
             this.$(".side_control_group:not(#part_metadata_container)").hide();
         },
 
         leaveSpectatorView: function() {
-            //this.$ControlsContainer.find("button").removeAttr("disabled");
             this.$(".side_control_group:not(#part_metadata_container)").show();
         },
 
         transformControlMode: function() {
             this.$("#view_buttons").find("button").removeClass("active");
-            //this.$("button#"+mode).addClass("active");
         },
 
         leaveTransformControlMode: function() {
-            //this.$("#transform_mode_view_btn > button").removeClass("active");
             this.controlTransformView.render();
         },
 
@@ -318,13 +313,6 @@ define(
                     }else{
                         self.partMetadataView.setModel(part).render();
                     }
-                    /*
-                    if (self.partInstanceView == undefined) {
-                        self.partInstanceView = new PartInstanceView().setMesh(mesh).render();
-                        self.$ControlsContainer.append(self.partInstanceView.$el);
-                    }else{
-                        self.partInstanceView.setMesh(mesh).render();
-                    }*/
                 }
             }});
         },
