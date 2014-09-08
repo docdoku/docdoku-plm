@@ -130,15 +130,11 @@ define(['models/component_module', 'views/component_views'], function (Component
         setSmartPaths: function (arrayPaths) {
             var pathToUnload = _.difference(this.smartPath, arrayPaths);
             if (pathToUnload.length !== 0) {
-                console.log('path to unload : ');
-                console.log(pathToUnload);
                 App.instancesManager.loadQueue.push({'process':'unload','path':pathToUnload});
             }
 
             var pathToLoad = _.difference(arrayPaths, this.smartPath);
             if (pathToLoad.length !== 0) {
-                console.log('path to load : ');
-                console.log(pathToLoad);
                 App.instancesManager.loadQueue.push({'process':'load','path':pathToLoad});
             }
             this.smartPath = arrayPaths;

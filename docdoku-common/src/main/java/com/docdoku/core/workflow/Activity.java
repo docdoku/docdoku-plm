@@ -20,8 +20,6 @@
 
 package com.docdoku.core.workflow;
 
-import com.docdoku.core.util.Tools;
-
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlTransient;
@@ -182,14 +180,14 @@ public abstract class Activity implements Serializable, Cloneable {
     public abstract void relaunch();
 
     @Override
-    public boolean equals(Object pObj) {
-        if (this == pObj) {
-            return true;
-        }
-        if (!(pObj instanceof Activity))
-            return false;
-        Activity activity = (Activity) pObj;
-        return ((activity.step==step) && (Tools.safeEquals(activity.workflow, workflow)));
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Activity activity = (Activity) o;
+
+        return step == activity.step
+                && (workflow != null ? workflow.equals(activity.workflow) : activity.workflow == null);
     }
     
     @Override

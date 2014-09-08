@@ -85,7 +85,6 @@ public class MessageDecoder implements Decoder.Text<AbstractMessage>{
             case ChannelMessagesType.COLLABORATIVE_KICK_USER:
             case ChannelMessagesType.COLLABORATIVE_KICK_NOT_INVITED:
             case ChannelMessagesType.COLLABORATIVE_KILL:
-            case ChannelMessagesType.COLLABORATIVE_REQUEST_HAND:
             case ChannelMessagesType.COLLABORATIVE_WITHDRAW_INVITATION:
                 CollaborativeMessage collaborativeMessage = new CollaborativeMessage(type,remoteUser);
                 String key = jsObj.containsKey("key")?jsObj.getString("key"):null;

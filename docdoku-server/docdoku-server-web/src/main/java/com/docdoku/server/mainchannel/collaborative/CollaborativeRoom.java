@@ -1,12 +1,14 @@
 package com.docdoku.server.mainchannel.collaborative;
 
 import com.docdoku.server.mainchannel.module.CollaborativeMessage;
+import org.apache.log4j.Level;
 
 import javax.json.*;
 import javax.websocket.Session;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.logging.Logger;
 
 /**
  * Created by docdoku on 30/06/14.
@@ -14,17 +16,13 @@ import java.util.concurrent.ConcurrentMap;
 public class CollaborativeRoom {
 
     private static final ConcurrentMap<String, CollaborativeRoom> DB = new ConcurrentHashMap<>();
-
+    private final static Logger LOGGER = Logger.getLogger(CollaborativeRoom.class.getName());
     private String key;
     private Session master;
     private List<Session> slaves;
     private List<String> pendingUsers;
     private Date creationDate;
-    private CollaborativeMessage cameraInfos;
-    private CollaborativeMessage smartPath;
-    private CollaborativeMessage editedMeshes;
-    private CollaborativeMessage colourEditedMeshes;
-    private CollaborativeMessage explode;
+    private JsonObjectBuilder saveJsonCommands;
     private String lastMaster;
 
     public CollaborativeRoom(Session master) {
@@ -34,6 +32,7 @@ public class CollaborativeRoom {
         this.creationDate = new Date();
         this.slaves = new LinkedList<>();
         this.lastMaster = getMasterName();
+        this.saveJsonCommands = Json.createObjectBuilder();
         put();
     }
 
@@ -63,46 +62,6 @@ public class CollaborativeRoom {
 
     public void setLastMaster(String lastMaster) {
         this.lastMaster = lastMaster;
-    }
-
-    public CollaborativeMessage getCameraInfos() {
-        return cameraInfos;
-    }
-
-    public void setCameraInfos(CollaborativeMessage cameraInfos) {
-        this.cameraInfos = cameraInfos;
-    }
-
-    public CollaborativeMessage getSmartPath() {
-        return smartPath;
-    }
-
-    public void setSmartPath(CollaborativeMessage smartPath) {
-        this.smartPath = smartPath;
-    }
-
-    public CollaborativeMessage getEditedMeshes() {
-        return editedMeshes;
-    }
-
-    public void setEditedMeshes(CollaborativeMessage editedMeshes) {
-        this.editedMeshes = editedMeshes;
-    }
-
-    public CollaborativeMessage getColourEditedMeshes() {
-        return colourEditedMeshes;
-    }
-
-    public void setColourEditedMeshes(CollaborativeMessage colourEditedMeshes) {
-        this.colourEditedMeshes = colourEditedMeshes;
-    }
-
-    public CollaborativeMessage getExplode() {
-        return explode;
-    }
-
-    public void setExplode(CollaborativeMessage explode) {
-        this.explode = explode;
     }
 
     public String toString() {
@@ -199,5 +158,30 @@ public class CollaborativeRoom {
             }
         }
         return userSession;
+    }
+
+    public JsonObject getCommands() {
+        return saveJsonCommands.build();
+    }
+
+    public void saveCommand(JsonObject command) {
+        if (command.containsKey("cameraInfos")) {
+            saveJsonCommands.add("cameraInfos",command.getJsonObject("cameraInfos"));
+        } else if (command.containsKey("smartPath")) {
+            JsonArray path = command.getJsonArray("smartPath");
+            if(path.size()==0){
+                saveJsonCommands.add("smartPath", JsonValue.NULL);
+            } else {
+                saveJsonCommands.add("smartPath", path);
+            }
+        } else if (command.containsKey("editedMeshes")) {
+            saveJsonCommands.add("editedMeshes",command.getJsonArray("editedMeshes"));
+        } else if (command.containsKey("colourEditedMeshes")) {
+            saveJsonCommands.add("colourEditedMeshes",command.getBoolean("colourEditedMeshes"));
+        } else if (command.containsKey("explode")) {
+            saveJsonCommands.add("explode",command.getString("explode"));
+        } else if (command.containsKey("clipping")) {
+            saveJsonCommands.add("clipping",command.getString("clipping"));
+        }
     }
 }

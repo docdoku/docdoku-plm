@@ -122,8 +122,7 @@ define(
 
         requestJoinRoom:function (key) {
             if (mainChannel.status !== ChannelStatus.OPENED) {
-                // Retry to connect every 500ms
-                console.log('!!!!!!!!!!! Websocket is not yet connected !!!!!!!!!!!!');
+                console.log('Websocket is not yet connected ! Retry to connect in 500ms.');
                 var _this = this;
                 setTimeout(function () {
                     _this.requestJoinRoom(key);
@@ -314,13 +313,6 @@ define(
                     }else{
                         self.partMetadataView.setModel(part).render();
                     }
-                    /*
-                    if (self.partInstanceView == undefined) {
-                        self.partInstanceView = new PartInstanceView().setMesh(mesh).render();
-                        self.$ControlsContainer.append(self.partInstanceView.$el);
-                    }else{
-                        self.partInstanceView.setMesh(mesh).render();
-                    }*/
                 }
             }});
         },

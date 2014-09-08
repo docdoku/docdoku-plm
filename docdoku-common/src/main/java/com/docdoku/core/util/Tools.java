@@ -54,16 +54,6 @@ public class Tools {
         return pActivity;
     }
 
-
-    public static boolean safeEquals(Object o1, Object o2) {
-        if (o1 == null && o2 == null) {
-            return true;
-        } else if (o1 == null) {
-            return o2.equals(o1);
-        }
-        return o1.equals(o2);
-    }
-
     public static String unAccent(String s) {
         String temp = Normalizer.normalize(s, Normalizer.Form.NFD);
         Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
