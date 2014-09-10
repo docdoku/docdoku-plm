@@ -43,6 +43,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -54,44 +55,41 @@ import java.util.logging.Logger;
 @Stateless(name = "MailerBean")
 public class MailerBean implements IMailerLocal {
 
-    private final static String BASE_NAME = "com.docdoku.server.templates.MailText";
+    private static final String BASE_NAME = "com.docdoku.server.templates.MailText";
     @Resource(name = "mail/docdokuSMTP")
     private Session mailSession;
     @Resource(name = "codebase")
     private String codebase;
-    private final static Logger LOGGER = Logger.getLogger(MailerBean.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(MailerBean.class.getName());
 
     @Asynchronous
     @Override
     public void sendStateNotification(User[] pSubscribers,
                                       DocumentRevision pDocumentRevision) {
         try {
-            javax.mail.Message message = new MimeMessage(mailSession);
-
             for (User pSubscriber : pSubscribers) {
-                try {
-                    Locale locale = new Locale(pSubscriber.getLanguage());
-                    message.addRecipient(Message.RecipientType.TO,
-                            new InternetAddress(pSubscriber.getEmail(),
-                                    pSubscriber.getName()));
-                    message.setSubject(getStateNotificationSubject(locale));
-                    message.setSentDate(new Date());
-                    message.setContent(getStateNotificationMessage(pDocumentRevision, locale),
-                            "text/html; charset=utf-8");
-                    message.setFrom();
-                    Transport.send(message);
-                    LOGGER.info("Sending state notification emails");
-                    LOGGER.info("for the document " + pDocumentRevision.getLastIteration());
-
-                } catch (UnsupportedEncodingException pUEEx) {
-                    LOGGER.warning("Mail address format error.");
-                    LOGGER.warning(pUEEx.getMessage());
-                }
+                sendStateNotification(pSubscriber,pDocumentRevision);
             }
         } catch (MessagingException pMEx) {
-            LOGGER.severe("Message format error.");
-            LOGGER.severe("Notifications can't be sent.");
-            LOGGER.severe(pMEx.getMessage());
+            String logMessage = "Message format error. \n\tNotifications can't be sent. \n\t" + pMEx.getMessage();
+            LOGGER.severe(logMessage);
+            LOGGER.log(Level.FINER,logMessage,pMEx);
+        }
+    }
+
+    private void sendStateNotification(User pSubscriber,
+                                      DocumentRevision pDocumentRevision) throws MessagingException {
+        try {
+            Locale locale = new Locale(pSubscriber.getLanguage());
+            sendMessage(new InternetAddress(pSubscriber.getEmail(),pSubscriber.getName()),
+                        getStateNotificationSubject(locale),
+                        getStateNotificationMessage(pDocumentRevision, locale));
+            LOGGER.info("Sending state notification emails \n\tfor the document " + pDocumentRevision.getLastIteration());
+
+        } catch (UnsupportedEncodingException pUEEx) {
+            String logMessage = "Mail address format error. \n\t" + pUEEx.getMessage();
+            LOGGER.warning(logMessage);
+            LOGGER.log(Level.FINER,logMessage,pUEEx);
         }
     }
 
@@ -102,62 +100,56 @@ public class MailerBean implements IMailerLocal {
                                           DocumentRevision pDocumentRevision) {
         try {
             for (User pSubscriber : pSubscribers) {
-                try {
-                    Locale locale = new Locale(pSubscriber.getLanguage());
-                    Message message = new MimeMessage(mailSession);
-                    message.addRecipient(Message.RecipientType.TO,
-                            new InternetAddress(pSubscriber.getEmail(),
-                                    pSubscriber.getName()));
-                    message.setSubject(getIterationNotificationSubject(locale));
-                    message.setSentDate(new Date());
-                    message.setContent(getIterationNotificationMessage(pDocumentRevision, locale),
-                            "text/html; charset=utf-8");
-                    message.setFrom();
-                    Transport.send(message);
-                    LOGGER.info("Sending iteration notification emails");
-                    LOGGER.info("for the document " + pDocumentRevision.getLastIteration());
-
-                } catch (UnsupportedEncodingException pUEEx) {
-                    LOGGER.warning("Mail address format error.");
-                    LOGGER.warning(pUEEx.getMessage());
-                }
+                sendIterationNotification(pSubscriber,pDocumentRevision);
             }
         } catch (MessagingException pMEx) {
-            LOGGER.severe("Message format error.");
-            LOGGER.severe("Notifications can't be sent.");
-            LOGGER.severe(pMEx.getMessage());
+            String message = "Message format error. \n\tNotifications can't be sent. \n\t"+ pMEx.getMessage();
+            LOGGER.severe(message);
+            LOGGER.log(Level.FINER,message,pMEx);
+        }
+    }
+
+    private void sendIterationNotification(User pSubscriber,
+                                          DocumentRevision pDocumentRevision) throws MessagingException {
+        try {
+            Locale locale = new Locale(pSubscriber.getLanguage());
+            sendMessage(new InternetAddress(pSubscriber.getEmail(),pSubscriber.getName()),
+                        getIterationNotificationSubject(locale),
+                        getIterationNotificationMessage(pDocumentRevision, locale));
+            LOGGER.info("Sending iteration notification emails \n\tfor the document " + pDocumentRevision.getLastIteration());
+        } catch (UnsupportedEncodingException pUEEx) {
+            String message  = "Mail address format error. \n\t"+pUEEx.getMessage();
+            LOGGER.warning(message);
+            LOGGER.log(Level.FINER, message, pUEEx);
         }
     }
 
     @Asynchronous
     @Override
-    public void sendApproval(Collection<Task> pRunningTasks,
-                             DocumentRevision pDocumentRevision) {
+    public void sendApproval(Collection<Task> pRunningTasks,DocumentRevision pDocumentRevision) {
         try {
             for (Task task : pRunningTasks) {
-                try {
-                    User worker = task.getWorker();
-                    Locale locale = new Locale(worker.getLanguage());
-                    javax.mail.Message message = new MimeMessage(mailSession);
-                    message.setRecipient(javax.mail.Message.RecipientType.TO,
-                            new InternetAddress(worker.getEmail(), worker.getName()));
-                    message.setSubject(getApprovalRequiredSubject(locale));
-                    message.setSentDate(new Date());
-                    message.setContent(getApprovalRequiredMessage(task, pDocumentRevision,locale),
-                            "text/html; charset=utf-8");
-                    message.setFrom();
-                    Transport.send(message);
-                    LOGGER.info("Sending approval required emails");
-                    LOGGER.info("for the document " + pDocumentRevision.getLastIteration());
-                } catch (UnsupportedEncodingException pUEEx) {
-                    LOGGER.warning("Mail address format error.");
-                    LOGGER.warning(pUEEx.getMessage());
-                }
+                sendApproval(task,pDocumentRevision);
             }
         } catch (MessagingException pMEx) {
-            LOGGER.severe("Message format error.");
-            LOGGER.severe("Approval can't be sent.");
-            LOGGER.severe(pMEx.getMessage());
+            String message ="Message format error. \n\t Approval can't be sent. \n\t " + pMEx.getMessage();
+            LOGGER.severe(message);
+            LOGGER.log(Level.FINER,message,pMEx);
+        }
+    }
+
+    private void sendApproval(Task task, DocumentRevision pDocumentRevision) throws MessagingException {
+        try {
+            User worker = task.getWorker();
+            Locale locale = new Locale(worker.getLanguage());
+            sendMessage(new InternetAddress(worker.getEmail(), worker.getName()),
+                        getApprovalRequiredSubject(locale),
+                        getApprovalRequiredMessage(task, pDocumentRevision,locale));
+            LOGGER.info("Sending approval required emails \n\tfor the document " + pDocumentRevision.getLastIteration());
+        } catch (UnsupportedEncodingException pUEEx) {
+            String message ="Mail address format error. \n\t"+pUEEx.getMessage();
+            LOGGER.warning(message);
+            LOGGER.log(Level.FINER,message,pUEEx);
         }
     }
 
@@ -166,59 +158,49 @@ public class MailerBean implements IMailerLocal {
     public void sendPasswordRecovery(Account account, String passwordRRUuid) {
         try {
             Locale locale = new Locale(account.getLanguage());
-            javax.mail.Message message = new MimeMessage(mailSession);
-            message.setRecipient(javax.mail.Message.RecipientType.TO,
-                    new InternetAddress(account.getEmail(), account.getName()));
-            message.setSubject(getPasswordRecoverySubject(locale));
-            message.setSentDate(new Date());
-            message.setContent(getPasswordRecoveryMessage(account, passwordRRUuid,locale),
-                    "text/html; charset=utf-8");
-            message.setFrom();
-            Transport.send(message);
-            LOGGER.info("Sending recovery message");
-            LOGGER.info("for the user which login is " + account.getLogin());
+            sendMessage(new InternetAddress(account.getEmail(), account.getName()),
+                        getPasswordRecoverySubject(locale),
+                        getPasswordRecoveryMessage(account, passwordRRUuid, locale));
+            LOGGER.info("Sending recovery message \n\tfor the user which login is " + account.getLogin());
         } catch (UnsupportedEncodingException pUEEx) {
-            LOGGER.warning("Mail address format error.");
-            LOGGER.warning(pUEEx.getMessage());
+            String message = "Mail address format error. \n\t"+pUEEx.getMessage();
+            LOGGER.warning(message);
+            LOGGER.log(Level.FINER,message,pUEEx);
         } catch (MessagingException pMEx) {
-            LOGGER.severe("Message format error.");
-            LOGGER.severe("Recovery message can't be sent.");
-            LOGGER.severe(pMEx.getMessage());
+            String message = "Message format error. \n\tRecovery message can't be sent. \n\t" + pMEx.getMessage();
+            LOGGER.severe(message);
+            LOGGER.log(Level.FINER,message,pMEx);
         }
     }
-
-
 
     @Asynchronous
     @Override
     public void sendApproval(Collection<Task> pRunningTasks, PartRevision partRevision) {
         try {
             for (Task task : pRunningTasks) {
-                try {
-                    User worker = task.getWorker();
-                    Locale locale = new Locale(worker.getLanguage());
-                    javax.mail.Message message = new MimeMessage(mailSession);
-                    message.setRecipient(javax.mail.Message.RecipientType.TO,
-                            new InternetAddress(worker.getEmail(), worker.getName()));
-                    message.setSubject(getApprovalRequiredSubject(locale));
-                    message.setSentDate(new Date());
-                    message.setContent(getApprovalRequiredMessage(task, partRevision,locale),
-                            "text/html; charset=utf-8");
-                    message.setFrom();
-                    Transport.send(message);
-                    LOGGER.info("Sending approval required emails");
-                    LOGGER.info("for the part " + partRevision.getLastIteration());
-                } catch (UnsupportedEncodingException pUEEx) {
-                    LOGGER.warning("Mail address format error.");
-                    LOGGER.warning(pUEEx.getMessage());
-                }
+                sendApproval(task,partRevision);
+                LOGGER.info("Sending approval required emails \n\tfor the part " + partRevision.getLastIteration());
             }
         } catch (MessagingException pMEx) {
-            LOGGER.severe("Message format error.");
-            LOGGER.severe("Approval can't be sent.");
-            LOGGER.severe(pMEx.getMessage());
+            String message = "Message format error.  \n\tApproval can't be sent. \n\t"+ pMEx.getMessage();
+            LOGGER.severe(message);
+            LOGGER.log(Level.FINER, message, pMEx);
         }
+    }
 
+    private void sendApproval(Task task, PartRevision partRevision) throws MessagingException {
+        try {
+            User worker = task.getWorker();
+            Locale locale = new Locale(worker.getLanguage());
+
+            sendMessage(new InternetAddress(worker.getEmail(), worker.getName()),
+                        getApprovalRequiredSubject(locale),
+                        getApprovalRequiredMessage(task, partRevision, locale));
+        } catch (UnsupportedEncodingException pUEEx) {
+            String message = "Mail address format error. \n\t" + pUEEx.getMessage();
+            LOGGER.warning(message);
+            LOGGER.log(Level.FINER,message,pUEEx);
+        }
     }
 
     @Asynchronous
@@ -226,28 +208,24 @@ public class MailerBean implements IMailerLocal {
     public void sendWorkspaceDeletionNotification(Account admin, String workspaceId) {
         try {
             Locale locale = new Locale(admin.getLanguage());
-            javax.mail.Message message = new MimeMessage(mailSession);
-            message.setRecipient(javax.mail.Message.RecipientType.TO,
-                    new InternetAddress(admin.getEmail(),admin.getName()));
-            message.setSubject(getWorkspaceDeletionSubject(locale));
-            message.setSentDate(new Date());
-            message.setContent(getWorkspaceDeletionMessage(workspaceId,locale),
-                    "text/html; charset=utf-8");
-            message.setFrom();
-            Transport.send(message);
+            sendMessage(new InternetAddress(admin.getEmail(),admin.getName()),
+                        getWorkspaceDeletionSubject(locale),
+                        getWorkspaceDeletionMessage(workspaceId,locale));
+
         } catch (UnsupportedEncodingException pUEEx) {
-            LOGGER.warning("Mail address format error.");
-            LOGGER.warning(pUEEx.getMessage());
+            String message ="Mail address format error. \n\t"+pUEEx.getMessage();
+            LOGGER.warning(message);
+            LOGGER.log(Level.FINER, message, pUEEx);
         } catch (MessagingException pMEx) {
-            LOGGER.severe("Message format error.");
-            LOGGER.severe(pMEx.getMessage());
+            String message = "Message format error. \n\t"+ pMEx.getMessage();
+            LOGGER.severe(message);
+            LOGGER.log(Level.FINER, message, pMEx);
         }
     }
 
     @Asynchronous
     @Override
     public void sendPartRevisionWorkflowRelaunchedNotification(PartRevision partRevision) {
-
         Workspace workspace = partRevision.getPartMaster().getWorkspace();
         Account admin = workspace.getAdmin();
         User author = partRevision.getAuthor();
@@ -281,43 +259,35 @@ public class MailerBean implements IMailerLocal {
     public void sendIndexerResult(Account account, String workspaceId, boolean hasSuccess, String pMessage) {
         try {
             Locale locale = new Locale(account.getLanguage());
-            javax.mail.Message message = new MimeMessage(mailSession);
-            message.setRecipient(javax.mail.Message.RecipientType.TO,
-                    new InternetAddress(account.getEmail(),account.getName()));
-            message.setSubject(getIndexerResultSubject(locale, hasSuccess));
-            message.setSentDate(new Date());
-            message.setContent(getIndexerResultMessage(workspaceId, pMessage, hasSuccess, locale),
-                    "text/html; charset=utf-8");
-            message.setFrom();
-            Transport.send(message);
+            sendMessage(new InternetAddress(account.getEmail(),account.getName()),
+                        getIndexerResultSubject(locale, hasSuccess),
+                        getIndexerResultMessage(workspaceId, pMessage, hasSuccess, locale));
         } catch (UnsupportedEncodingException pUEEx) {
-            LOGGER.warning("Mail address format error.");
-            LOGGER.warning(pUEEx.getMessage());
+            String message = "Mail address format error. \n\t"+pUEEx.getMessage();
+            LOGGER.warning(message);
+            LOGGER.log(Level.FINER,message,pUEEx);
         } catch (MessagingException pMEx) {
-            LOGGER.severe("Message format error.");
-            LOGGER.severe(pMEx.getMessage());
+            String message = "Message format error. \n\t"+pMEx.getMessage();
+            LOGGER.severe(message);
+            LOGGER.log(Level.FINER,message,pMEx);
         }
     }
 
     private void sendWorkflowRelaunchedNotification(String userName, String userEmail, String userLanguage, String workspaceId, PartRevision partRevision){
         try {
             Locale locale = new Locale(userLanguage);
-            javax.mail.Message message = new MimeMessage(mailSession);
-            message.setRecipient(javax.mail.Message.RecipientType.TO,
-                    new InternetAddress(userEmail,userName));
-            message.setSubject(getPartRevisionWorkflowRelaunchedSubject(locale));
-            message.setSentDate(new Date());
-            message.setContent(getPartRevisionWorkflowRelaunchedMessage(workspaceId, partRevision.getPartNumber(), partRevision.getVersion(), partRevision.getWorkflow().getLifeCycleState(), locale),
-                    "text/html; charset=utf-8");
-            message.setFrom();
-            Transport.send(message);
+            sendMessage(new InternetAddress(userEmail,userName),
+                        getPartRevisionWorkflowRelaunchedSubject(locale),
+                        getPartRevisionWorkflowRelaunchedMessage(workspaceId, partRevision.getPartNumber(),
+                                partRevision.getVersion(), partRevision.getWorkflow().getLifeCycleState(), locale));
         } catch (UnsupportedEncodingException pUEEx) {
-            LOGGER.warning("Mail address format error.");
-            LOGGER.warning(pUEEx.getMessage());
+            String message = "Mail address format error. \n\t"+pUEEx.getMessage();
+            LOGGER.warning(message);
+            LOGGER.log(Level.FINER,message,pUEEx);
         } catch (MessagingException pMEx) {
-            LOGGER.severe("Message format error.");
-            LOGGER.severe("Cannot send workflow relaunched notification.");
-            LOGGER.severe(pMEx.getMessage());
+            String message ="Message format error. \n\tCannot send workflow relaunched notification.\n\t"+pMEx.getMessage();
+            LOGGER.severe(message);
+            LOGGER.log(Level.FINER,message,pMEx);
         }
     }
 
@@ -332,22 +302,18 @@ public class MailerBean implements IMailerLocal {
     private void sendWorkflowRelaunchedNotification(String userName, String userEmail,  String userLanguage, String workspaceId, DocumentRevision documentRevision){
         try {
             Locale locale = new Locale(userLanguage);
-            javax.mail.Message message = new MimeMessage(mailSession);
-            message.setRecipient(javax.mail.Message.RecipientType.TO,
-                    new InternetAddress(userEmail,userName));
-            message.setSubject(getDocumentRevisionWorkflowRelaunchedSubject(locale));
-            message.setSentDate(new Date());
-            message.setContent(getDocumentRevisionWorkflowRelaunchedMessage(workspaceId, documentRevision.getId(), documentRevision.getVersion(), documentRevision.getWorkflow().getLifeCycleState(), locale),
-                    "text/html; charset=utf-8");
-            message.setFrom();
-            Transport.send(message);
+            sendMessage(new InternetAddress(userEmail,userName),
+                        getDocumentRevisionWorkflowRelaunchedSubject(locale),
+                        getDocumentRevisionWorkflowRelaunchedMessage(workspaceId, documentRevision.getId(),
+                                documentRevision.getVersion(), documentRevision.getWorkflow().getLifeCycleState(),locale));
         } catch (UnsupportedEncodingException pUEEx) {
-            LOGGER.warning("Mail address format error.");
-            LOGGER.warning(pUEEx.getMessage());
+            String message = "Mail address format error. \n\t"+ pUEEx.getMessage();
+            LOGGER.warning(message);
+            LOGGER.log(Level.FINER,message,pUEEx);
         } catch (MessagingException pMEx) {
-            LOGGER.severe("Message format error.");
-            LOGGER.severe("Cannot send workflow relaunched notification.");
-            LOGGER.severe(pMEx.getMessage());
+            String message ="Message format error. \n\tCannot send workflow relaunched notification.\n\t"+pMEx.getMessage();
+            LOGGER.severe(message);
+            LOGGER.log(Level.FINER,message,pMEx);
         }
     }
 
@@ -470,5 +436,15 @@ public class MailerBean implements IMailerLocal {
     private String getIndexerResultSubject(Locale pLocale, boolean hasSuccess){
         ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
         return (hasSuccess) ? bundle.getString("Indexer_success_title") : bundle.getString("Indexer_failure_title");
+    }
+
+    private void sendMessage(InternetAddress address, String subject, String content) throws MessagingException {
+        Message message = new MimeMessage(mailSession);
+        message.addRecipient(Message.RecipientType.TO,address);
+        message.setSubject(subject);
+        message.setSentDate(new Date());
+        message.setContent(content,"text/html; charset=utf-8");
+        message.setFrom();
+        Transport.send(message);
     }
 }

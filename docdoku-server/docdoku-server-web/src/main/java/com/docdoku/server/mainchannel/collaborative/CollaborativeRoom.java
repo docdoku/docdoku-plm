@@ -1,8 +1,5 @@
 package com.docdoku.server.mainchannel.collaborative;
 
-import com.docdoku.server.mainchannel.module.CollaborativeMessage;
-import org.apache.log4j.Level;
-
 import javax.json.*;
 import javax.websocket.Session;
 import java.util.*;
@@ -16,7 +13,7 @@ import java.util.logging.Logger;
 public class CollaborativeRoom {
 
     private static final ConcurrentMap<String, CollaborativeRoom> DB = new ConcurrentHashMap<>();
-    private final static Logger LOGGER = Logger.getLogger(CollaborativeRoom.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(CollaborativeRoom.class.getName());
     private String key;
     private Session master;
     private List<Session> slaves;
@@ -38,8 +35,9 @@ public class CollaborativeRoom {
 
     /** Retrieve a {@link com.docdoku.server.mainchannel.util.Room} instance from database */
     public static CollaborativeRoom getByKeyName(String roomKey) {
-        if(roomKey==null)
+        if(roomKey==null) {
             return null;
+        }
         return DB.get(roomKey);
     }
 
@@ -70,8 +68,7 @@ public class CollaborativeRoom {
 
     public JsonObject getContext() {
         JsonArrayBuilder slaves = Json.createArrayBuilder();
-        for (Iterator<Session> iter = this.getSlaves().listIterator(); iter.hasNext(); ) {
-            Session s = iter.next();
+        for (Session s : this.getSlaves()) {
             slaves.add(s.getUserPrincipal().getName());
         }
 
@@ -146,14 +143,13 @@ public class CollaborativeRoom {
     }
 
     public Date getCreationDate() {
-        return creationDate;
+        return (creationDate!=null) ? (Date) creationDate.clone() : null;
     }
 
     public Session findUserSession(String user){
         Session userSession = null;
-        for (Iterator<Session> iter = this.getSlaves().listIterator(); iter.hasNext(); ) {
-            Session s = iter.next();
-            if (s.getUserPrincipal().getName().equals(user)){
+        for (Session s : this.getSlaves()) {
+            if (s.getUserPrincipal().getName().equals(user)) {
                 userSession = s;
             }
         }
@@ -169,7 +165,7 @@ public class CollaborativeRoom {
             saveJsonCommands.add("cameraInfos",command.getJsonObject("cameraInfos"));
         } else if (command.containsKey("smartPath")) {
             JsonArray path = command.getJsonArray("smartPath");
-            if(path.size()==0){
+            if(path.isEmpty()){
                 saveJsonCommands.add("smartPath", JsonValue.NULL);
             } else {
                 saveJsonCommands.add("smartPath", path);

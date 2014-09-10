@@ -1,4 +1,4 @@
-/*global App,ChannelListener,ChannelMessagesType,mainChannel*/
+/*global App,ChannelStatus,ChannelListener,ChannelMessagesType,mainChannel*/
 'use strict';
 define(function(){
 

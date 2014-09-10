@@ -1,4 +1,4 @@
-
+'use strict';
 //JSF javascript functions
 function uncheckPasswordFields(){  
     var p1 = document.getElementById('account-password');

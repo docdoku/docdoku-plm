@@ -19,6 +19,9 @@
     margin: 10px 0 5% 6px;
     padding: 0;
     height: 95%;
+    height: -moz-calc(~"95% - 68px");
+    height: -webkit-calc(~"95% - 68px");
+    height: calc(~"95% - 68px");
     overflow: auto;
   }
 
@@ -91,9 +94,9 @@
 
     .dropdown-menu {
       border-radius: 0;
-      padding: 0;
+      padding: 0 10px 0 0;
       min-width: auto;
-      margin: -1px 0px 0 0;
+      margin: -1px 1px 0 0;
       right: 0;
       left: auto;
 
