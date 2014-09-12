@@ -15,7 +15,7 @@ define([
         initialize: function() {
             _.bindAll(this);
 	        this.isProduct=false;
-	        if(this.options && this.options.type) {
+	        if(this.options && this.options.type){
 		        this.isProduct = this.options.type==='RELEASED' || this.options.type==='LATEST' || this.options.type==='PRODUCT';
 	        }else if(!this.collection){
 				this.collection =new Baselines({},{type:'document'});
