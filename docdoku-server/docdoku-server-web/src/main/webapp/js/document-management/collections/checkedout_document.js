@@ -1,5 +1,7 @@
+/*global APP_CONFIG*/
+'use strict';
 define([
-	"models/document"
+	'models/document'
 ], function (
 	Document
 ) {
@@ -7,10 +9,10 @@ define([
 
         model: Document,
 
-        className : "CheckedoutDocumentList",
+        className : 'CheckedoutDocumentList',
 
         url : function(){
-            return  "/api/workspaces/" + APP_CONFIG.workspaceId + "/documents/checkedout";
+            return  '/api/workspaces/' + APP_CONFIG.workspaceId + '/documents/checkedout';
         }
 
 	});

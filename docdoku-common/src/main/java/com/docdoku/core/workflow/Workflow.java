@@ -40,7 +40,7 @@ public class Workflow implements Serializable, Cloneable {
 
     @OneToMany(mappedBy = "workflow", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @OrderBy("step ASC")
-    private List<Activity> activities = new LinkedList<Activity>();
+    private List<Activity> activities = new LinkedList<>();
 
     @javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date abortedDate;
@@ -60,7 +60,7 @@ public class Workflow implements Serializable, Cloneable {
         if (current != null) {
             return current.getOpenTasks();
         } else {
-            return new ArrayList<Task>();
+            return new ArrayList<>();
         }
     }
 
@@ -160,11 +160,11 @@ public class Workflow implements Serializable, Cloneable {
     }
 
     public Date getAbortedDate() {
-        return abortedDate;
+        return (abortedDate!=null) ? (Date) abortedDate.clone() : null;
     }
 
     public void setAbortedDate(Date abortedDate) {
-        this.abortedDate = abortedDate;
+        this.abortedDate = (abortedDate!=null) ? (Date) abortedDate.clone() : null;
     }
 
     /**
@@ -172,7 +172,7 @@ public class Workflow implements Serializable, Cloneable {
      */
     @Override
     public Workflow clone() {
-        Workflow clone = null;
+        Workflow clone;
         try {
             clone = (Workflow) super.clone();
         } catch (CloneNotSupportedException e) {
@@ -187,8 +187,9 @@ public class Workflow implements Serializable, Cloneable {
         }
         clone.activities = clonedActivities;
 
-        if (abortedDate != null)
+        if (abortedDate != null) {
             clone.abortedDate = (Date) abortedDate.clone();
+        }
         return clone;
     }
 

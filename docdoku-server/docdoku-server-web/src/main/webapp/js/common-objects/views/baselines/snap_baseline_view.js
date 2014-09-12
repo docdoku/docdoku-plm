@@ -1,8 +1,9 @@
 'use strict';
 define([
+	'common-objects/collections/baselines',
     'text!common-objects/templates/baselines/snap_baseline_view.html',
     'i18n!localization/nls/baseline-strings'
-], function (template, i18n) {
+], function (Baselines,template, i18n) {
     var SnapLatestBaselineView = Backbone.View.extend({
         events: {
             'submit #baseline_creation_form' : 'onSubmitForm',
@@ -13,12 +14,26 @@ define([
 
         initialize: function() {
             _.bindAll(this);
+	        this.isProduct=false;
+	        if(this.options && this.options.type) {
+		        this.isProduct = this.options.type==='RELEASED' || this.options.type==='LATEST' || this.options.type==='PRODUCT';
+	        }else if(!this.collection){
+				this.collection =new Baselines({},{type:'document'});
+	        }
         },
 
         render: function() {
-            this.$el.html(this.template({i18n: i18n, model: this.model, isReleased: this.options.type==='RELEASED', isLatest: this.options.type=='LATEST' }));
+	        var data = {
+		        i18n: i18n,
+		        isProduct: this.isProduct
+	        };
+	        if(this.isProduct){
+		        data.isReleased=this.options.type==='RELEASED';
+		        data.isLatest=this.options.type==='LATEST';
+	        }
+            this.$el.html(this.template(data));
             this.bindDomElements();
-            if(this.options.type){
+            if(this.isProduct){
                 this.$inputBaselineType.val(this.options.type);
             }
             return this;
@@ -27,22 +42,29 @@ define([
         bindDomElements:function(){
             this.$modal = this.$('#baseline_creation_modal');
             this.$inputBaselineName = this.$('#inputBaselineName');
-            this.$inputBaselineType = this.$('#inputBaselineType');
             this.$inputBaselineDescription = this.$('#inputBaselineDescription');
+	        if(this.isProduct) {
+		        this.$inputBaselineType = this.$('#inputBaselineType');
+	        }
         },
 
         onSubmitForm: function(e) {
-            this.model.createBaseline(
-                {
-                    name:this.$inputBaselineName.val(),
-                    type:this.$inputBaselineType.val(),
-                    description:this.$inputBaselineDescription.val()
-                },
-                {
-                    success: this.onBaselineCreated,
-                    error: this.onError
-                }
-            );
+	        var data = {
+		        name:this.$inputBaselineName.val(),
+		        description:this.$inputBaselineDescription.val()
+	        };
+	        var callbacks = {
+		        success: this.onBaselineCreated,
+		        error: this.onError
+	        };
+	        if(this.isProduct){
+		        data.type=this.$inputBaselineType.val();
+		        this.model.createBaseline(data,callbacks);
+	        }else{
+				var baselinesCollection = this.collection;
+		        baselinesCollection.create(data,callbacks);
+	        }
+
             e.preventDefault();
             e.stopPropagation();
             return false ;

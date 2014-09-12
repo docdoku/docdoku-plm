@@ -66,13 +66,15 @@ public class TaskResource {
     public Response processTaskForDocuments(@PathParam("workspaceId") String workspaceId, @QueryParam("activityWorkflowId") int activityWorkflowId, @QueryParam("activityStep") int activityStep, @QueryParam("index") int index, @QueryParam("action") String action, TaskProcessDTO taskProcessDTO) {
 
         try {
-
-            if (action.equals("approve")) {
-                documentService.approveTaskOnDocument(workspaceId, new TaskKey(new ActivityKey(activityWorkflowId, activityStep), index), taskProcessDTO.getComment(), taskProcessDTO.getSignature());
-            } else if (action.equals("reject")) {
-                documentService.rejectTaskOnDocument(workspaceId, new TaskKey(new ActivityKey(activityWorkflowId, activityStep), index), taskProcessDTO.getComment(), taskProcessDTO.getSignature());
-            } else {
-                return Response.status(Response.Status.BAD_REQUEST).build();
+            switch (action) {
+                case "approve":
+                    documentService.approveTaskOnDocument(workspaceId, new TaskKey(new ActivityKey(activityWorkflowId, activityStep), index), taskProcessDTO.getComment(), taskProcessDTO.getSignature());
+                    break;
+                case "reject":
+                    documentService.rejectTaskOnDocument(workspaceId, new TaskKey(new ActivityKey(activityWorkflowId, activityStep), index), taskProcessDTO.getComment(), taskProcessDTO.getSignature());
+                    break;
+                default:
+                    return Response.status(Response.Status.BAD_REQUEST).build();
             }
 
             return Response.ok().build();
@@ -89,13 +91,15 @@ public class TaskResource {
     public Response processTaskForParts(@PathParam("workspaceId") String workspaceId, @QueryParam("activityWorkflowId") int activityWorkflowId, @QueryParam("activityStep") int activityStep, @QueryParam("index") int index, @QueryParam("action") String action, TaskProcessDTO taskProcessDTO) {
 
         try {
-
-            if (action.equals("approve")) {
-                productService.approveTaskOnPart(workspaceId, new TaskKey(new ActivityKey(activityWorkflowId, activityStep), index), taskProcessDTO.getComment(), taskProcessDTO.getSignature());
-            } else if (action.equals("reject")) {
-                productService.rejectTaskOnPart(workspaceId, new TaskKey(new ActivityKey(activityWorkflowId, activityStep), index), taskProcessDTO.getComment(), taskProcessDTO.getSignature());
-            } else {
-                return Response.status(Response.Status.BAD_REQUEST).build();
+            switch (action) {
+                case "approve":
+                    productService.approveTaskOnPart(workspaceId, new TaskKey(new ActivityKey(activityWorkflowId, activityStep), index), taskProcessDTO.getComment(), taskProcessDTO.getSignature());
+                    break;
+                case "reject":
+                    productService.rejectTaskOnPart(workspaceId, new TaskKey(new ActivityKey(activityWorkflowId, activityStep), index), taskProcessDTO.getComment(), taskProcessDTO.getSignature());
+                    break;
+                default:
+                    return Response.status(Response.Status.BAD_REQUEST).build();
             }
 
             return Response.ok().build();
@@ -105,5 +109,4 @@ public class TaskResource {
         }
 
     }
-
 }

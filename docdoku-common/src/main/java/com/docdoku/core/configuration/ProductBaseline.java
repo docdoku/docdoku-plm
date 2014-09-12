@@ -37,13 +37,13 @@ import java.util.Map;
  * @version 2.0, 15/05/13
  * @since   V2.0
  */
-@Table(name="BASELINE")
+@Table(name="PRODUCTBASELINE")
 @Entity
 @NamedQueries({
-        @NamedQuery(name="Baseline.findByConfigurationItemId", query="SELECT b FROM Baseline b WHERE b.configurationItem.id = :ciId AND b.configurationItem.workspace.id = :workspaceId"),
-        @NamedQuery(name="Baseline.getBaselinesForPartRevision", query="SELECT b FROM Baseline b WHERE b.partCollection IN (SELECT bl.partCollection FROM BaselinedPart bl WHERE bl.targetPart.partRevision = :partRevision)")
+        @NamedQuery(name= "ProductBaseline.findByConfigurationItemId", query="SELECT b FROM ProductBaseline b WHERE b.configurationItem.id = :ciId AND b.configurationItem.workspace.id = :workspaceId"),
+        @NamedQuery(name= "ProductBaseline.getBaselinesForPartRevision", query="SELECT b FROM ProductBaseline b WHERE b.partCollection IN (SELECT bl.partCollection FROM BaselinedPart bl WHERE bl.targetPart.partRevision = :partRevision)")
 })
-public class Baseline implements Serializable {
+public class ProductBaseline implements Serializable {
 
 
     @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -71,12 +71,14 @@ public class Baseline implements Serializable {
     @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY, orphanRemoval = true)
     private PartCollection partCollection=new PartCollection();
 
-    public enum BaselineType {LATEST, RELEASED}
-
-    public Baseline() {
+    public enum BaselineType {
+        LATEST, RELEASED
     }
 
-    public Baseline(ConfigurationItem configurationItem, String name, BaselineType type, String description) {
+    public ProductBaseline() {
+    }
+
+    public ProductBaseline(ConfigurationItem configurationItem, String name, BaselineType type, String description) {
         this.configurationItem = configurationItem;
         this.name = name;
         this.type = type;
@@ -95,7 +97,7 @@ public class Baseline implements Serializable {
         partCollection.addBaselinedPart(targetPart);
     }
     public boolean hasBasedLinedPart(String targetPartWorkspaceId, String targetPartNumber){
-        return partCollection.hasBasedLinedPart(new BaselinedPartKey(partCollection.getId(),targetPartWorkspaceId,targetPartNumber));
+        return partCollection.hasBaselinedPart(new BaselinedPartKey(partCollection.getId(), targetPartWorkspaceId, targetPartNumber));
     }
     public BaselinedPart getBaselinedPart(BaselinedPartKey baselinedPartKey){
         return partCollection.getBaselinedPart(baselinedPartKey);
@@ -108,14 +110,18 @@ public class Baseline implements Serializable {
         this.name = name;
     }
 
-    public BaselineType getType() {return type;}
-    public void setType(BaselineType type) {this.type = type;}
+    public BaselineType getType() {
+        return type;
+    }
+    public void setType(BaselineType type) {
+        this.type = type;
+    }
 
     public Date getCreationDate() {
-        return creationDate;
+        return (creationDate!=null) ? (Date) creationDate.clone() : null;
     }
     public void setCreationDate(Date creationDate) {
-        this.creationDate = creationDate;
+        this.creationDate = (creationDate!=null) ? (Date) creationDate.clone() : null;
     }
 
     public String getDescription() {
@@ -145,11 +151,15 @@ public class Baseline implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Baseline)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ProductBaseline)) {
+            return false;
+        }
 
-        Baseline baseline = (Baseline) o;
-        return id == baseline.id;
+        ProductBaseline productBaseline = (ProductBaseline) o;
+        return id == productBaseline.id;
     }
 
     @Override

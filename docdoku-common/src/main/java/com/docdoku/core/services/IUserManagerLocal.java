@@ -31,7 +31,7 @@ import com.docdoku.core.security.WorkspaceUserMembership;
  *
  * @author Florent Garin
  */
-public interface    IUserManagerLocal{
+public interface IUserManagerLocal{
 
     Organization createOrganization(String pName, Account pOwner, String pDescription) throws OrganizationAlreadyExistsException, CreationException, NotAllowedException;
     void deleteOrganization(String pName) throws OrganizationNotFoundException, AccountNotFoundException, AccessRightException;

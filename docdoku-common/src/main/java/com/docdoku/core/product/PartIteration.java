@@ -144,11 +144,12 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
     */
     
     private Source source;   
-    public enum Source {MAKE, BUY}
+    public enum Source {
+        MAKE, BUY
+    }
     
     public PartIteration(){
     }
-    
     public PartIteration(PartRevision pPartRevision, int pIteration, User pAuthor) {
         setPartRevision(pPartRevision);
         iteration = pIteration;
@@ -162,51 +163,48 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
     public List<Geometry> getGeometries() {
         return geometries;
     }
-
     public void setGeometries(List<Geometry> geometries) {
         this.geometries = geometries;
     }
 
-    
-    public boolean removeGeometry(Geometry pGeometry){
-        return geometries.remove(pGeometry);
-    }
-    
     public void addGeometry(Geometry pGeometry){
         geometries.add(pGeometry);
-    }    
-    
-    public String getPartNumber() {
-        return partRevision==null?"":partRevision.getPartNumber();
     }
-    
-    public String getPartVersion() {
-        return partRevision==null?"":partRevision.getVersion();
+    public boolean removeGeometry(Geometry pGeometry){
+        return geometries.remove(pGeometry);
     }
 
     public String getNumber() {
         return getPartNumber();
     }
+    public String getPartNumber() {
+        return partRevision==null?"":partRevision.getPartNumber();
+    }
 
     public String getVersion() {
         return getPartVersion();
+    }
+    public String getPartVersion() {
+        return partRevision==null?"":partRevision.getVersion();
     }
 
     public User getAuthor() {
         return author;
     }
-
     public void setAuthor(User author) {
         this.author = author;
     }
 
-    public String getIterationNote() {return iterationNote;}
-    public void setIterationNote(String iterationNote) {this.iterationNote = iterationNote;}
+    public String getIterationNote() {
+        return iterationNote;
+    }
+    public void setIterationNote(String iterationNote) {
+        this.iterationNote = iterationNote;
+    }
 
     public BinaryResource getNativeCADFile() {
         return nativeCADFile;
     }
-
     public void setNativeCADFile(BinaryResource nativeCADFile) {
         this.nativeCADFile = nativeCADFile;
     }
@@ -214,15 +212,14 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
     public void setAttachedFiles(Set<BinaryResource> attachedFiles) {
         this.attachedFiles = attachedFiles;
     }
-    
-    public boolean removeFile(BinaryResource pBinaryResource){
-        return attachedFiles.remove(pBinaryResource);
-    }
-    
+
     public void addFile(BinaryResource pBinaryResource){
         attachedFiles.add(pBinaryResource);
     }
-    
+    public boolean removeFile(BinaryResource pBinaryResource){
+        return attachedFiles.remove(pBinaryResource);
+    }
+
     @Override
     public Set<BinaryResource> getAttachedFiles() {
         return attachedFiles;
@@ -237,17 +234,15 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
     }
     
     public Date getCreationDate() {
-        return creationDate;
+        return (creationDate!=null) ? (Date) creationDate.clone() : null;
     }
-
     public void setCreationDate(Date creationDate) {
-        this.creationDate = creationDate;
+        this.creationDate = (creationDate!=null) ? (Date) creationDate.clone() : null;
     }
 
     public Map<String, InstanceAttribute> getInstanceAttributes() {
         return instanceAttributes;
     }
-
     public void setInstanceAttributes(Map<String, InstanceAttribute> instanceAttributes) {
         this.instanceAttributes = instanceAttributes;
     }
@@ -255,7 +250,6 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
     public int getIteration() {
         return iteration;
     }
-
     public void setIteration(int iteration) {
         this.iteration = iteration;
     }
@@ -264,7 +258,6 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
     public PartRevision getPartRevision() {
         return partRevision;
     }
-
     public void setPartRevision(PartRevision partRevision) {
         this.partRevision = partRevision;
     }

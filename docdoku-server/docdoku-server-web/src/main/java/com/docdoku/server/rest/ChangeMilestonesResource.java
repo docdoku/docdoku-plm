@@ -27,9 +27,9 @@ import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IChangeManagerLocal;
 import com.docdoku.server.rest.dto.ACLDTO;
-import com.docdoku.server.rest.dto.ChangeMilestoneDTO;
-import com.docdoku.server.rest.dto.ChangeOrderDTO;
-import com.docdoku.server.rest.dto.ChangeRequestDTO;
+import com.docdoku.server.rest.dto.change.ChangeMilestoneDTO;
+import com.docdoku.server.rest.dto.change.ChangeOrderDTO;
+import com.docdoku.server.rest.dto.change.ChangeRequestDTO;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -56,7 +56,9 @@ public class ChangeMilestonesResource {
 
     private Mapper mapper;
 
-    public ChangeMilestonesResource() {}
+    public ChangeMilestonesResource() {
+
+    }
 
     @PostConstruct
     public void init() {

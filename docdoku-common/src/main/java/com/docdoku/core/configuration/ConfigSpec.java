@@ -21,6 +21,8 @@
 
 package com.docdoku.core.configuration;
 
+import com.docdoku.core.document.DocumentIteration;
+import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartMaster;
 
@@ -59,4 +61,7 @@ public abstract class ConfigSpec implements Serializable{
     }
 
     public abstract PartIteration filterConfigSpec(PartMaster part);
+
+    public abstract DocumentIteration filterConfigSpec(DocumentMaster documentMaster);
+
 }

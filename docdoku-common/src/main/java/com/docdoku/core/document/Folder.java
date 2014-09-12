@@ -21,6 +21,7 @@
 package com.docdoku.core.document;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.io.Serializable;
@@ -36,7 +37,7 @@ import java.util.Stack;
  * @since   V1.0
  */
 @Table(name="FOLDER")
-@javax.persistence.Entity
+@Entity
 public class Folder implements Serializable, Comparable<Folder> {
 
     @Column(length=255)
@@ -48,7 +49,7 @@ public class Folder implements Serializable, Comparable<Folder> {
     
     public Folder() {
     }
-    
+
     public Folder(String pCompletePath) {
         completePath = pCompletePath;
         if (!isRoot() && !isHome()){
@@ -57,21 +58,21 @@ public class Folder implements Serializable, Comparable<Folder> {
         }
     }
 
+    public Folder(String pParentFolderPath, String pShortName) {
+        this(pParentFolderPath + "/" + pShortName);
+    }
+
     public String getWorkspaceId(){
         return Folder.parseWorkspaceId(completePath);
     }
     
     public static String parseWorkspaceId(String pCompletePath){
-        if(!pCompletePath.contains("/"))
+        if(!pCompletePath.contains("/")) {
             return pCompletePath;
-        else{
+        }else{
             int index = pCompletePath.indexOf('/');
             return pCompletePath.substring(0, index);
         }
-    }
-    
-    public Folder(String pParentFolderPath, String pShortName) {
-        this(pParentFolderPath + "/" + pShortName);
     }
     
     public boolean isRoot() {
@@ -81,7 +82,7 @@ public class Folder implements Serializable, Comparable<Folder> {
     public boolean isHome() {
         try {
             int index = completePath.lastIndexOf('/');
-            return (completePath.charAt(index+1) == '~');
+            return completePath.charAt(index+1) == '~';
         } catch (IndexOutOfBoundsException pIOOBEx) {
             return false;
         }
@@ -90,7 +91,7 @@ public class Folder implements Serializable, Comparable<Folder> {
     public boolean isPrivate() {
         try {
             int index = completePath.indexOf('/');
-            return (completePath.charAt(index+1) == '~');
+            return completePath.charAt(index+1) == '~';
         } catch (IndexOutOfBoundsException pIOOBEx) {
             return false;
         }
@@ -101,8 +102,9 @@ public class Folder implements Serializable, Comparable<Folder> {
         if (isPrivate()) {
             int beginIndex = completePath.indexOf('/');
             int endIndex = completePath.indexOf("/", beginIndex+1);
-            if(endIndex==-1)
-                endIndex=completePath.length();
+            if(endIndex==-1) {
+                endIndex = completePath.length();
+            }
             
             owner = completePath.substring(beginIndex+2, endIndex);
         }
@@ -124,7 +126,7 @@ public class Folder implements Serializable, Comparable<Folder> {
     
     public Folder[] getAllFolders() {
         Folder currentFolder = this;
-        Stack<Folder> foldersStack = new Stack<Folder>();
+        Stack<Folder> foldersStack = new Stack<>();
         
         while (!(currentFolder == null)) {
             foldersStack.push(currentFolder);
@@ -139,8 +141,9 @@ public class Folder implements Serializable, Comparable<Folder> {
     }
     
     public String getShortName() {
-        if(isRoot())
+        if(isRoot()) {
             return completePath;
+        }
 
         int index = completePath.lastIndexOf('/');
         return completePath.substring(index + 1);
@@ -148,7 +151,7 @@ public class Folder implements Serializable, Comparable<Folder> {
 
     public String getRoutePath() {
         int index = completePath.indexOf('/');
-        return completePath.substring(index + 1).toString().replaceAll("/",":");
+        return completePath.substring(index + 1).replaceAll("/", ":");
     }
     
     public static Folder createRootFolder(String pWorkspaceId) {
@@ -177,8 +180,9 @@ public class Folder implements Serializable, Comparable<Folder> {
         if (this == pObj) {
             return true;
         }
-        if (!(pObj instanceof Folder))
+        if (!(pObj instanceof Folder)) {
             return false;
+        }
         Folder folder = (Folder) pObj;
         return folder.completePath.equals(completePath);
     }

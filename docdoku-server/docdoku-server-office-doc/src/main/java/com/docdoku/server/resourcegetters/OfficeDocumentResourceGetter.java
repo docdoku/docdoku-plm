@@ -50,7 +50,7 @@ public class OfficeDocumentResourceGetter implements DocumentResourceGetter {
     }
 
     private boolean outputSupported(String outputFormat) {
-        return outputFormat != null && outputFormat.equals("pdf");
+        return outputFormat != null && "pdf".equals(outputFormat);
     }
 
     @Override
@@ -62,7 +62,7 @@ public class OfficeDocumentResourceGetter implements DocumentResourceGetter {
 
         if ("pdf".equals(outputFormat)) {
 
-            if (extension.equals("pdf")) {
+            if ("pdf".equals(extension)) {
                 inputStream = dataManager.getBinaryResourceInputStream(binaryResource);
             } else {
                 String subResourceVirtualPath = FileIO.getFileNameWithoutExtension(binaryResource.getName()) + ".pdf";
@@ -86,10 +86,8 @@ public class OfficeDocumentResourceGetter implements DocumentResourceGetter {
             }
         }
 
-        if(binaryResource.getOwnerType().equals("documents")){
-            if(docI != null){
-                return TitleBlockGenerator.addBlockTitleToPDF(inputStream, docI, new Locale(user.getLanguage()));
-            }
+        if("documents".equals(binaryResource.getOwnerType()) && docI != null){
+            return TitleBlockGenerator.addBlockTitleToPDF(inputStream, docI, new Locale(user.getLanguage()));
         }
 
         return inputStream;

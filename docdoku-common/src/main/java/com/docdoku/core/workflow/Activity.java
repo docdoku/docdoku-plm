@@ -181,15 +181,19 @@ public abstract class Activity implements Serializable, Cloneable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         Activity activity = (Activity) o;
 
         return step == activity.step
                 && (workflow != null ? workflow.equals(activity.workflow) : activity.workflow == null);
     }
-    
+
     @Override
     public int hashCode() {
         int hash = 1;

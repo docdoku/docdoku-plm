@@ -143,12 +143,12 @@ public class PartRevisionDAO {
         StringBuilder queryStr = new StringBuilder();
         queryStr.append("SELECT DISTINCT p FROM PartRevision p ");
 
-        if (pAttrs != null && pAttrs.size() > 0) {
+        if (pAttrs != null && !pAttrs.isEmpty()) {
             queryStr.append("JOIN p.partIterations i ");
         }
 
         queryStr.append("WHERE p.partMaster.workspace.id = :workspaceId ");
-        if (pAttrs != null && pAttrs.size() > 0) {
+        if (pAttrs != null && !pAttrs.isEmpty()) {
             queryStr.append("AND i.iteration = (SELECT MAX(i2.iteration) FROM PartRevision p2 JOIN p2.partIterations i2 WHERE p2=p) ");
             int i = 0;
             for (SearchQuery.AbstractAttributeQuery attr : pAttrs) {
@@ -187,14 +187,17 @@ public class PartRevisionDAO {
         queryStr.append("AND p.version LIKE :version ");
         queryStr.append("AND p.partMaster.name LIKE :name ");
 
-        if(pType != null)
+        if(pType != null) {
             queryStr.append("AND p.partMaster.type LIKE :type ");
+        }
 
-        if (standardPart != null)
+        if (standardPart != null) {
             queryStr.append("AND p.partMaster.standardPart = :standardPart ");
+        }
 
-        if (pAuthor != null)
+        if (pAuthor != null) {
             queryStr.append("AND p.author.login = :author ");
+        }
 
         queryStr.append("AND p.creationDate BETWEEN :lowerDate AND :upperDate ");
         queryStr.append("ORDER BY p.partMaster.number, p.version");
@@ -205,16 +208,19 @@ public class PartRevisionDAO {
         query.setParameter("version", pVersion == null ? "%" : "%" + pVersion + "%");
         query.setParameter("name", pName == null ? "%" : "%" + pName + "%");
 
-        if(pType != null)
-            query.setParameter("type","%" + pType + "%");
+        if(pType != null) {
+            query.setParameter("type", "%" + pType + "%");
+        }
 
-        if (standardPart != null)
+        if (standardPart != null) {
             query.setParameter("standardPart", standardPart);
+        }
 
-        if (pAuthor != null)
+        if (pAuthor != null) {
             query.setParameter("author", pAuthor);
+        }
 
-        if (pAttrs != null && pAttrs.size() > 0) {
+        if (pAttrs != null && !pAttrs.isEmpty()) {
             int i = 0;
             for (SearchQuery.AbstractAttributeQuery attr : pAttrs) {
                 if (attr instanceof SearchQuery.TextAttributeQuery) {

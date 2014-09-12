@@ -19,6 +19,8 @@
  */
 package com.docdoku.core.configuration;
 
+import com.docdoku.core.document.DocumentIteration;
+import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.product.ConfigurationItem;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartMaster;
@@ -66,4 +68,10 @@ public abstract class EffectivityConfigSpec extends ConfigSpec {
     public PartIteration filterConfigSpec(PartMaster root) {
         return null;
     }
+
+    @Override
+    public DocumentIteration filterConfigSpec(DocumentMaster documentMaster) {
+        return null;
+    }
+
 }

@@ -82,10 +82,10 @@ public class PartDTO implements Serializable {
     }
 
     public Date getCreationDate() {
-        return creationDate;
+        return (creationDate!=null) ? (Date) creationDate.clone() : null;
     }
     public void setCreationDate(Date creationDate) {
-        this.creationDate = creationDate;
+        this.creationDate = (creationDate!=null) ? (Date) creationDate.clone() : null;
     }
 
     public String getDescription() {
@@ -124,10 +124,10 @@ public class PartDTO implements Serializable {
     }
 
     public Date getCheckOutDate() {
-        return checkOutDate;
+        return (checkOutDate!=null) ? (Date) checkOutDate.clone() : null;
     }
     public void setCheckOutDate(Date checkOutDate) {
-        this.checkOutDate = checkOutDate;
+        this.checkOutDate = (checkOutDate!=null) ? (Date) checkOutDate.clone() : null;
     }
 
     public WorkflowDTO getWorkflow() {
@@ -179,9 +179,17 @@ public class PartDTO implements Serializable {
         this.attributesLocked = attributesLocked;
     }
 
-    public PartRevision.RevisionStatus getStatus() {return status;}
-    public void setStatus(PartRevision.RevisionStatus status) {this.status = status;}
+    public PartRevision.RevisionStatus getStatus() {
+        return status;
+    }
+    public void setStatus(PartRevision.RevisionStatus status) {
+        this.status = status;
+    }
 
-    public int getLastIterationNumber() {return lastIterationNumber;}
-    public void setLastIterationNumber(int lastIterationNumber) {this.lastIterationNumber = lastIterationNumber;}
+    public int getLastIterationNumber() {
+        return lastIterationNumber;
+    }
+    public void setLastIterationNumber(int lastIterationNumber) {
+        this.lastIterationNumber = lastIterationNumber;
+    }
 }

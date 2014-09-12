@@ -18,7 +18,7 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.server.rest.dto;
+package com.docdoku.server.rest.dto.product;
 
 public class ProductInstanceCreationDTO {
 
@@ -29,12 +29,24 @@ public class ProductInstanceCreationDTO {
     public ProductInstanceCreationDTO() {
     }
 
-    public String getSerialNumber() {return serialNumber;}
-    public void setSerialNumber(String serialNumber) {this.serialNumber = serialNumber;}
+    public String getSerialNumber() {
+        return serialNumber;
+    }
+    public void setSerialNumber(String serialNumber) {
+        this.serialNumber = serialNumber;
+    }
 
-    public String getConfigurationItemId() {return configurationItemId;}
-    public void setConfigurationItemId(String configurationItemId) {this.configurationItemId = configurationItemId;}
+    public String getConfigurationItemId() {
+        return configurationItemId;
+    }
+    public void setConfigurationItemId(String configurationItemId) {
+        this.configurationItemId = configurationItemId;
+    }
 
-    public int getBaselineId() {return baselineId;}
-    public void setBaselineId(int baselineId) {this.baselineId = baselineId;}
+    public int getBaselineId() {
+        return baselineId;
+    }
+    public void setBaselineId(int baselineId) {
+        this.baselineId = baselineId;
+    }
 }

@@ -126,13 +126,13 @@ function (date, i18n) {
 	    },
 
         getInstancesUrl: function() {
-            return '/api/workspaces/' + APP_CONFIG.workspaceId + '/products/' + APP_CONFIG.productId + '/instances?configSpec='+window.configSpec+'&path=' + this.getPath();
+            return '/api/workspaces/' + APP_CONFIG.workspaceId + '/products/' + APP_CONFIG.productId + '/instances?configSpec='+APP_CONFIG.configSpec+'&path=' + this.getPath();
         },
 
         getUrlForBom: function() {
 
             if(this.isAssembly()) {
-                return '/api/workspaces/' + APP_CONFIG.workspaceId + '/products/' + APP_CONFIG.productId + '/bom?configSpec='+window.configSpec+'&partUsageLink=' + this.getPartUsageLinkId();
+                return '/api/workspaces/' + APP_CONFIG.workspaceId + '/products/' + APP_CONFIG.productId + '/bom?configSpec='+APP_CONFIG.configSpec+'&partUsageLink=' + this.getPartUsageLinkId();
             } else {
                 return '/api/workspaces/' + APP_CONFIG.workspaceId + '/parts/' + this.getNumber()+ '-' + this.getVersion();
             }
@@ -159,9 +159,9 @@ function (date, i18n) {
 
         url: function() {
             if (this.isRoot) {
-                return this.urlBase + '?configSpec='+window.configSpec+'&depth=0';
+                return this.urlBase + '?configSpec='+APP_CONFIG.configSpec+'&depth=0';
             } else {
-                return this.urlBase + '?configSpec='+window.configSpec+'&partUsageLink=' + this.parentUsageLinkId + '&depth=1';
+                return this.urlBase + '?configSpec='+APP_CONFIG.configSpec+'&partUsageLink=' + this.parentUsageLinkId + '&depth=1';
             }
         },
 

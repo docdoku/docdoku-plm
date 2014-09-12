@@ -72,32 +72,33 @@ public class ActivityModelDozerConverter extends DozerConverter<ActivityModel, A
     }
 
     @Override
-    public ActivityModel convertFrom(ActivityModelDTO activityModelDTO, ActivityModel activityModel) {
+    public ActivityModel convertFrom(ActivityModelDTO activityModelDTO, ActivityModel pActivityModel) {
 
         List<TaskModel> taskModels = new ArrayList<>();
         for(int i=0; i<activityModelDTO.getTaskModels().size(); i++){
             taskModels.add(mapper.map(activityModelDTO.getTaskModels().get(i), TaskModel.class));
         }
 
+        ActivityModel activityModel;
+
         switch (activityModelDTO.getType()){
             case SERIAL:{
-                SerialActivityModel serialActivityModel = new SerialActivityModel();
-                serialActivityModel.setStep(activityModelDTO.getStep());
-                serialActivityModel.setTaskModels(taskModels);
-                serialActivityModel.setLifeCycleState(activityModelDTO.getLifeCycleState());
-                return serialActivityModel;
+                activityModel = new SerialActivityModel();
+                break;
             }
             case PARALLEL:{
-                ParallelActivityModel parallelActivityModel = new ParallelActivityModel();
-                parallelActivityModel.setStep(activityModelDTO.getStep());
-                parallelActivityModel.setTaskModels(taskModels);
-                parallelActivityModel.setLifeCycleState(activityModelDTO.getLifeCycleState());
-                parallelActivityModel.setTasksToComplete(activityModelDTO.getTasksToComplete());
-                return parallelActivityModel;
+                activityModel = new ParallelActivityModel();
+                ((ParallelActivityModel) activityModel).setTasksToComplete(activityModelDTO.getTasksToComplete());
+                break;
             }
             default:{
                 throw new IllegalArgumentException("ActivityModelDTO type not supported");
             }
         }
+
+        activityModel.setStep(activityModelDTO.getStep());
+        activityModel.setTaskModels(taskModels);
+        activityModel.setLifeCycleState(activityModelDTO.getLifeCycleState());
+        return activityModel;
     }
 }

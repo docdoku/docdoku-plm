@@ -25,10 +25,10 @@ import com.docdoku.core.product.ConfigurationItemKey;
 import com.docdoku.core.product.PartIterationKey;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IProductManagerLocal;
-import com.docdoku.server.rest.dto.BaselinedPartDTO;
-import com.docdoku.server.rest.dto.ProductInstanceCreationDTO;
-import com.docdoku.server.rest.dto.ProductInstanceIterationDTO;
-import com.docdoku.server.rest.dto.ProductInstanceMasterDTO;
+import com.docdoku.server.rest.dto.baseline.BaselinedPartDTO;
+import com.docdoku.server.rest.dto.product.ProductInstanceCreationDTO;
+import com.docdoku.server.rest.dto.product.ProductInstanceIterationDTO;
+import com.docdoku.server.rest.dto.product.ProductInstanceMasterDTO;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -42,6 +42,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -55,6 +57,7 @@ public class ProductInstancesResource {
     @EJB
     private IProductManagerLocal productService;
 
+    private static final Logger LOGGER = Logger.getLogger(ProductInstancesResource.class.getName());
     private Mapper mapper;
 
     public ProductInstancesResource() {
@@ -84,6 +87,7 @@ public class ProductInstancesResource {
             }
             return productInstanceMasterDTOList;
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.SEVERE,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -96,6 +100,7 @@ public class ProductInstancesResource {
             ProductInstanceMaster productInstanceMaster = productService.createProductInstance(new ConfigurationItemKey(workspaceId, productInstanceCreationDTO.getConfigurationItemId()), productInstanceCreationDTO.getSerialNumber(), productInstanceCreationDTO.getBaselineId());
             return mapper.map(productInstanceMaster, ProductInstanceMasterDTO.class);
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.SEVERE,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -106,9 +111,9 @@ public class ProductInstancesResource {
     public ProductInstanceMasterDTO getProductInstance(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber){
         try {
             ProductInstanceMaster productInstanceMaster = productService.getProductInstanceMaster(new ProductInstanceMasterKey(serialNumber,workspaceId,configurationItemId));
-            ProductInstanceMasterDTO productInstanceMasterDTO= mapper.map(productInstanceMaster,ProductInstanceMasterDTO.class);
-            return productInstanceMasterDTO;
+            return mapper.map(productInstanceMaster,ProductInstanceMasterDTO.class);
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.SEVERE,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -121,6 +126,7 @@ public class ProductInstancesResource {
             productService.deleteProductInstance(workspaceId, configurationItemId, serialNumber);
             return Response.ok().build();
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.SEVERE,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -138,6 +144,7 @@ public class ProductInstancesResource {
             }
             return productInstanceIterationDTOList;
         }catch(ApplicationException ex) {
+            LOGGER.log(Level.SEVERE,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -148,14 +155,15 @@ public class ProductInstancesResource {
     @Produces(MediaType.APPLICATION_JSON)
     public ProductInstanceIterationDTO createProductInstanceIteration(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationId, @PathParam("serialNumber") String serialNumber, @PathParam("iteration") int iteration, ProductInstanceIterationDTO productInstanceIterationDTO){
         try {
-            configurationId = (configurationId != null) ? configurationId : productInstanceIterationDTO.getConfigurationItemId();
+            String cId = (configurationId != null) ? configurationId : productInstanceIterationDTO.getConfigurationItemId();
             List<PartIterationKey> partIterationKeys = new ArrayList<>();
             for(BaselinedPartDTO baselinedPartDTO : productInstanceIterationDTO.getBaselinedPartsList()){
                 partIterationKeys.add(new PartIterationKey(workspaceId, baselinedPartDTO.getNumber(),baselinedPartDTO.getVersion(),baselinedPartDTO.getIteration()));
             }
-            ProductInstanceIteration productInstanceIteration = productService.updateProductInstance(new ConfigurationItemKey(workspaceId, configurationId), productInstanceIterationDTO.getSerialNumber(), productInstanceIterationDTO.getIterationNote(), partIterationKeys);
+            ProductInstanceIteration productInstanceIteration = productService.updateProductInstance(new ConfigurationItemKey(workspaceId, cId), productInstanceIterationDTO.getSerialNumber(), productInstanceIterationDTO.getIterationNote(), partIterationKeys);
             return mapper.map(productInstanceIteration,ProductInstanceIterationDTO.class);
         }catch(ApplicationException ex) {
+            LOGGER.log(Level.SEVERE,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -166,9 +174,9 @@ public class ProductInstancesResource {
     public ProductInstanceIterationDTO getProductInstanceIteration(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, @PathParam("iteration") int iteration){
         try {
             ProductInstanceIteration productInstanceIteration = productService.getProductInstanceIteration(new ProductInstanceIterationKey(serialNumber, workspaceId, configurationItemId, iteration));
-            ProductInstanceIterationDTO productInstanceIterationDTO= mapper.map(productInstanceIteration,ProductInstanceIterationDTO.class);
-            return productInstanceIterationDTO;
+            return mapper.map(productInstanceIteration,ProductInstanceIterationDTO.class);
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.SEVERE,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -186,12 +194,9 @@ public class ProductInstancesResource {
                 baselinedParts = productService.getProductInstanceIterationBaselinedPart(new ProductInstanceIterationKey(serialNumber, workspaceId, configurationItemId, iteration));
             }
 
-            List<BaselinedPartDTO> baselinedPartDTOList = new ArrayList<>();
-            for(BaselinedPart baselinedPart : baselinedParts){
-                baselinedPartDTOList.add(Tools.mapBaselinedPartToBaselinedPartDTO(baselinedPart));
-            }
-            return baselinedPartDTOList;
+            return Tools.mapBaselinedPartsToBaselinedPartDTO(baselinedParts);
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.SEVERE,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }

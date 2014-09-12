@@ -109,6 +109,8 @@ public class InstanceAttributeTemplate implements Serializable {
                 case URL :
                     attr = new InstanceURLAttribute();
                     break;
+                default:
+                    return null;
             }
 
             attr.setName(name);
@@ -121,8 +123,12 @@ public class InstanceAttributeTemplate implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         InstanceAttributeTemplate that = (InstanceAttributeTemplate) o;
 

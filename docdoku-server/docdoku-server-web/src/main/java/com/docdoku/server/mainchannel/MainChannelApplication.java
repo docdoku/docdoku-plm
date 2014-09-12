@@ -239,7 +239,6 @@ public class MainChannelApplication {
                 CHANNELS.remove(userLogin);
             }
         }
-        System.out.println(session);
     }
 
     private boolean callerIsAllowToReachCallee(String caller, String callee) {

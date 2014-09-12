@@ -1,5 +1,7 @@
+/*global APP_CONFIG*/
+'use strict';
 define([
-	"models/document"
+	'models/document'
 ], function (
 	Document
 ) {
@@ -7,15 +9,15 @@ define([
 
 		model: Document,
 
-        className:"CheckedOutDocumentList",
+        className:'CheckedOutDocumentList',
 
         url: function() {
-            var baseUrl = "/api/workspaces/" + APP_CONFIG.workspaceId + "/checkedouts";
-            return baseUrl + "/"+ APP_CONFIG.login + "/documents";
+            var baseUrl = '/api/workspaces/' + APP_CONFIG.workspaceId + '/checkedouts';
+            return baseUrl + '/'+ APP_CONFIG.login + '/documents';
         },
 
         comparator: function(document) {
-            return document.get("id");
+            return document.get('id');
         }
 
 	});

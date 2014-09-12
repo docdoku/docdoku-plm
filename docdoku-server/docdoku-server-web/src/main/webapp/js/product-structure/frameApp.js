@@ -1,3 +1,5 @@
+/*global SCENE_INIT, APP_CONFIG*/
+'use strict';
 var sceneManager;
 
 // Global Namespace for the application
@@ -49,7 +51,7 @@ define(['dmu/SceneManager','dmu/InstancesManager'],
 
             initialize: function() {
 
-                window.config_spec = "latest";
+                APP_CONFIG.configSpec = "latest";
                 try{
                     App.frameApp = true;
                     App.instancesManager = new InstancesManager();

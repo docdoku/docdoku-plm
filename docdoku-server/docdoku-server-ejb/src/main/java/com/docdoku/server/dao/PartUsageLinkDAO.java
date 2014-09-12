@@ -69,8 +69,9 @@ public class PartUsageLinkDAO {
             newPath.add(0,parentUsage);
             createPath(parentUsage, newPath, usagePaths);
         }
-        if(parentUsages.isEmpty())
+        if(parentUsages.isEmpty()) {
             usagePaths.add(currentPath.toArray(new PartUsageLink[currentPath.size()]));
+        }
               
     }
     
@@ -82,7 +83,7 @@ public class PartUsageLinkDAO {
     }
 
     public boolean hasPartUsages(String workspaceId, String partNumber){
-        return findPartUsages(workspaceId,partNumber).size()>0;
+        return !findPartUsages(workspaceId,partNumber).isEmpty();
     }
     
     public PartUsageLink loadPartUsageLink(int pId) throws PartUsageLinkNotFoundException {

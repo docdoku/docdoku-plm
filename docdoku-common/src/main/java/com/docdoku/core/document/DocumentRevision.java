@@ -124,7 +124,7 @@ public class DocumentRevision implements Serializable, Comparable<DocumentRevisi
         @JoinColumn(name="DOCUMENTREVISION_VERSION", referencedColumnName="VERSION"),
         @JoinColumn(name="DOCUMENTMASTER_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID")
     })
-    private Set<Tag> tags=new HashSet<Tag>();
+    private Set<Tag> tags=new HashSet<>();
 
 
     @Column(name = "DOCUMENTMASTER_ID", nullable = false, insertable = false, updatable = false)
@@ -141,7 +141,6 @@ public class DocumentRevision implements Serializable, Comparable<DocumentRevisi
 
     public DocumentRevision() {
     }
-
     public DocumentRevision(DocumentMaster pDocumentMaster,
                         String pStringVersion,
                         User pAuthor) {
@@ -149,7 +148,6 @@ public class DocumentRevision implements Serializable, Comparable<DocumentRevisi
         version=pStringVersion;
         author = pAuthor;
     }
-
     public DocumentRevision(DocumentMaster pDocumentMaster,
                         Version pVersion,
                         User pAuthor) {
@@ -157,72 +155,67 @@ public class DocumentRevision implements Serializable, Comparable<DocumentRevisi
         version=pVersion.toString();
         author = pAuthor;
     }
-
     public DocumentRevision(DocumentMaster pDocumentMaster, User pAuthor) {
         this(pDocumentMaster);
         version = new Version().toString();
         author = pAuthor;
     }
-
     private DocumentRevision(DocumentMaster pDocumentMaster) {
         setDocumentMaster(pDocumentMaster);
-    }
-
-    public void setDocumentMaster(DocumentMaster documentMaster) {
-        this.documentMaster = documentMaster;
-        documentMasterId=documentMaster.getId();
-        documentMasterWorkspaceId=documentMaster.getWorkspaceId();
     }
 
     @XmlTransient
     public DocumentMaster getDocumentMaster() {
         return documentMaster;
     }
+    public void setDocumentMaster(DocumentMaster documentMaster) {
+        this.documentMaster = documentMaster;
+        documentMasterId=documentMaster.getId();
+        documentMasterWorkspaceId=documentMaster.getWorkspaceId();
+    }
 
     public DocumentRevisionKey getKey() {
         return new DocumentRevisionKey(getDocumentMasterKey(), version);
     }
 
-    public boolean isCheckedOut() {
-        return (checkOutUser != null);
-    }
-
     public User getCheckOutUser() {
         return checkOutUser;
     }
-
     public void setCheckOutUser(User pCheckOutUser) {
         checkOutUser = pCheckOutUser;
     }
+    public boolean isCheckedOut() {
+        return checkOutUser != null;
+    }
+    public boolean isCheckedOutBy(String pUser) {
+        return checkOutUser != null && checkOutUser.getLogin().equals(pUser);
+    }
 
     public Date getCheckOutDate() {
-        return checkOutDate;
+        return (checkOutDate!=null) ? (Date) checkOutDate.clone() : null;
     }
-
-    public void setCheckOutDate(Date pCheckOutDate) {
-        checkOutDate = pCheckOutDate;
-    }
-
-    public void setAuthor(User pAuthor) {
-        author = pAuthor;
+    public void setCheckOutDate(Date checkOutDate) {
+        this.checkOutDate = (checkOutDate!=null) ? (Date) checkOutDate.clone() : null;
     }
 
     public User getAuthor() {
         return author;
     }
-
-    public void setCreationDate(Date pCreationDate) {
-        creationDate = pCreationDate;
+    public void setAuthor(User pAuthor) {
+        author = pAuthor;
     }
 
     public Date getCreationDate() {
-        return creationDate;
+        return (creationDate!=null) ? (Date) creationDate.clone() : null;
     }
+    public void setCreationDate(Date creationDate) {
+        this.creationDate =(creationDate!=null) ? (Date) creationDate.clone(): null;
+    }
+
 
     public String getVersion() {
         return version;
     }
-
     public void setVersion(String version) {
         this.version = version;
     }
@@ -234,26 +227,24 @@ public class DocumentRevision implements Serializable, Comparable<DocumentRevisi
     public Workflow getWorkflow() {
         return workflow;
     }
-
     public void setWorkflow(Workflow pWorkflow) {
         workflow = pWorkflow;
     }
-
-    public String getLifeCycleState() {
-        if (workflow != null)
-            return workflow.getLifeCycleState();
-        else
-            return null;
+    public boolean hasWorkflow() {
+        return workflow != null;
     }
 
-    public boolean hasWorkflow() {
-        return (workflow != null);
+    public String getLifeCycleState() {
+        if (workflow != null) {
+            return workflow.getLifeCycleState();
+        } else {
+            return null;
+        }
     }
 
     public ACL getACL() {
         return acl;
     }
-
     public void setACL(ACL acl) {
         this.acl = acl;
     }
@@ -266,8 +257,14 @@ public class DocumentRevision implements Serializable, Comparable<DocumentRevisi
         this.abortedWorkflows.add(abortedWorkflow);
     }
 
-    public boolean isCheckedOutBy(String pUser) {
-        return (checkOutUser != null && checkOutUser.getLogin().equals(pUser));
+    public List<DocumentIteration> getDocumentIterations() {
+        return documentIterations;
+    }
+    public void setDocumentIterations(List<DocumentIteration> documentIterations) {
+        this.documentIterations = documentIterations;
+    }
+    public DocumentIteration getIteration(int pIteration) {
+        return documentIterations.get(pIteration-1);
     }
 
     public DocumentIteration createNextIteration(User pUser){
@@ -277,33 +274,55 @@ public class DocumentRevision implements Serializable, Comparable<DocumentRevisi
         documentIterations.add(doc);
         return doc;
     }
-
-    public void setDocumentIterations(List<DocumentIteration> documentIterations) {
-        this.documentIterations = documentIterations;
-    }
-
-    public List<DocumentIteration> getDocumentIterations() {
-        return documentIterations;
-    }
-
     public DocumentIteration getLastIteration() {
         int index = documentIterations.size()-1;
-        if(index < 0)
+        if(index < 0) {
             return null;
-        else
+        } else {
             return documentIterations.get(index);
+        }
     }
-
+    public DocumentIteration getLastUncheckoutedIteration() {
+        int index;
+        if(this.isCheckedOut()){
+            index = documentIterations.size()-2;
+        }else{
+            index = documentIterations.size()-1;
+        }
+        if(index < 0) {
+            List<DocumentRevision> documentRevisions = this.getDocumentMaster().getDocumentRevisions();
+            int position = documentRevisions.indexOf(this);
+            if (position > 0 ) {
+                return documentRevisions.get(position - 1).getLastUncheckoutedIteration();
+            }else{
+                return null;
+            }
+        }else {
+            return documentIterations.get(index);
+        }
+    }
     public DocumentIteration removeLastIteration() {
         int index = documentIterations.size()-1;
-        if(index < 0)
+        if(index < 0) {
             return null;
-        else
+        } else {
             return documentIterations.remove(index);
+        }
     }
-
-    public DocumentIteration getIteration(int pIteration) {
-        return documentIterations.get(pIteration-1);
+    /**
+     * Remove the iterations following the lastIterationWanted
+     * @param lastIterationWanted The new last iteration number
+     */
+    public void removeLastIterations(int lastIterationWanted){
+        DocumentIteration documentIteration;
+        do{
+            documentIteration = getLastIteration();
+            if(documentIteration.getIteration()>lastIterationWanted){
+                documentIteration = removeLastIteration();
+            }else{
+                break;
+            }
+        }while(documentIteration!=null);
     }
 
     public int getNumberOfIterations() {
@@ -313,7 +332,6 @@ public class DocumentRevision implements Serializable, Comparable<DocumentRevisi
     public void setDescription(String pDescription) {
         description = pDescription;
     }
-
     public String getDescription() {
         return description;
     }
@@ -334,53 +352,39 @@ public class DocumentRevision implements Serializable, Comparable<DocumentRevisi
     public String getDocumentMasterId() {
         return documentMasterId;
     }
-
     public String getDocumentMasterWorkspaceId() {
         return documentMasterWorkspaceId;
     }
 
-
     public boolean isPublicShared() {
         return publicShared;
     }
-
     public void setPublicShared(boolean publicShared) {
         this.publicShared = publicShared;
     }
 
-
     public void setTitle(String pTitle) {
         title = pTitle;
     }
-
     public String getTitle() {
         return title;
     }
-
-
-
 
     public boolean isCheckedOutBy(User pUser) {
         return isCheckedOutBy(pUser.getLogin());
     }
 
-
-
     public Set<Tag> getTags() {
         return tags;
     }
-
-
     public void setTags(Set<Tag> pTags) {
         tags.retainAll(pTags);
         pTags.removeAll(tags);
         tags.addAll(pTags);
     }
-    
     public boolean addTag(Tag pTag){
         return tags.add(pTag);
     }
-    
     public boolean removeTag(Tag pTag){
         return tags.remove(pTag);
     }
@@ -395,13 +399,15 @@ public class DocumentRevision implements Serializable, Comparable<DocumentRevisi
         if (this == pObj) {
             return true;
         }
-        if (!(pObj instanceof DocumentRevision))
+        if (!(pObj instanceof DocumentRevision)) {
             return false;
+        }
         DocumentRevision docR = (DocumentRevision) pObj;
-        return ((docR.getId().equals(getId())) && (docR.getWorkspaceId().equals(getWorkspaceId())) && (docR.version.equals(version)));
+        return (docR.getId().equals(getId()) &&
+               (docR.getWorkspaceId().equals(getWorkspaceId())) &&
+               (docR.version.equals(version)));
         
     }
-    
     @Override
     public int hashCode() {
         int hash = 1;
@@ -410,16 +416,17 @@ public class DocumentRevision implements Serializable, Comparable<DocumentRevisi
         hash = 31 * hash + version.hashCode();
 	    return hash;
     }
-
     public int compareTo(DocumentRevision pDocR) {
         int wksComp = getWorkspaceId().compareTo(pDocR.getWorkspaceId());
-        if (wksComp != 0)
+        if (wksComp != 0) {
             return wksComp;
+        }
         int idComp = getId().compareTo(pDocR.getId());
-        if (idComp != 0)
+        if (idComp != 0) {
             return idComp;
-        else
+        } else {
             return version.compareTo(pDocR.version);
+        }
     }
     
     public Folder getLocation() {
@@ -450,8 +457,9 @@ public class DocumentRevision implements Serializable, Comparable<DocumentRevisi
         }
         clone.documentIterations = clonedDocumentIterations;
         
-        if(workflow !=null)
+        if(workflow !=null) {
             clone.workflow = workflow.clone();
+        }
 
         //perform a deep copy
         List<Workflow> clonedAbortedWorkflows =new ArrayList<>();
@@ -461,18 +469,20 @@ public class DocumentRevision implements Serializable, Comparable<DocumentRevisi
         }
         clone.abortedWorkflows = clonedAbortedWorkflows;
 
-        if(acl !=null)
+        if(acl !=null) {
             clone.acl = acl.clone();
+        }
 
         clone.tags = new HashSet<>(tags);
         
-        if(creationDate!=null)
+        if(creationDate!=null) {
             clone.creationDate = (Date) creationDate.clone();
+        }
         
-        if(checkOutDate!=null)
+        if(checkOutDate!=null) {
             clone.checkOutDate = (Date) checkOutDate.clone();
+        }
         
         return clone;
     }
-    
 }

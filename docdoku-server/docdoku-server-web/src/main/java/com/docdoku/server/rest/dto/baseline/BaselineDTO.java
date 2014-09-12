@@ -18,18 +18,33 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.server.rest.dto;
+package com.docdoku.server.rest.dto.baseline;
 
-import com.docdoku.core.configuration.Baseline;
+import java.util.Date;
 
-import java.io.Serializable;
+public class BaselineDTO {
 
-public class BaselineCreationDTO implements Serializable {
+    private int id;
     private String name;
-    private String configurationItemId;
-    private Baseline.BaselineType type;
     private String description;
-    private String creationMessage;
+    private Date creationDate;
+
+    public BaselineDTO() {
+    }
+
+    public BaselineDTO(int id, String name, String description, Date creationDate) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.creationDate = (Date) creationDate.clone();
+    }
+
+    public int getId() {
+        return id;
+    }
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
@@ -38,9 +53,6 @@ public class BaselineCreationDTO implements Serializable {
         this.name = name;
     }
 
-    public Baseline.BaselineType getType() {return type;}
-    public void setType(Baseline.BaselineType type) {this.type = type;}
-
     public String getDescription() {
         return description;
     }
@@ -48,9 +60,10 @@ public class BaselineCreationDTO implements Serializable {
         this.description = description;
     }
 
-    public String getConfigurationItemId() {return configurationItemId;}
-    public void setConfigurationItemId(String configurationItemId) {this.configurationItemId = configurationItemId;}
-
-    public String getCreationMessage() {return creationMessage;}
-    public void setCreationMessage(String creationMessage) {this.creationMessage = creationMessage;}
+    public Date getCreationDate() {
+        return (creationDate!=null) ? (Date) creationDate.clone() : null;
+    }
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = (creationDate!=null) ? (Date) creationDate.clone() : null;
+    }
 }

@@ -27,7 +27,12 @@ import com.docdoku.core.product.PartIterationKey;
 import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IChangeManagerLocal;
-import com.docdoku.server.rest.dto.*;
+import com.docdoku.server.rest.dto.ACLDTO;
+import com.docdoku.server.rest.dto.DocumentIterationDTO;
+import com.docdoku.server.rest.dto.PartIterationDTO;
+import com.docdoku.server.rest.dto.TagDTO;
+import com.docdoku.server.rest.dto.change.ChangeIssueDTO;
+import com.docdoku.server.rest.dto.change.ChangeItemDTO;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -266,7 +271,7 @@ public class ChangeIssuesResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateACL(@PathParam("workspaceId") String pWorkspaceId, @PathParam("issueId") int issueId, ACLDTO acl) {
         try {
-            if (acl.getGroupEntries().size() > 0 || acl.getUserEntries().size() > 0) {
+            if (!acl.getGroupEntries().isEmpty() || !acl.getUserEntries().isEmpty()) {
 
                 Map<String,String> userEntries = new HashMap<>();
                 Map<String,String> groupEntries = new HashMap<>();

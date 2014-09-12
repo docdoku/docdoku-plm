@@ -1,12 +1,13 @@
+'use strict';
 define([
-    "common-objects/collections/baselines",
-    "common-objects/collections/configuration_items",
-    "text!templates/baseline/baselines_content.html",
-    "i18n!localization/nls/baseline-strings",
-    "views/baseline/baselines_list",
-    "views/baseline/baseline_duplicate_view",
-    "text!common-objects/templates/buttons/delete_button.html",
-    "text!common-objects/templates/buttons/duplicate_button.html"
+    'common-objects/collections/baselines',
+    'common-objects/collections/configuration_items',
+    'text!templates/baseline/baselines_content.html',
+    'i18n!localization/nls/baseline-strings',
+    'views/baseline/baselines_list',
+    'views/baseline/baseline_duplicate_view',
+    'text!common-objects/templates/buttons/delete_button.html',
+    'text!common-objects/templates/buttons/duplicate_button.html'
 ], function (
     BaselinesCollection,
     ConfigurationItemCollection,
@@ -14,21 +15,21 @@ define([
     i18n,
     BaselinesListView,
     BaselineDuplicateView,
-    delete_button,
-    duplicate_button
+    deleteButton,
+    duplicateButton
     ) {
     var BaselinesContentView = Backbone.View.extend({
 
         template: Mustache.compile(template),
 
         partials:{
-            delete_button: delete_button,
-            duplicate_button: duplicate_button
+            deleteButton: deleteButton,
+            duplicateButton: duplicateButton
         },
 
         events:{
-            "click button.delete":"deleteBaseline",
-            "click button.duplicate": "duplicateBaseline"
+            'click button.delete':'deleteBaseline',
+            'click button.duplicate': 'duplicateBaseline'
         },
 
         initialize: function () {
@@ -47,16 +48,16 @@ define([
         },
 
         bindDomElements:function(){
-            this.deleteButton = this.$(".delete");
-            this.duplicateButton = this.$(".duplicate");
-            this.$inputProductId = this.$("#inputProductId");
+            this.deleteButton = this.$('.delete');
+            this.duplicateButton = this.$('.duplicate');
+            this.$inputProductId = this.$('#inputProductId');
         },
 
         fillProductList: function(list){
             var self = this ;
             if(list){
                 list.each(function(product){
-                    self.$inputProductId.append("<option value='"+product.getId()+"'"+">"+product.getId()+"</option>");
+                    self.$inputProductId.append('<option value="'+product.getId()+'" >'+product.getId()+'</option>');
                 });
                 this.$inputProductId.combobox({bsVersion: '2'});
             }
@@ -70,16 +71,16 @@ define([
             }
             if(this.$inputProductId.val()){
                 this.listView = new BaselinesListView({
-                    collection:new BaselinesCollection({},{productId:this.$inputProductId.val()})
+                    collection:new BaselinesCollection({},{type:'product',productId:this.$inputProductId.val()})
                 }).render();
             }else{
                 this.listView = new BaselinesListView({
-                    collection:new BaselinesCollection({})
+                    collection:new BaselinesCollection({},{type:'product'})
                 }).render();
             }
             this.$el.append(this.listView.el);
-            this.listView.on("delete-button:display", this.changeDeleteButtonDisplay);
-            this.listView.on("duplicate-button:display", this.changeDuplicateButtonDisplay);
+            this.listView.on('delete-button:display', this.changeDeleteButtonDisplay);
+            this.listView.on('duplicate-button:display', this.changeDuplicateButtonDisplay);
         },
 
         deleteBaseline:function(){
@@ -88,7 +89,7 @@ define([
 
         duplicateBaseline:function(){
             var baselineDuplicateView = new BaselineDuplicateView({model: this.listView.getSelectedBaseline()});
-            $("body").append(baselineDuplicateView.render().el);
+            $('body').append(baselineDuplicateView.render().el);
             baselineDuplicateView.openModal();
         },
 

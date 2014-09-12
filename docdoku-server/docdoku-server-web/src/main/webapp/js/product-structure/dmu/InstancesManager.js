@@ -217,7 +217,7 @@ function (LoaderManager, async) {
 
         function loadPath(paths, callback){
             $.ajax({
-                url:'/api/workspaces/' + APP_CONFIG.workspaceId + '/products/' + APP_CONFIG.productId + '/instances?configSpec='+window.configSpec,
+                url:'/api/workspaces/' + APP_CONFIG.workspaceId + '/products/' + APP_CONFIG.productId + '/instances?configSpec='+APP_CONFIG.configSpec,
                 type:'POST',
                 contentType:'application/json',
                 dataType:'json',
@@ -262,7 +262,7 @@ function (LoaderManager, async) {
 
         function unLoadPath(paths, callback) {
             $.ajax({
-                url:'/api/workspaces/' + APP_CONFIG.workspaceId + '/products/' + APP_CONFIG.productId + '/instances?configSpec='+window.configSpec,
+                url:'/api/workspaces/' + APP_CONFIG.workspaceId + '/products/' + APP_CONFIG.productId + '/instances?configSpec='+APP_CONFIG.configSpec,
                 type:'POST',
                 contentType:'application/json',
                 data:JSON.stringify({

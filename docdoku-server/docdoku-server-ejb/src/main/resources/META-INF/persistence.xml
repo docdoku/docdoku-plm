@@ -14,7 +14,7 @@
     <class>com.docdoku.core.change.ChangeOrder</class>
     <class>com.docdoku.core.change.ChangeRequest</class>
     <class>com.docdoku.core.change.Milestone</class>
-    <class>com.docdoku.core.configuration.Baseline</class>
+    <class>com.docdoku.core.configuration.ProductBaseline</class>
     <class>com.docdoku.core.configuration.BaselineConfigSpec</class>
     <class>com.docdoku.core.configuration.BaselinedPart</class>
     <class>com.docdoku.core.configuration.ConfigSpec</class>
@@ -34,6 +34,11 @@
     <class>com.docdoku.core.document.Folder</class>
     <class>com.docdoku.core.document.IterationChangeSubscription</class>
     <class>com.docdoku.core.document.StateChangeSubscription</class>
+    <class>com.docdoku.core.document.baseline.DocumentBaseline</class>
+    <class>com.docdoku.core.document.baseline.DocumentsCollection</class>
+    <class>com.docdoku.core.document.baseline.FoldersCollection</class>
+    <class>com.docdoku.core.document.baseline.BaselinedDocument</class>
+    <class>com.docdoku.core.document.baseline.BaselinedFolder</class>
     <class>com.docdoku.core.gcm.GCMAccount</class>
     <class>com.docdoku.core.log.DocumentLog</class>
     <class>com.docdoku.core.log.PartLog</class>

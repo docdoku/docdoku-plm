@@ -91,7 +91,6 @@ public class DocumentMaster implements Serializable, Comparable<DocumentMaster>,
     public void setAuthor(User pAuthor) {
         author = pAuthor;
     }
-    
     public User getAuthor() {
         return author;
     }
@@ -99,7 +98,6 @@ public class DocumentMaster implements Serializable, Comparable<DocumentMaster>,
     public void setCreationDate(Date pCreationDate) {
         creationDate = pCreationDate;
     }
-    
     public Date getCreationDate() {
         return creationDate;
     }
@@ -107,7 +105,6 @@ public class DocumentMaster implements Serializable, Comparable<DocumentMaster>,
     public void setId(String id) {
         this.id = id;
     }
-
     public String getId(){
         return id;
     }
@@ -115,26 +112,36 @@ public class DocumentMaster implements Serializable, Comparable<DocumentMaster>,
     public List<DocumentRevision> getDocumentRevisions() {
         return documentRevisions;
     }
-
     public void setDocumentRevisions(List<DocumentRevision> documentRevisions) {
         this.documentRevisions = documentRevisions;
+    }
+
+    public DocumentRevision getDocumentRevision(String version) {
+        for(DocumentRevision documentRevision : documentRevisions){
+            if(documentRevision.getVersion().equals(version)){
+                return documentRevision;
+            }
+        }
+        return null;
     }
 
 
     public DocumentRevision getLastRevision() {
         int index = documentRevisions.size()-1;
-        if(index < 0)
+        if(index < 0) {
             return null;
-        else
+        } else {
             return documentRevisions.get(index);
+        }
     }
 
     public DocumentRevision removeLastRevision() {
         int index = documentRevisions.size()-1;
-        if(index < 0)
+        if(index < 0) {
             return null;
-        else
+        } else {
             return documentRevisions.remove(index);
+        }
     }
 
     public void removeRevision(DocumentRevision documentRevision) {
@@ -144,9 +151,9 @@ public class DocumentMaster implements Serializable, Comparable<DocumentMaster>,
     public DocumentRevision createNextRevision(User pUser){
         DocumentRevision lastRev=getLastRevision();
         Version version;
-        if(lastRev==null)
+        if(lastRev==null) {
             version = new Version("A");
-        else{
+        } else{
             version = new Version(lastRev.getVersion());
             version.increase();
         }
@@ -159,7 +166,6 @@ public class DocumentMaster implements Serializable, Comparable<DocumentMaster>,
     public String getType() {
         return type;
     }
-
     public void setType(String type) {
         this.type = type;
     }
@@ -177,7 +183,6 @@ public class DocumentMaster implements Serializable, Comparable<DocumentMaster>,
     public void setWorkspace(Workspace pWorkspace){
         workspace=pWorkspace;
     }
-    
     public Workspace getWorkspace(){
         return workspace;
     }
@@ -195,10 +200,11 @@ public class DocumentMaster implements Serializable, Comparable<DocumentMaster>,
         if (this == pObj) {
             return true;
         }
-        if (!(pObj instanceof DocumentMaster))
+        if (!(pObj instanceof DocumentMaster)) {
             return false;
+        }
         DocumentMaster docM = (DocumentMaster) pObj;
-        return ((docM.id.equals(id)) && (docM.getWorkspaceId().equals(getWorkspaceId())));
+        return (docM.id.equals(id) && (docM.getWorkspaceId().equals(getWorkspaceId())));
         
     }
     
@@ -213,10 +219,11 @@ public class DocumentMaster implements Serializable, Comparable<DocumentMaster>,
     @Override
     public int compareTo(DocumentMaster pDocM) {
         int wksComp = getWorkspaceId().compareTo(pDocM.getWorkspaceId());
-        if (wksComp != 0)
+        if (wksComp != 0) {
             return wksComp;
-        else
+        } else {
             return id.compareTo(pDocM.id);
+        }
 
     }
 
@@ -248,10 +255,10 @@ public class DocumentMaster implements Serializable, Comparable<DocumentMaster>,
         }
         clone.documentRevisions = clonedDocumentRevisions;
 
-        if(creationDate!=null)
+        if(creationDate!=null) {
             clone.creationDate = (Date) creationDate.clone();
+        }
 
         return clone;
     }
-    
 }

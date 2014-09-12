@@ -62,7 +62,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
     @EJB
     private IUserManagerLocal userManager;
 
-    private final static Logger LOGGER = Logger.getLogger(ChangeManagerBean.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ChangeManagerBean.class.getName());
 
     @PostConstruct
     private void init() {
@@ -88,7 +88,9 @@ public class ChangeManagerBean implements IChangeManagerLocal {
             try{
                 checkChangeItemReadAccess(changeIssue,user);                                                            // Check if the user can access to this Change-Issue
                 visibleChangeIssues.add(changeIssue);                                                                   // Add the Change-Issue to the list
-            }catch (AccessRightException ignored){}
+            }catch (AccessRightException e){
+                LOGGER.log(Level.FINEST,null,e);
+            }
         }
         return visibleChangeIssues;
     }

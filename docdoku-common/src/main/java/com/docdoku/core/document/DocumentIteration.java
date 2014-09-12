@@ -144,9 +144,6 @@ public class DocumentIteration implements Serializable, FileHolder, Comparable<D
         return getDocumentVersion();
     }
 
-    public void setDocumentMasterId(String documentMasterId) {
-    }
-
     public int getIteration() {
         return iteration;
     }
@@ -201,12 +198,12 @@ public class DocumentIteration implements Serializable, FileHolder, Comparable<D
         return documentRevision;
     }
 
-    public void setCreationDate(Date pCreationDate) {
-        creationDate = pCreationDate;
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = (creationDate!=null) ? (Date) creationDate.clone() : null;
     }
 
     public Date getCreationDate() {
-        return creationDate;
+        return (creationDate!=null) ? (Date) creationDate.clone() : null;
     }
 
     public Set<DocumentLink> getLinkedDocuments() {
@@ -245,10 +242,14 @@ public class DocumentIteration implements Serializable, FileHolder, Comparable<D
         if (this == pObj) {
             return true;
         }
-        if (!(pObj instanceof DocumentIteration))
+        if (!(pObj instanceof DocumentIteration)) {
             return false;
+        }
         DocumentIteration docI = (DocumentIteration) pObj;
-        return ((docI.getId().equals(getId())) && (docI.getWorkspaceId().equals(getWorkspaceId()))  && (docI.getDocumentVersion().equals(getDocumentVersion())) && (docI.iteration==iteration));
+        return docI.getId().equals(getId()) &&
+                docI.getWorkspaceId().equals(getWorkspaceId()) &&
+                docI.getDocumentVersion().equals(getDocumentVersion()) &&
+                docI.iteration==iteration;
     }
 
 

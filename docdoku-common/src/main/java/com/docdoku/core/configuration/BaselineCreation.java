@@ -26,26 +26,40 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BaselineCreation implements Serializable{
-    Baseline baseline;
+    ProductBaseline productBaseline;
     String message;
     List<PartRevision> conflit;
 
     public BaselineCreation(){}
 
-    public BaselineCreation(Baseline baseline) {
-        this.baseline = baseline;
+    public BaselineCreation(ProductBaseline productBaseline) {
+        this.productBaseline = productBaseline;
         this.message = null;
         this.conflit = new ArrayList<>();
     }
 
-    public Baseline getBaseline() {return baseline;}
-    public void setBaseline(Baseline baseline) {this.baseline = baseline;}
+    public ProductBaseline getProductBaseline() {
+        return productBaseline;
+    }
+    public void setProductBaseline(ProductBaseline productBaseline) {
+        this.productBaseline = productBaseline;
+    }
 
-    public String getMessage() {return message;}
-    public void setMessage(String message) {this.message = message;}
+    public String getMessage() {
+        return message;
+    }
+    public void setMessage(String message) {
+        this.message = message;
+    }
 
-    public List<PartRevision> getConflit() {return conflit;}
+    public List<PartRevision> getConflit() {
+        return conflit;
+    }
 
-    public void addConflit(PartRevision partRevision) {this.conflit.add(partRevision);}
-    public void addConflit(List<PartRevision> partRevisions) {this.conflit.addAll(partRevisions);}
+    public void addConflit(PartRevision partRevision) {
+        this.conflit.add(partRevision);
+    }
+    public void addConflit(List<PartRevision> partRevisions) {
+        this.conflit.addAll(partRevisions);
+    }
 }

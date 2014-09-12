@@ -1,9 +1,10 @@
 /*global APP_VIEW*/
+'use strict';
 define([
-	"common-objects/common/singleton_decorator",
-	"common-objects/views/base",
-	"views/tag_list",
-	"text!templates/tag_nav.html"
+	'common-objects/common/singleton_decorator',
+	'common-objects/views/base',
+	'views/tag_list',
+	'text!templates/tag_nav.html'
 ], function (
 	singletonDecorator,
 	BaseView,
@@ -13,15 +14,15 @@ define([
 
 	var TagNavView = BaseView.extend({
 		template: Mustache.compile(template),
-		el: "#tag-nav",
+		el: '#tag-nav',
 		initialize: function () {
 			BaseView.prototype.initialize.apply(this, arguments);
 			var toggleTarget = '[data-target="#items-' + this.cid + '"]';
-			this.events['click ' + toggleTarget] = "toggle";
+			this.events['click ' + toggleTarget] = 'toggle';
 
             var that = this ;
 
-            Backbone.Events.on("refreshTagNavViewCollection",function(){
+            Backbone.Events.on('refreshTagNavViewCollection',function(){
                 that.tagsView.collection.fetch({reset:true});
             });
 
@@ -30,33 +31,33 @@ define([
 		rendered: function () {
 			this.tagsView = this.addSubView(
 				new TagListView({
-					el: "#items-" + this.cid
+					el: '#items-' + this.cid
 				})
 			);
-			this.tagsView.bind("shown", this.onTagsViewShown);
-			this.bind("shown", this.shown);
-			this.bind("hidden", this.hidden);
+			this.tagsView.bind('shown', this.onTagsViewShown);
+			this.bind('shown', this.shown);
+			this.bind('hidden', this.hidden);
 		},
 		show: function (tag) {
 			this.tag = tag;
 			this.isOpen = true;
 			this.tagsView.showTag(this.tag);
 			if (!this.tag) {
-				this.router.navigate("tags", {trigger: false});
+				this.router.navigate('tags', {trigger: false});
 			}
-			this.trigger("shown");
+			this.trigger('shown');
 		},
 		hide: function () {
 			this.isOpen = false;
 			this.tagsView.hide();
-			this.router.navigate("tags", {trigger: false});
-			this.trigger("hidden");
+			this.router.navigate('tags', {trigger: false});
+			this.trigger('hidden');
 		},
 		shown: function () {
-			this.$el.addClass("open");
+			this.$el.addClass('open');
 		},
 		hidden: function () {
-			this.$el.removeClass("open");
+			this.$el.removeClass('open');
 		},
 		toggle: function () {
 			if(this.isOpen){
@@ -64,10 +65,6 @@ define([
             }else {
                 this.show();
             }
-            /*if(APP_VIEW.$documentManagementMenu){
-                APP_VIEW.$documentManagementMenu.find(".active").removeClass("active");
-            }
-			this.$el.find(".header").first().addClass("active");*/
 			return false;
 		}
 	});

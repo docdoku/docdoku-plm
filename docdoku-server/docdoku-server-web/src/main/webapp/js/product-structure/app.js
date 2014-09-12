@@ -19,7 +19,7 @@ define(
         'views/control_clipping_view',
         'views/control_explode_view',
         'views/control_measure_view',
-        'views/baseline_select_view',
+        'common-objects/views/baselines/baseline_select_view',
         'dmu/SceneManager',
         'dmu/collaborativeController',
         'dmu/InstancesManager',
@@ -65,7 +65,7 @@ define(
         template:Mustache.compile(template),
 
         initialize: function() {
-            window.configSpec = 'latest';
+            APP_CONFIG.configSpec = 'latest';
         },
 
         render:function(){
@@ -291,7 +291,7 @@ define(
         },
 
         onConfigSpecChange:function(configSpec){
-            window.configSpec = configSpec;
+            APP_CONFIG.configSpec = configSpec;
             App.sceneManager.clear();
             App.instancesManager.clear();
             Backbone.Events.trigger('refresh_tree');

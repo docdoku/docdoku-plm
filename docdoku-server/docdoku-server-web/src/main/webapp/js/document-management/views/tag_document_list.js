@@ -1,3 +1,5 @@
+/*global APP_VIEW*/
+'use strict';
 define([
 	"collections/tag_document",
 	"views/content_document_list",
@@ -11,12 +13,12 @@ define([
 ], function (
 	TagDocumentList,
 	ContentDocumentListView,
-    delete_button,
-    checkout_button_group,
-    tags_button,
-    new_version_button,
-    ACL_button,
-    search_form,
+	deleteButton,
+	checkoutButtonGroup,
+	tagsButton,
+	newVersionButton,
+	aclButton,
+	searchForm,
     template
 ) {
 	var TagDocumentListView = ContentDocumentListView.extend({
@@ -24,12 +26,12 @@ define([
         template: Mustache.compile(template),
 
         partials: {
-            delete_button: delete_button,
-            checkout_button_group: checkout_button_group,
-            tags_button:tags_button,
-            new_version_button: new_version_button,
-            search_form:search_form,
-            ACL_button:ACL_button
+	        deleteButton: deleteButton,
+	        checkoutButtonGroup: checkoutButtonGroup,
+	        tagsButton:tagsButton,
+	        newVersionButton: newVersionButton,
+	        searchForm:searchForm,
+	        aclButton:aclButton
         },
 
 		collection: function () {
@@ -41,6 +43,9 @@ define([
 			if (this.model) {
 				this.collection.parent = this.model;
 			}
+			this.templateExtraData = {
+				isReadOnly: APP_VIEW.isReadOnly()
+			};
 		}
     });
 	return TagDocumentListView;

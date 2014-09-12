@@ -1,5 +1,7 @@
+/*global APP_CONFIG*/
+'use strict';
 define([
-	"models/document"
+	'models/document'
 ], function (
 	Document
 ) {
@@ -7,7 +9,7 @@ define([
 
 		model: Document,
 
-        className:"SearchDocumentList",
+        className:'SearchDocumentList',
 
         setQuery:function(query){
             this.query = query  ;
@@ -15,8 +17,8 @@ define([
         },
 
         url: function() {
-            var baseUrl = "/api/workspaces/" + APP_CONFIG.workspaceId + "/search";
-            return baseUrl + "/" + this.query + "/documents";
+            var baseUrl = '/api/workspaces/' + APP_CONFIG.workspaceId + '/search';
+            return baseUrl + '/' + this.query + '/documents?configSpec='+APP_CONFIG.configSpec;
         }
 	});
 

@@ -18,7 +18,7 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.server.rest.dto;
+package com.docdoku.server.rest.dto.baseline;
 
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartRevision;
@@ -56,17 +56,33 @@ public class BaselinedPartDTO {
         this.iteration = iteration;
     }
 
-    public String getNumber() {return number;}
-    public void setNumber(String number) {this.number = number;}
+    public String getNumber() {
+        return number;
+    }
+    public void setNumber(String number) {
+        this.number = number;
+    }
 
-    public String getVersion() {return version;}
-    public void setVersion(String version) {this.version = version;}
+    public String getVersion() {
+        return version;
+    }
+    public void setVersion(String version) {
+        this.version = version;
+    }
 
-    public int getIteration() {return iteration;}
-    public void setIteration(int iteration) {this.iteration = iteration;}
+    public int getIteration() {
+        return iteration;
+    }
+    public void setIteration(int iteration) {
+        this.iteration = iteration;
+    }
 
 
-    public List<BaselinedPartOptionDTO> getAvailableIterations() {return availableIterations;}
-    public void setAvailableIterations(List<BaselinedPartOptionDTO> availableIterations) {this.availableIterations = availableIterations;}
+    public List<BaselinedPartOptionDTO> getAvailableIterations() {
+        return availableIterations;
+    }
+    public void setAvailableIterations(List<BaselinedPartOptionDTO> availableIterations) {
+        this.availableIterations = availableIterations;
+    }
 
 }

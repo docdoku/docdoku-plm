@@ -1,5 +1,7 @@
+/*global APP_CONFIG*/
+'use strict';
 define([
-	"models/document"
+	'models/document'
 ], function (
 	Document
 ) {
@@ -7,22 +9,22 @@ define([
 
 		model: Document,
 
-        className:"TaskDocumentList",
+        className:'TaskDocumentList',
 
         setFilterStatus:function(status){
             this.filterStatus = status;
         },
 
         url: function() {
-            var url = "/api/workspaces/" + APP_CONFIG.workspaceId + "/tasks/"+  APP_CONFIG.login +"/documents/";
+            var url = '/api/workspaces/' + APP_CONFIG.workspaceId + '/tasks/'+  APP_CONFIG.login +'/documents/';
             if(this.filterStatus){
-                url += "?filter="+this.filterStatus;
+                url += '?filter='+this.filterStatus;
             }
             return url;
         },
 
         comparator: function(document) {
-            return document.get("id");
+            return document.get('id');
         }
 
 	});

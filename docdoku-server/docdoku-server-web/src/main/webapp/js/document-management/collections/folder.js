@@ -1,10 +1,10 @@
+/*global APP_CONFIG*/
 'use strict';
 define([
 	'models/folder'
 ], function (
 	Folder
 ) {
-    //TODO : rename the file to FolderList
 	var FolderList = Backbone.Collection.extend({
 
         model: Folder,
@@ -14,9 +14,9 @@ define([
         url:function(){
             var baseUrl = '/api/workspaces/' + APP_CONFIG.workspaceId + '/folders';
             if (this.parent) {
-                return baseUrl + '/' + this.parent.get('id') + '/folders';
+                return baseUrl + '/' + this.parent.get('id') + '/folders?configSpec='+APP_CONFIG.configSpec;
             } else {
-                return  baseUrl;
+                return  baseUrl+'?configSpec='+APP_CONFIG.configSpec;
             }
         },
 

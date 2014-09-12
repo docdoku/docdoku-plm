@@ -188,31 +188,27 @@ public class PartRevision implements Serializable, Comparable<PartRevision>, Clo
     public User getAuthor() {
         return author;
     }
-
     public void setAuthor(User author) {
         this.author = author;
     }
 
     public Date getCreationDate() {
-        return creationDate;
+        return (creationDate!=null) ? (Date) creationDate.clone() : null;
     }
-
     public void setCreationDate(Date creationDate) {
-        this.creationDate = creationDate;
+        this.creationDate = (creationDate!=null) ? (Date) creationDate.clone() : null;
     }
 
     public Date getCheckOutDate() {
-        return checkOutDate;
+        return (checkOutDate!=null) ? (Date) checkOutDate.clone() : null;
+    }
+    public void setCheckOutDate(Date checkOutDate) {
+        this.checkOutDate = (checkOutDate!=null) ? (Date) checkOutDate.clone() : null;
     }
 
     public User getCheckOutUser() {
         return checkOutUser;
     }
-
-    public void setCheckOutDate(Date checkOutDate) {
-        this.checkOutDate = checkOutDate;
-    }
-
     public void setCheckOutUser(User checkOutUser) {
         this.checkOutUser = checkOutUser;
     }
@@ -220,7 +216,6 @@ public class PartRevision implements Serializable, Comparable<PartRevision>, Clo
     public String getVersion() {
         return version;
     }
-
     public void setVersion(String version) {
         this.version = version;
     }
@@ -228,7 +223,6 @@ public class PartRevision implements Serializable, Comparable<PartRevision>, Clo
     public Workflow getWorkflow() {
         return workflow;
     }
-    
     public void setWorkflow(Workflow pWorkflow) {
         workflow = pWorkflow;
     }
@@ -247,7 +241,6 @@ public class PartRevision implements Serializable, Comparable<PartRevision>, Clo
     public ACL getACL() {
         return acl;
     }
-
     public void setACL(ACL acl) {
         this.acl = acl;
     }
@@ -255,7 +248,6 @@ public class PartRevision implements Serializable, Comparable<PartRevision>, Clo
     public List<Workflow> getAbortedWorkflows() {
         return abortedWorkflows;
     }
-
     public void addAbortedWorkflows(Workflow abortedWorkflow) {
         this.abortedWorkflows.add(abortedWorkflow);
     }
@@ -268,16 +260,13 @@ public class PartRevision implements Serializable, Comparable<PartRevision>, Clo
         return part;
     }
 
-    
-    public void setPartIterations(List<PartIteration> partIterations) {
-        this.partIterations = partIterations;
-    }
-    
-
     public List<PartIteration> getPartIterations() {
         return partIterations;
     }
-    
+    public void setPartIterations(List<PartIteration> partIterations) {
+        this.partIterations = partIterations;
+    }
+
     public PartIteration getLastIteration() {
         int index = partIterations.size()-1;
         if(index < 0)
@@ -329,7 +318,6 @@ public class PartRevision implements Serializable, Comparable<PartRevision>, Clo
     public String getDescription() {
         return description;
     }
-
     public void setDescription(String description) {
         this.description = description;
     }  
@@ -362,11 +350,9 @@ public class PartRevision implements Serializable, Comparable<PartRevision>, Clo
         partMasterWorkspaceId = pPartMasterWorkspaceId;
     }
 
-
     public Set<Effectivity> getEffectivities() {
         return effectivities;
     }
-
     public void setEffectivities(Set<Effectivity> effectivities) {
         this.effectivities = effectivities;
     }
@@ -374,7 +360,6 @@ public class PartRevision implements Serializable, Comparable<PartRevision>, Clo
     public boolean isPublicShared() {
         return publicShared;
     }
-
     public void setPublicShared(boolean publicShared) {
         this.publicShared = publicShared;
     }
@@ -382,13 +367,13 @@ public class PartRevision implements Serializable, Comparable<PartRevision>, Clo
     public RevisionStatus getStatus() {
         return status;
     }
-
-    public void setStatus(RevisionStatus status) { this.status = status; }
+    public void setStatus(RevisionStatus status) {
+        this.status = status;
+    }
 
     public boolean isReleased(){
         return status==RevisionStatus.RELEASED;
     }
-
     public void release(){
         this.status=RevisionStatus.RELEASED;
     }

@@ -25,7 +25,9 @@ import java.util.Date;
 
 public class TaskDTO implements Serializable {
 
-    public enum Status {NOT_STARTED, IN_PROGRESS, APPROVED, REJECTED, NOT_TO_BE_DONE}
+    public enum Status {
+        NOT_STARTED, IN_PROGRESS, APPROVED, REJECTED, NOT_TO_BE_DONE
+    }
     private String closureComment;
     private String title;
     private String instructions;
@@ -35,18 +37,12 @@ public class TaskDTO implements Serializable {
     private UserDTO worker;
     private Status status;
 
-    // 0 = approved
-    // 1 = in progress
-    // 2 = not started
-    // 3 = rejected
-    //private int status ;
     public TaskDTO() {
     }
 
     public String getClosureComment() {
         return closureComment;
     }
-
     public void setClosureComment(String closureComment) {
         this.closureComment = closureComment;
     }
@@ -54,7 +50,6 @@ public class TaskDTO implements Serializable {
     public String getTitle() {
         return title;
     }
-
     public void setTitle(String title) {
         this.title = title;
     }
@@ -62,7 +57,6 @@ public class TaskDTO implements Serializable {
     public String getInstructions() {
         return instructions;
     }
-
     public void setInstructions(String instructions) {
         this.instructions = instructions;
     }
@@ -70,23 +64,20 @@ public class TaskDTO implements Serializable {
     public int getTargetIteration() {
         return targetIteration;
     }
-
     public void setTargetIteration(int targetIteration) {
         this.targetIteration = targetIteration;
     }
 
     public Date getClosureDate() {
-        return closureDate;
+        return (closureDate!=null) ? (Date) closureDate.clone() : null;
     }
-
     public void setClosureDate(java.util.Date date) {
-        this.closureDate = date;
+        this.closureDate = (closureDate!=null) ? (Date) closureDate.clone() : null;
     }
 
     public Status getStatus() {
         return status;
     }
-
     public void setStatus(Status status) {
         this.status = status;
     }
@@ -94,7 +85,6 @@ public class TaskDTO implements Serializable {
     public UserDTO getWorker() {
         return worker;
     }
-
     public void setWorker(UserDTO worker) {
         this.worker = worker;
     }
@@ -102,7 +92,6 @@ public class TaskDTO implements Serializable {
     public String getSignature() {
         return signature;
     }
-
     public void setSignature(String signature) {
         this.signature = signature;
     }

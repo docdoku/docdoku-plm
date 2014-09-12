@@ -22,7 +22,7 @@ package com.docdoku.cli.helpers;
 
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
-import com.docdoku.core.configuration.Baseline;
+import com.docdoku.core.configuration.ProductBaseline;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartMaster;
 import com.docdoku.core.product.PartRevision;
@@ -145,19 +145,19 @@ public class JSONOutput {
         }
     }
 
-    public static String printBaselines(List<Baseline> baselines) throws JSONException {
+    public static String printBaselines(List<ProductBaseline> productBaselines) throws JSONException {
         JSONArray jsonArray = new JSONArray();
-        for(Baseline baseline : baselines) {
-            jsonArray.put(printBaseline(baseline));
+        for(ProductBaseline productBaseline : productBaselines) {
+            jsonArray.put(printBaseline(productBaseline));
         }
         return jsonArray.toString();
     }
 
-    public static String printBaseline(Baseline baseline) throws JSONException {
+    public static String printBaseline(ProductBaseline productBaseline) throws JSONException {
         JSONObject baselineObject = new JSONObject();
-        baselineObject.put("id", baseline.hashCode());
-        baselineObject.put("name",baseline.getName());
-        baselineObject.put("configurationItem",baseline.getConfigurationItem().getId());
+        baselineObject.put("id", productBaseline.hashCode());
+        baselineObject.put("name", productBaseline.getName());
+        baselineObject.put("configurationItem", productBaseline.getConfigurationItem().getId());
         return baselineObject.toString();
     }
 

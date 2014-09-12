@@ -18,7 +18,7 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.server.rest.dto;
+package com.docdoku.server.rest.dto.baseline;
 
 public class BaselinedPartOptionDTO {
     private String version;
@@ -34,12 +34,24 @@ public class BaselinedPartOptionDTO {
         this.released = released;
     }
 
-    public String getVersion() {return version;}
-    public void setVersion(String version) {this.version = version;}
+    public String getVersion() {
+        return version;
+    }
+    public void setVersion(String version) {
+        this.version = version;
+    }
 
-    public int getLastIteration() {return lastIteration;}
-    public void setLastIteration(int lastIteration) {this.lastIteration = lastIteration;}
+    public int getLastIteration() {
+        return lastIteration;
+    }
+    public void setLastIteration(int lastIteration) {
+        this.lastIteration = lastIteration;
+    }
 
-    public boolean isReleased() {return released;}
-    public void setReleased(boolean released) {this.released = released;}
+    public boolean isReleased() {
+        return released;
+    }
+    public void setReleased(boolean released) {
+        this.released = released;
+    }
 }

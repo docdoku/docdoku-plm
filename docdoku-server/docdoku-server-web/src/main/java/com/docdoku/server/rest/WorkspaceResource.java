@@ -37,6 +37,9 @@ public class WorkspaceResource {
     private DocumentsResource documents;
 
     @EJB
+    private DocumentBaselinesResource documentBaselines;
+
+    @EJB
     private FolderResource folders;
 
     @EJB
@@ -152,8 +155,13 @@ public class WorkspaceResource {
     }
 
     @Path("/changes")
-    public ChangeItemsResource changeItemsResource(){
+    public ChangeItemsResource changeItems(){
         return changeItems;
+    }
+
+    @Path("/document-baselines")
+    public DocumentBaselinesResource documentBaselines(){
+        return documentBaselines;
     }
 
 

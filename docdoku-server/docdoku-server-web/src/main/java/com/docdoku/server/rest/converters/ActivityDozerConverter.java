@@ -72,32 +72,33 @@ public class ActivityDozerConverter extends DozerConverter<Activity, ActivityDTO
     }
 
     @Override
-    public Activity convertFrom(ActivityDTO activityDTO, Activity activity) {
+    public Activity convertFrom(ActivityDTO activityDTO, Activity pActivity) {
         List<Task> tasks = new ArrayList<>();
         for(int i=0; i<activityDTO.getTasks().size(); i++){
             tasks.add(mapper.map(activityDTO.getTasks().get(i), Task.class));
         }
 
+        Activity activity;
+
         switch (activityDTO.getType()){
             case SERIAL:{
-                SerialActivity serialActivity = new SerialActivity();
-                serialActivity.setStep(activityDTO.getStep());
-                serialActivity.setTasks(tasks);
-                serialActivity.setLifeCycleState(activityDTO.getLifeCycleState());
-                return serialActivity;
+                activity = new SerialActivity();
+                break;
             }
             case PARALLEL:{
-                ParallelActivity parallelActivity = new ParallelActivity();
-                parallelActivity.setStep(activityDTO.getStep());
-                parallelActivity.setTasks(tasks);
-                parallelActivity.setLifeCycleState(activityDTO.getLifeCycleState());
-                parallelActivity.setTasksToComplete(activityDTO.getTasksToComplete());
-                return parallelActivity;
+                activity = new ParallelActivity();
+                ((ParallelActivity) activity).setTasksToComplete(activityDTO.getTasksToComplete());
+                break;
             }
             default:{
                 throw new IllegalArgumentException("ActivityDTO type not supported");
             }
         }
+
+        activity.setStep(activityDTO.getStep());
+        activity.setTasks(tasks);
+        activity.setLifeCycleState(activityDTO.getLifeCycleState());
+        return activity;
     }
 
 }

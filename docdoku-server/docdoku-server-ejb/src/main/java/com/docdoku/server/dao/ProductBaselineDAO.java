@@ -20,8 +20,8 @@
 
 package com.docdoku.server.dao;
 
-import com.docdoku.core.configuration.Baseline;
 import com.docdoku.core.configuration.BaselinedPart;
+import com.docdoku.core.configuration.ProductBaseline;
 import com.docdoku.core.exceptions.BaselineNotFoundException;
 import com.docdoku.core.product.PartRevision;
 
@@ -30,49 +30,49 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class BaselineDAO {
+public class ProductBaselineDAO {
 
     private EntityManager em;
     private Locale mLocale;
 
-    public BaselineDAO(EntityManager pEM) {
+    public ProductBaselineDAO(EntityManager pEM) {
         em = pEM;
     }
 
-    public BaselineDAO(Locale pLocale, EntityManager pEM) {
+    public ProductBaselineDAO(Locale pLocale, EntityManager pEM) {
         em = pEM;
         mLocale = pLocale;
     }
 
-    public List<Baseline> findBaselines(String workspaceId) {
-        return em.createQuery("SELECT b FROM Baseline b WHERE b.configurationItem.workspace.id = :workspaceId", Baseline.class)
+    public List<ProductBaseline> findBaselines(String workspaceId) {
+        return em.createQuery("SELECT b FROM ProductBaseline b WHERE b.configurationItem.workspace.id = :workspaceId", ProductBaseline.class)
                 .setParameter("workspaceId",workspaceId)
                 .getResultList();
     }
 
-    public List<Baseline> findBaselines(String ciId, String workspaceId){
-        return em.createNamedQuery("Baseline.findByConfigurationItemId", Baseline.class)
+    public List<ProductBaseline> findBaselines(String ciId, String workspaceId){
+        return em.createNamedQuery("ProductBaseline.findByConfigurationItemId", ProductBaseline.class)
                 .setParameter("ciId", ciId)
                 .setParameter("workspaceId",workspaceId)
                 .getResultList();
     }
 
-    public void createBaseline(Baseline baseline) {
-        em.persist(baseline);
+    public void createBaseline(ProductBaseline productBaseline) {
+        em.persist(productBaseline);
         em.flush();
     }
 
-    public Baseline loadBaseline(int pId) throws BaselineNotFoundException {
-        Baseline baseline = em.find(Baseline.class, pId);
-        if (baseline == null) {
+    public ProductBaseline loadBaseline(int pId) throws BaselineNotFoundException {
+        ProductBaseline productBaseline = em.find(ProductBaseline.class, pId);
+        if (productBaseline == null) {
             throw new BaselineNotFoundException(mLocale, pId);
         } else {
-            return baseline;
+            return productBaseline;
         }
     }
 
-    public void deleteBaseline(Baseline baseline) {
-        em.remove(baseline);
+    public void deleteBaseline(ProductBaseline productBaseline) {
+        em.remove(productBaseline);
         em.flush();
     }
 
@@ -83,19 +83,19 @@ public class BaselineDAO {
             .getSingleResult() > 0;
     }
 
-    public void flushBaselinedParts(Baseline baseline) {
-        baseline.removeAllBaselinedParts();
+    public void flushBaselinedParts(ProductBaseline productBaseline) {
+        productBaseline.removeAllBaselinedParts();
         em.flush();
     }
 
-    public List<Baseline> findBaselineWherePartRevisionHasIterations(PartRevision partRevision) {
-        return em.createNamedQuery("Baseline.getBaselinesForPartRevision", Baseline.class)
+    public List<ProductBaseline> findBaselineWherePartRevisionHasIterations(PartRevision partRevision) {
+        return em.createNamedQuery("ProductBaseline.getBaselinesForPartRevision", ProductBaseline.class)
                 .setParameter("partRevision", partRevision)
                 .getResultList();
     }
 
-    public Baseline findBaselineById(int baselineId) {
-        return em.find(Baseline.class,baselineId);
+    public ProductBaseline findBaselineById(int baselineId) {
+        return em.find(ProductBaseline.class,baselineId);
     }
 
     public List<BaselinedPart> findBaselinedPartWithReferenceLike(int collectionId, String q, int maxResults) throws BaselineNotFoundException {
@@ -106,7 +106,9 @@ public class BaselineDAO {
         for(BaselinedPart baselinedPart : baselinedPartList){
             if(baselinedPart.getPartCollection().getId()==collectionId){
                 returnList.add(baselinedPart);
-                if(returnList.size()>=maxResults){break;}
+                if(returnList.size()>=maxResults){
+                    break;
+                }
             }
         }
         return returnList;

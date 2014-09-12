@@ -46,7 +46,6 @@ public class FolderDTO implements Serializable{
     public boolean isHome() {
         return home;
     }
-
     public void setHome(boolean home) {
         this.home = home;
     }
@@ -54,7 +53,6 @@ public class FolderDTO implements Serializable{
     public String getId() {
         return id;
     }
-
     public void setId(String id) {
         this.id = id;
     }
@@ -62,20 +60,40 @@ public class FolderDTO implements Serializable{
     public String getName() {
         return name;
     }
-
     public void setName(String name) {
         this.name = name.trim();
     }
 
-
-    
     public String getPath() {
         return path;
     }
-
     public void setPath(String path) {
         this.path = path;
     }
 
-    
+    public static String replaceSlashWithColon(String slashedCompletePath){
+        return slashedCompletePath.replaceAll("/", ":");
+    }
+    public static String replaceColonWithSlash(String colonedCompletePath){
+        return colonedCompletePath.replaceAll(":", "/");
+    }
+    public static String extractName(String slashedCompletePath){
+        stripTrailingSlash(slashedCompletePath);
+        int lastSlash = slashedCompletePath.lastIndexOf('/');
+        return slashedCompletePath.substring(lastSlash, slashedCompletePath.length());
+    }
+
+    public static String extractParentFolder(String slashedCompletePath){
+        stripTrailingSlash(slashedCompletePath);
+        int lastSlash = slashedCompletePath.lastIndexOf('/');
+        return slashedCompletePath.substring(0, lastSlash);
+    }
+
+    private static String stripTrailingSlash(String completePath){
+        if(completePath.charAt(completePath.length()-1)=='/') {
+            return completePath.substring(0, completePath.length() - 1);
+        } else {
+            return completePath;
+        }
+    }
 }

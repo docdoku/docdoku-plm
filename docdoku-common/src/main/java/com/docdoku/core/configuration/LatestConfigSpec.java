@@ -22,6 +22,9 @@
 package com.docdoku.core.configuration;
 
 import com.docdoku.core.common.User;
+import com.docdoku.core.document.DocumentIteration;
+import com.docdoku.core.document.DocumentMaster;
+import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartMaster;
 import com.docdoku.core.product.PartRevision;
@@ -52,8 +55,12 @@ public class LatestConfigSpec extends ConfigSpec {
         this.user = user;
     }
 
-    public User getUser() {return user;}
-    public void setUser(User user) {this.user = user;}
+    public User getUser() {
+        return user;
+    }
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     @Override
     public PartIteration filterConfigSpec(PartMaster part) {
@@ -63,6 +70,16 @@ public class LatestConfigSpec extends ConfigSpec {
             partI = partRevision.getLastUncheckoutedIteration();
         }
         return partI;
+    }
+
+    @Override
+    public DocumentIteration filterConfigSpec(DocumentMaster documentMaster) {
+        DocumentIteration documentIteration = documentMaster.getLastRevision().getLastIteration();
+        DocumentRevision documentRevision = documentIteration.getDocumentRevision();
+        if(documentRevision.isCheckedOut() && !documentRevision.getCheckOutUser().equals(user)){
+            documentIteration = documentRevision.getLastUncheckoutedIteration();
+        }
+        return documentIteration;
     }
 
 }

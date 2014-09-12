@@ -1,3 +1,4 @@
+'use strict';
 define([
 	'common-objects/views/components/list'
 ], function (
@@ -6,7 +7,7 @@ define([
 	var CollapsibleListView = ListView.extend({
 		show: function () {
 			this.$el.show();
-			this.$el.addClass("in");
+			this.$el.addClass('in');
 			var that = this;
 			this.collection.fetch({
                 reset:true,
@@ -19,7 +20,7 @@ define([
 		},
 		hide: function () {
 			this.$el.hide();
-			this.$el.removeClass("in");
+			this.$el.removeClass('in');
 			this.clear();
 		}
 	});

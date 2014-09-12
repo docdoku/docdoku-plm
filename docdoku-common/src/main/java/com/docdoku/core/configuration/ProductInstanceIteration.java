@@ -91,7 +91,7 @@ public class ProductInstanceIteration implements Serializable {
         partCollection.addBaselinedPart(targetPart);
     }
     public boolean hasBasedLinedPart(String targetPartWorkspaceId, String targetPartNumber){
-        return partCollection.hasBasedLinedPart(new BaselinedPartKey(partCollection.getId(),targetPartWorkspaceId,targetPartNumber));
+        return partCollection.hasBaselinedPart(new BaselinedPartKey(partCollection.getId(), targetPartWorkspaceId, targetPartNumber));
     }
     public BaselinedPart getBaselinedPart(BaselinedPartKey baselinedPartKey){return partCollection.getBaselinedPart(baselinedPartKey);}
 

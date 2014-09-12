@@ -67,13 +67,21 @@ public class DocumentMasterKey implements Serializable, Comparable<DocumentMaste
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         DocumentMasterKey that = (DocumentMasterKey) o;
 
-        if (!id.equals(that.id)) return false;
-        if (!workspace.equals(that.workspace)) return false;
+        if (!id.equals(that.id)) {
+            return false;
+        }
+        if (!workspace.equals(that.workspace)) {
+            return false;
+        }
 
         return true;
     }
@@ -88,15 +96,16 @@ public class DocumentMasterKey implements Serializable, Comparable<DocumentMaste
 
     public int compareTo(DocumentMasterKey pKey) {
         int wksComp = workspace.compareTo(pKey.workspace);
-        if (wksComp != 0)
+        if (wksComp != 0) {
             return wksComp;
-        else
+        } else {
             return id.compareTo(pKey.id);
+        }
     }
 
     @Override
     public DocumentMasterKey clone() {
-        DocumentMasterKey clone = null;
+        DocumentMasterKey clone;
         try {
             clone = (DocumentMasterKey) super.clone();
         } catch (CloneNotSupportedException e) {

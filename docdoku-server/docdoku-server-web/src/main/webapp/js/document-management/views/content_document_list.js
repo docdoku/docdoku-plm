@@ -96,7 +96,7 @@ define([
             }
 
 
-           if((APP_CONFIG.workspaceAdmin || document.attributes.author.login == APP_CONFIG.login)){
+           if((APP_CONFIG.workspaceAdmin || document.attributes.author.login === APP_CONFIG.login)){
                 this.aclButton.show();
            }
 
@@ -169,7 +169,17 @@ define([
             var that = this;
             if (confirm(i18n["DELETE_SELECTION_?"])) {
                 this.listView.eachChecked(function(view) {
-                    view.model.destroy({success:function(){that.listView.redraw();}});
+                    view.model.destroy({
+						success:function(){
+		                    that.listView.redraw();
+		                    that.collection.fetch();
+	                    },
+	                    error:function(model,err){
+		                    alert(err.responseText);
+		                    that.listView.redraw();
+		                    that.collection.fetch();
+	                    }
+                    });
                 });
             }
             return false;
@@ -278,7 +288,7 @@ define([
 
         highlightAddedView:function(model){
             this.listView.redraw();
-            var addedView = _.find(this.listView.subViews, function(view){ return view.model == model;});
+            var addedView = _.find(this.listView.subViews, function(view){ return view.model === model;});
             if(addedView){
                 addedView.$el.highlightEffect();
             }

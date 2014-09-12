@@ -83,16 +83,14 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @EJB
     private IDataManagerLocal dataManager;
 
-    private final static Logger LOGGER = Logger.getLogger(DocumentManagerBean.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(DocumentManagerBean.class.getName());
 
     @RolesAllowed("users")
     @Override
     public BinaryResource saveFileInTemplate(DocumentMasterTemplateKey pDocMTemplateKey, String pName, long pSize) throws WorkspaceNotFoundException, NotAllowedException, DocumentMasterTemplateNotFoundException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException, CreationException, AccessRightException {
         User user = userManager.checkWorkspaceWriteAccess(pDocMTemplateKey.getWorkspaceId());
-
-        if (!NamingConvention.correctNameFile(pName)) {
-            throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException9");
-        }
+        Locale locale = new Locale(user.getLanguage());
+        checkNameFileValidity(pName, locale);
 
         DocumentMasterTemplateDAO templateDAO = new DocumentMasterTemplateDAO(em);
         DocumentMasterTemplate template = templateDAO.loadDocMTemplate(pDocMTemplateKey);
@@ -121,9 +119,8 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @Override
     public BinaryResource saveFileInDocument(DocumentIterationKey pDocPK, String pName, long pSize) throws WorkspaceNotFoundException, NotAllowedException, DocumentRevisionNotFoundException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException, CreationException, AccessRightException {
         User user = checkDocumentRevisionWriteAccess(new DocumentRevisionKey(pDocPK.getWorkspaceId(), pDocPK.getDocumentMasterId(), pDocPK.getDocumentRevisionVersion()));
-        if (!NamingConvention.correctNameFile(pName)) {
-            throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException9");
-        }
+        Locale locale = new Locale(user.getLanguage());
+        checkNameFileValidity(pName, locale);
 
         DocumentRevisionDAO docRDAO = new DocumentRevisionDAO(em);
         DocumentRevision docR = docRDAO.loadDocR(new DocumentRevisionKey(pDocPK.getWorkspaceId(), pDocPK.getDocumentMasterId(), pDocPK.getDocumentRevisionVersion()));
@@ -382,8 +379,25 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
     @RolesAllowed("users")
     @Override
-    public DocumentRevision[] getAllDocumentsInWorkspace(String workspaceId, int start, int pMaxResults) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+    public DocumentRevision[] getAllDocumentsInWorkspace(String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+        List<DocumentRevision> docRs = new DocumentRevisionDAO(new Locale(user.getLanguage()), em).getDocumentRevisionsFiltered(user, workspaceId);
+        ListIterator<DocumentRevision> ite = docRs.listIterator();
 
+        while (ite.hasNext()) {
+            DocumentRevision docR = ite.next();
+            if ((docR.isCheckedOut()) && (!docR.getCheckOutUser().equals(user))) {
+                docR = docR.clone();
+                docR.removeLastIteration();
+                ite.set(docR);
+            }
+        }
+        return docRs.toArray(new DocumentRevision[docRs.size()]);
+    }
+
+    @RolesAllowed("users")
+    @Override
+    public DocumentRevision[] getAllDocumentsInWorkspace(String workspaceId, int start, int pMaxResults) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         List<DocumentRevision> docRs = new DocumentRevisionDAO(new Locale(user.getLanguage()), em).getDocumentRevisionsFiltered(user, workspaceId, start, pMaxResults);
         ListIterator<DocumentRevision> ite = docRs.listIterator();
@@ -396,7 +410,6 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
                 docR.removeLastIteration();
                 ite.set(docR);
             }
-
         }
         return docRs.toArray(new DocumentRevision[docRs.size()]);
     }
@@ -498,6 +511,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             String convertedMask = Tools.convertMask(inputMask);
             newId = Tools.increaseId(latestId, convertedMask);
         } catch (ParseException | NoResultException ex) {
+            LOGGER.log(Level.WARNING, null,ex);
             //may happen when a different mask has been used for the same document type
             //or
             //may happen when no document of the specified type has been created
@@ -517,7 +531,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             boolean isAdmin = wks.getAdmin().getLogin().equals(user.getLogin());
 
             ListIterator<DocumentRevision> ite = fetchedDocRs.listIterator();
-            while (ite.hasNext()) {
+            while (ite.hasNext()) {                                                                                     // Todo simplify
                 DocumentRevision docR = ite.next();
 
                 if (!isAdmin && docR.getACL() != null && !docR.getACL().hasReadAccess(user)) {                          // Check Rigth Acces
@@ -615,10 +629,10 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     public DocumentRevision createDocumentMaster(String pParentFolder, String pDocMId, String pTitle, String pDescription, String pDocMTemplateId, String pWorkflowModelId, ACLUserEntry[] pACLUserEntries, ACLUserGroupEntry[] pACLUserGroupEntries, Map<String, String> roleMappings) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, NotAllowedException, FolderNotFoundException, DocumentMasterTemplateNotFoundException, FileAlreadyExistsException, CreationException, DocumentRevisionAlreadyExistsException, RoleNotFoundException, WorkflowModelNotFoundException, DocumentMasterAlreadyExistsException {
 
         User user = userManager.checkWorkspaceWriteAccess(Folder.parseWorkspaceId(pParentFolder));
-        if (!NamingConvention.correct(pDocMId)) {
-            throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException9");
-        }
-        Folder folder = new FolderDAO(new Locale(user.getLanguage()), em).loadFolder(pParentFolder);
+        Locale locale = new Locale(user.getLanguage());
+        checkNameValidity(pDocMId, locale);
+
+        Folder folder = new FolderDAO(locale, em).loadFolder(pParentFolder);
         checkWritingRight(user, folder);
 
         DocumentMaster docM;
@@ -648,7 +662,6 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             Map<String, InstanceAttribute> attrs = new HashMap<>();
             for (InstanceAttributeTemplate attrTemplate : template.getAttributeTemplates()) {
                 InstanceAttribute attr = attrTemplate.createInstanceAttribute();
-                //attr.setDocument(newDoc);
                 attrs.put(attr.getName(), attr);
             }
             newDoc.setInstanceAttributes(attrs);
@@ -741,9 +754,9 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     public DocumentMasterTemplate createDocumentMasterTemplate(String pWorkspaceId, String pId, String pDocumentType,
             String pMask, InstanceAttributeTemplate[] pAttributeTemplates, boolean idGenerated, boolean attributesLocked) throws WorkspaceNotFoundException, AccessRightException, DocumentMasterTemplateAlreadyExistsException, UserNotFoundException, NotAllowedException, CreationException {
         User user = userManager.checkWorkspaceWriteAccess(pWorkspaceId);
-        if (!NamingConvention.correct(pId)) {
-            throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException9");
-        }
+        Locale locale = new Locale(user.getLanguage());
+        checkNameValidity(pId, locale);
+
         DocumentMasterTemplate template = new DocumentMasterTemplate(user.getWorkspace(), pId, user, pDocumentType, pMask);
         Date now = new Date();
         template.setCreationDate(now);
@@ -754,7 +767,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         Collections.addAll(attrs, pAttributeTemplates);
         template.setAttributeTemplates(attrs);
 
-        new DocumentMasterTemplateDAO(new Locale(user.getLanguage()), em).createDocMTemplate(template);
+        new DocumentMasterTemplateDAO(locale, em).createDocMTemplate(template);
         return template;
     }
 
@@ -788,10 +801,10 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     public Folder createFolder(String pParentFolder, String pFolder)
             throws WorkspaceNotFoundException, NotAllowedException, AccessRightException, FolderNotFoundException, FolderAlreadyExistsException, UserNotFoundException, CreationException {
         User user = userManager.checkWorkspaceWriteAccess(Folder.parseWorkspaceId(pParentFolder));
-        if (!NamingConvention.correct(pFolder)) {
-            throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException9");
-        }
-        FolderDAO folderDAO = new FolderDAO(new Locale(user.getLanguage()), em);
+        Locale locale = new Locale(user.getLanguage());
+        checkNameValidity(pFolder, locale);
+
+        FolderDAO folderDAO = new FolderDAO(locale, em);
         Folder folder = folderDAO.loadFolder(pParentFolder);
         checkFolderStructureRight(user);
         checkWritingRight(user, folder);
@@ -993,7 +1006,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException5");
         }
 
-        HashSet<Tag> tags = new HashSet<>();
+        Set<Tag> tags = new HashSet<>();
         for (String label : pTags) {
             tags.add(new Tag(user.getWorkspace(), label));
         }
@@ -1175,11 +1188,12 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
     @RolesAllowed("users")
     @Override
-    public void deleteDocumentRevision(DocumentRevisionKey pDocRPK) throws WorkspaceNotFoundException, NotAllowedException, DocumentRevisionNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException, ESServerException {
+    public void deleteDocumentRevision(DocumentRevisionKey pDocRPK) throws WorkspaceNotFoundException, NotAllowedException, DocumentRevisionNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException, ESServerException, EntityConstraintException {
 
         User user = checkDocumentRevisionWriteAccess(pDocRPK);
         DocumentMasterDAO documentMasterDAO = new DocumentMasterDAO(new Locale(user.getLanguage()), em);
         DocumentRevisionDAO docRDAO = new DocumentRevisionDAO(new Locale(user.getLanguage()), em);
+        BaselinedDocumentDAO baselinedDocumentDAO = new BaselinedDocumentDAO(new Locale(user.getLanguage()), em);
         DocumentRevision docR = docRDAO.loadDocR(pDocRPK);
         DocumentMaster documentMaster = docR.getDocumentMaster();
         boolean isLastRevision = documentMaster.getDocumentRevisions().size() == 1;
@@ -1189,9 +1203,12 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException22");
         }
 
+        if(baselinedDocumentDAO.hasPartRevision(pDocRPK.getDocumentMasterId(),pDocRPK.getVersion())) {
+            throw new EntityConstraintException(new Locale(user.getLanguage()),"EntityConstraintException6");
+        }
+
         for (DocumentIteration doc : docR.getDocumentIterations()) {
             for (BinaryResource file : doc.getAttachedFiles()) {
-                //indexer.removeFromIndex(file.getFullName());
                 try {
                     dataManager.deleteData(file);
                 } catch (StorageException e) {
@@ -1203,9 +1220,9 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             }
         }
 
-        if(isLastRevision){
+        if (isLastRevision) {
             documentMasterDAO.removeDocM(documentMaster);
-        }else{
+        } else {
             documentMaster.removeRevision(docR);
             docRDAO.removeRevision(docR);
         }
@@ -1296,8 +1313,9 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
                 DocumentIterationKey linkKey = link.getTargetDocumentKey();
                 if(!linkKeys.contains(linkKey)){
                     doc.getLinkedDocuments().remove(link);
-                }else
+                }else {
                     currentLinkKeys.add(linkKey);
+                }
             }
 
             for(DocumentIterationKey link:linkKeys){
@@ -1394,7 +1412,6 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             Map<String, InstanceAttribute> attrs = new HashMap<>();
             for (InstanceAttribute attr : lastDoc.getInstanceAttributes().values()) {
                 InstanceAttribute clonedAttribute = attr.clone();
-                //clonedAttribute.setDocument(firstIte);
                 attrs.put(clonedAttribute.getName(), clonedAttribute);
             }
             firstIte.setInstanceAttributes(attrs);
@@ -1617,6 +1634,18 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             return user;
         }else{                                                                                                          // Else throw a AccessRightException
             throw new AccessRightException(new Locale(user.getLanguage()),user);
+        }
+    }
+
+    private void checkNameValidity(String name, Locale locale) throws NotAllowedException {
+        if (!NamingConvention.correct(name)) {
+            throw new NotAllowedException(locale, "NotAllowedException9");
+        }
+    }
+
+    private void checkNameFileValidity(String name, Locale locale) throws NotAllowedException {
+        if (!NamingConvention.correctNameFile(name)) {
+            throw new NotAllowedException(locale, "NotAllowedException9");
         }
     }
 }

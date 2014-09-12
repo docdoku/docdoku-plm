@@ -19,17 +19,17 @@
  */
 package com.docdoku.server.rest;
 
-import com.docdoku.core.configuration.Baseline;
 import com.docdoku.core.configuration.BaselineCreation;
 import com.docdoku.core.configuration.BaselinedPart;
+import com.docdoku.core.configuration.ProductBaseline;
 import com.docdoku.core.exceptions.ApplicationException;
 import com.docdoku.core.product.ConfigurationItemKey;
 import com.docdoku.core.product.PartIterationKey;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IProductManagerLocal;
-import com.docdoku.server.rest.dto.BaselineCreationDTO;
-import com.docdoku.server.rest.dto.BaselineDTO;
-import com.docdoku.server.rest.dto.BaselinedPartDTO;
+import com.docdoku.server.rest.dto.baseline.BaselinedPartDTO;
+import com.docdoku.server.rest.dto.baseline.ProductBaselineCreationDTO;
+import com.docdoku.server.rest.dto.baseline.ProductBaselineDTO;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -61,7 +61,7 @@ public class BaselinesResource {
     @EJB
     private IProductManagerLocal productService;
 
-    private final static Logger LOGGER = Logger.getLogger(BaselinesResource.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(BaselinesResource.class.getName());
     private Mapper mapper;
 
     public BaselinesResource() {
@@ -74,20 +74,20 @@ public class BaselinesResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<BaselineDTO> getBaselines(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId){
+    public List<ProductBaselineDTO> getBaselines(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId){
             try {
-                List<Baseline> baselines;
+                List<ProductBaseline> productBaselines;
                 if(ciId != null) {
                     ConfigurationItemKey configurationItemKey = new ConfigurationItemKey(workspaceId, ciId);
-                    baselines = productService.getBaselines(configurationItemKey);
+                    productBaselines = productService.getBaselines(configurationItemKey);
                 }else{
-                    baselines = productService.getAllBaselines(workspaceId);
+                    productBaselines = productService.getAllBaselines(workspaceId);
                 }
-                List<BaselineDTO> baselinesDTO = new ArrayList<>();
-                for(Baseline baseline:baselines){
-                    BaselineDTO baselineDTO = mapper.map(baseline,BaselineDTO.class);
-                    baselineDTO.setConfigurationItemId(baseline.getConfigurationItem().getId());
-                    baselinesDTO.add(baselineDTO);
+                List<ProductBaselineDTO> baselinesDTO = new ArrayList<>();
+                for(ProductBaseline productBaseline : productBaselines){
+                    ProductBaselineDTO productBaselineDTO = mapper.map(productBaseline,ProductBaselineDTO.class);
+                    productBaselineDTO.setConfigurationItemId(productBaseline.getConfigurationItem().getId());
+                    baselinesDTO.add(productBaselineDTO);
                 }
                 return baselinesDTO;
             } catch (ApplicationException ex) {
@@ -98,18 +98,19 @@ public class BaselinesResource {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response createBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, BaselineCreationDTO baselineCreationDTO){
+    public Response createBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String pCiId, ProductBaselineCreationDTO productBaselineCreationDTO){
         try {
-            ciId = (ciId != null) ? ciId : baselineCreationDTO.getConfigurationItemId();
-            BaselineCreation baselineCreation = productService.createBaseline(new ConfigurationItemKey(workspaceId,ciId),baselineCreationDTO.getName(),baselineCreationDTO.getType(),baselineCreationDTO.getDescription());
-            BaselineDTO baselineDTO= mapper.map(baselineCreation.getBaseline(),BaselineDTO.class);
-            if(baselineCreation.getConflit().size()>0){
+            String ciId = (pCiId != null) ? pCiId : productBaselineCreationDTO.getConfigurationItemId();
+            BaselineCreation baselineCreation = productService.createBaseline(new ConfigurationItemKey(workspaceId,ciId), productBaselineCreationDTO.getName(), productBaselineCreationDTO.getType(), productBaselineCreationDTO.getDescription());
+            ProductBaselineDTO productBaselineDTO = mapper.map(baselineCreation.getProductBaseline(),ProductBaselineDTO.class);
+            if(!baselineCreation.getConflit().isEmpty()){
                 return Response.status(202).entity(baselineCreation.getMessage()).type("text/plain").build();
             }
 
             try {
-                return Response.created(URI.create(URLEncoder.encode(String.valueOf(baselineDTO.getId()),"UTF-8"))).entity(baselineDTO).build();
-            } catch (UnsupportedEncodingException ignored) {
+                return Response.created(URI.create(URLEncoder.encode(String.valueOf(productBaselineDTO.getId()),"UTF-8"))).entity(productBaselineDTO).build();
+            } catch (UnsupportedEncodingException ex) {
+                LOGGER.log(Level.FINEST,null,ex);
                 return Response.ok().build();
             }
         } catch(ApplicationException ex) {
@@ -121,14 +122,14 @@ public class BaselinesResource {
     @PUT
     @Path("{baselineId}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @PathParam("baselineId") String baselineId, BaselineDTO baselineDTO){
+    public Response updateBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String pCiId, @PathParam("baselineId") String baselineId, ProductBaselineDTO productBaselineDTO){
         try {
-            ciId = (ciId != null) ? ciId : baselineDTO.getConfigurationItemId();
+            String ciId = (pCiId != null) ? pCiId : productBaselineDTO.getConfigurationItemId();
             List<PartIterationKey> partIterationKeys = new ArrayList<>();
-            for(BaselinedPartDTO baselinedPartDTO : baselineDTO.getBaselinedParts()){
+            for(BaselinedPartDTO baselinedPartDTO : productBaselineDTO.getBaselinedParts()){
                 partIterationKeys.add(new PartIterationKey(workspaceId, baselinedPartDTO.getNumber(),baselinedPartDTO.getVersion(),baselinedPartDTO.getIteration()));
             }
-            productService.updateBaseline(new ConfigurationItemKey(workspaceId,ciId),Integer.parseInt(baselineId),baselineDTO.getName(),baselineDTO.getType(),baselineDTO.getDescription(),partIterationKeys);
+            productService.updateBaseline(new ConfigurationItemKey(workspaceId,ciId),Integer.parseInt(baselineId), productBaselineDTO.getName(), productBaselineDTO.getType(), productBaselineDTO.getDescription(),partIterationKeys);
             return Response.ok().build();
         } catch (ApplicationException ex) {
             LOGGER.log(Level.WARNING,null,ex);
@@ -152,13 +153,13 @@ public class BaselinesResource {
     @GET
     @Path("{baselineId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public BaselineDTO getBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @PathParam("baselineId") int baselineId){
+    public ProductBaselineDTO getBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @PathParam("baselineId") int baselineId){
         try {
-            Baseline baseline = productService.getBaseline(baselineId);
-            BaselineDTO baselineDTO = mapper.map(baseline,BaselineDTO.class);
-            baselineDTO.setConfigurationItemId(baseline.getConfigurationItem().getId());
-            baselineDTO.setBaselinedParts(Tools.mapBaselinedPartsToBaselinedPartDTO(baseline));
-            return baselineDTO;
+            ProductBaseline productBaseline = productService.getBaseline(baselineId);
+            ProductBaselineDTO productBaselineDTO = mapper.map(productBaseline,ProductBaselineDTO.class);
+            productBaselineDTO.setConfigurationItemId(productBaseline.getConfigurationItem().getId());
+            productBaselineDTO.setBaselinedParts(Tools.mapBaselinedPartsToBaselinedPartDTO(productBaseline));
+            return productBaselineDTO;
         } catch (ApplicationException ex) {
             LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
@@ -188,10 +189,10 @@ public class BaselinesResource {
     @Path("{baselineId}/duplicate")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public BaselineDTO duplicateBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @PathParam("baselineId") int baselineId,  BaselineCreationDTO baselineCreationDTO){
+    public ProductBaselineDTO duplicateBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @PathParam("baselineId") int baselineId,  ProductBaselineCreationDTO productBaselineCreationDTO){
         try {
-            Baseline baseline = productService.duplicateBaseline(baselineId, baselineCreationDTO.getName(), baselineCreationDTO.getType(), baselineCreationDTO.getDescription());
-            return mapper.map(baseline, BaselineDTO.class);
+            ProductBaseline productBaseline = productService.duplicateBaseline(baselineId, productBaselineCreationDTO.getName(), productBaselineCreationDTO.getType(), productBaselineCreationDTO.getDescription());
+            return mapper.map(productBaseline, ProductBaselineDTO.class);
         } catch (ApplicationException ex) {
             LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());

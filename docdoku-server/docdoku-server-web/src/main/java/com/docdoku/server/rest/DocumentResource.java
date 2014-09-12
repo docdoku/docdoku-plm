@@ -22,15 +22,18 @@ package com.docdoku.server.rest;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.common.Workspace;
+import com.docdoku.core.configuration.ConfigSpec;
 import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.document.DocumentRevisionKey;
-import com.docdoku.core.exceptions.ApplicationException;
+import com.docdoku.core.exceptions.*;
+import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.meta.*;
 import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.security.UserGroupMapping;
+import com.docdoku.core.services.IDocumentBaselineManagerLocal;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.sharing.SharedDocument;
 import com.docdoku.core.workflow.Workflow;
@@ -57,8 +60,12 @@ public class DocumentResource {
 
     @EJB
     private IDocumentManagerLocal documentService;
+    @EJB
+    private IDocumentBaselineManagerLocal documentBaselineService;
 
-    private final static Logger LOGGER = Logger.getLogger(DocumentResource.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(DocumentResource.class.getName());
+    private static final String BASELINE_LATEST = "latest";
+    private static final String BASELINE_UNDEFINED = "undefined";
     private Mapper mapper;
 
     public DocumentResource() {
@@ -71,19 +78,35 @@ public class DocumentResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public DocumentRevisionDTO getDocumentRevision(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion) {
+    public DocumentRevisionDTO getDocumentRevision(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion, @QueryParam("configSpec") String configSpecType) {
         try {
-            DocumentRevision docR = documentService.getDocumentRevision(new DocumentRevisionKey(workspaceId, documentId, documentVersion));
+            DocumentRevision docR;
+            DocumentRevisionKey documentRevisionKey = new DocumentRevisionKey(workspaceId, documentId, documentVersion);
+            if (configSpecType == null || BASELINE_UNDEFINED.equals(configSpecType) || BASELINE_LATEST.equals(configSpecType)) {
+                docR = documentService.getDocumentRevision(documentRevisionKey);
+            } else {
+                ConfigSpec configSpec = getConfigSpec(workspaceId, configSpecType);
+                docR = documentBaselineService.getFilteredDocumentRevision(documentRevisionKey, configSpec);
+            }
+
             DocumentRevisionDTO docRsDTO = mapper.map(docR, DocumentRevisionDTO.class);
             docRsDTO.setPath(docR.getLocation().getCompletePath());
-            docRsDTO.setLifeCycleState(docR.getLifeCycleState());
-            docRsDTO.setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId, docR));
-            docRsDTO.setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId,docR));
-            return docRsDTO;
 
-        } catch (ApplicationException ex) {
-            LOGGER.log(Level.WARNING,null,ex);
-            throw new RestApiException(ex.toString(), ex.getMessage());
+            if (configSpecType == null || BASELINE_UNDEFINED.equals(configSpecType) || BASELINE_LATEST.equals(configSpecType)) {
+                docRsDTO.setLifeCycleState(docR.getLifeCycleState());
+                docRsDTO.setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId, docR));
+                docRsDTO.setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId, docR));
+            }else{
+                docRsDTO.setWorkflow(null);
+                docRsDTO.setTags(null);
+            }
+            return docRsDTO;
+        } catch (UserNotFoundException | NotAllowedException | AccessRightException | UserNotActiveException e) {
+            LOGGER.log(Level.WARNING,null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
+        } catch (WorkspaceNotFoundException | DocumentRevisionNotFoundException | BaselineNotFoundException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
         }
     }
 
@@ -97,9 +120,15 @@ public class DocumentResource {
             DocumentRevisionDTO docRsDTO = mapper.map(docR, DocumentRevisionDTO.class);
             docRsDTO.setPath(docR.getLocation().getCompletePath());
             return docRsDTO;
-        } catch (ApplicationException ex) {
-            LOGGER.log(Level.WARNING,null,ex);
-            throw new RestApiException(ex.toString(), ex.getMessage());
+        } catch (AccessRightException | UserNotActiveException | NotAllowedException  | UserNotFoundException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
+        } catch (WorkspaceNotFoundException | DocumentRevisionNotFoundException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
+        } catch (ESServerException e) {
+            LOGGER.log(Level.SEVERE, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(), Response.Status.BAD_REQUEST);
         }
     }
 
@@ -114,9 +143,15 @@ public class DocumentResource {
             docRsDTO.setPath(docR.getLocation().getCompletePath());
             docRsDTO.setLifeCycleState(docR.getLifeCycleState());
             return docRsDTO;
-        } catch (ApplicationException ex) {
-            LOGGER.log(Level.WARNING,null,ex);
-            throw new RestApiException(ex.toString(), ex.getMessage());
+        } catch (UserNotFoundException | NotAllowedException | AccessRightException | UserNotActiveException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
+        } catch (WorkspaceNotFoundException | DocumentRevisionNotFoundException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
+        } catch (CreationException | FileAlreadyExistsException e) {
+            LOGGER.log(Level.SEVERE, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(), Response.Status.BAD_REQUEST);
         }
     }
 
@@ -131,9 +166,12 @@ public class DocumentResource {
             docRsDTO.setPath(docR.getLocation().getCompletePath());
             docRsDTO.setLifeCycleState(docR.getLifeCycleState());
             return docRsDTO;
-        } catch (ApplicationException ex) {
-            LOGGER.log(Level.WARNING,null,ex);
-            throw new RestApiException(ex.toString(), ex.getMessage());
+        } catch (AccessRightException | NotAllowedException | UserNotFoundException | UserNotActiveException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
+        } catch (WorkspaceNotFoundException | DocumentRevisionNotFoundException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
         }
     }
 
@@ -363,9 +401,18 @@ public class DocumentResource {
         try {
             documentService.deleteDocumentRevision(new DocumentRevisionKey(workspaceId, documentId, documentVersion));
             return Response.ok().build();
-        } catch (ApplicationException ex) {
-            LOGGER.log(Level.WARNING,null,ex);
-            throw new RestApiException(ex.toString(), ex.getMessage());
+        } catch (NotAllowedException | AccessRightException | UserNotActiveException | UserNotFoundException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
+        } catch (WorkspaceNotFoundException | DocumentRevisionNotFoundException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
+        } catch (EntityConstraintException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.CONFLICT);
+        } catch (ESServerException e) {
+            LOGGER.log(Level.SEVERE, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(), Response.Status.BAD_REQUEST);
         }
     }
 
@@ -535,5 +582,29 @@ public class DocumentResource {
         }
 
         return data;
+    }
+
+    /**
+     * Get a configuration specification
+     * @param workspaceId The current workspace
+     * @param configSpecType The configuration specification type
+     * @return A configuration specification
+     * @throws com.docdoku.core.exceptions.UserNotFoundException If the user login-workspace doesn't exist
+     * @throws com.docdoku.core.exceptions.UserNotActiveException If the user is disabled
+     * @throws com.docdoku.core.exceptions.WorkspaceNotFoundException If the workspace doesn't exist
+     * @throws com.docdoku.core.exceptions.BaselineNotFoundException If the baseline doesn't exist
+     */
+    private ConfigSpec getConfigSpec(String workspaceId, String configSpecType) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, BaselineNotFoundException {
+        ConfigSpec cs;
+        switch (configSpecType) {
+            case BASELINE_LATEST:
+            case BASELINE_UNDEFINED:
+                cs = documentBaselineService.getLatestConfigSpec(workspaceId);
+                break;
+            default:
+                cs = documentBaselineService.getConfigSpecForBaseline(Integer.parseInt(configSpecType));
+                break;
+        }
+        return cs;
     }
 }

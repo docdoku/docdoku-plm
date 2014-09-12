@@ -85,16 +85,16 @@ public class PartCollection implements Serializable {
         return baselinedParts.get(baselinedPartKey);
     }
 
-    public boolean hasBasedLinedPart(BaselinedPartKey baselinedPartKey){
+    public boolean hasBaselinedPart(BaselinedPartKey baselinedPartKey){
         return baselinedParts.containsKey(baselinedPartKey);
     }
 
     public Date getCreationDate() {
-        return creationDate;
+        return (creationDate!=null) ? (Date) creationDate.clone() : null;
     }
 
     public void setCreationDate(Date creationDate) {
-        this.creationDate = creationDate;
+        this.creationDate = (creationDate!=null) ? (Date) creationDate.clone() : null;
     }
 
     public User getAuthor() {
@@ -115,8 +115,12 @@ public class PartCollection implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof PartCollection)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof PartCollection)) {
+            return false;
+        }
 
         PartCollection collection = (PartCollection) o;
         return id == collection.id;

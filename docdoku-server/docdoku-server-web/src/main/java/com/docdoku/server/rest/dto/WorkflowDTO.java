@@ -62,18 +62,18 @@ public class WorkflowDTO implements Serializable, Comparable<WorkflowDTO> {
     }
 
     public Date getAbortedDate() {
-        return abortedDate;
+        return (abortedDate!=null) ? (Date) abortedDate.clone() : null;
     }
-
     public void setAbortedDate(Date abortedDate) {
-        this.abortedDate = abortedDate;
+        this.abortedDate = (abortedDate != null) ? (Date) abortedDate.clone() : null;
     }
 
     public ActivityDTO getCurrentActivity() {
-        if (getCurrentStep() < activities.size())
+        if (getCurrentStep() < activities.size()) {
             return activities.get(getCurrentStep());
-        else
+        } else {
             return null;
+        }
     }
     
     public void setId(int id) {
@@ -83,10 +83,11 @@ public class WorkflowDTO implements Serializable, Comparable<WorkflowDTO> {
     public int getCurrentStep() {
         int i = 0;
         for (ActivityDTO activity : activities) {
-            if (activity.isComplete())
+            if (activity.isComplete()) {
                 i++;
-            else
+            } else {
                 break;
+            }
         }
         return i;
     }
@@ -98,17 +99,22 @@ public class WorkflowDTO implements Serializable, Comparable<WorkflowDTO> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         WorkflowDTO that = (WorkflowDTO) o;
-        return id == that.id
-                && !(abortedDate != null ? !abortedDate.equals(that.abortedDate) : that.abortedDate != null)
-                && !(activities != null ? !activities.equals(that.activities) : that.activities != null)
-                && !(finalLifeCycleState != null ? !finalLifeCycleState.equals(that.finalLifeCycleState) : that.finalLifeCycleState != null);
+        return id == that.id;
     }
 
     @Override
     public int hashCode() {
-        return super.hashCode();
+        int result = id;
+        result = 31 * result + (finalLifeCycleState != null ? finalLifeCycleState.hashCode() : 0);
+        result = 31 * result + (activities != null ? activities.hashCode() : 0);
+        result = 31 * result + (abortedDate != null ? abortedDate.hashCode() : 0);
+        return result;
     }
 }

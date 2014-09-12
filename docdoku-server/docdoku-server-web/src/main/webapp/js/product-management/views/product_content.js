@@ -1,14 +1,15 @@
+'use strict';
 define([
-    "common-objects/collections/configuration_items",
-    "text!templates/product_content.html",
-    "i18n!localization/nls/product-management-strings",
-    "views/product_list",
-    "views/product_creation_view",
-    "views/baseline/baseline_creation_view",
-    "common-objects/views/baselines/snap_baseline_view",
-    "text!common-objects/templates/buttons/snap_latest_button.html",
-    "text!common-objects/templates/buttons/snap_released_button.html",
-    "text!common-objects/templates/buttons/delete_button.html"
+    'common-objects/collections/configuration_items',
+    'text!templates/product_content.html',
+    'i18n!localization/nls/product-management-strings',
+    'views/product_list',
+    'views/product_creation_view',
+    'views/baseline/baseline_creation_view',
+    'common-objects/views/baselines/snap_baseline_view',
+    'text!common-objects/templates/buttons/snap_latest_button.html',
+    'text!common-objects/templates/buttons/snap_released_button.html',
+    'text!common-objects/templates/buttons/delete_button.html'
 ], function (
     ConfigurationItemCollection,
     template,
@@ -17,27 +18,27 @@ define([
     ProductCreationView,
     BaselineCreationView,
     SnapBaselineView,
-    snap_latest_button,
-    snap_released_button,
-    delete_button
+    snapLatestButton,
+    snapReleasedButton,
+    deleteButton
     ) {
     var ProductContentView = Backbone.View.extend({
 
         template: Mustache.compile(template),
 
-        el: "#product-management-content",
+        el: '#product-management-content',
 
         partials:{
-            snap_latest_button: snap_latest_button,
-            snap_released_button: snap_released_button,
-            delete_button: delete_button
+            snapLatestButton: snapLatestButton,
+            snapReleasedButton: snapReleasedButton,
+            deleteButton: deleteButton
         },
 
         events:{
-            "click button.new-product":"newProduct",
-            "click button.delete":"deleteProduct",
-            "click button.new-latest-baseline":"createLatestBaseline",
-            "click button.new-released-baseline":"createReleasedBaseline"
+            'click button.new-product':'newProduct',
+            'click button.delete':'deleteProduct',
+            'click button.new-latest-baseline':'createLatestBaseline',
+            'click button.new-released-baseline':'createReleasedBaseline'
         },
 
         initialize: function () {
@@ -50,27 +51,27 @@ define([
             this.bindDomElements();
 
             this.productListView = new ProductListView({
-                el:this.$("#product_table"),
+                el:this.$('#product_table'),
                 collection:new ConfigurationItemCollection()
             }).render();
 
-            this.productListView.on("delete-button:display", this.changeDeleteButtonDisplay);
-            this.productListView.on("snap-latest-baseline-button:display", this.changeSnapLatestBaselineButtonDisplay);
-            this.productListView.on("snap-released-baseline-button:display", this.changeSnapReleasedBaselineButtonDisplay);
+            this.productListView.on('delete-button:display', this.changeDeleteButtonDisplay);
+            this.productListView.on('snap-latest-baseline-button:display', this.changeSnapLatestBaselineButtonDisplay);
+            this.productListView.on('snap-released-baseline-button:display', this.changeSnapReleasedBaselineButtonDisplay);
 
             return this;
         },
 
         bindDomElements:function(){
-            this.deleteButton = this.$(".delete");
-            this.snapLatestBaselineButton = this.$(".new-latest-baseline");
-            this.snapReleasedBaselineButton = this.$(".new-released-baseline");
+            this.deleteButton = this.$('.delete');
+            this.snapLatestBaselineButton = this.$('.new-latest-baseline');
+            this.snapReleasedBaselineButton = this.$('.new-released-baseline');
         },
 
         newProduct:function(){
             var productCreationView = new ProductCreationView();
             this.listenTo(productCreationView, 'product:created', this.addProductInList);
-            $("body").append(productCreationView.render().el);
+            $('body').append(productCreationView.render().el);
             productCreationView.openModal();
         },
 
@@ -82,9 +83,9 @@ define([
             var snapBaselineView = new SnapBaselineView(
                 {
                     model:this.productListView.getSelectedProduct(),
-                    type: "LATEST"
+                    type: 'LATEST'
                 });
-            $("body").append(snapBaselineView.render().el);
+            $('body').append(snapBaselineView.render().el);
             snapBaselineView.openModal();
         },
 
@@ -92,9 +93,9 @@ define([
             var snapBaselineView = new SnapBaselineView(
                 {
                     model:this.productListView.getSelectedProduct(),
-                    type: "RELEASED"
+                    type: 'RELEASED'
                 });
-            $("body").append(snapBaselineView.render().el);
+            $('body').append(snapBaselineView.render().el);
             snapBaselineView.openModal();
         },
 

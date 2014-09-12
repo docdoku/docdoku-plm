@@ -95,9 +95,9 @@ public class WorkspaceDAO {
     }
 
     public long getDiskUsageForWorkspace(String pWorkspaceId) {
-        Number result = ((Number)em.createNamedQuery("BinaryResource.diskUsageInPath")
+        Number result = (Number) em.createNamedQuery("BinaryResource.diskUsageInPath")
                 .setParameter("path", pWorkspaceId+"/%")
-                .getSingleResult());
+                .getSingleResult();
 
         return result != null ? result.longValue() : 0L;
     }
@@ -134,13 +134,20 @@ public class WorkspaceDAO {
         em.createQuery("DELETE FROM BaselinedPart bp where bp.targetPart.partRevision.partMasterWorkspaceId = :workspaceId")
                 .setParameter("workspaceId", workspaceId).executeUpdate();
 
+        // BaselinedDocument
+        em.createQuery("DELETE FROM BaselinedDocument bd where bd.targetDocument.documentRevision.documentMasterWorkspaceId = :workspaceId")
+                .setParameter("workspaceId", workspaceId).executeUpdate();
+
         // ProductInstances
         em.createQuery("DELETE FROM ProductInstanceIteration pii where pii.productInstanceMaster.instanceOf.workspace = :workspace")
                 .setParameter("workspace",workspace).executeUpdate();
         em.createQuery("DELETE FROM ProductInstanceMaster pim where pim.instanceOf.workspace = :workspace")
                 .setParameter("workspace",workspace).executeUpdate();
-        // Baselines
-        em.createQuery("DELETE FROM Baseline b where b.configurationItem.workspace = :workspace")
+        // ProductBaselines
+        em.createQuery("DELETE FROM ProductBaseline b where b.configurationItem.workspace = :workspace")
+                .setParameter("workspace",workspace).executeUpdate();
+        // DocumentBaselines
+        em.createQuery("DELETE FROM DocumentBaseline b where b.workspace = :workspace")
                 .setParameter("workspace",workspace).executeUpdate();
 
         // EffectivityConfigSpecs
@@ -153,6 +160,14 @@ public class WorkspaceDAO {
 
         // PartCollection
         em.createQuery("DELETE FROM PartCollection pc where pc.author.workspaceId = :workspaceId")
+                .setParameter("workspaceId",workspaceId).executeUpdate();
+
+        // DocumentCollection
+        em.createQuery("DELETE FROM DocumentCollection dc where dc.author.workspaceId = :workspaceId")
+                .setParameter("workspaceId",workspaceId).executeUpdate();
+
+        // FoldereCollection
+        em.createQuery("DELETE FROM FolderCollection fc where fc.author.workspaceId = :workspaceId")
                 .setParameter("workspaceId",workspaceId).executeUpdate();
 
         // Layers

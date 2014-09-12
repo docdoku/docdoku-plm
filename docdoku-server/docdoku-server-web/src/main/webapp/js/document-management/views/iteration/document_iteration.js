@@ -1,3 +1,4 @@
+/*global APP_CONFIG*/
 'use strict';
 define([
     'common-objects/views/components/modal',
@@ -128,6 +129,10 @@ define([
                 );
             }
 
+			if(APP_CONFIG.configSpec!=='latest'){
+		        data.isForBaseline=true;
+	        }
+
             /*Main window*/
             var html = this.template(data);
             this.$el.html(html);
@@ -180,11 +185,11 @@ define([
 
                 this.lifecycleView =  new LifecycleView({
                     el:'#tab-iteration-lifecycle'
-                }).setAbortedWorkflowsUrl(this.model.getUrl()+'/aborted-workflows').setWorkflow(this.model.get('workflow')).setEntityType('documents').render();
+                }).setAbortedWorkflowsUrl(this.model.getAbortedWorkflowsUrl()).setWorkflow(this.model.get('workflow')).setEntityType('documents').render();
 
                 this.lifecycleView.on('lifecycle:change',function(){
                     that.model.fetch({success:function(){
-                        that.lifecycleView.setAbortedWorkflowsUrl(that.model.getUrl()+'/aborted-workflows').setWorkflow(that.model.get('workflow')).setEntityType('documents').render();
+                        that.lifecycleView.setAbortedWorkflowsUrl(that.model.getAbortedWorkflowsUrl()).setWorkflow(that.model.get('workflow')).setEntityType('documents').render();
                     }});
                 });
 

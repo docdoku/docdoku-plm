@@ -20,9 +20,14 @@
 package com.docdoku.core.configuration;
 
 import com.docdoku.core.common.User;
+import com.docdoku.core.document.DocumentIteration;
+import com.docdoku.core.document.DocumentMaster;
+import com.docdoku.core.document.baseline.BaselinedDocument;
+import com.docdoku.core.document.baseline.BaselinedDocumentKey;
+import com.docdoku.core.document.baseline.DocumentBaseline;
+import com.docdoku.core.document.baseline.DocumentsCollection;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartMaster;
-import com.docdoku.core.product.PartRevision;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -33,39 +38,87 @@ import javax.persistence.Table;
 @Entity
 public class BaselineConfigSpec extends ConfigSpec {
 
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
-    private Baseline baseline;
+    @ManyToOne(optional = true, fetch = FetchType.EAGER)
+    private ProductBaseline productBaseline;
+    @ManyToOne(optional = true, fetch = FetchType.EAGER)
+    private DocumentBaseline documentBaseline;
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private User user;
 
     public BaselineConfigSpec(){
     }
-
-    public BaselineConfigSpec(Baseline baseline, User user) {
-        this.baseline = baseline;
+    public BaselineConfigSpec(ProductBaseline productBaseline, User user) {
+        this.productBaseline = productBaseline;
+        this.user = user;
+    }
+    public BaselineConfigSpec(DocumentBaseline documentBaseline, User user) {
+        this.documentBaseline = documentBaseline;
         this.user = user;
     }
 
-    public Baseline getBaseline() {return baseline;}
-    public void setBaseline(Baseline baseline) {this.baseline = baseline;}
+    public DocumentBaseline getDocumentBaseline() {
+        return documentBaseline;
+    }
+    public void setDocumentBaseline(DocumentBaseline documentBaseline) {
+        this.documentBaseline = documentBaseline;
+    }
 
-    public User getUser() {return user;}
-    public void setUser(User user) {this.user = user;}
+    public ProductBaseline getProductBaseline() {
+        return productBaseline;
+    }
+    public void setProductBaseline(ProductBaseline productBaseline) {
+        this.productBaseline = productBaseline;
+    }
+
+    public User getUser() {
+        return user;
+    }
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    @Override
+    public int getId(){
+        if(productBaseline!=null){
+            return productBaseline.getPartCollection().getId();
+        }else if(documentBaseline!=null){
+            return documentBaseline.getDocumentsCollection().getId();
+        }else{
+            return -1;
+        }
+    }
 
     @Override
     public PartIteration filterConfigSpec(PartMaster part) {
-        BaselinedPartKey baselinedRootPartKey = new BaselinedPartKey(baseline.getPartCollection().getId(),part.getWorkspaceId(),part.getNumber());
-        BaselinedPart baselinedRootPart = baseline.getBaselinedPart(baselinedRootPartKey);
-        if(baselinedRootPart != null){
-            return baselinedRootPart.getTargetPart();
-        }else{
-            // the part isn't in baseline, choose the latest version-iteration uncheckouted
-            PartIteration partI = part.getLastRevision().getLastIteration();
-            PartRevision partRevision = partI.getPartRevision();
-            if(partRevision.isCheckedOut() && !partRevision.getCheckOutUser().equals(user)){
-                partI = partRevision.getLastUncheckoutedIteration();
+        PartCollection partCollection = productBaseline.getPartCollection();
+        if(partCollection != null){
+            BaselinedPartKey baselinedRootPartKey = new BaselinedPartKey(partCollection.getId(),part.getWorkspaceId(),part.getNumber());
+            BaselinedPart baselinedRootPart = productBaseline.getBaselinedPart(baselinedRootPartKey);
+            if(baselinedRootPart != null){
+                return baselinedRootPart.getTargetPart();
+            }else{
+                // the part isn't in baseline, choose the latest version-iteration uncheckouted
+                return new LatestConfigSpec(user).filterConfigSpec(part);
             }
-            return partI;
+        }else{
+            return null;
         }
     }
+
+    @Override
+    public DocumentIteration filterConfigSpec(DocumentMaster documentMaster) {
+        DocumentsCollection documentsCollection = documentBaseline.getDocumentsCollection();
+        if(documentsCollection != null){
+            BaselinedDocumentKey baselinedDocumentKey = new BaselinedDocumentKey(documentBaseline.getId(), documentMaster.getWorkspaceId(),documentMaster.getId());
+            BaselinedDocument baselinedDocument = documentsCollection.getBaselinedDocument(baselinedDocumentKey);
+            if(baselinedDocument != null){
+                return baselinedDocument.getTargetDocument();
+            }else{
+                return new LatestConfigSpec(user).filterConfigSpec(documentMaster);
+            }
+        }else{
+            return null;
+        }
+    }
+
 }

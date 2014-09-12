@@ -18,22 +18,34 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.server.rest.dto;
+package com.docdoku.server.rest.dto.change;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.List;
 
-public class ChangeRequestDTO extends ChangeItemDTO implements Serializable{
-    private List<ChangeIssueDTO> addressedChangeIssues;
+@XmlRootElement
+public class ChangeOrderDTO extends ChangeItemDTO implements Serializable{
+    private List<ChangeRequestDTO> addressedChangeRequests;
     @XmlElement(nillable = true)
     private int milestoneId;
 
-    public ChangeRequestDTO() {}
+    public ChangeOrderDTO() {
 
-    public List<ChangeIssueDTO> getAddressedChangeIssues() { return addressedChangeIssues; }
-    public void setAddressedChangeIssues(List<ChangeIssueDTO> addressedChangeRequests) { this.addressedChangeIssues = addressedChangeRequests; }
+    }
 
-    public int getMilestoneId() {return milestoneId;}
-    public void setMilestoneId(int milestoneId) {this.milestoneId = milestoneId;}
+    public List<ChangeRequestDTO> getAddressedChangeRequests() {
+        return addressedChangeRequests;
+    }
+    public void setAddressedChangeRequests(List<ChangeRequestDTO> addressedChangeRequests) {
+        this.addressedChangeRequests = addressedChangeRequests;
+    }
+
+    public int getMilestoneId() {
+        return milestoneId;
+    }
+    public void setMilestoneId(int milestoneId) {
+        this.milestoneId = milestoneId;
+    }
 }

@@ -18,24 +18,23 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.server.rest.dto;
+package com.docdoku.server.rest.dto.change;
 
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
-import java.util.List;
 
 @XmlRootElement
-public class ChangeOrderDTO extends ChangeItemDTO implements Serializable{
-    private List<ChangeRequestDTO> addressedChangeRequests;
-    @XmlElement(nillable = true)
-    private int milestoneId;
+public class ChangeIssueDTO extends ChangeItemDTO implements Serializable {
+    private String initiator;
 
-    public ChangeOrderDTO() {}
+    public ChangeIssueDTO() {
 
-    public List<ChangeRequestDTO> getAddressedChangeRequests() { return addressedChangeRequests; }
-    public void setAddressedChangeRequests(List<ChangeRequestDTO> addressedChangeRequests) { this.addressedChangeRequests = addressedChangeRequests; }
+    }
 
-    public int getMilestoneId() {return milestoneId;}
-    public void setMilestoneId(int milestoneId) {this.milestoneId = milestoneId;}
+    public String getInitiator() {
+        return initiator;
+    }
+    public void setInitiator(String initiator) {
+        this.initiator = initiator;
+    }
 }

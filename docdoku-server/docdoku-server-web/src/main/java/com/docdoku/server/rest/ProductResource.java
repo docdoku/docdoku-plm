@@ -65,7 +65,7 @@ public class ProductResource {
     @EJB
     private ProductInstancesResource productInstancesResource;
 
-    private final static Logger LOGGER = Logger.getLogger(ProductResource.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ProductResource.class.getName());
     private Mapper mapper;
 
     public ProductResource() {
@@ -391,10 +391,17 @@ public class ProductResource {
      */
     private ConfigSpec getConfigSpec(String workspaceId, String configSpecType) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, BaselineNotFoundException {
         ConfigSpec cs;
-        if("latest".equals(configSpecType) || "undefined".equals(configSpecType)){
-            cs = productService.getLatestConfigSpec(workspaceId);
-        }else{
-            cs = productService.getConfigSpecForBaseline(Integer.parseInt(configSpecType));
+        switch (configSpecType) {
+            case "latest":
+            case "undefined":
+                cs = productService.getLatestConfigSpec(workspaceId);
+                break;
+            case "released":
+                cs = productService.getLatestReleasedConfigSpec(workspaceId);
+                break;
+            default:
+                cs = productService.getConfigSpecForBaseline(Integer.parseInt(configSpecType));
+                break;
         }
         return cs;
     }

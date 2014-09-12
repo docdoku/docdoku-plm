@@ -1,13 +1,30 @@
-define(["collections/document_iteration", "common-objects/utils/acl-checker"], function(DocumentIterationList,ACLChecker) {
-
+/*global APP_CONFIG*/
+'use strict';
+define(['collections/document_iteration', 'common-objects/utils/acl-checker'], function(DocumentIterationList,ACLChecker) {
     var Document = Backbone.Model.extend({
 
         urlRoot: function() {
             if(this.isNew()){
                 return this.collection.url();
             }
-            return "/api/workspaces/" + APP_CONFIG.workspaceId + "/documents";
+            return '/api/workspaces/' + APP_CONFIG.workspaceId + '/documents';
         },
+
+	    url: function(){
+		    if(this.getId()){
+			    return this.baseUrl()+'?configSpec='+APP_CONFIG.configSpec;
+		    }else{
+			    return this.urlRoot();
+		    }
+	    },
+
+	    baseUrl: function(){
+		    return this.urlRoot()+'/'+this.getId();
+	    },
+
+	    getAbortedWorkflowsUrl:function(){
+		    return this.urlRoot()+'/'+this.getId()+'/aborted-workflows';
+	    },
 
         parse: function(data) {
             this.iterations = new DocumentIterationList(data.documentIterations);
@@ -18,20 +35,20 @@ define(["collections/document_iteration", "common-objects/utils/acl-checker"], f
         },
 
         getId:function(){
-            return this.get("id");
+            return this.get('id');
         },
 
         getReference: function() {
-            var id = this.get("id");
-            return id.substr(0,id.lastIndexOf("-"));
+            var id = this.get('id');
+            return id.substr(0,id.lastIndexOf('-'));
         },
 
         getVersion: function() {
-            return this.get("version");
+            return this.get('version');
         },
 
         getWorkspace: function() {
-            return this.get("workspaceId");
+            return this.get('workspaceId');
         },
 
         getCheckoutUser: function() {
@@ -39,7 +56,7 @@ define(["collections/document_iteration", "common-objects/utils/acl-checker"], f
         },
 
         isCheckoutByConnectedUser: function() {
-            return this.isCheckout() ? this.getCheckoutUser().login == APP_CONFIG.login : false;
+            return this.isCheckout() ? this.getCheckoutUser().login === APP_CONFIG.login : false;
         },
 
         getUrl: function() {
@@ -59,26 +76,26 @@ define(["collections/document_iteration", "common-objects/utils/acl-checker"], f
         },
 
         isIterationChangedSubscribed: function() {
-            return this.get("iterationSubscription");
+            return this.get('iterationSubscription');
         },
 
         isStateChangedSubscribed: function() {
-            return this.get("stateSubscription");
+            return this.get('stateSubscription');
         },
 
         getTags: function() {
-            return this.get("tags");
+            return this.get('tags');
         },
 
         getPath: function() {
-            return this.get("path");
+            return this.get('path');
         },
 
         checkout: function() {
             $.ajax({
                 context: this,
-                type: "PUT",
-                url: this.url() + "/checkout",
+                type: 'PUT',
+                url: this.baseUrl() + '/checkout',
                 success: function() {
                     this.fetch();
                 },
@@ -91,8 +108,8 @@ define(["collections/document_iteration", "common-objects/utils/acl-checker"], f
         undocheckout: function() {
             $.ajax({
                 context: this,
-                type: "PUT",
-                url: this.url() + "/undocheckout",
+                type: 'PUT',
+                url: this.baseUrl() + '/undocheckout',
                 success: function() {
                     this.fetch();
                 },
@@ -105,8 +122,8 @@ define(["collections/document_iteration", "common-objects/utils/acl-checker"], f
         checkin: function() {
             $.ajax({
                 context: this,
-                type: "PUT",
-                url: this.url() + "/checkin",
+                type: 'PUT',
+                url: this.baseUrl() + '/checkin',
                 success: function() {
                     this.fetch();
                 },
@@ -118,12 +135,12 @@ define(["collections/document_iteration", "common-objects/utils/acl-checker"], f
 
         toggleStateSubscribe: function(oldState) {
 
-            var action = oldState ? "unsubscribe" : "subscribe";
+            var action = oldState ? 'unsubscribe' : 'subscribe';
 
             $.ajax({
                 context: this,
-                type: "PUT",
-                url: this.url() + "/notification/stateChange/" + action,
+                type: 'PUT',
+                url: this.baseUrl() + '/notification/stateChange/' + action,
                 success: function() {
                     this.fetch();
                 }
@@ -132,12 +149,12 @@ define(["collections/document_iteration", "common-objects/utils/acl-checker"], f
 
         toggleIterationSubscribe: function(oldState) {
 
-            var action = oldState ? "unsubscribe" : "subscribe";
+            var action = oldState ? 'unsubscribe' : 'subscribe';
 
             $.ajax({
                 context: this,
-                type: "PUT",
-                url: this.url() + "/notification/iterationChange/" + action,
+                type: 'PUT',
+                url: this.baseUrl() + '/notification/iterationChange/' + action,
                 success: function() {
                     this.fetch();
                 }
@@ -147,18 +164,17 @@ define(["collections/document_iteration", "common-objects/utils/acl-checker"], f
 
         isCheckout: function() {
             return this.attributes.checkOutDate;
-           // return !_.isNull(this.attributes.checkOutDate);
         },
 
         getPermalink: function() {
             return encodeURI(
-                window.location.origin
-                    + "/documents/"
-                    + this.getWorkspace()
-                    + "/"
-                    + this.getReference()
-                    + "/"
-                    + this.getVersion()
+                window.location.origin +
+                    '/documents/' +
+                    this.getWorkspace() +
+                    '/' +
+                    this.getReference() +
+                    '/' +
+                    this.getVersion()
             );
         },
 
@@ -166,10 +182,10 @@ define(["collections/document_iteration", "common-objects/utils/acl-checker"], f
 
             $.ajax({
                 context: this,
-                type: "POST",
-                url: this.url() + "/tags",
+                type: 'POST',
+                url: this.baseUrl() + '/tags',
                 data: JSON.stringify(tags),
-                contentType: "application/json; charset=utf-8",
+                contentType: 'application/json; charset=utf-8',
                 success: function() {
                     this.fetch();
                 }
@@ -179,8 +195,8 @@ define(["collections/document_iteration", "common-objects/utils/acl-checker"], f
 
         removeTag: function(tag, callback) {
             $.ajax({
-                type: "DELETE",
-                url:this.url() + "/tags/" +tag,
+                type: 'DELETE',
+                url:this.baseUrl() + '/tags/' +tag,
                 success: function() {
                     callback();
                 }
@@ -188,12 +204,12 @@ define(["collections/document_iteration", "common-objects/utils/acl-checker"], f
         },
 
         removeTags: function(tags, callback) {
-            var baseUrl = this.url() + "/tags/";
+            var baseUrl = this.baseUrl() + '/tags/';
             var count = 0;
             var total = _(tags).length;
             _(tags).each(function(tag){
                 $.ajax({
-                    type: "DELETE",
+                    type: 'DELETE',
                     url:baseUrl+tag,
                     success: function() {
                         count ++;
@@ -211,17 +227,17 @@ define(["collections/document_iteration", "common-objects/utils/acl-checker"], f
             var data = {
                 title: title,
                 description: description,
-                workflowModelId: workflow ? workflow.get("id") : null,
+                workflowModelId: workflow ? workflow.get('id') : null,
                 roleMapping:workflow? roleMappingList: null,
                 acl:aclList
             };
 
             $.ajax({
                 context: this,
-                type: "PUT",
-                url: this.url() + "/newVersion",
+                type: 'PUT',
+                url: this.baseUrl() + '/newVersion',
                 data: JSON.stringify(data),
-                contentType: "application/json; charset=utf-8",
+                contentType: 'application/json; charset=utf-8',
                 success: function() {
                     this.collection.fetch({reset:true});
                 }
@@ -236,10 +252,10 @@ define(["collections/document_iteration", "common-objects/utils/acl-checker"], f
 
             $.ajax({
                 context: this,
-                type: "PUT",
-                url: this.url() + "/move",
+                type: 'PUT',
+                url: this.baseUrl() + '/move',
                 data: JSON.stringify(data),
-                contentType: "application/json; charset=utf-8",
+                contentType: 'application/json; charset=utf-8',
                 success: function() {
                     if(callback){
                         callback();
@@ -254,67 +270,65 @@ define(["collections/document_iteration", "common-objects/utils/acl-checker"], f
 
         createShare:function(args){
             $.ajax({
-                type: "POST",
-                url: this.url() + "/share",
+                type: 'POST',
+                url: this.baseUrl() + '/share',
                 data: JSON.stringify(args.data),
-                contentType: "application/json; charset=utf-8",
+                contentType: 'application/json; charset=utf-8',
                 success: args.success
             });
         },
 
         publish:function(args){
             $.ajax({
-                type: "PUT",
-                url: this.url() + "/publish",
+                type: 'PUT',
+                url: this.baseUrl() + '/publish',
                 success: args.success
             });
         },
 
         unpublish:function(args){
             $.ajax({
-                type: "PUT",
-                url: this.url() + "/unpublish",
+                type: 'PUT',
+                url: this.baseUrl() + '/unpublish',
                 success: args.success
             });
         },
 
         updateACL:function(args){
             $.ajax({
-                type: "PUT",
-                url: this.url() + "/acl",
+                type: 'PUT',
+                url: this.baseUrl() + '/acl',
                 data: JSON.stringify(args.acl),
-                contentType: "application/json; charset=utf-8",
+                contentType: 'application/json; charset=utf-8',
                 success: args.success,
                 error : args.error
             });
         },
 
         hasACLForCurrentUser:function(){
-            return this.getACLPermissionForCurrentUser() != false;
+            return this.getACLPermissionForCurrentUser() !== false;
         },
 
         isForbidden:function(){
-            return this.getACLPermissionForCurrentUser() == "FORBIDDEN";
+            return this.getACLPermissionForCurrentUser() === 'FORBIDDEN';
         },
 
         isReadOnly:function(){
-            return this.getACLPermissionForCurrentUser() == "READ_ONLY";
+            return this.getACLPermissionForCurrentUser() === 'READ_ONLY';
         },
 
         isFullAccess:function(){
-            return this.getACLPermissionForCurrentUser() == "FULL_ACCESS";
+            return this.getACLPermissionForCurrentUser() === 'FULL_ACCESS';
         },
 
         getACLPermissionForCurrentUser:function(){
-            return ACLChecker.getPermission(this.get("acl"));
+            return ACLChecker.getPermission(this.get('acl'));
         },
 
         isAttributesLocked:function(){
-            return this.get("attributesLocked");
+            return this.get('attributesLocked');
         }
 
     });
-
     return Document;
-
 });

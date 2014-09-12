@@ -24,12 +24,16 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-
-
 public class RestApiException extends WebApplicationException {
 
     public RestApiException(String technicalDetail, String userMessage) {
-        super(Response.status(Status.BAD_REQUEST).header("Reason-Phrase",
-                userMessage).entity(technicalDetail).build());
+        this(technicalDetail,userMessage,Status.BAD_REQUEST);
+    }
+
+    public RestApiException(String technicalDetail, String userMessage, Status status) {
+        super(Response.status(status)
+                .header("Reason-Phrase",userMessage)
+                .entity(technicalDetail)
+                .build());
     }
 }
