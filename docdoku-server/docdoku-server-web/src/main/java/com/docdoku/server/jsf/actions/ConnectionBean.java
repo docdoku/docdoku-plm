@@ -20,6 +20,7 @@
 package com.docdoku.server.jsf.actions;
 
 import com.docdoku.core.common.Account;
+import com.docdoku.core.common.Workspace;
 import com.docdoku.core.exceptions.AccountNotFoundException;
 import com.docdoku.core.services.IUserManagerLocal;
 
@@ -90,8 +91,18 @@ public class ConnectionBean {
         }else{
             if(originURL!=null && originURL.length()>1)
                 ec.redirect(originURL);
-            else
-                ec.redirect(request.getContextPath() + "/document-management/");
+            else{
+                String workspaceID = null;
+                Workspace[] workspaces = userManager.getWorkspacesWhereCallerIsActive();
+                if (workspaces != null && workspaces.length > 0) {
+                    workspaceID = workspaces[0].getId();
+                }
+                if(workspaceID == null){
+                    ec.redirect(request.getContextPath() + "/faces/admin/workspace/workspacesMenu.xhtml");
+                }else{
+                    ec.redirect(request.getContextPath() + "/document-management/#" + workspaceID);
+                }
+            }
         }
     }
 

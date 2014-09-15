@@ -1,0 +1,183 @@
+<!-- Collapse Button For Responsive View -->
+<a class="btn btn-navbar" id="collapseButton" data-toggle="collapse" data-target=".nav-collapse"
+   xmlns="http://java.sun.com/jsf/html">
+    <span class="icon-bar"></span>
+    <span class="icon-bar"></span>
+    <span class="icon-bar"></span>
+</a>
+
+<div class="navbar-inner">
+    <a id="brand-title" class="brand" href="{{contextPath}}/">
+        <img id="brand-logo" alt="docdoku_plm" src="../images/plm_logo2.png"/>
+        <span id="brand-name">DocDoku<strong>PLM</strong></span>
+    </a>
+
+    <div class="container-fluid">
+
+        <ul class="nav header-menu breadcrumb-menu">
+
+            <li class="dropdown pull-left" id="workspace_container">
+
+                <a id="workspace_choose_menu" class="dropdown-toggle" data-toggle="dropdown">
+                    <i class="fa fa-home"></i>
+                    {{i18n.MY_WORKSPACES}}
+                    : {{currentWorkspace}}
+                </a>
+
+                <ul class="dropdown-menu">
+
+                    <li class="dropdown-section-title"><b><i class="fa fa-graduation-cap"></i>{{i18n.ADMINISTRATED}}</b>
+                    </li>
+
+                    {{#administratedWorkspaces}}
+
+                    <li class="dropdown-submenu visible-desktop">
+                        <a>
+                            {{id}}
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{{contextPath}}/document-management/#{{id}}/folders"
+                                   title="{{i18n.DOCUMENTS_MANAGEMENT}}">{{i18n.DOCUMENTS}}</a>
+                            </li>
+                            <li><a href="{{contextPath}}/product-management/#{{id}}/products"
+                                   title="{{i18n.PRODUCTS_MANAGEMENT}}">{{i18n.PRODUCTS}}</a>
+                            </li>
+                            <li><a href="{{contextPath}}/change-management/#{{id}}/workflows"
+                                   title="{{i18n.CHANGES_MANAGEMENT}}">{{i18n.CHANGES}}</a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    {{/administratedWorkspaces}}
+
+                    <li class="dropdown-hr">
+                        <hr/>
+                    </li>
+
+                    <li class="dropdown-section-title"><b><i class="fa fa-graduation-cap"></i>{{i18n.OTHERS}}</b></li>
+
+                    {{#otherWorkspaces}}
+                    <li class="dropdown-submenu visible-desktop">
+                        <a>
+                            {{id}}
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{{contextPath}}/document-management/#{{id}}/folders"
+                                   title="{{i18n.DOCUMENTS_MANAGEMENT}}">{{i18n.DOCUMENTS}}</a>
+                            </li>
+                            <li><a href="{{contextPath}}/product-management/#{{id}}/products"
+                                   title="{{i18n.PRODUCTS_MANAGEMENT}}">{{i18n.PRODUCTS}}</a>
+                            </li>
+                            <li><a href="{{contextPath}}/change-management/#{{id}}/workflows"
+                                   title="{{i18n.CHANGES_MANAGEMENT}}">{{i18n.CHANGES}}</a>
+                            </li>
+                        </ul>
+                    </li>
+                    {{/otherWorkspaces}}
+                </ul>
+            </li>
+
+            <!-- current workspace -->
+
+            <li class="dropdown pull-left">
+
+                {{#isDocumentManagement}}<a class="dropdown-toggle" data-toggle="dropdown"
+                                            title="{{i18n.DOCUMENTS_MANAGEMENT}}"><i class="fa fa-folder-open"></i>
+                {{i18n.DOCUMENTS}}</a>
+                {{/isDocumentManagement}}
+                {{#isProductManagement}}<a class="dropdown-toggle" data-toggle="dropdown"
+                                           title="{{i18n.PRODUCTS_MANAGEMENT}}"><i class="fa fa-briefcase"></i>{{i18n.PRODUCTS}}
+            </a>
+                {{/isProductManagement}}
+                {{#isProductStructure}}<a class="dropdown-toggle" data-toggle="dropdown"
+                                          title="{{i18n.PRODUCTS_MANAGEMENT}}"><i class="fa fa-briefcase"></i>{{i18n.PRODUCTS}}
+            </a>
+                {{/isProductStructure}}
+                {{#isChangeManagement}}<a class="dropdown-toggle" data-toggle="dropdown"
+                                          title="{{i18n.CHANGES_MANAGEMENT}}"><i class="fa fa-history"></i>
+                {{i18n.CHANGES}}</a>
+                {{/isChangeManagement}}
+
+                <ul class="dropdown-menu">
+                    <li>
+                        <a href="{{contextPath}}/document-management/#{{currentWorkspace}}/folders">
+                            {{#isDocumentManagement}}<i class="fa fa-check"></i>{{/isDocumentManagement}}
+                            {{i18n.DOCUMENTS}}
+                        </a>
+                    </li>
+                    <li><a href="{{contextPath}}/product-management/#{{currentWorkspace}}/products">
+                        {{#isProductManagement}}<i class="fa fa-check"></i>{{/isProductManagement}}
+                        {{#isProductStructure}}<i class="fa fa-check"></i>{{/isProductStructure}}
+                        {{i18n.PRODUCTS}}
+                    </a></li>
+                    <li><a href="{{contextPath}}/change-management/#{{currentWorkspace}}/workflows">
+                        {{#isChangeManagement}}
+                        <i class="fa fa-check"></i>
+                        {{/isChangeManagement}}
+                        {{i18n.CHANGES}}
+                    </a></li>
+                </ul>
+
+            </li>
+
+        </ul>
+        <ul class="nav header-menu pull-right">
+
+            <li class="dropdown" id="coworkers_access_module" style="">
+                <a class="dropdown-toggle" id="coworkers_access_module_toggler" href="#" data-toggle="dropdown"
+                   title="Coworkers">
+                    <i class="fa fa-users"></i>
+                    {{i18n.COWORKERS}}
+                    <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu" id="coworkers_access_module_entries">
+                </ul>
+            </li>
+            <li class="dropdown ">
+                <a href="#" class="dropdown-toggle" id="account_name_link" data-toggle="dropdown">
+                    <i class="fa fa-user"></i>
+                    {{userName}}
+                    <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a href="{{contextPath}}/faces/admin/accountEditionForm.xhtml">
+                        <i class="fa fa-user"></i>
+                        {{i18n.MY_ACCOUNT}}
+                    </a>
+                    </li>
+                    <li><a href="{{contextPath}}/faces/admin/organization/organizationMenu.xhtml">
+                        <i class="fa fa-building-o"></i>
+                        {{i18n.MY_ORGANIZATION}}
+                    </a>
+                    </li>
+                    <li><a href="{{contextPath}}/faces/admin/workspace/workspacesMenu.xhtml">
+                        <i class="fa fa-cog"></i>
+                        {{i18n.WORKSPACES_ADMINISTRATION}}
+                    </a>
+                    </li>
+                    <li class="divider"></li>
+                    <li class="dplm_download_link"><a href="{{contextPath}}/faces/download.xhtml">
+                        <i class="fa fa-download"></i>
+                        {{i18n.DOWNLOAD_DPLM_CLIENT}}
+                    </a>
+                    </li>
+                    <li id="community_link">
+                        <a href="http://www.docdokuplm.com/" target="_blank">
+                            <i class="fa fa-question"></i>
+                            {{i18n.ABOUT_DOCDOKUPLM}}
+                        </a>
+                    </li>
+                    <li class="divider"></li>
+                    <li id="logout_link">
+                        <a href="{{contextPath}}/logout">
+                            <i class="fa fa-power-off"></i>
+                            {{i18n.LOGOUT}}
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+
+        </ul>
+    </div>
+</div>

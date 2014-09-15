@@ -1,0 +1,15 @@
+<div class="nav-header">{{i18n.CUTPLAN}}</div>
+
+<div class="btn-group axis-buttons" data-toggle="buttons-radio">
+    <button data-axis="X" class="change-axis btn btn-custom active">X</button>
+    <button data-axis="Y" class="change-axis btn btn-custom">Y</button>
+    <button data-axis="Z" class="change-axis btn btn-custom">Z</button>
+</div>
+
+<div class="plan-switch custom-switch switch switch-small" data-on="custom-on" data-off="custom-off">
+    <input type="checkbox" checked/>
+</div>
+
+<div>
+    <input type="range" min="-10000" max="10000" id="slider-cut-plan" value="0" step="1"/>
+</div>

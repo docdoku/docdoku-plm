@@ -1,91 +1,55 @@
 /*global casper, workspaceUrl,partCreationNumber,partCreationName,__utils__*/
 'use strict';
-casper.test.begin('Show a part details is available',4, function(){
-    casper.thenOpen(workspaceUrl);
-    var exists;
+
+casper.test.begin('Part details tests suite',3, function partDetailsTestsSuite(){
 
     /**
-     * Go to product management
-     */
-    casper.then(function openProductManagement() {
-        exists = this.evaluate(function() {
-            return __utils__.exists('#products_management_link a');
-        });
-        if(!exists){
-            this.test.fail('Products management link not found');
-            this.exit('Products management link not found');
-        }
-        this.evaluate(function(){__utils__.log('Products management link found', 'info');});
-        this.click('#products_management_link a');
-    });
+     * Open product management URL
+     * */
+    casper.open(productManagementUrl);
 
     /**
      * Go to part nav
      */
-    casper.waitForSelector('#part-nav',function openPartNav() {
-        exists = this.evaluate(function() {
-            return __utils__.exists('#part-nav div a');
+    casper.then(function waitForPartNavLink(){
+        this.waitForSelector('#part-nav > .nav-list-entry > a',function clickPartNavLink() {
+            this.click('#part-nav > .nav-list-entry > a');
         });
-        if(!exists){
-            this.test.fail('Parts link not found');
-            this.exit('Parts link not found');
-        }
-        this.evaluate(function(){__utils__.log('Parts link found', 'info');});
-        this.click('#part-nav div a');
-    });
-
-    var partName;
-    var partNumber;
-    /**
-     * Find the created part in the list
-     */
-    casper.waitForSelector('#part_table tbody tr',function showPartDetails() {
-        partName = this.getHTML('#part_table tbody tr:first-child td:nth-child(6)');                                    // Todo dont look at the first child
-        partNumber = this.getHTML('#part_table tbody tr:first-child .part_number .part_number_value');
-        this.test.assertEquals(partNumber, partCreationNumber, 'Created part number should be valid in List');
-        this.test.assertEquals(partName, partCreationName, 'Created part name should be valid in List');
-        exists = this.evaluate(function() {
-            return __utils__.exists('#part_table tbody tr:first-child .part_number');
-        });
-        if(!exists){
-            this.test.fail('Part modal link not found');
-            this.exit('Part modal link not found');
-        }
-        this.evaluate(function(){__utils__.log('Part modal link found', 'info');});
-        this.click('#part_table tbody tr:first-child .part_number');
     });
 
     /**
-     * Test content of part modal
+     * Wait for part list display
      */
-    casper.waitForSelector('#part-modal',function testPartModal() {
-        this.test.assertEquals(partNumber, this.getHTML('#form-part div:first-child div span'), 'Created part number should be valid in modal');
-        this.test.assertEquals(partName, this.getHTML('#form-part div:nth-child(2) div span'), 'Created part name should be valid in modal');
+    casper.then(function waitForPartInList(){
+        this.waitForSelector('#part_table tbody tr:first-child td.part_number', function clickOnPartCheckbox() {
+            this.click('#part_table tbody tr:first-child td.part_number span');
+        });
+    });
+
+    /**
+     * Wait for part modal
+     */
+    casper.then(function waitForModalDisplay(){
+        this.waitForSelector('#part-modal',function testPartModal() {
+            this.test.assertSelectorHasText('#form-part div:first-child div span',partCreationNumber);
+            this.test.assertSelectorHasText('#form-part div:nth-child(2) div span',partCreationName);
+        });
     });
 
     /**
      * Close modal
      */
-    casper.then(function () {
-        casper.then(function closeModal() {
-            exists = this.evaluate(function() {
-                return __utils__.exists('#cancel-iteration');
-            });
-            if(!exists){
-                this.test.fail('Cancel button not found');
-                this.exit('Cancel button not found');
-            }
-            this.evaluate(function(){__utils__.log('Cancel button found', 'info');});
-            this.click('#cancel-iteration');
+    casper.then(function waitForCancelButton() {
+        this.waitForSelector('#part-modal #cancel-iteration',function testPartModal() {
+            this.click('#part-modal #cancel-iteration');
         });
     });
 
-    // screenshot
-    /*casper.then(function() {
-     this.wait(1000, function(){
-     this.capture('screenshot/part.png');
-     });
-     });*/
+    casper.then(function waitForModalToBeClosed(){
+       this.waitWhileSelector('#part-modal',function onPartModalClosed(){
+           this.test.assert(true,'Part modal has been closed');
+       });
+    });
 
     casper.run(function() {
         this.test.done();

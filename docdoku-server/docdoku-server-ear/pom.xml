@@ -12,6 +12,24 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>properties-maven-plugin</artifactId>
+                <version>1.0-alpha-2</version>
+                <executions>
+                    <execution>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>read-project-properties</goal>
+                        </goals>
+                        <configuration>
+                            <files>
+                                <file>../server.properties</file>
+                            </files>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.1</version>
@@ -28,7 +46,7 @@
                 <configuration>
                     <version>7</version>
                     <defaultLibBundleDir>/lib</defaultLibBundleDir>
-                    <generateApplicationXml>false</generateApplicationXml>
+                    <generateApplicationXml>true</generateApplicationXml>
                     <modules>
                         <ejbModule>
                             <groupId>org.ow2.docdoku</groupId>
@@ -38,9 +56,11 @@
                         <webModule>
                             <groupId>org.ow2.docdoku</groupId>
                             <artifactId>docdoku-server-web</artifactId>
+                            <contextRoot>${server.contextRoot}</contextRoot>
                             <bundleFileName>docdoku-server-web.war</bundleFileName>
                         </webModule>
                     </modules>
+
                 </configuration>
             </plugin>
         </plugins>

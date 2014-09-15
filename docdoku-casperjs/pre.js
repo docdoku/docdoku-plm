@@ -1,30 +1,32 @@
 /*global casper,__utils__,authUrl,login,pass,userInfoUrl,deleteDocumentUrl,deleteFolderUrl,deleteProductUrl,deletePartUrl,Tools*/
 'use strict';
-casper.test.begin('User should login',1, function LoginAndCleaningTest(){
-    var exists;
+var _ = require('underscore');
+
+casper.start();
+
+casper.test.begin('User should login',2, function LoginAndCleaningTest(){
+
+    /**
+    * Register to application logs
+    * */
+    casper.on('remote.message', function remoteMessage(message) {
+        this.log(message,'info');
+    });
+
+    /**
+     * Open app home page
+     */
+    casper.then(function(){
+        this.open(authUrl);
+    });
 
     /**
      * Test to find the login form
      */
-    casper.start(authUrl, function testLoginFormExisting()  {
-//        Tools.assertExist(this,'form[id="login_form"]','Login form found','Login form not found');
-        exists = this.evaluate(function() {
-            return __utils__.exists('form[id="login_form"]');
+    casper.then(function(){
+        this.waitForSelector('form[id="login_form"]',function loginFormFound(){
+            this.test.assert(true,'Login form found');
         });
-        if(!exists){
-            this.test.fail('Login form not found');
-            this.exit('Login form not found');
-        }
-        this.evaluate(function(){__utils__.log('Login form found', 'info');});
-
-        exists = this.evaluate(function testLoginButtonExisting() {
-            return __utils__.exists('#login_button_container input');
-        });
-        if(!exists){
-            this.test.fail('Login button not found');
-            this.exit('Login button not found');
-        }
-        this.evaluate(function(){__utils__.log('Login button found', 'info');});
     });
 
     /**
@@ -40,27 +42,74 @@ casper.test.begin('User should login',1, function LoginAndCleaningTest(){
     /**
      * Submit the login form
      */
-    casper.thenClick('#login_button_container input', function tryLogin(){
-        this.thenOpen(userInfoUrl, function loggedIn() {
-            this.test.assertHttpStatus(200, 'User "'+login+'" should logged in');
-        });
+    casper.then(function submitLoginForm(){
+        casper.click('#login_button_container input');
     });
 
     /**
-     * Delete test object if there was a previous crash
+     * Check if we are connected
      */
-    casper.then(function cleanup() {
-        this.open(deleteDocumentUrl,{method: 'DELETE'});
-        this.evaluate(function(){__utils__.log('Test documents has been deleted', 'info');});
-        this.open(deleteFolderUrl,{method: 'DELETE'});
-        this.evaluate(function(){__utils__.log('Test folders has been deleted', 'info');});
-        this.open(deleteProductUrl,{method: 'DELETE'});
-        this.evaluate(function(){__utils__.log('Test products has been deleted', 'info');});
-        this.open(deletePartUrl,{method: 'DELETE'});
-        this.evaluate(function(){__utils__.log('Test parts has been deleted', 'info');});
+    casper.then(function checkSessionState(){
+        this.open(userInfoUrl).then(function(response){
+            this.test.assert(response.status === 200, 'User "'+login+'" should logged in');
+        });
     });
 
-    casper.run(function() {
+
+    /**
+     * Delete test objects
+     */
+    casper.then(function cleanupDocuments() {
+
+        this.open(deleteDocumentUrl,{method: 'DELETE'}).then(function(response){
+           if(response.status === 200){
+               this.log('Test document has been deleted','info');
+           }else{
+               var reason = _(response.headers).findWhere({name:'Reason-Phrase'});
+               this.log('Cannot delete test document, reason : ' + reason.value,'warning');
+           }
+        });
+    });
+
+    casper.then(function cleanupFolders() {
+
+        this.open(deleteFolderUrl,{method: 'DELETE'}).then(function(response){
+            if(response.status === 200){
+                this.log('Test folders has been deleted','info');
+            }else{
+                var reason = _(response.headers).findWhere({name:'Reason-Phrase'});
+                this.log('Cannot delete test folders, reason : ' + reason.value,'warning');
+            }
+        });
+    });
+
+    casper.then(function cleanupProducts() {
+
+        this.open(deleteProductUrl,{method: 'DELETE'}).then(function(response){
+            if(response.status === 200){
+                this.log('Test products has been deleted','info');
+            }else{
+                var reason = _(response.headers).findWhere({name:'Reason-Phrase'});
+                this.log('Cannot delete test products, reason : ' + reason.value,'warning');
+            }
+        });
+    });
+
+    casper.then(function cleanupParts() {
+
+        this.open(deletePartUrl,{method: 'DELETE'}).then(function(response){
+            if(response.status === 200){
+                this.log('Test parts has been deleted','info');
+            }else{
+                var reason = _(response.headers).findWhere({name:'Reason-Phrase'});
+                this.log('Cannot delete test parts, reason : ' + reason.value,'warning');
+            }
+        });
+
+    });
+
+    casper.run(function allDone() {
         this.test.done();
     });
+
 });

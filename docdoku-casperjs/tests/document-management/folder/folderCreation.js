@@ -1,71 +1,42 @@
 /*global casper,__utils__,workspaceUrl,folderCreationName*/
 'use strict';
-casper.test.begin('Create a folder is available',1, function(){
-    casper.thenOpen(workspaceUrl);
-    var exists;
+casper.test.begin('Folder creation tests suite',1, function folderCreationTestsSuite(){
 
     /**
-     * Go to document management
+     * Open document management URL
+     * */
+    casper.open(documentManagementUrl);
+
+    /**
+     * Open folder nav
      */
-    casper.then(function openDocumentManagement() {
-        exists = this.evaluate(function() {
-            return __utils__.exists('#documents_management_link a');
+    casper.then(function waitForFolderNavLink(){
+        this.waitForSelector('#folder-nav > .nav-list-entry > a',function clickFolderNavLink() {
+            this.click('#folder-nav > .nav-list-entry > a');
         });
-        if(!exists){
-            this.test.fail('Documents management link not found');
-            this.exit('Documents management link not found');
-        }
-        this.evaluate(function(){__utils__.log('Documents management link found', 'info');});
-        this.click('#documents_management_link a');
     });
 
     /**
-     * Open new folder modal
+     * Open folder creation modal
      */
-    casper.waitForSelector('#folder-nav',function openNewFolderModal(){
-            exists = this.evaluate(function() {
-                return __utils__.exists('#folder-nav .new-folder a');
-            });
-            if(!exists){
-                this.test.fail('New folder link not found');
-                this.exit('New folder not found');
-            }
-            this.evaluate(function(){__utils__.log('New folder link found', 'info');});
-            this.click('#folder-nav .new-folder a');
+    casper.then(function clickOnFolderCreationLink(){
+        this.click('#folder-nav > div.nav-list-entry > div.btn-group > ul.dropdown-menu > li.new-folder > a');
+        this.waitForSelector('#new-folder-form',function openFolderCreationModal(){
+            this.sendKeys('#new-folder-form input', folderCreationName, {reset:true});
+            this.click('button[form=new-folder-form]');
+        });
     });
 
     /**
-     * Test create a folder
-     */
-    casper.waitForSelector('#new-folder-form',function fillNewFolderForm(){
-        // Search Folder Name Input
-        exists = this.evaluate(function() {
-            return __utils__.exists('#new-folder-form input');
-        });
-        if(!exists){
-            this.test.fail('New folder input not found');
-            this.exit('New folder input not found');
-        }
-        this.evaluate(function(){__utils__.log('New folder input found', 'info');});
-        this.sendKeys('#new-folder-form input', folderCreationName, {reset:true});
-
-        // Search Part Creation Submit Button
-        exists = this.evaluate(function() {
-            return __utils__.exists('.modal .btn-primary');
-        });
-        if(!exists){
-            this.test.fail('Folder creation submit button missing');
-            this.exit('Folder creation submit button missing');
-        }
-        this.evaluate(function(){__utils__.log('Folder creation submit button found', 'info');});
-        this.click('.modal .btn-primary');
-
-        this.wait(1000, function (){
-            this.test.assertDoesntExist('.modal .btn-primary', 'Should creating the folder '+folderCreationName);
+     *  Check if folder has been created
+     * */
+    casper.then(function checkIfFolderHasBeenCreated(){
+        this.waitForSelector('a[href="#'+workspace+'/folders/'+folderCreationName+'"]',function(){
+            this.test.assert(true,'Folder has been created');
         });
     });
 
-    casper.run(function() {
+    casper.run(function allDone() {
         this.test.done();
     });
 });

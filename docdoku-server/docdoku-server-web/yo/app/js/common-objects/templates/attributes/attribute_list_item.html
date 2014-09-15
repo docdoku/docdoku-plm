@@ -1,0 +1,22 @@
+{{#lockMode}}
+<div class="controls">
+    <a class="fa fa-times"></a>
+</div>
+<div class="controls">
+    <select class="type">
+        <option value="TEXT">{{i18n.TEXT}}</option>
+        <option value="BOOLEAN">{{i18n.BOOLEAN}}</option>
+        <option value="DATE">{{i18n.DATE}}</option>
+        <option value="NUMBER">{{i18n.NUMBER}}</option>
+        <option value="URL">{{i18n.URL}}</option>
+    </select>
+</div>
+{{/lockMode}}
+{{^lockMode}}
+<div class="controls type">
+</div>
+{{/lockMode}}
+<div class="controls">
+    <input type="text" class="input-xlarge name" placeholder="{{i18n.NAME}}" value="{{model.name}}" required
+    {{^lockMode}}disabled="disabled"{{/lockMode}} />
+</div>

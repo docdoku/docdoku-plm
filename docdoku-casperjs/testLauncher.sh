@@ -4,6 +4,7 @@ port="8080";
 login="test";
 pass="test";
 workspace="test";
+contextPath="/";
 
 while :
 do
@@ -14,6 +15,10 @@ do
             ;;
         -P | --port)
             port=$2
+            shift 2
+            ;;
+        -c | --contextPath)
+            contextPath=$2
             shift 2
             ;;
         -u | --user)
@@ -41,7 +46,7 @@ done
 
 casperjs test   --pre=pre.js \
                 --post=logout.js \
-                --includes=conf.js,Tools.js \
+                --includes=conf.js \
                 --fail-fast \
                 --xunit=testsResults.xml \
                 --domain=$domain \
@@ -49,12 +54,17 @@ casperjs test   --pre=pre.js \
                 --login=$login \
                 --pass=$pass \
                 --workspace=$workspace \
+                --contextPath=$contextPath \
                 --verbose \
-                --log-level=error \
+                --log-level=warning \
                 tests/product-management/part/partCreation.js \
                 tests/product-management/part/showPartDetails.js \
                 tests/product-management/product/productCreation.js \
                 tests/product-management/product/productDeletion.js \
                 tests/product-management/part/partDeletion.js \
                 tests/document-management/folder/folderCreation.js \
-                tests/document-management/folder/folderDeletion.js
+                tests/document-management/document/documentCreation.js \
+                tests/document-management/document/documentDeletion.js \
+                tests/document-management/folder/folderDeletion.js \
+                tests/document-management/template/templateCreation.js \
+                tests/document-management/template/templateDeletion.js

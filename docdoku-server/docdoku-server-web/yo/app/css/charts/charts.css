@@ -1,0 +1,26 @@
+.chart {
+    float: left;
+}
+.clear{
+    clear:both;
+}
+
+#disk_usage_chart , #entities_chart{
+    width:450px;
+}
+
+#disk_usage_chart>svg , #entities_chart>svg{
+    height:200px;
+}
+#cod_chart,#cop_chart, #users_chart{
+    width:900px;
+    clear:both;
+}
+#cod_chart>svg, #cop_chart>svg{
+    height:300px;
+    clear:both;
+}
+#users_chart>svg{
+    height:250px;
+    clear:both;
+}

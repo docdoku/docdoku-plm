@@ -1,0 +1,14 @@
+{
+  "name": "docdoku-casperjs",
+  "version": "0.0.1",
+  "dependencies": {},
+  "devDependencies": {
+    "casperjs": "^1.1.0-beta3",
+    "phantomjs": "^1.9.7-15",
+    "underscore": "^1.7.0"
+  },
+  "scripts": {
+    "start": "chmod +x testLauncher.sh && ./testLauncher.sh -h localhost -P 8080 -c / -u foo -p bar -w foo",
+    "prestart": "npm install"
+  }
+}

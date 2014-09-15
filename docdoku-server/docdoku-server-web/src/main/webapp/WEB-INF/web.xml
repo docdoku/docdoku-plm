@@ -81,28 +81,8 @@
         <servlet-class>com.docdoku.server.http.PrivateShareServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>DMServlet</servlet-name>
-        <servlet-class>com.docdoku.server.http.DMServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>PSServlet</servlet-name>
-        <servlet-class>com.docdoku.server.http.PSServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>PMServlet</servlet-name>
-        <servlet-class>com.docdoku.server.http.PMServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>CMServlet</servlet-name>
-        <servlet-class>com.docdoku.server.http.CMServlet</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>SearchServlet</servlet-name>
         <servlet-class>com.docdoku.server.http.SearchServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>VisualizationServlet</servlet-name>
-        <servlet-class>com.docdoku.server.http.VisualizationServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>UploadDownloadServlet</servlet-name>
@@ -125,43 +105,70 @@
         <url-pattern>/shared/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>DMServlet</servlet-name>
-        <url-pattern>/document-management/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>PSServlet</servlet-name>
-        <url-pattern>/product-structure/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>PMServlet</servlet-name>
-        <url-pattern>/product-management/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>CMServlet</servlet-name>
-        <url-pattern>/change-management/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>SearchServlet</servlet-name>
         <url-pattern>/search/*</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>VisualizationServlet</servlet-name>
-        <url-pattern>/visualization/*</url-pattern>
-    </servlet-mapping>
+
     <servlet-mapping>
         <servlet-name>UploadDownloadServlet</servlet-name>
         <url-pattern>/upload/*</url-pattern>
         <url-pattern>/files/*</url-pattern>
         <url-pattern>/shared-files/*</url-pattern>
     </servlet-mapping>
-<!--    <servlet>
-        <servlet-name>javax.ws.rs.core.Application</servlet-name>
-        <load-on-startup>1</load-on-startup>
+
+    <servlet>
+        <servlet-name>DocumentManagement</servlet-name>
+        <jsp-file>document-management/index.html</jsp-file>
     </servlet>
     <servlet-mapping>
-        <servlet-name>javax.ws.rs.core.Application</servlet-name>
-        <url-pattern>/api/*</url-pattern>
-    </servlet-mapping>-->
+        <servlet-name>DocumentManagement</servlet-name>
+        <url-pattern>/document-management/</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>ProductManagement</servlet-name>
+        <jsp-file>product-management/index.html</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ProductManagement</servlet-name>
+        <url-pattern>/product-management/</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>ProductStructure</servlet-name>
+        <jsp-file>product-structure/index.html</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ProductStructure</servlet-name>
+        <url-pattern>/product-structure/</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>ChangeManagement</servlet-name>
+        <jsp-file>change-management/index.html</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ChangeManagement</servlet-name>
+        <url-pattern>/change-management/</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>VisualizationServlet</servlet-name>
+        <jsp-file>visualization/index.html</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>VisualizationServlet</servlet-name>
+        <url-pattern>/visualization/</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>LogoutServlet</servlet-name>
+        <servlet-class>com.docdoku.server.http.LogoutServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>LogoutServlet</servlet-name>
+        <url-pattern>/logout</url-pattern>
+    </servlet-mapping>
+
     <security-constraint>
         <display-name>HTTP actions</display-name>
         <web-resource-collection>

@@ -1,0 +1,15 @@
+<div id="actions-{{view.cid}}" class="actions well">
+
+    {{> search_form}}
+
+    <button class="btn btn-default new-document" title="{{i18n.NEW_DOCUMENT}}">
+        <span class="icon"></span>
+    </button>
+
+    {{> delete_button}}
+    {{> checkout_button_group}}
+    {{> tags_button}}
+    {{> ACL_button}}
+    {{> new_version_button}}
+</div>
+<table id="list-{{view.cid}}" class="table table-striped table-condensed"></table>

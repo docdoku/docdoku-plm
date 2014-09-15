@@ -92,7 +92,7 @@ public class SearchServlet extends HttpServlet {
                 pRequest.setAttribute("login", login);
                 pRequest.getRequestDispatcher("/faces/search/index.xhtml").forward(pRequest, pResponse);
             }catch(UserNotFoundException | WorkspaceNotFoundException ex){
-                Logger.getLogger(PSServlet.class.getName()).log(Level.WARNING, String.valueOf(ex));
+                Logger.getLogger(SearchServlet.class.getName()).log(Level.WARNING, String.valueOf(ex));
                 pResponse.sendRedirect(pRequest.getContextPath() + "/faces/admin/workspace/workspacesMenu.xhtml");
             }catch (Exception ex) {
                 throw new ServletException("error while fetching user data.", ex);

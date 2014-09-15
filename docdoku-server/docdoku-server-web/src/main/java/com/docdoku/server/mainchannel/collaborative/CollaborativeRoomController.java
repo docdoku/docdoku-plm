@@ -41,7 +41,7 @@ public class CollaborativeRoomController {
                 }
                 // Chat message
                 ChatMessage chatMessage = new ChatMessage(ChannelMessagesType.CHAT_MESSAGE,invitedUser);
-                String invite = "/invite " + url + "#room=" + room.getKey();
+                String invite = "/invite " + url + "/room/" + room.getKey();
                 chatMessage.setMessage(invite);
                 chatMessage.setContext(context);
                 chatMessage.setRemoteUser(callerLogin);
