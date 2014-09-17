@@ -27,6 +27,7 @@ require.config({
         backbone: {deps: ['underscore', 'jquery'],exports: 'Backbone'},
         bootstrapCombobox:{deps:["jquery"],exports:"jQuery"},
         bootstrapSwitch:{deps:['jquery'],exports:'jQuery'},
+        unmask: { deps: ['jquery'], exports: 'jQuery' },
         unmaskConfig: { deps: ['unmask'], exports: 'jQuery' }
     },
     paths: {

@@ -16,7 +16,7 @@ define([
     "text!common-objects/templates/buttons/new_version_button.html",
     "text!common-objects/templates/buttons/release_button.html",
     "text!common-objects/templates/buttons/ACL_button.html"
-], function (Backbone, Mustache, PartCollection, PartSearchCollection, template, PartListView, PartCreationView, PartNewVersionView, PromptView, ACLEditView, AdvancedSearchView, delete_button, checkout_button_group, new_version_button, release_button, ACL_button) {
+], function (Backbone, Mustache, PartCollection, PartSearchCollection, template, PartListView, PartCreationView, PartNewVersionView, PromptView, ACLEditView, AdvancedSearchView, deleteButton, checkoutButtonGroup, newVersionButton, release_button, aclButton) {
     var PartContentView = Backbone.View.extend({
 
         el: "#product-management-content",
@@ -40,10 +40,10 @@ define([
         },
 
         partials: {
-            delete_button: delete_button,
-            ACL_button: ACL_button,
-            checkout_button_group: checkout_button_group,
-            new_version_button: new_version_button,
+            deleteButton: deleteButton,
+            aclButton: aclButton,
+            checkoutButtonGroup: checkoutButtonGroup,
+            newVersionButton: newVersionButton,
             release_button: release_button
         },
 

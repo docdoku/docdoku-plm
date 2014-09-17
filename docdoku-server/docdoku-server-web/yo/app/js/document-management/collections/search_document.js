@@ -1,13 +1,13 @@
 /*global define*/
 define([
-    "backbone",
-    "models/document"
+    'backbone',
+    'models/document'
 ], function (Backbone,Document) {
     var SearchDocumentList = Backbone.Collection.extend({
 
         model: Document,
 
-        className: "SearchDocumentList",
+        className: 'SearchDocumentList',
 
         setQuery: function (query) {
             this.query = query;
@@ -15,8 +15,8 @@ define([
         },
 
         url: function () {
-            var baseUrl = APP_CONFIG.contextPath + "/api/workspaces/" + APP_CONFIG.workspaceId + "/search";
-            return baseUrl + "/" + this.query + "/documents";
+            var baseUrl = APP_CONFIG.contextPath + '/api/workspaces/' + APP_CONFIG.workspaceId + '/search';
+            return baseUrl + '/' + this.query + '/documents?configSpec='+APP_CONFIG.configSpec;
         }
     });
 

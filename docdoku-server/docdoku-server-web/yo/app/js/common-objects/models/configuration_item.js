@@ -32,13 +32,13 @@ define(['backbone'], function (Backbone) {
         },
 
         getFrameUrl: function () {
-            return  APP_CONFIG.contextPath + '/visualization/#' + APP_CONFIG.workspaceId + '/' + this.getId() + '/0/10/1000/null'
+            return  APP_CONFIG.contextPath + '/visualization/#' + APP_CONFIG.workspaceId + '/' + this.getId() + '/0/10/1000/null/'+APP_CONFIG.configSpec
         },
 
         createBaseline: function (baselineArgs, callbacks) {
             $.ajax({
                 type: 'POST',
-                url: this.urlRoot + '/' + this.getId() + '/baselines',
+                url: this.urlRoot() + '/' + this.getId() + '/baselines',
                 data: JSON.stringify(baselineArgs),
                 contentType: 'application/json; charset=utf-8',
                 success: function (e) {
@@ -67,7 +67,7 @@ define(['backbone'], function (Backbone) {
             $.ajax({
                 type: 'DELETE',
                 async: false,
-                url: this.urlRoot + '/' + this.getId() + '/baselines/' + baselineId,
+                url: this.urlRoot() + '/' + this.getId() + '/baselines/' + baselineId,
                 contentType: 'application/json; charset=utf-8',
                 success: callbacks.success,
                 error: callbacks.error

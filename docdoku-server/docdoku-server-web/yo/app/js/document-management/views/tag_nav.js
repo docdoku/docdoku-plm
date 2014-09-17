@@ -60,10 +60,6 @@ define([
             } else {
                 this.show();
             }
-            /*if(App.$documentManagementMenu){
-             App.$documentManagementMenu.find(".active").removeClass("active");
-             }
-             this.$el.find(".header").first().addClass("active");*/
             return false;
         }
     });

@@ -2,26 +2,26 @@
 define(
     [
         'backbone',
-        "mustache",
-        "text!common-objects/templates/tags/tag.html"
+        'mustache',
+        'text!common-objects/templates/tags/tag.html'
     ],
     function (Backbone, Mustache, template) {
-
+		'use strict';
         var TagView = Backbone.View.extend({
 
-            tagName: "li",
-            className: "pull-left well",
+            tagName: 'li',
+            className: 'pull-left well',
 
             initialize: function () {
 
                 if (this.options.isAdded) {
-                    this.events = { "click a": "clicked" };
+                    this.events = { 'click a': 'clicked' };
                 }
                 else if (this.options.isAvailable) {
-                    this.events = { "click a": "cross_clicked",
-                        "click": "clicked" };
+                    this.events = { 'click a': 'crossClicked',
+                        'click': 'clicked' };
                 } else {
-                    this.events = { "click": "clicked" };
+                    this.events = { 'click': 'clicked' };
                 }
 
                 this.isRemovable = this.options.isAdded || this.options.isAvailable;
@@ -40,9 +40,9 @@ define(
                 }
             },
 
-            cross_clicked: function (e) {
-                if (this.options.cross_clicked) {
-                    this.options.cross_clicked();
+            crossClicked: function (e) {
+                if (this.options.crossClicked) {
+                    this.options.crossClicked();
                 }
                 e.stopPropagation();
             }

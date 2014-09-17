@@ -7,6 +7,10 @@ casper.test.begin('Document deletion tests suite',1, function documentDeletionTe
      * */
     casper.open(documentManagementUrl);
 
+    casper.then(function(){
+        this.reload();
+    });
+
     /**
      * Open folder nav
      */

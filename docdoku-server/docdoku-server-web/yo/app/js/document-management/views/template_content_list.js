@@ -1,18 +1,19 @@
 /*global define*/
 define([
-    "collections/template",
-    "views/content",
-    "views/template_list",
-    "views/template_new",
-    "text!templates/template_content_list.html",
-    "text!common-objects/templates/buttons/delete_button.html"
-], function (TemplateList, ContentView, TemplateListView, TemplateNewView, template, delete_button) {
-    var TemplateContentListView = ContentView.extend({
+    'collections/template',
+    'views/content',
+    'views/template_list',
+    'views/template_new',
+    'text!templates/template_content_list.html',
+    'text!common-objects/templates/buttons/delete_button.html'
+], function (TemplateList, ContentView, TemplateListView, TemplateNewView, template, deleteButton) {
+	'use strict';
+	var TemplateContentListView = ContentView.extend({
 
         template: template,
 
         partials: {
-            delete_button: delete_button
+            deleteButton: deleteButton
         },
 
         collection: function () {
@@ -20,22 +21,22 @@ define([
         },
         initialize: function () {
             ContentView.prototype.initialize.apply(this, arguments);
-            this.events["click .actions .new-template"] = "actionNew";
-            this.events["click .actions .delete"] = "actionDelete";
+            this.events['click .actions .new-template'] = 'actionNew';
+            this.events['click .actions .delete'] = 'actionDelete';
         },
         rendered: function () {
             this.listView = this.addSubView(new TemplateListView({
-                el: "#list-" + this.cid,
+                el: '#list-' + this.cid,
                 collection: this.collection
             }));
             this.listView.collection.fetch({reset: true});
-            this.listView.on("selectionChange", this.selectionChanged);
+            this.listView.on('selectionChange', this.selectionChanged);
             this.selectionChanged();
         },
         selectionChanged: function () {
             var showOrHide = this.listView.checkedViews().length > 0;
-            var action = showOrHide ? "show" : "hide";
-            this.$el.find(".actions .delete")[action]();
+            var action = showOrHide ? 'show' : 'hide';
+            this.$el.find('.actions .delete')[action]();
         },
         actionNew: function () {
             this.addSubView(

@@ -102,29 +102,39 @@
 
     .dropdown-menu {
       border-radius: 0;
-      padding: 0 10px 0 0;
-      min-width: auto;
+      padding: 0 0 0 0;
       margin: -1px 1px 0 0;
       right: 0;
       left: auto;
+      max-width:250px;
 
-      a:hover {
-        text-shadow: 0 1px 0 white;
+      >li{
+
+        width: 100%;
+        padding: 0;
+
+        >a{
+          font-size:13px;
+          padding: 0;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          width: 100%;
+        }
+
       }
-
-      .new-folder .icon {
+      li.new-folder .icon {
         .plm-icon-menu-folder-new;
-        margin: 4px 6px 4px 0;
+        margin: 4px 6px 4px 6px;
       }
-      .edit .icon {
+      li.edit .icon {
         .plm-icon-menu-edit;
-        margin: 4px 6px 4px 0;
+        margin: 4px 6px 4px 6px;
       }
-      .delete .icon {
+      li.delete .icon {
         .plm-icon-menu-delete;
-        margin: 4px 6px 4px 0;
+        margin: 4px 6px 4px 6px;
       }
-
     }
   }
 

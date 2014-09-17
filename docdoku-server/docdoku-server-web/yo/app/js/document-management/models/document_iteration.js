@@ -1,106 +1,112 @@
 /*global define*/
 define([
-    "backbone",
-    "common-objects/utils/date",
-    "common-objects/collections/attribute_collection",
-    "common-objects/collections/file/attached_file_collection"
-], function (Backbone,date, AttributeCollection, AttachedFileCollection) {
-    var DocumentIteration = Backbone.Model.extend({
+	'backbone',
+	'common-objects/utils/date',
+	'common-objects/collections/attribute_collection',
+	'common-objects/collections/file/attached_file_collection'
+], function (Backbone, date, AttributeCollection, AttachedFileCollection) {
+	'use strict';
+	var DocumentIteration = Backbone.Model.extend({
 
-        url: function () {
-            return this.collection.url() + "/" + this.getIteration();
-        },
+		url: function () {
+			if (this.getIteration()) {
+				return this.collection.baseUrl() + '/' + this.getIteration() + '?configSpec=' + APP_CONFIG.configSpec;
+			} else {
+				return this.collection.baseUrl();
+			}
+		},
 
-        initialize: function () {
+		initialize: function () {
 
-            this.className = "DocumentIteration";
+			this.className = 'DocumentIteration';
 
-            var attributes = new AttributeCollection(this.get("instanceAttributes"));
+			var attributes = new AttributeCollection(this.get('instanceAttributes'));
 
-            var filesMapping = _.map(this.get("attachedFiles"), function (fullName) {
-                return {
-                    "fullName": fullName,
-                    shortName: _.last(fullName.split("/")),
-                    created: true
-                };
-            });
-            var attachedFiles = new AttachedFileCollection(filesMapping);
+			var filesMapping = _.map(this.get('attachedFiles'), function (fullName) {
+				return {
+					'fullName': fullName,
+					shortName: _.last(fullName.split('/')),
+					created: true
+				};
+			});
+			var attachedFiles = new AttachedFileCollection(filesMapping);
 
-            //'attributes' is a special name for Backbone
-            this.set("instanceAttributes", attributes);
-            this.set("attachedFiles", attachedFiles);
-        },
+			//'attributes' is a special name for Backbone
+			this.set('instanceAttributes', attributes);
+			this.set('attachedFiles', attachedFiles);
+		},
 
-        defaults: {
-            attachedFiles: [],
-            instanceAttributes: []
-        },
+		defaults: {
+			attachedFiles: [],
+			instanceAttributes: []
+		},
 
-        getAttachedFiles: function () {
-            return this.get("attachedFiles");
-        },
+		getAttachedFiles: function () {
+			return this.get('attachedFiles');
+		},
 
-        getAttributes: function () {
-            return this.get("instanceAttributes");
-        },
+		getAttributes: function () {
+			return this.get('instanceAttributes');
+		},
 
-        getWorkspace: function () {
-            return this.get("workspaceId");
-        },
+		getWorkspace: function () {
+			return this.get('workspaceId');
+		},
 
-        getReference: function () {
-            console.log("deprecated use getId");
-            return this.getId();
-        },
-        getId: function () {
-            return this.get("id");
-        },
+		getReference: function () {
+			console.log('deprecated use getId');
+			return this.getId();
+		},
+		getId: function () {
+			return this.get('id');
+		},
 
-        getIteration: function () {
-            return this.get("iteration");
-        },
+		getIteration: function () {
+			return this.get('iteration');
+		},
 
-        getDocumentMasterId: function () {
-            return  this.get("documentMasterId");
-        },
+		getDocumentMasterId: function () {
+			return  this.get('documentMasterId');
+		},
 
-        getDocumentRevisionVersion: function () {
-            return  this.get("documentRevisionVersion");
-        },
+		getDocumentRevisionVersion: function () {
+			return  this.get('documentRevisionVersion');
+		},
 
-        // TODO rename getDocumentRevisionKey
-        getDocKey: function () {
-            return  this.getDocumentMasterId() + "-" + this.getDocumentRevisionVersion();
-        },
+		// TODO rename getDocumentRevisionKey
+		getDocKey: function () {
+			return  this.getDocumentMasterId() + '-' + this.getDocumentRevisionVersion();
+		},
 
-        getLinkedDocuments: function () {
-            return this.get("linkedDocuments");
-        },
+		getLinkedDocuments: function () {
+			return this.get('linkedDocuments');
+		},
 
-        getDocumentMasterPermalink: function () {
-            return encodeURI(
-                    window.location.origin
-                    + "/documents/"
-                    + this.getWorkspace()
-                    + "/"
-                    + this.getDocumentMasterId()
-                    + "/"
-                    + this.getDocumentRevisionVersion()
-            );
-        },
+		getDocumentMasterPermalink: function () {
+			return encodeURI(
+					window.location.origin +
+					APP_CONFIG.contextPath +
+					'/documents/' +
+					this.getWorkspace() +
+					'/' +
+					this.getDocumentMasterId() +
+					'/' +
+					this.getDocumentRevisionVersion()
+			);
+		},
 
-        /**
-         * file Upload uses the old servlet, not the JAXRS Api         *
-         * return /files/{workspace}/documents/{docId}/{version}/{iteration}/
-         * @returns string
-         */
-        getUploadBaseUrl: function () {
-            return APP_CONFIG.contextPath + "/files/" + this.getBaseName() + "/";
-        },
+		/**
+		 * file Upload uses the old servlet, not the JAXRS Api         *
+		 * return /files/{workspace}/documents/{docId}/{version}/{iteration}/
+		 * @returns string
+		 */
+		getUploadBaseUrl: function () {
+			return APP_CONFIG.contextPath + '/files/' + this.getBaseName() + '/';
+		},
 
-        getBaseName: function () {
-            return this.getWorkspace() + "/documents/" + this.getDocumentMasterId() + "/" + this.getDocumentRevisionVersion() + "/" + this.getIteration();
-        }
-    });
-    return DocumentIteration;
+		getBaseName: function () {
+			return this.getWorkspace() + '/documents/' + this.getDocumentMasterId() + '/' + this.getDocumentRevisionVersion() + '/' + this.getIteration();
+		}
+	});
+	return DocumentIteration;
 });

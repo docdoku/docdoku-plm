@@ -11,15 +11,15 @@ define([
     "text!common-objects/templates/buttons/snap_latest_button.html",
     "text!common-objects/templates/buttons/snap_released_button.html",
     "text!common-objects/templates/buttons/delete_button.html"
-], function (Backbone, Mustache, ConfigurationItemCollection, template, ProductListView, ProductCreationView, BaselineCreationView, SnapBaselineView, snap_latest_button, snap_released_button, delete_button) {
+], function (Backbone, Mustache, ConfigurationItemCollection, template, ProductListView, ProductCreationView, BaselineCreationView, SnapBaselineView, snapLatestButton, snapReleasedButton, deleteButton) {
     var ProductContentView = Backbone.View.extend({
 
         el: "#product-management-content",
 
         partials: {
-            snap_latest_button: snap_latest_button,
-            snap_released_button: snap_released_button,
-            delete_button: delete_button
+            snapLatestButton: snapLatestButton,
+            snapReleasedButton: snapReleasedButton,
+            deleteButton: deleteButton
         },
 
         events: {

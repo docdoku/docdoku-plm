@@ -412,5 +412,8 @@ define({
     ORDERS: "Ordres",
     ORDERS_NUMBER: "Ordres associ\u00e9s",
     REQUESTS: "Demandes",
-    REQUESTS_NUMBER: "Demandes associ\u00e9es"
+    REQUESTS_NUMBER: "Demandes associ\u00e9es",
+    LATEST_SHORT:"Dernières versions",
+    RELEASED_SHORT:"Derni\u00e8re versions finalis\u00e9s",
+    OPEN_NEW_WINDOW:"Ouvrir dans une nouvelle fenêtre"
 });

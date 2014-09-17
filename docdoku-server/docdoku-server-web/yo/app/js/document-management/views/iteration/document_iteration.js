@@ -1,7 +1,7 @@
 /*global define*/
-'use strict';
+
 define([
-    "mustache",
+    'mustache',
     'common-objects/views/components/modal',
     'common-objects/views/file/file_list',
     'common-objects/views/attributes/attributes',
@@ -13,6 +13,8 @@ define([
     'text!templates/iteration/document_iteration.html',
     'common-objects/utils/date'
 ], function (Mustache, ModalView, FileListView, DocumentAttributesView, LifecycleView, LinkedDocumentsView, Tag, TagView, LinkedDocumentCollection, template, date) {
+
+    'use strict';
 
     var IterationView = ModalView.extend({
 
@@ -127,6 +129,10 @@ define([
                 );
             }
 
+            if(APP_CONFIG.configSpec!=='latest'){
+                data.isForBaseline=true;
+            }
+
             /*Main window*/
             var html = Mustache.render(template, data);
             this.$el.html(html);
@@ -179,12 +185,14 @@ define([
 
                 this.lifecycleView = new LifecycleView({
                     el: '#tab-iteration-lifecycle'
-                }).setAbortedWorkflowsUrl(this.model.getUrl() + '/aborted-workflows').setWorkflow(this.model.get('workflow')).setEntityType('documents').render();
+                }).setAbortedWorkflowsUrl(this.model.getAbortedWorkflowsUrl()).setWorkflow(this.model.get('workflow')).setEntityType('documents').render();
 
                 this.lifecycleView.on('lifecycle:change', function () {
-                    that.model.fetch({success: function () {
-                        that.lifecycleView.setAbortedWorkflowsUrl(that.model.getUrl() + '/aborted-workflows').setWorkflow(that.model.get('workflow')).setEntityType('documents').render();
-                    }});
+                    that.model.fetch({
+                        success: function () {
+                            that.lifecycleView.setAbortedWorkflowsUrl(that.model.getAbortedWorkflowsUrl()).setWorkflow(that.model.get('workflow')).setEntityType('documents').render();
+                        }
+                    });
                 });
 
             } else {

@@ -1,21 +1,21 @@
 /*global define*/
 define([
     'backbone',
-    "mustache",
-    "common-objects/views/workflow/lifecycle_activity",
-    "text!common-objects/templates/workflow/lifecycle.html",
-    "common-objects/utils/date"
+    'mustache',
+    'common-objects/views/workflow/lifecycle_activity',
+    'text!common-objects/templates/workflow/lifecycle.html',
+    'common-objects/utils/date'
 
 ], function (Backbone, Mustache, LifecycleActivityView, template, Date) {
-
+	'use strict';
     var LifecycleView = Backbone.View.extend({
 
         tagName: 'div',
 
         events: {
-            "click a.history": "history",
-            "click a.abortedWorkflow": "abortedWorkflow",
-            "click a.currentWorkflow": "currentWorkflow"
+            'click a.history': 'history',
+            'click a.abortedWorkflow': 'abortedWorkflow',
+            'click a.currentWorkflow': 'currentWorkflow'
         },
 
         initialize: function () {
@@ -42,7 +42,6 @@ define([
             $.ajax({
                 url: this.abortedWorkflowsUrl,
                 success: function (abortedWorkflows) {
-
                     _.each(abortedWorkflows, function (workflow) {
 
                         workflow.abortedFormattedDate = Date.formatTimestamp(
@@ -57,9 +56,9 @@ define([
                         for (var i = 0; i < that.workflow.activities.length; i++) {
                             if (i >= that.workflow.currentStep) {
                                 for (var j = 0; j < that.workflow.activities[i].tasks.length; j++) {
-                                    if (that.workflow.activities[i].tasks[j].status == "NOT_STARTED") {
+                                    if (that.workflow.activities[i].tasks[j].status === 'NOT_STARTED') {
                                         for (var k = abortedWorkflows.length - 1; k--; k >= 0) {
-                                            if (abortedWorkflows[k].activities[i].tasks[j].status == "REJECTED") {
+                                            if (abortedWorkflows[k].activities[i].tasks[j].status === 'REJECTED') {
                                                 that.workflow.activities[i].tasks[j] = abortedWorkflows[k].activities[i].tasks[j];
                                                 break;
                                             }
@@ -80,30 +79,30 @@ define([
         },
 
         bindDomElements: function () {
-            this.$historyContent = this.$(".history-content");
-            this.$lifecycleActivities = this.$("#lifecycle-activities");
+            this.$historyContent = this.$('.history-content');
+            this.$lifecycleActivities = this.$('#lifecycle-activities');
         },
 
         history: function (e) {
-            this.$historyContent.toggleClass("hide");
+            this.$historyContent.toggleClass('hide');
             this.currentWorkflow(e);
         },
 
         currentWorkflow: function (e) {
             this.displayWorkflow(this.workflow);
-            this.$historyContent.find("a.active").removeClass("active");
-            $(e.target).addClass("active");
+            this.$historyContent.find('a.active').removeClass('active');
+            $(e.target).addClass('active');
         },
 
         abortedWorkflow: function (e) {
             var that = this;
-            var workflowId = $(e.target).data("id");
+            var workflowId = $(e.target).data('id');
             var workflow = _.select(that.abortedWorkflows, function (workflow) {
-                return workflow.id == workflowId;
+                return workflow.id === workflowId;
             })[0];
             if (workflow) {
-                this.$historyContent.find("a.active").removeClass("active");
-                $(e.target).addClass("active");
+                this.$historyContent.find('a.active').removeClass('active');
+                $(e.target).addClass('active');
                 this.displayWorkflow(workflow);
             }
         },
@@ -116,8 +115,8 @@ define([
                     activity.parentWorkflowId = that.workflow.id;
                     var lifecycleActivityView = new LifecycleActivityView().setActivity(activity).setEntityType(that.entityType).render();
                     that.$lifecycleActivities.append(lifecycleActivityView.$el);
-                    lifecycleActivityView.on("activity:change", function () {
-                        that.trigger("lifecycle:change");
+                    lifecycleActivityView.on('activity:change', function () {
+                        that.trigger('lifecycle:change');
                     });
                 }
             });

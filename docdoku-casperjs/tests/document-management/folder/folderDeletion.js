@@ -7,6 +7,10 @@ casper.test.begin('Folder deletion tests suite',1, function folderDeletionTestsS
      * */
     casper.open(documentManagementUrl);
 
+    casper.then(function(){
+        this.reload();
+    });
+
     /**
      * Click on delete folder link
      */

@@ -6,6 +6,10 @@ casper.test.begin('Document creation tests suite',2, function documentCreationTe
      * */
     casper.open(documentManagementUrl);
 
+    casper.then(function(){
+        this.reload();
+    });
+
     /**
      * Open folder nav
      */

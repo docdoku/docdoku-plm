@@ -101,13 +101,15 @@
                                 <span class="help-inline">{{master.description}}</span>
                             </div>
                         </div>
-                        <div class="control-group">
-                            <label class="control-label">{{i18n.TAGS}}</label>
+                        {{^isForBaseline}}
+                            <div class="control-group">
+                                <label class="control-label">{{i18n.TAGS}}</label>
 
-                            <div class="controls">
-                                <ul class="help-inline master-tags-list unstyled"></ul>
+                                <div class="controls">
+                                    <ul class="help-inline master-tags-list unstyled"></ul>
+                                </div>
                             </div>
-                        </div>
+                        {{/isForBaseline}}
                     </div>
                     <div id="tab-iteration-iteration" class="tab-pane">
                         <div class="control-group">

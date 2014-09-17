@@ -1,12 +1,13 @@
 /*global define*/
 define([
-    "backbone",
-    "common-objects/models/tag",
-    "common-objects/collections/tag",
-    "common-objects/views/components/modal",
-    "common-objects/views/tags/tag",
-    "text!common-objects/templates/tags/tags_management.html"
+    'backbone',
+    'common-objects/models/tag',
+    'common-objects/collections/tag',
+    'common-objects/views/components/modal',
+    'common-objects/views/tags/tag',
+    'text!common-objects/templates/tags/tags_management.html'
 ], function (Backbone,Tag, TagList, ModalView, TagView, template) {
+	'use strict';
     var TagsManagementView = ModalView.extend({
 
         template: template,
@@ -16,13 +17,13 @@ define([
         initialize: function () {
             this._collectionSize = this.collection.size();                                                              // Get number of item check
             this.templateExtraData = {                                                                                  // Set template variable to know the number of item check
-                isSingleChecked: this._collectionSize == 1,
-                isEmptyCollection: this._collectionSize == 0
+                isSingleChecked: this._collectionSize === 1,
+                isEmptyCollection: this._collectionSize === 0
             };
 
             ModalView.prototype.initialize.apply(this, arguments);
-            this.events["submit #form-" + this.cid] = "onSubmitForm";
-            this.events["click .newTag-button"] = "onNewTagButton";
+            this.events['submit #form-' + this.cid] = 'onSubmitForm';
+            this.events['click .newTag-button'] = 'onNewTagButton';
 
             this._existingTagsCollection = new TagList();
             this._existingTagsCollection.fetch({                                                                        // Get all Tag of the Workspace
@@ -39,33 +40,33 @@ define([
             this._tagsToAddCollection = [];
 
             _.bindAll(this);
-            this.$el.on("remove", this.removeSubviews);                                                                  // Remove cascade
+            this.$el.on('remove', this.removeSubviews);                                                                 // Remove cascade
         },
 
         removeSubviews: function () {                                                                                   // Remove all tagViews
-            _(this._existingTagsViews).invoke("remove");
-            _(this._currentTagsViews).invoke("remove");
+            _(this._existingTagsViews).invoke('remove');
+            _(this._currentTagsViews).invoke('remove');
             delete this._existingTagsViews;
             delete this._currentTagsViews;
         },
 
-        onExistingTagsFetched: function () {                                                                               // Action to do after All tags fetching
+        onExistingTagsFetched: function () {                                                                            // Action to do after All tags fetching
             this.renderExistingTags();
-            if (this._collectionSize == 1) {
+            if (this._collectionSize === 1) {
                 this.activeSingleElementChecked();
             } else {
                 this.launchEventBind();
             }
         },
 
-        launchEventBind: function () {                                                                                   // Initialize event binding
+        launchEventBind: function () {                                                                                  // Initialize event binding
             this._currentTagsCollection.on('add', this.onTagAdded, this);
             this._currentTagsCollection.on('remove', this.onTagRemoved, this);
             this._existingTagsCollection.on('add', this.onTagCreated, this);
             this._existingTagsCollection.on('remove', this.onTagDelete, this);
         },
 
-        activeSingleElementChecked: function () {                                                                        // Initialize context for single document tags management
+        activeSingleElementChecked: function () {                                                                       // Initialize context for single document tags management
             this._oldTagsCollection = [];
             this._tagsToRemoveCollection = [];
 
@@ -84,7 +85,7 @@ define([
         },
 
         renderExistingTags: function () {
-            var $existingTabs = this.$(".existing-tags-list");
+            var $existingTabs = this.$('.existing-tags-list');
             $existingTabs.empty();
             var that = this;
             _.each(this._existingTagsCollection.models, function (model) {
@@ -96,7 +97,7 @@ define([
             var that = this;
             _.each(tags, function (tagLabel) {
                 _.each(that._existingTagsCollection.models, function (model) {
-                    if (model.id == tagLabel) {
+                    if (model.id === tagLabel) {
                         that._currentTagsCollection.push(model);
                         that._oldTagsCollection.push(model);
                         that.addTagViewToResourceTagsList(model);
@@ -107,30 +108,30 @@ define([
         },
 
         onNewTagButton: function () {
-            var $newTagInput = this.$(".newTag");
+            var $newTagInput = this.$('.newTag');
             var tagId = $newTagInput.val();
             if (tagId) {
                 var newModel = new Tag({label: tagId, id: tagId, workspaceId: APP_CONFIG.workspaceId});
                 var modelAlreadyExists = false;
 
                 _.each(this._currentTagsCollection.models, function (model) {
-                    if (model.id == newModel.id) {
+                    if (model.id === newModel.id) {
                         modelAlreadyExists = true;
                     }
                 });
 
                 _.each(this._existingTagsCollection.models, function (model) {
-                    if (model.id == newModel.id) {
+                    if (model.id === newModel.id) {
                         modelAlreadyExists = true;
                     }
                 });
 
                 if (!modelAlreadyExists) {
                     this._existingTagsCollection.push(newModel);
-                    if (this._collectionSize != 0) {
+                    if (this._collectionSize !== 0) {
                         this._currentTagsCollection.push(newModel);
                     }
-                    $newTagInput.val("");
+                    $newTagInput.val('');
                 }
             }
         },
@@ -179,7 +180,7 @@ define([
             if (isInOldTag) {
                 this._tagsToRemoveCollection.push(model);
             }
-            if (isInTagsToCreate) {                                                                                       // It's a new tag that you remove from resource
+            if (isInTagsToCreate) {                                                                                     // It's a new tag that you remove from resource
                 this.addTagViewToExistingTagsList(model, true);
             } else {
                 this.addTagViewToExistingTagsList(model);
@@ -192,7 +193,7 @@ define([
 
             this.createNewTags(function () {
                 that.clearDeleteTags(function () {
-                    if (that._collectionSize != 0) {
+                    if (that._collectionSize !== 0) {
                         that.addTagsToResources();
                         that.removeTagsToResource();
                     }
@@ -204,11 +205,23 @@ define([
 
 
         addTagViewToExistingTagsList: function (model, editmode) {
-            var $existingTags = this.$(".existing-tags-list");
+            var $existingTags = this.$('.existing-tags-list');
             var that = this;
             var tagView = null;
 
-            if (this._collectionSize == 0 || editmode == true) {
+            if (this._collectionSize === 0){
+	            tagView = new TagView({
+		            model: model,
+		            isAdded: false,
+		            isAvailable: true,
+		            clicked: function () {
+			            that._existingTagsCollection.remove(model);
+		            },
+		            crossClicked: function () {
+			            that._existingTagsCollection.remove(model);
+		            }
+	            }).render();
+            } else if(editmode === true) {
                 tagView = new TagView({
                     model: model,
                     isAdded: false,
@@ -216,7 +229,7 @@ define([
                     clicked: function () {
                         that._currentTagsCollection.push(model);
                     },
-                    cross_clicked: function () {
+                    crossClicked: function () {
                         that._existingTagsCollection.remove(model);
                     }
                 }).render();
@@ -245,7 +258,7 @@ define([
             }
         },
         addTagViewToResourceTagsList: function (model) {
-            var $tagsToAdd = this.$(".tags-to-add-list");
+            var $tagsToAdd = this.$('.tags-to-add-list');
             var that = this;
             var tagView = new TagView({model: model, isAdded: true, clicked: function () {
                 that._currentTagsCollection.remove(model);
@@ -273,7 +286,7 @@ define([
                     that._tagsToCreate,
                     function () {
                         callbackSuccess();
-                        Backbone.Events.trigger("refreshTagNavViewCollection");
+                        Backbone.Events.trigger('refreshTagNavViewCollection');
                     }
                 );
             } else {
@@ -282,18 +295,18 @@ define([
         },
         clearDeleteTags: function (callbackSuccess) {
             if (this._tagsToDeleteCollection && this._tagsToDeleteCollection.length) {
-                var baseUrl = APP_CONFIG.contextPath + "/api/workspaces/" + APP_CONFIG.workspaceId + "/tags/";
+                var baseUrl = APP_CONFIG.contextPath + '/api/workspaces/' + APP_CONFIG.workspaceId + '/tags/';
                 var total = this._tagsToDeleteCollection.length;
                 _(this._tagsToDeleteCollection).each(function (tag) {
                     var count = 0;
                     $.ajax({
-                        type: "DELETE",
+                        type: 'DELETE',
                         url: baseUrl + tag.id,
                         success: function () {
                             count++;
                             if (count >= total) {
                                 callbackSuccess();
-                                Backbone.Events.trigger("refreshTagNavViewCollection");
+                                Backbone.Events.trigger('refreshTagNavViewCollection');
                             }
                         }
                     });

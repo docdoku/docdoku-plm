@@ -8,11 +8,11 @@ define([
     "views/product-instances/product_instances_list",
     "views/product-instances/product_instances_creation",
     "text!common-objects/templates/buttons/delete_button.html"
-], function (Backbone, Mustache, ProductInstancesCollection, ConfigurationItemCollection, template, ProductInstancesListView, ProductInstanceCreationView, delete_button) {
+], function (Backbone, Mustache, ProductInstancesCollection, ConfigurationItemCollection, template, ProductInstancesListView, ProductInstanceCreationView, deleteButton) {
     var BaselinesContentView = Backbone.View.extend({
 
         partials: {
-            delete_button: delete_button
+            deleteButton: deleteButton
         },
 
         events: {

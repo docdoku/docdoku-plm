@@ -10,7 +10,6 @@ var contextPath = casper.cli.get("contextPath");
 var authUrl = 'http://'+domain+':'+port + contextPath;
 var productManagementUrl = authUrl+'/product-management/#'+workspace;
 var documentManagementUrl = authUrl+'/document-management/#'+workspace;
-var workspaceUrl = authUrl+'/product-management/#'+workspace;
 var userInfoUrl = authUrl+'/api/workspaces/'+workspace+'/users/me';
 
 var partCreationNumber = '000-AAA-CasperJsTestPart';
@@ -31,7 +30,7 @@ casper.options.viewportSize = {
     height: 1050
 };
 
-casper.options.waitTimeout = 60000;
+casper.options.waitTimeout = 45000;
 
 casper.setFilter("page.confirm", function(msg) {
     this.log("Confirm box: "+msg,'info');

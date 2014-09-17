@@ -48,7 +48,7 @@ public class MainChannelApplication {
     // Users WebSockets Map : <UserLogin, <SessionId, Session>>
     private static final ConcurrentMap<String, Map<String, Session>> CHANNELS = new ConcurrentHashMap<>();
 
-    private final static Logger LOGGER = Logger.getLogger(MainChannelApplication.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(MainChannelApplication.class.getName());
     @EJB
     private IUserManagerLocal userManager;
 

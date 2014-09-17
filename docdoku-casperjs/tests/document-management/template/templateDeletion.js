@@ -9,6 +9,10 @@ casper.test.begin('Document template deletion tests suite',1, function documentT
      * */
     casper.open(documentManagementUrl);
 
+    casper.then(function(){
+        this.reload();
+    });
+
     /**
      * Open template nav
      */

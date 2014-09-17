@@ -1,6 +1,7 @@
 'use strict';
 var LIVERELOAD_PORT = 35729;
-var SERVER_PORT = 9000;
+var SERVER_PORT = 9001;
+var DEV_PORT = 8989;
 var lrSnippet = require('connect-livereload')({port: LIVERELOAD_PORT});
 
 var mountFolder = function (connect, dir) {
@@ -76,7 +77,10 @@ module.exports = function (grunt) {
         open: {
             server: {
                 path: 'http://localhost:<%= connect.options.port %>'
-            }
+            },
+	        dev:{
+		        path: 'http://localhost:'+DEV_PORT
+	        }
         },
         clean: {
             options: {
@@ -95,6 +99,7 @@ module.exports = function (grunt) {
                 '<%= yeoman.webapp %>/images',
                 '<%= yeoman.webapp %>/sounds',
                 '<%= yeoman.webapp %>/js/product-structure',
+                '<%= yeoman.webapp %>/js/home',
                 '<%= yeoman.webapp %>/bower_components',
                 '<%= yeoman.webapp %>/document-management',
                 '<%= yeoman.webapp %>/product-management',
@@ -436,6 +441,19 @@ module.exports = function (grunt) {
                     }
                 ]
             },
+            home:{
+                files: [
+                    {
+                        expand: true,
+                        dot: false,
+                        cwd: '<%= yeoman.app %>/js/home',
+                        dest: '<%= yeoman.dist %>/js/home',
+                        src: [
+                            'main.js'
+                        ]
+                    }
+                ]
+            },
             webapp: {
                 files: [
                     {
@@ -474,8 +492,9 @@ module.exports = function (grunt) {
 
         grunt.task.run([
             'clean:server',
+            'less',
             'connect:livereload',
-            'open:server',
+            'open:dev',
             'watch'
         ]);
     });
@@ -485,10 +504,12 @@ module.exports = function (grunt) {
      * */
     grunt.registerTask('build', [
         'clean:dist',
+	    'less',
         'copy:libs',
         'copy:assets',
         'copy:dmu',
         'copy:i18n',
+        'copy:home',
         'build-module:documentManagement',
         'build-module:productManagement',
         'build-module:productStructure',

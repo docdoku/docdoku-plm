@@ -8,7 +8,7 @@ define([
     "common-objects/views/security/acl_edit",
     "text!common-objects/templates/buttons/delete_button.html",
     "text!common-objects/templates/buttons/ACL_button.html"
-], function (Backbone, Mustache, MilestoneCollection, template, MilestoneListView, MilestoneCreationView, ACLEditView, delete_button, ACL_button) {
+], function (Backbone, Mustache, MilestoneCollection, template, MilestoneListView, MilestoneCreationView, ACLEditView, deleteButton, aclButton) {
     var MilestoneContentView = Backbone.View.extend({
 
 
@@ -19,8 +19,8 @@ define([
         },
 
         partials: {
-            delete_button: delete_button,
-            ACL_button: ACL_button
+            deleteButton: deleteButton,
+            aclButton: aclButton
         },
 
         initialize: function () {

@@ -7,13 +7,13 @@ define([
     "text!templates/workflows/workflow_content_list.html",
     "text!common-objects/templates/buttons/delete_button.html",
     'views/workflows/roles_modal_view'
-], function (require, ContentView, WorkflowListView, WorkflowEditorView, template, delete_button, RolesModalView) {
+], function (require, ContentView, WorkflowListView, WorkflowEditorView, template, deleteButton, RolesModalView) {
     var WorkflowContentListView = ContentView.extend({
 
         template: template,
 
         partials: {
-            delete_button: delete_button
+            deleteButton: deleteButton
         },
 
         initialize: function () {

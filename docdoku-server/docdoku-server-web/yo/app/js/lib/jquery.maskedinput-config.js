@@ -1,4 +1,5 @@
 (function ($) {
+	'use strict';
     $.mask = {
         // Override to handle our mask grammar
         definitions: {

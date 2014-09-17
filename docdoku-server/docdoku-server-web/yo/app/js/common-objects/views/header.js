@@ -1,23 +1,29 @@
 /*global define*/
 define([
-        'backbone',
-        'mustache',
-        'text!common-objects/templates/header.html'
-    ],
-    function (Backbone, Mustache, template) {
+	'backbone',
+	'mustache',
+	'text!common-objects/templates/header.html'
+],function (Backbone, Mustache, template) {
+	'use strict';
+	var HeaderView = Backbone.View.extend({
+         el: $("#header"),
 
-        var HeaderView = Backbone.View.extend({
+         render: function () {
 
-            el: $("#header"),
+	         var $el = this.$el;
 
-            render: function () {
+			var workspaces = APP_CONFIG.workspaces;
 
-                var $el = this.$el;
+                var otherWorkspaces = _.filter(workspaces.allWorkspaces, function (workspace) {
+                    return !_.findWhere(workspaces.administratedWorkspaces, workspace);
+                });
 
-                var workspaces = APP_CONFIG.workspaces
+                _.each(workspaces.administratedWorkspaces,function(workspace){
+                    workspace.isCurrent = workspace.id === APP_CONFIG.workspaceId;
+                });
 
-                var otherWorkspaces = _.filter(workspaces.allWorkspaces, function (obj) {
-                    return !_.findWhere(workspaces.administratedWorkspaces, obj);
+                _.each(otherWorkspaces,function(workspace){
+                    workspace.isCurrent = workspace.id === APP_CONFIG.workspaceId;
                 });
 
                 $el.html(Mustache.render(template, {

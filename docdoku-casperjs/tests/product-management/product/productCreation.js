@@ -8,6 +8,10 @@ casper.test.begin('Product creation tests suite',3, function productCreationTest
      * */
     casper.open(productManagementUrl);
 
+    casper.then(function(){
+        this.reload();
+    });
+
     /**
      * Go to product nav
      */
@@ -55,8 +59,8 @@ casper.test.begin('Product creation tests suite',3, function productCreationTest
     casper.then(function submitProductCreationForm(){
         this.click('#product_creation_modal .btn-primary');
         this.waitForSelector('#product_table .product_id',function productHasBeenCreated(){
-            this.test.assertSelectorHasText('#product_table tbody tr:first-child td.product_id',productCreationName);
-            this.test.assertSelectorHasText('#product_table tbody tr:first-child td:nth-child(3)',partCreationName);
+            this.test.assertSelectorHasText('#product_table tbody tr:first-child td.product_id',productCreationNumber);
+            this.test.assertSelectorHasText('#product_table tbody tr:first-child td:nth-child(3)',partCreationNumber);
         });
     });
 

@@ -664,7 +664,7 @@ define([
 
                 render();
             }
-            if (controlChanged) {
+            if (controlChanged && App.collaborativeController) {
                 App.collaborativeController.sendCameraInfos();
                 controlChanged = false;
             }

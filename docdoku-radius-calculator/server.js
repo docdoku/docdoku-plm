@@ -4,6 +4,7 @@ var app = express();
 app.use(express.bodyParser());
 
 app.post('/radius', function(req, res, next) {
+	'use strict';
     var RadiusCalculator = require("./radius-calculator");
     var filename = req.body.filename;
     RadiusCalculator.execute(filename,function(radius){

@@ -1,21 +1,21 @@
 /*global define*/
 define([
     'backbone',
-    "mustache",
-    "require",
-    "text!common-objects/templates/alert.html"
-], function (Backbone, Mustache, require, alert_template) {
+    'mustache',
+    'require',
+    'text!common-objects/templates/alert.html'
+], function (Backbone, Mustache, require, alertTemplate) {
     var BaseView = Backbone.View.extend({
 
         modelEvents: {
-            "change": "modelChange",
-            "sync": "modelSync",
-            "destroy": "modelDestroy"
+            'change': 'modelChange',
+            'sync': 'modelSync',
+            'destroy': 'modelDestroy'
         },
         collectionEvents: {
-            "reset": "collectionReset",
-            "add": "collectionAdd",
-            "remove": "collectionRemove"
+            'reset': 'collectionReset',
+            'add': 'collectionAdd',
+            'remove': 'collectionRemove'
         },
         initialize: function (options) {
 
@@ -52,7 +52,7 @@ define([
             this.remove();
         },
         clear: function () {
-            this.$el.html("");
+            this.$el.html('');
         },
         addSubView: function (view) {
             view.parentView = this;
@@ -83,7 +83,7 @@ define([
                 this._eventsBindings({
                     target: this.model,
                     events: this.modelEvents,
-                    action: "bind"
+                    action: 'bind'
                 });
             }
         },
@@ -92,7 +92,7 @@ define([
                 this._eventsBindings({
                     target: this.collection,
                     events: this.collectionEvents,
-                    action: "bind"
+                    action: 'bind'
                 });
             }
         },
@@ -101,7 +101,7 @@ define([
                 this._eventsBindings({
                     target: this.model,
                     events: this.modelEvents,
-                    action: "unbind"
+                    action: 'unbind'
                 });
             }
         },
@@ -110,13 +110,13 @@ define([
                 this._eventsBindings({
                     target: this.collection,
                     events: this.collectionEvents,
-                    action: "unbind"
+                    action: 'unbind'
                 });
             }
         },
         render: function () {
             this.deleteSubViews();
-            var html = "";
+            var html = '';
             if (this.template) {
                 var partials = this.partials ? this.partials : null;
                 html = Mustache.render(this.template, this.renderData(), partials);
@@ -144,10 +144,9 @@ define([
             return data;
         },
         viewToJSON: function () {
-            var data = {
+            return {
                 cid: this.cid
             };
-            return data;
         },
         modelToJSON: function () {
             return this.model.toJSON ?
@@ -162,17 +161,17 @@ define([
         alert: function (options) {
             // AlertView not used to resolve circular dependency
             var titles = {
-                "error": APP_CONFIG.i18n.ERROR
+                'error': APP_CONFIG.i18n.ERROR
             };
             options.title = options.title ? options.title : titles[options.type];
-            var html = Mustache.render(alert_template, {
+            var html = Mustache.render(alertTemplate, {
                 model: {
                     type: options.type,
                     title: options.title,
                     message: options.message
                 }
             });
-            $("#alerts-" + this.cid).html(html);
+            $('#alerts-' + this.cid).html(html);
         }
     });
     return BaseView;

@@ -20,7 +20,7 @@ define(
         'views/control_clipping_view',
         'views/control_explode_view',
         'views/control_measure_view',
-        'views/baseline_select_view',
+        'common-objects/views/baselines/baseline_select_view',
         'dmu/SceneManager',
         'dmu/collaborativeController',
         'dmu/InstancesManager',
@@ -63,7 +63,7 @@ define(
                     App.partsTreeView = new PartsTreeView({resultPathCollection: App.searchView.collection}).render();
                     App.controlNavigationView = new ControlNavigationView().render();
                     App.bomView = new BomView().render();
-                    App.baselineSelectView = new BaselineSelectView().render();
+                    App.baselineSelectView = new BaselineSelectView({el:'#config_spec_container'}).render();
                     App.controlModesView = new ControlModesView().render();
                     App.controlTransformView = new ControlTransformView().render();
 

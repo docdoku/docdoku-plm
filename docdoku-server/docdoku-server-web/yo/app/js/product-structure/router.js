@@ -1,13 +1,14 @@
 /*global define,App*/
 define([
-        "backbone",
-        "common-objects/common/singleton_decorator"
+        'backbone',
+        'common-objects/common/singleton_decorator'
     ],
     function (Backbone, singletonDecorator) {
+	    'use strict';
         var Router = Backbone.Router.extend({
             routes: {
-                ":workspaceId/:productId": "defaults",
-                ":workspaceId/:productId/room/:key": "joinCollaborative"
+                ':workspaceId/:productId': 'defaults',
+                ':workspaceId/:productId/room/:key': 'joinCollaborative'
             },
             defaults: function (workspaceId, productId) {
 

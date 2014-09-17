@@ -7,6 +7,10 @@ casper.test.begin('Folder creation tests suite',1, function folderCreationTestsS
      * */
     casper.open(documentManagementUrl);
 
+    casper.then(function(){
+        this.reload();
+    });
+
     /**
      * Open folder nav
      */

@@ -1,322 +1,336 @@
 /*global define*/
-define(["backbone","collections/document_iteration", "common-objects/utils/acl-checker"], function (Backbone, DocumentIterationList, ACLChecker) {
+define(['backbone', 'collections/document_iteration', 'common-objects/utils/acl-checker'], function (Backbone, DocumentIterationList, ACLChecker) {
+	'use strict';
+	var Document = Backbone.Model.extend({
 
-    var Document = Backbone.Model.extend({
+		urlRoot: function () {
+			if (this.isNew()) {
+				return this.collection.url();
+			}
+			return APP_CONFIG.contextPath + '/api/workspaces/' + APP_CONFIG.workspaceId + '/documents';
+		},
 
-        urlRoot: function () {
-            if (this.isNew()) {
-                return this.collection.url();
-            }
-            return APP_CONFIG.contextPath + "/api/workspaces/" + APP_CONFIG.workspaceId + "/documents";
-        },
+		url: function () {
+			if (this.getId()) {
+				return this.baseUrl() + '?configSpec=' + APP_CONFIG.configSpec;
+			} else {
+				return this.urlRoot();
+			}
+		},
 
-        parse: function (data) {
-            this.iterations = new DocumentIterationList(data.documentIterations);
-            this.iterations.setDocument(this);
-            delete data.documentIterations;
-            delete data.lastIteration;
-            return data;
-        },
+		baseUrl: function () {
+			return this.urlRoot() + '/' + this.getId();
+		},
+		getAbortedWorkflowsUrl: function () {
+			return this.urlRoot() + '/' + this.getId() + '/aborted-workflows';
+		},
 
-        getId: function () {
-            return this.get("id");
-        },
+		parse: function (data) {
+			this.iterations = new DocumentIterationList(data.documentIterations);
+			this.iterations.setDocument(this);
+			delete data.documentIterations;
+			delete data.lastIteration;
+			return data;
+		},
 
-        getReference: function () {
-            var id = this.get("id");
-            return id.substr(0, id.lastIndexOf("-"));
-        },
+		getId: function () {
+			return this.get('id');
+		},
 
-        getVersion: function () {
-            return this.get("version");
-        },
+		getReference: function () {
+			var id = this.get('id');
+			return id.substr(0, id.lastIndexOf('-'));
+		},
 
-        getWorkspace: function () {
-            return this.get("workspaceId");
-        },
+		getVersion: function () {
+			return this.get('version');
+		},
 
-        getCheckoutUser: function () {
-            return this.get('checkOutUser');
-        },
+		getWorkspace: function () {
+			return this.get('workspaceId');
+		},
 
-        isCheckoutByConnectedUser: function () {
-            return this.isCheckout() ? this.getCheckoutUser().login == APP_CONFIG.login : false;
-        },
+		getCheckoutUser: function () {
+			return this.get('checkOutUser');
+		},
 
-        getUrl: function () {
-            return this.url();
-        },
+		isCheckoutByConnectedUser: function () {
+			return this.isCheckout() ? this.getCheckoutUser().login === APP_CONFIG.login : false;
+		},
 
-        hasIterations: function () {
-            return !this.getIterations().isEmpty();
-        },
+		getUrl: function () {
+			return this.url();
+		},
 
-        getLastIteration: function () {
-            return this.getIterations().last();
-        },
+		hasIterations: function () {
+			return !this.getIterations().isEmpty();
+		},
 
-        getIterations: function () {
-            return this.iterations;
-        },
+		getLastIteration: function () {
+			return this.getIterations().last();
+		},
 
-        isIterationChangedSubscribed: function () {
-            return this.get("iterationSubscription");
-        },
+		getIterations: function () {
+			return this.iterations;
+		},
 
-        isStateChangedSubscribed: function () {
-            return this.get("stateSubscription");
-        },
+		isIterationChangedSubscribed: function () {
+			return this.get('iterationSubscription');
+		},
 
-        getTags: function () {
-            return this.get("tags");
-        },
+		isStateChangedSubscribed: function () {
+			return this.get('stateSubscription');
+		},
 
-        getPath: function () {
-            return this.get("path");
-        },
+		getTags: function () {
+			return this.get('tags');
+		},
 
-        checkout: function () {
-            $.ajax({
-                context: this,
-                type: "PUT",
-                url: this.url() + "/checkout",
-                success: function () {
-                    this.fetch();
-                },
-                error: function (xhr, status, errorThrown) {
-                    alert(xhr.responseText);
-                }
-            });
-        },
+		getPath: function () {
+			return this.get('path');
+		},
 
-        undocheckout: function () {
-            $.ajax({
-                context: this,
-                type: "PUT",
-                url: this.url() + "/undocheckout",
-                success: function () {
-                    this.fetch();
-                },
-                error: function (xhr, status, errorThrown) {
-                    alert(xhr.responseText);
-                }
-            });
-        },
+		checkout: function () {
+			$.ajax({
+				context: this,
+				type: 'PUT',
+				url: this.baseUrl() + '/checkout',
+				success: function () {
+					this.fetch();
+				},
+				error: function (xhr, status, errorThrown) {
+					alert(xhr.responseText);
+				}
+			});
+		},
 
-        checkin: function () {
-            $.ajax({
-                context: this,
-                type: "PUT",
-                url: this.url() + "/checkin",
-                success: function () {
-                    this.fetch();
-                },
-                error: function (xhr, status, errorThrown) {
-                    alert(xhr.responseText);
-                }
-            });
-        },
+		undocheckout: function () {
+			$.ajax({
+				context: this,
+				type: 'PUT',
+				url: this.baseUrl() + '/undocheckout',
+				success: function () {
+					this.fetch();
+				},
+				error: function (xhr, status, errorThrown) {
+					alert(xhr.responseText);
+				}
+			});
+		},
 
-        toggleStateSubscribe: function (oldState) {
+		checkin: function () {
+			$.ajax({
+				context: this,
+				type: 'PUT',
+				url: this.baseUrl() + '/checkin',
+				success: function () {
+					this.fetch();
+				},
+				error: function (xhr, status, errorThrown) {
+					alert(xhr.responseText);
+				}
+			});
+		},
 
-            var action = oldState ? "unsubscribe" : "subscribe";
+		toggleStateSubscribe: function (oldState) {
 
-            $.ajax({
-                context: this,
-                type: "PUT",
-                url: this.url() + "/notification/stateChange/" + action,
-                success: function () {
-                    this.fetch();
-                }
-            });
-        },
+			var action = oldState ? 'unsubscribe' : 'subscribe';
 
-        toggleIterationSubscribe: function (oldState) {
+			$.ajax({
+				context: this,
+				type: 'PUT',
+				url: this.baseUrl() + '/notification/stateChange/' + action,
+				success: function () {
+					this.fetch();
+				}
+			});
+		},
 
-            var action = oldState ? "unsubscribe" : "subscribe";
+		toggleIterationSubscribe: function (oldState) {
 
-            $.ajax({
-                context: this,
-                type: "PUT",
-                url: this.url() + "/notification/iterationChange/" + action,
-                success: function () {
-                    this.fetch();
-                }
-            });
+			var action = oldState ? 'unsubscribe' : 'subscribe';
 
-        },
+			$.ajax({
+				context: this,
+				type: 'PUT',
+				url: this.baseUrl() + '/notification/iterationChange/' + action,
+				success: function () {
+					this.fetch();
+				}
+			});
 
-        isCheckout: function () {
-            return this.attributes.checkOutDate;
-            // return !_.isNull(this.attributes.checkOutDate);
-        },
+		},
 
-        getPermalink: function () {
-            return encodeURI(
-                    window.location.origin
-                    + APP_CONFIG.contextPath
-                    + "/documents/"
-                    + this.getWorkspace()
-                    + "/"
-                    + this.getReference()
-                    + "/"
-                    + this.getVersion()
-            );
-        },
+		isCheckout: function () {
+			return this.attributes.checkOutDate;
+		},
 
-        addTags: function (tags) {
+		getPermalink: function () {
+			return encodeURI(
+					window.location.origin +
+					APP_CONFIG.contextPath +
+					'/documents/' +
+					this.getWorkspace() +
+					'/' +
+					this.getReference() +
+					'/' +
+					this.getVersion()
+			);
+		},
 
-            $.ajax({
-                context: this,
-                type: "POST",
-                url: this.url() + "/tags",
-                data: JSON.stringify(tags),
-                contentType: "application/json; charset=utf-8",
-                success: function () {
-                    this.fetch();
-                }
-            });
+		addTags: function (tags) {
 
-        },
+			$.ajax({
+				context: this,
+				type: 'POST',
+				url: this.baseUrl() + '/tags',
+				data: JSON.stringify(tags),
+				contentType: 'application/json; charset=utf-8',
+				success: function () {
+					this.fetch();
+				}
+			});
 
-        removeTag: function (tag, callback) {
-            $.ajax({
-                type: "DELETE",
-                url: this.url() + "/tags/" + tag,
-                success: function () {
-                    callback();
-                }
-            });
-        },
+		},
 
-        removeTags: function (tags, callback) {
-            var baseUrl = this.url() + "/tags/";
-            var count = 0;
-            var total = _(tags).length;
-            _(tags).each(function (tag) {
-                $.ajax({
-                    type: "DELETE",
-                    url: baseUrl + tag,
-                    success: function () {
-                        count++;
-                        if (count >= total) {
-                            callback();
-                        }
-                    }
-                });
-            });
+		removeTag: function (tag, callback) {
+			$.ajax({
+				type: 'DELETE',
+				url: this.baseUrl() + '/tags/' + tag,
+				success: function () {
+					callback();
+				}
+			});
+		},
 
-        },
+		removeTags: function (tags, callback) {
+			var baseUrl = this.baseUrl() + '/tags/';
+			var count = 0;
+			var total = _(tags).length;
+			_(tags).each(function (tag) {
+				$.ajax({
+					type: 'DELETE',
+					url: baseUrl + tag,
+					success: function () {
+						count++;
+						if (count >= total) {
+							callback();
+						}
+					}
+				});
+			});
 
-        createNewVersion: function (title, description, workflow, roleMappingList, aclList) {
+		},
 
-            var data = {
-                title: title,
-                description: description,
-                workflowModelId: workflow ? workflow.get("id") : null,
-                roleMapping: workflow ? roleMappingList : null,
-                acl: aclList
-            };
+		createNewVersion: function (title, description, workflow, roleMappingList, aclList) {
 
-            $.ajax({
-                context: this,
-                type: "PUT",
-                url: this.url() + "/newVersion",
-                data: JSON.stringify(data),
-                contentType: "application/json; charset=utf-8",
-                success: function () {
-                    this.collection.fetch({reset: true});
-                }
-            });
-        },
+			var data = {
+				title: title,
+				description: description,
+				workflowModelId: workflow ? workflow.get('id') : null,
+				roleMapping: workflow ? roleMappingList : null,
+				acl: aclList
+			};
 
-        moveInto: function (path, callback, error) {
+			$.ajax({
+				context: this,
+				type: 'PUT',
+				url: this.baseUrl() + '/newVersion',
+				data: JSON.stringify(data),
+				contentType: 'application/json; charset=utf-8',
+				success: function () {
+					this.collection.fetch({reset: true});
+				}
+			});
+		},
 
-            var data = {
-                path: path
-            };
+		moveInto: function (path, callback, error) {
 
-            $.ajax({
-                context: this,
-                type: "PUT",
-                url: this.url() + "/move",
-                data: JSON.stringify(data),
-                contentType: "application/json; charset=utf-8",
-                success: function () {
-                    if (callback) {
-                        callback();
-                    }
-                },
-                error: function (xhr, status, errorThrown) {
-                    alert(xhr.responseText);
-                    error();
-                }
-            });
-        },
+			var data = {
+				path: path
+			};
 
-        createShare: function (args) {
-            $.ajax({
-                type: "POST",
-                url: this.url() + "/share",
-                data: JSON.stringify(args.data),
-                contentType: "application/json; charset=utf-8",
-                success: args.success
-            });
-        },
+			$.ajax({
+				context: this,
+				type: 'PUT',
+				url: this.baseUrl() + '/move',
+				data: JSON.stringify(data),
+				contentType: 'application/json; charset=utf-8',
+				success: function () {
+					if (callback) {
+						callback();
+					}
+				},
+				error: function (xhr, status, errorThrown) {
+					alert(xhr.responseText);
+					error();
+				}
+			});
+		},
 
-        publish: function (args) {
-            $.ajax({
-                type: "PUT",
-                url: this.url() + "/publish",
-                success: args.success
-            });
-        },
+		createShare: function (args) {
+			$.ajax({
+				type: 'POST',
+				url: this.baseUrl() + '/share',
+				data: JSON.stringify(args.data),
+				contentType: 'application/json; charset=utf-8',
+				success: args.success
+			});
+		},
 
-        unpublish: function (args) {
-            $.ajax({
-                type: "PUT",
-                url: this.url() + "/unpublish",
-                success: args.success
-            });
-        },
+		publish: function (args) {
+			$.ajax({
+				type: 'PUT',
+				url: this.baseUrl() + '/publish',
+				success: args.success
+			});
+		},
 
-        updateACL: function (args) {
-            $.ajax({
-                type: "PUT",
-                url: this.url() + "/acl",
-                data: JSON.stringify(args.acl),
-                contentType: "application/json; charset=utf-8",
-                success: args.success,
-                error: args.error
-            });
-        },
+		unpublish: function (args) {
+			$.ajax({
+				type: 'PUT',
+				url: this.baseUrl() + '/unpublish',
+				success: args.success
+			});
+		},
 
-        hasACLForCurrentUser: function () {
-            return this.getACLPermissionForCurrentUser() != false;
-        },
+		updateACL: function (args) {
+			$.ajax({
+				type: 'PUT',
+				url: this.baseUrl() + '/acl',
+				data: JSON.stringify(args.acl),
+				contentType: 'application/json; charset=utf-8',
+				success: args.success,
+				error: args.error
+			});
+		},
 
-        isForbidden: function () {
-            return this.getACLPermissionForCurrentUser() == "FORBIDDEN";
-        },
+		hasACLForCurrentUser: function () {
+			return this.getACLPermissionForCurrentUser() !== false;
+		},
 
-        isReadOnly: function () {
-            return this.getACLPermissionForCurrentUser() == "READ_ONLY";
-        },
+		isForbidden: function () {
+			return this.getACLPermissionForCurrentUser() === 'FORBIDDEN';
+		},
 
-        isFullAccess: function () {
-            return this.getACLPermissionForCurrentUser() == "FULL_ACCESS";
-        },
+		isReadOnly: function () {
+			return this.getACLPermissionForCurrentUser() === 'READ_ONLY';
+		},
 
-        getACLPermissionForCurrentUser: function () {
-            return ACLChecker.getPermission(this.get("acl"));
-        },
+		isFullAccess: function () {
+			return this.getACLPermissionForCurrentUser() === 'FULL_ACCESS';
+		},
 
-        isAttributesLocked: function () {
-            return this.get("attributesLocked");
-        }
+		getACLPermissionForCurrentUser: function () {
+			return ACLChecker.getPermission(this.get('acl'));
+		},
 
-    });
+		isAttributesLocked: function () {
+			return this.get('attributesLocked');
+		}
 
-    return Document;
+	});
+
+	return Document;
 
 });

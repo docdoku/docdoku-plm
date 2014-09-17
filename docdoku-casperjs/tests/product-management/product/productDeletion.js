@@ -7,6 +7,10 @@ casper.test.begin('Product deletion tests suite',1, function productDeletionTest
      * */
     casper.open(productManagementUrl);
 
+    casper.then(function(){
+        this.reload();
+    });
+
     /**
      * Go to product nav
      */

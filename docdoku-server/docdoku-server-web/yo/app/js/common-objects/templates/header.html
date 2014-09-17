@@ -26,14 +26,16 @@
 
                 <ul class="dropdown-menu">
 
-                    <li class="dropdown-section-title"><b><i class="fa fa-graduation-cap"></i>{{i18n.ADMINISTRATED}}</b>
+                    <li class="dropdown-section-title">
+                        <i class="fa fa-graduation-cap"></i>{{i18n.ADMINISTRATED}}
                     </li>
 
                     {{#administratedWorkspaces}}
 
                     <li class="dropdown-submenu visible-desktop">
                         <a>
-                            {{id}}
+                            {{#isCurrent}}<i class="fa fa-check"></i>{{/isCurrent}}
+                             {{id}}
                         </a>
                         <ul class="dropdown-menu">
                             <li><a href="{{contextPath}}/document-management/#{{id}}/folders"
@@ -54,11 +56,14 @@
                         <hr/>
                     </li>
 
-                    <li class="dropdown-section-title"><b><i class="fa fa-graduation-cap"></i>{{i18n.OTHERS}}</b></li>
+                    <li class="dropdown-section-title">
+                        {{i18n.OTHERS}}
+                    </li>
 
                     {{#otherWorkspaces}}
                     <li class="dropdown-submenu visible-desktop">
                         <a>
+                            {{#isCurrent}}<i class="fa fa-check"></i>{{/isCurrent}}
                             {{id}}
                         </a>
                         <ul class="dropdown-menu">

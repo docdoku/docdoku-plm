@@ -19,6 +19,7 @@
  */
 package com.docdoku.server;
 
+import com.docdoku.core.change.ChangeItem;
 import com.docdoku.core.common.*;
 import com.docdoku.core.document.*;
 import com.docdoku.core.exceptions.*;
@@ -609,6 +610,10 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         List<DocumentRevision> docRs = new DocumentRevisionDAO(userLocale, em).findDocRsByTag(tagToRemove);
         for (DocumentRevision docR : docRs) {
             docR.getTags().remove(tagToRemove);
+        }
+        List<ChangeItem> changeItems = new ChangeItemDAO(userLocale, em).findChangeItemByTag(pKey.getWorkspaceId(),tagToRemove);
+        for (ChangeItem changeItem : changeItems) {
+            changeItem.getTags().remove(tagToRemove);
         }
 
         new TagDAO(userLocale, em).removeTag(pKey);

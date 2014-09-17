@@ -101,7 +101,7 @@ window.onload = function() {
         }
 
         var binaryLoader = new THREE.BinaryLoader();
-        binaryLoader.load("images/pba.js", addModelToScene);
+        binaryLoader.load( window.contextPath + "/images/pba.js", addModelToScene);
 
         var ambientLight = new THREE.AmbientLight(0x111111);
         scene.add(ambientLight);

@@ -1,73 +1,94 @@
 /*global define*/
 'use strict';
 define([
-    'backbone',
-    "mustache",
-    'text!common-objects/templates/baselines/snap_baseline_view.html'
-], function (Backbone, Mustache, template) {
-    var SnapLatestBaselineView = Backbone.View.extend({
-        events: {
-            'submit #baseline_creation_form': 'onSubmitForm',
-            'hidden #baseline_creation_modal': 'onHidden'
-        },
+	'backbone',
+	"mustache",
+	'common-objects/collections/baselines',
+	'text!common-objects/templates/baselines/snap_baseline_view.html'
+], function (Backbone, Mustache, Baselines, template) {
+	var SnapLatestBaselineView = Backbone.View.extend({
+		events: {
+			'submit #baseline_creation_form': 'onSubmitForm',
+			'hidden #baseline_creation_modal': 'onHidden'
+		},
 
-        initialize: function () {
-            _.bindAll(this);
-        },
+		initialize: function () {
+			_.bindAll(this);
+			this.isProduct = false;
+			if (this.options && this.options.type) {
+				this.isProduct = this.options.type === 'RELEASED' || this.options.type === 'LATEST' || this.options.type === 'PRODUCT';
+			} else if (!this.collection) {
+				this.collection = new Baselines({}, {type: 'document'});
+			}
+		},
 
-        render: function () {
-            this.$el.html(Mustache.render(template, {i18n: APP_CONFIG.i18n, model: this.model, isReleased: this.options.type === 'RELEASED', isLatest: this.options.type == 'LATEST' }));
-            this.bindDomElements();
-            if (this.options.type) {
-                this.$inputBaselineType.val(this.options.type);
-            }
-            return this;
-        },
+		render: function () {
+			var data = {
+				i18n: APP_CONFIG.i18n,
+				isProduct: this.isProduct
+			};
+			if (this.isProduct) {
+				data.isReleased = this.options.type === 'RELEASED';
+				data.isLatest = this.options.type === 'LATEST';
+			}
+			this.$el.html(Mustache.render(template, data));
+			this.bindDomElements();
+			if (this.isProduct) {
+				this.$inputBaselineType.val(this.options.type);
+			}
+			return this;
+		},
 
-        bindDomElements: function () {
-            this.$modal = this.$('#baseline_creation_modal');
-            this.$inputBaselineName = this.$('#inputBaselineName');
-            this.$inputBaselineType = this.$('#inputBaselineType');
-            this.$inputBaselineDescription = this.$('#inputBaselineDescription');
-        },
+		bindDomElements: function () {
+			this.$modal = this.$('#baseline_creation_modal');
+			this.$inputBaselineName = this.$('#inputBaselineName');
+			this.$inputBaselineDescription = this.$('#inputBaselineDescription');
+			if (this.isProduct) {
+				this.$inputBaselineType = this.$('#inputBaselineType');
+			}
+		},
 
-        onSubmitForm: function (e) {
-            this.model.createBaseline(
-                {
-                    name: this.$inputBaselineName.val(),
-                    type: this.$inputBaselineType.val(),
-                    description: this.$inputBaselineDescription.val()
-                },
-                {
-                    success: this.onBaselineCreated,
-                    error: this.onError
-                }
-            );
-            e.preventDefault();
-            e.stopPropagation();
-            return false;
-        },
+		onSubmitForm: function (e) {
+			var data = {
+				name: this.$inputBaselineName.val(),
+				description: this.$inputBaselineDescription.val()
+			};
+			var callbacks = {
+				success: this.onBaselineCreated,
+				error: this.onError
+			};
+			if (this.isProduct) {
+				data.type = this.$inputBaselineType.val();
+				this.model.createBaseline(data, callbacks);
+			} else {
+				var baselinesCollection = this.collection;
+				baselinesCollection.create(data, callbacks);
+			}
+			e.preventDefault();
+			e.stopPropagation();
+			return false;
+		},
 
-        onBaselineCreated: function () {
-            this.closeModal();
-        },
+		onBaselineCreated: function () {
+			this.closeModal();
+		},
 
-        onError: function (error) {
-            alert(APP_CONFIG.i18n.CREATION_ERROR + ' : ' + error.responseText);
-        },
+		onError: function (error) {
+			alert(APP_CONFIG.i18n.CREATION_ERROR + ' : ' + error.responseText);
+		},
 
-        openModal: function () {
-            this.$modal.modal('show');
-        },
+		openModal: function () {
+			this.$modal.modal('show');
+		},
 
-        closeModal: function () {
-            this.$modal.modal('hide');
-        },
+		closeModal: function () {
+			this.$modal.modal('hide');
+		},
 
-        onHidden: function () {
-            this.remove();
-        }
-    });
+		onHidden: function () {
+			this.remove();
+		}
+	});
 
-    return SnapLatestBaselineView;
+	return SnapLatestBaselineView;
 });

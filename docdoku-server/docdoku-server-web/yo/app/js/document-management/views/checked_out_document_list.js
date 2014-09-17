@@ -9,18 +9,18 @@ define([
     "text!common-objects/templates/buttons/ACL_button.html",
     "text!templates/search_document_form.html",
     "text!templates/checked_out_document_list.html"
-], function (CheckedOutDocumentList, ContentDocumentListView, delete_button, checkout_button_group, tags_button, new_version_button, ACL_button, search_form, template) {
+], function (CheckedOutDocumentList, ContentDocumentListView, deleteButton, checkoutButtonGroup, tagsButton, newVersionButton, aclButton, searchForm, template) {
     var CheckedOutDocumentListView = ContentDocumentListView.extend({
 
         template: template,
 
         partials: {
-            delete_button: delete_button,
-            checkout_button_group: checkout_button_group,
-            tags_button: tags_button,
-            new_version_button: new_version_button,
-            search_form: search_form,
-            ACL_button: ACL_button
+            deleteButton: deleteButton,
+            checkoutButtonGroup: checkoutButtonGroup,
+            tagsButton: tagsButton,
+            newVersionButton: newVersionButton,
+            searchForm: searchForm,
+            aclButton: aclButton
         },
 
         collection: function () {

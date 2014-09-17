@@ -13,8 +13,16 @@ define([
         },
 
         url: function () {
-            return this.document.url() + '/iterations';
-        },
+	        if(this.document.getId()){
+		        return this.baseUrl()+ '?configSpec='+APP_CONFIG.configSpec;
+		    }else{
+		    	return this.document.urlRoot()+ '/iterations';
+		    }
+	    },
+
+	    baseUrl: function(){
+			return this.document.urlRoot()+ '/'+this.document.getId()+ '/iterations';
+		},
 
         comparator: function (documentIteration) {
             return documentIteration.getDocKey();

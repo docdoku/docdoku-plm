@@ -12,41 +12,35 @@ define(['backbone'], function (Backbone) {
         getName: function () {
             return this.get('name');
         },
-        getType: function () {
-            return this.get('type');
-        },
-        isReleased: function () {
-            return this.get('type') === 'RELEASED';
-        },
-        getDescription: function () {
+        getDescription:function(){
             return this.get('description');
         },
         getCreationDate: function () {
             return this.get('creationDate');
         },
-        getBaselinedParts: function () {
+        getBaselinedParts:function(){
             return this.get('baselinedParts');
         },
-        getConfigurationItemId: function () {
+        getConfigurationItemId: function(){
             return this.get('configurationItemId');
         },
-        setConfigurationItemId: function (configurationItemId) {
-            this.set('configurationItemId', configurationItemId);
+        setConfigurationItemId: function(configurationItemId){
+            this.set('configurationItemId',configurationItemId);
         },
-        getBaselinePartsWithReference: function (ref, callback) {
-            var baselinedParts = null;
+        getBaselinePartsWithReference:function(ref,callback){
+            var baselinedParts=null;
             $.ajax({
                 type: 'GET',
-                url: this.url() + '/parts?q=' + ref,
+                url: this.url()+'/parts?q='+ref,
                 contentType: 'application/json; charset=utf-8',
-                success: function (data) {
-                    baselinedParts = data;
-                    if (callback && callback.success) {
+                success: function(data){
+                    baselinedParts=data;
+                    if(callback && callback.success){
                         callback.success(data);
                     }
                 },
-                error: function (data) {
-                    if (callback && callback.error) {
+                error: function(data){
+                    if(callback && callback.error){
                         callback.error(data);
                     }
                 }
@@ -54,7 +48,7 @@ define(['backbone'], function (Backbone) {
             return baselinedParts;
         },
 
-        duplicate: function (args) {
+        duplicate:function(args){
             var _this = this;
             $.ajax({
                 type: 'POST',

@@ -4,6 +4,7 @@
         {{i18n.FOLDERS}}
     </a>
 
+    {{^isReadOnly}}
     <div class="btn-group">
         <a class="btn dropdown-toggle" data-toggle="dropdown">
             <span class="caret"></span>
@@ -14,5 +15,7 @@
             </li>
         </ul>
     </div>
+    {{/isReadOnly}}
+
 </div>
 <ul id="items-{{view.cid}}" class="items"></ul>

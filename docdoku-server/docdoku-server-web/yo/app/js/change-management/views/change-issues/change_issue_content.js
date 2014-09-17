@@ -10,7 +10,7 @@ define([
     "text!common-objects/templates/buttons/delete_button.html",
     "text!common-objects/templates/buttons/tags_button.html",
     "text!common-objects/templates/buttons/ACL_button.html"
-], function (Backbone, Mustache, ChangeIssueCollection, template, ChangeIssueListView, ChangeIssueCreationView, TagsManagementView, ACLEditView, delete_button, tags_button, ACL_button) {
+], function (Backbone, Mustache, ChangeIssueCollection, template, ChangeIssueListView, ChangeIssueCreationView, TagsManagementView, ACLEditView, deleteButton, tagsButton, aclButton) {
     var ChangeIssueContentView = Backbone.View.extend({
 
 
@@ -22,9 +22,9 @@ define([
         },
 
         partials: {
-            delete_button: delete_button,
-            tags_button: tags_button,
-            ACL_button: ACL_button
+            deleteButton: deleteButton,
+            tagsButton: tagsButton,
+            aclButton: aclButton
         },
 
         initialize: function () {

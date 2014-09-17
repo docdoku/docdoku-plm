@@ -6,7 +6,11 @@ casper.test.begin('Part creation tests suite', 4, function partCreationTestsSuit
     /**
     * Open product management URL
     * */
-     casper.open(productManagementUrl);
+    casper.open(productManagementUrl);
+
+    casper.then(function(){
+        this.reload();
+    });
 
     /**
      * Go to part nav

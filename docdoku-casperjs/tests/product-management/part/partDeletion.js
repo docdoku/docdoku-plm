@@ -9,6 +9,10 @@ casper.test.begin('Part deletion tests suite', 1, function partDeletionTestsSuit
      * */
     casper.open(productManagementUrl);
 
+    casper.then(function(){
+        this.reload();
+    });
+
     /**
      * Go to part nav
      */

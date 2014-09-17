@@ -7,13 +7,13 @@ define([
     "views/part_template_list",
     "views/part_template_creation_view",
     "text!common-objects/templates/buttons/delete_button.html"
-], function (Backbone, Mustache, PartTemplateCollection, template, PartTemplateListView, PartTemplateCreationView, delete_button) {
+], function (Backbone, Mustache, PartTemplateCollection, template, PartTemplateListView, PartTemplateCreationView, deleteButton) {
     var PartTemplateContentView = Backbone.View.extend({
 
         el: "#product-management-content",
 
         partials: {
-            delete_button: delete_button
+            deleteButton: deleteButton
         },
 
         events: {

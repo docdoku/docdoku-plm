@@ -9,13 +9,11 @@ define([
     "views/baseline/baseline_duplicate_view",
     "text!common-objects/templates/buttons/delete_button.html",
     "text!common-objects/templates/buttons/duplicate_button.html"
-], function (Backbone, Mustache, BaselinesCollection, ConfigurationItemCollection, template, BaselinesListView, BaselineDuplicateView, delete_button, duplicate_button) {
+], function (Backbone, Mustache, BaselinesCollection, ConfigurationItemCollection, template, BaselinesListView, BaselineDuplicateView, deleteButton, duplicate_button) {
     var BaselinesContentView = Backbone.View.extend({
 
-
-
         partials: {
-            delete_button: delete_button,
+            deleteButton: deleteButton,
             duplicate_button: duplicate_button
         },
 
@@ -65,11 +63,11 @@ define([
             }
             if (this.$inputProductId.val()) {
                 this.listView = new BaselinesListView({
-                    collection: new BaselinesCollection({}, {productId: this.$inputProductId.val()})
+                    collection: new BaselinesCollection({}, {type:'product',productId: this.$inputProductId.val()})
                 }).render();
             } else {
                 this.listView = new BaselinesListView({
-                    collection: new BaselinesCollection({})
+                    collection: new BaselinesCollection({},{type:'product'})
                 }).render();
             }
             this.$el.append(this.listView.el);

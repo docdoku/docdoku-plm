@@ -26,7 +26,8 @@ require.config({
         effects: { deps: ['jquery'], exports: 'jQuery' },
         bootstrap: { deps: ['jquery', 'jqueryUI'], exports: 'jQuery' },
         datatables: { deps: ['jquery'], exports: 'jQuery' },
-        unmaskConfig: { deps: ['unmask'], exports: 'jQuery' },
+	    unmask: { deps: ['jquery'], exports: 'jQuery' },
+	    unmaskConfig: { deps: ['unmask','jquery'], exports: 'jQuery' },
         bootstrapSwitch: { deps: ['jquery'], exports: 'jQuery'},
         backbone: { deps: ['underscore', 'jquery'], exports: 'Backbone'}
     },

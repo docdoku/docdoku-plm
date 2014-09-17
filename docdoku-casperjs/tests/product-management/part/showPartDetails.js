@@ -8,6 +8,10 @@ casper.test.begin('Part details tests suite',3, function partDetailsTestsSuite()
      * */
     casper.open(productManagementUrl);
 
+    casper.then(function(){
+        this.reload();
+    });
+
     /**
      * Go to part nav
      */

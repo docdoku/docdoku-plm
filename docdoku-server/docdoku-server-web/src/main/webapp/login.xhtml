@@ -65,9 +65,11 @@
             </div>
             <script type="text/javascript">
                 if(window.location.hash){
-                    var redirectInput = document.getElementById("login_form:originURL");
+                    var redirectInput = document.getElementById("login_form-originURL");
                     redirectInput.value=redirectInput.value + window.location.hash;
                 }
+                window.contextPath = "#{request.contextPath}";
+                console.log(window.contextPath)
             </script>
             <script type="text/javascript" src="#{request.contextPath}/bower_components/threejs/build/three.min.js"></script>
             <script type="text/javascript" src="#{request.contextPath}/js/product-structure/dmu/loaders/BinaryLoader.js"></script>

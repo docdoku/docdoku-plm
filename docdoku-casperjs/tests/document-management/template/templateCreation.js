@@ -9,6 +9,10 @@ casper.test.begin('Document template creation tests suite',2, function documentT
      * */
     casper.open(documentManagementUrl);
 
+    casper.then(function(){
+        this.reload();
+    });
+
     /**
      * Open template nav
      */

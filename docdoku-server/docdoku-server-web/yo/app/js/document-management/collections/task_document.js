@@ -1,27 +1,28 @@
 /*global define*/
 define([
-    "models/document"
+    'models/document'
 ], function (Document) {
+	'use strict';
     var TaskDocumentList = Backbone.Collection.extend({
 
         model: Document,
 
-        className: "TaskDocumentList",
+        className: 'TaskDocumentList',
 
         setFilterStatus: function (status) {
             this.filterStatus = status;
         },
 
         url: function () {
-            var url = APP_CONFIG.contextPath + "/api/workspaces/" + APP_CONFIG.workspaceId + "/tasks/" + APP_CONFIG.login + "/documents/";
+            var url = APP_CONFIG.contextPath + '/api/workspaces/' + APP_CONFIG.workspaceId + '/tasks/' + APP_CONFIG.login + '/documents/';
             if (this.filterStatus) {
-                url += "?filter=" + this.filterStatus;
+                url += '?filter=' + this.filterStatus;
             }
             return url;
         },
 
         comparator: function (document) {
-            return document.get("id");
+            return document.get('id');
         }
 
     });

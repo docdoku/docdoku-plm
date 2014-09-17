@@ -413,5 +413,8 @@ define({
     WAITING_REMOTE_VIDEO: "Waiting for remote video.",
     CONNECTED: "Connected",
     DEVICE_ERROR: "Cannot access you audio/video device, please insure your browser is WebRTC capable, and if there's no exception for this website.",
-    CHANNEL_NOT_READY_ERROR: "Cannot communicate with the call server. Please insure that your browser is websocket capable, or your internet provider doesn't block them."
+    CHANNEL_NOT_READY_ERROR: "Cannot communicate with the call server. Please insure that your browser is websocket capable, or your internet provider doesn't block them.",
+    LATEST_SHORT:"Latest versions",
+    RELEASED_SHORT:"Latest released versions",
+    OPEN_NEW_WINDOW:"Open in a new window"
 });

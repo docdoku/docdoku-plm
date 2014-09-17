@@ -20,12 +20,14 @@ define([
                 this.$el.html(Mustache.render(template, {i18n: APP_CONFIG.i18n}));
                 this.$modal = this.$("#exportSceneModal");
                 this.$textarea = this.$('textarea');
+                this.$link = this.$('.frame-link');
                 return this;
             },
 
             openModal: function () {
                 this.$modal.modal('show');
                 this.$textarea.text('<iframe width="640" height="480" src="' + this.options.iframeSrc + '" frameborder="0"></iframe>');
+                this.$link.attr("href",this.options.iframeSrc);
 
             },
 
