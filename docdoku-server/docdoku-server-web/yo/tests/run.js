@@ -15,8 +15,6 @@ var local = require('./config.local');
 
 var conf = _.extend(ci, local);
 
-sys.print(fs.readFileSync('./log'));
-
 var casperCommand = 'casperjs test'
     + ' --domain=' + conf.domain
     + ' --port=' + conf.port
