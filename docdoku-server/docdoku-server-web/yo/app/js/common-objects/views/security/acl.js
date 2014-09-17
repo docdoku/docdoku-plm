@@ -17,7 +17,7 @@ define([
 
         render: function () {
 
-            this.$el.html(Mustache.render(template, {i18n: APP_CONFIG.i18n}));
+            this.$el.html(Mustache.render(template, {i18n: App.config.i18n}));
             this.bindDomElements();
 
             var that = this;
@@ -57,7 +57,7 @@ define([
         onUserMembershipsReset: function () {
             var that = this;
             this.userMemberships.each(function (userMembership) {
-                var view = new MembershipItemView({model: userMembership, editMode: that.options.editMode && userMembership.getUserLogin() != that.admin.getLogin() && userMembership.getUserLogin() != APP_CONFIG.login}).render();
+                var view = new MembershipItemView({model: userMembership, editMode: that.options.editMode && userMembership.getUserLogin() != that.admin.getLogin() && userMembership.getUserLogin() != App.config.login}).render();
                 that.$usersAcls.append(view.$el);
             });
         },

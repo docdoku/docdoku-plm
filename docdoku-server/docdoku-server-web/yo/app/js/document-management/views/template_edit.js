@@ -41,10 +41,10 @@ define([
             $("#tab-files-" + this.cid).append(this.fileListView.el);
 
             this.$("a#mask-help").popover({
-                title: APP_CONFIG.i18n.MASK,
+                title: App.config.i18n.MASK,
                 placement: "left",
                 html: true,
-                content: APP_CONFIG.i18n.MASK_HELP
+                content: App.config.i18n.MASK_HELP
             });
 
         },

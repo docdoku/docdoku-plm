@@ -1,4 +1,4 @@
-/*global define,APP_CONFIG*/
+/*global define,App*/
 'use strict';
 define([
     'backbone',
@@ -26,9 +26,9 @@ define([
 
             this.$el.html(Mustache.render(template,
                 {
-                    i18n: APP_CONFIG.i18n,
+                    i18n: App.config.i18n,
                     editMode: this.options.editMode,
-                    label: APP_CONFIG.i18n.ADD_DOCUMENT,
+                    label: App.config.i18n.ADD_DOCUMENT,
                     view: this
                 }
             ));
@@ -63,7 +63,7 @@ define([
 
             this.documentReferenceInput.typeahead({
                 source: function (query, process) {
-                    $.getJSON(APP_CONFIG.contextPath + '/api/workspaces/' + APP_CONFIG.workspaceId + '/documents/docs_last_iter?q=' + query, function (data) {
+                    $.getJSON(App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/documents/docs_last_iter?q=' + query, function (data) {
 
                         self.searchResults = new LinkedDocumentCollection(data);
 

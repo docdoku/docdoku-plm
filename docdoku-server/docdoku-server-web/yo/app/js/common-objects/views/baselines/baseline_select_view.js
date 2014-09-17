@@ -22,7 +22,7 @@ define([
 					type : this.type
 				};
 				if(this.type==='product'){
-					data.productId = APP_CONFIG.productId;
+					data.productId = App.config.productId;
 				}
 				this.collection = new Baselines({},data);
 			}
@@ -30,7 +30,7 @@ define([
 		},
 
 		render:function(){
-			this.$el.html(Mustache.render(template, {i18n:APP_CONFIG.i18n}));
+			this.$el.html(Mustache.render(template, {i18n:App.config.i18n}));
 			this.bindDomElements();
 			this.hideMenu();
 			this.collection.fetch({reset:true});
@@ -42,7 +42,7 @@ define([
 			this.$menu = this.$('.ConfigSpecSelector-menu');
 			this.$newBaselineBtn = this.$('.btn.newBaseline');
 			this.$deleteBaselineBtn = this.$('.btn.deleteBaseline');
-			if(APP_CONFIG.configSpec==='latest' || APP_CONFIG.configSpec==='released'){
+			if(App.config.configSpec==='latest' || App.config.configSpec==='released'){
 				this.$deleteBaselineBtn.attr("disabled", "disabled");
 				this.$deleteBaselineBtn.hide();
 			}
@@ -57,14 +57,14 @@ define([
 			var that = this ;
 			if(this.$select){
 				this.$select.find('option').remove();
-				this.$select.append('<option value="latest">'+APP_CONFIG.i18n.LATEST_SHORT+'</option>');
-				//this.$select.append('<option value="released">'+APP_CONFIG.i18n.RELEASED_SHORT+'</option>');
+				this.$select.append('<option value="latest">'+App.config.i18n.LATEST_SHORT+'</option>');
+				//this.$select.append('<option value="released">'+App.config.i18n.RELEASED_SHORT+'</option>');
 				this.collection.each(function(baseline){
 					that.$select.append('<option value="'+baseline.getId()+'">'+baseline.getName()+'</option>');
 				});
 			}
-			if(APP_CONFIG.configSpec){
-				this.$select.val(APP_CONFIG.configSpec);
+			if(App.config.configSpec){
+				this.$select.val(App.config.configSpec);
 			}
 		},
 
@@ -94,7 +94,7 @@ define([
 		deleteBaseline:function(){
 			var that = this;
 
-			if(confirm(APP_CONFIG.i18n.DELETE_SELECTION_QUESTION)){
+			if(confirm(App.config.i18n.DELETE_SELECTION_QUESTION)){
 				this.collection.each(function(baseline){
 
 					if(parseInt(that.$select.val(),10)===baseline.getId()){

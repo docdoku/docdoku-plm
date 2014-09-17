@@ -26,7 +26,7 @@ define(
                 var self = this;
 
                 this.$el.html(Mustache.render(template, {
-                    i18n: APP_CONFIG.i18n
+                    i18n: App.config.i18n
                 }));
 
                 this.$roleViews = this.$("#form-roles");
@@ -53,7 +53,7 @@ define(
 
             onSubmitNewRole: function (e) {
 
-                this.collection.create({workspaceId: APP_CONFIG.workspaceId, name: this.$newRoleName.val(), defaultUserMapped: null});
+                this.collection.create({workspaceId: App.config.workspaceId, name: this.$newRoleName.val(), defaultUserMapped: null});
                 this.resetNewRoleForm();
 
                 e.preventDefault();

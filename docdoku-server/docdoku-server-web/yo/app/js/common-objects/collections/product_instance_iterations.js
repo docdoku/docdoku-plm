@@ -1,5 +1,7 @@
-/*global define*/
-define(['backbone', "common-objects/models/product_instance_iteration"], function (Backbone, ProductInstanceIteration) {
+/*global _,define*/
+define(['backbone', 'common-objects/models/product_instance_iteration'],
+function (Backbone, ProductInstanceIteration) {
+	'use strict';
     var ProductInstanceIterations = Backbone.Collection.extend({
         model: ProductInstanceIteration,
 
@@ -8,7 +10,7 @@ define(['backbone', "common-objects/models/product_instance_iteration"], functio
         },
 
         url: function () {
-            return this.master.url() + "/iterations";
+            return this.master.url() + '/iterations';
         },
 
         next: function (iteration) {
@@ -30,7 +32,7 @@ define(['backbone', "common-objects/models/product_instance_iteration"], functio
         },
 
         isLast: function (iteration) {
-            return this.last() == iteration;
+            return this.last() === iteration;
         }
 
     });

@@ -8,7 +8,7 @@ define([
         model: Template,
 
         url: function () {
-            return APP_CONFIG.contextPath + "/api/workspaces/" + APP_CONFIG.workspaceId + "/part-templates";
+            return App.config.contextPath + "/api/workspaces/" + App.config.workspaceId + "/part-templates";
         }
 
     });

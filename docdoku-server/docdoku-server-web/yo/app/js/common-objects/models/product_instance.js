@@ -1,7 +1,7 @@
-/*global define,APP_CONFIG*/
-'use strict';
+/*global _,define,App*/
 define(['backbone', 'common-objects/collections/product_instance_iterations'
 ], function (Backbone, ProductInstanceList) {
+	'use strict';
     var ProductInstance = Backbone.Model.extend({
 
         initialize: function () {
@@ -11,9 +11,9 @@ define(['backbone', 'common-objects/collections/product_instance_iterations'
         idAttribute: 'serialNumber',
         urlRoot: function () {
             if (this.getConfigurationItemId()) {
-                return APP_CONFIG.contextPath + '/api/workspaces/' + APP_CONFIG.workspaceId + '/products/' + this.getConfigurationItemId() + '/product-instances';
+                return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + this.getConfigurationItemId() + '/product-instances';
             } else {
-                return APP_CONFIG.contextPath + '/api/workspaces/' + APP_CONFIG.workspaceId + '/products/product-instances';
+                return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/product-instances';
             }
         },
         parse: function (data) {

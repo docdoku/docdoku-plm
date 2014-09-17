@@ -38,18 +38,18 @@ define([
                 iDisplayLength: -1,
                 oLanguage: {
                     sSearch: "<i class='fa fa-search'></i>",
-                    sEmptyTable: APP_CONFIG.i18n.NO_DATA,
-                    sZeroRecords: APP_CONFIG.i18n.NO_FILTERED_DATA
+                    sEmptyTable: App.config.i18n.NO_DATA,
+                    sZeroRecords: App.config.i18n.NO_FILTERED_DATA
                 },
                 sDom: 'ft',
                 aoColumnDefs: [
                     { "bSortable": false, "aTargets": [ 0, 1, 12, 13, 14, 15 ] },
-                    { "sType": APP_CONFIG.i18n.DATE_SORT, "aTargets": [8, 10] }
+                    { "sType": App.config.i18n.DATE_SORT, "aTargets": [8, 10] }
                 ]
             });
 
 
-            this.$el.parent().find(".dataTables_filter input").attr("placeholder", APP_CONFIG.i18n.FILTER);
+            this.$el.parent().find(".dataTables_filter input").attr("placeholder", App.config.i18n.FILTER);
         }
 
     });

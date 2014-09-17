@@ -29,7 +29,7 @@ define([
 
             this.$el.html(Mustache.render(template,
                 {
-                    i18n: APP_CONFIG.i18n,
+                    i18n: App.config.i18n,
                     editMode: this.options.editMode,
                     label: this.options.label,
                     view: this

@@ -1,39 +1,40 @@
+/*global _,define,App*/
 define(['backbone',
-        "mustache",
-        "text!templates/change-requests/change_request_creation.html",
-        "models/change_request",
-        "common-objects/collections/users",
-        "collections/milestone_collection",
-        "common-objects/views/linked/linked_documents",
-        "common-objects/collections/linked/linked_document_collection",
-        "common-objects/views/linked/linked_parts",
-        "common-objects/collections/linked/linked_part_collection",
-        "common-objects/views/linked/linked_issues",
-        "common-objects/collections/linked/linked_change_item_collection"
+        'mustache',
+        'text!templates/change-requests/change_request_creation.html',
+        'models/change_request',
+        'common-objects/collections/users',
+        'collections/milestone_collection',
+        'common-objects/views/linked/linked_documents',
+        'common-objects/collections/linked/linked_document_collection',
+        'common-objects/views/linked/linked_parts',
+        'common-objects/collections/linked/linked_part_collection',
+        'common-objects/views/linked/linked_issues',
+        'common-objects/collections/linked/linked_change_item_collection'
     ],
     function (Backbone, Mustache, template, ChangeRequestModel, UserList, MilestoneList, LinkedDocumentsView, LinkedDocumentCollection, LinkedPartsView, LinkedPartCollection, LinkedIssuesView, LinkedChangeItemCollection) {
-
+	    'use strict';
         var ChangeRequestCreationView = Backbone.View.extend({
             model: new ChangeRequestModel(),
 
             events: {
-                "submit #request_creation_form": "onSubmitForm",
-                "hidden #request_creation_modal": "onHidden"
+                'submit #request_creation_form': 'onSubmitForm',
+                'hidden #request_creation_modal': 'onHidden'
             },
 
 
             initialize: function () {
                 this._subViews = [];
                 _.bindAll(this);
-                this.$el.on("remove", this.removeSubviews);                                                                  // Remove cascade
+                this.$el.on('remove', this.removeSubviews);                                                                  // Remove cascade
             },
 
             removeSubviews: function () {
-                _(this._subViews).invoke("remove");
+                _(this._subViews).invoke('remove');
             },
 
             render: function () {
-                this.$el.html(Mustache.render(template, {i18n: APP_CONFIG.i18n}));
+                this.$el.html(Mustache.render(template, {i18n: App.config.i18n}));
                 this.bindDomElements();
                 new UserList().fetch({success: this.fillUserList});
                 new MilestoneList().fetch({success: this.fillMilestoneList});
@@ -47,7 +48,7 @@ define(['backbone',
                 var self = this;
                 if (list) {
                     list.each(function (milestone) {
-                        self.$inputRequestMilestone.append("<option value='" + milestone.get("id") + "'" + ">" + milestone.get("title") + "</option>");
+                        self.$inputRequestMilestone.append('<option value="' + milestone.get('id') + ' " ' + '>' + milestone.get('title') + '</option>');
                     });
                 }
             },
@@ -55,24 +56,26 @@ define(['backbone',
                 var self = this;
                 if (list) {
                     list.each(function (user) {
-                        self.$inputRequestAssignee.append("<option value='" + user.get("login") + "'" + ">" + user.get("name") + "</option>");
+                        self.$inputRequestAssignee.append('<option value="' + user.get('login') + ' " ' + '>' + user.get('name') + '</option>');
                     });
                 }
             },
             fillPriorityList: function () {
-                for (var priority in this.model.priorities) {
-                    this.$inputRequestPriority.append("<option value='" + priority + "'" + ">" + priority + "</option>");
-                }
+	            var self = this;
+	            _.each(this.model.priorities, function(priority){
+		            self.$inputRequestPriority.append('<option value="' + priority + ' " ' + '>' + priority + '</option>');
+	            });
             },
             fillCategoryList: function () {
-                for (var category in this.model.categories) {
-                    this.$inputRequestCategory.append("<option value='" + category + "'" + ">" + category + "</option>");
-                }
+	            var self = this;
+	            _.each(this.model.categories, function(category){
+		            self.$inputRequestCategory.append('<option value="' + category + ' " ' + '>' + category + '</option>');
+	            });
             },
 
             linkManagement: function () {
                 var that = this;
-                var $affectedDocumentsLinkZone = this.$("#documents-affected-links");
+                var $affectedDocumentsLinkZone = this.$('#documents-affected-links');
 
                 that._affectedDocumentsCollection = new LinkedDocumentCollection();
                 that._linkedDocumentsView = new LinkedDocumentsView({
@@ -83,7 +86,7 @@ define(['backbone',
                 that._subViews.push(that._linkedDocumentsView);
                 $affectedDocumentsLinkZone.html(that._linkedDocumentsView.el);
 
-                var $affectedPartsLinkZone = this.$("#parts-affected-links");
+                var $affectedPartsLinkZone = this.$('#parts-affected-links');
 
                 that._affectedPartsCollection = new LinkedPartCollection();
                 that._linkedPartsView = new LinkedPartsView({
@@ -94,7 +97,7 @@ define(['backbone',
                 that._subViews.push(that._linkedPartsView);
                 $affectedPartsLinkZone.html(that._linkedPartsView.el);
 
-                var $affectedIssuesLinkZone = this.$("#issues-affected-links");
+                var $affectedIssuesLinkZone = this.$('#issues-affected-links');
 
                 that._affectedIssuesCollection = new LinkedChangeItemCollection();
                 var linkedIssuesView = new LinkedIssuesView({
@@ -123,7 +126,7 @@ define(['backbone',
                 var data = {
                     name: this.$inputRequestName.val(),
                     description: this.$inputRequestDescription.val(),
-                    author: APP_CONFIG.login,
+                    author: App.config.login,
                     assignee: this.$inputRequestAssignee.val(),
                     priority: this.$inputRequestPriority.val(),
                     category: this.$inputRequestCategory.val(),
@@ -150,7 +153,7 @@ define(['backbone',
             },
 
             onError: function (model, error) {
-                alert(APP_CONFIG.i18n.CREATION_ERROR + " : " + error.responseText);
+                alert(App.config.i18n.CREATION_ERROR + ' : ' + error.responseText);
             },
 
             openModal: function () {

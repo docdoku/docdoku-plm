@@ -1,0 +1,57 @@
+.Modal{
+  position: absolute;
+  max-height: none;
+  &-header{
+
+  }
+  &-body{
+    height: 421px;
+    max-height: 421px;
+    overflow: auto;
+
+    .no-overflow &{
+      overflow: visible;
+    }
+  }
+  &-footer{
+
+  }
+}
+
+.ModalHeader{
+  &-icon{
+    float: left;
+    margin: 0 8px 0 0 !important;
+  }
+
+  i{
+    line-height: 28px;
+    font-size: 20px;
+  }
+}
+
+.ModalBody{
+  &-alert{
+
+  }
+  &-tabs{
+    height: 100%;
+  }
+}
+
+.ModalTabs{
+  &-nav{
+    max-height: 37px;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+  &-form{
+    height: calc(~"100% - 64px");
+  }
+}
+
+.ModalTabsContent,
+.ModalTabsPane{
+  height: 100%;
+  overflow: auto;
+}

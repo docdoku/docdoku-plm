@@ -15,7 +15,7 @@ define([
         },
 
         render: function () {
-            this.$el.html(Mustache.render(template, {i18n: APP_CONFIG.i18n, workspaceId: APP_CONFIG.workspaceId}));
+            this.$el.html(Mustache.render(template, {i18n: App.config.i18n, workspaceId: App.config.workspaceId}));
         },
 
         setActive: function () {

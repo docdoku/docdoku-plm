@@ -1,18 +1,20 @@
+/*global define,App*/
 define([
     'backbone',
-    "mustache",
-    "require",
-    "text!templates/workflows/workflow_model_copy.html"
+    'mustache',
+    'require',
+    'text!templates/workflows/workflow_model_copy.html'
 ], function (Backbone, Mustache, require, template) {
+	'use strict';
     var WorkflowModelCopyView = Backbone.View.extend({
 
-        id: "modal-copy-workflow",
-        className: "modal hide fade",
+        id: 'modal-copy-workflow',
+        className: 'modal hide fade',
 
         events: {
-            "click #save-copy-workflow-btn": "saveCopyAction",
-            "click #cancel-copy-workflow-btn": "closeModalAction",
-            "click a.close": "closeModalAction"
+            'click #save-copy-workflow-btn': 'saveCopyAction',
+            'click #cancel-copy-workflow-btn': 'closeModalAction',
+            'click a.close': 'closeModalAction'
         },
 
         initialize: function () {
@@ -21,11 +23,11 @@ define([
 
         render: function () {
 
-            this.template = Mustache.render(template, {i18n: APP_CONFIG.i18n, workflow: this.model.attributes});
+            this.template = Mustache.render(template, {i18n: App.config.i18n, workflow: this.model.attributes});
 
             this.$el.html(this.template);
 
-            this.$el.modal("show");
+            this.$el.modal('show');
 
             this.bindDomElements();
 
@@ -33,14 +35,14 @@ define([
         },
 
         bindDomElements: function () {
-            this.inputWorkflowCopyName = this.$("#workflow-copy-name");
+            this.inputWorkflowCopyName = this.$('#workflow-copy-name');
         },
 
         saveCopyAction: function () {
             var self = this;
             var reference = this.inputWorkflowCopyName.val();
 
-            if (reference != null && reference != "") {
+            if (reference !== null && reference !== '') {
                 delete this.model.id;
                 this.model.save(
                     {
@@ -50,10 +52,10 @@ define([
                     {
                         success: function () {
                             self.closeModalAction();
-                            self.gotoWorkflows();
+                            self.goToWorkflows();
                         },
                         error: function (model, xhr) {
-                            console.error("Error while saving workflow '" + model.attributes.reference + "' : " + xhr.responseText);
+                            console.error('Error while saving workflow "' + model.attributes.reference + '" : ' + xhr.responseText);
                             self.inputWorkflowCopyName.focus();
                         }
                     }
@@ -62,12 +64,12 @@ define([
         },
 
         closeModalAction: function () {
-            this.$el.modal("hide");
+            this.$el.modal('hide');
             this.remove();
         },
 
-        gotoWorkflows: function () {
-            App.router.navigate(APP_CONFIG.workspaceId + "/workflows", {trigger: true});
+	    goToWorkflows: function () {
+            App.router.navigate(App.config.workspaceId + '/workflows', {trigger: true});
         }
 
     });

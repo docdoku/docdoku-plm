@@ -1,13 +1,14 @@
-/*global define*/
+/*global define,App*/
 define([
     'backbone',
-    "common-objects/models/role"
+    'common-objects/models/role'
 ], function (Backbone, Role) {
+	'use strict';
     var RoleInUseList = Backbone.Collection.extend({
         model: Role,
 
         url: function () {
-            return APP_CONFIG.contextPath + "/api/workspaces/" + APP_CONFIG.workspaceId + "/roles/inuse";
+            return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/roles/inuse';
         }
 
     });

@@ -1,12 +1,13 @@
-/*global define*/
+/*global define,App*/
 define([
     'backbone',
-    "common-objects/collections/activity_models"
+    'common-objects/collections/activity_models'
 ], function (Backbone, ActivityModels) {
+	'use strict';
     var WorkflowModel = Backbone.Model.extend({
 
         urlRoot: function () {
-            return APP_CONFIG.contextPath + "/api/workspaces/" + APP_CONFIG.workspaceId + "/workflows";
+            return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/workflows';
         },
 
         defaults: function () {

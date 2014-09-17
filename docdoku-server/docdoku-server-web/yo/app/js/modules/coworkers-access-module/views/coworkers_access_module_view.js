@@ -24,7 +24,7 @@ define(
 
                     _.each(users.models, function (user) {
 
-                        if (user.attributes.login !== APP_CONFIG.login) {
+                        if (user.attributes.login !== App.config.login) {
 
                             var cwiv = new CoWorkersItemView({
                                 model: user.attributes

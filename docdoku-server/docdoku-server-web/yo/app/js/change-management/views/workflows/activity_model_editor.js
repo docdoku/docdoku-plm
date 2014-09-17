@@ -1,23 +1,24 @@
+/*global define,App*/
 define([
     'backbone',
-    "mustache",
-    "text!templates/workflows/activity_model_editor.html",
-    "common-objects/models/activity_model",
-    "common-objects/models/task_model",
-    "views/workflows/task_model_editor"
+    'mustache',
+    'text!templates/workflows/activity_model_editor.html',
+    'common-objects/models/activity_model',
+    'common-objects/models/task_model',
+    'views/workflows/task_model_editor'
 ], function (Backbone, Mustache, template, ActivityModel, TaskModel, TaskModelEditorView) {
+	'use strict';
     var ActivityModelEditorView = Backbone.View.extend({
-
-        tagName: "li",
-        className: "activity-section",
+        tagName: 'li',
+        className: 'activity-section',
 
         events: {
-            "click button.add-task": "addTaskAction",
-            "click button.switch-activity": "switchActivityAction",
-            "click button.delete-activity": "deleteActivityAction",
-            "change input.activity-state": "lifeCycleStateChanged",
-            "change input.tasksToComplete": "tasksToCompleteChanged",
-            "change select.relaunchActivitySelector": "changeRelaunchActivityStep"
+            'click button.add-task': 'addTaskAction',
+            'click button.switch-activity': 'switchActivityAction',
+            'click button.delete-activity': 'deleteActivityAction',
+            'change input.activity-state': 'lifeCycleStateChanged',
+            'change input.tasksToComplete': 'tasksToCompleteChanged',
+            'change select.relaunchActivitySelector': 'changeRelaunchActivityStep'
         },
 
         initialize: function () {
@@ -25,21 +26,21 @@ define([
             this.subviews = [];
 
             var switchModeTitle;
-            switch (this.model.get("type")) {
-                case "SERIAL":
-                    switchModeTitle = APP_CONFIG.i18n.GOTO_PARALLEL_MODE;
+            switch (this.model.get('type')) {
+                case 'SERIAL':
+                    switchModeTitle = App.config.i18n.GOTO_PARALLEL_MODE;
                     break;
-                case "PARALLEL":
-                    switchModeTitle = APP_CONFIG.i18n.GOTO_SERIAL_MODE;
+                case 'PARALLEL':
+                    switchModeTitle = App.config.i18n.GOTO_SERIAL_MODE;
                     break;
             }
 
-            this.template = Mustache.render(template, {cid: this.model.cid, activity: this.model.attributes, switchModeTitle: switchModeTitle, i18n: APP_CONFIG.i18n});
+            this.template = Mustache.render(template, {cid: this.model.cid, activity: this.model.attributes, switchModeTitle: switchModeTitle, i18n: App.config.i18n});
 
             this.model.attributes.taskModels.bind('add', this.addOneTask, this);
             this.model.attributes.taskModels.bind('remove', this.removeOneTask, this);
 
-            this.on("activities-order:changed", this.populateRelaunchActivitySelector);
+            this.on('activities-order:changed', this.populateRelaunchActivitySelector);
 
         },
 
@@ -61,7 +62,7 @@ define([
         removeOneTask: function () {
             this.updateMaxTasksToComplete();
 
-            var cntTasks = this.model.get("taskModels").length;
+            var cntTasks = this.model.get('taskModels').length;
 
             if (this.inputTasksToComplete.val() > cntTasks) {
                 this.inputTasksToComplete.val(cntTasks);
@@ -71,7 +72,7 @@ define([
 
         updateMaxTasksToComplete: function () {
             this.inputTasksToComplete.attr({
-                MAX: this.model.get("taskModels").length
+                MAX: this.model.get('taskModels').length
             });
         },
 
@@ -84,22 +85,22 @@ define([
         },
 
         switchActivityAction: function () {
-            switch (this.model.get("type")) {
-                case "SERIAL":
+            switch (this.model.get('type')) {
+                case 'SERIAL':
                     this.model.set({
-                        type: "PARALLEL"
+                        type: 'PARALLEL'
                     });
-                    this.activityDiv.removeClass("SERIAL");
-                    this.activityDiv.addClass("PARALLEL");
-                    this.buttonSwitchActivity.attr({title: APP_CONFIG.i18n.GOTO_SERIAL_MODE});
+                    this.activityDiv.removeClass('SERIAL');
+                    this.activityDiv.addClass('PARALLEL');
+                    this.buttonSwitchActivity.attr({title: App.config.i18n.GOTO_SERIAL_MODE});
                     break;
-                case "PARALLEL":
+                case 'PARALLEL':
                     this.model.set({
-                        type: "SERIAL"
+                        type: 'SERIAL'
                     });
-                    this.activityDiv.removeClass("PARALLEL");
-                    this.activityDiv.addClass("SERIAL");
-                    this.buttonSwitchActivity.attr({title: APP_CONFIG.i18n.GOTO_PARALLEL_MODE});
+                    this.activityDiv.removeClass('PARALLEL');
+                    this.activityDiv.addClass('SERIAL');
+                    this.buttonSwitchActivity.attr({title: App.config.i18n.GOTO_PARALLEL_MODE});
                     break;
             }
             return false;
@@ -151,7 +152,7 @@ define([
         bindDomElements: function () {
             var self = this;
 
-            this.activityDiv = this.$("div.activity");
+            this.activityDiv = this.$('div.activity');
 
             this.buttonSwitchActivity = this.$('button.switch-activity');
 
@@ -159,14 +160,14 @@ define([
 
             this.inputTasksToComplete = this.$('input.tasksToComplete');
 
-            this.relaunchActivitySelector = this.$(".relaunchActivitySelector");
+            this.relaunchActivitySelector = this.$('.relaunchActivitySelector');
 
-            this.relaunchActivitySelectorWrapper = this.$(".relaunchActivitySelector-wrapper");
+            this.relaunchActivitySelectorWrapper = this.$('.relaunchActivitySelector-wrapper');
 
-            this.tasksUL = this.$("ul.task-list");
+            this.tasksUL = this.$('ul.task-list');
             this.tasksUL.sortable({
-                handle: "i.fa.fa-bars",
-                tolerance: "pointer",
+                handle: 'i.fa.fa-bars',
+                tolerance: 'pointer',
                 start: function (event, ui) {
                     ui.item.oldPosition = ui.item.index();
                 },
@@ -179,7 +180,7 @@ define([
         populateRelaunchActivitySelector: function () {
             var that = this;
             this.relaunchActivitySelector.empty();
-            this.relaunchActivitySelector.append("<option value='-1'></option>");
+            this.relaunchActivitySelector.append('<option value="-1"></option>');
             var stepCount = 0;
 
             var modelIndex = this.model.collection.indexOf(this.model);
@@ -187,7 +188,7 @@ define([
             this.model.collection.each(function (activity) {
                 var activityIndex = activity.collection.indexOf(activity);
                 if (activityIndex < modelIndex) {
-                    that.relaunchActivitySelector.append("<option value='" + activityIndex + "'>" + activity.get("lifeCycleState") + "</option>");
+                    that.relaunchActivitySelector.append('<option value="' + activityIndex + '">' + activity.get('lifeCycleState') + '</option>');
                     stepCount++;
                 }
             });
@@ -198,8 +199,8 @@ define([
                 this.relaunchActivitySelectorWrapper.show();
             }
 
-            if (this.model.get("relaunchStep") != null) {
-                this.relaunchActivitySelector.val(this.model.get("relaunchStep"));
+            if (this.model.get('relaunchStep') !== null) {
+                this.relaunchActivitySelector.val(this.model.get('relaunchStep'));
             }
 
         },
@@ -212,10 +213,10 @@ define([
         },
 
         changeRelaunchActivityStep: function (e) {
-            if (e.target.value == -1) {
-                this.model.set("relaunchStep", null);
+            if (e.target.value === -1) {
+                this.model.set('relaunchStep', null);
             } else {
-                this.model.set("relaunchStep", e.target.value);
+                this.model.set('relaunchStep', e.target.value);
             }
         }
 

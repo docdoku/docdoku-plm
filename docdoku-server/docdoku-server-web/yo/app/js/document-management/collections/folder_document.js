@@ -9,11 +9,11 @@ define([
         model: Document,
 
         url: function () {
-            var baseUrl = APP_CONFIG.contextPath + '/api/workspaces/' + APP_CONFIG.workspaceId;
+            var baseUrl = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId;
             if (this.parent) {
-                return  baseUrl + '/folders' + '/' + this.parent.id + '/documents?configSpec='+APP_CONFIG.configSpec;
+                return  baseUrl + '/folders' + '/' + this.parent.id + '/documents?configSpec='+App.config.configSpec;
             } else {
-                return  baseUrl + '/folders' + '/' + APP_CONFIG.workspaceId + '/documents?configSpec='+APP_CONFIG.configSpec;
+                return  baseUrl + '/folders' + '/' + App.config.workspaceId + '/documents?configSpec='+App.config.configSpec;
             }
         },
 

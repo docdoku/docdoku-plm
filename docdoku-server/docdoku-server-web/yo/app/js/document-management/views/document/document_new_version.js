@@ -21,7 +21,7 @@ define([
 
         render: function () {
 
-            this.template = Mustache.render(template, {i18n: APP_CONFIG.i18n, document: this.model.attributes});
+            this.template = Mustache.render(template, {i18n: App.config.i18n, document: this.model.attributes});
 
             this.$el.html(this.template);
 

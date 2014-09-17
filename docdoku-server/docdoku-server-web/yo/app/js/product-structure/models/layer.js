@@ -9,7 +9,7 @@ define([
     var Layer = Backbone.Model.extend({
 
         defaults: {
-            name: APP_CONFIG.i18n.NEW_LAYER,
+            name: App.config.i18n.NEW_LAYER,
             shown: true,
             editingName: false,
             editingMarkers: false

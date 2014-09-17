@@ -19,7 +19,7 @@ define(
             },
 
             render: function () {
-                this.$el.html(Mustache.render(template, {i18n: APP_CONFIG.i18n}));
+                this.$el.html(Mustache.render(template, {i18n: App.config.i18n}));
                 this.bindDomElements();
                 this.bindTypeahead();
                 return this;
@@ -35,7 +35,7 @@ define(
             bindTypeahead: function () {
                 this.$inputPartNumber.typeahead({
                     source: function (query, process) {
-                        $.getJSON(APP_CONFIG.contextPath + '/api/workspaces/' + APP_CONFIG.workspaceId + '/parts/numbers?q=' + query, function (data) {
+                        $.getJSON(App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/numbers?q=' + query, function (data) {
                             var partNumbers = [];
                             _(data).each(function (d) {
                                 partNumbers.push(d.partNumber);
@@ -50,7 +50,7 @@ define(
 
                 this.model = new ConfigurationItem({
                     id: this.$inputProductId.val(),
-                    workspaceId: APP_CONFIG.workspaceId,
+                    workspaceId: App.config.workspaceId,
                     description: this.$inputDescription.val(),
                     designItemNumber: this.$inputPartNumber.val()
                 });
@@ -72,7 +72,7 @@ define(
             },
 
             onError: function (model, error) {
-                alert(APP_CONFIG.i18n.CREATION_ERROR + " : " + error.responseText);
+                alert(App.config.i18n.CREATION_ERROR + " : " + error.responseText);
             },
 
             openModal: function () {

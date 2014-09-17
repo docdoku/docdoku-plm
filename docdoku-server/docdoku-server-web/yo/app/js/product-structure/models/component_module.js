@@ -1,4 +1,4 @@
-/*global define,APP_CONFIG*/
+/*global define,App.config*/
 'use strict';
 define(['backbone', 'common-objects/utils/date'],
     function (Backbone, date) {
@@ -51,7 +51,7 @@ define(['backbone', 'common-objects/utils/date'],
             getFormattedCheckoutDate: function () {
                 if (this.isCheckout()) {
                     return date.formatTimestamp(
-                        APP_CONFIG.i18n._DATE_FORMAT,
+                        App.config.i18n._DATE_FORMAT,
                         this.getCheckoutDate()
                     );
                 } else {
@@ -60,7 +60,7 @@ define(['backbone', 'common-objects/utils/date'],
             },
 
             isCheckoutByConnectedUser: function () {
-                return this.isCheckout() ? this.getCheckoutUser().login === APP_CONFIG.login : false;
+                return this.isCheckout() ? this.getCheckoutUser().login === App.config.login : false;
             },
 
             isAssembly: function () {
@@ -125,21 +125,21 @@ define(['backbone', 'common-objects/utils/date'],
             },
 
             getInstancesUrl: function () {
-                return APP_CONFIG.contextPath + '/api/workspaces/' + APP_CONFIG.workspaceId + '/products/' + APP_CONFIG.productId + '/instances?configSpec=' + APP_CONFIG.configSpec + '&path=' + this.getPath();
+                return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + App.config.productId + '/instances?configSpec=' + App.config.configSpec + '&path=' + this.getPath();
             },
 
             getUrlForBom: function () {
 
                 if (this.isAssembly()) {
-                    return APP_CONFIG.contextPath + '/api/workspaces/' + APP_CONFIG.workspaceId + '/products/' + APP_CONFIG.productId + '/bom?configSpec=' + APP_CONFIG.configSpec + '&partUsageLink=' + this.getPartUsageLinkId();
+                    return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + App.config.productId + '/bom?configSpec=' + App.config.configSpec + '&partUsageLink=' + this.getPartUsageLinkId();
                 } else {
-                    return APP_CONFIG.contextPath + '/api/workspaces/' + APP_CONFIG.workspaceId + '/parts/' + this.getNumber() + '-' + this.getVersion();
+                    return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/' + this.getNumber() + '-' + this.getVersion();
                 }
 
             },
 
             getRootUrlForBom: function () {
-                return APP_CONFIG.contextPath + '/api/workspaces/' + APP_CONFIG.workspaceId + '/parts/' + this.getNumber() + '-' + this.getVersion();
+                return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/' + this.getNumber() + '-' + this.getVersion();
             }
 
         });
@@ -158,14 +158,14 @@ define(['backbone', 'common-objects/utils/date'],
 
             url: function () {
                 if (this.isRoot) {
-                    return this.urlBase() + '?configSpec=' + APP_CONFIG.configSpec + '&depth=0';
+                    return this.urlBase() + '?configSpec=' + App.config.configSpec + '&depth=0';
                 } else {
-                    return this.urlBase() + '?configSpec=' + APP_CONFIG.configSpec + '&partUsageLink=' + this.parentUsageLinkId + '&depth=1';
+                    return this.urlBase() + '?configSpec=' + App.config.configSpec + '&partUsageLink=' + this.parentUsageLinkId + '&depth=1';
                 }
             },
 
             urlBase: function () {
-                return APP_CONFIG.contextPath + '/api/workspaces/' + APP_CONFIG.workspaceId + '/products/' + APP_CONFIG.productId;
+                return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + App.config.productId;
             },
 
             parse: function (response) {

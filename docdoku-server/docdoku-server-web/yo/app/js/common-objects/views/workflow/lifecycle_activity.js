@@ -34,14 +34,14 @@ define([
 
             switch (this.activity.type) {
                 case "SERIAL":
-                    this.activityType = APP_CONFIG.i18n.SERIAL_ACTIVITY;
+                    this.activityType = App.config.i18n.SERIAL_ACTIVITY;
                     break;
                 case "PARALLEL":
-                    this.activityType = APP_CONFIG.i18n.PARALLEL_ACTIVITY + " " + this.activity.tasksToComplete;
+                    this.activityType = App.config.i18n.PARALLEL_ACTIVITY + " " + this.activity.tasksToComplete;
                     break;
             }
 
-            this.$el.html(Mustache.render(template, {i18n: APP_CONFIG.i18n, activity: this.activity, activityType: this.activityType}));
+            this.$el.html(Mustache.render(template, {i18n: App.config.i18n, activity: this.activity, activityType: this.activityType}));
 
             var completeClass = "incomplete";// = this.activity.complete ? "complete" : "incomplete";
 

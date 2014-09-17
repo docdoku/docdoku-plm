@@ -6,7 +6,7 @@ define([
 ], function (Backbone, Template, singletonDecorator) {
     var TemplateList = Backbone.Collection.extend({
         url: function () {
-            return APP_CONFIG.contextPath + "/api/workspaces/" + APP_CONFIG.workspaceId + "/document-templates";
+            return App.config.contextPath + "/api/workspaces/" + App.config.workspaceId + "/document-templates";
         },
         model: Template
     });

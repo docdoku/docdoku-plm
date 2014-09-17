@@ -1,6 +1,6 @@
-/*global define,APP_CONFIG*/
-'use strict';
+/*global _,$,define,App*/
 define(['backbone'], function (Backbone) {
+	'use strict';
     var ProductInstanceIteration = Backbone.Model.extend({
         idAttribute: 'iteration',
 
@@ -24,7 +24,7 @@ define(['backbone'], function (Backbone) {
 
         urlRoot: function () {
             if (this.getConfigurationItemId) {
-                return APP_CONFIG.contextPath + '/api/workspaces/' + APP_CONFIG.workspaceId + '/products/' + this.getConfigurationItemId() +
+                return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + this.getConfigurationItemId() +
                     '/product-instances/' + this.getSerialNumber() + '/iterations/';
             } else {
                 return this.prototype.urlRoot();

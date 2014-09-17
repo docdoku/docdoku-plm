@@ -24,7 +24,7 @@ define([
             var data = this.model.toJSON();
             if (!_.isEmpty(data.value)) {
                 data.value = date.formatTimestamp(
-                    APP_CONFIG.i18n._DATE_PICKER_DATE_FORMAT,
+                    App.config.i18n._DATE_PICKER_DATE_FORMAT,
                     parseInt(data.value, 10)
                 );
             }

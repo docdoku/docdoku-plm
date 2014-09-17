@@ -46,10 +46,10 @@ define([
             this.$('button.filter[value=' + filter + ']').addClass('active');
         },
         allClicked: function () {
-            window.location.hash = '#' + APP_CONFIG.workspaceId + '/tasks';
+            window.location.hash = '#' + App.config.workspaceId + '/tasks';
         },
         inProgressClicked: function () {
-            window.location.hash = '#' + APP_CONFIG.workspaceId + '/tasks/in_progress';
+            window.location.hash = '#' + App.config.workspaceId + '/tasks/in_progress';
         }
 
     });

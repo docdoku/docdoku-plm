@@ -1,4 +1,4 @@
-/*global define,App,APP_CONFIG,worker*/
+/*global define,App,App.config,worker*/
 'use strict';
 define(['dmu/LoaderManager', 'async'],
     function (LoaderManager, async) {
@@ -71,7 +71,7 @@ define(['dmu/LoaderManager', 'async'],
                 }
             };
 
-            var worker = new Worker(APP_CONFIG.contextPath + '/js/product-structure/workers/InstancesWorker.js');
+            var worker = new Worker(App.config.contextPath + '/js/product-structure/workers/InstancesWorker.js');
 
             worker.addEventListener('message', function (message) {
                 if (typeof  workerMessages[message.data.fn] === 'function') {
@@ -176,7 +176,7 @@ define(['dmu/LoaderManager', 'async'],
             function findQualities(files) {
                 var q = [];
                 _(files).each(function (f) {
-                    q[f.quality] = APP_CONFIG.contextPath + '/files/' + f.fullName;
+                    q[f.quality] = App.config.contextPath + '/files/' + f.fullName;
                 });
                 return q;
             }
@@ -215,7 +215,7 @@ define(['dmu/LoaderManager', 'async'],
 
             function loadPath(paths, callback) {
                 $.ajax({
-                    url: APP_CONFIG.contextPath + '/api/workspaces/' + APP_CONFIG.workspaceId + '/products/' + APP_CONFIG.productId + '/instances?configSpec=' + APP_CONFIG.configSpec,
+                    url: App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + App.config.productId + '/instances?configSpec=' + App.config.configSpec,
                     type: 'POST',
                     contentType: 'application/json',
                     dataType: 'json',
@@ -260,7 +260,7 @@ define(['dmu/LoaderManager', 'async'],
 
             function unLoadPath(paths, callback) {
                 $.ajax({
-                    url: APP_CONFIG.contextPath + '/api/workspaces/' + APP_CONFIG.workspaceId + '/products/' + APP_CONFIG.productId + '/instances?configSpec=' + APP_CONFIG.configSpec,
+                    url: App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + App.config.productId + '/instances?configSpec=' + App.config.configSpec,
                     type: 'POST',
                     contentType: 'application/json',
                     data: JSON.stringify({

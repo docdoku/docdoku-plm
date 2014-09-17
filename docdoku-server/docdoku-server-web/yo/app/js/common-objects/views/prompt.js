@@ -1,17 +1,17 @@
-/*global define*/
+/*global _,define*/
 define([
     'backbone',
-    "mustache",
-    "text!common-objects/templates/prompt.html"
+    'mustache',
+    'text!common-objects/templates/prompt.html'
 ], function (Backbone, Mustache, template) {
-
+	'use strict';
     var PromptView = Backbone.View.extend({
 
         events: {
-            "click #cancelPrompt": "cancelAction",
-            "click #submitPrompt": "primaryAction",
-            "hidden #prompt_modal": "onHidden",
-            "shown #prompt_modal": "onShown"
+            'click #cancelPrompt': 'cancelAction',
+            'click #submitPrompt': 'primaryAction',
+            'hidden #prompt_modal': 'onHidden',
+            'shown #prompt_modal': 'onShown'
         },
 
         initialize: function () {
@@ -35,12 +35,12 @@ define([
         },
 
         primaryAction: function () {
-            this.trigger("prompt-ok", [this.$promptInput.val()]);
+            this.trigger('prompt-ok', [this.$promptInput.val()]);
             this.closeModal();
         },
 
         cancelAction: function () {
-            this.trigger("prompt-cancel");
+            this.trigger('prompt-cancel');
             this.closeModal();
         },
 

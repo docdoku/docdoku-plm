@@ -61,7 +61,7 @@ define(
 
                 var data = {
                     part: this.model,
-                    i18n: APP_CONFIG.i18n,
+                    i18n: App.config.i18n,
                     permalink: this.model.getPermalink()
                 };
 
@@ -77,7 +77,7 @@ define(
                     data.iteration.hasPreviousIteration = hasPreviousIteration;
                     data.reference = this.iteration.getReference();
                     data.iteration.creationDate = date.formatTimestamp(
-                        APP_CONFIG.i18n._DATE_FORMAT,
+                        App.config.i18n._DATE_FORMAT,
                         data.iteration.creationDate
                     );
                 }

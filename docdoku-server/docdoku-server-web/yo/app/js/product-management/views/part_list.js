@@ -32,7 +32,7 @@ define([
             if (this.oTable) {
                 this.oTable.fnDestroy();
             }
-            this.$el.html(Mustache.render(template, {i18n: APP_CONFIG.i18n}));
+            this.$el.html(Mustache.render(template, {i18n: App.config.i18n}));
             this.bindDomElements();
             var that = this;
             this.listItemViews = [];
@@ -140,7 +140,7 @@ define([
             this.trigger("delete-button:display", true);
             var partSelected = this.getSelectedPart();
             this.trigger("checkout-group:display", !partSelected.isReleased());
-            this.trigger("acl-edit-button:display", partSelected ? (APP_CONFIG.workspaceAdmin || partSelected.getAuthorLogin() == APP_CONFIG.login) : false);
+            this.trigger("acl-edit-button:display", partSelected ? (App.config.workspaceAdmin || partSelected.getAuthorLogin() == App.config.login) : false);
             this.trigger("new-version-button:display", !partSelected.isCheckout());
             this.trigger("release-button:display", (!partSelected.isCheckout() && !partSelected.isReleased()));
         },
@@ -155,7 +155,7 @@ define([
 
         deleteSelectedParts: function () {
             var that = this;
-            if (confirm(APP_CONFIG.i18n.DELETE_SELECTION_QUESTION)) {
+            if (confirm(App.config.i18n.DELETE_SELECTION_QUESTION)) {
                 _(this.listItemViews).each(function (view) {
                     if (view.isChecked()) {
                         view.model.destroy({
@@ -173,7 +173,7 @@ define([
         },
 
         releaseSelectedParts: function () {
-            if (confirm(APP_CONFIG.i18n.RELEASE_SELECTION_QUESTION)) {
+            if (confirm(App.config.i18n.RELEASE_SELECTION_QUESTION)) {
                 _(this.listItemViews).each(function (view) {
                     if (view.isChecked()) {
                         view.model.release();
@@ -223,16 +223,16 @@ define([
                 iDisplayLength: -1,
                 oLanguage: {
                     sSearch: "<i class='fa fa-search'></i>",
-                    sEmptyTable: APP_CONFIG.i18n.NO_DATA,
-                    sZeroRecords: APP_CONFIG.i18n.NO_FILTERED_DATA
+                    sEmptyTable: App.config.i18n.NO_DATA,
+                    sZeroRecords: App.config.i18n.NO_FILTERED_DATA
                 },
                 sDom: 'ft',
                 aoColumnDefs: [
                     { "bSortable": false, "aTargets": [ 0, 11, 12 ] },
-                    { "sType": APP_CONFIG.i18n.DATE_SORT, "aTargets": [7, 8] }
+                    { "sType": App.config.i18n.DATE_SORT, "aTargets": [7, 8] }
                 ]
             });
-            this.$el.parent().find(".dataTables_filter input").attr("placeholder", APP_CONFIG.i18n.FILTER);
+            this.$el.parent().find(".dataTables_filter input").attr("placeholder", App.config.i18n.FILTER);
         }
 
     });

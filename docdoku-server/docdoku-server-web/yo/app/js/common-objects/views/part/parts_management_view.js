@@ -25,7 +25,7 @@ define(
 
                 this.$('#existingParts').typeahead({
                     source: function (query, process) {
-                        $.getJSON(APP_CONFIG.contextPath + '/api/workspaces/' + APP_CONFIG.workspaceId + '/parts/numbers?q=' + query, function (data) {
+                        $.getJSON(App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/numbers?q=' + query, function (data) {
                             var partNumbers = [];
                             _(data).each(function (d) {
                                 if ((!that.model.getNumber()) || (that.model.getNumber() !== d.partNumber)) {
@@ -52,7 +52,7 @@ define(
             render: function () {
 
                 var that = this;
-                this.$el.html(Mustache.render(template, {i18n: APP_CONFIG.i18n, editMode: this.options.editMode}));
+                this.$el.html(Mustache.render(template, {i18n: App.config.i18n, editMode: this.options.editMode}));
 
                 this.componentViews = [];
 

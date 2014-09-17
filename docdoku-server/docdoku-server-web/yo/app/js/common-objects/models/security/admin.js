@@ -1,14 +1,13 @@
-/*global define*/
+/*global define,App*/
 define(['backbone'], function (Backbone) {
-
+	'use strict';
     var Admin = Backbone.Model.extend({
-
         url: function () {
-            return APP_CONFIG.contextPath + "/api/workspaces/" + APP_CONFIG.workspaceId + "/users/admin";
+            return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/users/admin';
         },
 
         getLogin: function () {
-            return this.get("login");
+            return this.get('login');
         }
 
     });

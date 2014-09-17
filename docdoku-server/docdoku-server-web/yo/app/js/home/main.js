@@ -13,6 +13,7 @@ var App = {
 };
 
 window.onload = function() {
+	'use strict';
 
     function hasWebGL() {
         try {
@@ -30,9 +31,9 @@ window.onload = function() {
         'Find out how to get it <a href="http://get.webgl.org/">here</a>.'
     ].join( '\n' );
 
-    var info_panel = document.getElementById("demo-scene");
+    var infoPanel = document.getElementById('demo-scene');
     if ( ! hasWebGL() ){
-        info_panel.innerHTML = errorMessage;
+        infoPanel.innerHTML = errorMessage;
     }
     // standard global variables
     var container, scene, camera, renderer, controls;
@@ -69,11 +70,11 @@ window.onload = function() {
         renderer = new THREE.WebGLRenderer( {antialias:true, alpha:true} );
         renderer.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
         container = document.createElement( 'div' );
-        info_panel.appendChild( container );
+        infoPanel.appendChild( container );
         container.appendChild( renderer.domElement );
 
         // CONTROLS
-        controls = new THREE.TrackballControls( camera, info_panel );
+        controls = new THREE.TrackballControls( camera, infoPanel );
 
 
         // LIGHT
@@ -101,7 +102,7 @@ window.onload = function() {
         }
 
         var binaryLoader = new THREE.BinaryLoader();
-        binaryLoader.load( window.contextPath + "/images/pba.js", addModelToScene);
+        binaryLoader.load( window.contextPath + '/images/pba.js', addModelToScene);
 
         var ambientLight = new THREE.AmbientLight(0x111111);
         scene.add(ambientLight);

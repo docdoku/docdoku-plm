@@ -90,18 +90,18 @@ define([
                 isCheckout: this.model.isCheckout(),
                 editMode: editMode,
                 master: this.model.toJSON(),
-                i18n: APP_CONFIG.i18n,
+                i18n: App.config.i18n,
                 permalink: this.model.getPermalink()
             };
 
             data.master.creationDate = date.formatTimestamp(
-                APP_CONFIG.i18n._DATE_FORMAT,
+                App.config.i18n._DATE_FORMAT,
                 data.master.creationDate
             );
 
 
             var fullPath = data.master.path;
-            var re = new RegExp(APP_CONFIG.workspaceId, '');
+            var re = new RegExp(App.config.workspaceId, '');
             fullPath = fullPath.replace(re, '');
             this.folderPath = fullPath.replace(/\//g, ':');
             if (this.folderPath[0] === ':') {
@@ -117,19 +117,19 @@ define([
                 data.iteration.hasPreviousIteration = hasPreviousIteration;
                 data.reference = this.iteration.getId();
                 data.iteration.creationDate = date.formatTimestamp(
-                    APP_CONFIG.i18n._DATE_FORMAT,
+                    App.config.i18n._DATE_FORMAT,
                     data.iteration.creationDate
                 );
             }
 
             if (this.model.isCheckout()) {
                 data.master.checkOutDate = date.formatTimestamp(
-                    APP_CONFIG.i18n._DATE_FORMAT,
+                    App.config.i18n._DATE_FORMAT,
                     data.master.checkOutDate
                 );
             }
 
-            if(APP_CONFIG.configSpec!=='latest'){
+            if(App.config.configSpec!=='latest'){
                 data.isForBaseline=true;
             }
 
@@ -318,7 +318,7 @@ define([
 
         onFolderPathClicked: function () {
             var redirectPath = this.folderPath ? 'folders/' + encodeURIComponent(this.folderPath) : 'folders';
-            App.router.navigate(APP_CONFIG.workspaceId + '/' + redirectPath, {trigger: true});
+            App.router.navigate(App.config.workspaceId + '/' + redirectPath, {trigger: true});
             ModalView.prototype.cancelAction.call(this);
         }
 

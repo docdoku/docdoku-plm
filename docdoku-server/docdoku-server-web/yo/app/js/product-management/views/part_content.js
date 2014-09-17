@@ -59,7 +59,7 @@ define([
         },
 
         render: function () {
-            this.$el.html(Mustache.render(template, {i18n: APP_CONFIG.i18n}, this.partials));
+            this.$el.html(Mustache.render(template, {i18n: App.config.i18n}, this.partials));
 
             this.bindDomElements();
 
@@ -179,7 +179,7 @@ define([
 
             if (!selectedPart.getLastIteration().get("iterationNote")) {
                 var promptView = new PromptView();
-                promptView.setPromptOptions(APP_CONFIG.i18n.ITERATION_NOTE, APP_CONFIG.i18n.ITERATION_NOTE_PROMPT_LABEL, APP_CONFIG.i18n.ITERATION_NOTE_PROMPT_OK, APP_CONFIG.i18n.ITERATION_NOTE_PROMPT_CANCEL);
+                promptView.setPromptOptions(App.config.i18n.ITERATION_NOTE, App.config.i18n.ITERATION_NOTE_PROMPT_LABEL, App.config.i18n.ITERATION_NOTE_PROMPT_OK, App.config.i18n.ITERATION_NOTE_PROMPT_CANCEL);
                 window.document.body.appendChild(promptView.render().el);
                 promptView.openModal();
 
@@ -206,7 +206,7 @@ define([
             this.partListView.getSelectedPart().checkout();
         },
         undocheckout: function () {
-            if (confirm(APP_CONFIG.i18n.UNDO_CHECKOUT_QUESTION)) {
+            if (confirm(App.config.i18n.UNDO_CHECKOUT_QUESTION)) {
                 this.partListView.getSelectedPart().undocheckout();
             }
         },
@@ -272,7 +272,7 @@ define([
         },
 
         goToPage: function () {
-            var requestedPage = prompt(APP_CONFIG.i18n.GO_TO_PAGE, "1");
+            var requestedPage = prompt(App.config.i18n.GO_TO_PAGE, "1");
             if (requestedPage - 1 >= 0 && requestedPage <= this.partListView.collection.getPageCount()) {
                 this.partListView.collection.setCurrentPage(requestedPage - 1).fetch({reset: true});
                 this.updatePageIndicator();

@@ -1,21 +1,15 @@
 /*global require*/
-'use strict';
-
-var APP_CONFIG = {
-    workspaceId: /^#([^/]+)/.exec(window.location.hash)[1] || null,
-    productId: window.location.hash.split('/')[1] || null,
-    login: '',
-    groups: [],
-    contextPath: '',
-    locale: localStorage.getItem('locale') || 'en'
-};
-
 var App = {
     debug: false,
-    instancesManager: null,
-    sceneManager: null,
-    logLevel: {ALL: -1, DEBUG: 0, INFO: 1, WARN: 2, ERROR: 3, FATAL: 4, OFF: 5},
-    logType: {ALL: -1, DEFAULT: 0, WORKER: 1, WEBSOCKET: 2},
+
+	config:{
+		workspaceId: /^#([^/]+)/.exec(window.location.hash)[1] || null,
+		productId: window.location.hash.split('/')[1] || null,
+		login: '',
+		groups: [],
+		contextPath: '',
+		locale: localStorage.getItem('locale') || 'en'
+	},
 
     WorkerManagedValues: {
         maxInstances: 500,
@@ -58,7 +52,7 @@ require.config({
         binaryloader: {deps: ['threecore'], exports: 'THREE'},
         colladaloader: {deps: ['threecore'], exports: 'THREE'},
         stlloader: {deps: ['threecore'], exports: 'THREE'},
-        buffergeometryutils: {deps: ['threecore'], exports: 'THREE'},
+        buffergeometryutils: {deps: ['threecore'], exports: 'THREE'}
     },
     paths: {
         jquery: '../../bower_components/jquery/jquery',
@@ -100,8 +94,9 @@ require.config({
     config: {
         i18n: {
             locale: (function(){
+	            'use strict';
                 try{
-                    return APP_CONFIG.locale;
+                    return App.config.locale;
                 }catch(ex){
                     return 'en';
                 }
@@ -111,15 +106,16 @@ require.config({
 });
 
 require(['common-objects/contextResolver','i18n!localization/nls/common','i18n!localization/nls/product-structure'],
-    function (ContextResolver,  commonStrings, productStructureStrings) {
-        APP_CONFIG.i18n = _.extend(commonStrings,productStructureStrings);
-        ContextResolver.resolve(function(){
-            require(['backbone','frameRouter', 'dmu/SceneManager','dmu/InstancesManager'],function(Backbone,  Router,SceneManager,InstancesManager){
-                App.instancesManager = new InstancesManager();
-                App.sceneManager = new SceneManager();
-                App.sceneManager.init();
-                App.router = Router.getInstance();
-                Backbone.history.start();
-            });
+function (ContextResolver,  commonStrings, productStructureStrings) {
+    'use strict';
+    App.config.i18n = _.extend(commonStrings,productStructureStrings);
+    ContextResolver.resolve(function(){
+        require(['backbone','frameRouter', 'dmu/SceneManager','dmu/InstancesManager'],function(Backbone,  Router,SceneManager,InstancesManager){
+            App.instancesManager = new InstancesManager();
+            App.sceneManager = new SceneManager();
+            App.sceneManager.init();
+            App.router = Router.getInstance();
+            Backbone.history.start();
         });
     });
+});

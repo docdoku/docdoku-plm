@@ -77,7 +77,7 @@ define(['backbone',
                 } else {
                     this.collection.push(message);
 
-                    if (message.sender !== APP_CONFIG.login) {
+                    if (message.sender !== App.config.login) {
                         Backbone.Events.trigger('NotificationSound');
                     }
 
@@ -104,7 +104,7 @@ define(['backbone',
                         remoteUser: this.remoteUser,
                         context: this.context
                     },
-                    i18n: APP_CONFIG.i18n
+                    i18n: App.config.i18n
                 }));
 
                 this._rendered = true;
@@ -131,7 +131,7 @@ define(['backbone',
             onSubmitForm: function (event) {
 
                 if (!App.mainChannel.isReady()) {
-                    this.$('ul.chat_session_messages').append('<li class="chat_message_error">' + APP_CONFIG.i18n.ERROR + ' : ' + APP_CONFIG.i18n.CHANNEL_NOT_READY_ERROR + '</li>');
+                    this.$('ul.chat_session_messages').append('<li class="chat_message_error">' + App.config.i18n.ERROR + ' : ' + App.config.i18n.CHANNEL_NOT_READY_ERROR + '</li>');
                     event.stopPropagation();
                     event.preventDefault();
                     return false;
@@ -149,7 +149,7 @@ define(['backbone',
                     remoteUser: this.remoteUser,
                     message: textInput.value,
                     context: this.context,
-                    sender: APP_CONFIG.login
+                    sender: App.config.login
                 };
 
                 // send it to remote
@@ -172,7 +172,7 @@ define(['backbone',
 
             onError: function (message) {
                 if (this._rendered) {
-                    this.$('ul.chat_session_messages').append('<li class="chat_message_error">' + APP_CONFIG.i18n.ERROR + ' : ' + APP_CONFIG.i18n[message.error] + '</li>');
+                    this.$('ul.chat_session_messages').append('<li class="chat_message_error">' + App.config.i18n.ERROR + ' : ' + App.config.i18n[message.error] + '</li>');
                     this.$el.show();
                 }
             },

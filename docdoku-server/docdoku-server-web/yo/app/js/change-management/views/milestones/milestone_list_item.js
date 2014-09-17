@@ -1,17 +1,19 @@
+/*global define,App*/
 define([
     'backbone',
-    "mustache",
-    "text!templates/milestones/milestone_list_item.html",
-    "views/milestones/milestone_edition"
+    'mustache',
+    'text!templates/milestones/milestone_list_item.html',
+    'views/milestones/milestone_edition'
 ], function (Backbone, Mustache, template, MilestoneEditionView) {
-    var MilestoneListItemView = Backbone.View.extend({
+	'use strict';
+	var MilestoneListItemView = Backbone.View.extend({
 
         events: {
-            "click input[type=checkbox]": "selectionChanged",
-            "click td.milestone_title": "openEditionView"
+            'click input[type=checkbox]': 'selectionChanged',
+            'click td.milestone_title': 'openEditionView'
         },
 
-        tagName: "tr",
+        tagName: 'tr',
 
         initialize: function () {
             this._isChecked = false;
@@ -19,15 +21,15 @@ define([
         },
 
         render: function () {
-            this.$el.html(Mustache.render(template, {model: this.model, i18n: APP_CONFIG.i18n}));
-            this.$checkbox = this.$("input[type=checkbox]");
-            this.trigger("rendered", this);
+            this.$el.html(Mustache.render(template, {model: this.model, i18n: App.config.i18n}));
+            this.$checkbox = this.$('input[type=checkbox]');
+            this.trigger('rendered', this);
             return this;
         },
 
         selectionChanged: function () {
-            this._isChecked = this.$checkbox.prop("checked");
-            this.trigger("selectionChanged", this);
+            this._isChecked = this.$checkbox.prop('checked');
+            this.trigger('selectionChanged', this);
         },
 
         isChecked: function () {
@@ -35,15 +37,15 @@ define([
         },
 
         check: function () {
-            this.$checkbox.prop("checked", true);
+            this.$checkbox.prop('checked', true);
             this._isChecked = true;
-            this.trigger("selectionChanged", this);
+            this.trigger('selectionChanged', this);
         },
 
         unCheck: function () {
-            this.$checkbox.prop("checked", false);
+            this.$checkbox.prop('checked', false);
             this._isChecked = false;
-            this.trigger("selectionChanged", this);
+            this.trigger('selectionChanged', this);
         },
 
         openEditionView: function () {

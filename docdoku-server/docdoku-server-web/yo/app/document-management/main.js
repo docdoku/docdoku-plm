@@ -1,16 +1,14 @@
-/*global require*/
-'use strict';
-
+/*global _,require*/
 var App = {
-    debug:true
-};
+    debug:false,
 
-var APP_CONFIG = {
-    workspaceId: /^#([^/]+)/.exec(window.location.hash)[1] || null,
-    login: '',
-    groups: [],
-    contextPath: '',
-    locale: localStorage.getItem('locale') || 'en'
+	config:{
+		workspaceId: /^#([^/]+)/.exec(window.location.hash)[1] || null,
+		login: '',
+		groups: [],
+		contextPath: '',
+		locale: window.localStorage.getItem('locale') || 'en'
+	}
 };
 
 if(!App.debug){
@@ -72,8 +70,9 @@ require.config({
     config: {
         i18n: {
             locale: (function(){
+	            'use strict';
                 try{
-                    return APP_CONFIG.locale;
+                    return App.config.locale;
                 }catch(ex){
                     return 'en';
                 }
@@ -83,15 +82,16 @@ require.config({
 });
 
 require(['common-objects/contextResolver','i18n!localization/nls/common','i18n!localization/nls/document-management'],
-    function (ContextResolver,  commonStrings, documentManagementStrings) {
-        APP_CONFIG.i18n = _.extend(commonStrings,documentManagementStrings);
-        ContextResolver.resolve(function(){
-            require(['backbone','app','router','common-objects/views/header','modules/all'],function(Backbone, AppView, Router,HeaderView,Modules){
-                App.appView = new AppView().render();
-                App.headerView = new HeaderView().render();
-                App.router = Router.getInstance();
-                App.coworkersView = new Modules.CoWorkersAccessModuleView().render();
-                Backbone.history.start();
-            });
+function (ContextResolver,  commonStrings, documentManagementStrings) {
+    'use strict';
+    App.config.i18n = _.extend(commonStrings,documentManagementStrings);
+    ContextResolver.resolve(function(){
+        require(['backbone','app','router','common-objects/views/header','modules/all'],function(Backbone, AppView, Router,HeaderView,Modules){
+            App.appView = new AppView().render();
+            App.headerView = new HeaderView().render();
+            App.router = Router.getInstance();
+            App.coworkersView = new Modules.CoWorkersAccessModuleView().render();
+            Backbone.history.start();
         });
+    });
 });

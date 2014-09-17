@@ -99,7 +99,7 @@ define([
 			}
 
 
-			if ((APP_CONFIG.workspaceAdmin || document.attributes.author.login === APP_CONFIG.login)) {
+			if ((App.config.workspaceAdmin || document.attributes.author.login === App.config.login)) {
 				this.aclButton.show();
 			}
 
@@ -126,7 +126,7 @@ define([
 		},
 
 		actionUndocheckout: function () {
-			if (confirm(APP_CONFIG.i18n.UNDO_CHECKOUT_QUESTION)) {
+			if (confirm(App.config.i18n.UNDO_CHECKOUT_QUESTION)) {
 				this.listView.eachChecked(function (view) {
 					view.model.undocheckout();
 				});
@@ -139,7 +139,7 @@ define([
 			this.listView.eachChecked(function (view) {
 				if (!view.model.getLastIteration().get('revisionNote')) {
 					var promptView = new PromptView();
-					promptView.setPromptOptions(APP_CONFIG.i18n.REVISION_NOTE, APP_CONFIG.i18n.REVISION_NOTE_PROMPT_LABEL, APP_CONFIG.i18n.REVISION_NOTE_PROMPT_OK, APP_CONFIG.i18n.REVISION_NOTE_PROMPT_CANCEL);
+					promptView.setPromptOptions(App.config.i18n.REVISION_NOTE, App.config.i18n.REVISION_NOTE_PROMPT_LABEL, App.config.i18n.REVISION_NOTE_PROMPT_OK, App.config.i18n.REVISION_NOTE_PROMPT_CANCEL);
 					window.document.body.appendChild(promptView.render().el);
 					promptView.openModal();
 
@@ -170,7 +170,7 @@ define([
 
 		actionDelete: function () {
 			var that = this;
-			if (confirm(APP_CONFIG.i18n.DELETE_SELECTION_QUESTION)) {
+			if (confirm(App.config.i18n.DELETE_SELECTION_QUESTION)) {
 				this.listView.eachChecked(function (view) {
 					view.model.destroy({
 						dataType: 'text', // server doesn't send a json hash in the response body
@@ -231,7 +231,7 @@ define([
 		onQuickSearch: function (e) {
 
 			if (e.target.children[0].value) {
-				App.router.navigate(APP_CONFIG.workspaceId + '/search/id=' + e.target.children[0].value, {trigger: true});
+				App.router.navigate(App.config.workspaceId + '/search/id=' + e.target.children[0].value, {trigger: true});
 			}
 
 			return false;

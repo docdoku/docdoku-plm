@@ -19,11 +19,11 @@ define([
 
             render: function () {
                 if (this.options.isPLC) {
-                    this.$el.html(Mustache.render(template, {i18n: APP_CONFIG.i18n, isPLC: true}));
+                    this.$el.html(Mustache.render(template, {i18n: App.config.i18n, isPLC: true}));
                 } else if (this.options.isTBC) {
-                    this.$el.html(Mustache.render(template, {i18n: APP_CONFIG.i18n, isTBC: true}));
+                    this.$el.html(Mustache.render(template, {i18n: App.config.i18n, isTBC: true}));
                 } else if (this.options.isORB) {
-                    this.$el.html(Mustache.render(template, {i18n: APP_CONFIG.i18n, isORC: true}));
+                    this.$el.html(Mustache.render(template, {i18n: App.config.i18n, isORC: true}));
                 }
 
                 this.$modal = this.$("#controlsInfosModal");

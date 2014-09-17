@@ -30,7 +30,7 @@ define([
         },
 
         render: function () {
-            this.$el.html(Mustache.render(template, {i18n: APP_CONFIG.i18n}));
+            this.$el.html(Mustache.render(template, {i18n: App.config.i18n}));
             this.bindDomElements();
             this.initSigningPopover();
             this.initCanvas();
@@ -47,7 +47,7 @@ define([
             this.$signingLink.popover({
                 html: true,
                 placement: "top",
-                title: APP_CONFIG.i18n.SIGN_TASK,
+                title: App.config.i18n.SIGN_TASK,
                 trigger: "manual",
                 content: function () {
                     return self.$signingPopover.html();

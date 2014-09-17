@@ -1,11 +1,10 @@
-/*global define*/
-'use strict';
+/*global _,define*/
 define([
     'backbone',
-    "common-objects/models/part_iteration"
+    'common-objects/models/part_iteration'
 ], function (Backbone, PartIteration) {
+	'use strict';
     var PartIterationList = Backbone.Collection.extend({
-
         model: PartIteration,
 
         setPart: function (part) {
@@ -13,7 +12,7 @@ define([
         },
 
         url: function () {
-            return this.part.url() + "/iterations";
+            return this.part.url() + '/iterations';
         },
 
         next: function (iteration) {

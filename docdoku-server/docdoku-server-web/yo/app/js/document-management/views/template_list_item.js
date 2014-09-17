@@ -24,7 +24,7 @@ define([
             // Format dates
             if (!_.isUndefined(data.creationDate)) {
                 data.creationDate = date.formatTimestamp(
-                    APP_CONFIG.i18n._DATE_FORMAT,
+                    App.config.i18n._DATE_FORMAT,
                     data.creationDate);
             }
             return data;

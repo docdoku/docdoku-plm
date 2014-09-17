@@ -24,13 +24,13 @@ define([ "backbone", "mustache", 'text!templates/part_meta_data.html'], function
         },
 
         render: function () {
-            var permalink = this.model.getPermalink ? this.model.getPermalink() : ('/parts/' + APP_CONFIG.workspaceId + '/' + this.model.getNumber() + '/' + this.model.getVersion());
-            this.$el.html(Mustache.render(template, {model: this.model, i18n: APP_CONFIG.i18n, permalink: permalink}));
+            var permalink = this.model.getPermalink ? this.model.getPermalink() : ('/parts/' + App.config.workspaceId + '/' + this.model.getNumber() + '/' + this.model.getVersion());
+            this.$el.html(Mustache.render(template, {model: this.model, i18n: App.config.i18n, permalink: permalink}));
             return this;
         },
 
         authorClicked: function () {
-            if (this.model.getAuthorLogin() !== APP_CONFIG.login) {
+            if (this.model.getAuthorLogin() !== App.config.login) {
                 Backbone.Events.trigger('NewChatSession', {remoteUser: this.model.getAuthorLogin(), context: this.model.getNumber()});
             }
         },

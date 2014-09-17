@@ -15,7 +15,7 @@ define([
         },
 
         url: function () {
-            return APP_CONFIG.contextPath + "/api/workspaces/" + APP_CONFIG.workspaceId + "/products/" + APP_CONFIG.productId + "/paths?partNumber=" + encodeURIComponent(this.searchString);
+            return App.config.contextPath + "/api/workspaces/" + App.config.workspaceId + "/products/" + App.config.productId + "/paths?partNumber=" + encodeURIComponent(this.searchString);
         }
 
     });

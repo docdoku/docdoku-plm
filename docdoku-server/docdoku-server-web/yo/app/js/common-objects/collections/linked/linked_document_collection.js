@@ -1,9 +1,9 @@
 /*global define*/
-'use strict';
 define([
     'backbone',
-    "common-objects/models/linked/linked_document"
+    'common-objects/models/linked/linked_document'
 ], function (Backbone, LinkedDocument) {
+	'use strict';
     var LinkedDocumentCollection = Backbone.Collection.extend({
 
         model: LinkedDocument,

@@ -1,23 +1,24 @@
-/*global App*/
+/*global define,App*/
 define([
-    "common-objects/common/singleton_decorator",
-    "common-objects/views/base",
-    "views/workflows/workflow_content_list",
-    "text!templates/nav/workflow_nav.html"
+    'common-objects/common/singleton_decorator',
+    'common-objects/views/base',
+    'views/workflows/workflow_content_list',
+    'text!templates/nav/workflow_nav.html'
 ], function (singletonDecorator, BaseView, WorkflowContentListView, template) {
+	'use strict';
     var WorkflowNavView = BaseView.extend({
+        el: '#workflow-nav',
+	    template: template,
 
-        template: template,
-        el: "#workflow-nav",
         initialize: function () {
             BaseView.prototype.initialize.apply(this, arguments);
             this.render();
         },
         setActive: function () {
             if (App.$changeManagementMenu) {
-                App.$changeManagementMenu.find(".active").removeClass("active");
+                App.$changeManagementMenu.find('.active').removeClass('active');
             }
-            this.$el.find(".nav-list-entry").first().addClass("active");
+            this.$el.find('.nav-list-entry').first().addClass('active');
         },
         showContent: function () {
             this.setActive();

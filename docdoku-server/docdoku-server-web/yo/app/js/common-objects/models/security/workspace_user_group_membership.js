@@ -1,10 +1,10 @@
-/*global define*/
+/*global _,define*/
 define(['backbone'], function (Backbone) {
-
+	'use strict';
     var WorkspaceUserGroupMembership = Backbone.Model.extend({
 
         initialize: function () {
-            var permission = this.isReadOnly() ? "READ_ONLY" : "FULL_ACCESS";
+            var permission = this.isReadOnly() ? 'READ_ONLY' : 'FULL_ACCESS';
             this.setPermission(permission);
             _.bindAll(this);
         },
@@ -18,23 +18,23 @@ define(['backbone'], function (Backbone) {
         },
 
         getWorkspaceId: function () {
-            return this.get("workspaceId");
+            return this.get('workspaceId');
         },
 
         getGroupId: function () {
-            return this.get("memberId");
+            return this.get('memberId');
         },
 
         isReadOnly: function () {
-            return this.get("readOnly");
+            return this.get('readOnly');
         },
 
         setPermission: function (permission) {
-            this.set("permission", permission);
+            this.set('permission', permission);
         },
 
         getPermission: function () {
-            return this.get("permission");
+            return this.get('permission');
         }
 
     });

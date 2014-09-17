@@ -10,7 +10,7 @@ define([
 
 		url: function () {
 			if (this.getIteration()) {
-				return this.collection.baseUrl() + '/' + this.getIteration() + '?configSpec=' + APP_CONFIG.configSpec;
+				return this.collection.baseUrl() + '/' + this.getIteration() + '?configSpec=' + App.config.configSpec;
 			} else {
 				return this.collection.baseUrl();
 			}
@@ -85,7 +85,7 @@ define([
 		getDocumentMasterPermalink: function () {
 			return encodeURI(
 					window.location.origin +
-					APP_CONFIG.contextPath +
+					App.config.contextPath +
 					'/documents/' +
 					this.getWorkspace() +
 					'/' +
@@ -101,7 +101,7 @@ define([
 		 * @returns string
 		 */
 		getUploadBaseUrl: function () {
-			return APP_CONFIG.contextPath + '/files/' + this.getBaseName() + '/';
+			return App.config.contextPath + '/files/' + this.getBaseName() + '/';
 		},
 
 		getBaseName: function () {

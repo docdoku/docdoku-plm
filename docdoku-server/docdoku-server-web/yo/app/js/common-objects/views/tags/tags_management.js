@@ -111,7 +111,7 @@ define([
             var $newTagInput = this.$('.newTag');
             var tagId = $newTagInput.val();
             if (tagId) {
-                var newModel = new Tag({label: tagId, id: tagId, workspaceId: APP_CONFIG.workspaceId});
+                var newModel = new Tag({label: tagId, id: tagId, workspaceId: App.config.workspaceId});
                 var modelAlreadyExists = false;
 
                 _.each(this._currentTagsCollection.models, function (model) {
@@ -295,7 +295,7 @@ define([
         },
         clearDeleteTags: function (callbackSuccess) {
             if (this._tagsToDeleteCollection && this._tagsToDeleteCollection.length) {
-                var baseUrl = APP_CONFIG.contextPath + '/api/workspaces/' + APP_CONFIG.workspaceId + '/tags/';
+                var baseUrl = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/tags/';
                 var total = this._tagsToDeleteCollection.length;
                 _(this._tagsToDeleteCollection).each(function (tag) {
                     var count = 0;

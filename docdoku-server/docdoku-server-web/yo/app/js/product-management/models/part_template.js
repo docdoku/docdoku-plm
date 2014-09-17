@@ -40,7 +40,7 @@ define([
         },
 
         getUploadBaseUrl: function () {
-            return APP_CONFIG.contextPath + '/files/' + this.get('workspaceId') + '/part-templates/' + this.get('id') + '/';
+            return App.config.contextPath + '/files/' + this.get('workspaceId') + '/part-templates/' + this.get('id') + '/';
         },
 
         getId: function () {
@@ -69,7 +69,7 @@ define([
 
         getFormattedCreationDate: function () {
             return Date.formatTimestamp(
-                APP_CONFIG.i18n._DATE_FORMAT,
+                App.config.i18n._DATE_FORMAT,
                 this.getCreationDate()
             );
         },
@@ -80,18 +80,18 @@ define([
 
         url: function () {
             if (this.get('id')) {
-                return APP_CONFIG.contextPath + '/api/workspaces/' + APP_CONFIG.workspaceId + '/part-templates/' + this.get('id');
+                return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/part-templates/' + this.get('id');
             } else {
-                return APP_CONFIG.contextPath + '/api/workspaces/' + APP_CONFIG.workspaceId + '/part-templates';
+                return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/part-templates';
             }
         },
 
         generateIdUrl: function () {
-            return APP_CONFIG.contextPath + '/api/workspaces/' + APP_CONFIG.workspaceId + '/part-templates/' + this.get('id') + '/generate_id';
+            return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/part-templates/' + this.get('id') + '/generate_id';
         },
 
         getBaseName: function () {
-            return APP_CONFIG.workspaceId + '/part-templates/' + this.get('id');
+            return App.config.workspaceId + '/part-templates/' + this.get('id');
         },
 
         isAttributesLocked: function () {

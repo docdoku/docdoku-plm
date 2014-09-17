@@ -28,7 +28,7 @@ define([
 
         render: function () {
             var _this = this;
-            this.$el.html(Mustache.render(template, {i18n: APP_CONFIG.i18n}));
+            this.$el.html(Mustache.render(template, {i18n: App.config.i18n}));
             this.bindDomElements();
             this.resetList();
             this.partReferenceInput.on('input', function () {

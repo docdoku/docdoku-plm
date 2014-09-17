@@ -1,11 +1,11 @@
-<div class="modal document-modal">
-    <div class="modal-header">
+<div class="Modal modal document-modal">
+    <div class="ModalHeader Modal-header modal-header">
         {{#isCheckout}}
         {{#isCheckoutByConnectedUser}}<i class="fa fa-pencil"></i>{{/isCheckoutByConnectedUser}}
         {{^isCheckoutByConnectedUser}}<i class="fa fa-lock"></i>{{/isCheckoutByConnectedUser}}
         {{/isCheckout}}
         {{^isCheckout}}
-        <i class="fa fa-eye"></i>
+        <i class="ModalHeader-icon fa fa-eye"></i>
         {{/isCheckout}}
 
         <a class="close" data-dismiss="modal">×</a>
@@ -13,10 +13,10 @@
         <h3><span class="icon"></span><a target="_blank" href="{{permalink}}">{{master.title}} ({{master.id}})</a></h3>
 
     </div>
-    <div class="modal-body">
-        <div id="alerts-{{view.cid}}"></div>
-        <div class="tabs">
-            <ul class="nav nav-tabs">
+    <div class="ModalBody Modal-body modal-body">
+        <div id="alerts-{{view.cid}}" class="ModalBody-alert"></div>
+        <div class="ModalTabs ModalBody-tabs tabs">
+            <ul class="ModalTabs-nav nav nav-tabs">
                 <li class="active"><a href="#tab-iteration-document" data-toggle="tab">{{i18n.GENERAL}}</a></li>
                 <li><a href="#tab-iteration-iteration" data-toggle="tab">{{i18n.ITERATION}}</a></li>
                 <li><a href="#tab-iteration-attributes" data-toggle="tab">{{i18n.ATTRIBUTES}}</a></li>
@@ -25,10 +25,9 @@
                 <li><a href="#tab-iteration-links" data-toggle="tab">{{i18n.LINKS}}</a></li>
             </ul>
 
-            <form id="form-document" class="form-horizontal">
-
-                <div id="form-{{view.cid}}" class="tab-content form-horizontal">
-                    <div id="tab-iteration-document" class="tab-pane active">
+            <form id="form-document" class="ModalTabs-form form-horizontal">
+                <div id="form-{{view.cid}}" class="ModalTabsContent tab-content form-horizontal">
+                    <div id="tab-iteration-document" class="ModalTabsPane tab-pane active">
                         <div class="control-group">
                             <label class="control-label">{{i18n.PATH}}</label>
 
@@ -111,7 +110,7 @@
                             </div>
                         {{/isForBaseline}}
                     </div>
-                    <div id="tab-iteration-iteration" class="tab-pane">
+                    <div id="tab-iteration-iteration" class="ModalTabsPane tab-pane">
                         <div class="control-group">
                             <label class="control-label">{{i18n.REFERENCE}}</label>
 
@@ -142,24 +141,22 @@
                             </div>
                         </div>
                     </div>
-                    <div id="tab-iteration-attributes" class="tab-pane attributes">
+                    <div id="tab-iteration-attributes" class="ModalTabsPane tab-pane attributes">
                         <div id="iteration-additional-attributes-container" class="attributes-edit"></div>
                         <div id="iteration-attributes"></div>
                     </div>
-                    <div id="tab-iteration-files" class="tab-pane files">
+                    <div id="tab-iteration-files" class="ModalTabsPane tab-pane files">
                         <div id="iteration-files"></div>
                     </div>
-                    <div id="tab-iteration-lifecycle" class="tab-pane">
-                        <div id="iteration-lifecycle"></div>
-                    </div>
-                    <div id="tab-iteration-links" class="tab-pane">
+                    <div id="tab-iteration-lifecycle" class="ModalTabsPane tab-pane"></div>
+                    <div id="tab-iteration-links" class="ModalTabsPane tab-pane">
                         <div id="iteration-links"></div>
                     </div>
                 </div>
             </form>
         </div>
     </div>
-    <div class="modal-footer">
+    <div class="Modal-footer modal-footer">
 
         {{#iteration}}
         <ul id="switch-iteration" class="pager">

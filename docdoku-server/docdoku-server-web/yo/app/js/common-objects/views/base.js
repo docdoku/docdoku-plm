@@ -1,10 +1,11 @@
-/*global define*/
+/*global _,define,App*/
 define([
     'backbone',
     'mustache',
     'require',
     'text!common-objects/templates/alert.html'
 ], function (Backbone, Mustache, require, alertTemplate) {
+	'use strict';
     var BaseView = Backbone.View.extend({
 
         modelEvents: {
@@ -71,12 +72,12 @@ define([
             var target = options.target;
             var events = options.events;
             var action = options.action;
-            for (var evt in events) {
-                var key = events[evt];
-                if (key in this && this[key]) {
-                    target[action](evt, this[key]);
-                }
-            }
+	        var that = this;
+	        _.each(events, function(key,evt){
+		        if (key in that && that[key]) {
+			        target[action](evt, that[key]);
+		        }
+	        });
         },
         bindModel: function () {
             if (this.model) {
@@ -129,8 +130,8 @@ define([
         },
         renderData: function () {
             var data = {};
-            data.i18n = APP_CONFIG.i18n;
-            data.workspaceId = APP_CONFIG.workspaceId;
+            data.i18n = App.config.i18n;
+            data.workspaceId = App.config.workspaceId;
             data.view = this.viewToJSON();
             if (this.model) {
                 data.model = this.modelToJSON();
@@ -161,7 +162,7 @@ define([
         alert: function (options) {
             // AlertView not used to resolve circular dependency
             var titles = {
-                'error': APP_CONFIG.i18n.ERROR
+                'error': App.config.i18n.ERROR
             };
             options.title = options.title ? options.title : titles[options.type];
             var html = Mustache.render(alertTemplate, {

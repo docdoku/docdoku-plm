@@ -1,4 +1,4 @@
-/*global define,App,APP_CONFIG,Stats,Instance,requestAnimationFrame,TWEEN*/
+/*global define,App,Stats,Instance,requestAnimationFrame,TWEEN*/
 'use strict';
 define([
     "backbone",
@@ -68,7 +68,7 @@ define([
         }
 
         function initLayerManager() {
-            if (!_.isUndefined(APP_CONFIG.productId)) {
+            if (!_.isUndefined(App.config.productId)) {
                 _this.layerManager = new LayerManager();
                 _this.layerManager.rescaleMarkers();
                 _this.layerManager.renderList();
@@ -818,7 +818,7 @@ define([
         this.takeScreenShot = function () {
             var imageSource = _this.renderer.domElement.toDataURL('image/png');
             var now = new Date();
-            var filename = APP_CONFIG.productId + "-" + now.getFullYear() + "-" + now.getMonth() + "-" + now.getDay();
+            var filename = App.config.productId + "-" + now.getFullYear() + "-" + now.getMonth() + "-" + now.getDay();
             if (/Firefox/i.test(window.navigator.userAgent)) {
                 var strDownloadMime = 'image/octet-stream';
                 document.location.href = imageSource.replace('image/png', strDownloadMime);

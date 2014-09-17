@@ -1,15 +1,15 @@
-/*global define*/
+/*global define,App*/
 define([
     'backbone',
-    "common-objects/models/security/workspace_user_group_membership"
+    'common-objects/models/security/workspace_user_group_membership'
 ], function (Backbone, WorkspaceUserGroupMembership) {
-
+	'use strict';
     var WorkspaceUserGroupMemberships = Backbone.Collection.extend({
 
         model: WorkspaceUserGroupMembership,
 
         url: function () {
-            return APP_CONFIG.contextPath + "/api/workspaces/" + APP_CONFIG.workspaceId + "/memberships/usergroups";
+            return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/memberships/usergroups';
         }
 
     });

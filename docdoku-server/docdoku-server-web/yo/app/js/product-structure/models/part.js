@@ -1,4 +1,4 @@
-/*global define,APP_CONFIG*/
+/*global define,App*/
 'use strict';
 define(['backbone', "common-objects/utils/date", "collections/part_iteration_collection"],
     function (Backbone, Date, PartIterationList) {
@@ -55,7 +55,7 @@ define(['backbone', "common-objects/utils/date", "collections/part_iteration_col
             getFormattedCheckoutDate: function () {
                 if (this.isCheckout()) {
                     return Date.formatTimestamp(
-                        APP_CONFIG.i18n._DATE_FORMAT,
+                        App.config.i18n._DATE_FORMAT,
                         this.getCheckoutDate()
                     );
                 }
@@ -63,7 +63,7 @@ define(['backbone', "common-objects/utils/date", "collections/part_iteration_col
 
             getFormattedCreationDate: function () {
                 return Date.formatTimestamp(
-                    APP_CONFIG.i18n._DATE_FORMAT,
+                    App.config.i18n._DATE_FORMAT,
                     this.getCreationDate()
                 );
             },
@@ -77,7 +77,7 @@ define(['backbone', "common-objects/utils/date", "collections/part_iteration_col
             },
 
             isCheckoutByConnectedUser: function () {
-                return this.isCheckout() ? this.getCheckOutUserLogin() === APP_CONFIG.login : false;
+                return this.isCheckout() ? this.getCheckOutUserLogin() === App.config.login : false;
             },
 
             getUrl: function () {
@@ -134,7 +134,7 @@ define(['backbone', "common-objects/utils/date", "collections/part_iteration_col
             },
 
             isStandardPartReadable: function () {
-                return this.get("standardPart") ? APP_CONFIG.i18n.TRUE : APP_CONFIG.i18n.FALSE;
+                return this.get("standardPart") ? App.config.i18n.TRUE : App.config.i18n.FALSE;
             },
 
             isAttributesLocked: function () {
@@ -177,7 +177,7 @@ define(['backbone', "common-objects/utils/date", "collections/part_iteration_col
             getPermalink: function () {
                 return encodeURI(
                         window.location.origin +
-                        APP_CONFIG.contextPath +
+                        App.config.contextPath +
                         "/parts/" +
                         this.getWorkspace() +
                         "/" +
@@ -192,7 +192,7 @@ define(['backbone', "common-objects/utils/date", "collections/part_iteration_col
             },
 
             url: function () {
-                return APP_CONFIG.contextPath + "/api/workspaces/" + APP_CONFIG.workspaceId + "/parts/" + this.getPartKey();
+                return App.config.contextPath + "/api/workspaces/" + App.config.workspaceId + "/parts/" + this.getPartKey();
             }
 
         });

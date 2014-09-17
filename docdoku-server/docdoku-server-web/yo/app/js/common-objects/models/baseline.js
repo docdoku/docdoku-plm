@@ -1,7 +1,6 @@
-/*global define*/
-'use strict';
+/*global _,$,define*/
 define(['backbone'], function (Backbone) {
-
+	'use strict';
     var Baseline = Backbone.Model.extend({
         initialize: function () {
             _.bindAll(this);

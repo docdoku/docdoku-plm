@@ -25,7 +25,7 @@ define([
             },
 
             render: function () {
-                this.$el.html(Mustache.render(template, {master: this.master, roomKey: this.roomKey, users: this.users, pendingUsers: this.pendingUsers, i18n: APP_CONFIG.i18n}));
+                this.$el.html(Mustache.render(template, {master: this.master, roomKey: this.roomKey, users: this.users, pendingUsers: this.pendingUsers, i18n: App.config.i18n}));
                 if (this.roomKey == null) {
                     this.$("a#collaborative_create").show();
                     this.$("ul").hide();
@@ -67,8 +67,8 @@ define([
                         type: ChannelMessagesType.COLLABORATIVE_INVITE,
                         key: this.roomKey,
                         messageBroadcast: {
-                            url: '#' + APP_CONFIG.workspaceId + '/' + APP_CONFIG.productId,
-                            context: APP_CONFIG.workspaceId
+                            url: '#' + App.config.workspaceId + '/' + App.config.productId,
+                            context: App.config.workspaceId
                         },
                         remoteUser: user
                     });
@@ -95,7 +95,7 @@ define([
                     key: this.roomKey,
                     remoteUser: name,
                     messageBroadcast: {
-                        context: APP_CONFIG.workspaceId
+                        context: App.config.workspaceId
                     }
                 });
             },
@@ -149,7 +149,7 @@ define([
                 App.collaborativeController.sendColourEditedMeshes();
                 App.collaborativeController.sendExplodeValue(App.$ControlsContainer.find("#slider-explode").val());
 
-                window.location.hash = [APP_CONFIG.workspaceId , APP_CONFIG.productId, 'room', this.roomKey].join('/');
+                window.location.hash = [App.config.workspaceId , App.config.productId, 'room', this.roomKey].join('/');
 
                 this.invite();
             },
@@ -170,14 +170,14 @@ define([
             setMaster: function (master) {
                 this.master = master;
                 this.noMaster = false;
-                this.isMaster = (this.master === APP_CONFIG.login);
+                this.isMaster = (this.master === App.config.login);
                 this.render();
             },
 
             setLastMaster: function (lastMaster) {
                 this.master = lastMaster;
                 this.noMaster = true;
-                this.isMaster = (this.lastMaster === APP_CONFIG.login);
+                this.isMaster = (this.lastMaster === App.config.login);
                 this.render();
             },
 

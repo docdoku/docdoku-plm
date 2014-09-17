@@ -1,8 +1,9 @@
-/*global define*/
+/*global _,define*/
 define([
     'backbone',
-    "common-objects/models/role"
+    'common-objects/models/role'
 ], function (Backbone, Role) {
+	'use strict';
     var TaskModel = Backbone.Model.extend({
 
         defaults: {
@@ -10,11 +11,9 @@ define([
         },
 
         initialize: function () {
-
             if (!_.isUndefined(this.attributes.role)) {
                 this.attributes.role = new Role(this.attributes.role);
             }
-
         },
 
         toJSON: function () {

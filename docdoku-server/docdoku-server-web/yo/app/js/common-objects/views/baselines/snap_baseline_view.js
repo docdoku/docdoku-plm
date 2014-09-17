@@ -24,7 +24,7 @@ define([
 
 		render: function () {
 			var data = {
-				i18n: APP_CONFIG.i18n,
+				i18n: App.config.i18n,
 				isProduct: this.isProduct
 			};
 			if (this.isProduct) {
@@ -74,7 +74,7 @@ define([
 		},
 
 		onError: function (error) {
-			alert(APP_CONFIG.i18n.CREATION_ERROR + ' : ' + error.responseText);
+			alert(App.config.i18n.CREATION_ERROR + ' : ' + error.responseText);
 		},
 
 		openModal: function () {

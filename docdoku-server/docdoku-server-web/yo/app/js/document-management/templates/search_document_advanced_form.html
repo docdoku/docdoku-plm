@@ -1,16 +1,14 @@
-<div id="advanced_search_modal" class="modal hide fade" tabindex="-1" role="dialog"
+<div id="advanced_search_modal" class="Modal modal hide fade" tabindex="-1" role="dialog"
      aria-hidden="true">
 
-    <div class="modal-header">
+    <div class="ModalHeader Modal-header modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
         <h3>{{i18n.ADVANCED_SEARCH}}</h3>
     </div>
 
-    <div class="modal-body">
-
-        <div class="tabs">
-
-            <ul class="nav nav-tabs">
+    <div class="ModalBody Modal-body modal-body">
+        <div class="ModalTabs ModalBody-tabs tabs">
+            <ul class="ModalTabs-nav nav nav-tabs ">
                 <li class="active">
                     <a href="#tab-search-main" data-toggle="tab">{{i18n.GENERAL}}</a>
                 </li>
@@ -22,107 +20,108 @@
                 </li>
             </ul>
 
-            <form id="advanced_search_form" class="form-horizontal tab-content">
+            <form id="advanced_search_form" class="ModalTabs-form">
+                <div class="ModalTabsContent form-horizontal tab-content">
+                    <div id="tab-search-main" class="ModalTabsPane tab-pane active ">
 
-                <div class="tab-pane active" id="tab-search-main">
+                        <div class="control-group">
+                            <label class="control-label" for="search-id">{{i18n.REFERENCE}}</label>
 
-                    <div class="control-group">
-                        <label class="control-label" for="search-id">{{i18n.REFERENCE}}</label>
+                            <div class="controls">
+                                <input type="text" id="search-id" class="input-medium">
 
-                        <div class="controls">
-                            <input type="text" id="search-id" class="input-medium">
-
-                            <p class="help-block">{{i18n.REFERENCE_HELP}}</p>
+                                <p class="help-block">{{i18n.REFERENCE_HELP}}</p>
+                            </div>
                         </div>
+
+                        <div class="control-group">
+                            <label class="control-label" for="search-title">{{i18n.TITLE}}</label>
+
+                            <div class="controls">
+                                <input type="text" id="search-title" class="input-medium">
+
+                                <p class="help-block">{{i18n.TITLE_HELP}}</p>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <label class="control-label" for="search-type">{{i18n.TYPE}}</label>
+
+                            <div class="controls">
+                                <select id="search-type">
+                                    <option></option>
+                                </select>
+
+                                <p class="help-block">{{i18n.DOCUMENT_TYPE_HELP}}</p>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <label class="control-label" for="search-version">{{i18n.VERSION}}</label>
+
+                            <div class="controls">
+                                <input type="text" id="search-version" class="input-medium">
+
+                                <p class="help-block">{{i18n.VERSION_HELP}}</p>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <label class="control-label" for="search-author">{{i18n.AUTHOR}}</label>
+
+                            <div class="controls">
+                                <select id="search-author">
+                                    <option></option>
+                                </select>
+
+                                <p class="help-block">{{i18n.AUTHOR_DOCUMENT_HELP}}</p>
+                            </div>
+                        </div>
+
+                        <div class="control-group creationDates">
+                            <label class="control-label" for="search-from">{{i18n.CREATION_DATE}}</label>
+
+                            <div class="controls">
+                                <input id="search-from" type="date"><br/>
+                                <input id="search-to" type="date">
+                            </div>
+                        </div>
+
                     </div>
 
-                    <div class="control-group">
-                        <label class="control-label" for="search-title">{{i18n.TITLE}}</label>
+                    <div id="tab-search-attributes" class="ModalTabsPane tab-pane attributes ">
+
+                        <label class="control-label" for="template-attributes-helper">{{i18n.TEMPLATE}}</label>
 
                         <div class="controls">
-                            <input type="text" id="search-title" class="input-medium">
-
-                            <p class="help-block">{{i18n.TITLE_HELP}}</p>
-                        </div>
-                    </div>
-
-                    <div class="control-group">
-                        <label class="control-label" for="search-type">{{i18n.TYPE}}</label>
-
-                        <div class="controls">
-                            <select id="search-type">
+                            <select id="template-attributes-helper">
                                 <option></option>
                             </select>
-
-                            <p class="help-block">{{i18n.DOCUMENT_TYPE_HELP}}</p>
                         </div>
+                        <br/>
+                        <a class="btn btn-default" id="search-add-attributes">{{i18n.APPEND}}</a>
+
+                        <div id="attributes-list" class="attributes-edit"></div>
                     </div>
 
-                    <div class="control-group">
-                        <label class="control-label" for="search-version">{{i18n.VERSION}}</label>
+                    <div id="tab-search-advanced" class="ModalTabsPane tab-pane advanced ">
+                        <div class="control-group">
+                            <label class="control-label" for="search-tags">{{i18n.TAGS}}</label>
 
-                        <div class="controls">
-                            <input type="text" id="search-version" class="input-medium">
+                            <div class="controls">
+                                <input type="text" id="search-tags" class="input-medium">
 
-                            <p class="help-block">{{i18n.VERSION_HELP}}</p>
+                                <p class="help-block">{{i18n.TAGS_HELP}}</p>
+                            </div>
                         </div>
-                    </div>
+                        <div class="control-group">
+                            <label class="control-label" for="search-content">{{i18n.CONTENT}}</label>
 
-                    <div class="control-group">
-                        <label class="control-label" for="search-author">{{i18n.AUTHOR}}</label>
+                            <div class="controls">
+                                <input type="text" id="search-content" class="input-medium">
 
-                        <div class="controls">
-                            <select id="search-author">
-                                <option></option>
-                            </select>
-
-                            <p class="help-block">{{i18n.AUTHOR_DOCUMENT_HELP}}</p>
-                        </div>
-                    </div>
-
-                    <div class="control-group creationDates">
-                        <label class="control-label" for="search-from">{{i18n.CREATION_DATE}}</label>
-
-                        <div class="controls">
-                            <input id="search-from" type="date"><br/>
-                            <input id="search-to" type="date">
-                        </div>
-                    </div>
-
-                </div>
-
-                <div id="tab-search-attributes" class="tab-pane attributes">
-
-                    <label class="control-label" for="template-attributes-helper">{{i18n.TEMPLATE}}</label>
-
-                    <div class="controls">
-                        <select id="template-attributes-helper">
-                            <option></option>
-                        </select>
-                    </div>
-                    <br/>
-                    <a class="btn btn-default" id="search-add-attributes">{{i18n.APPEND}}</a>
-
-                    <div id="attributes-list" class="attributes-edit"></div>
-                </div>
-
-                <div id="tab-search-advanced" class="tab-pane advanced">
-                    <div class="control-group">
-                        <label class="control-label" for="search-tags">{{i18n.TAGS}}</label>
-
-                        <div class="controls">
-                            <input type="text" id="search-tags" class="input-medium">
-
-                            <p class="help-block">{{i18n.TAGS_HELP}}</p>
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <label class="control-label" for="search-content">{{i18n.CONTENT}}</label>
-
-                        <div class="controls">
-                            <input type="text" id="search-content" class="input-medium">
-
-                            <p class="help-block">{{i18n.CONTENT_HELP}}</p>
+                                <p class="help-block">{{i18n.CONTENT_HELP}}</p>
+                            </div>
                         </div>
                     </div>
                 </div>

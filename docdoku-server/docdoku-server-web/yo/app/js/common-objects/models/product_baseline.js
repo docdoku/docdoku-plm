@@ -1,7 +1,8 @@
-/*global define*/
-'use strict';
-define(['common-objects/models/baseline'],function(Baseline){
+/*global $,define*/
 
+define(['common-objects/models/baseline'],
+function(Baseline){
+	'use strict';
 	var ProductBaseline = Baseline.extend({
 		getType:function(){
 			return this.get('type');

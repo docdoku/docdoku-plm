@@ -17,7 +17,7 @@ define([ "backbone", "mustache", "text!templates/layer_controls.html"], function
         },
 
         render: function () {
-            this.$el.html(Mustache.render(template, {i18n: APP_CONFIG.i18n}));
+            this.$el.html(Mustache.render(template, {i18n: App.config.i18n}));
             this.$el.toggleClass('shown', this.allShown);
             return this;
         },

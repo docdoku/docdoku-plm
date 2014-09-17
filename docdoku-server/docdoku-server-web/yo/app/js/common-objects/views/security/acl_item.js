@@ -19,8 +19,8 @@ define([
         },
 
         render: function () {
-            var permission = APP_CONFIG.i18n[this.model.getPermission()];
-            this.$el.html(Mustache.render(template, {acl: this.model, i18n: APP_CONFIG.i18n, editMode: this.options.editMode, permission: permission, radioName: this.model.key() + "-radio-" + this.cid}));
+            var permission = App.config.i18n[this.model.getPermission()];
+            this.$el.html(Mustache.render(template, {acl: this.model, i18n: App.config.i18n, editMode: this.options.editMode, permission: permission, radioName: this.model.key() + "-radio-" + this.cid}));
             return this;
         }
 
