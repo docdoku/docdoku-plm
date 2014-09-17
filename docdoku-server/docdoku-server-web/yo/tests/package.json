@@ -1,0 +1,14 @@
+{
+  "name": "docdoku-casperjs",
+  "version": "0.0.1",
+  "dependencies": {},
+  "devDependencies": {
+    "casperjs": "^1.1.0-beta3",
+    "phantomjs": "^1.9.7-15",
+    "underscore": "^1.7.0"
+  },
+  "scripts": {
+    "start": "node run.js",
+    "prestart": "npm install"
+  }
+}

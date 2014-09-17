@@ -5,6 +5,7 @@ test/temp
 app/bower_components
 .tmp
 test/bower_components/
+tests/conf.local.js
 
 app/document-management/main.css
 app/product-management/main.css

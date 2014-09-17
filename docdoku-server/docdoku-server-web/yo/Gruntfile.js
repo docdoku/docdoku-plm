@@ -4,6 +4,7 @@ var SERVER_PORT = 9001;
 var DEV_PORT = 8989;
 var lrSnippet = require('connect-livereload')({port: LIVERELOAD_PORT});
 
+
 var mountFolder = function (connect, dir) {
     return connect.static(require('path').resolve(dir));
 };
@@ -477,6 +478,14 @@ module.exports = function (grunt) {
                 'Gruntfile.js',
                 '<%= yeoman.app %>/js/{,*/}*.js'
             ]
+        },
+        execute:{
+            tests:{
+                options:{
+                    cwd:'tests'
+                },
+                src:['tests/run.js']
+            }
         }
     });
 
@@ -584,5 +593,10 @@ module.exports = function (grunt) {
     * Deploy command : used by maven
     * */
     grunt.registerTask('deploy',['clean:webapp','build','copy:webapp']);
+
+    /*
+     * Tests command
+     * */
+    grunt.registerTask('test',['execute:tests']);
 
 };
