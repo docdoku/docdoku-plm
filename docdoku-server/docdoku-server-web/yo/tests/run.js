@@ -27,8 +27,8 @@ var casperCommand = 'casperjs test'
     + ' --includes=' + conf.includes.join(',')
     + ' --xunit=' + conf.xunit
     + ' --fail-fast'
-    + ' --verbose '
-    +'--log-level=warning '
+    + (conf.verbose ? ' --verbose' : '')
+    +' --log-level='+conf.logLevel
     + ' ' + conf.paths.join(' ');
 
 sys.print('Running DocdokuPLM tests. Command : \n ' + casperCommand + '\n\n');

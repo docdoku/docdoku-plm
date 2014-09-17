@@ -10,7 +10,8 @@ casper.test.begin('DocdokuPLM Tests suite',0, function docdokuPLMTestsSuite() {
         height: 1050
     };
 
-    casper.options.waitTimeout = 5000;
+    casper.options.waitTimeout = 2000;
+    casper.options.timeout = 2000;
 
     casper.setFilter("page.confirm", function(msg) {
         this.log("Confirm box: "+msg,'info');
@@ -22,4 +23,5 @@ casper.test.begin('DocdokuPLM Tests suite',0, function docdokuPLMTestsSuite() {
     });
 
     casper.test.done();
+
 });

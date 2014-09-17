@@ -19,7 +19,7 @@ casper.test.begin('Part creation tests suite', 4, function partCreationTestsSuit
     casper.then(function waitForPartNavLink(){
         this.waitForSelector('#part-nav > .nav-list-entry > a',function clickPartNavLink() {
             this.click('#part-nav > .nav-list-entry > a');
-        });
+        },function fail(){this.capture('screenshot/wtf.png')});
     });
 
     /**

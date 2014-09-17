@@ -53,5 +53,7 @@ casper.test.begin('Cleaning potential data', 0, function cleanTest() {
 
     });
 
-    casper.test.done();
+    casper.then(function(){
+        this.test.done();
+    });
 });

@@ -17,7 +17,8 @@ module.exports = function (grunt) {
     var yeoman = {
         app: 'app',
         dist: 'dist',
-        webapp:'../src/main/webapp'
+        webapp:'../src/main/webapp',
+        tests: 'tests'
     };
 
     grunt.initConfig({
@@ -45,6 +46,10 @@ module.exports = function (grunt) {
             less: {
                 files: ['<%= yeoman.app %>/less/{,*/}*.less'],
                 tasks: ['less']
+            },
+            tests:{
+                files:['<%= yeoman.tests %>/{,*/}*.js'],
+                tasks:['tests']
             }
         },
         connect: {
@@ -598,5 +603,6 @@ module.exports = function (grunt) {
      * Tests command
      * */
     grunt.registerTask('test',['execute:tests']);
+    grunt.registerTask('livetests',['execute:tests','watch:tests']);
 
 };
