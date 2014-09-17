@@ -54,7 +54,7 @@ public class ConnectionBean {
         HttpServletRequest request = (HttpServletRequest) (FacesContext.getCurrentInstance().getExternalContext().getRequest());
         request.logout();
         request.getSession().invalidate();
-        return "/login.xhtml";
+        return request.getContextPath() + "/login.xhtml";
     }
 
     public void logIn() throws ServletException, AccountNotFoundException, IOException {

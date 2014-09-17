@@ -65,11 +65,11 @@ public class VoteServlet extends HttpServlet {
                 if (action.equals("Approve")) {
                     PartRevision partRevision = productService.approveTaskOnPart(workspaceId, new TaskKey(new ActivityKey(activityWorkflowId, activityStep), index), comment, null);
                     pRequest.setAttribute("entity", partRevision);
-                    pRequest.getRequestDispatcher("/faces/taskApproved.xhtml").forward(pRequest, pResponse);
+                    pRequest.getRequestDispatcher(pRequest.getContextPath()+"/faces/taskApproved.xhtml").forward(pRequest, pResponse);
                 } else if (action.equals("Reject")) {
                     PartRevision partRevision = productService.rejectTaskOnPart(workspaceId, new TaskKey(new ActivityKey(activityWorkflowId, activityStep), index), comment, null);
                     pRequest.setAttribute("entity", partRevision);
-                    pRequest.getRequestDispatcher("/faces/taskRejected.xhtml").forward(pRequest, pResponse);
+                    pRequest.getRequestDispatcher(pRequest.getContextPath()+"/faces/taskRejected.xhtml").forward(pRequest, pResponse);
                 }
 
             }else if(entityType.equals("documents")){
@@ -77,11 +77,11 @@ public class VoteServlet extends HttpServlet {
                 if (action.equals("Approve")) {
                     DocumentRevision documentRevision = documentService.approveTaskOnDocument(workspaceId, new TaskKey(new ActivityKey(activityWorkflowId, activityStep), index), comment, null);
                     pRequest.setAttribute("entity", documentRevision);
-                    pRequest.getRequestDispatcher("/faces/taskApproved.xhtml").forward(pRequest, pResponse);
+                    pRequest.getRequestDispatcher(pRequest.getContextPath()+"/faces/taskApproved.xhtml").forward(pRequest, pResponse);
                 } else if (action.equals("Reject")) {
                     DocumentRevision documentRevision = documentService.rejectTaskOnDocument(workspaceId, new TaskKey(new ActivityKey(activityWorkflowId, activityStep), index), comment, null);
                     pRequest.setAttribute("entity", documentRevision);
-                    pRequest.getRequestDispatcher("/faces/taskRejected.xhtml").forward(pRequest, pResponse);
+                    pRequest.getRequestDispatcher(pRequest.getContextPath()+"/faces/taskRejected.xhtml").forward(pRequest, pResponse);
                 }
 
             }

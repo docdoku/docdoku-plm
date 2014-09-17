@@ -33,6 +33,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.*;
 
@@ -67,8 +68,8 @@ public class WorkspaceBean {
         this.workspaceDescription = wks.getDescription();
         this.freezeFolders = wks.isFolderLocked();
         this.workspaceAdmin = wks.getAdmin().getLogin();
-
-        return "/admin/workspace/workspaceEditionForm.xhtml";
+        HttpServletRequest request = (HttpServletRequest) (FacesContext.getCurrentInstance().getExternalContext().getRequest());
+        return request.getContextPath() + "/admin/workspace/workspaceEditionForm.xhtml";
     }
 
 
@@ -76,7 +77,8 @@ public class WorkspaceBean {
         if(userManager.isCallerInRole("admin")){
             String wksId = adminState.getSelectedWorkspace();
             workspaceManager.synchronizeIndexer(wksId);
-            return "/admin/workspace/workspaceIndexed.xhtml";
+            HttpServletRequest request = (HttpServletRequest) (FacesContext.getCurrentInstance().getExternalContext().getRequest());
+            return request.getContextPath() + "/admin/workspace/workspaceIndexed.xhtml";
         }else{
             User user = userManager.checkWorkspaceReadAccess(adminState.getSelectedWorkspace());
             throw new AccessRightException(new Locale(user.getLanguage()),user);
@@ -86,24 +88,27 @@ public class WorkspaceBean {
     public String deleteWorkspace() throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException, IOException, StorageException, AccountNotFoundException {
         Workspace wks = adminState.getCurrentWorkspace();
         workspaceManager.deleteWorkspace(wks.getId());
-        return "/admin/workspace/workspaceDeleted.xhtml";
+        HttpServletRequest request = (HttpServletRequest) (FacesContext.getCurrentInstance().getExternalContext().getRequest());
+        return request.getContextPath() + "/admin/workspace/workspaceDeleted.xhtml";
     }
 
     public String createGroup() throws UserGroupAlreadyExistsException, AccessRightException, AccountNotFoundException, CreationException, WorkspaceNotFoundException {
         userManager.createUserGroup(groupToCreate, adminState.getCurrentWorkspace());
-        return "/admin/workspace/manageUsers.xhtml";
+        HttpServletRequest request = (HttpServletRequest) (FacesContext.getCurrentInstance().getExternalContext().getRequest());
+        return request.getContextPath() + "/admin/workspace/manageUsers.xhtml";
     }
 
     
     public String addUser() throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException, UserGroupNotFoundException, NotAllowedException, AccountNotFoundException, UserAlreadyExistsException, FolderAlreadyExistsException, CreationException {
         Workspace workspace = adminState.getCurrentWorkspace();
+        HttpServletRequest request = (HttpServletRequest) (FacesContext.getCurrentInstance().getExternalContext().getRequest());
 
         if (adminState.getSelectedGroup() != null && !adminState.getSelectedGroup().equals("")) {
             userManager.addUserInGroup(new UserGroupKey(workspace.getId(), adminState.getSelectedGroup()), loginToAdd);
-            return "/admin/workspace/manageUsersGroup.xhtml?group=" + adminState.getSelectedGroup();
+            return request.getContextPath() + "/admin/workspace/manageUsersGroup.xhtml?group=" + adminState.getSelectedGroup();
         } else {
             userManager.addUserInWorkspace(workspace.getId(), loginToAdd);
-            return "/admin/workspace/manageUsers.xhtml";
+            return request.getContextPath() + "/admin/workspace/manageUsers.xhtml";
         }
 
     }
@@ -115,8 +120,8 @@ public class WorkspaceBean {
         workspace.setFolderLocked(freezeFolders);
         workspace.setAdmin(newAdmin);
         userManager.updateWorkspace(workspace);
-
-        return "/admin/workspace/editWorkspace.xhtml";
+        HttpServletRequest request = (HttpServletRequest) (FacesContext.getCurrentInstance().getExternalContext().getRequest());
+        return request.getContextPath() + "/admin/workspace/editWorkspace.xhtml";
     }
 
     public String createWorkspace() throws FolderAlreadyExistsException, UserAlreadyExistsException, WorkspaceAlreadyExistsException, CreationException, NotAllowedException, AccountNotFoundException, ESIndexNamingException {
@@ -130,8 +135,8 @@ public class WorkspaceBean {
         Workspace workspace = userManager.createWorkspace(workspaceId, account, workspaceDescription, freezeFolders);
         adminState.setSelectedWorkspace(workspace.getId());
         adminState.setSelectedGroup(null);
-
-        return "/admin/workspace/createWorkspace.xhtml";
+        HttpServletRequest request = (HttpServletRequest) (FacesContext.getCurrentInstance().getExternalContext().getRequest());
+        return request.getContextPath() +"/admin/workspace/createWorkspace.xhtml";
     }
 
     public void read() throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException {

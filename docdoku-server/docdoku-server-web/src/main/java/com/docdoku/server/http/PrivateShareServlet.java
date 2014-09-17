@@ -80,7 +80,7 @@ public class PrivateShareServlet extends HttpServlet {
             // check if expire
             if(sharedEntity.getExpireDate() != null && sharedEntity.getExpireDate().getTime() < new Date().getTime()){
                 shareService.deleteSharedEntityIfExpired(sharedEntity);
-                pRequest.getRequestDispatcher("/faces/sharedEntityExpired.xhtml").forward(pRequest, pResponse);
+                pRequest.getRequestDispatcher(pRequest.getContextPath()+"/faces/sharedEntityExpired.xhtml").forward(pRequest, pResponse);
                 return;
             }
 
@@ -91,7 +91,7 @@ public class PrivateShareServlet extends HttpServlet {
                 if(providedPassword != null && md5sum(providedPassword).equals(sharedEntity.getPassword())){
                     handleOnCheckSuccess(pRequest,pResponse,sharedEntity);
                 }else{
-                    pRequest.getRequestDispatcher("/faces/sharedEntityPassword.xhtml").forward(pRequest, pResponse);
+                    pRequest.getRequestDispatcher(pRequest.getContextPath()+"/faces/sharedEntityPassword.xhtml").forward(pRequest, pResponse);
                 }
             }else{
                 handleOnCheckSuccess(pRequest, pResponse, sharedEntity);
@@ -121,14 +121,14 @@ public class PrivateShareServlet extends HttpServlet {
                 if(sharedEntity.getExpireDate() != null){
                     if(sharedEntity.getExpireDate().getTime() < new Date().getTime()){
                         shareService.deleteSharedEntityIfExpired(sharedEntity);
-                        pRequest.getRequestDispatcher("/faces/sharedEntityExpired.xhtml").forward(pRequest, pResponse);
+                        pRequest.getRequestDispatcher(pRequest.getContextPath()+"/faces/sharedEntityExpired.xhtml").forward(pRequest, pResponse);
                         return;
                     }
                 }
 
                 // check if password protected -> should come from the doPost
                 if(sharedEntity.getPassword() != null){
-                    pRequest.getRequestDispatcher("/faces/sharedEntityPassword.xhtml").forward(pRequest, pResponse);
+                    pRequest.getRequestDispatcher(pRequest.getContextPath()+"/faces/sharedEntityPassword.xhtml").forward(pRequest, pResponse);
                 }else{
                     // Tests for doGet are ok
                     handleOnCheckSuccess(pRequest,pResponse,sharedEntity);
@@ -160,7 +160,7 @@ public class PrivateShareServlet extends HttpServlet {
 
             pRequest.setAttribute("documentRevision", documentRevision);
             pRequest.setAttribute("attr",  new ArrayList<>(documentIteration.getInstanceAttributes().values()));
-            pRequest.getRequestDispatcher("/faces/documentPermalink.xhtml").forward(pRequest, pResponse);
+            pRequest.getRequestDispatcher(pRequest.getContextPath()+"/faces/documentPermalink.xhtml").forward(pRequest, pResponse);
 
         }else if(sharedEntity instanceof SharedPart){
 
@@ -189,7 +189,7 @@ public class PrivateShareServlet extends HttpServlet {
             pRequest.setAttribute("attr",  new ArrayList<>(partIteration.getInstanceAttributes().values()));
             pRequest.setAttribute("nativeCadFileURI",nativeCadFileURI);
             pRequest.setAttribute("geometryFileURI",geometryFileURI);
-            pRequest.getRequestDispatcher("/faces/partPermalink.xhtml").forward(pRequest, pResponse);
+            pRequest.getRequestDispatcher(pRequest.getContextPath()+"/faces/partPermalink.xhtml").forward(pRequest, pResponse);
         }
 
     }

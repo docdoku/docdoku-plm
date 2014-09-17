@@ -54,7 +54,7 @@ public class RegistrationBean {
 
         HttpSession session = request.getSession();
         session.setAttribute("remoteUser",login);
-        return "/register.xhtml";
+        return request.getContextPath()+"/register.xhtml";
     }
 
     public String getLogin() {

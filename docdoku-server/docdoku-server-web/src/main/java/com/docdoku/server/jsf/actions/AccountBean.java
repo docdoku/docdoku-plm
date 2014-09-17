@@ -27,6 +27,7 @@ import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
+import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 @Named("accountBean")
@@ -57,7 +58,8 @@ public class AccountBean {
     public String updateAccount() throws AccountNotFoundException {
         language = FacesContext.getCurrentInstance().getViewRoot().getLocale().getLanguage();
         userManager.updateAccount(name, email, language, password);
-        return "/login.xhtml";
+        HttpServletRequest request = (HttpServletRequest) (FacesContext.getCurrentInstance().getExternalContext().getRequest());
+        return request.getContextPath()+"/";
     }
 
     public String getPassword() {

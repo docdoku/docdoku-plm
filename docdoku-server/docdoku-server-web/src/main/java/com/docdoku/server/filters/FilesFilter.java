@@ -110,7 +110,7 @@ public class FilesFilter implements Filter {
                     //case insensitive fix
                     if(!userLogin.equals(remoteUser)){
                         httpRequest.logout();
-                        httpRequest.getRequestDispatcher("/faces/login.xhtml?originURL=" + URLEncoder.encode(originURL, "UTF-8")).forward(pRequest, pResponse);
+                        httpRequest.getRequestDispatcher(httpRequest.getContextPath()+"/faces/login.xhtml?originURL=" + URLEncoder.encode(originURL, "UTF-8")).forward(pRequest, pResponse);
                         return;
                     }
                     sessionHTTP.setAttribute("remoteUser",userLogin);
@@ -241,7 +241,7 @@ public class FilesFilter implements Filter {
                 chain.doFilter(pRequest,pResponse);
 
             } catch (LoginException pEx) {
-                httpRequest.getRequestDispatcher("/faces/login.xhtml?originURL=" + URLEncoder.encode(originURL, "UTF-8")).forward(pRequest, pResponse);
+                httpRequest.getRequestDispatcher(httpRequest.getContextPath()+"/faces/login.xhtml?originURL=" + URLEncoder.encode(originURL, "UTF-8")).forward(pRequest, pResponse);
             } catch (Exception pEx){
                 throw new ServletException("Error while downloading the file.", pEx);
             }
@@ -258,7 +258,7 @@ public class FilesFilter implements Filter {
 
                 if(sharedEntity.getExpireDate() != null && sharedEntity.getExpireDate().getTime() < new Date().getTime()){
                     shareService.deleteSharedEntityIfExpired(sharedEntity);
-                    pRequest.getRequestDispatcher("/faces/sharedEntityExpired.xhtml").forward(pRequest, pResponse);
+                    pRequest.getRequestDispatcher(httpRequest.getContextPath()+"/faces/sharedEntityExpired.xhtml").forward(pRequest, pResponse);
                     return;
                 }
 
@@ -321,7 +321,7 @@ public class FilesFilter implements Filter {
                 chain.doFilter(pRequest,pResponse);
 
             } catch (Exception e) {
-                httpRequest.getRequestDispatcher("/faces/login.xhtml?originURL=" + URLEncoder.encode(originURL, "UTF-8")).forward(pRequest, pResponse);
+                httpRequest.getRequestDispatcher(httpRequest.getContextPath()+"/faces/login.xhtml?originURL=" + URLEncoder.encode(originURL, "UTF-8")).forward(pRequest, pResponse);
             }
 
         }

@@ -90,7 +90,7 @@ public class SearchServlet extends HttpServlet {
                 pRequest.setAttribute("workspaceAdmin", workspaceAdmin);
                 pRequest.setAttribute("workspaceID", workspaceID);
                 pRequest.setAttribute("login", login);
-                pRequest.getRequestDispatcher("/faces/search/index.xhtml").forward(pRequest, pResponse);
+                pRequest.getRequestDispatcher(pRequest.getContextPath()+"/faces/search/index.xhtml").forward(pRequest, pResponse);
             }catch(UserNotFoundException | WorkspaceNotFoundException ex){
                 Logger.getLogger(SearchServlet.class.getName()).log(Level.WARNING, String.valueOf(ex));
                 pResponse.sendRedirect(pRequest.getContextPath() + "/faces/admin/workspace/workspacesMenu.xhtml");

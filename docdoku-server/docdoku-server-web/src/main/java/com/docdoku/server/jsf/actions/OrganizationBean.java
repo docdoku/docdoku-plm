@@ -28,6 +28,7 @@ import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
+import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 @Named("organizationBean")
@@ -69,8 +70,8 @@ public class OrganizationBean {
             organizationName=organization.getName();
             organizationDescription=organization.getDescription();
         }
-
-        return "/admin/organization/organizationEditionForm.xhtml";
+        HttpServletRequest request = (HttpServletRequest) (FacesContext.getCurrentInstance().getExternalContext().getRequest());
+        return request.getContextPath() + "/admin/organization/organizationEditionForm.xhtml";
     }
 
     public String addAccount() throws AccountNotFoundException, NotAllowedException, AccessRightException, OrganizationNotFoundException {

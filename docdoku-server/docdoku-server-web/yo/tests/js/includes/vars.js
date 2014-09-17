@@ -7,6 +7,8 @@ var pass = casper.cli.get("pass");
 var workspace = casper.cli.get("workspace");
 var contextPath = casper.cli.get("contextPath");
 
+var workspace = 'casperjs';
+
 var authUrl = 'http://'+domain+':'+port + contextPath;
 var productManagementUrl = authUrl+'/product-management/#'+workspace;
 var documentManagementUrl = authUrl+'/document-management/#'+workspace;

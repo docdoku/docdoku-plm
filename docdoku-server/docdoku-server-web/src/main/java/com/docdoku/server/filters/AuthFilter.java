@@ -92,7 +92,7 @@ public class AuthFilter implements Filter {
     private void redirectLogin(HttpServletRequest httpRequest, ServletResponse response) throws IOException, ServletException {
         String qs=httpRequest.getQueryString();
         String originURL = httpRequest.getRequestURI() + (qs==null?"": "?" + qs);
-        httpRequest.getRequestDispatcher("/faces/login.xhtml?originURL=" + URLEncoder.encode(originURL, "UTF-8")).forward(httpRequest, response);
+        httpRequest.getRequestDispatcher(httpRequest.getContextPath()+"/faces/login.xhtml?originURL=" + URLEncoder.encode(originURL, "UTF-8")).forward(httpRequest, response);
     }
 
     @Override

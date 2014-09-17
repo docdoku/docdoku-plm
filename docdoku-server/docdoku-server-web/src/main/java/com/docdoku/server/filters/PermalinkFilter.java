@@ -99,7 +99,7 @@ public class PermalinkFilter implements Filter {
             if(redirect){
                 String qs=httpRequest.getQueryString();
                 String originURL = httpRequest.getRequestURI() + (qs==null?"": "?" + qs);
-                httpRequest.getRequestDispatcher("/faces/login.xhtml?originURL=" + URLEncoder.encode(originURL, "UTF-8")).forward(request, response);
+                httpRequest.getRequestDispatcher(httpRequest.getContextPath()+"/faces/login.xhtml?originURL=" + URLEncoder.encode(originURL, "UTF-8")).forward(request, response);
             }else{
                 chain.doFilter(request, response);
             }

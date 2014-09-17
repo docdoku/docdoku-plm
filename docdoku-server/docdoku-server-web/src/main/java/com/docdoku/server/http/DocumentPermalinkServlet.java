@@ -82,7 +82,7 @@ public class DocumentPermalinkServlet extends HttpServlet {
         }
 
         pRequest.setAttribute("attr", new ArrayList<InstanceAttribute>(docI.getInstanceAttributes().values()));
-        pRequest.getRequestDispatcher("/faces/documentPermalink.xhtml").forward(pRequest, pResponse);
+        pRequest.getRequestDispatcher(pRequest.getContextPath() + "/faces/documentPermalink.xhtml").forward(pRequest, pResponse);
     }
 
 }
