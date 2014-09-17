@@ -2,4 +2,3 @@ node_modules
 *.png
 *.xml
 *.log
-config.local.js
