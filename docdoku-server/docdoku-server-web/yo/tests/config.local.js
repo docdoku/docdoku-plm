@@ -1,5 +1,5 @@
 module.exports = {
-    "verbose": true,
+    /*"verbose": true,
     "log-level": "debug",
     "xunit": "results.xml",
     "domain": "localhost",
@@ -7,5 +7,5 @@ module.exports = {
     "port": "8080",
     "login": "foo",
     "pass": "bar",
-    "contextPath": "/"
+    "contextPath": "/"*/
 };
