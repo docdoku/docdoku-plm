@@ -35,8 +35,7 @@
     "node": ">=0.10.0"
   },
   "scripts": {
-    "postinstall": "bower install",
-    "prestart": "npm install",
+    "prestart": "npm install -g bower grunt-cli coffee-script; npm install;",
     "start": "grunt deploy"
   }
 }
