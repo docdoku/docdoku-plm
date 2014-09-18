@@ -4,13 +4,14 @@ casper.test.begin('Document creation tests suite',2, function documentCreationTe
 
     'use strict';
 
+    casper.open('');
+
     /**
      * Open document management URL
      * */
-    casper.open(documentManagementUrl);
 
     casper.then(function(){
-        this.reload();
+        this.open(documentManagementUrl);
     });
 
     /**

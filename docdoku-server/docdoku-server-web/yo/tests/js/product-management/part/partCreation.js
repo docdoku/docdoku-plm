@@ -4,13 +4,14 @@ casper.test.begin('Part creation tests suite', 4, function partCreationTestsSuit
 
     'use strict';
 
+    casper.open('');
+
     /**
     * Open product management URL
     * */
-    casper.open(productManagementUrl);
 
     casper.then(function(){
-        this.reload();
+        this.open(productManagementUrl);
     });
 
     /**

@@ -1,27 +1,31 @@
 /*global casper*/
 
 // This is the first file in the tests suite : use casper.start()
+casper.options.viewportSize = {
+    width: 1680,
+    height: 1050
+};
+casper.options.waitTimeout = 10000;
+casper.options.timeout = 60000;
+
 casper.start();
 
-casper.test.begin('DocdokuPLM Tests suite',0, function docdokuPLMTestsSuite() {
+casper.setFilter("page.confirm", function(msg) {
+    this.log("Confirm box: "+msg,'info');
+    return true;
+});
 
-    casper.options.viewportSize = {
-        width: 1680,
-        height: 1050
-    };
+casper.on('remote.message', function remoteMessage(message) {
+    this.log(message,'info');
+});
 
-    casper.options.waitTimeout = 2000;
-    casper.options.timeout = 2000;
+casper.test.begin('DocdokuPLM Tests suite',1, function docdokuPLMTestsSuite() {
 
-    casper.setFilter("page.confirm", function(msg) {
-        this.log("Confirm box: "+msg,'info');
-        return true;
+    casper.thenOpen(homeUrl,function homePageLoaded(){
+        this.test.assert(true,'Tests begins');
     });
 
-    casper.on('remote.message', function remoteMessage(message) {
-        this.log(message,'info');
+    casper.run(function letsGo(){
+        this.test.done();
     });
-
-    casper.test.done();
-
 });

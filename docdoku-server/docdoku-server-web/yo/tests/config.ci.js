@@ -1,5 +1,6 @@
 module.exports = {
     verbose: true,
+    failFast:true,
     logLevel: "warning",
     xunit: "results.xml",
     domain: "val.docdoku.net",
@@ -10,8 +11,7 @@ module.exports = {
     contextPath: "/",
     pre: [
         "js/pre/start.js",
-        "js/auth/login.js",
-        "js/pre/clean.js"
+
     ],
     post: [
         "js/auth/logout.js"
@@ -21,6 +21,8 @@ module.exports = {
         "js/includes/helpers.js"
     ],
     paths: [
+        "js/auth/login.js",
+        "js/pre/clean.js",
         "js/product-management/part/partCreation.js",
         "js/product-management/part/showPartDetails.js",
         "js/product-management/product/productCreation.js",

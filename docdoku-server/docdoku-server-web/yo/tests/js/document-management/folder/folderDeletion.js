@@ -4,13 +4,14 @@ casper.test.begin('Folder deletion tests suite',1, function folderDeletionTestsS
 
     'use strict';
 
+    casper.open('');
+
     /**
      * Open document management URL
      * */
-    casper.open(documentManagementUrl);
 
     casper.then(function(){
-        this.reload();
+        this.open(documentManagementUrl);
     });
 
     /**
@@ -26,6 +27,7 @@ casper.test.begin('Folder deletion tests suite',1, function folderDeletionTestsS
     /**
      * Test if folder has been deleted
      */
+
     casper.then(function waitForFolderDisappear(){
         this.waitWhileSelector('#folder-nav .items a[title='+folderCreationName+']',function folderHasBEenDeleted(){
             this.test.assert(true,'Folder deleted');

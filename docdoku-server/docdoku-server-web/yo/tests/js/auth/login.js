@@ -1,8 +1,11 @@
 /*global casper*/
 
+
 casper.test.begin('Login tests suite',2, function loginTestsSuite(){
 
     'use strict';
+
+    casper.open('');
 
     /**
      * Open app home page

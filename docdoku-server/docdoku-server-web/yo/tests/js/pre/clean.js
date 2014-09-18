@@ -1,8 +1,10 @@
 /*global casper*/
 
-casper.test.begin('Cleaning potential data', 0, function cleanTest() {
+casper.test.begin('Cleaning potential data', 0, function cleanTestsSuite() {
 
     'use strict';
+
+    casper.open('');
 
     // Documents
     casper.then(function cleanupDocuments() {
@@ -53,7 +55,7 @@ casper.test.begin('Cleaning potential data', 0, function cleanTest() {
 
     });
 
-    casper.then(function(){
+    casper.run(function allDone(){
         this.test.done();
     });
 });

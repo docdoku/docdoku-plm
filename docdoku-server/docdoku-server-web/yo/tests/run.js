@@ -26,7 +26,7 @@ var casperCommand = 'casperjs test'
     + ' --post=' + conf.post.join(',')
     + ' --includes=' + conf.includes.join(',')
     + ' --xunit=' + conf.xunit
-    + ' --fail-fast'
+    + (conf.failFast ? ' --fail-fast' : '')
     + (conf.verbose ? ' --verbose' : '')
     +' --log-level='+conf.logLevel
     + ' ' + conf.paths.join(' ');

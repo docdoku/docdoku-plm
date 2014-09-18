@@ -3,7 +3,15 @@ casper.test.begin('Logout tests suite',1, function logoutTestsSuite(){
 
     'use strict';
 
-    casper.open(documentManagementUrl);
+    casper.open('');
+
+    /**
+     * Open document management URL
+     * */
+
+     casper.then(function(){
+        this.open(documentManagementUrl);
+     });
 
     /**
      *  Wait for disconnect link, and click it

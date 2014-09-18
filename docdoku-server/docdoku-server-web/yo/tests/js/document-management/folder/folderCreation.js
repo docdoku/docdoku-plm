@@ -4,13 +4,14 @@ casper.test.begin('Folder creation tests suite',1, function folderCreationTestsS
 
     'use strict';
 
+    casper.open('');
+
     /**
      * Open document management URL
      * */
-    casper.open(documentManagementUrl);
 
     casper.then(function(){
-        this.reload();
+        this.open(documentManagementUrl);
     });
 
     /**

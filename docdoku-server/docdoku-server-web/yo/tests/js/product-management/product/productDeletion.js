@@ -4,18 +4,20 @@ casper.test.begin('Product deletion tests suite',1, function productDeletionTest
 
     'use strict';
 
+    casper.open('');
+
     /**
      * Open product management URL
      * */
-    casper.open(productManagementUrl);
 
     casper.then(function(){
-        this.reload();
+        this.open(productManagementUrl);
     });
 
     /**
      * Go to product nav
      */
+
     casper.then(function waitForProductNavLink(){
         this.waitForSelector('#product-nav > .nav-list-entry > a',function clickProductNavLink() {
             this.click('#product-nav > .nav-list-entry > a');
@@ -25,6 +27,7 @@ casper.test.begin('Product deletion tests suite',1, function productDeletionTest
     /**
      * Test delete a product
      */
+
     casper.then(function waitForProductInList(){
         this.waitForSelector('#product_table tbody tr:first-child td.product_id', function clickOnProductCheckbox() {
             this.click('#product_table tbody tr:first-child td:first-child input');
@@ -44,4 +47,5 @@ casper.test.begin('Product deletion tests suite',1, function productDeletionTest
     casper.run(function() {
         this.test.done();
     });
+
 });

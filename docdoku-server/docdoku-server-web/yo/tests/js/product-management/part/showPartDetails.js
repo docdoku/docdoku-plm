@@ -4,18 +4,20 @@ casper.test.begin('Part details tests suite',3, function partDetailsTestsSuite()
 
     'use strict';
 
+    casper.open('');
+
     /**
      * Open product management URL
      * */
-    casper.open(productManagementUrl);
 
     casper.then(function(){
-        this.reload();
+        this.open(productManagementUrl);
     });
 
     /**
      * Go to part nav
      */
+
     casper.then(function waitForPartNavLink(){
         this.waitForSelector('#part-nav > .nav-list-entry > a',function clickPartNavLink() {
             this.click('#part-nav > .nav-list-entry > a');
@@ -25,6 +27,7 @@ casper.test.begin('Part details tests suite',3, function partDetailsTestsSuite()
     /**
      * Wait for part list display
      */
+
     casper.then(function waitForPartInList(){
         this.waitForSelector('#part_table tbody tr:first-child td.part_number', function clickOnPartCheckbox() {
             this.click('#part_table tbody tr:first-child td.part_number span');
@@ -44,6 +47,7 @@ casper.test.begin('Part details tests suite',3, function partDetailsTestsSuite()
     /**
      * Close modal
      */
+
     casper.then(function waitForCancelButton() {
         this.waitForSelector('#part-modal #cancel-iteration',function testPartModal() {
             this.click('#part-modal #cancel-iteration');
@@ -59,4 +63,5 @@ casper.test.begin('Part details tests suite',3, function partDetailsTestsSuite()
     casper.run(function() {
         this.test.done();
     });
+
 });
