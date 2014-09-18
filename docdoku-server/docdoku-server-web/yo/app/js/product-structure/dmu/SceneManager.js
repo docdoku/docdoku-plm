@@ -816,12 +816,20 @@ define([
             });
         };
         this.takeScreenShot = function () {
+            var imageSource = _this.renderer.domElement.toDataURL('image/png');
             var now = new Date();
             var filename = APP_CONFIG.productId + "-" + now.getFullYear() + "-" + now.getMonth() + "-" + now.getDay();
-            var pom = document.createElement('a');
-            pom.setAttribute('href', this.renderer.domElement.toDataURL('image/png'));
-            pom.setAttribute('download', filename);
-            pom.click();
+            if (/Firefox/i.test(window.navigator.userAgent)) {
+                var strDownloadMime = 'image/octet-stream';
+                document.location.href = imageSource.replace('image/png', strDownloadMime);
+            }
+            else {
+                var pom = document.createElement('a');
+                pom.setAttribute('href', imageSource);
+                pom.setAttribute('download', filename);
+                pom.click();
+            }
+
         };
         this.setCameraNear = function (n) {
             _this.cameraObject.near = n;
