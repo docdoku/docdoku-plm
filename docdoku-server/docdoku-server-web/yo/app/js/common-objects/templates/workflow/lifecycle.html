@@ -11,11 +11,11 @@
             </ul>
         </div>
     {{/abortedWorkflows.length}}
-    <div class="LifecycleModalTab-legend">
-        <span class="lifecycle-legend-incomplete">{{i18n.WORKFLOW_LEGEND_INCOMPLETE}}</span>
-        <span class="lifecycle-legend-complete">{{i18n.WORKFLOW_LEGEND_COMPLETE}}</span>
-        <span class="lifecycle-legend-rejected">{{i18n.WORKFLOW_LEGEND_REJECTED}}</span>
-        <span class="lifecycle-legend-in-progress">{{i18n.WORKFLOW_LEGEND_INPROGRESS}}</span>
+    <div class="LifecycleModalLegend">
+        <span class="LifecycleModalLegend-line incomplete">{{i18n.WORKFLOW_LEGEND_INCOMPLETE}}</span>
+        <span class="LifecycleModalLegend-line complete">{{i18n.WORKFLOW_LEGEND_COMPLETE}}</span>
+        <span class="LifecycleModalLegend-line rejected">{{i18n.WORKFLOW_LEGEND_REJECTED}}</span>
+        <span class="LifecycleModalLegend-line inProgress">{{i18n.WORKFLOW_LEGEND_INPROGRESS}}</span>
     </div>
     <div id="lifecycle-activities-wrapper" class="LifecycleActivitiesWrapper">
         <div id="lifecycle-activities"></div>

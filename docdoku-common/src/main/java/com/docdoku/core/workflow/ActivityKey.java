@@ -55,7 +55,7 @@ public class ActivityKey implements Serializable {
             return false;
         }
         ActivityKey key = (ActivityKey) pObj;
-        return ((key.workflow == workflow) && (key.step == step));
+        return key.workflow == workflow && key.step == step;
     }
 
     @Override

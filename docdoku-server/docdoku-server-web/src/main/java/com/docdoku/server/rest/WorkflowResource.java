@@ -21,7 +21,6 @@ package com.docdoku.server.rest;
 
 import com.docdoku.core.exceptions.ApplicationException;
 import com.docdoku.core.security.UserGroupMapping;
-import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.services.IWorkflowManagerLocal;
 import com.docdoku.core.workflow.*;
 import com.docdoku.server.rest.dto.ActivityModelDTO;
@@ -49,10 +48,6 @@ import java.util.logging.Logger;
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class WorkflowResource {
-
-    @EJB
-    private IDocumentManagerLocal documentService;
-
     @EJB
     private IWorkflowManagerLocal workflowService;
 

@@ -96,7 +96,7 @@ define([
 
         abortedWorkflow: function (e) {
             var that = this;
-            var workflowId = e.target.dataset.id;
+            var workflowId = parseInt(e.target.dataset.id,10);
             var workflow = _.select(that.abortedWorkflows, function (workflow) {
                 return workflow.id === workflowId;
             })[0];
