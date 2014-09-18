@@ -17,6 +17,7 @@ casper.test.begin('Document creation tests suite',2, function documentCreationTe
     /**
      * Open folder nav
      */
+
     casper.then(function waitForFolderNavLink(){
         this.waitForSelector('a[href="#'+workspace+'/folders/'+folderCreationName+'"]',function(){
             this.click('a[href="#'+workspace+'/folders/'+folderCreationName+'"]');
@@ -26,6 +27,7 @@ casper.test.begin('Document creation tests suite',2, function documentCreationTe
     /**
      * Open folder creation modal
      */
+
     casper.then(function clickOnDocumentCreationLink(){
         this.click('.actions .new-document');
     });
@@ -33,6 +35,7 @@ casper.test.begin('Document creation tests suite',2, function documentCreationTe
     /**
      * Wait for modal
      */
+
     casper.then(function waitForDocumentCreationModal(){
         this.waitForSelector('.modal.document-modal.new-document',function(){
             this.click('.modal.document-modal.new-document .btn.btn-primary');
@@ -43,6 +46,7 @@ casper.test.begin('Document creation tests suite',2, function documentCreationTe
     /**
      * Fill the form and create document
      */
+
     casper.then(function fillAndSubmitDocumentCreationModal(){
         this.waitForSelector('.modal.document-modal.new-document input.reference',function(){
             this.sendKeys('.modal.document-modal.new-document input.reference',documentCreationNumber);
@@ -53,6 +57,7 @@ casper.test.begin('Document creation tests suite',2, function documentCreationTe
     /**
      * Check if document has been created
      */
+
     casper.then(function checkForDocumentCreation(){
         this.waitForSelector('#document-management-content table.dataTable tr td.reference',function documentHasBeenCreated(){
             this.test.assertSelectorHasText('#document-management-content table.dataTable tr td.reference a',documentCreationNumber);

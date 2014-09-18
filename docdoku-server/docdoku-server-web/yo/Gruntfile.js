@@ -48,8 +48,8 @@ module.exports = function (grunt) {
                 tasks: ['less']
             },
             tests:{
-                files:['<%= yeoman.tests %>/{,*/}*.js'],
-                tasks:['tests']
+                files:['<%= yeoman.tests %>/js/**/*.js'],
+                tasks:['execute:tests','watch:tests']
             }
         },
         connect: {
