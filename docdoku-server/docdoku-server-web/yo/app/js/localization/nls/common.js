@@ -417,7 +417,12 @@ define({
         CHANNEL_NOT_READY_ERROR: "Cannot communicate with the call server. Please insure that your browser is websocket capable, or your internet provider doesn't block them.",
         LATEST_SHORT:"Latest versions",
         RELEASED_SHORT:"Latest released versions",
-        OPEN_NEW_WINDOW:"Open in a new window"
+        OPEN_NEW_WINDOW:"Open in a new window",
+        UPDATE_ACL_ERROR:"An error occurred while updating acl",
+        CANNOT_DELETE_FILE:"Cannot delete file : ",
+        BASELINE_DELETION_ERROR:"Cannot delete baseline : ",
+        YOU_HAVE_BEEN_KICKED:"You have been kicked from the room",
+        NOT_INVITED_COLLABORATIVE_ROOM:"You are not invited to join this room."
     },
     'fr': true,
     'es': true

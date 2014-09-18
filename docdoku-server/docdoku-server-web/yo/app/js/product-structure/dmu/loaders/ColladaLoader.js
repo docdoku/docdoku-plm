@@ -111,7 +111,7 @@ THREE.ColladaLoader = function () {
 
         } else {
 
-            alert("Don't know how to parse XML!");
+            console.error("Don't know how to parse XML!");
 
         }
 

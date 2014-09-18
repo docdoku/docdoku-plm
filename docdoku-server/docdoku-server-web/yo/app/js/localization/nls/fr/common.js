@@ -415,5 +415,11 @@ define({
     REQUESTS_NUMBER: "Demandes associ\u00e9es",
     LATEST_SHORT:"Dernières versions",
     RELEASED_SHORT:"Derni\u00e8re versions finalis\u00e9s",
-    OPEN_NEW_WINDOW:"Ouvrir dans une nouvelle fenêtre"
+    OPEN_NEW_WINDOW:"Ouvrir dans une nouvelle fenêtre",
+    UPDATE_ACL_ERROR:"Une erreur s'est produite pendant la mise à jour des droits",
+    CANNOT_DELETE_FILE:"Impossible de supprimer le fichier : ",
+    BASELINE_DELETION_ERROR:"Impossible de supprimer la baseline : ",
+    YOU_HAVE_BEEN_KICKED:"Vous avez été exclu de la salle collaborative",
+    NOT_INVITED_COLLABORATIVE_ROOM:"Vous n'êtes pas invité à rejoindre cette salle collaborative"
+
 });
