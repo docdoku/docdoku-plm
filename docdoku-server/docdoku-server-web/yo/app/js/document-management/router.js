@@ -49,7 +49,7 @@ define([
 	            this.executeOrReload(workspaceId,function(){
 		            this.initNavViews();
                     this.configSpecAdaptMenu(configSpec);
-                    FolderNavView.getInstance().toggle();
+                    FolderNavView.getInstance().show();
 	            });
             },
             folder: function (workspaceId, configSpec, path) {

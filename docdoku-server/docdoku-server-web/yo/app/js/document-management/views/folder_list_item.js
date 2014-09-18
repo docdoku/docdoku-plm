@@ -130,8 +130,6 @@ define([
         },
         hidden: function () {
             this.$el.removeClass('open');
-            this.navigate();
-            this.showContent();
         },
         navigate: function () {
             var path = this.modelPath ? '/' + encodeURIComponent(this.modelPath) : '';
