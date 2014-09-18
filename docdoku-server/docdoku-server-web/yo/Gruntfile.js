@@ -78,6 +78,15 @@ module.exports = function (grunt) {
                         ];
                     }
                 }
+            },
+	        app: {
+                options: {
+                    middleware: function (connect) {
+                        return [
+                            mountFolder(connect, yeoman.app)
+                        ];
+                    }
+                }
             }
         },
         open: {
@@ -399,7 +408,9 @@ module.exports = function (grunt) {
                         src: [
                             'images/*',
                             'sounds/*',
-                            'fonts/*'
+                            'fonts/*',
+	                        'js/home/main.js',
+	                        'js/lib/plugin-detect.js'
                         ]
                     },{
                         expand: true,
@@ -447,19 +458,7 @@ module.exports = function (grunt) {
                     }
                 ]
             },
-            home:{
-                files: [
-                    {
-                        expand: true,
-                        dot: false,
-                        cwd: '<%= yeoman.app %>/js/home',
-                        dest: '<%= yeoman.dist %>/js/home',
-                        src: [
-                            'main.js'
-                        ]
-                    }
-                ]
-            },
+
             webapp: {
                 files: [
                     {
@@ -503,6 +502,9 @@ module.exports = function (grunt) {
         if (target === 'dist') {
             return grunt.task.run(['build', 'open:server', 'connect:dist:keepalive']);
         }
+	    if (target === 'noLiveReload') {
+		    return grunt.task.run(['clean:server','less','connect:app','open:dev','watch']);
+	    }
 
         grunt.task.run([
             'clean:server',
@@ -523,7 +525,6 @@ module.exports = function (grunt) {
         'copy:assets',
         'copy:dmu',
         'copy:i18n',
-        'copy:home',
         'build-module:documentManagement',
         'build-module:productManagement',
         'build-module:productStructure',
