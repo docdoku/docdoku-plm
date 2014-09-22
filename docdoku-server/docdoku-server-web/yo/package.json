@@ -36,6 +36,6 @@
   },
   "scripts": {
     "prestart": "npm install -g bower grunt-cli coffee-script; npm install;",
-    "start": "grunt deploy"
+    "start": "bower install; grunt deploy"
   }
 }
