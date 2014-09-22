@@ -6,7 +6,7 @@ define([
 ],function (Backbone, Mustache, template) {
 	'use strict';
 	var HeaderView = Backbone.View.extend({
-         el: $('#header'),
+         el: '#header',
 
          render: function () {
 
