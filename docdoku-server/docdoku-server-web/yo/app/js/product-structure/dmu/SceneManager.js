@@ -764,11 +764,15 @@ define([
         };
 
         this.enableControlsObject = function () {
-            controlsObject.enabled = true;
+	        if(controlsObject){
+		        controlsObject.enabled = true;
+	        }
         };
 
         this.disableControlsObject = function () {
-            controlsObject.enabled = false;
+	        if(controlsObject){
+		        controlsObject.enabled = false;
+	        }
         };
 
         /**

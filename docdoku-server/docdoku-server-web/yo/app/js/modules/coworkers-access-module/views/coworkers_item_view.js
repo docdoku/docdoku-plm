@@ -1,13 +1,11 @@
-/*global define,App*/
-'use strict';
+/*global _,define,App*/
 define([
     'backbone',
     'mustache',
     'text!modules/coworkers-access-module/templates/coworker_item_template.html'
 ], function (Backbone, Mustache, template) {
-
+	'use strict';
     var CoWorkersItemView = Backbone.View.extend({
-
         tagName: 'li',
 
         events: {
@@ -68,5 +66,4 @@ define([
     });
 
     return CoWorkersItemView;
-
 });

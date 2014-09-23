@@ -1,12 +1,10 @@
-/*global define,App*/
-'use strict';
+/*global _,define,App*/
 define([
     'common-objects/websocket/channelListener',
-    "common-objects/websocket/channelMessagesType"
+    'common-objects/websocket/channelMessagesType'
 ], function (ChannelListener, ChannelMessagesType) {
-
+	'use strict';
     function CollaborativeController() {
-
         var _this = this;
 
         var collaborativeListener = new ChannelListener({
@@ -18,7 +16,6 @@ define([
             },
 
             onMessage: function (message) {
-
                 if (message.type === ChannelMessagesType.COLLABORATIVE_CREATE) {
                     App.collaborativeView.roomCreated(message.key, message.remoteUser);
                     return;
@@ -31,7 +28,7 @@ define([
                     App.sceneManager.setControlsContext(message.messageBroadcast.cameraInfos);
                     App.sceneManager.setEditedMeshes(message.messageBroadcast.editedMeshes);
                     App.sceneManager.setColourEditedMeshes(message.messageBroadcast.colourEditedMeshes);
-                    App.$ControlsContainer.find("#slider-explode").val(message.messageBroadcast.explode);
+                    App.$ControlsContainer.find('#slider-explode').val(message.messageBroadcast.explode);
                     App.sceneManager.explodeScene(message.messageBroadcast.explode);
                     return;
                 }
@@ -48,7 +45,7 @@ define([
                 }
 
                 if (message.type === ChannelMessagesType.COLLABORATIVE_KICK_USER) {
-                    alert("You've been kicked");
+                    alert('You\'ve been kicked');
                     App.appView.leaveSpectatorView();
                     App.sceneManager.enableControlsObject();
                     App.collaborativeView.reset();
@@ -56,7 +53,7 @@ define([
                 }
 
                 if (message.type === ChannelMessagesType.COLLABORATIVE_KICK_NOT_INVITED) {
-                    alert("You are not invited to join this room.");
+                    alert('You are not invited to join this room.');
                     App.appView.leaveSpectatorView();
                     App.sceneManager.enableControlsObject();
                     App.collaborativeView.reset();
@@ -73,17 +70,17 @@ define([
                     } else if (message.messageBroadcast.colourEditedMeshes !== undefined) {
                         App.sceneManager.setColourEditedMeshes(message.messageBroadcast.colourEditedMeshes);
                     } else if (message.messageBroadcast.explode) {
-                        App.$ControlsContainer.find("#slider-explode").val(message.messageBroadcast.explode);
+                        App.$ControlsContainer.find('#slider-explode').val(message.messageBroadcast.explode);
                         App.sceneManager.explodeScene(message.messageBroadcast.explode);
                     } else if (message.messageBroadcast.clipping) {
                         _this.setClippingValue(message.messageBroadcast.clipping);
                     } else if (message.messageBroadcast.layers) {
-                        if (message.messageBroadcast.layers === "remove layer") {
+                        if (message.messageBroadcast.layers === 'remove layer') {
                             App.sceneManager.layerManager.removeAllMeshesFromMarkers();
                         }
                         App.layersListView.refreshLayers();
                     } else if (message.messageBroadcast.markers) {
-                        if (message.messageBroadcast.markers === "remove marker") {
+                        if (message.messageBroadcast.markers === 'remove marker') {
                             App.sceneManager.layerManager.removeAllMeshesFromMarkers();
                         }
                         App.layersListView.refreshLayers();
@@ -100,7 +97,7 @@ define([
         App.mainChannel.addChannelListener(collaborativeListener);
 
         this.setClippingValue = function (value) {
-            App.$ControlsContainer.find("slider-clipping").val(value);
+            App.$ControlsContainer.find('slider-clipping').val(value);
             var max = App.SceneOptions.cameraFar * 3 / 4;
             var percentage = value * Math.log(max) / 100; // cross product to set a value to pass to the exponential function
             App.sceneManager.setCameraNear(Math.exp(percentage));
@@ -111,7 +108,7 @@ define([
             App.mainChannel.sendJSON({
                 type: ChannelMessagesType.COLLABORATIVE_JOIN,
                 key: key,
-                remoteUser: ""
+                remoteUser: ''
             });
         };
 
@@ -123,7 +120,7 @@ define([
                     messageBroadcast: {
                         layers: subject
                     },
-                    remoteUser: ""
+                    remoteUser: ''
                 };
                 App.mainChannel.sendJSON(message);
             }
@@ -137,7 +134,7 @@ define([
                     messageBroadcast: {
                         markers: subject
                     },
-                    remoteUser: ""
+                    remoteUser: ''
                 };
                 App.mainChannel.sendJSON(message);
             }
@@ -151,7 +148,7 @@ define([
                     messageBroadcast: {
                         cameraInfos: App.sceneManager.getControlsContext()
                     },
-                    remoteUser: ""
+                    remoteUser: ''
                 };
                 App.mainChannel.sendJSON(message);
             }
@@ -165,7 +162,7 @@ define([
                     messageBroadcast: {
                         clipping: value
                     },
-                    remoteUser: ""
+                    remoteUser: ''
                 };
                 App.mainChannel.sendJSON(message);
             }
@@ -189,7 +186,7 @@ define([
                     messageBroadcast: {
                         editedMeshes: arrayIds
                     },
-                    remoteUser: ""
+                    remoteUser: ''
                 };
                 App.mainChannel.sendJSON(message);
             }
@@ -203,7 +200,7 @@ define([
                     messageBroadcast: {
                         colourEditedMeshes: App.sceneManager.getEditedMeshesColoured()
                     },
-                    remoteUser: ""
+                    remoteUser: ''
                 };
                 App.mainChannel.sendJSON(message);
             }
@@ -218,7 +215,7 @@ define([
                     messageBroadcast: {
                         explode: value
                     },
-                    remoteUser: ""
+                    remoteUser: ''
                 };
                 App.mainChannel.sendJSON(message);
             }

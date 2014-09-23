@@ -31,11 +31,15 @@ import javax.ejb.EJB;
 import javax.inject.Inject;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class AuthFilter implements Filter {
+    private static final Logger LOGGER = Logger.getLogger(AuthFilter.class.getName());
 
     @Inject
     private AccountBean accountBean;
@@ -82,7 +86,8 @@ public class AuthFilter implements Filter {
                 }
                 chain.doFilter(request, response);
             } catch (AccountNotFoundException e) {
-                redirectLogin(httpRequest,response);
+                LOGGER.log(Level.FINEST,null,e);
+                redirectLogin(httpRequest, response);
             }
 
         }
@@ -92,6 +97,9 @@ public class AuthFilter implements Filter {
     private void redirectLogin(HttpServletRequest httpRequest, ServletResponse response) throws IOException, ServletException {
         String qs=httpRequest.getQueryString();
         String originURL = httpRequest.getRequestURI() + (qs==null?"": "?" + qs);
+        HttpSession session = httpRequest.getSession();
+        session.setAttribute("hasFail", false);
+        session.setAttribute("hasLogout", false);
         httpRequest.getRequestDispatcher(httpRequest.getContextPath()+"/faces/login.xhtml?originURL=" + URLEncoder.encode(originURL, "UTF-8")).forward(httpRequest, response);
     }
 

@@ -45,8 +45,11 @@ import java.io.IOException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class FilesFilter implements Filter {
+    private static final Logger LOGGER = Logger.getLogger(FilesFilter.class.getName());
 
     @EJB
     private IProductManagerLocal productService;
@@ -104,8 +107,8 @@ public class FilesFilter implements Filter {
                         if(account!=null) {
                             remoteUser = account.getLogin();
                         }
-                    }catch(AccountNotFoundException ignored){
-
+                    }catch(AccountNotFoundException e){
+                        LOGGER.log(Level.FINEST,null,e);
                     }
                     //case insensitive fix
                     if(!userLogin.equals(remoteUser)){
@@ -125,7 +128,7 @@ public class FilesFilter implements Filter {
             return;
         }
 
-        int offset = httpRequest.getContextPath().equals("") ? 1 : 2;
+        int offset = "".equals(httpRequest.getContextPath()) ? 1 : 2;
 
         String requestURI = httpRequest.getRequestURI();
         //remove empty entries because of Three.js that generates url with double /
@@ -243,6 +246,7 @@ public class FilesFilter implements Filter {
             } catch (LoginException pEx) {
                 httpRequest.getRequestDispatcher(httpRequest.getContextPath()+"/faces/login.xhtml?originURL=" + URLEncoder.encode(originURL, "UTF-8")).forward(pRequest, pResponse);
             } catch (Exception pEx){
+                LOGGER.log(Level.FINEST,null,pEx);
                 throw new ServletException("Error while downloading the file.", pEx);
             }
 

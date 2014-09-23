@@ -1,78 +1,62 @@
-/*global define*/
-'use strict';
-define(
-    [
-        'backbone',
-        'common-objects/collections/reachable_users',
-        'modules/coworkers-access-module/views/coworkers_item_view'
-    ],
-    function (Backbone, Users, CoWorkersItemView) {
+/*global _,define,App*/
+define([
+    'backbone',
+    'common-objects/collections/reachable_users',
+    'modules/coworkers-access-module/views/coworkers_item_view'
+], function (Backbone, Users, CoWorkersItemView) {
+	'use strict';
+    var CoWorkersAccessModuleView = Backbone.View.extend({
 
-        var CoWorkersAccessModuleView = Backbone.View.extend({
+        el: '#coworkers_access_module',
 
-            el: '#coworkers_access_module',
+        initialize: function () {
+            var that = this;
+            var users = new Users();
+            this._coworkersItemViews = [];
 
-            initialize: function () {
+            var $ul = this.$('#coworkers_access_module_entries');
 
-                var that = this;
-                var users = new Users();
-                this._coworkersItemViews = [];
+            users.fetch({reset: true, success: function () {
+                _.each(users.models, function (user) {
+                    if (user.attributes.login !== App.config.login) {
+                        var cwiv = new CoWorkersItemView({
+                            model: user.attributes
+                        });
 
-                var $ul = this.$('#coworkers_access_module_entries');
+                        that._coworkersItemViews.push(cwiv);
 
-                users.fetch({reset: true, success: function () {
-
-                    _.each(users.models, function (user) {
-
-                        if (user.attributes.login !== App.config.login) {
-
-                            var cwiv = new CoWorkersItemView({
-                                model: user.attributes
-                            });
-
-                            that._coworkersItemViews.push(cwiv);
-
-                            $ul.append(cwiv.render().el);
-                        }
-
-                    });
-
-                }});
-
-                this.$el.show();
-
-                this.$('#coworkers_access_module_toggler').click(function () {
-                    if (!$ul.is(':visible')) {
-                        that.refreshAvailabilities();
+                        $ul.append(cwiv.render().el);
                     }
                 });
+            }});
 
-                Backbone.Events.on('EnableCollaborativeInvite', this.collaborativeInvite, this);
+            this.$el.show();
 
-                return this;
+            this.$('#coworkers_access_module_toggler').click(function () {
+                if (!$ul.is(':visible')) {
+                    that.refreshAvailabilities();
+                }
+            });
 
-            },
+            Backbone.Events.on('EnableCollaborativeInvite', this.collaborativeInvite, this);
+            return this;
+        },
 
-            refreshAvailabilities: function () {
+        refreshAvailabilities: function () {
+            _.each(this._coworkersItemViews, function (view) {
+                view.refreshAvailability();
+            });
+        },
 
-                _.each(this._coworkersItemViews, function (view) {
-                    view.refreshAvailability();
-                });
+        render: function () {
+            return this;
+        },
 
-            },
-
-            render: function () {
-
-                return this;
-            },
-
-            collaborativeInvite: function () {
-                this.$('#coworkers_access_module_toggler').click();
-                this.$('.fa-globe').removeClass('corworker-action-disable').addClass('corworker-action');
-            }
-
-        });
-
-        return CoWorkersAccessModuleView;
-
+        collaborativeInvite: function () {
+            this.$('#coworkers_access_module_toggler').click();
+            this.$('.fa-globe').removeClass('corworker-action-disable').addClass('corworker-action');
+        }
     });
+
+    return CoWorkersAccessModuleView;
+});

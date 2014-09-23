@@ -34,10 +34,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Named("connectionBean")
 @RequestScoped
 public class ConnectionBean {
+    private static final Logger LOGGER = Logger.getLogger(ConnectionBean.class.getName());
     
     @EJB
     private IUserManagerLocal userManager;
@@ -54,55 +57,32 @@ public class ConnectionBean {
         HttpServletRequest request = (HttpServletRequest) (FacesContext.getCurrentInstance().getExternalContext().getRequest());
         request.logout();
         request.getSession().invalidate();
-        return request.getContextPath() + "/login.xhtml";
+        request.getSession().setAttribute("hasFail", false);
+        request.getSession().setAttribute("hasLogout", true);
+        return request.getContextPath() + "/";
     }
 
     public void logIn() throws ServletException, AccountNotFoundException, IOException {
-        HttpServletRequest request = (HttpServletRequest) (FacesContext.getCurrentInstance().getExternalContext().getRequest());
+        ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+        HttpServletRequest request = (HttpServletRequest) ec.getRequest();
         HttpSession session = request.getSession();
 
         //Logout in case of user is already logged in,
         //that could happen when using multiple tabs
         request.logout();
-        request.login(login, password);
+        if(tryLoggin(request)) {
+            checkAccount(request);
+            session.setAttribute("remoteUser",login);
+            boolean isAdmin=userManager.isCallerInRole("admin");
 
-        String accountLogin=null;
-        Locale accountLocale=Locale.getDefault();
-        try {
-            Account account = userManager.getAccount(login);
-            if(account!=null) {
-                accountLogin = account.getLogin();
-                accountLocale = new Locale(account.getLanguage());
+            if(isAdmin){
+                ec.redirect(request.getContextPath() + "/faces/admin/workspace/workspacesMenu.xhtml");
+            }else{
+                redirectionPostLogin(request,ec);
             }
-        }catch(AccountNotFoundException ignored){}
-        //case insensitive fix
-        if(!login.equals(accountLogin)){
-            request.logout();
-            throw new AccountNotFoundException(accountLocale,login);
-        }
-        session.setAttribute("remoteUser",login);
-        boolean isAdmin=userManager.isCallerInRole("admin");
-
-        FacesContext fc = FacesContext.getCurrentInstance();
-        ExternalContext ec = fc.getExternalContext();
-
-        if(isAdmin){
-            ec.redirect(request.getContextPath() + "/faces/admin/workspace/workspacesMenu.xhtml");
         }else{
-            if(originURL!=null && originURL.length()>1)
-                ec.redirect(originURL);
-            else{
-                String workspaceID = null;
-                Workspace[] workspaces = userManager.getWorkspacesWhereCallerIsActive();
-                if (workspaces != null && workspaces.length > 0) {
-                    workspaceID = workspaces[0].getId();
-                }
-                if(workspaceID == null){
-                    ec.redirect(request.getContextPath() + "/faces/admin/workspace/workspacesMenu.xhtml");
-                }else{
-                    ec.redirect(request.getContextPath() + "/document-management/#" + workspaceID);
-                }
-            }
+            session.setAttribute("hasFail", true);
+            session.setAttribute("hasLogout", false);
         }
     }
 
@@ -130,4 +110,51 @@ public class ConnectionBean {
         this.originURL = originURL;
     }
 
+    private boolean tryLoggin(HttpServletRequest request){
+        try {
+            request.login(login, password);
+            return true;
+        }catch(ServletException e){
+            String message = "The user '"+login+"' failed to login";
+            LOGGER.log(Level.WARNING, message);
+            LOGGER.log(Level.FINEST,message,e);
+            return false;
+        }
+    }
+
+    private void checkAccount(HttpServletRequest request) throws AccountNotFoundException, ServletException {
+        String accountLogin=null;
+        Locale accountLocale=Locale.getDefault();
+        try {
+            Account account = userManager.getAccount(login);
+            if(account!=null) {
+                accountLogin = account.getLogin();
+                accountLocale = new Locale(account.getLanguage());
+            }
+        }catch(AccountNotFoundException e){
+            LOGGER.log(Level.FINEST,null,e);
+        }
+        //case insensitive fix
+        if(!login.equals(accountLogin)){
+            request.logout();
+            throw new AccountNotFoundException(accountLocale,login);
+        }
+    }
+
+    private void redirectionPostLogin(HttpServletRequest request,ExternalContext ec) throws IOException {
+        if(originURL!=null && originURL.length()>1){
+            ec.redirect(originURL);
+        }else{
+            String workspaceID = null;
+            Workspace[] workspaces = userManager.getWorkspacesWhereCallerIsActive();
+            if (workspaces != null && workspaces.length > 0) {
+                workspaceID = workspaces[0].getId();
+            }
+            if(workspaceID == null){
+                ec.redirect(request.getContextPath() + "/faces/admin/workspace/workspacesMenu.xhtml");
+            }else{
+                ec.redirect(request.getContextPath() + "/document-management/#" + workspaceID);
+            }
+        }
+    }
 }
