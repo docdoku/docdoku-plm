@@ -12,9 +12,7 @@
     <name>dplm-gui-releaser Releaser of DPLM</name>
     <profiles>
         <profile>
-            <id>jenkins</id>
-            <activation>
-            </activation>
+            <id>env-ci</id>
             <build>
                 <plugins>
                     <plugin>
