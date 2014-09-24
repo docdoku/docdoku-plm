@@ -1,11 +1,13 @@
+/*global define,App*/
 define([
-    "backbone",
-    "models/change_order"
+    'backbone',
+    'models/change_order'
 ], function (Backbone,ChangeOrderModel) {
+	'use strict';
     var ChangeOrderListCollection = Backbone.Collection.extend({
         model: ChangeOrderModel,
         url: function () {
-            return APP_CONFIG.contextPath + "/api/workspaces/" + APP_CONFIG.workspaceId + "/changes/orders";
+            return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/changes/orders';
         }
     });
 

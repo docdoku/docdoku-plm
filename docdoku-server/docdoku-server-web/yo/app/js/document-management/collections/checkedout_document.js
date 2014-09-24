@@ -11,7 +11,7 @@ define([
         className: 'CheckedoutDocumentList',
 
         url: function () {
-            return  APP_CONFIG.contextPath + '/api/workspaces/' + APP_CONFIG.workspaceId + '/documents/checkedout';
+            return  App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/documents/checkedout';
         }
 
     });

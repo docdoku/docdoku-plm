@@ -14,7 +14,7 @@ define([
 
         url: function () {
 	        if(this.document.getId()){
-		        return this.baseUrl()+ '?configSpec='+APP_CONFIG.configSpec;
+		        return this.baseUrl()+ '?configSpec='+App.config.configSpec;
 		    }else{
 		    	return this.document.urlRoot()+ '/iterations';
 		    }

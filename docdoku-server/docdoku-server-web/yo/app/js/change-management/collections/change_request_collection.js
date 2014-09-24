@@ -1,11 +1,13 @@
+/*global define,App*/
 define([
-    "backbone",
-    "models/change_request"
+    'backbone',
+    'models/change_request'
 ], function (Backbone,ChangeRequestModel) {
+	'use strict';
     var ChangeRequestListCollection = Backbone.Collection.extend({
         model: ChangeRequestModel,
         url: function () {
-            return APP_CONFIG.contextPath + "/api/workspaces/" + APP_CONFIG.workspaceId + "/changes/requests";
+            return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/changes/requests';
         }
     });
 

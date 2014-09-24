@@ -1,4 +1,4 @@
-/*global define*/
+/*global _,define,App*/
 define([
 	'backbone',
 	'mustache',
@@ -6,33 +6,33 @@ define([
 ],function (Backbone, Mustache, template) {
 	'use strict';
 	var HeaderView = Backbone.View.extend({
-         el: $("#header"),
+         el: '#header',
 
          render: function () {
 
 	         var $el = this.$el;
 
-			var workspaces = APP_CONFIG.workspaces;
+			var workspaces = App.config.workspaces;
 
                 var otherWorkspaces = _.filter(workspaces.allWorkspaces, function (workspace) {
                     return !_.findWhere(workspaces.administratedWorkspaces, workspace);
                 });
 
                 _.each(workspaces.administratedWorkspaces,function(workspace){
-                    workspace.isCurrent = workspace.id === APP_CONFIG.workspaceId;
+                    workspace.isCurrent = workspace.id === App.config.workspaceId;
                 });
 
                 _.each(otherWorkspaces,function(workspace){
-                    workspace.isCurrent = workspace.id === APP_CONFIG.workspaceId;
+                    workspace.isCurrent = workspace.id === App.config.workspaceId;
                 });
 
                 $el.html(Mustache.render(template, {
-                    currentWorkspace: APP_CONFIG.workspaceId,
-                    contextPath: APP_CONFIG.contextPath,
+                    currentWorkspace: App.config.workspaceId,
+                    contextPath: App.config.contextPath,
                     administratedWorkspaces: workspaces.administratedWorkspaces,
                     otherWorkspaces: otherWorkspaces,
-                    i18n: APP_CONFIG.i18n,
-                    userName: APP_CONFIG.userName,
+                    i18n: App.config.i18n,
+                    userName: App.config.userName,
                     isDocumentManagement: window.location.pathname.match('/document-management/'),
                     isProductManagement: window.location.pathname.match('/product-management/'),
                     isProductStructure: window.location.pathname.match('/product-structure/'),

@@ -11,8 +11,8 @@ define([
         className: 'CheckedOutDocumentList',
 
         url: function () {
-            var baseUrl = APP_CONFIG.contextPath + '/api/workspaces/' + APP_CONFIG.workspaceId + '/checkedouts';
-            return baseUrl + '/' + APP_CONFIG.login + '/documents';
+            var baseUrl = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/checkedouts';
+            return baseUrl + '/' + App.config.login + '/documents';
         },
 
         comparator: function (document) {

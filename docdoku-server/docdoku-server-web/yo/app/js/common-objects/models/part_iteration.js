@@ -1,12 +1,11 @@
-/*global define*/
-'use strict';
+/*global _,define,App*/
 define([
     'backbone',
     'common-objects/utils/date',
     'common-objects/collections/attribute_collection',
     'common-objects/collections/file/attached_file_collection'
 ], function (Backbone, date, AttributeCollection, AttachedFileCollection) {
-
+	'use strict';
     var PartIteration = Backbone.Model.extend({
 
         idAttribute: 'iteration',
@@ -94,7 +93,7 @@ define([
          * @returns string
          */
         getUploadBaseUrl: function () {
-            return APP_CONFIG.contextPath + '/files/' + this.getWorkspace() + '/parts/' + this.getNumber() + '/' + this.getVersion() + '/' + this.get('iteration') + '/nativecad/';
+            return App.config.contextPath + '/files/' + this.getWorkspace() + '/parts/' + this.getNumber() + '/' + this.getVersion() + '/' + this.get('iteration') + '/nativecad/';
         }
 
     });

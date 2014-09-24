@@ -1,21 +1,21 @@
+/*global _,define,App*/
 define([
     'backbone',
-    "mustache",
-    "collections/milestone_collection",
-    "text!templates/milestones/milestone_content.html",
-    "views/milestones/milestone_list",
-    "views/milestones/milestone_creation",
-    "common-objects/views/security/acl_edit",
-    "text!common-objects/templates/buttons/delete_button.html",
-    "text!common-objects/templates/buttons/ACL_button.html"
+    'mustache',
+    'collections/milestone_collection',
+    'text!templates/milestones/milestone_content.html',
+    'views/milestones/milestone_list',
+    'views/milestones/milestone_creation',
+    'common-objects/views/security/acl_edit',
+    'text!common-objects/templates/buttons/delete_button.html',
+    'text!common-objects/templates/buttons/ACL_button.html'
 ], function (Backbone, Mustache, MilestoneCollection, template, MilestoneListView, MilestoneCreationView, ACLEditView, deleteButton, aclButton) {
-    var MilestoneContentView = Backbone.View.extend({
-
-
+	'use strict';
+	var MilestoneContentView = Backbone.View.extend({
         events: {
-            "click button.new-milestone": "newMilestone",
-            "click button.delete": "deleteMilestone",
-            "click button.edit-acl": "actionEditAcl"
+            'click button.new-milestone': 'newMilestone',
+            'click button.delete': 'deleteMilestone',
+            'click button.edit-acl': 'actionEditAcl'
         },
 
         partials: {
@@ -29,24 +29,24 @@ define([
         },
 
         render: function () {
-            this.$el.html(Mustache.render(template, {i18n: APP_CONFIG.i18n}, this.partials));
+            this.$el.html(Mustache.render(template, {i18n: App.config.i18n}, this.partials));
 
             this.bindDomElements();
 
             this.listView = new MilestoneListView({
-                el: this.$("#milestone_table"),
+                el: this.$('#milestone_table'),
                 collection: this.collection
             }).render();
 
-            this.listView.on("delete-button:display", this.changeDeleteButtonDisplay);
-            this.listView.on("acl-button:display", this.changeAclButtonDisplay);
+            this.listView.on('delete-button:display', this.changeDeleteButtonDisplay);
+            this.listView.on('acl-button:display', this.changeAclButtonDisplay);
 
             return this;
         },
 
         bindDomElements: function () {
-            this.deleteButton = this.$(".delete");
-            this.aclButton = this.$(".edit-acl");
+            this.deleteButton = this.$('.delete');
+            this.aclButton = this.$('.edit-acl');
         },
 
         newMilestone: function () {
@@ -77,17 +77,17 @@ define([
                 window.document.body.appendChild(aclEditView.render().el);
 
                 aclEditView.openModal();
-                aclEditView.on("acl:update", function () {
+                aclEditView.on('acl:update', function () {
                     var acl = aclEditView.toList();
                     modelChecked.updateACL({
                         acl: acl || {userEntries: {}, groupEntries: {}},
                         success: function () {
-                            modelChecked.set("acl", acl);
+                            modelChecked.set('acl', acl);
                             aclEditView.closeModal();
                             self.listView.redraw();
                         },
                         error: function () {
-                            alert("Error on update acl");
+                            alert('Error on update acl');
                         }
                     });
 

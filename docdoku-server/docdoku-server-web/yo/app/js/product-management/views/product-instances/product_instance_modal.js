@@ -25,7 +25,7 @@ define([
         render: function () {
             this.editMode = this.iterations.isLast(this.iteration);
             var data = {
-                i18n: APP_CONFIG.i18n,
+                i18n: App.config.i18n,
                 model: this.iteration,
                 editMode: this.editMode
             };
@@ -36,7 +36,7 @@ define([
                 data.iteration.hasNextIteration = hasNextIteration;
                 data.iteration.hasPreviousIteration = hasPreviousIteration;
                 data.iteration.updateDate = date.formatTimestamp(
-                    APP_CONFIG.i18n._DATE_FORMAT,
+                    App.config.i18n._DATE_FORMAT,
                     data.iteration.updateDate
                 );
             }
@@ -110,7 +110,7 @@ define([
         },
 
         onError: function (model, error) {
-            alert(APP_CONFIG.i18n.CREATION_ERROR + " : " + error.responseText);
+            alert(App.config.i18n.CREATION_ERROR + " : " + error.responseText);
         },
 
         openModal: function () {

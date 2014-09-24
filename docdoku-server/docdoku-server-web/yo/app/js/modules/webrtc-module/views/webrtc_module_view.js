@@ -73,7 +73,7 @@ define(
             },
 
             onError: function (message) {
-                this.setStatus(APP_CONFIG.i18n.ERROR + " : " + APP_CONFIG.i18n[message.error]);
+                this.setStatus(App.config.i18n.ERROR + " : " + App.config.i18n[message.error]);
             },
 
             onMinimizeButtonClick: function (ev) {
@@ -95,7 +95,7 @@ define(
             },
 
             onRemoteHangup: function () {
-                this.setStatus(APP_CONFIG.i18n.REMOTE_HANGUP);
+                this.setStatus(App.config.i18n.REMOTE_HANGUP);
                 this.stop();
             },
 
@@ -126,7 +126,7 @@ define(
 
                 // say bye if state != no call, then reset the call state to NO_CALL
                 if (this.callState != CALL_STATE.NO_CALL) {
-                    App.mainChannel.sendJSON({type: ChannelMessagesType.WEBRTC_BYE, roomKey: this.roomKey, remoteUser: APP_CONFIG.login});
+                    App.mainChannel.sendJSON({type: ChannelMessagesType.WEBRTC_BYE, roomKey: this.roomKey, remoteUser: App.config.login});
                     this.setState(CALL_STATE.NO_CALL);
                 }
 
@@ -153,7 +153,7 @@ define(
             },
 
             setTitle: function (title) {
-                this.$("#webrtc_module_title").html("<i class='fa fa-video-camera'></i> " + APP_CONFIG.i18n.CALL_TO_TITLE + " : " + title);
+                this.$("#webrtc_module_title").html("<i class='fa fa-video-camera'></i> " + App.config.i18n.CALL_TO_TITLE + " : " + title);
             },
 
             makeDraggable: function () {
@@ -170,14 +170,14 @@ define(
                 // store rtc session vars
                 this.setRemoteUser(sessionArgs.remoteUser);
                 this.setContext(sessionArgs.context);
-                this.setRoomKey(APP_CONFIG.login + "-" + this.remoteUser);
+                this.setRoomKey(App.config.login + "-" + this.remoteUser);
                 this.setTitle(this.remoteUser + " | " + this.context);
 
                 this.$el.show();
                 this.$el.removeClass("webrtc_minimized").addClass("webrtc_shown");
 
                 if (!App.mainChannel.isReady()) {
-                    this.setStatus(APP_CONFIG.i18n.ERROR + " : " + APP_CONFIG.i18n.CHANNEL_NOT_READY_ERROR);
+                    this.setStatus(App.config.i18n.ERROR + " : " + App.config.i18n.CHANNEL_NOT_READY_ERROR);
                     this.stop();
                     return;
                 }
@@ -189,7 +189,7 @@ define(
 
                 // local user initiate the call
                 this.setState(CALL_STATE.OUTGOING);
-                this.setStatus(APP_CONFIG.i18n.WAITING_USER_MEDIA);
+                this.setStatus(App.config.i18n.WAITING_USER_MEDIA);
                 this.initMedia();
             },
 
@@ -217,7 +217,7 @@ define(
                 });
 
                 this.setTitle(this.remoteUser + " | " + this.context);
-                this.setStatus(APP_CONFIG.i18n.WAITING_USER_MEDIA);
+                this.setStatus(App.config.i18n.WAITING_USER_MEDIA);
                 this.$el.addClass("webrtc_shown").show();
                 this.initMedia();
 
@@ -253,26 +253,26 @@ define(
 
             onCallAcceptedByRemoteUser: function (message) {
                 this.setState(CALL_STATE.NEGOTIATING);
-                this.setStatus(APP_CONFIG.i18n.REMOTE_ACCEPT);
+                this.setStatus(App.config.i18n.REMOTE_ACCEPT);
             },
 
             onCallRejectedByRemoteUser: function (message) {
 
                 switch (message.reason) {
                     case REJECT_CALL_REASON.BUSY :
-                        this.setStatus(APP_CONFIG.i18n.REMOTE_BUSY);
+                        this.setStatus(App.config.i18n.REMOTE_BUSY);
                         break;
                     case REJECT_CALL_REASON.TIMEOUT :
-                        this.setStatus(APP_CONFIG.i18n.REMOTE_TIMEOUT);
+                        this.setStatus(App.config.i18n.REMOTE_TIMEOUT);
                         break;
                     case REJECT_CALL_REASON.REJECTED :
-                        this.setStatus(APP_CONFIG.i18n.REMOTE_REJECT);
+                        this.setStatus(App.config.i18n.REMOTE_REJECT);
                         break;
                     case REJECT_CALL_REASON.OFFLINE :
-                        this.setStatus(APP_CONFIG.i18n.REMOTE_OFFLINE);
+                        this.setStatus(App.config.i18n.REMOTE_OFFLINE);
                         break;
                     default :
-                        this.setStatus(APP_CONFIG.i18n.REMOTE_REJECT);
+                        this.setStatus(App.config.i18n.REMOTE_REJECT);
                         break;
                 }
 
@@ -280,7 +280,7 @@ define(
             },
 
             onCallHangUpByRemoteUser: function (message) {
-                this.setStatus(APP_CONFIG.i18n.REMOTE_HANGUP);
+                this.setStatus(App.config.i18n.REMOTE_HANGUP);
                 this.stop();
             },
 
@@ -288,7 +288,7 @@ define(
                 try {
                     getUserMedia({'audio': true, 'video': {"mandatory": {}, "optional": []}}, this.onUserMediaSuccess, this.onUserMediaError);
                 } catch (e) {
-                    this.setStatus(APP_CONFIG.i18n.USER_MEDIA_FAILED);
+                    this.setStatus(App.config.i18n.USER_MEDIA_FAILED);
                 }
             },
 
@@ -311,7 +311,7 @@ define(
                             remoteUser: this.remoteUser,
                             context: this.context
                         });
-                        this.setStatus(APP_CONFIG.i18n.VIDEO_INVITATION_SENT);
+                        this.setStatus(App.config.i18n.VIDEO_INVITATION_SENT);
                     }
 
                 }
@@ -319,14 +319,14 @@ define(
             },
 
             onUserMediaError: function (error) {
-                this.setStatus(APP_CONFIG.i18n.ERROR + " : " + APP_CONFIG.i18n.DEVICE_ERROR);
+                this.setStatus(App.config.i18n.ERROR + " : " + App.config.i18n.DEVICE_ERROR);
                 this.stop();
             },
 
             maybeStart: function () {
 
                 if (!this.started && this.localStream) {
-                    this.setStatus(APP_CONFIG.i18n.CONNECTING);
+                    this.setStatus(App.config.i18n.CONNECTING);
                     this.createPeerConnection();
                     this.pc.addStream(this.localStream);
                     this.started = true;
@@ -366,7 +366,7 @@ define(
                     this.pc.onicecandidate = this.onIceCandidate;
                 } catch (e) {
                     // Failed to create PeerConnection
-                    this.setStatus(APP_CONFIG.i18n.CANNOT_CREATE_PC);
+                    this.setStatus(App.config.i18n.CANNOT_CREATE_PC);
                     return;
                 }
 
@@ -419,27 +419,27 @@ define(
             },
 
             onSessionConnecting: function (message) {
-                this.setStatus(APP_CONFIG.i18n.SESSION_CONNECTING);
+                this.setStatus(App.config.i18n.SESSION_CONNECTING);
             },
 
             onSessionOpened: function (message) {
-                this.setStatus(APP_CONFIG.i18n.SESSION_OPENED);
+                this.setStatus(App.config.i18n.SESSION_OPENED);
                 this.setState(CALL_STATE.RUNNING);
             },
 
             onRemoteStreamAdded: function (event) {
-                this.setStatus(APP_CONFIG.i18n.REMOTE_STEAM_ADDED);
+                this.setStatus(App.config.i18n.REMOTE_STEAM_ADDED);
                 this.remoteStream = event.stream;
                 attachMediaStream(this.remoteVideo, this.remoteStream);
                 this.waitForRemoteVideo();
             },
 
             onRemoteStreamRemoved: function (event) {
-                this.setStatus(APP_CONFIG.i18n.REMOTE_STEAM_REMOVED);
+                this.setStatus(App.config.i18n.REMOTE_STEAM_REMOVED);
             },
 
             waitForRemoteVideo: function () {
-                this.setStatus(APP_CONFIG.i18n.WAITING_REMOTE_VIDEO);
+                this.setStatus(App.config.i18n.WAITING_REMOTE_VIDEO);
                 var self = this;
                 try {
                     // Try the new representation of tracks in a stream in M26.
@@ -450,7 +450,7 @@ define(
 
                 if (this.videoTracks.length === 0 || this.remoteVideo.currentTime > 0) {
                     this.remoteVideo.style.opacity = 1;
-                    this.setStatus(APP_CONFIG.i18n.CONNECTED);
+                    this.setStatus(App.config.i18n.CONNECTED);
                     this.setState(CALL_STATE.RUNNING);
                 } else {
                     setTimeout(function () {

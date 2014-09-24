@@ -1,5 +1,6 @@
-/*global define*/
-define(['backbone','common-objects/models/product_baseline','common-objects/models/document_baseline'],function(Backbone, ProductBaseline,DocumentBaseline){
+/*global define,App*/
+define(['backbone','common-objects/models/product_baseline','common-objects/models/document_baseline'],
+function(Backbone, ProductBaseline,DocumentBaseline){
 	'use strict';
 	var Baselines = Backbone.Collection.extend({
 		initialize:function(attributes, options){
@@ -22,13 +23,13 @@ define(['backbone','common-objects/models/product_baseline','common-objects/mode
 		url: function(){
 			switch (this.type){
 				case 'document' :
-					return APP_CONFIG.contextPath + '/api/workspaces/' + APP_CONFIG.workspaceId + '/document-baselines/';
+					return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/document-baselines/';
 				case 'product' :
 					if(this.productId){
-						return APP_CONFIG.contextPath + '/api/workspaces/' + APP_CONFIG.workspaceId + '/products/' + this.productId + '/baselines';
+						return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + this.productId + '/baselines';
 					}
-					return APP_CONFIG.contextPath + '/api/workspaces/' + APP_CONFIG.workspaceId + '/products/baselines';
-				default : return "";
+					return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/baselines';
+				default : return '';
 			}
 		}
 

@@ -30,14 +30,14 @@ define([
 
             if (this.task.closureDate) {
                 this.task.formattedClosureDate = date.formatTimestamp(
-                    APP_CONFIG.i18n._DATE_FORMAT,
+                    App.config.i18n._DATE_FORMAT,
                     this.task.closureDate
                 );
-                this.task.ClosureStatus = (this.task.status.toLowerCase() == "approved") ? APP_CONFIG.i18n.TASK_APPROVED_ON : APP_CONFIG.i18n.TASK_REJECT_ON;
+                this.task.ClosureStatus = (this.task.status.toLowerCase() == "approved") ? App.config.i18n.TASK_APPROVED_ON : App.config.i18n.TASK_REJECT_ON;
             }
 
             this.task.isAcceptableOrRejectable = (
-                this.task.worker.login == APP_CONFIG.login &&
+                this.task.worker.login == App.config.login &&
                 this.task.status.toLowerCase() == "in_progress"
                 );
 
@@ -50,7 +50,7 @@ define([
         },
 
         render: function () {
-            this.$el.html(Mustache.render(template, {i18n: APP_CONFIG.i18n, task: this.task}));
+            this.$el.html(Mustache.render(template, {i18n: App.config.i18n, task: this.task}));
             this.$el.addClass(this.task.status.toLowerCase());
             this.$(".user-popover").userPopover(this.task.worker.login, this.task.title, "top");
             this.bindDomElements();
@@ -75,13 +75,13 @@ define([
         approveTaskButtonClicked: function () {
             this.$closureComment.addClass("toggled");
             this.$closureTypeInput.val(this.APPROVE_MODE);
-            this.$closureCommentTitle.text(APP_CONFIG.i18n.APPROVE_TASK);
+            this.$closureCommentTitle.text(App.config.i18n.APPROVE_TASK);
         },
 
         rejectTaskButtonClicked: function () {
             this.$closureComment.addClass("toggled");
             this.$closureTypeInput.val(this.REJECT_MODE);
-            this.$closureCommentTitle.text(APP_CONFIG.i18n.REJECT_TASK);
+            this.$closureCommentTitle.text(App.config.i18n.REJECT_TASK);
         },
 
         submitClosure: function (e) {
@@ -89,9 +89,9 @@ define([
             // documents / parts
             var entityType = this.entityType;
 
-            var processUrl = APP_CONFIG.contextPath
+            var processUrl = App.config.contextPath
                 + "/api/workspaces/"
-                + APP_CONFIG.workspaceId
+                + App.config.workspaceId
                 + "/tasks/" + entityType + "/process?"
                 + "activityWorkflowId=" + this.task.parentWorkflowId
                 + "&index=" + this.task.index

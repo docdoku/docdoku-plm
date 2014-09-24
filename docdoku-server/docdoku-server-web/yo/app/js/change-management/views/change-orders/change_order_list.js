@@ -1,11 +1,13 @@
+/*global _,define,App*/
 'use strict';
 define([
     'backbone',
-    "mustache",
+    'mustache',
     'text!templates/change_item_list.html',
     'views/change-orders/change_order_list_item',
 ], function (Backbone, Mustache, template, ChangeOrderListItemView) {
-    var ChangeOrderListView = Backbone.View.extend({
+	'use strict';
+	var ChangeOrderListView = Backbone.View.extend({
 
 
 
@@ -39,7 +41,7 @@ define([
             if (this.oTable) {
                 this.oTable.fnDestroy();
             }
-            this.$el.html(Mustache.render(template, {i18n: APP_CONFIG.i18n}));
+            this.$el.html(Mustache.render(template, {i18n: App.config.i18n}));
             this.bindDomElements();
             this.listItemViews = [];
             var that = this;
@@ -161,15 +163,15 @@ define([
                 iDisplayLength: -1,
                 oLanguage: {
                     sSearch: '<i class="fa fa-search"></i>',
-                    sEmptyTable: APP_CONFIG.i18n.NO_DATA,
-                    sZeroRecords: APP_CONFIG.i18n.NO_FILTERED_DATA
+                    sEmptyTable: App.config.i18n.NO_DATA,
+                    sZeroRecords: App.config.i18n.NO_FILTERED_DATA
                 },
                 sDom: 'ft',
                 aoColumnDefs: [
                     { 'bSortable': false, 'aTargets': [ 0, 5 ] }
                 ]
             });
-            this.$el.parent().find('.dataTables_filter input').attr('placeholder', APP_CONFIG.i18n.FILTER);
+            this.$el.parent().find('.dataTables_filter input').attr('placeholder', App.config.i18n.FILTER);
         }
     });
 

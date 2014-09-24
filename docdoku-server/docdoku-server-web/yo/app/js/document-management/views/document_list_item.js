@@ -35,14 +35,14 @@ define([
             if (this.model.hasIterations()) {
                 data.lastIteration = this.model.getLastIteration().toJSON();
                 data.lastIteration.creationDate = date.formatTimestamp(
-                    APP_CONFIG.i18n._DATE_FORMAT,
+                    App.config.i18n._DATE_FORMAT,
                     data.lastIteration.creationDate
                 );
             }
 
             if (this.model.isCheckout()) {
                 data.checkOutDate = date.formatTimestamp(
-                    APP_CONFIG.i18n._DATE_FORMAT,
+                    App.config.i18n._DATE_FORMAT,
                     data.checkOutDate
                 );
             }
@@ -62,15 +62,15 @@ define([
             CheckboxListItemView.prototype.rendered.apply(this, arguments);
 
             if (this.model.isStateChangedSubscribed()) {
-                this.$(".state-subscription").addClass("fa-bell").attr("title", APP_CONFIG.i18n.UNSUBSCRIBE_STATE_CHANGE);
+                this.$(".state-subscription").addClass("fa-bell").attr("title", App.config.i18n.UNSUBSCRIBE_STATE_CHANGE);
             } else {
-                this.$(".state-subscription").addClass("fa-bell-o").attr("title", APP_CONFIG.i18n.SUBSCRIBE_STATE_CHANGE);
+                this.$(".state-subscription").addClass("fa-bell-o").attr("title", App.config.i18n.SUBSCRIBE_STATE_CHANGE);
             }
 
             if (this.model.isIterationChangedSubscribed()) {
-                this.$(".iteration-subscription").addClass("fa-bell").attr("title", APP_CONFIG.i18n.UNSUBSCRIBE_ITERATION_CHANGE);
+                this.$(".iteration-subscription").addClass("fa-bell").attr("title", App.config.i18n.UNSUBSCRIBE_ITERATION_CHANGE);
             } else {
-                this.$(".iteration-subscription").addClass("fa-bell-o").attr("title", APP_CONFIG.i18n.SUBSCRIBE_ITERATION_CHANGE);
+                this.$(".iteration-subscription").addClass("fa-bell-o").attr("title", App.config.i18n.SUBSCRIBE_ITERATION_CHANGE);
             }
 
             this.$(".author-popover").userPopover(this.model.attributes.author.login, this.model.id, "left");

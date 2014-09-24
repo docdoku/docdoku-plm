@@ -45,7 +45,7 @@ define([
                 }
             });
 
-            this.template = Mustache.render(template, {cid: this.model.cid, task: this.model.attributes, roles: roles, i18n: APP_CONFIG.i18n});
+            this.template = Mustache.render(template, {cid: this.model.cid, task: this.model.attributes, roles: roles, i18n: App.config.i18n});
         },
 
         deleteTaskAction: function () {
@@ -59,7 +59,7 @@ define([
                 title: this.inputTitle.val()
             });
             if (this.inputTitle.val().length == 0) {
-                this.pTitle.html(APP_CONFIG.i18n.TASK_NAME_PLACEHOLDER);
+                this.pTitle.html(App.config.i18n.TASK_NAME_PLACEHOLDER);
             }
             else {
                 this.pTitle.html(this.inputTitle.val());

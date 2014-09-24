@@ -22,7 +22,7 @@ define(
             render: function () {
                 var that = this;
                 this.model.fetch().success(function () {
-                    that.$el.html(Mustache.render(template, {i18n: APP_CONFIG.i18n, model: that.model}));
+                    that.$el.html(Mustache.render(template, {i18n: App.config.i18n, model: that.model}));
                     that.bindDomElements();
                     that.initBaselinedPartListView();
                     that.openModal();
@@ -59,7 +59,7 @@ define(
             },
 
             onError: function (model, error) {
-                alert(APP_CONFIG.i18n.CREATION_ERROR + " : " + error.responseText);
+                alert(App.config.i18n.CREATION_ERROR + " : " + error.responseText);
             },
 
             openModal: function () {

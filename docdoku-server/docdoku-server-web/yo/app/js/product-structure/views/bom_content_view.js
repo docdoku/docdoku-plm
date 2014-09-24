@@ -16,7 +16,7 @@ define([ "backbone", "mustache", "views/bom_item_view", "text!templates/bom_cont
             },
 
             render: function () {
-                this.$el.html(Mustache.render(template, {i18n: APP_CONFIG.i18n}));
+                this.$el.html(Mustache.render(template, {i18n: App.config.i18n}));
                 this.table = this.$('table');
                 this.tbody = this.$('tbody');
                 return this;
@@ -107,16 +107,16 @@ define([ "backbone", "mustache", "views/bom_item_view", "text!templates/bom_cont
                     iDisplayLength: -1,
                     oLanguage: {
                         sSearch: "<i class='fa fa-search'></i>",
-                        sEmptyTable: APP_CONFIG.i18n.NO_DATA,
-                        sZeroRecords: APP_CONFIG.i18n.NO_FILTERED_DATA
+                        sEmptyTable: App.config.i18n.NO_DATA,
+                        sZeroRecords: App.config.i18n.NO_FILTERED_DATA
                     },
                     sDom: 'ft',
                     aoColumnDefs: [
                         { "bSortable": false, "aTargets": [ 0 ] },
-                        { "sType": APP_CONFIG.i18n.DATE_SORT, "aTargets": [7, 8] }
+                        { "sType": App.config.i18n.DATE_SORT, "aTargets": [7, 8] }
                     ]
                 });
-                this.$el.parent().find(".dataTables_filter input").attr("placeholder", APP_CONFIG.i18n.FILTER);
+                this.$el.parent().find(".dataTables_filter input").attr("placeholder", App.config.i18n.FILTER);
             }
 
         });

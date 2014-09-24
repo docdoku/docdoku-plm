@@ -10,20 +10,20 @@ define([
 	'use strict';
     var AppView = Backbone.View.extend({
 
-        el: $('#content'),
+        el: '#content',
 
         events: {
 	        'click button.newBaseline':'createBaseline'
         },
 
         initialize: function () {
-	        APP_CONFIG.configSpec = 'latest';
-            this.model = new Workspace({id: APP_CONFIG.workspaceId});
+	        App.config.configSpec = 'latest';
+            this.model = new Workspace({id: App.config.workspaceId});
         },
 
         render: function () {
 
-            this.$el.html(Mustache.render(template, {model: this.model, i18n: APP_CONFIG.i18n}));
+            this.$el.html(Mustache.render(template, {model: this.model, i18n: App.config.i18n}));
             App.$documentManagementMenu = this.$('#document-management-menu');
             this.bindDomElements();
 	        this.renderSubView();
@@ -51,11 +51,11 @@ define([
 	    },
 
 	    onConfigSpecChange:function(configSpec){
-		    App.router.navigate(APP_CONFIG.workspaceId+'/configspec/'+configSpec+'/folders', {trigger:true, replace:false});
+		    App.router.navigate(App.config.workspaceId+'/configspec/'+configSpec+'/folders', {trigger:true, replace:false});
 		},
 
 	    isReadOnly:function(){
-			return APP_CONFIG.configSpec!=='latest';
+			return App.config.configSpec!=='latest';
 	    }
     });
 

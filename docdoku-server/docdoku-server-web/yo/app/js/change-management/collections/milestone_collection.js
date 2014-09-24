@@ -1,11 +1,13 @@
+/*global define,App*/
 define([
-    "backbone",
-    "models/milestone"
+    'backbone',
+    'models/milestone'
 ], function (Backbone,MilestoneModel) {
+	'use strict';
     var MilestoneListCollection = Backbone.Collection.extend({
         model: MilestoneModel,
         url: function () {
-            return APP_CONFIG.contextPath + "/api/workspaces/" + APP_CONFIG.workspaceId + "/changes/milestones";
+            return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/changes/milestones';
         }
     });
 

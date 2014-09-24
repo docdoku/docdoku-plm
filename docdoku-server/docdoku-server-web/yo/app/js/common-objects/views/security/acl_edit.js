@@ -51,7 +51,7 @@ define([
 
             var that = this;
 
-            this.$el.html(Mustache.render(template, {i18n: APP_CONFIG.i18n, title: this.title}));
+            this.$el.html(Mustache.render(template, {i18n: App.config.i18n, title: this.title}));
 
             this.bindDomElements();
 
@@ -77,7 +77,7 @@ define([
                     _.each(that.acl.userEntries.entry, function (entry) {
                         var userLogin = entry.key;
                         var permission = entry.value;
-                        var editMode = that.options.editMode && userLogin != that.admin.getLogin() && userLogin != APP_CONFIG.login;
+                        var editMode = that.options.editMode && userLogin != that.admin.getLogin() && userLogin != App.config.login;
                         var userAclView = new ACLItemView({model: new ACLUserEntry({userLogin: userLogin, permission: permission}), editMode: editMode}).render();
                         that.$usersAcls.append(userAclView.$el);
                         that.aclUserEntries.push(userAclView.model);
@@ -124,7 +124,7 @@ define([
         onUserMembershipsReset: function () {
             var that = this;
             this.userMemberships.each(function (userMembership) {
-                var view = new ACLItemView({model: new ACLUserEntry({userLogin: userMembership.key(), permission: userMembership.getPermission()}), editMode: that.options.editMode && userMembership.key() != that.admin.getLogin() && userMembership.key() != APP_CONFIG.login}).render();
+                var view = new ACLItemView({model: new ACLUserEntry({userLogin: userMembership.key(), permission: userMembership.getPermission()}), editMode: that.options.editMode && userMembership.key() != that.admin.getLogin() && userMembership.key() != App.config.login}).render();
                 that.$usersAcls.append(view.$el);
                 that.aclUserEntries.push(view.model);
             });

@@ -1,23 +1,25 @@
+/*global define,App*/
 define([
     'backbone',
-    "mustache",
-    "require",
-    "common-objects/models/workflow_model",
-    "text!templates/workflows/workflow_model_editor.html",
-    "common-objects/collections/roles",
-    "common-objects/models/activity_model",
-    "views/workflows/workflow_model_copy",
-    "views/workflows/activity_model_editor"
+    'mustache',
+    'require',
+    'common-objects/models/workflow_model',
+    'text!templates/workflows/workflow_model_editor.html',
+    'common-objects/collections/roles',
+    'common-objects/models/activity_model',
+    'views/workflows/workflow_model_copy',
+    'views/workflows/activity_model_editor'
 ], function (Backbone, Mustache, require, WorkflowModel, template, Roles, ActivityModel, WorkflowModelCopyView, ActivityModelEditorView) {
+	'use strict';
     var WorkflowModelEditorView = Backbone.View.extend({
 
-        el: "#change-management-content",
+        el: '#change-management-content',
 
         events: {
-            "click .actions #cancel-workflow": "cancelAction",
-            "click .actions #save-workflow": "saveAction",
-            "click .actions #copy-workflow": "copyAction",
-            "click button#add-activity": "addActivityAction"
+            'click .actions #cancel-workflow': 'cancelAction',
+            'click .actions #save-workflow': 'saveAction',
+            'click .actions #copy-workflow': 'copyAction',
+            'click button#add-activity': 'addActivityAction'
         },
 
         initialize: function () {
@@ -36,9 +38,9 @@ define([
             self.subviews.push(activityModelEditorView);
             activityModelEditorView.render();
             self.liAddActivitySection.before(activityModelEditorView.el);
-            self.listenTo(activityModel, "change", function () {
+            self.listenTo(activityModel, 'change', function () {
                 _.each(self.subviews, function (subview) {
-                    subview.trigger("activities-order:changed");
+                    subview.trigger('activities-order:changed');
                 });
             });
         },
@@ -53,22 +55,16 @@ define([
             this.model.attributes.activityModels.remove(activityModel, {silent: true});
             this.model.attributes.activityModels.add(activityModel, {silent: true, at: newPosition});
             _.each(this.subviews, function (subview) {
-                subview.trigger("activities-order:changed");
+                subview.trigger('activities-order:changed');
             });
         },
 
-        activityNameChanged: function () {
-            _.each(this.subviews, function (subview) {
-                subview.trigger("activities-order:changed");
-            });
-        },
-
-        gotoWorkflows: function () {
-            App.router.navigate(APP_CONFIG.workspaceId + "/workflows", {trigger: true});
+	    goToWorkflows: function () {
+            App.router.navigate(App.config.workspaceId + '/workflows', {trigger: true});
         },
 
         cancelAction: function () {
-            this.gotoWorkflows();
+            this.goToWorkflows();
             return false;
         },
 
@@ -84,10 +80,10 @@ define([
                     },
                     {
                         success: function () {
-                            self.gotoWorkflows();
+                            self.goToWorkflows();
                         },
                         error: function (model, xhr) {
-                            console.error("Error while saving workflow '" + model.attributes.reference + "' : " + xhr.responseText);
+                            console.error('Error while saving workflow "' + model.attributes.reference + '" : ' + xhr.responseText);
                             self.inputWorkflowName.focus();
                         }
                     }
@@ -130,7 +126,7 @@ define([
                     } });
                 }
 
-                that.template = Mustache.render(template, {i18n: APP_CONFIG.i18n, workflow: that.model.attributes});
+                that.template = Mustache.render(template, {i18n: App.config.i18n, workflow: that.model.attributes});
 
                 that.$el.html(that.template);
 
@@ -144,17 +140,17 @@ define([
         bindDomElements: function () {
             var self = this;
 
-            this.inputWorkflowName = this.$("input#workflow-name");
+            this.inputWorkflowName = this.$('input#workflow-name');
 
-            this.inputFinalState = this.$("input#final-state");
+            this.inputFinalState = this.$('input#final-state');
 
-            this.liAddActivitySection = this.$("li#add-activity-section");
+            this.liAddActivitySection = this.$('li#add-activity-section');
 
-            this.activitiesUL = this.$("ul#activity-list");
+            this.activitiesUL = this.$('ul#activity-list');
             this.activitiesUL.sortable({
-                items: "li.activity-section",
-                handle: ".activity-topbar",
-                tolerance: "pointer",
+                items: 'li.activity-section',
+                handle: '.activity-topbar',
+                tolerance: 'pointer',
                 start: function (event, ui) {
                     ui.item.oldPosition = ui.item.index();
                 },

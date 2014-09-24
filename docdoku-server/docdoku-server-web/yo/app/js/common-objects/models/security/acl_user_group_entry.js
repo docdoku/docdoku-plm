@@ -1,5 +1,6 @@
-/*global define*/
+/*global _,define*/
 define(['backbone'], function (Backbone) {
+	'use strict';
     var UserAclEntry = Backbone.Model.extend({
 
         initialize: function () {
@@ -7,25 +8,25 @@ define(['backbone'], function (Backbone) {
         },
 
         key: function () {
-            return this.get("groupId");
+            return this.get('groupId');
         },
 
         isForbidden: function () {
-            return this.getPermission() == "FORBIDDEN";
+            return this.getPermission() === 'FORBIDDEN';
         },
         isReadOnly: function () {
-            return this.getPermission() == "READ_ONLY";
+            return this.getPermission() === 'READ_ONLY';
         },
         isFullAccess: function () {
-            return this.getPermission() == "FULL_ACCESS";
+            return this.getPermission() === 'FULL_ACCESS';
         },
 
         setPermission: function (permission) {
-            this.set("permission", permission);
+            this.set('permission', permission);
         },
 
         getPermission: function () {
-            return this.get("permission");
+            return this.get('permission');
         }
 
     });

@@ -32,7 +32,7 @@ define([
             if (this.oTable) {
                 this.oTable.fnDestroy();
             }
-            this.$el.html(Mustache.render(template, {i18n: APP_CONFIG.i18n}));
+            this.$el.html(Mustache.render(template, {i18n: App.config.i18n}));
             this.bindDomElements();
             this.listItemViews = [];
             var that = this;
@@ -146,7 +146,7 @@ define([
 
         deleteSelectedProducts: function () {
             var that = this;
-            if (confirm(APP_CONFIG.i18n.DELETE_SELECTION_QUESTION)) {
+            if (confirm(App.config.i18n.DELETE_SELECTION_QUESTION)) {
                 _(this.listItemViews).each(function (view) {
                     if (view.isChecked()) {
                         view.model.destroy({
@@ -181,15 +181,15 @@ define([
                 iDisplayLength: -1,
                 oLanguage: {
                     sSearch: "<i class='fa fa-search'></i>",
-                    sEmptyTable: APP_CONFIG.i18n.NO_DATA,
-                    sZeroRecords: APP_CONFIG.i18n.NO_FILTERED_DATA
+                    sEmptyTable: App.config.i18n.NO_DATA,
+                    sZeroRecords: App.config.i18n.NO_FILTERED_DATA
                 },
                 sDom: 'ft',
                 aoColumnDefs: [
                     { "bSortable": false, "aTargets": [ 0, 3 ] }
                 ]
             });
-            this.$el.parent().find(".dataTables_filter input").attr("placeholder", APP_CONFIG.i18n.FILTER);
+            this.$el.parent().find(".dataTables_filter input").attr("placeholder", App.config.i18n.FILTER);
         }
 
     });

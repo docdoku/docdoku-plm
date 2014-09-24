@@ -1,19 +1,20 @@
-/*global define*/
+/*global define,App*/
 define([
     'backbone',
-    "common-objects/models/role"
+    'common-objects/models/role'
 ], function (Backbone, Role) {
+	'use strict';
     var RoleList = Backbone.Collection.extend({
         model: Role,
 
-        className: "RoleList",
+        className: 'RoleList',
 
         comparator: function (a, b) {
             // sort roles by name
-            var nameA = a.get("name");
-            var nameB = b.get("name");
+            var nameA = a.get('name');
+            var nameB = b.get('name');
 
-            if (nameA == nameB) {
+            if (nameA === nameB) {
                 return 0;
             }
             return (nameA < nameB) ? -1 : 1;
@@ -21,7 +22,7 @@ define([
 
 
         url: function () {
-            return APP_CONFIG.contextPath + "/api/workspaces/" + APP_CONFIG.workspaceId + "/roles/";
+            return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/roles/';
         }
 
     });

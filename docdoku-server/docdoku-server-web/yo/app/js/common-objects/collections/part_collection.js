@@ -1,13 +1,13 @@
-/*global define*/
+/*global $,define,App*/
 define([
     'backbone',
-    "common-objects/models/part"
+    'common-objects/models/part'
 ], function (Backbone, Part) {
+	'use strict';
     var PartList = Backbone.Collection.extend({
-
         model: Part,
 
-        className: "PartList",
+        className: 'PartList',
 
         initialize: function (start) {
 
@@ -15,7 +15,7 @@ define([
             this.pageCount = 0;
             this.resultsPerPage = 20;
 
-            this.urlBase = APP_CONFIG.contextPath + "/api/workspaces/" + APP_CONFIG.workspaceId + "/parts?start=";
+            this.urlBase = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts?start=';
 
             if (start) {
                 this.currentPage = start;
@@ -26,13 +26,13 @@ define([
         fetchPageCount: function () {
             var self = this;
             $.ajax({
-                url: APP_CONFIG.contextPath + "/api/workspaces/" + APP_CONFIG.workspaceId + "/parts/count",
+                url: App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/count',
                 success: function (data) {
                     self.pageCount = Math.ceil(data.count / self.resultsPerPage);
-                    self.trigger("page-count:fetch");
+                    self.trigger('page-count:fetch');
                 },
                 error: function () {
-                    self.trigger("page-count:fetch");
+                    self.trigger('page-count:fetch');
                 }
             });
         },

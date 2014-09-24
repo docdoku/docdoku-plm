@@ -64,7 +64,7 @@ define([
             return this;
         },
 
-        template_empty_view: "<li>" + APP_CONFIG.i18n.NO_LAYERS + "</li>",
+        template_empty_view: "<li>" + App.config.i18n.NO_LAYERS + "</li>",
 
         addEmptyView: function () {
             this.listContainer.append(this.template_empty_view);

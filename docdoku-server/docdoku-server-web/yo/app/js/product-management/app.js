@@ -1,28 +1,28 @@
-/*global define*/
+/*global define,App*/
 define([
-    "backbone",
-    "mustache",
-    "common-objects/models/workspace",
-    "text!templates/content.html"
+    'backbone',
+    'mustache',
+    'common-objects/models/workspace',
+    'text!templates/content.html'
 ], function (Backbone, Mustache, Workspace, template) {
-
+	'use strict';
     var AppView = Backbone.View.extend({
 
-        el: $("#content"),
+        el: '#content',
 
         events: {},
 
         template: Mustache.parse(template),
 
         initialize: function () {
-            this.model = new Workspace({id: APP_CONFIG.workspaceId});
+            this.model = new Workspace({id: App.config.workspaceId});
         },
 
         render: function () {
 
-            this.$el.html(Mustache.render(template, {model: this.model, i18n: APP_CONFIG.i18n}));
+            this.$el.html(Mustache.render(template, {model: this.model, i18n: App.config.i18n}));
 
-            App.$productManagementMenu = this.$("#product-management-menu");
+            App.$productManagementMenu = this.$('#product-management-menu');
 
             App.$productManagementMenu.customResizable({
                 containment: this.$el

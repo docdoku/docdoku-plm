@@ -29,7 +29,7 @@ define([
         render: function () {
             var data = {
                 model: this.model,
-                i18n: APP_CONFIG.i18n
+                i18n: App.config.i18n
             };
             if (this.isForBaseline) {
                 data.released = this.options.released;

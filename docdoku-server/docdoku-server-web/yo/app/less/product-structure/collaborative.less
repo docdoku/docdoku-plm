@@ -1,66 +1,66 @@
 #collaborative_view{
-  ul{
-    margin:0 0 10px 0;
+  .CollaborativeRoom{
     border-radius: 3px;
     box-shadow: 0px 1px 5px #9b9b9b;
     max-width: 100%;
-    h4{
-      background-color: #5b779b;
-      background-image: -moz-linear-gradient(top, #7a99c1, #2c4361);
-      background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#7a99c1), to(#2c4361));
-      background-image: -webkit-linear-gradient(top, #7a99c1, #2c4361);
-      background-image: -o-linear-gradient(top, #7a99c1, #2c4361);
+
+    &-title{
+      min-height: 18px;
+      margin:0;
+      .gradient(#5b779b,#7a99c1,#2c4361);
       background-image: linear-gradient(to bottom, #7a99c1, #2c4361);
       background-repeat: repeat-x;
       color: white;
       font-size:1em;
       text-shadow: #555555 0px -1px 0px;
-      margin:0;
-      min-height: 18px;
-      i{
-        margin: 2px 5px;
-        &:hover {
-          color: @grayLight;
-          cursor: pointer;
-        }
-      }
-      #collaborative_exit{
-        float:right;
-      }
-      #collaborative_invite:after{
-        content:'+';
-        position : relative;
-        right:2px;
-        bottom:-4px;
-        z-index: 1;
+    }
+
+    &-exitBtn{
+      float:right;
+      margin: 2px 5px;
+      &:hover {
+        color: @grayLight;
+        cursor: pointer;
       }
     }
-    #room_wrapper{
+
+    &-wrapper{
       height: 100px;
       overflow: auto;
+      margin:0 0 10px 0;
     }
-    li{
-      padding: 2px 5px 0 5px;
+  }
 
+  .CollaborativeRoomParticipant{
+    padding: 2px 5px 0 5px;
+
+    &:hover {
+      background-color: rgba(118, 188, 255, 0.48);
+    }
+
+    &.master{
+
+    }
+
+    &.pending{
+
+    }
+
+    .fa-chevron-right,
+    .fa-chevron-left {
+      font-size: 0.8em;
+      vertical-align: baseline;
+      line-height: 18px;
+      color: grey;
+    }
+
+    .collaborative_give_hand,
+    .collaborative_kick,
+    .collaborative_withdraw_invitation {
+      color: @linkColor;
       &:hover {
-        background-color: rgba(118, 188, 255, 0.48);
-      }
-
-      .fa-chevron-right,
-      .fa-chevron-left {
-        font-size: 0.8em;
-        vertical-align: baseline;
-        line-height: 18px;
-        color: grey;
-      }
-      .collaborative_give_hand,
-      .collaborative_kick,
-      .collaborative_withdraw_invitation {
-        color: @linkColor;
-        &:hover {
-          color: @linkColorHover;
-          cursor: pointer;
-        }
+        color: @linkColorHover;
+        cursor: pointer;
       }
     }
   }

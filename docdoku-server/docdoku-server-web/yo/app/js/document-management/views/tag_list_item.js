@@ -37,7 +37,7 @@ define([
         },
         actionDelete: function () {
             this.hideActions();
-            if (confirm(APP_CONFIG.i18n.DELETE_TAG_QUESTION)) {
+            if (confirm(App.config.i18n.DELETE_TAG_QUESTION)) {
                 this.model.destroy();
             }
             return false;

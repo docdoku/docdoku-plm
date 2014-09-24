@@ -517,6 +517,7 @@ public class DocumentResource {
 
         try {
             DocumentRevision docR = documentService.getDocumentRevision(new DocumentRevisionKey(workspaceId, documentId, documentVersion));
+            //Todo use DAO to get the right Workflow
             List<Workflow> abortedWorkflows = docR.getAbortedWorkflows();
             List<WorkflowDTO> abortedWorkflowsDTO = new ArrayList<>();
 

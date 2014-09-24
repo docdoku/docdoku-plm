@@ -44,7 +44,7 @@ public class FileConverter {
     private static final String PROPERTIES_FILE = "/com/docdoku/server/viewers/conf.properties";
     private static final String OO_HOME_KEY = "com.docdoku.server.viewers.ooHome";
     private static final String OO_PORT_KEY = "com.docdoku.server.viewers.ooPort";
-    private final static Logger LOGGER = Logger.getLogger(FileConverter.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(FileConverter.class.getName());
 
     private OfficeManager officeManager;
 
@@ -66,9 +66,13 @@ public class FileConverter {
             LOGGER.log(Level.SEVERE, null, e);
             throw new RuntimeException(e);
         } finally {
-            try{if(inputStream!=null){
-                inputStream.close();
-            }}catch (IOException ignored){}
+            try{
+                if(inputStream!=null){
+                    inputStream.close();
+                }
+            }catch (IOException e){
+                LOGGER.log(Level.FINEST, null, e);
+            }
         }
     }
 

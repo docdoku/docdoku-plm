@@ -26,7 +26,7 @@ define([
         },
 
         render: function () {
-            this.$el.html(Mustache.render(template, {i18n: APP_CONFIG.i18n}, this.partials));
+            this.$el.html(Mustache.render(template, {i18n: App.config.i18n}, this.partials));
 
             this.bindDomElements();
 

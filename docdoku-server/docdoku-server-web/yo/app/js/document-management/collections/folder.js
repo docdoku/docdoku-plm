@@ -13,11 +13,11 @@ define([
         className: 'FolderList',
 
         url: function () {
-            var baseUrl = APP_CONFIG.contextPath + '/api/workspaces/' + APP_CONFIG.workspaceId + '/folders';
+            var baseUrl = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/folders';
             if (this.parent) {
-                return baseUrl + '/' + this.parent.get('id') + '/folders?configSpec='+APP_CONFIG.configSpec;
+                return baseUrl + '/' + this.parent.get('id') + '/folders?configSpec='+App.config.configSpec;
             } else {
-                return  baseUrl+'?configSpec='+APP_CONFIG.configSpec;
+                return  baseUrl+'?configSpec='+App.config.configSpec;
             }
         },
 
@@ -25,9 +25,9 @@ define([
             if (!this.parent) {
                 // inject the user home folder
                 data.unshift({
-                    id: APP_CONFIG.workspaceId + ':~' + APP_CONFIG.login,
-                    name: '~' + APP_CONFIG.login,
-                    path: APP_CONFIG.workspaceId,
+                    id: App.config.workspaceId + ':~' + App.config.login,
+                    name: '~' + App.config.login,
+                    path: App.config.workspaceId,
                     home: true
                 });
             }

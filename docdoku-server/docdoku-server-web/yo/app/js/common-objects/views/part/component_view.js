@@ -20,7 +20,7 @@ define([
         },
 
         render: function () {
-            this.$el.html(Mustache.render(template, {model: this.model.attributes, i18n: APP_CONFIG.i18n, editMode: this.options.editMode}));
+            this.$el.html(Mustache.render(template, {model: this.model.attributes, i18n: App.config.i18n, editMode: this.options.editMode}));
             this.bindDomElements();
             this.initCadInstanceViews();
             return this;

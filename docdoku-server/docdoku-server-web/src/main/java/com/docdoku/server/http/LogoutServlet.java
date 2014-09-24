@@ -11,6 +11,8 @@ public class LogoutServlet extends HttpServlet {
     protected void doGet(HttpServletRequest pRequest, HttpServletResponse pResponse) throws ServletException, IOException {
         pRequest.logout();
         pRequest.getSession().invalidate();
-        pResponse.sendRedirect(pRequest.getContextPath()+"/faces/login.xhtml");
+        pRequest.getSession().setAttribute("hasFail", false);
+        pRequest.getSession().setAttribute("hasLogout", true);
+        pResponse.sendRedirect(pRequest.getContextPath()+"/");
     }
 }

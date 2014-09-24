@@ -34,7 +34,9 @@ import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -64,11 +66,11 @@ public class MainChannelApplication {
     public static void sessionDestroyed(String userLogin) {
         if(hasChannels(userLogin)) {
             Map<String, Session> sessionMap = CHANNELS.get(userLogin);
+            List<Session> sessionList = new ArrayList<>(sessionMap.values());
 
-
-            for (Session session : sessionMap.values()) {
+            for (Session session : sessionList) {
                 try {
-                    session.close();
+                    sessionMap.get(session.getId()).close();
                 } catch (IOException e) {
                     Logger.getLogger(MainChannelApplication.class.getName()).log(Level.INFO, null, e);
                 }

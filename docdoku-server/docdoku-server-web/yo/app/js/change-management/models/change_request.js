@@ -1,25 +1,27 @@
+/*global $,define,App*/
 define([
-    "models/change_item"
+    'models/change_item'
 ], function (ChangeItemModel) {
+	'use strict';
     var ChangeRequestModel = ChangeItemModel.extend({
         urlRoot: function () {
-            return APP_CONFIG.contextPath + "/api/workspaces/" + APP_CONFIG.workspaceId + "/changes/requests"
+            return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/changes/requests';
         },
         getMilestoneId: function () {
-            return this.get("milestoneId");
+            return this.get('milestoneId');
         },
 
         getAddressedChangeIssues: function () {
-            return this.get("addressedChangeIssues");
+            return this.get('addressedChangeIssues');
         },
 
         saveAffectedIssues: function (issues, callback) {
             $.ajax({
                 context: this,
-                type: "PUT",
-                url: this.url() + "/affectedIssues",
+                type: 'PUT',
+                url: this.url() + '/affectedIssues',
                 data: JSON.stringify(issues),
-                contentType: "application/json; charset=utf-8",
+                contentType: 'application/json; charset=utf-8',
                 success: function () {
                     this.fetch();
                     if (callback) {

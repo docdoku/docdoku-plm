@@ -7,12 +7,12 @@ define(['backbone', 'collections/document_iteration', 'common-objects/utils/acl-
 			if (this.isNew()) {
 				return this.collection.url();
 			}
-			return APP_CONFIG.contextPath + '/api/workspaces/' + APP_CONFIG.workspaceId + '/documents';
+			return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/documents';
 		},
 
 		url: function () {
 			if (this.getId()) {
-				return this.baseUrl() + '?configSpec=' + APP_CONFIG.configSpec;
+				return this.baseUrl() + '?configSpec=' + App.config.configSpec;
 			} else {
 				return this.urlRoot();
 			}
@@ -55,7 +55,7 @@ define(['backbone', 'collections/document_iteration', 'common-objects/utils/acl-
 		},
 
 		isCheckoutByConnectedUser: function () {
-			return this.isCheckout() ? this.getCheckoutUser().login === APP_CONFIG.login : false;
+			return this.isCheckout() ? this.getCheckoutUser().login === App.config.login : false;
 		},
 
 		getUrl: function () {
@@ -168,7 +168,7 @@ define(['backbone', 'collections/document_iteration', 'common-objects/utils/acl-
 		getPermalink: function () {
 			return encodeURI(
 					window.location.origin +
-					APP_CONFIG.contextPath +
+					App.config.contextPath +
 					'/documents/' +
 					this.getWorkspace() +
 					'/' +

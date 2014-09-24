@@ -1,12 +1,13 @@
-/*global define*/
+/*global define,App*/
 define([
     'backbone',
-    "common-objects/models/user"
+    'common-objects/models/user'
 ], function (Backbone, User) {
+	'use strict';
     var Users = Backbone.Collection.extend({
         model: User,
         url: function () {
-            return APP_CONFIG.contextPath + "/api/workspaces/" + APP_CONFIG.workspaceId + "/users";
+            return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/users';
         }
     });
 

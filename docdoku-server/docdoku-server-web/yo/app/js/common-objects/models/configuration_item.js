@@ -1,14 +1,13 @@
-/*global define,APP_CONFIG*/
-'use strict';
+/*global _,$,define,App*/
 define(['backbone'], function (Backbone) {
-
+	'use strict';
     var ConfigurationItem = Backbone.Model.extend({
 
-        urlRoot: function () {
-            return APP_CONFIG.contextPath + '/api/workspaces/' + APP_CONFIG.workspaceId + '/products';
-        },
+	    idAttribute: '_id',
 
-        idAttribute: '_id',
+        urlRoot: function () {
+            return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products';
+        },
 
         initialize: function () {
             _.bindAll(this);
@@ -28,11 +27,11 @@ define(['backbone'], function (Backbone) {
         },
 
         getIndexUrl: function () {
-            return APP_CONFIG.contextPath + '/product-structure/#' + APP_CONFIG.workspaceId + '/' + encodeURIComponent(this.getId());
+            return App.config.contextPath + '/product-structure/#' + App.config.workspaceId + '/' + encodeURIComponent(this.getId());
         },
 
         getFrameUrl: function () {
-            return  APP_CONFIG.contextPath + '/visualization/#' + APP_CONFIG.workspaceId + '/' + this.getId() + '/0/10/1000/null/'+APP_CONFIG.configSpec
+            return  App.config.contextPath + '/visualization/#' + App.config.workspaceId + '/' + this.getId() + '/0/10/1000/null/'+App.config.configSpec;
         },
 
         createBaseline: function (baselineArgs, callbacks) {

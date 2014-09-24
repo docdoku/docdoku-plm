@@ -46,10 +46,10 @@ define(
                 this.attributesView.collection.reset(this.model.get("attributeTemplates"));
 
                 this.$("a#mask-help").popover({
-                    title: APP_CONFIG.i18n.MASK,
+                    title: App.config.i18n.MASK,
                     placement: "left",
                     html: true,
-                    content: APP_CONFIG.i18n.MASK_HELP
+                    content: App.config.i18n.MASK_HELP
                 });
 
             },
@@ -101,7 +101,7 @@ define(
             },
 
             onError: function (model, error) {
-                alert(APP_CONFIG.i18n.CREATION_ERROR + " : " + error.responseText);
+                alert(App.config.i18n.CREATION_ERROR + " : " + error.responseText);
             }
 
         });

@@ -7,7 +7,7 @@ define([
 
         initialize: function () {
             LinkedItemsView.prototype.initialize.apply(this, arguments);
-            this.options.label = APP_CONFIG.i18n.ADD_REQUEST;
+            this.options.label = App.config.i18n.ADD_REQUEST;
         },
 
         bindTypeahead: function () {
@@ -15,7 +15,7 @@ define([
 
             this.referenceInput.typeahead({
                 source: function (query, process) {
-                    $.getJSON(APP_CONFIG.contextPath + '/api/workspaces/' + APP_CONFIG.workspaceId + '/changes/orders/link/?q=' + query, function (data) {
+                    $.getJSON(App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/changes/orders/link/?q=' + query, function (data) {
 
                         self.searchResults = new LinkedChangeItemCollection(data);
                         process(self.searchResults.map(function (order) {

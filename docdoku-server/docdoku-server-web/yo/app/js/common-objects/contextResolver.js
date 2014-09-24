@@ -1,31 +1,30 @@
-/*global define*/
+/*global _,$,define,App*/
 define([
     'common-objects/models/user',
     'common-objects/models/workspace'
 ], function (User, Workspace) {
-
+	'use strict';
     var ContextResolver = function () {
     };
 
     ContextResolver.prototype.resolve = function (success) {
-        $.getJSON('../server.properties.json').success(function (data) {
-            APP_CONFIG.contextPath = data['contextRoot'];
-            User.whoami(APP_CONFIG.workspaceId, function (user, groups) {
+        $.getJSON('../server.properties.json').success(function (properties) {
+            App.config.contextPath = properties.contextRoot;
+            User.whoami(App.config.workspaceId, function (user, groups) {
                 Workspace.getWorkspaces(function (workspaces) {
-                    APP_CONFIG.login = user.login;
-                    APP_CONFIG.userName = user.name;
-                    APP_CONFIG.groups = groups;
-                    APP_CONFIG.workspaces = workspaces;
-                    APP_CONFIG.workspaceAdmin = _.select(APP_CONFIG.workspaces.administratedWorkspaces, function (workspace) {
-                        return workspace.id === APP_CONFIG.workspaceId
+                    App.config.login = user.login;
+                    App.config.userName = user.name;
+                    App.config.groups = groups;
+                    App.config.workspaces = workspaces;
+                    App.config.workspaceAdmin = _.select(App.config.workspaces.administratedWorkspaces, function (workspace) {
+                        return workspace.id === App.config.workspaceId;
                     }).length === 1;
-                    localStorage.setItem('locale', user.language || 'en');
+                    window.localStorage.setItem('locale', user.language || 'en');
                     success();
                 });
             });
         });
     };
 
-    return new ContextResolver;
-
+    return new ContextResolver();
 });

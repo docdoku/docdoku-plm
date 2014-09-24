@@ -49,7 +49,7 @@ define([
         },
         actionDelete: function () {
             var that = this;
-            if (confirm(APP_CONFIG.i18n.DELETE_SELECTION_QUESTION)) {
+            if (confirm(App.config.i18n.DELETE_SELECTION_QUESTION)) {
                 this.listView.eachChecked(function (view) {
                     view.model.destroy({success: function () {
                         that.listView.redraw();

@@ -1,22 +1,24 @@
+/*global _,$,define,App*/
 define([
-    "backbone",
-    "common-objects/utils/date",
-    "common-objects/utils/acl-checker"
+    'backbone',
+    'common-objects/utils/date',
+    'common-objects/utils/acl-checker'
 ], function (Backbone,Date, ACLChecker) {
+	'use strict';
     var ChangeItemModel = Backbone.Model.extend({
         priorities: {
-            LOW: "LOW",
-            MEDIUM: "MEDIUM",
-            HIGH: "HIGH",
-            EMERGENCY: "EMERGENCY"
+            LOW: 'LOW',
+            MEDIUM: 'MEDIUM',
+            HIGH: 'HIGH',
+            EMERGENCY: 'EMERGENCY'
         },
 
         categories: {
-            ADAPTIVE: "ADAPTIVE",
-            CORRECTIVE: "CORRECTIVE",
-            PERFECTIVE: "PERFECTIVE",
-            PREVENTIVE: "PREVENTIVE",
-            OTHER: "OTHER"
+            ADAPTIVE: 'ADAPTIVE',
+            CORRECTIVE: 'CORRECTIVE',
+            PERFECTIVE: 'PERFECTIVE',
+            PREVENTIVE: 'PREVENTIVE',
+            OTHER: 'OTHER'
         },
 
         initialize: function () {
@@ -24,71 +26,71 @@ define([
         },
 
         getId: function () {
-            return this.get("id");
+            return this.get('id');
         },
 
         getName: function () {
-            return this.get("name");
+            return this.get('name');
         },
 
         getAuthor: function () {
-            return this.get("author");
+            return this.get('author');
         },
 
         getAuthorName: function () {
-            return this.get("authorName");
+            return this.get('authorName');
         },
 
         getAssignee: function () {
-            return this.get("assignee");
+            return this.get('assignee');
         },
 
         getCreationDate: function () {
-            return this.get("creationDate");
+            return this.get('creationDate');
         },
 
         getFormattedCreationDate: function () {
             var date = this.getCreationDate();
             if (date) {
                 return Date.formatTimestamp(
-                    APP_CONFIG.i18n._DATE_FORMAT,
+                    App.config.i18n._DATE_FORMAT,
                     date
                 );
             }
-            return "Now";
+            return 'Now';
         },
 
         getDescription: function () {
-            return this.get("description");
+            return this.get('description');
         },
 
         getPriority: function () {
-            return this.get("priority");
+            return this.get('priority');
         },
 
         getCategory: function () {
-            return this.get("category");
+            return this.get('category');
         },
 
         getAffectedDocuments: function () {
-            return this.get("affectedDocuments");
+            return this.get('affectedDocuments');
         },
 
         getAffectedParts: function () {
-            return this.get("affectedParts");
+            return this.get('affectedParts');
         },
 
         getTags: function () {
-            return this.get("tags");
+            return this.get('tags');
         },
 
         addTags: function (tags) {
             $.ajax({
                 context: this,
-                type: "POST",
-                url: this.url() + "/tags",
+                type: 'POST',
+                url: this.url() + '/tags',
                 data: JSON.stringify(tags),
-                contentType: "application/json; charset=utf-8",
+                contentType: 'application/json; charset=utf-8',
                 success: function () {
                     this.fetch();
                 }
@@ -97,8 +99,8 @@ define([
 
         removeTag: function (tag, callback) {
             $.ajax({
-                type: "DELETE",
-                url: this.url() + "/tags/" + tag,
+                type: 'DELETE',
+                url: this.url() + '/tags/' + tag,
                 success: function () {
                     callback();
                 }
@@ -106,12 +108,12 @@ define([
         },
 
         removeTags: function (tags, callback) {
-            var baseUrl = this.url() + "/tags/";
+            var baseUrl = this.url() + '/tags/';
             var count = 0;
             var total = _(tags).length;
             _(tags).each(function (tag) {
                 $.ajax({
-                    type: "DELETE",
+                    type: 'DELETE',
                     url: baseUrl + tag,
                     success: function () {
                         count++;
@@ -127,10 +129,10 @@ define([
         saveAffectedDocuments: function (documents, callback) {
             $.ajax({
                 context: this,
-                type: "PUT",
-                url: this.url() + "/affectedDocuments",
+                type: 'PUT',
+                url: this.url() + '/affectedDocuments',
                 data: JSON.stringify(documents),
-                contentType: "application/json; charset=utf-8",
+                contentType: 'application/json; charset=utf-8',
                 success: function () {
                     this.fetch();
                     if (callback) {
@@ -143,10 +145,10 @@ define([
         saveAffectedParts: function (parts, callback) {
             $.ajax({
                 context: this,
-                type: "PUT",
-                url: this.url() + "/affectedParts",
+                type: 'PUT',
+                url: this.url() + '/affectedParts',
                 data: JSON.stringify(parts),
-                contentType: "application/json; charset=utf-8",
+                contentType: 'application/json; charset=utf-8',
                 success: function () {
                     this.fetch();
                     if (callback) {
@@ -157,34 +159,34 @@ define([
         },
 
         getACL: function () {
-            return this.get("acl");
+            return this.get('acl');
         },
 
         updateACL: function (args) {
             $.ajax({
-                type: "PUT",
-                url: this.url() + "/acl",
+                type: 'PUT',
+                url: this.url() + '/acl',
                 data: JSON.stringify(args.acl),
-                contentType: "application/json; charset=utf-8",
+                contentType: 'application/json; charset=utf-8',
                 success: args.success,
                 error: args.error
             });
         },
 
         hasACLForCurrentUser: function () {
-            return this.getACLPermissionForCurrentUser() != false;
+            return this.getACLPermissionForCurrentUser() !== false;
         },
 
         isForbidden: function () {
-            return this.getACLPermissionForCurrentUser() == "FORBIDDEN";
+            return this.getACLPermissionForCurrentUser() === 'FORBIDDEN';
         },
 
         isReadOnly: function () {
-            return this.getACLPermissionForCurrentUser() == "READ_ONLY";
+            return this.getACLPermissionForCurrentUser() === 'READ_ONLY';
         },
 
         isFullAccess: function () {
-            return this.getACLPermissionForCurrentUser() == "FULL_ACCESS";
+            return this.getACLPermissionForCurrentUser() === 'FULL_ACCESS';
         },
 
         getACLPermissionForCurrentUser: function () {
@@ -192,7 +194,7 @@ define([
         },
 
         isWritable: function () {
-            return this.get("writable");
+            return this.get('writable');
         }
 
     });

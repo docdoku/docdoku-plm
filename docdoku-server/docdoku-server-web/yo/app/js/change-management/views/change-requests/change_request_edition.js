@@ -1,25 +1,26 @@
+/*global _,define,App*/
 define([
         'backbone',
-        "mustache",
-        "text!templates/change-requests/change_request_edition.html",
-        "models/change_request",
-        "common-objects/collections/users",
-        "collections/milestone_collection",
-        "common-objects/models/tag",
-        "common-objects/views/tags/tag",
-        "common-objects/views/linked/linked_documents",
-        "common-objects/collections/linked/linked_document_collection",
-        "common-objects/views/linked/linked_parts",
-        "common-objects/collections/linked/linked_part_collection",
-        "common-objects/views/linked/linked_issues",
-        "common-objects/collections/linked/linked_change_item_collection"
+        'mustache',
+        'text!templates/change-requests/change_request_edition.html',
+        'models/change_request',
+        'common-objects/collections/users',
+        'collections/milestone_collection',
+        'common-objects/models/tag',
+        'common-objects/views/tags/tag',
+        'common-objects/views/linked/linked_documents',
+        'common-objects/collections/linked/linked_document_collection',
+        'common-objects/views/linked/linked_parts',
+        'common-objects/collections/linked/linked_part_collection',
+        'common-objects/views/linked/linked_issues',
+        'common-objects/collections/linked/linked_change_item_collection'
     ],
     function (Backbone, Mustache, template, ChangeRequestModel, UserList, MilestoneList, Tag, TagView, LinkedDocumentsView, LinkedDocumentCollection, LinkedPartsView, LinkedPartCollection, LinkedIssuesView, LinkedChangeItemCollection) {
-
+	    'use strict';
         var ChangeRequestEditionView = Backbone.View.extend({
             events: {
-                "submit #request_edition_form": "onSubmitForm",
-                "hidden #request_edition_modal": "onHidden"
+                'submit #request_edition_form': 'onSubmitForm',
+                'hidden #request_edition_modal': 'onHidden'
             },
 
 
@@ -28,17 +29,17 @@ define([
                 this._subViews = [];
                 this.model.fetch();
                 _.bindAll(this);
-                this.$el.on("remove", this.removeSubviews);                                                                  // Remove cascade
+                this.$el.on('remove', this.removeSubviews);                                                                  // Remove cascade
             },
 
             removeSubviews: function () {
-                _(this._subViews).invoke("remove");
+                _(this._subViews).invoke('remove');
             },
 
             render: function () {
                 this.removeSubviews();
                 this.editMode = this.model.isWritable();
-                this.$el.html(Mustache.render(template, {i18n: APP_CONFIG.i18n, model: this.model}));
+                this.$el.html(Mustache.render(template, {i18n: App.config.i18n, model: this.model}));
                 this.bindDomElements();
                 new UserList().fetch({success: this.fillUserList});
                 new MilestoneList().fetch({success: this.fillMilestoneList});
@@ -54,7 +55,7 @@ define([
                 var self = this;
                 if (list) {
                     list.each(function (milestone) {
-                        self.$inputRequestMilestone.append("<option value='" + milestone.get("id") + "'" + ">" + milestone.get("title") + "</option>");
+                        self.$inputRequestMilestone.append('<option value="' + milestone.get('id') + '"' + '>' + milestone.get('title') + '</option>');
                     });
                 }
                 this.$inputRequestMilestone.val(this.model.getMilestoneId());
@@ -62,20 +63,22 @@ define([
             fillUserList: function (list) {
                 var self = this;
                 list.each(function (user) {
-                    self.$inputRequestAssignee.append("<option value='" + user.get("login") + "'" + ">" + user.get("name") + "</option>");
+                    self.$inputRequestAssignee.append('<option value="' + user.get('login') + '"' + '>' + user.get('name') + '</option>');
                 });
                 this.$inputRequestAssignee.val(this.model.getAssignee());
             },
             fillPriorityList: function () {
-                for (var priority in this.model.priorities) {
-                    this.$inputRequestPriority.append("<option value='" + priority + "'" + ">" + priority + "</option>");
-                }
+	            var self = this;
+	            _.each(this.model.priorities, function(priority){
+		            self.$inputRequestPriority.append('<option value="' + priority + ' " ' + '>' + priority + '</option>');
+	            });
                 this.$inputRequestPriority.val(this.model.getPriority());
             },
             fillCategoryList: function () {
-                for (var category in this.model.categories) {
-                    this.$inputRequestCategory.append("<option value='" + category + "'" + ">" + category + "</option>");
-                }
+	            var self = this;
+	            _.each(this.model.categories, function(category){
+		            self.$inputRequestCategory.append('<option value="' + category + ' " ' + '>' + category + '</option>');
+	            });
                 this.$inputRequestCategory.val(this.model.getCategory());
             },
 
@@ -84,7 +87,7 @@ define([
 
                 if (this.model.attributes.tags.length) {
 
-                    var $tagsZone = this.$(".master-tags-list");
+                    var $tagsZone = this.$('.master-tags-list');
                     _.each(that.model.attributes.tags, function (tagLabel) {
                         var tagView;
                         var tagViewParams = {
@@ -108,7 +111,7 @@ define([
             linkManagement: function () {
                 var that = this;
                 var affectedDocuments = this.model.getAffectedDocuments();
-                var $affectedDocumentsLinkZone = this.$("#documents-affected-links");
+                var $affectedDocumentsLinkZone = this.$('#documents-affected-links');
 
                 that._affectedDocumentsCollection = new LinkedDocumentCollection(affectedDocuments);
                 that._linkedDocumentsView = new LinkedDocumentsView({
@@ -120,7 +123,7 @@ define([
                 $affectedDocumentsLinkZone.html(that._linkedDocumentsView.el);
 
                 var affectedParts = this.model.getAffectedParts();
-                var $affectedPartsLinkZone = this.$("#parts-affected-links");
+                var $affectedPartsLinkZone = this.$('#parts-affected-links');
 
                 that._affectedPartsCollection = new LinkedPartCollection(affectedParts);
                 that._linkedPartsView = new LinkedPartsView({
@@ -132,7 +135,7 @@ define([
                 $affectedPartsLinkZone.html(that._linkedPartsView.el);
 
                 var affectedIssues = this.model.getAddressedChangeIssues();
-                var $affectedIssuesLinkZone = this.$("#issues-affected-links");
+                var $affectedIssuesLinkZone = this.$('#issues-affected-links');
 
                 that._affectedIssuesCollection = new LinkedChangeItemCollection(affectedIssues);
                 var linkedIssuesView = new LinkedIssuesView({
@@ -165,7 +168,7 @@ define([
             onSubmitForm: function (e) {
                 var data = {
                     description: this.$inputRequestDescription.val(),
-                    author: APP_CONFIG.login,
+                    author: App.config.login,
                     assignee: this.$inputRequestAssignee.val(),
                     priority: this.$inputRequestPriority.val(),
                     category: this.$inputRequestCategory.val(),
@@ -189,7 +192,7 @@ define([
             },
 
             onError: function (model, error) {
-                alert(APP_CONFIG.i18n.EDITION_ERROR + " : " + error.responseText);
+                alert(App.config.i18n.EDITION_ERROR + ' : ' + error.responseText);
             },
 
             openModal: function () {

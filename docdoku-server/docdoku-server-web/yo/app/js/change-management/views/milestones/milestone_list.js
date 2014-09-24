@@ -1,18 +1,20 @@
+/*global _,define,App*/
 define([
     'backbone',
-    "mustache",
-    "text!templates/milestones/milestone_list.html",
-    "views/milestones/milestone_list_item"
+    'mustache',
+    'text!templates/milestones/milestone_list.html',
+    'views/milestones/milestone_list_item'
 ], function (Backbone, Mustache, template, MilestoneListItemView) {
-    var MilestoneListView = Backbone.View.extend({
+	'use strict';
+	var MilestoneListView = Backbone.View.extend({
 
         events: {
-            "click .toggle-checkboxes": "toggleSelection"
+            'click .toggle-checkboxes': 'toggleSelection'
         },
 
         initialize: function () {
             _.bindAll(this);
-            this.listenTo(this.collection, "reset", this.resetList);
+            this.listenTo(this.collection, 'reset', this.resetList);
             this.listenTo(this.collection, 'add', this.addNewMilestone);
             this.listItemViews = [];
         },
@@ -23,16 +25,15 @@ define([
         },
 
         bindDomElements: function () {
-            this.$items = this.$(".items");
-            this.$checkbox = this.$(".toggle-checkboxes");
+            this.$items = this.$('.items');
+            this.$checkbox = this.$('.toggle-checkboxes');
         },
 
         resetList: function () {
-            console.log('reset')
             if (this.oTable) {
                 this.oTable.fnDestroy();
             }
-            this.$el.html(Mustache.render(template, {i18n: APP_CONFIG.i18n}));
+            this.$el.html(Mustache.render(template, {i18n: App.config.i18n}));
             this.bindDomElements();
             this.listItemViews = [];
             var that = this;
@@ -43,7 +44,6 @@ define([
         },
 
         addNewMilestone: function (model) {
-            console.log('add')
             this.addMilestone(model, true);
             this.redraw();
         },
@@ -62,7 +62,7 @@ define([
 
         removeMilestoneView: function (model) {
             var viewToRemove = _(this.listItemViews).select(function (view) {
-                return view.model == model;
+                return view.model === model;
             })[0];
 
             if (viewToRemove) {
@@ -77,13 +77,13 @@ define([
             var view = new MilestoneListItemView({model: model}).render();
             this.listItemViews.push(view);
             this.$items.append(view.$el);
-            view.on("selectionChanged", this.onSelectionChanged);
-            view.on("rendered", this.redraw);
+            view.on('selectionChanged', this.onSelectionChanged);
+            view.on('rendered', this.redraw);
             return view;
         },
 
         toggleSelection: function () {
-            if (this.$checkbox.is(":checked")) {
+            if (this.$checkbox.is(':checked')) {
                 _(this.listItemViews).each(function (view) {
                     view.check();
                 });
@@ -101,14 +101,14 @@ define([
             }).length;
 
             if (checkedViewsLength <= 0) {                                                                               // No Milestone Selected
-                this.trigger("delete-button:display", false);
-                this.trigger("acl-button:display", false);
-            } else if (checkedViewsLength == 1) {                                                                          // One Milestone Selected
-                this.trigger("delete-button:display", true);
-                this.trigger("acl-button:display", true);
+                this.trigger('delete-button:display', false);
+                this.trigger('acl-button:display', false);
+            } else if (checkedViewsLength === 1) {                                                                          // One Milestone Selected
+                this.trigger('delete-button:display', true);
+                this.trigger('acl-button:display', true);
             } else {                                                                                                     // Several Milestone Selectes
-                this.trigger("delete-button:display", true);
-                this.trigger("acl-button:display", false);
+                this.trigger('delete-button:display', true);
+                this.trigger('acl-button:display', false);
             }
         },
 
@@ -132,7 +132,7 @@ define([
 
         deleteSelectedMilestones: function () {
             var that = this;
-            if (confirm("Delete Milestones")) {
+            if (confirm('Delete Milestones')) {
                 _(this.listItemViews).each(function (view) {
                     if (view.isChecked()) {
                         view.model.destroy({
@@ -160,7 +160,7 @@ define([
 
         dataTable: function () {
             var oldSort = [
-                [1, "asc"]
+                [1, 'asc']
             ];
             if (this.oTable) {
                 oldSort = this.oTable.fnSettings().aaSorting;
@@ -171,16 +171,16 @@ define([
                 bDestroy: true,
                 iDisplayLength: -1,
                 oLanguage: {
-                    sSearch: "<i class='fa fa-search'></i>",
-                    sEmptyTable: APP_CONFIG.i18n.NO_DATA,
-                    sZeroRecords: APP_CONFIG.i18n.NO_FILTERED_DATA
+                    sSearch: '<i class="fa fa-search"></i>',
+                    sEmptyTable: App.config.i18n.NO_DATA,
+                    sZeroRecords: App.config.i18n.NO_FILTERED_DATA
                 },
                 sDom: 'ft',
                 aoColumnDefs: [
-                    { "bSortable": false, "aTargets": [ 0, 5 ] }
+                    { 'bSortable': false, 'aTargets': [ 0, 5 ] }
                 ]
             });
-            this.$el.parent().find(".dataTables_filter input").attr("placeholder", APP_CONFIG.i18n.FILTER);
+            this.$el.parent().find('.dataTables_filter input').attr('placeholder', App.config.i18n.FILTER);
         }
 
     });

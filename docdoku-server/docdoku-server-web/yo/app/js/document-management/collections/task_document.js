@@ -14,7 +14,7 @@ define([
         },
 
         url: function () {
-            var url = APP_CONFIG.contextPath + '/api/workspaces/' + APP_CONFIG.workspaceId + '/tasks/' + APP_CONFIG.login + '/documents/';
+            var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/tasks/' + App.config.login + '/documents/';
             if (this.filterStatus) {
                 url += '?filter=' + this.filterStatus;
             }

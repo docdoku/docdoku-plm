@@ -1,5 +1,6 @@
 /*global define*/
 define(function () {
+	'use strict';
     return {
         WEBRTC_INVITE: 'WEBRTC_INVITE',
         WEBRTC_ACCEPT: 'WEBRTC_ACCEPT',
@@ -26,4 +27,4 @@ define(function () {
         CHAT_MESSAGE_ACK: 'CHAT_MESSAGE_ACK',
         USER_STATUS: 'USER_STATUS'
     };
-})
+});

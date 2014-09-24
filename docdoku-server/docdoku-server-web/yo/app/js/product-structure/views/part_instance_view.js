@@ -30,7 +30,7 @@ define(["backbone", "mustache", "text!templates/part_instance.html"], function (
         },
 
         render: function () {
-            this.$el.html(Mustache.render(template, {mesh: this.mesh, i18n: APP_CONFIG.i18n}));
+            this.$el.html(Mustache.render(template, {mesh: this.mesh, i18n: App.config.i18n}));
             if (App.sceneManager.transformControlsEnabled()) {
                 var mode = App.sceneManager.getTransformControlsMode();
                 this.$("button#" + mode).addClass("active");

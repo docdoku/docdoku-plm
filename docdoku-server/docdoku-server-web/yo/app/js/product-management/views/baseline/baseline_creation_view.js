@@ -19,7 +19,7 @@ define(
             },
 
             render: function () {
-                this.$el.html(Mustache.render(template, {i18n: APP_CONFIG.i18n, model: this.model}));
+                this.$el.html(Mustache.render(template, {i18n: App.config.i18n, model: this.model}));
                 this.bindDomElements();
                 return this;
             },
@@ -53,7 +53,7 @@ define(
             },
 
             onError: function (error) {
-                alert(APP_CONFIG.i18n.CREATION_ERROR + " : " + error.responseText);
+                alert(App.config.i18n.CREATION_ERROR + " : " + error.responseText);
             },
 
             openModal: function () {

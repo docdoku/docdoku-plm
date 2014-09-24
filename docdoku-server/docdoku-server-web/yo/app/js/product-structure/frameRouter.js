@@ -12,11 +12,11 @@ define([
 
                 if (pathToLoad && productId) {
 
-                    APP_CONFIG.workspaceId = workspaceId;
-                    APP_CONFIG.productId = productId;
-                    APP_CONFIG.configSpec = configSpec || 'latest';
+                    App.config.workspaceId = workspaceId;
+                    App.config.productId = productId;
+                    App.config.configSpec = configSpec || 'latest';
 
-                    APP_CONFIG.defaultCameraPosition = {
+                    App.config.defaultCameraPosition = {
                         x: parseFloat(cameraX || 0),
                         y: parseFloat(cameraY || 0),
                         z: parseFloat(cameraZ || 0)

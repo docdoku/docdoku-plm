@@ -27,7 +27,7 @@ define(
             },
 
             render: function () {
-                this.$el.html(Mustache.render(template, {i18n: APP_CONFIG.i18n, model: this.model}));
+                this.$el.html(Mustache.render(template, {i18n: App.config.i18n, model: this.model}));
                 this.$select = this.$("select");
                 this.fillUserList();
                 return this;
@@ -55,7 +55,7 @@ define(
                     this.remove();
                     this.trigger("view:removed");
                 } else {
-                    alert(APP_CONFIG.i18n.ALERT_ROLE_IN_USE);
+                    alert(App.config.i18n.ALERT_ROLE_IN_USE);
                 }
 
             },

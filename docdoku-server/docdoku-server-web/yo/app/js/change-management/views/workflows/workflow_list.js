@@ -1,9 +1,11 @@
+/*global define,App*/
 define([
-    "common-objects/collections/workflow_models",
-    "common-objects/views/documents/checkbox_list",
-    "views/workflows/workflow_list_item",
-    "text!templates/workflows/workflow_list.html"
+    'common-objects/collections/workflow_models',
+    'common-objects/views/documents/checkbox_list',
+    'views/workflows/workflow_list_item',
+    'text!templates/workflows/workflow_list.html'
 ], function (WorkflowList, CheckboxListView, WorkflowListItemView, template) {
+	'use strict';
     var WorkflowListView = CheckboxListView.extend({
 
         template: template,
@@ -17,11 +19,11 @@ define([
             });
         },
         rendered: function () {
-            this.once("_ready", this.dataTable);
+            this.once('_ready', this.dataTable);
         },
         dataTable: function () {
             var oldSort = [
-                [0, "asc"]
+                [0, 'asc']
             ];
             if (this.oTable) {
                 oldSort = this.oTable.fnSettings().aaSorting;
@@ -32,17 +34,17 @@ define([
                 bDestroy: true,
                 iDisplayLength: -1,
                 oLanguage: {
-                    sSearch: "<i class='fa fa-search'></i>",
-                    sEmptyTable: APP_CONFIG.i18n.NO_DATA,
-                    sZeroRecords: APP_CONFIG.i18n.NO_FILTERED_DATA
+                    sSearch: '<i class="fa fa-search"></i>',
+                    sEmptyTable: App.config.i18n.NO_DATA,
+                    sZeroRecords: App.config.i18n.NO_FILTERED_DATA
                 },
                 sDom: 'ft',
                 aoColumnDefs: [
-                    { "bSortable": false, "aTargets": [ 0 ] },
-                    { "sType": APP_CONFIG.i18n.DATE_SORT, "aTargets": [4] }
+                    { 'bSortable': false, 'aTargets': [ 0 ] },
+                    { 'sType': App.config.i18n.DATE_SORT, 'aTargets': [4] }
                 ]
             });
-            this.$el.parent().find(".dataTables_filter input").attr("placeholder", APP_CONFIG.i18n.FILTER);
+            this.$el.parent().find('.dataTables_filter input').attr('placeholder', App.config.i18n.FILTER);
         }
     });
     return WorkflowListView;

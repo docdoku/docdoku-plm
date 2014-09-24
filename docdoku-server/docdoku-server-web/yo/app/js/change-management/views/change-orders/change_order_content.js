@@ -1,24 +1,24 @@
+/*global _,define,App*/
 define([
     'backbone',
-    "mustache",
-    "collections/change_order_collection",
-    "text!templates/change-orders/change_order_content.html",
-    "views/change-orders/change_order_list",
-    "views/change-orders/change_order_creation",
-    "common-objects/views/tags/tags_management",
-    "common-objects/views/security/acl_edit",
-    "text!common-objects/templates/buttons/delete_button.html",
-    "text!common-objects/templates/buttons/tags_button.html",
-    "text!common-objects/templates/buttons/ACL_button.html"
+    'mustache',
+    'collections/change_order_collection',
+    'text!templates/change-orders/change_order_content.html',
+    'views/change-orders/change_order_list',
+    'views/change-orders/change_order_creation',
+    'common-objects/views/tags/tags_management',
+    'common-objects/views/security/acl_edit',
+    'text!common-objects/templates/buttons/delete_button.html',
+    'text!common-objects/templates/buttons/tags_button.html',
+    'text!common-objects/templates/buttons/ACL_button.html'
 ], function (Backbone, Mustache, ChangeOrderCollection, template, ChangeOrderListView, ChangeOrderCreationView, TagsManagementView, ACLEditView, deleteButton, tagsButton, aclButton) {
-    var ChangeOrderContentView = Backbone.View.extend({
-
-
+	'use strict';
+	var ChangeOrderContentView = Backbone.View.extend({
         events: {
-            "click button.new-order": "newOrder",
-            "click button.delete": "deleteOrder",
-            "click button.edit-acl": "actionEditAcl",
-            "click button.tags": "actionTags"
+            'click button.new-order': 'newOrder',
+            'click button.delete': 'deleteOrder',
+            'click button.edit-acl': 'actionEditAcl',
+            'click button.tags': 'actionTags'
         },
 
         partials: {
@@ -33,27 +33,27 @@ define([
         },
 
         render: function () {
-            this.$el.html(Mustache.render(template, {i18n: APP_CONFIG.i18n}, this.partials));
+            this.$el.html(Mustache.render(template, {i18n: App.config.i18n}, this.partials));
 
             this.bindDomElements();
 
             this.listView = new ChangeOrderListView({
-                el: this.$("#order_table"),
+                el: this.$('#order_table'),
                 collection: this.collection
             }).render();
 
-            this.listView.on("delete-button:display", this.changeDeleteButtonDisplay);
-            this.listView.on("acl-button:display", this.changeAclButtonDisplay);
+            this.listView.on('delete-button:display', this.changeDeleteButtonDisplay);
+            this.listView.on('acl-button:display', this.changeAclButtonDisplay);
             this.tagsButton.show();
 
-            this.$el.on("remove", this.listView.remove);
+            this.$el.on('remove', this.listView.remove);
             return this;
         },
 
         bindDomElements: function () {
-            this.deleteButton = this.$(".delete");
-            this.aclButton = this.$(".edit-acl");
-            this.tagsButton = this.$(".tags");
+            this.deleteButton = this.$('.delete');
+            this.aclButton = this.$('.edit-acl');
+            this.tagsButton = this.$('.tags');
         },
 
         newOrder: function () {
@@ -103,17 +103,17 @@ define([
                 window.document.body.appendChild(aclEditView.render().el);
 
                 aclEditView.openModal();
-                aclEditView.on("acl:update", function () {
+                aclEditView.on('acl:update', function () {
                     var acl = aclEditView.toList();
                     modelChecked.updateACL({
                         acl: acl || {userEntries: {}, groupEntries: {}},
                         success: function () {
-                            modelChecked.set("acl", acl);
+                            modelChecked.set('acl', acl);
                             aclEditView.closeModal();
                             self.listView.redraw();
                         },
                         error: function () {
-                            alert("Error on update acl");
+                            alert('Error on update acl');
                         }
                     });
 

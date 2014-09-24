@@ -3,6 +3,7 @@
   text-align: center;
   padding: 0;
   margin: 0 auto 30px auto;
+  vertical-align: bottom;
 
   background: -webkit-radial-gradient(center top, #e2e7ef 0%, #abbacd 100%);
   background: -moz-radial-gradient(center top, #e2e7ef 0%, #abbacd 100%);
@@ -16,20 +17,21 @@
     display: inline-block;
     margin: 0;
     width: 490px;
-    height: 281px;
+    height: 332px;
+    line-height: 51px;
 
     canvas {
-      height: 276px;
+      height: 332px;
     }
   }
 
   #login_form_container {
     display: inline-block;
     border-radius: 0 4px 4px 0;
-    float: right;
     padding: 20px 44px;
     margin: 0;
     background-color: white;
+    line-height: 51px;
 
     h3 {
       text-align: center;
@@ -42,15 +44,14 @@
       }
     }
 
+    .alert{
+      line-height: normal;
+    }
+
     #login_form {
       margin-top: 15px;
       margin-bottom: 0px;
       text-align: left;
-
-      &:login_button {
-        width: 80px;
-        margin-right: 20px;
-      }
 
       label {
         color: #5B6B80;

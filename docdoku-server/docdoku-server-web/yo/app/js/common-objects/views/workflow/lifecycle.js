@@ -1,4 +1,4 @@
-/*global define*/
+/*global _,define,App*/
 define([
     'backbone',
     'mustache',
@@ -13,7 +13,7 @@ define([
         tagName: 'div',
 
         events: {
-            'click a.history': 'history',
+            'click a.LifecycleModalTab-historyLink': 'history',
             'click a.abortedWorkflow': 'abortedWorkflow',
             'click a.currentWorkflow': 'currentWorkflow'
         },
@@ -45,7 +45,7 @@ define([
                     _.each(abortedWorkflows, function (workflow) {
 
                         workflow.abortedFormattedDate = Date.formatTimestamp(
-                            APP_CONFIG.i18n._DATE_FORMAT,
+                            App.config.i18n._DATE_FORMAT,
                             workflow.abortedDate
                         );
                     });
@@ -70,7 +70,7 @@ define([
                     }
 
                     that.abortedWorkflows = abortedWorkflows;
-                    that.$el.html(Mustache.render(template, {i18n: APP_CONFIG.i18n, workflow: that.workflow, abortedWorkflows: abortedWorkflows}));
+                    that.$el.html(Mustache.render(template, {i18n: App.config.i18n, workflow: that.workflow, abortedWorkflows: abortedWorkflows}));
                     that.bindDomElements();
                     that.displayWorkflow(that.workflow);
                 }
@@ -79,7 +79,7 @@ define([
         },
 
         bindDomElements: function () {
-            this.$historyContent = this.$('.history-content');
+            this.$historyContent = this.$('.LifecycleModalTab-historyContent');
             this.$lifecycleActivities = this.$('#lifecycle-activities');
         },
 
@@ -96,7 +96,7 @@ define([
 
         abortedWorkflow: function (e) {
             var that = this;
-            var workflowId = $(e.target).data('id');
+            var workflowId = parseInt(e.target.dataset.id,10);
             var workflow = _.select(that.abortedWorkflows, function (workflow) {
                 return workflow.id === workflowId;
             })[0];

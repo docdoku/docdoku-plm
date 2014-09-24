@@ -37,7 +37,7 @@ define([
             var data = {
                 view: this.viewToJSON(),
                 lockMode: this.editMode && !this.attributesLocked,
-                i18n: APP_CONFIG.i18n
+                i18n: App.config.i18n
             };
             this.$el.html(Mustache.render(template, data));
             this.rendered();

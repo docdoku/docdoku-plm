@@ -25,7 +25,7 @@ define([
             },
 
             render: function () {
-                this.$el.html(Mustache.render(template, {i18n: APP_CONFIG.i18n}));
+                this.$el.html(Mustache.render(template, {i18n: App.config.i18n}));
                 this.bindDomElements();
                 this.bindPartTemplateSelector();
                 this.bindAttributesView();
@@ -88,7 +88,7 @@ define([
             onSubmitForm: function (e) {
                 this.model = new Part({
                     number: this.$inputPartNumber.val(),
-                    workspaceId: APP_CONFIG.workspaceId,
+                    workspaceId: App.config.workspaceId,
                     description: this.$inputPartDescription.val(),
                     name: this.$inputPartName.val(),
                     standardPart: this.$inputPartStandard.is(':checked') ? 1 : 0
@@ -130,7 +130,7 @@ define([
             },
 
             onError: function (model, error) {
-                alert(APP_CONFIG.i18n.CREATION_ERROR + " : " + error.responseText);
+                alert(App.config.i18n.CREATION_ERROR + " : " + error.responseText);
             },
 
             openModal: function () {

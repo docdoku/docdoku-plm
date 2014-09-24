@@ -1,13 +1,11 @@
-/*global define,App,APP_CONFIG*/
-'use strict';
+/*global _,define,App*/
 define([
     'backbone',
     'mustache',
     'text!modules/coworkers-access-module/templates/coworker_item_template.html'
 ], function (Backbone, Mustache, template) {
-
+	'use strict';
     var CoWorkersItemView = Backbone.View.extend({
-
         tagName: 'li',
 
         events: {
@@ -22,7 +20,7 @@ define([
                 user: this.model.login
             };
             if (typeof(App) !== 'undefined' && App.sceneManager) {
-                data.displayCobrowsingButton = this.model.workspaceId === APP_CONFIG.workspaceId;
+                data.displayCobrowsingButton = this.model.workspaceId === App.config.workspaceId;
             }
             this.template = Mustache.render(template, data);
             _.bindAll(this);
@@ -40,9 +38,9 @@ define([
             Backbone.Events.on('UserStatusRequestDone', function (message) {
                 if (message.remoteUser === that.model.login && message.status !== null) {
                     if (message.status === 'OFFLINE') {
-                        that.$('.fa-user').addClass('user-offline').removeClass('user-online').attr('title', APP_CONFIG.i18n.OFFLINE);
+                        that.$('.fa-user').addClass('user-offline').removeClass('user-online').attr('title', App.config.i18n.OFFLINE);
                     } else if (message.status === 'ONLINE') {
-                        that.$('.fa-user').addClass('user-online').removeClass('user-offline').attr('title', APP_CONFIG.i18n.ONLINE);
+                        that.$('.fa-user').addClass('user-online').removeClass('user-offline').attr('title', App.config.i18n.ONLINE);
                     }
                 }
             });
@@ -51,15 +49,15 @@ define([
         },
 
         onVideoButtonClick: function () {
-            Backbone.Events.trigger('NewOutgoingCall', { remoteUser: this.model.login, context: APP_CONFIG.workspaceId });
+            Backbone.Events.trigger('NewOutgoingCall', { remoteUser: this.model.login, context: App.config.workspaceId });
         },
 
         onChatButtonClick: function () {
-            Backbone.Events.trigger('NewChatSession', { remoteUser: this.model.login, context: APP_CONFIG.workspaceId });
+            Backbone.Events.trigger('NewChatSession', { remoteUser: this.model.login, context: App.config.workspaceId });
         },
 
         onMailButtonClick: function () {
-            window.location.href = encodeURI('mailto:' + this.model.email + '?subject=' + APP_CONFIG.workspaceId);
+            window.location.href = encodeURI('mailto:' + this.model.email + '?subject=' + App.config.workspaceId);
         },
 
         onCobrowsingButtonClick: function () {
@@ -68,5 +66,4 @@ define([
     });
 
     return CoWorkersItemView;
-
 });

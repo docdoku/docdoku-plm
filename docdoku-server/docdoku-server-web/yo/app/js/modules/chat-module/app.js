@@ -1,12 +1,12 @@
 /*global define,App*/
 define([
     'backbone',
-    "modules/chat-module/models/chat_message_model",
-    "modules/chat-module/views/chat_module_view",
-    "common-objects/websocket/channelListener",
+    'modules/chat-module/models/chat_message_model',
+    'modules/chat-module/views/chat_module_view',
+    'common-objects/websocket/channelListener',
     'common-objects/websocket/channelMessagesType'
 ], function (Backbone, ChatMessage, ChatModuleView, ChannelListener, ChannelMessagesType) {
-
+	'use strict';
     var cmv = new ChatModuleView().render();
 
     // triggered on remote user message sent
@@ -30,18 +30,18 @@ define([
 
         // what kind of messages are we listening to ?
         isApplicable: function (messageType) {
-            return messageType == ChannelMessagesType.CHAT_MESSAGE
-                || messageType == ChannelMessagesType.CHAT_MESSAGE_ACK;
+            return messageType === ChannelMessagesType.CHAT_MESSAGE ||
+	               messageType === ChannelMessagesType.CHAT_MESSAGE_ACK;
         },
 
         // onMessage handler
         onMessage: function (message) {
 
-            if (APP_CONFIG.login != message.sender && message.message.match(/^\/invite /)) {
+            if (App.config.login !== message.sender && message.message.match(/^\/invite /)) {
                 var url = 'http://' + window.location.host + '/product-structure/' + message.message.substring(8);
-                message.message = "<em>" + APP_CONFIG.i18n.COLLABORATIVE_INVITE + " : </em>" + url;
-            } else if (APP_CONFIG.login != message.sender && message.message.match(/^\/withdrawInvitation/)) {
-                message.message = APP_CONFIG.i18n.COLLABORATIVE_WITHDRAW_INVITATION;
+                message.message = '<em>' + App.config.i18n.COLLABORATIVE_INVITE + ' : </em>' + url;
+            } else if (App.config.login !== message.sender && message.message.match(/^\/withdrawInvitation/)) {
+                message.message = App.config.i18n.COLLABORATIVE_WITHDRAW_INVITATION;
             }
 
             Backbone.Events.trigger('NewChatMessage', message);
