@@ -20,7 +20,7 @@
 
 package com.docdoku.server.dao;
 
-import com.docdoku.core.document.baseline.DocumentBaseline;
+import com.docdoku.core.configuration.DocumentBaseline;
 import com.docdoku.core.exceptions.BaselineNotFoundException;
 
 import javax.persistence.EntityManager;
@@ -48,8 +48,8 @@ public class DocumentBaselineDAO {
     }
 
     public void createBaseline(DocumentBaseline documentBaseline) {
-        em.persist(documentBaseline.getDocumentsCollection());
-        em.persist(documentBaseline.getFoldersCollection());
+        em.persist(documentBaseline.getDocumentCollection());
+        em.persist(documentBaseline.getFolderCollection());
         em.persist(documentBaseline);
         em.flush();
     }

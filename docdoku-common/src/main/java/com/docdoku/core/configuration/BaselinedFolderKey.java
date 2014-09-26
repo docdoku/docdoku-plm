@@ -18,7 +18,7 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.  
  */
 
-package com.docdoku.core.document.baseline;
+package com.docdoku.core.configuration;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -26,7 +26,7 @@ import java.io.Serializable;
 
 /**
  * Identity class of <a href="BaselinedFolder.html">BaselinedFolder</a> objects defined as an embeddable object in order
- * to be used inside the baselined documents map in the <a href="DocumentsCollection.html">DocumentsCollection</a> class.
+ * to be used inside the baselined documents map in the <a href="DocumentCollection.html">DocumentCollection</a> class.
  *
  * @author Taylor LABEJOF
  * @version 2.0, 25/08/14
@@ -34,24 +34,24 @@ import java.io.Serializable;
  */
 @Embeddable
 public class BaselinedFolderKey implements Serializable{
-    @Column(name = "FOLDERSCOLLECTION_ID", nullable = false, insertable = false, updatable = false)
-    private int foldersCollection;
+    @Column(name = "FOLDERCOLLECTION_ID", nullable = false, insertable = false, updatable = false)
+    private int folderCollection;
     @Column(name = "COMPLETEPATH", nullable = false, insertable = false, updatable = false)
     private String completePath;
 
 
     public BaselinedFolderKey(){
     }
-    public BaselinedFolderKey(int foldersCollection, String completePath) {
-        this.foldersCollection = foldersCollection;
+    public BaselinedFolderKey(int folderCollection, String completePath) {
+        this.folderCollection = folderCollection;
         this.completePath = completePath;
     }
 
-    public int getFoldersCollection() {
-        return foldersCollection;
+    public int getFolderCollection() {
+        return folderCollection;
     }
-    public void setFoldersCollection(int foldersCollection) {
-        this.foldersCollection = foldersCollection;
+    public void setFolderCollection(int folderCollection) {
+        this.folderCollection = folderCollection;
     }
 
     public String getCompletePath() {
@@ -73,14 +73,14 @@ public class BaselinedFolderKey implements Serializable{
 
         BaselinedFolderKey that = (BaselinedFolderKey) o;
 
-        return foldersCollection == that.foldersCollection
+        return folderCollection == that.folderCollection
                 && !(completePath != null ? !completePath.equals(that.completePath) : that.completePath != null);
 
     }
 
     @Override
     public int hashCode() {
-        int result = foldersCollection;
+        int result = folderCollection;
         result = 31 * result + (completePath != null ? completePath.hashCode() : 0);
         return result;
     }

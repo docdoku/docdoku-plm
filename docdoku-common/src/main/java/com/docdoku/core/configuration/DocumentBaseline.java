@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.docdoku.core.document.baseline;
+package com.docdoku.core.configuration;
 
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.document.DocumentIteration;
@@ -61,10 +61,10 @@ public class DocumentBaseline implements Serializable {
     private Date creationDate;
 
     @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY, orphanRemoval = true)
-    private DocumentsCollection documentsCollection=new DocumentsCollection();
+    private DocumentCollection documentCollection =new DocumentCollection();
 
     @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY, orphanRemoval = true)
-    private FoldersCollection foldersCollection=new FoldersCollection();
+    private FolderCollection folderCollection =new FolderCollection();
 
     public DocumentBaseline() {
     }
@@ -77,40 +77,40 @@ public class DocumentBaseline implements Serializable {
     }
 
     public Map<String, BaselinedFolder> getBaselinedFolders() {
-        return foldersCollection.getBaselinedFolders();
+        return folderCollection.getBaselinedFolders();
     }
     public void removeAllBaselinedFolders() {
-        foldersCollection.removeAllBaselinedFolders();
+        folderCollection.removeAllBaselinedFolders();
     }
 
     public void addBaselinedFolder(Folder folder){
-        foldersCollection.addBaselinedFolder(folder);
+        folderCollection.addBaselinedFolder(folder);
     }
     public void addBaselinedFolder(BaselinedFolder baselinedFolder){
-        foldersCollection.addBaselinedFolder(baselinedFolder);
+        folderCollection.addBaselinedFolder(baselinedFolder);
     }
     public boolean hasBasedLinedFolder(String completePath){
-        return foldersCollection.hasBaselinedFolder(completePath);
+        return folderCollection.hasBaselinedFolder(completePath);
     }
     public BaselinedFolder getBaselinedFolder(String completePath){
-        return foldersCollection.getBaselinedFolder(completePath);
+        return folderCollection.getBaselinedFolder(completePath);
     }
 
     public Map<BaselinedDocumentKey, BaselinedDocument> getBaselinedDocuments() {
-        return documentsCollection.getBaselinedDocuments();
+        return documentCollection.getBaselinedDocuments();
     }
     public void removeAllBaselinedDocuments() {
-        documentsCollection.removeAllBaselinedDocuments();
+        documentCollection.removeAllBaselinedDocuments();
     }
 
     public BaselinedDocument addBaselinedDocument(DocumentIteration targetDocument){
-        return documentsCollection.addBaselinedDocument(targetDocument);
+        return documentCollection.addBaselinedDocument(targetDocument);
     }
     public boolean hasBasedLinedDocument(DocumentMasterKey documentMasterKey){
-        return documentsCollection.hasBaselinedDocument(documentMasterKey);
+        return documentCollection.hasBaselinedDocument(documentMasterKey);
     }
     public BaselinedDocument getBaselinedDocument(BaselinedDocumentKey baselinedDocumentKey){
-        return documentsCollection.getBaselinedDocument(baselinedDocumentKey);
+        return documentCollection.getBaselinedDocument(baselinedDocumentKey);
     }
 
     public String getName() {
@@ -134,11 +134,11 @@ public class DocumentBaseline implements Serializable {
         this.description = description;
     }
 
-    public DocumentsCollection getDocumentsCollection() {
-        return documentsCollection;
+    public DocumentCollection getDocumentCollection() {
+        return documentCollection;
     }
-    public FoldersCollection getFoldersCollection() {
-        return foldersCollection;
+    public FolderCollection getFolderCollection() {
+        return folderCollection;
     }
 
     public Workspace getWorkspace() {

@@ -27,8 +27,8 @@ import java.util.Date;
  * Wraps data needed to perform a query on documents.
  * 
  * @author Florent Garin
- * @version 3.0, 03/01/2014
- * @since   V3.0
+ * @version 2.0, 03/01/2014
+ * @since   V2.0
  */
 public class DocumentSearchQuery extends SearchQuery implements Serializable{
     protected String docMId;

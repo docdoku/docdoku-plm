@@ -20,13 +20,13 @@
 
 package com.docdoku.core.exceptions;
 
-import com.docdoku.core.document.baseline.BaselinedFolder;
+import com.docdoku.core.configuration.BaselinedFolder;
 
 import java.text.MessageFormat;
 import java.util.Locale;
 
 /**
- * Exception throw when you try to create a folder in a baseline which already have it.
+ * Exception thrown when trying to add a folder into a baseline which already has it.
  *
  * @author Taylor LABEJOF
  * @version 2.0, 05/09/14

@@ -21,14 +21,11 @@ package com.docdoku.server.documents;
 
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
-import com.docdoku.core.configuration.BaselineConfigSpec;
-import com.docdoku.core.configuration.ConfigSpec;
-import com.docdoku.core.configuration.LatestConfigSpec;
+import com.docdoku.core.configuration.*;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.document.DocumentRevisionKey;
 import com.docdoku.core.document.Folder;
-import com.docdoku.core.document.baseline.*;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.meta.Tag;
 import com.docdoku.core.meta.TagKey;
@@ -118,7 +115,7 @@ public class DocumentBaselineManagerBean implements IDocumentBaselineManagerLoca
         Locale locale = new Locale(user.getLanguage());
         String[] shortNames;
         if(cs!=null&& cs instanceof BaselineConfigSpec){
-            int collectionId = ((BaselineConfigSpec) cs).getDocumentBaseline().getFoldersCollection().getId();
+            int collectionId = ((BaselineConfigSpec) cs).getDocumentBaseline().getFolderCollection().getId();
             BaselinedFolderKey key = new BaselinedFolderKey(collectionId,completePath);
             List<BaselinedFolder> subFolders = new BaselinedFolderDAO(locale, em).getSubFolders(key);
             shortNames = new String[subFolders.size()];
@@ -196,7 +193,7 @@ public class DocumentBaselineManagerBean implements IDocumentBaselineManagerLoca
         FolderDAO folderDAO = new FolderDAO(em);
 
         Folder currentFolder = folderDAO.loadFolder(folderPath);
-        BaselinedFolder baselinedFolder = new BaselinedFolder(baseline.getFoldersCollection(),currentFolder);
+        BaselinedFolder baselinedFolder = new BaselinedFolder(baseline.getFolderCollection(),currentFolder);
         baseline.addBaselinedFolder(baselinedFolder);
 
         // Add all subFolders
@@ -227,7 +224,7 @@ public class DocumentBaselineManagerBean implements IDocumentBaselineManagerLoca
             if(documentIteration!=null){
                 // Add current
                 BaselinedDocument baselinedDocument = baseline.addBaselinedDocument(documentIteration);
-                int collectionId = baseline.getFoldersCollection().getId();
+                int collectionId = baseline.getFolderCollection().getId();
                 BaselinedFolderKey key = new BaselinedFolderKey(collectionId,
                         documentIteration.getDocumentRevision().getLocation().getCompletePath());
                 BaselinedFolder baselinedFolder = new BaselinedFolderDAO(em).loadBaselineFolder(key);
@@ -238,7 +235,7 @@ public class DocumentBaselineManagerBean implements IDocumentBaselineManagerLoca
 
     private void snapshotAllFolders(DocumentBaseline baseline, String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, FolderNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
-        FoldersCollection collection = baseline.getFoldersCollection();
+        FolderCollection collection = baseline.getFolderCollection();
         collection.setCreationDate(new Date());
         collection.setAuthor(user);
         fillBaselineFolder(baseline, workspaceId);
@@ -246,7 +243,7 @@ public class DocumentBaselineManagerBean implements IDocumentBaselineManagerLoca
 
     private void snapshotAllDocuments(DocumentBaseline baseline, String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentRevisionNotFoundException, FolderNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
-        DocumentsCollection collection = baseline.getDocumentsCollection();
+        DocumentCollection collection = baseline.getDocumentCollection();
         collection.setCreationDate(new Date());
         collection.setAuthor(user);
         DocumentRevision[] documentRevisions = documentService.getAllDocumentsInWorkspace(workspaceId);

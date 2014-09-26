@@ -282,7 +282,7 @@ public class DocumentRevision implements Serializable, Comparable<DocumentRevisi
             return documentIterations.get(index);
         }
     }
-    public DocumentIteration getLastUncheckoutedIteration() {
+    public DocumentIteration getLastCheckedInIteration() {
         int index;
         if(this.isCheckedOut()){
             index = documentIterations.size()-2;
@@ -293,7 +293,7 @@ public class DocumentRevision implements Serializable, Comparable<DocumentRevisi
             List<DocumentRevision> documentRevisions = this.getDocumentMaster().getDocumentRevisions();
             int position = documentRevisions.indexOf(this);
             if (position > 0 ) {
-                return documentRevisions.get(position - 1).getLastUncheckoutedIteration();
+                return documentRevisions.get(position - 1).getLastCheckedInIteration();
             }else{
                 return null;
             }

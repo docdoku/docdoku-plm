@@ -22,7 +22,7 @@ package com.docdoku.core.services;
 import com.docdoku.core.configuration.ConfigSpec;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.document.DocumentRevisionKey;
-import com.docdoku.core.document.baseline.DocumentBaseline;
+import com.docdoku.core.configuration.DocumentBaseline;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.meta.TagKey;
 import com.docdoku.core.query.DocumentSearchQuery;

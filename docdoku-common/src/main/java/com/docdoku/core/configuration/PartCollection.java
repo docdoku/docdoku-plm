@@ -30,11 +30,11 @@ import java.util.Map;
 
 /**
  * This class maintains a collection of part iterations which cannot hold
- * more than one <a href="PartIteration.html">PartIteration</a> linked
- * to the same <a href="PartMaster.html">PartMaster</a>.
+ * more than one {@link com.docdoku.core.product.PartIteration} linked
+ * to the same {@link com.docdoku.core.product.PartMaster}.
  *
- * PartCollection is a foundation for the definition of <a href="Baseline.html">Baseline</a>
- * and <a href="ProductInstanceIteration.html">ProductInstanceIteration</a>.
+ * PartCollection is a foundation for the definition of {@link ProductBaseline}
+ * and {@link ProductInstanceIteration}.
  *
  * @author Florent Garin
  * @version 2.0, 25/02/14

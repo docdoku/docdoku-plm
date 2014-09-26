@@ -21,9 +21,9 @@
 package com.docdoku.server.dao;
 
 import com.docdoku.core.document.DocumentRevisionKey;
-import com.docdoku.core.document.baseline.BaselinedDocument;
-import com.docdoku.core.document.baseline.BaselinedDocumentKey;
-import com.docdoku.core.document.baseline.BaselinedFolderKey;
+import com.docdoku.core.configuration.BaselinedDocument;
+import com.docdoku.core.configuration.BaselinedDocumentKey;
+import com.docdoku.core.configuration.BaselinedFolderKey;
 import com.docdoku.core.exceptions.DocumentRevisionNotFoundException;
 
 import javax.persistence.EntityManager;
@@ -60,9 +60,9 @@ public class BaselinedDocumentDAO {
                 "SELECT DISTINCT d " +
                 "FROM BaselinedDocument d " +
                 "WHERE d.baselinedFolder.completePath = :completePath " +
-                "AND d.documentsCollection.id = :collectionId", BaselinedDocument.class)
+                "AND d.documentCollection.id = :collectionId", BaselinedDocument.class)
              .setParameter("completePath",baselinedFolderKey.getCompletePath())
-             .setParameter("collectionId", baselinedFolderKey.getFoldersCollection())
+             .setParameter("collectionId", baselinedFolderKey.getFolderCollection())
              .getResultList();
     }
 

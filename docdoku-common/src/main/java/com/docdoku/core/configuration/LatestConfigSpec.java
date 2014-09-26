@@ -67,7 +67,7 @@ public class LatestConfigSpec extends ConfigSpec {
         PartIteration partI = part.getLastRevision().getLastIteration();
         PartRevision partRevision = partI.getPartRevision();
         if(partRevision.isCheckedOut() && !partRevision.getCheckOutUser().equals(user)){
-            partI = partRevision.getLastUncheckoutedIteration();
+            partI = partRevision.getLastCheckedInIteration();
         }
         return partI;
     }
@@ -77,7 +77,7 @@ public class LatestConfigSpec extends ConfigSpec {
         DocumentIteration documentIteration = documentMaster.getLastRevision().getLastIteration();
         DocumentRevision documentRevision = documentIteration.getDocumentRevision();
         if(documentRevision.isCheckedOut() && !documentRevision.getCheckOutUser().equals(user)){
-            documentIteration = documentRevision.getLastUncheckoutedIteration();
+            documentIteration = documentRevision.getLastCheckedInIteration();
         }
         return documentIteration;
     }

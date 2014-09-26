@@ -18,7 +18,7 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.core.document.baseline;
+package com.docdoku.core.configuration;
 
 
 import com.docdoku.core.document.DocumentIteration;
@@ -42,8 +42,8 @@ public class BaselinedDocument implements Serializable{
     private BaselinedDocumentKey baselinedDocumentKey;
 
     @ManyToOne(optional=false, fetch=FetchType.EAGER)
-    @JoinColumn(name="DOCUMENTSCOLLECTION_ID", referencedColumnName="ID")
-    private DocumentsCollection documentsCollection;
+    @JoinColumn(name="DOCUMENTCOLLECTION_ID", referencedColumnName="ID")
+    private DocumentCollection documentCollection;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumns({
@@ -56,7 +56,7 @@ public class BaselinedDocument implements Serializable{
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumns({
-            @JoinColumn(name="BASELINEDFOLDER_FOLDERSCOLLECTION_ID", referencedColumnName="FOLDERSCOLLECTION_ID"),
+            @JoinColumn(name="BASELINEDFOLDER_FOLDERCOLLECTION_ID", referencedColumnName="FOLDERCOLLECTION_ID"),
             @JoinColumn(name="BASELINEDFOLDER_COMPLETEPATH", referencedColumnName="COMPLETEPATH"),
     })
     private BaselinedFolder baselinedFolder;
@@ -69,10 +69,10 @@ public class BaselinedDocument implements Serializable{
     public BaselinedDocument(){
     }
 
-    public BaselinedDocument(DocumentsCollection documentsCollection, DocumentIteration targetDocument) {
-        this.documentsCollection = documentsCollection;
+    public BaselinedDocument(DocumentCollection documentCollection, DocumentIteration targetDocument) {
+        this.documentCollection = documentCollection;
         this.targetDocument =targetDocument;
-        this.baselinedDocumentKey = new BaselinedDocumentKey(documentsCollection.getId(),targetDocument.getWorkspaceId(), targetDocument.getDocumentMasterId());
+        this.baselinedDocumentKey = new BaselinedDocumentKey(documentCollection.getId(),targetDocument.getWorkspaceId(), targetDocument.getDocumentMasterId());
         this.targetDocumentIteration = targetDocument.getIteration();
         this.targetDocumentVersion = targetDocument.getDocumentVersion();
     }
@@ -82,11 +82,11 @@ public class BaselinedDocument implements Serializable{
     }
 
     @XmlTransient
-    public DocumentsCollection getDocumentsCollection(){
-        return documentsCollection;
+    public DocumentCollection getDocumentCollection(){
+        return documentCollection;
     }
-    public void setDocumentsCollection(DocumentsCollection documentsCollection) {
-        this.documentsCollection = documentsCollection;
+    public void setDocumentCollection(DocumentCollection documentCollection) {
+        this.documentCollection = documentCollection;
     }
 
     public BaselinedFolder getBaselinedFolder() {
@@ -129,13 +129,13 @@ public class BaselinedDocument implements Serializable{
 
         BaselinedDocument that = (BaselinedDocument) o;
 
-        return documentsCollection.equals(that.documentsCollection)
+        return documentCollection.equals(that.documentCollection)
                 && targetDocument.equals(that.targetDocument);
     }
 
     @Override
     public int hashCode() {
-        int result = documentsCollection.hashCode();
+        int result = documentCollection.hashCode();
         result = 31 * result + targetDocument.hashCode();
         return result;
     }

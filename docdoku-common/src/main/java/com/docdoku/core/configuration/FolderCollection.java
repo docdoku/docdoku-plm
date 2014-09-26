@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.docdoku.core.document.baseline;
+package com.docdoku.core.configuration;
 
 import com.docdoku.core.common.User;
 import com.docdoku.core.document.Folder;
@@ -29,20 +29,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This class maintains a collection of folders which cannot hold
- * more than one <a href="Folder.html">Folder</a> in
- * the same <a href="PartMaster.html">PartMaster</a>.
+ * This class maintains a collection of folders.
  *
- * DocumentsCollection is a foundation for the definition of <a href="BaselineDM.html">BaselineDM</a>
- * and <a href="Folder.html">Folder</a>.
+ * FolderCollection is a foundation for the definition of {@link DocumentBaseline}.
  *
  * @author Taylor LABEJOF
  * @version 2.0, 25/08/14
  * @since   V2.0
  */
-@Table(name="FOLDERSCOLLECTION")
+@Table(name="FOLDERCOLLECTION")
 @Entity
-public class FoldersCollection implements Serializable {
+public class FolderCollection implements Serializable {
 
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Id
@@ -59,10 +56,10 @@ public class FoldersCollection implements Serializable {
     private Date creationDate;
 
     @MapKey(name="completePath")
-    @OneToMany(mappedBy="foldersCollection", cascade=CascadeType.ALL, fetch=FetchType.LAZY, orphanRemoval=true)
+    @OneToMany(mappedBy="folderCollection", cascade=CascadeType.ALL, fetch=FetchType.LAZY, orphanRemoval=true)
     private Map<String, BaselinedFolder> baselinedFolders = new HashMap<>();
 
-    public FoldersCollection() {
+    public FolderCollection() {
     }
 
     public void removeAllBaselinedFolders() {
@@ -116,11 +113,11 @@ public class FoldersCollection implements Serializable {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof FoldersCollection)) {
+        if (!(o instanceof FolderCollection)) {
             return false;
         }
 
-        FoldersCollection collection = (FoldersCollection) o;
+        FolderCollection collection = (FolderCollection) o;
         return id == collection.id;
     }
 

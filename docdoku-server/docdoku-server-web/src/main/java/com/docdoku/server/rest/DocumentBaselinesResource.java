@@ -19,7 +19,7 @@
  */
 package com.docdoku.server.rest;
 
-import com.docdoku.core.document.baseline.DocumentBaseline;
+import com.docdoku.core.configuration.DocumentBaseline;
 import com.docdoku.core.exceptions.ApplicationException;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentBaselineManagerLocal;

@@ -22,10 +22,6 @@ package com.docdoku.core.configuration;
 import com.docdoku.core.common.User;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentMaster;
-import com.docdoku.core.document.baseline.BaselinedDocument;
-import com.docdoku.core.document.baseline.BaselinedDocumentKey;
-import com.docdoku.core.document.baseline.DocumentBaseline;
-import com.docdoku.core.document.baseline.DocumentsCollection;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartMaster;
 
@@ -82,7 +78,7 @@ public class BaselineConfigSpec extends ConfigSpec {
         if(productBaseline!=null){
             return productBaseline.getPartCollection().getId();
         }else if(documentBaseline!=null){
-            return documentBaseline.getDocumentsCollection().getId();
+            return documentBaseline.getDocumentCollection().getId();
         }else{
             return -1;
         }
@@ -97,7 +93,7 @@ public class BaselineConfigSpec extends ConfigSpec {
             if(baselinedRootPart != null){
                 return baselinedRootPart.getTargetPart();
             }else{
-                // the part isn't in baseline, choose the latest version-iteration uncheckouted
+                // the part isn't in baseline, choose the latest checked in version-iteration
                 return new LatestConfigSpec(user).filterConfigSpec(part);
             }
         }else{
@@ -107,10 +103,10 @@ public class BaselineConfigSpec extends ConfigSpec {
 
     @Override
     public DocumentIteration filterConfigSpec(DocumentMaster documentMaster) {
-        DocumentsCollection documentsCollection = documentBaseline.getDocumentsCollection();
-        if(documentsCollection != null){
+        DocumentCollection documentCollection = documentBaseline.getDocumentCollection();
+        if(documentCollection != null){
             BaselinedDocumentKey baselinedDocumentKey = new BaselinedDocumentKey(documentBaseline.getId(), documentMaster.getWorkspaceId(),documentMaster.getId());
-            BaselinedDocument baselinedDocument = documentsCollection.getBaselinedDocument(baselinedDocumentKey);
+            BaselinedDocument baselinedDocument = documentCollection.getBaselinedDocument(baselinedDocumentKey);
             if(baselinedDocument != null){
                 return baselinedDocument.getTargetDocument();
             }else{

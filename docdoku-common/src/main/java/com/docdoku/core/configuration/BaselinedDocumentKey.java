@@ -18,7 +18,7 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.  
  */
 
-package com.docdoku.core.document.baseline;
+package com.docdoku.core.configuration;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -34,7 +34,7 @@ import java.io.Serializable;
  */
 @Embeddable
 public class BaselinedDocumentKey implements Serializable{
-    @Column(name = "DOCUMENTSCOLLECTION_ID", nullable = false, insertable = false, updatable = false)
+    @Column(name = "DOCUMENTCOLLECTION_ID", nullable = false, insertable = false, updatable = false)
     private int documentCollectionId;
     @Column(name = "TARGET_WORKSPACE_ID", length=100, nullable = false, insertable = false, updatable = false)
     private String targetDocumentWorkspaceId="";
@@ -44,8 +44,8 @@ public class BaselinedDocumentKey implements Serializable{
     public BaselinedDocumentKey(){
     }
 
-    public BaselinedDocumentKey(int documentsCollectionId, String workspaceId, String documentMasterId) {
-        this.documentCollectionId = documentsCollectionId;
+    public BaselinedDocumentKey(int documentCollectionId, String workspaceId, String documentMasterId) {
+        this.documentCollectionId = documentCollectionId;
         this.targetDocumentWorkspaceId = workspaceId;
         this.targetDocumentId = documentMasterId;
     }

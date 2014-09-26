@@ -20,8 +20,8 @@
 
 package com.docdoku.server.dao;
 
-import com.docdoku.core.document.baseline.BaselinedFolder;
-import com.docdoku.core.document.baseline.BaselinedFolderKey;
+import com.docdoku.core.configuration.BaselinedFolder;
+import com.docdoku.core.configuration.BaselinedFolderKey;
 import com.docdoku.core.exceptions.FolderNotFoundException;
 
 import javax.persistence.EntityManager;
@@ -57,9 +57,9 @@ public class BaselinedFolderDAO {
                 "SELECT DISTINCT f " +
                 "FROM BaselinedFolder f " +
                 "WHERE f.parentFolder.completePath = :completePath " +
-                "AND f.foldersCollection.id = :collectionId", BaselinedFolder.class)
+                "AND f.folderCollection.id = :collectionId", BaselinedFolder.class)
              .setParameter("completePath",baselinedFolderKey.getCompletePath())
-             .setParameter("collectionId", baselinedFolderKey.getFoldersCollection())
+             .setParameter("collectionId", baselinedFolderKey.getFolderCollection())
              .getResultList();
     }
 }

@@ -18,7 +18,7 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.core.document.baseline;
+package com.docdoku.core.configuration;
 
 
 import com.docdoku.core.document.DocumentMasterKey;
@@ -47,15 +47,15 @@ public class BaselinedFolder implements Serializable, Comparable<BaselinedFolder
     private BaselinedFolderKey baselinedFolderKey;
 
     @ManyToOne( optional=false, fetch=FetchType.EAGER)
-    @JoinColumn(name="FOLDERSCOLLECTION_ID", referencedColumnName="ID")
-    private FoldersCollection foldersCollection;
+    @JoinColumn(name="FOLDERCOLLECTION_ID", referencedColumnName="ID")
+    private FolderCollection folderCollection;
 
     @Column(name="COMPLETEPATH")
     private String completePath="";
 
     @ManyToOne
     @JoinColumns({
-            @JoinColumn(name="PARENTFOLDER_FOLDERSCOLLECTION_ID", referencedColumnName="FOLDERSCOLLECTION_ID", insertable = true, updatable = true),
+            @JoinColumn(name="PARENTFOLDER_FOLDERCOLLECTION_ID", referencedColumnName="FOLDERCOLLECTION_ID", insertable = true, updatable = true),
             @JoinColumn(name="PARENTFOLDER_COMPLETEPATH", referencedColumnName="COMPLETEPATH", insertable = true, updatable = true),
     })
     private BaselinedFolder parentFolder;
@@ -67,18 +67,18 @@ public class BaselinedFolder implements Serializable, Comparable<BaselinedFolder
     public BaselinedFolder(){
     }
 
-    public BaselinedFolder(FoldersCollection foldersCollection, String completePath) {
-        this.baselinedFolderKey = new BaselinedFolderKey(foldersCollection.getId(),completePath);
-        this.foldersCollection = foldersCollection;
+    public BaselinedFolder(FolderCollection folderCollection, String completePath) {
+        this.baselinedFolderKey = new BaselinedFolderKey(folderCollection.getId(),completePath);
+        this.folderCollection = folderCollection;
         this.completePath = completePath;
         if(!isRoot() && !isHome()){
             int index = completePath.lastIndexOf('/');
-            parentFolder = new BaselinedFolder(foldersCollection, completePath.substring(0, index));
+            parentFolder = new BaselinedFolder(folderCollection, completePath.substring(0, index));
         }
     }
 
-    public BaselinedFolder(FoldersCollection foldersCollection, Folder folder) {
-        this(foldersCollection,folder.getCompletePath());
+    public BaselinedFolder(FolderCollection folderCollection, Folder folder) {
+        this(folderCollection,folder.getCompletePath());
     }
 
     public BaselinedFolderKey getKey() {
@@ -86,11 +86,11 @@ public class BaselinedFolder implements Serializable, Comparable<BaselinedFolder
     }
 
     @XmlTransient
-    public FoldersCollection getFoldersCollection() {
-        return foldersCollection;
+    public FolderCollection getFolderCollection() {
+        return folderCollection;
     }
-    public void setFoldersCollection(FoldersCollection foldersCollection) {
-        this.foldersCollection = foldersCollection;
+    public void setFolderCollection(FolderCollection folderCollection) {
+        this.folderCollection = folderCollection;
     }
 
     public String getCompletePath() {
@@ -158,13 +158,13 @@ public class BaselinedFolder implements Serializable, Comparable<BaselinedFolder
         BaselinedFolder that = (BaselinedFolder) o;
 
         return completePath.equals(that.completePath)
-                && foldersCollection.equals(that.foldersCollection);
+                && folderCollection.equals(that.folderCollection);
 
     }
 
     @Override
     public int hashCode() {
-        int result = foldersCollection.hashCode();
+        int result = folderCollection.hashCode();
         result = 31 * result + completePath.hashCode();
         return result;
     }

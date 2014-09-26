@@ -275,7 +275,7 @@ public class PartRevision implements Serializable, Comparable<PartRevision>, Clo
             return partIterations.get(index);
     }
 
-    public PartIteration getLastUncheckoutedIteration() {
+    public PartIteration getLastCheckedInIteration() {
         int index;
         if(this.isCheckedOut()){
             index = partIterations.size()-2;
@@ -286,7 +286,7 @@ public class PartRevision implements Serializable, Comparable<PartRevision>, Clo
             List<PartRevision> partRevisions = this.getPartMaster().getPartRevisions();
             int position = partRevisions.indexOf(this);
             if (position > 0 ) {
-                return partRevisions.get(position - 1).getLastUncheckoutedIteration();
+                return partRevisions.get(position - 1).getLastCheckedInIteration();
             }else{
                 return null;
             }
