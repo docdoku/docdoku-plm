@@ -1,22 +1,24 @@
+/*global _,define,App*/
 define([
     'backbone',
-    "mustache",
-    "common-objects/models/task_model",
-    "text!templates/workflows/task_model_editor.html"
+    'mustache',
+    'common-objects/models/task_model',
+    'text!templates/workflows/task_model_editor.html'
 ], function (Backbone, Mustache, TaskModel, template) {
+	'use strict';
     var TaskModelEditorView = Backbone.View.extend({
 
-        tagName: "li",
+        tagName: 'li',
 
-        className: "task-section",
+        className: 'task-section',
 
         events: {
-            "click button.delete-task": "deleteTaskAction",
-            "click p.task-name": "gotoUnfoldState",
-            "click i.fa-minus": "gotoFoldState",
-            "change input.task-name": "titleChanged",
-            "change textarea.instructions": "instructionsChanged",
-            "change select.role": "roleSelected"
+            'click button.delete-task': 'deleteTaskAction',
+            'click p.task-name': 'gotoUnfoldState',
+            'click i.fa-minus': 'gotoFoldState',
+            'change input.task-name': 'titleChanged',
+            'change textarea.instructions': 'instructionsChanged',
+            'change select.role': 'roleSelected'
         },
 
         States: {
@@ -29,7 +31,7 @@ define([
 
             this.state = this.States.FOLD;
 
-            if (_.isUndefined(this.model.get("role"))) {
+            if (_.isUndefined(this.model.get('role'))) {
                 this.model.set({
                     role: this.options.roles.at(0)
                 });
@@ -37,11 +39,11 @@ define([
 
             var roles = [];
             _.each(this.options.roles.models, function (role) {
-                if (self.model.get("role") && self.model.get("role").get("name") == role.get("name")) {
-                    roles.push({name: role.get("name"), selected: true});
+                if (self.model.get('role') && self.model.get('role').get('name') === role.get('name')) {
+                    roles.push({name: role.get('name'), selected: true});
                 }
                 else {
-                    roles.push({name: role.get("name"), selected: false});
+                    roles.push({name: role.get('name'), selected: false});
                 }
             });
 
@@ -58,7 +60,7 @@ define([
             this.model.set({
                 title: this.inputTitle.val()
             });
-            if (this.inputTitle.val().length == 0) {
+            if (this.inputTitle.val().length === 0) {
                 this.pTitle.html(App.config.i18n.TASK_NAME_PLACEHOLDER);
             }
             else {
@@ -75,7 +77,7 @@ define([
         roleSelected: function (e) {
             var nameSelected = e.target.value;
             var roleSelected = _.find(this.options.roles.models, function (role) {
-                return nameSelected == role.get("name");
+                return nameSelected === role.get('name');
             });
             this.model.set({
                 role: roleSelected
@@ -84,15 +86,15 @@ define([
 
         gotoFoldState: function () {
             this.state = this.States.FOLD;
-            this.divTask.removeClass("unfold");
-            this.divTask.addClass("fold");
+            this.divTask.removeClass('unfold');
+            this.divTask.addClass('fold');
             this.inputTitle.prop('readonly', true);
         },
 
         gotoUnfoldState: function () {
             this.state = this.States.UNFOLD;
-            this.divTask.removeClass("fold");
-            this.divTask.addClass("unfold");
+            this.divTask.removeClass('fold');
+            this.divTask.addClass('unfold');
             this.inputTitle.prop('readonly', false);
         },
 
@@ -105,7 +107,7 @@ define([
         },
 
         bindDomElements: function () {
-            this.pTitle = this.$("p.task-name");
+            this.pTitle = this.$('p.task-name');
             this.inputTitle = this.$('input.task-name');
             this.textareaInstructions = this.$('textarea.instructions');
             this.divTask = this.$('div.task');

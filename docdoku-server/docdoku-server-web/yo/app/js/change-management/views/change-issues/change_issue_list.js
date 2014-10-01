@@ -7,9 +7,6 @@ define([
 ], function (Backbone, Mustache, template, ChangeIssueListItemView) {
 	'use strict';
     var ChangeIssueListView = Backbone.View.extend({
-
-
-
         events: {
             'click .toggle-checkboxes': 'toggleSelection'
         },

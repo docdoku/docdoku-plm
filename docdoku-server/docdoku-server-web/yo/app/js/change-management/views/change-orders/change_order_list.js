@@ -1,10 +1,9 @@
 /*global _,define,App*/
-'use strict';
 define([
     'backbone',
     'mustache',
     'text!templates/change_item_list.html',
-    'views/change-orders/change_order_list_item',
+    'views/change-orders/change_order_list_item'
 ], function (Backbone, Mustache, template, ChangeOrderListItemView) {
 	'use strict';
 	var ChangeOrderListView = Backbone.View.extend({

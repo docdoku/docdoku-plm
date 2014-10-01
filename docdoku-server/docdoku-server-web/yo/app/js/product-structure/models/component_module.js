@@ -1,8 +1,7 @@
-/*global define,App.config*/
-'use strict';
+/*global _,define,App*/
 define(['backbone', 'common-objects/utils/date'],
     function (Backbone, date) {
-
+	    'use strict';
         var ComponentModule = {};
 
         ComponentModule.Model = Backbone.Model.extend({

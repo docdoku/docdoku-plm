@@ -232,10 +232,13 @@ public class PartMaster implements Serializable {
         if (this == pObj) {
             return true;
         }
-        if (!(pObj instanceof PartMaster))
+        if (!(pObj instanceof PartMaster)){
             return false;
+        }
+
         PartMaster partM = (PartMaster) pObj;
-        return ((partM.number.equals(number)) && (partM.getWorkspaceId().equals(getWorkspaceId())));
+        return partM.number.equals(number) &&
+               partM.getWorkspaceId().equals(getWorkspaceId());
         
     }
  
