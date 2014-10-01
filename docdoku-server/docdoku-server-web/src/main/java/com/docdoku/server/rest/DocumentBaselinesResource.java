@@ -158,8 +158,8 @@ public class DocumentBaselinesResource {
             DocumentBaseline documentBaseline = documentBaselineService.getBaseline(baselineId);
             DocumentBaselineDTO baselineDTO = getBaselineLight(workspaceId,baselineId);
             List<FolderDTO> folderDTOs = Tools.mapBaselinedFoldersToFolderDTO(documentBaseline);
-            List<BaselinedDocumentDTO> documentDTOs = Tools.mapBaselinedDocumentsToBaselinedDocumentDTO(documentBaseline);
-            baselineDTO.setBaselinedDocuments(documentDTOs);
+            //List<BaselinedDocumentDTO> documentDTOs = Tools.mapBaselinedDocumentsToBaselinedDocumentDTO(documentBaseline);
+            //baselineDTO.setBaselinedDocuments(documentDTOs);
             baselineDTO.setBaselinedFolders(folderDTOs);
             return baselineDTO;
         } catch (ApplicationException ex) {

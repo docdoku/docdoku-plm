@@ -25,8 +25,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 /**
- * <a href="EffectivityConfigSpec.html">EffectivityConfigSpec</a>
- * expressed by date and time.
+ * A kind of {@link EffectivityConfigSpec} expressed by date and time.
  * 
  * @author Florent Garin
  * @version 1.1, 30/10/11

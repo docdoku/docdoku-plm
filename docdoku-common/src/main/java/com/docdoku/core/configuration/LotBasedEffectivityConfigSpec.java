@@ -26,8 +26,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 /**
- * <a href="EffectivityConfigSpec.html">EffectivityConfigSpec</a>
- * based on a specific lot.
+ * A kind of {@link EffectivityConfigSpec} based on a specific lot.
  * 
  * @author Florent Garin
  * @version 1.1, 30/10/11

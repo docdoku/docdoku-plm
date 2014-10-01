@@ -21,6 +21,7 @@
 package com.docdoku.core.configuration;
 
 
+import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentMasterKey;
 import com.docdoku.core.document.Folder;
 
@@ -60,8 +61,8 @@ public class BaselinedFolder implements Serializable, Comparable<BaselinedFolder
     })
     private BaselinedFolder parentFolder;
 
-    @OneToMany(mappedBy="baselinedFolder", cascade=CascadeType.ALL, fetch=FetchType.LAZY, orphanRemoval=true)
-    private List<BaselinedDocument> baselinedDocuments = new ArrayList<>();
+    @OneToMany
+    private List<DocumentIteration> documentIterations = new ArrayList<>();
 
 
     public BaselinedFolder(){
@@ -81,7 +82,7 @@ public class BaselinedFolder implements Serializable, Comparable<BaselinedFolder
         this(folderCollection,folder.getCompletePath());
     }
 
-    public BaselinedFolderKey getKey() {
+    public BaselinedFolderKey getBaselinedFolderKey() {
         return baselinedFolderKey;
     }
 
@@ -107,20 +108,16 @@ public class BaselinedFolder implements Serializable, Comparable<BaselinedFolder
         this.parentFolder = parentFolder;
     }
 
-    public List<BaselinedDocument> getBaselinedDocuments() {
-        return baselinedDocuments;
+    public void setDocumentIterations(List<DocumentIteration> documentIterations) {
+        this.documentIterations = documentIterations;
     }
-    public BaselinedDocument getBaselinedDocument(DocumentMasterKey documentMasterKey) {
-        for(BaselinedDocument  baselinedDocument : baselinedDocuments){
-            DocumentMasterKey target = baselinedDocument.getTargetDocument()
-                                                        .getDocumentRevision()
-                                                        .getDocumentMaster()
-                                                        .getKey();
-            if(documentMasterKey.equals(target)){
-                return baselinedDocument;
-            }
-        }
-        return null;
+
+    public void addDocumentIteration(DocumentIteration documentIteration){
+        documentIterations.add(documentIteration);
+    }
+
+    public List<DocumentIteration> getDocumentIterations() {
+        return documentIterations;
     }
 
     public boolean isRoot() {
@@ -176,6 +173,7 @@ public class BaselinedFolder implements Serializable, Comparable<BaselinedFolder
      */
     @Override
     public int compareTo(BaselinedFolder baselinedFolder) {
-        return completePath.compareTo(baselinedFolder.completePath);
+        int compCollection = this.baselinedFolderKey.getFolderCollection()-baselinedFolder.getBaselinedFolderKey().getFolderCollection();
+        return compCollection==0?completePath.compareTo(baselinedFolder.completePath):compCollection;
     }
 }

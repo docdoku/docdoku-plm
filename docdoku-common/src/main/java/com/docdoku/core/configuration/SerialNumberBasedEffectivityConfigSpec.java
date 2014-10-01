@@ -26,8 +26,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 /**
- * A kind of <a href="EffectivityConfigSpec.html">EffectivityConfigSpec</a>
- * based on serial number.
+ * A kind of {@link EffectivityConfigSpec} based on serial number.
  * 
  * @author Florent Garin
  * @version 1.1, 30/10/11

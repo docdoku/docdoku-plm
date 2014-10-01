@@ -20,6 +20,7 @@
 
 package com.docdoku.server.dao;
 
+import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentRevisionKey;
 import com.docdoku.core.configuration.BaselinedDocument;
 import com.docdoku.core.configuration.BaselinedDocumentKey;
@@ -55,14 +56,12 @@ public class BaselinedDocumentDAO {
         }
     }
 
-    public List<BaselinedDocument> findDocRsByFolder(BaselinedFolderKey baselinedFolderKey){
+    public List<DocumentIteration> findDocRsByFolder(BaselinedFolderKey baselinedFolderKey){
         return em.createQuery("" +
-                "SELECT DISTINCT d " +
-                "FROM BaselinedDocument d " +
-                "WHERE d.baselinedFolder.completePath = :completePath " +
-                "AND d.documentCollection.id = :collectionId", BaselinedDocument.class)
-             .setParameter("completePath",baselinedFolderKey.getCompletePath())
-             .setParameter("collectionId", baselinedFolderKey.getFolderCollection())
+                "SELECT d.documentIterations " +
+                "FROM BaselinedFolder d " +
+                "WHERE d.baselinedFolderKey = :pk ", DocumentIteration.class)
+             .setParameter("pk",baselinedFolderKey)
              .getResultList();
     }
 

@@ -24,6 +24,7 @@ package com.docdoku.core.configuration;
 import com.docdoku.core.common.User;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentMaster;
+import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartMaster;
 
@@ -33,7 +34,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /**
- * A <a href="ConfigSpec.html">ConfigSpec</a> which selects the latest released iteration.
+ * A {@link ConfigSpec} which selects the latest released iteration.
  *
  * @author Taylor LABEJOF
  * @version 2.0, 29/08/14
@@ -62,7 +63,7 @@ public class LatestReleasedConfigSpec extends ConfigSpec {
     }
 
     @Override
-    public DocumentIteration filterConfigSpec(DocumentMaster documentMaster) {
+    public DocumentIteration filterConfigSpec(DocumentRevision documentRevision) {
         return null;
     }
 }

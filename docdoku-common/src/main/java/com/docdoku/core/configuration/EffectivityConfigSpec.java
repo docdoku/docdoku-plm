@@ -21,6 +21,7 @@ package com.docdoku.core.configuration;
 
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentMaster;
+import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.product.ConfigurationItem;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartMaster;
@@ -29,12 +30,8 @@ import javax.persistence.*;
 import javax.xml.bind.annotation.XmlSeeAlso;
 
 /**
- * A configuration specification used to select
- * a <a href="PartIteration.html">PartIteration</a>
- * of a given <a href="PartMaster.html">PartMaster</a>
+ * A configuration specification used to filter {@link PartMaster}s and {@link DocumentRevision}s
  * according to its effectivities.
- * Actually the EffectivityConfigSpec determine the right
- * <a href="PartRevision.html">PartRevision</a>, we then catch its last iteration.
  * 
  * @author Florent Garin
  * @version 1.1, 30/10/11
@@ -70,7 +67,7 @@ public abstract class EffectivityConfigSpec extends ConfigSpec {
     }
 
     @Override
-    public DocumentIteration filterConfigSpec(DocumentMaster documentMaster) {
+    public DocumentIteration filterConfigSpec(DocumentRevision documentRevision) {
         return null;
     }
 

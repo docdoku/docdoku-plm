@@ -22,17 +22,19 @@ package com.docdoku.core.configuration;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentMasterKey;
+import com.docdoku.core.document.DocumentRevisionKey;
 import com.docdoku.core.document.Folder;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
- * Baseline refers to a specific configuration of document, it could be seen as
- * "snapshots in time" of folders. More concretely, baselines are collections
- * of items (like documents) at a specified iteration.
+ * Baselines refer to specific configurations of documents, they could be seen as
+ * "snapshots in time" of folders with their content. More concretely, baselines are collections
+ * of items (like documents and folders) at a given iteration.
  *
  * @author Taylor LABEJOF
  * @version 2.0, 25/08/14
@@ -61,10 +63,8 @@ public class DocumentBaseline implements Serializable {
     private Date creationDate;
 
     @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY, orphanRemoval = true)
-    private DocumentCollection documentCollection =new DocumentCollection();
-
-    @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY, orphanRemoval = true)
     private FolderCollection folderCollection =new FolderCollection();
+
 
     public DocumentBaseline() {
     }
@@ -76,9 +76,11 @@ public class DocumentBaseline implements Serializable {
         this.creationDate = new Date();
     }
 
-    public Map<String, BaselinedFolder> getBaselinedFolders() {
+    public Map<BaselinedFolderKey, BaselinedFolder> getBaselinedFolders() {
         return folderCollection.getBaselinedFolders();
     }
+
+
     public void removeAllBaselinedFolders() {
         folderCollection.removeAllBaselinedFolders();
     }
@@ -96,21 +98,43 @@ public class DocumentBaseline implements Serializable {
         return folderCollection.getBaselinedFolder(completePath);
     }
 
-    public Map<BaselinedDocumentKey, BaselinedDocument> getBaselinedDocuments() {
-        return documentCollection.getBaselinedDocuments();
-    }
+    /*
     public void removeAllBaselinedDocuments() {
         documentCollection.removeAllBaselinedDocuments();
     }
 
-    public BaselinedDocument addBaselinedDocument(DocumentIteration targetDocument){
-        return documentCollection.addBaselinedDocument(targetDocument);
+
+    public DocumentCollection getDocumentCollection() {
+        return documentCollection;
     }
-    public boolean hasBasedLinedDocument(DocumentMasterKey documentMasterKey){
-        return documentCollection.hasBaselinedDocument(documentMasterKey);
+    */
+
+
+
+    public void addBaselinedDocument(DocumentIteration targetDocument){
+        Folder location = targetDocument.getDocumentRevision().getLocation();
+        BaselinedFolder baselinedFolder = folderCollection.getBaselinedFolder(location.getCompletePath());
+        if(baselinedFolder==null)
+            baselinedFolder=new BaselinedFolder(folderCollection,location.getCompletePath());
+
+        baselinedFolder.addDocumentIteration(targetDocument);
     }
-    public BaselinedDocument getBaselinedDocument(BaselinedDocumentKey baselinedDocumentKey){
-        return documentCollection.getBaselinedDocument(baselinedDocumentKey);
+
+
+    public boolean hasBaselinedDocument(DocumentRevisionKey documentRevisionKey){
+        if(folderCollection != null){
+            for(BaselinedFolder folder:folderCollection.getBaselinedFolders().values()){
+                List<DocumentIteration> docIs = folder.getDocumentIterations();
+                for(DocumentIteration docI:docIs){
+                    if(docI.getDocumentRevision().getKey().equals(documentRevisionKey))
+                        return true;
+                }
+            }
+            return false;
+
+        }else{
+            return false;
+        }
     }
 
     public String getName() {
@@ -134,9 +158,6 @@ public class DocumentBaseline implements Serializable {
         this.description = description;
     }
 
-    public DocumentCollection getDocumentCollection() {
-        return documentCollection;
-    }
     public FolderCollection getFolderCollection() {
         return folderCollection;
     }

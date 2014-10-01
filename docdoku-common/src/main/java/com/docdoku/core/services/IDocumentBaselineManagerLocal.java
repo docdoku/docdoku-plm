@@ -19,6 +19,7 @@
  */
 package com.docdoku.core.services;
 
+import com.docdoku.core.configuration.BaselineConfigSpec;
 import com.docdoku.core.configuration.ConfigSpec;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.document.DocumentRevisionKey;
@@ -97,7 +98,7 @@ public interface IDocumentBaselineManagerLocal {
      * @throws WorkspaceNotFoundException If the workspace cann't be found
      * @throws BaselineNotFoundException If the baseline cann't be found
      */
-    ConfigSpec getConfigSpecForBaseline(int baselineId) throws BaselineNotFoundException, WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException;
+    BaselineConfigSpec getConfigSpecForBaseline(int baselineId) throws BaselineNotFoundException, WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException;
 
     /**
      * Get the list of folder filtered by a configuration specification
@@ -125,7 +126,7 @@ public interface IDocumentBaselineManagerLocal {
      * @param completePath The complete path of the folder
      * @return All documents of the folder filtered by a confSpec
      */
-    DocumentRevision[] getFilteredDocumentsByFolder(String workspaceId, ConfigSpec cs, String completePath) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
+    DocumentRevision[] getFilteredDocumentsByFolder(String workspaceId, BaselineConfigSpec cs, String completePath) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
 
     /**
      * Get the list of documents filtered by a configuration specification and a tag

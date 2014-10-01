@@ -22,6 +22,7 @@ package com.docdoku.core.configuration;
 import com.docdoku.core.common.User;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentMaster;
+import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartMaster;
 
@@ -29,7 +30,17 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.util.List;
 
+
+/**
+ * A {@link ConfigSpec} which returns the {@link PartIteration} and {@link DocumentIteration}
+ * which belong to the given baseline.
+ *
+ * @author Florent Garin
+ * @version 1.1, 30/10/11
+ * @since   V1.1
+ */
 @Table(name="BASELINECONFIGSPEC")
 @Entity
 public class BaselineConfigSpec extends ConfigSpec {
@@ -74,19 +85,8 @@ public class BaselineConfigSpec extends ConfigSpec {
     }
 
     @Override
-    public int getId(){
-        if(productBaseline!=null){
-            return productBaseline.getPartCollection().getId();
-        }else if(documentBaseline!=null){
-            return documentBaseline.getDocumentCollection().getId();
-        }else{
-            return -1;
-        }
-    }
-
-    @Override
     public PartIteration filterConfigSpec(PartMaster part) {
-        PartCollection partCollection = productBaseline.getPartCollection();
+        PartCollection partCollection = productBaseline==null?null:productBaseline.getPartCollection();
         if(partCollection != null){
             BaselinedPartKey baselinedRootPartKey = new BaselinedPartKey(partCollection.getId(),part.getWorkspaceId(),part.getNumber());
             BaselinedPart baselinedRootPart = productBaseline.getBaselinedPart(baselinedRootPartKey);
@@ -102,16 +102,19 @@ public class BaselineConfigSpec extends ConfigSpec {
     }
 
     @Override
-    public DocumentIteration filterConfigSpec(DocumentMaster documentMaster) {
-        DocumentCollection documentCollection = documentBaseline.getDocumentCollection();
-        if(documentCollection != null){
-            BaselinedDocumentKey baselinedDocumentKey = new BaselinedDocumentKey(documentBaseline.getId(), documentMaster.getWorkspaceId(),documentMaster.getId());
-            BaselinedDocument baselinedDocument = documentCollection.getBaselinedDocument(baselinedDocumentKey);
-            if(baselinedDocument != null){
-                return baselinedDocument.getTargetDocument();
-            }else{
-                return new LatestConfigSpec(user).filterConfigSpec(documentMaster);
+    public DocumentIteration filterConfigSpec(DocumentRevision documentRevision) {
+        FolderCollection folderCollection = documentBaseline==null?null:documentBaseline.getFolderCollection();
+        if(folderCollection != null){
+            for(BaselinedFolder folder:folderCollection.getBaselinedFolders().values()){
+                List<DocumentIteration> docIs = folder.getDocumentIterations();
+                for(DocumentIteration docI:docIs){
+                    if(docI.getDocumentRevision().equals(documentRevision))
+                        return docI;
+                }
             }
+            // the document isn't in baseline, choose the latest checked in version-iteration
+            return new LatestConfigSpec(user).filterConfigSpec(documentRevision);
+
         }else{
             return null;
         }

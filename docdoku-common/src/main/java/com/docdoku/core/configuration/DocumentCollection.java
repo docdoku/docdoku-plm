@@ -34,8 +34,6 @@ import java.util.Map;
  * more than one {@link com.docdoku.core.document.DocumentIteration} in
  * the same {@link com.docdoku.core.document.DocumentMaster}.
  *
- * PartCollection is a foundation for the definition of {@link DocumentBaseline}.
- *
  * @author Taylor LABEJOF
  * @version 2.0, 25/08/14
  * @since   V2.0

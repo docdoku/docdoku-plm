@@ -35,7 +35,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /**
- * A <a href="ConfigSpec.html">ConfigSpec</a> which selects the latest iteration.
+ * A {@link ConfigSpec} which selects the latest iteration.
  * 
  * @author Florent Garin
  * @version 1.1, 30/10/11
@@ -73,9 +73,8 @@ public class LatestConfigSpec extends ConfigSpec {
     }
 
     @Override
-    public DocumentIteration filterConfigSpec(DocumentMaster documentMaster) {
-        DocumentIteration documentIteration = documentMaster.getLastRevision().getLastIteration();
-        DocumentRevision documentRevision = documentIteration.getDocumentRevision();
+    public DocumentIteration filterConfigSpec(DocumentRevision documentRevision) {
+        DocumentIteration documentIteration = documentRevision.getLastIteration();
         if(documentRevision.isCheckedOut() && !documentRevision.getCheckOutUser().equals(user)){
             documentIteration = documentRevision.getLastCheckedInIteration();
         }

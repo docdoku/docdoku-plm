@@ -54,13 +54,6 @@ public class BaselinedDocument implements Serializable{
     })
     private DocumentIteration targetDocument;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumns({
-            @JoinColumn(name="BASELINEDFOLDER_FOLDERCOLLECTION_ID", referencedColumnName="FOLDERCOLLECTION_ID"),
-            @JoinColumn(name="BASELINEDFOLDER_COMPLETEPATH", referencedColumnName="COMPLETEPATH"),
-    })
-    private BaselinedFolder baselinedFolder;
-
     @Column(name = "TARGET_DOCUMENTREVISION_VERSION", length=10, nullable = false, insertable = false, updatable = false)
     private String targetDocumentVersion="";
     @Column(name = "TARGET_ITERATION", nullable = false, insertable = false, updatable = false)
@@ -87,13 +80,6 @@ public class BaselinedDocument implements Serializable{
     }
     public void setDocumentCollection(DocumentCollection documentCollection) {
         this.documentCollection = documentCollection;
-    }
-
-    public BaselinedFolder getBaselinedFolder() {
-        return baselinedFolder;
-    }
-    public void setBaselinedFolder(BaselinedFolder baselinedFolder) {
-        this.baselinedFolder = baselinedFolder;
     }
 
     public DocumentIteration getTargetDocument() {

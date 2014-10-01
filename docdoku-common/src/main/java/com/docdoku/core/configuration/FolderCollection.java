@@ -55,9 +55,9 @@ public class FolderCollection implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date creationDate;
 
-    @MapKey(name="completePath")
+    @MapKey(name="baselinedFolderKey")
     @OneToMany(mappedBy="folderCollection", cascade=CascadeType.ALL, fetch=FetchType.LAZY, orphanRemoval=true)
-    private Map<String, BaselinedFolder> baselinedFolders = new HashMap<>();
+    private Map<BaselinedFolderKey, BaselinedFolder> baselinedFolders = new HashMap<>();
 
     public FolderCollection() {
     }
@@ -66,17 +66,17 @@ public class FolderCollection implements Serializable {
         baselinedFolders.clear();
     }
 
-    public Map<String, BaselinedFolder> getBaselinedFolders() {
+    public Map<BaselinedFolderKey, BaselinedFolder> getBaselinedFolders() {
         return baselinedFolders;
     }
 
     public void addBaselinedFolder(Folder folder){
         BaselinedFolder baselinedFolder = new BaselinedFolder(this,folder);
-        baselinedFolders.put(baselinedFolder.getCompletePath(),baselinedFolder);
+        baselinedFolders.put(baselinedFolder.getBaselinedFolderKey(),baselinedFolder);
     }
 
     public void addBaselinedFolder(BaselinedFolder baselinedFolder){
-        baselinedFolders.put(baselinedFolder.getCompletePath(),baselinedFolder);
+        baselinedFolders.put(baselinedFolder.getBaselinedFolderKey(),baselinedFolder);
     }
 
     public BaselinedFolder getBaselinedFolder(String completePath){

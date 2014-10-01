@@ -102,7 +102,7 @@ public class DocumentBaselineManagerBean implements IDocumentBaselineManagerLoca
 
     @RolesAllowed("users")
     @Override
-    public ConfigSpec getConfigSpecForBaseline(int baselineId) throws BaselineNotFoundException, WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException {
+    public BaselineConfigSpec getConfigSpecForBaseline(int baselineId) throws BaselineNotFoundException, WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException {
         DocumentBaseline documentBaseline = getBaseline(baselineId);
         User user = userManager.checkWorkspaceReadAccess(documentBaseline.getWorkspace().getId());
         return new BaselineConfigSpec(documentBaseline,user);
@@ -145,14 +145,13 @@ public class DocumentBaselineManagerBean implements IDocumentBaselineManagerLoca
 
     @RolesAllowed("users")
     @Override
-    public DocumentRevision[] getFilteredDocumentsByFolder(String workspaceId, ConfigSpec cs, String completePath) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+    public DocumentRevision[] getFilteredDocumentsByFolder(String workspaceId, BaselineConfigSpec cs, String completePath) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
-        BaselinedFolderKey key = new BaselinedFolderKey(cs.getId(),completePath);
-        List<BaselinedDocument> baselinedDocuments = new BaselinedDocumentDAO(new Locale(user.getLanguage()),em).findDocRsByFolder(key);
+        BaselinedFolderKey key = new BaselinedFolderKey(cs.getDocumentBaseline().getFolderCollection().getId(),completePath);
+        List<DocumentIteration> baselinedDocuments = new BaselinedDocumentDAO(new Locale(user.getLanguage()),em).findDocRsByFolder(key);
         List<DocumentRevision> returnList = new ArrayList<>();
-        for(BaselinedDocument baselinedDocument : baselinedDocuments){
-            DocumentIteration docI = baselinedDocument.getTargetDocument();
-            DocumentRevision docR = filterDocumentRevisionAccessRight(user,docI.getDocumentRevision());
+        for(DocumentIteration baselinedDocument : baselinedDocuments){
+            DocumentRevision docR = filterDocumentRevisionAccessRight(user,baselinedDocument.getDocumentRevision());
             returnList.add(docR);
         }
         return returnList.toArray(new DocumentRevision[returnList.size()]);
@@ -209,7 +208,7 @@ public class DocumentBaselineManagerBean implements IDocumentBaselineManagerLoca
             User user = userManager.checkWorkspaceReadAccess(revisionKey.getWorkspaceId());
 
             // Ignore already existing document
-            if(baseline.hasBasedLinedDocument(revisionKey.getDocumentMaster())){
+            if(baseline.hasBaselinedDocument(revisionKey)){
                 break;
             }
 
@@ -222,13 +221,7 @@ public class DocumentBaselineManagerBean implements IDocumentBaselineManagerLoca
 
             DocumentIteration documentIteration = documentRevision.getLastIteration();
             if(documentIteration!=null){
-                // Add current
-                BaselinedDocument baselinedDocument = baseline.addBaselinedDocument(documentIteration);
-                int collectionId = baseline.getFolderCollection().getId();
-                BaselinedFolderKey key = new BaselinedFolderKey(collectionId,
-                        documentIteration.getDocumentRevision().getLocation().getCompletePath());
-                BaselinedFolder baselinedFolder = new BaselinedFolderDAO(em).loadBaselineFolder(key);
-                baselinedDocument.setBaselinedFolder(baselinedFolder);
+                baseline.addBaselinedDocument(documentIteration);
             }
         }
     }
@@ -243,9 +236,6 @@ public class DocumentBaselineManagerBean implements IDocumentBaselineManagerLoca
 
     private void snapshotAllDocuments(DocumentBaseline baseline, String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentRevisionNotFoundException, FolderNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
-        DocumentCollection collection = baseline.getDocumentCollection();
-        collection.setCreationDate(new Date());
-        collection.setAuthor(user);
         DocumentRevision[] documentRevisions = documentService.getAllDocumentsInWorkspace(workspaceId);
         List<DocumentRevisionKey> revisionKeyList = new ArrayList<>();
         for(DocumentRevision documentRevision : documentRevisions){
@@ -264,7 +254,7 @@ public class DocumentBaselineManagerBean implements IDocumentBaselineManagerLoca
     }
 
     private DocumentRevision filterDocumentRevision(ConfigSpec configSpec, DocumentRevision documentRevision) throws DocumentRevisionNotFoundException {
-        DocumentIteration docI = configSpec.filterConfigSpec(documentRevision.getDocumentMaster());
+        DocumentIteration docI = configSpec.filterConfigSpec(documentRevision);
         if(docI!=null){
             DocumentRevision docR = docI.getDocumentRevision();
             em.detach(docR);

@@ -191,9 +191,6 @@ public class Tools {
         return baselinedDocumentDTOs;
     }
 
-    public static List<BaselinedDocumentDTO> mapBaselinedDocumentsToBaselinedDocumentDTO(DocumentBaseline documentBaseline){
-        return mapBaselinedDocumentsToBaselinedDocumentDTO(documentBaseline.getBaselinedDocuments().values());
-    }
 
 
     public static BaselinedDocumentDTO mapBaselinedDocumentToBaselinedDocumentDTO(BaselinedDocument baselineDocument){

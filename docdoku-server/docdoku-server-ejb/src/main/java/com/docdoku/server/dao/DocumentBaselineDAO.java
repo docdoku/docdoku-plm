@@ -48,8 +48,6 @@ public class DocumentBaselineDAO {
     }
 
     public void createBaseline(DocumentBaseline documentBaseline) {
-        em.persist(documentBaseline.getDocumentCollection());
-        em.persist(documentBaseline.getFolderCollection());
         em.persist(documentBaseline);
         em.flush();
     }
