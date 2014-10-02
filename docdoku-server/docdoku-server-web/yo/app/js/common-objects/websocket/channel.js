@@ -1,8 +1,6 @@
-/*global define*/
-'use strict';
-
+/*global _,define*/
 define(['common-objects/websocket/channelStatus'], function (ChannelStatus) {
-
+	'use strict';
     function Channel() {
         this.status = ChannelStatus.CLOSED;
         this.listeners = [];
@@ -16,7 +14,6 @@ define(['common-objects/websocket/channelStatus'], function (ChannelStatus) {
         },
 
         create: function () {
-
             var self = this;
 
             this.ws = new WebSocket(this.url);

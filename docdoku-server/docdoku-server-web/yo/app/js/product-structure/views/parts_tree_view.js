@@ -1,8 +1,7 @@
 /*global define,App*/
-'use strict';
-define(['backbone', 'models/component_module', 'views/component_views', "common-objects/websocket/channelMessagesType"
-], function (Backbone, ComponentModule, ComponentViews, ChannelMessagesType) {
-
+define(['backbone', 'models/component_module', 'views/component_views'
+], function (Backbone, ComponentModule, ComponentViews) {
+	'use strict';
     var PartsTreeView = Backbone.View.extend({
 
         el: '#product_nav_list',
@@ -24,9 +23,7 @@ define(['backbone', 'models/component_module', 'views/component_views', "common-
         },
 
         render: function () {
-
             var self = this;
-
             var rootCollection = new ComponentModule.Collection([], { isRoot: true });
 
             this.smartPath = [];
@@ -105,23 +102,14 @@ define(['backbone', 'models/component_module', 'views/component_views', "common-
 
             if (relativeInput.parentNode.id === 'path_null') {
                 // Root node : master send the new smartPaths
-                if (App.collaborativeView.isMaster) {
-                    App.mainChannel.sendJSON({
-                        type: ChannelMessagesType.COLLABORATIVE_COMMANDS,
-                        key: App.collaborativeView.roomKey,
-                        messageBroadcast: {smartPath: this.smartPath},
-                        remoteUser: 'null'
-                    });
-                }
+	            App.collaborativeController.sendSmartPath(this.smartPath);
             }
-
         },
 
         addToSmartPath: function (p) {
             this.removeFromSmartPath(p);
             this.smartPath.push(p);
         },
-
         removeFromSmartPath: function (p) {
             this.smartPath = _.filter(this.smartPath, function (e) {
                 return e !== p;
@@ -129,19 +117,19 @@ define(['backbone', 'models/component_module', 'views/component_views', "common-
         },
 
         setSmartPaths: function (arrayPaths) {
-            var pathToUnload = _.difference(this.smartPath, arrayPaths);
-            if (pathToUnload.length !== 0) {
-                console.log('path to unload : ');
-                console.log(pathToUnload);
-                App.instancesManager.loadQueue.push({'process': 'unload', 'path': pathToUnload});
+	        arrayPaths = (arrayPaths) ? arrayPaths : [];
+	        var pathsToLoad = _.difference(arrayPaths, this.smartPath);
+	        if (pathsToLoad.length !== 0) {
+		        console.log('[PartsTreeView] Paths to load : \n\t'+pathsToLoad);
+		        App.instancesManager.loadComponentsByPaths(pathsToLoad);
+	        }
+
+	        var pathsToUnload = _.difference(this.smartPath, arrayPaths);
+            if (pathsToUnload.length !== 0) {
+                console.log('[PartsTreeView] Path to unload : \n\t'+pathsToUnload);
+                App.instancesManager.unLoadComponentsByPaths(pathsToUnload);
             }
 
-            var pathToLoad = _.difference(arrayPaths, this.smartPath);
-            if (pathToLoad.length !== 0) {
-                console.log('path to load : ');
-                console.log(pathToLoad);
-                App.instancesManager.loadQueue.push({'process': 'load', 'path': pathToLoad});
-            }
             this.smartPath = arrayPaths;
             this.setCheckboxes();
         },

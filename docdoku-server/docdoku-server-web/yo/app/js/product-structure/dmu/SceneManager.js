@@ -1,12 +1,11 @@
-/*global define,App,Stats,Instance,requestAnimationFrame,TWEEN*/
-'use strict';
+/*global _,define,App,Stats,Instance,requestAnimationFrame,TWEEN*/
 define([
-    "backbone",
-    "views/marker_create_modal_view",
-    "views/blocker_view",
-    "dmu/LayerManager"
+    'backbone',
+    'views/marker_create_modal_view',
+    'views/blocker_view',
+    'dmu/LayerManager'
 ], function (Backbone,MarkerCreateModalView, BlockerView, LayerManager) {
-
+	'use strict';
     var SceneManager = function (pOptions) {
         var _this = this;
 
@@ -52,21 +51,19 @@ define([
 
         function initDOM() {
             _this.$container = $('div#container');
-            _this.$container[0].setAttribute('tabindex', "-1");
-            _this.$sceneContainer = $("#scene_container");
+            _this.$container[0].setAttribute('tabindex', '-1');
+            _this.$sceneContainer = $('#scene_container');
             _this.$blocker = new BlockerView().render().$el;
             _this.$container.append(_this.$blocker);
             _this.$flyingModeButton = $('#flying_mode_view_btn');
             _this.$trackingModeButton = $('#tracking_mode_view_btn');
             _this.$orbitModeButton = $('#orbit_mode_view_btn');
         }
-
         function initRenderer() {
             _this.renderer = new THREE.WebGLRenderer({preserveDrawingBuffer: true, alpha: true});
             _this.renderer.setSize(_this.$container.width(), _this.$container.height());
             _this.$container.append(_this.renderer.domElement);
         }
-
         function initLayerManager() {
             if (!_.isUndefined(App.config.productId)) {
                 _this.layerManager = new LayerManager();
@@ -74,7 +71,6 @@ define([
                 _this.layerManager.renderList();
             }
         }
-
         function initAxes() {
             var axes = new THREE.AxisHelper(100);
             axes.position.set(0, 0, 0);
@@ -83,20 +79,18 @@ define([
             arrow.position.set(200, 0, 400);
             _this.scene.add(arrow);
         }
-
         function initStats() {
             _this.stats = new Stats();
             _this.$sceneContainer.append(_this.stats.domElement);
             _this.$stats = $(_this.stats.domElement);
             _this.$stats.attr('id', 'statsWin');
             _this.$stats.attr('class', 'statsWinMaximized');
-            _this.$statsArrow = $("<i id=\"statsArrow\" class=\"fa fa-chevron-down\"></i>");
+            _this.$statsArrow = $('<i id="statsArrow" class="fa fa-chevron-down"></i>');
             _this.$stats.prepend(_this.$statsArrow);
             _this.$statsArrow.bind('click', function () {
                 _this.$stats.toggleClass('statsWinMinimized statsWinMaximized');
             });
         }
-
         function initGrid() {
             var size = 500, step = 25;
             var geometry = new THREE.Geometry();
@@ -112,12 +106,10 @@ define([
             }
             _this.grid = new THREE.Line(geometry, material, THREE.LinePieces);
         }
-
         function initAmbientLight() {
             var ambient = new THREE.AmbientLight(0x101030);
             _this.scene.add(ambient);
         }
-
         function initSelectionBox() {
             selectionBox = new THREE.BoxHelper();
             selectionBox.material.depthTest = true;
@@ -133,7 +125,6 @@ define([
             camera.add(dirLight);
             camera.add(dirLight.target);
         }
-
         function handleResize() {
             _this.cameraObject.aspect = _this.$container.innerWidth() / _this.$container.innerHeight();
             _this.cameraObject.updateProjectionMatrix();
@@ -141,12 +132,10 @@ define([
             controlsObject.handleResize();
             _this.reDraw();
         }
-
         function setSelectionBoxOnMesh(mesh) {
             selectionBox.update(mesh);
             selectionBox.visible = true;
         }
-
         function unsetSelectionBox() {
             selectionBox.visible = false;
         }
@@ -159,14 +148,12 @@ define([
             _this.pointerLockControls = new THREE.PointerLockControls(_this.pointerLockCamera);
             addLightsToCamera(_this.pointerLockCamera);
         }
-
         function createOrbitControls() {
             _this.orbitCamera = new THREE.PerspectiveCamera(45, _this.$container.width() / _this.$container.height(), App.SceneOptions.cameraNear, App.SceneOptions.cameraFar);
             _this.orbitCamera.position.copy(App.SceneOptions.defaultCameraPosition);
             addLightsToCamera(_this.orbitCamera);
             _this.orbitControls = new THREE.OrbitControls(_this.orbitCamera, _this.$container[0]);
         }
-
         function createTrackBallControls() {
             _this.trackBallCamera = new THREE.PerspectiveCamera(45, _this.$container.width() / _this.$container.height(), App.SceneOptions.cameraNear, App.SceneOptions.cameraFar);
             _this.trackBallCamera.position.copy(App.SceneOptions.defaultCameraPosition);
@@ -174,24 +161,20 @@ define([
             _this.trackBallControls = new THREE.TrackballControls(_this.trackBallCamera, _this.$container[0]);
             _this.trackBallControls.keys = [ 65 /*A*/, 83 /*S*/, 68 /*D*/ ];
         }
-
         function initControls() {
             createPointerLockControls();
             createTrackBallControls();
             createOrbitControls();
         }
-
         function createTransformControls() {
             transformControls = new THREE.TransformControls(_this.$container[0]);
             transformControls.addEventListener('change', _this.reDraw);
         }
-
         function isPointerLock() {
             return (document.pointerLockElement === _this.$container[0] ||
                 document.mozPointerLockElement === _this.$container[0] ||
                 document.webkitPointerLockElement === _this.$container[0]);
         }
-
         function pointerLockChange() {
             _this.pointerLockControls.enabled = isPointerLock();
             if (_this.pointerLockControls.enabled) {
@@ -202,7 +185,6 @@ define([
                 _this.pointerLockControls.unbindEvents();
             }
         }
-
         /**
          * Lock the pointer (when you click on container) and Hide the gray screen
          */
@@ -219,14 +201,13 @@ define([
 
             _this.$container[0].requestPointerLock();
         }
-
         function deleteAllControls() {
-            _this.trackBallControls.removeEventListener("change");
+            _this.trackBallControls.removeEventListener('change');
             _this.trackBallControls.unbindEvents();
             _this.scene.remove(_this.trackBallCamera);
             _this.trackBallControls.enabled = false;
 
-            _this.pointerLockControls.removeEventListener("change");
+            _this.pointerLockControls.removeEventListener('change');
             _this.scene.remove(_this.pointerLockControls.getObject());
             _this.pointerLockControls.enabled = false;
             _this.pointerLockControls.unbindEvents();
@@ -239,7 +220,7 @@ define([
                 _this.$container[0].removeEventListener('click', bindPointerLock, false);
             }
 
-            _this.orbitControls.removeEventListener("change");
+            _this.orbitControls.removeEventListener('change');
             _this.scene.remove(_this.orbitControls.getObject());
             _this.orbitControls.enabled = false;
             _this.orbitControls.unbindEvents();
@@ -250,13 +231,11 @@ define([
         /**
          * Scene options control
          */
-
         function onControlChange() {
             App.instancesManager.planNewEval();
             controlChanged = true;
             _this.reDraw();
         }
-
         function applyWireFrame(mesh) {
             mesh.material.wireframe = wireframe;
             if ((mesh.material.materials)) {
@@ -265,7 +244,6 @@ define([
                 });
             }
         }
-
         function applyExplosionCoeff(mesh) {
             if (!mesh.absoluteCentroid) {
                 mesh.geometry.computeBoundingBox();
@@ -286,13 +264,11 @@ define([
             }
             mesh.updateMatrix();
         }
-
         function applyMeasureStateOpacity(mesh) {
             if (_this.measureState) {
                 mesh.material.opacity = _this.measureState ? 0.5 : 1;
             }
         }
-
         function showGrid() {
             if (_this.grid.added) {
                 return;
@@ -301,7 +277,6 @@ define([
             _this.scene.add(_this.grid);
             _this.reDraw();
         }
-
         function removeGrid() {
             if (!_this.grid.added) {
                 return;
@@ -310,7 +285,6 @@ define([
             _this.scene.remove(_this.grid);
             _this.reDraw();
         }
-
         function watchSceneOptions() {
             if (App.SceneOptions.grid) {
                 showGrid();
@@ -324,29 +298,22 @@ define([
          */
         function onMouseEnter() {
         }
-
         function onMouseLeave() {
             isMoving = false;
         }
-
         function onKeyDown() {
         }
-
         function onKeyUp() {
 
         }
-
         function onMouseDown() {
             isMoving = false;
         }
-
         function onSceneMouseWheel() {
         }
-
         function onSceneMouseMove() {
             isMoving = true;
         }
-
         function onMouseUp(event) {
             event.preventDefault();
             if (isMoving) {
@@ -379,7 +346,7 @@ define([
                     meshMarkedForSelection = intersects[0].object.uuid;
                     setSelectionBoxOnMesh(intersects[0].object);
 
-                    Backbone.Events.trigger("mesh:selected", intersects[0].object);
+                    Backbone.Events.trigger('mesh:selected', intersects[0].object);
                 }
             }
             else if (intersects.length > 0 && intersects[0].object.markerId) {
@@ -387,7 +354,7 @@ define([
             }
             else {
                 if (!App.sceneManager.transformControlsEnabled()) {
-                    Backbone.Events.trigger("selection:reset");
+                    Backbone.Events.trigger('selection:reset');
                     meshMarkedForSelection = null;
                     unsetSelectionBox();
                 }
@@ -399,7 +366,6 @@ define([
 
             _this.reDraw();
         }
-
         function bindMouseAndKeyEvents() {
             _this.$container[0].addEventListener('mousedown', onMouseDown, false);
             _this.$container[0].addEventListener('mouseup', onMouseUp, false);
@@ -431,14 +397,13 @@ define([
                     mesh.position.copy(meshEdited.position);
                     mesh.rotation.copy(meshEdited.rotation);
                     mesh.scale.copy(meshEdited.scale);
-                    console.log("[SceneManager] Restore transformed instance mesh");
+                    console.log('[SceneManager] Restore transformed instance mesh');
                     console.log(_this.mesh);
                 }
 
             }
             return mesh;
         }
-
         function removeMesh(meshId) {
             var mesh = meshesIndexed[meshId];
             delete meshesIndexed[meshId];
@@ -461,7 +426,7 @@ define([
             }
 
             if (meshMarkedForSelection === meshId) {
-                Backbone.Events.trigger("selection:reset");
+                Backbone.Events.trigger('selection:reset');
                 meshMarkedForSelection = null;
                 unsetSelectionBox();
             }
@@ -471,7 +436,6 @@ define([
 
             _this.reDraw();
         }
-
         function processLoadedStuff() {
             var loadedStuff = App.instancesManager.getLoadedGeometries(10);
             loadedStuff.forEach(function (stuff) {
@@ -588,7 +552,6 @@ define([
         /**
          * Colaborative Mode
          */
-
         this.setEditedMeshes = function (editedMeshesInfos) {
 
             var arrayId = _.pluck(editedMeshesInfos, 'uuid');
@@ -623,9 +586,7 @@ define([
             });
             _this.reDraw();
         };
-
-
-        this.setColourEditedMeshes = function (colour) {
+        this.setEditedMeshesColor = function (colour) {
             if (editedMeshesColoured !== colour) {
                 if (editedMeshesColoured) {
                     _this.cancelColourEditedMeshes();
@@ -670,7 +631,6 @@ define([
             }
         }
 
-
         this.init = function () {
             _.bindAll(_this);
             initDOM();
@@ -693,11 +653,9 @@ define([
 
             animate();
         };
-
         this.reDraw = function () {
             needsRedraw = true;
         };
-
         this.flyTo = function (mesh) {
             var boundingBox = mesh.geometry.boundingBox;
             var cog = boundingBox.center().clone().applyMatrix4(mesh.matrix);
@@ -710,17 +668,16 @@ define([
             var endCamPos = new THREE.Vector3().copy(cog).sub(dir.multiplyScalar(distance));
             cameraAnimation(cog, 2000, endCamPos);
         };
-
         this.lookAt = function (mesh) {
             var boundingBox = mesh.geometry.boundingBox;
             var cog = boundingBox.center().clone().applyMatrix4(mesh.matrix);
             cameraAnimation(cog, 2000);
         };
-
         this.resetCameraPlace = function () {
             var camPos = App.SceneOptions.defaultCameraPosition;
             resetCameraAnimation(new THREE.Vector3(0, 0, 0), 1000, camPos, new THREE.Vector3(0, 1, 0));
         };
+
         /**
          * Context API
          */
@@ -730,7 +687,6 @@ define([
                 camPos: controlsObject.getCamPos()
             };
         };
-
         this.getControlsContext = function () {
             return {
                 target: controlsObject.getTarget(),
@@ -738,7 +694,6 @@ define([
                 camOrientation: _this.cameraObject.up
             };
         };
-
         this.setControlsContext = function (context) {
             _this.cameraObject.position.copy(context.camPos);
             controlsObject.target.copy(context.target);
@@ -754,7 +709,6 @@ define([
                 return null;
             }
         };
-
         this.transformControlsEnabled = function () {
             var enabled = false;
             if (transformControls !== null && transformControls.enabled) {
@@ -762,13 +716,11 @@ define([
             }
             return enabled;
         };
-
         this.enableControlsObject = function () {
 	        if(controlsObject){
 		        controlsObject.enabled = true;
 	        }
         };
-
         this.disableControlsObject = function () {
 	        if(controlsObject){
 		        controlsObject.enabled = false;
@@ -781,12 +733,12 @@ define([
         this.startMarkerCreationMode = function (layer) {
             _this.markerCreationMode = true;
             currentLayer = layer;
-            _this.$sceneContainer.addClass("markersCreationMode");
+            _this.$sceneContainer.addClass('markersCreationMode');
         };
         this.stopMarkerCreationMode = function () {
             _this.markerCreationMode = false;
             currentLayer = null;
-            _this.$sceneContainer.removeClass("markersCreationMode");
+            _this.$sceneContainer.removeClass('markersCreationMode');
         };
         this.requestFullScreen = function () {
             _this.renderer.domElement.parentNode.requestFullscreen =
@@ -810,7 +762,7 @@ define([
             _this.measureCallback = callback;
         };
         this.setMeasureState = function (state) {
-            _this.$sceneContainer.toggleClass("measureMode", state);
+            _this.$sceneContainer.toggleClass('measureMode', state);
             _this.measureState = state;
             var opacity = state ? 0.5 : 1;
             _(_this.scene.children).each(function (child) {
@@ -822,7 +774,7 @@ define([
         this.takeScreenShot = function () {
             var imageSource = _this.renderer.domElement.toDataURL('image/png');
             var now = new Date();
-            var filename = App.config.productId + "-" + now.getFullYear() + "-" + now.getMonth() + "-" + now.getDay();
+            var filename = App.config.productId + '-' + now.getFullYear() + '-' + now.getMonth() + '-' + now.getDay();
             if (/Firefox/i.test(window.navigator.userAgent)) {
                 var strDownloadMime = 'image/octet-stream';
                 document.location.href = imageSource.replace('image/png', strDownloadMime);
@@ -866,13 +818,13 @@ define([
 
             _this.stateControl = _this.STATECONTROL.PLC;
             deleteAllControls();
-            _this.$flyingModeButton.addClass("active");
+            _this.$flyingModeButton.addClass('active');
             _this.$blocker.show();
 
             _this.cameraObject = _this.pointerLockCamera;
             controlsObject = _this.pointerLockControls;
 
-            _this.pointerLockControls.addEventListener("change", onControlChange);
+            _this.pointerLockControls.addEventListener('change', onControlChange);
 
             // Hook pointer lock state change events
             document.addEventListener('pointerlockchange', pointerLockChange, false);
@@ -891,13 +843,13 @@ define([
             _this.stateControl = _this.STATECONTROL.TBC;
             deleteAllControls();
 
-            _this.$trackingModeButton.addClass("active");
+            _this.$trackingModeButton.addClass('active');
 
             controlsObject = _this.trackBallControls;
             _this.cameraObject = _this.trackBallCamera;
 
             _this.trackBallControls.enabled = true;
-            _this.trackBallControls.addEventListener("change", onControlChange);
+            _this.trackBallControls.addEventListener('change', onControlChange);
             _this.trackBallControls.bindEvents();
             _this.scene.add(_this.trackBallCamera);
 
@@ -913,14 +865,14 @@ define([
             _this.stateControl = _this.STATECONTROL.ORB;
             deleteAllControls();
 
-            _this.$orbitModeButton.addClass("active");
+            _this.$orbitModeButton.addClass('active');
 
             controlsObject = _this.orbitControls;
             controlsObject.enabled = true;
 
             _this.cameraObject = _this.orbitCamera;
 
-            controlsObject.addEventListener("change", onControlChange);
+            controlsObject.addEventListener('change', onControlChange);
             controlsObject.bindEvents();
             _this.scene.add(_this.orbitCamera);
 
@@ -937,21 +889,21 @@ define([
                 if (editedMeshesColoured) {
                     _this.colourEditedMeshes();
                 }
-                console.log("mesh added : ");
+                console.log('mesh added : ');
                 console.log(this.editedMeshes);
                 App.collaborativeController.sendEditedMeshes();
             }
             transformControls.bindEvents();
             if (typeof(mode) !== 'undefined') {
                 switch (mode) {
-                    case "translate" :
-                        transformControls.setMode("translate");
+                    case 'translate' :
+                        transformControls.setMode('translate');
                         break;
-                    case "rotate":
-                        transformControls.setMode("rotate");
+                    case 'rotate':
+                        transformControls.setMode('rotate');
                         break;
-                    case "scale":
-                        transformControls.setMode("scale");
+                    case 'scale':
+                        transformControls.setMode('scale');
                 }
             }
             App.appView.transformControlMode();
@@ -1006,7 +958,7 @@ define([
                 .start();
             _this.editedMeshes = _.without(_this.editedMeshes, mesh.uuid);
             mesh.material = mesh.initialMaterial;
-            console.log("mesh removed");
+            console.log('mesh removed');
             App.collaborativeController.sendEditedMeshes();
 
             _this.reDraw();
@@ -1026,11 +978,9 @@ define([
         this.removeMeshById = function (meshId) {
             removeMesh(meshId);
         };
-
         this.getMesh = function (meshId) {
             return meshesIndexed[meshId];
         };
-
         this.getEditedMeshesColoured = function () {
             return editedMeshesColoured;
         };

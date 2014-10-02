@@ -21,7 +21,6 @@ package com.docdoku.server.rest;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.common.Workspace;
-import com.docdoku.core.configuration.BaselineConfigSpec;
 import com.docdoku.core.configuration.ConfigSpec;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentRevision;
@@ -33,7 +32,7 @@ import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.security.UserGroupMapping;
-import com.docdoku.core.services.IDocumentBaselineManagerLocal;
+import com.docdoku.core.services.IDocumentConfigSpecManagerLocal;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.server.rest.dto.*;
 import com.docdoku.server.rest.exceptions.ApplicationException;
@@ -67,7 +66,7 @@ public class DocumentsResource {
     @EJB
     private IDocumentManagerLocal documentService;
     @EJB
-    private IDocumentBaselineManagerLocal documentBaselineService;
+    private IDocumentConfigSpecManagerLocal documentConfigSpecService;
 
     @EJB
     private DocumentBaselinesResource baselinesResource;
@@ -117,12 +116,15 @@ public class DocumentsResource {
     @GET
     @Path("count")
     @Produces(MediaType.APPLICATION_JSON)
-    public int getDocumentsInWorkspaceCount(@PathParam("workspaceId") String workspaceId) {
+    public CountDTO getDocumentsInWorkspaceCount(@PathParam("workspaceId") String workspaceId) {
         try {
-            return documentService.getDocumentsInWorkspaceCount(Tools.stripTrailingSlash(workspaceId));
-        } catch (com.docdoku.core.exceptions.ApplicationException ex) {
-            LOGGER.log(Level.WARNING,null,ex);
-            throw new RestApiException(ex.toString(), ex.getMessage());
+            return new CountDTO(documentService.getDocumentsInWorkspaceCount(Tools.stripTrailingSlash(workspaceId)));
+        } catch (UserNotFoundException | UserNotActiveException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
+        } catch (WorkspaceNotFoundException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
         }
     }
 
@@ -133,8 +135,8 @@ public class DocumentsResource {
             if(configSpecType==null || BASELINE_UNDEFINED.equals(configSpecType) || BASELINE_LATEST.equals(configSpecType)) {
                 docRs = documentService.getAllDocumentsInWorkspace(workspaceId, start, maxResult);
             }else{
-                ConfigSpec configSpec = documentBaselineService.getConfigSpecForBaseline(Integer.parseInt(configSpecType));
-                docRs = documentBaselineService.getFilteredDocuments(workspaceId,configSpec,start,maxResult);
+                ConfigSpec configSpec = getConfigSpec(workspaceId,configSpecType);
+                docRs = documentConfigSpecService.getFilteredDocuments(workspaceId,configSpec,start,maxResult);
             }
             DocumentRevisionDTO[] docRsDTOs = new DocumentRevisionDTO[docRs.length];
 
@@ -183,8 +185,8 @@ public class DocumentsResource {
             if (configSpecType == null || BASELINE_UNDEFINED.equals(configSpecType) || BASELINE_LATEST.equals(configSpecType)) {
                 docRs = documentService.findDocumentRevisionsByFolder(decodedCompletePath);
             } else {
-                BaselineConfigSpec configSpec = documentBaselineService.getConfigSpecForBaseline(Integer.parseInt(configSpecType));
-                docRs = documentBaselineService.getFilteredDocumentsByFolder(workspaceId, configSpec, decodedCompletePath);
+                ConfigSpec configSpec = getConfigSpec(workspaceId, configSpecType);
+                docRs = documentConfigSpecService.getFilteredDocumentsByFolder(workspaceId, configSpec, decodedCompletePath);
             }
             DocumentRevisionDTO[] docRsDTOs = new DocumentRevisionDTO[docRs.length];
 
@@ -219,8 +221,8 @@ public class DocumentsResource {
             if(configSpecType==null || BASELINE_UNDEFINED.equals(configSpecType) || BASELINE_LATEST.equals(configSpecType)) {
                 docRs = documentService.findDocumentRevisionsByTag(tagKey);
             }else{
-                ConfigSpec configSpec = documentBaselineService.getConfigSpecForBaseline(Integer.parseInt(configSpecType));
-                docRs = documentBaselineService.getFilteredDocumentsByTag(workspaceId,configSpec,tagKey);
+                ConfigSpec configSpec = getConfigSpec(workspaceId,configSpecType);
+                docRs = documentConfigSpecService.getFilteredDocumentsByTag(workspaceId,configSpec,tagKey);
             }
             DocumentRevisionDTO[] docRsDTOs = new DocumentRevisionDTO[docRs.length];
 
@@ -287,8 +289,8 @@ public class DocumentsResource {
             if(configSpecType==null || BASELINE_UNDEFINED.equals(configSpecType) || BASELINE_LATEST.equals(configSpecType)) {
                 docRs = documentService.searchDocumentRevisions(documentSearchQuery);
             }else{
-                ConfigSpec configSpec = documentBaselineService.getConfigSpecForBaseline(Integer.parseInt(configSpecType));
-                docRs = documentBaselineService.searchFilteredDocuments(workspaceId,configSpec,documentSearchQuery);
+                ConfigSpec configSpec = getConfigSpec(workspaceId,configSpecType);
+                docRs = documentConfigSpecService.searchFilteredDocuments(workspaceId,configSpec,documentSearchQuery);
             }
             DocumentRevisionDTO[] docRsDTOs = new DocumentRevisionDTO[docRs.length];
 
@@ -434,5 +436,27 @@ public class DocumentsResource {
         return baselinesResource;
     }
 
-
+    /**
+     * Get a configuration specification
+     * @param workspaceId The current workspace
+     * @param configSpecType The configuration specification type
+     * @return A configuration specification
+     * @throws com.docdoku.core.exceptions.UserNotFoundException If the user login-workspace doesn't exist
+     * @throws com.docdoku.core.exceptions.UserNotActiveException If the user is disabled
+     * @throws com.docdoku.core.exceptions.WorkspaceNotFoundException If the workspace doesn't exist
+     * @throws com.docdoku.core.exceptions.BaselineNotFoundException If the baseline doesn't exist
+     */
+    private ConfigSpec getConfigSpec(String workspaceId, String configSpecType) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, BaselineNotFoundException {
+        ConfigSpec cs;
+        switch (configSpecType) {
+            case BASELINE_LATEST:
+            case BASELINE_UNDEFINED:
+                cs = documentConfigSpecService.getLatestConfigSpec(workspaceId);
+                break;
+            default:
+                cs = documentConfigSpecService.getConfigSpecForBaseline(Integer.parseInt(configSpecType));
+                break;
+        }
+        return cs;
+    }
 }

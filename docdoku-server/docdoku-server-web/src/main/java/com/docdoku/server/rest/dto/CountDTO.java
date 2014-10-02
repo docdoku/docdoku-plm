@@ -20,15 +20,15 @@
 
 package com.docdoku.server.rest.dto;
 
-public class PartCountDTO {
+public class CountDTO {
 
     private int count;
 
-    public PartCountDTO(int count) {
+    public CountDTO(int count) {
         this.count = count;
     }
 
-    public PartCountDTO() {
+    public CountDTO() {
     }
 
     public int getCount() {

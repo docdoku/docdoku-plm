@@ -1,4 +1,4 @@
-/*global define*/
+/*global define,App*/
 define([
     'backbone',
     'common-objects/websocket/channel',
@@ -9,8 +9,8 @@ define([
     'modules/chat-module/app',
     'modules/webrtc-module/app'
 ], function (Backbone, Channel, ChannelListener, ChannelMessagesType, CoWorkersAccessModuleView, UserPopoverModule, chatListener, webRTCInvitationListener) {
-
-    var page_unload = function () {
+	'use strict';
+    var pageUnload = function () {
         App.mainChannel.ws.onclose = function () {
         };
         App.mainChannel.ws.close();
@@ -32,7 +32,7 @@ define([
 
     });
 
-    window.addEventListener('beforeunload', page_unload, false);
+    window.addEventListener('beforeunload', pageUnload, false);
 
     App.mainChannel = new Channel();
     App.mainChannel.addChannelListener(userStatusListener);

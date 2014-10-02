@@ -1,8 +1,7 @@
-/*global define,App,App.config,worker*/
-'use strict';
+/*global _,$,define,App,worker*/
 define(['dmu/LoaderManager', 'async'],
     function (LoaderManager, async) {
-
+	    'use strict';
         /**
          *  This class handles instances management.
          *
@@ -28,7 +27,7 @@ define(['dmu/LoaderManager', 'async'],
 
             var instancesIndexed = {};
             var loadCache = {};
-            var loadedInstances = [];                                                                                       // Store all loaded geometries and materials
+            var loadedInstances = [];                                                                                   // Store all loaded geometries and materials
             var loaderManager = new LoaderManager({progressBar: true});
             var loaderIndicator = $('#product_title').find('img.loader');
             var timer = null;
@@ -213,72 +212,92 @@ define(['dmu/LoaderManager', 'async'],
                 }});
             }
 
-            function loadPath(paths, callback) {
+	        function loadPath(path, callback) {
+		        $.ajax({
+			        url: App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' +
+				         App.config.productId + '/instances' +
+				         '?configSpec='+App.config.configSpec+'&path='+path,
+			        type: 'GET',
+			        success:function(instances){
+				        onSuccessLoadPath(instances);
+				        if(callback){
+					        callback(instances);
+				        }
+			        }
+		        });
+	        }
+
+            function loadPaths(paths, callback) {
                 $.ajax({
-                    url: App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + App.config.productId + '/instances?configSpec=' + App.config.configSpec,
-                    type: 'POST',
-                    contentType: 'application/json',
-                    dataType: 'json',
-                    data: JSON.stringify({
-                        paths: paths
-                    }),
-                    success: function (instances) {
-
-                        _.each(instances, function (instance) {
-
-                            if (instancesIndexed[instance.id]) {
-                                worker.postMessage({fn: 'check', obj: instance.id});
-                            } else {
-                                instancesIndexed[instance.id] = instance;
-                                instance.matrix = adaptMatrix(instance.matrix);
-                                var radius = findRadius(instance.files);
-                                var instanceBox = new THREE.Box3().setFromCenterAndSize(new THREE.Vector3(radius / 2, radius / 2, radius / 2), new THREE.Vector3(radius, radius, radius));
-                                var cog = instanceBox.center().applyMatrix4(instance.matrix);
-                                instance.currentQuality = undefined;
-                                instance.qualities = findQualities(instance.files);
-
-                                worker.postMessage({
-                                    fn: 'addInstance',
-                                    obj: {
-                                        id: instance.id,
-                                        cog: cog,
-                                        radius: radius,
-                                        qualities: instance.qualities,
-                                        checked: true
-                                    }
-                                });
-                            }
-                        });
-
-                        _this.planNewEval();
-                        loaderIndicator.hide();
-                        callback();
-                    }
+	                url: App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' +
+		                 App.config.productId + '/instances',
+	                type:'POST',
+	                contentType: 'application/json',
+	                dataType: 'json',
+	                data: JSON.stringify({
+		                configSpec: App.config.configSpec,
+		                paths: paths
+	                }),
+	                success:function(instances){
+		                onSuccessLoadPath(instances);
+		                if(callback){
+			                callback(instances);
+		                }
+	                }
                 });
 
             }
 
-            function unLoadPath(paths, callback) {
-                $.ajax({
-                    url: App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + App.config.productId + '/instances?configSpec=' + App.config.configSpec,
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify({
-                        paths: paths
-                    }),
-                    success: function (instances) {
-                        _.each(instances, function (instance) {
-                            worker.postMessage({fn: 'unCheck', obj: instance.id});
-                        });
-                        _this.planNewEval();
-                        callback();
-                    }});
-            }
+	        function onSuccessLoadPath(instances){
+		        _.each(instances, function (instance) {
+			        if (instancesIndexed[instance.id]) {
+				        worker.postMessage({fn: 'check', obj: instance.id});
+			        } else {
+				        instancesIndexed[instance.id] = instance;
+				        instance.matrix = adaptMatrix(instance.matrix);
+				        var radius = findRadius(instance.files);
+				        var instanceBox = new THREE.Box3().setFromCenterAndSize(new THREE.Vector3(radius / 2, radius / 2, radius / 2), new THREE.Vector3(radius, radius, radius));
+				        var cog = instanceBox.center().applyMatrix4(instance.matrix);
+				        instance.currentQuality = undefined;
+				        instance.qualities = findQualities(instance.files);
 
+				        worker.postMessage({
+					        fn: 'addInstance',
+					        obj: {
+						        id: instance.id,
+						        cog: cog,
+						        radius: radius,
+						        qualities: instance.qualities,
+						        checked: true
+					        }
+				        });
+			        }
+		        });
+
+		        _this.planNewEval();
+		        loaderIndicator.hide();
+	        }
+
+	        function unLoadPath(path, callback) {
+		        $.ajax({
+			        url: App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' +
+				         App.config.productId + '/instances' +
+				         '?configSpec=' + App.config.configSpec+'&path='+path,
+			        type: 'GET',
+			        success: function (instances) {
+				        _.each(instances, function (instance) {
+					        worker.postMessage({fn: 'unCheck', obj: instance.id});
+				        });
+				        _this.planNewEval();
+				        callback();
+			        }});
+	        }
 
             this.loadQueue = async.queue(function (directive, callback) {
                 if (directive.process === 'load') {
-                    loadPath(directive.path, callback);
+	                loadPaths(directive.paths, callback);
+                } else if (directive.process === 'loadOne'){
+	                loadPath(directive.path, callback);
                 } else {
                     unLoadPath(directive.path, callback);
                 }
@@ -315,12 +334,30 @@ define(['dmu/LoaderManager', 'async'],
 
             this.loadComponent = function (component) {
                 loaderIndicator.show();
-                _this.loadQueue.push({'process': 'load', 'path': [component.getPath()]});
+                _this.loadQueue.push({'process': 'loadOne', 'path': [component.getPath()]});
             };
 
+	        this.loadComponentsByPaths = function(paths){
+		        loaderIndicator.show();
+		        var directive = {
+			        process: 'load',
+			        paths: []
+		        };
+		        _.each(paths,function(path){
+			        directive.paths.push(path);
+		        });
+		        _this.loadQueue.push(directive);
+	        };
+
             this.unLoadComponent = function (component) {
-                _this.loadQueue.push({'process': 'unload', 'path': [component.getPath()]});
+                _this.loadQueue.push({'process': 'unload', 'path': component.getPath()});
             };
+
+	        this.unLoadComponentsByPaths = function (pathsToUnload) {
+		        _(pathsToUnload).each(function(path){
+			        _this.loadQueue.push({'process': 'unload', 'path': path});
+		        });
+	        };
 
             this.clear = function () {
                 console.log('[InstanceManager] Clearing Scene');

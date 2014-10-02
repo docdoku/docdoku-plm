@@ -24,7 +24,7 @@ import com.docdoku.core.exceptions.ApplicationException;
 import com.docdoku.core.product.ConfigurationItemKey;
 import com.docdoku.core.product.PartIterationKey;
 import com.docdoku.core.security.UserGroupMapping;
-import com.docdoku.core.services.IProductManagerLocal;
+import com.docdoku.core.services.IProductInstanceManagerLocal;
 import com.docdoku.server.rest.dto.baseline.BaselinedPartDTO;
 import com.docdoku.server.rest.dto.product.ProductInstanceCreationDTO;
 import com.docdoku.server.rest.dto.product.ProductInstanceIterationDTO;
@@ -55,7 +55,7 @@ import java.util.logging.Logger;
 public class ProductInstancesResource {
 
     @EJB
-    private IProductManagerLocal productService;
+    private IProductInstanceManagerLocal productInstanceService;
 
     private static final Logger LOGGER = Logger.getLogger(ProductInstancesResource.class.getName());
     private Mapper mapper;
@@ -75,9 +75,9 @@ public class ProductInstancesResource {
             List<ProductInstanceMaster> productInstanceMasterList;
             if(ciId != null) {
                 ConfigurationItemKey configurationItemKey = new ConfigurationItemKey(workspaceId, ciId);
-                productInstanceMasterList = productService.getProductInstanceMasters(configurationItemKey);
+                productInstanceMasterList = productInstanceService.getProductInstanceMasters(configurationItemKey);
             }else{
-                productInstanceMasterList = productService.getProductInstanceMasters(workspaceId);
+                productInstanceMasterList = productInstanceService.getProductInstanceMasters(workspaceId);
             }
             List<ProductInstanceMasterDTO> productInstanceMasterDTOList = new ArrayList<>();
             for(ProductInstanceMaster productInstanceMaster : productInstanceMasterList){
@@ -97,7 +97,7 @@ public class ProductInstancesResource {
     @Produces(MediaType.APPLICATION_JSON)
     public ProductInstanceMasterDTO createProductInstanceMaster(@PathParam("workspaceId") String workspaceId, ProductInstanceCreationDTO productInstanceCreationDTO){
         try {
-            ProductInstanceMaster productInstanceMaster = productService.createProductInstance(new ConfigurationItemKey(workspaceId, productInstanceCreationDTO.getConfigurationItemId()), productInstanceCreationDTO.getSerialNumber(), productInstanceCreationDTO.getBaselineId());
+            ProductInstanceMaster productInstanceMaster = productInstanceService.createProductInstance(new ConfigurationItemKey(workspaceId, productInstanceCreationDTO.getConfigurationItemId()), productInstanceCreationDTO.getSerialNumber(), productInstanceCreationDTO.getBaselineId());
             return mapper.map(productInstanceMaster, ProductInstanceMasterDTO.class);
         } catch (ApplicationException ex) {
             LOGGER.log(Level.SEVERE,null,ex);
@@ -110,7 +110,7 @@ public class ProductInstancesResource {
     @Produces(MediaType.APPLICATION_JSON)
     public ProductInstanceMasterDTO getProductInstance(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber){
         try {
-            ProductInstanceMaster productInstanceMaster = productService.getProductInstanceMaster(new ProductInstanceMasterKey(serialNumber,workspaceId,configurationItemId));
+            ProductInstanceMaster productInstanceMaster = productInstanceService.getProductInstanceMaster(new ProductInstanceMasterKey(serialNumber,workspaceId,configurationItemId));
             return mapper.map(productInstanceMaster,ProductInstanceMasterDTO.class);
         } catch (ApplicationException ex) {
             LOGGER.log(Level.SEVERE,null,ex);
@@ -123,7 +123,7 @@ public class ProductInstancesResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response deleteProductInstanceMaster(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber){
         try {
-            productService.deleteProductInstance(workspaceId, configurationItemId, serialNumber);
+            productInstanceService.deleteProductInstance(workspaceId, configurationItemId, serialNumber);
             return Response.ok().build();
         } catch (ApplicationException ex) {
             LOGGER.log(Level.SEVERE,null,ex);
@@ -136,7 +136,7 @@ public class ProductInstancesResource {
     @Produces(MediaType.APPLICATION_JSON)
     public List<ProductInstanceIterationDTO> getProductInstanceIterations(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber){
         try {
-            List<ProductInstanceIteration> productInstanceIterationList = productService.getProductInstanceIterations(new ProductInstanceMasterKey(serialNumber, workspaceId, configurationItemId));
+            List<ProductInstanceIteration> productInstanceIterationList = productInstanceService.getProductInstanceIterations(new ProductInstanceMasterKey(serialNumber, workspaceId, configurationItemId));
             List<ProductInstanceIterationDTO> productInstanceIterationDTOList = new ArrayList<>();
             for (ProductInstanceIteration productInstanceIteration : productInstanceIterationList) {
                 ProductInstanceIterationDTO productInstanceIterationDTO = mapper.map(productInstanceIteration, ProductInstanceIterationDTO.class);
@@ -160,7 +160,7 @@ public class ProductInstancesResource {
             for(BaselinedPartDTO baselinedPartDTO : productInstanceIterationDTO.getBaselinedPartsList()){
                 partIterationKeys.add(new PartIterationKey(workspaceId, baselinedPartDTO.getNumber(),baselinedPartDTO.getVersion(),baselinedPartDTO.getIteration()));
             }
-            ProductInstanceIteration productInstanceIteration = productService.updateProductInstance(new ConfigurationItemKey(workspaceId, cId), productInstanceIterationDTO.getSerialNumber(), productInstanceIterationDTO.getIterationNote(), partIterationKeys);
+            ProductInstanceIteration productInstanceIteration = productInstanceService.updateProductInstance(new ConfigurationItemKey(workspaceId, cId), productInstanceIterationDTO.getSerialNumber(), productInstanceIterationDTO.getIterationNote(), partIterationKeys);
             return mapper.map(productInstanceIteration,ProductInstanceIterationDTO.class);
         }catch(ApplicationException ex) {
             LOGGER.log(Level.SEVERE,null,ex);
@@ -173,7 +173,7 @@ public class ProductInstancesResource {
     @Produces(MediaType.APPLICATION_JSON)
     public ProductInstanceIterationDTO getProductInstanceIteration(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, @PathParam("iteration") int iteration){
         try {
-            ProductInstanceIteration productInstanceIteration = productService.getProductInstanceIteration(new ProductInstanceIterationKey(serialNumber, workspaceId, configurationItemId, iteration));
+            ProductInstanceIteration productInstanceIteration = productInstanceService.getProductInstanceIteration(new ProductInstanceIterationKey(serialNumber, workspaceId, configurationItemId, iteration));
             return mapper.map(productInstanceIteration,ProductInstanceIterationDTO.class);
         } catch (ApplicationException ex) {
             LOGGER.log(Level.SEVERE,null,ex);
@@ -189,9 +189,9 @@ public class ProductInstancesResource {
             List<BaselinedPart> baselinedParts;
             if(q!=null){
                 int maxResults = 8;
-                baselinedParts = productService.getProductInstanceIterationPartWithReference(new ProductInstanceIterationKey(serialNumber, workspaceId, configurationItemId, iteration), q, maxResults);
+                baselinedParts = productInstanceService.getProductInstanceIterationPartWithReference(new ProductInstanceIterationKey(serialNumber, workspaceId, configurationItemId, iteration), q, maxResults);
             }else{
-                baselinedParts = productService.getProductInstanceIterationBaselinedPart(new ProductInstanceIterationKey(serialNumber, workspaceId, configurationItemId, iteration));
+                baselinedParts = productInstanceService.getProductInstanceIterationBaselinedPart(new ProductInstanceIterationKey(serialNumber, workspaceId, configurationItemId, iteration));
             }
 
             return Tools.mapBaselinedPartsToBaselinedPartDTO(baselinedParts);

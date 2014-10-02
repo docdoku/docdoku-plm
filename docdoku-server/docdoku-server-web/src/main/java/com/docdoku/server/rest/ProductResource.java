@@ -22,9 +22,11 @@ package com.docdoku.server.rest;
 import com.docdoku.core.common.User;
 import com.docdoku.core.configuration.ConfigSpec;
 import com.docdoku.core.exceptions.*;
+import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.product.*;
 import com.docdoku.core.security.UserGroupMapping;
+import com.docdoku.core.services.IProductConfigSpecManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.rest.dto.*;
 import org.dozer.DozerBeanMapperSingletonWrapper;
@@ -55,15 +57,16 @@ public class ProductResource {
 
     @EJB
     private IProductManagerLocal productService;
+    @EJB
+    private IProductConfigSpecManagerLocal productConfigSpecService;
 
     @EJB
     private LayerResource layerResource;
-
     @EJB
     private BaselinesResource baselinesResource;
-
     @EJB
     private ProductInstancesResource productInstancesResource;
+
 
     private static final Logger LOGGER = Logger.getLogger(ProductResource.class.getName());
     private Mapper mapper;
@@ -118,7 +121,7 @@ public class ProductResource {
             ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
             ConfigSpec cs = getConfigSpec(workspaceId,configSpecType);
 
-            PartUsageLink rootUsageLink = productService.filterProductStructure(ciKey, cs, partUsageLink, 1);
+            PartUsageLink rootUsageLink = productConfigSpecService.filterProductStructure(ciKey, cs, partUsageLink, 1);
 
             List<PartUsageLink> components = rootUsageLink.getComponent().getLastRevision().getLastIteration().getComponents();
 
@@ -149,7 +152,7 @@ public class ProductResource {
             ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
             ConfigSpec cs = getConfigSpec(workspaceId,configSpecType);
 
-            PartUsageLink rootUsageLink = productService.filterProductStructure(ciKey, cs, partUsageLink, depth);
+            PartUsageLink rootUsageLink = productConfigSpecService.filterProductStructure(ciKey, cs, partUsageLink, depth);
 
             if (depth == null) {
                 return createDTO(rootUsageLink, -1);
@@ -157,9 +160,12 @@ public class ProductResource {
                 return createDTO(rootUsageLink, depth);
             }
 
-        } catch (ApplicationException ex) {
-            LOGGER.log(Level.WARNING,null,ex);
-            throw new RestApiException(ex.toString(), ex.getMessage());
+        } catch (NotAllowedException | UserNotFoundException | UserNotActiveException | AccessRightException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
+        } catch (WorkspaceNotFoundException | BaselineNotFoundException | ConfigurationItemNotFoundException | PartUsageLinkNotFoundException | PartRevisionNotFoundException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
         }
     }
 
@@ -281,35 +287,23 @@ public class ProductResource {
             if (rb != null) {
                 return rb.build();
             } else {
-
                 CacheControl cc = new CacheControl();
                 //this request is resources consuming so we cache the response for 30 minutes
                 cc.setMaxAge(60 * 15);
 
                 ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
-
                 ConfigSpec cs = getConfigSpec(workspaceId, configSpecType);
 
-                PartUsageLink rootUsageLink;
-                List<Integer> usageLinkPaths = new ArrayList<>();
-                if(path != null && !"null".equals(path)){
-                    String[] partUsageIdsString = path.split("-");
+                InstanceCollection instanceCollection = getInstancesCollection(ciKey,cs,path);
 
-                    for (String partUsageIdString : partUsageIdsString) {
-                        usageLinkPaths.add(Integer.parseInt(partUsageIdString));
-                    }
-
-                    rootUsageLink = productService.filterProductStructure(ciKey, cs, usageLinkPaths.get(0), -1);
-                    usageLinkPaths.remove(0);
-                }else{
-                    rootUsageLink = productService.filterProductStructure(ciKey, cs, null, -1);
-                }
-                
-                return Response.ok().lastModified(new Date()).cacheControl(cc).entity(new InstanceCollection(rootUsageLink, usageLinkPaths, cs)).build();
+                return Response.ok().lastModified(new Date()).cacheControl(cc).entity(instanceCollection).build();
             }
-        } catch (ApplicationException ex) {
-            LOGGER.log(Level.WARNING,null,ex);
-            throw new RestApiException(ex.toString(), ex.getMessage());
+        } catch (NotAllowedException | UserNotFoundException | UserNotActiveException | AccessRightException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
+        } catch (WorkspaceNotFoundException | BaselineNotFoundException | ConfigurationItemNotFoundException | PartUsageLinkNotFoundException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
         }
     }
 
@@ -317,46 +311,43 @@ public class ProductResource {
     @Path("{ciId}/instances")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getInstancesPathFiltered(@Context Request request, @PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("configSpec") String configSpecType, PathListDTO pathsDTO) {
+    public Response getInstancesByMultiplePath(@Context Request request, @PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, PathListDTO pathsDTO) {
         try {
             Response.ResponseBuilder rb = fakeSimilarBehavior(request);
             if (rb != null) {
                 return rb.build();
             } else {
-
                 CacheControl cc = new CacheControl();
                 //this request is resources consuming so we cache the response for 30 minutes
                 cc.setMaxAge(60 * 15);
 
-                ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
-                ConfigSpec cs = getConfigSpec(workspaceId,configSpecType);
-
-                List<InstanceCollection> instanceCollections = new ArrayList<>();
-
-                for(String path : pathsDTO.getPaths()){
-                    List<Integer> usageLinkPaths = new ArrayList<>();
-                    PartUsageLink rootUsageLink;
-
-                    if(path != null && !"null".equals(path)){
-                        String[] partUsageIdsString = path.split("-");
-                        for (String partUsageIdString : partUsageIdsString) {
-                            usageLinkPaths.add(Integer.parseInt(partUsageIdString));
-                        }
-                        rootUsageLink = productService.filterProductStructure(ciKey, cs, usageLinkPaths.get(0), -1);
-                        usageLinkPaths.remove(0);
-                    }else{
-                        rootUsageLink = productService.filterProductStructure(ciKey, cs, null, -1);
-                        instanceCollections.clear();
-                    }
-                    instanceCollections.add(new InstanceCollection(rootUsageLink, usageLinkPaths, cs));
-                }
+                ConfigSpec cs = getConfigSpec(workspaceId,pathsDTO.getConfigSpec());
+                List<InstanceCollection> instanceCollections = getInstancesCollectionsList(workspaceId,ciId, cs,pathsDTO.getPaths());
 
                 return Response.ok().lastModified(new Date()).cacheControl(cc).entity(new PathFilteredListInstanceCollection(instanceCollections, cs)).build();
             }
-        } catch (ApplicationException ex) {
-            LOGGER.log(Level.WARNING,null,ex);
-            throw new RestApiException(ex.toString(), ex.getMessage());
+        } catch (NotAllowedException | UserNotFoundException | UserNotActiveException | AccessRightException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
+        } catch (WorkspaceNotFoundException | BaselineNotFoundException | ConfigurationItemNotFoundException | PartUsageLinkNotFoundException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
         }
+    }
+
+    private List<InstanceCollection> getInstancesCollectionsList(String workspaceId, String ciId, ConfigSpec cs, String[] paths) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, BaselineNotFoundException, NotAllowedException, AccessRightException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException {
+        ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
+
+        List<InstanceCollection> instanceCollections = new ArrayList<>();
+        for(String path : paths){
+            InstanceCollection instanceCollection = getInstancesCollection(ciKey,cs,path);
+
+            if(path == null || "null".equals(path) || "".equals(path)){
+                instanceCollections.clear();
+            }
+            instanceCollections.add(instanceCollection);
+        }
+        return instanceCollections;
     }
 
     @Path("baselines")
@@ -390,17 +381,21 @@ public class ProductResource {
      * @throws BaselineNotFoundException If the baseline doesn't exist
      */
     private ConfigSpec getConfigSpec(String workspaceId, String configSpecType) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, BaselineNotFoundException {
+        if(configSpecType==null){
+            return productConfigSpecService.getLatestConfigSpec(workspaceId);
+        }
+
         ConfigSpec cs;
         switch (configSpecType) {
             case "latest":
             case "undefined":
-                cs = productService.getLatestConfigSpec(workspaceId);
+                cs = productConfigSpecService.getLatestConfigSpec(workspaceId);
                 break;
             case "released":
-                cs = productService.getLatestReleasedConfigSpec(workspaceId);
+                cs = productConfigSpecService.getLatestReleasedConfigSpec(workspaceId);
                 break;
             default:
-                cs = productService.getConfigSpecForBaseline(Integer.parseInt(configSpecType));
+                cs = productConfigSpecService.getConfigSpecForBaseline(Integer.parseInt(configSpecType));
                 break;
         }
         return cs;
@@ -410,11 +405,39 @@ public class ProductResource {
      * Because some AS (like Glassfish) forbids the use of CacheControl
      * when authenticated we use the LastModified header to fake
      * a similar behavior (15 minutes of cache)
+     * @param request The incomming request
      * @return Nothing if there still have cache
      */
     private Response.ResponseBuilder fakeSimilarBehavior(Request request){
         Calendar cal = new GregorianCalendar();
         cal.add(Calendar.MINUTE, -15);
         return request.evaluatePreconditions(cal.getTime());
+    }
+
+    /**
+     * Return a InstanceCollection matching with a configurationItem, a configurationSpec and a node path
+     * @param ciKey The ConfigurationItem wanted
+     * @param cs The Specific ConfigurationSpec
+     * @param path The path of the root node
+     * @return The wanted InstanceCollection
+     * @throws AccessRightException If the user can not get the configuration item
+     * @throws NotAllowedException  If the user can not get the configuration item
+     * @throws WorkspaceNotFoundException If the workspace was not found
+     * @throws UserNotActiveException If the user was disabled
+     * @throws UserNotFoundException If the user doesn't exist
+     * @throws ConfigurationItemNotFoundException If the Configuration Item doesn't exist
+     * @throws PartUsageLinkNotFoundException If the Part Usage Link doesn't exist
+     */
+    private InstanceCollection getInstancesCollection(ConfigurationItemKey ciKey, ConfigSpec cs, String path) throws AccessRightException, NotAllowedException, WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException {
+        PartUsageLink rootUsageLink;
+        rootUsageLink = productConfigSpecService.getRootPartUsageLink(ciKey);
+        List<Integer> usageLinkPaths = new ArrayList<>();
+        if(path != null && !"null".equals(path) && !"".equals(path)) {
+            String[] partUsageIdsString = path.split("-");
+            for (String partUsageIdString : partUsageIdsString) {
+                usageLinkPaths.add(Integer.parseInt(partUsageIdString));
+            }
+        }
+        return new InstanceCollection(rootUsageLink, usageLinkPaths, cs);
     }
 }

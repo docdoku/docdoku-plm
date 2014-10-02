@@ -1,10 +1,10 @@
-/*global self,InstancesSorter,DegradationLevelBalancer*/
+/*global _,self,InstancesSorter,DegradationLevelBalancer*/
 'use strict';
 importScripts(
-    "../../../bower_components/underscore/underscore-min.js",
-    "../../../bower_components/threejs/build/three.min.js",
-    "InstancesSorter.js",
-    "DegradationLevelBalancer.js"
+    '../../../bower_components/underscore/underscore-min.js',
+    '../../../bower_components/threejs/build/three.min.js',
+    'InstancesSorter.js',
+    'DegradationLevelBalancer.js'
 );
 
 // Index instances
@@ -47,11 +47,15 @@ var Context = {
         newData = true;
     },
     unCheckInstance: function (instanceId) {
-        instances[instanceId].checked = false;
+	    if(instances[instanceId]){
+		    instances[instanceId].checked = false;
+	    }
         newData = true;
     },
     checkInstance: function (instanceId) {
-        instances[instanceId].checked = true;
+	    if(instances[instanceId]){
+		    instances[instanceId].checked = true;
+	    }
         newData = true;
     },
     hasChanged: function (newContext) {
@@ -92,7 +96,7 @@ var Context = {
         if (Context.hasChanged(context)) {
 
             if (debug) {
-                console.log("[Worker] Start a cycle");
+                console.log('[Worker] Start a cycle');
             }
             var start = Date.now();
             // Apply ratings, determine which instances must be displayed in this context
@@ -114,16 +118,16 @@ var Context = {
             });
 
             // Send directives
-            self.postMessage({fn: "directives", obj: directives});
+            self.postMessage({fn: 'directives', obj: directives});
 
             if (debug) {
-                console.log("[Worker] Cycle duration : " + (Date.now() - start) + " ms");
+                console.log('[Worker] Cycle duration : ' + (Date.now() - start) + ' ms');
             }
         } else {
             if (debug) {
-                console.log("[Worker] Context didn't changed since last call");
+                console.log('[Worker] Context didn\'t changed since last call');
             }
-            self.postMessage({fn: "directives", obj: []});
+            self.postMessage({fn: 'directives', obj: []});
         }
     }
 };
@@ -151,11 +155,11 @@ var ParentMessages = {
 };
 
 self.addEventListener('message', function (message) {
-    if (typeof  ParentMessages[message.data.fn] === "function") {
+    if (typeof  ParentMessages[message.data.fn] === 'function') {
         ParentMessages[message.data.fn](message.data.obj);
     } else {
         if (debug) {
-            console.log("[Worker] Unrecognized command  : ");
+            console.log('[Worker] Unrecognized command  : ');
             console.log(message.data);
         }
     }

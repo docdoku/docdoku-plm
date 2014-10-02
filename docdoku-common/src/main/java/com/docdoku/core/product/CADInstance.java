@@ -147,7 +147,7 @@ public class CADInstance implements Serializable, Cloneable {
 
     @Override
     public CADInstance clone() {
-        CADInstance clone = null;
+        CADInstance clone;
         try {
             clone = (CADInstance) super.clone();
         } catch (CloneNotSupportedException e) {

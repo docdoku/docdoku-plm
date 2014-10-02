@@ -21,8 +21,6 @@
 package com.docdoku.core.services;
 
 import com.docdoku.core.common.BinaryResource;
-import com.docdoku.core.configuration.BaselineCreation;
-import com.docdoku.core.configuration.ConfigSpec;
 import com.docdoku.core.configuration.ProductBaseline;
 import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.exceptions.*;
@@ -75,37 +73,7 @@ public interface IProductManagerWS{
      * @throws UserNotActiveException
      */
     List<PartUsageLink[]> findPartUsages(ConfigurationItemKey ciKey, PartMasterKey partMKey) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException;
-    
-    /**
-     * Resolves the product structure identified by the supplied
-     * <a href="ConfigurationItemKey.html">ConfigurationItemKey</a>.
-     * The resolution is made according to the given
-     * <a href="ConfigSpec.html">ConfigSpec</a> and starts at the specified
-     * part usage link if any.
-     * 
-     * @param ciKey
-     * The product structure to resolve
-     * 
-     * @param configSpec
-     * The rules for the resolution algorithm
-     * 
-     * @param partUsageLink
-     * The part usage link id, if null starts from the root part
-     * 
-     * @param depth
-     * The fetch depth
-     * 
-     * @return
-     * The resolved product
-     * 
-     * @throws com.docdoku.core.exceptions.ConfigurationItemNotFoundException
-     * @throws WorkspaceNotFoundException
-     * @throws NotAllowedException
-     * @throws UserNotFoundException
-     * @throws UserNotActiveException
-     */
-    PartUsageLink filterProductStructure(ConfigurationItemKey ciKey, ConfigSpec configSpec, Integer partUsageLink, Integer depth) throws ConfigurationItemNotFoundException, WorkspaceNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException, PartUsageLinkNotFoundException, AccessRightException;
-    
+
     /**
      * Creates a new product structure.
      * 
@@ -632,15 +600,6 @@ public interface IProductManagerWS{
     int getPartsInWorkspaceCount(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException;
 
     void deletePartRevision(PartRevisionKey partRevisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException, EntityConstraintException, ESServerException;
-
-    BaselineCreation createBaseline(ConfigurationItemKey configurationItemKey, String name, ProductBaseline.BaselineType type, String description) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, ConfigurationItemNotReleasedException, PartIterationNotFoundException, UserNotActiveException, NotAllowedException;
-    List<ProductBaseline> getBaselines(ConfigurationItemKey configurationItemKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
-    ConfigSpec getConfigSpecForBaseline(int baselineId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, BaselineNotFoundException;
-    void deleteBaseline(int baselineId) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, BaselineNotFoundException;
-    ProductBaseline getBaseline(int baselineId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, BaselineNotFoundException;
-    ProductBaseline getBaselineById(int baselineId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
-    ProductBaseline duplicateBaseline(int baselineId, String name, ProductBaseline.BaselineType type, String description) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, BaselineNotFoundException;
-    void updateBaseline(ConfigurationItemKey configurationItemKey, int baselineId, String name, ProductBaseline.BaselineType type, String description, List<PartIterationKey> partIterationKeys) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartIterationNotFoundException, BaselineNotFoundException, ConfigurationItemNotReleasedException;
 
     PartRevision createPartRevision(PartRevisionKey revisionKey, String pDescription, String pWorkflowModelId, ACLUserEntry[] pUserEntries, ACLUserGroupEntry[] pUserGroupEntries, Map<String, String> roleMappings) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, PartRevisionNotFoundException, NotAllowedException, FileAlreadyExistsException, CreationException, RoleNotFoundException, WorkflowModelNotFoundException, PartRevisionAlreadyExistsException;
 

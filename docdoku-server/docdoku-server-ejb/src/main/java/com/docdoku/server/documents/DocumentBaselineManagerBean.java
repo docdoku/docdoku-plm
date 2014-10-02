@@ -27,9 +27,6 @@ import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.document.DocumentRevisionKey;
 import com.docdoku.core.document.Folder;
 import com.docdoku.core.exceptions.*;
-import com.docdoku.core.meta.Tag;
-import com.docdoku.core.meta.TagKey;
-import com.docdoku.core.query.DocumentSearchQuery;
 import com.docdoku.core.services.IDocumentBaselineManagerLocal;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
@@ -42,12 +39,15 @@ import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 @DeclareRoles({"users","admin","guest-proxy"})
 @Local(IDocumentBaselineManagerLocal.class)
 @Stateless(name = "DocumentBaselineManagerBean")
-public class DocumentBaselineManagerBean implements IDocumentBaselineManagerLocal{
+public class DocumentBaselineManagerBean implements IDocumentBaselineManagerLocal {
 
     @PersistenceContext
     private EntityManager em;
@@ -91,96 +91,6 @@ public class DocumentBaselineManagerBean implements IDocumentBaselineManagerLoca
         DocumentBaseline documentBaseline = new DocumentBaselineDAO(em).loadBaseline(baselineId);
         userManager.checkWorkspaceReadAccess(documentBaseline.getWorkspace().getId());
         return documentBaseline;
-    }
-
-    @RolesAllowed("users")
-    @Override
-    public ConfigSpec getLatestConfigSpec(String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
-        User user = userManager.checkWorkspaceReadAccess(workspaceId);
-        return new LatestConfigSpec(user);
-    }
-
-    @RolesAllowed("users")
-    @Override
-    public BaselineConfigSpec getConfigSpecForBaseline(int baselineId) throws BaselineNotFoundException, WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException {
-        DocumentBaseline documentBaseline = getBaseline(baselineId);
-        User user = userManager.checkWorkspaceReadAccess(documentBaseline.getWorkspace().getId());
-        return new BaselineConfigSpec(documentBaseline,user);
-    }
-
-    @RolesAllowed("users")
-    @Override
-    public String[] getFilteredFolders(String workspaceId, ConfigSpec cs, String completePath) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
-        User user = userManager.checkWorkspaceReadAccess(workspaceId);
-        Locale locale = new Locale(user.getLanguage());
-        String[] shortNames;
-        if(cs!=null&& cs instanceof BaselineConfigSpec){
-            int collectionId = ((BaselineConfigSpec) cs).getDocumentBaseline().getFolderCollection().getId();
-            BaselinedFolderKey key = new BaselinedFolderKey(collectionId,completePath);
-            List<BaselinedFolder> subFolders = new BaselinedFolderDAO(locale, em).getSubFolders(key);
-            shortNames = new String[subFolders.size()];
-            int i = 0;
-            for (BaselinedFolder f : subFolders) {
-                shortNames[i++] = f.getShortName();
-            }
-        }else{
-            Folder[] subFolders = new FolderDAO(locale, em).getSubFolders(completePath);
-            shortNames = new String[subFolders.length];
-            int i = 0;
-            for (Folder f : subFolders) {
-                shortNames[i++] = f.getShortName();
-            }
-        }
-        return shortNames;
-    }
-
-    @RolesAllowed("users")
-    @Override
-    public DocumentRevision[] getFilteredDocuments(String workspaceId, ConfigSpec cs, int start, int pMaxResults) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentRevisionNotFoundException {
-        userManager.checkWorkspaceReadAccess(workspaceId);
-        List<DocumentRevision> docRs = Arrays.asList(documentService.getAllDocumentsInWorkspace(workspaceId, start, pMaxResults));
-        List<DocumentRevision> documentRevisionList = new ArrayList<>(docRs);
-        return filterDocumentRevisionList(cs, documentRevisionList).toArray(new DocumentRevision[docRs.size()]);
-    }
-
-    @RolesAllowed("users")
-    @Override
-    public DocumentRevision[] getFilteredDocumentsByFolder(String workspaceId, BaselineConfigSpec cs, String completePath) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
-        User user = userManager.checkWorkspaceReadAccess(workspaceId);
-        BaselinedFolderKey key = new BaselinedFolderKey(cs.getDocumentBaseline().getFolderCollection().getId(),completePath);
-        List<DocumentIteration> baselinedDocuments = new BaselinedDocumentDAO(new Locale(user.getLanguage()),em).findDocRsByFolder(key);
-        List<DocumentRevision> returnList = new ArrayList<>();
-        for(DocumentIteration baselinedDocument : baselinedDocuments){
-            DocumentRevision docR = filterDocumentRevisionAccessRight(user,baselinedDocument.getDocumentRevision());
-            returnList.add(docR);
-        }
-        return returnList.toArray(new DocumentRevision[returnList.size()]);
-    }
-
-    @RolesAllowed("users")
-    @Override
-    public DocumentRevision[] getFilteredDocumentsByTag(String workspaceId, ConfigSpec cs, TagKey tagKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentRevisionNotFoundException {
-        userManager.checkWorkspaceReadAccess(workspaceId);
-        List<DocumentRevision> docRs = Arrays.asList(documentService.findDocumentRevisionsByTag(tagKey));
-        List<DocumentRevision> documentRevisionList = new ArrayList<>(docRs);
-        return filterDocumentRevisionList(cs, documentRevisionList).toArray(new DocumentRevision[docRs.size()]);
-    }
-
-    @RolesAllowed("users")
-    @Override
-    public DocumentRevision[] searchFilteredDocuments(String workspaceId, ConfigSpec cs, DocumentSearchQuery pQuery) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentRevisionNotFoundException, ESServerException {
-        userManager.checkWorkspaceReadAccess(workspaceId);
-        List<DocumentRevision> docRs = Arrays.asList(documentService.searchDocumentRevisions(pQuery));
-        List<DocumentRevision> documentRevisionList = new ArrayList<>(docRs);
-        return filterDocumentRevisionList(cs, documentRevisionList).toArray(new DocumentRevision[docRs.size()]);
-    }
-
-    @RolesAllowed("users")
-    @Override
-    public DocumentRevision getFilteredDocumentRevision(DocumentRevisionKey documentRevisionKey, ConfigSpec configSpec) throws AccessRightException, NotAllowedException, WorkspaceNotFoundException, UserNotFoundException, DocumentRevisionNotFoundException, UserNotActiveException {
-        DocumentRevision docR = documentService.getDocumentRevision(documentRevisionKey);
-        docR = filterDocumentRevision(configSpec,docR);
-        return docR;
     }
 
     private void fillBaselineFolder(DocumentBaseline baseline, String folderPath) throws FolderNotFoundException, WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException{
@@ -243,29 +153,6 @@ public class DocumentBaselineManagerBean implements IDocumentBaselineManagerLoca
         }
 
         fillBaselineDocument(baseline, revisionKeyList);
-    }
-
-    private List<DocumentRevision> filterDocumentRevisionList(ConfigSpec configSpec, List<DocumentRevision> pDocumentRs) throws DocumentRevisionNotFoundException {
-        List<DocumentRevision> returnList = new ArrayList<>();
-        for(DocumentRevision documentRevision : pDocumentRs){
-            returnList.add(filterDocumentRevision(configSpec, documentRevision));
-        }
-        return returnList;
-    }
-
-    private DocumentRevision filterDocumentRevision(ConfigSpec configSpec, DocumentRevision documentRevision) throws DocumentRevisionNotFoundException {
-        DocumentIteration docI = configSpec.filterConfigSpec(documentRevision);
-        if(docI!=null){
-            DocumentRevision docR = docI.getDocumentRevision();
-            em.detach(docR);
-            if(docR!=null && docR.getNumberOfIterations() > 1){
-                docR.removeLastIterations(docI.getIteration());
-                docR.setWorkflow(null);
-                docR.setTags(new HashSet<Tag>());
-                return docR;
-            }
-        }
-        throw new DocumentRevisionNotFoundException("");
     }
 
     private DocumentRevision filterDocumentRevisionAccessRight(User user, DocumentRevision documentRevision){

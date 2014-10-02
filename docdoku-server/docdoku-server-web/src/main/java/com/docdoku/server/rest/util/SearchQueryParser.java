@@ -27,13 +27,16 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class SearchQueryParser {
+    private SearchQueryParser(){
+        super();
+    }
 
     public static DocumentSearchQuery parseDocumentStringQuery(String workspaceId , String pQuery){
-
         String pDocMId = null;
         String pTitle = null;
         String pVersion = null;
@@ -41,77 +44,46 @@ public class SearchQueryParser {
         String pType = null;
         Date pCreationDateFrom = null;
         Date pCreationDateTo = null;
-        ArrayList<DocumentSearchQuery.AbstractAttributeQuery> pAttributes = new ArrayList<>();
+        List<DocumentSearchQuery.AbstractAttributeQuery> pAttributes = new ArrayList<>();
         String[] pTags = null;
         String pContent = null;
 
         String[] query = pQuery.split("&");
 
         for(String filters : query){
-
             String[] filter = filters.split("=");
-
             if(filter.length == 2){
-
                 switch (filter[0]){
-
-                    case "id" : pDocMId = filter[1]; break;
-                    case "title" : pTitle = filter[1]; break;
-                    case "version" : pVersion = filter[1]; break;
-                    case "author" : pAuthor = filter[1]; break;
-                    case "type" : pType = filter[1]; break;
-                    case "from" : pCreationDateFrom = new Date(Long.valueOf(filter[1])); break;
-                    case "to" : pCreationDateTo = new Date(Long.valueOf(filter[1])); break;
-                    case "tags" : pTags = filter[1].split(","); break;
-                    case "content" : pContent = filter[1]; break;
-
-                    case "attributes" :
-
-                        String[] attributesString = filter[1].split(";");
-
-                        for(String attributeString : attributesString){
-
-                            String[] attribute = attributeString.split(":");
-
-                            if(attribute.length == 3){
-
-                                switch(attribute[0]){
-                                    case "BOOLEAN" :
-                                        DocumentSearchQuery.BooleanAttributeQuery baq = new DocumentSearchQuery.BooleanAttributeQuery(attribute[1],Boolean.valueOf(attribute[2]));
-                                        pAttributes.add(baq);
-                                        break;
-                                    case "DATE" :
-                                        DocumentSearchQuery.DateAttributeQuery daq = new DocumentSearchQuery.DateAttributeQuery();
-                                        daq.setName(attribute[1]);
-                                        daq.setFromDate(new Date(Long.valueOf(attribute[2])));
-                                        pAttributes.add(daq);
-                                        break;
-                                    case "TEXT" :
-                                        DocumentSearchQuery.TextAttributeQuery taq = new DocumentSearchQuery.TextAttributeQuery(attribute[1],attribute[2]);
-                                        pAttributes.add(taq);
-                                        break;
-                                    case "NUMBER" :
-                                        try {
-                                            DocumentSearchQuery.NumberAttributeQuery naq = new DocumentSearchQuery.NumberAttributeQuery(attribute[1], NumberFormat.getInstance().parse(attribute[2]).floatValue());
-                                            pAttributes.add(naq);
-                                        } catch (ParseException e) {
-                                            Logger.getLogger(SearchQueryParser.class.getName()).log(Level.INFO, null, e);
-                                        }
-                                        break;
-                                    case "URL" :
-                                        DocumentSearchQuery.URLAttributeQuery uaq = new DocumentSearchQuery.URLAttributeQuery(attribute[0],attribute[1]);
-                                        pAttributes.add(uaq);
-                                        break;
-
-                                    default : break;
-                                }
-
-                            }
-
-                        }
-
+                    case "id" :
+                        pDocMId = filter[1];
                         break;
-
+                    case "title" :
+                        pTitle = filter[1];
+                        break;
+                    case "version" :
+                        pVersion = filter[1];
+                        break;
+                    case "author" :
+                        pAuthor = filter[1];
+                        break;
+                    case "type" :
+                        pType = filter[1];
+                        break;
+                    case "from" :
+                        pCreationDateFrom = new Date(Long.valueOf(filter[1]));
+                        break;
+                    case "to" :
+                        pCreationDateTo = new Date(Long.valueOf(filter[1]));
+                        break;
+                    case "tags" :
+                        pTags = filter[1].split(",");
+                        break;
+                    case "content" :
+                        pContent = filter[1];
+                        break;
+                    case "attributes" :
+                        pAttributes = parseDocumentAttributeStringQuery(filter[1]);
+                        break;
                 }
             }
 
@@ -123,8 +95,6 @@ public class SearchQueryParser {
                 pType, pCreationDateFrom, pCreationDateTo, pAttributesArray, pTags, pContent);
 
     }
-
-
     public static PartSearchQuery parsePartStringQuery(String workspaceId , String pQuery){
 
         String pNumber = null;
@@ -140,72 +110,38 @@ public class SearchQueryParser {
         String[] query = pQuery.split("&");
 
         for(String filters : query){
-
             String[] filter = filters.split("=");
-
             if(filter.length == 2){
-
                 switch (filter[0]){
-
-                    case "number" : pNumber = filter[1]; break;
-                    case "name" : pName = filter[1]; break;
-                    case "version" : pVersion = filter[1]; break;
-                    case "author" : pAuthor = filter[1]; break;
-                    case "type" : pType = filter[1]; break;
-                    case "from" : pCreationDateFrom = new Date(Long.valueOf(filter[1])); break;
-                    case "to" : pCreationDateTo = new Date(Long.valueOf(filter[1])); break;
-                    case "standardPart" : standardPart = Boolean.valueOf(filter[1]); break;
-
-                    case "attributes" :
-
-                        String[] attributesString = filter[1].split(";");
-
-                        for(String attributeString : attributesString){
-
-                            String[] attribute = attributeString.split(":");
-
-                            if(attribute.length == 3){
-
-                                switch(attribute[0]){
-                                    case "BOOLEAN" :
-                                        PartSearchQuery.BooleanAttributeQuery baq = new PartSearchQuery.BooleanAttributeQuery(attribute[1],Boolean.valueOf(attribute[2]));
-                                        pAttributes.add(baq);
-                                        break;
-                                    case "DATE" :
-                                        PartSearchQuery.DateAttributeQuery daq = new PartSearchQuery.DateAttributeQuery();
-                                        daq.setName(attribute[1]);
-                                        daq.setFromDate(new Date(Long.valueOf(attribute[2])));
-                                        pAttributes.add(daq);
-                                        break;
-                                    case "TEXT" :
-                                        PartSearchQuery.TextAttributeQuery taq = new PartSearchQuery.TextAttributeQuery(attribute[1],attribute[2]);
-                                        pAttributes.add(taq);
-                                        break;
-                                    case "NUMBER" :
-                                        try {
-                                            PartSearchQuery.NumberAttributeQuery naq = new PartSearchQuery.NumberAttributeQuery(attribute[1], NumberFormat.getInstance().parse(attribute[2]).floatValue());
-                                            pAttributes.add(naq);
-                                        } catch (ParseException e) {
-                                            Logger.getLogger(SearchQueryParser.class.getName()).log(Level.INFO, null, e);
-                                        }
-                                        break;
-                                    case "URL" :
-                                        PartSearchQuery.URLAttributeQuery uaq = new PartSearchQuery.URLAttributeQuery(attribute[0],attribute[1]);
-                                        pAttributes.add(uaq);
-                                        break;
-
-                                    default : break;
-                                }
-
-                            }
-
-                        }
-
+                    case "number" :
+                        pNumber = filter[1];
                         break;
-
+                    case "name" :
+                        pName = filter[1];
+                        break;
+                    case "version" :
+                        pVersion = filter[1];
+                        break;
+                    case "author" :
+                        pAuthor = filter[1];
+                        break;
+                    case "type" :
+                        pType = filter[1];
+                        break;
+                    case "from" :
+                        pCreationDateFrom = new Date(Long.valueOf(filter[1]));
+                        break;
+                    case "to" :
+                        pCreationDateTo = new Date(Long.valueOf(filter[1]));
+                        break;
+                    case "standardPart" :
+                        standardPart = Boolean.valueOf(filter[1]);
+                        break;
+                    case "attributes" :
+                        parsePartAttributeStringQuery(filter[1]);
+                        break;
                 }
             }
-
         }
 
         PartSearchQuery.AbstractAttributeQuery[] pAttributesArray = pAttributes.toArray(new PartSearchQuery.AbstractAttributeQuery[pAttributes.size()]);
@@ -215,4 +151,85 @@ public class SearchQueryParser {
 
     }
 
+    private static List<DocumentSearchQuery.AbstractAttributeQuery> parseDocumentAttributeStringQuery(String attributeQuery){
+        List<DocumentSearchQuery.AbstractAttributeQuery> pAttributes = new ArrayList<>();
+        String[] attributesString = attributeQuery.split(";");
+        for(String attributeString : attributesString){
+            String[] attribute = attributeString.split(":");
+            if(attribute.length == 3){
+                switch(attribute[0]){
+                    case "BOOLEAN" :
+                        DocumentSearchQuery.BooleanAttributeQuery baq = new DocumentSearchQuery.BooleanAttributeQuery(attribute[1],Boolean.valueOf(attribute[2]));
+                        pAttributes.add(baq);
+                        break;
+                    case "DATE" :
+                        DocumentSearchQuery.DateAttributeQuery daq = new DocumentSearchQuery.DateAttributeQuery();
+                        daq.setName(attribute[1]);
+                        daq.setFromDate(new Date(Long.valueOf(attribute[2])));
+                        pAttributes.add(daq);
+                        break;
+                    case "TEXT" :
+                        DocumentSearchQuery.TextAttributeQuery taq = new DocumentSearchQuery.TextAttributeQuery(attribute[1],attribute[2]);
+                        pAttributes.add(taq);
+                        break;
+                    case "NUMBER" :
+                        try {
+                            DocumentSearchQuery.NumberAttributeQuery naq = new DocumentSearchQuery.NumberAttributeQuery(attribute[1], NumberFormat.getInstance().parse(attribute[2]).floatValue());
+                            pAttributes.add(naq);
+                        } catch (ParseException e) {
+                            Logger.getLogger(SearchQueryParser.class.getName()).log(Level.INFO, null, e);
+                        }
+                        break;
+                    case "URL" :
+                        DocumentSearchQuery.URLAttributeQuery uaq = new DocumentSearchQuery.URLAttributeQuery(attribute[0],attribute[1]);
+                        pAttributes.add(uaq);
+                        break;
+
+                    default : break;
+                }
+            }
+        }
+        return  pAttributes;
+    }
+
+    private static List<PartSearchQuery.AbstractAttributeQuery> parsePartAttributeStringQuery(String attributeQuery){
+        List<PartSearchQuery.AbstractAttributeQuery> pAttributes = new ArrayList<>();
+        String[] attributesString = attributeQuery.split(";");
+        for(String attributeString : attributesString){
+            String[] attribute = attributeString.split(":");
+            if(attribute.length == 3){
+                switch(attribute[0]){
+                    case "BOOLEAN" :
+                        PartSearchQuery.BooleanAttributeQuery baq = new PartSearchQuery.BooleanAttributeQuery(attribute[1],Boolean.valueOf(attribute[2]));
+                        pAttributes.add(baq);
+                        break;
+                    case "DATE" :
+                        PartSearchQuery.DateAttributeQuery daq = new PartSearchQuery.DateAttributeQuery();
+                        daq.setName(attribute[1]);
+                        daq.setFromDate(new Date(Long.valueOf(attribute[2])));
+                        pAttributes.add(daq);
+                        break;
+                    case "TEXT" :
+                        PartSearchQuery.TextAttributeQuery taq = new PartSearchQuery.TextAttributeQuery(attribute[1],attribute[2]);
+                        pAttributes.add(taq);
+                        break;
+                    case "NUMBER" :
+                        try {
+                            PartSearchQuery.NumberAttributeQuery naq = new PartSearchQuery.NumberAttributeQuery(attribute[1], NumberFormat.getInstance().parse(attribute[2]).floatValue());
+                            pAttributes.add(naq);
+                        } catch (ParseException e) {
+                            Logger.getLogger(SearchQueryParser.class.getName()).log(Level.INFO, null, e);
+                        }
+                        break;
+                    case "URL" :
+                        PartSearchQuery.URLAttributeQuery uaq = new PartSearchQuery.URLAttributeQuery(attribute[0],attribute[1]);
+                        pAttributes.add(uaq);
+                        break;
+
+                    default : break;
+                }
+            }
+        }
+        return  pAttributes;
+    }
 }

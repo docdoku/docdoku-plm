@@ -1,4 +1,4 @@
-/*global define*/
+/*global define,App*/
 'use strict';
 define([
 	'backbone',

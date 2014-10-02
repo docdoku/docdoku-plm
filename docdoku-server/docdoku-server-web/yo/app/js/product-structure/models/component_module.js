@@ -144,7 +144,6 @@ define(['backbone', 'common-objects/utils/date'],
         });
 
         ComponentModule.Collection = Backbone.Collection.extend({
-
             model: ComponentModule.Model,
 
             initialize: function (models, options) {
@@ -179,9 +178,6 @@ define(['backbone', 'common-objects/utils/date'],
                     });
                 }
             }
-
         });
-
         return ComponentModule;
-
     });

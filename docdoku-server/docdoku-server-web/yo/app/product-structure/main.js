@@ -1,4 +1,4 @@
-/*global _,require*/
+/*global _,require,console*/
 var App = {
     debug: false,
 

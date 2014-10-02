@@ -1,8 +1,8 @@
 /*global define,App*/
 define([
     'backbone',
-    "modules/coworkers-access-module/views/coworkers_access_module_view",
-    "common-objects/websocket/channelMessagesType"
+    'modules/coworkers-access-module/views/coworkers_access_module_view',
+    'common-objects/websocket/channelMessagesType'
 ],
 function (Backbone, CoWorkersAccessModuleView, ChannelMessagesType) {
 	'use strict';

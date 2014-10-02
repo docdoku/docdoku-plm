@@ -309,13 +309,16 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
         if (this == pObj) {
             return true;
         }
-        if (!(pObj instanceof PartIteration))
+        if (!(pObj instanceof PartIteration)){
             return false;
+        }
         PartIteration partI = (PartIteration) pObj;
-        return ((partI.getPartNumber().equals(getPartNumber())) && (partI.getWorkspaceId().equals(getWorkspaceId()))  && (partI.getPartVersion().equals(getPartVersion())) && (partI.iteration==iteration));
+        return partI.getPartNumber().equals(getPartNumber()) &&
+                partI.getWorkspaceId().equals(getWorkspaceId()) &&
+                partI.getPartVersion().equals(getPartVersion()) &&
+                partI.iteration==iteration;
     }
 
-    
     @Override
     public int compareTo(PartIteration pPart) {
         

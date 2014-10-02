@@ -49,6 +49,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 @Stateless
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
@@ -63,6 +64,8 @@ public class PartsResource {
 
     @EJB
     private PartResource part;
+
+    private static final Logger LOGGER = Logger.getLogger(PartsResource.class.getName());
 
     public PartsResource() {
     }
@@ -101,9 +104,9 @@ public class PartsResource {
     @GET
     @Path("count")
     @Produces(MediaType.APPLICATION_JSON)
-    public PartCountDTO getTotalNumberOfParts(@PathParam("workspaceId") String workspaceId) {
+    public CountDTO getTotalNumberOfParts(@PathParam("workspaceId") String workspaceId) {
         try {
-            return new PartCountDTO(productService.getTotalNumberOfParts(Tools.stripTrailingSlash(workspaceId)));
+            return new CountDTO(productService.getTotalNumberOfParts(Tools.stripTrailingSlash(workspaceId)));
         } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }

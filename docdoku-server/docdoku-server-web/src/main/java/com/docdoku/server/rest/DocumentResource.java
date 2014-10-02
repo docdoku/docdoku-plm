@@ -33,7 +33,7 @@ import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.security.UserGroupMapping;
-import com.docdoku.core.services.IDocumentBaselineManagerLocal;
+import com.docdoku.core.services.IDocumentConfigSpecManagerLocal;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.sharing.SharedDocument;
 import com.docdoku.core.workflow.Workflow;
@@ -61,7 +61,7 @@ public class DocumentResource {
     @EJB
     private IDocumentManagerLocal documentService;
     @EJB
-    private IDocumentBaselineManagerLocal documentBaselineService;
+    private IDocumentConfigSpecManagerLocal documentConfigSpecService;
 
     private static final Logger LOGGER = Logger.getLogger(DocumentResource.class.getName());
     private static final String BASELINE_LATEST = "latest";
@@ -86,7 +86,7 @@ public class DocumentResource {
                 docR = documentService.getDocumentRevision(documentRevisionKey);
             } else {
                 ConfigSpec configSpec = getConfigSpec(workspaceId, configSpecType);
-                docR = documentBaselineService.getFilteredDocumentRevision(documentRevisionKey, configSpec);
+                docR = documentConfigSpecService.getFilteredDocumentRevision(documentRevisionKey, configSpec);
             }
 
             DocumentRevisionDTO docRsDTO = mapper.map(docR, DocumentRevisionDTO.class);
@@ -600,10 +600,10 @@ public class DocumentResource {
         switch (configSpecType) {
             case BASELINE_LATEST:
             case BASELINE_UNDEFINED:
-                cs = documentBaselineService.getLatestConfigSpec(workspaceId);
+                cs = documentConfigSpecService.getLatestConfigSpec(workspaceId);
                 break;
             default:
-                cs = documentBaselineService.getConfigSpecForBaseline(Integer.parseInt(configSpecType));
+                cs = documentConfigSpecService.getConfigSpecForBaseline(Integer.parseInt(configSpecType));
                 break;
         }
         return cs;

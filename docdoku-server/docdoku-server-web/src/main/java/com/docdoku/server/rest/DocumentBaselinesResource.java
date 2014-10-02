@@ -20,7 +20,7 @@
 package com.docdoku.server.rest;
 
 import com.docdoku.core.configuration.DocumentBaseline;
-import com.docdoku.core.exceptions.ApplicationException;
+import com.docdoku.core.exceptions.*;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentBaselineManagerLocal;
 import com.docdoku.server.rest.dto.FolderDTO;
@@ -35,6 +35,7 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.*;
+import javax.ws.rs.NotAllowedException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.UnsupportedEncodingException;
@@ -87,9 +88,12 @@ public class DocumentBaselinesResource {
                 baselinesDTO.add(documentBaselineDTO);
             }
             return baselinesDTO;
-        } catch (ApplicationException ex) {
-            LOGGER.log(Level.SEVERE,null,ex);
-            throw new RestApiException(ex.toString(), ex.getMessage());
+        } catch (NotAllowedException | UserNotFoundException | UserNotActiveException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
+        } catch (WorkspaceNotFoundException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
         }
     }
 
@@ -106,9 +110,12 @@ public class DocumentBaselinesResource {
             DocumentBaseline baseline = documentBaselineService.createBaseline(workspaceId,documentBaselineDTO.getName(),documentBaselineDTO.getDescription());
             DocumentBaselineDTO baselineDTO= mapper.map(baseline,DocumentBaselineDTO.class);
             return prepareCreateResponse(baselineDTO);
-        } catch(ApplicationException ex) {
-            LOGGER.log(Level.SEVERE,null,ex);
-            throw new RestApiException(ex.toString(), ex.getMessage());
+        } catch (NotAllowedException | UserNotFoundException | UserNotActiveException | AccessRightException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
+        } catch (WorkspaceNotFoundException | DocumentRevisionNotFoundException | FolderNotFoundException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
         }
     }
 
@@ -138,9 +145,12 @@ public class DocumentBaselinesResource {
         try {
             documentBaselineService.deleteBaseline(baselineId);
             return Response.ok().build();
-        } catch (ApplicationException ex) {
-            LOGGER.log(Level.SEVERE,null,ex);
-            throw new RestApiException(ex.toString(), ex.getMessage());
+        } catch (NotAllowedException | UserNotFoundException | UserNotActiveException | AccessRightException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
+        } catch (WorkspaceNotFoundException | BaselineNotFoundException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
         }
     }
 
@@ -162,9 +172,12 @@ public class DocumentBaselinesResource {
             //baselineDTO.setBaselinedDocuments(documentDTOs);
             baselineDTO.setBaselinedFolders(folderDTOs);
             return baselineDTO;
-        } catch (ApplicationException ex) {
-            LOGGER.log(Level.WARNING,null,ex);
-            throw new RestApiException(ex.toString(), ex.getMessage());
+        } catch (NotAllowedException | UserNotFoundException | UserNotActiveException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
+        } catch (WorkspaceNotFoundException | BaselineNotFoundException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
         }
     }
 
@@ -181,9 +194,12 @@ public class DocumentBaselinesResource {
         try {
             DocumentBaseline documentBaseline = documentBaselineService.getBaseline(baselineId);
             return mapper.map(documentBaseline,DocumentBaselineDTO.class);
-        } catch (ApplicationException ex) {
-            LOGGER.log(Level.WARNING,null,ex);
-            throw new RestApiException(ex.toString(), ex.getMessage());
+        } catch (NotAllowedException | UserNotFoundException | UserNotActiveException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
+        } catch (WorkspaceNotFoundException | BaselineNotFoundException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
         }
     }
 }

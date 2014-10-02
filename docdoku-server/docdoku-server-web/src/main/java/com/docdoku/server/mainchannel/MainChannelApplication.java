@@ -158,7 +158,6 @@ public class MainChannelApplication {
                 webRTC = (WebRTCMessage) message;
                 processP2P(session, callerLogin, webRTC);
                 break;
-
             case ChannelMessagesType.CHAT_MESSAGE:
                 ChatMessage chat = (ChatMessage) message;
                 process(session, callerLogin, chat);

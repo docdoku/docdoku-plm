@@ -5,15 +5,12 @@ import javax.websocket.Session;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.logging.Logger;
 
 /**
- * Created by docdoku on 30/06/14.
+ * Created by Arthur FRIN on 30/06/14.
  */
 public class CollaborativeRoom {
-
     private static final ConcurrentMap<String, CollaborativeRoom> DB = new ConcurrentHashMap<>();
-    private static final Logger LOGGER = Logger.getLogger(CollaborativeRoom.class.getName());
     private String key;
     private Session master;
     private List<Session> slaves;
@@ -67,22 +64,22 @@ public class CollaborativeRoom {
     }
 
     public JsonObject getContext() {
-        JsonArrayBuilder slaves = Json.createArrayBuilder();
+        JsonArrayBuilder contextSlaves = Json.createArrayBuilder();
         for (Session s : this.getSlaves()) {
-            slaves.add(s.getUserPrincipal().getName());
+            contextSlaves.add(s.getUserPrincipal().getName());
         }
 
-        JsonArrayBuilder pendingUsers = Json.createArrayBuilder();
+        JsonArrayBuilder contextPendingUsers = Json.createArrayBuilder();
         for (Iterator<String> iter = this.getPendingUsers().listIterator(); iter.hasNext(); ) {
             String s = iter.next();
-            pendingUsers.add(s);
+            contextPendingUsers.add(s);
         }
 
         return Json.createObjectBuilder()
                 .add("master", this.getMasterName())
                 .add("lastMaster", this.getLastMaster())
-                .add("users", slaves)
-                .add("pendingUsers", pendingUsers).build();
+                .add("users", contextSlaves)
+                .add("pendingUsers", contextPendingUsers).build();
     }
 
     /** Store current instance into database */
@@ -161,23 +158,27 @@ public class CollaborativeRoom {
     }
 
     public void saveCommand(JsonObject command) {
-        if (command.containsKey("cameraInfos")) {
-            saveJsonCommands.add("cameraInfos",command.getJsonObject("cameraInfos"));
-        } else if (command.containsKey("smartPath")) {
-            JsonArray path = command.getJsonArray("smartPath");
-            if(path.isEmpty()){
-                saveJsonCommands.add("smartPath", JsonValue.NULL);
-            } else {
-                saveJsonCommands.add("smartPath", path);
-            }
-        } else if (command.containsKey("editedMeshes")) {
-            saveJsonCommands.add("editedMeshes",command.getJsonArray("editedMeshes"));
-        } else if (command.containsKey("colourEditedMeshes")) {
-            saveJsonCommands.add("colourEditedMeshes",command.getBoolean("colourEditedMeshes"));
-        } else if (command.containsKey("explode")) {
-            saveJsonCommands.add("explode",command.getString("explode"));
-        } else if (command.containsKey("clipping")) {
-            saveJsonCommands.add("clipping",command.getString("clipping"));
+        final String cameraInfosField = "cameraInfos";
+        final String smartPath = "smartPath";
+        final String editedMeshes = "editedMeshes";
+        final String colourEditedMeshes = "colourEditedMeshes";
+        final String explode = "explode";
+        final String clipping = "clipping";
+
+        if (command.containsKey(cameraInfosField)) {
+            saveJsonCommands.add(cameraInfosField,command.getJsonObject(cameraInfosField));
+        } else if (command.containsKey(smartPath)) {
+            JsonValue path = command.getJsonArray(smartPath);
+            path = ((JsonArray) path).isEmpty() ? JsonValue.NULL : path;
+            saveJsonCommands.add(smartPath, path);
+        } else if (command.containsKey(editedMeshes)) {
+            saveJsonCommands.add(editedMeshes,command.getJsonArray(editedMeshes));
+        } else if (command.containsKey(colourEditedMeshes)) {
+            saveJsonCommands.add(colourEditedMeshes,command.getBoolean(colourEditedMeshes));
+        } else if (command.containsKey(explode)) {
+            saveJsonCommands.add(explode,command.getString(explode));
+        } else if (command.containsKey(clipping)) {
+            saveJsonCommands.add(clipping,command.getString(clipping));
         }
     }
 }

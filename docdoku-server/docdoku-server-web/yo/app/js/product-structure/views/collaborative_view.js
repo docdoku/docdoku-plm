@@ -107,7 +107,7 @@ define([
             });
             this.setMaster(name);
 
-            // App.sceneManager.disableControlsObject();
+            //App.sceneManager.disableControlsObject();
             //App.appView.setSpectatorView();
         },
 
@@ -134,14 +134,7 @@ define([
             this.setRoomKey(key);
             this.setMaster(master);
 
-            App.mainChannel.sendJSON({
-                type: ChannelMessagesType.COLLABORATIVE_COMMANDS,
-                remoteUser: '',
-                key: this.roomKey,
-                messageBroadcast: {
-                    smartPath: App.partsTreeView.getSmartPath()
-                }
-            });
+			App.collaborativeController.sendSmartPath(App.partsTreeView.getSmartPath());
             App.collaborativeController.sendCameraInfos();
             App.collaborativeController.sendEditedMeshes();
             App.collaborativeController.sendColourEditedMeshes();

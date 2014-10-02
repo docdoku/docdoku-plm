@@ -26,7 +26,7 @@ import com.docdoku.core.exceptions.ApplicationException;
 import com.docdoku.core.product.ConfigurationItemKey;
 import com.docdoku.core.product.PartIterationKey;
 import com.docdoku.core.security.UserGroupMapping;
-import com.docdoku.core.services.IProductManagerLocal;
+import com.docdoku.core.services.IProductBaselineManagerLocal;
 import com.docdoku.server.rest.dto.baseline.BaselinedPartDTO;
 import com.docdoku.server.rest.dto.baseline.ProductBaselineCreationDTO;
 import com.docdoku.server.rest.dto.baseline.ProductBaselineDTO;
@@ -59,7 +59,7 @@ import java.util.logging.Logger;
 public class BaselinesResource {
 
     @EJB
-    private IProductManagerLocal productService;
+    private IProductBaselineManagerLocal productBaselineService;
 
     private static final Logger LOGGER = Logger.getLogger(BaselinesResource.class.getName());
     private Mapper mapper;
@@ -79,9 +79,9 @@ public class BaselinesResource {
                 List<ProductBaseline> productBaselines;
                 if(ciId != null) {
                     ConfigurationItemKey configurationItemKey = new ConfigurationItemKey(workspaceId, ciId);
-                    productBaselines = productService.getBaselines(configurationItemKey);
+                    productBaselines = productBaselineService.getBaselines(configurationItemKey);
                 }else{
-                    productBaselines = productService.getAllBaselines(workspaceId);
+                    productBaselines = productBaselineService.getAllBaselines(workspaceId);
                 }
                 List<ProductBaselineDTO> baselinesDTO = new ArrayList<>();
                 for(ProductBaseline productBaseline : productBaselines){
@@ -101,7 +101,7 @@ public class BaselinesResource {
     public Response createBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String pCiId, ProductBaselineCreationDTO productBaselineCreationDTO){
         try {
             String ciId = (pCiId != null) ? pCiId : productBaselineCreationDTO.getConfigurationItemId();
-            BaselineCreation baselineCreation = productService.createBaseline(new ConfigurationItemKey(workspaceId,ciId), productBaselineCreationDTO.getName(), productBaselineCreationDTO.getType(), productBaselineCreationDTO.getDescription());
+            BaselineCreation baselineCreation = productBaselineService.createBaseline(new ConfigurationItemKey(workspaceId,ciId), productBaselineCreationDTO.getName(), productBaselineCreationDTO.getType(), productBaselineCreationDTO.getDescription());
             ProductBaselineDTO productBaselineDTO = mapper.map(baselineCreation.getProductBaseline(),ProductBaselineDTO.class);
             if(!baselineCreation.getConflit().isEmpty()){
                 return Response.status(202).entity(baselineCreation.getMessage()).type("text/plain").build();
@@ -129,7 +129,7 @@ public class BaselinesResource {
             for(BaselinedPartDTO baselinedPartDTO : productBaselineDTO.getBaselinedParts()){
                 partIterationKeys.add(new PartIterationKey(workspaceId, baselinedPartDTO.getNumber(),baselinedPartDTO.getVersion(),baselinedPartDTO.getIteration()));
             }
-            productService.updateBaseline(new ConfigurationItemKey(workspaceId,ciId),Integer.parseInt(baselineId), productBaselineDTO.getName(), productBaselineDTO.getType(), productBaselineDTO.getDescription(),partIterationKeys);
+            productBaselineService.updateBaseline(new ConfigurationItemKey(workspaceId,ciId),Integer.parseInt(baselineId), productBaselineDTO.getName(), productBaselineDTO.getType(), productBaselineDTO.getDescription(),partIterationKeys);
             return Response.ok().build();
         } catch (ApplicationException ex) {
             LOGGER.log(Level.WARNING,null,ex);
@@ -142,7 +142,7 @@ public class BaselinesResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response deleteBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @PathParam("baselineId") int baselineId){
         try {
-            productService.deleteBaseline(baselineId);
+            productBaselineService.deleteBaseline(baselineId);
             return Response.ok().build();
         } catch (ApplicationException ex) {
             LOGGER.log(Level.WARNING,null,ex);
@@ -155,7 +155,7 @@ public class BaselinesResource {
     @Produces(MediaType.APPLICATION_JSON)
     public ProductBaselineDTO getBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @PathParam("baselineId") int baselineId){
         try {
-            ProductBaseline productBaseline = productService.getBaseline(baselineId);
+            ProductBaseline productBaseline = productBaselineService.getBaseline(baselineId);
             ProductBaselineDTO productBaselineDTO = mapper.map(productBaseline,ProductBaselineDTO.class);
             productBaselineDTO.setConfigurationItemId(productBaseline.getConfigurationItem().getId());
             productBaselineDTO.setBaselinedParts(Tools.mapBaselinedPartsToBaselinedPartDTO(productBaseline));
@@ -172,7 +172,7 @@ public class BaselinesResource {
     public List<BaselinedPartDTO> getBaselineParts(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @PathParam("baselineId") int baselineId, @QueryParam("q") String q){
         try {
             int maxResults = 8;
-            List<BaselinedPart> baselinedPartList = productService.getBaselinedPartWithReference(baselineId, q, maxResults);
+            List<BaselinedPart> baselinedPartList = productBaselineService.getBaselinedPartWithReference(baselineId, q, maxResults);
 
             List<BaselinedPartDTO> baselinedPartDTOList = new ArrayList<>();
             for(BaselinedPart baselinedPart:baselinedPartList){
@@ -191,7 +191,7 @@ public class BaselinesResource {
     @Produces(MediaType.APPLICATION_JSON)
     public ProductBaselineDTO duplicateBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @PathParam("baselineId") int baselineId,  ProductBaselineCreationDTO productBaselineCreationDTO){
         try {
-            ProductBaseline productBaseline = productService.duplicateBaseline(baselineId, productBaselineCreationDTO.getName(), productBaselineCreationDTO.getType(), productBaselineCreationDTO.getDescription());
+            ProductBaseline productBaseline = productBaselineService.duplicateBaseline(baselineId, productBaselineCreationDTO.getName(), productBaselineCreationDTO.getType(), productBaselineCreationDTO.getDescription());
             return mapper.map(productBaseline, ProductBaselineDTO.class);
         } catch (ApplicationException ex) {
             LOGGER.log(Level.WARNING,null,ex);

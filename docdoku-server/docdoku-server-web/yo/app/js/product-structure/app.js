@@ -69,6 +69,7 @@ define([
                 App.$ControlsContainer.append(App.controlModesView.$el);
                 App.$ControlsContainer.append(App.controlTransformView.$el);
 
+	            // Todo maybe save controls views
                 App.$ControlsContainer.append(new ControlOptionsView().render().$el);
                 App.$ControlsContainer.append(new ControlClippingView().render().$el);
                 App.$ControlsContainer.append(new ControlExplodeView().render().$el);
@@ -260,18 +261,22 @@ define([
         },
 
         onNoWebGLSupport: function () {
-            this.centerSceneContainer.find('#scene_container').html('<span class="no-webgl">' + App.config.i18n.NO_WEBGL + '</span>');
-            this.centerSceneContainer.find('#side_controls_container').empty();
-            this.exportSceneButton.remove();
-            this.fullScreenSceneButton.remove();
+	        this.crashWithMessage(App.config.i18n.NO_WEBGL);
         },
 
         onConfigSpecChange: function (configSpec) {
-            App.config.configSpec = configSpec;
-            App.sceneManager.clear();
-            App.instancesManager.clear();
-            Backbone.Events.trigger('refresh_tree');
+	        this.setConfigSpec(configSpec);
+	        if(App.collaborativeController){
+		        App.collaborativeController.sendBaseline(configSpec);
+	        }
         },
+
+	    setConfigSpec : function(configSpec){
+		    App.config.configSpec = configSpec;
+		    App.sceneManager.clear();
+		    App.instancesManager.clear();
+		    Backbone.Events.trigger('refresh_tree');
+	    },
 
         onMeshSelected: function (mesh) {
             var partKey = mesh.partIterationId.substr(0, mesh.partIterationId.lastIndexOf('-'));
@@ -326,9 +331,14 @@ define([
             valuesControllers.push(gui.add(App.SceneOptions, 'panSpeed').min(0).max(10).step(0.01));
 
             return this;
-        }
+        },
 
-
+		crashWithMessage: function(htmlMessage){
+			this.centerSceneContainer.find('#scene_container').html('<span class="crashMessage">'+htmlMessage+ '</span>');
+			this.centerSceneContainer.find('#side_controls_container').empty();
+			this.exportSceneButton.remove();
+			this.fullScreenSceneButton.remove();
+		}
     });
 
     return AppView;

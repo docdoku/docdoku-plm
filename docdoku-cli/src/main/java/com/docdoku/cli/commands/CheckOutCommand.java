@@ -28,6 +28,7 @@ import com.docdoku.core.common.Version;
 import com.docdoku.core.configuration.ConfigSpec;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.*;
+import com.docdoku.core.services.IProductConfigSpecManagerWS;
 import com.docdoku.core.services.IProductManagerWS;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
@@ -69,19 +70,21 @@ public class CheckOutCommand extends AbstractCommandLine{
     protected int baselineId;
 
     private IProductManagerWS productS;
+    private IProductConfigSpecManagerWS productConfigSpecS;
 
     public Object execImpl() throws Exception {
         if(partNumber==null || revision==null){
             loadMetadata();
         }
         productS = ScriptingTools.createProductService(getServerURL(), user, password);
+        productConfigSpecS = ScriptingTools.createProductConfigSpecService(getServerURL(), user, password);
 
         String strRevision = revision==null?null:revision.toString();
 
         ConfigSpec cs = null;
 
         if(baselineId != 0){
-            cs = productS.getConfigSpecForBaseline(baselineId);
+            cs = productConfigSpecS.getConfigSpecForBaseline(baselineId);
         }
 
         checkoutPart(partNumber,strRevision,0,cs);

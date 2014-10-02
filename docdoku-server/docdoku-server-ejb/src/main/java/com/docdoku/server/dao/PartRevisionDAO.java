@@ -24,6 +24,7 @@ import com.docdoku.core.common.User;
 import com.docdoku.core.exceptions.CreationException;
 import com.docdoku.core.exceptions.PartRevisionAlreadyExistsException;
 import com.docdoku.core.exceptions.PartRevisionNotFoundException;
+import com.docdoku.core.product.PartIterationKey;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.product.PartRevisionKey;
 import com.docdoku.core.query.SearchQuery;
@@ -48,7 +49,6 @@ public class PartRevisionDAO {
         em = pEM;
         mLocale = pLocale;
     }
-
     public PartRevisionDAO(EntityManager pEM) {
         em = pEM;
         mLocale = Locale.getDefault();
@@ -63,7 +63,6 @@ public class PartRevisionDAO {
             return partR;
         }
     }
-
 
     public void updateRevision(PartRevision pPartR) {
         em.merge(pPartR);
@@ -262,5 +261,10 @@ public class PartRevisionDAO {
                 .setParameter("partNumber", "%" + reference + "%")
                 .setMaxResults(maxResults)
                 .getResultList();
+    }
+
+    public boolean isCheckoutedIteration(PartIterationKey partIKey) throws PartRevisionNotFoundException {
+        PartRevision partR = loadPartR(partIKey.getPartRevision());
+        return partR.isCheckedOut() && (partIKey.getIteration() == partR.getLastIterationNumber());
     }
 }

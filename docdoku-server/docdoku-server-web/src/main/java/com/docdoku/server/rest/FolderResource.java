@@ -25,7 +25,7 @@ import com.docdoku.core.document.Folder;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.security.UserGroupMapping;
-import com.docdoku.core.services.IDocumentBaselineManagerLocal;
+import com.docdoku.core.services.IDocumentConfigSpecManagerLocal;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.server.rest.dto.FolderDTO;
 import org.dozer.DozerBeanMapperSingletonWrapper;
@@ -52,7 +52,7 @@ public class FolderResource {
     @EJB
     private IDocumentManagerLocal documentService;
     @EJB
-    private IDocumentBaselineManagerLocal documentBaselineService;
+    private IDocumentConfigSpecManagerLocal documentConfigSpecService;
     @EJB
     private DocumentsResource documentsResource;
 
@@ -105,7 +105,7 @@ public class FolderResource {
                 folderNames = documentService.getFolders(completePath);
             }else{
                 ConfigSpec cs = getConfigSpec(workspaceId, configSpecType);
-                folderNames = documentBaselineService.getFilteredFolders(workspaceId,cs,completePath);
+                folderNames = documentConfigSpecService.getFilteredFolders(workspaceId,cs,completePath);
             }
 
             FolderDTO[] folderDtos = new FolderDTO[folderNames.length];
@@ -254,10 +254,10 @@ public class FolderResource {
         switch (configSpecType) {
             case "latest":
             case "undefined":
-                cs = documentBaselineService.getLatestConfigSpec(workspaceId);
+                cs = documentConfigSpecService.getLatestConfigSpec(workspaceId);
                 break;
             default:
-                cs = documentBaselineService.getConfigSpecForBaseline(Integer.parseInt(configSpecType));
+                cs = documentConfigSpecService.getConfigSpecForBaseline(Integer.parseInt(configSpecType));
                 break;
         }
         return cs;

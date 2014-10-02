@@ -1,19 +1,15 @@
 /*global define,App*/
-'use strict';
 define([
     'backbone',
     'models/part',
-    'common-objects/views/part/part_modal_view',
-    "common-objects/websocket/channelMessagesType"
-], function (Backbone, Part, PartModalView, ChannelMessagesType) {
-
+    'common-objects/views/part/part_modal_view'
+], function (Backbone, Part, PartModalView) {
+	'use strict';
     var expandedViews = [];
     var ComponentViews = {};
 
     ComponentViews.Components = Backbone.View.extend({
-
         tagName: 'ul',
-
 
         initialize: function () {
             this.options.parentView.append(this.el);
@@ -59,7 +55,6 @@ define([
             this.$el.empty();
             this.collection.fetch({reset: true});
         }
-
     });
 
     ComponentViews.Leaf = Backbone.View.extend({
@@ -132,6 +127,11 @@ define([
 
             this.input = this.$('>input');
 
+	        //If the ComponentViews is checked
+	        if(this.options.checkedAtInit){
+		        App.instancesManager.loadComponent(this.model);
+	        }
+
             if (this.options.isLast) {
                 this.$el.addClass('last');
             }
@@ -146,17 +146,15 @@ define([
             this.$('>a').trigger('component_selected', [this.model, this.$el]);
         },
 
-        onEditPart: function () {
-            var self = this;
-            var model = new Part({partKey: self.model.getNumber() + '-' + self.model.getVersion()});
-            model.fetch().success(function () {
-                new PartModalView({
-                    model: model
-                }).show();
-            });
+	    onEditPart: function () {
+		    var model = new Part({partKey: this.model.getNumber() + '-' + this.model.getVersion()});
+		    model.fetch().success(function () {
+			    new PartModalView({
+				    model: model
+			    }).show();
+		    });
 
-        }
-
+	    }
     });
 
     ComponentViews.Assembly = Backbone.View.extend({
@@ -237,6 +235,11 @@ define([
 
             this.input = this.$('>input');
 
+	        //If the ComponentViews is checked
+	        if(this.options.checkedAtInit && (!App.collaborativeView || !App.collaborativeView.roomKey)){
+		        App.instancesManager.loadComponent(this.model);
+	        }
+
             if (data.isForbidden || data.isLock) {
                 this.$el.removeClass('expandable');
             }
@@ -313,19 +316,15 @@ define([
             return this.input.prop('checked');
         },
 
-        onEditPart: function () {
-            var self = this;
+	    onEditPart: function () {
+		    var model = new Part({partKey: this.model.getNumber() + '-' + this.model.getVersion()});
+		    model.fetch().success(function () {
+			    new PartModalView({
+				    model: model
+			    }).show();
+		    });
 
-            var model = new Part({partKey: self.model.getNumber() + '-' + self.model.getVersion()});
-            model.fetch().success(function () {
-                new PartModalView({
-                    model: model
-                }).show();
-            });
-
-
-        }
-
+	    }
     });
 
     return ComponentViews;

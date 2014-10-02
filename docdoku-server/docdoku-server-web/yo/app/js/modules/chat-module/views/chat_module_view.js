@@ -1,9 +1,9 @@
-/*global define*/
-define(['backbone', "modules/chat-module/views/chat_session_view"], function (Backbone, ChatMessageSessionView) {
-
+/*global _,define*/
+define(['backbone', 'modules/chat-module/views/chat_session_view'], function (Backbone, ChatMessageSessionView) {
+	'use strict';
     var ChatModuleView = Backbone.View.extend({
 
-        el: "#chat_module",
+        el: '#chat_module',
 
         initialize: function () {
             _.bindAll(this);
@@ -19,13 +19,13 @@ define(['backbone', "modules/chat-module/views/chat_session_view"], function (Ba
             var view = this.getChatSessionView(message);
             view.onNewChatMessage(message);
             // set above others
-            Backbone.Events.trigger("ChatSessionFocusRequired", view);
+            Backbone.Events.trigger('ChatSessionFocusRequired', view);
         },
 
         onNewChatSession: function (chatSessionArgs) {
             var csv = this.getChatSessionView(chatSessionArgs);
             // set above others
-            Backbone.Events.trigger("ChatSessionFocusRequired", csv);
+            Backbone.Events.trigger('ChatSessionFocusRequired', csv);
         },
 
         onChatStatusChanged: function (status) {
@@ -94,7 +94,7 @@ define(['backbone', "modules/chat-module/views/chat_session_view"], function (Ba
 
         onRemoveWebRTCInvitation: function (webRTCInvitation) {
             var csv = this.getChatSessionView(webRTCInvitation.message);
-            if (csv != null && csv.webRTCInvitation != null) {
+            if (csv && csv.webRTCInvitation != null) {
                 clearTimeout(csv.webRTCInvitation.invitationTimeout);
                 csv.hideWebRTCInvitation();
             }
