@@ -21,7 +21,6 @@ package com.docdoku.core.configuration;
 
 import com.docdoku.core.common.User;
 import com.docdoku.core.document.DocumentIteration;
-import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartMaster;
@@ -30,7 +29,6 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import java.util.List;
 
 
 /**
@@ -84,40 +82,41 @@ public class BaselineConfigSpec extends ConfigSpec {
         this.user = user;
     }
 
+    public int getPartCollectionId(){
+        return productBaseline.getPartCollection().getId();
+    }
+    public int getFolderCollectionId(){
+        return documentBaseline.getFolderCollection().getId();
+    }
+
     @Override
     public PartIteration filterConfigSpec(PartMaster part) {
-        PartCollection partCollection = productBaseline==null?null:productBaseline.getPartCollection();
-        if(partCollection != null){
-            BaselinedPartKey baselinedRootPartKey = new BaselinedPartKey(partCollection.getId(),part.getWorkspaceId(),part.getNumber());
+        PartCollection partCollection = productBaseline==null ? null : productBaseline.getPartCollection();             // Prevent NullPointerException
+        if(partCollection != null) {
+            BaselinedPartKey baselinedRootPartKey = new BaselinedPartKey(partCollection.getId(), part.getWorkspaceId(), part.getNumber());
             BaselinedPart baselinedRootPart = productBaseline.getBaselinedPart(baselinedRootPartKey);
-            if(baselinedRootPart != null){
+            if (baselinedRootPart != null) {
                 return baselinedRootPart.getTargetPart();
-            }else{
-                // the part isn't in baseline, choose the latest checked in version-iteration
-                return new LatestConfigSpec(user).filterConfigSpec(part);
             }
-        }else{
-            return null;
+            // the part isn't in baseline, choose the latest checked in version-iteration
+            return new LatestConfigSpec(user).filterConfigSpec(part);
         }
+
+        return null;
     }
 
     @Override
     public DocumentIteration filterConfigSpec(DocumentRevision documentRevision) {
-        FolderCollection folderCollection = documentBaseline==null?null:documentBaseline.getFolderCollection();
+        FolderCollection folderCollection = documentBaseline==null ? null : documentBaseline.getFolderCollection();     // Prevent NullPointerException
         if(folderCollection != null){
-            for(BaselinedFolder folder:folderCollection.getBaselinedFolders().values()){
-                List<DocumentIteration> docIs = folder.getDocumentIterations();
-                for(DocumentIteration docI:docIs){
-                    if(docI.getDocumentRevision().equals(documentRevision))
-                        return docI;
-                }
+            DocumentIteration docI = folderCollection.getDocumentIteration(documentRevision.getKey());
+            if(docI!=null){
+                return docI;
             }
             // the document isn't in baseline, choose the latest checked in version-iteration
             return new LatestConfigSpec(user).filterConfigSpec(documentRevision);
-
-        }else{
-            return null;
         }
-    }
 
+        return null;
+    }
 }

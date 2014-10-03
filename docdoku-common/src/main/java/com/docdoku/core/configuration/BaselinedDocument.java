@@ -61,7 +61,6 @@ public class BaselinedDocument implements Serializable{
 
     public BaselinedDocument(){
     }
-
     public BaselinedDocument(DocumentCollection documentCollection, DocumentIteration targetDocument) {
         this.documentCollection = documentCollection;
         this.targetDocument =targetDocument;
@@ -85,8 +84,7 @@ public class BaselinedDocument implements Serializable{
     public DocumentIteration getTargetDocument() {
         return targetDocument;
     }
-
-    public String targetDocumentMasterId(){
+    public String getTargetDocumentMasterId(){
         return targetDocument.getDocumentMasterId();
     }
 

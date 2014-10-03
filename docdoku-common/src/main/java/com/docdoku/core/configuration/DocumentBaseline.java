@@ -21,14 +21,12 @@ package com.docdoku.core.configuration;
 
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.document.DocumentIteration;
-import com.docdoku.core.document.DocumentMasterKey;
 import com.docdoku.core.document.DocumentRevisionKey;
 import com.docdoku.core.document.Folder;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -68,7 +66,6 @@ public class DocumentBaseline implements Serializable {
 
     public DocumentBaseline() {
     }
-
     public DocumentBaseline(Workspace workspace, String name, String description) {
         this.workspace = workspace;
         this.name = name;
@@ -79,17 +76,15 @@ public class DocumentBaseline implements Serializable {
     public Map<BaselinedFolderKey, BaselinedFolder> getBaselinedFolders() {
         return folderCollection.getBaselinedFolders();
     }
-
-
     public void removeAllBaselinedFolders() {
         folderCollection.removeAllBaselinedFolders();
     }
 
-    public void addBaselinedFolder(Folder folder){
-        folderCollection.addBaselinedFolder(folder);
+    public BaselinedFolder addBaselinedFolder(Folder folder){
+        return folderCollection.addBaselinedFolder(folder);
     }
-    public void addBaselinedFolder(BaselinedFolder baselinedFolder){
-        folderCollection.addBaselinedFolder(baselinedFolder);
+    public BaselinedFolder addBaselinedFolder(BaselinedFolder baselinedFolder){
+        return folderCollection.addBaselinedFolder(baselinedFolder);
     }
     public boolean hasBasedLinedFolder(String completePath){
         return folderCollection.hasBaselinedFolder(completePath);
@@ -98,43 +93,22 @@ public class DocumentBaseline implements Serializable {
         return folderCollection.getBaselinedFolder(completePath);
     }
 
-    /*
-    public void removeAllBaselinedDocuments() {
-        documentCollection.removeAllBaselinedDocuments();
-    }
-
-
-    public DocumentCollection getDocumentCollection() {
-        return documentCollection;
-    }
-    */
-
-
-
     public void addBaselinedDocument(DocumentIteration targetDocument){
         Folder location = targetDocument.getDocumentRevision().getLocation();
         BaselinedFolder baselinedFolder = folderCollection.getBaselinedFolder(location.getCompletePath());
-        if(baselinedFolder==null)
-            baselinedFolder=new BaselinedFolder(folderCollection,location.getCompletePath());
-
+        if(baselinedFolder==null) {
+            baselinedFolder = addBaselinedFolder(location);
+        }
         baselinedFolder.addDocumentIteration(targetDocument);
     }
-
-
     public boolean hasBaselinedDocument(DocumentRevisionKey documentRevisionKey){
         if(folderCollection != null){
-            for(BaselinedFolder folder:folderCollection.getBaselinedFolders().values()){
-                List<DocumentIteration> docIs = folder.getDocumentIterations();
-                for(DocumentIteration docI:docIs){
-                    if(docI.getDocumentRevision().getKey().equals(documentRevisionKey))
-                        return true;
-                }
-            }
-            return false;
-
-        }else{
-            return false;
+            return folderCollection.hasDocumentRevision(documentRevisionKey);
         }
+        return false;
+    }
+    public DocumentIteration getBaselinedDocument(DocumentRevisionKey documentRevisionKey){
+        return (folderCollection!=null) ? folderCollection.getDocumentIteration(documentRevisionKey) : null;
     }
 
     public String getName() {

@@ -23,7 +23,6 @@ package com.docdoku.core.configuration;
 
 import com.docdoku.core.common.User;
 import com.docdoku.core.document.DocumentIteration;
-import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartMaster;

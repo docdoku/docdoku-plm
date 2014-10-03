@@ -101,16 +101,17 @@ public class DocumentsResource {
         }
         if(query != null){
             return getDocumentsWithSearchQuery(workspaceId, query, configSpecType);
-        }else if(tagId != null){
-            return getDocumentsWithGivenTagIdAndWorkspaceId(workspaceId, tagId, configSpecType);
-        }else if(assignedUserLogin !=null){
-            return getDocumentsWhereGivenUserHasAssignedTasks(workspaceId, assignedUserLogin, filter);
-        }else if(folderId != null){
-            return getDocumentsWithGivenFolderIdAndWorkspaceId(workspaceId,folderId, configSpecType);
-        }else{
-            return getDocumentsInWorkspace(workspaceId, start, configSpecType);
         }
-
+        if(tagId != null){
+            return getDocumentsWithGivenTagIdAndWorkspaceId(workspaceId, tagId, configSpecType);
+        }
+        if(assignedUserLogin !=null){
+            return getDocumentsWhereGivenUserHasAssignedTasks(workspaceId, assignedUserLogin, filter);
+        }
+        if(folderId != null){
+            return getDocumentsWithGivenFolderIdAndWorkspaceId(workspaceId,folderId, configSpecType);
+        }
+        return getDocumentsInWorkspace(workspaceId, start, configSpecType);
     }
 
     @GET
@@ -437,9 +438,9 @@ public class DocumentsResource {
     }
 
     /**
-     * Get a configuration specification
+     * Get a configuration specification according a string params
      * @param workspaceId The current workspace
-     * @param configSpecType The configuration specification type
+     * @param configSpecType The string discribing the configSpec
      * @return A configuration specification
      * @throws com.docdoku.core.exceptions.UserNotFoundException If the user login-workspace doesn't exist
      * @throws com.docdoku.core.exceptions.UserNotActiveException If the user is disabled

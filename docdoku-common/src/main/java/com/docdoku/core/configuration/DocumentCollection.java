@@ -63,12 +63,11 @@ public class DocumentCollection implements Serializable {
     public DocumentCollection() {
     }
 
-    public void removeAllBaselinedDocuments() {
-        baselinedDocuments.clear();
-    }
-
     public Map<BaselinedDocumentKey, BaselinedDocument> getBaselinedDocuments() {
         return baselinedDocuments;
+    }
+    public void removeAllBaselinedDocuments() {
+        baselinedDocuments.clear();
     }
 
     public BaselinedDocument addBaselinedDocument(DocumentIteration targetDocument){
@@ -83,7 +82,6 @@ public class DocumentCollection implements Serializable {
     public BaselinedDocument getBaselinedDocument(BaselinedDocumentKey baselinedDocumentKey){
         return baselinedDocuments.get(baselinedDocumentKey);
     }
-
     public boolean hasBaselinedDocument(DocumentMasterKey documentMasterKey){
         BaselinedDocumentKey baselinedDocumentKey = new BaselinedDocumentKey(id,documentMasterKey.getWorkspace(), documentMasterKey.getId());
         return baselinedDocuments.containsKey(baselinedDocumentKey);

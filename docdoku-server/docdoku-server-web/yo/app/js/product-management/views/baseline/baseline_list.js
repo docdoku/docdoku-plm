@@ -1,11 +1,10 @@
-/*global define*/
-'use strict';
+/*global _,define*/
 define([
     'backbone',
     'common-objects/collections/baselines',
     'views/baseline/baseline_list_item'
 ], function (Backbone, Baselines, BaselineListItemView) {
-
+	'use strict';
     var BaselineListView = Backbone.View.extend({
 
         tagName: 'ul',

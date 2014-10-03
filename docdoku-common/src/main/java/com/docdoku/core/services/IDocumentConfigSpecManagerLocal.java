@@ -19,6 +19,7 @@
  */
 package com.docdoku.core.services;
 
+import com.docdoku.core.configuration.BaselineConfigSpec;
 import com.docdoku.core.configuration.ConfigSpec;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.document.DocumentRevisionKey;
@@ -51,7 +52,7 @@ public interface IDocumentConfigSpecManagerLocal {
      * @throws WorkspaceNotFoundException If the workspace cann't be found
      * @throws BaselineNotFoundException If the baseline cann't be found
      */
-    ConfigSpec getConfigSpecForBaseline(int baselineId) throws BaselineNotFoundException, WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException;
+    BaselineConfigSpec getConfigSpecForBaseline(int baselineId) throws BaselineNotFoundException, WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException;
 
     /**
      * Get the list of folder filtered by a configuration specification

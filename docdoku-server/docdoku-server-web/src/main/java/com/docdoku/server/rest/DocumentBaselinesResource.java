@@ -24,7 +24,6 @@ import com.docdoku.core.exceptions.*;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentBaselineManagerLocal;
 import com.docdoku.server.rest.dto.FolderDTO;
-import com.docdoku.server.rest.dto.baseline.BaselinedDocumentDTO;
 import com.docdoku.server.rest.dto.baseline.DocumentBaselineDTO;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
@@ -168,8 +167,6 @@ public class DocumentBaselinesResource {
             DocumentBaseline documentBaseline = documentBaselineService.getBaseline(baselineId);
             DocumentBaselineDTO baselineDTO = getBaselineLight(workspaceId,baselineId);
             List<FolderDTO> folderDTOs = Tools.mapBaselinedFoldersToFolderDTO(documentBaseline);
-            //List<BaselinedDocumentDTO> documentDTOs = Tools.mapBaselinedDocumentsToBaselinedDocumentDTO(documentBaseline);
-            //baselineDTO.setBaselinedDocuments(documentDTOs);
             baselineDTO.setBaselinedFolders(folderDTOs);
             return baselineDTO;
         } catch (NotAllowedException | UserNotFoundException | UserNotActiveException e) {

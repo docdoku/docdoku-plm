@@ -22,11 +22,11 @@ package com.docdoku.server.rest;
 
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.UserGroup;
-import com.docdoku.core.configuration.BaselinedPart;
-import com.docdoku.core.configuration.ProductBaseline;
-import com.docdoku.core.configuration.BaselinedDocument;
 import com.docdoku.core.configuration.BaselinedFolder;
+import com.docdoku.core.configuration.BaselinedPart;
 import com.docdoku.core.configuration.DocumentBaseline;
+import com.docdoku.core.configuration.ProductBaseline;
+import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.product.CADInstance;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartRevision;
@@ -174,27 +174,22 @@ public class Tools {
         }
         return baselinedPartDTOs;
     }
-
     public static List<BaselinedPartDTO> mapBaselinedPartsToBaselinedPartDTO(ProductBaseline productBaseline){
         return mapBaselinedPartsToBaselinedPartDTO(productBaseline.getBaselinedParts().values());
     }
-
     public static BaselinedPartDTO mapBaselinedPartToBaselinedPartDTO(BaselinedPart baselinedPart){
         return new BaselinedPartDTO(baselinedPart.getTargetPart());
     }
 
-    public static List<BaselinedDocumentDTO> mapBaselinedDocumentsToBaselinedDocumentDTO(Collection<BaselinedDocument> baselinedDocuments){
+    public static List<BaselinedDocumentDTO> mapBaselinedDocumentsToBaselinedDocumentDTO(Collection<DocumentIteration> baselinedDocuments){
         List<BaselinedDocumentDTO> baselinedDocumentDTOs = new ArrayList<>();
-        for(BaselinedDocument baselinedDocument : baselinedDocuments){
+        for(DocumentIteration baselinedDocument : baselinedDocuments){
             baselinedDocumentDTOs.add(mapBaselinedDocumentToBaselinedDocumentDTO(baselinedDocument));
         }
         return baselinedDocumentDTOs;
     }
-
-
-
-    public static BaselinedDocumentDTO mapBaselinedDocumentToBaselinedDocumentDTO(BaselinedDocument baselineDocument){
-        return new BaselinedDocumentDTO(baselineDocument.getTargetDocument());
+    public static BaselinedDocumentDTO mapBaselinedDocumentToBaselinedDocumentDTO(DocumentIteration baselineDocument){
+        return new BaselinedDocumentDTO(baselineDocument);
     }
 
     public static List<FolderDTO> mapBaselinedFoldersToFolderDTO(Collection<BaselinedFolder> baselinedFolders){
@@ -204,11 +199,9 @@ public class Tools {
         }
         return folderDTOs;
     }
-
     public static List<FolderDTO> mapBaselinedFoldersToFolderDTO(DocumentBaseline documentBaseline){
         return mapBaselinedFoldersToFolderDTO(documentBaseline.getBaselinedFolders().values());
     }
-
     private static FolderDTO mapBaselinedFolderToFolderDTO(BaselinedFolder baselinedFolder) {
         String completePath = baselinedFolder.getCompletePath();
         return new FolderDTO(FolderDTO.extractParentFolder(completePath),FolderDTO.extractName(completePath));

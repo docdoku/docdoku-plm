@@ -20,6 +20,8 @@
 package com.docdoku.core.configuration;
 
 import com.docdoku.core.common.User;
+import com.docdoku.core.document.DocumentIteration;
+import com.docdoku.core.document.DocumentRevisionKey;
 import com.docdoku.core.document.Folder;
 
 import javax.persistence.*;
@@ -59,32 +61,51 @@ public class FolderCollection implements Serializable {
     @OneToMany(mappedBy="folderCollection", cascade=CascadeType.ALL, fetch=FetchType.LAZY, orphanRemoval=true)
     private Map<BaselinedFolderKey, BaselinedFolder> baselinedFolders = new HashMap<>();
 
-    public FolderCollection() {
-    }
 
-    public void removeAllBaselinedFolders() {
-        baselinedFolders.clear();
+    public FolderCollection() {
     }
 
     public Map<BaselinedFolderKey, BaselinedFolder> getBaselinedFolders() {
         return baselinedFolders;
     }
-
-    public void addBaselinedFolder(Folder folder){
-        BaselinedFolder baselinedFolder = new BaselinedFolder(this,folder);
-        baselinedFolders.put(baselinedFolder.getBaselinedFolderKey(),baselinedFolder);
+    public void removeAllBaselinedFolders() {
+        baselinedFolders.clear();
     }
 
-    public void addBaselinedFolder(BaselinedFolder baselinedFolder){
+    public BaselinedFolder addBaselinedFolder(Folder folder){
+        BaselinedFolder baselinedFolder = new BaselinedFolder(this,folder);
         baselinedFolders.put(baselinedFolder.getBaselinedFolderKey(),baselinedFolder);
+        return  baselinedFolder;
+    }
+    public BaselinedFolder addBaselinedFolder(BaselinedFolder baselinedFolder){
+        baselinedFolders.put(baselinedFolder.getBaselinedFolderKey(),baselinedFolder);
+        return  baselinedFolder;
     }
 
     public BaselinedFolder getBaselinedFolder(String completePath){
-        return baselinedFolders.get(completePath);
+        return baselinedFolders.get(new BaselinedFolderKey(id,completePath));
+    }
+    public boolean hasBaselinedFolder(String completePath){
+        return baselinedFolders.containsKey(new BaselinedFolderKey(id,completePath));
     }
 
-    public boolean hasBaselinedFolder(String completePath){
-        return baselinedFolders.containsKey(completePath);
+    public DocumentIteration getDocumentIteration(DocumentRevisionKey documentRevisionKey){
+        for(BaselinedFolder folder : baselinedFolders.values()){
+            DocumentIteration documentIteration = folder.getDocumentIteration(documentRevisionKey);
+            if(documentIteration!=null){
+                return documentIteration;
+            }
+        }
+        return null;
+    }
+    public boolean hasDocumentRevision(DocumentRevisionKey documentRevisionKey){
+        for(BaselinedFolder folder : baselinedFolders.values()){
+            boolean hasDocument = folder.hasDocumentRevision(documentRevisionKey);
+            if(hasDocument){
+                return true;
+            }
+        }
+        return false;
     }
 
     public Date getCreationDate() {

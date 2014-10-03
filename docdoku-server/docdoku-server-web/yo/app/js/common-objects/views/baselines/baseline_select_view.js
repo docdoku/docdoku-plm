@@ -1,5 +1,4 @@
 /*global define,App*/
-'use strict';
 define([
 	'backbone',
 	'mustache',
@@ -7,6 +6,7 @@ define([
 	'text!common-objects/templates/baselines/baseline_select.html',
 	'common-objects/views/baselines/snap_baseline_view'
 ], function (Backbone, Mustache, Baselines, template, SnapBaselineView) {
+	'use strict';
 
 	var BaselineSelectView = Backbone.View.extend({
 		events:{
@@ -43,7 +43,7 @@ define([
 			this.$newBaselineBtn = this.$('.btn.newBaseline');
 			this.$deleteBaselineBtn = this.$('.btn.deleteBaseline');
 			if(App.config.configSpec==='latest' || App.config.configSpec==='released'){
-				this.$deleteBaselineBtn.attr("disabled", "disabled");
+				this.$deleteBaselineBtn.attr('disabled', 'disabled');
 				this.$deleteBaselineBtn.hide();
 			}
 		},
@@ -71,13 +71,13 @@ define([
 		onSelectorChanged:function(e){
 			this.trigger('config_spec:changed', e.target.value);
 			if(e.target.value==='latest' || e.target.value==='released'){
-				this.$deleteBaselineBtn.attr("disabled", "disabled");
-				this.$newBaselineBtn.removeAttr("disabled");
+				this.$deleteBaselineBtn.attr('disabled', 'disabled');
+				this.$newBaselineBtn.removeAttr('disabled');
 				this.$deleteBaselineBtn.hide();
 			}else{
 				this.$deleteBaselineBtn.show();
-				this.$deleteBaselineBtn.removeAttr("disabled");
-				this.$newBaselineBtn.attr("disabled", "disabled");
+				this.$deleteBaselineBtn.removeAttr('disabled');
+				this.$newBaselineBtn.attr('disabled', 'disabled');
 			}
 		},
 

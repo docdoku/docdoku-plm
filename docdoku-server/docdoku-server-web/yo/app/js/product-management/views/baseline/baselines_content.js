@@ -1,25 +1,26 @@
 /*global define*/
 define([
     'backbone',
-    "mustache",
-    "common-objects/collections/baselines",
-    "common-objects/collections/configuration_items",
-    "text!templates/baseline/baselines_content.html",
-    "views/baseline/baselines_list",
-    "views/baseline/baseline_duplicate_view",
-    "text!common-objects/templates/buttons/delete_button.html",
-    "text!common-objects/templates/buttons/duplicate_button.html"
-], function (Backbone, Mustache, BaselinesCollection, ConfigurationItemCollection, template, BaselinesListView, BaselineDuplicateView, deleteButton, duplicate_button) {
+    'mustache',
+    'common-objects/collections/baselines',
+    'common-objects/collections/configuration_items',
+    'text!templates/baseline/baselines_content.html',
+    'views/baseline/baselines_list',
+    'views/baseline/baseline_duplicate_view',
+    'text!common-objects/templates/buttons/delete_button.html',
+    'text!common-objects/templates/buttons/duplicate_button.html'
+], function (Backbone, Mustache, BaselinesCollection, ConfigurationItemCollection, template, BaselinesListView, BaselineDuplicateView, deleteButton, duplicateButton) {
+	'use strict';
     var BaselinesContentView = Backbone.View.extend({
 
         partials: {
             deleteButton: deleteButton,
-            duplicate_button: duplicate_button
+            duplicateButton: duplicateButton
         },
 
         events: {
-            "click button.delete": "deleteBaseline",
-            "click button.duplicate": "duplicateBaseline"
+            'click button.delete': 'deleteBaseline',
+            'click button.duplicate': 'duplicateBaseline'
         },
 
         initialize: function () {
@@ -40,16 +41,16 @@ define([
         },
 
         bindDomElements: function () {
-            this.deleteButton = this.$(".delete");
-            this.duplicateButton = this.$(".duplicate");
-            this.$inputProductId = this.$("#inputProductId");
+            this.deleteButton = this.$('.delete');
+            this.duplicateButton = this.$('.duplicate');
+            this.$inputProductId = this.$('#inputProductId');
         },
 
         fillProductList: function (list) {
             var self = this;
             if (list) {
                 list.each(function (product) {
-                    self.$inputProductId.append("<option value='" + product.getId() + "'" + ">" + product.getId() + "</option>");
+                    self.$inputProductId.append('<option value="' + product.getId() + ' ">' + product.getId() + '</option>');
                 });
                 this.$inputProductId.combobox({bsVersion: '2'});
             }
@@ -71,8 +72,8 @@ define([
                 }).render();
             }
             this.$el.append(this.listView.el);
-            this.listView.on("delete-button:display", this.changeDeleteButtonDisplay);
-            this.listView.on("duplicate-button:display", this.changeDuplicateButtonDisplay);
+            this.listView.on('delete-button:display', this.changeDeleteButtonDisplay);
+            this.listView.on('duplicate-button:display', this.changeDuplicateButtonDisplay);
         },
 
         deleteBaseline: function () {

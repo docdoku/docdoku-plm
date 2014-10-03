@@ -57,7 +57,7 @@ public class DocumentConfigSpecManagerBean implements IDocumentConfigSpecManager
     @EJB
     private IUserManagerLocal userManager;
     @EJB
-    private IDocumentBaselineManagerLocal documentBaselineManager;
+    private IDocumentBaselineManagerLocal documentBaselineService;
     @EJB
     private IDocumentManagerLocal documentService;
 
@@ -70,8 +70,8 @@ public class DocumentConfigSpecManagerBean implements IDocumentConfigSpecManager
 
     @RolesAllowed("users")
     @Override
-    public ConfigSpec getConfigSpecForBaseline(int baselineId) throws BaselineNotFoundException, WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException {
-        DocumentBaseline documentBaseline = documentBaselineManager.getBaseline(baselineId);
+    public BaselineConfigSpec getConfigSpecForBaseline(int baselineId) throws BaselineNotFoundException, WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException {
+        DocumentBaseline documentBaseline = documentBaselineService.getBaseline(baselineId);
         User user = userManager.checkWorkspaceReadAccess(documentBaseline.getWorkspace().getId());
         return new BaselineConfigSpec(documentBaseline,user);
     }
@@ -115,12 +115,22 @@ public class DocumentConfigSpecManagerBean implements IDocumentConfigSpecManager
     @Override
     public DocumentRevision[] getFilteredDocumentsByFolder(String workspaceId, ConfigSpec cs, String completePath) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
-        BaselinedFolderKey key = new BaselinedFolderKey(cs.getId(),completePath);
-        List<BaselinedDocument> baselinedDocuments = new BaselinedDocumentDAO(new Locale(user.getLanguage()),em).findDocRsByFolder(key);
+        switch (cs.getClass().getName()){
+            case "BaselineConfigSpec" :
+                return getFilteredDocumentsByFolder(workspaceId,(BaselineConfigSpec) cs,completePath,user);
+            case "EffectivityConfigSpec":
+                return new DocumentRevision[0];
+            default :
+                return documentService.findDocumentRevisionsByFolder(completePath);
+        }
+    }
+
+    private DocumentRevision[] getFilteredDocumentsByFolder(String workspaceId, BaselineConfigSpec cs, String completePath, User user) {
+        BaselinedFolderKey key = new BaselinedFolderKey(cs.getFolderCollectionId(),completePath);
+        List<DocumentIteration> baselinedDocuments = new BaselinedDocumentDAO(new Locale(user.getLanguage()),em).findDocRsByFolder(key);
         List<DocumentRevision> returnList = new ArrayList<>();
-        for(BaselinedDocument baselinedDocument : baselinedDocuments){
-            DocumentIteration docI = baselinedDocument.getTargetDocument();
-            DocumentRevision docR = filterDocumentRevisionAccessRight(user,docI.getDocumentRevision());
+        for(DocumentIteration baselinedDocument : baselinedDocuments){
+            DocumentRevision docR = filterDocumentRevisionAccessRight(user,baselinedDocument.getDocumentRevision());
             returnList.add(docR);
         }
         return returnList.toArray(new DocumentRevision[returnList.size()]);
@@ -161,9 +171,9 @@ public class DocumentConfigSpecManagerBean implements IDocumentConfigSpecManager
     }
 
     private DocumentRevision filterDocumentRevision(ConfigSpec configSpec, DocumentRevision documentRevision) throws DocumentRevisionNotFoundException {
-        DocumentIteration docI = configSpec.filterConfigSpec(documentRevision.getDocumentMaster());
+        DocumentIteration docI = configSpec.filterConfigSpec(documentRevision);
         if(docI!=null){
-            DocumentRevision docR = docI.getDocumentRevision();
+            DocumentRevision docR = documentRevision;
             em.detach(docR);
             if(docR!=null && docR.getNumberOfIterations() > 1){
                 docR.removeLastIterations(docI.getIteration());

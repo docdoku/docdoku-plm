@@ -21,7 +21,9 @@ package com.docdoku.server.documents;
 
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
-import com.docdoku.core.configuration.*;
+import com.docdoku.core.configuration.BaselinedFolder;
+import com.docdoku.core.configuration.DocumentBaseline;
+import com.docdoku.core.configuration.FolderCollection;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.document.DocumentRevisionKey;
@@ -30,7 +32,10 @@ import com.docdoku.core.exceptions.*;
 import com.docdoku.core.services.IDocumentBaselineManagerLocal;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
-import com.docdoku.server.dao.*;
+import com.docdoku.server.dao.DocumentBaselineDAO;
+import com.docdoku.server.dao.DocumentRevisionDAO;
+import com.docdoku.server.dao.FolderDAO;
+import com.docdoku.server.dao.WorkspaceDAO;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
@@ -145,7 +150,7 @@ public class DocumentBaselineManagerBean implements IDocumentBaselineManagerLoca
     }
 
     private void snapshotAllDocuments(DocumentBaseline baseline, String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentRevisionNotFoundException, FolderNotFoundException {
-        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+        userManager.checkWorkspaceReadAccess(workspaceId);
         DocumentRevision[] documentRevisions = documentService.getAllDocumentsInWorkspace(workspaceId);
         List<DocumentRevisionKey> revisionKeyList = new ArrayList<>();
         for(DocumentRevision documentRevision : documentRevisions){

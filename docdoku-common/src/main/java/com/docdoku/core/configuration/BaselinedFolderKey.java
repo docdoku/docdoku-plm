@@ -25,8 +25,8 @@ import javax.persistence.Embeddable;
 import java.io.Serializable;
 
 /**
- * Identity class of <a href="BaselinedFolder.html">BaselinedFolder</a> objects defined as an embeddable object in order
- * to be used inside the baselined documents map in the <a href="DocumentCollection.html">DocumentCollection</a> class.
+ * Identity class of {@link BaselinedFolder} objects defined as an embeddable object in order
+ * to be used inside the baselined documents map in the {@link com.docdoku.core.configuration.DocumentCollection} class.
  *
  * @author Taylor LABEJOF
  * @version 2.0, 25/08/14

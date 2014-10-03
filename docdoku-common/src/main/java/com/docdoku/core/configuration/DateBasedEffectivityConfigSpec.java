@@ -34,7 +34,6 @@ import java.util.Date;
 @Table(name="DATEBASEDEFFCS")
 @Entity
 public class DateBasedEffectivityConfigSpec extends EffectivityConfigSpec {
-
     /**
      * The date and/or time of the context.
      */
@@ -52,7 +51,4 @@ public class DateBasedEffectivityConfigSpec extends EffectivityConfigSpec {
     public void setDate(Date date) {
         this.date = date;
     }
-    
-    
-    
 }

@@ -1,8 +1,8 @@
-/*global define*/
+/*global _,define,App*/
 'use strict';
 define([
 	'backbone',
-	"mustache",
+	'mustache',
 	'common-objects/collections/baselines',
 	'text!common-objects/templates/baselines/snap_baseline_view.html'
 ], function (Backbone, Mustache, Baselines, template) {

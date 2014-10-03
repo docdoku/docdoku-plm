@@ -22,7 +22,7 @@ package com.docdoku.core.configuration;
 
 
 import com.docdoku.core.document.DocumentIteration;
-import com.docdoku.core.document.DocumentMasterKey;
+import com.docdoku.core.document.DocumentRevisionKey;
 import com.docdoku.core.document.Folder;
 
 import javax.persistence.*;
@@ -67,7 +67,6 @@ public class BaselinedFolder implements Serializable, Comparable<BaselinedFolder
 
     public BaselinedFolder(){
     }
-
     public BaselinedFolder(FolderCollection folderCollection, String completePath) {
         this.baselinedFolderKey = new BaselinedFolderKey(folderCollection.getId(),completePath);
         this.folderCollection = folderCollection;
@@ -77,7 +76,6 @@ public class BaselinedFolder implements Serializable, Comparable<BaselinedFolder
             parentFolder = new BaselinedFolder(folderCollection, completePath.substring(0, index));
         }
     }
-
     public BaselinedFolder(FolderCollection folderCollection, Folder folder) {
         this(folderCollection,folder.getCompletePath());
     }
@@ -89,6 +87,9 @@ public class BaselinedFolder implements Serializable, Comparable<BaselinedFolder
     @XmlTransient
     public FolderCollection getFolderCollection() {
         return folderCollection;
+    }
+    public int getFolderCollectionId() {
+        return baselinedFolderKey.getFolderCollection();
     }
     public void setFolderCollection(FolderCollection folderCollection) {
         this.folderCollection = folderCollection;
@@ -108,22 +109,32 @@ public class BaselinedFolder implements Serializable, Comparable<BaselinedFolder
         this.parentFolder = parentFolder;
     }
 
-    public void setDocumentIterations(List<DocumentIteration> documentIterations) {
-        this.documentIterations = documentIterations;
-    }
-
-    public void addDocumentIteration(DocumentIteration documentIteration){
-        documentIterations.add(documentIteration);
-    }
-
     public List<DocumentIteration> getDocumentIterations() {
         return documentIterations;
+    }
+    public DocumentIteration getDocumentIteration(DocumentRevisionKey documentRevisionKey) {
+        for(DocumentIteration docI : documentIterations){
+            if(docI.getKey().getDocumentRevision().equals(documentRevisionKey)){
+                return docI;
+            }
+        }
+        return null;
+    }
+    public boolean hasDocumentRevision(DocumentRevisionKey documentRevisionKey){
+        for(DocumentIteration docI : documentIterations){
+            if(docI.getKey().getDocumentRevision().equals(documentRevisionKey)){
+                return true;
+            }
+        }
+        return false;
+    }
+    public void addDocumentIteration(DocumentIteration documentIteration){
+        documentIterations.add(documentIteration);
     }
 
     public boolean isRoot() {
         return !completePath.contains("/");
     }
-
     public boolean isHome() {
         try {
             int index = completePath.lastIndexOf('/');
@@ -154,8 +165,8 @@ public class BaselinedFolder implements Serializable, Comparable<BaselinedFolder
 
         BaselinedFolder that = (BaselinedFolder) o;
 
-        return completePath.equals(that.completePath)
-                && folderCollection.equals(that.folderCollection);
+        return completePath.equals(that.completePath) &&
+               folderCollection.equals(that.folderCollection);
 
     }
 
@@ -173,7 +184,7 @@ public class BaselinedFolder implements Serializable, Comparable<BaselinedFolder
      */
     @Override
     public int compareTo(BaselinedFolder baselinedFolder) {
-        int compCollection = this.baselinedFolderKey.getFolderCollection()-baselinedFolder.getBaselinedFolderKey().getFolderCollection();
-        return compCollection==0?completePath.compareTo(baselinedFolder.completePath):compCollection;
+        int compCollection = getFolderCollectionId()-baselinedFolder.getFolderCollectionId();
+        return compCollection==0 ? completePath.compareTo(baselinedFolder.completePath) : compCollection;
     }
 }

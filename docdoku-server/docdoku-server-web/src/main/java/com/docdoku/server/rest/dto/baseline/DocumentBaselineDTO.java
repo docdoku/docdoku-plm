@@ -28,7 +28,6 @@ import java.util.List;
 public class DocumentBaselineDTO extends BaselineDTO {
 
     private String workspaceId;
-    private List<BaselinedDocumentDTO> baselinedDocuments;
     private List<FolderDTO> baselinedFolders;
 
     public DocumentBaselineDTO() {
@@ -43,13 +42,6 @@ public class DocumentBaselineDTO extends BaselineDTO {
     }
     public void setWorkspaceId(String workspaceId) {
         this.workspaceId = workspaceId;
-    }
-
-    public List<BaselinedDocumentDTO> getBaselinedDocuments() {
-        return baselinedDocuments;
-    }
-    public void setBaselinedDocuments(List<BaselinedDocumentDTO> baselinedDocuments) {
-        this.baselinedDocuments = baselinedDocuments;
     }
 
     public List<FolderDTO> getBaselinedFolders() {
