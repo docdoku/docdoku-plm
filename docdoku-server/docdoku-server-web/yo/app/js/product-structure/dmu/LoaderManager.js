@@ -1,7 +1,6 @@
-/*global define,ColladaLoader2*/
-'use strict';
+/*global _,define,THREE*/
 define(['views/progress_bar_view'], function (ProgressBarView) {
-
+	'use strict';
     var LoaderManager = function (options) {
 
         this.ColladaLoader = null;
@@ -149,7 +148,5 @@ define(['views/progress_bar_view'], function (ProgressBarView) {
             }
         }
     };
-
     return LoaderManager;
-
 });

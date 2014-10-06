@@ -1,5 +1,5 @@
-define(["../lib/spin.min"], function(Spinner) {
-
+define(['../lib/spin.min'], function(Spinner) {
+	'use strict';
     var loader = function() {
         var opts = {
             lines: 13, // The number of lines to draw
@@ -21,9 +21,8 @@ define(["../lib/spin.min"], function(Spinner) {
         };
 
         var spinner = new Spinner(opts).spin();
-
-        return $(spinner.el)
-    }
+        return $(spinner.el);
+    };
 
     return loader;
-})
+});

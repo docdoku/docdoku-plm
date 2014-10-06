@@ -5,45 +5,8 @@ define([
 ], function (ChannelListener, ChannelMessagesType) {
 	'use strict';
     function CollaborativeController() {
-        var _this = this;
-
-        var collaborativeListener = new ChannelListener({
-
-            messagePattern: /^COLLABORATIVE_.+/,
-
-            isApplicable: function (messageType) {
-                return messageType.match(this.messagePattern) !== null;
-            },
-
-            onMessage: function (message) {
-	            switch(message.type){
-		            case ChannelMessagesType.COLLABORATIVE_CREATE:
-			            onCreateMessage(message);
-			            break;
-		            case ChannelMessagesType.COLLABORATIVE_JOIN:
-			            onJoinMessage(message);
-			            break;
-		            case ChannelMessagesType.COLLABORATIVE_CONTEXT:
-			            onContextMessage(message);
-			            break;
-		            case ChannelMessagesType.COLLABORATIVE_KICK_USER:
-			            onKickUserMessage(message);
-			            break;
-		            case ChannelMessagesType.COLLABORATIVE_KICK_NOT_INVITED:
-			            onKickNotInvitedMessage(message);
-			            break;
-		            case ChannelMessagesType.COLLABORATIVE_COMMANDS:
-			            onCollaborativeMessage(message);
-			            break;
-		            default:
-			            break;
-	            }
-            },
-            onStatusChanged: function (status) {
-                // only for compliance
-            }
-        });
-        App.mainChannel.addChannelListener(collaborativeListener);
+        var collaborativeListener;
+	    var _this = this;
 
 	    function onCreateMessage(message){
 		    App.collaborativeView.roomCreated(message.key, message.remoteUser);
@@ -58,17 +21,17 @@ define([
 		    App.$ControlsContainer.find('#slider-explode').val(message.messageBroadcast.explode);
 		    App.sceneManager.explodeScene(message.messageBroadcast.explode);
 	    }
-		function onContextMessage(message){
-			if(App.collaborativeView.roomKey === message.key){
-				if (message.messageBroadcast.master === '') {
-					App.collaborativeView.setLastMaster(message.messageBroadcast.lastMaster);
-				} else {
-					App.collaborativeView.setMaster(message.messageBroadcast.master);
-				}
-				App.collaborativeView.setUsers(message.messageBroadcast.users);
-				App.collaborativeView.setPendingUsers(message.messageBroadcast.pendingUsers);
-			}
-		}
+	    function onContextMessage(message){
+		    if(App.collaborativeView.roomKey === message.key){
+			    if (message.messageBroadcast.master === '') {
+				    App.collaborativeView.setLastMaster(message.messageBroadcast.lastMaster);
+			    } else {
+				    App.collaborativeView.setMaster(message.messageBroadcast.master);
+			    }
+			    App.collaborativeView.setUsers(message.messageBroadcast.users);
+			    App.collaborativeView.setPendingUsers(message.messageBroadcast.pendingUsers);
+		    }
+	    }
 	    function onKick(){
 		    App.appView.leaveSpectatorView();
 		    App.sceneManager.enableControlsObject();
@@ -113,6 +76,44 @@ define([
 			    }
 		    }
 	    }
+
+	    collaborativeListener = new ChannelListener({
+
+		    messagePattern: /^COLLABORATIVE_.+/,
+
+		    isApplicable: function (messageType) {
+			    return messageType.match(this.messagePattern) !== null;
+		    },
+
+		    onMessage: function (message) {
+			    switch (message.type) {
+				    case ChannelMessagesType.COLLABORATIVE_CREATE:
+					    onCreateMessage(message);
+					    break;
+				    case ChannelMessagesType.COLLABORATIVE_JOIN:
+					    onJoinMessage(message);
+					    break;
+				    case ChannelMessagesType.COLLABORATIVE_CONTEXT:
+					    onContextMessage(message);
+					    break;
+				    case ChannelMessagesType.COLLABORATIVE_KICK_USER:
+					    onKickUserMessage(message);
+					    break;
+				    case ChannelMessagesType.COLLABORATIVE_KICK_NOT_INVITED:
+					    onKickNotInvitedMessage(message);
+					    break;
+				    case ChannelMessagesType.COLLABORATIVE_COMMANDS:
+					    onCollaborativeMessage(message);
+					    break;
+				    default:
+					    break;
+			    }
+		    },
+		    onStatusChanged: function (status) {
+			    // only for compliance
+		    }
+	    });
+        App.mainChannel.addChannelListener(collaborativeListener);
 
         this.setClippingValue = function (value) {
             App.$ControlsContainer.find('slider-clipping').val(value);

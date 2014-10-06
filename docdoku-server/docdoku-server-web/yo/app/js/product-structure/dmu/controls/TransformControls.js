@@ -1,11 +1,9 @@
 /**
  * @author arodic / https://github.com/arodic
  */
-/*global App,intersectObjects*/
+/*global App,THREE,intersectObjects*/
 /*jshint sub:true*/
-'use strict';
 (function () {
-
     'use strict';
 
     var GizmoMaterial = function (parameters) {
@@ -101,16 +99,16 @@
             planeMaterial.side = THREE.DoubleSide;
 
             var planes = {
-                "XY": new THREE.Mesh(planeGeometry, planeMaterial),
-                "YZ": new THREE.Mesh(planeGeometry, planeMaterial),
-                "XZ": new THREE.Mesh(planeGeometry, planeMaterial),
-                "XYZE": new THREE.Mesh(planeGeometry, planeMaterial)
+                'XY': new THREE.Mesh(planeGeometry, planeMaterial),
+                'YZ': new THREE.Mesh(planeGeometry, planeMaterial),
+                'XZ': new THREE.Mesh(planeGeometry, planeMaterial),
+                'XYZE': new THREE.Mesh(planeGeometry, planeMaterial)
             };
 
-            this.activePlane = planes["XYZE"];
+            this.activePlane = planes['XYZE'];
 
-            planes["YZ"].rotation.set(0, Math.PI / 2, 0);
-            planes["XZ"].rotation.set(-Math.PI / 2, 0, 0);
+            planes['YZ'].rotation.set(0, Math.PI / 2, 0);
+            planes['XZ'].rotation.set(-Math.PI / 2, 0, 0);
 
             for (var i in planes) {
                 planes[i].name = i;
@@ -211,9 +209,9 @@
         var lookAtMatrix = new THREE.Matrix4();
 
         this.traverse(function (child) {
-            if (child.name.search("E") !== -1) {
+            if (child.name.search('E') !== -1) {
                 child.quaternion.setFromRotationMatrix(lookAtMatrix.lookAt(eye, vec1, vec2));
-            } else if (child.name.search("X") !== -1 || child.name.search("Y") !== -1 || child.name.search("Z") !== -1) {
+            } else if (child.name.search('X') !== -1 || child.name.search('Y') !== -1 || child.name.search('Z') !== -1) {
                 child.quaternion.setFromEuler(rotation);
             }
         });
@@ -294,43 +292,43 @@
         this.setActivePlane = function (axis, eye) {
 
             var tempMatrix = new THREE.Matrix4();
-            eye.applyMatrix4(tempMatrix.getInverse(tempMatrix.extractRotation(this.planes[ "XY" ].matrixWorld)));
+            eye.applyMatrix4(tempMatrix.getInverse(tempMatrix.extractRotation(this.planes[ 'XY' ].matrixWorld)));
 
-            if (axis === "X") {
-                this.activePlane = this.planes[ "XY" ];
+            if (axis === 'X') {
+                this.activePlane = this.planes[ 'XY' ];
                 if (Math.abs(eye.y) > Math.abs(eye.z)) {
-                    this.activePlane = this.planes[ "XZ" ];
+                    this.activePlane = this.planes[ 'XZ' ];
                 }
             }
 
-            if (axis === "Y") {
-                this.activePlane = this.planes[ "XY" ];
+            if (axis === 'Y') {
+                this.activePlane = this.planes[ 'XY' ];
                 if (Math.abs(eye.x) > Math.abs(eye.z)) {
-                    this.activePlane = this.planes[ "YZ" ];
+                    this.activePlane = this.planes[ 'YZ' ];
                 }
             }
 
-            if (axis === "Z") {
-                this.activePlane = this.planes[ "XZ" ];
+            if (axis === 'Z') {
+                this.activePlane = this.planes[ 'XZ' ];
                 if (Math.abs(eye.x) > Math.abs(eye.y)) {
-                    this.activePlane = this.planes[ "YZ" ];
+                    this.activePlane = this.planes[ 'YZ' ];
                 }
             }
 
-            if (axis === "XYZ") {
-                this.activePlane = this.planes[ "XYZE" ];
+            if (axis === 'XYZ') {
+                this.activePlane = this.planes[ 'XYZE' ];
             }
 
-            if (axis === "XY") {
-                this.activePlane = this.planes[ "XY" ];
+            if (axis === 'XY') {
+                this.activePlane = this.planes[ 'XY' ];
             }
 
-            if (axis === "YZ") {
-                this.activePlane = this.planes[ "YZ" ];
+            if (axis === 'YZ') {
+                this.activePlane = this.planes[ 'YZ' ];
             }
 
-            if (axis === "XZ") {
-                this.activePlane = this.planes[ "XZ" ];
+            if (axis === 'XZ') {
+                this.activePlane = this.planes[ 'XZ' ];
             }
 
             this.hide();
@@ -404,20 +402,20 @@
 
         this.setActivePlane = function (axis) {
 
-            if (axis === "E") {
-                this.activePlane = this.planes[ "XYZE" ];
+            if (axis === 'E') {
+                this.activePlane = this.planes[ 'XYZE' ];
             }
 
-            if (axis === "X") {
-                this.activePlane = this.planes[ "YZ" ];
+            if (axis === 'X') {
+                this.activePlane = this.planes[ 'YZ' ];
             }
 
-            if (axis === "Y") {
-                this.activePlane = this.planes[ "XZ" ];
+            if (axis === 'Y') {
+                this.activePlane = this.planes[ 'XZ' ];
             }
 
-            if (axis === "Z") {
-                this.activePlane = this.planes[ "XY" ];
+            if (axis === 'Z') {
+                this.activePlane = this.planes[ 'XY' ];
             }
 
             this.hide();
@@ -430,8 +428,8 @@
             THREE.TransformGizmo.prototype.update.apply(this, arguments);
 
             var group = {
-                handles: this["handles"],
-                pickers: this["pickers"]
+                handles: this['handles'],
+                pickers: this['pickers']
             };
 
             var tempMatrix = new THREE.Matrix4();
@@ -445,7 +443,7 @@
             var quaternionZ = new THREE.Quaternion();
             var eye = eye2.clone();
 
-            worldRotation.copy(this.planes["XY"].rotation);
+            worldRotation.copy(this.planes['XY'].rotation);
             tempQuaternion.setFromEuler(worldRotation);
 
             tempMatrix.makeRotationFromQuaternion(tempQuaternion).getInverse(tempMatrix);
@@ -455,19 +453,19 @@
 
                 tempQuaternion.setFromEuler(worldRotation);
 
-                if (child.name === "X") {
+                if (child.name === 'X') {
                     quaternionX.setFromAxisAngle(unitX, Math.atan2(-eye.y, eye.z));
                     tempQuaternion.multiplyQuaternions(tempQuaternion, quaternionX);
                     child.quaternion.copy(tempQuaternion);
                 }
 
-                if (child.name === "Y") {
+                if (child.name === 'Y') {
                     quaternionY.setFromAxisAngle(unitY, Math.atan2(eye.x, eye.z));
                     tempQuaternion.multiplyQuaternions(tempQuaternion, quaternionY);
                     child.quaternion.copy(tempQuaternion);
                 }
 
-                if (child.name === "Z") {
+                if (child.name === 'Z') {
                     quaternionZ.setFromAxisAngle(unitZ, Math.atan2(eye.y, eye.x));
                     tempQuaternion.multiplyQuaternions(tempQuaternion, quaternionZ);
                     child.quaternion.copy(tempQuaternion);
@@ -539,31 +537,31 @@
         this.setActivePlane = function (axis, eye) {
 
             var tempMatrix = new THREE.Matrix4();
-            eye.applyMatrix4(tempMatrix.getInverse(tempMatrix.extractRotation(this.planes[ "XY" ].matrixWorld)));
+            eye.applyMatrix4(tempMatrix.getInverse(tempMatrix.extractRotation(this.planes[ 'XY' ].matrixWorld)));
 
-            if (axis === "X") {
-                this.activePlane = this.planes[ "XY" ];
+            if (axis === 'X') {
+                this.activePlane = this.planes[ 'XY' ];
                 if (Math.abs(eye.y) > Math.abs(eye.z)) {
-                    this.activePlane = this.planes[ "XZ" ];
+                    this.activePlane = this.planes[ 'XZ' ];
                 }
             }
 
-            if (axis === "Y") {
-                this.activePlane = this.planes[ "XY" ];
+            if (axis === 'Y') {
+                this.activePlane = this.planes[ 'XY' ];
                 if (Math.abs(eye.x) > Math.abs(eye.z)) {
-                    this.activePlane = this.planes[ "YZ" ];
+                    this.activePlane = this.planes[ 'YZ' ];
                 }
             }
 
-            if (axis === "Z") {
-                this.activePlane = this.planes[ "XZ" ];
+            if (axis === 'Z') {
+                this.activePlane = this.planes[ 'XZ' ];
                 if (Math.abs(eye.x) > Math.abs(eye.y)) {
-                    this.activePlane = this.planes[ "YZ" ];
+                    this.activePlane = this.planes[ 'YZ' ];
                 }
             }
 
-            if (axis === "XYZ") {
-                this.activePlane = this.planes[ "XYZE" ];
+            if (axis === 'XYZ') {
+                this.activePlane = this.planes[ 'XYZE' ];
             }
 
             this.hide();
@@ -587,21 +585,21 @@
         this.domElement = ( domElement !== undefined ) ? domElement : document;
 
         this.gizmo = {};
-        this.gizmo["translate"] = new THREE.TransformGizmoTranslate();
-        this.gizmo["rotate"] = new THREE.TransformGizmoRotate();
-        this.gizmo["scale"] = new THREE.TransformGizmoScale();
+        this.gizmo['translate'] = new THREE.TransformGizmoTranslate();
+        this.gizmo['rotate'] = new THREE.TransformGizmoRotate();
+        this.gizmo['scale'] = new THREE.TransformGizmoScale();
 
-        this.add(this.gizmo["translate"]);
-        this.add(this.gizmo["rotate"]);
-        this.add(this.gizmo["scale"]);
+        this.add(this.gizmo['translate']);
+        this.add(this.gizmo['rotate']);
+        this.add(this.gizmo['scale']);
 
-        this.gizmo["translate"].hide();
-        this.gizmo["rotate"].hide();
-        this.gizmo["scale"].hide();
+        this.gizmo['translate'].hide();
+        this.gizmo['rotate'].hide();
+        this.gizmo['scale'].hide();
 
         this.object = undefined;
         this.snap = null;
-        this.space = "world";
+        this.space = 'world';
         this.size = 1;
         this.axis = null;
         var camera = null;
@@ -611,10 +609,10 @@
         var scope = this;
 
         var _dragging = false;
-        var _mode = "translate";
-        var _plane = "XY";
+        var _mode = 'translate';
+        var _plane = 'XY';
 
-        var changeEvent = { type: "change" };
+        var changeEvent = { type: 'change' };
 
         var ray = new THREE.Raycaster();
         var projector = new THREE.Projector();
@@ -744,7 +742,7 @@
             var planeIntersect = intersectObjects(pointer, [scope.gizmo[_mode].activePlane]);
             point.copy(planeIntersect.point);
 
-            if (_mode === "translate") {
+            if (_mode === 'translate') {
                 point.sub(offset);
                 point.multiply(parentScale);
 
@@ -753,17 +751,17 @@
                     _dragging = false;
                     return;
                 }
-                if (scope.space === "local") {
+                if (scope.space === 'local') {
 
                     point.applyMatrix4(tempMatrix.getInverse(worldRotationMatrix));
 
-                    if (scope.axis.search("X") === -1) {
+                    if (scope.axis.search('X') === -1) {
                         point.x = 0;
                     }
-                    if (scope.axis.search("Y") === -1) {
+                    if (scope.axis.search('Y') === -1) {
                         point.y = 0;
                     }
-                    if (scope.axis.search("Z") === -1) {
+                    if (scope.axis.search('Z') === -1) {
                         point.z = 0;
                     }
 
@@ -774,15 +772,15 @@
 
                 }
 
-                if (scope.space === "world" || scope.axis.search("XYZ") !== -1) {
+                if (scope.space === 'world' || scope.axis.search('XYZ') !== -1) {
 
-                    if (scope.axis.search("X") === -1) {
+                    if (scope.axis.search('X') === -1) {
                         point.x = 0;
                     }
-                    if (scope.axis.search("Y") === -1) {
+                    if (scope.axis.search('Y') === -1) {
                         point.y = 0;
                     }
-                    if (scope.axis.search("Z") === -1) {
+                    if (scope.axis.search('Z') === -1) {
                         point.z = 0;
                     }
 
@@ -795,26 +793,26 @@
 
                 if (scope.snap !== null) {
 
-                    if (scope.axis.search("X") !== -1) {
+                    if (scope.axis.search('X') !== -1) {
                         scope.object.position.x = Math.round(scope.object.position.x / scope.snap) * scope.snap;
                     }
-                    if (scope.axis.search("Y") !== -1) {
+                    if (scope.axis.search('Y') !== -1) {
                         scope.object.position.y = Math.round(scope.object.position.y / scope.snap) * scope.snap;
                     }
-                    if (scope.axis.search("Z") !== -1) {
+                    if (scope.axis.search('Z') !== -1) {
                         scope.object.position.z = Math.round(scope.object.position.z / scope.snap) * scope.snap;
                     }
 
                 }
 
-            } else if (_mode === "scale") {
+            } else if (_mode === 'scale') {
 
                 point.sub(offset);
                 point.multiply(parentScale);
 
-                if (scope.space === "local") {
+                if (scope.space === 'local') {
 
-                    if (scope.axis === "XYZ") {
+                    if (scope.axis === 'XYZ') {
 
                         scale = 1 + ( ( point.y ) / 50 );
 
@@ -826,13 +824,13 @@
 
                         point.applyMatrix4(tempMatrix.getInverse(worldRotationMatrix));
 
-                        if (scope.axis === "X") {
+                        if (scope.axis === 'X') {
                             scope.object.scale.x = oldScale.x * ( 1 + point.x / 50 );
                         }
-                        if (scope.axis === "Y") {
+                        if (scope.axis === 'Y') {
                             scope.object.scale.y = oldScale.y * ( 1 + point.y / 50 );
                         }
-                        if (scope.axis === "Z") {
+                        if (scope.axis === 'Z') {
                             scope.object.scale.z = oldScale.z * ( 1 + point.z / 50 );
                         }
 
@@ -840,14 +838,14 @@
 
                 }
 
-            } else if (_mode === "rotate") {
+            } else if (_mode === 'rotate') {
 
                 point.sub(worldPosition);
                 point.multiply(parentScale);
                 tempVector.copy(offset).sub(worldPosition);
                 tempVector.multiply(parentScale);
 
-                if (scope.axis === "E") {
+                if (scope.axis === 'E') {
 
                     point.applyMatrix4(tempMatrix.getInverse(lookAtMatrix));
                     tempVector.applyMatrix4(tempMatrix.getInverse(lookAtMatrix));
@@ -865,7 +863,7 @@
 
                     scope.object.quaternion.copy(tempQuaternion);
 
-                } else if (scope.axis === "XYZE") {
+                } else if (scope.axis === 'XYZE') {
 
                     quaternionE.setFromEuler(point.clone().cross(tempVector).normalize()); // rotation axis
 
@@ -878,7 +876,7 @@
 
                     scope.object.quaternion.copy(tempQuaternion);
 
-                } else if (scope.space === "local") {
+                } else if (scope.space === 'local') {
 
                     point.applyMatrix4(tempMatrix.getInverse(worldRotationMatrix));
 
@@ -892,19 +890,19 @@
                     quaternionY.setFromAxisAngle(unitY, rotation.y - offsetRotation.y);
                     quaternionZ.setFromAxisAngle(unitZ, rotation.z - offsetRotation.z);
 
-                    if (scope.axis === "X") {
+                    if (scope.axis === 'X') {
                         quaternionXYZ.multiplyQuaternions(quaternionXYZ, quaternionX);
                     }
-                    if (scope.axis === "Y") {
+                    if (scope.axis === 'Y') {
                         quaternionXYZ.multiplyQuaternions(quaternionXYZ, quaternionY);
                     }
-                    if (scope.axis === "Z") {
+                    if (scope.axis === 'Z') {
                         quaternionXYZ.multiplyQuaternions(quaternionXYZ, quaternionZ);
                     }
 
                     scope.object.quaternion.copy(quaternionXYZ);
 
-                } else if (scope.space === "world") {
+                } else if (scope.space === 'world') {
 
                     rotation.set(Math.atan2(point.z, point.y), Math.atan2(point.x, point.z), Math.atan2(point.y, point.x));
                     offsetRotation.set(Math.atan2(tempVector.z, tempVector.y), Math.atan2(tempVector.x, tempVector.z), Math.atan2(tempVector.y, tempVector.x));
@@ -916,13 +914,13 @@
                     quaternionZ.setFromAxisAngle(unitZ, rotation.z - offsetRotation.z);
                     quaternionXYZ.setFromRotationMatrix(worldRotationMatrix);
 
-                    if (scope.axis === "X") {
+                    if (scope.axis === 'X') {
                         tempQuaternion.multiplyQuaternions(tempQuaternion, quaternionX);
                     }
-                    if (scope.axis === "Y") {
+                    if (scope.axis === 'Y') {
                         tempQuaternion.multiplyQuaternions(tempQuaternion, quaternionY);
                     }
-                    if (scope.axis === "Z") {
+                    if (scope.axis === 'Z') {
                         tempQuaternion.multiplyQuaternions(tempQuaternion, quaternionZ);
                     }
 
@@ -964,46 +962,46 @@
         }
 
         this.unbindEvents = function () {
-            scope.domElement.removeEventListener("mousedown", onPointerDown, false);
-            scope.domElement.removeEventListener("touchstart", onPointerDown, false);
+            scope.domElement.removeEventListener('mousedown', onPointerDown, false);
+            scope.domElement.removeEventListener('touchstart', onPointerDown, false);
 
-            scope.domElement.removeEventListener("mousemove", onPointerHover, false);
-            scope.domElement.removeEventListener("touchmove", onPointerHover, false);
+            scope.domElement.removeEventListener('mousemove', onPointerHover, false);
+            scope.domElement.removeEventListener('touchmove', onPointerHover, false);
 
-            scope.domElement.removeEventListener("mousemove", onPointerMove, false);
-            scope.domElement.removeEventListener("touchmove", onPointerMove, false);
+            scope.domElement.removeEventListener('mousemove', onPointerMove, false);
+            scope.domElement.removeEventListener('touchmove', onPointerMove, false);
 
-            scope.domElement.removeEventListener("mouseup", onPointerUp, false);
-            scope.domElement.removeEventListener("mouseout", onPointerUp, false);
-            scope.domElement.removeEventListener("touchend", onPointerUp, false);
-            scope.domElement.removeEventListener("touchcancel", onPointerUp, false);
-            scope.domElement.removeEventListener("touchleave", onPointerUp, false);
+            scope.domElement.removeEventListener('mouseup', onPointerUp, false);
+            scope.domElement.removeEventListener('mouseout', onPointerUp, false);
+            scope.domElement.removeEventListener('touchend', onPointerUp, false);
+            scope.domElement.removeEventListener('touchcancel', onPointerUp, false);
+            scope.domElement.removeEventListener('touchleave', onPointerUp, false);
         };
 
         this.bindEvents = function () {
-            scope.domElement.addEventListener("mousedown", onPointerDown, false);
-            scope.domElement.addEventListener("touchstart", onPointerDown, false);
+            scope.domElement.addEventListener('mousedown', onPointerDown, false);
+            scope.domElement.addEventListener('touchstart', onPointerDown, false);
 
-            scope.domElement.addEventListener("mousemove", onPointerHover, false);
-            scope.domElement.addEventListener("touchmove", onPointerHover, false);
+            scope.domElement.addEventListener('mousemove', onPointerHover, false);
+            scope.domElement.addEventListener('touchmove', onPointerHover, false);
 
-            scope.domElement.addEventListener("mousemove", onPointerMove, false);
-            scope.domElement.addEventListener("touchmove", onPointerMove, false);
+            scope.domElement.addEventListener('mousemove', onPointerMove, false);
+            scope.domElement.addEventListener('touchmove', onPointerMove, false);
 
-            scope.domElement.addEventListener("mouseup", onPointerUp, false);
-            scope.domElement.addEventListener("mouseout", onPointerUp, false);
-            scope.domElement.addEventListener("touchend", onPointerUp, false);
-            scope.domElement.addEventListener("touchcancel", onPointerUp, false);
-            scope.domElement.addEventListener("touchleave", onPointerUp, false);
+            scope.domElement.addEventListener('mouseup', onPointerUp, false);
+            scope.domElement.addEventListener('mouseout', onPointerUp, false);
+            scope.domElement.addEventListener('touchend', onPointerUp, false);
+            scope.domElement.addEventListener('touchcancel', onPointerUp, false);
+            scope.domElement.addEventListener('touchleave', onPointerUp, false);
         };
 
         this.attach = function (object) {
 
             scope.object = object;
 
-            this.gizmo["translate"].hide();
-            this.gizmo["rotate"].hide();
-            this.gizmo["scale"].hide();
+            this.gizmo['translate'].hide();
+            this.gizmo['rotate'].hide();
+            this.gizmo['scale'].hide();
             this.gizmo[_mode].show();
 
             scope.update();
@@ -1015,9 +1013,9 @@
             scope.object = undefined;
             this.axis = undefined;
 
-            this.gizmo["translate"].hide();
-            this.gizmo["rotate"].hide();
-            this.gizmo["scale"].hide();
+            this.gizmo['translate'].hide();
+            this.gizmo['rotate'].hide();
+            this.gizmo['scale'].hide();
 
         };
 
@@ -1029,13 +1027,13 @@
 
             _mode = mode ? mode : _mode;
 
-            if (_mode === "scale") {
-                scope.space = "local";
+            if (_mode === 'scale') {
+                scope.space = 'local';
             }
 
-            this.gizmo["translate"].hide();
-            this.gizmo["rotate"].hide();
-            this.gizmo["scale"].hide();
+            this.gizmo['translate'].hide();
+            this.gizmo['rotate'].hide();
+            this.gizmo['scale'].hide();
             this.gizmo[_mode].show();
 
             this.update();
@@ -1092,11 +1090,11 @@
 
             eye.copy(camPosition).sub(worldPosition).normalize();
 
-            if (scope.space === "local") {
+            if (scope.space === 'local') {
                 this.gizmo[_mode].update(worldRotation, eye);
             }
 
-            else if (scope.space === "world") {
+            else if (scope.space === 'world') {
                 this.gizmo[_mode].update(new THREE.Euler(), eye);
             }
 

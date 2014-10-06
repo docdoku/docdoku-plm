@@ -1,7 +1,7 @@
-/*global App*/
-'use strict';
-THREE.TrackballControls = function (object, domElement) {
+/*global App,THREE*/
 
+THREE.TrackballControls = function (object, domElement) {
+	'use strict';
     var _this = this;
     var STATE = { NONE: -1, ROTATE: 0, ZOOM: 1, PAN: 2, TOUCH_ROTATE: 3, TOUCH_ZOOM: 4, TOUCH_PAN: 5 };
 

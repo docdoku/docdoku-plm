@@ -20,9 +20,8 @@
 //      controls = new THREE.TrackballControls(camera);
 //      controls.target.z = 150;
 // Simple substitute "OrbitControls" and the control should work as-is.
-'use strict';
 THREE.OrbitControls = function (object, domElement) {
-
+	'use strict';
     this.object = object;
     this.domElement = ( domElement !== undefined ) ? domElement : document;
 

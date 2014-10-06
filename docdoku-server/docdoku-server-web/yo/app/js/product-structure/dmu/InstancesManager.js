@@ -1,4 +1,4 @@
-/*global _,$,define,App,worker*/
+/*global _,$,define,App,Worker,console*/
 define(['dmu/LoaderManager', 'async'],
     function (LoaderManager, async) {
 	    'use strict';
@@ -212,6 +212,36 @@ define(['dmu/LoaderManager', 'async'],
                 }});
             }
 
+	        function onSuccessLoadPath(instances){
+		        _.each(instances, function (instance) {
+			        if (instancesIndexed[instance.id]) {
+				        worker.postMessage({fn: 'check', obj: instance.id});
+			        } else {
+				        instancesIndexed[instance.id] = instance;
+				        instance.matrix = adaptMatrix(instance.matrix);
+				        var radius = findRadius(instance.files);
+				        var instanceBox = new THREE.Box3().setFromCenterAndSize(new THREE.Vector3(radius / 2, radius / 2, radius / 2), new THREE.Vector3(radius, radius, radius));
+				        var cog = instanceBox.center().applyMatrix4(instance.matrix);
+				        instance.currentQuality = undefined;
+				        instance.qualities = findQualities(instance.files);
+
+				        worker.postMessage({
+					        fn: 'addInstance',
+					        obj: {
+						        id: instance.id,
+						        cog: cog,
+						        radius: radius,
+						        qualities: instance.qualities,
+						        checked: true
+					        }
+				        });
+			        }
+		        });
+
+		        _this.planNewEval();
+		        loaderIndicator.hide();
+	        }
+
 	        function loadPath(path, callback) {
 		        $.ajax({
 			        url: App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' +
@@ -247,36 +277,6 @@ define(['dmu/LoaderManager', 'async'],
                 });
 
             }
-
-	        function onSuccessLoadPath(instances){
-		        _.each(instances, function (instance) {
-			        if (instancesIndexed[instance.id]) {
-				        worker.postMessage({fn: 'check', obj: instance.id});
-			        } else {
-				        instancesIndexed[instance.id] = instance;
-				        instance.matrix = adaptMatrix(instance.matrix);
-				        var radius = findRadius(instance.files);
-				        var instanceBox = new THREE.Box3().setFromCenterAndSize(new THREE.Vector3(radius / 2, radius / 2, radius / 2), new THREE.Vector3(radius, radius, radius));
-				        var cog = instanceBox.center().applyMatrix4(instance.matrix);
-				        instance.currentQuality = undefined;
-				        instance.qualities = findQualities(instance.files);
-
-				        worker.postMessage({
-					        fn: 'addInstance',
-					        obj: {
-						        id: instance.id,
-						        cog: cog,
-						        radius: radius,
-						        qualities: instance.qualities,
-						        checked: true
-					        }
-				        });
-			        }
-		        });
-
-		        _this.planNewEval();
-		        loaderIndicator.hide();
-	        }
 
 	        function unLoadPath(path, callback) {
 		        $.ajax({

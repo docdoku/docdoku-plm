@@ -1,4 +1,4 @@
-/*global _,define,App,Stats,Instance,requestAnimationFrame,TWEEN*/
+/*global _,define,App,THREE,TWEEN,requestAnimationFrame*/
 define([
     'backbone',
     'views/marker_create_modal_view',

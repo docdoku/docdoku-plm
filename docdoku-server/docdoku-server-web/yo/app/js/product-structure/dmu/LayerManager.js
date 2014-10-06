@@ -1,11 +1,11 @@
-/*global define,App*/
-'use strict';
+/*global define,App,THREE*/
 define([
     'collections/layer_collection',
     'models/layer',
     'views/layers-list-view',
     'views/marker_info_modal_view'
 ], function (LayerCollection, Layer, LayersListView, MarkerInfoModalView) {
+	'use strict';
 
     var STATE = { FULL: 0, TRANSPARENT: 1};
 
