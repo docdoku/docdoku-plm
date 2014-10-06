@@ -18,7 +18,7 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.  
  */
 
-package com.docdoku.cli;
+package com.docdoku.cli.services;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
@@ -29,37 +29,33 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author Taylor LABEJOF
+ * @author Florent Garin
  */
-@WebServiceClient(name = "ProductConfigSpecService", targetNamespace = "http://server.docdoku.com/", wsdlLocation = "http://localhost:8080/services/productConfigSpec?wsdl")
-public class ProductConfigSpecService extends Service
-{
-
-    private final static URL PRODUCTCONFIGSPECSERVICE_WSDL_LOCATION;
-    private final static QName PRODUCTCONFIGSPECSERVICE_QNAME = new QName("http://server.docdoku.com/", "ProductConfigSpecManagerBeanService");
-    private final static Logger LOGGER = Logger.getLogger(ProductConfigSpecService.class.getName());
+@WebServiceClient(name = "WorkflowService", targetNamespace = "http://server.docdoku.com/", wsdlLocation = "http://localhost:8080/services/workflow?wsdl")
+public class WorkflowService extends Service{
+    private final static URL WORKFLOWSERVICE_WSDL_LOCATION;
+    private final static QName WORKFLOWSERVICE_QNAME = new QName("http://server.docdoku.com/", "WorkflowManagerBeanService");
+    private final static Logger LOGGER = Logger.getLogger(WorkflowService.class.getName());
 
     static {
         URL url = null;
         try {
             URL baseUrl;
-            baseUrl = ProductConfigSpecService.class.getResource(".");
-            url = new URL(baseUrl, "http://localhost:8080/services/productConfigSpec?wsdl");
+            baseUrl = WorkflowService.class.getResource(".");
+            url = new URL(baseUrl, "http://localhost:8080/services/workflow?wsdl");
         } catch (MalformedURLException e) {
-            LOGGER.warning("Failed to create URL for the wsdl Location: 'http://localhost:8080/services/productConfigSpec?wsdl', retrying as a local file");
+            LOGGER.warning("Failed to create URL for the wsdl Location: 'http://localhost:8080/services/workflow?wsdl', retrying as a local file");
             LOGGER.warning(e.getMessage());
         }
-        PRODUCTCONFIGSPECSERVICE_WSDL_LOCATION = url;
+        WORKFLOWSERVICE_WSDL_LOCATION = url;
     }
 
-    public ProductConfigSpecService(URL wsdlLocation, QName serviceName) {
+    public WorkflowService(URL wsdlLocation, QName serviceName) {
         super(wsdlLocation, serviceName);
     }
 
-    public ProductConfigSpecService() {
-        super(PRODUCTCONFIGSPECSERVICE_WSDL_LOCATION, PRODUCTCONFIGSPECSERVICE_QNAME);
+    public WorkflowService() {
+        super(WORKFLOWSERVICE_WSDL_LOCATION, WORKFLOWSERVICE_QNAME);
     }
-
-    
 
 }

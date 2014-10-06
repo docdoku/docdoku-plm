@@ -18,7 +18,7 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.  
  */
 
-package com.docdoku.cli;
+package com.docdoku.cli.services;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
@@ -31,35 +31,31 @@ import java.util.logging.Logger;
  *
  * @author Florent Garin
  */
-@WebServiceClient(name = "DocumentService", targetNamespace = "http://server.docdoku.com/", wsdlLocation = "http://localhost:8080/services/document?wsdl")
-public class DocumentService extends Service
-{
-
-    private final static URL DOCUMENTSERVICE_WSDL_LOCATION;
-    private final static QName DOCUMENTSERVICE_QNAME = new QName("http://server.docdoku.com/", "DocumentManagerBeanService");
-    private final static Logger LOGGER = Logger.getLogger(com.docdoku.cli.DocumentService.class.getName());
+@WebServiceClient(name = "ProductService", targetNamespace = "http://server.docdoku.com/", wsdlLocation = "http://localhost:8080/services/product?wsdl")
+public class ProductService extends Service{
+    private final static URL PRODUCTSERVICE_WSDL_LOCATION;
+    private final static QName PRODUCTSERVICE_QNAME = new QName("http://server.docdoku.com/", "ProductManagerBeanService");
+    private final static Logger LOGGER = Logger.getLogger(ProductService.class.getName());
 
     static {
         URL url = null;
         try {
             URL baseUrl;
-            baseUrl = com.docdoku.cli.DocumentService.class.getResource(".");
-            url = new URL(baseUrl, "http://localhost:8080/services/document?wsdl");
+            baseUrl = ProductService.class.getResource(".");
+            url = new URL(baseUrl, "http://localhost:8080/services/product?wsdl");
         } catch (MalformedURLException e) {
-            LOGGER.warning("Failed to create URL for the wsdl Location: 'http://localhost:8080/services/document?wsdl', retrying as a local file");
+            LOGGER.warning("Failed to create URL for the wsdl Location: 'http://localhost:8080/services/product?wsdl', retrying as a local file");
             LOGGER.warning(e.getMessage());
         }
-        DOCUMENTSERVICE_WSDL_LOCATION = url;
+        PRODUCTSERVICE_WSDL_LOCATION = url;
     }
 
-    public DocumentService(URL wsdlLocation, QName serviceName) {
+    public ProductService(URL wsdlLocation, QName serviceName) {
         super(wsdlLocation, serviceName);
     }
 
-    public DocumentService() {
-        super(DOCUMENTSERVICE_WSDL_LOCATION, DOCUMENTSERVICE_QNAME);
+    public ProductService() {
+        super(PRODUCTSERVICE_WSDL_LOCATION, PRODUCTSERVICE_QNAME);
     }
-
-    
 
 }

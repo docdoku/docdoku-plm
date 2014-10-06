@@ -18,7 +18,7 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.  
  */
 
-package com.docdoku.cli;
+package com.docdoku.cli.services;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
@@ -29,37 +29,32 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author Morgan Guimard
+ * @author Taylor LABEJOF
  */
-@WebServiceClient(name = "UserService", targetNamespace = "http://server.docdoku.com/", wsdlLocation = "http://localhost:8080/services/user?wsdl")
-public class UserService extends Service
-{
-
-    private final static URL USERSERVICE_WSDL_LOCATION;
-    private final static QName USERSERVICE_QNAME = new QName("http://server.docdoku.com/", "UserManagerBeanService");
-    private final static Logger LOGGER = Logger.getLogger(UserService.class.getName());
+@WebServiceClient(name = "ProductConfigSpecService", targetNamespace = "http://server.docdoku.com/", wsdlLocation = "http://localhost:8080/services/productConfigSpec?wsdl")
+public class ProductConfigSpecService extends Service{
+    private static final URL PRODUCTCONFIGSPECSERVICE_WSDL_LOCATION;
+    private static final QName PRODUCTCONFIGSPECSERVICE_QNAME = new QName("http://server.docdoku.com/", "ProductConfigSpecManagerBeanService");
+    private static final Logger LOGGER = Logger.getLogger(ProductConfigSpecService.class.getName());
 
     static {
         URL url = null;
         try {
             URL baseUrl;
-            baseUrl = UserService.class.getResource(".");
-            url = new URL(baseUrl, "http://localhost:8080/services/user?wsdl");
+            baseUrl = ProductConfigSpecService.class.getResource(".");
+            url = new URL(baseUrl, "http://localhost:8080/services/productConfigSpec?wsdl");
         } catch (MalformedURLException e) {
-            LOGGER.warning("Failed to create URL for the wsdl Location: 'http://localhost:8080/services/user?wsdl', retrying as a local file");
+            LOGGER.warning("Failed to create URL for the wsdl Location: 'http://localhost:8080/services/productConfigSpec?wsdl', retrying as a local file");
             LOGGER.warning(e.getMessage());
         }
-        USERSERVICE_WSDL_LOCATION = url;
+        PRODUCTCONFIGSPECSERVICE_WSDL_LOCATION = url;
     }
 
-    public UserService(URL wsdlLocation, QName serviceName) {
+    public ProductConfigSpecService(URL wsdlLocation, QName serviceName) {
         super(wsdlLocation, serviceName);
     }
 
-    public UserService() {
-        super(USERSERVICE_WSDL_LOCATION, USERSERVICE_QNAME);
+    public ProductConfigSpecService() {
+        super(PRODUCTCONFIGSPECSERVICE_WSDL_LOCATION, PRODUCTCONFIGSPECSERVICE_QNAME);
     }
-
-    
-
 }

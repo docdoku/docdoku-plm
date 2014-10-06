@@ -1,20 +1,21 @@
-/*global define*/
+/*global _,define,App*/
 define([
     'backbone',
-    "mustache",
-    "common-objects/collections/configuration_items",
-    "text!templates/product_content.html",
-    "views/product_list",
-    "views/product_creation_view",
-    "views/baseline/baseline_creation_view",
-    "common-objects/views/baselines/snap_baseline_view",
-    "text!common-objects/templates/buttons/snap_latest_button.html",
-    "text!common-objects/templates/buttons/snap_released_button.html",
-    "text!common-objects/templates/buttons/delete_button.html"
+    'mustache',
+    'common-objects/collections/configuration_items',
+    'text!templates/product_content.html',
+    'views/product_list',
+    'views/product_creation_view',
+    'views/baseline/baseline_creation_view',
+    'common-objects/views/baselines/snap_baseline_view',
+    'text!common-objects/templates/buttons/snap_latest_button.html',
+    'text!common-objects/templates/buttons/snap_released_button.html',
+    'text!common-objects/templates/buttons/delete_button.html'
 ], function (Backbone, Mustache, ConfigurationItemCollection, template, ProductListView, ProductCreationView, BaselineCreationView, SnapBaselineView, snapLatestButton, snapReleasedButton, deleteButton) {
-    var ProductContentView = Backbone.View.extend({
+    'use strict';
+	var ProductContentView = Backbone.View.extend({
 
-        el: "#product-management-content",
+        el: '#product-management-content',
 
         partials: {
             snapLatestButton: snapLatestButton,
@@ -23,10 +24,10 @@ define([
         },
 
         events: {
-            "click button.new-product": "newProduct",
-            "click button.delete": "deleteProduct",
-            "click button.new-latest-baseline": "createLatestBaseline",
-            "click button.new-released-baseline": "createReleasedBaseline"
+            'click button.new-product': 'newProduct',
+            'click button.delete': 'deleteProduct',
+            'click button.new-latest-baseline': 'createLatestBaseline',
+            'click button.new-released-baseline': 'createReleasedBaseline'
         },
 
         initialize: function () {
@@ -39,21 +40,21 @@ define([
             this.bindDomElements();
 
             this.productListView = new ProductListView({
-                el: this.$("#product_table"),
+                el: this.$('#product_table'),
                 collection: new ConfigurationItemCollection()
             }).render();
 
-            this.productListView.on("delete-button:display", this.changeDeleteButtonDisplay);
-            this.productListView.on("snap-latest-baseline-button:display", this.changeSnapLatestBaselineButtonDisplay);
-            this.productListView.on("snap-released-baseline-button:display", this.changeSnapReleasedBaselineButtonDisplay);
+            this.productListView.on('delete-button:display', this.changeDeleteButtonDisplay);
+            this.productListView.on('snap-latest-baseline-button:display', this.changeSnapLatestBaselineButtonDisplay);
+            this.productListView.on('snap-released-baseline-button:display', this.changeSnapReleasedBaselineButtonDisplay);
 
             return this;
         },
 
         bindDomElements: function () {
-            this.deleteButton = this.$(".delete");
-            this.snapLatestBaselineButton = this.$(".new-latest-baseline");
-            this.snapReleasedBaselineButton = this.$(".new-released-baseline");
+            this.deleteButton = this.$('.delete');
+            this.snapLatestBaselineButton = this.$('.new-latest-baseline');
+            this.snapReleasedBaselineButton = this.$('.new-released-baseline');
         },
 
         newProduct: function () {
@@ -71,7 +72,7 @@ define([
             var snapBaselineView = new SnapBaselineView(
                 {
                     model: this.productListView.getSelectedProduct(),
-                    type: "LATEST"
+                    type: 'LATEST'
                 });
             window.document.body.appendChild(snapBaselineView.render().el);
             snapBaselineView.openModal();
@@ -81,7 +82,7 @@ define([
             var snapBaselineView = new SnapBaselineView(
                 {
                     model: this.productListView.getSelectedProduct(),
-                    type: "RELEASED"
+                    type: 'RELEASED'
                 });
             window.document.body.appendChild(snapBaselineView.render().el);
             snapBaselineView.openModal();
@@ -114,7 +115,5 @@ define([
         }
 
     });
-
     return ProductContentView;
-
 });

@@ -8,7 +8,7 @@ import com.docdoku.server.mainchannel.util.ChannelMessagesType;
 import javax.json.JsonObject;
 import javax.websocket.Session;
 /**
- * Created by docdoku on 30/06/14.
+ * Created by Arthur FRIN on 30/06/14.
  */
 public class CollaborativeRoomController {
 
@@ -30,28 +30,24 @@ public class CollaborativeRoomController {
     }
 
     public static void processInvite(String callerLogin, String invitedUser, CollaborativeRoom room, String context, String url){
-        if (room.getMasterName().equals(callerLogin)){
+        if (room.getMasterName().equals(callerLogin) && room.findUserSession(invitedUser)==null) {
             // the master sent the invitation
-
-            if (room.findUserSession(invitedUser)==null) {
-                // the user is not already in the room
-                if (!room.getPendingUsers().contains(invitedUser)) {
-                    // the user is not yet in the pending list, add him.
-                    room.addPendingUser(invitedUser);
-                }
-                // Chat message
-                ChatMessage chatMessage = new ChatMessage(ChannelMessagesType.CHAT_MESSAGE,invitedUser);
-                String invite = "/invite " + url + "/room/" + room.getKey();
-                chatMessage.setMessage(invite);
-                chatMessage.setContext(context);
-                chatMessage.setRemoteUser(callerLogin);
-                chatMessage.setSender(callerLogin);
-                MainChannelDispatcher.sendToAllUserChannels(invitedUser,chatMessage);
-
-                CollaborativeRoomController.broadcastNewContext(room);
+            // the user is not already in the room
+            if (!room.getPendingUsers().contains(invitedUser)) {
+                // the user is not yet in the pending list, add him.
+                room.addPendingUser(invitedUser);
             }
-        }
+            // Chat message
+            ChatMessage chatMessage = new ChatMessage(ChannelMessagesType.CHAT_MESSAGE,invitedUser);
+            String invite = "/invite " + url + "/room/" + room.getKey();
+            chatMessage.setMessage(invite);
+            chatMessage.setContext(context);
+            chatMessage.setRemoteUser(callerLogin);
+            chatMessage.setSender(callerLogin);
+            MainChannelDispatcher.sendToAllUserChannels(invitedUser,chatMessage);
 
+            CollaborativeRoomController.broadcastNewContext(room);
+        }
     }
 
     public static void processJoin(Session callerSession, String callerLogin, CollaborativeRoom room, CollaborativeMessage collaborativeMessage){
@@ -61,20 +57,17 @@ public class CollaborativeRoomController {
         }
 
         // Master
-        if (room.getMasterName().equals("")){
+        if ("".equals(room.getMasterName()) && room.getLastMaster().equals(callerLogin)) {
             // if the room has no master, allow the last master to take the lead
-            if (room.getLastMaster().equals(callerLogin)) {
-                room.setMaster(callerSession);
-                CollaborativeRoomController.sendAllCommands(callerSession,room);
-                //MainChannelDispatcher.send(callerSession, collaborativeMessage); // notify the user that he joined the room
-                CollaborativeRoomController.broadcastNewContext(room);
-                return;
-            }
+            room.setMaster(callerSession);
+            CollaborativeRoomController.sendAllCommands(callerSession,room);
+            //MainChannelDispatcher.send(callerSession, collaborativeMessage); // notify the user that he joined the room
+            CollaborativeRoomController.broadcastNewContext(room);
+            return;
         }
 
         // User
-        if (!room.removePendingUser(callerLogin))
-        {
+        if (!room.removePendingUser(callerLogin)){
             // if the user is not in the pending list reject him
             CollaborativeMessage message = new CollaborativeMessage(ChannelMessagesType.COLLABORATIVE_KICK_NOT_INVITED,room.getKey(),null,callerLogin);
             MainChannelDispatcher.send(callerSession, message);

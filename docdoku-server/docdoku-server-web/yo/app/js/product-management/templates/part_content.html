@@ -1,9 +1,5 @@
 <div class="actions well">
-    <form id="part-search-form">
-        <input type="text" class="part-document-input" placeholder="{{i18n.QUICK_SEARCH}}"/>
-        <i class="fa fa-caret-down advanced-search-button" title="{{i18n.ADVANCED_SEARCH}}"></i>
-        <button class="btn btn-custom fa fa-search" title="{{i18n.SEARCH}}"></button>
-    </form>
+    {{> searchForm}}
 
     <button class="btn btn-default new-part" title="{{i18n.NEW_PART}}">
         <span class="icon"></span>
@@ -13,7 +9,7 @@
     {{> checkoutButtonGroup}}
     {{> aclButton}}
     {{> newVersionButton}}
-    {{> release_button}}
+    {{> releaseButton}}
 </div>
 
 <div class="page-controls">

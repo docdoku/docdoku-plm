@@ -18,7 +18,7 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.  
  */
 
-package com.docdoku.cli;
+package com.docdoku.cli.services;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
@@ -29,37 +29,34 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author Florent Garin
+ * @author Morgan Guimard
  */
-@WebServiceClient(name = "ProductService", targetNamespace = "http://server.docdoku.com/", wsdlLocation = "http://localhost:8080/services/product?wsdl")
-public class ProductService extends Service
-{
+@WebServiceClient(name = "UserService", targetNamespace = "http://server.docdoku.com/", wsdlLocation = "http://localhost:8080/services/user?wsdl")
+public class UserService extends Service{
 
-    private final static URL PRODUCTSERVICE_WSDL_LOCATION;
-    private final static QName PRODUCTSERVICE_QNAME = new QName("http://server.docdoku.com/", "ProductManagerBeanService");
-    private final static Logger LOGGER = Logger.getLogger(com.docdoku.cli.ProductService.class.getName());
+    private final static URL USERSERVICE_WSDL_LOCATION;
+    private final static QName USERSERVICE_QNAME = new QName("http://server.docdoku.com/", "UserManagerBeanService");
+    private final static Logger LOGGER = Logger.getLogger(UserService.class.getName());
 
     static {
         URL url = null;
         try {
             URL baseUrl;
-            baseUrl = com.docdoku.cli.ProductService.class.getResource(".");
-            url = new URL(baseUrl, "http://localhost:8080/services/product?wsdl");
+            baseUrl = UserService.class.getResource(".");
+            url = new URL(baseUrl, "http://localhost:8080/services/user?wsdl");
         } catch (MalformedURLException e) {
-            LOGGER.warning("Failed to create URL for the wsdl Location: 'http://localhost:8080/services/product?wsdl', retrying as a local file");
+            LOGGER.warning("Failed to create URL for the wsdl Location: 'http://localhost:8080/services/user?wsdl', retrying as a local file");
             LOGGER.warning(e.getMessage());
         }
-        PRODUCTSERVICE_WSDL_LOCATION = url;
+        USERSERVICE_WSDL_LOCATION = url;
     }
 
-    public ProductService(URL wsdlLocation, QName serviceName) {
+    public UserService(URL wsdlLocation, QName serviceName) {
         super(wsdlLocation, serviceName);
     }
 
-    public ProductService() {
-        super(PRODUCTSERVICE_WSDL_LOCATION, PRODUCTSERVICE_QNAME);
+    public UserService() {
+        super(USERSERVICE_WSDL_LOCATION, USERSERVICE_QNAME);
     }
-
-    
 
 }

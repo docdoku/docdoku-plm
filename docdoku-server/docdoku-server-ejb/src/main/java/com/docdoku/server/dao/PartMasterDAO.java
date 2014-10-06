@@ -30,11 +30,14 @@ import com.docdoku.core.product.PartRevision;
 import javax.persistence.*;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class PartMasterDAO {
 
     private EntityManager em;
     private Locale mLocale;
+    private static final Logger LOGGER = Logger.getLogger(PartMasterDAO.class.getName());
 
     public PartMasterDAO(Locale pLocale, EntityManager pEM) {
         em = pEM;
@@ -60,6 +63,7 @@ public class PartMasterDAO {
         try {
             return em.getReference(PartMaster.class, pKey);
         } catch (EntityNotFoundException pENFEx) {
+            LOGGER.log(Level.FINEST,null,pENFEx);
             throw new PartMasterNotFoundException(mLocale, pKey.getNumber());
         }
     }
@@ -75,11 +79,13 @@ public class PartMasterDAO {
             em.persist(pPartM);
             em.flush();
         } catch (EntityExistsException pEEEx) {
+            LOGGER.log(Level.FINEST,null,pEEEx);
             throw new PartMasterAlreadyExistsException(mLocale, pPartM);
         } catch (PersistenceException pPEx) {
             //EntityExistsException is case sensitive
             //whereas MySQL is not thus PersistenceException could be
             //thrown instead of EntityExistsException
+            LOGGER.log(Level.FINEST,null,pPEx);
             throw new CreationException(mLocale);
         }
     }
@@ -125,17 +131,17 @@ public class PartMasterDAO {
     }
 
     public long getDiskUsageForPartsInWorkspace(String pWorkspaceId) {
-        Number result = ((Number)em.createNamedQuery("BinaryResource.diskUsageInPath")
+        Number result = (Number)em.createNamedQuery("BinaryResource.diskUsageInPath")
                 .setParameter("path", pWorkspaceId+"/parts/%")
-                .getSingleResult());
+                .getSingleResult();
 
         return result != null ? result.longValue() : 0L;
     }
 
     public long getDiskUsageForPartTemplatesInWorkspace(String pWorkspaceId) {
-        Number result = ((Number)em.createNamedQuery("BinaryResource.diskUsageInPath")
+        Number result = (Number)em.createNamedQuery("BinaryResource.diskUsageInPath")
                 .setParameter("path", pWorkspaceId+"/part-templates/%")
-                .getSingleResult());
+                .getSingleResult();
 
         return result != null ? result.longValue() : 0L;
     }

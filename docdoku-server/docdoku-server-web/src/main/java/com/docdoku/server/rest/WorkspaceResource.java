@@ -24,6 +24,7 @@ import com.docdoku.core.exceptions.AccountNotFoundException;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.rest.dto.WorkspaceDTO;
+import com.docdoku.server.rest.dto.WorkspaceDetailsDTO;
 import com.docdoku.server.rest.dto.WorkspaceListDTO;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
@@ -35,6 +36,8 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 @Stateless
 @Path("workspaces")
@@ -120,6 +123,17 @@ public class WorkspaceResource {
         return workspaceListDTO;
     }
 
+    @GET
+    @Path("/more")
+    public List<WorkspaceDetailsDTO> getDetailedWorkspacesForConnectedUser() throws AccountNotFoundException {
+        List<WorkspaceDetailsDTO> workspaceListDTO = new ArrayList<>();
+
+        for(Workspace workspace : userManager.getWorkspacesWhereCallerIsActive()){
+            workspaceListDTO.add(mapper.map(workspace, WorkspaceDetailsDTO.class));
+        }
+        return workspaceListDTO;
+    }
+
     @Path("/{workspaceId}/documents")
     public DocumentsResource documents() {
         return documents;
@@ -199,6 +213,4 @@ public class WorkspaceResource {
     public DocumentBaselinesResource documentBaselines(){
         return documentBaselines;
     }
-
-
 }

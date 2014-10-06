@@ -1,4 +1,4 @@
-/*global define*/
+/*global _,define,App*/
 define([
 	'backbone',
 	'views/content',
@@ -278,13 +278,9 @@ define([
 							alert('Error on update acl');
 						}
 					});
-
 				});
-
 			}
-
 			return false;
-
 		},
 
 		highlightAddedView: function (model) {
@@ -298,7 +294,5 @@ define([
 		}
 
 	});
-
 	return ContentDocumentListView;
-
 });

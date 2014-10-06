@@ -59,30 +59,22 @@ public class Workspace implements Serializable, Cloneable {
         description = pDescription;
         folderLocked=pFolderLocked;
     }
-    
     public Workspace(String pId) {
         id = pId;
     }
-
     public Workspace() {
     }
     
-    public void setDescription(String pDescription) {
-        description = pDescription;
-    }
-
-    public void setAdmin(Account pAdmin) {
-        admin = pAdmin;
-    }
-
     public Account getAdmin() {
         return admin;
+    }
+    public void setAdmin(Account pAdmin) {
+        admin = pAdmin;
     }
 
     public String getId() {
         return id;
     }
-
     public void setId(String pId){
         id=pId;
     }
@@ -90,11 +82,13 @@ public class Workspace implements Serializable, Cloneable {
     public String getDescription() {
         return description;
     }
+    public void setDescription(String pDescription) {
+        description = pDescription;
+    }
 
     public boolean isFolderLocked() {
         return folderLocked;
     }
-
     public void setFolderLocked(boolean folderLocked) {
         this.folderLocked = folderLocked;
     }
@@ -110,8 +104,9 @@ public class Workspace implements Serializable, Cloneable {
         if (this == pObj) {
             return true;
         }
-        if (!(pObj instanceof Workspace))
+        if (!(pObj instanceof Workspace)){
             return false;
+        }
         Workspace workspace = (Workspace) pObj;
         return workspace.id.equals(id);
     }

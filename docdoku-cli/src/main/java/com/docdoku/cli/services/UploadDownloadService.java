@@ -18,7 +18,7 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.cli;
+package com.docdoku.cli.services;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
@@ -32,19 +32,17 @@ import java.util.logging.Logger;
  * @author Florent Garin
  */
 @WebServiceClient(name = "UploadDownloadService", targetNamespace = "http://server.docdoku.com/", wsdlLocation = "http://localhost:8080/services/UploadDownload?wsdl")
-public class UploadDownloadService
-    extends Service
-{
+public class UploadDownloadService extends Service{
 
     private final static URL UPLOADDOWNLOADSERVICE_WSDL_LOCATION;
     private final static QName UPLOADDOWNLOADSERVICE_QNAME = new QName("http://server.docdoku.com/", "UploadDownloadService");
-    private final static Logger LOGGER = Logger.getLogger(com.docdoku.cli.UploadDownloadService.class.getName());
+    private final static Logger LOGGER = Logger.getLogger(UploadDownloadService.class.getName());
 
     static {
         URL url = null;
         try {
             URL baseUrl;
-            baseUrl = com.docdoku.cli.UploadDownloadService.class.getResource(".");
+            baseUrl = UploadDownloadService.class.getResource(".");
             url = new URL(baseUrl, "http://localhost:8080/services/UploadDownload?wsdl");
         } catch (MalformedURLException e) {
             LOGGER.warning("Failed to create URL for the wsdl Location: 'http://localhost:8080/services/UploadDownload?wsdl', retrying as a local file");

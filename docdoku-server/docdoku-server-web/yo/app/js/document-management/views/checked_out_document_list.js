@@ -1,16 +1,17 @@
 /*global define*/
 define([
-    "collections/checked_out_document",
-    "views/content_document_list",
-    "text!common-objects/templates/buttons/delete_button.html",
-    "text!common-objects/templates/buttons/checkout_button_group.html",
-    "text!common-objects/templates/buttons/tags_button.html",
-    "text!common-objects/templates/buttons/new_version_button.html",
-    "text!common-objects/templates/buttons/ACL_button.html",
-    "text!templates/search_document_form.html",
-    "text!templates/checked_out_document_list.html"
+    'collections/checked_out_document',
+    'views/content_document_list',
+    'text!common-objects/templates/buttons/delete_button.html',
+    'text!common-objects/templates/buttons/checkout_button_group.html',
+    'text!common-objects/templates/buttons/tags_button.html',
+    'text!common-objects/templates/buttons/new_version_button.html',
+    'text!common-objects/templates/buttons/ACL_button.html',
+    'text!templates/search_document_form.html',
+    'text!templates/checked_out_document_list.html'
 ], function (CheckedOutDocumentList, ContentDocumentListView, deleteButton, checkoutButtonGroup, tagsButton, newVersionButton, aclButton, searchForm, template) {
-    var CheckedOutDocumentListView = ContentDocumentListView.extend({
+    'use strict';
+	var CheckedOutDocumentListView = ContentDocumentListView.extend({
 
         template: template,
 

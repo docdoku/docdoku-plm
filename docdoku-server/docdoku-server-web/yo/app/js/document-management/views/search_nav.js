@@ -1,28 +1,28 @@
 /*global define,App*/
 define([
-    "common-objects/common/singleton_decorator",
-    "common-objects/views/base",
-    "views/search_document_list",
-    "views/advanced_search",
-    "text!templates/search_nav.html"
+    'common-objects/common/singleton_decorator',
+    'common-objects/views/base',
+    'views/search_document_list',
+    'views/advanced_search',
+    'text!templates/search_nav.html'
 ], function (singletonDecorator, BaseView, SearchDocumentListView, AdvancedSearchView, template) {
+	'use strict';
     var SearchNavView = BaseView.extend({
-
         template: template,
 
-        el: "#search-nav",
+        el: '#search-nav',
 
         initialize: function () {
             BaseView.prototype.initialize.apply(this, arguments);
-            this.events['click div'] = "onClick";
+            this.events['click div'] = 'onClick';
             this.render();
         },
 
         setActive: function () {
             if (App.$searchMenu) {
-                App.$searchMenu.find(".active").removeClass("active");
+                App.$searchMenu.find('.active').removeClass('active');
             }
-            this.$el.find(".nav-list-entry").first().addClass("active");
+            this.$el.find('.nav-list-entry').first().addClass('active');
         },
 
         showContent: function (query) {

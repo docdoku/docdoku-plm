@@ -19,8 +19,8 @@
  */
 package com.docdoku.loaders;
 
-import com.docdoku.cli.ProductService;
-import com.docdoku.cli.UploadDownloadService;
+import com.docdoku.cli.services.ProductService;
+import com.docdoku.cli.services.UploadDownloadService;
 import com.docdoku.core.services.IProductManagerWS;
 import com.docdoku.core.services.IUploadDownloadWS;
 

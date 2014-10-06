@@ -1,42 +1,44 @@
-/*global define*/
+/*global _.define,App*/
 define([
     'backbone',
-    "mustache",
-    "common-objects/collections/part_collection",
-    "common-objects/collections/part_search_collection",
-    "text!templates/part_content.html",
-    "views/part_list",
-    "views/part_creation_view",
-    "views/part_new_version",
-    "common-objects/views/prompt",
-    "common-objects/views/security/acl_edit",
-    "views/advanced_search",
-    "text!common-objects/templates/buttons/delete_button.html",
-    "text!common-objects/templates/buttons/checkout_button_group.html",
-    "text!common-objects/templates/buttons/new_version_button.html",
-    "text!common-objects/templates/buttons/release_button.html",
-    "text!common-objects/templates/buttons/ACL_button.html"
-], function (Backbone, Mustache, PartCollection, PartSearchCollection, template, PartListView, PartCreationView, PartNewVersionView, PromptView, ACLEditView, AdvancedSearchView, deleteButton, checkoutButtonGroup, newVersionButton, release_button, aclButton) {
-    var PartContentView = Backbone.View.extend({
+    'mustache',
+    'common-objects/collections/part_collection',
+    'common-objects/collections/part_search_collection',
+    'text!templates/part_content.html',
+    'views/part_list',
+    'views/part_creation_view',
+    'views/part_new_version',
+    'common-objects/views/prompt',
+    'common-objects/views/security/acl_edit',
+    'views/advanced_search',
+    'text!common-objects/templates/buttons/delete_button.html',
+    'text!common-objects/templates/buttons/checkout_button_group.html',
+    'text!common-objects/templates/buttons/new_version_button.html',
+    'text!common-objects/templates/buttons/release_button.html',
+    'text!common-objects/templates/buttons/ACL_button.html',
+	'text!templates/search_part_form.html'
+], function (Backbone, Mustache, PartCollection, PartSearchCollection, template, PartListView, PartCreationView, PartNewVersionView, PromptView, ACLEditView, AdvancedSearchView, deleteButton, checkoutButtonGroup, newVersionButton, releaseButton, aclButton, searchForm) {
+    'use strict';
+	var PartContentView = Backbone.View.extend({
 
-        el: "#product-management-content",
+        el: '#product-management-content',
 
         events: {
-            "click button.new-part": "newPart",
-            "click button.delete": "deletePart",
-            "click button.checkout": "checkout",
-            "click button.undocheckout": "undocheckout",
-            "click button.checkin": "checkin",
-            "click button.edit-acl": "updateACL",
-            "click button.new-version": "newVersion",
-            "click button.new-release": "releasePart",
-            "click button.next-page": "toNextPage",
-            "click button.previous-page": "toPreviousPage",
-            "click button.first-page": "toFirstPage",
-            "click button.last-page": "toLastPage",
-            "click button.current-page": "goToPage",
-            "submit #part-search-form": "onQuickSearch",
-            "click .advanced-search-button": "onAdvancedSearch"
+            'click button.new-part': 'newPart',
+            'click button.delete': 'deletePart',
+            'click button.checkout': 'checkout',
+            'click button.undocheckout': 'undocheckout',
+            'click button.checkin': 'checkin',
+            'click button.edit-acl': 'updateACL',
+            'click button.new-version': 'newVersion',
+            'click button.new-release': 'releasePart',
+            'click button.next-page': 'toNextPage',
+            'click button.previous-page': 'toPreviousPage',
+            'click button.first-page': 'toFirstPage',
+            'click button.last-page': 'toLastPage',
+            'click button.current-page': 'goToPage',
+            'submit #part-search-form': 'onQuickSearch',
+            'click .advanced-search-button': 'onAdvancedSearch'
         },
 
         partials: {
@@ -44,12 +46,13 @@ define([
             aclButton: aclButton,
             checkoutButtonGroup: checkoutButtonGroup,
             newVersionButton: newVersionButton,
-            release_button: release_button
+            releaseButton: releaseButton,
+	         searchForm: searchForm
         },
 
         initialize: function () {
             _.bindAll(this);
-            Backbone.Events.on("refresh_tree", this.resetCollection);
+            Backbone.Events.on('refresh_tree', this.resetCollection);
             this.query = null;
         },
 
@@ -73,34 +76,34 @@ define([
             }
 
             this.partListView = new PartListView({
-                el: this.$("#part_table"),
+                el: this.$('#part_table'),
                 collection: collection
             }).render();
 
-            this.partListView.collection.on("page-count:fetch", this.onPageCountFetched);
+            this.partListView.collection.on('page-count:fetch', this.onPageCountFetched);
             this.partListView.collection.fetchPageCount();
 
-            this.partListView.on("delete-button:display", this.changeDeleteButtonDisplay);
-            this.partListView.on("checkout-group:display", this.changeCheckoutGroupDisplay);
-            this.partListView.on("checkout-group:update", this.updateCheckoutButtons);
-            this.partListView.on("acl-edit-button:display", this.changeACLButtonDisplay);
-            this.partListView.on("new-version-button:display", this.changeVersionButtonDisplay);
-            this.partListView.on("release-button:display", this.changeReleaseButtonDisplay);
+            this.partListView.on('delete-button:display', this.changeDeleteButtonDisplay);
+            this.partListView.on('checkout-group:display', this.changeCheckoutGroupDisplay);
+            this.partListView.on('checkout-group:update', this.updateCheckoutButtons);
+            this.partListView.on('acl-edit-button:display', this.changeACLButtonDisplay);
+            this.partListView.on('new-version-button:display', this.changeVersionButtonDisplay);
+            this.partListView.on('release-button:display', this.changeReleaseButtonDisplay);
 
             return this;
         },
 
         bindDomElements: function () {
-            this.deleteButton = this.$(".delete");
-            this.checkoutGroup = this.$(".checkout-group");
-            this.checkoutButton = this.$(".checkout");
-            this.undoCheckoutButton = this.$(".undocheckout");
-            this.aclButton = this.$(".edit-acl");
-            this.checkinButton = this.$(".checkin");
-            this.newVersionButton = this.$(".new-version");
-            this.releaseButton = this.$(".new-release");
-            this.currentPageIndicator = this.$(".current-page");
-            this.pageControls = this.$(".page-controls");
+            this.deleteButton = this.$('.delete');
+            this.checkoutGroup = this.$('.checkout-group');
+            this.checkoutButton = this.$('.checkout');
+            this.undoCheckoutButton = this.$('.undocheckout');
+            this.aclButton = this.$('.edit-acl');
+            this.checkinButton = this.$('.checkin');
+            this.newVersionButton = this.$('.new-version');
+            this.releaseButton = this.$('.new-release');
+            this.currentPageIndicator = this.$('.current-page');
+            this.pageControls = this.$('.page-controls');
         },
 
         newPart: function () {
@@ -112,7 +115,7 @@ define([
 
         fetchPartAndAdd: function (part) {
             var self = this;
-            part.set("partKey", part.getNumber() + "-A");
+            part.set('partKey', part.getNumber() + '-A');
             part.fetch().success(function () {
                 self.addPartInList(part);
             });
@@ -177,7 +180,7 @@ define([
             var self = this;
             var selectedPart = this.partListView.getSelectedPart();
 
-            if (!selectedPart.getLastIteration().get("iterationNote")) {
+            if (!selectedPart.getLastIteration().get('iterationNote')) {
                 var promptView = new PromptView();
                 promptView.setPromptOptions(App.config.i18n.ITERATION_NOTE, App.config.i18n.ITERATION_NOTE_PROMPT_LABEL, App.config.i18n.ITERATION_NOTE_PROMPT_OK, App.config.i18n.ITERATION_NOTE_PROMPT_CANCEL);
                 window.document.body.appendChild(promptView.render().el);
@@ -185,7 +188,7 @@ define([
 
                 self.listenTo(promptView, 'prompt-ok', function (args) {
                     var iterationNote = args[0];
-                    if (_.isEqual(iterationNote, "")) {
+                    if (_.isEqual(iterationNote, '')) {
                         iterationNote = null;
                     }
                     selectedPart.getLastIteration().save({
@@ -219,7 +222,7 @@ define([
 
             var aclEditView = new ACLEditView({
                 editMode: true,
-                acl: selectedPart.get("acl")
+                acl: selectedPart.get('acl')
             });
 
             aclEditView.setTitle(selectedPart.getPartKey());
@@ -228,14 +231,14 @@ define([
 
             aclEditView.openModal();
 
-            aclEditView.on("acl:update", function () {
+            aclEditView.on('acl:update', function () {
 
                 var acl = aclEditView.toList();
 
                 selectedPart.updateACL({
                     acl: acl || {userEntries: {}, groupEntries: {}},
                     success: function () {
-                        selectedPart.set("acl", acl);
+                        selectedPart.set('acl', acl);
                         aclEditView.closeModal();
                     },
                     error: function (error) {
@@ -272,7 +275,7 @@ define([
         },
 
         goToPage: function () {
-            var requestedPage = prompt(App.config.i18n.GO_TO_PAGE, "1");
+            var requestedPage = prompt(App.config.i18n.GO_TO_PAGE, '1');
             if (requestedPage - 1 >= 0 && requestedPage <= this.partListView.collection.getPageCount()) {
                 this.partListView.collection.setCurrentPage(requestedPage - 1).fetch({reset: true});
                 this.updatePageIndicator();
@@ -305,12 +308,12 @@ define([
         },
 
         updatePageIndicator: function () {
-            this.currentPageIndicator.text(this.partListView.collection.getCurrentPage() + " / " + this.partListView.collection.getPageCount());
+            this.currentPageIndicator.text(this.partListView.collection.getCurrentPage() + ' / ' + this.partListView.collection.getPageCount());
         },
 
         onQuickSearch: function (e) {
             if (e.target.children[0].value) {
-                App.router.navigate("parts-search/number=" + e.target.children[0].value, {trigger: true});
+                App.router.navigate(App.config.workspaceId + '/parts-search/number=' + e.target.children[0].value, {trigger: true});
             }
             e.preventDefault();
             return false;
@@ -325,5 +328,4 @@ define([
     });
 
     return PartContentView;
-
 });

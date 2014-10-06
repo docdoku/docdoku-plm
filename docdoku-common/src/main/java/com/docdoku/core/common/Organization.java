@@ -22,7 +22,6 @@ package com.docdoku.core.common;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -55,8 +54,6 @@ public class Organization implements Serializable {
     public Organization() {
 
     }
-
-
     public Organization(String pName, Account pOwner, String pDescription) {
         name = pName;
         owner = pOwner;
@@ -66,27 +63,23 @@ public class Organization implements Serializable {
     public Set<Account> getMembers() {
         return members;
     }
-
     public boolean addMember(Account pAccount){
         return members.add(pAccount);
     }
-
     public boolean removeMember(Account pAccount){
         return members.remove(pAccount);
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getName() {
         return name;
     }
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public String getDescription() {
         return description;
     }
-
     public void setDescription(String description) {
         this.description = description;
     }
@@ -94,7 +87,6 @@ public class Organization implements Serializable {
     public Account getOwner() {
         return owner;
     }
-
     public void setOwner(Account owner) {
         this.owner = owner;
     }
@@ -106,14 +98,16 @@ public class Organization implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o){
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()){
+            return false;
+        }
 
         Organization that = (Organization) o;
 
-        if (!name.equals(that.name)) return false;
-
-        return true;
+         return  name.equals(that.name);
     }
 
     @Override

@@ -20,6 +20,7 @@
 
 package com.docdoku.cli;
 
+import com.docdoku.cli.services.*;
 import com.docdoku.core.services.*;
 
 import javax.xml.ws.BindingProvider;
@@ -35,16 +36,19 @@ import java.util.Map;
 public class ScriptingTools {
 
     public static String HTTP_CLIENT_STREAMING_CHUNK_SIZE;
-    public final static String JAVA7_HTTP_CLIENT_STREAMING_CHUNK_SIZE = "com.sun.xml.internal.ws.transport.http.client.streaming.chunk.size";
-    public final static String JAVA6_HTTP_CLIENT_STREAMING_CHUNK_SIZE = "com.sun.xml.ws.transport.http.client.streaming.chunk.size";
+    public static final String JAVA7_HTTP_CLIENT_STREAMING_CHUNK_SIZE = "com.sun.xml.internal.ws.transport.http.client.streaming.chunk.size";
+    public static final String JAVA6_HTTP_CLIENT_STREAMING_CHUNK_SIZE = "com.sun.xml.ws.transport.http.client.streaming.chunk.size";
 
 
-    private final static String DOCUMENT_WSDL_LOCATION = "/services/document?wsdl";
-    private final static String PRODUCT_WSDL_LOCATION = "/services/product?wsdl";
-    private final static String PRODUCT_CONFIGSPEC_WSDL_LOCATION = "/services/productConfigSpec?wsdl";
-    private final static String WORKFLOW_WSDL_LOCATION = "/services/workflow?wsdl";
-    private final static String USER_WSDL_LOCATION = "/services/user?wsdl";
-    private final static String FILE_MANAGER_WSDL_LOCATION = "/services/UploadDownload?wsdl";
+    private static final String DOCUMENT_WSDL_LOCATION = "/services/document?wsdl";
+    private static final String PRODUCT_WSDL_LOCATION = "/services/product?wsdl";
+    private static final String PRODUCT_CONFIGSPEC_WSDL_LOCATION = "/services/productConfigSpec?wsdl";
+    private static final String WORKFLOW_WSDL_LOCATION = "/services/workflow?wsdl";
+    private static final String USER_WSDL_LOCATION = "/services/user?wsdl";
+    private static final String FILE_MANAGER_WSDL_LOCATION = "/services/UploadDownload?wsdl";
+
+    private static final String NAMESPACEURI = "http://server.docdoku.com/";
+    private static final String PRODUCT_NAMESPACEURI = "http://products.server.docdoku.com/";
 
     static {
         String version = System.getProperty("java.version"); 
@@ -59,7 +63,7 @@ public class ScriptingTools {
     }
 
     public static IDocumentManagerWS createDocumentService(URL url, String login, String password) throws MalformedURLException, Exception {
-        DocumentService service = new DocumentService(new URL(url, DOCUMENT_WSDL_LOCATION), new javax.xml.namespace.QName("http://server.docdoku.com/", "DocumentManagerBeanService"));
+        DocumentService service = new DocumentService(new URL(url, DOCUMENT_WSDL_LOCATION), new javax.xml.namespace.QName(NAMESPACEURI, "DocumentManagerBeanService"));
         IDocumentManagerWS port = service.getPort(IDocumentManagerWS.class);
         ((BindingProvider) port).getRequestContext().put(BindingProvider.USERNAME_PROPERTY, login);
         ((BindingProvider) port).getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, password);
@@ -68,7 +72,7 @@ public class ScriptingTools {
     }
 
     public static IProductManagerWS createProductService(URL url, String login, String password) throws MalformedURLException, Exception {
-        ProductService service = new ProductService(new URL(url, PRODUCT_WSDL_LOCATION), new javax.xml.namespace.QName("http://server.docdoku.com/", "ProductManagerBeanService"));
+        ProductService service = new ProductService(new URL(url, PRODUCT_WSDL_LOCATION), new javax.xml.namespace.QName(NAMESPACEURI, "ProductManagerBeanService"));
         IProductManagerWS port = service.getPort(IProductManagerWS.class);
         ((BindingProvider) port).getRequestContext().put(BindingProvider.USERNAME_PROPERTY, login);
         ((BindingProvider) port).getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, password);
@@ -77,7 +81,7 @@ public class ScriptingTools {
     }
 
     public static IProductConfigSpecManagerWS createProductConfigSpecService(URL url, String login, String password) throws MalformedURLException, Exception {
-        ProductConfigSpecService service = new ProductConfigSpecService(new URL(url, PRODUCT_CONFIGSPEC_WSDL_LOCATION), new javax.xml.namespace.QName("http://server.docdoku.com/", "ProductConfigSpecBeanManagerService"));
+        ProductConfigSpecService service = new ProductConfigSpecService(new URL(url, PRODUCT_CONFIGSPEC_WSDL_LOCATION), new javax.xml.namespace.QName(PRODUCT_NAMESPACEURI, "ProductConfigSpecManagerBeanService"));
         IProductConfigSpecManagerWS port = service.getPort(IProductConfigSpecManagerWS.class);
         ((BindingProvider) port).getRequestContext().put(BindingProvider.USERNAME_PROPERTY, login);
         ((BindingProvider) port).getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, password);
@@ -86,7 +90,7 @@ public class ScriptingTools {
     }
 
     public static IWorkflowManagerWS createWorkflowService(URL url, String login, String password) throws MalformedURLException, Exception {
-        WorkflowService service = new WorkflowService(new URL(url, WORKFLOW_WSDL_LOCATION), new javax.xml.namespace.QName("http://server.docdoku.com/", "WorkflowManagerBeanService"));
+        WorkflowService service = new WorkflowService(new URL(url, WORKFLOW_WSDL_LOCATION), new javax.xml.namespace.QName(NAMESPACEURI, "WorkflowManagerBeanService"));
         IWorkflowManagerWS port = service.getPort(IWorkflowManagerWS.class);
         ((BindingProvider) port).getRequestContext().put(BindingProvider.USERNAME_PROPERTY, login);
         ((BindingProvider) port).getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, password);
@@ -96,7 +100,7 @@ public class ScriptingTools {
 
     public static IUploadDownloadWS createFileManagerService(URL url, String login, String password) throws MalformedURLException {
         MTOMFeature feature = new MTOMFeature();
-        UploadDownloadService service = new UploadDownloadService(new URL(url, FILE_MANAGER_WSDL_LOCATION), new javax.xml.namespace.QName("http://server.docdoku.com/", "UploadDownloadService"));
+        UploadDownloadService service = new UploadDownloadService(new URL(url, FILE_MANAGER_WSDL_LOCATION), new javax.xml.namespace.QName(NAMESPACEURI, "UploadDownloadService"));
         IUploadDownloadWS proxy = service.getPort(IUploadDownloadWS.class, feature);
         Map context = ((BindingProvider) proxy).getRequestContext();
         context.put(HTTP_CLIENT_STREAMING_CHUNK_SIZE, 8192);
@@ -107,7 +111,7 @@ public class ScriptingTools {
 
 
     public static IUserManagerWS createUserManagerService(URL url, String login, String password) throws MalformedURLException {
-        UserService service = new UserService(new URL(url, USER_WSDL_LOCATION), new javax.xml.namespace.QName("http://server.docdoku.com/", "UserManagerBeanService"));
+        UserService service = new UserService(new URL(url, USER_WSDL_LOCATION), new javax.xml.namespace.QName(NAMESPACEURI, "UserManagerBeanService"));
         IUserManagerWS port = service.getPort(IUserManagerWS.class);
         ((BindingProvider) port).getRequestContext().put(BindingProvider.USERNAME_PROPERTY, login);
         ((BindingProvider) port).getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, password);

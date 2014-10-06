@@ -17,6 +17,7 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
+import javax.jws.WebService;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
@@ -29,7 +30,8 @@ import java.util.logging.Logger;
 @DeclareRoles({"users","admin","guest-proxy"})
 @Local(IProductConfigSpecManagerLocal.class)
 @Stateless(name = "ProductConfigSpecManagerBean")
-public class ProductConfigSpecManagerBean implements IProductConfigSpecManagerLocal, IProductConfigSpecManagerWS {
+@WebService(endpointInterface = "com.docdoku.core.services.IProductConfigSpecManagerWS")
+public class ProductConfigSpecManagerBean implements IProductConfigSpecManagerWS, IProductConfigSpecManagerLocal {
     @PersistenceContext
     private EntityManager em;
 

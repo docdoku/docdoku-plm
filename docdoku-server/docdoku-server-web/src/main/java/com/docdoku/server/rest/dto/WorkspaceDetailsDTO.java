@@ -18,33 +18,40 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.cli.commands;
+package com.docdoku.server.rest.dto;
 
-import com.docdoku.cli.ScriptingTools;
-import com.docdoku.cli.helpers.JSONOutput;
-import com.docdoku.core.common.Workspace;
-import com.docdoku.core.services.IUserManagerWS;
+public class WorkspaceDetailsDTO {
 
-/**
- *
- * @author Morgan Guimard
- */
-public class WorkspacesCommand extends AbstractCommandLine{
+    private String id;
+    private String admin;
+    private String description;
 
-    public Object execImpl() throws Exception {
-
-        IUserManagerWS userS = ScriptingTools.createUserManagerService(getServerURL(), user, password);
-        Workspace[] workspaces = userS.getWorkspacesWhereCallerIsActive();
-
-        for (Workspace workspace : workspaces) {
-            System.out.println(workspace.getId());
-        }
-        return JSONOutput.printWorkspaces(workspaces);
-
+    public WorkspaceDetailsDTO() {
+    }
+    public WorkspaceDetailsDTO(String id, String admin, String description) {
+        this.id = id;
+        this.admin = admin;
+        this.description = description;
     }
 
-    @Override
+    public String getId() {
+        return id;
+    }
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getAdmin() {
+        return admin;
+    }
+    public void setAdmin(String admin) {
+        this.admin = admin;
+    }
+
     public String getDescription() {
-        return "List all workspaces the user belongs to.";
+        return description;
+    }
+    public void setDescription(String description) {
+        this.description = description;
     }
 }
