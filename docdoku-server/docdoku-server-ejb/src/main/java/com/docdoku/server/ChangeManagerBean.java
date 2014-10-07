@@ -37,7 +37,6 @@ import com.docdoku.core.services.IChangeManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.dao.*;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Local;
@@ -64,10 +63,6 @@ public class ChangeManagerBean implements IChangeManagerLocal {
 
     private static final Logger LOGGER = Logger.getLogger(ChangeManagerBean.class.getName());
 
-    @PostConstruct
-    private void init() {
-    }
-
     @RolesAllowed("users")
     @Override
     public ChangeIssue getChangeIssue(String pWorkspaceId, int pId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ChangeIssueNotFoundException, AccessRightException {
@@ -89,7 +84,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
                 checkChangeItemReadAccess(changeIssue,user);                                                            // Check if the user can access to this Change-Issue
                 visibleChangeIssues.add(changeIssue);                                                                   // Add the Change-Issue to the list
             }catch (AccessRightException e){
-                LOGGER.log(Level.FINEST,null,e);
+                LOGGER.log(Level.FINEST, null, e);
             }
         }
         return visibleChangeIssues;
@@ -106,7 +101,9 @@ public class ChangeManagerBean implements IChangeManagerLocal {
             try{
                 checkChangeItemReadAccess(changeIssue,user);                                                            // Check if the user can access to this Change-Issue
                 visibleChangeIssues.add(changeIssue);                                                                   // Add the Change-Issue to the list
-            }catch (AccessRightException ignored){}
+            }catch (AccessRightException e){
+                LOGGER.log(Level.FINEST, null, e);
+            }
         }
         return visibleChangeIssues;
     }
@@ -162,7 +159,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
         ChangeIssue changeIssue = new ChangeItemDAO(userLocale,em).loadChangeIssue(pId);                                // Load the Change-Issue
         checkChangeItemWriteAccess(changeIssue,user);                                                                   // Check the write access to the Change-Issue
 
-        HashSet<DocumentIteration> documentIterations = new HashSet<>();
+        Set<DocumentIteration> documentIterations = new HashSet<>();
         DocumentRevisionDAO docRDAO = new DocumentRevisionDAO(userLocale, em);
         for (DocumentIterationKey docKey : pAffectedDocuments) {
             try {
@@ -184,7 +181,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
         ChangeIssue changeIssue = new ChangeItemDAO(userLocale,em).loadChangeIssue(pId);                                // Load the Change-Issue
         checkChangeItemWriteAccess(changeIssue,user);                                                                   // Check the write access to the Change-Issue
 
-        HashSet<PartIteration> partIterations = new HashSet<>();
+        Set<PartIteration> partIterations = new HashSet<>();
         PartRevisionDAO partRDAO = new PartRevisionDAO(userLocale, em);
         for (PartIterationKey partKey : pAffectedParts) {
             try {
@@ -206,7 +203,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
         ChangeIssue changeIssue = new ChangeItemDAO(userLocale,em).loadChangeIssue(pId);                                // Load the Change-Issue
         checkChangeItemWriteAccess(changeIssue, user);                                                                  // Check the write access to the Change-Issue
 
-        HashSet<Tag> tags = new HashSet<>();                                                                            // Create un Set of the tags
+        Set<Tag> tags = new HashSet<>();                                                                            // Create un Set of the tags
         for (String label : tagsLabel) {
             tags.add(new Tag(user.getWorkspace(), label));
         }
@@ -260,7 +257,9 @@ public class ChangeManagerBean implements IChangeManagerLocal {
             try{
                 checkChangeItemReadAccess(changeRequest,user);                                                          // Check if the user can access to this Change-Request
                 visibleChangeRequests.add(filterLinkedChangeIssues(changeRequest, user));                               // Add the Change-Request filtered to the list
-            }catch (AccessRightException ignored){}
+            }catch (AccessRightException e){
+                LOGGER.log(Level.FINEST, null, e);
+            }
         }
         return visibleChangeRequests;
     }
@@ -276,7 +275,9 @@ public class ChangeManagerBean implements IChangeManagerLocal {
             try{
                 checkChangeItemReadAccess(changeRequest,user);                                                          // Check if the user can access to this Change-Request
                 visibleChangeRequests.add(filterLinkedChangeIssues(changeRequest, user));                               // Add the Change-Request filtered to the list
-            }catch (AccessRightException ignored){}
+            }catch (AccessRightException e){
+                LOGGER.log(Level.FINEST, null, e);
+            }
         }
         return visibleChangeRequests;
     }
@@ -333,7 +334,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
         ChangeRequest changeRequest = new ChangeItemDAO(userLocale,em).loadChangeRequest(pId);                          // Load the Change-Request
         checkChangeItemWriteAccess(changeRequest,user);                                                                 // Check the write access to the Change-Request
 
-        HashSet<DocumentIteration> documentIterations = new HashSet<>();
+        Set<DocumentIteration> documentIterations = new HashSet<>();
         DocumentRevisionDAO docRDAO = new DocumentRevisionDAO(userLocale, em);
         for (DocumentIterationKey docKey : pAffectedDocuments) {
             try {
@@ -354,7 +355,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
         ChangeRequest changeRequest = new ChangeItemDAO(userLocale,em).loadChangeRequest(pId);                          // Load the Change-Request
         checkChangeItemWriteAccess(changeRequest,user);                                                                 // Check the write access to the Change-Request
 
-        HashSet<PartIteration> partIterations = new HashSet<>();
+        Set<PartIteration> partIterations = new HashSet<>();
         PartRevisionDAO partRDAO = new PartRevisionDAO(userLocale, em);
         for (PartIterationKey partKey : pAffectedParts) {
             try {
@@ -375,7 +376,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
         ChangeRequest changeRequest = changeItemDAO.loadChangeRequest(pId);                                             // Load the Change-Request
         checkChangeItemWriteAccess(changeRequest,user);                                                                 // Check the write access to the Change-Request
 
-        HashSet<ChangeIssue> changeIssues = new HashSet<>();
+        Set<ChangeIssue> changeIssues = new HashSet<>();
         for (int linkId : pLinkIds) {
             try {
                 changeIssues.add(changeItemDAO.loadChangeIssue(linkId));                                                // Add the issue to the Change-Request
@@ -395,7 +396,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
         ChangeRequest changeRequest = new ChangeItemDAO(userLocale,em).loadChangeRequest(pId);                          // Load the Change-Request
         checkChangeItemWriteAccess(changeRequest, user);                                                                // Check the write access to the Change-Request
 
-        HashSet<Tag> tags = new HashSet<>();                                                                            // Create un Set of the tags
+        Set<Tag> tags = new HashSet<>();                                                                            // Create un Set of the tags
         for (String label : tagsLabel) {
             tags.add(new Tag(user.getWorkspace(), label));
         }
@@ -448,7 +449,9 @@ public class ChangeManagerBean implements IChangeManagerLocal {
             try{
                 checkChangeItemReadAccess(changeOrder,user);                                                            // Check if the user can access to this Change-Order
                 visibleChangeOrders.add(filterLinkedChangeRequests(changeOrder, user));                                 // Add the Change-Order filtered to the list
-            }catch (AccessRightException ignored){}
+            }catch (AccessRightException e){
+                LOGGER.log(Level.FINEST, null, e);
+            }
         }
         return visibleChangeOrders;
     }
@@ -506,7 +509,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
         ChangeOrder changeOrder = new ChangeItemDAO(userLocale,em).loadChangeOrder(pId);                                // Load the Change-Order
         checkChangeItemWriteAccess(changeOrder,user);                                                                   // Check the write access to the Change-Order
 
-        HashSet<DocumentIteration> documentIterations = new HashSet<>();
+        Set<DocumentIteration> documentIterations = new HashSet<>();
         DocumentRevisionDAO docRDAO = new DocumentRevisionDAO(userLocale, em);
         for (DocumentIterationKey docKey : pAffectedDocuments) {
             try {
@@ -527,7 +530,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
         ChangeOrder changeOrder = new ChangeItemDAO(userLocale,em).loadChangeOrder(pId);                                // Load the Change-Order
         checkChangeItemWriteAccess(changeOrder,user);                                                                   // Check the write access to the Change-Order
 
-        HashSet<PartIteration> partIterations = new HashSet<>();
+        Set<PartIteration> partIterations = new HashSet<>();
         PartRevisionDAO partRDAO = new PartRevisionDAO(userLocale, em);
         for (PartIterationKey partKey : pAffectedParts) {
             try {
@@ -548,7 +551,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
         ChangeOrder changeOrder = changeItemDAO.loadChangeOrder(pId);                                                   // Load the Change-Order
         checkChangeItemWriteAccess(changeOrder,user);                                                                   // Check the write access to the Change-Order
 
-        HashSet<ChangeRequest> changeRequests = new HashSet<>();
+        Set<ChangeRequest> changeRequests = new HashSet<>();
         for (int linkId : pLinkIds) {
             try {
                 changeRequests.add(changeItemDAO.loadChangeRequest(linkId));                                            // Add the request to the Change-Order
@@ -568,7 +571,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
         ChangeOrder changeOrder = new ChangeItemDAO(userLocale,em).loadChangeOrder(pId);                                // Load the Change-Order
         checkChangeItemWriteAccess(changeOrder,user);                                                                   // Check the write access to the Change-Order
 
-        HashSet<Tag> tags = new HashSet<>();                                                                            // Create un Set of the tags
+        Set<Tag> tags = new HashSet<>();                                                                            // Create un Set of the tags
         for (String label : tagsLabel) {
             tags.add(new Tag(user.getWorkspace(), label));
         }
@@ -630,6 +633,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
                 checkMilestoneReadAccess(milestone, user);                                                              // Check if the user can access to this Milestone
             }catch (AccessRightException e){
                 visibleMilestones.remove(milestone);                                                                    // If access is deny remove it from the result
+                LOGGER.log(Level.FINEST, null, e);
             }
         }
         return visibleMilestones;
@@ -681,7 +685,9 @@ public class ChangeManagerBean implements IChangeManagerLocal {
             try{
                 checkChangeItemReadAccess(changeRequest,user);                                                          // Check if the user can access to this Change-Request
                 visibleChangeRequests.add(filterLinkedChangeIssues(changeRequest, user));                               // Add the Change-Request filtered to the list
-            }catch (AccessRightException ignored){}
+            }catch (AccessRightException e){
+                LOGGER.log(Level.FINEST, null, e);
+            }
         }
         return visibleChangeRequests;
     }
@@ -699,7 +705,9 @@ public class ChangeManagerBean implements IChangeManagerLocal {
             try{
                 checkChangeItemReadAccess(changeOrder,user);                                                            // Check if the user can access to this Change-Order
                 visibleChangeOrders.add(filterLinkedChangeRequests(changeOrder, user));                                 // Add the Change-Order filtered to the list
-            }catch (AccessRightException ignored){}
+            }catch (AccessRightException e){
+                LOGGER.log(Level.FINEST, null, e);
+            }
         }
         return visibleChangeOrders;
     }
@@ -756,38 +764,11 @@ public class ChangeManagerBean implements IChangeManagerLocal {
         checkMilestoneWriteAccess(milestone, user);                                                                    // Check the grant access to the milestone
 
         if (milestone.getACL() == null) {                                                                               // Check if already a ACL Rule
-            ACL acl = new ACL();
-            if (pUserEntries != null) {
-                for (Map.Entry<String, String> entry : pUserEntries.entrySet()) {
-                    acl.addEntry(em.getReference(User.class, new UserKey(pWorkspaceId, entry.getKey())),
-                            ACL.Permission.valueOf(entry.getValue()));
-                }
-            }
-            if (pGroupEntries != null) {
-                for (Map.Entry<String, String> entry : pGroupEntries.entrySet()) {
-                    acl.addEntry(em.getReference(UserGroup.class,new UserGroupKey(pWorkspaceId,entry.getKey())),
-                            ACL.Permission.valueOf(entry.getValue()));
-                }
-            }
-            new ACLDAO(em).createACL(acl);
+            ACL acl = createACL(pWorkspaceId,pUserEntries,pGroupEntries);
             milestone.setACL(acl);
         }else{                                                                                                          // Else change existing ACL Rule
-            if (pUserEntries != null) {
-                for (ACLUserEntry entry : milestone.getACL().getUserEntries().values()) {
-                    ACL.Permission newPermission = ACL.Permission.valueOf(pUserEntries.get(entry.getPrincipalLogin()));
-                    if(newPermission != null){
-                        entry.setPermission(newPermission);
-                    }
-                }
-            }
-            if (pGroupEntries != null) {
-                for (ACLUserGroupEntry entry : milestone.getACL().getGroupEntries().values()) {
-                    ACL.Permission newPermission = ACL.Permission.valueOf(pGroupEntries.get(entry.getPrincipalId()));
-                    if(newPermission != null){
-                        entry.setPermission(newPermission);
-                    }
-                }
-            }
+            ACL acl = milestone.getACL();
+            updateACL(acl, pUserEntries, pGroupEntries);
         }
     }
 
@@ -842,7 +823,8 @@ public class ChangeManagerBean implements IChangeManagerLocal {
         try{
             checkChangeItemWriteAccess(pChangeItem,user);                                                               // Try to check if the user can write the Change-Item
             return true;                                                                                                // Set the writable attribute to XHR
-        }catch (AccessRightException ignored){
+        }catch (AccessRightException e){
+            LOGGER.log(Level.FINEST, null, e);
             return false;
         }
     }
@@ -854,45 +836,19 @@ public class ChangeManagerBean implements IChangeManagerLocal {
         try{
             checkMilestoneWriteAccess(pMilestone,user);                                                                 // Try to check if the user can write the Milestone
             return true;
-        }catch (AccessRightException ignored){
+        }catch (AccessRightException e){
+            LOGGER.log(Level.FINEST, null, e);
             return false;
         }
     }
 
     private void updateACLForChangeItem(String pWorkspaceId, ChangeItem changeItem, Map<String, String> pUserEntries, Map<String, String> pGroupEntries){
         if (changeItem.getACL() == null) {                                                                              // Check if already a ACL Rule
-            ACL acl = new ACL();
-            if (pUserEntries != null) {
-                for (Map.Entry<String, String> entry : pUserEntries.entrySet()) {
-                    acl.addEntry(em.getReference(User.class, new UserKey(pWorkspaceId, entry.getKey())),
-                            ACL.Permission.valueOf(entry.getValue()));
-                }
-            }
-            if (pGroupEntries != null) {
-                for (Map.Entry<String, String> entry : pGroupEntries.entrySet()) {
-                    acl.addEntry(em.getReference(UserGroup.class,new UserGroupKey(pWorkspaceId,entry.getKey())),
-                            ACL.Permission.valueOf(entry.getValue()));
-                }
-            }
-            new ACLDAO(em).createACL(acl);
+            ACL acl = createACL(pWorkspaceId,pUserEntries,pGroupEntries);
             changeItem.setACL(acl);
         }else{                                                                                                          // Else change existing ACL Rule
-            if (pUserEntries != null) {
-                for (ACLUserEntry entry : changeItem.getACL().getUserEntries().values()) {
-                    ACL.Permission newPermission = ACL.Permission.valueOf(pUserEntries.get(entry.getPrincipalLogin()));
-                    if(newPermission != null){
-                        entry.setPermission(newPermission);
-                    }
-                }
-            }
-            if (pGroupEntries != null) {
-                for (ACLUserGroupEntry entry : changeItem.getACL().getGroupEntries().values()) {
-                    ACL.Permission newPermission = ACL.Permission.valueOf(pGroupEntries.get(entry.getPrincipalId()));
-                    if(newPermission != null){
-                        entry.setPermission(newPermission);
-                    }
-                }
-            }
+            ACL acl = changeItem.getACL();
+            updateACL(acl, pUserEntries, pGroupEntries);
         }
     }
 
@@ -969,7 +925,9 @@ public class ChangeManagerBean implements IChangeManagerLocal {
             try{
                 checkChangeItemReadAccess(changeIssue,user);                                                            // Check if the user can access to this Change-Issue
                 visibleChangeIssues.add(changeIssue);                                                                   // Add the Change-Issue to the list
-            }catch (AccessRightException ignored){}
+            }catch (AccessRightException e){
+                LOGGER.log(Level.FINEST, null, e);
+            }
         }
         changeRequest.setAddressedChangeIssues(visibleChangeIssues);
         return changeRequest;
@@ -983,9 +941,49 @@ public class ChangeManagerBean implements IChangeManagerLocal {
             try{
                 checkChangeItemReadAccess(changeRequest,user);                                                          // Check if the user can access to this Change-Request
                 visibleChangeRequests.add(filterLinkedChangeIssues(changeRequest, user));                               // Add the Change-Request filtered to the list
-            }catch (AccessRightException ignored){}
+            }catch (AccessRightException e){
+                LOGGER.log(Level.FINEST, null, e);
+            }
         }
         changeOrder.setAddressedChangeRequests(visibleChangeRequests);
         return changeOrder;
+    }
+
+    private ACL createACL(String pWorkspaceId,Map<String, String> pUserEntries,Map<String, String> pGroupEntries){
+        ACL acl = new ACL();
+        if (pUserEntries != null) {
+            for (Map.Entry<String, String> entry : pUserEntries.entrySet()) {
+                acl.addEntry(em.getReference(User.class, new UserKey(pWorkspaceId, entry.getKey())),
+                        ACL.Permission.valueOf(entry.getValue()));
+            }
+        }
+        if (pGroupEntries != null) {
+            for (Map.Entry<String, String> entry : pGroupEntries.entrySet()) {
+                acl.addEntry(em.getReference(UserGroup.class,new UserGroupKey(pWorkspaceId,entry.getKey())),
+                        ACL.Permission.valueOf(entry.getValue()));
+            }
+        }
+        new ACLDAO(em).createACL(acl);
+        return acl;
+    }
+
+    private ACL updateACL(ACL acl,Map<String, String> pUserEntries,Map<String, String> pGroupEntries){
+        if (pUserEntries != null) {
+            for (ACLUserEntry entry : acl.getUserEntries().values()) {
+                ACL.Permission newPermission = ACL.Permission.valueOf(pUserEntries.get(entry.getPrincipalLogin()));
+                if(newPermission != null){
+                    entry.setPermission(newPermission);
+                }
+            }
+        }
+        if (pGroupEntries != null) {
+            for (ACLUserGroupEntry entry : acl.getGroupEntries().values()) {
+                ACL.Permission newPermission = ACL.Permission.valueOf(pGroupEntries.get(entry.getPrincipalId()));
+                if(newPermission != null){
+                    entry.setPermission(newPermission);
+                }
+            }
+        }
+        return acl;
     }
 }

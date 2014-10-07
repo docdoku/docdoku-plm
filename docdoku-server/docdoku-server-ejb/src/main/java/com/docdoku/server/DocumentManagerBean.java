@@ -40,6 +40,7 @@ import com.docdoku.core.util.Tools;
 import com.docdoku.core.workflow.*;
 import com.docdoku.server.dao.*;
 import com.docdoku.server.esindexer.ESIndexer;
+import com.docdoku.server.esindexer.ESSearcher;
 
 import javax.annotation.Resource;
 import javax.annotation.security.DeclareRoles;
@@ -71,16 +72,14 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
     @EJB
     private IUserManagerLocal userManager;
-
     @EJB
     private IMailerLocal mailer;
-
     @EJB
     private IGCMSenderLocal gcmNotifier;
-
     @EJB
     private ESIndexer esIndexer;
-
+    @EJB
+    private ESSearcher esSearcher;
     @EJB
     private IDataManagerLocal dataManager;
 
@@ -525,7 +524,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @Override
     public DocumentRevision[] searchDocumentRevisions(DocumentSearchQuery pQuery) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, ESServerException {
         User user = userManager.checkWorkspaceReadAccess(pQuery.getWorkspaceId());
-        List<DocumentRevision> fetchedDocRs = esIndexer.search(pQuery);                                                 // Get Search Results
+        List<DocumentRevision> fetchedDocRs = esSearcher.search(pQuery);                                                 // Get Search Results
 
         if(!fetchedDocRs.isEmpty()){
             Workspace wks = new WorkspaceDAO(new Locale(user.getLanguage()), em).loadWorkspace(pQuery.getWorkspaceId());

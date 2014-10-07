@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2014 DocDoku SARL
+ * Copyright 2006 - 2013 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -84,6 +84,9 @@ public class SearchQueryParser {
                     case "attributes" :
                         pAttributes = parseDocumentAttributeStringQuery(filter[1]);
                         break;
+                    default:
+                        break;
+
                 }
             }
 
@@ -104,7 +107,7 @@ public class SearchQueryParser {
         String pType = null;
         Date pCreationDateFrom = null;
         Date pCreationDateTo = null;
-        ArrayList<PartSearchQuery.AbstractAttributeQuery> pAttributes = new ArrayList<>();
+        List<PartSearchQuery.AbstractAttributeQuery> pAttributes = new ArrayList<>();
         Boolean standardPart = null;
 
         String[] query = pQuery.split("&");
@@ -180,12 +183,9 @@ public class SearchQueryParser {
                             Logger.getLogger(SearchQueryParser.class.getName()).log(Level.INFO, null, e);
                         }
                         break;
-                    case "URL" :
-                        DocumentSearchQuery.URLAttributeQuery uaq = new DocumentSearchQuery.URLAttributeQuery(attribute[0],attribute[1]);
-                        pAttributes.add(uaq);
+                    default:
                         break;
 
-                    default : break;
                 }
             }
         }
@@ -225,8 +225,8 @@ public class SearchQueryParser {
                         PartSearchQuery.URLAttributeQuery uaq = new PartSearchQuery.URLAttributeQuery(attribute[0],attribute[1]);
                         pAttributes.add(uaq);
                         break;
-
-                    default : break;
+                    default :
+                        break;
                 }
             }
         }

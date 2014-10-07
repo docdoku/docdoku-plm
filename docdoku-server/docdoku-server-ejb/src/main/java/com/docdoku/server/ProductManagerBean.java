@@ -42,6 +42,7 @@ import com.docdoku.core.util.Tools;
 import com.docdoku.core.workflow.*;
 import com.docdoku.server.dao.*;
 import com.docdoku.server.esindexer.ESIndexer;
+import com.docdoku.server.esindexer.ESSearcher;
 
 import javax.annotation.Resource;
 import javax.annotation.security.DeclareRoles;
@@ -77,6 +78,8 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     private IDataManagerLocal dataManager;
     @EJB
     private ESIndexer esIndexer;
+    @EJB
+    private ESSearcher esSearcher;
 
     private static final Logger LOGGER = Logger.getLogger(ProductManagerBean.class.getName());
     private static final String INVALIDE_NAME_ERROR = "NotAllowedException9";
@@ -810,7 +813,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     @Override
     public List<PartRevision> searchPartRevisions(PartSearchQuery pQuery) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ESServerException {
         User user = userManager.checkWorkspaceReadAccess(pQuery.getWorkspaceId());
-        List<PartRevision> fetchedPartRs = esIndexer.search(pQuery);
+        List<PartRevision> fetchedPartRs = esSearcher.search(pQuery);
         // Get Search Results
 
         Workspace wks = new WorkspaceDAO(new Locale(user.getLanguage()), em).loadWorkspace(pQuery.getWorkspaceId());

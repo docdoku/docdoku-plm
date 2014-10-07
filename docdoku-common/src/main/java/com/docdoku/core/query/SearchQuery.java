@@ -42,36 +42,71 @@ public class SearchQuery  implements Serializable {
     protected Date creationDateTo;
     protected AbstractAttributeQuery[] attributes;
 
-    public SearchQuery(){}
+    public SearchQuery(){
+
+    }
     public SearchQuery(String workspaceId, String fullText, String version, String author, String type, Date creationDateFrom, Date creationDateTo, AbstractAttributeQuery[] attributes) {
         this.workspaceId = workspaceId;
         this.fullText =fullText;
         this.version = version;
         this.author = author;
         this.type = type;
-        this.creationDateFrom = creationDateFrom;
-        this.creationDateTo = creationDateTo;
+        this.creationDateFrom = (creationDateFrom!=null) ? (Date) creationDateFrom.clone() : null;
+        this.creationDateTo = (creationDateTo!=null) ? (Date) creationDateTo.clone() : null;
         this.attributes = attributes;
     }
 
     // Getter
-    public String getWorkspaceId() {return workspaceId;}
-    public String getFullText() {return fullText;}
-    public String getVersion() {return version;}
-    public String getAuthor() {return author;}
-    public String getType() {return type;}
-    public Date getCreationDateFrom() {return creationDateFrom;}
-    public Date getCreationDateTo() {return creationDateTo;}
-    public AbstractAttributeQuery[] getAttributes() {return attributes;}
+    public String getWorkspaceId() {
+        return workspaceId;
+    }
+    public String getFullText() {
+        return fullText;
+    }
+    public String getVersion() {
+        return version;
+    }
+    public String getAuthor() {
+        return author;
+    }
+    public String getType() {
+        return type;
+    }
+    public Date getCreationDateFrom() {
+        return (creationDateFrom!=null) ? (Date) creationDateFrom.clone() : null;
+    }
+    public Date getCreationDateTo() {
+        return (creationDateTo!=null) ? (Date) creationDateTo.clone() : null;
+    }
+    public AbstractAttributeQuery[] getAttributes() {
+        return attributes;
+    }
+
     //Setter
-    public void setWorkspaceId(String workspaceId) {this.workspaceId = workspaceId;}
-    public void setFullText(String fullText){this.fullText = fullText;}
-    public void setVersion(String version) {this.version = version;}
-    public void setAuthor(String author) {this.author = author;}
-    public void setType(String type) {this.type = type;}
-    public void setCreationDateFrom(Date creationDateFrom) {this.creationDateFrom = creationDateFrom;}
-    public void setCreationDateTo(Date creationDateTo) {this.creationDateTo = creationDateTo;}
-    public void setAttributes(AbstractAttributeQuery[] attributes) {this.attributes = attributes;}
+    public void setWorkspaceId(String workspaceId) {
+        this.workspaceId = workspaceId;
+    }
+    public void setFullText(String fullText){
+        this.fullText = fullText;
+    }
+    public void setVersion(String version) {
+        this.version = version;
+    }
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+    public void setType(String type) {
+        this.type = type;
+    }
+    public void setCreationDateFrom(Date creationDateFrom) {
+        this.creationDateFrom = (creationDateFrom!=null) ? (Date) creationDateFrom.clone() : null;
+    }
+    public void setCreationDateTo(Date creationDateTo) {
+        this.creationDateTo = (creationDateTo!=null) ? (Date) creationDateTo.clone() : null;
+    }
+    public void setAttributes(AbstractAttributeQuery[] attributes) {
+        this.attributes = attributes;
+    }
 
     @XmlSeeAlso({TextAttributeQuery.class, NumberAttributeQuery.class, DateAttributeQuery.class, BooleanAttributeQuery.class, URLAttributeQuery.class})
     public static abstract class AbstractAttributeQuery implements Serializable{
@@ -93,7 +128,9 @@ public class SearchQuery  implements Serializable {
 
     public static class TextAttributeQuery extends AbstractAttributeQuery{
         private String textValue;
-        public TextAttributeQuery(){}
+        public TextAttributeQuery(){
+
+        }
         public TextAttributeQuery(String name, String value){
             super(name);
             this.textValue=value;
@@ -111,7 +148,9 @@ public class SearchQuery  implements Serializable {
     }
     public static class NumberAttributeQuery extends AbstractAttributeQuery{
         private float numberValue;
-        public NumberAttributeQuery(){}
+        public NumberAttributeQuery(){
+
+        }
         public NumberAttributeQuery(String name, float value){
             super(name);
             this.numberValue=value;
@@ -129,7 +168,9 @@ public class SearchQuery  implements Serializable {
     }
     public static class BooleanAttributeQuery extends AbstractAttributeQuery{
         private boolean booleanValue;
-        public BooleanAttributeQuery(){}
+        public BooleanAttributeQuery(){
+
+        }
         public BooleanAttributeQuery(String name, boolean value){
             super(name);
             this.booleanValue=value;
@@ -147,7 +188,9 @@ public class SearchQuery  implements Serializable {
     }
     public static class URLAttributeQuery extends AbstractAttributeQuery{
         private String urlValue;
-        public URLAttributeQuery(){}
+        public URLAttributeQuery(){
+
+        }
         public URLAttributeQuery(String name, String value){
             super(name);
             this.urlValue=value;
@@ -167,17 +210,19 @@ public class SearchQuery  implements Serializable {
     public static class DateAttributeQuery extends AbstractAttributeQuery{
         private Date fromDate;
         private Date toDate;
-        public DateAttributeQuery(){}
+        public DateAttributeQuery(){
+
+        }
         public DateAttributeQuery(String name, Date fromDate, Date toDate){
             super(name);
             this.fromDate=fromDate;
             this.toDate=toDate;
         }
         public Date getFromDate() {
-            return fromDate;
+            return (fromDate!=null) ? (Date) fromDate.clone() : null;
         }
         public void setFromDate(Date fromDate) {
-            this.fromDate = fromDate;
+            this.fromDate = (fromDate!=null) ? (Date) fromDate.clone() : null;
         }
         public Date getToDate() {
             return toDate;
@@ -190,8 +235,9 @@ public class SearchQuery  implements Serializable {
             if (attr instanceof InstanceDateAttribute) {
                 InstanceDateAttribute dateAttr = (InstanceDateAttribute) attr;
                 Date dateValue = dateAttr.getDateValue();
-                if(toDate !=null && fromDate !=null)
+                if(toDate !=null && fromDate !=null) {
                     return !(dateValue.after(toDate) || dateValue.before(fromDate));
+                }
             }
             return false;
         }

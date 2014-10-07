@@ -81,10 +81,6 @@
         <servlet-class>com.docdoku.server.http.PrivateShareServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>SearchServlet</servlet-name>
-        <servlet-class>com.docdoku.server.http.SearchServlet</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>UploadDownloadServlet</servlet-name>
         <servlet-class>com.docdoku.server.http.UploadDownloadServlet</servlet-class>
     </servlet>
@@ -103,10 +99,6 @@
     <servlet-mapping>
         <servlet-name>PrivateShareServlet</servlet-name>
         <url-pattern>/shared/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>SearchServlet</servlet-name>
-        <url-pattern>/search/*</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

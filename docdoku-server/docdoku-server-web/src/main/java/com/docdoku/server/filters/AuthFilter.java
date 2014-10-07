@@ -28,6 +28,7 @@ import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.jsf.actions.AccountBean;
 
 import javax.ejb.EJB;
+import javax.el.PropertyNotFoundException;
 import javax.inject.Inject;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -100,7 +101,13 @@ public class AuthFilter implements Filter {
         HttpSession session = httpRequest.getSession();
         session.setAttribute("hasFail", false);
         session.setAttribute("hasLogout", false);
-        httpRequest.getRequestDispatcher(httpRequest.getContextPath()+"/faces/login.xhtml?originURL=" + URLEncoder.encode(originURL, "UTF-8")).forward(httpRequest, response);
+        try {
+            httpRequest.getRequestDispatcher(httpRequest.getContextPath() + "/faces/login.xhtml?originURL=" + URLEncoder.encode(originURL, "UTF-8"))
+                       .forward(httpRequest, response);
+        }catch (PropertyNotFoundException e){
+            LOGGER.log(Level.SEVERE,"Cannot redirect to Login Page");
+            LOGGER.log(Level.FINER,null,e);
+        }
     }
 
     @Override
