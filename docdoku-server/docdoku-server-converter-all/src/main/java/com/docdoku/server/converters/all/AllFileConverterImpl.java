@@ -86,8 +86,7 @@ public class AllFileConverterImpl implements CADConverter{
                 }
             }
             return tmpCadFile;
-        }
-        finally {
+        } finally {
             FileIO.rmDir(tmpDir);
         }
     }

@@ -34,9 +34,9 @@ import java.util.logging.Logger;
 @WebServiceClient(name = "UploadDownloadService", targetNamespace = "http://server.docdoku.com/", wsdlLocation = "http://localhost:8080/services/UploadDownload?wsdl")
 public class UploadDownloadService extends Service{
 
-    private final static URL UPLOADDOWNLOADSERVICE_WSDL_LOCATION;
-    private final static QName UPLOADDOWNLOADSERVICE_QNAME = new QName("http://server.docdoku.com/", "UploadDownloadService");
-    private final static Logger LOGGER = Logger.getLogger(UploadDownloadService.class.getName());
+    private static final URL UPLOADDOWNLOADSERVICE_WSDL_LOCATION;
+    private static final QName UPLOADDOWNLOADSERVICE_QNAME = new QName("http://server.docdoku.com/", "UploadDownloadService");
+    private static final Logger LOGGER = Logger.getLogger(UploadDownloadService.class.getName());
 
     static {
         URL url = null;

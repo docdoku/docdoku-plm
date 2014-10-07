@@ -32,12 +32,11 @@ import java.util.logging.Logger;
  * @author Florent Garin
  */
 @WebServiceClient(name = "WorkflowService", targetNamespace = "http://server.docdoku.com/", wsdlLocation = "http://localhost:8080/services/workflow?wsdl")
-public class WorkflowService extends Service
-{
+public class WorkflowService extends Service {
 
-    private final static URL WORKFLOWSERVICE_WSDL_LOCATION;
-    private final static QName WORKFLOWSERVICE_QNAME = new QName("http://server.docdoku.com/", "WorkflowManagerBeanService");
-    private final static Logger LOGGER = Logger.getLogger(WorkflowService.class.getName());
+    private static final URL WORKFLOWSERVICE_WSDL_LOCATION;
+    private static final QName WORKFLOWSERVICE_QNAME = new QName("http://server.docdoku.com/", "WorkflowManagerBeanService");
+    private static final Logger LOGGER = Logger.getLogger(WorkflowService.class.getName());
 
     static {
         URL url = null;
@@ -59,7 +58,4 @@ public class WorkflowService extends Service
     public WorkflowService() {
         super(WORKFLOWSERVICE_WSDL_LOCATION, WORKFLOWSERVICE_QNAME);
     }
-
-    
-
 }

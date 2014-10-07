@@ -34,9 +34,9 @@ import java.util.logging.Logger;
 @WebServiceClient(name = "DocumentService", targetNamespace = "http://server.docdoku.com/", wsdlLocation = "http://localhost:8080/services/document?wsdl")
 public class DocumentService extends Service{
 
-    private final static URL DOCUMENTSERVICE_WSDL_LOCATION;
-    private final static QName DOCUMENTSERVICE_QNAME = new QName("http://server.docdoku.com/", "DocumentManagerBeanService");
-    private final static Logger LOGGER = Logger.getLogger(DocumentService.class.getName());
+    private static final URL DOCUMENTSERVICE_WSDL_LOCATION;
+    private static final QName DOCUMENTSERVICE_QNAME = new QName("http://server.docdoku.com/", "DocumentManagerBeanService");
+    private static final Logger LOGGER = Logger.getLogger(DocumentService.class.getName());
 
     static {
         URL url = null;

@@ -32,8 +32,7 @@ import java.util.logging.Logger;
  * @author Florent Garin
  */
 @WebServiceClient(name = "ProductService", targetNamespace = "http://server.docdoku.com/", wsdlLocation = "http://localhost:8080/services/product?wsdl")
-public class ProductService extends Service
-{
+public class ProductService extends Service{
 
     private final static URL PRODUCTSERVICE_WSDL_LOCATION;
     private final static QName PRODUCTSERVICE_QNAME = new QName("http://server.docdoku.com/", "ProductManagerBeanService");

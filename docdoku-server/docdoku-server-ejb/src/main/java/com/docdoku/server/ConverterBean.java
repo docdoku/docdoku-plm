@@ -74,6 +74,4 @@ public class ConverterBean implements IConverterManagerLocal {
         }
         return new AsyncResult<>(convertedFile);
     }
-
-
 }

@@ -45,9 +45,9 @@ import java.util.logging.Logger;
 @OBJFileConverter
 public class OBJFileConverterImpl implements CADConverter{
 
-    private final static String PYTHON_SCRIPT="/com/docdoku/server/converters/obj/convert_obj_three.py";
-    private final static String CONF_PROPERTIES="/com/docdoku/server/converters/obj/conf.properties";
-    private final static Properties CONF = new Properties();
+    private static final String PYTHON_SCRIPT="/com/docdoku/server/converters/obj/convert_obj_three.py";
+    private static final String CONF_PROPERTIES="/com/docdoku/server/converters/obj/conf.properties";
+    private static final Properties CONF = new Properties();
 
     @EJB
     private IProductManagerLocal productService;
@@ -63,9 +63,13 @@ public class OBJFileConverterImpl implements CADConverter{
         } catch (IOException e) {
             Logger.getLogger(OBJFileConverterImpl.class.getName()).log(Level.WARNING, null, e);
         } finally {
-            try{if(inputStream!=null){
-                inputStream.close();
-            }}catch (IOException ignored){}
+            try{
+                if(inputStream!=null){
+                    inputStream.close();
+                }
+            }catch (IOException e){
+                Logger.getLogger(OBJFileConverterImpl.class.getName()).log(Level.FINEST, null, e);
+            }
         }
     }
 
