@@ -25,6 +25,7 @@ import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.meta.Tag;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartRevisionKey;
+import com.docdoku.core.workflow.Workflow;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 
@@ -98,7 +99,7 @@ public class ESMapper {
             setField(tmp,CREATION_DATE_KEY,doc.getDocumentRevision().getCreationDate(),1f);
             setField(tmp,"description",doc.getDocumentRevision().getDescription(),1f);
             setField(tmp,"revisionNote",doc.getRevisionNote(),0.5f);
-            setField(tmp,"workflow",doc.getDocumentRevision().getWorkflow(),0.5f);
+            setField(tmp,"workflow",doc.getDocumentRevision().getWorkflow(),0.25f);
             setField(tmp,"folder",doc.getDocumentRevision().getLocation().getShortName(),0.25f);
             if(!doc.getDocumentRevision().getTags().isEmpty()){
                 tmp.startArray("tags");
@@ -162,7 +163,7 @@ public class ESMapper {
             setField(tmp,CREATION_DATE_KEY,part.getCreationDate(),1f);
             setField(tmp,"description",part.getPartRevision().getDescription(),1f);
             setField(tmp,"revisionNote",part.getIterationNote(),0.5f);
-            setField(tmp,"workflow",part.getPartRevision().getWorkflow(),0.5f);
+            setField(tmp,"workflow",part.getPartRevision().getWorkflow(),0.25f);
             if(! part.getInstanceAttributes().isEmpty()){
                 tmp.startObject("attributes");
                 Collection<InstanceAttribute> listAttr = part.getInstanceAttributes().values();
@@ -189,6 +190,13 @@ public class ESMapper {
     private static XContentBuilder setField(XContentBuilder object, String field, int value, float coef ) throws IOException {
         object.field(field, ""+value, coef);
         return object;
+    }
+
+    private static XContentBuilder setField(XContentBuilder object, String field, Workflow value, float coef ) throws IOException {
+        if(value != null){
+            return object.field(field, value.getFinalLifeCycleState(), coef);
+        }
+        return null;
     }
 
     private static XContentBuilder setField(XContentBuilder object, String field, Object value, float coef ) throws IOException {
