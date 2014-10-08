@@ -30,6 +30,9 @@ import com.docdoku.core.security.*;
 import com.docdoku.core.services.*;
 import com.docdoku.server.*;
 import com.docdoku.server.esindexer.ESIndexer;
+import com.docdoku.server.esindexer.ESMapper;
+import com.docdoku.server.esindexer.ESSearcher;
+import com.docdoku.server.esindexer.ESTools;
 import com.docdoku.server.gcm.GCMSenderBean;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -89,6 +92,9 @@ public class AccessRightsTest {
                         DataManagerBean.class,
                         DocumentManagerBean.class,
                         ESIndexer.class,
+                        ESMapper.class,
+                        ESSearcher.class,
+                        ESTools.class,
                         GCMAccount.class,
                         GCMSenderBean.class,
                         IDataManagerLocal.class,

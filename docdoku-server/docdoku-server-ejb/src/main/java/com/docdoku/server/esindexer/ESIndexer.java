@@ -161,7 +161,8 @@ public class ESIndexer{
             createIndex(ESTools.formatIndexName(workspaceId), client);
             client.close();
         }catch (NoNodeAvailableException e){
-            LOGGER.log(Level.WARNING, "Error on creating: "+workspaceId+" index",e);
+            LOGGER.log(Level.WARNING, "Error on creating: "+workspaceId+" index");
+            LOGGER.log(Level.FINER, null, e);
         }
     }
 
