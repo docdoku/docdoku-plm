@@ -1,8 +1,7 @@
-/*global define,App*/
+/*global _,define,App*/
 define(['backbone'], function (Backbone) {
 	'use strict';
     var linkedDocument = Backbone.Model.extend({
-
         initialize: function () {
             _.bindAll(this);
         },

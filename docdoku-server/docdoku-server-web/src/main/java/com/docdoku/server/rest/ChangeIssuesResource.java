@@ -56,7 +56,7 @@ public class ChangeIssuesResource {
     @EJB
     private IChangeManagerLocal changeManager;
 
-    private final static Logger LOGGER = Logger.getLogger(ChangeIssuesResource.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ChangeIssuesResource.class.getName());
     private Mapper mapper;
 
     public ChangeIssuesResource() {

@@ -38,8 +38,8 @@ import java.security.NoSuchAlgorithmException;
 
 public class FileHelper {
 
-    private final static int CHUNK_SIZE = 1024*8;
-    private final static int BUFFER_CAPACITY = 1024*32;
+    private static final int CHUNK_SIZE = 1024*8;
+    private static final int BUFFER_CAPACITY = 1024*32;
 
     private String login;
     private String password;

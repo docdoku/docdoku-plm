@@ -1,29 +1,28 @@
-/*global define*/
+/*global define, App*/
 define([
     'backbone',
-    "mustache",
-    "text!common-objects/templates/linked/linked_part.html"
+    'mustache',
+    'text!common-objects/templates/linked/linked_part.html'
 ], function (Backbone, Mustache, template) {
-    var LinkedPartView = Backbone.View.extend({
+    'use strict';
+	var LinkedPartView = Backbone.View.extend({
 
-        tagName: "li",
-        className: "linked-item well",
+        tagName: 'li',
+        className: 'linked-item well',
 
         events: {
-            "click .delete-linked-item": "deleteButtonClicked"
+            'click .delete-linked-item': 'deleteButtonClicked'
         },
 
         initialize: function () {
         },
 
         render: function () {
-            this.$el.html(Mustache.render(template,
-                {
-                    i18n: App.config.i18n,
-                    linkedPart: this.model,
-                    editMode: this.options.editMode
-                }
-            ));
+	        this.$el.html(Mustache.render(template,{
+	            i18n: App.config.i18n,
+	            linkedPart: this.model,
+	            editMode: this.options.editMode
+	        }));
 
             return this;
         },
@@ -37,4 +36,3 @@ define([
     });
     return LinkedPartView;
 });
-

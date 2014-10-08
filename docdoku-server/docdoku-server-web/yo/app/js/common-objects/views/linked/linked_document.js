@@ -1,29 +1,28 @@
-/*global define*/
+/*global define,App*/
 define([
     'backbone',
-    "mustache",
-    "text!common-objects/templates/linked/linked_document.html"
+    'mustache',
+    'text!common-objects/templates/linked/linked_document.html'
 ], function (Backbone, Mustache, template) {
-    var LinkedDocumentView = Backbone.View.extend({
+    'use strict';
+	var LinkedDocumentView = Backbone.View.extend({
 
-        tagName: "li",
-        className: "linked-item well",
+        tagName: 'li',
+        className: 'linked-item well',
 
         events: {
-            "click .delete-linked-item": "deleteButtonClicked"
+            'click .delete-linked-item': 'deleteButtonClicked'
         },
 
         initialize: function () {
         },
 
         render: function () {
-            this.$el.html(Mustache.render(template,
-                {
-                    i18n: App.config.i18n,
-                    linkedDocument: this.model,
-                    editMode: this.options.editMode
-                }
-            ));
+            this.$el.html(Mustache.render(template,{
+                i18n: App.config.i18n,
+                linkedDocument: this.model,
+                editMode: this.options.editMode
+            }));
 
             return this;
         },
@@ -33,8 +32,6 @@ define([
             this.remove();
             return false;
         }
-
     });
     return LinkedDocumentView;
 });
-

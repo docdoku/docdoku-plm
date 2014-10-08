@@ -35,9 +35,9 @@ import java.util.logging.Logger;
 public class ProductConfigSpecService extends Service
 {
 
-    private final static URL PRODUCTCONFIGSPECSERVICE_WSDL_LOCATION;
-    private final static QName PRODUCTCONFIGSPECSERVICE_QNAME = new QName("http://server.docdoku.com/", "ProductConfigSpecManagerBeanService");
-    private final static Logger LOGGER = Logger.getLogger(ProductConfigSpecService.class.getName());
+    private static final URL PRODUCTCONFIGSPECSERVICE_WSDL_LOCATION;
+    private static final QName PRODUCTCONFIGSPECSERVICE_QNAME = new QName("http://server.docdoku.com/", "ProductConfigSpecManagerBeanService");
+    private static final Logger LOGGER = Logger.getLogger(ProductConfigSpecService.class.getName());
 
     static {
         URL url = null;

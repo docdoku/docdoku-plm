@@ -43,10 +43,11 @@ import java.util.logging.Logger;
 @StepFileConverter
 public class StepFileConverterImpl implements CADConverter{
 
-    private final static String PYTHON_SCRIPT_TO_OBJ="/com/docdoku/server/converters/step/convert_step_obj.py";
-    private final static String PYTHON_SCRIPT_TO_JS="/com/docdoku/server/converters/step/convert_obj_three.py";
-    private final static String CONF_PROPERTIES="/com/docdoku/server/converters/step/conf.properties";
-    private final static Properties CONF = new Properties();
+    private static final String PYTHON_SCRIPT_TO_OBJ="/com/docdoku/server/converters/step/convert_step_obj.py";
+    private static final String PYTHON_SCRIPT_TO_JS="/com/docdoku/server/converters/step/convert_obj_three.py";
+    private static final String CONF_PROPERTIES="/com/docdoku/server/converters/step/conf.properties";
+    private static final Properties CONF = new Properties();
+    private static final Logger LOGGER = Logger.getLogger(StepFileConverterImpl.class.getName());
 
     @EJB
     private IProductManagerLocal productService;
@@ -62,9 +63,13 @@ public class StepFileConverterImpl implements CADConverter{
         } catch (IOException e) {
             Logger.getLogger(StepFileConverterImpl.class.getName()).log(Level.INFO, null, e);
         } finally {
-            try{if(inputStream!=null){
-                inputStream.close();
-            }}catch (IOException ignored){}
+            try{
+                if(inputStream!=null){
+                    inputStream.close();
+                }
+            }catch (IOException e){
+                Logger.getLogger(StepFileConverterImpl.class.getName()).log(Level.FINEST, null, e);
+            }
         }
     }
 
@@ -164,18 +169,10 @@ public class StepFileConverterImpl implements CADConverter{
             return jsFile;
         } finally {
             FileIO.rmDir(tmpDir);
-            try{if(isr1!=null){
-                isr1.close();
-            }}catch (IOException ignored){}
-            try{if(isr2!=null){
-                isr2.close();
-            }}catch (IOException ignored){}
-            try{if(br1!=null){
-                br1.close();
-            }}catch (IOException ignored){}
-            try{if(br2!=null){
-                br2.close();
-            }}catch (IOException ignored){}
+            closeStream(isr1);
+            closeStream(isr2);
+            closeStream(br1);
+            closeStream(br2);
         }
     }
 
@@ -184,4 +181,14 @@ public class StepFileConverterImpl implements CADConverter{
         return Arrays.asList("stp", "step", "igs", "iges").contains(cadFileExtension);
     }
 
+
+    private void closeStream(Closeable stream) {
+        try{
+            if(stream!=null){
+                stream.close();
+            }
+        }catch (IOException e){
+            LOGGER.log(Level.FINEST, null, e);
+        }
+    }
 }

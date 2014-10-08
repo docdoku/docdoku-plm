@@ -35,7 +35,7 @@ public class StreamingBinaryResourceOutput implements StreamingOutput {
     private File file;
     private Range range;
 
-    private final static int BLOCK_SIZE = 32 * 1024;
+    private static final int BLOCK_SIZE = 32 * 1024;
 
     public StreamingBinaryResourceOutput(File file, Range range) {
         this.file = file;

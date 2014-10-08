@@ -12,6 +12,12 @@ import java.util.logging.Logger;
 
 
 public class MainCommandImpl {
+    private static final Logger LOGGER = Logger.getLogger(MainCommandImpl.class.getName());
+
+    private MainCommandImpl(){
+        super();
+    }
+
   /*
   * Main function wrapper
   * */
@@ -61,6 +67,7 @@ public class MainCommandImpl {
                     return null;
             }
         } catch (Exception e) {
+            LOGGER.log(Level.FINEST,null,e);
             printUsage();
             return null;
         }
@@ -77,7 +84,7 @@ public class MainCommandImpl {
             parser.printUsage(System.err);
             return JSONOutput.printException(e);
         } catch (Exception e) {
-            Logger.getLogger(MainCommandImpl.class.getName()).log(Level.SEVERE, null, e);
+            LOGGER.log(Level.SEVERE, null, e);
             return JSONOutput.printException(e);
         }
     }

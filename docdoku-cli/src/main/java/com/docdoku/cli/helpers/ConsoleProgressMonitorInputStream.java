@@ -33,7 +33,7 @@ public class ConsoleProgressMonitorInputStream extends FilterInputStream {
 
     private int rotationChar;
 
-    private final static char[] ROTATION = {'|','|','|','|','/','/','/','/','-','-','-','-','\\','\\','\\','\\'};
+    private static final char[] ROTATION = {'|','|','|','|','/','/','/','/','-','-','-','-','\\','\\','\\','\\'};
 
     public ConsoleProgressMonitorInputStream(long maximum, InputStream in){
         super(in);

@@ -7,7 +7,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 /**
- * Created by Arthur FRIN on 30/06/14.
+ * A room of Collaboration Module
+ *
+ * @author Arthur FRIN
+ * @version 1.0, 30/06/14
+ * @since   V2.0
  */
 public class CollaborativeRoom {
     private static final ConcurrentMap<String, CollaborativeRoom> DB = new ConcurrentHashMap<>();

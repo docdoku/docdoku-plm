@@ -1,10 +1,11 @@
-/*global define*/
+/*global _,define,App*/
 define([
-    "common-objects/views/attributes/attribute_list_item",
-    "text!common-objects/templates/attributes/attribute_list_item.html",
-    "text!common-objects/templates/attributes/attribute_list_item_date.html",
-    "common-objects/utils/date"
+    'common-objects/views/attributes/attribute_list_item',
+    'text!common-objects/templates/attributes/attribute_list_item.html',
+    'text!common-objects/templates/attributes/attribute_list_item_date.html',
+    'common-objects/utils/date'
 ], function (AttributeListItemView, attribute_list_item, template, date) {
+	'use strict';
     var AttributeListItemDateView = AttributeListItemView.extend({
 
         template: template,
@@ -18,7 +19,7 @@ define([
         },
 
         /**
-         * format date from attribute model (timestamp string) to html5 input date ("yyyy-mm-dd")
+         * format date from attribute model (timestamp string) to html5 input date ('yyyy-mm-dd')
          */
         modelToJSON: function () {
             var data = this.model.toJSON();
@@ -42,7 +43,7 @@ define([
          * called on input change
          */
         updateValue: function () {
-            var el = this.$("input.value");
+            var el = this.$('input.value');
             this.model.set({
                 value: this.getValue(el)
             }, {
@@ -53,5 +54,4 @@ define([
     });
 
     return AttributeListItemDateView;
-
 });

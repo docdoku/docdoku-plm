@@ -27,10 +27,10 @@ import java.util.logging.Logger;
 @Stateless(name = "GCMSenderBean")
 public class GCMSenderBean implements IGCMSenderLocal {
 
-    private final static String GCM_URL = "https://android.googleapis.com/gcm/send";
-    private final static String CONF_PROPERTIES = "/com/docdoku/server/gcm/gcm.properties";
-    private final static Properties CONF = new Properties();
-    private final static Logger LOGGER = Logger.getLogger(GCMSenderBean.class.getName());
+    private static final String GCM_URL = "https://android.googleapis.com/gcm/send";
+    private static final String CONF_PROPERTIES = "/com/docdoku/server/gcm/gcm.properties";
+    private static final Properties CONF = new Properties();
+    private static final Logger LOGGER = Logger.getLogger(GCMSenderBean.class.getName());
 
     @EJB
     private IUserManagerLocal userManager;

@@ -1,35 +1,35 @@
 define([], function() {
-
+	'use strit';
     var Part = Backbone.Model.extend({
 
         init:function(number, version){
-            this.set("number",number);
-            this.set("version",version);
+            this.set('number',number);
+            this.set('version',version);
             return this;
         },
 
         getNumber:function(){
-            return this.get("number");
+            return this.get('number');
         },
 
         getName:function(){
-            return this.get("name");
+            return this.get('name');
         },
 
         getVersion: function() {
-            return this.get("version");
+            return this.get('version');
         },
 
         getDescription: function() {
-            return this.get("description");
+            return this.get('description');
         },
 
         getPartKey:function(){
-            return this.get("partKey");
+            return this.get('partKey');
         },
 
         getWorkspace: function() {
-            return this.get("workspace");
+            return this.get('workspace');
         },
 
         getCheckoutUser: function() {
@@ -85,11 +85,11 @@ define([], function() {
         },
 
         getAuthorLogin:function(){
-            return this.get("author").login;
+            return this.get('author').login;
         },
 
         getAuthorName:function(){
-            return this.get("author").name;
+            return this.get('author').name;
         },
 
         getCheckOutUserName:function(){
@@ -105,22 +105,21 @@ define([], function() {
         },
 
         isStandardPart:function(){
-//          return this.get("standardPart") ? 1:0;
+//          return this.get('standardPart') ? 1:0;
             // TODO ?
         },
 
         isStandardPartReadable:function(){
-//            return this.get("standardPart") ? i18n.TRUE:i18n.FALSE;
+//            return this.get('standardPart') ? i18n.TRUE:i18n.FALSE;
             // TODO ?
         },
 
 
         isCheckout:function(){
-            return !_.isNull(this.get("checkOutDate"));
+            return !_.isNull(this.get('checkOutDate'));
         }
 
     });
 
     return Part;
-
 });

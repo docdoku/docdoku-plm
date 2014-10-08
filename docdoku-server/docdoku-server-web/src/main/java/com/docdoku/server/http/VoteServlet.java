@@ -59,9 +59,7 @@ public class VoteServlet extends HttpServlet {
         String entityType = pRequest.getParameter("entityType");
 
         try {
-
             if(entityType.equals("parts")){
-
                 if (action.equals("Approve")) {
                     PartRevision partRevision = productService.approveTaskOnPart(workspaceId, new TaskKey(new ActivityKey(activityWorkflowId, activityStep), index), comment, null);
                     pRequest.setAttribute("entity", partRevision);

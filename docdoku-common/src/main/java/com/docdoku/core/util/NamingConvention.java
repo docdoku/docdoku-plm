@@ -27,13 +27,13 @@ package com.docdoku.core.util;
 public class NamingConvention {
     
     
-    private final static char[] FORBIDDEN_CHARS = {'/', '\\', ':', '*', '?',
+    private static final char[] FORBIDDEN_CHARS = {'/', '\\', ':', '*', '?',
     '"', '<', '>', '|', '~', '%', ' '};
 
-    private final static char[] FORBIDDEN_CHARS_FILE = {'/', '\\', ':', '*', '?',
+    private static final char[] FORBIDDEN_CHARS_FILE = {'/', '\\', ':', '*', '?',
             '"', '<', '>', '|', '~'};
     
-    private final static String[] FORBIDDEN_NAMES = {"",".."};
+    private static final String[] FORBIDDEN_NAMES = {"",".."};
 
     private NamingConvention() {
     }

@@ -1,22 +1,23 @@
-/*global define*/
+/*global _,define*/
 define([
     'backbone',
-    "common-objects/collections/task_models"
+    'common-objects/collections/task_models'
 ], function (Backbone, TaskModels) {
+	'use strict';
     var ActivityModel = Backbone.Model.extend({
 
         defaults: function () {
             return {
-                type: "SERIAL",
+                type: 'SERIAL',
                 tasksToComplete: 0,
                 taskModels: new TaskModels()
             };
         },
 
         initialize: function () {
-            if (_.isUndefined(this.get("taskModels").models)) {
+            if (_.isUndefined(this.get('taskModels').models)) {
                 this.set({
-                    taskModels: new TaskModels(this.get("taskModels"))
+                    taskModels: new TaskModels(this.get('taskModels'))
                 });
             }
         },

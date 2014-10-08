@@ -41,8 +41,8 @@ public class GoogleStorageCloud {
 
     private GoogleStorageCloud(){}
 
-    private final static GoogleStorageProperties properties = new GoogleStorageProperties();
-    private final static Logger LOGGER = Logger.getLogger(GoogleStorageCloud.class.getName());
+    private static final GoogleStorageProperties properties = new GoogleStorageProperties();
+    private static final Logger LOGGER = Logger.getLogger(GoogleStorageCloud.class.getName());
 
     private static String getOAuthAuthorizationHeader() throws IOException {
         return new StringBuilder().append("Bearer ").append(getOAuthAccessToken()).toString();

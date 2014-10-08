@@ -1,4 +1,4 @@
-/*global define*/
+/*global _,define,App*/
 'use strict';
 define([
     'backbone',
@@ -141,7 +141,7 @@ define([
 
         deleteSelectedBaselines: function () {
             var that = this;
-            if (confirm(App.config.i18n.DELETE_SELECTION_QUESTION)) {
+            if (window.confirm(App.config.i18n.DELETE_SELECTION_QUESTION)) {
                 _(this.listItemViews).each(function (view) {
                     if (view.isChecked()) {
                         view.model.destroy({

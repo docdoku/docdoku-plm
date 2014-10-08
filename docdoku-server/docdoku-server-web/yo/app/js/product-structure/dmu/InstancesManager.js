@@ -1,4 +1,4 @@
-/*global _,$,define,App,Worker,console*/
+/*global _,$,define,App,THREE,Worker,console*/
 define(['dmu/LoaderManager', 'async'],
     function (LoaderManager, async) {
 	    'use strict';
@@ -32,6 +32,8 @@ define(['dmu/LoaderManager', 'async'],
             var loaderIndicator = $('#product_title').find('img.loader');
             var timer = null;
             var evalRunning = false;
+
+	        var worker = new Worker(App.config.contextPath + '/js/product-structure/workers/InstancesWorker.js');
 
             var workerMessages = {
                 stats: function (stats) {
@@ -69,8 +71,6 @@ define(['dmu/LoaderManager', 'async'],
                     }, 500);
                 }
             };
-
-            var worker = new Worker(App.config.contextPath + '/js/product-structure/workers/InstancesWorker.js');
 
             worker.addEventListener('message', function (message) {
                 if (typeof  workerMessages[message.data.fn] === 'function') {

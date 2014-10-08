@@ -48,7 +48,7 @@ public class DataManagerBean implements IDataManagerLocal {
     private StorageProvider defaultStorageProvider;
     private FileStorageProvider fileStorageProvider;
 
-    private final static Logger LOGGER = Logger.getLogger(DataManagerBean.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(DataManagerBean.class.getName());
 
     @PostConstruct
     private void init() {

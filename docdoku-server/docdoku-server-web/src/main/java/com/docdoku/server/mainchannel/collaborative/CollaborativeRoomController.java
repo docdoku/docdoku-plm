@@ -7,11 +7,19 @@ import com.docdoku.server.mainchannel.util.ChannelMessagesType;
 
 import javax.json.JsonObject;
 import javax.websocket.Session;
+
 /**
- * Created by Arthur FRIN on 30/06/14.
+ * A controller for manage a room of Collaboration Module
+ *
+ * @author Arthur FRIN
+ * @version 1.0, 30/06/14
+ * @since   V2.0
  */
 public class CollaborativeRoomController {
 
+    private CollaborativeRoomController(){
+        super();
+    }
     public static void broadcastNewContext(CollaborativeRoom room){
         String master = room.getMasterName();
         CollaborativeMessage message = new CollaborativeMessage(ChannelMessagesType.COLLABORATIVE_CONTEXT,room.getKey(),room.getContext(),master);

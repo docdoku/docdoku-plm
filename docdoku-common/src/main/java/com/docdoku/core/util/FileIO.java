@@ -37,14 +37,14 @@ import java.util.zip.ZipInputStream;
  */
 public class FileIO {
 
-    private final static int CHUNK_SIZE = 1024 * 8;
-    private final static int BUFFER_CAPACITY = 1024 * 16;
+    private static final int CHUNK_SIZE = 1024 * 8;
+    private static final int BUFFER_CAPACITY = 1024 * 16;
 
 
-    private final static List<String> DOC_EXTENSIONS = Arrays.asList("odt", "html", "sxw", "swf", "sxc", "doc", "docx", "xls", "xlsx", "rtf", "txt", "ppt", "pptx", "odp", "wpd", "tsv", "sxi", "csv", "pdf");
-    private final static List<String> AV_EXTENSIONS = Arrays.asList("mp3", "mpg", "flv", "mp4", "aac", "mov");
-    private final static List<String> IMAGE_EXTENSIONS = Arrays.asList("jpg", "png", "gif", "psd", "jpeg", "psp", "tif");
-    private final static List<String> ARCHIVE_EXTENSIONS = Arrays.asList("zip");
+    private static final List<String> DOC_EXTENSIONS = Arrays.asList("odt", "html", "sxw", "swf", "sxc", "doc", "docx", "xls", "xlsx", "rtf", "txt", "ppt", "pptx", "odp", "wpd", "tsv", "sxi", "csv", "pdf");
+    private static final List<String> AV_EXTENSIONS = Arrays.asList("mp3", "mpg", "flv", "mp4", "aac", "mov");
+    private static final List<String> IMAGE_EXTENSIONS = Arrays.asList("jpg", "png", "gif", "psd", "jpeg", "psp", "tif");
+    private static final List<String> ARCHIVE_EXTENSIONS = Arrays.asList("zip");
 
     private FileIO() {
     }

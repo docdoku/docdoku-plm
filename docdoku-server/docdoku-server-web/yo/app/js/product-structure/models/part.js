@@ -1,11 +1,10 @@
-/*global define,App*/
-'use strict';
-define(['backbone', "common-objects/utils/date", "collections/part_iteration_collection"],
+/*global _,$,define,App*/
+define(['backbone', 'common-objects/utils/date', 'collections/part_iteration_collection'],
     function (Backbone, Date, PartIterationList) {
-
+	    'use strict';
         var Part = Backbone.Model.extend({
 
-            idAttribute: "partKey",
+            idAttribute: 'partKey',
 
             parse: function (data) {
                 this.iterations = new PartIterationList(data.partIterations);
@@ -19,33 +18,33 @@ define(['backbone', "common-objects/utils/date", "collections/part_iteration_col
             },
 
             init: function (number, version) {
-                this.set("number", number);
-                this.set("version", version);
+                this.set('number', number);
+                this.set('version', version);
                 return this;
             },
 
             getNumber: function () {
-                return this.get("number");
+                return this.get('number');
             },
 
             getName: function () {
-                return this.get("name");
+                return this.get('name');
             },
 
             getVersion: function () {
-                return this.get("version");
+                return this.get('version');
             },
 
             getDescription: function () {
-                return this.get("description");
+                return this.get('description');
             },
 
             getPartKey: function () {
-                return this.get("partKey");
+                return this.get('partKey');
             },
 
             getWorkspace: function () {
-                return this.get("workspaceId");
+                return this.get('workspaceId');
             },
 
             getCheckoutUser: function () {
@@ -106,15 +105,15 @@ define(['backbone', "common-objects/utils/date", "collections/part_iteration_col
             },
 
             getAuthorLogin: function () {
-                return this.get("author").login;
+                return this.get('author').login;
             },
 
             getAuthorName: function () {
-                return this.get("author").name;
+                return this.get('author').name;
             },
 
             getAuthor: function () {
-                return this.get("author").name;
+                return this.get('author').name;
             },
 
             getCheckOutUserName: function () {
@@ -130,22 +129,22 @@ define(['backbone', "common-objects/utils/date", "collections/part_iteration_col
             },
 
             isStandardPart: function () {
-                return this.get("standardPart") ? 1 : 0;
+                return this.get('standardPart') ? 1 : 0;
             },
 
             isStandardPartReadable: function () {
-                return this.get("standardPart") ? App.config.i18n.TRUE : App.config.i18n.FALSE;
+                return this.get('standardPart') ? App.config.i18n.TRUE : App.config.i18n.FALSE;
             },
 
             isAttributesLocked: function () {
-                return this.get("attributesLocked");
+                return this.get('attributesLocked');
             },
 
             checkout: function () {
                 $.ajax({
                     context: this,
-                    type: "PUT",
-                    url: this.url() + "/checkout",
+                    type: 'PUT',
+                    url: this.url() + '/checkout',
                     success: function () {
                         this.fetch();
                     }
@@ -155,8 +154,8 @@ define(['backbone', "common-objects/utils/date", "collections/part_iteration_col
             undocheckout: function () {
                 $.ajax({
                     context: this,
-                    type: "PUT",
-                    url: this.url() + "/undocheckout",
+                    type: 'PUT',
+                    url: this.url() + '/undocheckout',
                     success: function () {
                         this.fetch();
                     }
@@ -166,8 +165,8 @@ define(['backbone', "common-objects/utils/date", "collections/part_iteration_col
             checkin: function () {
                 $.ajax({
                     context: this,
-                    type: "PUT",
-                    url: this.url() + "/checkin",
+                    type: 'PUT',
+                    url: this.url() + '/checkin',
                     success: function () {
                         this.fetch();
                     }
@@ -178,21 +177,21 @@ define(['backbone', "common-objects/utils/date", "collections/part_iteration_col
                 return encodeURI(
                         window.location.origin +
                         App.config.contextPath +
-                        "/parts/" +
+                        '/parts/' +
                         this.getWorkspace() +
-                        "/" +
+                        '/' +
                         this.getNumber() +
-                        "/" +
+                        '/' +
                         this.getVersion()
                 );
             },
 
             isCheckout: function () {
-                return !_.isNull(this.get("checkOutDate"));
+                return !_.isNull(this.get('checkOutDate'));
             },
 
             url: function () {
-                return App.config.contextPath + "/api/workspaces/" + App.config.workspaceId + "/parts/" + this.getPartKey();
+                return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/' + this.getPartKey();
             }
 
         });

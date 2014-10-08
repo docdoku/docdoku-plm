@@ -53,6 +53,8 @@ import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPOutputStream;
 
@@ -76,16 +78,16 @@ public class UploadDownloadServlet extends HttpServlet {
     private IDocumentPostUploaderManagerLocal documentPostUploaderService;
 
     @EJB
-    private IDocumentViewerManagerLocal documentViewerService;
-
-    @EJB
     private IDataManagerLocal dataManager;
 
     @Resource
     private UserTransaction utx;
 
+    private static final Logger LOGGER = Logger.getLogger(UploadDownloadServlet.class.getName());
     private static final int DEFAULT_BUFFER_SIZE = 4096;
     private static final String MULTIPART_BOUNDARY = "MULTIPART_BYTERANGES";
+    private static final String ENCODAGE = "UTF-8";
+    private static final String CONTENT_RANGE = "Content-Range";
 
     @Override
     protected void doHead(HttpServletRequest pRequest, HttpServletResponse pResponse) throws ServletException, IOException{
@@ -132,7 +134,7 @@ public class UploadDownloadServlet extends HttpServlet {
                 fileName+="."+outputFormat;
             }
 
-            fileName = URLEncoder.encode(fileName, "UTF-8");
+            fileName = URLEncoder.encode(fileName, ENCODAGE);
             
             // Set content type
             String contentType;
@@ -196,7 +198,7 @@ public class UploadDownloadServlet extends HttpServlet {
 
                 // Range header should match format "bytes=n-n,n-n,n-n...". If not, then return 416.
                 if (!range.matches("^bytes=\\d*-\\d*(,\\d*-\\d*)*$")) {
-                    pResponse.setHeader("Content-Range", "bytes */" + length); // Required in 416.
+                    pResponse.setHeader(CONTENT_RANGE, "bytes */" + length); // Required in 416.
                     pResponse.sendError(HttpServletResponse.SC_REQUESTED_RANGE_NOT_SATISFIABLE);
                     return;
                 }
@@ -210,7 +212,8 @@ public class UploadDownloadServlet extends HttpServlet {
                         if (ifRangeTime != -1 && ifRangeTime + 1000 < lastModified) {
                             ranges.add(full);
                         }
-                    } catch (IllegalArgumentException ignore) {
+                    } catch (IllegalArgumentException e) {
+                        LOGGER.log(Level.FINEST,null,e);
                         ranges.add(full);
                     }
                 }
@@ -232,7 +235,7 @@ public class UploadDownloadServlet extends HttpServlet {
 
                         // Check if Range is syntactically valid. If not, then return 416.
                         if (start > end) {
-                            pResponse.setHeader("Content-Range", "bytes */" + length); // Required in 416.
+                            pResponse.setHeader(CONTENT_RANGE, "bytes */" + length); // Required in 416.
                             pResponse.sendError(HttpServletResponse.SC_REQUESTED_RANGE_NOT_SATISFIABLE);
                             return;
                         }
@@ -302,7 +305,7 @@ public class UploadDownloadServlet extends HttpServlet {
                 if (ranges.isEmpty() || ranges.get(0) == full) {
                     r = full;
                     pResponse.setContentType(contentType);
-                    pResponse.setHeader("Content-Range", "bytes " + r.start + "-" + r.end + "/" + r.total);
+                    pResponse.setHeader(CONTENT_RANGE, "bytes " + r.start + "-" + r.end + "/" + r.total);
                     if (content) {
                         if (acceptsGzip) {
                             pResponse.setHeader("Content-Encoding", "gzip");
@@ -316,7 +319,7 @@ public class UploadDownloadServlet extends HttpServlet {
                 } else if (ranges.size() == 1) {
                     r = ranges.get(0);
                     pResponse.setContentType(contentType);
-                    pResponse.setHeader("Content-Range", "bytes " + r.start + "-" + r.end + "/" + r.total);
+                    pResponse.setHeader(CONTENT_RANGE, "bytes " + r.start + "-" + r.end + "/" + r.total);
                     pResponse.setContentLength((int) r.length);
                     pResponse.setStatus(HttpServletResponse.SC_PARTIAL_CONTENT); // 206.
 
@@ -352,8 +355,7 @@ public class UploadDownloadServlet extends HttpServlet {
                     }
                 }
 
-            }
-            finally {
+            } finally {
                 close(binaryContentInputStream);
                 if(httpOut  != null){
                     httpOut.flush();
@@ -362,6 +364,7 @@ public class UploadDownloadServlet extends HttpServlet {
             }
 
         } catch (Exception pEx) {
+            LOGGER.log(Level.FINEST,null,pEx);
             pResponse.setHeader("Reason-Phrase", pEx.getMessage());
             throw new ServletException("Error while downloading the file.", pEx);
         }
@@ -374,7 +377,7 @@ public class UploadDownloadServlet extends HttpServlet {
         String[] pathInfos = Pattern.compile("/").split(pRequest.getRequestURI());
         int offset = pRequest.getContextPath().isEmpty() ? 2 : 3;
 
-        String workspaceId = URLDecoder.decode(pathInfos[offset], "UTF-8");
+        String workspaceId = URLDecoder.decode(pathInfos[offset], ENCODAGE);
         String elementType = pathInfos[offset + 1];
 
         String fileName = null;
@@ -389,42 +392,44 @@ public class UploadDownloadServlet extends HttpServlet {
             utx.begin();
             switch (elementType) {
                 case "documents": {
-                    String docMId = URLDecoder.decode(pathInfos[offset + 2], "UTF-8");
+                    String docMId = URLDecoder.decode(pathInfos[offset + 2], ENCODAGE);
                     String docMVersion = pathInfos[offset + 3];
                     int iteration = Integer.parseInt(pathInfos[offset + 4]);
-                    fileName = URLDecoder.decode(pathInfos[offset + 5], "UTF-8");
+                    fileName = URLDecoder.decode(pathInfos[offset + 5], ENCODAGE);
                     docPK = new DocumentIterationKey(workspaceId, docMId, docMVersion, iteration);
                     binaryResource = documentService.saveFileInDocument(docPK, fileName, 0);
                     break;
                 }
                 case "document-templates": {
-                    String templateID = URLDecoder.decode(pathInfos[offset + 2], "UTF-8");
-                    fileName = URLDecoder.decode(pathInfos[offset + 3], "UTF-8");
+                    String templateID = URLDecoder.decode(pathInfos[offset + 2], ENCODAGE);
+                    fileName = URLDecoder.decode(pathInfos[offset + 3], ENCODAGE);
                     templatePK = new DocumentMasterTemplateKey(workspaceId, templateID);
                     binaryResource = documentService.saveFileInTemplate(templatePK, fileName, 0);
                     break;
                 }
                 case "part-templates": {
-                    String templateID = URLDecoder.decode(pathInfos[offset + 2], "UTF-8");
-                    fileName = URLDecoder.decode(pathInfos[offset + 3], "UTF-8");
+                    String templateID = URLDecoder.decode(pathInfos[offset + 2], ENCODAGE);
+                    fileName = URLDecoder.decode(pathInfos[offset + 3], ENCODAGE);
                     partTemplatePK = new PartMasterTemplateKey(workspaceId, templateID);
                     binaryResource = productService.saveFileInTemplate(partTemplatePK, fileName, 0);
                     break;
                 }
                 case "parts": {
-                    String partMNumber = URLDecoder.decode(pathInfos[offset + 2], "UTF-8");
+                    String partMNumber = URLDecoder.decode(pathInfos[offset + 2], ENCODAGE);
                     String partMVersion = pathInfos[offset + 3];
                     int iteration = Integer.parseInt(pathInfos[offset + 4]);
                     partPK = new PartIterationKey(workspaceId, partMNumber, partMVersion, iteration);
                     if (pathInfos.length == offset + 7) {
-                        fileName = URLDecoder.decode(pathInfos[offset + 6], "UTF-8");
+                        fileName = URLDecoder.decode(pathInfos[offset + 6], ENCODAGE);
                         binaryResource = productService.saveNativeCADInPartIteration(partPK, fileName, 0);
                     } else {
-                        fileName = URLDecoder.decode(pathInfos[offset + 5], "UTF-8");
+                        fileName = URLDecoder.decode(pathInfos[offset + 5], ENCODAGE);
                         binaryResource = productService.saveFileInPartIteration(partPK, fileName, 0);
                     }
                     break;
                 }
+                default:
+                    break;
             }
 
             Collection<Part> uploadedParts = pRequest.getParts();
@@ -470,21 +475,24 @@ public class UploadDownloadServlet extends HttpServlet {
                         productService.saveFileInPartIteration(partPK, fileName, length);
                     }
                     break;
+                default:
+                    break;
             }
             utx.commit();
-        } catch (Exception pEx) {
+        } catch (NotAllowedException | AccessRightException pEx){
+            LOGGER.log(Level.FINEST,null,pEx);
             pResponse.setHeader("Reason-Phrase", pEx.getMessage());
-            if(pEx instanceof NotAllowedException || pEx instanceof AccessRightException){
-                pResponse.sendError(HttpServletResponse.SC_FORBIDDEN,pEx.getMessage());
-            }else{
-                throw new ServletException("Error while uploading the file.", pEx);
-            }
+            pResponse.sendError(HttpServletResponse.SC_FORBIDDEN,pEx.getMessage());
+        } catch (Exception e){
+            pResponse.setHeader("Reason-Phrase", e.getMessage());
+            throw new ServletException("Error while uploading the file.", e);
         } finally {
             try {
                 if (utx.getStatus() == Status.STATUS_ACTIVE || utx.getStatus() == Status.STATUS_MARKED_ROLLBACK) {
                     utx.rollback();
                 }
             } catch (Exception pRBEx) {
+                LOGGER.log(Level.FINEST,null,pRBEx);
                 pResponse.setHeader("Reason-Phrase", pRBEx.getMessage());
                 rollbackFailException = new ServletException("Rollback failed.", pRBEx);
             }
@@ -537,9 +545,10 @@ public class UploadDownloadServlet extends HttpServlet {
         if (resource != null) {
             try {
                 resource.close();
-            } catch (IOException ignore) {
+            } catch (IOException e) {
                 // Ignore IOException. If you want to handle this anyway, it might be useful to know
                 // that this will generally only be thrown when the client aborted the request.
+                LOGGER.log(Level.FINEST,null,e);
             }
         }
     }
@@ -575,5 +584,4 @@ public class UploadDownloadServlet extends HttpServlet {
         }
 
     }
-
 }

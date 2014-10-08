@@ -63,7 +63,7 @@ public class WorkflowManagerBean implements IWorkflowManagerWS, IWorkflowManager
     @EJB
     private IUserManagerLocal userManager;
 
-    private final static Logger LOGGER = Logger.getLogger(WorkflowManagerBean.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(WorkflowManagerBean.class.getName());
 
 
     @RolesAllowed("users")

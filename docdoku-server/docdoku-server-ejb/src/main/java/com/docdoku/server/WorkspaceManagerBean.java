@@ -68,7 +68,7 @@ public class WorkspaceManagerBean implements IWorkspaceManagerLocal {
     @Resource
     private SessionContext ctx;
 
-    private final static Logger LOGGER = Logger.getLogger(WorkspaceManagerBean.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(WorkspaceManagerBean.class.getName());
 
     @PostConstruct
     private void init() {

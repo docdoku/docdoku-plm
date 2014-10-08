@@ -39,7 +39,7 @@ public class UserGroupMapping implements java.io.Serializable {
     
     private String groupName;
     
-    public final static String REGULAR_USER_ROLE_ID="users";
+    public static final String REGULAR_USER_ROLE_ID="users";
     
     public UserGroupMapping() {
     }

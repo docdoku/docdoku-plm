@@ -66,7 +66,7 @@ public class PartResource {
     public PartResource() {
     }
 
-    private final static Logger LOGGER = Logger.getLogger(PartResource.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(PartResource.class.getName());
     private Mapper mapper;
 
     @PostConstruct

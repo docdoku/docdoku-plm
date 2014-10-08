@@ -52,7 +52,7 @@ public class TitleBlockGenerator {
 
     private static final String TEMP_FILE_NAME = "output.pdf";
 
-    private final static String BASE_NAME = "com.docdoku.server.viewers.localization.TitleBlockGenerator";
+    private static final String BASE_NAME = "com.docdoku.server.viewers.localization.TitleBlockGenerator";
 
     private TitleBlockGenerator(){}
 

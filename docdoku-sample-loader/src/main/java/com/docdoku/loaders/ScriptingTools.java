@@ -35,7 +35,7 @@ import java.util.Map;
  * @author Florent GARIN
  */
 public class ScriptingTools {
-    public final static String HTTP_CLIENT_STREAMING_CHUNK_SIZE= "com.sun.xml.internal.ws.transport.http.client.streaming.chunk.size";
+    public static final String HTTP_CLIENT_STREAMING_CHUNK_SIZE= "com.sun.xml.internal.ws.transport.http.client.streaming.chunk.size";
 
     private ScriptingTools() {
     }

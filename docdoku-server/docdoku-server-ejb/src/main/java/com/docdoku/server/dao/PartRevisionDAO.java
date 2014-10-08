@@ -43,7 +43,7 @@ public class PartRevisionDAO {
 
     private EntityManager em;
     private Locale mLocale;
-    private final static int MAX_RESULTS = 500;
+    private static final int MAX_RESULTS = 500;
 
     public PartRevisionDAO(Locale pLocale, EntityManager pEM) {
         em = pEM;

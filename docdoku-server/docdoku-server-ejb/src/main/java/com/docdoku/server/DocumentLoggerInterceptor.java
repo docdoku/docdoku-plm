@@ -43,8 +43,8 @@ public class DocumentLoggerInterceptor {
     private EntityManager em;
     @Resource
     private SessionContext ejbCtx;
-    private final static Logger LOGGER = Logger.getLogger(DocumentLoggerInterceptor.class.getName());
-    private final static String EVENT = "DOWNLOAD";
+    private static final Logger LOGGER = Logger.getLogger(DocumentLoggerInterceptor.class.getName());
+    private static final String EVENT = "DOWNLOAD";
 
     @AroundInvoke
     public Object log(InvocationContext ctx) throws Exception {

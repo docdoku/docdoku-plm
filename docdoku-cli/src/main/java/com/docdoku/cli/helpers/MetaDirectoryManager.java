@@ -30,15 +30,15 @@ public class MetaDirectoryManager {
     private Properties indexProps;
 
 
-    private final static String META_DIRECTORY_NAME = ".dplm";
-    private final static String INDEX_FILE_NAME = "index.xml";
+    private static final String META_DIRECTORY_NAME = ".dplm";
+    private static final String INDEX_FILE_NAME = "index.xml";
 
-    private final static String PART_NUMBER_PROP = "partNumber";
-    private final static String REVISION_PROP = "revision";
-    private final static String ITERATION_PROP = "iteration";
-    private final static String WORKSPACE_PROP = "workspace";
-    private final static String LAST_MODIFIED_DATE_PROP = "lastModifiedDate";
-    private final static String DIGEST_PROP = "digest";
+    private static final String PART_NUMBER_PROP = "partNumber";
+    private static final String REVISION_PROP = "revision";
+    private static final String ITERATION_PROP = "iteration";
+    private static final String WORKSPACE_PROP = "workspace";
+    private static final String LAST_MODIFIED_DATE_PROP = "lastModifiedDate";
+    private static final String DIGEST_PROP = "digest";
 
     public MetaDirectoryManager(File workingDirectory) throws IOException {
         this.metaDirectory=new File(workingDirectory,META_DIRECTORY_NAME);

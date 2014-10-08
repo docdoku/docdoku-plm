@@ -49,8 +49,9 @@ import java.util.logging.Logger;
 @CatiaProductFileParser
 public class CatiaProductFileParserImpl implements CADConverter {
 
-    private final static String CONF_PROPERTIES = "/com/docdoku/server/converters/catia/product/conf.properties";
-    private final static Properties CONF = new Properties();
+    private static final String CONF_PROPERTIES = "/com/docdoku/server/converters/catia/product/conf.properties";
+    private static final Properties CONF = new Properties();
+    private static final Logger LOGGER = Logger.getLogger(CatiaProductFileParserImpl.class.getName());
 
     @EJB
     private IProductManagerLocal productService;
@@ -66,9 +67,13 @@ public class CatiaProductFileParserImpl implements CADConverter {
         } catch (IOException e) {
             Logger.getLogger(CatiaProductFileParserImpl.class.getName()).log(Level.WARNING, null, e);
         } finally {
-            try{if(inputStream!=null){
+            try{
+                if(inputStream!=null){
                     inputStream.close();
-            }}catch (IOException ignored){}
+                }
+            }catch (IOException e){
+                Logger.getLogger(CatiaProductFileParserImpl.class.getName()).log(Level.FINEST,null,e);
+            }
         }
     }
 
@@ -133,24 +138,32 @@ public class CatiaProductFileParserImpl implements CADConverter {
             Logger.getLogger(CatiaProductFileParserImpl.class.getName()).log(Level.INFO, null, e);
         } finally {
             FileIO.rmDir(tmpDir);
-            try{if(isr!=null){
+            try{
+                if(isr!=null){
                     isr.close();
-            }}catch (IOException ignored){}
-            try{if(br!=null){
-                br.close();
-            }}catch (IOException ignored){}
+                }
+            }catch (IOException e){
+                LOGGER.log(Level.FINEST,null,e);
+            }
+            try{
+                if(br!=null){
+                    br.close();
+                }
+            }catch (IOException e){
+                LOGGER.log(Level.FINEST,null,e);
+            }
         }
 
         return null;
     }
 
-    private void syncAssembly(ComponentDTK component_dtk, PartIteration partToConvert) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+    private void syncAssembly(ComponentDTK componentDtk, PartIteration partToConvert) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
 
         List<PartUsageLink> partUsageLinks = new ArrayList<>();
 
         Map<String, List<CADInstance>> mapInstances = new HashMap<>();
 
-        parseSubComponents(mapInstances, component_dtk);
+        parseSubComponents(mapInstances, componentDtk);
 
         for(Map.Entry<String,List<CADInstance>> entry : mapInstances.entrySet()){
             String cadFileName = entry.getKey();

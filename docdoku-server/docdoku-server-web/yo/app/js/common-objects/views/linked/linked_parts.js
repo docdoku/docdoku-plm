@@ -1,12 +1,12 @@
-/*global define,App*/
-'use strict';
+/*global $,define,App*/
 define([
     'backbone',
-    "mustache",
+    'mustache',
     'common-objects/collections/linked/linked_part_collection',
     'common-objects/views/linked/linked_part',
     'text!common-objects/templates/linked/linked_items.html'
 ], function (Backbone, Mustache, LinkedPartCollection, LinkedPartView, template) {
+	'use strict';
     var LinkedPartsView = Backbone.View.extend({
 
         tagName: 'div',

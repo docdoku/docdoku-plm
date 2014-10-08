@@ -30,7 +30,7 @@ import java.util.ResourceBundle;
 
 public abstract class ApplicationException extends Exception{
     
-    private final static String DEFAULT_BUNDLE_NAME = "com.docdoku.core.i18n.LocalStrings";
+    private static final String DEFAULT_BUNDLE_NAME = "com.docdoku.core.i18n.LocalStrings";
     private ResourceBundle mResourceBundle;
 
     public ApplicationException(String pMessage, Throwable pCause, String pBundleName) {

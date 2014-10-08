@@ -33,40 +33,32 @@ public final class MainChannelDispatcher {
     private  MainChannelDispatcher(){
     }
 
-
-
     /* Send a message to multiple channels */
     public static void sendToAllUserChannels(String userLogin, ChatMessage message){
-        if(userLogin != null && !userLogin.equals("") ){
-            if(MainChannelApplication.getUserChannels(userLogin) != null) {
-                Collection<Session> sessions = MainChannelApplication.getUserChannels(userLogin).values();
-                for(Session session:sessions){
-                    send(session, message);
-                }
+        if(userLogin != null && !"".equals(userLogin) && MainChannelApplication.getUserChannels(userLogin) != null) {
+            Collection<Session> sessions = MainChannelApplication.getUserChannels(userLogin).values();
+            for(Session session:sessions){
+                send(session, message);
             }
         }
     }
 
     /* Send a message to multiple channels */
     public static void sendToAllUserChannels(String userLogin, WebRTCMessage message){
-        if(userLogin != null && !userLogin.equals("") ){
-            if(MainChannelApplication.getUserChannels(userLogin) != null) {
-                Collection<Session> sessions = MainChannelApplication.getUserChannels(userLogin).values();
-                for(Session session:sessions){
-                    send(session, message);
-                }
+        if(userLogin != null && !"".equals(userLogin) && MainChannelApplication.getUserChannels(userLogin) != null) {
+            Collection<Session> sessions = MainChannelApplication.getUserChannels(userLogin).values();
+            for(Session session:sessions){
+                send(session, message);
             }
         }
     }
 
     /* Send a message to multiple channels */
     public static void sendToAllUserChannels(String userLogin, CollaborativeMessage message){
-        if(userLogin != null && !userLogin.equals("") ){
-            if(MainChannelApplication.getUserChannels(userLogin) != null) {
-                Collection<Session> sessions = MainChannelApplication.getUserChannels(userLogin).values();
-                for(Session session:sessions){
-                    send(session, message);
-                }
+        if(userLogin != null && !"".equals(userLogin) && MainChannelApplication.getUserChannels(userLogin) != null) {
+            Collection<Session> sessions = MainChannelApplication.getUserChannels(userLogin).values();
+            for(Session session:sessions){
+                send(session, message);
             }
         }
     }
@@ -114,6 +106,4 @@ public final class MainChannelDispatcher {
         }
         return false;
     }
-
-
 }

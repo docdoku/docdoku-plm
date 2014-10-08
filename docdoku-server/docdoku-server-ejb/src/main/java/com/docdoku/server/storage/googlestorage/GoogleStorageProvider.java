@@ -40,7 +40,7 @@ public class GoogleStorageProvider implements StorageProvider {
 
     private final String vaultPath;
 
-    private final static GoogleStorageProperties properties = new GoogleStorageProperties();
+    private static final GoogleStorageProperties properties = new GoogleStorageProperties();
 
     public GoogleStorageProvider(String vaultPath) {
         this.vaultPath = vaultPath;

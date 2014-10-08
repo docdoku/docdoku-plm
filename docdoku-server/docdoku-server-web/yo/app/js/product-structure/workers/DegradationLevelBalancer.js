@@ -1,4 +1,4 @@
-/*global App,debug,WorkerManagedValues*/
+/*global _,App,debug,WorkerManagedValues*/
 'use strict';
 var DegradationLevelBalancer = {};
 

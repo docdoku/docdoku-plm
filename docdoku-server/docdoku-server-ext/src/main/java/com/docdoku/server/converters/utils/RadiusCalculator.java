@@ -32,8 +32,8 @@ import java.util.logging.Logger;
 
 public class RadiusCalculator {
 
-    private final static String CONF_PROPERTIES="/com/docdoku/server/converters/utils/conf.properties";
-    private final static Properties CONF = new Properties();
+    private static final String CONF_PROPERTIES="/com/docdoku/server/converters/utils/conf.properties";
+    private static final Properties CONF = new Properties();
 
     public RadiusCalculator() {
     }

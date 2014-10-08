@@ -46,9 +46,9 @@ import java.util.logging.Logger;
 @CatiaFileConverter
 public class CatiaFileConverterImpl implements CADConverter{
 
-    private final static String CONF_PROPERTIES="/com/docdoku/server/converters/catia/conf.properties";
+    private static final String CONF_PROPERTIES="/com/docdoku/server/converters/catia/conf.properties";
 
-    private final static Properties CONF = new Properties();
+    private static final Properties CONF = new Properties();
 
     @EJB
     private IProductManagerLocal productService;
@@ -63,10 +63,14 @@ public class CatiaFileConverterImpl implements CADConverter{
             CONF.load(inputStream);
         } catch (IOException e) {
             Logger.getLogger(CatiaFileConverterImpl.class.getName()).log(Level.WARNING, null, e);
-        } finally {try{
+        } finally {
+            try{
                 if(inputStream!=null){
                     inputStream.close();
-            }}catch (IOException ignored){}
+                }
+            }catch (IOException e){
+                Logger.getLogger(CatiaFileConverterImpl.class.getName()).log(Level.FINEST,null, e);
+            }
         }
     }
 
@@ -104,23 +108,21 @@ public class CatiaFileConverterImpl implements CADConverter{
 
             int exitCode = process.exitValue();
 
-            if (exitCode==0) {
-                if(tmpDAEFile.exists() && tmpDAEFile.length() > 0 ){
-                    PartIterationKey partIPK = partToConvert.getKey();
+            if (exitCode==0 & tmpDAEFile.exists() && tmpDAEFile.length() > 0 ){
+                PartIterationKey partIPK = partToConvert.getKey();
 
-                    // Calculate radius
-                    double radius = RadiusCalculator.calculateRadius(tmpDAEFile);
+                // Calculate radius
+                double radius = RadiusCalculator.calculateRadius(tmpDAEFile);
 
-                    BinaryResource jsBinaryResource = productService.saveGeometryInPartIteration(partIPK, woExName+".dae", 0, tmpDAEFile.length(),radius);
-                    OutputStream daeOutputStream = null;
-                    try {
-                        daeOutputStream = dataManager.getBinaryResourceOutputStream(jsBinaryResource);
-                        Files.copy(tmpDAEFile, daeOutputStream);
-                    } finally {
-                        if(daeOutputStream!=null){
-                            daeOutputStream.flush();
-                            daeOutputStream.close();
-                        }
+                BinaryResource jsBinaryResource = productService.saveGeometryInPartIteration(partIPK, woExName+".dae", 0, tmpDAEFile.length(),radius);
+                OutputStream daeOutputStream = null;
+                try {
+                    daeOutputStream = dataManager.getBinaryResourceOutputStream(jsBinaryResource);
+                    Files.copy(tmpDAEFile, daeOutputStream);
+                } finally {
+                    if(daeOutputStream!=null){
+                        daeOutputStream.flush();
+                        daeOutputStream.close();
                     }
                 }
             }
@@ -130,8 +132,7 @@ public class CatiaFileConverterImpl implements CADConverter{
         } catch(Exception e){
             Logger.getLogger(CatiaFileConverterImpl.class.getName()).log(Level.INFO, null, e);
             return null;
-        }
-        finally {
+        } finally {
             FileIO.rmDir(tmpDir);
         }
     }

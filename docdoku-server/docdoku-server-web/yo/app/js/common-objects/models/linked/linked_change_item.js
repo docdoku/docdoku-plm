@@ -1,4 +1,4 @@
-/*global define*/
+/*global _,define*/
 define(['backbone'], function (Backbone) {
 	'use strict';
     var linkedChangeItems = Backbone.Model.extend({
