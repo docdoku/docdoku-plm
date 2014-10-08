@@ -98,6 +98,8 @@ public class ESSearcher {
                 }
             }
 
+            //Todo FilterConfigSpec
+
             client.close();
             return listOfDocuments;
         } catch (NoNodeAvailableException e) {
@@ -128,6 +130,9 @@ public class ESSearcher {
                         listOfParts.add(partRevision);
                 }
             }
+
+            //Todo FilterConfigSpec
+
             client.close();
             return listOfParts;
         } catch (NoNodeAvailableException e) {
@@ -271,15 +276,19 @@ public class ESSearcher {
      */
     private QueryBuilder getQueryBuilder(DocumentSearchQuery docQuery) {
         QueryBuilder qr;
-        if (docQuery.getDocMId() != null) {
+        if (docQuery.getFullText() != null) {
             qr = QueryBuilders.disMaxQuery()                                                                            // TODO Cut the query and make a boolQuery() with all the words
                     .add(QueryBuilders.fuzzyLikeThisQuery()
-                            .likeText(docQuery.getDocMId()))
-                    .add(QueryBuilders.queryString(docQuery.getDocMId() + "*")
+                            .likeText(docQuery.getFullText()))
+                    .add(QueryBuilders.queryString(docQuery.getFullText() + "*")
                             .boost(2.5f))
                     .tieBreaker(1.2f);
         } else {
             qr = QueryBuilders.boolQuery();
+            if (docQuery.getDocMId() != null) {
+                ((BoolQueryBuilder) qr).should(
+                        QueryBuilders.fuzzyLikeThisFieldQuery("docMId").likeText(docQuery.getDocMId()));
+            }
             if (docQuery.getTitle() != null) {
                 ((BoolQueryBuilder) qr).should(
                         QueryBuilders.fuzzyLikeThisFieldQuery("title").likeText(docQuery.getTitle()));

@@ -113,6 +113,7 @@ function (Backbone, singletonDecorator, FolderNavView, TagNavView, SearchNavView
             TemplateNavView.getInstance().$el.toggle(isLatest);
             CheckedoutNavView.getInstance().$el.toggle(isLatest);
             TaskNavView.getInstance().$el.toggle(isLatest);
+		    SearchNavView.getInstance().$el.toggle(isLatest);
             App.appView.$objectsNav.toggle(isLatest);
             App.appView.$linksNav.toggle(isLatest);
 
