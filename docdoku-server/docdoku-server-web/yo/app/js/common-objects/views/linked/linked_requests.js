@@ -1,8 +1,9 @@
-/*global define*/
+/*global $,define,App*/
 define([
-    "common-objects/collections/linked/linked_change_item_collection",
-    "common-objects/views/linked/linked_change_items"
+    'common-objects/collections/linked/linked_change_item_collection',
+    'common-objects/views/linked/linked_change_items'
 ], function (LinkedChangeItemCollection, LinkedItemsView) {
+	'use strict';
     var LinkedRequestsView = LinkedItemsView.extend({
 
         initialize: function () {
@@ -30,7 +31,7 @@ define([
 
                 updater: function (requestName) {
                     var linkedRequest = self.searchResults.find(function (request) {
-                        return request.getName() == requestName;
+                        return request.getName() === requestName;
                     });
                     linkedRequest.collection.remove(linkedRequest);
                     self.collection.add(linkedRequest);

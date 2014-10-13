@@ -1,9 +1,10 @@
-/*global define*/
+/*global $,define,App*/
 define([
-    "common-objects/collections/linked/linked_change_item_collection",
-    "common-objects/views/linked/linked_change_items"
+    'common-objects/collections/linked/linked_change_item_collection',
+    'common-objects/views/linked/linked_change_items'
 ], function (LinkedChangeItemCollection, LinkedItemsView) {
-    var LinkedIssuesView = LinkedItemsView.extend({
+    'use strict';
+	var LinkedIssuesView = LinkedItemsView.extend({
 
         initialize: function () {
             LinkedItemsView.prototype.initialize.apply(this, arguments);
@@ -30,7 +31,7 @@ define([
 
                 updater: function (issueName) {
                     var linkedIssue = self.searchResults.find(function (issue) {
-                        return issue.getName() == issueName;
+                        return issue.getName() === issueName;
                     });
                     linkedIssue.collection.remove(linkedIssue);
                     self.collection.add(linkedIssue);

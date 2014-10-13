@@ -1,10 +1,11 @@
-/*global define*/
+/*global _,define*/
 define([
-    "backbone",
-    "common-objects/views/base",
-    "common-objects/views/attributes/template_new_attribute_list",
-    "text!common-objects/templates/attributes/template_new_attributes.html"
+    'backbone',
+    'common-objects/views/base',
+    'common-objects/views/attributes/template_new_attribute_list',
+    'text!common-objects/templates/attributes/template_new_attributes.html'
 ], function (Backbone,BaseView, TemplateNewAttributeListView, template) {
+	'use strict';
     var TemplateNewAttributesView = BaseView.extend({
 
         template: template,
@@ -17,8 +18,8 @@ define([
 
         initialize: function () {
             BaseView.prototype.initialize.apply(this, arguments);
-            this.events["click .add"] = this.addAttribute;
-            this.events["change .lock input"] = this.attributesLockedChange;
+            this.events['click .add'] = this.addAttribute;
+            this.events['change .lock input'] = this.attributesLockedChange;
 
             if (this.options.attributesLocked) {
                 this.attributesLocked = this.options.attributesLocked;
@@ -28,19 +29,19 @@ define([
         rendered: function () {
             this.attributesView = this.addSubView(
                 new TemplateNewAttributeListView({
-                    el: "#items-" + this.cid,
+                    el: '#items-' + this.cid,
                     collection: this.collection
                 })
             );
 
-            this.$el.find(".lock input")[0].checked = this.attributesLocked;
-            this.$el.toggleClass("attributes-locked", this.attributesLocked);
+            this.$el.find('.lock input')[0].checked = this.attributesLocked;
+            this.$el.toggleClass('attributes-locked', this.attributesLocked);
         },
 
         addAttribute: function () {
             this.collection.add({
-                name: "",
-                attributeType: "TEXT"
+                name: '',
+                attributeType: 'TEXT'
             });
         },
 
@@ -49,11 +50,11 @@ define([
 
             if (!this.attributesLocked) {
                 _.map(this.collection.models, function (attribute) {
-                    return attribute.set("mandatory", false);
+                    return attribute.set('mandatory', false);
                 });
             }
 
-            this.$el.toggleClass("attributes-locked", this.attributesLocked);
+            this.$el.toggleClass('attributes-locked', this.attributesLocked);
         },
 
         isAttributesLocked: function () {

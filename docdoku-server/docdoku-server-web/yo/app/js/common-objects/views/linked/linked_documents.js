@@ -1,12 +1,12 @@
-/*global define,App*/
-'use strict';
+/*global _,define,App*/
 define([
     'backbone',
-    "mustache",
-    "common-objects/collections/linked/linked_document_collection",
-    "common-objects/views/linked/linked_document",
-    "text!common-objects/templates/linked/linked_items.html"
+    'mustache',
+    'common-objects/collections/linked/linked_document_collection',
+    'common-objects/views/linked/linked_document',
+    'text!common-objects/templates/linked/linked_items.html'
 ], function (Backbone, Mustache, LinkedDocumentCollection, LinkedDocumentView, template) {
+	'use strict';
     var LinkedDocumentsView = Backbone.View.extend({
 
         tagName: 'div',
@@ -16,8 +16,8 @@ define([
             this.searchResults = [];
             this._subViews = [];
             var self = this;
-            this.$el.on("remove", function () {
-                _(self._subViews).invoke("remove");
+            this.$el.on('remove', function () {
+                _(self._subViews).invoke('remove');
             });
         },
 
@@ -44,8 +44,8 @@ define([
         },
 
         bindDomElements: function () {
-            this.documentReferenceInput = this.$(".linked-items-reference-typehead");
-            this.linksUL = this.$("#linked-items-" + this.cid);
+            this.documentReferenceInput = this.$('.linked-items-reference-typehead');
+            this.linksUL = this.$('#linked-items-' + this.cid);
         },
 
         addLinkView: function (linkedDocument) {

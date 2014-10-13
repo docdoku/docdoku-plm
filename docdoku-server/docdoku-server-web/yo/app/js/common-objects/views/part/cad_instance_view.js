@@ -1,23 +1,23 @@
-/*global define*/
+/*global define,App*/
 define([
     'backbone',
-    "mustache",
-    "text!common-objects/templates/part/cad_instance.html"
+    'mustache',
+    'text!common-objects/templates/part/cad_instance.html'
 ], function (Backbone, Mustache, template) {
-
+	'use strict';
     var CadInstanceView = Backbone.View.extend({
 
-        className: "cadInstance",
+        className: 'cadInstance',
 
         events: {
-            "change input[name=tx]": "changeTX",
-            "change input[name=ty]": "changeTY",
-            "change input[name=tz]": "changeTZ",
-            "change input[name=rx]": "changeRX",
-            "change input[name=ry]": "changeRY",
-            "change input[name=rz]": "changeRZ",
-            "change select[name=position]": "changePosition",
-            "click .remove-cadInstance": "removeCadInstance"
+            'change input[name=tx]': 'changeTX',
+            'change input[name=ty]': 'changeTY',
+            'change input[name=tz]': 'changeTZ',
+            'change input[name=rx]': 'changeRX',
+            'change input[name=ry]': 'changeRY',
+            'change input[name=rz]': 'changeRZ',
+            'change select[name=position]': 'changePosition',
+            'click .remove-cadInstance': 'removeCadInstance'
         },
 
         initialize: function () {
@@ -53,7 +53,7 @@ define([
         },
 
         removeCadInstance: function () {
-            this.trigger("instance:remove");
+            this.trigger('instance:remove');
             this.remove();
         }
 

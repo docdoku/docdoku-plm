@@ -17,7 +17,8 @@ module.exports = function (grunt) {
     var yeoman = {
         app: 'app',
         dist: 'dist',
-        webapp:'../src/main/webapp',
+        //webapp:'../src/main/webapp',
+	    webapp: '../target/docdoku-server-web',
         tests: 'tests'
     };
 
@@ -598,7 +599,7 @@ module.exports = function (grunt) {
     /*
     * Deploy command : used by maven
     * */
-    grunt.registerTask('deploy',['clean:webapp','build','copy:webapp']);
+    grunt.registerTask('deploy',['clean:webapp','build','copy:webapp','clean:dist']);
 
     /*
      * Tests command

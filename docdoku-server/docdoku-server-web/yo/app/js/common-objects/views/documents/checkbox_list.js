@@ -1,15 +1,16 @@
-/*global define*/
+/*global _,define*/
 define([
-    "common-objects/views/components/list"
+    'common-objects/views/components/list'
 ], function (ListView) {
+	'use strict';
     var CheckboxListView = ListView.extend({
         initialize: function () {
             ListView.prototype.initialize.apply(this, arguments);
-            this.checkToggle = "#check-toggle-" + this.cid;
-            this.events["click " + this.checkToggle] = "toggle";
+            this.checkToggle = '#check-toggle-' + this.cid;
+            this.events['click ' + this.checkToggle] = 'toggle';
         },
         toggle: function () {
-            if ($(this.checkToggle).is(":checked")) {
+            if ($(this.checkToggle).is(':checked')) {
                 _.each(_.values(this.subViews), function (view) {
                     view.check();
                 });
@@ -21,8 +22,8 @@ define([
         },
         viewAdded: function (view) {
             var that = this;
-            view.on("checked unchecked", function () {
-                that.trigger("selectionChange");
+            view.on('checked unchecked', function () {
+                that.trigger('selectionChange');
             });
         },
         checkedViews: function () {

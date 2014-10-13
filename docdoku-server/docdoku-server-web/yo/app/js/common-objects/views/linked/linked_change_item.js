@@ -1,16 +1,17 @@
-/*global define*/
+/*global define,App*/
 define([
     'backbone',
-    "mustache",
-    "text!common-objects/templates/linked/linked_change_item.html"
+    'mustache',
+    'text!common-objects/templates/linked/linked_change_item.html'
 ], function (Backbone, Mustache, template) {
-    var LinkedChangeItemView = Backbone.View.extend({
+    'use strict';
+	var LinkedChangeItemView = Backbone.View.extend({
 
-        tagName: "li",
-        className: "linked-item well",
+        tagName: 'li',
+        className: 'linked-item well',
 
         events: {
-            "click .delete-linked-item": "deleteButtonClicked"
+            'click .delete-linked-item': 'deleteButtonClicked'
         },
 
         initialize: function () {
@@ -26,7 +27,7 @@ define([
             ));
 
             if (this.model.getPriority) {
-                this.$el.addClass("priorityColor-" + this.model.getPriority());
+                this.$el.addClass('priorityColor-' + this.model.getPriority());
             }
 
             return this;

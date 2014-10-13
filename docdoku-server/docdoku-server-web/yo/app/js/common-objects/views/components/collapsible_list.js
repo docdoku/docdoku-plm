@@ -1,4 +1,4 @@
-/*global define*/
+/*global _,define*/
 define([
     'common-objects/views/components/list'
 ], function (ListView) {

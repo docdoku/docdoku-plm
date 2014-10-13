@@ -1,12 +1,13 @@
-/*global define*/
+/*global _,$,define,App*/
 define([
     'backbone',
-    "mustache",
-    "text!common-objects/templates/file/file_list.html",
-    "common-objects/models/file/attached_file",
-    "common-objects/views/file/file"
+    'mustache',
+    'text!common-objects/templates/file/file_list.html',
+    'common-objects/models/file/attached_file',
+    'common-objects/views/file/file'
 ], function (Backbone, Mustache, template, AttachedFile, FileView) {
-    var FileListView = Backbone.View.extend({
+    'use strict';
+	var FileListView = Backbone.View.extend({
 
         tagName: 'div',
         className: 'attachedFiles idle',
@@ -14,11 +15,11 @@ define([
         editMode: true,
 
         events: {
-            "click form button.cancel-upload-btn": "cancelButtonClicked",
-            "change form input#upload-btn": "fileSelectHandler",
-            "dragover .droppable": "fileDragHover",
-            "dragleave .droppable": "fileDragHover",
-            "drop .droppable": "fileDropHandler"
+            'click form button.cancel-upload-btn': 'cancelButtonClicked',
+            'change form input#upload-btn': 'fileSelectHandler',
+            'dragover .droppable': 'fileDragHover',
+            'dragleave .droppable': 'fileDragHover',
+            'drop .droppable': 'fileDropHandler'
         },
 
         initialize: function () {
@@ -29,12 +30,12 @@ define([
             $.event.props.push('dataTransfer');
 
             // Prevent browser behavior on file drop
-            window.addEventListener("drop", function (e) {
+            window.addEventListener('drop', function (e) {
                 e.preventDefault();
                 return false;
             }, false);
 
-            window.addEventListener("ondragenter", function (e) {
+            window.addEventListener('ondragenter', function (e) {
                 e.preventDefault();
                 return false;
             }, false);
@@ -53,11 +54,11 @@ define([
         fileDragHover: function (e) {
             e.stopPropagation();
             e.preventDefault();
-            if (e.type == "dragover") {
-                this.filedroparea.addClass("hover");
+            if (e.type === 'dragover') {
+                this.filedroparea.addClass('hover');
             }
             else {
-                this.filedroparea.removeClass("hover");
+                this.filedroparea.removeClass('hover');
             }
         },
 
@@ -103,22 +104,22 @@ define([
             this.gotoUploadingState();
 
             var newFile = new AttachedFile({
-                fullName: this.options.baseName + "/" + file.name,
+                fullName: this.options.baseName + '/' + file.name,
                 shortName: file.name
             });
 
             this.xhr = new XMLHttpRequest();
 
-            this.xhr.upload.addEventListener("progress", function (evt) {
+            this.xhr.upload.addEventListener('progress', function (evt) {
                 if (evt.lengthComputable) {
                     var percentComplete = Math.round(evt.loaded * 100 / evt.total);
-                    self.progressBar.width(percentComplete + "%");
+                    self.progressBar.width(percentComplete + '%');
                 }
             }, false);
 
-            this.xhr.addEventListener("load", function (e) {
+            this.xhr.addEventListener('load', function (e) {
 
-                if (e.currentTarget.status != 200) {
+                if (e.currentTarget.status !== 200) {
                     alert(e.currentTarget.statusText);
                     self.finished();
                     return false;
@@ -133,10 +134,10 @@ define([
             }, false);
 
             var url = this.options.uploadBaseUrl + file.name;
-            this.xhr.open("POST", url);
+            this.xhr.open('POST', url);
 
             var fd = new FormData();
-            fd.append("upload", file);
+            fd.append('upload', file);
 
             this.xhr.send(fd);
         },
@@ -152,11 +153,11 @@ define([
 
         deleteFilesToDelete: function () {
             /*we need to reverse read because model.destroy() remove elements from collection*/
-            while (this.filesToDelete.length != 0) {
+            while (this.filesToDelete.length !== 0) {
                 var file = this.filesToDelete.pop();
                 file.destroy({
                     error: function () {
-                        alert("file " + file + " could not be deleted");
+                        alert('file ' + file + ' could not be deleted');
                     }
                 });
             }
@@ -170,26 +171,26 @@ define([
 
             /*deleting unwanted files that have been added by upload*/
             /*we need to reverse read because model.destroy() remove elements from collection*/
-            while (this.newItems.length != 0) {
+            while (this.newItems.length !== 0) {
                 var file = this.newItems.pop();
                 file.destroy({
                     error: function () {
-                        alert("file " + file + " could not be deleted");
+                        alert('file ' + file + ' could not be deleted');
                     }
                 });
             }
         },
 
         gotoIdleState: function () {
-            this.$el.removeClass("uploading");
-            this.$el.addClass("idle");
-            this.uploadInput.val("");
-            this.progressBar.width("0%");
+            this.$el.removeClass('uploading');
+            this.$el.addClass('idle');
+            this.uploadInput.val('');
+            this.progressBar.width('0%');
         },
 
         gotoUploadingState: function () {
-            this.$el.removeClass("idle");
-            this.$el.addClass("uploading");
+            this.$el.removeClass('idle');
+            this.$el.addClass('uploading');
         },
 
         render: function () {
@@ -203,11 +204,11 @@ define([
         },
 
         bindDomElements: function () {
-            this.filedroparea = this.$("#filedroparea");
-            this.filesUL = this.$("ul.file-list");
-            this.uploadFileNameP = this.$("p#upload-file-shortname");
-            this.progressBar = this.$("div.bar");
-            this.uploadInput = this.$("input#upload-btn");
+            this.filedroparea = this.$('#filedroparea');
+            this.filesUL = this.$('ul.file-list');
+            this.uploadFileNameP = this.$('p#upload-file-shortname');
+            this.progressBar = this.$('div.bar');
+            this.uploadInput = this.$('input#upload-btn');
         }
     });
     return FileListView;

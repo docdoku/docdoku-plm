@@ -132,19 +132,34 @@
                         <version>1.3.2</version>
                         <executions>
                             <execution>
+                                <id>clean-yo-dist</id>
+                                <phase>clean</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <workingDirectory>yo</workingDirectory>
+                                    <executable>grunt</executable>
+                                    <arguments>
+                                        <argument>clean:dist</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>build-yo</id>
                                 <phase>generate-sources</phase>
                                 <goals>
                                     <goal>exec</goal>
                                 </goals>
+                                <configuration>
+                                    <workingDirectory>yo</workingDirectory>
+                                    <executable>npm</executable>
+                                    <arguments>
+                                        <argument>start</argument>
+                                    </arguments>
+                                </configuration>
                             </execution>
                         </executions>
-                        <configuration>
-                            <workingDirectory>yo</workingDirectory>
-                            <executable>npm</executable>
-                            <arguments>
-                                <argument>start</argument>
-                            </arguments>
-                        </configuration>
                     </plugin>
                 </plugins>
             </build>
@@ -161,19 +176,34 @@
                         <version>1.3.2</version>
                         <executions>
                             <execution>
+                                <id>clean-yo-dist</id>
+                                <phase>clean</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <workingDirectory>yo</workingDirectory>
+                                    <executable>grunt</executable>
+                                    <arguments>
+                                        <argument>clean:dist</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>build-yo</id>
                                 <phase>generate-sources</phase>
                                 <goals>
                                     <goal>exec</goal>
                                 </goals>
+                                <configuration>
+                                    <workingDirectory>yo</workingDirectory>
+                                    <executable>npm</executable>
+                                    <arguments>
+                                        <argument>start</argument>
+                                    </arguments>
+                                </configuration>
                             </execution>
                         </executions>
-                        <configuration>
-                            <workingDirectory>yo</workingDirectory>
-                            <executable>npm</executable>
-                            <arguments>
-                                <argument>start</argument>
-                            </arguments>
-                        </configuration>
                     </plugin>
                 </plugins>
             </build>

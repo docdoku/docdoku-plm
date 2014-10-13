@@ -1,9 +1,10 @@
-/*global define*/
+/*global $,define,App*/
 define([
-    "common-objects/collections/linked/linked_change_item_collection",
-    "common-objects/views/linked/linked_change_items"
+    'common-objects/collections/linked/linked_change_item_collection',
+    'common-objects/views/linked/linked_change_items'
 ], function (LinkedChangeItemCollection, LinkedItemsView) {
-    var LinkedOrdersView = LinkedItemsView.extend({
+    'use strict';
+	var LinkedOrdersView = LinkedItemsView.extend({
 
         initialize: function () {
             LinkedItemsView.prototype.initialize.apply(this, arguments);
@@ -30,7 +31,7 @@ define([
 
                 updater: function (orderName) {
                     var linkedOrder = self.searchResults.find(function (order) {
-                        return order.getName() == orderName;
+                        return order.getName() === orderName;
                     });
                     linkedOrder.collection.remove(linkedOrder);
                     self.collection.add(linkedOrder);

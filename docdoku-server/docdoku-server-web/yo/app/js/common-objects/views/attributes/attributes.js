@@ -1,12 +1,13 @@
-/*global define*/
+/*global _,define,App*/
 define([
-    "backbone",
-    "mustache",
-    "common-objects/views/base",
-    "common-objects/views/attributes/attribute_list",
-    "text!common-objects/templates/attributes/attributes.html"
+    'backbone',
+    'mustache',
+    'common-objects/views/base',
+    'common-objects/views/attributes/attribute_list',
+    'text!common-objects/templates/attributes/attributes.html'
 ], function (Backbone,Mustache, BaseView, AttributeListView, template) {
-    var AttributesView = BaseView.extend({
+    'use strict';
+	var AttributesView = BaseView.extend({
 
         template: template,
 
@@ -30,7 +31,7 @@ define([
         initialize: function () {
             _.bindAll(this);
             BaseView.prototype.initialize.apply(this, arguments);
-            this.events["click .add"] = this.addAttribute;
+            this.events['click .add'] = this.addAttribute;
         },
 
         render: function () {
@@ -47,7 +48,7 @@ define([
         rendered: function () {
             this.attributesView = this.addSubView(
                 new AttributeListView({
-                    el: this.$("#items-" + this.cid),
+                    el: this.$('#items-' + this.cid),
                     collection: this.collection
                 })
             );
@@ -58,9 +59,9 @@ define([
         addAttribute: function () {
             this.collection.add({
                 mandatory: false,
-                name: "",
-                type: "TEXT",
-                value: ""
+                name: '',
+                type: 'TEXT',
+                value: ''
             });
         },
 
