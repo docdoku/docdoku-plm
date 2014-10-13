@@ -139,9 +139,10 @@
                                 </goals>
                                 <configuration>
                                     <workingDirectory>yo</workingDirectory>
-                                    <executable>grunt</executable>
+                                    <executable>npm</executable>
                                     <arguments>
-                                        <argument>clean:dist</argument>
+                                        <argument>run</argument>
+                                        <argument>clean</argument>
                                     </arguments>
                                 </configuration>
                             </execution>
@@ -155,7 +156,8 @@
                                     <workingDirectory>yo</workingDirectory>
                                     <executable>npm</executable>
                                     <arguments>
-                                        <argument>start</argument>
+                                        <argument>run</argument>
+                                        <argument>deploy</argument>
                                     </arguments>
                                 </configuration>
                             </execution>
@@ -183,9 +185,10 @@
                                 </goals>
                                 <configuration>
                                     <workingDirectory>yo</workingDirectory>
-                                    <executable>grunt</executable>
+                                    <executable>npm</executable>
                                     <arguments>
-                                        <argument>clean:dist</argument>
+                                        <argument>run</argument>
+                                        <argument>clean</argument>
                                     </arguments>
                                 </configuration>
                             </execution>
@@ -199,7 +202,8 @@
                                     <workingDirectory>yo</workingDirectory>
                                     <executable>npm</executable>
                                     <arguments>
-                                        <argument>start</argument>
+                                        <argument>run</argument>
+                                        <argument>deploy</argument>
                                     </arguments>
                                 </configuration>
                             </execution>

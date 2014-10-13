@@ -35,8 +35,9 @@
     "node": ">=0.10.0"
   },
   "scripts": {
-	"postinstall": "bower install",
-    "prestart": "npm install;",
-    "start": "grunt deploy"
+    "prestart": "npm install;bower install",
+    "start": "grunt deploy",
+	"clean": "npm install; grunt clean:dist;",
+	"deploy": "npm install;bower install;grunt deploy"
   }
 }
