@@ -26,6 +26,7 @@ import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.PartIterationKey;
 import com.docdoku.core.product.PartMasterKey;
 import com.docdoku.core.product.PartRevisionKey;
+import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.*;
 import com.google.common.io.ByteStreams;
 
@@ -67,7 +68,7 @@ public class UploadDownloadService implements IUploadDownloadWS {
     @EJB
     private IDataManagerLocal dataManager;
     
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @XmlMimeType("application/octet-stream")
     @Override
     public DataHandler downloadFromDocument(String workspaceId, String docMId, String docMVersion, int iteration, String fileName) throws NotAllowedException, FileNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException {
@@ -76,7 +77,7 @@ public class UploadDownloadService implements IUploadDownloadWS {
         return new DataHandler(getBinaryResourceDataSource(binaryResource));
     }
 
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @XmlMimeType("application/octet-stream")
     @Override
     public DataHandler downloadNativeFromPart(String workspaceId, String partMNumber, String partRVersion, int iteration, String fileName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, FileNotFoundException, NotAllowedException {
@@ -85,7 +86,7 @@ public class UploadDownloadService implements IUploadDownloadWS {
         return new DataHandler(getBinaryResourceDataSource(binaryResource));
     }
 
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @XmlMimeType("application/octet-stream")
     @Override
     public DataHandler downloadFromPart(String workspaceId, String partMNumber, String partRVersion, int iteration, String fileName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, FileNotFoundException, NotAllowedException {
@@ -94,7 +95,7 @@ public class UploadDownloadService implements IUploadDownloadWS {
         return new DataHandler(getBinaryResourceDataSource(binaryResource));
     }
     
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @XmlMimeType("application/octet-stream")
     @Override
     public DataHandler downloadFromTemplate(String workspaceId, String templateID, String fileName) throws NotAllowedException, FileNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException {
@@ -103,7 +104,7 @@ public class UploadDownloadService implements IUploadDownloadWS {
         return new DataHandler(getBinaryResourceDataSource(binaryResource));
     }
 
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public void uploadToDocument(String workspaceId, String docMId, String docMVersion, int iteration, String fileName,
             @XmlMimeType("application/octet-stream") DataHandler data) throws IOException, CreationException, WorkspaceNotFoundException, NotAllowedException, DocumentRevisionNotFoundException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException, AccessRightException {
@@ -130,7 +131,7 @@ public class UploadDownloadService implements IUploadDownloadWS {
         documentService.saveFileInDocument(docPK, fileName, length);
     }
     
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public void uploadGeometryToPart(String workspaceId, String partMNumber, String partRVersion, int iteration, String fileName, int quality,
             @XmlMimeType("application/octet-stream") DataHandler data) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, PartRevisionNotFoundException, FileAlreadyExistsException, CreationException, IOException {
@@ -157,7 +158,7 @@ public class UploadDownloadService implements IUploadDownloadWS {
     }
 
 
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public void uploadNativeCADToPart(String workspaceId, String partMNumber, String partRVersion, int iteration, String fileName,
             @XmlMimeType("application/octet-stream") DataHandler data) throws Exception {
@@ -184,7 +185,7 @@ public class UploadDownloadService implements IUploadDownloadWS {
         converterService.convertCADFileToJSON(partIPK, binaryResource);
     }
 
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public void uploadToPart(String workspaceId, String partMNumber, String partRVersion, int iteration, String fileName,
             @XmlMimeType("application/octet-stream") DataHandler data) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, PartRevisionNotFoundException, FileAlreadyExistsException, CreationException, IOException {
@@ -210,7 +211,7 @@ public class UploadDownloadService implements IUploadDownloadWS {
         productService.saveFileInPartIteration(partIPK, fileName, length);
     }    
 
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public void uploadToTemplate(String workspaceId, String templateID, String fileName,
             @XmlMimeType("application/octet-stream") DataHandler data) throws IOException, CreationException, WorkspaceNotFoundException, NotAllowedException, DocumentMasterTemplateNotFoundException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException, AccessRightException {

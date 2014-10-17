@@ -4,6 +4,7 @@ import com.docdoku.core.common.User;
 import com.docdoku.core.configuration.*;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.*;
+import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IProductConfigSpecManagerLocal;
 import com.docdoku.core.services.IProductConfigSpecManagerWS;
 import com.docdoku.core.services.IProductManagerLocal;
@@ -42,21 +43,21 @@ public class ProductConfigSpecManagerBean implements IProductConfigSpecManagerWS
 
     private static final Logger LOGGER = Logger.getLogger(ProductConfigSpecManagerBean.class.getName());
 
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public ConfigSpec getLatestConfigSpec(String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException{
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         return new LatestConfigSpec(user);
     }
 
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public ConfigSpec getLatestReleasedConfigSpec(String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException{
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         return new LatestReleasedConfigSpec(user);
     }
 
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public ConfigSpec getConfigSpecForBaseline(int baselineId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, BaselineNotFoundException {
         ProductBaselineDAO productBaselineDAO = new ProductBaselineDAO(em);
@@ -65,7 +66,7 @@ public class ProductConfigSpecManagerBean implements IProductConfigSpecManagerWS
         return new BaselineConfigSpec(productBaseline, user);
     }
 
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public PartUsageLink filterProductStructure(ConfigurationItemKey pKey, ConfigSpec configSpec, Integer partUsageLink, Integer pDepth) throws ConfigurationItemNotFoundException, WorkspaceNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException, PartUsageLinkNotFoundException, AccessRightException {
         User user = userManager.checkWorkspaceReadAccess(pKey.getWorkspace());
@@ -93,7 +94,7 @@ public class ProductConfigSpecManagerBean implements IProductConfigSpecManagerWS
         }
     }
 
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public PartUsageLink filterProductStructure(PartUsageLink rootUsageLink, ConfigSpec configSpec, Integer pDepth) throws ConfigurationItemNotFoundException, WorkspaceNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException, PartUsageLinkNotFoundException, AccessRightException {
         User user = userManager.checkWorkspaceReadAccess(rootUsageLink.getComponent().getWorkspaceId());
@@ -109,7 +110,7 @@ public class ProductConfigSpecManagerBean implements IProductConfigSpecManagerWS
         return rootUsageLink;
     }
 
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public PartUsageLink getRootPartUsageLink(ConfigurationItemKey pKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ConfigurationItemNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(pKey.getWorkspace());

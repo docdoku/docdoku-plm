@@ -1,11 +1,11 @@
-/*global define*/
-'use strict';
+/*global _,define,App*/
 define([
     'backbone',
-    "mustache",
+    'mustache',
     'text!templates/product-instances/product_instances_list.html',
     'views/product-instances/product_instances_list_item'
 ], function (Backbone, Mustache, template, ProductInstancesListItemView) {
+	'use strict';
     var ProductInstancesListView = Backbone.View.extend({
 
         events: {

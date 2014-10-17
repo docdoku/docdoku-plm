@@ -1,11 +1,12 @@
-/*global define*/
+/*global define,App*/
 define([
-    "common-objects/utils/date",
-    "common-objects/views/components/modal",
-    "common-objects/views/attributes/template_new_attributes",
-    "common-objects/views/file/file_list",
-    "text!templates/template_new.html"
+    'common-objects/utils/date',
+    'common-objects/views/components/modal',
+    'common-objects/views/attributes/template_new_attributes',
+    'common-objects/views/file/file_list',
+    'text!templates/template_new.html'
 ], function (date, ModalView, TemplateNewAttributesView, FileListView, template) {
+	'use strict';
     var TemplateEditView = ModalView.extend({
 
         template: template,
@@ -23,26 +24,26 @@ define([
         rendered: function () {
             this.attributesView = this.addSubView(
                 new TemplateNewAttributesView({
-                    el: "#tab-attributes-" + this.cid,
+                    el: '#tab-attributes-' + this.cid,
                     attributesLocked: this.model.isAttributesLocked()
                 })
             );
             this.attributesView.render();
-            this.attributesView.collection.reset(this.model.get("attributeTemplates"));
+            this.attributesView.collection.reset(this.model.get('attributeTemplates'));
 
             this.fileListView = new FileListView({
                 deleteBaseUrl: this.model.url(),
                 uploadBaseUrl: this.model.getUploadBaseUrl(),
-                collection: this.model.get("attachedFiles"),
+                collection: this.model.get('attachedFiles'),
                 editMode: true
             }).render();
 
             /* Add the fileListView to the tab */
-            $("#tab-files-" + this.cid).append(this.fileListView.el);
+            $('#tab-files-' + this.cid).append(this.fileListView.el);
 
-            this.$("a#mask-help").popover({
+            this.$('a#mask-help').popover({
                 title: App.config.i18n.MASK,
-                placement: "left",
+                placement: 'left',
                 html: true,
                 content: App.config.i18n.MASK_HELP
             });
@@ -50,11 +51,11 @@ define([
         },
 
         primaryAction: function () {
-            this.model.unset("reference");
+            this.model.unset('reference');
             this.model.save({
-                documentType: $("#form-" + this.cid + " .type").val(),
-                mask: $("#form-" + this.cid + " .mask").val(),
-                idGenerated: $("#form-" + this.cid + " .id-generated").is(':checked'),
+                documentType: $('#form-' + this.cid + ' .type').val(),
+                mask: $('#form-' + this.cid + ' .mask').val(),
+                idGenerated: $('#form-' + this.cid + ' .id-generated').is(':checked'),
                 attributeTemplates: this.attributesView.collection.toJSON(),
                 attributesLocked: this.attributesView.isAttributesLocked()
             }, {
@@ -75,7 +76,7 @@ define([
             this.fileListView.deleteNewFiles();
         },
 
-        success: function (model, response) {
+        success: function () {
             this.hide();
         },
 
@@ -83,7 +84,7 @@ define([
             this.collection.remove(model);
             if (error.responseText) {
                 this.alert({
-                    type: "error",
+                    type: 'error',
                     message: error.responseText
                 });
             } else {

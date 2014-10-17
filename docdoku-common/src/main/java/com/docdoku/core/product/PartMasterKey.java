@@ -69,31 +69,33 @@ public class PartMasterKey implements Serializable, Comparable<PartMasterKey>, C
         if (this == pObj) {
             return true;
         }
-        if (!(pObj instanceof PartMasterKey))
+        if (!(pObj instanceof PartMasterKey)) {
             return false;
+        }
         PartMasterKey key = (PartMasterKey) pObj;
-        return ((key.number.equals(number)) && (key.workspace.equals(workspace)));
+        return (key.number.equals(number) && (key.workspace.equals(workspace)));
     }
 
     @Override
     public int hashCode() {
         int hash = 1;
-	    hash = 31 * hash + workspace.hashCode();
-	    hash = 31 * hash + number.hashCode();
-	    return hash;
+        hash = 31 * hash + workspace.hashCode();
+        hash = 31 * hash + number.hashCode();
+        return hash;
     }
 
     public int compareTo(PartMasterKey pKey) {
         int wksComp = workspace.compareTo(pKey.workspace);
-        if (wksComp != 0)
+        if (wksComp != 0) {
             return wksComp;
-        else
+        }else {
             return number.compareTo(pKey.number);
+        }
     }
     
     @Override
     public PartMasterKey clone() {
-        PartMasterKey clone = null;
+        PartMasterKey clone;
         try {
             clone = (PartMasterKey) super.clone();
         } catch (CloneNotSupportedException e) {

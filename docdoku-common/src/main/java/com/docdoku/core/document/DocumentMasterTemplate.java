@@ -167,8 +167,9 @@ public class DocumentMasterTemplate implements Serializable, FileHolder, Compara
         attributeTemplates.retainAll(pAttributeTemplates);
         for(InstanceAttributeTemplate currentAttr:attributeTemplates){
             for(InstanceAttributeTemplate attr:pAttributeTemplates){
-                if(attr.equals(currentAttr))
+                if(attr.equals(currentAttr)) {
                     currentAttr.setAttributeType(attr.getAttributeType());
+                }
             }
         }
         pAttributeTemplates.removeAll(attributeTemplates);
@@ -225,18 +226,19 @@ public class DocumentMasterTemplate implements Serializable, FileHolder, Compara
         if (this == pObj) {
             return true;
         }
-        if (!(pObj instanceof DocumentMasterTemplate))
+        if (!(pObj instanceof DocumentMasterTemplate)) {
             return false;
+        }
         DocumentMasterTemplate template = (DocumentMasterTemplate) pObj;
-        return ((template.id.equals(id)) && (template.workspaceId.equals(workspaceId)));
+        return (template.id.equals(id) && (template.workspaceId.equals(workspaceId)));
     }
     
     @Override
     public int hashCode() {
         int hash = 1;
-	hash = 31 * hash + workspaceId.hashCode();
-	hash = 31 * hash + id.hashCode();
-	return hash;
+        hash = 31 * hash + workspaceId.hashCode();
+        hash = 31 * hash + id.hashCode();
+        return hash;
     }
     
     @Override
@@ -246,10 +248,11 @@ public class DocumentMasterTemplate implements Serializable, FileHolder, Compara
     
     public int compareTo(DocumentMasterTemplate pTemplate) {
         int wksComp = workspaceId.compareTo(pTemplate.workspaceId);
-        if (wksComp != 0)
+        if (wksComp != 0) {
             return wksComp;
-        else
+        } else {
             return id.compareTo(pTemplate.id);
+        }
     }
     
 }

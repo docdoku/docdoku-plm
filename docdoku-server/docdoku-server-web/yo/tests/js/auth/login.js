@@ -1,6 +1,4 @@
-/*global casper*/
-
-
+/*global casper,homeUrl,login,pass,apiUrls*/
 casper.test.begin('Login tests suite',2, function loginTestsSuite(){
 
     'use strict';
@@ -44,7 +42,7 @@ casper.test.begin('Login tests suite',2, function loginTestsSuite(){
      * Check if we are connected
      */
     casper.then(function checkSessionState(){
-        this.open(userInfoUrl).then(function(response){
+        this.open(apiUrls.userInfo).then(function(response){
             this.test.assert(response.status === 200, 'User "'+login+'" should log in');
         });
     });

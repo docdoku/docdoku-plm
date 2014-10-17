@@ -1,4 +1,4 @@
-/*global casper*/
+/*global casper,urls,documents*/
 
 casper.test.begin('Document template creation tests suite',2, function documentTemplateCreationTestsSuite(){
 
@@ -11,7 +11,7 @@ casper.test.begin('Document template creation tests suite',2, function documentT
      * */
 
     casper.then(function(){
-        this.open(documentManagementUrl);
+        this.open(urls.documentManagement);
     });
 
     /**
@@ -31,7 +31,7 @@ casper.test.begin('Document template creation tests suite',2, function documentT
     casper.then(function waitForTemplateCreationLink(){
         this.waitForSelector('.actions .new-template',function clickOnTemplateCreationLink(){
             this.click('.actions .new-template');
-        })
+        });
     });
 
     /**
@@ -51,7 +51,7 @@ casper.test.begin('Document template creation tests suite',2, function documentT
 
     casper.then(function fillAndSubmitTemplateCreationModal(){
         this.waitForSelector('.modal.new-template input.reference',function(){
-            this.sendKeys('.modal.new-template input.reference',documentTemplateCreationNumber);
+            this.sendKeys('.modal.new-template input.reference',documents.template1.number);
             this.click('.modal.new-template .btn.btn-primary');
         });
     });
@@ -62,7 +62,7 @@ casper.test.begin('Document template creation tests suite',2, function documentT
 
      casper.then(function checkIfTemplateHasBeenCreated(){
         this.waitForSelector('#document-management-content table.dataTable tr td.reference',function templateHasBeenCreated(){
-            this.test.assertSelectorHasText('#document-management-content table.dataTable tr td.reference',documentTemplateCreationNumber);
+            this.test.assertSelectorHasText('#document-management-content table.dataTable tr td.reference',documents.template1.number);
         });
     });
 

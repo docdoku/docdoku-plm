@@ -204,16 +204,16 @@ public class DocumentMaster implements Serializable, Comparable<DocumentMaster>,
             return false;
         }
         DocumentMaster docM = (DocumentMaster) pObj;
-        return (docM.id.equals(id) && (docM.getWorkspaceId().equals(getWorkspaceId())));
+        return docM.id.equals(id) && docM.getWorkspaceId().equals(getWorkspaceId());
         
     }
     
     @Override
     public int hashCode() {
         int hash = 1;
-	    hash = 31 * hash + getWorkspaceId().hashCode();
-	    hash = 31 * hash + id.hashCode();
-	    return hash;
+        hash = 31 * hash + getWorkspaceId().hashCode();
+        hash = 31 * hash + id.hashCode();
+        return hash;
     }
 
     @Override

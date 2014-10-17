@@ -11,7 +11,6 @@ module.exports = {
     contextPath: "/",
     pre: [
         "js/pre/start.js",
-
     ],
     post: [
         "js/auth/logout.js"

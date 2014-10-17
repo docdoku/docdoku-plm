@@ -33,14 +33,14 @@ import javax.persistence.Table;
 @Table(name="USERGROUPMAPPING")
 @javax.persistence.Entity
 public class UserGroupMapping implements java.io.Serializable {
-    
     @javax.persistence.Id
     private String login="";
-    
     private String groupName;
     
     public static final String REGULAR_USER_ROLE_ID="users";
-    
+    public static final String ADMIN_ROLE_ID ="admin";
+    public static final String GUEST_PROXY_ROLE_ID ="guest-proxy";
+
     public UserGroupMapping() {
     }
     

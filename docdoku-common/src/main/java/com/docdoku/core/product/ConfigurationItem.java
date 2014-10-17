@@ -123,18 +123,19 @@ public class ConfigurationItem implements Serializable {
         if (this == pObj) {
             return true;
         }
-        if (!(pObj instanceof ConfigurationItem))
+        if (!(pObj instanceof ConfigurationItem)) {
             return false;
+        }
         ConfigurationItem ci = (ConfigurationItem) pObj;
-        return ((ci.id.equals(id)) && (ci.getWorkspaceId().equals(getWorkspaceId())));
+        return (ci.id.equals(id) && (ci.getWorkspaceId().equals(getWorkspaceId())));
     }
     
     @Override
     public int hashCode() {
         int hash = 1;
-	    hash = 31 * hash + getWorkspaceId().hashCode();
-	    hash = 31 * hash + id.hashCode();
-	    return hash;
+        hash = 31 * hash + getWorkspaceId().hashCode();
+        hash = 31 * hash + id.hashCode();
+        return hash;
     }
     
     @Override

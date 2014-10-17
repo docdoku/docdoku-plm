@@ -8,6 +8,7 @@ import com.docdoku.core.configuration.BaselinedPartKey;
 import com.docdoku.core.configuration.ProductBaseline;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.*;
+import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IProductBaselineManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.dao.ConfigurationItemDAO;
@@ -33,7 +34,7 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
     @EJB
     private IUserManagerLocal userManager;
 
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public BaselineCreation createBaseline(ConfigurationItemKey configurationItemKey, String name, ProductBaseline.BaselineType pType, String description) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, ConfigurationItemNotReleasedException, PartIterationNotFoundException, UserNotActiveException, NotAllowedException{
         User user = userManager.checkWorkspaceWriteAccess(configurationItemKey.getWorkspace());
@@ -106,21 +107,21 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
         return baselineCreation;
     }
 
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public List<ProductBaseline> getAllBaselines(String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         userManager.checkWorkspaceReadAccess(workspaceId);
         return new ProductBaselineDAO(em).findBaselines(workspaceId);
     }
 
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public List<ProductBaseline> getBaselines(ConfigurationItemKey configurationItemKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         userManager.checkWorkspaceReadAccess(configurationItemKey.getWorkspace());
         return new ProductBaselineDAO(em).findBaselines(configurationItemKey.getId(), configurationItemKey.getWorkspace());
     }
 
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public void deleteBaseline(int baselineId) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, BaselineNotFoundException {
         ProductBaselineDAO productBaselineDAO = new ProductBaselineDAO(em);
@@ -129,7 +130,7 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
         productBaselineDAO.deleteBaseline(productBaseline);
     }
 
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public ProductBaseline getBaseline(int baselineId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, BaselineNotFoundException {
         ProductBaseline productBaseline = new ProductBaselineDAO(em).loadBaseline(baselineId);
@@ -137,7 +138,7 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
         return productBaseline;
     }
 
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public ProductBaseline getBaselineById(int baselineId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         ProductBaselineDAO productBaselineDAO = new ProductBaselineDAO(em);
@@ -147,7 +148,7 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
         return productBaseline;
     }
 
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public ProductBaseline duplicateBaseline(int baselineId, String name, ProductBaseline.BaselineType pType, String description) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, BaselineNotFoundException{
         ProductBaselineDAO productBaselineDAO = new ProductBaselineDAO(em);
@@ -174,7 +175,7 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
         return duplicatedProductBaseline;
     }
 
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public void updateBaseline(ConfigurationItemKey configurationItemKey, int baselineId, String name, ProductBaseline.BaselineType type, String description, List<PartIterationKey> partIterationKeys) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartIterationNotFoundException, BaselineNotFoundException, ConfigurationItemNotReleasedException {
         ProductBaselineDAO productBaselineDAO = new ProductBaselineDAO(em);
@@ -198,7 +199,7 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
         }
     }
 
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public List<BaselinedPart> getBaselinedPartWithReference(int baselineId, String q, int maxResults) throws BaselineNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         ProductBaselineDAO productBaselineDAO = new ProductBaselineDAO(em);

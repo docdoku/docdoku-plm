@@ -1,5 +1,4 @@
-/*global define,requestAnimationFrame*/
-'use strict';
+/*global define,THREE,requestAnimationFrame*/
 
 // Global Namespace for the application
 var App = {
@@ -14,9 +13,8 @@ var App = {
 };
 
 define(function () {
-
+	'use strict';
     function PermalinkApp(filename, width, height) {
-
         var container = $("#container");
         var scene = new THREE.Scene();
         var camera = new THREE.PerspectiveCamera(45, container.width() / container.height(), App.SceneOptions.cameraNear, App.SceneOptions.cameraFar);
@@ -24,6 +22,13 @@ define(function () {
         var renderer = new THREE.WebGLRenderer({alpha: true});
         var texturePath = filename.substring(0, filename.lastIndexOf('/'));
         var extension = filename.substr(filename.lastIndexOf('.') + 1).toLowerCase();
+
+	    function addLightsToCamera(camera) {
+		    var dirLight = new THREE.DirectionalLight(0xffffff);
+		    dirLight.position.set(200, 200, 1000).normalize();
+		    camera.add(dirLight);
+		    camera.add(dirLight.target);
+	    }
 
         camera.position.copy(App.SceneOptions.defaultCameraPosition);
         addLightsToCamera(camera);
@@ -56,12 +61,7 @@ define(function () {
             render();
         }
 
-        function addLightsToCamera(camera) {
-            var dirLight = new THREE.DirectionalLight(0xffffff);
-            dirLight.position.set(200, 200, 1000).normalize();
-            camera.add(dirLight);
-            camera.add(dirLight.target);
-        }
+
 
         function getMeshGeometries(collada, geometries) {
             if (collada) {

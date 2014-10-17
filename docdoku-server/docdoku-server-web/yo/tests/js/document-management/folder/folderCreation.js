@@ -1,4 +1,4 @@
-/*global casper*/
+/*global casper,urls,workspace,documents*/
 
 casper.test.begin('Folder creation tests suite',1, function folderCreationTestsSuite(){
 
@@ -11,7 +11,7 @@ casper.test.begin('Folder creation tests suite',1, function folderCreationTestsS
      * */
 
     casper.then(function(){
-        this.open(documentManagementUrl);
+        this.open(urls.documentManagement);
     });
 
     /**
@@ -29,7 +29,7 @@ casper.test.begin('Folder creation tests suite',1, function folderCreationTestsS
     casper.then(function clickOnFolderCreationLink(){
         this.click('#folder-nav > div.nav-list-entry > div.btn-group > ul.dropdown-menu > li.new-folder > a');
         this.waitForSelector('#new-folder-form',function openFolderCreationModal(){
-            this.sendKeys('#new-folder-form input', folderCreationName, {reset:true});
+            this.sendKeys('#new-folder-form input', documents.folder1, {reset:true});
             this.click('button[form=new-folder-form]');
         });
     });
@@ -38,7 +38,7 @@ casper.test.begin('Folder creation tests suite',1, function folderCreationTestsS
      *  Check if folder has been created
      * */
     casper.then(function checkIfFolderHasBeenCreated(){
-        this.waitForSelector('a[href="#'+workspace+'/folders/'+folderCreationName+'"]',function(){
+        this.waitForSelector('a[href="#'+workspace+'/folders/'+documents.folder1+'"]',function(){
             this.test.assert(true,'Folder has been created');
         });
     });

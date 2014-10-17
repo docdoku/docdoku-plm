@@ -155,11 +155,7 @@ define([
             /*we need to reverse read because model.destroy() remove elements from collection*/
             while (this.filesToDelete.length !== 0) {
                 var file = this.filesToDelete.pop();
-                file.destroy({
-                    error: function () {
-                        alert('file ' + file + ' could not be deleted');
-                    }
-                });
+	            this.deleteAFile(file);
             }
         },
 
@@ -173,13 +169,18 @@ define([
             /*we need to reverse read because model.destroy() remove elements from collection*/
             while (this.newItems.length !== 0) {
                 var file = this.newItems.pop();
-                file.destroy({
-                    error: function () {
-                        alert('file ' + file + ' could not be deleted');
-                    }
-                });
+	            this.deleteAFile(file);
             }
         },
+
+		deleteAFile: function(file){
+			file.destroy({
+				dataType: 'text', // server doesn't send a json hash in the response body
+				error: function () {
+					alert(App.config.i18n.FILE_DELETION_ERROR.replace('%{id}',file.id));
+				}
+			});
+		},
 
         gotoIdleState: function () {
             this.$el.removeClass('uploading');

@@ -11,7 +11,7 @@ casper.test.begin('Document creation tests suite',2, function documentCreationTe
      * */
 
     casper.then(function(){
-        this.open(changeManagementUrl);
+        this.open(urls.changeManagement);
     });
 
     /**
@@ -45,7 +45,7 @@ casper.test.begin('Document creation tests suite',2, function documentCreationTe
      */
     casper.then(function fillAndSubmitChangeIssueCreationModal(){
         this.waitForSelector('#issue_creation_modal input#inputIssueName',function(){
-            this.sendKeys('#issue_creation_modal input#inputIssueName',changeIssueCreationName);
+            this.sendKeys('#issue_creation_modal input#inputIssueName',changeItems.changeIssue1.number);
             this.click('#issue_creation_modal .btn.btn-primary');
         });
     });
@@ -55,7 +55,7 @@ casper.test.begin('Document creation tests suite',2, function documentCreationTe
      */
     casper.then(function checkForDocumentCreation(){
         this.waitForSelector('#issue_table tr td.reference',function issueHasBeenCreated(){
-            this.test.assertSelectorHasText('#issue_table tr td.reference',changeIssueCreationName);
+            this.test.assertSelectorHasText('#issue_table tr td.reference',changeItems.changeIssue1.number);
         });
     });
 

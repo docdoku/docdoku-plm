@@ -1,4 +1,4 @@
-/*global define*/
+/*global _,define,App*/
 define([
 	'backbone',
 	'common-objects/utils/date',
@@ -10,10 +10,13 @@ define([
 
 		url: function () {
 			if (this.getIteration()) {
-				return this.collection.baseUrl() + '/' + this.getIteration() + '?configSpec=' + App.config.configSpec;
-			} else {
-				return this.collection.baseUrl();
+				return this.baseUrl() + '?configSpec=' + App.config.configSpec;
 			}
+			return this.collection.baseUrl();
+		},
+
+		baseUrl: function () {
+			return this.collection.baseUrl() + '/' + this.getIteration();
 		},
 
 		initialize: function () {

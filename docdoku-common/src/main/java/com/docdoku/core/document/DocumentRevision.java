@@ -403,18 +403,18 @@ public class DocumentRevision implements Serializable, Comparable<DocumentRevisi
             return false;
         }
         DocumentRevision docR = (DocumentRevision) pObj;
-        return (docR.getId().equals(getId()) &&
-               (docR.getWorkspaceId().equals(getWorkspaceId())) &&
-               (docR.version.equals(version)));
+        return docR.getId().equals(getId()) &&
+               docR.getWorkspaceId().equals(getWorkspaceId()) &&
+               docR.version.equals(version);
         
     }
     @Override
     public int hashCode() {
         int hash = 1;
-	    hash = 31 * hash + getWorkspaceId().hashCode();
-	    hash = 31 * hash + getId().hashCode();
+        hash = 31 * hash + getWorkspaceId().hashCode();
+        hash = 31 * hash + getId().hashCode();
         hash = 31 * hash + version.hashCode();
-	    return hash;
+        return hash;
     }
     public int compareTo(DocumentRevision pDocR) {
         int wksComp = getWorkspaceId().compareTo(pDocR.getWorkspaceId());

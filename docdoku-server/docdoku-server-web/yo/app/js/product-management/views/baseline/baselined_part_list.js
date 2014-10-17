@@ -1,13 +1,12 @@
-/*global define*/
-'use strict';
+/*global _,define,App*/
 define([
     'backbone',
-    "mustache",
-    "text!templates/baseline/baselined_part_list.html",
-    "views/baseline/baselined_part_list_item",
-    "common-objects/models/baselined_part"
+    'mustache',
+    'text!templates/baseline/baselined_part_list.html',
+    'views/baseline/baselined_part_list_item',
+    'common-objects/models/baselined_part'
 ], function (Backbone, Mustache, template, BaselinedPartListItemView, BaselinedPart) {
-
+	'use strict';
     var BaselinedPartsView = Backbone.View.extend({
 
         tagName: 'div',

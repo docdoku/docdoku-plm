@@ -1,4 +1,4 @@
-/*global casper*/
+/*global casper,urls,products*/
 
 casper.test.begin('Part creation tests suite', 4, function partCreationTestsSuite(){
 
@@ -11,7 +11,7 @@ casper.test.begin('Part creation tests suite', 4, function partCreationTestsSuit
     * */
 
     casper.then(function(){
-        this.open(productManagementUrl);
+        this.open(urls.productManagement);
     });
 
     /**
@@ -20,7 +20,7 @@ casper.test.begin('Part creation tests suite', 4, function partCreationTestsSuit
     casper.then(function waitForPartNavLink(){
         this.waitForSelector('#part-nav > .nav-list-entry > a',function clickPartNavLink() {
             this.click('#part-nav > .nav-list-entry > a');
-        },function fail(){this.capture('screenshot/wtf.png')});
+        },function fail(){this.capture('screenshot/nav-link-error.png');});
     });
 
     /**
@@ -49,16 +49,16 @@ casper.test.begin('Part creation tests suite', 4, function partCreationTestsSuit
 
     casper.then(function fillNewPartModalForm(){
         this.waitForSelector('#part_creation_modal input#inputPartNumber',function onNewPartFormReady(){
-            this.sendKeys('#part_creation_modal input#inputPartNumber', partCreationNumber, {reset:true});
-            this.sendKeys('#part_creation_modal input#inputPartName', partCreationName, {reset:true});
+            this.sendKeys('#part_creation_modal input#inputPartNumber', products.part1.number, {reset:true});
+            this.sendKeys('#part_creation_modal input#inputPartName', products.part1.name, {reset:true});
             this.click('#part_creation_modal .btn-primary');
         });
     });
 
     casper.then(function waitForPartToBeCreated(){
         this.waitForSelector('#part_table .part_number span',function partHasBeenCreated(){
-            this.test.assertSelectorHasText('#part_table tbody tr:first-child td.part_number span',partCreationNumber);
-            this.test.assertSelectorHasText('#part_table tbody tr:first-child td:nth-child(6)',partCreationName);
+            this.test.assertSelectorHasText('#part_table tbody tr:first-child td.part_number span',products.part1.number);
+            this.test.assertSelectorHasText('#part_table tbody tr:first-child td:nth-child(6)',products.part1.name);
         });
     });
 

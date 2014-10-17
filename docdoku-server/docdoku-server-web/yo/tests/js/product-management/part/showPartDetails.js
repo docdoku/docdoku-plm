@@ -1,4 +1,4 @@
-/*global casper*/
+/*global casper,urls,products*/
 
 casper.test.begin('Part details tests suite',3, function partDetailsTestsSuite(){
 
@@ -11,7 +11,7 @@ casper.test.begin('Part details tests suite',3, function partDetailsTestsSuite()
      * */
 
     casper.then(function(){
-        this.open(productManagementUrl);
+        this.open(urls.productManagement);
     });
 
     /**
@@ -39,8 +39,8 @@ casper.test.begin('Part details tests suite',3, function partDetailsTestsSuite()
      */
     casper.then(function waitForModalDisplay(){
         this.waitForSelector('#part-modal',function testPartModal() {
-            this.test.assertSelectorHasText('#form-part div:first-child div span',partCreationNumber);
-            this.test.assertSelectorHasText('#form-part div:nth-child(2) div span',partCreationName);
+            this.test.assertSelectorHasText('#form-part div:first-child div span',products.part1.number);
+            this.test.assertSelectorHasText('#form-part div:nth-child(2) div span',products.part1.name);
         });
     });
 

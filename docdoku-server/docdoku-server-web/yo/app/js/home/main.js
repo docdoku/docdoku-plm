@@ -1,4 +1,4 @@
-/*global requestAnimationFrame*/
+/*global THREE,requestAnimationFrame*/
 // Application option for DMU
 var App = {
     SceneOptions: {
@@ -14,7 +14,6 @@ var App = {
 
 window.onload = function() {
 	'use strict';
-
     function hasWebGL() {
         try {
             return !! window.WebGLRenderingContext && !! document.createElement( 'canvas' ).getContext( 'experimental-webgl' );

@@ -42,9 +42,9 @@ public class UserKey implements Serializable {
     @Override
     public int hashCode() {
         int hash = 1;
-	hash = 31 * hash + workspaceId.hashCode();
-	hash = 31 * hash + login.hashCode();
-	return hash;
+        hash = 31 * hash + workspaceId.hashCode();
+        hash = 31 * hash + login.hashCode();
+        return hash;
     }
     
     @Override
@@ -52,10 +52,11 @@ public class UserKey implements Serializable {
         if (this == pObj) {
             return true;
         }
-        if (!(pObj instanceof UserKey))
+        if (!(pObj instanceof UserKey)) {
             return false;
+        }
         UserKey key = (UserKey) pObj;
-        return ((key.login.equals(login)) && (key.workspaceId.equals(workspaceId)));
+        return (key.login.equals(login) && (key.workspaceId.equals(workspaceId)));
     }
     
     @Override

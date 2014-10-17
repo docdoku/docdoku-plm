@@ -3,8 +3,9 @@
  */
 
 var Stats = function () {
-
-    var startTime = Date.now(), prevTime = startTime;
+	'use strict';
+    var bar;
+	var startTime = Date.now(), prevTime = startTime;
     var ms = 0, msMin = Infinity, msMax = 0;
     var fps = 0, fpsMin = Infinity, fpsMax = 0;
     var frames = 0, mode = 0;
@@ -16,7 +17,7 @@ var Stats = function () {
     var fpsDiv = document.createElement('div');
     fpsDiv.addEventListener('mousedown', function (event) {
         event.preventDefault();
-        setMode(++mode % 2)
+        setMode(++mode % 2);
     }, false);
     fpsDiv.id = 'fps';
     fpsDiv.style.cssText = 'padding:0 0 3px 3px;text-align:left;background-color:#002';
@@ -35,7 +36,7 @@ var Stats = function () {
 
     while (fpsGraph.children.length < 74) {
 
-        var bar = document.createElement('span');
+	    bar = document.createElement('span');
         bar.style.cssText = 'width:1px;height:30px;float:left;background-color:#113';
         fpsGraph.appendChild(bar);
 
@@ -44,7 +45,7 @@ var Stats = function () {
     var msDiv = document.createElement('div');
     msDiv.addEventListener('mousedown', function (event) {
         event.preventDefault();
-        setMode(++mode % 2)
+        setMode(++mode % 2);
     }, false);
     msDiv.id = 'ms';
     msDiv.style.cssText = 'padding:0 0 3px 3px;text-align:left;background-color:#020;display:none';
@@ -63,7 +64,7 @@ var Stats = function () {
 
     while (msGraph.children.length < 74) {
 
-        var bar = document.createElement('span');
+        bar = document.createElement('span');
         bar.style.cssText = 'width:1px;height:30px;float:left;background-color:#131';
         msGraph.appendChild(bar);
 
@@ -85,14 +86,14 @@ var Stats = function () {
                 break;
         }
 
-    }
+    };
 
     var updateGraph = function (dom, value) {
 
         var child = dom.appendChild(dom.firstChild);
         child.style.height = value + 'px';
 
-    }
+    };
 
     return {
 
@@ -145,6 +146,6 @@ var Stats = function () {
 
         }
 
-    }
+    };
 
 };

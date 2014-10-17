@@ -1,4 +1,4 @@
-/*global casper*/
+/*global casper,urls*/
 
 casper.test.begin('Product deletion tests suite',1, function productDeletionTestsSuite(){
 
@@ -11,7 +11,7 @@ casper.test.begin('Product deletion tests suite',1, function productDeletionTest
      * */
 
     casper.then(function(){
-        this.open(productManagementUrl);
+        this.open(urls.productManagement);
     });
 
     /**

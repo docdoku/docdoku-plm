@@ -1,49 +1,48 @@
 /*global define*/
 define([
     'backbone',
-    "mustache",
-    "text!common-objects/templates/file/file.html"
+    'mustache',
+    'text!common-objects/templates/file/file.html'
 ], function (Backbone, Mustache, template) {
+	'use strict';
     var FileView = Backbone.View.extend({
 
-        tagName: "li",
+        tagName: 'li',
         className: 'file',
 
         editMode: true,
 
         events: {
-            "change input.file-check": "fileCheckChanged",
-            "dragstart a.fileName": "dragStart"
+            'change input.file-check': 'fileCheckChanged',
+            'dragstart a.fileName': 'dragStart'
         },
 
         initialize: function () {
             this.editMode = this.options.editMode;
-            this.model.url = this.options.deleteBaseUrl + "/files/" + this.model.get("shortName");
-            this.fileUrl = this.options.uploadBaseUrl + this.model.get("shortName");
+            this.model.url = this.options.deleteBaseUrl + '/files/' + this.model.get('shortName');
+            this.fileUrl = this.options.uploadBaseUrl + this.model.get('shortName');
         },
 
         fileCheckChanged: function () {
-            if (this.checkbox.is(":checked")) {
-                this.fileNameEl.addClass("stroke");
+            if (this.checkbox.is(':checked')) {
+                this.fileNameEl.addClass('stroke');
                 this.options.filesToDelete.add(this.model);
             } else {
-                this.fileNameEl.removeClass("stroke");
+                this.fileNameEl.removeClass('stroke');
                 this.options.filesToDelete.remove(this.model);
             }
         },
 
         dragStart: function (evt) {
-            evt.dataTransfer.setData("DownloadURL", "application/octet-stream:" + this.model.get("shortName") + ":" + window.location.origin + "/" + this.fileUrl);
+            evt.dataTransfer.setData('DownloadURL', 'application/octet-stream:' + this.model.get('shortName') + ':' + window.location.origin + '/' + this.fileUrl);
         },
 
         render: function () {
-            this.$el.html(Mustache.render(template,
-                {
-                    url: this.fileUrl,
-                    shortName: this.model.get("shortName"),
-                    editMode: this.editMode
-                }
-            ));
+            this.$el.html(Mustache.render(template,{
+                url: this.fileUrl,
+                shortName: this.model.get('shortName'),
+                editMode: this.editMode
+            }));
 
             this.bindDomElements();
 
@@ -51,8 +50,8 @@ define([
         },
 
         bindDomElements: function () {
-            this.checkbox = this.$("input.file-check");
-            this.fileNameEl = this.$(".fileName");
+            this.checkbox = this.$('input.file-check');
+            this.fileNameEl = this.$('.fileName');
         }
     });
     return FileView;

@@ -148,17 +148,19 @@ public class PartMaster implements Serializable {
         
     public PartRevision getLastRevision() {
         int index = partRevisions.size()-1;
-        if(index < 0)
+        if(index < 0) {
             return null;
-        else
+        }else {
             return partRevisions.get(index);
+        }
     }
     public PartRevision removeLastRevision() {
         int index = partRevisions.size()-1;
-        if(index < 0)
+        if(index < 0) {
             return null;
-        else
+        }else {
             return partRevisions.remove(index);
+        }
     }
 
     public PartRevision getLastReleasedRevision(){
@@ -178,9 +180,9 @@ public class PartMaster implements Serializable {
     public PartRevision createNextRevision(User pUser){
         PartRevision lastRev=getLastRevision();
         Version version;
-        if(lastRev==null)
+        if(lastRev==null) {
             version = new Version("A");
-        else{
+        } else{
             version = new Version(lastRev.getVersion());
             version.increase();
         }
@@ -245,9 +247,9 @@ public class PartMaster implements Serializable {
     @Override
     public int hashCode() {
         int hash = 1;
-	    hash = 31 * hash + getWorkspaceId().hashCode();
-	    hash = 31 * hash + number.hashCode();
-	    return hash;
+        hash = 31 * hash + getWorkspaceId().hashCode();
+        hash = 31 * hash + number.hashCode();
+        return hash;
     }
 
 

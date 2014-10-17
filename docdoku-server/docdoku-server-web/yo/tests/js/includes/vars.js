@@ -8,21 +8,53 @@ var workspace = casper.cli.get("workspace");
 var contextPath = casper.cli.get("contextPath");
 
 var homeUrl = 'http://'+domain+':'+port + contextPath;
-var productManagementUrl = homeUrl+'/product-management/#'+workspace;
-var documentManagementUrl = homeUrl+'/document-management/#'+workspace;
-var changeManagementUrl = homeUrl+'/change-management/#'+workspace;
-var userInfoUrl = homeUrl+'/api/workspaces/'+workspace+'/users/me';
 
-var partCreationNumber = '000-AAA-CasperJsTestPart';
-var partCreationName = 'CasperJsTestPart';
-var documentCreationNumber = '000-AAA-CasperJsTestDocument';
-var documentTemplateCreationNumber = 'CasperJsTestDocumentTemplate';
-var productCreationNumber = '000-AAA-CasperJsTestProduct';
-var productCreationName = 'CasperJsTestProduct';
-var folderCreationName = 'CasperJsTestFolder';
-var changeIssueCreationName = 'CasperJsTestIssue';
+var documents = {
+	template1 : {
+		number : 'CasperJsTestDocumentTemplate'
+	},
+	folder1: 'CasperJsTestFolder',
+	document1 : {
+		number : '000-AAA-CasperJsTestDocument'
+	}
+};
 
-var deletePartUrl = homeUrl+'/api/workspaces/'+workspace+'/parts/'+partCreationNumber+'-A';
-var deleteDocumentUrl = homeUrl+'/api/workspaces/'+workspace+'/documents/'+documentCreationNumber+'-A';
-var deleteProductUrl = homeUrl+'/api/workspaces/'+workspace+'/products/'+productCreationNumber;
-var deleteFolderUrl = homeUrl+'/api/workspaces/'+workspace+'/folders/'+workspace+":"+folderCreationName;
+var products = {
+	template1 : {
+		number : 'CasperJsTestPartTemplate'
+	},
+	part1 : {
+		number : '000-AAA-CasperJsTestPart',
+		name : 'CasperJsTestPart'
+	},
+	product1: {
+		number : '000-AAA-CasperJsTestProduct',
+		name : 'CasperJsTestProduct'
+	}
+};
+
+var workflows = {
+	role1 : 'CasperJsRole1',
+	role2 : 'CasperJsRole2',
+	role3 : 'CasperJsRole3'
+};
+
+var changeItems = {
+	changeIssue1 : {
+		number : 'CasperJsTestIssue'
+	}
+};
+
+var urls = {
+	productManagement : homeUrl+'/product-management/#'+workspace,
+	documentManagement : homeUrl+'/document-management/#'+workspace,
+	changeManagement : homeUrl+'/change-management/#'+workspace
+};
+
+var apiUrls = {
+	userInfo : homeUrl+'/api/workspaces/'+workspace+'/users/me',
+	deletePart : homeUrl+'/api/workspaces/'+workspace+'/parts/'+products.part1.number+'-A',
+	deleteDocument : homeUrl+'/api/workspaces/'+workspace+'/documents/'+documents.document1.number+'-A',
+	deleteProduct : homeUrl+'/api/workspaces/'+workspace+'/products/'+products.product1.number,
+	deleteFolder : homeUrl+'/api/workspaces/'+workspace+'/folders/'+workspace+":"+documents.folder1
+};

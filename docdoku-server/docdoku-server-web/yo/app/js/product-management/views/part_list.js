@@ -1,19 +1,20 @@
-/*global define*/
+/*global _,define,App*/
 define([
     'backbone',
-    "mustache",
-    "text!templates/part_list.html",
-    "views/part_list_item"
+    'mustache',
+    'text!templates/part_list.html',
+    'views/part_list_item'
 ], function (Backbone, Mustache, template, PartListItemView) {
+	'use strict';
     var PartListView = Backbone.View.extend({
 
         events: {
-            "click .toggle-checkboxes": "toggleSelection"
+            'click .toggle-checkboxes': 'toggleSelection'
         },
 
         initialize: function () {
             _.bindAll(this);
-            this.listenTo(this.collection, "reset", this.resetList);
+            this.listenTo(this.collection, 'reset', this.resetList);
             this.listenTo(this.collection, 'add', this.addNewPart);
             this.listItemViews = [];
         },
@@ -24,8 +25,8 @@ define([
         },
 
         bindDomElements: function () {
-            this.$items = this.$(".items");
-            this.$checkbox = this.$(".toggle-checkboxes");
+            this.$items = this.$('.items');
+            this.$checkbox = this.$('.toggle-checkboxes');
         },
 
         resetList: function () {
@@ -66,7 +67,7 @@ define([
         removePartView: function (model) {
 
             var viewToRemove = _(this.listItemViews).select(function (view) {
-                return view.model == model;
+                return view.model === model;
             })[0];
 
             if (viewToRemove) {
@@ -82,13 +83,13 @@ define([
             var view = new PartListItemView({model: model}).render();
             this.listItemViews.push(view);
             this.$items.append(view.$el);
-            view.on("selectionChanged", this.onSelectionChanged);
-            view.on("rendered", this.redraw);
+            view.on('selectionChanged', this.onSelectionChanged);
+            view.on('rendered', this.redraw);
             return view;
         },
 
         toggleSelection: function () {
-            if (this.$checkbox.is(":checked")) {
+            if (this.$checkbox.is(':checked')) {
                 _(this.listItemViews).each(function (view) {
                     view.check();
                 });
@@ -108,18 +109,18 @@ define([
 
             if (checkedViews.length <= 0) {
                 this.onNoPartSelected();
-            } else if (checkedViews.length == 1) {
+            } else if (checkedViews.length === 1) {
                 this.onOnePartSelected();
 
                 if (checkedViews[0].model.isCheckout()) {
                     if (checkedViews[0].model.isCheckoutByConnectedUser()) {
-                        var canUndo = checkedViews[0].model.getLastIteration().get("iteration") > 1;
-                        this.trigger("checkout-group:update", {canCheckout: false, canUndo: canUndo, canCheckin: true});
+                        var canUndo = checkedViews[0].model.getLastIteration().get('iteration') > 1;
+                        this.trigger('checkout-group:update', {canCheckout: false, canUndo: canUndo, canCheckin: true});
                     } else {
-                        this.trigger("checkout-group:update", {canCheckout: false, canUndo: false, canCheckin: false});
+                        this.trigger('checkout-group:update', {canCheckout: false, canUndo: false, canCheckin: false});
                     }
                 } else {
-                    this.trigger("checkout-group:update", {canCheckout: true, canUndo: false, canCheckin: false});
+                    this.trigger('checkout-group:update', {canCheckout: true, canUndo: false, canCheckin: false});
                 }
 
             } else {
@@ -129,28 +130,28 @@ define([
         },
 
         onNoPartSelected: function () {
-            this.trigger("delete-button:display", false);
-            this.trigger("checkout-group:display", false);
-            this.trigger("acl-edit-button:display", false);
-            this.trigger("new-version-button:display", false);
-            this.trigger("release-button:display", false);
+            this.trigger('delete-button:display', false);
+            this.trigger('checkout-group:display', false);
+            this.trigger('acl-edit-button:display', false);
+            this.trigger('new-version-button:display', false);
+            this.trigger('release-button:display', false);
         },
 
         onOnePartSelected: function () {
-            this.trigger("delete-button:display", true);
+            this.trigger('delete-button:display', true);
             var partSelected = this.getSelectedPart();
-            this.trigger("checkout-group:display", !partSelected.isReleased());
-            this.trigger("acl-edit-button:display", partSelected ? (App.config.workspaceAdmin || partSelected.getAuthorLogin() == App.config.login) : false);
-            this.trigger("new-version-button:display", !partSelected.isCheckout());
-            this.trigger("release-button:display", (!partSelected.isCheckout() && !partSelected.isReleased()));
+            this.trigger('checkout-group:display', !partSelected.isReleased());
+            this.trigger('acl-edit-button:display', partSelected ? (App.config.workspaceAdmin || partSelected.getAuthorLogin() === App.config.login) : false);
+            this.trigger('new-version-button:display', !partSelected.isCheckout());
+            this.trigger('release-button:display', (!partSelected.isCheckout() && !partSelected.isReleased()));
         },
 
         onSeveralPartsSelected: function () {
-            this.trigger("delete-button:display", true);
-            this.trigger("checkout-group:display", false);
-            this.trigger("acl-edit-button:display", false);
-            this.trigger("new-version-button:display", false);
-            this.trigger("release-button:display", this.isSelectedPartsReleasable());
+            this.trigger('delete-button:display', true);
+            this.trigger('checkout-group:display', false);
+            this.trigger('acl-edit-button:display', false);
+            this.trigger('new-version-button:display', false);
+            this.trigger('release-button:display', this.isSelectedPartsReleasable());
         },
 
         deleteSelectedParts: function () {
@@ -209,7 +210,7 @@ define([
 
         dataTable: function () {
             var oldSort = [
-                [0, "asc"]
+                [0, 'asc']
             ];
             if (this.oTable) {
                 if (this.oTable.fnSettings()) {
@@ -222,21 +223,19 @@ define([
                 bDestroy: true,
                 iDisplayLength: -1,
                 oLanguage: {
-                    sSearch: "<i class='fa fa-search'></i>",
+                    sSearch: '<i class="fa fa-search"></i>',
                     sEmptyTable: App.config.i18n.NO_DATA,
                     sZeroRecords: App.config.i18n.NO_FILTERED_DATA
                 },
                 sDom: 'ft',
                 aoColumnDefs: [
-                    { "bSortable": false, "aTargets": [ 0, 11, 12 ] },
-                    { "sType": App.config.i18n.DATE_SORT, "aTargets": [7, 8] }
+                    { 'bSortable': false, 'aTargets': [ 0, 11, 12 ] },
+                    { 'sType': App.config.i18n.DATE_SORT, 'aTargets': [7, 8] }
                 ]
             });
-            this.$el.parent().find(".dataTables_filter input").attr("placeholder", App.config.i18n.FILTER);
+            this.$el.parent().find('.dataTables_filter input').attr('placeholder', App.config.i18n.FILTER);
         }
 
     });
-
     return PartListView;
-
 });

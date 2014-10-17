@@ -297,11 +297,11 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
     @Override
     public int hashCode() {
         int hash = 1;
-	    hash = 31 * hash + getWorkspaceId().hashCode();
-	    hash = 31 * hash + getPartNumber().hashCode();
+        hash = 31 * hash + getWorkspaceId().hashCode();
+        hash = 31 * hash + getPartNumber().hashCode();
         hash = 31 * hash + getPartVersion().hashCode();
         hash = 31 * hash + iteration;
-	    return hash;
+        return hash;
     }
     
     @Override
@@ -323,16 +323,19 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
     public int compareTo(PartIteration pPart) {
         
         int wksComp = getWorkspaceId().compareTo(pPart.getWorkspaceId());
-        if (wksComp != 0)
+        if (wksComp != 0) {
             return wksComp;
+        }
         int mpartNumberComp = getPartNumber().compareTo(pPart.getPartNumber());
-        if (mpartNumberComp != 0)
+        if (mpartNumberComp != 0) {
             return mpartNumberComp;
+        }
         int mpartVersionComp = getPartVersion().compareTo(pPart.getPartVersion());
-        if (mpartVersionComp != 0)
+        if (mpartVersionComp != 0) {
             return mpartVersionComp;
-        else
-            return iteration-pPart.iteration;
+        }else {
+            return iteration - pPart.iteration;
+        }
     }
 
     /**
@@ -369,5 +372,4 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
         }
         return clone;
     }
-    
 }

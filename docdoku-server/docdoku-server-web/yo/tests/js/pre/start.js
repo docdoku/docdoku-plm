@@ -20,7 +20,6 @@ casper.on('remote.message', function remoteMessage(message) {
 });
 
 casper.test.begin('DocdokuPLM Tests suite',1, function docdokuPLMTestsSuite() {
-
     casper.thenOpen(homeUrl,function homePageLoaded(){
         this.test.assert(true,'Tests begins');
     });

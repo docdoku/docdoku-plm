@@ -1,4 +1,4 @@
-/*global casper*/
+/*global casper,urls,workspace,documents*/
 
 casper.test.begin('Document creation tests suite',2, function documentCreationTestsSuite(){
 
@@ -11,7 +11,7 @@ casper.test.begin('Document creation tests suite',2, function documentCreationTe
      * */
 
     casper.then(function(){
-        this.open(documentManagementUrl);
+        this.open(urls.documentManagement);
     });
 
     /**
@@ -19,8 +19,8 @@ casper.test.begin('Document creation tests suite',2, function documentCreationTe
      */
 
     casper.then(function waitForFolderNavLink(){
-        this.waitForSelector('a[href="#'+workspace+'/folders/'+folderCreationName+'"]',function(){
-            this.click('a[href="#'+workspace+'/folders/'+folderCreationName+'"]');
+        this.waitForSelector('a[href="#'+workspace+'/folders/'+documents.folder1+'"]',function(){
+            this.click('a[href="#'+workspace+'/folders/'+documents.folder1+'"]');
         });
     });
 
@@ -49,7 +49,7 @@ casper.test.begin('Document creation tests suite',2, function documentCreationTe
 
     casper.then(function fillAndSubmitDocumentCreationModal(){
         this.waitForSelector('.modal.document-modal.new-document input.reference',function(){
-            this.sendKeys('.modal.document-modal.new-document input.reference',documentCreationNumber);
+            this.sendKeys('.modal.document-modal.new-document input.reference',documents.document1.number);
             this.click('.modal.document-modal.new-document .btn.btn-primary');
         });
     });
@@ -60,7 +60,7 @@ casper.test.begin('Document creation tests suite',2, function documentCreationTe
 
     casper.then(function checkForDocumentCreation(){
         this.waitForSelector('#document-management-content table.dataTable tr td.reference',function documentHasBeenCreated(){
-            this.test.assertSelectorHasText('#document-management-content table.dataTable tr td.reference a',documentCreationNumber);
+            this.test.assertSelectorHasText('#document-management-content table.dataTable tr td.reference a',documents.document1.number);
         });
     });
 

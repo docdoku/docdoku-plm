@@ -13,9 +13,8 @@ define(['backbone', 'collections/document_iteration', 'common-objects/utils/acl-
 		url: function () {
 			if (this.getId()) {
 				return this.baseUrl() + '?configSpec=' + App.config.configSpec;
-			} else {
-				return this.urlRoot();
 			}
+			return this.urlRoot();
 		},
 
 		baseUrl: function () {

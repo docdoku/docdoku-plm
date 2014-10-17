@@ -1,5 +1,4 @@
-/*global _,self,InstancesSorter,DegradationLevelBalancer*/
-'use strict';
+/*global _,self,THREE,InstancesSorter,DegradationLevelBalancer*/
 importScripts(
     '../../../bower_components/underscore/underscore-min.js',
     '../../../bower_components/threejs/build/three.min.js',
@@ -15,6 +14,7 @@ var WorkerManagedValues = {};
 var debug = null;
 
 function fixPrecision(v) {
+	'use strict';
     v.x = parseFloat(v.x).toFixed(2);
     v.y = parseFloat(v.y).toFixed(2);
     v.z = parseFloat(v.z).toFixed(2);
@@ -31,6 +31,7 @@ var Context = {
     ct: new THREE.Vector3(),
 
     clear: function () {
+	    'use strict';
         instances = {};
         instancesCount = 0;
         newData = true;
@@ -40,6 +41,7 @@ var Context = {
 
     },
     addInstance: function (instance) {
+	    'use strict';
         if (typeof(instances[instance.id]) === 'undefined') {
             instancesCount++;
         }
@@ -47,18 +49,21 @@ var Context = {
         newData = true;
     },
     unCheckInstance: function (instanceId) {
+	    'use strict';
 	    if(instances[instanceId]){
 		    instances[instanceId].checked = false;
 	    }
         newData = true;
     },
     checkInstance: function (instanceId) {
+	    'use strict';
 	    if(instances[instanceId]){
 		    instances[instanceId].checked = true;
 	    }
         newData = true;
     },
     hasChanged: function (newContext) {
+	    'use strict';
         debug = newContext.debug;
         WorkerManagedValues = newContext.WorkerManagedValues;
         //Lower precision, sometimes camera is moving by 1E-6 and triggers calculations
@@ -83,16 +88,20 @@ var Context = {
     },
 
     setQuality: function (instance) {
+	    'use strict';
         instances[instance.id].qualityLoaded = instance.quality;
     },
 
     cameraDist: function (instance) {
+	    'use strict';
         return new THREE.Vector3().subVectors(instance.cog, Context.camera).length();
     },
     cameraAngle: function (instance) {
+	    'use strict';
         return new THREE.Vector3().subVectors(instance.cog, Context.camera).normalize().angleTo(Context.ct);
     },
     evalContext: function (context) {
+	    'use strict';
         if (Context.hasChanged(context)) {
 
             if (debug) {
@@ -135,26 +144,33 @@ var Context = {
 // Lookup table for parent messages
 var ParentMessages = {
     context: function (context) {
+	    'use strict';
         Context.evalContext(context);
     },
     unCheck: function (nodeId) {
+	    'use strict';
         Context.unCheckInstance(nodeId);
     },
     check: function (nodeId) {
+	    'use strict';
         Context.checkInstance(nodeId);
     },
     clear: function () {
+	    'use strict';
         Context.clear();
     },
     setQuality: function (instance) {
+	    'use strict';
         Context.setQuality(instance);
     },
     addInstance: function (instance) {
+	    'use strict';
         Context.addInstance(instance);
     }
 };
 
 self.addEventListener('message', function (message) {
+	'use strict';
     if (typeof  ParentMessages[message.data.fn] === 'function') {
         ParentMessages[message.data.fn](message.data.obj);
     } else {

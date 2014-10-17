@@ -42,9 +42,9 @@ public class DocumentMasterTemplateKey implements Serializable {
     @Override
     public int hashCode() {
         int hash = 1;
-	hash = 31 * hash + workspaceId.hashCode();
-	hash = 31 * hash + id.hashCode();
-	return hash;
+        hash = 31 * hash + workspaceId.hashCode();
+        hash = 31 * hash + id.hashCode();
+        return hash;
     }
     
     @Override
@@ -52,10 +52,11 @@ public class DocumentMasterTemplateKey implements Serializable {
         if (this == pObj) {
             return true;
         }
-        if (!(pObj instanceof DocumentMasterTemplateKey))
+        if (!(pObj instanceof DocumentMasterTemplateKey)) {
             return false;
+        }
         DocumentMasterTemplateKey key = (DocumentMasterTemplateKey) pObj;
-        return ((key.id.equals(id)) && (key.workspaceId.equals(workspaceId)));
+        return (key.id.equals(id) && (key.workspaceId.equals(workspaceId)));
     }
     
     @Override

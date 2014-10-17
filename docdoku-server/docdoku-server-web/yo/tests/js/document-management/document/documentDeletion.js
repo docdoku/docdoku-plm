@@ -1,4 +1,4 @@
-/*global casper*/
+/*global casper,urls,workspace,documents*/
 
 casper.test.begin('Document deletion tests suite',1, function documentDeletionTestsSuite(){
 
@@ -11,7 +11,7 @@ casper.test.begin('Document deletion tests suite',1, function documentDeletionTe
      * */
 
     casper.then(function(){
-        this.open(documentManagementUrl);
+        this.open(urls.documentManagement);
     });
 
     /**
@@ -19,8 +19,8 @@ casper.test.begin('Document deletion tests suite',1, function documentDeletionTe
      */
 
     casper.then(function waitForFolderNavLink(){
-        this.waitForSelector('a[href="#'+workspace+'/folders/'+folderCreationName+'"]',function(){
-            this.click('a[href="#'+workspace+'/folders/'+folderCreationName+'"]');
+        this.waitForSelector('a[href="#'+workspace+'/folders/'+documents.folder1+'"]',function(){
+            this.click('a[href="#'+workspace+'/folders/'+documents.folder1+'"]');
         });
     });
 

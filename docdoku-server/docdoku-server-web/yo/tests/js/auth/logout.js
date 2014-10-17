@@ -1,4 +1,4 @@
-/*global casper*/
+/*global casper,urls,apiUrls*/
 casper.test.begin('Logout tests suite',1, function logoutTestsSuite(){
 
     'use strict';
@@ -10,7 +10,7 @@ casper.test.begin('Logout tests suite',1, function logoutTestsSuite(){
      * */
 
      casper.then(function(){
-        this.open(documentManagementUrl);
+        this.open(urls.documentManagement);
      });
 
     /**
@@ -27,7 +27,7 @@ casper.test.begin('Logout tests suite',1, function logoutTestsSuite(){
         this.wait(500);
     });
 
-    casper.thenOpen(userInfoUrl, function testSessionState(){
+    casper.thenOpen(apiUrls.userInfo, function testSessionState(){
         this.test.assertHttpStatus(401,'We should get a 401 HTTP code');
     });
 

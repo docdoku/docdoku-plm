@@ -182,7 +182,7 @@ public class PartRevision implements Serializable, Comparable<PartRevision>, Clo
     }
     
     public boolean isCheckedOut() {
-        return (checkOutUser != null);
+        return checkOutUser != null;
     }
     
     public User getAuthor() {
@@ -228,14 +228,15 @@ public class PartRevision implements Serializable, Comparable<PartRevision>, Clo
     }
     
     public String getLifeCycleState() {
-        if (workflow != null)
+        if (workflow != null) {
             return workflow.getLifeCycleState();
-        else
+        }else {
             return null;
+        }
     }
     
     public boolean hasWorkflow() {
-        return (workflow != null);
+        return workflow != null;
     }
     
     public ACL getACL() {
@@ -269,10 +270,11 @@ public class PartRevision implements Serializable, Comparable<PartRevision>, Clo
 
     public PartIteration getLastIteration() {
         int index = partIterations.size()-1;
-        if(index < 0)
+        if(index < 0) {
             return null;
-        else
+        } else {
             return partIterations.get(index);
+        }
     }
 
     public PartIteration getLastCheckedInIteration() {
@@ -301,10 +303,11 @@ public class PartRevision implements Serializable, Comparable<PartRevision>, Clo
     
     public PartIteration removeLastIteration() {
         int index = partIterations.size()-1;
-        if(index < 0)
+        if(index < 0) {
             return null;
-        else
+        }else {
             return partIterations.remove(index);
+        }
     }
     
     public PartIteration getIteration(int pIteration) {
@@ -388,32 +391,35 @@ public class PartRevision implements Serializable, Comparable<PartRevision>, Clo
         if (this == pObj) {
             return true;
         }
-        if (!(pObj instanceof PartRevision))
+        if (!(pObj instanceof PartRevision)) {
             return false;
+        }
         PartRevision partR = (PartRevision) pObj;
-        return ((partR.getPartNumber().equals(getPartNumber())) && (partR.getWorkspaceId().equals(getWorkspaceId())) && (partR.version.equals(version)));
+        return (partR.getPartNumber().equals(getPartNumber()) && (partR.getWorkspaceId().equals(getWorkspaceId())) && (partR.version.equals(version)));
         
     }
     
     @Override
     public int hashCode() {
         int hash = 1;
-	    hash = 31 * hash + getWorkspaceId().hashCode();
-	    hash = 31 * hash + getPartNumber().hashCode();
+        hash = 31 * hash + getWorkspaceId().hashCode();
+        hash = 31 * hash + getPartNumber().hashCode();
         hash = 31 * hash + version.hashCode();
-	    return hash;
+        return hash;
     }
 
     @Override
     public int compareTo(PartRevision pPartR) {
         int wksComp = getWorkspaceId().compareTo(pPartR.getWorkspaceId());
-        if (wksComp != 0)
+        if (wksComp != 0) {
             return wksComp;
+        }
         int numberComp = getPartNumber().compareTo(pPartR.getPartNumber());
-        if (numberComp != 0)
+        if (numberComp != 0) {
             return numberComp;
-        else
+        } else {
             return version.compareTo(pPartR.version);
+        }
     }
 
     /**
@@ -436,8 +442,9 @@ public class PartRevision implements Serializable, Comparable<PartRevision>, Clo
         }
         clone.partIterations = clonedPartIterations;
 
-        if(workflow !=null)
+        if(workflow !=null) {
             clone.workflow = workflow.clone();
+        }
 
         //perform a deep copy
         List<Workflow> clonedAbortedWorkflows =new ArrayList<>();
@@ -447,15 +454,15 @@ public class PartRevision implements Serializable, Comparable<PartRevision>, Clo
         }
         clone.abortedWorkflows = clonedAbortedWorkflows;
 
-
-        if(acl !=null)
+        if(acl !=null) {
             clone.acl = acl.clone();
-
-        if(creationDate!=null)
+        }
+        if(creationDate!=null) {
             clone.creationDate = (Date) creationDate.clone();
-
-        if(checkOutDate!=null)
+        }
+        if(checkOutDate!=null) {
             clone.checkOutDate = (Date) checkOutDate.clone();
+        }
 
         return clone;
     }

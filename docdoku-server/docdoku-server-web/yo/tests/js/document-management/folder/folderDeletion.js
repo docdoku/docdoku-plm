@@ -1,4 +1,4 @@
-/*global casper*/
+/*global casper,urls,documents*/
 
 casper.test.begin('Folder deletion tests suite',1, function folderDeletionTestsSuite(){
 
@@ -11,7 +11,7 @@ casper.test.begin('Folder deletion tests suite',1, function folderDeletionTestsS
      * */
 
     casper.then(function(){
-        this.open(documentManagementUrl);
+        this.open(urls.documentManagement);
     });
 
     /**
@@ -19,8 +19,8 @@ casper.test.begin('Folder deletion tests suite',1, function folderDeletionTestsS
      */
 
     casper.then(function waitForDeleteFolderLink(){
-        this.waitForSelector('#folder-nav .items a[title="'+folderCreationName+'"] + .btn-group .delete a',function clickFolderDeleteLink() {
-            this.click('#folder-nav .items a[title="'+folderCreationName+'"] + .btn-group .delete a');
+        this.waitForSelector('#folder-nav .items a[title="'+documents.folder1+'"] + .btn-group .delete a',function clickFolderDeleteLink() {
+            this.click('#folder-nav .items a[title="'+documents.folder1+'"] + .btn-group .delete a');
         });
     });
 
@@ -29,9 +29,9 @@ casper.test.begin('Folder deletion tests suite',1, function folderDeletionTestsS
      */
 
     casper.then(function waitForFolderDisappear(){
-        this.waitWhileSelector('#folder-nav .items a[title='+folderCreationName+']',function folderHasBEenDeleted(){
+        this.waitWhileSelector('#folder-nav .items a[title='+documents.folder1+']',function folderHasBEenDeleted(){
             this.test.assert(true,'Folder deleted');
-        })
+        });
     });
 
     casper.run(function allDone() {

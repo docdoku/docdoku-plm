@@ -1,5 +1,4 @@
-/*global define*/
-
+/*global _,define,App*/
 define([
     'mustache',
     'common-objects/views/components/modal',
@@ -13,7 +12,6 @@ define([
     'text!templates/iteration/document_iteration.html',
     'common-objects/utils/date'
 ], function (Mustache, ModalView, FileListView, DocumentAttributesView, LifecycleView, LinkedDocumentsView, Tag, TagView, LinkedDocumentCollection, template, date) {
-
     'use strict';
 
     var IterationView = ModalView.extend({
@@ -161,7 +159,7 @@ define([
 
                 this.fileListView = new FileListView({
                     baseName: this.iteration.getBaseName(),
-                    deleteBaseUrl: this.iteration.url(),
+                    deleteBaseUrl: this.iteration.baseUrl(),
                     uploadBaseUrl: this.iteration.getUploadBaseUrl(),
                     collection: this.iteration.getAttachedFiles(),
                     editMode: editMode

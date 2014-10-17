@@ -1,4 +1,4 @@
-/*global casper*/
+/*global casper,urls,products*/
 
 casper.test.begin('Product creation tests suite',3, function productCreationTestsSuite(){
 
@@ -11,7 +11,7 @@ casper.test.begin('Product creation tests suite',3, function productCreationTest
      * */
 
     casper.then(function(){
-        this.open(productManagementUrl);
+        this.open(urls.productManagement);
     });
 
     /**
@@ -52,17 +52,17 @@ casper.test.begin('Product creation tests suite',3, function productCreationTest
      * */
     casper.then(function fillProductCreationForm(){
         this.waitForSelector('#product_creation_modal #inputDescription',function onNewPartFormReady(){
-            this.sendKeys('#product_creation_modal #inputProductId', productCreationNumber, {reset:true});
-            this.sendKeys('#product_creation_modal #inputDescription', productCreationName, {reset:true});
-            this.sendKeys('#product_creation_modal #inputPartNumber', partCreationNumber, {reset:true});
+            this.sendKeys('#product_creation_modal #inputProductId', products.product1.number, {reset:true});
+            this.sendKeys('#product_creation_modal #inputDescription', products.product1.name, {reset:true});
+            this.sendKeys('#product_creation_modal #inputPartNumber', products.part1.number, {reset:true});
         });
     });
 
     casper.then(function submitProductCreationForm(){
         this.click('#product_creation_modal .btn-primary');
         this.waitForSelector('#product_table .product_id',function productHasBeenCreated(){
-            this.test.assertSelectorHasText('#product_table tbody tr:first-child td.product_id',productCreationNumber);
-            this.test.assertSelectorHasText('#product_table tbody tr:first-child td:nth-child(3)',partCreationNumber);
+            this.test.assertSelectorHasText('#product_table tbody tr:first-child td.product_id',products.product1.number);
+            this.test.assertSelectorHasText('#product_table tbody tr:first-child td:nth-child(3)',products.part1.number);
         });
     });
 

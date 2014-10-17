@@ -83,9 +83,9 @@ public class Tag implements Serializable {
     @Override
     public int hashCode() {
         int hash = 1;
-	hash = 31 * hash + workspaceId.hashCode();
-	hash = 31 * hash + label.hashCode();
-	return hash;
+        hash = 31 * hash + workspaceId.hashCode();
+        hash = 31 * hash + label.hashCode();
+        return hash;
     }
     
     @Override
@@ -93,12 +93,13 @@ public class Tag implements Serializable {
         if (this == pObj) {
             return true;
         }
-        if (!(pObj instanceof Tag))
+        if (!(pObj instanceof Tag)) {
             return false;
+        }
         Tag tag = (Tag) pObj;
         
         return tag.workspaceId.equals(workspaceId)
-        && tag.label.equals(label);
+                && tag.label.equals(label);
     }
     
     @Override

@@ -1,4 +1,4 @@
-/*global casper*/
+/*global casper,urls*/
 
 casper.test.begin('Document template deletion tests suite',1, function documentTemplateDeletionTestsSuite(){
 
@@ -11,7 +11,7 @@ casper.test.begin('Document template deletion tests suite',1, function documentT
      * */
 
     casper.then(function(){
-        this.open(documentManagementUrl);
+        this.open(urls.documentManagement);
     });
 
     /**

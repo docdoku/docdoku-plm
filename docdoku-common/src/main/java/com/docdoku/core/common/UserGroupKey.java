@@ -42,9 +42,9 @@ public class UserGroupKey implements Serializable {
     @Override
     public int hashCode() {
         int hash = 1;
-	hash = 31 * hash + workspaceId.hashCode();
-	hash = 31 * hash + id.hashCode();
-	return hash;
+        hash = 31 * hash + workspaceId.hashCode();
+        hash = 31 * hash + id.hashCode();
+        return hash;
     }
     
     @Override
@@ -52,10 +52,11 @@ public class UserGroupKey implements Serializable {
         if (this == pObj) {
             return true;
         }
-        if (!(pObj instanceof UserGroupKey))
+        if (!(pObj instanceof UserGroupKey)) {
             return false;
+        }
         UserGroupKey key = (UserGroupKey) pObj;
-        return ((key.id.equals(id)) && (key.workspaceId.equals(workspaceId)));
+        return ((key.id.equals(id)) && key.workspaceId.equals(workspaceId));
     }
     
     @Override
@@ -78,5 +79,4 @@ public class UserGroupKey implements Serializable {
     public void setId(String pId) {
         id = pId;
     }
-    
 }

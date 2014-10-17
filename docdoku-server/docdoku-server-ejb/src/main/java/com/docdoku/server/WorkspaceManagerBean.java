@@ -23,9 +23,8 @@ package com.docdoku.server;
 import com.docdoku.core.common.Account;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
-import com.docdoku.core.exceptions.AccessRightException;
-import com.docdoku.core.exceptions.AccountNotFoundException;
-import com.docdoku.core.exceptions.StorageException;
+import com.docdoku.core.exceptions.*;
+import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.services.IMailerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
@@ -34,7 +33,6 @@ import com.docdoku.server.dao.AccountDAO;
 import com.docdoku.server.dao.WorkspaceDAO;
 import com.docdoku.server.esindexer.ESIndexer;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
@@ -43,9 +41,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.io.IOException;
 import java.util.Locale;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
-@DeclareRoles({"users","admin"})
+@DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.ADMIN_ROLE_ID})
 @Local(IWorkspaceManagerLocal.class)
 @Stateless(name = "WorkspaceManagerBean")
 public class WorkspaceManagerBean implements IWorkspaceManagerLocal {
@@ -70,12 +69,7 @@ public class WorkspaceManagerBean implements IWorkspaceManagerLocal {
 
     private static final Logger LOGGER = Logger.getLogger(WorkspaceManagerBean.class.getName());
 
-    @PostConstruct
-    private void init() {
-
-    }
-
-    @RolesAllowed("admin")
+    @RolesAllowed(UserGroupMapping.ADMIN_ROLE_ID)
     @Override
     public long getDiskUsageInWorkspace(String workspaceId) throws AccountNotFoundException {
         Account account = new AccountDAO(em).loadAccount(ctx.getCallerPrincipal().toString());
@@ -83,7 +77,7 @@ public class WorkspaceManagerBean implements IWorkspaceManagerLocal {
     }
 
     @Override
-    @RolesAllowed({"users","admin"})
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.ADMIN_ROLE_ID})
     @Asynchronous
     public void deleteWorkspace(String workspaceId) {
         try{
@@ -101,15 +95,18 @@ public class WorkspaceManagerBean implements IWorkspaceManagerLocal {
                     throw new AccessRightException(new Locale(user.getLanguage()),user);
                 }
             }
-
-        }catch(Exception e){
-            LOGGER.severe("Exception deleting workspace " + e.getMessage());
+        } catch (UserNotFoundException | UserNotActiveException | AccessRightException e) {
+            LOGGER.log(Level.SEVERE,"Attempt to delete a unauthorized workspace : ("+workspaceId+")",e);
+        } catch (WorkspaceNotFoundException e) {
+            LOGGER.log(Level.WARNING,"Attempt to delete a workspace which does not exist : ("+workspaceId+")",e);
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE,"Exception deleting workspace "+workspaceId,e);
         }
 
     }
 
     @Override
-    @RolesAllowed({"admin"})
+    @RolesAllowed({UserGroupMapping.ADMIN_ROLE_ID})
     public void synchronizeIndexer(String workspaceId) {
         esIndexer.indexWorkspace(workspaceId);
     }
@@ -120,14 +117,11 @@ public class WorkspaceManagerBean implements IWorkspaceManagerLocal {
         try {
             new WorkspaceDAO(em, dataManager).removeWorkspace(workspace);
         } catch (IOException e) {
-            LOGGER.severe("IOException while deleting the workspace : "+workspaceId);
-            LOGGER.severe(e.getMessage());
+            LOGGER.log(Level.SEVERE,"IOException while deleting the workspace : "+workspaceId,e);
         } catch (StorageException e) {
-            LOGGER.severe("StorageException while deleting the workspace : "+workspaceId);
-            LOGGER.severe(e.getMessage());
+            LOGGER.log(Level.SEVERE,"StorageException while deleting the workspace : "+workspaceId,e);
         }
 
         mailerManager.sendWorkspaceDeletionNotification(admin,workspaceId);
-
     }
 }
