@@ -230,7 +230,7 @@ public class DocumentMasterTemplate implements Serializable, FileHolder, Compara
             return false;
         }
         DocumentMasterTemplate template = (DocumentMasterTemplate) pObj;
-        return (template.id.equals(id) && (template.workspaceId.equals(workspaceId)));
+        return template.id.equals(id) && template.workspaceId.equals(workspaceId);
     }
     
     @Override

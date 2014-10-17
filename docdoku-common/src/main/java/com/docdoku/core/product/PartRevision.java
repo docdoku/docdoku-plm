@@ -395,7 +395,7 @@ public class PartRevision implements Serializable, Comparable<PartRevision>, Clo
             return false;
         }
         PartRevision partR = (PartRevision) pObj;
-        return (partR.getPartNumber().equals(getPartNumber()) && (partR.getWorkspaceId().equals(getWorkspaceId())) && (partR.version.equals(version)));
+        return partR.getPartNumber().equals(getPartNumber()) && partR.getWorkspaceId().equals(getWorkspaceId()) && partR.version.equals(version);
         
     }
     
@@ -420,50 +420,5 @@ public class PartRevision implements Serializable, Comparable<PartRevision>, Clo
         } else {
             return version.compareTo(pPartR.version);
         }
-    }
-
-    /**
-     * perform a deep clone operation
-     */
-    @Override
-    public PartRevision clone() {
-        PartRevision clone;
-        try {
-            clone = (PartRevision) super.clone();
-        } catch (CloneNotSupportedException e) {
-            throw new InternalError();
-        }
-        //perform a deep copy
-        List<PartIteration> clonedPartIterations = new ArrayList<>();
-        for (PartIteration part : partIterations) {
-            PartIteration clonedPart=part.clone();
-            clonedPart.setPartRevision(clone);
-            clonedPartIterations.add(clonedPart);
-        }
-        clone.partIterations = clonedPartIterations;
-
-        if(workflow !=null) {
-            clone.workflow = workflow.clone();
-        }
-
-        //perform a deep copy
-        List<Workflow> clonedAbortedWorkflows =new ArrayList<>();
-        for (Workflow abortedWorkflow : abortedWorkflows) {
-            Workflow clonedWorkflow=abortedWorkflow.clone();
-            clonedAbortedWorkflows.add(clonedWorkflow);
-        }
-        clone.abortedWorkflows = clonedAbortedWorkflows;
-
-        if(acl !=null) {
-            clone.acl = acl.clone();
-        }
-        if(creationDate!=null) {
-            clone.creationDate = (Date) creationDate.clone();
-        }
-        if(checkOutDate!=null) {
-            clone.checkOutDate = (Date) checkOutDate.clone();
-        }
-
-        return clone;
     }
 }

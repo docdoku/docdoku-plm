@@ -43,9 +43,9 @@ public class TaskKey implements Serializable {
     @Override
     public int hashCode() {
         int hash = 1;
-	hash = 31 * hash + activity.hashCode();
+        hash = 31 * hash + activity.hashCode();
         hash = 31 * hash + num;
-	return hash;
+        return hash;
     }
     
     @Override
@@ -53,10 +53,11 @@ public class TaskKey implements Serializable {
         if (this == pObj) {
             return true;
         }
-        if (!(pObj instanceof TaskKey))
+        if (!(pObj instanceof TaskKey)) {
             return false;
+        }
         TaskKey key = (TaskKey) pObj;
-        return ((key.activity.equals(activity)) && (key.num==num));
+        return key.activity.equals(activity) && key.num==num;
     }
     
     @Override

@@ -19,14 +19,9 @@
  */
 package com.docdoku.server.rest;
 
-import com.docdoku.core.exceptions.ApplicationException;
 import com.docdoku.core.security.UserGroupMapping;
-import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.services.IWorkspaceManagerLocal;
-import org.dozer.DozerBeanMapperSingletonWrapper;
-import org.dozer.Mapper;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
@@ -46,25 +41,12 @@ import javax.ws.rs.core.Response;
 public class SearchResource {
 
     @EJB
-    private IDocumentManagerLocal documentService;
-
-    @EJB
     private DocumentsResource documentsResource;
-
-    @EJB
-    private DocumentResource documentResource;
 
     @EJB
     private IWorkspaceManagerLocal workspaceManager;
 
-    private Mapper mapper;
-
     public SearchResource() {
-    }
-
-    @PostConstruct
-    public void init() {
-        mapper = DozerBeanMapperSingletonWrapper.getInstance();
     }
 
     @Path("{query}/documents/")

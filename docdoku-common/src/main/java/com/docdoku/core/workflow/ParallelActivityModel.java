@@ -68,8 +68,9 @@ public class ParallelActivityModel extends ActivityModel {
     @Override
     public void removeTaskModel(TaskModel pTaskModel) {
         super.removeTaskModel(pTaskModel);
-        if (tasksToComplete > taskModels.size())
+        if (tasksToComplete > taskModels.size()) {
             tasksToComplete--;
+        }
     }
 
     @Override

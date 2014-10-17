@@ -19,7 +19,7 @@
  */
 package com.docdoku.server.rest;
 
-import com.docdoku.core.exceptions.ApplicationException;
+import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.ConfigurationItemKey;
 import com.docdoku.core.product.Layer;
 import com.docdoku.core.product.Marker;
@@ -27,10 +27,7 @@ import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.rest.dto.LayerDTO;
 import com.docdoku.server.rest.dto.MarkerDTO;
-import org.dozer.DozerBeanMapperSingletonWrapper;
-import org.dozer.Mapper;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
@@ -40,6 +37,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -53,14 +52,9 @@ public class LayerResource {
     @EJB
     private IProductManagerLocal productService;
 
-    private Mapper mapper;
+    private static final Logger LOGGER = Logger.getLogger(LayerResource.class.getName());
 
     public LayerResource() {
-    }
-
-    @PostConstruct
-    public void init() {
-        mapper = DozerBeanMapperSingletonWrapper.getInstance();
     }
 
     @GET
@@ -74,9 +68,13 @@ public class LayerResource {
                 layerDtos[i] = new LayerDTO(layers.get(i).getId(), layers.get(i).getName(),layers.get(i).getColor());
             }
             return layerDtos;
-        } catch (ApplicationException ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
-        }        
+        } catch (UserNotFoundException | UserNotActiveException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
+        } catch (WorkspaceNotFoundException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
+        }
     }
 
     
@@ -89,8 +87,12 @@ public class LayerResource {
             Layer l = productService.createLayer(ciKey, layer.getName(),layer.getColor());
             return new LayerDTO(l.getId(), l.getName(),l.getColor());
             
-        } catch (ApplicationException ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
+        } catch (UserNotFoundException | AccessRightException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
+        } catch (WorkspaceNotFoundException | ConfigurationItemNotFoundException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
         }
     }
 
@@ -103,8 +105,12 @@ public class LayerResource {
             ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
             Layer l = productService.updateLayer(ciKey, layerId, layer.getName(),layer.getColor());
             return new LayerDTO(l.getId(), l.getName(),l.getColor());
-        } catch (ApplicationException ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
+        } catch (UserNotActiveException | UserNotFoundException | AccessRightException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
+        } catch (WorkspaceNotFoundException | ConfigurationItemNotFoundException | LayerNotFoundException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
         }
     }
 
@@ -115,8 +121,12 @@ public class LayerResource {
         try {
             productService.deleteLayer(workspaceId,layerId);
             return Response.ok().build();
-        } catch (ApplicationException ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
+        } catch (UserNotFoundException | UserNotActiveException | AccessRightException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
+        } catch (WorkspaceNotFoundException | LayerNotFoundException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
         }
     }
 
@@ -127,14 +137,18 @@ public class LayerResource {
         try {
             Layer layer = productService.getLayer(layerId);
             Set<Marker> markers = layer.getMarkers();
-            Marker[] markersArray = markers.toArray(new Marker[0]);
+            Marker[] markersArray = markers.toArray(new Marker[markers.size()]);
                 MarkerDTO[] markersDTO = new MarkerDTO[markers.size()];
             for (int i = 0; i < markersArray.length; i++) {
                 markersDTO[i] = new MarkerDTO(markersArray[i].getId(), markersArray[i].getTitle(),markersArray[i].getDescription(), markersArray[i].getX(), markersArray[i].getY(), markersArray[i].getZ());
             }
             return markersDTO;
-        } catch (ApplicationException ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
+        } catch (UserNotFoundException | UserNotActiveException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
+        } catch (WorkspaceNotFoundException | LayerNotFoundException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
         }
     }
 
@@ -146,8 +160,12 @@ public class LayerResource {
         try {
             Marker marker = productService.createMarker(layerId, markerDTO.getTitle(), markerDTO.getDescription(), markerDTO.getX(), markerDTO.getY(), markerDTO.getZ());
             return new MarkerDTO(marker.getId(), marker.getTitle(), marker.getDescription(), marker.getX(), marker.getY(), marker.getZ());
-        } catch (ApplicationException ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
+        } catch (UserNotFoundException | AccessRightException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
+        } catch (WorkspaceNotFoundException | LayerNotFoundException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
         }
     }
 
@@ -159,9 +177,12 @@ public class LayerResource {
         try {
             productService.deleteMarker(layerId, markerId);
             return Response.status(Response.Status.OK).build();
-        } catch (ApplicationException ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
+        } catch (UserNotFoundException | UserNotActiveException | AccessRightException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
+        } catch (WorkspaceNotFoundException | LayerNotFoundException | MarkerNotFoundException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
         }
     }
-
 }

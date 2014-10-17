@@ -362,7 +362,6 @@ public class UploadDownloadServlet extends HttpServlet {
                 }
                 close(httpOut);
             }
-
         } catch (Exception pEx) {
             LOGGER.log(Level.FINEST,null,pEx);
             pResponse.setHeader("Reason-Phrase", pEx.getMessage());
@@ -443,9 +442,13 @@ public class UploadDownloadServlet extends HttpServlet {
                     inputStream = item.getInputStream();
                     length = ByteStreams.copy(inputStream, outputStream);
                 } finally {
-                    inputStream.close();
-                    outputStream.flush();
-                    outputStream.close();
+                    if(inputStream!=null){
+                        inputStream.close();
+                    }
+                    if(outputStream!=null){
+                        outputStream.flush();
+                        outputStream.close();
+                    }
                 }
                 // TODO Check "Why use a loop if you break systematically?"
                 break;
@@ -569,7 +572,7 @@ public class UploadDownloadServlet extends HttpServlet {
         }
     }
 
-    protected class Range {
+    protected static class Range {
 
         long start;
         long end;

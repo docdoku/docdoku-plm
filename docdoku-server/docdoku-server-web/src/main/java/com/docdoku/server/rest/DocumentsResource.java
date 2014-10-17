@@ -34,8 +34,8 @@ import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentConfigSpecManagerLocal;
 import com.docdoku.core.services.IDocumentManagerLocal;
+import com.docdoku.core.services.IDocumentWorkflowManagerLocal;
 import com.docdoku.server.rest.dto.*;
-import com.docdoku.server.rest.exceptions.ApplicationException;
 import com.docdoku.server.rest.util.SearchQueryParser;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
@@ -67,6 +67,8 @@ public class DocumentsResource {
     private IDocumentManagerLocal documentService;
     @EJB
     private IDocumentConfigSpecManagerLocal documentConfigSpecService;
+    @EJB
+    private IDocumentWorkflowManagerLocal documentWorkflowService;
 
     @EJB
     private DocumentBaselinesResource baselinesResource;
@@ -151,9 +153,12 @@ public class DocumentsResource {
 
             return docRsDTOs;
 
-        } catch (com.docdoku.core.exceptions.ApplicationException ex) {
-            LOGGER.log(Level.WARNING,null,ex);
-            throw new RestApiException(ex.toString(), ex.getMessage());
+        } catch (UserNotActiveException | UserNotFoundException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
+        } catch (WorkspaceNotFoundException | BaselineNotFoundException | DocumentRevisionNotFoundException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
         }
     }
 
@@ -172,11 +177,13 @@ public class DocumentsResource {
             }
 
             return docRsDTOs;
-        } catch (com.docdoku.core.exceptions.ApplicationException ex) {
-            LOGGER.log(Level.WARNING,null,ex);
-            throw new RestApiException(ex.toString(), ex.getMessage());
+        } catch (UserNotActiveException | UserNotFoundException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
+        } catch (WorkspaceNotFoundException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
         }
-
     }
 
     private DocumentRevisionDTO[] getDocumentsWithGivenFolderIdAndWorkspaceId(String workspaceId, String folderId, String configSpecType){
@@ -242,9 +249,12 @@ public class DocumentsResource {
             }
 
             return docRsDTOs;
-        } catch (com.docdoku.core.exceptions.ApplicationException ex) {
-            LOGGER.log(Level.WARNING,null,ex);
-            throw new RestApiException(ex.toString(), ex.getMessage());
+        } catch (UserNotActiveException | UserNotFoundException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
+        } catch (WorkspaceNotFoundException | BaselineNotFoundException | DocumentRevisionNotFoundException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
         }
     }
 
@@ -253,12 +263,12 @@ public class DocumentsResource {
             DocumentRevision[] docRs;
 
             if(filter == null){
-                docRs = documentService.getDocumentRevisionsWithAssignedTasksForGivenUser(workspaceId, assignedUserLogin);
+                docRs = documentWorkflowService.getDocumentRevisionsWithAssignedTasksForGivenUser(workspaceId, assignedUserLogin);
             }else{
                 if ("in_progress".equals(filter)) {
-                    docRs = documentService.getDocumentRevisionsWithOpenedTasksForGivenUser(workspaceId, assignedUserLogin);
+                    docRs = documentWorkflowService.getDocumentRevisionsWithOpenedTasksForGivenUser(workspaceId, assignedUserLogin);
                 } else {
-                    docRs = documentService.getDocumentRevisionsWithAssignedTasksForGivenUser(workspaceId, assignedUserLogin);
+                    docRs = documentWorkflowService.getDocumentRevisionsWithAssignedTasksForGivenUser(workspaceId, assignedUserLogin);
                 }
             }
 
@@ -277,9 +287,12 @@ public class DocumentsResource {
 
             return docRsDTOs.toArray(new DocumentRevisionDTO[docRsDTOs.size()]);
 
-        } catch (com.docdoku.core.exceptions.ApplicationException ex) {
-            LOGGER.log(Level.WARNING,null,ex);
-            throw new RestApiException(ex.toString(), ex.getMessage());
+        } catch (UserNotActiveException | UserNotFoundException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
+        } catch (WorkspaceNotFoundException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
         }
     }
 
@@ -304,9 +317,15 @@ public class DocumentsResource {
             }
 
             return docRsDTOs;
-        } catch (com.docdoku.core.exceptions.ApplicationException ex) {
-            LOGGER.log(Level.WARNING,null,ex);
-            throw new RestApiException(ex.toString(), ex.getMessage());
+        } catch (UserNotFoundException | UserNotActiveException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
+        } catch (WorkspaceNotFoundException | DocumentRevisionNotFoundException | BaselineNotFoundException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
+        } catch (ESServerException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.BAD_REQUEST);
         }
     }
 
@@ -384,8 +403,7 @@ public class DocumentsResource {
     @GET
     @Path("checkedout")
     @Produces(MediaType.APPLICATION_JSON)
-    public DocumentRevisionDTO[] getCheckedOutDocMs(@PathParam("workspaceId") String workspaceId) throws ApplicationException {
-
+    public DocumentRevisionDTO[] getCheckedOutDocMs(@PathParam("workspaceId") String workspaceId){
         try {
             DocumentRevision[] checkedOutdocRs = documentService.getCheckedOutDocumentRevisions(workspaceId);
             DocumentRevisionDTO[] checkedOutdocRsDTO = new DocumentRevisionDTO[checkedOutdocRs.length];
@@ -400,9 +418,12 @@ public class DocumentsResource {
 
             return checkedOutdocRsDTO;
 
-        } catch (com.docdoku.core.exceptions.ApplicationException ex) {
-            LOGGER.log(Level.WARNING,null,ex);
-            throw new RestApiException(ex.toString(), ex.getMessage());
+        } catch (UserNotFoundException | UserNotActiveException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
+        } catch (WorkspaceNotFoundException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
         }
     }
 
@@ -426,9 +447,12 @@ public class DocumentsResource {
 
             return docsLastIter.toArray(new DocumentIterationDTO[docsLastIter.size()]);
 
-        } catch (com.docdoku.core.exceptions.ApplicationException ex) {
-            LOGGER.log(Level.WARNING,null,ex);
-            throw new RestApiException(ex.toString(), ex.getMessage());
+        } catch (UserNotFoundException | UserNotActiveException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
+        } catch (WorkspaceNotFoundException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
         }
     }
 

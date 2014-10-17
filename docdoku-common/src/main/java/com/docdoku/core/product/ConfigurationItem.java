@@ -127,7 +127,7 @@ public class ConfigurationItem implements Serializable {
             return false;
         }
         ConfigurationItem ci = (ConfigurationItem) pObj;
-        return (ci.id.equals(id) && (ci.getWorkspaceId().equals(getWorkspaceId())));
+        return ci.id.equals(id) && ci.getWorkspaceId().equals(getWorkspaceId());
     }
     
     @Override

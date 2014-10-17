@@ -45,7 +45,7 @@ import java.util.List;
 @javax.persistence.NamedQueries ({
         @NamedQuery(name="DocumentMaster.findByWorkspace", query="SELECT dm FROM DocumentMaster dm WHERE dm.workspace.id = :workspaceId ORDER BY dm.creationDate DESC")
 })
-public class DocumentMaster implements Serializable, Comparable<DocumentMaster>, Cloneable {
+public class DocumentMaster implements Serializable, Comparable<DocumentMaster> {
 
     @Column(name="ID", length=100)
     @Id
@@ -233,32 +233,5 @@ public class DocumentMaster implements Serializable, Comparable<DocumentMaster>,
 
     public void setAttributesLocked(boolean attributesLocked) {
         this.attributesLocked = attributesLocked;
-    }
-
-    /**
-     * perform a deep clone operation
-     */
-    @Override
-    public DocumentMaster clone() {
-        DocumentMaster clone;
-        try {
-            clone = (DocumentMaster) super.clone();
-        } catch (CloneNotSupportedException e) {
-            throw new InternalError();
-        }
-        //perform a deep copy
-        List<DocumentRevision> clonedDocumentRevisions = new ArrayList<>();
-        for (DocumentRevision revision : documentRevisions) {
-            DocumentRevision clonedRevision=revision.clone();
-            clonedRevision.setDocumentMaster(clone);
-            clonedDocumentRevisions.add(clonedRevision);
-        }
-        clone.documentRevisions = clonedDocumentRevisions;
-
-        if(creationDate!=null) {
-            clone.creationDate = (Date) creationDate.clone();
-        }
-
-        return clone;
     }
 }

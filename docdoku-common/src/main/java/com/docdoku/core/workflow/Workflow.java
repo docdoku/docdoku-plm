@@ -47,20 +47,37 @@ public class Workflow implements Serializable, Cloneable {
 
     private String finalLifeCycleState;
 
+    public Workflow() {
+    }
     public Workflow(String pFinalLifeCycleState) {
         finalLifeCycleState = pFinalLifeCycleState;
     }
 
-    public Workflow() {
+    public int getId() {
+        return id;
+    }
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public Collection<Task> getRunningTasks() {
+    public List<Activity> getActivities() {
+        return activities;
+    }
+    public void setActivities(List<Activity> activities) {
+        this.activities = activities;
+        for(Activity activity : activities){
+            activity.setWorkflow(this);
+        }
+    }
 
-        Activity current = getCurrentActivity();
-        if (current != null) {
-            return current.getOpenTasks();
+    public Activity getActivity(int pIndex) {
+        return activities.get(pIndex);
+    }
+    public Activity getCurrentActivity() {
+        if (getCurrentStep() < activities.size()) {
+            return getActivity(getCurrentStep());
         } else {
-            return new ArrayList<>();
+            return null;
         }
     }
 
@@ -76,36 +93,28 @@ public class Workflow implements Serializable, Cloneable {
         return i;
     }
 
-    public Activity getCurrentActivity() {
-        if (getCurrentStep() < activities.size()) {
-            return getActivity(getCurrentStep());
-        } else {
-            return null;
-        }
-    }
-
     public String getFinalLifeCycleState() {
         return finalLifeCycleState;
     }
-
-    public int getId() {
-        return id;
-    }
-
-    public java.util.List<Activity> getActivities() {
-        return activities;
-    }
-
-    public void setActivities(java.util.List<Activity> activities) {
-        this.activities = activities;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public void setFinalLifeCycleState(String finalLifeCycleState) {
         this.finalLifeCycleState = finalLifeCycleState;
+    }
+
+    public Date getAbortedDate() {
+        return (abortedDate!=null) ? (Date) abortedDate.clone() : null;
+    }
+    public void setAbortedDate(Date abortedDate) {
+        this.abortedDate = (abortedDate!=null) ? (Date) abortedDate.clone() : null;
+    }
+
+    public Collection<Task> getRunningTasks() {
+
+        Activity current = getCurrentActivity();
+        if (current != null) {
+            return current.getOpenTasks();
+        } else {
+            return new ArrayList<>();
+        }
     }
 
     public int numberOfSteps() {
@@ -120,27 +129,20 @@ public class Workflow implements Serializable, Cloneable {
 
         return lc;
     }
-
     public String getLifeCycleState() {
         Activity current = getCurrentActivity();
         return current == null ? finalLifeCycleState : current.getLifeCycleState();
     }
 
-    public Activity getActivity(int pIndex) {
-        return activities.get(pIndex);
-    }
-
     public void abort() {
         for (Activity activity : activities) {
-            for(Task task:activity.getTasks()){
+            for(Task task : activity.getTasks()){
                 task.stop();
             }
         }
         this.setAbortedDate(new Date());
     }
-
     public void relaunch(int relaunchActivityStep) {
-
         for(Activity a :activities){
             if(a.getStep() < relaunchActivityStep){ 
                 for(Task t : a.getTasks()){
@@ -157,40 +159,6 @@ public class Workflow implements Serializable, Cloneable {
         Activity currentActivity = activities.get(relaunchActivityStep);
         currentActivity.relaunch();
 
-    }
-
-    public Date getAbortedDate() {
-        return (abortedDate!=null) ? (Date) abortedDate.clone() : null;
-    }
-
-    public void setAbortedDate(Date abortedDate) {
-        this.abortedDate = (abortedDate!=null) ? (Date) abortedDate.clone() : null;
-    }
-
-    /**
-     * perform a deep clone operation
-     */
-    @Override
-    public Workflow clone() {
-        Workflow clone;
-        try {
-            clone = (Workflow) super.clone();
-        } catch (CloneNotSupportedException e) {
-            throw new InternalError();
-        }
-        //perform a deep copy
-        List<Activity> clonedActivities = new LinkedList<>();
-        for (Activity activity : activities) {
-            Activity clonedActivity = activity.clone();
-            clonedActivity.setWorkflow(clone);
-            clonedActivities.add(clonedActivity);
-        }
-        clone.activities = clonedActivities;
-
-        if (abortedDate != null) {
-            clone.abortedDate = (Date) abortedDate.clone();
-        }
-        return clone;
     }
 
     @Override

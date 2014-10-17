@@ -56,7 +56,7 @@ public class PartMasterTemplateKey implements Serializable {
             return false;
         }
         PartMasterTemplateKey key = (PartMasterTemplateKey) pObj;
-        return (key.id.equals(id) && (key.workspaceId.equals(workspaceId)));
+        return key.id.equals(id) && key.workspaceId.equals(workspaceId);
     }
     
     @Override

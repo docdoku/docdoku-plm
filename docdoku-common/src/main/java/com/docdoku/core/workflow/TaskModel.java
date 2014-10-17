@@ -171,11 +171,11 @@ public class TaskModel implements Serializable, Cloneable {
         @Override
     public int hashCode() {
         int hash = 1;
-	hash = 31 * hash + workspaceId.hashCode();
-	hash = 31 * hash + workflowModelId.hashCode();
+        hash = 31 * hash + workspaceId.hashCode();
+        hash = 31 * hash + workflowModelId.hashCode();
         hash = 31 * hash + activityModelStep;
         hash = 31 * hash + num;
-	return hash;
+        return hash;
     }
     
     @Override
@@ -183,10 +183,14 @@ public class TaskModel implements Serializable, Cloneable {
         if (this == pObj) {
             return true;
         }
-        if (!(pObj instanceof TaskModel))
+        if (!(pObj instanceof TaskModel)) {
             return false;
+        }
         TaskModel model = (TaskModel) pObj;
-        return ((model.workspaceId.equals(workspaceId)) && (model.workflowModelId.equals(workflowModelId)) && (model.activityModelStep==activityModelStep) && (model.num==num));
+        return model.workspaceId.equals(workspaceId) &&
+               model.workflowModelId.equals(workflowModelId) &&
+               model.activityModelStep==activityModelStep &&
+               model.num==num;
     }
     
     @Override

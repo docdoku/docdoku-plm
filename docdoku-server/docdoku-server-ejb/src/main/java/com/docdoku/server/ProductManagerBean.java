@@ -34,6 +34,7 @@ import com.docdoku.core.query.PartSearchQuery;
 import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;
+import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.*;
 import com.docdoku.core.sharing.SharedEntityKey;
 import com.docdoku.core.sharing.SharedPart;
@@ -60,7 +61,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-@DeclareRoles({"users","admin","guest-proxy"})
+@DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.ADMIN_ROLE_ID,UserGroupMapping.GUEST_PROXY_ROLE_ID})
 @Local(IProductManagerLocal.class)
 @Stateless(name = "ProductManagerBean")
 @WebService(endpointInterface = "com.docdoku.core.services.IProductManagerWS")
@@ -84,7 +85,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     private static final Logger LOGGER = Logger.getLogger(ProductManagerBean.class.getName());
     private static final String INVALIDE_NAME_ERROR = "NotAllowedException9";
 
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public List<PartUsageLink[]> findPartUsages(ConfigurationItemKey pKey, PartMasterKey pPartMKey) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
         User user = userManager.checkWorkspaceReadAccess(pKey.getWorkspace());
@@ -94,7 +95,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         return usagePaths;
     }
 
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public List<PartMaster> findPartMasters(String pWorkspaceId, String pPartNumber, int pMaxResults) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException {
         User user = userManager.checkWorkspaceWriteAccess(pWorkspaceId);
@@ -102,7 +103,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         return partMDAO.findPartMasters(pWorkspaceId, pPartNumber, pMaxResults);
     }
 
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public ConfigurationItem createConfigurationItem(String pWorkspaceId, String pId, String pDescription, String pDesignItemNumber) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, ConfigurationItemAlreadyExistsException, CreationException, PartMasterNotFoundException {
 
@@ -125,7 +126,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     }
 
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public PartMaster createPartMaster(String pWorkspaceId, String pNumber, String pName, boolean pStandardPart, String pWorkflowModelId, String pPartRevisionDescription, String templateId, Map<String, String> roleMappings, ACLUserEntry[] pACLUserEntries, ACLUserGroupEntry[] pACLUserGroupEntries) throws NotAllowedException, UserNotFoundException, WorkspaceNotFoundException, AccessRightException, WorkflowModelNotFoundException, PartMasterAlreadyExistsException, CreationException, PartMasterTemplateNotFoundException, FileAlreadyExistsException, RoleNotFoundException {
 
@@ -230,7 +231,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         return pm;
     }
 
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public PartRevision undoCheckOutPart(PartRevisionKey pPartRPK) throws NotAllowedException, PartRevisionNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException {
         User user = userManager.checkWorkspaceReadAccess(pPartRPK.getPartMaster().getWorkspace());
@@ -286,7 +287,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         }
     }
 
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public PartRevision checkOutPart(PartRevisionKey pPartRPK) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, PartRevisionNotFoundException, NotAllowedException, FileAlreadyExistsException, CreationException {
         User user = userManager.checkWorkspaceWriteAccess(pPartRPK.getPartMaster().getWorkspace());
@@ -381,7 +382,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         return partR;
     }
 
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public PartRevision checkInPart(PartRevisionKey pPartRPK) throws PartRevisionNotFoundException, UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, ESServerException {
         User user = userManager.checkWorkspaceWriteAccess(pPartRPK.getPartMaster().getWorkspace());
@@ -409,7 +410,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         }
     }
 
-    @RolesAllowed({"users","guest-proxy"})
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.GUEST_PROXY_ROLE_ID})
     @Override
     public BinaryResource getBinaryResource(String pFullName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, FileNotFoundException, NotAllowedException {
 
@@ -436,7 +437,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         }
     }
 
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public BinaryResource saveGeometryInPartIteration(PartIterationKey pPartIPK, String pName, int quality, long pSize, double radius) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, PartRevisionNotFoundException, FileAlreadyExistsException, CreationException {
         User user = userManager.checkWorkspaceReadAccess(pPartIPK.getWorkspaceId());
@@ -473,7 +474,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         }
     }
 
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public BinaryResource saveNativeCADInPartIteration(PartIterationKey pPartIPK, String pName, long pSize) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, PartRevisionNotFoundException, FileAlreadyExistsException, CreationException {
         User user = userManager.checkWorkspaceReadAccess(pPartIPK.getWorkspaceId());
@@ -535,7 +536,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     }
 
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public BinaryResource saveFileInPartIteration(PartIterationKey pPartIPK, String pName, long pSize) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, PartRevisionNotFoundException, FileAlreadyExistsException, CreationException {
         User user = userManager.checkWorkspaceReadAccess(pPartIPK.getWorkspaceId());
@@ -570,7 +571,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         }
     }
 
-    @RolesAllowed({"users","admin"})
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.ADMIN_ROLE_ID})
     @Override
     public List<ConfigurationItem> getConfigurationItems(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         Locale locale = Locale.getDefault();
@@ -586,7 +587,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     * give pUsageLinks null for no modification, give an empty list for removing them
     * give pAttributes null for no modification, give an empty list for removing them
     * */
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public PartRevision updatePartIteration(PartIterationKey pKey, String pIterationNote, Source source, List<PartUsageLink> pUsageLinks, List<InstanceAttribute> pAttributes, DocumentIterationKey[] pLinkKeys) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, PartRevisionNotFoundException, PartMasterNotFoundException {
 
@@ -695,7 +696,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     }
 
-    @RolesAllowed({"users","guest-proxy"})
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.GUEST_PROXY_ROLE_ID})
     @Override
     public PartRevision getPartRevision(PartRevisionKey pPartRPK) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException, AccessRightException {
 
@@ -719,7 +720,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         return partR;
     }
 
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public void updatePartRevisionACL(String workspaceId, PartRevisionKey revisionKey, Map<String, String> pACLUserEntries, Map<String, String> pACLUserGroupEntries) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException, AccessRightException, DocumentRevisionNotFoundException {
 
@@ -776,7 +777,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     }
 
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public void removeACLFromPartRevision(PartRevisionKey revisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException, AccessRightException {
 
@@ -797,7 +798,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     }
 
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public void setRadiusForPartIteration(PartIterationKey pPartIPK, Float radius) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartIterationNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(pPartIPK.getWorkspaceId());
@@ -809,7 +810,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         instanceAttributes.put("radius",instanceNumberAttribute);
     }
 
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public List<PartRevision> searchPartRevisions(PartSearchQuery pQuery) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ESServerException {
         User user = userManager.checkWorkspaceReadAccess(pQuery.getWorkspaceId());
@@ -825,9 +826,8 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
             if ((partR.isCheckedOut()) && (!partR.getCheckOutUser().equals(user))) {
             // Remove CheckedOut PartRevision From Results
-                partR = partR.clone();
+                em.detach(partR);
                 partR.removeLastIteration();
-                ite.set(partR);
             }
 
             //Check access rights
@@ -839,7 +839,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         return new ArrayList<>(fetchedPartRs);
     }
 
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public PartMaster findPartMasterByCADFileName(String workspaceId, String cadFileName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         userManager.checkWorkspaceReadAccess(workspaceId);
@@ -857,7 +857,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     }
 
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public PartRevision[] getPartRevisionsWithReference(String pWorkspaceId, String reference, int maxResults) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
@@ -865,7 +865,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         return partRs.toArray(new PartRevision[partRs.size()]);
     }
 
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public PartRevision releasePartRevision(PartRevisionKey pRevisionKey) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException, NotAllowedException {
         User user = checkPartRevisionWriteAccess(pRevisionKey);                                                         // Check if the user can write the part
@@ -885,7 +885,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         return partRevision;
     }
 
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public List<ProductBaseline> findBaselinesWherePartRevisionHasIterations(PartRevisionKey partRevisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(partRevisionKey.getPartMaster().getWorkspace());
@@ -893,7 +893,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         return new ProductBaselineDAO(em).findBaselineWherePartRevisionHasIterations(partRevision);
     }
 
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public List<PartUsageLink> getComponents(PartIterationKey pPartIPK) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartIterationNotFoundException, NotAllowedException {
         User user = userManager.checkWorkspaceReadAccess(pPartIPK.getWorkspaceId());
@@ -906,7 +906,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         return partI.getComponents();
     }
 
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public boolean partMasterExists(PartMasterKey partMasterKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(partMasterKey.getWorkspace());
@@ -973,7 +973,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         }
     }
 
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public PartMaster getPartMaster(PartMasterKey pPartMPK) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartMasterNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(pPartMPK.getWorkspace());
@@ -988,14 +988,14 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         return partM;
     }
 
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public List<Layer> getLayers(ConfigurationItemKey pKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(pKey.getWorkspace());
         return new LayerDAO(new Locale(user.getLanguage()), em).findAllLayers(pKey);
     }
 
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public Layer getLayer(int pId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, LayerNotFoundException {
         Layer layer = new LayerDAO(em).loadLayer(pId);
@@ -1003,7 +1003,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         return layer;
     }
 
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public Layer createLayer(ConfigurationItemKey pKey, String pName, String color) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, ConfigurationItemNotFoundException {
         User user = userManager.checkWorkspaceWriteAccess(pKey.getWorkspace());
@@ -1016,7 +1016,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         return layer;
     }
 
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public Layer updateLayer(ConfigurationItemKey pKey, int pId, String pName, String color) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, ConfigurationItemNotFoundException, LayerNotFoundException, UserNotActiveException {
         Layer layer = getLayer(pId);
@@ -1026,7 +1026,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         return layer;
     }
 
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public Marker createMarker(int pLayerId, String pTitle, String pDescription, double pX, double pY, double pZ) throws LayerNotFoundException, UserNotFoundException, WorkspaceNotFoundException, AccessRightException {
         Layer layer = new LayerDAO(em).loadLayer(pLayerId);
@@ -1040,7 +1040,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         return marker;
     }
 
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public void deleteMarker(int pLayerId, int pMarkerId) throws WorkspaceNotFoundException, UserNotActiveException, LayerNotFoundException, UserNotFoundException, AccessRightException, MarkerNotFoundException {
         Layer layer = new LayerDAO(em).loadLayer(pLayerId);
@@ -1058,14 +1058,14 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     }
 
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public PartMasterTemplate[] getPartMasterTemplates(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
         return new PartMasterTemplateDAO(new Locale(user.getLanguage()), em).findAllPartMTemplates(pWorkspaceId);
     }
 
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public PartMasterTemplate getPartMasterTemplate(PartMasterTemplateKey pKey) throws WorkspaceNotFoundException, PartMasterTemplateNotFoundException, UserNotFoundException, UserNotActiveException {
         User user = userManager.checkWorkspaceReadAccess(pKey.getWorkspaceId());
@@ -1073,7 +1073,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     }
 
 
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public PartMasterTemplate createPartMasterTemplate(String pWorkspaceId, String pId, String pPartType, String pMask, InstanceAttributeTemplate[] pAttributeTemplates, boolean idGenerated, boolean attributesLocked) throws WorkspaceNotFoundException, AccessRightException, PartMasterTemplateAlreadyExistsException, UserNotFoundException, NotAllowedException, CreationException {
         User user = userManager.checkWorkspaceWriteAccess(pWorkspaceId);
@@ -1093,7 +1093,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         return template;
     }
 
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public PartMasterTemplate updatePartMasterTemplate(PartMasterTemplateKey pKey, String pPartType, String pMask, InstanceAttributeTemplate[] pAttributeTemplates, boolean idGenerated, boolean attributesLocked) throws WorkspaceNotFoundException, AccessRightException, PartMasterTemplateNotFoundException, UserNotFoundException {
         User user = userManager.checkWorkspaceWriteAccess(pKey.getWorkspaceId());
@@ -1123,7 +1123,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         return template;
     }
 
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public void deletePartMasterTemplate(PartMasterTemplateKey pKey) throws WorkspaceNotFoundException, AccessRightException, PartMasterTemplateNotFoundException, UserNotFoundException {
         User user = userManager.checkWorkspaceWriteAccess(pKey.getWorkspaceId());
@@ -1139,7 +1139,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         }
     }
 
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public BinaryResource saveFileInTemplate(PartMasterTemplateKey pPartMTemplateKey, String pName, long pSize) throws WorkspaceNotFoundException, NotAllowedException, PartMasterTemplateNotFoundException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException, CreationException {
         userManager.checkWorkspaceReadAccess(pPartMTemplateKey.getWorkspaceId());
@@ -1169,7 +1169,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         return binaryResource;
     }
 
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public PartMasterTemplate removeFileFromTemplate(String pFullName) throws WorkspaceNotFoundException, PartMasterTemplateNotFoundException, AccessRightException, FileNotFoundException, UserNotFoundException, UserNotActiveException {
         User user = userManager.checkWorkspaceReadAccess(BinaryResource.parseWorkspaceId(pFullName));
@@ -1188,14 +1188,14 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         return template;
     }
 
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public List<PartMaster> getPartMasters(String pWorkspaceId, int start, int pMaxResults) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, UserNotActiveException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
         return new PartMasterDAO(new Locale(user.getLanguage()), em).getPartMasters(pWorkspaceId, start, pMaxResults);
     }
 
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public List<PartRevision> getPartRevisions(String pWorkspaceId, int start, int pMaxResults) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, UserNotActiveException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
@@ -1212,14 +1212,14 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         return filtredPartRevisions;
     }
 
-    @RolesAllowed({"users"})
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     @Override
     public int getPartsInWorkspaceCount(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
         return new PartRevisionDAO(new Locale(user.getLanguage()), em).getPartRevisionCountFiltered(user, pWorkspaceId);
     }
 
-    @RolesAllowed({"users","admin"})
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.ADMIN_ROLE_ID})
     @Override
     public int getTotalNumberOfParts(String pWorkspaceId) throws AccessRightException, WorkspaceNotFoundException, AccountNotFoundException, UserNotFoundException, UserNotActiveException {
         Locale locale = Locale.getDefault();
@@ -1231,7 +1231,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         return new PartRevisionDAO(locale, em).getTotalNumberOfParts(pWorkspaceId);
     }
 
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public void deletePartMaster(PartMasterKey partMasterKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartMasterNotFoundException, EntityConstraintException, ESServerException {
 
@@ -1282,7 +1282,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     }
 
 
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public void deletePartRevision(PartRevisionKey partRevisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException, EntityConstraintException, ESServerException {
 
@@ -1339,14 +1339,14 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     }
 
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public int getNumberOfIteration(PartRevisionKey partRevisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(partRevisionKey.getPartMaster().getWorkspace());
         return new PartRevisionDAO(new Locale(user.getLanguage()), em).loadPartR(partRevisionKey).getLastIterationNumber();
     }
 
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public PartRevision createPartRevision(PartRevisionKey revisionKey, String pDescription, String pWorkflowModelId, ACLUserEntry[] pACLUserEntries, ACLUserGroupEntry[] pACLUserGroupEntries, Map<String, String> roleMappings) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, PartRevisionNotFoundException, NotAllowedException, FileAlreadyExistsException, CreationException, RoleNotFoundException, WorkflowModelNotFoundException, PartRevisionAlreadyExistsException {
 
@@ -1503,7 +1503,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     }
 
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public String generateId(String pWorkspaceId, String pPartMTemplateId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, PartMasterTemplateNotFoundException {
 
@@ -1526,119 +1526,26 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     }
 
 
-    @RolesAllowed({"users","admin"})
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.ADMIN_ROLE_ID})
     @Override
     public long getDiskUsageForPartsInWorkspace(String pWorkspaceId) throws WorkspaceNotFoundException, AccessRightException, AccountNotFoundException {
         Account account = userManager.checkAdmin(pWorkspaceId);
         return new PartMasterDAO(new Locale(account.getLanguage()), em).getDiskUsageForPartsInWorkspace(pWorkspaceId);
     }
 
-    @RolesAllowed({"users","admin"})
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.ADMIN_ROLE_ID})
     @Override
     public long getDiskUsageForPartTemplatesInWorkspace(String pWorkspaceId) throws WorkspaceNotFoundException, AccessRightException, AccountNotFoundException {
         Account account = userManager.checkAdmin(pWorkspaceId);
         return new PartMasterDAO(new Locale(account.getLanguage()), em).getDiskUsageForPartTemplatesInWorkspace(pWorkspaceId);
     }
 
-    @RolesAllowed({"users","admin"})
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.ADMIN_ROLE_ID})
     @Override
     public PartRevision[] getAllCheckedOutPartRevisions(String pWorkspaceId) throws WorkspaceNotFoundException, AccessRightException, AccountNotFoundException {
         Account account = userManager.checkAdmin(pWorkspaceId);
         List<PartRevision> partRevisions = new PartRevisionDAO(new Locale(account.getLanguage()), em).findAllCheckedOutPartRevisions(pWorkspaceId);
         return partRevisions.toArray(new PartRevision[partRevisions.size()]);
-    }
-
-    @RolesAllowed("users")
-    @Override
-    public PartRevision approveTaskOnPart(String pWorkspaceId, TaskKey pTaskKey, String pComment, String pSignature) throws WorkspaceNotFoundException, TaskNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException {
-        //TODO no check is made that pTaskKey is from the same workspace than pWorkspaceId
-        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
-
-        Task task = new TaskDAO(new Locale(user.getLanguage()), em).loadTask(pTaskKey);
-        Workflow workflow = task.getActivity().getWorkflow();
-        PartRevision partRevision = new WorkflowDAO(em).getPartTarget(workflow);
-
-
-        if (!task.getWorker().equals(user)) {
-            throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException14");
-        }
-
-        if (!workflow.getRunningTasks().contains(task)) {
-            throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException15");
-        }
-
-        if (partRevision.isCheckedOut()) {
-            throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException17");
-        }
-
-        task.approve(pComment, partRevision.getLastIteration().getIteration(), pSignature);
-
-        Collection<Task> runningTasks = workflow.getRunningTasks();
-        for (Task runningTask : runningTasks) {
-            runningTask.start();
-        }
-        mailer.sendApproval(runningTasks, partRevision);
-        return partRevision;
-    }
-
-    @RolesAllowed("users")
-    @Override
-    public PartRevision rejectTaskOnPart(String pWorkspaceId, TaskKey pTaskKey, String pComment, String pSignature) throws WorkspaceNotFoundException, TaskNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException {
-
-        //TODO no check is made that pTaskKey is from the same workspace than pWorkspaceId
-        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
-
-        Task task = new TaskDAO(new Locale(user.getLanguage()), em).loadTask(pTaskKey);
-        Workflow workflow = task.getActivity().getWorkflow();
-        PartRevision partRevision = new WorkflowDAO(em).getPartTarget(workflow);
-
-        if (!task.getWorker().equals(user)) {
-            throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException14");
-        }
-
-        if (!workflow.getRunningTasks().contains(task)) {
-            throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException15");
-        }
-
-        if (partRevision.isCheckedOut()) {
-            throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException17");
-        }
-
-        task.reject(pComment, partRevision.getLastIteration().getIteration(), pSignature);
-
-        // Relaunch Workflow ?
-        Activity currentActivity = task.getActivity();
-
-        if(currentActivity.isStopped() && currentActivity.getRelaunchActivity() != null){
-
-            WorkflowDAO workflowDAO = new WorkflowDAO(em);
-
-            int relaunchActivityStep  = currentActivity.getRelaunchActivity().getStep();
-
-            // Clone workflow
-            Workflow relaunchedWorkflow  = workflow.clone();
-            workflowDAO.createWorkflow(relaunchedWorkflow);
-
-            // Move aborted workflow in partM list
-            workflow.abort();
-            partRevision.addAbortedWorkflows(workflow);
-
-            // Set new workflow on document
-            partRevision.setWorkflow(relaunchedWorkflow);
-
-            // Reset some properties
-            relaunchedWorkflow.relaunch(relaunchActivityStep);
-
-            // Send mails for running tasks
-            mailer.sendApproval(relaunchedWorkflow.getRunningTasks(), partRevision);
-
-            // Send notification for relaunch
-            mailer.sendPartRevisionWorkflowRelaunchedNotification(partRevision);
-
-        }
-
-        return partRevision;
-
     }
 
     @RolesAllowed({"users"})
@@ -1676,7 +1583,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         throw new AccessRightException(new Locale(user.getLanguage()),user);                                            // Else throw a AccessRightException
     }
 
-    @RolesAllowed({"users","admin"})
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.ADMIN_ROLE_ID})
     @Override
     public User checkPartRevisionReadAccess(PartRevisionKey partRevisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException, AccessRightException {
         String workspaceId = partRevisionKey.getPartMaster().getWorkspace();
@@ -1687,7 +1594,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         return user;
     }
 
-    @RolesAllowed({"users","admin"})
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.ADMIN_ROLE_ID})
     @Override
     public boolean canAccess(User user, PartRevisionKey partRKey) throws PartRevisionNotFoundException {
         if(user.getWorkspace().getId().equals(partRKey.getPartMaster().getWorkspace())) {                               // False if the user workspace doesn't match with the part Workspace
@@ -1702,7 +1609,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         return false;
     }
 
-    @RolesAllowed({"users","admin"})
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.ADMIN_ROLE_ID})
     @Override
     public boolean canAccess(User user, PartIterationKey partIKey) throws PartRevisionNotFoundException, PartIterationNotFoundException {
         if(canAccess(user,partIKey.getPartRevision())){

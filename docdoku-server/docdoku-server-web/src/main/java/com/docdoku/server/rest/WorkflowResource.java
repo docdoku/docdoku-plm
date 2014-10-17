@@ -19,7 +19,7 @@
  */
 package com.docdoku.server.rest;
 
-import com.docdoku.core.exceptions.ApplicationException;
+import com.docdoku.core.exceptions.*;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IWorkflowManagerLocal;
 import com.docdoku.core.workflow.*;
@@ -36,7 +36,9 @@ import javax.ejb.Stateless;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -51,10 +53,9 @@ public class WorkflowResource {
     @EJB
     private IWorkflowManagerLocal workflowService;
 
-    @EJB
-    private IWorkflowManagerLocal roleService;
-
     private Mapper mapper;
+
+    private static final Logger LOGGER = Logger.getLogger(WorkflowResource.class.getName());
 
     public WorkflowResource() {
     }
@@ -78,8 +79,12 @@ public class WorkflowResource {
             
             return dtos;
             
-        } catch (ApplicationException ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
+        } catch (UserNotFoundException | UserNotActiveException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
+        } catch (WorkspaceNotFoundException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
         }
     }
 
@@ -90,8 +95,12 @@ public class WorkflowResource {
         try{
             WorkflowModel workflowModel = workflowService.getWorkflowModel(new WorkflowModelKey(workspaceId, workflowModelId));
             return mapper.map(workflowModel, WorkflowModelDTO.class);
-        }  catch (ApplicationException ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
+        } catch (UserNotFoundException | UserNotActiveException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
+        } catch (WorkspaceNotFoundException | WorkflowModelNotFoundException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
         }
     }
 
@@ -101,8 +110,12 @@ public class WorkflowResource {
         try {
             workflowService.deleteWorkflowModel(new WorkflowModelKey(workspaceId, workflowModelId));
             return Response.status(Response.Status.OK).build();
-        }  catch (ApplicationException ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
+        } catch (UserNotFoundException | AccessRightException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
+        } catch (WorkspaceNotFoundException | WorkflowModelNotFoundException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
         }
     }
 
@@ -111,14 +124,14 @@ public class WorkflowResource {
     @Produces(MediaType.APPLICATION_JSON)
     public WorkflowModelDTO updateWorkflowModelInWorkspace(@PathParam("workspaceId") String workspaceId, @PathParam("workflowModelId") String workflowModelId, WorkflowModelDTO workflowModelDTOToPersist) {
         try {
-
             workflowService.deleteWorkflowModel(new WorkflowModelKey(workspaceId, workflowModelId));
-
             return this.createWorkflowModelInWorkspace(workspaceId, workflowModelDTOToPersist);
-
-        } catch (ApplicationException ex) {
-            Logger.getLogger(WorkflowResource.class.getName()).log(Level.WARNING, null, ex);
-            throw new RestApiException(ex.toString(), ex.getMessage());
+        } catch (UserNotFoundException | AccessRightException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
+        } catch (WorkspaceNotFoundException | WorkflowModelNotFoundException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
         }
     }
 
@@ -126,38 +139,57 @@ public class WorkflowResource {
     @Produces(MediaType.APPLICATION_JSON)
     public WorkflowModelDTO createWorkflowModelInWorkspace(@PathParam("workspaceId") String workspaceId, WorkflowModelDTO workflowModelDTOToPersist) {
         try {
-
-            Role[] roles = roleService.getRoles(workspaceId);
-
+            Role[] roles = workflowService.getRoles(workspaceId);
             List<ActivityModelDTO> activityModelDTOsList = workflowModelDTOToPersist.getActivityModels();
-
-            ActivityModel[] activityModels = new ActivityModel[activityModelDTOsList.size()];
-            for(int i=0; i<activityModelDTOsList.size(); i++){
-                activityModels[i] = mapper.map(activityModelDTOsList.get(i), ActivityModel.class);
-
-                if(activityModelDTOsList.get(i).getRelaunchStep() != null && activityModelDTOsList.get(i).getRelaunchStep() < i){
-                    activityModels[i].setRelaunchActivity(activityModels[activityModelDTOsList.get(i).getRelaunchStep()]);
-                }
-
-                List<TaskModel> taskModelList = activityModels[i].getTaskModels();
-                for(TaskModel taskModel : taskModelList){
-                    String roleName = taskModel.getRole().getName();
-                    for (Role role : roles) {
-                        if (role.getName().equals(roleName)) {
-                            taskModel.setRole(role);
-                            break;
-                        }
-                    }
-                }
-            }
+            ActivityModel[] activityModels = extractActivityModelFromDTO(activityModelDTOsList,roles);
 
             WorkflowModel workflowModel = workflowService.createWorkflowModel(workspaceId, workflowModelDTOToPersist.getReference(), workflowModelDTOToPersist.getFinalLifeCycleState(), activityModels);
-
             return mapper.map(workflowModel, WorkflowModelDTO.class);
 
-        } catch (ApplicationException ex) {
-            Logger.getLogger(WorkflowResource.class.getName()).log(Level.WARNING, null, ex);
-            throw new RestApiException(ex.toString(), ex.getMessage());
+        } catch (UserNotActiveException | UserNotFoundException | AccessRightException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
+        } catch (WorkspaceNotFoundException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
+        } catch (WorkflowModelAlreadyExistsException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.CONFLICT);
+        } catch (CreationException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.BAD_REQUEST);
+        }
+    }
+
+    private ActivityModel[] extractActivityModelFromDTO(List<ActivityModelDTO> activityModelDTOsList, Role[] roles){
+        Map<Integer,ActivityModel> activityModels = new HashMap<>();
+
+        for(int i=0; i<activityModelDTOsList.size(); i++){
+            ActivityModelDTO activityModelDTO = activityModelDTOsList.get(i);
+            ActivityModel activityModel = mapper.map(activityModelDTO, ActivityModel.class);
+            activityModels.put(activityModel.getStep(),activityModel);
+
+            Integer relaunchStep = activityModelDTO.getRelaunchStep();
+            if(relaunchStep != null && relaunchStep < i){
+                ActivityModel relaunchActivity = activityModels.get(relaunchStep);
+                activityModel.setRelaunchActivity(relaunchActivity);
+            }
+
+            assignRoleToTasks(activityModel,roles);
+        }
+
+        return activityModels.values().toArray(new ActivityModel[activityModels.size()]);
+    }
+
+    private void assignRoleToTasks(ActivityModel activityModel,Role[] roles){
+        for(TaskModel taskModel : activityModel.getTaskModels()){
+            String roleName = taskModel.getRole().getName();
+            for (Role role : roles) {
+                if (role.getName().equals(roleName)) {
+                    taskModel.setRole(role);
+                    break;
+                }
+            }
         }
     }
     

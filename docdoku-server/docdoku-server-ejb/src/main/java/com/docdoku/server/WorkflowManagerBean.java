@@ -19,11 +19,11 @@
  */
 package com.docdoku.server;
 
-
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.UserKey;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.exceptions.*;
+import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.core.services.IWorkflowManagerLocal;
 import com.docdoku.core.services.IWorkflowManagerWS;
@@ -34,12 +34,10 @@ import com.docdoku.server.dao.UserDAO;
 import com.docdoku.server.dao.WorkflowModelDAO;
 import com.docdoku.server.dao.WorkspaceDAO;
 
-import javax.annotation.Resource;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Local;
-import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.jws.WebService;
 import javax.persistence.EntityManager;
@@ -47,8 +45,6 @@ import javax.persistence.PersistenceContext;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.logging.Logger;
-
 
 @DeclareRoles("users")
 @Local(IWorkflowManagerLocal.class)
@@ -58,15 +54,10 @@ public class WorkflowManagerBean implements IWorkflowManagerWS, IWorkflowManager
 
     @PersistenceContext
     private EntityManager em;
-    @Resource
-    private SessionContext ctx;
     @EJB
     private IUserManagerLocal userManager;
 
-    private static final Logger LOGGER = Logger.getLogger(WorkflowManagerBean.class.getName());
-
-
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public void deleteWorkflowModel(WorkflowModelKey pKey) throws WorkspaceNotFoundException, AccessRightException, WorkflowModelNotFoundException, UserNotFoundException {
         User user = userManager.checkWorkspaceWriteAccess(pKey.getWorkspaceId());
@@ -74,8 +65,7 @@ public class WorkflowManagerBean implements IWorkflowManagerWS, IWorkflowManager
         em.flush();
     }
 
-
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public WorkflowModel createWorkflowModel(String pWorkspaceId, String pId, String pFinalLifeCycleState, ActivityModel[] pActivityModels) throws WorkspaceNotFoundException, AccessRightException, UserNotFoundException, WorkflowModelAlreadyExistsException, CreationException {
         User user = userManager.checkWorkspaceWriteAccess(pWorkspaceId);
@@ -90,25 +80,22 @@ public class WorkflowManagerBean implements IWorkflowManagerWS, IWorkflowManager
         return model;
     }
 
-
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public WorkflowModel[] getWorkflowModels(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
         return new WorkflowModelDAO(new Locale(user.getLanguage()), em).findAllWorkflowModels(pWorkspaceId);
     }
 
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public WorkflowModel getWorkflowModel(WorkflowModelKey pKey)
-            throws WorkspaceNotFoundException, WorkflowModelNotFoundException, UserNotFoundException, UserNotActiveException {
+    public WorkflowModel getWorkflowModel(WorkflowModelKey pKey) throws WorkspaceNotFoundException, WorkflowModelNotFoundException, UserNotFoundException, UserNotActiveException {
         User user = userManager.checkWorkspaceReadAccess(pKey.getWorkspaceId());
         return new WorkflowModelDAO(new Locale(user.getLanguage()), em).loadWorkflowModel(pKey);
     }
 
-
     @Override
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     public Role[] getRoles(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
         RoleDAO roleDAO = new RoleDAO(new Locale(user.getLanguage()),em);
@@ -116,6 +103,7 @@ public class WorkflowManagerBean implements IWorkflowManagerWS, IWorkflowManager
         return roles.toArray(new Role[roles.size()]);
     }
 
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public Role[] getRolesInUse(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
@@ -125,7 +113,7 @@ public class WorkflowManagerBean implements IWorkflowManagerWS, IWorkflowManager
     }
 
     @Override
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     public Role createRole(String roleName, String workspaceId, String userLogin) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException {
         User user = userManager.checkWorkspaceWriteAccess(workspaceId);
         RoleDAO roleDAO = new RoleDAO(new Locale(user.getLanguage()),em);
@@ -141,6 +129,7 @@ public class WorkflowManagerBean implements IWorkflowManagerWS, IWorkflowManager
         return role;
     }
 
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public Role updateRole(RoleKey roleKey, String userLogin) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException, RoleNotFoundException {
         User user = userManager.checkWorkspaceWriteAccess(roleKey.getWorkspace());
@@ -159,7 +148,7 @@ public class WorkflowManagerBean implements IWorkflowManagerWS, IWorkflowManager
     }
 
     @Override
-    @RolesAllowed("users")
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     public void deleteRole(RoleKey roleKey) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException, RoleNotFoundException, EntityConstraintException {
         User user = userManager.checkWorkspaceWriteAccess(roleKey.getWorkspace());
         RoleDAO roleDAO = new RoleDAO(new Locale(user.getLanguage()),em);

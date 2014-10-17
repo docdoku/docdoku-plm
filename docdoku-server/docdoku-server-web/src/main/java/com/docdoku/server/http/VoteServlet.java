@@ -22,8 +22,8 @@ package com.docdoku.server.http;
 
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.product.PartRevision;
-import com.docdoku.core.services.IDocumentManagerLocal;
-import com.docdoku.core.services.IProductManagerLocal;
+import com.docdoku.core.services.IDocumentWorkflowManagerLocal;
+import com.docdoku.core.services.IPartWorkflowManagerLocal;
 import com.docdoku.core.workflow.ActivityKey;
 import com.docdoku.core.workflow.TaskKey;
 
@@ -34,13 +34,19 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-
 public class VoteServlet extends HttpServlet {
 
     @EJB
-    private IDocumentManagerLocal documentService;
+    private IDocumentWorkflowManagerLocal documentWorkflowService;
     @EJB
-    private IProductManagerLocal productService;
+    private IPartWorkflowManagerLocal partWorkflowService;
+
+    private static final String APPROVE = "Approve";
+    private static final String REJECT = "Reject";
+    private static final String URL_SUFIXE_APPROVE = "/faces/taskApproved.xhtml";
+    private static final String URL_SUFIXE_REJECT = "/faces/taskRejected.xhtml";
+    private static final String ENTITY_ATTRIBUTE = "entity";
+
 
     @Override
     protected void doGet(HttpServletRequest pRequest,
@@ -59,34 +65,31 @@ public class VoteServlet extends HttpServlet {
         String entityType = pRequest.getParameter("entityType");
 
         try {
-            if(entityType.equals("parts")){
-                if (action.equals("Approve")) {
-                    PartRevision partRevision = productService.approveTaskOnPart(workspaceId, new TaskKey(new ActivityKey(activityWorkflowId, activityStep), index), comment, null);
-                    pRequest.setAttribute("entity", partRevision);
-                    pRequest.getRequestDispatcher(pRequest.getContextPath()+"/faces/taskApproved.xhtml").forward(pRequest, pResponse);
-                } else if (action.equals("Reject")) {
-                    PartRevision partRevision = productService.rejectTaskOnPart(workspaceId, new TaskKey(new ActivityKey(activityWorkflowId, activityStep), index), comment, null);
-                    pRequest.setAttribute("entity", partRevision);
-                    pRequest.getRequestDispatcher(pRequest.getContextPath()+"/faces/taskRejected.xhtml").forward(pRequest, pResponse);
+            if("parts".equals(entityType)){
+                if (APPROVE.equals(action)) {
+                    PartRevision partRevision = partWorkflowService.approveTaskOnPart(workspaceId, new TaskKey(new ActivityKey(activityWorkflowId, activityStep), index), comment, null);
+                    pRequest.setAttribute(ENTITY_ATTRIBUTE, partRevision);
+                    pRequest.getRequestDispatcher(pRequest.getContextPath()+URL_SUFIXE_APPROVE).forward(pRequest, pResponse);
+                } else if (REJECT.equals(action)) {
+                    PartRevision partRevision = partWorkflowService.rejectTaskOnPart(workspaceId, new TaskKey(new ActivityKey(activityWorkflowId, activityStep), index), comment, null);
+                    pRequest.setAttribute(ENTITY_ATTRIBUTE, partRevision);
+                    pRequest.getRequestDispatcher(pRequest.getContextPath()+URL_SUFIXE_REJECT).forward(pRequest, pResponse);
                 }
 
-            }else if(entityType.equals("documents")){
-
-                if (action.equals("Approve")) {
-                    DocumentRevision documentRevision = documentService.approveTaskOnDocument(workspaceId, new TaskKey(new ActivityKey(activityWorkflowId, activityStep), index), comment, null);
-                    pRequest.setAttribute("entity", documentRevision);
-                    pRequest.getRequestDispatcher(pRequest.getContextPath()+"/faces/taskApproved.xhtml").forward(pRequest, pResponse);
-                } else if (action.equals("Reject")) {
-                    DocumentRevision documentRevision = documentService.rejectTaskOnDocument(workspaceId, new TaskKey(new ActivityKey(activityWorkflowId, activityStep), index), comment, null);
-                    pRequest.setAttribute("entity", documentRevision);
-                    pRequest.getRequestDispatcher(pRequest.getContextPath()+"/faces/taskRejected.xhtml").forward(pRequest, pResponse);
+            }else if("documents".equals(entityType)){
+                if (APPROVE.equals(action)) {
+                    DocumentRevision documentRevision = documentWorkflowService.approveTaskOnDocument(workspaceId, new TaskKey(new ActivityKey(activityWorkflowId, activityStep), index), comment, null);
+                    pRequest.setAttribute(ENTITY_ATTRIBUTE, documentRevision);
+                    pRequest.getRequestDispatcher(pRequest.getContextPath()+URL_SUFIXE_APPROVE).forward(pRequest, pResponse);
+                } else if (REJECT.equals(action)) {
+                    DocumentRevision documentRevision = documentWorkflowService.rejectTaskOnDocument(workspaceId, new TaskKey(new ActivityKey(activityWorkflowId, activityStep), index), comment, null);
+                    pRequest.setAttribute(ENTITY_ATTRIBUTE, documentRevision);
+                    pRequest.getRequestDispatcher(pRequest.getContextPath()+URL_SUFIXE_REJECT).forward(pRequest, pResponse);
                 }
-
             }
 
         } catch (Exception pEx) {
             throw new ServletException("Error while voting.", pEx);
         }
-
     }
 }

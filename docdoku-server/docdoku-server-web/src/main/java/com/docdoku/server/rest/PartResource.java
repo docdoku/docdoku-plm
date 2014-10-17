@@ -58,16 +58,14 @@ public class PartResource {
 
     @EJB
     private IProductManagerLocal productService;
-
-
     @EJB
     private IUserManagerLocal userManager;
 
-    public PartResource() {
-    }
-
     private static final Logger LOGGER = Logger.getLogger(PartResource.class.getName());
     private Mapper mapper;
+
+    public PartResource() {
+    }
 
     @PostConstruct
     public void init() {
@@ -356,7 +354,6 @@ public class PartResource {
     @Path("/aborted-workflows")
     @Produces(MediaType.APPLICATION_JSON)
     public List<WorkflowDTO> getAbortedWorkflows(@PathParam("workspaceId") String workspaceId, @PathParam("partNumber") String partNumber , @PathParam("partVersion") String partVersion) {
-
         try {
 
             PartRevisionKey revisionKey = new PartRevisionKey(workspaceId, partNumber, partVersion);

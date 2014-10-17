@@ -19,15 +19,12 @@
  */
 package com.docdoku.server.rest;
 
+import com.docdoku.core.exceptions.*;
 import com.docdoku.core.meta.TagKey;
-import com.docdoku.core.exceptions.ApplicationException;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.server.rest.dto.TagDTO;
-import org.dozer.DozerBeanMapperSingletonWrapper;
-import org.dozer.Mapper;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
@@ -37,6 +34,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -53,17 +52,9 @@ public class TagResource {
     @EJB
     private DocumentsResource documentsResource;
 
-    @EJB
-    private DocumentResource documentResource;
-
-    private Mapper mapper;
+    private static final Logger LOGGER = Logger.getLogger(TagResource.class.getName());
 
     public TagResource() {
-    }
-
-    @PostConstruct
-    public void init() {
-        mapper = DozerBeanMapperSingletonWrapper.getInstance();
     }
 
     @Path("{tagId}/documents/")
@@ -74,23 +65,20 @@ public class TagResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<TagDTO> getTagsInWorkspace (@PathParam("workspaceId") String workspaceId){
-        
-        try{    
-        
+        try{
             String[] tagsName = documentService.getTags(workspaceId);
-
-            List<TagDTO> tagsDTO = new ArrayList<TagDTO>();
-
+            List<TagDTO> tagsDTO = new ArrayList<>();
             for (String tagName : tagsName) {
                 tagsDTO.add(new TagDTO(tagName,workspaceId));
             }            
-            
             return tagsDTO;
-
-        } catch (ApplicationException ex) {
-        
-            throw new RestApiException(ex.toString(), ex.getMessage());
-        }          
+        } catch (UserNotFoundException | UserNotActiveException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
+        } catch (WorkspaceNotFoundException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
+        }
     }
 
     @POST
@@ -98,12 +86,20 @@ public class TagResource {
     @Produces(MediaType.APPLICATION_JSON)
     public TagDTO createTag(@PathParam("workspaceId") String workspaceId, TagDTO tag) {
         try {
-
             documentService.createTag(workspaceId, tag.getLabel());
             return new TagDTO(tag.getLabel());
-            
-        } catch (ApplicationException ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
+        } catch (UserNotFoundException | UserNotActiveException | AccessRightException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
+        } catch (WorkspaceNotFoundException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
+        } catch (TagAlreadyExistsException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.CONFLICT);
+        } catch (CreationException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.BAD_REQUEST);
         }
     }
 
@@ -112,15 +108,22 @@ public class TagResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response createTags(@PathParam("workspaceId") String workspaceId, List<TagDTO> tagsDTO) {
         try {
-
             for(TagDTO tagDTO : tagsDTO){
                 documentService.createTag(workspaceId, tagDTO.getLabel());
             }
-
             return Response.ok().build();
-
-        } catch (ApplicationException ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
+        } catch (UserNotFoundException | UserNotActiveException | AccessRightException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
+        } catch (WorkspaceNotFoundException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
+        } catch (TagAlreadyExistsException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.CONFLICT);
+        } catch (CreationException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.BAD_REQUEST);
         }
     }
 
@@ -130,9 +133,12 @@ public class TagResource {
         try {
             documentService.deleteTag(new TagKey(workspaceId, tagId));
             return Response.ok().build();
-        } catch (ApplicationException ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
+        } catch (UserNotFoundException | AccessRightException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
+        } catch (WorkspaceNotFoundException | TagNotFoundException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
         }
     }
-
 }

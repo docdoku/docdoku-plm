@@ -56,7 +56,7 @@ public class UserKey implements Serializable {
             return false;
         }
         UserKey key = (UserKey) pObj;
-        return (key.login.equals(login) && (key.workspaceId.equals(workspaceId)));
+        return key.login.equals(login) && key.workspaceId.equals(workspaceId);
     }
     
     @Override

@@ -56,7 +56,7 @@ public class TagKey implements Serializable {
             return false;
         }
         TagKey key = (TagKey) pObj;
-        return (key.workspaceId.equals(workspaceId) && (key.label.equals(label)));
+        return key.workspaceId.equals(workspaceId) && key.label.equals(label);
     }
     
     @Override

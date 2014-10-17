@@ -35,6 +35,7 @@ import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentConfigSpecManagerLocal;
 import com.docdoku.core.services.IDocumentManagerLocal;
+import com.docdoku.core.services.IDocumentWorkflowManagerLocal;
 import com.docdoku.core.sharing.SharedDocument;
 import com.docdoku.core.workflow.Workflow;
 import com.docdoku.server.rest.dto.*;
@@ -60,6 +61,8 @@ public class DocumentResource {
 
     @EJB
     private IDocumentManagerLocal documentService;
+    @EJB
+    private IDocumentWorkflowManagerLocal documentWorkflowService;
     @EJB
     private IDocumentConfigSpecManagerLocal documentConfigSpecService;
 
@@ -93,7 +96,7 @@ public class DocumentResource {
             docRsDTO.setPath(docR.getLocation().getCompletePath());
 
             if (configSpecType == null || BASELINE_UNDEFINED.equals(configSpecType) || BASELINE_LATEST.equals(configSpecType)) {
-                docRsDTO.setLifeCycleState(docR.getLifeCycleState());
+                setDocumentRevisionDTOWorkflow(docR,docRsDTO);
                 docRsDTO.setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId, docR));
                 docRsDTO.setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId, docR));
             }else{
@@ -107,6 +110,16 @@ public class DocumentResource {
         } catch (WorkspaceNotFoundException | DocumentRevisionNotFoundException | BaselineNotFoundException e) {
             LOGGER.log(Level.WARNING, null, e);
             throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
+        }
+    }
+
+    private void setDocumentRevisionDTOWorkflow(DocumentRevision documentRevision, DocumentRevisionDTO documentRevisionDTO) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, DocumentRevisionNotFoundException {
+        try{
+            Workflow currentWorkflow = documentWorkflowService.getCurrentWorkflow(documentRevision.getKey());
+            documentRevisionDTO.setWorkflow(mapper.map(currentWorkflow,WorkflowDTO.class));
+            documentRevisionDTO.setLifeCycleState(currentWorkflow.getLifeCycleState());
+        } catch (WorkflowNotFoundException e) {
+            LOGGER.log(Level.FINEST, null, e);
         }
     }
 
@@ -514,11 +527,8 @@ public class DocumentResource {
     @Path("aborted-workflows")
     @Produces(MediaType.APPLICATION_JSON)
     public List<WorkflowDTO> getAbortedWorkflows(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion) {
-
         try {
-            DocumentRevision docR = documentService.getDocumentRevision(new DocumentRevisionKey(workspaceId, documentId, documentVersion));
-            //Todo use DAO to get the right Workflow
-            List<Workflow> abortedWorkflows = docR.getAbortedWorkflows();
+            Workflow[] abortedWorkflows = documentWorkflowService.getAbortedWorkflow(new DocumentRevisionKey(workspaceId, documentId, documentVersion));
             List<WorkflowDTO> abortedWorkflowsDTO = new ArrayList<>();
 
             for(Workflow abortedWorkflow:abortedWorkflows){
@@ -528,10 +538,12 @@ public class DocumentResource {
             Collections.sort(abortedWorkflowsDTO);
 
             return abortedWorkflowsDTO;
-
-        } catch (ApplicationException ex) {
-            LOGGER.log(Level.WARNING,null,ex);
-            throw new RestApiException(ex.toString(), ex.getMessage());
+        } catch (UserNotFoundException | UserNotActiveException | AccessRightException e) {
+            LOGGER.log(Level.WARNING,null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
+        } catch (WorkspaceNotFoundException | DocumentRevisionNotFoundException e) {
+            LOGGER.log(Level.WARNING,null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
         }
     }
 

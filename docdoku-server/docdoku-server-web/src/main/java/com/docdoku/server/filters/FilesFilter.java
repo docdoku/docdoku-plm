@@ -59,7 +59,7 @@ public class FilesFilter implements Filter {
     private IDocumentManagerLocal documentService;
 
     @EJB
-    private IUserManagerLocal userManager;
+    private IUserManagerLocal userService;
 
     @EJB
     private IDocumentResourceGetterManagerLocal documentResourceGetterService;
@@ -104,7 +104,7 @@ public class FilesFilter implements Filter {
                     httpRequest.login(userLogin, userPassword);
 
                     try {
-                        Account account = userManager.getAccount(userLogin);
+                        Account account = userService.getAccount(userLogin);
                         if(account!=null) {
                             remoteUser = account.getLogin();
                         }
@@ -170,7 +170,7 @@ public class FilesFilter implements Filter {
                         if (remoteUser != null) {
                             binaryResource = documentService.getBinaryResource(fullName);
                             docI = documentService.findDocumentIterationByBinaryResource(binaryResource);
-                            user = documentService.whoAmI(workspaceId);
+                            user = userService.whoAmI(workspaceId);
                         } else {
                             DocumentRevisionKey docRK = new DocumentRevisionKey(workspaceId, docMId, docMVersion);
                             binaryResource = guestProxy.getPublicBinaryResourceForDocument(docRK, fullName);
@@ -278,7 +278,7 @@ public class FilesFilter implements Filter {
                     if(remoteUser != null){
                         binaryResource = documentService.getBinaryResource(fullName);
                         docI = documentService.findDocumentIterationByBinaryResource(binaryResource);
-                        user = documentService.whoAmI(workspaceId);
+                        user = userService.whoAmI(workspaceId);
                     }else{
                         binaryResource = guestProxy.getBinaryResourceForSharedDocument(fullName);
                         docI = guestProxy.findDocumentIterationByBinaryResource(binaryResource);

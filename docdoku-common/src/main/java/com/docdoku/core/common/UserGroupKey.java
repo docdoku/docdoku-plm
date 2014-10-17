@@ -56,7 +56,7 @@ public class UserGroupKey implements Serializable {
             return false;
         }
         UserGroupKey key = (UserGroupKey) pObj;
-        return ((key.id.equals(id)) && key.workspaceId.equals(workspaceId));
+        return key.id.equals(id) && key.workspaceId.equals(workspaceId);
     }
     
     @Override

@@ -38,8 +38,6 @@ import java.util.Date;
 @javax.persistence.IdClass(com.docdoku.core.workflow.TaskKey.class)
 @Entity
 public class Task implements Serializable, Cloneable {
-
-
     @Id
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumns({
@@ -60,7 +58,6 @@ public class Task implements Serializable, Cloneable {
 
     @javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date startDate;
-
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumns({
@@ -87,21 +84,11 @@ public class Task implements Serializable, Cloneable {
 
     public Task() {
     }
-
     public Task(int pNum, String pTitle, String pInstructions, User pWorker) {
         num = pNum;
         title = pTitle;
         worker = pWorker;
         instructions = pInstructions;
-    }
-
-    @XmlTransient
-    public Activity getActivity() {
-        return activity;
-    }
-
-    public int getWorkflowId() {
-        return activity == null ? 0 : activity.getWorkflowId();
     }
 
     public TaskKey getKey() {
@@ -115,11 +102,20 @@ public class Task implements Serializable, Cloneable {
         this.num = num;
     }
 
-    public int getActivityStep() {
-        return activity == null ? 0 : activity.getStep();
+    public int getWorkflowId() {
+        return activity == null ? 0 : activity.getWorkflowId();
+    }
+
+    @XmlTransient
+    public Activity getActivity() {
+        return activity;
     }
     public void setActivity(Activity activity) {
         this.activity = activity;
+    }
+
+    public int getActivityStep() {
+        return activity == null ? 0 : activity.getStep();
     }
 
     public Task.Status getStatus() {
@@ -164,6 +160,13 @@ public class Task implements Serializable, Cloneable {
         this.duration = duration;
     }
 
+    public Date getClosureDate() {
+        return (closureDate!=null) ? (Date) closureDate.clone() : null;
+    }
+    public void setClosureDate(Date closureDate) {
+        this.closureDate = (closureDate!=null) ? (Date) closureDate.clone() : null;
+    }
+
     public String getClosureComment() {
         return closureComment;
     }
@@ -178,13 +181,6 @@ public class Task implements Serializable, Cloneable {
         this.targetIteration = targetIteration;
     }
 
-    public Date getClosureDate() {
-        return (closureDate!=null) ? (Date) closureDate.clone() : null;
-    }
-    public void setClosureDate(Date closureDate) {
-        this.closureDate = (closureDate!=null) ? (Date) closureDate.clone() : null;
-    }
-
     public String getSignature() {
         return signature;
     }
@@ -196,21 +192,22 @@ public class Task implements Serializable, Cloneable {
         reject(pComment, pTargetIteration, null);
     }
     public void reject(String pComment, int pTargetIteration, String pSignature) {
-        closureDate = new Date();
-        closureComment = pComment;
-        signature = pSignature;
+        submit(pComment,pTargetIteration,pSignature);
         status = Status.REJECTED;
-        targetIteration = pTargetIteration;
     }
 
     public void approve(String pComment, int pTargetIteration) {
         approve(pComment, pTargetIteration, null);
     }
     public void approve(String pComment, int pTargetIteration, String pSignature) {
+        submit(pComment,pTargetIteration,pSignature);
+        status = Status.APPROVED;
+    }
+
+    private void submit(String pComment, int pTargetIteration, String pSignature){
         closureDate = new Date();
         closureComment = pComment;
         signature = pSignature;
-        status = Status.APPROVED;
         targetIteration = pTargetIteration;
     }
 
@@ -225,7 +222,6 @@ public class Task implements Serializable, Cloneable {
             status = Status.NOT_STARTED;
         }
     }
-
     public void reset(Task.Status status) {
         setStatus(status);
         setSignature(null);
@@ -282,24 +278,23 @@ public class Task implements Serializable, Cloneable {
         return title;
     }
 
-
     /**
      * perform a deep clone operation
      */
     @Override
     public Task clone() {
-        Task clone;
         try {
-            clone = (Task) super.clone();
+            Task clone = (Task) super.clone();
+
+            if (startDate != null) {
+                clone.startDate = (Date) startDate.clone();
+            }
+            if (closureDate != null) {
+                clone.closureDate = (Date) closureDate.clone();
+            }
+            return clone;
         } catch (CloneNotSupportedException e) {
             throw new InternalError();
         }
-        if (startDate != null)
-            clone.startDate = (Date) startDate.clone();
-
-        if (closureDate != null)
-            clone.closureDate = (Date) closureDate.clone();
-
-        return clone;
     }
 }

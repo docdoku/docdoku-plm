@@ -33,7 +33,6 @@ import org.dozer.Mapper;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class ActivityDozerConverter extends DozerConverter<Activity, ActivityDTO> {
 
     private Mapper mapper;
@@ -81,18 +80,15 @@ public class ActivityDozerConverter extends DozerConverter<Activity, ActivityDTO
         Activity activity;
 
         switch (activityDTO.getType()){
-            case SERIAL:{
+            case SERIAL:
                 activity = new SerialActivity();
                 break;
-            }
-            case PARALLEL:{
+            case PARALLEL:
                 activity = new ParallelActivity();
                 ((ParallelActivity) activity).setTasksToComplete(activityDTO.getTasksToComplete());
                 break;
-            }
-            default:{
+            default:
                 throw new IllegalArgumentException("ActivityDTO type not supported");
-            }
         }
 
         activity.setStep(activityDTO.getStep());
@@ -100,5 +96,4 @@ public class ActivityDozerConverter extends DozerConverter<Activity, ActivityDTO
         activity.setLifeCycleState(activityDTO.getLifeCycleState());
         return activity;
     }
-
 }

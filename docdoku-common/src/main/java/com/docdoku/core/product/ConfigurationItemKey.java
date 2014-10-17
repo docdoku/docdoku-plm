@@ -58,7 +58,7 @@ public class ConfigurationItemKey implements Serializable {
             return false;
         }
         ConfigurationItemKey key = (ConfigurationItemKey) pObj;
-        return (key.id.equals(id) && (key.workspace.equals(workspace)));
+        return key.id.equals(id) && key.workspace.equals(workspace);
     }
     
     @Override

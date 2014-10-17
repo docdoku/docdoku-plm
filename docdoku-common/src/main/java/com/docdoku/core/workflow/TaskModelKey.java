@@ -47,11 +47,11 @@ public class TaskModelKey implements Serializable {
     @Override
     public int hashCode() {
         int hash = 1;
-	hash = 31 * hash + workspaceId.hashCode();
-	hash = 31 * hash + workflowModelId.hashCode();
+        hash = 31 * hash + workspaceId.hashCode();
+        hash = 31 * hash + workflowModelId.hashCode();
         hash = 31 * hash + activityModelStep;
         hash = 31 * hash + num;
-	return hash;
+        return hash;
     }
     
     @Override
@@ -59,10 +59,14 @@ public class TaskModelKey implements Serializable {
         if (this == pObj) {
             return true;
         }
-        if (!(pObj instanceof TaskModelKey))
+        if (!(pObj instanceof TaskModelKey)) {
             return false;
+        }
         TaskModelKey key = (TaskModelKey) pObj;
-        return ((key.workspaceId.equals(workspaceId)) && (key.workflowModelId.equals(workflowModelId)) && (key.activityModelStep==activityModelStep) && (key.num==num));
+        return key.workspaceId.equals(workspaceId) &&
+               key.workflowModelId.equals(workflowModelId) &&
+               key.activityModelStep==activityModelStep &&
+               key.num==num;
     }
     
     @Override
@@ -97,8 +101,6 @@ public class TaskModelKey implements Serializable {
     public int getNum() {
         return num;
     }
-
-
     public void setNum(int num) {
         this.num = num;
     }
