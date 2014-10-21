@@ -1,6 +1,8 @@
 'use strict';
 var LIVERELOAD_PORT = 35729;
+var SERVER_HOSTNAME = 'localhost';
 var SERVER_PORT = 9001;
+var DEV_HOSTNAME = 'localhost';
 var DEV_PORT = 8989;
 var lrSnippet = require('connect-livereload')({port: LIVERELOAD_PORT});
 
@@ -17,7 +19,6 @@ module.exports = function (grunt) {
     var yeoman = {
         app: 'app',
         dist: 'dist',
-        //webapp:'../src/main/webapp',
 	    webapp: '../target/docdoku-server-web',
         tests: 'tests'
     };
@@ -54,10 +55,9 @@ module.exports = function (grunt) {
             }
         },
         connect: {
-
             options: {
                 port: grunt.option('port') || SERVER_PORT,
-                hostname: 'localhost'
+                hostname: SERVER_HOSTNAME
             },
 
             livereload: {
@@ -95,7 +95,7 @@ module.exports = function (grunt) {
                 path: 'http://localhost:<%= connect.options.port %>'
             },
 	        dev:{
-		        path: 'http://localhost:'+DEV_PORT
+		        path: 'http://'+DEV_HOSTNAME+':'+DEV_PORT
 	        }
         },
         clean: {
@@ -494,118 +494,5 @@ module.exports = function (grunt) {
         }
     });
 
-    /*
-     * Dev mode : grunt serve (needs proxy like nginx)
-     * Dev mode with build : grunt serve:dist
-     * */
-    grunt.registerTask('serve', function (target) {
-
-        if (target === 'dist') {
-            return grunt.task.run(['build', 'open:server', 'connect:dist:keepalive']);
-        }
-	    if (target === 'noLiveReload') {
-		    return grunt.task.run(['clean:server','less','connect:app','open:dev','watch:livereload','watch:less']);
-	    }
-
-        grunt.task.run([
-            'clean:server',
-            'less',
-            'connect:livereload',
-            'open:dev',
-	        'watch:livereload',
-	        'watch:less'
-        ]);
-    });
-
-    /*
-     * Main build : grunt build
-     * */
-    grunt.registerTask('build', [
-        'clean:dist',
-	    'less',
-        'copy:libs',
-        'copy:assets',
-        'copy:dmu',
-        'copy:i18n',
-        'build-module:documentManagement',
-        'build-module:productManagement',
-        'build-module:productStructure',
-        'build-module:productFrame',
-        'build-module:changeManagement'
-    ]);
-
-    /*
-     * Module build : grunt build-module:documentManagement
-     * */
-
-    grunt.registerTask('build-module', function (module) {
-
-        if(module === 'documentManagement'){
-            return grunt.task.run([
-                'clean:documentManagement',
-                'requirejs:documentManagement',
-                'uglify:documentManagement',
-                'cssmin:documentManagement',
-                'htmlmin:documentManagement',
-                'usemin:documentManagement'
-            ]);
-        }
-
-        if(module === 'productManagement'){
-            return grunt.task.run([
-                'clean:productManagement',
-                'requirejs:productManagement',
-                'uglify:productManagement',
-                'cssmin:productManagement',
-                'htmlmin:productManagement',
-                'usemin:productManagement'
-            ]);
-        }
-
-        if(module === 'productStructure'){
-            return grunt.task.run([
-                'clean:productStructure',
-                'requirejs:productStructure',
-                'uglify:productStructure',
-                'cssmin:productStructure',
-                'htmlmin:productStructure',
-                'usemin:productStructure'
-            ]);
-        }
-
-        if(module === 'changeManagement'){
-            return grunt.task.run([
-                'clean:changeManagement',
-                'requirejs:changeManagement',
-                'uglify:changeManagement',
-                'cssmin:changeManagement',
-                'htmlmin:changeManagement',
-                'usemin:changeManagement'
-            ]);
-        }
-
-        if(module === 'productFrame'){
-            return grunt.task.run([
-                'clean:productFrame',
-                'requirejs:productFrame',
-                'uglify:productFrame',
-                'cssmin:productFrame',
-                'htmlmin:productFrame',
-                'usemin:productFrame'
-            ]);
-        }
-
-    });
-
-    /*
-    * Deploy command : used by maven
-    * */
-    grunt.registerTask('deploy',['clean:webapp','build','copy:webapp','clean:dist']);
-
-    /*
-     * Tests command
-     * */
-    grunt.registerTask('test',['execute:tests']);
-    grunt.registerTask('livetests',['execute:tests','watch:tests']);
-
+	grunt.loadTasks('tasks');
 };
