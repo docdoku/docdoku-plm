@@ -122,7 +122,10 @@ public class ESIndexer{
     private void createIndex(String pIndex, Client pClient) throws ESIndexAlreadyExistsException, ESIndexNamingException {
         try{
             pClient.admin().indices().prepareCreate(pIndex)
-                   .setSettings(ImmutableSettings.settingsBuilder().put("number_of_shards", CONF.getProperty("number_of_shards")).put("number_of_replicas", CONF.getProperty("number_of_replicas")))
+                   .setSettings(ImmutableSettings.settingsBuilder()
+                           .put("number_of_shards", CONF.getProperty("number_of_shards"))
+                           .put("number_of_replicas", CONF.getProperty("number_of_replicas"))
+                           .put("auto_expand_replicas", CONF.getProperty("auto_expand_replicas")))
                    .execute().actionGet();
         }catch (IndexAlreadyExistsException e){
             String logMessage = ResourceBundle.getBundle(I18N_CONF,Locale.getDefault()).getString("ES_IndexCreationError1");
