@@ -15,7 +15,7 @@ var App = {
 define(function () {
 	'use strict';
     function PermalinkApp(filename, width, height) {
-        var container = $("#container");
+        var container = $('#container');
         var scene = new THREE.Scene();
         var camera = new THREE.PerspectiveCamera(45, container.width() / container.height(), App.SceneOptions.cameraNear, App.SceneOptions.cameraFar);
         var control;

@@ -26,7 +26,7 @@ define([
             Backbone.Events.trigger('UserStatusRequestDone', message);
         },
 
-        onStatusChanged: function (status) {
+        onStatusChanged: function () {
 
         }
 

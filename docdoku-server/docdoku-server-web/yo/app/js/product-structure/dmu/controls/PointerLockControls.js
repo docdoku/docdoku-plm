@@ -269,8 +269,8 @@ THREE.PointerLockControls = function (camera) {
         yawObject.translateX(velocity.x);
         yawObject.translateY(velocity.y);
         yawObject.translateZ(velocity.z);
-        //console.log(yawObject.position);
-        //console.log(yawObject.rotation);
+        //App.log(yawObject.position);
+        //App.log(yawObject.rotation);
         if (velocity.x || velocity.y || velocity.z) {
             scope.dispatchEvent(changeEvent);
         }

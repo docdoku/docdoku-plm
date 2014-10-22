@@ -43,8 +43,10 @@ define([
         },
 
         render: function () {
-
-            this.$el.html(Mustache.render(template, {productId: App.config.productId, contextPath: App.config.contextPath, i18n: App.config.i18n})).show();
+            this.$el.html(Mustache.render(template, {
+                productId: App.config.productId,
+                contextPath: App.config.contextPath,
+                i18n: App.config.i18n})).show();
 
             this.bindDomElements();
             this.menuResizable();
@@ -83,7 +85,7 @@ define([
                 this.bindDatGUIControls();
 
            } catch (ex) {
-                console.log('Got exception in dmu');
+                App.log('Got exception in dmu');
                 console.error(ex);
                 this.onNoWebGLSupport();
             }
@@ -94,7 +96,7 @@ define([
         requestJoinRoom: function (key) {
             if (!App.mainChannel.isReady()) {
                 // Retry to connect every 500ms
-                console.log('[App] Websocket is not openned');
+                App.log('[App] Websocket is not openned');
                 var _this = this;
                 setTimeout(function () {
                     _this.requestJoinRoom(key);

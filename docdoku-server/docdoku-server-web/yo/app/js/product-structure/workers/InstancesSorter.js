@@ -124,7 +124,7 @@ var InstancesSorter = {};
         });
 
         if (debug) {
-            console.log("[InstancesSorter] " + JSON.stringify(result));
+            App.log("[InstancesSorter] " + JSON.stringify(result));
         }
 
         result.sortedInstances = sortedInstances;

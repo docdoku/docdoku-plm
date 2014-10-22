@@ -76,8 +76,8 @@ define(['dmu/LoaderManager', 'async'],
                 if (typeof  workerMessages[message.data.fn] === 'function') {
                     workerMessages[message.data.fn](message.data.obj);
                 } else {
-                    console.log('[InstancesManager] Unrecognized command  : ');
-                    console.log(message.data);
+                    App.log('[InstancesManager] Unrecognized command  : ');
+                    App.log(message.data);
                 }
             }, false);
 
@@ -203,7 +203,7 @@ define(['dmu/LoaderManager', 'async'],
                 }
                 evalRunning = true;
                 var sceneContext = App.sceneManager.getSceneContext();
-                console.log('[InstancesManager] Updating worker');
+                App.log('[InstancesManager] Updating worker');
                 worker.postMessage({fn: 'context', obj: {
                     camera: sceneContext.camPos,
                     target: sceneContext.target || {},
@@ -304,28 +304,28 @@ define(['dmu/LoaderManager', 'async'],
             }, 1);
 
             this.loadQueue.drain = function () {
-                console.log('[InstancesManager - loadQueue] All paths have been processed');
+                App.log('[InstancesManager - loadQueue] All paths have been processed');
             };
 
             this.loadQueue.empty = function () {
-                console.log('[InstancesManager - loadQueue] Queue is empty');
+                App.log('[InstancesManager - loadQueue] Queue is empty');
             };
 
             this.loadQueue.saturated = function () {
-                console.log('[InstancesManager - loadQueue] Queue is saturated');
+                App.log('[InstancesManager - loadQueue] Queue is saturated');
             };
 
 
             this.xhrQueue = async.queue(loadProcess, 4);
 
             this.xhrQueue.drain = function () {
-                console.log('[InstancesManager] All items have been processed');
+                App.log('[InstancesManager] All items have been processed');
             };
             this.xhrQueue.empty = function () {
-                console.log('[InstancesManager] Queue is empty');
+                App.log('[InstancesManager] Queue is empty');
             };
             this.xhrQueue.saturated = function () {
-                console.log('[InstancesManager] Queue is saturated');
+                App.log('[InstancesManager] Queue is saturated');
             };
 
             this.getLoadedGeometries = function (n) {
@@ -360,7 +360,7 @@ define(['dmu/LoaderManager', 'async'],
 	        };
 
             this.clear = function () {
-                console.log('[InstanceManager] Clearing Scene');
+                App.log('[InstanceManager] Clearing Scene');
 
                 _this.xhrQueue.kill();
                 _this.loadQueue.kill();

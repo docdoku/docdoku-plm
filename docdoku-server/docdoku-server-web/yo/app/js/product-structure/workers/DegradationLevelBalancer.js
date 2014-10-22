@@ -32,7 +32,7 @@ var availableLevels = [0, 1];
     DLB.apply = function (sorterResult) {
 
         if (debug) {
-            console.log("[Worker] SorterResult | eligible : " + sorterResult.eligible + " eliminated : " + sorterResult.eliminated);
+            App.log('[Worker] SorterResult | eligible : ' + sorterResult.eligible + ' eliminated : ' + sorterResult.eliminated);
         }
 
         var instancesList = sorterResult.sortedInstances;
@@ -84,7 +84,7 @@ var availableLevels = [0, 1];
         }
 
         if (debug) {
-            console.log("[Worker] Instances: " + onScene);
+            console.log('[Worker] Instances: ' + onScene);
         }
 
         return {

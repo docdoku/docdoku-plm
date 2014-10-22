@@ -11,9 +11,12 @@ var App = {
 	}
 };
 
-if(!App.debug){
-    console.log=function(){};
-}
+App.log=function(){
+    'use strict';
+    if(App.debug){
+        window.console.log(arguments);
+    }
+};
 
 require.config({
     baseUrl: '../js/product-management',

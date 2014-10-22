@@ -1,4 +1,4 @@
-/*global _,define,WebSocket*/
+/*global _,define,WebSocket,App*/
 define(['common-objects/websocket/channelStatus'], function (ChannelStatus) {
 	'use strict';
     function Channel() {
@@ -19,7 +19,7 @@ define(['common-objects/websocket/channelStatus'], function (ChannelStatus) {
             this.ws = new WebSocket(this.url);
 
             this.ws.onopen = function (event) {
-                console.log('Websocket created');
+                App.log('Websocket created');
                 self.onopen(event);
             };
 
@@ -40,7 +40,7 @@ define(['common-objects/websocket/channelStatus'], function (ChannelStatus) {
         // send string
         send: function (message) {
 
-            console.log('C->S: ' + message);
+            App.log('C->S: ' + message);
             this.ws.send(message);
 
         },
@@ -64,8 +64,7 @@ define(['common-objects/websocket/channelStatus'], function (ChannelStatus) {
         },
 
         onmessage: function (message) {
-
-            console.log('S->C: ' + message.data);
+            App.log('S->C: ' + message.data);
 
             var jsonMessage = JSON.parse(message.data);
             if (jsonMessage.type) {
@@ -81,8 +80,8 @@ define(['common-objects/websocket/channelStatus'], function (ChannelStatus) {
         onclose: function (event) {
             this.status = ChannelStatus.CLOSED;
 
-            console.log('Websocket closed');
-            console.log(event);
+            App.log('Websocket closed');
+            App.log(event);
 
             _.each(this.listeners, function (listener) {
                 listener.handlers.onStatusChanged(ChannelStatus.CLOSED);
@@ -91,8 +90,8 @@ define(['common-objects/websocket/channelStatus'], function (ChannelStatus) {
         },
 
         onerror: function (event) {
-            console.log('Websocket error');
-            console.log(event);
+            App.log('Websocket error');
+            App.log(event);
         },
 
         addChannelListener: function (listener) {

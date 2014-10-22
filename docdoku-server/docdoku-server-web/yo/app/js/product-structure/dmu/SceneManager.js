@@ -120,7 +120,7 @@ define([
         }
 
         function addLightsToCamera(camera) {
-            var dirLight = new THREE.DirectionalLight(0xffffff);
+            var dirLight = new THREE.DirectionalLight(0xbcbcbc);
             dirLight.position.set(200, 200, 1000).normalize();
             camera.add(dirLight);
             camera.add(dirLight.target);
@@ -397,8 +397,8 @@ define([
                     mesh.position.copy(meshEdited.position);
                     mesh.rotation.copy(meshEdited.rotation);
                     mesh.scale.copy(meshEdited.scale);
-                    console.log('[SceneManager] Restore transformed instance mesh');
-                    console.log(_this.mesh);
+                    App.log('[SceneManager] Restore transformed instance mesh');
+                    App.log(_this.mesh);
                 }
 
             }
@@ -432,7 +432,7 @@ define([
             }
             _this.scene.remove(mesh);
 
-            console.log('[SceneManager] mesh removed');
+            App.log('[SceneManager] mesh removed');
 
             _this.reDraw();
         }
@@ -558,7 +558,7 @@ define([
 
             // cancel transformations for mesh which are no longer edited
             var diff = _.difference(_this.editedMeshes, arrayId);
-            console.log(diff);
+            App.log(diff);
             _.each(diff, function (uuid) {
                 var mesh = meshesIndexed[uuid];
                 if (_this.editedMeshes.lastIndexOf(uuid) !== -1) {
@@ -889,8 +889,8 @@ define([
                 if (editedMeshesColoured) {
                     _this.colourEditedMeshes();
                 }
-                console.log('mesh added : ');
-                console.log(this.editedMeshes);
+                App.log('mesh added : ');
+                App.log(this.editedMeshes);
                 App.collaborativeController.sendEditedMeshes();
             }
             transformControls.bindEvents();
@@ -958,7 +958,7 @@ define([
                 .start();
             _this.editedMeshes = _.without(_this.editedMeshes, mesh.uuid);
             mesh.material = mesh.initialMaterial;
-            console.log('mesh removed');
+            App.log('mesh removed');
             App.collaborativeController.sendEditedMeshes();
 
             _this.reDraw();

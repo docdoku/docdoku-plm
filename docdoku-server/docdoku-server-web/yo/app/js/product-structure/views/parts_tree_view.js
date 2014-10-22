@@ -3,7 +3,6 @@ define(['backbone', 'models/component_module', 'views/component_views'
 ], function (Backbone, ComponentModule, ComponentViews) {
 	'use strict';
     var PartsTreeView = Backbone.View.extend({
-
         el: '#product_nav_list',
 
         events: {
@@ -120,13 +119,13 @@ define(['backbone', 'models/component_module', 'views/component_views'
 	        arrayPaths = (arrayPaths) ? arrayPaths : [];
 	        var pathsToLoad = _.difference(arrayPaths, this.smartPath);
 	        if (pathsToLoad.length !== 0) {
-		        console.log('[PartsTreeView] Paths to load : \n\t'+pathsToLoad);
+		        App.log('[PartsTreeView] Paths to load : \n\t'+pathsToLoad);
 		        App.instancesManager.loadComponentsByPaths(pathsToLoad);
 	        }
 
 	        var pathsToUnload = _.difference(this.smartPath, arrayPaths);
             if (pathsToUnload.length !== 0) {
-                console.log('[PartsTreeView] Path to unload : \n\t'+pathsToUnload);
+                App.log('[PartsTreeView] Path to unload : \n\t'+pathsToUnload);
                 App.instancesManager.unLoadComponentsByPaths(pathsToUnload);
             }
 

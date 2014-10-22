@@ -88,17 +88,16 @@ window.onload = function() {
         scene.fog = new THREE.FogExp2( 0x9999ff, 0.00025 );
 
         // RESIZER
-
-        window.addEventListener('resize', handleResize, false);
-
-        var $container = $('div#demo-scene');
-
         function handleResize() {
             ASPECT = $container.innerWidth() / $container.innerHeight();
             camera.updateProjectionMatrix();
             renderer.setSize($container.innerWidth(), $container.innerHeight());
             controls.handleResize();
         }
+
+        window.addEventListener('resize', handleResize, false);
+
+        var $container = $('div#demo-scene');
 
         var binaryLoader = new THREE.BinaryLoader();
         binaryLoader.load( window.contextPath + '/images/pba.js', addModelToScene);

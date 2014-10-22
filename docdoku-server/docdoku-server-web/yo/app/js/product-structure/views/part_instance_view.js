@@ -57,7 +57,7 @@ define(["backbone", "mustache", "text!templates/part_instance.html"], function (
 
         transformView: function (e) {
             //$('#transform_mode_view_btn').addClass("active");
-            console.log(e.currentTarget.id); // :/
+            App.log(e.currentTarget.id); // :/
             App.sceneManager.setTransformControls(this.mesh, e.currentTarget.id);
         },
 

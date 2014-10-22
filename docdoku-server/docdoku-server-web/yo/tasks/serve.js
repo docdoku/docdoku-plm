@@ -9,7 +9,14 @@ module.exports = function(grunt) {
 			return grunt.task.run(['build', 'open:server', 'connect:dist:keepalive']);
 		}
 		if (target === 'noLiveReload') {
-			return grunt.task.run(['clean:server','less','connect:app','open:dev','watch:livereload','watch:less']);
+			return grunt.task.run([
+                'clean:server',
+                'less',
+                'connect:app',
+                'open:dev',
+                'watch:livereload',
+                'watch:less'
+                ]);
 		}
 
 		grunt.task.run([

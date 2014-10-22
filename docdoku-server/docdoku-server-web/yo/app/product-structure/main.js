@@ -2,6 +2,16 @@
 var App = {
     debug: false,
 
+    setDebug:function(state){
+        'use strict';
+        App.debug = state;
+        if(state){
+            $('body').addClass('debug');
+        }else{
+            $('body').removeClass('debug');
+        }
+    },
+
 	config:{
 		workspaceId: /^#([^/]+)/.exec(window.location.hash)[1] || null,
 		productId: window.location.hash.split('/')[1] || null,
@@ -36,9 +46,12 @@ var App = {
 
 };
 
-if(!App.debug){
-    console.log=function(){};
-}
+App.log=function(){
+    'use strict';
+    if(App.debug){
+        window.console.log(arguments);
+    }
+};
 
 require.config({
     baseUrl: '../js/product-structure',

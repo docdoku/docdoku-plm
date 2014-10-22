@@ -1,17 +1,17 @@
 /*global define*/
-define(['datatables'], function (DT) {
+define(['datatables'], function () {
 	'use strict';
     // sorting french dates dd-mm-YYYY hh:ii:ss
     function parseTimeStampFromFrenchDate(str) {
         if (!str){
 	        return 0;
         }
-        var _split = str.split(" ");
+        var _split = str.split(' ');
         if (_split.length !== 2){
 	        return 0;
         }
-        var left = _split[0].split("-");
-        var right = _split[1].split(":");
+        var left = _split[0].split('-');
+        var right = _split[1].split(':');
         if (left.length !== 3 && right.length !== 3){
 	        return 0;
         }
