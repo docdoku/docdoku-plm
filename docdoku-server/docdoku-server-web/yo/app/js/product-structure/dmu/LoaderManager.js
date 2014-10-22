@@ -4,7 +4,6 @@ define(['views/progress_bar_view'], function (ProgressBarView) {
     var LoaderManager = function (options) {
 
         this.ColladaLoader = null;
-        this.StlLoader = null;
         this.BinaryLoader = null;
 
         _.extend(this, options);
@@ -14,7 +13,6 @@ define(['views/progress_bar_view'], function (ProgressBarView) {
         }
         // Reuse material
         this.material = new THREE.MeshPhongMaterial({ transparent: true, color: new THREE.Color(0xbbbbbb) });
-
     };
 
     /*
@@ -115,16 +113,11 @@ define(['views/progress_bar_view'], function (ProgressBarView) {
                     break;
 
                 case 'stl':
+                    var stlLoader = new THREE.STLLoader();
 
-                    if (this.StlLoader === null) {
-                        this.StlLoader = new THREE.STLLoader();
-                    }
-
-                    this.StlLoader.addEventListener('load', function (stl) {
-                        var geometry = stl.content;
+                    stlLoader.load(filename, function(geometry){
                         callbacks.success(geometry, material);
                     });
-                    this.StlLoader.load(filename);
 
                     break;
 

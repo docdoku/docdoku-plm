@@ -150,8 +150,8 @@ define(['dmu/LoaderManager', 'async'],
                             loadCache[instance.partIterationId + '-' + directive.quality].count++;
                         } else {
                             geometry.computeFaceNormals();
-                            geometry.computeVertexNormals();
-                            loadCache[instance.partIterationId + '-' + directive.quality] = {count: 1, geometry: THREE.BufferGeometryUtils.fromGeometry(geometry), material: material};
+                            //geometry.computeVertexNormals();
+                            loadCache[instance.partIterationId + '-' + directive.quality] = {count: 1, geometry: geometry, material: material};
                         }
 
                         _this.xhrsDone++;
