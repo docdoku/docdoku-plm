@@ -148,7 +148,7 @@
                             </execution>
                             <execution>
                                 <id>build-yo</id>
-                                <phase>generate-sources</phase>
+                                <phase>generate-resources</phase>
                                 <goals>
                                     <goal>exec</goal>
                                 </goals>
