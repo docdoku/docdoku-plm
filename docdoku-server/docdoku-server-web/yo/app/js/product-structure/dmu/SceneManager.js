@@ -107,7 +107,8 @@ define([
             _this.grid = new THREE.Line(geometry, material, THREE.LinePieces);
         }
         function initAmbientLight() {
-            var ambient = new THREE.AmbientLight(0x101030);
+            var ambient = new THREE.AmbientLight(App.SceneOptions.ambientLightColor);
+            ambient.name='AmbientLight';
             _this.scene.add(ambient);
         }
         function initSelectionBox() {
@@ -120,8 +121,9 @@ define([
         }
 
         function addLightsToCamera(camera) {
-            var dirLight = new THREE.DirectionalLight(0xbcbcbc);
+            var dirLight = new THREE.DirectionalLight(App.SceneOptions.cameraLightColor);
             dirLight.position.set(200, 200, 1000).normalize();
+            dirLight.name='CameraLight';
             camera.add(dirLight);
             camera.add(dirLight.target);
         }
@@ -269,6 +271,12 @@ define([
                 mesh.material.opacity = _this.measureState ? 0.5 : 1;
             }
         }
+        function updateAmbientLight(color){
+            App.sceneManager.scene.getObjectByName('AmbientLight').color.setHex(color);
+        }
+        function updateCameraLight(color){
+            App.sceneManager.cameraObject.getObjectByName('CameraLight').color.setHex(color);
+        }
         function showGrid() {
             if (_this.grid.added) {
                 return;
@@ -286,6 +294,8 @@ define([
             _this.reDraw();
         }
         function watchSceneOptions() {
+            updateAmbientLight(App.SceneOptions.ambientLightColor);
+            updateCameraLight(App.SceneOptions.cameraLightColor);
             if (App.SceneOptions.grid) {
                 showGrid();
             } else {

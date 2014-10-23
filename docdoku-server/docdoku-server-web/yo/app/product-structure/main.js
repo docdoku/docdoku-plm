@@ -33,7 +33,6 @@ var App = {
 
     SceneOptions: {
         grid: false,
-        skeleton: true,
         zoomSpeed: 1.2,
         rotateSpeed: 1.0,
         panSpeed: 0.3,
@@ -41,6 +40,8 @@ var App = {
         cameraFar: 5E4,
         defaultCameraPosition: {x: -1000, y: 800, z: 1100},
         defaultTargetPosition: {x: 0, y: 0, z: 0},
+        ambientLightColor:0x101030,
+        cameraLightColor:0xbcbcbc,
         transformControls:true
     }
 

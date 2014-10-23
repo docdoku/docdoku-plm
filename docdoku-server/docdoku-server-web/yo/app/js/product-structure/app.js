@@ -327,11 +327,12 @@ define([
             valuesControllers.push(gui.add(App.WorkerManagedValues, 'volRating').min(0).max(1).step(0.01));
 
             valuesControllers.push(gui.add(App.SceneOptions, 'grid'));
-            valuesControllers.push(gui.add(App.SceneOptions, 'skeleton'));
             valuesControllers.push(gui.add(App.SceneOptions, 'rotateSpeed').min(0).max(10).step(0.01));
             valuesControllers.push(gui.add(App.SceneOptions, 'zoomSpeed').min(0).max(10).step(0.01));
             valuesControllers.push(gui.add(App.SceneOptions, 'panSpeed').min(0).max(10).step(0.01));
 
+            valuesControllers.push(gui.addColor(App.SceneOptions, 'ambientLightColor'));
+            valuesControllers.push(gui.addColor(App.SceneOptions, 'cameraLightColor'));
             return this;
         },
 

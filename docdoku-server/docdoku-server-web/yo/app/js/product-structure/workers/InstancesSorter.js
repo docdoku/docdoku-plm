@@ -1,4 +1,4 @@
-/*global App,WorkerManagedValues,Context,debug*/
+/*global WorkerManagedValues,Context,debug*/
 'use strict';
 var InstancesSorter = {};
 
@@ -124,7 +124,7 @@ var InstancesSorter = {};
         });
 
         if (debug) {
-            App.log("[InstancesSorter] " + JSON.stringify(result));
+            console.log("[InstancesSorter] " + JSON.stringify(result));
         }
 
         result.sortedInstances = sortedInstances;

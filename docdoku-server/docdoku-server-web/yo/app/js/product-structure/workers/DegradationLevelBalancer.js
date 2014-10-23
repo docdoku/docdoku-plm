@@ -1,4 +1,4 @@
-/*global _,App,debug,WorkerManagedValues*/
+/*global _,debug,WorkerManagedValues*/
 'use strict';
 var DegradationLevelBalancer = {};
 
@@ -32,7 +32,7 @@ var availableLevels = [0, 1];
     DLB.apply = function (sorterResult) {
 
         if (debug) {
-            App.log('[Worker] SorterResult | eligible : ' + sorterResult.eligible + ' eliminated : ' + sorterResult.eliminated);
+            console.log('[Worker] SorterResult | eligible : ' + sorterResult.eligible + ' eliminated : ' + sorterResult.eliminated);
         }
 
         var instancesList = sorterResult.sortedInstances;

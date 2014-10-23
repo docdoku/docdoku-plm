@@ -1,4 +1,4 @@
-/*global _,self,THREE,InstancesSorter,DegradationLevelBalancer,App*/
+/*global _,self,THREE,InstancesSorter,DegradationLevelBalancer*/
 importScripts(
     '../../../bower_components/underscore/underscore-min.js',
     '../../../bower_components/threejs/build/three.min.js',
@@ -105,7 +105,7 @@ var Context = {
         if (Context.hasChanged(context)) {
 
             if (debug) {
-                App.log('[Worker] Start a cycle');
+                console.log('[Worker] Start a cycle');
             }
             var start = Date.now();
             // Apply ratings, determine which instances must be displayed in this context
@@ -130,7 +130,7 @@ var Context = {
             self.postMessage({fn: 'directives', obj: directives});
 
             if (debug) {
-                console.App.log('[Worker] Cycle duration : ' + (Date.now() - start) + ' ms');
+                console.log('[Worker] Cycle duration : ' + (Date.now() - start) + ' ms');
             }
         } else {
             if (debug) {
@@ -175,7 +175,7 @@ self.addEventListener('message', function (message) {
         ParentMessages[message.data.fn](message.data.obj);
     } else {
         if (debug) {
-            App.log('[Worker] Unrecognized command  : ');
+            console.log('[Worker] Unrecognized command  : ');
             console.log(message.data);
         }
     }
