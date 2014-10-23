@@ -1,15 +1,15 @@
-/*global define,App*/
+/*global _,define,App*/
 define([
-    "backbone",
-    "models/layer"
+    'backbone',
+    'models/layer'
 ], function (Backbone, Layer) {
-
+    'use strict';
     var LayerCollection = Backbone.Collection.extend({
 
         model: Layer,
 
         url: function () {
-            return App.config.contextPath + "/api/workspaces/" + App.config.workspaceId + "/products/" + App.config.productId + "/layers"
+            return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + App.config.productId + '/layers';
         },
 
         setAllShown: function (allShown) {
@@ -35,5 +35,4 @@ define([
     });
 
     return LayerCollection;
-
 });

@@ -1,21 +1,20 @@
 /*global define,App*/
 define([
-    "backbone",
-    "views/layer-item-view",
-    "views/layer-header-view"
+    'backbone',
+    'views/layer-item-view',
+    'views/layer-header-view'
 ], function (Backbone, LayerItemView, LayerHeaderView) {
-
+    'use strict';
     var LayersListView = Backbone.View.extend({
-
         el: 'div#layer-wrapper',
 
         events: {
-            "layers:setAllShown": "setAllShown",
-            "layers:addLayer": "addLayer"
+            'layers:setAllShown': 'setAllShown',
+            'layers:addLayer': 'addLayer'
         },
 
         initialize: function () {
-            this.listContainer = this.$("nav > ul");
+            this.listContainer = this.$('nav > ul');
             this.listenTo(this.collection, 'add', this.addOne)
                 .listenTo(this.collection, 'remove', this.onRemove)
                 .listenTo(this.collection, 'reset', this.addAll);
@@ -64,10 +63,10 @@ define([
             return this;
         },
 
-        template_empty_view: "<li>" + App.config.i18n.NO_LAYERS + "</li>",
+        templateEmptyView: '<li>' + App.config.i18n.NO_LAYERS + '</li>',
 
         addEmptyView: function () {
-            this.listContainer.append(this.template_empty_view);
+            this.listContainer.append(this.templateEmptyView);
         },
 
         setAllShown: function (e, allShown) {

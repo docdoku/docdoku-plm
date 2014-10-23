@@ -1,15 +1,17 @@
-/*global define*/
-define([ "backbone", "mustache", "text!templates/layer_controls.html"], function (Backbone, Mustache, template) {
-
+/*global define,App*/
+define([
+    'backbone',
+    'mustache',
+    'text!templates/layer_controls.html'
+], function (Backbone, Mustache, template) {
+    'use strict';
     var LayerHeaderView = Backbone.View.extend({
-
         tagName: 'div',
-
         className: 'btn-group',
 
         events: {
-            "click button.toggleAllShow": "toggleAllShow",
-            "click button.addLayer": "addLayer"
+            'click button.toggleAllShow': 'toggleAllShow',
+            'click button.addLayer': 'addLayer'
         },
 
         initialize: function () {
