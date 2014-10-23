@@ -85,7 +85,7 @@ define([
                 this.bindDatGUIControls();
 
            } catch (ex) {
-                App.log('Got exception in dmu');
+                console.error('Got exception in dmu');
                 console.error(ex);
                 this.onNoWebGLSupport();
             }
@@ -96,7 +96,7 @@ define([
         requestJoinRoom: function (key) {
             if (!App.mainChannel.isReady()) {
                 // Retry to connect every 500ms
-                App.log('[App] Websocket is not openned');
+                App.log('%c [App] %c Websocket is not openned',true);
                 var _this = this;
                 setTimeout(function () {
                     _this.requestJoinRoom(key);

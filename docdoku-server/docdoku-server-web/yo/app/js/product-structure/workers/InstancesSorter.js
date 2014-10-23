@@ -1,8 +1,8 @@
-/*global WorkerManagedValues,Context,debug*/
-'use strict';
+/*global WorkerManagedValues,AppWorker,Context*/
 var InstancesSorter = {};
 
 (function (IS) {
+    'use strict';
     IS.sort = function (instances) {
 
         /*
@@ -123,9 +123,7 @@ var InstancesSorter = {};
             return (b.globalRating - a.globalRating);
         });
 
-        if (debug) {
-            console.log("[InstancesSorter] " + JSON.stringify(result));
-        }
+        AppWorker.log("%c " + JSON.stringify(result), 'IS');
 
         result.sortedInstances = sortedInstances;
 

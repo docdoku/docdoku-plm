@@ -407,10 +407,8 @@ define([
                     mesh.position.copy(meshEdited.position);
                     mesh.rotation.copy(meshEdited.rotation);
                     mesh.scale.copy(meshEdited.scale);
-                    App.log('[SceneManager] Restore transformed instance mesh');
-                    App.log(_this.mesh);
+                    App.log('%c Restore transformed instance mesh\n\t'+_this.mesh,'SM');
                 }
-
             }
             return mesh;
         }
@@ -442,7 +440,7 @@ define([
             }
             _this.scene.remove(mesh);
 
-            App.log('[SceneManager] mesh removed');
+            App.log('%c mesh removed','SM');
 
             _this.reDraw();
         }
@@ -563,12 +561,10 @@ define([
          * Colaborative Mode
          */
         this.setEditedMeshes = function (editedMeshesInfos) {
-
             var arrayId = _.pluck(editedMeshesInfos, 'uuid');
 
             // cancel transformations for mesh which are no longer edited
             var diff = _.difference(_this.editedMeshes, arrayId);
-            App.log(diff);
             _.each(diff, function (uuid) {
                 var mesh = meshesIndexed[uuid];
                 if (_this.editedMeshes.lastIndexOf(uuid) !== -1) {
@@ -899,8 +895,7 @@ define([
                 if (editedMeshesColoured) {
                     _this.colourEditedMeshes();
                 }
-                App.log('mesh added : ');
-                App.log(this.editedMeshes);
+                App.log('%c Mesh added : \n\t'+this.editedMeshes,'SM');
                 App.collaborativeController.sendEditedMeshes();
             }
             transformControls.bindEvents();
@@ -968,7 +963,7 @@ define([
                 .start();
             _this.editedMeshes = _.without(_this.editedMeshes, mesh.uuid);
             mesh.material = mesh.initialMaterial;
-            App.log('mesh removed');
+            App.log('%c Mesh removed','SM');
             App.collaborativeController.sendEditedMeshes();
 
             _this.reDraw();

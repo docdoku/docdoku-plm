@@ -1,19 +1,21 @@
 /*global define,App*/
-define(["backbone", "mustache", "text!templates/part_instance.html"], function (Backbone, Mustache, template) {
+define(['backbone', 'mustache', 'text!templates/part_instance.html'],
+function (Backbone, Mustache, template) {
+    'use strict';
     var PartMetadataView = Backbone.View.extend({
 
         tagName: 'div',
 
-        id: "part_instance_container",
+        id: 'part_instance_container',
 
         events: {
-            "click button#fly_to": "fly_to",
-            "click button#look_at": "look_at",
-            "click #transform_mode_view_btn > button": "transformView",
-            "click button#cancel_transformation": "cancelTransformation"
+            'click button#fly_to': 'flyTo',
+            'click button#look_at': 'lookAt',
+            'click #transform_mode_view_btn > button': 'transformView',
+            'click button#cancel_transformation': 'cancelTransformation'
         },
 
-        className: "side_control_group",
+        className: 'side_control_group',
 
         initialize: function () {
 
@@ -33,36 +35,32 @@ define(["backbone", "mustache", "text!templates/part_instance.html"], function (
             this.$el.html(Mustache.render(template, {mesh: this.mesh, i18n: App.config.i18n}));
             if (App.sceneManager.transformControlsEnabled()) {
                 var mode = App.sceneManager.getTransformControlsMode();
-                this.$("button#" + mode).addClass("active");
+                this.$('button#' + mode).addClass('active');
 
             }
             return this;
         },
 
         reset: function () {
-            if (App.sceneManager.transformControlsEnabled()) {
-                //App.sceneManager.deleteTransformControls();
-            } else {
+            if (! App.sceneManager.transformControlsEnabled()) {
                 this.$el.empty();
             }
         },
 
-        fly_to: function () {
+        flyTo: function () {
             App.sceneManager.flyTo(this.mesh);
         },
 
-        look_at: function () {
+        lookAt: function () {
             App.sceneManager.lookAt(this.mesh);
         },
 
         transformView: function (e) {
-            //$('#transform_mode_view_btn').addClass("active");
-            App.log(e.currentTarget.id); // :/
             App.sceneManager.setTransformControls(this.mesh, e.currentTarget.id);
         },
 
         cancelTransformation: function () {
-            //$('#transform_mode_view_btn').removeClass("active");
+            //$('#transform_mode_view_btn').removeClass('active');
             App.sceneManager.cancelTransformation(this.mesh);
         }
 
