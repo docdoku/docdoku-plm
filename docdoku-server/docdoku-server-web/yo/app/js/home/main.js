@@ -87,6 +87,8 @@ window.onload = function() {
         // SKYBOX/FOG
         scene.fog = new THREE.FogExp2( 0x9999ff, 0.00025 );
 
+        var $container = $('div#demo-scene');
+
         // RESIZER
         function handleResize() {
             ASPECT = $container.innerWidth() / $container.innerHeight();
@@ -96,8 +98,6 @@ window.onload = function() {
         }
 
         window.addEventListener('resize', handleResize, false);
-
-        var $container = $('div#demo-scene');
 
         var binaryLoader = new THREE.BinaryLoader();
         binaryLoader.load( window.contextPath + '/images/pba.js', addModelToScene);

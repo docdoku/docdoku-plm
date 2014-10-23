@@ -1,4 +1,4 @@
-/*global define,App*/
+/*global _,define,App*/
 define(['backbone', 'models/component_module', 'views/component_views'
 ], function (Backbone, ComponentModule, ComponentViews) {
 	'use strict';

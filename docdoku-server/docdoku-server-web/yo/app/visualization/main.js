@@ -1,4 +1,4 @@
-/*global require*/
+/*global require,window*/
 var App = {
     debug: false,
 
