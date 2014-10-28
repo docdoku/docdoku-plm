@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -31,15 +31,13 @@ import com.docdoku.core.services.IUserManagerWS;
  */
 public class WorkspacesCommand extends AbstractCommandLine{
 
-    private IUserManagerWS userS;
-
     public Object execImpl() throws Exception {
 
-        userS = ScriptingTools.createUserManagerService(getServerURL(), user, password);
+        IUserManagerWS userS = ScriptingTools.createUserManagerService(getServerURL(), user, password);
         Workspace[] workspaces = userS.getWorkspacesWhereCallerIsActive();
 
-        for(int i = 0 ; i < workspaces.length; i++){
-            System.out.println(workspaces[i].getId());
+        for (Workspace workspace : workspaces) {
+            System.out.println(workspace.getId());
         }
         return JSONOutput.printWorkspaces(workspaces);
 

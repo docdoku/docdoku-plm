@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -68,8 +68,9 @@ public class ParallelActivityModel extends ActivityModel {
     @Override
     public void removeTaskModel(TaskModel pTaskModel) {
         super.removeTaskModel(pTaskModel);
-        if (tasksToComplete > taskModels.size())
+        if (tasksToComplete > taskModels.size()) {
             tasksToComplete--;
+        }
     }
 
     @Override

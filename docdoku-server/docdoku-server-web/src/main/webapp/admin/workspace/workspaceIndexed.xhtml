@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html">
+
+    <ui:composition template="/WEB-INF/templates/defaultTemplate.xhtml">
+        <ui:define name="title">
+            <f:loadBundle var="i18nWorkspaceIndexed" basename="com.docdoku.server.localization.admin.workspaceIndexed_resource"/>
+            #{i18nWorkspaceIndexed['title']}
+        </ui:define>
+        <ui:define name="content">
+            <ol class="breadcrumb">
+                <li><h:link value="#{i18nTemplate['toplinks.admin']}" outcome="/admin/workspace/workspacesMenu.xhtml" />
+                    <span class="divider">/</span></li>
+                <li class="active">#{i18nWorkspaceIndexed['main.title']}</li>
+            </ol>
+
+            <h2>#{i18nWorkspaceIndexed['main.title']}</h2>
+            <h3>#{i18nWorkspaceIndexed['section.title']}</h3>
+            <h:form>
+            <h:commandLink value="#{i18nWorkspaceIndexed['section.backToMenu']}" action="/admin/workspace/workspacesMenu.xhtml"/>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>

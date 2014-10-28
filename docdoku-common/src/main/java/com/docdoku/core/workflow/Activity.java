@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -20,8 +20,6 @@
 
 package com.docdoku.core.workflow;
 
-import com.docdoku.core.util.Tools;
-
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlTransient;
@@ -36,7 +34,7 @@ import java.util.List;
  * It's the responsability of the concrete implementation to decide how
  * the workflow will progress to the next step and thus launch the execution
  * of the next Activity.
- * 
+ *
  * @author Florent Garin
  * @version 1.0, 02/06/08
  * @since   V1.0
@@ -48,10 +46,9 @@ import java.util.List;
 @Entity
 public abstract class Activity implements Serializable, Cloneable {
 
-    
     @Id
     protected int step;
-    
+
     @Id
     @ManyToOne(optional=false, fetch=FetchType.EAGER)
     @JoinColumn(name="WORKFLOW_ID", referencedColumnName="ID")
@@ -60,7 +57,7 @@ public abstract class Activity implements Serializable, Cloneable {
     @OneToMany(mappedBy="activity", cascade=CascadeType.ALL, fetch=FetchType.EAGER)
     @OrderBy(value="num")
     protected List<Task> tasks=new LinkedList<>();
-
+    protected String lifeCycleState;
     @ManyToOne(optional = true,fetch=FetchType.EAGER)
     @JoinTable (
             name="ACTIVITY_RELAUNCH",
@@ -75,90 +72,62 @@ public abstract class Activity implements Serializable, Cloneable {
     )
     private Activity relaunchActivity;
 
-    protected String lifeCycleState;
-    
-    
+    public Activity(){
+
+    }
     public Activity(int pStep, String pLifeCycleState){
         step=pStep;
         lifeCycleState=pLifeCycleState;
     }
-    
-    public Activity(){
-        
+
+    public ActivityKey getKey() {
+        return new ActivityKey(getWorkflowId(), step);
     }
-    
+
     public int getStep(){
         return step;
     }
+    public void setStep(int pStep){
+        step=pStep;
+    }
 
-
+    public List<Task> getTasks() {
+        return tasks;
+    }
     public void setTasks(List<Task> tasks) {
         this.tasks = tasks;
     }
 
-    public void setStep(int pStep){
-        step=pStep;
-    }
-    
     public String getLifeCycleState(){
         return lifeCycleState;
     }
-    
     public void setLifeCycleState(String pLifeCycleState){
         lifeCycleState=pLifeCycleState;
-    }
-
-    public java.util.List<Task> getTasks() {
-        return tasks;
-    }
-    
-    public void setWorkflow(Workflow workflow) {
-        this.workflow = workflow;
     }
 
     @XmlTransient
     public Workflow getWorkflow() {
         return workflow;
     }
+    public void setWorkflow(Workflow workflow) {
+        this.workflow = workflow;
+    }
+    public int getWorkflowId() {
+        return workflow==null ? 0 : workflow.getId();
+    }
 
     @XmlTransient
     public Activity getRelaunchActivity() {
         return relaunchActivity;
     }
-
     public void setRelaunchActivity(Activity relaunchActivity) {
         this.relaunchActivity = relaunchActivity;
     }
 
-    /**
-     * perform a deep clone operation
-     */
-    @Override
-    public Activity clone() {
-        Activity clone;
-        try {
-            clone = (Activity) super.clone();
-        } catch (CloneNotSupportedException e) {
-            throw new InternalError();
-        }
-        //perform a deep copy
-        List<Task> clonedTasks = new LinkedList<>();
-        for (Task task : tasks) {
-            Task clonedTask=task.clone();
-            clonedTask.setActivity(clone);
-            clonedTasks.add(clonedTask);
-        }
-        clone.tasks = clonedTasks;
-        return clone;
-    }
-
-    
     public abstract Collection<Task> getOpenTasks();
 
     public abstract boolean isComplete();
-
     public abstract boolean isStopped();
-
     public boolean isInProgress() {
         if (!isComplete() && !isStopped()) {
             for (Task task : tasks) {
@@ -169,7 +138,6 @@ public abstract class Activity implements Serializable, Cloneable {
         }
         return false;
     }
-
     public boolean isToDo(){
         for(Task task : tasks){
             if(task.isNotToBeDone()){
@@ -181,33 +149,47 @@ public abstract class Activity implements Serializable, Cloneable {
 
     public abstract void relaunch();
 
+    /**
+     * perform a deep clone operation
+     */
     @Override
-    public boolean equals(Object pObj) {
-        if (this == pObj) {
+    public Activity clone() {
+        try {
+            Activity clone = (Activity) super.clone();
+            //perform a deep copy
+            List<Task> clonedTasks = new LinkedList<>();
+            for (Task task : tasks) {
+                Task clonedTask=task.clone();
+                clonedTask.setActivity(clone);
+                clonedTasks.add(clonedTask);
+            }
+            clone.tasks = clonedTasks;
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new InternalError();
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
             return true;
         }
-        if (!(pObj instanceof Activity))
+        if (o == null || getClass() != o.getClass()) {
             return false;
-        Activity activity = (Activity) pObj;
-        return ((activity.step==step) && (Tools.safeEquals(activity.workflow, workflow)));
+        }
+
+        Activity activity = (Activity) o;
+
+        return step == activity.step
+                && (workflow != null ? workflow.equals(activity.workflow) : activity.workflow == null);
     }
-    
+
     @Override
     public int hashCode() {
         int hash = 1;
-	hash = 31 * hash + (workflow==null?0:workflow.hashCode());
-	hash = 31 * hash + step;
-	return hash;
+        hash = 31 * hash + (workflow==null?0:workflow.hashCode());
+        hash = 31 * hash + step;
+        return hash;
     }
-    
-    
-    public int getWorkflowId() {
-        return workflow==null?0:workflow.getId();
-    }
-
-    public ActivityKey getKey() {
-        return new ActivityKey(getWorkflowId(), step);
-    }
-    
-
 }

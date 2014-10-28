@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -27,8 +27,8 @@ import java.util.Date;
  * Wraps data needed to perform a query on part revisions.
  * 
  * @author Morgan Guimard
- * @version 3.0, 03/01/2014
- * @since   V3.0
+ * @version 2.0, 03/01/2014
+ * @since   V2.0
  */
 public class PartSearchQuery extends SearchQuery implements Serializable{
     protected String partNumber;

@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -26,18 +26,21 @@ import com.docdoku.core.services.IUserManagerLocal;
 
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
-import javax.faces.bean.ManagedBean;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.inject.Named;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.*;
+import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-@ManagedBean(name = "connectionBean")
+@Named("connectionBean")
 @RequestScoped
 public class ConnectionBean {
+    private static final Logger LOGGER = Logger.getLogger(ConnectionBean.class.getName());
     
     @EJB
     private IUserManagerLocal userManager;
@@ -51,66 +54,35 @@ public class ConnectionBean {
     }
 
     public String logOut() throws ServletException {
-
-        //TODO switch to a more JSF style code
         HttpServletRequest request = (HttpServletRequest) (FacesContext.getCurrentInstance().getExternalContext().getRequest());
-        HttpSession session = request.getSession();
-        session.removeAttribute("account");
-        session.removeAttribute("administeredWorkspaces");
-        session.removeAttribute("regularWorkspaces");
-        session.removeAttribute("isSuperAdmin");
         request.logout();
-        return "/admin/logout.xhtml";
+        request.getSession().invalidate();
+        request.getSession().setAttribute("hasFail", false);
+        request.getSession().setAttribute("hasLogout", true);
+        return request.getContextPath() + "/";
     }
 
     public void logIn() throws ServletException, AccountNotFoundException, IOException {
-        //TODO switch to a more JSF style code
-        HttpServletRequest request = (HttpServletRequest) (FacesContext.getCurrentInstance().getExternalContext().getRequest());     
+        ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+        HttpServletRequest request = (HttpServletRequest) ec.getRequest();
         HttpSession session = request.getSession();
 
         //Logout in case of user is already logged in,
         //that could happen when using multiple tabs
         request.logout();
-        request.login(login, password);
+        if(tryLoggin(request)) {
+            checkAccount(request);
+            session.setAttribute("remoteUser",login);
+            boolean isAdmin=userManager.isCallerInRole("admin");
 
-        Account account = userManager.getAccount(login);
-
-        //case insensitive fix
-        if(!login.equals(account.getLogin())){
-            request.logout();
-            throw new AccountNotFoundException(new Locale(account.getLanguage()),login);
-        }
-
-        session.setAttribute("account", account);
-
-        Map<String, Workspace> administeredWorkspaces = new HashMap<>();
-        for (Workspace wks : userManager.getAdministratedWorkspaces()) {
-            administeredWorkspaces.put(wks.getId(), wks);
-        }
-        session.setAttribute("administeredWorkspaces", administeredWorkspaces);
-
-        boolean isAdmin=userManager.isCallerInRole("admin");
-
-        if(!isAdmin){
-            Set<Workspace> regularWorkspaces = new HashSet<>();
-            Workspace[] workspaces = userManager.getWorkspacesWhereCallerIsActive();
-            regularWorkspaces.addAll(Arrays.asList(workspaces));
-            regularWorkspaces.removeAll(administeredWorkspaces.values());
-            session.setAttribute("regularWorkspaces", regularWorkspaces);
-        }
-
-        FacesContext fc = FacesContext.getCurrentInstance();
-        ExternalContext ec = fc.getExternalContext();
-
-        if(isAdmin){
-            ec.redirect(request.getContextPath() + "/faces/admin/workspace/workspacesMenu.xhtml");
-            session.setAttribute("isSuperAdmin",true);
+            if(isAdmin){
+                ec.redirect(request.getContextPath() + "/faces/admin/workspace/workspacesMenu.xhtml");
+            }else{
+                redirectionPostLogin(request,ec);
+            }
         }else{
-            session.setAttribute("isSuperAdmin",false);
-            if(originURL!=null && originURL.length()>1)
-                ec.redirect(originURL);
-            else
-                ec.redirect(request.getContextPath() + "/document-management/");
+            session.setAttribute("hasFail", true);
+            session.setAttribute("hasLogout", false);
         }
     }
 
@@ -138,4 +110,51 @@ public class ConnectionBean {
         this.originURL = originURL;
     }
 
+    private boolean tryLoggin(HttpServletRequest request){
+        try {
+            request.login(login, password);
+            return true;
+        }catch(ServletException e){
+            String message = "The user '"+login+"' failed to login";
+            LOGGER.log(Level.WARNING, message);
+            LOGGER.log(Level.FINEST,message,e);
+            return false;
+        }
+    }
+
+    private void checkAccount(HttpServletRequest request) throws AccountNotFoundException, ServletException {
+        String accountLogin=null;
+        Locale accountLocale=Locale.getDefault();
+        try {
+            Account account = userManager.getAccount(login);
+            if(account!=null) {
+                accountLogin = account.getLogin();
+                accountLocale = new Locale(account.getLanguage());
+            }
+        }catch(AccountNotFoundException e){
+            LOGGER.log(Level.FINEST,null,e);
+        }
+        //case insensitive fix
+        if(!login.equals(accountLogin)){
+            request.logout();
+            throw new AccountNotFoundException(accountLocale,login);
+        }
+    }
+
+    private void redirectionPostLogin(HttpServletRequest request,ExternalContext ec) throws IOException {
+        if(originURL!=null && originURL.length()>1){
+            ec.redirect(originURL);
+        }else{
+            String workspaceID = null;
+            Workspace[] workspaces = userManager.getWorkspacesWhereCallerIsActive();
+            if (workspaces != null && workspaces.length > 0) {
+                workspaceID = workspaces[0].getId();
+            }
+            if(workspaceID == null){
+                ec.redirect(request.getContextPath() + "/faces/admin/workspace/workspacesMenu.xhtml");
+            }else{
+                ec.redirect(request.getContextPath() + "/document-management/#" + workspaceID);
+            }
+        }
+    }
 }

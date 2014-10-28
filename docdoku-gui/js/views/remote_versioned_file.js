@@ -16,7 +16,7 @@ define(["text!templates/remote_versioned_file.html", "views/loader",  "dplm"], f
             status.checkoutDateParsed = moment(status.checkoutDate).format("YYYY-MM-DD HH:MM:ss");
             status.isCheckedOutByMe = this.isCheckoutByConnectedUser(status);
             status.iteration = _.last(status.iterations);
-            status.isCheckedIn=!status.isCheckedOut;
+            status.canBeCheckedOut=(!status.isCheckedOut) && (!status.isReleased);
             this.$el.html(this.template({model: this.model, status: status}));
 
             return this;

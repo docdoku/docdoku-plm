@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -30,11 +30,14 @@ import com.docdoku.core.product.PartRevision;
 import javax.persistence.*;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class PartMasterDAO {
 
     private EntityManager em;
     private Locale mLocale;
+    private static final Logger LOGGER = Logger.getLogger(PartMasterDAO.class.getName());
 
     public PartMasterDAO(Locale pLocale, EntityManager pEM) {
         em = pEM;
@@ -58,9 +61,9 @@ public class PartMasterDAO {
 
     public PartMaster getPartMRef(PartMasterKey pKey) throws PartMasterNotFoundException {
         try {
-            PartMaster partM = em.getReference(PartMaster.class, pKey);
-            return partM;
+            return em.getReference(PartMaster.class, pKey);
         } catch (EntityNotFoundException pENFEx) {
+            LOGGER.log(Level.FINEST,null,pENFEx);
             throw new PartMasterNotFoundException(mLocale, pKey.getNumber());
         }
     }
@@ -76,11 +79,13 @@ public class PartMasterDAO {
             em.persist(pPartM);
             em.flush();
         } catch (EntityExistsException pEEEx) {
+            LOGGER.log(Level.FINEST,null,pEEEx);
             throw new PartMasterAlreadyExistsException(mLocale, pPartM);
         } catch (PersistenceException pPEx) {
             //EntityExistsException is case sensitive
             //whereas MySQL is not thus PersistenceException could be
             //thrown instead of EntityExistsException
+            LOGGER.log(Level.FINEST,null,pPEx);
             throw new CreationException(mLocale);
         }
     }
@@ -126,25 +131,24 @@ public class PartMasterDAO {
     }
 
     public long getDiskUsageForPartsInWorkspace(String pWorkspaceId) {
-        Number result = ((Number)em.createNamedQuery("BinaryResource.diskUsageInPath")
+        Number result = (Number)em.createNamedQuery("BinaryResource.diskUsageInPath")
                 .setParameter("path", pWorkspaceId+"/parts/%")
-                .getSingleResult());
+                .getSingleResult();
 
         return result != null ? result.longValue() : 0L;
     }
 
     public long getDiskUsageForPartTemplatesInWorkspace(String pWorkspaceId) {
-        Number result = ((Number)em.createNamedQuery("BinaryResource.diskUsageInPath")
+        Number result = (Number)em.createNamedQuery("BinaryResource.diskUsageInPath")
                 .setParameter("path", pWorkspaceId+"/part-templates/%")
-                .getSingleResult());
+                .getSingleResult();
 
         return result != null ? result.longValue() : 0L;
     }
 
     public List<PartMaster> getAllByWorkspace(String workspaceId) {
-        List<PartMaster> partMasters = em.createNamedQuery("PartMaster.findByWorkspace")
+        return em.createNamedQuery("PartMaster.findByWorkspace")
                 .setParameter("workspaceId",workspaceId)
                 .getResultList();
-        return partMasters;
     }
 }

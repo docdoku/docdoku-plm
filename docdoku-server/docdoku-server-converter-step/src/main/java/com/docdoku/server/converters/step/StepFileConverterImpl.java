@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -36,15 +36,18 @@ import javax.ejb.EJB;
 import java.io.*;
 import java.util.Arrays;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 @StepFileConverter
 public class StepFileConverterImpl implements CADConverter{
 
-    private final static String PYTHON_SCRIPT_TO_OBJ="/com/docdoku/server/converters/step/convert_step_obj.py";
-    private final static String PYTHON_SCRIPT_TO_JS="/com/docdoku/server/converters/step/convert_obj_three.py";
-    private final static String CONF_PROPERTIES="/com/docdoku/server/converters/step/conf.properties";
-    private final static Properties CONF = new Properties();
+    private static final String PYTHON_SCRIPT_TO_OBJ="/com/docdoku/server/converters/step/convert_step_obj.py";
+    private static final String PYTHON_SCRIPT_TO_JS="/com/docdoku/server/converters/step/convert_obj_three.py";
+    private static final String CONF_PROPERTIES="/com/docdoku/server/converters/step/conf.properties";
+    private static final Properties CONF = new Properties();
+    private static final Logger LOGGER = Logger.getLogger(StepFileConverterImpl.class.getName());
 
     @EJB
     private IProductManagerLocal productService;
@@ -53,10 +56,20 @@ public class StepFileConverterImpl implements CADConverter{
     private IDataManagerLocal dataManager;
 
     static{
+        InputStream inputStream = null;
         try {
-            CONF.load(StepFileConverterImpl.class.getResourceAsStream(CONF_PROPERTIES));
+            inputStream = StepFileConverterImpl.class.getResourceAsStream(CONF_PROPERTIES);
+            CONF.load(inputStream);
         } catch (IOException e) {
-            e.printStackTrace();
+            Logger.getLogger(StepFileConverterImpl.class.getName()).log(Level.INFO, null, e);
+        } finally {
+            try{
+                if(inputStream!=null){
+                    inputStream.close();
+                }
+            }catch (IOException e){
+                Logger.getLogger(StepFileConverterImpl.class.getName()).log(Level.FINEST, null, e);
+            }
         }
     }
 
@@ -70,6 +83,10 @@ public class StepFileConverterImpl implements CADConverter{
         File tmpJSFile = new File(tmpDir, woExName+".js");
         File tmpBINFile = new File(tmpDir, woExName + ".bin");
         File jsFile = null;
+        InputStreamReader isr1 = null;
+        BufferedReader br1 = null;
+        InputStreamReader isr2 = null;
+        BufferedReader br2 = null;
 
         try {
             // 1st step : convert cadFile to OBJ
@@ -85,7 +102,7 @@ public class StepFileConverterImpl implements CADConverter{
                     try {
                         return dataManager.getBinaryResourceInputStream(cadFile);
                     } catch (StorageException e) {
-                        e.printStackTrace();
+                        Logger.getLogger(StepFileConverterImpl.class.getName()).log(Level.WARNING, null, e);
                         throw new IOException(e);
                     }
                 }
@@ -95,8 +112,8 @@ public class StepFileConverterImpl implements CADConverter{
             ProcessBuilder pb1 = new ProcessBuilder(args1);
 
             Process p1 = pb1.start();
-            InputStreamReader isr1 = new  InputStreamReader(p1.getInputStream());
-            BufferedReader br1 = new BufferedReader(isr1);
+            isr1 = new InputStreamReader(p1.getInputStream());
+            br1 = new BufferedReader(isr1);
 
             // read the output buffer (prevent waitFor to be never called)
             while (br1.readLine() != null);
@@ -112,8 +129,8 @@ public class StepFileConverterImpl implements CADConverter{
                 ProcessBuilder pb2 = new ProcessBuilder(args2);
 
                 Process p2 = pb2.start();
-                InputStreamReader isr2 = new  InputStreamReader(p2.getInputStream());
-                BufferedReader br2 = new BufferedReader(isr2);
+                isr2 = new InputStreamReader(p2.getInputStream());
+                br2 = new BufferedReader(isr2);
                 while (br2.readLine() != null);
 
                 p2.waitFor();
@@ -127,8 +144,10 @@ public class StepFileConverterImpl implements CADConverter{
                         binOutputStream = dataManager.getBinaryResourceOutputStream(binBinaryResource);
                         Files.copy(tmpBINFile, binOutputStream);
                     } finally {
-                        binOutputStream.flush();
-                        binOutputStream.close();
+                        if(binOutputStream!=null){
+                            binOutputStream.flush();
+                            binOutputStream.close();
+                        }
                     }
 
                     double radius = RadiusCalculator.calculateRadius(tmpJSFile);
@@ -139,8 +158,10 @@ public class StepFileConverterImpl implements CADConverter{
                         jsOutputStream = dataManager.getBinaryResourceOutputStream(jsBinaryResource);
                         Files.copy(tmpJSFile, jsOutputStream);
                     } finally {
-                        jsOutputStream.flush();
-                        jsOutputStream.close();
+                        if(jsOutputStream!=null){
+                            jsOutputStream.flush();
+                            jsOutputStream.close();
+                        }
                     }
 
                 }
@@ -148,6 +169,10 @@ public class StepFileConverterImpl implements CADConverter{
             return jsFile;
         } finally {
             FileIO.rmDir(tmpDir);
+            closeStream(isr1);
+            closeStream(isr2);
+            closeStream(br1);
+            closeStream(br2);
         }
     }
 
@@ -156,4 +181,14 @@ public class StepFileConverterImpl implements CADConverter{
         return Arrays.asList("stp", "step", "igs", "iges").contains(cadFileExtension);
     }
 
+
+    private void closeStream(Closeable stream) {
+        try{
+            if(stream!=null){
+                stream.close();
+            }
+        }catch (IOException e){
+            LOGGER.log(Level.FINEST, null, e);
+        }
+    }
 }

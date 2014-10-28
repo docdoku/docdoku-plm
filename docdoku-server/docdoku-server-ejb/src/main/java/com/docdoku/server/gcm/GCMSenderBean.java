@@ -15,9 +15,11 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.util.Properties;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
@@ -25,19 +27,25 @@ import java.util.logging.Logger;
 @Stateless(name = "GCMSenderBean")
 public class GCMSenderBean implements IGCMSenderLocal {
 
-    private final static String GCM_URL = "https://android.googleapis.com/gcm/send";
-    private final static String CONF_PROPERTIES = "/com/docdoku/server/gcm/gcm.properties";
-    private final static Properties CONF = new Properties();
-    private final static Logger LOGGER = Logger.getLogger(GCMSenderBean.class.getName());
+    private static final String GCM_URL = "https://android.googleapis.com/gcm/send";
+    private static final String CONF_PROPERTIES = "/com/docdoku/server/gcm/gcm.properties";
+    private static final Properties CONF = new Properties();
+    private static final Logger LOGGER = Logger.getLogger(GCMSenderBean.class.getName());
 
     @EJB
     private IUserManagerLocal userManager;
 
     static {
+        InputStream inputStream = null;
         try {
-            CONF.load(GCMSenderBean.class.getResourceAsStream(CONF_PROPERTIES));
+            inputStream = GCMSenderBean.class.getResourceAsStream(CONF_PROPERTIES);
+            CONF.load(inputStream);
         } catch (IOException e) {
-            e.printStackTrace();
+            Logger.getLogger(GCMSenderBean.class.getName()).log(Level.WARNING, null, e);
+        } finally {
+            try{if(inputStream!=null){
+                    inputStream.close();
+            }}catch (IOException ignored){}
         }
     }
 

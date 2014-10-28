@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -20,7 +20,6 @@
 package com.docdoku.core.configuration;
 
 import com.docdoku.core.common.User;
-import com.docdoku.core.product.ConfigurationItem;
 import com.docdoku.core.product.PartIteration;
 
 import javax.persistence.*;
@@ -31,11 +30,11 @@ import java.util.Map;
 
 /**
  * This class maintains a collection of part iterations which cannot hold
- * more than one <a href="PartIteration.html">PartIteration</a> linked
- * to the same <a href="PartMaster.html">PartMaster</a>.
+ * more than one {@link com.docdoku.core.product.PartIteration} linked
+ * to the same {@link com.docdoku.core.product.PartMaster}.
  *
- * PartCollection is a foundation for the definition of <a href="Baseline.html">Baseline</a>
- * and <a href="ProductInstanceIteration.html">ProductInstanceIteration</a>.
+ * PartCollection is a foundation for the definition of {@link ProductBaseline}
+ * and {@link ProductInstanceIteration}.
  *
  * @author Florent Garin
  * @version 2.0, 25/02/14
@@ -62,7 +61,7 @@ public class PartCollection implements Serializable {
 
     @MapKey(name="baselinedPartKey")
     @OneToMany(mappedBy="partCollection", cascade=CascadeType.ALL, fetch=FetchType.LAZY, orphanRemoval=true)
-    private Map<BaselinedPartKey, BaselinedPart> baselinedParts=new HashMap<BaselinedPartKey, BaselinedPart>();
+    private Map<BaselinedPartKey, BaselinedPart> baselinedParts=new HashMap<>();
 
     public PartCollection() {
     }
@@ -77,6 +76,8 @@ public class PartCollection implements Serializable {
 
     public void addBaselinedPart(PartIteration targetPart){
         BaselinedPart baselinedPart = new BaselinedPart(this, targetPart);
+        baselinedPart.setTargetPartIteration(targetPart.getIteration());
+        baselinedPart.setTargetPartVersion(targetPart.getVersion());
         baselinedParts.put(baselinedPart.getBaselinedPartKey(),baselinedPart);
     }
 
@@ -84,16 +85,16 @@ public class PartCollection implements Serializable {
         return baselinedParts.get(baselinedPartKey);
     }
 
-    public boolean hasBasedLinedPart(BaselinedPartKey baselinedPartKey){
+    public boolean hasBaselinedPart(BaselinedPartKey baselinedPartKey){
         return baselinedParts.containsKey(baselinedPartKey);
     }
 
     public Date getCreationDate() {
-        return creationDate;
+        return (creationDate!=null) ? (Date) creationDate.clone() : null;
     }
 
     public void setCreationDate(Date creationDate) {
-        this.creationDate = creationDate;
+        this.creationDate = (creationDate!=null) ? (Date) creationDate.clone() : null;
     }
 
     public User getAuthor() {
@@ -114,8 +115,12 @@ public class PartCollection implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof PartCollection)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof PartCollection)) {
+            return false;
+        }
 
         PartCollection collection = (PartCollection) o;
         return id == collection.id;

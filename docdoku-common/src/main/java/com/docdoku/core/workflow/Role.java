@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -40,7 +40,7 @@ import java.io.Serializable;
 })
 public class Role implements Serializable {
 
-    @Column(length = 255)
+    @Column(length = 100)
     @Id
     private String name = "";
 

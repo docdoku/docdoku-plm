@@ -1,0 +1,27 @@
+<div class="modal hide fade" id="creationMarkersModal" tabindex="-1">
+    <div class="modal-header">
+        <h3 id="exportSceneTitle">{{i18n.NEW_MARKER}}</h3>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" id="save-marker">
+            <div class="control-group">
+                <label class="control-label">{{i18n.NAME}}</label>
+
+                <div class="controls">
+                    <input type="text" name="makerName" placeholder="{{i18n.NAME}}"/>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">{{i18n.DESCRIPTION}}</label>
+
+                <div class="controls">
+                    <textarea type="text" placeholder="{{i18n.DESCRIPTION}}"></textarea>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn cancel" data-dismiss="modal">{{i18n.CANCEL}}</a>
+        <button form="save-marker" class="btn btn-primary">{{i18n.SAVE}}</button>
+    </div>
+</div>

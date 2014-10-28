@@ -9,7 +9,7 @@
  * <p>
  * <pre>
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This pacakage is part of DocDokuPLM.
  *

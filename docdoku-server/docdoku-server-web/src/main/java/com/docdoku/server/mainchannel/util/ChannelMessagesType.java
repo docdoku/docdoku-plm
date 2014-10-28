@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -22,19 +22,33 @@ package com.docdoku.server.mainchannel.util;
 
 public class ChannelMessagesType {
 
+
+    public static final String USER_STATUS = "USER_STATUS";
+
+    public static final String CHAT_MESSAGE = "CHAT_MESSAGE";
+    public static final String CHAT_MESSAGE_ACK = "CHAT_MESSAGE_ACK";
+
     public static final String WEBRTC_INVITE = "WEBRTC_INVITE";
     public static final String WEBRTC_ACCEPT = "WEBRTC_ACCEPT";
     public static final String WEBRTC_REJECT = "WEBRTC_REJECT";
-    public static final String WEBRTC_HANGUP = "WEBRTC_HANGUP" ;
-    public static final String WEBRTC_ROOM_JOIN_EVENT = "WEBRTC_ROOM_JOIN_EVENT" ;
-    public static final String WEBRTC_ROOM_REJECT_EVENT = "WEBRTC_ROOM_REJECT_EVENT" ;
+    public static final String WEBRTC_HANGUP = "WEBRTC_HANGUP";
+    public static final String WEBRTC_ROOM_JOIN_EVENT = "WEBRTC_ROOM_JOIN_EVENT";
+    public static final String WEBRTC_ROOM_REJECT_EVENT = "WEBRTC_ROOM_REJECT_EVENT";
+
     public static final String WEBRTC_OFFER  = "offer";
     public static final String WEBRTC_ANSWER = "answer";
     public static final String WEBRTC_BYE = "bye";
     public static final String WEBRTC_CANDIDATE = "candidate";
-    public static final String CHAT_MESSAGE = "CHAT_MESSAGE" ;
-    public static final String CHAT_MESSAGE_ACK = "CHAT_MESSAGE_ACK" ;
-    public static final String USER_STATUS = "USER_STATUS" ;
-    public static final String PEER_DECLARATION = "PEER_DECLARATION" ;
 
+    public static final String COLLABORATIVE_CREATE = "COLLABORATIVE_CREATE";
+    public static final String COLLABORATIVE_INVITE = "COLLABORATIVE_INVITE";
+    public static final String COLLABORATIVE_JOIN = "COLLABORATIVE_JOIN";
+    public static final String COLLABORATIVE_CONTEXT = "COLLABORATIVE_CONTEXT";
+    public static final String COLLABORATIVE_COMMANDS = "COLLABORATIVE_COMMANDS";
+    public static final String COLLABORATIVE_EXIT = "COLLABORATIVE_EXIT";
+    public static final String COLLABORATIVE_KILL = "COLLABORATIVE_KILL";
+    public static final String COLLABORATIVE_GIVE_HAND = "COLLABORATIVE_GIVE_HAND";
+    public static final String COLLABORATIVE_KICK_USER = "COLLABORATIVE_KICK_USER";
+    public static final String COLLABORATIVE_KICK_NOT_INVITED= "COLLABORATIVE_KICK_NOT_INVITED";
+    public static final String COLLABORATIVE_WITHDRAW_INVITATION = "COLLABORATIVE_WITHDRAW_INVITATION";
 }

@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -33,7 +33,7 @@ public class ConsoleProgressMonitorInputStream extends FilterInputStream {
 
     private int rotationChar;
 
-    private final static char[] ROTATION = {'|','|','|','|','/','/','/','/','-','-','-','-','\\','\\','\\','\\'};
+    private static final char[] ROTATION = {'|','|','|','|','/','/','/','/','-','-','-','-','\\','\\','\\','\\'};
 
     public ConsoleProgressMonitorInputStream(long maximum, InputStream in){
         super(in);

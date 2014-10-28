@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -32,12 +32,11 @@ import java.util.logging.Logger;
  * @author Florent Garin
  */
 @WebServiceClient(name = "ProductService", targetNamespace = "http://server.docdoku.com/", wsdlLocation = "http://localhost:8080/services/product?wsdl")
-public class ProductService extends Service
-{
+public class ProductService extends Service{
 
-    private final static URL PRODUCTSERVICE_WSDL_LOCATION;
-    private final static QName PRODUCTSERVICE_QNAME = new QName("http://server.docdoku.com/", "ProductManagerBeanService");
-    private final static Logger LOGGER = Logger.getLogger(ProductService.class.getName());
+    private static final URL PRODUCTSERVICE_WSDL_LOCATION;
+    private static final QName PRODUCTSERVICE_QNAME = new QName("http://server.docdoku.com/", "ProductManagerBeanService");
+    private static final Logger LOGGER = Logger.getLogger(ProductService.class.getName());
 
     static {
         URL url = null;

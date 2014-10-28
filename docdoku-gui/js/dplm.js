@@ -1,5 +1,6 @@
+/*global APP_GLOBAL,classPath,os,exec*/
 define(function(){
-
+	'use strict';
     var escapeShell = function(cmd) {
         return '"'+cmd+'"';
     };
@@ -23,9 +24,9 @@ define(function(){
     };
 
     var toCommand = function(args){
-        var command = "";
+        var command = '';
         _(args).each(function(arg){
-            command += escapeShell(arg) + " ";
+            command += escapeShell(arg) + ' ';
         });
         return command;
     };
@@ -33,9 +34,9 @@ define(function(){
     var Dplm = {};
 
     switch(os.type()){
-        case "Windows_NT" : _.extend(Dplm,WindowsCMD); break;
-        case "Linux" : _.extend(Dplm,LinuxCMD); break;
-        case "Darwin" : _.extend(Dplm,OsxCMD); break;
+        case 'Windows_NT' : _.extend(Dplm,WindowsCMD); break;
+        case 'Linux' : _.extend(Dplm,LinuxCMD); break;
+        case 'Darwin' : _.extend(Dplm,OsxCMD); break;
         default :_.extend(Dplm,LinuxCMD); break;
     }
 
@@ -47,6 +48,7 @@ define(function(){
             exec(Dplm.base() + command,{ maxBuffer: 1274916 * 2  },function (error, stdout, stderr) {
                 var results = stdout ? JSON.parse(stdout) : {};
                 if (error || stderr) {
+	                console.warn(stderr);
                     callbacks.error();
                 } else {
                     callbacks.success(results);
@@ -55,13 +57,12 @@ define(function(){
         },
 
         getWorkspaces: function (callbacks) {
-
             var args = [
-                "wl",
-                "-h", APP_GLOBAL.GLOBAL_CONF.host,
-                "-P", APP_GLOBAL.GLOBAL_CONF.port,
-                "-u", APP_GLOBAL.GLOBAL_CONF.user,
-                "-p", APP_GLOBAL.GLOBAL_CONF.password
+                'wl',
+                '-h', APP_GLOBAL.GLOBAL_CONF.host,
+                '-P', APP_GLOBAL.GLOBAL_CONF.port,
+                '-u', APP_GLOBAL.GLOBAL_CONF.user,
+                '-p', APP_GLOBAL.GLOBAL_CONF.password
             ];
 
             Dplm.run(args,callbacks);
@@ -71,11 +72,11 @@ define(function(){
         getStatusForFile: function (file, callbacks) {
 
             var args = [
-                "st",
-                "-h", APP_GLOBAL.GLOBAL_CONF.host,
-                "-P", APP_GLOBAL.GLOBAL_CONF.port,
-                "-u", APP_GLOBAL.GLOBAL_CONF.user,
-                "-p", APP_GLOBAL.GLOBAL_CONF.password,
+                'st',
+                '-h', APP_GLOBAL.GLOBAL_CONF.host,
+                '-P', APP_GLOBAL.GLOBAL_CONF.port,
+                '-u', APP_GLOBAL.GLOBAL_CONF.user,
+                '-p', APP_GLOBAL.GLOBAL_CONF.password,
                 file
             ];
 
@@ -85,14 +86,14 @@ define(function(){
         getStatusForPart: function (part, callbacks) {
 
             var args = [
-                "st",
-                "-h", APP_GLOBAL.GLOBAL_CONF.host,
-                "-P", APP_GLOBAL.GLOBAL_CONF.port,
-                "-u", APP_GLOBAL.GLOBAL_CONF.user,
-                "-p", APP_GLOBAL.GLOBAL_CONF.password,
-                "-w", part.getWorkspace(),
-                "-o", part.getNumber(),
-                "-r", part.getVersion()
+                'st',
+                '-h', APP_GLOBAL.GLOBAL_CONF.host,
+                '-P', APP_GLOBAL.GLOBAL_CONF.port,
+                '-u', APP_GLOBAL.GLOBAL_CONF.user,
+                '-p', APP_GLOBAL.GLOBAL_CONF.password,
+                '-w', part.getWorkspace(),
+                '-o', part.getNumber(),
+                '-r', part.getVersion()
             ];
 
             Dplm.run(args,callbacks);
@@ -102,24 +103,24 @@ define(function(){
         checkout: function (part, options, callbacks) {
 
             var args = [
-                "co",
-                "-h", APP_GLOBAL.GLOBAL_CONF.host,
-                "-P", APP_GLOBAL.GLOBAL_CONF.port,
-                "-u", APP_GLOBAL.GLOBAL_CONF.user,
-                "-p", APP_GLOBAL.GLOBAL_CONF.password,
-                "-w", part.getWorkspace(),
-                "-o", part.getNumber(),
-                "-r", part.getVersion()
+                'co',
+                '-h', APP_GLOBAL.GLOBAL_CONF.host,
+                '-P', APP_GLOBAL.GLOBAL_CONF.port,
+                '-u', APP_GLOBAL.GLOBAL_CONF.user,
+                '-p', APP_GLOBAL.GLOBAL_CONF.password,
+                '-w', part.getWorkspace(),
+                '-o', part.getNumber(),
+                '-r', part.getVersion()
             ];
 
             if (options.recursive) {
-                args.push("-R");
+                args.push('-R');
             }
             if (options.force) {
-                args.push("f");
+                args.push('f');
             }
             if (options.baseline) {
-                args.push("-b");
+                args.push('-b');
                 args.push(options.baseline);
             }
 
@@ -130,14 +131,14 @@ define(function(){
         checkin: function (part, callbacks) {
 
             var args = [
-                "ci",
-                "-h", APP_GLOBAL.GLOBAL_CONF.host,
-                "-P", APP_GLOBAL.GLOBAL_CONF.port,
-                "-u", APP_GLOBAL.GLOBAL_CONF.user,
-                "-p", APP_GLOBAL.GLOBAL_CONF.password,
-                "-w", part.getWorkspace(),
-                "-o", part.getNumber(),
-                "-r", part.getVersion()
+                'ci',
+                '-h', APP_GLOBAL.GLOBAL_CONF.host,
+                '-P', APP_GLOBAL.GLOBAL_CONF.port,
+                '-u', APP_GLOBAL.GLOBAL_CONF.user,
+                '-p', APP_GLOBAL.GLOBAL_CONF.password,
+                '-w', part.getWorkspace(),
+                '-o', part.getNumber(),
+                '-r', part.getVersion()
             ];
 
             Dplm.run(args,callbacks);
@@ -147,14 +148,14 @@ define(function(){
         undoCheckout: function (part, callbacks) {
 
             var args = [
-                "uco",
-                "-h", APP_GLOBAL.GLOBAL_CONF.host,
-                "-P", APP_GLOBAL.GLOBAL_CONF.port,
-                "-u", APP_GLOBAL.GLOBAL_CONF.user,
-                "-p", APP_GLOBAL.GLOBAL_CONF.password,
-                "-w", part.getWorkspace(),
-                "-o", part.getNumber(),
-                "-r", part.getVersion()
+                'uco',
+                '-h', APP_GLOBAL.GLOBAL_CONF.host,
+                '-P', APP_GLOBAL.GLOBAL_CONF.port,
+                '-u', APP_GLOBAL.GLOBAL_CONF.user,
+                '-p', APP_GLOBAL.GLOBAL_CONF.password,
+                '-w', part.getWorkspace(),
+                '-o', part.getNumber(),
+                '-r', part.getVersion()
             ];
 
             Dplm.run(args,callbacks);
@@ -163,24 +164,24 @@ define(function(){
         download: function (part, options, callbacks) {
 
             var args = [
-                "get",
-                "-h", APP_GLOBAL.GLOBAL_CONF.host,
-                "-P", APP_GLOBAL.GLOBAL_CONF.port,
-                "-u", APP_GLOBAL.GLOBAL_CONF.user,
-                "-p", APP_GLOBAL.GLOBAL_CONF.password,
-                "-w", part.getWorkspace(),
-                "-o", part.getNumber(),
-                "-r", part.getVersion()
+                'get',
+                '-h', APP_GLOBAL.GLOBAL_CONF.host,
+                '-P', APP_GLOBAL.GLOBAL_CONF.port,
+                '-u', APP_GLOBAL.GLOBAL_CONF.user,
+                '-p', APP_GLOBAL.GLOBAL_CONF.password,
+                '-w', part.getWorkspace(),
+                '-o', part.getNumber(),
+                '-r', part.getVersion()
             ];
 
             if (options.recursive) {
-                args.push("-R");
+                args.push('-R');
             }
             if (options.force) {
-                args.push("f");
+                args.push('f');
             }
             if (options.baseline) {
-                args.push("-b");
+                args.push('-b');
                 args.push(options.baseline);
             }
 
@@ -191,21 +192,21 @@ define(function(){
         createPart: function (part, filePath, callbacks) {
 
             var args = [
-                "cr",
-                "-h", APP_GLOBAL.GLOBAL_CONF.host,
-                "-P", APP_GLOBAL.GLOBAL_CONF.port,
-                "-u", APP_GLOBAL.GLOBAL_CONF.user,
-                "-p", APP_GLOBAL.GLOBAL_CONF.password,
-                "-w", part.getWorkspace(),
-                "-o", part.getNumber()
+                'cr',
+                '-h', APP_GLOBAL.GLOBAL_CONF.host,
+                '-P', APP_GLOBAL.GLOBAL_CONF.port,
+                '-u', APP_GLOBAL.GLOBAL_CONF.user,
+                '-p', APP_GLOBAL.GLOBAL_CONF.password,
+                '-w', part.getWorkspace(),
+                '-o', part.getNumber()
             ];
 
             if (part.getName()) {
-                args.push("-N");
+                args.push('-N');
                 args.push(part.getName());
             }
             if (part.getDescription()) {
-                args.push("-d");
+                args.push('-d');
                 args.push(part.getDescription());
             }
 
@@ -218,13 +219,13 @@ define(function(){
         getPartMastersCount: function (workspace, callbacks) {
 
             var args = [
-                "pl",
-                "-h", APP_GLOBAL.GLOBAL_CONF.host,
-                "-P", APP_GLOBAL.GLOBAL_CONF.port,
-                "-u", APP_GLOBAL.GLOBAL_CONF.user,
-                "-p", APP_GLOBAL.GLOBAL_CONF.password,
-                "-w", workspace,
-                "-c"
+                'pl',
+                '-h', APP_GLOBAL.GLOBAL_CONF.host,
+                '-P', APP_GLOBAL.GLOBAL_CONF.port,
+                '-u', APP_GLOBAL.GLOBAL_CONF.user,
+                '-p', APP_GLOBAL.GLOBAL_CONF.password,
+                '-w', workspace,
+                '-c'
             ];
 
             Dplm.run(args,callbacks);
@@ -234,14 +235,14 @@ define(function(){
         getPartMasters: function (workspace, start, max, callbacks) {
 
             var args = [
-                "pl",
-                "-h", APP_GLOBAL.GLOBAL_CONF.host,
-                "-P", APP_GLOBAL.GLOBAL_CONF.port,
-                "-u", APP_GLOBAL.GLOBAL_CONF.user,
-                "-p", APP_GLOBAL.GLOBAL_CONF.password,
-                "-s", Number(start).toString(),
-                "-m", Number(max).toString(),
-                "-w", workspace
+                'pl',
+                '-h', APP_GLOBAL.GLOBAL_CONF.host,
+                '-P', APP_GLOBAL.GLOBAL_CONF.port,
+                '-u', APP_GLOBAL.GLOBAL_CONF.user,
+                '-p', APP_GLOBAL.GLOBAL_CONF.password,
+                '-s', Number(start).toString(),
+                '-m', Number(max).toString(),
+                '-w', workspace
             ];
 
             Dplm.run(args,callbacks);
@@ -251,35 +252,32 @@ define(function(){
         searchPartMasters: function (workspace, search, callbacks) {
 
             var args = [
-                "s",
-                "-h", APP_GLOBAL.GLOBAL_CONF.host,
-                "-P", APP_GLOBAL.GLOBAL_CONF.port,
-                "-u", APP_GLOBAL.GLOBAL_CONF.user,
-                "-p", APP_GLOBAL.GLOBAL_CONF.password,
-                "-w", workspace,
-                "-s", search
+                's',
+                '-h', APP_GLOBAL.GLOBAL_CONF.host,
+                '-P', APP_GLOBAL.GLOBAL_CONF.port,
+                '-u', APP_GLOBAL.GLOBAL_CONF.user,
+                '-p', APP_GLOBAL.GLOBAL_CONF.password,
+                '-w', workspace,
+                '-s', search
             ];
 
             Dplm.run(args,callbacks);
         },
 
         getBaselines: function (part, callbacks) {
-
             var args = [
-                "bl",
-                "-h", APP_GLOBAL.GLOBAL_CONF.host,
-                "-P", APP_GLOBAL.GLOBAL_CONF.port,
-                "-u", APP_GLOBAL.GLOBAL_CONF.user,
-                "-p", APP_GLOBAL.GLOBAL_CONF.password,
-                "-w", part.getWorkspace(),
-                "-o", part.getNumber(),
-                "-r", part.getVersion()
+                'bl',
+                '-h', APP_GLOBAL.GLOBAL_CONF.host,
+                '-P', APP_GLOBAL.GLOBAL_CONF.port,
+                '-u', APP_GLOBAL.GLOBAL_CONF.user,
+                '-p', APP_GLOBAL.GLOBAL_CONF.password,
+                '-w', part.getWorkspace(),
+                '-o', part.getNumber(),
+                '-r', part.getVersion()
             ];
 
             Dplm.run(args,callbacks);
-
         }
     });
-
     return Dplm;
 });

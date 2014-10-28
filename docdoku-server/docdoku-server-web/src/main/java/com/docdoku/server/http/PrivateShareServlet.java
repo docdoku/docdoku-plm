@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -25,7 +25,6 @@ import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.exceptions.SharedEntityNotFoundException;
-import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.product.Geometry;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartRevision;
@@ -48,6 +47,8 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 /**
@@ -79,26 +80,26 @@ public class PrivateShareServlet extends HttpServlet {
             // check if expire
             if(sharedEntity.getExpireDate() != null && sharedEntity.getExpireDate().getTime() < new Date().getTime()){
                 shareService.deleteSharedEntityIfExpired(sharedEntity);
-                pRequest.getRequestDispatcher("/faces/sharedEntityExpired.xhtml").forward(pRequest, pResponse);
+                pRequest.getRequestDispatcher(pRequest.getContextPath()+"/faces/sharedEntityExpired.xhtml").forward(pRequest, pResponse);
                 return;
             }
 
             // check shared entity password and provided password
 
             if(sharedEntity.getPassword() != null){
-                String providedPassword = (String) pRequest.getParameter("password");
+                String providedPassword = pRequest.getParameter("password");
                 if(providedPassword != null && md5sum(providedPassword).equals(sharedEntity.getPassword())){
                     handleOnCheckSuccess(pRequest,pResponse,sharedEntity);
                 }else{
-                    pRequest.getRequestDispatcher("/faces/sharedEntityPassword.xhtml").forward(pRequest, pResponse);
+                    pRequest.getRequestDispatcher(pRequest.getContextPath()+"/faces/sharedEntityPassword.xhtml").forward(pRequest, pResponse);
                 }
             }else{
                 handleOnCheckSuccess(pRequest, pResponse, sharedEntity);
             }
 
         } catch (Exception pEx) {
-            pEx.printStackTrace();
-            throw new ServletException("error while fetching your document.", pEx);
+            Logger.getLogger(PrivateShareServlet.class.getName()).log(Level.SEVERE, null, pEx);
+            throw new ServletException("error while fetching your data.", pEx);
         }
 
     }
@@ -120,14 +121,14 @@ public class PrivateShareServlet extends HttpServlet {
                 if(sharedEntity.getExpireDate() != null){
                     if(sharedEntity.getExpireDate().getTime() < new Date().getTime()){
                         shareService.deleteSharedEntityIfExpired(sharedEntity);
-                        pRequest.getRequestDispatcher("/faces/sharedEntityExpired.xhtml").forward(pRequest, pResponse);
+                        pRequest.getRequestDispatcher(pRequest.getContextPath()+"/faces/sharedEntityExpired.xhtml").forward(pRequest, pResponse);
                         return;
                     }
                 }
 
                 // check if password protected -> should come from the doPost
                 if(sharedEntity.getPassword() != null){
-                    pRequest.getRequestDispatcher("/faces/sharedEntityPassword.xhtml").forward(pRequest, pResponse);
+                    pRequest.getRequestDispatcher(pRequest.getContextPath()+"/faces/sharedEntityPassword.xhtml").forward(pRequest, pResponse);
                 }else{
                     // Tests for doGet are ok
                     handleOnCheckSuccess(pRequest,pResponse,sharedEntity);
@@ -139,7 +140,7 @@ public class PrivateShareServlet extends HttpServlet {
             }
 
         } catch (Exception pEx) {
-            pEx.printStackTrace();
+            Logger.getLogger(PrivateShareServlet.class.getName()).log(Level.SEVERE, null, pEx);
             throw new ServletException("error while processing the request.", pEx);
         }
     }
@@ -158,8 +159,8 @@ public class PrivateShareServlet extends HttpServlet {
             }
 
             pRequest.setAttribute("documentRevision", documentRevision);
-            pRequest.setAttribute("attr",  new ArrayList<InstanceAttribute>(documentIteration.getInstanceAttributes().values()));
-            pRequest.getRequestDispatcher("/faces/documentPermalink.xhtml").forward(pRequest, pResponse);
+            pRequest.setAttribute("attr",  new ArrayList<>(documentIteration.getInstanceAttributes().values()));
+            pRequest.getRequestDispatcher(pRequest.getContextPath()+"/faces/documentPermalink.xhtml").forward(pRequest, pResponse);
 
         }else if(sharedEntity instanceof SharedPart){
 
@@ -185,10 +186,10 @@ public class PrivateShareServlet extends HttpServlet {
             }
 
             pRequest.setAttribute("partRevision", partRevision);
-            pRequest.setAttribute("attr",  new ArrayList<InstanceAttribute>(partIteration.getInstanceAttributes().values()));
+            pRequest.setAttribute("attr",  new ArrayList<>(partIteration.getInstanceAttributes().values()));
             pRequest.setAttribute("nativeCadFileURI",nativeCadFileURI);
             pRequest.setAttribute("geometryFileURI",geometryFileURI);
-            pRequest.getRequestDispatcher("/faces/partPermalink.xhtml").forward(pRequest, pResponse);
+            pRequest.getRequestDispatcher(pRequest.getContextPath()+"/faces/partPermalink.xhtml").forward(pRequest, pResponse);
         }
 
     }
@@ -198,8 +199,8 @@ public class PrivateShareServlet extends HttpServlet {
 
         byte[] digest = MessageDigest.getInstance("MD5").digest(pText.getBytes());
         StringBuffer hexString = new StringBuffer();
-        for (int i=0; i < digest.length; i++) {
-            String hex = Integer.toHexString(0xFF & digest[i]);
+        for (byte aDigest : digest) {
+            String hex = Integer.toHexString(0xFF & aDigest);
             if (hex.length() == 1) {
                 hexString.append("0" + hex);
             } else {

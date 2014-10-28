@@ -30,7 +30,7 @@ public class GuestProxy{
     @EJB
     private IDocumentManagerLocal documentService;
 
-    public PartRevision getPublicPartRevision(PartRevisionKey partRevisionKey) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, LoginException {
+    public PartRevision getPublicPartRevision(PartRevisionKey partRevisionKey) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, LoginException, AccessRightException {
 
         PartRevision partRevision = productService.getPartRevision(partRevisionKey);
         if(partRevision.isPublicShared()){
@@ -55,7 +55,7 @@ public class GuestProxy{
         return documentService.getBinaryResource(fullName);
     }
 
-    public BinaryResource getPublicBinaryResourceForPart(PartRevisionKey partK, String fullName) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, LoginException, FileNotFoundException, NotAllowedException {
+    public BinaryResource getPublicBinaryResourceForPart(PartRevisionKey partK, String fullName) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, LoginException, FileNotFoundException, NotAllowedException, AccessRightException {
         getPublicPartRevision(partK);
         return productService.getBinaryResource(fullName);
     }

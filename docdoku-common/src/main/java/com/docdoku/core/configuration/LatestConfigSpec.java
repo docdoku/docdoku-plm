@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -21,15 +21,20 @@
 
 package com.docdoku.core.configuration;
 
+import com.docdoku.core.common.User;
+import com.docdoku.core.document.DocumentIteration;
+import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartMaster;
 import com.docdoku.core.product.PartRevision;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /**
- * A <a href="ConfigSpec.html">ConfigSpec</a> which selects the latest iteration.
+ * A {@link ConfigSpec} which selects the latest iteration.
  * 
  * @author Florent Garin
  * @version 1.1, 30/10/11
@@ -39,14 +44,40 @@ import javax.persistence.Table;
 @Entity
 public class LatestConfigSpec extends ConfigSpec {
 
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    private User user;
     
     public LatestConfigSpec() {
     }
 
+    public LatestConfigSpec(User user) {
+        this.user = user;
+    }
+
+    public User getUser() {
+        return user;
+    }
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     @Override
     public PartIteration filterConfigSpec(PartMaster part) {
-        PartRevision partR = part.getLastRevision();
-        return partR.getLastIteration();
+        PartRevision partRevision = part.getLastRevision();
+        PartIteration partI = partRevision.getLastIteration();
+        if(partRevision.isCheckedOut() && !partRevision.getCheckOutUser().equals(user)){
+            partI = partRevision.getLastCheckedInIteration();
+        }
+        return partI;
+    }
+
+    @Override
+    public DocumentIteration filterConfigSpec(DocumentRevision documentRevision) {
+        DocumentIteration documentIteration = documentRevision.getLastIteration();
+        if(documentRevision.isCheckedOut() && !documentRevision.getCheckOutUser().equals(user)){
+            documentIteration = documentRevision.getLastCheckedInIteration();
+        }
+        return documentIteration;
     }
 
 }

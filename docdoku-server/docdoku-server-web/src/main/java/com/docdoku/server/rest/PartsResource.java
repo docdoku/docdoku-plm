@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -23,6 +23,7 @@ import com.docdoku.core.common.User;
 import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.exceptions.ApplicationException;
+import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartMaster;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.query.PartSearchQuery;
@@ -48,6 +49,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 @Stateless
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
@@ -62,6 +64,8 @@ public class PartsResource {
 
     @EJB
     private PartResource part;
+
+    private static final Logger LOGGER = Logger.getLogger(PartsResource.class.getName());
 
     public PartsResource() {
     }
@@ -85,7 +89,7 @@ public class PartsResource {
         try {
             int maxResults = 20;
             List<PartRevision> partRevisions = productService.getPartRevisions(Tools.stripTrailingSlash(workspaceId), start, maxResults);
-            List<PartDTO> partDTOs = new ArrayList<PartDTO>();
+            List<PartDTO> partDTOs = new ArrayList<>();
 
             for(PartRevision partRevision : partRevisions){
                 partDTOs.add(Tools.mapPartRevisionToPartDTO(partRevision));
@@ -100,9 +104,9 @@ public class PartsResource {
     @GET
     @Path("count")
     @Produces(MediaType.APPLICATION_JSON)
-    public PartCountDTO getTotalNumberOfParts(@PathParam("workspaceId") String workspaceId) {
+    public CountDTO getTotalNumberOfParts(@PathParam("workspaceId") String workspaceId) {
         try {
-            return new PartCountDTO(productService.getTotalNumberOfParts(Tools.stripTrailingSlash(workspaceId)));
+            return new CountDTO(productService.getTotalNumberOfParts(Tools.stripTrailingSlash(workspaceId)));
         } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
@@ -117,7 +121,7 @@ public class PartsResource {
             PartSearchQuery partSearchQuery = SearchQueryParser.parsePartStringQuery(workspaceId, pStringQuery);
 
             List<PartRevision> partRevisions = productService.searchPartRevisions(partSearchQuery);
-            List<PartDTO> partDTOs = new ArrayList<PartDTO>();
+            List<PartDTO> partDTOs = new ArrayList<>();
 
             for(PartRevision partRevision : partRevisions){
                 partDTOs.add(Tools.mapPartRevisionToPartDTO(partRevision));
@@ -135,7 +139,7 @@ public class PartsResource {
     public List<LightPartMasterDTO> searchPartNumbers(@PathParam("workspaceId") String workspaceId, @QueryParam("q") String q) {
         try {
             List<PartMaster> partMasters = productService.findPartMasters(Tools.stripTrailingSlash(workspaceId), "%" + q + "%", 8);
-            List<LightPartMasterDTO> partsMastersDTO = new ArrayList<LightPartMasterDTO>();
+            List<LightPartMasterDTO> partsMastersDTO = new ArrayList<>();
             for(PartMaster p : partMasters){
                 partsMastersDTO.add(new LightPartMasterDTO(p.getNumber()));
             }
@@ -154,7 +158,7 @@ public class PartsResource {
             String pWorkflowModelId = partCreationDTO.getWorkflowModelId();
             RoleMappingDTO[] rolesMappingDTO = partCreationDTO.getRoleMapping();
 
-            Map<String, String> roleMappings = new HashMap<String,String>();
+            Map<String, String> roleMappings = new HashMap<>();
 
             if(rolesMappingDTO != null){
                 for(RoleMappingDTO roleMappingDTO : rolesMappingDTO){
@@ -183,13 +187,36 @@ public class PartsResource {
             }
 
             PartMaster partMaster = productService.createPartMaster(workspaceId, partCreationDTO.getNumber(), partCreationDTO.getName(), partCreationDTO.isStandardPart(), pWorkflowModelId, partCreationDTO.getDescription(), partCreationDTO.getTemplateId(), roleMappings, userEntries, userGroupEntries);
-            PartDTO partDTO = Tools.mapPartRevisionToPartDTO(partMaster.getLastRevision());
-            return partDTO;
+            return Tools.mapPartRevisionToPartDTO(partMaster.getLastRevision());
 
         } catch (Exception ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
 
+    }
+
+    @GET
+    @Path("parts_last_iter")
+    @Produces(MediaType.APPLICATION_JSON)
+    public PartIterationDTO[] searchDocumentsLastIterationToLink(@PathParam("workspaceId") String workspaceId,@QueryParam("q") String q) {
+        try {
+
+            int maxResults = 8;
+
+            PartRevision[] partRs = productService.getPartRevisionsWithReference(workspaceId, q, maxResults);
+
+            List<PartIterationDTO> partsLastIter = new ArrayList<>();
+            for (PartRevision partR : partRs) {
+                PartIteration partLastIter = partR.getLastIteration();
+                if (partLastIter != null)
+                    partsLastIter.add(new PartIterationDTO(partLastIter.getWorkspaceId(), partLastIter.getPartNumber(), partLastIter.getPartVersion(), partLastIter.getIteration()));
+            }
+
+            return partsLastIter.toArray(new PartIterationDTO[partsLastIter.size()]);
+
+        } catch (com.docdoku.core.exceptions.ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
     }
 
 

@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -38,10 +38,10 @@ public class BaselinedPartKey implements Serializable{
     @Column(name = "PARTCOLLECTION_ID", nullable = false, insertable = false, updatable = false)
     private int partCollectionId;
 
-    @Column(name = "TARGET_WORKSPACE_ID", length=255, nullable = false, insertable = false, updatable = false)
+    @Column(name = "TARGET_WORKSPACE_ID", length=100, nullable = false, insertable = false, updatable = false)
     private String targetPartWorkspaceId="";
 
-    @Column(name = "TARGET_PARTMASTER_PARTNUMBER", length=255, nullable = false, insertable = false, updatable = false)
+    @Column(name = "TARGET_PARTMASTER_PARTNUMBER", length=100, nullable = false, insertable = false, updatable = false)
     private String targetPartNumber="";
 
     public BaselinedPartKey(){
@@ -87,9 +87,8 @@ public class BaselinedPartKey implements Serializable{
 
         if (partCollectionId != that.partCollectionId) return false;
         if (!targetPartNumber.equals(that.targetPartNumber)) return false;
-        if (!targetPartWorkspaceId.equals(that.targetPartWorkspaceId)) return false;
+        return targetPartWorkspaceId.equals(that.targetPartWorkspaceId);
 
-        return true;
     }
 
     @Override

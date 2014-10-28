@@ -1,0 +1,47 @@
+<div class="nav-header">{{i18n.COLLABORATIVE}}</div>
+
+<div id="collaborative_view">
+    <div>
+        <a id="collaborative_create" href="#">{{i18n.CREATE_ROOM}}</a>
+    </div>
+    <div id="collaborative_room" class="CollaborativeRoom">
+        <h4 class="CollaborativeRoom-title">
+            <i id="collaborative_exit" class="CollaborativeRoom-exitBtn fa fa-times" title="{{i18n.EXIT}}"></i>
+        </h4>
+
+        <ul id="room_wrapper" class="CollaborativeRoom-wrapper">
+            <li class="CollaborativeRoomParticipant master">
+                <i id="collaborative_master" class="fa fa-graduation-cap master"
+                   title="{{i18n.COLLABORATIVE_LEAD}}"></i>
+                <span>{{master}}</span>
+            </li>
+
+            {{^users}}
+            {{^pendingUsers}}
+            <li><em>{{i18n.NO_PARTICIPANT}}</em></li>
+            {{/pendingUsers}}
+            {{/users}}
+
+            {{#users}}
+            <li id="participant_{{.}}" class="CollaborativeRoomParticipant">
+                <i class="fa fa-globe participant-online" title="{{i18n.PARTICIPANT}}"></i>
+                <span>{{ . }}</span>
+                <i class="fa fa-chevron-right"></i>
+                <i class="fa fa-chevron-left"></i>
+                <i class="collaborative_give_hand fa fa-graduation-cap" title="{{i18n.GIVE_HAND}}"></i>
+                <i class="collaborative_kick fa fa-sign-out" title="{{i18n.WITHDRAW_INVITATION}}"></i>
+            </li>
+            {{/users}}
+
+            {{#pendingUsers}}
+            <li id="participant_{{.}}" class="CollaborativeRoomParticipant pending">
+                <i class="fa fa-globe participant-offline" title="{{i18n.PENDING}}"></i>
+                <span>{{ . }} </span>
+                <i class="fa fa-chevron-right"></i>
+                <i class="fa fa-chevron-left"></i>
+                <i class="collaborative_withdraw_invitation fa fa-sign-out" title="{{i18n.WITHDRAW_INVITATION}}"></i>
+            </li>
+            {{/pendingUsers}}
+        </ul>
+    </div>
+</div>

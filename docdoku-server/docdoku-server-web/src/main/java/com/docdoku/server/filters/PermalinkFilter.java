@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -20,7 +20,6 @@
 
 package com.docdoku.server.filters;
 
-import com.docdoku.core.common.Account;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.document.DocumentRevisionKey;
 import com.docdoku.core.product.PartRevision;
@@ -31,7 +30,6 @@ import com.docdoku.core.services.IProductManagerLocal;
 import javax.ejb.EJB;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -48,6 +46,7 @@ public class PermalinkFilter implements Filter {
     @EJB
     private GuestProxy guestProxy;
 
+
     @Override
     public void doFilter(ServletRequest request, ServletResponse response,
             FilterChain chain) throws IOException, ServletException {
@@ -57,10 +56,9 @@ public class PermalinkFilter implements Filter {
         String[] pathInfos = Pattern.compile("/").split(requestURI);
         int offset = httpRequest.getContextPath().equals("") ? 2 : 3;
 
-        HttpSession sessionHTTP = httpRequest.getSession();
-        Account account = (Account) sessionHTTP.getAttribute("account");
+        String remoteUser = httpRequest.getRemoteUser();
 
-        if(account == null){
+        if(remoteUser == null){
 
             String entityType = URLDecoder.decode(pathInfos[offset-1], "UTF-8");
             boolean redirect = false;
@@ -94,14 +92,14 @@ public class PermalinkFilter implements Filter {
                             redirect = true;
                         }
                         break;
-                    default : redirect = true; break ;
+                    default : redirect = true; break;
                 }
             }
 
             if(redirect){
                 String qs=httpRequest.getQueryString();
                 String originURL = httpRequest.getRequestURI() + (qs==null?"": "?" + qs);
-                httpRequest.getRequestDispatcher("/faces/login.xhtml?originURL=" + URLEncoder.encode(originURL, "UTF-8")).forward(request, response);
+                httpRequest.getRequestDispatcher(httpRequest.getContextPath()+"/faces/login.xhtml?originURL=" + URLEncoder.encode(originURL, "UTF-8")).forward(request, response);
             }else{
                 chain.doFilter(request, response);
             }
@@ -113,9 +111,12 @@ public class PermalinkFilter implements Filter {
 
     @Override
     public void destroy() {
+
     }
 
     @Override
-    public void init(FilterConfig filterConfig) {
+    public void init(FilterConfig filterConfig) throws ServletException {
+
     }
+
 }

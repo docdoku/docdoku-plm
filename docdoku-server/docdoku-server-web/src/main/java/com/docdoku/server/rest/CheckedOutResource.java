@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -20,11 +20,7 @@
 package com.docdoku.server.rest;
 
 import com.docdoku.core.security.UserGroupMapping;
-import com.docdoku.core.services.IDocumentManagerLocal;
-import org.dozer.DozerBeanMapperSingletonWrapper;
-import org.dozer.Mapper;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
@@ -37,24 +33,11 @@ import javax.ws.rs.Path;
 public class CheckedOutResource {
 
     @EJB
-    private IDocumentManagerLocal documentService;
-
-    @EJB
     private DocumentsResource documentsResource;
 
-    @EJB
-    private DocumentResource documentResource;
-
-    private Mapper mapper;
 
     public CheckedOutResource() {
     }
-
-    @PostConstruct
-    public void init() {
-        mapper = DozerBeanMapperSingletonWrapper.getInstance();
-    } 
-
 
     @Path("{checkoutUser}/documents/")
     public DocumentsResource getDocumentsResource() {

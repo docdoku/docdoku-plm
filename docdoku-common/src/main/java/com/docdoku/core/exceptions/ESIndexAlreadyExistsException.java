@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -30,7 +30,7 @@ public class ESIndexAlreadyExistsException extends ApplicationException {
 
     public ESIndexAlreadyExistsException(Locale pLocale) {
         super(pLocale);
-        mKey="IndexAlreadyExistException1";
+        mKey="IndexAlreadyExistsException";
     }
     public String getLocalizedMessage() {
         return mKey==null?null:getBundleMessage(mKey);

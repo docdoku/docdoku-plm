@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -38,7 +38,7 @@ public class InstanceAttributeTemplate implements Serializable {
     @Id
     private int id;
 
-    @Column(length=255)
+    @Column(length=100)
     private String name = "";
 
     private  boolean mandatory;
@@ -92,26 +92,30 @@ public class InstanceAttributeTemplate implements Serializable {
 
     public InstanceAttribute createInstanceAttribute() {
         InstanceAttribute attr = null;
-        switch (attributeType) {
-            case TEXT:
-                attr = new InstanceTextAttribute();
-                break;
-            case NUMBER:
-                attr = new InstanceNumberAttribute();
-                break;
-            case BOOLEAN:
-                attr = new InstanceBooleanAttribute();
-                break;
-            case DATE:
-                attr = new InstanceDateAttribute();
-                break;
-            case URL :
-                attr = new InstanceURLAttribute();
-                break;
-        }
+        if(attributeType!=null){
+            switch (attributeType) {
+                case TEXT:
+                    attr = new InstanceTextAttribute();
+                    break;
+                case NUMBER:
+                    attr = new InstanceNumberAttribute();
+                    break;
+                case BOOLEAN:
+                    attr = new InstanceBooleanAttribute();
+                    break;
+                case DATE:
+                    attr = new InstanceDateAttribute();
+                    break;
+                case URL :
+                    attr = new InstanceURLAttribute();
+                    break;
+                default:
+                    return null;
+            }
 
-        attr.setName(name);
-        attr.setMandatory(mandatory);
+            attr.setName(name);
+            attr.setMandatory(mandatory);
+        }
 
         return attr;
     }
@@ -119,15 +123,17 @@ public class InstanceAttributeTemplate implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         InstanceAttributeTemplate that = (InstanceAttributeTemplate) o;
 
-        if (id != that.id) return false;
-        if (!name.equals(that.name)) return false;
+        return id == that.id && name.equals(that.name);
 
-        return true;
     }
 
     @Override

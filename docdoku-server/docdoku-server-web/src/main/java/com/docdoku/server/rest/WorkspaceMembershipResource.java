@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -67,43 +67,59 @@ public class WorkspaceMembershipResource {
     @Path("users")
     @Produces(MediaType.APPLICATION_JSON)
     public WorkspaceUserMemberShipDTO[] getWorkspaceUserMemberShips (@PathParam("workspaceId") String workspaceId){
-
         try{
-
             WorkspaceUserMembership[] workspaceUserMemberships = userManager.getWorkspaceUserMemberships(workspaceId);
             WorkspaceUserMemberShipDTO[] workspaceUserMemberShipDTO = new WorkspaceUserMemberShipDTO[workspaceUserMemberships.length];
-
             for(int i = 0 ; i< workspaceUserMemberships.length ; i++){
                 workspaceUserMemberShipDTO[i] = mapper.map(workspaceUserMemberships[i],WorkspaceUserMemberShipDTO.class);
             }
-
             return workspaceUserMemberShipDTO;
-
         } catch (ApplicationException ex) {
-
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
 
     }
 
     @GET
+    @Path("users/me")
+    @Produces(MediaType.APPLICATION_JSON)
+    public WorkspaceUserMemberShipDTO getWorkspaceSpecificUserMemberShips (@PathParam("workspaceId") String workspaceId){
+        try{
+            WorkspaceUserMembership workspaceUserMemberships = userManager.getWorkspaceSpecificUserMemberships(workspaceId);
+            return mapper.map(workspaceUserMemberships,WorkspaceUserMemberShipDTO.class);
+        } catch (ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
+    }
+
+    @GET
     @Path("usergroups")
     @Produces(MediaType.APPLICATION_JSON)
     public WorkspaceUserGroupMemberShipDTO[] getWorkspaceUserGroupMemberShips (@PathParam("workspaceId") String workspaceId){
-
         try{
-
             WorkspaceUserGroupMembership[] workspaceUserGroupMemberships = userManager.getWorkspaceUserGroupMemberships(workspaceId);
             WorkspaceUserGroupMemberShipDTO[] workspaceUserGroupMemberShipDTO = new WorkspaceUserGroupMemberShipDTO[workspaceUserGroupMemberships.length];
-
             for(int i = 0 ; i< workspaceUserGroupMemberships.length ; i++){
                 workspaceUserGroupMemberShipDTO[i] = mapper.map(workspaceUserGroupMemberships[i],WorkspaceUserGroupMemberShipDTO.class);
             }
-
             return workspaceUserGroupMemberShipDTO;
-
         } catch (ApplicationException ex) {
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
+    }
 
+    @GET
+    @Path("usergroups/me")
+    @Produces(MediaType.APPLICATION_JSON)
+    public WorkspaceUserGroupMemberShipDTO[] getWorkspaceSpecificUserGroupMemberShips (@PathParam("workspaceId") String workspaceId){
+        try{
+            WorkspaceUserGroupMembership[] workspaceUserGroupMemberships = userManager.getWorkspaceSpecificUserGroupMemberships(workspaceId);
+            WorkspaceUserGroupMemberShipDTO[] workspaceUserGroupMemberShipDTO = new WorkspaceUserGroupMemberShipDTO[workspaceUserGroupMemberships.length];
+            for(int i = 0 ; i< workspaceUserGroupMemberships.length ; i++){
+                workspaceUserGroupMemberShipDTO[i] = mapper.map(workspaceUserGroupMemberships[i],WorkspaceUserGroupMemberShipDTO.class);
+            }
+            return workspaceUserGroupMemberShipDTO;
+        } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
 

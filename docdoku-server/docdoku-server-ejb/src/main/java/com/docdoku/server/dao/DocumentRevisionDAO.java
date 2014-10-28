@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -24,20 +24,23 @@ import com.docdoku.core.common.User;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.document.DocumentRevisionKey;
-import com.docdoku.core.meta.Tag;
 import com.docdoku.core.exceptions.CreationException;
 import com.docdoku.core.exceptions.DocumentRevisionAlreadyExistsException;
 import com.docdoku.core.exceptions.DocumentRevisionNotFoundException;
+import com.docdoku.core.meta.Tag;
 
 import javax.persistence.*;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class DocumentRevisionDAO {
 
     private EntityManager em;
     private Locale mLocale;
-    private final static int MAX_RESULTS = 500;
+    private static final int MAX_RESULTS = 500;
+    private static final Logger LOGGER = Logger.getLogger("DocumentRevisionDAO");
 
     public DocumentRevisionDAO(Locale pLocale, EntityManager pEM) {
         em = pEM;
@@ -48,120 +51,7 @@ public class DocumentRevisionDAO {
         em = pEM;
         mLocale = Locale.getDefault();
     }
-/*
-    public List<DocumentRevision> searchDocumentRevisions(String pWorkspaceId, String pDocMId, String pTitle,
-                                                          String pVersion, String pAuthor, String pType, java.util.Date pCreationDateFrom,
-                                                          java.util.Date pCreationDateTo, Collection<Tag> pTags, Collection<DocumentSearchQuery.AbstractAttributeQuery> pAttrs) {
-        StringBuilder queryStr = new StringBuilder();
-        queryStr.append("SELECT DISTINCT r FROM DocumentRevision r ");
 
-        if (pAttrs != null && pAttrs.size() > 0) {
-            queryStr.append("JOIN r.documentIterations d ");
-        }
-
-        queryStr.append("WHERE r.documentMasterWorkspaceId = :workspaceId ");
-        if (pAttrs != null && pAttrs.size() > 0) {
-            queryStr.append("AND d.iteration = (SELECT MAX(d2.iteration) FROM DocumentRevision r2 JOIN r2.documentIterations d2 WHERE r2=r) ");
-            int i=0;
-            for(DocumentSearchQuery.AbstractAttributeQuery attr:pAttrs){
-                queryStr.append("AND EXISTS (");
-                if(attr instanceof DocumentSearchQuery.DateAttributeQuery){
-                    queryStr.append("SELECT attr").append(i).append(" FROM InstanceDateAttribute attr").append(i).append(" ");
-                    queryStr.append("WHERE attr").append(i).append(".dateValue BETWEEN :attrLValue").append(i).append(" AND :attrUValue").append(i).append(" ");
-                    queryStr.append("AND attr").append(i).append(" MEMBER OF d.instanceAttributes ");
-                    queryStr.append("AND attr").append(i).append(".name = :attrName").append(i++);
-                }else if(attr instanceof DocumentSearchQuery.TextAttributeQuery){
-                    queryStr.append("SELECT attr").append(i).append(" FROM InstanceTextAttribute attr").append(i).append(" ");
-                    queryStr.append("WHERE attr").append(i).append(".textValue  = :attrValue").append(i).append(" ");
-                    queryStr.append("AND attr").append(i).append(" MEMBER OF d.instanceAttributes ");
-                    queryStr.append("AND attr").append(i).append(".name = :attrName").append(i++);
-                }else if(attr instanceof DocumentSearchQuery.NumberAttributeQuery){
-                    queryStr.append("SELECT attr").append(i).append(" FROM InstanceNumberAttribute attr").append(i).append(" ");
-                    queryStr.append("WHERE ABS(attr").append(i).append(".numberValue - :attrValue").append(i).append(" ) < 0.0001");
-                    queryStr.append("AND attr").append(i).append(" MEMBER OF d.instanceAttributes ");
-                    queryStr.append("AND attr").append(i).append(".name = :attrName").append(i++);
-                }else if(attr instanceof DocumentSearchQuery.BooleanAttributeQuery){
-                    queryStr.append("SELECT attr").append(i).append(" FROM InstanceBooleanAttribute attr").append(i).append(" ");
-                    queryStr.append("WHERE attr").append(i).append(".booleanValue  = :attrValue").append(i).append(" ");
-                    queryStr.append("AND attr").append(i).append(" MEMBER OF d.instanceAttributes ");
-                    queryStr.append("AND attr").append(i).append(".name = :attrName").append(i++);
-                }else if(attr instanceof DocumentSearchQuery.URLAttributeQuery){
-                    queryStr.append("SELECT attr").append(i).append(" FROM InstanceURLAttribute attr").append(i).append(" ");
-                    queryStr.append("WHERE attr").append(i).append(".urlValue  = :attrValue").append(i).append(" ");
-                    queryStr.append("AND attr").append(i).append(" MEMBER OF d.instanceAttributes ");
-                    queryStr.append("AND attr").append(i).append(".name = :attrName").append(i++);
-                }
-                queryStr.append(") ");
-            }
-            
-        }
-        queryStr.append("AND r.documentMasterId LIKE :id ");
-        queryStr.append("AND r.version LIKE :version ");
-        queryStr.append("AND r.title LIKE :title ");
-        queryStr.append("AND r.documentMaster.type LIKE :type ");
-        if(pAuthor != null)
-            queryStr.append("AND r.author.login = :author ");
-
-        if (pTags != null && pTags.size() > 0) {
-            for(int i =0 ;i<pTags.size();i++)
-                queryStr.append("AND :tag").append(i).append(" MEMBER OF r.tags ");
-        }
-        queryStr.append("AND r.creationDate BETWEEN :lowerDate AND :upperDate ");
-        queryStr.append("ORDER BY r.documentMasterId, r.version");
-
-        TypedQuery<DocumentRevision> query = em.createQuery(queryStr.toString(), DocumentRevision.class);
-        query.setParameter("workspaceId", pWorkspaceId);
-        query.setParameter("id", pDocMId == null ? "%" : "%" + pDocMId + "%");
-        query.setParameter("version", pVersion == null ? "%" : "%" + pVersion + "%");
-        query.setParameter("title", pTitle == null ? "%" : "%" + pTitle + "%");
-        query.setParameter("type", pType == null ? "%" : "%" + pType + "%");
-        if(pAuthor != null)
-            query.setParameter("author", pAuthor);
-
-        
-        if (pTags != null && pTags.size() > 0) {
-            int i=0;
-            for(Tag tag:pTags)
-                query.setParameter("tag" + (i++), tag);
-        }
-        
-        if (pAttrs != null && pAttrs.size() > 0) {
-            int i=0;
-            for(DocumentSearchQuery.AbstractAttributeQuery attr:pAttrs){
-                if(attr instanceof DocumentSearchQuery.TextAttributeQuery){
-                    query.setParameter("attrValue" + i, ((DocumentSearchQuery.TextAttributeQuery)attr).getTextValue());
-                }else if(attr instanceof DocumentSearchQuery.URLAttributeQuery){
-                    query.setParameter("attrValue" + i, ((DocumentSearchQuery.URLAttributeQuery)attr).getUrlValue());
-                }else if(attr instanceof DocumentSearchQuery.NumberAttributeQuery){
-                    query.setParameter("attrValue" + i, ((DocumentSearchQuery.NumberAttributeQuery)attr).getNumberValue());
-                }else if(attr instanceof DocumentSearchQuery.BooleanAttributeQuery){
-                    query.setParameter("attrValue" + i, ((DocumentSearchQuery.BooleanAttributeQuery)attr).isBooleanValue());
-                }else if(attr instanceof DocumentSearchQuery.DateAttributeQuery){
-                    query.setParameter("attrLValue" + i, ((DocumentSearchQuery.DateAttributeQuery)attr).getFromDate());
-                    query.setParameter("attrUValue" + i, ((DocumentSearchQuery.DateAttributeQuery)attr).getToDate());
-                }
-                query.setParameter("attrName" + (i++), attr.getName());
-            }
-        }
-
-        query.setParameter("lowerDate", pCreationDateFrom == null ? new Date(0) : pCreationDateFrom);
-        if(pCreationDateTo!=null){
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(pCreationDateTo);
-            cal.set(Calendar.HOUR_OF_DAY, 24);
-            cal.set(Calendar.MINUTE, 0);
-
-            pCreationDateTo=cal.getTime();
-        }else
-            pCreationDateTo=new Date();
-
-        query.setParameter("upperDate", pCreationDateTo);
-
-        query.setMaxResults(MAX_RESULTS);
-        return query.getResultList();
-
-    }
-*/
     public String findLatestDocMId(String pWorkspaceId, String pType) {
         String docMId;
         Query query = em.createQuery("SELECT m.id FROM DocumentMaster m "
@@ -207,9 +97,9 @@ public class DocumentRevisionDAO {
 
     public DocumentRevision getDocRRef(DocumentRevisionKey pKey) throws DocumentRevisionNotFoundException {
         try {
-            DocumentRevision docR = em.getReference(DocumentRevision.class, pKey);
-            return docR;
+            return em.getReference(DocumentRevision.class, pKey);
         } catch (EntityNotFoundException pENFEx) {
+            LOGGER.log(Level.FINEST,null,pENFEx);
             throw new DocumentRevisionNotFoundException(mLocale, pKey);
         }
     }
@@ -230,11 +120,13 @@ public class DocumentRevisionDAO {
             em.persist(pDocumentRevision);
             em.flush();
         } catch (EntityExistsException pEEEx) {
+            LOGGER.log(Level.FINEST,null,pEEEx);
             throw new DocumentRevisionAlreadyExistsException(mLocale, pDocumentRevision);
         } catch (PersistenceException pPEx) {
             //EntityExistsException is case sensitive
             //whereas MySQL is not thus PersistenceException could be
             //thrown instead of EntityExistsException
+            LOGGER.log(Level.FINEST,null,pPEx);
             throw new CreationException(mLocale);
         }
     }
@@ -247,8 +139,9 @@ public class DocumentRevisionDAO {
         WorkflowDAO workflowDAO = new WorkflowDAO(em);
         workflowDAO.removeWorkflowConstraints(pDocR);
 
-        for(DocumentIteration doc:pDocR.getDocumentIterations())
+        for(DocumentIteration doc:pDocR.getDocumentIterations()) {
             docDAO.removeDoc(doc);
+        }
 
         SharedEntityDAO sharedEntityDAO = new SharedEntityDAO(em);
         sharedEntityDAO.deleteSharesForDocument(pDocR);
@@ -279,18 +172,18 @@ public class DocumentRevisionDAO {
     }
 
     public long getDiskUsageForDocumentsInWorkspace(String pWorkspaceId) {
-        Number result = ((Number)em.createNamedQuery("BinaryResource.diskUsageInPath")
+        Number result = (Number)em.createNamedQuery("BinaryResource.diskUsageInPath")
                 .setParameter("path", pWorkspaceId+"/documents/%")
-                .getSingleResult());
+                .getSingleResult();
 
         return result != null ? result.longValue() : 0L;
 
     }
 
     public long getDiskUsageForDocumentTemplatesInWorkspace(String pWorkspaceId) {
-        Number result = ((Number)em.createNamedQuery("BinaryResource.diskUsageInPath")
+        Number result = (Number)em.createNamedQuery("BinaryResource.diskUsageInPath")
                 .setParameter("path", pWorkspaceId+"/document-templates/%")
-                .getSingleResult());
+                .getSingleResult();
 
         return result != null ? result.longValue() : 0L;
 
@@ -308,21 +201,31 @@ public class DocumentRevisionDAO {
         try{
             return query.getSingleResult();
         }catch(NoResultException ex){
+            LOGGER.log(Level.FINEST,null,ex);
             return null;
         }
     }
 
+    public List<DocumentRevision> getDocumentRevisionsFiltered(User user, String workspaceId) {
+        return getDocumentRevisionsFiltered(user,workspaceId, -1, -1);
+    }
+
     public List<DocumentRevision> getDocumentRevisionsFiltered(User user, String workspaceId, int start, int pMaxResults) {
+        // Todo check group access right
+
+        int maxResults = (pMaxResults<1) ? pMaxResults : MAX_RESULTS;
 
         String excludedFolders = workspaceId + "/~%";
 
-        return em.createNamedQuery("DocumentRevision.findByWorkspace.filterUserACLEntry", DocumentRevision.class)
-                .setParameter("workspaceId", workspaceId)
-                .setParameter("user", user)
-                .setParameter("excludedFolders", excludedFolders)
-                .setFirstResult(start)
-                .setMaxResults(pMaxResults)
-                .getResultList();
+        Query query =em.createNamedQuery("DocumentRevision.findByWorkspace.filterUserACLEntry", DocumentRevision.class)
+                        .setParameter("workspaceId", workspaceId)
+                        .setParameter("user", user)
+                        .setParameter("excludedFolders", excludedFolders);
+        if(start>-1 && maxResults >-1){
+            query.setFirstResult(start)
+                .setMaxResults(maxResults);
+        }
+        return query.getResultList();
     }
 
     public int getDocumentRevisionsCountFiltered(User user, String workspaceId) {

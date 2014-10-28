@@ -10,7 +10,7 @@
 {{/if}}
 <!--Part info-->
 <div class="partInfo">
-    <div class="partNumber">{{status.partNumber}}</div>
+    <div class="partNumber">{{status.partNumber}} - {{model.getVersion}}</div>
     <div class="name">{{model.getName}}</div>
 </div>
 <!--Checkout info-->
@@ -29,7 +29,9 @@
 {{#if status.isCheckedOut}}
 {{#if status.isCheckedOutByMe}}
 <i class="icon-signout" title="Checkin"></i>
-<i class="icon-undo" title="Cancel checkout"></i>
+    {{^if status.isFirstIteration}}
+        <i class="icon-undo" title="Cancel checkout"></i>
+    {{/if}}
 {{else}}
 <i class="icon-refresh" title="Refresh"></i>
 {{/if}}

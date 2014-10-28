@@ -1,0 +1,21 @@
+<div class="header nav-list-entry">
+    <a href="#{{workspaceId}}/folders" data-target="#items-{{view.cid}}">
+        <span class="icon plm-icon-nav-documents"></span>
+        {{i18n.FOLDERS}}
+    </a>
+
+    {{^isReadOnly}}
+    <div class="btn-group">
+        <a class="btn dropdown-toggle" data-toggle="dropdown">
+            <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu large-entries">
+            <li class="new-folder">
+                <a><span class="icon"></span>{{i18n.NEW_FOLDER}}</a>
+            </li>
+        </ul>
+    </div>
+    {{/isReadOnly}}
+
+</div>
+<ul id="items-{{view.cid}}" class="items"></ul>

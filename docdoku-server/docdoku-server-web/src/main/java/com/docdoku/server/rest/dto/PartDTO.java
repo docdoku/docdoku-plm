@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -19,6 +19,8 @@
  */
 
 package com.docdoku.server.rest.dto;
+
+import com.docdoku.core.product.PartRevision;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -50,6 +52,10 @@ public class PartDTO implements Serializable {
     @XmlElement(nillable = true)
     private ACLDTO acl;
     private boolean attributesLocked;
+    @XmlElement(nillable = true)
+    private PartRevision.RevisionStatus status;
+    @XmlElement(nillable = true)
+    int lastIterationNumber;
 
     public PartDTO() {
     }
@@ -57,7 +63,6 @@ public class PartDTO implements Serializable {
     public String getNumber() {
         return number;
     }
-
     public void setNumber(String number) {
         this.number = number;
     }
@@ -65,7 +70,6 @@ public class PartDTO implements Serializable {
     public String getVersion() {
         return version;
     }
-
     public void setVersion(String version) {
         this.version = version;
     }
@@ -73,23 +77,20 @@ public class PartDTO implements Serializable {
     public UserDTO getAuthor() {
         return author;
     }
-
     public void setAuthor(UserDTO author) {
         this.author = author;
     }
 
     public Date getCreationDate() {
-        return creationDate;
+        return (creationDate!=null) ? (Date) creationDate.clone() : null;
     }
-
     public void setCreationDate(Date creationDate) {
-        this.creationDate = creationDate;
+        this.creationDate = (creationDate!=null) ? (Date) creationDate.clone() : null;
     }
 
     public String getDescription() {
         return description;
     }
-
     public void setDescription(String description) {
         this.description = description;
     }
@@ -97,7 +98,6 @@ public class PartDTO implements Serializable {
     public String getName() {
         return name;
     }
-
     public void setName(String name) {
         this.name = name;
     }
@@ -105,7 +105,6 @@ public class PartDTO implements Serializable {
     public boolean isStandardPart() {
         return standardPart;
     }
-
     public void setStandardPart(boolean standardPart) {
         this.standardPart = standardPart;
     }
@@ -113,7 +112,6 @@ public class PartDTO implements Serializable {
     public List<PartIterationDTO> getPartIterations() {
         return partIterations;
     }
-
     public void setPartIterations(List<PartIterationDTO> partIterations) {
         this.partIterations = partIterations;
     }
@@ -121,23 +119,20 @@ public class PartDTO implements Serializable {
     public UserDTO getCheckOutUser() {
         return checkOutUser;
     }
-
     public void setCheckOutUser(UserDTO checkOutUser) {
         this.checkOutUser = checkOutUser;
     }
 
     public Date getCheckOutDate() {
-        return checkOutDate;
+        return (checkOutDate!=null) ? (Date) checkOutDate.clone() : null;
     }
-
     public void setCheckOutDate(Date checkOutDate) {
-        this.checkOutDate = checkOutDate;
+        this.checkOutDate = (checkOutDate!=null) ? (Date) checkOutDate.clone() : null;
     }
 
     public WorkflowDTO getWorkflow() {
         return workflow;
     }
-
     public void setWorkflow(WorkflowDTO workflow) {
         this.workflow = workflow;
     }
@@ -145,7 +140,6 @@ public class PartDTO implements Serializable {
     public String getPartKey() {
         return partKey;
     }
-
     public void setPartKey(String partKey) {
         this.partKey = partKey;
     }
@@ -153,7 +147,6 @@ public class PartDTO implements Serializable {
     public String getWorkspaceId() {
         return workspaceId;
     }
-
     public void setWorkspaceId(String workspaceId) {
         this.workspaceId = workspaceId;
     }
@@ -161,7 +154,6 @@ public class PartDTO implements Serializable {
     public String getLifeCycleState() {
         return lifeCycleState;
     }
-
     public void setLifeCycleState(String lifeCycleState) {
         this.lifeCycleState = lifeCycleState;
     }
@@ -169,7 +161,6 @@ public class PartDTO implements Serializable {
     public boolean isPublicShared() {
         return publicShared;
     }
-
     public void setPublicShared(boolean publicShared) {
         this.publicShared = publicShared;
     }
@@ -177,7 +168,6 @@ public class PartDTO implements Serializable {
     public ACLDTO getAcl() {
         return acl;
     }
-
     public void setAcl(ACLDTO acl) {
         this.acl = acl;
     }
@@ -185,8 +175,21 @@ public class PartDTO implements Serializable {
     public boolean isAttributesLocked() {
         return attributesLocked;
     }
-
     public void setAttributesLocked(boolean attributesLocked) {
         this.attributesLocked = attributesLocked;
+    }
+
+    public PartRevision.RevisionStatus getStatus() {
+        return status;
+    }
+    public void setStatus(PartRevision.RevisionStatus status) {
+        this.status = status;
+    }
+
+    public int getLastIterationNumber() {
+        return lastIterationNumber;
+    }
+    public void setLastIterationNumber(int lastIterationNumber) {
+        this.lastIterationNumber = lastIterationNumber;
     }
 }

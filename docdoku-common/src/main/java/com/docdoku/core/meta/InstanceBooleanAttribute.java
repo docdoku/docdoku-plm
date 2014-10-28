@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -33,7 +33,6 @@ import javax.persistence.Table;
 @Table(name="INSTANCEBOOLEANATTRIBUTE")
 @Entity
 public class InstanceBooleanAttribute extends InstanceAttribute{
-
    
     private boolean booleanValue;
     
@@ -46,23 +45,13 @@ public class InstanceBooleanAttribute extends InstanceAttribute{
     }
 
     @Override
-    public Boolean getValue() {
-        return booleanValue;
-    }
-
-    public boolean isBooleanValue() {
-        return booleanValue;
-    }
-
-    public void setBooleanValue(boolean booleanValue) {
-        this.booleanValue = booleanValue;
-    }
-
+    public Boolean getValue() {return booleanValue;}
     @Override
     public boolean setValue(Object pValue) {
         booleanValue=Boolean.parseBoolean(pValue + "");
         return true;
     }
-    
 
+    public boolean isBooleanValue() {return booleanValue;}
+    public void setBooleanValue(boolean booleanValue) {this.booleanValue = booleanValue;}
 }

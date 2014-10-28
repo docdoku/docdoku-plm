@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -29,9 +29,11 @@ import com.docdoku.core.services.IUserManagerLocal;
 
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
-import javax.faces.bean.ManagedBean;
+import javax.faces.context.FacesContext;
+import javax.inject.Named;
+import javax.servlet.http.HttpServletRequest;
 
-@ManagedBean(name= "recoveryBean")
+@Named("recoveryBean")
 @RequestScoped
 public class RecoveryBean {
 
@@ -51,7 +53,8 @@ public class RecoveryBean {
             passwordRRUuid="";
         
         userManager.recoverPassword(passwordRRUuid, newPassword);
-        return "/recovery.xhtml";
+        HttpServletRequest request = (HttpServletRequest) (FacesContext.getCurrentInstance().getExternalContext().getRequest());
+        return request.getContextPath() + "/recovery.xhtml";
     }
 
     public String sendRecoveryMessage() throws AccountNotFoundException {
@@ -59,8 +62,8 @@ public class RecoveryBean {
         Account account = userManager.getAccount(login);
         PasswordRecoveryRequest passwdRR = userManager.createPasswordRecoveryRequest(account.getLogin());
         mailer.sendPasswordRecovery(account, passwdRR.getUuid());
-
-        return "/recoveryRequested.xhtml";
+        HttpServletRequest request = (HttpServletRequest) (FacesContext.getCurrentInstance().getExternalContext().getRequest());
+        return request.getContextPath() + "/recoveryRequested.xhtml";
     }
 
     public String getLogin() {

@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -22,9 +22,11 @@ package com.docdoku.server.rest;
 
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.UserGroup;
-import com.docdoku.core.configuration.Baseline;
+import com.docdoku.core.configuration.BaselinedFolder;
 import com.docdoku.core.configuration.BaselinedPart;
-import com.docdoku.core.configuration.BaselinedPartKey;
+import com.docdoku.core.configuration.DocumentBaseline;
+import com.docdoku.core.configuration.ProductBaseline;
+import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.product.CADInstance;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartRevision;
@@ -33,13 +35,15 @@ import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.server.rest.dto.*;
+import com.docdoku.server.rest.dto.baseline.BaselinedDocumentDTO;
+import com.docdoku.server.rest.dto.baseline.BaselinedPartDTO;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  *
@@ -47,35 +51,31 @@ import java.util.Set;
  */
 public class Tools {
     
-    private Tools(){};
+    private Tools(){
+
+    }
     
     public static String stripTrailingSlash(String completePath){
-        if(completePath.charAt(completePath.length()-1)=='/')
-            return completePath.substring(0,completePath.length()-1);
-        else
+        if(completePath.charAt(completePath.length()-1)=='/') {
+            return completePath.substring(0, completePath.length() - 1);
+        } else {
             return completePath;
+        }
     }
     
     public static String stripLeadingSlash(String completePath){
-        if(completePath.charAt(0)=='/')
-            return completePath.substring(1,completePath.length());
-        else
+        if(completePath.charAt(0)=='/') {
+            return completePath.substring(1, completePath.length());
+        } else {
             return completePath;
-    }
-    
-    public static String replaceSlashWithColon(String completePath){
-        return completePath.replaceAll("/", ":");
-    }
-    
-    public static String replaceColonWithSlash(String completePath){
-        return completePath.replaceAll(":", "/");
+        }
     }
 
     public static DocumentRevisionDTO createLightDocumentRevisionDTO(DocumentRevisionDTO docRsDTO){
        
        if (docRsDTO.getLastIteration() != null) {
            DocumentIterationDTO lastIteration = docRsDTO.getLastIteration();
-           List<DocumentIterationDTO> iterations = new ArrayList<DocumentIterationDTO>();
+           List<DocumentIterationDTO> iterations = new ArrayList<>();
            iterations.add(lastIteration);
            docRsDTO.setDocumentIterations(iterations);
        }
@@ -116,7 +116,8 @@ public class Tools {
         partDTO.setStandardPart(partRevision.getPartMaster().isStandardPart());
         partDTO.setVersion(partRevision.getVersion());
         partDTO.setDescription(partRevision.getDescription());
-        List<PartIterationDTO> partIterationDTOs = new ArrayList<PartIterationDTO>();
+        partDTO.setStatus(partRevision.getStatus());
+        List<PartIterationDTO> partIterationDTOs = new ArrayList<>();
         for(PartIteration partIteration : partRevision.getPartIterations()){
             partIterationDTOs.add(mapPartIterationToPartIterationDTO(partIteration));
         }
@@ -146,12 +147,12 @@ public class Tools {
     public static PartIterationDTO mapPartIterationToPartIterationDTO(PartIteration partIteration){
         Mapper mapper = DozerBeanMapperSingletonWrapper.getInstance();
 
-        List<PartUsageLinkDTO> usageLinksDTO = new ArrayList<PartUsageLinkDTO>();
+        List<PartUsageLinkDTO> usageLinksDTO = new ArrayList<>();
         PartIterationDTO partIterationDTO = mapper.map(partIteration, PartIterationDTO.class);
 
         for(PartUsageLink partUsageLink : partIteration.getComponents()){
             PartUsageLinkDTO partUsageLinkDTO = mapper.map(partUsageLink, PartUsageLinkDTO.class);
-            List<CADInstanceDTO> cadInstancesDTO = new ArrayList<CADInstanceDTO>();
+            List<CADInstanceDTO> cadInstancesDTO = new ArrayList<>();
             for(CADInstance cadInstance : partUsageLink.getCadInstances()){
                 CADInstanceDTO cadInstanceDTO = mapper.map(cadInstance,CADInstanceDTO.class);
                 cadInstancesDTO.add(cadInstanceDTO);
@@ -166,25 +167,43 @@ public class Tools {
         return partIterationDTO;
     }
 
-    public static List<BaselinedPartDTO> mapBaselinedPartsToBaselinedPartDTO(Baseline baseline){
-        List<BaselinedPartDTO> baselinedPartDTOs = new ArrayList<BaselinedPartDTO>();
-        Set<Map.Entry<BaselinedPartKey,BaselinedPart>> entries = baseline.getBaselinedParts().entrySet();
-
-        for(Map.Entry<BaselinedPartKey,BaselinedPart> entry : entries){
-            baselinedPartDTOs.add(mapBaselinedPartToBaselinedPartDTO(entry.getValue()));
+    public static List<BaselinedPartDTO> mapBaselinedPartsToBaselinedPartDTO(Collection<BaselinedPart> baselinedParts){
+        List<BaselinedPartDTO> baselinedPartDTOs = new ArrayList<>();
+        for(BaselinedPart baselinedPart : baselinedParts){
+            baselinedPartDTOs.add(mapBaselinedPartToBaselinedPartDTO(baselinedPart));
         }
-
         return baselinedPartDTOs;
     }
-
+    public static List<BaselinedPartDTO> mapBaselinedPartsToBaselinedPartDTO(ProductBaseline productBaseline){
+        return mapBaselinedPartsToBaselinedPartDTO(productBaseline.getBaselinedParts().values());
+    }
     public static BaselinedPartDTO mapBaselinedPartToBaselinedPartDTO(BaselinedPart baselinedPart){
-        BaselinedPartDTO baselinedPartDTO = new BaselinedPartDTO();
-        PartIteration partI = baselinedPart.getTargetPart();
-        baselinedPartDTO.setNumber(partI.getPartNumber());
-        baselinedPartDTO.setVersion(partI.getPartVersion());
-        baselinedPartDTO.setIteration(partI.getIteration());
-        baselinedPartDTO.setLastIteration(partI.getPartRevision().getLastIteration().getIteration());
-        baselinedPartDTO.setLastVersion(partI.getPartRevision().getPartMaster().getLastRevision().getVersion());
-        return baselinedPartDTO;
+        return new BaselinedPartDTO(baselinedPart.getTargetPart());
+    }
+
+    public static List<BaselinedDocumentDTO> mapBaselinedDocumentsToBaselinedDocumentDTO(Collection<DocumentIteration> baselinedDocuments){
+        List<BaselinedDocumentDTO> baselinedDocumentDTOs = new ArrayList<>();
+        for(DocumentIteration baselinedDocument : baselinedDocuments){
+            baselinedDocumentDTOs.add(mapBaselinedDocumentToBaselinedDocumentDTO(baselinedDocument));
+        }
+        return baselinedDocumentDTOs;
+    }
+    public static BaselinedDocumentDTO mapBaselinedDocumentToBaselinedDocumentDTO(DocumentIteration baselineDocument){
+        return new BaselinedDocumentDTO(baselineDocument);
+    }
+
+    public static List<FolderDTO> mapBaselinedFoldersToFolderDTO(Collection<BaselinedFolder> baselinedFolders){
+        List<FolderDTO> folderDTOs = new ArrayList<>();
+        for(BaselinedFolder baselinedFolder : baselinedFolders){
+            folderDTOs.add(mapBaselinedFolderToFolderDTO(baselinedFolder));
+        }
+        return folderDTOs;
+    }
+    public static List<FolderDTO> mapBaselinedFoldersToFolderDTO(DocumentBaseline documentBaseline){
+        return mapBaselinedFoldersToFolderDTO(documentBaseline.getBaselinedFolders().values());
+    }
+    private static FolderDTO mapBaselinedFolderToFolderDTO(BaselinedFolder baselinedFolder) {
+        String completePath = baselinedFolder.getCompletePath();
+        return new FolderDTO(FolderDTO.extractParentFolder(completePath),FolderDTO.extractName(completePath));
     }
 }

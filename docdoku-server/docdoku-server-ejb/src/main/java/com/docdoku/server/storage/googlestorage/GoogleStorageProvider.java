@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -30,6 +30,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author Asmae Chadid
@@ -38,7 +40,7 @@ public class GoogleStorageProvider implements StorageProvider {
 
     private final String vaultPath;
 
-    private final static GoogleStorageProperties properties = new GoogleStorageProperties();
+    private static final GoogleStorageProperties properties = new GoogleStorageProperties();
 
     public GoogleStorageProvider(String vaultPath) {
         this.vaultPath = vaultPath;
@@ -75,7 +77,7 @@ public class GoogleStorageProvider implements StorageProvider {
 
     @Override
     public void deleteWorkspaceFolder(String workspaceId, List<BinaryResource> binaryResourcesInWorkspace) throws StorageException {
-        if(workspaceId != null && workspaceId != ""){
+        if(workspaceId != null && !workspaceId.equals("")){
             for(BinaryResource br : binaryResourcesInWorkspace) {
                 delData(br);
             }
@@ -97,8 +99,8 @@ public class GoogleStorageProvider implements StorageProvider {
                 try {
                     getBinaryResourceInputStream(br);
                     return baseUrl + getVirtualPath(br);
-                } catch (FileNotFoundException e1) {
-                } catch (StorageException e1) {
+                } catch (FileNotFoundException | StorageException e1) {
+                    Logger.getLogger(GoogleStorageProvider.class.getName()).log(Level.INFO, null, e1);
                 }
             }
         } catch (StorageException e) {
@@ -118,7 +120,7 @@ public class GoogleStorageProvider implements StorageProvider {
             try {
                 shortenExternalResourceURI = GoogleStorageCloud.getShortenURI(externalResourceURI);
             } catch (IOException e) {
-                e.printStackTrace();
+                Logger.getLogger(GoogleStorageProvider.class.getName()).log(Level.INFO, null, e);
             }
         }
 

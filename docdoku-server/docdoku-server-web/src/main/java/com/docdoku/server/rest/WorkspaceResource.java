@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -19,22 +19,37 @@
  */
 package com.docdoku.server.rest;
 
+import com.docdoku.core.common.Workspace;
+import com.docdoku.core.exceptions.AccountNotFoundException;
 import com.docdoku.core.security.UserGroupMapping;
+import com.docdoku.core.services.IUserManagerLocal;
+import com.docdoku.server.rest.dto.WorkspaceDTO;
+import com.docdoku.server.rest.dto.WorkspaceDetailsDTO;
+import com.docdoku.server.rest.dto.WorkspaceListDTO;
+import org.dozer.DozerBeanMapperSingletonWrapper;
+import org.dozer.Mapper;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 @Stateless
-@Path("workspaces/{workspaceId}")
+@Path("workspaces")
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class WorkspaceResource {
 
     @EJB
     private DocumentsResource documents;
+
+    @EJB
+    private DocumentBaselinesResource documentBaselines;
 
     @EJB
     private FolderResource folders;
@@ -67,6 +82,9 @@ public class WorkspaceResource {
     private WorkflowResource workflows;
 
     @EJB
+    private ChangeItemsResource changeItems;
+
+    @EJB
     private UserResource users;
 
     @EJB
@@ -75,77 +93,124 @@ public class WorkspaceResource {
     @EJB
     private WorkspaceMembershipResource workspaceMemberships;
 
+    @EJB
+    private IUserManagerLocal userManager;
+
+    private Mapper mapper;
+
     public WorkspaceResource() {
     }
 
-    @Path("/documents")
+    @PostConstruct
+    public void init() {
+        mapper = DozerBeanMapperSingletonWrapper.getInstance();
+    }
+
+    @GET
+    public WorkspaceListDTO getWorkspacesForConnectedUser() throws AccountNotFoundException {
+
+        WorkspaceListDTO workspaceListDTO = new WorkspaceListDTO();
+
+        Workspace[] administratedWorkspaces = userManager.getAdministratedWorkspaces();
+        Workspace[] allWorkspaces = userManager.getWorkspacesWhereCallerIsActive();
+
+        for(Workspace workspace:administratedWorkspaces){
+            workspaceListDTO.addAdministratedWorkspaces(mapper.map(workspace, WorkspaceDTO.class));
+        }
+        for(Workspace workspace:allWorkspaces){
+            workspaceListDTO.addAllWorkspaces(mapper.map(workspace, WorkspaceDTO.class));
+        }
+        return workspaceListDTO;
+    }
+
+    @GET
+    @Path("/more")
+    public List<WorkspaceDetailsDTO> getDetailedWorkspacesForConnectedUser() throws AccountNotFoundException {
+        List<WorkspaceDetailsDTO> workspaceListDTO = new ArrayList<>();
+
+        for(Workspace workspace : userManager.getWorkspacesWhereCallerIsActive()){
+            workspaceListDTO.add(mapper.map(workspace, WorkspaceDetailsDTO.class));
+        }
+        return workspaceListDTO;
+    }
+
+    @Path("/{workspaceId}/documents")
     public DocumentsResource documents() {
         return documents;
     }
 
-    @Path("/folders") 
+    @Path("/{workspaceId}/folders")
     public FolderResource folders() {
         return folders;
     }
 
-    @Path("/document-templates")
+    @Path("/{workspaceId}/document-templates")
     public DocumentTemplateResource docTemplates() {
         return docTemplates;
     }
 
-    @Path("/part-templates")
+    @Path("/{workspaceId}/part-templates")
     public PartTemplateResource partTemplates() {
         return partTemplates;
     }
 
-    @Path("/products")
+    @Path("/{workspaceId}/products")
     public ProductResource products() {
         return products;
     }
 
-    @Path("/parts")
+    @Path("/{workspaceId}/parts")
     public PartsResource parts() {
         return parts;
     }
 
-    @Path("/tags")
+    @Path("/{workspaceId}/tags")
     public TagResource tags() {
         return tags;
     }
 
-    @Path("/checkedouts")
+    @Path("/{workspaceId}/checkedouts")
     public CheckedOutResource checkedOuts() {
         return checkedOuts;
     }
 
-    @Path("/search")
+    @Path("/{workspaceId}/search")
     public SearchResource search() {
         return searches;
     }
 
-    @Path("/tasks")
+    @Path("/{workspaceId}/tasks")
     public TaskResource task() {
         return tasks;
     }
 
-    @Path("/workflows")
+    @Path("/{workspaceId}/workflows")
     public WorkflowResource workflows() {
         return workflows;
     }
 
-    @Path("/users")
+    @Path("/{workspaceId}/users")
     public UserResource users() {
         return users;
     }
 
-    @Path("/roles")
+    @Path("/{workspaceId}/roles")
     public RoleResource roles() {
         return roles;
     }
 
-    @Path("/memberships")
+    @Path("/{workspaceId}/memberships")
     public WorkspaceMembershipResource workspaceMemberships() {
         return workspaceMemberships;
     }
 
+    @Path("/{workspaceId}/changes")
+    public ChangeItemsResource changeItems(){
+        return changeItems;
+    }
+
+    @Path("/{workspaceId}/document-baselines")
+    public DocumentBaselinesResource documentBaselines(){
+        return documentBaselines;
+    }
 }

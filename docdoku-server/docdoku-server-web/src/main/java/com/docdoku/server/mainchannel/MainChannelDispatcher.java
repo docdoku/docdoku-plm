@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -20,6 +20,11 @@
 
 package com.docdoku.server.mainchannel;
 
+import com.docdoku.server.mainchannel.module.ChatMessage;
+import com.docdoku.server.mainchannel.module.CollaborativeMessage;
+import com.docdoku.server.mainchannel.module.StatusMessage;
+import com.docdoku.server.mainchannel.module.WebRTCMessage;
+
 import javax.websocket.Session;
 import java.util.Collection;
 
@@ -29,35 +34,76 @@ public final class MainChannelDispatcher {
     }
 
     /* Send a message to multiple channels */
-    public static void sendToAllUserChannels(String userLogin, String message){
-
-        if(userLogin != null && !userLogin.equals("") ){
-
-            if(MainChannelApplication.getUserChannels(userLogin) != null) {
-
-                Collection<Session> sessions = MainChannelApplication.getUserChannels(userLogin).values();
-
-                for(Session session:sessions){
-                    send(session, message);
-                }
-
+    public static void sendToAllUserChannels(String userLogin, ChatMessage message){
+        if(userLogin != null && !"".equals(userLogin) && MainChannelApplication.getUserChannels(userLogin) != null) {
+            Collection<Session> sessions = MainChannelApplication.getUserChannels(userLogin).values();
+            for(Session session:sessions){
+                send(session, message);
             }
-
         }
-
     }
+
+    /* Send a message to multiple channels */
+    public static void sendToAllUserChannels(String userLogin, WebRTCMessage message){
+        if(userLogin != null && !"".equals(userLogin) && MainChannelApplication.getUserChannels(userLogin) != null) {
+            Collection<Session> sessions = MainChannelApplication.getUserChannels(userLogin).values();
+            for(Session session:sessions){
+                send(session, message);
+            }
+        }
+    }
+
+    /* Send a message to multiple channels */
+    public static void sendToAllUserChannels(String userLogin, CollaborativeMessage message){
+        if(userLogin != null && !"".equals(userLogin) && MainChannelApplication.getUserChannels(userLogin) != null) {
+            Collection<Session> sessions = MainChannelApplication.getUserChannels(userLogin).values();
+            for(Session session:sessions){
+                send(session, message);
+            }
+        }
+    }
+
 
     /* Send a message to single channel */
     public static boolean send(Session session, String message){
-
         if (session != null) {
             session.getAsyncRemote().sendText(message);
             return true;
         }
-
         return false;
-
+    }
+    /* Send a message to single channel */
+    public static boolean send(Session session, StatusMessage status){
+        if (session != null) {
+            session.getAsyncRemote().sendObject(status);
+            return true;
+        }
+        return false;
     }
 
+    /* Send a message to single channel */
+    public static boolean send(Session session, ChatMessage message){
+        if (session != null) {
+            session.getAsyncRemote().sendObject(message);
+            return true;
+        }
+        return false;
+    }
 
+    /* Send a message to single channel */
+    public static boolean send(Session session, WebRTCMessage message){
+        if (session != null) {
+            session.getAsyncRemote().sendObject(message);
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean send(Session session, CollaborativeMessage message) {
+        if (session != null) {
+            session.getAsyncRemote().sendObject(message);
+            return true;
+        }
+        return false;
+    }
 }

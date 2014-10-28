@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -44,21 +44,11 @@ public class ProductInstanceIterationKey implements Serializable {
         iteration=pIteration;
     }
 
-    public int getIteration() {
-        return iteration;
-    }
+    public int getIteration() {return iteration;}
+    public void setIteration(int iteration) {this.iteration = iteration;}
 
-    public void setIteration(int iteration) {
-        this.iteration = iteration;
-    }
-
-    public ProductInstanceMasterKey getProductInstanceMaster() {
-        return productInstanceMaster;
-    }
-
-    public void setProductInstanceMaster(ProductInstanceMasterKey productInstanceMaster) {
-        this.productInstanceMaster = productInstanceMaster;
-    }
+    public ProductInstanceMasterKey getProductInstanceMaster() {return productInstanceMaster;}
+    public void setProductInstanceMaster(ProductInstanceMasterKey productInstanceMaster) {this.productInstanceMaster = productInstanceMaster;}
 
     @Override
     public boolean equals(Object o) {
@@ -67,10 +57,8 @@ public class ProductInstanceIterationKey implements Serializable {
 
         ProductInstanceIterationKey that = (ProductInstanceIterationKey) o;
 
-        if (iteration != that.iteration) return false;
-        if (!productInstanceMaster.equals(that.productInstanceMaster)) return false;
+        return iteration == that.iteration && productInstanceMaster.equals(that.productInstanceMaster);
 
-        return true;
     }
 
     @Override

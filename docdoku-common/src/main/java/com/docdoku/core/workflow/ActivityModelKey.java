@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -44,10 +44,10 @@ public class ActivityModelKey implements Serializable {
     @Override
     public int hashCode() {
         int hash = 1;
-	hash = 31 * hash + workspaceId.hashCode();
-	hash = 31 * hash + workflowModelId.hashCode();
+        hash = 31 * hash + workspaceId.hashCode();
+        hash = 31 * hash + workflowModelId.hashCode();
         hash = 31 * hash + step;
-	return hash;
+        return hash;
     }
     
     @Override
@@ -55,10 +55,13 @@ public class ActivityModelKey implements Serializable {
         if (this == pObj) {
             return true;
         }
-        if (!(pObj instanceof ActivityModelKey))
+        if (!(pObj instanceof ActivityModelKey)) {
             return false;
+        }
         ActivityModelKey key = (ActivityModelKey) pObj;
-        return ((key.workflowModelId.equals(workflowModelId)) && (key.workspaceId.equals(workspaceId)) && (key.step==step));
+        return key.workflowModelId.equals(workflowModelId) &&
+               key.workspaceId.equals(workspaceId) &&
+               key.step==step;
     }
     
     @Override

@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -28,6 +28,8 @@ import com.docdoku.server.viewers.utils.ScormUtil;
 
 import javax.ejb.EJB;
 import java.io.InputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ScormResourceGetterImpl implements DocumentResourceGetter {
 
@@ -50,7 +52,7 @@ public class ScormResourceGetterImpl implements DocumentResourceGetter {
         try {
             return dataManager.exists(binaryResource, ScormUtil.getScormSubResourceVirtualPath(ScormUtil.IMS_MANIFEST));
         } catch (StorageException e) {
-            e.printStackTrace();
+            Logger.getLogger(ScormResourceGetterImpl.class.getName()).log(Level.INFO, null, e);
             return false;
         }
     }

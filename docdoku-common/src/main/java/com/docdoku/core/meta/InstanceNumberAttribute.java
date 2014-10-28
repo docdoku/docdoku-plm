@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -47,26 +47,18 @@ public class InstanceNumberAttribute extends InstanceAttribute{
     }
 
     @Override
-    public Float getValue() {
-        return numberValue;
-    }
-
-    public float getNumberValue() {
-        return numberValue;
-    }
-
-    public void setNumberValue(float numberValue) {
-        this.numberValue = numberValue;
-    }
-
+    public Float getValue() {return numberValue;}
     @Override
     public boolean setValue(Object pValue) {
         try{
             numberValue=Float.parseFloat(pValue + "");
             return true;
         }catch(NumberFormatException ex){
+            numberValue=0;
             return false;
         }
     }
 
+    public float getNumberValue() {return numberValue;}
+    public void setNumberValue(float numberValue) {this.numberValue = numberValue;}
 }

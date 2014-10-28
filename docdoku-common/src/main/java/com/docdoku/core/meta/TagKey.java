@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -42,9 +42,9 @@ public class TagKey implements Serializable {
     @Override
     public int hashCode() {
         int hash = 1;
-	hash = 31 * hash + workspaceId.hashCode();
-	hash = 31 * hash + label.hashCode();
-	return hash;
+        hash = 31 * hash + workspaceId.hashCode();
+        hash = 31 * hash + label.hashCode();
+        return hash;
     }
     
     @Override
@@ -52,10 +52,11 @@ public class TagKey implements Serializable {
         if (this == pObj) {
             return true;
         }
-        if (!(pObj instanceof TagKey))
+        if (!(pObj instanceof TagKey)) {
             return false;
+        }
         TagKey key = (TagKey) pObj;
-        return ((key.workspaceId.equals(workspaceId)) && (key.label.equals(label)));
+        return key.workspaceId.equals(workspaceId) && key.label.equals(label);
     }
     
     @Override

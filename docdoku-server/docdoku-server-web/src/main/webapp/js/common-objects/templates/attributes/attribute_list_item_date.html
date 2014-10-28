@@ -1,9 +1,0 @@
-{{> attribute_list_item}}
-<div class="controls">
-    {{#editMode}}
-	<input type="date" class="input-xlarge value" value="{{model.value}}" {{#model.mandatory}}required{{/model.mandatory}}/>
-    {{/editMode}}
-    {{^editMode}}
-        {{model.value}}
-    {{/editMode}}
-</div>

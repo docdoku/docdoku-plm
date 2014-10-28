@@ -1,0 +1,19 @@
+<div class="activity {{activity.type}}">
+    <div class="activity-topbar">
+        <button class="switch-activity" title="{{switchModeTitle}}"></button>
+        <input id="tasksToComplete-{{cid}}" class="tasksToComplete" type="number" step="1" min="1"
+               max="{{activity.taskModels.length}}" value="{{activity.tasksToComplete}}"/>
+        <label for="tasksToComplete-{{cid}}" class="tasksToComplete">{{i18n.NB_TASKS_TO_COMPLETE}}</label>
+        <button class="delete-activity" title="{{i18n.DELETE_ACTIVITY}}"><i class="fa fa-times"></i></button>
+        <input class="activity-state" type="text" placeholder="{{i18n.ACTIVITY_STATE_PLACEHOLDER}}"
+               value="{{activity.lifeCycleState}}"/>
+
+        <div class="relaunchActivitySelector-wrapper">
+            <i class="fa fa-arrow-circle-left" title="{{i18n.RELAUCNH_ACTIVITY_SELECTOR}}"></i>
+            <select title="{{i18n.RELAUCNH_ACTIVITY_SELECTOR}}" class="relaunchActivitySelector"></select>
+        </div>
+    </div>
+    <ul class="task-list">
+    </ul>
+    <button class="add-task" title="{{i18n.ADD_TASK}}"><i class="fa fa-plus"></i></button>
+</div>

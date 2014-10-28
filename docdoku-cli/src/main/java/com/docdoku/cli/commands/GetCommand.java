@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -25,10 +25,10 @@ import com.docdoku.cli.helpers.FileHelper;
 import com.docdoku.cli.helpers.MetaDirectoryManager;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.Version;
-import com.docdoku.core.configuration.BaselineConfigSpec;
 import com.docdoku.core.configuration.ConfigSpec;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.*;
+import com.docdoku.core.services.IProductConfigSpecManagerWS;
 import com.docdoku.core.services.IProductManagerWS;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
@@ -71,6 +71,7 @@ public class GetCommand extends AbstractCommandLine{
     protected int baselineId;
 
     private IProductManagerWS productS;
+    private IProductConfigSpecManagerWS productConfigSpecS;
 
     public Object execImpl() throws Exception {
 
@@ -79,12 +80,13 @@ public class GetCommand extends AbstractCommandLine{
         }
 
         productS = ScriptingTools.createProductService(getServerURL(), user, password);
+        productConfigSpecS = ScriptingTools.createProductConfigSpecService(getServerURL(), user, password);
         String strRevision = revision==null?null:revision.toString();
 
         ConfigSpec cs = null;
 
         if(baselineId != 0){
-            cs = new BaselineConfigSpec(productS.getBaselineById(baselineId));
+            cs = productConfigSpecS.getConfigSpecForBaseline(baselineId);
         }
 
         getPart(partNumber, strRevision, iteration, cs);
@@ -110,7 +112,7 @@ public class GetCommand extends AbstractCommandLine{
         path=path.getParentFile();
     }
 
-    private void getPart(String pPartNumber, String pRevision, int pIteration,ConfigSpec cs) throws IOException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartMasterNotFoundException, PartRevisionNotFoundException, LoginException, NoSuchAlgorithmException, PartIterationNotFoundException, NotAllowedException {
+    private void getPart(String pPartNumber, String pRevision, int pIteration,ConfigSpec cs) throws IOException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartMasterNotFoundException, PartRevisionNotFoundException, LoginException, NoSuchAlgorithmException, PartIterationNotFoundException, NotAllowedException, AccessRightException {
         PartRevision pr;
         PartIteration pi;
         PartMaster pm = productS.getPartMaster(new PartMasterKey(workspace, pPartNumber));

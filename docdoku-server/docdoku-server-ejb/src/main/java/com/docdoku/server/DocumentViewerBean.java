@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -36,6 +36,8 @@ import javax.inject.Inject;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Stateless(name="DocumentViewerBean")
 public class DocumentViewerBean implements IDocumentViewerManagerLocal {
@@ -49,7 +51,7 @@ public class DocumentViewerBean implements IDocumentViewerManagerLocal {
 
     @Override
     public String getHtmlForViewer(BinaryResource binaryResource, String uuid) {
-        String template = "";
+        String template;
         DocumentViewer documentViewerSelected = selectViewerForTemplate(binaryResource);
 
         try {
@@ -59,7 +61,7 @@ public class DocumentViewerBean implements IDocumentViewerManagerLocal {
                 template = getDefaultTemplate(binaryResource,uuid);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.getLogger(DocumentViewerBean.class.getName()).log(Level.INFO, null, e);
             template = new StringBuilder().append("<p>").append("Can't render ").append(binaryResource.getName()).append("</p>").toString();
         }
 
@@ -87,9 +89,7 @@ public class DocumentViewerBean implements IDocumentViewerManagerLocal {
         StringWriter templateWriter = new StringWriter();
         mustache.execute(templateWriter, scopes).flush();
 
-        String html = ViewerUtils.getViewerTemplate(dataManager, binaryResource, uuid, templateWriter.toString());
-
-        return html;
+        return ViewerUtils.getViewerTemplate(dataManager, binaryResource, uuid, templateWriter.toString());
     }
 
 }

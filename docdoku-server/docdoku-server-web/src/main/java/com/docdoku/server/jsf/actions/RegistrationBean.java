@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -19,23 +19,19 @@
  */
 package com.docdoku.server.jsf.actions;
 
-import com.docdoku.core.common.Account;
-import com.docdoku.core.common.Workspace;
 import com.docdoku.core.exceptions.AccountAlreadyExistsException;
 import com.docdoku.core.exceptions.CreationException;
 import com.docdoku.core.services.IUserManagerLocal;
 
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
-import javax.faces.bean.ManagedBean;
 import javax.faces.context.FacesContext;
+import javax.inject.Named;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.HashMap;
-import java.util.HashSet;
 
-@ManagedBean(name = "registrationBean")
+@Named("registrationBean")
 @RequestScoped
 public class RegistrationBean {
 
@@ -50,20 +46,15 @@ public class RegistrationBean {
     }
 
     public String register() throws AccountAlreadyExistsException, CreationException, ServletException {
-
-        //TODO switch to a more JSF style code
-        HttpServletRequest request = (HttpServletRequest) (FacesContext.getCurrentInstance().getExternalContext().getRequest()); 
+        HttpServletRequest request = (HttpServletRequest) (FacesContext.getCurrentInstance().getExternalContext().getRequest());
         String language = FacesContext.getCurrentInstance().getViewRoot().getLocale().getLanguage();
 
-        Account account = userManager.createAccount(login, name, email, language, password);
+        userManager.createAccount(login, name, email, language, password);
         request.login(login, password);
 
-        HttpSession sessionHTTP = request.getSession();
-        sessionHTTP.setAttribute("account", account);
-        sessionHTTP.setAttribute("administeredWorkspaces", new HashMap<String, Workspace>());
-        sessionHTTP.setAttribute("regularWorkspaces", new HashSet<Workspace>());
-
-        return "/register.xhtml";
+        HttpSession session = request.getSession();
+        session.setAttribute("remoteUser",login);
+        return request.getContextPath()+"/register.xhtml";
     }
 
     public String getLogin() {

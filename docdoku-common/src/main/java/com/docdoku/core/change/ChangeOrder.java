@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -38,8 +38,53 @@ import java.util.Set;
  */
 @Table(name="CHANGEORDER")
 @Entity
+@AssociationOverrides({
+        @AssociationOverride(
+                name="tags",
+                joinTable = @JoinTable(name="CHANGEORDER_TAG",
+                        inverseJoinColumns={
+                                @JoinColumn(name="TAG_LABEL", referencedColumnName="LABEL"),
+                                @JoinColumn(name="TAG_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID")
+                        },
+                        joinColumns={
+                                @JoinColumn(name="CHANGEORDER_ID", referencedColumnName="ID")
+                        }
+                )
+        ),
+        @AssociationOverride(
+                name="affectedDocuments",
+                joinTable = @JoinTable(name="CHANGEORDER_AFFECTED_DOCUMENT",
+                        inverseJoinColumns={
+                                @JoinColumn(name="DOCUMENTMASTER_ID", referencedColumnName="DOCUMENTMASTER_ID"),
+                                @JoinColumn(name="DOCUMENTREVISION_VERSION", referencedColumnName="DOCUMENTREVISION_VERSION"),
+                                @JoinColumn(name="DOCUMENTMASTER_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
+                                @JoinColumn(name = "ITERATION", referencedColumnName = "ITERATION")
+                        },
+                        joinColumns={
+                                @JoinColumn(name="CHANGEORDER_ID", referencedColumnName="ID")
+                        }
+                )
+        ),
+        @AssociationOverride(
+                name="affectedParts",
+                joinTable = @JoinTable(name="CHANGEORDER_AFFECTED_PART",
+                        inverseJoinColumns={
+                                @JoinColumn(name="PARTMASTER_PARTNUMBER", referencedColumnName="PARTMASTER_PARTNUMBER"),
+                                @JoinColumn(name="PARTREVISION_VERSION", referencedColumnName="PARTREVISION_VERSION"),
+                                @JoinColumn(name="PARTMASTER_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
+                                @JoinColumn(name = "ITERATION", referencedColumnName = "ITERATION")
+                        },
+                        joinColumns={
+                                @JoinColumn(name="CHANGEORDER_ID", referencedColumnName="ID")
+                        }
+                )
+        )
+})
 @NamedQueries({
         @NamedQuery(name="ChangeOrder.findChangeOrdersByWorkspace",query="SELECT DISTINCT c FROM ChangeOrder c WHERE c.workspace.id = :workspaceId"),
+        @NamedQuery(name="ChangeOrder.countOrderByMilestonesAndWorkspace",query="SELECT COUNT(o) FROM ChangeOrder o WHERE o.workspace.id = :workspaceId AND o.milestone.id = :milestoneId"),
+        @NamedQuery(name="ChangeOrder.getOrderByMilestonesAndWorkspace",query="SELECT DISTINCT o FROM ChangeOrder o WHERE o.workspace.id = :workspaceId AND o.milestone.id = :milestoneId"),
+        @NamedQuery(name="ChangeOrder.findByReference", query="SELECT c FROM ChangeOrder c WHERE c.name LIKE :name AND c.workspace.id = :workspaceId")
 })
 public class ChangeOrder extends ChangeItem {
 
@@ -57,8 +102,6 @@ public class ChangeOrder extends ChangeItem {
     @ManyToOne(fetch = FetchType.EAGER)
     private Milestone milestone;
 
-    private Priority priority;
-
     public ChangeOrder() {
     }
 
@@ -66,19 +109,18 @@ public class ChangeOrder extends ChangeItem {
         super(pWorkspace, pName, pAuthor);
     }
 
-    public Priority getPriority() {
-        return priority;
-    }
-
-    public void setPriority(Priority priority) {
-        this.priority = priority;
+    public ChangeOrder(String name, Workspace workspace, User author, User assignee, Date creationDate, String description, Priority priority, Category category, Milestone milestone) {
+        super(name, workspace, author, assignee, creationDate, description, priority, category);
+        this.milestone = milestone;
     }
 
     public Milestone getMilestone() {
         return milestone;
     }
+    public void setMilestone(Milestone milestone) {this.milestone = milestone;}
 
-    public void setMilestone(Milestone milestone) {
-        this.milestone = milestone;
-    }
+    public Set<ChangeRequest> getAddressedChangeRequests() {return addressedChangeRequests;}
+    public void setAddressedChangeRequests(Set<ChangeRequest> addressedChangeRequests) {this.addressedChangeRequests = addressedChangeRequests;}
+
+    public int getMilestoneId(){ return (milestone!=null) ? milestone.getId() : -1;}
 }

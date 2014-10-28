@@ -1,0 +1,27 @@
+<div class="header nav-list-entry FolderNavListItem-entry FolderNavEntry">
+    <a href="#{{workspaceId}}/folders/{{model.path}}" class="FolderNavEntry-tab" title="{{model.name}}" data-target="#items-{{view.cid}}">
+        <span class="status FolderNavEntry-status"></span>
+        <span class="icon FolderNavEntry-icon"></span>
+        <span class="FolderNavEntry-name">{{model.name}}</span>
+    </a>
+
+    {{^isReadOnly}}
+        <div class="btn-group">
+            <a class="btn dropdown-toggle" data-toggle="dropdown">
+                <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu large-entries NavToggle-entries">
+                <li class="new-folder NavToggle-entry">
+                    <a><span class="icon"></span>{{i18n.NEW_FOLDER}}</a>
+                </li>
+                <li class="edit NavToggle-entry">
+                    <a><span class="icon"></span>{{i18n.RENAME}}</a>
+                </li>
+                <li class="delete NavToggle-entry">
+                    <a><span class="icon"></span>{{i18n.DELETE}}</a>
+                </li>
+            </ul>
+        </div>
+    {{/isReadOnly}}
+</div>
+<ul id="items-{{view.cid}}" class="items FolderNavListItem-subList SubFolderNavList"></ul>

@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -48,11 +48,11 @@ import java.util.Set;
 @javax.persistence.Entity
 public class DocumentMasterTemplate implements Serializable, FileHolder, Comparable<DocumentMasterTemplate> {
 
-    @Column(length=255)
+    @Column(length=100)
     @javax.persistence.Id
     private String id="";
     
-    @javax.persistence.Column(name = "WORKSPACE_ID", length=255, nullable = false, insertable = false, updatable = false)
+    @javax.persistence.Column(name = "WORKSPACE_ID", length=100, nullable = false, insertable = false, updatable = false)
     @javax.persistence.Id
     private String workspaceId="";
     
@@ -72,7 +72,7 @@ public class DocumentMasterTemplate implements Serializable, FileHolder, Compara
             @JoinColumn(name="DOCUMENTMASTERTEMPLATE_ID", referencedColumnName="ID")
         }
     )
-    private Set<BinaryResource> attachedFiles = new HashSet<BinaryResource>();
+    private Set<BinaryResource> attachedFiles = new HashSet<>();
 
 
     @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
@@ -85,7 +85,7 @@ public class DocumentMasterTemplate implements Serializable, FileHolder, Compara
                     @JoinColumn(name="DOCUMENTMASTERTEMPLATE_ID", referencedColumnName="ID")
             }
     )
-    private Set<InstanceAttributeTemplate> attributeTemplates=new HashSet<InstanceAttributeTemplate>();
+    private Set<InstanceAttributeTemplate> attributeTemplates=new HashSet<>();
 
     private boolean attributesLocked;
     
@@ -167,8 +167,9 @@ public class DocumentMasterTemplate implements Serializable, FileHolder, Compara
         attributeTemplates.retainAll(pAttributeTemplates);
         for(InstanceAttributeTemplate currentAttr:attributeTemplates){
             for(InstanceAttributeTemplate attr:pAttributeTemplates){
-                if(attr.equals(currentAttr))
+                if(attr.equals(currentAttr)) {
                     currentAttr.setAttributeType(attr.getAttributeType());
+                }
             }
         }
         pAttributeTemplates.removeAll(attributeTemplates);
@@ -225,18 +226,19 @@ public class DocumentMasterTemplate implements Serializable, FileHolder, Compara
         if (this == pObj) {
             return true;
         }
-        if (!(pObj instanceof DocumentMasterTemplate))
+        if (!(pObj instanceof DocumentMasterTemplate)) {
             return false;
+        }
         DocumentMasterTemplate template = (DocumentMasterTemplate) pObj;
-        return ((template.id.equals(id)) && (template.workspaceId.equals(workspaceId)));
+        return template.id.equals(id) && template.workspaceId.equals(workspaceId);
     }
     
     @Override
     public int hashCode() {
         int hash = 1;
-	hash = 31 * hash + workspaceId.hashCode();
-	hash = 31 * hash + id.hashCode();
-	return hash;
+        hash = 31 * hash + workspaceId.hashCode();
+        hash = 31 * hash + id.hashCode();
+        return hash;
     }
     
     @Override
@@ -246,10 +248,11 @@ public class DocumentMasterTemplate implements Serializable, FileHolder, Compara
     
     public int compareTo(DocumentMasterTemplate pTemplate) {
         int wksComp = workspaceId.compareTo(pTemplate.workspaceId);
-        if (wksComp != 0)
+        if (wksComp != 0) {
             return wksComp;
-        else
+        } else {
             return id.compareTo(pTemplate.id);
+        }
     }
     
 }

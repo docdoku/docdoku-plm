@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -38,12 +38,12 @@ import java.io.Serializable;
 @javax.persistence.Entity
 public class WorkspaceUserGroupMembership implements Serializable {
 
-    @javax.persistence.Column(name = "WORKSPACE_ID", length=255, nullable = false, insertable = false, updatable = false)
+    @javax.persistence.Column(name = "WORKSPACE_ID", length=100, nullable = false, insertable = false, updatable = false)
     @javax.persistence.Id
     private String workspaceId = "";
     @javax.persistence.ManyToOne(optional = false, fetch = FetchType.EAGER)
     private Workspace workspace;
-    @javax.persistence.Column(name = "MEMBER_WORKSPACE_ID", length=255, nullable = false, insertable = false, updatable = false)
+    @javax.persistence.Column(name = "MEMBER_WORKSPACE_ID", length=100, nullable = false, insertable = false, updatable = false)
     @javax.persistence.Id
     private String memberWorkspaceId = "";
     @javax.persistence.Column(name = "MEMBER_ID", nullable = false, insertable = false, updatable = false)

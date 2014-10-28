@@ -1,0 +1,186 @@
+<div class="Modal modal document-modal">
+    <div class="ModalHeader Modal-header modal-header">
+        {{#isCheckout}}
+        {{#isCheckoutByConnectedUser}}<i class="fa fa-pencil"></i>{{/isCheckoutByConnectedUser}}
+        {{^isCheckoutByConnectedUser}}<i class="fa fa-lock"></i>{{/isCheckoutByConnectedUser}}
+        {{/isCheckout}}
+        {{^isCheckout}}
+        <i class="ModalHeader-icon fa fa-eye"></i>
+        {{/isCheckout}}
+
+        <a class="close" data-dismiss="modal">×</a>
+
+        <h3><span class="icon"></span><a target="_blank" href="{{permalink}}">{{master.title}} ({{master.id}})</a></h3>
+
+    </div>
+    <div class="ModalBody Modal-body modal-body">
+        <div id="alerts-{{view.cid}}" class="ModalBody-alert"></div>
+        <div class="ModalTabs ModalBody-tabs tabs">
+            <ul class="ModalTabs-nav nav nav-tabs">
+                <li class="active"><a href="#tab-iteration-document" data-toggle="tab">{{i18n.GENERAL}}</a></li>
+                <li><a href="#tab-iteration-iteration" data-toggle="tab">{{i18n.ITERATION}}</a></li>
+                <li><a href="#tab-iteration-attributes" data-toggle="tab">{{i18n.ATTRIBUTES}}</a></li>
+                <li><a href="#tab-iteration-files" data-toggle="tab">{{i18n.ATTACHED_FILES}}</a></li>
+                <li><a href="#tab-iteration-lifecycle" data-toggle="tab">{{i18n.LIFECYCLE_STATE}}</a></li>
+                <li><a href="#tab-iteration-links" data-toggle="tab">{{i18n.LINKS}}</a></li>
+            </ul>
+
+            <form id="form-document" class="ModalTabs-form form-horizontal">
+                <div id="form-{{view.cid}}" class="ModalTabsContent tab-content form-horizontal">
+                    <div id="tab-iteration-document" class="ModalTabsPane tab-pane active">
+                        <div class="control-group">
+                            <label class="control-label">{{i18n.PATH}}</label>
+
+                            <div class="controls">
+                                <span class="help-inline"><a class="document-path"><i class="fa fa-folder"></i>
+                                    {{master.path}}</a></span>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">{{i18n.REFERENCE}}</label>
+
+                            <div class="controls">
+                                <span class="help-inline">{{master.id}}</span>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">{{i18n.AUTHOR}}</label>
+
+                            <div class="controls">
+                                <span class="help-inline"><a class="author-popover">{{master.author.name}}</a></span>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">{{i18n.CREATION_DATE}}</label>
+
+                            <div class="controls">
+                                <span class="help-inline">{{master.creationDate}}</span>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">{{i18n.TYPE}}</label>
+
+                            <div class="controls">
+                                <span class="help-inline">{{master.type}}</span>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">{{i18n.TITLE}}</label>
+
+                            <div class="controls">
+                                <span class="help-inline">{{master.title}}</span>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">{{i18n.CHECKOUT_BY}}</label>
+
+                            <div class="controls">
+                                <span class="help-inline"><a
+                                        class="checkout-user-popover">{{master.checkOutUser.name}}</a></span>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">{{i18n.CHECKOUT_DATE}}</label>
+
+                            <div class="controls">
+                                <span class="help-inline">{{master.checkOutDate}}</span>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">{{i18n.LIFECYCLE_STATE}}</label>
+
+                            <div class="controls">
+                                <span class="help-inline">{{master.lifeCycleState}}</span>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">{{i18n.DESCRIPTION}}</label>
+
+                            <div class="controls">
+                                <span class="help-inline">{{master.description}}</span>
+                            </div>
+                        </div>
+                        {{^isForBaseline}}
+                            <div class="control-group">
+                                <label class="control-label">{{i18n.TAGS}}</label>
+
+                                <div class="controls">
+                                    <ul class="help-inline master-tags-list unstyled"></ul>
+                                </div>
+                            </div>
+                        {{/isForBaseline}}
+                    </div>
+                    <div id="tab-iteration-iteration" class="ModalTabsPane tab-pane">
+                        <div class="control-group">
+                            <label class="control-label">{{i18n.REFERENCE}}</label>
+
+                            <div class="controls">
+                                <span class="help-inline">{{reference}}</span>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="inputRevisionNote">{{i18n.REVISION_NOTE}}</label>
+
+                            <div class="controls">
+                                <input type="text" id="inputRevisionNote" value="{{iteration.revisionNote}}"
+                                {{^editMode}}disabled="disabled"{{/editMode}} />
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">{{i18n.MODIFICATION_DATE}}</label>
+
+                            <div class="controls">
+                                <span class="help-inline">{{iteration.creationDate}}</span>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">{{i18n.AUTHOR}}</label>
+
+                            <div class="controls">
+                                <span class="help-inline">{{iteration.author.name}}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="tab-iteration-attributes" class="ModalTabsPane tab-pane attributes">
+                        <div id="iteration-additional-attributes-container" class="attributes-edit"></div>
+                        <div id="iteration-attributes"></div>
+                    </div>
+                    <div id="tab-iteration-files" class="ModalTabsPane tab-pane files">
+                        <div id="iteration-files"></div>
+                    </div>
+                    <div id="tab-iteration-lifecycle" class="ModalTabsPane tab-pane"></div>
+                    <div id="tab-iteration-links" class="ModalTabsPane tab-pane">
+                        <div id="iteration-links"></div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="Modal-footer modal-footer">
+
+        {{#iteration}}
+        <ul id="switch-iteration" class="pager">
+            <li class="{{^hasPreviousIteration}}disabled{{/hasPreviousIteration}}">
+                <a href="#" id="previous-iteration"><i class="fa fa-angle-left icon-large"></i></a>
+            </li>
+            <li>{{iteration}}</li>
+            <li class="{{^hasNextIteration}}disabled{{/hasNextIteration}}">
+                <a href="#" id="next-iteration"><i class="fa fa-angle-right icon-large"></i></a>
+            </li>
+        </ul>
+        {{/iteration}}
+
+        {{#editMode}}
+        <a id="cancel-iteration" class="btn btn-default cancel" data-dismiss="modal">{{i18n.CANCEL}}</a>
+        <button id="save-iteration" class="btn btn-primary" form="form-document">
+            {{i18n.SAVE}}
+        </button>
+        {{/editMode}}
+        {{^editMode}}
+        <button id="close-iteration" class="btn btn-default cancel close-iteration" form="form-document">
+            {{i18n.CLOSE}}
+        </button>
+        {{/editMode}}
+
+    </div>
+</div>

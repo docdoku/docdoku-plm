@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -55,7 +55,7 @@ public class ActivityKey implements Serializable {
             return false;
         }
         ActivityKey key = (ActivityKey) pObj;
-        return ((key.workflow == workflow) && (key.step == step));
+        return key.workflow == workflow && key.step == step;
     }
 
     @Override

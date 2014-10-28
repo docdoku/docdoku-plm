@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -37,6 +37,8 @@ import javax.xml.stream.*;
 import javax.xml.stream.events.Characters;
 import javax.xml.stream.events.XMLEvent;
 import java.io.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 @KMZFileConverter
@@ -58,7 +60,7 @@ public class KMZFileConverterImpl implements CADConverter{
                 try {
                     return dataManager.getBinaryResourceInputStream(cadFile);
                 } catch (StorageException e) {
-                    e.printStackTrace();
+                    Logger.getLogger(KMZFileConverterImpl.class.getName()).log(Level.SEVERE, null, e);
                     throw new IOException(e);
                 }
             }
@@ -85,8 +87,10 @@ public class KMZFileConverterImpl implements CADConverter{
                             finalTextureOutputStream = dataManager.getBinaryResourceOutputStream(finalTextureBinaryResource);
                             Files.copy(tempTexture, finalTextureOutputStream);
                         } finally {
-                            finalTextureOutputStream.flush();
-                            finalTextureOutputStream.close();
+                            if(finalTextureOutputStream!=null){
+                                finalTextureOutputStream.flush();
+                                finalTextureOutputStream.close();
+                            }
                         }
                     }
                 }
@@ -102,10 +106,12 @@ public class KMZFileConverterImpl implements CADConverter{
                 daeOutputStream = dataManager.getBinaryResourceOutputStream(daeBinaryResource);
                 Files.copy(tmpNewDAEFile, daeOutputStream);
             } finally {
-                daeOutputStream.flush();
-                daeOutputStream.close();
+                if(daeOutputStream!=null){
+                    daeOutputStream.flush();
+                    daeOutputStream.close();
+                }
             }
-            return daeFile;
+            return daeFile;                                                                                             // Todo Check "why are we always return null?"
         }
         finally {
             FileIO.rmDir(tmpDir);

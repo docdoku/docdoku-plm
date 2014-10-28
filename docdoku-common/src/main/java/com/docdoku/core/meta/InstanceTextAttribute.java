@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -47,22 +47,13 @@ public class InstanceTextAttribute extends InstanceAttribute{
     }
 
     @Override
-    public String getValue() {
-        return textValue;
-    }
-
-    public String getTextValue() {
-        return textValue;
-    }
-
-    public void setTextValue(String textValue) {
-        this.textValue = textValue;
-    }
-
+    public String getValue() {return textValue;}
     @Override
     public boolean setValue(Object pValue) {
         textValue=pValue + "";
         return true;
     }
 
+    public String getTextValue() {return textValue;}
+    public void setTextValue(String textValue) {this.textValue = textValue;}
 }

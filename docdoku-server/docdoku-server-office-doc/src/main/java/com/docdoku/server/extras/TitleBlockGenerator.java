@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -21,8 +21,8 @@
 package com.docdoku.server.extras;
 
 import com.docdoku.core.document.DocumentIteration;
-import com.docdoku.core.meta.Tag;
 import com.docdoku.core.meta.InstanceAttribute;
+import com.docdoku.core.meta.Tag;
 import com.docdoku.core.workflow.Activity;
 import com.docdoku.core.workflow.Task;
 import com.itextpdf.text.*;
@@ -32,7 +32,12 @@ import com.itextpdf.text.pdf.draw.LineSeparator;
 import javax.xml.bind.DatatypeConverter;
 import java.io.*;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Locale;
+import java.util.Map;
+import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class TitleBlockGenerator {
 
@@ -47,7 +52,7 @@ public class TitleBlockGenerator {
 
     private static final String TEMP_FILE_NAME = "output.pdf";
 
-    private final static String BASE_NAME = "com.docdoku.server.viewers.localization.TitleBlockGenerator";
+    private static final String BASE_NAME = "com.docdoku.server.viewers.localization.TitleBlockGenerator";
 
     private TitleBlockGenerator(){}
 
@@ -68,8 +73,8 @@ public class TitleBlockGenerator {
 
             int n;
 
-            for (int i = 0; i < files.length; i++) {
-                ReadInputPDF = new PdfReader(files[i]);
+            for (InputStream file : files) {
+                ReadInputPDF = new PdfReader(file);
                 n = ReadInputPDF.getNumberOfPages();
                 for (int page = 0; page < n; ) {
                     copy.addPage(copy.getImportedPage(ReadInputPDF, ++page));
@@ -83,7 +88,7 @@ public class TitleBlockGenerator {
             return new FileInputStream(tmpCopyFile);
         }
         catch (Exception e){
-            e.printStackTrace();
+            Logger.getLogger(TitleBlockGenerator.class.getName()).log(Level.INFO, null, e);
         }
 
         return null;
@@ -113,7 +118,7 @@ public class TitleBlockGenerator {
         String currentIteration = String.valueOf(docI.getIteration());
 
         Document document = new Document();
-        PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(blockTitleFile));
+        PdfWriter.getInstance(document, new FileOutputStream(blockTitleFile));
         document.open();
 
         // Main paragraph
@@ -220,10 +225,9 @@ public class TitleBlockGenerator {
             attributesTable.addCell(cell);
 
             // Table body
-            Iterator it = instanceAttributes.entrySet().iterator();
 
-            while (it.hasNext()) {
-                Map.Entry pairs = (Map.Entry)it.next();
+            for (Object o : instanceAttributes.entrySet()) {
+                Map.Entry pairs = (Map.Entry) o;
                 InstanceAttribute instanceAttr = (InstanceAttribute) pairs.getValue();
                 cell = new PdfPCell(new Phrase((String) pairs.getKey()));
                 attributesTable.addCell(cell);

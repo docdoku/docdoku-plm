@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -39,8 +39,6 @@ import java.util.List;
 @Table(name="SERIALACTIVITY")
 @Entity
 public class SerialActivity extends Activity {
-    
-
     public SerialActivity() {
 
     }
@@ -52,8 +50,9 @@ public class SerialActivity extends Activity {
     @Override
     public boolean isStopped() {
         for(Task task:tasks)
-            if(task.isRejected())
+            if(task.isRejected()) {
                 return true;
+            }
         
         return false;
     }
@@ -75,8 +74,9 @@ public class SerialActivity extends Activity {
     @Override
     public boolean isComplete() {
         for(Task task:tasks)
-            if(!(task.isApproved() || task.isNotToBeDone()))
+            if(!(task.isApproved() || task.isNotToBeDone())) {
                 return false;
+            }
         
         return true;
     }

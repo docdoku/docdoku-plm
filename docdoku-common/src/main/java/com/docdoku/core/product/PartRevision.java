@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -45,7 +45,8 @@ import java.util.*;
         @NamedQuery(name="PartRevision.findByWorkspace", query="SELECT pr FROM PartRevision pr WHERE pr.partMaster.workspace.id = :workspaceId ORDER BY pr.partMaster.number ASC"),
         @NamedQuery(name="PartRevision.findByWorkspace.filterUserACLEntry", query="SELECT pr FROM PartRevision pr WHERE pr.partMaster.workspace.id = :workspaceId and (pr.acl is null or exists(SELECT au from ACLUserEntry au WHERE au.principal = :user AND au.permission not like com.docdoku.core.security.ACL.Permission.FORBIDDEN AND au.acl = pr.acl)) ORDER BY pr.partMaster.number ASC"),
         @NamedQuery(name="PartRevision.countByWorkspace.filterUserACLEntry", query="SELECT count(pr) FROM PartRevision pr WHERE pr.partMaster.workspace.id = :workspaceId and (pr.acl is null or exists(SELECT au from ACLUserEntry au WHERE au.principal = :user AND au.permission not like com.docdoku.core.security.ACL.Permission.FORBIDDEN AND au.acl = pr.acl))"),
-        @NamedQuery(name="PartRevision.countByWorkspace", query="SELECT count(pr) FROM PartRevision pr WHERE pr.partMasterWorkspaceId = :workspaceId")
+        @NamedQuery(name="PartRevision.countByWorkspace", query="SELECT count(pr) FROM PartRevision pr WHERE pr.partMasterWorkspaceId = :workspaceId"),
+        @NamedQuery(name="PartRevision.findByReference", query="SELECT pr FROM PartRevision pr WHERE pr.partMaster.number LIKE :partNumber AND pr.partMaster.workspace.id = :workspaceId")
 })
 public class PartRevision implements Serializable, Comparable<PartRevision>, Cloneable {
 
@@ -86,12 +87,12 @@ public class PartRevision implements Serializable, Comparable<PartRevision>, Clo
         @JoinColumn(name="PARTMASTER_PARTNUMBER", referencedColumnName="PARTMASTER_PARTNUMBER"),
         @JoinColumn(name="PARTREVISION_VERSION", referencedColumnName="VERSION")
     })
-    private Set<Effectivity> effectivities = new HashSet<Effectivity>();
+    private Set<Effectivity> effectivities = new HashSet<>();
     
     
     @OneToMany(mappedBy = "partRevision", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @OrderBy("iteration ASC")
-    private List<PartIteration> partIterations = new ArrayList<PartIteration>();
+    private List<PartIteration> partIterations = new ArrayList<>();
    
  
     @ManyToOne(fetch=FetchType.EAGER)
@@ -129,6 +130,12 @@ public class PartRevision implements Serializable, Comparable<PartRevision>, Clo
     private ACL acl;
 
     private boolean publicShared;
+
+    private RevisionStatus status=RevisionStatus.WIP;
+
+    public enum RevisionStatus {
+        WIP, RELEASED
+    }
 
     public PartRevision(){
     }
@@ -175,38 +182,33 @@ public class PartRevision implements Serializable, Comparable<PartRevision>, Clo
     }
     
     public boolean isCheckedOut() {
-        return (checkOutUser != null);
+        return checkOutUser != null;
     }
-
     
     public User getAuthor() {
         return author;
     }
-
     public void setAuthor(User author) {
         this.author = author;
     }
 
     public Date getCreationDate() {
-        return creationDate;
+        return (creationDate!=null) ? (Date) creationDate.clone() : null;
     }
-
     public void setCreationDate(Date creationDate) {
-        this.creationDate = creationDate;
+        this.creationDate = (creationDate!=null) ? (Date) creationDate.clone() : null;
     }
 
     public Date getCheckOutDate() {
-        return checkOutDate;
+        return (checkOutDate!=null) ? (Date) checkOutDate.clone() : null;
+    }
+    public void setCheckOutDate(Date checkOutDate) {
+        this.checkOutDate = (checkOutDate!=null) ? (Date) checkOutDate.clone() : null;
     }
 
     public User getCheckOutUser() {
         return checkOutUser;
     }
-
-    public void setCheckOutDate(Date checkOutDate) {
-        this.checkOutDate = checkOutDate;
-    }
-
     public void setCheckOutUser(User checkOutUser) {
         this.checkOutUser = checkOutUser;
     }
@@ -214,7 +216,6 @@ public class PartRevision implements Serializable, Comparable<PartRevision>, Clo
     public String getVersion() {
         return version;
     }
-
     public void setVersion(String version) {
         this.version = version;
     }
@@ -222,26 +223,25 @@ public class PartRevision implements Serializable, Comparable<PartRevision>, Clo
     public Workflow getWorkflow() {
         return workflow;
     }
-    
     public void setWorkflow(Workflow pWorkflow) {
         workflow = pWorkflow;
     }
     
     public String getLifeCycleState() {
-        if (workflow != null)
+        if (workflow != null) {
             return workflow.getLifeCycleState();
-        else
+        }else {
             return null;
+        }
     }
     
     public boolean hasWorkflow() {
-        return (workflow != null);
+        return workflow != null;
     }
     
     public ACL getACL() {
         return acl;
     }
-
     public void setACL(ACL acl) {
         this.acl = acl;
     }
@@ -249,7 +249,6 @@ public class PartRevision implements Serializable, Comparable<PartRevision>, Clo
     public List<Workflow> getAbortedWorkflows() {
         return abortedWorkflows;
     }
-
     public void addAbortedWorkflows(Workflow abortedWorkflow) {
         this.abortedWorkflows.add(abortedWorkflow);
     }
@@ -262,30 +261,53 @@ public class PartRevision implements Serializable, Comparable<PartRevision>, Clo
         return part;
     }
 
-    
-    public void setPartIterations(List<PartIteration> partIterations) {
-        this.partIterations = partIterations;
-    }
-    
-
     public List<PartIteration> getPartIterations() {
         return partIterations;
     }
-    
+    public void setPartIterations(List<PartIteration> partIterations) {
+        this.partIterations = partIterations;
+    }
+
     public PartIteration getLastIteration() {
         int index = partIterations.size()-1;
-        if(index < 0)
+        if(index < 0) {
             return null;
-        else
+        } else {
             return partIterations.get(index);
+        }
+    }
+
+    public PartIteration getLastCheckedInIteration() {
+        int index;
+        if(this.isCheckedOut()){
+            index = partIterations.size()-2;
+        }else{
+            index = partIterations.size()-1;
+        }
+        if(index < 0) {
+            List<PartRevision> partRevisions = this.getPartMaster().getPartRevisions();
+            int position = partRevisions.indexOf(this);
+            if (position > 0 ) {
+                return partRevisions.get(position - 1).getLastCheckedInIteration();
+            }else{
+                return null;
+            }
+        }else {
+            return partIterations.get(index);
+        }
+    }
+
+    public int getLastIterationNumber() {
+        return this.getLastIteration().getIteration();
     }
     
     public PartIteration removeLastIteration() {
         int index = partIterations.size()-1;
-        if(index < 0)
+        if(index < 0) {
             return null;
-        else
+        }else {
             return partIterations.remove(index);
+        }
     }
     
     public PartIteration getIteration(int pIteration) {
@@ -299,7 +321,6 @@ public class PartRevision implements Serializable, Comparable<PartRevision>, Clo
     public String getDescription() {
         return description;
     }
-
     public void setDescription(String description) {
         this.description = description;
     }  
@@ -332,11 +353,9 @@ public class PartRevision implements Serializable, Comparable<PartRevision>, Clo
         partMasterWorkspaceId = pPartMasterWorkspaceId;
     }
 
-
     public Set<Effectivity> getEffectivities() {
         return effectivities;
     }
-
     public void setEffectivities(Set<Effectivity> effectivities) {
         this.effectivities = effectivities;
     }
@@ -344,14 +363,27 @@ public class PartRevision implements Serializable, Comparable<PartRevision>, Clo
     public boolean isPublicShared() {
         return publicShared;
     }
-
     public void setPublicShared(boolean publicShared) {
         this.publicShared = publicShared;
     }
 
+    public RevisionStatus getStatus() {
+        return status;
+    }
+    public void setStatus(RevisionStatus status) {
+        this.status = status;
+    }
+
+    public boolean isReleased(){
+        return status==RevisionStatus.RELEASED;
+    }
+    public void release(){
+        this.status=RevisionStatus.RELEASED;
+    }
+
     @Override
     public String toString() {
-        return partMaster.getNumber() + "-" + version;
+        return getPartNumber() + "-" + version;
     }
 
     @Override
@@ -359,75 +391,34 @@ public class PartRevision implements Serializable, Comparable<PartRevision>, Clo
         if (this == pObj) {
             return true;
         }
-        if (!(pObj instanceof PartRevision))
+        if (!(pObj instanceof PartRevision)) {
             return false;
+        }
         PartRevision partR = (PartRevision) pObj;
-        return ((partR.getPartNumber().equals(getPartNumber())) && (partR.getWorkspaceId().equals(getWorkspaceId())) && (partR.version.equals(version)));
+        return partR.getPartNumber().equals(getPartNumber()) && partR.getWorkspaceId().equals(getWorkspaceId()) && partR.version.equals(version);
         
     }
     
     @Override
     public int hashCode() {
         int hash = 1;
-	    hash = 31 * hash + getWorkspaceId().hashCode();
-	    hash = 31 * hash + getPartNumber().hashCode();
+        hash = 31 * hash + getWorkspaceId().hashCode();
+        hash = 31 * hash + getPartNumber().hashCode();
         hash = 31 * hash + version.hashCode();
-	    return hash;
+        return hash;
     }
 
     @Override
     public int compareTo(PartRevision pPartR) {
         int wksComp = getWorkspaceId().compareTo(pPartR.getWorkspaceId());
-        if (wksComp != 0)
+        if (wksComp != 0) {
             return wksComp;
+        }
         int numberComp = getPartNumber().compareTo(pPartR.getPartNumber());
-        if (numberComp != 0)
+        if (numberComp != 0) {
             return numberComp;
-        else
+        } else {
             return version.compareTo(pPartR.version);
-    }
-
-    /**
-     * perform a deep clone operation
-     */
-    @Override
-    public PartRevision clone() {
-        PartRevision clone = null;
-        try {
-            clone = (PartRevision) super.clone();
-        } catch (CloneNotSupportedException e) {
-            throw new InternalError();
         }
-        //perform a deep copy
-        List<PartIteration> clonedPartIterations = new ArrayList<PartIteration>();
-        for (PartIteration part : partIterations) {
-            PartIteration clonedPart=part.clone();
-            clonedPart.setPartRevision(clone);
-            clonedPartIterations.add(clonedPart);
-        }
-        clone.partIterations = clonedPartIterations;
-
-        if(workflow !=null)
-            clone.workflow = workflow.clone();
-
-        //perform a deep copy
-        List<Workflow> clonedAbortedWorkflows =new ArrayList<>();
-        for (Workflow abortedWorkflow : abortedWorkflows) {
-            Workflow clonedWorkflow=abortedWorkflow.clone();
-            clonedAbortedWorkflows.add(clonedWorkflow);
-        }
-        clone.abortedWorkflows = clonedAbortedWorkflows;
-
-
-        if(acl !=null)
-            clone.acl = acl.clone();
-
-        if(creationDate!=null)
-            clone.creationDate = (Date) creationDate.clone();
-
-        if(checkOutDate!=null)
-            clone.checkOutDate = (Date) checkOutDate.clone();
-
-        return clone;
     }
 }

@@ -1,0 +1,47 @@
+<div class="modal tag-management">
+    <div class="modal-header">
+        <a class="close" data-dismiss="modal">×</a>
+
+        <h3><span class="icon plm-icon-nav-tag"></span>{{i18n.TAGS}}</h3>
+    </div>
+    <div class="modal-body">
+        <div id="alerts-{{view.cid}}"></div>
+        <div class="form-horizontal">
+            <div class="control-group">
+                <label class="control-label required" for="form-{{view.cid}}-newTag">{{i18n.ADD_NEW_TAG}}</label>
+
+                <div class="controls">
+                    <input type="text" class="input-xlarge newTag" id="form-{{view.cid}}-newTag"/>
+                    <i class="btn fa fa-plus newTag-button"></i>
+                </div>
+            </div>
+        </div>
+        <form id="form-{{view.cid}}" class="form-horizontal">
+            <div class="control-group">
+                <label class="control-label required" for="form-{{view.cid}}-newTag">{{i18n.EXISTING_TAGS}}</label>
+
+                <div class="controls">
+                    <ul class="unstyled existing-tags-list"></ul>
+                </div>
+            </div>
+
+            {{^isEmptyCollection}}
+            <hr/>
+            <div class="control-group">
+                {{#isSingleChecked}}<label class="control-label required" for="form-{{view.cid}}-newTag">{{i18n.CURRENT_TAGS}}</label>{{/isSingleChecked}}
+                {{^isSingleChecked}}<label class="control-label required" for="form-{{view.cid}}-newTag">{{i18n.TAGS_TO_ADD}}</label>{{/isSingleChecked}}
+                <div class="controls">
+                    <ul class="unstyled tags-to-add-list"></ul>
+                </div>
+            </div>
+            {{/isEmptyCollection}}
+
+        </form>
+    </div>
+    <div class="modal-footer">
+        <a class="btn cancel" data-dismiss="modal">{{i18n.CANCEL}}</a>
+        <button class="btn btn-primary" form="form-{{view.cid}}">
+            {{i18n.SAVE}}
+        </button>
+    </div>
+</div>

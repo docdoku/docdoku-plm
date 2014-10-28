@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -31,6 +31,8 @@ import org.apache.commons.io.FileUtils;
 import java.io.*;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 public class FileStorageProvider implements StorageProvider {
@@ -146,7 +148,7 @@ public class FileStorageProvider implements StorageProvider {
             try {
                 FileUtils.copyDirectory(subResourceFolder, getSubResourceFolder(destination));
             } catch (IOException e) {
-                e.printStackTrace();
+                Logger.getLogger(FileStorageProvider.class.getName()).log(Level.WARNING, null, e);
                 throw new StorageException("Can't copy subResourceFolder from " + source.getFullName() + " to " + destination.getFullName(), e);
             }
         }
@@ -170,7 +172,7 @@ public class FileStorageProvider implements StorageProvider {
 
     @Override
     public void deleteWorkspaceFolder(String workspaceId, List<BinaryResource> binaryResourcesInWorkspace) throws StorageException {
-        if(workspaceId != null && workspaceId != ""){
+        if(workspaceId != null && !workspaceId.equals("")){
             try{
                 File rootFolder = new File(new StringBuilder().append(vaultPath).append("/").append(workspaceId).toString());
                 if(rootFolder.exists()){

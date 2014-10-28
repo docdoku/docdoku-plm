@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -22,17 +22,20 @@ package com.docdoku.server.rest;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.common.Workspace;
+import com.docdoku.core.configuration.ConfigSpec;
 import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.document.DocumentRevisionKey;
-import com.docdoku.core.meta.Tag;
-import com.docdoku.core.exceptions.ApplicationException;
+import com.docdoku.core.exceptions.*;
+import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.meta.*;
 import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.security.UserGroupMapping;
+import com.docdoku.core.services.IDocumentConfigSpecManagerLocal;
 import com.docdoku.core.services.IDocumentManagerLocal;
+import com.docdoku.core.services.IDocumentWorkflowManagerLocal;
 import com.docdoku.core.sharing.SharedDocument;
 import com.docdoku.core.workflow.Workflow;
 import com.docdoku.server.rest.dto.*;
@@ -48,6 +51,8 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Stateless
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
@@ -56,7 +61,14 @@ public class DocumentResource {
 
     @EJB
     private IDocumentManagerLocal documentService;
+    @EJB
+    private IDocumentWorkflowManagerLocal documentWorkflowService;
+    @EJB
+    private IDocumentConfigSpecManagerLocal documentConfigSpecService;
 
+    private static final Logger LOGGER = Logger.getLogger(DocumentResource.class.getName());
+    private static final String BASELINE_LATEST = "latest";
+    private static final String BASELINE_UNDEFINED = "undefined";
     private Mapper mapper;
 
     public DocumentResource() {
@@ -69,18 +81,45 @@ public class DocumentResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public DocumentRevisionDTO getDocumentRevision(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion) {
+    public DocumentRevisionDTO getDocumentRevision(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion, @QueryParam("configSpec") String configSpecType) {
         try {
-            DocumentRevision docR = documentService.getDocumentRevision(new DocumentRevisionKey(workspaceId, documentId, documentVersion));
+            DocumentRevision docR;
+            DocumentRevisionKey documentRevisionKey = new DocumentRevisionKey(workspaceId, documentId, documentVersion);
+            if (configSpecType == null || BASELINE_UNDEFINED.equals(configSpecType) || BASELINE_LATEST.equals(configSpecType)) {
+                docR = documentService.getDocumentRevision(documentRevisionKey);
+            } else {
+                ConfigSpec configSpec = getConfigSpec(workspaceId, configSpecType);
+                docR = documentConfigSpecService.getFilteredDocumentRevision(documentRevisionKey, configSpec);
+            }
+
             DocumentRevisionDTO docRsDTO = mapper.map(docR, DocumentRevisionDTO.class);
             docRsDTO.setPath(docR.getLocation().getCompletePath());
-            docRsDTO.setLifeCycleState(docR.getLifeCycleState());
-            docRsDTO.setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId, docR));
-            docRsDTO.setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId,docR));
-            return docRsDTO;
 
-        } catch (ApplicationException ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
+            if (configSpecType == null || BASELINE_UNDEFINED.equals(configSpecType) || BASELINE_LATEST.equals(configSpecType)) {
+                setDocumentRevisionDTOWorkflow(docR,docRsDTO);
+                docRsDTO.setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId, docR));
+                docRsDTO.setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId, docR));
+            }else{
+                docRsDTO.setWorkflow(null);
+                docRsDTO.setTags(null);
+            }
+            return docRsDTO;
+        } catch (UserNotFoundException | NotAllowedException | AccessRightException | UserNotActiveException e) {
+            LOGGER.log(Level.WARNING,null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
+        } catch (WorkspaceNotFoundException | DocumentRevisionNotFoundException | BaselineNotFoundException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
+        }
+    }
+
+    private void setDocumentRevisionDTOWorkflow(DocumentRevision documentRevision, DocumentRevisionDTO documentRevisionDTO) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, DocumentRevisionNotFoundException {
+        try{
+            Workflow currentWorkflow = documentWorkflowService.getCurrentWorkflow(documentRevision.getKey());
+            documentRevisionDTO.setWorkflow(mapper.map(currentWorkflow,WorkflowDTO.class));
+            documentRevisionDTO.setLifeCycleState(currentWorkflow.getLifeCycleState());
+        } catch (WorkflowNotFoundException e) {
+            LOGGER.log(Level.FINEST, null, e);
         }
     }
 
@@ -94,8 +133,15 @@ public class DocumentResource {
             DocumentRevisionDTO docRsDTO = mapper.map(docR, DocumentRevisionDTO.class);
             docRsDTO.setPath(docR.getLocation().getCompletePath());
             return docRsDTO;
-        } catch (ApplicationException ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
+        } catch (AccessRightException | UserNotActiveException | NotAllowedException  | UserNotFoundException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
+        } catch (WorkspaceNotFoundException | DocumentRevisionNotFoundException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
+        } catch (ESServerException e) {
+            LOGGER.log(Level.SEVERE, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(), Response.Status.BAD_REQUEST);
         }
     }
 
@@ -110,8 +156,15 @@ public class DocumentResource {
             docRsDTO.setPath(docR.getLocation().getCompletePath());
             docRsDTO.setLifeCycleState(docR.getLifeCycleState());
             return docRsDTO;
-        } catch (ApplicationException ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
+        } catch (UserNotFoundException | NotAllowedException | AccessRightException | UserNotActiveException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
+        } catch (WorkspaceNotFoundException | DocumentRevisionNotFoundException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
+        } catch (CreationException | FileAlreadyExistsException e) {
+            LOGGER.log(Level.SEVERE, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(), Response.Status.BAD_REQUEST);
         }
     }
 
@@ -126,8 +179,12 @@ public class DocumentResource {
             docRsDTO.setPath(docR.getLocation().getCompletePath());
             docRsDTO.setLifeCycleState(docR.getLifeCycleState());
             return docRsDTO;
-        } catch (ApplicationException ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
+        } catch (AccessRightException | NotAllowedException | UserNotFoundException | UserNotActiveException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
+        } catch (WorkspaceNotFoundException | DocumentRevisionNotFoundException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
         }
     }
 
@@ -146,6 +203,7 @@ public class DocumentResource {
             docMsDTO.setLifeCycleState(movedDocumentRevision.getLifeCycleState());
             return docMsDTO;
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -157,6 +215,7 @@ public class DocumentResource {
             documentService.subscribeToIterationChangeEvent(new DocumentRevisionKey(workspaceId, documentId, documentVersion));
             return Response.ok().build();
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -168,6 +227,7 @@ public class DocumentResource {
             documentService.unsubscribeToIterationChangeEvent(new DocumentRevisionKey(workspaceId, documentId, documentVersion));
             return Response.ok().build();
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -179,6 +239,7 @@ public class DocumentResource {
             documentService.subscribeToStateChangeEvent(new DocumentRevisionKey(workspaceId, documentId, documentVersion));
             return Response.ok().build();
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -190,6 +251,7 @@ public class DocumentResource {
             documentService.unsubscribeToStateChangeEvent(new DocumentRevisionKey(workspaceId, documentId, documentVersion));
             return Response.ok().build();
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -218,6 +280,7 @@ public class DocumentResource {
             DocumentRevision docR = documentService.updateDocument(new DocumentIterationKey(workspaceId, documentId, documentVersion, pIteration), pRevisionNote, attributes, links);
             return mapper.map(docR.getLastIteration(), DocumentIterationDTO.class);
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
 
@@ -278,6 +341,7 @@ public class DocumentResource {
             return dtos;
 
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -300,6 +364,7 @@ public class DocumentResource {
 
             return docRsDto;
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -327,6 +392,7 @@ public class DocumentResource {
             return Response.ok().build();
 
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -338,9 +404,9 @@ public class DocumentResource {
             documentService.removeTag(new DocumentRevisionKey(workspaceId, documentId, documentVersion), tagName);
             return Response.ok().build();
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
-
     }
 
     @DELETE
@@ -348,8 +414,18 @@ public class DocumentResource {
         try {
             documentService.deleteDocumentRevision(new DocumentRevisionKey(workspaceId, documentId, documentVersion));
             return Response.ok().build();
-        } catch (ApplicationException ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
+        } catch (NotAllowedException | AccessRightException | UserNotActiveException | UserNotFoundException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
+        } catch (WorkspaceNotFoundException | DocumentRevisionNotFoundException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
+        } catch (EntityConstraintException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.CONFLICT);
+        } catch (ESServerException e) {
+            LOGGER.log(Level.SEVERE, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(), Response.Status.BAD_REQUEST);
         }
     }
 
@@ -361,6 +437,7 @@ public class DocumentResource {
             documentService.removeFileFromDocument(fileFullName);
             return Response.ok().build();
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -379,6 +456,7 @@ public class DocumentResource {
             SharedDocumentDTO sharedDocumentDTO = mapper.map(sharedDocument,SharedDocumentDTO.class);
             return Response.ok().entity(sharedDocumentDTO).build();
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
 
@@ -394,6 +472,7 @@ public class DocumentResource {
             documentRevision.setPublicShared(true);
             return Response.ok().build();
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -407,6 +486,7 @@ public class DocumentResource {
             documentRevision.setPublicShared(false);
             return Response.ok().build();
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
 
@@ -419,7 +499,7 @@ public class DocumentResource {
         try {
             DocumentRevisionKey documentRevisionKey = new DocumentRevisionKey(pWorkspaceId, documentId, documentVersion);
 
-            if (acl.getGroupEntries().size() > 0 || acl.getUserEntries().size() > 0) {
+            if (!acl.getGroupEntries().isEmpty() || !acl.getUserEntries().isEmpty()) {
 
                 Map<String,String> userEntries = new HashMap<>();
                 Map<String,String> groupEntries = new HashMap<>();
@@ -438,6 +518,7 @@ public class DocumentResource {
             }
             return Response.ok().build();
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -446,10 +527,8 @@ public class DocumentResource {
     @Path("aborted-workflows")
     @Produces(MediaType.APPLICATION_JSON)
     public List<WorkflowDTO> getAbortedWorkflows(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion) {
-
         try {
-            DocumentRevision docR = documentService.getDocumentRevision(new DocumentRevisionKey(workspaceId, documentId, documentVersion));
-            List<Workflow> abortedWorkflows = docR.getAbortedWorkflows();
+            Workflow[] abortedWorkflows = documentWorkflowService.getAbortedWorkflow(new DocumentRevisionKey(workspaceId, documentId, documentVersion));
             List<WorkflowDTO> abortedWorkflowsDTO = new ArrayList<>();
 
             for(Workflow abortedWorkflow:abortedWorkflows){
@@ -459,15 +538,18 @@ public class DocumentResource {
             Collections.sort(abortedWorkflowsDTO);
 
             return abortedWorkflowsDTO;
-
-        } catch (ApplicationException ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
+        } catch (UserNotFoundException | UserNotActiveException | AccessRightException e) {
+            LOGGER.log(Level.WARNING,null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
+        } catch (WorkspaceNotFoundException | DocumentRevisionNotFoundException e) {
+            LOGGER.log(Level.WARNING,null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
         }
     }
 
     private InstanceAttribute[] createInstanceAttributes(List<InstanceAttributeDTO> dtos) {
         if (dtos == null) {
-            return null;
+            return new InstanceAttribute[0];
         }
         InstanceAttribute[] data = new InstanceAttribute[dtos.size()];
         int i = 0;
@@ -479,42 +561,30 @@ public class DocumentResource {
     }
 
     private InstanceAttribute createInstanceAttribute(InstanceAttributeDTO dto) {
-        if (dto.getType().equals(InstanceAttributeDTO.Type.BOOLEAN)) {
-            InstanceBooleanAttribute attr = new InstanceBooleanAttribute();
-            attr.setName(dto.getName());
-            attr.setBooleanValue(Boolean.parseBoolean(dto.getValue()));
-            return attr;
-        } else if (dto.getType().equals(InstanceAttributeDTO.Type.TEXT)) {
-            InstanceTextAttribute attr = new InstanceTextAttribute();
-            attr.setName(dto.getName());
-            attr.setTextValue(dto.getValue());
-            return attr;
-        } else if (dto.getType().equals(InstanceAttributeDTO.Type.NUMBER)) {
-            InstanceNumberAttribute attr = new InstanceNumberAttribute();
-            attr.setName(dto.getName());
-            try{
-                attr.setNumberValue(Float.parseFloat(dto.getValue()));
-            }catch(NumberFormatException ex){
-                attr.setNumberValue(0);
-            }
-            return attr;
-        } else if (dto.getType().equals(InstanceAttributeDTO.Type.DATE)) {
-            InstanceDateAttribute attr = new InstanceDateAttribute();
-            attr.setName(dto.getName());
-            try{
-                attr.setDateValue(new Date(Long.parseLong(dto.getValue())));
-            }catch(NumberFormatException ex){
-                attr.setDateValue(null);
-            }
-            return attr;
-        } else if (dto.getType().equals(InstanceAttributeDTO.Type.URL)) {
-            InstanceURLAttribute attr = new InstanceURLAttribute();
-            attr.setName(dto.getName());
-            attr.setUrlValue(dto.getValue());
-            return attr;
-        } else {
-            throw new IllegalArgumentException("Instance attribute not supported");
+        InstanceAttribute attr;
+        switch (dto.getType()){
+            case BOOLEAN :
+                attr = new InstanceBooleanAttribute();
+                break;
+            case TEXT :
+                attr = new InstanceTextAttribute();
+                break;
+            case NUMBER :
+                attr = new InstanceNumberAttribute();
+                break;
+            case DATE :
+                attr = new InstanceDateAttribute();
+                break;
+            case URL :
+                attr = new InstanceURLAttribute();
+                break;
+            default:
+                throw new IllegalArgumentException("Instance attribute not supported");
         }
+
+        attr.setName(dto.getName());
+        attr.setValue(dto.getValue());
+        return attr;
     }
 
     private DocumentIterationKey[] createDocumentIterationKeys(List<DocumentIterationDTO> dtos) {
@@ -527,4 +597,27 @@ public class DocumentResource {
         return data;
     }
 
+    /**
+     * Get a configuration specification
+     * @param workspaceId The current workspace
+     * @param configSpecType The configuration specification type
+     * @return A configuration specification
+     * @throws com.docdoku.core.exceptions.UserNotFoundException If the user login-workspace doesn't exist
+     * @throws com.docdoku.core.exceptions.UserNotActiveException If the user is disabled
+     * @throws com.docdoku.core.exceptions.WorkspaceNotFoundException If the workspace doesn't exist
+     * @throws com.docdoku.core.exceptions.BaselineNotFoundException If the baseline doesn't exist
+     */
+    private ConfigSpec getConfigSpec(String workspaceId, String configSpecType) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, BaselineNotFoundException {
+        ConfigSpec cs;
+        switch (configSpecType) {
+            case BASELINE_LATEST:
+            case BASELINE_UNDEFINED:
+                cs = documentConfigSpecService.getLatestConfigSpec(workspaceId);
+                break;
+            default:
+                cs = documentConfigSpecService.getConfigSpecForBaseline(Integer.parseInt(configSpecType));
+                break;
+        }
+        return cs;
+    }
 }
