@@ -12,20 +12,17 @@ define([
     'common-objects/collections/linked/linked_part_collection',
 	'common-objects/views/linked/linked_requests',
 	'common-objects/collections/linked/linked_change_item_collection'
-],
-function (Backbone, Mustache, template, ChangeOrderModel, UserList, MilestoneList, LinkedDocumentsView, LinkedDocumentCollection, LinkedPartsView, LinkedPartCollection,LinkedRequestsView,LinkedChangeItemCollection) {
+], function (Backbone, Mustache, template, ChangeOrderModel, UserList, MilestoneList, LinkedDocumentsView, LinkedDocumentCollection, LinkedPartsView, LinkedPartCollection,LinkedRequestsView,LinkedChangeItemCollection) {
     'use strict';
     var ChangeOrderCreationView = Backbone.View.extend({
-        model: new ChangeOrderModel(),
-
         events: {
             'submit #order_creation_form': 'onSubmitForm',
             'hidden #order_creation_modal': 'onHidden'
         },
 
-
         initialize: function () {
             this._subViews = [];
+            this.model = new ChangeOrderModel();
             _.bindAll(this);
             this.$el.on('remove', this.removeSubviews);                                                                  // Remove cascade
         },

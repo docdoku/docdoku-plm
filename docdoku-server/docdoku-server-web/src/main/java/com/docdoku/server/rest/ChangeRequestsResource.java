@@ -93,7 +93,9 @@ public class ChangeRequestsResource {
     public ChangeRequestDTO createRequest(@PathParam("workspaceId") String workspaceId, ChangeRequestDTO changeRequestDTO){
         try{
             ChangeRequest changeRequest = changeManager.createChangeRequest(workspaceId, changeRequestDTO.getName(), changeRequestDTO.getDescription(), changeRequestDTO.getMilestoneId(), changeRequestDTO.getPriority(), changeRequestDTO.getAssignee(), changeRequestDTO.getCategory());
-            return mapper.map(changeRequest, ChangeRequestDTO.class);
+            ChangeRequestDTO ret = mapper.map(changeRequest, ChangeRequestDTO.class);
+            ret.setWritable(true);
+            return ret;
         } catch (ApplicationException ex) {
             LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());

@@ -13,16 +13,14 @@ define([
 function (Backbone, Mustache, template, ChangeIssueModel, UserList, LinkedDocumentsView, LinkedDocumentCollection, LinkedPartsView, LinkedPartCollection) {
     'use strict';
     var ChangeIssueCreationView = Backbone.View.extend({
-        model: new ChangeIssueModel(),
-
         events: {
             'submit #issue_creation_form': 'onSubmitForm',
             'hidden #issue_creation_modal': 'onHidden'
         },
 
-
         initialize: function () {
             this._subViews = [];
+            this.model = new ChangeIssueModel();
             _.bindAll(this);
             this.$el.on('remove', this.removeSubviews);                                                                 // Remove cascade
         },

@@ -8,8 +8,6 @@ define([
 function (Backbone, Mustache, template, MilestoneModel) {
     'use strict';
     var MilestoneCreationView = Backbone.View.extend({
-        model: new MilestoneModel(),
-
         events: {
             'submit #milestone_creation_form': 'onSubmitForm',
             'hidden #milestone_creation_modal': 'onHidden'
@@ -18,6 +16,7 @@ function (Backbone, Mustache, template, MilestoneModel) {
 
         initialize: function () {
             _.bindAll(this);
+            this.model = new MilestoneModel();
         },
 
         render: function () {
