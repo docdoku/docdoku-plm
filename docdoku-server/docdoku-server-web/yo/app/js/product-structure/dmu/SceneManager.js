@@ -52,7 +52,6 @@ define([
         function initDOM() {
             _this.$container = $('div#container');
             _this.$container[0].setAttribute('tabindex', '-1');
-            _this.$sceneContainer = $('#scene_container');
             _this.$blocker = new BlockerView().render().$el;
             _this.$container.append(_this.$blocker);
             _this.$flyingModeButton = $('#flying_mode_view_btn');
@@ -81,7 +80,7 @@ define([
         }
         function initStats() {
             _this.stats = new Stats();
-            _this.$sceneContainer.append(_this.stats.domElement);
+            App.$SceneContainer.append(_this.stats.domElement);
             _this.$stats = $(_this.stats.domElement);
             _this.$stats.attr('id', 'statsWin');
             _this.$stats.attr('class', 'statsWinMaximized');
@@ -739,12 +738,12 @@ define([
         this.startMarkerCreationMode = function (layer) {
             _this.markerCreationMode = true;
             currentLayer = layer;
-            _this.$sceneContainer.addClass('markersCreationMode');
+            App.$SceneContainer.addClass('markersCreationMode');
         };
         this.stopMarkerCreationMode = function () {
             _this.markerCreationMode = false;
             currentLayer = null;
-            _this.$sceneContainer.removeClass('markersCreationMode');
+            App.$SceneContainer.removeClass('markersCreationMode');
         };
         this.requestFullScreen = function () {
             _this.renderer.domElement.parentNode.requestFullscreen =
@@ -768,7 +767,7 @@ define([
             _this.measureCallback = callback;
         };
         this.setMeasureState = function (state) {
-            _this.$sceneContainer.toggleClass('measureMode', state);
+            App.$SceneContainer.toggleClass('measureMode', state);
             _this.measureState = state;
             var opacity = state ? 0.5 : 1;
             _(_this.scene.children).each(function (child) {
