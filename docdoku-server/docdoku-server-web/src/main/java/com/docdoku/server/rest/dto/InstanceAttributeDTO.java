@@ -31,7 +31,6 @@ public class InstanceAttributeDTO  implements Serializable{
     private boolean mandatory;
     private Type type;
     public enum Type {
-
         TEXT, NUMBER, DATE, BOOLEAN, URL
     }
     private String value;
@@ -54,7 +53,6 @@ public class InstanceAttributeDTO  implements Serializable{
     public String getName() {
         return name;
     }
-
     public void setName(String name) {
         this.name = name;
     }
@@ -62,23 +60,20 @@ public class InstanceAttributeDTO  implements Serializable{
     public String getValue() {
         return value;
     }
-    
+    public void setValue(String value) {
+        this.value = value;
+    }
+
     public InstanceAttributeDTO.Type getType(){
         return type;
     }
-    
     public void setType(InstanceAttributeDTO.Type type) {
         this.type = type;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
     }
 
     public boolean isMandatory() {
         return mandatory;
     }
-
     public void setMandatory(boolean mandatory) {
         this.mandatory = mandatory;
     }
