@@ -407,9 +407,9 @@ module.exports = function (grunt) {
                         cwd: '<%= yeoman.app %>',
                         dest: '<%= yeoman.dist %>',
                         src: [
-                            'images/*',
-                            'sounds/*',
-                            'fonts/*',
+                            'images/{,*/}*',
+                            'sounds/{,*/}*',
+                            'fonts/{,*/}*',
 	                        'js/home/main.js',
 	                        'js/lib/plugin-detect.js'
                         ]
