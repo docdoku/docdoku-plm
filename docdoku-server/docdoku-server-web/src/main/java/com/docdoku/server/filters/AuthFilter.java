@@ -41,6 +41,7 @@ import java.util.logging.Logger;
 
 public class AuthFilter implements Filter {
     private static final Logger LOGGER = Logger.getLogger(AuthFilter.class.getName());
+    private static final String ENCODING = "UTF-8";
 
     @Inject
     private AccountBean accountBean;
@@ -102,7 +103,7 @@ public class AuthFilter implements Filter {
         session.setAttribute("hasFail", false);
         session.setAttribute("hasLogout", false);
         try {
-            httpRequest.getRequestDispatcher(httpRequest.getContextPath() + "/faces/login.xhtml?originURL=" + URLEncoder.encode(originURL, "UTF-8"))
+            httpRequest.getRequestDispatcher(httpRequest.getContextPath() + "/faces/login.xhtml?originURL=" + URLEncoder.encode(originURL, ENCODING))
                        .forward(httpRequest, response);
         }catch (PropertyNotFoundException e){
             LOGGER.log(Level.SEVERE,"Cannot redirect to Login Page");

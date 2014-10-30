@@ -90,7 +90,9 @@ public class ChangeMilestonesResource {
     public ChangeMilestoneDTO createMilestone(@PathParam("workspaceId") String workspaceId, ChangeMilestoneDTO changeMilestoneDTO){
         try{
             Milestone changeMilestone = changeManager.createChangeMilestone(workspaceId, changeMilestoneDTO.getTitle(), changeMilestoneDTO.getDescription(), changeMilestoneDTO.getDueDate());
-            return mapper.map(changeMilestone, ChangeMilestoneDTO.class);
+            ChangeMilestoneDTO ret = mapper.map(changeMilestone, ChangeMilestoneDTO.class);
+            ret.setWritable(true);
+            return ret;
         } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }

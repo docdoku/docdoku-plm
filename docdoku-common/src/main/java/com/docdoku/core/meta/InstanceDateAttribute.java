@@ -54,9 +54,13 @@ public class InstanceDateAttribute extends InstanceAttribute{
         if(pValue instanceof Date){
             dateValue=(Date)pValue;
             return true;
-        }else
+        }else if(pValue instanceof String){
+            dateValue= new Date(Long.parseLong((String) pValue));
+            return true;
+        }else{
             dateValue=null;
             return false;
+        }
     }
 
     public Date getDateValue() {return dateValue;}

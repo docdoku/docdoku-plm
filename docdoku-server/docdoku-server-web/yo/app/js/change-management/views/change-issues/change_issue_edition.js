@@ -19,7 +19,6 @@ function (Backbone, Mustache, template, UserList, Tag, TagView, LinkedDocumentsV
             'hidden #issue_edition_modal': 'onHidden'
         },
 
-
         initialize: function () {
             this.tagsToRemove = [];
             this._subViews = [];

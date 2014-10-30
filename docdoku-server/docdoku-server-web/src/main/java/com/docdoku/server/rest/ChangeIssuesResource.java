@@ -92,7 +92,9 @@ public class ChangeIssuesResource {
     public ChangeItemDTO createIssue(@PathParam("workspaceId") String workspaceId, ChangeIssueDTO changeIssueDTO){
         try{
             ChangeIssue changeIssue = changeManager.createChangeIssue(workspaceId, changeIssueDTO.getName(), changeIssueDTO.getDescription(), changeIssueDTO.getInitiator(), changeIssueDTO.getPriority(), changeIssueDTO.getAssignee(), changeIssueDTO.getCategory());
-            return mapper.map(changeIssue, ChangeIssueDTO.class);
+            ChangeIssueDTO ret = mapper.map(changeIssue, ChangeIssueDTO.class);
+            ret.setWritable(true);
+            return ret;
         } catch (ApplicationException ex) {
             LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());

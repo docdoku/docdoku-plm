@@ -92,7 +92,9 @@ public class ChangeOrdersResource {
     public ChangeOrderDTO createOrder(@PathParam("workspaceId") String workspaceId, ChangeOrderDTO changeOrderDTO){
         try{
             ChangeOrder changeOrder = changeManager.createChangeOrder(workspaceId, changeOrderDTO.getName(), changeOrderDTO.getDescription(), changeOrderDTO.getMilestoneId(), changeOrderDTO.getPriority(), changeOrderDTO.getAssignee(), changeOrderDTO.getCategory());
-            return mapper.map(changeOrder, ChangeOrderDTO.class);
+            ChangeOrderDTO ret = mapper.map(changeOrder, ChangeOrderDTO.class);
+            ret.setWritable(true);
+            return ret;
         } catch (ApplicationException ex) {
             LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());

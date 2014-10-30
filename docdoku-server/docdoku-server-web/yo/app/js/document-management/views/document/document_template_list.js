@@ -53,7 +53,7 @@ define([
                     this.showMask(template);
                 }
                 if (template.get("idGenerated")) {
-                    this.generate_id(template);
+                    this.generateId(template);
                 }
 
                 this.attributesView.setAttributesLocked(template.isAttributesLocked());
@@ -67,7 +67,7 @@ define([
             var mask = template.get("mask");//.replace(/#/g, "9");
             elId.mask(mask);
         },
-        generate_id: function (template) {
+        generateId: function (template) {
             var elId = this.parentView.$el.find("input.reference:first");
             // Get the next id from the webservice if any
             $.getJSON(template.url() + "/generate_id", function (data) {
