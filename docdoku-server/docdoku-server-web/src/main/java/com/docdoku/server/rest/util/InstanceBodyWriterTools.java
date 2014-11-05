@@ -114,7 +114,7 @@ public class InstanceBodyWriterTools {
                 }
             }
         } catch (NotAllowedException | UserNotFoundException | UserNotActiveException | AccessRightException e) {
-            LOGGER.log(Level.WARNING, "You have no rigth to filter the usageLink : " + pUsageLink.getId(), e);
+            LOGGER.log(Level.WARNING, "You have no right to filter the usageLink : " + pUsageLink.getId(), e);
         } catch (WorkspaceNotFoundException | ConfigurationItemNotFoundException | PartUsageLinkNotFoundException e) {
             LOGGER.log(Level.WARNING, "Some resources are missing :", e);
         }
