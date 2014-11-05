@@ -1,4 +1,4 @@
-/*global _,require,console*/
+/*global _,require,window*/
 var App = {
 	debug:false,
 
@@ -11,10 +11,10 @@ var App = {
 	}
 };
 
-App.log=function(){
+App.log=function(message){
     'use strict';
     if(App.debug){
-        window.console.log(arguments);
+        window.console.log(message);
     }
 };
 

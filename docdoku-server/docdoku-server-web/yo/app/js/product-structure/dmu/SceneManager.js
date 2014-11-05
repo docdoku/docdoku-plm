@@ -52,7 +52,6 @@ define([
         function initDOM() {
             _this.$container = $('div#container');
             _this.$container[0].setAttribute('tabindex', '-1');
-            _this.$sceneContainer = $('#scene_container');
             _this.$blocker = new BlockerView().render().$el;
             _this.$container.append(_this.$blocker);
             _this.$flyingModeButton = $('#flying_mode_view_btn');
@@ -81,7 +80,7 @@ define([
         }
         function initStats() {
             _this.stats = new Stats();
-            _this.$sceneContainer.append(_this.stats.domElement);
+            App.$SceneContainer.append(_this.stats.domElement);
             _this.$stats = $(_this.stats.domElement);
             _this.$stats.attr('id', 'statsWin');
             _this.$stats.attr('class', 'statsWinMaximized');
@@ -107,7 +106,8 @@ define([
             _this.grid = new THREE.Line(geometry, material, THREE.LinePieces);
         }
         function initAmbientLight() {
-            var ambient = new THREE.AmbientLight(0x101030);
+            var ambient = new THREE.AmbientLight(App.SceneOptions.ambientLightColor);
+            ambient.name='AmbientLight';
             _this.scene.add(ambient);
         }
         function initSelectionBox() {
@@ -120,8 +120,9 @@ define([
         }
 
         function addLightsToCamera(camera) {
-            var dirLight = new THREE.DirectionalLight(0xbcbcbc);
+            var dirLight = new THREE.DirectionalLight(App.SceneOptions.cameraLightColor);
             dirLight.position.set(200, 200, 1000).normalize();
+            dirLight.name='CameraLight';
             camera.add(dirLight);
             camera.add(dirLight.target);
         }
@@ -269,6 +270,12 @@ define([
                 mesh.material.opacity = _this.measureState ? 0.5 : 1;
             }
         }
+        function updateAmbientLight(color){
+            App.sceneManager.scene.getObjectByName('AmbientLight').color.setHex(color);
+        }
+        function updateCameraLight(color){
+            App.sceneManager.cameraObject.getObjectByName('CameraLight').color.setHex(color);
+        }
         function showGrid() {
             if (_this.grid.added) {
                 return;
@@ -286,6 +293,8 @@ define([
             _this.reDraw();
         }
         function watchSceneOptions() {
+            updateAmbientLight(App.SceneOptions.ambientLightColor);
+            updateCameraLight(App.SceneOptions.cameraLightColor);
             if (App.SceneOptions.grid) {
                 showGrid();
             } else {
@@ -397,10 +406,8 @@ define([
                     mesh.position.copy(meshEdited.position);
                     mesh.rotation.copy(meshEdited.rotation);
                     mesh.scale.copy(meshEdited.scale);
-                    App.log('[SceneManager] Restore transformed instance mesh');
-                    App.log(_this.mesh);
+                    App.log('%c Restore transformed instance mesh\n\t'+_this.mesh,'SM');
                 }
-
             }
             return mesh;
         }
@@ -432,7 +439,7 @@ define([
             }
             _this.scene.remove(mesh);
 
-            App.log('[SceneManager] mesh removed');
+            App.log('%c mesh removed','SM');
 
             _this.reDraw();
         }
@@ -553,12 +560,10 @@ define([
          * Colaborative Mode
          */
         this.setEditedMeshes = function (editedMeshesInfos) {
-
             var arrayId = _.pluck(editedMeshesInfos, 'uuid');
 
             // cancel transformations for mesh which are no longer edited
             var diff = _.difference(_this.editedMeshes, arrayId);
-            App.log(diff);
             _.each(diff, function (uuid) {
                 var mesh = meshesIndexed[uuid];
                 if (_this.editedMeshes.lastIndexOf(uuid) !== -1) {
@@ -733,12 +738,12 @@ define([
         this.startMarkerCreationMode = function (layer) {
             _this.markerCreationMode = true;
             currentLayer = layer;
-            _this.$sceneContainer.addClass('markersCreationMode');
+            App.$SceneContainer.addClass('markersCreationMode');
         };
         this.stopMarkerCreationMode = function () {
             _this.markerCreationMode = false;
             currentLayer = null;
-            _this.$sceneContainer.removeClass('markersCreationMode');
+            App.$SceneContainer.removeClass('markersCreationMode');
         };
         this.requestFullScreen = function () {
             _this.renderer.domElement.parentNode.requestFullscreen =
@@ -762,7 +767,7 @@ define([
             _this.measureCallback = callback;
         };
         this.setMeasureState = function (state) {
-            _this.$sceneContainer.toggleClass('measureMode', state);
+            App.$SceneContainer.toggleClass('measureMode', state);
             _this.measureState = state;
             var opacity = state ? 0.5 : 1;
             _(_this.scene.children).each(function (child) {
@@ -889,8 +894,7 @@ define([
                 if (editedMeshesColoured) {
                     _this.colourEditedMeshes();
                 }
-                App.log('mesh added : ');
-                App.log(this.editedMeshes);
+                App.log('%c Mesh added : \n\t'+this.editedMeshes,'SM');
                 App.collaborativeController.sendEditedMeshes();
             }
             transformControls.bindEvents();
@@ -958,7 +962,7 @@ define([
                 .start();
             _this.editedMeshes = _.without(_this.editedMeshes, mesh.uuid);
             mesh.material = mesh.initialMaterial;
-            App.log('mesh removed');
+            App.log('%c Mesh removed','SM');
             App.collaborativeController.sendEditedMeshes();
 
             _this.reDraw();

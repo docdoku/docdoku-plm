@@ -20,6 +20,7 @@ define(['backbone', 'collections/document_iteration', 'common-objects/utils/acl-
 		baseUrl: function () {
 			return this.urlRoot() + '/' + this.getId();
 		},
+
 		getAbortedWorkflowsUrl: function () {
 			return this.urlRoot() + '/' + this.getId() + '/aborted-workflows';
 		},

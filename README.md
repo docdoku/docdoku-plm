@@ -22,9 +22,13 @@ The Project is lead by the DocDoku team and is part of the [OW2 Consortium](http
 
 You have a full description of the [Installation Guide](https://github.com/docdoku/docdoku-plm/wiki/Installation-Guide).
 
+To know how to use the PLM, you can look at the [Quick Starter Guide](https://github.com/docdoku/docdoku-plm/wiki/Quick-Starter-Guide) or at the [User Guide](http://docdokuplm.com/docdoku-plm/user-guide/en/1.1-RC1/).
+
 ## Coding 
 
 You may fork or just clone the code on [GitHub](https://github.com/docdoku/docdoku-plm) and then compile and package it with Maven.
+
+You have more information in the [Development Guide](https://github.com/docdoku/docdoku-plm/wiki/Development-Guide).
 
 ## License
 

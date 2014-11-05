@@ -51,44 +51,42 @@ define([
             this.bindDomElements();
             this.menuResizable();
 
+            App.sceneManager = new SceneManager();
+            App.instancesManager = new InstancesManager();
+            App.collaborativeController = new CollaborativeController();
+
+            App.collaborativeView = new CollaborativeView().render();
+            App.searchView = new SearchView().render();
+            App.partsTreeView = new PartsTreeView({resultPathCollection: App.searchView.collection}).render();
+            App.controlNavigationView = new ControlNavigationView().render();
+            App.bomView = new BomView().render();
+            App.baselineSelectView = new BaselineSelectView({el:'#config_spec_container'}).render();
+            App.controlModesView = new ControlModesView().render();
+            App.controlTransformView = new ControlTransformView().render();
+
+            App.$ControlsContainer.append(App.collaborativeView.$el);
+            App.$ControlsContainer.append(App.controlNavigationView.$el);
+            App.$ControlsContainer.append(App.controlModesView.$el);
+            App.$ControlsContainer.append(App.controlTransformView.$el);
+
+            // Todo maybe save controls views
+            App.$ControlsContainer.append(new ControlOptionsView().render().$el);
+            App.$ControlsContainer.append(new ControlClippingView().render().$el);
+            App.$ControlsContainer.append(new ControlExplodeView().render().$el);
+            App.$ControlsContainer.append(new ControlMarkersView().render().$el);
+            App.$ControlsContainer.append(new ControlLayersView().render().$el);
+            App.$ControlsContainer.append(new ControlMeasureView().render().$el);
+
             try {
-
-                App.instancesManager = new InstancesManager();
-                App.sceneManager = new SceneManager();
-                App.collaborativeController = new CollaborativeController();
-
-                App.collaborativeView = new CollaborativeView().render();
-                App.searchView = new SearchView().render();
-                App.partsTreeView = new PartsTreeView({resultPathCollection: App.searchView.collection}).render();
-                App.controlNavigationView = new ControlNavigationView().render();
-                App.bomView = new BomView().render();
-                App.baselineSelectView = new BaselineSelectView({el:'#config_spec_container'}).render();
-                App.controlModesView = new ControlModesView().render();
-                App.controlTransformView = new ControlTransformView().render();
-
-                App.$ControlsContainer.append(App.collaborativeView.$el);
-                App.$ControlsContainer.append(App.controlNavigationView.$el);
-                App.$ControlsContainer.append(App.controlModesView.$el);
-                App.$ControlsContainer.append(App.controlTransformView.$el);
-
-	            // Todo maybe save controls views
-                App.$ControlsContainer.append(new ControlOptionsView().render().$el);
-                App.$ControlsContainer.append(new ControlClippingView().render().$el);
-                App.$ControlsContainer.append(new ControlExplodeView().render().$el);
-                App.$ControlsContainer.append(new ControlMarkersView().render().$el);
-                App.$ControlsContainer.append(new ControlLayersView().render().$el);
-                App.$ControlsContainer.append(new ControlMeasureView().render().$el);
-
                 App.sceneManager.init();
-
-                this.listenEvents();
-                this.bindDatGUIControls();
-
-           } catch (ex) {
-                App.log('Got exception in dmu');
-                console.error(ex);
+            } catch (ex) {
+                console.error('Got exception in dmu');
+                App.log(ex);
                 this.onNoWebGLSupport();
             }
+
+            this.listenEvents();
+            this.bindDatGUIControls();
 
             return this;
         },
@@ -96,7 +94,7 @@ define([
         requestJoinRoom: function (key) {
             if (!App.mainChannel.isReady()) {
                 // Retry to connect every 500ms
-                App.log('[App] Websocket is not openned');
+                App.log('%c [App] %c Websocket is not openned',true);
                 var _this = this;
                 setTimeout(function () {
                     _this.requestJoinRoom(key);
@@ -141,6 +139,7 @@ define([
             this.centerSceneContainer = this.$('#center_container');
             this.partMetadataContainer = this.$('#part_metadata_container');
             App.$ControlsContainer = this.$('#side_controls_container');
+            App.$SceneContainer = this.$('#scene_container');
         },
 
         updateBom: function (showRoot) {
@@ -327,17 +326,18 @@ define([
             valuesControllers.push(gui.add(App.WorkerManagedValues, 'volRating').min(0).max(1).step(0.01));
 
             valuesControllers.push(gui.add(App.SceneOptions, 'grid'));
-            valuesControllers.push(gui.add(App.SceneOptions, 'skeleton'));
             valuesControllers.push(gui.add(App.SceneOptions, 'rotateSpeed').min(0).max(10).step(0.01));
             valuesControllers.push(gui.add(App.SceneOptions, 'zoomSpeed').min(0).max(10).step(0.01));
             valuesControllers.push(gui.add(App.SceneOptions, 'panSpeed').min(0).max(10).step(0.01));
 
+            valuesControllers.push(gui.addColor(App.SceneOptions, 'ambientLightColor'));
+            valuesControllers.push(gui.addColor(App.SceneOptions, 'cameraLightColor'));
             return this;
         },
 
 		crashWithMessage: function(htmlMessage){
-			this.centerSceneContainer.find('#scene_container').html('<span class="crashMessage">'+htmlMessage+ '</span>');
-			this.centerSceneContainer.find('#side_controls_container').empty();
+            App.$SceneContainer.html('<span class="crashMessage">'+htmlMessage+ '</span>');
+            App.$ControlsContainer.empty();
 			this.exportSceneButton.remove();
 			this.fullScreenSceneButton.remove();
 		}

@@ -116,8 +116,10 @@ public class DocumentResource {
     private void setDocumentRevisionDTOWorkflow(DocumentRevision documentRevision, DocumentRevisionDTO documentRevisionDTO) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, DocumentRevisionNotFoundException {
         try{
             Workflow currentWorkflow = documentWorkflowService.getCurrentWorkflow(documentRevision.getKey());
-            documentRevisionDTO.setWorkflow(mapper.map(currentWorkflow,WorkflowDTO.class));
-            documentRevisionDTO.setLifeCycleState(currentWorkflow.getLifeCycleState());
+            if(currentWorkflow!=null){
+                documentRevisionDTO.setWorkflow(mapper.map(currentWorkflow,WorkflowDTO.class));
+                documentRevisionDTO.setLifeCycleState(currentWorkflow.getLifeCycleState());
+            }
         } catch (WorkflowNotFoundException e) {
             LOGGER.log(Level.FINEST, null, e);
         }

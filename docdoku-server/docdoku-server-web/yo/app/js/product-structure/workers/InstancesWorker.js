@@ -1,4 +1,4 @@
-/*global _,self,THREE,InstancesSorter,DegradationLevelBalancer,App*/
+/*global _,self,THREE,InstancesSorter,DegradationLevelBalancer*/
 importScripts(
     '../../../bower_components/underscore/underscore-min.js',
     '../../../bower_components/threejs/build/three.min.js',
@@ -12,6 +12,27 @@ var instances = {};
 var instancesCount = 0;
 var WorkerManagedValues = {};
 var debug = null;
+
+var AppWorker = {
+    log : function(message,type){
+        'use strict';
+        if(debug){
+            type = type ? type : '';
+            switch (type) {
+                case 'IS':
+                    console.log('%c [Worker] IS '+message, 'background: #5D2B63; color: #bada55','background: none; color:inherit');
+                    break;
+                case 'DLB':
+                    console.log('%c [Worker] DLB '+message, 'background: #5D2B63; color: #bada55','background: none; color:inherit');
+                    break;
+                default :
+                    console.log('%c [Worker] '+message, 'background: #5D2B63; color: #bada55','background: none; color:inherit');
+                    break;
+            }
+
+        }
+    }
+};
 
 function fixPrecision(v) {
 	'use strict';
@@ -35,10 +56,8 @@ var Context = {
         instances = {};
         instancesCount = 0;
         newData = true;
-        if (debug) {
-            App.log('[Worker] CLEARED');
-        }
 
+        AppWorker.log('%c CLEARED');
     },
     addInstance: function (instance) {
 	    'use strict';
@@ -103,10 +122,8 @@ var Context = {
     evalContext: function (context) {
 	    'use strict';
         if (Context.hasChanged(context)) {
+            AppWorker.log('%c Start a cycle');
 
-            if (debug) {
-                App.log('[Worker] Start a cycle');
-            }
             var start = Date.now();
             // Apply ratings, determine which instances must be displayed in this context
             var sorterResult = InstancesSorter.sort(instances);
@@ -129,13 +146,10 @@ var Context = {
             // Send directives
             self.postMessage({fn: 'directives', obj: directives});
 
-            if (debug) {
-                console.App.log('[Worker] Cycle duration : ' + (Date.now() - start) + ' ms');
-            }
+            AppWorker.log('%c Cycle duration : ' + (Date.now() - start) + ' ms');
         } else {
-            if (debug) {
-                console.log('[Worker] Context didn\'t changed since last call');
-            }
+            AppWorker.log('%c Context didn\'t changed since last call');
+
             self.postMessage({fn: 'directives', obj: []});
         }
     }
@@ -174,9 +188,6 @@ self.addEventListener('message', function (message) {
     if (typeof  ParentMessages[message.data.fn] === 'function') {
         ParentMessages[message.data.fn](message.data.obj);
     } else {
-        if (debug) {
-            App.log('[Worker] Unrecognized command  : ');
-            console.log(message.data);
-        }
+        AppWorker.log('%c Unrecognized command  : \n\t'+message.data);
     }
 }, false);

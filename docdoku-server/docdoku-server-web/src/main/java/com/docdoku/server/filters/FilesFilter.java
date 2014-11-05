@@ -39,6 +39,7 @@ import javax.ejb.EJB;
 import javax.security.auth.login.LoginException;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.xml.bind.DatatypeConverter;
 import java.io.IOException;
@@ -50,23 +51,19 @@ import java.util.logging.Logger;
 
 public class FilesFilter implements Filter {
     private static final Logger LOGGER = Logger.getLogger(FilesFilter.class.getName());
-    private static final String ENCODAGE = "UTF-8";
+    private static final String ENCODING = "UTF-8";
+    private static final String CREDENTIAL_ENCODING = "US-ASCII";
 
     @EJB
     private IProductManagerLocal productService;
-
     @EJB
     private IDocumentManagerLocal documentService;
-
     @EJB
     private IUserManagerLocal userService;
-
     @EJB
     private IDocumentResourceGetterManagerLocal documentResourceGetterService;
-
     @EJB
     private IShareManagerLocal shareService;
-
     @EJB
     private GuestProxy guestProxy;
 
@@ -93,7 +90,7 @@ public class FilesFilter implements Filter {
                 String[] splitAuthorization = authorization.split(" ");
                 if(splitAuthorization.length == 2){
                     byte[] decoded = DatatypeConverter.parseBase64Binary(splitAuthorization[1]);
-                    String credentials = new String(decoded, "US-ASCII");
+                    String credentials = new String(decoded, CREDENTIAL_ENCODING);
                     String[] splitCredentials = credentials.split(":");
                     String userLogin = splitCredentials[0];
                     String userPassword = splitCredentials[1];
@@ -113,8 +110,14 @@ public class FilesFilter implements Filter {
                     }
                     //case insensitive fix
                     if(!userLogin.equals(remoteUser)){
-                        httpRequest.logout();
-                        httpRequest.getRequestDispatcher(httpRequest.getContextPath()+"/faces/login.xhtml?originURL=" + URLEncoder.encode(originURL, ENCODAGE)).forward(pRequest, pResponse);
+                        try {
+                            httpRequest.logout();
+                            httpRequest.getRequestDispatcher(httpRequest.getContextPath()+"/faces/login.xhtml?originURL=" + URLEncoder.encode(originURL, ENCODING)).forward(pRequest, pResponse);
+                        } catch (ServletException | IOException e) {
+                            LOGGER.log(Level.SEVERE,"Cannot redirect to Login Page");
+                            LOGGER.log(Level.FINER,null,e);
+                            ((HttpServletResponse) pResponse).sendRedirect("/");
+                        }
                         return;
                     }
                     sessionHTTP.setAttribute("remoteUser",userLogin);
@@ -149,21 +152,21 @@ public class FilesFilter implements Filter {
         boolean isDocumentAndOutputSpecified = outputFormat != null && !outputFormat.isEmpty();
         String subResourceVirtualPath = "";
 
-        boolean isPrivateSharedFile = "shared-files".equals(URLDecoder.decode(pathInfo[offset - 1], ENCODAGE));
+        boolean isPrivateSharedFile = "shared-files".equals(URLDecoder.decode(pathInfo[offset - 1], ENCODING));
 
         if (!isPrivateSharedFile) {
             try {
-                workspaceId = URLDecoder.decode(pathInfo[offset], ENCODAGE);
-                elementType = URLDecoder.decode(pathInfo[offset + 1], ENCODAGE);
+                workspaceId = URLDecoder.decode(pathInfo[offset], ENCODING);
+                elementType = URLDecoder.decode(pathInfo[offset + 1], ENCODING);
 
                 switch (elementType) {
                     case "documents":
                         needsCacheHeaders = true;
 
-                        String docMId = URLDecoder.decode(pathInfo[offset + 2], ENCODAGE);
+                        String docMId = URLDecoder.decode(pathInfo[offset + 2], ENCODING);
                         String docMVersion = pathInfo[offset + 3];
                         iteration = Integer.parseInt(pathInfo[offset + 4]);
-                        fileName = URLDecoder.decode(pathInfo[offset + 5], ENCODAGE);
+                        fileName = URLDecoder.decode(pathInfo[offset + 5], ENCODING);
 
                         fullName = workspaceId + "/" + elementType + "/" + docMId + "/" + docMVersion + "/" + iteration + "/" + fileName;
 
@@ -190,16 +193,16 @@ public class FilesFilter implements Filter {
 
                         needsCacheHeaders = true;
 
-                        String partNumber = URLDecoder.decode(pathInfo[offset + 2], ENCODAGE);
+                        String partNumber = URLDecoder.decode(pathInfo[offset + 2], ENCODING);
                         String version = pathInfo[offset + 3];
                         iteration = Integer.parseInt(pathInfo[offset + 4]);
 
                         if (pathInfo.length == offset + 7) {
-                            fileName = URLDecoder.decode(pathInfo[offset + 6], ENCODAGE);
-                            String subType = URLDecoder.decode(pathInfo[offset + 5], ENCODAGE); //subType may be nativecad
+                            fileName = URLDecoder.decode(pathInfo[offset + 6], ENCODING);
+                            String subType = URLDecoder.decode(pathInfo[offset + 5], ENCODING); //subType may be nativecad
                             fullName = workspaceId + "/" + elementType + "/" + partNumber + "/" + version + "/" + iteration + "/" + subType + "/" + fileName;
                         } else {
-                            fileName = URLDecoder.decode(pathInfo[offset + 5], ENCODAGE);
+                            fileName = URLDecoder.decode(pathInfo[offset + 5], ENCODING);
                             fullName = workspaceId + "/" + elementType + "/" + partNumber + "/" + version + "/" + iteration + "/" + fileName;
                         }
                         if (remoteUser != null) {
@@ -212,15 +215,15 @@ public class FilesFilter implements Filter {
 
                     // We don't serve these files to guests, no changes.
                     case "document-templates": {
-                        String templateID = URLDecoder.decode(pathInfo[offset + 2], ENCODAGE);
-                        fileName = URLDecoder.decode(pathInfo[offset + 3], ENCODAGE);
+                        String templateID = URLDecoder.decode(pathInfo[offset + 2], ENCODING);
+                        fileName = URLDecoder.decode(pathInfo[offset + 3], ENCODING);
                         fullName = workspaceId + "/" + elementType + "/" + templateID + "/" + fileName;
                         binaryResource = documentService.getBinaryResource(fullName);
                         break;
                     }
                     case "part-templates": {
-                        String templateID = URLDecoder.decode(pathInfo[offset + 2], ENCODAGE);
-                        fileName = URLDecoder.decode(pathInfo[offset + 3], ENCODAGE);
+                        String templateID = URLDecoder.decode(pathInfo[offset + 2], ENCODING);
+                        fileName = URLDecoder.decode(pathInfo[offset + 3], ENCODING);
                         fullName = workspaceId + "/" + elementType + "/" + templateID + "/" + fileName;
                         binaryResource = documentService.getBinaryResource(fullName);
                         break;
@@ -245,7 +248,7 @@ public class FilesFilter implements Filter {
 
             } catch (LoginException pEx) {
                 LOGGER.log(Level.FINEST,null,pEx);
-                httpRequest.getRequestDispatcher(httpRequest.getContextPath()+"/faces/login.xhtml?originURL=" + URLEncoder.encode(originURL, ENCODAGE)).forward(pRequest, pResponse);
+                httpRequest.getRequestDispatcher(httpRequest.getContextPath()+"/faces/login.xhtml?originURL=" + URLEncoder.encode(originURL, ENCODING)).forward(pRequest, pResponse);
             } catch (Exception pEx){
                 LOGGER.log(Level.FINEST,null,pEx);
                 throw new ServletException("Error while downloading the file.", pEx);
@@ -255,8 +258,8 @@ public class FilesFilter implements Filter {
 
             try {
 
-                String uuid = URLDecoder.decode(pathInfo[offset], ENCODAGE);
-                iteration = Integer.valueOf(URLDecoder.decode(pathInfo[offset + 1], ENCODAGE));
+                String uuid = URLDecoder.decode(pathInfo[offset], ENCODING);
+                iteration = Integer.valueOf(URLDecoder.decode(pathInfo[offset + 1], ENCODING));
 
                 SharedEntity sharedEntity = shareService.findSharedEntityForGivenUUID(uuid);
                 workspaceId = sharedEntity.getWorkspace().getId();
@@ -272,7 +275,7 @@ public class FilesFilter implements Filter {
                     String id = documentRevision.getId();
                     String version = documentRevision.getVersion();
 
-                    fileName = URLDecoder.decode(pathInfo[offset + 2], ENCODAGE);
+                    fileName = URLDecoder.decode(pathInfo[offset + 2], ENCODING);
                     fullName = workspaceId + "/" + "documents" + "/" + id + "/" + version + "/" + iteration + "/" + fileName;
 
                     if(remoteUser != null){
@@ -298,11 +301,11 @@ public class FilesFilter implements Filter {
                     String version =partRevision.getVersion();
 
                     if (pathInfo.length == offset + 4) {
-                        fileName = URLDecoder.decode(pathInfo[offset + 3], ENCODAGE);
-                        String subType = URLDecoder.decode(pathInfo[offset + 2], ENCODAGE); //subType may be nativecad
+                        fileName = URLDecoder.decode(pathInfo[offset + 3], ENCODING);
+                        String subType = URLDecoder.decode(pathInfo[offset + 2], ENCODING); //subType may be nativecad
                         fullName = workspaceId + "/" + "parts" + "/" + partNumber + "/" + version + "/" + iteration + "/" + subType + "/" + fileName;
                     } else {
-                        fileName = URLDecoder.decode(pathInfo[offset + 2], ENCODAGE);
+                        fileName = URLDecoder.decode(pathInfo[offset + 2], ENCODING);
                         fullName = workspaceId + "/" + "parts" + "/" + partNumber + "/" + version + "/" + iteration + "/" + fileName;
                     }
                     if(remoteUser != null){
@@ -327,7 +330,7 @@ public class FilesFilter implements Filter {
 
             } catch (Exception e) {
                 LOGGER.log(Level.FINEST,null,e);
-                httpRequest.getRequestDispatcher(httpRequest.getContextPath()+"/faces/login.xhtml?originURL=" + URLEncoder.encode(originURL, ENCODAGE)).forward(pRequest, pResponse);
+                httpRequest.getRequestDispatcher(httpRequest.getContextPath()+"/faces/login.xhtml?originURL=" + URLEncoder.encode(originURL, ENCODING)).forward(pRequest, pResponse);
             }
 
         }

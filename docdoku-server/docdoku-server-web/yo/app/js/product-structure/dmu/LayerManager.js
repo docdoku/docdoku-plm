@@ -165,5 +165,4 @@ define([
     };
 
     return LayerManager;
-
 });

@@ -1,4 +1,4 @@
-/*global _,require,console*/
+/*global _,require,window*/
 var App = {
     debug: false,
 
@@ -33,7 +33,6 @@ var App = {
 
     SceneOptions: {
         grid: false,
-        skeleton: true,
         zoomSpeed: 1.2,
         rotateSpeed: 1.0,
         panSpeed: 0.3,
@@ -41,15 +40,37 @@ var App = {
         cameraFar: 5E4,
         defaultCameraPosition: {x: -1000, y: 800, z: 1100},
         defaultTargetPosition: {x: 0, y: 0, z: 0},
+        ambientLightColor:0x101030,
+        cameraLightColor:0xbcbcbc,
         transformControls:true
     }
 
 };
 
-App.log=function(){
+App.log=function(message,colorType){
     'use strict';
     if(App.debug){
-        window.console.log(arguments);
+        if(colorType){
+            switch (colorType) {
+                case 'WS' :
+                    window.console.log('%c [WS] ' + message, 'background: #222; color: #bada55','background: none; color:inherit');
+                    break;
+                case 'IM' :
+                    window.console.log('%c [InstancesManager] ' + message, 'background: #206963; color: #bada55','background: none; color:inherit');
+                    break;
+                case 'SM' :
+                    window.console.log('%c [SceneManager] ' + message, 'background: #275217; color: #bada55','background: none; color:inherit');
+                    break;
+                case 'PTV' :
+                    window.console.log('%c [PartsTreeView] ' + message, 'background: #3C4C52; color: #bada55','background: none; color:inherit');
+                    break;
+                default :
+                    window.console.log(message, 'background: #888; color: #bada55','background: none; color:inherit');
+                    break;
+            }
+        }else{
+            window.console.log(message);
+        }
     }
 };
 

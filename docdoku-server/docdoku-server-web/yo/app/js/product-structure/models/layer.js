@@ -1,11 +1,10 @@
-/*global define,App*/
-'use strict';
+/*global _,define,App*/
 define([
     'backbone',
-    "models/marker",
-    "collections/marker_collection"
+    'models/marker',
+    'collections/marker_collection'
 ], function (Backbone, Marker, MarkerCollection) {
-
+    'use strict';
     var Layer = Backbone.Model.extend({
 
         defaults: {
@@ -80,9 +79,9 @@ define([
                 transparent: true
             });
             this.markers = new MarkerCollection();
-            this.markers.on("add", this._addMarkerToScene, this);
-            this.markers.on("remove", this._removeMarkerFromScene, this);
-            this.markers.on("reset", this._onResetMarkers, this);
+            this.markers.on('add', this._addMarkerToScene, this);
+            this.markers.on('remove', this._removeMarkerFromScene, this);
+            this.markers.on('reset', this._onResetMarkers, this);
             this.on('remove', this._removeAllMarkersFromScene, this);
             this.on('change:id', this._setMarkersUrl);
             if (!this.isNew()) {
@@ -118,7 +117,7 @@ define([
                 z: z
             });
             this.getMarkers().create(marker, {success: function () {
-                App.collaborativeController.sendMarkersRefresh("create marker");
+                App.collaborativeController.sendMarkersRefresh('create marker');
             }});
 
             return marker;
@@ -150,7 +149,7 @@ define([
         },
 
         getHexaColor: function () {
-            return "#" + this.get('color');
+            return '#' + this.get('color');
         },
 
         _onResetMarkers: function () {

@@ -1,7 +1,12 @@
-/*global define,App*/
+/*global _,define,App*/
 define(['backbone', 'models/component_module', 'views/component_views'
 ], function (Backbone, ComponentModule, ComponentViews) {
 	'use strict';
+
+    function isChildOfPath(parentPath, path){
+        return path.startsWith(parentPath);
+    }
+
     var PartsTreeView = Backbone.View.extend({
         el: '#product_nav_list',
 
@@ -117,17 +122,32 @@ define(['backbone', 'models/component_module', 'views/component_views'
 
         setSmartPaths: function (arrayPaths) {
 	        arrayPaths = (arrayPaths) ? arrayPaths : [];
-	        var pathsToLoad = _.difference(arrayPaths, this.smartPath);
-	        if (pathsToLoad.length !== 0) {
-		        App.log('[PartsTreeView] Paths to load : \n\t'+pathsToLoad);
-		        App.instancesManager.loadComponentsByPaths(pathsToLoad);
-	        }
+            var pathsToLoad = _.difference(arrayPaths, this.smartPath);
+            var pathsToUnload = _.difference(this.smartPath, arrayPaths);
 
-	        var pathsToUnload = _.difference(this.smartPath, arrayPaths);
+            // Remove child path of path to load from the pathsToUnload
+            pathsToUnload = _.filter(pathsToUnload,function(unloadPath){
+                var isChildOfALoadedPath = false;
+                _.each(pathsToLoad,function(loadPath){
+                    if(loadPath==='null'){
+                        isChildOfALoadedPath = true;
+                    }else{
+                        var isChildOfThis = unloadPath.indexOf(loadPath)===0;
+                        isChildOfALoadedPath = isChildOfALoadedPath || isChildOfThis;
+                    }
+                });
+                return ! isChildOfALoadedPath;
+            });
+
+            // We have to unload path before load it because some path to unload can be child of path to load
             if (pathsToUnload.length !== 0) {
-                App.log('[PartsTreeView] Path to unload : \n\t'+pathsToUnload);
+                App.log('%c Path to unload : \n\t'+pathsToUnload, 'PTV');
                 App.instancesManager.unLoadComponentsByPaths(pathsToUnload);
             }
+            if (pathsToLoad.length !== 0) {
+		        App.log('%c Paths to load : \n\t'+pathsToLoad, 'PTV');
+		        App.instancesManager.loadComponentsByPaths(pathsToLoad);
+	        }
 
             this.smartPath = arrayPaths;
             this.setCheckboxes();

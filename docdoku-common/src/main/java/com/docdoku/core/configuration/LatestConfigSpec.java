@@ -63,8 +63,8 @@ public class LatestConfigSpec extends ConfigSpec {
 
     @Override
     public PartIteration filterConfigSpec(PartMaster part) {
-        PartIteration partI = part.getLastRevision().getLastIteration();
-        PartRevision partRevision = partI.getPartRevision();
+        PartRevision partRevision = part.getLastRevision();
+        PartIteration partI = partRevision.getLastIteration();
         if(partRevision.isCheckedOut() && !partRevision.getCheckOutUser().equals(user)){
             partI = partRevision.getLastCheckedInIteration();
         }

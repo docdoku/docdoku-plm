@@ -76,8 +76,7 @@ define(['dmu/LoaderManager', 'async'],
                 if (typeof  workerMessages[message.data.fn] === 'function') {
                     workerMessages[message.data.fn](message.data.obj);
                 } else {
-                    App.log('[InstancesManager] Unrecognized command  : ');
-                    App.log(message.data);
+                    App.log('%c Unrecognized command  : \n\t'+message.data,'IM');
                 }
             }, false);
 
@@ -179,7 +178,6 @@ define(['dmu/LoaderManager', 'async'],
                 });
                 return q;
             }
-
             function findRadius(files) {
                 var r = 0;
                 _(files).each(function (f) {
@@ -203,7 +201,7 @@ define(['dmu/LoaderManager', 'async'],
                 }
                 evalRunning = true;
                 var sceneContext = App.sceneManager.getSceneContext();
-                App.log('[InstancesManager] Updating worker');
+                App.log('%c Updating worker', 'IM');
                 worker.postMessage({fn: 'context', obj: {
                     camera: sceneContext.camPos,
                     target: sceneContext.target || {},
@@ -256,7 +254,6 @@ define(['dmu/LoaderManager', 'async'],
 			        }
 		        });
 	        }
-
             function loadPaths(paths, callback) {
                 $.ajax({
 	                url: App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' +
@@ -277,7 +274,6 @@ define(['dmu/LoaderManager', 'async'],
                 });
 
             }
-
 	        function unLoadPath(path, callback) {
 		        $.ajax({
 			        url: App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' +
@@ -304,28 +300,26 @@ define(['dmu/LoaderManager', 'async'],
             }, 1);
 
             this.loadQueue.drain = function () {
-                App.log('[InstancesManager - loadQueue] All paths have been processed');
+                App.log('Load Queue %c All paths have been processed','IM');
             };
-
             this.loadQueue.empty = function () {
-                App.log('[InstancesManager - loadQueue] Queue is empty');
+                App.log('Load Queue %c  Empty Queue','IM');
             };
-
             this.loadQueue.saturated = function () {
-                App.log('[InstancesManager - loadQueue] Queue is saturated');
+                App.log('Load Queue %c Saturated Queue','IM');
             };
 
 
             this.xhrQueue = async.queue(loadProcess, 4);
 
             this.xhrQueue.drain = function () {
-                App.log('[InstancesManager] All items have been processed');
+                App.log('XHR Queue %c All items have been processed','IM');
             };
             this.xhrQueue.empty = function () {
-                App.log('[InstancesManager] Queue is empty');
+                App.log('XHR Queue %c Empty Queue','IM');
             };
             this.xhrQueue.saturated = function () {
-                App.log('[InstancesManager] Queue is saturated');
+                App.log('XHR Queue %c Saturated Queue','IM');
             };
 
             this.getLoadedGeometries = function (n) {
@@ -336,7 +330,6 @@ define(['dmu/LoaderManager', 'async'],
                 loaderIndicator.show();
                 _this.loadQueue.push({'process': 'loadOne', 'path': [component.getPath()]});
             };
-
 	        this.loadComponentsByPaths = function(paths){
 		        loaderIndicator.show();
 		        var directive = {
@@ -348,11 +341,9 @@ define(['dmu/LoaderManager', 'async'],
 		        });
 		        _this.loadQueue.push(directive);
 	        };
-
             this.unLoadComponent = function (component) {
                 _this.loadQueue.push({'process': 'unload', 'path': component.getPath()});
             };
-
 	        this.unLoadComponentsByPaths = function (pathsToUnload) {
 		        _(pathsToUnload).each(function(path){
 			        _this.loadQueue.push({'process': 'unload', 'path': path});
@@ -360,7 +351,7 @@ define(['dmu/LoaderManager', 'async'],
 	        };
 
             this.clear = function () {
-                App.log('[InstanceManager] Clearing Scene');
+                App.log('%c Clearing Scene','IM');
 
                 _this.xhrQueue.kill();
                 _this.loadQueue.kill();

@@ -1,50 +1,48 @@
 /*global define,App*/
-define(
-    [
-        "backbone",
-        "mustache",
-        "text!templates/control_navigation.html"
-    ], function (Backbone, Mustache, template) {
+define([
+    'backbone',
+    'mustache',
+    'text!templates/control_navigation.html'
+], function (Backbone, Mustache, template) {
+    'use strict';
+    var PartMetadataView = Backbone.View.extend({
+        className: 'side_control_group',
 
-        var PartMetadataView = Backbone.View.extend({
+        events: {
+            'click button#fly_to': 'flyTo',
+            'click button#look_at': 'lookAt',
+            'click button#reset_camera': 'resetCamera'
+        },
 
-            className: "side_control_group",
+        setMesh: function (mesh) {
+            this.$('button#look_at').removeAttr('disabled');
+            this.$('button#fly_to').removeAttr('disabled');
+            this.mesh = mesh;
+        },
 
-            events: {
-                "click button#fly_to": "fly_to",
-                "click button#look_at": "look_at",
-                "click button#reset_camera": "reset_camera"
-            },
+        reset: function () {
+            this.$('button#look_at').attr('disabled', 'disabled');
+            this.$('button#fly_to').attr('disabled', 'disabled');
+        },
 
-            setMesh: function (mesh) {
-                this.$("button#look_at").removeAttr("disabled");
-                this.$("button#fly_to").removeAttr("disabled");
-                this.mesh = mesh;
-            },
+        render: function () {
+            this.$el.html(Mustache.render(template, {mesh: this.mesh, i18n: App.config.i18n}));
+            this.reset();
+            return this;
+        },
 
-            reset: function () {
-                this.$("button#look_at").attr("disabled", "disabled");
-                this.$("button#fly_to").attr("disabled", "disabled");
-            },
+        flyTo: function () {
+            App.sceneManager.flyTo(this.mesh);
+        },
 
-            render: function () {
-                this.$el.html(Mustache.render(template, {mesh: this.mesh, i18n: App.config.i18n}));
-                this.reset();
-                return this;
-            },
+        lookAt: function () {
+            App.sceneManager.lookAt(this.mesh);
+        },
 
-            fly_to: function () {
-                App.sceneManager.flyTo(this.mesh);
-            },
-
-            look_at: function () {
-                App.sceneManager.lookAt(this.mesh);
-            },
-
-            reset_camera: function () {
-                App.sceneManager.resetCameraPlace();
-            }
-        });
-
-        return PartMetadataView;
+        resetCamera: function () {
+            App.sceneManager.resetCameraPlace();
+        }
     });
+
+    return PartMetadataView;
+});

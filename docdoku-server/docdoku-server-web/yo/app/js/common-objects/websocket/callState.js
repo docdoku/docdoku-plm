@@ -1,5 +1,6 @@
 /*global define*/
 define(function () {
+    'use strict';
     return  {
         NO_CALL: 'NO_CALL',
         INCOMING: 'INCOMING',
@@ -8,4 +9,4 @@ define(function () {
         RUNNING: 'RUNNING',
         ENDED: 'ENDED'
     };
-})
+});
