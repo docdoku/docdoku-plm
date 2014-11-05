@@ -169,6 +169,7 @@
         <profile>
             <id>env-prod</id>
             <activation>
+                <activeByDefault>true</activeByDefault>
             </activation>
             <build>
                 <plugins>
