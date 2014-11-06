@@ -39,15 +39,15 @@ define(function () {
         control = new THREE.TrackballControls(camera, container[0]);
 
         function centerOn(mesh) {
+            mesh.geometry.computeBoundingBox();
             var boundingBox = mesh.geometry.boundingBox;
-            var cog = new THREE.Vector3().copy(boundingBox.center()).applyMatrix4(mesh.matrix);
+            var cog = new THREE.Vector3().copy(boundingBox.center());
             var size = boundingBox.size();
             var radius = Math.max(size.x, size.y, size.z);
-            var dir = new THREE.Vector3().copy(cog).sub(camera.position).normalize();
             var distance = radius ? radius * 2 : 1000;
-            distance = distance < App.SceneOptions.cameraNear ? App.SceneOptions.cameraNear + 100 : distance;
-            var endCamPos = new THREE.Vector3().copy(cog).sub(dir.multiplyScalar(distance));
-            camera.position.copy(endCamPos);
+            distance = (distance < App.SceneOptions.cameraNear) ? App.SceneOptions.cameraNear + 100 : distance;
+            camera.position.set(cog.x+distance,cog.y,cog.z+distance);
+            control.target.copy(cog);
         }
 
         function render() {
@@ -61,8 +61,6 @@ define(function () {
             render();
         }
 
-
-
         function getMeshGeometries(collada, geometries) {
             if (collada) {
                 _.each(collada.children, function (child) {
@@ -75,7 +73,6 @@ define(function () {
         }
 
         function onParseSuccess(geometry, material) {
-            THREE.GeometryUtils.center(geometry);
             var mesh = new THREE.Mesh(geometry, material || new THREE.MeshPhongMaterial({ transparent: true, color: new THREE.Color(0xbbbbbb) }));
             scene.add(mesh);
             centerOn(mesh);
@@ -109,15 +106,11 @@ define(function () {
                 break;
 
             case 'stl':
-
                 var stlLoader = new THREE.STLLoader();
 
-                stlLoader.addEventListener('load', function (stl) {
-                    var geometry = stl.content;
+                stlLoader.load(filename, function(geometry){
                     onParseSuccess(geometry, null);
                 });
-
-                stlLoader.load(filename);
 
                 break;
 
@@ -139,14 +132,11 @@ define(function () {
 
         }
 
-
         control.addEventListener('change', function () {
             render();
         });
 
         animate();
-
-
     }
 
     return PermalinkApp;
