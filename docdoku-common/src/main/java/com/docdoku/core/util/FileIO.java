@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -25,6 +25,8 @@ import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
@@ -35,28 +37,31 @@ import java.util.zip.ZipInputStream;
  */
 public class FileIO {
 
-    private final static int CHUNK_SIZE = 1024 * 8;
-    private final static int BUFFER_CAPACITY = 1024 * 16;
+    private static final int CHUNK_SIZE = 1024 * 8;
+    private static final int BUFFER_CAPACITY = 1024 * 16;
 
 
-    private final static List<String> DOC_EXTENSIONS = Arrays.asList("odt", "html", "sxw", "swf", "sxc", "doc", "docx", "xls", "xlsx", "rtf", "txt", "ppt", "pptx", "odp", "wpd", "tsv", "sxi", "csv", "pdf");
-    private final static List<String> AV_EXTENSIONS = Arrays.asList("mp3", "mpg", "flv", "mp4", "aac", "mov");
-    private final static List<String> IMAGE_EXTENSIONS = Arrays.asList("jpg", "png", "gif", "psd", "jpeg", "psp", "tif");
-    private final static List<String> ARCHIVE_EXTENSIONS = Arrays.asList("zip");
+    private static final List<String> DOC_EXTENSIONS = Arrays.asList("odt", "html", "sxw", "swf", "sxc", "doc", "docx", "xls", "xlsx", "rtf", "txt", "ppt", "pptx", "odp", "wpd", "tsv", "sxi", "csv", "pdf");
+    private static final List<String> AV_EXTENSIONS = Arrays.asList("mp3", "mpg", "flv", "mp4", "aac", "mov");
+    private static final List<String> IMAGE_EXTENSIONS = Arrays.asList("jpg", "png", "gif", "psd", "jpeg", "psp", "tif");
+    private static final List<String> ARCHIVE_EXTENSIONS = Arrays.asList("zip");
 
     private FileIO() {
     }
 
     public static void rmDir(File pDir) {
         if (pDir.isDirectory()) {
-            for (File subFile : pDir.listFiles()) {
-                if (subFile.isDirectory()) {
-                    rmDir(subFile);
-                } else {
-                    subFile.delete();
+            File[] files = pDir.listFiles();
+            if(files!=null){
+                for (File subFile : files) {
+                    if (subFile.isDirectory()) {
+                        rmDir(subFile);
+                    } else {
+                        subFile.delete();
+                    }
                 }
+                pDir.delete();
             }
-            pDir.delete();
         }
     }
 
@@ -117,27 +122,27 @@ public class FileIO {
     }
 
     public static String encodeURL(String url) throws UnsupportedEncodingException {
-        String encodedURL;
+        StringBuilder encodedURLBuf = new StringBuilder();
 
         String[] parts = url.split("/");
-        encodedURL = URLEncoder.encode(parts[0], "UTF-8");
+        encodedURLBuf.append(URLEncoder.encode(parts[0], "UTF-8"));
 
         for (int i = 1; i < parts.length; i++) {
-            encodedURL += "/" + URLEncoder.encode(parts[i], "UTF-8");
+            encodedURLBuf.append("/").append(URLEncoder.encode(parts[i], "UTF-8"));
         }
-        return encodedURL;
+        return encodedURLBuf.toString();
     }
 
     public static String getLinkEncoded(String link, String enc) throws UnsupportedEncodingException {
-        String codeUri;
+        StringBuilder codeUriBuild = new StringBuilder();
 
         String[] tabFolder = link.split("/");
-        codeUri = URLEncoder.encode(tabFolder[0], enc);
+        codeUriBuild.append(URLEncoder.encode(tabFolder[0], enc));
 
         for (int i = 1; i < tabFolder.length; i++) {
-            codeUri += "/" + URLEncoder.encode(tabFolder[i], enc);
+            codeUriBuild.append("/").append(URLEncoder.encode(tabFolder[i], enc));
         }
-        return codeUri;
+        return codeUriBuild.toString();
     }
 
     public static boolean isAVFile(String fileName){
@@ -193,8 +198,17 @@ public class FileIO {
     }
 
     public static boolean existsInArchive(File archiveFile, String fileName) throws IOException {
-        ZipFile zipfile = new ZipFile(archiveFile);
-        return zipfile.getEntry(fileName) != null;
+        boolean exists = false;
+        ZipFile zipfile = null;
+        try{
+            zipfile = new ZipFile(archiveFile);
+            exists = zipfile.getEntry(fileName) != null;
+        }finally {
+            try{if(zipfile != null){
+                    zipfile.close();
+            }}catch (IOException ignored){}
+        }
+        return exists;
     }
 
     public static boolean existsInArchive(InputStream archiveInputStream, String fileName) {
@@ -208,7 +222,7 @@ public class FileIO {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            Logger.getLogger(FileIO.class.getName()).log(Level.INFO, null, e);
         }
         return false;
     }

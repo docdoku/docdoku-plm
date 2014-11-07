@@ -1,0 +1,70 @@
+/*global define,App*/
+define([
+    'backbone',
+    'mustache',
+    'text!templates/change-issues/change_issue_list_item.html',
+    'views/change-issues/change_issue_edition'
+], function (Backbone, Mustache, template, ChangeIssueEditionView) {
+	'use strict';
+    var ChangeIssueListItemView = Backbone.View.extend({
+
+        events: {
+            'click input[type=checkbox]': 'selectionChanged',
+            'click td.change_issue_name': 'openEditionView'
+        },
+
+        tagName: 'tr',
+
+        initialize: function () {
+            this._isChecked = false;
+            this.listenTo(this.model, 'change', this.render);
+        },
+
+        render: function () {
+            this.$el.html(Mustache.render(template, {model: this.model, i18n: App.config.i18n}));
+            this.$checkbox = this.$('input[type=checkbox]');
+            this.bindUserPopover();
+            this.trigger('rendered', this);
+            return this;
+        },
+
+        selectionChanged: function () {
+            this._isChecked = this.$checkbox.prop('checked');
+            this.trigger('selectionChanged', this);
+        },
+
+        isChecked: function () {
+            return this._isChecked;
+        },
+
+        check: function () {
+            this.$checkbox.prop('checked', true);
+            this._isChecked = true;
+            this.trigger('selectionChanged', this);
+        },
+
+        unCheck: function () {
+            this.$checkbox.prop('checked', false);
+            this._isChecked = false;
+            this.trigger('selectionChanged', this);
+        },
+
+        bindUserPopover: function () {
+            this.$('.author-popover').userPopover(this.model.getAuthor(), this.model.getName(), 'left');
+        },
+
+        openEditionView: function () {
+            var that = this;
+            this.model.fetch();
+            var editionView = new ChangeIssueEditionView({
+                collection: that.collection,
+                model: that.model
+            });
+            window.document.body.appendChild(editionView.render().el);
+            editionView.openModal();
+
+        }
+    });
+
+    return ChangeIssueListItemView;
+});

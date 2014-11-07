@@ -1,4 +1,4 @@
-define(["text!templates/home.html","storage"], function(template, Storage) {
+define(["text!templates/home.html","storage","dplm"], function(template, Storage,Dplm) {
 
     var MainView =  Backbone.View.extend({
 
@@ -13,9 +13,18 @@ define(["text!templates/home.html","storage"], function(template, Storage) {
         },
 
         render:function() {
+            var self = this;
             var recentlyUsedPaths = Storage.getRecentlyUsedPaths();
             var recentlyUsedWorkspaces = Storage.getRecentlyUsedWorkspaces();
-            this.$el.html(this.template({user:APP_GLOBAL.GLOBAL_CONF.user,recentlyUsedPaths:recentlyUsedPaths.reverse(),recentlyUsedWorkspaces:recentlyUsedWorkspaces.reverse()}));
+            Dplm.getWorkspaces({
+                success:function(workspaces){
+                    recentlyUsedWorkspaces = _.intersection(recentlyUsedWorkspaces,workspaces);
+                    self.$el.html(self.template({user:APP_GLOBAL.GLOBAL_CONF.user,recentlyUsedPaths:recentlyUsedPaths.reverse(),recentlyUsedWorkspaces:recentlyUsedWorkspaces.reverse()}));
+                },
+                error:function(){
+                    self.$el.html(self.template({user:APP_GLOBAL.GLOBAL_CONF.user,recentlyUsedPaths:recentlyUsedPaths.reverse(),recentlyUsedWorkspaces:recentlyUsedWorkspaces.reverse()}));
+                }
+            });
             this.bindDomElements();
             return this;
         },

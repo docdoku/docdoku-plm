@@ -1,0 +1,47 @@
+<div id="product-menu">
+    <div id="product-menu-inner">
+        <div id="nav_list_action_bar"></div>
+
+        <div id="product_nav_list_container">
+            <nav class="nav nav-list treeview" id="product_nav_list">
+                <div id='product_title'><i class="fa fa-briefcase"></i> {{productId}} <img class="loader"
+                                                                                           src="{{contextPath}}/images/product-loader.gif"/>
+                </div>
+            </nav>
+        </div>
+
+        <div id="config_spec_container" class="ConfigSpecSelector"></div>
+    </div>
+</div>
+
+<div id="product-content">
+
+    <div id="top_controls_container" class="actions well">
+        <div class="btn-group" data-toggle="buttons-radio" id="top_buttons">
+            <button class="btn btn-custom active" id="scene_view_btn" title="{{i18n.SCENE_VIEW}}"><i
+                    class="fa fa-eye"></i></button>
+            <button class="btn btn-custom" id="bom_view_btn" title="{{i18n.BOM_VIEW}}"><i class="fa fa-list"></i>
+            </button>
+        </div>
+        <button class="btn btn-custom" id="export_scene_btn"><i class="fa fa-upload"></i> <b>{{i18n.EXPORT}}</b>
+        </button>
+        <button class="btn btn-custom" id="fullscreen_scene_btn"><i class="fa fa-arrows-alt"></i> <b>{{i18n.FULL_SCREEN}}</b>
+        </button>
+        <div id="progress_bar_container" class="progress progress-striped active"></div>
+    </div>
+
+    <div id="center_container">
+
+        <div id="side_controls_container">
+        </div>
+
+        <div id="scene_container">
+            <div id="container"></div>
+        </div>
+
+    </div>
+
+    <div id="bom_table_container"></div>
+    <div id="part_metadata_container" class="minimized"></div>
+
+</div>

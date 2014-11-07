@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -47,7 +47,7 @@ public class ShareManagerBean implements IShareManagerLocal {
     @Resource
     private SessionContext ctx;
 
-    private final static Logger LOGGER = Logger.getLogger(ShareManagerBean.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ShareManagerBean.class.getName());
 
     @PostConstruct
     private void init() {

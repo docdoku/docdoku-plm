@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -42,9 +42,9 @@ import static org.junit.Assert.assertNotNull;
  */
 public class MailSending {
 
-    private final static String FOLDER_NAME = "test";
-    private final static String DOCUMENT_ID = "Test-Document";
-    private final static String MAIL_SUBJECT = "Iteration notification";
+    private static final String FOLDER_NAME = "test";
+    private static final String DOCUMENT_ID = "Test-Document";
+    private static final String MAIL_SUBJECT = "Iteration notification";
     private SmokeTestProperties properties = new SmokeTestProperties();
 
 

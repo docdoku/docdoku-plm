@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -38,8 +38,8 @@ import java.security.NoSuchAlgorithmException;
 
 public class FileHelper {
 
-    private final static int CHUNK_SIZE = 1024*8;
-    private final static int BUFFER_CAPACITY = 1024*32;
+    private static final int CHUNK_SIZE = 1024*8;
+    private static final int BUFFER_CAPACITY = 1024*32;
 
     private String login;
     private String password;
@@ -172,7 +172,7 @@ public class FileHelper {
         conn.setRequestProperty("Authorization", "Basic " + new String(encoded, "US-ASCII"));
         conn.setRequestMethod("HEAD");
         conn.connect();
-        int code = conn.getResponseCode();
+        //conn.getResponseCode();
     }
 
     public static String getPartURL(URL serverURL, PartIterationKey pPart, String pRemoteFileName) throws UnsupportedEncodingException, MalformedURLException {

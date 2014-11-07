@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -48,17 +48,23 @@ public class InstanceDateAttribute extends InstanceAttribute{
     }
 
     @Override
-    public Date getValue() {
-        return dateValue;
+    public Date getValue() {return dateValue;}
+    @Override
+    public boolean setValue(Object pValue) {
+        if(pValue instanceof Date){
+            dateValue=(Date)pValue;
+            return true;
+        }else if(pValue instanceof String){
+            dateValue= new Date(Long.parseLong((String) pValue));
+            return true;
+        }else{
+            dateValue=null;
+            return false;
+        }
     }
 
-    public Date getDateValue() {
-        return dateValue;
-    }
-
-    public void setDateValue(Date dateValue) {
-        this.dateValue = dateValue;
-    }
+    public Date getDateValue() {return dateValue;}
+    public void setDateValue(Date dateValue) {this.dateValue = dateValue;}
     
     
     /**
@@ -66,21 +72,11 @@ public class InstanceDateAttribute extends InstanceAttribute{
      */
     @Override
     public InstanceDateAttribute clone() {
-        InstanceDateAttribute clone = null;
+        InstanceDateAttribute clone;
         clone = (InstanceDateAttribute) super.clone();
         
         if(dateValue!=null)
             clone.dateValue = (Date) dateValue.clone();
         return clone;
     }
-
-    @Override
-    public boolean setValue(Object pValue) {
-        if(pValue instanceof Date){
-            dateValue=(Date)pValue;
-            return true;
-        }else
-            return false;
-    }
-
 }

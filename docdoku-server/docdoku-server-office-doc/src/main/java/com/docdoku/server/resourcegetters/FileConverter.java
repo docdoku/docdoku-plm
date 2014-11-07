@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -44,15 +44,17 @@ public class FileConverter {
     private static final String PROPERTIES_FILE = "/com/docdoku/server/viewers/conf.properties";
     private static final String OO_HOME_KEY = "com.docdoku.server.viewers.ooHome";
     private static final String OO_PORT_KEY = "com.docdoku.server.viewers.ooPort";
-    private final static Logger LOGGER = Logger.getLogger(FileConverter.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(FileConverter.class.getName());
 
     private OfficeManager officeManager;
 
     @PostConstruct
     private void init() {
+        InputStream inputStream = null;
         try {
             Properties properties = new Properties();
-            properties.load(FileConverter.class.getResourceAsStream(PROPERTIES_FILE));
+            inputStream = FileConverter.class.getResourceAsStream(PROPERTIES_FILE);
+            properties.load(inputStream);
             String ooHome = properties.getProperty(OO_HOME_KEY);
             int ooPort = Integer.parseInt(properties.getProperty(OO_PORT_KEY));
             officeManager = new DefaultOfficeManagerConfiguration()
@@ -63,6 +65,14 @@ public class FileConverter {
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, null, e);
             throw new RuntimeException(e);
+        } finally {
+            try{
+                if(inputStream!=null){
+                    inputStream.close();
+                }
+            }catch (IOException e){
+                LOGGER.log(Level.FINEST, null, e);
+            }
         }
     }
 

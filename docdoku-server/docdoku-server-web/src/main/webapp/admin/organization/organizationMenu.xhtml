@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+    
+    <ui:composition template="/WEB-INF/templates/defaultTemplate.xhtml">
+        <ui:define name="title">
+            <f:loadBundle var="i18nOrganizationMenu" basename="com.docdoku.server.localization.admin.organizationMenu_resource"/>
+            #{i18nOrganizationMenu['title']}
+        </ui:define>
+        <ui:define name="content">
+            <ol class="breadcrumb">
+                <li class="active">#{i18nTemplate['toplinks.organization']}</li>
+            </ol>
+
+            <div id="sidebar" class="well well-large">
+                <h3>#{i18nOrganizationMenu['sidebar.title']}</h3>
+                <p>#{i18nOrganizationMenu['sidebar.text']}</p>
+            </div>
+            <h2>#{i18nOrganizationMenu['main.title']}</h2>
+            <h3>#{i18nOrganizationMenu['section.title']}</h3>
+            <h:form>
+                <fieldset id="admin">
+                    <c:choose>
+                        <c:when test="#{empty accountBean.organizationName}">
+                            <h:link value="#{i18nOrganizationMenu['section.create']}" outcome="/admin/organization/organizationCreationForm.xhtml"/>
+                        </c:when>
+                        <c:otherwise>
+                            <c:if test="#{accountBean.superAdmin or accountBean.organizationAdmin eq accountBean.login}">
+                                <h:commandLink value="#{i18nOrganizationMenu['section.edit']}" action="#{organizationBean.editOrganization}"/> |
+                                <h:link value="#{i18nOrganizationMenu['section.manage']}" outcome="/admin/organization/manageAccounts.xhtml"/> |
+                                <h:commandLink value="#{i18nOrganizationMenu['section.delete']}" action="#{organizationBean.deleteOrganization}" onclick="return prompt('#{i18nOrganizationMenu['section.deleteConfirm']}') == '#{i18nOrganizationMenu['section.deleteConfirmPromptValue']}'" />
+                            </c:if>
+                        </c:otherwise>
+                    </c:choose>
+                </fieldset>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>

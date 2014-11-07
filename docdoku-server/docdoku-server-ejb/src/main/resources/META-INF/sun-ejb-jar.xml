@@ -36,6 +36,18 @@
             </webservice-endpoint>
         </ejb>
         <ejb>
+            <ejb-name>ProductConfigSpecManagerBean</ejb-name>
+            <jndi-name>ejb/ProductConfigSpecManagerBean</jndi-name>
+            <webservice-endpoint>
+                <port-component-name>ProductConfigSpecManagerBean</port-component-name>
+                <endpoint-address-uri>services/productConfigSpec</endpoint-address-uri>
+                <login-config>
+                    <auth-method>BASIC</auth-method>
+                    <realm>docdokuRealm</realm>
+                </login-config>
+            </webservice-endpoint>
+        </ejb>
+        <ejb>
             <ejb-name>WorkflowManagerBean</ejb-name>
             <jndi-name>ejb/WorkflowManagerBean</jndi-name>
             <webservice-endpoint>

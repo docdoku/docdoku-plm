@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -45,9 +45,6 @@ public class DocumentMasterDAO {
         mLocale = Locale.getDefault();
     }
 
-
-
-
     public void createDocM(DocumentMaster pDocumentMaster) throws DocumentMasterAlreadyExistsException, CreationException {
         try {
             //the EntityExistsException is thrown only when flush occurs
@@ -74,9 +71,8 @@ public class DocumentMasterDAO {
 
 
     public List<DocumentMaster> getAllByWorkspace(String workspaceId) {
-        List<DocumentMaster> documentMasters = em.createNamedQuery("DocumentMaster.findByWorkspace")
-                .setParameter("workspaceId",workspaceId)
-                .getResultList();
-        return documentMasters;
+        return em.createNamedQuery("DocumentMaster.findByWorkspace")
+                                                 .setParameter("workspaceId",workspaceId)
+                                                 .getResultList();
     }
 }

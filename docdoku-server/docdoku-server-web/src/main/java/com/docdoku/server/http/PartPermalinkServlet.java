@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -56,10 +56,9 @@ public class PartPermalinkServlet extends HttpServlet {
                 PartRevision partRevision = (PartRevision) pRequest.getAttribute("publicPartRevision");
                 handleSuccess(pRequest,pResponse,partRevision);
             }else{
-                HttpServletRequest httpRequest = (HttpServletRequest) pRequest;
-                String requestURI = httpRequest.getRequestURI();
+                String requestURI = pRequest.getRequestURI();
                 String[] pathInfos = Pattern.compile("/").split(requestURI);
-                int offset = httpRequest.getContextPath().equals("") ? 2 : 3;
+                int offset = pRequest.getContextPath().equals("") ? 2 : 3;
 
                 String workspaceId = URLDecoder.decode(pathInfos[offset], "UTF-8");
                 String partNumber = URLDecoder.decode(pathInfos[offset+1],"UTF-8");
@@ -97,6 +96,6 @@ public class PartPermalinkServlet extends HttpServlet {
         pRequest.setAttribute("attr",  new ArrayList<InstanceAttribute>(partIteration.getInstanceAttributes().values()));
         pRequest.setAttribute("nativeCadFileURI",nativeCadFileURI);
         pRequest.setAttribute("geometryFileURI",geometryFileURI);
-        pRequest.getRequestDispatcher("/faces/partPermalink.xhtml").forward(pRequest, pResponse);
+        pRequest.getRequestDispatcher(pRequest.getContextPath()+"/faces/partPermalink.xhtml").forward(pRequest, pResponse);
     }
 }

@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -27,18 +27,22 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class RadiusCalculator {
 
-    private final static String CONF_PROPERTIES="/com/docdoku/server/converters/utils/conf.properties";
-    private final static Properties CONF = new Properties();
+    private static final String CONF_PROPERTIES="/com/docdoku/server/converters/utils/conf.properties";
+    private static final Properties CONF = new Properties();
 
     public RadiusCalculator() {
     }
 
     public static double calculateRadius(File file){
+        InputStream inputStream = null;
         try{
-            CONF.load(RadiusCalculator.class.getResourceAsStream(CONF_PROPERTIES));
+            inputStream = RadiusCalculator.class.getResourceAsStream(CONF_PROPERTIES);
+            CONF.load(inputStream);
             String nodeServerUrl = CONF.getProperty("nodeServerUrl");
 
             URL url = new URL(nodeServerUrl+"/radius");
@@ -54,7 +58,7 @@ public class RadiusCalculator {
             wr.flush();
             wr.close();
 
-            int responseCode = con.getResponseCode();
+            //int responseCode = con.getResponseCode();
 
             BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
             String inputLine;
@@ -68,12 +72,13 @@ public class RadiusCalculator {
             String result = response.toString();
 
             JsonObject jsonResponse = Json.createReader(new StringReader(result)).readObject();
-            double radius = Double.parseDouble(jsonResponse.getString("radius"));
-
-            return radius;
-
+            return Double.parseDouble(jsonResponse.getString("radius"));
         } catch (IOException e) {
-            e.printStackTrace();
+            Logger.getLogger(RadiusCalculator.class.getName()).log(Level.INFO, null, e);
+        }finally {
+            try{if(inputStream!=null){
+                    inputStream.close();
+            }}catch (IOException ignored){}
         }
 
         return 0;

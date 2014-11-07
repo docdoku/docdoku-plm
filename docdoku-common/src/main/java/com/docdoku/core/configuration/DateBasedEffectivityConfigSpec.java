@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -25,8 +25,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 /**
- * <a href="EffectivityConfigSpec.html">EffectivityConfigSpec</a>
- * expressed by date and time.
+ * A kind of {@link EffectivityConfigSpec} expressed by date and time.
  * 
  * @author Florent Garin
  * @version 1.1, 30/10/11
@@ -35,7 +34,6 @@ import java.util.Date;
 @Table(name="DATEBASEDEFFCS")
 @Entity
 public class DateBasedEffectivityConfigSpec extends EffectivityConfigSpec {
-
     /**
      * The date and/or time of the context.
      */
@@ -53,7 +51,4 @@ public class DateBasedEffectivityConfigSpec extends EffectivityConfigSpec {
     public void setDate(Date date) {
         this.date = date;
     }
-    
-    
-    
 }

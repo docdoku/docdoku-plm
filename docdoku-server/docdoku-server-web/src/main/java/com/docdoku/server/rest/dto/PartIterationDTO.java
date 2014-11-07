@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -40,6 +40,13 @@ public class PartIterationDTO implements Serializable {
     private String version;
 
     public PartIterationDTO() {
+    }
+
+    public PartIterationDTO(String pWorkspaceId, String pNumber, String pVersion, int pIteration) {
+        workspaceId = pWorkspaceId;
+        number = pNumber;
+        version = pVersion;
+        iteration = pIteration;
     }
 
     public String getWorkspaceId() {

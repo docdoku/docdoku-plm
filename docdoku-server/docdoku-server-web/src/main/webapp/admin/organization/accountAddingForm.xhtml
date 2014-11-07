@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html">
+
+    <ui:composition template="/WEB-INF/templates/defaultTemplate.xhtml">
+        <ui:define name="title">
+            <f:loadBundle var="i18nAccountAddingForm" basename="com.docdoku.server.localization.admin.accountAddingForm_resource"/>
+            #{i18nAccountAddingForm['title']}
+        </ui:define>
+        <ui:define name="content">
+            <f:loadBundle var="i18nManageAccounts" basename="com.docdoku.server.localization.admin.manageAccounts_resource"/>
+            <ol class="breadcrumb">
+                <li><h:link value="#{i18nTemplate['toplinks.organization']}" outcome="/admin/organization/organizationMenu.xhtml" />
+                    <span class="divider">/</span></li>
+                <li><h:link value="#{i18nManageAccounts['main.title']}" outcome="/admin/organization/manageAccounts.xhtml" />
+                    <span class="divider">/</span></li>
+                <li class="active">#{i18nAccountAddingForm['main.title']}</li>
+            </ol>
+
+            <div id="sidebar" class="well well-large">
+                <h3>#{i18nAccountAddingForm['sidebar.title']}</h3>
+                <p>#{i18nAccountAddingForm['sidebar.text']}</p>
+            </div>
+
+            <h2>#{i18nAccountAddingForm['main.title']}</h2>
+            <h3>#{i18nAccountAddingForm['section.title']} #{accountBean.organizationName}</h3>
+
+
+            <h:form>
+                <fieldset id="admin">
+                    <h:outputLabel value="#{i18nAccountAddingForm['section.login']}*:" for="login"/>
+                    <h:inputText required ="true" id="login" value="#{organizationBean.loginToAdd}" size="20" maxlength="50"/>
+                    <div class="actions-btn">
+                        <h:commandButton styleClass="btn btn-primary" action="#{organizationBean.addAccount}" value="#{i18nAccountAddingForm['section.add']}" alt="#{i18nAccountAddingForm['section.add']}"/>
+                    </div>
+                </fieldset>
+            </h:form>
+        </ui:define>
+
+    </ui:composition>
+</html>

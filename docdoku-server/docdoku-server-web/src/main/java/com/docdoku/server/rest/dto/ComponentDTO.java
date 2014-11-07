@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -20,6 +20,7 @@
 
 package com.docdoku.server.rest.dto;
 
+import javax.xml.bind.annotation.XmlElement;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -45,8 +46,14 @@ public class ComponentDTO implements Serializable{
     private List<InstanceAttributeDTO> attributes;
     private UserDTO checkOutUser;
     private Date checkOutDate;
+    @XmlElement(nillable = true)
+    private int lastIterationNumber;
+    @XmlElement(nillable = true)
+    private boolean accessDeny;
 
-    public ComponentDTO() {}
+    public ComponentDTO() {
+
+    }
 
     public ComponentDTO(String number) {
         this.number=number;
@@ -55,11 +62,13 @@ public class ComponentDTO implements Serializable{
     public String getNumber() {
         return number;
     }
+    public void setNumber(String number) {
+        this.number = number;
+    }
 
     public boolean isAssembly() {
         return assembly;
     }
-
     public void setAssembly(boolean assembly) {
         this.assembly = assembly;
     }
@@ -67,11 +76,13 @@ public class ComponentDTO implements Serializable{
     public boolean isStandardPart() {
         return standardPart;
     }
+    public void setStandardPart(boolean standardPart) {
+        this.standardPart = standardPart;
+    }
 
     public int getIteration() {
         return iteration;
     }
-
     public void setIteration(int iteration) {
         this.iteration = iteration;
     }
@@ -79,55 +90,41 @@ public class ComponentDTO implements Serializable{
     public List<ComponentDTO> getComponents() {
         return components;
     }
+    public void setComponents(List<ComponentDTO> components) {
+        this.components = components;
+    }
 
     public String getDescription() {
         return description;
+    }
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getName() {
         return name;
     }
-
-    public void setComponents(List<ComponentDTO> components) {
-        this.components = components;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getVersion() {
         return version;
     }
-
     public void setVersion(String version) {
         this.version = version;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public int getPartUsageLinkId() {
         return partUsageLinkId;
     }
-
     public void setPartUsageLinkId(int partUsageLinkId) {
         this.partUsageLinkId = partUsageLinkId;
-    }
-
-    public void setNumber(String number) {
-        this.number = number;
-    }
-
-    public void setStandardPart(boolean standardPart) {
-        this.standardPart = standardPart;
     }
 
     public void setAttributes(List<InstanceAttributeDTO> attributes) {
         this.attributes = attributes;
     }
-
     public List<InstanceAttributeDTO> getAttributes() {
         return attributes;
     }
@@ -135,7 +132,6 @@ public class ComponentDTO implements Serializable{
     public String getAuthor() {
         return author;
     }
-
     public void setAuthor(String author) {
         this.author = author;
     }
@@ -143,7 +139,6 @@ public class ComponentDTO implements Serializable{
     public String getAuthorLogin() {
         return authorLogin;
     }
-
     public void setAuthorLogin(String authorLogin) {
         this.authorLogin = authorLogin;
     }
@@ -151,7 +146,6 @@ public class ComponentDTO implements Serializable{
     public int getAmount() {
         return amount;
     }
-
     public void setAmount(int amount) {
         this.amount = amount;
     }
@@ -159,7 +153,6 @@ public class ComponentDTO implements Serializable{
     public UserDTO getCheckOutUser() {
         return checkOutUser;
     }
-
     public void setCheckOutUser(UserDTO checkOutUser) {
         this.checkOutUser = checkOutUser;
     }
@@ -167,9 +160,17 @@ public class ComponentDTO implements Serializable{
     public Date getCheckOutDate() {
         return checkOutDate;
     }
-
     public void setCheckOutDate(Date checkOutDate) {
         this.checkOutDate = checkOutDate;
     }
 
+    public int getLastIterationNumber() {
+        return lastIterationNumber;
+    }
+    public void setLastIterationNumber(int lastIterationNumber) {
+        this.lastIterationNumber = lastIterationNumber;
+    }
+
+    public boolean isAccessDeny() {return accessDeny;}
+    public void setAccessDeny(boolean accessDeny) {this.accessDeny = accessDeny;}
 }

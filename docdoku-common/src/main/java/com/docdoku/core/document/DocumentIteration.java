@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -71,7 +71,7 @@ public class DocumentIteration implements Serializable, FileHolder, Comparable<D
         @JoinColumn(name = "DOCUMENTREVISION_VERSION", referencedColumnName = "DOCUMENTREVISION_VERSION"),
         @JoinColumn(name = "ITERATION", referencedColumnName = "ITERATION")
     })
-    private Set<BinaryResource> attachedFiles = new HashSet<BinaryResource>();
+    private Set<BinaryResource> attachedFiles = new HashSet<>();
     private String revisionNote;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumns({
@@ -94,7 +94,7 @@ public class DocumentIteration implements Serializable, FileHolder, Comparable<D
         @JoinColumn(name = "DOCUMENTREVISION_VERSION", referencedColumnName = "DOCUMENTREVISION_VERSION"),
         @JoinColumn(name = "ITERATION", referencedColumnName = "ITERATION")
     })
-    private Set<DocumentLink> linkedDocuments = new HashSet<DocumentLink>();
+    private Set<DocumentLink> linkedDocuments = new HashSet<>();
     
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @MapKey(name = "name")
@@ -108,7 +108,7 @@ public class DocumentIteration implements Serializable, FileHolder, Comparable<D
         @JoinColumn(name = "DOCUMENTREVISION_VERSION", referencedColumnName = "DOCUMENTREVISION_VERSION"),
         @JoinColumn(name = "ITERATION", referencedColumnName = "ITERATION")
     })
-    private Map<String, InstanceAttribute> instanceAttributes = new HashMap<String, InstanceAttribute>();
+    private Map<String, InstanceAttribute> instanceAttributes = new HashMap<>();
 
     public DocumentIteration() {
     }
@@ -142,9 +142,6 @@ public class DocumentIteration implements Serializable, FileHolder, Comparable<D
 
     public String getDocumentRevisionVersion(){
         return getDocumentVersion();
-    }
-
-    public void setDocumentMasterId(String documentMasterId) {
     }
 
     public int getIteration() {
@@ -201,12 +198,12 @@ public class DocumentIteration implements Serializable, FileHolder, Comparable<D
         return documentRevision;
     }
 
-    public void setCreationDate(Date pCreationDate) {
-        creationDate = pCreationDate;
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = (creationDate!=null) ? (Date) creationDate.clone() : null;
     }
 
     public Date getCreationDate() {
-        return creationDate;
+        return (creationDate!=null) ? (Date) creationDate.clone() : null;
     }
 
     public Set<DocumentLink> getLinkedDocuments() {
@@ -245,10 +242,14 @@ public class DocumentIteration implements Serializable, FileHolder, Comparable<D
         if (this == pObj) {
             return true;
         }
-        if (!(pObj instanceof DocumentIteration))
+        if (!(pObj instanceof DocumentIteration)) {
             return false;
+        }
         DocumentIteration docI = (DocumentIteration) pObj;
-        return ((docI.getId().equals(getId())) && (docI.getWorkspaceId().equals(getWorkspaceId()))  && (docI.getDocumentVersion().equals(getDocumentVersion())) && (docI.iteration==iteration));
+        return docI.getId().equals(getId()) &&
+                docI.getWorkspaceId().equals(getWorkspaceId()) &&
+                docI.getDocumentVersion().equals(getDocumentVersion()) &&
+                docI.iteration==iteration;
     }
 
 
@@ -285,9 +286,9 @@ public class DocumentIteration implements Serializable, FileHolder, Comparable<D
             throw new InternalError();
         }
         //perform a deep copy
-        clone.attachedFiles = new HashSet<BinaryResource>(attachedFiles);
+        clone.attachedFiles = new HashSet<>(attachedFiles);
 
-        Set<DocumentLink> clonedLinks = new HashSet<DocumentLink>();
+        Set<DocumentLink> clonedLinks = new HashSet<>();
         for (DocumentLink link : linkedDocuments) {
             DocumentLink clonedLink = link.clone();
             clonedLinks.add(clonedLink);
@@ -295,7 +296,7 @@ public class DocumentIteration implements Serializable, FileHolder, Comparable<D
         clone.linkedDocuments = clonedLinks;
 
         //perform a deep copy
-        Map<String, InstanceAttribute> clonedInstanceAttributes = new HashMap<String, InstanceAttribute>();
+        Map<String, InstanceAttribute> clonedInstanceAttributes = new HashMap<>();
         for (InstanceAttribute attribute : instanceAttributes.values()) {
             InstanceAttribute clonedAttribute = attribute.clone();
             clonedInstanceAttributes.put(clonedAttribute.getName(), clonedAttribute);

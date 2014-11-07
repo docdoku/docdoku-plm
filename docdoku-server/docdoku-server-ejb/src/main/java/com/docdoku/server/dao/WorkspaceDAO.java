@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -34,7 +34,6 @@ import com.docdoku.core.product.PartMaster;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.workflow.WorkflowModel;
 
-import javax.annotation.Resource;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
@@ -45,8 +44,6 @@ import java.util.Locale;
 
 public class WorkspaceDAO {
 
-    @Resource(name = "vaultPath")
-    private String vaultPath;
 
     private EntityManager em;
     private Locale mLocale;
@@ -98,24 +95,23 @@ public class WorkspaceDAO {
     }
 
     public long getDiskUsageForWorkspace(String pWorkspaceId) {
-        Number result = ((Number)em.createNamedQuery("BinaryResource.diskUsageInPath")
+        Number result = (Number) em.createNamedQuery("BinaryResource.diskUsageInPath")
                 .setParameter("path", pWorkspaceId+"/%")
-                .getSingleResult());
+                .getSingleResult();
 
         return result != null ? result.longValue() : 0L;
     }
 
     public List<Workspace> findWorkspacesWhereUserIsActive(String userLogin){
-        List<Workspace> workspaces = em.createNamedQuery("Workspace.findWorkspacesWhereUserIsActive", Workspace.class)
+        return em.createNamedQuery("Workspace.findWorkspacesWhereUserIsActive", Workspace.class)
                 .setParameter("userLogin", userLogin)
                 .getResultList();
-        return workspaces;
     }
 
     public void removeWorkspace(Workspace workspace) throws IOException, StorageException {
 
         String workspaceId = workspace.getId();
-        String pathToMatch = workspaceId+"/%";
+        String pathToMatch = workspaceId.replace("_","\\_").replace("%","\\%")+"/%";
 
         // Keep binaries in memory to delete them if google storage is the default storage provider
         // We also could enhance the way we delete files by using gsutils from google api
@@ -134,8 +130,24 @@ public class WorkspaceDAO {
         em.createQuery("DELETE FROM StateChangeSubscription s where s.observedDocumentRevisionWorkspaceId = :workspaceId")
                 .setParameter("workspaceId",workspaceId).executeUpdate();
 
-        // Baselines
-        em.createQuery("DELETE FROM Baseline b where b.configurationItem.workspace = :workspace")
+        // BaselinedPart
+        em.createQuery("DELETE FROM BaselinedPart bp where bp.targetPart.partRevision.partMasterWorkspaceId = :workspaceId")
+                .setParameter("workspaceId", workspaceId).executeUpdate();
+
+        // BaselinedDocument
+        em.createQuery("DELETE FROM BaselinedDocument bd where bd.targetDocument.documentRevision.documentMasterWorkspaceId = :workspaceId")
+                .setParameter("workspaceId", workspaceId).executeUpdate();
+
+        // ProductInstances
+        em.createQuery("DELETE FROM ProductInstanceIteration pii where pii.productInstanceMaster.instanceOf.workspace = :workspace")
+                .setParameter("workspace",workspace).executeUpdate();
+        em.createQuery("DELETE FROM ProductInstanceMaster pim where pim.instanceOf.workspace = :workspace")
+                .setParameter("workspace",workspace).executeUpdate();
+        // ProductBaselines
+        em.createQuery("DELETE FROM ProductBaseline b where b.configurationItem.workspace = :workspace")
+                .setParameter("workspace",workspace).executeUpdate();
+        // DocumentBaselines
+        em.createQuery("DELETE FROM DocumentBaseline b where b.workspace = :workspace")
                 .setParameter("workspace",workspace).executeUpdate();
 
         // EffectivityConfigSpecs
@@ -145,6 +157,18 @@ public class WorkspaceDAO {
         // Effectivity
         em.createQuery("DELETE FROM Effectivity e where e.configurationItem.workspace = :workspace")
                 .setParameter("workspace",workspace).executeUpdate();
+
+        // PartCollection
+        em.createQuery("DELETE FROM PartCollection pc where pc.author.workspaceId = :workspaceId")
+                .setParameter("workspaceId",workspaceId).executeUpdate();
+
+        // DocumentCollection
+        em.createQuery("DELETE FROM DocumentCollection dc where dc.author.workspaceId = :workspaceId")
+                .setParameter("workspaceId",workspaceId).executeUpdate();
+
+        // FoldereCollection
+        em.createQuery("DELETE FROM FolderCollection fc where fc.author.workspaceId = :workspaceId")
+                .setParameter("workspaceId",workspaceId).executeUpdate();
 
         // Layers
         em.createQuery("DELETE FROM Layer l where l.configurationItem.workspace = :workspace")
@@ -272,8 +296,7 @@ public class WorkspaceDAO {
     }
 
     public List<Workspace> getAll() {
-        List<Workspace> workspaces = em.createNamedQuery("Workspace.findAllWorkspaces")
+        return em.createNamedQuery("Workspace.findAllWorkspaces")
                 .getResultList();
-        return workspaces;
     }
 }

@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -23,9 +23,10 @@ package com.docdoku.core.change;
 
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
-import com.docdoku.core.document.DocumentRevision;
+import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.meta.Tag;
-import com.docdoku.core.product.PartRevision;
+import com.docdoku.core.product.PartIteration;
+import com.docdoku.core.security.ACL;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -67,11 +68,16 @@ public abstract class ChangeItem implements Serializable {
     })
     protected User assignee;
 
+    @OneToOne(orphanRemoval = true, cascade=CascadeType.ALL, fetch=FetchType.EAGER)
+    protected ACL acl;
+
     @Temporal(TemporalType.TIMESTAMP)
     protected java.util.Date creationDate;
 
     @Lob
     protected String description;
+
+    protected Priority priority;
 
     public enum Priority {
         LOW, HIGH, MEDIUM, EMERGENCY
@@ -90,47 +96,30 @@ public abstract class ChangeItem implements Serializable {
         ADAPTIVE, CORRECTIVE, PERFECTIVE, PREVENTIVE, OTHER
     }
 
+    @ManyToMany
+    protected Set<PartIteration> affectedParts = new HashSet<>();
 
     @ManyToMany
-    @JoinTable(name="CHANGEITEM_AFFECTED_PART",
-            inverseJoinColumns={
-                    @JoinColumn(name="PARTMASTER_PARTNUMBER", referencedColumnName="PARTMASTER_PARTNUMBER"),
-                    @JoinColumn(name="PARTREVISION_VERSION", referencedColumnName="VERSION"),
-                    @JoinColumn(name="PARTMASTER_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID")
-            },
-            joinColumns={
-                    @JoinColumn(name="CHANGEITEM_ID", referencedColumnName="ID")
-            })
-    private Set<PartRevision> affectedParts = new HashSet<>();
-
-    @ManyToMany
-    @JoinTable(name="CHANGEITEM_AFFECTED_DOCUMENT",
-            inverseJoinColumns={
-                    @JoinColumn(name="DOCUMENTMASTER_ID", referencedColumnName="DOCUMENTMASTER_ID"),
-                    @JoinColumn(name="DOCUMENTREVISION_VERSION", referencedColumnName="VERSION"),
-                    @JoinColumn(name="DOCUMENTMASTER_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID")
-            },
-            joinColumns={
-                    @JoinColumn(name="CHANGEITEM_ID", referencedColumnName="ID")
-            })
-    private Set<DocumentRevision> affectedDocuments = new HashSet<>();
-
+    protected Set<DocumentIteration> affectedDocuments = new HashSet<>();
 
     @ManyToMany(fetch=FetchType.EAGER)
-    @JoinTable(name="CHANGEITEM_TAG",
-            inverseJoinColumns={
-                    @JoinColumn(name="TAG_LABEL", referencedColumnName="LABEL"),
-                    @JoinColumn(name="TAG_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID")
-            },
-            joinColumns={
-                    @JoinColumn(name="CHANGEITEM_ID", referencedColumnName="ID")
-            })
-    private Set<Tag> tags=new HashSet<Tag>();
+    protected Set<Tag> tags=new HashSet<>();
 
     public ChangeItem(Workspace pWorkspace, String pName, User pAuthor) {
         workspace=pWorkspace;
         name=pName;
         author=pAuthor;
+    }
+
+    protected ChangeItem(String name, Workspace workspace, User author, User assignee, Date creationDate, String description, Priority priority, Category category) {
+        this.name = name;
+        this.workspace = workspace;
+        this.author = author;
+        this.assignee = assignee;
+        this.creationDate = creationDate;
+        this.description = description;
+        this.priority = priority;
+        this.category = category;
     }
 
     public ChangeItem() {
@@ -143,31 +132,38 @@ public abstract class ChangeItem implements Serializable {
     public Category getCategory() {
         return category;
     }
-
     public void setCategory(Category category) {
         this.category = category;
     }
 
+    public Priority getPriority() { return priority; }
+    public void setPriority(Priority priority) { this.priority = priority; }
+
     public Date getCreationDate() {
         return creationDate;
     }
-
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
     }
 
+    public ACL getACL() {return acl;}
+    public void setACL(ACL acl) {this.acl = acl;}
+
     public Set<Tag> getTags() {
         return tags;
     }
-
-    public void setTags(Set<Tag> tags) {
-        this.tags = tags;
+    public void setTags(Set<Tag> pTags) {
+        tags.retainAll(pTags);
+        pTags.removeAll(tags);
+        tags.addAll(pTags);
     }
+
+    public boolean addTag(Tag pTag){ return tags.add(pTag); }
+    public boolean removeTag(Tag pTag){ return tags.remove(pTag); }
 
     public String getName() {
         return name;
     }
-
     public void setName(String name) {
         this.name = name;
     }
@@ -175,15 +171,17 @@ public abstract class ChangeItem implements Serializable {
     public User getAuthor() {
         return author;
     }
-
     public void setAuthor(User author) {
         this.author = author;
+    }
+
+    public String getAuthorName() {
+        return author.getName();
     }
 
     public Workspace getWorkspace() {
         return workspace;
     }
-
     public void setWorkspace(Workspace workspace) {
         this.workspace = workspace;
     }
@@ -191,31 +189,27 @@ public abstract class ChangeItem implements Serializable {
     public User getAssignee() {
         return assignee;
     }
-
     public void setAssignee(User assignee) {
         this.assignee = assignee;
     }
 
-    public Set<DocumentRevision> getAffectedDocuments() {
+    public Set<DocumentIteration> getAffectedDocuments() {
         return affectedDocuments;
     }
-
-    public void setAffectedDocuments(Set<DocumentRevision> affectedDocuments) {
+    public void setAffectedDocuments(Set<DocumentIteration> affectedDocuments) {
         this.affectedDocuments = affectedDocuments;
     }
 
-    public Set<PartRevision> getAffectedParts() {
+    public Set<PartIteration> getAffectedParts() {
         return affectedParts;
     }
-
-    public void setAffectedParts(Set<PartRevision> affectedParts) {
+    public void setAffectedParts(Set<PartIteration> affectedParts) {
         this.affectedParts = affectedParts;
     }
 
     public String getDescription() {
         return description;
     }
-
     public void setDescription(String description) {
         this.description = description;
     }

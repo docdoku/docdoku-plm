@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -28,10 +28,14 @@ import com.docdoku.core.exceptions.*;
 import com.docdoku.core.security.WorkspaceUserMembership;
 import com.docdoku.core.security.WorkspaceUserMembershipKey;
 
-import javax.persistence.*;
-import java.util.ArrayList;
+import javax.persistence.EntityExistsException;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceException;
+import javax.persistence.Query;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class UserDAO {
 
@@ -179,9 +183,9 @@ public class UserDAO {
         return users;
     }
 
-    public User[] findReachableUsersForCaller(String callerLogin) {
+    public User[] findReachableUsersForCaller(String callerLogin, String workspaceId) {
 
-        List<User> users = new ArrayList<User>();
+        Map<String,User> users = new TreeMap<>();
 
         List<String> listWorkspaceId = em.createQuery("SELECT u.workspaceId FROM User u WHERE u.login = :login")
                 .setParameter("login", callerLogin).getResultList();
@@ -189,16 +193,18 @@ public class UserDAO {
         List<User> listUsers = em.createQuery("SELECT u FROM User u where u.workspaceId IN :workspacesId")
                 .setParameter("workspacesId", listWorkspaceId).getResultList();
 
-        List<String> loginsAdded = new ArrayList<String>();
 
-        for (int i = 0; i < listUsers.size(); i++) {
-            if(!loginsAdded.contains( ((User)listUsers.get(i)).getLogin()) ){
-                loginsAdded.add(((User)listUsers.get(i)).getLogin());
-                users.add((User) listUsers.get(i));
+        for (User listUser : listUsers) {
+            String loginUser = listUser.getLogin();
+            if (!users.keySet().contains(loginUser)) {
+                users.put(loginUser,listUser);
+            } else if(workspaceId.equals(listUser.getWorkspaceId())){
+                users.remove(loginUser);
+                users.put(loginUser,listUser);
             }
         }
 
-        return users.toArray(new User[users.size()]);
+        return users.values().toArray(new User[users.size()]);
 
     }
 

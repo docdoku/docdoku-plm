@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -60,13 +60,13 @@ public class DocumentLink implements Serializable, Cloneable{
     @Column(name = "TARGET_ITERATION", insertable = false, updatable = false)
     private int targetDocumentIteration;
     
-    @Column(name = "TARGET_DOCUMENTMASTER_ID", length=255, insertable = false, updatable = false)
+    @Column(name = "TARGET_DOCUMENTMASTER_ID", length=100, insertable = false, updatable = false)
     private String targetDocumentDocumentMasterId="";
     
-    @Column(name = "TARGET_DOCUMENTREVISION_VERSION", length=255, insertable = false, updatable = false)
+    @Column(name = "TARGET_DOCUMENTREVISION_VERSION", length=10, insertable = false, updatable = false)
     private String targetDocumentDocumentRevisionVersion ="";
     
-    @Column(name = "TARGET_WORKSPACE_ID", length=255, insertable = false, updatable = false)
+    @Column(name = "TARGET_WORKSPACE_ID", length=100, insertable = false, updatable = false)
     private String targetDocumentWorkspaceId="";
     
     @Column(name="COMMENTDATA")
@@ -178,7 +178,7 @@ public class DocumentLink implements Serializable, Cloneable{
 
     @Override
     public DocumentLink clone() {
-        DocumentLink clone = null;
+        DocumentLink clone;
         try {
             clone = (DocumentLink) super.clone();
         } catch (CloneNotSupportedException e) {

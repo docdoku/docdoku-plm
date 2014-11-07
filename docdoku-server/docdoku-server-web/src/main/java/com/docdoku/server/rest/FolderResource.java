@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -19,13 +19,14 @@
  */
 package com.docdoku.server.rest;
 
+import com.docdoku.core.configuration.ConfigSpec;
 import com.docdoku.core.document.DocumentRevisionKey;
 import com.docdoku.core.document.Folder;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.security.UserGroupMapping;
+import com.docdoku.core.services.IDocumentConfigSpecManagerLocal;
 import com.docdoku.core.services.IDocumentManagerLocal;
-import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.rest.dto.FolderDTO;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
@@ -40,6 +41,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Stateless
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
@@ -48,12 +51,12 @@ public class FolderResource {
 
     @EJB
     private IDocumentManagerLocal documentService;
-
+    @EJB
+    private IDocumentConfigSpecManagerLocal documentConfigSpecService;
     @EJB
     private DocumentsResource documentsResource;
 
-    @EJB
-    private IUserManagerLocal userManager;
+    private static final Logger LOGGER = Logger.getLogger(FolderResource.class.getName());
 
     @Context
     private UriInfo context;
@@ -76,62 +79,57 @@ public class FolderResource {
     /**
      * Retrieves representation of folders located at the root of the given workspace
      *
-     * @param workspaceId
-     * @return the array of folders
+     * @param workspaceId The current workspace id
+     * @return The array of folders
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public FolderDTO[] getRootFoldersJson(@PathParam("workspaceId") String workspaceId) {
-        try {
-            
-            String completePath = Tools.stripTrailingSlash(workspaceId);
-            String[] folderNames = documentService.getFolders(completePath);
-            FolderDTO[] folderDtos = new FolderDTO[folderNames.length];
-            
-            for (int i = 0; i < folderNames.length; i++) {
-                
-                String completeFolderPath=workspaceId+"/"+folderNames[i];
-                String encodedFolderId=Tools.replaceSlashWithColon(completeFolderPath);
-                
-                folderDtos[i] = new FolderDTO();
-                folderDtos[i].setPath(completePath);
-                folderDtos[i].setName(folderNames[i]);
-                folderDtos[i].setId(encodedFolderId);
-
-            }
-
-            return folderDtos;
-        } catch (ApplicationException ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
-        }
+    public FolderDTO[] getRootFoldersJson(@PathParam("workspaceId") String workspaceId, @QueryParam("configSpec") String configSpecType) {
+        String completePath = Tools.stripTrailingSlash(workspaceId);
+        return getFoldersJson(workspaceId, completePath, true, configSpecType);
     }
     
     @GET
     @Path("{completePath}/folders")
     @Produces(MediaType.APPLICATION_JSON)
-    public FolderDTO[] getSubFoldersJson(@PathParam("completePath") String folderId) {
-        try {
-            
-            String decodedCompletePath = Tools.replaceColonWithSlash(folderId);
-            
-            String completePath = Tools.stripTrailingSlash(decodedCompletePath);
-            String[] folderNames = documentService.getFolders(completePath);
-            
+    public FolderDTO[] getSubFoldersJson(@PathParam("workspaceId") String workspaceId, @PathParam("completePath") String folderId, @QueryParam("configSpec") String configSpecType) {
+        String decodedCompletePath = FolderDTO.replaceColonWithSlash(folderId);
+        String completePath = Tools.stripTrailingSlash(decodedCompletePath);
+        return getFoldersJson(workspaceId, completePath, false, configSpecType);
+    }
+
+    private FolderDTO[] getFoldersJson(String workspaceId, String completePath, boolean rootFolder, String configSpecType){
+        try{
+            String[] folderNames;
+            if(configSpecType==null || "latest".equals(configSpecType)){
+                folderNames = documentService.getFolders(completePath);
+            }else{
+                ConfigSpec cs = getConfigSpec(workspaceId, configSpecType);
+                folderNames = documentConfigSpecService.getFilteredFolders(workspaceId,cs,completePath);
+            }
+
             FolderDTO[] folderDtos = new FolderDTO[folderNames.length];
-            
+
             for (int i = 0; i < folderNames.length; i++) {
-                
-                String completeFolderPath=completePath+"/"+folderNames[i];
-                String encodedFolderId=Tools.replaceSlashWithColon(completeFolderPath);
-               
+                String completeFolderPath;
+                if(rootFolder){
+                    completeFolderPath = workspaceId+"/"+folderNames[i];
+                } else {
+                    completeFolderPath=completePath+"/"+folderNames[i];
+                }
+
+                String encodedFolderId=FolderDTO.replaceSlashWithColon(completeFolderPath);
+
                 folderDtos[i] = new FolderDTO();
                 folderDtos[i].setPath(completePath);
                 folderDtos[i].setName(folderNames[i]);
                 folderDtos[i].setId(encodedFolderId);
+
             }
 
             return folderDtos;
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.SEVERE,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -143,20 +141,18 @@ public class FolderResource {
     @Path("{folderId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public FolderDTO renameFolderjson(@PathParam("folderId") String folderPath, FolderDTO folder) {
+    public FolderDTO renameFolderJson(@PathParam("folderId") String folderPath, FolderDTO folder) {
         try {
             
-            String decodedCompletePath = Tools.replaceColonWithSlash(folderPath);
-            
+            String decodedCompletePath = FolderDTO.replaceColonWithSlash(folderPath);
             String completePath = Tools.stripTrailingSlash(decodedCompletePath);
-            int lastSlash = completePath.lastIndexOf('/');
-            String destParentFolder = completePath.substring(0, lastSlash);
+            String destParentFolder = FolderDTO.extractParentFolder(completePath);
             String folderName = folder.getName();
             
             documentService.moveFolder(completePath, destParentFolder, folderName);
 
             String completeRenamedFolderId=destParentFolder+'/'+folderName;
-            String encodedRenamedFolderId=Tools.replaceSlashWithColon(completeRenamedFolderId);            
+            String encodedRenamedFolderId=FolderDTO.replaceSlashWithColon(completeRenamedFolderId);
             
             FolderDTO renamedFolderDto = new FolderDTO();
             renamedFolderDto.setPath(destParentFolder);
@@ -166,6 +162,7 @@ public class FolderResource {
             return renamedFolderDto;
 
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.SEVERE,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -177,13 +174,12 @@ public class FolderResource {
     public FolderDTO createSubFolder(@PathParam("parentFolderPath") String parentFolderPath, FolderDTO folder) {
         try {
             
-            String decodedCompletePath = Tools.replaceColonWithSlash(parentFolderPath);  
+            String decodedCompletePath = FolderDTO.replaceColonWithSlash(parentFolderPath);
             
             String folderName = folder.getName(); 
-            FolderDTO createdSubFolder =  createFolder(decodedCompletePath, folderName);
-            
-            return createdSubFolder;
+            return createFolder(decodedCompletePath, folderName);
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.SEVERE,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -193,13 +189,10 @@ public class FolderResource {
     @Produces(MediaType.APPLICATION_JSON)
     public FolderDTO createRootFolder(@PathParam("workspaceId") String workspaceId, FolderDTO folder) {
         try {
-
-            String folderName = folder.getName();  
-            FolderDTO createdRootFolder = createFolder(workspaceId, folderName);
-            
-            return createdRootFolder;
-            
+            String folderName = folder.getName();
+            return createFolder(workspaceId, folderName);
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.SEVERE,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -215,19 +208,16 @@ public class FolderResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteRootFolder(@PathParam("folderId") String completePath) {
         try {
-            
             deleteFolder(completePath);
-            
             return Response.status(Response.Status.OK).build();
-            
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.SEVERE,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
     
     private DocumentRevisionKey[] deleteFolder(String pCompletePath) throws WorkspaceNotFoundException, NotAllowedException, AccessRightException, UserNotFoundException, UserNotActiveException, FolderNotFoundException, ESServerException {
-
-        String decodedCompletePath = Tools.replaceColonWithSlash(pCompletePath);
+        String decodedCompletePath = FolderDTO.replaceColonWithSlash(pCompletePath);
 
         String completePath = Tools.stripTrailingSlash(decodedCompletePath);
 
@@ -235,11 +225,10 @@ public class FolderResource {
     }
     
     private FolderDTO createFolder(String pCompletePath, String pFolderName) throws WorkspaceNotFoundException, NotAllowedException, AccessRightException, FolderNotFoundException, FolderAlreadyExistsException, UserNotFoundException, UserNotActiveException, CreationException {
-    
         Folder createdFolder= documentService.createFolder(pCompletePath, pFolderName);
                         
         String completeCreatedFolderPath=createdFolder.getCompletePath()+'/'+createdFolder.getShortName();
-        String encodedFolderId=Tools.replaceSlashWithColon(completeCreatedFolderPath); 
+        String encodedFolderId=FolderDTO.replaceSlashWithColon(completeCreatedFolderPath);
 
         FolderDTO createdFolderDtos = new FolderDTO();
         createdFolderDtos.setPath(createdFolder.getCompletePath());
@@ -250,5 +239,27 @@ public class FolderResource {
 
     }
 
+    /**
+     * Get a configuration specification
+     * @param workspaceId The current workspace
+     * @param configSpecType The configuration specification type
+     * @return A configuration specification
+     * @throws UserNotFoundException If the user login-workspace doesn't exist
+     * @throws UserNotActiveException If the user is disabled
+     * @throws WorkspaceNotFoundException If the workspace doesn't exist
+     * @throws BaselineNotFoundException If the baseline doesn't exist
+     */
+    private ConfigSpec getConfigSpec(String workspaceId, String configSpecType) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, BaselineNotFoundException {
+        ConfigSpec cs;
+        switch (configSpecType) {
+            case "latest":
+            case "undefined":
+                cs = documentConfigSpecService.getLatestConfigSpec(workspaceId);
+                break;
+            default:
+                cs = documentConfigSpecService.getConfigSpecForBaseline(Integer.parseInt(configSpecType));
+                break;
+        }
+        return cs;
+    }
 }
-

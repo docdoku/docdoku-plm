@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -30,10 +30,9 @@ import java.util.ResourceBundle;
 
 public abstract class ApplicationException extends Exception{
     
-    private final static String DEFAULT_BUNDLE_NAME = "com.docdoku.core.i18n.LocalStrings";
+    private static final String DEFAULT_BUNDLE_NAME = "com.docdoku.core.i18n.LocalStrings";
     private ResourceBundle mResourceBundle;
-    
-    
+
     public ApplicationException(String pMessage, Throwable pCause, String pBundleName) {
         super(pMessage, pCause);
         mResourceBundle=ResourceBundle.getBundle(pBundleName, Locale.getDefault());
@@ -58,8 +57,7 @@ public abstract class ApplicationException extends Exception{
         super(pCause);
         mResourceBundle=ResourceBundle.getBundle(DEFAULT_BUNDLE_NAME, pLocale);
     }
-    
-    public void setLocale(Locale pLocale){
+     public void setLocale(Locale pLocale){
         mResourceBundle=ResourceBundle.getBundle(DEFAULT_BUNDLE_NAME, pLocale);
     }
     

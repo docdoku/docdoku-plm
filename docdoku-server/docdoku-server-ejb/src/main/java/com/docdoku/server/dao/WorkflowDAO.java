@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -19,31 +19,74 @@
  */
 package com.docdoku.server.dao;
 
+import com.docdoku.core.common.User;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.product.PartRevision;
-import com.docdoku.core.workflow.Activity;
-import com.docdoku.core.workflow.Workflow;
+import com.docdoku.core.workflow.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class WorkflowDAO {
 
     private EntityManager em;
 
     public WorkflowDAO(EntityManager pEM) {
-        em = pEM;
+        this.em = pEM;
     }
 
     public void createWorkflow(Workflow pWf) {
         //Hack to prevent a bug inside the JPA implementation (Eclipse Link)
         List<Activity> activities = pWf.getActivities();
-        pWf.setActivities(null);
+        pWf.setActivities(new ArrayList<Activity>());
         em.persist(pWf);
         em.flush();
         pWf.setActivities(activities);
+    }
+
+    public Workflow createWorkflow(WorkflowModel workflowModel,Map<Role, User> roleUserMap){
+        Workflow workflow = new Workflow(workflowModel.getFinalLifeCycleState());
+        em.persist(workflow);
+        em.flush();
+
+        List<Activity> activities = new ArrayList<>();
+        for(ActivityModel model:workflowModel.getActivityModels()){
+            Activity activity = model.createActivity(roleUserMap);
+            activity.setWorkflow(workflow);
+            Activity relaunchActivity = activity.getRelaunchActivity();
+            if(relaunchActivity!=null){
+                activity.setRelaunchActivity(activities.get(relaunchActivity.getStep()));
+            }
+            activities.add(activity);
+        }
+        workflow.setActivities(activities);
+        return workflow;
+    }
+
+    public Workflow duplicateWorkflow(Workflow workflow){
+        Workflow duplicatedWF = new Workflow(workflow.getFinalLifeCycleState());
+        em.persist(duplicatedWF);
+        em.flush();
+
+        List<Activity> rwActivities = new ArrayList<>();
+        for (Activity activity : workflow.getActivities()){
+            Activity clonedActivity = activity.clone();
+            clonedActivity.setWorkflow(duplicatedWF);
+            Activity relaunchActivity = activity.getRelaunchActivity();
+            if(relaunchActivity!=null){
+                Activity clonedRelaunchActivity = rwActivities.get(relaunchActivity.getStep());
+                clonedActivity.setRelaunchActivity(clonedRelaunchActivity);
+            }
+            rwActivities.add(clonedActivity);
+        }
+
+        duplicatedWF.setActivities(rwActivities);
+        return duplicatedWF;
+
     }
 
     public DocumentRevision getDocumentTarget(Workflow pWorkflow) {

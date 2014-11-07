@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -49,7 +49,7 @@ import java.io.Serializable;
 public class ConfigurationItem implements Serializable {
 
 
-    @Column(length = 255)
+    @Column(length = 100)
     @Id
     private String id = "";
     
@@ -123,18 +123,19 @@ public class ConfigurationItem implements Serializable {
         if (this == pObj) {
             return true;
         }
-        if (!(pObj instanceof ConfigurationItem))
+        if (!(pObj instanceof ConfigurationItem)) {
             return false;
+        }
         ConfigurationItem ci = (ConfigurationItem) pObj;
-        return ((ci.id.equals(id)) && (ci.getWorkspaceId().equals(getWorkspaceId())));
+        return ci.id.equals(id) && ci.getWorkspaceId().equals(getWorkspaceId());
     }
     
     @Override
     public int hashCode() {
         int hash = 1;
-	    hash = 31 * hash + getWorkspaceId().hashCode();
-	    hash = 31 * hash + id.hashCode();
-	    return hash;
+        hash = 31 * hash + getWorkspaceId().hashCode();
+        hash = 31 * hash + id.hashCode();
+        return hash;
     }
     
     @Override

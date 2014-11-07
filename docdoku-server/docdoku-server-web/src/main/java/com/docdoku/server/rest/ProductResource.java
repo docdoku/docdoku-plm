@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -20,13 +20,13 @@
 package com.docdoku.server.rest;
 
 import com.docdoku.core.common.User;
-import com.docdoku.core.configuration.Baseline;
 import com.docdoku.core.configuration.ConfigSpec;
-import com.docdoku.core.configuration.LatestConfigSpec;
-import com.docdoku.core.exceptions.ApplicationException;
+import com.docdoku.core.exceptions.*;
+import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.product.*;
 import com.docdoku.core.security.UserGroupMapping;
+import com.docdoku.core.services.IProductConfigSpecManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.rest.dto.*;
 import org.dozer.DozerBeanMapperSingletonWrapper;
@@ -43,6 +43,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -55,10 +57,18 @@ public class ProductResource {
 
     @EJB
     private IProductManagerLocal productService;
+    @EJB
+    private IProductConfigSpecManagerLocal productConfigSpecService;
 
     @EJB
     private LayerResource layerResource;
+    @EJB
+    private BaselinesResource baselinesResource;
+    @EJB
+    private ProductInstancesResource productInstancesResource;
 
+
+    private static final Logger LOGGER = Logger.getLogger(ProductResource.class.getName());
     private Mapper mapper;
 
     public ProductResource() {
@@ -73,7 +83,6 @@ public class ProductResource {
     @Produces(MediaType.APPLICATION_JSON)
     public ConfigurationItemDTO[] getRootProducts(@PathParam("workspaceId") String workspaceId) {
         try {
-
             String wksId = Tools.stripTrailingSlash(workspaceId);
             List<ConfigurationItem> cis = productService.getConfigurationItems(wksId);
             ConfigurationItemDTO[] dtos = new ConfigurationItemDTO[cis.size()];
@@ -84,9 +93,24 @@ public class ProductResource {
 
             return dtos;
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
 
+    }
+
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response createConfigurationItem(ConfigurationItemDTO configurationItemDTO) throws UnsupportedEncodingException {
+        try {
+            ConfigurationItem configurationItem = productService.createConfigurationItem(configurationItemDTO.getWorkspaceId(), configurationItemDTO.getId(), configurationItemDTO.getDescription(), configurationItemDTO.getDesignItemNumber());
+            ConfigurationItemDTO configurationItemDTOCreated = mapper.map(configurationItem, ConfigurationItemDTO.class);
+            configurationItemDTOCreated.setDesignItemNumber(configurationItem.getDesignItem().getNumber());
+            return Response.created(URI.create(URLEncoder.encode(configurationItemDTOCreated.getId(),"UTF-8"))).entity(configurationItemDTOCreated).build();
+        } catch (ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
+            throw new RestApiException(ex.toString(), ex.getMessage());
+        }
     }
 
     @GET
@@ -95,15 +119,9 @@ public class ProductResource {
     public PartDTO[] filterPart(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("configSpec") String configSpecType, @QueryParam("partUsageLink") Integer partUsageLink) {
         try {
             ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
-            ConfigSpec cs;
+            ConfigSpec cs = getConfigSpec(workspaceId,configSpecType);
 
-            if(configSpecType == null || configSpecType.equals("latest")){
-                cs = new LatestConfigSpec();
-            }else{
-                cs = productService.getConfigSpecForBaseline(Integer.parseInt(configSpecType));
-            }
-
-            PartUsageLink rootUsageLink = productService.filterProductStructure(ciKey, cs, partUsageLink, 1);
+            PartUsageLink rootUsageLink = productConfigSpecService.filterProductStructure(ciKey, cs, partUsageLink, 1);
 
             List<PartUsageLink> components = rootUsageLink.getComponent().getLastRevision().getLastIteration().getComponents();
 
@@ -121,6 +139,7 @@ public class ProductResource {
             return partsDTO;
 
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -131,15 +150,9 @@ public class ProductResource {
     public ComponentDTO filterProductStructure(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("configSpec") String configSpecType, @QueryParam("partUsageLink") Integer partUsageLink, @QueryParam("depth") Integer depth) {
         try {
             ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
-            ConfigSpec cs ;
+            ConfigSpec cs = getConfigSpec(workspaceId,configSpecType);
 
-            if(configSpecType == null || configSpecType.equals("latest")){
-                cs = new LatestConfigSpec();
-            }else{
-                cs = productService.getConfigSpecForBaseline(Integer.parseInt(configSpecType));
-            }
-
-            PartUsageLink rootUsageLink = productService.filterProductStructure(ciKey, cs, partUsageLink, depth);
+            PartUsageLink rootUsageLink = productConfigSpecService.filterProductStructure(ciKey, cs, partUsageLink, depth);
 
             if (depth == null) {
                 return createDTO(rootUsageLink, -1);
@@ -147,8 +160,12 @@ public class ProductResource {
                 return createDTO(rootUsageLink, depth);
             }
 
-        } catch (ApplicationException ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
+        } catch (NotAllowedException | UserNotFoundException | UserNotActiveException | AccessRightException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
+        } catch (WorkspaceNotFoundException | BaselineNotFoundException | ConfigurationItemNotFoundException | PartUsageLinkNotFoundException | PartRevisionNotFoundException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
         }
     }
 
@@ -161,6 +178,7 @@ public class ProductResource {
             productService.deleteConfigurationItem(ciKey);
             return Response.ok().build();
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
     }
@@ -174,7 +192,7 @@ public class ProductResource {
             ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
             List<PartUsageLink[]> usagePaths = productService.findPartUsages(ciKey, new PartMasterKey(workspaceId,partNumber));
 
-            List<PathDTO> pathsDTO = new ArrayList<PathDTO>();
+            List<PathDTO> pathsDTO = new ArrayList<>();
 
             for(PartUsageLink[] usagePath : usagePaths){
                 StringBuilder sb=new StringBuilder();
@@ -190,8 +208,8 @@ public class ProductResource {
 
 
             return pathsDTO;
-
         } catch (ApplicationException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
 
@@ -202,27 +220,26 @@ public class ProductResource {
         return layerResource;
     }
 
-    private ComponentDTO createDTO(PartUsageLink usageLink, int depth) {
+    private ComponentDTO createDTO(PartUsageLink usageLink, int depth) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
         PartMaster pm = usageLink.getComponent();
         PartRevision partR = pm.getLastRevision();
+        int newdepth = depth;
 
         ComponentDTO dto = new ComponentDTO();
         dto.setNumber(pm.getNumber());
         dto.setPartUsageLinkId(usageLink.getId());
-        dto.setDescription(partR.getDescription());
         dto.setName(pm.getName());
         dto.setStandardPart(pm.isStandardPart());
         dto.setAuthor(pm.getAuthor().getName());
         dto.setAuthorLogin(pm.getAuthor().getLogin());
         dto.setAmount(usageLink.getCadInstances().size());
 
-        List<InstanceAttributeDTO> lstAttributes = new ArrayList<InstanceAttributeDTO>();
-        List<ComponentDTO> components = new ArrayList<ComponentDTO>();
+        List<InstanceAttributeDTO> lstAttributes = new ArrayList<>();
+        List<ComponentDTO> components = new ArrayList<>();
 
-
-        PartIteration partI = null;
         if (partR != null) {
-            partI = partR.getLastIteration();
+            dto.setDescription(partR.getDescription());
+            PartIteration partI = partR.getLastIteration();
 
             User checkoutUser = pm.getLastRevision().getCheckOutUser();
             if (checkoutUser != null) {
@@ -231,20 +248,29 @@ public class ProductResource {
             }
 
             dto.setVersion(partR.getVersion());
-        }
+            try {
+                productService.checkPartRevisionReadAccess(partR.getKey());
+                dto.setAccessDeny(false);
+                dto.setLastIterationNumber(productService.getNumberOfIteration(partR.getKey()));
+            }catch (Exception e){
+                LOGGER.log(Level.FINEST,null,e);
+                dto.setLastIterationNumber(-1);
+                dto.setAccessDeny(true);
+            }
 
-        if (partI != null) {
-            for (InstanceAttribute attr : partI.getInstanceAttributes().values()) {
-                lstAttributes.add(mapper.map(attr, InstanceAttributeDTO.class));
-            }
-            if (depth != 0) {
-                depth--;
-                for (PartUsageLink component : partI.getComponents()) {
-                    components.add(createDTO(component, depth));
+            if (partI != null) {
+                for (InstanceAttribute attr : partI.getInstanceAttributes().values()) {
+                    lstAttributes.add(mapper.map(attr, InstanceAttributeDTO.class));
                 }
+                if (newdepth != 0) {
+                    newdepth--;
+                    for (PartUsageLink component : partI.getComponents()) {
+                        components.add(createDTO(component, newdepth));
+                    }
+                }
+                dto.setAssembly(partI.isAssembly());
+                dto.setIteration(partI.getIteration());
             }
-            dto.setAssembly(partI.isAssembly());
-            dto.setIteration(partI.getIteration());
         }
 
         dto.setAttributes(lstAttributes);
@@ -257,151 +283,161 @@ public class ProductResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getInstances(@Context Request request, @PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("configSpec") String configSpecType, @QueryParam("path") String path) {
         try {
-            //Because some AS (like Glassfish) forbids the use of CacheControl
-            //when authenticated we use the LastModified header to fake
-            //a similar behavior (15 minutes of cache)
-            Calendar cal = new GregorianCalendar();
-            cal.add(Calendar.MINUTE, -15);
-            Response.ResponseBuilder rb = request.evaluatePreconditions(cal.getTime());
+            Response.ResponseBuilder rb = fakeSimilarBehavior(request);
             if (rb != null) {
                 return rb.build();
             } else {
-
                 CacheControl cc = new CacheControl();
                 //this request is resources consuming so we cache the response for 30 minutes
                 cc.setMaxAge(60 * 15);
 
                 ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
+                ConfigSpec cs = getConfigSpec(workspaceId, configSpecType);
 
-                ConfigSpec cs;
+                InstanceCollection instanceCollection = getInstancesCollection(ciKey,cs,path);
 
-                if(configSpecType == null || configSpecType.equals("latest") || configSpecType.equals("undefined")){
-                    cs = new LatestConfigSpec();
-                }else{
-                    cs = productService.getConfigSpecForBaseline(Integer.parseInt(configSpecType));
-                }
-
-                PartUsageLink rootUsageLink;
-                List<Integer> usageLinkPaths = new ArrayList<Integer>();
-                if(path != null && !path.equals("null")){
-                    String[] partUsageIdsString = path.split("-");
-
-                    for (int i = 0; i < partUsageIdsString.length; i++) {
-                        usageLinkPaths.add(Integer.parseInt(partUsageIdsString[i]));
-                    }
-
-                    rootUsageLink = productService.filterProductStructure(ciKey, cs, usageLinkPaths.get(0), 0);
-                    usageLinkPaths.remove(0);
-                }else{
-                    rootUsageLink = productService.filterProductStructure(ciKey, cs, null, 0);                  
-                }
-                
-                return Response.ok().lastModified(new Date()).cacheControl(cc).entity(new InstanceCollection(rootUsageLink, usageLinkPaths, cs)).build();
+                return Response.ok().lastModified(new Date()).cacheControl(cc).entity(instanceCollection).build();
             }
-        } catch (ApplicationException ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
+        } catch (NotAllowedException | UserNotFoundException | UserNotActiveException | AccessRightException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
+        } catch (WorkspaceNotFoundException | BaselineNotFoundException | ConfigurationItemNotFoundException | PartUsageLinkNotFoundException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
         }
     }
 
     @POST
+    @Path("{ciId}/instances")
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createConfigurationItem(ConfigurationItemDTO configurationItemDTO) throws UnsupportedEncodingException {
+    public Response getInstancesByMultiplePath(@Context Request request, @PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, PathListDTO pathsDTO) {
         try {
-            ConfigurationItem configurationItem = productService.createConfigurationItem(configurationItemDTO.getWorkspaceId(), configurationItemDTO.getId(), configurationItemDTO.getDescription(), configurationItemDTO.getDesignItemNumber());
-            ConfigurationItemDTO configurationItemDTOCreated = mapper.map(configurationItem, ConfigurationItemDTO.class);
-            configurationItemDTOCreated.setDesignItemNumber(configurationItem.getDesignItem().getNumber());
-            return Response.created(URI.create(URLEncoder.encode(configurationItemDTOCreated.getId(),"UTF-8"))).entity(configurationItemDTOCreated).build();
-        } catch (ApplicationException ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
-        }
-    }
+            Response.ResponseBuilder rb = fakeSimilarBehavior(request);
+            if (rb != null) {
+                return rb.build();
+            } else {
+                CacheControl cc = new CacheControl();
+                //this request is resources consuming so we cache the response for 30 minutes
+                cc.setMaxAge(60 * 15);
 
-    @GET
-    @Path("{ciId}/baseline")
-    @Produces(MediaType.APPLICATION_JSON)
-    public List<BaselineDTO> getBaselines(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId){
-        try {
-            ConfigurationItemKey configurationItemKey = new ConfigurationItemKey(workspaceId,ciId);
-            List<Baseline> baselines = productService.getBaselines(configurationItemKey);
-            List<BaselineDTO> baselinesDTO = new ArrayList<BaselineDTO>();
-            for(Baseline baseline:baselines){
-                baselinesDTO.add(mapper.map(baseline,BaselineDTO.class));
+                ConfigSpec cs = getConfigSpec(workspaceId,pathsDTO.getConfigSpec());
+                List<InstanceCollection> instanceCollections = getInstancesCollectionsList(workspaceId,ciId, cs,pathsDTO.getPaths());
+
+                return Response.ok().lastModified(new Date()).cacheControl(cc).entity(new PathFilteredListInstanceCollection(instanceCollections, cs)).build();
             }
-            return baselinesDTO;
-        } catch (ApplicationException ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
+        } catch (NotAllowedException | UserNotFoundException | UserNotActiveException | AccessRightException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
+        } catch (WorkspaceNotFoundException | BaselineNotFoundException | ConfigurationItemNotFoundException | PartUsageLinkNotFoundException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
         }
     }
 
-    @GET
-    @Path("{ciId}/baseline/{baselineId}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public BaselineDTO getBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @PathParam("baselineId") int baselineId){
-        try {
-            ConfigurationItemKey configurationItemKey = new ConfigurationItemKey(workspaceId,ciId);
-            Baseline baseline = productService.getBaseline(baselineId);
-            BaselineDTO baselineDTO = mapper.map(baseline,BaselineDTO.class);
-            baselineDTO.setBaselinedParts(Tools.mapBaselinedPartsToBaselinedPartDTO(baseline));
-            return baselineDTO;
-        } catch (ApplicationException ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
-        }
-    }
+    private List<InstanceCollection> getInstancesCollectionsList(String workspaceId, String ciId, ConfigSpec cs, String[] paths) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, BaselineNotFoundException, NotAllowedException, AccessRightException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException {
+        ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
 
-    @POST
-    @Path("{ciId}/baseline")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response createBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, BaselineCreationDTO baselineCreationDTO){
-        try {
-            productService.createBaseline(new ConfigurationItemKey(workspaceId,ciId),baselineCreationDTO.getName(),baselineCreationDTO.getDescription());
-            return Response.ok().build();
-        } catch (ApplicationException ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
-        }
-    }
+        List<InstanceCollection> instanceCollections = new ArrayList<>();
+        for(String path : paths){
+            InstanceCollection instanceCollection = getInstancesCollection(ciKey,cs,path);
 
-    @PUT
-    @Path("{ciId}/baseline/{baselineId}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @PathParam("baselineId") String baselineId, BaselineDTO baselineDTO){
-        try {
-
-            List<PartIterationKey> partIterationKeys = new ArrayList<PartIterationKey>();
-
-            for(BaselinedPartDTO baselinedPartDTO : baselineDTO.getBaselinedParts()){
-                partIterationKeys.add(new PartIterationKey(workspaceId, baselinedPartDTO.getNumber(),baselinedPartDTO.getVersion(),baselinedPartDTO.getIteration()));
+            if(path == null || "null".equals(path) || "".equals(path)){
+                instanceCollections.clear();
             }
-
-            productService.updateBaseline(new ConfigurationItemKey(workspaceId,ciId),Integer.parseInt(baselineId),baselineDTO.getName(),baselineDTO.getDescription(),partIterationKeys);
-            return Response.ok().build();
-        } catch (ApplicationException ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
+            instanceCollections.add(instanceCollection);
         }
+        return instanceCollections;
     }
 
-    @POST
-    @Path("{ciId}/baseline/{baselineId}/duplicate")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public BaselineDTO duplicateBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @PathParam("baselineId") int baselineId,  BaselineCreationDTO baselineCreationDTO){
-        try {
-            Baseline baseline = productService.duplicateBaseline(baselineId, baselineCreationDTO.getName(), baselineCreationDTO.getDescription());
-            return mapper.map(baseline, BaselineDTO.class);
-        } catch (ApplicationException ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
-        }
+    @Path("baselines")
+    public BaselinesResource getAllBaselines(@PathParam("workspaceId") String workspaceId){
+        return baselinesResource;
     }
 
-    @DELETE
-    @Path("{ciId}/baseline/{baselineId}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response deleteBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @PathParam("baselineId") int baselineId){
-        try {
-            productService.deleteBaseline(baselineId);
-            return Response.ok().build();
-        } catch (ApplicationException ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
-        }
+    @Path("{ciId}/baselines")
+    public BaselinesResource getBaselines(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId){
+        return baselinesResource;
     }
 
+    @Path("product-instances")
+    public ProductInstancesResource getAllProductInstances(@PathParam("workspaceId") String workspaceId){
+        return productInstancesResource;
+    }
+
+    @Path("{ciId}/product-instances")
+    public ProductInstancesResource getProductInstances(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId){
+        return productInstancesResource;
+    }
+
+    /**
+     * Get a configuration specification
+     * @param workspaceId The current workspace
+     * @param configSpecType The configuration specification type
+     * @return A configuration specification
+     * @throws UserNotFoundException If the user login-workspace doesn't exist
+     * @throws UserNotActiveException If the user is disabled
+     * @throws WorkspaceNotFoundException If the workspace doesn't exist
+     * @throws BaselineNotFoundException If the baseline doesn't exist
+     */
+    private ConfigSpec getConfigSpec(String workspaceId, String configSpecType) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, BaselineNotFoundException {
+        if(configSpecType==null){
+            return productConfigSpecService.getLatestConfigSpec(workspaceId);
+        }
+
+        ConfigSpec cs;
+        switch (configSpecType) {
+            case "latest":
+            case "undefined":
+                cs = productConfigSpecService.getLatestConfigSpec(workspaceId);
+                break;
+            case "released":
+                cs = productConfigSpecService.getLatestReleasedConfigSpec(workspaceId);
+                break;
+            default:
+                cs = productConfigSpecService.getConfigSpecForBaseline(Integer.parseInt(configSpecType));
+                break;
+        }
+        return cs;
+    }
+
+    /**
+     * Because some AS (like Glassfish) forbids the use of CacheControl
+     * when authenticated we use the LastModified header to fake
+     * a similar behavior (15 minutes of cache)
+     * @param request The incomming request
+     * @return Nothing if there still have cache
+     */
+    private Response.ResponseBuilder fakeSimilarBehavior(Request request){
+        Calendar cal = new GregorianCalendar();
+        cal.add(Calendar.MINUTE, -15);
+        return request.evaluatePreconditions(cal.getTime());
+    }
+
+    /**
+     * Return a InstanceCollection matching with a configurationItem, a configurationSpec and a node path
+     * @param ciKey The ConfigurationItem wanted
+     * @param cs The Specific ConfigurationSpec
+     * @param path The path of the root node
+     * @return The wanted InstanceCollection
+     * @throws AccessRightException If the user can not get the configuration item
+     * @throws NotAllowedException  If the user can not get the configuration item
+     * @throws WorkspaceNotFoundException If the workspace was not found
+     * @throws UserNotActiveException If the user was disabled
+     * @throws UserNotFoundException If the user doesn't exist
+     * @throws ConfigurationItemNotFoundException If the Configuration Item doesn't exist
+     * @throws PartUsageLinkNotFoundException If the Part Usage Link doesn't exist
+     */
+    private InstanceCollection getInstancesCollection(ConfigurationItemKey ciKey, ConfigSpec cs, String path) throws AccessRightException, NotAllowedException, WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException {
+        PartUsageLink rootUsageLink;
+        rootUsageLink = productConfigSpecService.getRootPartUsageLink(ciKey);
+        List<Integer> usageLinkPaths = new ArrayList<>();
+        if(path != null && !"null".equals(path) && !"".equals(path)) {
+            String[] partUsageIdsString = path.split("-");
+            for (String partUsageIdString : partUsageIdsString) {
+                usageLinkPaths.add(Integer.parseInt(partUsageIdString));
+            }
+        }
+        return new InstanceCollection(rootUsageLink, usageLinkPaths, cs);
+    }
 }

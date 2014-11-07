@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -35,8 +35,8 @@ import java.io.File;
 public class UploadFile {
 
     private SmokeTestProperties properties = new SmokeTestProperties();
-    private final static String CAD_FILE = "/com/docdoku/test/smoke/KTM.obj";
-    private final static String PART_NUMBER = "Test-Part";
+    private static final String CAD_FILE = "/com/docdoku/test/smoke/KTM.obj";
+    private static final String PART_NUMBER = "Test-Part";
     public void upload() throws Exception {
 
         File cadFile =  FileIO.urlToFile(UploadFile.class.getResource(CAD_FILE));

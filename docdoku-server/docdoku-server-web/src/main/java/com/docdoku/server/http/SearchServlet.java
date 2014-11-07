@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -24,6 +24,7 @@ import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.common.UserKey;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.exceptions.UserNotFoundException;
+import com.docdoku.core.exceptions.WorkspaceNotFoundException;
 import com.docdoku.core.services.IUserManagerLocal;
 import org.apache.commons.lang.StringUtils;
 
@@ -32,11 +33,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.net.URLDecoder;
-import java.util.Map;
-import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 public class SearchServlet extends HttpServlet {
@@ -62,19 +62,14 @@ public class SearchServlet extends HttpServlet {
         String workspaceID = null;
         try {
             workspaceID = URLDecoder.decode(pathInfos[offset], "UTF-8");
-        } catch (IndexOutOfBoundsException ex) {
+        } catch (IndexOutOfBoundsException ignored) {
             //we'll try to switch to default workspace
         }
 
-        HttpSession sessionHTTP = pRequest.getSession();
-        Map<String, Workspace> administeredWorkspaces = (Map<String, Workspace>) sessionHTTP.getAttribute("administeredWorkspaces");
-
         if (workspaceID == null) {
-            Set<Workspace> regularWorkspaces = (Set<Workspace>) sessionHTTP.getAttribute("regularWorkspaces");
-            if (administeredWorkspaces != null && !administeredWorkspaces.isEmpty()) {
-                workspaceID = administeredWorkspaces.values().iterator().next().getId();
-            } else if (regularWorkspaces != null && !regularWorkspaces.isEmpty()) {
-                workspaceID = regularWorkspaces.iterator().next().getId();
+            Workspace[] workspaces = userManager.getWorkspacesWhereCallerIsActive();
+            if (workspaces != null && workspaces.length > 0) {
+                workspaceID = workspaces[0].getId();
             }
 
             if(workspaceID == null){
@@ -83,20 +78,25 @@ public class SearchServlet extends HttpServlet {
                 pResponse.sendRedirect(pRequest.getContextPath() + "/search/" + workspaceID);
             }
         } else {
+            boolean workspaceAdmin;
             try{
                 UserGroup[] userGroups = userManager.getUserGroupsForUser(new UserKey(workspaceID, login));
+                workspaceAdmin = login.equals(userManager.getWorkspace(workspaceID).getAdmin().getLogin());
                 String[] groups = new String[userGroups.length];
                 for(int i = 0 ; i< userGroups.length;i++){
                     groups[i] = "\""+userGroups[i].toString()+"\"";
                 }
                 pRequest.setAttribute("groups", StringUtils.join(groups, ","));
-            } catch (UserNotFoundException e) {
+                pRequest.setAttribute("workspaceAdmin", workspaceAdmin);
+                pRequest.setAttribute("workspaceID", workspaceID);
+                pRequest.setAttribute("login", login);
+                pRequest.getRequestDispatcher(pRequest.getContextPath()+"/faces/search/index.xhtml").forward(pRequest, pResponse);
+            }catch(UserNotFoundException | WorkspaceNotFoundException ex){
+                Logger.getLogger(SearchServlet.class.getName()).log(Level.WARNING, String.valueOf(ex));
+                pResponse.sendRedirect(pRequest.getContextPath() + "/faces/admin/workspace/workspacesMenu.xhtml");
+            }catch (Exception ex) {
+                throw new ServletException("error while fetching user data.", ex);
             }
-
-            pRequest.setAttribute("workspaceAdmin", administeredWorkspaces.containsKey(workspaceID));
-            pRequest.setAttribute("workspaceID", workspaceID);
-            pRequest.setAttribute("login", login);
-            pRequest.getRequestDispatcher("/faces/search/index.xhtml").forward(pRequest, pResponse);
         }
     }
 }

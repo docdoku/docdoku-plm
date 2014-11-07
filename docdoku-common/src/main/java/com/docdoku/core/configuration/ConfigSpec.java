@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -21,6 +21,8 @@
 
 package com.docdoku.core.configuration;
 
+import com.docdoku.core.document.DocumentIteration;
+import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartMaster;
 
@@ -29,16 +31,15 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import java.io.Serializable;
 
 /**
- * A ConfigSpec is used to filter the right
- * <a href="PartIteration.html">PartIteration</a> of
- * <a href="PartMaster.html">PartMaster</a>s, based on various rules.
+ * A ConfigSpec is used to select for each {@link PartMaster}s and {@link DocumentRevision}s
+ * the right {@link PartIteration} and {@link DocumentIteration} according to specific rules.
  * 
  * @author Florent Garin
  * @version 1.1, 30/10/11
  * @since   V1.1
  */
 @Table(name="CONFIGSPEC")
-@XmlSeeAlso({EffectivityConfigSpec.class, LatestConfigSpec.class, BaselineConfigSpec.class})
+@XmlSeeAlso({EffectivityConfigSpec.class, LatestReleasedConfigSpec.class, LatestConfigSpec.class, BaselineConfigSpec.class})
 @Inheritance()
 @Entity
 public abstract class ConfigSpec implements Serializable{
@@ -47,7 +48,6 @@ public abstract class ConfigSpec implements Serializable{
     @Id
     private int id;
 
-    
     public ConfigSpec() {
     }
 
@@ -59,6 +59,8 @@ public abstract class ConfigSpec implements Serializable{
         this.id = id;
     }
 
-    public abstract PartIteration filterConfigSpec(PartMaster part);
+    public abstract PartIteration filterConfigSpec(PartMaster partMaster);
+
+    public abstract DocumentIteration filterConfigSpec(DocumentRevision documentRevision);
 
 }

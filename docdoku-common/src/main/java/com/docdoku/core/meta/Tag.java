@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -39,11 +39,11 @@ import java.io.Serializable;
 @javax.persistence.Entity
 public class Tag implements Serializable {
     
-    @javax.persistence.Column(name = "WORKSPACE_ID", length=255, nullable = false, insertable = false, updatable = false)
+    @javax.persistence.Column(name = "WORKSPACE_ID", length=100, nullable = false, insertable = false, updatable = false)
     @javax.persistence.Id
     private String workspaceId="";
 
-    @Column(length=255)
+    @Column(length=100)
     @javax.persistence.Id
     private String label="";
     
@@ -83,9 +83,9 @@ public class Tag implements Serializable {
     @Override
     public int hashCode() {
         int hash = 1;
-	hash = 31 * hash + workspaceId.hashCode();
-	hash = 31 * hash + label.hashCode();
-	return hash;
+        hash = 31 * hash + workspaceId.hashCode();
+        hash = 31 * hash + label.hashCode();
+        return hash;
     }
     
     @Override
@@ -93,12 +93,13 @@ public class Tag implements Serializable {
         if (this == pObj) {
             return true;
         }
-        if (!(pObj instanceof Tag))
+        if (!(pObj instanceof Tag)) {
             return false;
+        }
         Tag tag = (Tag) pObj;
         
         return tag.workspaceId.equals(workspaceId)
-        && tag.label.equals(label);
+                && tag.label.equals(label);
     }
     
     @Override

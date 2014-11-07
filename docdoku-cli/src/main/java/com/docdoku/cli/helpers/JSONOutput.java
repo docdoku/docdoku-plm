@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -22,7 +22,7 @@ package com.docdoku.cli.helpers;
 
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
-import com.docdoku.core.configuration.Baseline;
+import com.docdoku.core.configuration.ProductBaseline;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartMaster;
 import com.docdoku.core.product.PartRevision;
@@ -100,33 +100,36 @@ public class JSONOutput {
 
         JSONObject status = new JSONObject();
 
-        User user = pr.getCheckOutUser();
-        String login = user != null ? user.getLogin() : "";
-        Date checkoutDate = pr.getCheckOutDate();
-        Long timeStamp = checkoutDate != null ? checkoutDate.getTime() : null;
+        if(pr != null){
+            User user = pr.getCheckOutUser();
+            String login = user != null ? user.getLogin() : "";
+            Date checkoutDate = pr.getCheckOutDate();
+            Long timeStamp = checkoutDate != null ? checkoutDate.getTime() : null;
 
-        status.put("isCheckedOut", pr.isCheckedOut());
-        status.put("partNumber", pr.getPartMasterNumber());
-        status.put("checkoutUser", login);
-        status.put("checkoutDate", timeStamp);
-        status.put("workspace", pr.getPartMasterWorkspaceId());
-        status.put("version", pr.getVersion());
-        status.put("description", pr.getDescription());
-        status.put("lastModified", lastModified);
+            status.put("isReleased", pr.isReleased());
+            status.put("isCheckedOut", pr.isCheckedOut());
+            status.put("partNumber", pr.getPartMasterNumber());
+            status.put("checkoutUser", login);
+            status.put("checkoutDate", timeStamp);
+            status.put("workspace", pr.getPartMasterWorkspaceId());
+            status.put("version", pr.getVersion());
+            status.put("description", pr.getDescription());
+            status.put("lastModified", lastModified);
 
-        if(pr != null && pr.getLastIteration() != null && pr.getLastIteration().getNativeCADFile() != null) {
-            String nativeCADFileName  = pr.getLastIteration().getNativeCADFile().getName();
-            status.put("cadFileName", nativeCADFileName);
-        }
-
-        List<PartIteration> partIterations = pr.getPartIterations();
-        JSONArray partIterationJSonArray;
-        if (partIterations != null) {
-            partIterationJSonArray = new JSONArray();
-            for(PartIteration partIteration : partIterations) {
-                partIterationJSonArray.put(partIteration.getIteration());
+            if(pr.getLastIteration() != null && pr.getLastIteration().getNativeCADFile() != null) {
+                String nativeCADFileName  = pr.getLastIteration().getNativeCADFile().getName();
+                status.put("cadFileName", nativeCADFileName);
             }
-            status.put("iterations", partIterationJSonArray);
+
+            List<PartIteration> partIterations = pr.getPartIterations();
+            JSONArray partIterationJSonArray;
+            if (partIterations != null) {
+                partIterationJSonArray = new JSONArray();
+                for(PartIteration partIteration : partIterations) {
+                    partIterationJSonArray.put(partIteration.getIteration());
+                }
+                status.put("iterations", partIterationJSonArray);
+            }
         }
 
         return status;
@@ -142,19 +145,19 @@ public class JSONOutput {
         }
     }
 
-    public static String printBaselines(List<Baseline> baselines) throws JSONException {
+    public static String printBaselines(List<ProductBaseline> productBaselines) throws JSONException {
         JSONArray jsonArray = new JSONArray();
-        for(Baseline baseline : baselines) {
-            jsonArray.put(printBaseline(baseline));
+        for(ProductBaseline productBaseline : productBaselines) {
+            jsonArray.put(printBaseline(productBaseline));
         }
         return jsonArray.toString();
     }
 
-    public static String printBaseline(Baseline baseline) throws JSONException {
+    public static String printBaseline(ProductBaseline productBaseline) throws JSONException {
         JSONObject baselineObject = new JSONObject();
-        baselineObject.put("id", baseline.hashCode());
-        baselineObject.put("name",baseline.getName());
-        baselineObject.put("configurationItem",baseline.getConfigurationItem().getId());
+        baselineObject.put("id", productBaseline.hashCode());
+        baselineObject.put("name", productBaseline.getName());
+        baselineObject.put("configurationItem", productBaseline.getConfigurationItem().getId());
         return baselineObject.toString();
     }
 

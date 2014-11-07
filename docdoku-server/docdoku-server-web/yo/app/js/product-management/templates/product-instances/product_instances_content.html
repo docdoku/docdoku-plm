@@ -1,0 +1,13 @@
+<div class="actions well">
+    <button class="btn btn-default new-product-instance" title="{{i18n.NEW_PRODUCT_INSTANCE}}">
+        <span class="icon"></span>
+    </button>
+    {{> deleteButton}}
+    {{> aclButton}}
+</div>
+<div class="product-instances-filter-bar ">
+    <label for="inputProductId"><span class="fa fa-cogs"></span></label>
+    <select id="inputProductId">
+        <option value="" disabled selected>{{i18n.CHOOSE_A_PRODUCT}}</option>
+    </select>
+</div>

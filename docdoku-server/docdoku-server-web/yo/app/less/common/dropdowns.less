@@ -1,0 +1,34 @@
+.dropdown-menu {
+
+  min-width: 140px;
+
+  li > a {
+    line-height:18px;
+    height: 18px;
+    padding: 3px 16px;
+    &:hover {
+      color: #fff;
+      background-color: #147be8;
+      background-image: -moz-linear-gradient(top, #147be8, #147be8);
+      background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#147be8), to(#147be8));
+      background-image: -webkit-linear-gradient(top, #147be8, #147be8);
+      background-image: -o-linear-gradient(top, #147be8, #147be8);
+      background-image: linear-gradient(to bottom, #147be8, #147be8);
+    }
+  }
+  .divider {
+    margin: 5px 1px;
+  }
+
+  &.large-entries{
+    li>a{
+      line-height: 30px;
+      height:30px;
+      &:hover{
+        color: #111;
+        background: #eee;
+      }
+    }
+  }
+
+}

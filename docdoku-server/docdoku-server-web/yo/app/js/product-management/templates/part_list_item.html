@@ -1,0 +1,34 @@
+<td><input type="checkbox"/></td>
+<td class="part_number">
+    {{#model.isCheckout}}
+    {{#model.isCheckoutByConnectedUser}}<i class="fa fa-pencil"></i>{{/model.isCheckoutByConnectedUser}}
+    {{^model.isCheckoutByConnectedUser}}<i class="fa fa-lock"></i>{{/model.isCheckoutByConnectedUser}}
+    {{/model.isCheckout}}
+    {{^model.isCheckout}}
+    {{#model.isReleased}}<i class="fa fa-check"></i>{{/model.isReleased}}
+    {{^model.isReleased}}<i class="fa fa-eye"></i>{{/model.isReleased}}
+    {{/model.isCheckout}}
+    <span class="part_number_value">{{model.getNumber}}</span>
+</td>
+<td>{{model.getVersion}}</td>
+<td>
+    {{#model.getLastIteration}}{{id}}{{/model.getLastIteration}}{{^model.getLastIteration}}-{{/model.getLastIteration}}
+</td>
+<td>{{model.isStandardPartReadable}}</td>
+<td>{{model.getName}}</td>
+<td><a class="author-popover">{{model.getAuthorName}}</a></td>
+<td>{{model.getLifeCycleState}}</td>
+<td>{{model.getFormattedCreationDate}}</td>
+<td>{{model.getFormattedCheckoutDate}}</td>
+<td><a class="checkout-user-popover">{{model.getCheckOutUserName}}</a></td>
+<td class="part-acl-info">
+    {{#model.isReadOnly}}
+    <i class="fa fa-ban read-only" title="{{i18n.READ_ONLY}}"></i>
+    {{/model.isReadOnly}}
+    {{#model.isFullAccess}}
+    <i class="fa fa-ban full-access" title="{{i18n.FULL_ACCESS}}"></i>
+    {{/model.isFullAccess}}
+</td>
+<td class="part-revision-share">
+    <i class="fa fa-globe" title="{{i18n.PUBLISH}}"></i>
+</td>

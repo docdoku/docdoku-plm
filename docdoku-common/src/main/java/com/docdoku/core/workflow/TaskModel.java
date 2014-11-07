@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -60,11 +60,11 @@ public class TaskModel implements Serializable, Cloneable {
     @javax.persistence.Id
     private int activityModelStep;
     
-    @javax.persistence.Column(name = "WORKFLOWMODEL_ID", length=255, nullable = false, insertable = false, updatable = false)
+    @javax.persistence.Column(name = "WORKFLOWMODEL_ID", length=100, nullable = false, insertable = false, updatable = false)
     @javax.persistence.Id
     private String workflowModelId="";
     
-    @javax.persistence.Column(name = "WORKSPACE_ID", length=255, nullable = false, insertable = false, updatable = false)
+    @javax.persistence.Column(name = "WORKSPACE_ID", length=100, nullable = false, insertable = false, updatable = false)
     @javax.persistence.Id
     private String workspaceId="";
     
@@ -171,11 +171,11 @@ public class TaskModel implements Serializable, Cloneable {
         @Override
     public int hashCode() {
         int hash = 1;
-	hash = 31 * hash + workspaceId.hashCode();
-	hash = 31 * hash + workflowModelId.hashCode();
+        hash = 31 * hash + workspaceId.hashCode();
+        hash = 31 * hash + workflowModelId.hashCode();
         hash = 31 * hash + activityModelStep;
         hash = 31 * hash + num;
-	return hash;
+        return hash;
     }
     
     @Override
@@ -183,10 +183,14 @@ public class TaskModel implements Serializable, Cloneable {
         if (this == pObj) {
             return true;
         }
-        if (!(pObj instanceof TaskModel))
+        if (!(pObj instanceof TaskModel)) {
             return false;
+        }
         TaskModel model = (TaskModel) pObj;
-        return ((model.workspaceId.equals(workspaceId)) && (model.workflowModelId.equals(workflowModelId)) && (model.activityModelStep==activityModelStep) && (model.num==num));
+        return model.workspaceId.equals(workspaceId) &&
+               model.workflowModelId.equals(workflowModelId) &&
+               model.activityModelStep==activityModelStep &&
+               model.num==num;
     }
     
     @Override
@@ -197,7 +201,7 @@ public class TaskModel implements Serializable, Cloneable {
 
     @Override
     public TaskModel clone() {
-        TaskModel clone = null;
+        TaskModel clone;
         try {
             clone = (TaskModel) super.clone();
         } catch (CloneNotSupportedException e) {

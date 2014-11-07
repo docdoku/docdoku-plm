@@ -8,6 +8,10 @@
         <param-name>javax.faces.STATE_SAVING_METHOD</param-name>
         <param-value>client</param-value>
     </context-param>
+    <context-param>
+        <param-name>javax.faces.SEPARATOR_CHAR</param-name>
+        <param-value>-</param-value>
+    </context-param>
     <servlet>
         <servlet-name>Faces Servlet</servlet-name>
         <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
@@ -19,7 +23,7 @@
     </servlet-mapping>
     <session-config>
         <session-timeout>
-            30
+            90
         </session-timeout>
     </session-config>
     <error-page>
@@ -45,6 +49,8 @@
         <url-pattern>/document-management/*</url-pattern>
         <url-pattern>/product-management/*</url-pattern>
         <url-pattern>/product-structure/*</url-pattern>
+        <url-pattern>/change-management/*</url-pattern>
+        <url-pattern>/search/*</url-pattern>
         <url-pattern>/visualization/*</url-pattern>
         <url-pattern>/home</url-pattern>
     </filter-mapping>
@@ -75,34 +81,6 @@
         <servlet-class>com.docdoku.server.http.PrivateShareServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>DMServlet</servlet-name>
-        <servlet-class>com.docdoku.server.http.DMServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>PSServlet</servlet-name>
-        <servlet-class>com.docdoku.server.http.PSServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>PMServlet</servlet-name>
-        <servlet-class>com.docdoku.server.http.PMServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>CMServlet</servlet-name>
-        <servlet-class>com.docdoku.server.http.CMServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>SearchServlet</servlet-name>
-        <servlet-class>com.docdoku.server.http.SearchServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>VisualizationServlet</servlet-name>
-        <servlet-class>com.docdoku.server.http.VisualizationServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>CalendarServlet</servlet-name>
-        <servlet-class>com.docdoku.server.http.CalendarServlet</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>UploadDownloadServlet</servlet-name>
         <servlet-class>com.docdoku.server.http.UploadDownloadServlet</servlet-class>
     </servlet>
@@ -122,48 +100,67 @@
         <servlet-name>PrivateShareServlet</servlet-name>
         <url-pattern>/shared/*</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>DMServlet</servlet-name>
-        <url-pattern>/document-management/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>PSServlet</servlet-name>
-        <url-pattern>/product-structure/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>PMServlet</servlet-name>
-        <url-pattern>/product-management/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>CMServlet</servlet-name>
-        <url-pattern>/change-management/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>SearchServlet</servlet-name>
-        <url-pattern>/search/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>VisualizationServlet</servlet-name>
-        <url-pattern>/visualization/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>CalendarServlet</servlet-name>
-        <url-pattern>/calendar/*</url-pattern>
-    </servlet-mapping>
+
     <servlet-mapping>
         <servlet-name>UploadDownloadServlet</servlet-name>
         <url-pattern>/upload/*</url-pattern>
         <url-pattern>/files/*</url-pattern>
         <url-pattern>/shared-files/*</url-pattern>
     </servlet-mapping>
-<!--    <servlet>
-        <servlet-name>javax.ws.rs.core.Application</servlet-name>
-        <load-on-startup>1</load-on-startup>
+
+    <servlet>
+        <servlet-name>DocumentManagement</servlet-name>
+        <jsp-file>document-management/index.html</jsp-file>
     </servlet>
     <servlet-mapping>
-        <servlet-name>javax.ws.rs.core.Application</servlet-name>
-        <url-pattern>/api/*</url-pattern>
-    </servlet-mapping>-->
+        <servlet-name>DocumentManagement</servlet-name>
+        <url-pattern>/document-management/</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>ProductManagement</servlet-name>
+        <jsp-file>product-management/index.html</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ProductManagement</servlet-name>
+        <url-pattern>/product-management/</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>ProductStructure</servlet-name>
+        <jsp-file>product-structure/index.html</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ProductStructure</servlet-name>
+        <url-pattern>/product-structure/</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>ChangeManagement</servlet-name>
+        <jsp-file>change-management/index.html</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ChangeManagement</servlet-name>
+        <url-pattern>/change-management/</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>VisualizationServlet</servlet-name>
+        <jsp-file>visualization/index.html</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>VisualizationServlet</servlet-name>
+        <url-pattern>/visualization/</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>LogoutServlet</servlet-name>
+        <servlet-class>com.docdoku.server.http.LogoutServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>LogoutServlet</servlet-name>
+        <url-pattern>/logout</url-pattern>
+    </servlet-mapping>
+
     <security-constraint>
         <display-name>HTTP actions</display-name>
         <web-resource-collection>
@@ -179,8 +176,18 @@
         <display-name>REST Resources</display-name>
         <web-resource-collection>
             <web-resource-name>Resources</web-resource-name>
-            <url-pattern>/calendar/*</url-pattern>
             <url-pattern>/api/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <description/>
+            <role-name>users</role-name>
+        </auth-constraint>
+    </security-constraint>
+    <security-constraint>
+        <display-name>WebSocket channels</display-name>
+        <web-resource-collection>
+            <web-resource-name>Main Channel</web-resource-name>
+            <url-pattern>/mainChannelSocket</url-pattern>
         </web-resource-collection>
         <auth-constraint>
             <description/>
@@ -198,4 +205,10 @@
     <welcome-file-list>
         <welcome-file>home</welcome-file>
     </welcome-file-list>
+    <listener>
+        <listener-class>
+            com.docdoku.server.http.WebSessionListener
+        </listener-class>
+    </listener>
 </web-app>
+

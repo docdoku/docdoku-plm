@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -21,7 +21,7 @@
 package com.docdoku.core.change;
 
 import com.docdoku.core.common.Workspace;
-import com.docdoku.core.product.ConfigurationItem;
+import com.docdoku.core.security.ACL;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -37,6 +37,10 @@ import java.util.Date;
  */
 @Table(name="MILESTONE")
 @javax.persistence.Entity
+@NamedQueries({
+        @NamedQuery(name="Milestone.findMilestonesByWorkspace",query="SELECT DISTINCT m FROM Milestone m WHERE m.workspace.id = :workspaceId"),
+        @NamedQuery(name="Milestone.findMilestonesByTitleAndWorkspace",query="SELECT DISTINCT m FROM Milestone m WHERE m.workspace.id = :workspaceId AND m.title = :title")
+})
 public class Milestone implements Serializable {
 
     @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -51,9 +55,11 @@ public class Milestone implements Serializable {
     @Lob
     private String description;
 
-
     @ManyToOne(optional=false, fetch=FetchType.EAGER)
     private Workspace workspace;
+
+    @OneToOne(orphanRemoval = true, cascade=CascadeType.ALL, fetch=FetchType.EAGER)
+    private ACL acl;
 
     public Milestone() {
     }
@@ -63,26 +69,35 @@ public class Milestone implements Serializable {
         title=pTitle;
     }
 
+    public Milestone(String title, Date dueDate, String description, Workspace workspace) {
+        this.title = title;
+        this.dueDate = dueDate;
+        this.description = description;
+        this.workspace = workspace;
+    }
+
+    public int getId() {
+        return id;
+    }
+
     public Date getDueDate() {
         return dueDate;
     }
-
     public void setDueDate(Date dueDate) {
         this.dueDate = dueDate;
-    }
-
-    public void setWorkspace(Workspace pWorkspace){
-        workspace=pWorkspace;
     }
 
     public Workspace getWorkspace() {
         return workspace;
     }
+    public String getWorkspaceId() {return workspace.getId();}
+    public void setWorkspace(Workspace pWorkspace){
+        workspace=pWorkspace;
+    }
 
     public String getDescription() {
         return description;
     }
-
     public void setDescription(String description) {
         this.description = description;
     }
@@ -90,15 +105,15 @@ public class Milestone implements Serializable {
     public String getTitle() {
         return title;
     }
-
     public void setTitle(String title) {
         this.title = title;
     }
 
+    public ACL getACL() {return acl;}
+    public void setACL(ACL acl) {this.acl = acl;}
+
     @Override
-    public int hashCode() {
-	    return id;
-    }
+    public int hashCode() {return id;}
     
     @Override
     public boolean equals(Object pObj) {

@@ -37,12 +37,24 @@ body > form {
 
     }
 
-    #brand-logo {
-      float: left;
-      display: inline-block;
-      height: 30px;
-      width: 30px;
-      margin: 5px;
+
+    #brand-title{
+      padding-top: 0px;
+      padding-bottom: 0px;
+
+      #h-brand-logo {
+        float: left;
+        display: inline-block;
+        height: 30px;
+        width: 30px;
+        margin: 5px;
+      }
+
+      #brand-name {
+        display: inline-block;
+        padding-top: 11px;
+        padding-bottom: 11px;
+      }
     }
 
     ul.breadcrumb-menu{
@@ -110,8 +122,87 @@ body > form {
         &:first-child > a:before , &:last-child > a:after{
           display: none;
         }
+
+        .dropdown-menu{
+          > li{
+            text-transform : capitalize;
+
+            &.dropdown-section-title{
+              padding-left: 8px;
+            }
+
+            &.dropdown-hr hr{
+              margin: 5px 0;
+            }
+
+            i.fa-check{
+              margin-left: -14px;
+            }
+          }
+        }
       }
     }
 
+  }
+}
+
+@media (max-width: @navbarCollapseWidth) {
+  #header {
+    .nav-collapse{
+      + div{
+        clear: both;
+      }
+
+      ul.breadcrumb-menu {
+        > li{
+          .dropdown-menu{
+            > li{
+              color: white;
+              &.dropdown-section-title,
+              &.dropdown-hr hr{
+                display: none;
+              }
+
+              i.fa-check{
+              }
+
+              &.dropdown-sub-menu{
+                font-weight: normal;
+
+                .dropdown-sub-menu-title{
+                  display: inline-block;
+                  float: left;
+                  width: calc(~"100% - 155px");
+                  height: 18px;
+                  padding: 9px 15px;
+                  color: white;
+                  line-height: 18px;
+                  text-transform: capitalize;
+
+                  i{
+                    color: rgba(255,255,255,0.5);
+                  }
+                }
+
+                .dropdown-inline-menu{
+                  display: inline-block;
+                  li{
+                    float: left;
+                    list-style-type: none;
+
+                    a{
+                      width: 13px;
+                      height: 13px;
+                      padding: 10px;
+                      margin: 0;
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   }
 }

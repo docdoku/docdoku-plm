@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -105,13 +105,11 @@ public abstract class InstanceAttribute implements Serializable, Cloneable {
     public void setId(int id) {
         this.id = id;
     }
-
     public int getId() {
         return id;
     }
 
     public abstract Object getValue();
-
     public abstract boolean setValue(Object pValue);
 
     public boolean isValueEquals(Object pValue) {

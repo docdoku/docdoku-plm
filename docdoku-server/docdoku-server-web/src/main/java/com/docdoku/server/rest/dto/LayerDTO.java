@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -27,6 +27,7 @@ public class LayerDTO implements Serializable{
 
     private int id;
     private String name;
+    private String color;
    
     public LayerDTO() {
     }
@@ -35,15 +36,17 @@ public class LayerDTO implements Serializable{
         this.name=pName;
     }
 
-    public LayerDTO(int pId, String pName) {
+    public LayerDTO(int pId, String pName, String color) {
         this.id = pId;
         this.name = pName;
+        this.color = color;
     }
+
+
 
     public String getName() {
         return name;
     }
-
     public void setName(String name) {
         this.name = name;
     }
@@ -51,9 +54,14 @@ public class LayerDTO implements Serializable{
     public int getId() {
         return id;
     }
-
     public void setId(int id) {
         this.id = id;
     }
 
+    public String getColor() {
+        return color;
+    }
+    public void setColor(String color) {
+        this.color = color;
+    }
 }

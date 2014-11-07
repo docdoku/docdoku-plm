@@ -19,6 +19,7 @@ define(["text!templates/local_versioned_file.html", "views/loader",  "dplm"], fu
             status.checkoutDateParsed = moment(status.checkoutDate).format("YYYY-MM-DD HH:MM:ss");
             status.isCheckedOutByMe = this.isCheckoutByConnectedUser(status);
             status.iteration = _.last(status.iterations);
+            status.isFirstIteration = status.iteration==1;
 
             this.$el.html(this.template({model: this.model, status: status}));
 

@@ -6,14 +6,12 @@
 # Author : Morgan Guimard
 # Date : Wed Oct 2 2013
 #
-# Args :
-# $1 : version (TODO : use date if no version specified)
-#
 
 # Vars init
-VERSION=$1;
 RELEASER_DIR=$(dirname "$0");
 SOURCE="$RELEASER_DIR/../docdoku-gui/*";
+JARSOURCE="$RELEASER_DIR/../docdoku-cli/target/";
+JARDEST="$RELEASER_DIR/../docdoku-gui/dplm/";
 TMP_DIR="$RELEASER_DIR/tmp";
 NWVERSION="0.8.4";
 
@@ -22,12 +20,13 @@ NW_LINUX_64="$RELEASER_DIR/nw-releases/node-webkit-v$NWVERSION-linux-x64/nw";
 NW_WIN_32="$RELEASER_DIR/nw-releases/node-webkit-v$NWVERSION-win-ia32";
 NW_OSX="$RELEASER_DIR/nw-releases/node-webkit-v$NWVERSION-osx-ia32/node-webkit.app";
 
+OUT_DIR="$RELEASER_DIR/../docdoku-server/docdoku-server-web/src/main/webapp/download/dplm";
 
-OUT_DIR_LINUX_32="$RELEASER_DIR/out/linux-32";
-OUT_DIR_LINUX_64="$RELEASER_DIR/out/linux-64";
-OUT_DIR_WIN32="$RELEASER_DIR/out/win32";
-OUT_DIR_OSX="$RELEASER_DIR/out/osx";
+cp $JARSOURCE*.jar $JARDEST;
 
+# Create folders
+mkdir -p $TMP_DIR
+mkdir -p $OUT_DIR
 
 # Set the current dir
 cd $RELEASER_DIR;
@@ -64,10 +63,10 @@ cp "$NW_LINUX_32.pak" $TMP_DIR;
 
 # zipping dplm + pak file
 cd $TMP_DIR;
-zip dplm-linux-32-$VERSION.zip *;
+zip dplm-linux-32.zip *;
 
 # Move the resulting archive in the output dir
-mv dplm-linux-32-$VERSION.zip $OUT_DIR_LINUX_32;
+mv dplm-linux-32.zip $OUT_DIR;
 
 #Clean the tmp dir
 rm -rf $TMP_DIR/*;
@@ -89,10 +88,10 @@ cp "$NW_LINUX_64.pak" $TMP_DIR;
 
 # zipping dplm + pak file
 cd $TMP_DIR;
-zip dplm-linux-64-$VERSION.zip *;
+zip dplm-linux-64.zip *;
 
 # Move the resulting archive in the output dir
-mv dplm-linux-64-$VERSION.zip $OUT_DIR_LINUX_64;
+mv dplm-linux-64.zip $OUT_DIR;
 
 #Clean the tmp dir
 rm -rf $TMP_DIR/*;
@@ -114,10 +113,10 @@ cp "$NW_WIN_32/"*.dll $TMP_DIR;
 cp "$NW_WIN_32/nw.pak" $TMP_DIR;
 # zipping dplm + DLLs
 cd $TMP_DIR;
-zip dplm-win32-$VERSION.zip *;
+zip dplm-win32.zip *;
 
 # Move the resulting archive in the output dir
-mv dplm-win32-$VERSION.zip $OUT_DIR_WIN32;
+mv dplm-win32.zip $OUT_DIR;
 
 #Clean the tmp dir
 rm -rf $TMP_DIR/*;
@@ -130,30 +129,30 @@ rm -rf $TMP_DIR/*;
 cd $RELEASER_DIR;
 echo "Building OSX app ...";
 
-if [ -d "$OUT_DIR_OSX/dplm-$VERSION.app/" ] ; then
+if [ -d "$OUT_DIR/dplm.app/" ] ; then
 	echo "Removing old .app"
-	rm -rf "$OUT_DIR_OSX/dplm-$VERSION.app/";
+	rm -rf "$OUT_DIR/dplm.app/";
 fi
 # copy nutshell
 echo "Copying nutshell ...";
-cp -R $NW_OSX $OUT_DIR_OSX;
+cp -R $NW_OSX $OUT_DIR;
 # rename
-mv "$OUT_DIR_OSX/node-webkit.app/" "$OUT_DIR_OSX/dplm-$VERSION.app/";
+mv "$OUT_DIR/node-webkit.app/" "$OUT_DIR/dplm.app/";
 #copy the source in Contents/Resources
-mkdir "$OUT_DIR_OSX/dplm-$VERSION.app/Contents/Resources/app.nw"
+mkdir "$OUT_DIR/dplm.app/Contents/Resources/app.nw"
 echo "Copying source files ...";
-cp -R $SOURCE "$OUT_DIR_OSX/dplm-$VERSION.app/Contents/Resources/app.nw";
+cp -R $SOURCE "$OUT_DIR/dplm.app/Contents/Resources/app.nw";
 echo "Copying plist and icon ...";
 #Replace Plist
-#cp Info.plist "$OUT_DIR_OSX/dplm-$VERSION.app/Contents/";
+#cp Info.plist "$OUT_DIR/dplm.app/Contents/";
 #Replace Icon
-cp nw.icns "$OUT_DIR_OSX/dplm-$VERSION.app/Contents/Resources/";
+cp nw.icns "$OUT_DIR/dplm.app/Contents/Resources/";
 # chmod it
-chmod -R 0775 "$OUT_DIR_OSX/dplm-$VERSION.app/";
+chmod -R 0775 "$OUT_DIR/dplm.app/";
 # zip the .app
-cd $OUT_DIR_OSX;
-zip -r dplm-$VERSION.zip dplm-$VERSION.app;
-rm -rf dplm-$VERSION.app;
+cd $OUT_DIR;
+zip -r dplm-osx.zip dplm.app;
+rm -rf dplm.app;
 echo "... done";
 
 
@@ -164,6 +163,7 @@ echo "... done";
 
 cd $RELEASER_DIR;
 echo "All builds done, removing archive source...";
+rm $JARDEST*.jar
 rm app.nw;
 echo "... done";
 echo "Exiting.";

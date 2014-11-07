@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -35,7 +35,7 @@ public class StreamingBinaryResourceOutput implements StreamingOutput {
     private File file;
     private Range range;
 
-    private final static int BLOCK_SIZE = 32 * 1024;
+    private static final int BLOCK_SIZE = 32 * 1024;
 
     public StreamingBinaryResourceOutput(File file, Range range) {
         this.file = file;

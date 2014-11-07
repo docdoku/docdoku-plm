@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -67,7 +67,7 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
         @JoinColumn(name = "PARTREVISION_VERSION", referencedColumnName = "PARTREVISION_VERSION"),
         @JoinColumn(name = "ITERATION", referencedColumnName = "ITERATION")
     })
-    private List<Geometry> geometries = new LinkedList<Geometry>();
+    private List<Geometry> geometries = new LinkedList<>();
 
     @OneToOne(orphanRemoval=true, cascade=CascadeType.ALL, fetch=FetchType.EAGER)
     private BinaryResource nativeCADFile;
@@ -83,7 +83,7 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
         @JoinColumn(name="PARTREVISION_VERSION", referencedColumnName="PARTREVISION_VERSION"),
         @JoinColumn(name="ITERATION", referencedColumnName="ITERATION")
     })
-    private Set<DocumentLink> linkedDocuments=new HashSet<DocumentLink>();
+    private Set<DocumentLink> linkedDocuments=new HashSet<>();
 
 
     @OneToMany(orphanRemoval=true, cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, fetch = FetchType.EAGER)
@@ -96,7 +96,7 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
         @JoinColumn(name = "PARTREVISION_VERSION", referencedColumnName = "PARTREVISION_VERSION"),
         @JoinColumn(name = "ITERATION", referencedColumnName = "ITERATION")
     })
-    private Set<BinaryResource> attachedFiles = new HashSet<BinaryResource>();    
+    private Set<BinaryResource> attachedFiles = new HashSet<>();
 
     private String iterationNote;
 
@@ -122,7 +122,7 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
         @JoinColumn(name="PARTREVISION_VERSION", referencedColumnName="PARTREVISION_VERSION"),
         @JoinColumn(name="ITERATION", referencedColumnName="ITERATION")
     })
-    private Map<String, InstanceAttribute> instanceAttributes=new HashMap<String, InstanceAttribute>();
+    private Map<String, InstanceAttribute> instanceAttributes=new HashMap<>();
 
     @OrderColumn(name="COMPONENT_ORDER")
     @OneToMany(orphanRemoval=true, cascade=CascadeType.ALL, fetch=FetchType.LAZY)
@@ -136,7 +136,7 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
         @JoinColumn(name="PARTREVISION_VERSION", referencedColumnName="PARTREVISION_VERSION"),
         @JoinColumn(name="ITERATION", referencedColumnName="ITERATION")
     })
-    private List<PartUsageLink> components=new LinkedList<PartUsageLink>();
+    private List<PartUsageLink> components=new LinkedList<>();
     
     /*
     private Type type;
@@ -144,12 +144,12 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
     */
     
     private Source source;   
-    public enum Source {MAKE, BUY}
+    public enum Source {
+        MAKE, BUY
+    }
     
     public PartIteration(){
     }
-    
-    
     public PartIteration(PartRevision pPartRevision, int pIteration, User pAuthor) {
         setPartRevision(pPartRevision);
         iteration = pIteration;
@@ -163,24 +163,27 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
     public List<Geometry> getGeometries() {
         return geometries;
     }
-
     public void setGeometries(List<Geometry> geometries) {
         this.geometries = geometries;
     }
 
-    
+    public void addGeometry(Geometry pGeometry){
+        geometries.add(pGeometry);
+    }
     public boolean removeGeometry(Geometry pGeometry){
         return geometries.remove(pGeometry);
     }
-    
-    public void addGeometry(Geometry pGeometry){
-        geometries.add(pGeometry);
-    }    
-    
+
+    public String getNumber() {
+        return getPartNumber();
+    }
     public String getPartNumber() {
         return partRevision==null?"":partRevision.getPartNumber();
     }
-    
+
+    public String getVersion() {
+        return getPartVersion();
+    }
     public String getPartVersion() {
         return partRevision==null?"":partRevision.getVersion();
     }
@@ -188,7 +191,6 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
     public User getAuthor() {
         return author;
     }
-
     public void setAuthor(User author) {
         this.author = author;
     }
@@ -196,7 +198,6 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
     public String getIterationNote() {
         return iterationNote;
     }
-
     public void setIterationNote(String iterationNote) {
         this.iterationNote = iterationNote;
     }
@@ -204,7 +205,6 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
     public BinaryResource getNativeCADFile() {
         return nativeCADFile;
     }
-
     public void setNativeCADFile(BinaryResource nativeCADFile) {
         this.nativeCADFile = nativeCADFile;
     }
@@ -212,15 +212,14 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
     public void setAttachedFiles(Set<BinaryResource> attachedFiles) {
         this.attachedFiles = attachedFiles;
     }
-    
-    public boolean removeFile(BinaryResource pBinaryResource){
-        return attachedFiles.remove(pBinaryResource);
-    }
-    
+
     public void addFile(BinaryResource pBinaryResource){
         attachedFiles.add(pBinaryResource);
     }
-    
+    public boolean removeFile(BinaryResource pBinaryResource){
+        return attachedFiles.remove(pBinaryResource);
+    }
+
     @Override
     public Set<BinaryResource> getAttachedFiles() {
         return attachedFiles;
@@ -235,17 +234,15 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
     }
     
     public Date getCreationDate() {
-        return creationDate;
+        return (creationDate!=null) ? (Date) creationDate.clone() : null;
     }
-
     public void setCreationDate(Date creationDate) {
-        this.creationDate = creationDate;
+        this.creationDate = (creationDate!=null) ? (Date) creationDate.clone() : null;
     }
 
     public Map<String, InstanceAttribute> getInstanceAttributes() {
         return instanceAttributes;
     }
-
     public void setInstanceAttributes(Map<String, InstanceAttribute> instanceAttributes) {
         this.instanceAttributes = instanceAttributes;
     }
@@ -253,7 +250,6 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
     public int getIteration() {
         return iteration;
     }
-
     public void setIteration(int iteration) {
         this.iteration = iteration;
     }
@@ -262,7 +258,6 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
     public PartRevision getPartRevision() {
         return partRevision;
     }
-
     public void setPartRevision(PartRevision partRevision) {
         this.partRevision = partRevision;
     }
@@ -291,7 +286,7 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
     }   
     
     public boolean isAssembly(){
-        return components==null?false:!components.isEmpty();
+        return components != null && !components.isEmpty();
     }
 
     @Override
@@ -302,11 +297,11 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
     @Override
     public int hashCode() {
         int hash = 1;
-	    hash = 31 * hash + getWorkspaceId().hashCode();
-	    hash = 31 * hash + getPartNumber().hashCode();
+        hash = 31 * hash + getWorkspaceId().hashCode();
+        hash = 31 * hash + getPartNumber().hashCode();
         hash = 31 * hash + getPartVersion().hashCode();
         hash = 31 * hash + iteration;
-	    return hash;
+        return hash;
     }
     
     @Override
@@ -314,27 +309,33 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
         if (this == pObj) {
             return true;
         }
-        if (!(pObj instanceof PartIteration))
+        if (!(pObj instanceof PartIteration)){
             return false;
+        }
         PartIteration partI = (PartIteration) pObj;
-        return ((partI.getPartNumber().equals(getPartNumber())) && (partI.getWorkspaceId().equals(getWorkspaceId()))  && (partI.getPartVersion().equals(getPartVersion())) && (partI.iteration==iteration));
+        return partI.getPartNumber().equals(getPartNumber()) &&
+                partI.getWorkspaceId().equals(getWorkspaceId()) &&
+                partI.getPartVersion().equals(getPartVersion()) &&
+                partI.iteration==iteration;
     }
 
-    
     @Override
     public int compareTo(PartIteration pPart) {
         
         int wksComp = getWorkspaceId().compareTo(pPart.getWorkspaceId());
-        if (wksComp != 0)
+        if (wksComp != 0) {
             return wksComp;
+        }
         int mpartNumberComp = getPartNumber().compareTo(pPart.getPartNumber());
-        if (mpartNumberComp != 0)
+        if (mpartNumberComp != 0) {
             return mpartNumberComp;
+        }
         int mpartVersionComp = getPartVersion().compareTo(pPart.getPartVersion());
-        if (mpartVersionComp != 0)
+        if (mpartVersionComp != 0) {
             return mpartVersionComp;
-        else
-            return iteration-pPart.iteration;
+        }else {
+            return iteration - pPart.iteration;
+        }
     }
 
     /**
@@ -342,16 +343,16 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
      */
     @Override
     public PartIteration clone() {
-        PartIteration clone = null;
+        PartIteration clone;
         try {
             clone = (PartIteration) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new InternalError();
         }
         //perform a deep copy
-        clone.attachedFiles = new HashSet<BinaryResource>(attachedFiles);
+        clone.attachedFiles = new HashSet<>(attachedFiles);
 
-        Set<DocumentLink> clonedLinks = new HashSet<DocumentLink>();
+        Set<DocumentLink> clonedLinks = new HashSet<>();
         for (DocumentLink link : linkedDocuments) {
             DocumentLink clonedLink = link.clone();
             clonedLinks.add(clonedLink);
@@ -359,7 +360,7 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
         clone.linkedDocuments = clonedLinks;
 
         //perform a deep copy
-        Map<String, InstanceAttribute> clonedInstanceAttributes = new HashMap<String, InstanceAttribute>();
+        Map<String, InstanceAttribute> clonedInstanceAttributes = new HashMap<>();
         for (InstanceAttribute attribute : instanceAttributes.values()) {
             InstanceAttribute clonedAttribute = attribute.clone();
             clonedInstanceAttributes.put(clonedAttribute.getName(), clonedAttribute);
@@ -371,5 +372,4 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
         }
         return clone;
     }
-    
 }

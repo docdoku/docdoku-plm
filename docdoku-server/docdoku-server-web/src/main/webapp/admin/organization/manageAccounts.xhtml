@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html">
+
+    <ui:composition template="/WEB-INF/templates/defaultTemplate.xhtml">
+        <ui:define name="title">
+            <f:loadBundle var="i18nManageAccounts" basename="com.docdoku.server.localization.admin.manageAccounts_resource"/>
+            #{i18nManageAccounts['title']}
+        </ui:define>
+        <ui:define name="content">
+            <ol class="breadcrumb">
+                <li><h:link value="#{i18nTemplate['toplinks.organization']}" outcome="/admin/organization/organizationMenu.xhtml" />
+                    <span class="divider">/</span></li>
+                <li class="active">#{i18nManageAccounts['main.title']}</li>
+            </ol>
+
+            <div id="sidebar" class="well well-large">
+                <h3>#{i18nManageAccounts['sidebar.title']}</h3>
+                <p><h:outputFormat value="#{i18nManageAccounts['sidebar.text']}" escape="false"/></p>         
+            </div>
+
+            <h2>#{i18nManageAccounts['main.title']}</h2>
+              <h:form>
+                <fieldset id="admin">
+                    <h3>#{i18nManageAccounts['section.title1']} #{accountBean.organizationName} #{i18nManageAccounts['section.title2']}</h3>
+                    <h:dataTable rendered="#{!empty organizationBean.accountsToManage}" id="accountsTable" value="#{organizationBean.accountsToManage}" var="account" class="table table-striped table-condensed" cellpadding="10" cellspacing="10" border="0">
+                        <h:column>
+                            <f:facet name="header">
+                            </f:facet>
+                            <h:selectBooleanCheckbox rendered="#{account.login != accountBean.organizationAdmin}" value="#{organizationBean.selectedLogins[account.login]}" />
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{i18nManageAccounts['section.name']}" />
+                            </f:facet>
+                                #{account.name}
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{i18nManageAccounts['section.email']}" />
+                            </f:facet>
+                            <h:outputLink value="mailto:#{account.email}">#{account.email}</h:outputLink>
+                        </h:column>
+                    </h:dataTable>
+                    <h:link value="#{i18nManageAccounts['section.addAccount']}" outcome="/admin/organization/accountAddingForm.xhtml"/>
+
+                    <div class="actions-btn">
+                        <h:commandButton action="#{organizationBean.removeAccounts}" styleClass="btn" value="#{i18nManageAccounts['section.remove']}" alt="#{i18nManageAccounts['section.remove']}"/>
+                    </div>
+                </fieldset>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>

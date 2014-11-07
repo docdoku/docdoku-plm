@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -69,7 +69,6 @@ public class DocumentPermalinkServlet extends HttpServlet {
                 handleSuccess(pRequest,pResponse,documentRevision);
             }
         }  catch (Exception pEx) {
-            pEx.printStackTrace();
             throw new ServletException("error while fetching your document.", pEx);
         }
     }
@@ -83,7 +82,7 @@ public class DocumentPermalinkServlet extends HttpServlet {
         }
 
         pRequest.setAttribute("attr", new ArrayList<InstanceAttribute>(docI.getInstanceAttributes().values()));
-        pRequest.getRequestDispatcher("/faces/documentPermalink.xhtml").forward(pRequest, pResponse);
+        pRequest.getRequestDispatcher(pRequest.getContextPath() + "/faces/documentPermalink.xhtml").forward(pRequest, pResponse);
     }
 
 }

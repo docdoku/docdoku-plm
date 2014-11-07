@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -47,9 +47,9 @@ public class PartUsageLinkDAO {
     
     public List<PartUsageLink[]> findPartUsagePaths(PartMasterKey pPartMKey){
         List<PartUsageLink> usages= findPartUsages(pPartMKey.getWorkspace(),pPartMKey.getNumber()); 
-        List<PartUsageLink[]> usagePaths = new ArrayList<PartUsageLink[]>();
+        List<PartUsageLink[]> usagePaths = new ArrayList<>();
         for(PartUsageLink usage:usages){
-            List<PartUsageLink> path=new ArrayList<PartUsageLink>();
+            List<PartUsageLink> path=new ArrayList<>();
             path.add(usage);
             createPath(usage,path,usagePaths);
         }
@@ -65,12 +65,13 @@ public class PartUsageLinkDAO {
         List<PartUsageLink> parentUsages = findPartUsages(owner.getWorkspaceId(), owner.getPartNumber());
         
         for(PartUsageLink parentUsage:parentUsages){
-            List<PartUsageLink> newPath=new ArrayList<PartUsageLink>(currentPath);
+            List<PartUsageLink> newPath=new ArrayList<>(currentPath);
             newPath.add(0,parentUsage);
             createPath(parentUsage, newPath, usagePaths);
         }
-        if(parentUsages.isEmpty())
+        if(parentUsages.isEmpty()) {
             usagePaths.add(currentPath.toArray(new PartUsageLink[currentPath.size()]));
+        }
               
     }
     
@@ -82,7 +83,7 @@ public class PartUsageLinkDAO {
     }
 
     public boolean hasPartUsages(String workspaceId, String partNumber){
-        return findPartUsages(workspaceId,partNumber).size()>0;
+        return !findPartUsages(workspaceId,partNumber).isEmpty();
     }
     
     public PartUsageLink loadPartUsageLink(int pId) throws PartUsageLinkNotFoundException {

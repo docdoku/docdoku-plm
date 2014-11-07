@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -55,7 +55,7 @@ public abstract class Subscription implements Serializable{
     })
     protected DocumentRevision observedDocumentRevision;
     
-    @javax.persistence.Column(name = "SUBSCRIBER_WORKSPACE_ID", length=255, nullable = false, insertable = false, updatable = false)
+    @javax.persistence.Column(name = "SUBSCRIBER_WORKSPACE_ID", length=100, nullable = false, insertable = false, updatable = false)
     @javax.persistence.Id
     private String subscriberWorkspaceId="";
     
@@ -64,15 +64,15 @@ public abstract class Subscription implements Serializable{
     private String subscriberLogin="";
     
     
-    @javax.persistence.Column(name = "DOCUMENTMASTER_WORKSPACE_ID", length=255, nullable = false, insertable = false, updatable = false)
+    @javax.persistence.Column(name = "DOCUMENTMASTER_WORKSPACE_ID", length=100, nullable = false, insertable = false, updatable = false)
     @javax.persistence.Id
     private String observedDocumentRevisionWorkspaceId ="";
     
-    @javax.persistence.Column(name = "DOCUMENTREVISION_VERSION", length=255, nullable = false, insertable = false, updatable = false)
+    @javax.persistence.Column(name = "DOCUMENTREVISION_VERSION", length=10, nullable = false, insertable = false, updatable = false)
     @javax.persistence.Id
     private String observedDocumentRevisionVersion ="";
     
-    @javax.persistence.Column(name = "DOCUMENTMASTER_ID", length=255, nullable = false, insertable = false, updatable = false)
+    @javax.persistence.Column(name = "DOCUMENTMASTER_ID", length=100, nullable = false, insertable = false, updatable = false)
     @javax.persistence.Id
     private String observedDocumentRevisionId ="";
     

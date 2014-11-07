@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -39,14 +39,16 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 @CatiaFileConverter
 public class CatiaFileConverterImpl implements CADConverter{
 
-    private final static String CONF_PROPERTIES="/com/docdoku/server/converters/catia/conf.properties";
+    private static final String CONF_PROPERTIES="/com/docdoku/server/converters/catia/conf.properties";
 
-    private final static Properties CONF = new Properties();
+    private static final Properties CONF = new Properties();
 
     @EJB
     private IProductManagerLocal productService;
@@ -55,10 +57,20 @@ public class CatiaFileConverterImpl implements CADConverter{
     private IDataManagerLocal dataManager;
 
     static{
+        InputStream inputStream = null;
         try {
-            CONF.load(CatiaFileConverterImpl.class.getResourceAsStream(CONF_PROPERTIES));
+            inputStream = CatiaFileConverterImpl.class.getResourceAsStream(CONF_PROPERTIES);
+            CONF.load(inputStream);
         } catch (IOException e) {
-            e.printStackTrace();
+            Logger.getLogger(CatiaFileConverterImpl.class.getName()).log(Level.WARNING, null, e);
+        } finally {
+            try{
+                if(inputStream!=null){
+                    inputStream.close();
+                }
+            }catch (IOException e){
+                Logger.getLogger(CatiaFileConverterImpl.class.getName()).log(Level.FINEST,null, e);
+            }
         }
     }
 
@@ -81,7 +93,7 @@ public class CatiaFileConverterImpl implements CADConverter{
                     try {
                         return dataManager.getBinaryResourceInputStream(cadFile);
                     } catch (StorageException e) {
-                        e.printStackTrace();
+                        Logger.getLogger(CatiaFileConverterImpl.class.getName()).log(Level.INFO, null, e);
                         throw new IOException(e);
                     }
                 }
@@ -96,19 +108,19 @@ public class CatiaFileConverterImpl implements CADConverter{
 
             int exitCode = process.exitValue();
 
-            if (exitCode==0) {
-                if(tmpDAEFile.exists() && tmpDAEFile.length() > 0 ){
-                    PartIterationKey partIPK = partToConvert.getKey();
+            if (exitCode==0 & tmpDAEFile.exists() && tmpDAEFile.length() > 0 ){
+                PartIterationKey partIPK = partToConvert.getKey();
 
-                    // Calculate radius
-                    double radius = RadiusCalculator.calculateRadius(tmpDAEFile);
+                // Calculate radius
+                double radius = RadiusCalculator.calculateRadius(tmpDAEFile);
 
-                    BinaryResource jsBinaryResource = productService.saveGeometryInPartIteration(partIPK, woExName+".dae", 0, tmpDAEFile.length(),radius);
-                    OutputStream daeOutputStream = null;
-                    try {
-                        daeOutputStream = dataManager.getBinaryResourceOutputStream(jsBinaryResource);
-                        Files.copy(tmpDAEFile, daeOutputStream);
-                    } finally {
+                BinaryResource jsBinaryResource = productService.saveGeometryInPartIteration(partIPK, woExName+".dae", 0, tmpDAEFile.length(),radius);
+                OutputStream daeOutputStream = null;
+                try {
+                    daeOutputStream = dataManager.getBinaryResourceOutputStream(jsBinaryResource);
+                    Files.copy(tmpDAEFile, daeOutputStream);
+                } finally {
+                    if(daeOutputStream!=null){
                         daeOutputStream.flush();
                         daeOutputStream.close();
                     }
@@ -118,11 +130,9 @@ public class CatiaFileConverterImpl implements CADConverter{
             return daeFile;
 
         } catch(Exception e){
-
-            e.printStackTrace();
+            Logger.getLogger(CatiaFileConverterImpl.class.getName()).log(Level.INFO, null, e);
             return null;
-        }
-        finally {
+        } finally {
             FileIO.rmDir(tmpDir);
         }
     }

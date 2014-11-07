@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2014 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -20,6 +20,12 @@
 
 package com.docdoku.server.http;
 
+import com.docdoku.core.common.Workspace;
+import com.docdoku.core.services.IUserManagerLocal;
+import com.docdoku.server.jsf.actions.AccountBean;
+
+import javax.ejb.EJB;
+import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -30,11 +36,31 @@ import java.io.IOException;
 @WebServlet(name = "HomePageServlet", urlPatterns = {"/home"})
 public class HomePageServlet extends HttpServlet {
 
+    @Inject
+    private AccountBean accountBean;
+
+    @EJB
+    private IUserManagerLocal userManager;
 
     private void handleRequest(HttpServletRequest pRequest,
             HttpServletResponse pResponse)
             throws ServletException, IOException {
-        pResponse.sendRedirect(pRequest.getContextPath() + "/document-management/");
+        if(accountBean.isSuperAdmin()){
+            pResponse.sendRedirect(pRequest.getContextPath() + "/faces/admin/workspace/workspacesMenu.xhtml");
+        }else{
+
+            String workspaceID = null;
+            Workspace[] workspaces = userManager.getWorkspacesWhereCallerIsActive();
+            if (workspaces != null && workspaces.length > 0) {
+                workspaceID = workspaces[0].getId();
+            }
+            if(workspaceID == null){
+                pResponse.sendRedirect(pRequest.getContextPath() + "/faces/admin/workspace/workspacesMenu.xhtml");
+            }else{
+                pResponse.sendRedirect(pRequest.getContextPath() + "/document-management/#" + workspaceID);
+            }
+
+        }
     }
     @Override
     protected void doGet(HttpServletRequest pRequest,

@@ -1,0 +1,15 @@
+<td><input type="checkbox"/></td>
+<td class="reference change_order_name"><i class="fa fa-archive"></i>{{model.getName}}</td>
+<td><a class="assigned-user-popover">{{model.getAssignee}}</a></td>
+<td>{{model.getPriority}}</td>
+<td>{{model.getCategory}}</td>
+<td><a class="author-popover">{{model.getAuthorName}}</a></td>
+<td>{{model.getFormattedCreationDate}}</td>
+<td class="acl-info">
+    {{#model.isReadOnly}}
+    <i class="fa fa-ban read-only" title="{{i18n.READ_ONLY}}"></i>
+    {{/model.isReadOnly}}
+    {{#model.isFullAccess}}
+    <i class="fa fa-ban full-access" title="{{i18n.FULL_ACCESS}}"></i>
+    {{/model.isFullAccess}}
+</td>
