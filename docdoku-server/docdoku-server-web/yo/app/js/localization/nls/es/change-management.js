@@ -1,4 +1,8 @@
 /*global define*/
 define({
-
+    ADVICE_CREATE_WORKFLOW:"Aquí puede crear procesos que definen el ciclo de vida de sus documentos y sus artículos",
+    ERROR_WORKFLOW_REFERENCE_MISSING:"Por favor, introduzca el nombre de su flujo de trabajo",
+    NEW_ROLES_NAME:"Introduzca el nombre de la nueva función",
+    WARNING_ANY_ROLE:"Crear algún papel antes de crear un Workflow",
+    WARNING_FINAL_STATE_MISSING:"Usted debe ingresar el nombre del estado final de su flujo de trabajo"
 });

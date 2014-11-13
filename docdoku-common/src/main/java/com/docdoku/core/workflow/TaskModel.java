@@ -39,7 +39,7 @@ import java.util.Map;
 @Table(name="TASKMODEL")
 @javax.persistence.IdClass(com.docdoku.core.workflow.TaskModelKey.class)
 @NamedQueries({
-        @NamedQuery(name="TaskModel.findByRoleName", query="SELECT t FROM TaskModel t WHERE t.role.name = :roleName"),
+        @NamedQuery(name="Role.findRolesInUseByRoleName", query="SELECT t FROM TaskModel t WHERE t.role.name = :roleName AND t.role.workspace = :workspace"),
         @NamedQuery(name="Role.findRolesInUse", query="SELECT t.role FROM TaskModel t WHERE t.role.workspace.id = :workspaceId")
 })
 @Entity

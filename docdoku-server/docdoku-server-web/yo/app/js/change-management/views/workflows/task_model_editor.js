@@ -16,6 +16,8 @@ define([
             'click button.delete-task': 'deleteTaskAction',
             'click p.task-name': 'gotoUnfoldState',
             'click i.fa-minus': 'gotoFoldState',
+            'click .new-role': 'newRoleAction',
+            'click .add-role': 'addRoleAction',
             'change input.task-name': 'titleChanged',
             'change textarea.instructions': 'instructionsChanged',
             'change select.role': 'roleSelected'
@@ -27,33 +29,40 @@ define([
         },
 
         initialize: function () {
-            var self = this;
+            this.isNewRole = false;
+            this.roles = this.options.roles;
+            this.roles.on('add',this.onRoleAdd,this);
+            this.newRoles = this.options.newRoles;
 
             this.state = this.States.FOLD;
-
             if (_.isUndefined(this.model.get('role'))) {
                 this.model.set({
                     role: this.options.roles.at(0)
                 });
             }
+        },
+        render: function () {
+            var _this = this;
+            this.template = Mustache.render(template, {cid: this.model.cid, task: this.model.attributes, roles: this.roles.pluck('name'), i18n: App.config.i18n});
+            this.$el.html(this.template);
+            this.bindDomElements();
 
-            var roles = [];
-            _.each(this.options.roles.models, function (role) {
-                if (self.model.get('role') && self.model.get('role').get('name') === role.get('name')) {
-                    roles.push({name: role.get('name'), selected: true});
-                }
-                else {
-                    roles.push({name: role.get('name'), selected: false});
+            // Select right role
+            _.each(this.roles.models, function (role) {
+                if (_this.model.get('role') && _this.model.get('role').get('name') === role.get('name')) {
+                    _this.roleSelect.val(role.get('name'));
                 }
             });
-
-            this.template = Mustache.render(template, {cid: this.model.cid, task: this.model.attributes, roles: roles, i18n: App.config.i18n});
+            return this;
         },
-
-        deleteTaskAction: function () {
-            this.model.collection.remove(this.model);
-            this.unbindAllEvents();
-            this.remove();
+        bindDomElements: function () {
+            this.divTask = this.$('div.task');
+            this.taskContent = this.$('.task-content');
+            this.pTitle = this.$('p.task-name');
+            this.inputTitle = this.$('input.task-name');
+            this.textareaInstructions = this.$('textarea.instructions');
+            this.roleInput = this.$('.role-input');
+            this.roleSelect = this.$('.role-select');
         },
 
         titleChanged: function () {
@@ -67,16 +76,49 @@ define([
                 this.pTitle.html(this.inputTitle.val());
             }
         },
-
         instructionsChanged: function () {
             this.model.set({
                 instructions: this.textareaInstructions.val()
             });
         },
+        onRoleAdd: function(model){
+            this.roleSelect.append('<option value="'+model.getName()+'">'+model.getName()+'</option>');
+        },
 
+
+        deleteTaskAction: function () {
+        this.model.collection.remove(this.model);
+        this.unbindAllEvents();
+        this.remove();
+    },
+
+        newRoleAction:function(){
+            this.roleInput.val('');
+            this.taskContent.addClass('new-role');
+            return false;
+        },
+        addRoleAction:function(){
+            var roleName = this.roleInput.val();
+            var selectedRole = this.roles.findWhere({name: roleName});
+            if(!selectedRole){
+                var selectedRole={
+                    workspaceId: App.config.workspaceId,
+                    name: roleName,
+                    defaultUserMapped: null
+                };
+                this.newRoles.push(selectedRole);
+                this.roles.add(selectedRole);
+            }
+            this.roleSelect.val(roleName);
+            this.model.set({
+                role: selectedRole
+            });
+            this.taskContent.removeClass('new-role');
+            return false;
+        },
         roleSelected: function (e) {
             var nameSelected = e.target.value;
-            var roleSelected = _.find(this.options.roles.models, function (role) {
+            var roleSelected = _.find(this.roles.models, function (role) {
                 return nameSelected === role.get('name');
             });
             this.model.set({
@@ -90,27 +132,11 @@ define([
             this.divTask.addClass('fold');
             this.inputTitle.prop('readonly', true);
         },
-
         gotoUnfoldState: function () {
             this.state = this.States.UNFOLD;
             this.divTask.removeClass('fold');
             this.divTask.addClass('unfold');
             this.inputTitle.prop('readonly', false);
-        },
-
-        render: function () {
-            this.$el.html(this.template);
-
-            this.bindDomElements();
-
-            return this;
-        },
-
-        bindDomElements: function () {
-            this.pTitle = this.$('p.task-name');
-            this.inputTitle = this.$('input.task-name');
-            this.textareaInstructions = this.$('textarea.instructions');
-            this.divTask = this.$('div.task');
         },
 
         unbindAllEvents: function () {

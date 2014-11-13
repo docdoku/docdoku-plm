@@ -4,11 +4,12 @@ define([
 	'common-objects/views/components/modal',
 	'text!templates/workflows/roles_modal.html',
 	'common-objects/models/role',
-	'common-objects/collections/roles',
-	'common-objects/collections/roles_in_use',
+	'collections/roles',
+	'collections/roles_in_use',
 	'common-objects/views/workflow/role_item_view',
+    'common-objects/views/alert',
 	'common-objects/collections/users'
-],function (Mustache, ModalView, template, Role, RolesList, RoleInUseList, RoleItemView, UserList) {
+],function (Mustache, ModalView, template, Role, RolesList, RoleInUseList, RoleItemView, AlertView, UserList) {
 	'use strict';
     var RolesModalView = ModalView.extend({
         initialize: function () {
@@ -18,18 +19,21 @@ define([
         },
 
         render: function () {
-            var self = this;
+            var _this = this;
 
             this.$el.html(Mustache.render(template, {
                 i18n: App.config.i18n
             }));
+            this.bindDomElement();
 
             this.$roleViews = this.$('#form-roles');
             this.$newRoleName = this.$('input.role-name');
 
 
             this.userList = new UserList();
-            this.collection = new RolesList();
+            if(!this.collection){
+                this.collection = new RolesList();
+            }
             this.rolesInUse = new RoleInUseList();
 
             this.rolesToDelete = [];
@@ -38,39 +42,79 @@ define([
             this.listenTo(this.collection, 'add', this.onModelAddedToCollection);
 
             this.userList.fetch({reset: true, success: function () {
-                self.rolesInUse.fetch({reset: true, success: function () {
-                    self.collection.fetch({reset: true});
+                _this.rolesInUse.fetch({reset: true, success: function () {
+                    _this.collection.fetch({reset: true});
                 }});
             }});
 
             return this;
         },
 
+        bindDomElement: function(){
+            this.$notifications = this.$el.find('.notifications').first();
+        },
+
+        onError:function(model, error){
+            var errorMessage = error ? error.responseText : model;
+
+            this.$notifications.append(new AlertView({
+                type: 'error',
+                message: errorMessage
+            }).render().$el);
+            this.collection.fetch();
+        },
+
         onSubmitNewRole: function (e) {
-            this.collection.create({workspaceId: App.config.workspaceId, name: this.$newRoleName.val(), defaultUserMapped: null});
+            this.collection.add({
+                workspaceId: App.config.workspaceId,
+                name: this.$newRoleName.val(),
+                defaultUserMapped: null
+            });
             this.resetNewRoleForm();
 
             e.preventDefault();
             e.stopPropagation();
             return false;
         },
-
         onSubmitForm: function (e) {
-            var self = this;
+            var _this = this;
+            var toSave = this.collection.length;
+            var toDelete = this.rolesToDelete.length;
 
             // Update models which has changed
             this.collection.each(function (model) {
-                if (model.hasChanged('defaultUserMapped') && !_.contains(self.rolesToDelete, model)) {
-                    model.save();
+                if(!_.contains(_this.rolesToDelete, model)){
+                    model.save(null,{
+                        success: function(){
+                            toSave--;
+                            if(!toDelete && !toSave){
+                                _this.hide();
+                            }
+                        },
+                        error: _this.onError
+                    });
+                }else{
+                    toSave--;
                 }
             });
 
             // Delete roles marked for delete
             _.each(this.rolesToDelete, function (model) {
-                model.destroy();
+                model.destroy({
+                    dataType: 'text', // server doesn't send a json hash in the response body
+                    success: function(){
+                        toDelete--;
+                        if(!toDelete && !toSave){
+                            _this.hide();
+                        }
+                    },
+                    error: _this.onError
+                });
             });
 
-            this.hide();
+            if(!toDelete && !toSave){
+                _this.hide();
+            }
 
             e.preventDefault();
             e.stopPropagation();
@@ -78,10 +122,10 @@ define([
         },
 
         onCollectionReset: function () {
-            var self = this;
+            var _this = this;
             this.roleViews = [];
             this.collection.each(function (model) {
-                self.addRoleView(model);
+                _this.addRoleView(model);
             });
         },
 
@@ -90,18 +134,31 @@ define([
         },
 
         onModelAddedToCollection: function (model) {
-            this.addRoleView(model);
+            var _this = this;
+            this.addRoleView(model, function(){
+                _this.collection.remove(model);
+            });
         },
 
-        addRoleView: function (model) {
-            var self = this;
+        addRoleView: function (model,onRemove) {
+            var _this = this;
+            var onViewRemove = (_.isFunction(onRemove)) ? onRemove : function () {
+                _this.rolesToDelete.push(model);
+            };
+
             var modelCanBeRemoved = this.checkRemovable(model);
-            var view = new RoleItemView({model: model, userList: this.userList, nullable: true, removable: modelCanBeRemoved}).render();
+            var view = new RoleItemView({
+                model: model,
+                userList: this.userList,
+                nullable: true,
+                removable: modelCanBeRemoved,
+                onError: _this.onError
+            }).render();
             this.roleViews.push(view);
             this.$roleViews.append(view.$el);
-            view.on('view:removed', function () {
-                self.rolesToDelete.push(model);
-            });
+            this.addSubView(view);
+
+            view.on('view:removed', onViewRemove);
         },
 
         checkRemovable: function (pModel) {
@@ -112,6 +169,11 @@ define([
                 }
             });
             return removable;
+        },
+
+        hidden: function () {
+            this.collection.fetch({reset:true});
+            this.destroy();
         }
     });
     return RolesModalView;

@@ -1,4 +1,4 @@
-/*global define*/
+/*global define,App*/
 define([
     'collections/template',
     'views/content',
@@ -51,9 +51,12 @@ define([
             var that = this;
             if (confirm(App.config.i18n.DELETE_SELECTION_QUESTION)) {
                 this.listView.eachChecked(function (view) {
-                    view.model.destroy({success: function () {
-                        that.listView.redraw();
-                    }});
+                    view.model.destroy({
+                        dataType: 'text', // server doesn't send a json hash in the response body
+                        success: function () {
+                            that.listView.redraw();
+                        }
+                    });
                 });
             }
             return false;

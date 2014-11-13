@@ -202,12 +202,13 @@ div#workflow-editor {
                   }
 
                   i.fa-bars {
-                    padding: 10px 0px 8px 0px;
-                    width: 32px;
-                    cursor: move;
                     float: left;
+                    width: 32px;
+                    padding: 10px 0 8px 0;
+                    cursor: move;
                     color: #25598F;
                     font-size: 17px;
+                    text-align: center;
                   }
 
                   input.task-name {
@@ -215,8 +216,8 @@ div#workflow-editor {
                   }
 
                   p.task-name {
+                    height: 34px;
                     min-width: 90px;
-                    min-height: 34px;
                     font-weight: bold;
                     line-height: 32px;
                     overflow: hidden;
@@ -224,12 +225,8 @@ div#workflow-editor {
                     cursor: pointer;
                     box-shadow: none;
                     color: white;
-                    padding: 2px 6px 2px 0px;
-                    margin: 0px;
-                  }
-
-                  button.delete-task {
-                    display: none;
+                    padding: 2px 6px 2px 0;
+                    margin: 0;
                   }
                 }
 
@@ -259,31 +256,22 @@ div#workflow-editor {
 
                 input.task-name {
                   height: 24px;
-                  width: 97px;
+                  width: 146px;
                   font-weight: bold;
-                  margin: 2px 0px 2px 2px;
+                  margin: 2px 0 2px 2px;
                   border-color: rgba(0, 0, 0, 0.45);
                   background-color: rgba(255, 255, 255, 0.9);
-                }
-
-                button.delete-task {
-                  padding: 0;
-                  float: right;
-                  width: 32px;
-                  height: 38px;
-                  color: #25598F;
-                  font-size: 15px;
                 }
               }
 
               div.task-topbar {
+                height: 38px;
                 text-align: left;
                 background-color: #659FD8;
                 border-radius: 4px 4px 0px 0px;
 
                 input.task-name {
                   height: 24px;
-                  width: 97px;
                   font-weight: bold;
                   margin: 2px 0px 2px 2px;
                 }
@@ -302,9 +290,53 @@ div#workflow-editor {
                   margin: 0px 0px 4px 4px;
                 }
 
-                >select {
-                  margin: 0px 4px 4px 4px;
+                >input{
+                    width: 188px;
+                    padding: 3px 0 3px 0;
+                    margin: 0 4px 4px 4px;
+                    border: 1px solid #cccccc;
+                    -webkit-border-radius: 4px;
+                    -moz-border-radius: 4px;
+                    border-radius: 4px;
                 }
+
+                >select {
+                  width: 190px;
+                  margin: 0 4px 4px 4px;
+                }
+
+                .add-role,
+                .new-role{
+                    width: 22px;
+                    height: 22px;
+                    margin-right: 4px;
+                    text-align: center;
+                }
+
+                .new-role, .role-select{
+                  display: inline-block;
+                }
+                .add-role, .role-input{
+                  display: none;
+                }
+
+                &.new-role{
+                  .new-role, .role-select{
+                    display: none;
+                  }
+                  .add-role, .role-input{
+                    display: inline-block;
+                  }
+                }
+              }
+
+              button.delete-task {
+                padding: 0;
+                float: right;
+                width: 32px;
+                height: 38px;
+                color: #25598F;
+                font-size: 15px;
               }
             }
           }

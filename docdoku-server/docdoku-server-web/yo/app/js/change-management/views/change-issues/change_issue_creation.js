@@ -106,7 +106,7 @@ function (Backbone, Mustache, template, ChangeIssueModel, UserList, LinkedDocume
 
             this.model.save(data, {
                 success: this.onIssueCreated,
-                error: this.error,
+                error: this.onError,
                 wait: true
             });
 

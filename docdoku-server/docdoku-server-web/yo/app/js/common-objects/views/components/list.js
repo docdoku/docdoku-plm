@@ -1,7 +1,8 @@
 /*global define*/
 define([
-    "common-objects/views/base"
+    'common-objects/views/base'
 ], function (BaseView) {
+    'use strict';
     var ListView = BaseView.extend({
         collectionReset: function () {
             this.clear();
@@ -9,7 +10,7 @@ define([
                 this.render();
                 this.collection.each(this.createItemView);
             }
-            this.trigger("_ready");
+            this.trigger('_ready');
         },
         collectionAdd: function () {
             this.collectionReset();

@@ -1,9 +1,10 @@
 /*global define*/
 define([
-    "common-objects/views/base"
+    'common-objects/views/base'
 ], function (BaseView) {
+    'use strict';
     var ContentView = BaseView.extend({
-        el: "#document-management-content",
+        el: '#document-management-content',
         initialize: function () {
             BaseView.prototype.initialize.apply(this, arguments);
             // destroy previous content view if any
@@ -14,7 +15,7 @@ define([
             ContentView._instance = this;
         },
         destroyed: function () {
-            this.$el.html("");
+            this.$el.html('');
         }
     });
     return ContentView;

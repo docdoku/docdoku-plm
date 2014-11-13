@@ -15,11 +15,18 @@
         <textarea id="instructions-{{cid}}" class="instructions" rows="2">{{task.instructions}}</textarea>
         <br/>
         <label for="role-{{cid}}">{{i18n.ROLE}}</label>
-        <select id="role-{{cid}}" class="role">
+        <input id="role-{{cid}}-newRole" class="role role-input" placeholder="{{i18n.NEW_ROLES_NAME}}"/>
+        <select id="role-{{cid}}" class="role role-select">
             {{#roles}}
-            <option
-            {{#selected}}selected{{/selected}} value="{{name}}">{{name}}</option>
+                <option value="{{.}}">{{.}}</option>
             {{/roles}}
         </select>
+        <button class="new-role" title="{{i18n.ADD}}">
+            <i class="fa fa-plus"></i>
+        </button>
+
+        <button class="add-role" title="{{i18n.SAVE}}">
+            <i class="fa fa-check"></i>
+        </button>
     </div>
 </div>

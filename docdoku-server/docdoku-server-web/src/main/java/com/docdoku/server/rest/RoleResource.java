@@ -20,7 +20,7 @@
 package com.docdoku.server.rest;
 
 
-import com.docdoku.core.exceptions.ApplicationException;
+import com.docdoku.core.exceptions.*;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IWorkflowManagerLocal;
 import com.docdoku.core.workflow.Role;
@@ -41,6 +41,8 @@ import javax.ws.rs.core.Response;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -54,6 +56,7 @@ public class RoleResource {
     @EJB
     private IWorkflowManagerLocal roleService;
 
+    private static final Logger LOGGER = Logger.getLogger(RoleResource.class.getName());
     private Mapper mapper;
 
     public RoleResource() {
@@ -78,10 +81,13 @@ public class RoleResource {
 
             return rolesDTO;
 
-        } catch (ApplicationException ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
+        } catch (UserNotFoundException | UserNotActiveException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
+        } catch (WorkspaceNotFoundException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
         }
-
     }
 
     @GET
@@ -99,10 +105,13 @@ public class RoleResource {
 
             return rolesDTO;
 
-        } catch (ApplicationException ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
+        } catch (UserNotFoundException | UserNotActiveException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
+        } catch (WorkspaceNotFoundException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
         }
-
     }
 
 
@@ -111,7 +120,6 @@ public class RoleResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response createRole(RoleDTO roleDTO) throws UnsupportedEncodingException {
         try {
-
             UserDTO userDTO = roleDTO.getDefaultUserMapped();
             String userLogin = null;
             if(userDTO != null){
@@ -121,8 +129,18 @@ public class RoleResource {
             Role roleCreated = roleService.createRole(roleDTO.getName(),roleDTO.getWorkspaceId(),userLogin);
             RoleDTO roleCreatedDTO = mapRoleToDTO(roleCreated);
             return Response.created(URI.create(URLEncoder.encode(roleCreatedDTO.getName(), "UTF-8"))).entity(roleCreatedDTO).build();
-        } catch (ApplicationException ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
+        } catch (UserNotFoundException | UserNotActiveException | AccessRightException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
+        } catch (WorkspaceNotFoundException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
+        } catch (RoleAlreadyExistsException e){
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(), Response.Status.CONFLICT);
+        } catch (CreationException e) {
+            LOGGER.log(Level.SEVERE, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(), Response.Status.BAD_REQUEST);
         }
     }
 
@@ -132,7 +150,6 @@ public class RoleResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateRole(@PathParam("roleName") String roleName, RoleDTO roleDTO) throws UnsupportedEncodingException {
         try {
-
             UserDTO userDTO = roleDTO.getDefaultUserMapped();
             String userLogin = null;
             if(userDTO != null){
@@ -142,8 +159,12 @@ public class RoleResource {
             Role roleUpdated = roleService.updateRole(new RoleKey(roleDTO.getWorkspaceId(), roleName), userLogin);
             RoleDTO roleUpdatedDTO = mapRoleToDTO(roleUpdated);
             return Response.status(Response.Status.OK).entity(roleUpdatedDTO).build();
-        } catch (ApplicationException ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
+        } catch (UserNotFoundException | UserNotActiveException | AccessRightException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
+        } catch (WorkspaceNotFoundException | RoleNotFoundException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
         }
     }
 
@@ -155,14 +176,20 @@ public class RoleResource {
             RoleKey roleKey = new RoleKey(workspaceId, roleName);
             roleService.deleteRole(roleKey);
             return Response.ok().build();
-        } catch (ApplicationException ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
+        } catch (UserNotFoundException | UserNotActiveException | AccessRightException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
+        } catch (WorkspaceNotFoundException | RoleNotFoundException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
+        } catch (EntityConstraintException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.CONFLICT);
         }
     }
 
 
     private RoleDTO mapRoleToDTO(Role role){
-
         RoleDTO roleDTO = mapper.map(role,RoleDTO.class);
         roleDTO.setWorkspaceId(role.getWorkspace().getId());
         if(role.getDefaultUserMapped() != null){
