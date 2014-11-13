@@ -99,20 +99,22 @@ define([
         },
         addRoleAction:function(){
             var roleName = this.roleInput.val();
-            var selectedRole = this.roles.findWhere({name: roleName});
-            if(!selectedRole){
-                var selectedRole={
-                    workspaceId: App.config.workspaceId,
-                    name: roleName,
-                    defaultUserMapped: null
-                };
-                this.newRoles.push(selectedRole);
-                this.roles.add(selectedRole);
+            if(roleName){
+                var selectedRole = this.roles.findWhere({name: roleName});
+                if(!selectedRole){
+                    var selectedRole={
+                        workspaceId: App.config.workspaceId,
+                        name: roleName,
+                        defaultUserMapped: null
+                    };
+                    this.newRoles.push(selectedRole);
+                    this.roles.add(selectedRole);
+                }
+                this.roleSelect.val(roleName);
+                this.model.set({
+                    role: selectedRole
+                });
             }
-            this.roleSelect.val(roleName);
-            this.model.set({
-                role: selectedRole
-            });
             this.taskContent.removeClass('new-role');
             return false;
         },
