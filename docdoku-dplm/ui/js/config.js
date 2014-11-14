@@ -13,9 +13,9 @@ require.config({
     ],
 
     paths: {
-        "i18n": "lib/i18n-2.0.4.js",
-        "localization": "localization",
-        "text": "lib/text-2.0.10.js"
+        "i18n": "lib/i18n",
+        "text": "lib/text",
+        "localization": "localization"
     },
 
     config: {
