@@ -33,7 +33,7 @@ public class HelpCommand extends AbstractCommandLine{
     private String command;
 
     @Override
-    public Object execImpl() throws Exception {
+    public void execImpl() throws Exception {
         CommandLine cl;
         switch(command){
             case "status": case "stat": case "st":
@@ -73,7 +73,6 @@ public class HelpCommand extends AbstractCommandLine{
         System.out.println(cl.getDescription());
         System.out.println();
         parser.printUsage(System.out);
-        return null;
     }
 
     @Override

@@ -53,7 +53,7 @@ public class PartCreationCommand extends AbstractCommandLine {
     @Argument(metaVar = "<cadfile>", required = true, index=0, usage = "specify the cad file of the part to import")
     private File cadFile;
 
-    public Object execImpl() throws Exception {
+    public void execImpl() throws Exception {
         IProductManagerWS productS = ScriptingTools.createProductService(getServerURL(), user, password);
         PartMaster partMaster = productS.createPartMaster(workspace, partNumber, partName, false, null, description, null, null, null, null);
         PartRevision pr = partMaster.getLastRevision();
@@ -61,7 +61,6 @@ public class PartCreationCommand extends AbstractCommandLine {
         PartIterationKey partIPK = new PartIterationKey(partRPK, pr.getLastIteration().getIteration());
         FileHelper fh = new FileHelper(user,password);
         fh.uploadNativeCADFile(getServerURL(), cadFile, partIPK);
-        return null;
     }
 
     @Override

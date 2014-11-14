@@ -47,12 +47,12 @@ public class BaselineListCommand extends AbstractCommandLine {
     private IProductManagerWS productS;
 
     @Override
-    public Object execImpl() throws Exception {
+    public void execImpl() throws Exception {
 
         productS = ScriptingTools.createProductService(getServerURL(), user, password);
         PartRevisionKey pK = new PartRevisionKey(workspace,number,revision);
         List<ProductBaseline> productBaselines = productS.findBaselinesWherePartRevisionHasIterations(pK);
-        return JSONOutput.printBaselines(productBaselines);
+        JSONOutput.printBaselines(productBaselines);
     }
 
     @Override

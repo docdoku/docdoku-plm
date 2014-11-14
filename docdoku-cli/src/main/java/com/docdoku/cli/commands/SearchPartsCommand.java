@@ -46,14 +46,14 @@ public class SearchPartsCommand extends AbstractCommandLine {
 
 
     @Override
-    public Object execImpl() throws Exception {
+    public void execImpl() throws Exception {
         IProductManagerWS productS = ScriptingTools.createProductService(getServerURL(), user, password);
 
         List<PartRevision> partRevisions = productS.searchPartRevisions(
                 new PartSearchQuery(workspace, searchValue, null, null, null, null, null, null, null, null)
         );
 
-        return JSONOutput.printPartRevisions(partRevisions);
+        JSONOutput.printPartRevisions(partRevisions);
     }
 
     @Override

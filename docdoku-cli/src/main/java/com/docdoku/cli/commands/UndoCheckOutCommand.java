@@ -62,7 +62,7 @@ public class UndoCheckOutCommand extends AbstractCommandLine{
     @Option(name="-R", aliases = "--recursive", usage="execute the command through the product structure hierarchy")
     private boolean recursive;
 
-    public Object execImpl() throws Exception {
+    public void execImpl() throws Exception {
         if(partNumber==null || revision==null){
             loadMetadata();
         }
@@ -77,7 +77,6 @@ public class UndoCheckOutCommand extends AbstractCommandLine{
             FileHelper fh = new FileHelper(user,password);
             fh.downloadNativeCADFile(getServerURL(), path, workspace, partNumber, pr, pi, force);
         }
-        return null;
     }
 
     private void loadMetadata() throws IOException {

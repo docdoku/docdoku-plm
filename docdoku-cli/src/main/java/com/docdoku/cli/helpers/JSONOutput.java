@@ -33,7 +33,16 @@ import org.codehaus.jettison.json.JSONObject;
 import java.util.Date;
 import java.util.List;
 
-public class JSONOutput {
+public class JSONOutput  extends CliOutput {
+    @Override
+    public void printWorkspaces() {
+        System.out.printf("json output");
+    }
+
+
+
+
+
 
     public static String printPartMasters(List<PartMaster> partMasters) throws JSONException {
         JSONArray jsonArray = new JSONArray();
