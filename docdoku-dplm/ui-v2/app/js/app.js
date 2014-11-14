@@ -15,24 +15,27 @@ angular.module('dplm',[
     // Components
     'dplm.services.cli',
     'dplm.services.configuration',
-    'dplm.services.translations'
+    'dplm.services.translations',
+    'dplm.services.notification'
 
 ])
 
 .config(function($routeProvider){
-        $routeProvider.otherwise('/');
+    $routeProvider.otherwise('/');
 })
 
-.controller('AppCtrl', function($scope, $mdSidenav) {
+.controller('AppCtrl', function($scope, $mdSidenav, CliService) {
+
+    CliService.checkRequirements().then(CliService.getWorkspaces,onError);
+
+    function onError(){
+        console.log('Error')
+    }
+
+    $scope.title="DocDoku DPLM";
 
     $scope.toggleLeft = function() {
         $mdSidenav('left').toggle();
     };
 
-})
-
-.controller('LeftCtrl', function($scope, $mdSidenav) {
-    $scope.close = function() {
-        $mdSidenav('left').close();
-    };
-})
+});

@@ -1466,7 +1466,7 @@ md-button {
     left: 0;
     top: 0;
     width: 100%;
-    height: 100%;
+    height: auto; /*MOD:100%*/
     background: transparent;
     border: none;
     color: inherit;

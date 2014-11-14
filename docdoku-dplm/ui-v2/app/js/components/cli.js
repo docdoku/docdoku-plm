@@ -1,79 +1,104 @@
 angular.module('dplm.services.cli',[])
-.service('CliService',function(Configuration){
+
+.service('CliService',function(ConfigurationService, NotificationService,$q,$log){
 
         var configuration = ConfigurationService.configuration;
-        var classPath = process.cwd() + '/dplm/docdoku-cli-jar-with-dependencies.jar';
-        var mainClass = com.docdoku.cli.MainCommand;
+        var classPath = process.cwd() + '/cli/docdoku-cli-jar-with-dependencies.jar';
+        var mainClass = 'com.docdoku.cli.MainCommand';
         var memOptions = '-Xmx1024M';
 
-        this.checkRequirements = function(){
-
-            function javaversion(callback) {
-
-                var spawn = require('child_process').spawn('java', ['-version']);
-
-                spawn.on('error', function(err){
-                    return callback(err, null);
-                })
-                spawn.stderr.on('data', function(data) {
-                    data = data.toString().split('\n')[0];
-                    var javaVersion = new RegExp('java version').test(data) ? data.split(' ')[2].replace(/"/g, '') : false;
-                    if (javaVersion != false) {
-                        console.log('TODO: We have Java installed ' + javaVersion);
-
-                    } else {
-                        console.log('No java found');
-                    }
-                });
-
-            }
-
-            javaversion(function(err,version){
-                console.log("Version is " + version);
-            });
-
-        };
-
-        this.run=function(args,progressHandler){
+        var  run = function(args,progressHandler){
 
             return $q(function(reject,resolve){
+
+                $log.log(([memOptions,'-cp',classPath, mainClass].concat(args)).join(' '));
 
                 var spawn = require('child_process').spawn;
                 var cliProcess  = spawn('java', [memOptions,'-cp',classPath, mainClass].concat(args));
 
-                cliProcess.stdout.on('data',function(err,data){
-                    console.log('stdout : ' + data.toString());
-                    // progressHandler
+                var objects = [];
+                var errors = [];
+
+                cliProcess.stdout.on('data',function(data){
+                    var entries = data.toString().split('\n');
+                    angular.forEach(entries,function(entry){
+                        if(entry && entry.trim()){
+                            objects.push(JSON.parse(entry));
+                            NotificationService.toast(entry);
+                        }
+                    });
                 });
-                cliProcess.stderr.on('data',function(err,data){
-                    console.error('stderr : ' + data.toString());
+
+                cliProcess.stderr.on('data',function(data){
+                    var entries = data.toString().split('\n');
+                    angular.forEach(entries,function(entry){
+                        if(entry && entry.trim()){
+                            errors.push(JSON.parse(entry));
+                            NotificationService.toast(entry);
+                        }
+                    });
                 });
+
                 cliProcess.stderr.on('close', function (code, signal) {
-                    console.log('child process terminated due to receipt of signal '+signal);
-                    resolve();
+                    if(!code){
+                        var result = objects.length ? objects[objects.length-1] : null;
+                        resolve(result);
+                    }else{
+                        reject();
+                    }
                 });
 
             });
 
         };
+        
+        this.checkRequirements = function(){
 
-        this.getWorkspaces = function (callbacks) {
+            $log.info('Checking requirements');
+
+            return $q(function(resolve,reject){
+
+                var spawn = require('child_process').spawn('java', ['-version']);
+
+                spawn.on('error', function(err){
+                    $log.log('spawn.onerror')
+                    return reject('No java found');
+                });
+
+                spawn.stderr.on('data', function(data) {
+                    data = data.toString().split('\n')[0];
+                    var javaVersion = new RegExp('java version').test(data) ? data.split(' ')[2].replace(/"/g, '') : false;
+                    if (javaVersion != false && javaVersion >= '1.7') {
+                        $log.log('javaVersion'+javaVersion)
+                        resolve(javaVersion);
+                    } else {
+                        reject('No java found or version not matching');
+                    }
+                });
+
+            });
+
+        };       
+
+        this.getWorkspaces = function () {
             var args = [
                 'wl',
+                '-F', 'json',
                 '-h', configuration.host,
                 '-P', configuration.port,
                 '-u', configuration.user,
                 '-p', configuration.password
             ];
 
-            return this.run(args,callbacks);
+            return run(args);
 
         };
 
-        this.getStatusForFile= function (file, callbacks) {
+        this.getStatusForFile= function (file) {
 
             var args = [
                 'st',
+                '-F', 'json',
                 '-h', configuration.host,
                 '-P', configuration.port,
                 '-u', configuration.user,
@@ -81,13 +106,14 @@ angular.module('dplm.services.cli',[])
                 file
             ];
 
-            return this.run(args,callbacks);
+            return run(args);
         };
 
-        this.getStatusForPart= function (part, callbacks) {
+        this.getStatusForPart= function (part) {
 
             var args = [
                 'st',
+                '-F', 'json',
                 '-h', configuration.host,
                 '-P', configuration.port,
                 '-u', configuration.user,
@@ -97,14 +123,15 @@ angular.module('dplm.services.cli',[])
                 '-r', part.getVersion()
             ];
 
-            return this.run(args,callbacks);
+            return run(args);
 
         };
 
-        this.checkout= function (part, options, callbacks) {
+        this.checkout= function (part, options) {
 
             var args = [
                 'co',
+                '-F', 'json',
                 '-h', configuration.host,
                 '-P', configuration.port,
                 '-u', configuration.user,
@@ -125,14 +152,15 @@ angular.module('dplm.services.cli',[])
                 args.push(options.baseline);
             }
 
-            return this.run(args,callbacks);
+            return run(args);
 
         };
 
-        this.checkin= function (part, callbacks) {
+        this.checkin= function (part) {
 
             var args = [
                 'ci',
+                '-F', 'json',
                 '-h', configuration.host,
                 '-P', configuration.port,
                 '-u', configuration.user,
@@ -142,14 +170,15 @@ angular.module('dplm.services.cli',[])
                 '-r', part.getVersion()
             ];
 
-            return this.run(args,callbacks);
+            return run(args);
 
         };
 
-        this.undoCheckout= function (part, callbacks) {
+        this.undoCheckout= function (part) {
 
             var args = [
                 'uco',
+                '-F', 'json',
                 '-h', configuration.host,
                 '-P', configuration.port,
                 '-u', configuration.user,
@@ -159,13 +188,14 @@ angular.module('dplm.services.cli',[])
                 '-r', part.getVersion()
             ];
 
-            return this.run(args,callbacks);
+            return run(args);
         };
 
-        this.download= function (part, options, callbacks) {
+        this.download= function (part, options) {
 
             var args = [
                 'get',
+                '-F', 'json',
                 '-h', configuration.host,
                 '-P', configuration.port,
                 '-u', configuration.user,
@@ -186,14 +216,15 @@ angular.module('dplm.services.cli',[])
                 args.push(options.baseline);
             }
 
-            return this.run(args,callbacks);
+            return run(args);
 
         };
 
-        this.createPart= function (part, filePath, callbacks) {
+        this.createPart= function (part, filePath) {
 
             var args = [
                 'cr',
+                '-F', 'json',
                 '-h', configuration.host,
                 '-P', configuration.port,
                 '-u', configuration.user,
@@ -213,14 +244,15 @@ angular.module('dplm.services.cli',[])
 
             args.push(filePath);
 
-            return this.run(args,callbacks);
+            return run(args);
 
         };
 
-        this.getPartMastersCount= function (workspace, callbacks) {
+        this.getPartMastersCount= function (workspace) {
 
             var args = [
                 'pl',
+                '-F', 'json',
                 '-h', configuration.host,
                 '-P', configuration.port,
                 '-u', configuration.user,
@@ -229,14 +261,15 @@ angular.module('dplm.services.cli',[])
                 '-c'
             ];
 
-            return this.run(args,callbacks);
+            return run(args);
 
         };
 
-        this.getPartMasters= function (workspace, start, max, callbacks) {
+        this.getPartMasters= function (workspace, start, max) {
 
             var args = [
                 'pl',
+                '-F', 'json',
                 '-h', configuration.host,
                 '-P', configuration.port,
                 '-u', configuration.user,
@@ -246,14 +279,15 @@ angular.module('dplm.services.cli',[])
                 '-w', workspace
             ];
 
-            return this.run(args,callbacks);
+            return run(args);
 
         };
 
-        this.searchPartMasters= function (workspace, search, callbacks) {
+        this.searchPartMasters= function (workspace, search) {
 
             var args = [
                 's',
+                '-F', 'json',
                 '-h', configuration.host,
                 '-P', configuration.port,
                 '-u', configuration.user,
@@ -262,12 +296,13 @@ angular.module('dplm.services.cli',[])
                 '-s', search
             ];
 
-            return this.run(args,callbacks);
+            return run(args);
         };
 
-        this.getBaselines= function (part, callbacks) {
+        this.getBaselines= function (part) {
             var args = [
                 'bl',
+                '-F', 'json',
                 '-h', configuration.host,
                 '-P', configuration.port,
                 '-u', configuration.user,
@@ -277,7 +312,7 @@ angular.module('dplm.services.cli',[])
                 '-r', part.getVersion()
             ];
 
-            return this.run(args,callbacks);
+            return run(args);
         }
        
 
