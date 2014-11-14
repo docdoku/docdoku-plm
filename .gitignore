@@ -23,6 +23,7 @@ docdoku-server/docdoku-server-web/build
 docdoku-server/docdoku-server-web/src/main/webapp/download/dplm
 docdoku-dplm/ui/dplm/*.jar
 docdoku-dplm/tmp
+docdoku-dplm/tests/worskpace
 docdoku-common/build
 docdoku-client/build
 
