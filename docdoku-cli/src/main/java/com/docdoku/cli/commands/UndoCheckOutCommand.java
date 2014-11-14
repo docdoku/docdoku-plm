@@ -70,11 +70,11 @@ public class UndoCheckOutCommand extends AbstractCommandLine{
         IProductManagerWS productS = ScriptingTools.createProductService(getServerURL(), user, password);
         PartRevision pr = productS.undoCheckOutPart(new PartRevisionKey(workspace, partNumber, revision.toString()));
         PartIteration pi = pr.getLastIteration();
-        System.out.println("Undo checking out part: " + partNumber + " " + pr.getVersion() + "." + pi.getIteration()+1 + " (" + workspace + ")");
+        output.printInfo("Undo checking out part: " + partNumber + " " + pr.getVersion() + "." + pi.getIteration()+1 + " (" + workspace + ")");
 
         BinaryResource bin = pi.getNativeCADFile();
         if(bin!=null && download){
-            FileHelper fh = new FileHelper(user,password);
+            FileHelper fh = new FileHelper(user,password,output);
             fh.downloadNativeCADFile(getServerURL(), path, workspace, partNumber, pr, pi, force);
         }
     }

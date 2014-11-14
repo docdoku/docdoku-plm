@@ -136,10 +136,10 @@ public class GetCommand extends AbstractCommandLine{
         BinaryResource bin = pi.getNativeCADFile();
 
         if(bin!=null){
-            FileHelper fh = new FileHelper(user,password);
+            FileHelper fh = new FileHelper(user,password,output);
             fh.downloadNativeCADFile(getServerURL(), path, workspace, pPartNumber, pr, pi, force);
         }else{
-            System.out.println("No file for part: "  + pPartNumber + " " + pr.getVersion() + "." + pi.getIteration() + " (" + workspace + ")");
+            output.printInfo("No file for part: "  + pPartNumber + " " + pr.getVersion() + "." + pi.getIteration() + " (" + workspace + ")");
         }
 
         if(recursive){

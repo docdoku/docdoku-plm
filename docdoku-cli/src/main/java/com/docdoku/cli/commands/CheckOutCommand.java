@@ -129,7 +129,7 @@ public class CheckOutCommand extends AbstractCommandLine{
         BinaryResource bin = pi.getNativeCADFile();
 
         if(bin!=null && !noDownload){
-            FileHelper fh = new FileHelper(user,password);
+            FileHelper fh = new FileHelper(user,password,output);
             fh.downloadNativeCADFile(getServerURL(), path, workspace, pPartNumber, pr, pi, force);
         }
 

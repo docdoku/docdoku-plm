@@ -1,9 +1,7 @@
 package com.docdoku.cli;
 
 import com.docdoku.cli.commands.*;
-import com.docdoku.cli.helpers.JSONOutput;
 import com.docdoku.core.common.Version;
-import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 
 import java.util.Arrays;
@@ -70,17 +68,18 @@ public class MainCommand {
                 case "help":
                 case "?":
                 case "h":
-                    if (args.length > 1) {
-                         execCommand(new HelpCommand(), Arrays.copyOfRange(args, 1, args.length));
+                    if(args.length == 1){
+                        execCommand(new HelpCommand(), args);
+                    }else{
+                        execCommand(new HelpCommand(), Arrays.copyOfRange(args, 1, args.length));
                     }
                     break;
                 default:
-                    printUsage();
+                    execCommand(new HelpCommand(), args);
                     break;
             }
         } catch (Exception e) {
-            LOGGER.log(Level.FINEST,null,e);
-            printUsage();
+            execCommand(new HelpCommand(), args);
         }
     }
 
@@ -90,32 +89,9 @@ public class MainCommand {
         try {
             parser.parseArgument(args);
             cl.exec();
-        } catch (CmdLineException e) {
-            System.err.println(e.getMessage());
-            parser.printUsage(System.err);
-            JSONOutput.printException(e);
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, null, e);
-            JSONOutput.printException(e);
+       } catch (Exception e) {
+            cl.getOutput().printException(e);
         }
-    }
-
-    private static void printUsage() {
-        System.err.println("usage: dplm <command> [<args>]");
-        System.err.println("DocDokuPLM command-line client, version 1.0.");
-        System.err.println("Type 'dplm help <command>' for help on a specific command.");
-        System.err.println();
-        System.err.println("Available commands:");
-        System.err.println("   checkin (ci)");
-        System.err.println("   checkout (co)");
-        System.err.println("   create (cr)");
-        System.err.println("   get");
-        System.err.println("   help (?, h)");
-        System.err.println("   put");
-        System.err.println("   status (stat, st)");
-        System.err.println("   undocheckout (uco)");
-        System.err.println();
-        System.err.println("For additional information, see http://www.docdokuplm.com");
     }
 
 }
