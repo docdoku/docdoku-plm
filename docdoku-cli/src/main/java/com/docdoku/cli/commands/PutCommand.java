@@ -53,7 +53,7 @@ public class PutCommand extends AbstractCommandLine{
     @Argument(metaVar = "<cadfile>", required = true, index=0, usage = "specify the cad file of the part to import")
     private File cadFile;
 
-    public Object execImpl() throws Exception {
+    public void execImpl() throws Exception {
         if(partNumber==null || revision==null){
             loadMetadata();
         }
@@ -67,7 +67,6 @@ public class PutCommand extends AbstractCommandLine{
 
         FileHelper fh = new FileHelper(user,password);
         fh.uploadNativeCADFile(getServerURL(), cadFile, partIPK);
-        return null;
     }
 
     private void loadMetadata() throws IOException {

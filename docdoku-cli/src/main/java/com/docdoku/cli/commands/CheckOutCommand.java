@@ -72,7 +72,7 @@ public class CheckOutCommand extends AbstractCommandLine{
     private IProductManagerWS productS;
     private IProductConfigSpecManagerWS productConfigSpecS;
 
-    public Object execImpl() throws Exception {
+    public void execImpl() throws Exception {
         if(partNumber==null || revision==null){
             loadMetadata();
         }
@@ -88,7 +88,6 @@ public class CheckOutCommand extends AbstractCommandLine{
         }
 
         checkoutPart(partNumber,strRevision,0,cs);
-        return null;
     }
 
     private void loadMetadata() throws IOException {

@@ -60,7 +60,7 @@ public class CheckInCommand extends AbstractCommandLine{
     @Option(name="-w", aliases = "--workspace", required = true, metaVar = "<workspace>", usage="workspace on which operations occur")
     protected String workspace;
 
-    public Object execImpl() throws Exception {
+    public void execImpl() throws Exception {
 
         if(partNumber==null || revision==null){
             loadMetadata();
@@ -89,8 +89,6 @@ public class CheckInCommand extends AbstractCommandLine{
         PartRevision pr = productS.checkInPart(partRPK);
         PartIteration pi = pr.getLastIteration();
         System.out.println("Checking in part: " + partNumber + " " + pr.getVersion() + "." + pi.getIteration() + " (" + workspace + ")");
-
-        return null;
     }
 
     private void loadMetadata() throws IOException {

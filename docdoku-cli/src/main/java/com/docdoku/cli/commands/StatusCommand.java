@@ -59,7 +59,7 @@ public class StatusCommand extends AbstractCommandLine{
     private long lastModified;
 
     @Override
-    public Object execImpl() throws Exception {
+    public void execImpl() throws Exception {
         try {
             if(partNumber==null || revision==null){
                 loadMetadata();
@@ -67,13 +67,13 @@ public class StatusCommand extends AbstractCommandLine{
             IProductManagerWS productS = ScriptingTools.createProductService(getServerURL(), user, password);
             PartMaster pm = productS.getPartMaster(new PartMasterKey(workspace, partNumber));
             printMasterStatus(pm);
-            return JSONOutput.printPartMaster(pm,lastModified);
+            JSONOutput.printPartMaster(pm,lastModified);
 
         } catch (PartMasterNotFoundException pmnfe) {
             JSONOutput.printException(pmnfe);
             MetaDirectoryManager meta = new MetaDirectoryManager(cadFile.getParentFile());
             meta.deletePartInfo(cadFile.getAbsolutePath());
-            return JSONOutput.printException(pmnfe);
+            JSONOutput.printException(pmnfe);
         }
     }
 

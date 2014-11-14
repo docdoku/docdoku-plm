@@ -47,15 +47,15 @@ public class PartListCommand extends AbstractCommandLine {
     private int max;
 
     @Override
-    public Object execImpl() throws Exception {
+    public void execImpl() throws Exception {
         IProductManagerWS productS = ScriptingTools.createProductService(getServerURL(), user, password);
 
         if(count){
             int partRevisionsCount = productS.getPartsInWorkspaceCount(workspace);
-            return JSONOutput.printPartRevisionsCount(partRevisionsCount);
+            JSONOutput.printPartRevisionsCount(partRevisionsCount);
         }else{
             List<PartRevision> partRevisions = productS.getPartRevisions(workspace, start, max);
-            return JSONOutput.printPartRevisions(partRevisions);
+            JSONOutput.printPartRevisions(partRevisions);
         }
     }
 

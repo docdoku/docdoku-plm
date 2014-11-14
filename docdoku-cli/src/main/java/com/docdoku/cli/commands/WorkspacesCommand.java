@@ -31,7 +31,7 @@ import com.docdoku.core.services.IUserManagerWS;
  */
 public class WorkspacesCommand extends AbstractCommandLine{
 
-    public Object execImpl() throws Exception {
+    public void execImpl() throws Exception {
 
         IUserManagerWS userS = ScriptingTools.createUserManagerService(getServerURL(), user, password);
         Workspace[] workspaces = userS.getWorkspacesWhereCallerIsActive();
@@ -39,7 +39,7 @@ public class WorkspacesCommand extends AbstractCommandLine{
         for (Workspace workspace : workspaces) {
             System.out.println(workspace.getId());
         }
-        return JSONOutput.printWorkspaces(workspaces);
+        JSONOutput.printWorkspaces(workspaces);
 
     }
 
