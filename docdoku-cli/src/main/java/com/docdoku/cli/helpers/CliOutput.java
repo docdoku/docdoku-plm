@@ -1,5 +1,17 @@
 package com.docdoku.cli.helpers;
 
+import com.docdoku.cli.commands.CommandLine;
+import com.docdoku.core.common.Version;
+import com.docdoku.core.common.Workspace;
+import com.docdoku.core.configuration.ProductBaseline;
+import com.docdoku.core.product.PartMaster;
+import com.docdoku.core.product.PartRevision;
+import org.kohsuke.args4j.CmdLineException;
+
+import java.io.FilterInputStream;
+import java.io.InputStream;
+import java.util.List;
+
 import static com.docdoku.cli.helpers.CliOutput.formats.*;
 
 /**
@@ -11,7 +23,6 @@ public abstract class CliOutput {
         HUMAN,
         JSON
     }
-
     public static CliOutput GetOutput(formats format) {
         if(format == null){
             format = HUMAN;
@@ -23,5 +34,18 @@ public abstract class CliOutput {
         }
     }
 
-    public abstract void printWorkspaces();
+    public abstract void printException(Exception e);
+    public abstract void printCommandUsage(CommandLine cl);
+    public abstract void printUsage();
+    public abstract void printInfo(String s);
+
+    public abstract void printWorkspaces(Workspace[] workspaces);
+    public abstract void printPartRevisionsCount(int partRevisionsCount);
+    public abstract void printPartRevisions(List<PartRevision> partRevisions);
+    public abstract void printBaselines(List<ProductBaseline> productBaselines);
+    public abstract void printPartRevision(PartRevision pr, long lastModified);
+    public abstract void printPartMaster(PartMaster pm, long lastModified);
+
+    public abstract FilterInputStream getMonitor(long maximum, InputStream in);
+
 }

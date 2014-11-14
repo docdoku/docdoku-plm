@@ -65,7 +65,7 @@ public class PutCommand extends AbstractCommandLine{
         PartIteration pi = pr.getLastIteration();
         PartIterationKey partIPK = new PartIterationKey(partRPK, pi.getIteration());
 
-        FileHelper fh = new FileHelper(user,password);
+        FileHelper fh = new FileHelper(user,password,output);
         fh.uploadNativeCADFile(getServerURL(), cadFile, partIPK);
     }
 

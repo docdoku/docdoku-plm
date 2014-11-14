@@ -21,7 +21,6 @@
 package com.docdoku.cli.commands;
 
 import com.docdoku.cli.ScriptingTools;
-import com.docdoku.cli.helpers.JSONOutput;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.query.PartSearchQuery;
 import com.docdoku.core.services.IProductManagerWS;
@@ -53,7 +52,7 @@ public class SearchPartsCommand extends AbstractCommandLine {
                 new PartSearchQuery(workspace, searchValue, null, null, null, null, null, null, null, null)
         );
 
-        JSONOutput.printPartRevisions(partRevisions);
+        output.printPartRevisions(partRevisions);
     }
 
     @Override

@@ -21,7 +21,6 @@
 package com.docdoku.cli.commands;
 
 import com.docdoku.cli.ScriptingTools;
-import com.docdoku.cli.helpers.JSONOutput;
 import com.docdoku.core.configuration.ProductBaseline;
 import com.docdoku.core.product.PartRevisionKey;
 import com.docdoku.core.services.IProductManagerWS;
@@ -48,11 +47,10 @@ public class BaselineListCommand extends AbstractCommandLine {
 
     @Override
     public void execImpl() throws Exception {
-
         productS = ScriptingTools.createProductService(getServerURL(), user, password);
         PartRevisionKey pK = new PartRevisionKey(workspace,number,revision);
         List<ProductBaseline> productBaselines = productS.findBaselinesWherePartRevisionHasIterations(pK);
-        JSONOutput.printBaselines(productBaselines);
+        output.printBaselines(productBaselines);
     }
 
     @Override

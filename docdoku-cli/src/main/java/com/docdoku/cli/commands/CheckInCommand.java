@@ -79,7 +79,7 @@ public class CheckInCommand extends AbstractCommandLine{
                 File localFile = new File(path,fileName);
                 if(localFile.exists()){
                     PartIterationKey partIPK = new PartIterationKey(partRPK, pi.getIteration());
-                    FileHelper fh = new FileHelper(user,password);
+                    FileHelper fh = new FileHelper(user,password,output);
                     fh.uploadNativeCADFile(getServerURL(), localFile, partIPK);
                     localFile.setWritable(false);
                 }
@@ -88,7 +88,7 @@ public class CheckInCommand extends AbstractCommandLine{
 
         PartRevision pr = productS.checkInPart(partRPK);
         PartIteration pi = pr.getLastIteration();
-        System.out.println("Checking in part: " + partNumber + " " + pr.getVersion() + "." + pi.getIteration() + " (" + workspace + ")");
+        output.printInfo("Checking in part: " + partNumber + " " + pr.getVersion() + "." + pi.getIteration() + " (" + workspace + ")");
     }
 
     private void loadMetadata() throws IOException {

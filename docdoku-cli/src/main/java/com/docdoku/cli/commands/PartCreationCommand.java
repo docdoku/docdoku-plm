@@ -59,7 +59,7 @@ public class PartCreationCommand extends AbstractCommandLine {
         PartRevision pr = partMaster.getLastRevision();
         PartRevisionKey partRPK = new PartRevisionKey(workspace, partNumber, pr.getVersion());
         PartIterationKey partIPK = new PartIterationKey(partRPK, pr.getLastIteration().getIteration());
-        FileHelper fh = new FileHelper(user,password);
+        FileHelper fh = new FileHelper(user,password,output);
         fh.uploadNativeCADFile(getServerURL(), cadFile, partIPK);
     }
 

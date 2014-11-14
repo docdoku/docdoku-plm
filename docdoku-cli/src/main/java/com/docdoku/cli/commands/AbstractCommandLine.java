@@ -51,33 +51,37 @@ public abstract class AbstractCommandLine implements CommandLine{
 
     private void promptForUser(){
         Console c = System.console();
+        if(c == null){
+            return;
+        }
         user = c.readLine("Please enter user for '" + host + "': ");
     }
 
     private void promptForPassword(){
         Console c = System.console();
+        if(c == null){
+            return;
+        }
         password = new String(c.readPassword("Please enter password for '" + user +"@" + host +"': "));
     }
 
     @Override
     public void exec() throws Exception {
 
+        output = CliOutput.GetOutput(format);
 
+        if(user==null && format.equals(CliOutput.formats.HUMAN)){
+            promptForUser();
+        }
+        if(password==null && format.equals(CliOutput.formats.HUMAN)){
+            promptForPassword();
+        }
 
-        System.out.println("Format : " + format);
+        execImpl();
+    }
 
-        output=CliOutput.GetOutput(format);
-
-        output.printWorkspaces();
-
-
-//        if(user==null){
-//            promptForUser();
-//        }
-//        if(password==null){
-//            promptForPassword();
-//        }
-//        execImpl();
+    public CliOutput getOutput(){
+        return output;
     }
 
     public URL getServerURL() throws MalformedURLException {
