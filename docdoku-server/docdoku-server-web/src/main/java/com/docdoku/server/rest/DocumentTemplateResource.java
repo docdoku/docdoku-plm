@@ -89,12 +89,8 @@ public class DocumentTemplateResource {
     @Produces(MediaType.APPLICATION_JSON)
     public DocumentMasterTemplateDTO getDocumentMasterTemplates(@PathParam("workspaceId") String workspaceId, @PathParam("templateId") String templateId) {
         try {
-
             DocumentMasterTemplate docMsTemplate = documentService.getDocumentMasterTemplate(new DocumentMasterTemplateKey(workspaceId, templateId));
-            DocumentMasterTemplateDTO dto = mapper.map(docMsTemplate, DocumentMasterTemplateDTO.class);
-
-            return dto;
-
+            return mapper.map(docMsTemplate, DocumentMasterTemplateDTO.class);
         } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
@@ -127,7 +123,7 @@ public class DocumentTemplateResource {
             boolean attributesLocked = templateCreationDTO.isAttributesLocked();
 
             Set<InstanceAttributeTemplateDTO> attributeTemplates = templateCreationDTO.getAttributeTemplates();
-            List<InstanceAttributeTemplateDTO> attributeTemplatesList = new ArrayList<InstanceAttributeTemplateDTO>(attributeTemplates);
+            List<InstanceAttributeTemplateDTO> attributeTemplatesList = new ArrayList<>(attributeTemplates);
             InstanceAttributeTemplateDTO[] attributeTemplatesDtos = new InstanceAttributeTemplateDTO[attributeTemplatesList.size()];
 
             for (int i = 0; i < attributeTemplatesDtos.length; i++) {
@@ -135,10 +131,7 @@ public class DocumentTemplateResource {
             }
 
             DocumentMasterTemplate template = documentService.createDocumentMasterTemplate(workspaceId, id, documentType, mask, createInstanceAttributeTemplateFromDto(attributeTemplatesDtos), idGenerated, attributesLocked);
-            DocumentMasterTemplateDTO templateDto = mapper.map(template, DocumentMasterTemplateDTO.class);
-
-            return templateDto;
-
+            return mapper.map(template, DocumentMasterTemplateDTO.class);
         } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
@@ -151,14 +144,13 @@ public class DocumentTemplateResource {
     public DocumentMasterTemplateDTO updateDocMsTemplate(@PathParam("workspaceId") String workspaceId,@PathParam("templateId") String templateId, DocumentMasterTemplateDTO docMsTemplateDTO) {
 
         try {
-            String id = docMsTemplateDTO.getId();
             String documentType = docMsTemplateDTO.getDocumentType();
             String mask = docMsTemplateDTO.getMask();
             boolean idGenerated = docMsTemplateDTO.isIdGenerated();
             boolean attributesLocked = docMsTemplateDTO.isAttributesLocked();
 
             Set<InstanceAttributeTemplateDTO> attributeTemplates = docMsTemplateDTO.getAttributeTemplates();
-            List<InstanceAttributeTemplateDTO> attributeTemplatesList = new ArrayList<InstanceAttributeTemplateDTO>(attributeTemplates);
+            List<InstanceAttributeTemplateDTO> attributeTemplatesList = new ArrayList<>(attributeTemplates);
             InstanceAttributeTemplateDTO[] attributeTemplatesDtos = new InstanceAttributeTemplateDTO[attributeTemplatesList.size()];
 
             for (int i = 0; i < attributeTemplatesDtos.length; i++) {
@@ -166,10 +158,7 @@ public class DocumentTemplateResource {
             }
 
             DocumentMasterTemplate template = documentService.updateDocumentMasterTemplate(new DocumentMasterTemplateKey(workspaceId, templateId), documentType, mask, createInstanceAttributeTemplateFromDto(attributeTemplatesDtos), idGenerated, attributesLocked);
-            DocumentMasterTemplateDTO templateDto = mapper.map(template, DocumentMasterTemplateDTO.class);
-
-            return templateDto;
-
+            return mapper.map(template, DocumentMasterTemplateDTO.class);
         } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());
         }
