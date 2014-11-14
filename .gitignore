@@ -21,10 +21,10 @@ docdoku-server/build
 docdoku-server/docdoku-server-ejb/build
 docdoku-server/docdoku-server-web/build
 docdoku-server/docdoku-server-web/src/main/webapp/download/dplm
-docdoku-gui/dplm/*.jar
+docdoku-dplm/ui/dplm/*.jar
+docdoku-dplm/tmp
 docdoku-common/build
 docdoku-client/build
-
 
 docdoku-cli/target
 docdoku-casperjs/*.png
