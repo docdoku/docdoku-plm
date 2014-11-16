@@ -1,3 +1,5 @@
+'use strict';
+
 angular.module('dplm.services.cli',[])
 
 .service('CliService',function(ConfigurationService, NotificationService,$q,$log){
@@ -7,48 +9,63 @@ angular.module('dplm.services.cli',[])
         var mainClass = 'com.docdoku.cli.MainCommand';
         var memOptions = '-Xmx1024M';
 
-        var  run = function(args,progressHandler){
+        this.requirementsError = 'CLI_REQUIREMEMENTS_ERROR';
 
-            return $q(function(reject,resolve){
+        var  run = function(args){
 
-                $log.log(([memOptions,'-cp',classPath, mainClass].concat(args)).join(' '));
+            var deferred = $q.defer();
 
-                var spawn = require('child_process').spawn;
-                var cliProcess  = spawn('java', [memOptions,'-cp',classPath, mainClass].concat(args));
+            $log.info(([memOptions,'-cp',classPath, mainClass].concat(args)).join(' '));
 
-                var objects = [];
-                var errors = [];
+            var spawn = require('child_process').spawn;
+            var cliProcess  = spawn('java', [memOptions,'-cp',classPath, mainClass].concat(args));
 
-                cliProcess.stdout.on('data',function(data){
-                    var entries = data.toString().split('\n');
-                    angular.forEach(entries,function(entry){
-                        if(entry && entry.trim()){
-                            objects.push(JSON.parse(entry));
-                            NotificationService.toast(entry);
+            var objects = [];
+            var errors = [];
+
+            cliProcess.stdout.on('data',function(data){
+                $log.log(data.toString());
+                var entries = data.toString().split('\n');
+                angular.forEach(entries,function(entry){
+                    if(entry && entry.trim()){
+                        var object = JSON.parse(entry);
+                        if(object.progress){
+                            deferred.notify(object.progress);
+                        }else if(object.info){
+                            NotificationService.toast(object.info);
+                            console.info(object.info);
                         }
-                    });
-                });
-
-                cliProcess.stderr.on('data',function(data){
-                    var entries = data.toString().split('\n');
-                    angular.forEach(entries,function(entry){
-                        if(entry && entry.trim()){
-                            errors.push(JSON.parse(entry));
-                            NotificationService.toast(entry);
-                        }
-                    });
-                });
-
-                cliProcess.stderr.on('close', function (code, signal) {
-                    if(!code){
-                        var result = objects.length ? objects[objects.length-1] : null;
-                        resolve(result);
-                    }else{
-                        reject();
+                        objects.push(object);
                     }
                 });
-
             });
+
+            cliProcess.stderr.on('data',function(data){
+                $log.warn('STDERR '+data.toString());
+                var entries = data.toString().split('\n');
+                angular.forEach(entries,function(entry){
+                    if(entry && entry.trim()){
+                        var object = JSON.parse(entry);
+                        if(object.error){
+                            NotificationService.toast(object.error);
+                        }
+                        errors.push(object);
+                    }
+                });
+            });
+
+            cliProcess.stderr.on('close', function () {      
+                if(objects.length){
+                    deferred.resolve(objects[objects.length-1]);
+                }
+                else if (errors.length){                    
+                    deferred.reject(errors[errors.length-1]);
+                }else{
+                    deferred.resolve();
+                }
+            });
+
+            return deferred.promise;
 
         };
         
@@ -61,15 +78,15 @@ angular.module('dplm.services.cli',[])
                 var spawn = require('child_process').spawn('java', ['-version']);
 
                 spawn.on('error', function(err){
-                    $log.log('spawn.onerror')
+                    $log.log('spawn.onerror');
                     return reject('No java found');
                 });
 
                 spawn.stderr.on('data', function(data) {
                     data = data.toString().split('\n')[0];
                     var javaVersion = new RegExp('java version').test(data) ? data.split(' ')[2].replace(/"/g, '') : false;
-                    if (javaVersion != false && javaVersion >= '1.7') {
-                        $log.log('javaVersion'+javaVersion)
+                    if (javaVersion && javaVersion >= '1.7') {
+                        $log.log('javaVersion'+javaVersion);
                         resolve(javaVersion);
                     } else {
                         reject('No java found or version not matching');
@@ -118,16 +135,19 @@ angular.module('dplm.services.cli',[])
                 '-P', configuration.port,
                 '-u', configuration.user,
                 '-p', configuration.password,
-                '-w', part.getWorkspace(),
-                '-o', part.getNumber(),
-                '-r', part.getVersion()
+                '-w', part.workspace,
+                '-o', part.partNumber,
+                '-r', part.version
             ];
 
-            return run(args);
+            return run(args).then(function(newPart){
+                console.log(newPart);
+                angular.extend(part,newPart);
+            });
 
         };
 
-        this.checkout= function (part, options) {
+        this.checkout= function (part, path, options) {
 
             var args = [
                 'co',
@@ -136,21 +156,23 @@ angular.module('dplm.services.cli',[])
                 '-P', configuration.port,
                 '-u', configuration.user,
                 '-p', configuration.password,
-                '-w', part.getWorkspace(),
-                '-o', part.getNumber(),
-                '-r', part.getVersion()
+                '-w', part.workspace,
+                '-o', part.partNumber,
+                '-r', part.version
             ];
 
             if (options.recursive) {
                 args.push('-R');
             }
             if (options.force) {
-                args.push('f');
+                args.push('-f');
             }
             if (options.baseline) {
                 args.push('-b');
                 args.push(options.baseline);
             }
+
+            args.push(path);
 
             return run(args);
 
@@ -165,9 +187,9 @@ angular.module('dplm.services.cli',[])
                 '-P', configuration.port,
                 '-u', configuration.user,
                 '-p', configuration.password,
-                '-w', part.getWorkspace(),
-                '-o', part.getNumber(),
-                '-r', part.getVersion()
+                '-w', part.workspace,
+                '-o', part.partNumber,
+                '-r', part.version
             ];
 
             return run(args);
@@ -183,15 +205,15 @@ angular.module('dplm.services.cli',[])
                 '-P', configuration.port,
                 '-u', configuration.user,
                 '-p', configuration.password,
-                '-w', part.getWorkspace(),
-                '-o', part.getNumber(),
-                '-r', part.getVersion()
+                '-w', part.workspace,
+                '-o', part.partNumber,
+                '-r', part.version
             ];
 
             return run(args);
         };
 
-        this.download= function (part, options) {
+        this.download = function (part, path, options) {
 
             var args = [
                 'get',
@@ -200,21 +222,23 @@ angular.module('dplm.services.cli',[])
                 '-P', configuration.port,
                 '-u', configuration.user,
                 '-p', configuration.password,
-                '-w', part.getWorkspace(),
-                '-o', part.getNumber(),
-                '-r', part.getVersion()
+                '-w', part.workspace,
+                '-o', part.partNumber,
+                '-r', part.version
             ];
 
             if (options.recursive) {
                 args.push('-R');
             }
             if (options.force) {
-                args.push('f');
+                args.push('-f');
             }
             if (options.baseline) {
                 args.push('-b');
                 args.push(options.baseline);
             }
+
+            args.push(path);
 
             return run(args);
 
@@ -229,8 +253,8 @@ angular.module('dplm.services.cli',[])
                 '-P', configuration.port,
                 '-u', configuration.user,
                 '-p', configuration.password,
-                '-w', part.getWorkspace(),
-                '-o', part.getNumber()
+                '-w', part.workspace,
+                '-o', part.partNumber
             ];
 
             if (part.getName()) {
@@ -265,7 +289,7 @@ angular.module('dplm.services.cli',[])
 
         };
 
-        this.getPartMasters= function (workspace, start, max) {
+        this.getPartMasters = function (workspace, start, max) {
 
             var args = [
                 'pl',
@@ -307,13 +331,13 @@ angular.module('dplm.services.cli',[])
                 '-P', configuration.port,
                 '-u', configuration.user,
                 '-p', configuration.password,
-                '-w', part.getWorkspace(),
-                '-o', part.getNumber(),
-                '-r', part.getVersion()
+                '-w', part.workspace,
+                '-o', part.partNumber,
+                '-r', part.version
             ];
 
             return run(args);
-        }
+        };
        
 
-})
+});

@@ -1,3 +1,5 @@
+'use strict';
+
 angular.module('dplm.services.notification',[])
 .service('NotificationService',function($mdToast){
 
@@ -24,6 +26,7 @@ angular.module('dplm.services.notification',[])
                 hideDelay: 6000,
                 position: getToastPosition()
             });
+            
         };
 
-    })
+    });

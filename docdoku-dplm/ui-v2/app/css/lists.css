@@ -1,0 +1,14 @@
+.md-tile-content h3, .md-tile-content h4{
+	cursor: pointer;
+}
+.md-tile-content.small{
+	padding: 6px;
+}
+.md-tile-left{
+	margin-right: 0;
+	margin-top: 20px;
+}
+
+.md-tile-left.small{
+	min-width:32px;
+}

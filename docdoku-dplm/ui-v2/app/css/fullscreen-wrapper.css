@@ -1,0 +1,11 @@
+.fullscreen-wrapper{
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 18px;
+	bottom: 0;
+	overflow: auto;
+}
+.fullscreen-wrapper.offset-toolbar{
+	top: 124px;
+}
