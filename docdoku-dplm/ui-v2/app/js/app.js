@@ -31,6 +31,7 @@ angular.module('dplm',[
     'dplm.directives.scrollend',
     
     'dplm.filters.fileshortname',
+    'dplm.filters.timeago',
     'dplm.filters.last'
 
 ])

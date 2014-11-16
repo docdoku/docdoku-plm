@@ -4,19 +4,14 @@ angular.module('dplm.workspace',[])
     .config(function($routeProvider){
         $routeProvider.when('/workspace/:workspace',{
             controller:'WorkspaceController',
-            templateUrl:'js/workspace/workspace.html',
-            resolve:{
-            	WorkspaceInfos:function(CliService,$route){
-            		return CliService.getPartMastersCount($route.current.params.workspace);
-            	}
-            }
+            templateUrl:'js/workspace/workspace.html'
         });
     })
 
-.controller('WorkspaceController', function($scope,$window,$timeout,$routeParams,CliService, ConfigurationService,WorkspaceInfos){	
+.controller('WorkspaceController', function($scope,$window,$timeout,$routeParams,CliService, ConfigurationService){
 	
 	$scope.workspace = $routeParams.workspace;
-	$scope.count = WorkspaceInfos.count;
+	$scope.count = 0;
 	$scope.start = 0;
 	$scope.max = 10;
 	$scope.parts = [];
@@ -93,7 +88,9 @@ angular.module('dplm.workspace',[])
 		}
 	};
 
-	getPartMasters();
+	CliService.getPartMastersCount($routeParams.workspace).then(function(data){
+		$scope.count = data.count;
+	}).then(getPartMasters);
 
 })
 .filter('filterParts',function(ConfigurationService){
