@@ -8,18 +8,63 @@
     </div>
 </md-toolbar>
 
+<div class="row list-header" layout="horizontal">
+  <div flex>
+    <md-text-float style="margin: 0 18px;" label="{{'SEARCH' | translate}} ({{count}} {{'ITEMS' | translate}})" ng-model="search" type="text"></md-text-float>
+  </div>
+  <div style="padding-right:8px;">
+    <md-checkbox ng-model="filters.released" aria-label="">
+      <i class="fa fa-check"></i>
+    </md-checkbox>
+    <md-checkbox ng-model="filters.checkoutable" aria-label="">
+      <i class="fa fa-eye"></i>
+    </md-checkbox>
+    <md-checkbox ng-model="filters.checkouted" aria-label="">
+      <i class="fa fa-lock"></i>
+    </md-checkbox>
+    <md-checkbox ng-model="filters.checkoutedByMe" aria-label="">
+      <i class="fa fa-pencil"></i>
+    </md-checkbox>
+  </div>    
+</div>
+<div on-scroll-end="onScrollEnd()" class="fullscreen-wrapper offset-toolbar" >
 <md-content class="md-padding">  
     <md-list>
       <md-item ng-repeat="file in files">
-        <md-item-content ng-controller="FileController">
-          <div class="md-tile-left">
-             icon
+        <md-item-content 
+        ng-controller="FileController" layout-align="start start">
+          <div class="md-tile-left" align="center" >
+              <i class="fa fa-check fa-lg" ng-show="file.part.isReleased"></i>
+              <i class="fa fa-eye fa-lg" ng-show="!file.part.isReleased 
+              && !file.part.checkoutUser"></i>
+              <i class="fa fa-pencil fa-lg" ng-show="file.part.checkoutUser === configuration.user"></i>
+               <i class="fa fa-lock" ng-show="file.part.checkoutUser && file.part.checkoutUser !== configuration.user"></i>
           </div>
-          <div class="md-tile-content">        
-            <h4>{{file}}</h4>
-          </div>
+
+          <div class="md-tile-content">
+           
+             <div class="cursor">
+               <i style="float:right" class="fa"></i> 
+               <h3>
+                  {{file.path | fileshortname}} 
+                  <small ng-if="file.part.partNumber">
+                    {{file.part.partNumber}}-{{file.part.version}}-{{file.part.iterations | last}}
+                  </small>
+                </h3>
+                <h4 ng-show="file.part.checkoutUser">
+                  {{'CHECKOUT_BY'}} {{file.part.checkoutUser}} {{file.part.checkoutDate | timeago}}
+                </h4>
+            </div>
+
+            <div>
+
+            </div>
+
+          </div>        
+
         </md-item-content>
         <md-divider ng-if="!$last"></md-divider>
       </md-item>
     </md-list>
 </md-content>
+</div>

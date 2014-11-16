@@ -1,8 +1,9 @@
 {
   "name": "DPLM",
   "main": "index.html",
-  "locale":"fr_FR",
+  "locale": "fr_FR",
   "dependencies": {
+    "moment": "^2.8.3",
     "requirejs": ">=1.0.0"
   },
   "window": {

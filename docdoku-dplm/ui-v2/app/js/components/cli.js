@@ -11,7 +11,7 @@ angular.module('dplm.services.cli',[])
 
         this.requirementsError = 'CLI_REQUIREMEMENTS_ERROR';
 
-        var  run = function(args){
+        var  run = function(args,silent){
 
             var deferred = $q.defer();
 
@@ -32,7 +32,9 @@ angular.module('dplm.services.cli',[])
                         if(object.progress){
                             deferred.notify(object.progress);
                         }else if(object.info){
-                            NotificationService.toast(object.info);
+                            if(!silent){
+                                NotificationService.toast(object.info);
+                            }
                             console.info(object.info);
                         }
                         objects.push(object);
@@ -47,7 +49,9 @@ angular.module('dplm.services.cli',[])
                     if(entry && entry.trim()){
                         var object = JSON.parse(entry);
                         if(object.error){
-                            NotificationService.toast(object.error);
+                            if(!silent){
+                                NotificationService.toast(object.error);
+                            }
                         }
                         errors.push(object);
                     }
@@ -120,10 +124,12 @@ angular.module('dplm.services.cli',[])
                 '-P', configuration.port,
                 '-u', configuration.user,
                 '-p', configuration.password,
-                file
+                file.path
             ];
 
-            return run(args);
+            return run(args,true).then(function(status){               
+                file.part=status;
+            });
         };
 
         this.getStatusForPart= function (part) {
@@ -140,8 +146,7 @@ angular.module('dplm.services.cli',[])
                 '-r', part.version
             ];
 
-            return run(args).then(function(newPart){
-                console.log(newPart);
+            return run(args,true).then(function(newPart){               
                 angular.extend(part,newPart);
             });
 
