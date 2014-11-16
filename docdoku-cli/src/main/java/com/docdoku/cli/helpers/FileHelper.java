@@ -196,7 +196,6 @@ public class FileHelper {
     public void uploadNativeCADFile(URL serverURL, File cadFile, PartIterationKey partIPK) throws IOException, LoginException, NoSuchAlgorithmException {
         String workspace = partIPK.getWorkspaceId();
         String fileName = cadFile.getName();
-        output.printInfo("Saving part: " + partIPK.getPartMasterNumber() + " " + partIPK.getPartRevision().getVersion() + "." + partIPK.getIteration() + " (" + workspace + ")");
         String digest = uploadFile(cadFile, FileHelper.getPartURL(serverURL, partIPK, fileName));
 
         File path = cadFile.getParentFile();
@@ -220,7 +219,6 @@ public class FileHelper {
                 return;
         }
         localFile.delete();
-        output.printInfo("Fetching part: " + partIPK.getPartMasterNumber() + " " + partIPK.getPartRevision().getVersion() + "." + partIPK.getIteration() + " (" + workspace + ")");
         String digest = downloadFile(localFile, FileHelper.getPartURL(serverURL, partIPK, fileName));
         localFile.setWritable(writable);
 
