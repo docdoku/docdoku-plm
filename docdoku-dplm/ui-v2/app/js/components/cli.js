@@ -249,6 +249,23 @@ angular.module('dplm.services.cli',[])
 
         };
 
+        this.put = function (workspace, file) {
+
+            var args = [
+                'put',
+                '-F', 'json',
+                '-h', configuration.host,
+                '-P', configuration.port,
+                '-u', configuration.user,
+                '-p', configuration.password,
+                '-w', workspace
+            ];
+
+            args.push(file);
+
+            return run(args);
+
+        };
         this.createPart= function (part, filePath) {
 
             var args = [
