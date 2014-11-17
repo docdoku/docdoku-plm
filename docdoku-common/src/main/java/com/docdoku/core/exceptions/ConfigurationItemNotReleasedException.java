@@ -28,15 +28,13 @@ import java.util.Locale;
  * @author Florent Garin
  */
 public class ConfigurationItemNotReleasedException extends ApplicationException {
-
-
-    private String mCIId;
+    private final String mCIId;
 
 
     public ConfigurationItemNotReleasedException(String pMessage) {
         super(pMessage);
+        mCIId=null;
     }
-
 
     public ConfigurationItemNotReleasedException(Locale pLocale, String pCIID) {
         this(pLocale, pCIID, null);

@@ -97,7 +97,8 @@ public class DocumentsResource {
     // Todo Split it
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public DocumentRevisionDTO[] getDocuments(@PathParam("workspaceId") String workspaceId, @PathParam("folderId") String folderId, @PathParam("tagId") String tagId, @PathParam("query") String query, @PathParam("assignedUserLogin") String assignedUserLogin, @PathParam("checkoutUser") String checkoutUser, @QueryParam("filter") String filter, @QueryParam("start") int start, @QueryParam("configSpec") String configSpecType) {
+    public DocumentRevisionDTO[] getDocuments(@PathParam("workspaceId") String workspaceId, @PathParam("folderId") String folderId, @PathParam("tagId") String tagId, @PathParam("query") String query, @PathParam("assignedUserLogin") String assignedUserLogin, @PathParam("checkoutUser") String checkoutUser, @QueryParam("filter") String filter, @QueryParam("start") int start, @QueryParam("configSpec") String configSpecType)
+            throws EntityNotFoundException {
         if(checkoutUser != null){
             return getDocumentsCheckedOutByUser(workspaceId);
         }
@@ -119,19 +120,18 @@ public class DocumentsResource {
     @GET
     @Path("count")
     @Produces(MediaType.APPLICATION_JSON)
-    public CountDTO getDocumentsInWorkspaceCount(@PathParam("workspaceId") String workspaceId) {
+    public CountDTO getDocumentsInWorkspaceCount(@PathParam("workspaceId") String workspaceId)
+            throws EntityNotFoundException {
         try {
             return new CountDTO(documentService.getDocumentsInWorkspaceCount(Tools.stripTrailingSlash(workspaceId)));
         } catch (UserNotFoundException | UserNotActiveException e) {
             LOGGER.log(Level.WARNING, null, e);
             throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
-        } catch (WorkspaceNotFoundException e) {
-            LOGGER.log(Level.WARNING, null, e);
-            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
         }
     }
 
-    private DocumentRevisionDTO[] getDocumentsInWorkspace(String workspaceId, int start, String configSpecType) {
+    private DocumentRevisionDTO[] getDocumentsInWorkspace(String workspaceId, int start, String configSpecType)
+            throws EntityNotFoundException {
         int maxResult = 20;
         try {
             DocumentRevision[] docRs;
@@ -156,14 +156,11 @@ public class DocumentsResource {
         } catch (UserNotActiveException | UserNotFoundException e) {
             LOGGER.log(Level.WARNING, null, e);
             throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
-        } catch (WorkspaceNotFoundException | BaselineNotFoundException | DocumentRevisionNotFoundException e) {
-            LOGGER.log(Level.WARNING, null, e);
-            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
         }
     }
 
-    private DocumentRevisionDTO[] getDocumentsCheckedOutByUser(String workspaceId) {
-
+    private DocumentRevisionDTO[] getDocumentsCheckedOutByUser(String workspaceId)
+            throws EntityNotFoundException {
         try {
             DocumentRevision[] docRs = documentService.getCheckedOutDocumentRevisions(workspaceId);
             DocumentRevisionDTO[] docRsDTOs = new DocumentRevisionDTO[docRs.length];
@@ -180,13 +177,11 @@ public class DocumentsResource {
         } catch (UserNotActiveException | UserNotFoundException e) {
             LOGGER.log(Level.WARNING, null, e);
             throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
-        } catch (WorkspaceNotFoundException e) {
-            LOGGER.log(Level.WARNING, null, e);
-            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
         }
     }
 
-    private DocumentRevisionDTO[] getDocumentsWithGivenFolderIdAndWorkspaceId(String workspaceId, String folderId, String configSpecType){
+    private DocumentRevisionDTO[] getDocumentsWithGivenFolderIdAndWorkspaceId(String workspaceId, String folderId, String configSpecType)
+            throws EntityNotFoundException {
         try {
             String decodedCompletePath = getPathFromUrlParams(workspaceId, folderId);
             DocumentRevision[] docRs;
@@ -216,13 +211,11 @@ public class DocumentsResource {
         } catch (UserNotActiveException | UserNotFoundException e) {
             LOGGER.log(Level.WARNING, null, e);
             throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
-        } catch (WorkspaceNotFoundException | BaselineNotFoundException e) {
-            LOGGER.log(Level.WARNING, null, e);
-            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
         }
     }
 
-    private DocumentRevisionDTO[] getDocumentsWithGivenTagIdAndWorkspaceId(String workspaceId, String tagId, String configSpecType){
+    private DocumentRevisionDTO[] getDocumentsWithGivenTagIdAndWorkspaceId(String workspaceId, String tagId, String configSpecType)
+            throws EntityNotFoundException {
         try{
             DocumentRevision[] docRs;
             TagKey tagKey = new TagKey(workspaceId, tagId);
@@ -252,13 +245,11 @@ public class DocumentsResource {
         } catch (UserNotActiveException | UserNotFoundException e) {
             LOGGER.log(Level.WARNING, null, e);
             throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
-        } catch (WorkspaceNotFoundException | BaselineNotFoundException | DocumentRevisionNotFoundException e) {
-            LOGGER.log(Level.WARNING, null, e);
-            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
         }
     }
 
-    private DocumentRevisionDTO[] getDocumentsWhereGivenUserHasAssignedTasks(String workspaceId, String assignedUserLogin, String filter){
+    private DocumentRevisionDTO[] getDocumentsWhereGivenUserHasAssignedTasks(String workspaceId, String assignedUserLogin, String filter)
+            throws EntityNotFoundException {
         try{
             DocumentRevision[] docRs;
 
@@ -290,13 +281,11 @@ public class DocumentsResource {
         } catch (UserNotActiveException | UserNotFoundException e) {
             LOGGER.log(Level.WARNING, null, e);
             throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
-        } catch (WorkspaceNotFoundException e) {
-            LOGGER.log(Level.WARNING, null, e);
-            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
         }
     }
 
-    private DocumentRevisionDTO[] getDocumentsWithSearchQuery(String workspaceId, String pStringQuery, String configSpecType){
+    private DocumentRevisionDTO[] getDocumentsWithSearchQuery(String workspaceId, String pStringQuery, String configSpecType)
+            throws EntityNotFoundException {
         try{
             DocumentSearchQuery documentSearchQuery = SearchQueryParser.parseDocumentStringQuery(workspaceId, pStringQuery);
             DocumentRevision[] docRs;
@@ -320,9 +309,6 @@ public class DocumentsResource {
         } catch (UserNotFoundException | UserNotActiveException e) {
             LOGGER.log(Level.WARNING, null, e);
             throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
-        } catch (WorkspaceNotFoundException | DocumentRevisionNotFoundException | BaselineNotFoundException e) {
-            LOGGER.log(Level.WARNING, null, e);
-            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
         } catch (ESServerException e) {
             LOGGER.log(Level.WARNING, null, e);
             throw new RestApiException(e.toString(), e.getMessage(),Response.Status.BAD_REQUEST);
@@ -332,7 +318,8 @@ public class DocumentsResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createDocumentMasterInFolder(@PathParam("workspaceId") String workspaceId, DocumentCreationDTO docCreationDTO, @PathParam("folderId") String folderId, @QueryParam("configSpec") String configSpecType) throws UnsupportedEncodingException {
+    public Response createDocumentMasterInFolder(@PathParam("workspaceId") String workspaceId, DocumentCreationDTO docCreationDTO, @PathParam("folderId") String folderId, @QueryParam("configSpec") String configSpecType)
+            throws EntityNotFoundException {
 
         String pDocMID = docCreationDTO.getReference();
         String pTitle = docCreationDTO.getTitle();
@@ -379,14 +366,16 @@ public class DocumentsResource {
             docRsDTO.setPath(createdDocRs.getLocation().getCompletePath());
             docRsDTO.setLifeCycleState(createdDocRs.getLifeCycleState());
 
-           return Response.created(URI.create(URLEncoder.encode(pDocMID + "-" + createdDocRs.getVersion(),"UTF-8"))).entity(docRsDTO).build();
+            try{
+                return Response.created(URI.create(URLEncoder.encode(pDocMID + "-" + createdDocRs.getVersion(),"UTF-8"))).entity(docRsDTO).build();
+            } catch (UnsupportedEncodingException ex) {
+                LOGGER.log(Level.WARNING,null,ex);
+                return Response.ok().build();
+            }
 
         } catch (UserNotFoundException | NotAllowedException | AccessRightException e) {
             LOGGER.log(Level.WARNING, null, e);
             throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
-        } catch (WorkspaceNotFoundException | FolderNotFoundException | WorkflowModelNotFoundException | DocumentMasterTemplateNotFoundException | RoleNotFoundException e) {
-            LOGGER.log(Level.WARNING, null, e);
-            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
         } catch (DocumentMasterAlreadyExistsException | DocumentRevisionAlreadyExistsException | FileAlreadyExistsException e) {
             LOGGER.log(Level.WARNING, null, e);
             throw new RestApiException(e.toString(), e.getMessage(),Response.Status.CONFLICT);
@@ -403,7 +392,7 @@ public class DocumentsResource {
     @GET
     @Path("checkedout")
     @Produces(MediaType.APPLICATION_JSON)
-    public DocumentRevisionDTO[] getCheckedOutDocMs(@PathParam("workspaceId") String workspaceId){
+    public DocumentRevisionDTO[] getCheckedOutDocMs(@PathParam("workspaceId") String workspaceId) throws EntityNotFoundException {
         try {
             DocumentRevision[] checkedOutdocRs = documentService.getCheckedOutDocumentRevisions(workspaceId);
             DocumentRevisionDTO[] checkedOutdocRsDTO = new DocumentRevisionDTO[checkedOutdocRs.length];
@@ -421,18 +410,14 @@ public class DocumentsResource {
         } catch (UserNotFoundException | UserNotActiveException e) {
             LOGGER.log(Level.WARNING, null, e);
             throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
-        } catch (WorkspaceNotFoundException e) {
-            LOGGER.log(Level.WARNING, null, e);
-            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
         }
     }
 
     @GET
     @Path("docs_last_iter")
     @Produces(MediaType.APPLICATION_JSON)
-    public DocumentIterationDTO[] searchDocumentsLastIterationToLink(@PathParam("workspaceId") String workspaceId,@QueryParam("q") String q) {
+    public DocumentIterationDTO[] searchDocumentsLastIterationToLink(@PathParam("workspaceId") String workspaceId,@QueryParam("q") String q) throws EntityNotFoundException {
         try {
-
             int maxResults = 8;
 
             DocumentRevision[] docRs = documentService.getDocumentRevisionsWithReference(workspaceId, q, maxResults);
@@ -450,9 +435,6 @@ public class DocumentsResource {
         } catch (UserNotFoundException | UserNotActiveException e) {
             LOGGER.log(Level.WARNING, null, e);
             throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
-        } catch (WorkspaceNotFoundException e) {
-            LOGGER.log(Level.WARNING, null, e);
-            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
         }
     }
 
@@ -471,7 +453,7 @@ public class DocumentsResource {
      * @throws com.docdoku.core.exceptions.WorkspaceNotFoundException If the workspace doesn't exist
      * @throws com.docdoku.core.exceptions.BaselineNotFoundException If the baseline doesn't exist
      */
-    private ConfigSpec getConfigSpec(String workspaceId, String configSpecType) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, BaselineNotFoundException {
+    private ConfigSpec getConfigSpec(String workspaceId, String configSpecType) throws UserNotActiveException, EntityNotFoundException {
         ConfigSpec cs;
         switch (configSpecType) {
             case BASELINE_LATEST:

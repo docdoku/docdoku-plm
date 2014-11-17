@@ -27,16 +27,13 @@ import java.util.Locale;
  *
  * @author Florent Garin
  */
-public class ChangeRequestNotFoundException extends ApplicationException {
-
-
-    private int mChange;
-
+public class ChangeRequestNotFoundException extends EntityNotFoundException {
+    private final int mChange;
 
     public ChangeRequestNotFoundException(String pMessage) {
         super(pMessage);
+        mChange = -1;
     }
-
 
     public ChangeRequestNotFoundException(Locale pLocale, int pChange) {
         this(pLocale, pChange, null);
@@ -46,9 +43,10 @@ public class ChangeRequestNotFoundException extends ApplicationException {
         super(pLocale, pCause);
         mChange =pChange;
     }
-    
+
+    @Override
     public String getLocalizedMessage() {
-        String message = getBundleMessage("ChangeRequestNotFoundException");
+        String message = getBundleDefaultMessage();
         return MessageFormat.format(message, mChange);
     }
 }

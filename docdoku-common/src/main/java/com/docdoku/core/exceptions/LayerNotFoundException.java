@@ -27,17 +27,14 @@ import java.util.Locale;
  *
  * @author Florent Garin
  */
-public class LayerNotFoundException extends ApplicationException {
+public class LayerNotFoundException extends EntityNotFoundException {
+    private final int mLayer;
 
-
-    private int mLayer;
-
-    
     public LayerNotFoundException(String pMessage) {
         super(pMessage);
+        mLayer=-1;
     }
-    
-    
+
     public LayerNotFoundException(Locale pLocale, int pLayer) {
         this(pLocale, pLayer, null);
     }
@@ -46,7 +43,8 @@ public class LayerNotFoundException extends ApplicationException {
         super(pLocale, pCause);
         mLayer=pLayer;
     }
-    
+
+    @Override
     public String getLocalizedMessage() {
         String message = getBundleDefaultMessage();
         return MessageFormat.format(message,mLayer);     

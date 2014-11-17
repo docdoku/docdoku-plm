@@ -21,6 +21,8 @@
 package com.docdoku.server.rest;
 
 
+import com.docdoku.server.rest.exceptions.RequestedRangeNotSatisfiableException;
+
 import java.io.File;
 
 /**

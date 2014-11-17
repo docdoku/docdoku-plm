@@ -27,13 +27,13 @@ import java.util.Locale;
  *
  * @author Florent Garin
  */
-public class AccountNotFoundException extends ApplicationException {
+public class AccountNotFoundException extends EntityNotFoundException {
+    private final String mLogin;
 
-    private String mLogin;
-    
     
     public AccountNotFoundException(String pMessage) {
         super(pMessage);
+        mLogin=null;
     }
     
     public AccountNotFoundException(Locale pLocale, String pLogin) {
@@ -44,7 +44,8 @@ public class AccountNotFoundException extends ApplicationException {
         super(pLocale, pCause);
         mLogin=pLogin;
     }
-    
+
+    @Override
     public String getLocalizedMessage() {
         String message = getBundleDefaultMessage();
         return MessageFormat.format(message,mLogin);     

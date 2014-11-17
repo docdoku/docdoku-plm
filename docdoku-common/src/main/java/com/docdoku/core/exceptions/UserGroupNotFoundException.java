@@ -30,12 +30,12 @@ import java.util.Locale;
  *
  * @author Florent Garin
  */
-public class UserGroupNotFoundException extends ApplicationException {
-
-    private UserGroupKey mKey;
+public class UserGroupNotFoundException extends EntityNotFoundException {
+    private final UserGroupKey mKey;
     
     public UserGroupNotFoundException(String pMessage) {
         super(pMessage);
+        mKey=null;
     }
     
     public UserGroupNotFoundException(Locale pLocale, UserGroupKey pKey) {

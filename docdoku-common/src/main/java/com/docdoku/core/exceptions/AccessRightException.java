@@ -31,12 +31,11 @@ import java.util.Locale;
  * @author Florent Garin
  */
 public class AccessRightException extends ApplicationException {
+    private final String mName;
 
-    private String mName;
-    
-    
     public AccessRightException(String pMessage) {
         super(pMessage);
+        mName=null;
     }
     
     public AccessRightException(Locale pLocale, User pUser) {

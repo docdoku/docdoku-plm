@@ -29,14 +29,13 @@ import java.util.Locale;
  *
  * @author Florent Garin
  */
-public class ProductInstanceIterationNotFoundException extends ApplicationException {
-    private ProductInstanceIterationKey mProductInstanceIteration;
-
+public class ProductInstanceIterationNotFoundException extends EntityNotFoundException {
+    private final ProductInstanceIterationKey mProductInstanceIteration;
 
     public ProductInstanceIterationNotFoundException(String pMessage) {
         super(pMessage);
+        mProductInstanceIteration=null;
     }
-
 
     public ProductInstanceIterationNotFoundException(Locale pLocale, ProductInstanceIterationKey pProductInstanceMaster) {
         this(pLocale, pProductInstanceMaster, null);
@@ -47,6 +46,7 @@ public class ProductInstanceIterationNotFoundException extends ApplicationExcept
         mProductInstanceIteration=pProductInstanceMaster;
     }
 
+    @Override
     public String getLocalizedMessage() {
         String message = getBundleDefaultMessage();
         return MessageFormat.format(message,mProductInstanceIteration);

@@ -25,13 +25,15 @@ import java.util.Locale;
  * Exception when trying to create a existing index;
  * @author Taylor LABEJOF
  */
-public class ESIndexAlreadyExistsException extends ApplicationException {
-    private String mKey;
+public class ESIndexAlreadyExistsException extends EntityAlreadyExistsException {
+    private final String mKey;
 
     public ESIndexAlreadyExistsException(Locale pLocale) {
         super(pLocale);
         mKey="IndexAlreadyExistsException";
     }
+
+    @Override
     public String getLocalizedMessage() {
         return mKey==null?null:getBundleMessage(mKey);
     }

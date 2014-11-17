@@ -18,45 +18,45 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.server.rest;
+package com.docdoku.server.rest.collections;
 
 import com.docdoku.core.configuration.ConfigSpec;
-import com.docdoku.core.product.PartUsageLink;
 
 import java.util.List;
 
 /**
  *
- * @author Florent Garin
+ * @author Morgan Guimard
  */
 
-public class InstanceCollection {
-    
-    private PartUsageLink rootUsageLink;
-    private List<Integer> usageLinkPaths;
+public class PathFilteredListInstanceCollection {
+
+    private List<InstanceCollection> instanceCollections;
+
     private ConfigSpec configSpec;
-    
-    public InstanceCollection(){
-        
+
+    public PathFilteredListInstanceCollection(){
+
     }
-    
-    public InstanceCollection(PartUsageLink rootUsageLink, List<Integer> usageLinkPaths, ConfigSpec configSpec){
-        this.rootUsageLink=rootUsageLink;
-        this.usageLinkPaths=usageLinkPaths;
-        this.configSpec=configSpec;
+
+    public PathFilteredListInstanceCollection(List<InstanceCollection> instanceCollections, ConfigSpec configSpec) {
+        this.instanceCollections = instanceCollections;
+        this.configSpec = configSpec;
+    }
+
+    public List<InstanceCollection> getInstanceCollections() {
+        return instanceCollections;
+    }
+
+    public void setInstanceCollections(List<InstanceCollection> instanceCollections) {
+        this.instanceCollections = instanceCollections;
     }
 
     public ConfigSpec getConfigSpec() {
         return configSpec;
     }
 
-    public PartUsageLink getRootUsageLink() {
-        return rootUsageLink;
+    public void setConfigSpec(ConfigSpec configSpec) {
+        this.configSpec = configSpec;
     }
-
-    public List<Integer> getUsageLinkPaths() {
-        return usageLinkPaths;
-    }
-    
-    
 }

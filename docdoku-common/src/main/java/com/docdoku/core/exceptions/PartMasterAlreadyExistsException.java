@@ -29,13 +29,13 @@ import java.util.Locale;
  *
  * @author Florent Garin
  */
-public class PartMasterAlreadyExistsException extends ApplicationException {
-
-    private PartMaster mPartMaster;
+public class PartMasterAlreadyExistsException extends EntityAlreadyExistsException {
+    private final PartMaster mPartMaster;
     
     
     public PartMasterAlreadyExistsException(String pMessage) {
         super(pMessage);
+        mPartMaster = null;
     }
     
     
@@ -47,7 +47,8 @@ public class PartMasterAlreadyExistsException extends ApplicationException {
         super(pLocale, pCause);
         mPartMaster=pPartMaster;
     }
-    
+
+    @Override
     public String getLocalizedMessage() {
         String message = getBundleDefaultMessage();
         return MessageFormat.format(message,mPartMaster);     

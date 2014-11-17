@@ -22,7 +22,10 @@ package com.docdoku.server.rest;
 import com.docdoku.core.change.ChangeOrder;
 import com.docdoku.core.change.ChangeRequest;
 import com.docdoku.core.change.Milestone;
-import com.docdoku.core.exceptions.ApplicationException;
+import com.docdoku.core.exceptions.AccessRightException;
+import com.docdoku.core.exceptions.EntityAlreadyExistsException;
+import com.docdoku.core.exceptions.EntityNotFoundException;
+import com.docdoku.core.exceptions.UserNotActiveException;
 import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IChangeManagerLocal;
@@ -67,139 +70,115 @@ public class ChangeMilestonesResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<ChangeMilestoneDTO> getMilestones(@PathParam("workspaceId") String workspaceId){
-        try{
-            List<Milestone> changeMilestones = changeManager.getChangeMilestones(workspaceId);
-            List<ChangeMilestoneDTO> changeMilestoneDTOs = new ArrayList<>();
-            for(Milestone milestone : changeMilestones){
-                ChangeMilestoneDTO changeMilestoneDTO= mapper.map(milestone, ChangeMilestoneDTO.class);
-                changeMilestoneDTO.setWritable(changeManager.isMilestoneWritable(milestone));
-                changeMilestoneDTO.setNumberOfRequests(changeManager.getNumberOfRequestByMilestone(milestone.getWorkspaceId(),milestone.getId()));
-                changeMilestoneDTO.setNumberOfOrders(changeManager.getNumberOfOrderByMilestone(milestone.getWorkspaceId(),milestone.getId()));
-                changeMilestoneDTOs.add(changeMilestoneDTO);
-            }
-            return changeMilestoneDTOs;
-        } catch (ApplicationException ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
+    public List<ChangeMilestoneDTO> getMilestones(@PathParam("workspaceId") String workspaceId)
+            throws EntityNotFoundException, UserNotActiveException {
+        List<Milestone> changeMilestones = changeManager.getChangeMilestones(workspaceId);
+        List<ChangeMilestoneDTO> changeMilestoneDTOs = new ArrayList<>();
+        for(Milestone milestone : changeMilestones){
+            ChangeMilestoneDTO changeMilestoneDTO= mapper.map(milestone, ChangeMilestoneDTO.class);
+            changeMilestoneDTO.setWritable(changeManager.isMilestoneWritable(milestone));
+            changeMilestoneDTO.setNumberOfRequests(changeManager.getNumberOfRequestByMilestone(milestone.getWorkspaceId(),milestone.getId()));
+            changeMilestoneDTO.setNumberOfOrders(changeManager.getNumberOfOrderByMilestone(milestone.getWorkspaceId(),milestone.getId()));
+            changeMilestoneDTOs.add(changeMilestoneDTO);
         }
+        return changeMilestoneDTOs;
     }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ChangeMilestoneDTO createMilestone(@PathParam("workspaceId") String workspaceId, ChangeMilestoneDTO changeMilestoneDTO){
-        try{
-            Milestone changeMilestone = changeManager.createChangeMilestone(workspaceId, changeMilestoneDTO.getTitle(), changeMilestoneDTO.getDescription(), changeMilestoneDTO.getDueDate());
-            ChangeMilestoneDTO ret = mapper.map(changeMilestone, ChangeMilestoneDTO.class);
-            ret.setWritable(true);
-            return ret;
-        } catch (ApplicationException ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
-        }
+    public ChangeMilestoneDTO createMilestone(@PathParam("workspaceId") String workspaceId, ChangeMilestoneDTO changeMilestoneDTO)
+            throws EntityNotFoundException, AccessRightException, EntityAlreadyExistsException {
+        Milestone changeMilestone = changeManager.createChangeMilestone(workspaceId, changeMilestoneDTO.getTitle(), changeMilestoneDTO.getDescription(), changeMilestoneDTO.getDueDate());
+        ChangeMilestoneDTO ret = mapper.map(changeMilestone, ChangeMilestoneDTO.class);
+        ret.setWritable(true);
+        return ret;
     }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{milestoneId}")
-    public ChangeMilestoneDTO getMilestone(@PathParam("workspaceId") String workspaceId, @PathParam("milestoneId") int milestoneId){
-        try{
-            Milestone changeMilestone = changeManager.getChangeMilestone(workspaceId, milestoneId);
-            ChangeMilestoneDTO changeMilestoneDTO= mapper.map(changeMilestone, ChangeMilestoneDTO.class);
-            changeMilestoneDTO.setWritable(changeManager.isMilestoneWritable(changeMilestone));
-            changeMilestoneDTO.setNumberOfRequests(changeManager.getNumberOfRequestByMilestone(changeMilestone.getWorkspaceId(),changeMilestone.getId()));
-            changeMilestoneDTO.setNumberOfOrders(changeManager.getNumberOfOrderByMilestone(changeMilestone.getWorkspaceId(),changeMilestone.getId()));
-            return changeMilestoneDTO;
-        } catch (ApplicationException ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
-        }
+    public ChangeMilestoneDTO getMilestone(@PathParam("workspaceId") String workspaceId, @PathParam("milestoneId") int milestoneId)
+            throws EntityNotFoundException, UserNotActiveException, AccessRightException {
+        Milestone changeMilestone = changeManager.getChangeMilestone(workspaceId, milestoneId);
+        ChangeMilestoneDTO changeMilestoneDTO= mapper.map(changeMilestone, ChangeMilestoneDTO.class);
+        changeMilestoneDTO.setWritable(changeManager.isMilestoneWritable(changeMilestone));
+        changeMilestoneDTO.setNumberOfRequests(changeManager.getNumberOfRequestByMilestone(changeMilestone.getWorkspaceId(),changeMilestone.getId()));
+        changeMilestoneDTO.setNumberOfOrders(changeManager.getNumberOfOrderByMilestone(changeMilestone.getWorkspaceId(),changeMilestone.getId()));
+        return changeMilestoneDTO;
     }
 
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{milestoneId}")
-    public ChangeMilestoneDTO updateMilestone(@PathParam("workspaceId") String workspaceId, @PathParam("milestoneId") int milestoneId, ChangeMilestoneDTO pChangeMilestoneDTO){
-        try{
-            Milestone changeMilestone = changeManager.updateChangeMilestone(milestoneId, workspaceId, pChangeMilestoneDTO.getTitle(), pChangeMilestoneDTO.getDescription(), pChangeMilestoneDTO.getDueDate());
-            ChangeMilestoneDTO changeMilestoneDTO= mapper.map(changeMilestone, ChangeMilestoneDTO.class);
-            changeMilestoneDTO.setWritable(changeManager.isMilestoneWritable(changeMilestone));
-            changeMilestoneDTO.setNumberOfRequests(changeManager.getNumberOfRequestByMilestone(changeMilestone.getWorkspaceId(),changeMilestone.getId()));
-            changeMilestoneDTO.setNumberOfOrders(changeManager.getNumberOfOrderByMilestone(changeMilestone.getWorkspaceId(),changeMilestone.getId()));
-            return changeMilestoneDTO;
-        } catch (ApplicationException ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
-        }
+    public ChangeMilestoneDTO updateMilestone(@PathParam("workspaceId") String workspaceId, @PathParam("milestoneId") int milestoneId, ChangeMilestoneDTO pChangeMilestoneDTO)
+            throws EntityNotFoundException, UserNotActiveException, AccessRightException {
+        Milestone changeMilestone = changeManager.updateChangeMilestone(milestoneId, workspaceId, pChangeMilestoneDTO.getTitle(), pChangeMilestoneDTO.getDescription(), pChangeMilestoneDTO.getDueDate());
+        ChangeMilestoneDTO changeMilestoneDTO= mapper.map(changeMilestone, ChangeMilestoneDTO.class);
+        changeMilestoneDTO.setWritable(changeManager.isMilestoneWritable(changeMilestone));
+        changeMilestoneDTO.setNumberOfRequests(changeManager.getNumberOfRequestByMilestone(changeMilestone.getWorkspaceId(),changeMilestone.getId()));
+        changeMilestoneDTO.setNumberOfOrders(changeManager.getNumberOfOrderByMilestone(changeMilestone.getWorkspaceId(),changeMilestone.getId()));
+        return changeMilestoneDTO;
     }
 
     @DELETE
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("{milestoneId}")
-    public Response removeIssue(@PathParam("milestoneId") int milestoneId){
-        try{
-            changeManager.deleteChangeMilestone(milestoneId);
-            return Response.ok().build();
-        } catch (ApplicationException ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
-        }
+    public Response removeIssue(@PathParam("milestoneId") int milestoneId)
+            throws EntityNotFoundException, UserNotActiveException, AccessRightException {
+        changeManager.deleteChangeMilestone(milestoneId);
+        return Response.ok().build();
     }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{milestoneId}/requests")
-    public List<ChangeRequestDTO> getRequestsByMilestone(@PathParam("workspaceId") String workspaceId, @PathParam("milestoneId") int milestoneId){
-        try{
-            List<ChangeRequest> changeRequests = changeManager.getChangeRequestsByMilestone(workspaceId, milestoneId);
-            List<ChangeRequestDTO> changeRequestDTOs = new ArrayList<>();
-            for(ChangeRequest changeRequest : changeRequests){
-                changeRequestDTOs.add(mapper.map(changeRequest, ChangeRequestDTO.class));
-            }
-            return changeRequestDTOs;
-        } catch (ApplicationException ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
+    public List<ChangeRequestDTO> getRequestsByMilestone(@PathParam("workspaceId") String workspaceId, @PathParam("milestoneId") int milestoneId)
+            throws EntityNotFoundException, UserNotActiveException, AccessRightException {
+        List<ChangeRequest> changeRequests = changeManager.getChangeRequestsByMilestone(workspaceId, milestoneId);
+        List<ChangeRequestDTO> changeRequestDTOs = new ArrayList<>();
+        for(ChangeRequest changeRequest : changeRequests){
+            changeRequestDTOs.add(mapper.map(changeRequest, ChangeRequestDTO.class));
         }
+        return changeRequestDTOs;
     }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{milestoneId}/orders")
-    public List<ChangeOrderDTO> getOrdersByMilestone(@PathParam("workspaceId") String workspaceId, @PathParam("milestoneId") int milestoneId){
-        try{
-            List<ChangeOrder> changeOrders = changeManager.getChangeOrdersByMilestone(workspaceId, milestoneId);
-            List<ChangeOrderDTO> changeOrderDTOs = new ArrayList<>();
-            for(ChangeOrder changeOrder : changeOrders){
-                changeOrderDTOs.add(mapper.map(changeOrder, ChangeOrderDTO.class));
-            }
-            return changeOrderDTOs;
-        } catch (ApplicationException ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
+    public List<ChangeOrderDTO> getOrdersByMilestone(@PathParam("workspaceId") String workspaceId, @PathParam("milestoneId") int milestoneId)
+            throws EntityNotFoundException, UserNotActiveException, AccessRightException {
+        List<ChangeOrder> changeOrders = changeManager.getChangeOrdersByMilestone(workspaceId, milestoneId);
+        List<ChangeOrderDTO> changeOrderDTOs = new ArrayList<>();
+        for(ChangeOrder changeOrder : changeOrders){
+            changeOrderDTOs.add(mapper.map(changeOrder, ChangeOrderDTO.class));
         }
+        return changeOrderDTOs;
     }
 
     @PUT
     @Path("{milestoneId}/acl")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateACL(@PathParam("workspaceId") String pWorkspaceId, @PathParam("milestoneId") int milestoneId, ACLDTO acl) {
-        try {
-            if (acl.getGroupEntries().size() > 0 || acl.getUserEntries().size() > 0) {
+    public Response updateACL(@PathParam("workspaceId") String pWorkspaceId, @PathParam("milestoneId") int milestoneId, ACLDTO acl)
+            throws EntityNotFoundException, UserNotActiveException, AccessRightException {
+        if (acl.getGroupEntries().size() > 0 || acl.getUserEntries().size() > 0) {
 
-                Map<String,String> userEntries = new HashMap<>();
-                Map<String,String> groupEntries = new HashMap<>();
+            Map<String,String> userEntries = new HashMap<>();
+            Map<String,String> groupEntries = new HashMap<>();
 
-                for (Map.Entry<String, ACL.Permission> entry : acl.getUserEntries().entrySet()) {
-                    userEntries.put(entry.getKey(), entry.getValue().name());
-                }
-
-                for (Map.Entry<String, ACL.Permission> entry : acl.getGroupEntries().entrySet()) {
-                    groupEntries.put(entry.getKey(), entry.getValue().name());
-                }
-
-                changeManager.updateACLForMilestone(pWorkspaceId, milestoneId, userEntries, groupEntries);
-            }else{
-                changeManager.removeACLFromMilestone(pWorkspaceId, milestoneId);
+            for (Map.Entry<String, ACL.Permission> entry : acl.getUserEntries().entrySet()) {
+                userEntries.put(entry.getKey(), entry.getValue().name());
             }
-            return Response.ok().build();
-        } catch (ApplicationException ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
+
+            for (Map.Entry<String, ACL.Permission> entry : acl.getGroupEntries().entrySet()) {
+                groupEntries.put(entry.getKey(), entry.getValue().name());
+            }
+
+            changeManager.updateACLForMilestone(pWorkspaceId, milestoneId, userEntries, groupEntries);
+        }else{
+            changeManager.removeACLFromMilestone(pWorkspaceId, milestoneId);
         }
+        return Response.ok().build();
     }
 }

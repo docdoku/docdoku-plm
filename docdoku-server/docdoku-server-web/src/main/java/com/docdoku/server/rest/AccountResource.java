@@ -21,7 +21,10 @@ package com.docdoku.server.rest;
 
 import com.docdoku.core.common.Account;
 import com.docdoku.core.common.Workspace;
-import com.docdoku.core.exceptions.ApplicationException;
+import com.docdoku.core.exceptions.AccountNotFoundException;
+import com.docdoku.core.exceptions.CreationException;
+import com.docdoku.core.exceptions.EntityAlreadyExistsException;
+import com.docdoku.core.exceptions.EntityNotFoundException;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.rest.dto.AccountDTO;
@@ -68,15 +71,10 @@ public class AccountResource {
     @GET
     @Path("/me")
     @Produces(MediaType.APPLICATION_JSON)
-    public AccountDTO getAccount(){
-
-        try{
-            Account account = userManager.getAccount(ctx.getCallerPrincipal().getName());
-            return mapper.map(account,AccountDTO.class);
-        } catch (ApplicationException ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
-        }
-
+    public AccountDTO getAccount()
+            throws AccountNotFoundException {
+        Account account = userManager.getAccount(ctx.getCallerPrincipal().getName());
+        return mapper.map(account,AccountDTO.class);
     }
 
 
@@ -84,40 +82,31 @@ public class AccountResource {
     @Path("/workspaces")
     @Produces(MediaType.APPLICATION_JSON)
     public List<WorkspaceDTO> getWorkspaces(){
-
         Workspace[] workspacesWhereCallerIsActive = userManager.getWorkspacesWhereCallerIsActive();
 
-        List<WorkspaceDTO> workspaceDTOs = new ArrayList<WorkspaceDTO>();
-        for(int i = 0 ; i < workspacesWhereCallerIsActive.length;i++){
-            workspaceDTOs.add(mapper.map(workspacesWhereCallerIsActive[i],WorkspaceDTO.class));
+        List<WorkspaceDTO> workspaceDTOs = new ArrayList<>();
+        for (Workspace aWorkspacesWhereCallerIsActive : workspacesWhereCallerIsActive) {
+            workspaceDTOs.add(mapper.map(aWorkspacesWhereCallerIsActive, WorkspaceDTO.class));
         }
 
         return workspaceDTOs;
-
     }
 
     @PUT
     @Path("gcm")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response setGCMAccount(GCMAccountDTO data){
-        try{
-            userManager.setGCMAccount(data.getGcmId());
-            return Response.ok().build();
-        } catch (ApplicationException ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
-        }
+    public Response setGCMAccount(GCMAccountDTO data)
+            throws EntityAlreadyExistsException, AccountNotFoundException, CreationException {
+        userManager.setGCMAccount(data.getGcmId());
+        return Response.ok().build();
     }
 
 
     @DELETE
     @Path("gcm")
-    public Response deleteGCMAccount(){
-        try{
-            userManager.deleteGCMAccount();
-            return Response.ok().build();
-        } catch (ApplicationException ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
-        }
+    public Response deleteGCMAccount() throws EntityNotFoundException {
+        userManager.deleteGCMAccount();
+        return Response.ok().build();
     }
 
 }

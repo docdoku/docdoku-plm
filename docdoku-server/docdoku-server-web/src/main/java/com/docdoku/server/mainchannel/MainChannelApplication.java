@@ -55,7 +55,9 @@ public class MainChannelApplication {
     private IUserManagerLocal userManager;
 
     public static boolean hasChannels(String userLogin) {
-        return CHANNELS.get(userLogin) != null && !CHANNELS.get(userLogin).isEmpty();
+        return CHANNELS!=null
+                && CHANNELS.get(userLogin) != null
+                && !CHANNELS.get(userLogin).isEmpty();
     }
 
     public static Map<String, Session> getUserChannels(String userLogin) {

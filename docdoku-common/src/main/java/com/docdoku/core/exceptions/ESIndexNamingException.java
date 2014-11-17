@@ -26,12 +26,13 @@ import java.util.Locale;
  * @author Taylor LABEJOF
  */
 public class ESIndexNamingException extends ApplicationException {
-    private String mKey;
+    private final String mKey;
 
     public ESIndexNamingException(Locale pLocale) {
         super(pLocale);
-        mKey="IndexNamingException1";
+        mKey="IndexNamingException";
     }
+    @Override
     public String getLocalizedMessage() {
         return mKey==null?null:getBundleMessage(mKey);
     }

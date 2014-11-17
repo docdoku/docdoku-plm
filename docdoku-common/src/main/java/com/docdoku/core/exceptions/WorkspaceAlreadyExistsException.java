@@ -29,14 +29,13 @@ import java.util.Locale;
  *
  * @author Florent Garin
  */
-public class WorkspaceAlreadyExistsException extends ApplicationException {
+public class WorkspaceAlreadyExistsException extends EntityAlreadyExistsException {
+    private final Workspace mWorkspace;
 
-    private Workspace mWorkspace;
-    
-    
     
     public WorkspaceAlreadyExistsException(String pMessage) {
         super(pMessage);
+        mWorkspace=null;
     }
     
     public WorkspaceAlreadyExistsException(Locale pLocale, Workspace pWorkspace) {
@@ -47,7 +46,8 @@ public class WorkspaceAlreadyExistsException extends ApplicationException {
         super(pLocale, pCause);
         mWorkspace=pWorkspace;
     }
-    
+
+    @Override
     public String getLocalizedMessage() {
         String message = getBundleDefaultMessage();
         return MessageFormat.format(message,mWorkspace);     

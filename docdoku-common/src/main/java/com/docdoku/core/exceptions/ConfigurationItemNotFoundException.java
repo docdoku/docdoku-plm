@@ -27,17 +27,14 @@ import java.util.Locale;
  *
  * @author Florent Garin
  */
-public class ConfigurationItemNotFoundException extends ApplicationException {
+public class ConfigurationItemNotFoundException extends EntityNotFoundException {
+    private final String mCIId;
 
-
-    private String mCIId;
-
-    
     public ConfigurationItemNotFoundException(String pMessage) {
         super(pMessage);
+        mCIId = null;
     }
-    
-    
+
     public ConfigurationItemNotFoundException(Locale pLocale, String pCIID) {
         this(pLocale, pCIID, null);
     }
@@ -46,7 +43,8 @@ public class ConfigurationItemNotFoundException extends ApplicationException {
         super(pLocale, pCause);
         mCIId=pCIId;
     }
-    
+
+    @Override
     public String getLocalizedMessage() {
         String message = getBundleDefaultMessage();
         return MessageFormat.format(message,mCIId);     

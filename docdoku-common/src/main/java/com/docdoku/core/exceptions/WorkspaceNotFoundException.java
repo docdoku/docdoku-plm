@@ -27,14 +27,12 @@ import java.util.Locale;
  *
  * @author Florent Garin
  */
-public class WorkspaceNotFoundException extends ApplicationException {
+public class WorkspaceNotFoundException extends EntityNotFoundException {
+    private final String mID;
 
-    private String mID;
-    
-    
-    
     public WorkspaceNotFoundException(String pMessage) {
         super(pMessage);
+        mID=null;
     }
     
     public WorkspaceNotFoundException(Locale pLocale, String pID) {
@@ -45,7 +43,8 @@ public class WorkspaceNotFoundException extends ApplicationException {
         super(pLocale, pCause);
         mID=pID;
     }
-    
+
+    @Override
     public String getLocalizedMessage() {
         String message = getBundleDefaultMessage();
         return MessageFormat.format(message,mID);     

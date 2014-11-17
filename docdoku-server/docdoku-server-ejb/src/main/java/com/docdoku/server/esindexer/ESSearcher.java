@@ -63,7 +63,7 @@ public class ESSearcher {
     private static final String ESTYPE_DOCUMENT = "document";
     private static final String ESTYPE_PART = "part";
     private static final String ES_SEARCH_ERROR_1 = "ES_SearchError1";
-    private static final String ES_SERVER_ERROR_1 = "IndexerServerException1";
+    private static final String ES_SERVER_ERROR_1 = "IndexerServerException";
 
     @PersistenceContext
     private EntityManager em;

@@ -30,15 +30,14 @@ import java.util.Locale;
  * @author Florent Garin
  */
 public class DocumentMasterAlreadyExistsException extends ApplicationException {
-
-    private DocumentMaster mDocM;
+    private final DocumentMaster mDocM;
     
     
     public DocumentMasterAlreadyExistsException(String pMessage) {
         super(pMessage);
+        mDocM = null;
     }
-    
-    
+
     public DocumentMasterAlreadyExistsException(Locale pLocale, DocumentMaster pDocM) {
         this(pLocale, pDocM, null);
     }

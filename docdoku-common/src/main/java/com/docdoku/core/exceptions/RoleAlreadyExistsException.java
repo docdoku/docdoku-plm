@@ -28,13 +28,8 @@ import java.util.Locale;
 /**
  * @author Taylor LABEJOF
  */
-public class RoleAlreadyExistsException extends ApplicationException {
-
-    private Role mRole;
-
-    public RoleAlreadyExistsException(String pMessage) {
-        super(pMessage);
-    }
+public class RoleAlreadyExistsException extends EntityAlreadyExistsException {
+    private final Role mRole;
 
     public RoleAlreadyExistsException(Locale pLocale, Role pRole) {
         this(pLocale, pRole, null);
@@ -44,7 +39,8 @@ public class RoleAlreadyExistsException extends ApplicationException {
         super(pLocale, pCause);
         mRole=pRole;
     }
-    
+
+    @Override
     public String getLocalizedMessage() {
         String message = getBundleDefaultMessage();
         return MessageFormat.format(message,mRole.getName());

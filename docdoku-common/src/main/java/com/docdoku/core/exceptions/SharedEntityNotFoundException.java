@@ -26,21 +26,22 @@ import java.util.Locale;
  * @author Morgan Guimard
  */
 
-public class SharedEntityNotFoundException extends ApplicationException {
+public class SharedEntityNotFoundException extends EntityNotFoundException {
+    private final String uuid;
 
-        private String uuid;
-
-        public SharedEntityNotFoundException(String pMessage) {
-            super(pMessage);
-        }
-
-        public SharedEntityNotFoundException(Locale pLocale, String pUuid) {
-            super(pLocale);
-            uuid=pUuid;
-        }
-
-        public String getLocalizedMessage() {
-            String message = getBundleDefaultMessage();
-            return MessageFormat.format(message, uuid);
-        }
+    public SharedEntityNotFoundException(String pMessage) {
+        super(pMessage);
+        uuid=null;
     }
+
+    public SharedEntityNotFoundException(Locale pLocale, String pUuid) {
+        super(pLocale);
+        uuid=pUuid;
+    }
+
+    @Override
+    public String getLocalizedMessage() {
+        String message = getBundleDefaultMessage();
+        return MessageFormat.format(message, uuid);
+    }
+}

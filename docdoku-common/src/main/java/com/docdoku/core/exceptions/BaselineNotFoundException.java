@@ -27,16 +27,14 @@ import java.util.Locale;
  *
  * @author Florent Garin
  */
-public class BaselineNotFoundException extends ApplicationException {
-
-
-    private int mBaseline;
+public class BaselineNotFoundException extends EntityNotFoundException {
+    private final int mBaseline;
 
 
     public BaselineNotFoundException(String pMessage) {
         super(pMessage);
+        mBaseline = -1;
     }
-
 
     public BaselineNotFoundException(Locale pLocale, int pBaseline) {
         this(pLocale, pBaseline, null);
@@ -46,7 +44,8 @@ public class BaselineNotFoundException extends ApplicationException {
         super(pLocale, pCause);
         mBaseline=pBaseline;
     }
-    
+
+    @Override
     public String getLocalizedMessage() {
         String message = getBundleDefaultMessage();
         return MessageFormat.format(message,mBaseline);
