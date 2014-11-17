@@ -13,22 +13,25 @@ angular.module('dplm.workspace',[])
 	$scope.workspace = $routeParams.workspace;
 	$scope.count = 0;
 	$scope.start = 0;
-	$scope.max = 10;
+	$scope.max = 6;
 	$scope.parts = [];
 	$scope.loadingParts = true;
+	$scope.loadingMore = false;
 	$scope.openedPart = null;
 	$scope.search = '';
 			
 	$scope.filters = {
-		released : true,
 		checkoutable : true,
-		checkouted : true,
-		checkoutedByMe : true
+		checkoutedByMe : true,
+		released : false,
+		checkouted : false
 	};
 
 	var resetList = function() {
 		$scope.start = 0;
 		$scope.parts.length = 0;
+		$scope.loadingParts = true;	
+		$scope.loadingMore = false;	
 		getPartMasters();
 	};
 
@@ -39,6 +42,7 @@ angular.module('dplm.workspace',[])
 
 	var onListResults = function(parts){
 		$scope.loadingParts = false;
+		$scope.loadingMore = false;
 		angular.forEach(parts,function(part){
 			$scope.parts.push(part);
 		});
@@ -50,8 +54,7 @@ angular.module('dplm.workspace',[])
 			.then(onSearchResults);
 	};
 
-	var getPartMasters = function(){
-		$scope.loadingParts = true;		
+	var getPartMasters = function(){			
 		return CliService.getPartMasters($scope.workspace, $scope.start, $scope.max)
 			.then(onListResults);
 	};
@@ -84,6 +87,7 @@ angular.module('dplm.workspace',[])
 	$scope.onScrollEnd = function(){		
 		if(!$scope.loadingParts && !$scope.search && $scope.start < $scope.count){
 			$scope.start+=$scope.max;
+			$scope.loadingMore = true;
 			getPartMasters();
 		}
 	};
@@ -146,6 +150,7 @@ angular.module('dplm.workspace',[])
 
 			var onFinish = function(){
 				$scope.part.busy = false;
+				$scope.part.progress = 0;
 			};
 
 			var onProgress = function(progress){
@@ -163,14 +168,14 @@ angular.module('dplm.workspace',[])
 				$scope.part.busy = true;
 				CliService.checkout($scope.part,$scope.folder.path,$scope.options).then(function(){
 					return CliService.getStatusForPart($scope.part);					
-				}).then(onFinish);
+				},null,onProgress).then(onFinish);
 			};
 
 			$scope.checkin = function(){
 				$scope.part.busy = true;
 				CliService.checkin($scope.part).then(function(){
 					return CliService.getStatusForPart($scope.part);
-				}).then(onFinish);
+				},null,onProgress).then(onFinish);
 			};
 
 			$scope.undoCheckout = function(){

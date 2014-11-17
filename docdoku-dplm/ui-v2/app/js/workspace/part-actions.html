@@ -15,7 +15,7 @@
 </div>
 <div class="row" ng-if="!part.busy">
 	<label>{{'SAVE_TO' | translate}}</label>
-	<select ng-model="folder.path">
+	<i class="fa fa-folder-open"></i><select ng-model="folder.path">
 		<option ng-repeat="folder in folders" value="{{folder.path}}">
 			{{folder.path | fileshortname}}
 		</option>

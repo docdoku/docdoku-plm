@@ -13,6 +13,21 @@ angular.module('dplm.services.folders',[])
 		}).length > 0;
 	}
 
+	function statFiles(fileNames){
+		var promises = [];
+		var fs = require('fs');
+		angular.forEach(fileNames,function(fileName){			
+			promises.push($q(function(resolve,reject){
+				fs.stat(fileName,function(err,stats){
+					var file = {path:fileName};
+					if (err) reject(file);
+					else resolve(angular.extend(stats,file));
+				});
+			}));			
+		});
+		return $q.all(promises);
+	}
+
 	this.getFolder = function(params){
 		return $filter('filter')(_this.folders,params)[0];
 	};
@@ -45,21 +60,29 @@ angular.module('dplm.services.folders',[])
 			  	resolve(files);
 			  }
 			});
-		});
+		}).then(statFiles);
 	};
 
-	this.fetchFilesStatus = function(files){
+	this.fetchFileStatus = function(file){		
+		return	CliService.getStatusForFile(file);
+	};
 
-		var promises = [];
-		
-		angular.forEach(files,function(file){
-			promises.push($q(function(resolve,reject){
-				CliService.getStatusForFile(file).then(resolve,reject);
-			}));
-		});
-
-		return $q.all(promises);
-
+	this.reveal = function(path){		
+		var os = require('os');
+		var command = '';	   
+		switch(os.type()){
+			case 'Windows_NT' :
+				command = 'explorer';
+			break;	       
+			case 'Darwin' : 
+				command = 'explorer';
+			break;
+			default :
+				command = 'nautilus';
+			break;
+		}
+		require('child_process').spawn(command, [path]);	
+           
 	};
 
 });

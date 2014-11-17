@@ -19,17 +19,17 @@
     <md-text-float style="margin: 0 18px;" label="{{'SEARCH' | translate}} ({{count}} {{'ITEMS' | translate}})" ng-model="search" type="text"></md-text-float>
   </div>
   <div style="padding-right:8px;">
-    <md-checkbox ng-model="filters.released" aria-label="">
-      <i class="fa fa-check"></i>
-    </md-checkbox>
     <md-checkbox ng-model="filters.checkoutable" aria-label="">
       <i class="fa fa-eye"></i>
     </md-checkbox>
-    <md-checkbox ng-model="filters.checkouted" aria-label="">
-      <i class="fa fa-lock"></i>
-    </md-checkbox>
     <md-checkbox ng-model="filters.checkoutedByMe" aria-label="">
       <i class="fa fa-pencil"></i>
+    </md-checkbox>
+    <md-checkbox ng-model="filters.released" aria-label="">
+      <i class="fa fa-check"></i>
+    </md-checkbox>
+    <md-checkbox ng-model="filters.checkouted" aria-label="">
+      <i class="fa fa-lock"></i>
     </md-checkbox>
   </div>    
 </div>
@@ -72,5 +72,6 @@
         <md-divider ng-if="!$last"></md-divider>
       </md-item>
     </md-list>
+      <md-progress-linear ng-show="loadingMore" mode="indeterminate"></md-progress-linear>
   </md-content>
 </div>
