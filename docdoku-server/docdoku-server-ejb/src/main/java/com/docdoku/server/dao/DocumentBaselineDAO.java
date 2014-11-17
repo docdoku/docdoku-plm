@@ -40,6 +40,7 @@ public class DocumentBaselineDAO {
 
     public DocumentBaselineDAO(EntityManager em) {
         this.em = em;
+        this.mLocale = Locale.getDefault();
     }
 
     public DocumentBaselineDAO(EntityManager em, Locale mLocale) {

@@ -298,7 +298,11 @@ public class PartRevision implements Serializable, Comparable<PartRevision>, Clo
     }
 
     public int getLastIterationNumber() {
-        return this.getLastIteration().getIteration();
+        if(this.getLastIteration()!=null){
+            return this.getLastIteration().getIteration();
+        }else{
+            return 0;
+        }
     }
     
     public PartIteration removeLastIteration() {
