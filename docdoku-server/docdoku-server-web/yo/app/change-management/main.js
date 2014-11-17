@@ -26,6 +26,7 @@ require.config({
         jqueryUI: { deps: ['jquery'], exports: 'jQuery' },
         effects: { deps: ['jquery'], exports: 'jQuery' },
         bootstrap: { deps: ['jquery', 'jqueryUI'], exports: 'jQuery' },
+        bootbox: { deps: ['jquery'], exports: 'jQuery' },
         datatables: { deps: ['jquery'], exports: 'jQuery' },
         bootstrapSwitch: {deps: ['jquery'], exports: 'jQuery'},
         backbone: {deps: ['underscore', 'jquery'],exports: 'Backbone'}
@@ -40,6 +41,7 @@ require.config({
         i18n: '../../bower_components/requirejs-i18n/i18n',
         buzz: '../../bower_components/buzz/dist/buzz',
         bootstrap: '../../bower_components/bootstrap/docs/assets/js/bootstrap',
+        bootbox:'../../bower_components/bootbox/bootbox',
         datatables: '../../bower_components/datatables/media/js/jquery.dataTables',
         jqueryUI: '../../bower_components/jqueryui/ui/jquery-ui',
         bootstrapSwitch:'../../bower_components/bootstrap-switch/static/js/bootstrap-switch',
@@ -58,6 +60,7 @@ require.config({
         'underscore',
         'date',
         'bootstrap',
+        'bootbox',
         'bootstrapSwitch',
         'jqueryUI',
         'effects',

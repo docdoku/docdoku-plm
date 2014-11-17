@@ -18,7 +18,6 @@ define([
                     message: this.options.message
                 }
             }));
-            this.bindDomElements();
             return this;
         },
 
