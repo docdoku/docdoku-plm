@@ -10,7 +10,16 @@
 
         <a class="close" data-dismiss="modal">×</a>
 
-        <h3><span class="icon"></span><a target="_blank" href="{{permalink}}">{{master.title}} ({{master.id}})</a></h3>
+        <h3>
+            <span class="icon"></span>
+            {{#hasIterations}}
+                <a target="_blank" href="{{permalink}}">
+            {{/hasIterations}}
+                    {{master.title}} ({{master.id}})
+            {{#hasIterations}}
+                </a>
+            {{/hasIterations}}
+        </h3>
 
     </div>
     <div class="ModalBody Modal-body modal-body">
@@ -18,11 +27,13 @@
         <div class="ModalTabs ModalBody-tabs tabs">
             <ul class="ModalTabs-nav nav nav-tabs">
                 <li class="active"><a href="#tab-iteration-document" data-toggle="tab">{{i18n.GENERAL}}</a></li>
+                {{#hasIterations}}
                 <li><a href="#tab-iteration-iteration" data-toggle="tab">{{i18n.ITERATION}}</a></li>
                 <li><a href="#tab-iteration-attributes" data-toggle="tab">{{i18n.ATTRIBUTES}}</a></li>
                 <li><a href="#tab-iteration-files" data-toggle="tab">{{i18n.ATTACHED_FILES}}</a></li>
                 <li><a href="#tab-iteration-lifecycle" data-toggle="tab">{{i18n.LIFECYCLE_STATE}}</a></li>
                 <li><a href="#tab-iteration-links" data-toggle="tab">{{i18n.LINKS}}</a></li>
+                {{/hasIterations}}
             </ul>
 
             <form id="form-document" class="ModalTabs-form form-horizontal">
@@ -110,6 +121,7 @@
                             </div>
                         {{/isForBaseline}}
                     </div>
+                    {{#hasIterations}}
                     <div id="tab-iteration-iteration" class="ModalTabsPane tab-pane">
                         <div class="control-group">
                             <label class="control-label">{{i18n.REFERENCE}}</label>
@@ -152,6 +164,7 @@
                     <div id="tab-iteration-links" class="ModalTabsPane tab-pane">
                         <div id="iteration-links"></div>
                     </div>
+                    {{/hasIterations}}
                 </div>
             </form>
         </div>

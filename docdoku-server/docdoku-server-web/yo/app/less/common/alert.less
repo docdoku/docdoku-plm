@@ -1,0 +1,43 @@
+.Alert{
+    margin : 0;
+    &-closeBtn{
+
+    }
+    &-title{
+        display: inline-block;
+
+        .alert-info &{
+            &:before{
+                display: inline;
+                content: "Info ! ";
+                font-weight: bold;
+                padding-right: 48px;
+                font-size: 18px;
+            }
+        }
+
+        .alert-warning &{
+            &:before{
+                display: inline;
+                content: "Warning ! ";
+                font-weight: bold;
+                padding-right: 10px;
+                font-size: 18px;
+            }
+        }
+
+        .alert-error &{
+            &:before{
+                display: inline;
+                content: "Error ! ";
+                font-weight: bold;
+                padding-right: 38px;
+                font-size: 18px;
+            }
+        }
+    }
+    &-message{
+        display: inline-block;
+        margin :0;
+    }
+}

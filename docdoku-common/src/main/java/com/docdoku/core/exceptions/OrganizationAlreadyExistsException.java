@@ -21,7 +21,6 @@
 package com.docdoku.core.exceptions;
 
 import com.docdoku.core.common.Organization;
-import com.docdoku.core.common.Workspace;
 
 import java.text.MessageFormat;
 import java.util.Locale;
@@ -30,14 +29,13 @@ import java.util.Locale;
  *
  * @author Florent Garin
  */
-public class OrganizationAlreadyExistsException extends ApplicationException {
-
-    private Organization mOrganization;
-
+public class OrganizationAlreadyExistsException extends EntityAlreadyExistsException {
+    private final Organization mOrganization;
 
 
     public OrganizationAlreadyExistsException(String pMessage) {
         super(pMessage);
+        mOrganization=null;
     }
 
     public OrganizationAlreadyExistsException(Locale pLocale, Organization pOrganization) {
@@ -48,7 +46,8 @@ public class OrganizationAlreadyExistsException extends ApplicationException {
         super(pLocale, pCause);
         mOrganization=pOrganization;
     }
-    
+
+    @Override
     public String getLocalizedMessage() {
         String message = getBundleDefaultMessage();
         return MessageFormat.format(message,mOrganization);

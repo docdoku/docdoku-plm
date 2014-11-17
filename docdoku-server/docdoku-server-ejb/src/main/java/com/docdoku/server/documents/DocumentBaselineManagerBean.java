@@ -69,7 +69,7 @@ public class DocumentBaselineManagerBean implements IDocumentBaselineManagerLoca
         User user = userManager.checkWorkspaceWriteAccess(workspaceId);
         Workspace workspace = new WorkspaceDAO(new Locale(user.getLanguage()), em).loadWorkspace(workspaceId);
         DocumentBaseline baseline = new DocumentBaseline(workspace,name,description);
-        new DocumentBaselineDAO(em).createBaseline(baseline);
+        new DocumentBaselineDAO(em, new Locale(user.getLanguage())).createBaseline(baseline);
         snapshotAllFolders(baseline,workspaceId);
         snapshotAllDocuments(baseline,workspaceId);
         return baseline;
@@ -87,8 +87,8 @@ public class DocumentBaselineManagerBean implements IDocumentBaselineManagerLoca
     @Override
     public void deleteBaseline(int baselineId) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, BaselineNotFoundException, UserNotActiveException {
         DocumentBaseline documentBaseline = getBaseline(baselineId);
-        userManager.checkWorkspaceWriteAccess(documentBaseline.getWorkspace().getId());
-        new DocumentBaselineDAO(em).deleteBaseline(documentBaseline);
+        User user = userManager.checkWorkspaceWriteAccess(documentBaseline.getWorkspace().getId());
+        new DocumentBaselineDAO(em, new Locale(user.getLanguage())).deleteBaseline(documentBaseline);
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)

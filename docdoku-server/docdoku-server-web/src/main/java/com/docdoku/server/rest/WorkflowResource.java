@@ -20,6 +20,7 @@
 package com.docdoku.server.rest;
 
 import com.docdoku.core.exceptions.*;
+import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IWorkflowManagerLocal;
 import com.docdoku.core.workflow.*;
@@ -38,6 +39,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -155,13 +157,13 @@ public class WorkflowResource {
         } catch (WorkflowModelAlreadyExistsException e) {
             LOGGER.log(Level.WARNING, null, e);
             throw new RestApiException(e.toString(), e.getMessage(),Response.Status.CONFLICT);
-        } catch (CreationException e) {
+        } catch (CreationException | NotAllowedException e) {
             LOGGER.log(Level.WARNING, null, e);
             throw new RestApiException(e.toString(), e.getMessage(),Response.Status.BAD_REQUEST);
         }
     }
 
-    private ActivityModel[] extractActivityModelFromDTO(List<ActivityModelDTO> activityModelDTOsList, Role[] roles){
+    private ActivityModel[] extractActivityModelFromDTO(List<ActivityModelDTO> activityModelDTOsList, Role[] roles) throws NotAllowedException {
         Map<Integer,ActivityModel> activityModels = new HashMap<>();
 
         for(int i=0; i<activityModelDTOsList.size(); i++){
@@ -181,9 +183,17 @@ public class WorkflowResource {
         return activityModels.values().toArray(new ActivityModel[activityModels.size()]);
     }
 
-    private void assignRoleToTasks(ActivityModel activityModel,Role[] roles){
+    private void assignRoleToTasks(ActivityModel activityModel,Role[] roles) throws NotAllowedException {
+        List<TaskModel> modelTask = activityModel.getTaskModels();
+        if(modelTask==null || modelTask.isEmpty()){
+            throw new NotAllowedException(Locale.getDefault(),"NotAllowedException3");
+        }
         for(TaskModel taskModel : activityModel.getTaskModels()){
-            String roleName = taskModel.getRole().getName();
+            Role modelRole = taskModel.getRole();
+            if(modelRole==null){
+                throw new NotAllowedException(Locale.getDefault(),"NotAllowedException13");
+            }
+            String roleName = modelRole.getName();
             for (Role role : roles) {
                 if (role.getName().equals(roleName)) {
                     taskModel.setRole(role);

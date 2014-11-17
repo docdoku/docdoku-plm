@@ -27,16 +27,15 @@ import java.util.Locale;
  *
  * @author Taylor LABEJOF
  */
-public class MilestoneNotFoundException extends ApplicationException {
-
-
-    private int mChange;
-
+public class MilestoneNotFoundException extends EntityNotFoundException {
+    private final int mChange;
+    private final String mTitle;
 
     public MilestoneNotFoundException(String pMessage) {
         super(pMessage);
+        mTitle=null;
+        mChange=-1;
     }
-
 
     public MilestoneNotFoundException(Locale pLocale, int pChange) {
         this(pLocale, pChange, null);
@@ -45,14 +44,21 @@ public class MilestoneNotFoundException extends ApplicationException {
     public MilestoneNotFoundException(Locale pLocale, int pChange, Throwable pCause) {
         super(pLocale, pCause);
         mChange =pChange;
+        mTitle=null;
     }
 
     public MilestoneNotFoundException(Locale pLocale, String pTitle) {
-        super("The milestone "+pTitle+" can not be found");
+        super(pLocale, null);
+        mTitle = pTitle;
+        mChange = -1;
     }
 
+    @Override
     public String getLocalizedMessage() {
         String message = getBundleDefaultMessage();
-        return MessageFormat.format(message, mChange);
+        if(mTitle!=null){
+            return MessageFormat.format(message, mTitle);
+        }
+        return MessageFormat.format(message, "N° "+mChange);
     }
 }

@@ -28,6 +28,8 @@ import com.docdoku.core.product.*;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IProductConfigSpecManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
+import com.docdoku.server.rest.collections.InstanceCollection;
+import com.docdoku.server.rest.collections.PathFilteredListInstanceCollection;
 import com.docdoku.server.rest.dto.*;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;

@@ -477,11 +477,12 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             String inputMask = template.getMask();
             String convertedMask = Tools.convertMask(inputMask);
             newId = Tools.increaseId(latestId, convertedMask);
-        } catch (ParseException | NoResultException ex) {
-            LOGGER.log(Level.WARNING, null,ex);
-            //may happen when a different mask has been used for the same document type
-            //or
+        } catch (NoResultException ex){
+            LOGGER.log(Level.FINER,null,ex);
             //may happen when no document of the specified type has been created
+        } catch (ParseException ex) {
+            LOGGER.log(Level.SEVERE, null,ex);
+            //may happen when a different mask has been used for the same document type
         }
         return newId;
 

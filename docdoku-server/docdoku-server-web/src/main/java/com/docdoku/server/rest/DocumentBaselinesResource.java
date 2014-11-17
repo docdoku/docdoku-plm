@@ -20,7 +20,9 @@
 package com.docdoku.server.rest;
 
 import com.docdoku.core.configuration.DocumentBaseline;
-import com.docdoku.core.exceptions.*;
+import com.docdoku.core.exceptions.AccessRightException;
+import com.docdoku.core.exceptions.EntityNotFoundException;
+import com.docdoku.core.exceptions.UserNotActiveException;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentBaselineManagerLocal;
 import com.docdoku.server.rest.dto.FolderDTO;
@@ -34,7 +36,6 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.*;
-import javax.ws.rs.NotAllowedException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.UnsupportedEncodingException;
@@ -76,24 +77,17 @@ public class DocumentBaselinesResource {
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<DocumentBaselineDTO> getBaselines(@PathParam("workspaceId") String workspaceId){
-        try {
-            List<DocumentBaseline> documentBaselines;
-            documentBaselines = documentBaselineService.getBaselines(workspaceId);
-            List<DocumentBaselineDTO> baselinesDTO = new ArrayList<>();
-            for(DocumentBaseline documentBaseline : documentBaselines){
-                DocumentBaselineDTO documentBaselineDTO = mapper.map(documentBaseline,DocumentBaselineDTO.class);
-                documentBaselineDTO.setWorkspaceId(workspaceId);
-                baselinesDTO.add(documentBaselineDTO);
-            }
-            return baselinesDTO;
-        } catch (NotAllowedException | UserNotFoundException | UserNotActiveException e) {
-            LOGGER.log(Level.WARNING, null, e);
-            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
-        } catch (WorkspaceNotFoundException e) {
-            LOGGER.log(Level.WARNING, null, e);
-            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
+    public List<DocumentBaselineDTO> getBaselines(@PathParam("workspaceId") String workspaceId)
+            throws EntityNotFoundException, UserNotActiveException{
+        List<DocumentBaseline> documentBaselines;
+        documentBaselines = documentBaselineService.getBaselines(workspaceId);
+        List<DocumentBaselineDTO> baselinesDTO = new ArrayList<>();
+        for(DocumentBaseline documentBaseline : documentBaselines){
+            DocumentBaselineDTO documentBaselineDTO = mapper.map(documentBaseline,DocumentBaselineDTO.class);
+            documentBaselineDTO.setWorkspaceId(workspaceId);
+            baselinesDTO.add(documentBaselineDTO);
         }
+        return baselinesDTO;
     }
 
     /**
@@ -104,18 +98,11 @@ public class DocumentBaselinesResource {
      */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response createBaseline(@PathParam("workspaceId") String workspaceId, DocumentBaselineDTO documentBaselineDTO){
-        try {
-            DocumentBaseline baseline = documentBaselineService.createBaseline(workspaceId,documentBaselineDTO.getName(),documentBaselineDTO.getDescription());
-            DocumentBaselineDTO baselineDTO= mapper.map(baseline,DocumentBaselineDTO.class);
-            return prepareCreateResponse(baselineDTO);
-        } catch (NotAllowedException | UserNotFoundException | UserNotActiveException | AccessRightException e) {
-            LOGGER.log(Level.WARNING, null, e);
-            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
-        } catch (WorkspaceNotFoundException | DocumentRevisionNotFoundException | FolderNotFoundException e) {
-            LOGGER.log(Level.WARNING, null, e);
-            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
-        }
+    public Response createBaseline(@PathParam("workspaceId") String workspaceId, DocumentBaselineDTO documentBaselineDTO)
+            throws EntityNotFoundException, UserNotActiveException, AccessRightException{
+        DocumentBaseline baseline = documentBaselineService.createBaseline(workspaceId,documentBaselineDTO.getName(),documentBaselineDTO.getDescription());
+        DocumentBaselineDTO baselineDTO= mapper.map(baseline,DocumentBaselineDTO.class);
+        return prepareCreateResponse(baselineDTO);
     }
 
     /**
@@ -127,7 +114,7 @@ public class DocumentBaselinesResource {
         try {
             return Response.created(URI.create(URLEncoder.encode(String.valueOf(baselineDTO.getId()), "UTF-8"))).entity(baselineDTO).build();
         } catch (UnsupportedEncodingException ex) {
-            LOGGER.log(Level.INFO,null,ex);
+            LOGGER.log(Level.WARNING,null,ex);
             return Response.ok().build();
         }
     }
@@ -140,17 +127,10 @@ public class DocumentBaselinesResource {
     @DELETE
     @Path("{baselineId}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response deleteBaseline(@PathParam("baselineId") int baselineId){
-        try {
-            documentBaselineService.deleteBaseline(baselineId);
-            return Response.ok().build();
-        } catch (NotAllowedException | UserNotFoundException | UserNotActiveException | AccessRightException e) {
-            LOGGER.log(Level.WARNING, null, e);
-            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
-        } catch (WorkspaceNotFoundException | BaselineNotFoundException e) {
-            LOGGER.log(Level.WARNING, null, e);
-            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
-        }
+    public Response deleteBaseline(@PathParam("baselineId") int baselineId)
+            throws EntityNotFoundException, AccessRightException, UserNotActiveException{
+        documentBaselineService.deleteBaseline(baselineId);
+        return Response.ok().build();
     }
 
     /**
@@ -162,20 +142,13 @@ public class DocumentBaselinesResource {
     @GET
     @Path("{baselineId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public DocumentBaselineDTO getBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("baselineId") int baselineId){
-        try {
-            DocumentBaseline documentBaseline = documentBaselineService.getBaseline(baselineId);
-            DocumentBaselineDTO baselineDTO = getBaselineLight(workspaceId,baselineId);
-            List<FolderDTO> folderDTOs = Tools.mapBaselinedFoldersToFolderDTO(documentBaseline);
-            baselineDTO.setBaselinedFolders(folderDTOs);
-            return baselineDTO;
-        } catch (NotAllowedException | UserNotFoundException | UserNotActiveException e) {
-            LOGGER.log(Level.WARNING, null, e);
-            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
-        } catch (WorkspaceNotFoundException | BaselineNotFoundException e) {
-            LOGGER.log(Level.WARNING, null, e);
-            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
-        }
+    public DocumentBaselineDTO getBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("baselineId") int baselineId)
+            throws EntityNotFoundException, UserNotActiveException{
+        DocumentBaseline documentBaseline = documentBaselineService.getBaseline(baselineId);
+        DocumentBaselineDTO baselineDTO = getBaselineLight(workspaceId,baselineId);
+        List<FolderDTO> folderDTOs = Tools.mapBaselinedFoldersToFolderDTO(documentBaseline);
+        baselineDTO.setBaselinedFolders(folderDTOs);
+        return baselineDTO;
     }
 
     /**
@@ -187,16 +160,9 @@ public class DocumentBaselinesResource {
     @GET
     @Path("{baselineId}-light")
     @Produces(MediaType.APPLICATION_JSON)
-    public DocumentBaselineDTO getBaselineLight(@PathParam("workspaceId") String workspaceId, @PathParam("baselineId") int baselineId){
-        try {
-            DocumentBaseline documentBaseline = documentBaselineService.getBaseline(baselineId);
-            return mapper.map(documentBaseline,DocumentBaselineDTO.class);
-        } catch (NotAllowedException | UserNotFoundException | UserNotActiveException e) {
-            LOGGER.log(Level.WARNING, null, e);
-            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
-        } catch (WorkspaceNotFoundException | BaselineNotFoundException e) {
-            LOGGER.log(Level.WARNING, null, e);
-            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
-        }
+    public DocumentBaselineDTO getBaselineLight(@PathParam("workspaceId") String workspaceId, @PathParam("baselineId") int baselineId)
+            throws EntityNotFoundException, UserNotActiveException{
+        DocumentBaseline documentBaseline = documentBaselineService.getBaseline(baselineId);
+        return mapper.map(documentBaseline,DocumentBaselineDTO.class);
     }
 }

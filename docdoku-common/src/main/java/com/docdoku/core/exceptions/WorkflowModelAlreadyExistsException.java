@@ -29,13 +29,13 @@ import java.util.Locale;
  *
  * @author Florent Garin
  */
-public class WorkflowModelAlreadyExistsException extends ApplicationException {
-
-    private WorkflowModel mWorkflowModel;
+public class WorkflowModelAlreadyExistsException extends EntityAlreadyExistsException {
+    private final WorkflowModel mWorkflowModel;
     
     
     public WorkflowModelAlreadyExistsException(String pMessage) {
         super(pMessage);
+        mWorkflowModel=null;
     }
     
     public WorkflowModelAlreadyExistsException(Locale pLocale, WorkflowModel pWorkflowModel) {
@@ -46,7 +46,8 @@ public class WorkflowModelAlreadyExistsException extends ApplicationException {
         super(pLocale, pCause);
         mWorkflowModel=pWorkflowModel;
     }
-    
+
+    @Override
     public String getLocalizedMessage() {
         String message = getBundleDefaultMessage();
         return MessageFormat.format(message,mWorkflowModel);     

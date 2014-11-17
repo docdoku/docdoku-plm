@@ -27,13 +27,13 @@ import java.util.Locale;
  *
  * @author Florent Garin
  */
-public class PasswordRecoveryRequestNotFoundException extends ApplicationException {
-
-    private String mPasswordRRUuid;
+public class PasswordRecoveryRequestNotFoundException extends EntityNotFoundException {
+    private final String mPasswordRRUuid;
     
     
     public PasswordRecoveryRequestNotFoundException(String pMessage) {
         super(pMessage);
+        mPasswordRRUuid=null;
     }
     
     public PasswordRecoveryRequestNotFoundException(Locale pLocale, String pPasswordRRUuid) {
@@ -44,7 +44,8 @@ public class PasswordRecoveryRequestNotFoundException extends ApplicationExcepti
         super(pLocale, pCause);
         mPasswordRRUuid=pPasswordRRUuid;
     }
-    
+
+    @Override
     public String getLocalizedMessage() {
         String message = getBundleDefaultMessage();
         return MessageFormat.format(message,mPasswordRRUuid);

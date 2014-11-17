@@ -27,14 +27,9 @@ import java.util.Locale;
  *
  * @author Morgan Guimard
  */
-public class GCMAccountNotFoundException extends ApplicationException {
+public class GCMAccountNotFoundException extends EntityNotFoundException {
+    private final String mLogin;
 
-    private String mLogin;
-
-
-    public GCMAccountNotFoundException(String pMessage) {
-        super(pMessage);
-    }
 
     public GCMAccountNotFoundException(Locale pLocale, String pLogin) {
         this(pLocale, pLogin, null);

@@ -29,16 +29,15 @@ import java.util.Locale;
  *
  * @author Florent Garin
  */
-public class DocumentMasterTemplateAlreadyExistsException extends ApplicationException {
-
-    private DocumentMasterTemplate mDocMTemplate;
+public class DocumentMasterTemplateAlreadyExistsException extends EntityAlreadyExistsException {
+    private final DocumentMasterTemplate mDocMTemplate;
     
     
     public DocumentMasterTemplateAlreadyExistsException(String pMessage) {
         super(pMessage);
+        mDocMTemplate=null;
     }
-    
-    
+
     public DocumentMasterTemplateAlreadyExistsException(Locale pLocale, DocumentMasterTemplate pDocMTemplate) {
         this(pLocale, pDocMTemplate, null);
     }
@@ -47,7 +46,8 @@ public class DocumentMasterTemplateAlreadyExistsException extends ApplicationExc
         super(pLocale, pCause);
         mDocMTemplate=pDocMTemplate;
     }
-    
+
+    @Override
     public String getLocalizedMessage() {
         String message = getBundleDefaultMessage();
         return MessageFormat.format(message,mDocMTemplate);     

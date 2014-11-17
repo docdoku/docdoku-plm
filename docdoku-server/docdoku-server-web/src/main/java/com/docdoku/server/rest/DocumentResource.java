@@ -81,47 +81,37 @@ public class DocumentResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public DocumentRevisionDTO getDocumentRevision(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion, @QueryParam("configSpec") String configSpecType) {
-        try {
-            DocumentRevision docR;
-            DocumentRevisionKey documentRevisionKey = new DocumentRevisionKey(workspaceId, documentId, documentVersion);
-            if (configSpecType == null || BASELINE_UNDEFINED.equals(configSpecType) || BASELINE_LATEST.equals(configSpecType)) {
-                docR = documentService.getDocumentRevision(documentRevisionKey);
-            } else {
-                ConfigSpec configSpec = getConfigSpec(workspaceId, configSpecType);
-                docR = documentConfigSpecService.getFilteredDocumentRevision(documentRevisionKey, configSpec);
-            }
-
-            DocumentRevisionDTO docRsDTO = mapper.map(docR, DocumentRevisionDTO.class);
-            docRsDTO.setPath(docR.getLocation().getCompletePath());
-
-            if (configSpecType == null || BASELINE_UNDEFINED.equals(configSpecType) || BASELINE_LATEST.equals(configSpecType)) {
-                setDocumentRevisionDTOWorkflow(docR,docRsDTO);
-                docRsDTO.setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId, docR));
-                docRsDTO.setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId, docR));
-            }else{
-                docRsDTO.setWorkflow(null);
-                docRsDTO.setTags(null);
-            }
-            return docRsDTO;
-        } catch (UserNotFoundException | NotAllowedException | AccessRightException | UserNotActiveException e) {
-            LOGGER.log(Level.WARNING,null, e);
-            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
-        } catch (WorkspaceNotFoundException | DocumentRevisionNotFoundException | BaselineNotFoundException e) {
-            LOGGER.log(Level.WARNING, null, e);
-            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
+    public DocumentRevisionDTO getDocumentRevision(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion, @QueryParam("configSpec") String configSpecType)
+            throws EntityNotFoundException, AccessRightException, NotAllowedException, UserNotActiveException {
+        DocumentRevision docR;
+        DocumentRevisionKey documentRevisionKey = new DocumentRevisionKey(workspaceId, documentId, documentVersion);
+        if (configSpecType == null || BASELINE_UNDEFINED.equals(configSpecType) || BASELINE_LATEST.equals(configSpecType)) {
+            docR = documentService.getDocumentRevision(documentRevisionKey);
+        } else {
+            ConfigSpec configSpec = getConfigSpec(workspaceId, configSpecType);
+            docR = documentConfigSpecService.getFilteredDocumentRevision(documentRevisionKey, configSpec);
         }
+
+        DocumentRevisionDTO docRsDTO = mapper.map(docR, DocumentRevisionDTO.class);
+        docRsDTO.setPath(docR.getLocation().getCompletePath());
+
+        if (configSpecType == null || BASELINE_UNDEFINED.equals(configSpecType) || BASELINE_LATEST.equals(configSpecType)) {
+            setDocumentRevisionDTOWorkflow(docR,docRsDTO);
+            docRsDTO.setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId, docR));
+            docRsDTO.setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId, docR));
+        }else{
+            docRsDTO.setWorkflow(null);
+            docRsDTO.setTags(null);
+        }
+        return docRsDTO;
     }
 
-    private void setDocumentRevisionDTOWorkflow(DocumentRevision documentRevision, DocumentRevisionDTO documentRevisionDTO) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, DocumentRevisionNotFoundException {
-        try{
-            Workflow currentWorkflow = documentWorkflowService.getCurrentWorkflow(documentRevision.getKey());
-            if(currentWorkflow!=null){
-                documentRevisionDTO.setWorkflow(mapper.map(currentWorkflow,WorkflowDTO.class));
-                documentRevisionDTO.setLifeCycleState(currentWorkflow.getLifeCycleState());
-            }
-        } catch (WorkflowNotFoundException e) {
-            LOGGER.log(Level.FINEST, null, e);
+    private void setDocumentRevisionDTOWorkflow(DocumentRevision documentRevision, DocumentRevisionDTO documentRevisionDTO)
+            throws EntityNotFoundException, UserNotActiveException, AccessRightException{
+        Workflow currentWorkflow = documentWorkflowService.getCurrentWorkflow(documentRevision.getKey());
+        if(currentWorkflow!=null){
+            documentRevisionDTO.setWorkflow(mapper.map(currentWorkflow,WorkflowDTO.class));
+            documentRevisionDTO.setLifeCycleState(currentWorkflow.getLifeCycleState());
         }
     }
 
@@ -129,133 +119,86 @@ public class DocumentResource {
     @Path("/checkin")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public DocumentRevisionDTO checkInDocument(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion) {
-        try {
-            DocumentRevision docR = documentService.checkInDocument(new DocumentRevisionKey(workspaceId, documentId, documentVersion));
-            DocumentRevisionDTO docRsDTO = mapper.map(docR, DocumentRevisionDTO.class);
-            docRsDTO.setPath(docR.getLocation().getCompletePath());
-            return docRsDTO;
-        } catch (AccessRightException | UserNotActiveException | NotAllowedException  | UserNotFoundException e) {
-            LOGGER.log(Level.WARNING, null, e);
-            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
-        } catch (WorkspaceNotFoundException | DocumentRevisionNotFoundException e) {
-            LOGGER.log(Level.WARNING, null, e);
-            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
-        } catch (ESServerException e) {
-            LOGGER.log(Level.SEVERE, null, e);
-            throw new RestApiException(e.toString(), e.getMessage(), Response.Status.BAD_REQUEST);
-        }
+    public DocumentRevisionDTO checkInDocument(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion)
+            throws NotAllowedException, EntityNotFoundException, ESServerException, AccessRightException, UserNotActiveException{
+        DocumentRevision docR = documentService.checkInDocument(new DocumentRevisionKey(workspaceId, documentId, documentVersion));
+        DocumentRevisionDTO docRsDTO = mapper.map(docR, DocumentRevisionDTO.class);
+        docRsDTO.setPath(docR.getLocation().getCompletePath());
+        return docRsDTO;
     }
 
     @PUT
     @Path("/checkout")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public DocumentRevisionDTO checkOutDocument(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion) {
-        try {
-            DocumentRevision docR = documentService.checkOutDocument(new DocumentRevisionKey(workspaceId, documentId, documentVersion));
-            DocumentRevisionDTO docRsDTO = mapper.map(docR, DocumentRevisionDTO.class);
-            docRsDTO.setPath(docR.getLocation().getCompletePath());
-            docRsDTO.setLifeCycleState(docR.getLifeCycleState());
-            return docRsDTO;
-        } catch (UserNotFoundException | NotAllowedException | AccessRightException | UserNotActiveException e) {
-            LOGGER.log(Level.WARNING, null, e);
-            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
-        } catch (WorkspaceNotFoundException | DocumentRevisionNotFoundException e) {
-            LOGGER.log(Level.WARNING, null, e);
-            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
-        } catch (CreationException | FileAlreadyExistsException e) {
-            LOGGER.log(Level.SEVERE, null, e);
-            throw new RestApiException(e.toString(), e.getMessage(), Response.Status.BAD_REQUEST);
-        }
+    public DocumentRevisionDTO checkOutDocument(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion)
+            throws EntityNotFoundException, NotAllowedException, CreationException, AccessRightException, UserNotActiveException, EntityAlreadyExistsException{
+        DocumentRevision docR = documentService.checkOutDocument(new DocumentRevisionKey(workspaceId, documentId, documentVersion));
+        DocumentRevisionDTO docRsDTO = mapper.map(docR, DocumentRevisionDTO.class);
+        docRsDTO.setPath(docR.getLocation().getCompletePath());
+        docRsDTO.setLifeCycleState(docR.getLifeCycleState());
+        return docRsDTO;
     }
 
     @PUT
     @Path("/undocheckout")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public DocumentRevisionDTO undoCheckOutDocument(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion) {
-        try {
-            DocumentRevision docR = documentService.undoCheckOutDocument(new DocumentRevisionKey(workspaceId, documentId, documentVersion));
-            DocumentRevisionDTO docRsDTO = mapper.map(docR, DocumentRevisionDTO.class);
-            docRsDTO.setPath(docR.getLocation().getCompletePath());
-            docRsDTO.setLifeCycleState(docR.getLifeCycleState());
-            return docRsDTO;
-        } catch (AccessRightException | NotAllowedException | UserNotFoundException | UserNotActiveException e) {
-            LOGGER.log(Level.WARNING, null, e);
-            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
-        } catch (WorkspaceNotFoundException | DocumentRevisionNotFoundException e) {
-            LOGGER.log(Level.WARNING, null, e);
-            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
-        }
+    public DocumentRevisionDTO undoCheckOutDocument(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion)
+            throws EntityNotFoundException, NotAllowedException, UserNotActiveException, AccessRightException {
+        DocumentRevision docR = documentService.undoCheckOutDocument(new DocumentRevisionKey(workspaceId, documentId, documentVersion));
+        DocumentRevisionDTO docRsDTO = mapper.map(docR, DocumentRevisionDTO.class);
+        docRsDTO.setPath(docR.getLocation().getCompletePath());
+        docRsDTO.setLifeCycleState(docR.getLifeCycleState());
+        return docRsDTO;
     }
 
     @PUT
     @Path("/move")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public DocumentRevisionDTO moveDocument(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion, DocumentCreationDTO docCreationDTO) {
-        try {
-            String parentFolderPath = docCreationDTO.getPath();
-            String newCompletePath = Tools.stripTrailingSlash(parentFolderPath);
-            DocumentRevisionKey docRsKey = new DocumentRevisionKey(workspaceId, documentId, documentVersion);
-            DocumentRevision movedDocumentRevision = documentService.moveDocumentRevision(newCompletePath, docRsKey);
-            DocumentRevisionDTO docMsDTO = mapper.map(movedDocumentRevision, DocumentRevisionDTO.class);
-            docMsDTO.setPath(movedDocumentRevision.getLocation().getCompletePath());
-            docMsDTO.setLifeCycleState(movedDocumentRevision.getLifeCycleState());
-            return docMsDTO;
-        } catch (ApplicationException ex) {
-            LOGGER.log(Level.WARNING,null,ex);
-            throw new RestApiException(ex.toString(), ex.getMessage());
-        }
+    public DocumentRevisionDTO moveDocument(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion, DocumentCreationDTO docCreationDTO)
+            throws EntityNotFoundException, NotAllowedException, AccessRightException, UserNotActiveException{
+        String parentFolderPath = docCreationDTO.getPath();
+        String newCompletePath = Tools.stripTrailingSlash(parentFolderPath);
+        DocumentRevisionKey docRsKey = new DocumentRevisionKey(workspaceId, documentId, documentVersion);
+        DocumentRevision movedDocumentRevision = documentService.moveDocumentRevision(newCompletePath, docRsKey);
+        DocumentRevisionDTO docMsDTO = mapper.map(movedDocumentRevision, DocumentRevisionDTO.class);
+        docMsDTO.setPath(movedDocumentRevision.getLocation().getCompletePath());
+        docMsDTO.setLifeCycleState(movedDocumentRevision.getLifeCycleState());
+        return docMsDTO;
     }
 
     @PUT
     @Path("/notification/iterationChange/subscribe")
-    public Response subscribeToIterationChangeEvent(@PathParam("workspaceId") String workspaceId,@PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion) {
-        try {
-            documentService.subscribeToIterationChangeEvent(new DocumentRevisionKey(workspaceId, documentId, documentVersion));
-            return Response.ok().build();
-        } catch (ApplicationException ex) {
-            LOGGER.log(Level.WARNING,null,ex);
-            throw new RestApiException(ex.toString(), ex.getMessage());
-        }
+    public Response subscribeToIterationChangeEvent(@PathParam("workspaceId") String workspaceId,@PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion)
+            throws EntityNotFoundException, AccessRightException, NotAllowedException, UserNotActiveException {
+        documentService.subscribeToIterationChangeEvent(new DocumentRevisionKey(workspaceId, documentId, documentVersion));
+        return Response.ok().build();
     }
 
     @PUT
     @Path("/notification/iterationChange/unsubscribe")
-    public Response unSubscribeToIterationChangeEvent(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion) {
-        try {
-            documentService.unsubscribeToIterationChangeEvent(new DocumentRevisionKey(workspaceId, documentId, documentVersion));
-            return Response.ok().build();
-        } catch (ApplicationException ex) {
-            LOGGER.log(Level.WARNING,null,ex);
-            throw new RestApiException(ex.toString(), ex.getMessage());
-        }
+    public Response unSubscribeToIterationChangeEvent(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion)
+            throws EntityNotFoundException, UserNotActiveException, AccessRightException{
+        documentService.unsubscribeToIterationChangeEvent(new DocumentRevisionKey(workspaceId, documentId, documentVersion));
+        return Response.ok().build();
     }
 
     @PUT
     @Path("/notification/stateChange/subscribe")
-    public Response subscribeToStateChangeEvent(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion) {
-        try {
-            documentService.subscribeToStateChangeEvent(new DocumentRevisionKey(workspaceId, documentId, documentVersion));
-            return Response.ok().build();
-        } catch (ApplicationException ex) {
-            LOGGER.log(Level.WARNING,null,ex);
-            throw new RestApiException(ex.toString(), ex.getMessage());
-        }
+    public Response subscribeToStateChangeEvent(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion)
+            throws EntityNotFoundException, AccessRightException, NotAllowedException, UserNotActiveException {
+        documentService.subscribeToStateChangeEvent(new DocumentRevisionKey(workspaceId, documentId, documentVersion));
+        return Response.ok().build();
     }
 
     @PUT
     @Path("/notification/stateChange/unsubscribe")
-    public Response unsubscribeToStateChangeEvent(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion) {
-        try {
-            documentService.unsubscribeToStateChangeEvent(new DocumentRevisionKey(workspaceId, documentId, documentVersion));
-            return Response.ok().build();
-        } catch (ApplicationException ex) {
-            LOGGER.log(Level.WARNING,null,ex);
-            throw new RestApiException(ex.toString(), ex.getMessage());
-        }
+    public Response unsubscribeToStateChangeEvent(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion)
+            throws EntityNotFoundException, UserNotActiveException, AccessRightException{
+        documentService.unsubscribeToStateChangeEvent(new DocumentRevisionKey(workspaceId, documentId, documentVersion));
+        return Response.ok().build();
     }
 
     @PUT
@@ -519,9 +462,12 @@ public class DocumentResource {
                 documentService.removeACLFromDocumentRevision(documentRevisionKey);
             }
             return Response.ok().build();
-        } catch (ApplicationException ex) {
-            LOGGER.log(Level.WARNING,null,ex);
-            throw new RestApiException(ex.toString(), ex.getMessage());
+        } catch (UserNotFoundException | AccessRightException | UserNotActiveException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
+        } catch (WorkspaceNotFoundException | DocumentRevisionNotFoundException e) {
+            LOGGER.log(Level.WARNING, null, e);
+            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
         }
     }
 

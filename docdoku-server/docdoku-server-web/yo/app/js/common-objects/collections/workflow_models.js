@@ -1,7 +1,7 @@
 /*global define,App*/
 define([
     'backbone',
-    'common-objects/models/workflow_model'
+    'common-objects/models/workflow/workflow_model'
 ], function (Backbone, WorkflowModel) {
 	'use strict';
     var WorkflowModels = Backbone.Collection.extend({

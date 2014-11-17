@@ -29,15 +29,14 @@ import java.util.Locale;
  *
  * @author Morgan Guimard
  */
-public class DocumentRevisionAlreadyExistsException extends ApplicationException {
-
-    private DocumentRevision mDocR;
+public class DocumentRevisionAlreadyExistsException extends EntityAlreadyExistsException {
+    private final DocumentRevision mDocR;
 
 
     public DocumentRevisionAlreadyExistsException(String pMessage) {
         super(pMessage);
+        mDocR=null;
     }
-
 
     public DocumentRevisionAlreadyExistsException(Locale pLocale, DocumentRevision pDocR) {
         this(pLocale, pDocR, null);
@@ -47,7 +46,8 @@ public class DocumentRevisionAlreadyExistsException extends ApplicationException
         super(pLocale, pCause);
         mDocR=pDocR;
     }
-    
+
+    @Override
     public String getLocalizedMessage() {
         String message = getBundleDefaultMessage();
         return MessageFormat.format(message,mDocR);

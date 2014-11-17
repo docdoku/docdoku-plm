@@ -32,7 +32,7 @@ import java.util.Locale;
  * @version 2.0, 05/09/14
  * @since   V2.0
  */
-public class BaselinedFolderAlreadyExistsException extends ApplicationException {
+public class BaselinedFolderAlreadyExistsException extends EntityAlreadyExistsException {
     private final BaselinedFolder mFolder;
 
     public BaselinedFolderAlreadyExistsException(String pMessage) {
@@ -54,5 +54,4 @@ public class BaselinedFolderAlreadyExistsException extends ApplicationException 
         String message = getBundleDefaultMessage();
         return MessageFormat.format(message, mFolder);
     }
-
 }

@@ -30,11 +30,11 @@ import java.util.Locale;
  * @author Florent Garin
  */
 public class UserNotActiveException extends ApplicationException {
-
-    private String mName;
+    private final String mName;
     
     public UserNotActiveException(String pMessage) {
         super(pMessage);
+        mName=null;
     }
     
     public UserNotActiveException(Locale pLocale, User pUser) {

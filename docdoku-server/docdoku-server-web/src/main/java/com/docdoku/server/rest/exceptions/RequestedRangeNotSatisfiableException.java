@@ -20,19 +20,12 @@
 
 package com.docdoku.server.rest.exceptions;
 
-import java.io.Serializable;
-
 /**
- *
- * @author Florent GARIN
+ * @author Julien Maffre
  */
-public class ApplicationException extends Exception implements Serializable{
-    
-    public ApplicationException() {
-        
+public class RequestedRangeNotSatisfiableException extends Exception {
+
+    public RequestedRangeNotSatisfiableException() {
     }
-    public ApplicationException(String message) {
-        super(message);
-    }
-    
+
 }

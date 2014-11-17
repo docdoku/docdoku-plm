@@ -17,10 +17,12 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.docdoku.server.rest;
+package com.docdoku.server.rest.writer;
 
 import com.docdoku.core.configuration.ConfigSpec;
 import com.docdoku.core.product.PartUsageLink;
+import com.docdoku.server.rest.collections.InstanceCollection;
+import com.docdoku.server.rest.collections.PathFilteredListInstanceCollection;
 import com.docdoku.server.rest.util.InstanceBodyWriterTools;
 
 import javax.json.Json;

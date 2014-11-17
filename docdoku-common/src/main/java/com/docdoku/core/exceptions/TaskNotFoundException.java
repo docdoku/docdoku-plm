@@ -29,19 +29,20 @@ import java.util.Locale;
  *
  * @author Florent Garin
  */
-public class TaskNotFoundException extends ApplicationException {
-
-    private TaskKey mTaskKey;
+public class TaskNotFoundException extends EntityNotFoundException {
+    private final TaskKey mTaskKey;
     
     public TaskNotFoundException(String pMessage) {
         super(pMessage);
+        mTaskKey=null;
     }
     
     public TaskNotFoundException(Locale pLocale, TaskKey pTaskKey) {
         super(pLocale);
         mTaskKey=pTaskKey;
     }
-    
+
+    @Override
     public String getLocalizedMessage() {
         String message = getBundleDefaultMessage();
         return MessageFormat.format(message,mTaskKey);     

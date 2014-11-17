@@ -3,7 +3,7 @@ define([
     'backbone',
     'mustache',
     'text!templates/workflows/activity_model_editor.html',
-    'common-objects/models/activity_model',
+    'common-objects/models/workflow/activity_model',
     'common-objects/models/task_model',
     'views/workflows/task_model_editor'
 ], function (Backbone, Mustache, template, ActivityModel, TaskModel, TaskModelEditorView) {
@@ -22,7 +22,6 @@ define([
         },
 
         initialize: function () {
-
             this.subviews = [];
 
             var switchModeTitle;
@@ -43,20 +42,59 @@ define([
             this.on('activities-order:changed', this.populateRelaunchActivitySelector);
 
         },
+        render: function () {
+            this.$el.html(this.template);
+            this.bindDomElements();
+            this.addAllTask();
+            this.populateRelaunchActivitySelector();
+            return this;
+        },
+        bindDomElements: function () {
+            var self = this;
+
+            this.activityDiv = this.$('div.activity');
+
+            this.buttonSwitchActivity = this.$('button.switch-activity');
+
+            this.inputLifeCycleState = this.$('input.activity-state');
+
+            this.inputTasksToComplete = this.$('input.tasksToComplete');
+
+            this.relaunchActivitySelector = this.$('.relaunchActivitySelector');
+
+            this.relaunchActivitySelectorWrapper = this.$('.relaunchActivitySelector-wrapper');
+
+            this.tasksUL = this.$('ul.task-list');
+            this.tasksUL.sortable({
+                handle: 'i.fa.fa-bars',
+                tolerance: 'pointer',
+                start: function (event, ui) {
+                    ui.item.oldPosition = ui.item.index();
+                },
+                stop: function (event, ui) {
+                    self.taskPositionChanged(ui.item.oldPosition, ui.item.index());
+                }
+            });
+        },
 
         addAllTask: function () {
             this.model.attributes.taskModels.each(this.addOneTask, this);
         },
 
         addOneTask: function (taskModel) {
-            var self = this;
+            var _this = this;
 
             this.updateMaxTasksToComplete();
 
-            var taskModelEditorView = new TaskModelEditorView({model: taskModel, roles: self.options.roles});
-            self.subviews.push(taskModelEditorView);
+            var taskModelEditorView = new TaskModelEditorView({
+                model: taskModel,
+                roles: _this.options.roles,
+                newRoles: _this.options.newRoles
+            });
+
+            _this.subviews.push(taskModelEditorView);
             taskModelEditorView.render();
-            self.tasksUL.append(taskModelEditorView.el);
+            _this.tasksUL.append(taskModelEditorView.el);
         },
 
         removeOneTask: function () {
@@ -78,9 +116,8 @@ define([
 
         addTaskAction: function () {
             this.inputTasksToComplete.val(parseInt(this.inputTasksToComplete.val(), 10) + 1);
-            this.tasksToCompleteChanged();
-
             this.model.attributes.taskModels.add(new TaskModel());
+            this.tasksToCompleteChanged();
             return false;
         },
 
@@ -114,13 +151,20 @@ define([
 
         tasksToCompleteChanged: function () {
             var tasksToCompleteValue = parseInt(this.inputTasksToComplete.val(), 10);
-            if (tasksToCompleteValue > 0) {
+            var maxTaskToComplete = this.model.attributes.taskModels.length;
+            if (tasksToCompleteValue <= 0) {
+                this.inputTasksToComplete.val(1);
                 this.model.set({
-                    tasksToComplete: tasksToCompleteValue
+                    tasksToComplete: 1
+                });
+            } else if (tasksToCompleteValue > maxTaskToComplete) {
+                this.inputTasksToComplete.val(maxTaskToComplete);
+                this.model.set({
+                    tasksToComplete: maxTaskToComplete
                 });
             } else {
                 this.model.set({
-                    tasksToComplete: 1
+                    tasksToComplete: tasksToCompleteValue
                 });
             }
         },
@@ -134,46 +178,6 @@ define([
         lifeCycleStateChanged: function () {
             this.model.set({
                 lifeCycleState: this.inputLifeCycleState.val()
-            });
-        },
-
-        render: function () {
-            this.$el.html(this.template);
-
-            this.bindDomElements();
-
-            this.addAllTask();
-
-            this.populateRelaunchActivitySelector();
-
-            return this;
-        },
-
-        bindDomElements: function () {
-            var self = this;
-
-            this.activityDiv = this.$('div.activity');
-
-            this.buttonSwitchActivity = this.$('button.switch-activity');
-
-            this.inputLifeCycleState = this.$('input.activity-state');
-
-            this.inputTasksToComplete = this.$('input.tasksToComplete');
-
-            this.relaunchActivitySelector = this.$('.relaunchActivitySelector');
-
-            this.relaunchActivitySelectorWrapper = this.$('.relaunchActivitySelector-wrapper');
-
-            this.tasksUL = this.$('ul.task-list');
-            this.tasksUL.sortable({
-                handle: 'i.fa.fa-bars',
-                tolerance: 'pointer',
-                start: function (event, ui) {
-                    ui.item.oldPosition = ui.item.index();
-                },
-                stop: function (event, ui) {
-                    self.taskPositionChanged(ui.item.oldPosition, ui.item.index());
-                }
             });
         },
 

@@ -27,17 +27,14 @@ import java.util.Locale;
  *
  * @author Florent Garin
  */
-public class DocumentMasterTemplateNotFoundException extends ApplicationException {
+public class DocumentMasterTemplateNotFoundException extends EntityNotFoundException {
+    private final String mDocMTemplateId;
 
-
-    private String mDocMTemplateId;
-
-    
     public DocumentMasterTemplateNotFoundException(String pMessage) {
         super(pMessage);
+        mDocMTemplateId=null;
     }
-    
-    
+
     public DocumentMasterTemplateNotFoundException(Locale pLocale, String pDocMTemplateID) {
         this(pLocale, pDocMTemplateID, null);
     }
@@ -46,7 +43,8 @@ public class DocumentMasterTemplateNotFoundException extends ApplicationExceptio
         super(pLocale, pCause);
         mDocMTemplateId=pDocMTemplateId;
     }
-    
+
+    @Override
     public String getLocalizedMessage() {
         String message = getBundleDefaultMessage();
         return MessageFormat.format(message,mDocMTemplateId);     

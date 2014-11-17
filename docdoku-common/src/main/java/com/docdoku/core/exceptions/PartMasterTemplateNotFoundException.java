@@ -27,16 +27,13 @@ import java.util.Locale;
  *
  * @author Morgan Guimard
  */
-public class PartMasterTemplateNotFoundException extends ApplicationException {
-
-
-    private String mPartMTemplateId;
-
+public class PartMasterTemplateNotFoundException extends EntityNotFoundException {
+    private final String mPartMTemplateId;
 
     public PartMasterTemplateNotFoundException(String pMessage) {
         super(pMessage);
+        mPartMTemplateId=null;
     }
-
 
     public PartMasterTemplateNotFoundException(Locale pLocale, String pPartMTemplateID) {
         this(pLocale, pPartMTemplateID, null);
@@ -47,6 +44,7 @@ public class PartMasterTemplateNotFoundException extends ApplicationException {
         mPartMTemplateId=pPartMTemplateId;
     }
 
+    @Override
     public String getLocalizedMessage() {
         String message = getBundleDefaultMessage();
         return MessageFormat.format(message,mPartMTemplateId);

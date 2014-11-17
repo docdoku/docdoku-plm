@@ -27,20 +27,20 @@ import java.util.Locale;
  * @author Florent Garin
  */
 public class NotAllowedException extends ApplicationException {
+    private final String mKey;
     
-    private String mKey;
-    
-    
-    
+
     public NotAllowedException(String pMessage) {
         super(pMessage);
+        mKey=null;
     }
     
     public NotAllowedException(Locale pLocale, String pKey) {
         super(pLocale);
         mKey=pKey;
     }
-    
+
+    @Override
     public String getLocalizedMessage() {
         return mKey==null?null:getBundleMessage(mKey);     
     }

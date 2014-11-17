@@ -31,18 +31,17 @@ import java.util.Locale;
  *
  * @author Florent Garin
  */
-public class PartIterationNotFoundException extends ApplicationException {
-
-
-    private String mPartMNumber;
-    private String mPartRStringVersion;
-    private int mPartIIteration;
-
+public class PartIterationNotFoundException extends EntityNotFoundException {
+    private final String mPartMNumber;
+    private final String mPartRStringVersion;
+    private final int mPartIIteration;
 
     public PartIterationNotFoundException(String pMessage) {
         super(pMessage);
+        mPartMNumber=null;
+        mPartRStringVersion=null;
+        mPartIIteration=-1;
     }
-
 
     public PartIterationNotFoundException(Locale pLocale, PartIterationKey pPartIPK) {
         this(pLocale, pPartIPK, null);
@@ -66,7 +65,8 @@ public class PartIterationNotFoundException extends ApplicationException {
         mPartRStringVersion=pPartRStringVersion;
         mPartIIteration=pPartIIteration;
     }
-    
+
+    @Override
     public String getLocalizedMessage() {
         String message = getBundleDefaultMessage();
         return MessageFormat.format(message,mPartMNumber,mPartRStringVersion, mPartIIteration);

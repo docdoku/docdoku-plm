@@ -26,6 +26,7 @@ import com.docdoku.core.workflow.WorkflowModel;
 import javax.swing.text.MaskFormatter;
 import java.text.Normalizer;
 import java.text.ParseException;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 /**
@@ -33,6 +34,7 @@ import java.util.regex.Pattern;
  * @author Florent Garin
  */
 public class Tools {
+    private static final Logger LOGGER = Logger.getLogger(Tools.class.getName());
 
     private Tools() {
     }
@@ -61,7 +63,7 @@ public class Tools {
     }
 
     public static String increaseId(String id, String mask) throws ParseException {
-        System.out.println("#### Tools.increaseId id = " + id + " , mask = " + mask);
+        LOGGER.info("#### Tools.increaseId id = " + id + " , mask = " + mask);
         MaskFormatter formatter = new MaskFormatter(mask);
         formatter.setValueContainsLiteralCharacters(false);
         String value = formatter.stringToValue(id).toString();
@@ -71,105 +73,57 @@ public class Tools {
             char c = value.charAt(i);
             switch (c) {
                 case '9':
-                    if (increase) {
-                        newValue.append('0');
-                    } else {
-                        newValue.append('9');
-                    }
+                    newValue.append((increase) ? '0' : '9');
                     break;
 
                 case '8':
-                    if (increase) {
-                        newValue.append('9');
-                        increase = false;
-                    } else {
-                        newValue.append('8');
-                    }
-
+                    newValue.append((increase) ? '9' : '8');
+                    increase = false;
                     break;
 
                 case '7':
-                    if (increase) {
-                        newValue.append('8');
-                        increase = false;
-                    } else {
-                        newValue.append('7');
-                    }
-
+                    newValue.append((increase) ? '8' : '7');
+                    increase = false;
                     break;
 
                 case '6':
-                    if (increase) {
-                        newValue.append('7');
-                        increase = false;
-                    } else {
-                        newValue.append('6');
-                    }
-
+                    newValue.append((increase) ? '7' : '6');
+                    increase = false;
                     break;
 
                 case '5':
-                    if (increase) {
-                        newValue.append('6');
-                        increase = false;
-                    } else {
-                        newValue.append('5');
-                    }
-
+                    newValue.append((increase) ? '6' : '5');
+                    increase = false;
                     break;
 
                 case '4':
-                    if (increase) {
-                        newValue.append('5');
-                        increase = false;
-                    } else {
-                        newValue.append('4');
-                    }
-
+                    newValue.append((increase) ? '5' : '4');
+                    increase = false;
                     break;
 
                 case '3':
-                    if (increase) {
-                        newValue.append('4');
-                        increase = false;
-                    } else {
-                        newValue.append('3');
-                    }
-
+                    newValue.append((increase) ? '4' : '3');
+                    increase = false;
                     break;
 
                 case '2':
-                    if (increase) {
-                        newValue.append('3');
-                        increase = false;
-                    } else {
-                        newValue.append('2');
-                    }
-
+                    newValue.append((increase) ? '3' : '2');
+                    increase = false;
                     break;
 
                 case '1':
-                    if (increase) {
-                        newValue.append('2');
-                        increase = false;
-                    } else {
-                        newValue.append('1');
-                    }
-
+                    newValue.append((increase) ? '2' : '1');
+                    increase = false;
                     break;
 
                 case '0':
-                    if (increase) {
-                        newValue.append('1');
-                        increase = false;
-                    } else {
-                        newValue.append('0');
-                    }
-
+                    newValue.append((increase) ? '1' : '0');
+                    increase = false;
                     break;
 
                 default:
                     newValue.append(c);
+                    break;
             }
         }
         return formatter.valueToString(newValue.reverse().toString());

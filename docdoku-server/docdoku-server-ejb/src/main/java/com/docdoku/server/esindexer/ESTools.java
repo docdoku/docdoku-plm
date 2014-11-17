@@ -94,7 +94,7 @@ public class ESTools {
             return new TransportClient().addTransportAddress(new InetSocketTransportAddress(CONF.getProperty("host"), Integer.parseInt(CONF.getProperty("port"))));
         }catch (ElasticsearchException e){
             LOGGER.log(Level.WARNING, null, e);
-            throw new ESServerException(Locale.getDefault(), "IndexerServerException1");
+            throw new ESServerException(Locale.getDefault(), "IndexerServerException");
         }
     }
 

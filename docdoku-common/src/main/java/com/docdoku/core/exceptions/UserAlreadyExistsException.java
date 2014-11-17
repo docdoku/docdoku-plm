@@ -29,13 +29,13 @@ import java.util.Locale;
  *
  * @author Florent Garin
  */
-public class UserAlreadyExistsException extends ApplicationException {
-
-    private User mUser;
+public class UserAlreadyExistsException extends EntityAlreadyExistsException {
+    private final User mUser;
     
     
     public UserAlreadyExistsException(String pMessage) {
         super(pMessage);
+        mUser=null;
     }
     
     
@@ -47,7 +47,8 @@ public class UserAlreadyExistsException extends ApplicationException {
         super(pLocale, pCause);
         mUser=pUser;
     }
-    
+
+    @Override
     public String getLocalizedMessage() {
         String message = getBundleDefaultMessage();
         return MessageFormat.format(message,mUser);     

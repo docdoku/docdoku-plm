@@ -89,7 +89,8 @@ define([
                 editMode: editMode,
                 master: this.model.toJSON(),
                 i18n: App.config.i18n,
-                permalink: this.model.getPermalink()
+                permalink: this.model.getPermalink(),
+                hasIterations: this.iterations.length
             };
 
             data.master.creationDate = date.formatTimestamp(

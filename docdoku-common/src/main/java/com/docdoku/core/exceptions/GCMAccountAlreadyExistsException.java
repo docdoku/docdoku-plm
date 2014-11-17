@@ -27,13 +27,8 @@ import java.util.Locale;
  *
  * @author Morgan Guimard
  */
-public class GCMAccountAlreadyExistsException extends ApplicationException {
-
-    private String mLogin;
-
-    public GCMAccountAlreadyExistsException(String pMessage) {
-        super(pMessage);
-    }
+public class GCMAccountAlreadyExistsException extends EntityAlreadyExistsException {
+    private final String mLogin;
 
     public GCMAccountAlreadyExistsException(Locale pLocale, String pLogin) {
         this(pLocale, pLogin, null);
@@ -43,7 +38,8 @@ public class GCMAccountAlreadyExistsException extends ApplicationException {
         super(pLocale, pCause);
         mLogin=pLogin;
     }
-    
+
+    @Override
     public String getLocalizedMessage() {
         String message = getBundleDefaultMessage();
         return MessageFormat.format(message,mLogin);     

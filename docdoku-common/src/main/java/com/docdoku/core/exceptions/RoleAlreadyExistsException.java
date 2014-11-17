@@ -18,14 +18,31 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.  
  */
 
-package com.docdoku.server.rest;
+package com.docdoku.core.exceptions;
+
+import com.docdoku.core.workflow.Role;
+
+import java.text.MessageFormat;
+import java.util.Locale;
 
 /**
- * @author Julien Maffre
+ * @author Taylor LABEJOF
  */
-public class RequestedRangeNotSatisfiableException extends Exception {
+public class RoleAlreadyExistsException extends EntityAlreadyExistsException {
+    private final Role mRole;
 
-    public RequestedRangeNotSatisfiableException() {
+    public RoleAlreadyExistsException(Locale pLocale, Role pRole) {
+        this(pLocale, pRole, null);
     }
 
+    public RoleAlreadyExistsException(Locale pLocale, Role pRole, Throwable pCause) {
+        super(pLocale, pCause);
+        mRole=pRole;
+    }
+
+    @Override
+    public String getLocalizedMessage() {
+        String message = getBundleDefaultMessage();
+        return MessageFormat.format(message,mRole.getName());
+    }
 }
