@@ -69,78 +69,56 @@ public class RoleResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public RoleDTO[] getRolesInWorkspace (@PathParam("workspaceId") String workspaceId){
+    public RoleDTO[] getRolesInWorkspace (@PathParam("workspaceId") String workspaceId)
+            throws EntityNotFoundException, UserNotActiveException {
 
-        try {
-            Role[] roles = roleService.getRoles(workspaceId);
-            RoleDTO[] rolesDTO = new RoleDTO[roles.length];
+        Role[] roles = roleService.getRoles(workspaceId);
+        RoleDTO[] rolesDTO = new RoleDTO[roles.length];
 
-            for(int i = 0 ; i< roles.length ; i++){
-                rolesDTO[i] = mapRoleToDTO(roles[i]);
-            }
-
-            return rolesDTO;
-
-        } catch (UserNotFoundException | UserNotActiveException e) {
-            LOGGER.log(Level.WARNING, null, e);
-            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
-        } catch (WorkspaceNotFoundException e) {
-            LOGGER.log(Level.WARNING, null, e);
-            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
+        for(int i = 0 ; i< roles.length ; i++){
+            rolesDTO[i] = mapRoleToDTO(roles[i]);
         }
+
+        return rolesDTO;
     }
 
     @GET
     @Path("inuse")
     @Produces(MediaType.APPLICATION_JSON)
-    public RoleDTO[] getRolesInUseInWorkspace (@PathParam("workspaceId") String workspaceId){
+    public RoleDTO[] getRolesInUseInWorkspace (@PathParam("workspaceId") String workspaceId)
+            throws EntityNotFoundException, UserNotActiveException {
 
-        try {
-            Role[] roles = roleService.getRolesInUse(workspaceId);
-            RoleDTO[] rolesDTO = new RoleDTO[roles.length];
+        Role[] roles = roleService.getRolesInUse(workspaceId);
+        RoleDTO[] rolesDTO = new RoleDTO[roles.length];
 
-            for(int i = 0 ; i< roles.length ; i++){
-                rolesDTO[i] = mapRoleToDTO(roles[i]);
-            }
-
-            return rolesDTO;
-
-        } catch (UserNotFoundException | UserNotActiveException e) {
-            LOGGER.log(Level.WARNING, null, e);
-            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
-        } catch (WorkspaceNotFoundException e) {
-            LOGGER.log(Level.WARNING, null, e);
-            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
+        for(int i = 0 ; i< roles.length ; i++){
+            rolesDTO[i] = mapRoleToDTO(roles[i]);
         }
+
+        return rolesDTO;
     }
 
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response createRole(RoleDTO roleDTO) throws UnsupportedEncodingException {
-        try {
-            UserDTO userDTO = roleDTO.getDefaultUserMapped();
-            String userLogin = null;
-            if(userDTO != null){
-                userLogin = userDTO.getLogin();
-            }
+    public Response createRole(RoleDTO roleDTO)
+            throws EntityNotFoundException, EntityAlreadyExistsException, UserNotActiveException, AccessRightException, CreationException {
 
-            Role roleCreated = roleService.createRole(roleDTO.getName(),roleDTO.getWorkspaceId(),userLogin);
-            RoleDTO roleCreatedDTO = mapRoleToDTO(roleCreated);
+        UserDTO userDTO = roleDTO.getDefaultUserMapped();
+        String userLogin = null;
+        if(userDTO != null){
+            userLogin = userDTO.getLogin();
+        }
+
+        Role roleCreated = roleService.createRole(roleDTO.getName(),roleDTO.getWorkspaceId(),userLogin);
+        RoleDTO roleCreatedDTO = mapRoleToDTO(roleCreated);
+
+        try{
             return Response.created(URI.create(URLEncoder.encode(roleCreatedDTO.getName(), "UTF-8"))).entity(roleCreatedDTO).build();
-        } catch (UserNotFoundException | UserNotActiveException | AccessRightException e) {
-            LOGGER.log(Level.WARNING, null, e);
-            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
-        } catch (WorkspaceNotFoundException e) {
-            LOGGER.log(Level.WARNING, null, e);
-            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
-        } catch (RoleAlreadyExistsException e){
-            LOGGER.log(Level.WARNING, null, e);
-            throw new RestApiException(e.toString(), e.getMessage(), Response.Status.CONFLICT);
-        } catch (CreationException e) {
-            LOGGER.log(Level.SEVERE, null, e);
-            throw new RestApiException(e.toString(), e.getMessage(), Response.Status.BAD_REQUEST);
+        } catch (UnsupportedEncodingException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
+            return Response.ok().build();
         }
     }
 
@@ -148,44 +126,34 @@ public class RoleResource {
     @Path("{roleName}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateRole(@PathParam("roleName") String roleName, RoleDTO roleDTO) throws UnsupportedEncodingException {
-        try {
-            UserDTO userDTO = roleDTO.getDefaultUserMapped();
-            String userLogin = null;
-            if(userDTO != null){
-                userLogin = userDTO.getLogin();
-            }
+    public Response updateRole(@PathParam("roleName") String roleName, RoleDTO roleDTO)
+            throws EntityNotFoundException, AccessRightException, UserNotActiveException {
 
-            Role roleUpdated = roleService.updateRole(new RoleKey(roleDTO.getWorkspaceId(), roleName), userLogin);
-            RoleDTO roleUpdatedDTO = mapRoleToDTO(roleUpdated);
-            return Response.status(Response.Status.OK).entity(roleUpdatedDTO).build();
-        } catch (UserNotFoundException | UserNotActiveException | AccessRightException e) {
-            LOGGER.log(Level.WARNING, null, e);
-            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
-        } catch (WorkspaceNotFoundException | RoleNotFoundException e) {
-            LOGGER.log(Level.WARNING, null, e);
-            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
+        UserDTO userDTO = roleDTO.getDefaultUserMapped();
+        String userLogin = null;
+        if(userDTO != null){
+            userLogin = userDTO.getLogin();
+        }
+
+        Role roleUpdated = roleService.updateRole(new RoleKey(roleDTO.getWorkspaceId(), roleName), userLogin);
+        RoleDTO roleUpdatedDTO = mapRoleToDTO(roleUpdated);
+        try{
+            return Response.created(URI.create(URLEncoder.encode(roleUpdatedDTO.getName(), "UTF-8"))).entity(roleUpdatedDTO).build();
+        } catch (UnsupportedEncodingException ex) {
+            LOGGER.log(Level.WARNING,null,ex);
+            return Response.ok().build();
         }
     }
 
     @DELETE
     @Path("{roleName}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteRole(@PathParam("workspaceId") String workspaceId, @PathParam("roleName") String roleName) {
-        try {
-            RoleKey roleKey = new RoleKey(workspaceId, roleName);
-            roleService.deleteRole(roleKey);
-            return Response.ok().build();
-        } catch (UserNotFoundException | UserNotActiveException | AccessRightException e) {
-            LOGGER.log(Level.WARNING, null, e);
-            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
-        } catch (WorkspaceNotFoundException | RoleNotFoundException e) {
-            LOGGER.log(Level.WARNING, null, e);
-            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
-        } catch (EntityConstraintException e) {
-            LOGGER.log(Level.WARNING, null, e);
-            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.CONFLICT);
-        }
+    public Response deleteRole(@PathParam("workspaceId") String workspaceId, @PathParam("roleName") String roleName)
+            throws EntityNotFoundException, UserNotActiveException, AccessRightException, EntityConstraintException {
+
+        RoleKey roleKey = new RoleKey(workspaceId, roleName);
+        roleService.deleteRole(roleKey);
+        return Response.ok().build();
     }
 
 

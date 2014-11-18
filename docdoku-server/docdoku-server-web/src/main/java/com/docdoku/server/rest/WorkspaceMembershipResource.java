@@ -20,7 +20,8 @@
 
 package com.docdoku.server.rest;
 
-import com.docdoku.core.exceptions.ApplicationException;
+import com.docdoku.core.exceptions.EntityNotFoundException;
+import com.docdoku.core.exceptions.UserNotActiveException;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.security.WorkspaceUserGroupMembership;
 import com.docdoku.core.security.WorkspaceUserMembership;
@@ -66,63 +67,53 @@ public class WorkspaceMembershipResource {
     @GET
     @Path("users")
     @Produces(MediaType.APPLICATION_JSON)
-    public WorkspaceUserMemberShipDTO[] getWorkspaceUserMemberShips (@PathParam("workspaceId") String workspaceId){
-        try{
-            WorkspaceUserMembership[] workspaceUserMemberships = userManager.getWorkspaceUserMemberships(workspaceId);
-            WorkspaceUserMemberShipDTO[] workspaceUserMemberShipDTO = new WorkspaceUserMemberShipDTO[workspaceUserMemberships.length];
-            for(int i = 0 ; i< workspaceUserMemberships.length ; i++){
-                workspaceUserMemberShipDTO[i] = mapper.map(workspaceUserMemberships[i],WorkspaceUserMemberShipDTO.class);
-            }
-            return workspaceUserMemberShipDTO;
-        } catch (ApplicationException ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
-        }
+    public WorkspaceUserMemberShipDTO[] getWorkspaceUserMemberShips (@PathParam("workspaceId") String workspaceId)
+            throws EntityNotFoundException, UserNotActiveException {
 
+        WorkspaceUserMembership[] workspaceUserMemberships = userManager.getWorkspaceUserMemberships(workspaceId);
+        WorkspaceUserMemberShipDTO[] workspaceUserMemberShipDTO = new WorkspaceUserMemberShipDTO[workspaceUserMemberships.length];
+        for(int i = 0 ; i< workspaceUserMemberships.length ; i++){
+            workspaceUserMemberShipDTO[i] = mapper.map(workspaceUserMemberships[i],WorkspaceUserMemberShipDTO.class);
+        }
+        return workspaceUserMemberShipDTO;
     }
 
     @GET
     @Path("users/me")
     @Produces(MediaType.APPLICATION_JSON)
-    public WorkspaceUserMemberShipDTO getWorkspaceSpecificUserMemberShips (@PathParam("workspaceId") String workspaceId){
-        try{
-            WorkspaceUserMembership workspaceUserMemberships = userManager.getWorkspaceSpecificUserMemberships(workspaceId);
-            return mapper.map(workspaceUserMemberships,WorkspaceUserMemberShipDTO.class);
-        } catch (ApplicationException ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
-        }
+    public WorkspaceUserMemberShipDTO getWorkspaceSpecificUserMemberShips (@PathParam("workspaceId") String workspaceId)
+            throws EntityNotFoundException, UserNotActiveException {
+
+        WorkspaceUserMembership workspaceUserMemberships = userManager.getWorkspaceSpecificUserMemberships(workspaceId);
+        return mapper.map(workspaceUserMemberships,WorkspaceUserMemberShipDTO.class);
     }
 
     @GET
     @Path("usergroups")
     @Produces(MediaType.APPLICATION_JSON)
-    public WorkspaceUserGroupMemberShipDTO[] getWorkspaceUserGroupMemberShips (@PathParam("workspaceId") String workspaceId){
-        try{
-            WorkspaceUserGroupMembership[] workspaceUserGroupMemberships = userManager.getWorkspaceUserGroupMemberships(workspaceId);
-            WorkspaceUserGroupMemberShipDTO[] workspaceUserGroupMemberShipDTO = new WorkspaceUserGroupMemberShipDTO[workspaceUserGroupMemberships.length];
-            for(int i = 0 ; i< workspaceUserGroupMemberships.length ; i++){
-                workspaceUserGroupMemberShipDTO[i] = mapper.map(workspaceUserGroupMemberships[i],WorkspaceUserGroupMemberShipDTO.class);
-            }
-            return workspaceUserGroupMemberShipDTO;
-        } catch (ApplicationException ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
+    public WorkspaceUserGroupMemberShipDTO[] getWorkspaceUserGroupMemberShips (@PathParam("workspaceId") String workspaceId)
+            throws EntityNotFoundException, UserNotActiveException {
+
+        WorkspaceUserGroupMembership[] workspaceUserGroupMemberships = userManager.getWorkspaceUserGroupMemberships(workspaceId);
+        WorkspaceUserGroupMemberShipDTO[] workspaceUserGroupMemberShipDTO = new WorkspaceUserGroupMemberShipDTO[workspaceUserGroupMemberships.length];
+        for(int i = 0 ; i< workspaceUserGroupMemberships.length ; i++){
+            workspaceUserGroupMemberShipDTO[i] = mapper.map(workspaceUserGroupMemberships[i],WorkspaceUserGroupMemberShipDTO.class);
         }
+        return workspaceUserGroupMemberShipDTO;
     }
 
     @GET
     @Path("usergroups/me")
     @Produces(MediaType.APPLICATION_JSON)
-    public WorkspaceUserGroupMemberShipDTO[] getWorkspaceSpecificUserGroupMemberShips (@PathParam("workspaceId") String workspaceId){
-        try{
-            WorkspaceUserGroupMembership[] workspaceUserGroupMemberships = userManager.getWorkspaceSpecificUserGroupMemberships(workspaceId);
-            WorkspaceUserGroupMemberShipDTO[] workspaceUserGroupMemberShipDTO = new WorkspaceUserGroupMemberShipDTO[workspaceUserGroupMemberships.length];
-            for(int i = 0 ; i< workspaceUserGroupMemberships.length ; i++){
-                workspaceUserGroupMemberShipDTO[i] = mapper.map(workspaceUserGroupMemberships[i],WorkspaceUserGroupMemberShipDTO.class);
-            }
-            return workspaceUserGroupMemberShipDTO;
-        } catch (ApplicationException ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
-        }
+    public WorkspaceUserGroupMemberShipDTO[] getWorkspaceSpecificUserGroupMemberShips (@PathParam("workspaceId") String workspaceId)
+            throws EntityNotFoundException, UserNotActiveException {
 
+        WorkspaceUserGroupMembership[] workspaceUserGroupMemberships = userManager.getWorkspaceSpecificUserGroupMemberships(workspaceId);
+        WorkspaceUserGroupMemberShipDTO[] workspaceUserGroupMemberShipDTO = new WorkspaceUserGroupMemberShipDTO[workspaceUserGroupMemberships.length];
+        for(int i = 0 ; i< workspaceUserGroupMemberships.length ; i++){
+            workspaceUserGroupMemberShipDTO[i] = mapper.map(workspaceUserGroupMemberships[i],WorkspaceUserGroupMemberShipDTO.class);
+        }
+        return workspaceUserGroupMemberShipDTO;
     }
 
 }

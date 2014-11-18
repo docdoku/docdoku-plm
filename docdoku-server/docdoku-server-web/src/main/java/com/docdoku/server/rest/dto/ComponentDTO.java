@@ -158,10 +158,10 @@ public class ComponentDTO implements Serializable{
     }
 
     public Date getCheckOutDate() {
-        return checkOutDate;
+        return (checkOutDate!=null) ? (Date) checkOutDate.clone() : null;
     }
     public void setCheckOutDate(Date checkOutDate) {
-        this.checkOutDate = checkOutDate;
+        this.checkOutDate = (checkOutDate!=null) ? (Date) checkOutDate.clone() : null;
     }
 
     public int getLastIterationNumber() {

@@ -41,8 +41,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -57,8 +55,6 @@ public class WorkflowResource {
 
     private Mapper mapper;
 
-    private static final Logger LOGGER = Logger.getLogger(WorkflowResource.class.getName());
-
     public WorkflowResource() {
     }
 
@@ -69,98 +65,59 @@ public class WorkflowResource {
     
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public WorkflowModelDTO[] getWorkflowsInWorkspace(@PathParam("workspaceId") String workspaceId) {
-        try {
+    public WorkflowModelDTO[] getWorkflowsInWorkspace(@PathParam("workspaceId") String workspaceId)
+            throws EntityNotFoundException, UserNotActiveException {
 
-            WorkflowModel[] workflowModels = workflowService.getWorkflowModels(workspaceId);
-            WorkflowModelDTO[] dtos = new WorkflowModelDTO[workflowModels.length];
-            
-            for(int i=0; i<workflowModels.length; i++){
-                dtos[i] = mapper.map(workflowModels[i], WorkflowModelDTO.class);
-            }
-            
-            return dtos;
-            
-        } catch (UserNotFoundException | UserNotActiveException e) {
-            LOGGER.log(Level.WARNING, null, e);
-            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
-        } catch (WorkspaceNotFoundException e) {
-            LOGGER.log(Level.WARNING, null, e);
-            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
+        WorkflowModel[] workflowModels = workflowService.getWorkflowModels(workspaceId);
+        WorkflowModelDTO[] dtos = new WorkflowModelDTO[workflowModels.length];
+
+        for(int i=0; i<workflowModels.length; i++){
+            dtos[i] = mapper.map(workflowModels[i], WorkflowModelDTO.class);
         }
+
+        return dtos;
     }
 
     @GET
     @Path("{workflowModelId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public WorkflowModelDTO getWorkflowInWorkspace(@PathParam("workspaceId") String workspaceId, @PathParam("workflowModelId") String workflowModelId) {
-        try{
-            WorkflowModel workflowModel = workflowService.getWorkflowModel(new WorkflowModelKey(workspaceId, workflowModelId));
-            return mapper.map(workflowModel, WorkflowModelDTO.class);
-        } catch (UserNotFoundException | UserNotActiveException e) {
-            LOGGER.log(Level.WARNING, null, e);
-            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
-        } catch (WorkspaceNotFoundException | WorkflowModelNotFoundException e) {
-            LOGGER.log(Level.WARNING, null, e);
-            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
-        }
+    public WorkflowModelDTO getWorkflowInWorkspace(@PathParam("workspaceId") String workspaceId, @PathParam("workflowModelId") String workflowModelId)
+            throws EntityNotFoundException, UserNotActiveException {
+
+        WorkflowModel workflowModel = workflowService.getWorkflowModel(new WorkflowModelKey(workspaceId, workflowModelId));
+        return mapper.map(workflowModel, WorkflowModelDTO.class);
     }
 
     @DELETE
     @Path("{workflowModelId}")
-    public Response delWorkflowModel(@PathParam("workspaceId") String workspaceId, @PathParam("workflowModelId") String workflowModelId){
-        try {
-            workflowService.deleteWorkflowModel(new WorkflowModelKey(workspaceId, workflowModelId));
-            return Response.status(Response.Status.OK).build();
-        } catch (UserNotFoundException | AccessRightException e) {
-            LOGGER.log(Level.WARNING, null, e);
-            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
-        } catch (WorkspaceNotFoundException | WorkflowModelNotFoundException e) {
-            LOGGER.log(Level.WARNING, null, e);
-            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
-        }
+    public Response delWorkflowModel(@PathParam("workspaceId") String workspaceId, @PathParam("workflowModelId") String workflowModelId)
+            throws EntityNotFoundException, AccessRightException {
+
+        workflowService.deleteWorkflowModel(new WorkflowModelKey(workspaceId, workflowModelId));
+        return Response.status(Response.Status.OK).build();
     }
 
     @PUT
     @Path("{workflowModelId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public WorkflowModelDTO updateWorkflowModelInWorkspace(@PathParam("workspaceId") String workspaceId, @PathParam("workflowModelId") String workflowModelId, WorkflowModelDTO workflowModelDTOToPersist) {
-        try {
-            workflowService.deleteWorkflowModel(new WorkflowModelKey(workspaceId, workflowModelId));
-            return this.createWorkflowModelInWorkspace(workspaceId, workflowModelDTOToPersist);
-        } catch (UserNotFoundException | AccessRightException e) {
-            LOGGER.log(Level.WARNING, null, e);
-            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
-        } catch (WorkspaceNotFoundException | WorkflowModelNotFoundException e) {
-            LOGGER.log(Level.WARNING, null, e);
-            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
-        }
+    public WorkflowModelDTO updateWorkflowModelInWorkspace(@PathParam("workspaceId") String workspaceId, @PathParam("workflowModelId") String workflowModelId, WorkflowModelDTO workflowModelDTOToPersist)
+            throws EntityNotFoundException, AccessRightException, EntityAlreadyExistsException, CreationException, UserNotActiveException, NotAllowedException {
+
+        workflowService.deleteWorkflowModel(new WorkflowModelKey(workspaceId, workflowModelId));
+        return this.createWorkflowModelInWorkspace(workspaceId, workflowModelDTOToPersist);
     }
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
-    public WorkflowModelDTO createWorkflowModelInWorkspace(@PathParam("workspaceId") String workspaceId, WorkflowModelDTO workflowModelDTOToPersist) {
-        try {
-            Role[] roles = workflowService.getRoles(workspaceId);
-            List<ActivityModelDTO> activityModelDTOsList = workflowModelDTOToPersist.getActivityModels();
-            ActivityModel[] activityModels = extractActivityModelFromDTO(activityModelDTOsList,roles);
+    public WorkflowModelDTO createWorkflowModelInWorkspace(@PathParam("workspaceId") String workspaceId, WorkflowModelDTO workflowModelDTOToPersist)
+            throws EntityNotFoundException, EntityAlreadyExistsException, UserNotActiveException, NotAllowedException, AccessRightException, CreationException {
 
-            WorkflowModel workflowModel = workflowService.createWorkflowModel(workspaceId, workflowModelDTOToPersist.getReference(), workflowModelDTOToPersist.getFinalLifeCycleState(), activityModels);
-            return mapper.map(workflowModel, WorkflowModelDTO.class);
+        Role[] roles = workflowService.getRoles(workspaceId);
+        List<ActivityModelDTO> activityModelDTOsList = workflowModelDTOToPersist.getActivityModels();
+        ActivityModel[] activityModels = extractActivityModelFromDTO(activityModelDTOsList,roles);
 
-        } catch (UserNotActiveException | UserNotFoundException | AccessRightException e) {
-            LOGGER.log(Level.WARNING, null, e);
-            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
-        } catch (WorkspaceNotFoundException e) {
-            LOGGER.log(Level.WARNING, null, e);
-            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
-        } catch (WorkflowModelAlreadyExistsException e) {
-            LOGGER.log(Level.WARNING, null, e);
-            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.CONFLICT);
-        } catch (CreationException | NotAllowedException e) {
-            LOGGER.log(Level.WARNING, null, e);
-            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.BAD_REQUEST);
-        }
+        WorkflowModel workflowModel = workflowService.createWorkflowModel(workspaceId, workflowModelDTOToPersist.getReference(), workflowModelDTOToPersist.getFinalLifeCycleState(), activityModels);
+        return mapper.map(workflowModel, WorkflowModelDTO.class);
     }
 
     private ActivityModel[] extractActivityModelFromDTO(List<ActivityModelDTO> activityModelDTOsList, Role[] roles) throws NotAllowedException {

@@ -29,7 +29,7 @@ import java.util.Locale;
  *
  * @author Florent Garin
  */
-public class DocumentMasterAlreadyExistsException extends ApplicationException {
+public class DocumentMasterAlreadyExistsException extends EntityAlreadyExistsException {
     private final DocumentMaster mDocM;
     
     
@@ -46,7 +46,8 @@ public class DocumentMasterAlreadyExistsException extends ApplicationException {
         super(pLocale, pCause);
         mDocM=pDocM;
     }
-    
+
+    @Override
     public String getLocalizedMessage() {
         String message = getBundleDefaultMessage();
         return MessageFormat.format(message,mDocM);     

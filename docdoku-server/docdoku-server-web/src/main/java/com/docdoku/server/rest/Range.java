@@ -88,7 +88,7 @@ public class Range {
             // bytes=499- : from 500th bytes to the end
             minRange = range.getMin();
             maxRange = lengthOfFile - 1;
-        } else if (range.getMin() != -1 && range.getMax() != -1) {
+        } else if (range.getMin() != -1) {
             // bytes=499-999 : from 500th bytes to the 1000th bytes
             minRange = range.getMin();
             maxRange = range.getMax();

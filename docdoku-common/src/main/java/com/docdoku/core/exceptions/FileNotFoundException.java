@@ -27,7 +27,7 @@ import java.util.Locale;
  *
  * @author Florent Garin
  */
-public class FileNotFoundException extends ApplicationException {
+public class FileNotFoundException extends EntityNotFoundException {
     private final String mFullName;
     
     public FileNotFoundException(String pMessage) {

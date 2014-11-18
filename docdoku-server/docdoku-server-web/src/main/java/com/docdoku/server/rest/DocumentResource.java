@@ -51,8 +51,6 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 @Stateless
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
@@ -66,7 +64,6 @@ public class DocumentResource {
     @EJB
     private IDocumentConfigSpecManagerLocal documentConfigSpecService;
 
-    private static final Logger LOGGER = Logger.getLogger(DocumentResource.class.getName());
     private static final String BASELINE_LATEST = "latest";
     private static final String BASELINE_UNDEFINED = "undefined";
     private Mapper mapper;
@@ -205,294 +202,226 @@ public class DocumentResource {
     @Path("/iterations/{docIteration}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public DocumentIterationDTO updateDocMs(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion, @PathParam("docIteration") String docIteration, DocumentIterationDTO data) {
-        try {
-            String pRevisionNote = data.getRevisionNote();
-            int pIteration = Integer.parseInt(docIteration);
+    public DocumentIterationDTO updateDocMs(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion, @PathParam("docIteration") String docIteration, DocumentIterationDTO data)
+            throws EntityNotFoundException, NotAllowedException, AccessRightException, UserNotActiveException{
+        String pRevisionNote = data.getRevisionNote();
+        int pIteration = Integer.parseInt(docIteration);
 
-            List<DocumentIterationDTO> linkedDocs = data.getLinkedDocuments();
-            DocumentIterationKey[] links = null;
-            if (linkedDocs != null) {
-                links = createDocumentIterationKeys(linkedDocs);
-            }
-
-            List<InstanceAttributeDTO> instanceAttributes = data.getInstanceAttributes();
-            InstanceAttribute[] attributes = null;
-            if (instanceAttributes != null) {
-                attributes = createInstanceAttributes(instanceAttributes);
-            }
-
-            DocumentRevision docR = documentService.updateDocument(new DocumentIterationKey(workspaceId, documentId, documentVersion, pIteration), pRevisionNote, attributes, links);
-            return mapper.map(docR.getLastIteration(), DocumentIterationDTO.class);
-        } catch (ApplicationException ex) {
-            LOGGER.log(Level.WARNING,null,ex);
-            throw new RestApiException(ex.toString(), ex.getMessage());
+        List<DocumentIterationDTO> linkedDocs = data.getLinkedDocuments();
+        DocumentIterationKey[] links = null;
+        if (linkedDocs != null) {
+            links = createDocumentIterationKeys(linkedDocs);
         }
 
+        List<InstanceAttributeDTO> instanceAttributes = data.getInstanceAttributes();
+        InstanceAttribute[] attributes = null;
+        if (instanceAttributes != null) {
+            attributes = createInstanceAttributes(instanceAttributes);
+        }
+
+        DocumentRevision docR = documentService.updateDocument(new DocumentIterationKey(workspaceId, documentId, documentVersion, pIteration), pRevisionNote, attributes, links);
+        return mapper.map(docR.getLastIteration(), DocumentIterationDTO.class);
     }
 
     @PUT
     @Path("/newVersion")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public DocumentRevisionDTO[] createNewVersion(@PathParam("workspaceId") String pWorkspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion, DocumentCreationDTO docCreationDTO) {
+    public DocumentRevisionDTO[] createNewVersion(@PathParam("workspaceId") String pWorkspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion, DocumentCreationDTO docCreationDTO)
+            throws EntityNotFoundException, EntityAlreadyExistsException, NotAllowedException, AccessRightException, CreationException, UserNotActiveException {
         String pTitle = docCreationDTO.getTitle();
         String pDescription = docCreationDTO.getDescription();
         String pWorkflowModelId = docCreationDTO.getWorkflowModelId();
         RoleMappingDTO[] rolesMappingDTO = docCreationDTO.getRoleMapping();
         ACLDTO acl = docCreationDTO.getAcl();
 
-        try {
-
-            ACLUserEntry[] userEntries = null;
-            ACLUserGroupEntry[] userGroupEntries = null;
-            if (acl != null) {
-                userEntries = new ACLUserEntry[acl.getUserEntries().size()];
-                userGroupEntries = new ACLUserGroupEntry[acl.getGroupEntries().size()];
-                int i = 0;
-                for (Map.Entry<String, ACL.Permission> entry : acl.getUserEntries().entrySet()) {
-                    userEntries[i] = new ACLUserEntry();
-                    userEntries[i].setPrincipal(new User(new Workspace(pWorkspaceId), entry.getKey()));
-                    userEntries[i++].setPermission(ACL.Permission.valueOf(entry.getValue().name()));
-                }
-                i = 0;
-                for (Map.Entry<String, ACL.Permission> entry : acl.getGroupEntries().entrySet()) {
-                    userGroupEntries[i] = new ACLUserGroupEntry();
-                    userGroupEntries[i].setPrincipal(new UserGroup(new Workspace(pWorkspaceId), entry.getKey()));
-                    userGroupEntries[i++].setPermission(ACL.Permission.valueOf(entry.getValue().name()));
-                }
+        ACLUserEntry[] userEntries = null;
+        ACLUserGroupEntry[] userGroupEntries = null;
+        if (acl != null) {
+            userEntries = new ACLUserEntry[acl.getUserEntries().size()];
+            userGroupEntries = new ACLUserGroupEntry[acl.getGroupEntries().size()];
+            int i = 0;
+            for (Map.Entry<String, ACL.Permission> entry : acl.getUserEntries().entrySet()) {
+                userEntries[i] = new ACLUserEntry();
+                userEntries[i].setPrincipal(new User(new Workspace(pWorkspaceId), entry.getKey()));
+                userEntries[i++].setPermission(ACL.Permission.valueOf(entry.getValue().name()));
             }
-
-            Map<String, String> roleMappings = new HashMap<>();
-
-            if (rolesMappingDTO != null) {
-                for(RoleMappingDTO roleMappingDTO : rolesMappingDTO) {
-                    roleMappings.put(roleMappingDTO.getRoleName(), roleMappingDTO.getUserLogin());
-                }
+            i = 0;
+            for (Map.Entry<String, ACL.Permission> entry : acl.getGroupEntries().entrySet()) {
+                userGroupEntries[i] = new ACLUserGroupEntry();
+                userGroupEntries[i].setPrincipal(new UserGroup(new Workspace(pWorkspaceId), entry.getKey()));
+                userGroupEntries[i++].setPermission(ACL.Permission.valueOf(entry.getValue().name()));
             }
-
-            DocumentRevision[] docR = documentService.createDocumentRevision(new DocumentRevisionKey(pWorkspaceId, documentId, documentVersion), pTitle, pDescription, pWorkflowModelId, userEntries, userGroupEntries, roleMappings);
-            DocumentRevisionDTO[] dtos = new DocumentRevisionDTO[docR.length];
-
-            for (int i = 0; i < docR.length; i++) {
-                dtos[i] = mapper.map(docR[i], DocumentRevisionDTO.class);
-                dtos[i].setPath(docR[i].getLocation().getCompletePath());
-                dtos[i].setLifeCycleState(docR[i].getLifeCycleState());
-                dtos[i] = Tools.createLightDocumentRevisionDTO(dtos[i]);
-                dtos[i].setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(pWorkspaceId,docR[i]));
-                dtos[i].setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(pWorkspaceId,docR[i]));
-            }
-
-            return dtos;
-
-        } catch (ApplicationException ex) {
-            LOGGER.log(Level.WARNING,null,ex);
-            throw new RestApiException(ex.toString(), ex.getMessage());
         }
+
+        Map<String, String> roleMappings = new HashMap<>();
+
+        if (rolesMappingDTO != null) {
+            for(RoleMappingDTO roleMappingDTO : rolesMappingDTO) {
+                roleMappings.put(roleMappingDTO.getRoleName(), roleMappingDTO.getUserLogin());
+            }
+        }
+
+        DocumentRevision[] docR = documentService.createDocumentRevision(new DocumentRevisionKey(pWorkspaceId, documentId, documentVersion), pTitle, pDescription, pWorkflowModelId, userEntries, userGroupEntries, roleMappings);
+        DocumentRevisionDTO[] dtos = new DocumentRevisionDTO[docR.length];
+
+        for (int i = 0; i < docR.length; i++) {
+            dtos[i] = mapper.map(docR[i], DocumentRevisionDTO.class);
+            dtos[i].setPath(docR[i].getLocation().getCompletePath());
+            dtos[i].setLifeCycleState(docR[i].getLifeCycleState());
+            dtos[i] = Tools.createLightDocumentRevisionDTO(dtos[i]);
+            dtos[i].setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(pWorkspaceId,docR[i]));
+            dtos[i].setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(pWorkspaceId,docR[i]));
+        }
+
+        return dtos;
     }
 
     @PUT
     @Path("/tags")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public DocumentRevisionDTO saveDocTags(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion, List<TagDTO> tagDtos) {
+    public DocumentRevisionDTO saveDocTags(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion, List<TagDTO> tagDtos)
+            throws EntityNotFoundException, NotAllowedException, ESServerException, AccessRightException, UserNotActiveException{
         String[] tagsLabel = new String[tagDtos.size()];
         for (int i = 0; i < tagDtos.size(); i++) {
             tagsLabel[i] = tagDtos.get(i).getLabel();
         }
 
-        try {
-            DocumentRevision docRs = documentService.saveTags(new DocumentRevisionKey(workspaceId, documentId, documentVersion), tagsLabel);
-            DocumentRevisionDTO docRsDto = mapper.map(docRs, DocumentRevisionDTO.class);
-            docRsDto.setPath(docRs.getLocation().getCompletePath());
-            docRsDto.setLifeCycleState(docRs.getLifeCycleState());
+        DocumentRevision docRs = documentService.saveTags(new DocumentRevisionKey(workspaceId, documentId, documentVersion), tagsLabel);
+        DocumentRevisionDTO docRsDto = mapper.map(docRs, DocumentRevisionDTO.class);
+        docRsDto.setPath(docRs.getLocation().getCompletePath());
+        docRsDto.setLifeCycleState(docRs.getLifeCycleState());
 
-            return docRsDto;
-        } catch (ApplicationException ex) {
-            LOGGER.log(Level.WARNING,null,ex);
-            throw new RestApiException(ex.toString(), ex.getMessage());
-        }
+        return docRsDto;
     }
 
     @POST
     @Path("/tags")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response addDocTag(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion, List<TagDTO> tagDtos) {
-        try {
-            DocumentRevisionKey docRPK=new DocumentRevisionKey(workspaceId, documentId, documentVersion);
-            DocumentRevision docR = documentService.getDocumentRevision(docRPK);
-            Set<Tag> tags = docR.getTags();
-            Set<String> tagLabels = new HashSet<>();
+    public Response addDocTag(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion, List<TagDTO> tagDtos)
+            throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException, ESServerException {
 
-            for(TagDTO tagDto:tagDtos){
-                tagLabels.add(tagDto.getLabel());
-            }
+        DocumentRevisionKey docRPK=new DocumentRevisionKey(workspaceId, documentId, documentVersion);
+        DocumentRevision docR = documentService.getDocumentRevision(docRPK);
+        Set<Tag> tags = docR.getTags();
+        Set<String> tagLabels = new HashSet<>();
 
-            for(Tag tag : tags){
-                tagLabels.add(tag.getLabel());
-            }
-
-            documentService.saveTags(docRPK,tagLabels.toArray(new String[tagLabels.size()]));
-            return Response.ok().build();
-
-        } catch (ApplicationException ex) {
-            LOGGER.log(Level.WARNING,null,ex);
-            throw new RestApiException(ex.toString(), ex.getMessage());
+        for(TagDTO tagDto:tagDtos){
+            tagLabels.add(tagDto.getLabel());
         }
+
+        for(Tag tag : tags){
+            tagLabels.add(tag.getLabel());
+        }
+
+        documentService.saveTags(docRPK,tagLabels.toArray(new String[tagLabels.size()]));
+        return Response.ok().build();
     }
 
     @DELETE
     @Path("/tags/{tagName}")
-    public Response removeDocTags(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion, @PathParam("tagName") String tagName) {
-        try {
-            documentService.removeTag(new DocumentRevisionKey(workspaceId, documentId, documentVersion), tagName);
-            return Response.ok().build();
-        } catch (ApplicationException ex) {
-            LOGGER.log(Level.WARNING,null,ex);
-            throw new RestApiException(ex.toString(), ex.getMessage());
-        }
+    public Response removeDocTags(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion, @PathParam("tagName") String tagName)
+            throws EntityNotFoundException, NotAllowedException, AccessRightException, UserNotActiveException, ESServerException {
+        documentService.removeTag(new DocumentRevisionKey(workspaceId, documentId, documentVersion), tagName);
+        return Response.ok().build();
     }
 
     @DELETE
-    public Response deleteDocument(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion) {
-        try {
-            documentService.deleteDocumentRevision(new DocumentRevisionKey(workspaceId, documentId, documentVersion));
-            return Response.ok().build();
-        } catch (NotAllowedException | AccessRightException | UserNotActiveException | UserNotFoundException e) {
-            LOGGER.log(Level.WARNING, null, e);
-            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
-        } catch (WorkspaceNotFoundException | DocumentRevisionNotFoundException e) {
-            LOGGER.log(Level.WARNING, null, e);
-            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
-        } catch (EntityConstraintException e) {
-            LOGGER.log(Level.WARNING, null, e);
-            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.CONFLICT);
-        } catch (ESServerException e) {
-            LOGGER.log(Level.SEVERE, null, e);
-            throw new RestApiException(e.toString(), e.getMessage(), Response.Status.BAD_REQUEST);
-        }
+    public Response deleteDocument(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion)
+            throws EntityNotFoundException, NotAllowedException, AccessRightException, UserNotActiveException, ESServerException, EntityConstraintException {
+        documentService.deleteDocumentRevision(new DocumentRevisionKey(workspaceId, documentId, documentVersion));
+        return Response.ok().build();
     }
 
     @DELETE
     @Path("/iterations/{docIteration}/files/{fileName}")
-    public Response removeAttachedFile(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion, @PathParam("docIteration") int docIteration, @PathParam("fileName") String fileName) {
-        try {
-            String fileFullName = workspaceId + "/documents/" + documentId + "/" + documentVersion + "/" + docIteration + "/" + fileName;
-            documentService.removeFileFromDocument(fileFullName);
-            return Response.ok().build();
-        } catch (ApplicationException ex) {
-            LOGGER.log(Level.WARNING,null,ex);
-            throw new RestApiException(ex.toString(), ex.getMessage());
-        }
+    public Response removeAttachedFile(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion, @PathParam("docIteration") int docIteration, @PathParam("fileName") String fileName)
+            throws EntityNotFoundException, NotAllowedException, AccessRightException, UserNotActiveException {
+        String fileFullName = workspaceId + "/documents/" + documentId + "/" + documentVersion + "/" + docIteration + "/" + fileName;
+        documentService.removeFileFromDocument(fileFullName);
+        return Response.ok().build();
     }
 
     @POST
     @Path("share")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createSharedDocument(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion, SharedDocumentDTO pSharedDocumentDTO) {
+    public Response createSharedDocument(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion, SharedDocumentDTO pSharedDocumentDTO)
+            throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException {
 
         String password = pSharedDocumentDTO.getPassword();
         Date expireDate = pSharedDocumentDTO.getExpireDate();
 
-        try {
-            SharedDocument sharedDocument = documentService.createSharedDocument(new DocumentRevisionKey(workspaceId, documentId, documentVersion),password,expireDate);
-            SharedDocumentDTO sharedDocumentDTO = mapper.map(sharedDocument,SharedDocumentDTO.class);
-            return Response.ok().entity(sharedDocumentDTO).build();
-        } catch (ApplicationException ex) {
-            LOGGER.log(Level.WARNING,null,ex);
-            throw new RestApiException(ex.toString(), ex.getMessage());
-        }
-
+        SharedDocument sharedDocument = documentService.createSharedDocument(new DocumentRevisionKey(workspaceId, documentId, documentVersion),password,expireDate);
+        SharedDocumentDTO sharedDocumentDTO = mapper.map(sharedDocument,SharedDocumentDTO.class);
+        return Response.ok().entity(sharedDocumentDTO).build();
     }
 
 
     @PUT
     @Path("publish")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response publishPartRevision(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion) {
-        try {
-            DocumentRevision documentRevision = documentService.getDocumentRevision(new DocumentRevisionKey(workspaceId, documentId, documentVersion));
-            documentRevision.setPublicShared(true);
-            return Response.ok().build();
-        } catch (ApplicationException ex) {
-            LOGGER.log(Level.WARNING,null,ex);
-            throw new RestApiException(ex.toString(), ex.getMessage());
-        }
+    public Response publishPartRevision(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion)
+            throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException {
+        DocumentRevision documentRevision = documentService.getDocumentRevision(new DocumentRevisionKey(workspaceId, documentId, documentVersion));
+        documentRevision.setPublicShared(true);
+        return Response.ok().build();
     }
 
     @PUT
     @Path("unpublish")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response unPublishPartRevision(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion) {
-        try {
-            DocumentRevision documentRevision = documentService.getDocumentRevision(new DocumentRevisionKey(workspaceId, documentId, documentVersion));
-            documentRevision.setPublicShared(false);
-            return Response.ok().build();
-        } catch (ApplicationException ex) {
-            LOGGER.log(Level.WARNING,null,ex);
-            throw new RestApiException(ex.toString(), ex.getMessage());
-        }
-
+    public Response unPublishPartRevision(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion)
+            throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException {
+        DocumentRevision documentRevision = documentService.getDocumentRevision(new DocumentRevisionKey(workspaceId, documentId, documentVersion));
+        documentRevision.setPublicShared(false);
+        return Response.ok().build();
     }
 
     @PUT
     @Path("acl")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateACL(@PathParam("workspaceId") String pWorkspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion, ACLDTO acl) {
-        try {
-            DocumentRevisionKey documentRevisionKey = new DocumentRevisionKey(pWorkspaceId, documentId, documentVersion);
+    public Response updateACL(@PathParam("workspaceId") String pWorkspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion, ACLDTO acl)
+            throws EntityNotFoundException, AccessRightException, UserNotActiveException {
+        DocumentRevisionKey documentRevisionKey = new DocumentRevisionKey(pWorkspaceId, documentId, documentVersion);
 
-            if (!acl.getGroupEntries().isEmpty() || !acl.getUserEntries().isEmpty()) {
+        if (!acl.getGroupEntries().isEmpty() || !acl.getUserEntries().isEmpty()) {
 
-                Map<String,String> userEntries = new HashMap<>();
-                Map<String,String> groupEntries = new HashMap<>();
+            Map<String,String> userEntries = new HashMap<>();
+            Map<String,String> groupEntries = new HashMap<>();
 
-                for (Map.Entry<String, ACL.Permission> entry : acl.getUserEntries().entrySet()) {
-                    userEntries.put(entry.getKey(), entry.getValue().name());
-                }
-
-                for (Map.Entry<String, ACL.Permission> entry : acl.getGroupEntries().entrySet()) {
-                    groupEntries.put(entry.getKey(), entry.getValue().name());
-                }
-
-                documentService.updateDocumentACL(pWorkspaceId, documentRevisionKey, userEntries, groupEntries);
-            }else{
-                documentService.removeACLFromDocumentRevision(documentRevisionKey);
+            for (Map.Entry<String, ACL.Permission> entry : acl.getUserEntries().entrySet()) {
+                userEntries.put(entry.getKey(), entry.getValue().name());
             }
-            return Response.ok().build();
-        } catch (UserNotFoundException | AccessRightException | UserNotActiveException e) {
-            LOGGER.log(Level.WARNING, null, e);
-            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
-        } catch (WorkspaceNotFoundException | DocumentRevisionNotFoundException e) {
-            LOGGER.log(Level.WARNING, null, e);
-            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
+
+            for (Map.Entry<String, ACL.Permission> entry : acl.getGroupEntries().entrySet()) {
+                groupEntries.put(entry.getKey(), entry.getValue().name());
+            }
+
+            documentService.updateDocumentACL(pWorkspaceId, documentRevisionKey, userEntries, groupEntries);
+        }else{
+            documentService.removeACLFromDocumentRevision(documentRevisionKey);
         }
+        return Response.ok().build();
     }
 
     @GET
     @Path("aborted-workflows")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<WorkflowDTO> getAbortedWorkflows(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion) {
-        try {
-            Workflow[] abortedWorkflows = documentWorkflowService.getAbortedWorkflow(new DocumentRevisionKey(workspaceId, documentId, documentVersion));
-            List<WorkflowDTO> abortedWorkflowsDTO = new ArrayList<>();
+    public List<WorkflowDTO> getAbortedWorkflows(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion)
+            throws EntityNotFoundException, AccessRightException, UserNotActiveException {
+        Workflow[] abortedWorkflows = documentWorkflowService.getAbortedWorkflow(new DocumentRevisionKey(workspaceId, documentId, documentVersion));
+        List<WorkflowDTO> abortedWorkflowsDTO = new ArrayList<>();
 
-            for(Workflow abortedWorkflow:abortedWorkflows){
-                abortedWorkflowsDTO.add(mapper.map(abortedWorkflow,WorkflowDTO.class));
-            }
-
-            Collections.sort(abortedWorkflowsDTO);
-
-            return abortedWorkflowsDTO;
-        } catch (UserNotFoundException | UserNotActiveException | AccessRightException e) {
-            LOGGER.log(Level.WARNING,null, e);
-            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
-        } catch (WorkspaceNotFoundException | DocumentRevisionNotFoundException e) {
-            LOGGER.log(Level.WARNING,null, e);
-            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
+        for(Workflow abortedWorkflow:abortedWorkflows){
+            abortedWorkflowsDTO.add(mapper.map(abortedWorkflow,WorkflowDTO.class));
         }
+
+        Collections.sort(abortedWorkflowsDTO);
+
+        return abortedWorkflowsDTO;
     }
 
     private InstanceAttribute[] createInstanceAttributes(List<InstanceAttributeDTO> dtos) {

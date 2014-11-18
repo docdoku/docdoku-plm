@@ -20,7 +20,7 @@
 package com.docdoku.server.rest;
 
 import com.docdoku.core.common.Workspace;
-import com.docdoku.core.exceptions.AccountNotFoundException;
+import com.docdoku.core.exceptions.EntityNotFoundException;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.rest.dto.WorkspaceDTO;
@@ -107,7 +107,7 @@ public class WorkspaceResource {
     }
 
     @GET
-    public WorkspaceListDTO getWorkspacesForConnectedUser() throws AccountNotFoundException {
+    public WorkspaceListDTO getWorkspacesForConnectedUser() throws EntityNotFoundException {
 
         WorkspaceListDTO workspaceListDTO = new WorkspaceListDTO();
 
@@ -125,7 +125,7 @@ public class WorkspaceResource {
 
     @GET
     @Path("/more")
-    public List<WorkspaceDetailsDTO> getDetailedWorkspacesForConnectedUser() throws AccountNotFoundException {
+    public List<WorkspaceDetailsDTO> getDetailedWorkspacesForConnectedUser() throws EntityNotFoundException {
         List<WorkspaceDetailsDTO> workspaceListDTO = new ArrayList<>();
 
         for(Workspace workspace : userManager.getWorkspacesWhereCallerIsActive()){
