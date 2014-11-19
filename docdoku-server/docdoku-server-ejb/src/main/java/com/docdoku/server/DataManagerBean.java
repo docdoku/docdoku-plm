@@ -22,6 +22,7 @@ package com.docdoku.server;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.exceptions.FileNotFoundException;
 import com.docdoku.core.exceptions.StorageException;
+import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.server.storage.StorageProvider;
 import com.docdoku.server.storage.filesystem.FileStorageProvider;
@@ -37,7 +38,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
-@DeclareRoles("users")
+@DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @Local(IDataManagerLocal.class)
 @Stateless(name = "DataManagerBean")
 public class DataManagerBean implements IDataManagerLocal {

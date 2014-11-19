@@ -25,7 +25,7 @@ import javax.persistence.PersistenceContext;
 import java.text.MessageFormat;
 import java.util.*;
 
-@DeclareRoles({"users","admin","guest-proxy"})
+@DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID, UserGroupMapping.GUEST_PROXY_ROLE_ID})
 @Local(IProductBaselineManagerLocal.class)
 @Stateless(name = "ProductBaselineManagerBean")
 public class ProductBaselineManagerBean implements IProductBaselineManagerLocal {

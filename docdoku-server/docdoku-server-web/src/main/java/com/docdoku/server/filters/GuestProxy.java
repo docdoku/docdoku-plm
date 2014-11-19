@@ -8,6 +8,7 @@ import com.docdoku.core.document.DocumentRevisionKey;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.product.PartRevisionKey;
+import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
 
@@ -18,8 +19,8 @@ import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.security.auth.login.LoginException;
 
-@DeclareRoles("guest-proxy")
-@RunAs("guest-proxy")
+@DeclareRoles(UserGroupMapping.GUEST_PROXY_ROLE_ID)
+@RunAs(UserGroupMapping.GUEST_PROXY_ROLE_ID)
 @LocalBean
 @Stateless
 public class GuestProxy{

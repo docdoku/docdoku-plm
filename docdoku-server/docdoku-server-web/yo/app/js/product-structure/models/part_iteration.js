@@ -1,32 +1,32 @@
-/*global define*/
+/*global define,App*/
 define([
     'backbone',
-    "common-objects/utils/date",
-    "common-objects/collections/attribute_collection",
-    "common-objects/collections/file/attached_file_collection"
+    'common-objects/utils/date',
+    'common-objects/collections/attribute_collection',
+    'common-objects/collections/file/attached_file_collection'
 ], function (Backbone, date, AttributeCollection, AttachedFileCollection) {
-
+    'use strict';
     var PartIteration = Backbone.Model.extend({
 
-        idAttribute: "iteration",
+        idAttribute: 'iteration',
 
         initialize: function () {
 
-            this.className = "PartIteration";
+            this.className = 'PartIteration';
 
-            var attributes = new AttributeCollection(this.get("instanceAttributes"));
-            this.set("instanceAttributes", attributes);
+            var attributes = new AttributeCollection(this.get('instanceAttributes'));
+            this.set('instanceAttributes', attributes);
 
             this.resetNativeCADFile();
 
         },
 
         resetNativeCADFile: function () {
-            var nativeCADFullName = this.get("nativeCADFile");
+            var nativeCADFullName = this.get('nativeCADFile');
             if (nativeCADFullName) {
                 var nativeCad = {
                     fullName: nativeCADFullName,
-                    shortName: _.last(nativeCADFullName.split("/")),
+                    shortName: _.last(nativeCADFullName.split('/')),
                     created: true
                 };
                 this._nativeCADFile = new AttachedFileCollection(nativeCad);
@@ -40,31 +40,31 @@ define([
         },
 
         getAttributes: function () {
-            return this.get("instanceAttributes");
+            return this.get('instanceAttributes');
         },
 
         getWorkspace: function () {
-            return this.get("workspaceId");
+            return this.get('workspaceId');
         },
 
         getReference: function () {
-            return this.getPartKey() + "-" + this.getIteration();
+            return this.getPartKey() + '-' + this.getIteration();
         },
 
         getIteration: function () {
-            return this.get("iteration");
+            return this.get('iteration');
         },
 
         getPartKey: function () {
-            return  this.get("number") + "-" + this.get("version");
+            return  this.get('number') + '-' + this.get('version');
         },
 
         getAttachedFiles: function () {
-            return this.get("nativeCADFile");
+            return this.get('nativeCADFile');
         },
 
         getBaseName: function () {
-            return App.config.contextPath + "/files/" + this.getWorkspace() + "/parts/" + this.get("number") + "/" + this.get("version") + "/" + this.get("iteration");
+            return App.config.contextPath + '/files/' + this.getWorkspace() + '/parts/' + this.get('number') + '/' + this.get('version') + '/' + this.get('iteration');
         },
 
         getNumber: function () {
@@ -76,11 +76,11 @@ define([
         },
 
         getComponents: function () {
-            return this.get("components");
+            return this.get('components');
         },
 
         getLinkedDocuments: function () {
-            return this.get("linkedDocuments");
+            return this.get('linkedDocuments');
         },
 
 
@@ -90,7 +90,7 @@ define([
          * @returns string
          */
         getUploadBaseUrl: function () {
-            return  App.config.contextPath + "/files/" + this.getWorkspace() + "/parts/" + this.getNumber() + "/" + this.getVersion() + "/" + this.get("iteration") + "/nativecad/";
+            return  App.config.contextPath + '/files/' + this.getWorkspace() + '/parts/' + this.getNumber() + '/' + this.getVersion() + '/' + this.get('iteration') + '/nativecad/';
         }
 
     });

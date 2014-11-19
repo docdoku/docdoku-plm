@@ -50,7 +50,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-@DeclareRoles({"users","admin","guest-proxy"})
+@DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID, UserGroupMapping.GUEST_PROXY_ROLE_ID})
 @Local(IDocumentBaselineManagerLocal.class)
 @Stateless(name = "DocumentBaselineManagerBean")
 public class DocumentBaselineManagerBean implements IDocumentBaselineManagerLocal {

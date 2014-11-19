@@ -46,7 +46,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-@DeclareRoles("users")
+@DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @Local(IWorkflowManagerLocal.class)
 @Stateless(name = "WorkflowManagerBean")
 @WebService(endpointInterface = "com.docdoku.core.services.IWorkflowManagerWS")
