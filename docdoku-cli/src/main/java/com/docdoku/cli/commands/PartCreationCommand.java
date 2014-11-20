@@ -50,12 +50,15 @@ public class PartCreationCommand extends AbstractCommandLine {
     @Option(name="-w", aliases = "--workspace", required = true, metaVar = "<workspace>", usage="workspace on which operations occur")
     protected String workspace;
 
+    @Option(name="-s", aliases = "--standard", metaVar = "<format>", usage="save as standard part")
+    protected boolean standardPart = false;
+
     @Argument(metaVar = "<cadfile>", required = true, index=0, usage = "specify the cad file of the part to import")
     private File cadFile;
 
     public void execImpl() throws Exception {
         IProductManagerWS productS = ScriptingTools.createProductService(getServerURL(), user, password);
-        PartMaster partMaster = productS.createPartMaster(workspace, partNumber, partName, false, null, description, null, null, null, null);
+        PartMaster partMaster = productS.createPartMaster(workspace, partNumber, partName, standardPart, null, description, null, null, null, null);
         PartRevision pr = partMaster.getLastRevision();
         PartRevisionKey partRPK = new PartRevisionKey(workspace, partNumber, pr.getVersion());
         PartIterationKey partIPK = new PartIterationKey(partRPK, pr.getLastIteration().getIteration());

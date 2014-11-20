@@ -17,11 +17,21 @@ angular.module('dplm.folder',[])
     $scope.files = [];
     $scope.openedFile = null;
 
-    FolderService.recursiveReadDir($scope.folder.path).then(function(files){
-         angular.forEach(files,function(file){
-            $scope.files.push(file);
-        });     
-    });         
+    $scope.filters = {
+        sync:true,
+        notSync:true,
+        modified:true
+    };
+
+    $scope.refresh = function(){
+        $scope.files.length = 0;
+         FolderService.recursiveReadDir($scope.folder.path).then(function(files){
+             angular.forEach(files,function(file){
+                $scope.files.push(file);
+            });     
+        });    
+    };
+
 
     $scope.toggleOpenedFile = function(file){
         $scope.openedFile = file == $scope.openedFile ? null : file;
@@ -31,9 +41,40 @@ angular.module('dplm.folder',[])
         FolderService.reveal($scope.folder.path);
     };
 
+    $scope.refresh();
+
 }) 
 
-.controller('FileController', function($scope,FolderService){
+.filter('filterFiles',function(ConfigurationService){
+    return function(arr,filters) {
+     
+        if(!arr){
+            return [];
+        }
+
+        return arr.filter(function(file){
+
+
+            if(!filters.sync && file.sync){
+                return false;
+            }
+
+            if(!filters.notSync && file.notSync){
+                return false;
+            }
+
+            if(!filters.modified && file.modified){
+                return false;
+            }
+
+            return true;
+
+      });
+
+    };
+})
+
+.controller('FileController', function($scope,FolderService){    
     $scope.fetchStatus = function(){
         $scope.loading = true;
         FolderService.fetchFileStatus($scope.file).then(function(){
@@ -51,9 +92,11 @@ angular.module('dplm.folder',[])
 
         templateUrl: 'js/folder/file-actions.html',
 
-        controller: function($scope, $element, $attrs, $transclude, $timeout, CliService) {
+        controller: function($scope, $element, $attrs, $transclude, $timeout, CliService, WorkspaceService) {
             
             $scope.options = {force:true};
+            $scope.workspaces = WorkspaceService.workspaces;
+            $scope.newPart = {workspace:$scope.workspaces[0]};           
 
             var onFinish = function(){
                 $scope.file.busy = false;
@@ -89,6 +132,15 @@ angular.module('dplm.folder',[])
                 CliService.undoCheckout($scope.file.part).then(function(){
                     return $scope.fetchStatus();       
                 }).then(onFinish);
+            };
+
+            $scope.createPart = function(){            
+                $scope.file.busy = true;
+                CliService.createPart($scope.newPart,$scope.file.path).then(function(){
+                    $scope.newPart = {workspace:$scope.workspaces[0]};           
+                    return $scope.fetchStatus();      
+                }).then(onFinish);
+
             };
 
         }

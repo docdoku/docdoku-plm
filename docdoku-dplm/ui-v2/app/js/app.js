@@ -32,7 +32,9 @@ angular.module('dplm',[
     
     'dplm.filters.fileshortname',
     'dplm.filters.timeago',
-    'dplm.filters.last'
+    'dplm.filters.last',
+
+    'dplm.contextmenu'
 
 ])
 
