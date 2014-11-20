@@ -7,13 +7,13 @@ angular.module('dplm.services.folders',[])
 
 	this.folders = angular.fromJson(localStorage.folders || '[]');
 
-	function alreadyHave(path){
+	var alreadyHave = function(path){
 		return _this.folders.filter(function(folder){
 			return folder.path == path;
 		}).length > 0;
 	}
 
-	function statFiles(fileNames){
+	var statFiles = function(fileNames){
 		var promises = [];
 		var fs = require('fs');
 		angular.forEach(fileNames,function(fileName){			

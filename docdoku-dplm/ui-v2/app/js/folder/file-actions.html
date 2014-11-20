@@ -1,7 +1,6 @@
 
 <md-progress-linear ng-if="file.busy"  mode="determinate" ng-value="file.progress"></md-progress-linear>
 
-
 <div class="md-actions" ng-if="!file.notSync && !file.busy">
 	<md-button ng-if="!file.part.isReleased && !file.part.checkoutUser" aria-label="" ng-click="checkout()" class="md-primary">
 	  {{'CHECKOUT' | translate}}
@@ -24,6 +23,36 @@
 </div>
 
 
-<div class="md-actions" ng-if="file.notSync">
-	Creation form
+<div class="md-actions" ng-if="file.notSync && !file.busy" layout="horizontal">
+
+    <form name="creationForm" ng-submit="creationForm.$valid && createPart()">
+        {{creationForm}}
+        <div class="row">{{'CREATE_PART'|translate}}</div>
+        <div class="row">
+            <md-text-float label="{{'PART_NUMBER' | translate}}" ng-model="newPart.partNumber" required="true"></md-text-float>
+            <md-text-float label="{{'PART_NAME' | translate}}" ng-model="newPart.name"></md-text-float>
+        </div>
+        <div class="row">
+            <md-text-float label="{{'PART_DESCRIPTION' | translate}}" ng-model="newPart.description"></md-text-float>
+
+             <md-checkbox ng-model="newPart.standard" aria-label="">
+                {{'STANDARD'|translate}}     
+            </md-checkbox>
+        </div>
+        <div class="row">       
+
+            <label>{{'WORKSPACE' | translate}}</label>
+            <i class="fa fa-globe"></i><select ng-model="folder.path">
+                <option ng-repeat="workspace in workspaces" value="{{workspace}}">
+                    {{workspace}}
+                </option>
+            </select>
+
+             <md-button aria-label="" class="md-raised md-primary">
+             {{'SAVE'|translate}}
+            </md-button>
+        </div>
+    </form>
+
+
 </div>
