@@ -64,7 +64,17 @@ angular.module('dplm.services.folders',[])
 	};
 
 	this.fetchFileStatus = function(file){		
-		return	CliService.getStatusForFile(file);
+		return	CliService.getStatusForFile(file).then(function(){
+			var userModif = parseInt(file.mtime.getTime()/1000);
+			var dplmModif =  parseInt(file.part.lastModified/1000);
+			file.modified = userModif > dplmModif;
+			file.sync = !file.modified;
+			console.log(userModif);
+			console.log(dplmModif);
+			console.log(file.modified);
+		},function(){
+			file.notSync = true;
+		});
 	};
 
 	this.reveal = function(path){		

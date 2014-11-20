@@ -6,6 +6,9 @@
 
           <md-button aria-label="" ng-click="showInBrowser()">
             {{workspace}}     
+             <md-tooltip>
+              {{'OPEN_IN_BROWSER'|translate}}
+            </md-tooltip>
           </md-button>
         </h3>        
          
@@ -25,11 +28,12 @@
     <md-checkbox ng-model="filters.checkoutedByMe" aria-label="">
       <i class="fa fa-pencil"></i>
     </md-checkbox>
-    <md-checkbox ng-model="filters.released" aria-label="">
+    <md-checkbox ng-model="filters.isReleased" aria-label="">
       <i class="fa fa-check"></i>
     </md-checkbox>
     <md-checkbox ng-model="filters.checkouted" aria-label="">
       <i class="fa fa-lock"></i>
+
     </md-checkbox>
   </div>    
 </div>
@@ -52,7 +56,8 @@
              <div class="cursor" ng-click="toggleOpenedPart(part)">
                <i style="float:right" class="fa" ng-class="{'fa-angle-down': part != openedPart, 'fa-angle-up': part === openedPart}"></i> 
                <h3>
-                  {{part.partNumber}}-{{part.version}}-{{part.iterations | last}} 
+                  {{part.partNumber}} {{part.version}}-{{part.iterations | last}} 
+                  <br />
                   <small>
                     {{part.cadFileName || 'NO_CAD_FILE' | translate }}
                   </small>

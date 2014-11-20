@@ -40,7 +40,6 @@ angular.module('dplm.folder',[])
             $scope.loading = false;
         },function(){
             $scope.loading = false;
-            $scope.file.notSync = true;
         });
     };
     $scope.fetchStatus();

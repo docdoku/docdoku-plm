@@ -8,12 +8,12 @@ angular.module('dplm.workspace',[])
         });
     })
 
-.controller('WorkspaceController', function($scope,$window,$timeout,$routeParams,CliService, ConfigurationService){
+.controller('WorkspaceController', function($scope,$filter,$window,$timeout,$routeParams,CliService, ConfigurationService,NotificationService){
 	
 	$scope.workspace = $routeParams.workspace;
 	$scope.count = 0;
 	$scope.start = 0;
-	$scope.max = 6;
+	$scope.max = 20;
 	$scope.parts = [];
 	$scope.loadingParts = true;
 	$scope.loadingMore = false;
@@ -88,6 +88,7 @@ angular.module('dplm.workspace',[])
 		if(!$scope.loadingParts && !$scope.search && $scope.start < $scope.count){
 			$scope.start+=$scope.max;
 			$scope.loadingMore = true;
+			NotificationService.toastBottomRight($filter('translate')('LOADING_MORE'),2000);
 			getPartMasters();
 		}
 	};
@@ -106,11 +107,12 @@ angular.module('dplm.workspace',[])
 
 	    return arr.filter(function(part){
 
+
 	  		if(!filters.isReleased && part.isReleased){
 	  			return false;
 	  		}
 
-	  		if(!filters.checkoutable && !part.checkoutUser){
+	  		if(!filters.checkoutable && !part.checkoutUser && !part.isReleased) {
   				return false;
 	  		}
 
