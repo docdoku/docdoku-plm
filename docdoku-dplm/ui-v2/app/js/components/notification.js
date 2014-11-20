@@ -3,11 +3,31 @@
 angular.module('dplm.services.notification',[])
 .service('NotificationService',function($mdToast){
 
-        this.toast = function(message){
+        var that = this;
+
+        this.toastUpRight = function(message,length){
+            that.toast(message,{
+                bottom: false,
+                top: true,
+                left: false,
+                right: true
+            },length);
+        };
+
+        this.toastBottomRight = function(message,length){
+            that.toast(message,{
+                bottom: true,
+                top: false,
+                left: false,
+                right: true
+            },length);
+        };
+
+        this.toast = function(message,pos,length){
 
             var getToastPosition = function() {
 
-                var toastPosition = {
+                var toastPosition = pos || {
                     bottom: false,
                     top: true,
                     left: false,
@@ -23,7 +43,7 @@ angular.module('dplm.services.notification',[])
             $mdToast.show({
                 controller: function($scope){$scope.message=message;},
                 template: '<md-toast><span flex>{{message}}</span></md-toast>',
-                hideDelay: 6000,
+                hideDelay: length || 6000,
                 position: getToastPosition()
             });
             

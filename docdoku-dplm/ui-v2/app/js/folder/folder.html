@@ -6,6 +6,9 @@
           
         <md-button aria-label="" ng-click="reveal()">
           {{ folder.path | fileshortname }}
+             <md-tooltip>
+              {{'OPEN_IN_EXPLORER'|translate}}
+            </md-tooltip>
         </md-button>
 
         </h3>
@@ -17,17 +20,14 @@
     <md-text-float style="margin: 0 18px;" label="{{'SEARCH' | translate}} ({{count}} {{'ITEMS' | translate}})" ng-model="search" type="text"></md-text-float>
   </div>
   <div style="padding-right:8px;">
-    <md-checkbox ng-model="filters.released" aria-label="">
-      <i class="fa fa-check"></i>
+    <md-checkbox ng-model="filters.sync" aria-label="">
+      <i class="fa fa-check-circle-o file-sync"></i>
     </md-checkbox>
-    <md-checkbox ng-model="filters.checkoutable" aria-label="">
-      <i class="fa fa-eye"></i>
+    <md-checkbox ng-model="filters.modified" aria-label="">
+      <i class="fa fa-cloud-upload file-modified"></i>
     </md-checkbox>
-    <md-checkbox ng-model="filters.checkouted" aria-label="">
-      <i class="fa fa-lock"></i>
-    </md-checkbox>
-    <md-checkbox ng-model="filters.checkoutedByMe" aria-label="">
-      <i class="fa fa-pencil"></i>
+    <md-checkbox ng-model="filters.notSync" aria-label="">
+      <i class="fa  fa-plus-circle file-notSync"></i>
     </md-checkbox>
   </div>    
 </div>
@@ -41,12 +41,16 @@
             <i class="fa fa-refresh fa-spin"></i>
           </div>
           <div class="md-tile-left" align="center" ng-if="!loading">
+              <i class="fa fa-refresh fa-spin" ng-show="loading"></i>
+              <i class="fa fa-check-circle-o fa-lg file-sync" ng-show="file.sync"></i>
+              <i class="fa fa-cloud-upload fa-lg file-modified" ng-show="file.modified"></i>
+              <i class="fa fa-plus-circle fa-lg file-notSync" ng-show="file.notSync"></i>    
               <i class="fa fa-check fa-lg" ng-show="file.part.isReleased"></i>
               <i class="fa fa-eye fa-lg" ng-show="!file.part.isReleased 
-              && !file.part.checkoutUser && !file.notSync"></i>
+              && !file.part.checkoutUser"></i>
               <i class="fa fa-pencil fa-lg" ng-show="file.part.checkoutUser === configuration.user"></i>
                <i class="fa fa-lock" ng-show="file.part.checkoutUser && file.part.checkoutUser !== configuration.user"></i>
-               <i class="fa fa-plus" ng-show="file.notSync"></i>
+
           </div>
        
           <div class="md-tile-content">
@@ -67,6 +71,7 @@
                 </h4><h4 ng-show="file.mtime">
                   {{'LAST_MODIFIED'}} {{file.mtime | timeago}}
                 </h4>
+                <small><pre>{{file}}</pre></small>
             </div>
 
             <div>
