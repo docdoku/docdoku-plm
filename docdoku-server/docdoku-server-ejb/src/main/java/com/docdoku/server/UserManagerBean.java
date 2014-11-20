@@ -250,7 +250,6 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
         return workspace;
     }
 
-    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.ADMIN_ROLE_ID})
     @Override
     public Account getAccount(String pLogin) throws AccountNotFoundException {
         return new AccountDAO(em).loadAccount(pLogin);

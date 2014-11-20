@@ -39,7 +39,14 @@ public interface IUserManagerLocal{
     void addAccountInOrganization(String pOrganizationName, String pLogin) throws OrganizationNotFoundException, AccountNotFoundException, AccessRightException, NotAllowedException;
     void removeAccountFromOrganization(String pOrganizationName, String[] pLogins) throws AccessRightException, OrganizationNotFoundException, AccountNotFoundException;
 
+    /**
+     * Get the account matching a login. ONLY USE IN LOCAL.
+     * @param pLogin Login you search
+     * @return The account matching the login
+     * @throws AccountNotFoundException If no account was found
+     */
     Account getAccount(String pLogin) throws AccountNotFoundException;
+
     Account createAccount(String pLogin, String pName, String pEmail, String pLanguage, String pPassword) throws AccountAlreadyExistsException, CreationException;
     void updateAccount(String pName, String pEmail, String pLanguage, String pPassword) throws AccountNotFoundException;
 
