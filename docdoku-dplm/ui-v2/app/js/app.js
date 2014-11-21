@@ -1,3 +1,5 @@
+/*global process*/
+
 'use strict';
 
 process.on('uncaughtException', function (e) {
@@ -46,6 +48,8 @@ angular.module('dplm', [
     })
 
     .controller('AppCtrl', function ($scope, $location, $mdSidenav, $filter, NotificationService, ConfigurationService, CliService, WorkspaceService, FolderService) {
+
+
 
         $scope.title = 'DocDoku DPLM';
 

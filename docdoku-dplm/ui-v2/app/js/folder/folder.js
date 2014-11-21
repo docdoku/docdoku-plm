@@ -27,9 +27,7 @@ angular.module('dplm.folder', [])
             $scope.loadingFiles = true;
             $scope.files.length = 0;
             FolderService.recursiveReadDir($scope.folder.path).then(function (files) {
-                angular.forEach(files, function (file) {
-                    $scope.files.push(file);
-                });
+                angular.copy(files,$scope.files);
                 $scope.loadingFiles = false;
             },function(){
                 $scope.loadingFiles = false;
@@ -107,6 +105,7 @@ angular.module('dplm.folder', [])
 
                 var onFinish = function () {
                     $scope.file.busy = false;
+                    $scope.file.progress = 0;
                 };
 
                 var onProgress = function (progress) {
@@ -146,8 +145,7 @@ angular.module('dplm.folder', [])
                     CliService.createPart($scope.newPart, $scope.file.path).then(function () {
                         $scope.newPart = {workspace: $scope.workspaces[0]};
                         return $scope.fetchStatus();
-                    }).then(onFinish);
-
+                    },null,onProgress).then(onFinish);
                 };
 
             }

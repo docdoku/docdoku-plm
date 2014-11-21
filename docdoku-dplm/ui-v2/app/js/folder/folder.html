@@ -33,9 +33,6 @@
                        type="text"></md-text-float>
     </div>
     <div style="padding-right:8px;">
-
-
-
         <md-checkbox ng-model="filters.sync" aria-label="">
             <i class="fa fa-check-circle-o file-sync"></i>
         </md-checkbox>
@@ -61,7 +58,6 @@
                         <i class="fa fa-check-circle-o fa-lg file-sync" ng-show="file.sync"></i>
                         <i class="fa fa-cloud-upload fa-lg file-modified" ng-show="file.modified"></i>
                         <i class="fa fa-plus-circle fa-lg file-notSync" ng-show="file.notSync"></i>
-
                     </div>
 
                     <div class="md-tile-content">
@@ -96,7 +92,7 @@
                         </div>
 
                         <div>
-                            <file-actions class="slide-down" ng-if="file === openedFile"></part-file>
+                            <file-actions class="slide-down" ng-if="file === openedFile"></file-actions>
                         </div>
 
                     </div>

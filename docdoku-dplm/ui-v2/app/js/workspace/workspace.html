@@ -34,7 +34,6 @@
         </md-checkbox>
         <md-checkbox ng-model="filters.checkouted" aria-label="">
             <i class="fa fa-lock"></i>
-
         </md-checkbox>
     </div>
 </div>
@@ -42,6 +41,7 @@
 <div on-scroll-end="onScrollEnd()" class="fullscreen-wrapper offset-toolbar">
     <md-content class="md-padding">
         <md-list>
+            <md-item ng-show="!loadingParts && !parts.length" align="center">{{'NO_PARTS'|translate}}</md-item>
             <md-item ng-repeat="part in parts | filterParts:filters">
                 <md-item-content ng-controller="PartController" layout-align="start start">
                     <div class="md-tile-left" align="center">

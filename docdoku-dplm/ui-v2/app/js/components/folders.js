@@ -69,10 +69,10 @@ angular.module('dplm.services.folders', [])
                 var dplmModif = parseInt(file.part.lastModified / 1000);
                 file.modified = userModif > dplmModif;
                 file.sync = !file.modified;
-                console.log(userModif);
-                console.log(dplmModif);
-                console.log(file.modified);
+                file.notSync = false;
             }, function () {
+                file.sync = false;
+                file.modified = false;
                 file.notSync = true;
             });
         };

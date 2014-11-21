@@ -28,7 +28,6 @@
 <div class="md-actions" ng-if="file.notSync && !file.busy" layout="horizontal">
 
     <form name="creationForm" ng-submit="creationForm.$valid && createPart()">
-        {{creationForm}}
         <div class="row">{{'CREATE_PART'|translate}}</div>
         <div class="row">
             <md-text-float label="{{'PART_NUMBER' | translate}}" ng-model="newPart.partNumber"

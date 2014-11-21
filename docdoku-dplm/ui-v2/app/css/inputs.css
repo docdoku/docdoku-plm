@@ -7,11 +7,11 @@
 }
 .file-input {
     display: inline-block;
+	cursor: pointer;
 }
 
 select{
 	background: transparent;
 	border: none;
-	/*border-bottom: 1px solid rgba(0, 0, 0, 0.729412);*/
 	color: inherit;
 }
