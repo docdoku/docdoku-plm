@@ -1,3 +1,4 @@
 app/bower_components
 app/node_modules
 dist
+npm-debug.log
