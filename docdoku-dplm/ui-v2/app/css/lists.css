@@ -24,3 +24,7 @@ part-actions {
 .subtitle{
 	color: #757575;
 }
+
+md-sidenav h3:first-of-type{
+	margin-top: 0;
+}

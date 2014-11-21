@@ -1,3 +1,6 @@
+.hide-input [type=file] {
+	display: none;
+}
 .file-input [type=file] {
 	opacity: 0;
 	cursor: pointer;
@@ -39,4 +42,15 @@ select{
 }
 .cursor{
 	cursor: pointer;
+}
+
+md-radio-group{
+	border:none;
+}
+
+h3{
+	width: 100%;
+}
+.right{
+	float:right;
 }

@@ -2,12 +2,12 @@
 <div class="row" ng-if="!part.busy">
     <label>{{'SAVE_TO' | translate}}</label>
     <i class="fa fa-folder-open"></i>
-    <select ng-model="folder.path">
+    <select ng-model="folder.path" class="cursor">
         <option ng-repeat="folder in folders" value="{{folder.path}}">
             {{folder.path | fileshortname}}
         </option>
     </select>
-    <label class="file-input small">
+    <label class="hide-input small cursor">
         <i class="fa fa-plus"></i> {{'ADD_FOLDER' | translate}}
         <input file-change="addFolder($event,files)" type="file" webkitdirectory/>
     </label>

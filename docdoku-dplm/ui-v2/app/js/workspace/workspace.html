@@ -6,7 +6,7 @@
 
             <md-button aria-label="" ng-click="showInBrowser()">
                 {{workspace}}
-                <md-tooltip md-visible="true">
+                <md-tooltip>
                     {{'OPEN_IN_BROWSER'|translate}}
                 </md-tooltip>
             </md-button>
@@ -41,7 +41,7 @@
 <div on-scroll-end="onScrollEnd()" class="fullscreen-wrapper offset-toolbar">
     <md-content class="md-padding">
         <md-list>
-            <md-item ng-show="!loadingParts && !parts.length" align="center">{{'NO_PARTS'|translate}}</md-item>
+            <md-item ng-show="!loadingParts && !parts.length">{{'NO_PARTS'|translate}}</md-item>
             <md-item ng-repeat="part in parts | filterParts:filters">
                 <md-item-content ng-controller="PartController" layout-align="start start" ng-class="{opened: part == openedPart}">
                     <div class="md-tile-left" align="center">

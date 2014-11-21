@@ -4,6 +4,9 @@
         <a href="#/">{{title}}</a>
         <md-button aria-label="" href="#/settings">
           <i class="fa fa-cog"></i>
+            <md-tooltip>
+                {{'SETTINGS' | translate }}
+            </md-tooltip>
         </md-button>
     </h1>
 </md-toolbar>
@@ -16,6 +19,9 @@
        <md-button style="float:right" class="md-raised md-primary file-input" md-theme="default" aria-label="Profile">
            <input file-change="addFolder($event,files)" type="file" webkitdirectory/>
            <i class="fa fa-plus"></i>
+           <md-tooltip>
+               {{'ADD_FOLDER'|translate}}
+           </md-tooltip>
        </md-button>
 
 
@@ -25,7 +31,7 @@
 
   <md-content style="max-height:150px">
    <md-list>
-    <md-item ng-repeat="folder in folders" ng-controller="FolderMenuController">
+    <md-item ng-repeat="folder in folders | orderBy:'-favorite'" ng-controller="FolderMenuController">
       <md-item-content>
             <div class="md-tile-content small">
               <md-button aria-label="" href="#/folder/{{folder.uuid}}" class="md-primary">

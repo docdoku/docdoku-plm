@@ -44,6 +44,13 @@ angular.module('dplm.services.folders', [])
             _this.save();
         };
 
+        this.delete = function(folder){
+            if (alreadyHave(folder.path)) {
+                _this.folders.splice(_this.folders.indexOf(folder),1);
+                _this.save();
+            }
+        };
+
         this.save = function () {
             localStorage.folders = angular.toJson(_this.folders);
         };

@@ -49,7 +49,9 @@ angular.module('dplm.services.translations', ['pascalprecht.translate'])
                 CHECKOUT_BY: 'Checkouted by',
                 LAST_ACTION: 'Last action',
                 LAST_MODIFIED: 'Downloaded',
-                NO_CAD_FILE: 'No CAD file'
+                NO_CAD_FILE: 'No CAD file',
+                DELETE_FOLDER:'Delete folder',
+                NO_FILES:'Folder is empty'
             })
             .translations('fr', {
                 CUT: 'Couper',
@@ -69,7 +71,7 @@ angular.module('dplm.services.translations', ['pascalprecht.translate'])
                 FAVORITE: 'Favoris',
                 REFRESH_FOLDER: 'Rafraîchir le dossier',
                 DOWNLOAD: 'Télécharger',
-                HOME: 'Acuueil',
+                HOME: 'Accueil',
                 SETTINGS: 'Paramètres',
                 LANG: 'Langue',
                 FR: 'Français',
@@ -94,7 +96,9 @@ angular.module('dplm.services.translations', ['pascalprecht.translate'])
                 CHECKOUT_BY: 'Réservé par',
                 LAST_ACTION: 'Dernière action',
                 LAST_MODIFIED: 'Dernier téléchargement',
-                NO_CAD_FILE: 'Aucun fichier CAD'
+                NO_CAD_FILE: 'Aucun fichier CAD',
+                DELETE_FOLDER:'Supprimer le dossier',
+                NO_FILES:'Le dossier est vide'
             });
 
         $translateProvider.preferredLanguage(localStorage.lang || 'en');

@@ -8,7 +8,7 @@
     "requirejs": ">=1.0.0"
   },
   "window": {
-    "toolbar": true,
+    "toolbar": false,
     "position": "center",
     "width": 960,
     "height": 500,

@@ -9,7 +9,7 @@ angular.module('dplm.folder', [])
         });
     })
 
-    .controller('FolderController', function ($scope, $routeParams, ConfigurationService, FolderService) {
+    .controller('FolderController', function ($scope, $location, $routeParams, ConfigurationService, FolderService) {
 
         $scope.folder = FolderService.getFolder($routeParams);
 
@@ -44,6 +44,12 @@ angular.module('dplm.folder', [])
 
         $scope.toggleFavorite = function () {
             $scope.folder.favorite = !$scope.folder.favorite;
+            FolderService.save();
+        };
+
+        $scope.delete = function(){
+            FolderService.delete($scope.folder);
+            $location.path('/');
         };
 
         $scope.refresh();

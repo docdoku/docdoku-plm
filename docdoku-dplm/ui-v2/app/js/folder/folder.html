@@ -8,16 +8,22 @@
                     {{'OPEN_IN_EXPLORER'|translate}}
                 </md-tooltip>
             </md-button>
-            <md-button aria-label="" ng-click="toggleFavorite()">
+            <md-button aria-label="" ng-click="toggleFavorite()" class="right">
                 <i class="fa fa-star" ng-class="{favorite:folder.favorite}"></i>
                 <md-tooltip>
                     {{'FAVORITE'|translate}}
                 </md-tooltip>
             </md-button>
-            <md-button aria-label="" ng-click="refresh()">
+            <md-button aria-label="" ng-click="refresh()" class="right">
                 <i class="fa fa-refresh"></i>
                 <md-tooltip>
                     {{'REFRESH_FOLDER'|translate}}
+                </md-tooltip>
+            </md-button>
+            <md-button aria-label="" ng-click="delete()" class="right">
+                <i class="fa fa-times"></i>
+                <md-tooltip>
+                    {{'DELETE_FOLDER'|translate}}
                 </md-tooltip>
             </md-button>
         </h3>
@@ -47,9 +53,11 @@
 <div on-scroll-end="onScrollEnd()" class="fullscreen-wrapper offset-toolbar">
     <md-content class="md-padding">
         <md-list>
+            <md-item ng-show="!loadingFiles && !files.length">{{'NO_FILES'|translate}}</md-item>
+
             <md-item ng-repeat="file in files | filter:search | filterFiles:filters">
                 <md-item-content
-                        ng-controller="FileController" layout-align="start start">
+                        ng-controller="FileController" layout-align="start start" ng-class="{opened: file == openedFile}">
                     <div class="md-tile-left" align="center" ng-if="loading">
                         <i class="fa fa-refresh fa-spin"></i>
                     </div>
