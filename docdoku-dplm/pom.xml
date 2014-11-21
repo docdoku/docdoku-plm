@@ -21,17 +21,20 @@
                         <version>1.3.2</version>
                         <executions>
                             <execution>
-                                <id>release.sh</id>
+                                <id>build-dplm</id>
                                 <phase>install</phase>
                                 <goals>
                                     <goal>exec</goal>
                                 </goals>
+                                <configuration>
+                                    <workingDirectory>ui-v2</workingDirectory>
+                                    <executable>npm</executable>
+                                    <arguments>
+                                        <argument>install</argument>
+                                    </arguments>
+                                </configuration>
                             </execution>
                         </executions>
-                        <configuration>
-                            <executable>${basedir}/release.sh</executable>
-                            <workingDirectory>${basedir}</workingDirectory>
-                        </configuration>
                     </plugin>
                 </plugins>
             </build>

@@ -2,3 +2,4 @@ app/bower_components
 app/node_modules
 dist
 npm-debug.log
+docdoku-cli-jar-with-dependencies.jar
