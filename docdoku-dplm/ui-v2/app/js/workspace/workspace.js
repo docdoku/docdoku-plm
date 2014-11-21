@@ -1,193 +1,193 @@
 'use strict';
 
-angular.module('dplm.workspace',[])
-    .config(function($routeProvider){
-        $routeProvider.when('/workspace/:workspace',{
-            controller:'WorkspaceController',
-            templateUrl:'js/workspace/workspace.html'
+angular.module('dplm.workspace', [])
+    .config(function ($routeProvider) {
+        $routeProvider.when('/workspace/:workspace', {
+            controller: 'WorkspaceController',
+            templateUrl: 'js/workspace/workspace.html'
         });
     })
 
-.controller('WorkspaceController', function($scope,$filter,$window,$timeout,$routeParams,CliService, ConfigurationService,NotificationService){
-	
-	$scope.workspace = $routeParams.workspace;
-	$scope.count = 0;
-	$scope.start = 0;
-	$scope.max = 20;
-	$scope.parts = [];
-	$scope.loadingParts = true;
-	$scope.loadingMore = false;
-	$scope.openedPart = null;
-	$scope.search = '';
-			
-	$scope.filters = {
-		checkoutable : true,
-		checkoutedByMe : true,
-		released : false,
-		checkouted : false
-	};
+    .controller('WorkspaceController', function ($scope, $filter, $window, $timeout, $routeParams, CliService, ConfigurationService, NotificationService) {
 
-	var resetList = function() {
-		$scope.start = 0;
-		$scope.parts.length = 0;
-		$scope.loadingParts = true;	
-		$scope.loadingMore = false;	
-		getPartMasters();
-	};
+        $scope.workspace = $routeParams.workspace;
+        $scope.count = 0;
+        $scope.start = 0;
+        $scope.max = 20;
+        $scope.parts = [];
+        $scope.loadingParts = true;
+        $scope.loadingMore = false;
+        $scope.openedPart = null;
+        $scope.search = '';
 
-	var onSearchResults = function(parts){
-		$scope.loadingParts = false;
-		$scope.parts = parts;
-	};
+        $scope.filters = {
+            checkoutable: true,
+            checkoutedByMe: true,
+            released: false,
+            checkouted: false
+        };
 
-	var onListResults = function(parts){
-		$scope.loadingParts = false;
-		$scope.loadingMore = false;
-		angular.forEach(parts,function(part){
-			$scope.parts.push(part);
-		});
-	};
+        var resetList = function () {
+            $scope.start = 0;
+            $scope.parts.length = 0;
+            $scope.loadingParts = true;
+            $scope.loadingMore = false;
+            getPartMasters();
+        };
 
-	var runSearch = function(search){
-		$scope.loadingParts = true;
-		return CliService.searchPartMasters($scope.workspace, search)
-			.then(onSearchResults);
-	};
+        var onSearchResults = function (parts) {
+            $scope.loadingParts = false;
+            $scope.parts = parts;
+        };
 
-	var getPartMasters = function(){			
-		return CliService.getPartMasters($scope.workspace, $scope.start, $scope.max)
-			.then(onListResults);
-	};
+        var onListResults = function (parts) {
+            $scope.loadingParts = false;
+            $scope.loadingMore = false;
+            angular.forEach(parts, function (part) {
+                $scope.parts.push(part);
+            });
+        };
 
-	var searchTimeout;
+        var runSearch = function (search) {
+            $scope.loadingParts = true;
+            return CliService.searchPartMasters($scope.workspace, search)
+                .then(onSearchResults);
+        };
 
-	$scope.$watch('search',function(newValue,oldValue){		
-		if (searchTimeout){
-			$timeout.cancel(searchTimeout);
-		}
-		if(newValue){			
-	        searchTimeout = $timeout(function() {
-	        	runSearch(newValue);
-	        }, 750);			
-		}else if(oldValue){
-			resetList();
-		}
-	});
+        var getPartMasters = function () {
+            return CliService.getPartMasters($scope.workspace, $scope.start, $scope.max)
+                .then(onListResults);
+        };
 
-	$scope.toggleOpenedPart = function(part){
-		$scope.openedPart = part == $scope.openedPart ? null : part;
-	};
+        var searchTimeout;
 
-	$scope.showInBrowser = function(){
-		var host = ConfigurationService.configuration.host;
-		var port = ConfigurationService.configuration.port;
-		$window.open('http://'+host+':'+port+'/product-management/#'+$scope.workspace);
-	};
+        $scope.$watch('search', function (newValue, oldValue) {
+            if (searchTimeout) {
+                $timeout.cancel(searchTimeout);
+            }
+            if (newValue) {
+                searchTimeout = $timeout(function () {
+                    runSearch(newValue);
+                }, 750);
+            } else if (oldValue) {
+                resetList();
+            }
+        });
 
-	$scope.onScrollEnd = function(){		
-		if(!$scope.loadingParts && !$scope.search && $scope.start < $scope.count){
-			$scope.start+=$scope.max;
-			$scope.loadingMore = true;
-			NotificationService.toastBottomRight($filter('translate')('LOADING_MORE'),2000);
-			getPartMasters();
-		}
-	};
+        $scope.toggleOpenedPart = function (part) {
+            $scope.openedPart = part == $scope.openedPart ? null : part;
+        };
 
-	CliService.getPartMastersCount($routeParams.workspace).then(function(data){
-		$scope.count = data.count;
-	}).then(getPartMasters);
+        $scope.showInBrowser = function () {
+            var host = ConfigurationService.configuration.host;
+            var port = ConfigurationService.configuration.port;
+            $window.open('http://' + host + ':' + port + '/product-management/#' + $scope.workspace);
+        };
 
-})
-.filter('filterParts',function(ConfigurationService){
-	return function(arr,filters) {
-	 
-		if(!arr){
-			return [];
-		}
+        $scope.onScrollEnd = function () {
+            if (!$scope.loadingParts && !$scope.search && $scope.start < $scope.count) {
+                $scope.start += $scope.max;
+                $scope.loadingMore = true;
+                NotificationService.toastBottomRight($filter('translate')('LOADING_MORE'), 2000);
+                getPartMasters();
+            }
+        };
 
-	    return arr.filter(function(part){
+        CliService.getPartMastersCount($routeParams.workspace).then(function (data) {
+            $scope.count = data.count;
+        }).then(getPartMasters);
+
+    })
+    .filter('filterParts', function (ConfigurationService) {
+        return function (arr, filters) {
+
+            if (!arr) {
+                return [];
+            }
+
+            return arr.filter(function (part) {
 
 
-	  		if(!filters.isReleased && part.isReleased){
-	  			return false;
-	  		}
+                if (!filters.isReleased && part.isReleased) {
+                    return false;
+                }
 
-	  		if(!filters.checkoutable && !part.checkoutUser && !part.isReleased) {
-  				return false;
-	  		}
+                if (!filters.checkoutable && !part.checkoutUser && !part.isReleased) {
+                    return false;
+                }
 
-	  		if(!filters.checkouted && part.checkoutUser && part.checkoutUser !== ConfigurationService.configuration.user){
-  				return false;
-	  		}
+                if (!filters.checkouted && part.checkoutUser && part.checkoutUser !== ConfigurationService.configuration.user) {
+                    return false;
+                }
 
-			if(!filters.checkoutedByMe && part.checkoutUser && part.checkoutUser === ConfigurationService.configuration.user){
-  				return false;
-	  		}
+                if (!filters.checkoutedByMe && part.checkoutUser && part.checkoutUser === ConfigurationService.configuration.user) {
+                    return false;
+                }
 
-	  		return true;
+                return true;
 
-	  });
+            });
 
-	};
-})
-.controller('PartController',function($scope,ConfigurationService){
-	$scope.configuration = ConfigurationService.configuration;	
-	$scope.actions = false;	     
-})
+        };
+    })
+    .controller('PartController', function ($scope, ConfigurationService) {
+        $scope.configuration = ConfigurationService.configuration;
+        $scope.actions = false;
+    })
 
-.directive('partActions', function(){
+    .directive('partActions', function () {
 
-	return {
+        return {
 
-		templateUrl: 'js/workspace/part-actions.html',
+            templateUrl: 'js/workspace/part-actions.html',
 
-		controller: function($scope, $element, $attrs, $transclude, $timeout, CliService,FolderService) {
+            controller: function ($scope, $element, $attrs, $transclude, $timeout, CliService, FolderService) {
 
-			$scope.folders = FolderService.folders;
-			$scope.options = {force:true,recursive:true};
-			
+                $scope.folders = FolderService.folders;
+                $scope.options = {force: true, recursive: true};
 
-			$scope.folder = {};
-			$scope.folder.path = FolderService.folders[0].path;
 
-			var onFinish = function(){
-				$scope.part.busy = false;
-				$scope.part.progress = 0;
-			};
+                $scope.folder = {};
+                $scope.folder.path = FolderService.folders.length ? FolderService.folders[0].path : '';
 
-			var onProgress = function(progress){
-				$scope.part.progress = progress;
-			};
+                var onFinish = function () {
+                    $scope.part.busy = false;
+                    $scope.part.progress = 0;
+                };
 
-			$scope.download = function(){
-				$scope.part.busy = true;
-				CliService.download($scope.part,$scope.folder.path,$scope.options).then(function(){
-					return CliService.getStatusForPart($scope.part);
-				},null,onProgress).then(onFinish);
-			};
+                var onProgress = function (progress) {
+                    $scope.part.progress = progress;
+                };
 
-			$scope.checkout = function(){
-				$scope.part.busy = true;
-				CliService.checkout($scope.part,$scope.folder.path,$scope.options).then(function(){
-					return CliService.getStatusForPart($scope.part);					
-				},null,onProgress).then(onFinish);
-			};
+                $scope.download = function () {
+                    $scope.part.busy = true;
+                    CliService.download($scope.part, $scope.folder.path, $scope.options).then(function () {
+                        return CliService.getStatusForPart($scope.part);
+                    }, null, onProgress).then(onFinish);
+                };
 
-			$scope.checkin = function(){
-				$scope.part.busy = true;
-				CliService.checkin($scope.part).then(function(){
-					return CliService.getStatusForPart($scope.part);
-				},null,onProgress).then(onFinish);
-			};
+                $scope.checkout = function () {
+                    $scope.part.busy = true;
+                    CliService.checkout($scope.part, $scope.folder.path, $scope.options).then(function () {
+                        return CliService.getStatusForPart($scope.part);
+                    }, null, onProgress).then(onFinish);
+                };
 
-			$scope.undoCheckout = function(){
-				$scope.part.busy = true;
-				CliService.undoCheckout($scope.part).then(function(){
-					return CliService.getStatusForPart($scope.part);
-				}).then(onFinish);
-			};
+                $scope.checkin = function () {
+                    $scope.part.busy = true;
+                    CliService.checkin($scope.part).then(function () {
+                        return CliService.getStatusForPart($scope.part);
+                    }, null, onProgress).then(onFinish);
+                };
 
-		}
+                $scope.undoCheckout = function () {
+                    $scope.part.busy = true;
+                    CliService.undoCheckout($scope.part).then(function () {
+                        return CliService.getStatusForPart($scope.part);
+                    }).then(onFinish);
+                };
 
-	};
-});
+            }
+
+        };
+    });

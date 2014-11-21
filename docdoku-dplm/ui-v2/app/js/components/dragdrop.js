@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('ngDragDrop',[])
+angular.module('ngDragDrop', [])
     .directive('uiDraggable', [
         '$parse',
         '$rootScope',
@@ -101,7 +101,6 @@ angular.module('ngDragDrop',[])
                 });
 
 
-
                 $rootScope.$on('ANGULAR_DRAG_END', function (e, channel) {
                     dragChannel = '';
                     if (dropChannel === channel) {
@@ -118,7 +117,7 @@ angular.module('ngDragDrop',[])
 
                 $rootScope.$on('ANGULAR_HOVER', function (e, channel) {
                     if (dropChannel === channel) {
-                      element.removeClass(dragHoverClass);
+                        element.removeClass(dragHoverClass);
                     }
                 });
 

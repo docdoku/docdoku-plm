@@ -1,8 +1,10 @@
 'use strict';
 
-process.on('uncaughtException', function(e) { console.log(e); });
+process.on('uncaughtException', function (e) {
+    console.log(e);
+});
 
-angular.module('dplm',[
+angular.module('dplm', [
 
     // Dependencies
     'ngMaterial',
@@ -12,6 +14,7 @@ angular.module('dplm',[
     'uuid4',
     'ngDragDrop',
     'ngAnimate',
+    'ngAria',
 
     // Routes
     'dplm.home',
@@ -29,7 +32,7 @@ angular.module('dplm',[
 
     'dplm.directives.filechange',
     'dplm.directives.scrollend',
-    
+
     'dplm.filters.fileshortname',
     'dplm.filters.timeago',
     'dplm.filters.last',
@@ -38,53 +41,54 @@ angular.module('dplm',[
 
 ])
 
-.config(function($routeProvider){
-    $routeProvider.otherwise('/');
-})
+    .config(function ($routeProvider) {
+        $routeProvider.otherwise('/');
+    })
 
-.controller('AppCtrl', function($scope, $location, $mdSidenav, NotificationService, ConfigurationService, CliService, WorkspaceService) {
- 
-    $scope.title = 'DocDoku DPLM';
-   
-    $scope.openMenu = function() {
-        $mdSidenav('menu').open();
-    };
+    .controller('AppCtrl', function ($scope, $location, $mdSidenav, $filter, NotificationService, ConfigurationService, CliService, WorkspaceService, FolderService) {
 
-    var handleError = function (error) {
-        if(error === ConfigurationService.error){
-            NotificationService.toast('Configuration missing');             
-        }else if(error == CliService.requirementsError){
-            NotificationService.toast('Requirements missing');
-        }
-        $location.path('settings');
-    };
+        $scope.title = 'DocDoku DPLM';
 
-    ConfigurationService.checkAtStartup()
-        .then(CliService.checkRequirements)
-        .then(WorkspaceService.getWorkspaces)
-        .catch(handleError);
-})
+        $scope.openMenu = function () {
+            $mdSidenav('menu').open();
+        };
 
-.controller('MenuController',function($scope,ConfigurationService,WorkspaceService,FolderService){
-    
-    $scope.configuration = ConfigurationService.configuration;
-    $scope.workspaces = WorkspaceService.workspaces;
-    $scope.folders = FolderService.folders;
+        $scope.configuration = ConfigurationService.configuration;
+        $scope.workspaces = WorkspaceService.workspaces;
+        $scope.folders = FolderService.folders;
 
-    $scope.addFolder = function($event,files){
-        if(files && files.length === 1){
-          FolderService.add(files[0].path);  
-        }
-    };     
-  
-})
+        $scope.addFolder = function ($event, files) {
+            if (files && files.length === 1) {
+                FolderService.add(files[0].path);
+            }
+        };
 
-.controller('FolderMenuController',function($scope){
-    $scope.onDrop = function(){       
-    };
-})
+        var handleError = function (error) {
+            if (error === ConfigurationService.error) {
+                NotificationService.toast($filter('translate')('CONFIGURATION_ERROR'));
+            } else if (error == CliService.requirementsError) {
+                NotificationService.toast($filter('translate')('REQUIREMENTS_MISSING'));
+            }
+            $location.path('settings');
+        };
 
-.controller('WorkspaceMenuController',function($scope){
-    $scope.onDrop = function(){       
-    };
-});
+        ConfigurationService.checkAtStartup()
+            .then(CliService.checkRequirements)
+            .then(WorkspaceService.getWorkspaces)
+            .catch(handleError);
+    })
+
+    .controller('MenuController', function () {
+
+
+    })
+
+    .controller('FolderMenuController', function ($scope) {
+        $scope.onDrop = function () {
+        };
+    })
+
+    .controller('WorkspaceMenuController', function ($scope) {
+        $scope.onDrop = function () {
+        };
+    });
