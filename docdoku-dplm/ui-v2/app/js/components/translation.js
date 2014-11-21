@@ -1,13 +1,13 @@
-angular.module('dplm.services.translations',['pascalprecht.translate'])
-.config(function($translateProvider) {
+angular.module('dplm.services.translations', ['pascalprecht.translate'])
+    .config(function ($translateProvider) {
 
         $translateProvider.translations('en', {
-            HELLO:'Hello'
+            HELLO: 'Hello'
         })
-        .translations('fr', {
-            HELLO:'Bonjour'
-        });
+            .translations('fr', {
+                HELLO: 'Bonjour'
+            });
 
         $translateProvider.preferredLanguage(localStorage.lang || 'en');
 
-});
+    });

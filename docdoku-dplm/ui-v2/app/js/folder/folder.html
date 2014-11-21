@@ -1,98 +1,109 @@
 <md-toolbar scroll-shrink>
-<div class="md-toolbar-tools">
-  <h3>
-    <md-button aria-label="" ng-click="openMenu()" hide-md>   <i class="fa fa-bars"></i>          
-  </md-button>
-
-  <md-button aria-label="" ng-click="reveal()">
-  {{ folder.path | fileshortname }}
-  <md-tooltip>
-  {{'OPEN_IN_EXPLORER'|translate}}
-</md-tooltip>
-</md-button>
-</h3>
-
-</div>
+    <div class="md-toolbar-tools">
+        <h3>
+            <md-button aria-label="" ng-click="openMenu()" hide-md><i class="fa fa-bars"></i></md-button>
+            <md-button aria-label="" ng-click="reveal()">
+                {{ folder.path | fileshortname }}
+                <md-tooltip>
+                    {{'OPEN_IN_EXPLORER'|translate}}
+                </md-tooltip>
+            </md-button>
+            <md-button aria-label="" ng-click="toggleFavorite()">
+                <i class="fa fa-star" ng-class="{favorite:folder.favorite}"></i>
+                <md-tooltip>
+                    {{'FAVORITE'|translate}}
+                </md-tooltip>
+            </md-button>
+            <md-button aria-label="" ng-click="refresh()">
+                <i class="fa fa-refresh"></i>
+                <md-tooltip>
+                    {{'REFRESH_FOLDER'|translate}}
+                </md-tooltip>
+            </md-button>
+        </h3>
+    </div>
+    <md-progress-linear ng-show="loadingFiles" mode="indeterminate"></md-progress-linear>
 
 </md-toolbar>
 
 <div class="row list-header" layout="horizontal">
-  <div flex>
-    <md-text-float style="margin: 0 18px;" label="{{'SEARCH' | translate}} ({{files.length}} {{'ITEMS' | translate}})" ng-model="search" type="text"></md-text-float>   
-  </div>
-  <div style="padding-right:8px;"> 
-  
-    <md-button aria-label="" ng-click="refresh()">
-      <i class="fa fa-refresh"></i>
-      <md-tooltip>
-      {{'REFRESH_FOLDER'|translate}}
-    </md-tooltip>
-    </md-button> 
+    <div flex>
+        <md-text-float style="margin: 0 18px;"
+                       label="{{'SEARCH' | translate}} ({{files.length}} {{'ITEMS' | translate}})" ng-model="search"
+                       type="text"></md-text-float>
+    </div>
+    <div style="padding-right:8px;">
 
-    <md-checkbox ng-model="filters.sync" aria-label="">
-    <i class="fa fa-check-circle-o file-sync"></i>
-  </md-checkbox>
-  <md-checkbox ng-model="filters.modified" aria-label="">
-  <i class="fa fa-cloud-upload file-modified"></i>
-</md-checkbox>
-<md-checkbox ng-model="filters.notSync" aria-label="">
-<i class="fa  fa-plus-circle file-notSync"></i>
-</md-checkbox>
-</div>    
+
+
+        <md-checkbox ng-model="filters.sync" aria-label="">
+            <i class="fa fa-check-circle-o file-sync"></i>
+        </md-checkbox>
+        <md-checkbox ng-model="filters.modified" aria-label="">
+            <i class="fa fa-cloud-upload file-modified"></i>
+        </md-checkbox>
+        <md-checkbox ng-model="filters.notSync" aria-label="">
+            <i class="fa  fa-plus-circle file-notSync"></i>
+        </md-checkbox>
+    </div>
 </div>
-<div on-scroll-end="onScrollEnd()" class="fullscreen-wrapper offset-toolbar" >
-  <md-content class="md-padding">  
-  <md-list>
-  <md-item ng-repeat="file in files | filter:search | filterFiles:filters">
-  <md-item-content 
-  ng-controller="FileController" layout-align="start start">
-  <div class="md-tile-left" align="center" ng-if="loading">
-    <i class="fa fa-refresh fa-spin"></i>
-  </div>
-  <div class="md-tile-left" align="center" ng-if="!loading">
-    <i class="fa fa-refresh fa-spin" ng-show="loading"></i>
-    <i class="fa fa-check-circle-o fa-lg file-sync" ng-show="file.sync"></i>
-    <i class="fa fa-cloud-upload fa-lg file-modified" ng-show="file.modified"></i>
-    <i class="fa fa-plus-circle fa-lg file-notSync" ng-show="file.notSync"></i>
+<div on-scroll-end="onScrollEnd()" class="fullscreen-wrapper offset-toolbar">
+    <md-content class="md-padding">
+        <md-list>
+            <md-item ng-repeat="file in files | filter:search | filterFiles:filters">
+                <md-item-content
+                        ng-controller="FileController" layout-align="start start">
+                    <div class="md-tile-left" align="center" ng-if="loading">
+                        <i class="fa fa-refresh fa-spin"></i>
+                    </div>
+                    <div class="md-tile-left" align="center" ng-if="!loading">
+                        <i class="fa fa-refresh fa-spin" ng-show="loading"></i>
+                        <i class="fa fa-check-circle-o fa-lg file-sync" ng-show="file.sync"></i>
+                        <i class="fa fa-cloud-upload fa-lg file-modified" ng-show="file.modified"></i>
+                        <i class="fa fa-plus-circle fa-lg file-notSync" ng-show="file.notSync"></i>
 
-  </div>
+                    </div>
 
-  <div class="md-tile-content">
+                    <div class="md-tile-content">
 
-   <div class="cursor"  ng-click="toggleOpenedFile(file)">
-    <i style="float:right" class="fa" ng-class="{'fa-angle-down': file != openedFile, 'fa-angle-up': file === openedFile}"></i> 
-    <h3>
+                        <div class="cursor" ng-click="toggleOpenedFile(file)">
+                            <i style="float:right" class="fa"
+                               ng-class="{'fa-angle-down': file != openedFile, 'fa-angle-up': file === openedFile}"></i>
 
-      <i class="fa fa-check" ng-show="file.part && file.part.isReleased"></i>
-      <i class="fa fa-eye" ng-show="file.part && !file.part.isReleased 
+                            <h3>
+
+                                <i class="fa fa-check" ng-show="file.part && file.part.isReleased"></i>
+                                <i class="fa fa-eye" ng-show="file.part && !file.part.isReleased
       && !file.part.checkoutUser"></i>
-      <i class="fa fa-pencil" ng-show="file.part && file.part.checkoutUser === configuration.user"></i>
-      <i class="fa fa-lock" ng-show="file.part && file.part.checkoutUser && file.part.checkoutUser !== configuration.user"></i>
+                                <i class="fa fa-pencil"
+                                   ng-show="file.part && file.part.checkoutUser === configuration.user"></i>
+                                <i class="fa fa-lock"
+                                   ng-show="file.part && file.part.checkoutUser && file.part.checkoutUser !== configuration.user"></i>
 
-      {{file.path | fileshortname}} 
-      <small ng-if="file.part.partNumber">
-        {{file.part.partNumber}}-{{file.part.version}}-{{file.part.iterations | last}}
-      </small>
-    </h3>
-    <h4 ng-show="file.part.checkoutUser">
-      {{'CHECKOUT_BY'}} {{file.part.checkoutUser}} {{file.part.checkoutDate | timeago}}
-    </h4>
-    <h4 ng-show="file.part.lastModified">
-      {{'LAST_ACTION'}} {{file.part.lastModified | timeago}}
-    </h4><h4 ng-show="file.mtime">
-    {{'LAST_MODIFIED'}} {{file.mtime | timeago}}
-  </h4>
-</div>
+                                {{file.path | fileshortname}}
+                                <small ng-if="file.part.partNumber">
+                                    {{file.part.partNumber}}-{{file.part.version}}-{{file.part.iterations | last}}
+                                </small>
+                            </h3>
+                            <h4 ng-show="file.part.checkoutUser">
+                                {{'CHECKOUT_BY'}} {{file.part.checkoutUser}} {{file.part.checkoutDate | timeago}}
+                            </h4>
+                            <h4 ng-show="file.part.lastModified">
+                                {{'LAST_ACTION'}} {{file.part.lastModified | timeago}}
+                            </h4><h4 ng-show="file.mtime">
+                            {{'LAST_MODIFIED'}} {{file.mtime | timeago}}
+                        </h4>
+                        </div>
 
-<div>
-  <file-actions class="slide-down" ng-if="file === openedFile"></part-file>
-</div>
+                        <div>
+                            <file-actions class="slide-down" ng-if="file === openedFile"></part-file>
+                        </div>
 
-</div>        
+                    </div>
 
-</md-item-content>
-<md-divider ng-if="!$last"></md-divider>
-</md-item>
-</md-list>
-</md-content>
+                </md-item-content>
+                <md-divider ng-if="!$last"></md-divider>
+            </md-item>
+        </md-list>
+    </md-content>
 </div>

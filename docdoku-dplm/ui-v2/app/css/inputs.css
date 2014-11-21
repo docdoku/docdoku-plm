@@ -2,8 +2,10 @@
     display: none;
 }
 
+.menu-file-input {
+	float: right;
+}
 .file-input {
-    float: right;
     display: inline-block;
 }
 
