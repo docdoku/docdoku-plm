@@ -13,11 +13,15 @@
    <h3>
     <i class="fa fa-folder-open"></i> 
     {{ 'FOLDERS' | translate }}
-     <label class="file-input menu-file-input small">
-       <i class="fa fa-plus"></i> {{'ADD_FOLDER' | translate}}
-       <input file-change="addFolder($event,files)" type="file" webkitdirectory/>
-    </label>
+       <md-button style="float:right" class="md-raised md-primary file-input" md-theme="default" aria-label="Profile">
+           <input file-change="addFolder($event,files)" type="file" webkitdirectory/>
+           <i class="fa fa-plus"></i>
+       </md-button>
+
+
   </h3>
+
+
 
   <md-content style="max-height:150px">
    <md-list>

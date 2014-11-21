@@ -24,13 +24,16 @@
     <md-button aria-label="" ng-click="download()" class="md-primary md-raised">
         {{'DOWNLOAD' | translate}}
     </md-button>
-    <md-button ng-if="!part.isReleased && !part.checkoutUser" aria-label="" ng-click="checkout()" class="md-primary md-raised">
+    <md-button ng-if="!part.isReleased && !part.checkoutUser" aria-label="" ng-click="checkout()"
+               class="md-primary md-raised">
         {{'CHECKOUT' | translate}}
     </md-button>
-    <md-button ng-if="part.checkoutUser === configuration.user" aria-label="" ng-click="checkin()" class="md-primary md-raised">
+    <md-button ng-if="part.checkoutUser === configuration.user" aria-label="" ng-click="checkin()"
+               class="md-primary md-raised">
         {{'CHECKIN' | translate}}
     </md-button>
-    <md-button ng-if="part.checkoutUser === configuration.user" ng-click="undoCheckout()" aria-label="" class="md-primary md-raised">
+    <md-button ng-if="part.checkoutUser === configuration.user" ng-click="undoCheckout()" aria-label=""
+               class="md-primary md-raised">
         {{'UNDO_CHECKOUT' | translate}}
     </md-button>
 </div>

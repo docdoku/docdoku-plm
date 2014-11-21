@@ -12,3 +12,15 @@
 .md-tile-left.small{
 	min-width:32px;
 }
+
+.opened{
+	background: #E0E0E0;
+	border-radius: 4px;
+}
+part-actions {
+	padding: 18px;
+}
+
+.subtitle{
+	color: #757575;
+}

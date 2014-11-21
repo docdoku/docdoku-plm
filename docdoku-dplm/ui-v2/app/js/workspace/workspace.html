@@ -6,7 +6,7 @@
 
             <md-button aria-label="" ng-click="showInBrowser()">
                 {{workspace}}
-                <md-tooltip>
+                <md-tooltip md-visible="true">
                     {{'OPEN_IN_BROWSER'|translate}}
                 </md-tooltip>
             </md-button>
@@ -43,7 +43,7 @@
         <md-list>
             <md-item ng-show="!loadingParts && !parts.length" align="center">{{'NO_PARTS'|translate}}</md-item>
             <md-item ng-repeat="part in parts | filterParts:filters">
-                <md-item-content ng-controller="PartController" layout-align="start start">
+                <md-item-content ng-controller="PartController" layout-align="start start" ng-class="{opened: part == openedPart}">
                     <div class="md-tile-left" align="center">
                         <i class="fa fa-check fa-lg" ng-show="part.isReleased"></i>
                         <i class="fa fa-eye fa-lg" ng-show="!part.isReleased
@@ -60,14 +60,15 @@
                                ng-class="{'fa-angle-down': part != openedPart, 'fa-angle-up': part === openedPart}"></i>
 
                             <h3>
-                                {{part.partNumber}} {{part.version}}-{{part.iterations | last}}
-                                <br/>
-                                <small>
+                                {{part.partNumber}}  <span class="subtitle">{{part.version}}-{{part.iterations | last}}</span>
+                                <br />
+                                <small class="subtitle">
                                     {{part.cadFileName || 'NO_CAD_FILE' | translate }}
                                 </small>
                             </h3>
+
                             <h4 ng-show="part.checkoutUser">
-                                {{'CHECKOUT_BY'}} {{part.checkoutUser}} {{part.checkoutDate | timeago}}
+                                {{'CHECKOUT_BY' | translate }} {{part.checkoutUser}} {{part.checkoutDate | timeago}}
                             </h4>
                         </div>
 

@@ -1,11 +1,10 @@
 .slide-down {
   display: block;
   border-top:1px solid #eee;
-  padding-top: 12px;
   transform:scale(1,1);
 }
 
-.slide-down.ng-enter {
+.slide-down.ng-enter, .slide-down.ng-leave {
   transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
 }
 

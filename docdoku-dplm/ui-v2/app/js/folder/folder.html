@@ -77,17 +77,18 @@
                                    ng-show="file.part && file.part.checkoutUser && file.part.checkoutUser !== configuration.user"></i>
 
                                 {{file.path | fileshortname}}
-                                <small ng-if="file.part.partNumber">
+                                <small class="cad-file-name" ng-if="file.part.partNumber">
                                     {{file.part.partNumber}}-{{file.part.version}}-{{file.part.iterations | last}}
                                 </small>
                             </h3>
                             <h4 ng-show="file.part.checkoutUser">
-                                {{'CHECKOUT_BY'}} {{file.part.checkoutUser}} {{file.part.checkoutDate | timeago}}
+                                {{'CHECKOUT_BY' | translate }} {{file.part.checkoutUser}} {{file.part.checkoutDate |
+                                timeago}}
                             </h4>
                             <h4 ng-show="file.part.lastModified">
-                                {{'LAST_ACTION'}} {{file.part.lastModified | timeago}}
+                                {{'LAST_MODIFIED' | translate }} {{file.part.lastModified | timeago}}
                             </h4><h4 ng-show="file.mtime">
-                            {{'LAST_MODIFIED'}} {{file.mtime | timeago}}
+                            {{'LAST_ACTION' | translate }} {{file.mtime | timeago}}
                         </h4>
                         </div>
 
