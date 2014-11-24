@@ -4,7 +4,6 @@
   "description": "",
   "author": "morgan.guimard@docdoku.com",
   "scripts": {
-    "postinstall":"bower install && cd app && npm install",
-    "release":"sh release.sh"
+    "postinstall":"bower install && cd app && npm install"
   }
 }

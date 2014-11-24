@@ -34,6 +34,19 @@
                                     </arguments>
                                 </configuration>
                             </execution>
+                            <execution>
+                                <id>release-dplm</id>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>sh</executable>
+                                    <arguments>
+                                        <argument>release.sh</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
                         </executions>
                     </plugin>
                 </plugins>
