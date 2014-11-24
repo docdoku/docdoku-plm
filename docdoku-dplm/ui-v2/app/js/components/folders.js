@@ -92,7 +92,7 @@ angular.module('dplm.services.folders', [])
                     command = 'explorer';
                     break;
                 case 'Darwin' :
-                    command = 'explorer';
+                    command = 'open';
                     break;
                 default :
                     command = 'nautilus';
