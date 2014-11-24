@@ -3,13 +3,13 @@
 BASE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 TMP_DIR=${BASE_DIR}/tmp
-SOURCES=${BASE_DIR}/ui
+SOURCES=${BASE_DIR}/ui-v2/app
 
 echo "Creating nw archive ..."
 
 cd ${TMP_DIR};
 
-rm -rf ui;
+rm -rf app;
 
 cp -R ${SOURCES} ${TMP_DIR};
 
@@ -20,6 +20,6 @@ if [ -f "app.nw" ] ; then
 fi
 
 # Zip the source in a zip archive
-cd ui;
+cd app;
 /usr/bin/zip -r ../app.nw *;
 echo "... done";
