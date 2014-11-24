@@ -141,11 +141,18 @@ angular.module('dplm.workspace', [])
 
             templateUrl: 'js/workspace/part-actions.html',
 
-            controller: function ($scope, $element, $attrs, $transclude, $timeout, CliService, FolderService) {
+            controller: function ($scope, $filter,$element, $attrs, $transclude, $timeout, CliService, FolderService) {
 
                 $scope.folders = FolderService.folders;
                 $scope.options = {force: true, recursive: true};
+                $scope.baselines = [{name:$filter('translate')('LATEST'),id:''}];
+                $scope.baseline = $scope.baselines[0];
 
+                CliService.getBaselines($scope.part).then(function(baselines){
+                   angular.forEach(baselines,function(baseline){
+                       $scope.baselines.push(baseline);
+                   });
+                });
 
                 $scope.folder = {};
                 $scope.folder.path = FolderService.folders.length ? FolderService.folders[0].path : '';

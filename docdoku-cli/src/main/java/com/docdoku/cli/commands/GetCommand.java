@@ -111,26 +111,41 @@ public class GetCommand extends AbstractCommandLine{
         path=path.getParentFile();
     }
 
-    private void getPart(String pPartNumber, String pRevision, int pIteration,ConfigSpec cs) throws IOException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartMasterNotFoundException, PartRevisionNotFoundException, LoginException, NoSuchAlgorithmException, PartIterationNotFoundException, NotAllowedException, AccessRightException {
+    private void getPart(String pPartNumber, String pRevision, int pIteration, ConfigSpec cs) throws IOException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartMasterNotFoundException, PartRevisionNotFoundException, LoginException, NoSuchAlgorithmException, PartIterationNotFoundException, NotAllowedException, AccessRightException {
+        PartMaster pm = productS.getPartMaster(new PartMasterKey(workspace, pPartNumber));
         PartRevision pr;
         PartIteration pi;
-        PartMaster pm = productS.getPartMaster(new PartMasterKey(workspace, pPartNumber));
-        if(pRevision==null){
-            pr = pm.getLastRevision();
-        }else{
-            pr = productS.getPartRevision(new PartRevisionKey(workspace,pPartNumber,pRevision));
-        }
 
         if(cs != null){
+
             pi = cs.filterConfigSpec(pm);
-        }else if(pIteration==0){
-            pi = pr.getLastIteration();
-        }else{
-            if(pIteration > pr.getNumberOfIterations()){
-                throw new IllegalArgumentException("Iteration " + pIteration + " doesn't exist");
-            }else{
-                pi = pr.getIteration(pIteration);
+
+            if(pi == null){
+                throw new IllegalArgumentException("Cannot find a part iteration in configuration "+ cs.getId());
             }
+
+            pr = pi.getPartRevision();
+
+            if(null != pRevision && pr.getVersion() != pRevision){
+                throw new IllegalArgumentException("Config spec "+ cs.getId() + " and revision "+pRevision+" doesn't match");
+            }
+
+        }else {
+
+            if(pRevision != null){
+                pr = productS.getPartRevision(new PartRevisionKey(workspace, pPartNumber, pRevision));
+                if(pIteration == 0){
+                    pi = pr.getLastIteration();
+                }else if(pIteration > pr.getNumberOfIterations()){
+                    throw new IllegalArgumentException("Iteration " + pIteration + " doesn't exist");
+                }else{
+                    pi = pr.getIteration(pIteration);
+                }
+            }else{
+                pr = pm.getLastRevision();
+                pi = pr.getLastIteration();
+            }
+
         }
 
         BinaryResource bin = pi.getNativeCADFile();

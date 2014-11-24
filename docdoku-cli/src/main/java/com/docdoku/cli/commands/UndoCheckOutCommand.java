@@ -59,9 +59,6 @@ public class UndoCheckOutCommand extends AbstractCommandLine{
     @Option(name="-f", aliases = "--force", usage="overwrite existing files even if they have been modified locally")
     private boolean force;
 
-    @Option(name="-R", aliases = "--recursive", usage="execute the command through the product structure hierarchy")
-    private boolean recursive;
-
     public void execImpl() throws Exception {
         if(partNumber==null || revision==null){
             loadMetadata();

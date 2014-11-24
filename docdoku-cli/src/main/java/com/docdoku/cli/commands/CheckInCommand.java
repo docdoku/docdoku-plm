@@ -54,9 +54,6 @@ public class CheckInCommand extends AbstractCommandLine{
     @Option(name="-n", aliases = "--no-upload", usage="do not upload the cad file of the part if any")
     private boolean noUpload;
 
-    @Option(name="-R", aliases = "--recursive", usage="execute the command through the product structure hierarchy")
-    private boolean recursive;
-
     @Option(name="-w", aliases = "--workspace", required = true, metaVar = "<workspace>", usage="workspace on which operations occur")
     protected String workspace;
 

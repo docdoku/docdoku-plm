@@ -13,6 +13,15 @@
     </label>
 </div>
 <div class="row" ng-if="!part.busy">
+
+    <label>{{'BASELINE' | translate}}</label>
+    <i class="fa fa-sitemap"></i>
+    <select ng-model="options.baseline" class="cursor">
+        <option ng-repeat="baseline in baselines" value="{{baseline.id}}">
+            {{baseline.name}}
+        </option>
+    </select>
+
     <md-checkbox ng-model="options.force" aria-label="">
         {{'FORCE'|translate}}
     </md-checkbox>
