@@ -1,31 +1,35 @@
 <md-progress-linear ng-if="file.busy" mode="determinate" ng-value="file.progress"></md-progress-linear>
 
+<div class="row" ng-if="!file.notSync && !file.busy && !file.part.isReleased">
+    <md-checkbox ng-model="options.force" aria-label="">
+        {{'FORCE'|translate}}
+    </md-checkbox>
+    <md-checkbox ng-model="options.recursive" aria-label="">
+        {{'RECURSIVE'|translate}}
+    </md-checkbox>
+</div>
+
 <div class="md-actions" ng-if="!file.notSync && !file.busy">
     <md-button ng-if="!file.part.isReleased && !file.part.checkoutUser" aria-label="" ng-click="checkout()"
-               class="md-primary">
+               class="md-raised md-primary">
         {{'CHECKOUT' | translate}}
     </md-button>
     <md-button ng-if="file.part.checkoutUser === configuration.user" aria-label="" ng-click="checkin()"
-               class="md-primary">
+               class="md-raised md-primary">
         {{'CHECKIN' | translate}}
     </md-button>
     <md-button ng-if="file.part.checkoutUser === configuration.user" aria-label="" ng-click="undoCheckout()"
-               class="md-primary">
+               class="md-raised md-primary">
         {{'UNDO_CHECKOUT' | translate}}
     </md-button>
-    <md-button ng-if="file.part.checkoutUser === configuration.user" aria-label="" ng-click="put()" class="md-primary">
+    <md-button ng-if="file.part.checkoutUser === configuration.user" aria-label="" ng-click="put()" class="md-raised md-primary">
         {{'PUT' | translate}}
     </md-button>
 </div>
 
-<div class="row" ng-if="!file.notSync && !file.busy">
-    <md-checkbox ng-model="options.force" aria-label="">
-        {{'FORCE'|translate}}
-    </md-checkbox>
-</div>
 
 
-<div class="md-actions" ng-if="file.notSync && !file.busy" layout="horizontal">
+<div class="md-actions md-padding" ng-if="file.notSync && !file.busy" layout="horizontal">
 
     <form name="creationForm" ng-submit="creationForm.$valid && createPart()">
         <div class="row">{{'CREATE_PART'|translate}}</div>

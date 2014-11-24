@@ -105,7 +105,7 @@ angular.module('dplm.folder', [])
 
             controller: function ($scope, $element, $attrs, $transclude, $timeout, CliService, WorkspaceService) {
 
-                $scope.options = {force: true};
+                $scope.options = {force: true,recursive:true};
                 $scope.workspaces = WorkspaceService.workspaces;
                 $scope.newPart = {workspace: $scope.workspaces[0]};
 

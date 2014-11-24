@@ -3,6 +3,7 @@
         <h3>
             <md-button aria-label="" ng-click="openMenu()" hide-md><i class="fa fa-bars"></i></md-button>
             <md-button aria-label="" ng-click="reveal()">
+                <i class="fa fa-folder-open"></i> {{'FOLDER' | translate}} :
                 {{ folder.path | fileshortname }}
                 <md-tooltip>
                     {{'OPEN_IN_EXPLORER'|translate}}
