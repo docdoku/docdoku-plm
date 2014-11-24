@@ -46,6 +46,7 @@ require.config({
         jqueryUI: '../../bower_components/jqueryui/ui/jquery-ui',
         bootstrapSwitch:'../../bower_components/bootstrap-switch/static/js/bootstrap-switch',
         date:'../../bower_components/date.format/date.format',
+        unorm:'../../bower_components/unorm/lib/unorm',
         localization: '../localization',
         modules: '../modules',
         'common-objects': '../common-objects',

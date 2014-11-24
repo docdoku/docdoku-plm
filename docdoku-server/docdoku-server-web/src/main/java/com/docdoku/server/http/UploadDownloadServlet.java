@@ -134,7 +134,7 @@ public class UploadDownloadServlet extends HttpServlet {
                 fileName+="."+outputFormat;
             }
 
-            fileName = URLEncoder.encode(fileName, ENCODAGE);
+            fileName = URLEncoder.encode(fileName, ENCODAGE).replace("+","%20");
             
             // Set content type
             String contentType;

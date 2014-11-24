@@ -26,7 +26,8 @@
     "date.format": "~1.2.3",
     "dat.gui": "*",
     "less": "1.3.3",
-	"less-elements": "latest"
+	"less-elements": "latest",
+    "unorm" :"1.3.3"
   },
   "devDependencies": {},
   "resolutions": {
