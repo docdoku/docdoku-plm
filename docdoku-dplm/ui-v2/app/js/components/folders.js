@@ -16,10 +16,15 @@ angular.module('dplm.services.folders', [])
         var statFiles = function (fileNames) {
             var promises = [];
             var fs = require('fs');
+            var isWindows = require('os').type() === 'Windows_NT';
             angular.forEach(fileNames, function (fileName) {
                 promises.push($q(function (resolve, reject) {
                     fs.stat(fileName, function (err, stats) {
+                        if(isWindows){
+                            fileName =  fileName.charAt(0).toUpperCase()+ fileName.slice(1);
+                        }
                         var file = {path: fileName};
+
                         if (err) reject(file);
                         else resolve(angular.extend(stats, file));
                     });
