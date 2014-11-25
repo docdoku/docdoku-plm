@@ -98,6 +98,15 @@ angular.module('dplm.workspace', [])
             }
         };
 
+        $scope.refreshCurrent = function(){
+            angular.forEach($scope.parts, function (part) {
+                part.busy=true;
+                CliService.getStatusForPart(part).then(function(){
+                    part.busy = false;
+                });
+            });
+        };
+
         CliService.getPartMastersCount($routeParams.workspace).then(function (data) {
             $scope.count = data.count;
         }).then(getPartMasters);
@@ -175,6 +184,12 @@ angular.module('dplm.workspace', [])
                     FolderService.getFolder({path:$scope.folder.path}).newStuff = true;;
                 };
 
+                var checkForWorkspaceReload = function(){
+                    if($scope.options.recursive){
+                        $scope.refreshCurrent();
+                    }
+                };
+
                 $scope.download = function () {
                     $scope.part.busy = true;
                     CliService.download($scope.part, $scope.folder.path, $scope.options).then(function () {
@@ -186,7 +201,7 @@ angular.module('dplm.workspace', [])
                     $scope.part.busy = true;
                     CliService.checkout($scope.part, $scope.folder.path, $scope.options).then(function () {
                         return CliService.getStatusForPart($scope.part);
-                    }, null, onProgress).then(onFinish).then(newStuff);
+                    }, null, onProgress).then(onFinish).then(newStuff).then(checkForWorkspaceReload);
                 };
 
                 $scope.checkin = function () {
