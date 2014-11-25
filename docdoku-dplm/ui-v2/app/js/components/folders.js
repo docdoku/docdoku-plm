@@ -5,6 +5,8 @@ angular.module('dplm.services.folders', [])
 
         var _this = this;
 
+        var ignoreList = ['.dplm'];
+
         this.folders = angular.fromJson(localStorage.folders || '[]');
 
         var alreadyHave = function (path) {
@@ -62,7 +64,6 @@ angular.module('dplm.services.folders', [])
 
         this.recursiveReadDir = function (path) {
             return $q(function (resolve, reject) {
-                var ignoreList = ['.dplm'];
                 var recursive = require('recursive-readdir');
                 recursive(path, ignoreList, function (err, files) {
                     if (err) {
@@ -73,6 +74,20 @@ angular.module('dplm.services.folders', [])
                     }
                 });
             }).then(statFiles);
+        };
+
+        this.getFilesCount = function(path){
+            return $q(function (resolve, reject) {
+                var recursive = require('recursive-readdir');
+                recursive(path, ignoreList, function (err, files) {
+                    if (err) {
+                        reject(err);
+                    }
+                    else {
+                        resolve(files.length);
+                    }
+                });
+            });
         };
 
         this.fetchFileStatus = function (file) {

@@ -1,9 +1,47 @@
 <md-toolbar scroll-shrink>
     <div class="md-toolbar-tools">
         <h3>
-            <md-button aria-label="" ng-click="openMenu()" hide-md><i class="fa fa-bars"></i>
+            <md-button aria-label="" ng-click="openMenu()" hide-md>
+                <i class="fa fa-bars"></i>
             </md-button>
-            <span>{{'HOME' | translate}}</span>
+            <md-button aria-label="">
+                <i class="fa fa-home"></i> {{'HOME' | translate}}
+            </md-button>
         </h3>
     </div>
 </md-toolbar>
+<div layout="vertical" class="settings">
+
+    <md-content class="md-padding">
+        {{'GREETINGS'|translate}} <b>{{configuration.user}}</b>, {{'CONNECTED_TO' | translate}} <b>{{configuration.host}}</b>
+    </md-content>
+
+    <md-content class="md-padding">
+        <h4><i class="fa fa-star favorite"></i> {{'FAVORITE_FOLDERS' | translate}}</h4>
+
+        <md-list>
+            <md-item ng-if="!folders.length">
+                <md-item-content>
+                    {{'NO_FOLDERS' | translate}}
+                </md-item-content>
+            </md-item>
+            <md-item ng-repeat="folder in folders">
+                <md-item-content ng-controller="FolderDetailsController">
+                    <div class="md-tile-left" align="center">
+                       <i class="fa fa-folder"></i>
+                    </div>
+                    <div class="md-tile-content">
+                        <h3>
+                            <md-button aria-label="" href="#/folder/{{folder.uuid}}" class="md-primary">{{folder.path | fileshortname}}</md-button>
+                        </h3>
+                    </div>
+                    <div class="md-tile-right">
+                        {{details.count}} {{'FILES' | translate }}
+                    </div>
+                </md-item-content>
+                <md-divider ng-if="!$last"></md-divider>
+            </md-item>
+        </md-list>
+    </md-content>
+
+</div>

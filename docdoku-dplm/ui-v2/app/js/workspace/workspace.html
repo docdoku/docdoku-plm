@@ -44,7 +44,7 @@
             <md-item ng-show="!loadingParts && !parts.length">{{'NO_PARTS'|translate}}</md-item>
             <md-item ng-repeat="part in parts | filterParts:filters">
                 <md-item-content ng-controller="PartController" layout-align="start start" ng-class="{opened: part == openedPart}">
-                    <div class="md-tile-left" align="center">
+                    <div class="md-tile-left md-tile-top" align="center">
                         <i class="fa fa-check fa-lg" ng-show="part.isReleased"></i>
                         <i class="fa fa-eye fa-lg" ng-show="!part.isReleased
               && !part.checkoutUser"></i>

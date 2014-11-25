@@ -43,7 +43,7 @@ angular.module('dplm.services.translations', ['pascalprecht.translate'])
                 PASSWORD: 'Password',
                 HOST: 'Host',
                 PORT: 'Port',
-                ITEMS: 'items',
+                ITEMS: 'item(s)',
                 LOADING_MORE: 'Loading more',
                 FOLDERS: 'Folders',
                 CHECKOUT_BY: 'Checkouted by',
@@ -62,7 +62,12 @@ angular.module('dplm.services.translations', ['pascalprecht.translate'])
                 DELETE_FOLDER_CONFIRM_TITLE:'Are you sure to want to remove this folder ?',
                 DELETE_FOLDER_CONFIRMED:'Folder removed',
                 YES:'Yes',
-                NO:'No'
+                NO:'No',
+                GREETINGS:'Welcome',
+                FILES:'file(s)',
+                FAVORITE_FOLDERS:'Favorite folders',
+                NO_FOLDERS:'No folders',
+                CONNECTED_TO:'connected to'
             })
             .translations('fr', {
                 CUT: 'Couper',
@@ -101,7 +106,7 @@ angular.module('dplm.services.translations', ['pascalprecht.translate'])
                 PASSWORD: 'Mot de passe',
                 HOST: 'Hôte',
                 PORT: 'Port',
-                ITEMS: 'entrées',
+                ITEMS: 'entrée(s)',
                 LOADING_MORE: 'Chargement d\'entrées supplémentaires',
                 FOLDERS: 'Dossiers',
                 CHECKOUT_BY: 'Réservé par',
@@ -120,7 +125,12 @@ angular.module('dplm.services.translations', ['pascalprecht.translate'])
                 DELETE_FOLDER_CONFIRM_TITLE:'Êtes-vous sûr de vouloir supprimer ce dossier ?',
                 DELETE_FOLDER_CONFIRMED:'Dossier supprimé',
                 YES:'Oui',
-                NO:'Non'
+                NO:'Non',
+                GREETINGS:'Bienvenue',
+                FILES:'fichier(s)',
+                FAVORITE_FOLDERS:'Dossiers favoris',
+                NO_FOLDERS:'Aucun dossier',
+                CONNECTED_TO:'connecté à'
             });
 
         $translateProvider.preferredLanguage(localStorage.lang || 'en');

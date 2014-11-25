@@ -6,9 +6,10 @@
 }
 .md-tile-left{
 	margin-right: 0;
+}
+.md-tile-left.md-tile-top{
 	margin-top: 20px;
 }
-
 .md-tile-left.small{
 	min-width:32px;
 }

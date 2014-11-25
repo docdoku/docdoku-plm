@@ -59,10 +59,10 @@
             <md-item ng-repeat="file in files | filter:search | filterFiles:filters">
                 <md-item-content
                         ng-controller="FileController" layout-align="start start" ng-class="{opened: file == openedFile}">
-                    <div class="md-tile-left" align="center" ng-if="loading">
+                    <div class="md-tile-left md-tile-top" align="center" ng-if="loading">
                         <i class="fa fa-refresh fa-spin"></i>
                     </div>
-                    <div class="md-tile-left" align="center" ng-if="!loading">
+                    <div class="md-tile-left md-tile-top" align="center" ng-if="!loading">
                         <i class="fa fa-refresh fa-spin" ng-show="loading"></i>
                         <i class="fa fa-check-circle-o fa-lg file-sync" ng-show="file.sync"></i>
                         <i class="fa fa-cloud-upload fa-lg file-modified" ng-show="file.modified"></i>
