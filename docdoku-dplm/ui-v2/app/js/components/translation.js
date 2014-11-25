@@ -58,7 +58,11 @@ angular.module('dplm.services.translations', ['pascalprecht.translate'])
                 NO_SUITABLE_JAVA:'No suitable Java version found',
                 FETCHING_WORKSPACES:'Receiving workspaces list',
                 LATEST:'Latest',
-                BASELINE:'Baseline'
+                BASELINE:'Baseline',
+                DELETE_FOLDER_CONFIRM_TITLE:'Are you sure to want to remove this folder ?',
+                DELETE_FOLDER_CONFIRMED:'Folder removed',
+                YES:'Yes',
+                NO:'No'
             })
             .translations('fr', {
                 CUT: 'Couper',
@@ -112,7 +116,11 @@ angular.module('dplm.services.translations', ['pascalprecht.translate'])
                 NO_SUITABLE_JAVA:'Pas de version de Java trouvée',
                 FETCHING_WORKSPACES:'Récupération de la liste des espaces de travail ...',
                 LATEST:'Dernière',
-                BASELINE:'Baseline'
+                BASELINE:'Baseline',
+                DELETE_FOLDER_CONFIRM_TITLE:'Êtes-vous sûr de vouloir supprimer ce dossier ?',
+                DELETE_FOLDER_CONFIRMED:'Dossier supprimé',
+                YES:'Oui',
+                NO:'Non'
             });
 
         $translateProvider.preferredLanguage(localStorage.lang || 'en');

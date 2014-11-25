@@ -14,7 +14,7 @@ angular.module('dplm.folder', [])
         });
     })
 
-    .controller('FolderController', function ($scope, $location, $routeParams, ConfigurationService, FolderService) {
+    .controller('FolderController', function ($scope, $location, $routeParams, $filter, ConfirmService, ConfigurationService, FolderService, NotificationService) {
 
         $scope.folder = FolderService.getFolder($routeParams);
 
@@ -52,9 +52,14 @@ angular.module('dplm.folder', [])
             FolderService.save();
         };
 
-        $scope.delete = function(){
-            FolderService.delete($scope.folder);
-            $location.path('/');
+        $scope.delete = function(ev){
+            ConfirmService.confirm(ev,{
+                content:$filter('translate')('DELETE_FOLDER_CONFIRM_TITLE')
+            }).then(function(){
+                FolderService.delete($scope.folder);
+                NotificationService.toast($filter('translate')('DELETE_FOLDER_CONFIRMED'));
+                $location.path('/');
+            });
         };
 
         $scope.refresh();

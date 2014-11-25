@@ -31,6 +31,7 @@ angular.module('dplm', [
     'dplm.services.notification',
     'dplm.services.folders',
     'dplm.services.workspaces',
+    'dplm.services.confirm',
 
     'dplm.directives.filechange',
     'dplm.directives.scrollend',
