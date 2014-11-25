@@ -139,7 +139,7 @@ angular.module('dplm.folder', [])
 
                 $scope.checkin = function () {
                     $scope.file.busy = true;
-                    CliService.checkin($scope.file.part).then(function () {
+                    CliService.checkin($scope.file.part,$scope.folder.path).then(function () {
                         return $scope.fetchStatus();
                     }, null, onProgress).then(onFinish);
                 };

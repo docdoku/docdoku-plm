@@ -190,7 +190,7 @@ angular.module('dplm.services.cli', [])
 
         };
 
-        this.checkin = function (part) {
+        this.checkin = function (part,path) {
 
             var args = [
                 'ci',
@@ -203,6 +203,10 @@ angular.module('dplm.services.cli', [])
                 '-o', part.partNumber,
                 '-r', part.version
             ];
+
+            if(path){
+                args.push(path);
+            }
 
             return run(args);
 

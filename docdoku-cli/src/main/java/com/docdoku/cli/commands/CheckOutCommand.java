@@ -140,7 +140,8 @@ public class CheckOutCommand extends AbstractCommandLine{
 
         if(!pr.isCheckedOut()) {
             try{
-                productS.checkOutPart(new PartRevisionKey(workspace, pPartNumber, pr.getVersion()));
+                pr = productS.checkOutPart(new PartRevisionKey(workspace, pPartNumber, pr.getVersion()));
+                pi = pr.getLastIteration();
             }catch (Exception e){
                 output.printException(e);
             }
