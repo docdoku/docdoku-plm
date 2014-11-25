@@ -52,7 +52,13 @@ angular.module('dplm.services.translations', ['pascalprecht.translate'])
                 NO_CAD_FILE: 'No CAD file',
                 DELETE_FOLDER:'Delete folder',
                 NO_FILES:'Folder is empty',
-                FOLDER:'Folder'
+                FOLDER:'Folder',
+                CONFIGURATION_MISSING:'Configuration missing, please fill in the required fields',
+                CHECKING_FOR_JAVA:'Looking for suitable Java version ...',
+                NO_SUITABLE_JAVA:'No suitable Java version found',
+                FETCHING_WORKSPACES:'Receiving workspaces list',
+                LATEST:'Latest',
+                BASELINE:'Baseline'
             })
             .translations('fr', {
                 CUT: 'Couper',
@@ -100,7 +106,13 @@ angular.module('dplm.services.translations', ['pascalprecht.translate'])
                 NO_CAD_FILE: 'Aucun fichier CAD',
                 DELETE_FOLDER:'Supprimer le dossier',
                 NO_FILES:'Le dossier est vide',
-                FOLDER:'Dossier'
+                FOLDER:'Dossier',
+                CONFIGURATION_MISSING:'Configuration incomplète, veuillez renseigner les champs obligatoires',
+                CHECKING_FOR_JAVA:'Recherche de java ...',
+                NO_SUITABLE_JAVA:'Pas de version de Java trouvée',
+                FETCHING_WORKSPACES:'Récupération de la liste des espaces de travail ...',
+                LATEST:'Dernière',
+                BASELINE:'Baseline'
             });
 
         $translateProvider.preferredLanguage(localStorage.lang || 'en');

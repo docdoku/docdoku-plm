@@ -53,4 +53,8 @@ angular.module('dplm.services.notification', [])
 
         };
 
+        this.hide = function(){
+            $mdToast.hide();
+        }
+
     });

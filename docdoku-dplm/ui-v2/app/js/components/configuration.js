@@ -2,7 +2,7 @@
 
 angular.module('dplm.services.configuration', [])
 
-    .service('ConfigurationService', function ($q, $log) {
+    .service('ConfigurationService', function ($q, $log, $filter, $location, NotificationService) {
 
         var _this = this;
 
@@ -12,16 +12,73 @@ angular.module('dplm.services.configuration', [])
 
         this.save = function () {
             localStorage.configuration = JSON.stringify(_this.configuration);
-        }
-        this.checkAtStartup = function () {
-            $log.info('Checking for valid configuration');
-            return $q(function (resolve, reject) {
-                if (_this.configuration.user && _this.configuration.password) {
-                    resolve();
-                } else {
-                    $log.error('Configuration missing, rejecting')
-                    reject(_this.error);
+        };
+
+        var checkForJava = function(){
+
+            var deferred = $q.defer();
+
+                try{
+
+                    NotificationService.toast($filter('translate')('CHECKING_FOR_JAVA'));
+
+                    var spawn = require('child_process').spawn(_this.configuration.java || 'java', ['-version']);
+
+                    spawn.on('error', function (err) {
+                        $log.error(err);
+                        deferred.reject();
+                    });
+
+                    spawn.stderr.on('data', function (data) {
+                        data = data.toString().split('\n')[0];
+                        var javaVersion = new RegExp('java version').test(data) ? data.split(' ')[2].replace(/"/g, '') : false;
+                        if (javaVersion && javaVersion >= '1.7') {
+                            $log.info('Java version found' + javaVersion);
+                            deferred.resolve();
+                        } else {
+                            deferred.reject();
+                        }
+                    });
+
+                } catch(e){
+                    deferred.reject(e);
                 }
-            });
-        }
+
+            return deferred.promise;
+        };
+
+        var checkAtStartupPromise;
+
+        this.checkAtStartup = function () {
+
+            if(checkAtStartupPromise){
+                return checkAtStartupPromise;
+            }
+
+            var deferred = $q.defer();
+            checkAtStartupPromise = deferred.promise;
+
+            if (!_this.configuration.user || !_this.configuration.password) {
+                NotificationService.toast($filter('translate')('CONFIGURATION_MISSING'));
+                $location.path('settings');
+                deferred.reject();
+            }else{
+                checkForJava().then(function(){
+                   // WorkspaceService.getWorkspaces(deferred.resolve,deferred.reject);
+                    deferred.resolve();
+                },function(){
+                    NotificationService.toast($filter('translate')('NO_SUITABLE_JAVA'));
+                    $location.path('settings');
+                    deferred.reject();
+                });
+            }
+
+            return deferred.promise;
+
+        };
+
+        this.reset = function(){
+            checkAtStartupPromise = null;
+        };
+
     });

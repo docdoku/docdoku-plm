@@ -4,7 +4,12 @@ angular.module('dplm.workspace', [])
     .config(function ($routeProvider) {
         $routeProvider.when('/workspace/:workspace', {
             controller: 'WorkspaceController',
-            templateUrl: 'js/workspace/workspace.html'
+            templateUrl: 'js/workspace/workspace.html',
+            resolve:{
+                conf:function(ConfigurationService,WorkspaceService){
+                    return ConfigurationService.checkAtStartup().then(WorkspaceService.getWorkspaces);
+                }
+            }
         });
     })
 
@@ -88,8 +93,8 @@ angular.module('dplm.workspace', [])
             if (!$scope.loadingParts && !$scope.search && $scope.start < $scope.count) {
                 $scope.start += $scope.max;
                 $scope.loadingMore = true;
-                NotificationService.toastBottomRight($filter('translate')('LOADING_MORE'), 2000);
-                getPartMasters();
+                NotificationService.toastBottomRight($filter('translate')('LOADING_MORE'));
+                getPartMasters().then(NotificationService.hide);
             }
         };
 

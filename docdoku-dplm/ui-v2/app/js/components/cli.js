@@ -9,8 +9,6 @@ angular.module('dplm.services.cli', [])
         var mainClass = 'com.docdoku.cli.MainCommand';
         var memOptions = '-Xmx1024M';
 
-        this.requirementsError = 'CLI_REQUIREMEMENTS_ERROR';
-
         var run = function (args, silent) {
 
             var deferred = $q.defer();
@@ -18,7 +16,7 @@ angular.module('dplm.services.cli', [])
             $log.info(([memOptions, '-cp', classPath, mainClass].concat(args)).join(' '));
 
             var spawn = require('child_process').spawn;
-            var cliProcess = spawn('java', [memOptions, '-cp', classPath, mainClass].concat(args));
+            var cliProcess = spawn(configuration.java ||'java', [memOptions, '-cp', classPath, mainClass].concat(args));
 
             var objects = [];
             var errors = [];
@@ -79,23 +77,29 @@ angular.module('dplm.services.cli', [])
 
             return $q(function (resolve, reject) {
 
-                var spawn = require('child_process').spawn('java', ['-version']);
+                try{
 
-                spawn.on('error', function (err) {
-                    $log.log('spawn.onerror');
-                    return reject('No java found');
-                });
+                    var spawn = require('child_process').spawn(configuration.java ||'java', ['-version']);
 
-                spawn.stderr.on('data', function (data) {
-                    data = data.toString().split('\n')[0];
-                    var javaVersion = new RegExp('java version').test(data) ? data.split(' ')[2].replace(/"/g, '') : false;
-                    if (javaVersion && javaVersion >= '1.7') {
-                        $log.log('javaVersion' + javaVersion);
-                        resolve(javaVersion);
-                    } else {
-                        reject('No java found or version not matching');
-                    }
-                });
+                    spawn.on('error', function (err) {
+                        $log.log('spawn.onerror');
+                        return reject('No java found');
+                    });
+
+                    spawn.stderr.on('data', function (data) {
+                        data = data.toString().split('\n')[0];
+                        var javaVersion = new RegExp('java version').test(data) ? data.split(' ')[2].replace(/"/g, '') : false;
+                        if (javaVersion && javaVersion >= '1.7') {
+                            $log.log('javaVersion' + javaVersion);
+                            resolve(javaVersion);
+                        } else {
+                            reject('No java found or version not matching');
+                        }
+                    });
+
+                } catch(e){
+                    reject(e);
+                }
 
             });
 

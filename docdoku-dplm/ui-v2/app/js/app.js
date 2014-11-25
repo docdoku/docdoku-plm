@@ -49,7 +49,6 @@ angular.module('dplm', [
 
     .controller('AppCtrl', function ($scope, $location, $mdSidenav, $filter, NotificationService, ConfigurationService, CliService, WorkspaceService, FolderService) {
 
-
         $scope.title = 'DocDoku DPLM';
 
         $scope.openMenu = function () {
@@ -66,31 +65,15 @@ angular.module('dplm', [
             }
         };
 
-        var handleError = function (error) {
-            if (error === ConfigurationService.error) {
-                NotificationService.toast($filter('translate')('CONFIGURATION_ERROR'));
-            } else if (error == CliService.requirementsError) {
-                NotificationService.toast($filter('translate')('REQUIREMENTS_MISSING'));
-            }
-            $location.path('settings');
-        };
-
-        ConfigurationService.checkAtStartup()
-            .then(CliService.checkRequirements)
-            .then(WorkspaceService.getWorkspaces)
-            .catch(handleError);
     })
 
     .controller('MenuController', function () {
-
-
     })
 
     .controller('FolderMenuController', function ($scope) {
         $scope.onDrop = function () {
         };
     })
-
     .controller('WorkspaceMenuController', function ($scope) {
         $scope.onDrop = function () {
         };

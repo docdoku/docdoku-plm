@@ -9,14 +9,14 @@ angular.module('dplm.settings', [])
         });
     })
 
-    .controller('SettingsController', function ($scope, $location, $translate, ConfigurationService, WorkspaceService) {
+    .controller('SettingsController', function ($scope, $location, $translate, ConfigurationService,WorkspaceService) {
         $scope.configuration = ConfigurationService.configuration;
 
         $scope.save = function () {
             ConfigurationService.save();
-            WorkspaceService.getWorkspaces().then(function () {
-                $location.path('home');
-            });
+            ConfigurationService.reset();
+            WorkspaceService.reset();
+            $location.path('home');
         };
 
         $scope.lang = localStorage.lang || 'en';

@@ -5,7 +5,12 @@ angular.module('dplm.folder', [])
     .config(function ($routeProvider) {
         $routeProvider.when('/folder/:uuid', {
             templateUrl: 'js/folder/folder.html',
-            controller: 'FolderController'
+            controller: 'FolderController',
+            resolve:{
+                conf:function(ConfigurationService,WorkspaceService){
+                    return ConfigurationService.checkAtStartup().then(WorkspaceService.getWorkspaces);
+                }
+            }
         });
     })
 

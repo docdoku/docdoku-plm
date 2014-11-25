@@ -5,6 +5,11 @@ angular.module('dplm.home', [])
                 $scope.configuration = ConfigurationService.configuration;
                 $scope.save = ConfigurationService.save;
             },
+            resolve:{
+                conf:function(ConfigurationService,WorkspaceService){
+                    return ConfigurationService.checkAtStartup().then(WorkspaceService.getWorkspaces);
+                }
+            },
             templateUrl: 'js/home/home.html'
         })
     });
