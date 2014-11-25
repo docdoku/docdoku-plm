@@ -37,15 +37,13 @@
             <md-text-float label="{{'PART_NUMBER' | translate}}" ng-model="newPart.partNumber"
                            required="true"></md-text-float>
             <md-text-float label="{{'PART_NAME' | translate}}" ng-model="newPart.name"></md-text-float>
-        </div>
-        <div class="row">
+
             <md-text-float label="{{'PART_DESCRIPTION' | translate}}" ng-model="newPart.description"></md-text-float>
 
             <md-checkbox ng-model="newPart.standard" aria-label="">
                 {{'STANDARD'|translate}}
             </md-checkbox>
-        </div>
-        <div class="row">
+
             <label class="label-margin">{{'WORKSPACE' | translate}}</label>
             <i class="fa fa-globe"></i>
             <select ng-model="folder.path">

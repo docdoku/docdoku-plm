@@ -32,10 +32,10 @@ angular.module('dplm', [
     'dplm.services.folders',
     'dplm.services.workspaces',
     'dplm.services.confirm',
+    'dplm.services.3d',
 
     'dplm.directives.filechange',
     'dplm.directives.scrollend',
-
     'dplm.filters.fileshortname',
     'dplm.filters.timeago',
     'dplm.filters.last',
