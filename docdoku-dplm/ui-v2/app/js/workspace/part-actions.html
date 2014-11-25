@@ -3,7 +3,7 @@
     <label>{{'SAVE_TO' | translate}}</label>
     <i class="fa fa-folder-open"></i>
     <select ng-model="folder.path" class="cursor">
-        <option ng-repeat="folder in folders" value="{{folder.path}}">
+        <option ng-repeat="folder in folders | orderBy:'-favorite'" value="{{folder.path}}">
             {{folder.path | fileshortname}}
         </option>
     </select>

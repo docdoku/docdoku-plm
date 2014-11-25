@@ -171,18 +171,22 @@ angular.module('dplm.workspace', [])
                     $scope.part.progress = progress;
                 };
 
+                var newStuff = function () {
+                    FolderService.getFolder({path:$scope.folder.path}).newStuff = true;;
+                };
+
                 $scope.download = function () {
                     $scope.part.busy = true;
                     CliService.download($scope.part, $scope.folder.path, $scope.options).then(function () {
                         return CliService.getStatusForPart($scope.part);
-                    }, null, onProgress).then(onFinish);
+                    }, null, onProgress).then(onFinish).then(newStuff);
                 };
 
                 $scope.checkout = function () {
                     $scope.part.busy = true;
                     CliService.checkout($scope.part, $scope.folder.path, $scope.options).then(function () {
                         return CliService.getStatusForPart($scope.part);
-                    }, null, onProgress).then(onFinish);
+                    }, null, onProgress).then(onFinish).then(newStuff);
                 };
 
                 $scope.checkin = function () {

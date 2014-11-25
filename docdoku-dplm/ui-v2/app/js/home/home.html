@@ -17,8 +17,7 @@
     </md-content>
 
     <md-content class="md-padding">
-        <h4><i class="fa fa-star favorite"></i> {{'FAVORITE_FOLDERS' | translate}}</h4>
-
+        <i class="fa fa-star favorite"></i> {{'FAVORITE_FOLDERS' | translate}}
         <md-list>
             <md-item ng-if="!folders.length">
                 <md-item-content>
@@ -27,12 +26,9 @@
             </md-item>
             <md-item ng-repeat="folder in folders">
                 <md-item-content ng-controller="FolderDetailsController">
-                    <div class="md-tile-left" align="center">
-                       <i class="fa fa-folder"></i>
-                    </div>
                     <div class="md-tile-content">
                         <h3>
-                            <md-button aria-label="" href="#/folder/{{folder.uuid}}" class="md-primary">{{folder.path | fileshortname}}</md-button>
+                            <md-button aria-label="" href="#/folder/{{folder.uuid}}" class="md-primary">  <i class="fa fa-folder-open"></i> {{folder.path | fileshortname}}</md-button>
                         </h3>
                     </div>
                     <div class="md-tile-right">

@@ -66,6 +66,10 @@ angular.module('dplm', [
             }
         };
 
+        $scope.isActive = function(route) {
+            return route === $location.path();
+        };
+
     })
 
     .controller('MenuController', function () {

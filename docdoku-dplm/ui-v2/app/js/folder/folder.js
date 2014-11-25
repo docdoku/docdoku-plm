@@ -36,6 +36,8 @@ angular.module('dplm.folder', [])
                 $scope.loadingFiles = false;
             }, function () {
                 $scope.loadingFiles = false;
+            }).then(function(){
+                $scope.folder.newStuff = false;
             });
         };
 

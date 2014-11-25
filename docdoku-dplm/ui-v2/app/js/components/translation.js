@@ -67,7 +67,8 @@ angular.module('dplm.services.translations', ['pascalprecht.translate'])
                 FILES:'file(s)',
                 FAVORITE_FOLDERS:'Favorite folders',
                 NO_FOLDERS:'No folders',
-                CONNECTED_TO:'connected to'
+                CONNECTED_TO:'connected to',
+                NEW_STUFF:'New files'
             })
             .translations('fr', {
                 CUT: 'Couper',
@@ -130,7 +131,8 @@ angular.module('dplm.services.translations', ['pascalprecht.translate'])
                 FILES:'fichier(s)',
                 FAVORITE_FOLDERS:'Dossiers favoris',
                 NO_FOLDERS:'Aucun dossier',
-                CONNECTED_TO:'connecté à'
+                CONNECTED_TO:'connecté à',
+                NEW_STUFF:'Nouveaux fichiers'
             });
 
         $translateProvider.preferredLanguage(localStorage.lang || 'en');
