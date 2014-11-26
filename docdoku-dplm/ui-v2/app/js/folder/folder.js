@@ -97,7 +97,7 @@ angular.module('dplm.folder', [])
         };
     })
 
-    .controller('FileController', function ($scope, FolderService) {
+    .controller('FileController', function ($scope, FolderService, AvailableLoaders) {
         $scope.fetchStatus = function () {
             $scope.loading = true;
             FolderService.fetchFileStatus($scope.file).then(function () {
@@ -106,6 +106,7 @@ angular.module('dplm.folder', [])
                 $scope.loading = false;
             });
         };
+        $scope.isViewable = AvailableLoaders.indexOf($scope.file.path.split('.').pop()) !== -1;
         $scope.fetchStatus();
     })
 

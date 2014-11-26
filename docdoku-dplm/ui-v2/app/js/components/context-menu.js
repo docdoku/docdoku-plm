@@ -43,6 +43,9 @@ angular.module('dplm.contextmenu', [])
         var menu = new Menu(translate('CUT'), translate('COPY'), translate('PASTE'));
 
         $document.on("contextmenu", function (e) {
+            if(e.target.tagName === 'CANVAS'){
+                return;
+            }
             e.preventDefault();
             menu.popup(e.x, e.y);
         });
