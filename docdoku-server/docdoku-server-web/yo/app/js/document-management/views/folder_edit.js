@@ -19,15 +19,6 @@ define([
             var name = $.trim(this.nameInput.val());
 
             if (name != this.model.get("name") && name != "") {
-                this.model.on('change',function(){
-                    console.log('Change !')
-                });
-                this.model.on('destroy',function(){
-                    console.log('Destroy !')
-                });
-                this.model.on('sync',function(){
-                    console.log('Sync !')
-                });
                 this.model.save({
                     name: name
                 }, {
