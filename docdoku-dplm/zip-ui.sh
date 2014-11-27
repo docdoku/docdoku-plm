@@ -9,7 +9,7 @@ echo "Creating nw archive ..."
 
 cd ${TMP_DIR};
 
-rm -rf app;
+rm -rf dist;
 
 cp -R ${SOURCES} ${TMP_DIR};
 
@@ -20,6 +20,6 @@ if [ -f "app.nw" ] ; then
 fi
 
 # Zip the source in a zip archive
-cd app;
+cd dist;
 /usr/bin/zip -r ../app.nw *;
 echo "... done";
