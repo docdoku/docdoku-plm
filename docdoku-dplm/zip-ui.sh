@@ -3,7 +3,7 @@
 BASE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 TMP_DIR=${BASE_DIR}/tmp
-SOURCES=${BASE_DIR}/ui-v2/app
+SOURCES=${BASE_DIR}/ui-v2/dist
 
 echo "Creating nw archive ..."
 
