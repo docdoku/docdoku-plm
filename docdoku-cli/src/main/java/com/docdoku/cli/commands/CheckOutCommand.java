@@ -72,7 +72,7 @@ public class CheckOutCommand extends AbstractCommandLine{
     private IProductManagerWS productS;
     private IProductConfigSpecManagerWS productConfigSpecS;
 
-    public Object execImpl() throws Exception {
+    public void execImpl() throws Exception {
         if(partNumber==null || revision==null){
             loadMetadata();
         }
@@ -87,8 +87,7 @@ public class CheckOutCommand extends AbstractCommandLine{
             cs = productConfigSpecS.getConfigSpecForBaseline(baselineId);
         }
 
-        checkoutPart(partNumber,strRevision,0,cs);
-        return null;
+        checkoutPart(partNumber,strRevision,cs);
     }
 
     private void loadMetadata() throws IOException {
@@ -108,29 +107,50 @@ public class CheckOutCommand extends AbstractCommandLine{
         path=path.getParentFile();
     }
 
+    private void checkoutPart(String pPartNumber, String pRevision, ConfigSpec cs) throws IOException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartMasterNotFoundException, PartRevisionNotFoundException, LoginException, NoSuchAlgorithmException, PartIterationNotFoundException, NotAllowedException, FileAlreadyExistsException, AccessRightException, CreationException {
 
-    private void checkoutPart(String pPartNumber, String pRevision, int pIteration, ConfigSpec cs) throws IOException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartMasterNotFoundException, PartRevisionNotFoundException, LoginException, NoSuchAlgorithmException, PartIterationNotFoundException, NotAllowedException, FileAlreadyExistsException, AccessRightException, CreationException {
-
-        PartIteration pi;
         PartMaster pm = productS.getPartMaster(new PartMasterKey(workspace, pPartNumber));
-        PartRevision pr = productS.checkOutPart(new PartRevisionKey(workspace, pPartNumber, pRevision));
+        PartRevision pr;
+        PartIteration pi;
 
         if(cs != null){
+
             pi = cs.filterConfigSpec(pm);
-        }else if(pIteration==0){
-            pi = pr.getLastIteration();
-        }else{
-            if(pIteration > pr.getNumberOfIterations()){
-                throw new IllegalArgumentException("Iteration " + pIteration + " doesn't exist");
+
+            if(pi == null){
+                throw new IllegalArgumentException("Cannot find a part iteration in configuration "+ cs.getId());
+            }
+
+            pr = pi.getPartRevision();
+
+            if(null != pRevision && pr.getVersion() != pRevision){
+                throw new IllegalArgumentException("Config spec "+ cs.getId() + " and revision "+pRevision+" doesn't match");
+            }
+
+        }else {
+
+            if(pRevision != null){
+                pr = productS.getPartRevision(new PartRevisionKey(workspace, pPartNumber, pRevision));
             }else{
-                pi = pr.getIteration(pIteration);
+                pr = pm.getLastRevision();
+            }
+
+            pi = pr.getLastIteration();
+        }
+
+        if(!pr.isCheckedOut()) {
+            try{
+                pr = productS.checkOutPart(new PartRevisionKey(workspace, pPartNumber, pr.getVersion()));
+                pi = pr.getLastIteration();
+            }catch (Exception e){
+                output.printException(e);
             }
         }
 
         BinaryResource bin = pi.getNativeCADFile();
 
         if(bin!=null && !noDownload){
-            FileHelper fh = new FileHelper(user,password);
+            FileHelper fh = new FileHelper(user,password,output);
             fh.downloadNativeCADFile(getServerURL(), path, workspace, pPartNumber, pr, pi, force);
         }
 
@@ -140,7 +160,7 @@ public class CheckOutCommand extends AbstractCommandLine{
 
             for(PartUsageLink link:usageLinks){
                 PartMaster subPM = link.getComponent();
-                checkoutPart(subPM.getNumber(), null, 0, cs);
+                checkoutPart(subPM.getNumber(), null, cs);
             }
         }
 

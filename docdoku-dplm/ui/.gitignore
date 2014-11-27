@@ -1,0 +1,6 @@
+app/bower_components
+node_modules
+dist
+tmp
+npm-debug.log
+docdoku-cli-jar-with-dependencies.jar
