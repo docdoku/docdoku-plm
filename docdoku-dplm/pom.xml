@@ -27,7 +27,7 @@
                                     <goal>exec</goal>
                                 </goals>
                                 <configuration>
-                                    <workingDirectory>ui-v2</workingDirectory>
+                                    <workingDirectory>ui</workingDirectory>
                                     <executable>npm</executable>
                                     <arguments>
                                         <argument>install</argument>

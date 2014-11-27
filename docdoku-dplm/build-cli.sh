@@ -1,7 +1,7 @@
 #!/bin/bash
 
 BASE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-SOURCES=${BASE_DIR}/ui-v2
+SOURCES=${BASE_DIR}/ui
 CLI_DIR=${BASE_DIR}/../docdoku-cli
 
 echo "Building docdoku-cli ... ";

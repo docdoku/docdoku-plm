@@ -1,18 +1,22 @@
 {
-  "name": "DPLM",
-  "main": "index.html",
-  "locale":"fr_FR",
-  "dependencies": {
-    "requirejs": ">=1.0.0"
+  "name": "docdoku-dplm",
+  "version": "0.2.0",
+  "description": "",
+  "author": "morgan.guimard@docdoku.com",
+  "scripts": {
+    "postinstall": "bower install && cd app && npm install"
   },
-  "window": {
-    "toolbar": false,
-    "position": "center",
-    "width": 820,
-    "height": 500,
-    "min_width": 820,
-    "min_height": 500,
-    "resizable": true,
-    "icon": "images/icon.png"
+  "devDependencies": {
+    "grunt": "~0.4.5",
+    "grunt-contrib-clean": "~0.5.0",
+    "grunt-contrib-concat": "~0.4.0",
+    "grunt-contrib-copy": "^0.7.0",
+    "grunt-contrib-cssmin": "^0.10.0",
+    "grunt-contrib-jshint": "^0.10.0",
+    "grunt-contrib-uglify": "~0.5.0",
+    "grunt-html2js": "~0.2.7",
+    "grunt-ng-annotate": "~0.7.0",
+    "grunt-text-replace": "^0.4.0",
+    "grunt-usemin": "^2.6.2"
   }
 }
