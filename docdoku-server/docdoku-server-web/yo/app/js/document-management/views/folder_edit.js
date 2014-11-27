@@ -1,13 +1,10 @@
 /*global define*/
 define([
-    "mustache",
     "common-objects/views/components/modal",
     "text!templates/folder_edit.html"
-], function (Mustache, ModalView, template) {
+], function (ModalView, template) {
     var FolderEditView = ModalView.extend({
-
         template: template,
-
         tagName: "div",
         initialize: function () {
             ModalView.prototype.initialize.apply(this, arguments);
@@ -16,11 +13,21 @@ define([
         rendered: function () {
             this.nameInput = this.$el.find("input.name").first();
             this.nameInput.val(this.model.get("name"));
+            this.previousName = this.model.get("name");
         },
         primaryAction: function () {
             var name = $.trim(this.nameInput.val());
 
             if (name != this.model.get("name") && name != "") {
+                this.model.on('change',function(){
+                    console.log('Change !')
+                });
+                this.model.on('destroy',function(){
+                    console.log('Destroy !')
+                });
+                this.model.on('sync',function(){
+                    console.log('Sync !')
+                });
                 this.model.save({
                     name: name
                 }, {
@@ -38,6 +45,7 @@ define([
             this.hide();
         },
         error: function (model, error) {
+            this.model.set("name",this.previousName);
             if (error.responseText) {
                 this.alert({
                     type: "error",
