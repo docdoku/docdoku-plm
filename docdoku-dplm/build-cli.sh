@@ -8,5 +8,5 @@ echo "Building docdoku-cli ... ";
 cd ${CLI_DIR}
 mvn clean install
 cp ${CLI_DIR}/target/docdoku-cli-jar-with-dependencies.jar ${SOURCES}/dplm/
-cp ${CLI_DIR}/target/docdoku-cli-jar-with-dependencies.jar ${SOURCES}-v2/app/cli/
+cp ${CLI_DIR}/target/docdoku-cli-jar-with-dependencies.jar ${SOURCES}-v2/app/
 echo "... done"

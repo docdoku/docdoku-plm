@@ -1,22 +1,24 @@
-'use strict';
+(function(){
 
-angular.module('dplm.services.configuration', [])
+    'use strict';
 
-    .service('ConfigurationService', function ($q, $log, $filter, $location, NotificationService) {
+    angular.module('dplm.services.configuration', [])
 
-        var _this = this;
+        .service('ConfigurationService', function ($q, $log, $filter, $location, NotificationService) {
 
-        this.error = 'CONFIG_SERVICE_ERROR';
+            var _this = this;
 
-        this.configuration = JSON.parse(localStorage.configuration || '{}');
+            this.error = 'CONFIG_SERVICE_ERROR';
 
-        this.save = function () {
-            localStorage.configuration = JSON.stringify(_this.configuration);
-        };
+            this.configuration = JSON.parse(localStorage.configuration || '{}');
 
-        var checkForJava = function(){
+            this.save = function () {
+                localStorage.configuration = JSON.stringify(_this.configuration);
+            };
 
-            var deferred = $q.defer();
+            var checkForJava = function(){
+
+                var deferred = $q.defer();
 
                 try{
 
@@ -44,41 +46,41 @@ angular.module('dplm.services.configuration', [])
                     deferred.reject(e);
                 }
 
-            return deferred.promise;
-        };
+                return deferred.promise;
+            };
 
-        var checkAtStartupPromise;
+            var checkAtStartupPromise;
 
-        this.checkAtStartup = function () {
+            this.checkAtStartup = function () {
 
-            if(checkAtStartupPromise){
-                return checkAtStartupPromise;
-            }
+                if(checkAtStartupPromise){
+                    return checkAtStartupPromise;
+                }
 
-            var deferred = $q.defer();
-            checkAtStartupPromise = deferred.promise;
+                var deferred = $q.defer();
+                checkAtStartupPromise = deferred.promise;
 
-            if (!_this.configuration.user || !_this.configuration.password) {
-                NotificationService.toast($filter('translate')('CONFIGURATION_MISSING'));
-                $location.path('settings');
-                deferred.reject();
-            }else{
-                checkForJava().then(function(){
-                   // WorkspaceService.getWorkspaces(deferred.resolve,deferred.reject);
-                    deferred.resolve();
-                },function(){
-                    NotificationService.toast($filter('translate')('NO_SUITABLE_JAVA'));
+                if (!_this.configuration.user || !_this.configuration.password) {
+                    NotificationService.toast($filter('translate')('CONFIGURATION_MISSING'));
                     $location.path('settings');
                     deferred.reject();
-                });
-            }
+                }else{
+                    checkForJava().then(function(){
+                        deferred.resolve();
+                    },function(){
+                        NotificationService.toast($filter('translate')('NO_SUITABLE_JAVA'));
+                        $location.path('settings');
+                        deferred.reject();
+                    });
+                }
 
-            return deferred.promise;
+                return deferred.promise;
 
-        };
+            };
 
-        this.reset = function(){
-            checkAtStartupPromise = null;
-        };
+            this.reset = function(){
+                checkAtStartupPromise = null;
+            };
 
-    });
+        });
+})();

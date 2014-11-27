@@ -1,380 +1,383 @@
-'use strict';
+(function(){
 
-angular.module('dplm.services.cli', [])
+    'use strict';
 
-    .service('CliService', function (ConfigurationService, NotificationService, $q, $log) {
+    angular.module('dplm.services.cli', [])
 
-        var configuration = ConfigurationService.configuration;
-        var classPath = process.cwd() + '/cli/docdoku-cli-jar-with-dependencies.jar';
-        var mainClass = 'com.docdoku.cli.MainCommand';
-        var memOptions = '-Xmx1024M';
+        .service('CliService', function (ConfigurationService, NotificationService, $q, $log) {
 
-        var run = function (args, silent) {
+            var configuration = ConfigurationService.configuration;
+            var classPath = process.cwd() + '/docdoku-cli-jar-with-dependencies.jar';
+            var mainClass = 'com.docdoku.cli.MainCommand';
+            var memOptions = '-Xmx1024M';
 
-            var deferred = $q.defer();
+            var run = function (args, silent) {
 
-            $log.info(([memOptions, '-cp', classPath, mainClass].concat(args)).join(' '));
+                var deferred = $q.defer();
 
-            var spawn = require('child_process').spawn;
-            var cliProcess = spawn(configuration.java ||'java', [memOptions, '-cp', classPath, mainClass].concat(args));
+                $log.info(([memOptions, '-cp', classPath, mainClass].concat(args)).join(' '));
 
-            var objects = [];
-            var errors = [];
+                var spawn = require('child_process').spawn;
+                var cliProcess = spawn(configuration.java ||'java', [memOptions, '-cp', classPath, mainClass].concat(args));
 
-            cliProcess.stdout.on('data', function (data) {
-                $log.log(data.toString());
-                var entries = data.toString().split('\n');
-                angular.forEach(entries, function (entry) {
-                    if (entry && entry.trim()) {
-                        var object = JSON.parse(entry);
-                        if (object.progress) {
-                            deferred.notify(object.progress);
-                        } else if (object.info) {
-                            if (!silent) {
-                                NotificationService.toast(object.info);
+                var objects = [];
+                var errors = [];
+
+                cliProcess.stdout.on('data', function (data) {
+                    $log.log(data.toString());
+                    var entries = data.toString().split('\n');
+                    angular.forEach(entries, function (entry) {
+                        if (entry && entry.trim()) {
+                            var object = JSON.parse(entry);
+                            if (object.progress) {
+                                deferred.notify(object.progress);
+                            } else if (object.info) {
+                                if (!silent) {
+                                    NotificationService.toast(object.info);
+                                }
+                                console.info(object.info);
                             }
-                            console.info(object.info);
-                        }
-                        objects.push(object);
-                    }
-                });
-            });
-
-            cliProcess.stderr.on('data', function (data) {
-                $log.warn('STDERR ' + data.toString());
-                var entries = data.toString().split('\n');
-                angular.forEach(entries, function (entry) {
-                    if (entry && entry.trim()) {
-                        var object = JSON.parse(entry);
-                        if (object.error) {
-                            if (!silent) {
-                                NotificationService.toast(object.error);
-                            }
-                        }
-                        errors.push(object);
-                    }
-                });
-            });
-
-            cliProcess.stderr.on('close', function () {
-                if (objects.length) {
-                    deferred.resolve(objects[objects.length - 1]);
-                }
-                else if (errors.length) {
-                    deferred.reject(errors[errors.length - 1]);
-                } else {
-                    deferred.resolve();
-                }
-            });
-
-            return deferred.promise;
-
-        };
-
-        this.checkRequirements = function () {
-
-            $log.info('Checking requirements');
-
-            return $q(function (resolve, reject) {
-
-                try{
-
-                    var spawn = require('child_process').spawn(configuration.java ||'java', ['-version']);
-
-                    spawn.on('error', function (err) {
-                        $log.log('spawn.onerror');
-                        return reject('No java found');
-                    });
-
-                    spawn.stderr.on('data', function (data) {
-                        data = data.toString().split('\n')[0];
-                        var javaVersion = new RegExp('java version').test(data) ? data.split(' ')[2].replace(/"/g, '') : false;
-                        if (javaVersion && javaVersion >= '1.7') {
-                            $log.log('javaVersion' + javaVersion);
-                            resolve(javaVersion);
-                        } else {
-                            reject('No java found or version not matching');
+                            objects.push(object);
                         }
                     });
+                });
 
-                } catch(e){
-                    reject(e);
+                cliProcess.stderr.on('data', function (data) {
+                    $log.warn('STDERR ' + data.toString());
+                    var entries = data.toString().split('\n');
+                    angular.forEach(entries, function (entry) {
+                        if (entry && entry.trim()) {
+                            var object = JSON.parse(entry);
+                            if (object.error) {
+                                if (!silent) {
+                                    NotificationService.toast(object.error);
+                                }
+                            }
+                            errors.push(object);
+                        }
+                    });
+                });
+
+                cliProcess.stderr.on('close', function () {
+                    if (objects.length) {
+                        deferred.resolve(objects[objects.length - 1]);
+                    }
+                    else if (errors.length) {
+                        deferred.reject(errors[errors.length - 1]);
+                    } else {
+                        deferred.resolve();
+                    }
+                });
+
+                return deferred.promise;
+
+            };
+
+            this.checkRequirements = function () {
+
+                $log.info('Checking requirements');
+
+                return $q(function (resolve, reject) {
+
+                    try{
+
+                        var spawn = require('child_process').spawn(configuration.java ||'java', ['-version']);
+
+                        spawn.on('error', function (err) {
+                            $log.log('spawn.onerror');
+                            return reject('No java found');
+                        });
+
+                        spawn.stderr.on('data', function (data) {
+                            data = data.toString().split('\n')[0];
+                            var javaVersion = new RegExp('java version').test(data) ? data.split(' ')[2].replace(/"/g, '') : false;
+                            if (javaVersion && javaVersion >= '1.7') {
+                                $log.log('javaVersion' + javaVersion);
+                                resolve(javaVersion);
+                            } else {
+                                reject('No java found or version not matching');
+                            }
+                        });
+
+                    } catch(e){
+                        reject(e);
+                    }
+
+                });
+
+            };
+
+            this.getWorkspaces = function () {
+                var args = [
+                    'wl',
+                    '-F', 'json',
+                    '-h', configuration.host,
+                    '-P', configuration.port,
+                    '-u', configuration.user,
+                    '-p', configuration.password
+                ];
+
+                return run(args);
+
+            };
+
+            this.getStatusForFile = function (file) {
+
+                var args = [
+                    'st',
+                    '-F', 'json',
+                    '-h', configuration.host,
+                    '-P', configuration.port,
+                    '-u', configuration.user,
+                    '-p', configuration.password,
+                    file.path
+                ];
+
+                return run(args, true).then(function (status) {
+                    if (!file.part) {
+                        file.part = {};
+                    }
+                    angular.extend(file.part, status);
+                });
+            };
+
+            this.getStatusForPart = function (part) {
+
+                var args = [
+                    'st',
+                    '-F', 'json',
+                    '-h', configuration.host,
+                    '-P', configuration.port,
+                    '-u', configuration.user,
+                    '-p', configuration.password,
+                    '-w', part.workspace,
+                    '-o', part.partNumber,
+                    '-r', part.version
+                ];
+
+                return run(args, true).then(function (newPart) {
+                    angular.extend(part, newPart);
+                });
+
+            };
+
+            this.checkout = function (part, path, options) {
+
+                var args = [
+                    'co',
+                    '-F', 'json',
+                    '-h', configuration.host,
+                    '-P', configuration.port,
+                    '-u', configuration.user,
+                    '-p', configuration.password,
+                    '-w', part.workspace,
+                    '-o', part.partNumber,
+                    '-r', part.version
+                ];
+
+                if (options.recursive) {
+                    args.push('-R');
+                }
+                if (options.force) {
+                    args.push('-f');
+                }
+                if (options.baseline) {
+                    args.push('-b');
+                    args.push(options.baseline);
                 }
 
-            });
-
-        };
-
-        this.getWorkspaces = function () {
-            var args = [
-                'wl',
-                '-F', 'json',
-                '-h', configuration.host,
-                '-P', configuration.port,
-                '-u', configuration.user,
-                '-p', configuration.password
-            ];
-
-            return run(args);
-
-        };
-
-        this.getStatusForFile = function (file) {
-
-            var args = [
-                'st',
-                '-F', 'json',
-                '-h', configuration.host,
-                '-P', configuration.port,
-                '-u', configuration.user,
-                '-p', configuration.password,
-                file.path
-            ];
-
-            return run(args, true).then(function (status) {
-                if (!file.part) {
-                    file.part = {};
-                }
-                angular.extend(file.part, status);
-            });
-        };
-
-        this.getStatusForPart = function (part) {
-
-            var args = [
-                'st',
-                '-F', 'json',
-                '-h', configuration.host,
-                '-P', configuration.port,
-                '-u', configuration.user,
-                '-p', configuration.password,
-                '-w', part.workspace,
-                '-o', part.partNumber,
-                '-r', part.version
-            ];
-
-            return run(args, true).then(function (newPart) {
-                angular.extend(part, newPart);
-            });
-
-        };
-
-        this.checkout = function (part, path, options) {
-
-            var args = [
-                'co',
-                '-F', 'json',
-                '-h', configuration.host,
-                '-P', configuration.port,
-                '-u', configuration.user,
-                '-p', configuration.password,
-                '-w', part.workspace,
-                '-o', part.partNumber,
-                '-r', part.version
-            ];
-
-            if (options.recursive) {
-                args.push('-R');
-            }
-            if (options.force) {
-                args.push('-f');
-            }
-            if (options.baseline) {
-                args.push('-b');
-                args.push(options.baseline);
-            }
-
-            args.push(path);
-
-            return run(args);
-
-        };
-
-        this.checkin = function (part,path) {
-
-            var args = [
-                'ci',
-                '-F', 'json',
-                '-h', configuration.host,
-                '-P', configuration.port,
-                '-u', configuration.user,
-                '-p', configuration.password,
-                '-w', part.workspace,
-                '-o', part.partNumber,
-                '-r', part.version
-            ];
-
-            if(path){
                 args.push(path);
-            }
 
-            return run(args);
+                return run(args);
 
-        };
+            };
 
-        this.undoCheckout = function (part) {
+            this.checkin = function (part,path) {
 
-            var args = [
-                'uco',
-                '-F', 'json',
-                '-h', configuration.host,
-                '-P', configuration.port,
-                '-u', configuration.user,
-                '-p', configuration.password,
-                '-w', part.workspace,
-                '-o', part.partNumber,
-                '-r', part.version
-            ];
+                var args = [
+                    'ci',
+                    '-F', 'json',
+                    '-h', configuration.host,
+                    '-P', configuration.port,
+                    '-u', configuration.user,
+                    '-p', configuration.password,
+                    '-w', part.workspace,
+                    '-o', part.partNumber,
+                    '-r', part.version
+                ];
 
-            return run(args);
-        };
+                if(path){
+                    args.push(path);
+                }
 
-        this.download = function (part, path, options) {
+                return run(args);
 
-            var args = [
-                'get',
-                '-F', 'json',
-                '-h', configuration.host,
-                '-P', configuration.port,
-                '-u', configuration.user,
-                '-p', configuration.password,
-                '-w', part.workspace,
-                '-o', part.partNumber,
-                '-r', part.version
-            ];
+            };
 
-            if (options.recursive) {
-                args.push('-R');
-            }
-            if (options.force) {
-                args.push('-f');
-            }
-            if (options.baseline) {
-                args.push('-b');
-                args.push(options.baseline);
-            }
+            this.undoCheckout = function (part) {
 
-            args.push(path);
+                var args = [
+                    'uco',
+                    '-F', 'json',
+                    '-h', configuration.host,
+                    '-P', configuration.port,
+                    '-u', configuration.user,
+                    '-p', configuration.password,
+                    '-w', part.workspace,
+                    '-o', part.partNumber,
+                    '-r', part.version
+                ];
 
-            return run(args);
+                return run(args);
+            };
 
-        };
+            this.download = function (part, path, options) {
 
-        this.put = function (workspace, file) {
+                var args = [
+                    'get',
+                    '-F', 'json',
+                    '-h', configuration.host,
+                    '-P', configuration.port,
+                    '-u', configuration.user,
+                    '-p', configuration.password,
+                    '-w', part.workspace,
+                    '-o', part.partNumber,
+                    '-r', part.version
+                ];
 
-            var args = [
-                'put',
-                '-F', 'json',
-                '-h', configuration.host,
-                '-P', configuration.port,
-                '-u', configuration.user,
-                '-p', configuration.password,
-                '-w', workspace
-            ];
+                if (options.recursive) {
+                    args.push('-R');
+                }
+                if (options.force) {
+                    args.push('-f');
+                }
+                if (options.baseline) {
+                    args.push('-b');
+                    args.push(options.baseline);
+                }
 
-            args.push(file);
+                args.push(path);
 
-            return run(args);
+                return run(args);
 
-        };
-        this.createPart = function (part, filePath) {
+            };
 
-            var args = [
-                'cr',
-                '-F', 'json',
-                '-h', configuration.host,
-                '-P', configuration.port,
-                '-u', configuration.user,
-                '-p', configuration.password,
-                '-w', part.workspace,
-                '-o', part.partNumber
-            ];
+            this.put = function (workspace, file) {
 
-            if (part.name) {
-                args.push('-N');
-                args.push(part.name);
-            }
-            if (part.description) {
-                args.push('-d');
-                args.push(part.description);
-            }
+                var args = [
+                    'put',
+                    '-F', 'json',
+                    '-h', configuration.host,
+                    '-P', configuration.port,
+                    '-u', configuration.user,
+                    '-p', configuration.password,
+                    '-w', workspace
+                ];
 
-            if (part.standard) {
-                args.push('-s');
-            }
+                args.push(file);
 
-            args.push(filePath);
+                return run(args);
 
-            return run(args);
+            };
+            this.createPart = function (part, filePath) {
 
-        };
+                var args = [
+                    'cr',
+                    '-F', 'json',
+                    '-h', configuration.host,
+                    '-P', configuration.port,
+                    '-u', configuration.user,
+                    '-p', configuration.password,
+                    '-w', part.workspace,
+                    '-o', part.partNumber
+                ];
 
-        this.getPartMastersCount = function (workspace) {
+                if (part.name) {
+                    args.push('-N');
+                    args.push(part.name);
+                }
+                if (part.description) {
+                    args.push('-d');
+                    args.push(part.description);
+                }
 
-            var args = [
-                'pl',
-                '-F', 'json',
-                '-h', configuration.host,
-                '-P', configuration.port,
-                '-u', configuration.user,
-                '-p', configuration.password,
-                '-w', workspace,
-                '-c'
-            ];
+                if (part.standard) {
+                    args.push('-s');
+                }
 
-            return run(args);
+                args.push(filePath);
 
-        };
+                return run(args);
 
-        this.getPartMasters = function (workspace, start, max) {
+            };
 
-            var args = [
-                'pl',
-                '-F', 'json',
-                '-h', configuration.host,
-                '-P', configuration.port,
-                '-u', configuration.user,
-                '-p', configuration.password,
-                '-s', Number(start).toString(),
-                '-m', Number(max).toString(),
-                '-w', workspace
-            ];
+            this.getPartMastersCount = function (workspace) {
 
-            return run(args);
+                var args = [
+                    'pl',
+                    '-F', 'json',
+                    '-h', configuration.host,
+                    '-P', configuration.port,
+                    '-u', configuration.user,
+                    '-p', configuration.password,
+                    '-w', workspace,
+                    '-c'
+                ];
 
-        };
+                return run(args);
 
-        this.searchPartMasters = function (workspace, search) {
+            };
 
-            var args = [
-                's',
-                '-F', 'json',
-                '-h', configuration.host,
-                '-P', configuration.port,
-                '-u', configuration.user,
-                '-p', configuration.password,
-                '-w', workspace,
-                '-s', search
-            ];
+            this.getPartMasters = function (workspace, start, max) {
 
-            return run(args);
-        };
+                var args = [
+                    'pl',
+                    '-F', 'json',
+                    '-h', configuration.host,
+                    '-P', configuration.port,
+                    '-u', configuration.user,
+                    '-p', configuration.password,
+                    '-s', Number(start).toString(),
+                    '-m', Number(max).toString(),
+                    '-w', workspace
+                ];
 
-        this.getBaselines = function (part) {
-            var args = [
-                'bl',
-                '-F', 'json',
-                '-h', configuration.host,
-                '-P', configuration.port,
-                '-u', configuration.user,
-                '-p', configuration.password,
-                '-w', part.workspace,
-                '-o', part.partNumber,
-                '-r', part.version
-            ];
+                return run(args);
 
-            return run(args);
-        };
+            };
+
+            this.searchPartMasters = function (workspace, search) {
+
+                var args = [
+                    's',
+                    '-F', 'json',
+                    '-h', configuration.host,
+                    '-P', configuration.port,
+                    '-u', configuration.user,
+                    '-p', configuration.password,
+                    '-w', workspace,
+                    '-s', search
+                ];
+
+                return run(args);
+            };
+
+            this.getBaselines = function (part) {
+                var args = [
+                    'bl',
+                    '-F', 'json',
+                    '-h', configuration.host,
+                    '-P', configuration.port,
+                    '-u', configuration.user,
+                    '-p', configuration.password,
+                    '-w', part.workspace,
+                    '-o', part.partNumber,
+                    '-r', part.version
+                ];
+
+                return run(args);
+            };
 
 
-    });
+        });
+})();

@@ -4,8 +4,7 @@
   "locale": "fr_FR",
   "dependencies": {
     "moment": "^2.8.3",
-    "recursive-readdir": "^1.2.0",
-    "requirejs": ">=1.0.0"
+    "recursive-readdir": "^1.2.0"
   },
   "window": {
     "toolbar": true,

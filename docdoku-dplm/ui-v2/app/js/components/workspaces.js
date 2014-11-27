@@ -1,38 +1,41 @@
-'use strict';
+(function(){
 
-angular.module('dplm.services.workspaces', [])
-    .service('WorkspaceService', function ($log, $filter, $q, $location, CliService, NotificationService) {
+    'use strict';
 
-        var _this = this;
+    angular.module('dplm.services.workspaces', [])
+        .service('WorkspaceService', function ($log, $filter, $q, $location, CliService, NotificationService) {
 
-        this.workspaces = [];
+            var _this = this;
 
-        this.getWorkspaces = function () {
+            this.workspaces = [];
 
-            var deferred = $q.defer();
+            this.getWorkspaces = function () {
 
-            if(_this.workspaces.length){
-                deferred.resolve();
+                var deferred = $q.defer();
+
+                if(_this.workspaces.length){
+                    deferred.resolve();
+                    return deferred.promise;
+                }
+
+                NotificationService.toast($filter('translate')('FETCHING_WORKSPACES'));
+
+                CliService.getWorkspaces().then(function (workspaces) {
+                    angular.copy(workspaces,_this.workspaces);
+                    NotificationService.hide();
+                    deferred.resolve();
+                },function(){
+                    // Should be offline, or auth error
+                    $location.path('settings');
+                    deferred.reject();
+                });
+
                 return deferred.promise;
-            }
+            };
 
-            NotificationService.toast($filter('translate')('FETCHING_WORKSPACES'));
+            this.reset = function(){
+                _this.workspaces.length = 0;
+            };
 
-            CliService.getWorkspaces().then(function (workspaces) {
-                angular.copy(workspaces,_this.workspaces);
-                NotificationService.hide();
-                deferred.resolve();
-            },function(){
-                // Should be offline, or auth error
-                $location.path('settings');
-                deferred.reject();
-            });
-
-            return deferred.promise;
-        };
-
-        this.reset = function(){
-            _this.workspaces.length = 0;
-        };
-
-    });
+        });
+})();
