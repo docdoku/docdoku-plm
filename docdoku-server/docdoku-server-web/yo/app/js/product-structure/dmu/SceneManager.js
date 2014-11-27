@@ -777,19 +777,20 @@ define([
             });
         };
         this.takeScreenShot = function () {
+
             var imageSource = _this.renderer.domElement.toDataURL('image/png');
             var now = new Date();
             var filename = App.config.productId + '-' + now.getFullYear() + '-' + now.getMonth() + '-' + now.getDay();
-            if (/Firefox/i.test(window.navigator.userAgent)) {
-                var strDownloadMime = 'image/octet-stream';
-                document.location.href = imageSource.replace('image/png', strDownloadMime);
-            }
-            else {
-                var pom = document.createElement('a');
-                pom.setAttribute('href', imageSource);
-                pom.setAttribute('download', filename);
-                pom.click();
-            }
+
+            var save = document.createElement('a');
+            save.href = imageSource;
+            save.download = filename;
+            var event = document.createEvent("MouseEvents");
+            event.initMouseEvent(
+                "click", true, false, window, 0, 0, 0, 0, 0
+                , false, false, false, false, 0, null
+            );
+            save.dispatchEvent(event);
 
         };
         this.setCameraNear = function (n) {
