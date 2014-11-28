@@ -1,0 +1,56 @@
+.hide-input [type=file] {
+	display: none;
+}
+.file-input [type=file] {
+	opacity: 0;
+	cursor: pointer;
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+}
+
+.menu-file-input {
+	float: right;
+}
+
+.file-input {
+    display: inline-block;
+	cursor: pointer;
+}
+
+select{
+	background: transparent;
+	border: none;
+	color: inherit;
+}
+
+.row  md-input-group,
+.row  md-checkbox,
+.row  md-radio-button,
+.row  md-button,
+.row select,
+.row label {
+	font-size: inherit;
+	margin-right: 8px;
+	display: inline-block;
+}
+.row .label-margin{
+	padding: 0 6px;
+	margin: 15px 15px 15px 0;
+}
+.cursor{
+	cursor: pointer;
+}
+
+md-radio-group{
+	border:none;
+}
+
+h3{
+	width: 100%;
+}
+.right{
+	float:right;
+}

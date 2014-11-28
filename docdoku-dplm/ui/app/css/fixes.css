@@ -1,0 +1,6 @@
+md-tooltip{
+    z-index: 10;
+}
+md-backdrop:not(.md-sidenav-backdrop){
+    z-index: 10;
+}

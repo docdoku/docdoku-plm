@@ -6,14 +6,14 @@
     </div>
     <div class="modal-body">
         <div id="alerts-{{view.cid}}"></div>
-        <form id="edit-folder-form">
-            <label>Nom</label>
+        <form id="edit-folder-form" class="form-horizontal">
+            <label>{{i18n.NAME}}</label>
             <input class="name" type="text" autofocus
                    placeholder="{{i18n.FOLDER_S_NAME}}"/>
         </form>
     </div>
     <div class="modal-footer">
-        <a class="btn  btn-defaultcancel" data-dismiss="modal">{{i18n.CANCEL}}</a>
+        <a class="btn btn-default cancel" data-dismiss="modal">{{i18n.CANCEL}}</a>
         <button class="btn save btn-primary" form="edit-folder-form">
             {{i18n.SAVE}}
         </button>

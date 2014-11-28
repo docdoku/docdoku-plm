@@ -183,11 +183,9 @@ define([
         },
         actionEdit: function () {
             this.hideActions();
-            this.addSubView(
-                new FolderEditView({
-                    model: this.model
-                })
-            ).show();
+            new FolderEditView({
+                model: this.model
+            }).show();
             return false;
         },
         actionDelete: function () {
