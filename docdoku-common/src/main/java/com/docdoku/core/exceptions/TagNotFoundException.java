@@ -29,19 +29,20 @@ import java.util.Locale;
  *
  * @author Florent Garin
  */
-public class TagNotFoundException extends ApplicationException {
-
-    private TagKey mTagKey;
+public class TagNotFoundException extends EntityNotFoundException {
+    private final TagKey mTagKey;
     
     public TagNotFoundException(String pMessage) {
         super(pMessage);
+        mTagKey=null;
     }
     
     public TagNotFoundException(Locale pLocale, TagKey pTagKey) {
         super(pLocale);
         mTagKey=pTagKey;
     }
-    
+
+    @Override
     public String getLocalizedMessage() {
         String message = getBundleDefaultMessage();
         return MessageFormat.format(message,mTagKey);     

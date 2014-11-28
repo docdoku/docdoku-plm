@@ -29,13 +29,13 @@ import java.util.Locale;
  *
  * @author Taylor LABEJOF
  */
-public class ProductInstanceAlreadyExistsException extends ApplicationException {
-
-    private ProductInstanceMaster productInstanceMaster;
+public class ProductInstanceAlreadyExistsException extends EntityAlreadyExistsException {
+    private final ProductInstanceMaster productInstanceMaster;
 
 
     public ProductInstanceAlreadyExistsException(String pMessage) {
         super(pMessage);
+        productInstanceMaster=null;
     }
 
 
@@ -48,6 +48,7 @@ public class ProductInstanceAlreadyExistsException extends ApplicationException 
         this.productInstanceMaster=productInstanceMaster;
     }
 
+    @Override
     public String getLocalizedMessage() {
         String message = getBundleDefaultMessage();
         return MessageFormat.format(message,productInstanceMaster);

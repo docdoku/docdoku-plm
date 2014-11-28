@@ -29,13 +29,13 @@ import java.util.Locale;
  *
  * @author Florent Garin
  */
-public class FolderAlreadyExistsException extends ApplicationException {
-
-    private Folder mFolder;
+public class FolderAlreadyExistsException extends EntityAlreadyExistsException {
+    private final Folder mFolder;
     
     
     public FolderAlreadyExistsException(String pMessage) {
         super(pMessage);
+        mFolder=null;
     }
     
     public FolderAlreadyExistsException(Locale pLocale, Folder pFolder) {
@@ -46,7 +46,8 @@ public class FolderAlreadyExistsException extends ApplicationException {
         super(pLocale, pCause);
         mFolder=pFolder;
     }
-    
+
+    @Override
     public String getLocalizedMessage() {
         String message = getBundleDefaultMessage();
         return MessageFormat.format(message,mFolder);     

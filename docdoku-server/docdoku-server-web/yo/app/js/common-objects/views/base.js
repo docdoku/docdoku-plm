@@ -65,7 +65,11 @@ define([
         },
         deleteSubViews: function () {
             _.each(_.values(this.subViews), function (view) {
-                view.destroy();
+                if (_.isFunction(view.destroy)) {
+                    view.destroy();
+                }else{
+                    view.remove();
+                }
             });
         },
         _eventsBindings: function (options) {

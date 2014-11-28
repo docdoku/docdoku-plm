@@ -29,14 +29,13 @@ import java.util.Locale;
  *
  * @author Florent Garin
  */
-public class ProductInstanceMasterNotFoundException extends ApplicationException {
-    private ProductInstanceMasterKey mProductInstanceMaster;
-
+public class ProductInstanceMasterNotFoundException extends EntityNotFoundException {
+    private final ProductInstanceMasterKey mProductInstanceMaster;
 
     public ProductInstanceMasterNotFoundException(String pMessage) {
         super(pMessage);
+        mProductInstanceMaster=null;
     }
-
 
     public ProductInstanceMasterNotFoundException(Locale pLocale, ProductInstanceMasterKey pProductInstanceMaster) {
         this(pLocale, pProductInstanceMaster, null);
@@ -47,6 +46,7 @@ public class ProductInstanceMasterNotFoundException extends ApplicationException
         mProductInstanceMaster=pProductInstanceMaster;
     }
 
+    @Override
     public String getLocalizedMessage() {
         String message = getBundleDefaultMessage();
         return MessageFormat.format(message,mProductInstanceMaster);

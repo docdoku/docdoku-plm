@@ -22,7 +22,8 @@ package com.docdoku.server.rest;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.common.Workspace;
-import com.docdoku.core.exceptions.ApplicationException;
+import com.docdoku.core.exceptions.*;
+import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartMaster;
 import com.docdoku.core.product.PartRevision;
@@ -35,10 +36,7 @@ import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.rest.dto.*;
 import com.docdoku.server.rest.util.SearchQueryParser;
-import org.dozer.DozerBeanMapperSingletonWrapper;
-import org.dozer.Mapper;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
@@ -49,7 +47,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 @Stateless
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
@@ -65,16 +62,7 @@ public class PartsResource {
     @EJB
     private PartResource part;
 
-    private static final Logger LOGGER = Logger.getLogger(PartsResource.class.getName());
-
     public PartsResource() {
-    }
-
-    private Mapper mapper;
-
-    @PostConstruct
-    public void init() {
-        mapper = DozerBeanMapperSingletonWrapper.getInstance();
     }
 
     @Path("{partNumber: [^/].*}-{partVersion:[A-Z]+}")
@@ -85,139 +73,118 @@ public class PartsResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<PartDTO> getPartRevisions(@PathParam("workspaceId") String workspaceId, @QueryParam("start") int start) {
-        try {
-            int maxResults = 20;
-            List<PartRevision> partRevisions = productService.getPartRevisions(Tools.stripTrailingSlash(workspaceId), start, maxResults);
-            List<PartDTO> partDTOs = new ArrayList<>();
+    public List<PartDTO> getPartRevisions(@PathParam("workspaceId") String workspaceId, @QueryParam("start") int start)
+            throws EntityNotFoundException, AccessRightException, UserNotActiveException {
 
-            for(PartRevision partRevision : partRevisions){
-                partDTOs.add(Tools.mapPartRevisionToPartDTO(partRevision));
-            }
+        int maxResults = 20;
+        List<PartRevision> partRevisions = productService.getPartRevisions(Tools.stripTrailingSlash(workspaceId), start, maxResults);
+        List<PartDTO> partDTOs = new ArrayList<>();
 
-            return partDTOs;
-        } catch (ApplicationException ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
+        for(PartRevision partRevision : partRevisions){
+            partDTOs.add(Tools.mapPartRevisionToPartDTO(partRevision));
         }
+
+        return partDTOs;
     }
 
     @GET
     @Path("count")
     @Produces(MediaType.APPLICATION_JSON)
-    public CountDTO getTotalNumberOfParts(@PathParam("workspaceId") String workspaceId) {
-        try {
-            return new CountDTO(productService.getTotalNumberOfParts(Tools.stripTrailingSlash(workspaceId)));
-        } catch (ApplicationException ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
-        }
+    public CountDTO getTotalNumberOfParts(@PathParam("workspaceId") String workspaceId)
+            throws EntityNotFoundException, AccessRightException, UserNotActiveException {
+
+        return new CountDTO(productService.getTotalNumberOfParts(Tools.stripTrailingSlash(workspaceId)));
     }
 
     @GET
     @Path("search/{query}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<PartDTO> searchPartRevisions(@PathParam("workspaceId") String workspaceId, @PathParam("query") String pStringQuery) {
-        try{
+    public List<PartDTO> searchPartRevisions(@PathParam("workspaceId") String workspaceId, @PathParam("query") String pStringQuery)
+            throws EntityNotFoundException, ESServerException, UserNotActiveException {
 
-            PartSearchQuery partSearchQuery = SearchQueryParser.parsePartStringQuery(workspaceId, pStringQuery);
+        PartSearchQuery partSearchQuery = SearchQueryParser.parsePartStringQuery(workspaceId, pStringQuery);
 
-            List<PartRevision> partRevisions = productService.searchPartRevisions(partSearchQuery);
-            List<PartDTO> partDTOs = new ArrayList<>();
+        List<PartRevision> partRevisions = productService.searchPartRevisions(partSearchQuery);
+        List<PartDTO> partDTOs = new ArrayList<>();
 
-            for(PartRevision partRevision : partRevisions){
-                partDTOs.add(Tools.mapPartRevisionToPartDTO(partRevision));
-            }
-
-            return partDTOs;
-        } catch (ApplicationException ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
+        for(PartRevision partRevision : partRevisions){
+            partDTOs.add(Tools.mapPartRevisionToPartDTO(partRevision));
         }
+
+        return partDTOs;
     }
 
     @GET
     @Path("numbers")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<LightPartMasterDTO> searchPartNumbers(@PathParam("workspaceId") String workspaceId, @QueryParam("q") String q) {
-        try {
-            List<PartMaster> partMasters = productService.findPartMasters(Tools.stripTrailingSlash(workspaceId), "%" + q + "%", 8);
-            List<LightPartMasterDTO> partsMastersDTO = new ArrayList<>();
-            for(PartMaster p : partMasters){
-                partsMastersDTO.add(new LightPartMasterDTO(p.getNumber()));
-            }
-            return partsMastersDTO;
-        } catch (ApplicationException ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
+    public List<LightPartMasterDTO> searchPartNumbers(@PathParam("workspaceId") String workspaceId, @QueryParam("q") String q)
+            throws EntityNotFoundException, AccessRightException {
+
+        List<PartMaster> partMasters = productService.findPartMasters(Tools.stripTrailingSlash(workspaceId), "%" + q + "%", 8);
+        List<LightPartMasterDTO> partsMastersDTO = new ArrayList<>();
+        for(PartMaster p : partMasters){
+            partsMastersDTO.add(new LightPartMasterDTO(p.getNumber()));
         }
+        return partsMastersDTO;
     }
 
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
-    public PartDTO createNewPart(@PathParam("workspaceId") String workspaceId, PartCreationDTO partCreationDTO){
+    public PartDTO createNewPart(@PathParam("workspaceId") String workspaceId, PartCreationDTO partCreationDTO)
+            throws EntityNotFoundException, EntityAlreadyExistsException, CreationException, AccessRightException, NotAllowedException {
 
-        try {
-            String pWorkflowModelId = partCreationDTO.getWorkflowModelId();
-            RoleMappingDTO[] rolesMappingDTO = partCreationDTO.getRoleMapping();
+        String pWorkflowModelId = partCreationDTO.getWorkflowModelId();
+        RoleMappingDTO[] rolesMappingDTO = partCreationDTO.getRoleMapping();
 
-            Map<String, String> roleMappings = new HashMap<>();
+        Map<String, String> roleMappings = new HashMap<>();
 
-            if(rolesMappingDTO != null){
-                for(RoleMappingDTO roleMappingDTO : rolesMappingDTO){
-                    roleMappings.put(roleMappingDTO.getRoleName(),roleMappingDTO.getUserLogin());
-                }
+        if(rolesMappingDTO != null){
+            for(RoleMappingDTO roleMappingDTO : rolesMappingDTO){
+                roleMappings.put(roleMappingDTO.getRoleName(),roleMappingDTO.getUserLogin());
             }
-
-            ACLDTO acl = partCreationDTO.getAcl();
-            ACLUserEntry[] userEntries = null;
-            ACLUserGroupEntry[] userGroupEntries = null;
-            if (acl != null) {
-                userEntries = new ACLUserEntry[acl.getUserEntries().size()];
-                userGroupEntries = new ACLUserGroupEntry[acl.getGroupEntries().size()];
-                int i = 0;
-                for (Map.Entry<String, ACL.Permission> entry : acl.getUserEntries().entrySet()) {
-                    userEntries[i] = new ACLUserEntry();
-                    userEntries[i].setPrincipal(new User(new Workspace(workspaceId), entry.getKey()));
-                    userEntries[i++].setPermission(ACL.Permission.valueOf(entry.getValue().name()));
-                }
-                i = 0;
-                for (Map.Entry<String, ACL.Permission> entry : acl.getGroupEntries().entrySet()) {
-                    userGroupEntries[i] = new ACLUserGroupEntry();
-                    userGroupEntries[i].setPrincipal(new UserGroup(new Workspace(workspaceId), entry.getKey()));
-                    userGroupEntries[i++].setPermission(ACL.Permission.valueOf(entry.getValue().name()));
-                }
-            }
-
-            PartMaster partMaster = productService.createPartMaster(workspaceId, partCreationDTO.getNumber(), partCreationDTO.getName(), partCreationDTO.isStandardPart(), pWorkflowModelId, partCreationDTO.getDescription(), partCreationDTO.getTemplateId(), roleMappings, userEntries, userGroupEntries);
-            return Tools.mapPartRevisionToPartDTO(partMaster.getLastRevision());
-
-        } catch (Exception ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
         }
 
+        ACLDTO acl = partCreationDTO.getAcl();
+        ACLUserEntry[] userEntries = null;
+        ACLUserGroupEntry[] userGroupEntries = null;
+        if (acl != null) {
+            userEntries = new ACLUserEntry[acl.getUserEntries().size()];
+            userGroupEntries = new ACLUserGroupEntry[acl.getGroupEntries().size()];
+            int i = 0;
+            for (Map.Entry<String, ACL.Permission> entry : acl.getUserEntries().entrySet()) {
+                userEntries[i] = new ACLUserEntry();
+                userEntries[i].setPrincipal(new User(new Workspace(workspaceId), entry.getKey()));
+                userEntries[i++].setPermission(ACL.Permission.valueOf(entry.getValue().name()));
+            }
+            i = 0;
+            for (Map.Entry<String, ACL.Permission> entry : acl.getGroupEntries().entrySet()) {
+                userGroupEntries[i] = new ACLUserGroupEntry();
+                userGroupEntries[i].setPrincipal(new UserGroup(new Workspace(workspaceId), entry.getKey()));
+                userGroupEntries[i++].setPermission(ACL.Permission.valueOf(entry.getValue().name()));
+            }
+        }
+
+        PartMaster partMaster = productService.createPartMaster(workspaceId, partCreationDTO.getNumber(), partCreationDTO.getName(), partCreationDTO.isStandardPart(), pWorkflowModelId, partCreationDTO.getDescription(), partCreationDTO.getTemplateId(), roleMappings, userEntries, userGroupEntries);
+        return Tools.mapPartRevisionToPartDTO(partMaster.getLastRevision());
     }
 
     @GET
     @Path("parts_last_iter")
     @Produces(MediaType.APPLICATION_JSON)
-    public PartIterationDTO[] searchDocumentsLastIterationToLink(@PathParam("workspaceId") String workspaceId,@QueryParam("q") String q) {
-        try {
+    public PartIterationDTO[] searchDocumentsLastIterationToLink(@PathParam("workspaceId") String workspaceId,@QueryParam("q") String q)
+            throws EntityNotFoundException, UserNotActiveException {
 
-            int maxResults = 8;
+        int maxResults = 8;
+        PartRevision[] partRs = productService.getPartRevisionsWithReference(workspaceId, q, maxResults);
 
-            PartRevision[] partRs = productService.getPartRevisionsWithReference(workspaceId, q, maxResults);
-
-            List<PartIterationDTO> partsLastIter = new ArrayList<>();
-            for (PartRevision partR : partRs) {
-                PartIteration partLastIter = partR.getLastIteration();
-                if (partLastIter != null)
-                    partsLastIter.add(new PartIterationDTO(partLastIter.getWorkspaceId(), partLastIter.getPartNumber(), partLastIter.getPartVersion(), partLastIter.getIteration()));
-            }
-
-            return partsLastIter.toArray(new PartIterationDTO[partsLastIter.size()]);
-
-        } catch (com.docdoku.core.exceptions.ApplicationException ex) {
-            throw new RestApiException(ex.toString(), ex.getMessage());
+        List<PartIterationDTO> partsLastIter = new ArrayList<>();
+        for (PartRevision partR : partRs) {
+            PartIteration partLastIter = partR.getLastIteration();
+            if (partLastIter != null)
+                partsLastIter.add(new PartIterationDTO(partLastIter.getWorkspaceId(), partLastIter.getPartNumber(), partLastIter.getPartVersion(), partLastIter.getIteration()));
         }
+
+        return partsLastIter.toArray(new PartIterationDTO[partsLastIter.size()]);
     }
-
-
 }

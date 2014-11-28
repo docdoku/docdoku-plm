@@ -27,19 +27,20 @@ import java.util.Locale;
  *
  * @author Florent Garin
  */
-public class FileNotFoundException extends ApplicationException {
-
-    private String mFullName;
+public class FileNotFoundException extends EntityNotFoundException {
+    private final String mFullName;
     
     public FileNotFoundException(String pMessage) {
         super(pMessage);
+        mFullName=null;
     }
     
     public FileNotFoundException(Locale pLocale, String pFullName) {
         super(pLocale);
         mFullName=pFullName;
     }
-    
+
+    @Override
     public String getLocalizedMessage() {
         String message = getBundleDefaultMessage();
         return MessageFormat.format(message,mFullName);     

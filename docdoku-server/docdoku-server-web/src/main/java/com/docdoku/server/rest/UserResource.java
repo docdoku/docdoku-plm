@@ -21,7 +21,9 @@ package com.docdoku.server.rest;
 
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
-import com.docdoku.core.exceptions.*;
+import com.docdoku.core.exceptions.AccessRightException;
+import com.docdoku.core.exceptions.EntityNotFoundException;
+import com.docdoku.core.exceptions.UserNotActiveException;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
@@ -39,9 +41,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 @Stateless
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
@@ -54,7 +53,6 @@ public class UserResource {
     private IUserManagerLocal userManager;
 
     private Mapper mapper;
-    private static final Logger LOGGER = Logger.getLogger(UserResource.class.getName());
 
     public UserResource() {
     }
@@ -66,75 +64,53 @@ public class UserResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public UserDTO[] getUsersInWorkspace(@PathParam("workspaceId") String workspaceId) {
-        try {
+    public UserDTO[] getUsersInWorkspace(@PathParam("workspaceId") String workspaceId)
+            throws EntityNotFoundException, AccessRightException, UserNotActiveException {
 
-            User[] users = documentService.getUsers(workspaceId);
-            UserDTO[] dtos = new UserDTO[users.length];
+        User[] users = documentService.getUsers(workspaceId);
+        UserDTO[] dtos = new UserDTO[users.length];
 
-            for(int i=0; i<users.length; i++){
-                dtos[i] = mapper.map(users[i], UserDTO.class);
-            }
-
-            return dtos;
-        } catch (UserNotFoundException | UserNotActiveException | AccessRightException e) {
-            LOGGER.log(Level.WARNING, null, e);
-            throw new RestApiException(e.toString(), e.getMessage(), Response.Status.FORBIDDEN);
-        } catch (WorkspaceNotFoundException e) {
-            LOGGER.log(Level.WARNING, null, e);
-            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
-        } catch (AccountNotFoundException e){
-            LOGGER.log(Level.WARNING, null, e);
-            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.BAD_REQUEST);
+        for(int i=0; i<users.length; i++){
+            dtos[i] = mapper.map(users[i], UserDTO.class);
         }
+
+        return dtos;
     }
 
     @GET
     @Path("me")
     @Produces(MediaType.APPLICATION_JSON)
-    public UserDTO whoami(@PathParam("workspaceId") String workspaceId){
-        try {
-            User  user = userManager.whoAmI(workspaceId);
-            return mapper.map(user, UserDTO.class);
-        } catch (UserNotFoundException | UserNotActiveException e) {
-            LOGGER.log(Level.WARNING, null, e);
-            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.FORBIDDEN);
-        } catch (WorkspaceNotFoundException e) {
-            LOGGER.log(Level.WARNING, null, e);
-            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
-        }
+    public UserDTO whoami(@PathParam("workspaceId") String workspaceId)
+            throws EntityNotFoundException, UserNotActiveException {
+
+        User  user = userManager.whoAmI(workspaceId);
+        return mapper.map(user, UserDTO.class);
     }
 
     @GET
     @Path("reachable")
     @Produces(MediaType.APPLICATION_JSON)
-    public UserDTO[] getReachableUsersForCaller(@PathParam("workspaceId") String workspaceId) {
-        try {
-            User[] users = documentService.getReachableUsers(workspaceId);
-            UserDTO[] dtos = new UserDTO[users.length];
+    public UserDTO[] getReachableUsersForCaller(@PathParam("workspaceId") String workspaceId)
+            throws EntityNotFoundException{
 
-            for(int i=0; i<users.length; i++){
-                dtos[i] = mapper.map(users[i], UserDTO.class);
-            }
+        User[] users = documentService.getReachableUsers(workspaceId);
+        UserDTO[] dtos = new UserDTO[users.length];
 
-            return dtos;
-        } catch (AccountNotFoundException e) {
-            LOGGER.log(Level.WARNING, null, e);
-            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.BAD_REQUEST);
+        for(int i=0; i<users.length; i++){
+            dtos[i] = mapper.map(users[i], UserDTO.class);
         }
+
+        return dtos;
     }
 
     @GET
     @Path("admin")
     @Produces(MediaType.APPLICATION_JSON)
-    public UserDTO getAdminInWorkspace(@PathParam("workspaceId") String workspaceId){
-        try {
-            Workspace workspace = userManager.getWorkspace(workspaceId);
-            return mapper.map(workspace.getAdmin(),UserDTO.class);
-        } catch (WorkspaceNotFoundException e) {
-            LOGGER.log(Level.WARNING, null, e);
-            throw new RestApiException(e.toString(), e.getMessage(),Response.Status.NOT_FOUND);
-        }
+    public UserDTO getAdminInWorkspace(@PathParam("workspaceId") String workspaceId)
+            throws EntityNotFoundException{
+
+        Workspace workspace = userManager.getWorkspace(workspaceId);
+        return mapper.map(workspace.getAdmin(),UserDTO.class);
     }
 }
 

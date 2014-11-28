@@ -414,7 +414,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     @Override
     public BinaryResource getBinaryResource(String pFullName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, FileNotFoundException, NotAllowedException {
 
-        if(ctx.isCallerInRole("guest-proxy")){
+        if(ctx.isCallerInRole(UserGroupMapping.GUEST_PROXY_ROLE_ID)){
             return new BinaryResourceDAO(em).loadBinaryResource(pFullName);
         }
 
@@ -575,7 +575,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     @Override
     public List<ConfigurationItem> getConfigurationItems(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         Locale locale = Locale.getDefault();
-        if(!userManager.isCallerInRole("admin")){
+        if(!userManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID)){
             User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
             locale = new Locale(user.getLanguage());
         }
@@ -700,7 +700,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     @Override
     public PartRevision getPartRevision(PartRevisionKey pPartRPK) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException, AccessRightException {
 
-        if(ctx.isCallerInRole("guest-proxy")){
+        if(ctx.isCallerInRole(UserGroupMapping.GUEST_PROXY_ROLE_ID)){
             PartRevision partRevision = new PartRevisionDAO(em).loadPartR(pPartRPK);
             if(partRevision.isCheckedOut()){
                 em.detach(partRevision);
@@ -1223,7 +1223,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     @Override
     public int getTotalNumberOfParts(String pWorkspaceId) throws AccessRightException, WorkspaceNotFoundException, AccountNotFoundException, UserNotFoundException, UserNotActiveException {
         Locale locale = Locale.getDefault();
-        if(!userManager.isCallerInRole("admin")){
+        if(!userManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID)){
             User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
             locale = new Locale(user.getLanguage());
         }
@@ -1548,7 +1548,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         return partRevisions.toArray(new PartRevision[partRevisions.size()]);
     }
 
-    @RolesAllowed({"users"})
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     @Override
     public SharedPart createSharedPart(PartRevisionKey pPartRevisionKey, String pPassword, Date pExpireDate) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, PartRevisionNotFoundException, UserNotActiveException {
         User user = userManager.checkWorkspaceWriteAccess(pPartRevisionKey.getPartMaster().getWorkspace());
@@ -1558,7 +1558,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         return sharedPart;
     }
 
-    @RolesAllowed({"users"})
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     @Override
     public void deleteSharedPart(SharedEntityKey pSharedEntityKey) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, SharedEntityNotFoundException {
         User user = userManager.checkWorkspaceWriteAccess(pSharedEntityKey.getWorkspace());

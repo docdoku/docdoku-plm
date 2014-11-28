@@ -27,13 +27,12 @@ import java.util.Locale;
  *
  * @author Florent Garin
  */
-public class FolderNotFoundException extends ApplicationException {
+public class FolderNotFoundException extends EntityNotFoundException {
+    private final String mCompletePath;
 
-    private String mCompletePath;
-    
-    
     public FolderNotFoundException(String pMessage) {
         super(pMessage);
+        mCompletePath=null;
     }
     
     public FolderNotFoundException(Locale pLocale, String pCompletePath) {
@@ -44,7 +43,8 @@ public class FolderNotFoundException extends ApplicationException {
         super(pLocale, pCause);
         mCompletePath=pCompletePath;
     }
-    
+
+    @Override
     public String getLocalizedMessage() {
         String message = getBundleDefaultMessage();
         return MessageFormat.format(message,mCompletePath);     

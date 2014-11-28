@@ -21,7 +21,9 @@ package com.docdoku.server.rest;
 
 import com.docdoku.core.change.ChangeOrder;
 import com.docdoku.core.document.DocumentIterationKey;
-import com.docdoku.core.exceptions.ApplicationException;
+import com.docdoku.core.exceptions.AccessRightException;
+import com.docdoku.core.exceptions.EntityNotFoundException;
+import com.docdoku.core.exceptions.UserNotActiveException;
 import com.docdoku.core.meta.Tag;
 import com.docdoku.core.product.PartIterationKey;
 import com.docdoku.core.security.ACL;
@@ -46,8 +48,6 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 @Stateless
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
@@ -57,7 +57,6 @@ public class ChangeOrdersResource {
     @EJB
     private IChangeManagerLocal changeManager;
 
-    private static final Logger LOGGER = Logger.getLogger(ChangeOrdersResource.class.getName());
     private Mapper mapper;
 
     public ChangeOrdersResource() {
@@ -70,79 +69,71 @@ public class ChangeOrdersResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<ChangeOrderDTO> getOrders(@PathParam("workspaceId") String workspaceId){
-        try{
-            List<ChangeOrder> changeOrders = changeManager.getChangeOrders(workspaceId);
-            List<ChangeOrderDTO> changeOrderDTOs = new ArrayList<>();
-            for(ChangeOrder order : changeOrders){
-                ChangeOrderDTO changeOrderDTO= mapper.map(order, ChangeOrderDTO.class);
-                changeOrderDTO.setWritable(changeManager.isChangeItemWritable(order));
-                changeOrderDTOs.add(changeOrderDTO);
-            }
-            return changeOrderDTOs;
-        } catch (ApplicationException ex) {
-            LOGGER.log(Level.WARNING,null,ex);
-            throw new RestApiException(ex.toString(), ex.getMessage());
+    public List<ChangeOrderDTO> getOrders(@PathParam("workspaceId") String workspaceId)
+            throws EntityNotFoundException, UserNotActiveException{
+        List<ChangeOrder> changeOrders = changeManager.getChangeOrders(workspaceId);
+        List<ChangeOrderDTO> changeOrderDTOs = new ArrayList<>();
+        for(ChangeOrder order : changeOrders){
+            ChangeOrderDTO changeOrderDTO= mapper.map(order, ChangeOrderDTO.class);
+            changeOrderDTO.setWritable(changeManager.isChangeItemWritable(order));
+            changeOrderDTOs.add(changeOrderDTO);
         }
+        return changeOrderDTOs;
     }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ChangeOrderDTO createOrder(@PathParam("workspaceId") String workspaceId, ChangeOrderDTO changeOrderDTO){
-        try{
-            ChangeOrder changeOrder = changeManager.createChangeOrder(workspaceId, changeOrderDTO.getName(), changeOrderDTO.getDescription(), changeOrderDTO.getMilestoneId(), changeOrderDTO.getPriority(), changeOrderDTO.getAssignee(), changeOrderDTO.getCategory());
-            ChangeOrderDTO ret = mapper.map(changeOrder, ChangeOrderDTO.class);
-            ret.setWritable(true);
-            return ret;
-        } catch (ApplicationException ex) {
-            LOGGER.log(Level.WARNING,null,ex);
-            throw new RestApiException(ex.toString(), ex.getMessage());
-        }
+    public ChangeOrderDTO createOrder(@PathParam("workspaceId") String workspaceId, ChangeOrderDTO changeOrderDTO)
+            throws EntityNotFoundException, AccessRightException {
+        ChangeOrder changeOrder = changeManager.createChangeOrder(workspaceId,
+                                                                changeOrderDTO.getName(),
+                                                                changeOrderDTO.getDescription(),
+                                                                changeOrderDTO.getMilestoneId(),
+                                                                changeOrderDTO.getPriority(),
+                                                                changeOrderDTO.getAssignee(),
+                                                                changeOrderDTO.getCategory());
+        ChangeOrderDTO ret = mapper.map(changeOrder, ChangeOrderDTO.class);
+        ret.setWritable(true);
+        return ret;
     }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{orderId}")
-    public ChangeOrderDTO getOrder(@PathParam("workspaceId") String workspaceId, @PathParam("orderId") int orderId){
-        try{
-            ChangeOrder changeOrder = changeManager.getChangeOrder(workspaceId, orderId);
-            ChangeOrderDTO changeOrderDTO= mapper.map(changeOrder, ChangeOrderDTO.class);
-            changeOrderDTO.setWritable(changeManager.isChangeItemWritable(changeOrder));
-            return changeOrderDTO;
-        } catch (ApplicationException ex) {
-            LOGGER.log(Level.WARNING,null,ex);
-            throw new RestApiException(ex.toString(), ex.getMessage());
-        }
+    public ChangeOrderDTO getOrder(@PathParam("workspaceId") String workspaceId, @PathParam("orderId") int orderId)
+            throws EntityNotFoundException, UserNotActiveException, AccessRightException{
+        ChangeOrder changeOrder = changeManager.getChangeOrder(workspaceId, orderId);
+        ChangeOrderDTO changeOrderDTO= mapper.map(changeOrder, ChangeOrderDTO.class);
+        changeOrderDTO.setWritable(changeManager.isChangeItemWritable(changeOrder));
+        return changeOrderDTO;
     }
 
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{orderId}")
-    public ChangeOrderDTO updateOrder(@PathParam("workspaceId") String workspaceId, @PathParam("orderId") int orderId, ChangeOrderDTO pChangeOrderDTO){
-        try{
-            ChangeOrder changeOrder = changeManager.updateChangeOrder(orderId, workspaceId, pChangeOrderDTO.getDescription(), pChangeOrderDTO.getMilestoneId(), pChangeOrderDTO.getPriority(), pChangeOrderDTO.getAssignee(), pChangeOrderDTO.getCategory());
-            ChangeOrderDTO changeOrderDTO= mapper.map(changeOrder, ChangeOrderDTO.class);
-            changeOrderDTO.setWritable(changeManager.isChangeItemWritable(changeOrder));
-            return changeOrderDTO;
-        } catch (ApplicationException ex) {
-            LOGGER.log(Level.WARNING,null,ex);
-            throw new RestApiException(ex.toString(), ex.getMessage());
-        }
+    public ChangeOrderDTO updateOrder(@PathParam("workspaceId") String workspaceId, @PathParam("orderId") int orderId, ChangeOrderDTO pChangeOrderDTO)
+            throws EntityNotFoundException, UserNotActiveException, AccessRightException{
+        ChangeOrder changeOrder = changeManager.updateChangeOrder(orderId,
+                                                                workspaceId,
+                                                                pChangeOrderDTO.getDescription(),
+                                                                pChangeOrderDTO.getMilestoneId(),
+                                                                pChangeOrderDTO.getPriority(),
+                                                                pChangeOrderDTO.getAssignee(),
+                                                                pChangeOrderDTO.getCategory());
+        ChangeOrderDTO changeOrderDTO= mapper.map(changeOrder, ChangeOrderDTO.class);
+        changeOrderDTO.setWritable(changeManager.isChangeItemWritable(changeOrder));
+        return changeOrderDTO;
     }
 
     @DELETE
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("{orderId}")
-    public Response removeOrder(@PathParam("orderId") int orderId){
-        try{
-            changeManager.deleteChangeOrder(orderId);
-            return Response.ok().build();
-        } catch (ApplicationException ex) {
-            LOGGER.log(Level.WARNING,null,ex);
-            throw new RestApiException(ex.toString(), ex.getMessage());
-        }
+    public Response removeOrder(@PathParam("orderId") int orderId)
+            throws EntityNotFoundException, UserNotActiveException, AccessRightException{
+        changeManager.deleteChangeOrder(orderId);
+        return Response.ok().build();
     }
 
 
@@ -150,110 +141,92 @@ public class ChangeOrdersResource {
     @Path("{orderId}/tags")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ChangeOrderDTO saveTags(@PathParam("workspaceId") String workspaceId, @PathParam("orderId") int orderId, List<TagDTO> tagDtos) {
+    public ChangeOrderDTO saveTags(@PathParam("workspaceId") String workspaceId, @PathParam("orderId") int orderId, List<TagDTO> tagDtos)
+            throws EntityNotFoundException, UserNotActiveException, AccessRightException{
         String[] tagsLabel = new String[tagDtos.size()];
         for (int i = 0; i < tagDtos.size(); i++) {
             tagsLabel[i] = tagDtos.get(i).getLabel();
         }
 
-        try {
-            ChangeOrder changeOrder = changeManager.saveChangeOrderTags(workspaceId, orderId, tagsLabel);
-            ChangeOrderDTO changeOrderDTO= mapper.map(changeOrder, ChangeOrderDTO.class);
-            changeOrderDTO.setWritable(changeManager.isChangeItemWritable(changeOrder));
-            return changeOrderDTO;
-        } catch (ApplicationException ex) {
-            LOGGER.log(Level.WARNING,null,ex);
-            throw new RestApiException(ex.toString(), ex.getMessage());
-        }
+        ChangeOrder changeOrder = changeManager.saveChangeOrderTags(workspaceId, orderId, tagsLabel);
+        ChangeOrderDTO changeOrderDTO= mapper.map(changeOrder, ChangeOrderDTO.class);
+        changeOrderDTO.setWritable(changeManager.isChangeItemWritable(changeOrder));
+        return changeOrderDTO;
     }
 
     @POST
     @Path("{orderId}/tags")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ChangeItemDTO addTag(@PathParam("workspaceId") String workspaceId, @PathParam("orderId") int orderId, List<TagDTO> tagDtos) {
-        try {
-            ChangeOrder changeOrder = changeManager.getChangeOrder(workspaceId, orderId);
-            Set<Tag> tags = changeOrder.getTags();
-            Set<String> tagLabels = new HashSet<>();
+    public ChangeItemDTO addTag(@PathParam("workspaceId") String workspaceId, @PathParam("orderId") int orderId, List<TagDTO> tagDtos)
+            throws EntityNotFoundException, UserNotActiveException, AccessRightException{
+        ChangeOrder changeOrder = changeManager.getChangeOrder(workspaceId, orderId);
+        Set<Tag> tags = changeOrder.getTags();
+        Set<String> tagLabels = new HashSet<>();
 
-            for(TagDTO tagDto:tagDtos){
-                tagLabels.add(tagDto.getLabel());
-            }
-
-            for(Tag tag : tags){
-                tagLabels.add(tag.getLabel());
-            }
-
-            changeOrder = changeManager.saveChangeOrderTags(workspaceId, orderId, tagLabels.toArray(new String[tagLabels.size()]));
-            ChangeOrderDTO changeOrderDTO= mapper.map(changeOrder, ChangeOrderDTO.class);
-            changeOrderDTO.setWritable(changeManager.isChangeItemWritable(changeOrder));
-            return changeOrderDTO;
-
-        } catch (ApplicationException ex) {
-            LOGGER.log(Level.WARNING,null,ex);
-            throw new RestApiException(ex.toString(), ex.getMessage());
+        for(TagDTO tagDto:tagDtos){
+            tagLabels.add(tagDto.getLabel());
         }
+
+        for(Tag tag : tags){
+            tagLabels.add(tag.getLabel());
+        }
+
+        changeOrder = changeManager.saveChangeOrderTags(workspaceId, orderId, tagLabels.toArray(new String[tagLabels.size()]));
+        ChangeOrderDTO changeOrderDTO= mapper.map(changeOrder, ChangeOrderDTO.class);
+        changeOrderDTO.setWritable(changeManager.isChangeItemWritable(changeOrder));
+        return changeOrderDTO;
+
     }
 
     @DELETE
     @Path("{orderId}/tags/{tagName}")
-    public Response removeTags(@PathParam("workspaceId") String workspaceId, @PathParam("orderId")int orderId, @PathParam("tagName") String tagName) {
-        try {
-            changeManager.removeChangeOrderTag(workspaceId, orderId, tagName);
-            return Response.ok().build();
-        } catch (ApplicationException ex) {
-            LOGGER.log(Level.WARNING,null,ex);
-            throw new RestApiException(ex.toString(), ex.getMessage());
-        }
+    public Response removeTags(@PathParam("workspaceId") String workspaceId, @PathParam("orderId")int orderId, @PathParam("tagName") String tagName)
+            throws EntityNotFoundException, UserNotActiveException, AccessRightException {
+        changeManager.removeChangeOrderTag(workspaceId, orderId, tagName);
+        return Response.ok().build();
     }
 
     @PUT
     @Path("{orderId}/affectedDocuments")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ChangeItemDTO saveAffectedDocuments(@PathParam("workspaceId") String workspaceId, @PathParam("orderId") int orderId, List<DocumentIterationDTO> documentLinkDtos) {
+    public ChangeItemDTO saveAffectedDocuments(@PathParam("workspaceId") String workspaceId, @PathParam("orderId") int orderId, List<DocumentIterationDTO> documentLinkDtos)
+            throws EntityNotFoundException, UserNotActiveException, AccessRightException{
         DocumentIterationKey[] links = null;
         if (documentLinkDtos != null) {
             links = createDocumentIterationKeys(documentLinkDtos);
         }
 
-        try {
-            ChangeOrder changeOrder = changeManager.saveChangeOrderAffectedDocuments(workspaceId, orderId, links);
-            ChangeOrderDTO changeOrderDTO= mapper.map(changeOrder, ChangeOrderDTO.class);
-            changeOrderDTO.setWritable(changeManager.isChangeItemWritable(changeOrder));
-            return changeOrderDTO;
-        } catch (ApplicationException ex) {
-            LOGGER.log(Level.WARNING,null,ex);
-            throw new RestApiException(ex.toString(), ex.getMessage());
-        }
+        ChangeOrder changeOrder = changeManager.saveChangeOrderAffectedDocuments(workspaceId, orderId, links);
+        ChangeOrderDTO changeOrderDTO= mapper.map(changeOrder, ChangeOrderDTO.class);
+        changeOrderDTO.setWritable(changeManager.isChangeItemWritable(changeOrder));
+        return changeOrderDTO;
     }
 
     @PUT
     @Path("{orderId}/affectedParts")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ChangeItemDTO saveAffectedParts(@PathParam("workspaceId") String workspaceId, @PathParam("orderId") int orderId, List<PartIterationDTO> partLinkDtos) {
+    public ChangeItemDTO saveAffectedParts(@PathParam("workspaceId") String workspaceId, @PathParam("orderId") int orderId, List<PartIterationDTO> partLinkDtos)
+            throws EntityNotFoundException, UserNotActiveException, AccessRightException{
         PartIterationKey[] links = null;
         if (partLinkDtos != null) {
             links = createPartIterationKeys(partLinkDtos);
         }
-        try {
-            ChangeOrder changeOrder = changeManager.saveChangeOrderAffectedParts(workspaceId, orderId, links);
-            ChangeOrderDTO changeOrderDTO= mapper.map(changeOrder, ChangeOrderDTO.class);
-            changeOrderDTO.setWritable(changeManager.isChangeItemWritable(changeOrder));
-            return changeOrderDTO;
-        } catch (ApplicationException ex) {
-            LOGGER.log(Level.WARNING,null,ex);
-            throw new RestApiException(ex.toString(), ex.getMessage());
-        }
+
+        ChangeOrder changeOrder = changeManager.saveChangeOrderAffectedParts(workspaceId, orderId, links);
+        ChangeOrderDTO changeOrderDTO= mapper.map(changeOrder, ChangeOrderDTO.class);
+        changeOrderDTO.setWritable(changeManager.isChangeItemWritable(changeOrder));
+        return changeOrderDTO;
     }
 
     @PUT
     @Path("{orderId}/affectedRequests")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ChangeItemDTO saveAffectedRequests(@PathParam("workspaceId") String workspaceId, @PathParam("orderId") int orderId, List<ChangeRequestDTO> changeRequestDTOs) {
+    public ChangeItemDTO saveAffectedRequests(@PathParam("workspaceId") String workspaceId, @PathParam("orderId") int orderId, List<ChangeRequestDTO> changeRequestDTOs)
+            throws EntityNotFoundException, UserNotActiveException, AccessRightException{
         int[] links;
         if (changeRequestDTOs != null) {
             int i = 0;
@@ -264,44 +237,36 @@ public class ChangeOrdersResource {
         }else{
             links = new int[0];
         }
-        try {
-            ChangeOrder changeOrder = changeManager.saveChangeOrderAffectedRequests(workspaceId, orderId, links);
-            ChangeOrderDTO changeOrderDTO= mapper.map(changeOrder, ChangeOrderDTO.class);
-            changeOrderDTO.setWritable(changeManager.isChangeItemWritable(changeOrder));
-            return changeOrderDTO;
-        } catch (ApplicationException ex) {
-            LOGGER.log(Level.WARNING,null,ex);
-            throw new RestApiException(ex.toString(), ex.getMessage());
-        }
+
+        ChangeOrder changeOrder = changeManager.saveChangeOrderAffectedRequests(workspaceId, orderId, links);
+        ChangeOrderDTO changeOrderDTO= mapper.map(changeOrder, ChangeOrderDTO.class);
+        changeOrderDTO.setWritable(changeManager.isChangeItemWritable(changeOrder));
+        return changeOrderDTO;
     }
 
     @PUT
     @Path("{orderId}/acl")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateACL(@PathParam("workspaceId") String pWorkspaceId, @PathParam("orderId") int orderId, ACLDTO acl) {
-        try {
-            if (!acl.getGroupEntries().isEmpty() || !acl.getUserEntries().isEmpty()) {
+    public Response updateACL(@PathParam("workspaceId") String pWorkspaceId, @PathParam("orderId") int orderId, ACLDTO acl)
+            throws EntityNotFoundException, UserNotActiveException, AccessRightException{
+        if (!acl.getGroupEntries().isEmpty() || !acl.getUserEntries().isEmpty()) {
 
-                Map<String,String> userEntries = new HashMap<>();
-                Map<String,String> groupEntries = new HashMap<>();
+            Map<String,String> userEntries = new HashMap<>();
+            Map<String,String> groupEntries = new HashMap<>();
 
-                for (Map.Entry<String, ACL.Permission> entry : acl.getUserEntries().entrySet()) {
-                    userEntries.put(entry.getKey(), entry.getValue().name());
-                }
-
-                for (Map.Entry<String, ACL.Permission> entry : acl.getGroupEntries().entrySet()) {
-                    groupEntries.put(entry.getKey(), entry.getValue().name());
-                }
-
-                changeManager.updateACLForChangeOrder(pWorkspaceId, orderId, userEntries, groupEntries);
-            }else{
-                changeManager.removeACLFromChangeOrder(pWorkspaceId, orderId);
+            for (Map.Entry<String, ACL.Permission> entry : acl.getUserEntries().entrySet()) {
+                userEntries.put(entry.getKey(), entry.getValue().name());
             }
-            return Response.ok().build();
-        } catch (ApplicationException ex) {
-            LOGGER.log(Level.WARNING,null,ex);
-            throw new RestApiException(ex.toString(), ex.getMessage());
+
+            for (Map.Entry<String, ACL.Permission> entry : acl.getGroupEntries().entrySet()) {
+                groupEntries.put(entry.getKey(), entry.getValue().name());
+            }
+
+            changeManager.updateACLForChangeOrder(pWorkspaceId, orderId, userEntries, groupEntries);
+        }else{
+            changeManager.removeACLFromChangeOrder(pWorkspaceId, orderId);
         }
+        return Response.ok().build();
     }
 
 

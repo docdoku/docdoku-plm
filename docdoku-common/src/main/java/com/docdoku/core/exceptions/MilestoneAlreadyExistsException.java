@@ -27,13 +27,13 @@ import java.util.Locale;
  *
  * @author Florent Garin
  */
-public class MilestoneAlreadyExistsException extends ApplicationException {
-
-    private String mTitle;
+public class MilestoneAlreadyExistsException extends EntityAlreadyExistsException {
+    private final String mTitle;
 
 
     public MilestoneAlreadyExistsException(String pMessage) {
         super(pMessage);
+        mTitle=null;
     }
 
     public MilestoneAlreadyExistsException(Locale pLocale, String pLogin) {
@@ -44,7 +44,8 @@ public class MilestoneAlreadyExistsException extends ApplicationException {
         super(pLocale, pCause);
         mTitle=pTitle;
     }
-    
+
+    @Override
     public String getLocalizedMessage() {
         String message = getBundleDefaultMessage();
         return MessageFormat.format(message,mTitle);

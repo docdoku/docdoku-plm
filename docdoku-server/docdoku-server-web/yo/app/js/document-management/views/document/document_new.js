@@ -1,28 +1,29 @@
 /*global define*/
 define([
-    "mustache",
-    "common-objects/views/components/modal",
-    "common-objects/views/attributes/attributes",
-    "views/document/document_template_list",
-    "common-objects/views/workflow/workflow_list",
-    "common-objects/views/workflow/workflow_mapping",
-    "common-objects/views/security/acl",
-    "text!templates/document/document_new.html"
+    'mustache',
+    'common-objects/views/components/modal',
+    'common-objects/views/attributes/attributes',
+    'views/document/document_template_list',
+    'common-objects/views/workflow/workflow_list',
+    'common-objects/views/workflow/workflow_mapping',
+    'common-objects/views/security/acl',
+    'text!templates/document/document_new.html'
 ], function (Mustache, ModalView, AttributesView, DocumentTemplateListView, DocumentWorkflowListView, DocumentWorkflowMappingView, ACLView, template) {
+    'use strict';
     var DocumentNewView = ModalView.extend({
 
         template: template,
 
         initialize: function () {
             ModalView.prototype.initialize.apply(this, arguments);
-            this.events["submit #form-" + this.cid] = "onSubmitForm";
+            this.events['submit #form-' + this.cid] = 'onSubmitForm';
         },
 
         rendered: function () {
 
             this.attributesView = this.addSubView(
                 new AttributesView({
-                    el: "#tab-attributes-" + this.cid
+                    el: '#tab-attributes-' + this.cid
                 })
             );
 
@@ -30,7 +31,7 @@ define([
 
             this.templatesView = this.addSubView(
                 new DocumentTemplateListView({
-                    el: "#templates-" + this.cid,
+                    el: '#templates-' + this.cid,
                     attributesView: this.attributesView
                 })
             );
@@ -39,27 +40,27 @@ define([
 
             this.workflowsView = this.addSubView(
                 new DocumentWorkflowListView({
-                    el: "#workflows-" + this.cid
+                    el: '#workflows-' + this.cid
                 })
             );
 
             this.workflowsMappingView = this.addSubView(
                 new DocumentWorkflowMappingView({
-                    el: "#workflows-mapping-" + this.cid
+                    el: '#workflows-mapping-' + this.cid
                 })
             );
 
-            this.workflowsView.on("workflow:change", this.workflowsMappingView.updateMapping);
+            this.workflowsView.on('workflow:change', this.workflowsMappingView.updateMapping);
 
             this.workspaceMembershipsView = new ACLView({
-                el: this.$("#acl-mapping-" + this.cid),
+                el: this.$('#acl-mapping-' + this.cid),
                 editMode: true
             }).render();
         },
 
         onSubmitForm: function () {
 
-            var reference = $("#form-" + this.cid + " .reference").val();
+            var reference = $('#form-' + this.cid + ' .reference').val();
 
             if (reference) {
                 var workflow = this.workflowsView.selected();
@@ -68,10 +69,10 @@ define([
 
                 var data = {
                     reference: reference,
-                    title: $("#form-" + this.cid + " .title").val(),
-                    description: $("#form-" + this.cid + " .description").val(),
-                    workflowModelId: workflow ? workflow.get("id") : null,
-                    templateId: template ? template.get("id") : null,
+                    title: $('#form-' + this.cid + ' .title').val(),
+                    description: $('#form-' + this.cid + ' .description').val(),
+                    workflowModelId: workflow ? workflow.get('id') : null,
+                    templateId: template ? template.get('id') : null,
                     roleMapping: workflow ? this.workflowsMappingView.toList() : null,
                     acl: acl
                 };
@@ -103,7 +104,7 @@ define([
             this.collection.remove(model);
             if (error.responseText) {
                 this.alert({
-                    type: "error",
+                    type: 'error',
                     message: error.responseText
                 });
             } else {

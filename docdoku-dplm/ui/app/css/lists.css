@@ -1,0 +1,31 @@
+.md-tile-content h3, .md-tile-content h4{
+	cursor: pointer;
+}
+.md-tile-content.small{
+	padding: 6px;
+}
+.md-tile-left{
+	margin-right: 0;
+}
+.md-tile-left.md-tile-top{
+	margin-top: 20px;
+}
+.md-tile-left.small{
+	min-width:32px;
+}
+
+.opened{
+	background: #E0E0E0;
+	border-radius: 4px;
+}
+part-actions {
+	padding: 18px;
+}
+
+.subtitle{
+	color: #757575;
+}
+
+md-sidenav h3:first-of-type{
+	margin-top: 0;
+}

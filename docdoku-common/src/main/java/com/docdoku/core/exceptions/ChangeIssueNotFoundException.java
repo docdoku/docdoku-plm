@@ -27,16 +27,13 @@ import java.util.Locale;
  *
  * @author Florent Garin
  */
-public class ChangeIssueNotFoundException extends ApplicationException {
-
-
-    private int mChange;
-
+public class ChangeIssueNotFoundException extends EntityNotFoundException {
+    private final int mChange;
 
     public ChangeIssueNotFoundException(String pMessage) {
         super(pMessage);
+        mChange = -1;
     }
-
 
     public ChangeIssueNotFoundException(Locale pLocale, int pChange) {
         this(pLocale, pChange, null);
@@ -46,9 +43,10 @@ public class ChangeIssueNotFoundException extends ApplicationException {
         super(pLocale, pCause);
         mChange =pChange;
     }
-    
+
+    @Override
     public String getLocalizedMessage() {
-        String message = getBundleMessage("ChangeIssueNotFoundException");
+        String message = getBundleDefaultMessage();
         return MessageFormat.format(message, mChange);
     }
 }

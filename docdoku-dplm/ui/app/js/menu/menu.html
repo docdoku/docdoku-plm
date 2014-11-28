@@ -1,0 +1,70 @@
+<md-toolbar>
+    <h1 class="md-toolbar-tools">
+        <img src="img/icon.png" style="width: 36px; height:36px;">
+        <a href="#/">{{title}}</a>
+        <md-button aria-label="" href="#/settings">
+          <i class="fa fa-cog"></i>
+            <md-tooltip>
+                {{'SETTINGS' | translate }}
+            </md-tooltip>
+        </md-button>
+    </h1>
+</md-toolbar>
+
+<md-content class="md-padding">  
+
+   <h3>
+    <i class="fa fa-folder-open"></i> 
+    {{ 'FOLDERS' | translate }}
+       <md-button style="float:right" class="md-raised md-primary file-input" md-theme="default" aria-label="Profile">
+           <input file-change="addFolder($event,files)" type="file" webkitdirectory/>
+           <i class="fa fa-plus"></i>
+           <md-tooltip>
+               {{'ADD_FOLDER'|translate}}
+           </md-tooltip>
+       </md-button>
+    </h3>
+
+
+
+  <md-content style="max-height:150px">
+   <md-list>
+    <md-item ng-repeat="folder in folders | orderBy:'-favorite'" ng-controller="FolderMenuController">
+      <md-item-content>
+            <div class="md-tile-content small">
+              <md-button aria-label="" href="#/folder/{{folder.uuid}}" class="md-primary">
+                  <i ng-if="isActive('/folder/'+folder.uuid)" class="fa fa-folder-open"></i>
+                  <i ng-if="folder.newStuff" class="fa fa-download" title="{{'NEW_STUFF'|translate}}"></i>
+                  {{folder.path | fileshortname}}
+              </md-button>
+            </div>
+      </md-item-content>
+    </md-item>
+  </md-list>
+  </md-content>
+
+  <h3>
+    <i class="fa fa-globe"></i> 
+    {{ configuration.host + ':' + configuration.port }}
+  </h3>
+
+  <md-content style="max-height:150px">
+   <md-list>
+    <md-item ng-repeat="workspace in workspaces" ng-controller="WorkspaceMenuController">
+      <md-item-content 
+        drag-enter-class="dropzone" 
+        ui-on-drop="onDrop($data,$event)"
+        drag-hover-class="dropzone-selected">
+            <div class="md-tile-content small">
+              <md-button aria-label="" href="#/workspace/{{workspace}}" class="md-primary">
+                  <i ng-if="isActive('/workspace/'+workspace)" class="fa fa-globe"></i>
+                  {{workspace}}
+              </md-button>
+            </div>         
+      </md-item-content>
+    </md-item>
+  </md-list>
+  </md-content>
+
+
+</md-content>

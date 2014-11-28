@@ -1,55 +1,54 @@
 /*global define,App*/
-'use strict';
 define([
-        "backbone",
-        "mustache",
-        'text!templates/marker_info_modal.html'
-    ],
+	'backbone',
+	'mustache',
+	'text!templates/marker_info_modal.html'
+], function (Backbone, Mustache, template) {
+	'use strict';
+	var MarkerInfoModalView = Backbone.View.extend({
 
-    function (Backbone, Mustache, template) {
+		events: {
+			'click .destroy-marker-btn': 'destroyMarker',
+			'hidden #markerModal': 'onHidden'
+		},
 
-        var MarkerInfoModalView = Backbone.View.extend({
+		initialize: function () {
+			_.bindAll(this);
+		},
 
-            events: {
-                'click .destroy-marker-btn': 'destroyMarker',
-                'hidden #markerModal': 'onHidden'
-            },
+		render: function () {
+			this.$el.html(Mustache.render(template, {i18n: App.config.i18n, title: this.model.getTitle()}));
+			this.$modal = this.$('#markerModal');
+			this.$('#markerDesc').html(this.model.getDescription().nl2br());
 
-            initialize: function () {
-                _.bindAll(this);
-            },
+			return this;
+		},
 
-            render: function () {
-                this.$el.html(Mustache.render(template, {i18n: App.config.i18n, title: this.model.getTitle()}));
-                this.$modal = this.$('#markerModal');
-                this.$('#markerDesc').html(this.model.getDescription().nl2br());
+		destroyMarker: function () {
+			if (this.model) {
+				this.model.destroy({
+					dataType: 'text', // server doesn't send a json hash in the response body
+					success: function () {
+						App.collaborativeController.sendMarkersRefresh('remove marker');
+					}
+				});
+			}
+			this.closeModal();
+		},
 
-                return this;
-            },
+		openModal: function () {
+			this.$modal.modal('show');
+		},
 
-            destroyMarker: function () {
-                if (this.model) {
-                    this.model.destroy({success: function () {
-                        App.collaborativeController.sendMarkersRefresh('remove marker');
-                    }});
-                }
-                this.closeModal();
-            },
+		closeModal: function () {
+			this.$modal.modal('hide');
+		},
 
-            openModal: function () {
-                this.$modal.modal('show');
-            },
+		onHidden: function () {
+			this.remove();
+		}
 
-            closeModal: function () {
-                this.$modal.modal('hide');
-            },
+	});
 
-            onHidden: function () {
-                this.remove();
-            }
-
-        });
-
-        return MarkerInfoModalView;
-    }
-);
+	return MarkerInfoModalView;
+});

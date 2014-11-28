@@ -30,19 +30,16 @@ import java.util.Locale;
  *
  * @author Florent Garin
  */
-public class DocumentRevisionNotFoundException extends ApplicationException {
+public class DocumentRevisionNotFoundException extends EntityNotFoundException {
+    private final String mDocMId;
+    private final String mDocRStringVersion;
 
-
-    private String mDocMId;
-    private String mDocRStringVersion;
-     
-    
-    
     public DocumentRevisionNotFoundException(String pMessage) {
         super(pMessage);
+        mDocMId=null;
+        mDocRStringVersion=null;
     }
-    
-    
+
     public DocumentRevisionNotFoundException(Locale pLocale, DocumentRevisionKey pDocRPK) {
         this(pLocale, pDocRPK, null);
     }
@@ -64,7 +61,8 @@ public class DocumentRevisionNotFoundException extends ApplicationException {
         mDocMId=pDocMId;
         mDocRStringVersion=pDocRStringVersion;
     }
-    
+
+    @Override
     public String getLocalizedMessage() {
         String message = getBundleDefaultMessage();
         return MessageFormat.format(message,mDocMId,mDocRStringVersion);

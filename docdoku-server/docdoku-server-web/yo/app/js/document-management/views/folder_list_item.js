@@ -183,17 +183,17 @@ define([
         },
         actionEdit: function () {
             this.hideActions();
-            this.addSubView(
-                new FolderEditView({
-                    model: this.model
-                })
-            ).show();
+            new FolderEditView({
+                model: this.model
+            }).show();
             return false;
         },
         actionDelete: function () {
             this.hideActions();
             if (confirm(App.config.i18n.DELETE_FOLDER_QUESTION)) {
-                this.model.destroy();
+                this.model.destroy({
+                    dataType: 'text' // server doesn't send a json hash in the response body
+                });
             }
             return false;
         },

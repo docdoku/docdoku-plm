@@ -7,6 +7,7 @@
             '%': '[A-Za-z]',
             '*': '[A-Za-z0-9]'
         },
-        dataName: 'rawMaskFn'
+        dataName: 'rawMaskFn',
+        placeholder: '_'
     };
 })(jQuery);

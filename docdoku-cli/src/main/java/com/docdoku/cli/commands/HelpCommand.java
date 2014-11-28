@@ -29,11 +29,17 @@ import org.kohsuke.args4j.CmdLineParser;
  */
 public class HelpCommand extends AbstractCommandLine{
 
-    @Argument(metaVar = "<command>", required = true, index=0, usage = "the command to display the help information")
+    @Argument(metaVar = "<command>", index=0, usage = "the command to display the help information")
     private String command;
 
     @Override
-    public Object execImpl() throws Exception {
+    public void execImpl() throws Exception {
+
+        if(command == null){
+            output.printUsage();
+            return;
+        }
+
         CommandLine cl;
         switch(command){
             case "status": case "stat": case "st":
@@ -69,11 +75,8 @@ public class HelpCommand extends AbstractCommandLine{
                 cl=new HelpCommand();
         }
 
-        CmdLineParser parser = new CmdLineParser(cl);
-        System.out.println(cl.getDescription());
-        System.out.println();
-        parser.printUsage(System.out);
-        return null;
+        output.printCommandUsage(cl);
+
     }
 
     @Override

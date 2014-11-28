@@ -28,7 +28,6 @@ import java.util.Locale;
  */
 public class CreationException extends ApplicationException {
 
-    
     public CreationException(String pMessage) {
         super(pMessage);
     }

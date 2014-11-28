@@ -20,6 +20,7 @@
 
 package com.docdoku.cli.commands;
 
+import com.docdoku.cli.helpers.CliOutput;
 import org.kohsuke.args4j.Option;
 import java.io.Console;
 import java.net.MalformedURLException;
@@ -43,30 +44,48 @@ public abstract class AbstractCommandLine implements CommandLine{
     @Option(name="-u", aliases = "--user", metaVar = "<user>", usage="user for login")
     protected String user;
 
+    @Option(name="-F", aliases = "--format", metaVar = "<format>", usage="output format, possible value : json")
+    protected CliOutput.formats format = CliOutput.formats.HUMAN;
+
+    protected CliOutput output;
+
     private void promptForUser(){
         Console c = System.console();
+        if(c == null){
+            return;
+        }
         user = c.readLine("Please enter user for '" + host + "': ");
     }
 
     private void promptForPassword(){
         Console c = System.console();
+        if(c == null){
+            return;
+        }
         password = new String(c.readPassword("Please enter password for '" + user +"@" + host +"': "));
     }
 
     @Override
-    public Object exec() throws Exception {
+    public void exec() throws Exception {
 
-        if(user==null){
+        output = CliOutput.GetOutput(format);
+
+        if(user==null && format.equals(CliOutput.formats.HUMAN)){
             promptForUser();
         }
-        if(password==null){
+        if(password==null && format.equals(CliOutput.formats.HUMAN)){
             promptForPassword();
         }
-        return execImpl();
+
+        execImpl();
+    }
+
+    public CliOutput getOutput(){
+        return output;
     }
 
     public URL getServerURL() throws MalformedURLException {
         return new URL("http",host,port,"");
     }
-    public abstract Object  execImpl() throws Exception;
+    public abstract void execImpl() throws Exception;
 }

@@ -2,10 +2,11 @@
 define([
     'backbone',
     'mustache',
+    'unorm',
     'text!common-objects/templates/file/file_list.html',
     'common-objects/models/file/attached_file',
     'common-objects/views/file/file'
-], function (Backbone, Mustache, template, AttachedFile, FileView) {
+], function (Backbone, Mustache, unorm, template, AttachedFile, FileView) {
     'use strict';
 	var FileListView = Backbone.View.extend({
 
@@ -98,14 +99,15 @@ define([
 
         uploadNewFile: function (file) {
             var self = this;
+            var fileName = unorm.nfc(file.name);
 
-            this.uploadFileNameP.html(file.name);
+            this.uploadFileNameP.html(fileName);
 
             this.gotoUploadingState();
 
             var newFile = new AttachedFile({
-                fullName: this.options.baseName + '/' + file.name,
-                shortName: file.name
+                fullName: this.options.baseName + '/' + fileName,
+                shortName: fileName
             });
 
             this.xhr = new XMLHttpRequest();
@@ -133,7 +135,7 @@ define([
                 self.newItems.add(newFile);
             }, false);
 
-            var url = this.options.uploadBaseUrl + file.name;
+            var url = this.options.uploadBaseUrl + fileName;
             this.xhr.open('POST', url);
 
             var fd = new FormData();

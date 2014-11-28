@@ -21,14 +21,20 @@ package com.docdoku.server.dao;
 
 
 import com.docdoku.core.common.User;
+import com.docdoku.core.exceptions.CreationException;
+import com.docdoku.core.exceptions.RoleAlreadyExistsException;
 import com.docdoku.core.exceptions.RoleNotFoundException;
 import com.docdoku.core.workflow.Role;
 import com.docdoku.core.workflow.RoleKey;
 
+import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author Morgan Guimard
@@ -37,6 +43,8 @@ public class RoleDAO {
 
     private EntityManager em;
     private Locale mLocale;
+
+    private static final Logger LOGGER = Logger.getLogger(RoleDAO.class.getName());
 
     public RoleDAO(Locale pLocale, EntityManager pEM) {
         mLocale=pLocale;
@@ -63,9 +71,17 @@ public class RoleDAO {
         return em.createNamedQuery("Role.findByWorkspace",Role.class).setParameter("workspaceId", pWorkspaceId).getResultList();
     }
 
-    public void createRole(Role pRole) {
-        em.persist(pRole);
-        em.flush();
+    public void createRole(Role pRole) throws CreationException, RoleAlreadyExistsException {
+        try{
+            em.persist(pRole);
+            em.flush();
+        } catch (EntityExistsException pEEEx) {
+            LOGGER.log(Level.FINEST,null,pEEEx);
+            throw new RoleAlreadyExistsException(mLocale, pRole);
+        } catch (PersistenceException pPEx) {
+            LOGGER.log(Level.FINEST,null,pPEx);
+            throw new CreationException(mLocale);
+        }
     }
 
     public void deleteRole(Role pRole){
@@ -74,7 +90,10 @@ public class RoleDAO {
     }
 
     public boolean isRoleInUseInWorkflowModel(Role role) {
-        return em.createNamedQuery("TaskModel.findByRoleName").setParameter("roleName", role.getName()).getResultList().size() > 0;
+        return em.createNamedQuery("Role.findRolesInUseByRoleName")
+                 .setParameter("roleName", role.getName())
+                 .setParameter("workspace", role.getWorkspace())
+                 .getResultList().size() > 0;
 
     }
 

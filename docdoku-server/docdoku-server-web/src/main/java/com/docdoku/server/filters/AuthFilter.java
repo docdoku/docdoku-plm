@@ -24,6 +24,7 @@ import com.docdoku.core.common.Account;
 import com.docdoku.core.common.Organization;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.exceptions.AccountNotFoundException;
+import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.jsf.actions.AccountBean;
 
@@ -60,7 +61,7 @@ public class AuthFilter implements Filter {
         } else {
             try {
                 Account user = userManager.getAccount(httpRequest.getRemoteUser());
-                boolean isAdmin = userManager.isCallerInRole("admin");
+                boolean isAdmin = userManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID);
                 accountBean.setLogin(user.getLogin());
                 accountBean.setEmail(user.getEmail());
                 accountBean.setLanguage(user.getLanguage());

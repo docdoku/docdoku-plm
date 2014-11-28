@@ -73,9 +73,12 @@ define([
         removeLayer: function () {
             var collection = this.model.collection;
             this.model.setEditingMarkers(false);
-            this.model.destroy({success: function () {
-                App.collaborativeController.sendLayersRefresh('remove layer');
-            }});
+            this.model.destroy({
+                dataType: 'text', // server doesn't send a json hash in the response body
+                success: function () {
+                    App.collaborativeController.sendLayersRefresh('remove layer');
+                }
+            });
             if (collection.length === 0) {
                 collection.onEmpty();
             }

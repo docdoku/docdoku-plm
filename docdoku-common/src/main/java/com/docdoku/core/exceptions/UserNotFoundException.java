@@ -27,12 +27,12 @@ import java.util.Locale;
  *
  * @author Florent Garin
  */
-public class UserNotFoundException extends ApplicationException {
-
-    private String mLogin;
+public class UserNotFoundException extends EntityNotFoundException {
+    private final String mLogin;
     
     public UserNotFoundException(String pMessage) {
         super(pMessage);
+        mLogin=null;
     }
     
     public UserNotFoundException(Locale pLocale, String pLogin) {
@@ -43,7 +43,8 @@ public class UserNotFoundException extends ApplicationException {
         super(pLocale, pCause);
         mLogin=pLogin;
     }
-    
+
+    @Override
     public String getLocalizedMessage() {
         String message = getBundleDefaultMessage();
         return MessageFormat.format(message,mLogin);     

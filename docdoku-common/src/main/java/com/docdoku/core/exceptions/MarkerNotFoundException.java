@@ -23,13 +23,8 @@ package com.docdoku.core.exceptions;
 import java.text.MessageFormat;
 import java.util.Locale;
 
-public class MarkerNotFoundException extends ApplicationException {
-
-    private int mMarker;
-
-    public MarkerNotFoundException(String pMessage) {
-        super(pMessage);
-    }
+public class MarkerNotFoundException extends EntityNotFoundException {
+    private final int mMarker;
 
     public MarkerNotFoundException(Locale pLocale, int pMarker) {
         this(pLocale, pMarker, null);
@@ -39,7 +34,8 @@ public class MarkerNotFoundException extends ApplicationException {
         super(pLocale, pCause);
         mMarker = pMarker;
     }
-    
+
+    @Override
     public String getLocalizedMessage() {
         String message = getBundleDefaultMessage();
         return MessageFormat.format(message, mMarker);

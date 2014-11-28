@@ -27,17 +27,14 @@ import java.util.Locale;
  *
  * @author Florent Garin
  */
-public class PartUsageLinkNotFoundException extends ApplicationException {
+public class PartUsageLinkNotFoundException extends EntityNotFoundException {
+    private final int mPartUsageLink;
 
-
-    private int mPartUsageLink;
-
-    
     public PartUsageLinkNotFoundException(String pMessage) {
         super(pMessage);
+        mPartUsageLink = -1;
     }
-    
-    
+
     public PartUsageLinkNotFoundException(Locale pLocale, int pPartUsageLink) {
         this(pLocale, pPartUsageLink, null);
     }
@@ -46,7 +43,8 @@ public class PartUsageLinkNotFoundException extends ApplicationException {
         super(pLocale, pCause);
         mPartUsageLink=pPartUsageLink;
     }
-    
+
+    @Override
     public String getLocalizedMessage() {
         String message = getBundleDefaultMessage();
         return MessageFormat.format(message,mPartUsageLink);     

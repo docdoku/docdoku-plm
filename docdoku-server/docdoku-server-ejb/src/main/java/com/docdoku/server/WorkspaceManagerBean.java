@@ -81,7 +81,7 @@ public class WorkspaceManagerBean implements IWorkspaceManagerLocal {
     @Asynchronous
     public void deleteWorkspace(String workspaceId) {
         try{
-            if(userManager.isCallerInRole("admin")){
+            if(userManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID)){
                 Workspace workspace = new WorkspaceDAO(em, dataManager).loadWorkspace(workspaceId);
                 doWorkspaceDeletion(workspace);
                 esIndexer.deleteWorkspace(workspaceId);

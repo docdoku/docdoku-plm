@@ -27,16 +27,14 @@ import java.util.Locale;
  *
  * @author Florent Garin
  */
-public class ChangeOrderNotFoundException extends ApplicationException {
-
-
-    private int mChange;
+public class ChangeOrderNotFoundException extends EntityNotFoundException {
+    private final int mChange;
 
 
     public ChangeOrderNotFoundException(String pMessage) {
         super(pMessage);
+        mChange = -1;
     }
-
 
     public ChangeOrderNotFoundException(Locale pLocale, int pChange) {
         this(pLocale, pChange, null);
@@ -47,8 +45,9 @@ public class ChangeOrderNotFoundException extends ApplicationException {
         mChange =pChange;
     }
 
+    @Override
     public String getLocalizedMessage() {
-        String message = getBundleMessage("ChangeOrderNotFoundException");
+        String message = getBundleDefaultMessage();
         return MessageFormat.format(message, mChange);
     }
 }

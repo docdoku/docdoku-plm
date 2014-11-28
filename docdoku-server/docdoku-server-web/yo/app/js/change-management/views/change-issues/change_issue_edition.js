@@ -148,7 +148,7 @@ function (Backbone, Mustache, template, UserList, Tag, TagView, LinkedDocumentsV
 
             this.model.save(data, {
                 success: this.closeModal,
-                error: this.error,
+                error: this.onError,
                 wait: true
             });
 

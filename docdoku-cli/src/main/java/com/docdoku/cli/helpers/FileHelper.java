@@ -43,21 +43,23 @@ public class FileHelper {
 
     private String login;
     private String password;
+    private CliOutput output;
 
-    public FileHelper(String login, String password) {
+    public FileHelper(String login, String password, CliOutput output) {
         this.login = login;
         this.password = password;
+        this.output = output;
     }
 
     public String downloadFile(File pLocalFile, String pURL) throws IOException, LoginException, NoSuchAlgorithmException {
-        ConsoleProgressMonitorInputStream in = null;
+        FilterInputStream in = null;
         OutputStream out = null;
         HttpURLConnection conn = null;
         try {
             //Hack for NTLM proxy
             //perform a head method to negociate the NTLM proxy authentication
             URL url = new URL(pURL);
-            System.out.println("Downloading file: " + pLocalFile.getName() + " from " + url.getHost());
+            output.printInfo("Downloading file: " + pLocalFile.getName() + " from " + url.getHost());
             performHeadHTTPMethod(url);
 
             out = new BufferedOutputStream(new FileOutputStream(pLocalFile), BUFFER_CAPACITY);
@@ -73,7 +75,8 @@ public class FileHelper {
             manageHTTPCode(conn);
 
             MessageDigest md = MessageDigest.getInstance("MD5");
-            in = new ConsoleProgressMonitorInputStream(conn.getContentLength(),new DigestInputStream(new BufferedInputStream(conn.getInputStream(), BUFFER_CAPACITY),md));
+            in = output.getMonitor(conn.getContentLength(),new DigestInputStream(new BufferedInputStream(conn.getInputStream(), BUFFER_CAPACITY),md));
+
             byte[] data = new byte[CHUNK_SIZE];
             int length;
 
@@ -102,7 +105,7 @@ public class FileHelper {
             //Hack for NTLM proxy
             //perform a head method to negociate the NTLM proxy authentication
             URL url = new URL(pURL);
-            System.out.println("Uploading file: " + pLocalFile.getName() + " to " + url.getHost());
+            output.printInfo("Uploading file: " + pLocalFile.getName() + " to " + url.getHost());
             performHeadHTTPMethod(url);
 
 
@@ -122,7 +125,6 @@ public class FileHelper {
 
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
-            //conn.setRequestProperty("Content-Length",len + "");
             long len = header.length + pLocalFile.length() + footer.length;
             conn.setFixedLengthStreamingMode((int) len);
             out = new BufferedOutputStream(conn.getOutputStream(), BUFFER_CAPACITY);
@@ -131,7 +133,7 @@ public class FileHelper {
             byte[] data = new byte[CHUNK_SIZE];
             int length;
             MessageDigest md = MessageDigest.getInstance("MD5");
-            in = new ConsoleProgressMonitorInputStream(pLocalFile.length(), new DigestInputStream(new BufferedInputStream(new FileInputStream(pLocalFile), BUFFER_CAPACITY),md));
+            in = output.getMonitor(pLocalFile.length(), new DigestInputStream(new BufferedInputStream(new FileInputStream(pLocalFile), BUFFER_CAPACITY),md));
             while ((length = in.read(data)) != -1) {
                 out.write(data, 0, length);
             }
@@ -172,7 +174,6 @@ public class FileHelper {
         conn.setRequestProperty("Authorization", "Basic " + new String(encoded, "US-ASCII"));
         conn.setRequestMethod("HEAD");
         conn.connect();
-        //conn.getResponseCode();
     }
 
     public static String getPartURL(URL serverURL, PartIterationKey pPart, String pRemoteFileName) throws UnsupportedEncodingException, MalformedURLException {
@@ -195,7 +196,6 @@ public class FileHelper {
     public void uploadNativeCADFile(URL serverURL, File cadFile, PartIterationKey partIPK) throws IOException, LoginException, NoSuchAlgorithmException {
         String workspace = partIPK.getWorkspaceId();
         String fileName = cadFile.getName();
-        System.out.println("Saving part: " + partIPK.getPartMasterNumber() + " " + partIPK.getPartRevision().getVersion() + "." + partIPK.getIteration() + " (" + workspace + ")");
         String digest = uploadFile(cadFile, FileHelper.getPartURL(serverURL, partIPK, fileName));
 
         File path = cadFile.getParentFile();
@@ -219,7 +219,6 @@ public class FileHelper {
                 return;
         }
         localFile.delete();
-        System.out.println("Fetching part: " + partIPK.getPartMasterNumber() + " " + partIPK.getPartRevision().getVersion() + "." + partIPK.getIteration() + " (" + workspace + ")");
         String digest = downloadFile(localFile, FileHelper.getPartURL(serverURL, partIPK, fileName));
         localFile.setWritable(writable);
 

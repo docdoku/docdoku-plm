@@ -29,21 +29,22 @@ import java.util.Locale;
  * @author Morgan Guimard
  */
 
-public class RoleNotFoundException extends ApplicationException {
+public class RoleNotFoundException extends EntityNotFoundException {
+    private final RoleKey mRoleKey;
 
-        private RoleKey mRoleKey;
-
-        public RoleNotFoundException(String pMessage) {
-            super(pMessage);
-        }
-
-        public RoleNotFoundException(Locale pLocale, RoleKey pRoleKey) {
-            super(pLocale);
-            mRoleKey=pRoleKey;
-        }
-
-        public String getLocalizedMessage() {
-            String message = getBundleDefaultMessage();
-            return MessageFormat.format(message, mRoleKey);
-        }
+    public RoleNotFoundException(String pMessage) {
+        super(pMessage);
+        mRoleKey=null;
     }
+
+    public RoleNotFoundException(Locale pLocale, RoleKey pRoleKey) {
+        super(pLocale);
+        mRoleKey=pRoleKey;
+    }
+
+    @Override
+    public String getLocalizedMessage() {
+        String message = getBundleDefaultMessage();
+        return MessageFormat.format(message, mRoleKey);
+    }
+}

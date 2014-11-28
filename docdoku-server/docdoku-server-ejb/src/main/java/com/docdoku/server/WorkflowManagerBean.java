@@ -46,7 +46,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-@DeclareRoles("users")
+@DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @Local(IWorkflowManagerLocal.class)
 @Stateless(name = "WorkflowManagerBean")
 @WebService(endpointInterface = "com.docdoku.core.services.IWorkflowManagerWS")
@@ -67,10 +67,20 @@ public class WorkflowManagerBean implements IWorkflowManagerWS, IWorkflowManager
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public WorkflowModel createWorkflowModel(String pWorkspaceId, String pId, String pFinalLifeCycleState, ActivityModel[] pActivityModels) throws WorkspaceNotFoundException, AccessRightException, UserNotFoundException, WorkflowModelAlreadyExistsException, CreationException {
+    public WorkflowModel createWorkflowModel(String pWorkspaceId, String pId, String pFinalLifeCycleState, ActivityModel[] pActivityModels) throws WorkspaceNotFoundException, AccessRightException, UserNotFoundException, WorkflowModelAlreadyExistsException, CreationException, NotAllowedException {
         User user = userManager.checkWorkspaceWriteAccess(pWorkspaceId);
-
         Locale userLocale = new Locale(user.getLanguage());
+
+        if(pActivityModels.length==0){
+            throw new NotAllowedException(userLocale,"NotAllowedException2");
+        }
+
+        for(ActivityModel activity : pActivityModels){
+            if(activity.getLifeCycleState()==null || "".equals(activity.getLifeCycleState())){
+                throw new NotAllowedException(userLocale,"NotAllowedException3");
+            }
+        }
+
         WorkflowModelDAO modelDAO = new WorkflowModelDAO(userLocale, em);
         WorkflowModel model = new WorkflowModel(user.getWorkspace(), pId, user, pFinalLifeCycleState, pActivityModels);
         Tools.resetParentReferences(model);
@@ -114,18 +124,18 @@ public class WorkflowManagerBean implements IWorkflowManagerWS, IWorkflowManager
 
     @Override
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
-    public Role createRole(String roleName, String workspaceId, String userLogin) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException {
+    public Role createRole(String roleName, String workspaceId, String userLogin) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException, RoleAlreadyExistsException, CreationException {
         User user = userManager.checkWorkspaceWriteAccess(workspaceId);
-        RoleDAO roleDAO = new RoleDAO(new Locale(user.getLanguage()),em);
-        Workspace wks = new WorkspaceDAO(new Locale(user.getLanguage()), em).loadWorkspace(workspaceId);
+        Locale locale = new Locale(user.getLanguage());
+        Workspace wks = new WorkspaceDAO(locale, em).loadWorkspace(workspaceId);
         Role role = new Role(roleName,wks);
 
         if(userLogin != null){
-            User userMapped = new UserDAO(new Locale(user.getLanguage()),em).loadUser(new UserKey(workspaceId,userLogin));
+            User userMapped = new UserDAO(locale,em).loadUser(new UserKey(workspaceId,userLogin));
             role.setDefaultUserMapped(userMapped);
         }
 
-        roleDAO.createRole(role);
+        new RoleDAO(locale,em).createRole(role);
         return role;
     }
 

@@ -35,7 +35,9 @@ define([
         },
 
         removeAction: function () {
-            this.model.destroy();
+            this.model.destroy({
+                dataType: 'text' // server doesn't send a json hash in the response body
+            });
         },
 
         typeChanged: function (evt) {

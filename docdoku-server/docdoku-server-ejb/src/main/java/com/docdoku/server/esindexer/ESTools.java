@@ -32,6 +32,8 @@ import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
+import org.elasticsearch.common.settings.ImmutableSettings;
+import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -91,10 +93,13 @@ public class ESTools {
      */
     protected static Client createClient() throws ESServerException {
         try{
-            return new TransportClient().addTransportAddress(new InetSocketTransportAddress(CONF.getProperty("host"), Integer.parseInt(CONF.getProperty("port"))));
+            Settings settings = ImmutableSettings.settingsBuilder()
+                    .put("cluster.name", CONF.getProperty("cluster.name")).build();
+
+            return new TransportClient(settings).addTransportAddress(new InetSocketTransportAddress(CONF.getProperty("host"), Integer.parseInt(CONF.getProperty("port"))));
         }catch (ElasticsearchException e){
             LOGGER.log(Level.WARNING, null, e);
-            throw new ESServerException(Locale.getDefault(), "IndexerServerException1");
+            throw new ESServerException(Locale.getDefault(), "IndexerServerException");
         }
     }
 

@@ -30,16 +30,15 @@ import java.util.Locale;
  *
  * @author Florent Garin
  */
-public class ConfigurationItemAlreadyExistsException extends ApplicationException {
-
-    private ConfigurationItem mConfigurationItem;
+public class ConfigurationItemAlreadyExistsException extends EntityAlreadyExistsException {
+    private final ConfigurationItem mConfigurationItem;
     
     
     public ConfigurationItemAlreadyExistsException(String pMessage) {
         super(pMessage);
+        mConfigurationItem = null;
     }
-    
-    
+
     public ConfigurationItemAlreadyExistsException(Locale pLocale, ConfigurationItem pConfigurationItem) {
         this(pLocale, pConfigurationItem, null);
     }
@@ -48,7 +47,8 @@ public class ConfigurationItemAlreadyExistsException extends ApplicationExceptio
         super(pLocale, pCause);
         mConfigurationItem=pConfigurationItem;
     }
-    
+
+    @Override
     public String getLocalizedMessage() {
         String message = getBundleDefaultMessage();
         return MessageFormat.format(message,mConfigurationItem);     

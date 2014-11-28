@@ -27,14 +27,12 @@ import java.util.Locale;
  *
  * @author Florent Garin
  */
-public class OrganizationNotFoundException extends ApplicationException {
-
-    private String mName;
-
-
+public class OrganizationNotFoundException extends EntityNotFoundException {
+    private final String mName;
 
     public OrganizationNotFoundException(String pMessage) {
         super(pMessage);
+        mName=null;
     }
 
     public OrganizationNotFoundException(Locale pLocale, String pName) {
@@ -45,7 +43,8 @@ public class OrganizationNotFoundException extends ApplicationException {
         super(pLocale, pCause);
         mName=pName;
     }
-    
+
+    @Override
     public String getLocalizedMessage() {
         String message = getBundleDefaultMessage();
         return MessageFormat.format(message,mName);

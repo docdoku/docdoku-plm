@@ -1,4 +1,4 @@
-/*global _,define,App*/
+/*global _,define,bootbox,App*/
 define([
     'backbone',
     'mustache',
@@ -126,24 +126,26 @@ define([
         },
 
         deleteSelectedIssues: function () {
-            var that = this;
-            if (confirm('Delete Issues')) {
-                _(this.listItemViews).each(function (view) {
-                    if (view.isChecked()) {
-                        view.model.destroy({
-                            dataType: 'text', // server doesn't send a json hash in the response body
-                            success: function () {
-                                that.removeIssue(view.model);
-                                that.onSelectionChanged();
-                            },
-                            error: function (model, err) {
-                                alert(err.responseText);
-                                that.onSelectionChanged();
-                            }
-                        });
-                    }
-                });
-            }
+            var _this = this;
+            bootbox.confirm(App.config.i18n.CONFIRM_DELETE_ISSUE, function(result){
+                if(result){
+                    _(_this.listItemViews).each(function (view) {
+                        if (view.isChecked()) {
+                            view.model.destroy({
+                                dataType: 'text', // server doesn't send a json hash in the response body
+                                success: function () {
+                                    _this.removeIssue(view.model);
+                                    _this.onSelectionChanged();
+                                },
+                                error: function (model, err) {
+                                    _this.trigger('error', model, err);
+                                    _this.onSelectionChanged();
+                                }
+                            });
+                        }
+                    });
+                }
+            });
         },
 
         redraw: function () {

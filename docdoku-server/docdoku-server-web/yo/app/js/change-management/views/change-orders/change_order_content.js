@@ -8,10 +8,11 @@ define([
     'views/change-orders/change_order_creation',
     'common-objects/views/tags/tags_management',
     'common-objects/views/security/acl_edit',
+    'common-objects/views/alert',
     'text!common-objects/templates/buttons/delete_button.html',
     'text!common-objects/templates/buttons/tags_button.html',
     'text!common-objects/templates/buttons/ACL_button.html'
-], function (Backbone, Mustache, ChangeOrderCollection, template, ChangeOrderListView, ChangeOrderCreationView, TagsManagementView, ACLEditView, deleteButton, tagsButton, aclButton) {
+], function (Backbone, Mustache, ChangeOrderCollection, template, ChangeOrderListView, ChangeOrderCreationView, TagsManagementView, ACLEditView, AlertView, deleteButton, tagsButton, aclButton) {
 	'use strict';
 	var ChangeOrderContentView = Backbone.View.extend({
         events: {
@@ -44,6 +45,7 @@ define([
 
             this.listView.on('delete-button:display', this.changeDeleteButtonDisplay);
             this.listView.on('acl-button:display', this.changeAclButtonDisplay);
+            this.listView.on('error', this.onError);
             this.tagsButton.show();
 
             this.$el.on('remove', this.listView.remove);
@@ -136,6 +138,16 @@ define([
             } else {
                 this.aclButton.hide();
             }
+        },
+
+        onError:function(model, error){
+            var errorMessage = error ? error.responseText : model;
+
+            this.$notifications.append(new AlertView({
+                type: 'error',
+                message: errorMessage
+            }).render().$el);
+            this.collection.fetch();
         }
     });
 

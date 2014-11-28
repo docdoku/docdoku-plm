@@ -27,13 +27,12 @@ import java.util.Locale;
  *
  * @author Florent Garin
  */
-public class AccountAlreadyExistsException extends ApplicationException {
-
-    private String mLogin;
-    
+public class AccountAlreadyExistsException extends EntityAlreadyExistsException {
+    private final String mLogin;
     
     public AccountAlreadyExistsException(String pMessage) {
         super(pMessage);
+        mLogin = null;
     }
     
     public AccountAlreadyExistsException(Locale pLocale, String pLogin) {
@@ -44,7 +43,8 @@ public class AccountAlreadyExistsException extends ApplicationException {
         super(pLocale, pCause);
         mLogin=pLogin;
     }
-    
+
+    @Override
     public String getLocalizedMessage() {
         String message = getBundleDefaultMessage();
         return MessageFormat.format(message,mLogin);     

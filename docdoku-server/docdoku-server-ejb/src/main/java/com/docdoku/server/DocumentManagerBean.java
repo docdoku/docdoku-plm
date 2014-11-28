@@ -156,7 +156,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @Override
     public BinaryResource getBinaryResource(String pFullName) throws WorkspaceNotFoundException, NotAllowedException, FileNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException {
 
-        if(ctx.isCallerInRole("guest-proxy")){
+        if(ctx.isCallerInRole(UserGroupMapping.GUEST_PROXY_ROLE_ID)){
             return new BinaryResourceDAO(em).loadBinaryResource(pFullName);
         }
 
@@ -244,7 +244,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.GUEST_PROXY_ROLE_ID})
     @Override
     public DocumentRevision getDocumentRevision(DocumentRevisionKey pDocRPK) throws WorkspaceNotFoundException, DocumentRevisionNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException, AccessRightException{
-        if(ctx.isCallerInRole("guest-proxy")){
+        if(ctx.isCallerInRole(UserGroupMapping.GUEST_PROXY_ROLE_ID)){
             DocumentRevision documentRevision = new DocumentRevisionDAO(em).loadDocR(pDocRPK);
             if(documentRevision.isCheckedOut()){
                 em.detach(documentRevision);
@@ -278,7 +278,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @Override
     public DocumentIteration findDocumentIterationByBinaryResource(BinaryResource pBinaryResource) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
 
-        if(ctx.isCallerInRole("guest-proxy")){
+        if(ctx.isCallerInRole(UserGroupMapping.GUEST_PROXY_ROLE_ID)){
             return  new DocumentRevisionDAO(em).findDocumentIterationByBinaryResource(pBinaryResource);
         }
 
@@ -435,7 +435,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         return new SubscriptionDAO(em).getIterationChangeEventSubscriptions(user);
     }
 
-    @RolesAllowed({"users"})
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     @Override
     public DocumentRevisionKey[] getStateChangeEventSubscriptions(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
@@ -477,11 +477,12 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             String inputMask = template.getMask();
             String convertedMask = Tools.convertMask(inputMask);
             newId = Tools.increaseId(latestId, convertedMask);
-        } catch (ParseException | NoResultException ex) {
-            LOGGER.log(Level.WARNING, null,ex);
-            //may happen when a different mask has been used for the same document type
-            //or
+        } catch (NoResultException ex){
+            LOGGER.log(Level.FINER,null,ex);
             //may happen when no document of the specified type has been created
+        } catch (ParseException ex) {
+            LOGGER.log(Level.SEVERE, null,ex);
+            //may happen when a different mask has been used for the same document type
         }
         return newId;
 
@@ -1379,7 +1380,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.ADMIN_ROLE_ID})
     @Override
     public User[] getUsers(String pWorkspaceId) throws WorkspaceNotFoundException, AccessRightException, AccountNotFoundException, UserNotFoundException, UserNotActiveException {
-        if(userManager.isCallerInRole("admin")){
+        if(userManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID)){
             Account account = new AccountDAO(em).loadAccount(ctx.getCallerPrincipal().toString());
             return new UserDAO(new Locale(account.getLanguage()), em).findAllUsers(pWorkspaceId);
         }
@@ -1425,7 +1426,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         return documentRevisionDAO.getDiskUsageForDocumentTemplatesInWorkspace(pWorkspaceId);
     }
 
-    @RolesAllowed({"users"})
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     @Override
     public SharedDocument createSharedDocument(DocumentRevisionKey pDocRPK, String pPassword, Date pExpireDate) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, DocumentRevisionNotFoundException, UserNotActiveException, NotAllowedException {
         User user = userManager.checkWorkspaceWriteAccess(pDocRPK.getDocumentMaster().getWorkspace());
@@ -1435,7 +1436,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         return sharedDocument;
     }
 
-    @RolesAllowed({"users"})
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     @Override
     public void deleteSharedDocument(SharedEntityKey sharedEntityKey) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, SharedEntityNotFoundException {
         User user = userManager.checkWorkspaceWriteAccess(sharedEntityKey.getWorkspace());

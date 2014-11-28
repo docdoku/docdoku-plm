@@ -28,7 +28,7 @@ import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-@DeclareRoles({"users","admin","guest-proxy"})
+@DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID, UserGroupMapping.GUEST_PROXY_ROLE_ID})
 @Local(IProductConfigSpecManagerLocal.class)
 @Stateless(name = "ProductConfigSpecManagerBean")
 @WebService(endpointInterface = "com.docdoku.core.services.IProductConfigSpecManagerWS")

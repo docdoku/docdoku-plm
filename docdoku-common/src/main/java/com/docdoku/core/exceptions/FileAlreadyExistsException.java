@@ -29,13 +29,13 @@ import java.util.Locale;
  *
  * @author Florent Garin
  */
-public class FileAlreadyExistsException extends ApplicationException {
-
-    private String mFullName;
+public class FileAlreadyExistsException extends EntityAlreadyExistsException {
+    private final String mFullName;
     
     
     public FileAlreadyExistsException(String pMessage) {
         super(pMessage);
+        mFullName=null;
     }
     
     public FileAlreadyExistsException(Locale pLocale, BinaryResource pFile) {
@@ -54,7 +54,8 @@ public class FileAlreadyExistsException extends ApplicationException {
         super(pLocale,pCause);
         mFullName=pFullName;
     }
-    
+
+    @Override
     public String getLocalizedMessage() {
         String message = getBundleDefaultMessage();
         return MessageFormat.format(message,mFullName);     

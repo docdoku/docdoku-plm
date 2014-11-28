@@ -103,6 +103,7 @@ require.config({
         buzz: '../../bower_components/buzz/dist/buzz',
         bootstrap:'../../bower_components/bootstrap/docs/assets/js/bootstrap',
         datatables:'../../bower_components/datatables/media/js/jquery.dataTables',
+        unorm:'../../bower_components/unorm/lib/unorm',
         threecore:'../../bower_components/threejs/build/three',
         jqueryUI: '../../bower_components/jqueryui/ui/jquery-ui',
         async: '../../bower_components/async/lib/async',

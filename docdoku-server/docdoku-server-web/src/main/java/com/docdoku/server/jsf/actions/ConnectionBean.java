@@ -22,6 +22,7 @@ package com.docdoku.server.jsf.actions;
 import com.docdoku.core.common.Account;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.exceptions.AccountNotFoundException;
+import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IUserManagerLocal;
 
 import javax.ejb.EJB;
@@ -73,7 +74,7 @@ public class ConnectionBean {
         if(tryLoggin(request)) {
             checkAccount(request);
             session.setAttribute("remoteUser",login);
-            boolean isAdmin=userManager.isCallerInRole("admin");
+            boolean isAdmin=userManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID);
 
             if(isAdmin){
                 ec.redirect(request.getContextPath() + "/faces/admin/workspace/workspacesMenu.xhtml");

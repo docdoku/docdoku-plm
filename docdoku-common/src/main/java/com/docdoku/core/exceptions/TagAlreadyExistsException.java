@@ -29,16 +29,15 @@ import java.util.Locale;
  *
  * @author Florent Garin
  */
-public class TagAlreadyExistsException extends ApplicationException {
-
-    private Tag mTag;
+public class TagAlreadyExistsException extends EntityAlreadyExistsException {
+    private final Tag mTag;
     
     
     public TagAlreadyExistsException(String pMessage) {
         super(pMessage);
+        mTag=null;
     }
-    
-    
+
     public TagAlreadyExistsException(Locale pLocale, Tag pTag) {
         this(pLocale, pTag, null);
     }
@@ -47,7 +46,8 @@ public class TagAlreadyExistsException extends ApplicationException {
         super(pLocale, pCause);
         mTag=pTag;
     }
-    
+
+    @Override
     public String getLocalizedMessage() {
         String message = getBundleDefaultMessage();
         return MessageFormat.format(message,mTag);

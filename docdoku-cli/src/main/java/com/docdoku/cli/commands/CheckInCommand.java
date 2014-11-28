@@ -54,13 +54,10 @@ public class CheckInCommand extends AbstractCommandLine{
     @Option(name="-n", aliases = "--no-upload", usage="do not upload the cad file of the part if any")
     private boolean noUpload;
 
-    @Option(name="-R", aliases = "--recursive", usage="execute the command through the product structure hierarchy")
-    private boolean recursive;
-
     @Option(name="-w", aliases = "--workspace", required = true, metaVar = "<workspace>", usage="workspace on which operations occur")
     protected String workspace;
 
-    public Object execImpl() throws Exception {
+    public void execImpl() throws Exception {
 
         if(partNumber==null || revision==null){
             loadMetadata();
@@ -79,7 +76,7 @@ public class CheckInCommand extends AbstractCommandLine{
                 File localFile = new File(path,fileName);
                 if(localFile.exists()){
                     PartIterationKey partIPK = new PartIterationKey(partRPK, pi.getIteration());
-                    FileHelper fh = new FileHelper(user,password);
+                    FileHelper fh = new FileHelper(user,password,output);
                     fh.uploadNativeCADFile(getServerURL(), localFile, partIPK);
                     localFile.setWritable(false);
                 }
@@ -88,9 +85,7 @@ public class CheckInCommand extends AbstractCommandLine{
 
         PartRevision pr = productS.checkInPart(partRPK);
         PartIteration pi = pr.getLastIteration();
-        System.out.println("Checking in part: " + partNumber + " " + pr.getVersion() + "." + pi.getIteration() + " (" + workspace + ")");
-
-        return null;
+        output.printInfo("Checking in part: " + partNumber + " " + pr.getVersion() + "." + pi.getIteration() + " (" + workspace + ")");
     }
 
     private void loadMetadata() throws IOException {

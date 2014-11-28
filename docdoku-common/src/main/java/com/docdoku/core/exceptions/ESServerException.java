@@ -26,15 +26,18 @@ import java.util.Locale;
  * @author Taylor LABEJOF
  */
 public class ESServerException extends ApplicationException {
-    private String mKey;
+    private final String mKey;
 
     public ESServerException(String pMessage) {
         super(pMessage);
+        mKey = null;
     }
     public ESServerException(Locale pLocale, String pKey) {
         super(pLocale);
         mKey=pKey;
     }
+
+    @Override
     public String getLocalizedMessage() {
         return mKey==null?null:getBundleMessage(mKey);
     }

@@ -1,7 +1,7 @@
 /*global define*/
 define([
     'backbone',
-    'common-objects/models/activity_model'
+    'common-objects/models/workflow/activity_model'
 ], function (Backbone, ActivityModel) {
 	'use strict';
     var ActivityModels = Backbone.Collection.extend({

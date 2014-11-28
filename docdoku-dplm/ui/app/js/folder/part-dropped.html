@@ -1,0 +1,19 @@
+<md-dialog aria-label="Mango (Fruit)">
+
+    <md-content>
+        <md-subheader class="md-sticky-no-effect">
+            {{part.partNumber + '-' + part.version}} >> {{folder.path | fileshortname}}
+        </md-subheader>
+    </md-content>
+
+    <div class="md-actions" ng-if="!part.busy">
+        <md-button aria-label="" ng-click="action('download')" class="md-primary">
+            {{'DOWNLOAD' | translate}}
+        </md-button>
+        <md-button ng-if="!part.isReleased && !part.checkoutUser" aria-label="" ng-click="action('checkout')"
+                   class="md-primary">
+            {{'CHECKOUT' | translate}}
+        </md-button>
+    </div>
+
+</md-dialog>

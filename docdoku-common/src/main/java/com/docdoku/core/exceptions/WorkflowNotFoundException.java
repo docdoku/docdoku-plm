@@ -27,13 +27,12 @@ import java.util.Locale;
  *
  * @author Morgan Guimard
  */
-public class WorkflowNotFoundException extends ApplicationException {
-
-    private int mID;
-
+public class WorkflowNotFoundException extends EntityNotFoundException {
+    private final int mID;
 
     public WorkflowNotFoundException(String pMessage) {
         super(pMessage);
+        mID=-1;
     }
 
     public WorkflowNotFoundException(Locale pLocale, int pID) {
@@ -44,7 +43,8 @@ public class WorkflowNotFoundException extends ApplicationException {
         super(pLocale, pCause);
         mID=pID;
     }
-    
+
+    @Override
     public String getLocalizedMessage() {
         String message = getBundleDefaultMessage();
         return MessageFormat.format(message,mID);     

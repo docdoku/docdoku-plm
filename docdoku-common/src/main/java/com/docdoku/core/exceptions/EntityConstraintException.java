@@ -28,11 +28,11 @@ import java.util.Locale;
  * @author Morgan Guimard
  */
 public class EntityConstraintException extends ApplicationException{
-
-    private String mKey;
+    private final String mKey;
 
     public EntityConstraintException(String pMessage) {
         super(pMessage);
+        mKey=null;
     }
 
     public EntityConstraintException(Locale pLocale, String pKey) {
@@ -40,6 +40,7 @@ public class EntityConstraintException extends ApplicationException{
         mKey=pKey;
     }
 
+    @Override
     public String getLocalizedMessage() {
         return mKey==null?null:getBundleMessage(mKey);
     }

@@ -31,19 +31,16 @@ import java.util.Locale;
  *
  * @author Florent Garin
  */
-public class PartRevisionNotFoundException extends ApplicationException {
+public class PartRevisionNotFoundException extends EntityNotFoundException {
+    private final String mPartMNumber;
+    private final String mPartRStringVersion;
 
-
-    private String mPartMNumber;
-    private String mPartRStringVersion;
-     
-    
-    
     public PartRevisionNotFoundException(String pMessage) {
         super(pMessage);
+        mPartMNumber=null;
+        mPartRStringVersion=null;
     }
-    
-    
+
     public PartRevisionNotFoundException(Locale pLocale, PartRevisionKey pPartRPK) {
         this(pLocale, pPartRPK, null);
     }
@@ -65,7 +62,8 @@ public class PartRevisionNotFoundException extends ApplicationException {
         mPartMNumber=pPartMNumber;
         mPartRStringVersion=pPartRStringVersion;
     }
-    
+
+    @Override
     public String getLocalizedMessage() {
         String message = getBundleDefaultMessage();
         return MessageFormat.format(message,mPartMNumber,mPartRStringVersion);     

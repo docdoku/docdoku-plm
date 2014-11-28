@@ -3,16 +3,16 @@ define([
     'backbone',
     'mustache',
     'require',
-    'common-objects/models/workflow_model',
+    'collections/roles',
     'text!templates/workflows/workflow_model_editor.html',
-    'common-objects/collections/roles',
-    'common-objects/models/activity_model',
     'views/workflows/workflow_model_copy',
-    'views/workflows/activity_model_editor'
-], function (Backbone, Mustache, require, WorkflowModel, template, Roles, ActivityModel, WorkflowModelCopyView, ActivityModelEditorView) {
+    'views/workflows/activity_model_editor',
+    'common-objects/models/workflow/workflow_model',
+    'common-objects/models/workflow/activity_model',
+    'common-objects/views/alert'
+], function (Backbone, Mustache, require, Roles, template, WorkflowModelCopyView, ActivityModelEditorView, WorkflowModel, ActivityModel, AlertView) {
 	'use strict';
     var WorkflowModelEditorView = Backbone.View.extend({
-
         el: '#change-management-content',
 
         events: {
@@ -23,31 +23,123 @@ define([
         },
 
         initialize: function () {
-            this.subviews = [];
-            this.roles = new Roles();
+            this.subviews = [];                                                                                         // store subview to clean them on view remove
+            if(!this.roles) {
+                this.roles = this.options.roles ? this.options.roles : new Roles();
+            }
+            this.newRoles = [];
+            this.listenTo(this.roles, 'reset', this.onRolesListFetch);
         },
 
-        addAllActivity: function () {
-            this.model.attributes.activityModels.bind('add', this.addOneActivity, this);
-            this.model.attributes.activityModels.each(this.addOneActivity, this);
-        },
+        render: function () {
+            var _this = this;
+            var templateOptions = {
+                i18n: App.config.i18n
+            };
+            if(!_.isUndefined(this.options.workflowModelId)){
+                templateOptions.workflowId = this.options.workflowModelId;
+            }
 
-        addOneActivity: function (activityModel) {
-            var self = this;
-            var activityModelEditorView = new ActivityModelEditorView({model: activityModel, roles: self.roles});
-            self.subviews.push(activityModelEditorView);
-            activityModelEditorView.render();
-            self.liAddActivitySection.before(activityModelEditorView.el);
-            self.listenTo(activityModel, 'change', function () {
-                _.each(self.subviews, function (subview) {
-                    subview.trigger('activities-order:changed');
+            this.template = Mustache.render(template,templateOptions);
+            this.$el.html(this.template);
+            this.bindDomElements();
+
+            // Init model & collection at first render
+            if(!this.model){
+                this.roles.fetch({
+                    reset: true,
+                    success:function(){
+                        _this.initModel();
+                    }
                 });
+            }
+
+            // Check if tooltips is necessary
+            if(!this.inputFinalState.val()){
+                this.$notifications.append(new AlertView({
+                    type: 'info',
+                    message: App.config.i18n.WARNING_FINAL_STATE_MISSING
+                }).render().$el);
+            }
+
+            return this;
+        },
+        bindDomElements: function () {
+            var _this = this;
+            this.inputWorkflowName = this.$('input#workflow-name');
+            this.inputFinalState = this.$('input#final-state');
+            this.liAddActivitySection = this.$('li#add-activity-section');
+            this.$notifications = this.$el.find('.notifications').first();
+            this.$saveBtn = this.$el.find('#save-workflow').first();
+
+            this.activitiesUL = this.$('ul#activity-list');
+            this.activitiesUL.sortable({
+                items: 'li.activity-section',
+                handle: '.activity-topbar',
+                tolerance: 'pointer',
+                start: function (event, ui) {
+                    ui.item.oldPosition = ui.item.index();
+                },
+                stop: function (event, ui) {
+                    _this.activityPositionChanged(ui.item.oldPosition - 1, ui.item.index() - 1);
+                }
             });
         },
 
-        addActivityAction: function () {
-            this.model.attributes.activityModels.add(new ActivityModel());
-            return false;
+        initModel:function(){
+            var _this = this;
+            if(_.isUndefined(this.options.workflowModelId)) {
+                this.model = new WorkflowModel();
+                this.model.attributes.activityModels.bind('add', this.addActivity, this);
+            } else {
+                this.model = new WorkflowModel({
+                    id: this.options.workflowModelId
+                });
+                this.model.fetch({
+                    success: function(){
+                        _this.onModelFetch();
+                    }
+                });
+            }
+        },
+        onModelFetch: function(){
+            this.inputFinalState.val(this.model.get('finalLifeCycleState'));
+            this.model.attributes.activityModels.bind('add', this.addActivity, this);
+            this.model.attributes.activityModels.each(this.addActivity, this);
+        },
+        onRolesListFetch: function(){
+            var _this = this;
+            this.isRolesListEmpty = _this.roles.length === 0;
+            if (this.isRolesListEmpty) {
+                this.$notifications.append(new AlertView({
+                    type: 'warning',
+                    message: App.config.i18n.WARNING_ANY_ROLE
+                }).render().$el);
+            }
+        },
+        onError:function(model, error){
+            var errorMessage = error ? error.responseText : model;
+            this.$notifications.append(new AlertView({
+                type: 'error',
+                message: errorMessage
+            }).render().$el);
+        },
+
+        addActivity: function (activityModel) {
+            var _this = this;
+            var activityModelEditorView = new ActivityModelEditorView({
+                model: activityModel,
+                roles: _this.roles,
+                newRoles: _this.newRoles
+            });
+            _this.subviews.push(activityModelEditorView);
+            activityModelEditorView.render();
+            _this.liAddActivitySection.before(activityModelEditorView.el);
+            _this.listenTo(activityModel, 'change', function () {
+                _.each(_this.subviews, function (subview) {
+                    subview.trigger('activities-order:changed');
+                });
+            });
         },
 
         activityPositionChanged: function (oldPosition, newPosition) {
@@ -59,44 +151,63 @@ define([
             });
         },
 
+        addActivityAction: function () {
+            this.model.attributes.activityModels.add(new ActivityModel());
+            return false;
+        },
 	    goToWorkflows: function () {
             App.router.navigate(App.config.workspaceId + '/workflows', {trigger: true});
         },
-
         cancelAction: function () {
             this.goToWorkflows();
             return false;
         },
-
         saveAction: function () {
-            var self = this;
+            var _this = this;
             var reference = this.inputWorkflowName.val();
 
             if (reference) {
-                this.model.save(
-                    {
-                        reference: reference,
-                        finalLifeCycleState: self.inputFinalState.val()
-                    },
-                    {
-                        success: function () {
-                            self.goToWorkflows();
-                        },
-                        error: function (model, xhr) {
-                            console.error('Error while saving workflow "' + model.attributes.reference + '" : ' + xhr.responseText);
-                            self.inputWorkflowName.focus();
-                        }
-                    }
-                );
+                if(this.newRoles.length){
+                    _.each(this.newRoles, function(role){
+                        _this.roles.findWhere({name: role.name}).save(null,{
+                            success:function(){
+                                _this.saveModel(reference);
+                            },
+                            error: function (model, xhr) {
+                                _this.onError(model,xhr);
+                            }
+                        });
+                    });
+                } else {
+                    this.saveModel(reference);
+                }
+
             } else {
                 this.inputWorkflowName.focus();
+                this.onError(App.config.i18n.ERROR_WORKFLOW_REFERENCE_MISSING);
             }
 
             return false;
         },
-
+        saveModel:function(reference){
+            var _this = this;
+            this.model.save(
+                {
+                    reference: reference,
+                    finalLifeCycleState: _this.inputFinalState.val()
+                },
+                {
+                    success: function () {
+                        _this.goToWorkflows();
+                    },
+                    error: function (model, xhr) {
+                        _this.onError(model,xhr);
+                        _this.inputWorkflowName.focus();
+                    }
+                }
+            );
+        },
         copyAction: function () {
-
             var workflowModelCopyView = new WorkflowModelCopyView({
                 model: this.model
             }).render();
@@ -106,67 +217,12 @@ define([
             return false;
         },
 
-        render: function () {
-
-            var that = this;
-
-            this.roles.fetch({reset: true, success: function () {
-
-                if (_.isUndefined(that.options.workflowModelId)) {
-                    that.model = new WorkflowModel();
-                    that.model.attributes.activityModels.bind('add', that.addOneActivity, that);
-                } else {
-                    that.model = new WorkflowModel({
-                        id: that.options.workflowModelId
-                    });
-
-                    that.model.fetch({success: function () {
-                        that.inputFinalState.val(that.model.get('finalLifeCycleState'));
-                        that.addAllActivity();
-                    } });
-                }
-
-                that.template = Mustache.render(template, {i18n: App.config.i18n, workflow: that.model.attributes});
-
-                that.$el.html(that.template);
-
-                that.bindDomElements();
-
-            }});
-
-            return this;
-        },
-
-        bindDomElements: function () {
-            var self = this;
-
-            this.inputWorkflowName = this.$('input#workflow-name');
-
-            this.inputFinalState = this.$('input#final-state');
-
-            this.liAddActivitySection = this.$('li#add-activity-section');
-
-            this.activitiesUL = this.$('ul#activity-list');
-            this.activitiesUL.sortable({
-                items: 'li.activity-section',
-                handle: '.activity-topbar',
-                tolerance: 'pointer',
-                start: function (event, ui) {
-                    ui.item.oldPosition = ui.item.index();
-                },
-                stop: function (event, ui) {
-                    self.activityPositionChanged(ui.item.oldPosition - 1, ui.item.index() - 1);
-                }
-            });
-        },
-
         unbindAllEvents: function () {
             _.each(this.subviews, function (subview) {
                 subview.unbindAllEvents();
             });
             this.undelegateEvents();
         }
-
     });
 
     return WorkflowModelEditorView;

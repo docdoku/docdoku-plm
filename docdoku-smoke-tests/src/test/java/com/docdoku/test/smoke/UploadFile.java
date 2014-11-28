@@ -22,6 +22,7 @@ package com.docdoku.test.smoke;
 
 import com.docdoku.cli.ScriptingTools;
 import com.docdoku.cli.helpers.FileHelper;
+import com.docdoku.cli.helpers.HumanOutput;
 import com.docdoku.core.product.*;
 import com.docdoku.core.services.IProductManagerWS;
 import com.docdoku.core.util.FileIO;
@@ -49,7 +50,7 @@ public class UploadFile {
         PartRevision pr = productS.getPartRevision(partRPK);
         PartIteration pi = pr.getLastIteration();
         PartIterationKey partIPK = new PartIterationKey(partRPK, pi.getIteration());
-        FileHelper fh = new FileHelper(properties.getLoginForUser2(), properties.getPassword());
+        FileHelper fh = new FileHelper(properties.getLoginForUser2(), properties.getPassword(), new HumanOutput());
         fh.uploadNativeCADFile(properties.getURL(), cadFile, partIPK);
         productS.deletePartMaster(partMPK);
     }

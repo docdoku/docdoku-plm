@@ -29,16 +29,15 @@ import java.util.Locale;
  *
  * @author Florent Garin
  */
-public class UserGroupAlreadyExistsException extends ApplicationException {
-
-    private UserGroup mUserGroup;
+public class UserGroupAlreadyExistsException extends EntityAlreadyExistsException {
+    private final UserGroup mUserGroup;
     
     
     public UserGroupAlreadyExistsException(String pMessage) {
         super(pMessage);
+        mUserGroup=null;
     }
-    
-    
+
     public UserGroupAlreadyExistsException(Locale pLocale, UserGroup pUserGroup) {
         this(pLocale, pUserGroup, null);
     }
@@ -47,7 +46,8 @@ public class UserGroupAlreadyExistsException extends ApplicationException {
         super(pLocale, pCause);
         mUserGroup=pUserGroup;
     }
-    
+
+    @Override
     public String getLocalizedMessage() {
         String message = getBundleDefaultMessage();
         return MessageFormat.format(message,mUserGroup);
