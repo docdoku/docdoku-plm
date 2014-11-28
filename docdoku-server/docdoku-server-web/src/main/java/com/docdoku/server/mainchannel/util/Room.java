@@ -53,8 +53,9 @@ public class Room {
     
     /** Retrieve a {@link com.docdoku.server.mainchannel.util.Room} instance from database */
     public static Room getByKeyName(String roomKey) {
-        if(roomKey==null)
+        if(roomKey==null) {
             return null;
+        }
         return DB.get(roomKey);
     }
 
@@ -97,21 +98,14 @@ public class Room {
 
     /** @return true if one the participant is named as the input parameter, false otherwise */
     public boolean hasUser(String user) {
-
         if(user != null) {
-
-            if(userSession1 != null){
-                if(user.equals(getUser1Login())){
-                    return true;
-                }
+            if(userSession1 != null && user.equals(getUser1Login())){
+                return true;
             }
 
-            if(userSession2 != null){
-                if(user.equals(getUser2Login())){
-                    return true;
-                }
+            if(userSession2 != null && user.equals(getUser2Login())){
+                return true;
             }
-
         }
         return false;
     }
@@ -120,17 +114,12 @@ public class Room {
     public Session getUserSession(String user) {
 
         if(user != null) {
-
-            if(userSession1 != null){
-                if(user.equals(getUser1Login())){
-                    return userSession1;
-                }
+            if(userSession1 != null && user.equals(getUser1Login())){
+                return userSession1;
             }
 
-            if(userSession2 != null){
-                if(user.equals(getUser2Login())){
-                    return userSession2;
-                }
+            if(userSession2 != null && user.equals(getUser2Login())){
+                return userSession2;
             }
 
         }
@@ -142,33 +131,25 @@ public class Room {
 
         if(user != null) {
 
-            if(userSession1 != null){
-                if(user.equals(getUser1Login())){
-                    removeUserSession(userSession1);
-                }
+            if(userSession1 != null && user.equals(getUser1Login())){
+                removeUserSession(userSession1);
             }
 
-            if(userSession2 != null){
-                if(user.equals(getUser2Login())){
-                    removeUserSession(userSession2);
-                }
+            if(userSession2 != null && user.equals(getUser2Login())){
+                removeUserSession(userSession2);
             }
 
         }
-
     }
 
     /** Add a new participant to this room
      * @return if participant is found */
     public boolean addUserSession(Session userSession) {
-
         boolean success = true;
 
         // avoid a user to be added in the room many times.
-        if(userSession != null){
-            if(userSession.equals(userSession1) || userSession.equals(userSession2)){
-                return success;
-            }
+        if(userSession != null && (userSession.equals(userSession1) || userSession.equals(userSession2))){
+            return true;
         }
 
         if (userSession1 == null) {
@@ -185,12 +166,12 @@ public class Room {
 
     /** Removed a participant form current room */
     public void removeUserSession(Session userSession) {
-
         if (userSession != null && userSession.equals(userSession2)) {
             userSession2 = null;
         }
 
         if (userSession != null && userSession.equals(userSession1)) {
+            // Todo check why this if always true
             if (userSession1 != null) {
                 userSession1 = userSession2;
                 userSession2 = null;
@@ -227,17 +208,11 @@ public class Room {
     }
 
     public Session getSessionForUserLogin(String userLogin){
-
-        if (userSession1 != null) {
-            if(userLogin.equals(getUser2Login())){
-                return userSession1;
-            }
-        } else if (userSession2 != null) {
-            if(userLogin.equals(getUser2Login())){
-                return userSession2;
-            }
+        if (userSession1 != null && userLogin.equals(getUser1Login())){
+            return userSession1;
+        } else if (userSession2 != null && userLogin.equals(getUser2Login())){
+            return userSession2;
         }
-
         return null;
     }
 
