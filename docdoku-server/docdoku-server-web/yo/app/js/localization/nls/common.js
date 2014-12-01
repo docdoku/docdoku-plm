@@ -160,6 +160,7 @@ define({
 		FOLDER_S_NAME: "Folder name",
 		FOLD_TASK: "Minimize task",
 		FORBIDDEN: "Forbidden",
+        FORBIDDEN_MESSAGE:"You cannot access to this resource, you need to disconnect before continue",
 		FORM_HELPER: "Let these inputs empty if you don't want to specify a password or an expiration date",
 		FULL_ACCESS: "Full access",
 		FULL_SCREEN: "Full screen",
@@ -426,7 +427,8 @@ define({
 		WORKSPACES_ADMINISTRATION: 'Workspaces administration',
 		WORKSPACES: "Workspaces",
 		WORKSPACE: "Workspace",
-		YOU_HAVE_BEEN_KICKED:"You have been kicked from the room"
+		YOU_HAVE_BEEN_KICKED:"You have been kicked from the room",
+        BACK:'Back'
 	},
 	'es': true,
 	'fr': true

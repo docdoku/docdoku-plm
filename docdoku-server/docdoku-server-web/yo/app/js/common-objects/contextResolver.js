@@ -1,8 +1,9 @@
 /*global _,$,define,App*/
 define([
     'common-objects/models/user',
-    'common-objects/models/workspace'
-], function (User, Workspace) {
+    'common-objects/models/workspace',
+    'common-objects/views/forbidden'
+], function (User, Workspace,ForbiddenView) {
 	'use strict';
     var ContextResolver = function () {
     };
@@ -22,6 +23,10 @@ define([
                     window.localStorage.setItem('locale', user.language || 'en');
                     success();
                 });
+            },function(){
+                var forbiddenView = new ForbiddenView().render();
+                $('body').append(forbiddenView.$el);
+                forbiddenView.openModal();
             });
         });
     };
