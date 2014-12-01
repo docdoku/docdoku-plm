@@ -20,9 +20,9 @@
 
 package com.docdoku.test.smoke;
 
-import com.docdoku.cli.ScriptingTools;
 import com.docdoku.cli.helpers.FileHelper;
 import com.docdoku.cli.helpers.HumanOutput;
+import com.docdoku.cli.tools.ScriptingTools;
 import com.docdoku.core.product.*;
 import com.docdoku.core.services.IProductManagerWS;
 import com.docdoku.core.util.FileIO;

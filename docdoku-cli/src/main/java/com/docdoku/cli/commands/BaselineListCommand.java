@@ -20,7 +20,7 @@
 
 package com.docdoku.cli.commands;
 
-import com.docdoku.cli.ScriptingTools;
+import com.docdoku.cli.tools.ScriptingTools;
 import com.docdoku.core.configuration.ProductBaseline;
 import com.docdoku.core.product.PartRevisionKey;
 import com.docdoku.core.services.IProductManagerWS;

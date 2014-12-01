@@ -20,9 +20,9 @@
 
 package com.docdoku.cli.commands;
 
-import com.docdoku.cli.ScriptingTools;
 import com.docdoku.cli.helpers.FileHelper;
 import com.docdoku.cli.helpers.MetaDirectoryManager;
+import com.docdoku.cli.tools.ScriptingTools;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.Version;
 import com.docdoku.core.product.PartIteration;

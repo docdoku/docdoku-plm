@@ -18,7 +18,7 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.cli;
+package com.docdoku.cli.tools;
 
 import com.docdoku.cli.services.*;
 import com.docdoku.core.services.*;
@@ -35,7 +35,7 @@ import java.util.Map;
  */
 public class ScriptingTools {
 
-    public static String HTTP_CLIENT_STREAMING_CHUNK_SIZE;
+    public static final String HTTP_CLIENT_STREAMING_CHUNK_SIZE;
     public static final String JAVA7_HTTP_CLIENT_STREAMING_CHUNK_SIZE = "com.sun.xml.internal.ws.transport.http.client.streaming.chunk.size";
     public static final String JAVA6_HTTP_CLIENT_STREAMING_CHUNK_SIZE = "com.sun.xml.ws.transport.http.client.streaming.chunk.size";
 

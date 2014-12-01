@@ -21,6 +21,7 @@
 package com.docdoku.cli.commands;
 
 import com.docdoku.cli.helpers.CliOutput;
+import com.docdoku.cli.interfaces.CommandLine;
 import org.kohsuke.args4j.Option;
 
 import java.io.Console;
@@ -31,7 +32,7 @@ import java.net.URL;
  *
  * @author Florent Garin
  */
-public abstract class AbstractCommandLine implements CommandLine{
+public abstract class AbstractCommandLine implements CommandLine {
 
     @Option(name="-P", aliases = "--port", metaVar = "<port>", usage="port number to use for connection; default is 80")
     protected int port=80;

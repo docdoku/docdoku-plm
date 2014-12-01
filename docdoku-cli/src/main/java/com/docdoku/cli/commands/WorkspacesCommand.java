@@ -20,7 +20,7 @@
 
 package com.docdoku.cli.commands;
 
-import com.docdoku.cli.ScriptingTools;
+import com.docdoku.cli.tools.ScriptingTools;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.services.IUserManagerWS;
 

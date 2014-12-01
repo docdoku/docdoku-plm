@@ -1,6 +1,6 @@
 package com.docdoku.cli.helpers;
 
-import com.docdoku.cli.commands.CommandLine;
+import com.docdoku.cli.interfaces.CommandLine;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.configuration.ProductBaseline;
 import com.docdoku.core.product.PartIteration;

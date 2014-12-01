@@ -20,7 +20,7 @@
 
 package com.docdoku.test.smoke;
 
-import com.docdoku.cli.ScriptingTools;
+import com.docdoku.cli.tools.ScriptingTools;
 import com.docdoku.core.document.DocumentMasterKey;
 import com.docdoku.core.document.DocumentRevisionKey;
 import com.docdoku.core.services.IDocumentManagerWS;
