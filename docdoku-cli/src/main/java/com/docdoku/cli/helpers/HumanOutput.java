@@ -1,7 +1,6 @@
 package com.docdoku.cli.helpers;
 
 import com.docdoku.cli.commands.CommandLine;
-import com.docdoku.core.common.Version;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.configuration.ProductBaseline;
 import com.docdoku.core.product.PartIteration;
@@ -82,7 +81,7 @@ public class HumanOutput extends CliOutput{
 
     @Override
     public void printBaselines(List<ProductBaseline> productBaselines) {
-        if(productBaselines.size() == 0){
+        if(productBaselines.isEmpty()){
             System.out.println("No baseline");
             return;
         }
@@ -111,8 +110,9 @@ public class HumanOutput extends CliOutput{
 
     private String fillWithEmptySpace(String txt, int totalChar){
         StringBuilder b = new StringBuilder(txt);
-        for(int i = 0; i < totalChar-txt.length();i++)
-            b.insert(0,' ');
+        for(int i = 0; i < totalChar-txt.length();i++) {
+            b.insert(0, ' ');
+        }
 
         return b.toString();
     }

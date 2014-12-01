@@ -5,13 +5,8 @@ import com.docdoku.core.common.Version;
 import org.kohsuke.args4j.CmdLineParser;
 
 import java.util.Arrays;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 
 public class MainCommand {
-    private static final Logger LOGGER = Logger.getLogger(MainCommand.class.getName());
-
     private MainCommand(){
         super();
     }

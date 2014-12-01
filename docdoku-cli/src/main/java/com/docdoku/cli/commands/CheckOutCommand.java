@@ -123,7 +123,7 @@ public class CheckOutCommand extends AbstractCommandLine{
 
             pr = pi.getPartRevision();
 
-            if(null != pRevision && pr.getVersion() != pRevision){
+            if(null != pRevision && !pr.getVersion().equals(pRevision)){
                 throw new IllegalArgumentException("Config spec "+ cs.getId() + " and revision "+pRevision+" doesn't match");
             }
 

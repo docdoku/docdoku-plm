@@ -194,7 +194,6 @@ public class FileHelper {
     }
 
     public void uploadNativeCADFile(URL serverURL, File cadFile, PartIterationKey partIPK) throws IOException, LoginException, NoSuchAlgorithmException {
-        String workspace = partIPK.getWorkspaceId();
         String fileName = cadFile.getName();
         String digest = uploadFile(cadFile, FileHelper.getPartURL(serverURL, partIPK, fileName));
 

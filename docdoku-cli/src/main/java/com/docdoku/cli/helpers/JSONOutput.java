@@ -22,7 +22,6 @@ package com.docdoku.cli.helpers;
 
 import com.docdoku.cli.commands.CommandLine;
 import com.docdoku.core.common.User;
-import com.docdoku.core.common.Version;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.configuration.ProductBaseline;
 import com.docdoku.core.product.PartIteration;
@@ -48,6 +47,7 @@ public class JSONOutput  extends CliOutput {
         try {
             jsonObj.put("error", e.getMessage());
         } catch (JSONException e1) {
+
         }
         System.err.println(jsonObj.toString());
     }
@@ -62,6 +62,7 @@ public class JSONOutput  extends CliOutput {
             jsonObj.put("description", cl.getDescription());
             jsonObj.put("usage", o.toString());
         } catch (JSONException e) {
+
         }
         System.out.println(jsonObj.toString());
     }
@@ -77,6 +78,7 @@ public class JSONOutput  extends CliOutput {
         try {
             jsonObj.put("info", s);
         } catch (JSONException e1) {
+
         }
         System.out.println(jsonObj.toString());
     }
@@ -88,6 +90,7 @@ public class JSONOutput  extends CliOutput {
             try {
                 wks.put(i,workspaces[i].getId());
             } catch (JSONException e) {
+
             }
         }
         System.out.println(wks.toString());
@@ -99,6 +102,7 @@ public class JSONOutput  extends CliOutput {
         try {
             jsonObject.put("count",partMastersCount);
         } catch (JSONException e) {
+
         }
         System.out.println(jsonObject.toString());
     }
@@ -123,6 +127,7 @@ public class JSONOutput  extends CliOutput {
                 baselineObject.put("configurationItem", productBaseline.getConfigurationItem().getId());
                 jsonArray.put(baselineObject);
             } catch (JSONException e) {
+
             }
         }
         System.out.println(jsonArray.toString());
@@ -142,7 +147,9 @@ public class JSONOutput  extends CliOutput {
             for (PartRevision pr : pm.getPartRevisions()) {
                 revisions.put(getPartRevision(pr, lastModified));
             }
-        }catch(JSONException e){}
+        }catch(JSONException e){
+
+        }
 
         System.out.println(getPartRevision(pm.getLastRevision(), lastModified));
     }

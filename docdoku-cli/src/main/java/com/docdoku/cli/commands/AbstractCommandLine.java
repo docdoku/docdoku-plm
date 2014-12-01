@@ -22,6 +22,7 @@ package com.docdoku.cli.commands;
 
 import com.docdoku.cli.helpers.CliOutput;
 import org.kohsuke.args4j.Option;
+
 import java.io.Console;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -68,7 +69,7 @@ public abstract class AbstractCommandLine implements CommandLine{
     @Override
     public void exec() throws Exception {
 
-        output = CliOutput.GetOutput(format);
+        output = CliOutput.getOutput(format);
 
         if(user==null && format.equals(CliOutput.formats.HUMAN)){
             promptForUser();
