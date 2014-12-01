@@ -1,4 +1,9 @@
 /*global _,require,window*/
+var workspace = /^#([^/]+)/.exec(window.location.hash);
+if(!workspace){
+    location.href = '../';
+}
+
 var App = {
     debug: false,
 
@@ -13,7 +18,7 @@ var App = {
     },
 
 	config:{
-		workspaceId: /^#([^/]+)/.exec(window.location.hash)[1] || null,
+		workspaceId: workspace[1] || null,
 		productId: window.location.hash.split('/')[1] || null,
 		login: '',
 		groups: [],

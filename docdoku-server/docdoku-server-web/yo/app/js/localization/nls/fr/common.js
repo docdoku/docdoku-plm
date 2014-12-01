@@ -159,6 +159,7 @@ define({
 	FOLDER_S_NAME: "Nom du dossier",
 	FOLD_TASK: "Réduire la tâche",
 	FORBIDDEN: "Interdit",
+	FORBIDDEN_MESSAGE: "Vous n'avez pas accès à cette ressource, vous devez vous déconnecter pour continuer",
 	FORM_HELPER: "Laissez ces champs vide si vous ne voulez pas spécifier de mot de passe ou de date d'expiration",
 	FULL_ACCESS: "Accès complet",
 	FULL_SCREEN: "Plein écran",
@@ -424,5 +425,6 @@ define({
 	WORKSPACE: "Espace de travail",
 	WORKSPACES_ADMINISTRATION: 'Administration des espaces de travail',
 	WORKSPACES: "Workspaces",
-	YOU_HAVE_BEEN_KICKED:"Vous avez été exclu de la salle collaborative"
+	YOU_HAVE_BEEN_KICKED:"Vous avez été exclu de la salle collaborative",
+    BACK:'Retour'
 });

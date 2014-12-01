@@ -54,13 +54,16 @@ public class ConnectionBean {
     public ConnectionBean() {
     }
 
-    public String logOut() throws ServletException {
-        HttpServletRequest request = (HttpServletRequest) (FacesContext.getCurrentInstance().getExternalContext().getRequest());
+    public String logOut() throws ServletException, IOException {
+        ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+        HttpServletRequest request = (HttpServletRequest) (ec.getRequest());
         request.logout();
         request.getSession().invalidate();
-        request.getSession().setAttribute("hasFail", false);
-        request.getSession().setAttribute("hasLogout", true);
-        return request.getContextPath() + "/";
+        HttpSession newSession = request.getSession(true);
+        newSession.setAttribute("hasFail", false);
+        newSession.setAttribute("hasLogout", true);
+        ec.redirect(request.getContextPath()+"/");
+        return request.getContextPath()+"/";
     }
 
     public void logIn() throws ServletException, AccountNotFoundException, IOException {
