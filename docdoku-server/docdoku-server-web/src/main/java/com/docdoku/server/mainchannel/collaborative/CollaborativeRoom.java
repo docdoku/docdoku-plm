@@ -74,8 +74,7 @@ public class CollaborativeRoom {
         }
 
         JsonArrayBuilder contextPendingUsers = Json.createArrayBuilder();
-        for (Iterator<String> iter = this.getPendingUsers().listIterator(); iter.hasNext(); ) {
-            String s = iter.next();
+        for (String s : this.getPendingUsers()) {
             contextPendingUsers.add(s);
         }
 

@@ -130,7 +130,7 @@ public class CollaborativeRoomController {
                 kickMessage = new CollaborativeMessage(ChannelMessagesType.COLLABORATIVE_KICK_USER, roomKey, null, remoteUser);
                 MainChannelDispatcher.send(slave, kickMessage);
             }
-            //collaborativeRoom.delete();
+            room.delete();
         }
     }
 

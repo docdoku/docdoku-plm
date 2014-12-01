@@ -66,7 +66,7 @@ public class MainChannelApplication {
 
 
     public static void sessionDestroyed(String userLogin) {
-        if(hasChannels(userLogin)) {
+        if(userLogin!=null && hasChannels(userLogin)) {
             Map<String, Session> sessionMap = CHANNELS.get(userLogin);
             List<Session> sessionList = new ArrayList<>(sessionMap.values());
 
@@ -88,6 +88,7 @@ public class MainChannelApplication {
 
     @OnClose
     public void close(Session session, CloseReason reason) {
+        LOGGER.log(Level.FINE, null, reason);
         closeSession(session);
     }
 
