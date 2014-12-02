@@ -91,7 +91,7 @@ define([
             });
         }
         function initGrid() {
-            var size = 500, step = 25;
+            var size = 500000, step = 2500;
             var geometry = new THREE.Geometry();
             var material = new THREE.LineBasicMaterial({ vertexColors: THREE.VertexColors });
             var color1 = new THREE.Color(0x444444), color2 = new THREE.Color(0x888888);
@@ -270,12 +270,7 @@ define([
                 mesh.material.opacity = _this.measureState ? 0.5 : 1;
             }
         }
-        function updateAmbientLight(color){
-            App.sceneManager.scene.getObjectByName('AmbientLight').color.setHex(color);
-        }
-        function updateCameraLight(color){
-            App.sceneManager.cameraObject.getObjectByName('CameraLight').color.setHex(color);
-        }
+
         function showGrid() {
             if (_this.grid.added) {
                 return;
@@ -293,8 +288,6 @@ define([
             _this.reDraw();
         }
         function watchSceneOptions() {
-            updateAmbientLight(App.SceneOptions.ambientLightColor);
-            updateCameraLight(App.SceneOptions.cameraLightColor);
             if (App.SceneOptions.grid) {
                 showGrid();
             } else {
@@ -989,6 +982,17 @@ define([
         this.getEditedMeshesColoured = function () {
             return editedMeshesColoured;
         };
+
+        this.updateAmbientLight = function(color){
+            console.log('toto')
+            _this.scene.getObjectByName('AmbientLight').color.set(color);
+            _this.reDraw();
+        };
+
+        this.updateCameraLight = function(color){
+            _this.cameraObject.getObjectByName('CameraLight').color.set(color);
+            _this.reDraw();
+        }
 
     };
 
