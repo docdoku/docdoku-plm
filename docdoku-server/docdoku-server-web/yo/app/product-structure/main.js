@@ -84,6 +84,7 @@ require.config({
     shim: {
         jqueryUI: { deps: ['jquery'], exports: 'jQuery' },
         effects: { deps: ['jquery'], exports: 'jQuery' },
+        inputValidity: { deps: ['jquery'], exports: 'jQuery' },
         bootstrap:{ deps: ['jquery','jqueryUI'], exports: 'jQuery' },
         datatables:{ deps: ['jquery'], exports: 'jQuery' },
         backbone: {deps: ['underscore', 'jquery'],exports: 'Backbone'},
@@ -122,6 +123,7 @@ require.config({
         'common-objects': '../common-objects',
         userPopover:'modules/user-popover-module/app',
         effects:'../lib/effects',
+        inputValidity: '../lib/input-validity',
         datatablesOsortExt: '../lib/datatables.oSort.ext',
         stringprototype:'../lib/string.prototype',
         pointerlockcontrols:'dmu/controls/PointerLockControls',
@@ -158,7 +160,8 @@ require.config({
         'buffergeometryutils',
         'stats',
         'dat',
-        'tween'
+        'tween',
+        'inputValidity'
     ],
     config: {
         i18n: {

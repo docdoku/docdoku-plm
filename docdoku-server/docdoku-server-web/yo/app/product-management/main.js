@@ -34,7 +34,8 @@ require.config({
         bootstrapCombobox:{deps:["jquery"],exports:"jQuery"},
         bootstrapSwitch:{deps:['jquery'],exports:'jQuery'},
         unmask: { deps: ['jquery'], exports: 'jQuery' },
-        unmaskConfig: { deps: ['unmask'], exports: 'jQuery' }
+        unmaskConfig: { deps: ['unmask'], exports: 'jQuery' },
+        inputValidity: { deps: ['jquery'], exports: 'jQuery' }
     },
     paths: {
         jquery: '../../bower_components/jquery/jquery',
@@ -59,6 +60,7 @@ require.config({
         'common-objects': '../common-objects',
         userPopover:'modules/user-popover-module/app',
         effects:'../lib/effects',
+        inputValidity: '../lib/input-validity',
         datatablesOsortExt: '../lib/datatables.oSort.ext',
         stringprototype:'../lib/string.prototype'
     },
@@ -76,7 +78,8 @@ require.config({
         'bootstrapCombobox',
         'bootstrapSwitch',
         'stringprototype',
-        'unmaskConfig'
+        'unmaskConfig',
+        'inputValidity'
     ],
     config: {
         i18n: {
