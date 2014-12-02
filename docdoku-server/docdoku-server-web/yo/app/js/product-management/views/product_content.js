@@ -6,12 +6,11 @@ define([
     'text!templates/product_content.html',
     'views/product_list',
     'views/product_creation_view',
-    'views/baseline/baseline_creation_view',
     'common-objects/views/baselines/snap_baseline_view',
     'text!common-objects/templates/buttons/snap_latest_button.html',
     'text!common-objects/templates/buttons/snap_released_button.html',
     'text!common-objects/templates/buttons/delete_button.html'
-], function (Backbone, Mustache, ConfigurationItemCollection, template, ProductListView, ProductCreationView, BaselineCreationView, SnapBaselineView, snapLatestButton, snapReleasedButton, deleteButton) {
+], function (Backbone, Mustache, ConfigurationItemCollection, template, ProductListView, ProductCreationView, SnapBaselineView, snapLatestButton, snapReleasedButton, deleteButton) {
     'use strict';
 	var ProductContentView = Backbone.View.extend({
 
