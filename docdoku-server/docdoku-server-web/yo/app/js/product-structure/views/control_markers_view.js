@@ -15,17 +15,15 @@ define([ "backbone", "mustache", "text!templates/control_markers.html"], functio
         },
 
         markerZoomLess: function () {
-            if (App.sceneManager.layerManager.markerScale.x > 0.2) {
-                App.sceneManager.layerManager.markerScale.addScalar(-0.1);
-                App.sceneManager.layerManager.rescaleMarkers();
-            }
+            App.sceneManager.layerManager.markerScale.addScalar(-App.sceneManager.layerManager.markerScale.x/2);
+            App.sceneManager.layerManager.rescaleMarkers();
         },
         markerState: function () {
             App.sceneManager.layerManager.changeMarkerState();
         },
 
         markerZoomMore: function () {
-            App.sceneManager.layerManager.markerScale.addScalar(0.1);
+            App.sceneManager.layerManager.markerScale.addScalar(App.sceneManager.layerManager.markerScale.x/2);
             App.sceneManager.layerManager.rescaleMarkers();
         },
 
