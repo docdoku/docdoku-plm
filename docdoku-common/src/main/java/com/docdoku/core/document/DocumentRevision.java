@@ -313,16 +313,14 @@ public class DocumentRevision implements Serializable, Comparable<DocumentRevisi
      * Remove the iterations following the lastIterationWanted
      * @param lastIterationWanted The new last iteration number
      */
-    public void removeLastIterations(int lastIterationWanted){
+    public void removeFollowingIterations(int lastIterationWanted){
         DocumentIteration documentIteration;
         do{
             documentIteration = getLastIteration();
             if(documentIteration.getIteration()>lastIterationWanted){
                 documentIteration = removeLastIteration();
-            }else{
-                break;
             }
-        }while(documentIteration!=null);
+        }while(documentIteration!=null && documentIteration.getIteration()>lastIterationWanted);
     }
 
     public int getNumberOfIterations() {

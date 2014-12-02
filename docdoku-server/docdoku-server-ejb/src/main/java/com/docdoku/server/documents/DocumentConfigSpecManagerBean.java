@@ -116,17 +116,17 @@ public class DocumentConfigSpecManagerBean implements IDocumentConfigSpecManager
     @Override
     public DocumentRevision[] getFilteredDocumentsByFolder(String workspaceId, ConfigSpec cs, String completePath) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
-        switch (cs.getClass().getName()){
-            case "BaselineConfigSpec" :
-                return getFilteredDocumentsByFolder(workspaceId,(BaselineConfigSpec) cs,completePath,user);
-            case "EffectivityConfigSpec":
-                return new DocumentRevision[0];
-            default :
-                return documentService.findDocumentRevisionsByFolder(completePath);
+
+        if(cs instanceof BaselineConfigSpec){
+            return getFilteredDocumentsByFolder((BaselineConfigSpec) cs,completePath,user);
+        }else if(cs instanceof EffectivityConfigSpec){
+            return new DocumentRevision[0];
+        }else{
+            return documentService.findDocumentRevisionsByFolder(completePath);
         }
     }
 
-    private DocumentRevision[] getFilteredDocumentsByFolder(String workspaceId, BaselineConfigSpec cs, String completePath, User user) {
+    private DocumentRevision[] getFilteredDocumentsByFolder(BaselineConfigSpec cs, String completePath, User user) {
         BaselinedFolderKey key = new BaselinedFolderKey(cs.getFolderCollectionId(),completePath);
         List<DocumentIteration> baselinedDocuments = new BaselinedDocumentDAO(new Locale(user.getLanguage()),em).findDocRsByFolder(key);
         List<DocumentRevision> returnList = new ArrayList<>();
@@ -172,18 +172,26 @@ public class DocumentConfigSpecManagerBean implements IDocumentConfigSpecManager
     }
 
     private DocumentRevision filterDocumentRevision(ConfigSpec configSpec, DocumentRevision documentRevision) throws DocumentRevisionNotFoundException {
+        Locale locale = Locale.getDefault();
+        if(documentRevision==null){
+            throw new DocumentRevisionNotFoundException("");
+        }
+
         DocumentIteration docI = configSpec.filterConfigSpec(documentRevision);
         if(docI!=null){
-            DocumentRevision docR = documentRevision;
-            em.detach(docR);
-            if(docR!=null && docR.getNumberOfIterations() > 1){
-                docR.removeLastIterations(docI.getIteration());
-                docR.setWorkflow(null);
-                docR.setTags(new HashSet<Tag>());
-                return docR;
+            em.detach(documentRevision);
+
+            if(documentRevision.getNumberOfIterations() > 1){
+                documentRevision.removeFollowingIterations(docI.getIteration());
             }
+            documentRevision.setCheckOutDate(null);
+            documentRevision.setCheckOutUser(null);
+            documentRevision.setWorkflow(null);
+            documentRevision.setTags(new HashSet<Tag>());
+            return documentRevision;
         }
-        throw new DocumentRevisionNotFoundException("");
+
+        throw new DocumentRevisionNotFoundException(locale,documentRevision.getKey());
     }
 
     private DocumentRevision filterDocumentRevisionAccessRight(User user, DocumentRevision documentRevision){

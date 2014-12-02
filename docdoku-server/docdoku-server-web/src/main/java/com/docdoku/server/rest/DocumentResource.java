@@ -78,7 +78,10 @@ public class DocumentResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public DocumentRevisionDTO getDocumentRevision(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion, @QueryParam("configSpec") String configSpecType)
+    public DocumentRevisionDTO getDocumentRevision(@PathParam("workspaceId") String workspaceId,
+                                                   @PathParam("documentId") String documentId,
+                                                   @PathParam("documentVersion") String documentVersion,
+                                                   @QueryParam("configSpec") String configSpecType)
             throws EntityNotFoundException, AccessRightException, NotAllowedException, UserNotActiveException {
         DocumentRevision docR;
         DocumentRevisionKey documentRevisionKey = new DocumentRevisionKey(workspaceId, documentId, documentVersion);

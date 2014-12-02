@@ -33,15 +33,16 @@ public class Version implements Serializable, Comparable<Version>, Cloneable {
     private List<VersionUnit> mVersionUnits;
 
     public enum VersionUnit {
-        A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z};
+        A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z
+    }
 
     public Version() {
-        mVersionUnits = new LinkedList<VersionUnit>();
+        mVersionUnits = new LinkedList<>();
         mVersionUnits.add(VersionUnit.A);
     }
 
     public Version(String pStringVersion) {
-        mVersionUnits = new LinkedList<VersionUnit>();
+        mVersionUnits = new LinkedList<>();
 
         for (int i = 0; i < pStringVersion.length(); i++) {
             try {
@@ -58,9 +59,9 @@ public class Version implements Serializable, Comparable<Version>, Cloneable {
         for (int i = mVersionUnits.size() - 1; i > -1; i--) {
             VersionUnit unit = mVersionUnits.get(i);
             if (unit == VersionUnit.Z) {
-                unit = VersionUnit.A;
-                if (i == 0)
+                if (i == 0) {
                     mVersionUnits.add(0, VersionUnit.A);
+                }
             } else {
                 int ordinal = unit.ordinal();
                 mVersionUnits.set(i, VersionUnit.values()[++ordinal]);
@@ -96,28 +97,11 @@ public class Version implements Serializable, Comparable<Version>, Cloneable {
 
     @Override
     public int hashCode() {
-        //because of bug #6277781
-        //implementation based on string representation.
         return toString().hashCode();
     }
 
     public int compareTo(Version pVersion) {
-        //because of bug #6277781
-        //implementation based on string representation.
         return toString().compareTo(pVersion.toString());
-        //old implementation was:
-        /*
-        List<VersionUnit> versionUnits = pVersion.mVersionUnits;
-        if (mVersionUnits.size() == versionUnits.size()) {
-            for (int i = 0; i < mVersionUnits.size(); i++) {
-                int comp = mVersionUnits.get(i).compareTo(versionUnits.get(i));
-                if (comp != 0)
-                    return comp;
-            }
-            return 0;
-        } else
-            return (mVersionUnits.size() - versionUnits.size());
-        */
     }
 
     /**
@@ -125,14 +109,14 @@ public class Version implements Serializable, Comparable<Version>, Cloneable {
      */
     @Override
     public Version clone() {
-        Version clone = null;
+        Version clone;
         try {
             clone = (Version) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new InternalError();
         }
         //perform a deep copy
-        clone.mVersionUnits = new LinkedList<VersionUnit>(mVersionUnits);
+        clone.mVersionUnits = new LinkedList<>(mVersionUnits);
         return clone;
     }
 }

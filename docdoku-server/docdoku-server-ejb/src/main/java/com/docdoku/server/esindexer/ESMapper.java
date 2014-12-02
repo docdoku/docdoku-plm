@@ -194,7 +194,9 @@ public class ESMapper {
 
     private static XContentBuilder setField(XContentBuilder object, String field, Workflow value, float coef ) throws IOException {
         if(value != null){
-            return object.field(field, value.getFinalLifeCycleState(), coef);
+            String finalLifeCycleState = value.getFinalLifeCycleState();
+            finalLifeCycleState = (finalLifeCycleState != null && !"".equals(finalLifeCycleState)) ? finalLifeCycleState : " ";
+            return object.field(field, ""+finalLifeCycleState, coef);
         }
         return null;
     }
