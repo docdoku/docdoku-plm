@@ -13,11 +13,11 @@ define([
 
         initialize: function () {
             ModalView.prototype.initialize.apply(this, arguments);
+            this.events["click .modal-footer .btn-primary"] = "interceptSubmit";
             this.events['submit #part_template_creation_form'] = 'onSubmitForm';
         },
 
         rendered: function () {
-            this.$('.tabs').tabs();
 
             this.bindDomElements();
 
@@ -58,30 +58,36 @@ define([
             this.$partTemplateIdGenerated = this.$('#part-template-id-generated');
         },
 
+        interceptSubmit:function(){
+            this.isValid = !this.$('.tabs').invalidFormTabSwitcher();
+        },
+
         onSubmitForm: function (e) {
 
-            // cannot pass a collection of cad file to server.
-            var attachedFile = this.fileListView.collection.first();
-            if (attachedFile) {
-                this.model.set('attachedFile', attachedFile.get('fullName'));
-            } else {
-                this.model.set('attachedFile', '');
+            if(this.isValid){
+                // cannot pass a collection of cad file to server.
+                var attachedFile = this.fileListView.collection.first();
+                if (attachedFile) {
+                    this.model.set('attachedFile', attachedFile.get('fullName'));
+                } else {
+                    this.model.set('attachedFile', '');
+                }
+
+                this.model.save({
+                    id: this.$partTemplateReference.val(),
+                    partType: this.$partTemplateType.val(),
+                    mask: this.$partTemplateMask.val(),
+                    idGenerated: this.$partTemplateIdGenerated.is(':checked'),
+                    attributeTemplates: this.attributesView.collection.toJSON(),
+                    attributesLocked: this.attributesView.isAttributesLocked()
+                }, {
+                    wait: true,
+                    success: this.onPartTemplateCreated,
+                    error: this.onError
+                });
+
+                this.fileListView.deleteFilesToDelete();
             }
-
-            this.model.save({
-                id: this.$partTemplateReference.val(),
-                partType: this.$partTemplateType.val(),
-                mask: this.$partTemplateMask.val(),
-                idGenerated: this.$partTemplateIdGenerated.is(':checked'),
-                attributeTemplates: this.attributesView.collection.toJSON(),
-                attributesLocked: this.attributesView.isAttributesLocked()
-            }, {
-                wait: true,
-                success: this.onPartTemplateCreated,
-                error: this.onError
-            });
-
-            this.fileListView.deleteFilesToDelete();
 
             e.preventDefault();
             e.stopPropagation();

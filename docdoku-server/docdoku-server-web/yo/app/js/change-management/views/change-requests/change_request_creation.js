@@ -16,6 +16,7 @@ define([
     'use strict';
     var ChangeRequestCreationView = Backbone.View.extend({
         events: {
+            'click .modal-footer .btn-primary': 'interceptSubmit',
             'submit #request_creation_form': 'onSubmitForm',
             'hidden #request_creation_modal': 'onHidden'
         },
@@ -39,6 +40,8 @@ define([
             this.fillPriorityList();
             this.fillCategoryList();
             this.linkManagement();
+            this.$inputRequestName.customValidity(App.config.i18n.REQUIRED_FIELD);
+
             return this;
         },
 
@@ -120,22 +123,29 @@ define([
             this.$inputRequestCategory = this.$('#inputRequestCategory');
         },
 
-        onSubmitForm: function (e) {
-            var data = {
-                name: this.$inputRequestName.val(),
-                description: this.$inputRequestDescription.val(),
-                author: App.config.login,
-                assignee: this.$inputRequestAssignee.val(),
-                priority: this.$inputRequestPriority.val(),
-                category: this.$inputRequestCategory.val(),
-                milestoneId: parseInt(this.$inputRequestMilestone.val(), 10)
-            };
+        interceptSubmit : function(){
+            this.isValid = ! this.$('.tabs').invalidFormTabSwitcher();
+        },
 
-            this.model.save(data, {
-                success: this.onRequestCreated,
-                error: this.error,
-                wait: true
-            });
+        onSubmitForm: function (e) {
+
+            if(this.isValid){
+                var data = {
+                    name: this.$inputRequestName.val(),
+                    description: this.$inputRequestDescription.val(),
+                    author: App.config.login,
+                    assignee: this.$inputRequestAssignee.val(),
+                    priority: this.$inputRequestPriority.val(),
+                    category: this.$inputRequestCategory.val(),
+                    milestoneId: parseInt(this.$inputRequestMilestone.val(), 10)
+                };
+
+                this.model.save(data, {
+                    success: this.onRequestCreated,
+                    error: this.error,
+                    wait: true
+                });
+            }
 
             e.preventDefault();
             e.stopPropagation();

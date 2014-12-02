@@ -20,6 +20,7 @@ define([
             var type = this.model.get("attributeType");
             this.$el.find("select.type:first").val(type);
             this.$el.addClass("well");
+            this.$('input[required]').customValidity(App.config.i18n.REQUIRED_FIELD);
         },
         removeAction: function () {
             this.model.destroy({

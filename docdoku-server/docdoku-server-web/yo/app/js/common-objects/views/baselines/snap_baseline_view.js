@@ -36,7 +36,8 @@ define([
 			if (this.isProduct) {
 				this.$inputBaselineType.val(this.options.type);
 			}
-			return this;
+            this.$inputBaselineName.customValidity(App.config.i18n.REQUIRED_FIELD);
+            return this;
 		},
 
 		bindDomElements: function () {

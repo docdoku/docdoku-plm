@@ -16,6 +16,7 @@ define([
 
         initialize: function () {
             ModalView.prototype.initialize.apply(this, arguments);
+            this.events["click .modal-footer button.btn-primary"] = "interceptSubmit";
             this.events['submit #form-' + this.cid] = 'onSubmitForm';
         },
 
@@ -56,21 +57,26 @@ define([
                 el: this.$('#acl-mapping-' + this.cid),
                 editMode: true
             }).render();
+
+            this.$('input.reference').customValidity(App.config.i18n.REQUIRED_FIELD);
+
+        },
+
+        interceptSubmit:function(){
+            this.isValid = !this.$('.tabs').invalidFormTabSwitcher();
         },
 
         onSubmitForm: function () {
 
-            var reference = $('#form-' + this.cid + ' .reference').val();
-
-            if (reference) {
+            if (this.isValid) {
                 var workflow = this.workflowsView.selected();
                 var template = this.templatesView.selected();
                 var acl = this.workspaceMembershipsView.toList();
 
                 var data = {
-                    reference: reference,
-                    title: $('#form-' + this.cid + ' .title').val(),
-                    description: $('#form-' + this.cid + ' .description').val(),
+                    reference: this.$('#form-' + this.cid + ' .reference').val(),
+                    title: this.$('#form-' + this.cid + ' .title').val(),
+                    description: this.$('#form-' + this.cid + ' .description').val(),
                     workflowModelId: workflow ? workflow.get('id') : null,
                     templateId: template ? template.get('id') : null,
                     roleMapping: workflow ? this.workflowsMappingView.toList() : null,

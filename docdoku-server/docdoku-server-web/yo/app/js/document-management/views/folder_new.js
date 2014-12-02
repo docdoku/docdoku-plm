@@ -1,18 +1,21 @@
 /*global define*/
 define([
-    "common-objects/views/components/modal",
-    "text!templates/folder_new.html"
+    'common-objects/views/components/modal',
+    'text!templates/folder_new.html'
 ], function (ModalView, template) {
     var FolderNewView = ModalView.extend({
         template: template,
-        tagName: "div",
+        tagName: 'div',
         initialize: function () {
             ModalView.prototype.initialize.apply(this, arguments);
-            this.events["submit form"] = "primaryAction";
+            this.events['submit #new-folder-form'] = 'onSubmitForm';
         },
-        primaryAction: function () {
-            this.nameInput = this.$el.find("input.name").first();
-            var name = $.trim(this.nameInput.val());
+        rendered:function(){
+            this.$('input.name').customValidity(App.config.i18n.REQUIRED_FIELD);
+        },
+
+        onSubmitForm: function (e) {
+            var name = $.trim(this.$('input.name').val());
             if (name) {
                 this.collection.create({
                     name: name
@@ -22,8 +25,11 @@ define([
                     error: this.error
                 });
             }
+            e.preventDefault();
+            e.stopPropagation();
             return false;
         },
+
         success: function () {
             this.hide();
             this.parentView.show();
@@ -31,7 +37,7 @@ define([
         error: function (model, error) {
             if (error.responseText) {
                 this.alert({
-                    type: "error",
+                    type: 'error',
                     message: error.responseText
                 });
                 this.collection.remove([model]);

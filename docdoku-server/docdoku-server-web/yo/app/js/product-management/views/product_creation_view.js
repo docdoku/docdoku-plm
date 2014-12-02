@@ -10,6 +10,7 @@ define(
         var ProductCreationView = Backbone.View.extend({
 
             events: {
+                "click .modal-footer .btn-primary": "interceptSubmit",
                 "submit #product_creation_form": "onSubmitForm",
                 "hidden #product_creation_modal": "onHidden"
             },
@@ -22,6 +23,7 @@ define(
                 this.$el.html(Mustache.render(template, {i18n: App.config.i18n}));
                 this.bindDomElements();
                 this.bindTypeahead();
+                this.$('input[required]').customValidity(App.config.i18n.REQUIRED_FIELD);
                 return this;
             },
 
@@ -46,20 +48,26 @@ define(
                 });
             },
 
+            interceptSubmit : function(){
+                this.isValid = ! this.$('.tabs').invalidFormTabSwitcher();
+            },
+
             onSubmitForm: function (e) {
 
-                this.model = new ConfigurationItem({
-                    id: this.$inputProductId.val(),
-                    workspaceId: App.config.workspaceId,
-                    description: this.$inputDescription.val(),
-                    designItemNumber: this.$inputPartNumber.val()
-                });
+                if(this.isValid){
+                    this.model = new ConfigurationItem({
+                        id: this.$inputProductId.val(),
+                        workspaceId: App.config.workspaceId,
+                        description: this.$inputDescription.val(),
+                        designItemNumber: this.$inputPartNumber.val()
+                    });
 
-                this.model.save({}, {
-                    wait: true,
-                    success: this.onProductCreated,
-                    error: this.onError
-                });
+                    this.model.save({}, {
+                        wait: true,
+                        success: this.onProductCreated,
+                        error: this.onError
+                    });
+                }
 
                 e.preventDefault();
                 e.stopPropagation();

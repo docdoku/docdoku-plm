@@ -14,8 +14,8 @@ define([
     var PartCreationView = Backbone.View.extend({
 
         events: {
+            'click .modal-footer .btn-primary': 'interceptSubmit',
             'submit #part_creation_form': 'onSubmitForm',
-            'hidden #part_creation_modal': 'onHidden',
             'change select#inputPartTemplate': 'onChangeTemplate'
         },
 
@@ -28,7 +28,6 @@ define([
             this.bindDomElements();
             this.bindPartTemplateSelector();
             this.bindAttributesView();
-            this.$('.tabs').tabs();
 
             this.workflowsView = new DocumentWorkflowListView({
                 el: this.$('#workflows-list')
@@ -45,11 +44,12 @@ define([
                 editMode: true
             }).render();
 
+            this.$inputPartNumber.customValidity(App.config.i18n.REQUIRED_FIELD);
+
             return this;
         },
 
         bindDomElements: function () {
-            this.$modal = this.$('#part_creation_modal');
             this.$inputPartTemplate = this.$('#inputPartTemplate');
             this.$inputPartNumber = this.$('#inputPartNumber');
             this.$inputPartName = this.$('#inputPartName');
@@ -84,29 +84,36 @@ define([
             });
         },
 
+        interceptSubmit:function(){
+            this.isValid = !this.$('.tabs').invalidFormTabSwitcher();
+        },
+
         onSubmitForm: function (e) {
-            this.model = new Part({
-                number: this.$inputPartNumber.val(),
-                workspaceId: App.config.workspaceId,
-                description: this.$inputPartDescription.val(),
-                name: this.$inputPartName.val(),
-                standardPart: this.$inputPartStandard.is(':checked') ? 1 : 0
-            });
 
-            var templateId = this.$inputPartTemplate.val();
-            var workflow = this.workflowsView.selected();
-            var saveOptions = {
-                templateId: templateId ? templateId : null,
-                workflowModelId: workflow ? workflow.get('id') : null,
-                roleMapping: workflow ? this.workflowsMappingView.toList() : null,
-                acl: this.workspaceMembershipsView.toList()
-            };
+            if(this.isValid){
+                this.model = new Part({
+                    number: this.$inputPartNumber.val(),
+                    workspaceId: App.config.workspaceId,
+                    description: this.$inputPartDescription.val(),
+                    name: this.$inputPartName.val(),
+                    standardPart: this.$inputPartStandard.is(':checked') ? 1 : 0
+                });
 
-            this.model.save(saveOptions, {
-                wait: true,
-                success: this.onPartCreated,
-                error: this.onError
-            });
+                var templateId = this.$inputPartTemplate.val();
+                var workflow = this.workflowsView.selected();
+                var saveOptions = {
+                    templateId: templateId ? templateId : null,
+                    workflowModelId: workflow ? workflow.get('id') : null,
+                    roleMapping: workflow ? this.workflowsMappingView.toList() : null,
+                    acl: this.workspaceMembershipsView.toList()
+                };
+
+                this.model.save(saveOptions, {
+                    wait: true,
+                    success: this.onPartCreated,
+                    error: this.onError
+                });
+            }
 
             e.preventDefault();
             e.stopPropagation();
@@ -133,11 +140,13 @@ define([
         },
 
         openModal: function () {
-            this.$modal.modal('show');
+            this.$el.one('shown', this.render.bind(this));
+            this.$el.one('hidden', this.onHidden.bind(this));
+            this.$el.modal('show');
         },
 
         closeModal: function () {
-            this.$modal.modal('hide');
+            this.$el.modal('hide');
         },
 
         onHidden: function () {

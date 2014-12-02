@@ -22,6 +22,8 @@ function (Backbone, Mustache, template, MilestoneModel) {
         render: function () {
             this.$el.html(Mustache.render(template, {i18n: App.config.i18n}));
             this.bindDomElements();
+            console.log(this.$('input[required]'))
+            this.$('input[required]').customValidity(App.config.i18n.REQUIRED_FIELD);
             return this;
         },
 

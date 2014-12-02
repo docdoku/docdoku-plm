@@ -109,7 +109,7 @@ define([
         newPart: function () {
             var partCreationView = new PartCreationView();
             this.listenTo(partCreationView, 'part:created', this.fetchPartAndAdd);
-            window.document.body.appendChild(partCreationView.render().el);
+            window.document.body.appendChild(partCreationView.el);
             partCreationView.openModal();
         },
 
