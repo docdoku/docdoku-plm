@@ -52,20 +52,22 @@ define(
 
             onSubmitForm: function (e) {
 
-                this.model = new PartTemplate({
-                    reference: this.$partTemplateReference.val(),
-                    partType: this.$partTemplateType.val(),
-                    mask: this.$partTemplateMask.val(),
-                    idGenerated: this.$partTemplateIdGenerated.is(":checked"),
-                    attributeTemplates: this.attributesView.collection.toJSON(),
-                    attributesLocked: this.attributesView.isAttributesLocked()
-                });
+                if(this.isValid){
+                    this.model = new PartTemplate({
+                        reference: this.$partTemplateReference.val(),
+                        partType: this.$partTemplateType.val(),
+                        mask: this.$partTemplateMask.val(),
+                        idGenerated: this.$partTemplateIdGenerated.is(":checked"),
+                        attributeTemplates: this.attributesView.collection.toJSON(),
+                        attributesLocked: this.attributesView.isAttributesLocked()
+                    });
 
-                this.model.save({}, {
-                    wait: true,
-                    success: this.onPartTemplateCreated,
-                    error: this.onError
-                });
+                    this.model.save({}, {
+                        wait: true,
+                        success: this.onPartTemplateCreated,
+                        error: this.onError
+                    });
+                }
 
                 e.preventDefault();
                 e.stopPropagation();
