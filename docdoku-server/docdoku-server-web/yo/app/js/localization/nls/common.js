@@ -318,6 +318,7 @@ define({
 		REPLACE: "Reset",
 		REQUESTS_NUMBER: "Number of request",
 		REQUESTS: "Requests",
+        REQUIRED_FIELD:"Please fill out his field",
 		RESET_CAMERA: "Reset camera",
 		REVISION_NOTE_PROMPT_CANCEL: "Ignore",
 		REVISION_NOTE_PROMPT_LABEL: "The revision note has not been defined. Do you want to add it?",

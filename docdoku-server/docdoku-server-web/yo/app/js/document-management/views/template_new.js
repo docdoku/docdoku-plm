@@ -9,6 +9,7 @@ define([
         template: template,
         initialize: function () {
             ModalView.prototype.initialize.apply(this, arguments);
+            this.events["click .modal-footer button.btn-primary"] = "interceptSubmit";
             this.events["submit form"] = "onSubmitForm";
         },
         rendered: function () {
@@ -24,15 +25,22 @@ define([
                 html: true,
                 content: App.config.i18n.MASK_HELP
             });
+
+            this.$('input.reference').customValidity(App.config.i18n.REQUIRED_FIELD);
+
         },
+
+        interceptSubmit:function(){
+            this.isValid = !this.$('.tabs').invalidFormTabSwitcher();
+        },
+
         onSubmitForm: function (e) {
-            var reference = $("#form-" + this.cid + " .reference").val();
-            if (reference) {
+            if (this.isValid ) {
                 this.collection.create({
-                    reference: reference,
-                    documentType: $("#form-" + this.cid + " .type").val(),
-                    mask: $("#form-" + this.cid + " .mask").val(),
-                    idGenerated: $("#form-" + this.cid + " .id-generated").is(':checked'),
+                    reference:  this.$("#form-" + this.cid + " .reference").val(),
+                    documentType: this.$("#form-" + this.cid + " .type").val(),
+                    mask: this.$("#form-" + this.cid + " .mask").val(),
+                    idGenerated: this.$("#form-" + this.cid + " .id-generated").is(':checked'),
                     attributeTemplates: this.attributesView.collection.toJSON(),
                     attributesLocked: this.attributesView.isAttributesLocked()
                 }, {

@@ -19,6 +19,9 @@ define([
             }
             // keep track of the created template edit view
             TemplateEditView._instance = this;
+
+            this.events["click .modal-footer button.btn-primary"] = "interceptSubmit";
+            this.events["submit form"] = "onSubmitForm";
         },
 
         rendered: function () {
@@ -38,7 +41,7 @@ define([
                 editMode: true
             }).render();
 
-            /* Add the fileListView to the tab */
+            // Add the fileListView to the tab
             $('#tab-files-' + this.cid).append(this.fileListView.el);
 
             this.$('a#mask-help').popover({
@@ -50,25 +53,32 @@ define([
 
         },
 
-        primaryAction: function () {
-            this.model.unset('reference');
-            this.model.save({
-                documentType: $('#form-' + this.cid + ' .type').val(),
-                mask: $('#form-' + this.cid + ' .mask').val(),
-                idGenerated: $('#form-' + this.cid + ' .id-generated').is(':checked'),
-                attributeTemplates: this.attributesView.collection.toJSON(),
-                attributesLocked: this.attributesView.isAttributesLocked()
-            }, {
-                success: this.success,
-                error: this.error
-            });
+        interceptSubmit:function(){
+            this.isValid = !this.$('.tabs').invalidFormTabSwitcher();
+        },
 
-            /*
-             *saving new files : nothing to do : it's already saved
-             *deleting unwanted files
-             */
-            this.fileListView.deleteFilesToDelete();
+        onSubmitForm: function (e) {
 
+            if(this.isValid){
+                this.model.unset('reference');
+                this.model.save({
+                    documentType: $('#form-' + this.cid + ' .type').val(),
+                    mask: $('#form-' + this.cid + ' .mask').val(),
+                    idGenerated: $('#form-' + this.cid + ' .id-generated').is(':checked'),
+                    attributeTemplates: this.attributesView.collection.toJSON(),
+                    attributesLocked: this.attributesView.isAttributesLocked()
+                }, {
+                    success: this.success,
+                    error: this.error
+                });
+
+                // saving new files : nothing to do : it's already saved
+                // deleting unwanted files
+                this.fileListView.deleteFilesToDelete();
+            }
+
+            e.preventDefault();
+            e.stopPropagation();
             return false;
         },
 

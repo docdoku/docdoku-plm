@@ -29,6 +29,7 @@ require.config({
     shim: {
         jqueryUI: { deps: ['jquery'], exports: 'jQuery' },
         effects: { deps: ['jquery'], exports: 'jQuery' },
+        inputValidity: { deps: ['jquery'], exports: 'jQuery' },
         bootstrap: { deps: ['jquery', 'jqueryUI'], exports: 'jQuery' },
         bootbox: { deps: ['jquery'], exports: 'jQuery' },
         datatables: { deps: ['jquery'], exports: 'jQuery' },
@@ -59,6 +60,7 @@ require.config({
         modules: '../modules',
         'common-objects': '../common-objects',
         effects: '../lib/effects',
+        inputValidity: '../lib/input-validity',
         datatablesOsortExt: '../lib/datatables.oSort.ext',
         stringprototype: '../lib/string.prototype',
         userPopover: 'modules/user-popover-module/app'
@@ -73,6 +75,7 @@ require.config({
         'bootstrapSwitch',
         'jqueryUI',
         'effects',
+        'inputValidity',
         'datatables',
         'datatablesOsortExt',
         'unmaskConfig',
