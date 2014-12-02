@@ -1,34 +1,18 @@
-<div id="part_creation_modal" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal">
     <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <a class="close" data-dismiss="modal">×</a>
         <h3>{{i18n.NEW_PART}}</h3>
     </div>
-
     <div class="modal-body">
-
         <div class="tabs">
-
             <ul class="nav nav-tabs">
-                <li class="active">
-                    <a href="#tab-main" data-toggle="tab">{{i18n.GENERAL}}</a>
-                </li>
-                <li>
-                    <a href="#tab-attributes" data-toggle="tab">{{i18n.ATTRIBUTES}}</a>
-                </li>
-                <li>
-                    <a href="#tab-workflow" data-toggle="tab">{{i18n.WORKFLOW}}</a>
-                </li>
-                <li>
-                    <a href="#tab-acl" data-toggle="tab">{{i18n.ACL}}</a>
-                </li>
+                <li class="active"><a href="#tab-main" data-toggle="tab">{{i18n.GENERAL}}</a></li>
+                <li><a href="#tab-workflow" data-toggle="tab">{{i18n.WORKFLOW}}</a></li>
+                <li><a href="#tab-attributes" data-toggle="tab">{{i18n.ATTRIBUTES}}</a></li>
+                <li><a href="#tab-acl" data-toggle="tab">{{i18n.ACL}}</a></li>
             </ul>
-
-
-            <form id="part_creation_form" class="form-horizontal">
-
-
-                <div class="tab-pane active" id="tab-main">
-
+            <form id="part_creation_form" class="tab-content form-horizontal">
+                <div id="tab-main" class="tab-pane active">
                     <div class="control-group">
                         <label class="control-label" for="inputPartTemplate">{{i18n.PART_TEMPLATE}}</label>
 
@@ -71,20 +55,17 @@
                         </div>
                     </div>
                 </div>
-                <div class="tab-pane attributes attributes-edit" id="tab-attributes"></div>
-                <div class="tab-pane" id="tab-workflow">
+                <div id="tab-workflow" class="tab-pane">
                     <div id="workflows-list"></div>
                     <div id="workflows-mapping" class="role-mapping"></div>
                 </div>
-                <div class="tab-pane" id="tab-acl">
+                <div class="tab-pane attributes attributes-edit" id="tab-attributes"></div>
+                <div id="tab-acl" class="tab-pane">
                     <div id="acl-mapping"></div>
                 </div>
             </form>
         </div>
-
-
     </div>
-
     <div class="modal-footer">
         <button class="btn" data-dismiss="modal" aria-hidden="true">{{i18n.CLOSE}}</button>
         <button class="btn btn-primary" form="part_creation_form">{{i18n.CREATE_PART}}</button>

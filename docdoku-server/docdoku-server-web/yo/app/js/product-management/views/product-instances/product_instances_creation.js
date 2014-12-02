@@ -31,6 +31,7 @@ define([
         render: function () {
             this.$el.html(Mustache.render(template, {i18n: App.config.i18n}));
             this.bindDomElements();
+            this.$inputSerialNumber.customValidity(App.config.i18n.REQUIRED_FIELD);
             new ConfigurationItemCollection().fetch({success: this.fillConfigurationItemList});
             return this;
         },
