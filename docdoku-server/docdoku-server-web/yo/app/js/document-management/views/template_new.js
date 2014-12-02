@@ -35,7 +35,7 @@ define([
         },
 
         onSubmitForm: function (e) {
-            if (this.isValid ) {
+            if (this.isValid) {
                 this.collection.create({
                     reference:  this.$("#form-" + this.cid + " .reference").val(),
                     documentType: this.$("#form-" + this.cid + " .type").val(),
