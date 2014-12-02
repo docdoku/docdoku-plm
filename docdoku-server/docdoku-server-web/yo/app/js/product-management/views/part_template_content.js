@@ -44,7 +44,7 @@ define([
         },
 
         newPartTemplate: function () {
-            var partTemplateCreationView = new PartTemplateCreationView().render();
+            var partTemplateCreationView = new PartTemplateCreationView();
             this.listenTo(partTemplateCreationView, 'part-template:created', this.fetchPartTemplateAndAdd);
             partTemplateCreationView.show();
         },

@@ -14,12 +14,11 @@ define(
 
             initialize: function () {
                 ModalView.prototype.initialize.apply(this, arguments);
+                this.events["click .modal-footer .btn-primary"] = "interceptSubmit";
                 this.events["submit #part_template_creation_form"] = "onSubmitForm";
             },
 
             rendered: function () {
-
-                this.$(".tabs").tabs();
 
                 this.bindDomElements();
 
@@ -36,6 +35,8 @@ define(
                     content: App.config.i18n.MASK_HELP
                 });
 
+                this.$partTemplateReference.customValidity(App.config.i18n.REQUIRED_FIELD);
+
             },
 
             bindDomElements: function () {
@@ -43,6 +44,10 @@ define(
                 this.$partTemplateType = this.$("#part-template-type");
                 this.$partTemplateMask = this.$("#part-template-mask");
                 this.$partTemplateIdGenerated = this.$("#part-template-id-generated");
+            },
+
+            interceptSubmit:function(){
+                this.isValid = !this.$('.tabs').invalidFormTabSwitcher();
             },
 
             onSubmitForm: function (e) {
