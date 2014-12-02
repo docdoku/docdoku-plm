@@ -14,16 +14,20 @@
 
     // Changes the custom validity message
     $.fn.customValidity = function (message) {
-        var element = this[0];
-        element.oninvalid = function(e) {
-            e.target.setCustomValidity("");
-            if (!e.target.validity.valid) {
-                e.target.setCustomValidity(message);
-            }
-        };
-        element.oninput = function(e) {
-            e.target.setCustomValidity("");
-        };
+        var element = this;
+
+        for(var i = 0 ; i < element.length; i++){
+            element[i].oninvalid = function(e) {
+                e.target.setCustomValidity("");
+                if (!e.target.validity.valid) {
+                    e.target.setCustomValidity(message);
+                }
+            };
+            element[i].oninput = function(e) {
+                e.target.setCustomValidity("");
+            };
+        }
+
     };
 
 })(jQuery);

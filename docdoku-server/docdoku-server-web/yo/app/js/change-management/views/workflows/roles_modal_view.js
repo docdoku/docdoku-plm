@@ -29,6 +29,7 @@ define([
             this.$roleViews = this.$('#form-roles');
             this.$newRoleName = this.$('input.role-name');
 
+            this.$newRoleName.customValidity(App.config.i18n.REQUIRED_FIELD);
 
             this.userList = new UserList();
             if(!this.collection){
