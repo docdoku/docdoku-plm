@@ -29,6 +29,7 @@ import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.sun.enterprise.security.ee.auth.login.ProgrammaticLogin;
 
+
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;

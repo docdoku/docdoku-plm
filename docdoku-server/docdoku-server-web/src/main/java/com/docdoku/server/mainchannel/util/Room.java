@@ -229,7 +229,7 @@ public class Room {
     public Session getSessionForUserLogin(String userLogin){
 
         if (userSession1 != null) {
-            if(userLogin.equals(getUser2Login())){
+            if(userLogin.equals(getUser1Login())){
                 return userSession1;
             }
         } else if (userSession2 != null) {
