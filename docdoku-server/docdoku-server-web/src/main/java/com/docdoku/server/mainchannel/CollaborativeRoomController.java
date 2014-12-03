@@ -1,12 +1,15 @@
-package com.docdoku.server.mainchannel.collaborative;
+package com.docdoku.server.mainchannel;
 
-import com.docdoku.server.mainchannel.MainChannelDispatcher;
+import com.docdoku.server.mainchannel.collaborative.CollaborativeRoom;
 import com.docdoku.server.mainchannel.module.ChatMessage;
 import com.docdoku.server.mainchannel.module.CollaborativeMessage;
 import com.docdoku.server.mainchannel.util.ChannelMessagesType;
 
 import javax.json.JsonObject;
 import javax.websocket.Session;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * A controller for manage a room of Collaboration Module
@@ -20,6 +23,8 @@ public class CollaborativeRoomController {
     private CollaborativeRoomController(){
         super();
     }
+
+
     public static void broadcastNewContext(CollaborativeRoom room){
         String master = room.getMasterName();
         CollaborativeMessage message = new CollaborativeMessage(ChannelMessagesType.COLLABORATIVE_CONTEXT,room.getKey(),room.getContext(),master);
@@ -85,6 +90,18 @@ public class CollaborativeRoomController {
             //MainChannelDispatcher.send(callerSession, collaborativeMessage); // notify the user that he joined the room
             CollaborativeRoomController.broadcastNewContext(room);
 
+        }
+    }
+
+    public static void removeSessionFromCollaborativeRoom(Session userSession) {
+
+        for (CollaborativeRoom room : CollaborativeRoom.getAllCollaborativeRooms()) {
+            if (room.getSlaves().contains(userSession)){
+                CollaborativeRoomController.processExit(userSession, userSession.getUserPrincipal().getName(), room);
+            }
+            if (room.getMaster()==userSession){
+                CollaborativeRoomController.processExit(userSession,userSession.getUserPrincipal().getName(),room);
+            }
         }
     }
 

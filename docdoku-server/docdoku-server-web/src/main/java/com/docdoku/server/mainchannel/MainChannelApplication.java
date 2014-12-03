@@ -22,7 +22,6 @@ package com.docdoku.server.mainchannel;
 
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.mainchannel.collaborative.CollaborativeRoom;
-import com.docdoku.server.mainchannel.collaborative.CollaborativeRoomController;
 import com.docdoku.server.mainchannel.module.*;
 import com.docdoku.server.mainchannel.util.ChannelMessagesBuilder;
 import com.docdoku.server.mainchannel.util.ChannelMessagesType;
@@ -235,7 +234,7 @@ public class MainChannelApplication {
         if (sessionId != null && userLogin != null) {
             // find whom the session belongs
             Room.removeUserFromAllRoom(userLogin);
-            CollaborativeRoom.removeSessionFromCollaborativeRoom(session);
+            CollaborativeRoomController.removeSessionFromCollaborativeRoom(session);
             // remove the session from the user hash map
             CHANNELS.get(userLogin).remove(sessionId);
             // clean from memory when no more channel left
