@@ -33,7 +33,6 @@ import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
 
-
 /**
  * @author Taylor LABEJOF
  */
@@ -51,41 +50,49 @@ public class TestWorkflowManagerBean {
 
     public WorkflowModel createWorkflowModel(String login, String pWorkspaceId, String pId, String pFinalLifeCycleState, ActivityModel[] pActivityModels) throws UserNotActiveException, WorkspaceNotFoundException, AccessRightException, CreationException, FolderNotFoundException, UserNotFoundException, FolderAlreadyExistsException, NotAllowedException, WorkflowModelAlreadyExistsException {
         loginP.login(login, password.toCharArray());
-        WorkflowModel workflowModel = workflowManagerLocal.createWorkflowModel(pWorkspaceId,pId,pFinalLifeCycleState,pActivityModels);
+        WorkflowModel workflowModel = null;
+        for (WorkflowModel workflow : workflowManagerLocal.getWorkflowModels(pWorkspaceId)) {
+            if (workflow.getKey().equals(new WorkflowModelKey(pWorkspaceId, pId)))
+                workflowModel = workflow;
+        }
+        if (workflowModel == null) {
+            workflowModel= workflowManagerLocal.createWorkflowModel(pWorkspaceId, pId, pFinalLifeCycleState, pActivityModels);
+        }
         loginP.logout();
         return workflowModel;
     }
 
-    public WorkflowModel[] getWorkflows(String login,String pWorkspaceId)throws UserNotActiveException, WorkspaceNotFoundException, AccessRightException, CreationException, FolderNotFoundException, UserNotFoundException, FolderAlreadyExistsException, NotAllowedException, WorkflowModelAlreadyExistsException {
+    public WorkflowModel[] getWorkflows(String login, String pWorkspaceId) throws UserNotActiveException, WorkspaceNotFoundException, AccessRightException, CreationException, FolderNotFoundException, UserNotFoundException, FolderAlreadyExistsException, NotAllowedException, WorkflowModelAlreadyExistsException {
         loginP.login(login, password.toCharArray());
         WorkflowModel[] workflowModel = workflowManagerLocal.getWorkflowModels(pWorkspaceId);
         loginP.logout();
         return workflowModel;
     }
-    public Role[] getWorkspaceRoles(String login,String pWorkspaceId) throws WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException {
+
+    public Role[] getWorkspaceRoles(String login, String pWorkspaceId) throws WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException {
         loginP.login(login, password.toCharArray());
-        Role[] roles =  workflowManagerLocal.getRoles(pWorkspaceId);
+        Role[] roles = workflowManagerLocal.getRoles(pWorkspaceId);
         loginP.logout();
         return roles;
     }
 
-    public Role createRole(String login,String roleName,String workspace, String userlogin) throws UserNotActiveException, WorkspaceNotFoundException, CreationException, UserNotFoundException, AccessRightException, RoleNotFoundException, EntityConstraintException, RoleAlreadyExistsException {
+    public Role createRole(String login, String roleName, String workspace, String userlogin) throws UserNotActiveException, WorkspaceNotFoundException, CreationException, UserNotFoundException, AccessRightException, RoleNotFoundException, EntityConstraintException, RoleAlreadyExistsException {
         loginP.login(login, password.toCharArray());
         Role roleExist = null, role = null;
-        for(Role pRole: workflowManagerLocal.getRoles(workspace)){
-            if (pRole.getName().equals(roleName)){
+        for (Role pRole : workflowManagerLocal.getRoles(workspace)) {
+            if (pRole.getName().equals(roleName)) {
                 roleExist = pRole;
             }
         }
-        if (roleExist == null){
-            role = workflowManagerLocal.createRole(roleName,workspace,userlogin);
+        if (roleExist == null) {
+            role = workflowManagerLocal.createRole(roleName, workspace, userlogin);
         }
         loginP.logout();
         return role;
     }
 
 
-    public void createRequest(String login,String pWorkspaceId, String name, String description, int milestone, ChangeItem.Priority priority, String assignee, ChangeItem.Category category){
+    public void createRequest(String login, String pWorkspaceId, String name, String description, int milestone, ChangeItem.Priority priority, String assignee, ChangeItem.Category category) {
         loginP.login(login, password.toCharArray());
 
         loginP.logout();

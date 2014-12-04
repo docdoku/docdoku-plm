@@ -48,6 +48,7 @@ import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -161,15 +162,14 @@ public class WorkflowTest {
         utx.commit();
 
         userManagerBean.testWorkspaceCreation(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST);
-        userManagerBean.testWorkspaceCreation(TestUtil.USER2_TEST, TestUtil.WORKSPACE_TEST);
-        userManagerBean.testWorkspaceCreation(TestUtil.USER3_TEST, TestUtil.WORKSPACE_TEST);
+        userManagerBean.testAddingUserInWorkspace(TestUtil.USER1_TEST, TestUtil.USER2_TEST, TestUtil.WORKSPACE_TEST);
+        userManagerBean.testAddingUserInWorkspace(TestUtil.USER1_TEST, TestUtil.USER3_TEST, TestUtil.WORKSPACE_TEST);
 
     }
 
 
     @Test
-    public void
-    test1_Workflow_ActivityValidity() throws AccountNotFoundException, ESIndexNamingException, WorkspaceAlreadyExistsException, NotAllowedException, CreationException, FolderAlreadyExistsException, UserAlreadyExistsException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, UserNotFoundException, WorkflowModelAlreadyExistsException, FolderNotFoundException {
+    public void test1_WorkflowWithNoActivity() throws AccountNotFoundException, ESIndexNamingException, WorkspaceAlreadyExistsException, NotAllowedException, CreationException, FolderAlreadyExistsException, UserAlreadyExistsException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, UserNotFoundException, WorkflowModelAlreadyExistsException, FolderNotFoundException {
         Logger.getLogger(WorkflowTest.class.getName()).log(Level.INFO, "Test method : Workflow_ActivityValidity");
         try {
             WorkflowModel workflowModel = workflowManagerBean.createWorkflowModel(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "workflow1", "", new ActivityModel[0]);
@@ -181,7 +181,7 @@ public class WorkflowTest {
     }
 
     @Test
-    public void test2_WorkflowValidity() throws CreationException, FolderAlreadyExistsException, WorkspaceNotFoundException, UserNotFoundException, NotAllowedException, FolderNotFoundException, WorkflowModelAlreadyExistsException, AccessRightException, UserNotActiveException, RoleAlreadyExistsException, RoleNotFoundException, EntityConstraintException {
+    public void test2_WorkflowCreation() throws CreationException, FolderAlreadyExistsException, WorkspaceNotFoundException, UserNotFoundException, NotAllowedException, FolderNotFoundException, WorkflowModelAlreadyExistsException, AccessRightException, UserNotActiveException, RoleAlreadyExistsException, RoleNotFoundException, EntityConstraintException {
         Logger.getLogger(WorkflowTest.class.getName()).log(Level.INFO, "Test method : WorkflowCreationWithRoles");
 
         Map<Role, User> roles = new HashMap<>();
@@ -189,120 +189,117 @@ public class WorkflowTest {
         roles.put(workflowManagerBean.createRole(TestUtil.USER1_TEST, "role2", TestUtil.WORKSPACE_TEST, TestUtil.USER2_TEST), new User(TestUtil.USER2_TEST));
         roles.put(workflowManagerBean.createRole(TestUtil.USER1_TEST, "role3", TestUtil.WORKSPACE_TEST, TestUtil.USER3_TEST), new User(TestUtil.USER3_TEST));
 
-        List<SerialActivityModel> sactivityModels = new ArrayList<SerialActivityModel>();
-        SerialActivityModel serialActivityModel = new SerialActivityModel();
-        serialActivityModel.createActivity(roles);
-        sactivityModels.add(serialActivityModel);
-        WorkflowModel workflowModel = workflowManagerBean.createWorkflowModel(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "workflow1", "", (ActivityModel[]) sactivityModels.toArray());
-        assertTrue(workflowModel == null);
-        assertTrue(workflowModel.getActivityModels().get(0) instanceof ParallelActivityModel);
-        assertTrue(workflowModel.getActivityModels().get(0) instanceof ActivityModel);
-        assertTrue(workflowManagerBean.getWorkspaceRoles(TestUtil.USER1_TEST,TestUtil.WORKSPACE_TEST).length == 3);
+        ActivityModel[] sactivityModels = new SerialActivityModel[1];
+        sactivityModels[0] = new SerialActivityModel();
+        sactivityModels[0].createActivity(roles);
+        sactivityModels[0].setLifeCycleState("etat1");
+        sactivityModels[0].setStep(1);
+        sactivityModels[0].addTaskModel(new TaskModel(sactivityModels[0], 1, "titleTask", "", roles.keySet().iterator().next()));
+
+        WorkflowModel workflowModel = workflowManagerBean.createWorkflowModel(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "workflow1", "", sactivityModels);
+
+        assertTrue(workflowModel != null);
+        assertTrue(!(workflowModel.getActivityModels().get(0) instanceof ParallelActivityModel));
+        assertTrue(workflowModel.getActivityModels().get(0) instanceof SerialActivityModel);
+        assertTrue(workflowManagerBean.getWorkspaceRoles(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST).length == 3);
 
     }
 
 
     @Test
-    public void test3_Task_RoleValidity(){
-        Logger.getLogger(WorkflowTest.class.getName()).log(Level.INFO, "Test method : Task_RoleValidity");
-        try{
-            userManagerBean.testWorkspaceCreation(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST);
-            Map<Role,User> roles = new HashMap<>();
-            roles.put(workflowManagerBean.createRole(TestUtil.USER1_TEST,"role1",TestUtil.WORKSPACE_TEST,TestUtil.USER1_TEST),new User(TestUtil.USER1_TEST));
-            roles.put(workflowManagerBean.createRole(TestUtil.USER1_TEST,"role2",TestUtil.WORKSPACE_TEST,TestUtil.USER2_TEST),new User(TestUtil.USER2_TEST));
-            roles.put(workflowManagerBean.createRole(TestUtil.USER1_TEST,"role3",TestUtil.WORKSPACE_TEST,TestUtil.USER3_TEST),new User(TestUtil.USER3_TEST));
-            List<ActivityModel> sactivityModels = new ArrayList<ActivityModel>();
-            SerialActivityModel serialActivityModel = new SerialActivityModel();
-            serialActivityModel.createActivity(roles);
-            sactivityModels.add(serialActivityModel);
-            workflowManagerBean.createWorkflowModel(TestUtil.USER1_TEST,TestUtil.WORKSPACE_TEST, "workflow1", "", (ActivityModel[])sactivityModels.toArray());
-        }
-        catch (Exception e){
-            Logger.getLogger(WorkflowTest.class.getName()).log(Level.INFO, "Test method : Task_RoleValidity: Task without role" + e);
-            Logger.getLogger(WorkflowTest.class.getName()).log(Level.INFO, "Test method : Task_RoleValidity Stack trace" + e);
-        }
+    public void test3_WorkflowWithActivityWithNoTask() throws CreationException, FolderAlreadyExistsException, WorkspaceNotFoundException, UserNotFoundException, NotAllowedException, FolderNotFoundException, WorkflowModelAlreadyExistsException, AccessRightException, UserNotActiveException {
+        Logger.getLogger(WorkflowTest.class.getName()).log(Level.INFO, "Test method : test3_WorkflowWithActivityWithNoTask");
+        ActivityModel[] sactivityModels = new SerialActivityModel[1];
+        sactivityModels[0] = new SerialActivityModel();
+        sactivityModels[0].setLifeCycleState("etat1");
+        sactivityModels[0].setStep(1);
+        sactivityModels[0].setTaskModels(null);
+        workflowManagerBean.createWorkflowModel(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "workflow1", "", sactivityModels);
+        Assert.assertTrue(workflowManagerBean.getWorkflows(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST).length == 0);
 
-    }
-    @Test
-    public void test4_Activity_TaskValidity(){
-        Logger.getLogger(WorkflowTest.class.getName()).log(Level.INFO, "Test method : Activity_TaskValidity");
-        try{
-            userManagerBean.testWorkspaceCreation(TestUtil.USER1_TEST, "WORKSPACE2");
-            Map<Role,User> roles = new HashMap<>();
-            TaskModel task = null;
-            task.createTask(roles);
-            List<ActivityModel> sactivityModels = new ArrayList<ActivityModel>();
-            SerialActivityModel serialActivityModel = new SerialActivityModel();
-            serialActivityModel.createActivity(roles);
-            serialActivityModel.addTaskModel(task);
-            sactivityModels.add(serialActivityModel);
-
-            WorkflowModel workflowModel = workflowManagerBean.createWorkflowModel(TestUtil.USER1_TEST,"WORKSPACE2", "workflow1", "", (ActivityModel[])sactivityModels.toArray());
-        }
-        catch (Exception e){
-            Logger.getLogger(WorkflowTest.class.getName()).log(Level.INFO, "Test method : Activity_TaskValidity: Activity without task" + e);
-            Logger.getLogger(WorkflowTest.class.getName()).log(Level.INFO, "Test method : Activity_TaskValidity Stack trace" + e);
-        }
-    }
-    @Test
-    public void test5_Activity_ParallelTasksValidity(){
-        Logger.getLogger(WorkflowTest.class.getName()).log(Level.INFO, "Test method : Activity_ParallelTasksValidity");
-        try{
-            Workspace workspace = userManagerBean.testWorkspaceCreation(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST);
-            Map<Role,User> roles = new HashMap<>();
-            roles.put(workflowManagerBean.createRole(TestUtil.USER1_TEST,"role1",TestUtil.WORKSPACE_TEST,TestUtil.USER1_TEST),new User(TestUtil.USER1_TEST));
-            roles.put(workflowManagerBean.createRole(TestUtil.USER1_TEST,"role2",TestUtil.WORKSPACE_TEST,TestUtil.USER2_TEST),new User(TestUtil.USER2_TEST));
-            roles.put(workflowManagerBean.createRole(TestUtil.USER1_TEST,"role3",TestUtil.WORKSPACE_TEST,TestUtil.USER3_TEST),new User(TestUtil.USER3_TEST));
-            TaskModel task = null;
-            task.createTask(roles);
-            List<ActivityModel> activityModels = new ArrayList<ActivityModel>();
-            ParallelActivityModel parallelActivityModel = new ParallelActivityModel();
-            parallelActivityModel.createActivity(roles);
-            parallelActivityModel.addTaskModel(task);
-            parallelActivityModel.setTasksToComplete(3);
-            activityModels.add(parallelActivityModel);
-
-            WorkflowModel workflowModel = workflowManagerBean.createWorkflowModel(TestUtil.USER1_TEST,TestUtil.WORKSPACE_TEST, "workflow1", "", (ActivityModel[])activityModels.toArray());
-            assertTrue(workflowModel == null);
-            assertTrue(workflowManagerBean.getWorkspaceRoles(TestUtil.USER1_TEST,TestUtil.WORKSPACE_TEST).length == 3);
-        }
-        catch (Exception e){
-            Logger.getLogger(WorkflowTest.class.getName()).log(Level.INFO, "Test method : Activity_ParallelTasksValidity: number of tasks to complete is higher than defined tasks" + e);
-            Logger.getLogger(WorkflowTest.class.getName()).log(Level.INFO, "Test method : Activity_ParallelTasksValidity Stack trace" + e);
-        }
     }
 
     @Test
-    public void test6_Workflow_NameValidity() {
+    public void test4_WorkflowWithTaskWithNoRole() throws CreationException, FolderAlreadyExistsException, WorkspaceNotFoundException, UserNotFoundException, NotAllowedException, FolderNotFoundException, WorkflowModelAlreadyExistsException, AccessRightException, UserNotActiveException {
+        Logger.getLogger(WorkflowTest.class.getName()).log(Level.INFO, "Test method : test4_WorkflowWithTaskWithNoRole");
+        ActivityModel[] sactivityModels = new SerialActivityModel[1];
+        sactivityModels[0] = new SerialActivityModel();
+        sactivityModels[0].setLifeCycleState("etat1");
+        sactivityModels[0].setStep(1);
+        List<TaskModel> taskModels = new ArrayList<TaskModel>();
+        taskModels.add(new TaskModel());
+        taskModels.get(0).createTask(new HashMap<Role, User>(0));
+        sactivityModels[0].setTaskModels(taskModels);
+        try {
+            workflowManagerBean.createWorkflowModel(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "workflow1", "", sactivityModels);
+        } catch (Exception e) {
+        } finally {
+            Assert.assertTrue(workflowManagerBean.getWorkflows(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST).length == 0);
+        }
+
+    }
+
+
+    @Test
+    public void test5_Activity_ParallelTasks() throws CreationException, FolderAlreadyExistsException, WorkspaceNotFoundException, UserNotFoundException, NotAllowedException, FolderNotFoundException, WorkflowModelAlreadyExistsException, AccessRightException, UserNotActiveException, RoleAlreadyExistsException, EntityConstraintException, RoleNotFoundException {
+        Logger.getLogger(WorkflowTest.class.getName()).log(Level.INFO, "Test method : Activity_ParallelTasks");
+        Map<Role, User> roles = new HashMap<>();
+        roles.put(workflowManagerBean.createRole(TestUtil.USER1_TEST, "role1", TestUtil.WORKSPACE_TEST, TestUtil.USER1_TEST), new User(TestUtil.USER1_TEST));
+        roles.put(workflowManagerBean.createRole(TestUtil.USER1_TEST, "role2", TestUtil.WORKSPACE_TEST, TestUtil.USER2_TEST), new User(TestUtil.USER2_TEST));
+        roles.put(workflowManagerBean.createRole(TestUtil.USER1_TEST, "role3", TestUtil.WORKSPACE_TEST, TestUtil.USER3_TEST), new User(TestUtil.USER3_TEST));
+
+        ParallelActivityModel[] activityModels = new ParallelActivityModel[1];
+        activityModels[0] = new ParallelActivityModel();
+        activityModels[0].setLifeCycleState("state1");
+        activityModels[0].setTaskModels(new ArrayList<TaskModel>());
+        activityModels[0].createActivity(roles);
+        TaskModel task = new TaskModel(activityModels[0], 1, "titleTask", "", roles.keySet().iterator().next());
+        task.createTask(roles);
+        activityModels[0].addTaskModel(task);
+        activityModels[0].setTasksToComplete(3);
+        WorkflowModel workflowModel = workflowManagerBean.createWorkflowModel(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "workflow1", "", activityModels);
+        assertTrue(workflowModel != null);
+        assertTrue(workflowManagerBean.getWorkspaceRoles(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST).length == 3);
+
+        Assert.assertTrue(workflowManagerBean.getWorkflows(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST).length == 1);
+
+    }
+
+    @Test
+    public void test6_WorkflowEmptyName() throws RoleNotFoundException, UserNotActiveException, WorkspaceNotFoundException, CreationException, UserNotFoundException, EntityConstraintException, AccessRightException, RoleAlreadyExistsException, NotAllowedException, WorkflowModelAlreadyExistsException, FolderAlreadyExistsException, FolderNotFoundException {
         Logger.getLogger(WorkflowTest.class.getName()).log(Level.INFO, "Test method : Workflow_ActivityValidity");
-        try{
-            userManagerBean.testWorkspaceCreation(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST);
-            WorkflowModel workflowModel = workflowManagerBean.createWorkflowModel(TestUtil.USER1_TEST,TestUtil.WORKSPACE_TEST, "", "", null);
-            assertTrue(workflowModel == null);
-        }
-        catch (Exception e) {
-            Logger.getLogger(WorkflowTest.class.getName()).log(Level.INFO, "Test method : WorkflowCreationWithoutRoles undefined name for workflow " + e);
-            Logger.getLogger(WorkflowTest.class.getName()).log(Level.INFO, "Test method : WorkflowCreationWithoutRoles Stack trace" + e);
-            try {
-                assertTrue(workflowManagerBean.getWorkflows(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST).length == 0);
-            } catch (Exception exp) {
-            }
-        }
+        Map<Role, User> roles = new HashMap<>();
+        roles.put(workflowManagerBean.createRole(TestUtil.USER1_TEST, "role1", TestUtil.WORKSPACE_TEST, TestUtil.USER1_TEST), new User(TestUtil.USER1_TEST));
+        roles.put(workflowManagerBean.createRole(TestUtil.USER1_TEST, "role2", TestUtil.WORKSPACE_TEST, TestUtil.USER2_TEST), new User(TestUtil.USER2_TEST));
+        roles.put(workflowManagerBean.createRole(TestUtil.USER1_TEST, "role3", TestUtil.WORKSPACE_TEST, TestUtil.USER3_TEST), new User(TestUtil.USER3_TEST));
+
+        ActivityModel[] sactivityModels = new SerialActivityModel[1];
+        sactivityModels[0] = new SerialActivityModel();
+        sactivityModels[0].createActivity(roles);
+        sactivityModels[0].setLifeCycleState("etat1");
+        sactivityModels[0].setStep(1);
+        sactivityModels[0].addTaskModel(new TaskModel(sactivityModels[0], 1, "titleTask", "", roles.keySet().iterator().next()));
+
+        WorkflowModel workflowModel = workflowManagerBean.createWorkflowModel(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, " ", "", sactivityModels);
+        Assert.assertTrue(workflowModel == null);
+
     }
+
     @Test
-    public void test7_Task_RoleNameValidity(){
+    public void test7_RoleUserUnicity() {
         Logger.getLogger(WorkflowTest.class.getName()).log(Level.INFO, "Test method : Task_RoleNameValidity");
-        try{
+        try {
             userManagerBean.testWorkspaceCreation(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST);
-            workflowManagerBean.createRole(TestUtil.USER1_TEST,"role1",TestUtil.WORKSPACE_TEST,TestUtil.USER1_TEST);
-            workflowManagerBean.createRole(TestUtil.USER1_TEST,"role1",TestUtil.WORKSPACE_TEST,TestUtil.USER2_TEST);
+            workflowManagerBean.createRole(TestUtil.USER1_TEST, "role1", TestUtil.WORKSPACE_TEST, TestUtil.USER1_TEST);
+            workflowManagerBean.createRole(TestUtil.USER1_TEST, "role1", TestUtil.WORKSPACE_TEST, TestUtil.USER2_TEST);
+            assertTrue(workflowManagerBean.getWorkspaceRoles(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST).length == 1);
 
-
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             Logger.getLogger(WorkflowTest.class.getName()).log(Level.INFO, "Test method : Task_RoleNameValidity: Task with the same name" + e);
             Logger.getLogger(WorkflowTest.class.getName()).log(Level.INFO, "Test method : Task_RoleNameValidity Stack trace" + e);
         }
 
     }
+
+
 }

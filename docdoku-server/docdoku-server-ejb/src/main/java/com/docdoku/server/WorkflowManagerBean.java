@@ -78,7 +78,12 @@ public class WorkflowManagerBean implements IWorkflowManagerWS, IWorkflowManager
         for(ActivityModel activity : pActivityModels){
             if(activity.getLifeCycleState()==null || "".equals(activity.getLifeCycleState() ) || activity.getTaskModels().isEmpty()){
                 throw new NotAllowedException(userLocale,"NotAllowedException3");
+
             }
+            for (TaskModel taskModel : activity.getTaskModels())
+                if (taskModel.getRole() == null || "".equals(taskModel.getRole().getName()))
+                    throw new NotAllowedException(userLocale, "NotAllowedException31");
+
         }
 
         WorkflowModelDAO modelDAO = new WorkflowModelDAO(userLocale, em);
