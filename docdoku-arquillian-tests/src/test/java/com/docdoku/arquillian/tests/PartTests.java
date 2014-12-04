@@ -154,7 +154,7 @@ public class PartTests {
         }
         utx.commit();
 
-        userManagerBean.testWorkspaceCreation(TestUtil.USER_TEST, TestUtil.WORKSPACE_TEST);
+        userManagerBean.testWorkspaceCreation(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST);
 
     }
 
@@ -164,9 +164,9 @@ public class PartTests {
     public void test1_createPartMasterFromTemplate()  {
        Logger.getLogger(PartTests.class.getName()).log(Level.INFO, "Test method : testCreationPartMasterFromTemplate");
       try{
-          partManagerBean.createPartMasterTemplate(TestUtil.USER_TEST, TestUtil.WORKSPACE_TEST, "template1", "planes", "plane_###", new InstanceAttributeTemplate[0], true, true);
-          partManagerBean.createPartMaster(TestUtil.USER_TEST, TestUtil.WORKSPACE_TEST, "plane_125", " ", true, null, "", "template1",new HashMap<String, String>(), new ACLUserEntry[0], new ACLUserGroupEntry[0]);
-          assertTrue(partManagerBean.findPartMasterById(TestUtil.USER_TEST, TestUtil.WORKSPACE_TEST, "plane_125") != null);
+          partManagerBean.createPartMasterTemplate(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "template1", "planes", "plane_###", new InstanceAttributeTemplate[0], true, true);
+          partManagerBean.createPartMaster(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "plane_125", " ", true, null, "", "template1",new HashMap<String, String>(), new ACLUserEntry[0], new ACLUserGroupEntry[0]);
+          assertTrue(partManagerBean.findPartMasterById(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "plane_125") != null);
       }catch (Exception e){
           Logger.getLogger(PartTests.class.getName()).log(Level.INFO, "Test method : testCreationPartMasterFromTemplate"+e);
       }
@@ -182,9 +182,9 @@ public class PartTests {
         attributeTemplates[2]= new InstanceAttributeTemplate("attr3", InstanceAttributeTemplate.AttributeType.NUMBER);
         attributeTemplates[3]= new InstanceAttributeTemplate("attr3", InstanceAttributeTemplate.AttributeType.TEXT);
         attributeTemplates[4]= new InstanceAttributeTemplate("attr3", InstanceAttributeTemplate.AttributeType.URL);
-        partManagerBean.createPartMasterTemplate(TestUtil.USER_TEST, TestUtil.WORKSPACE_TEST, "template1", "planes", "plane_###",attributeTemplates, true, true);
-        partManagerBean.createPartMaster(TestUtil.USER_TEST, TestUtil.WORKSPACE_TEST, "plane_125", " ", true, null, "", "template1",new HashMap<String, String>(), new ACLUserEntry[0], new ACLUserGroupEntry[0]);
-        assertTrue(partManagerBean.findPartMasterById(TestUtil.USER_TEST, TestUtil.WORKSPACE_TEST, "plane_125") != null);
+        partManagerBean.createPartMasterTemplate(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "template1", "planes", "plane_###",attributeTemplates, true, true);
+        partManagerBean.createPartMaster(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "plane_125", " ", true, null, "", "template1",new HashMap<String, String>(), new ACLUserEntry[0], new ACLUserGroupEntry[0]);
+        assertTrue(partManagerBean.findPartMasterById(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "plane_125") != null);
     }
 
     @Test
@@ -199,15 +199,15 @@ public class PartTests {
         for (InstanceAttributeTemplate attr:attributeTemplates){
             attr.setMandatory(true);
         }
-        partManagerBean.createPartMasterTemplate(TestUtil.USER_TEST, TestUtil.WORKSPACE_TEST, "template1", "planes", "plane_###",attributeTemplates, true, true);
-        PartMaster partMaster= partManagerBean.createPartMaster(TestUtil.USER_TEST, TestUtil.WORKSPACE_TEST, "plane_125", " ", true, null, "", "template1",new HashMap<String, String>(), new ACLUserEntry[0], new ACLUserGroupEntry[0]);
+        partManagerBean.createPartMasterTemplate(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "template1", "planes", "plane_###",attributeTemplates, true, true);
+        PartMaster partMaster= partManagerBean.createPartMaster(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "plane_125", " ", true, null, "", "template1",new HashMap<String, String>(), new ACLUserEntry[0], new ACLUserGroupEntry[0]);
         List<InstanceAttribute> attrs  =  new ArrayList<InstanceAttribute>();
         attrs.add(new InstanceDateAttribute("attr1", new Date(),true));
         attrs.add(new InstanceBooleanAttribute("attr2",true,true));
         attrs.add(new InstanceNumberAttribute("attr3", 123,true));
         attrs.add(new InstanceTextAttribute("attr4", "text",true));
         attrs.add(new InstanceURLAttribute("attr5", "http://localhost:8080",true));
-        PartRevision partRevision =  partManagerBean.updatePartIteration(TestUtil.USER_TEST, partMaster.getPartRevisions().get(0).getPartIterations().get(0).getKey(), "", PartIteration.Source.BUY, new ArrayList<PartUsageLink>(), attrs, new DocumentIterationKey[0]);
+        PartRevision partRevision =  partManagerBean.updatePartIteration(TestUtil.USER1_TEST, partMaster.getPartRevisions().get(0).getPartIterations().get(0).getKey(), "", PartIteration.Source.BUY, new ArrayList<PartUsageLink>(), attrs, new DocumentIterationKey[0]);
         List<PartRevision> revisions = new ArrayList<PartRevision>() ;
         revisions.add(partRevision);
         partMaster.setPartRevisions(revisions);
@@ -224,27 +224,27 @@ public class PartTests {
     public void test4_maskValidityPartTemplate() throws Exception {
 
         Logger.getLogger(PartTests.class.getName()).log(Level.INFO, "Test method : testMaskValidityPartTemplate");
-        partManagerBean.createPartMasterTemplate(TestUtil.USER_TEST, TestUtil.WORKSPACE_TEST, "template1", "planes", "ref_##_###", new InstanceAttributeTemplate[0], true, true);
+        partManagerBean.createPartMasterTemplate(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "template1", "planes", "ref_##_###", new InstanceAttributeTemplate[0], true, true);
 
-        PartMaster partMaster= partManagerBean.createPartMaster(TestUtil.USER_TEST, TestUtil.WORKSPACE_TEST, "rof_12_526", " ", true, null, "", "template1",new HashMap<String, String>(), new ACLUserEntry[0], new ACLUserGroupEntry[0]);
+        PartMaster partMaster= partManagerBean.createPartMaster(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "rof_12_526", " ", true, null, "", "template1",new HashMap<String, String>(), new ACLUserEntry[0], new ACLUserGroupEntry[0]);
         partMaster.setAttributesLocked(true);
-        partManagerBean.createPartMaster(TestUtil.USER_TEST, TestUtil.WORKSPACE_TEST, "ref_1235", " ", true, null, "", "template1",new HashMap<String, String>(), new ACLUserEntry[0], new ACLUserGroupEntry[0]);
-        partManagerBean.createPartMaster(TestUtil.USER_TEST, TestUtil.WORKSPACE_TEST, "ref_125", " ", true, null, "", "template1",new HashMap<String, String>(), new ACLUserEntry[0], new ACLUserGroupEntry[0]);
-        assertTrue(partManagerBean.findPartMasterById(TestUtil.USER_TEST, TestUtil.WORKSPACE_TEST, "ref_1235") == null);
-        assertTrue(partManagerBean.findPartMasterById(TestUtil.USER_TEST, TestUtil.WORKSPACE_TEST, "ref_125") == null);
-        assertEquals(partManagerBean.findPartMasterById(TestUtil.USER_TEST, TestUtil.WORKSPACE_TEST, "ref_12_526"), 1);
-        assertEquals(partManagerBean.findAllPartMaster(TestUtil.USER_TEST, TestUtil.WORKSPACE_TEST), 1);
+        partManagerBean.createPartMaster(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "ref_1235", " ", true, null, "", "template1",new HashMap<String, String>(), new ACLUserEntry[0], new ACLUserGroupEntry[0]);
+        partManagerBean.createPartMaster(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "ref_125", " ", true, null, "", "template1",new HashMap<String, String>(), new ACLUserEntry[0], new ACLUserGroupEntry[0]);
+        assertTrue(partManagerBean.findPartMasterById(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "ref_1235") == null);
+        assertTrue(partManagerBean.findPartMasterById(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "ref_125") == null);
+        assertEquals(partManagerBean.findPartMasterById(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "ref_12_526"), 1);
+        assertEquals(partManagerBean.findAllPartMaster(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST), 1);
     }
 
     @Test
     public void test5_duplicatePartName() throws Exception {
         Logger.getLogger(PartTests.class.getName()).log(Level.INFO, "Test method : duplicatePartName");
-        partManagerBean.createPartMaster(TestUtil.USER_TEST, TestUtil.WORKSPACE_TEST, "plane_125", " ", true, null, "", null, new HashMap<String, String>(), new ACLUserEntry[0], new ACLUserGroupEntry[0]);
+        partManagerBean.createPartMaster(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "plane_125", " ", true, null, "", null, new HashMap<String, String>(), new ACLUserEntry[0], new ACLUserGroupEntry[0]);
         try {
-            partManagerBean.createPartMaster(TestUtil.USER_TEST, TestUtil.WORKSPACE_TEST, "plane_125", " ", true, null, "", null,new HashMap<String, String>(), new ACLUserEntry[0], new ACLUserGroupEntry[0]);
+            partManagerBean.createPartMaster(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "plane_125", " ", true, null, "", null,new HashMap<String, String>(), new ACLUserEntry[0], new ACLUserGroupEntry[0]);
         }catch (Exception ignored){}
        finally {
-            assertTrue(partManagerBean.findAllPartMaster(TestUtil.USER_TEST,TestUtil.WORKSPACE_TEST) == 1);
+            assertTrue(partManagerBean.findAllPartMaster(TestUtil.USER1_TEST,TestUtil.WORKSPACE_TEST) == 1);
         }
     }
 

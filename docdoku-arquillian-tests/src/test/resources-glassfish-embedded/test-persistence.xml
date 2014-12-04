@@ -59,9 +59,15 @@
         <class>com.docdoku.core.security.WorkspaceUserMembership</class>
         <class>com.docdoku.core.workflow.Activity</class>
         <class>com.docdoku.core.workflow.ParallelActivity</class>
+        <class>com.docdoku.core.workflow.ParallelActivityModel</class>
         <class>com.docdoku.core.workflow.SerialActivity</class>
+        <class>com.docdoku.core.workflow.SerialActivityModel</class>
         <class>com.docdoku.core.workflow.Task</class>
+        <class>com.docdoku.core.workflow.Role</class>
+        <class>com.docdoku.core.workflow.TaskModel</class>
         <class>com.docdoku.core.workflow.Workflow</class>
+        <class>com.docdoku.core.workflow.WorkflowModel</class>
+        <class>com.docdoku.core.workflow.ActivityModel</class>
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
         <properties>
             <property name="eclipselink.logging.level" value="FINE"/>

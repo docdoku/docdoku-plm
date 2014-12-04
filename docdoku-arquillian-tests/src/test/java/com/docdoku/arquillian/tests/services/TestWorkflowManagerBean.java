@@ -24,9 +24,7 @@ package com.docdoku.arquillian.tests.services;
 import com.docdoku.core.change.ChangeItem;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.services.IWorkflowManagerLocal;
-import com.docdoku.core.workflow.ActivityModel;
-import com.docdoku.core.workflow.Role;
-import com.docdoku.core.workflow.WorkflowModel;
+import com.docdoku.core.workflow.*;
 import com.sun.enterprise.security.ee.auth.login.ProgrammaticLogin;
 
 
@@ -51,7 +49,7 @@ public class TestWorkflowManagerBean {
     private String password = "password";
 
 
-    public WorkflowModel createWorkflow(String login,String pWorkspaceId, String pId, String pFinalLifeCycleState, ActivityModel[] pActivityModels) throws UserNotActiveException, WorkspaceNotFoundException, AccessRightException, CreationException, FolderNotFoundException, UserNotFoundException, FolderAlreadyExistsException, NotAllowedException, WorkflowModelAlreadyExistsException {
+    public WorkflowModel createWorkflowModel(String login, String pWorkspaceId, String pId, String pFinalLifeCycleState, ActivityModel[] pActivityModels) throws UserNotActiveException, WorkspaceNotFoundException, AccessRightException, CreationException, FolderNotFoundException, UserNotFoundException, FolderAlreadyExistsException, NotAllowedException, WorkflowModelAlreadyExistsException {
         loginP.login(login, password.toCharArray());
         WorkflowModel workflowModel = workflowManagerLocal.createWorkflowModel(pWorkspaceId,pId,pFinalLifeCycleState,pActivityModels);
         loginP.logout();
@@ -71,9 +69,17 @@ public class TestWorkflowManagerBean {
         return roles;
     }
 
-    public Role createRole(String login,String roleName,String workspace, String userlogin) throws UserNotActiveException, WorkspaceNotFoundException, CreationException, UserNotFoundException, AccessRightException, RoleAlreadyExistsException {
+    public Role createRole(String login,String roleName,String workspace, String userlogin) throws UserNotActiveException, WorkspaceNotFoundException, CreationException, UserNotFoundException, AccessRightException, RoleNotFoundException, EntityConstraintException, RoleAlreadyExistsException {
         loginP.login(login, password.toCharArray());
-        Role role = workflowManagerLocal.createRole(roleName,workspace,userlogin);
+        Role roleExist = null, role = null;
+        for(Role pRole: workflowManagerLocal.getRoles(workspace)){
+            if (pRole.getName().equals(roleName)){
+                roleExist = pRole;
+            }
+        }
+        if (roleExist == null){
+            role = workflowManagerLocal.createRole(roleName,workspace,userlogin);
+        }
         loginP.logout();
         return role;
     }

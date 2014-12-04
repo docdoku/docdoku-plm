@@ -3,8 +3,9 @@ package com.docdoku.arquillian.tests.services;
 import com.docdoku.core.configuration.BaselineCreation;
 import com.docdoku.core.configuration.ProductBaseline;
 import com.docdoku.core.exceptions.*;
-import com.docdoku.core.meta.InstanceAttributeTemplate;
-import com.docdoku.core.product.*;
+
+import com.docdoku.core.product.ConfigurationItem;
+import com.docdoku.core.product.ConfigurationItemKey;
 import com.docdoku.core.services.IProductBaselineManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.esindexer.ESIndexer;
