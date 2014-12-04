@@ -76,7 +76,7 @@ public class WorkflowManagerBean implements IWorkflowManagerWS, IWorkflowManager
         }
 
         for(ActivityModel activity : pActivityModels){
-            if(activity.getLifeCycleState()==null || "".equals(activity.getLifeCycleState())){
+            if(activity.getLifeCycleState()==null || "".equals(activity.getLifeCycleState() ) || activity.getTaskModels().isEmpty()){
                 throw new NotAllowedException(userLocale,"NotAllowedException3");
             }
         }
