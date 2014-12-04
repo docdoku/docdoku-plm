@@ -17,14 +17,22 @@
             <h3>#{i18nAccountEdition['section.title']}</h3>
             <h:form id="account">
                 <fieldset>
-                    <span id="login">#{i18nAccountEdition['section.login']} #{accountBean.login}</span><br/>
-                    <c:if test="#{not empty accountBean.organizationName}"><span id="organization">#{i18nAccountEdition['section.organization']} #{accountBean.organizationName}</span><br/></c:if>
+                    <span id="login">#{i18nAccountEdition['section.login']} : #{accountBean.login}</span><br/>
+                    <c:if test="#{not empty accountBean.organizationName}"><span id="organization">#{i18nAccountEdition['section.organization']} : #{accountBean.organizationName}</span><br/></c:if>
 
+                    <br/>
                     <h:outputLabel value="#{i18nAccountEdition['section.name']}*:" for="name"/>
                     <h:inputText id="name" value="#{accountBean.name}" size="20" maxlength="255"/>
 
                     <h:outputLabel value="#{i18nAccountEdition['section.email']}*:" for="email"/>
                     <h:inputText id="email" value="#{accountBean.email}" size="20" maxlength="255"/>
+
+                    <h:outputLabel value="#{i18nAccountEdition['section.language']}*:" for="email"/>
+                    <h:selectOneMenu id="language" value="#{accountBean.language}">
+                        <f:selectItem id="browser-language-item" itemLabel="#{i18nAccountEdition['section.language.browser']} : #{accountBean.browserLanguage}" itemValue="" />
+                        <f:selectItem id="en-language-item" itemLabel="#{i18nAccountEdition['section.language.en']}" itemValue="en" />
+                        <f:selectItem id="fr-language-item" itemLabel="#{i18nAccountEdition['section.language.fr']}" itemValue="fr" />
+                    </h:selectOneMenu>
 
                     <br/>
                     <h:selectBooleanCheckbox style="display: inline;" value="false" title="#{i18nAccountEdition['section.change_password']}" id="changePassword" onclick="uncheckPasswordFields();"/>

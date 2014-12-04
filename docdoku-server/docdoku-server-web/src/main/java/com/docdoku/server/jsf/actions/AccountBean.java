@@ -56,7 +56,9 @@ public class AccountBean {
     }
 
     public String updateAccount() throws AccountNotFoundException {
-        language = FacesContext.getCurrentInstance().getViewRoot().getLocale().getLanguage();
+        if(language == null || "".equals(language) || " ".equals(language)){
+            language = FacesContext.getCurrentInstance().getViewRoot().getLocale().getLanguage();
+        }
         userManager.updateAccount(name, email, language, password);
         HttpServletRequest request = (HttpServletRequest) (FacesContext.getCurrentInstance().getExternalContext().getRequest());
         return request.getContextPath()+"/";
@@ -95,6 +97,9 @@ public class AccountBean {
     }
     public void setLanguage(String language) {
         this.language = language;
+    }
+    public String getBrowserLanguage() {
+        return FacesContext.getCurrentInstance().getViewRoot().getLocale().getLanguage();
     }
 
     public String getOrganizationName() {
