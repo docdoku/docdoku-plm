@@ -262,6 +262,7 @@ public class WorkflowTest {
         assertTrue(workflowManagerBean.getWorkspaceRoles(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST).length == 3);
 
         Assert.assertTrue(workflowManagerBean.getWorkflows(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST).length == 1);
+        Assert.assertTrue(((ParallelActivityModel)workflowManagerBean.getWorkflows(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST)[0].getActivityModels().get(0)).getTasksToComplete() == 1);
 
     }
 
@@ -280,23 +281,26 @@ public class WorkflowTest {
         sactivityModels[0].setStep(1);
         sactivityModels[0].addTaskModel(new TaskModel(sactivityModels[0], 1, "titleTask", "", roles.keySet().iterator().next()));
 
-        WorkflowModel workflowModel = workflowManagerBean.createWorkflowModel(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, " ", "", sactivityModels);
-        Assert.assertTrue(workflowModel == null);
+        try {
+            WorkflowModel workflowModel = workflowManagerBean.createWorkflowModel(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "", "", sactivityModels);
+        }
+        catch (Exception e){}
+        finally {
+            Assert.assertTrue(workflowManagerBean.getWorkflows(TestUtil.USER1_TEST,TestUtil.WORKSPACE_TEST).length == 0);
+        }
 
     }
 
     @Test
-    public void test7_RoleUserUnicity() {
+    public void test7_RoleUserUnicity() throws WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException {
         Logger.getLogger(WorkflowTest.class.getName()).log(Level.INFO, "Test method : Task_RoleNameValidity");
         try {
-            userManagerBean.testWorkspaceCreation(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST);
             workflowManagerBean.createRole(TestUtil.USER1_TEST, "role1", TestUtil.WORKSPACE_TEST, TestUtil.USER1_TEST);
             workflowManagerBean.createRole(TestUtil.USER1_TEST, "role1", TestUtil.WORKSPACE_TEST, TestUtil.USER2_TEST);
-            assertTrue(workflowManagerBean.getWorkspaceRoles(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST).length == 1);
 
-        } catch (Exception e) {
-            Logger.getLogger(WorkflowTest.class.getName()).log(Level.INFO, "Test method : Task_RoleNameValidity: Task with the same name" + e);
-            Logger.getLogger(WorkflowTest.class.getName()).log(Level.INFO, "Test method : Task_RoleNameValidity Stack trace" + e);
+        } catch (Exception e) { }
+        finally {
+            assertTrue(workflowManagerBean.getWorkspaceRoles(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST).length == 1);
         }
 
     }

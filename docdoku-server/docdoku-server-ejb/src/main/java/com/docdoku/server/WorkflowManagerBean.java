@@ -71,6 +71,10 @@ public class WorkflowManagerBean implements IWorkflowManagerWS, IWorkflowManager
         User user = userManager.checkWorkspaceWriteAccess(pWorkspaceId);
         Locale userLocale = new Locale(user.getLanguage());
 
+        if(pId == null || pId.isEmpty()){
+            throw new NotAllowedException(userLocale,"WorkflowNameEmptyException");
+        }
+
         if(pActivityModels.length==0){
             throw new NotAllowedException(userLocale,"NotAllowedException2");
         }
