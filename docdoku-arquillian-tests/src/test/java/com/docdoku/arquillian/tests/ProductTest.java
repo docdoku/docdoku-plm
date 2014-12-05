@@ -29,8 +29,10 @@ import com.docdoku.core.common.*;
 import com.docdoku.core.configuration.BaselineCreation;
 import com.docdoku.core.configuration.BaselinedPart;
 import com.docdoku.core.configuration.ProductBaseline;
+import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.gcm.GCMAccount;
+import com.docdoku.core.meta.InstanceAttributeTemplate;
 import com.docdoku.core.product.*;
 import com.docdoku.core.security.*;
 import com.docdoku.core.services.*;
@@ -40,6 +42,7 @@ import com.docdoku.server.esindexer.ESMapper;
 import com.docdoku.server.esindexer.ESSearcher;
 import com.docdoku.server.esindexer.ESTools;
 import com.docdoku.server.gcm.GCMSenderBean;
+import com.docdoku.server.products.ProductBaselineManagerBean;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
@@ -74,12 +77,6 @@ import static org.junit.Assert.assertTrue;
 public class ProductTest {
 
     @EJB
-    private ESIndexer esIndexer;
-
-    @EJB
-    private TestDocumentManagerBean documentManagerBean;
-
-    @EJB
     private TestUserManagerBean userManagerBean;
 
     @EJB
@@ -103,13 +100,16 @@ public class ProductTest {
                 .addPackage(Workspace.class.getPackage())
                 .addClasses(
                         Account.class,
+                        ACLUserEntry.class,
+                        ACLUserGroupEntry.class,
                         BaselineCreation.class,
-                        BaselinedPart.class,
                         Organization.class,
                         Credential.class,
                         ConfigurationItemKey.class,
+                        ConfigurationItem.class,
                         DataManagerBean.class,
                         DocumentManagerBean.class,
+                        DocumentIterationKey.class,
                         ESIndexer.class,
                         ESMapper.class,
                         ESSearcher.class,
@@ -120,19 +120,26 @@ public class ProductTest {
                         IDocumentManagerLocal.class,
                         IProductManagerLocal.class,
                         IProductBaselineManagerLocal.class,
+                        IProductManagerLocal.class,
                         IGCMSenderLocal.class,
                         IMailerLocal.class,
+                        InstanceAttributeTemplate.class,
                         IUserManagerLocal.class,
                         IWorkspaceManagerLocal.class,
                         JsonValue.class,
                         MailerBean.class,
-                        PartIterationKey.class,
-                        ProductBaseline.class,
+                        PartMaster.class,
+                        PartMasterTemplate.class,
+                        PartRevision.class,
+                        PartRevisionKey.class,
                         ProductManagerBean.class,
+                        ProductBaselineManagerBean.class,
+                        ProductBaseline.class,
+                        PartUsageLink.class,
                         TestDocumentManagerBean.class,
+                        TestUserManagerBean.class,
                         TestPartManagerBean.class,
                         TestProductManagerBean.class,
-                        TestUserManagerBean.class,
                         UserManagerBean.class,
                         Workspace.class,
                         WorkspaceManagerBean.class,
@@ -160,9 +167,9 @@ public class ProductTest {
     }
 
 
-  //  @Test
+   @Test
     public void test1_ProductWithNullPart() throws Exception{
-        Logger.getLogger(PartTests.class.getName()).log(Level.INFO, "Test method : ProductWithNullPart");
+        Logger.getLogger(ProductTest.class.getName()).log(Level.INFO, "Test method : ProductWithNullPart");
         try {
             productManagerBean.createConfigurationItem(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "produit1", "", null);
         } catch (NotAllowedException |WorkspaceNotFoundException |PartMasterNotFoundException| ConfigurationItemAlreadyExistsException| CreationException| AccessRightException |UserNotFoundException|PartMasterTemplateAlreadyExistsException e) {
@@ -197,14 +204,14 @@ public class ProductTest {
             Logger.getLogger(PartTests.class.getName()).log(Level.INFO, "Test method : productCreation stack trace" + e);
         }
     }
-/*
+
     @Test
     public void test4_baselineProductNotCheckouted() throws Exception{
 
             partManagerBean.createPartMaster(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "part1", " ", true, null, "", null, null, null, null);
             productManagerBean.createConfigurationItem(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "produit1", "", "part1");
             ConfigurationItem configurationItem = productManagerBean.getListConfigurationItem(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST).get(0);
-            Assert.assertTrue(configurationItem != null);
+            assertTrue(configurationItem != null);
             ConfigurationItemKey configurationItemKey = new ConfigurationItemKey(TestUtil.WORKSPACE_TEST, "produit1");
             BaselineCreation baselineCreation = productManagerBean.baselineProduct(TestUtil.USER1_TEST, configurationItemKey, "myBaseline", ProductBaseline.BaselineType.RELEASED, "");
             ProductBaseline productBaseline = productManagerBean.getBaseline(TestUtil.USER1_TEST, baselineCreation.getProductBaseline().getId());
@@ -238,5 +245,5 @@ public class ProductTest {
             }
         }
     }
-*/
+
 }
