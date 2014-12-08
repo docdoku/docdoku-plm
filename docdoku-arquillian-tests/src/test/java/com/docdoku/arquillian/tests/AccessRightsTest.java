@@ -34,7 +34,6 @@ import com.docdoku.server.esindexer.ESMapper;
 import com.docdoku.server.esindexer.ESSearcher;
 import com.docdoku.server.esindexer.ESTools;
 import com.docdoku.server.gcm.GCMSenderBean;
-import junit.framework.Assert;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
@@ -136,9 +135,9 @@ public class AccessRightsTest {
     public void Test1_testSimpleCreation() throws Exception {
         Logger.getLogger(AccessRightsTest.class.getName()).log(Level.INFO, "Test method : testSimpleCreation");
         userManagerBean.testWorkspaceCreation("user1", "TEST_WORKSPACE");
-        documentManagerBean.testFolderCreation("user1", "TEST_WORKSPACE", "TEST_FOLDER");
+        documentManagerBean.createFolder("user1", "TEST_WORKSPACE", "TEST_FOLDER");
         userManagerBean.testAddingUserInWorkspace("user1", "user2", "TEST_WORKSPACE");
-        documentManagerBean.testDocumentCreation("user2", "TEST_WORKSPACE/TEST_FOLDER", "DOCUMENT0", null, null);
+        documentManagerBean.createDocumentMaster("user2", "TEST_WORKSPACE/TEST_FOLDER", "DOCUMENT0", null, null);
 
     }
 
@@ -146,7 +145,7 @@ public class AccessRightsTest {
     public void Test2_testMatrixRights1() throws Exception {
         Logger.getLogger(AccessRightsTest.class.getName()).log(Level.INFO, "Test method : testMatrixRights1");
         userManagerBean.testGrantingUserAccessInWorkspace("user1", new String[]{"user2"}, "TEST_WORKSPACE", false);
-        documentManagerBean.testDocumentCreation("user2", "TEST_WORKSPACE/TEST_FOLDER", "DOCUMENT1", null, null);
+        documentManagerBean.createDocumentMaster("user2", "TEST_WORKSPACE/TEST_FOLDER", "DOCUMENT1", null, null);
     }
 
     @Test
@@ -157,7 +156,7 @@ public class AccessRightsTest {
         userManagerBean.testAddingUserInGroup("user1", "group1", "TEST_WORKSPACE", "user3");
         userManagerBean.testAddingUserInWorkspace("user1", "user3", "TEST_WORKSPACE");
         userManagerBean.testGrantingUserAccessInWorkspace("user1", new String[]{"user3"}, "TEST_WORKSPACE", false);
-        documentManagerBean.testDocumentCreation("user3", "TEST_WORKSPACE/TEST_FOLDER", "DOCUMENT3", null, null);
+        documentManagerBean.createDocumentMaster("user3", "TEST_WORKSPACE/TEST_FOLDER", "DOCUMENT3", null, null);
     }
 
     @Test
@@ -168,7 +167,7 @@ public class AccessRightsTest {
         userManagerBean.testGrantingUserGroupAccessInWorkspace("user1", new String[]{"group1"}, "TEST_WORKSPACE", true);
         userManagerBean.testAddingUserInGroup("user1", "group1", "TEST_WORKSPACE", "user3");
         userManagerBean.testAddingUserInGroup("user1", "group2", "TEST_WORKSPACE", "user3");
-        documentManagerBean.testDocumentCreation("user3", "TEST_WORKSPACE/TEST_FOLDER", "DOCUMENT4", null, null);
+        documentManagerBean.createDocumentMaster("user3", "TEST_WORKSPACE/TEST_FOLDER", "DOCUMENT4", null, null);
     }
 
     @Test
@@ -185,7 +184,7 @@ public class AccessRightsTest {
         ACLUserGroupEntry[] aclUserGroupEntries = new ACLUserGroupEntry[1];
         aclUserGroupEntries[0] = new ACLUserGroupEntry(new ACL(), userGroup, ACL.Permission.FULL_ACCESS);
 
-        documentManagerBean.testDocumentCreation("user1", "TEST_WORKSPACE/TEST_FOLDER", "DOCUMENT5", aclUserEntries, aclUserGroupEntries);
+        documentManagerBean.createDocumentMaster("user1", "TEST_WORKSPACE/TEST_FOLDER", "DOCUMENT5", aclUserEntries, aclUserGroupEntries);
     }
 
     @Test

@@ -5,6 +5,7 @@ package com.docdoku.arquillian.tests.util;
  */
 public class TestUtil {
 
+    public static final String FOLDER_TEST = "Folder1";
     public static String WORKSPACE_TEST = "TEST_WORKSPACE";
     public static String USER1_TEST = "user1";
     public static String USER2_TEST = "user2";

@@ -55,7 +55,7 @@ public class TestUploadDownloadManagerBean {
         return dataHandler;
     }
 
-    void uploadToDocument(String login, String workspaceId, String docMId, String docMVersion, int iteration, String fileName, DataHandler data) throws CreationException, WorkspaceNotFoundException, NotAllowedException, DocumentRevisionNotFoundException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException, AccessRightException, IOException {
+    public void uploadToDocument(String login, String workspaceId, String docMId, String docMVersion, int iteration, String fileName, DataHandler data) throws CreationException, WorkspaceNotFoundException, NotAllowedException, DocumentRevisionNotFoundException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException, AccessRightException, IOException {
         loginP.login(login, password.toCharArray());
         uploadDownloadWS.uploadToDocument(workspaceId, docMId, docMVersion, iteration, fileName, data);
         loginP.logout();
