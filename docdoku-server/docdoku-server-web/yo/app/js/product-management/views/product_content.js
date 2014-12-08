@@ -9,8 +9,9 @@ define([
     'common-objects/views/baselines/snap_baseline_view',
     'text!common-objects/templates/buttons/snap_latest_button.html',
     'text!common-objects/templates/buttons/snap_released_button.html',
-    'text!common-objects/templates/buttons/delete_button.html'
-], function (Backbone, Mustache, ConfigurationItemCollection, template, ProductListView, ProductCreationView, SnapBaselineView, snapLatestButton, snapReleasedButton, deleteButton) {
+    'text!common-objects/templates/buttons/delete_button.html',
+    'common-objects/views/alert'
+], function (Backbone, Mustache, ConfigurationItemCollection, template, ProductListView, ProductCreationView, SnapBaselineView, snapLatestButton, snapReleasedButton, deleteButton, AlertView) {
     'use strict';
 	var ProductContentView = Backbone.View.extend({
 
@@ -51,6 +52,7 @@ define([
         },
 
         bindDomElements: function () {
+            this.$notifications = this.$el.find('.notifications').first();
             this.deleteButton = this.$('.delete');
             this.snapLatestBaselineButton = this.$('.new-latest-baseline');
             this.snapReleasedBaselineButton = this.$('.new-released-baseline');
@@ -74,6 +76,7 @@ define([
                     type: 'LATEST'
                 });
             window.document.body.appendChild(snapBaselineView.render().el);
+            snapBaselineView.on('warning', this.onWarning);
             snapBaselineView.openModal();
         },
 
@@ -84,6 +87,7 @@ define([
                     type: 'RELEASED'
                 });
             window.document.body.appendChild(snapBaselineView.render().el);
+            snapBaselineView.on('warning', this.onWarning);
             snapBaselineView.openModal();
         },
 
@@ -111,6 +115,24 @@ define([
             } else {
                 this.snapReleasedBaselineButton.hide();
             }
+        },
+
+        onError:function(model, error){
+            var errorMessage = error ? error.responseText : model;
+
+            this.$notifications.append(new AlertView({
+                type: 'error',
+                message: errorMessage
+            }).render().$el);
+        },
+
+        onWarning:function(model, error){
+            var errorMessage = error ? error.responseText : model;
+
+            this.$notifications.append(new AlertView({
+                type: 'warning',
+                message: errorMessage
+            }).render().$el);
         }
 
     });

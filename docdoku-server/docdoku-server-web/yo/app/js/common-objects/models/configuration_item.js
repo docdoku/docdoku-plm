@@ -40,12 +40,7 @@ define(['backbone'], function (Backbone) {
                 url: this.urlRoot() + '/' + this.getId() + '/baselines',
                 data: JSON.stringify(baselineArgs),
                 contentType: 'application/json; charset=utf-8',
-                success: function (e) {
-                    if (typeof(e) === 'string') {
-                        alert(e);
-                    }
-                    callbacks.success();
-                },
+                success: callbacks.success,
                 error: callbacks.error
             });
         },
