@@ -23,6 +23,7 @@ define([
             this.$el.html(Mustache.render(template, {model: this.model, i18n: App.config.i18n}));
 
             App.$productManagementMenu = this.$('#product-management-menu');
+            App.$productManagementContent = this.$('#product-management-content');
 
             App.$productManagementMenu.customResizable({
                 containment: this.$el

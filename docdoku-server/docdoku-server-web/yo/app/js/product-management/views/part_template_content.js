@@ -1,24 +1,22 @@
-/*global define*/
+/*global define,App*/
 define([
     'backbone',
-    "mustache",
-    "collections/part_templates",
-    "text!templates/part_template_content.html",
-    "views/part_template_list",
-    "views/part_template_creation_view",
-    "text!common-objects/templates/buttons/delete_button.html"
+    'mustache',
+    'collections/part_templates',
+    'text!templates/part_template_content.html',
+    'views/part_template_list',
+    'views/part_template_creation_view',
+    'text!common-objects/templates/buttons/delete_button.html'
 ], function (Backbone, Mustache, PartTemplateCollection, template, PartTemplateListView, PartTemplateCreationView, deleteButton) {
+    'use strict';
     var PartTemplateContentView = Backbone.View.extend({
-
-        el: "#product-management-content",
-
         partials: {
             deleteButton: deleteButton
         },
 
         events: {
-            "click button.new-template": "newPartTemplate",
-            "click button.delete": "deletePartTemplate"
+            'click button.new-template': 'newPartTemplate',
+            'click button.delete': 'deletePartTemplate'
         },
 
         initialize: function () {
@@ -31,16 +29,16 @@ define([
             this.bindDomElements();
 
             this.partTemplateListView = new PartTemplateListView({
-                el: this.$("#part_template_table"),
+                el: this.$('#part_template_table'),
                 collection: new PartTemplateCollection()
             }).render();
 
-            this.partTemplateListView.on("delete-button:display", this.changeDeleteButtonDisplay);
+            this.partTemplateListView.on('delete-button:display', this.changeDeleteButtonDisplay);
             return this;
         },
 
         bindDomElements: function () {
-            this.deleteButton = this.$(".delete");
+            this.deleteButton = this.$('.delete');
         },
 
         newPartTemplate: function () {
@@ -72,5 +70,4 @@ define([
     });
 
     return PartTemplateContentView;
-
 });

@@ -1,13 +1,13 @@
-/*global _,define,App*/
-'use strict';
+/*global _,define,bootbox,App*/
 define([
     'backbone',
-    "mustache",
+    'mustache',
     'text!templates/baseline/baselines_list.html',
     'views/baseline/baselines_list_item'
 ], function (Backbone, Mustache, template, BaselinesListItemView) {
-    var BaselinesListView = Backbone.View.extend({
+    'use strict';
 
+    var BaselinesListView = Backbone.View.extend({
         events: {
             'click .toggle-checkboxes': 'toggleSelection'
         },
@@ -140,22 +140,24 @@ define([
         },
 
         deleteSelectedBaselines: function () {
-            var that = this;
-            if (window.confirm(App.config.i18n.DELETE_SELECTION_QUESTION)) {
-                _(this.listItemViews).each(function (view) {
-                    if (view.isChecked()) {
-                        view.model.destroy({
-                            dataType: 'text', // server doesn't send a json hash in the response body
-                            success: function () {
-                                that.removeBaseline(view.model);
-                                that.onSelectionChanged();
-                            }, error: function (model, err) {
-                                alert(err.responseText);
-                                that.onSelectionChanged();
-                            }});
-                    }
-                });
-            }
+            var _this = this;
+            bootbox.confirm(App.config.i18n.CONFIRM_DELETE_BASELINE, function(result){
+                if(result){
+                    _(_this.listItemViews).each(function (view) {
+                        if (view.isChecked()) {
+                            view.model.destroy({
+                                dataType: 'text', // server doesn't send a json hash in the response body
+                                success: function () {
+                                    _this.removeBaseline(view.model);
+                                    _this.onSelectionChanged();
+                                }, error: function (model, err) {
+                                    _this.trigger('error',model,err);
+                                    _this.onSelectionChanged();
+                                }});
+                        }
+                    });
+                }
+            });
         },
         redraw: function () {
             this.dataTable();

@@ -20,9 +20,6 @@ define([
 ], function (Backbone, Mustache, PartCollection, PartSearchCollection, template, PartListView, PartCreationView, PartNewVersionView, PromptView, ACLEditView, AdvancedSearchView, deleteButton, checkoutButtonGroup, newVersionButton, releaseButton, aclButton, searchForm) {
     'use strict';
 	var PartContentView = Backbone.View.extend({
-
-        el: '#product-management-content',
-
         events: {
             'click button.new-part': 'newPart',
             'click button.delete': 'deletePart',

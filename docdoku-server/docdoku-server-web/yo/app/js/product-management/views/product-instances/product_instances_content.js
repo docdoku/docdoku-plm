@@ -1,14 +1,15 @@
-/*global define*/
+/*global _.define,App*/
 define([
     'backbone',
-    "mustache",
-    "common-objects/collections/product_instances",
-    "common-objects/collections/configuration_items",
-    "text!templates/product-instances/product_instances_content.html",
-    "views/product-instances/product_instances_list",
-    "views/product-instances/product_instances_creation",
-    "text!common-objects/templates/buttons/delete_button.html"
+    'mustache',
+    'common-objects/collections/product_instances',
+    'common-objects/collections/configuration_items',
+    'text!templates/product-instances/product_instances_content.html',
+    'views/product-instances/product_instances_list',
+    'views/product-instances/product_instances_creation',
+    'text!common-objects/templates/buttons/delete_button.html'
 ], function (Backbone, Mustache, ProductInstancesCollection, ConfigurationItemCollection, template, ProductInstancesListView, ProductInstanceCreationView, deleteButton) {
+    'use strict';
     var BaselinesContentView = Backbone.View.extend({
 
         partials: {
@@ -16,8 +17,8 @@ define([
         },
 
         events: {
-            "click button.new-product-instance": "newProductInstance",
-            "click button.delete": "deleteBaseline"
+            'click button.new-product-instance': 'newProductInstance',
+            'click button.delete': 'deleteBaseline'
         },
 
         initialize: function () {
@@ -38,8 +39,8 @@ define([
         },
 
         bindDomElements: function () {
-            this.deleteButton = this.$(".delete");
-            this.$inputProductId = this.$("#inputProductId");
+            this.deleteButton = this.$('.delete');
+            this.$inputProductId = this.$('#inputProductId');
         },
 
         newProductInstance: function () {
@@ -57,7 +58,7 @@ define([
             var self = this;
             if (list) {
                 list.each(function (product) {
-                    self.$inputProductId.append("<option value='" + product.getId() + "'" + ">" + product.getId() + "</option>");
+                    self.$inputProductId.append('<option value="' + product.getId() + '"' + '>' + product.getId() + '</option>');
                 });
                 this.$inputProductId.combobox({bsVersion: '2'});
             }
@@ -77,7 +78,7 @@ define([
                 collection: this.collection
             }).render();
             this.$el.append(this.listView.el);
-            this.listView.on("delete-button:display", this.changeDeleteButtonDisplay);
+            this.listView.on('delete-button:display', this.changeDeleteButtonDisplay);
         },
 
         deleteBaseline: function () {
@@ -94,9 +95,9 @@ define([
 
         lockButton: function (state) {
             if (state) {
-                $("button.new-product-instance").attr("disabled", "disabled");
+                $('button.new-product-instance').attr('disabled', 'disabled');
             } else {
-                $("button.new-product-instance").removeAttr("disabled");
+                $('button.new-product-instance').removeAttr('disabled');
             }
         }
     });

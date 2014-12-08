@@ -14,9 +14,6 @@ define([
 ], function (Backbone, Mustache, ConfigurationItemCollection, template, ProductListView, ProductCreationView, SnapBaselineView, snapLatestButton, snapReleasedButton, deleteButton, AlertView) {
     'use strict';
 	var ProductContentView = Backbone.View.extend({
-
-        el: '#product-management-content',
-
         partials: {
             snapLatestButton: snapLatestButton,
             snapReleasedButton: snapReleasedButton,
@@ -44,6 +41,8 @@ define([
                 collection: new ConfigurationItemCollection()
             }).render();
 
+            this.productListView.on('error', this.onError);
+            this.productListView.on('warning', this.onWarning);
             this.productListView.on('delete-button:display', this.changeDeleteButtonDisplay);
             this.productListView.on('snap-latest-baseline-button:display', this.changeSnapLatestBaselineButtonDisplay);
             this.productListView.on('snap-released-baseline-button:display', this.changeSnapReleasedBaselineButtonDisplay);

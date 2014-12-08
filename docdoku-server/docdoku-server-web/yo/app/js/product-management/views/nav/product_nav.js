@@ -1,14 +1,14 @@
 /*global define,App*/
 define([
     'backbone',
-    "mustache",
-    "common-objects/common/singleton_decorator",
-    "text!templates/nav/product_nav.html",
-    "views/product_content"
+    'mustache',
+    'common-objects/common/singleton_decorator',
+    'text!templates/nav/product_nav.html',
+    'views/product_content'
 ], function (Backbone, Mustache, singletonDecorator, template, ProductContentView) {
+    'use strict';
     var ProductNavView = Backbone.View.extend({
-
-        el: "#product-nav",
+        el: '#product-nav',
 
         initialize: function () {
             this.render();
@@ -21,21 +21,23 @@ define([
 
         setActive: function () {
             if (App.$productManagementMenu) {
-                App.$productManagementMenu.find(".active").removeClass("active");
+                App.$productManagementMenu.find('.active').removeClass('active');
             }
-            this.$el.find(".nav-list-entry").first().addClass("active");
+            this.$el.find('.nav-list-entry').first().addClass('active');
         },
 
         showContent: function () {
-
             this.setActive();
+			this.cleanView();
+            this.productContentView = new ProductContentView().render();
+            App.$productManagementContent.html(this.productContentView.el);
+        },
 
+        cleanView: function () {
             if (this.productContentView) {
                 this.productContentView.undelegateEvents();
+                this.productContentView.remove();
             }
-
-            this.productContentView = new ProductContentView().render();
-
         }
 
     });

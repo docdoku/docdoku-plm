@@ -1,4 +1,4 @@
-/*global define*/
+/*global _,define,App*/
 define([
     'backbone',
     'mustache',
@@ -8,11 +8,12 @@ define([
     'views/baseline/baselines_list',
     'views/baseline/baseline_duplicate_view',
     'text!common-objects/templates/buttons/delete_button.html',
-    'text!common-objects/templates/buttons/duplicate_button.html'
-], function (Backbone, Mustache, BaselinesCollection, ConfigurationItemCollection, template, BaselinesListView, BaselineDuplicateView, deleteButton, duplicateButton) {
+    'text!common-objects/templates/buttons/duplicate_button.html',
+    'common-objects/views/alert'
+], function (Backbone, Mustache, BaselinesCollection, ConfigurationItemCollection, template, BaselinesListView, BaselineDuplicateView, deleteButton, duplicateButton, AlertView) {
 	'use strict';
-    var BaselinesContentView = Backbone.View.extend({
 
+    var BaselinesContentView = Backbone.View.extend({
         partials: {
             deleteButton: deleteButton,
             duplicateButton: duplicateButton
@@ -41,6 +42,7 @@ define([
         },
 
         bindDomElements: function () {
+            this.$notifications = this.$el.find('.notifications').first();
             this.deleteButton = this.$('.delete');
             this.duplicateButton = this.$('.duplicate');
             this.$inputProductId = this.$('#inputProductId');
@@ -72,6 +74,8 @@ define([
                 }).render();
             }
             this.$el.append(this.listView.el);
+            this.listView.on('error', this.onError);
+            this.listView.on('warning', this.onWarning);
             this.listView.on('delete-button:display', this.changeDeleteButtonDisplay);
             this.listView.on('duplicate-button:display', this.changeDuplicateButtonDisplay);
         },
@@ -100,6 +104,24 @@ define([
             } else {
                 this.duplicateButton.hide();
             }
+        },
+
+        onError:function(model, error){
+            var errorMessage = error ? error.responseText : model;
+
+            this.$notifications.append(new AlertView({
+                type: 'error',
+                message: errorMessage
+            }).render().$el);
+        },
+
+        onWarning:function(model, error){
+            var errorMessage = error ? error.responseText : model;
+
+            this.$notifications.append(new AlertView({
+                type: 'warning',
+                message: errorMessage
+            }).render().$el);
         }
     });
 
