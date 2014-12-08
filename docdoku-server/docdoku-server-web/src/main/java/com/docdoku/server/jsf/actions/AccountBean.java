@@ -117,7 +117,7 @@ public class AccountBean {
     }
 
     public Map<String, Workspace> getAdministeredWorkspaces() {
-        return administeredWorkspaces;
+        return new TreeMap<>(administeredWorkspaces);
     }
     public void setAdministeredWorkspaces(Map<String, Workspace> administeredWorkspaces) {
         this.administeredWorkspaces = administeredWorkspaces;
