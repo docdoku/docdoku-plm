@@ -25,8 +25,10 @@ import com.docdoku.core.common.UserGroupKey;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.services.IUserManagerLocal;
+import com.docdoku.core.services.IWorkspaceManagerLocal;
 import com.docdoku.server.esindexer.ESIndexer;
 import com.sun.enterprise.security.ee.auth.login.ProgrammaticLogin;
+
 
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
@@ -43,6 +45,9 @@ public class TestUserManagerBean {
     private IUserManagerLocal userManagerLocal;
 
     @EJB
+    private IWorkspaceManagerLocal workspaceManagerLocal;
+
+    @EJB
     private ESIndexer esIndexer;
 
     private ProgrammaticLogin loginP = new ProgrammaticLogin();
@@ -52,6 +57,7 @@ public class TestUserManagerBean {
         loginP.login(login, password.toCharArray());
         try{
             esIndexer.deleteWorkspace(pWorkspace);
+            workspaceManagerLocal.deleteWorkspace(pWorkspace);
         }catch (Exception ignored){}
         Workspace workspace = userManagerLocal.createWorkspace(pWorkspace, userManagerLocal.getAccount(login), "", false);
         loginP.logout();
