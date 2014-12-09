@@ -20,14 +20,17 @@
 
 package com.docdoku.arquillian.tests.services;
 
+import com.docdoku.core.document.DocumentMasterTemplate;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.document.DocumentRevisionKey;
 import com.docdoku.core.document.Folder;
 import com.docdoku.core.exceptions.*;
+import com.docdoku.core.meta.InstanceAttributeTemplate;
 import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.sun.enterprise.security.ee.auth.login.ProgrammaticLogin;
+
 
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
@@ -48,19 +51,27 @@ public class TestDocumentManagerBean {
     private String password = "password";
 
 
-    public Folder testFolderCreation(String login, String pWorkspace, String pFolder) throws UserNotActiveException, WorkspaceNotFoundException, AccessRightException, CreationException, FolderNotFoundException, UserNotFoundException, FolderAlreadyExistsException, NotAllowedException {
+    public Folder createFolder(String login, String pWorkspace, String pFolder) throws UserNotActiveException, WorkspaceNotFoundException, AccessRightException, CreationException, FolderNotFoundException, UserNotFoundException, FolderAlreadyExistsException, NotAllowedException {
         loginP.login(login, password.toCharArray());
         Folder folder = documentManagerLocal.createFolder(pWorkspace, pFolder);
         loginP.logout();
         return folder;
     }
 
-    public DocumentRevision testDocumentCreation(String login, String path, String documentId, ACLUserEntry[] pACLUserEntries, ACLUserGroupEntry[] pACLUserGroupEntries) throws WorkspaceNotFoundException, RoleNotFoundException, AccessRightException, CreationException, FolderNotFoundException, UserNotFoundException, NotAllowedException, DocumentMasterAlreadyExistsException, DocumentMasterTemplateNotFoundException, WorkflowModelNotFoundException, FileAlreadyExistsException, DocumentRevisionAlreadyExistsException {
+    public DocumentRevision createDocumentMaster(String login, String path, String documentId, ACLUserEntry[] pACLUserEntries, ACLUserGroupEntry[] pACLUserGroupEntries) throws WorkspaceNotFoundException, RoleNotFoundException, AccessRightException, CreationException, FolderNotFoundException, UserNotFoundException, NotAllowedException, DocumentMasterAlreadyExistsException, DocumentMasterTemplateNotFoundException, WorkflowModelNotFoundException, FileAlreadyExistsException, DocumentRevisionAlreadyExistsException {
         loginP.login(login, password.toCharArray());
         DocumentRevision documentRevision = documentManagerLocal.createDocumentMaster(path, documentId, "", "", null, null, pACLUserEntries, pACLUserGroupEntries, null);
         loginP.logout();
         return documentRevision;
     }
+
+    public DocumentMasterTemplate createDocumentTemplate(String login,String pWorkspaceId, String pId, String pDocumentType, String pMask, InstanceAttributeTemplate[] instanceAttributeTemplates,boolean idGenerated, boolean attributesLocked) throws WorkspaceNotFoundException, RoleNotFoundException, AccessRightException, CreationException, FolderNotFoundException, UserNotFoundException, NotAllowedException, DocumentMasterAlreadyExistsException, DocumentMasterTemplateNotFoundException, WorkflowModelNotFoundException, FileAlreadyExistsException, DocumentRevisionAlreadyExistsException, DocumentMasterTemplateAlreadyExistsException {
+        loginP.login(login, password.toCharArray());
+        DocumentMasterTemplate masterTemplate = documentManagerLocal.createDocumentMasterTemplate(pWorkspaceId,pId,pDocumentType,pMask,instanceAttributeTemplates,idGenerated,attributesLocked);
+        loginP.logout();
+        return masterTemplate;
+    }
+
 
     public void testDocumentCheckIn(String login, DocumentRevisionKey documentRevisionKey) throws UserNotActiveException, WorkspaceNotFoundException, AccessRightException, UserNotFoundException, NotAllowedException, DocumentRevisionNotFoundException, ESServerException {
         loginP.login(login, password.toCharArray());

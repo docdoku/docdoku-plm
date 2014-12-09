@@ -71,8 +71,8 @@ public class WorkflowManagerBean implements IWorkflowManagerWS, IWorkflowManager
         User user = userManager.checkWorkspaceWriteAccess(pWorkspaceId);
         Locale userLocale = new Locale(user.getLanguage());
 
-        if(pId==null){
-            throw new NotAllowedException(userLocale,"NotAllowedException28");
+        if(pId == null || pId.isEmpty()){
+            throw new NotAllowedException(userLocale,"WorkflowNameEmptyException");
         }
 
         if(pActivityModels.length==0){
@@ -80,9 +80,14 @@ public class WorkflowManagerBean implements IWorkflowManagerWS, IWorkflowManager
         }
 
         for(ActivityModel activity : pActivityModels){
-            if(activity.getLifeCycleState()==null || "".equals(activity.getLifeCycleState())){
+            if(activity.getLifeCycleState()==null || "".equals(activity.getLifeCycleState() ) || activity.getTaskModels().isEmpty()){
                 throw new NotAllowedException(userLocale,"NotAllowedException3");
+
             }
+            for (TaskModel taskModel : activity.getTaskModels())
+                if (taskModel.getRole() == null || "".equals(taskModel.getRole().getName()))
+                    throw new NotAllowedException(userLocale, "NotAllowedException31");
+
         }
 
         WorkflowModelDAO modelDAO = new WorkflowModelDAO(userLocale, em);
