@@ -1,19 +1,17 @@
 /*global define,App*/
 define([
     'common-objects/views/components/modal',
-    'text!templates/part_template_creation_view.html',
+    'text!templates/part-template/part_template_creation_view.html',
     'models/part_template',
-    'common-objects/views/file/file_list',
     'common-objects/views/attributes/template_new_attributes'
-], function (ModalView, template, PartTemplate, FileListView, TemplateNewAttributesView) {
-	'use strict';
-    var PartTemplateEditView = ModalView.extend({
-
+], function (ModalView, template, PartTemplate, TemplateNewAttributesView) {
+    'use strict';
+    var PartTemplateCreationView = ModalView.extend({
         template: template,
 
         initialize: function () {
             ModalView.prototype.initialize.apply(this, arguments);
-            this.events["click .modal-footer .btn-primary"] = "interceptSubmit";
+            this.events['click .modal-footer .btn-primary'] = 'interceptSubmit';
             this.events['submit #part_template_creation_form'] = 'onSubmitForm';
         },
 
@@ -23,24 +21,9 @@ define([
 
             this.attributesView = this.addSubView(
                 new TemplateNewAttributesView({
-                    el: '#tab-attributes',
-                    attributesLocked: this.model.isAttributesLocked()
+                    el: '#tab-attributes'
                 })
             ).render();
-
-
-            this.fileListView = new FileListView({
-                baseName: this.model.getBaseName(),
-                deleteBaseUrl: this.model.url(),
-                uploadBaseUrl: this.model.getUploadBaseUrl(),
-                collection: this.model._attachedFile,
-                editMode: true,
-                singleFile: true
-            }).render();
-
-            this.$('#tab-files').append(this.fileListView.el);
-
-            this.attributesView.collection.reset(this.model.get('attributeTemplates'));
 
             this.$('a#mask-help').popover({
                 title: App.config.i18n.MASK,
@@ -48,6 +31,8 @@ define([
                 html: true,
                 content: App.config.i18n.MASK_HELP
             });
+
+            this.$partTemplateReference.customValidity(App.config.i18n.REQUIRED_FIELD);
 
         },
 
@@ -65,28 +50,20 @@ define([
         onSubmitForm: function (e) {
 
             if(this.isValid){
-                // cannot pass a collection of cad file to server.
-                var attachedFile = this.fileListView.collection.first();
-                if (attachedFile) {
-                    this.model.set('attachedFile', attachedFile.get('fullName'));
-                } else {
-                    this.model.set('attachedFile', '');
-                }
-
-                this.model.save({
-                    id: this.$partTemplateReference.val(),
+                this.model = new PartTemplate({
+                    reference: this.$partTemplateReference.val(),
                     partType: this.$partTemplateType.val(),
                     mask: this.$partTemplateMask.val(),
                     idGenerated: this.$partTemplateIdGenerated.is(':checked'),
                     attributeTemplates: this.attributesView.collection.toJSON(),
                     attributesLocked: this.attributesView.isAttributesLocked()
-                }, {
+                });
+
+                this.model.save({}, {
                     wait: true,
                     success: this.onPartTemplateCreated,
                     error: this.onError
                 });
-
-                this.fileListView.deleteFilesToDelete();
             }
 
             e.preventDefault();
@@ -94,12 +71,8 @@ define([
             return false;
         },
 
-        cancelAction: function () {
-            this.fileListView.deleteNewFiles();
-        },
-
         onPartTemplateCreated: function () {
-            this.model.fetch();
+            this.trigger('part-template:created', this.model);
             this.hide();
         },
 
@@ -109,6 +82,6 @@ define([
 
     });
 
-    return PartTemplateEditView;
+    return PartTemplateCreationView;
 
 });

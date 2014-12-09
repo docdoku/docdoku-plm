@@ -1,21 +1,22 @@
-/*global define*/
+/*global define,App*/
 define([
     'backbone',
-    "mustache",
-    "text!templates/part_new_version.html",
-    "common-objects/views/workflow/workflow_mapping",
-    "common-objects/views/workflow/workflow_list",
-    "common-objects/views/security/acl"
+    'mustache',
+    'text!templates/part/part_new_version.html',
+    'common-objects/views/workflow/workflow_mapping',
+    'common-objects/views/workflow/workflow_list',
+    'common-objects/views/security/acl'
 ], function (Backbone, Mustache, template, WorkflowMappingView, WorkflowListView, ACLView) {
+    'use strict';
     var PartNewVersionView = Backbone.View.extend({
 
-        id: "new-version-modal",
-        className: "modal hide fade",
+        id: 'new-version-modal',
+        className: 'modal hide fade',
 
         events: {
-            "click #create-new-version-btn": "createNewVersionAction",
-            "click #cancel-new-version-btn": "closeModalAction",
-            "click a.close": "closeModalAction"
+            'click #create-new-version-btn': 'createNewVersionAction',
+            'click #cancel-new-version-btn': 'closeModalAction',
+            'click a.close': 'closeModalAction'
         },
 
         initialize: function () {
@@ -28,7 +29,7 @@ define([
 
             this.$el.html(this.template);
 
-            this.$el.modal("show");
+            this.$el.modal('show');
 
             this.bindDomElements();
 
@@ -36,24 +37,24 @@ define([
             this.newVersionWorkflowDiv.html(this.workflowsView.el);
 
             this.workflowsMappingView = new WorkflowMappingView({
-                el: this.$("#workflows-mapping")
+                el: this.$('#workflows-mapping')
             });
 
-            this.workflowsView.on("workflow:change", this.workflowsMappingView.updateMapping);
+            this.workflowsView.on('workflow:change', this.workflowsMappingView.updateMapping);
 
             this.aclView = new ACLView({
-                el: this.$("#acl-mapping"),
+                el: this.$('#acl-mapping'),
                 editMode: true
             }).render();
 
-            this.$(".tabs").tabs();
+            this.$('.tabs').tabs();
 
             return this;
         },
 
         bindDomElements: function () {
-            this.newVersionWorkflowDiv = this.$("#new-version-workflow");
-            this.textAreaNewVersionDescription = this.$("#new-version-description");
+            this.newVersionWorkflowDiv = this.$('#new-version-workflow');
+            this.textAreaNewVersionDescription = this.$('#new-version-description');
         },
 
         createNewVersionAction: function () {
@@ -62,7 +63,7 @@ define([
         },
 
         closeModalAction: function () {
-            this.$el.modal("hide");
+            this.$el.modal('hide');
             this.remove();
         }
 

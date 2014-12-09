@@ -29,14 +29,17 @@ define([
         showContent: function () {
             this.setActive();
             this.cleanView();
-            this.contentView = new BaselinesContentView().render();
+            if(!this.contentView){
+                this.contentView = new BaselinesContentView();
+            }
+            this.contentView.render();
             App.$productManagementContent.html(this.contentView.el);
         },
 
         cleanView: function () {
             if (this.contentView) {
                 this.contentView.undelegateEvents();
-                this.contentView.remove();
+                App.$productManagementContent.html('');
             }
         }
 

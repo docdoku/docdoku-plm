@@ -1,18 +1,19 @@
-/*global define*/
+/*global define,App*/
 define([
     'backbone',
-    "mustache",
-    "text!templates/product_list_item.html",
-    "views/product_details_view"
+    'mustache',
+    'text!templates/product/product_list_item.html',
+    'views/product/product_details_view'
 ], function (Backbone, Mustache, template, ProductDetailsView) {
+    'use strict';
     var ProductListItemView = Backbone.View.extend({
 
         events: {
-            "click input[type=checkbox]": "selectionChanged",
-            "click td.product_id": "openDetailsView"
+            'click input[type=checkbox]': 'selectionChanged',
+            'click td.product_id': 'openDetailsView'
         },
 
-        tagName: "tr",
+        tagName: 'tr',
 
         initialize: function () {
             this._isChecked = false;
@@ -20,14 +21,14 @@ define([
 
         render: function () {
             this.$el.html(Mustache.render(template, {model: this.model, url: this.model.getIndexUrl(), i18n: App.config.i18n}));
-            this.$checkbox = this.$("input[type=checkbox]");
-            this.trigger("rendered", this);
+            this.$checkbox = this.$('input[type=checkbox]');
+            this.trigger('rendered', this);
             return this;
         },
 
         selectionChanged: function () {
-            this._isChecked = this.$checkbox.prop("checked");
-            this.trigger("selectionChanged", this);
+            this._isChecked = this.$checkbox.prop('checked');
+            this.trigger('selectionChanged', this);
         },
 
         isChecked: function () {
@@ -35,12 +36,12 @@ define([
         },
 
         check: function () {
-            this.$checkbox.prop("checked", true);
+            this.$checkbox.prop('checked', true);
             this._isChecked = true;
         },
 
         unCheck: function () {
-            this.$checkbox.prop("checked", false);
+            this.$checkbox.prop('checked', false);
             this._isChecked = false;
         },
 
@@ -54,5 +55,4 @@ define([
     });
 
     return ProductListItemView;
-
 });

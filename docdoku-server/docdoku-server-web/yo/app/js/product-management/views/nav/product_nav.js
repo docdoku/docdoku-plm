@@ -4,7 +4,7 @@ define([
     'mustache',
     'common-objects/common/singleton_decorator',
     'text!templates/nav/product_nav.html',
-    'views/product_content'
+    'views/product/product_content'
 ], function (Backbone, Mustache, singletonDecorator, template, ProductContentView) {
     'use strict';
     var ProductNavView = Backbone.View.extend({
@@ -29,14 +29,17 @@ define([
         showContent: function () {
             this.setActive();
 			this.cleanView();
-            this.productContentView = new ProductContentView().render();
+            if(!this.productContentView){
+                this.productContentView = new ProductContentView();
+            }
+            this.productContentView.render();
             App.$productManagementContent.html(this.productContentView.el);
         },
 
         cleanView: function () {
             if (this.productContentView) {
                 this.productContentView.undelegateEvents();
-                this.productContentView.remove();
+                App.$productManagementContent.html('');
             }
         }
 

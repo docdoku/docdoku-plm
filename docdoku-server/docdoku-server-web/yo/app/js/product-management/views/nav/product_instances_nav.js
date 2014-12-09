@@ -29,14 +29,17 @@ define([
         showContent: function () {
             this.setActive();
             this.cleanView();
-            this.contentView = new ProductInstancesContentView().render();
+            if(!this.contentView){
+                this.contentView = new ProductInstancesContentView();
+            }
+            this.contentView.render();
             App.$productManagementContent.html(this.contentView.el);
         },
 
         cleanView: function () {
             if (this.contentView) {
                 this.contentView.undelegateEvents();
-                this.contentView.remove();
+                App.$productManagementContent.html('');
             }
         }
     });
