@@ -176,7 +176,7 @@ public class ProductTest {
             Logger.getLogger(PartTests.class.getName()).info("ProductWithNullPart exception "+e);
         }
         finally {
-            assertTrue(productManagerBean.getListConfigurationItem(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST) == null);
+            assertTrue(productManagerBean.getListConfigurationItem(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST).size() == 0);
         }
 
     }
