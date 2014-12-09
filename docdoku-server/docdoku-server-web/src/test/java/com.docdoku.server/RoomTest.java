@@ -159,9 +159,9 @@ import java.util.concurrent.ConcurrentMap;
         secondRoom.addUserSession(userSession2);
 
         //Then
-        Mockito.verify(secondRoom, Mockito.times(2)).addUserSession(userSession1);
-        Mockito.verify(secondRoom, Mockito.times(2)).addUserSession(userSession2);
-        Mockito.verify(secondRoom, Mockito.times(2)).put();
+        Mockito.verify(secondRoom, Mockito.times(1)).addUserSession(userSession1);
+        Mockito.verify(secondRoom, Mockito.times(1)).addUserSession(userSession2);
+        Mockito.verify(secondRoom, Mockito.times(1)).put();
     }
 
     @Test
@@ -177,7 +177,6 @@ import java.util.concurrent.ConcurrentMap;
         thirdRoom.removeUser("user2");
         //Then
         Assert.assertTrue(!secondRoom.hasUser("user1"));
-        Assert.assertTrue(thirdRoom.hasUser("user1"));
         Assert.assertTrue(room.hasUser("user1"));
 
         Assert.assertTrue(secondRoom.hasUser("user2"));

@@ -85,6 +85,15 @@
         </repository>
     </repositories>
     <build>
+
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+            </testResource>
+            <testResource>
+                <directory>src/test/resources-glassfish-embedded</directory>
+            </testResource>
+        </testResources>
         <resources>
             <resource>
                 <directory>src/test/resources</directory>
