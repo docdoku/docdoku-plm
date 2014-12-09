@@ -85,7 +85,11 @@
         </repository>
     </repositories>
     <build>
-
+        <resources>
+            <resource>
+                <directory>src/test/resources</directory>
+            </resource>
+        </resources>
         <testResources>
             <testResource>
                 <directory>src/test/resources</directory>
@@ -94,14 +98,6 @@
                 <directory>src/test/resources-glassfish-embedded</directory>
             </testResource>
         </testResources>
-        <resources>
-            <resource>
-                <directory>src/test/resources</directory>
-            </resource>
-            <resource>
-                <directory>src/test/resources-glassfish-embedded</directory>
-            </resource>
-        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

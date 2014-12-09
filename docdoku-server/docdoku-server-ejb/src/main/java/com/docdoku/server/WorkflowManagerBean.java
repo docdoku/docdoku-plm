@@ -84,10 +84,11 @@ public class WorkflowManagerBean implements IWorkflowManagerWS, IWorkflowManager
                 throw new NotAllowedException(userLocale,"NotAllowedException3");
 
             }
-            for (TaskModel taskModel : activity.getTaskModels())
-                if (taskModel.getRole() == null || "".equals(taskModel.getRole().getName()))
-                    throw new NotAllowedException(userLocale, "NotAllowedException31");
-
+            for (TaskModel taskModel : activity.getTaskModels()) {
+                if (taskModel.getRole() == null || "".equals(taskModel.getRole().getName())) {
+                    throw new NotAllowedException(userLocale, "NotAllowedException13");
+                }
+            }
         }
 
         WorkflowModelDAO modelDAO = new WorkflowModelDAO(userLocale, em);
