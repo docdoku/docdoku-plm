@@ -29,47 +29,47 @@ function (Backbone, singletonDecorator, ProductNavView, BaselinesNavView, Produc
 	        }
         },
 
-        cleanContent: function () {
-            ProductNavView.getInstance().cleanView();
-            BaselinesNavView.getInstance().cleanView();
-            ProductInstancesNavView.getInstance().cleanView();
-            PartNavView.getInstance().cleanView();
-            PartTemplateNavView.getInstance().cleanView();
+        initNavViews: function () {
+	        ProductNavView.getInstance().cleanView();
+	        BaselinesNavView.getInstance().cleanView();
+	        ProductInstancesNavView.getInstance().cleanView();
+	        PartNavView.getInstance().cleanView();
+	        PartTemplateNavView.getInstance().cleanView();
         },
 
         products: function (workspaceId) {
             this.executeOrReload(workspaceId,function(){
-                this.cleanContent();
+	            this.initNavViews();
 	            ProductNavView.getInstance().showContent();
             });
         },
         baselines: function (workspaceId) {
             this.executeOrReload(workspaceId,function(){
-                this.cleanContent();
+	            this.initNavViews();
 	            BaselinesNavView.getInstance().showContent();
             });
         },
         productInstances: function (workspaceId) {
             this.executeOrReload(workspaceId,function(){
-                this.cleanContent();
+	            this.initNavViews();
 	            ProductInstancesNavView.getInstance().showContent();
             });
         },
         parts: function (workspaceId) {
             this.executeOrReload(workspaceId,function(){
-                this.cleanContent();
+	            this.initNavViews();
 	            PartNavView.getInstance().showContent();
             });
         },
         search: function (workspaceId, query) {
             this.executeOrReload(workspaceId,function(){
-	            this.cleanContent();
+	            this.initNavViews();
 	            PartNavView.getInstance().showContent(query);
             });
         },
         partsTemplate: function (workspaceId) {
             this.executeOrReload(workspaceId,function(){
-	            this.cleanContent();
+	            this.initNavViews();
 	            PartTemplateNavView.getInstance().showContent();
             });
         }

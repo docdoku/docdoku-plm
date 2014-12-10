@@ -225,7 +225,7 @@
                 <network-listeners>
                     <network-listener port="8787" protocol="http-listener-1" address="localhost" transport="tcp" name="http-listener-1" thread-pool="http-thread-pool"></network-listener>
                     <network-listener port="8686" protocol="http-listener" address="localhost" transport="tcp" name="http-listener" thread-pool="http-thread-pool"></network-listener>
-                    <network-listener port="4948" protocol="pu-protocol" address="localhost" transport="tcp" name="admin-listener" thread-pool="admin-thread-pool"></network-listener>
+                    <network-listener port="4848" protocol="pu-protocol" address="localhost" transport="tcp" name="admin-listener" thread-pool="admin-thread-pool"></network-listener>
                 </network-listeners>
                 <transports>
                     <transport name="tcp"></transport>

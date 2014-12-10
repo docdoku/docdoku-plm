@@ -1,9 +1,9 @@
-/*global _,define,App*/
+/*global _,define,App,bootbox*/
 define([
     'backbone',
     'mustache',
-    'text!templates/part_list.html',
-    'views/part_list_item'
+    'text!templates/part/part_list.html',
+    'views/part/part_list_item'
 ], function (Backbone, Mustache, template, PartListItemView) {
 	'use strict';
     var PartListView = Backbone.View.extend({
@@ -12,11 +12,17 @@ define([
             'click .toggle-checkboxes': 'toggleSelection'
         },
 
+        removeSubviews: function () {
+            _(this.listItemViews).invoke('remove');                                                                     // Invoke remove for each views in listItemViews
+            this.listItemViews = [];
+        },
+
         initialize: function () {
             _.bindAll(this);
             this.listenTo(this.collection, 'reset', this.resetList);
             this.listenTo(this.collection, 'add', this.addNewPart);
             this.listItemViews = [];
+            this.$el.on('remove', this.removeSubviews);
         },
 
         render: function () {
@@ -30,21 +36,16 @@ define([
         },
 
         resetList: function () {
-            if (this.oTable) {
-                this.oTable.fnDestroy();
-            }
+            var _this = this;
+            this.removeSubviews();
+
             this.$el.html(Mustache.render(template, {i18n: App.config.i18n}));
             this.bindDomElements();
-            var that = this;
-            this.listItemViews = [];
+
             this.collection.each(function (model) {
-                that.addPart(model);
+                _this.addPart(model);
             });
             this.dataTable();
-        },
-
-        pushPart: function (part) {
-            this.collection.push(part);
         },
 
         addNewPart: function (model) {
@@ -155,22 +156,24 @@ define([
         },
 
         deleteSelectedParts: function () {
-            var that = this;
-            if (confirm(App.config.i18n.DELETE_SELECTION_QUESTION)) {
-                _(this.listItemViews).each(function (view) {
-                    if (view.isChecked()) {
-                        view.model.destroy({
-                            dataType: 'text', // server doesn't send a json hash in the response body
-                            success: function () {
-                                that.removePart(view.model);
-                                that.onSelectionChanged();
-                            }, error: function (model, err) {
-                                alert(err.responseText);
-                                that.onSelectionChanged();
-                            }});
-                    }
-                });
-            }
+            var _this = this;
+            bootbox.confirm(App.config.i18n.CONFIRM_DELETE_PART, function(result){
+                if(result){
+                    _(_this.listItemViews).each(function (view) {
+                        if (view.isChecked()) {
+                            view.model.destroy({
+                                dataType: 'text', // server doesn't send a json hash in the response body
+                                success: function () {
+                                    _this.removePart(view.model);
+                                    _this.onSelectionChanged();
+                                }, error: function (model, err) {
+                                    _this.trigger('error',model,err);
+                                    _this.onSelectionChanged();
+                                }});
+                        }
+                    });
+                }
+            });
         },
 
         releaseSelectedParts: function () {

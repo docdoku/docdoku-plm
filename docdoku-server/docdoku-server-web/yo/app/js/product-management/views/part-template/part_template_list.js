@@ -1,70 +1,75 @@
-/*global _,define,bootbox,App*/
+/*global _,define,App,bootbox*/
 define([
     'backbone',
     'mustache',
-    'text!templates/product_list.html',
-    'views/product_list_item'
-], function (Backbone, Mustache, template, ProductListItemView) {
+    'text!templates/part-template/part_template_list.html',
+    'views/part-template/part_template_list_item'
+], function (Backbone, Mustache, template, PartTemplateListItemView) {
 	'use strict';
-    var ProductListView = Backbone.View.extend({
+    var PartTemplateListView = Backbone.View.extend({
 
         events: {
             'click .toggle-checkboxes': 'toggleSelection'
         },
 
-        initialize: function () {
-            _.bindAll(this);
-            this.listenTo(this.collection, 'reset', this.resetList);
-            this.listenTo(this.collection, 'add', this.addNewProduct);
+        removeSubviews: function () {
+            _(this.listItemViews).invoke('remove');                                                                     // Invoke remove for each views in listItemViews
             this.listItemViews = [];
         },
 
-        render: function () {
-            this.collection.fetch({reset: true});
-            return this;
+        initialize: function () {
+            _.bindAll(this);
+            this.listenTo(this.collection, 'reset', this.resetList);
+            this.listenTo(this.collection, 'add', this.addNewPartTemplate);
+            this.listItemViews = [];
+            this.$el.on('remove', this.removeSubviews);
         },
 
+        render: function () {
+            var _this = this;
+            this.collection.fetch({
+                reset: true,
+                error:function(err){
+                    _this.trigger('error',err);
+                }});
+            return this;
+        },
         bindDomElements: function () {
             this.$items = this.$('.items');
             this.$checkbox = this.$('.toggle-checkboxes');
         },
 
         resetList: function () {
-            if (this.oTable) {
-                this.oTable.fnDestroy();
-            }
+            var _this = this;
+            this.removeSubviews();
+
             this.$el.html(Mustache.render(template, {i18n: App.config.i18n}));
             this.bindDomElements();
-            this.listItemViews = [];
-            var that = this;
+
             this.collection.each(function (model) {
-                that.addProduct(model);
+                _this.addPartTemplate(model);
             });
             this.dataTable();
         },
 
-        pushProduct: function (product) {
-            this.collection.push(product);
-        },
-
-        addNewProduct: function (model) {
-            this.addProduct(model, true);
+        addNewPartTemplate: function (model) {
+            this.addPartTemplate(model, true);
             this.redraw();
         },
 
-        addProduct: function (model, effect) {
-            var view = this.addProductView(model);
+        addPartTemplate: function (model, effect) {
+            var view = this.addPartTemplateView(model);
             if (effect) {
                 view.$el.highlightEffect();
             }
         },
 
-        removeProduct: function (model) {
-            this.removeProductView(model);
+        removePartTemplate: function (model) {
+            this.removePartTemplateView(model);
             this.redraw();
         },
 
-        removeProductView: function (model) {
+        removePartTemplateView: function (model) {
 
             var viewToRemove = _(this.listItemViews).select(function (view) {
                 return view.model === model;
@@ -79,8 +84,8 @@ define([
 
         },
 
-        addProductView: function (model) {
-            var view = new ProductListItemView({model: model}).render();
+        addPartTemplateView: function (model) {
+            var view = new PartTemplateListItemView({model: model}).render();
             this.listItemViews.push(view);
             this.$items.append(view.$el);
             view.on('selectionChanged', this.onSelectionChanged);
@@ -103,70 +108,51 @@ define([
 
         onSelectionChanged: function () {
 
-            var checkedViews = _(this.listItemViews).select(function (view) {
-                return view.isChecked();
+            var checkedViews = _(this.listItemViews).select(function (itemView) {
+                return itemView.isChecked();
             });
 
             if (checkedViews.length <= 0) {
-                this.onNoProductSelected();
+                this.onNoPartTemplateSelected();
             } else if (checkedViews.length === 1) {
-                this.onOneProductSelected();
+                this.onOnePartTemplateSelected();
             } else {
-                this.onSeveralProductsSelected();
+                this.onSeveralPartTemplatesSelected();
             }
 
         },
 
-        onNoProductSelected: function () {
+        onNoPartTemplateSelected: function () {
             this.trigger('delete-button:display', false);
-            this.trigger('snap-latest-baseline-button:display', false);
-            this.trigger('snap-released-baseline-button:display', false);
         },
-
-        onOneProductSelected: function () {
+        onOnePartTemplateSelected: function () {
             this.trigger('delete-button:display', true);
-            this.trigger('snap-latest-baseline-button:display', true);
-            this.trigger('snap-released-baseline-button:display', true);
         },
-
-        onSeveralProductsSelected: function () {
+        onSeveralPartTemplatesSelected: function () {
             this.trigger('delete-button:display', true);
-            this.trigger('snap-latest-baseline-button:display', false);
-            this.trigger('snap-released-baseline-button:display', false);
         },
 
-        getSelectedProduct: function () {
-            var model = null;
-            _(this.listItemViews).each(function (view) {
-                if (view.isChecked()) {
-                    model = view.model;
-                }
-            });
-            return model;
-        },
-
-        deleteSelectedProducts: function () {
+        deleteSelectedPartTemplates: function () {
             var _this = this;
-            bootbox.confirm(App.config.i18n.CONFIRM_DELETE_PRODUCT, function(result){
+            bootbox.confirm(App.config.i18n.CONFIRM_DELETE_PART_TEMPLATE, function(result){
                 if(result){
                     _(_this.listItemViews).each(function (view) {
                         if (view.isChecked()) {
                             view.model.destroy({
                                 dataType: 'text', // server doesn't send a json hash in the response body
                                 success: function () {
-                                    _this.removeProduct(view.model);
+                                    _this.removePartTemplate(view.model);
                                     _this.onSelectionChanged();
-                                },
-                                error: function (model, err) {
+                                }, error: function (model, err) {
                                     _this.trigger('error',model,err);
                                     _this.onSelectionChanged();
-                                }
-                            });
+                                }});
                         }
                     });
                 }
             });
         },
+
         redraw: function () {
             this.dataTable();
         },
@@ -189,7 +175,8 @@ define([
                 },
                 sDom: 'ft',
                 aoColumnDefs: [
-                    { 'bSortable': false, 'aTargets': [ 0, 3 ] }
+                    { 'bSortable': false, 'aTargets': [ 0 ] },
+                    { 'sType': App.config.i18n.DATE_SORT, 'aTargets': [5] }
                 ]
             });
             this.$el.parent().find('.dataTables_filter input').attr('placeholder', App.config.i18n.FILTER);
@@ -197,6 +184,6 @@ define([
 
     });
 
-    return ProductListView;
+    return PartTemplateListView;
 
 });

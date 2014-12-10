@@ -2,12 +2,12 @@
 define([
     'backbone',
     'mustache',
-    'text!templates/baseline/baselines_list.html',
-    'views/baseline/baselines_list_item'
-], function (Backbone, Mustache, template, BaselinesListItemView) {
-    'use strict';
+    'text!templates/product/product_list.html',
+    'views/product/product_list_item'
+], function (Backbone, Mustache, template, ProductListItemView) {
+	'use strict';
+    var ProductListView = Backbone.View.extend({
 
-    var BaselinesListView = Backbone.View.extend({
         events: {
             'click .toggle-checkboxes': 'toggleSelection'
         },
@@ -20,55 +20,59 @@ define([
         initialize: function () {
             _.bindAll(this);
             this.listenTo(this.collection, 'reset', this.resetList);
-            this.listenTo(this.collection, 'add', this.addNewBaseline);
+            this.listenTo(this.collection, 'add', this.addNewProduct);
             this.listItemViews = [];
             this.$el.on('remove', this.removeSubviews);
         },
 
         render: function () {
-            this.collection.fetch({reset: true});
+            var _this = this;
+            this.oTable=null;
+            this.collection.fetch({
+                reset: true,
+                error:function(err){
+                    _this.trigger('error',err);
+                }
+            });
             return this;
         },
 
         bindDomElements: function () {
-            this.$table = this.$('#baseline_table');
             this.$items = this.$('.items');
             this.$checkbox = this.$('.toggle-checkboxes');
         },
 
         resetList: function () {
-            if (this.oTable) {
-                this.oTable.fnDestroy();
-            }
+            var _this = this;
+            this.removeSubviews();
+
             this.$el.html(Mustache.render(template, {i18n: App.config.i18n}));
             this.bindDomElements();
-            this.listItemViews = [];
-            var that = this;
+
             this.collection.each(function (model) {
-                that.addBaseline(model);
+                _this.addProduct(model);
             });
             this.dataTable();
         },
 
-        addNewBaseline: function (model) {
-            this.addBaseline(model, true);
+        addNewProduct: function (model) {
+            this.addProduct(model, true);
             this.redraw();
         },
 
-        addBaseline: function (model, effect) {
-            var view = this.addBaselineView(model);
+        addProduct: function (model, effect) {
+            var view = this.addProductView(model);
             if (effect) {
                 view.$el.highlightEffect();
             }
         },
 
-        removeBaseline: function (model) {
-            this.removeBaselineView(model);
+        removeProduct: function (model) {
+            this.removeProductView(model);
             this.redraw();
         },
 
-        removeBaselineView: function (model) {
-
+        removeProductView: function (model) {
             var viewToRemove = _(this.listItemViews).select(function (view) {
                 return view.model === model;
             })[0];
@@ -82,8 +86,8 @@ define([
 
         },
 
-        addBaselineView: function (model) {
-            var view = new BaselinesListItemView({model: model}).render();
+        addProductView: function (model) {
+            var view = new ProductListItemView({model: model}).render();
             this.listItemViews.push(view);
             this.$items.append(view.$el);
             view.on('selectionChanged', this.onSelectionChanged);
@@ -111,31 +115,34 @@ define([
             });
 
             if (checkedViews.length <= 0) {
-                this.onNoBaselineSelected();
+                this.onNoProductSelected();
             } else if (checkedViews.length === 1) {
-                this.onOneBaselineSelected();
+                this.onOneProductSelected();
             } else {
-                this.onSeveralBaselinesSelected();
+                this.onSeveralProductsSelected();
             }
 
         },
 
-        onNoBaselineSelected: function () {
+        onNoProductSelected: function () {
             this.trigger('delete-button:display', false);
-            this.trigger('duplicate-button:display', false);
+            this.trigger('snap-latest-baseline-button:display', false);
+            this.trigger('snap-released-baseline-button:display', false);
         },
 
-        onOneBaselineSelected: function () {
+        onOneProductSelected: function () {
             this.trigger('delete-button:display', true);
-            this.trigger('duplicate-button:display', true);
+            this.trigger('snap-latest-baseline-button:display', true);
+            this.trigger('snap-released-baseline-button:display', true);
         },
 
-        onSeveralBaselinesSelected: function () {
+        onSeveralProductsSelected: function () {
             this.trigger('delete-button:display', true);
-            this.trigger('duplicate-button:display', false);
+            this.trigger('snap-latest-baseline-button:display', false);
+            this.trigger('snap-released-baseline-button:display', false);
         },
 
-        getSelectedBaseline: function () {
+        getSelectedProduct: function () {
             var model = null;
             _(this.listItemViews).each(function (view) {
                 if (view.isChecked()) {
@@ -145,21 +152,23 @@ define([
             return model;
         },
 
-        deleteSelectedBaselines: function () {
+        deleteSelectedProducts: function () {
             var _this = this;
-            bootbox.confirm(App.config.i18n.CONFIRM_DELETE_BASELINE, function(result){
+            bootbox.confirm(App.config.i18n.CONFIRM_DELETE_PRODUCT, function(result){
                 if(result){
                     _(_this.listItemViews).each(function (view) {
                         if (view.isChecked()) {
                             view.model.destroy({
                                 dataType: 'text', // server doesn't send a json hash in the response body
                                 success: function () {
-                                    _this.removeBaseline(view.model);
+                                    _this.removeProduct(view.model);
                                     _this.onSelectionChanged();
-                                }, error: function (model, err) {
+                                },
+                                error: function (model, err) {
                                     _this.trigger('error',model,err);
                                     _this.onSelectionChanged();
-                                }});
+                                }
+                            });
                         }
                     });
                 }
@@ -170,13 +179,13 @@ define([
         },
         dataTable: function () {
             var oldSort = [
-                [1, 'asc']
+                [0, 'asc']
             ];
             if (this.oTable) {
                 oldSort = this.oTable.fnSettings().aaSorting;
                 this.oTable.fnDestroy();
             }
-            this.oTable = this.$table.dataTable({
+            this.oTable = this.$el.dataTable({
                 aaSorting: oldSort,
                 bDestroy: true,
                 iDisplayLength: -1,
@@ -187,13 +196,13 @@ define([
                 },
                 sDom: 'ft',
                 aoColumnDefs: [
-                    { 'bSortable': false, 'aTargets': [ 0 ] }
+                    { 'bSortable': false, 'aTargets': [ 0, 3 ] }
                 ]
             });
-            this.$el.find('.dataTables_filter input').attr('placeholder', App.config.i18n.FILTER);
+            this.$el.parent().find('.dataTables_filter input').attr('placeholder', App.config.i18n.FILTER);
         }
 
     });
 
-    return BaselinesListView;
+    return ProductListView;
 });

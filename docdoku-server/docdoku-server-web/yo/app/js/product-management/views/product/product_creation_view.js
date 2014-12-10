@@ -2,7 +2,7 @@
 define([
     'backbone',
     'mustache',
-    'text!templates/product_creation_view.html',
+    'text!templates/product/product_creation_view.html',
     'common-objects/models/configuration_item'
 ], function (Backbone, Mustache, template, ConfigurationItem) {
     'use strict';

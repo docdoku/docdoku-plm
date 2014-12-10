@@ -2,14 +2,14 @@
 define([
     'backbone',
     'mustache',
-    'text!templates/part_creation_view.html',
+    'text!templates/part/part_creation_view.html',
     'common-objects/models/part',
     'collections/part_templates',
     'common-objects/views/attributes/attributes',
     'common-objects/views/workflow/workflow_list',
     'common-objects/views/workflow/workflow_mapping',
     'common-objects/views/security/acl'
-], function (Backbone, Mustache, template, Part, PartTemplateCollection, AttributesView, DocumentWorkflowListView, DocumentWorkflowMappingView, ACLView) {
+], function (Backbone, Mustache, template, Part, PartTemplateCollection, AttributesView, WorkflowListView, DocumentWorkflowMappingView, ACLView) {
     'use strict';
     var PartCreationView = Backbone.View.extend({
 
@@ -29,7 +29,7 @@ define([
             this.bindPartTemplateSelector();
             this.bindAttributesView();
 
-            this.workflowsView = new DocumentWorkflowListView({
+            this.workflowsView = new WorkflowListView({
                 el: this.$('#workflows-list')
             });
 

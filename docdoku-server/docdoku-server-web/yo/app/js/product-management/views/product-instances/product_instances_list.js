@@ -1,4 +1,4 @@
-/*global _,define,App*/
+/*global _,define,App,bootbox*/
 define([
     'backbone',
     'mustache',
@@ -12,11 +12,17 @@ define([
             'click .toggle-checkboxes': 'toggleSelection'
         },
 
+        removeSubviews: function () {
+            _(this.listItemViews).invoke('remove');                                                                     // Invoke remove for each views in listItemViews
+            this.listItemViews = [];
+        },
+
         initialize: function () {
             _.bindAll(this);
             this.listenTo(this.collection, 'reset', this.resetList);
             this.listenTo(this.collection, 'add', this.addNewProductInstances);
             this.listItemViews = [];
+            this.$el.on('remove', this.removeSubviews);
         },
 
         render: function () {
@@ -140,25 +146,28 @@ define([
         },
 
         deleteSelectedProductInstances: function () {
-            var that = this;
-            if (confirm(App.config.i18n.DELETE_SELECTION_QUESTION)) {
-                _(this.listItemViews).each(function (view) {
-                    if (view.isChecked()) {
-                        view.model.id = view.model.getSerialNumber();
-                        view.model.destroy({
-                            dataType: 'text', // server doesn't send a json hash in the response body
-                            success: function () {
-                                that.removeProductInstance(view.model);
-                                that.onSelectionChanged();
-                            },
-                            error: function (model, err) {
-                                alert(err.responseText);
-                                that.onSelectionChanged();
-                            },
-                            wait: true});
-                    }
-                });
-            }
+            var _this = this;
+            bootbox.confirm(App.config.i18n.CONFIRM_DELETE_PRODUCT_INSTANCE, function(result){
+                if(result){
+                    _(_this.listItemViews).each(function (view) {
+                        if (view.isChecked()) {
+                            view.model.id = view.model.getSerialNumber();
+                            view.model.destroy({
+                                dataType: 'text', // server doesn't send a json hash in the response body
+                                success: function () {
+                                    _this.removeProductInstance(view.model);
+                                    _this.onSelectionChanged();
+                                },
+                                error: function (model, err) {
+                                    _this.trigger('error',model,err);
+                                    _this.onSelectionChanged();
+                                },
+                                wait: true});
+                        }
+                    });
+                }
+
+            });
         },
         redraw: function () {
             this.dataTable();

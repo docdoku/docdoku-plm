@@ -151,10 +151,8 @@ public class Room {
         boolean success = true;
 
         // avoid a user to be added in the room many times.
-        if(userSession != null){
-            if(userSession.equals(userSession1) || userSession.equals(userSession2)){
-                return success;
-            }
+        if(userSession != null && (userSession.equals(userSession1) || userSession.equals(userSession2))){
+            return true;
         }
 
         if (userSession1 == null) {

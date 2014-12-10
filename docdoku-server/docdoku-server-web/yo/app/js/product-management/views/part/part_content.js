@@ -4,10 +4,10 @@ define([
     'mustache',
     'common-objects/collections/part_collection',
     'common-objects/collections/part_search_collection',
-    'text!templates/part_content.html',
-    'views/part_list',
-    'views/part_creation_view',
-    'views/part_new_version',
+    'text!templates/part/part_content.html',
+    'views/part/part_list',
+    'views/part/part_creation_view',
+    'views/part/part_new_version',
     'common-objects/views/prompt',
     'common-objects/views/security/acl_edit',
     'views/advanced_search',
@@ -16,8 +16,9 @@ define([
     'text!common-objects/templates/buttons/new_version_button.html',
     'text!common-objects/templates/buttons/release_button.html',
     'text!common-objects/templates/buttons/ACL_button.html',
-	'text!templates/search_part_form.html'
-], function (Backbone, Mustache, PartCollection, PartSearchCollection, template, PartListView, PartCreationView, PartNewVersionView, PromptView, ACLEditView, AdvancedSearchView, deleteButton, checkoutButtonGroup, newVersionButton, releaseButton, aclButton, searchForm) {
+	'text!templates/part/search_part_form.html',
+    'common-objects/views/alert'
+], function (Backbone, Mustache, PartCollection, PartSearchCollection, template, PartListView, PartCreationView, PartNewVersionView, PromptView, ACLEditView, AdvancedSearchView, deleteButton, checkoutButtonGroup, newVersionButton, releaseButton, aclButton, searchForm, AlertView) {
     'use strict';
 	var PartContentView = Backbone.View.extend({
         events: {
@@ -44,15 +45,13 @@ define([
             checkoutButtonGroup: checkoutButtonGroup,
             newVersionButton: newVersionButton,
             releaseButton: releaseButton,
-	         searchForm: searchForm
+            searchForm: searchForm
         },
 
         initialize: function () {
             _.bindAll(this);
-            Backbone.Events.on('refresh_tree', this.resetCollection);
             this.query = null;
         },
-
         setQuery: function (query) {
             this.query = query;
             return this;
@@ -60,37 +59,32 @@ define([
 
         render: function () {
             this.$el.html(Mustache.render(template, {i18n: App.config.i18n}, this.partials));
-
             this.bindDomElements();
 
-            var collection;
+            if(!this.partsCollection){
+                if (this.query) {
+                    this.partsCollection = new PartSearchCollection();
+                    this.partsCollection.setQuery(this.query);
+                } else {
+                    this.partsCollection = new PartCollection();
+                }
+            }
 
-            if (this.query) {
-                collection = new PartSearchCollection();
-                collection.setQuery(this.query);
-            } else {
-                collection = new PartCollection();
+            if(this.partListView){
+                this.partListView.remove();
             }
 
             this.partListView = new PartListView({
                 el: this.$('#part_table'),
-                collection: collection
+                collection: this.partsCollection
             }).render();
 
-            this.partListView.collection.on('page-count:fetch', this.onPageCountFetched);
-            this.partListView.collection.fetchPageCount();
-
-            this.partListView.on('delete-button:display', this.changeDeleteButtonDisplay);
-            this.partListView.on('checkout-group:display', this.changeCheckoutGroupDisplay);
-            this.partListView.on('checkout-group:update', this.updateCheckoutButtons);
-            this.partListView.on('acl-edit-button:display', this.changeACLButtonDisplay);
-            this.partListView.on('new-version-button:display', this.changeVersionButtonDisplay);
-            this.partListView.on('release-button:display', this.changeReleaseButtonDisplay);
-
+            this.bindEvent();
             return this;
         },
 
         bindDomElements: function () {
+            this.$notifications = this.$el.find('.notifications').first();
             this.deleteButton = this.$('.delete');
             this.checkoutGroup = this.$('.checkout-group');
             this.checkoutButton = this.$('.checkout');
@@ -101,6 +95,24 @@ define([
             this.releaseButton = this.$('.new-release');
             this.currentPageIndicator = this.$('.current-page');
             this.pageControls = this.$('.page-controls');
+        },
+
+        bindEvent: function(){
+            // Try to remove this
+            Backbone.Events.on('refresh_tree', this.resetCollection);
+
+            this.partListView.collection.on('page-count:fetch', this.onPageCountFetched);
+            this.partListView.collection.fetchPageCount();
+
+            this.partListView.on('error', this.onError);
+            this.partListView.on('warning', this.onWarning);
+            this.partListView.on('delete-button:display', this.changeDeleteButtonDisplay);
+            this.partListView.on('checkout-group:display', this.changeCheckoutGroupDisplay);
+            this.partListView.on('checkout-group:update', this.updateCheckoutButtons);
+            this.partListView.on('acl-edit-button:display', this.changeACLButtonDisplay);
+            this.partListView.on('new-version-button:display', this.changeVersionButtonDisplay);
+            this.partListView.on('release-button:display', this.changeReleaseButtonDisplay);
+
         },
 
         newPart: function () {
@@ -124,7 +136,7 @@ define([
         },
 
         addPartInList: function (part) {
-            this.partListView.pushPart(part);
+            this.partsCollection.push(part);
         },
 
         changeDeleteButtonDisplay: function (state) {
@@ -315,11 +327,28 @@ define([
             e.preventDefault();
             return false;
         },
-
         onAdvancedSearch: function () {
             var advancedSearchView = new AdvancedSearchView();
             window.document.body.appendChild(advancedSearchView.render().el);
             advancedSearchView.openModal();
+        },
+
+
+        onError:function(model, error){
+            var errorMessage = error ? error.responseText : model;
+
+            this.$notifications.append(new AlertView({
+                type: 'error',
+                message: errorMessage
+            }).render().$el);
+        },
+        onWarning:function(model, error){
+            var errorMessage = error ? error.responseText : model;
+
+            this.$notifications.append(new AlertView({
+                type: 'warning',
+                message: errorMessage
+            }).render().$el);
         }
 
     });

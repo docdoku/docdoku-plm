@@ -1,11 +1,11 @@
-/*global define,App*/
+/*global _,define,App*/
 define([
     'backbone',
     'mustache',
     'collections/part_templates',
-    'text!templates/part_template_content.html',
-    'views/part_template_list',
-    'views/part_template_creation_view',
+    'text!templates/part-template/part_template_content.html',
+    'views/part-template/part_template_list',
+    'views/part-template/part_template_creation_view',
     'text!common-objects/templates/buttons/delete_button.html'
 ], function (Backbone, Mustache, PartTemplateCollection, template, PartTemplateListView, PartTemplateCreationView, deleteButton) {
     'use strict';
@@ -22,42 +22,47 @@ define([
         initialize: function () {
             _.bindAll(this);
         },
-
         render: function () {
             this.$el.html(Mustache.render(template, {i18n: App.config.i18n}, this.partials));
-
             this.bindDomElements();
+
+            if(!this.partTemplateCollection){
+                this.partTemplateCollection = new PartTemplateCollection();
+            }
+
+            if(this.partTemplateListView){
+                this.partTemplateListView.remove();
+            }
 
             this.partTemplateListView = new PartTemplateListView({
                 el: this.$('#part_template_table'),
-                collection: new PartTemplateCollection()
+                collection: this.partTemplateCollection
             }).render();
 
-            this.partTemplateListView.on('delete-button:display', this.changeDeleteButtonDisplay);
+            this.bindEvent();
             return this;
         },
-
         bindDomElements: function () {
+            this.$notifications = this.$el.find('.notifications').first();
             this.deleteButton = this.$('.delete');
         },
+        bindEvent: function(){
+            this.partTemplateListView.on('error', this.onError);
+            this.partTemplateListView.on('warning', this.onWarning);
+            this.partTemplateListView.on('delete-button:display', this.changeDeleteButtonDisplay);
+            this.delegateEvents();
+        },
+
 
         newPartTemplate: function () {
             var partTemplateCreationView = new PartTemplateCreationView();
-            this.listenTo(partTemplateCreationView, 'part-template:created', this.fetchPartTemplateAndAdd);
+            partTemplateCreationView.on('part-template:created', this.partTemplateCollection.push, this.partTemplateCollection);
             partTemplateCreationView.show();
         },
-
-        fetchPartTemplateAndAdd: function (partTemplate) {
-            this.addPartTemplateInList(partTemplate);
-        },
-
         deletePartTemplate: function () {
             this.partTemplateListView.deleteSelectedPartTemplates();
         },
 
-        addPartTemplateInList: function (partTemplate) {
-            this.partTemplateListView.pushPartTemplate(partTemplate);
-        },
 
         changeDeleteButtonDisplay: function (state) {
             if (state) {

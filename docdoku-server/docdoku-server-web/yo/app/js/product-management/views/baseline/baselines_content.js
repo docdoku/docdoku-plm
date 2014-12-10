@@ -30,13 +30,18 @@ define([
 
         render: function () {
             this.$el.html(Mustache.render(template, {i18n: App.config.i18n}, this.partials));
-
             this.bindDomElements();
-            new ConfigurationItemCollection().fetch({success: this.fillProductList});
-            var self = this;
-            this.$inputProductId.change(function () {
-                self.createBaselineView();
+
+            if(!this.configurationItemCollection){
+                this.configurationItemCollection = new ConfigurationItemCollection();
+            }
+
+            this.configurationItemCollection.fetch({
+                success: this.fillProductList,
+                error: this.onError
             });
+
+            this.bindEvent();
             this.createBaselineView();
             return this;
         },
@@ -46,6 +51,14 @@ define([
             this.deleteButton = this.$('.delete');
             this.duplicateButton = this.$('.duplicate');
             this.$inputProductId = this.$('#inputProductId');
+        },
+
+        bindEvent: function(){
+            var _this = this;
+            this.$inputProductId.change(function () {
+                _this.createBaselineView();
+            });
+            this.delegateEvents();
         },
 
         fillProductList: function (list) {
