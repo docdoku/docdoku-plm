@@ -134,8 +134,8 @@ public class AccessRightsTest {
     @Test
     public void Test1_testSimpleCreation() throws Exception {
         Logger.getLogger(AccessRightsTest.class.getName()).log(Level.INFO, "Test method : testSimpleCreation");
-        userManagerBean.testWorkspaceCreation("user1", "TEST_WORKSPACE");
-        documentManagerBean.createFolder("user1", "TEST_WORKSPACE", "TEST_FOLDER");
+//        userManagerBean.testWorkspaceCreation("user1", "TEST_WORKSPACE");
+//        documentManagerBean.createFolder("user1", "TEST_WORKSPACE", "TEST_FOLDER");
         userManagerBean.testAddingUserInWorkspace("user1", "user2", "TEST_WORKSPACE");
         documentManagerBean.createDocumentMaster("user2", "TEST_WORKSPACE/TEST_FOLDER", "DOCUMENT0", null, null);
 
