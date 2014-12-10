@@ -62,9 +62,11 @@ public class ParallelActivityModel extends ActivityModel {
     }
 
     public void setTasksToComplete(int pTasksToComplete) {
-        if (pTasksToComplete < this.getTaskModels().size())
+        if (pTasksToComplete < this.getTaskModels().size()) {
             tasksToComplete = pTasksToComplete;
-        else tasksToComplete = this.getTaskModels().size();
+        } else {
+            tasksToComplete = this.getTaskModels().size();
+        }
     }
 
     @Override

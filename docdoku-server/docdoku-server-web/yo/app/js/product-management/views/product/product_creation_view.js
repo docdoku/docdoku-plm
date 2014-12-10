@@ -3,8 +3,9 @@ define([
     'backbone',
     'mustache',
     'text!templates/product/product_creation_view.html',
-    'common-objects/models/configuration_item'
-], function (Backbone, Mustache, template, ConfigurationItem) {
+    'models/configuration_item',
+    'common-objects/views/alert'
+], function (Backbone, Mustache, template, ConfigurationItem, AlertView) {
     'use strict';
     var ProductCreationView = Backbone.View.extend({
 
@@ -27,6 +28,7 @@ define([
         },
 
         bindDomElements: function () {
+            this.$notifications = this.$el.find('.notifications').first();
             this.$modal = this.$('#product_creation_modal');
             this.$inputPartNumber = this.$('#inputPartNumber');
             this.$inputProductId = this.$('#inputProductId');
@@ -79,7 +81,12 @@ define([
         },
 
         onError: function (model, error) {
-            alert(App.config.i18n.CREATION_ERROR + ' : ' + error.responseText);
+            var errorMessage = error ? error.responseText : model;
+
+            this.$notifications.append(new AlertView({
+                type: 'error',
+                message: errorMessage
+            }).render().$el);
         },
 
         openModal: function () {

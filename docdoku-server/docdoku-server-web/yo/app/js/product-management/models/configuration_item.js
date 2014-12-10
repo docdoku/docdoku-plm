@@ -1,9 +1,8 @@
 /*global _,$,define,App*/
 define(['backbone'], function (Backbone) {
-	'use strict';
+    'use strict';
     var ConfigurationItem = Backbone.Model.extend({
-
-	    idAttribute: '_id',
+        idAttribute: '_id',
 
         urlRoot: function () {
             return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products';
@@ -45,16 +44,24 @@ define(['backbone'], function (Backbone) {
             });
         },
 
-        deleteBaselines: function (baselines) {
-            var that = this;
-            var errors = [];
+        deleteBaselines: function (baselines, callbacks) {
+            var _this = this;
+            var toDelete = _.size(baselines);
             _.each(baselines, function (baseline) {
-                that.deleteBaseline(baseline.getId(), {success: function () {
-                }, error: function () {
-                    errors.push(baseline);
-                }});
+                _this.deleteBaseline(baseline.getId(), {
+                    success: function (data) {
+                        toDelete--;
+                        if(toDelete===0 && callbacks && _.isFunction(callbacks.success)){
+                            callbacks.success(data);
+                        }
+                    },
+                    error: function(err){
+                        if(callbacks && _.isFunction(callbacks.error)){
+                            callbacks.error(err);
+                        }
+                    }
+                });
             });
-            return errors;
         },
 
         deleteBaseline: function (baselineId, callbacks) {
@@ -63,8 +70,16 @@ define(['backbone'], function (Backbone) {
                 async: false,
                 url: this.urlRoot() + '/' + this.getId() + '/baselines/' + baselineId,
                 contentType: 'application/json; charset=utf-8',
-                success: callbacks.success,
-                error: callbacks.error
+                success: function(data) {
+                    if (callbacks && _.isFunction(callbacks.success)) {
+                        callbacks.success(data);
+                    }
+                },
+                error: function(err) {
+                    if (callbacks && _.isFunction(callbacks.error)) {
+                        callbacks.error(err);
+                    }
+                }
             });
         }
 

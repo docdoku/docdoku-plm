@@ -41,6 +41,13 @@ casper.test.begin('Part deletion tests suite', 1, function partDeletionTestsSuit
 
     casper.then(function clickOnDeletePartButton(){
         this.click('.actions .delete');
+        // Confirm deletion
+        this.waitForSelector('.bootbox',function confirmPartDeletion(){
+            this.click('.bootbox .modal-footer .btn-primary');
+        },function fail() {
+            this.capture('screenshot/partDeletion/waitForDeletionConfirmationModal-error.png');
+            this.test.assert(false,'Part deletion confirmation modal can not be found');
+        });
     });
 
     casper.then(function waitForPartDiseapear(){

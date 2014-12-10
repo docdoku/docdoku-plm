@@ -4,8 +4,9 @@ define([
     'mustache',
     'text!templates/product/product_details.html',
     'views/baseline/baseline_list',
-    'views/baseline/baseline_edit_view'
-], function (Backbone, Mustache, template, BaselineListView, BaselineEditView) {
+    'views/baseline/baseline_edit_view',
+    'common-objects/views/alert'
+], function (Backbone, Mustache, template, BaselineListView, BaselineEditView, AlertView) {
     'use strict';
     var ProductDetailsView = Backbone.View.extend({
 
@@ -28,22 +29,22 @@ define([
         },
 
         bindDomElements: function () {
+            this.$notifications = this.$el.find('.notifications').first();
             this.$modal = this.$('#product_details_modal');
             this.$tabBaselines = this.$('#tab-baselines');
         },
 
         onSubmitForm: function (e) {
-
+            var _this = this;
             var baselines = this.baselineListView.getCheckedBaselines();
 
             if (baselines.length) {
-                var errors = this.model.deleteBaselines(baselines);
-                if (errors.length) {
-                    alert('Error on baseline deletion');
-                }
+                this.model.deleteBaselines(baselines,{
+                    success: _this.closeModal.bind(this),
+                    error: _this.onError.bind(this)
+                });
             }
 
-            this.closeModal();
             e.preventDefault();
             e.stopPropagation();
             return false;
@@ -60,7 +61,12 @@ define([
         },
 
         onError: function (model, error) {
-            alert(App.config.i18n.CREATION_ERROR + ' : ' + error.responseText);
+            var errorMessage = error ? error.responseText : model;
+
+            this.$notifications.append(new AlertView({
+                type: 'error',
+                message: errorMessage
+            }).render().$el);
         },
 
         openModal: function () {

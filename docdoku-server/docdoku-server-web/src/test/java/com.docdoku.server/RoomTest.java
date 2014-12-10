@@ -24,7 +24,8 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.*;
+import org.mockito.Matchers;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import javax.websocket.Session;
@@ -39,7 +40,7 @@ import java.util.concurrent.ConcurrentMap;
     public class RoomTest {
 
     private static Room room = Mockito.mock(Room.class);
-    private static ConcurrentMap<String, Room> DB = Mockito.mock(new ConcurrentHashMap<String, Room>().getClass());
+    private static ConcurrentMap<String, Room> DB = Mockito.mock(ConcurrentHashMap.class);
     private static Session userSession1 = Mockito.mock(Session.class);
     private static Principal principal1 = Mockito.mock(Principal.class);
     private static Principal principal2 = Mockito.mock(Principal.class);
@@ -48,8 +49,6 @@ import java.util.concurrent.ConcurrentMap;
     private static Room secondRoom = Mockito.spy(new Room("PLMRoom"));
     private static Room thirdRoom = Mockito.spy(new Room("ChatRoom"));
     private static Session userSession3 = Mockito.mock(Session.class);
-    private Session userSession4 = Mockito.mock(Session.class);
-
 
     @BeforeClass
     public static void setUp() {
@@ -193,7 +192,7 @@ import java.util.concurrent.ConcurrentMap;
         secondRoom.addUserSession(userSession1);
         secondRoom.addUserSession(userSession2);
         //When
-        room.removeUserFromAllRoom("user1");
+        Room.removeUserFromAllRoom("user1");
         //Then
         Assert.assertTrue(!thirdRoom.hasUser("user1"));
 

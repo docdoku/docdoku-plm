@@ -1,4 +1,4 @@
-/*global _.define,App*/
+/*global _.define,App,bootbox*/
 define([
     'backbone',
     'mustache',
@@ -218,16 +218,19 @@ define([
             this.partListView.getSelectedPart().checkout();
         },
         undocheckout: function () {
-            if (confirm(App.config.i18n.UNDO_CHECKOUT_QUESTION)) {
-                this.partListView.getSelectedPart().undocheckout();
-            }
+            var _this= this;
+            bootbox.confirm(App.config.i18n.UNDO_CHECKOUT_QUESTION, function(result){
+                if(result){
+                    _this.partListView.getSelectedPart().undocheckout();
+                }
+
+            });
         },
 
         updateACL: function () {
+            var _this = this;
 
-            var that = this;
-
-            var selectedPart = that.partListView.getSelectedPart();
+            var selectedPart = _this.partListView.getSelectedPart();
 
             var aclEditView = new ACLEditView({
                 editMode: true,
@@ -250,9 +253,7 @@ define([
                         selectedPart.set('acl', acl);
                         aclEditView.closeModal();
                     },
-                    error: function (error) {
-                        alert(error.responseText);
-                    }
+                    error: _this.onError
                 });
 
             });

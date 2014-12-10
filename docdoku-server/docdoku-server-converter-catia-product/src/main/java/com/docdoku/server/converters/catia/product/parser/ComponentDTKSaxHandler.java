@@ -31,7 +31,7 @@ public class ComponentDTKSaxHandler extends DefaultHandler {
 
     private final StringBuilder buffer = new StringBuilder(128);
 
-    private final String COMPONENT = "Component",
+    private static final String COMPONENT = "Component",
             ID_ATTR = "id",
             FATHER_ID_ATTR = "fatherId",
             ASSEMBLY_ATTR = "assembly",
@@ -47,10 +47,10 @@ public class ComponentDTKSaxHandler extends DefaultHandler {
 
 
     private ComponentDTK componentDtk;
-    private Stack<ComponentDTK> components = new Stack<ComponentDTK>();
+    private Stack<ComponentDTK> components = new Stack<>();
 
     private MetaData metaData;
-    private Stack<MetaData> metaDataStack = new Stack<MetaData>();
+    private Stack<MetaData> metaDataStack = new Stack<>();
 
     public ComponentDTKSaxHandler() {
         super();
@@ -182,8 +182,9 @@ public class ComponentDTKSaxHandler extends DefaultHandler {
     }
 
     private String getBufferValue() {
-        if (buffer.length() == 0)
+        if (buffer.length() == 0) {
             return null;
+        }
         String value = buffer.toString().trim();
         buffer.setLength(0);
         return value.length() == 0 ? null : value;
@@ -191,10 +192,7 @@ public class ComponentDTKSaxHandler extends DefaultHandler {
 
     private static boolean getBoolean(Attributes attributes, String name) {
         String s = getString(attributes, name);
-        if ("1".equals(s)) {
-            return true;
-        }
-        return Boolean.parseBoolean(s);
+        return "1".equals(s) || Boolean.parseBoolean(s);
     }
 
     private static Integer getInt(Attributes attributes, String name) {
@@ -217,13 +215,15 @@ public class ComponentDTKSaxHandler extends DefaultHandler {
 
     private static String getString(Attributes attributes, String name) {
         String s = attributes.getValue(name);
-        if (s == null)
+        if (s == null) {
             return null;
+        }
         // trim leading and trailing spaces.
         s = s.trim();
         // see if empty string.
-        if (s.length() == 0)
+        if (s.length() == 0) {
             return null;
+        }
         return s;
     }
 

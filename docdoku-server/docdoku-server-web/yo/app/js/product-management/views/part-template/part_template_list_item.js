@@ -1,4 +1,4 @@
-/*global define*/
+/*global _,define*/
 define([
     'backbone',
     'mustache',

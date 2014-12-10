@@ -3,7 +3,7 @@ define([
     'backbone',
     'mustache',
     'common-objects/collections/product_instances',
-    'common-objects/collections/configuration_items',
+    'collections/configuration_items',
     'text!templates/product-instances/product_instances_content.html',
     'views/product-instances/product_instances_list',
     'views/product-instances/product_instances_creation',
