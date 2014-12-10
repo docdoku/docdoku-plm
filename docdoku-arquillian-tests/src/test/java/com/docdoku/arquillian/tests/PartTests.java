@@ -94,7 +94,7 @@ public class PartTests {
     @Deployment
     public static Archive<?> createDeployment() {
 
-        return ShrinkWrap.create(WebArchive.class, "docdoku-arquillian-tests.war")
+        return ShrinkWrap.create(WebArchive.class, "docdoku-arquillian-tests-parts.war")
                 .addPackage(DocumentManagerBean.class.getPackage())
                 .addClasses(
                         Account.class,
@@ -146,6 +146,7 @@ public class PartTests {
     public void insertData() throws Exception {
         utx.begin();
         em.joinTransaction();
+        em.clear();
         for (int i = 1; i <= COUNT; i++) {
             Account account = new Account("user" + i, "user" + i, "user" + i + "@docdoku.com", "FR", new Date());
             em.merge(Credential.createCredential(account.getLogin(), "password"));
@@ -153,9 +154,7 @@ public class PartTests {
             em.merge(account);
         }
         utx.commit();
-
-        userManagerBean.testWorkspaceCreation(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST);
-
+       TestUtil.init();
     }
 
 
@@ -164,6 +163,7 @@ public class PartTests {
     public void test1_createPartMasterFromTemplate()  {
        Logger.getLogger(PartTests.class.getName()).log(Level.INFO, "Test method : testCreationPartMasterFromTemplate");
       try{
+
           partManagerBean.createPartMasterTemplate(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "template1", "planes", "plane_###", new InstanceAttributeTemplate[0], true, true);
           partManagerBean.createPartMaster(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "plane_125", " ", true, null, "", "template1",new HashMap<String, String>(), new ACLUserEntry[0], new ACLUserGroupEntry[0]);
           assertTrue(partManagerBean.findPartMasterById(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "plane_125") != null);

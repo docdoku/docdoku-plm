@@ -96,7 +96,7 @@ public class ProductTest {
     @Deployment
     public static Archive<?> createDeployment() {
 
-        return ShrinkWrap.create(WebArchive.class, "docdoku-arquillian-tests.war")
+        return ShrinkWrap.create(WebArchive.class, "docdoku-arquillian-tests-product.war")
                 .addPackage(Workspace.class.getPackage())
                 .addClasses(
                         Account.class,
@@ -163,7 +163,7 @@ public class ProductTest {
             em.merge(account);
         }
         utx.commit();
-        userManagerBean.testWorkspaceCreation(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST);
+        TestUtil.init();
     }
 
 

@@ -85,7 +85,7 @@ public class UploadDownloadTest {
     @Deployment
     public static Archive<?> createDeployment() {
 
-        return ShrinkWrap.create(WebArchive.class, "docdoku-arquillian-tests.war")
+        return ShrinkWrap.create(WebArchive.class, "docdoku-arquillian-tests-upload.war")
                 .addPackage(DocumentManagerBean.class.getPackage())
                 .addClasses(
                         Account.class,
@@ -138,6 +138,7 @@ public class UploadDownloadTest {
     @Before
     public void insertData() throws Exception {
         utx.begin();
+        em.clear();
         em.joinTransaction();
         for (int i = 1; i <= COUNT; i++) {
             Account account = new Account("user" + i, "user" + i, "user" + i + "@docdoku.com", "FR", new Date());
@@ -147,9 +148,7 @@ public class UploadDownloadTest {
         }
         utx.commit();
 
-        userManagerBean.testWorkspaceCreation(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST);
-        documentManagerBean.createFolder(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST,TestUtil.FOLDER_TEST);
-
+      TestUtil.init();
     }
 
     @Test

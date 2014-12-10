@@ -92,7 +92,7 @@ public class ChangeTest {
     @Deployment
     public static Archive<?> createDeployment() {
 
-        return ShrinkWrap.create(WebArchive.class, "docdoku-arquillian-parts-tests.war")
+        return ShrinkWrap.create(WebArchive.class, "docdoku-arquillian-tests-change.war")
                 .addPackage(Workspace.class.getPackage())
                 .addClasses(
                         Account.class,
@@ -147,6 +147,7 @@ public class ChangeTest {
     @Before
     public void insertData() throws Exception {
         utx.begin();
+        em.clear();
         em.joinTransaction();
         for (int i = 1; i <= COUNT; i++) {
             Account account = new Account("user" + i, "user" + i, "user" + i + "@docdoku.com", "FR", new Date());
@@ -155,7 +156,7 @@ public class ChangeTest {
             em.merge(account);
         }
         utx.commit();
-        userManagerBean.testWorkspaceCreation(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST);
+        TestUtil.init();
     }
 
 

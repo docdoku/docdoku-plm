@@ -20,29 +20,39 @@
 
 package com.docdoku.arquillian.tests;
 
-import com.docdoku.arquillian.tests.services.TestDocumentManagerBean;
-import com.docdoku.arquillian.tests.services.TestUserManagerBean;
+import com.docdoku.arquillian.tests.services.*;
+import com.docdoku.arquillian.tests.util.TestUtil;
+import com.docdoku.core.change.ChangeIssue;
+import com.docdoku.core.change.ChangeOrder;
+import com.docdoku.core.change.ChangeRequest;
 import com.docdoku.core.common.*;
+import com.docdoku.core.configuration.BaselineCreation;
+import com.docdoku.core.configuration.ProductBaseline;
+import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.document.DocumentMasterKey;
 import com.docdoku.core.document.DocumentRevisionKey;
 import com.docdoku.core.gcm.GCMAccount;
+import com.docdoku.core.meta.InstanceAttributeTemplate;
+import com.docdoku.core.product.*;
 import com.docdoku.core.security.*;
 import com.docdoku.core.services.*;
+import com.docdoku.core.workflow.Activity;
+import com.docdoku.core.workflow.ActivityModel;
+import com.docdoku.core.workflow.*;
 import com.docdoku.server.*;
 import com.docdoku.server.esindexer.ESIndexer;
 import com.docdoku.server.esindexer.ESMapper;
 import com.docdoku.server.esindexer.ESSearcher;
 import com.docdoku.server.esindexer.ESTools;
 import com.docdoku.server.gcm.GCMSenderBean;
+import com.docdoku.server.products.ProductBaselineManagerBean;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.Before;
-import org.junit.FixMethodOrder;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 
@@ -59,18 +69,17 @@ import java.util.logging.Logger;
 /**
  * @author Asmae CHADID
  */
-
 @RunWith(Arquillian.class)
-@FixMethodOrder(value = MethodSorters.NAME_ASCENDING )
+@FixMethodOrder(value = MethodSorters.NAME_ASCENDING)
 public class AccessRightsTest {
 
     @EJB
     private ESIndexer esIndexer;
 
     @EJB
-    private TestDocumentManagerBean documentManagerBean;
+    private static TestDocumentManagerBean documentManagerBean;
     @EJB
-    private TestUserManagerBean userManagerBean;
+    private static TestUserManagerBean userManagerBean;
 
     @PersistenceContext
     private EntityManager em;
@@ -83,34 +92,82 @@ public class AccessRightsTest {
     @Deployment
     public static Archive<?> createDeployment() {
 
-        return ShrinkWrap.create(WebArchive.class, "docdoku-arquillian-tests.war")
+        return ShrinkWrap.create(WebArchive.class, "docdoku-arquillian-tests-acl.war")
                 .addPackage(Workspace.class.getPackage())
                 .addClasses(
                         Account.class,
+                        ACLUserEntry.class,
+                        ACLUserGroupEntry.class,
+                        Activity.class,
+                        ActivityModel.class,
+                        BaselineCreation.class,
                         Organization.class,
                         Credential.class,
+                        ChangeOrder.class,
+                        ChangeRequest.class,
+                        ChangeIssue.class,
+                        ChangeManagerBean.class,
+                        ChangeOrder.class,
+                        ChangeRequest.class,
+                        ChangeIssue.class,
+                        ChangeManagerBean.class,
+                        ConfigurationItemKey.class,
+                        ChangeOrder.class,
+                        ConfigurationItem.class,
                         DataManagerBean.class,
                         DocumentManagerBean.class,
+                        DocumentIterationKey.class,
                         ESIndexer.class,
                         ESMapper.class,
                         ESSearcher.class,
                         ESTools.class,
                         GCMAccount.class,
                         GCMSenderBean.class,
+                        IChangeManagerLocal.class,
                         IDataManagerLocal.class,
                         IDocumentManagerLocal.class,
+                        IProductManagerLocal.class,
+                        IProductBaselineManagerLocal.class,
                         IGCMSenderLocal.class,
                         IMailerLocal.class,
+                        InstanceAttributeTemplate.class,
+                        ParallelActivityModel.class,
+                        ProductManagerBean.class,
+                        ProductManagerBean.class,
+                        ProductBaselineManagerBean.class,
+                        Role.class,
+                        ProductBaseline.class,
+                        SerialActivityModel.class,
+                        TaskModel.class,
                         IUserManagerLocal.class,
+                        IUploadDownloadWS.class,
                         IWorkspaceManagerLocal.class,
+                        IWorkflowManagerLocal.class,
                         JsonValue.class,
                         MailerBean.class,
+                        PartMaster.class,
+                        PartMasterTemplate.class,
+                        PartRevision.class,
+                        PartRevisionKey.class,
+                        PartUsageLink.class,
+                        ProductManagerBean.class,
+                        ProductManagerBean.class,
+                        ProductBaselineManagerBean.class,
+                        ProductBaseline.class,
+                        ChangeManagerBean.class,
                         TestDocumentManagerBean.class,
                         TestUserManagerBean.class,
+                        TestChangeManagerBean.class,
+                        TestPartManagerBean.class,
+                        TestProductManagerBean.class,
+                        TestUploadDownloadManagerBean.class,
                         UserManagerBean.class,
                         Workspace.class,
                         WorkspaceManagerBean.class,
-                        WorkspaceUserMembership.class
+                        WorkspaceUserMembership.class,
+                        WorkflowModel.class,
+                        Workflow.class,
+                        WorkflowManagerBean.class
                 )
                 .addAsResource("test-persistence.xml", "META-INF/persistence.xml")
                 .addAsWebInfResource("WEB-INF/sun-web.xml")
@@ -121,6 +178,7 @@ public class AccessRightsTest {
     public void insertData() throws Exception {
         utx.begin();
         em.joinTransaction();
+        em.clear();
         for (int i = 1; i <= COUNT; i++) {
             Account account = new Account("user" + i, "user" + i, "user" + i + "@docdoku.com", "FR", new Date());
             em.merge(Credential.createCredential(account.getLogin(), "password"));
@@ -128,14 +186,14 @@ public class AccessRightsTest {
             em.merge(account);
         }
         utx.commit();
+
     }
 
 
     @Test
     public void Test1_testSimpleCreation() throws Exception {
         Logger.getLogger(AccessRightsTest.class.getName()).log(Level.INFO, "Test method : testSimpleCreation");
-//        userManagerBean.testWorkspaceCreation("user1", "TEST_WORKSPACE");
-//        documentManagerBean.createFolder("user1", "TEST_WORKSPACE", "TEST_FOLDER");
+        TestUtil.init();
         userManagerBean.testAddingUserInWorkspace("user1", "user2", "TEST_WORKSPACE");
         documentManagerBean.createDocumentMaster("user2", "TEST_WORKSPACE/TEST_FOLDER", "DOCUMENT0", null, null);
 

@@ -97,7 +97,7 @@ public class WorkflowTest {
 
     @Deployment
     public static Archive<?> createDeployment() {
-        return ShrinkWrap.create(WebArchive.class, "docdoku-arquillian-tests.war")
+        return ShrinkWrap.create(WebArchive.class, "docdoku-arquillian-tests-workflow.war")
                 .addPackage(Workspace.class.getPackage())
                 .addClasses(
                         Account.class,
@@ -153,6 +153,7 @@ public class WorkflowTest {
     public void insertData() throws Exception {
         utx.begin();
         em.joinTransaction();
+        em.clear();
         for (int i = 1; i <= COUNT; i++) {
             Account account = new Account("user" + i, "user" + i, "user" + i + "@docdoku.com", "FR", new Date());
             em.merge(Credential.createCredential(account.getLogin(), "password"));
@@ -161,9 +162,7 @@ public class WorkflowTest {
         }
         utx.commit();
 
-        userManagerBean.testWorkspaceCreation(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST);
-        userManagerBean.testAddingUserInWorkspace(TestUtil.USER1_TEST, TestUtil.USER2_TEST, TestUtil.WORKSPACE_TEST);
-        userManagerBean.testAddingUserInWorkspace(TestUtil.USER1_TEST, TestUtil.USER3_TEST, TestUtil.WORKSPACE_TEST);
+        TestUtil.init();
 
     }
 
