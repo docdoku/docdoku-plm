@@ -50,13 +50,10 @@ define([
         }
 
         function initDOM() {
-            _this.$container = $('div#container');
+            _this.$container = App.$SceneContainer.find('#container');
             _this.$container[0].setAttribute('tabindex', '-1');
             _this.$blocker = new BlockerView().render().$el;
             _this.$container.append(_this.$blocker);
-            _this.$flyingModeButton = $('#flying_mode_view_btn');
-            _this.$trackingModeButton = $('#tracking_mode_view_btn');
-            _this.$orbitModeButton = $('#orbit_mode_view_btn');
         }
         function initRenderer() {
             _this.renderer = new THREE.WebGLRenderer({preserveDrawingBuffer: true, alpha: true});
@@ -80,15 +77,19 @@ define([
         }
         function initStats() {
             _this.stats = new Stats();
-            App.$SceneContainer.append(_this.stats.domElement);
-            _this.$stats = $(_this.stats.domElement);
-            _this.$stats.attr('id', 'statsWin');
-            _this.$stats.attr('class', 'statsWinMaximized');
-            _this.$statsArrow = $('<i id="statsArrow" class="fa fa-chevron-down"></i>');
-            _this.$stats.prepend(_this.$statsArrow);
-            _this.$statsArrow.bind('click', function () {
-                _this.$stats.toggleClass('statsWinMinimized statsWinMaximized');
-            });
+            var statsElement = _this.stats.domElement;
+            App.$SceneContainer.append(statsElement);
+            statsElement.id='statsWin';
+            statsElement.className='statsWinMaximized';
+            var statsArrow=document.createElement('i');
+            statsArrow.id='statsArrow';
+            statsArrow.className='fa fa-chevron-down';
+            statsElement.insertBefore(statsArrow,statsElement.firstChild);
+            statsArrow.onclick = function () {
+                var statsClass = _this.stats.domElement.classList;
+                statsClass.toggle('statsWinMinimized');
+                statsClass.toggle('statsWinMaximized');
+            };
         }
         function initGrid() {
             var size = 500000, step = 2500;
@@ -338,7 +339,7 @@ define([
             if (intersects.length > 0 && intersects[0].object.partIterationId) {
                 if (_this.markerCreationMode) {
                     var mcmv = new MarkerCreateModalView({model: currentLayer, intersectPoint: intersects[0].point});
-                    window.document.body.appendChild(mcmv.render().el);
+                    document.body.appendChild(mcmv.render().el);
                     mcmv.openModal();
                 }
                 else if (_this.measureState) {
@@ -780,8 +781,7 @@ define([
             save.download = filename;
             var event = document.createEvent("MouseEvents");
             event.initMouseEvent(
-                "click", true, false, window, 0, 0, 0, 0, 0
-                , false, false, false, false, 0, null
+                "click", true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null
             );
             save.dispatchEvent(event);
 
@@ -817,7 +817,6 @@ define([
 
             _this.stateControl = _this.STATECONTROL.PLC;
             deleteAllControls();
-            _this.$flyingModeButton.addClass('active');
             _this.$blocker.show();
 
             _this.cameraObject = _this.pointerLockCamera;
@@ -842,8 +841,6 @@ define([
             _this.stateControl = _this.STATECONTROL.TBC;
             deleteAllControls();
 
-            _this.$trackingModeButton.addClass('active');
-
             controlsObject = _this.trackBallControls;
             _this.cameraObject = _this.trackBallCamera;
 
@@ -863,8 +860,6 @@ define([
 
             _this.stateControl = _this.STATECONTROL.ORB;
             deleteAllControls();
-
-            _this.$orbitModeButton.addClass('active');
 
             controlsObject = _this.orbitControls;
             controlsObject.enabled = true;
@@ -984,7 +979,6 @@ define([
         };
 
         this.updateAmbientLight = function(color){
-            console.log('toto')
             _this.scene.getObjectByName('AmbientLight').color.set(color);
             _this.reDraw();
         };
@@ -992,7 +986,7 @@ define([
         this.updateCameraLight = function(color){
             _this.cameraObject.getObjectByName('CameraLight').color.set(color);
             _this.reDraw();
-        }
+        };
 
     };
 
