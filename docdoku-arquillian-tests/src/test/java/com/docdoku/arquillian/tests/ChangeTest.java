@@ -164,7 +164,7 @@ public class ChangeTest {
 
 
     @Test
-    public void test1_createChangeRequestSimple() throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException {
+    public void create_changeRequestSimple() throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException {
         Logger.getLogger(PartTests.class.getName()).log(Level.INFO, "Test method : createChangeRequest");
         ChangeRequest changeRequest = changeManagerBean.createRequest(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "newRequest", "description", 0, ChangeItem.Priority.MEDIUM, "", ChangeItem.Category.ADAPTIVE);
         Assert.assertTrue(changeManagerBean.getAllChangeRequest(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST).size() == 1);
@@ -173,7 +173,7 @@ public class ChangeTest {
     }
 
     @Test
-    public void test2_createChangeIssueSimple() throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, UserNotActiveException {
+    public void createChangeIssueSimple() throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, UserNotActiveException {
         Logger.getLogger(PartTests.class.getName()).log(Level.INFO, "Test method : createChangeRequest");
         ChangeIssue changeIssue = changeManagerBean.createIssue(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "newRequest", "description", "0", ChangeItem.Priority.MEDIUM, "", ChangeItem.Category.ADAPTIVE);
         Assert.assertTrue(changeManagerBean.getAllChangeRequest(TestUtil.USER1_TEST,TestUtil.WORKSPACE_TEST).size() == 1);
@@ -181,7 +181,7 @@ public class ChangeTest {
     }
 
     @Test
-    public void test3_createChangeOrderSimple() throws Exception {
+    public void createChangeOrderSimple() throws Exception {
         Logger.getLogger(PartTests.class.getName()).log(Level.INFO, "Test method : createChangeRequest");
         userManagerBean.testWorkspaceCreation(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST);
         ChangeOrder changeOrder = changeManagerBean.createOrder(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "newRequest", "description",0, ChangeItem.Priority.MEDIUM, "", ChangeItem.Category.ADAPTIVE);

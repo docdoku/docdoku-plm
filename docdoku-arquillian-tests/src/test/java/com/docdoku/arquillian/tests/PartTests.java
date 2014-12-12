@@ -162,8 +162,8 @@ public class PartTests {
 
 
     @Test
-    public void test1_createPartMasterFromTemplate()  {
-       Logger.getLogger(PartTests.class.getName()).log(Level.INFO, "Test method : testCreationPartMasterFromTemplate");
+    public void createPartMasterFromTemplate()  {
+       Logger.getLogger(PartTests.class.getName()).log(Level.INFO, "Test method : createPartMasterFromTemplate");
       try{
 
           partManagerBean.createPartMasterTemplate(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "template1", "planes", "plane_###", new InstanceAttributeTemplate[0], true, true);
@@ -176,8 +176,8 @@ public class PartTests {
 
 
    @Test
-    public void test2_inheritedAttributesFromTemplate() throws Exception {
-        Logger.getLogger(PartTests.class.getName()).log(Level.INFO, "Test method : testCreationPartMasterFromTemplate");
+    public void inheritedAttributesFromTemplate() throws Exception {
+        Logger.getLogger(PartTests.class.getName()).log(Level.INFO, "Test method : inheritedAttributesFromTemplate");
         InstanceAttributeTemplate[] attributeTemplates = new InstanceAttributeTemplate[5];
         attributeTemplates[0]= new InstanceAttributeTemplate("attr1", InstanceAttributeTemplate.AttributeType.DATE);
         attributeTemplates[1]= new InstanceAttributeTemplate("attr2", InstanceAttributeTemplate.AttributeType.BOOLEAN);
@@ -190,8 +190,8 @@ public class PartTests {
     }
 
     @Test
-    public void test3_checkObligatoryAttributes() throws Exception {
-        Logger.getLogger(PartTests.class.getName()).log(Level.INFO, "Test method : testCreationPartMasterFromTemplate");
+    public void checkObligatoryAttributes() throws Exception {
+        Logger.getLogger(PartTests.class.getName()).log(Level.INFO, "Test method : checkObligatoryAttributes");
         InstanceAttributeTemplate[] attributeTemplates = new InstanceAttributeTemplate[5];
         attributeTemplates[0]= new InstanceAttributeTemplate("attr1", InstanceAttributeTemplate.AttributeType.DATE);
         attributeTemplates[1]= new InstanceAttributeTemplate("attr2", InstanceAttributeTemplate.AttributeType.BOOLEAN);
@@ -223,9 +223,9 @@ public class PartTests {
 
 
     @Test
-    public void test4_maskValidityPartTemplate() throws Exception {
+    public void control_maskValidityForPartTemplate() throws Exception {
 
-        Logger.getLogger(PartTests.class.getName()).log(Level.INFO, "Test method : testMaskValidityPartTemplate");
+        Logger.getLogger(PartTests.class.getName()).log(Level.INFO, "Test method : control_maskValidityForPartTemplate");
         partManagerBean.createPartMasterTemplate(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "template1", "planes", "ref_##_###", new InstanceAttributeTemplate[0], true, true);
 
         PartMaster partMaster= partManagerBean.createPartMaster(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "rof_12_526", " ", true, null, "", "template1",new HashMap<String, String>(), new ACLUserEntry[0], new ACLUserGroupEntry[0]);
@@ -239,7 +239,7 @@ public class PartTests {
     }
 
     @Test
-    public void test5_duplicatePartName() throws Exception {
+    public void duplicatePartName() throws Exception {
         Logger.getLogger(PartTests.class.getName()).log(Level.INFO, "Test method : duplicatePartName");
         partManagerBean.createPartMaster(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "plane_125", " ", true, null, "", null, new HashMap<String, String>(), new ACLUserEntry[0], new ACLUserGroupEntry[0]);
         try {

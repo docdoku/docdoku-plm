@@ -170,8 +170,8 @@ public class WorkflowTest {
 
 
     @Test
-    public void test1_WorkflowWithNoActivity() throws AccountNotFoundException, ESIndexNamingException, WorkspaceAlreadyExistsException, NotAllowedException, CreationException, FolderAlreadyExistsException, UserAlreadyExistsException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, UserNotFoundException, WorkflowModelAlreadyExistsException, FolderNotFoundException {
-        Logger.getLogger(WorkflowTest.class.getName()).log(Level.INFO, "Test method : Workflow_ActivityValidity");
+    public void create_workflow_with_no_activity() throws AccountNotFoundException, ESIndexNamingException, WorkspaceAlreadyExistsException, NotAllowedException, CreationException, FolderAlreadyExistsException, UserAlreadyExistsException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, UserNotFoundException, WorkflowModelAlreadyExistsException, FolderNotFoundException {
+        Logger.getLogger(WorkflowTest.class.getName()).log(Level.INFO, "Test method : create_workflow_with_no_activity    ");
         try {
             WorkflowModel workflowModel = workflowManagerBean.createWorkflowModel(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "workflow1", "", new ActivityModel[0]);
         } catch (NotAllowedException ignored) {
@@ -182,8 +182,8 @@ public class WorkflowTest {
     }
 
     @Test
-    public void test2_WorkflowCreation() throws CreationException, FolderAlreadyExistsException, WorkspaceNotFoundException, UserNotFoundException, NotAllowedException, FolderNotFoundException, WorkflowModelAlreadyExistsException, AccessRightException, UserNotActiveException, RoleAlreadyExistsException, RoleNotFoundException, EntityConstraintException {
-        Logger.getLogger(WorkflowTest.class.getName()).log(Level.INFO, "Test method : WorkflowCreationWithRoles");
+    public void create_workflowModel() throws CreationException, FolderAlreadyExistsException, WorkspaceNotFoundException, UserNotFoundException, NotAllowedException, FolderNotFoundException, WorkflowModelAlreadyExistsException, AccessRightException, UserNotActiveException, RoleAlreadyExistsException, RoleNotFoundException, EntityConstraintException {
+        Logger.getLogger(WorkflowTest.class.getName()).log(Level.INFO, "Test method : create_workflowModel");
 
         Map<Role, User> roles = new HashMap<>();
         roles.put(workflowManagerBean.createRole(TestUtil.USER1_TEST, "role1", TestUtil.WORKSPACE_TEST, TestUtil.USER1_TEST), new User(TestUtil.USER1_TEST));
@@ -208,8 +208,8 @@ public class WorkflowTest {
 
 
     @Test
-    public void test3_WorkflowWithActivityWithNoTask() throws CreationException, FolderAlreadyExistsException, WorkspaceNotFoundException, UserNotFoundException, NotAllowedException, FolderNotFoundException, WorkflowModelAlreadyExistsException, AccessRightException, UserNotActiveException {
-        Logger.getLogger(WorkflowTest.class.getName()).log(Level.INFO, "Test method : test3_WorkflowWithActivityWithNoTask");
+    public void create_workflow_with_activity_without_tasks() throws CreationException, FolderAlreadyExistsException, WorkspaceNotFoundException, UserNotFoundException, NotAllowedException, FolderNotFoundException, WorkflowModelAlreadyExistsException, AccessRightException, UserNotActiveException {
+        Logger.getLogger(WorkflowTest.class.getName()).log(Level.INFO, "Test method : create_workflow_with_activity_without_tasks");
         ActivityModel[] sactivityModels = new SerialActivityModel[1];
         sactivityModels[0] = new SerialActivityModel();
         sactivityModels[0].setLifeCycleState("etat1");
@@ -221,8 +221,8 @@ public class WorkflowTest {
     }
 
     @Test
-    public void test4_WorkflowWithTaskWithNoRole() throws CreationException, FolderAlreadyExistsException, WorkspaceNotFoundException, UserNotFoundException, NotAllowedException, FolderNotFoundException, WorkflowModelAlreadyExistsException, AccessRightException, UserNotActiveException {
-        Logger.getLogger(WorkflowTest.class.getName()).log(Level.INFO, "Test method : test4_WorkflowWithTaskWithNoRole");
+    public void create_workflow_with_task_having_no_roles() throws CreationException, FolderAlreadyExistsException, WorkspaceNotFoundException, UserNotFoundException, NotAllowedException, FolderNotFoundException, WorkflowModelAlreadyExistsException, AccessRightException, UserNotActiveException {
+        Logger.getLogger(WorkflowTest.class.getName()).log(Level.INFO, "Test method : create_workflow_with_task_having_no_roles");
         ActivityModel[] sactivityModels = new SerialActivityModel[1];
         sactivityModels[0] = new SerialActivityModel();
         sactivityModels[0].setLifeCycleState("etat1");
@@ -242,8 +242,8 @@ public class WorkflowTest {
 
 
     @Test
-    public void test5_Activity_ParallelTasks() throws CreationException, FolderAlreadyExistsException, WorkspaceNotFoundException, UserNotFoundException, NotAllowedException, FolderNotFoundException, WorkflowModelAlreadyExistsException, AccessRightException, UserNotActiveException, RoleAlreadyExistsException, EntityConstraintException, RoleNotFoundException {
-        Logger.getLogger(WorkflowTest.class.getName()).log(Level.INFO, "Test method : Activity_ParallelTasks");
+    public void create_parallel_activity() throws CreationException, FolderAlreadyExistsException, WorkspaceNotFoundException, UserNotFoundException, NotAllowedException, FolderNotFoundException, WorkflowModelAlreadyExistsException, AccessRightException, UserNotActiveException, RoleAlreadyExistsException, EntityConstraintException, RoleNotFoundException {
+        Logger.getLogger(WorkflowTest.class.getName()).log(Level.INFO, "Test method : create_parallel_activity");
         Map<Role, User> roles = new HashMap<>();
         roles.put(workflowManagerBean.createRole(TestUtil.USER1_TEST, "role1", TestUtil.WORKSPACE_TEST, TestUtil.USER1_TEST), new User(TestUtil.USER1_TEST));
         roles.put(workflowManagerBean.createRole(TestUtil.USER1_TEST, "role2", TestUtil.WORKSPACE_TEST, TestUtil.USER2_TEST), new User(TestUtil.USER2_TEST));
@@ -268,8 +268,8 @@ public class WorkflowTest {
     }
 
     @Test
-    public void test6_WorkflowEmptyName() throws RoleNotFoundException, UserNotActiveException, WorkspaceNotFoundException, CreationException, UserNotFoundException, EntityConstraintException, AccessRightException, RoleAlreadyExistsException, NotAllowedException, WorkflowModelAlreadyExistsException, FolderAlreadyExistsException, FolderNotFoundException {
-        Logger.getLogger(WorkflowTest.class.getName()).log(Level.INFO, "Test method : Workflow_ActivityValidity");
+    public void create_workflow_with_empty_name() throws RoleNotFoundException, UserNotActiveException, WorkspaceNotFoundException, CreationException, UserNotFoundException, EntityConstraintException, AccessRightException, RoleAlreadyExistsException, NotAllowedException, WorkflowModelAlreadyExistsException, FolderAlreadyExistsException, FolderNotFoundException {
+        Logger.getLogger(WorkflowTest.class.getName()).log(Level.INFO, "Test method : create_workflow_with_empty_name");
         Map<Role, User> roles = new HashMap<>();
         roles.put(workflowManagerBean.createRole(TestUtil.USER1_TEST, "role1", TestUtil.WORKSPACE_TEST, TestUtil.USER1_TEST), new User(TestUtil.USER1_TEST));
         roles.put(workflowManagerBean.createRole(TestUtil.USER1_TEST, "role2", TestUtil.WORKSPACE_TEST, TestUtil.USER2_TEST), new User(TestUtil.USER2_TEST));
@@ -293,8 +293,8 @@ public class WorkflowTest {
     }
 
     @Test
-    public void test7_RoleUserUnicity() throws WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException {
-        Logger.getLogger(WorkflowTest.class.getName()).log(Level.INFO, "Test method : Task_RoleNameValidity");
+    public void duplicate_role() throws WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException {
+        Logger.getLogger(WorkflowTest.class.getName()).log(Level.INFO, "Test method : duplicate_role");
         try {
             workflowManagerBean.createRole(TestUtil.USER1_TEST, "role1", TestUtil.WORKSPACE_TEST, TestUtil.USER1_TEST);
             workflowManagerBean.createRole(TestUtil.USER1_TEST, "role1", TestUtil.WORKSPACE_TEST, TestUtil.USER2_TEST);

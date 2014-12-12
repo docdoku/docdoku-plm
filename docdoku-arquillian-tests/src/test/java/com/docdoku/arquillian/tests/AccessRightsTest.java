@@ -193,23 +193,23 @@ public class AccessRightsTest {
 
 
     @Test
-    public void Test1_testSimpleCreation() throws Exception {
-        Logger.getLogger(AccessRightsTest.class.getName()).log(Level.INFO, "Test method : testSimpleCreation");
+    public void create_document() throws Exception {
+        Logger.getLogger(AccessRightsTest.class.getName()).log(Level.INFO, "Test method : create_document");
         userManagerBean.testAddingUserInWorkspace("user1", "user2", "TEST_WORKSPACE");
         documentManagerBean.createDocumentMaster("user2", "TEST_WORKSPACE/TEST_FOLDER", "DOCUMENT0", null, null);
 
     }
 
     @Test
-    public void Test2_testMatrixRights1() throws Exception {
-        Logger.getLogger(AccessRightsTest.class.getName()).log(Level.INFO, "Test method : testMatrixRights1");
+    public void matrix_rights1() throws Exception {
+        Logger.getLogger(AccessRightsTest.class.getName()).log(Level.INFO, "Test method : matrix_rights1");
         userManagerBean.testGrantingUserAccessInWorkspace("user1", new String[]{"user2"}, "TEST_WORKSPACE", false);
         documentManagerBean.createDocumentMaster("user2", "TEST_WORKSPACE/TEST_FOLDER", "DOCUMENT1", null, null);
     }
 
     @Test
-    public void Test3_testMatrixRights2() throws Exception {
-        Logger.getLogger(AccessRightsTest.class.getName()).log(Level.INFO, "Test method : testMatrixRights2");
+    public void matrix_rights2() throws Exception {
+        Logger.getLogger(AccessRightsTest.class.getName()).log(Level.INFO, "Test method : matrix_rights2");
         userManagerBean.testGroupCreation("user1", "TEST_WORKSPACE", "group1");
         userManagerBean.testGrantingUserGroupAccessInWorkspace("user1", new String[]{"group1"}, "TEST_WORKSPACE", true);
         userManagerBean.testAddingUserInGroup("user1", "group1", "TEST_WORKSPACE", "user3");
@@ -219,8 +219,8 @@ public class AccessRightsTest {
     }
 
     @Test
-    public void Test4_testMatrixRights3() throws Exception {
-        Logger.getLogger(AccessRightsTest.class.getName()).log(Level.INFO, "Test method : testMatrixRights3");
+    public void matrix_rights3() throws Exception {
+        Logger.getLogger(AccessRightsTest.class.getName()).log(Level.INFO, "Test method : matrix_rights3");
         userManagerBean.testGroupCreation("user1", "TEST_WORKSPACE", "group2");
         userManagerBean.testGrantingUserGroupAccessInWorkspace("user1", new String[]{"group2"}, "TEST_WORKSPACE", false);
         userManagerBean.testGrantingUserGroupAccessInWorkspace("user1", new String[]{"group1"}, "TEST_WORKSPACE", true);
@@ -230,8 +230,8 @@ public class AccessRightsTest {
     }
 
     @Test
-    public void Test5_testMatrixRights4() throws Exception {
-        Logger.getLogger(AccessRightsTest.class.getName()).log(Level.INFO, "Test method : testMatrixRights4");
+    public void matrix_rights4() throws Exception {
+        Logger.getLogger(AccessRightsTest.class.getName()).log(Level.INFO, "Test method : matrix_rights4");
         userManagerBean.testAddingUserInWorkspace("user1", "user4", "TEST_WORKSPACE");
         userManagerBean.testGrantingUserAccessInWorkspace("user1", new String[]{"user4"}, "TEST_WORKSPACE", true);
         User user = em.find(User.class, new UserKey("TEST_WORKSPACE", "user4"));
@@ -247,8 +247,8 @@ public class AccessRightsTest {
     }
 
     @Test
-    public void Test6_testCheckInCheckOut() throws Exception {
-        Logger.getLogger(AccessRightsTest.class.getName()).log(Level.INFO, "Test method : testCheckInCheckOut");
+    public void checkIn_checkOut_document() throws Exception {
+        Logger.getLogger(AccessRightsTest.class.getName()).log(Level.INFO, "Test method : checkIn_checkOut_document");
         documentManagerBean.testDocumentCheckIn("user1", new DocumentRevisionKey(new DocumentMasterKey("TEST_WORKSPACE", "DOCUMENT5"), "A"));
         documentManagerBean.testDocumentCheckOut("user4", new DocumentRevisionKey(new DocumentMasterKey("TEST_WORKSPACE", "DOCUMENT5"), "A"));
     }

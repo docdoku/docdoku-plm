@@ -160,7 +160,7 @@ public class UploadDownloadTest {
 
 
     @Test
-    public void test_uploadTo_downloadFrom_part() throws Exception {
+    public void uploadTo_downloadFrom_part() throws Exception {
         Logger.getLogger(PartTests.class.getName()).log(Level.INFO, "Test method : uploadTo_downloadFrom_part");
 
         partManagerBean.createPartMaster(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "plane_125", " ", true, null, "", null, new HashMap<String, String>(), new ACLUserEntry[0], new ACLUserGroupEntry[0]);
@@ -186,7 +186,7 @@ public class UploadDownloadTest {
     }
 
     @Test
-    public void test_uploadTo_downloadFrom_document() throws Exception {
+    public void uploadTo_downloadFrom_document() throws Exception {
         Logger.getLogger(PartTests.class.getName()).log(Level.INFO, "Test method :uploadTo_downloadFrom_document");
         DocumentRevision documentRevision = documentManagerBean.createDocumentMaster(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST + "/" + TestUtil.FOLDER_TEST, "plane_125", new ACLUserEntry[0], new ACLUserGroupEntry[0]);
         assertTrue(documentRevision != null);
@@ -201,7 +201,7 @@ public class UploadDownloadTest {
     }
 
     @Test
-    public void test_uploadTo_downloadFrom_template() throws Exception {
+    public void uploadTo_downloadFrom_template() throws Exception {
         Logger.getLogger(PartTests.class.getName()).log(Level.INFO, "Test method : uploadTo_downloadFrom_template");
         PartMasterTemplate masterTemplate = partManagerBean.createPartMasterTemplate(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "template1", "planes", "plane_###", new InstanceAttributeTemplate[0], true, true);
         DocumentMasterTemplate documentMasterTemplate = documentManagerBean.createDocumentTemplate(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "template1", "", "", new InstanceAttributeTemplate[0], false, false);
@@ -218,7 +218,7 @@ public class UploadDownloadTest {
 
 
     @Test
-    public void test_uploadTo_downloadFrom_nativeCAD_part() throws Exception {
+    public void uploadTo_downloadFrom_nativeCAD_part() throws Exception {
         Logger.getLogger(PartTests.class.getName()).log(Level.INFO, "Test method : uploadTo_downloadFrom_nativeCAD_part");
         partManagerBean.createPartMaster(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "plane_125", " ", true, null, "", null, new HashMap<String, String>(), new ACLUserEntry[0], new ACLUserGroupEntry[0]);
         PartMaster partMaster = partManagerBean.findPartMasterById(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "plane_125");
@@ -235,7 +235,7 @@ public class UploadDownloadTest {
     }
 
     @Test
-    public void test_uploadTo_downloadFrom_geometry_part() throws Exception {
+    public void uploadTo_downloadFrom_geometry_part() throws Exception {
         Logger.getLogger(PartTests.class.getName()).log(Level.INFO, "Test method : uploadTo_downloadFrom_geometry_part");
         partManagerBean.createPartMaster(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "plane_125", " ", true, null, "", null, new HashMap<String, String>(), new ACLUserEntry[0], new ACLUserGroupEntry[0]);
         PartMaster partMaster = partManagerBean.findPartMasterById(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "plane_125");
