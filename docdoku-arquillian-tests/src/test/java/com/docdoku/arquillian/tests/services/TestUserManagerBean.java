@@ -57,7 +57,6 @@ public class TestUserManagerBean {
         loginP.login(login, password.toCharArray());
         try{
             esIndexer.deleteWorkspace(pWorkspace);
-//            workspaceManagerLocal.deleteWorkspace(pWorkspace);
         }catch (Exception ignored){}
         Workspace workspace = userManagerLocal.createWorkspace(pWorkspace, userManagerLocal.getAccount(login), "", false);
         loginP.logout();

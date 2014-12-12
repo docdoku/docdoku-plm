@@ -85,6 +85,9 @@ public class ProductTest {
     @EJB
     private TestProductManagerBean productManagerBean;
 
+    @EJB
+    private  TestDocumentManagerBean documentManagerBean;
+
     @PersistenceContext
     private EntityManager em;
 
@@ -92,6 +95,8 @@ public class ProductTest {
     private UserTransaction utx;
 
     private static final int COUNT = 5;
+
+    private  TestUtil util =new TestUtil();
 
     @Deployment
     public static Archive<?> createDeployment() {
@@ -163,7 +168,7 @@ public class ProductTest {
             em.merge(account);
         }
         utx.commit();
-        TestUtil.init();
+        util.init(userManagerBean,documentManagerBean);
     }
 
 

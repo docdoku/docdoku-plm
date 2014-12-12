@@ -89,6 +89,9 @@ public class ChangeTest {
 
     private static final int COUNT = 5;
 
+
+    private TestUtil util =new TestUtil();
+
     @Deployment
     public static Archive<?> createDeployment() {
 
@@ -156,7 +159,7 @@ public class ChangeTest {
             em.merge(account);
         }
         utx.commit();
-        TestUtil.init();
+        util.init(userManagerBean,documentManagerBean);
     }
 
 

@@ -95,6 +95,8 @@ public class WorkflowTest {
 
     private static final int COUNT = 5;
 
+    private  TestUtil util =new TestUtil();
+
     @Deployment
     public static Archive<?> createDeployment() {
         return ShrinkWrap.create(WebArchive.class, "docdoku-arquillian-tests-workflow.war")
@@ -162,7 +164,7 @@ public class WorkflowTest {
         }
         utx.commit();
 
-        TestUtil.init();
+        util.init(userManagerBean,documentManagerBean);
 
     }
 
