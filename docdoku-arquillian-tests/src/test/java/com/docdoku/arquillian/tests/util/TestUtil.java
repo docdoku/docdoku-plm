@@ -7,9 +7,8 @@ import javax.ejb.EJB;
 import javax.inject.Inject;
 import java.io.File;
 
-
 /**
- * @author Asmae CHADID
+ * Created by asmae on 03/12/14.
  */
 public class TestUtil {
 

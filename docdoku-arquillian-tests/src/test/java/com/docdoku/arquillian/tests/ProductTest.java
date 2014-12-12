@@ -173,8 +173,8 @@ public class ProductTest {
 
 
    @Test
-    public void create_product_with_null_Part() throws Exception{
-        Logger.getLogger(ProductTest.class.getName()).log(Level.INFO, "Test method : create_product_with_null_Part");
+    public void test1_ProductWithNullPart() throws Exception{
+        Logger.getLogger(ProductTest.class.getName()).log(Level.INFO, "Test method : ProductWithNullPart");
         try {
             productManagerBean.createConfigurationItem(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "produit1", "", null);
         } catch (NotAllowedException |WorkspaceNotFoundException |PartMasterNotFoundException| ConfigurationItemAlreadyExistsException| CreationException| AccessRightException |UserNotFoundException|PartMasterTemplateAlreadyExistsException e) {
@@ -187,8 +187,8 @@ public class ProductTest {
     }
 
     @Test
-    public void create_product_with_invalid_Part() {
-        Logger.getLogger(PartTests.class.getName()).log(Level.INFO, "Test method : create_product_with_invalid_Part");
+    public void test2_productWithoutInvalidePart() {
+        Logger.getLogger(PartTests.class.getName()).log(Level.INFO, "Test method : ProductWithoutInvalidePart");
 
         try {
             productManagerBean.createConfigurationItem(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "produit1", "", "part1");
@@ -199,8 +199,8 @@ public class ProductTest {
     }
 
     @Test
-    public void create_product() {
-        Logger.getLogger(PartTests.class.getName()).log(Level.INFO, "Test method : create_product");
+    public void test3_productCreation() {
+        Logger.getLogger(PartTests.class.getName()).log(Level.INFO, "Test method : productCreation");
         try {
             partManagerBean.createPartMaster(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "part1", " ", true, null, "", null, null, null, null);
             productManagerBean.createConfigurationItem(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "produit1", "", "part1");
@@ -211,9 +211,9 @@ public class ProductTest {
     }
 
     @Test
-    public void create_baseline_with_product_not_checkouted() throws Exception{
-        Logger.getLogger(PartTests.class.getName()).log(Level.INFO, "Test method : create_baseline_with_product_not_checkouted");
-        partManagerBean.createPartMaster(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "part1", " ", true, null, "", null, null, null, null);
+    public void test4_baselineProductNotCheckouted() throws Exception{
+
+            partManagerBean.createPartMaster(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "part1", " ", true, null, "", null, null, null, null);
             productManagerBean.createConfigurationItem(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "produit1", "", "part1");
             ConfigurationItem configurationItem = productManagerBean.getListConfigurationItem(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST).get(0);
             assertTrue(configurationItem != null);
@@ -225,8 +225,8 @@ public class ProductTest {
 
 
     @Test
-    public void create_baseline_of_product_without_access_to_part() {
-        Logger.getLogger(PartTests.class.getName()).log(Level.INFO, "Test method : create_baseline_of_product_without_access_to_part");
+    public void test5_baselineProductPartNoAccess() {
+        Logger.getLogger(PartTests.class.getName()).log(Level.INFO, "Test method : baselineProductPartNoAccess");
         BaselineCreation baselineCreation = null;
         try {
 
