@@ -1,12 +1,11 @@
 /*global _,define,App*/
-'use strict';
 define([
     'backbone',
     'common-objects/collections/file/attached_file_collection',
     'common-objects/utils/date'
 ], function (Backbone, AttachedFileCollection, Date) {
+    'use strict';
     var Template = Backbone.Model.extend({
-
         className: 'PartTemplate',
 
         initialize: function () {

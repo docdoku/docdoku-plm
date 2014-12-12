@@ -4,8 +4,9 @@ define([
     'text!templates/part-template/part_template_creation_view.html',
     'models/part_template',
     'common-objects/views/file/file_list',
-    'common-objects/views/attributes/template_new_attributes'
-], function (ModalView, template, PartTemplate, FileListView, TemplateNewAttributesView) {
+    'common-objects/views/attributes/template_new_attributes',
+    'common-objects/views/alert'
+], function (ModalView, template, PartTemplate, FileListView, TemplateNewAttributesView, AlertView) {
 	'use strict';
     var PartTemplateEditView = ModalView.extend({
 
@@ -52,6 +53,7 @@ define([
         },
 
         bindDomElements: function () {
+            this.$notifications = this.$el.find('.notifications').first();
             this.$partTemplateReference = this.$('#part-template-reference');
             this.$partTemplateType = this.$('#part-template-type');
             this.$partTemplateMask = this.$('#part-template-mask');
@@ -104,7 +106,12 @@ define([
         },
 
         onError: function (model, error) {
-            alert(App.config.i18n.CREATION_ERROR + ' : ' + error.responseText);
+            var errorMessage = error ? error.responseText : model;
+
+            this.$notifications.append(new AlertView({
+                type: 'error',
+                message: errorMessage
+            }).render().$el);
         }
 
     });

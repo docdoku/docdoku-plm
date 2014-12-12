@@ -1,13 +1,14 @@
-/*global define*/
-'use strict';
+/*global _,define,App*/
 define([
     'backbone',
-    "mustache",
+    'mustache',
     'text!templates/product-instances/product_instances_creation.html',
     'common-objects/models/product_instance',
-    'common-objects/collections/configuration_items',
-    'common-objects/collections/baselines'
-], function (Backbone, Mustache, template, ProductInstanceModel, ConfigurationItemCollection, BaselinesCollection) {
+    'collections/configuration_items',
+    'common-objects/collections/baselines',
+    'common-objects/views/alert'
+], function (Backbone, Mustache, template, ProductInstanceModel, ConfigurationItemCollection, BaselinesCollection, AlertView) {
+    'use strict';
 
     var ProductInstanceCreationView = Backbone.View.extend({
 
@@ -61,6 +62,7 @@ define([
         },
 
         bindDomElements: function () {
+            this.$notifications = this.$el.find('.notifications').first();
             this.$modal = this.$('#product_instance_creation_modal');
             this.$inputSerialNumber = this.$('#inputSerialNumber');
             this.$inputConfigurationItem = this.$('#inputConfigurationItem');
@@ -94,7 +96,12 @@ define([
         },
 
         onError: function (model, error) {
-            alert(App.config.i18n.CREATION_ERROR + ' : ' + error.responseText);
+            var errorMessage = error ? error.responseText : model;
+
+            this.$notifications.append(new AlertView({
+                type: 'error',
+                message: errorMessage
+            }).render().$el);
         },
 
         openModal: function () {

@@ -7,9 +7,6 @@ import com.docdoku.server.mainchannel.util.ChannelMessagesType;
 
 import javax.json.JsonObject;
 import javax.websocket.Session;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * A controller for manage a room of Collaboration Module

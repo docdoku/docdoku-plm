@@ -1,15 +1,18 @@
 /*global define*/
-define(['backbone', "mustache", "text!templates/baseline/baseline_list_item.html"], function (Backbone, Mustache, template) {
-
+define([
+    'backbone',
+    'mustache',
+    'text!templates/baseline/baseline_list_item.html'
+], function (Backbone, Mustache, template) {
+    'use strict';
     var BaselineItemView = Backbone.View.extend({
+        tagName: 'li',
 
-        tagName: "li",
-
-        className: "baseline-item",
+        className: 'baseline-item',
 
         events: {
-            "change input[type=checkbox]": "toggleStroke",
-            "click a": "toBaselineEditView"
+            'change input[type=checkbox]': 'toggleStroke',
+            'click a': 'toBaselineEditView'
         },
 
         render: function () {
@@ -19,24 +22,23 @@ define(['backbone', "mustache", "text!templates/baseline/baseline_list_item.html
         },
 
         bindDomElements: function () {
-            this.$a = this.$("a");
-            this.$checkbox = this.$("input[type=checkbox]");
+            this.$a = this.$('a');
+            this.$checkbox = this.$('input[type=checkbox]');
         },
 
         toggleStroke: function () {
-            this.$a.toggleClass("stroke");
+            this.$a.toggleClass('stroke');
         },
 
         isChecked: function () {
-            return this.$checkbox.is(":checked");
+            return this.$checkbox.is(':checked');
         },
 
         toBaselineEditView: function () {
-            this.trigger("baseline:to-edit-modal", this.model);
+            this.trigger('baseline:to-edit-modal', this.model);
         }
 
     });
 
     return BaselineItemView;
-
 });

@@ -1,17 +1,19 @@
-/*global define*/
+/*global define,App*/
 define([
     'backbone',
-    "mustache",
-    "text!templates/product-instances/product_instance_modal.html",
-    "views/baseline/baselined_part_list",
-    "common-objects/utils/date"
-], function (Backbone, Mustache, template, BaselinedPartListView, date) {
+    'mustache',
+    'text!templates/product-instances/product_instance_modal.html',
+    'views/baseline/baselined_part_list',
+    'common-objects/utils/date',
+    'common-objects/views/alert'
+], function (Backbone, Mustache, template, BaselinedPartListView, date,AlertView) {
+    'use strict';
     var ProductInstancesModalView = Backbone.View.extend({
         events: {
-            "submit #product_instance_edit_form": "onSubmitForm",
-            "hidden #product_instance_modal": "onHidden",
-            "click a#previous-iteration": "onPreviousIteration",
-            "click a#next-iteration": "onNextIteration"
+            'submit #product_instance_edit_form': 'onSubmitForm',
+            'hidden #product_instance_modal': 'onHidden',
+            'click a#previous-iteration': 'onPreviousIteration',
+            'click a#next-iteration': 'onNextIteration'
         },
 
         template: Mustache.parse(template),
@@ -73,9 +75,10 @@ define([
         },
 
         bindDomElements: function () {
-            this.$modal = this.$("#product_instance_modal");
-            this.$inputIterationNote = this.$("#inputIterationNote");
-            this.$baselinedPartListArea = this.$("#baselinedPartListArea");
+            this.$notifications = this.$el.find('.notifications').first();
+            this.$modal = this.$('#product_instance_modal');
+            this.$inputIterationNote = this.$('#inputIterationNote');
+            this.$baselinedPartListArea = this.$('#baselinedPartListArea');
             this.$authorLink = this.$('.author-popover');
         },
 
@@ -85,23 +88,21 @@ define([
         },
 
         bindUserPopover: function () {
-            this.$authorLink.userPopover(this.model.getUpdateAuthor(), this.model.getSerialNumber(), "right");
+            this.$authorLink.userPopover(this.model.getUpdateAuthor(), this.model.getSerialNumber(), 'right');
         },
 
         onSubmitForm: function (e) {
-            var that = this;
+            var _this = this;
             this.iteration = this.iteration.clone();
-            this.iteration.unset("iteration");
+            this.iteration.unset('iteration');
             this.iteration.setIterationNote(this.$inputIterationNote.val());
             this.iteration.setBaselinedParts(this.baselinePartListView.getBaselinedParts());
-            this.iteration.save(JSON.stringify(this.iteration), "", {
+            this.iteration.save(JSON.stringify(this.iteration), '', {
                 success: function () {
-                    that.model.fetch();
-                    that.closeModal();
+                    _this.model.fetch();
+                    _this.closeModal();
                 },
-                error: function (status, err) {
-                    alert(err.responseText);
-                }
+                error: _this.onError
             });
 
             e.preventDefault();
@@ -110,7 +111,12 @@ define([
         },
 
         onError: function (model, error) {
-            alert(App.config.i18n.CREATION_ERROR + " : " + error.responseText);
+            var errorMessage = error ? error.responseText : model;
+
+            this.$notifications.append(new AlertView({
+                type: 'error',
+                message: errorMessage
+            }).render().$el);
         },
 
         openModal: function () {

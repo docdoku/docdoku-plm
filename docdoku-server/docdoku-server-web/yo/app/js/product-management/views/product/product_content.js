@@ -2,7 +2,7 @@
 define([
     'backbone',
     'mustache',
-    'common-objects/collections/configuration_items',
+    'collections/configuration_items',
     'text!templates/product/product_content.html',
     'views/product/product_list',
     'views/product/product_creation_view',

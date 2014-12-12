@@ -1,18 +1,19 @@
-/*global define*/
+/*global define,App*/
 define([
     'backbone',
-    "mustache",
-    "text!templates/product-instances/product_instances_list_item.html",
-    "views/product-instances/product_instance_modal"
+    'mustache',
+    'text!templates/product-instances/product_instances_list_item.html',
+    'views/product-instances/product_instance_modal'
 ], function (Backbone, Mustache, template, ProductInstanceModalView) {
+    'use strict';
     var ProductInstancesListItemView = Backbone.View.extend({
 
         events: {
-            "click input[type=checkbox]": "selectionChanged",
-            "click td.reference": "openEditView"
+            'click input[type=checkbox]': 'selectionChanged',
+            'click td.reference': 'openEditView'
         },
 
-        tagName: "tr",
+        tagName: 'tr',
 
         initialize: function () {
             this._isChecked = false;
@@ -20,16 +21,16 @@ define([
 
         render: function () {
             this.$el.html(Mustache.render(template, {model: this.model, i18n: App.config.i18n}));
-            this.$checkbox = this.$("input[type=checkbox]");
-            this.model.on("change", this.render, this);
+            this.$checkbox = this.$('input[type=checkbox]');
+            this.model.on('change', this.render, this);
             this.bindUserPopover();
-            this.trigger("rendered", this);
+            this.trigger('rendered', this);
             return this;
         },
 
         selectionChanged: function () {
-            this._isChecked = this.$checkbox.prop("checked");
-            this.trigger("selectionChanged", this);
+            this._isChecked = this.$checkbox.prop('checked');
+            this.trigger('selectionChanged', this);
         },
 
         isChecked: function () {
@@ -37,16 +38,16 @@ define([
         },
 
         check: function () {
-            this.$checkbox.prop("checked", true);
+            this.$checkbox.prop('checked', true);
             this._isChecked = true;
         },
 
         bindUserPopover: function () {
-            this.$(".author-popover").userPopover(this.model.getUpdateAuthor(), this.model.getSerialNumber(), "left");
+            this.$('.author-popover').userPopover(this.model.getUpdateAuthor(), this.model.getSerialNumber(), 'left');
         },
 
         unCheck: function () {
-            this.$checkbox.prop("checked", false);
+            this.$checkbox.prop('checked', false);
             this._isChecked = false;
         },
 

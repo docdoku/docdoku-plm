@@ -1,5 +1,5 @@
 /*global define,App*/
-define(['backbone', 'common-objects/models/configuration_item' ],
+define(['backbone', 'models/configuration_item' ],
 function (Backbone, ConfigurationItem) {
 	'use strict';
     var ConfigurationItemCollection = Backbone.Collection.extend({

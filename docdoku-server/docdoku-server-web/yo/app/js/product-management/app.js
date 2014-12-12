@@ -7,7 +7,6 @@ define([
 ], function (Backbone, Mustache, Workspace, template) {
 	'use strict';
     var AppView = Backbone.View.extend({
-
         el: '#content',
 
         events: {},

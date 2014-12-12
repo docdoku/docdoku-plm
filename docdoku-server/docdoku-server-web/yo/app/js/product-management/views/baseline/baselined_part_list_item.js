@@ -1,21 +1,19 @@
-/*global define*/
-'use strict';
+/*global _,define,App*/
 define([
     'backbone',
-    "mustache",
-    "text!templates/baseline/baselined_part_list_item.html"
+    'mustache',
+    'text!templates/baseline/baselined_part_list_item.html'
 ], function (Backbone, Mustache, template) {
-
+    'use strict';
     var BaselinedPartListItemView = Backbone.View.extend({
+        tagName: 'li',
 
-        tagName: "li",
-
-        className: "baselined-part-item",
+        className: 'baselined-part-item',
 
         events: {
-            "change .iteration-input": "changeIteration",
-            "change .version-input": "changeVersion",
-            "change input.exclude-input": "excludePart"
+            'change .iteration-input': 'changeIteration',
+            'change .version-input': 'changeVersion',
+            'change input.exclude-input': 'excludePart'
         },
 
         template: Mustache.parse(template),
@@ -77,7 +75,7 @@ define([
             var _this = this;
             var iteration = 1;
             var version = this.$versionInput.val();
-            this.$iterationInput.html("");
+            this.$iterationInput.html('');
             this.availableIterations.each(function (optionI) {
                 if (optionI.version === version) {
                     iteration = optionI.lastIteration;
@@ -105,9 +103,9 @@ define([
         },
         excludePart: function (e) {
             if (e.target.checked) {
-                this.$el.css("opacity", 0.5);
+                this.$el.css('opacity', 0.5);
             } else {
-                this.$el.css("opacity", 1);
+                this.$el.css('opacity', 1);
             }
             this.model.setExcluded(e.target.checked);
         }

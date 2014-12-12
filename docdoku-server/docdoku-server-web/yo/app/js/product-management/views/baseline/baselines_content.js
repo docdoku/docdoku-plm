@@ -3,7 +3,7 @@ define([
     'backbone',
     'mustache',
     'common-objects/collections/baselines',
-    'common-objects/collections/configuration_items',
+    'collections/configuration_items',
     'text!templates/baseline/baselines_content.html',
     'views/baseline/baselines_list',
     'views/baseline/baseline_duplicate_view',

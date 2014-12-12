@@ -1,4 +1,4 @@
-/*global require,window*/
+/*global $,require,window*/
 var App = {
     debug: false,
 
@@ -135,6 +135,7 @@ function (ContextResolver,  commonStrings, productStructureStrings) {
     App.config.i18n = _.extend(commonStrings,productStructureStrings);
     ContextResolver.resolve(function(){
         require(['backbone','frameRouter', 'dmu/SceneManager','dmu/InstancesManager'],function(Backbone,  Router,SceneManager,InstancesManager){
+            App.$SceneContainer = $('div#frameWorkspace');
             App.instancesManager = new InstancesManager();
             App.sceneManager = new SceneManager();
             App.sceneManager.init();

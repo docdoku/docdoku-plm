@@ -8,8 +8,9 @@ define([
     'common-objects/views/attributes/attributes',
     'common-objects/views/workflow/workflow_list',
     'common-objects/views/workflow/workflow_mapping',
-    'common-objects/views/security/acl'
-], function (Backbone, Mustache, template, Part, PartTemplateCollection, AttributesView, WorkflowListView, DocumentWorkflowMappingView, ACLView) {
+    'common-objects/views/security/acl',
+    'common-objects/views/alert'
+], function (Backbone, Mustache, template, Part, PartTemplateCollection, AttributesView, WorkflowListView, DocumentWorkflowMappingView, ACLView, AlertView) {
     'use strict';
     var PartCreationView = Backbone.View.extend({
 
@@ -50,6 +51,7 @@ define([
         },
 
         bindDomElements: function () {
+            this.$notifications = this.$el.find('.notifications').first();
             this.$inputPartTemplate = this.$('#inputPartTemplate');
             this.$inputPartNumber = this.$('#inputPartNumber');
             this.$inputPartName = this.$('#inputPartName');
@@ -136,7 +138,12 @@ define([
         },
 
         onError: function (model, error) {
-            alert(App.config.i18n.CREATION_ERROR + ' : ' + error.responseText);
+            var errorMessage = error ? error.responseText : model;
+
+            this.$notifications.append(new AlertView({
+                type: 'error',
+                message: errorMessage
+            }).render().$el);
         },
 
         openModal: function () {
