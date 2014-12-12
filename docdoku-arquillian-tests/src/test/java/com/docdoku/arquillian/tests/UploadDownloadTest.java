@@ -28,10 +28,8 @@ import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.FixMethodOrder;
-import org.junit.Test;
+import org.junit.*;
+import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 
@@ -42,7 +40,10 @@ import javax.json.JsonValue;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.UserTransaction;
+import java.io.*;
 import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -81,6 +82,9 @@ public class UploadDownloadTest {
 
 
     private static final int COUNT = 5;
+
+    private  TestUtil util =new TestUtil();
+
 
     @Deployment
     public static Archive<?> createDeployment() {
@@ -137,6 +141,7 @@ public class UploadDownloadTest {
 
     @Before
     public void insertData() throws Exception {
+
         utx.begin();
         em.clear();
         em.joinTransaction();
@@ -148,24 +153,27 @@ public class UploadDownloadTest {
         }
         utx.commit();
 
-      TestUtil.init();
+
+        TestUtil.deleteDownloadedFiles("null");
+        util.init(userManagerBean,documentManagerBean);
     }
 
-    @Test
-    public void test1_uploadToDownloadFromPart() throws Exception {
-        Logger.getLogger(PartTests.class.getName()).log(Level.INFO, "Test method : uploadToDownloadFromPart");
-        partManagerBean.createPartMaster(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "plane_125", " ", true, null, "", null, new HashMap<String, String>(), new ACLUserEntry[0], new ACLUserGroupEntry[0]);
 
+    @Test
+    public void test_uploadTo_downloadFrom_part() throws Exception {
+        Logger.getLogger(PartTests.class.getName()).log(Level.INFO, "Test method : uploadTo_downloadFrom_part");
+
+        partManagerBean.createPartMaster(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "plane_125", " ", true, null, "", null, new HashMap<String, String>(), new ACLUserEntry[0], new ACLUserGroupEntry[0]);
         PartMaster partMaster = partManagerBean.findPartMasterById(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "plane_125");
         assertTrue(partMaster != null);
         URL binURL = getClass().getResource("/com/docdoku/arquillian/tests/bike.bin");
         URL binURL2 = getClass().getResource("/com/docdoku/arquillian/tests/vélo'(.bin");
         DataHandler data = new DataHandler(binURL);
         DataHandler data2 = new DataHandler(binURL2);
-        uploadDownloadManagerBean.uploadToPart(TestUtil.USER1_TEST,TestUtil.WORKSPACE_TEST,"plane_125","A",1,"bike.bin",data);
-        uploadDownloadManagerBean.uploadToPart(TestUtil.USER1_TEST,TestUtil.WORKSPACE_TEST,"plane_125","A",1,"vélo'(.bin",data2);
-        DataHandler dataHandler= uploadDownloadManagerBean.downloadFromPart(TestUtil.USER1_TEST,TestUtil.WORKSPACE_TEST,"plane_125","A",1,"bike.bin");
-        DataHandler dataHandler2= uploadDownloadManagerBean.downloadFromPart(TestUtil.USER1_TEST,TestUtil.WORKSPACE_TEST,"plane_125","A",1,"vélo'(.bin");
+        uploadDownloadManagerBean.uploadToPart(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "plane_125", "A", 1, "bike.bin", data);
+        uploadDownloadManagerBean.uploadToPart(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "plane_125", "A", 1, "vélo'(.bin", data2);
+        DataHandler dataHandler = uploadDownloadManagerBean.downloadFromPart(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "plane_125", "A", 1, "bike.bin");
+        DataHandler dataHandler2 = uploadDownloadManagerBean.downloadFromPart(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "plane_125", "A", 1, "vélo'(.bin");
 
         Assert.assertTrue(dataHandler.getDataSource().getName().equals("bike.bin"));
         Assert.assertTrue(dataHandler.getDataSource().getContentType().equals(data.getDataSource().getContentType()));
@@ -174,17 +182,18 @@ public class UploadDownloadTest {
         Assert.assertTrue(dataHandler2.getDataSource().getContentType().equals(data2.getDataSource().getContentType()));
         Assert.assertTrue(dataHandler2.getDataSource().getInputStream().available() == data2.getDataSource().getInputStream().available());
 
+
     }
 
     @Test
-    public void test2_uploadToDownloadFromDocument() throws Exception {
-        Logger.getLogger(PartTests.class.getName()).log(Level.INFO, "Test method : uploadToDownloadFromDocument");
-        DocumentRevision documentRevision= documentManagerBean.createDocumentMaster(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST + "/"+TestUtil.FOLDER_TEST, "plane_125", new ACLUserEntry[0], new ACLUserGroupEntry[0]);
+    public void test_uploadTo_downloadFrom_document() throws Exception {
+        Logger.getLogger(PartTests.class.getName()).log(Level.INFO, "Test method :uploadTo_downloadFrom_document");
+        DocumentRevision documentRevision = documentManagerBean.createDocumentMaster(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST + "/" + TestUtil.FOLDER_TEST, "plane_125", new ACLUserEntry[0], new ACLUserGroupEntry[0]);
         assertTrue(documentRevision != null);
         URL binURL = getClass().getResource("/com/docdoku/arquillian/tests/bike.bin");
         DataHandler data = new DataHandler(binURL);
         uploadDownloadManagerBean.uploadToDocument(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "plane_125", "A", 1, "bike.bin", data);
-        DataHandler dataHandler= uploadDownloadManagerBean.downloadFromDocument(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "plane_125", "A", 1, "bike.bin");
+        DataHandler dataHandler = uploadDownloadManagerBean.downloadFromDocument(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "plane_125", "A", 1, "bike.bin");
         Assert.assertTrue(dataHandler.getDataSource().getName().equals("bike.bin"));
         Assert.assertTrue(dataHandler.getDataSource().getContentType().equals(data.getDataSource().getContentType()));
         Assert.assertTrue(dataHandler.getDataSource().getInputStream().available() == data.getDataSource().getInputStream().available());
@@ -192,15 +201,15 @@ public class UploadDownloadTest {
     }
 
     @Test
-    public void test3_uploadToTemplate() throws Exception{
-        Logger.getLogger(PartTests.class.getName()).log(Level.INFO, "Test method : uploadToTemplate");
-        PartMasterTemplate masterTemplate= partManagerBean.createPartMasterTemplate(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "template1", "planes", "plane_###", new InstanceAttributeTemplate[0], true, true);
-        DocumentMasterTemplate  documentMasterTemplate = documentManagerBean.createDocumentTemplate(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "template1", "", "", new InstanceAttributeTemplate[0], false, false);
+    public void test_uploadTo_downloadFrom_template() throws Exception {
+        Logger.getLogger(PartTests.class.getName()).log(Level.INFO, "Test method : uploadTo_downloadFrom_template");
+        PartMasterTemplate masterTemplate = partManagerBean.createPartMasterTemplate(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "template1", "planes", "plane_###", new InstanceAttributeTemplate[0], true, true);
+        DocumentMasterTemplate documentMasterTemplate = documentManagerBean.createDocumentTemplate(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "template1", "", "", new InstanceAttributeTemplate[0], false, false);
         URL binURL = getClass().getResource("/com/docdoku/arquillian/tests/bike.bin");
         DataHandler data = new DataHandler(binURL);
         uploadDownloadManagerBean.uploadToTemplate(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "template1", "bike.bin", data);
 
-        DataHandler dataHandler= uploadDownloadManagerBean.downloadFromTemplate(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "template1", "bike.bin");
+        DataHandler dataHandler = uploadDownloadManagerBean.downloadFromTemplate(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "template1", "bike.bin");
         assertTrue(documentMasterTemplate != null);
         Assert.assertTrue(dataHandler.getDataSource().getName().equals("bike.bin"));
         Assert.assertTrue(dataHandler.getDataSource().getContentType().equals(data.getDataSource().getContentType()));
@@ -209,15 +218,15 @@ public class UploadDownloadTest {
 
 
     @Test
-    public void test4_uploadDownloadNativeCADFromPart() throws Exception{
-        Logger.getLogger(PartTests.class.getName()).log(Level.INFO, "Test method : uploadDownloadNativeCADFromPart");
+    public void test_uploadTo_downloadFrom_nativeCAD_part() throws Exception {
+        Logger.getLogger(PartTests.class.getName()).log(Level.INFO, "Test method : uploadTo_downloadFrom_nativeCAD_part");
         partManagerBean.createPartMaster(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "plane_125", " ", true, null, "", null, new HashMap<String, String>(), new ACLUserEntry[0], new ACLUserGroupEntry[0]);
         PartMaster partMaster = partManagerBean.findPartMasterById(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "plane_125");
         assertTrue(partMaster != null);
         URL binURL = getClass().getResource("/com/docdoku/arquillian/tests/bike.bin");
         DataHandler data = new DataHandler(binURL);
         uploadDownloadManagerBean.uploadNativeCADToPart(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "plane_125", "A", 1, "bike.bin", data);
-        DataHandler dataHandler= uploadDownloadManagerBean.downloadNativeFromPart(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "plane_125", "A", 1, "bike.bin");
+        DataHandler dataHandler = uploadDownloadManagerBean.downloadNativeFromPart(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "plane_125", "A", 1, "bike.bin");
 
         Assert.assertTrue(dataHandler.getDataSource().getName().equals("bike.bin"));
         Assert.assertTrue(dataHandler.getDataSource().getContentType().equals(data.getDataSource().getContentType()));
@@ -226,8 +235,8 @@ public class UploadDownloadTest {
     }
 
     @Test
-    public void test5_uploadGeometryToPart() throws Exception{
-        Logger.getLogger(PartTests.class.getName()).log(Level.INFO, "Test method : uploadGeometryToPart");
+    public void test_uploadTo_downloadFrom_geometry_part() throws Exception {
+        Logger.getLogger(PartTests.class.getName()).log(Level.INFO, "Test method : uploadTo_downloadFrom_geometry_part");
         partManagerBean.createPartMaster(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "plane_125", " ", true, null, "", null, new HashMap<String, String>(), new ACLUserEntry[0], new ACLUserGroupEntry[0]);
         PartMaster partMaster = partManagerBean.findPartMasterById(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "plane_125");
         assertTrue(partMaster != null);
@@ -235,7 +244,7 @@ public class UploadDownloadTest {
         DataHandler data = new DataHandler(binURL);
         uploadDownloadManagerBean.uploadGeometryToPart(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "plane_125", "A", 1, "bike.bin", 1, data);
 
-        DataHandler dataHandler= uploadDownloadManagerBean.downloadFromPart(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "plane_125", "A", 1, "bike.bin");
+        DataHandler dataHandler = uploadDownloadManagerBean.downloadFromPart(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "plane_125", "A", 1, "bike.bin");
 
         Assert.assertTrue(dataHandler.getDataSource().getName().equals("bike.bin"));
         Assert.assertTrue(dataHandler.getDataSource().getContentType().equals(data.getDataSource().getContentType()));
@@ -243,5 +252,10 @@ public class UploadDownloadTest {
 
     }
 
+    @AfterClass
+    public static void clearData() {
+       TestUtil.deleteDownloadedFiles("null");
+
+    }
 
 }

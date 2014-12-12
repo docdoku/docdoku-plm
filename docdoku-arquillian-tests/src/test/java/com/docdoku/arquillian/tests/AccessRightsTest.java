@@ -77,9 +77,9 @@ public class AccessRightsTest {
     private ESIndexer esIndexer;
 
     @EJB
-    private static TestDocumentManagerBean documentManagerBean;
+    private  TestDocumentManagerBean documentManagerBean;
     @EJB
-    private static TestUserManagerBean userManagerBean;
+    private  TestUserManagerBean userManagerBean;
 
     @PersistenceContext
     private EntityManager em;
@@ -88,6 +88,8 @@ public class AccessRightsTest {
     private UserTransaction utx;
 
     private static final int COUNT = 5;
+
+    private TestUtil util =new TestUtil();
 
     @Deployment
     public static Archive<?> createDeployment() {
@@ -186,14 +188,13 @@ public class AccessRightsTest {
             em.merge(account);
         }
         utx.commit();
-
+        util.init(userManagerBean,documentManagerBean);
     }
 
 
     @Test
     public void Test1_testSimpleCreation() throws Exception {
         Logger.getLogger(AccessRightsTest.class.getName()).log(Level.INFO, "Test method : testSimpleCreation");
-        TestUtil.init();
         userManagerBean.testAddingUserInWorkspace("user1", "user2", "TEST_WORKSPACE");
         documentManagerBean.createDocumentMaster("user2", "TEST_WORKSPACE/TEST_FOLDER", "DOCUMENT0", null, null);
 

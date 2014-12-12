@@ -88,8 +88,10 @@ public class PartTests {
     @Inject
     private UserTransaction utx;
 
-
     private static final int COUNT = 5;
+
+
+    private TestUtil util =new TestUtil();
 
     @Deployment
     public static Archive<?> createDeployment() {
@@ -154,7 +156,7 @@ public class PartTests {
             em.merge(account);
         }
         utx.commit();
-       TestUtil.init();
+       util.init(userManagerBean,documentManagerBean);
     }
 
 
