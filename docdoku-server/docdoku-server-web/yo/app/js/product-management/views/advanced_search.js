@@ -96,7 +96,7 @@ define([
         onSubmitForm: function (e) {
             var queryString = this.constructQueryString();
             if (queryString) {
-                App.router.navigate('parts-search/' + queryString, {trigger: true});
+                App.router.navigate(App.config.workspaceId + '/parts-search/' + queryString, {trigger: true});
                 this.closeModal();
             }
             return false;

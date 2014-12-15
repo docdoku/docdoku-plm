@@ -127,7 +127,7 @@ public class ESSearcher {
                 SearchHit hit = sr.getHits().getAt(i);
                 PartRevision partRevision = getPartRevision(hit);
                 if (partRevision!=null && !listOfParts.contains(partRevision)) {
-                        listOfParts.add(partRevision);
+                    listOfParts.add(partRevision);
                 }
             }
 
@@ -280,7 +280,7 @@ public class ESSearcher {
             qr = QueryBuilders.disMaxQuery()                                                                            // TODO Cut the query and make a boolQuery() with all the words
                     .add(QueryBuilders.fuzzyLikeThisQuery()
                             .likeText(docQuery.getFullText()))
-                    .add(QueryBuilders.queryString(docQuery.getFullText() + "*")
+                    .add(QueryBuilders.queryString("*"+docQuery.getFullText() + "*")
                             .boost(2.5f))
                     .tieBreaker(1.2f);
         } else {
@@ -342,7 +342,7 @@ public class ESSearcher {
             qr = QueryBuilders.disMaxQuery()
                     .add(QueryBuilders.fuzzyLikeThisQuery()
                             .likeText(partQuery.getFullText()))
-                    .add(QueryBuilders.queryString(partQuery.getFullText() + "*")
+                    .add(QueryBuilders.queryString("*"+partQuery.getFullText() + "*")
                             .boost(2.5f))
                     .tieBreaker(1.2f);
         } else {

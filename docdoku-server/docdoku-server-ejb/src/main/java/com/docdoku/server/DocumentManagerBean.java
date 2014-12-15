@@ -492,33 +492,18 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @Override
     public DocumentRevision[] searchDocumentRevisions(DocumentSearchQuery pQuery) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, ESServerException {
         User user = userManager.checkWorkspaceReadAccess(pQuery.getWorkspaceId());
-        List<DocumentRevision> fetchedDocRs = esSearcher.search(pQuery);                                                 // Get Search Results
+        List<DocumentRevision> fetchedDocRs = esSearcher.search(pQuery);                                                // Get Search Results
+        List<DocumentRevision> docList = new ArrayList<>();
 
         if(!fetchedDocRs.isEmpty()){
-            Workspace wks = new WorkspaceDAO(new Locale(user.getLanguage()), em).loadWorkspace(pQuery.getWorkspaceId());
-            boolean isAdmin = wks.getAdmin().getLogin().equals(user.getLogin());
-
-            ListIterator<DocumentRevision> ite = fetchedDocRs.listIterator();
-            while (ite.hasNext()) {                                                                                     // Todo simplify
-                DocumentRevision docR = ite.next();
-
-                if (!isAdmin && docR.getACL() != null && !docR.getACL().hasReadAccess(user)) {                          // Check Rigth Acces
-                    ite.remove();
-                    continue;
-                }
-
-                if(docR.getLocation().isPrivate() && (!docR.getLocation().getOwner().equals(user.getLogin())) ){        // Remove Private DocMaster From Results
-                    ite.remove();
-                    continue;
-                }
-
-                if ((docR.isCheckedOut()) && (!docR.getCheckOutUser().equals(user))) {                                  // Remove CheckedOut DocMaster From Results
-                    em.detach(docR);
-                    docR.removeLastIteration();
-                    ite.set(docR);
+            for(DocumentRevision docR : fetchedDocRs){
+                DocumentRevision filteredDocR = applyDocumentRevisionReadAccess(user, docR);
+                if(filteredDocR!=null){
+                    docList.add(filteredDocR);
                 }
             }
-            return fetchedDocRs.toArray(new DocumentRevision[fetchedDocRs.size()]);
+
+            return docList.toArray(new DocumentRevision[docList.size()]);
         }
         return new DocumentRevision[0];
     }
@@ -1457,6 +1442,32 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         if (wks.isFolderLocked() && (!pUser.isAdministrator())) {
             throw new NotAllowedException(new Locale(pUser.getLanguage()), "NotAllowedException7");
         }
+    }
+
+    /**
+     * Check if a user, which have access to the workspace, have read access to a document revision
+     * @param user A user which have read access to the workspace
+     * @param documentRevision The document revision wanted
+     * @return True if access if granted, False otherwise
+     */
+    private boolean hasDocumentRevisionReadAccess(User user, DocumentRevision documentRevision){
+        return (user.isAdministrator() ||
+               documentRevision.getACL()==null ||
+               documentRevision.getACL().hasReadAccess(user)) &&
+               (!documentRevision.getLocation().isPrivate() ||
+               documentRevision.getLocation().getOwner().equals(user.getLogin())) ;
+    }
+
+    private DocumentRevision applyDocumentRevisionReadAccess(User user, DocumentRevision documentRevision){
+        if(hasDocumentRevisionReadAccess(user, documentRevision)){
+            if(!documentRevision.isCheckedOut() || documentRevision.getCheckOutUser().equals(user)){
+                return documentRevision;
+            }
+            em.detach(documentRevision);
+            documentRevision.removeLastIteration();
+            return documentRevision;
+        }
+        return null;
     }
 
     private User checkDocumentRevisionWriteAccess(DocumentRevisionKey documentRevisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, DocumentRevisionNotFoundException {

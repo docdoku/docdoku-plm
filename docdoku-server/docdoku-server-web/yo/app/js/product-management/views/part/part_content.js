@@ -54,6 +54,7 @@ define([
         },
         setQuery: function (query) {
             this.query = query;
+            this.partsCollection = null;
             return this;
         },
 
@@ -112,6 +113,8 @@ define([
             this.partListView.on('acl-edit-button:display', this.changeACLButtonDisplay);
             this.partListView.on('new-version-button:display', this.changeVersionButtonDisplay);
             this.partListView.on('release-button:display', this.changeReleaseButtonDisplay);
+
+            this.delegateEvents();
 
         },
 
@@ -323,7 +326,7 @@ define([
 
         onQuickSearch: function (e) {
             if (e.target.children[0].value) {
-                App.router.navigate(App.config.workspaceId + '/parts-search/number=' + e.target.children[0].value, {trigger: true});
+                App.router.navigate(App.config.workspaceId + '/parts-search/q=' + e.target.children[0].value, {trigger: true});
             }
             e.preventDefault();
             return false;

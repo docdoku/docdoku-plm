@@ -231,7 +231,7 @@ define([
 		onQuickSearch: function (e) {
 
 			if (e.target.children[0].value) {
-				App.router.navigate(App.config.workspaceId + '/search/id=' + e.target.children[0].value, {trigger: true});
+				App.router.navigate(App.config.workspaceId + '/search/q=' + e.target.children[0].value, {trigger: true});
 			}
 
 			return false;

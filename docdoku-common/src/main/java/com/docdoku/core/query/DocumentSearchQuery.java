@@ -37,8 +37,8 @@ public class DocumentSearchQuery extends SearchQuery implements Serializable{
     protected String content;
 
     public DocumentSearchQuery(){}
-    public DocumentSearchQuery(String workspaceId, String docMId, String title, String version, String author, String type, Date creationDateFrom, Date creationDateTo, SearchQuery.AbstractAttributeQuery[] attributes, String[] tags, String content){
-        super(workspaceId,docMId,version,author,type,creationDateFrom,creationDateTo,attributes);
+    public DocumentSearchQuery(String workspaceId, String fullText, String docMId, String title, String version, String author, String type, Date creationDateFrom, Date creationDateTo, SearchQuery.AbstractAttributeQuery[] attributes, String[] tags, String content){
+        super(workspaceId,fullText,version,author,type,creationDateFrom,creationDateTo,attributes);
         this.docMId=docMId;
         this.title=title;
         this.tags=tags;
