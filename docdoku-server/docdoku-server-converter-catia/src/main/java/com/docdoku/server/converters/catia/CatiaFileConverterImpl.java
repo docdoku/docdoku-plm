@@ -138,7 +138,7 @@ public class CatiaFileConverterImpl implements CADConverter{
     }
 
     @Override
-    public boolean canConvertToJSON(String cadFileExtension) {
+    public boolean canConvertToOBJ(String cadFileExtension) {
         return Arrays.asList("catpart").contains(cadFileExtension);
     }
 }

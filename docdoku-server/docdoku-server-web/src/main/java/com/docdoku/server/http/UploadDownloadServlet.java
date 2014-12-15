@@ -473,7 +473,7 @@ public class UploadDownloadServlet extends HttpServlet {
                     if (pathInfos.length == offset + 7) {
                         productService.saveNativeCADInPartIteration(partPK, fileName, length);
                         //TODO: Should be put in a DocumentPostUploader plugin
-                        converterService.convertCADFileToJSON(partPK, binaryResource);
+                        converterService.convertCADFileToOBJ(partPK, binaryResource);
                     } else {
                         productService.saveFileInPartIteration(partPK, fileName, length);
                     }

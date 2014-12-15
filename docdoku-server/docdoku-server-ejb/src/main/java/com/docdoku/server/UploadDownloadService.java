@@ -182,7 +182,7 @@ public class UploadDownloadService implements IUploadDownloadWS {
         }
 
         productService.saveNativeCADInPartIteration(partIPK, fileName, length);
-        converterService.convertCADFileToJSON(partIPK, binaryResource);
+        converterService.convertCADFileToOBJ(partIPK, binaryResource);
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)

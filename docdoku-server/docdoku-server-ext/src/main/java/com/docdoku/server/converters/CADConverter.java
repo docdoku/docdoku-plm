@@ -27,5 +27,5 @@ import java.io.File;
 
 public interface CADConverter {
     File convert(PartIteration partToConvert, BinaryResource cadFile) throws Exception;
-    boolean canConvertToJSON(String cadFileExtension);
+    boolean canConvertToOBJ(String cadFileExtension);
 }
