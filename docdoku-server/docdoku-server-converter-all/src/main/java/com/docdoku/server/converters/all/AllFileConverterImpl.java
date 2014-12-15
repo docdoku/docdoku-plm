@@ -92,7 +92,7 @@ public class AllFileConverterImpl implements CADConverter{
     }
 
     @Override
-    public boolean canConvertToJSON(String cadFileExtension) {
+    public boolean canConvertToOBJ(String cadFileExtension) {
         return Arrays.asList("stl", "dae").contains(cadFileExtension);
     }
 }

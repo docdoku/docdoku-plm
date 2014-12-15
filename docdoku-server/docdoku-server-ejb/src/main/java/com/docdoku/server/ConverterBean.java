@@ -56,12 +56,12 @@ public class ConverterBean implements IConverterManagerLocal {
 
     @Override
     @Asynchronous
-    public Future<File> convertCADFileToJSON(PartIterationKey pPartIPK, BinaryResource cadBinaryResource) throws Exception {
+    public Future<File> convertCADFileToOBJ(PartIterationKey pPartIPK, BinaryResource cadBinaryResource) throws Exception {
         String ext = FileIO.getExtension(cadBinaryResource.getName());
         File convertedFile = null;
         CADConverter selectedConverter=null;
         for(CADConverter converter:converters){
-            if(converter.canConvertToJSON(ext)){
+            if(converter.canConvertToOBJ(ext)){
                 selectedConverter=converter;
                 break;
             }

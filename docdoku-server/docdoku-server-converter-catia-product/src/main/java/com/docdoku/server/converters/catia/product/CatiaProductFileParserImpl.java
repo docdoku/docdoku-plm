@@ -219,7 +219,7 @@ public class CatiaProductFileParserImpl implements CADConverter {
 
 
     @Override
-    public boolean canConvertToJSON(String cadFileExtension) {
+    public boolean canConvertToOBJ(String cadFileExtension) {
         return "catproduct".equals(cadFileExtension);
     }
 

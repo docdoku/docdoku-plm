@@ -32,5 +32,5 @@ import java.util.concurrent.Future;
  * @author Florent Garin
  */
 public interface IConverterManagerLocal {
-    Future<File> convertCADFileToJSON(PartIterationKey pPartIPK, BinaryResource cadFile) throws Exception;
+    Future<File> convertCADFileToOBJ(PartIterationKey pPartIPK, BinaryResource cadFile) throws Exception;
 }

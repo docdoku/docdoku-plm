@@ -140,7 +140,7 @@ public class OBJFileConverterImpl implements CADConverter{
     }
 
     @Override
-    public boolean canConvertToJSON(String cadFileExtension) {
+    public boolean canConvertToOBJ(String cadFileExtension) {
         return "obj".equalsIgnoreCase(cadFileExtension);
     }
 }
