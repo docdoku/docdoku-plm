@@ -20,6 +20,7 @@
 
 package com.docdoku.server.converters.utils;
 
+import org.codehaus.jettison.json.JSONException;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
@@ -38,14 +39,14 @@ public class GeometryParser {
     public GeometryParser() {
     }
 
-    public static double calculateRadius(File file){
+    public static double[] calculateBox(File file) throws JSONException {
         InputStream inputStream = null;
         try{
             inputStream = GeometryParser.class.getResourceAsStream(CONF_PROPERTIES);
             CONF.load(inputStream);
             String nodeServerUrl = CONF.getProperty("nodeServerUrl");
 
-            URL url = new URL(nodeServerUrl+"/radius");
+            URL url = new URL(nodeServerUrl+"/box");
 
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("POST");
@@ -71,16 +72,30 @@ public class GeometryParser {
 
             String result = response.toString();
 
-            JsonObject jsonResponse = Json.createReader(new StringReader(result)).readObject();
-            return Double.parseDouble(jsonResponse.getString("radius"));
+            JsonObject box = Json.createReader(new StringReader(result)).readObject();
+
+            JsonObject min = box.getJsonObject("min");
+            JsonObject max = box.getJsonObject("max");
+
+
+            return new double[]{
+                    min.getJsonNumber("x").doubleValue(),
+                    min.getJsonNumber("y").doubleValue(),
+                    min.getJsonNumber("z").doubleValue(),
+                    max.getJsonNumber("x").doubleValue(),
+                    max.getJsonNumber("y").doubleValue(),
+                    max.getJsonNumber("z").doubleValue()
+            };
+
         } catch (IOException e) {
             Logger.getLogger(GeometryParser.class.getName()).log(Level.INFO, null, e);
-        }finally {
+        }
+        finally {
             try{if(inputStream!=null){
                     inputStream.close();
             }}catch (IOException ignored){}
         }
 
-        return 0;
+        return null;
     }
 }

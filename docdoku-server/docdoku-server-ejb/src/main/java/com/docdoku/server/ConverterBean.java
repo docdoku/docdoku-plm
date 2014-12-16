@@ -20,6 +20,7 @@
 package com.docdoku.server;
 
 import com.docdoku.core.common.BinaryResource;
+import com.docdoku.core.product.Geometry;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartIterationKey;
 import com.docdoku.core.services.IConverterManagerLocal;
@@ -27,6 +28,7 @@ import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.core.util.FileIO;
 import com.docdoku.server.converters.CADConverter;
+import com.docdoku.server.converters.utils.GeometryParser;
 import com.docdoku.server.dao.PartIterationDAO;
 import com.google.common.io.Files;
 
@@ -132,11 +134,15 @@ public class ConverterBean implements IConverterManagerLocal {
             Process proc = pb.start();
             proc.waitFor();
 
+
             if(proc.exitValue() == 0){
+
+                double[] box = GeometryParser.calculateBox(file);
+
                 String baseName = tempDir.getAbsolutePath() + "/" + FileIO.getFileNameWithoutExtension(file.getName());
-                saveFile(pPartIPK,0,new File(baseName + "100.obj"));
-                saveFile(pPartIPK,1,new File(baseName + "60.obj"));
-                saveFile(pPartIPK,2,new File(baseName + "20.obj"));
+                saveFile(pPartIPK,0,new File(baseName + "100.obj"),box);
+                saveFile(pPartIPK,1,new File(baseName + "60.obj"),box);
+                saveFile(pPartIPK,2,new File(baseName + "20.obj"),box);
             }
 
             logger.log(Level.INFO, "Decimation done, exit code = " + proc.exitValue());
@@ -149,13 +155,13 @@ public class ConverterBean implements IConverterManagerLocal {
 
     }
 
-    private void saveFile(PartIterationKey partIPK, int quality, File file) {
+    private void saveFile(PartIterationKey partIPK, int quality, File file, double[] box) {
 
         OutputStream os = null;
 
         try {
-            BinaryResource jsBinaryResource = productService.saveGeometryInPartIteration(partIPK,file.getName(), quality, file.length());
-            os = dataManager.getBinaryResourceOutputStream(jsBinaryResource);
+            Geometry lod = (Geometry) productService.saveGeometryInPartIteration(partIPK,file.getName(), quality, file.length(), box);
+            os = dataManager.getBinaryResourceOutputStream(lod);
             Files.copy(file, os);
         } catch (Exception e) {
             e.printStackTrace();
@@ -168,4 +174,5 @@ public class ConverterBean implements IConverterManagerLocal {
             }
         }
     }
+
 }

@@ -96,7 +96,7 @@ public class KMZFileConverterImpl implements CADConverter{
             }
 
             // Upload dae
-            BinaryResource daeBinaryResource = productService.saveGeometryInPartIteration(partIPK, tmpNewDAEFile.getName(), 0, tmpNewDAEFile.length());
+            BinaryResource daeBinaryResource = productService.saveGeometryInPartIteration(partIPK, tmpNewDAEFile.getName(), 0, tmpNewDAEFile.length(),null);
             OutputStream daeOutputStream = null;
             try {
                 daeOutputStream = dataManager.getBinaryResourceOutputStream(daeBinaryResource);
