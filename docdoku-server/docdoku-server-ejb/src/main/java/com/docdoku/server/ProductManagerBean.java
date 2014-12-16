@@ -412,7 +412,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.GUEST_PROXY_ROLE_ID})
     @Override
-    public BinaryResource getBinaryResource(String pFullName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, FileNotFoundException, NotAllowedException {
+    public BinaryResource getBinaryResource(String pFullName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, FileNotFoundException, NotAllowedException, AccessRightException {
 
         if(ctx.isCallerInRole(UserGroupMapping.GUEST_PROXY_ROLE_ID)){
             //Todo check if part is public
@@ -428,14 +428,27 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         if (partIte != null) {
             PartRevision partR = partIte.getPartRevision();
 
-            if (isCheckoutByAnotherUser(user,partR) && partR.getLastIteration().equals(partIte)) {
-                throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException34");
-            } else {
-                return binaryResource;
+            if(isACLGrantReadAccess(user,partR)){
+                if (isCheckoutByAnotherUser(user,partR) && partR.getLastIteration().equals(partIte)) {
+                    throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException34");
+                } else {
+                    return binaryResource;
+                }
+            }else{
+                throw new AccessRightException(userLocale,user);
             }
         } else {
             throw new FileNotFoundException(userLocale, pFullName);
         }
+    }
+
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.GUEST_PROXY_ROLE_ID})
+    @Override
+    public BinaryResource getTemplateBinaryResource(String pFullName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, FileNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(BinaryResource.parseWorkspaceId(pFullName));
+        Locale userLocale = new Locale(user.getLanguage());
+        BinaryResourceDAO binDAO = new BinaryResourceDAO(userLocale, em);
+        return binDAO.loadBinaryResource(pFullName);
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)

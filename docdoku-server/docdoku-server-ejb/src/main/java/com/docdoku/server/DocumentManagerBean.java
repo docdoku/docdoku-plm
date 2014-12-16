@@ -162,8 +162,8 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         }
 
         User user = userManager.checkWorkspaceReadAccess(BinaryResource.parseWorkspaceId(pFullName));
-
-        BinaryResourceDAO binDAO = new BinaryResourceDAO(new Locale(user.getLanguage()), em);
+        Locale userLocale = new Locale(user.getLanguage());
+        BinaryResourceDAO binDAO = new BinaryResourceDAO(userLocale, em);
         BinaryResource binaryResource = binDAO.loadBinaryResource(pFullName);
 
         DocumentIteration document = binDAO.getDocumentOwner(binaryResource);
@@ -177,13 +177,23 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
                     return binaryResource;
                 }
             }else{
-                throw new AccessRightException(new Locale(user.getLanguage()),user);
+                throw new AccessRightException(userLocale,user);
             }
-
         } else {
-            return binaryResource;
+            throw new FileNotFoundException(userLocale, pFullName);
         }
     }
+
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.GUEST_PROXY_ROLE_ID})
+    @Override
+    public BinaryResource getTemplateBinaryResource(String pFullName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, FileNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(BinaryResource.parseWorkspaceId(pFullName));
+        Locale userLocale = new Locale(user.getLanguage());
+        BinaryResourceDAO binDAO = new BinaryResourceDAO(userLocale, em);
+        return binDAO.loadBinaryResource(pFullName);
+    }
+
+
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override

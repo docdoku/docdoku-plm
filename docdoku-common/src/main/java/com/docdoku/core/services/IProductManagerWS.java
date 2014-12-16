@@ -361,7 +361,7 @@ public interface IProductManagerWS{
      * @throws FileNotFoundException
      * @throws NotAllowedException
      */
-    BinaryResource getBinaryResource(String fullName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, FileNotFoundException, NotAllowedException;
+    BinaryResource getBinaryResource(String fullName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, FileNotFoundException, NotAllowedException, AccessRightException;
     
     /**
      * Retrieves all product structures that belong to the given workspace.

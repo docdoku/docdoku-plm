@@ -17,18 +17,30 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
+package com.docdoku.server.rest.exceptions;
 
-package com.docdoku.server.resourcegetters;
+import java.util.Calendar;
+import java.util.Date;
 
-import com.docdoku.core.common.BinaryResource;
-import com.docdoku.core.document.DocumentIteration;
+/**
+ * @author Taylor LABEJOF
+ */
+public class NotModifiedException extends RestApiException  {
+    private static final int CACHE_SECOND = 60 * 60 * 24;
 
-import java.io.InputStream;
-import java.util.Locale;
+    private final String eTag;
 
-public interface DocumentResourceGetter {
-    boolean canGetConvertedResource(String outputFormat, BinaryResource binaryResource);
-    InputStream getConvertedResource(String outputFormat, BinaryResource binaryResource, DocumentIteration docI, Locale locale) throws Exception;
-    boolean canGetSubResourceVirtualPath(BinaryResource binaryResource);
-    String getSubResourceVirtualPath(BinaryResource binaryResource, String subResourceUri);
+    public NotModifiedException(String eTag) {
+        super();
+        this.eTag = eTag;
+    }
+
+    public String getETag() {
+        return eTag;
+    }
+    public Date getExpireDate(){
+        Calendar expirationDate = Calendar.getInstance();
+        expirationDate.add(Calendar.SECOND, CACHE_SECOND);
+        return expirationDate.getTime();
+    }
 }

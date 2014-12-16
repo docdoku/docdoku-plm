@@ -17,34 +17,33 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.docdoku.server.rest.exceptions.mapper;
+package com.docdoku.server.rest.exceptions;
 
-import com.docdoku.core.exceptions.UserNotActiveException;
-
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.ext.ExceptionMapper;
-import javax.ws.rs.ext.Provider;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
  * @author Taylor LABEJOF
  */
-@Provider
-public class UserNotActiveExceptionMapper implements ExceptionMapper<UserNotActiveException> {
-    private static final Logger LOGGER = Logger.getLogger(UserNotActiveExceptionMapper.class.getName());
-    public UserNotActiveExceptionMapper() {
+public class InterruptedStreamException extends RestApiException {
+    private Throwable cause;
+
+    public InterruptedStreamException(InputStream inputStream, OutputStream outputStream, Throwable cause){
+        super();
+        this.cause=cause;
+        try {
+            inputStream.close();
+            outputStream.close();
+        }catch (IOException e){
+            Logger.getLogger(InterruptedStreamException.class.getName()).log(Level.WARNING, null, e);
+        }
     }
 
     @Override
-    public Response toResponse(UserNotActiveException e) {
-        LOGGER.log(Level.WARNING,e.getMessage());
-        LOGGER.log(Level.FINE,null,e);
-        return Response.status(Response.Status.FORBIDDEN)
-                       .header("Reason-Phrase", e.getMessage())
-                       .entity(e.toString())
-                       .type(MediaType.TEXT_PLAIN)
-                       .build();
+    public Throwable getCause() {
+        return cause;
     }
 }

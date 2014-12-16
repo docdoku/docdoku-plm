@@ -41,14 +41,14 @@ public class TestUploadDownloadManagerBean {
         return dataHandler;
     }
 
-    public DataHandler downloadFromPart(String login, String workspaceId, String partMNumber, String partRVersion, int iteration, String fileName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, FileNotFoundException, NotAllowedException {
+    public DataHandler downloadFromPart(String login, String workspaceId, String partMNumber, String partRVersion, int iteration, String fileName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, FileNotFoundException, NotAllowedException, AccessRightException {
         loginP.login(login, password.toCharArray());
         DataHandler dataHandler = uploadDownloadWS.downloadFromPart(workspaceId, partMNumber, partRVersion, iteration, fileName);
         loginP.logout();
         return dataHandler;
     }
 
-    public DataHandler downloadNativeFromPart(String login, String workspaceId, String partMNumber, String partRVersion, int iteration, String fileName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, FileNotFoundException, NotAllowedException {
+    public DataHandler downloadNativeFromPart(String login, String workspaceId, String partMNumber, String partRVersion, int iteration, String fileName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, FileNotFoundException, NotAllowedException, AccessRightException {
         loginP.login(login, password.toCharArray());
         DataHandler dataHandler = uploadDownloadWS.downloadNativeFromPart(workspaceId, partMNumber, partRVersion, iteration, fileName);
         loginP.logout();

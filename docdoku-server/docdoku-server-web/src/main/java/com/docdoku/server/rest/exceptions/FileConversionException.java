@@ -17,18 +17,21 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
+package com.docdoku.server.rest.exceptions;
 
-package com.docdoku.server.resourcegetters;
+/**
+ * @author Taylor LABEJOF
+ */
+public class FileConversionException extends RestApiException {
+    private Throwable cause;
 
-import com.docdoku.core.common.BinaryResource;
-import com.docdoku.core.document.DocumentIteration;
+    public FileConversionException(Throwable cause){
+        super();
+        this.cause = cause;
+    }
 
-import java.io.InputStream;
-import java.util.Locale;
-
-public interface DocumentResourceGetter {
-    boolean canGetConvertedResource(String outputFormat, BinaryResource binaryResource);
-    InputStream getConvertedResource(String outputFormat, BinaryResource binaryResource, DocumentIteration docI, Locale locale) throws Exception;
-    boolean canGetSubResourceVirtualPath(BinaryResource binaryResource);
-    String getSubResourceVirtualPath(BinaryResource binaryResource, String subResourceUri);
+    @Override
+    public Throwable getCause() {
+        return cause;
+    }
 }

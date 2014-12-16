@@ -19,9 +19,8 @@
  */
 package com.docdoku.server.rest.exceptions.mapper;
 
-import com.docdoku.core.exceptions.UserNotActiveException;
+import com.docdoku.server.rest.exceptions.NotModifiedException;
 
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
@@ -32,19 +31,17 @@ import java.util.logging.Logger;
  * @author Taylor LABEJOF
  */
 @Provider
-public class UserNotActiveExceptionMapper implements ExceptionMapper<UserNotActiveException> {
-    private static final Logger LOGGER = Logger.getLogger(UserNotActiveExceptionMapper.class.getName());
-    public UserNotActiveExceptionMapper() {
+public class NotModifiedExceptionMapper implements ExceptionMapper<NotModifiedException> {
+    private static final Logger LOGGER = Logger.getLogger(NotModifiedExceptionMapper.class.getName());
+    public NotModifiedExceptionMapper() {
     }
 
     @Override
-    public Response toResponse(UserNotActiveException e) {
-        LOGGER.log(Level.WARNING,e.getMessage());
+    public Response toResponse(NotModifiedException e) {
         LOGGER.log(Level.FINE,null,e);
-        return Response.status(Response.Status.FORBIDDEN)
-                       .header("Reason-Phrase", e.getMessage())
-                       .entity(e.toString())
-                       .type(MediaType.TEXT_PLAIN)
+        return Response.status(Response.Status.NOT_MODIFIED)
+                       .expires(e.getExpireDate())
+                       .tag(e.getETag())
                        .build();
     }
 }

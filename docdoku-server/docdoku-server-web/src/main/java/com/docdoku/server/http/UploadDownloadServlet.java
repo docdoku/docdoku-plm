@@ -291,10 +291,17 @@ public class UploadDownloadServlet extends HttpServlet {
                 binaryContentInputStream = dataManager.getBinarySubResourceInputStream(binaryResource, subResourceVirtualPath);
             } else {
                 if (isDocumentAndOutputSpecified) {
-                    binaryContentInputStream = documentResourceGetterService.getConvertedResource(outputFormat, binaryResource, docI, user);
+                    binaryContentInputStream = documentResourceGetterService.getConvertedResource(outputFormat, binaryResource);
                 } else {
                     binaryContentInputStream = dataManager.getBinaryResourceInputStream(binaryResource);
                 }
+            }
+            // Check if the input is null
+            if(binaryContentInputStream==null){
+                String message = "The input stream of "+binaryResource.getFullName()+" is null";
+                LOGGER.log(Level.SEVERE,message);
+                pResponse.setHeader("Reason-Phrase", "An error occur while downloading the file.");
+                throw new ServletException("Error while downloading the file.");
             }
 
             // Send file (or parts) to client  --------------------------------------------------------
@@ -557,7 +564,6 @@ public class UploadDownloadServlet extends HttpServlet {
     }
 
     private static void copy(final InputStream input, OutputStream output, long start, long length, long binaryLength) throws IOException {
-
         if(start == 0 && binaryLength == length){
             ByteStreams.copy(input, output);
         }else{

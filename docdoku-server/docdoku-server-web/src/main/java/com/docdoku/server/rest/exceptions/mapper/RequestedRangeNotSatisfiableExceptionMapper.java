@@ -19,9 +19,8 @@
  */
 package com.docdoku.server.rest.exceptions.mapper;
 
-import com.docdoku.core.exceptions.UserNotActiveException;
+import com.docdoku.server.rest.exceptions.RequestedRangeNotSatisfiableException;
 
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
@@ -32,19 +31,17 @@ import java.util.logging.Logger;
  * @author Taylor LABEJOF
  */
 @Provider
-public class UserNotActiveExceptionMapper implements ExceptionMapper<UserNotActiveException> {
-    private static final Logger LOGGER = Logger.getLogger(UserNotActiveExceptionMapper.class.getName());
-    public UserNotActiveExceptionMapper() {
+public class RequestedRangeNotSatisfiableExceptionMapper implements ExceptionMapper<RequestedRangeNotSatisfiableException> {
+    private static final Logger LOGGER = Logger.getLogger(RequestedRangeNotSatisfiableExceptionMapper.class.getName());
+    public RequestedRangeNotSatisfiableExceptionMapper() {
     }
 
     @Override
-    public Response toResponse(UserNotActiveException e) {
-        LOGGER.log(Level.WARNING,e.getMessage());
+    public Response toResponse(RequestedRangeNotSatisfiableException e) {
+        LOGGER.log(Level.SEVERE,e.getMessage());
         LOGGER.log(Level.FINE,null,e);
-        return Response.status(Response.Status.FORBIDDEN)
-                       .header("Reason-Phrase", e.getMessage())
-                       .entity(e.toString())
-                       .type(MediaType.TEXT_PLAIN)
-                       .build();
+        return Response.status(Response.Status.REQUESTED_RANGE_NOT_SATISFIABLE)
+                .header("Content-Range", "bytes */" + e.getContentRange())
+                .build();
     }
 }
