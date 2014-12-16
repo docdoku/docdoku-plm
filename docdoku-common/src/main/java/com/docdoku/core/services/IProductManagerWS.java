@@ -276,7 +276,7 @@ public interface IProductManagerWS{
      * @throws FileAlreadyExistsException
      * @throws CreationException
      */
-    BinaryResource saveGeometryInPartIteration(PartIterationKey partIPK, String name, int quality, long size, double radius) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, PartRevisionNotFoundException, FileAlreadyExistsException, CreationException;
+    BinaryResource saveGeometryInPartIteration(PartIterationKey partIPK, String name, int quality, long size) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, PartRevisionNotFoundException, FileAlreadyExistsException, CreationException;
     
     /**
      * Creates a regular file, <a href="BinaryResource.html">BinaryResource</a>
@@ -581,8 +581,6 @@ public interface IProductManagerWS{
     PartRevision createPartRevision(PartRevisionKey revisionKey, String pDescription, String pWorkflowModelId, ACLUserEntry[] pUserEntries, ACLUserGroupEntry[] pUserGroupEntries, Map<String, String> roleMappings) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, PartRevisionNotFoundException, NotAllowedException, FileAlreadyExistsException, CreationException, RoleNotFoundException, WorkflowModelNotFoundException, PartRevisionAlreadyExistsException;
 
     void removeACLFromPartRevision(PartRevisionKey revisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException, AccessRightException;
-
-    void setRadiusForPartIteration(PartIterationKey partIPK, Float radius) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartIterationNotFoundException;
 
     List<PartRevision> searchPartRevisions(PartSearchQuery partSearchQuery) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ESServerException;
 
