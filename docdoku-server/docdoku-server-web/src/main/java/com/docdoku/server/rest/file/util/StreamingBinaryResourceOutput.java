@@ -26,13 +26,12 @@ public class StreamingBinaryResourceOutput implements StreamingOutput {
     public void write(OutputStream outputStream) throws WebApplicationException, IOException {
         try {
             if(binaryContentInputStream==null){
-                String message = "The file input stream is null";
-                LOGGER.log(Level.SEVERE,message);
+                LOGGER.log(Level.SEVERE,"The file input stream is null");
             }
             copy(binaryContentInputStream, outputStream, fullRange.start, fullRange.length,fullRange.total);
         } catch (InterruptedStreamException e) {
             LOGGER.log(Level.WARNING,"Downloading file interrupted");
-            LOGGER.log(Level.FINE,"Streaming file interruption",e.getCause());
+            LOGGER.log(Level.FINE,"Streaming file interruption",e);
         }
     }
 
@@ -62,13 +61,11 @@ public class StreamingBinaryResourceOutput implements StreamingOutput {
 
     private static class Range {
         long start;
-        long end;
         long length;
         long total;
 
         public Range(long start, long end, long total) {
             this.start = start;
-            this.end = end;
             this.length = end - start + 1;
             this.total = total;
         }

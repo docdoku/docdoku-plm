@@ -20,8 +20,6 @@
 package com.docdoku.server.http;
 
 import com.docdoku.core.common.BinaryResource;
-import com.docdoku.core.common.User;
-import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.document.DocumentMasterTemplateKey;
 import com.docdoku.core.exceptions.AccessRightException;
@@ -113,8 +111,6 @@ public class UploadDownloadServlet extends HttpServlet {
             String fullName = (String) pRequest.getAttribute("fullName");
             String outputFormat = (String) pRequest.getAttribute("outputFormat");
             String subResourceVirtualPath = (String) pRequest.getAttribute("subResourceVirtualPath");
-            User user = (User) pRequest.getAttribute("user");
-            DocumentIteration docI = (DocumentIteration) pRequest.getAttribute("docI");
 
             // 404 if no binary resource
             if(binaryResource == null){

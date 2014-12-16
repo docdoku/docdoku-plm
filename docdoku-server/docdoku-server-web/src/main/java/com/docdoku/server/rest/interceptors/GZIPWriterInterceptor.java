@@ -1,6 +1,5 @@
 package com.docdoku.server.rest.interceptors;
 
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.ext.Provider;
 import javax.ws.rs.ext.WriterInterceptor;
@@ -15,8 +14,7 @@ public class GZIPWriterInterceptor implements WriterInterceptor {
     private static final int DEFAULT_BUFFER_SIZE = 4096;
 
     @Override
-    public void aroundWriteTo(WriterInterceptorContext context)
-            throws IOException, WebApplicationException {
+    public void aroundWriteTo(WriterInterceptorContext context) throws IOException{
         MultivaluedMap<String,Object> headers = context.getHeaders();
         Object rangeHeader = headers.getFirst("Accept-Ranges");
 

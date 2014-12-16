@@ -142,21 +142,6 @@ public class BinaryResourceMeta {
     public String getContentDisposition(){
         String dispositionType = ("viewer".equals(downloadType)) ? "inline" : "attachement";
         return dispositionType+";filename=\""+ getFileName() +"\"";
-/*
-        String contentType = this.getContentType();
-        String disposition = "inline";
-
-        // Expect for images, determine content disposition. If content type is supported by
-        // the browser, then set to inline, else attachment which will pop a 'save as' dialogue.
-        if (!contentType.startsWith("image")) {
-            String accept = pRequest.getHeader("Accept");
-            disposition = accept != null && accepts(accept, contentType) ? "inline" : "attachment";
-        }
-
-        if(!isDocumentAndOutputSpecified && !isSubResource){
-            disposition = "attachment";
-        }
-*/
     }
 
     private static void initFileTypeMap(){

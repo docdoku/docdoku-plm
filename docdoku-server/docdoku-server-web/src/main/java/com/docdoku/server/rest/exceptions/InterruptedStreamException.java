@@ -29,21 +29,14 @@ import java.util.logging.Logger;
  * @author Taylor LABEJOF
  */
 public class InterruptedStreamException extends RestApiException {
-    private Throwable cause;
 
     public InterruptedStreamException(InputStream inputStream, OutputStream outputStream, Throwable cause){
         super();
-        this.cause=cause;
         try {
             inputStream.close();
             outputStream.close();
         }catch (IOException e){
             Logger.getLogger(InterruptedStreamException.class.getName()).log(Level.WARNING, null, e);
         }
-    }
-
-    @Override
-    public Throwable getCause() {
-        return cause;
     }
 }

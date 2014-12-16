@@ -21,9 +21,11 @@ package com.docdoku.server.rest.file;
 
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.exceptions.*;
+import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.services.IDocumentResourceGetterManagerLocal;
+import com.docdoku.server.rest.exceptions.FileConversionException;
 import com.docdoku.server.rest.exceptions.NotModifiedException;
 import com.docdoku.server.rest.exceptions.PreconditionFailedException;
 import com.docdoku.server.rest.exceptions.RequestedRangeNotSatisfiableException;
@@ -33,10 +35,7 @@ import com.docdoku.server.rest.interceptors.Compress;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Request;
@@ -63,7 +62,9 @@ public class DocumentTemplateBinaryResource {
                                                  @HeaderParam("Range") String range,
                                                  @PathParam("workspaceId") final String workspaceId,
                                                  @PathParam("templateId") final String templateId,
-                                                 @PathParam("fileName") final String fileName)
+                                                 @PathParam("fileName") final String fileName,
+                                                 @QueryParam("type") String type,
+                                                 @QueryParam("output") String output)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException, PreconditionFailedException, NotModifiedException, RequestedRangeNotSatisfiableException {
 
 
@@ -79,11 +80,30 @@ public class DocumentTemplateBinaryResource {
         }
 
         try {
-            InputStream binaryContentInputStream = dataManager.getBinaryResourceInputStream(binaryResource);
+            InputStream binaryContentInputStream;
+            if(output!=null && !output.isEmpty()){
+                binaryContentInputStream = getConvertedBinaryResource(binaryResource, output);
+            }else{
+                binaryContentInputStream = dataManager.getBinaryResourceInputStream(binaryResource);
+            }
             return BinaryResourceResponse.prepareResponse(binaryContentInputStream, binaryResourceMeta, range);
-        } catch (StorageException e) {
+        } catch (StorageException | FileConversionException e) {
             return BinaryResourceResponse.downloadError(e, fullName);
         }
+    }
 
+    /**
+     * Try to convert a binary resource to a specific format
+     * @param binaryResource The binary resource
+     * @param output The wanted output
+     * @return The binary resource stream in the wanted output
+     * @throws com.docdoku.server.rest.exceptions.FileConversionException
+     */
+    private InputStream getConvertedBinaryResource(BinaryResource binaryResource, String output) throws FileConversionException {
+        try {
+            return documentResourceGetterService.getConvertedResource(output, binaryResource);
+        } catch (Exception e) {
+            throw new FileConversionException(e);
+        }
     }
 }
