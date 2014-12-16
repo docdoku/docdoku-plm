@@ -30,18 +30,18 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class RadiusCalculator {
+public class GeometryParser {
 
     private static final String CONF_PROPERTIES="/com/docdoku/server/converters/utils/conf.properties";
     private static final Properties CONF = new Properties();
 
-    public RadiusCalculator() {
+    public GeometryParser() {
     }
 
     public static double calculateRadius(File file){
         InputStream inputStream = null;
         try{
-            inputStream = RadiusCalculator.class.getResourceAsStream(CONF_PROPERTIES);
+            inputStream = GeometryParser.class.getResourceAsStream(CONF_PROPERTIES);
             CONF.load(inputStream);
             String nodeServerUrl = CONF.getProperty("nodeServerUrl");
 
@@ -74,7 +74,7 @@ public class RadiusCalculator {
             JsonObject jsonResponse = Json.createReader(new StringReader(result)).readObject();
             return Double.parseDouble(jsonResponse.getString("radius"));
         } catch (IOException e) {
-            Logger.getLogger(RadiusCalculator.class.getName()).log(Level.INFO, null, e);
+            Logger.getLogger(GeometryParser.class.getName()).log(Level.INFO, null, e);
         }finally {
             try{if(inputStream!=null){
                     inputStream.close();

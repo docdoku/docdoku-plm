@@ -28,7 +28,6 @@ import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.core.util.FileIO;
 import com.docdoku.server.converters.CADConverter;
-import com.docdoku.server.converters.utils.RadiusCalculator;
 import com.google.common.io.Files;
 import com.google.common.io.InputSupplier;
 
@@ -96,11 +95,8 @@ public class KMZFileConverterImpl implements CADConverter{
                 }
             }
 
-            // Calculate radius
-            double radius = RadiusCalculator.calculateRadius(tmpDAEFile);
-
             // Upload dae
-            BinaryResource daeBinaryResource = productService.saveGeometryInPartIteration(partIPK, tmpNewDAEFile.getName(), 0, tmpNewDAEFile.length(),radius);
+            BinaryResource daeBinaryResource = productService.saveGeometryInPartIteration(partIPK, tmpNewDAEFile.getName(), 0, tmpNewDAEFile.length(),1);
             OutputStream daeOutputStream = null;
             try {
                 daeOutputStream = dataManager.getBinaryResourceOutputStream(daeBinaryResource);

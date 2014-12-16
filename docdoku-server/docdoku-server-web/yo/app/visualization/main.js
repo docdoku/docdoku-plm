@@ -76,6 +76,7 @@ require.config({
         binaryloader: {deps: ['threecore'], exports: 'THREE'},
         colladaloader: {deps: ['threecore'], exports: 'THREE'},
         stlloader: {deps: ['threecore'], exports: 'THREE'},
+        objloader: {deps: ['threecore'], exports: 'THREE'},
         buffergeometryutils: {deps: ['threecore'], exports: 'THREE'}
     },
     paths: {
@@ -99,6 +100,7 @@ require.config({
         colladaloader: 'dmu/loaders/ColladaLoader',
         buffergeometryutils: 'dmu/utils/BufferGeometryUtils',
         stlloader: 'dmu/loaders/STLLoader',
+        objloader: 'dmu/loaders/OBJLoader',
         stats:'dmu/utils/Stats'
     },
 
@@ -110,6 +112,7 @@ require.config({
         'binaryloader',
         'colladaloader',
         'stlloader',
+        'objloader',
         'buffergeometryutils',
         'stats',
         'dat',

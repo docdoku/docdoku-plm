@@ -56,7 +56,6 @@
               <artifactSet>
                 <includes>
                   <include>org.ow2.docdoku:docdoku-server-ext</include>
-                  <include>org.ow2.docdoku:docdoku-server-converter-obj</include>
                   <include>org.ow2.docdoku:docdoku-server-converter-step</include>
                   <include>org.ow2.docdoku:docdoku-server-converter-kmz</include>
                   <include>org.ow2.docdoku:docdoku-server-converter-all</include>
@@ -92,13 +91,6 @@
       <artifactId>docdoku-common</artifactId>
       <version>2.0-SNAPSHOT</version>
       <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.ow2.docdoku</groupId>
-      <artifactId>docdoku-server-converter-obj</artifactId>
-      <version>2.0-SNAPSHOT</version>
-      <type>pom</type>
-      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.ow2.docdoku</groupId>
@@ -228,6 +220,12 @@
       <groupId>com.github.spullara.mustache.java</groupId>
       <artifactId>compiler</artifactId>
       <version>0.8.11</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.google.code.gson</groupId>
+      <artifactId>gson</artifactId>
+      <version>2.2.4</version>
       <scope>compile</scope>
     </dependency>
     <dependency>

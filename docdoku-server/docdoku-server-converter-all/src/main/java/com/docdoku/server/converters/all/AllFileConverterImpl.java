@@ -23,12 +23,10 @@ package com.docdoku.server.converters.all;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.PartIteration;
-import com.docdoku.core.product.PartIterationKey;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.core.util.FileIO;
 import com.docdoku.server.converters.CADConverter;
-import com.docdoku.server.converters.utils.RadiusCalculator;
 import com.google.common.io.Files;
 import com.google.common.io.InputSupplier;
 
@@ -36,8 +34,8 @@ import javax.ejb.EJB;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Arrays;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -45,14 +43,37 @@ import java.util.logging.Logger;
 @AllFileConverter
 public class AllFileConverterImpl implements CADConverter{
 
+    private static final String CONF_PROPERTIES="/com/docdoku/server/converters/all/conf.properties";
+    private static final Properties CONF = new Properties();
+
     @EJB
     private IProductManagerLocal productService;
 
     @EJB
     private IDataManagerLocal dataManager;
 
+    static{
+        InputStream inputStream = null;
+        try {
+            inputStream = AllFileConverterImpl.class.getResourceAsStream(CONF_PROPERTIES);
+            CONF.load(inputStream);
+        } catch (IOException e) {
+            Logger.getLogger(AllFileConverterImpl.class.getName()).log(Level.WARNING, null, e);
+        } finally {
+            try{
+                if(inputStream!=null){
+                    inputStream.close();
+                }
+            }catch (IOException e){
+                Logger.getLogger(AllFileConverterImpl.class.getName()).log(Level.FINEST, null, e);
+            }
+        }
+    }
+
+
     @Override
     public File convert(PartIteration partToConvert, final BinaryResource cadFile) throws IOException, InterruptedException, UserNotActiveException, PartRevisionNotFoundException, WorkspaceNotFoundException, CreationException, UserNotFoundException, NotAllowedException, FileAlreadyExistsException, StorageException {
+
         File tmpDir = Files.createTempDir();
         File tmpCadFile = new File(tmpDir, cadFile.getName());
         Files.copy(new InputSupplier<InputStream>() {
@@ -67,32 +88,25 @@ public class AllFileConverterImpl implements CADConverter{
             }
         }, tmpCadFile);
 
-        try {
-            PartIterationKey partIPK = partToConvert.getKey();
+        String convertedFileName = FileIO.getFileNameWithoutExtension(tmpCadFile.getAbsolutePath()) ;
+        String meshconvBinary = CONF.getProperty("meshconv_path");
 
-            // Calculate radius
-            double radius = RadiusCalculator.calculateRadius(tmpCadFile);
+        String[] args = {meshconvBinary, tmpCadFile.getAbsolutePath(), "-c" , "obj", "-o", convertedFileName};
+        ProcessBuilder pb = new ProcessBuilder(args);
+        Process proc = pb.start();
+        proc.waitFor();
 
-            // Upload dae
-            BinaryResource daeBinaryResource = productService.saveGeometryInPartIteration(partIPK, tmpCadFile.getName(), 0, tmpCadFile.length(), radius);
-            OutputStream daeOutputStream = null;
-            try {
-                daeOutputStream = dataManager.getBinaryResourceOutputStream(daeBinaryResource);
-                Files.copy(tmpCadFile, daeOutputStream);
-            } finally {
-                if(daeOutputStream!=null){
-                    daeOutputStream.flush();
-                    daeOutputStream.close();
-                }
-            }
-            return tmpCadFile;
-        } finally {
-            FileIO.rmDir(tmpDir);
+        if(proc.exitValue() == 0){
+            return new File(convertedFileName + ".obj");
         }
+
+        return null;
+
     }
 
     @Override
     public boolean canConvertToOBJ(String cadFileExtension) {
-        return Arrays.asList("stl", "dae").contains(cadFileExtension);
+        // Also convert obj files, makes them smaller
+        return Arrays.asList("dxf","obj","off","ply","stl","3ds","wrl").contains(cadFileExtension);
     }
 }
