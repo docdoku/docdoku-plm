@@ -46,19 +46,23 @@ public class Geometry extends BinaryResource{
      */
     private int quality;
 
-    private double radius;
- 
+    /*
+    * Box
+    * */
+
+    private double xMin = 0;
+    private double yMin = 0;
+    private double zMin = 0;
+    private double xMax = 0;
+    private double yMax = 0;
+    private double zMax = 0;
+
     public Geometry() {
     }
     
     public Geometry(int pQuality, String pFullName, long pContentLength, Date pLastModified) {
         super(pFullName, pContentLength, pLastModified);
         this.quality=pQuality;
-    }
-
-    public Geometry(int pQuality, String pFullName, long pContentLength, Date pLastModified, double pRadius) {
-        this(pQuality,pFullName, pContentLength, pLastModified);
-        this.radius=pRadius;
     }
 
     public int getQuality() {
@@ -69,11 +73,13 @@ public class Geometry extends BinaryResource{
         this.quality = quality;
     }
 
-    public double getRadius() {
-        return radius;
+    public void setBox(double x1, double y1, double z1, double x2, double y2, double z2){
+        xMin = Math.min(x1,x2);
+        xMax = Math.max(x1,x2);
+        yMin = Math.min(y1,y2);
+        yMax = Math.max(y1,y2);
+        zMin = Math.min(z1,z2);
+        zMax = Math.max(z1,z2);
     }
 
-    public void setRadius(double radius) {
-        this.radius = radius;
-    }
 }

@@ -439,7 +439,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public BinaryResource saveGeometryInPartIteration(PartIterationKey pPartIPK, String pName, int quality, long pSize, double radius) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, PartRevisionNotFoundException, FileAlreadyExistsException, CreationException {
+    public BinaryResource saveGeometryInPartIteration(PartIterationKey pPartIPK, String pName, int quality, long pSize) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, PartRevisionNotFoundException, FileAlreadyExistsException, CreationException {
         User user = userManager.checkWorkspaceReadAccess(pPartIPK.getWorkspaceId());
         if (!NamingConvention.correctNameFile(pName)) {
             throw new NotAllowedException(Locale.getDefault(), INVALIDE_NAME_ERROR);
@@ -459,14 +459,13 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 }
             }
             if (geometryBinaryResource == null) {
-                geometryBinaryResource = new Geometry(quality, fullName, pSize, new Date(), radius);
+                geometryBinaryResource = new Geometry(quality, fullName, pSize, new Date());
                 new BinaryResourceDAO(em).createBinaryResource(geometryBinaryResource);
                 partI.addGeometry(geometryBinaryResource);
             } else {
                 geometryBinaryResource.setContentLength(pSize);
                 geometryBinaryResource.setQuality(quality);
                 geometryBinaryResource.setLastModified(new Date());
-                geometryBinaryResource.setRadius(radius);
             }
             return geometryBinaryResource;
         } else {
@@ -796,18 +795,6 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             throw new AccessRightException(new Locale(user.getLanguage()), user);
         }
 
-    }
-
-    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
-    @Override
-    public void setRadiusForPartIteration(PartIterationKey pPartIPK, Float radius) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartIterationNotFoundException {
-        User user = userManager.checkWorkspaceReadAccess(pPartIPK.getWorkspaceId());
-        PartIteration partI = new PartIterationDAO(new Locale(user.getLanguage()), em).loadPartI(pPartIPK);
-        Map<String, InstanceAttribute> instanceAttributes = partI.getInstanceAttributes();
-        InstanceNumberAttribute instanceNumberAttribute = new InstanceNumberAttribute();
-        instanceNumberAttribute.setName("radius");
-        instanceNumberAttribute.setNumberValue(radius);
-        instanceAttributes.put("radius",instanceNumberAttribute);
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)

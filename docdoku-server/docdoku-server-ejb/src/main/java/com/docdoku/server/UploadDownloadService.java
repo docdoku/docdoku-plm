@@ -137,7 +137,7 @@ public class UploadDownloadService implements IUploadDownloadWS {
             @XmlMimeType("application/octet-stream") DataHandler data) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, PartRevisionNotFoundException, FileAlreadyExistsException, CreationException, IOException {
 
         PartIterationKey partIPK = new PartIterationKey(new PartRevisionKey(new PartMasterKey(workspaceId, partMNumber), partRVersion), iteration);
-        BinaryResource binaryResource = productService.saveGeometryInPartIteration(partIPK, fileName, quality, 0, 0);
+        BinaryResource binaryResource = productService.saveGeometryInPartIteration(partIPK, fileName, quality, 0);
 
         long length = 0;
 
@@ -154,7 +154,7 @@ public class UploadDownloadService implements IUploadDownloadWS {
             }
         }
 
-        productService.saveGeometryInPartIteration(partIPK, fileName, quality, length, 0);
+        productService.saveGeometryInPartIteration(partIPK, fileName, quality, length);
     }
 
 

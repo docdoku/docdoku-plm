@@ -171,7 +171,6 @@ public class InstanceBodyWriterTools {
             jg.writeStartObject();
             jg.write("fullName", g.getFullName());
             jg.write("quality", g.getQuality());
-            jg.write("radius", g.getRadius());
             jg.writeEnd();
         }
         jg.writeEnd();

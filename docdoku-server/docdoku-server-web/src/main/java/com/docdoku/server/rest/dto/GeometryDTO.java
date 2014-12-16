@@ -30,7 +30,6 @@ public class GeometryDTO implements Serializable {
 
     private String fullName;
     private int quality;
-    private double radius;
 
     public GeometryDTO(){
     }
@@ -38,7 +37,6 @@ public class GeometryDTO implements Serializable {
     public GeometryDTO(String fullName, int quality, double radius) {
         this.fullName = fullName;
         this.quality = quality;
-        this.radius = radius;
     }
 
     public String getFullName() {
@@ -57,11 +55,4 @@ public class GeometryDTO implements Serializable {
         this.quality = quality;
     }
 
-    public double getRadius() {
-        return radius;
-    }
-
-    public void setRadius(double radius) {
-        this.radius = radius;
-    }
 }

@@ -154,7 +154,7 @@ public class ConverterBean implements IConverterManagerLocal {
         OutputStream os = null;
 
         try {
-            BinaryResource jsBinaryResource = productService.saveGeometryInPartIteration(partIPK,file.getName(), quality, file.length(),1000);
+            BinaryResource jsBinaryResource = productService.saveGeometryInPartIteration(partIPK,file.getName(), quality, file.length());
             os = dataManager.getBinaryResourceOutputStream(jsBinaryResource);
             Files.copy(file, os);
         } catch (Exception e) {
