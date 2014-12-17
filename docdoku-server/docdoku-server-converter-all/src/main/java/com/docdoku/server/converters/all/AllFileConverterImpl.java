@@ -31,9 +31,8 @@ import com.google.common.io.Files;
 import com.google.common.io.InputSupplier;
 
 import javax.ejb.EJB;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -72,10 +71,13 @@ public class AllFileConverterImpl implements CADConverter{
 
 
     @Override
-    public File convert(PartIteration partToConvert, final BinaryResource cadFile) throws IOException, InterruptedException, UserNotActiveException, PartRevisionNotFoundException, WorkspaceNotFoundException, CreationException, UserNotFoundException, NotAllowedException, FileAlreadyExistsException, StorageException {
+    public File convert(PartIteration partToConvert, final BinaryResource cadFile, File tempDir) throws IOException, InterruptedException, UserNotActiveException, PartRevisionNotFoundException, WorkspaceNotFoundException, CreationException, UserNotFoundException, NotAllowedException, FileAlreadyExistsException, StorageException {
 
-        File tmpDir = Files.createTempDir();
-        File tmpCadFile = new File(tmpDir, cadFile.getName());
+        String extension = FileIO.getExtension(cadFile.getName());
+        File tmpCadFile = new File(tempDir, partToConvert.getKey() + "." + extension);
+        String convertedFileName = tempDir.getAbsolutePath() + "/" + partToConvert.getKey() ;
+        String meshconvBinary = CONF.getProperty("meshconv_path");
+
         Files.copy(new InputSupplier<InputStream>() {
             @Override
             public InputStream getInput() throws IOException {
@@ -87,9 +89,6 @@ public class AllFileConverterImpl implements CADConverter{
                 }
             }
         }, tmpCadFile);
-
-        String convertedFileName = FileIO.getFileNameWithoutExtension(tmpCadFile.getAbsolutePath()) ;
-        String meshconvBinary = CONF.getProperty("meshconv_path");
 
         String[] args = {meshconvBinary, tmpCadFile.getAbsolutePath(), "-c" , "obj", "-o", convertedFileName};
         ProcessBuilder pb = new ProcessBuilder(args);
@@ -109,4 +108,5 @@ public class AllFileConverterImpl implements CADConverter{
         // Also convert obj files, makes them smaller
         return Arrays.asList("dxf","obj","off","ply","stl","3ds","wrl").contains(cadFileExtension);
     }
+
 }

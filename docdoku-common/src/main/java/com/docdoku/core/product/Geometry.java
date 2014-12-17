@@ -73,13 +73,60 @@ public class Geometry extends BinaryResource{
         this.quality = quality;
     }
 
-    public void setBox(double x1, double y1, double z1, double x2, double y2, double z2){
-        xMin = Math.min(x1,x2);
-        xMax = Math.max(x1,x2);
-        yMin = Math.min(y1,y2);
-        yMax = Math.max(y1,y2);
-        zMin = Math.min(z1,z2);
-        zMax = Math.max(z1,z2);
+    public void setBox(double x1, double y1, double z1, double x2, double y2, double z2) {
+        xMin = Math.min(x1, x2);
+        xMax = Math.max(x1, x2);
+        yMin = Math.min(y1, y2);
+        yMax = Math.max(y1, y2);
+        zMin = Math.min(z1, z2);
+        zMax = Math.max(z1, z2);
     }
 
+    public double getxMin() {
+        return xMin;
+    }
+
+    public void setxMin(double xMin) {
+        this.xMin = xMin;
+    }
+
+    public double getyMin() {
+        return yMin;
+    }
+
+    public void setyMin(double yMin) {
+        this.yMin = yMin;
+    }
+
+    public double getzMin() {
+        return zMin;
+    }
+
+    public void setzMin(double zMin) {
+        this.zMin = zMin;
+    }
+
+    public double getxMax() {
+        return xMax;
+    }
+
+    public void setxMax(double xMax) {
+        this.xMax = xMax;
+    }
+
+    public double getyMax() {
+        return yMax;
+    }
+
+    public void setyMax(double yMax) {
+        this.yMax = yMax;
+    }
+
+    public double getzMax() {
+        return zMax;
+    }
+
+    public void setzMax(double zMax) {
+        this.zMax = zMax;
+    }
 }

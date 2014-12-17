@@ -37,13 +37,13 @@
         </dependency>
         <dependency>
             <groupId>org.ow2.docdoku</groupId>
-            <artifactId>docdoku-server-converter-kmz</artifactId>
+            <artifactId>docdoku-server-converter-dae</artifactId>
             <version>${project.version}</version>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.ow2.docdoku</groupId>
-            <artifactId>docdoku-server-converter-kmz</artifactId>
+            <artifactId>docdoku-server-converter-dae</artifactId>
             <version>${project.version}</version>
             <type>pom</type>
         </dependency>
@@ -256,7 +256,7 @@
                                 <includes>
                                     <include>org.ow2.docdoku:docdoku-server-ext</include>
                                     <include>org.ow2.docdoku:docdoku-server-converter-step</include>
-                                    <include>org.ow2.docdoku:docdoku-server-converter-kmz</include>
+                                    <include>org.ow2.docdoku:docdoku-server-converter-dae</include>
                                     <include>org.ow2.docdoku:docdoku-server-converter-all</include>
                                     <include>org.ow2.docdoku:docdoku-server-converter-catia</include>
                                     <include>org.ow2.docdoku:docdoku-server-converter-catia-product</include>
