@@ -127,7 +127,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         DocumentRevision docR = docRDAO.loadDocR(new DocumentRevisionKey(pDocPK.getWorkspaceId(), pDocPK.getDocumentMasterId(), pDocPK.getDocumentRevisionVersion()));
         DocumentIteration document = docR.getIteration(pDocPK.getIteration());
 
-        if (docR.isCheckedOut() && docR.getCheckOutUser().equals(user) && docR.getLastIteration().equals(document)) {
+        if (isCheckoutByUser(user, docR) && docR.getLastIteration().equals(document)) {
             BinaryResource binaryResource = null;
             String fullName = docR.getWorkspaceId() + "/documents/" + docR.getId() + "/" + docR.getVersion() + "/" + document.getIteration() + "/" + pName;
 
@@ -157,6 +157,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     public BinaryResource getBinaryResource(String pFullName) throws WorkspaceNotFoundException, NotAllowedException, FileNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException {
 
         if(ctx.isCallerInRole(UserGroupMapping.GUEST_PROXY_ROLE_ID)){
+            //Todo check if document is public
             return new BinaryResourceDAO(em).loadBinaryResource(pFullName);
         }
 
@@ -169,10 +170,8 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         if (document != null) {
             DocumentRevision docR = document.getDocumentRevision();
 
-            if((docR.getACL() != null && docR.getACL().hasReadAccess(user)) || docR.getACL() == null){
-                String owner = docR.getLocation().getOwner();
-
-                if (((owner != null) && (!owner.equals(user.getLogin()))) || (docR.isCheckedOut() && !docR.getCheckOutUser().equals(user) && docR.getLastIteration().equals(document))) {
+            if(isACLGrantReadAccess(user,docR)){
+                if((isInAnotherUserHomeFolder(user,docR) || isCheckoutByAnotherUser(user,docR)) && docR.getLastIteration().equals(document)) {
                     throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException34");
                 } else {
                     return binaryResource;
@@ -206,13 +205,11 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         List<DocumentRevision> docRs = new DocumentRevisionDAO(new Locale(user.getLanguage()), em).findDocRsByFolder(pCompletePath);
         ListIterator<DocumentRevision> ite = docRs.listIterator();
-        Workspace wks = new WorkspaceDAO(new Locale(user.getLanguage()), em).loadWorkspace(workspaceId);
-        boolean isAdmin = wks.getAdmin().getLogin().equals(user.getLogin());
         while (ite.hasNext()) {
             DocumentRevision docR = ite.next();
-            if (!isAdmin && docR.getACL() != null && !docR.getACL().hasReadAccess(user)) {
+            if (hasDocumentRevisionReadAccess(user,docR)) {
                 ite.remove();
-            }else if ((docR.isCheckedOut()) && (!docR.getCheckOutUser().equals(user))) {
+            }else if (isCheckoutByAnotherUser(user,docR)) {
                 em.detach(docR);
                 docR.removeLastIteration();
             }
@@ -227,13 +224,11 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         List<DocumentRevision> docRs = new DocumentRevisionDAO(new Locale(user.getLanguage()), em).findDocRsByTag(new Tag(user.getWorkspace(), pKey.getLabel()));
         ListIterator<DocumentRevision> ite = docRs.listIterator();
-        Workspace wks = new WorkspaceDAO(new Locale(user.getLanguage()), em).loadWorkspace(workspaceId);
-        boolean isAdmin = wks.getAdmin().getLogin().equals(user.getLogin());
         while (ite.hasNext()) {
             DocumentRevision docR = ite.next();
-            if (!isAdmin && docR.getACL() != null && !docR.getACL().hasReadAccess(user)) {
+            if (hasDocumentRevisionReadAccess(user,docR)){
                 ite.remove();
-            }else if ((docR.isCheckedOut()) && (!docR.getCheckOutUser().equals(user))) {
+            }else if (isCheckoutByAnotherUser(user,docR)) {
                 em.detach(docR);
                 docR.removeLastIteration();
             }
@@ -277,7 +272,6 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.GUEST_PROXY_ROLE_ID})
     @Override
     public DocumentIteration findDocumentIterationByBinaryResource(BinaryResource pBinaryResource) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
-
         if(ctx.isCallerInRole(UserGroupMapping.GUEST_PROXY_ROLE_ID)){
             return  new DocumentRevisionDAO(em).findDocumentIterationByBinaryResource(pBinaryResource);
         }
@@ -290,15 +284,11 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public void updateDocumentACL(String pWorkspaceId, DocumentRevisionKey docKey, Map<String,String> pACLUserEntries, Map<String,String> pACLUserGroupEntries) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentRevisionNotFoundException, AccessRightException {
-
-        User user = checkDocumentRevisionWriteAccess(docKey);                                                           // Todo Just check if the user is document's or workspace's owner
+        User user = checkDocumentRevisionWriteAccess(docKey);
 
         DocumentRevisionDAO documentRevisionDAO = new DocumentRevisionDAO(new Locale(user.getLanguage()), em);
         DocumentRevision docR = documentRevisionDAO.loadDocR(docKey);
-        Workspace wks = new WorkspaceDAO(em).loadWorkspace(pWorkspaceId);
-
-        if (docR.getAuthor().getLogin().equals(user.getLogin())                                                         // Check if the user is the document owner
-            || wks.getAdmin().getLogin().equals(user.getLogin())) {                                                     // Check if the user is the workspace owner
+        if (user.isAdministrator() || isAuthor(user,docR)) {
 
             if (docR.getACL() == null) {
                 ACL acl = new ACL();
@@ -345,21 +335,19 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public void removeACLFromDocumentRevision(DocumentRevisionKey documentRevisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentRevisionNotFoundException, AccessRightException {
+        User user = userManager.checkWorkspaceReadAccess(documentRevisionKey.getDocumentMaster().getWorkspace());
 
-        User user = userManager.checkWorkspaceReadAccess(documentRevisionKey.getDocumentMaster().getWorkspace());       // Todo Just check if the user is document's or workspace's owner
+        Locale locale = new Locale(user.getLanguage());
+        DocumentRevision docR = new DocumentRevisionDAO(locale, em).getDocRRef(documentRevisionKey);
 
-        DocumentRevisionDAO documentRevisionDAO = new DocumentRevisionDAO(new Locale(user.getLanguage()), em);
-        DocumentRevision docR = documentRevisionDAO.getDocRRef(documentRevisionKey);
-        Workspace wks = new WorkspaceDAO(em).loadWorkspace(documentRevisionKey.getDocumentMaster().getWorkspace());
-
-        if (docR.getAuthor().getLogin().equals(user.getLogin()) || wks.getAdmin().getLogin().equals(user.getLogin())) {
+        if (user.isAdministrator() || isAuthor(user,docR)) {
             ACL acl = docR.getACL();
             if (acl != null) {
                 new ACLDAO(em).removeACLEntries(acl);
                 docR.setACL(null);
             }
         }else{
-            throw new AccessRightException(new Locale(user.getLanguage()), user);
+            throw new AccessRightException(locale, user);
         }
     }
 
@@ -590,7 +578,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         checkNameValidity(pDocMId, locale);
 
         Folder folder = new FolderDAO(locale, em).loadFolder(pParentFolder);
-        checkWritingRight(user, folder);
+        checkFolderWritingRight(user, folder);
 
         DocumentMaster docM;
         DocumentRevision docR;
@@ -735,13 +723,11 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         User user = checkDocumentRevisionWriteAccess(pDocRPK);
 
         Folder newLocation = new FolderDAO(new Locale(user.getLanguage()), em).loadFolder(pParentFolder);
-        checkWritingRight(user, newLocation);
+        checkFolderWritingRight(user, newLocation);
         DocumentRevisionDAO docRDAO = new DocumentRevisionDAO(new Locale(user.getLanguage()), em);
         DocumentRevision docR = docRDAO.loadDocR(pDocRPK);
 
-        Folder oldLocation = docR.getLocation();
-        String owner = oldLocation.getOwner();
-        if ((owner != null) && (!owner.equals(user.getLogin()))) {
+        if(isInAnotherUserHomeFolder(user,docR)) {
             throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException6");
         } else {
             docR.setLocation(newLocation);
@@ -763,8 +749,8 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
         FolderDAO folderDAO = new FolderDAO(locale, em);
         Folder folder = folderDAO.loadFolder(pParentFolder);
-        checkFolderStructureRight(user);
-        checkWritingRight(user, folder);
+        checkFoldersStructureChangeRight(user);
+        checkFolderWritingRight(user, folder);
         Folder newFolder = new Folder(pParentFolder, pFolder);
         folderDAO.createFolder(newFolder);
         return newFolder;
@@ -773,14 +759,12 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public DocumentRevision checkOutDocument(DocumentRevisionKey pDocRPK) throws WorkspaceNotFoundException, NotAllowedException, DocumentRevisionNotFoundException, AccessRightException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException, CreationException {
-
         User user = checkDocumentRevisionWriteAccess(pDocRPK);
         DocumentRevisionDAO docRDAO = new DocumentRevisionDAO(new Locale(user.getLanguage()), em);
         DocumentRevision docR = docRDAO.loadDocR(pDocRPK);
         //Check access rights on docR
 
-        String owner = docR.getLocation().getOwner();
-        if ((owner != null) && (!owner.equals(user.getLogin()))) {
+        if (isInAnotherUserHomeFolder(user, docR)) {
             throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException5");
         }
 
@@ -840,8 +824,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         Locale userLocale = new Locale(user.getLanguage());
         DocumentRevisionDAO docRDAO = new DocumentRevisionDAO(userLocale, em);
         DocumentRevision docR = docRDAO.loadDocR(pDocRPK);
-        String owner = docR.getLocation().getOwner();
-        if ((owner != null) && (!owner.equals(user.getLogin()))) {
+        if (isInAnotherUserHomeFolder(user, docR)) {
             throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException5");
         }
 
@@ -888,7 +871,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         Tag tagToRemove = new Tag(user.getWorkspace(), pTag);
         docR.getTags().remove(tagToRemove);
 
-        if ((docR.isCheckedOut()) && (!docR.getCheckOutUser().equals(user))) {
+        if (isCheckoutByAnotherUser(user,docR)) {
             em.detach(docR);
             docR.removeLastIteration();
         }
@@ -939,7 +922,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         DocumentRevisionDAO docRDAO = new DocumentRevisionDAO(new Locale(user.getLanguage()), em);
         DocumentRevision docR = docRDAO.loadDocR(pDocRPK);
 
-        if (docR.isCheckedOut() && docR.getCheckOutUser().equals(user)) {
+        if (isCheckoutByUser(user,docR)) {
             SubscriptionDAO subscriptionDAO = new SubscriptionDAO(em);
             User[] subscribers = subscriptionDAO.getIterationChangeEventSubscribers(docR);
             GCMAccount[] gcmAccounts = subscriptionDAO.getIterationChangeEventSubscribersGCMAccount(docR);
@@ -955,8 +938,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
                 gcmNotifier.sendIterationNotification(gcmAccounts, docR);
             }
 
-            //esIndexer.index(docM.getLastIteration());                                                                 // Index the last iteration in ElasticSearch
-            for(DocumentIteration docIteration :docR.getDocumentIterations()){
+            for(DocumentIteration docIteration : docR.getDocumentIterations()){
                 esIndexer.index(docIteration);                                                                          // Index all iterations in ElasticSearch (decrease old iteration boost factor)
             }
 
@@ -972,9 +954,8 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         User user = userManager.checkWorkspaceWriteAccess(Folder.parseWorkspaceId(pCompletePath));
         FolderDAO folderDAO = new FolderDAO(new Locale(user.getLanguage()), em);
         Folder folder = folderDAO.loadFolder(pCompletePath);
-        String owner = folder.getOwner();
-        checkFolderStructureRight(user);
-        if (((owner != null) && (!owner.equals(user.getLogin()))) || (folder.isRoot()) || folder.isHome()) {
+        checkFoldersStructureChangeRight(user);
+        if (isAnotherUserHomeFolder(user, folder) || (folder.isRoot()) || folder.isHome()) {
             throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException21");
         } else {
             List<DocumentRevision> docRs = folderDAO.removeFolder(folder);
@@ -1007,9 +988,8 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         User user = userManager.checkWorkspaceWriteAccess(workspace);
         FolderDAO folderDAO = new FolderDAO(new Locale(user.getLanguage()), em);
         Folder folder = folderDAO.loadFolder(pCompletePath);
-        String owner = folder.getOwner();
-        checkFolderStructureRight(user);
-        if (((owner != null) && (!owner.equals(user.getLogin()))) || (folder.isRoot()) || folder.isHome()) {
+        checkFoldersStructureChangeRight(user);
+        if (isAnotherUserHomeFolder(user, folder) || (folder.isRoot()) || folder.isHome()) {
             throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException21");
         } else if (!workspace.equals(Folder.parseWorkspaceId(pDestParentFolder))) {
             throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException23");
@@ -1037,8 +1017,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         DocumentMaster documentMaster = docR.getDocumentMaster();
         boolean isLastRevision = documentMaster.getDocumentRevisions().size() == 1;
 
-        String owner = docR.getLocation().getOwner();
-        if ((owner != null) && (!owner.equals(user.getLogin()))) {
+        if (isInAnotherUserHomeFolder(user, docR)) {
             throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException22");
         }
 
@@ -1097,7 +1076,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         //check access rights on docR
         user = checkDocumentRevisionWriteAccess(docR.getKey());
 
-        if (docR.isCheckedOut() && docR.getCheckOutUser().equals(user) && docR.getLastIteration().equals(document)) {
+        if (isCheckoutByUser(user,docR) && docR.getLastIteration().equals(document)) {
             try {
                 dataManager.deleteData(file);
             } catch (StorageException e) {
@@ -1114,8 +1093,8 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public DocumentMasterTemplate removeFileFromTemplate(String pFullName) throws WorkspaceNotFoundException, DocumentMasterTemplateNotFoundException, AccessRightException, FileNotFoundException, UserNotFoundException, UserNotActiveException {
-        User user = userManager.checkWorkspaceReadAccess(BinaryResource.parseWorkspaceId(pFullName));
-        //TODO checkWorkspaceWriteAccess ?
+        User user = userManager.checkWorkspaceWriteAccess(BinaryResource.parseWorkspaceId(pFullName));
+
         BinaryResourceDAO binDAO = new BinaryResourceDAO(new Locale(user.getLanguage()), em);
         BinaryResource file = binDAO.loadBinaryResource(pFullName);
 
@@ -1140,7 +1119,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         DocumentLinkDAO linkDAO = new DocumentLinkDAO(new Locale(user.getLanguage()), em);
         DocumentRevision docR = docRDAO.loadDocR(rKey);
         //check access rights on docR ?
-        if (docR.isCheckedOut() && docR.getCheckOutUser().equals(user) && docR.getLastIteration().getKey().equals(iKey)) {
+        if (isCheckoutByUser(user,docR) && docR.getLastIteration().getKey().equals(iKey)) {
             DocumentIteration doc = docR.getLastIteration();
 
             Set<DocumentIterationKey> linkKeys = new HashSet<>(Arrays.asList(pLinkKeys));
@@ -1208,7 +1187,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         DocumentRevision originalDocR = docRDAO.loadDocR(pOriginalDocRPK);
         DocumentMaster docM = originalDocR.getDocumentMaster();
         Folder folder = originalDocR.getLocation();
-        checkWritingRight(user, folder);
+        checkFolderWritingRight(user, folder);
 
         if (originalDocR.isCheckedOut()) {
             throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException26");
@@ -1315,8 +1294,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     public void subscribeToStateChangeEvent(DocumentRevisionKey pDocRPK) throws WorkspaceNotFoundException, NotAllowedException, DocumentRevisionNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException {
         User user = checkDocumentRevisionReadAccess(pDocRPK);
         DocumentRevision docR = new DocumentRevisionDAO(new Locale(user.getLanguage()), em).loadDocR(pDocRPK);
-        String owner = docR.getLocation().getOwner();
-        if ((owner != null) && (!owner.equals(user.getLogin()))) {
+        if (isAnotherUserHomeFolder(user, docR.getLocation())) {
             throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException30");
         }
 
@@ -1336,8 +1314,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     public void subscribeToIterationChangeEvent(DocumentRevisionKey pDocRPK) throws WorkspaceNotFoundException, NotAllowedException, DocumentRevisionNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException {
         User user = checkDocumentRevisionReadAccess(pDocRPK);
         DocumentRevision docR = new DocumentRevisionDAO(new Locale(user.getLanguage()), em).getDocRRef(pDocRPK);
-        String owner = docR.getLocation().getOwner();
-        if ((owner != null) && (!owner.equals(user.getLogin()))) {
+        if (isAnotherUserHomeFolder(user,docR.getLocation())) {
             throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException30");
         }
 
@@ -1430,37 +1407,25 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         sharedEntityDAO.deleteSharedDocument(sharedDocument);
     }
 
-    private Folder checkWritingRight(User pUser, Folder pFolder) throws NotAllowedException {
-        if (pFolder.isPrivate() && (!pFolder.getOwner().equals(pUser.getLogin()))) {
-            throw new NotAllowedException(new Locale(pUser.getLanguage()), "NotAllowedException33");
-        }
-        return pFolder;
+
+
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.ADMIN_ROLE_ID})
+    @Override
+    public boolean canAccess(User user, DocumentRevisionKey docRKey) throws DocumentRevisionNotFoundException {
+        DocumentRevision docRevision = new DocumentRevisionDAO(new Locale(user.getLanguage()), em).loadDocR(docRKey);
+        return hasDocumentRevisionReadAccess(user,docRevision);
     }
 
-    private void checkFolderStructureRight(User pUser) throws NotAllowedException {
-        Workspace wks = pUser.getWorkspace();
-        if (wks.isFolderLocked() && (!pUser.isAdministrator())) {
-            throw new NotAllowedException(new Locale(pUser.getLanguage()), "NotAllowedException7");
-        }
-    }
 
     /**
-     * Check if a user, which have access to the workspace, have read access to a document revision
-     * @param user A user which have read access to the workspace
-     * @param documentRevision The document revision wanted
-     * @return True if access if granted, False otherwise
+     * Apply read access policy on a document revision
+     * @param user The user to test
+     * @param documentRevision The document revision to test
+     * @return The readable document revision or null if the user has no access to it.
      */
-    private boolean hasDocumentRevisionReadAccess(User user, DocumentRevision documentRevision){
-        return (user.isAdministrator() ||
-               documentRevision.getACL()==null ||
-               documentRevision.getACL().hasReadAccess(user)) &&
-               (!documentRevision.getLocation().isPrivate() ||
-               documentRevision.getLocation().getOwner().equals(user.getLogin())) ;
-    }
-
     private DocumentRevision applyDocumentRevisionReadAccess(User user, DocumentRevision documentRevision){
         if(hasDocumentRevisionReadAccess(user, documentRevision)){
-            if(!documentRevision.isCheckedOut() || documentRevision.getCheckOutUser().equals(user)){
+            if(!isCheckoutByAnotherUser(user, documentRevision)){
                 return documentRevision;
             }
             em.detach(documentRevision);
@@ -1470,8 +1435,38 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         return null;
     }
 
-    private User checkDocumentRevisionWriteAccess(DocumentRevisionKey documentRevisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, DocumentRevisionNotFoundException {
 
+    /**
+     * Check if the current account have read access on a document revision.
+     * @param documentRevisionKey The key of the document revision.
+     * @return The user if he has read access to the document revision.
+     * @throws UserNotFoundException If there are any User matching the Workspace and the current account login.
+     * @throws UserNotActiveException If the user is not actif.
+     * @throws WorkspaceNotFoundException If the workspace doesn't exist.
+     * @throws AccessRightException If the user has no read access to the document revision.
+     * @throws DocumentRevisionNotFoundException If the document revision doesn't exist.
+     */
+    private User checkDocumentRevisionReadAccess(DocumentRevisionKey documentRevisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, DocumentRevisionNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(documentRevisionKey.getDocumentMaster().getWorkspace());
+        DocumentRevision documentRevision = new DocumentRevisionDAO(em).loadDocR(documentRevisionKey);
+
+        if(!hasDocumentRevisionReadAccess(user, documentRevision)){
+            throw new AccessRightException(new Locale(user.getLanguage()),user);
+        }
+
+        return user;
+    }
+    /**
+     * Check if the current account user have write access on a document revision.
+     * @param documentRevisionKey The key of the document revision.
+     * @return The user if he has write access to the document revision.
+     * @throws UserNotFoundException If there are any User matching the Workspace and the current account login.
+     * @throws UserNotActiveException If the user is not actif.
+     * @throws WorkspaceNotFoundException If the workspace doesn't exist.
+     * @throws AccessRightException If the user has no write access to the document revision.
+     * @throws DocumentRevisionNotFoundException If the document revision doesn't exist.
+     */
+    private User checkDocumentRevisionWriteAccess(DocumentRevisionKey documentRevisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, DocumentRevisionNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(documentRevisionKey.getDocumentMaster().getWorkspace());
         if(user.isAdministrator()){
             return user;
@@ -1487,43 +1482,91 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         }
     }
 
-    private User checkDocumentRevisionReadAccess(DocumentRevisionKey documentRevisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, DocumentRevisionNotFoundException {
-        User user = userManager.checkWorkspaceReadAccess(documentRevisionKey.getDocumentMaster().getWorkspace());
-        if(user.isAdministrator()){                                                                                     // If it is the workspace's owner, give it access
-            return user;
-        }
-        DocumentRevision documentRevision = new DocumentRevisionDAO(em).loadDocR(documentRevisionKey);
-        if((documentRevision.getACL()==null) || (documentRevision.getACL().hasReadAccess(user))){                       // If the document haven't ACL, give it access or if there is a read access
-            return user;
-        }else{                                                                                                          // Else throw a AccessRightException
-            throw new AccessRightException(new Locale(user.getLanguage()),user);
+
+    /**
+     * Check if a user, which have access to the workspace, have the right of change the folder structure.
+     * @param pUser A user which have read access to the workspace.
+     * @throws NotAllowedException If access is deny.
+     */
+    private void checkFoldersStructureChangeRight(User pUser) throws NotAllowedException {
+        Workspace wks = pUser.getWorkspace();
+        if (wks.isFolderLocked() && (!pUser.isAdministrator())) {
+            throw new NotAllowedException(new Locale(pUser.getLanguage()), "NotAllowedException7");
         }
     }
+    /**
+     * Check if a user, which have access to the workspace, have write access in a folder
+     * @param pUser A user which have read access to the workspace
+     * @param pFolder The folder wanted
+     * @return The folder access is granted.
+     * @throws NotAllowedException If the folder access is deny.
+     */
+    private Folder checkFolderWritingRight(User pUser, Folder pFolder) throws NotAllowedException {
+        if(isAnotherUserHomeFolder(pUser,pFolder)) {
+            throw new NotAllowedException(new Locale(pUser.getLanguage()), "NotAllowedException33");
+        }
+        return pFolder;
+    }
+
+
+    /**
+     * Say if a user, which have access to the workspace, have read access to a document revision
+     * @param user A user which have read access to the workspace
+     * @param documentRevision The document revision wanted
+     * @return True if access is granted, False otherwise
+     */
+    private boolean hasDocumentRevisionReadAccess(User user, DocumentRevision documentRevision){
+        return isInSameWorkspace(user, documentRevision) &&
+                (user.isAdministrator() || isACLGrantReadAccess(user,documentRevision)) &&
+                !isInAnotherUserHomeFolder(user, documentRevision);
+    }
+    /**
+     * Say if a user, which have access to the workspace, have write access to a document revision
+     * @param user A user which have read access to the workspace
+     * @param documentRevision The document revision wanted
+     * @return True if access is granted, False otherwise
+     */
+    private boolean hasDocumentRevisionWriteAccess(User user, DocumentRevision documentRevision){
+        return isInSameWorkspace(user, documentRevision) &&
+                (user.isAdministrator() || isACLGrantWriteAccess(user,documentRevision)) &&
+                !isInAnotherUserHomeFolder(user, documentRevision);
+    }
+
+
+    private boolean isInSameWorkspace(User user, DocumentRevision documentRevision){
+        return user.getWorkspaceId().equals(documentRevision.getWorkspaceId());
+    }
+    private boolean isAuthor(User user, DocumentRevision documentRevision){
+        return documentRevision.getAuthor().getLogin().equals(user.getLogin());
+    }
+    private boolean isACLGrantReadAccess(User user, DocumentRevision documentRevision){
+        return documentRevision.getACL()==null || documentRevision.getACL().hasReadAccess(user);
+    }
+    private boolean isACLGrantWriteAccess(User user, DocumentRevision documentRevision){
+        return documentRevision.getACL()==null || documentRevision.getACL().hasWriteAccess(user);
+    }
+    private boolean isAnotherUserHomeFolder(User user, Folder folder){
+        return folder.isPrivate() && !folder.getOwner().equals(user.getLogin());
+    }
+    private boolean isInAnotherUserHomeFolder(User user, DocumentRevision documentRevision){
+        return isAnotherUserHomeFolder(user,documentRevision.getLocation());
+    }
+    private boolean isCheckoutByUser(User user, DocumentRevision documentRevision){
+        return documentRevision.isCheckedOut() && documentRevision.getCheckOutUser().equals(user);
+    }
+    private boolean isCheckoutByAnotherUser(User user, DocumentRevision documentRevision){
+        return documentRevision.isCheckedOut() && !documentRevision.getCheckOutUser().equals(user);
+    }
+
 
     private void checkNameValidity(String name, Locale locale) throws NotAllowedException {
         if (!NamingConvention.correct(name)) {
             throw new NotAllowedException(locale, "NotAllowedException9");
         }
     }
-
     private void checkNameFileValidity(String name, Locale locale) throws NotAllowedException {
         if (!NamingConvention.correctNameFile(name)) {
             throw new NotAllowedException(locale, "NotAllowedException9");
         }
-    }
-
-    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.ADMIN_ROLE_ID})
-    @Override
-    public boolean canAccess(User user, DocumentRevisionKey docRKey) throws DocumentRevisionNotFoundException {
-        if(user.getWorkspace().getId().equals(docRKey.getWorkspaceId())) {                                              // False if the user workspace doesn't match with the part Workspace
-            if (user.isAdministrator()) {                                                                               // True if the user is the workspace administrator
-                return true;
-            }
-            DocumentRevision docRevision = new DocumentRevisionDAO(new Locale(user.getLanguage()), em).loadDocR(docRKey);
-            if (docRevision.getACL() == null || docRevision.getACL().hasReadAccess(user)) {                           // True if there are no ACL or if they grant read access
-                return true;
-            }
-        }
-        return false;
     }
 }

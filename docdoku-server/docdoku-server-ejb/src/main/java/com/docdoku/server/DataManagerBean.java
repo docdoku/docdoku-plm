@@ -36,7 +36,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Logger;
 
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @Local(IDataManagerLocal.class)
@@ -48,8 +47,6 @@ public class DataManagerBean implements IDataManagerLocal {
 
     private StorageProvider defaultStorageProvider;
     private FileStorageProvider fileStorageProvider;
-
-    private static final Logger LOGGER = Logger.getLogger(DataManagerBean.class.getName());
 
     @PostConstruct
     private void init() {
