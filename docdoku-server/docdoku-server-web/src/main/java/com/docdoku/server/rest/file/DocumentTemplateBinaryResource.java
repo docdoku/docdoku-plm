@@ -20,6 +20,7 @@
 package com.docdoku.server.rest.file;
 
 import com.docdoku.core.common.BinaryResource;
+import com.docdoku.core.document.DocumentMasterTemplateKey;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.services.IDataManagerLocal;
@@ -29,18 +30,29 @@ import com.docdoku.server.rest.exceptions.FileConversionException;
 import com.docdoku.server.rest.exceptions.NotModifiedException;
 import com.docdoku.server.rest.exceptions.PreconditionFailedException;
 import com.docdoku.server.rest.exceptions.RequestedRangeNotSatisfiableException;
-import com.docdoku.server.rest.file.util.BinaryResourceMeta;
-import com.docdoku.server.rest.file.util.BinaryResourceResponse;
+import com.docdoku.server.rest.file.util.BinaryResourceDownloadMeta;
+import com.docdoku.server.rest.file.util.BinaryResourceDownloadResponseBuilder;
+import com.docdoku.server.rest.file.util.BinaryResourceUpload;
 import com.docdoku.server.rest.interceptors.Compress;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.Part;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Collection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Stateless
 public class DocumentTemplateBinaryResource {
@@ -51,11 +63,52 @@ public class DocumentTemplateBinaryResource {
     @EJB
     private IDocumentResourceGetterManagerLocal documentResourceGetterService;
 
+    private static final Logger LOGGER = Logger.getLogger(DocumentTemplateBinaryResource.class.getName());
 
     public DocumentTemplateBinaryResource() {
     }
 
+    @POST
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    public Response uploadDocumentTemplateFiles(@Context HttpServletRequest request,
+                                                @PathParam("workspaceId") final String workspaceId,
+                                                @PathParam("templateId") final String templateId)
+            throws EntityNotFoundException, EntityAlreadyExistsException, UserNotActiveException, AccessRightException, NotAllowedException, CreationException {
+
+        try {
+            BinaryResource binaryResource;
+            String fileName=null;
+            long length;
+            DocumentMasterTemplateKey templatePK = new DocumentMasterTemplateKey(workspaceId, templateId);
+            Collection<Part> formParts = request.getParts();
+
+            for(Part formPart : formParts){
+                fileName = formPart.getSubmittedFileName();
+                // Init the binary resource with a null length
+                binaryResource= documentService.saveFileInTemplate(templatePK, fileName, 0);
+                OutputStream outputStream = dataManager.getBinaryResourceOutputStream(binaryResource);
+                length = BinaryResourceUpload.UploadBinary(outputStream, formPart);
+                documentService.saveFileInTemplate(templatePK, fileName, length);
+            }
+
+            try {
+                if(formParts.size()==1){
+                    return Response.created(new URI(request.getRequestURI()+fileName)).build();
+                }
+            } catch (URISyntaxException e) {
+                LOGGER.log(Level.WARNING,null,e);
+            }
+            return Response.ok().build();
+
+        } catch (IOException | ServletException | StorageException e) {
+            return BinaryResourceUpload.uploadError(e);
+        }
+    }
+
+
+
     @GET
+    @Path("/{fileName}")
     @Compress
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response downloadDocumentTemplateFile(@Context Request request,
@@ -71,10 +124,10 @@ public class DocumentTemplateBinaryResource {
         String fullName = workspaceId + "/document-templates/" + templateId + "/" + fileName;
         // Todo : If Guest, return public binary resource
         BinaryResource binaryResource = documentService.getTemplateBinaryResource(fullName);
-        BinaryResourceMeta binaryResourceMeta = new BinaryResourceMeta(binaryResource);
+        BinaryResourceDownloadMeta binaryResourceDownloadMeta = new BinaryResourceDownloadMeta(binaryResource);
 
         // Check cache precondition
-        Response.ResponseBuilder rb = request.evaluatePreconditions(binaryResourceMeta.getLastModified(), binaryResourceMeta.getETag());
+        Response.ResponseBuilder rb = request.evaluatePreconditions(binaryResourceDownloadMeta.getLastModified(), binaryResourceDownloadMeta.getETag());
         if(rb!= null){
             return rb.build();
         }
@@ -86,9 +139,9 @@ public class DocumentTemplateBinaryResource {
             }else{
                 binaryContentInputStream = dataManager.getBinaryResourceInputStream(binaryResource);
             }
-            return BinaryResourceResponse.prepareResponse(binaryContentInputStream, binaryResourceMeta, range);
+            return BinaryResourceDownloadResponseBuilder.prepareResponse(binaryContentInputStream, binaryResourceDownloadMeta, range);
         } catch (StorageException | FileConversionException e) {
-            return BinaryResourceResponse.downloadError(e, fullName);
+            return BinaryResourceDownloadResponseBuilder.downloadError(e, fullName);
         }
     }
 

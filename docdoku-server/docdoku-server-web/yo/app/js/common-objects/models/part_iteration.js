@@ -93,7 +93,7 @@ define([
          * @returns string
          */
         getUploadBaseUrl: function () {
-            return App.config.contextPath + '/files/' + this.getWorkspace() + '/parts/' + this.getNumber() + '/' + this.getVersion() + '/' + this.get('iteration') + '/nativecad/';
+            return App.config.contextPath + '/api/files/' + this.getWorkspace() + '/parts/' + this.getNumber() + '/' + this.getVersion() + '/' + this.get('iteration') + '/nativecad/';
         }
 
     });

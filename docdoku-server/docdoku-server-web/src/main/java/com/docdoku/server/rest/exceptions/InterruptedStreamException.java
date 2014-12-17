@@ -19,24 +19,12 @@
  */
 package com.docdoku.server.rest.exceptions;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 /**
  * @author Taylor LABEJOF
  */
 public class InterruptedStreamException extends RestApiException {
 
-    public InterruptedStreamException(InputStream inputStream, OutputStream outputStream, Throwable cause){
+    public InterruptedStreamException(){
         super();
-        try {
-            inputStream.close();
-            outputStream.close();
-        }catch (IOException e){
-            Logger.getLogger(InterruptedStreamException.class.getName()).log(Level.WARNING, null, e);
-        }
     }
 }

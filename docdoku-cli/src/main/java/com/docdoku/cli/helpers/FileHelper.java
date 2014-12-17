@@ -178,7 +178,7 @@ public class FileHelper {
 
     public static String getPartURL(URL serverURL, PartIterationKey pPart, String pRemoteFileName) throws UnsupportedEncodingException, MalformedURLException {
         return serverURL
-                + "/files/"
+                + "/api/files/"
                 + URLEncoder.encode(pPart.getWorkspaceId(), "UTF-8") + "/"
                 + "parts/"
                 + URLEncoder.encode(pPart.getPartMasterNumber(), "UTF-8") + "/"

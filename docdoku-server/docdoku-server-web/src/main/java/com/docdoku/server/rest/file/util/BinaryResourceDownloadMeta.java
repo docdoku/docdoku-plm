@@ -14,8 +14,8 @@ import java.util.logging.Logger;
 /**
  *
  */
-public class BinaryResourceMeta {
-    private static final Logger LOGGER = Logger.getLogger(BinaryResourceMeta.class.getName());
+public class BinaryResourceDownloadMeta {
+    private static final Logger LOGGER = Logger.getLogger(BinaryResourceDownloadMeta.class.getName());
     private static MimetypesFileTypeMap fileTypeMap = null;
     private static final String ENCODAGE = "UTF-8";
 
@@ -27,17 +27,17 @@ public class BinaryResourceMeta {
 
     private String subResourceVirtualPath;
 
-    public BinaryResourceMeta(BinaryResource binaryResource, String outputFormat, String downloadType) {
+    public BinaryResourceDownloadMeta(BinaryResource binaryResource, String outputFormat, String downloadType) {
         this.fullName = binaryResource.getName();
         this.outputFormat = outputFormat;
         this.downloadType = downloadType;
         this.length = binaryResource.getContentLength();
         this.lastModified = binaryResource.getLastModified();
         if(fileTypeMap==null){
-            BinaryResourceMeta.initFileTypeMap();
+            BinaryResourceDownloadMeta.initFileTypeMap();
         }
     }
-    public BinaryResourceMeta(BinaryResource binaryResource) {
+    public BinaryResourceDownloadMeta(BinaryResource binaryResource) {
         this(binaryResource,null,null);
     }
 

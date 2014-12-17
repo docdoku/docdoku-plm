@@ -20,27 +20,40 @@
 package com.docdoku.server.rest.file;
 
 import com.docdoku.core.common.BinaryResource;
+import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.services.IDocumentManagerLocal;
+import com.docdoku.core.services.IDocumentPostUploaderManagerLocal;
 import com.docdoku.core.services.IDocumentResourceGetterManagerLocal;
 import com.docdoku.server.rest.exceptions.FileConversionException;
 import com.docdoku.server.rest.exceptions.NotModifiedException;
 import com.docdoku.server.rest.exceptions.PreconditionFailedException;
 import com.docdoku.server.rest.exceptions.RequestedRangeNotSatisfiableException;
-import com.docdoku.server.rest.file.util.BinaryResourceMeta;
-import com.docdoku.server.rest.file.util.BinaryResourceResponse;
+import com.docdoku.server.rest.file.util.BinaryResourceDownloadMeta;
+import com.docdoku.server.rest.file.util.BinaryResourceDownloadResponseBuilder;
+import com.docdoku.server.rest.file.util.BinaryResourceUpload;
 import com.docdoku.server.rest.interceptors.Compress;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.Part;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Collection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Stateless
 public class DocumentBinaryResource {
@@ -50,12 +63,56 @@ public class DocumentBinaryResource {
     private IDocumentManagerLocal documentService;
     @EJB
     private IDocumentResourceGetterManagerLocal documentResourceGetterService;
+    @EJB
+    private IDocumentPostUploaderManagerLocal documentPostUploaderService;
 
+    private static final Logger LOGGER = Logger.getLogger(DocumentBinaryResource.class.getName());
 
     public DocumentBinaryResource() {
     }
 
+    @POST
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    public Response uploadDocumentFiles(@Context HttpServletRequest request,
+                                       @PathParam("workspaceId") final String workspaceId,
+                                       @PathParam("documentId") final String documentId,
+                                       @PathParam("version") final String version,
+                                       @PathParam("iteration") final int iteration)
+            throws EntityNotFoundException, EntityAlreadyExistsException, UserNotActiveException, AccessRightException, NotAllowedException, CreationException {
+
+        try {
+            BinaryResource binaryResource;
+            String fileName=null;
+            long length;
+            DocumentIterationKey docPK = new DocumentIterationKey(workspaceId, documentId, version, iteration);
+            Collection<Part> formParts = request.getParts();
+
+            for(Part formPart : formParts){
+                fileName = formPart.getSubmittedFileName();
+                // Init the binary resource with a null length
+                binaryResource= documentService.saveFileInDocument(docPK, fileName, 0);
+                OutputStream outputStream = dataManager.getBinaryResourceOutputStream(binaryResource);
+                length = BinaryResourceUpload.UploadBinary(outputStream,formPart);
+                documentService.saveFileInDocument(docPK, fileName, length);
+                documentPostUploaderService.process(binaryResource);
+            }
+
+            try {
+                if(formParts.size()==1){
+                    return Response.created(new URI(request.getRequestURI()+fileName)).build();
+                }
+            } catch (URISyntaxException e) {
+                LOGGER.log(Level.WARNING,null,e);
+            }
+            return Response.ok().build();
+
+        } catch (IOException | ServletException | StorageException e) {
+            return BinaryResourceUpload.uploadError(e);
+        }
+    }
+
     @GET
+    @Path("/{fileName}")
     @Compress
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response downloadDocumentFile(@Context Request request,
@@ -72,10 +129,10 @@ public class DocumentBinaryResource {
         String fullName = workspaceId + "/documents/" + documentId + "/" + version + "/" + iteration + "/" + fileName;
         // Todo : If Guest, return public binary resource
         BinaryResource binaryResource = documentService.getBinaryResource(fullName);
-        BinaryResourceMeta binaryResourceMeta = new BinaryResourceMeta(binaryResource,output,type);
+        BinaryResourceDownloadMeta binaryResourceDownloadMeta = new BinaryResourceDownloadMeta(binaryResource,output,type);
 
         // Check cache precondition
-        Response.ResponseBuilder rb = request.evaluatePreconditions(binaryResourceMeta.getLastModified(), binaryResourceMeta.getETag());
+        Response.ResponseBuilder rb = request.evaluatePreconditions(binaryResourceDownloadMeta.getLastModified(), binaryResourceDownloadMeta.getETag());
         if(rb!= null){
             return rb.build();
         }
@@ -87,9 +144,9 @@ public class DocumentBinaryResource {
             }else{
                 binaryContentInputStream = dataManager.getBinaryResourceInputStream(binaryResource);
             }
-            return BinaryResourceResponse.prepareResponse(binaryContentInputStream, binaryResourceMeta, range);
+            return BinaryResourceDownloadResponseBuilder.prepareResponse(binaryContentInputStream, binaryResourceDownloadMeta, range);
         } catch (StorageException | FileConversionException e) {
-            return BinaryResourceResponse.downloadError(e, fullName);
+            return BinaryResourceDownloadResponseBuilder.downloadError(e, fullName);
         }
     }
 

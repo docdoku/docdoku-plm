@@ -48,22 +48,22 @@ public class FileResource {
     public FileResource() {
     }
 
-    @Path("/{workspaceId}/documents/{documentId}/{version}/{iteration}/{fileName}")
+    @Path("/{workspaceId}/documents/{documentId}/{version}/{iteration}")
     public DocumentBinaryResource downloadDocumentFile(){
         return documentBinaryResource;
     }
 
-    @Path("/{workspaceId}/parts/{partNumber}/{version}/{iteration}{subType : (/[^/]+?)?}/{fileName}")
+    @Path("/{workspaceId}/parts/{partNumber}/{version}/{iteration}")
     public PartBinaryResource downloadPartFile(){
         return partBinaryResource;
     }
 
-    @Path("/{workspaceId}/document-templates/{templateId}/{fileName}")
+    @Path("/{workspaceId}/document-templates/{templateId}/")
     public DocumentTemplateBinaryResource downloadDocumentTemplateFile(){
         return documentTemplateBinaryResource;
     }
 
-    @Path("/{workspaceId}/part-templates/{templateId}/{fileName}")
+    @Path("/{workspaceId}/part-templates/{templateId}/")
     public PartTemplateBinaryResource downloadPartTemplateFile(){
         return partTemplateBinaryResource;
     }

@@ -35,12 +35,12 @@ import java.util.logging.Logger;
  * @author Taylor LABEJOF
  */
 
-public class BinaryResourceResponse {
-    private static final Logger LOGGER = Logger.getLogger(BinaryResourceResponse.class.getName());
+public class BinaryResourceDownloadResponseBuilder {
+    private static final Logger LOGGER = Logger.getLogger(BinaryResourceDownloadResponseBuilder.class.getName());
     private static final int CACHE_SECOND = 60 * 60 * 24;
 
 
-    private BinaryResourceResponse(){
+    private BinaryResourceDownloadResponseBuilder(){
         super();
     }
 
@@ -48,37 +48,37 @@ public class BinaryResourceResponse {
     /**
      * Set the header of the downloading response.
      * @param binaryContentInputStream The stream of the binary content to download.
-     * @param binaryResourceMeta The header parameters for the binary content download.
+     * @param binaryResourceDownloadMeta The header parameters for the binary content download.
      * @param range The string of the queried range. Null if no range are specified
      * @return A response builder with the header & the content.
      * @throws RequestedRangeNotSatisfiableException If the range is not satisfiable.
      */
-    public static Response prepareResponse(InputStream binaryContentInputStream,BinaryResourceMeta binaryResourceMeta, String range)
+    public static Response prepareResponse(InputStream binaryContentInputStream,BinaryResourceDownloadMeta binaryResourceDownloadMeta, String range)
             throws RequestedRangeNotSatisfiableException{
 
         Response.ResponseBuilder responseBuilder;
 
         if(range==null || range.isEmpty()){
-            long length = binaryResourceMeta.getLength();
+            long length = binaryResourceDownloadMeta.getLength();
             responseBuilder = Response.ok()
-                    .header("Content-Disposition", binaryResourceMeta.getContentDisposition())
-                    .header("Content-Type", binaryResourceMeta.getContentType())
-                    .entity(new StreamingBinaryResourceOutput(binaryContentInputStream, 0, length - 1, length));
+                    .header("Content-Disposition", binaryResourceDownloadMeta.getContentDisposition())
+                    .header("Content-Type", binaryResourceDownloadMeta.getContentType())
+                    .entity(new BinaryResourceBinaryStreamingOutput(binaryContentInputStream, 0, length - 1, length));
 
             // Converting files modify its length so we don't specify the lenght on converted content
-            if(!binaryResourceMeta.isConverted()){
+            if(!binaryResourceDownloadMeta.isConverted()){
                 responseBuilder.header("Content-Length", length);
             }
         }else{
-            responseBuilder = prepareStreamingDownloadResponse(binaryResourceMeta, binaryContentInputStream, range);
+            responseBuilder = prepareStreamingDownloadResponse(binaryResourceDownloadMeta, binaryContentInputStream, range);
         }
 
-        responseBuilder = applyCachePolicyToResponse(responseBuilder, binaryResourceMeta.getETag(), binaryResourceMeta.getLastModified());
+        responseBuilder = applyCachePolicyToResponse(responseBuilder, binaryResourceDownloadMeta.getETag(), binaryResourceDownloadMeta.getLastModified());
         return responseBuilder.build();
     }
 
-    private static Response.ResponseBuilder prepareStreamingDownloadResponse(BinaryResourceMeta binaryResourceMeta, InputStream binaryContentInputStream, String range) throws RequestedRangeNotSatisfiableException {
-        long length = binaryResourceMeta.getLength();
+    private static Response.ResponseBuilder prepareStreamingDownloadResponse(BinaryResourceDownloadMeta binaryResourceDownloadMeta, InputStream binaryContentInputStream, String range) throws RequestedRangeNotSatisfiableException {
+        long length = binaryResourceDownloadMeta.getLength();
 
         // Range header should match format "bytes=n-n,n-n,n-n...". If not, then return 416.
         if (!range.matches("^bytes=\\d*-\\d*(,\\d*-\\d*)*$")) {
@@ -91,12 +91,12 @@ public class BinaryResourceResponse {
         final String responseRange = String.format("bytes %d-%d/%d", from, length - 1, length);
 
         return Response.status(Response.Status.PARTIAL_CONTENT)
-                .header("Content-Disposition", binaryResourceMeta.getContentDisposition())
+                .header("Content-Disposition", binaryResourceDownloadMeta.getContentDisposition())
                 .header("Accept-Ranges", "bytes")
                 .header("Content-Length", length - from)
                 .header("Content-Range", responseRange)
-                .header("Content-Type", binaryResourceMeta.getContentType())
-                .entity(new StreamingBinaryResourceOutput(binaryContentInputStream, from, length - 1, length));
+                .header("Content-Type", binaryResourceDownloadMeta.getContentType())
+                .entity(new BinaryResourceBinaryStreamingOutput(binaryContentInputStream, from, length - 1, length));
     }
 
     /**

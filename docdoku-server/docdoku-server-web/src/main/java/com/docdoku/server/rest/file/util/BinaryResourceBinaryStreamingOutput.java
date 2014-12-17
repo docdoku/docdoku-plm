@@ -12,12 +12,12 @@ import java.io.OutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class StreamingBinaryResourceOutput implements StreamingOutput {
-    private static final Logger LOGGER = Logger.getLogger(StreamingBinaryResourceOutput.class.getName());
-    private InputStream binaryContentInputStream;
-    private Range fullRange;
+public class BinaryResourceBinaryStreamingOutput implements StreamingOutput {
+    private static final Logger LOGGER = Logger.getLogger(BinaryResourceBinaryStreamingOutput.class.getName());
+    private final InputStream binaryContentInputStream;
+    private final Range fullRange;
 
-    public StreamingBinaryResourceOutput(InputStream binaryContentInputStream, long start, long end, long length) {
+    public BinaryResourceBinaryStreamingOutput(InputStream binaryContentInputStream, long start, long end, long length) {
         this.binaryContentInputStream = binaryContentInputStream;
         this.fullRange = new Range(start, end, length);
     }
@@ -35,25 +35,34 @@ public class StreamingBinaryResourceOutput implements StreamingOutput {
         }
     }
 
-    private static void copy(final InputStream input, OutputStream output, long start, long length, long binaryLength) throws InterruptedStreamException, IOException {
+    private void copy(final InputStream input, OutputStream output, long start, long length, long binaryLength) throws InterruptedStreamException{
         if(start == 0 && binaryLength == length){
             try {
                 ByteStreams.copy(input, output);
             }catch (IOException e){
-                throw new InterruptedStreamException(input,output,e);
+                // may cause by a client side cancel
+                LOGGER.log(Level.FINE,"A downloading stream was interrupted.",e);
+                throw new InterruptedStreamException();
+            }finally {
+                try {
+                    input.close();
+                } catch (IOException e) {
+                    LOGGER.log(Level.SEVERE, "A input stream was not clearly close.", e);
+                }
             }
         }else{
             // Slice the input stream considering offset and length
-            InputStream slicedInputStream = ByteStreams.slice(new InputSupplier<InputStream>() {
-                public InputStream getInput() throws IOException {
+
+            try (InputStream slicedInputStream = ByteStreams.slice(new InputSupplier<InputStream>() {
+                public InputStream getInput(){
                     return input;
                 }
-            }, start, length).getInput();
-
-            try {
+            }, start, length).getInput()) {
                 ByteStreams.copy(slicedInputStream, output);
-            }catch (IOException e){
-                throw new InterruptedStreamException(slicedInputStream,output,e);
+            } catch (IOException e) {
+                // may cause by a client side cancel
+                LOGGER.log(Level.FINE,"A downloading stream was interrupted.",e);
+                throw new InterruptedStreamException();
             }
         }
 
