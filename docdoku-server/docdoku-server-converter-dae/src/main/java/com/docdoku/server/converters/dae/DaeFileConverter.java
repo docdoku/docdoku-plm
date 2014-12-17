@@ -18,7 +18,7 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.server.converters.kmz;
+package com.docdoku.server.converters.dae;
 
 
 import javax.inject.Qualifier;
@@ -31,4 +31,4 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Qualifier
 @Retention(RUNTIME)
 @Target({TYPE, METHOD, FIELD, PARAMETER})
-public @interface KMZFileConverter {}
+public @interface DaeFileConverter {}

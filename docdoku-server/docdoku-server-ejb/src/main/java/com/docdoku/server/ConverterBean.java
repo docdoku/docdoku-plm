@@ -40,10 +40,7 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -54,7 +51,7 @@ import java.util.logging.Logger;
  *
  * @author Florent.Garin
  */
-@Stateless(name="ConverterBean")
+@Stateless(name = "ConverterBean")
 public class ConverterBean implements IConverterManagerLocal {
 
     @PersistenceContext
@@ -70,25 +67,25 @@ public class ConverterBean implements IConverterManagerLocal {
     @EJB
     private IDataManagerLocal dataManager;
 
-    private static final String CONF_PROPERTIES="/com/docdoku/server/converters/utils/conf.properties";
+    private static final String CONF_PROPERTIES = "/com/docdoku/server/converters/utils/conf.properties";
     private static final Properties CONF = new Properties();
-    private static final Logger logger = Logger.getLogger(ConverterBean.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ConverterBean.class.getName());
 
-    static{
+    static {
 
         InputStream inputStream = null;
         try {
             inputStream = ConverterBean.class.getResourceAsStream(CONF_PROPERTIES);
             CONF.load(inputStream);
         } catch (IOException e) {
-            logger.log(Level.WARNING, null, e);
+            LOGGER.log(Level.WARNING, null, e);
         } finally {
-            try{
-                if(inputStream!=null){
+            try {
+                if (inputStream != null) {
                     inputStream.close();
                 }
-            }catch (IOException e){
-                logger.log(Level.FINEST, null, e);
+            } catch (IOException e) {
+                LOGGER.log(Level.FINEST, null, e);
             }
         }
     }
@@ -96,59 +93,63 @@ public class ConverterBean implements IConverterManagerLocal {
     @Override
     @Asynchronous
     public void convertCADFileToOBJ(PartIterationKey pPartIPK, BinaryResource cadBinaryResource) throws Exception {
+
+        File tempDir = Files.createTempDir();
+
         String ext = FileIO.getExtension(cadBinaryResource.getName());
+
         File convertedFile = null;
-        CADConverter selectedConverter=null;
-        for(CADConverter converter:converters){
-            if(converter.canConvertToOBJ(ext)){
-                selectedConverter=converter;
+        CADConverter selectedConverter = null;
+
+        for (CADConverter converter : converters) {
+            if (converter.canConvertToOBJ(ext)) {
+                selectedConverter = converter;
                 break;
             }
         }
-        if(selectedConverter!=null){
+
+        if (selectedConverter != null) {
 
             PartIterationDAO partIDAO = new PartIterationDAO(em);
             PartIteration partI = partIDAO.loadPartI(pPartIPK);
 
-            // Convert the file to obj format
-            convertedFile = selectedConverter.convert(partI, cadBinaryResource);
+            convertedFile = selectedConverter.convert(partI, cadBinaryResource, tempDir);
 
-            if(convertedFile != null){
-               decimate(pPartIPK,convertedFile);
+            if (convertedFile != null) {
+                decimate(pPartIPK, convertedFile, tempDir);
             }
 
-
+        } else {
+            LOGGER.log(Level.WARNING, "No CAD converter able to handle " + cadBinaryResource.getName());
         }
 
+        FileIO.rmDir(tempDir);
+
     }
-    private void decimate(PartIterationKey pPartIPK, File file){
 
-        String decimater = CONF.getProperty("decimaterPath");
+    private void decimate(PartIterationKey pPartIPK, File file, File tempDir) {
 
-        File tempDir = Files.createTempDir();
+        String decimater = CONF.getProperty("decimater");
 
-        try{
+        try {
+            String[] args = {decimater, "-i", file.getAbsolutePath(), "-o", tempDir.getAbsolutePath(), "1", "0.6", "0.2"};
 
-            String[] args = {decimater, "-i", file.getAbsolutePath(), "-o", tempDir.getAbsolutePath() , "1","0.6","0.2"};
             ProcessBuilder pb = new ProcessBuilder(args);
             Process proc = pb.start();
             proc.waitFor();
 
-
-            if(proc.exitValue() == 0){
-
+            if (proc.exitValue() == 0) {
                 double[] box = GeometryParser.calculateBox(file);
-
                 String baseName = tempDir.getAbsolutePath() + "/" + FileIO.getFileNameWithoutExtension(file.getName());
-                saveFile(pPartIPK,0,new File(baseName + "100.obj"),box);
-                saveFile(pPartIPK,1,new File(baseName + "60.obj"),box);
-                saveFile(pPartIPK,2,new File(baseName + "20.obj"),box);
+                saveFile(pPartIPK, 0, new File(baseName + "100.obj"), box);
+                saveFile(pPartIPK, 1, new File(baseName + "60.obj"), box);
+                saveFile(pPartIPK, 2, new File(baseName + "20.obj"), box);
+            } else {
+                LOGGER.log(Level.SEVERE, "Decimation failed with code = " + proc.exitValue());
             }
 
-            logger.log(Level.INFO, "Decimation done, exit code = " + proc.exitValue());
-
-        }catch(Exception e){
-            logger.log(Level.SEVERE, null, e);
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, null, e);
         } finally {
             FileIO.rmDir(tempDir);
         }
@@ -160,11 +161,11 @@ public class ConverterBean implements IConverterManagerLocal {
         OutputStream os = null;
 
         try {
-            Geometry lod = (Geometry) productService.saveGeometryInPartIteration(partIPK,file.getName(), quality, file.length(), box);
+            Geometry lod = (Geometry) productService.saveGeometryInPartIteration(partIPK, file.getName(), quality, file.length(), box);
             os = dataManager.getBinaryResourceOutputStream(lod);
             Files.copy(file, os);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Cannot save geometry to part iteration", e);
         } finally {
             try {
                 os.flush();
@@ -174,5 +175,6 @@ public class ConverterBean implements IConverterManagerLocal {
             }
         }
     }
+
 
 }

@@ -26,6 +26,6 @@ import com.docdoku.core.product.PartIteration;
 import java.io.File;
 
 public interface CADConverter {
-    File convert(PartIteration partToConvert, BinaryResource cadFile) throws Exception;
+    File convert(PartIteration partToConvert, BinaryResource cadFile, File tempDir) throws Exception;
     boolean canConvertToOBJ(String cadFileExtension);
 }
