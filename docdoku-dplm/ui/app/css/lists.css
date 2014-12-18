@@ -30,7 +30,11 @@ md-sidenav h3:first-of-type{
 	margin-top: 0;
 }
 
+.menu-list.hover{
+	border: 1px dashed green;
+}
 .menu-list{
+	border: 1px dashed white;
 	max-height: 150px;
 	transition: all 1s linear;
 }

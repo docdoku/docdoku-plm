@@ -11,7 +11,7 @@
     </h1>
 </md-toolbar>
 
-<md-content class="md-padding">  
+<md-content class="md-padding">
 
    <h3>
     <i class="fa fa-folder-open"></i> 
@@ -25,7 +25,7 @@
        </md-button>
     </h3>
 
-  <md-content class="menu-list" ng-class="{expanded: foldersExpanded}">
+  <md-content class="menu-list" ng-class="{expanded: foldersExpanded}" droppable on-file-dropped="onFileDropped(path)">
    <md-list>
     <md-item ng-repeat="folder in folders | orderBy:'-favorite'" ng-controller="FolderMenuController">
       <md-item-content>
