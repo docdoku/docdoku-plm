@@ -1,16 +1,14 @@
-package com.docdoku.arquillian.tests.services;
+package com.docdoku.test.arquillian.services;
 
 import com.docdoku.core.configuration.BaselineCreation;
 import com.docdoku.core.configuration.ProductBaseline;
 import com.docdoku.core.exceptions.*;
-
 import com.docdoku.core.product.ConfigurationItem;
 import com.docdoku.core.product.ConfigurationItemKey;
 import com.docdoku.core.services.IProductBaselineManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.esindexer.ESIndexer;
 import com.sun.enterprise.security.ee.auth.login.ProgrammaticLogin;
-
 
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;

@@ -18,15 +18,17 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.arquillian.tests.services;
+package com.docdoku.test.arquillian.services;
 
 
 import com.docdoku.core.change.ChangeItem;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.services.IWorkflowManagerLocal;
-import com.docdoku.core.workflow.*;
+import com.docdoku.core.workflow.ActivityModel;
+import com.docdoku.core.workflow.Role;
+import com.docdoku.core.workflow.WorkflowModel;
+import com.docdoku.core.workflow.WorkflowModelKey;
 import com.sun.enterprise.security.ee.auth.login.ProgrammaticLogin;
-
 
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
@@ -34,7 +36,7 @@ import javax.ejb.Stateless;
 
 
 /**
- * @author Taylor LABEJOF
+ * @author Asmae CHADID
  */
 
 @LocalBean

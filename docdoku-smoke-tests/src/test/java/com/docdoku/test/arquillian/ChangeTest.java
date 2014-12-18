@@ -1,10 +1,11 @@
-package com.docdoku.arquillian.tests;
+package com.docdoku.test.arquillian;
 
-import com.docdoku.arquillian.tests.services.TestChangeManagerBean;
-import com.docdoku.arquillian.tests.services.TestDocumentManagerBean;
-import com.docdoku.arquillian.tests.services.TestPartManagerBean;
-import com.docdoku.arquillian.tests.services.TestUserManagerBean;
-import com.docdoku.arquillian.tests.util.TestUtil;
+import com.docdoku.server.*;
+import com.docdoku.test.arquillian.services.TestChangeManagerBean;
+import com.docdoku.test.arquillian.services.TestDocumentManagerBean;
+import com.docdoku.test.arquillian.services.TestPartManagerBean;
+import com.docdoku.test.arquillian.services.TestUserManagerBean;
+import com.docdoku.test.arquillian.*;
 import com.docdoku.core.change.ChangeIssue;
 import com.docdoku.core.change.ChangeItem;
 import com.docdoku.core.change.ChangeOrder;
@@ -24,12 +25,13 @@ import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.product.PartRevisionKey;
 import com.docdoku.core.security.*;
 import com.docdoku.core.services.*;
-import com.docdoku.server.*;
 import com.docdoku.server.esindexer.ESIndexer;
 import com.docdoku.server.esindexer.ESMapper;
 import com.docdoku.server.esindexer.ESSearcher;
 import com.docdoku.server.esindexer.ESTools;
 import com.docdoku.server.gcm.GCMSenderBean;
+import com.docdoku.test.arquillian.services.TestDocumentManagerBean;
+import com.docdoku.test.arquillian.util.TestUtil;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -51,6 +53,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.UserTransaction;
 import java.util.Date;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -60,10 +63,7 @@ import static org.junit.Assert.assertTrue;
  * @author Asmae CHADID
  */
 @RunWith(Arquillian.class)
-@FixMethodOrder(value = MethodSorters.NAME_ASCENDING)
 public class ChangeTest {
-
-
 
     @EJB
     private ESIndexer esIndexer;
@@ -164,7 +164,7 @@ public class ChangeTest {
 
 
     @Test
-    public void test1_createChangeRequestSimple() throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException {
+    public void createChangeRequestSimple() throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException {
         Logger.getLogger(PartTests.class.getName()).log(Level.INFO, "Test method : createChangeRequest");
         ChangeRequest changeRequest = changeManagerBean.createRequest(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "newRequest", "description", 0, ChangeItem.Priority.MEDIUM, "", ChangeItem.Category.ADAPTIVE);
         Assert.assertTrue(changeManagerBean.getAllChangeRequest(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST).size() == 1);
@@ -173,7 +173,7 @@ public class ChangeTest {
     }
 
     @Test
-    public void test2_createChangeIssueSimple() throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, UserNotActiveException {
+    public void createChangeIssueSimple() throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, UserNotActiveException {
         Logger.getLogger(PartTests.class.getName()).log(Level.INFO, "Test method : createChangeRequest");
         ChangeIssue changeIssue = changeManagerBean.createIssue(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "newRequest", "description", "0", ChangeItem.Priority.MEDIUM, "", ChangeItem.Category.ADAPTIVE);
         Assert.assertTrue(changeManagerBean.getAllChangeRequest(TestUtil.USER1_TEST,TestUtil.WORKSPACE_TEST).size() == 1);
@@ -181,7 +181,7 @@ public class ChangeTest {
     }
 
     @Test
-    public void test3_createChangeOrderSimple() throws Exception {
+    public void createChangeOrderSimple() throws Exception {
         Logger.getLogger(PartTests.class.getName()).log(Level.INFO, "Test method : createChangeRequest");
         userManagerBean.testWorkspaceCreation(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST);
         ChangeOrder changeOrder = changeManagerBean.createOrder(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "newRequest", "description",0, ChangeItem.Priority.MEDIUM, "", ChangeItem.Category.ADAPTIVE);

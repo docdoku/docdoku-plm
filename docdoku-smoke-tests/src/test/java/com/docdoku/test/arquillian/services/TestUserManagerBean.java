@@ -18,7 +18,7 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.arquillian.tests.services;
+package com.docdoku.test.arquillian.services;
 
 import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.common.UserGroupKey;
@@ -28,7 +28,6 @@ import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.core.services.IWorkspaceManagerLocal;
 import com.docdoku.server.esindexer.ESIndexer;
 import com.sun.enterprise.security.ee.auth.login.ProgrammaticLogin;
-
 
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
@@ -53,12 +52,12 @@ public class TestUserManagerBean {
     private ProgrammaticLogin loginP = new ProgrammaticLogin();
     private String password = "password";
 
-    public Workspace testWorkspaceCreation(String login, String pWorkspace) throws AccountNotFoundException, UserAlreadyExistsException, CreationException, WorkspaceAlreadyExistsException, FolderAlreadyExistsException, ESIndexNamingException, NotAllowedException {
+    public Workspace testWorkspaceCreation(String login, String pWorkspace) throws AccountNotFoundException, UserAlreadyExistsException, CreationException, WorkspaceAlreadyExistsException, FolderAlreadyExistsException, ESIndexNamingException, NotAllowedException, WorkspaceNotFoundException {
         loginP.login(login, password.toCharArray());
-        try{
-            esIndexer.deleteWorkspace(pWorkspace);
-        }catch (Exception ignored){}
-        Workspace workspace = userManagerLocal.createWorkspace(pWorkspace, userManagerLocal.getAccount(login), "", false);
+        Workspace workspace = userManagerLocal.getWorkspace(pWorkspace);
+        if ( workspace== null){
+            workspace = userManagerLocal.createWorkspace(pWorkspace, userManagerLocal.getAccount(login), "", false);
+        }
         loginP.logout();
         return workspace;
     }

@@ -18,26 +18,27 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.arquillian.tests;
+package com.docdoku.test.arquillian;
 
-import com.docdoku.arquillian.tests.services.TestDocumentManagerBean;
-import com.docdoku.arquillian.tests.services.TestPartManagerBean;
-import com.docdoku.arquillian.tests.services.TestUserManagerBean;
-import com.docdoku.arquillian.tests.util.TestUtil;
-import com.docdoku.core.common.*;
+import com.docdoku.server.*;
+import com.docdoku.test.arquillian.services.TestDocumentManagerBean;
+import com.docdoku.test.arquillian.services.TestPartManagerBean;
+import com.docdoku.test.arquillian.services.TestUserManagerBean;
+import com.docdoku.test.arquillian.util.TestUtil;
+import com.docdoku.core.common.Account;
+import com.docdoku.core.common.Organization;
+import com.docdoku.core.common.Workspace;
 import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.gcm.GCMAccount;
 import com.docdoku.core.meta.*;
 import com.docdoku.core.product.*;
 import com.docdoku.core.security.*;
 import com.docdoku.core.services.*;
-import com.docdoku.server.*;
 import com.docdoku.server.esindexer.ESIndexer;
 import com.docdoku.server.esindexer.ESMapper;
 import com.docdoku.server.esindexer.ESSearcher;
 import com.docdoku.server.esindexer.ESTools;
 import com.docdoku.server.gcm.GCMSenderBean;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
@@ -60,7 +61,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static org.junit.Assert.assertEquals;
+import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -68,7 +69,6 @@ import static org.junit.Assert.assertTrue;
  */
 
 @RunWith(Arquillian.class)
-@FixMethodOrder(value = MethodSorters.NAME_ASCENDING )
 public class PartTests {
 
     @EJB

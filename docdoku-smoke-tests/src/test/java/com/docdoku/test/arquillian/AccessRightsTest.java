@@ -18,10 +18,8 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.arquillian.tests;
+package com.docdoku.test.arquillian;
 
-import com.docdoku.arquillian.tests.services.*;
-import com.docdoku.arquillian.tests.util.TestUtil;
 import com.docdoku.core.change.ChangeIssue;
 import com.docdoku.core.change.ChangeOrder;
 import com.docdoku.core.change.ChangeRequest;
@@ -36,8 +34,6 @@ import com.docdoku.core.meta.InstanceAttributeTemplate;
 import com.docdoku.core.product.*;
 import com.docdoku.core.security.*;
 import com.docdoku.core.services.*;
-import com.docdoku.core.workflow.Activity;
-import com.docdoku.core.workflow.ActivityModel;
 import com.docdoku.core.workflow.*;
 import com.docdoku.server.*;
 import com.docdoku.server.esindexer.ESIndexer;
@@ -46,13 +42,18 @@ import com.docdoku.server.esindexer.ESSearcher;
 import com.docdoku.server.esindexer.ESTools;
 import com.docdoku.server.gcm.GCMSenderBean;
 import com.docdoku.server.products.ProductBaselineManagerBean;
+import com.docdoku.test.arquillian.services.*;
+import com.docdoku.test.arquillian.util.TestUtil;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.FixMethodOrder;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 
@@ -70,16 +71,15 @@ import java.util.logging.Logger;
  * @author Asmae CHADID
  */
 @RunWith(Arquillian.class)
-@FixMethodOrder(value = MethodSorters.NAME_ASCENDING)
 public class AccessRightsTest {
 
     @EJB
     private ESIndexer esIndexer;
 
     @EJB
-    private  TestDocumentManagerBean documentManagerBean;
+    private TestDocumentManagerBean documentManagerBean;
     @EJB
-    private  TestUserManagerBean userManagerBean;
+    private TestUserManagerBean userManagerBean;
 
     @PersistenceContext
     private EntityManager em;
@@ -112,7 +112,6 @@ public class AccessRightsTest {
                         ChangeOrder.class,
                         ChangeRequest.class,
                         ChangeIssue.class,
-                        ChangeManagerBean.class,
                         ConfigurationItemKey.class,
                         ChangeOrder.class,
                         ConfigurationItem.class,
@@ -134,7 +133,6 @@ public class AccessRightsTest {
                         IMailerLocal.class,
                         InstanceAttributeTemplate.class,
                         ParallelActivityModel.class,
-                        ProductManagerBean.class,
                         ProductManagerBean.class,
                         ProductBaselineManagerBean.class,
                         Role.class,
@@ -192,24 +190,25 @@ public class AccessRightsTest {
     }
 
 
+
     @Test
-    public void Test1_testSimpleCreation() throws Exception {
-        Logger.getLogger(AccessRightsTest.class.getName()).log(Level.INFO, "Test method : testSimpleCreation");
+    public void create_document() throws Exception {
+        Logger.getLogger(AccessRightsTest.class.getName()).log(Level.INFO, "Test method : create_document");
         userManagerBean.testAddingUserInWorkspace("user1", "user2", "TEST_WORKSPACE");
         documentManagerBean.createDocumentMaster("user2", "TEST_WORKSPACE/TEST_FOLDER", "DOCUMENT0", null, null);
 
     }
 
     @Test
-    public void Test2_testMatrixRights1() throws Exception {
-        Logger.getLogger(AccessRightsTest.class.getName()).log(Level.INFO, "Test method : testMatrixRights1");
+    public void matrix_rights1() throws Exception {
+        Logger.getLogger(AccessRightsTest.class.getName()).log(Level.INFO, "Test method : matrix_rights1");
         userManagerBean.testGrantingUserAccessInWorkspace("user1", new String[]{"user2"}, "TEST_WORKSPACE", false);
         documentManagerBean.createDocumentMaster("user2", "TEST_WORKSPACE/TEST_FOLDER", "DOCUMENT1", null, null);
     }
 
     @Test
-    public void Test3_testMatrixRights2() throws Exception {
-        Logger.getLogger(AccessRightsTest.class.getName()).log(Level.INFO, "Test method : testMatrixRights2");
+    public void matrix_rights2() throws Exception {
+        Logger.getLogger(AccessRightsTest.class.getName()).log(Level.INFO, "Test method : matrix_rights2");
         userManagerBean.testGroupCreation("user1", "TEST_WORKSPACE", "group1");
         userManagerBean.testGrantingUserGroupAccessInWorkspace("user1", new String[]{"group1"}, "TEST_WORKSPACE", true);
         userManagerBean.testAddingUserInGroup("user1", "group1", "TEST_WORKSPACE", "user3");
@@ -219,8 +218,8 @@ public class AccessRightsTest {
     }
 
     @Test
-    public void Test4_testMatrixRights3() throws Exception {
-        Logger.getLogger(AccessRightsTest.class.getName()).log(Level.INFO, "Test method : testMatrixRights3");
+    public void matrix_rights3() throws Exception {
+        Logger.getLogger(AccessRightsTest.class.getName()).log(Level.INFO, "Test method : matrix_rights3");
         userManagerBean.testGroupCreation("user1", "TEST_WORKSPACE", "group2");
         userManagerBean.testGrantingUserGroupAccessInWorkspace("user1", new String[]{"group2"}, "TEST_WORKSPACE", false);
         userManagerBean.testGrantingUserGroupAccessInWorkspace("user1", new String[]{"group1"}, "TEST_WORKSPACE", true);
@@ -230,25 +229,24 @@ public class AccessRightsTest {
     }
 
     @Test
-    public void Test5_testMatrixRights4() throws Exception {
-        Logger.getLogger(AccessRightsTest.class.getName()).log(Level.INFO, "Test method : testMatrixRights4");
+    public void matrix_rights4() throws Exception {
+        Logger.getLogger(AccessRightsTest.class.getName()).log(Level.INFO, "Test method : matrix_rights4");
         userManagerBean.testAddingUserInWorkspace("user1", "user4", "TEST_WORKSPACE");
         userManagerBean.testGrantingUserAccessInWorkspace("user1", new String[]{"user4"}, "TEST_WORKSPACE", true);
-        User user = em.find(User.class, new UserKey("TEST_WORKSPACE", "user4"));
-        ACLUserEntry[] aclUserEntries = new ACLUserEntry[1];
-        aclUserEntries[0] = new ACLUserEntry(new ACL(), user, ACL.Permission.FULL_ACCESS);
 
-        userManagerBean.testAddingUserInGroup("user1", "group1", "TEST_WORKSPACE", "user4");
-        UserGroup userGroup = em.find(UserGroup.class, new UserGroupKey("TEST_WORKSPACE", "group1"));
-        ACLUserGroupEntry[] aclUserGroupEntries = new ACLUserGroupEntry[1];
-        aclUserGroupEntries[0] = new ACLUserGroupEntry(new ACL(), userGroup, ACL.Permission.FULL_ACCESS);
-
-        documentManagerBean.createDocumentMaster("user1", "TEST_WORKSPACE/TEST_FOLDER", "DOCUMENT5", aclUserEntries, aclUserGroupEntries);
     }
 
     @Test
-    public void Test6_testCheckInCheckOut() throws Exception {
-        Logger.getLogger(AccessRightsTest.class.getName()).log(Level.INFO, "Test method : testCheckInCheckOut");
+    public void checkIn_checkOut_document() throws Exception {
+        Logger.getLogger(AccessRightsTest.class.getName()).log(Level.INFO, "Test method : checkIn_checkOut_document");
+        ACLUserGroupEntry[] aclUserGroupEntries = new ACLUserGroupEntry[1];
+        UserGroup userGroup = em.find(UserGroup.class, new UserGroupKey("TEST_WORKSPACE", "group1"));
+        aclUserGroupEntries[0] = new ACLUserGroupEntry(new ACL(), userGroup, ACL.Permission.FULL_ACCESS);
+        User user = em.find(User.class, new UserKey("TEST_WORKSPACE", "user4"));
+        ACLUserEntry[] aclUserEntries = new ACLUserEntry[1];
+        aclUserEntries[0] = new ACLUserEntry(new ACL(), user, ACL.Permission.FULL_ACCESS);
+        userManagerBean.testAddingUserInGroup("user1", "group1", "TEST_WORKSPACE", "user4");
+        documentManagerBean.createDocumentMaster("user1", "TEST_WORKSPACE/TEST_FOLDER", "DOCUMENT5", aclUserEntries, aclUserGroupEntries);
         documentManagerBean.testDocumentCheckIn("user1", new DocumentRevisionKey(new DocumentMasterKey("TEST_WORKSPACE", "DOCUMENT5"), "A"));
         documentManagerBean.testDocumentCheckOut("user4", new DocumentRevisionKey(new DocumentMasterKey("TEST_WORKSPACE", "DOCUMENT5"), "A"));
     }

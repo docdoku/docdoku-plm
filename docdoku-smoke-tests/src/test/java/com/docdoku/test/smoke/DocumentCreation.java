@@ -23,6 +23,7 @@ package com.docdoku.test.smoke;
 
 import com.docdoku.cli.tools.ScriptingTools;
 import com.docdoku.core.services.IDocumentManagerWS;
+import com.sun.enterprise.security.ee.auth.login.ProgrammaticLogin;
 
 import static org.junit.Assert.assertNotNull;
 
@@ -36,8 +37,11 @@ public class DocumentCreation {
     private static final String DOCUMENT_ID = "Test-Document";
     private static final String FOLDER_NAME = "test";
     private SmokeTestProperties properties = new SmokeTestProperties();
+    private ProgrammaticLogin loginP = new ProgrammaticLogin();
+    private String password = "password";
 
     public void createDocument() throws Exception {
+        loginP.login("demo", password.toCharArray());
         IDocumentManagerWS documentS = ScriptingTools.createDocumentService(properties.getURL(),properties.getLoginForUser1(),properties.getPassword());
         assertNotNull(documentS);
         documentS.createFolder(properties.getWorkspace(), FOLDER_NAME);

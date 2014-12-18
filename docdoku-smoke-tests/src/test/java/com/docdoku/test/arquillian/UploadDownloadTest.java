@@ -1,10 +1,11 @@
-package com.docdoku.arquillian.tests;
+package com.docdoku.test.arquillian;
 
-import com.docdoku.arquillian.tests.services.TestDocumentManagerBean;
-import com.docdoku.arquillian.tests.services.TestPartManagerBean;
-import com.docdoku.arquillian.tests.services.TestUploadDownloadManagerBean;
-import com.docdoku.arquillian.tests.services.TestUserManagerBean;
-import com.docdoku.arquillian.tests.util.TestUtil;
+import com.docdoku.server.*;
+import com.docdoku.test.arquillian.services.TestDocumentManagerBean;
+import com.docdoku.test.arquillian.services.TestPartManagerBean;
+import com.docdoku.test.arquillian.services.TestUploadDownloadManagerBean;
+import com.docdoku.test.arquillian.services.TestUserManagerBean;
+import com.docdoku.test.arquillian.util.TestUtil;
 import com.docdoku.core.common.Account;
 import com.docdoku.core.common.Organization;
 import com.docdoku.core.common.Workspace;
@@ -16,7 +17,6 @@ import com.docdoku.core.meta.InstanceAttributeTemplate;
 import com.docdoku.core.product.*;
 import com.docdoku.core.security.*;
 import com.docdoku.core.services.*;
-import com.docdoku.server.*;
 import com.docdoku.server.esindexer.ESIndexer;
 import com.docdoku.server.esindexer.ESMapper;
 import com.docdoku.server.esindexer.ESSearcher;
@@ -29,7 +29,6 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.*;
-import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 
@@ -40,10 +39,7 @@ import javax.json.JsonValue;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.UserTransaction;
-import java.io.*;
 import java.net.URL;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -57,7 +53,6 @@ import static org.junit.Assert.assertTrue;
  */
 
 @RunWith(Arquillian.class)
-@FixMethodOrder(value = MethodSorters.NAME_ASCENDING)
 public class UploadDownloadTest {
 
     @EJB

@@ -1,10 +1,8 @@
-package com.docdoku.arquillian.tests.util;
+package com.docdoku.test.arquillian.util;
 
-import com.docdoku.arquillian.tests.services.TestDocumentManagerBean;
-import com.docdoku.arquillian.tests.services.TestUserManagerBean;
+import com.docdoku.test.arquillian.services.TestDocumentManagerBean;
+import com.docdoku.test.arquillian.services.TestUserManagerBean;
 
-import javax.ejb.EJB;
-import javax.inject.Inject;
 import java.io.File;
 
 /**
@@ -29,6 +27,7 @@ public class TestUtil {
            init = true;
        }
     }
+
 
 
     public static void deleteDownloadedFiles(String fileName) {

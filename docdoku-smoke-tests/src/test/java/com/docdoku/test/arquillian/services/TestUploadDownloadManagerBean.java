@@ -1,4 +1,4 @@
-package com.docdoku.arquillian.tests.services;
+package com.docdoku.test.arquillian.services;
 
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.services.IUploadDownloadWS;

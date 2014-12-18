@@ -1,12 +1,10 @@
-package com.docdoku.arquillian.tests.services;
+package com.docdoku.test.arquillian.services;
 
 import com.docdoku.core.change.*;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.services.IChangeManagerLocal;
-
 import com.docdoku.server.esindexer.ESIndexer;
 import com.sun.enterprise.security.ee.auth.login.ProgrammaticLogin;
-
 
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;

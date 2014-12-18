@@ -18,7 +18,7 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.arquillian.tests.services;
+package com.docdoku.test.arquillian.services;
 
 import com.docdoku.core.document.DocumentMasterTemplate;
 import com.docdoku.core.document.DocumentRevision;
@@ -30,7 +30,6 @@ import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.sun.enterprise.security.ee.auth.login.ProgrammaticLogin;
-
 
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;

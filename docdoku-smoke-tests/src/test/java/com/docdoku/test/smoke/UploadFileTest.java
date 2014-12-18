@@ -20,6 +20,7 @@
 
 package com.docdoku.test.smoke;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static junit.framework.Assert.fail;
@@ -27,6 +28,7 @@ import static junit.framework.Assert.fail;
 
 public class UploadFileTest {
     @Test
+    @Ignore
     public void test(){
         UploadFile uploadFile = new UploadFile();
         try {

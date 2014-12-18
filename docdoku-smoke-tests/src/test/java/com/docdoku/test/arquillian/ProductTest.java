@@ -18,16 +18,19 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.arquillian.tests;
+package com.docdoku.test.arquillian;
 
-import com.docdoku.arquillian.tests.services.TestDocumentManagerBean;
-import com.docdoku.arquillian.tests.services.TestPartManagerBean;
-import com.docdoku.arquillian.tests.services.TestProductManagerBean;
-import com.docdoku.arquillian.tests.services.TestUserManagerBean;
-import com.docdoku.arquillian.tests.util.TestUtil;
-import com.docdoku.core.common.*;
+import com.docdoku.server.*;
+import com.docdoku.test.arquillian.services.TestDocumentManagerBean;
+import com.docdoku.test.arquillian.services.TestPartManagerBean;
+import com.docdoku.test.arquillian.services.TestProductManagerBean;
+import com.docdoku.test.arquillian.services.TestUserManagerBean;
+import com.docdoku.test.arquillian.util.TestUtil;
+import com.docdoku.core.common.Account;
+import com.docdoku.core.common.Organization;
+import com.docdoku.core.common.User;
+import com.docdoku.core.common.Workspace;
 import com.docdoku.core.configuration.BaselineCreation;
-import com.docdoku.core.configuration.BaselinedPart;
 import com.docdoku.core.configuration.ProductBaseline;
 import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.exceptions.*;
@@ -36,7 +39,6 @@ import com.docdoku.core.meta.InstanceAttributeTemplate;
 import com.docdoku.core.product.*;
 import com.docdoku.core.security.*;
 import com.docdoku.core.services.*;
-import com.docdoku.server.*;
 import com.docdoku.server.esindexer.ESIndexer;
 import com.docdoku.server.esindexer.ESMapper;
 import com.docdoku.server.esindexer.ESSearcher;
@@ -49,6 +51,7 @@ import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -65,7 +68,6 @@ import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -73,7 +75,6 @@ import static org.junit.Assert.assertTrue;
  */
 
 @RunWith(Arquillian.class)
-@FixMethodOrder(value = MethodSorters.NAME_ASCENDING)
 public class ProductTest {
 
     @EJB
@@ -173,8 +174,8 @@ public class ProductTest {
 
 
    @Test
-    public void test1_ProductWithNullPart() throws Exception{
-        Logger.getLogger(ProductTest.class.getName()).log(Level.INFO, "Test method : ProductWithNullPart");
+    public void create_product_with_null_Part() throws Exception{
+        Logger.getLogger(ProductTest.class.getName()).log(Level.INFO, "Test method : create_product_with_null_Part");
         try {
             productManagerBean.createConfigurationItem(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "produit1", "", null);
         } catch (NotAllowedException |WorkspaceNotFoundException |PartMasterNotFoundException| ConfigurationItemAlreadyExistsException| CreationException| AccessRightException |UserNotFoundException|PartMasterTemplateAlreadyExistsException e) {
@@ -187,8 +188,8 @@ public class ProductTest {
     }
 
     @Test
-    public void test2_productWithoutInvalidePart() {
-        Logger.getLogger(PartTests.class.getName()).log(Level.INFO, "Test method : ProductWithoutInvalidePart");
+    public void create_product_with_invalid_Part() {
+        Logger.getLogger(PartTests.class.getName()).log(Level.INFO, "Test method : create_product_with_invalid_Part");
 
         try {
             productManagerBean.createConfigurationItem(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "produit1", "", "part1");
@@ -199,8 +200,8 @@ public class ProductTest {
     }
 
     @Test
-    public void test3_productCreation() {
-        Logger.getLogger(PartTests.class.getName()).log(Level.INFO, "Test method : productCreation");
+    public void create_product() {
+        Logger.getLogger(PartTests.class.getName()).log(Level.INFO, "Test method : create_product");
         try {
             partManagerBean.createPartMaster(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "part1", " ", true, null, "", null, null, null, null);
             productManagerBean.createConfigurationItem(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "produit1", "", "part1");
@@ -211,9 +212,9 @@ public class ProductTest {
     }
 
     @Test
-    public void test4_baselineProductNotCheckouted() throws Exception{
-
-            partManagerBean.createPartMaster(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "part1", " ", true, null, "", null, null, null, null);
+    public void create_baseline_with_product_not_checkin() throws Exception{
+        Logger.getLogger(PartTests.class.getName()).log(Level.INFO, "Test method : create_baseline_with_product_not_checkouted");
+        partManagerBean.createPartMaster(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "part1", " ", true, null, "", null, null, null, null);
             productManagerBean.createConfigurationItem(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "produit1", "", "part1");
             ConfigurationItem configurationItem = productManagerBean.getListConfigurationItem(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST).get(0);
             assertTrue(configurationItem != null);
@@ -225,29 +226,44 @@ public class ProductTest {
 
 
     @Test
-    public void test5_baselineProductPartNoAccess() {
-        Logger.getLogger(PartTests.class.getName()).log(Level.INFO, "Test method : baselineProductPartNoAccess");
-        BaselineCreation baselineCreation = null;
+    public void create_baseline_of_product_without_access_to_part() {
+        Logger.getLogger(PartTests.class.getName()).log(Level.INFO, "Test method : create_baseline_of_product_without_access_to_part");
+        BaselineCreation baselineCreation = null,baseline = null;
         try {
-
+            //part creation
             ACLUserEntry aclUserEntry = new ACLUserEntry();
-            aclUserEntry.setPermission(ACL.Permission.FORBIDDEN);
+            aclUserEntry.setPermission(ACL.Permission.FULL_ACCESS);
+            aclUserEntry.setPrincipal(new User(new Workspace(TestUtil.WORKSPACE_TEST), TestUtil.USER1_TEST));
+            ACL acl=new ACL();
+            acl.addEntry(new User(new Workspace(TestUtil.WORKSPACE_TEST), TestUtil.USER2_TEST), ACL.Permission.FORBIDDEN);
+            acl.addEntry(new User(new Workspace(TestUtil.WORKSPACE_TEST), TestUtil.USER3_TEST), ACL.Permission.FULL_ACCESS);
+            aclUserEntry.setACL(acl);
             ACLUserEntry[] aclUserEntries = new ACLUserEntry[1];
-            aclUserEntries[1] = aclUserEntry;
+            aclUserEntries[0] = new ACLUserEntry();
+            aclUserEntries[0] = aclUserEntry;
             PartMaster partMaster = partManagerBean.createPartMaster(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "part1", " ", true, null, "", null, null, aclUserEntries, null);
-            PartRevisionKey partRevisionKey = new PartRevisionKey(TestUtil.WORKSPACE_TEST, partMaster.getNumber(), "1");
-            partManagerBean.checkoutPart(TestUtil.USER1_TEST, partRevisionKey);
-            productManagerBean.createConfigurationItem(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "produit1", "", "part1");
-            productManagerBean.getListConfigurationItem(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST).get(0);
-            ConfigurationItemKey configurationItemKey = new ConfigurationItemKey(TestUtil.WORKSPACE_TEST, "produit1");
+            PartRevisionKey partRevisionKey = new PartRevisionKey(TestUtil.WORKSPACE_TEST, partMaster.getNumber(), "A");
+            //liberate part
+            partManagerBean.checkInPart(TestUtil.USER1_TEST, partMaster);
+
+            //product creation
+            ConfigurationItem configurationItem= productManagerBean.createConfigurationItem(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "produit1", "", "part1");
+
+            partManagerBean.releasePartRevision(TestUtil.USER1_TEST,partMaster.getPartRevisions().get(0).getKey());
+
+            //baseline the created product with the latest parts
+            ConfigurationItemKey configurationItemKey = new ConfigurationItemKey(TestUtil.WORKSPACE_TEST, configurationItem.getId());
+
             baselineCreation = productManagerBean.baselineProduct(TestUtil.USER1_TEST, configurationItemKey, "myBaseline", ProductBaseline.BaselineType.RELEASED, "");
+            baseline = productManagerBean.baselineProduct(TestUtil.USER2_TEST, configurationItemKey, "myBaseline", ProductBaseline.BaselineType.LATEST, "");
+
         } catch (Exception e) {
             Logger.getLogger(PartTests.class.getName()).log(Level.INFO, "Test method : baselineProductPartNoAccess stack trace" + e);
-            try {
-                productManagerBean.getBaseline(TestUtil.USER1_TEST, baselineCreation.getProductBaseline().getId());
-            } catch (UserNotFoundException | WorkspaceNotFoundException | UserNotActiveException | BaselineNotFoundException e1) {
-                Logger.getLogger(PartTests.class.getName()).log(Level.INFO, "Test method : baselineProductPartNoAccess stack trace" + e);
-            }
+
+        }
+        finally {
+            Assert.assertTrue(baselineCreation != null);
+            Assert.assertTrue(baseline == null);
         }
     }
 

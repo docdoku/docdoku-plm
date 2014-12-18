@@ -1,4 +1,4 @@
-package com.docdoku.arquillian.tests.services;
+package com.docdoku.test.arquillian.services;
 
 import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.exceptions.*;
@@ -10,7 +10,6 @@ import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.esindexer.ESIndexer;
 import com.sun.enterprise.security.ee.auth.login.ProgrammaticLogin;
-
 
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
@@ -67,7 +66,7 @@ public class TestPartManagerBean {
         return partRevision;
     }
 
-    public PartRevision updatePartIteration(String login,PartIterationKey pKey, java.lang.String pIterationNote, PartIteration.Source source, java.util.List<PartUsageLink> pUsageLinks, java.util.List<InstanceAttribute> pAttributes, DocumentIterationKey[] pLinkKeys) throws NotAllowedException, PartRevisionNotFoundException, WorkspaceNotFoundException, UserNotFoundException, AccessRightException, PartMasterNotFoundException {
+    public PartRevision updatePartIteration(String login,PartIterationKey pKey, String pIterationNote, PartIteration.Source source, java.util.List<PartUsageLink> pUsageLinks, java.util.List<InstanceAttribute> pAttributes, DocumentIterationKey[] pLinkKeys) throws NotAllowedException, PartRevisionNotFoundException, WorkspaceNotFoundException, UserNotFoundException, AccessRightException, PartMasterNotFoundException {
         loginP.login(login, password.toCharArray());
         PartRevision partRevision = productManagerLocal.updatePartIteration(pKey,pIterationNote,source,pUsageLinks,pAttributes,pLinkKeys);
         loginP.logout();
@@ -83,6 +82,12 @@ public class TestPartManagerBean {
     public void checkInPart(String login,PartMaster partMaster) throws PartRevisionNotFoundException, WorkspaceNotFoundException, CreationException, UserNotFoundException, NotAllowedException, AccessRightException, FileAlreadyExistsException, ESServerException {
         loginP.login(login, password.toCharArray());
         productManagerLocal.checkInPart(partMaster.getLastRevision().getKey());
+        loginP.logout();
+    }
+
+    public void releasePartRevision(String login,PartRevisionKey partRevisionKey) throws UserNotActiveException, PartRevisionNotFoundException, WorkspaceNotFoundException, UserNotFoundException, NotAllowedException, AccessRightException {
+        loginP.login(login, password.toCharArray());
+        productManagerLocal.releasePartRevision(partRevisionKey);
         loginP.logout();
     }
 }
