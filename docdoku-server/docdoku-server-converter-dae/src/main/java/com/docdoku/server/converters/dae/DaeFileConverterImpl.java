@@ -105,7 +105,7 @@ public class DaeFileConverterImpl implements CADConverter{
 
     @Override
     public boolean canConvertToOBJ(String cadFileExtension) {
-        return Arrays.asList("dae").contains(cadFileExtension);
+        return Arrays.asList("dae","ifc","lwo","x","ac","cob","scn","ms3d").contains(cadFileExtension);
     }
 
 }

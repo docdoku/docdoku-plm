@@ -90,7 +90,8 @@ define(['views/progress_bar_view'], function (ProgressBarView) {
                         this.OBJLoader = new THREE.OBJLoader();
                     }
 
-                    material = new THREE.MeshPhongMaterial({ transparent: true, color: new THREE.Color(0xbbbbbb) });
+                    material = new THREE.MeshPhongMaterial({  transparent: true, color: new THREE.Color(0xbbbbbb) });
+                    material.side = THREE.doubleSided;
 
                     this.OBJLoader.load(filename, function ( object ) {
 
