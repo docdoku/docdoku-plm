@@ -17,9 +17,8 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.docdoku.server;
+package com.docdoku.server.mainchannel.util;
 
-import com.docdoku.server.mainchannel.util.Room;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;

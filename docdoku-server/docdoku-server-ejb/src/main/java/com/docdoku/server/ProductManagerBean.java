@@ -212,7 +212,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
         if ((pACLUserEntries != null && pACLUserEntries.length > 0) || (pACLUserGroupEntries != null && pACLUserGroupEntries.length > 0)) {
             ACL acl = new ACL();
-            if (pACLUserEntries != null) {
+             if (pACLUserEntries != null) {
                 for (ACLUserEntry entry : pACLUserEntries) {
                     acl.addEntry(em.getReference(User.class, new UserKey(user.getWorkspaceId(), entry.getPrincipalLogin())), entry.getPermission());
                 }

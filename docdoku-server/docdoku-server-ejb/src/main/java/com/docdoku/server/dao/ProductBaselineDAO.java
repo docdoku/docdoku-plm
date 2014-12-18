@@ -58,8 +58,11 @@ public class ProductBaselineDAO {
     }
 
     public void createBaseline(ProductBaseline productBaseline) {
-        em.persist(productBaseline);
-        em.flush();
+        try {
+            em.persist(productBaseline);
+            em.flush();
+        }catch (Exception e){}
+
     }
 
     public ProductBaseline loadBaseline(int pId) throws BaselineNotFoundException {

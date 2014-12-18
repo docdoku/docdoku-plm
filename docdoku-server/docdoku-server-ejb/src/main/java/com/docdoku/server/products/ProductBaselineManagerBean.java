@@ -1,6 +1,7 @@
 package com.docdoku.server.products;
 
 import com.docdoku.core.common.User;
+import com.docdoku.core.common.UserKey;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.configuration.BaselineCreation;
 import com.docdoku.core.configuration.BaselinedPart;
@@ -14,12 +15,16 @@ import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.dao.ConfigurationItemDAO;
 import com.docdoku.server.dao.PartIterationDAO;
 import com.docdoku.server.dao.ProductBaselineDAO;
+import com.docdoku.server.dao.UserDAO;
 
+import javax.annotation.Resource;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Local;
+import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.text.MessageFormat;
@@ -33,6 +38,9 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
     private EntityManager em;
     @EJB
     private IUserManagerLocal userManager;
+
+    @Resource
+    private SessionContext ctx;
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
@@ -80,7 +88,7 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
 
                     for(int i= lastRevision.getLastIteration().getIteration(); i>0 && !isPartFinded; i--){
                         try{
-                            checkPartIterationForBaseline(new PartIterationKey(lastRevision.getKey(),i));
+                            checkPartIterationForBaseline(user,new PartIterationKey(lastRevision.getKey(),i));
                             baselinedIteration = lastRevision.getIteration(i);
                             isPartFinded=true;
                         }catch (AccessRightException e){
@@ -96,7 +104,7 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
                 break;
         }
 
-        baselineCreation.addConflit(fillBaselineParts(productBaseline, baselinedIteration, type, locale));
+        baselineCreation.addConflit(fillBaselineParts(productBaseline, baselinedIteration, type, user));
 
         if(!baselineCreation.getConflit().isEmpty()){
             String message = ResourceBundle.getBundle("com.docdoku.core.i18n.LocalStrings", locale).getString("BaselineWarningException1");
@@ -208,7 +216,8 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
         return new ProductBaselineDAO(new Locale(user.getLanguage()), em).findBaselinedPartWithReferenceLike(productBaseline.getPartCollection().getId(), q, maxResults);
     }
 
-    private List<PartRevision> fillBaselineParts(ProductBaseline productBaseline, PartIteration lastIteration, ProductBaseline.BaselineType type, Locale locale) throws ConfigurationItemNotReleasedException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartIterationNotFoundException, NotAllowedException{
+    private List<PartRevision> fillBaselineParts(ProductBaseline productBaseline, PartIteration lastIteration, ProductBaseline.BaselineType type,User user) throws ConfigurationItemNotReleasedException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartIterationNotFoundException, NotAllowedException{
+        Locale locale = new Locale(user.getLanguage());
         // Ignore already existing parts
         List<PartRevision> ignoredRevisions = new ArrayList<>();
         if(productBaseline.hasBasedLinedPart(lastIteration.getWorkspaceId(), lastIteration.getPartNumber())) return ignoredRevisions;
@@ -240,7 +249,7 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
                         lastRevision = partRevisions.get(j);
                         for(int i= lastRevision.getLastIteration().getIteration(); i>0 && !isPartFinded; i--){
                             try{
-                                checkPartIterationForBaseline(new PartIterationKey(lastRevision.getKey(), i));
+                                checkPartIterationForBaseline(user,new PartIterationKey(lastRevision.getKey(), i));
                                 baselinedIteration = lastRevision.getIteration(i);
                                 isPartFinded=true;
                             }catch (AccessRightException e){
@@ -255,21 +264,22 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
                     }
                     break;
             }
-            List<PartRevision> ignoredUsageLinkRevisions = fillBaselineParts(productBaseline, baselinedIteration, type, locale);
+            List<PartRevision> ignoredUsageLinkRevisions = fillBaselineParts(productBaseline, baselinedIteration, type, user);
             ignoredRevisions.addAll(ignoredUsageLinkRevisions);
         }
         return ignoredRevisions;
     }
 
-    private User checkPartIterationForBaseline(PartIterationKey partIterationKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartIterationNotFoundException, AccessRightException {
-        User user = userManager.checkWorkspaceReadAccess(partIterationKey.getWorkspaceId());
+    private User checkPartIterationForBaseline(User user,PartIterationKey partIterationKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartIterationNotFoundException, AccessRightException, NotAllowedException {
+
         Locale locale = new Locale(user.getLanguage());
-        PartIteration partIteration = new PartIterationDAO(locale,em).loadPartI(partIterationKey);
+        PartIteration partIteration = new PartIterationDAO(locale, em).loadPartI(partIterationKey);
         PartRevision partRevision = partIteration.getPartRevision();
-        if((partRevision.getACL()==null || partRevision.getACL().hasReadAccess(user)) &&
-                (!partRevision.isCheckedOut() || !partRevision.getLastIteration().equals(partIteration))){              // Check if the ACL grant write access
+        if ((partRevision.getACL() == null || partRevision.getACL().hasReadAccess(user)) &&
+                (!partRevision.isCheckedOut() || !partRevision.getLastIteration().equals(partIteration))) {              // Check if the ACL grant write access
             return user;
         }
-        throw new AccessRightException(locale,user);                                                                    // Else throw a AccessRightException
+        throw new AccessRightException(locale, user);                                                                    // Else throw a AccessRightException
+
     }
 }

@@ -14,11 +14,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import javax.json.Json;
 import javax.json.JsonObject;
-import javax.json.JsonValue;
 import javax.websocket.Session;
 import java.io.StringReader;
 import java.security.Principal;
-import java.util.Arrays;
 
 /**
  * @author Asmae CHADID
@@ -155,7 +153,6 @@ public class CollaborativeRoomTest {
 
     @Test
     public void shouldReturnSlave1Slave2AndNull(){
-//        findUserSession
         //Given
         CollaborativeRoom collaborativeRoom1 = Mockito.spy(new CollaborativeRoom(master));
         //When
@@ -213,8 +210,8 @@ public class CollaborativeRoomTest {
         room.addSlave(slave1);
         room.addSlave(slave2);
 
-        JsonObject commandCamerasInfos = collaborativeMessage.getMessageBroadcast();
-        room.saveCommand(commandCamerasInfos);
+        JsonObject commands = collaborativeMessage.getMessageBroadcast();
+        room.saveCommand(commands);
         Assert.assertTrue(room.getCommands().entrySet().size() == 1);
     }
 
