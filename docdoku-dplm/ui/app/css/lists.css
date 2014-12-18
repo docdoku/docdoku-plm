@@ -29,3 +29,25 @@ part-actions {
 md-sidenav h3:first-of-type{
 	margin-top: 0;
 }
+
+.menu-list{
+	max-height: 150px;
+	transition: all 1s linear;
+}
+.menu-list.expanded{
+	max-height: 800px;
+}
+.list-toggle{
+	transition: all 0.5s linear;
+	text-align: center;
+	cursor: pointer;
+	width: 100%;
+	background: #eee;
+	color: #999;
+}
+.list-toggle:hover{
+	background: #ddd;
+}
+.list-toggle.expanded{
+	color:blue;
+}

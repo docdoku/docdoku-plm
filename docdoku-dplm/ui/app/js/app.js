@@ -75,7 +75,13 @@
 
         })
 
-        .controller('MenuController', function () {
+        .controller('MenuController', function ($scope) {
+            $scope.toggleFolders = function(){
+                $scope.foldersExpanded=!$scope.foldersExpanded;
+            };
+            $scope.toggleWorkspaces = function(){
+                $scope.workspacesExpanded=!$scope.workspacesExpanded;
+            };
         })
 
         .controller('FolderMenuController', function ($scope) {
