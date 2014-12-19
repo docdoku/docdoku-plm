@@ -1,6 +1,6 @@
 /*global casper*/
 
-casper.test.begin('Change issue creation tests suite',2, function changeIssueCreationTestsSuite(){
+casper.test.begin('Change issue creation tests suite',3, function changeIssueCreationTestsSuite(){
 
     'use strict';
 

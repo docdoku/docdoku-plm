@@ -2,9 +2,9 @@
 // git update-index --skip-worktree config.local.js
 
 module.exports = {
-    "domain":"localhost",
+    //"domain":"localhost",
     //"workspace": "foo",
-    "port": "8989",
+    //"port": "8989",
     //"login": "foo",
     //"pass": "bar",
     //"contextPath": "/"

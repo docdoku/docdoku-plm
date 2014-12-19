@@ -23,21 +23,27 @@ module.exports = {
         "js/auth/login.js",
         "js/pre/clean.js",
 
-        //"js/product-management/part/partCreation.js",
-        //"js/product-management/part/partCheckin.js",
-        //"js/product-management/part/showPartDetails.js",
-        //"js/product-management/product/productCreation.js",
-        //"js/product-management/product/productDeletion.js",
-        //"js/product-management/part/partDeletion.js",
-        //"js/document-management/folder/folderCreation.js",
-        //"js/document-management/document/documentCreation.js",
-        //"js/document-management/document/documentDeletion.js",
-        //"js/document-management/folder/folderDeletion.js",
-        //"js/document-management/template/templateCreation.js",
-        //"js/document-management/template/templateDeletion.js",
+        "js/product-management/part/partCreation.js",
+        "js/product-management/part/partCheckin.js",
+        "js/product-management/part/showPartDetails.js",
+        "js/product-management/product/productCreation.js",
+
+        "js/product-management/baseline/baselineCreation.js",
+        "js/product-management/baseline/baselineDuplication.js",
+
+        "js/document-management/folder/folderCreation.js",
+        "js/document-management/document/documentCreation.js",
+        "js/document-management/document/documentDeletion.js",
+        "js/document-management/template/templateCreation.js",
+
         "js/change-management/issue/issueCreation.js",
-        //"js/product-management/baseline/baselineCreation.js",
-        //"js/product-management/baseline/baselineDuplication.js",
-        //"js/product-management/baseline/baselineDeletion.js"
+
+        "js/document-management/template/templateDeletion.js",
+        "js/document-management/folder/folderDeletion.js",
+
+        "js/product-management/baseline/baselineDeletion.js",
+        "js/product-management/product/productDeletion.js",
+        "js/product-management/part/partDeletion.js"
+
     ]
 };
