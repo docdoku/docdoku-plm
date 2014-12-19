@@ -54,7 +54,17 @@ var workflows = {
 var changeItems = {
 	changeIssue1 : {
 		number : 'CasperJsTestIssue'
-	}
+	},
+    changeRequest1:{
+        number: 'CasperJsTestRequest'
+    },
+    changeOrder1:{
+        number: 'CasperJsTestOrder'
+    },
+    milestone1:{
+        title:'CasperJsTestMilestone',
+        date:'31/12/2015'
+    }
 };
 
 var urls = {
