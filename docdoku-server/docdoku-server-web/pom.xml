@@ -9,6 +9,8 @@
     <artifactId>docdoku-server-web</artifactId>
     <packaging>war</packaging>
     <name>docdoku-server-web Java EE 7 Webapp</name>
+
+
     <dependencies>
 
         <!-- docdoku core -->
@@ -67,6 +69,20 @@
             <artifactId>javax.json</artifactId>
             <version>1.0.4</version>
             <type>jar</type>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.googlecode.catch-exception</groupId>
+            <artifactId>catch-exception</artifactId>
+            <version>1.2.0</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.googlecode.catch-exception</groupId>
+            <artifactId>catch-throwable</artifactId>
+            <version>1.2.0</version>
             <scope>test</scope>
         </dependency>
 
