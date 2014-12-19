@@ -67,6 +67,12 @@ var changeItems = {
     }
 };
 
+var roles = {
+    role1:{
+        name:'Lecteur'
+    }
+};
+
 var urls = {
 	productManagement : homeUrl+'/product-management/#'+workspace,
 	documentManagement : homeUrl+'/document-management/#'+workspace,
