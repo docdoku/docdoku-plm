@@ -112,7 +112,7 @@ public class DocumentBinaryResource {
     }
 
     @GET
-    @Path("/{fileName}")
+    @Path("/{fileName}{virtualSubResource : (/[^/]+?)?}")
     @Compress
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response downloadDocumentFile(@Context Request request,
@@ -122,14 +122,28 @@ public class DocumentBinaryResource {
                                          @PathParam("version") final String version,
                                          @PathParam("iteration") final int iteration,
                                          @PathParam("fileName") final String fileName,
+                                         @PathParam("virtualSubResource") final String virtualSubResource,
                                          @QueryParam("type") String type,
                                          @QueryParam("output") String output)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException, NotModifiedException, PreconditionFailedException, RequestedRangeNotSatisfiableException{
 
         String fullName = workspaceId + "/documents/" + documentId + "/" + version + "/" + iteration + "/" + fileName;
-        // Todo : If Guest, return public binary resource
+
+        // Log guest user
+        boolean isGuestUser=false;                                                                                      // Todo : If Guest, return public binary resource
+        if(isGuestUser){
+            // Create user with the role GUEST
+        }
+
+        // Check access right
+        DocumentIterationKey docIK = new DocumentIterationKey(workspaceId, documentId, version,iteration);
+        if(documentService.canAccess(docIK)){
+            throw new NotAllowedException("NotAllowedException34");
+        }
+
         BinaryResource binaryResource = documentService.getBinaryResource(fullName);
         BinaryResourceDownloadMeta binaryResourceDownloadMeta = new BinaryResourceDownloadMeta(binaryResource,output,type);
+        binaryResourceDownloadMeta.setSubResourceVirtualPath(virtualSubResource);
 
         // Check cache precondition
         Response.ResponseBuilder rb = request.evaluatePreconditions(binaryResourceDownloadMeta.getLastModified(), binaryResourceDownloadMeta.getETag());
@@ -139,7 +153,10 @@ public class DocumentBinaryResource {
 
         try {
             InputStream binaryContentInputStream;
-            if(output!=null && !output.isEmpty()){
+            if(virtualSubResource!=null && !virtualSubResource.isEmpty()){
+                String virtualSubResourcePath = workspaceId+"/"+documentId+"/"+version+"/"+iteration+"/"+fileName+"/"+virtualSubResource;
+                binaryContentInputStream = dataManager.getBinarySubResourceInputStream(binaryResource, virtualSubResourcePath);
+            }else if(output!=null && !output.isEmpty()){
                 binaryContentInputStream = getConvertedBinaryResource(binaryResource, output);
             }else{
                 binaryContentInputStream = dataManager.getBinaryResourceInputStream(binaryResource);
@@ -149,7 +166,6 @@ public class DocumentBinaryResource {
             return BinaryResourceDownloadResponseBuilder.downloadError(e, fullName);
         }
     }
-
 
     /**
      * Try to convert a binary resource to a specific format

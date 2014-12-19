@@ -56,7 +56,23 @@ public interface IProductManagerLocal{
     BinaryResource saveGeometryInPartIteration(PartIterationKey pPartIPK, String pName, int quality, long pSize, double radius) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, PartRevisionNotFoundException, FileAlreadyExistsException, CreationException;
     BinaryResource saveFileInPartIteration(PartIterationKey pPartIPK, String pName, long pSize) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, PartRevisionNotFoundException, FileAlreadyExistsException, CreationException;
     PartRevision updatePartIteration(PartIterationKey pKey, java.lang.String pIterationNote, PartIteration.Source source, java.util.List<PartUsageLink> pUsageLinks, java.util.List<InstanceAttribute> pAttributes, DocumentIterationKey[] pLinkKeys) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, PartRevisionNotFoundException, PartMasterNotFoundException;
-    BinaryResource getBinaryResource(String pFullName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, FileNotFoundException, NotAllowedException, AccessRightException;
+    /**
+     * Returns the BinaryResource object given his Id. WARNING: You have to check access right before use it.
+     *
+     * @param fullName
+     * Id of the <a href="BinaryResource.html">BinaryResource</a> of which the
+     * data file will be returned
+     *
+     * @return
+     * The binary resource, a BinaryResource instance, that now needs to be created
+     *
+     * @throws UserNotFoundException
+     * @throws UserNotActiveException
+     * @throws WorkspaceNotFoundException
+     * @throws FileNotFoundException
+     * @throws NotAllowedException
+     */
+    BinaryResource getBinaryResource(String fullName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, FileNotFoundException, NotAllowedException, AccessRightException;
     BinaryResource getTemplateBinaryResource(String pFullName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, FileNotFoundException;
     List<ConfigurationItem> getConfigurationItems(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
     List<Layer> getLayers(ConfigurationItemKey pKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
@@ -125,6 +141,8 @@ public interface IProductManagerLocal{
 
     public User checkPartRevisionReadAccess(PartRevisionKey partRevisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException, AccessRightException;
 
+    boolean canAccess(PartRevisionKey partRKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException;
+    boolean canAccess(PartIterationKey partRKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException, PartIterationNotFoundException;
     /**
      * Check if a user can access to a PartRevision
      * [WARN] Don't check if the user exist and if he can access to the part workspace
@@ -132,8 +150,7 @@ public interface IProductManagerLocal{
      * @param partRKey The key of the specif part
      * @return TRUE if he can access, False otherwise
      */
-    boolean canAccess(User user, PartRevisionKey partRKey) throws PartRevisionNotFoundException;
-
+    boolean canUserAccess(User user, PartRevisionKey partRKey) throws PartRevisionNotFoundException;
     /**
      * Check if a user can access to a PartIteration
      * [WARN] Don't check if the user exist and if he can access to the part iteration workspace
@@ -141,5 +158,5 @@ public interface IProductManagerLocal{
      * @param partIKey The key of the specif part iteration
      * @return TRUE if he can access, False otherwise
      */
-    boolean canAccess(User user, PartIterationKey partIKey) throws PartRevisionNotFoundException, PartIterationNotFoundException;
+    boolean canUserAccess(User user, PartIterationKey partIKey) throws PartRevisionNotFoundException, PartIterationNotFoundException;
 }

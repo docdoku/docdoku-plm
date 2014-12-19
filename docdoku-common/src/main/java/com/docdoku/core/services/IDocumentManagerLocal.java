@@ -72,9 +72,40 @@ public interface IDocumentManagerLocal {
 
     BinaryResource saveFileInDocument(DocumentIterationKey pDocPK, String pName, long pSize) throws WorkspaceNotFoundException, NotAllowedException, DocumentRevisionNotFoundException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException, CreationException, AccessRightException;
 
-    BinaryResource getBinaryResource(String pFullName) throws WorkspaceNotFoundException, NotAllowedException, FileNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException;
-
-    BinaryResource getTemplateBinaryResource(String pFullName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, FileNotFoundException;
+    /**
+     * Returns the BinaryResource object given his Id. WARNING: You have to check access right before use it.
+     *
+     * @param fullName
+     * Id of the <a href="BinaryResource.html">BinaryResource</a> of which the
+     * data file will be returned
+     *
+     * @return
+     * The binary resource, a BinaryResource instance, that now needs to be created
+     *
+     * @throws UserNotFoundException
+     * @throws UserNotActiveException
+     * @throws WorkspaceNotFoundException
+     * @throws FileNotFoundException
+     * @throws NotAllowedException
+     */
+    BinaryResource getBinaryResource(String fullName) throws WorkspaceNotFoundException, NotAllowedException, FileNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException;
+    /**
+     * Returns the BinaryResource object given his Id. WARNING: You have to check access right before use it.
+     *
+     * @param fullName
+     * Id of the <a href="BinaryResource.html">BinaryResource</a> of which the
+     * data file will be returned
+     *
+     * @return
+     * The binary resource, a BinaryResource instance, that now needs to be created
+     *
+     * @throws UserNotFoundException
+     * @throws UserNotActiveException
+     * @throws WorkspaceNotFoundException
+     * @throws FileNotFoundException
+     * @throws NotAllowedException
+     */
+    BinaryResource getTemplateBinaryResource(String fullName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, FileNotFoundException;
 
     DocumentRevision checkInDocument(DocumentRevisionKey pDocRPK) throws WorkspaceNotFoundException, NotAllowedException, DocumentRevisionNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException, ESServerException;
 
@@ -157,5 +188,8 @@ public interface IDocumentManagerLocal {
 
     DocumentRevision removeTag(DocumentRevisionKey pDocMPK, String pTag) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, DocumentRevisionNotFoundException, NotAllowedException, ESServerException;
 
-    boolean canAccess(User user, DocumentRevisionKey docRKey) throws DocumentRevisionNotFoundException;
+    boolean canAccess(DocumentRevisionKey docRKey) throws DocumentRevisionNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
+    boolean canAccess(DocumentIterationKey docRKey) throws DocumentRevisionNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
+    boolean canUserAccess(User user, DocumentRevisionKey docRKey) throws DocumentRevisionNotFoundException;
+    boolean canUserAccess(User user, DocumentIterationKey docRKey) throws DocumentRevisionNotFoundException;
 }

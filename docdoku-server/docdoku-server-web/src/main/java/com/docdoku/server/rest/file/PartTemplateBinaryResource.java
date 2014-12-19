@@ -114,7 +114,6 @@ public class PartTemplateBinaryResource {
 
 
         String fullName = workspaceId + "/part-templates/" + templateId + "/" + fileName;
-        // Todo : If Guest, return public binary resource
         BinaryResource binaryResource = productService.getTemplateBinaryResource(fullName);
         BinaryResourceDownloadMeta binaryResourceDownloadMeta = new BinaryResourceDownloadMeta(binaryResource);
 

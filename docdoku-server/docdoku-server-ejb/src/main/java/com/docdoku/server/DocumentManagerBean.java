@@ -157,7 +157,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     public BinaryResource getBinaryResource(String pFullName) throws WorkspaceNotFoundException, NotAllowedException, FileNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException {
 
         if(ctx.isCallerInRole(UserGroupMapping.GUEST_PROXY_ROLE_ID)){
-            //Todo check if document is public
+            // Don't check access right because it is do before. (Is public or isShared)
             return new BinaryResourceDAO(em).loadBinaryResource(pFullName);
         }
 
@@ -1418,12 +1418,43 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     }
 
 
+    @RolesAllowed({UserGroupMapping.GUEST_PROXY_ROLE_ID,UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.ADMIN_ROLE_ID})
+    @Override
+    public boolean canAccess(DocumentRevisionKey docRKey) throws DocumentRevisionNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+        DocumentRevision documentRevision;
+        if(ctx.isCallerInRole(UserGroupMapping.GUEST_PROXY_ROLE_ID)){
+            documentRevision = new DocumentRevisionDAO(em).loadDocR(docRKey);
+            return documentRevision.isPublicShared();
+        }
 
+        User user = userManager.checkWorkspaceReadAccess(docRKey.getDocumentMaster().getWorkspace());
+        return  canUserAccess(user,docRKey);
+    }
+    @RolesAllowed({UserGroupMapping.GUEST_PROXY_ROLE_ID,UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.ADMIN_ROLE_ID})
+    @Override
+    public boolean canAccess(DocumentIterationKey docIKey) throws DocumentRevisionNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+        DocumentRevision documentRevision;
+        if(ctx.isCallerInRole(UserGroupMapping.GUEST_PROXY_ROLE_ID)){
+            documentRevision = new DocumentRevisionDAO(em).loadDocR(docIKey.getDocumentRevision());
+            return documentRevision.isPublicShared() && documentRevision.getLastIteration().getIteration() > docIKey.getIteration();
+        }
+
+        User user = userManager.checkWorkspaceReadAccess(docIKey.getWorkspaceId());
+        return canUserAccess(user,docIKey);
+    }
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.ADMIN_ROLE_ID})
     @Override
-    public boolean canAccess(User user, DocumentRevisionKey docRKey) throws DocumentRevisionNotFoundException {
+    public boolean canUserAccess(User user, DocumentRevisionKey docRKey) throws DocumentRevisionNotFoundException {
         DocumentRevision docRevision = new DocumentRevisionDAO(new Locale(user.getLanguage()), em).loadDocR(docRKey);
         return hasDocumentRevisionReadAccess(user,docRevision);
+    }
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.ADMIN_ROLE_ID})
+    @Override
+    public boolean canUserAccess(User user, DocumentIterationKey docIKey) throws DocumentRevisionNotFoundException {
+        DocumentRevision docRevision = new DocumentRevisionDAO(new Locale(user.getLanguage()), em).loadDocR(docIKey.getDocumentRevision());
+        return hasDocumentRevisionReadAccess(user,docRevision) &&
+                (docRevision.getLastIteration().getIteration() > docIKey.getIteration() ||
+                        !isCheckoutByAnotherUser(user,docRevision));
     }
 
 
@@ -1526,9 +1557,10 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
      * @return True if access is granted, False otherwise
      */
     private boolean hasDocumentRevisionReadAccess(User user, DocumentRevision documentRevision){
-        return isInSameWorkspace(user, documentRevision) &&
-                (user.isAdministrator() || isACLGrantReadAccess(user,documentRevision)) &&
-                !isInAnotherUserHomeFolder(user, documentRevision);
+        return documentRevision.isPublicShared() ||
+               ( isInSameWorkspace(user, documentRevision) &&
+                 (user.isAdministrator() || isACLGrantReadAccess(user,documentRevision)) &&
+                 !isInAnotherUserHomeFolder(user, documentRevision));
     }
     /**
      * Say if a user, which have access to the workspace, have write access to a document revision

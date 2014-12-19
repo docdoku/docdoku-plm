@@ -107,7 +107,9 @@ public class BinaryResourceDownloadMeta {
     }
 
     public void setSubResourceVirtualPath(String subResourceVirtualPath){
-        this.subResourceVirtualPath = subResourceVirtualPath;
+        if(subResourceVirtualPath!=null && !subResourceVirtualPath.isEmpty()){
+            this.subResourceVirtualPath = subResourceVirtualPath;
+        }
     }
 
     /**

@@ -122,7 +122,6 @@ public class DocumentTemplateBinaryResource {
 
 
         String fullName = workspaceId + "/document-templates/" + templateId + "/" + fileName;
-        // Todo : If Guest, return public binary resource
         BinaryResource binaryResource = documentService.getTemplateBinaryResource(fullName);
         BinaryResourceDownloadMeta binaryResourceDownloadMeta = new BinaryResourceDownloadMeta(binaryResource);
 

@@ -139,8 +139,20 @@ public class PartBinaryResource {
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException, PreconditionFailedException, NotModifiedException, RequestedRangeNotSatisfiableException {
 
         String fullName = "/parts/" + partNumber + "/" + version + "/" + iteration + "/";
-        fullName += (subType!= null && !"".equals(subType)) ? subType + "/" +fileName : fileName;
-        // Todo : If Guest, return public binary resource
+        fullName += (subType!= null && !subType.isEmpty()) ? subType + "/" +fileName : fileName;
+
+        // Log guest user
+        boolean isGuestUser=false;                                                                                      // Todo : If Guest, return public binary resource
+        if(isGuestUser){
+            // Create user with the role GUEST
+        }
+
+        // Check access right
+        PartIterationKey partIK = new PartIterationKey(workspaceId, partNumber, version,iteration);
+        if(productService.canAccess(partIK)){
+            throw new NotAllowedException("NotAllowedException34");
+        }
+
         BinaryResource binaryResource = productService.getBinaryResource(fullName);
         BinaryResourceDownloadMeta binaryResourceDownloadMeta = new BinaryResourceDownloadMeta(binaryResource,output,type);
 
@@ -150,7 +162,7 @@ public class PartBinaryResource {
             return rb.build();
         }
 
-        if(subType!= null && !"".equals(subType)){
+        if(subType!= null && !subType.isEmpty()){
             binaryResourceDownloadMeta.setSubResourceVirtualPath(subType);
         }
 

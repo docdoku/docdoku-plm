@@ -415,7 +415,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     public BinaryResource getBinaryResource(String pFullName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, FileNotFoundException, NotAllowedException, AccessRightException {
 
         if(ctx.isCallerInRole(UserGroupMapping.GUEST_PROXY_ROLE_ID)){
-            //Todo check if part is public
+            // Don't check access right because it is do before. (Is public or isShared)
             return new BinaryResourceDAO(em).loadBinaryResource(pFullName);
         }
 
@@ -1586,32 +1586,51 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
 
 
+    @RolesAllowed({UserGroupMapping.GUEST_PROXY_ROLE_ID,UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.ADMIN_ROLE_ID})
+    @Override
+    public boolean canAccess(PartRevisionKey partRKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException {
+        PartRevision partRevision;
+        if(ctx.isCallerInRole(UserGroupMapping.GUEST_PROXY_ROLE_ID)){
+            partRevision = new PartRevisionDAO(em).loadPartR(partRKey);
+            return partRevision.isPublicShared();
+        }
 
+        User user = userManager.checkWorkspaceReadAccess(partRKey.getPartMaster().getWorkspace());
+        return  canUserAccess(user,partRKey);
+    }
+    @RolesAllowed({UserGroupMapping.GUEST_PROXY_ROLE_ID,UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.ADMIN_ROLE_ID})
+    @Override
+    public boolean canAccess(PartIterationKey partIKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException, PartIterationNotFoundException {
+        PartRevision partRevision;
+        if(ctx.isCallerInRole(UserGroupMapping.GUEST_PROXY_ROLE_ID)){
+            partRevision = new PartRevisionDAO(em).loadPartR(partIKey.getPartRevision());
+            return partRevision.isPublicShared() && partRevision.getLastIteration().getIteration() > partIKey.getIteration();
+        }
+
+        User user = userManager.checkWorkspaceReadAccess(partIKey.getWorkspaceId());
+        return canUserAccess(user,partIKey);
+    }
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.ADMIN_ROLE_ID})
     @Override
-    public boolean canAccess(User user, PartRevisionKey partRKey) throws PartRevisionNotFoundException {
+    public boolean canUserAccess(User user, PartRevisionKey partRKey) throws PartRevisionNotFoundException {
         PartRevision partRevision = new PartRevisionDAO(new Locale(user.getLanguage()), em).loadPartR(partRKey);
         return hasPartRevisionReadAccess(user, partRevision);
     }
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.ADMIN_ROLE_ID})
     @Override
-    public boolean canAccess(User user, PartIterationKey partIKey) throws PartRevisionNotFoundException, PartIterationNotFoundException {
-        if(canAccess(user,partIKey.getPartRevision())){
-            Locale locale = new Locale(user.getLanguage());
-            PartRevision partR = new PartRevisionDAO(new Locale(user.getLanguage()), em).loadPartR(partIKey.getPartRevision());
-            boolean isCheckoutedIteration = new PartRevisionDAO(locale,em).isCheckoutedIteration(partIKey);
-            if (!isCheckoutedIteration || user.equals(partR.getCheckOutUser())) {
-                return true;
-            }
-        }
-        return false;
+    public boolean canUserAccess(User user, PartIterationKey partIKey) throws PartRevisionNotFoundException, PartIterationNotFoundException {
+        PartRevisionDAO partRevisionDAO = new PartRevisionDAO(new Locale(user.getLanguage()), em);
+        PartRevision partR = partRevisionDAO.loadPartR(partIKey.getPartRevision());
+        return hasPartRevisionReadAccess(user, partR) &&
+                (!partRevisionDAO.isCheckoutedIteration(partIKey) ||
+                        user.equals(partR.getCheckOutUser()));
     }
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.ADMIN_ROLE_ID})
     @Override
     public User checkPartRevisionReadAccess(PartRevisionKey partRevisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException, AccessRightException {
         User user = userManager.checkWorkspaceReadAccess(partRevisionKey.getPartMaster().getWorkspace());
-        if(!canAccess(user,partRevisionKey)){
+        if(!canUserAccess(user, partRevisionKey)){
             throw new AccessRightException(new Locale(user.getLanguage()),user);
         }
         return user;
