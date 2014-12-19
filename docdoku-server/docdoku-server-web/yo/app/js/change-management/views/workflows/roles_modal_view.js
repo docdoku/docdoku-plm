@@ -66,13 +66,14 @@ define([
         },
 
         onSubmitNewRole: function (e) {
-            this.collection.add({
-                workspaceId: App.config.workspaceId,
-                name: this.$newRoleName.val(),
-                defaultUserMapped: null
-            });
-            this.resetNewRoleForm();
-
+            if(this.$newRoleName.val().trim() && !this.collection.findWhere({name:this.$newRoleName.val()})){
+                this.collection.add({
+                    workspaceId: App.config.workspaceId,
+                    name: this.$newRoleName.val(),
+                    defaultUserMapped: null
+                });
+                this.resetNewRoleForm();
+            }
             e.preventDefault();
             e.stopPropagation();
             return false;
