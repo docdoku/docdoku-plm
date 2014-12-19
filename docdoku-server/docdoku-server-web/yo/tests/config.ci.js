@@ -40,7 +40,10 @@ module.exports = {
         "js/change-management/request/requestCreation.js",
         "js/change-management/order/orderCreation.js",
         "js/change-management/milestone/milestoneCreation.js",
+
         "js/change-management/role/roleCreation.js",
+        "js/change-management/workflow/workflowCreation.js",
+        "js/change-management/workflow/workflowDeletion.js",
 
         "js/document-management/template/templateDeletion.js",
         "js/document-management/folder/folderDeletion.js",

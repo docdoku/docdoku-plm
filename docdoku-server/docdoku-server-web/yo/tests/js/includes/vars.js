@@ -73,6 +73,23 @@ var roles = {
     }
 };
 
+var workflows = {
+    workflow1:{
+        name:'CasperJsTestWorkflow',
+        finalState:'CasperJsFinalState',
+        activities:{
+            activity1 : {
+                name:'CasperJsTestActivity',
+                tasks:{
+                    task1:{
+                        name:'CasperJsTestTask'
+                    }
+                }
+            }
+        }
+    }
+}
+
 var urls = {
 	productManagement : homeUrl+'/product-management/#'+workspace,
 	documentManagement : homeUrl+'/document-management/#'+workspace,

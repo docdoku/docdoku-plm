@@ -1,6 +1,6 @@
 /*global casper*/
 
-casper.test.begin('Role creation tests suite',6, function roleCreationTestsSuite(){
+casper.test.begin('Role creation tests suite',5, function roleCreationTestsSuite(){
 
     'use strict';
 
@@ -25,8 +25,6 @@ casper.test.begin('Role creation tests suite',6, function roleCreationTestsSuite
             this.test.assert(false,'Workflow nav link can not be found');
         });
     });
-
-    casper.test.assert(true,true)
 
     /**
      * Wait for role button
@@ -93,9 +91,6 @@ casper.test.begin('Role creation tests suite',6, function roleCreationTestsSuite
         });
 
     });
-
-
-    // #form-roles > div > input
 
     casper.run(function allDone() {
         this.test.done();
