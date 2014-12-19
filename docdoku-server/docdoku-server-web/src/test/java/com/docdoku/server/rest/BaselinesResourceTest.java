@@ -26,23 +26,17 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.mockito.*;
-import org.mockito.internal.stubbing.answers.ThrowsException;
 import org.mockito.runners.MockitoJUnitRunner;
-import sun.org.mozilla.javascript.ast.ErrorCollector;
+
 
 import javax.ejb.SessionContext;
 import javax.persistence.EntityManager;
 
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.ExecutionException;
 
-import static com.googlecode.catchexception.CatchException.caughtException;
-import static com.googlecode.catchexception.CatchException.verifyException;
-import static org.hamcrest.CoreMatchers.allOf;
-import static org.hamcrest.core.Is.is;
+
+
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.MockitoAnnotations.initMocks;
 
@@ -174,5 +168,31 @@ public class BaselinesResourceTest {
         Assert.assertTrue(baselineCreation.getProductBaseline().getConfigurationItem().getWorkspaceId().equals(baselineRuleReleased.getWorkspace().getId()));
     }
 
+
+    @Category(FastTestCategory.class)
+    @Test
+    public void createLatestBaselineWithACheckoutedPart() throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, NotAllowedException, UserNotActiveException, PartIterationNotFoundException, ConfigurationItemNotReleasedException {
+
+        //Given
+        baselineRuleReleased = new BaselineRule("myBaseline",null,"description","workspace01","user1","part01","product01",true,true);
+        doReturn(new User("en")).when(userManager).checkWorkspaceWriteAccess(Matchers.anyString());
+        Mockito.when(userManager.checkWorkspaceWriteAccess(Matchers.anyString())).thenReturn(baselineRuleReleased.getUser1());
+        Mockito.when(em.find(ConfigurationItem.class, baselineRuleReleased.getConfigurationItemKey())).thenReturn(baselineRuleReleased.getConfigurationItem()
+        );
+        Mockito.when(new ConfigurationItemDAO(new Locale("en"), em).loadConfigurationItem(baselineRuleReleased.getConfigurationItemKey())).thenReturn(baselineRuleReleased.getConfigurationItem());
+        Mockito.when(em.find(PartIteration.class, baselineRuleReleased.getPartMaster().getLastReleasedRevision().getIteration(1).getKey())).thenReturn(baselineRuleReleased.getPartMaster().getLastReleasedRevision().getIteration(1));
+        Mockito.when(new PartIterationDAO(new Locale("en"), em).loadPartI(baselineRuleReleased.getPartMaster().getLastReleasedRevision().getIteration(1).getKey())).thenReturn(baselineRuleReleased.getPartMaster().getLastReleasedRevision().getIteration(1));
+
+        //When
+        BaselineCreation baselineCreation = productBaselineService.createBaseline(baselineRuleReleased.getConfigurationItemKey(), baselineRuleReleased.getName(), baselineRuleReleased.getType(), baselineRuleReleased.getDescription());
+
+        //Then
+        Assert.assertTrue(baselineCreation != null);
+        Assert.assertTrue(baselineCreation.getProductBaseline().getDescription().equals(baselineRuleReleased.getDescription()));
+        Assert.assertTrue(baselineCreation.getProductBaseline().getType().equals(ProductBaseline.BaselineType.LATEST));
+        Assert.assertTrue(baselineCreation.getProductBaseline().getConfigurationItem().getWorkspaceId().equals(baselineRuleReleased.getWorkspace().getId()));
+
+        //add ACL
+    }
 
 }

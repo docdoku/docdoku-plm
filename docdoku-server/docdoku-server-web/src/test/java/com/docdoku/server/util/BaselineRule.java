@@ -13,6 +13,7 @@ import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -53,7 +54,14 @@ public class BaselineRule implements TestRule {
         configurationItem.setDesignItem(partMaster);
     }
 
-    @Override
+    public BaselineRule(String baselineName,ProductBaseline.BaselineType type,String description,String workspaceId,String login,String partId,String productId,boolean released,boolean checkouted){
+        this(baselineName,type,description,workspaceId,login,partId,productId,released);
+        this.partMaster.getLastReleasedRevision().getIteration(1).getPartRevision().setCheckOutUser(this.user1);
+
+            }
+
+
+        @Override
     public Statement apply(Statement statement, Description description) {
         return new BaselineStatement(statement,this.configurationItem);
     }
