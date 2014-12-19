@@ -25,12 +25,24 @@ var products = {
 	},
 	part1 : {
 		number : '000-AAA-CasperJsTestPart',
-		name : 'CasperJsTestPart'
+		name : 'CasperJsTestPart',
+        iterationNode:'This is the first iteration'
 	},
 	product1: {
 		number : '000-AAA-CasperJsTestProduct',
 		name : 'CasperJsTestProduct'
 	}
+};
+
+var baselines = {
+    baseline1:{
+        name: '000-AAA-CasperJsTestBaseline',
+        description: 'This is a baseline'
+    },
+    baseline2:{
+        name: '001-AAA-CasperJsTestBaseline',
+        description: 'This is also a baseline'
+    }
 };
 
 var workflows = {

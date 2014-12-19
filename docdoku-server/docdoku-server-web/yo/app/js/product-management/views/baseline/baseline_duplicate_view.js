@@ -44,14 +44,16 @@ define([
                 description: this.$inputBaselineDescription.val()
             };
 
-            this.model.duplicate({
-                data: data,
-                success: function (baseline) {
-                    _this.closeModal();
-                    _this.model = baseline;
-                },
-                error: _this.onError
-            });
+            if(data.name.trim()){
+                this.model.duplicate({
+                    data: data,
+                    success: function (baseline) {
+                        _this.closeModal();
+                        _this.model = baseline;
+                    },
+                    error: _this.onError
+                });
+            }
 
             e.preventDefault();
             e.stopPropagation();

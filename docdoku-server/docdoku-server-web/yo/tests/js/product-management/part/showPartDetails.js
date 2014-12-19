@@ -49,8 +49,8 @@ casper.test.begin('Part details tests suite',3, function partDetailsTestsSuite()
      */
 
     casper.then(function waitForCancelButton() {
-        this.waitForSelector('#part-modal #cancel-iteration',function testPartModal() {
-            this.click('#part-modal #cancel-iteration');
+        this.waitForSelector('#part-modal button.close',function closePartModal() {
+            this.click('#part-modal button.close');
         });
     });
 

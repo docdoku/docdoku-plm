@@ -59,21 +59,25 @@ define([
 				name: this.$inputBaselineName.val(),
 				description: this.$inputBaselineDescription.val()
 			};
-            var _this = this;
-			var callbacks = {
-				success: this.onBaselineCreated,
-				error: function(error){
-                    _this.onError(data,error);
-                    _this.$submitButton.removeAttr('disabled');
+            if(data.name.trim()){
+                var _this = this;
+                var callbacks = {
+                    success: this.onBaselineCreated,
+                    error: function(error){
+                        _this.onError(data,error);
+                        _this.$submitButton.removeAttr('disabled');
+                    }
+                };
+                if (this.isProduct) {
+                    data.type = this.$inputBaselineType.val();
+                    this.model.createBaseline(data, callbacks);
+                } else {
+                    var baselinesCollection = this.collection;
+                    baselinesCollection.create(data, callbacks);
                 }
-			};
-			if (this.isProduct) {
-				data.type = this.$inputBaselineType.val();
-				this.model.createBaseline(data, callbacks);
-			} else {
-				var baselinesCollection = this.collection;
-				baselinesCollection.create(data, callbacks);
-			}
+            }else{
+                this.$submitButton.removeAttr('disabled');
+            }
 			e.preventDefault();
 			e.stopPropagation();
 			return false;
