@@ -22,14 +22,19 @@ package com.docdoku.server;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.User;
 import com.docdoku.core.document.DocumentIteration;
+import com.docdoku.core.security.UserGroupMapping;
+import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.services.IDocumentResourceGetterManagerLocal;
+import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.resourcegetters.DocumentResourceGetter;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import java.io.InputStream;
+import java.util.Locale;
 
 
 /**
@@ -41,9 +46,25 @@ public class DocumentResourceGetterBean implements IDocumentResourceGetterManage
     @Inject
     @Any
     private Instance<DocumentResourceGetter> documentResourceGetters;
+    @EJB
+    private IDocumentManagerLocal documentService;
+    @EJB
+    private IUserManagerLocal userManager;
 
     @Override
-    public InputStream getConvertedResource(String outputFormat, BinaryResource binaryResource, DocumentIteration docI, User user) throws Exception {
+    public InputStream getConvertedResource(String outputFormat, BinaryResource binaryResource) throws Exception {
+        DocumentIteration docI;
+        Locale locale;
+        if(userManager.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)) {
+            User user = userManager.whoAmI(binaryResource.getWorkspaceId());
+            locale = new Locale(user.getLanguage());
+        }else{
+            locale = Locale.getDefault();
+        }
+
+        docI = documentService.findDocumentIterationByBinaryResource(binaryResource);
+
+
         DocumentResourceGetter selectedDocumentResourceGetter = null;
         for (DocumentResourceGetter documentResourceGetter : documentResourceGetters) {
             if (documentResourceGetter.canGetConvertedResource(outputFormat, binaryResource)) {
@@ -52,7 +73,7 @@ public class DocumentResourceGetterBean implements IDocumentResourceGetterManage
             }
         }
         if (selectedDocumentResourceGetter != null) {
-            return selectedDocumentResourceGetter.getConvertedResource(outputFormat, binaryResource,docI,user);
+            return selectedDocumentResourceGetter.getConvertedResource(outputFormat, binaryResource,docI,locale);
         }
 
         return null;

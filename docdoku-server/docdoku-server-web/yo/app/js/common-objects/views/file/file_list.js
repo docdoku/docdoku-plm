@@ -121,7 +121,7 @@ define([
 
             this.xhr.addEventListener('load', function (e) {
 
-                if (e.currentTarget.status !== 200) {
+                if (e.currentTarget.status !== 200 && e.currentTarget.status !== 201) {
                     alert(e.currentTarget.statusText);
                     self.finished();
                     return false;
@@ -135,8 +135,7 @@ define([
                 self.newItems.add(newFile);
             }, false);
 
-            var url = this.options.uploadBaseUrl + fileName;
-            this.xhr.open('POST', url);
+            this.xhr.open('POST', this.options.uploadBaseUrl);
 
             var fd = new FormData();
             fd.append('upload', file);

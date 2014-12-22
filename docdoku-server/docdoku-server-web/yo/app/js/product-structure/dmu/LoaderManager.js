@@ -39,7 +39,7 @@ define(['views/progress_bar_view'], function (ProgressBarView) {
 
             XMLHttpRequest.prototype.open = function () {
 
-                if (arguments[1].indexOf('/files/') === 0) {
+                if (arguments[1].indexOf('/api/files/') === 0) {
 
                     var totalAdded = false,
                         totalLoaded = 0,

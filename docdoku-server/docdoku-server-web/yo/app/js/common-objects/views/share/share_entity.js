@@ -11,10 +11,9 @@ function (Backbone, Mustache, template, templateShared) {
 
         tagName: 'div',
 
-        templateShared: Mustache.parse(templateShared),
-
         events: {
-            'click #generate-private-share': 'createShare'
+            'click #generate-private-share': 'createShare',
+            'hidden #share-modal': 'closeModal'
         },
 
         initialize: function () {
@@ -65,10 +64,6 @@ function (Backbone, Mustache, template, templateShared) {
         },
 
         closeModal: function () {
-            this.$modal.modal('hide');
-        },
-
-        onHidden: function () {
             this.remove();
         },
 
@@ -110,7 +105,7 @@ function (Backbone, Mustache, template, templateShared) {
 
                 this.model.createShare({data: data, success: function (pData) {
                     that.$privateShare.empty();
-                    that.$privateShare.html(that.templateShared({i18n: App.config.i18n, generatedUrl: that.generateUrlFromUUID(pData.uuid)}));
+                    that.$privateShare.html(Mustache.render(templateShared,{i18n: App.config.i18n, generatedUrl: that.generateUrlFromUUID(pData.uuid)}));
                 }});
             }
 

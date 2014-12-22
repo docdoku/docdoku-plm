@@ -39,7 +39,7 @@ define([
         },
 
         getUploadBaseUrl: function () {
-            return App.config.contextPath + '/files/' + this.get('workspaceId') + '/part-templates/' + this.get('id') + '/';
+            return App.config.contextPath + '/api/files/' + this.get('workspaceId') + '/part-templates/' + this.get('id') + '/';
         },
 
         getId: function () {

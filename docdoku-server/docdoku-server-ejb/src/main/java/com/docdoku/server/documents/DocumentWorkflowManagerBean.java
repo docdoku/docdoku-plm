@@ -68,7 +68,7 @@ public class DocumentWorkflowManagerBean implements IDocumentWorkflowManagerLoca
     @Override
     public Workflow getCurrentWorkflow(DocumentRevisionKey documentRevisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentRevisionNotFoundException, AccessRightException, WorkflowNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(documentRevisionKey.getWorkspaceId());
-        if(!documentManager.canAccess(user,documentRevisionKey)) {
+        if(!documentManager.canUserAccess(user, documentRevisionKey)) {
             throw new AccessRightException(new Locale(user.getLanguage()), user);
         }
 
@@ -81,7 +81,7 @@ public class DocumentWorkflowManagerBean implements IDocumentWorkflowManagerLoca
     @Override
     public Workflow[] getAbortedWorkflow(DocumentRevisionKey documentRevisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentRevisionNotFoundException, AccessRightException {
         User user = userManager.checkWorkspaceReadAccess(documentRevisionKey.getWorkspaceId());
-        if(!documentManager.canAccess(user,documentRevisionKey)) {
+        if(!documentManager.canUserAccess(user, documentRevisionKey)) {
             throw new AccessRightException(new Locale(user.getLanguage()), user);
         }
 

@@ -66,7 +66,7 @@ public class PartWorkflowManagerBean implements IPartWorkflowManagerLocal {
     @Override
     public Workflow getCurentWorkflow(PartRevisionKey partRevisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException, AccessRightException{
         User user = userManager.checkWorkspaceReadAccess(partRevisionKey.getPartMaster().getWorkspace());
-        if(!productManager.canAccess(user,partRevisionKey)) {
+        if(!productManager.canUserAccess(user, partRevisionKey)) {
             throw new AccessRightException(new Locale(user.getLanguage()), user);
         }
 
@@ -79,7 +79,7 @@ public class PartWorkflowManagerBean implements IPartWorkflowManagerLocal {
     @Override
     public Workflow[] getAbortedWorkflow(PartRevisionKey partRevisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException, AccessRightException {
         User user = userManager.checkWorkspaceReadAccess(partRevisionKey.getPartMaster().getWorkspace());
-        if(!productManager.canAccess(user,partRevisionKey)) {
+        if(!productManager.canUserAccess(user, partRevisionKey)) {
             throw new AccessRightException(new Locale(user.getLanguage()), user);
         }
 

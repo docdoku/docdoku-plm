@@ -174,7 +174,7 @@ define(['dmu/LoaderManager', 'async'],
             function findQualities(files) {
                 var q = [];
                 _(files).each(function (f) {
-                    q[f.quality] = App.config.contextPath + '/files/' + f.fullName;
+                    q[f.quality] = App.config.contextPath + '/api/files/' + f.fullName;
                 });
                 return q;
             }

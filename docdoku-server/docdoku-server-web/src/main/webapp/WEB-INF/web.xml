@@ -30,6 +30,8 @@
         <exception-type>java.lang.Exception</exception-type>
         <location>/faces/error.xhtml</location>
     </error-page>
+
+
     <filter>
         <filter-name>AuthFilter</filter-name>
         <filter-class>com.docdoku.server.filters.AuthFilter</filter-class>
@@ -63,6 +65,8 @@
         <url-pattern>/files/*</url-pattern>
         <url-pattern>/shared-files/*</url-pattern>
     </filter-mapping>
+
+
     <servlet>
         <servlet-name>VoteServlet</servlet-name>
         <servlet-class>com.docdoku.server.http.VoteServlet</servlet-class>
@@ -99,7 +103,6 @@
         <servlet-name>PrivateShareServlet</servlet-name>
         <url-pattern>/shared/*</url-pattern>
     </servlet-mapping>
-
     <servlet-mapping>
         <servlet-name>UploadDownloadServlet</servlet-name>
         <url-pattern>/upload/*</url-pattern>
@@ -115,7 +118,6 @@
         <servlet-name>DocumentManagement</servlet-name>
         <url-pattern>/document-management/</url-pattern>
     </servlet-mapping>
-
     <servlet>
         <servlet-name>ProductManagement</servlet-name>
         <jsp-file>product-management/index.html</jsp-file>
@@ -124,7 +126,6 @@
         <servlet-name>ProductManagement</servlet-name>
         <url-pattern>/product-management/</url-pattern>
     </servlet-mapping>
-
     <servlet>
         <servlet-name>ProductStructure</servlet-name>
         <jsp-file>product-structure/index.html</jsp-file>
@@ -141,7 +142,6 @@
         <servlet-name>ChangeManagement</servlet-name>
         <url-pattern>/change-management/</url-pattern>
     </servlet-mapping>
-
     <servlet>
         <servlet-name>VisualizationServlet</servlet-name>
         <jsp-file>visualization/index.html</jsp-file>
@@ -158,6 +158,17 @@
     <servlet-mapping>
         <servlet-name>LogoutServlet</servlet-name>
         <url-pattern>/logout</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>com.docdoku.server.rest.ApplicationConfig</servlet-name>
+        <multipart-config>
+            <file-size-threshold>1048576</file-size-threshold>
+        </multipart-config>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>com.docdoku.server.rest.ApplicationConfig</servlet-name>
+        <url-pattern>/api/*</url-pattern>
     </servlet-mapping>
 
     <security-constraint>

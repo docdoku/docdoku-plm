@@ -18,22 +18,11 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.  
  */
 
-package com.docdoku.server.rest;
+package com.docdoku.server.rest.exceptions;
 
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
+public class RestApiException extends Exception {
 
-public class RestApiException extends WebApplicationException {
-
-    public RestApiException(String technicalDetail, String userMessage) {
-        this(technicalDetail,userMessage,Status.BAD_REQUEST);
-    }
-
-    public RestApiException(String technicalDetail, String userMessage, Status status) {
-        super(Response.status(status)
-                .header("Reason-Phrase",userMessage)
-                .entity(technicalDetail)
-                .build());
+    public RestApiException() {
+        super();
     }
 }

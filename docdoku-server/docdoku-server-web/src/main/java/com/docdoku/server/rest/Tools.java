@@ -109,14 +109,13 @@ public class Tools {
 
         Mapper mapper = DozerBeanMapperSingletonWrapper.getInstance();
 
-        PartDTO partDTO = mapper.map(partRevision.getPartMaster(),PartDTO.class);
+        PartDTO partDTO = mapper.map(partRevision,PartDTO.class);
+
         partDTO.setNumber(partRevision.getPartNumber());
         partDTO.setPartKey(partRevision.getPartNumber() + "-" + partRevision.getVersion());
         partDTO.setName(partRevision.getPartMaster().getName());
         partDTO.setStandardPart(partRevision.getPartMaster().isStandardPart());
-        partDTO.setVersion(partRevision.getVersion());
-        partDTO.setDescription(partRevision.getDescription());
-        partDTO.setStatus(partRevision.getStatus());
+
         List<PartIterationDTO> partIterationDTOs = new ArrayList<>();
         for(PartIteration partIteration : partRevision.getPartIterations()){
             partIterationDTOs.add(mapPartIterationToPartIterationDTO(partIteration));

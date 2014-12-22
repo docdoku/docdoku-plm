@@ -54,10 +54,13 @@ casper.test.begin('Part checkin tests suite', 1, function partCheckinTestsSuite(
      */
     casper.then(function waitForIterationNotePrompt(){
         this.waitForSelector('#prompt_modal #prompt_input',function fillIterationNote() {
-            this.sendKeys('#prompt_modal #prompt_input', products.part1.iterationNode, {reset:true});
-            this.click('#prompt_modal .modal-footer .btn-primary');
+            // Huh, we need to wait a bit before filling the input, this may not be taken into account otherwise.
+            this.wait(200,function(){
+                this.sendKeys('#prompt_modal #prompt_input', products.part1.iterationNote, {reset:true});
+                this.click('#prompt_modal .modal-footer .btn-primary');
+            })
         },function fail() {
-            this.capture('screenshot/partCheckin/waitForBaselineCreationButton-error.png');
+            this.capture('screenshot/partCheckin/waitForIterationNotePrompt-error.png');
             this.test.assert(false,'Iteration note modal not found');
         });
     });

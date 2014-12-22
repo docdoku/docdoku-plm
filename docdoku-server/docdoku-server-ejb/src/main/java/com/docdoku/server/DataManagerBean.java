@@ -61,9 +61,9 @@ public class DataManagerBean implements IDataManagerLocal {
             return defaultStorageProvider.getBinaryResourceInputStream(binaryResource);
         } catch (FileNotFoundException e) {
             BinaryResource previous = binaryResource.getPrevious();
-            if (previous != null)
+            if (previous != null) {
                 return getBinaryResourceInputStream(previous);
-            else {
+            } else {
                 throw new StorageException(new StringBuilder().append("Can't find ").append(binaryResource.getFullName()).toString());
             }
         }
@@ -75,9 +75,9 @@ public class DataManagerBean implements IDataManagerLocal {
             return fileStorageProvider.getBinarySubResourceInputStream(binaryResource, subResourceVirtualPath);
         } catch (FileNotFoundException e) {
             BinaryResource previous = binaryResource.getPrevious();
-            if (previous != null)
+            if (previous != null) {
                 return getBinarySubResourceInputStream(previous, subResourceVirtualPath);
-            else {
+            } else {
                 throw new StorageException(new StringBuilder().append("Can't find sub resource ").append(subResourceVirtualPath).append(" of ").append(binaryResource.getFullName()).toString());
             }
         }

@@ -80,7 +80,7 @@ public class UploadDownloadService implements IUploadDownloadWS {
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @XmlMimeType("application/octet-stream")
     @Override
-    public DataHandler downloadNativeFromPart(String workspaceId, String partMNumber, String partRVersion, int iteration, String fileName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, FileNotFoundException, NotAllowedException {
+    public DataHandler downloadNativeFromPart(String workspaceId, String partMNumber, String partRVersion, int iteration, String fileName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, FileNotFoundException, NotAllowedException, AccessRightException {
         String fullName = workspaceId + "/parts/" + partMNumber + "/" + partRVersion + "/" + iteration + "/nativecad/" + fileName;
         BinaryResource binaryResource = productService.getBinaryResource(fullName);
         return new DataHandler(getBinaryResourceDataSource(binaryResource));
@@ -89,7 +89,7 @@ public class UploadDownloadService implements IUploadDownloadWS {
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @XmlMimeType("application/octet-stream")
     @Override
-    public DataHandler downloadFromPart(String workspaceId, String partMNumber, String partRVersion, int iteration, String fileName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, FileNotFoundException, NotAllowedException {
+    public DataHandler downloadFromPart(String workspaceId, String partMNumber, String partRVersion, int iteration, String fileName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, FileNotFoundException, NotAllowedException, AccessRightException {
         String fullName = workspaceId + "/parts/" + partMNumber + "/" + partRVersion + "/" + iteration + "/" + fileName;
         BinaryResource binaryResource = productService.getBinaryResource(fullName);
         return new DataHandler(getBinaryResourceDataSource(binaryResource));
@@ -100,7 +100,7 @@ public class UploadDownloadService implements IUploadDownloadWS {
     @Override
     public DataHandler downloadFromTemplate(String workspaceId, String templateID, String fileName) throws NotAllowedException, FileNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException {
         String fullName = workspaceId + "/templates/" + templateID + "/" + fileName;
-        BinaryResource binaryResource = documentService.getBinaryResource(fullName);
+        BinaryResource binaryResource = documentService.getTemplateBinaryResource(fullName);
         return new DataHandler(getBinaryResourceDataSource(binaryResource));
     }
 
