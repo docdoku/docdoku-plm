@@ -48,9 +48,13 @@ public class BaselineRule implements TestRule {
             iterationLists.add(new PartIteration(revision, 1, user1));
             revision.setPartIterations(iterationLists);
             revision.setStatus(PartRevision.RevisionStatus.RELEASED);
-            ACL acl = new ACL();
-            acl.addEntry(user1,permission);
-            revision.setACL(acl);
+            if (permission != null)
+            {
+                ACL acl = new ACL();
+                acl.addEntry(user1,permission);
+                revision.setACL(acl);
+            }
+
             revisions.add(revision);
             partMaster.setPartRevisions(revisions);
         }

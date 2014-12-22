@@ -1,4 +1,4 @@
-package com.docdoku.server.rest;
+package com.docdoku.server;
 
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
@@ -7,19 +7,14 @@ import com.docdoku.core.configuration.ProductBaseline;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.*;
 import com.docdoku.core.security.ACL;
-import com.docdoku.core.services.IProductBaselineManagerLocal;
-import com.docdoku.server.DataManagerBean;
-import com.docdoku.server.UserManagerBean;
+
 import com.docdoku.server.dao.ConfigurationItemDAO;
 import com.docdoku.server.dao.PartIterationDAO;
 import com.docdoku.server.products.ProductBaselineManagerBean;
 import com.docdoku.server.util.BaselineRule;
 import com.docdoku.server.util.FastTestCategory;
-import com.google.common.collect.Lists;
-import com.googlecode.catchexception.CatchException;
-import com.googlecode.catchexception.apis.CatchExceptionBdd.*;
 
-import com.googlecode.catchexception.apis.CatchExceptionHamcrestMatchers;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -36,8 +31,7 @@ import javax.persistence.EntityManager;
 
 import java.security.Principal;
 import java.util.Locale;
-import java.util.Properties;
-import java.util.regex.Matcher;
+
 
 
 import static org.mockito.Mockito.doReturn;
@@ -88,26 +82,21 @@ public class BaselinesResourceTest {
      */
     @Category(FastTestCategory.class)
     @Test
-    public void createBaselineUsingPartNotReleasedYet() {
+    public void createBaselineUsingPartNotReleasedYet() throws Exception{
 
         //Given
 
-        try {
-            baselineRuleNotReleased = new BaselineRule("myBaseline",ProductBaseline.BaselineType.RELEASED,"description","workspace01","user1","part01","product01",false,null);
+        baselineRuleNotReleased = new BaselineRule("myBaseline", ProductBaseline.BaselineType.RELEASED, "description", "workspace01", "user1", "part01", "product01", false, null);
 
-            doReturn(new User("en")).when(userManager).checkWorkspaceWriteAccess(Matchers.anyString());
-            Mockito.when(userManager.checkWorkspaceWriteAccess(Matchers.anyString())).thenReturn(baselineRuleNotReleased.getUser1());
-            Mockito.when(em.find(ConfigurationItem.class, baselineRuleNotReleased.getConfigurationItemKey())).thenReturn(baselineRuleNotReleased.getConfigurationItem());
-            Mockito.when(new ConfigurationItemDAO(new Locale("en"), em).loadConfigurationItem(baselineRuleNotReleased.getConfigurationItemKey())).thenReturn(baselineRuleNotReleased.getConfigurationItem());
+        doReturn(new User("en")).when(userManager).checkWorkspaceWriteAccess(Matchers.anyString());
+        Mockito.when(userManager.checkWorkspaceWriteAccess(Matchers.anyString())).thenReturn(baselineRuleNotReleased.getUser1());
+        Mockito.when(em.find(ConfigurationItem.class, baselineRuleNotReleased.getConfigurationItemKey())).thenReturn(baselineRuleNotReleased.getConfigurationItem());
+        Mockito.when(new ConfigurationItemDAO(new Locale("en"), em).loadConfigurationItem(baselineRuleNotReleased.getConfigurationItemKey())).thenReturn(baselineRuleNotReleased.getConfigurationItem());
+        thrown.expect(ConfigurationItemNotReleasedException.class);
+        //When
+        productBaselineService.createBaseline(baselineRuleNotReleased.getConfigurationItemKey(), baselineRuleNotReleased.getName(), baselineRuleNotReleased.getType(), baselineRuleNotReleased.getDescription());
 
-            //When
-            CatchException.catchException(productBaselineService).createBaseline(baselineRuleNotReleased.getConfigurationItemKey(),baselineRuleNotReleased.getName(),baselineRuleNotReleased.getType(), baselineRuleNotReleased.getDescription());
 
-
-        } catch (Exception e) {
-            //Then
-            Assert.assertTrue(e instanceof ConfigurationItemNotReleasedException);
-        }
     }
 
     /**
@@ -118,11 +107,11 @@ public class BaselinesResourceTest {
     public void createReleasedBaseline() throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, NotAllowedException, UserNotActiveException, PartIterationNotFoundException, ConfigurationItemNotReleasedException {
 
         //Given
-        baselineRuleReleased = new BaselineRule("myBaseline",ProductBaseline.BaselineType.RELEASED,"description","workspace01","user1","part01","product01",true,null);
+        baselineRuleReleased = new BaselineRule("myBaseline", ProductBaseline.BaselineType.RELEASED, "description", "workspace01", "user1", "part01", "product01", true, null);
         doReturn(new User("en")).when(userManager).checkWorkspaceWriteAccess(Matchers.anyString());
         Mockito.when(userManager.checkWorkspaceWriteAccess(Matchers.anyString())).thenReturn(baselineRuleReleased.getUser1());
         Mockito.when(em.find(ConfigurationItem.class, baselineRuleReleased.getConfigurationItemKey())).thenReturn(baselineRuleReleased.getConfigurationItem()
-                );
+        );
         Mockito.when(new ConfigurationItemDAO(new Locale("en"), em).loadConfigurationItem(baselineRuleReleased.getConfigurationItemKey())).thenReturn(baselineRuleReleased.getConfigurationItem());
 
 
@@ -140,6 +129,7 @@ public class BaselinesResourceTest {
 
     /**
      * Create  baseline with the latest version of the products
+     *
      * @throws UserNotFoundException
      * @throws AccessRightException
      * @throws WorkspaceNotFoundException
@@ -154,7 +144,7 @@ public class BaselinesResourceTest {
     public void createBaselineWithoutSpecifiyingType() throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, NotAllowedException, UserNotActiveException, PartIterationNotFoundException, ConfigurationItemNotReleasedException {
 
         //Given
-        baselineRuleReleased = new BaselineRule("myBaseline",null,"description","workspace01","user1","part01","product01",true,null);
+        baselineRuleReleased = new BaselineRule("myBaseline", null, "description", "workspace01", "user1", "part01", "product01", true, null);
         doReturn(new User("en")).when(userManager).checkWorkspaceWriteAccess(Matchers.anyString());
         Mockito.when(userManager.checkWorkspaceWriteAccess(Matchers.anyString())).thenReturn(baselineRuleReleased.getUser1());
         Mockito.when(em.find(ConfigurationItem.class, baselineRuleReleased.getConfigurationItemKey())).thenReturn(baselineRuleReleased.getConfigurationItem()
@@ -174,7 +164,6 @@ public class BaselinesResourceTest {
     }
 
     /**
-     *
      * @throws UserNotFoundException
      * @throws AccessRightException
      * @throws WorkspaceNotFoundException
@@ -189,7 +178,7 @@ public class BaselinesResourceTest {
     public void createLatestBaselineWithCheckedPart() throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, NotAllowedException, UserNotActiveException, PartIterationNotFoundException, ConfigurationItemNotReleasedException {
 
         //Given
-        baselineRuleReleased = new BaselineRule("myBaseline",null,"description","workspace01","user1","part01","product01",true,false);
+        baselineRuleReleased = new BaselineRule("myBaseline", null, "description", "workspace01", "user1", "part01", "product01", true, false);
         doReturn(new User("en")).when(userManager).checkWorkspaceWriteAccess(Matchers.anyString());
         Mockito.when(userManager.checkWorkspaceWriteAccess(Matchers.anyString())).thenReturn(baselineRuleReleased.getUser1());
         Mockito.when(em.find(ConfigurationItem.class, baselineRuleReleased.getConfigurationItemKey())).thenReturn(baselineRuleReleased.getConfigurationItem()
@@ -214,7 +203,7 @@ public class BaselinesResourceTest {
     public void throwExceptionWhenNoPermissionForUserOnPart() throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, NotAllowedException, UserNotActiveException, PartIterationNotFoundException, ConfigurationItemNotReleasedException {
 
         //Given
-        baselineRuleACL = new BaselineRule("myBaseline",null,"description","workspace01","user1","part01","product01",true, ACL.Permission.FORBIDDEN);
+        baselineRuleACL = new BaselineRule("myBaseline", null, "description", "workspace01", "user1", "part01", "product01", true, ACL.Permission.FORBIDDEN);
         doReturn(new User("en")).when(userManager).checkWorkspaceWriteAccess(Matchers.anyString());
         Mockito.when(userManager.checkWorkspaceWriteAccess(Matchers.anyString())).thenReturn(baselineRuleACL.getUser1());
         Mockito.when(em.find(ConfigurationItem.class, baselineRuleACL.getConfigurationItemKey())).thenReturn(baselineRuleACL.getConfigurationItem()

@@ -195,6 +195,13 @@
             <artifactId>junit</artifactId>
             <version>4.11</version>
         </dependency>
+        <!-- JUNIT & Mockito -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>1.9.5</version>
+        </dependency>
+
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
