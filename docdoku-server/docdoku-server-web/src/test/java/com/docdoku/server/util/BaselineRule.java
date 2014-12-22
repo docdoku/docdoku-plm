@@ -5,6 +5,7 @@ import com.docdoku.core.common.Workspace;
 import com.docdoku.core.configuration.BaselineCreation;
 import com.docdoku.core.configuration.ProductBaseline;
 import com.docdoku.core.product.*;
+import com.docdoku.core.security.ACL;
 import org.junit.Test;
 import org.junit.rules.MethodRule;
 import org.junit.rules.TestRule;
@@ -30,7 +31,7 @@ public class BaselineRule implements TestRule {
     private ConfigurationItemKey configurationItemKey;
     private ConfigurationItem configurationItem;
 
-    public BaselineRule(String baselineName,ProductBaseline.BaselineType type,String description,String workspaceId,String login,String partId,String productId,boolean released){
+    public BaselineRule(String baselineName,ProductBaseline.BaselineType type,String description,String workspaceId,String login,String partId,String productId,boolean released,ACL.Permission permission){
         name = baselineName;
         this.type = type;
         this.description = description;
@@ -47,6 +48,9 @@ public class BaselineRule implements TestRule {
             iterationLists.add(new PartIteration(revision, 1, user1));
             revision.setPartIterations(iterationLists);
             revision.setStatus(PartRevision.RevisionStatus.RELEASED);
+            ACL acl = new ACL();
+            acl.addEntry(user1,permission);
+            revision.setACL(acl);
             revisions.add(revision);
             partMaster.setPartRevisions(revisions);
         }
@@ -55,8 +59,11 @@ public class BaselineRule implements TestRule {
     }
 
     public BaselineRule(String baselineName,ProductBaseline.BaselineType type,String description,String workspaceId,String login,String partId,String productId,boolean released,boolean checkouted){
-        this(baselineName,type,description,workspaceId,login,partId,productId,released);
-        this.partMaster.getLastReleasedRevision().getIteration(1).getPartRevision().setCheckOutUser(this.user1);
+        this(baselineName,type,description,workspaceId,login,partId,productId,released,null);
+        if (checkouted){
+            this.partMaster.getLastReleasedRevision().getIteration(1).getPartRevision().setCheckOutUser(this.user1);
+        }
+
 
             }
 
