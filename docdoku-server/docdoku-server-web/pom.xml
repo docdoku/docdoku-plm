@@ -67,10 +67,13 @@
             <version>4.11</version>
         </dependency>
 
-
-
-
-
+        <dependency>
+            <groupId>org.glassfish</groupId>
+            <artifactId>javax.json</artifactId>
+            <version>1.0.4</version>
+            <type>jar</type>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
