@@ -23,7 +23,7 @@ module.exports = {
         "js/auth/login.js",
         "js/pre/clean.js",
 
-        // Create entities
+        //Create entities
         "js/product-management/part/partCreation.js",
         "js/product-management/part/partCheckin.js",
         "js/product-management/part/showPartDetails.js",
@@ -35,6 +35,9 @@ module.exports = {
 
         "js/document-management/folder/folderCreation.js",
         "js/document-management/document/documentCreation.js",
+        "js/document-management/document/documentCheckin.js",
+        "js/document-management/share/sharedDocumentCreation.js",
+        "js/document-management/share/publicSharedDocument.js",
 
         "js/change-management/issue/issueCreation.js",
         "js/change-management/request/requestCreation.js",
