@@ -15,7 +15,10 @@ var documents = {
 	},
 	folder1: 'CasperJsTestFolder',
 	document1 : {
-		number : '000-AAA-CasperJsTestDocument'
+		number : '000-AAA-CasperJsTestDocument',
+        iterationNote:'This is the first iteration',
+        sharedPassword:'azertyuiop',
+        expireDate:'2014-12-23'
 	}
 };
 
@@ -28,7 +31,7 @@ var products = {
 	part1 : {
 		number : '000-AAA-CasperJsTestPart',
 		name : 'CasperJsTestPart',
-        iterationNode:'This is the first iteration'
+        iterationNote:'This is the first iteration'
 	},
 	product1: {
 		number : '000-AAA-CasperJsTestProduct',
@@ -99,18 +102,19 @@ var workflows = {
 };
 
 var urls = {
-	productManagement : homeUrl+'/product-management/#'+workspace,
-	documentManagement : homeUrl+'/document-management/#'+workspace,
-	changeManagement : homeUrl+'/change-management/#'+workspace
+	productManagement : homeUrl+'product-management/#'+workspace,
+	documentManagement : homeUrl+'document-management/#'+workspace,
+	changeManagement : homeUrl+'change-management/#'+workspace,
+    documentPermalink:homeUrl+'documents/'+workspace+'/'+documents.document1.number+'/A'
 };
 
 var apiUrls = {
-	userInfo : homeUrl+'/api/workspaces/'+workspace+'/users/me',
-	deletePart : homeUrl+'/api/workspaces/'+workspace+'/parts/'+products.part1.number+'-A',
-    deletePartTemplate : homeUrl+'/api/workspaces/'+workspace+'/part-templates/'+products.template1.number,
-	deleteDocument : homeUrl+'/api/workspaces/'+workspace+'/documents/'+documents.document1.number+'-A',
-	deleteProduct : homeUrl+'/api/workspaces/'+workspace+'/products/'+products.product1.number,
-	deleteFolder : homeUrl+'/api/workspaces/'+workspace+'/folders/'+workspace+":"+documents.folder1,
-	getBaselines : homeUrl+'/api/workspaces/'+workspace+'/products/'+products.product1.number+'/baselines',
-    deleteProductInstance : homeUrl+'/api/workspaces/'+workspace+'/products/'+products.product1.number+'/product-instances/'+productInstances.productInstance1.serialNumber
+	userInfo : homeUrl+'api/workspaces/'+workspace+'/users/me',
+	deletePart : homeUrl+'api/workspaces/'+workspace+'/parts/'+products.part1.number+'-A',
+    deletePartTemplate : homeUrl+'api/workspaces/'+workspace+'/part-templates/'+products.template1.number,
+	deleteDocument : homeUrl+'api/workspaces/'+workspace+'/documents/'+documents.document1.number+'-A',
+	deleteProduct : homeUrl+'api/workspaces/'+workspace+'/products/'+products.product1.number,
+	deleteFolder : homeUrl+'api/workspaces/'+workspace+'/folders/'+workspace+":"+documents.folder1,
+	getBaselines : homeUrl+'api/workspaces/'+workspace+'/products/'+products.product1.number+'/baselines',
+    deleteProductInstance : homeUrl+'api/workspaces/'+workspace+'/products/'+products.product1.number+'/product-instances/'+productInstances.productInstance1.serialNumber
 };
