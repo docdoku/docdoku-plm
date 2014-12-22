@@ -1,69 +1,69 @@
-/*global casper,urls,workspace,documents*/
+/*global casper,urls,workspace,parts*/
 
-casper.test.begin('Shared document creation tests suite',2, function sharedDocumentCreationTestsSuite(){
+casper.test.begin('Shared part creation tests suite',2, function sharedPartCreationTestsSuite(){
 
     'use strict';
 
     casper.open('');
 
     /**
-     * Open document management URL
+     * Open product management URL
      * */
 
     casper.then(function(){
-        this.open(urls.documentManagement);
+        this.open(urls.productManagement);
     });
 
     /**
-     * Open folder nav
+     * Go to part nav
      */
-
-    casper.then(function waitForFolderNavLink(){
-        this.waitForSelector('a[href="#'+workspace+'/folders/'+documents.folder1+'"]',function(){
-            this.click('a[href="#'+workspace+'/folders/'+documents.folder1+'"]');
-        },function fail() {
-            this.capture('screenshot/sharedDocumentCreation/waitForFolderNavLink-error.png');
-            this.test.assert(false,'Folder nav link can not be found');
+    casper.then(function waitForPartNavLink(){
+        this.waitForSelector('#part-nav > .nav-list-entry > a',function clickPartNavLink() {
+            this.click('#part-nav > .nav-list-entry > a');
+        },function fail(){
+            this.capture('screenshot/sharedPartCreation/waitForPartNavLink-error.png');
+            this.test.assert(false,'Part nav link can not be found');
         });
     });
 
     /**
-     * Find the shared document link in the document list
+     * Find the shared part link in the part list
      */
 
-    casper.then(function waitForDocumentList(){
-        var link = '#document-management-content table.dataTable tbody tr:first-child td.document-master-share i';
+    casper.then(function waitForPartList(){
+        var link = '#part_table tbody tr:first-child td.part-revision-share i';
         this.waitForSelector(link,function onLinkFound(){
             this.click(link);
         },function fail(){
-            this.capture('screenshot/sharedDocumentCreation/waitForFolderNavLink-error.png');
-            this.test.assert(false,'Shared document modal can not be found');
+            this.capture('screenshot/sharedPartCreation/waitForPartList-error.png');
+            this.test.assert(false,'Shared part modal can not be found');
         });
     });
 
     /**
      * Wait for modal
      */
-    casper.then(function waitForSharedDocumentCreationModal(){
+    casper.then(function waitForSharedPartCreationModal(){
         this.waitForSelector('#share-modal',function modalOpened(){
-            this.test.assert(true,'Shared document modal is opened');
+            this.test.assert(true,'Shared part modal is opened');
         },function fail() {
-            this.capture('screenshot/sharedDocumentCreation/waitForSharedDocumentCreationModal-error.png');
-            this.test.assert(false,'Shared document modal can not be found');
+            this.capture('screenshot/sharedPartCreation/waitForSharedPartCreationModal-error.png');
+            this.test.assert(false,'Shared part modal can not be found');
         });
     });
 
     /**
-     * Set the document as public
+     * Set the part as public
      */
-    casper.then(function setDocumentAsPublicShared(){
-
+    casper.then(function setPartAsPublicShared(){
+        this.capture('screenshot/sharedPartCreation/before-switch.png');
         this.click('#share-modal .public-shared-switch .switch-off input');
         this.waitForSelector('#share-modal .public-shared-switch .switch-on',function publicSharedCreated(){
-            this.test.assert(true,'Document is now public shared');
+            this.capture('screenshot/sharedPartCreation/after-switch.png');
+            this.test.assert(true,'Part is now public shared');
         },function fail(){
-            this.capture('screenshot/sharedDocumentCreation/setDocumentAsPublicShared-error.png');
-            this.test.assert(false,'Shared document cannot be shared as public');
+            this.capture('screenshot/sharedPartCreation/setPartAsPublicShared-error.png');
+            this.test.assert(false,'Shared part cannot be shared as public');
         });
 
     });
@@ -72,10 +72,11 @@ casper.test.begin('Shared document creation tests suite',2, function sharedDocum
     /**
      * Create a private share, with expire date and password
      */
-    casper.then(function createDocumentPrivateShare(){
-        this.sendKeys('#private-share .password',documents.document1.sharedPassword,{reset:true});
-        this.sendKeys('#private-share .confirm-password',documents.document1.sharedPassword,{reset:true});
-        this.sendKeys('#private-share .expire-date',documents.document1.expireDate,{reset:true});
+    casper.then(function createPartPrivateShare(){
+        this.sendKeys('#private-share .password',products.part1.sharedPassword,{reset:true});
+        this.sendKeys('#private-share .confirm-password',products.part1.sharedPassword,{reset:true});
+        this.sendKeys('#private-share .expire-date',products.part1.expireDate,{reset:true});
+        this.capture('screenshot/sharedPartCreation/before-send.png');
         this.click('#private-share #generate-private-share');
         this.test.assert(true,'Private share created');
     });
@@ -84,15 +85,15 @@ casper.test.begin('Shared document creation tests suite',2, function sharedDocum
     /**
     * Close the modal
     */
-    casper.then(function closeSharedDocumentModal(){
+    casper.then(function closeSharedPartModal(){
 
         this.click('#share-modal > div.modal-header > button');
 
         this.waitWhileSelector('#share-modal',function modalClosed(){
-            this.test.assert(true,'Shared document modal closed');
+            this.test.assert(true,'Shared part modal closed');
         },function fail(){
-            this.capture('screenshot/sharedDocumentCreation/closeSharedDocumentModal-error.png');
-            this.test.assert(false,'Shared document modal cannot be closed');
+            this.capture('screenshot/sharedPartCreation/closeSharedPartModal-error.png');
+            this.test.assert(false,'Shared part modal cannot be closed');
         });
 
     });

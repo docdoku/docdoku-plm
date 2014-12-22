@@ -31,7 +31,9 @@ var products = {
 	part1 : {
 		number : '000-AAA-CasperJsTestPart',
 		name : 'CasperJsTestPart',
-        iterationNote:'This is the first iteration'
+        iterationNote:'This is the first iteration',
+        sharedPassword:'azertyuiop',
+        expireDate:'2014-12-23'
 	},
 	product1: {
 		number : '000-AAA-CasperJsTestProduct',
