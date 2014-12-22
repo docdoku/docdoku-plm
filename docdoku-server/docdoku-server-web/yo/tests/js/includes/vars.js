@@ -34,6 +34,12 @@ var products = {
 	}
 };
 
+var productInstances = {
+    productInstance1 : {
+        serialNumber:'CasperJsTestSerialNumber'
+    }
+};
+
 var baselines = {
     baseline1:{
         name: '000-AAA-CasperJsTestBaseline',
@@ -88,7 +94,7 @@ var workflows = {
             }
         }
     }
-}
+};
 
 var urls = {
 	productManagement : homeUrl+'/product-management/#'+workspace,
@@ -101,5 +107,7 @@ var apiUrls = {
 	deletePart : homeUrl+'/api/workspaces/'+workspace+'/parts/'+products.part1.number+'-A',
 	deleteDocument : homeUrl+'/api/workspaces/'+workspace+'/documents/'+documents.document1.number+'-A',
 	deleteProduct : homeUrl+'/api/workspaces/'+workspace+'/products/'+products.product1.number,
-	deleteFolder : homeUrl+'/api/workspaces/'+workspace+'/folders/'+workspace+":"+documents.folder1
+	deleteFolder : homeUrl+'/api/workspaces/'+workspace+'/folders/'+workspace+":"+documents.folder1,
+	getBaselines : homeUrl+'/api/workspaces/'+workspace+'/products/'+products.product1.number+'/baselines',
+    deleteProductInstance : homeUrl+'/api/workspaces/'+workspace+'/products/'+products.product1.number+'/product-instances/'+productInstances.productInstance1.serialNumber
 };

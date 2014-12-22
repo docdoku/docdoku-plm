@@ -27,9 +27,9 @@ module.exports = {
         "js/product-management/part/partCheckin.js",
         "js/product-management/part/showPartDetails.js",
         "js/product-management/product/productCreation.js",
-
         "js/product-management/baseline/baselineCreation.js",
         "js/product-management/baseline/baselineDuplication.js",
+        "js/product-management/product-instance/productInstanceCreation.js",
 
         "js/document-management/folder/folderCreation.js",
         "js/document-management/document/documentCreation.js",
@@ -48,9 +48,9 @@ module.exports = {
         "js/document-management/template/templateDeletion.js",
         "js/document-management/folder/folderDeletion.js",
 
+        "js/product-management/product-instance/productInstanceDeletion.js",
         "js/product-management/baseline/baselineDeletion.js",
         "js/product-management/product/productDeletion.js",
         "js/product-management/part/partDeletion.js"
-
     ]
 };

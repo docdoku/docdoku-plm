@@ -5,8 +5,9 @@ casper.options.viewportSize = {
     width: 1680,
     height: 1050
 };
-casper.options.waitTimeout = 10000;
-casper.options.timeout = 60000;
+
+casper.options.waitTimeout = 10 * 1000; // 10 seconds
+casper.options.timeout =  5 * 60 * 1000; // 5 minutes
 
 casper.start();
 
