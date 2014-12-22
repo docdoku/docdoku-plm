@@ -21,7 +21,9 @@ var documents = {
 
 var products = {
 	template1 : {
-		number : 'CasperJsTestPartTemplate'
+        number : 'CasperJsTestPartTemplate',
+        type : 'CasperJsTestPartType',
+        mask:'FAX_***_##'
 	},
 	part1 : {
 		number : '000-AAA-CasperJsTestPart',
@@ -105,6 +107,7 @@ var urls = {
 var apiUrls = {
 	userInfo : homeUrl+'/api/workspaces/'+workspace+'/users/me',
 	deletePart : homeUrl+'/api/workspaces/'+workspace+'/parts/'+products.part1.number+'-A',
+    deletePartTemplate : homeUrl+'/api/workspaces/'+workspace+'/part-templates/'+products.template1.number,
 	deleteDocument : homeUrl+'/api/workspaces/'+workspace+'/documents/'+documents.document1.number+'-A',
 	deleteProduct : homeUrl+'/api/workspaces/'+workspace+'/products/'+products.product1.number,
 	deleteFolder : homeUrl+'/api/workspaces/'+workspace+'/folders/'+workspace+":"+documents.folder1,

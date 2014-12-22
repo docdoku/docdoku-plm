@@ -86,6 +86,19 @@ casper.test.begin('Cleaning potential data', 0, function cleanTestsSuite() {
 
     });
 
+    // Part templates
+    casper.then(function cleanupPartTemplates() {
+
+        this.open(apiUrls.deletePartTemplate, {method: 'DELETE'}).then(function (response) {
+            if (response.status === 200) {
+                this.log('Test part templates has been deleted', 'info');
+            } else {
+                this.log('Cannot delete test part templates, reason : ' + helpers.findReasonInResponseHeaders(response.headers), 'warning');
+            }
+        });
+
+    });
+
     casper.run(function allDone(){
         this.test.done();
     });
