@@ -23,9 +23,12 @@ module.exports = {
         "js/auth/login.js",
         "js/pre/clean.js",
 
-        //Create entities
+        // Creations
         "js/product-management/part/partCreation.js",
         "js/product-management/part/partCheckin.js",
+        "js/product-management/share/sharedPartCreation.js",
+        "js/product-management/share/publicSharedPart.js",
+        "js/product-management/share/privateSharedPart.js",
         "js/product-management/part/showPartDetails.js",
         "js/product-management/product/productCreation.js",
         "js/product-management/baseline/baselineCreation.js",
@@ -38,6 +41,7 @@ module.exports = {
         "js/document-management/document/documentCheckin.js",
         "js/document-management/share/sharedDocumentCreation.js",
         "js/document-management/share/publicSharedDocument.js",
+        "js/document-management/share/privateSharedDocument.js",
 
         "js/change-management/issue/issueCreation.js",
         "js/change-management/request/requestCreation.js",
@@ -46,7 +50,8 @@ module.exports = {
         "js/change-management/role/roleCreation.js",
         "js/change-management/workflow/workflowCreation.js",
 
-        //Deletions
+
+        // Deletions
         "js/document-management/document/documentDeletion.js",
         "js/document-management/template/templateCreation.js",
         "js/document-management/template/templateDeletion.js",

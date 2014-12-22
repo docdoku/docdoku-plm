@@ -31,7 +31,9 @@ var products = {
 	part1 : {
 		number : '000-AAA-CasperJsTestPart',
 		name : 'CasperJsTestPart',
-        iterationNote:'This is the first iteration'
+        iterationNote:'This is the first iteration',
+        sharedPassword:'azertyuiop',
+        expireDate:'2014-12-23'
 	},
 	product1: {
 		number : '000-AAA-CasperJsTestProduct',
@@ -105,7 +107,11 @@ var urls = {
 	productManagement : homeUrl+'product-management/#'+workspace,
 	documentManagement : homeUrl+'document-management/#'+workspace,
 	changeManagement : homeUrl+'change-management/#'+workspace,
-    documentPermalink:homeUrl+'documents/'+workspace+'/'+documents.document1.number+'/A'
+    documentPermalink:homeUrl+'documents/'+workspace+'/'+documents.document1.number+'/A',
+    partPermalink:homeUrl+'parts/'+workspace+'/'+products.part1.number+'/A',
+    // Set on share creation
+    privateDocumentPermalink:null,
+    createPartPrivateShare:null
 };
 
 var apiUrls = {
