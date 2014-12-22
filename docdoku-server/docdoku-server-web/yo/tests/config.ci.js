@@ -23,6 +23,7 @@ module.exports = {
         "js/auth/login.js",
         "js/pre/clean.js",
 
+        // Create entities
         "js/product-management/part/partCreation.js",
         "js/product-management/part/partCheckin.js",
         "js/product-management/part/showPartDetails.js",
@@ -34,20 +35,25 @@ module.exports = {
 
         "js/document-management/folder/folderCreation.js",
         "js/document-management/document/documentCreation.js",
-        "js/document-management/document/documentDeletion.js",
-        "js/document-management/template/templateCreation.js",
 
         "js/change-management/issue/issueCreation.js",
         "js/change-management/request/requestCreation.js",
         "js/change-management/order/orderCreation.js",
         "js/change-management/milestone/milestoneCreation.js",
-
         "js/change-management/role/roleCreation.js",
         "js/change-management/workflow/workflowCreation.js",
-        "js/change-management/workflow/workflowDeletion.js",
 
+        //Deletions
+        "js/document-management/document/documentDeletion.js",
+        "js/document-management/template/templateCreation.js",
         "js/document-management/template/templateDeletion.js",
         "js/document-management/folder/folderDeletion.js",
+
+        "js/change-management/workflow/workflowDeletion.js",
+        "js/change-management/issue/issueDeletion.js",
+        "js/change-management/milestone/milestoneDeletion.js",
+        "js/change-management/order/orderDeletion.js",
+        "js/change-management/request/requestDeletion.js",
 
         "js/product-management/product-instance/productInstanceDeletion.js",
         "js/product-management/baseline/baselineDeletion.js",

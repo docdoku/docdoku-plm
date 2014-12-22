@@ -1,4 +1,4 @@
-/*global _,define,App*/
+/*global _,define,App,bootbox*/
 define([
     'backbone',
     'mustache',
@@ -132,8 +132,8 @@ define([
 
         deleteSelectedMilestones: function () {
             var that = this;
-            if (confirm('Delete Milestones')) {
-                _(this.listItemViews).each(function (view) {
+            bootbox.confirm(App.config.i18n.CONFIRM_DELETE_ISSUE, function(result){
+                _(that.listItemViews).each(function (view) {
                     if (view.isChecked()) {
                         view.model.destroy({
                             dataType: 'text', // server doesn't send a json hash in the response body
@@ -148,7 +148,8 @@ define([
                         });
                     }
                 });
-            }
+            });
+
         },
 
         redraw: function () {
