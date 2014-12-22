@@ -71,7 +71,7 @@ module.exports = {
         "js/product-management/baseline/baselineDeletion.js",
         "js/product-management/product/productDeletion.js",
         "js/product-management/part/partDeletion.js",
-        "js/product-management/template/partTemplateDeletion.js",
+        "js/product-management/template/partTemplateDeletion.js"
 
     ]
 };

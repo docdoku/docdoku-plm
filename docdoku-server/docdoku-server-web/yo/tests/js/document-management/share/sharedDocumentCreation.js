@@ -87,7 +87,7 @@ casper.test.begin('Shared document creation tests suite',4, function sharedDocum
         },function fail(){
             this.capture('screenshot/sharedDocumentCreation/createDocumentPrivateShare-error.png');
             this.test.assert(false,'Shared document cannot be shared as private');
-        })
+        });
     });
 
 

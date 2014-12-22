@@ -1,4 +1,4 @@
-/*global casper,urls,workspace,parts*/
+/*global casper,urls,workspace,parts,products*/
 
 casper.test.begin('Shared part creation tests suite',4, function sharedPartCreationTestsSuite(){
 
@@ -56,10 +56,8 @@ casper.test.begin('Shared part creation tests suite',4, function sharedPartCreat
      * Set the part as public
      */
     casper.then(function setPartAsPublicShared(){
-        this.capture('screenshot/sharedPartCreation/before-switch.png');
         this.click('#share-modal .public-shared-switch .switch-off input');
         this.waitForSelector('#share-modal .public-shared-switch .switch-on',function publicSharedCreated(){
-            this.capture('screenshot/sharedPartCreation/after-switch.png');
             this.test.assert(true,'Part is now public shared');
         },function fail(){
             this.capture('screenshot/sharedPartCreation/setPartAsPublicShared-error.png');
@@ -86,7 +84,7 @@ casper.test.begin('Shared part creation tests suite',4, function sharedPartCreat
         },function fail(){
             this.capture('screenshot/sharedPartCreation/createPartPrivateShare-error.png');
             this.test.assert(false,'Shared part cannot be shared as private');
-        })
+        });
     });
 
 

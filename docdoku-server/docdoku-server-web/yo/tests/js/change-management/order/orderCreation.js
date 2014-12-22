@@ -1,4 +1,4 @@
-/*global casper*/
+/*global casper,urls,workspace,changeItems*/
 
 casper.test.begin('Change order creation tests suite',3, function changeOrderCreationTestsSuite(){
 
@@ -29,9 +29,17 @@ casper.test.begin('Change order creation tests suite',3, function changeOrderCre
     /**
      * Open order creation modal
      */
-    casper.then(function clickOnChangeOrderCreationLink(){
-        this.click('.actions .new-order');
+    casper.then(function openNewChangeOrderModal(){
+        this.waitForSelector('.actions .new-order',
+            function clickOnChangeOrderCreationLink(){
+                this.click('.actions .new-order');
+            },function fail(){
+                this.capture('screenshot/orderCreation/openNewChangeOrderModal-error.png');
+                this.test.assert(false,'New order button can not be found');
+            }
+        );
     });
+
 
     /**
      * Try to create an order without a name

@@ -1,4 +1,4 @@
-/*global casper*/
+/*global casper,urls,workspace*/
 
 casper.test.begin('Change issue deletion tests suite',2, function changeIssueDeletionTestsSuite(){
 

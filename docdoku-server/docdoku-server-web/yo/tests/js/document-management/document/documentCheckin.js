@@ -45,7 +45,6 @@ casper.test.begin('Document checkin tests suite', 1, function documentCheckinTes
      */
     casper.then(function waitForCheckinButton(){
         this.waitForSelector('.actions .checkin',function clickOnCheckinButton() {
-            this.capture('screenshot/debug/iteration-note-before-click.png');
             this.click('.actions .checkin');
         },function fail() {
             this.capture('screenshot/documentCheckin/waitForCheckinButton-error.png');

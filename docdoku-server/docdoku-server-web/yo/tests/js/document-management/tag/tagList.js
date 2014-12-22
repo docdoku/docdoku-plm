@@ -1,4 +1,4 @@
-/*global casper,urls,documents*/
+/*global casper,urls,workspace,documents*/
 
 casper.test.begin('Document tag list tests suite',1, function documentTagListTestsSuite(){
 
@@ -34,7 +34,6 @@ casper.test.begin('Document tag list tests suite',1, function documentTagListTes
     casper.then(function countTags(){
         this.waitForSelector('#tag-nav > ul > li.tag',function(){
             this.test.assertElementCount('#tag-nav > ul > li.tag',2,'Should have 2 tags created');
-            this.capture('screenshot/debug/tag1.png')
         },function fail() {
             this.capture('screenshot/tagList/countTags-error.png');
             this.test.assert(false,'Tags links can not be found');

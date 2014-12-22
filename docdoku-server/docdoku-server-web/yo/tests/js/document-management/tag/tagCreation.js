@@ -23,7 +23,7 @@ casper.test.begin('Document tag creation tests suite',6, function documentTagCre
         },function fail(){
             this.capture('screenshot/documentTagCreation/openTagCreationModal-error.png');
             this.test.assert(false,'Tag creation button can not be found');
-        })
+        });
     });
 
 
@@ -36,7 +36,7 @@ casper.test.begin('Document tag creation tests suite',6, function documentTagCre
         },function fail(){
             this.capture('screenshot/documentTagCreation/waitTagCreationModal-error.png');
             this.test.assert(false,'Tag creation modal can not be found');
-        })
+        });
     });
 
     /**

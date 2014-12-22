@@ -23,7 +23,7 @@ casper.test.begin('Document tag deletion tests suite',1, function documentTagDel
         },function fail(){
             this.capture('screenshot/documentTagDeletion/openTagCreationModal-error.png');
             this.test.assert(false,'Tag deletion button can not be found');
-        })
+        });
     });
 
 
@@ -55,7 +55,7 @@ casper.test.begin('Document tag deletion tests suite',1, function documentTagDel
         },function fail(){
             this.capture('screenshot/documentTagDeletion/waitTagCreationModal-error.png');
             this.test.assert(false,'Tag modal can not be found');
-        })
+        });
     });
 
     /**

@@ -1,7 +1,6 @@
-/*global casper*/
+/*global casper,urls,workspace,changeItems*/
 
 casper.test.begin('Change request creation tests suite',3, function changeRequestCreationTestsSuite(){
-
     'use strict';
 
     casper.open('');
@@ -29,8 +28,15 @@ casper.test.begin('Change request creation tests suite',3, function changeReques
     /**
      * Open request creation modal
      */
-    casper.then(function clickOnChangeRequestCreationLink(){
-        this.click('.actions .new-request');
+    casper.then(function openNewChangeRequestModal(){
+        this.waitForSelector('.actions .new-request',
+            function clickOnChangeRequestCreationLink(){
+                this.click('.actions .new-request');
+            },function fail(){
+                this.capture('screenshot/requestCreation/openNewChangeRequestModal-error.png');
+                this.test.assert(false,'New request button can not be found');
+            }
+        );
     });
 
     /**

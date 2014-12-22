@@ -58,7 +58,7 @@ casper.test.begin('Part checkin tests suite', 1, function partCheckinTestsSuite(
             this.wait(200,function(){
                 this.sendKeys('#prompt_modal #prompt_input', products.part1.iterationNote, {reset:true});
                 this.click('#prompt_modal .modal-footer .btn-primary');
-            })
+            });
         },function fail() {
             this.capture('screenshot/partCheckin/waitForIterationNotePrompt-error.png');
             this.test.assert(false,'Iteration note modal not found');

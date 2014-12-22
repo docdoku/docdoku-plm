@@ -1,4 +1,4 @@
-/*global casper,urls,workspace,documents*/
+/*global casper,urls,workspace,products*/
 
 casper.test.begin('Private shared part tests suite',3, function privateSharedPartTestsSuite(){
 

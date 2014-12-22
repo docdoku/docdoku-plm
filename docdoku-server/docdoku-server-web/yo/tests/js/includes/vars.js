@@ -62,12 +62,6 @@ var baselines = {
     }
 };
 
-var workflows = {
-	role1 : 'CasperJsRole1',
-	role2 : 'CasperJsRole2',
-	role3 : 'CasperJsRole3'
-};
-
 var changeItems = {
 	changeIssue1 : {
 		number : 'CasperJsTestIssue'
@@ -91,6 +85,9 @@ var roles = {
 };
 
 var workflows = {
+    role1 : 'CasperJsRole1',
+    role2 : 'CasperJsRole2',
+    role3 : 'CasperJsRole3',
     workflow1:{
         name:'CasperJsTestWorkflow',
         finalState:'CasperJsFinalState',

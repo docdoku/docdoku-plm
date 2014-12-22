@@ -1,4 +1,4 @@
-/*global casper*/
+/*global casper,urls,workspace,changeItems*/
 
 casper.test.begin('Change issue creation tests suite',3, function changeIssueCreationTestsSuite(){
 
@@ -29,8 +29,15 @@ casper.test.begin('Change issue creation tests suite',3, function changeIssueCre
     /**
      * Open issue creation modal
      */
-    casper.then(function clickOnChangeIssueCreationLink(){
-        this.click('.actions .new-issue');
+    casper.then(function openNewChangeIssueModal(){
+        this.waitForSelector('.actions .new-issue',
+            function clickOnChangeIssueCreationLink(){
+                this.click('.actions .new-issue');
+            },function fail(){
+                this.capture('screenshot/issueCreation/openNewChangeIssueModal-error.png');
+                this.test.assert(false,'New issue button can not be found');
+            }
+        );
     });
 
     /**
