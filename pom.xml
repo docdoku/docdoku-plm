@@ -82,7 +82,8 @@
                         <version>2.16</version>
                         <configuration>
                             <!-- run fast tests only-->
-                            <groups>com.docdoku.server.util.FastTestCategory</groups>
+                            <skipTests>true</skipTests>
+                            <!--<groups>com.docdoku.server.util.FastTestCategory</groups>-->
                         </configuration>
                     </plugin>
                 </plugins>

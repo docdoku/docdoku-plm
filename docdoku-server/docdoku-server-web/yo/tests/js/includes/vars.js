@@ -19,7 +19,11 @@ var documents = {
         iterationNote:'This is the first iteration',
         sharedPassword:'azertyuiop',
         expireDate:'2014-12-23'
-	}
+	},
+    tags:{
+        tag1:'Foo',
+        tag2:'Bar'
+    }
 };
 
 var products = {
