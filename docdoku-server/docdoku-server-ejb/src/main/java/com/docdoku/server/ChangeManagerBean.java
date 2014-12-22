@@ -115,10 +115,10 @@ public class ChangeManagerBean implements IChangeManagerLocal {
         User user = userManager.checkWorkspaceWriteAccess(pWorkspaceId);                                                // Check the write access to the workspace
         User assigneeUser = null;
         if(assignee != null && pWorkspaceId != null){
-            assigneeUser = em.getReference(User.class, new UserKey(pWorkspaceId,assignee));
+            assigneeUser = em.find(User.class, new UserKey(pWorkspaceId,assignee));
         }
         ChangeIssue change = new ChangeIssue(name,                                                                      // Create the Change-Issue =>   The Change-Issue's name
-                                            user.getWorkspace(),                                                        //                              The Change-Issue's worspace
+                                            user.getWorkspace(),                                                        //                              The Change-Issue's workspace
                                             user,                                                                       //                              The Change-Issue's author
                                             assigneeUser,                                                               //                              The Change-Issue's assignee
                                             new Date(),                                                                 //                              The Change-Issue's creation date
@@ -139,7 +139,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
         changeIssue.setDescription(description);                                                                        // Update the Change-Issue attributes
         changeIssue.setPriority(priority);
         changeIssue.setCategory(category);
-        changeIssue.setAssignee(em.getReference(User.class, new UserKey(pWorkspaceId, assignee)));
+        changeIssue.setAssignee(em.find(User.class, new UserKey(pWorkspaceId, assignee)));
         return changeIssue;
     }
 
@@ -289,7 +289,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
         User user = userManager.checkWorkspaceWriteAccess(pWorkspaceId);                                                // Check the write access to the workspace
         User assigneeUser = null;
         if(assignee != null && pWorkspaceId != null){
-            assigneeUser = em.getReference(User.class, new UserKey(pWorkspaceId,assignee));
+            assigneeUser = em.find(User.class, new UserKey(pWorkspaceId,assignee));
         }
         ChangeRequest changeRequest = new ChangeRequest(name,                                                           // Create the Change-Request => The Change-Request's name
                                                  user.getWorkspace(),                                                   //                              The Change-Request's workspace
@@ -313,7 +313,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
         changeRequest.setDescription(description);                                                                      // Update the Change-Request attributes
         changeRequest.setPriority(priority);
         changeRequest.setCategory(category);
-        changeRequest.setAssignee(em.getReference(User.class, new UserKey(pWorkspaceId, assignee)));
+        changeRequest.setAssignee(em.find(User.class, new UserKey(pWorkspaceId, assignee)));
         changeRequest.setMilestone(em.find(Milestone.class,milestoneId));
         return changeRequest;
     }
@@ -463,7 +463,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
         User user = userManager.checkWorkspaceWriteAccess(pWorkspaceId);                                                // Check the write access to the workspace
         User assigneeUser = null;
         if(assignee != null && pWorkspaceId != null){
-            assigneeUser = em.getReference(User.class, new UserKey(pWorkspaceId,assignee));
+            assigneeUser = em.find(User.class, new UserKey(pWorkspaceId,assignee));
         }
         ChangeOrder changeOrder = new ChangeOrder(name,                                                                 // Create the Change-Order => The Change-Order's name
                                                  user.getWorkspace(),                                                   //                            The Change-Order's workspace
@@ -487,11 +487,10 @@ public class ChangeManagerBean implements IChangeManagerLocal {
         changeOrder.setDescription(description);                                                                        // Update the Change-Order attributes
         changeOrder.setPriority(priority);
         changeOrder.setCategory(category);
-        changeOrder.setAssignee(em.getReference(User.class, new UserKey(pWorkspaceId, assignee)));
+        changeOrder.setAssignee(em.find(User.class, new UserKey(pWorkspaceId, assignee)));
         changeOrder.setMilestone(em.find(Milestone.class,milestoneId));
         return changeOrder;
     }
-
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
@@ -954,13 +953,13 @@ public class ChangeManagerBean implements IChangeManagerLocal {
         ACL acl = new ACL();
         if (pUserEntries != null) {
             for (Map.Entry<String, String> entry : pUserEntries.entrySet()) {
-                acl.addEntry(em.getReference(User.class, new UserKey(pWorkspaceId, entry.getKey())),
+                acl.addEntry(em.find(User.class, new UserKey(pWorkspaceId, entry.getKey())),
                         ACL.Permission.valueOf(entry.getValue()));
             }
         }
         if (pGroupEntries != null) {
             for (Map.Entry<String, String> entry : pGroupEntries.entrySet()) {
-                acl.addEntry(em.getReference(UserGroup.class,new UserGroupKey(pWorkspaceId,entry.getKey())),
+                acl.addEntry(em.find(UserGroup.class,new UserGroupKey(pWorkspaceId,entry.getKey())),
                         ACL.Permission.valueOf(entry.getValue()));
             }
         }

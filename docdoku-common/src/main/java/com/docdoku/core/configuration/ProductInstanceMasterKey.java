@@ -71,10 +71,8 @@ public class ProductInstanceMasterKey implements Serializable {
 
         ProductInstanceMasterKey that = (ProductInstanceMasterKey) o;
 
-        if (!instanceOf.equals(that.instanceOf)) return false;
-        if (!serialNumber.equals(that.serialNumber)) return false;
+        return instanceOf.equals(that.instanceOf) && serialNumber.equals(that.serialNumber);
 
-        return true;
     }
 
     @Override
