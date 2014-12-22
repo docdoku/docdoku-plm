@@ -107,7 +107,11 @@ var urls = {
 	productManagement : homeUrl+'product-management/#'+workspace,
 	documentManagement : homeUrl+'document-management/#'+workspace,
 	changeManagement : homeUrl+'change-management/#'+workspace,
-    documentPermalink:homeUrl+'documents/'+workspace+'/'+documents.document1.number+'/A'
+    documentPermalink:homeUrl+'documents/'+workspace+'/'+documents.document1.number+'/A',
+    partPermalink:homeUrl+'parts/'+workspace+'/'+products.part1.number+'/A',
+    // Set on share creation
+    privateDocumentPermalink:null,
+    createPartPrivateShare:null
 };
 
 var apiUrls = {

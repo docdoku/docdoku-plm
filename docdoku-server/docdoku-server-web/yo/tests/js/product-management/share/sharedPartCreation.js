@@ -1,6 +1,6 @@
 /*global casper,urls,workspace,parts*/
 
-casper.test.begin('Shared part creation tests suite',2, function sharedPartCreationTestsSuite(){
+casper.test.begin('Shared part creation tests suite',4, function sharedPartCreationTestsSuite(){
 
     'use strict';
 
@@ -76,9 +76,17 @@ casper.test.begin('Shared part creation tests suite',2, function sharedPartCreat
         this.sendKeys('#private-share .password',products.part1.sharedPassword,{reset:true});
         this.sendKeys('#private-share .confirm-password',products.part1.sharedPassword,{reset:true});
         this.sendKeys('#private-share .expire-date',products.part1.expireDate,{reset:true});
-        this.capture('screenshot/sharedPartCreation/before-send.png');
+
         this.click('#private-share #generate-private-share');
-        this.test.assert(true,'Private share created');
+
+        this.waitForSelector('#private-share > div > div > a',function onLinkGenerated(){
+            var url =  this.fetchText('#private-share > div > div > a') ;
+            urls.privatePartPermalink = url;
+            this.test.assert(true,'Private share created : ' + url);
+        },function fail(){
+            this.capture('screenshot/sharedPartCreation/createPartPrivateShare-error.png');
+            this.test.assert(false,'Shared part cannot be shared as private');
+        })
     });
 
 

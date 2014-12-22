@@ -1,6 +1,6 @@
 /*global casper,urls,workspace,documents*/
 
-casper.test.begin('Shared document creation tests suite',2, function sharedDocumentCreationTestsSuite(){
+casper.test.begin('Shared document creation tests suite',4, function sharedDocumentCreationTestsSuite(){
 
     'use strict';
 
@@ -73,11 +73,21 @@ casper.test.begin('Shared document creation tests suite',2, function sharedDocum
      * Create a private share, with expire date and password
      */
     casper.then(function createDocumentPrivateShare(){
+
         this.sendKeys('#private-share .password',documents.document1.sharedPassword,{reset:true});
         this.sendKeys('#private-share .confirm-password',documents.document1.sharedPassword,{reset:true});
         this.sendKeys('#private-share .expire-date',documents.document1.expireDate,{reset:true});
+
         this.click('#private-share #generate-private-share');
-        this.test.assert(true,'Private share created');
+
+        this.waitForSelector('#private-share > div > div > a',function onLinkGenerated(){
+            var url =  this.fetchText('#private-share > div > div > a') ;
+            urls.privateDocumentPermalink = url;
+            this.test.assert(true,'Private share created : ' + url);
+        },function fail(){
+            this.capture('screenshot/sharedDocumentCreation/createDocumentPrivateShare-error.png');
+            this.test.assert(false,'Shared document cannot be shared as private');
+        })
     });
 
 

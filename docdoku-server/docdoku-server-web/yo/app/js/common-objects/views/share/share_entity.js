@@ -12,7 +12,8 @@ function (Backbone, Mustache, template, templateShared) {
         tagName: 'div',
 
         events: {
-            'click #generate-private-share': 'createShare'
+            'click #generate-private-share': 'createShare',
+            'hidden #share-modal': 'closeModal'
         },
 
         initialize: function () {
@@ -63,7 +64,6 @@ function (Backbone, Mustache, template, templateShared) {
         },
 
         closeModal: function () {
-            this.$modal.modal('hide');
             this.remove();
         },
 
