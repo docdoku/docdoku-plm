@@ -104,7 +104,7 @@ define([
 		 * @returns string
 		 */
 		getUploadBaseUrl: function () {
-			return App.config.contextPath + '/files/' + this.getBaseName() + '/';
+			return App.config.contextPath + '/api/files/' + this.getBaseName() + '/';
 		},
 
 		getBaseName: function () {

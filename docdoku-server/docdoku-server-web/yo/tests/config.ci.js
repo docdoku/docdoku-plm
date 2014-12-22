@@ -10,7 +10,7 @@ module.exports = {
     pass: "testpassword",
     contextPath: "/",
     pre: [
-        "js/pre/start.js",
+        "js/pre/start.js"
     ],
     post: [
         "js/auth/logout.js"

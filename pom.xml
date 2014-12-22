@@ -80,11 +80,6 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
                         <version>2.16</version>
-                        <configuration>
-                            <!-- run fast tests only-->
-                            <skipTests>true</skipTests>
-                            <!--<groups>com.docdoku.server.util.FastTestCategory</groups>-->
-                        </configuration>
                     </plugin>
                 </plugins>
             </build>
