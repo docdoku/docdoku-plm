@@ -46,6 +46,7 @@ module.exports = {
         "js/document-management/share/sharedDocumentCreation.js",
         "js/document-management/share/publicSharedDocument.js",
         "js/document-management/share/privateSharedDocument.js",
+        "js/document-management/share/expiredSharedDocument.js",
 
         "js/change-management/issue/issueCreation.js",
         "js/change-management/request/requestCreation.js",
