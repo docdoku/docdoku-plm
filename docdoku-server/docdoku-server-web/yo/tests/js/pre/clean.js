@@ -75,13 +75,30 @@ casper.test.begin('Cleaning potential data', 0, function cleanTestsSuite() {
 
     // Parts
     casper.then(function cleanupParts() {
-
         this.open(apiUrls.deletePart, {method: 'DELETE'}).then(function (response) {
+
             if (response.status === 200) {
                 this.log('Test parts has been deleted', 'info');
             } else {
                 this.log('Cannot delete test parts, reason : ' + helpers.findReasonInResponseHeaders(response.headers), 'warning');
             }
+        });
+
+    });
+
+    // Assembly parts
+    var partNumbers = Object.keys(products.assembly.parts);
+
+    partNumbers.forEach(function(partNumber){
+
+        casper.then(function cleanupParts() {
+            this.open(homeUrl + 'api/workspaces/' + workspace + '/parts/' + partNumber + '-A', {method: 'DELETE'}).then(function (response) {
+                if (response.status === 200) {
+                    this.log('Part deleted');
+                } else {
+                    this.log('Cannot delete part, reason : ' + helpers.findReasonInResponseHeaders(response.headers), 'warning');
+                }
+            });
         });
 
     });
