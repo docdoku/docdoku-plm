@@ -21,7 +21,7 @@ public class GZIPWriterInterceptor implements WriterInterceptor {
     @Override
     public void aroundWriteTo(WriterInterceptorContext context) throws IOException{
         MultivaluedMap<String,Object> headers = context.getHeaders();
-        Object rangeHeader = headers.getFirst("Accept-Ranges");
+        Object rangeHeader = headers.getFirst("Content-Range");
 
         OutputStream old=null;
         GZIPOutputStream gzipOutputStream=null;
