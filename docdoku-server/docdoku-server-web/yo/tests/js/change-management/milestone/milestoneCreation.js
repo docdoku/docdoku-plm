@@ -1,7 +1,6 @@
-/*global casper*/
+/*global casper,urls,workspace,changeItems*/
 
 casper.test.begin('Milestone creation tests suite',4, function milestoneCreationTestsSuite(){
-
     'use strict';
 
     casper.open('');
@@ -29,8 +28,15 @@ casper.test.begin('Milestone creation tests suite',4, function milestoneCreation
     /**
      * Open milestone creation modal
      */
-    casper.then(function clickOnMilestoneCreationLink(){
-        this.click('.actions .new-milestone');
+    casper.then(function openNewMilestoneModal(){
+        this.waitForSelector('.actions .new-milestone',
+            function clickOnMilestoneCreationLink(){
+                this.click('.actions .new-milestone');
+            },function fail(){
+                this.capture('screenshot/milestonCreation/openNewMilestoneModal-error.png');
+                this.test.assert(false,'New mileston button can not be found');
+            }
+        );
     });
 
     /**

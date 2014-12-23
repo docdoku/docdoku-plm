@@ -9,6 +9,11 @@ var contextPath = casper.cli.get("contextPath");
 
 var homeUrl = 'http://'+domain+':'+port + contextPath;
 
+var tomorrow = new Date(Date.now()+86400000);
+var yesterday = new Date(Date.now()-86400000);
+var tomorrowValue = tomorrow.getFullYear()+'-'+(tomorrow.getMonth()+1)+'-'+tomorrow.getDate();
+var yesterdayValue = yesterday.getFullYear()+'-'+(yesterday.getMonth()+1)+'-'+yesterday.getDate();
+
 var documents = {
 	template1 : {
 		number : 'CasperJsTestDocumentTemplate'
@@ -18,8 +23,13 @@ var documents = {
 		number : '000-AAA-CasperJsTestDocument',
         iterationNote:'This is the first iteration',
         sharedPassword:'azertyuiop',
-        expireDate:'2014-12-23'
-	}
+        expireDate:tomorrowValue,
+        expireDate2:yesterdayValue
+	},
+    tags:{
+        tag1:'Foo',
+        tag2:'Bar'
+    }
 };
 
 var products = {
@@ -31,7 +41,10 @@ var products = {
 	part1 : {
 		number : '000-AAA-CasperJsTestPart',
 		name : 'CasperJsTestPart',
-        iterationNote:'This is the first iteration'
+        iterationNote:'This is the first iteration',
+        sharedPassword:'azertyuiop',
+        expireDate:tomorrowValue,
+        expireDate2:yesterdayValue
 	},
 	product1: {
 		number : '000-AAA-CasperJsTestProduct',
@@ -54,12 +67,6 @@ var baselines = {
         name: '001-AAA-CasperJsTestBaseline',
         description: 'This is also a baseline'
     }
-};
-
-var workflows = {
-	role1 : 'CasperJsRole1',
-	role2 : 'CasperJsRole2',
-	role3 : 'CasperJsRole3'
 };
 
 var changeItems = {
@@ -85,6 +92,9 @@ var roles = {
 };
 
 var workflows = {
+    role1 : 'CasperJsRole1',
+    role2 : 'CasperJsRole2',
+    role3 : 'CasperJsRole3',
     workflow1:{
         name:'CasperJsTestWorkflow',
         finalState:'CasperJsFinalState',
@@ -105,7 +115,15 @@ var urls = {
 	productManagement : homeUrl+'product-management/#'+workspace,
 	documentManagement : homeUrl+'document-management/#'+workspace,
 	changeManagement : homeUrl+'change-management/#'+workspace,
-    documentPermalink:homeUrl+'documents/'+workspace+'/'+documents.document1.number+'/A'
+    documentPermalink:homeUrl+'documents/'+workspace+'/'+documents.document1.number+'/A',
+    partPermalink:homeUrl+'parts/'+workspace+'/'+products.part1.number+'/A',
+
+    // Set on share creation
+    privateDocumentPermalink:null,
+    privateDocumentPermalinkExpired:null,
+
+    privatePartPermalink:null,
+    privatePartPermalinkExpired:null
 };
 
 var apiUrls = {

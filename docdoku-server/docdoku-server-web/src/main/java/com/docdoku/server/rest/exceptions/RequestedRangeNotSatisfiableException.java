@@ -23,9 +23,21 @@ package com.docdoku.server.rest.exceptions;
 /**
  * @author Julien Maffre
  */
-public class RequestedRangeNotSatisfiableException extends Exception {
+public class RequestedRangeNotSatisfiableException extends RestApiException {
+    private final String resource;
+    private final long contentRange;
 
-    public RequestedRangeNotSatisfiableException() {
+    public RequestedRangeNotSatisfiableException(String resource, long contentRange) {
+        this.resource = resource;
+        this.contentRange = contentRange;
     }
 
+    @Override
+    public String getMessage(){
+        return "Http requested range is not satisfiable for "+resource;
+    }
+
+    public long getContentRange() {
+        return contentRange;
+    }
 }

@@ -30,6 +30,8 @@
         <exception-type>java.lang.Exception</exception-type>
         <location>/faces/error.xhtml</location>
     </error-page>
+
+
     <filter>
         <filter-name>AuthFilter</filter-name>
         <filter-class>com.docdoku.server.filters.AuthFilter</filter-class>

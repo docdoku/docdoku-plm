@@ -346,24 +346,6 @@ public interface IProductManagerWS{
     PartRevision updatePartIteration(PartIterationKey key, java.lang.String iterationNote, PartIteration.Source source, java.util.List<PartUsageLink> usageLinks, java.util.List<InstanceAttribute> attributes, DocumentIterationKey[] linkKeys) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, PartRevisionNotFoundException, PartMasterNotFoundException;
     
     /**
-     * Returns the BinaryResource object given his Id.
-     * 
-     * @param fullName
-     * Id of the <a href="BinaryResource.html">BinaryResource</a> of which the
-     * data file will be returned
-     * 
-     * @return
-     * The binary resource, a BinaryResource instance, that now needs to be created
-     * 
-     * @throws UserNotFoundException
-     * @throws UserNotActiveException
-     * @throws WorkspaceNotFoundException
-     * @throws FileNotFoundException
-     * @throws NotAllowedException
-     */
-    BinaryResource getBinaryResource(String fullName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, FileNotFoundException, NotAllowedException;
-    
-    /**
      * Retrieves all product structures that belong to the given workspace.
      * 
      * @param workspaceId

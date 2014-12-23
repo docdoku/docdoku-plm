@@ -1,4 +1,4 @@
-/*global casper,urls,products*/
+/*global casper,urls,products,productInstances*/
 
 casper.test.begin('Product instance creation tests suite',3, function productInstanceCreationTestsSuite(){
     'use strict';

@@ -1,4 +1,4 @@
-/*global casper,urls,products*/
+/*global casper,urls,products,baselines*/
 
 casper.test.begin('Baseline duplication tests suite',2, function baselineDuplicationTestsSuite(){
     'use strict';

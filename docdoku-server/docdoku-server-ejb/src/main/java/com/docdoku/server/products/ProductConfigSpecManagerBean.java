@@ -146,7 +146,7 @@ public class ProductConfigSpecManagerBean implements IProductConfigSpecManagerWS
         if(partI!=null){
             try {
                 // Check PartIteration access
-                canRead = productManager.canAccess(user, partI.getKey());
+                canRead = productManager.canUserAccess(user, partI.getKey());
 
                 // Filter the childs and childs substitute
                 if (canRead && depth != 0) {

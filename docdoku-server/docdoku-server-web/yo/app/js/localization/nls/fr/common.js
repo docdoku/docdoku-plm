@@ -254,7 +254,7 @@ define({
 	NOTIFICATIONS: "Notifications",
 	NOT_INVITED_COLLABORATIVE_ROOM:"Vous n'êtes pas invité à rejoindre cette salle com.docdoku.server.mainchannel.collaborative",
 	NO_WEBGL: "Le navigateur ne supporte pas WebGL ou n'est pas activé.",
-	NUMBER: "Nombre",
+	NUMBER: "Numero",
 	OBJECTS: "Objets",
 	OFFLINE: "Hors ligne",
 	OK: "OK",

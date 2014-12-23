@@ -9,8 +9,6 @@
     <artifactId>docdoku-server-web</artifactId>
     <packaging>war</packaging>
     <name>docdoku-server-web Java EE 7 Webapp</name>
-
-
     <dependencies>
 
         <!-- docdoku core -->
@@ -20,8 +18,6 @@
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
-
-
 
         <!-- JEE core API -->
         <dependency>

@@ -218,14 +218,14 @@ public class FilesFilter implements Filter {
                         String templateID = URLDecoder.decode(pathInfo[offset + 2], ENCODING);
                         fileName = URLDecoder.decode(pathInfo[offset + 3], ENCODING);
                         fullName = workspaceId + "/" + elementType + "/" + templateID + "/" + fileName;
-                        binaryResource = documentService.getBinaryResource(fullName);
+                        binaryResource = documentService.getTemplateBinaryResource(fullName);
                         break;
                     }
                     case "part-templates": {
                         String templateID = URLDecoder.decode(pathInfo[offset + 2], ENCODING);
                         fileName = URLDecoder.decode(pathInfo[offset + 3], ENCODING);
                         fullName = workspaceId + "/" + elementType + "/" + templateID + "/" + fileName;
-                        binaryResource = documentService.getBinaryResource(fullName);
+                        binaryResource = productService.getTemplateBinaryResource(fullName);
                         break;
                     }
                     default:

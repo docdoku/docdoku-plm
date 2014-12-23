@@ -1,4 +1,4 @@
-/*global casper*/
+/*global casper,urls,workspace,roles*/
 
 casper.test.begin('Role creation tests suite',5, function roleCreationTestsSuite(){
 

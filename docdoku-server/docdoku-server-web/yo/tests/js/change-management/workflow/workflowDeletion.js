@@ -1,4 +1,4 @@
-/*global casper*/
+/*global casper,urls,workspace*/
 
 casper.test.begin('Workflow Deletion tests suite',2, function workflowDeletionTestsSuite(){
 

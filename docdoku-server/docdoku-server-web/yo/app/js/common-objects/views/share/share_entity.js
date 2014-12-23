@@ -12,7 +12,8 @@ function (Backbone, Mustache, template, templateShared) {
         tagName: 'div',
 
         events: {
-            'click #generate-private-share': 'createShare'
+            'click #generate-private-share': 'createShare',
+            'hidden #share-modal': 'closeModal'
         },
 
         initialize: function () {
@@ -63,7 +64,6 @@ function (Backbone, Mustache, template, templateShared) {
         },
 
         closeModal: function () {
-            this.$modal.modal('hide');
             this.remove();
         },
 
@@ -101,7 +101,7 @@ function (Backbone, Mustache, template, templateShared) {
                 this.$badPasswordLabel.show();
             } else {
                 data.password = this.$password.val() ? this.$password.val() : null;
-                data.expireDate = this.$expireDate.val() ? this.$expireDate.val() : null;
+                data.expireDate = this.$expireDate.val() ? new Date(Date.parse(this.$expireDate.val())) : null;
 
                 this.model.createShare({data: data, success: function (pData) {
                     that.$privateShare.empty();

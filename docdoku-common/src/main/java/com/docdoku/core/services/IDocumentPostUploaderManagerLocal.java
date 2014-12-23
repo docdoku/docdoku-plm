@@ -23,5 +23,5 @@ package com.docdoku.core.services;
 import com.docdoku.core.common.BinaryResource;
 
 public interface IDocumentPostUploaderManagerLocal {
-    void process(BinaryResource binaryResource) throws Exception;
+    void process(BinaryResource binaryResource);
 }

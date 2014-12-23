@@ -297,8 +297,8 @@ define([
             if (this._tagsToDeleteCollection && this._tagsToDeleteCollection.length) {
                 var baseUrl = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/tags/';
                 var total = this._tagsToDeleteCollection.length;
+                var count = 0;
                 _(this._tagsToDeleteCollection).each(function (tag) {
-                    var count = 0;
                     $.ajax({
                         type: 'DELETE',
                         url: baseUrl + tag.id,

@@ -173,7 +173,7 @@ public class DocumentBaselineManagerBean implements IDocumentBaselineManagerLoca
     private DocumentRevision filterDocumentRevisionBaselinable(User user, DocumentRevision documentRevision){
         DocumentRevision documentFiltered =filterDocumentRevisionAccessRight(user,documentRevision);
 
-        if (documentFiltered.isCheckedOut()) {
+        if (documentFiltered!= null && documentFiltered.isCheckedOut()) {
             em.detach(documentFiltered);
             documentFiltered.removeLastIteration();
         }
