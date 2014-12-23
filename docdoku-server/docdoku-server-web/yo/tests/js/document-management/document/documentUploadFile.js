@@ -1,5 +1,4 @@
-/*global casper,urls,products*/
-
+/*global casper,urls,workspace,documents*/
 casper.test.begin('Document upload  file tests suite', 2, function documentUploadCadTestsSuite(){
     'use strict';
 
@@ -68,15 +67,13 @@ casper.test.begin('Document upload  file tests suite', 2, function documentUploa
      * Chose a file and upload
      */
     casper.then(function setFileAndUpload(){
-
-        this.capture('screenshot/debug/upload.png')
         this.fill('.document-modal #upload-form', {
             'upload': 'res/document-upload.txt'
         }, false);
 
         casper.waitFor(function check() {
             return this.evaluate(function() {
-                return document.querySelectorAll('.document-modal .attachedFiles ul#file-list li').length == 1;
+                return document.querySelectorAll('.document-modal .attachedFiles ul#file-list li').length === 1;
             });
         }, function then() {
             this.test.assert(true,'File has been uploaded to document');

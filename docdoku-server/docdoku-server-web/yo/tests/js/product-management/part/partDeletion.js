@@ -53,7 +53,7 @@ casper.test.begin('Part deletion tests suite', 1, function partDeletionTestsSuit
     casper.then(function waitForPartDiseapear(){
         casper.waitFor(function check() {
             return this.evaluate(function() {
-                return document.querySelectorAll('#part_table tbody tr').length == 4;
+                return document.querySelectorAll('#part_table tbody tr').length === 4;
             });
         }, function then() {
             this.test.assert(true,'Part has been deleted');

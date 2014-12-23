@@ -67,15 +67,13 @@ casper.test.begin('Part upload native cad file tests suite', 1, function partUpl
      * Chose a file and upload
      */
     casper.then(function setFileAndUpload(){
-
-        this.capture('screenshot/debug/upload.png')
         this.fill('#part-modal #upload-form', {
             'upload': 'res/part-upload.obj'
         }, false);
 
         casper.waitFor(function check() {
             return this.evaluate(function() {
-                return document.querySelectorAll('#part-modal .attachedFiles ul#file-list li').length == 1;
+                return document.querySelectorAll('#part-modal .attachedFiles ul#file-list li').length === 1;
             });
         }, function then() {
             this.test.assert(true,'File has been uploaded to part');
