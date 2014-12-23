@@ -23,6 +23,7 @@ import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.product.PartIterationKey;
+import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IConverterManagerLocal;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
@@ -34,6 +35,8 @@ import com.docdoku.server.rest.file.util.BinaryResourceDownloadResponseBuilder;
 import com.docdoku.server.rest.file.util.BinaryResourceUpload;
 import com.docdoku.server.rest.interceptors.Compress;
 
+import javax.annotation.security.DeclareRoles;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.servlet.ServletException;
@@ -50,10 +53,13 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @Stateless
+@DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.GUEST_PROXY_ROLE_ID})
+@RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.GUEST_PROXY_ROLE_ID})
 public class PartBinaryResource {
     @EJB
     private IDataManagerLocal dataManager;
@@ -149,8 +155,8 @@ public class PartBinaryResource {
 
         // Check access right
         PartIterationKey partIK = new PartIterationKey(workspaceId, partNumber, version,iteration);
-        if(productService.canAccess(partIK)){
-            throw new NotAllowedException("NotAllowedException34");
+        if(!productService.canAccess(partIK)){
+            throw new NotAllowedException(Locale.getDefault(),"NotAllowedException34");
         }
 
         BinaryResource binaryResource = productService.getBinaryResource(fullName);

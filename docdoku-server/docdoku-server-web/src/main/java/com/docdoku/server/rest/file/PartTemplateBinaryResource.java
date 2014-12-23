@@ -23,6 +23,7 @@ import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.product.PartMasterTemplateKey;
+import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.rest.exceptions.NotModifiedException;
@@ -33,6 +34,8 @@ import com.docdoku.server.rest.file.util.BinaryResourceDownloadResponseBuilder;
 import com.docdoku.server.rest.file.util.BinaryResourceUpload;
 import com.docdoku.server.rest.interceptors.Compress;
 
+import javax.annotation.security.DeclareRoles;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.servlet.ServletException;
@@ -53,6 +56,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @Stateless
+@DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID})
+@RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
 public class PartTemplateBinaryResource {
     @EJB
     private IDataManagerLocal dataManager;
