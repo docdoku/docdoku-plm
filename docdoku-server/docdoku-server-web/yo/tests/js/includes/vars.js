@@ -49,7 +49,27 @@ var products = {
 	product1: {
 		number : '000-AAA-CasperJsTestProduct',
 		name : 'CasperJsTestProduct'
-	}
+	},
+    assembly:{
+        parts: {
+            '100-AAA-CasperJsAssemblyP1':{
+                tx:100,ty:150,tz:-140,
+                rx:Math.PI/2,ry:Math.PI/4,rz:-Math.PI/2
+            },
+            '200-AAA-CasperJsAssemblyP2':{
+                tx:-100,ty:-150,tz:-140,
+                rx:-Math.PI/2,ry:-Math.PI/4,rz:-Math.PI/2
+            },
+            '300-AAA-CasperJsAssemblyP3':{
+                tx:-100,ty:150,tz:-140,
+                rx:Math.PI/2,ry:Math.PI/4,rz:-Math.PI/2
+            },
+            '400-AAA-CasperJsAssemblyP4':{
+                tx:100,ty:-150,tz:140,
+                rx:-Math.PI/2,ry:Math.PI/4,rz:Math.PI/2
+            }
+        }
+    }
 };
 
 var productInstances = {

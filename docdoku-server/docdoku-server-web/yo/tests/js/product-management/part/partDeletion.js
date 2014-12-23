@@ -51,9 +51,13 @@ casper.test.begin('Part deletion tests suite', 1, function partDeletionTestsSuit
     });
 
     casper.then(function waitForPartDiseapear(){
-        this.waitWhileSelector('#part_table tbody tr:first-child td.part_number',function partHasBeenDeleted(){
-            casper.test.assert(true, "Part has been deleted");
-        },function fail() {
+        casper.waitFor(function check() {
+            return this.evaluate(function() {
+                return document.querySelectorAll('#part_table tbody tr').length == 4;
+            });
+        }, function then() {
+            this.test.assert(true,'Part has been deleted');
+        }, function fail(){
             this.capture('screenshot/partDeletion/waitForPartDiseapear-error.png');
             this.test.assert(false,'Part has not been deleted');
         });
