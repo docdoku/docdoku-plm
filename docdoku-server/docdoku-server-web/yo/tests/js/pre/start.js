@@ -6,14 +6,16 @@ casper.options.viewportSize = {
     height: 1050
 };
 
-casper.options.waitTimeout = 10 * 1000; // 10 seconds
-casper.options.timeout =  5 * 60 * 1000; // 5 minutes
+// Wait actions
+casper.options.waitTimeout = 10 * 1000; // 10 sec
+// Global test duration
+casper.options.timeout =  15 * 60 * 1000; // 15 min
 
 casper.start();
 
 casper.setFilter('page.confirm', function(msg) {
     'use strict';
-    this.log('Confirm box: '+msg,'info');
+    this.log('Confirm box: '+msg,'warning');
     return true;
 });
 
@@ -27,7 +29,6 @@ casper.test.begin('DocdokuPLM Tests suite',1, function docdokuPLMTestsSuite() {
     casper.thenOpen(homeUrl,function homePageLoaded(){
         this.test.assert(true,'Tests begins');
     });
-
     casper.run(function letsGo(){
         this.test.done();
     });
