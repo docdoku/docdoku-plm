@@ -1,6 +1,6 @@
 /*global casper,urls,documents*/
 
-casper.test.begin('Document tag deletion tests suite',1, function documentTagDeletionTestsSuite(){
+casper.test.begin('Document tag deletion tests suite',5, function documentTagDeletionTestsSuite(){
 
     'use strict';
 

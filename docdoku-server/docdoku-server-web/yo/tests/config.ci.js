@@ -28,6 +28,7 @@ module.exports = {
         "js/product-management/part/partCheckin.js",
         "js/product-management/share/sharedPartCreation.js",
         "js/product-management/share/publicSharedPart.js",
+        "js/product-management/share/expiredSharedPart.js",
         "js/product-management/share/privateSharedPart.js",
         "js/product-management/part/showPartDetails.js",
         "js/product-management/product/productCreation.js",

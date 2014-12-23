@@ -9,6 +9,11 @@ var contextPath = casper.cli.get("contextPath");
 
 var homeUrl = 'http://'+domain+':'+port + contextPath;
 
+var tomorrow = new Date(Date.now()+86400000);
+var yesterday = new Date(Date.now()-86400000);
+var tomorrowValue = tomorrow.getFullYear()+'-'+(tomorrow.getMonth()+1)+'-'+tomorrow.getDate();
+var yesterdayValue = yesterday.getFullYear()+'-'+(yesterday.getMonth()+1)+'-'+yesterday.getDate();
+
 var documents = {
 	template1 : {
 		number : 'CasperJsTestDocumentTemplate'
@@ -18,7 +23,8 @@ var documents = {
 		number : '000-AAA-CasperJsTestDocument',
         iterationNote:'This is the first iteration',
         sharedPassword:'azertyuiop',
-        expireDate:'2014-12-23'
+        expireDate:tomorrowValue,
+        expireDate2:yesterdayValue
 	},
     tags:{
         tag1:'Foo',
@@ -37,7 +43,8 @@ var products = {
 		name : 'CasperJsTestPart',
         iterationNote:'This is the first iteration',
         sharedPassword:'azertyuiop',
-        expireDate:'2014-12-23'
+        expireDate:tomorrowValue,
+        expireDate2:yesterdayValue
 	},
 	product1: {
 		number : '000-AAA-CasperJsTestProduct',
@@ -110,9 +117,13 @@ var urls = {
 	changeManagement : homeUrl+'change-management/#'+workspace,
     documentPermalink:homeUrl+'documents/'+workspace+'/'+documents.document1.number+'/A',
     partPermalink:homeUrl+'parts/'+workspace+'/'+products.part1.number+'/A',
+
     // Set on share creation
     privateDocumentPermalink:null,
-    createPartPrivateShare:null
+    privateDocumentPermalinkExpired:null,
+
+    privatePartPermalink:null,
+    privatePartPermalinkExpired:null
 };
 
 var apiUrls = {
