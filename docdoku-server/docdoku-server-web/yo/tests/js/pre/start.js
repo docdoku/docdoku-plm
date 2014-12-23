@@ -19,9 +19,15 @@ casper.setFilter('page.confirm', function(msg) {
     return true;
 });
 
+casper.on('remote.alert', function(msg) {
+    'use strict';
+    this.log('Alert box: '+msg,'warning');
+    return true;
+});
+
 casper.on('remote.message', function remoteMessage(message) {
     'use strict';
-    this.log(message,'info');
+    this.log('[WebConsole] '+message,'info');
 });
 
 casper.test.begin('DocdokuPLM Tests suite',1, function docdokuPLMTestsSuite() {

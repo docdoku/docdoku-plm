@@ -53,7 +53,7 @@ casper.test.begin('Assembly creation tests suite',11, function assemblyCreationT
     });
 
     /**
-     * Wait the modal
+     * Wait the modal tab
      */
     casper.then(function waitForPartModalTab(){
         this.waitForSelector('#part-modal #existingParts',function tabSelected() {
