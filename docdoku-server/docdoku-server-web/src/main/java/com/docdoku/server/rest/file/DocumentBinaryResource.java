@@ -23,6 +23,7 @@ import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
+import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.services.IDocumentPostUploaderManagerLocal;
@@ -36,6 +37,8 @@ import com.docdoku.server.rest.file.util.BinaryResourceDownloadResponseBuilder;
 import com.docdoku.server.rest.file.util.BinaryResourceUpload;
 import com.docdoku.server.rest.interceptors.Compress;
 
+import javax.annotation.security.DeclareRoles;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.servlet.ServletException;
@@ -52,10 +55,13 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @Stateless
+@DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.GUEST_PROXY_ROLE_ID})
+@RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.GUEST_PROXY_ROLE_ID})
 public class DocumentBinaryResource {
     @EJB
     private IDataManagerLocal dataManager;
@@ -137,8 +143,8 @@ public class DocumentBinaryResource {
 
         // Check access right
         DocumentIterationKey docIK = new DocumentIterationKey(workspaceId, documentId, version,iteration);
-        if(documentService.canAccess(docIK)){
-            throw new NotAllowedException("NotAllowedException34");
+        if(!documentService.canAccess(docIK)){
+            throw new NotAllowedException(Locale.getDefault(), "NotAllowedException34");
         }
 
         BinaryResource binaryResource = documentService.getBinaryResource(fullName);
