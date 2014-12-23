@@ -154,5 +154,7 @@ var apiUrls = {
 	deleteProduct : homeUrl+'api/workspaces/'+workspace+'/products/'+products.product1.number,
 	deleteFolder : homeUrl+'api/workspaces/'+workspace+'/folders/'+workspace+":"+documents.folder1,
 	getBaselines : homeUrl+'api/workspaces/'+workspace+'/products/'+products.product1.number+'/baselines',
-    deleteProductInstance : homeUrl+'api/workspaces/'+workspace+'/products/'+products.product1.number+'/product-instances/'+productInstances.productInstance1.serialNumber
+    deleteProductInstance : homeUrl+'api/workspaces/'+workspace+'/products/'+products.product1.number+'/product-instances/'+productInstances.productInstance1.serialNumber,
+    getWorkflows : homeUrl+'api/workspaces/'+workspace+'/workflows',
+    getRoles : homeUrl+'api/workspaces/'+workspace+'/roles'
 };
