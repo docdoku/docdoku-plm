@@ -53,7 +53,7 @@ casper.test.begin('Assembly creation tests suite',11, function assemblyCreationT
     });
 
     /**
-     * Wait the modal
+     * Wait the modal tab
      */
     casper.then(function waitForPartModalTab(){
         this.waitForSelector('#part-modal #existingParts',function tabSelected() {
@@ -113,7 +113,7 @@ casper.test.begin('Assembly creation tests suite',11, function assemblyCreationT
         }, function then() {
             this.test.assert(true,'5 entries in the table');
         }, function fail(){
-            this.capture('screenshot/assemblyCreation/waitModalToBeClosed-error.png');
+            this.capture('screenshot/assemblyCreation/checkIfPartsInAssemblyAreCreated-error.png');
             this.test.assert(false,'There are not 5 entries in the table');
         });
     });
