@@ -38,12 +38,13 @@
         <filter-name>PermalinkFilter</filter-name>
         <filter-class>com.docdoku.server.filters.PermalinkFilter</filter-class>
     </filter>
-    <filter>
+<!--    <filter>
         <filter-name>FilesFilter</filter-name>
         <filter-class>com.docdoku.server.filters.FilesFilter</filter-class>
-    </filter>
+    </filter>-->
     <filter-mapping>
         <filter-name>AuthFilter</filter-name>
+        <url-pattern>/api/*</url-pattern>
         <url-pattern>/admin/*</url-pattern>
         <url-pattern>/faces/admin/*</url-pattern>
         <url-pattern>/document-management/*</url-pattern>
@@ -58,11 +59,11 @@
         <url-pattern>/documents/*</url-pattern>
         <url-pattern>/parts/*</url-pattern>
     </filter-mapping>
-    <filter-mapping>
+    <!--<filter-mapping>
         <filter-name>FilesFilter</filter-name>
         <url-pattern>/files/*</url-pattern>
         <url-pattern>/shared-files/*</url-pattern>
-    </filter-mapping>
+    </filter-mapping>-->
     <servlet>
         <servlet-name>VoteServlet</servlet-name>
         <servlet-class>com.docdoku.server.http.VoteServlet</servlet-class>
@@ -99,7 +100,6 @@
         <servlet-name>PrivateShareServlet</servlet-name>
         <url-pattern>/shared/*</url-pattern>
     </servlet-mapping>
-
     <servlet-mapping>
         <servlet-name>UploadDownloadServlet</servlet-name>
         <url-pattern>/upload/*</url-pattern>
@@ -115,7 +115,6 @@
         <servlet-name>DocumentManagement</servlet-name>
         <url-pattern>/document-management/</url-pattern>
     </servlet-mapping>
-
     <servlet>
         <servlet-name>ProductManagement</servlet-name>
         <jsp-file>product-management/index.html</jsp-file>
@@ -124,7 +123,6 @@
         <servlet-name>ProductManagement</servlet-name>
         <url-pattern>/product-management/</url-pattern>
     </servlet-mapping>
-
     <servlet>
         <servlet-name>ProductStructure</servlet-name>
         <jsp-file>product-structure/index.html</jsp-file>
@@ -141,7 +139,6 @@
         <servlet-name>ChangeManagement</servlet-name>
         <url-pattern>/change-management/</url-pattern>
     </servlet-mapping>
-
     <servlet>
         <servlet-name>VisualizationServlet</servlet-name>
         <jsp-file>visualization/index.html</jsp-file>
@@ -160,6 +157,17 @@
         <url-pattern>/logout</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>com.docdoku.server.rest.ApplicationConfig</servlet-name>
+        <multipart-config>
+            <file-size-threshold>1048576</file-size-threshold>
+        </multipart-config>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>com.docdoku.server.rest.ApplicationConfig</servlet-name>
+        <url-pattern>/api/*</url-pattern>
+    </servlet-mapping>
+
     <security-constraint>
         <display-name>HTTP actions</display-name>
         <web-resource-collection>
@@ -171,7 +179,7 @@
             <role-name>users</role-name>
         </auth-constraint>
     </security-constraint>
-    <security-constraint>
+    <!--<security-constraint>
         <display-name>REST Resources</display-name>
         <web-resource-collection>
             <web-resource-name>Resources</web-resource-name>
@@ -181,7 +189,7 @@
             <description/>
             <role-name>users</role-name>
         </auth-constraint>
-    </security-constraint>
+    </security-constraint>-->
     <security-constraint>
         <display-name>WebSocket channels</display-name>
         <web-resource-collection>
