@@ -23,18 +23,27 @@ module.exports = {
         "js/auth/login.js",
         "js/pre/clean.js",
 
-        // Creations
+        // Begin with workflows
+
+        "js/change-management/role/roleCreation.js",
+        "js/change-management/workflow/workflowCreation.js",
+
+        // Part and assembly creation
         "js/product-management/part/partCreation.js",
-        // "js/product-management/part/partUploadNativeCadFile.js", // Failing
+        "js/product-management/part/showPartDetails.js",
+        "js/product-management/part/partUploadNativeCadFile.js", // Failing
         "js/product-management/part/partCheckin.js",
         "js/product-management/part/partCheckout.js",
         "js/product-management/assembly/assemblyCreation.js",
         "js/product-management/part/partCheckin.js",
+
+        // Part sharing
         "js/product-management/share/sharedPartCreation.js",
         "js/product-management/share/publicSharedPart.js",
         "js/product-management/share/expiredSharedPart.js",
         "js/product-management/share/privateSharedPart.js",
-        "js/product-management/part/showPartDetails.js",
+
+        // Product creation
         "js/product-management/product/productCreation.js",
         "js/product-management/baseline/baselineCreation.js",
         "js/product-management/baseline/baselineDuplication.js",
@@ -48,6 +57,8 @@ module.exports = {
         "js/document-management/document/documentCreation.js",
         "js/document-management/document/documentUploadFile.js",
         "js/document-management/document/documentCheckin.js",
+
+        // Document sharing
         "js/document-management/share/sharedDocumentCreation.js",
         "js/document-management/share/publicSharedDocument.js",
         "js/document-management/share/privateSharedDocument.js",
@@ -57,8 +68,6 @@ module.exports = {
         "js/change-management/request/requestCreation.js",
         "js/change-management/order/orderCreation.js",
         "js/change-management/milestone/milestoneCreation.js",
-        "js/change-management/role/roleCreation.js",
-        "js/change-management/workflow/workflowCreation.js",
 
 
         // Deletions
