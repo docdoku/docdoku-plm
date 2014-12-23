@@ -21,13 +21,13 @@ package com.docdoku.server.rest.file;
 
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.document.DocumentIterationKey;
+import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.security.UserGroupMapping;
-import com.docdoku.core.services.IDataManagerLocal;
-import com.docdoku.core.services.IDocumentManagerLocal;
-import com.docdoku.core.services.IDocumentPostUploaderManagerLocal;
-import com.docdoku.core.services.IDocumentResourceGetterManagerLocal;
+import com.docdoku.core.services.*;
+import com.docdoku.core.sharing.SharedDocument;
+import com.docdoku.core.sharing.SharedEntity;
 import com.docdoku.server.rest.exceptions.FileConversionException;
 import com.docdoku.server.rest.exceptions.NotModifiedException;
 import com.docdoku.server.rest.exceptions.PreconditionFailedException;
@@ -71,6 +71,8 @@ public class DocumentBinaryResource {
     private IDocumentResourceGetterManagerLocal documentResourceGetterService;
     @EJB
     private IDocumentPostUploaderManagerLocal documentPostUploaderService;
+    @EJB
+    private IShareManagerLocal shareService;
 
     private static final Logger LOGGER = Logger.getLogger(DocumentBinaryResource.class.getName());
 
@@ -78,13 +80,20 @@ public class DocumentBinaryResource {
     }
 
     @POST
+    @Path("/{iteration}")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Response uploadDocumentFiles(@Context HttpServletRequest request,
+                                        @PathParam("uuid") final String uuid,
                                        @PathParam("workspaceId") final String workspaceId,
                                        @PathParam("documentId") final String documentId,
                                        @PathParam("version") final String version,
                                        @PathParam("iteration") final int iteration)
             throws EntityNotFoundException, EntityAlreadyExistsException, UserNotActiveException, AccessRightException, NotAllowedException, CreationException {
+
+        if(uuid!=null){
+            return Response.status(Response.Status.METHOD_NOT_ALLOWED)
+                           .build();
+        }
 
         try {
             BinaryResource binaryResource;
@@ -118,11 +127,12 @@ public class DocumentBinaryResource {
     }
 
     @GET
-    @Path("/{fileName}{virtualSubResource : (/[^/]+?)?}")
+    @Path("/{iteration}/{fileName}{virtualSubResource : (/[^/]+?)?}")
     @Compress
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response downloadDocumentFile(@Context Request request,
                                          @HeaderParam("Range") String range,
+                                         @PathParam("uuid") final String uuid,
                                          @PathParam("workspaceId") final String workspaceId,
                                          @PathParam("documentId") final String documentId,
                                          @PathParam("version") final String version,
@@ -133,20 +143,32 @@ public class DocumentBinaryResource {
                                          @QueryParam("output") String output)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException, NotModifiedException, PreconditionFailedException, RequestedRangeNotSatisfiableException{
 
-        String fullName = workspaceId + "/documents/" + documentId + "/" + version + "/" + iteration + "/" + fileName;
+        String fullName;
+        if (uuid != null) {
+            SharedEntity sharedEntity = shareService.findSharedEntityForGivenUUID(uuid);
+            DocumentRevision documentRevision = ((SharedDocument) sharedEntity).getDocumentRevision();
+            fullName = sharedEntity.getWorkspace().getId() +
+                    "/documents/" +
+                    documentRevision.getId() + "/" +
+                    documentRevision.getVersion() + "/" +
+                    iteration + "/" +fileName;
+        }else {
+            // Log guest user                                                                                           // Todo : If Guest, return public binary resource
 
-        // Log guest user
-        boolean isGuestUser=false;                                                                                      // Todo : If Guest, return public binary resource
-        if(isGuestUser){
-            // Create user with the role GUEST
+            // Check access right
+            DocumentIterationKey docIK = new DocumentIterationKey(workspaceId, documentId, version, iteration);
+            if (!documentService.canAccess(docIK)) {
+                throw new NotAllowedException(Locale.getDefault(), "NotAllowedException34");
+            }
+            fullName = workspaceId + "/documents/" + documentId + "/" + version + "/" + iteration + "/" + fileName;
         }
+        return downloadDocumentFile(request, range, fullName, virtualSubResource, type, output);
+    }
 
-        // Check access right
-        DocumentIterationKey docIK = new DocumentIterationKey(workspaceId, documentId, version,iteration);
-        if(!documentService.canAccess(docIK)){
-            throw new NotAllowedException(Locale.getDefault(), "NotAllowedException34");
-        }
 
+
+    private Response downloadDocumentFile(Request request, String range, String fullName, String virtualSubResource, String type, String output)
+            throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException, NotModifiedException, PreconditionFailedException, RequestedRangeNotSatisfiableException{
         BinaryResource binaryResource = documentService.getBinaryResource(fullName);
         BinaryResourceDownloadMeta binaryResourceDownloadMeta = new BinaryResourceDownloadMeta(binaryResource,output,type);
         binaryResourceDownloadMeta.setSubResourceVirtualPath(virtualSubResource);
@@ -160,8 +182,7 @@ public class DocumentBinaryResource {
         try {
             InputStream binaryContentInputStream;
             if(virtualSubResource!=null && !virtualSubResource.isEmpty()){
-                String virtualSubResourcePath = workspaceId+"/"+documentId+"/"+version+"/"+iteration+"/"+fileName+"/"+virtualSubResource;
-                binaryContentInputStream = dataManager.getBinarySubResourceInputStream(binaryResource, virtualSubResourcePath);
+                binaryContentInputStream = dataManager.getBinarySubResourceInputStream(binaryResource, fullName+"/"+virtualSubResource);
             }else if(output!=null && !output.isEmpty()){
                 binaryContentInputStream = getConvertedBinaryResource(binaryResource, output);
             }else{
