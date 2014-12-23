@@ -53,8 +53,6 @@ import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.Locale;
 import java.util.logging.Level;
@@ -108,47 +106,45 @@ public class PartBinaryResource{
         }
 
         try {
-            BinaryResource binaryResource;
             String fileName=null;
-            long length;
             PartIterationKey partPK = new PartIterationKey(workspaceId, partNumber, version, iteration);
             Collection<Part> formParts = request.getParts();
 
             for(Part formPart : formParts){
-                fileName = formPart.getSubmittedFileName();
-                // Init the binary resource with a null length
-                if(subType!=null && !subType.isEmpty()){
-                    binaryResource = productService.saveNativeCADInPartIteration(partPK, fileName, 0);
-                }else{
-                    binaryResource = productService.saveFileInPartIteration(partPK, fileName, 0);
-                }
-                OutputStream outputStream = dataManager.getBinaryResourceOutputStream(binaryResource);
-                length = BinaryResourceUpload.UploadBinary(outputStream, formPart);
-                if(subType!=null && !subType.isEmpty()){
-                    productService.saveNativeCADInPartIteration(partPK, fileName, length);
-                    try {
-                        //TODO: Should be put in a DocumentPostUploader plugin
-                        converterService.convertCADFileToJSON(partPK, binaryResource);
-                    } catch (Exception e) {
-                        LOGGER.log(Level.SEVERE, "A CAD file conversion can not be done", e);
-                    }
-                }else{
-                    productService.saveFileInPartIteration(partPK, fileName, length);
-                }
+                fileName = uploadAFile(formPart,partPK, subType);
             }
 
-            try {
-                if(formParts.size()==1){
-                    return Response.created(new URI(request.getRequestURI()+fileName)).build();
-                }
-            } catch (URISyntaxException e) {
-                LOGGER.log(Level.WARNING,null,e);
+            if(formParts.size()==1) {
+                return BinaryResourceUpload.tryToRespondCreated(request.getRequestURI() + fileName);
             }
+
             return Response.ok().build();
 
         } catch (IOException | ServletException | StorageException e) {
             return BinaryResourceUpload.uploadError(e);
         }
+    }
+
+    private String uploadAFile(Part formPart, PartIterationKey partPK, String subType)
+            throws EntityNotFoundException, EntityAlreadyExistsException, UserNotActiveException, CreationException, NotAllowedException, StorageException, IOException {
+        BinaryResource binaryResource;
+        long length;
+        String fileName = formPart.getSubmittedFileName();
+        // Init the binary resource with a null length
+        if(subType!=null && !subType.isEmpty()){
+            binaryResource = productService.saveNativeCADInPartIteration(partPK, fileName, 0);
+        }else{
+            binaryResource = productService.saveFileInPartIteration(partPK, fileName, 0);
+        }
+        OutputStream outputStream = dataManager.getBinaryResourceOutputStream(binaryResource);
+        length = BinaryResourceUpload.uploadBinary(outputStream, formPart);
+        if(subType!=null && !subType.isEmpty()){
+            productService.saveNativeCADInPartIteration(partPK, fileName, length);
+            tryToConvertCADFileToJSON(partPK,binaryResource);
+        }else{
+            productService.saveFileInPartIteration(partPK, fileName, length);
+        }
+        return fileName;
     }
 
     @GET
@@ -232,6 +228,15 @@ public class PartBinaryResource{
             return BinaryResourceDownloadResponseBuilder.prepareResponse(binaryContentInputStream, binaryResourceDownloadMeta, range);
         } catch (StorageException e) {
             return BinaryResourceDownloadResponseBuilder.downloadError(e, fullName);
+        }
+    }
+
+    private void tryToConvertCADFileToJSON(PartIterationKey partPK, BinaryResource binaryResource){
+        try {
+            //TODO: Should be put in a DocumentPostUploader plugin
+            converterService.convertCADFileToJSON(partPK, binaryResource);
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "A CAD file conversion can not be done", e);
         }
     }
 }

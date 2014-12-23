@@ -49,11 +49,7 @@ import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Collection;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 @Stateless
 @DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID})
@@ -63,8 +59,6 @@ public class PartTemplateBinaryResource {
     private IDataManagerLocal dataManager;
     @EJB
     private IProductManagerLocal productService;
-
-    private static final Logger LOGGER = Logger.getLogger(PartTemplateBinaryResource.class.getName());
 
     public PartTemplateBinaryResource() {
     }
@@ -88,16 +82,12 @@ public class PartTemplateBinaryResource {
                 // Init the binary resource with a null length
                 binaryResource= productService.saveFileInTemplate(templatePK, fileName, 0);
                 OutputStream outputStream = dataManager.getBinaryResourceOutputStream(binaryResource);
-                length = BinaryResourceUpload.UploadBinary(outputStream, formPart);
+                length = BinaryResourceUpload.uploadBinary(outputStream, formPart);
                 productService.saveFileInTemplate(templatePK, fileName, length);
             }
 
-            try {
-                if(formParts.size()==1){
-                    return Response.created(new URI(request.getRequestURI()+fileName)).build();
-                }
-            } catch (URISyntaxException e) {
-                LOGGER.log(Level.WARNING,null,e);
+            if(formParts.size()==1) {
+                return BinaryResourceUpload.tryToRespondCreated(request.getRequestURI()+fileName);
             }
             return Response.ok().build();
 

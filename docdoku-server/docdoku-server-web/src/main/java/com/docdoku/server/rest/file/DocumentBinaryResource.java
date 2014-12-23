@@ -52,12 +52,8 @@ import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.Locale;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 @Stateless
 @DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.GUEST_PROXY_ROLE_ID})
@@ -73,8 +69,6 @@ public class DocumentBinaryResource {
     private IDocumentPostUploaderManagerLocal documentPostUploaderService;
     @EJB
     private IShareManagerLocal shareService;
-
-    private static final Logger LOGGER = Logger.getLogger(DocumentBinaryResource.class.getName());
 
     public DocumentBinaryResource() {
     }
@@ -96,34 +90,35 @@ public class DocumentBinaryResource {
         }
 
         try {
-            BinaryResource binaryResource;
             String fileName=null;
-            long length;
             DocumentIterationKey docPK = new DocumentIterationKey(workspaceId, documentId, version, iteration);
             Collection<Part> formParts = request.getParts();
 
             for(Part formPart : formParts){
-                fileName = formPart.getSubmittedFileName();
-                // Init the binary resource with a null length
-                binaryResource= documentService.saveFileInDocument(docPK, fileName, 0);
-                OutputStream outputStream = dataManager.getBinaryResourceOutputStream(binaryResource);
-                length = BinaryResourceUpload.UploadBinary(outputStream,formPart);
-                documentService.saveFileInDocument(docPK, fileName, length);
-                documentPostUploaderService.process(binaryResource);
+                fileName = uploadAFile(formPart,docPK);
             }
 
-            try {
-                if(formParts.size()==1){
-                    return Response.created(new URI(request.getRequestURI()+fileName)).build();
-                }
-            } catch (URISyntaxException e) {
-                LOGGER.log(Level.WARNING,null,e);
+            if(formParts.size()==1) {
+                return BinaryResourceUpload.tryToRespondCreated(request.getRequestURI()+fileName);
             }
             return Response.ok().build();
 
         } catch (IOException | ServletException | StorageException e) {
             return BinaryResourceUpload.uploadError(e);
         }
+    }
+
+    private String uploadAFile(Part formPart,DocumentIterationKey docPK)
+            throws EntityNotFoundException, EntityAlreadyExistsException, AccessRightException, NotAllowedException, CreationException, UserNotActiveException, StorageException, IOException {
+
+        String fileName = formPart.getSubmittedFileName();
+        // Init the binary resource with a null length
+        BinaryResource binaryResource = documentService.saveFileInDocument(docPK, fileName, 0);
+        OutputStream outputStream = dataManager.getBinaryResourceOutputStream(binaryResource);
+        long length = BinaryResourceUpload.uploadBinary(outputStream, formPart);
+        documentService.saveFileInDocument(docPK, fileName, length);
+        documentPostUploaderService.process(binaryResource);
+        return fileName;
     }
 
     @GET

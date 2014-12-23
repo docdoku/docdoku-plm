@@ -94,7 +94,6 @@ public class FileResource {
             throw new ExpiredLinkException();
         }
 
-        String workspaceId = sharedEntity.getWorkspace().getId();
         if(sharedEntity instanceof SharedDocument){
             return documentBinaryResource;
         }else if(sharedEntity instanceof SharedPart){

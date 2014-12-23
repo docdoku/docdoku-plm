@@ -1,7 +1,6 @@
 package com.docdoku.server.products;
 
 import com.docdoku.core.common.User;
-import com.docdoku.core.common.UserKey;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.configuration.BaselineCreation;
 import com.docdoku.core.configuration.BaselinedPart;
@@ -15,16 +14,12 @@ import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.dao.ConfigurationItemDAO;
 import com.docdoku.server.dao.PartIterationDAO;
 import com.docdoku.server.dao.ProductBaselineDAO;
-import com.docdoku.server.dao.UserDAO;
 
-import javax.annotation.Resource;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Local;
-import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
-import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.text.MessageFormat;
@@ -38,9 +33,6 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
     private EntityManager em;
     @EJB
     private IUserManagerLocal userManager;
-
-    @Resource
-    private SessionContext ctx;
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override

@@ -27,6 +27,8 @@ import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -48,14 +50,13 @@ public class BinaryResourceUpload {
      * @param formPart The formulaire part list
      * @return The lenght of the file uploaded
      */
-    public static long UploadBinary(OutputStream outputStream, Part formPart){
+    public static long uploadBinary(OutputStream outputStream, Part formPart)
+            throws IOException {
         InputStream inputStream = null;
         long length = -1;
         try {
             inputStream = formPart.getInputStream();
             length = ByteStreams.copy(inputStream, outputStream);
-        } catch (IOException e) {
-            e.printStackTrace();
         } finally {
             closeInputStream(inputStream);
             closeOutputStream(outputStream);
@@ -99,5 +100,14 @@ public class BinaryResourceUpload {
                 .entity(message)
                 .type(MediaType.TEXT_PLAIN)
                 .build();
+    }
+
+    public static Response tryToRespondCreated(String uri){
+        try {
+            return Response.created(new URI(uri)).build();
+        } catch (URISyntaxException e) {
+            LOGGER.log(Level.WARNING,null,e);
+            return Response.ok().build();
+        }
     }
 }
