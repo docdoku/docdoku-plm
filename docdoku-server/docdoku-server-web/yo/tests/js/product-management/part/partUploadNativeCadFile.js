@@ -58,7 +58,7 @@ casper.test.begin('Part upload native cad file tests suite', 1, function partUpl
         this.waitForSelector('#part-modal #upload-btn',function tabSelected() {
             this.test.assert(true,'Native cad file upload tab opened');
         },function fail(){
-            this.capture('screenshot/assemblyCreation/waitForPartModalTab-error.png');
+            this.capture('screenshot/partUpload/waitForPartModalTab-error.png');
             this.test.assert(false,'Part modal tab can not be found');
         });
     });
@@ -73,9 +73,15 @@ casper.test.begin('Part upload native cad file tests suite', 1, function partUpl
             'upload': 'res/part-upload.obj'
         }, false);
 
-        // Wait for link above
-        this.wait(1000,function(){
-           //
+        casper.waitFor(function check() {
+            return this.evaluate(function() {
+                return document.querySelectorAll('#part-modal .attachedFiles ul#file-list li').length == 1;
+            });
+        }, function then() {
+            this.test.assert(true,'File has been uploaded to part');
+        }, function fail(){
+            this.capture('screenshot/partUpload/setFileAndUpload-error.png');
+            this.test.assert(false,'Cannot upload the file');
         });
 
 

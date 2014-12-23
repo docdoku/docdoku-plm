@@ -25,6 +25,7 @@ module.exports = {
 
         // Creations
         "js/product-management/part/partCreation.js",
+        // "js/product-management/part/partUploadNativeCadFile.js", // Failing
         "js/product-management/part/partCheckin.js",
         "js/product-management/part/partCheckout.js",
         "js/product-management/assembly/assemblyCreation.js",
@@ -45,6 +46,7 @@ module.exports = {
 
         "js/document-management/folder/folderCreation.js",
         "js/document-management/document/documentCreation.js",
+        "js/document-management/document/documentUploadFile.js",
         "js/document-management/document/documentCheckin.js",
         "js/document-management/share/sharedDocumentCreation.js",
         "js/document-management/share/publicSharedDocument.js",
