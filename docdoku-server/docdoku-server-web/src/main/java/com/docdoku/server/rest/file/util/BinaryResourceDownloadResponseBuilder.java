@@ -65,7 +65,7 @@ public class BinaryResourceDownloadResponseBuilder {
                     .header("Content-Type", binaryResourceDownloadMeta.getContentType())
                     .entity(new BinaryResourceBinaryStreamingOutput(binaryContentInputStream, 0, length - 1, length));
 
-            // Converting files modify its length so we don't specify the lenght on converted content
+            // Converting files modify its length so we don't specify the length on converted content
             if(!binaryResourceDownloadMeta.isConverted()){
                 responseBuilder.header("Content-Length", length);
             }
