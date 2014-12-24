@@ -184,7 +184,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         }
     }
 
-    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.GUEST_PROXY_ROLE_ID})
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     @Override
     public BinaryResource getTemplateBinaryResource(String pFullName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, FileNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(BinaryResource.parseWorkspaceId(pFullName));
