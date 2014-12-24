@@ -106,7 +106,7 @@ public class AuthFilter implements Filter {
     }
 
     private boolean isExcludedURL(HttpServletRequest httpRequest){
-        String path = httpRequest.getPathInfo();
+        String path = httpRequest.getRequestURI();
         String method=httpRequest.getMethod();
         if(path!=null && excludedPaths !=null && "GET".equals(method)){
             for(String excludedPath: excludedPaths){
