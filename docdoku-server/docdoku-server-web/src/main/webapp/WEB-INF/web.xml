@@ -35,6 +35,10 @@
     <filter>
         <filter-name>AuthFilter</filter-name>
         <filter-class>com.docdoku.server.filters.AuthFilter</filter-class>
+        <init-param>
+            <param-name>excludedPaths</param-name>
+            <param-value>/files/*/documents/**,/files/*/parts/**</param-value>
+        </init-param>
     </filter>
     <filter>
         <filter-name>PermalinkFilter</filter-name>
