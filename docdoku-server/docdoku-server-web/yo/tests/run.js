@@ -15,21 +15,21 @@ var local = require('./config.local');
 
 var conf = _.extend(ci, local);
 
-var casperCommand = 'casperjs test'
-    + ' --domain=' + conf.domain
-    + ' --port=' + conf.port
-    + ' --login=' + conf.login
-    + ' --pass=' + conf.pass
-    + ' --workspace=' + conf.workspace
-    + ' --contextPath=' + conf.contextPath
-    + ' --pre=' + conf.pre.join(',')
-    + ' --post=' + conf.post.join(',')
-    + ' --includes=' + conf.includes.join(',')
-    + ' --xunit=' + conf.xunit
-    + (conf.failFast ? ' --fail-fast' : '')
-    + (conf.verbose ? ' --verbose' : '')
-    +' --log-level='+conf.logLevel
-    + ' ' + conf.paths.join(' ');
+var casperCommand = 'casperjs test' +
+                    ' --domain=' + conf.domain +
+                    ' --port=' + conf.port +
+                    ' --login=' + conf.login +
+                    ' --pass=' + conf.pass +
+                    ' --workspace=' + conf.workspace +
+                    ' --contextPath=' + conf.contextPath +
+                    ' --pre=' + conf.pre.join(',') +
+                    ' --post=' + conf.post.join(',') +
+                    ' --includes=' + conf.includes.join(',') +
+                    ' --xunit=' + conf.xunit +
+                    (conf.failFast ? ' --fail-fast' : '') +
+                    (conf.verbose ? ' --verbose' : '') +
+                    ' --log-level='+conf.logLevel +
+                    ' ' + conf.paths.join(' ');
 
 sys.print('Running DocdokuPLM tests. Command : \n ' + casperCommand + '\n\n');
 

@@ -1,4 +1,4 @@
-/*global casper,urls*/
+/*global casper,urls,products,homeUrl,workspace*/
 
 casper.test.begin('Assembly creation tests suite',11, function assemblyCreationTestsSuite(){
 
@@ -108,7 +108,7 @@ casper.test.begin('Assembly creation tests suite',11, function assemblyCreationT
     casper.then(function checkIfPartsInAssemblyAreCreated(){
         casper.waitFor(function check() {
             return this.evaluate(function() {
-                return document.querySelectorAll('#part_table tbody tr').length == 5;
+                return document.querySelectorAll('#part_table tbody tr').length === 5;
             });
         }, function then() {
             this.test.assert(true,'5 entries in the table');
@@ -129,7 +129,7 @@ casper.test.begin('Assembly creation tests suite',11, function assemblyCreationT
                 this.test.assertEquals(response.status, 200 , 'Part ' + partNumber + ' should be checkin');
             },function(){
                 this.test.assert(false , 'Part ' + partNumber + ' has not been checkin');
-            })
+            });
         });
     });
 

@@ -176,13 +176,13 @@ public class PrivateShareServlet extends HttpServlet {
 
             if(partIteration.getNativeCADFile() != null){
                 BinaryResource binaryResource = partIteration.getNativeCADFile();
-                nativeCadFileURI = "/shared-files/" + uuid +  "/" + binaryResource.getOwnerIteration() + "/nativecad/" + binaryResource.getName();
+                nativeCadFileURI = "/api/files/" + uuid +  "/" + binaryResource.getOwnerIteration() + "/nativecad/" + binaryResource.getName();
             }
 
             String geometryFileURI = "";
             if(partRevision.getLastIteration().getGeometries().size()>0){
                 Geometry geometry = partRevision.getLastIteration().getGeometries().get(0);
-                geometryFileURI ="/shared-files/" + uuid +  "/" + geometry.getOwnerIteration() + "/" + geometry.getName();
+                geometryFileURI ="/api/files/" + uuid +  "/" + geometry.getOwnerIteration() + "/" + geometry.getName();
             }
 
             pRequest.setAttribute("partRevision", partRevision);
