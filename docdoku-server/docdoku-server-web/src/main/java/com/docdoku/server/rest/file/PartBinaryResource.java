@@ -31,16 +31,17 @@ import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.core.services.IShareManagerLocal;
 import com.docdoku.core.sharing.SharedEntity;
 import com.docdoku.core.sharing.SharedPart;
-import com.docdoku.server.rest.exceptions.NotModifiedException;
-import com.docdoku.server.rest.exceptions.PreconditionFailedException;
-import com.docdoku.server.rest.exceptions.RequestedRangeNotSatisfiableException;
+import com.docdoku.server.filters.GuestProxy;
+import com.docdoku.server.rest.exceptions.*;
 import com.docdoku.server.rest.file.util.BinaryResourceDownloadMeta;
 import com.docdoku.server.rest.file.util.BinaryResourceDownloadResponseBuilder;
 import com.docdoku.server.rest.file.util.BinaryResourceUpload;
 
+import javax.annotation.Resource;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
+import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -54,13 +55,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @Stateless
 @DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.GUEST_PROXY_ROLE_ID})
-@RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.GUEST_PROXY_ROLE_ID})
 public class PartBinaryResource{
     @EJB
     private IDataManagerLocal dataManager;
@@ -70,6 +71,11 @@ public class PartBinaryResource{
     private IConverterManagerLocal converterService;
     @EJB
     private IShareManagerLocal shareService;
+    @EJB
+    private GuestProxy guestProxy;
+
+    @Resource
+    private SessionContext ctx;
 
     private static final Logger LOGGER = Logger.getLogger(PartBinaryResource.class.getName());
 
@@ -79,32 +85,27 @@ public class PartBinaryResource{
     @POST
     @Path("/{iteration}")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     public Response uploadDirectPartFiles(@Context HttpServletRequest request,
-                                          @PathParam("uuid") final String uuid,
                                           @PathParam("workspaceId") final String workspaceId,
                                           @PathParam("partNumber") final String partNumber,
                                           @PathParam("version") final String version,
                                           @PathParam("iteration") final int iteration)
             throws EntityNotFoundException, EntityAlreadyExistsException, UserNotActiveException, AccessRightException, NotAllowedException, CreationException{
-        return uploadPartFiles(request,uuid,workspaceId,partNumber,version,iteration,null);
+        return uploadPartFiles(request,workspaceId,partNumber,version,iteration,null);
     }
 
     @POST
     @Path("/{iteration}/{subType}")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     public Response uploadPartFiles(@Context HttpServletRequest request,
-                                    @PathParam("uuid") final String uuid,
                                     @PathParam("workspaceId") final String workspaceId,
                                     @PathParam("partNumber") final String partNumber,
                                     @PathParam("version") final String version,
                                     @PathParam("iteration") final int iteration,
                                     @PathParam("subType") final String subType)
             throws EntityNotFoundException, EntityAlreadyExistsException, UserNotActiveException, AccessRightException, NotAllowedException, CreationException {
-        if(uuid!=null){
-            return Response.status(Response.Status.METHOD_NOT_ALLOWED)
-                    .build();
-        }
-
         try {
             String fileName=null;
             PartIterationKey partPK = new PartIterationKey(workspaceId, partNumber, version, iteration);
@@ -148,29 +149,28 @@ public class PartBinaryResource{
     }
 
     @GET
-    @Path("/{iteration}/{fileName}")
+    @Path("/{iteration}/{fileName}{uuid:(/uuid/[^/]+?)?}")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response downloadDirectPartFile(@Context Request request,
                                      @HeaderParam("Range") String range,
-                                     @PathParam("uuid") final String uuid,
                                      @PathParam("workspaceId") final String workspaceId,
                                      @PathParam("partNumber") final String partNumber,
                                      @PathParam("version") final String version,
                                      @PathParam("iteration") final int iteration,
                                      @PathParam("fileName") final String fileName,
                                      @QueryParam("type") String type,
-                                     @QueryParam("output") String output)
-            throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException, PreconditionFailedException, NotModifiedException, RequestedRangeNotSatisfiableException {
-        return downloadPartFile(request,range,uuid,workspaceId,partNumber,version,iteration,null,fileName,type,output);
+                                     @QueryParam("output") String output,
+                                     @PathParam("uuid") final String uuid)
+            throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException, PreconditionFailedException, NotModifiedException, RequestedRangeNotSatisfiableException, UnmatchingUuidException, ExpiredLinkException {
+        return downloadPartFile(request,range,workspaceId,partNumber,version,iteration,null,fileName,type,output,uuid);
     }
 
 
     @GET
-    @Path("/{iteration}/{subType}/{fileName}")
+    @Path("/{iteration}/{subType}/{fileName}{uuid:(/uuid/[^/]+?)?}")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response downloadPartFile(@Context Request request,
                                      @HeaderParam("Range") String range,
-                                     @PathParam("uuid") final String uuid,
                                      @PathParam("workspaceId") final String workspaceId,
                                      @PathParam("partNumber") final String partNumber,
                                      @PathParam("version") final String version,
@@ -178,12 +178,18 @@ public class PartBinaryResource{
                                      @PathParam("subType") final String subType,
                                      @PathParam("fileName") final String fileName,
                                      @QueryParam("type") String type,
-                                     @QueryParam("output") String output)
-            throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException, PreconditionFailedException, NotModifiedException, RequestedRangeNotSatisfiableException {
+                                     @QueryParam("output") String output,
+                                     @PathParam("uuid") final String pUuid)
+            throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException, PreconditionFailedException, NotModifiedException, RequestedRangeNotSatisfiableException, UnmatchingUuidException, ExpiredLinkException {
 
         String fullName;
-        if (uuid != null) {
+        if (pUuid != null && !pUuid.isEmpty()) {
+            String uuid = pUuid.split("/")[2];
             SharedEntity sharedEntity = shareService.findSharedEntityForGivenUUID(uuid);
+
+            // Check uuid & access right
+            checkUuidValidity(sharedEntity,workspaceId,partNumber,version,iteration);
+
             PartRevision partRevision = ((SharedPart) sharedEntity).getPartRevision();
             fullName = sharedEntity.getWorkspace().getId() +
                     "/parts/" +
@@ -191,14 +197,12 @@ public class PartBinaryResource{
                     partRevision.getVersion() + "/" +
                     iteration + "/";
         }else {
-            // Log guest user                                                                                           // Todo : If Guest, return public binary resource
-
             // Check access right
-
             PartIterationKey partIK = new PartIterationKey(workspaceId, partNumber, version,iteration);
-            if(!productService.canAccess(partIK)){
+            if(!canAccess(partIK)){
                 throw new NotAllowedException(Locale.getDefault(),"NotAllowedException34");
             }
+
             fullName = workspaceId+"/parts/" + partNumber + "/" + version + "/" + iteration + "/";
         }
 
@@ -210,7 +214,7 @@ public class PartBinaryResource{
 
     private Response downloadPartFile(Request request, String range, String fullName, String subType, String type, String output)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException, PreconditionFailedException, NotModifiedException, RequestedRangeNotSatisfiableException {
-        BinaryResource binaryResource = productService.getBinaryResource(fullName);
+        BinaryResource binaryResource = getBinaryResource(fullName);
         BinaryResourceDownloadMeta binaryResourceDownloadMeta = new BinaryResourceDownloadMeta(binaryResource,output,type);
 
         // Check cache precondition
@@ -237,6 +241,52 @@ public class PartBinaryResource{
             converterService.convertCADFileToJSON(partPK, binaryResource);
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "A CAD file conversion can not be done", e);
+        }
+    }
+
+    private boolean canAccess(PartIterationKey partIKey) throws UserNotActiveException, EntityNotFoundException {
+        if(ctx.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)){
+            return productService.canAccess(partIKey);
+        }else{
+            return guestProxy.canAccess(partIKey);
+        }
+    }
+
+    private BinaryResource getBinaryResource(String fullName)
+            throws NotAllowedException, AccessRightException, UserNotActiveException, EntityNotFoundException {
+        if(ctx.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)){
+            return productService.getBinaryResource(fullName);
+        }else{
+            return guestProxy.getBinaryResourceForPart(fullName);
+        }
+    }
+
+    private void checkUuidValidity(SharedEntity sharedEntity, String workspaceId, String partNumber, String version, int iteration)
+            throws UnmatchingUuidException, ExpiredLinkException {
+        if(!(sharedEntity instanceof SharedPart)){
+            throw new UnmatchingUuidException();
+        }
+
+        // Todo Check password of shared entity
+
+        checkUuidExpiredDate(sharedEntity);
+
+        String shareEntityWorkspaceId = sharedEntity.getWorkspace().getId();
+        PartRevision partRevision = ((SharedPart) sharedEntity).getPartRevision();
+
+        if(!shareEntityWorkspaceId.equals(workspaceId) ||
+                !partRevision.getPartMasterNumber().equals(partNumber) ||
+                !partRevision.getVersion().equals(version) ||
+                partRevision.getLastCheckedInIteration().getIteration() < iteration){
+            throw new UnmatchingUuidException();
+        }
+    }
+
+    private void checkUuidExpiredDate(SharedEntity sharedEntity) throws ExpiredLinkException {
+        // Check shared entity expired
+        if(sharedEntity.getExpireDate() != null && sharedEntity.getExpireDate().getTime() < new Date().getTime()){
+            shareService.deleteSharedEntityIfExpired(sharedEntity);
+            throw new ExpiredLinkException();
         }
     }
 }

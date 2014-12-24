@@ -1436,7 +1436,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         DocumentRevision documentRevision;
         if(ctx.isCallerInRole(UserGroupMapping.GUEST_PROXY_ROLE_ID)){
             documentRevision = new DocumentRevisionDAO(em).loadDocR(docIKey.getDocumentRevision());
-            return documentRevision.isPublicShared() && documentRevision.getLastIteration().getIteration() > docIKey.getIteration();
+            return documentRevision.isPublicShared() && documentRevision.getLastCheckedInIteration().getIteration() >= docIKey.getIteration();
         }
 
         User user = userManager.checkWorkspaceReadAccess(docIKey.getWorkspaceId());

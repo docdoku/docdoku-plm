@@ -19,13 +19,8 @@
  */
 package com.docdoku.server.rest;
 
-import com.docdoku.core.exceptions.EntityNotFoundException;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IShareManagerLocal;
-import com.docdoku.core.sharing.SharedDocument;
-import com.docdoku.core.sharing.SharedEntity;
-import com.docdoku.core.sharing.SharedPart;
-import com.docdoku.server.rest.exceptions.ExpiredLinkException;
 import com.docdoku.server.rest.file.DocumentBinaryResource;
 import com.docdoku.server.rest.file.DocumentTemplateBinaryResource;
 import com.docdoku.server.rest.file.PartBinaryResource;
@@ -36,13 +31,10 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import java.util.Date;
 
 @Stateless
 @Path("files")
 @DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.GUEST_PROXY_ROLE_ID})
-@RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.GUEST_PROXY_ROLE_ID})
 public class FileResource {
     @EJB
     private DocumentBinaryResource documentBinaryResource;
@@ -70,36 +62,14 @@ public class FileResource {
     }
 
     @Path("/{workspaceId}/document-templates/{templateId}/")
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     public DocumentTemplateBinaryResource downloadDocumentTemplateFile(){
         return documentTemplateBinaryResource;
     }
 
     @Path("/{workspaceId}/part-templates/{templateId}/")
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     public PartTemplateBinaryResource downloadPartTemplateFile(){
         return partTemplateBinaryResource;
-    }
-
-    @Path("/{uuid}")
-    public Object downloadShareFile(@PathParam("uuid") final String uuid)
-            throws EntityNotFoundException, ExpiredLinkException {
-
-        // Get shared entity$
-        SharedEntity sharedEntity = shareService.findSharedEntityForGivenUUID(uuid);
-
-        // Check shared entity access
-
-        // Check shared entity expired
-        if(sharedEntity.getExpireDate() != null && sharedEntity.getExpireDate().getTime() < new Date().getTime()){
-            shareService.deleteSharedEntityIfExpired(sharedEntity);
-            throw new ExpiredLinkException();
-        }
-
-        if(sharedEntity instanceof SharedDocument){
-            return documentBinaryResource;
-        }else if(sharedEntity instanceof SharedPart){
-            return partBinaryResource;
-        }else{
-            return null;
-        }
     }
 }

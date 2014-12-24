@@ -48,7 +48,7 @@ import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-@DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.ADMIN_ROLE_ID})
+@DeclareRoles({UserGroupMapping.GUEST_PROXY_ROLE_ID,UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.ADMIN_ROLE_ID})
 @Local(IUserManagerLocal.class)
 @Stateless(name = "UserManagerBean")
 @WebService(endpointInterface = "com.docdoku.core.services.IUserManagerWS")
@@ -573,7 +573,7 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
         return userLogin1 != null && userLogin2 != null && new UserDAO(em).hasCommonWorkspace(userLogin1, userLogin2);
     }
 
-    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.ADMIN_ROLE_ID})
+    @RolesAllowed({UserGroupMapping.GUEST_PROXY_ROLE_ID, UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.ADMIN_ROLE_ID})
     @Override
     public boolean isCallerInRole(String role) {
         return ctx.isCallerInRole(role);

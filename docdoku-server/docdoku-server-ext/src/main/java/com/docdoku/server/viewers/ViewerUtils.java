@@ -20,7 +20,7 @@ public class ViewerUtils {
         if(uuid == null){
             return "/api/files/" + binaryResource.getFullName();
         }else{
-            return "/api/files/" + uuid +  "/" + binaryResource.getOwnerIteration() + "/" + binaryResource.getName();
+            return "/api/files/" + binaryResource.getFullName() + "/uuid/" + uuid;
         }
     }
 

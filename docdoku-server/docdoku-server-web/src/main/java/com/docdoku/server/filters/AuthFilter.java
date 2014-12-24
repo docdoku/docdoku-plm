@@ -39,7 +39,6 @@ import java.net.URLEncoder;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class AuthFilter implements Filter {
@@ -110,8 +109,9 @@ public class AuthFilter implements Filter {
         String method=httpRequest.getMethod();
         if(path!=null && excludedPaths !=null && "GET".equals(method)){
             for(String excludedPath: excludedPaths){
-                if(Pattern.matches(excludedPath, path))
+                if(Pattern.matches(excludedPath, path)) {
                     return true;
+                }
             }
         }
         return false;
@@ -148,8 +148,9 @@ public class AuthFilter implements Filter {
                     endLess=true;
                 }
                 excludedPaths[i] = excludedPaths[i].replace("*", "[^/]+?");
-                if(endLess)
-                    excludedPaths[i] +=".*";
+                if(endLess) {
+                    excludedPaths[i] += ".*";
+                }
             }
         }
         else
