@@ -23,7 +23,7 @@ define([
         'dmu/collaborativeController',
         'dmu/InstancesManager',
         'text!templates/content.html',
-        'models/part'
+        'common-objects/models/part'
 ], function (Backbone, Mustache, SearchView, PartsTreeView, BomView, CollaborativeView, PartMetadataView, PartInstanceView, ExportSceneModalView, ControlNavigationView, ControlModesView, ControlTransformView, ControlMarkersView, ControlLayersView, ControlOptionsView, ControlClippingView, ControlExplodeView, ControlMeasureView, BaselineSelectView, SceneManager, CollaborativeController, InstancesManager, template, Part) {
 	'use strict';
     var AppView = Backbone.View.extend({

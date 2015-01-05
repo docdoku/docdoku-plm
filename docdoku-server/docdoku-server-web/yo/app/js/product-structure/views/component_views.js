@@ -1,7 +1,7 @@
 /*global _,define,App*/
 define([
     'backbone',
-    'models/part',
+    'common-objects/models/part',
     'common-objects/views/part/part_modal_view'
 ], function (Backbone, Part, PartModalView) {
 	'use strict';
