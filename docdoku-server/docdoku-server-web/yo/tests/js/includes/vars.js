@@ -10,6 +10,7 @@ var contextPath = casper.cli.get("contextPath");
 var homeUrl = 'http://'+domain+':'+port + contextPath;
 
 function twoDigit(n){
+    'use strict';
     return n > 9 ? n : "0" + n;
 }
 

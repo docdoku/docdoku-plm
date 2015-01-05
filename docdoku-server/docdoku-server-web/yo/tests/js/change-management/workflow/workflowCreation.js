@@ -30,7 +30,7 @@ casper.test.begin('Workflow creation tests suite',8, function workflowCreationTe
      * Wait for workflow button
      */
     casper.then(function waitForNewWorkflowButton(){
-        this.waitForSelector('.actions .new',function clickOnNewWorkflowButton(){
+        this.waitForSelector('.actions .new:enabled',function clickOnNewWorkflowButton(){
             this.click('.actions .new');
             this.test.assert(true,'New Workflow button is displayed');
         },function fail() {
@@ -117,6 +117,7 @@ casper.test.begin('Workflow creation tests suite',8, function workflowCreationTe
      */
     casper.then(function checkForWorkflowToBeCreated(){
         this.waitForSelector('.workflow-table',function workflowTableDisplayed(){
+            this.capture('screenshot/debug/workflowCreation/checkForWorkflowToBeCreated-sucess.png');
             this.test.assertSelectorHasText('.workflow-table tbody tr:first-child td.reference', workflows.workflow1.name);
         },function fail(){
             this.capture('screenshot/workflowCreation/checkForWorkflowToBeCreated-error.png');
