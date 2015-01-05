@@ -74,7 +74,9 @@
                     LOCKED:'Locked',
                     UP_TO_DATE:'Up to date',
                     MODIFIED:'Modified',
-                    NOT_SYNC:'Not synchronised'
+                    NOT_SYNC:'Not synchronised',
+                    LAST_WORKSPACES_VISITED:'Last workspaces visited',
+                    NOTHING_TO_SHOW:'Nothing to show'
                 })
                 .translations('fr', {
                     CUT: 'Couper',
@@ -145,7 +147,9 @@
                     LOCKED:'Vérrouillé',
                     UP_TO_DATE:'À jour',
                     MODIFIED:'Modifié',
-                    NOT_SYNC:'Non synchronisé'
+                    NOT_SYNC:'Non synchronisé',
+                    LAST_WORKSPACES_VISITED:'Derniers espaces de travail utilisés',
+                    NOTHING_TO_SHOW:'Aucune entrée'
                 });
 
             $translateProvider.preferredLanguage(localStorage.lang || 'en');
