@@ -51,6 +51,10 @@ module.exports = {
         "js/product-management/product-instance/productInstanceCreation.js",
         "js/product-management/template/partTemplateCreation.js",
 
+        // Product structure
+        "js/product-management/assembly/bomInspection.js",
+
+
         // Documents tags
         "js/document-management/tag/tagCreation.js",
         "js/document-management/tag/tagList.js",

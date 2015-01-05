@@ -137,6 +137,7 @@ var workflows = {
 
 var urls = {
 	productManagement : homeUrl+'product-management/#'+workspace,
+    productStructure : homeUrl+'product-structure/#'+workspace+'/' + products.product1.number,
 	documentManagement : homeUrl+'document-management/#'+workspace,
 	changeManagement : homeUrl+'change-management/#'+workspace,
     documentPermalink:homeUrl+'documents/'+workspace+'/'+documents.document1.number+'/A',
