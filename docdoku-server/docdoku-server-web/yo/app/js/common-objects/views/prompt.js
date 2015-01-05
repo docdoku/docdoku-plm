@@ -34,14 +34,18 @@ define([
             this.$promptInput = this.$('#prompt_input');
         },
 
-        primaryAction: function () {
+        primaryAction: function (e) {
             this.trigger('prompt-ok', [this.$promptInput.val()]);
             this.closeModal();
+            e.preventDefault();
+            return false;
         },
 
-        cancelAction: function () {
+        cancelAction: function (e) {
             this.trigger('prompt-cancel');
             this.closeModal();
+            e.preventDefault();
+            return false;
         },
 
         setPromptOptions: function (title, question, primaryButton, cancelButton) {

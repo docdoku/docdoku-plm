@@ -9,6 +9,8 @@
 
             this.workspaces = [];
 
+            var lastVisitedWorkspaces = JSON.parse(localStorage.lastVisitedWorkspaces || '[]');
+
             this.getWorkspaces = function () {
 
                 var deferred = $q.defer();
@@ -35,6 +37,22 @@
 
             this.reset = function(){
                 _this.workspaces.length = 0;
+            };
+
+            this.getLastVisitedWorkspaces = function(){
+                return lastVisitedWorkspaces;
+            };
+
+            this.addLastVisited = function(workspace){
+
+                var alreadyIndexed = lastVisitedWorkspaces.indexOf(workspace)
+                if(alreadyIndexed !== -1){
+                    lastVisitedWorkspaces.splice(alreadyIndexed,1);
+                }
+
+                lastVisitedWorkspaces.unshift(workspace);
+                lastVisitedWorkspaces.splice(4,lastVisitedWorkspaces.length-1)
+                localStorage.lastVisitedWorkspaces = JSON.stringify(lastVisitedWorkspaces);
             };
 
         });

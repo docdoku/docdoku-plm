@@ -5,6 +5,7 @@ define([
 ], function (Backbone, PartIteration) {
 	'use strict';
     var PartIterationList = Backbone.Collection.extend({
+
         model: PartIteration,
 
         setPart: function (part) {
