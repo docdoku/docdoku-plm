@@ -26,12 +26,13 @@ package com.docdoku.core.util;
  */
 public class NamingConvention {
     
-    
-    private static final char[] FORBIDDEN_CHARS = {'/', '\\', ':', '*', '?',
-    '"', '<', '>', '|', '~', '%', ' '};
+    private static final char[] FORBIDDEN_CHARS = {
+            '$','&','+',',','/',':',';','=','?','@','"', '<', '>', '#','%','{','}','|','\\','^','~','[',']',' ', '*','`'
+    };
 
-    private static final char[] FORBIDDEN_CHARS_FILE = {'/', '\\', ':', '*', '?',
-            '"', '<', '>', '|', '~'};
+    private static final char[] FORBIDDEN_CHARS_FILE = {
+            '/', '\\', ':', '*', '?','"', '<', '>', '|', '~'
+    };
     
     private static final String[] FORBIDDEN_NAMES = {"",".."};
 
@@ -39,23 +40,30 @@ public class NamingConvention {
     }
     
     private static boolean forbidden(char pChar, char[] forbiddenChars) {
-        for (char forbiddenChar : forbiddenChars)
-            if (pChar == forbiddenChar)
+        for (char forbiddenChar : forbiddenChars) {
+            if (pChar == forbiddenChar) {
                 return true;
+            }
+        }
         return false;
     }
 
     private static boolean correct(String pShortName, char[] forbiddenChars) {
-        if (pShortName == null)
+        if (pShortName == null) {
             return false;
+        }
 
-        for (String forbiddenName : FORBIDDEN_NAMES)
-            if (pShortName.equals(forbiddenName))
+        for (String forbiddenName : FORBIDDEN_NAMES) {
+            if (pShortName.equals(forbiddenName)) {
                 return false;
+            }
+        }
 
-        for (int i = 0; i < pShortName.length(); i++)
-            if (forbidden(pShortName.charAt(i),forbiddenChars))
+        for (int i = 0; i < pShortName.length(); i++) {
+            if (forbidden(pShortName.charAt(i), forbiddenChars)) {
                 return false;
+            }
+        }
         return true;
     }
     
