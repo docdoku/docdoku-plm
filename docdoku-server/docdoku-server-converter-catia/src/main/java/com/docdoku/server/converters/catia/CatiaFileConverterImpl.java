@@ -28,7 +28,6 @@ import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.core.util.FileIO;
 import com.docdoku.server.converters.CADConverter;
-import com.docdoku.server.converters.utils.RadiusCalculator;
 import com.google.common.io.Files;
 import com.google.common.io.InputSupplier;
 
@@ -75,70 +74,51 @@ public class CatiaFileConverterImpl implements CADConverter{
     }
 
     @Override
-    public File convert(PartIteration partToConvert, final BinaryResource cadFile) throws IOException, InterruptedException, UserNotActiveException, PartRevisionNotFoundException, WorkspaceNotFoundException, CreationException, UserNotFoundException, NotAllowedException, FileAlreadyExistsException, StorageException {
+    public File convert(PartIteration partToConvert, final BinaryResource cadFile, File tempDir) throws IOException, InterruptedException, UserNotActiveException, PartRevisionNotFoundException, WorkspaceNotFoundException, CreationException, UserNotFoundException, NotAllowedException, FileAlreadyExistsException, StorageException {
         String woExName = FileIO.getFileNameWithoutExtension(cadFile.getName());
-        File tmpDir = Files.createTempDir();
-        File tmpCadFile;
-        File tmpDAEFile = new File(tmpDir, woExName+".dae");
-        File daeFile = null;
+        File tmpCadFile = new File(tempDir, cadFile.getName());
+        File tmpDAEFile = new File(tempDir, woExName+".dae");
+        String catPartConverter = CONF.getProperty("catPartConverter");
 
-        try {
-            String catPartConverter = CONF.getProperty("catPartConverter");
-
-            tmpCadFile = new File(tmpDir, cadFile.getName());
-
-            Files.copy(new InputSupplier<InputStream>() {
-                @Override
-                public InputStream getInput() throws IOException {
-                    try {
-                        return dataManager.getBinaryResourceInputStream(cadFile);
-                    } catch (StorageException e) {
-                        Logger.getLogger(CatiaFileConverterImpl.class.getName()).log(Level.INFO, null, e);
-                        throw new IOException(e);
-                    }
-                }
-            }, tmpCadFile);
-
-            String[] args = {"sh", catPartConverter, tmpCadFile.getAbsolutePath() , tmpDAEFile.getAbsolutePath()};
-
-            ProcessBuilder pb = new ProcessBuilder(args);
-            Process process = pb.start();
-
-            process.waitFor();
-
-            int exitCode = process.exitValue();
-
-            if (exitCode==0 & tmpDAEFile.exists() && tmpDAEFile.length() > 0 ){
-                PartIterationKey partIPK = partToConvert.getKey();
-
-                // Calculate radius
-                double radius = RadiusCalculator.calculateRadius(tmpDAEFile);
-
-                BinaryResource jsBinaryResource = productService.saveGeometryInPartIteration(partIPK, woExName+".dae", 0, tmpDAEFile.length(),radius);
-                OutputStream daeOutputStream = null;
+        Files.copy(new InputSupplier<InputStream>() {
+            @Override
+            public InputStream getInput() throws IOException {
                 try {
-                    daeOutputStream = dataManager.getBinaryResourceOutputStream(jsBinaryResource);
-                    Files.copy(tmpDAEFile, daeOutputStream);
-                } finally {
-                    if(daeOutputStream!=null){
-                        daeOutputStream.flush();
-                        daeOutputStream.close();
-                    }
+                    return dataManager.getBinaryResourceInputStream(cadFile);
+                } catch (StorageException e) {
+                    Logger.getLogger(CatiaFileConverterImpl.class.getName()).log(Level.INFO, null, e);
+                    throw new IOException(e);
                 }
             }
+        }, tmpCadFile);
 
-            return daeFile;
+        String[] args = {"sh", catPartConverter, tmpCadFile.getAbsolutePath() , tmpDAEFile.getAbsolutePath()};
 
-        } catch(Exception e){
-            Logger.getLogger(CatiaFileConverterImpl.class.getName()).log(Level.INFO, null, e);
-            return null;
-        } finally {
-            FileIO.rmDir(tmpDir);
+        ProcessBuilder pb = new ProcessBuilder(args);
+        Process process = pb.start();
+
+        process.waitFor();
+
+        // Convert to OBJ once converted to DAE
+        if (process.exitValue() == 0 & tmpDAEFile.exists() && tmpDAEFile.length() > 0 ){
+
+            String assimp = CONF.getProperty("assimp");
+            String convertedFileName = FileIO.getFileNameWithoutExtension(tmpDAEFile.getAbsolutePath()) + ".obj";
+            String[] argsOBJ = {assimp, "export", tmpDAEFile.getAbsolutePath(), convertedFileName};
+            pb = new ProcessBuilder(argsOBJ);
+            Process proc = pb.start();
+            proc.waitFor();
+
+            if (proc.exitValue() == 0) {
+                return new File(convertedFileName);
+            }
         }
+
+        return null;
     }
 
     @Override
-    public boolean canConvertToJSON(String cadFileExtension) {
+    public boolean canConvertToOBJ(String cadFileExtension) {
         return Arrays.asList("catpart").contains(cadFileExtension);
     }
 }

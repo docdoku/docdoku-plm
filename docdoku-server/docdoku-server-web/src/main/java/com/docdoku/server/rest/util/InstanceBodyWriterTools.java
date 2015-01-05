@@ -34,6 +34,7 @@ import org.apache.commons.lang.StringUtils;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
+import javax.json.JsonObject;
 import javax.json.stream.JsonGenerator;
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -171,7 +172,14 @@ public class InstanceBodyWriterTools {
             jg.writeStartObject();
             jg.write("fullName", g.getFullName());
             jg.write("quality", g.getQuality());
-            jg.write("radius", g.getRadius());
+
+            jg.write("xMin", g.getxMin());
+            jg.write("yMin", g.getyMin());
+            jg.write("zMin", g.getzMin());
+            jg.write("xMax", g.getxMax());
+            jg.write("yMax", g.getyMax());
+            jg.write("zMax", g.getzMax());
+
             jg.writeEnd();
         }
         jg.writeEnd();

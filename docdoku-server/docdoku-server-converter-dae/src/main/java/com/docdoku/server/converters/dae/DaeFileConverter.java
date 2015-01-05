@@ -18,14 +18,17 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.server.converters;
+package com.docdoku.server.converters.dae;
 
-import com.docdoku.core.common.BinaryResource;
-import com.docdoku.core.product.PartIteration;
 
-import java.io.File;
+import javax.inject.Qualifier;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
-public interface CADConverter {
-    File convert(PartIteration partToConvert, BinaryResource cadFile, File tempDir) throws Exception;
-    boolean canConvertToOBJ(String cadFileExtension);
-}
+import static java.lang.annotation.ElementType.*;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
+@Qualifier
+@Retention(RUNTIME)
+@Target({TYPE, METHOD, FIELD, PARAMETER})
+public @interface DaeFileConverter {}
