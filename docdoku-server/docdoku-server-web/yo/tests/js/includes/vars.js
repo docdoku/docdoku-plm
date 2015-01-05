@@ -9,10 +9,14 @@ var contextPath = casper.cli.get("contextPath");
 
 var homeUrl = 'http://'+domain+':'+port + contextPath;
 
+function twoDigit(n){
+    return n > 9 ? n : "0" + n;
+}
+
 var tomorrow = new Date(Date.now()+86400000);
 var yesterday = new Date(Date.now()-86400000);
-var tomorrowValue = tomorrow.getFullYear()+'-'+(tomorrow.getMonth()+1)+'-'+tomorrow.getDate();
-var yesterdayValue = yesterday.getFullYear()+'-'+(yesterday.getMonth()+1)+'-'+yesterday.getDate();
+var tomorrowValue = tomorrow.getFullYear()+'-'+twoDigit(tomorrow.getMonth()+1)+'-'+twoDigit(tomorrow.getDate());
+var yesterdayValue = yesterday.getFullYear()+'-'+twoDigit(yesterday.getMonth()+1)+'-'+twoDigit(yesterday.getDate());
 
 var documents = {
 	template1 : {
