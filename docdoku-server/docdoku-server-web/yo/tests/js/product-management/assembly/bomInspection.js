@@ -1,6 +1,6 @@
 /*global casper,urls,products,homeUrl,workspace*/
 
-casper.test.begin('Bom inspection tests suite',10, function bomInspectionTestsSuite(){
+casper.test.begin('Bom inspection tests suite',13, function bomInspectionTestsSuite(){
 
     'use strict';
 
@@ -127,6 +127,7 @@ casper.test.begin('Bom inspection tests suite',10, function bomInspectionTestsSu
     casper.then(function checkRootNode(){
         this.test.assertExists('#product_nav_list_container > .treeview > ul > li > input[type=checkbox]:not(:checked)','Checkbox is unchecked');
         this.click('#product_nav_list_container > .treeview > ul > li > input[type=checkbox]');
+        this.test.assertExists('#product_nav_list_container > .treeview > ul > li > input[type=checkbox]:checked','Checkbox is now checked');
     });
 
     /**
@@ -135,6 +136,24 @@ casper.test.begin('Bom inspection tests suite',10, function bomInspectionTestsSu
     casper.then(function countChildNodesCheckedInTree(){
         this.test.assertElementCount('#product_nav_list_container > .treeview > ul > li > ul > li  > input[type=checkbox]:checked',4,'4 child nodes checked');
     });
+
+    /**
+     * Uncheck the root node
+     */
+
+    casper.then(function unCheckRootNode(){
+        this.click('#product_nav_list_container > .treeview > ul > li > input[type=checkbox]');
+        this.test.assertExists('#product_nav_list_container > .treeview > ul > li > input[type=checkbox]:not(:checked)','Checkbox is now unchecked');
+    });
+
+    /**
+     * Count child nodes checked
+     * */
+    casper.then(function countChildNodesUnCheckedInTree(){
+        this.test.assertElementCount('#product_nav_list_container > .treeview > ul > li > ul > li  > input[type=checkbox]:not(:checked)',4,'4 child nodes are now unchecked');
+    });
+
+
 
     casper.run(function allDone(){
         this.test.done();
