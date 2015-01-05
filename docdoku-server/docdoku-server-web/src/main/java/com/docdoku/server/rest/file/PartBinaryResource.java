@@ -148,8 +148,9 @@ public class PartBinaryResource{
         return fileName;
     }
 
+    // Split on several methods because of Path conflict when we use regex
     @GET
-    @Path("/{iteration}/{fileName}{uuid:(/uuid/[^/]+?)?}")
+    @Path("/{iteration}/{fileName}")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response downloadDirectPartFile(@Context Request request,
                                      @HeaderParam("Range") String range,
@@ -159,15 +160,48 @@ public class PartBinaryResource{
                                      @PathParam("iteration") final int iteration,
                                      @PathParam("fileName") final String fileName,
                                      @QueryParam("type") String type,
-                                     @QueryParam("output") String output,
-                                     @PathParam("uuid") final String uuid)
+                                     @QueryParam("output") String output)
+            throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException, PreconditionFailedException, NotModifiedException, RequestedRangeNotSatisfiableException, UnmatchingUuidException, ExpiredLinkException {
+        return downloadPartFile(request,range,workspaceId,partNumber,version,iteration,null,fileName,type,output,null);
+    }
+
+    @GET
+    @Path("/{iteration}/{fileName}/uuid/{uuid}")
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    public Response downloadPartFileWithUuid(@Context Request request,
+                                           @HeaderParam("Range") String range,
+                                           @PathParam("workspaceId") final String workspaceId,
+                                           @PathParam("partNumber") final String partNumber,
+                                           @PathParam("version") final String version,
+                                           @PathParam("iteration") final int iteration,
+                                           @PathParam("fileName") final String fileName,
+                                           @QueryParam("type") String type,
+                                           @QueryParam("output") String output,
+                                           @PathParam("uuid") final String uuid)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException, PreconditionFailedException, NotModifiedException, RequestedRangeNotSatisfiableException, UnmatchingUuidException, ExpiredLinkException {
         return downloadPartFile(request,range,workspaceId,partNumber,version,iteration,null,fileName,type,output,uuid);
     }
 
+    @GET
+    @Path("/{iteration}/{subType}/{fileName}/")
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    public Response downloadPartFileWithSubtype(@Context Request request,
+                                               @HeaderParam("Range") String range,
+                                               @PathParam("workspaceId") final String workspaceId,
+                                               @PathParam("partNumber") final String partNumber,
+                                               @PathParam("version") final String version,
+                                               @PathParam("iteration") final int iteration,
+                                               @PathParam("subType") final String subType,
+                                               @PathParam("fileName") final String fileName,
+                                               @QueryParam("type") String type,
+                                               @QueryParam("output") String output)
+            throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException, PreconditionFailedException, NotModifiedException, RequestedRangeNotSatisfiableException, UnmatchingUuidException, ExpiredLinkException {
+        return downloadPartFile(request,range,workspaceId,partNumber,version,iteration,subType,fileName,type,output,null);
+    }
+
 
     @GET
-    @Path("/{iteration}/{subType}/{fileName}{uuid:(/uuid/[^/]+?)?}")
+    @Path("/{iteration}/{subType}/{fileName}/uuid/{uuid}")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response downloadPartFile(@Context Request request,
                                      @HeaderParam("Range") String range,

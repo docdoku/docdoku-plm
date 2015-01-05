@@ -32,7 +32,7 @@ module.exports = {
         // Part and assembly creation
         "js/product-management/part/partCreation.js",
         "js/product-management/part/showPartDetails.js",
-        //"js/product-management/part/partUploadNativeCadFile.js", // Failing
+        "js/product-management/part/partUploadNativeCadFile.js",
         "js/product-management/part/partCheckin.js",
         "js/product-management/part/partCheckout.js",
         "js/product-management/assembly/assemblyCreation.js",

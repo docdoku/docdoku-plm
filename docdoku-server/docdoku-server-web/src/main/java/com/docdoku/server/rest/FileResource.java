@@ -52,24 +52,24 @@ public class FileResource {
     }
 
     @Path("/{workspaceId}/documents/{documentId}/{version}")
-    public DocumentBinaryResource downloadDocumentFile(){
+    public DocumentBinaryResource documentFile(){
         return documentBinaryResource;
     }
 
     @Path("/{workspaceId}/parts/{partNumber}/{version}")
-    public PartBinaryResource downloadPartFile(){
+    public PartBinaryResource partFile(){
         return partBinaryResource;
     }
 
     @Path("/{workspaceId}/document-templates/{templateId}/")
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
-    public DocumentTemplateBinaryResource downloadDocumentTemplateFile(){
+    public DocumentTemplateBinaryResource documentTemplateFile(){
         return documentTemplateBinaryResource;
     }
 
     @Path("/{workspaceId}/part-templates/{templateId}/")
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
-    public PartTemplateBinaryResource downloadPartTemplateFile(){
+    public PartTemplateBinaryResource partTemplateFile(){
         return partTemplateBinaryResource;
     }
 }

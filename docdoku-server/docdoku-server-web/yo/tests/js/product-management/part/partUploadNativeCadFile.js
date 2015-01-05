@@ -1,6 +1,6 @@
 /*global casper,urls,products*/
 
-casper.test.begin('Part upload native cad file tests suite', 1, function partUploadCadTestsSuite(){
+casper.test.begin('Part upload native cad file tests suite', 2, function partUploadCadTestsSuite(){
     'use strict';
 
     casper.open('');
