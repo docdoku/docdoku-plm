@@ -83,8 +83,6 @@ define({
 		COPY_WORKFLOW: "Copy the workflow",
 		COWORKERS: 'Coworkers',
 		CREATE_BASELINE: "Create a baseline",
-		CREATE_BASELINE_LATEST: "Create baseline with last released part",
-		CREATE_BASELINE_RELEASED: "Create baseline with last part",
 		CREATE: "Create",
 		CREATE_NEW_PART: "Create a new part",
 		CREATE_NEW_VERSION: "Create new version",
