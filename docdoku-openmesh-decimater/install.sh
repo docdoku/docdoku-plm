@@ -1,4 +1,5 @@
 #!/bin/sh
+mkdir -p build
 cd build
 rm lod.o main.o OpenMeshDecimater Makefile;
 qmake ../src/OpenMeshDecimater.pro
