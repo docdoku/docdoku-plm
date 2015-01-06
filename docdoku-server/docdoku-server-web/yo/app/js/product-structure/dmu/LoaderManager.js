@@ -115,8 +115,6 @@ define(['views/progress_bar_view'], function (ProgressBarView) {
 
                     break;
 
-                    break;
-
                 case 'dae':
                      material = new THREE.MeshPhongMaterial({ transparent: true, color: new THREE.Color(0xbbbbbb) });
 

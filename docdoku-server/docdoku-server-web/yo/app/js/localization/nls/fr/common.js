@@ -82,8 +82,6 @@ define({
 	COPY_WORKFLOW: "Copier le workflow",
 	COWORKERS: 'Collaborateurs',
 	CREATE_BASELINE: "Cr\u00e9er une baseline",
-	CREATE_BASELINE_LATEST: "Cr\u00e9er la baseline avec les derniers articles",
-	CREATE_BASELINE_RELEASED: "Cr\u00e9er la baseline avec les derniers articles finalisés",
 	CREATE: "Cr\u00e9er",
 	CREATE_NEW_PART: "Créer un nouvel article",
 	CREATE_NEW_VERSION: "Cr\u00e9er une nouvelle version",

@@ -70,14 +70,14 @@ define([
             fillPriorityList: function () {
 	            var self = this;
 	            _.each(this.model.priorities, function(priority){
-		            self.$inputRequestPriority.append('<option value="' + priority + ' " ' + '>' + priority + '</option>');
+		            self.$inputRequestPriority.append('<option value="' + priority + '" ' + '>' + priority + '</option>');
 	            });
                 this.$inputRequestPriority.val(this.model.getPriority());
             },
             fillCategoryList: function () {
 	            var self = this;
 	            _.each(this.model.categories, function(category){
-		            self.$inputRequestCategory.append('<option value="' + category + ' " ' + '>' + category + '</option>');
+		            self.$inputRequestCategory.append('<option value="' + category + '" ' + '>' + category + '</option>');
 	            });
                 this.$inputRequestCategory.val(this.model.getCategory());
             },

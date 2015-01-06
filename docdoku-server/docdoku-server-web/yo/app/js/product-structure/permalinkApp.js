@@ -127,6 +127,34 @@ define(function () {
 
                 break;
 
+            case 'obj' :
+
+                var OBJLoader = new THREE.OBJLoader();
+
+                var material = new THREE.MeshPhongMaterial({  transparent: true, color: new THREE.Color(0xbbbbbb) });
+                material.side = THREE.doubleSided;
+
+                OBJLoader.load(filename, function ( object ) {
+
+                    var geometries = [], combined = new THREE.Geometry();
+                    getMeshGeometries(object, geometries);
+
+                    // Merge all sub meshes into one
+                    _.each(geometries, function (geometry) {
+                        THREE.GeometryUtils.merge(combined, geometry);
+                    });
+
+                    combined.dynamic = false;
+                    combined.mergeVertices();
+
+                    combined.computeBoundingSphere();
+                    onParseSuccess(combined, material);
+
+                }, function onProgress(){},  function onError(){});
+
+
+                break;
+
             default:
                 break;
 
