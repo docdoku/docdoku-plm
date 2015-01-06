@@ -201,7 +201,6 @@ define(['dmu/LoaderManager', 'async'],
 			        } else {
 
 				        instancesIndexed[instance.id] = instance;
-
 				        instance.matrix = adaptMatrix(instance.matrix);
 
                         var min =  new THREE.Vector3(instance.xMin,instance.yMin,instance.zMin);
@@ -209,7 +208,9 @@ define(['dmu/LoaderManager', 'async'],
                         var box = new THREE.Box3(min,max).applyMatrix4(instance.matrix);
 
                         var cog = box.center();
-                        var radius = box.size().length();
+
+                        // Allow parts that don't have box to be displayed
+                        var radius = box.size().length() || 0.01;
 
                         worker.postMessage({
 					        fn: 'addInstance',
