@@ -1,13 +1,12 @@
 /*global _,define,App*/
 define([
-        'backbone',
-        'mustache',
-        'text!templates/milestones/milestone_edition.html',
-        'common-objects/views/linked/linked_requests',
-        'common-objects/collections/linked/linked_change_item_collection',
-        'common-objects/views/linked/linked_orders'
-],
-function (Backbone, Mustache, template, LinkedRequestsView, LinkedChangeItemCollection, LinkedOrdersView) {
+    'backbone',
+    'mustache',
+    'text!templates/milestones/milestone_edition.html',
+    'common-objects/views/linked/linked_requests',
+    'common-objects/collections/linked/linked_change_item_collection',
+    'common-objects/views/linked/linked_orders'
+], function (Backbone, Mustache, template, LinkedRequestsView, LinkedChangeItemCollection, LinkedOrdersView) {
     'use strict';
     var MilestoneEditionView = Backbone.View.extend({
         events: {

@@ -1,11 +1,10 @@
 /*global _,define,App*/
 define([
-        'backbone',
-        'mustache',
-        'text!templates/milestones/milestone_creation.html',
-        'models/milestone'
-],
-function (Backbone, Mustache, template, MilestoneModel) {
+    'backbone',
+    'mustache',
+    'text!templates/milestones/milestone_creation.html',
+    'models/milestone'
+], function (Backbone, Mustache, template, MilestoneModel) {
     'use strict';
     var MilestoneCreationView = Backbone.View.extend({
         events: {
@@ -22,7 +21,6 @@ function (Backbone, Mustache, template, MilestoneModel) {
         render: function () {
             this.$el.html(Mustache.render(template, {i18n: App.config.i18n}));
             this.bindDomElements();
-            console.log(this.$('input[required]'))
             this.$('input[required]').customValidity(App.config.i18n.REQUIRED_FIELD);
             return this;
         },
