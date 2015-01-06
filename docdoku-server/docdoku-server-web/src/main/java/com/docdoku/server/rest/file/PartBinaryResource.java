@@ -141,7 +141,7 @@ public class PartBinaryResource{
         length = BinaryResourceUpload.uploadBinary(outputStream, formPart);
         if(subType!=null && !subType.isEmpty()){
             productService.saveNativeCADInPartIteration(partPK, fileName, length);
-            tryToConvertCADFileToJSON(partPK,binaryResource);
+            tryToConvertCADFileToOBJ(partPK,binaryResource);
         }else{
             productService.saveFileInPartIteration(partPK, fileName, length);
         }
@@ -269,10 +269,10 @@ public class PartBinaryResource{
         }
     }
 
-    private void tryToConvertCADFileToJSON(PartIterationKey partPK, BinaryResource binaryResource){
+    private void tryToConvertCADFileToOBJ(PartIterationKey partPK, BinaryResource binaryResource){
         try {
             //TODO: Should be put in a DocumentPostUploader plugin
-            converterService.convertCADFileToJSON(partPK, binaryResource);
+            converterService.convertCADFileToOBJ(partPK, binaryResource);
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "A CAD file conversion can not be done", e);
         }

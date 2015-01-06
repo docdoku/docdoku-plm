@@ -34,7 +34,6 @@ import org.apache.commons.lang.StringUtils;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
-import javax.json.JsonObject;
 import javax.json.stream.JsonGenerator;
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -167,19 +166,24 @@ public class InstanceBodyWriterTools {
         jg.writeEnd();
     }
     private static void writeGeometries(List<GeometryDTO> files,JsonGenerator jg){
+
+        jg.write("qualities",files.size());
+
+        if(files.size() > 0){
+            GeometryDTO geometryDTO = files.get(0);
+            jg.write("xMin", geometryDTO.getxMin());
+            jg.write("yMin", geometryDTO.getyMin());
+            jg.write("zMin", geometryDTO.getzMin());
+            jg.write("xMax", geometryDTO.getxMax());
+            jg.write("yMax", geometryDTO.getyMax());
+            jg.write("zMax", geometryDTO.getzMax());
+        }
+
         jg.writeStartArray("files");
+
         for (GeometryDTO g : files) {
             jg.writeStartObject();
-            jg.write("fullName", g.getFullName());
-            jg.write("quality", g.getQuality());
-
-            jg.write("xMin", g.getxMin());
-            jg.write("yMin", g.getyMin());
-            jg.write("zMin", g.getzMin());
-            jg.write("xMax", g.getxMax());
-            jg.write("yMax", g.getyMax());
-            jg.write("zMax", g.getzMax());
-
+            jg.write("fullName", "api/files/" + g.getFullName());
             jg.writeEnd();
         }
         jg.writeEnd();

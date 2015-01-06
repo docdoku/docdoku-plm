@@ -988,6 +988,11 @@ define([
             _this.reDraw();
         };
 
+        this.debugPoint = function(v){
+            var cogMesh = new THREE.Mesh(new THREE.SphereGeometry(2,1,1),new THREE.MeshNormalMaterial({color:0xFFFF00}));
+            cogMesh.position.copy(v);
+            _this.scene.add(cogMesh);
+        };
     };
 
     return SceneManager;
