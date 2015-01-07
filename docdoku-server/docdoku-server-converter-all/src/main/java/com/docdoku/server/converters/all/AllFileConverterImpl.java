@@ -24,7 +24,6 @@ import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.services.IDataManagerLocal;
-import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.core.util.FileIO;
 import com.docdoku.server.converters.CADConverter;
 import com.google.common.io.Files;
@@ -43,9 +42,6 @@ public class AllFileConverterImpl implements CADConverter{
 
     private static final String CONF_PROPERTIES="/com/docdoku/server/converters/all/conf.properties";
     private static final Properties CONF = new Properties();
-
-    @EJB
-    private IProductManagerLocal productService;
 
     @EJB
     private IDataManagerLocal dataManager;
@@ -95,26 +91,24 @@ public class AllFileConverterImpl implements CADConverter{
         ProcessBuilder pb = new ProcessBuilder(args);
         Process proc = pb.start();
 
-        String output = "";
+        StringBuilder output = new StringBuilder();
         String line;
         // Read buffer
-        InputStreamReader isr = new InputStreamReader(proc.getInputStream());
+        InputStreamReader isr = new InputStreamReader(proc.getInputStream(),"UTF-8");
         BufferedReader br = new BufferedReader(isr);
-
         while ((line = br.readLine()) != null){
-            output+=line+"\n";
+            output.append(line).append("\n");
         }
+        br.close();
 
         proc.waitFor();
 
         if(proc.exitValue() == 0){
             return new File(convertedFileName + ".obj");
-        }else{
-            LOGGER.log(Level.SEVERE, "Cannot convert to obj : " + tmpCadFile.getAbsolutePath(), output);
         }
 
+        LOGGER.log(Level.SEVERE, "Cannot convert to obj : " + tmpCadFile.getAbsolutePath(), output.toString());
         return null;
-
     }
 
     @Override

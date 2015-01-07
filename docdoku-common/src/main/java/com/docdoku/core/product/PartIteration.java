@@ -67,7 +67,7 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
         @JoinColumn(name = "PARTREVISION_VERSION", referencedColumnName = "PARTREVISION_VERSION"),
         @JoinColumn(name = "ITERATION", referencedColumnName = "ITERATION")
     })
-    private Set<Geometry> geometries = new HashSet<>();
+    private Set<Geometry> geometries = new LinkedHashSet<>();
 
     @OneToOne(orphanRemoval=true, cascade=CascadeType.ALL, fetch=FetchType.EAGER)
     private BinaryResource nativeCADFile;
@@ -162,10 +162,6 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
 
     public Set<Geometry> getGeometries() {
         return geometries;
-    }
-
-    public void setGeometries(Set<Geometry> geometries) {
-        this.geometries = geometries;
     }
 
     public void addGeometry(Geometry pGeometry){

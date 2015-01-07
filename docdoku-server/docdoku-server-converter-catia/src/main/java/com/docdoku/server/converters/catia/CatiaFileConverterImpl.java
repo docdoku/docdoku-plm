@@ -24,7 +24,6 @@ import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.services.IDataManagerLocal;
-import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.core.util.FileIO;
 import com.docdoku.server.converters.CADConverter;
 import com.google.common.io.Files;
@@ -46,10 +45,9 @@ public class CatiaFileConverterImpl implements CADConverter{
     private static final Properties CONF = new Properties();
 
     @EJB
-    private IProductManagerLocal productService;
-
-    @EJB
     private IDataManagerLocal dataManager;
+
+    private static final Logger LOGGER = Logger.getLogger(CatiaFileConverterImpl.class.getName());
 
     static{
         InputStream inputStream = null;
@@ -93,34 +91,44 @@ public class CatiaFileConverterImpl implements CADConverter{
         ProcessBuilder pb = new ProcessBuilder(args);
         Process process = pb.start();
 
-        InputStreamReader isr = new InputStreamReader(process.getInputStream());
-        BufferedReader br = new BufferedReader(isr);
+        StringBuilder output = new StringBuilder();
+        String line;
 
-        while (br.readLine() != null);
+        InputStreamReader isr = new InputStreamReader(process.getInputStream(),"UTF-8");
+        BufferedReader br = new BufferedReader(isr);
+        while ((line=br.readLine()) != null){
+            output.append(line).append("\n");
+        };
+        br.close();
 
         process.waitFor();
 
         // Convert to OBJ once converted to DAE
         if (process.exitValue() == 0 & tmpDAEFile.exists() && tmpDAEFile.length() > 0 ){
-
             String assimp = CONF.getProperty("assimp");
             String convertedFileName = FileIO.getFileNameWithoutExtension(tmpDAEFile.getAbsolutePath()) + ".obj";
             String[] argsOBJ = {assimp, "export", tmpDAEFile.getAbsolutePath(), convertedFileName};
             pb = new ProcessBuilder(argsOBJ);
             Process proc = pb.start();
 
-            InputStreamReader isr2 = new InputStreamReader(proc.getInputStream());
-            BufferedReader br2 = new BufferedReader(isr2);
+            output = new StringBuilder();
 
-            while (br2.readLine() != null);
+            InputStreamReader isr2 = new InputStreamReader(proc.getInputStream(),"UTF-8");
+            BufferedReader br2 = new BufferedReader(isr2);
+            while ((line=br2.readLine()) != null){
+                output.append(line).append("\n");
+            };
+            br2.close();
 
             proc.waitFor();
 
             if (proc.exitValue() == 0) {
                 return new File(convertedFileName);
-            }else{
-
+            }else {
+                LOGGER.log(Level.SEVERE, "Cannot convert to obj : " + tmpCadFile.getAbsolutePath(), output.toString());
             }
+        } else {
+            LOGGER.log(Level.SEVERE, "Cannot convert to dae : " + tmpCadFile.getAbsolutePath(), output.toString());
         }
 
         return null;

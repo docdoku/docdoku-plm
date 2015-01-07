@@ -152,8 +152,8 @@ public class AuthFilter implements Filter {
                     excludedPaths[i] += ".*";
                 }
             }
+        } else {
+            excludedPaths = null;
         }
-        else
-            excludedPaths =null;
     }
 }

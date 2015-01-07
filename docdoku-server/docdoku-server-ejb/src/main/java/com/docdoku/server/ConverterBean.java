@@ -98,7 +98,6 @@ public class ConverterBean implements IConverterManagerLocal {
 
         String ext = FileIO.getExtension(cadBinaryResource.getName());
 
-        File convertedFile = null;
         CADConverter selectedConverter = null;
 
         for (CADConverter converter : converters) {
@@ -113,7 +112,7 @@ public class ConverterBean implements IConverterManagerLocal {
             PartIterationDAO partIDAO = new PartIterationDAO(em);
             PartIteration partI = partIDAO.loadPartI(pPartIPK);
 
-            convertedFile = selectedConverter.convert(partI, cadBinaryResource, tempDir);
+            File convertedFile = selectedConverter.convert(partI, cadBinaryResource, tempDir);
 
             double[] box = GeometryParser.calculateBox(convertedFile);
 
@@ -138,15 +137,17 @@ public class ConverterBean implements IConverterManagerLocal {
             ProcessBuilder pb = new ProcessBuilder(args);
             Process proc = pb.start();
 
-            String output = "";
+            StringBuilder output = new StringBuilder();
             String line;
             // Read buffer
-            InputStreamReader isr = new InputStreamReader(proc.getInputStream());
+            InputStreamReader isr = new InputStreamReader(proc.getInputStream(),"UTF-8");
             BufferedReader br = new BufferedReader(isr);
 
             while ((line = br.readLine()) != null){
-                output+=line+"\n";
+                output.append(line).append("\n");
             }
+
+            br.close();
 
             proc.waitFor();
 
@@ -156,7 +157,7 @@ public class ConverterBean implements IConverterManagerLocal {
                 saveFile(pPartIPK, 1, new File(baseName + "60.obj"), box);
                 saveFile(pPartIPK, 2, new File(baseName + "20.obj"), box);
             } else {
-                LOGGER.log(Level.SEVERE, "Decimation failed with code = " + proc.exitValue(), output);
+                LOGGER.log(Level.SEVERE, "Decimation failed with code = " + proc.exitValue(), output.toString());
             }
 
         } catch (Exception e) {
@@ -168,7 +169,6 @@ public class ConverterBean implements IConverterManagerLocal {
     }
 
     private void saveFile(PartIterationKey partIPK, int quality, File file, double[] box) {
-
         OutputStream os = null;
 
         try {
@@ -180,10 +180,12 @@ public class ConverterBean implements IConverterManagerLocal {
             LOGGER.log(Level.SEVERE, "Cannot save geometry to part iteration", e);
         } finally {
             try {
-                os.flush();
-                os.close();
+                if(os != null){
+                    os.flush();
+                    os.close();
+                }
             } catch (IOException e) {
-                e.printStackTrace();
+                LOGGER.log(Level.SEVERE,null, e);
             }
         }
     }

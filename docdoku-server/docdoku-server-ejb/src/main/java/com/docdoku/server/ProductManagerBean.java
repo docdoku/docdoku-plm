@@ -27,7 +27,6 @@ import com.docdoku.core.document.DocumentLink;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.meta.InstanceAttributeTemplate;
-import com.docdoku.core.meta.InstanceNumberAttribute;
 import com.docdoku.core.product.*;
 import com.docdoku.core.product.PartIteration.Source;
 import com.docdoku.core.query.PartSearchQuery;
@@ -503,8 +502,8 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                     LOGGER.log(Level.INFO, null, e);
                 }
                 partI.removeGeometry(geometry);
+                binDAO.removeBinaryResource(geometry);
             }
-
             return nativeCADBinaryResource;
         } else {
             throw new NotAllowedException(locale, "NotAllowedException4");
@@ -516,11 +515,10 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     @Override
     public BinaryResource saveGeometryInPartIteration(PartIterationKey pPartIPK, String pName, int quality, long pSize, double[] box) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, PartRevisionNotFoundException, FileAlreadyExistsException, CreationException {
         User user = userManager.checkWorkspaceReadAccess(pPartIPK.getWorkspaceId());
-        if (!NamingConvention.correctNameFile(pName)) {
-            throw new NotAllowedException(Locale.getDefault(), "NotAllowedException9");
-        }
+        Locale locale = new Locale(user.getLanguage());
+        checkNameFileValidity(pName,locale);
 
-        PartRevisionDAO partRDAO = new PartRevisionDAO(em);
+        PartRevisionDAO partRDAO = new PartRevisionDAO(locale,em);
         PartRevision partR = partRDAO.loadPartR(pPartIPK.getPartRevision());
         PartIteration partI = partR.getIteration(pPartIPK.getIteration());
         if (partR.isCheckedOut() && partR.getCheckOutUser().equals(user) && partR.getLastIteration().equals(partI)) {
@@ -535,7 +533,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             }
             if (geometryBinaryResource == null) {
                 geometryBinaryResource = new Geometry(quality, fullName, pSize, new Date());
-                new BinaryResourceDAO(em).createBinaryResource(geometryBinaryResource);
+                new BinaryResourceDAO(locale,em).createBinaryResource(geometryBinaryResource);
                 partI.addGeometry(geometryBinaryResource);
             } else {
                 geometryBinaryResource.setContentLength(pSize);
@@ -549,7 +547,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
             return geometryBinaryResource;
         } else {
-            throw new NotAllowedException(Locale.getDefault(), "NotAllowedException4");
+            throw new NotAllowedException(locale, "NotAllowedException4");
         }
     }
 

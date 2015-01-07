@@ -21,6 +21,7 @@
 package com.docdoku.server.converters.utils;
 
 import org.codehaus.jettison.json.JSONException;
+
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
@@ -35,8 +36,9 @@ public class GeometryParser {
 
     private static final String CONF_PROPERTIES="/com/docdoku/server/converters/utils/conf.properties";
     private static final Properties CONF = new Properties();
+    private static final Logger LOGGER = Logger.getLogger(GeometryParser.class.getName());
 
-    public GeometryParser() {
+    private GeometryParser() {
     }
 
     public static double[] calculateBox(File file) throws JSONException {
@@ -59,11 +61,9 @@ public class GeometryParser {
             wr.flush();
             wr.close();
 
-            //int responseCode = con.getResponseCode();
-
-            BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+            BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream(),"UTF-8"));
             String inputLine;
-            StringBuffer response = new StringBuffer();
+            StringBuilder response = new StringBuilder();
 
             while ((inputLine = in.readLine()) != null) {
                 response.append(inputLine);
@@ -88,14 +88,17 @@ public class GeometryParser {
             };
 
         } catch (IOException e) {
-            Logger.getLogger(GeometryParser.class.getName()).log(Level.INFO, null, e);
-        }
-        finally {
-            try{if(inputStream!=null){
+            LOGGER.log(Level.INFO, null, e);
+        } finally {
+            try{
+                if(inputStream!=null){
                     inputStream.close();
-            }}catch (IOException ignored){}
+                }
+            }catch (IOException ioe){
+                LOGGER.log(Level.SEVERE,null,ioe);
+            }
         }
 
-        return null;
+        return new double[0];
     }
 }

@@ -169,7 +169,7 @@ public class InstanceBodyWriterTools {
 
         jg.write("qualities",files.size());
 
-        if(files.size() > 0){
+        if(!files.isEmpty()){
             GeometryDTO geometryDTO = files.get(0);
             jg.write("xMin", geometryDTO.getxMin());
             jg.write("yMin", geometryDTO.getyMin());

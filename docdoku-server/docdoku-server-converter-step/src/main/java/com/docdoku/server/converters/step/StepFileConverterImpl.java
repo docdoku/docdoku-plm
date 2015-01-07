@@ -24,16 +24,13 @@ import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.services.IDataManagerLocal;
-import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.core.util.FileIO;
 import com.docdoku.server.converters.CADConverter;
 import com.google.common.io.Files;
 import com.google.common.io.InputSupplier;
 
 import javax.ejb.EJB;
-import javax.print.DocFlavor;
 import java.io.*;
-import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -47,9 +44,6 @@ public class StepFileConverterImpl implements CADConverter{
     private static final String CONF_PROPERTIES="/com/docdoku/server/converters/step/conf.properties";
     private static final Properties CONF = new Properties();
     private static final Logger LOGGER = Logger.getLogger(StepFileConverterImpl.class.getName());
-
-    @EJB
-    private IProductManagerLocal productService;
 
     @EJB
     private IDataManagerLocal dataManager;
@@ -101,10 +95,15 @@ public class StepFileConverterImpl implements CADConverter{
 
         Process p = pb.start();
 
-        InputStreamReader isr = new InputStreamReader(p.getInputStream());
+        StringBuilder output = new StringBuilder();
+        String line;
+
+        InputStreamReader isr = new InputStreamReader(p.getInputStream(),"UTF-8");
         BufferedReader br = new BufferedReader(isr);
 
-        while (br.readLine() != null);
+        while ((line=br.readLine()) != null){
+            output.append(line).append("\n");
+        }
 
         p.waitFor();
 
@@ -115,6 +114,7 @@ public class StepFileConverterImpl implements CADConverter{
             return tmpOBJFile;
         }
 
+        LOGGER.log(Level.SEVERE, "Cannot convert to obj : " + tmpCadFile.getAbsolutePath(), output.toString());
         return null;
     }
 

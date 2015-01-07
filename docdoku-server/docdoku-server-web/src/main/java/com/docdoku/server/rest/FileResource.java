@@ -20,7 +20,6 @@
 package com.docdoku.server.rest;
 
 import com.docdoku.core.security.UserGroupMapping;
-import com.docdoku.core.services.IShareManagerLocal;
 import com.docdoku.server.rest.file.DocumentBinaryResource;
 import com.docdoku.server.rest.file.DocumentTemplateBinaryResource;
 import com.docdoku.server.rest.file.PartBinaryResource;
@@ -44,9 +43,6 @@ public class FileResource {
     private DocumentTemplateBinaryResource documentTemplateBinaryResource;
     @EJB
     private PartTemplateBinaryResource partTemplateBinaryResource;
-
-    @EJB
-    private IShareManagerLocal shareService;
 
     public FileResource() {
     }
