@@ -31,9 +31,7 @@ import com.google.common.io.Files;
 import com.google.common.io.InputSupplier;
 
 import javax.ejb.EJB;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.Arrays;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -52,20 +50,22 @@ public class AllFileConverterImpl implements CADConverter{
     @EJB
     private IDataManagerLocal dataManager;
 
+    private static final Logger LOGGER = Logger.getLogger(AllFileConverterImpl.class.getName());
+
     static{
         InputStream inputStream = null;
         try {
             inputStream = AllFileConverterImpl.class.getResourceAsStream(CONF_PROPERTIES);
             CONF.load(inputStream);
         } catch (IOException e) {
-            Logger.getLogger(AllFileConverterImpl.class.getName()).log(Level.WARNING, null, e);
+            LOGGER.log(Level.WARNING, null, e);
         } finally {
             try{
                 if(inputStream!=null){
                     inputStream.close();
                 }
             }catch (IOException e){
-                Logger.getLogger(AllFileConverterImpl.class.getName()).log(Level.FINEST, null, e);
+                LOGGER.log(Level.FINEST, null, e);
             }
         }
     }
@@ -85,7 +85,7 @@ public class AllFileConverterImpl implements CADConverter{
                 try {
                     return dataManager.getBinaryResourceInputStream(cadFile);
                 } catch (StorageException e) {
-                    Logger.getLogger(AllFileConverterImpl.class.getName()).log(Level.WARNING, null, e);
+                    LOGGER.log(Level.WARNING, null, e);
                     throw new IOException(e);
                 }
             }
@@ -94,10 +94,23 @@ public class AllFileConverterImpl implements CADConverter{
         String[] args = {meshconvBinary, tmpCadFile.getAbsolutePath(), "-c" , "obj", "-o", convertedFileName};
         ProcessBuilder pb = new ProcessBuilder(args);
         Process proc = pb.start();
+
+        String output = "";
+        String line;
+        // Read buffer
+        InputStreamReader isr = new InputStreamReader(proc.getInputStream());
+        BufferedReader br = new BufferedReader(isr);
+
+        while ((line = br.readLine()) != null){
+            output+=line+"\n";
+        }
+
         proc.waitFor();
 
         if(proc.exitValue() == 0){
             return new File(convertedFileName + ".obj");
+        }else{
+            LOGGER.log(Level.SEVERE, "Cannot convert to obj : " + tmpCadFile.getAbsolutePath(), output);
         }
 
         return null;

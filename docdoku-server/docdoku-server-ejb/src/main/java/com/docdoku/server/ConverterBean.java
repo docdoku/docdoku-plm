@@ -115,8 +115,10 @@ public class ConverterBean implements IConverterManagerLocal {
 
             convertedFile = selectedConverter.convert(partI, cadBinaryResource, tempDir);
 
+            double[] box = GeometryParser.calculateBox(convertedFile);
+
             if (convertedFile != null) {
-                decimate(pPartIPK, convertedFile, tempDir);
+                decimate(pPartIPK, convertedFile, tempDir, box);
             }
 
         } else {
@@ -127,29 +129,38 @@ public class ConverterBean implements IConverterManagerLocal {
 
     }
 
-    private void decimate(PartIterationKey pPartIPK, File file, File tempDir) {
+    private void decimate(PartIterationKey pPartIPK, File file, File tempDir, double[] box) {
 
         String decimater = CONF.getProperty("decimater");
 
         try {
             String[] args = {decimater, "-i", file.getAbsolutePath(), "-o", tempDir.getAbsolutePath(), "1", "0.6", "0.2"};
-
             ProcessBuilder pb = new ProcessBuilder(args);
             Process proc = pb.start();
+
+            String output = "";
+            String line;
+            // Read buffer
+            InputStreamReader isr = new InputStreamReader(proc.getInputStream());
+            BufferedReader br = new BufferedReader(isr);
+
+            while ((line = br.readLine()) != null){
+                output+=line+"\n";
+            }
+
             proc.waitFor();
 
             if (proc.exitValue() == 0) {
-                double[] box = GeometryParser.calculateBox(file);
                 String baseName = tempDir.getAbsolutePath() + "/" + FileIO.getFileNameWithoutExtension(file.getName());
                 saveFile(pPartIPK, 0, new File(baseName + "100.obj"), box);
                 saveFile(pPartIPK, 1, new File(baseName + "60.obj"), box);
                 saveFile(pPartIPK, 2, new File(baseName + "20.obj"), box);
             } else {
-                LOGGER.log(Level.SEVERE, "Decimation failed with code = " + proc.exitValue());
+                LOGGER.log(Level.SEVERE, "Decimation failed with code = " + proc.exitValue(), output);
             }
 
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, null, e);
+            LOGGER.log(Level.SEVERE, "Decimation failed for " + file.getAbsolutePath(), e);
         } finally {
             FileIO.rmDir(tempDir);
         }
@@ -164,6 +175,7 @@ public class ConverterBean implements IConverterManagerLocal {
             Geometry lod = (Geometry) productService.saveGeometryInPartIteration(partIPK, file.getName(), quality, file.length(), box);
             os = dataManager.getBinaryResourceOutputStream(lod);
             Files.copy(file, os);
+            LOGGER.log(Level.INFO, "Decimation and savedone");
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Cannot save geometry to part iteration", e);
         } finally {

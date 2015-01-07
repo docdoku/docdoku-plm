@@ -23,7 +23,6 @@ package com.docdoku.server.converters.catia;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.PartIteration;
-import com.docdoku.core.product.PartIterationKey;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.core.util.FileIO;
@@ -32,10 +31,7 @@ import com.google.common.io.Files;
 import com.google.common.io.InputSupplier;
 
 import javax.ejb.EJB;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.Arrays;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -97,6 +93,11 @@ public class CatiaFileConverterImpl implements CADConverter{
         ProcessBuilder pb = new ProcessBuilder(args);
         Process process = pb.start();
 
+        InputStreamReader isr = new InputStreamReader(process.getInputStream());
+        BufferedReader br = new BufferedReader(isr);
+
+        while (br.readLine() != null);
+
         process.waitFor();
 
         // Convert to OBJ once converted to DAE
@@ -107,10 +108,18 @@ public class CatiaFileConverterImpl implements CADConverter{
             String[] argsOBJ = {assimp, "export", tmpDAEFile.getAbsolutePath(), convertedFileName};
             pb = new ProcessBuilder(argsOBJ);
             Process proc = pb.start();
+
+            InputStreamReader isr2 = new InputStreamReader(proc.getInputStream());
+            BufferedReader br2 = new BufferedReader(isr2);
+
+            while (br2.readLine() != null);
+
             proc.waitFor();
 
             if (proc.exitValue() == 0) {
                 return new File(convertedFileName);
+            }else{
+
             }
         }
 

@@ -478,16 +478,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 }
                 partI.setNativeCADFile(null);
                 binDAO.removeBinaryResource(nativeCADBinaryResource);
-                //Delete converted files if any
-                List<Geometry> geometries = new ArrayList<>(partI.getGeometries());
-                for(Geometry geometry : geometries){
-                    try {
-                        dataManager.deleteData(geometry);
-                    } catch (StorageException e) {
-                        LOGGER.log(Level.INFO, null, e);
-                    }
-                    partI.removeGeometry(geometry);
-                }
+
                 Set<BinaryResource> attachedFiles = new HashSet<>(partI.getAttachedFiles());
                 for(BinaryResource attachedFile : attachedFiles){
                     try {
@@ -502,6 +493,18 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 binDAO.createBinaryResource(nativeCADBinaryResource);
                 partI.setNativeCADFile(nativeCADBinaryResource);
             }
+
+            //Delete converted files if any
+            List<Geometry> geometries = new ArrayList<>(partI.getGeometries());
+            for(Geometry geometry : geometries){
+                try {
+                    dataManager.deleteData(geometry);
+                } catch (StorageException e) {
+                    LOGGER.log(Level.INFO, null, e);
+                }
+                partI.removeGeometry(geometry);
+            }
+
             return nativeCADBinaryResource;
         } else {
             throw new NotAllowedException(locale, "NotAllowedException4");
