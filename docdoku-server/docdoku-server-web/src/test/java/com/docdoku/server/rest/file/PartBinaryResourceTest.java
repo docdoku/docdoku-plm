@@ -12,7 +12,7 @@ public class PartBinaryResourceTest {
     private static final String SOURCE_FILENAME1="/upload_0000000_0000000000__0000_00000011.tmp";
     private static final String SOURCE_FILENAME2_1="/upload_0000000_0000000000__0000_00000012.tmp";
     private static final String SOURCE_FILENAME2_3="/upload_0000000_0000000000__0000_00000013.tmp";
-    private static final String FILENAME1="TestFile.txt";
+    private static final String FILENAME1= "com/docdoku/server/rest/file/TestFile.txt";
     private static final String FILENAME2="TestFile_With_éàè.txt";
     private static final String FILENAME3_1="TestFile2.txt";
     private static final String FILENAME3_2="TestFile3.txt";
@@ -37,7 +37,7 @@ public class PartBinaryResourceTest {
         //                    lastModified = new Date();
         //                  }
 
-        // assert uploaded file exist in FILE_STORAGE+"/"+FILENAME1 et length > 0
+        // assert uploaded file exist in TARGET_FILE_STORAGE+"/"+FILENAME1 et length > 0
         // assert response.status.code = "201"
         // assert response.getLocation().toString() = "/api/files/"+WORKSPACE_ID+"/"+PART_ID+"/"+VERSION+"/"+ITERATION+"/"+FILENAME1
     }
@@ -62,7 +62,7 @@ public class PartBinaryResourceTest {
         //                    lastModified = new Date();
         //                  }
 
-        // assert uploaded file exist in FILE_STORAGE+"/"+FILENAME2 et length > 0
+        // assert uploaded file exist in TARGET_FILE_STORAGE+"/"+FILENAME2 et length > 0
         // assert response.status.code = "201"
         // assert response.getLocation().toString() = "/api/files/"+WORKSPACE_ID+"/"+PART_ID+"/"+VERSION+"/"+ITERATION+"/"+FILENAME2
     }
@@ -94,8 +94,8 @@ public class PartBinaryResourceTest {
         //                    lastModified = new Date();
         //                  }
 
-        // assert uploaded file exist in FILE_STORAGE+"/"+FILENAME3_1  et length > 0
-        // assert uploaded file exist in FILE_STORAGE+"/"+FILENAME3_2  et length > 0
+        // assert uploaded file exist in TARGET_FILE_STORAGE+"/"+FILENAME3_1  et length > 0
+        // assert uploaded file exist in TARGET_FILE_STORAGE+"/"+FILENAME3_2  et length > 0
         // assert response.status.code = "200"
     }
 
