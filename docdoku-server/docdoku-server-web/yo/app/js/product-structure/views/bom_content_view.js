@@ -5,8 +5,9 @@ define([
 	'views/bom_item_view',
 	'text!templates/bom_content.html',
 	'collections/part_collection',
-    'common-objects/views/prompt'
-],function (Backbone, Mustache, BomItemView, template, PartList, PromptView) {
+    'common-objects/views/prompt',
+    'common-objects/views/security/acl_edit'
+],function (Backbone, Mustache, BomItemView, template, PartList, PromptView, ACLEditView) {
 	'use strict';
     var BomContentView = Backbone.View.extend({
 
@@ -128,6 +129,38 @@ define([
             return false;
         },
 
+        actionUpdateACL:function(){
+            var _this = this;
+
+            var selectedPart = this.checkedViews()[0].model;
+
+            var aclEditView = new ACLEditView({
+                editMode: true,
+                acl: selectedPart.get('acl')
+            });
+
+            aclEditView.setTitle(selectedPart.getPartKey());
+
+            window.document.body.appendChild(aclEditView.render().el);
+
+            aclEditView.openModal();
+
+            aclEditView.on('acl:update', function () {
+
+                var acl = aclEditView.toList();
+
+                selectedPart.updateACL({
+                    acl: acl || {userEntries: {}, groupEntries: {}},
+                    success: function () {
+                        selectedPart.set('acl', acl);
+                        aclEditView.closeModal();
+                    },
+                    error: _this.onError
+                });
+
+            });
+        },
+
         dataTable: function () {
             var oldSort = [
                 [0, 'asc']
@@ -153,6 +186,11 @@ define([
                 ]
             });
             this.$el.parent().find('.dataTables_filter input').attr('placeholder', App.config.i18n.FILTER);
+        },
+
+        onError:function(model, error){
+            var errorMessage = error ? error.responseText : model;
+            alert(errorMessage);
         }
 
     });

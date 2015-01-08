@@ -157,7 +157,7 @@ define([
             this.bomContainer.hide();
             this.centerSceneContainer.show();
             this.fullScreenSceneButton.show();
-            App.bomView.bomHeaderView.hideCheckGroup();
+            App.bomView.bomHeaderView.hideButtons();
 
             if (App.partsTreeView.componentSelected) {
                 this.exportSceneButton.show();
