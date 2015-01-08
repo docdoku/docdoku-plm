@@ -4,8 +4,9 @@ define([
 	'mustache',
 	'views/bom_item_view',
 	'text!templates/bom_content.html',
-	'collections/part_collection'
-],function (Backbone, Mustache, BomItemView, template, PartList) {
+	'collections/part_collection',
+    'common-objects/views/prompt'
+],function (Backbone, Mustache, BomItemView, template, PartList, PromptView) {
 	'use strict';
     var BomContentView = Backbone.View.extend({
 
@@ -92,8 +93,37 @@ define([
         },
 
         actionCheckin: function () {
+            var self = this ;
             _.each(this.checkedViews(), function (view) {
-                view.model.checkin();
+
+                console.log(view.model)
+                if (!view.model.getLastIteration().get('iterationNote')) {
+                    var promptView = new PromptView();
+                    promptView.setPromptOptions(App.config.i18n.ITERATION_NOTE, App.config.i18n.ITERATION_NOTE_PROMPT_LABEL, App.config.i18n.ITERATION_NOTE_PROMPT_OK, App.config.i18n.ITERATION_NOTE_PROMPT_CANCEL);
+                    window.document.body.appendChild(promptView.render().el);
+                    promptView.openModal();
+
+                    self.listenTo(promptView, 'prompt-ok', function (args) {
+                        var iterationNote = args[0];
+                        if (_.isEqual(iterationNote, '')) {
+                            iterationNote = null;
+                        }
+                        view.model.getLastIteration().save({
+                            iterationNote: iterationNote
+                        }).success(function () {
+                            view.model.checkin();
+                        });
+
+                    });
+
+                    self.listenTo(promptView, 'prompt-cancel', function () {
+                        view.model.checkin();
+                    });
+
+                } else {
+                    view.model.checkin();
+                }
+
             });
             return false;
         },
