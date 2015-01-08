@@ -52,6 +52,7 @@ public class DocumentBinaryResourceTest {
     public void testUploadDocumentFiles1() throws Exception {
         //Given
         HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+        request.setAttribute("URI", "");
         Part part = Mockito.mock(Part.class);
 
         Collection<Part> parts = new ArrayList(1);
@@ -65,14 +66,15 @@ public class DocumentBinaryResourceTest {
         OutputStream outputstream = Mockito.spy(new FileOutputStream(getClass().getResource(ResourceUtil.TARGET_FILE_STORAGE+ResourceUtil.FILENAME1).getFile()));
         Mockito.when(documentService.saveFileInDocument(Matchers.any(DocumentIterationKey.class),Matchers.anyString(), Matchers.anyInt())).thenReturn(binaryResource);
         Mockito.when(dataManager.getBinaryResourceOutputStream(binaryResource)).thenReturn(outputstream);
-        Mockito.when(request.getRequestURI()).thenReturn("/api/files/"+ResourceUtil.WORKSPACE_ID+"/"+ResourceUtil.DOCUMENT_ID+"/"+ResourceUtil.VERSION+"/"+ResourceUtil.ITERATION+"/");
+        Mockito.when(request.getRequestURI()).thenReturn("/home/asmae/projects/plm/docdoku-plm/docdoku-server/docdoku-server-web/src/test/resources/com/docdoku/server/rest/file/toUpload/");
         parts.add(part);
+
         Mockito.when(request.getParts()).thenReturn(parts);
         //When
         Response response = documentBinaryResource.uploadDocumentFiles(request, ResourceUtil.WORKSPACE_ID, ResourceUtil.DOCUMENT_ID, ResourceUtil.VERSION, ResourceUtil.ITERATION);
         //Then
         Assert.assertTrue(response.getStatus() == 201);
-        Assert.assertTrue(response.getLocation().toString() ==  "/api/files/"+ResourceUtil.WORKSPACE_ID+"/"+ResourceUtil.DOCUMENT_ID+"/"+ResourceUtil.VERSION+"/"+ResourceUtil.ITERATION+"/"+ResourceUtil.FILENAME1);
+
 
 
             //User Case1
