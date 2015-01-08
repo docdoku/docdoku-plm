@@ -69,6 +69,7 @@ public class BinaryResourceDAO {
 
     public void removeBinaryResource(BinaryResource pBinaryResource) {
         em.remove(pBinaryResource);
+        em.flush();
     }
 
     public BinaryResource loadBinaryResource(String pFullName) throws FileNotFoundException {

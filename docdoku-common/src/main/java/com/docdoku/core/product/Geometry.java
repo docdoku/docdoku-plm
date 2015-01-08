@@ -129,4 +129,12 @@ public class Geometry extends BinaryResource{
     public void setzMax(double zMax) {
         this.zMax = zMax;
     }
+
+    public int compareTo(Geometry geometry) {
+        int ret = quality - geometry.quality;
+        if(ret == 0){
+            return fullName.compareTo(geometry.fullName);
+        }
+        return ret;
+    }
 }

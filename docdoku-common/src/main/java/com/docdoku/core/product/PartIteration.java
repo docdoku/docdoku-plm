@@ -56,7 +56,6 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
     @Id
     private int iteration;
 
-    @OrderBy("quality")
     @OneToMany(orphanRemoval=true, cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, fetch = FetchType.EAGER)
     @JoinTable(name="PARTITERATION_GEOMETRY", inverseJoinColumns = {
         @JoinColumn(name = "GEOMETRY_FULLNAME", referencedColumnName = "FULLNAME")
@@ -67,7 +66,7 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
         @JoinColumn(name = "PARTREVISION_VERSION", referencedColumnName = "PARTREVISION_VERSION"),
         @JoinColumn(name = "ITERATION", referencedColumnName = "ITERATION")
     })
-    private Set<Geometry> geometries = new LinkedHashSet<>();
+    private Set<Geometry> geometries = new HashSet<>();
 
     @OneToOne(orphanRemoval=true, cascade=CascadeType.ALL, fetch=FetchType.EAGER)
     private BinaryResource nativeCADFile;
@@ -162,6 +161,11 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
 
     public Set<Geometry> getGeometries() {
         return geometries;
+    }
+    public List<Geometry> getSortedGeometries() {
+        ArrayList<Geometry> geometriesList = new ArrayList<>(geometries);
+        Collections.sort(geometriesList);
+        return geometriesList;
     }
 
     public void addGeometry(Geometry pGeometry){
