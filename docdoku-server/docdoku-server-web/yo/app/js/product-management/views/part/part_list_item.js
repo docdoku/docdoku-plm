@@ -74,12 +74,9 @@ define([
         },
 
         sharePart: function () {
-            var that = this;
-
-            var shareView = new ShareView({model: that.model, entityType: 'parts'});
+            var shareView = new ShareView({model: this.model, entityType: 'parts'});
             window.document.body.appendChild(shareView.render().el);
             shareView.openModal();
-
         }
 
     });
