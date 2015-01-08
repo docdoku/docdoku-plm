@@ -1,4 +1,4 @@
-/*global define*/
+/*global $,define*/
 define(['datatables'], function () {
 	'use strict';
     // sorting french dates dd-mm-YYYY hh:ii:ss

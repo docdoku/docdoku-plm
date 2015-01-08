@@ -1,4 +1,4 @@
-/*global define,App*/
+/*global $,define,App*/
 define(['backbone','common-objects/collections/users'],
 function (Backbone, Users) {
     'use strict';

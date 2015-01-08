@@ -1,4 +1,4 @@
-/*global $,define,App*/
+/*global $,_,define,App*/
 define(['backbone', 'collections/document_iteration', 'common-objects/utils/acl-checker'], function (Backbone, DocumentIterationList, ACLChecker) {
 	'use strict';
 	var Document = Backbone.Model.extend({

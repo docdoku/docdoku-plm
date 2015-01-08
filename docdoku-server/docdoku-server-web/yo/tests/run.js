@@ -1,3 +1,4 @@
+/*global require*/
 /*
  * Node script wrapper to execute casper executable
  * execution : node run.js

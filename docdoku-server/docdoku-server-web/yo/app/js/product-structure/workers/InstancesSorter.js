@@ -1,8 +1,8 @@
-/*global WorkerManagedValues,AppWorker,Context*/
+/*global _,WorkerManagedValues,AppWorker,Context,THREE*/
 var InstancesSorter = {};
 
 (function (IS) {
-
+    'use strict';
     var cameraDist = function (instance) {
         return Math.min(
             new THREE.Vector3().subVectors(instance.box.min, Context.camera).length(),
@@ -19,7 +19,6 @@ var InstancesSorter = {};
         );
     };
 
-    'use strict';
     IS.sort = function (instances) {
 
         /*

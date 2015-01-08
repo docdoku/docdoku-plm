@@ -100,7 +100,7 @@ define(['views/progress_bar_view'], function (ProgressBarView) {
 
                         // Merge all sub meshes into one
                         _.each(geometries, function (geometry) {
-                            THREE.GeometryUtils.merge(combined, geometry);
+                            combined.merge(geometry);
                         });
 
                         combined.dynamic = false;
@@ -129,7 +129,7 @@ define(['views/progress_bar_view'], function (ProgressBarView) {
 
                         // Merge all sub meshes into one
                         _.each(geometries, function (geometry) {
-                            THREE.GeometryUtils.merge(combined, geometry);
+                            combined.merge(geometry);
                         });
 
                         combined.dynamic = false;

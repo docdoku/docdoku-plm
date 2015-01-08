@@ -1,6 +1,6 @@
-/*global define*/
+/*global define,App*/
 define([
-    "backbone",
+    'backbone',
     'models/folder'
 ], function (Backbone,Folder) {
 	'use strict';
