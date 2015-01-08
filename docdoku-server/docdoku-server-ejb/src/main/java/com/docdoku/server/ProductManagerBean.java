@@ -881,6 +881,24 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
+    public PartRevision getLastReleasePartRevision(ConfigurationItemKey ciKey)
+            throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, AccessRightException, PartRevisionNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(ciKey.getWorkspace());
+        Locale locale = new Locale(user.getLanguage());
+        ConfigurationItem ci = new ConfigurationItemDAO(locale,em).loadConfigurationItem(ciKey);
+        PartMaster partMaster = ci.getDesignItem();
+        PartRevision lastReleasedRevision = partMaster.getLastReleasedRevision();
+        if(lastReleasedRevision == null){
+            throw new PartRevisionNotFoundException(locale,partMaster.getNumber(),"Released");
+        }
+        if(!canUserAccess(user, lastReleasedRevision.getKey())){
+            throw new AccessRightException(locale,user);
+        }
+        return lastReleasedRevision;
+    }
+
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
     public List<ProductBaseline> findBaselinesWherePartRevisionHasIterations(PartRevisionKey partRevisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(partRevisionKey.getPartMaster().getWorkspace());
         Locale locale = new Locale(user.getLanguage());
@@ -1632,6 +1650,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         }
         return user;
     }
+
     private User checkPartRevisionWriteAccess(PartRevisionKey partRevisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException, AccessRightException {
         String workspaceId = partRevisionKey.getPartMaster().getWorkspace();
         User user = userManager.checkWorkspaceReadAccess(workspaceId);

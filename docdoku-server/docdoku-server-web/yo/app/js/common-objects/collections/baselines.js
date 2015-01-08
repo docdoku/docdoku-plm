@@ -31,7 +31,30 @@ function(Backbone, ProductBaseline,DocumentBaseline){
 					return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/baselines';
 				default : return '';
 			}
-		}
+		},
+
+        getLastReleaseRevision: function(callback){
+            var lastReleaseRevision=null;
+            if(this.productId) {
+                $.ajax({
+                    type: 'GET',
+                    url: App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + this.productId + '/releases/last',
+                    contentType: 'application/json; charset=utf-8',
+                    success: function (data) {
+                        lastReleaseRevision = data;
+                        if (callback && callback.success) {
+                            callback.success(data);
+                        }
+                    },
+                    error: function (data) {
+                        if (callback && callback.error) {
+                            callback.error(data);
+                        }
+                    }
+                });
+            }
+            return lastReleaseRevision;
+        }
 
 	});
 
