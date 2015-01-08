@@ -3,6 +3,7 @@ div.attachedFiles {
     div.progress .bar {
         color: #333;
     }
+
     &.idle {
 
         div.progress {
@@ -11,6 +12,10 @@ div.attachedFiles {
         }
 
         button.cancel-upload-btn {
+            display: none;
+        }
+
+        p.upload-file-shortname {
             display: none;
         }
     }
@@ -26,9 +31,33 @@ div.attachedFiles {
         }
     }
 
-    form#upload-form {
+    form.upload-form {
         position: relative;
         margin: 20px 0 0 0;
+    }
+
+    input#upload-btn {
+        height: 100%;
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        opacity: 0;
+    }
+
+    input#upload-btn {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 150px;
+        height: 28px;
+        line-height: normal;
+        opacity: 0;
+        cursor: pointer;
+    }
+
+    span.droppable {
+        margin: 0 0 0 18px;
     }
 
     #filedroparea {
@@ -49,36 +78,25 @@ div.attachedFiles {
     }
 
     input#upload-btn {
-        height: 100%;
         position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
+        left: 20px;
+        top: 20px;
+        width: 235px;
+        height: 28px;
+        line-height: normal;
         opacity: 0;
     }
 
-    button.droppable {
-        width: 150px;
-    }
-    span.droppable {
-        margin: 0 0 0 18px;
+    input[type="checkbox"].file-check {
+        margin: 0 0 3px 0;
     }
 
-    ul#file-list {
-        margin: 0;
-    }
     li {
 
         margin: 4px;
 
-        list-style: none;
-
-        input[type="checkbox"].file-check {
-            margin: 0 0 3px 0;
-        }
-
-        div.item-component {
-            display: inline-block;
+        ul#file-list {
+            margin: 0;
         }
 
         .stroke {
@@ -102,13 +120,13 @@ div.attachedFiles {
             .filename-edit-form {
                 font-size: 13px;
                 display: inline-block;
-                i{
+                i {
                     cursor: pointer;
                 }
-                .validate-name{
+                .validate-name {
                     color: #33ae24;
                 }
-                .cancel-name{
+                .cancel-name {
                     color: #ff5622;
                 }
             }
@@ -120,23 +138,17 @@ div.attachedFiles {
         .filename-edit-form {
             display: none;
         }
-        .edit-name,.fileName {
+        .edit-name, .fileName {
             display: inline-block;
         }
 
-        input[name=filename]{
+        input[name=filename] {
             line-height: 18px;
             height: 19px;
             font-size: 13px;
             padding: 0;
             border: none;
-
         }
-    }
-
-    li.stroke {
-        text-decoration: line-through;
-        color: red;
     }
 
     input.file-delete {

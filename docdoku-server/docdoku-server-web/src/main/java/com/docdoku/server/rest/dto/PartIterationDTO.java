@@ -45,6 +45,7 @@ public class PartIterationDTO implements Serializable {
     private String number;
     private String name;
     private String version;
+    private List<String> attachedFiles;
 
     public PartIterationDTO() {
     }
@@ -176,4 +177,13 @@ public class PartIterationDTO implements Serializable {
     public void setInstanceAttributeTemplates(List<InstanceAttributeTemplateDTO> instanceAttributeTemplates) {
         this.instanceAttributeTemplates = instanceAttributeTemplates;
     }
+
+    public List<String> getAttachedFiles() {
+        return attachedFiles;
+    }
+
+    public void setAttachedFiles(List<String> attachedFiles) {
+        this.attachedFiles = attachedFiles;
+    }
+
 }

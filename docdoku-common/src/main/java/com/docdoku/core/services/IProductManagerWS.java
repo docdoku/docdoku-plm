@@ -35,9 +35,11 @@ import com.docdoku.core.product.*;
 import com.docdoku.core.query.PartSearchQuery;
 import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;
+import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.sharing.SharedEntityKey;
 import com.docdoku.core.sharing.SharedPart;
 
+import javax.annotation.security.RolesAllowed;
 import javax.jws.WebService;
 import java.util.Date;
 import java.util.List;
@@ -318,8 +320,11 @@ public interface IProductManagerWS{
      * @throws FileAlreadyExistsException
      * @throws CreationException
      */
-    BinaryResource saveFileInPartIteration(PartIterationKey partIPK, String name, long size) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, PartRevisionNotFoundException, FileAlreadyExistsException, CreationException;
-    
+    BinaryResource saveFileInPartIteration(PartIterationKey partIPK, String name, String subType, long size) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, PartRevisionNotFoundException, FileAlreadyExistsException, CreationException;
+
+
+    void removeFileInPartIteration(PartIterationKey pPartIPK, String pName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartIterationNotFoundException, FileNotFoundException;
+
     /**
      * Updates the specified <a href="PartIteration.html">PartIteration</a> with
      * the properties passed as parameters. The corresponding part revision

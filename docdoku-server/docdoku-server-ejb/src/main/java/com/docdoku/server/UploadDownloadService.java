@@ -147,9 +147,9 @@ public class UploadDownloadService implements IUploadDownloadWS {
             throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, PartRevisionNotFoundException, FileAlreadyExistsException, CreationException, IOException {
 
         PartIterationKey partIPK = new PartIterationKey(new PartRevisionKey(new PartMasterKey(workspaceId, partMNumber), partRVersion), iteration);
-        BinaryResource binaryResource = productService.saveFileInPartIteration(partIPK, fileName, 0);
+        BinaryResource binaryResource = productService.saveFileInPartIteration(partIPK, fileName, null, 0);
         long length = uploadAFile(data,binaryResource);
-        productService.saveFileInPartIteration(partIPK, fileName, length);
+        productService.saveFileInPartIteration(partIPK, fileName, null, length);
     }    
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)

@@ -135,6 +135,7 @@ define([
             this.bindUserPopover();
             if (this.iteration) {
                 this.initCadFileUploadView();
+                this.initMaterialFileUploadView();
                 this.initAttributesView();
 
                 this.initPartsManagementView();
@@ -144,7 +145,7 @@ define([
                 this.initLifeCycleView();
 
                 if (!data.iteration.hasNextIteration) {
-                    this.initModificationNotificationGroupListView();
+                    this.initModificationNotificatIProductManagerLocal.javaionGroupListView();
                 }
             }
 
@@ -195,7 +196,7 @@ define([
         onSubmitForm: function (e) {
 
             // cannot pass a collection of cad file to server.
-            var cadFile = this.fileListView.collection.first();
+            var cadFile = this.cadFileView.collection.first();
             if (cadFile) {
                 this.iteration.set('nativeCADFile', cadFile.get('fullName'));
             } else {
@@ -224,7 +225,7 @@ define([
 
             this.fileListView.deleteFilesToDelete();
             that.deleteClickedTags();
-
+            this.cadFileView.deleteFilesToDelete();
 
             e.preventDefault();
             e.stopPropagation();
@@ -233,16 +234,32 @@ define([
         },
 
         initCadFileUploadView: function () {
-            this.fileListView = new FileListView({
+            this.cadFileView = new FileListView({
+                title:'CAD',
                 baseName: this.iteration.getBaseName(),
                 deleteBaseUrl: this.iteration.url(),
-                uploadBaseUrl: this.iteration.getUploadBaseUrl(),
+                uploadBaseUrl: this.iteration.getNativeCadFileUploadBaseUrl(),
                 collection: this.iteration._nativeCADFile,
                 editMode: this.editMode,
                 singleFile: true
             }).render();
 
-            this.$('#iteration-files').html(this.fileListView.el);
+            this.$('#iteration-files').html(this.cadFileView.el);
+
+        },
+
+        initMaterialFileUploadView: function () {
+
+            this.attachedFilesView = new FileListView({
+                title:'Attached files',
+                baseName: this.iteration.getBaseName(),
+                deleteBaseUrl: this.iteration.url(),
+                uploadBaseUrl: this.iteration.getAttachedFileUploadBaseUrl(),
+                collection: this.iteration.getAttachedFiles(),
+                editMode: this.editMode
+            }).render();
+
+            this.$('#iteration-files').append(this.attachedFilesView.el);
 
             if(this.editMode){
                 this.conversionStatusView = new ConversionStatusView({model:this.iteration}).render();

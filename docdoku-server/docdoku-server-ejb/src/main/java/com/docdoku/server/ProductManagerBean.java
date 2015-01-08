@@ -558,17 +558,6 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 }
                 partI.setNativeCADFile(null);
                 binDAO.removeBinaryResource(nativeCADBinaryResource);
-
-                Set<BinaryResource> attachedFiles = new HashSet<>(partI.getAttachedFiles());
-                for (BinaryResource attachedFile : attachedFiles) {
-                    try {
-                        dataManager.deleteData(attachedFile);
-                    } catch (StorageException e) {
-                        LOGGER.log(Level.INFO, null, e);
-                    }
-                    partI.removeFile(attachedFile);
-                }
-
                 nativeCADBinaryResource = new BinaryResource(fullName, pSize, new Date());
                 binDAO.createBinaryResource(nativeCADBinaryResource);
                 partI.setNativeCADFile(nativeCADBinaryResource);
@@ -634,7 +623,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public BinaryResource saveFileInPartIteration(PartIterationKey pPartIPK, String pName, long pSize) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, PartRevisionNotFoundException, FileAlreadyExistsException, CreationException {
+    public BinaryResource saveFileInPartIteration(PartIterationKey pPartIPK, String pName, String subType, long pSize) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, PartRevisionNotFoundException, FileAlreadyExistsException, CreationException {
         User user = userManager.checkWorkspaceReadAccess(pPartIPK.getWorkspaceId());
         Locale locale = new Locale(user.getLanguage());
         checkNameFileValidity(pName, locale);
@@ -644,7 +633,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         PartIteration partI = partR.getIteration(pPartIPK.getIteration());
         if (isCheckoutByUser(user, partR) && partR.getLastIteration().equals(partI)) {
             BinaryResource binaryResource = null;
-            String fullName = partR.getWorkspaceId() + "/parts/" + partR.getPartNumber() + "/" + partR.getVersion() + "/" + partI.getIteration() + "/" + pName;
+            String fullName = partR.getWorkspaceId() + "/parts/" + partR.getPartNumber() + "/" + partR.getVersion() + "/" + partI.getIteration() + "/" + (subType != null ? subType+"/" : "" ) + pName;
 
             for (BinaryResource bin : partI.getAttachedFiles()) {
                 if (bin.getFullName().equals(fullName)) {
@@ -1146,7 +1135,35 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             new ACLDAO(em).removeACLEntries(acl);
             partMaster.setAcl(null);
         }
+    }
 
+    @Override
+    public void removeFileInPartIteration(PartIterationKey pPartIPK, String pSubType, String pName)
+            throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartIterationNotFoundException, FileNotFoundException {
+
+        User user = userManager.checkWorkspaceReadAccess(pPartIPK.getWorkspaceId());
+
+        PartIteration partIteration = new PartIterationDAO(new Locale(user.getLanguage()),em).loadPartI(pPartIPK);
+        PartRevision partR = partIteration.getPartRevision();
+
+        if (isCheckoutByUser(user,partR) && partR.getLastIteration().equals(partIteration)) {
+
+            BinaryResourceDAO binDAO = new BinaryResourceDAO(new Locale(user.getLanguage()), em);
+            BinaryResource file = binDAO.loadBinaryResource(pName);
+
+            try {
+                dataManager.deleteData(file);
+            } catch (StorageException e) {
+                Logger.getLogger(DocumentManagerBean.class.getName()).log(Level.INFO, null, e);
+            }
+
+            if (pSubType != null && pSubType.equals("nativecad")) {
+                partIteration.setNativeCADFile(null);
+            } else {
+                removeAttachedFiles(partIteration);
+            }
+            binDAO.removeBinaryResource(file);
+        }
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
@@ -1425,6 +1442,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     private void removeCADFile(PartIteration partIteration)
             throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartIterationNotFoundException {
 
+        // Delete native cad file
         BinaryResource br = partIteration.getNativeCADFile();
         if (br != null) {
             try {
@@ -1435,6 +1453,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             partIteration.setNativeCADFile(null);
         }
 
+        // Delete generated 3D files
         List<Geometry> geometries = new ArrayList<>(partIteration.getGeometries());
         for (Geometry geometry : geometries) {
             try {
@@ -1444,15 +1463,20 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             }
             partIteration.removeGeometry(geometry);
         }
+    }
 
-        Set<BinaryResource> attachedFiles = new HashSet<>(partIteration.getAttachedFiles());
-        for (BinaryResource attachedFile : attachedFiles) {
+    private void removeAttachedFiles(PartIteration partIteration)
+            throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartIterationNotFoundException {
+
+        // Delete attached files
+        for (BinaryResource file : partIteration.getAttachedFiles()) {
             try {
-                dataManager.deleteData(attachedFile);
+                dataManager.deleteData(file);
             } catch (StorageException e) {
                 LOGGER.log(Level.INFO, null, e);
             }
-            partIteration.removeFile(attachedFile);
+
+            esIndexer.delete(partIteration);
         }
     }
 

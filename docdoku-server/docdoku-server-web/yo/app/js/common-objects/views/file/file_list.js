@@ -18,14 +18,16 @@ define([
 
         events: {
             'click form button.cancel-upload-btn': 'cancelButtonClicked',
-            'change form input#upload-btn': 'fileSelectHandler',
+            'change form input.upload-btn': 'fileSelectHandler',
             'dragover .droppable': 'fileDragHover',
             'dragleave .droppable': 'fileDragHover',
-            'drop .droppable': 'fileDropHandler'
+            'drop .droppable': 'fileDropHandler',
+            'submit form':'formSubmit'
         },
 
         initialize: function () {
             this.editMode = this.options.editMode;
+            this.title = this.options.title;
 
             this.xhrs = [];
 
@@ -229,7 +231,7 @@ define([
         },
 
         render: function () {
-            this.$el.html(Mustache.render(template, {i18n: App.config.i18n, editMode: this.editMode, multiple:!this.options.singleFile}));
+            this.$el.html(Mustache.render(template, {i18n: App.config.i18n, title:this.title, editMode: this.editMode, multiple:!this.options.singleFile}));
 
             this.bindDomElements();
 
@@ -238,8 +240,13 @@ define([
             return this;
         },
 
+        formSubmit:function(e){
+
+            return false;
+        },
+
         bindDomElements: function () {
-            this.filedroparea = this.$('#filedroparea');
+            this.filedroparea = this.$('.filedroparea');
             this.filesUL = this.$('ul.file-list');
             this.uploadInput = this.$('input#upload-btn');
             this.progressBars = this.$('div.progress-bars');

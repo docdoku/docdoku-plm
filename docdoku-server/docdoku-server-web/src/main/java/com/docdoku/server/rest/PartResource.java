@@ -414,9 +414,9 @@ public class PartResource {
     @Path("/iterations/{partIteration}/files/{fileName}")
     public Response removeAttachedFile(@PathParam("workspaceId") String workspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion, @PathParam("partIteration") int partIteration, @PathParam("fileName") String fileName)
             throws EntityNotFoundException, UserNotActiveException {
-
         PartIterationKey partIKey = new PartIterationKey(workspaceId, partNumber, partVersion, partIteration);
-        productService.removeCADFileFromPartIteration(partIKey);
+        String fileFullName = workspaceId + "/parts/" + partNumber + "/" + partVersion + "/" + partIteration + "/" + fileName;
+        productService.removeFileInPartIteration(partIKey, fileFullName);
         return Response.ok().build();
     }
 

@@ -18,6 +18,17 @@ define([
             this.set('instanceAttributes', attributes);
             this.resetNativeCADFile();
 
+            var filesMapping = _.map(this.get('attachedFiles'), function (fullName) {
+                return {
+                    'fullName': fullName,
+                    shortName: _.last(fullName.split('/')),
+                    created: true
+                };
+            });
+
+            var attachedFiles = new AttachedFileCollection(filesMapping);
+
+            this.set('attachedFiles', attachedFiles);
 
         },
 
@@ -34,6 +45,7 @@ define([
                 this._nativeCADFile = new AttachedFileCollection();
             }
         },
+
 
         defaults: {
             instanceAttributes: []
@@ -67,7 +79,7 @@ define([
         },
 
         getAttachedFiles: function () {
-            return this.get('nativeCADFile');
+            return this.get('attachedFiles');
         },
 
         getBaseName: function () {
@@ -121,6 +133,14 @@ define([
          * @returns string
          */
         getUploadBaseUrl: function () {
+            return App.config.contextPath + '/api/files/' + this.getWorkspace() + '/parts/' + this.getNumber() + '/' + this.getVersion() + '/' + this.get('iteration') + '/nativecad/';
+        },
+
+        getAttachedFileUploadBaseUrl: function () {
+            return App.config.contextPath + '/api/files/' + this.getWorkspace() + '/parts/' + this.getNumber() + '/' + this.getVersion() + '/' + this.get('iteration') + '/mtl/';
+        },
+
+        getNativeCadFileUploadBaseUrl: function () {
             return App.config.contextPath + '/api/files/' + this.getWorkspace() + '/parts/' + this.getNumber() + '/' + this.getVersion() + '/' + this.get('iteration') + '/nativecad/';
         }
 
