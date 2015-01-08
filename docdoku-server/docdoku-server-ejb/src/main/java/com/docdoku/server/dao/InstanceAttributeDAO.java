@@ -24,17 +24,17 @@ import com.docdoku.core.meta.InstanceAttribute;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
-
-
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class InstanceAttributeDAO {
+    private static final Logger LOGGER = Logger.getLogger(InstanceAttributeDAO.class.getName());
 
-    private EntityManager em;
+    private final EntityManager em;
 
     public InstanceAttributeDAO(EntityManager pEM) {
         em=pEM;
     }
-
 
     public void removeAttribute(InstanceAttribute pAttr){
         em.remove(pAttr);
@@ -47,6 +47,7 @@ public class InstanceAttributeDAO {
             em.flush();
         }catch(EntityExistsException pEEEx){
             //already created
+            LOGGER.log(Level.FINER,null,pEEEx);
         }
     }
 }

@@ -163,7 +163,7 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
         return geometries;
     }
     public List<Geometry> getSortedGeometries() {
-        ArrayList<Geometry> geometriesList = new ArrayList<>(geometries);
+        List<Geometry> geometriesList = new ArrayList<>(geometries);
         Collections.sort(geometriesList);
         return geometriesList;
     }

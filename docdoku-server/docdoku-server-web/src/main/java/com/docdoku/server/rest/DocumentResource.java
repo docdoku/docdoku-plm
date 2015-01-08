@@ -387,7 +387,7 @@ public class DocumentResource {
     @Path("acl")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateACL(@PathParam("workspaceId") String pWorkspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion, ACLDTO acl)
-            throws EntityNotFoundException, AccessRightException, UserNotActiveException {
+            throws EntityNotFoundException, AccessRightException, UserNotActiveException, NotAllowedException {
         DocumentRevisionKey documentRevisionKey = new DocumentRevisionKey(pWorkspaceId, documentId, documentVersion);
 
         if (!acl.getGroupEntries().isEmpty() || !acl.getUserEntries().isEmpty()) {

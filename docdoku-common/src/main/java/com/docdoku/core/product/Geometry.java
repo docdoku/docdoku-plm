@@ -130,11 +130,50 @@ public class Geometry extends BinaryResource{
         this.zMax = zMax;
     }
 
-    public int compareTo(Geometry geometry) {
-        int ret = quality - geometry.quality;
+//    @Override
+//    public int compareTo(O geometry) {
+//        int ret = quality - geometry.quality;
+//        if(ret == 0){
+//            return fullName.compareTo(geometry.fullName);
+//        }
+//        return ret;
+//    }
+
+
+    @Override
+    public int compareTo(BinaryResource pBinaryResource) {
+        if (!(pBinaryResource instanceof Geometry)) {
+            return super.compareTo(pBinaryResource);
+        }
+
+        int ret = quality - ((Geometry) pBinaryResource).quality;
         if(ret == 0){
-            return fullName.compareTo(geometry.fullName);
+            return  fullName.compareTo(((Geometry) pBinaryResource).fullName);
         }
         return ret;
+
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Geometry)) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+
+        Geometry geometry = (Geometry) o;
+        return quality == geometry.quality;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + quality;
+        return result;
     }
 }

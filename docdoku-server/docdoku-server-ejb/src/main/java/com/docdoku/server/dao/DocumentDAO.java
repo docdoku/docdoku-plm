@@ -28,11 +28,14 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 public class DocumentDAO {
+    private static final Logger LOGGER = Logger.getLogger(DocumentDAO.class.getName());
 
-    private EntityManager em;
+    private final EntityManager em;
 
     public DocumentDAO(EntityManager pEM) {
         em=pEM;
@@ -55,16 +58,15 @@ public class DocumentDAO {
             try{
                 DocumentIteration doc = docQuery.setParameter("link",link).getSingleResult();
                 doc.getLinkedDocuments().remove(link);
-
             }catch(NoResultException ex){
+                LOGGER.log(Level.FINER,null,ex);
+            }
 
-                try{
-                    PartIteration part = partQuery.setParameter("link",link).getSingleResult();
-                    part.getLinkedDocuments().remove(link);
-
-                }catch(NoResultException ex2){
-                    // TODO : log it ?
-                }
+            try{
+                PartIteration part = partQuery.setParameter("link",link).getSingleResult();
+                part.getLinkedDocuments().remove(link);
+            }catch(NoResultException ex){
+                LOGGER.log(Level.FINER,null,ex);
             }
 
         }

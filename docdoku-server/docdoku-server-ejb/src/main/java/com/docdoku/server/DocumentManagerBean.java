@@ -93,7 +93,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         Locale locale = new Locale(user.getLanguage());
         checkNameFileValidity(pName, locale);
 
-        DocumentMasterTemplateDAO templateDAO = new DocumentMasterTemplateDAO(em);
+        DocumentMasterTemplateDAO templateDAO = new DocumentMasterTemplateDAO(locale,em);
         DocumentMasterTemplate template = templateDAO.loadDocMTemplate(pDocMTemplateKey);
         BinaryResource binaryResource = null;
         String fullName = template.getWorkspaceId() + "/document-templates/" + template.getId() + "/" + pName;
@@ -107,7 +107,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
         if (binaryResource == null) {
             binaryResource = new BinaryResource(fullName, pSize, new Date());
-            new BinaryResourceDAO(em).createBinaryResource(binaryResource);
+            new BinaryResourceDAO(locale,em).createBinaryResource(binaryResource);
             template.addFile(binaryResource);
         } else {
             binaryResource.setContentLength(pSize);
@@ -123,7 +123,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         Locale locale = new Locale(user.getLanguage());
         checkNameFileValidity(pName, locale);
 
-        DocumentRevisionDAO docRDAO = new DocumentRevisionDAO(em);
+        DocumentRevisionDAO docRDAO = new DocumentRevisionDAO(locale,em);
         DocumentRevision docR = docRDAO.loadDocR(new DocumentRevisionKey(pDocPK.getWorkspaceId(), pDocPK.getDocumentMasterId(), pDocPK.getDocumentRevisionVersion()));
         DocumentIteration document = docR.getIteration(pDocPK.getIteration());
 
@@ -139,7 +139,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             }
             if (binaryResource == null) {
                 binaryResource = new BinaryResource(fullName, pSize, new Date());
-                new BinaryResourceDAO(em).createBinaryResource(binaryResource);
+                new BinaryResourceDAO(locale,em).createBinaryResource(binaryResource);
                 document.addFile(binaryResource);
             } else {
                 binaryResource.setContentLength(pSize);
@@ -259,22 +259,21 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         }
 
         User user = userManager.checkWorkspaceReadAccess(pDocRPK.getWorkspaceId());
-        DocumentRevision docR = new DocumentRevisionDAO(new Locale(user.getLanguage()), em).loadDocR(pDocRPK);
-        String owner = docR.getLocation().getOwner();
-        if ((owner != null) && (!owner.equals(user.getLogin()))) {
-            throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException5");
+        Locale userLocale = new Locale(user.getLanguage());
+        DocumentRevision docR = new DocumentRevisionDAO(userLocale, em).loadDocR(pDocRPK);
+        if (isAnotherUserHomeFolder(user,docR.getLocation())) {
+            throw new NotAllowedException(userLocale, "NotAllowedException5");
         }
 
-        if((docR.getACL() != null && docR.getACL().hasReadAccess(user)) || docR.getACL() == null){
-
-            if ((docR.isCheckedOut()) && (!docR.getCheckOutUser().equals(user))) {
+        if(hasDocumentRevisionReadAccess(user,docR)){
+            if (isCheckoutByAnotherUser(user,docR)) {
                 em.detach(docR);
                 docR.removeLastIteration();
             }
             return docR;
 
         }else{
-            throw new AccessRightException(new Locale(user.getLanguage()),user);
+            throw new AccessRightException(userLocale,user);
         }
 
     }
@@ -293,10 +292,11 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public void updateDocumentACL(String pWorkspaceId, DocumentRevisionKey docKey, Map<String,String> pACLUserEntries, Map<String,String> pACLUserGroupEntries) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentRevisionNotFoundException, AccessRightException {
+    public void updateDocumentACL(String pWorkspaceId, DocumentRevisionKey docKey, Map<String,String> pACLUserEntries, Map<String,String> pACLUserGroupEntries) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentRevisionNotFoundException, AccessRightException, NotAllowedException {
         User user = checkDocumentRevisionWriteAccess(docKey);
+        Locale userLocale = new Locale(user.getLanguage());
 
-        DocumentRevisionDAO documentRevisionDAO = new DocumentRevisionDAO(new Locale(user.getLanguage()), em);
+        DocumentRevisionDAO documentRevisionDAO = new DocumentRevisionDAO(userLocale, em);
         DocumentRevision docR = documentRevisionDAO.loadDocR(docKey);
         if (user.isAdministrator() || isAuthor(user,docR)) {
 
@@ -338,7 +338,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             }
 
         }else {
-                throw new AccessRightException(new Locale(user.getLanguage()), user);
+                throw new AccessRightException(userLocale, user);
         }
     }
 
@@ -366,16 +366,15 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     public DocumentRevision[] getAllDocumentsInWorkspace(String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         List<DocumentRevision> docRs = new DocumentRevisionDAO(new Locale(user.getLanguage()), em).getDocumentRevisionsFiltered(user, workspaceId);
-        ListIterator<DocumentRevision> ite = docRs.listIterator();
-
-        while (ite.hasNext()) {
-            DocumentRevision docR = ite.next();
-            if ((docR.isCheckedOut()) && (!docR.getCheckOutUser().equals(user))) {
+        List<DocumentRevision> documentRevisions = new ArrayList<>();
+        for(DocumentRevision docR : docRs){
+            if (isCheckoutByAnotherUser(user,docR)) {
                 em.detach(docR);
                 docR.removeLastIteration();
             }
+            documentRevisions.add(docR);
         }
-        return docRs.toArray(new DocumentRevision[docRs.size()]);
+        return documentRevisions.toArray(new DocumentRevision[documentRevisions.size()]);
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
@@ -383,17 +382,15 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     public DocumentRevision[] getAllDocumentsInWorkspace(String workspaceId, int start, int pMaxResults) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         List<DocumentRevision> docRs = new DocumentRevisionDAO(new Locale(user.getLanguage()), em).getDocumentRevisionsFiltered(user, workspaceId, start, pMaxResults);
-        ListIterator<DocumentRevision> ite = docRs.listIterator();
-
-        while (ite.hasNext()) {
-            DocumentRevision docR = ite.next();
-
-            if ((docR.isCheckedOut()) && (!docR.getCheckOutUser().equals(user))) {
+        List<DocumentRevision> documentRevisions = new ArrayList<>();
+        for(DocumentRevision docR : docRs){
+            if (isCheckoutByAnotherUser(user,docR)) {
                 em.detach(docR);
                 docR.removeLastIteration();
             }
+            documentRevisions.add(docR);
         }
-        return docRs.toArray(new DocumentRevision[docRs.size()]);
+        return documentRevisions.toArray(new DocumentRevision[documentRevisions.size()]);
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
@@ -467,11 +464,12 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     public String generateId(String pWorkspaceId, String pDocMTemplateId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, DocumentMasterTemplateNotFoundException {
 
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
-        DocumentMasterTemplate template = new DocumentMasterTemplateDAO(new Locale(user.getLanguage()), em).loadDocMTemplate(new DocumentMasterTemplateKey(user.getWorkspaceId(), pDocMTemplateId));
+        Locale locale = new Locale(user.getLanguage());
+        DocumentMasterTemplate template = new DocumentMasterTemplateDAO(locale, em).loadDocMTemplate(new DocumentMasterTemplateKey(user.getWorkspaceId(), pDocMTemplateId));
 
         String newId = null;
         try {
-            String latestId = new DocumentRevisionDAO(new Locale(user.getLanguage()), em).findLatestDocMId(pWorkspaceId, template.getDocumentType());
+            String latestId = new DocumentRevisionDAO(locale, em).findLatestDocMId(pWorkspaceId, template.getDocumentType());
             String inputMask = template.getMask();
             String convertedMask = Tools.convertMask(inputMask);
             newId = Tools.increaseId(latestId, convertedMask);
@@ -594,7 +592,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         DocumentRevision docR;
         DocumentIteration newDoc;
 
-        DocumentMasterDAO docMDAO = new DocumentMasterDAO(new Locale(user.getLanguage()), em);
+        DocumentMasterDAO docMDAO = new DocumentMasterDAO(locale, em);
         if (pDocMTemplateId == null) {
             docM = new DocumentMaster(user.getWorkspace(), pDocMId, user);
             //specify an empty type instead of null
@@ -604,7 +602,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             docR = docM.createNextRevision(user);
             newDoc = docR.createNextIteration(user);
         } else {
-            DocumentMasterTemplate template = new DocumentMasterTemplateDAO(new Locale(user.getLanguage()), em).loadDocMTemplate(new DocumentMasterTemplateKey(user.getWorkspaceId(), pDocMTemplateId));
+            DocumentMasterTemplate template = new DocumentMasterTemplateDAO(locale, em).loadDocMTemplate(new DocumentMasterTemplateKey(user.getWorkspaceId(), pDocMTemplateId));
             docM = new DocumentMaster(user.getWorkspace(), pDocMId, user);
             docM.setType(template.getDocumentType());
             docM.setAttributesLocked(template.isAttributesLocked());
@@ -621,7 +619,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             }
             newDoc.setInstanceAttributes(attrs);
 
-            BinaryResourceDAO binDAO = new BinaryResourceDAO(new Locale(user.getLanguage()), em);
+            BinaryResourceDAO binDAO = new BinaryResourceDAO(locale, em);
             for (BinaryResource sourceFile : template.getAttachedFiles()) {
                 String fileName = sourceFile.getName();
                 long length = sourceFile.getContentLength();
@@ -634,15 +632,15 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
                 try {
                     dataManager.copyData(sourceFile, targetFile);
                 } catch (StorageException e) {
-                    Logger.getLogger(DocumentManagerBean.class.getName()).log(Level.INFO, null, e);
+                    LOGGER.log(Level.INFO, null, e);
                 }
             }
         }
 
         if (pWorkflowModelId != null) {
 
-            UserDAO userDAO = new UserDAO(new Locale(user.getLanguage()),em);
-            RoleDAO roleDAO = new RoleDAO(new Locale(user.getLanguage()),em);
+            UserDAO userDAO = new UserDAO(locale,em);
+            RoleDAO roleDAO = new RoleDAO(locale,em);
 
             Map<Role,User> roleUserMap = new HashMap<>();
 
@@ -655,7 +653,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
                 roleUserMap.put(role, worker);
             }
 
-            WorkflowModel workflowModel = new WorkflowModelDAO(new Locale(user.getLanguage()), em).loadWorkflowModel(new WorkflowModelKey(user.getWorkspaceId(), pWorkflowModelId));
+            WorkflowModel workflowModel = new WorkflowModelDAO(locale, em).loadWorkflowModel(new WorkflowModelKey(user.getWorkspaceId(), pWorkflowModelId));
             Workflow workflow = workflowModel.createWorkflow(roleUserMap);
             docR.setWorkflow(workflow);
 
@@ -691,8 +689,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         docR.setCheckOutUser(user);
         docR.setCheckOutDate(now);
         newDoc.setCreationDate(now);
-        DocumentRevisionDAO docRDAO = new DocumentRevisionDAO(new Locale(user.getLanguage()), em);
-        docRDAO.createDocR(docR);
+        new DocumentRevisionDAO(locale, em).createDocR(docR);
         return docR;
     }
 
@@ -741,7 +738,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException6");
         } else {
             docR.setLocation(newLocation);
-            if ((docR.isCheckedOut()) && (!docR.getCheckOutUser().equals(user))) {
+            if (isCheckoutByAnotherUser(user,docR)) {
                 em.detach(docR);
                 docR.removeLastIteration();
             }
@@ -770,16 +767,13 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @Override
     public DocumentRevision checkOutDocument(DocumentRevisionKey pDocRPK) throws WorkspaceNotFoundException, NotAllowedException, DocumentRevisionNotFoundException, AccessRightException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException, CreationException {
         User user = checkDocumentRevisionWriteAccess(pDocRPK);
-        DocumentRevisionDAO docRDAO = new DocumentRevisionDAO(new Locale(user.getLanguage()), em);
+        Locale locale = new Locale(user.getLanguage());
+        DocumentRevisionDAO docRDAO = new DocumentRevisionDAO(locale, em);
         DocumentRevision docR = docRDAO.loadDocR(pDocRPK);
         //Check access rights on docR
 
-        if (isInAnotherUserHomeFolder(user, docR)) {
-            throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException5");
-        }
-
         if (docR.isCheckedOut()) {
-            throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException37");
+            throw new NotAllowedException(locale, "NotAllowedException37");
         }
 
         DocumentIteration beforeLastDocument = docR.getLastIteration();
@@ -794,7 +788,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         docR.setCheckOutDate(now);
 
         if (beforeLastDocument != null) {
-            BinaryResourceDAO binDAO = new BinaryResourceDAO(new Locale(user.getLanguage()), em);
+            BinaryResourceDAO binDAO = new BinaryResourceDAO(locale, em);
             for (BinaryResource sourceFile : beforeLastDocument.getAttachedFiles()) {
                 String fileName = sourceFile.getName();
                 long length = sourceFile.getContentLength();
@@ -834,9 +828,6 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         Locale userLocale = new Locale(user.getLanguage());
         DocumentRevisionDAO docRDAO = new DocumentRevisionDAO(userLocale, em);
         DocumentRevision docR = docRDAO.loadDocR(pDocRPK);
-        if (isInAnotherUserHomeFolder(user, docR)) {
-            throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException5");
-        }
 
         Set<Tag> tags = new HashSet<>();
         for (String label : pTags) {
@@ -859,7 +850,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
         docR.setTags(tags);
 
-        if ((docR.isCheckedOut()) && (!docR.getCheckOutUser().equals(user))) {
+        if (isCheckoutByAnotherUser(user,docR)) {
             em.detach(docR);
             docR.removeLastIteration();
         }
@@ -897,19 +888,19 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     public DocumentRevision undoCheckOutDocument(DocumentRevisionKey pDocRPK) throws WorkspaceNotFoundException, DocumentRevisionNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException, AccessRightException {
 
         User user = checkDocumentRevisionWriteAccess(pDocRPK);
+        Locale userLocale = new Locale(user.getLanguage());
 
-        DocumentRevisionDAO docRDAO = new DocumentRevisionDAO(new Locale(user.getLanguage()), em);
-        DocumentRevision docR = docRDAO.loadDocR(pDocRPK);
-        if (docR.isCheckedOut() && docR.getCheckOutUser().equals(user)) {
+        DocumentRevision docR = new DocumentRevisionDAO(userLocale, em).loadDocR(pDocRPK);
+        if (isCheckoutByUser(user,docR)) {
             if(docR.getLastIteration().getIteration() <= 1) {
-                throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException27");
+                throw new NotAllowedException(userLocale, "NotAllowedException27");
             }
             DocumentIteration doc = docR.removeLastIteration();
             for (BinaryResource file : doc.getAttachedFiles()) {
                 try {
                     dataManager.deleteData(file);
                 } catch (StorageException e) {
-                    Logger.getLogger(DocumentManagerBean.class.getName()).log(Level.INFO, null, e);
+                    LOGGER.log(Level.INFO, null, e);
                 }
             }
 
@@ -919,7 +910,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             docR.setCheckOutUser(null);
             return docR;
         } else {
-            throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException19");
+            throw new NotAllowedException(userLocale, "NotAllowedException19");
         }
     }
 
@@ -928,8 +919,9 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     public DocumentRevision checkInDocument(DocumentRevisionKey pDocRPK) throws WorkspaceNotFoundException, NotAllowedException, DocumentRevisionNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException, ESServerException {
 
         User user = checkDocumentRevisionWriteAccess(pDocRPK);
+        Locale userLocale = new Locale(user.getLanguage());
 
-        DocumentRevisionDAO docRDAO = new DocumentRevisionDAO(new Locale(user.getLanguage()), em);
+        DocumentRevisionDAO docRDAO = new DocumentRevisionDAO(userLocale, em);
         DocumentRevision docR = docRDAO.loadDocR(pDocRPK);
 
         if (isCheckoutByUser(user,docR)) {
@@ -954,7 +946,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
             return docR;
         } else {
-            throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException20");
+            throw new NotAllowedException(userLocale, "NotAllowedException20");
         }
     }
 
@@ -962,11 +954,13 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @Override
     public DocumentRevisionKey[] deleteFolder(String pCompletePath) throws WorkspaceNotFoundException, NotAllowedException, AccessRightException, UserNotFoundException, FolderNotFoundException, ESServerException {
         User user = userManager.checkWorkspaceWriteAccess(Folder.parseWorkspaceId(pCompletePath));
-        FolderDAO folderDAO = new FolderDAO(new Locale(user.getLanguage()), em);
+        Locale userLocale = new Locale(user.getLanguage());
+
+        FolderDAO folderDAO = new FolderDAO(userLocale, em);
         Folder folder = folderDAO.loadFolder(pCompletePath);
         checkFoldersStructureChangeRight(user);
-        if (isAnotherUserHomeFolder(user, folder) || (folder.isRoot()) || folder.isHome()) {
-            throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException21");
+        if (isAnotherUserHomeFolder(user, folder) || folder.isRoot() || folder.isHome()) {
+            throw new NotAllowedException(userLocale, "NotAllowedException21");
         } else {
             List<DocumentRevision> docRs = folderDAO.removeFolder(folder);
             DocumentRevisionKey[] pks = new DocumentRevisionKey[docRs.size()];
@@ -979,7 +973,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
                         try {
                             dataManager.deleteData(file);
                         } catch (StorageException e) {
-                            Logger.getLogger(DocumentManagerBean.class.getName()).log(Level.INFO, null, e);
+                            LOGGER.log(Level.INFO, null, e);
                         }
                     }
                     esIndexer.delete(doc);
@@ -996,13 +990,15 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         //TODO security check if both parameter belong to the same workspace
         String workspace = Folder.parseWorkspaceId(pCompletePath);
         User user = userManager.checkWorkspaceWriteAccess(workspace);
-        FolderDAO folderDAO = new FolderDAO(new Locale(user.getLanguage()), em);
+        Locale userLocale = new Locale(user.getLanguage());
+
+        FolderDAO folderDAO = new FolderDAO(userLocale, em);
         Folder folder = folderDAO.loadFolder(pCompletePath);
         checkFoldersStructureChangeRight(user);
-        if (isAnotherUserHomeFolder(user, folder) || (folder.isRoot()) || folder.isHome()) {
-            throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException21");
+        if (isAnotherUserHomeFolder(user, folder) || folder.isRoot() || folder.isHome()) {
+            throw new NotAllowedException(userLocale, "NotAllowedException21");
         } else if (!workspace.equals(Folder.parseWorkspaceId(pDestParentFolder))) {
-            throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException23");
+            throw new NotAllowedException(userLocale, "NotAllowedException23");
         } else {
             Folder newFolder = createFolder(pDestParentFolder, pDestFolder);
             List<DocumentRevision> docRs = folderDAO.moveFolder(folder, newFolder);
@@ -1020,19 +1016,21 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     public void deleteDocumentRevision(DocumentRevisionKey pDocRPK) throws WorkspaceNotFoundException, NotAllowedException, DocumentRevisionNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException, ESServerException, EntityConstraintException {
 
         User user = checkDocumentRevisionWriteAccess(pDocRPK);
-        DocumentMasterDAO documentMasterDAO = new DocumentMasterDAO(new Locale(user.getLanguage()), em);
-        DocumentRevisionDAO docRDAO = new DocumentRevisionDAO(new Locale(user.getLanguage()), em);
-        BaselinedDocumentDAO baselinedDocumentDAO = new BaselinedDocumentDAO(new Locale(user.getLanguage()), em);
+        Locale userLocale = new Locale(user.getLanguage());
+
+        DocumentMasterDAO documentMasterDAO = new DocumentMasterDAO(userLocale, em);
+        DocumentRevisionDAO docRDAO = new DocumentRevisionDAO(userLocale, em);
+        BaselinedDocumentDAO baselinedDocumentDAO = new BaselinedDocumentDAO(userLocale, em);
         DocumentRevision docR = docRDAO.loadDocR(pDocRPK);
         DocumentMaster documentMaster = docR.getDocumentMaster();
         boolean isLastRevision = documentMaster.getDocumentRevisions().size() == 1;
 
         if (isInAnotherUserHomeFolder(user, docR)) {
-            throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException22");
+            throw new NotAllowedException(userLocale, "NotAllowedException22");
         }
 
         if(baselinedDocumentDAO.hasPartRevision(pDocRPK.getDocumentMasterId(),pDocRPK.getVersion())) {
-            throw new EntityConstraintException(new Locale(user.getLanguage()),"EntityConstraintException6");
+            throw new EntityConstraintException(userLocale,"EntityConstraintException6");
         }
 
         for (DocumentIteration doc : docR.getDocumentIterations()) {
@@ -1040,11 +1038,10 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
                 try {
                     dataManager.deleteData(file);
                 } catch (StorageException e) {
-                    Logger.getLogger(DocumentManagerBean.class.getName()).log(Level.INFO, null, e);
+                    LOGGER.log(Level.INFO, null, e);
                 }
 
                 esIndexer.delete(doc);
-                // Remove ElasticSearch Index for this DocumentIteration
             }
         }
 
@@ -1067,7 +1064,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             try {
                 dataManager.deleteData(file);
             } catch (StorageException e) {
-                Logger.getLogger(DocumentManagerBean.class.getName()).log(Level.INFO, null, e);
+                LOGGER.log(Level.INFO, null, e);
             }
         }
     }
@@ -1076,8 +1073,9 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @Override
     public DocumentRevision removeFileFromDocument(String pFullName) throws WorkspaceNotFoundException, DocumentRevisionNotFoundException, NotAllowedException, AccessRightException, FileNotFoundException, UserNotFoundException, UserNotActiveException {
         User user = userManager.checkWorkspaceReadAccess(BinaryResource.parseWorkspaceId(pFullName));
+        Locale userLocale = new Locale(user.getLanguage());
 
-        BinaryResourceDAO binDAO = new BinaryResourceDAO(new Locale(user.getLanguage()), em);
+        BinaryResourceDAO binDAO = new BinaryResourceDAO(userLocale, em);
         BinaryResource file = binDAO.loadBinaryResource(pFullName);
 
         DocumentIteration document = binDAO.getDocumentOwner(file);
@@ -1090,13 +1088,13 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             try {
                 dataManager.deleteData(file);
             } catch (StorageException e) {
-                Logger.getLogger(DocumentManagerBean.class.getName()).log(Level.INFO, null, e);
+                LOGGER.log(Level.INFO, null, e);
             }
             document.removeFile(file);
             binDAO.removeBinaryResource(file);
             return docR;
         } else {
-            throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException24");
+            throw new NotAllowedException(userLocale, "NotAllowedException24");
         }
     }
 
@@ -1112,7 +1110,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         try {
             dataManager.deleteData(file);
         } catch (StorageException e) {
-            Logger.getLogger(DocumentManagerBean.class.getName()).log(Level.INFO, null, e);
+            LOGGER.log(Level.INFO, null, e);
         }
         template.removeFile(file);
         binDAO.removeBinaryResource(file);
@@ -1124,9 +1122,10 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     public DocumentRevision updateDocument(DocumentIterationKey iKey, String pRevisionNote, InstanceAttribute[] pAttributes, DocumentIterationKey[] pLinkKeys) throws WorkspaceNotFoundException, NotAllowedException, DocumentRevisionNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException {
         DocumentRevisionKey rKey = new DocumentRevisionKey(iKey.getWorkspaceId(), iKey.getDocumentMasterId(), iKey.getDocumentRevisionVersion());
         User user = checkDocumentRevisionWriteAccess(rKey);
+        Locale userLocale = new Locale(user.getLanguage());
 
-        DocumentRevisionDAO docRDAO = new DocumentRevisionDAO(new Locale(user.getLanguage()), em);
-        DocumentLinkDAO linkDAO = new DocumentLinkDAO(new Locale(user.getLanguage()), em);
+        DocumentRevisionDAO docRDAO = new DocumentRevisionDAO(userLocale, em);
+        DocumentLinkDAO linkDAO = new DocumentLinkDAO(userLocale, em);
         DocumentRevision docR = docRDAO.loadDocR(rKey);
         //check access rights on docR ?
         if (isCheckoutByUser(user,docR) && docR.getLastIteration().getKey().equals(iKey)) {
@@ -1184,7 +1183,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             return docR;
 
         } else {
-            throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException25");
+            throw new NotAllowedException(userLocale, "NotAllowedException25");
         }
 
     }
@@ -1193,18 +1192,19 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @Override
     public DocumentRevision[] createDocumentRevision(DocumentRevisionKey pOriginalDocRPK, String pTitle, String pDescription, String pWorkflowModelId, ACLUserEntry[] pACLUserEntries, ACLUserGroupEntry[] pACLUserGroupEntries, Map<String,String> roleMappings) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, NotAllowedException, DocumentRevisionAlreadyExistsException, CreationException, WorkflowModelNotFoundException, RoleNotFoundException, DocumentRevisionNotFoundException, FileAlreadyExistsException {
         User user = userManager.checkWorkspaceWriteAccess(pOriginalDocRPK.getWorkspaceId());
-        DocumentRevisionDAO docRDAO = new DocumentRevisionDAO(new Locale(user.getLanguage()), em);
+        Locale userLocale = new Locale(user.getLanguage());
+        DocumentRevisionDAO docRDAO = new DocumentRevisionDAO(userLocale, em);
         DocumentRevision originalDocR = docRDAO.loadDocR(pOriginalDocRPK);
         DocumentMaster docM = originalDocR.getDocumentMaster();
         Folder folder = originalDocR.getLocation();
         checkFolderWritingRight(user, folder);
 
         if (originalDocR.isCheckedOut()) {
-            throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException26");
+            throw new NotAllowedException(userLocale, "NotAllowedException26");
         }
 
         if (originalDocR.getNumberOfIterations() == 0) {
-            throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException27");
+            throw new NotAllowedException(userLocale, "NotAllowedException27");
         }
 
         DocumentRevision docR = docM.createNextRevision(user);
@@ -1214,7 +1214,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         DocumentIteration lastDoc = originalDocR.getLastIteration();
         DocumentIteration firstIte = docR.createNextIteration(user);
         if (lastDoc != null) {
-            BinaryResourceDAO binDAO = new BinaryResourceDAO(new Locale(user.getLanguage()), em);
+            BinaryResourceDAO binDAO = new BinaryResourceDAO(userLocale, em);
             for (BinaryResource sourceFile : lastDoc.getAttachedFiles()) {
                 String fileName = sourceFile.getName();
                 long length = sourceFile.getContentLength();
@@ -1226,7 +1226,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
                 try {
                     dataManager.copyData(sourceFile, targetFile);
                 } catch (StorageException e) {
-                    Logger.getLogger(DocumentManagerBean.class.getName()).log(Level.INFO, null, e);
+                    LOGGER.log(Level.INFO, null, e);
                 }
             }
 
@@ -1247,8 +1247,8 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
         if (pWorkflowModelId != null) {
 
-            UserDAO userDAO = new UserDAO(new Locale(user.getLanguage()),em);
-            RoleDAO roleDAO = new RoleDAO(new Locale(user.getLanguage()),em);
+            UserDAO userDAO = new UserDAO(userLocale,em);
+            RoleDAO roleDAO = new RoleDAO(userLocale,em);
 
             Map<Role,User> roleUserMap = new HashMap<>();
 
@@ -1261,7 +1261,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
                 roleUserMap.put(role, worker);
             }
 
-            WorkflowModel workflowModel = new WorkflowModelDAO(new Locale(user.getLanguage()), em).loadWorkflowModel(new WorkflowModelKey(user.getWorkspaceId(), pWorkflowModelId));
+            WorkflowModel workflowModel = new WorkflowModelDAO(userLocale, em).loadWorkflowModel(new WorkflowModelKey(user.getWorkspaceId(), pWorkflowModelId));
             Workflow workflow = workflowModel.createWorkflow(roleUserMap);
             docR.setWorkflow(workflow);
 
@@ -1303,9 +1303,10 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @Override
     public void subscribeToStateChangeEvent(DocumentRevisionKey pDocRPK) throws WorkspaceNotFoundException, NotAllowedException, DocumentRevisionNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException {
         User user = checkDocumentRevisionReadAccess(pDocRPK);
-        DocumentRevision docR = new DocumentRevisionDAO(new Locale(user.getLanguage()), em).loadDocR(pDocRPK);
+        Locale userLocale = new Locale(user.getLanguage());
+        DocumentRevision docR = new DocumentRevisionDAO(userLocale, em).loadDocR(pDocRPK);
         if (isAnotherUserHomeFolder(user, docR.getLocation())) {
-            throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException30");
+            throw new NotAllowedException(userLocale, "NotAllowedException30");
         }
 
         new SubscriptionDAO(em).createStateChangeSubscription(new StateChangeSubscription(user, docR));
@@ -1323,9 +1324,10 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @Override
     public void subscribeToIterationChangeEvent(DocumentRevisionKey pDocRPK) throws WorkspaceNotFoundException, NotAllowedException, DocumentRevisionNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException {
         User user = checkDocumentRevisionReadAccess(pDocRPK);
-        DocumentRevision docR = new DocumentRevisionDAO(new Locale(user.getLanguage()), em).getDocRRef(pDocRPK);
+        Locale userLocale = new Locale(user.getLanguage());
+        DocumentRevision docR = new DocumentRevisionDAO(userLocale, em).getDocRRef(pDocRPK);
         if (isAnotherUserHomeFolder(user,docR.getLocation())) {
-            throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException30");
+            throw new NotAllowedException(userLocale, "NotAllowedException30");
         }
 
         new SubscriptionDAO(em).createIterationChangeSubscription(new IterationChangeSubscription(user, docR));
@@ -1489,10 +1491,11 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
      */
     private User checkDocumentRevisionReadAccess(DocumentRevisionKey documentRevisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, DocumentRevisionNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(documentRevisionKey.getDocumentMaster().getWorkspace());
-        DocumentRevision documentRevision = new DocumentRevisionDAO(em).loadDocR(documentRevisionKey);
+        Locale locale = new Locale(user.getLanguage());
+        DocumentRevision documentRevision = new DocumentRevisionDAO(locale,em).loadDocR(documentRevisionKey);
 
         if(!hasDocumentRevisionReadAccess(user, documentRevision)){
-            throw new AccessRightException(new Locale(user.getLanguage()),user);
+            throw new AccessRightException(locale,user);
         }
 
         return user;
@@ -1507,19 +1510,22 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
      * @throws AccessRightException If the user has no write access to the document revision.
      * @throws DocumentRevisionNotFoundException If the document revision doesn't exist.
      */
-    private User checkDocumentRevisionWriteAccess(DocumentRevisionKey documentRevisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, DocumentRevisionNotFoundException {
+    private User checkDocumentRevisionWriteAccess(DocumentRevisionKey documentRevisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, DocumentRevisionNotFoundException, NotAllowedException {
         User user = userManager.checkWorkspaceReadAccess(documentRevisionKey.getDocumentMaster().getWorkspace());
+        Locale locale = new Locale(user.getLanguage());
         if(user.isAdministrator()){
             return user;
         }
-        DocumentRevision documentRevision = new DocumentRevisionDAO(em).loadDocR(documentRevisionKey);
+        DocumentRevision documentRevision = new DocumentRevisionDAO(locale,em).loadDocR(documentRevisionKey);
 
         if(documentRevision.getACL()==null){
             return userManager.checkWorkspaceWriteAccess(documentRevisionKey.getDocumentMaster().getWorkspace());
-        }else if(documentRevision.getACL().hasWriteAccess(user)){
+        }else if(hasDocumentRevisionWriteAccess(user, documentRevision)){
             return user;
+        }else if(isInAnotherUserHomeFolder(user, documentRevision)){
+            throw new NotAllowedException(locale, "NotAllowedException5");
         }else{
-            throw new AccessRightException(new Locale(user.getLanguage()),user);
+            throw new AccessRightException(locale,user);
         }
     }
 
