@@ -75,11 +75,15 @@ define([
         },
         actionDelete: function () {
             var _this = this;
-            this.listView.eachChecked(function (view) {
-                view.model.destroy({
-                    dataType: 'text', // server doesn't send a json hash in the response body
-                    success: _this.render
-                });
+            bootbox.confirm(App.config.i18n.CONFIRM_DELETE_WORKFLOW, function(result){
+                if(result){
+                    _this.listView.eachChecked(function (view) {
+                        view.model.destroy({
+                            dataType: 'text',
+                            success: _this.render
+                        });
+                    });
+                }
             });
             return false;
         },
