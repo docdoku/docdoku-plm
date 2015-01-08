@@ -58,7 +58,6 @@ define([
             return data;
         },
         rendered: function () {
-
             var isHome = this.model ? this.model.get('home') : false;
             var isRoot = _.isUndefined(this.model);
             if (isHome) {
