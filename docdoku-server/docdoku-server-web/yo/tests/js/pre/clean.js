@@ -1,4 +1,4 @@
-/*global casper,apiUrls,helpers*/
+/*global casper,apiUrls,helpers,products,workspace,homeUrl*/
 casper.test.begin('Cleaning potential data', 0, function cleanTestsSuite() {
     'use strict';
 
@@ -36,6 +36,24 @@ casper.test.begin('Cleaning potential data', 0, function cleanTestsSuite() {
                 });
             } else {
                 this.log('Cannot delete test workflow, reason : ' + helpers.findReasonInResponseHeaders(response.headers), 'warning');
+            }
+        });
+    });
+
+    // Tags
+    casper.then(function cleanupWorkflows() {
+        var that = this;
+        this.open(apiUrls.getTags, {method: 'GET'}).then(function (response) {
+            if (response.status === 200) {
+                var tags = JSON.parse(this.getPageContent());
+                tags.forEach(function(tag) {
+                    that.log('Deleting tag '+tag.id,'info');
+                    that.open(apiUrls.getTags+'/'+tag.id,{method: 'DELETE'}).then(function(){
+                        that.log('Tag '+tag.id+' deleted','info');
+                    });
+                });
+            } else {
+                this.log('Cannot delete test tags, reason : ' + helpers.findReasonInResponseHeaders(response.headers), 'warning');
             }
         });
     });
