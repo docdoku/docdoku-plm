@@ -57,13 +57,12 @@ define([
 
         toPartModal: function () {
             var self = this;
-            var model = new Part({partKey: self.model.getNumber() + '-' + self.model.getVersion()});
-            model.fetch().success(function () {
-                new PartModalView({
-                    model: model
-                }).show();
+            self.model.fetch().success(function () {
+                var partModalView = new PartModalView({
+                    model: self.model
+                });
+                partModalView.show();
             });
-
         },
 
         bindUserPopover: function () {
@@ -74,12 +73,9 @@ define([
         },
 
         sharePart: function () {
-            var that = this;
-
-            var shareView = new ShareView({model: that.model, entityType: 'parts'});
+            var shareView = new ShareView({model: this.model, entityType: 'parts'});
             window.document.body.appendChild(shareView.render().el);
             shareView.openModal();
-
         }
 
     });

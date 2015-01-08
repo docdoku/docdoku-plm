@@ -4,6 +4,7 @@ define({
     CONFIRM_DELETE_ISSUE:"Voulez-vous supprimer les anomalies sélectionnées",
     CONFIRM_DELETE_ORDER:"Voulez-vous supprimer les ordres sélectionnés",
     CONFIRM_DELETE_REQUEST:"Voulez-vous supprimer les demandes sélectionnées",
+    CONFIRM_DELETE_WORKFLOW:"Voulez-vous supprimer les processus sélectionnées",
     ERROR_WORKFLOW_REFERENCE_MISSING:"Veuillez renseigner le nom de votre workflow",
     NEW_ROLES_NAME:"Entrer le nom du nouveau rôle",
     WARNING_ANY_ROLE:"Veuillez créer des rôles avant de créer un workflow",

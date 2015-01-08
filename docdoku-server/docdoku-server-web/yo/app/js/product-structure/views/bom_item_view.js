@@ -1,13 +1,15 @@
 /*global define*/
-define([ 'backbone', "mustache", 'text!templates/bom_item.html', 'common-objects/views/part/part_modal_view'],
-    function (Backbone, Mustache, template, PartModalView) {
+define([ 'backbone', "mustache", 'text!templates/bom_item.html', 'common-objects/views/part/part_modal_view', 'common-objects/views/share/share_entity',
+    ],
+    function (Backbone, Mustache, template, PartModalView, ShareView) {
 
         var BomItemView = Backbone.View.extend({
 
             tagName: 'tr',
 
             events: {
-                "click .part_number": "onPartClicked"
+                "click .part_number": "onPartClicked",
+                'click td.part-revision-share i': 'sharePart'
             },
 
             initialize: function () {
@@ -15,7 +17,7 @@ define([ 'backbone', "mustache", 'text!templates/bom_item.html', 'common-objects
             },
 
             render: function () {
-                this.$el.html(Mustache.render(template, this.model));
+                this.$el.html(Mustache.render(template, {model: this.model, i18n: App.config.i18n}));
                 this.$input = this.$("input");
                 this.$(".author-popover").userPopover(this.model.getAuthorLogin(), this.model.getName(), "left");
                 if (this.model.isCheckout()) {
@@ -31,6 +33,12 @@ define([ 'backbone', "mustache", 'text!templates/bom_item.html', 'common-objects
                         model: self.model
                     }).show();
                 });
+            },
+
+            sharePart: function () {
+                var shareView = new ShareView({model: this.model, entityType: 'parts'});
+                window.document.body.appendChild(shareView.render().el);
+                shareView.openModal();
             },
 
             isChecked: function () {

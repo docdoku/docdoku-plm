@@ -10,6 +10,7 @@ define(['backbone', 'views/bom_header_view', 'views/bom_content_view'], function
             this.listenTo(this.bomHeaderView, 'actionCheckout', this.bomContentView.actionCheckout);
             this.listenTo(this.bomHeaderView, 'actionUndocheckout', this.bomContentView.actionUndocheckout);
             this.listenTo(this.bomHeaderView, 'actionCheckin', this.bomContentView.actionCheckin);
+            this.listenTo(this.bomHeaderView, 'actionUpdateACL', this.bomContentView.actionUpdateACL);
             return this;
         },
 

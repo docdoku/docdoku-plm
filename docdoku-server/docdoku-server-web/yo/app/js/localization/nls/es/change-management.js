@@ -4,6 +4,7 @@ define({
     CONFIRM_DELETE_ISSUE:"¿Desea eliminar cuestiones seleccionados?",
     CONFIRM_DELETE_ORDER:"¿Desea eliminar pedidos seleccionados?",
     CONFIRM_DELETE_REQUEST:"¿Desea eliminar petición seleccionados?",
+    CONFIRM_DELETE_WORKFLOW:"¿Desea eliminar procesos seleccionados?",
     ERROR_WORKFLOW_REFERENCE_MISSING:"Por favor, introduzca el nombre de su flujo de trabajo",
     NEW_ROLES_NAME:"Introduzca el nombre de la nueva función",
     WARNING_ANY_ROLE:"Crear algún papel antes de crear un Workflow",

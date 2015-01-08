@@ -9,7 +9,8 @@ define(['backbone', 'mustache', "text!templates/bom_header.html"],
             events: {
                 "click .checkout": "actionCheckout",
                 "click .undocheckout": "actionUndocheckout",
-                "click .checkin": "actionCheckin"
+                "click .checkin": "actionCheckin",
+                "click .edit-acl": "actionUpdateACL"
             },
 
             actionCheckout: function () {
@@ -24,6 +25,10 @@ define(['backbone', 'mustache', "text!templates/bom_header.html"],
                 this.trigger('actionCheckin');
             },
 
+            actionUpdateACL: function () {
+                this.trigger('actionUpdateACL');
+            },
+
             initialize: function () {
                 _.bindAll(this);
             },
@@ -34,6 +39,7 @@ define(['backbone', 'mustache', "text!templates/bom_header.html"],
                 this.checkoutButton = this.$(".checkout");
                 this.undoCheckoutButton = this.$(".undocheckout");
                 this.checkinButton = this.$(".checkin");
+                this.aclButton = this.$('.edit-acl');
                 return this;
             },
 
@@ -53,16 +59,27 @@ define(['backbone', 'mustache', "text!templates/bom_header.html"],
 
             },
 
+            hideButtons:function(){
+                this.hideCheckGroup();
+                this.hideACLButton();
+            },
+
             hideCheckGroup: function () {
                 this.checkoutGroup.hide();
             },
 
+            hideACLButton: function () {
+                this.aclButton.hide();
+            },
+
             onNoComponentSelected: function () {
                 this.hideCheckGroup();
+                this.aclButton.hide();
             },
 
             onOneComponentSelected: function (component) {
                 this.checkoutGroup.show();
+                this.aclButton.show();
 
                 if (component.isCheckout()) {
                     if (component.isCheckoutByConnectedUser()) {
@@ -77,7 +94,8 @@ define(['backbone', 'mustache', "text!templates/bom_header.html"],
             },
 
             onSeveralComponentsSelected: function () {
-                this.checkoutGroup.hide();
+                this.hideCheckGroup();
+                this.hideACLButton();
             },
 
             updateActionsButton: function (canCheckout, canUndoAndCheckin) {
