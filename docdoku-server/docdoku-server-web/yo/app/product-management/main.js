@@ -7,7 +7,7 @@ var App = {
 	debug:false,
 
 	config:{
-		workspaceId: workspace[1] || null,
+		workspaceId: decodeURIComponent(workspace[1]).trim() || null,
 		login: '',
 		groups: [],
 		contextPath: '',
