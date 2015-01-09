@@ -39,7 +39,7 @@ define([
                     isChangeManagement: window.location.pathname.match('/change-management/')
                 }));
 
-                $el.show();
+                $el.show().addClass('loaded');
 
                 return this;
             }
