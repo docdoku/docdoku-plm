@@ -170,6 +170,7 @@ define({
 		GOTO_SERIAL_MODE: "Switch activity to serial",
 		GRID_SWITCH: "Show/Hide the grid",
 		GROUPS: "Groups",
+        HOME_PAGE: "Home",
 		HISTORY: "History",
 		ID_GENERATION: "Id generation",
 		INITIATOR: "Initiator",
@@ -426,8 +427,7 @@ define({
 		WORKSPACES_ADMINISTRATION: 'Workspaces administration',
 		WORKSPACES: "Workspaces",
 		WORKSPACE: "Workspace",
-		YOU_HAVE_BEEN_KICKED:"You have been kicked from the room",
-        BACK:'Back'
+		YOU_HAVE_BEEN_KICKED:"You have been kicked from the room"
 	},
 	'es': true,
 	'fr': true

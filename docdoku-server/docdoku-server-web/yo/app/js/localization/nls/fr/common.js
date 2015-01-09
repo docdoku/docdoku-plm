@@ -169,6 +169,7 @@ define({
 	GOTO_SERIAL_MODE: "Transformer l'activité en serie",
 	GRID_SWITCH: "Afficher/Masquer la grille",
 	GROUPS: "Groupes",
+    HOME_PAGE: "Accueil",
 	HISTORY: "Historique",
 	ID_GENERATION: "G\u00e9n\u00e9ration de l'id",
 	INITIATOR: "Initiateur",
@@ -424,6 +425,5 @@ define({
 	WORKSPACE: "Espace de travail",
 	WORKSPACES_ADMINISTRATION: 'Administration des espaces de travail',
 	WORKSPACES: "Workspaces",
-	YOU_HAVE_BEEN_KICKED:"Vous avez été exclu de la salle com.docdoku.server.mainchannel.collaborative",
-    BACK:'Retour'
+	YOU_HAVE_BEEN_KICKED:"Vous avez été exclu de la salle com.docdoku.server.mainchannel.collaborative"
 });

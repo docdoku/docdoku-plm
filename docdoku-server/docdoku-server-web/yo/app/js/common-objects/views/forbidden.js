@@ -20,7 +20,7 @@ define([
             this.$el.html(Mustache.render(template, {
                 title: App.config.i18n.FORBIDDEN,
                 content:App.config.i18n.FORBIDDEN_MESSAGE,
-                backButton: history.length > 2 ? App.config.i18n.BACK:null,
+                backButton: history.length > 2 ? App.config.i18n.HOME_PAGE:null,
                 disconnectButton: App.config.i18n.LOGOUT
             }));
             this.bindDomElements();
@@ -47,10 +47,11 @@ define([
         },
 
         back:function(){
-            history.back();
-            setTimeout(function(){
-                location.reload();
-            },10);
+            //history.back();
+            //setTimeout(function(){
+            //    location.reload();
+            //},10);
+            window.location.href=App.config.contextPath;
         },
 
         disconnect:function(){

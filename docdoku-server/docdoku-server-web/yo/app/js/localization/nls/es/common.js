@@ -168,6 +168,7 @@ define({
 	GOTO_SERIAL_MODE: "Switch activity to serial",
 	GRID_SWITCH: "Show/Hide the grid",
 	GROUPS: "Groups",
+    HOME_PAGE: "Página principal",
 	HISTORY: "History",
 	ID_GENERATION: "Id generation",
 	INITIATOR: "Initiator",

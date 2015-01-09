@@ -18,7 +18,7 @@ var App = {
     },
 
 	config:{
-		workspaceId: workspace[1] || null,
+		workspaceId: decodeURIComponent(workspace[1]).trim() || null,
 		productId: window.location.hash.split('/')[1] || null,
 		login: '',
 		groups: [],
