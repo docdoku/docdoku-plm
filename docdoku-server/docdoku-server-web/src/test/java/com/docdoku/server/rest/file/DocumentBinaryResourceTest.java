@@ -8,6 +8,7 @@ import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.services.IDocumentPostUploaderManagerLocal;
 import com.docdoku.core.services.IDocumentResourceGetterManagerLocal;
 import com.docdoku.server.util.ResourceUtil;
+import com.jayway.restassured.RestAssured;
 import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,6 +25,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
+import static com.jayway.restassured.RestAssured.basic;
+import static com.jayway.restassured.RestAssured.get;
+import static com.jayway.restassured.RestAssured.given;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class DocumentBinaryResourceTest {
@@ -43,6 +47,8 @@ public class DocumentBinaryResourceTest {
     @Before
     public void setup() throws Exception {
      initMocks(this);
+        RestAssured.authentication = basic("asmae","password");
+
     }
     /**
      * Test the upload of file to a document
@@ -52,7 +58,6 @@ public class DocumentBinaryResourceTest {
     public void testUploadDocumentFiles1() throws Exception {
         //Given
         HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-        request.setAttribute("URI", "");
         Part part = Mockito.mock(Part.class);
 
         Collection<Part> parts = new ArrayList(1);
@@ -66,7 +71,7 @@ public class DocumentBinaryResourceTest {
         OutputStream outputstream = Mockito.spy(new FileOutputStream(getClass().getResource(ResourceUtil.TARGET_FILE_STORAGE+ResourceUtil.FILENAME1).getFile()));
         Mockito.when(documentService.saveFileInDocument(Matchers.any(DocumentIterationKey.class),Matchers.anyString(), Matchers.anyInt())).thenReturn(binaryResource);
         Mockito.when(dataManager.getBinaryResourceOutputStream(binaryResource)).thenReturn(outputstream);
-        Mockito.when(request.getRequestURI()).thenReturn("/home/asmae/projects/plm/docdoku-plm/docdoku-server/docdoku-server-web/src/test/resources/com/docdoku/server/rest/file/toUpload/");
+        Mockito.when(request.getRequestURI()).thenReturn("/com/docdoku/server/rest/file/toUpload/");
         parts.add(part);
 
         Mockito.when(request.getParts()).thenReturn(parts);
@@ -102,6 +107,13 @@ public class DocumentBinaryResourceTest {
      */
     @Test
     public void testUploadDocumentFiles2() throws Exception {
+
+     File file = new File(getClass().getClassLoader().getResource(ResourceUtil.SOURCE_FILE_STORAGE+"/"+ResourceUtil.FILENAME1).getFile());
+
+     Assert.assertNotNull(file);
+     Assert.assertTrue(file.canRead());
+     given().multiPart(file).expect().when().post("http://www.docdokuplm.net/files/asmae/documents/doc1/B/2/newFile.txt");
+
         //User Case2
             //workspaceId = WORKSPACE_ID
             //documentId = DOCUMENT_ID
@@ -159,6 +171,10 @@ public class DocumentBinaryResourceTest {
      */
     @Test
     public void testDownloadDocumentFile1() throws Exception {
+
+        given().auth().basic("asmae", "password");
+        //downloadDocumentFile
+        com.jayway.restassured.response.Response response =  get("http://www.docdokuplm.net/files/asmae/documents/doc1/B/2/Fiche%20TU%20(2).pdf");
 
     }
 
