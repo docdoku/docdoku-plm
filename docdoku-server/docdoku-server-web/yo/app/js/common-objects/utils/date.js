@@ -1,4 +1,4 @@
-/*global define*/
+/*global define,App*/
 define(['moment', 'momentTimeZone'],function (moment, momentTimeZone) {
 
     'use strict';
@@ -21,7 +21,7 @@ define(['moment', 'momentTimeZone'],function (moment, momentTimeZone) {
             try {
                 return moment.tz(timestamp,zone).fromNow();
             } catch (error) {
-                console.error('Date.formatTimestamp(' + format + ', ' + timestamp + ')', error);
+                console.error('Date.formatTimestamp(' + timestamp + ')', error);
                 return timestamp;
             }
         }

@@ -1,4 +1,4 @@
-/*global $,define*/
+/*global define,App*/
 define(['datatables','moment','momentTimeZone'], function (DT,moment,momentTimeZone) {
 	'use strict';
 
@@ -6,7 +6,6 @@ define(['datatables','moment','momentTimeZone'], function (DT,moment,momentTimeZ
     // allows string comparison
 
     var getComparableDate = function(date){
-        console.log('comp')
         return moment(date,App.config.i18n._DATE_FORMAT).toDate().getTime();
     };
 
