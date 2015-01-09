@@ -16,6 +16,7 @@ define([
                     Workspace.getWorkspaces(function (workspaces) {
                         App.config.login = user.login;
                         App.config.userName = user.name;
+                        App.config.timeZone = user.timeZone || 'Europe/Paris';
                         App.config.groups = groups;
                         App.config.workspaces = workspaces;
                         App.config.workspaceAdmin = _.select(App.config.workspaces.administratedWorkspaces, function (workspace) {

@@ -45,7 +45,7 @@ public class Account implements Serializable, Cloneable {
     private String name;
     private String email;
     private String language;
-    private String timeZone;
+    private String timeZone = "Europe/London";
 
     @ManyToOne
     private Organization organization;

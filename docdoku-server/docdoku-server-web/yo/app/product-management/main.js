@@ -53,6 +53,8 @@ require.config({
         bootstrapCombobox:'../../bower_components/bootstrap-combobox/js/bootstrap-combobox',
         bootstrapSwitch:'../../bower_components/bootstrap-switch/static/js/bootstrap-switch',
         unorm:'../../bower_components/unorm/lib/unorm',
+        moment:'../../bower_components/moment/min/moment-with-locales',
+        momentTimeZone:'../../bower_components/moment-timezone/builds/moment-timezone-with-data',
         date:'../../bower_components/date.format/date.format',
         unmaskConfig:'../lib/jquery.maskedinput-config',
         localization: '../localization',
