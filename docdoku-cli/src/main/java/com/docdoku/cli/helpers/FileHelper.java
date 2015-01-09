@@ -88,12 +88,15 @@ public class FileHelper {
             byte[] digest = md.digest();
             return Base64.encodeBase64String(digest);
         } finally {
-            if(out!=null)
+            if(out!=null) {
                 out.close();
-            if(in!=null)
+            }
+            if(in!=null) {
                 in.close();
-            if(conn!=null)
+            }
+            if(conn!=null) {
                 conn.disconnect();
+            }
         }
     }
 
@@ -146,12 +149,15 @@ public class FileHelper {
             byte[] digest = md.digest();
             return Base64.encodeBase64String(digest);
         } finally {
-            if(out!=null)
+            if(out!=null) {
                 out.close();
-            if(in!=null)
+            }
+            if(in!=null) {
                 in.close();
-            if(conn!=null)
+            }
+            if(conn!=null) {
                 conn.disconnect();
+            }
         }
     }
 
@@ -214,8 +220,9 @@ public class FileHelper {
 
         if(localFile.exists() && !force && localFile.lastModified()!=meta.getLastModifiedDate(localFile.getAbsolutePath())){
             boolean confirm = FileHelper.confirmOverwrite(localFile.getAbsolutePath());
-            if(!confirm)
+            if(!confirm) {
                 return;
+            }
         }
         localFile.delete();
         String digest = downloadFile(localFile, FileHelper.getPartURL(serverURL, partIPK, fileName));

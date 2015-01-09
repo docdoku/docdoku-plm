@@ -43,9 +43,13 @@ public class GCMSenderBean implements IGCMSenderLocal {
         } catch (IOException e) {
             Logger.getLogger(GCMSenderBean.class.getName()).log(Level.WARNING, null, e);
         } finally {
-            try{if(inputStream!=null){
+            try{
+                if(inputStream!=null){
                     inputStream.close();
-            }}catch (IOException ignored){}
+                }
+            }catch (IOException e){
+                Logger.getLogger(GCMSenderBean.class.getName()).log(Level.SEVERE, null, e);
+            }
         }
     }
 

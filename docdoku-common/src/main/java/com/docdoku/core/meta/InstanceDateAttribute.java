@@ -48,7 +48,9 @@ public class InstanceDateAttribute extends InstanceAttribute{
     }
 
     @Override
-    public Date getValue() {return dateValue;}
+    public Date getValue() {
+        return dateValue;
+    }
     @Override
     public boolean setValue(Object pValue) {
         if(pValue instanceof Date){
@@ -68,8 +70,12 @@ public class InstanceDateAttribute extends InstanceAttribute{
         }
     }
 
-    public Date getDateValue() {return dateValue;}
-    public void setDateValue(Date dateValue) {this.dateValue = dateValue;}
+    public Date getDateValue() {
+        return dateValue;
+    }
+    public void setDateValue(Date dateValue) {
+        this.dateValue = dateValue;
+    }
     
     
     /**

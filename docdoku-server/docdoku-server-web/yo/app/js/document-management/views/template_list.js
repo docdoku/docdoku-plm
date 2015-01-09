@@ -1,28 +1,29 @@
-/*global define*/
+/*global define,App*/
 define([
-    "common-objects/views/documents/checkbox_list",
-    "views/template_list_item",
-    "text!templates/template_list.html"
+    'common-objects/views/documents/checkbox_list',
+    'views/template_list_item',
+    'text!templates/template_list.html'
 ], function (CheckboxListView, TemplateListItemView, template) {
+    'use strict';
     var TemplateListView = CheckboxListView.extend({
 
         template: template,
 
         itemViewFactory: function (model) {
-            model.on("change", this.redraw);
+            model.on('change', this.redraw);
             return new TemplateListItemView({
                 model: model
             });
         },
         rendered: function () {
-            this.once("_ready", this.dataTable);
+            this.once('_ready', this.dataTable);
         },
         redraw: function () {
             this.dataTable();
         },
         dataTable: function () {
             var oldSort = [
-                [0, "asc"]
+                [0, 'asc']
             ];
             if (this.oTable) {
                 oldSort = this.oTable.fnSettings().aaSorting;
@@ -33,17 +34,17 @@ define([
                 bDestroy: true,
                 iDisplayLength: -1,
                 oLanguage: {
-                    sSearch: "<i class='fa fa-search'></i>",
+                    sSearch: '<i class="fa fa-search"></i>',
                     sEmptyTable: App.config.i18n.NO_DATA,
                     sZeroRecords: App.config.i18n.NO_FILTERED_DATA
                 },
                 sDom: 'ft',
                 aoColumnDefs: [
-                    { "bSortable": false, "aTargets": [ 0 ] },
-                    { "sType": App.config.i18n.DATE_SORT, "aTargets": [4] }
+                    { 'bSortable': false, 'aTargets': [ 0 ] },
+                    { 'sType': App.config.i18n.DATE_SORT, 'aTargets': [4] }
                 ]
             });
-            this.$el.parent().find(".dataTables_filter input").attr("placeholder", App.config.i18n.FILTER);
+            this.$el.parent().find('.dataTables_filter input').attr('placeholder', App.config.i18n.FILTER);
         }
     });
     return TemplateListView;

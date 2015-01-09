@@ -71,29 +71,53 @@ public class ProductInstanceIteration implements Serializable {
     }
 
     @XmlTransient
-    public ProductInstanceMaster getProductInstanceMaster() {return productInstanceMaster;}
-    public void setProductInstanceMaster(ProductInstanceMaster productInstanceMaster) {this.productInstanceMaster = productInstanceMaster;}
+    public ProductInstanceMaster getProductInstanceMaster() {
+        return productInstanceMaster;
+    }
+    public void setProductInstanceMaster(ProductInstanceMaster productInstanceMaster) {
+        this.productInstanceMaster = productInstanceMaster;
+    }
 
-    public String getSerialNumber(){return this.productInstanceMaster.getSerialNumber();}
-    public String getConfigurationItemId(){return this.productInstanceMaster.getInstanceOf().getId();}
+    public String getSerialNumber(){
+        return this.productInstanceMaster.getSerialNumber();
+    }
+    public String getConfigurationItemId(){
+        return this.productInstanceMaster.getInstanceOf().getId();
+    }
 
-    public int getIteration() {return iteration;}
-    public void setIteration(int iteration) {this.iteration = iteration;}
+    public int getIteration() {
+        return iteration;
+    }
+    public void setIteration(int iteration) {
+        this.iteration = iteration;
+    }
 
-    public String getIterationNote() {return iterationNote;}
-    public void setIterationNote(String iterationNote) {this.iterationNote = iterationNote;}
+    public String getIterationNote() {
+        return iterationNote;
+    }
+    public void setIterationNote(String iterationNote) {
+        this.iterationNote = iterationNote;
+    }
 
-    public PartCollection getPartCollection() {return partCollection;}
-    public void setPartCollection(PartCollection partCollection) {this.partCollection = partCollection;}
+    public PartCollection getPartCollection() {
+        return partCollection;
+    }
+    public void setPartCollection(PartCollection partCollection) {
+        this.partCollection = partCollection;
+    }
 
-    public Map<BaselinedPartKey, BaselinedPart> getBaselinedParts() {return partCollection.getBaselinedParts();}
+    public Map<BaselinedPartKey, BaselinedPart> getBaselinedParts() {
+        return partCollection.getBaselinedParts();
+    }
     public void addBaselinedPart(PartIteration targetPart){
         partCollection.addBaselinedPart(targetPart);
     }
     public boolean hasBasedLinedPart(String targetPartWorkspaceId, String targetPartNumber){
         return partCollection.hasBaselinedPart(new BaselinedPartKey(partCollection.getId(), targetPartWorkspaceId, targetPartNumber));
     }
-    public BaselinedPart getBaselinedPart(BaselinedPartKey baselinedPartKey){return partCollection.getBaselinedPart(baselinedPartKey);}
+    public BaselinedPart getBaselinedPart(BaselinedPartKey baselinedPartKey){
+        return partCollection.getBaselinedPart(baselinedPartKey);
+    }
 
     public User getUpdateAuthor(){
         return this.getPartCollection().getAuthor();
@@ -108,5 +132,7 @@ public class ProductInstanceIteration implements Serializable {
     public Date getUpdateDate(){
         return this.getPartCollection().getCreationDate();
     }
-    public List<BaselinedPart> getBaselinedPartsList(){return new ArrayList<>(this.getBaselinedParts().values());}
+    public List<BaselinedPart> getBaselinedPartsList(){
+        return new ArrayList<>(this.getBaselinedParts().values());
+    }
 }

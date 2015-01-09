@@ -110,9 +110,9 @@ public class DataManagerBean implements IDataManagerLocal {
             fileStorageProvider.copySubResources(source, destination);
         } catch (FileNotFoundException e) {
             BinaryResource previous = source.getPrevious();
-            if (previous != null)
+            if (previous != null) {
                 copyData(previous, destination);
-            else {
+            } else {
                 throw new StorageException(new StringBuilder().append("Can't find source file to copy ").append(source.getFullName()).toString());
             }
         }
@@ -131,9 +131,9 @@ public class DataManagerBean implements IDataManagerLocal {
             return fileStorageProvider.getLastModified(binaryResource, subResourceVirtualPath);
         } catch (FileNotFoundException e) {
             BinaryResource previous = binaryResource.getPrevious();
-            if (previous != null)
+            if (previous != null) {
                 return getLastModified(previous, subResourceVirtualPath);
-            else {
+            } else {
                 throw new StorageException(new StringBuilder().append("Can't find source file to get last modified date ").append(binaryResource.getFullName()).toString());
             }
         }

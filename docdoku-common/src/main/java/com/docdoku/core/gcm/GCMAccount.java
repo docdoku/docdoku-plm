@@ -64,15 +64,15 @@ public class GCMAccount implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         GCMAccount that = (GCMAccount) o;
-
-        if (!account.equals(that.account)) return false;
-        if (!gcmId.equals(that.gcmId)) return false;
-
-        return true;
+        return account.equals(that.account) && gcmId.equals(that.gcmId);
     }
 
     @Override

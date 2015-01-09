@@ -49,10 +49,11 @@ public class MapToListDozerConverter extends DozerConverter<Map, List> implement
 
     @Override
     public List convertTo(Map source, List destination) {
-        if (source==null)
+        if (source==null) {
             return null;
+        }
         
-        List<InstanceAttributeDTO> convertedList = new ArrayList<InstanceAttributeDTO>();
+        List<InstanceAttributeDTO> convertedList = new ArrayList<>();
         for (Object object : source.values()) {
             InstanceAttributeDTO mappedItem = mapper.map(object, InstanceAttributeDTO.class);
             convertedList.add(mappedItem);
@@ -62,10 +63,11 @@ public class MapToListDozerConverter extends DozerConverter<Map, List> implement
 
     @Override
     public Map convertFrom(List source, Map destination) {
-        if (source==null)
+        if (source==null) {
             return null;
+        }
         
-        Map<String, InstanceAttribute> convertedMap = new HashMap<String, InstanceAttribute>();
+        Map<String, InstanceAttribute> convertedMap = new HashMap<>();
         for (Object object : source) {
             InstanceAttribute mappedItem = mapper.map(object, InstanceAttribute.class);
             convertedMap.put(mappedItem.getName(), mappedItem);

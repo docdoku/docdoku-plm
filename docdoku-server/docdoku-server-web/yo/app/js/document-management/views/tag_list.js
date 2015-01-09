@@ -1,9 +1,10 @@
-/*global define*/
+/*global _,define*/
 define([
-    "common-objects/collections/tag",
-    "common-objects/views/components/collapsible_list",
-    "views/tag_list_item"
+    'common-objects/collections/tag',
+    'common-objects/views/components/collapsible_list',
+    'views/tag_list_item'
 ], function (TagList, CollapsibleListView, TagListItemView) {
+    'use strict';
     var TagListView = CollapsibleListView.extend({
         itemViewFactory: function (model) {
             return new TagListItemView({
@@ -22,7 +23,7 @@ define([
                 var view = _.find(
                     _.values(this.subViews),
                     function (view) {
-                        return this.tag == view.model.id;
+                        return this.tag === view.model.id;
                     },
                     this
                 );

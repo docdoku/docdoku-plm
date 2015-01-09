@@ -30,7 +30,9 @@ public class BaselineCreation implements Serializable{
     String message;
     List<PartRevision> conflit;
 
-    public BaselineCreation(){}
+    public BaselineCreation(){
+
+    }
 
     public BaselineCreation(ProductBaseline productBaseline) {
         this.productBaseline = productBaseline;

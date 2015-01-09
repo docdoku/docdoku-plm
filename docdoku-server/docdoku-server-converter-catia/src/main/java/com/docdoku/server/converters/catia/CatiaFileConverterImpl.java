@@ -98,7 +98,7 @@ public class CatiaFileConverterImpl implements CADConverter{
         BufferedReader br = new BufferedReader(isr);
         while ((line=br.readLine()) != null){
             output.append(line).append("\n");
-        };
+        }
         br.close();
 
         process.waitFor();
@@ -117,7 +117,7 @@ public class CatiaFileConverterImpl implements CADConverter{
             BufferedReader br2 = new BufferedReader(isr2);
             while ((line=br2.readLine()) != null){
                 output.append(line).append("\n");
-            };
+            }
             br2.close();
 
             proc.waitFor();

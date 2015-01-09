@@ -73,7 +73,9 @@ public class ProductInstanceIterationDAO {
         for(BaselinedPart baselinedPart : baselinedPartList){
             if(baselinedPart.getPartCollection().getId()==collectionId){
                 returnList.add(baselinedPart);
-                if(returnList.size()>=maxResults){break;}
+                if(returnList.size()>=maxResults){
+                    break;
+                }
             }
         }
         return returnList;

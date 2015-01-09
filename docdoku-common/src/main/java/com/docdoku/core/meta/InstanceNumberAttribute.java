@@ -47,7 +47,9 @@ public class InstanceNumberAttribute extends InstanceAttribute{
     }
 
     @Override
-    public Float getValue() {return numberValue;}
+    public Float getValue() {
+        return numberValue;
+    }
     @Override
     public boolean setValue(Object pValue) {
         try{
@@ -59,6 +61,10 @@ public class InstanceNumberAttribute extends InstanceAttribute{
         }
     }
 
-    public float getNumberValue() {return numberValue;}
-    public void setNumberValue(float numberValue) {this.numberValue = numberValue;}
+    public float getNumberValue() {
+        return numberValue;
+    }
+    public void setNumberValue(float numberValue) {
+        this.numberValue = numberValue;
+    }
 }

@@ -101,7 +101,7 @@ public class GuestProxy{
             throws AccessRightException, NotAllowedException, EntityNotFoundException, UserNotActiveException{
         return productService.getBinaryResource(fullName);
     }
-    public InputStream getConvertedResource(String outputFormat, BinaryResource binaryResource) throws Exception {
+    public InputStream getConvertedResource(String outputFormat, BinaryResource binaryResource) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConvertedResourceException {
         return documentResourceGetterService.getConvertedResource(outputFormat, binaryResource);
     }
 

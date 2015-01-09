@@ -1563,10 +1563,12 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
      * @return True if access is granted, False otherwise
      */
     private boolean hasDocumentRevisionReadAccess(User user, DocumentRevision documentRevision){
-        return documentRevision.isPublicShared() ||
-               ( isInSameWorkspace(user, documentRevision) &&
-                 (user.isAdministrator() || isACLGrantReadAccess(user,documentRevision)) &&
-                 !isInAnotherUserHomeFolder(user, documentRevision));
+        return documentRevision.isPublicShared() || hasPrivateDocumentRevisionReadAccess(user,documentRevision);
+    }
+    private boolean hasPrivateDocumentRevisionReadAccess(User user, DocumentRevision documentRevision){
+        return isInSameWorkspace(user, documentRevision) &&
+                (user.isAdministrator() || isACLGrantReadAccess(user,documentRevision)) &&
+                !isInAnotherUserHomeFolder(user, documentRevision);
     }
     /**
      * Say if a user, which have access to the workspace, have write access to a document revision

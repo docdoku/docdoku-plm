@@ -74,8 +74,9 @@ public class Version implements Serializable, Comparable<Version>, Cloneable {
     @Override
     public String toString() {
         StringBuilder stringVersion = new StringBuilder();
-        for (VersionUnit unit : mVersionUnits)
+        for (VersionUnit unit : mVersionUnits) {
             stringVersion.append(unit.toString());
+        }
 
         return stringVersion.toString();
     }
@@ -85,8 +86,9 @@ public class Version implements Serializable, Comparable<Version>, Cloneable {
         if (this == pObj) {
             return true;
         }
-        if (!(pObj instanceof Version))
+        if (!(pObj instanceof Version)) {
             return false;
+        }
         Version version = (Version) pObj;
         //because of bug #6277781 Serialization of Enums over IIOP is broken.
         //we compare the string representation.

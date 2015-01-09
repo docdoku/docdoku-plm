@@ -14,7 +14,9 @@ import java.util.UUID;
 
 public class ViewerUtils {
 
-    private ViewerUtils(){}
+    private ViewerUtils(){
+
+    }
 
     public static String getURI(BinaryResource binaryResource, String uuid) {
         if(uuid == null){

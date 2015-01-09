@@ -22,6 +22,10 @@ package com.docdoku.server;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.User;
 import com.docdoku.core.document.DocumentIteration;
+import com.docdoku.core.exceptions.ConvertedResourceException;
+import com.docdoku.core.exceptions.UserNotActiveException;
+import com.docdoku.core.exceptions.UserNotFoundException;
+import com.docdoku.core.exceptions.WorkspaceNotFoundException;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.services.IDocumentResourceGetterManagerLocal;
@@ -52,7 +56,8 @@ public class DocumentResourceGetterBean implements IDocumentResourceGetterManage
     private IUserManagerLocal userManager;
 
     @Override
-    public InputStream getConvertedResource(String outputFormat, BinaryResource binaryResource) throws Exception {
+    public InputStream getConvertedResource(String outputFormat, BinaryResource binaryResource)
+            throws WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException, ConvertedResourceException {
         DocumentIteration docI;
         Locale locale;
         if(userManager.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)) {

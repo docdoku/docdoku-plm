@@ -18,18 +18,18 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.server.resourcegetters;
+package com.docdoku.core.exceptions;
 
-import com.docdoku.core.common.BinaryResource;
-import com.docdoku.core.document.DocumentIteration;
-import com.docdoku.core.exceptions.ConvertedResourceException;
-
-import java.io.InputStream;
 import java.util.Locale;
 
-public interface DocumentResourceGetter {
-    boolean canGetConvertedResource(String outputFormat, BinaryResource binaryResource);
-    InputStream getConvertedResource(String outputFormat, BinaryResource binaryResource, DocumentIteration docI, Locale locale) throws ConvertedResourceException;
-    boolean canGetSubResourceVirtualPath(BinaryResource binaryResource);
-    String getSubResourceVirtualPath(BinaryResource binaryResource, String subResourceUri);
+public class ConvertedResourceException extends ApplicationException {
+
+    public ConvertedResourceException(Locale pLocale, Throwable pCause) {
+        super(pLocale, pCause);
+    }
+
+    @Override
+    public String getLocalizedMessage() {
+        return getBundleDefaultMessage();
+    }
 }

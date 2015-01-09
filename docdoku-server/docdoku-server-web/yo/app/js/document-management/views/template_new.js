@@ -1,27 +1,28 @@
-/*global define*/
+/*global define,App*/
 define([
-    "common-objects/views/components/modal",
-    "common-objects/views/attributes/template_new_attributes",
-    "text!templates/template_new.html"
+    'common-objects/views/components/modal',
+    'common-objects/views/attributes/template_new_attributes',
+    'text!templates/template_new.html'
 ], function (ModalView, TemplateNewAttributesView, template) {
+    'use strict';
     var TemplateNewView = ModalView.extend({
 
         template: template,
         initialize: function () {
             ModalView.prototype.initialize.apply(this, arguments);
-            this.events["click .modal-footer button.btn-primary"] = "interceptSubmit";
-            this.events["submit form"] = "onSubmitForm";
+            this.events['click .modal-footer button.btn-primary'] = 'interceptSubmit';
+            this.events['submit form'] = 'onSubmitForm';
         },
         rendered: function () {
             this.attributesView = this.addSubView(
                 new TemplateNewAttributesView({
-                    el: "#tab-attributes-" + this.cid
+                    el: '#tab-attributes-' + this.cid
                 })
             ).render();
 
-            this.$("a#mask-help").popover({
+            this.$('a#mask-help').popover({
                 title: App.config.i18n.MASK,
-                placement: "left",
+                placement: 'left',
                 html: true,
                 content: App.config.i18n.MASK_HELP
             });
@@ -37,10 +38,10 @@ define([
         onSubmitForm: function (e) {
             if (this.isValid) {
                 this.collection.create({
-                    reference:  this.$("#form-" + this.cid + " .reference").val(),
-                    documentType: this.$("#form-" + this.cid + " .type").val(),
-                    mask: this.$("#form-" + this.cid + " .mask").val(),
-                    idGenerated: this.$("#form-" + this.cid + " .id-generated").is(':checked'),
+                    reference:  this.$('#form-' + this.cid + ' .reference').val(),
+                    documentType: this.$('#form-' + this.cid + ' .type').val(),
+                    mask: this.$('#form-' + this.cid + ' .mask').val(),
+                    idGenerated: this.$('#form-' + this.cid + ' .id-generated').is(':checked'),
                     attributeTemplates: this.attributesView.collection.toJSON(),
                     attributesLocked: this.attributesView.isAttributesLocked()
                 }, {
@@ -54,14 +55,14 @@ define([
 
             return false;
         },
-        success: function (model, response) {
+        success: function () {
             this.hide();
         },
         error: function (model, error) {
             this.collection.remove(model);
             if (error.responseText) {
                 this.alert({
-                    type: "error",
+                    type: 'error',
                     message: error.responseText
                 });
             } else {

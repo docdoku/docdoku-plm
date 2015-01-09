@@ -181,8 +181,9 @@ public class PartsResource {
         List<PartIterationDTO> partsLastIter = new ArrayList<>();
         for (PartRevision partR : partRs) {
             PartIteration partLastIter = partR.getLastIteration();
-            if (partLastIter != null)
+            if (partLastIter != null) {
                 partsLastIter.add(new PartIterationDTO(partLastIter.getWorkspaceId(), partLastIter.getPartNumber(), partLastIter.getPartVersion(), partLastIter.getIteration()));
+            }
         }
 
         return partsLastIter.toArray(new PartIterationDTO[partsLastIter.size()]);

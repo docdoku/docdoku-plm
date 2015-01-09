@@ -171,6 +171,10 @@ public class ComponentDTO implements Serializable{
         this.lastIterationNumber = lastIterationNumber;
     }
 
-    public boolean isAccessDeny() {return accessDeny;}
-    public void setAccessDeny(boolean accessDeny) {this.accessDeny = accessDeny;}
+    public boolean isAccessDeny() {
+        return accessDeny;
+    }
+    public void setAccessDeny(boolean accessDeny) {
+        this.accessDeny = accessDeny;
+    }
 }

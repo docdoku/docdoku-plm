@@ -130,16 +130,6 @@ public class Geometry extends BinaryResource{
         this.zMax = zMax;
     }
 
-//    @Override
-//    public int compareTo(O geometry) {
-//        int ret = quality - geometry.quality;
-//        if(ret == 0){
-//            return fullName.compareTo(geometry.fullName);
-//        }
-//        return ret;
-//    }
-
-
     @Override
     public int compareTo(BinaryResource pBinaryResource) {
         if (!(pBinaryResource instanceof Geometry)) {

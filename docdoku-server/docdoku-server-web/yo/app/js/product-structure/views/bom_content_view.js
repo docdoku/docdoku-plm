@@ -96,8 +96,6 @@ define([
         actionCheckin: function () {
             var self = this ;
             _.each(this.checkedViews(), function (view) {
-
-                console.log(view.model)
                 if (!view.model.getLastIteration().get('iterationNote')) {
                     var promptView = new PromptView();
                     promptView.setPromptOptions(App.config.i18n.ITERATION_NOTE, App.config.i18n.ITERATION_NOTE_PROMPT_LABEL, App.config.i18n.ITERATION_NOTE_PROMPT_OK, App.config.i18n.ITERATION_NOTE_PROMPT_CANCEL);

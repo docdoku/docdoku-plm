@@ -59,24 +59,25 @@ public class SerialActivity extends Activity {
 
     @Override
     public Collection<Task> getOpenTasks() {
-        List<Task> runningTasks = new ArrayList<Task>();
-        if (!isComplete() && !isStopped()) {          
+        List<Task> runningTasks = new ArrayList<>();
+        if (!isComplete() && !isStopped()) {
             for(Task task:tasks){
-                if(task.isInProgress() || task.isNotStarted()){
+                if (task.isInProgress() || task.isNotStarted()) {
                     runningTasks.add(task);
                     break;
                 }
-            }     
+            }
         }
         return runningTasks;
     }
     
     @Override
     public boolean isComplete() {
-        for(Task task:tasks)
-            if(!(task.isApproved() || task.isNotToBeDone())) {
+        for(Task task:tasks) {
+            if (!(task.isApproved() || task.isNotToBeDone())) {
                 return false;
             }
+        }
         
         return true;
     }

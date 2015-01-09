@@ -36,7 +36,9 @@ public class DocumentSearchQuery extends SearchQuery implements Serializable{
     private String[] tags;
     protected String content;
 
-    public DocumentSearchQuery(){}
+    public DocumentSearchQuery(){
+
+    }
     public DocumentSearchQuery(String workspaceId, String fullText, String docMId, String title, String version, String author, String type, Date creationDateFrom, Date creationDateTo, SearchQuery.AbstractAttributeQuery[] attributes, String[] tags, String content){
         super(workspaceId,fullText,version,author,type,creationDateFrom,creationDateTo,attributes);
         this.docMId=docMId;
@@ -46,13 +48,29 @@ public class DocumentSearchQuery extends SearchQuery implements Serializable{
     }
 
     //Getter
-    public String getDocMId() {return docMId;}
-    public String getTitle() {return title;}
-    public String[] getTags() {return tags;}
-    public String getContent() {return content;}
+    public String getDocMId() {
+        return docMId;
+    }
+    public String getTitle() {
+        return title;
+    }
+    public String[] getTags() {
+        return tags;
+    }
+    public String getContent() {
+        return content;
+    }
     //Setter
-    public void setDocMId(String docMId) {this.docMId = docMId;}
-    public void setTitle(String title) {this.title = title;}
-    public void setTags(String[] tags) {this.tags = tags;}
-    public void setContent(String content) {this.content = content;}
+    public void setDocMId(String docMId) {
+        this.docMId = docMId;
+    }
+    public void setTitle(String title) {
+        this.title = title;
+    }
+    public void setTags(String[] tags) {
+        this.tags = tags;
+    }
+    public void setContent(String content) {
+        this.content = content;
+    }
 }

@@ -136,8 +136,12 @@ public abstract class ChangeItem implements Serializable {
         this.category = category;
     }
 
-    public Priority getPriority() { return priority; }
-    public void setPriority(Priority priority) { this.priority = priority; }
+    public Priority getPriority() {
+        return priority;
+    }
+    public void setPriority(Priority priority) {
+        this.priority = priority;
+    }
 
     public Date getCreationDate() {
         return creationDate;
@@ -146,8 +150,12 @@ public abstract class ChangeItem implements Serializable {
         this.creationDate = creationDate;
     }
 
-    public ACL getACL() {return acl;}
-    public void setACL(ACL acl) {this.acl = acl;}
+    public ACL getACL() {
+        return acl;
+    }
+    public void setACL(ACL acl) {
+        this.acl = acl;
+    }
 
     public Set<Tag> getTags() {
         return tags;
@@ -158,8 +166,12 @@ public abstract class ChangeItem implements Serializable {
         tags.addAll(pTags);
     }
 
-    public boolean addTag(Tag pTag){ return tags.add(pTag); }
-    public boolean removeTag(Tag pTag){ return tags.remove(pTag); }
+    public boolean addTag(Tag pTag){
+        return tags.add(pTag);
+    }
+    public boolean removeTag(Tag pTag){
+        return tags.remove(pTag);
+    }
 
     public String getName() {
         return name;
