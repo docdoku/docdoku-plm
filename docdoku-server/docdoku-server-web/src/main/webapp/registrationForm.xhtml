@@ -31,6 +31,22 @@
                     <h:outputLabel value="#{i18nRegistration['section.email']}*:" for="email"/>
                     <h:inputText id="email" value="#{registrationBean.email}" size="20" maxlength="255"/>
 
+                    <h:outputLabel value="#{i18nRegistration['section.language']}*:" for="language"/>
+                    <h:selectOneMenu id="language" value="#{registrationBean.language}">
+                        <f:selectItem id="browser-language-item" itemLabel="#{i18nRegistration['section.language.browser']} : #{registrationBean.language}" itemValue="" />
+                        <f:selectItem id="en-language-item" itemLabel="#{i18nRegistration['section.language.en']}" itemValue="en" />
+                        <f:selectItem id="fr-language-item" itemLabel="#{i18nRegistration['section.language.fr']}" itemValue="fr" />
+                    </h:selectOneMenu>
+
+                    <br />
+
+                    <h:outputLabel value="#{i18nRegistration['section.timeZone']}*:" for="timeZone"/>
+                    <h:selectOneMenu id="timeZone" value="#{registrationBean.timeZone}">
+                        <f:selectItems value="#{registrationBean.availableTimeZones}"/>
+                    </h:selectOneMenu>
+
+                    <br />
+
                     <h:outputLabel value="#{i18nRegistration['section.password']}*:" for="password"/>
                     <h:inputSecret label="#{i18nRegistration['section.password']}" binding="#{newPasswordInput}" id="password" value="#{registrationBean.password}" immediate="true" required="true" size="20" maxlength="50"/>
 

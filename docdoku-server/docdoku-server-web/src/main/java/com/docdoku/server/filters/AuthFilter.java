@@ -73,6 +73,7 @@ public class AuthFilter implements Filter {
                 accountBean.setEmail(user.getEmail());
                 accountBean.setLanguage(user.getLanguage());
                 accountBean.setName(user.getName());
+                accountBean.setTimeZone(user.getTimeZone());
                 Organization organization = user.getOrganization();
                 if(organization!=null){
                     accountBean.setOrganizationName(user.getOrganization().getName());

@@ -50,12 +50,9 @@ import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.After;
 import org.junit.Before;
-import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.MethodSorters;
 
 import javax.ejb.EJB;
 import javax.inject.Inject;
@@ -180,7 +177,7 @@ public class AccessRightsTest {
         em.joinTransaction();
         em.clear();
         for (int i = 1; i <= COUNT; i++) {
-            Account account = new Account("user" + i, "user" + i, "user" + i + "@docdoku.com", "FR", new Date());
+            Account account = new Account("user" + i, "user" + i, "user" + i + "@docdoku.com", "FR", new Date(),null);
             em.merge(Credential.createCredential(account.getLogin(), "password"));
             em.merge(new UserGroupMapping(account.getLogin()));
             em.merge(account);

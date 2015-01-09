@@ -30,6 +30,7 @@ import javax.inject.Named;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.TimeZone;
 
 @Named("registrationBean")
 @RequestScoped
@@ -41,15 +42,22 @@ public class RegistrationBean {
     private String name;
     private String email;
     private String password;
+    private String language;
+    private String timeZone;
+    private String[] availableTimeZones = TimeZone.getAvailableIDs();
 
     public RegistrationBean() {
     }
 
     public String register() throws AccountAlreadyExistsException, CreationException, ServletException {
-        HttpServletRequest request = (HttpServletRequest) (FacesContext.getCurrentInstance().getExternalContext().getRequest());
-        String language = FacesContext.getCurrentInstance().getViewRoot().getLocale().getLanguage();
 
-        userManager.createAccount(login, name, email, language, password);
+        HttpServletRequest request = (HttpServletRequest) (FacesContext.getCurrentInstance().getExternalContext().getRequest());
+
+        if(language == null || "".equals(language) || " ".equals(language)){
+            language = FacesContext.getCurrentInstance().getViewRoot().getLocale().getLanguage();
+        }
+
+        userManager.createAccount(login, name, email, language, password, timeZone);
         request.login(login, password);
 
         HttpSession session = request.getSession();
@@ -88,4 +96,25 @@ public class RegistrationBean {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+
+    public String getTimeZone() {
+        return timeZone;
+    }
+
+    public void setTimeZone(String timeZone) {
+        this.timeZone = timeZone;
+    }
+
+    public String[] getAvailableTimeZones() {
+        return availableTimeZones;
+    }
+
 }

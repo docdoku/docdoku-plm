@@ -20,11 +20,6 @@
 
 package com.docdoku.test.arquillian;
 
-import com.docdoku.server.*;
-import com.docdoku.test.arquillian.services.TestDocumentManagerBean;
-import com.docdoku.test.arquillian.services.TestUserManagerBean;
-import com.docdoku.test.arquillian.services.TestWorkflowManagerBean;
-import com.docdoku.test.arquillian.util.TestUtil;
 import com.docdoku.core.change.ChangeItem;
 import com.docdoku.core.common.Account;
 import com.docdoku.core.common.Organization;
@@ -38,11 +33,16 @@ import com.docdoku.core.product.PartMasterTemplate;
 import com.docdoku.core.security.*;
 import com.docdoku.core.services.*;
 import com.docdoku.core.workflow.*;
+import com.docdoku.server.*;
 import com.docdoku.server.esindexer.ESIndexer;
 import com.docdoku.server.esindexer.ESMapper;
 import com.docdoku.server.esindexer.ESSearcher;
 import com.docdoku.server.esindexer.ESTools;
 import com.docdoku.server.gcm.GCMSenderBean;
+import com.docdoku.test.arquillian.services.TestDocumentManagerBean;
+import com.docdoku.test.arquillian.services.TestUserManagerBean;
+import com.docdoku.test.arquillian.services.TestWorkflowManagerBean;
+import com.docdoku.test.arquillian.util.TestUtil;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
@@ -51,10 +51,8 @@ import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.MethodSorters;
 
 import javax.ejb.EJB;
 import javax.inject.Inject;
@@ -156,7 +154,7 @@ public class WorkflowTest {
         em.joinTransaction();
         em.clear();
         for (int i = 1; i <= COUNT; i++) {
-            Account account = new Account("user" + i, "user" + i, "user" + i + "@docdoku.com", "FR", new Date());
+            Account account = new Account("user" + i, "user" + i, "user" + i + "@docdoku.com", "FR", new Date(),null);
             em.merge(Credential.createCredential(account.getLogin(), "password"));
             em.merge(new UserGroupMapping(account.getLogin()));
             em.merge(account);

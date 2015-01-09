@@ -43,7 +43,7 @@ public class DocumentBaselineManagerBeanTest {
     EntityManager em;
     @Mock
     DataManagerBean dataManager;
-    Account account = Mockito.spy(new Account("user2" , "user2", "user2@docdoku.com", "en",new Date()));
+    Account account = Mockito.spy(new Account("user2" , "user2", "user2@docdoku.com", "en",new Date(),null));
     @Spy
     Workspace workspace = new Workspace("workspace01",account, "pDescription", false);
     @Spy
