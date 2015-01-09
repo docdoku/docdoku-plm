@@ -10,27 +10,28 @@ define([
 
     ContextResolver.prototype.resolve = function (success) {
         $.getJSON('../server.properties.json').success(function (properties) {
+
             App.config.contextPath = properties.contextRoot;
-            User.whoami(App.config.workspaceId,
-                function (user, groups) {
-                    Workspace.getWorkspaces(function (workspaces) {
-                        App.config.login = user.login;
-                        App.config.userName = user.name;
-                        App.config.timeZone = user.timeZone || 'Europe/Paris';
-                        App.config.groups = groups;
-                        App.config.workspaces = workspaces;
-                        App.config.workspaceAdmin = _.select(App.config.workspaces.administratedWorkspaces, function (workspace) {
-                            return workspace.id === App.config.workspaceId;
-                        }).length === 1;
-                        window.localStorage.setItem('locale', user.language || 'en');
-                        success();
-                    });
-                }, function () {
-                    var forbiddenView = new ForbiddenView().render();
-                    $('body').append(forbiddenView.$el);
-                    forbiddenView.openModal();
-                }
-            );
+
+            User.whoami(App.config.workspaceId, function (user, groups) {
+                Workspace.getWorkspaces(function (workspaces) {
+                    App.config.login = user.login;
+                    App.config.userName = user.name;
+                    App.config.timeZone = user.timeZone;
+                    App.config.groups = groups;
+                    App.config.workspaces = workspaces;
+                    App.config.workspaceAdmin = _.select(App.config.workspaces.administratedWorkspaces, function (workspace) {
+                        return workspace.id === App.config.workspaceId;
+                    }).length === 1;
+                    window.localStorage.setItem('locale', user.language || 'en');
+
+                    success();
+                });
+            }, function () {
+                var forbiddenView = new ForbiddenView().render();
+                $('body').append(forbiddenView.$el);
+                forbiddenView.openModal();
+            });
         });
     };
 
