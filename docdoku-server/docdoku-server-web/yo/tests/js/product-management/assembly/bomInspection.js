@@ -83,7 +83,7 @@ casper.test.begin('Bom inspection tests suite',13, function bomInspectionTestsSu
      */
     casper.then(function openStructureInTree(){
         this.click('#product_nav_list_container > .treeview > ul > li > .hitarea');
-        this.waitForSelector('#product_nav_list_container > .treeview > ul > li > ul',function childNodesDisplayed(){
+        this.waitForSelector('#product_nav_list_container > .treeview > ul > li > ul > li',function childNodesDisplayed(){
             this.test.assert(true,'Child nodes are shown');
         },function fail(){
             this.capture('screenshot/assembly/openStructureInTree-error.png');
@@ -110,13 +110,12 @@ casper.test.begin('Bom inspection tests suite',13, function bomInspectionTestsSu
      * Assert rows count is 1 in the bom
      *
      * */
-
     casper.then(function countBomTableRows(){
-        this.waitForSelector('#bom_table > tbody > tr', function rowsAvailabled(){
-            this.test.assertElementCount('#bom_table > tbody > tr',1,'1 entry in the bom list');
+        this.waitForSelector('#bom_table > tbody > tr:only-child', function rowsAvailabled(){
+            this.test.assert(true,'1 entry in the bom list');
         },function fail(){
             this.capture('screenshot/assembly/countBomTableRows-error.png');
-            this.test.assert(false,'Bom list may be empty');
+            this.test.assert(false,'Bom list may have only one child');
         });
     });
 
