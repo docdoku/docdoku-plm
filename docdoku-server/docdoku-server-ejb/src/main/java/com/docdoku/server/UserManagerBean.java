@@ -65,9 +65,9 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
 
 
     @Override
-    public Account createAccount(String pLogin, String pName, String pEmail, String pLanguage, String pPassword) throws AccountAlreadyExistsException, CreationException {
+    public Account createAccount(String pLogin, String pName, String pEmail, String pLanguage, String pPassword, String pTimeZone) throws AccountAlreadyExistsException, CreationException {
         Date now = new Date();
-        Account account = new Account(pLogin, pName, pEmail, pLanguage, now);
+        Account account = new Account(pLogin, pName, pEmail, pLanguage, now, pTimeZone);
         new AccountDAO(new Locale(pLanguage), em).createAccount(account, pPassword);
         return account;
     }
@@ -470,12 +470,13 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.ADMIN_ROLE_ID})
     @Override
-    public void updateAccount(String pName, String pEmail, String pLanguage, String pPassword) throws AccountNotFoundException {
+    public void updateAccount(String pName, String pEmail, String pLanguage, String pPassword, String pTimeZone) throws AccountNotFoundException {
         AccountDAO accountDAO = new AccountDAO(new Locale(pLanguage), em);
         Account account = accountDAO.loadAccount(ctx.getCallerPrincipal().toString());
         account.setName(pName);
         account.setEmail(pEmail);
         account.setLanguage(pLanguage);
+        account.setTimeZone(pTimeZone);
         if (pPassword != null) {
             accountDAO.updateCredential(account.getLogin(), pPassword);
         }

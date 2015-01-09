@@ -55,6 +55,8 @@ require.config({
         bootstrapSwitch:'../../bower_components/bootstrap-switch/static/js/bootstrap-switch',
         date:'../../bower_components/date.format/date.format',
         unorm:'../../bower_components/unorm/lib/unorm',
+        moment:'../../bower_components/moment/min/moment-with-locales',
+        momentTimeZone:'../../bower_components/moment-timezone/builds/moment-timezone-with-data',
         unmaskConfig:'../lib/jquery.maskedinput-config',
         localization: '../localization',
         modules: '../modules',

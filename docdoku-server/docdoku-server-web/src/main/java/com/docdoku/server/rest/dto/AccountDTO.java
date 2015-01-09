@@ -26,6 +26,7 @@ public class AccountDTO {
     private String name;
     private String email;
     private String language;
+    private String timeZone;
 
     public AccountDTO() {
     }
@@ -60,5 +61,13 @@ public class AccountDTO {
 
     public void setLanguage(String language) {
         this.language = language;
+    }
+
+    public String getTimeZone() {
+        return timeZone;
+    }
+
+    public void setTimeZone(String timeZone) {
+        this.timeZone = timeZone;
     }
 }

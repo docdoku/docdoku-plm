@@ -45,6 +45,7 @@ public class Account implements Serializable, Cloneable {
     private String name;
     private String email;
     private String language;
+    private String timeZone = "Europe/London";
 
     @ManyToOne
     private Organization organization;
@@ -53,16 +54,16 @@ public class Account implements Serializable, Cloneable {
     private Date creationDate;
 
     public Account(){
-
     }
-    public Account(String pLogin, String pName, String pEmail, String pLanguage, Date pCreationDate) {
+
+    public Account(String pLogin, String pName, String pEmail, String pLanguage, Date pCreationDate,String pTimeZone) {
         login = pLogin;
         name = pName;
         email = pEmail;
         language = pLanguage;
         creationDate = pCreationDate;
+        timeZone = pTimeZone;
     }
-
 
     public String getLogin() {
         return login;
@@ -90,6 +91,14 @@ public class Account implements Serializable, Cloneable {
     }
     public String getLanguage() {
         return language;
+    }
+
+    public String getTimeZone() {
+        return timeZone;
+    }
+
+    public void setTimeZone(String timeZone) {
+        this.timeZone = timeZone;
     }
 
     @XmlTransient

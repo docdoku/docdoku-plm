@@ -111,6 +111,8 @@ require.config({
         bootstrap:'../../bower_components/bootstrap/docs/assets/js/bootstrap',
         datatables:'../../bower_components/datatables/media/js/jquery.dataTables',
         unorm:'../../bower_components/unorm/lib/unorm',
+        moment:'../../bower_components/moment/min/moment-with-locales',
+        momentTimeZone:'../../bower_components/moment-timezone/builds/moment-timezone-with-data',
         threecore:'../../bower_components/threejs/build/three',
         jqueryUI: '../../bower_components/jqueryui/ui/jquery-ui',
         async: '../../bower_components/async/lib/async',
