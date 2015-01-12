@@ -114,7 +114,7 @@ public class RegistrationBean {
     }
 
     public String[] getAvailableTimeZones() {
-        return availableTimeZones;
+        return availableTimeZones.clone();
     }
 
 }

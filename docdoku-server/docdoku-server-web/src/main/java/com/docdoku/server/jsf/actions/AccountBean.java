@@ -140,7 +140,7 @@ public class AccountBean {
     }
 
     public String[] getAvailableTimeZones() {
-        return availableTimeZones;
+        return availableTimeZones.clone();
     }
 
     public String getTimeZone() {
