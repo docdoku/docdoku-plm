@@ -2,9 +2,6 @@
 'use strict';
 var DegradationLevelBalancer = {};
 
-// Restrict the number of qualities asked to ADS
-var availableLevels = [0, 1];
-
 (function (DLB) {
 
     /*
@@ -50,7 +47,7 @@ var availableLevels = [0, 1];
                 if (instance.globalRating !== -1) {
                     directives[instance.id] = {
                         instance: instance,
-                        quality: Math.min(instance.qualities,degradationLevel)
+                        quality: Math.min(instance.qualities-1,degradationLevel)
                     };
                     onScene++;
                 }
