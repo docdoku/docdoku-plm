@@ -17,4 +17,19 @@ public class ResourceUtil {
     public static final String FILENAME2="TestFile_With_éàè.txt";
     public static final String FILENAME3_1="TestFile2.txt";
     public static final String FILENAME3_2="TestFile3.txt";
+    public static final String DOC_TEMPLATE_ID ="temp_01" ;
+    public static final String FILE_TYPE = "application/pdf";
+    public static final String RANGE= "bytes=0-366828";
+    public static final long DOCUMENT_SIZE = 26 ;
+    public static final String PART_TEMPLATE_ID = "part_templ_01";
+    public static final String TEST_PART_FILENAME1 = "part_file_test1.txt";
+    public static final String TEST_PART_FILENAME2 = "part_file_test1.txt";
+
+    public static String FILENAME_TO_UPLOAD_PART_SPECIAL_CHARACTER="part_file_to_upload-èé_spécial&.txt";
+    public static final long PART_SIZE =363666 ;
+    public static final String TARGET_PART_STORAGE = "docdoku-server/docdoku-server-web/src/test/resources/com/docdoku/server/rest/part/uploaded/";
+    public static final String SOURCE_PART_STORAGE = "docdoku-server/docdoku-server-web/src/test/resources/com/docdoku/server/rest/part/toUpload/";
+    public static String FILENAME_TARGET_PART ="new_part_file.txt";
+    public static String FILENAME_TARGET_PART_SPECIAL_CHARACTERS ="new_part_fileÉ'' .txt";
+
 }

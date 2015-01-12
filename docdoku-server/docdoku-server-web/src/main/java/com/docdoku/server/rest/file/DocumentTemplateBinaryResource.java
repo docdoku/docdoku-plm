@@ -70,7 +70,7 @@ public class DocumentTemplateBinaryResource {
 
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public Response uploadDocumentTemplateFiles(@Context HttpServletRequest request,
+    public Response downloadDocumentTemplateFilementTemplateFiles(@Context HttpServletRequest request,
                                                 @PathParam("workspaceId") final String workspaceId,
                                                 @PathParam("templateId") final String templateId)
             throws EntityNotFoundException, EntityAlreadyExistsException, UserNotActiveException, AccessRightException, NotAllowedException, CreationException {
