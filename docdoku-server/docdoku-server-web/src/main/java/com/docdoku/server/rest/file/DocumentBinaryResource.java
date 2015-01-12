@@ -126,6 +126,7 @@ public class DocumentBinaryResource {
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response downloadDocumentFile(@Context Request request,
                                          @HeaderParam("Range") String range,
+                                         @HeaderParam("Referer") String referer,
                                          @PathParam("workspaceId") final String workspaceId,
                                          @PathParam("documentId") final String documentId,
                                          @PathParam("version") final String version,
@@ -143,7 +144,7 @@ public class DocumentBinaryResource {
             SharedEntity sharedEntity = shareService.findSharedEntityForGivenUUID(uuid);
 
             // Check uuid & access right
-            checkUuidValidity(sharedEntity,workspaceId,documentId,version,iteration);
+            checkUuidValidity(sharedEntity,workspaceId,documentId,version,iteration, referer);
 
             DocumentRevision documentRevision = ((SharedDocument) sharedEntity).getDocumentRevision();
             fullName = sharedEntity.getWorkspace().getId() +
@@ -229,14 +230,13 @@ public class DocumentBinaryResource {
         }
     }
 
-    private void checkUuidValidity(SharedEntity sharedEntity, String workspaceId, String documentId, String version, int iteration)
-            throws UnmatchingUuidException, ExpiredLinkException {
+    private void checkUuidValidity(SharedEntity sharedEntity, String workspaceId, String documentId, String version, int iteration, String referer)
+            throws UnmatchingUuidException, ExpiredLinkException, NotAllowedException {
         if(!(sharedEntity instanceof SharedDocument)){
             throw new UnmatchingUuidException();
         }
 
-        // Todo Check password of shared entity
-
+        checkUuidReferer(sharedEntity, referer);
         checkUuidExpiredDate(sharedEntity);
 
         String shareEntityWorkspaceId = sharedEntity.getWorkspace().getId();
@@ -255,6 +255,18 @@ public class DocumentBinaryResource {
         if(sharedEntity.getExpireDate() != null && sharedEntity.getExpireDate().getTime() < new Date().getTime()){
             shareService.deleteSharedEntityIfExpired(sharedEntity);
             throw new ExpiredLinkException();
+        }
+    }
+
+    private void checkUuidReferer(SharedEntity sharedEntity,String referer) throws NotAllowedException {
+        if(referer==null || referer.isEmpty()){
+            throw new NotAllowedException(Locale.getDefault(),"NotAllowedException18");
+        }
+
+        String refererPath[] = referer.split("/");
+        String refererUUID = refererPath[refererPath.length-1];
+        if(sharedEntity.getPassword()!=null && !sharedEntity.getUuid().equals(refererUUID)){
+            throw new NotAllowedException(Locale.getDefault(),"NotAllowedException18");
         }
     }
 }

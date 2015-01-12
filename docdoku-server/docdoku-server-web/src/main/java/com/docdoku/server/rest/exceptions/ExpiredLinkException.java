@@ -30,6 +30,6 @@ public class ExpiredLinkException extends RestApiException {
 
     @Override
     public String getMessage(){
-        return "This resource has not be found. Maybe the link has expired.";
+        return "This resource can not be found. Maybe the link has expired.";
     }
 }

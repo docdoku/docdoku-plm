@@ -43,7 +43,7 @@ public class ExpiredLinkExceptionMapper implements ExceptionMapper<ExpiredLinkEx
         LOGGER.log(Level.FINE,null,e);
         return Response.status(Response.Status.NOT_FOUND)
                 .header("Reason-Phrase", e.getMessage())
-                .entity(e.toString())
+                .entity(e.getMessage())
                 .type(MediaType.TEXT_PLAIN)
                 .build();
     }

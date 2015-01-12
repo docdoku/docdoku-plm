@@ -162,7 +162,7 @@ public class PartBinaryResource{
                                      @QueryParam("type") String type,
                                      @QueryParam("output") String output)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException, PreconditionFailedException, NotModifiedException, RequestedRangeNotSatisfiableException, UnmatchingUuidException, ExpiredLinkException {
-        return downloadPartFile(request,range,workspaceId,partNumber,version,iteration,null,fileName,type,output,null);
+        return downloadPartFile(request,range,null,workspaceId,partNumber,version,iteration,null,fileName,type,output,null);
     }
 
     @GET
@@ -170,6 +170,7 @@ public class PartBinaryResource{
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response downloadPartFileWithUuid(@Context Request request,
                                            @HeaderParam("Range") String range,
+                                           @HeaderParam("Referer") String referer,
                                            @PathParam("workspaceId") final String workspaceId,
                                            @PathParam("partNumber") final String partNumber,
                                            @PathParam("version") final String version,
@@ -179,7 +180,7 @@ public class PartBinaryResource{
                                            @QueryParam("output") String output,
                                            @PathParam("uuid") final String uuid)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException, PreconditionFailedException, NotModifiedException, RequestedRangeNotSatisfiableException, UnmatchingUuidException, ExpiredLinkException {
-        return downloadPartFile(request,range,workspaceId,partNumber,version,iteration,null,fileName,type,output,uuid);
+        return downloadPartFile(request,range,referer,workspaceId,partNumber,version,iteration,null,fileName,type,output,uuid);
     }
 
     @GET
@@ -196,7 +197,7 @@ public class PartBinaryResource{
                                                @QueryParam("type") String type,
                                                @QueryParam("output") String output)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException, PreconditionFailedException, NotModifiedException, RequestedRangeNotSatisfiableException, UnmatchingUuidException, ExpiredLinkException {
-        return downloadPartFile(request,range,workspaceId,partNumber,version,iteration,subType,fileName,type,output,null);
+        return downloadPartFile(request,range,null,workspaceId,partNumber,version,iteration,subType,fileName,type,output,null);
     }
 
 
@@ -205,6 +206,7 @@ public class PartBinaryResource{
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response downloadPartFile(@Context Request request,
                                      @HeaderParam("Range") String range,
+                                     @HeaderParam("Referer") String referer,
                                      @PathParam("workspaceId") final String workspaceId,
                                      @PathParam("partNumber") final String partNumber,
                                      @PathParam("version") final String version,
@@ -222,7 +224,7 @@ public class PartBinaryResource{
             SharedEntity sharedEntity = shareService.findSharedEntityForGivenUUID(uuid);
 
             // Check uuid & access right
-            checkUuidValidity(sharedEntity,workspaceId,partNumber,version,iteration);
+            checkUuidValidity(sharedEntity,workspaceId,partNumber,version,iteration,referer);
 
             PartRevision partRevision = ((SharedPart) sharedEntity).getPartRevision();
             fullName = sharedEntity.getWorkspace().getId() +
@@ -295,14 +297,13 @@ public class PartBinaryResource{
         }
     }
 
-    private void checkUuidValidity(SharedEntity sharedEntity, String workspaceId, String partNumber, String version, int iteration)
-            throws UnmatchingUuidException, ExpiredLinkException {
+    private void checkUuidValidity(SharedEntity sharedEntity, String workspaceId, String partNumber, String version, int iteration, String referer)
+            throws UnmatchingUuidException, ExpiredLinkException, NotAllowedException {
         if(!(sharedEntity instanceof SharedPart)){
             throw new UnmatchingUuidException();
         }
 
-        // Todo Check password of shared entity
-
+        checkUuidReferer(sharedEntity, referer);
         checkUuidExpiredDate(sharedEntity);
 
         String shareEntityWorkspaceId = sharedEntity.getWorkspace().getId();
@@ -321,6 +322,18 @@ public class PartBinaryResource{
         if(sharedEntity.getExpireDate() != null && sharedEntity.getExpireDate().getTime() < new Date().getTime()){
             shareService.deleteSharedEntityIfExpired(sharedEntity);
             throw new ExpiredLinkException();
+        }
+    }
+
+    private void checkUuidReferer(SharedEntity sharedEntity,String referer) throws NotAllowedException {
+        if(referer==null || referer.isEmpty()){
+            throw new NotAllowedException(Locale.getDefault(),"NotAllowedException18");
+        }
+
+        String refererPath[] = referer.split("/");
+        String refererUUID = refererPath[refererPath.length-1];
+        if(sharedEntity.getPassword()!=null && !sharedEntity.getUuid().equals(refererUUID)){
+            throw new NotAllowedException(Locale.getDefault(),"NotAllowedException18");
         }
     }
 }
