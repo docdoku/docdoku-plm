@@ -3,8 +3,9 @@ define([
     'backbone',
     'mustache',
     'text!templates/product-instances/product_instances_list_item.html',
-    'views/product-instances/product_instance_modal'
-], function (Backbone, Mustache, template, ProductInstanceModalView) {
+    'views/product-instances/product_instance_modal',
+    'common-objects/utils/date'
+], function (Backbone, Mustache, template, ProductInstanceModalView, date) {
     'use strict';
     var ProductInstancesListItemView = Backbone.View.extend({
 
@@ -24,6 +25,7 @@ define([
             this.$checkbox = this.$('input[type=checkbox]');
             this.model.on('change', this.render, this);
             this.bindUserPopover();
+            date.dateHelper(this.$('.date-popover'));
             this.trigger('rendered', this);
             return this;
         },

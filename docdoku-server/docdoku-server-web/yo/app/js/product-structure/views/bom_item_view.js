@@ -4,8 +4,9 @@ define([
     'mustache',
     'text!templates/bom_item.html',
     'common-objects/views/part/part_modal_view',
-    'common-objects/views/share/share_entity'
-], function (Backbone, Mustache, template, PartModalView, ShareView) {
+    'common-objects/views/share/share_entity',
+    'common-objects/utils/date'
+], function (Backbone, Mustache, template, PartModalView, ShareView, date) {
     'use strict';
     var BomItemView = Backbone.View.extend({
 
@@ -27,6 +28,7 @@ define([
             if (this.model.isCheckout()) {
                 this.$('.checkout-user-popover').userPopover(this.model.getCheckOutUserLogin(), this.model.getNumber(), 'left');
             }
+            date.dateHelper(this.$('.date-popover'));
             return this;
         },
 

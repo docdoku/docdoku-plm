@@ -5,8 +5,9 @@ define([
     'text!templates/search_part_advanced_form.html',
     'common-objects/collections/users',
     'common-objects/views/attributes/attribute_list',
-    'collections/part_templates'
-], function (Backbone, Mustache, template, Users, PartAttributeListView, Templates) {
+    'collections/part_templates',
+    'common-objects/utils/date'
+], function (Backbone, Mustache, template, Users, PartAttributeListView, Templates, date) {
     'use strict';
     var AdvancedSearchView = Backbone.View.extend({
 
@@ -155,10 +156,10 @@ define([
                 queryString += '&author=' + author;
             }
             if (from) {
-                queryString += '&from=' + new Date(from).getTime().toString();
+                queryString += '&from=' + date.toUTCWithTimeZoneOffset(from);
             }
             if (to) {
-                queryString += '&to=' + new Date(to).getTime().toString();
+                queryString += '&to=' + date.toUTCWithTimeZoneOffset(to);
             }
             if (standardPart) {
                 queryString += '&standardPart=' + standardPart;

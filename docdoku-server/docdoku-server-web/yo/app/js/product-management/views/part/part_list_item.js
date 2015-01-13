@@ -5,8 +5,9 @@ define([
     'common-objects/models/part',
     'text!templates/part/part_list_item.html',
     'common-objects/views/share/share_entity',
-    'common-objects/views/part/part_modal_view'
-], function (Backbone, Mustache, Part, template, ShareView, PartModalView) {
+    'common-objects/views/part/part_modal_view',
+    'common-objects/utils/date'
+], function (Backbone, Mustache, Part, template, ShareView, PartModalView, date) {
     'use strict';
     var PartListItemView = Backbone.View.extend({
 
@@ -32,6 +33,7 @@ define([
                 this.trigger('selectionChanged', this);
             }
             this.bindUserPopover();
+            date.dateHelper(this.$('.date-popover'));
             this.trigger('rendered', this);
             return this;
         },

@@ -17,6 +17,7 @@ define([
         rendered: function () {
             CheckboxListItemView.prototype.rendered.apply(this, arguments);
             this.$(".author-popover").userPopover(this.model.attributes.author.login, this.model.id, "left");
+            date.dateHelper(this.$('.date-popover'));
         },
 
         modelToJSON: function () {

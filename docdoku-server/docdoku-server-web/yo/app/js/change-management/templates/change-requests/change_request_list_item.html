@@ -4,7 +4,7 @@
 <td>{{model.getPriority}}</td>
 <td>{{model.getCategory}}</td>
 <td><a class="author-popover">{{model.getAuthorName}}</a></td>
-<td>{{model.getFormattedCreationDate}}</td>
+<td><a class="date-popover">{{model.getFormattedCreationDate}}</a></td>
 <td class="acl-info">
     {{#model.isReadOnly}}
     <i class="fa fa-ban read-only" title="{{i18n.READ_ONLY}}"></i>

@@ -3,9 +3,11 @@ define([
     'backbone',
     'mustache',
     'text!common-objects/templates/share/share_entity.html',
-    'text!common-objects/templates/share/shared_entity.html'
-],
-function (Backbone, Mustache, template, templateShared) {
+    'text!common-objects/templates/share/shared_entity.html',
+    'common-objects/utils/date',
+
+    ],
+function (Backbone, Mustache, template, templateShared, date) {
 	'use strict';
     var ShareView = Backbone.View.extend({
 
@@ -34,7 +36,7 @@ function (Backbone, Mustache, template, templateShared) {
                     break;
             }
 
-            this.$el.html(Mustache.render(template, {i18n: App.config.i18n, title: title, permalink: this.model.getPermalink()}));
+            this.$el.html(Mustache.render(template, {timeZone:App.config.timeZone,i18n: App.config.i18n, title: title, permalink: this.model.getPermalink()}));
             this.bindDomElements();
 
             this.$badPasswordLabel.hide();
@@ -71,7 +73,7 @@ function (Backbone, Mustache, template, templateShared) {
             this.$modal = this.$('#share-modal');
             this.$password = this.$('.password');
             this.$confirmPassword = this.$('.confirm-password');
-            this.$badPasswordLabel = this.$('.help-block');
+            this.$badPasswordLabel = this.$('.bad-password');
             this.$passwordControl = this.$('#password-control');
             this.$expireDate = this.$('.expire-date');
             this.$publicSharedSwitch = this.$('.public-shared-switch');
@@ -101,8 +103,7 @@ function (Backbone, Mustache, template, templateShared) {
                 this.$badPasswordLabel.show();
             } else {
                 data.password = this.$password.val() ? this.$password.val() : null;
-                data.expireDate = this.$expireDate.val() ? new Date(Date.parse(this.$expireDate.val())) : null;
-
+                data.expireDate = this.$expireDate.val() ? date.toUTCWithTimeZoneOffset(this.$expireDate.val()) : null;
                 this.model.createShare({data: data, success: function (pData) {
                     that.$privateShare.empty();
                     that.$privateShare.html(Mustache.render(templateShared,{i18n: App.config.i18n, generatedUrl: that.generateUrlFromUUID(pData.uuid)}));

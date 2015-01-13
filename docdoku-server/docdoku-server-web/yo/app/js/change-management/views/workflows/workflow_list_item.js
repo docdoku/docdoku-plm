@@ -4,7 +4,7 @@ define([
     'common-objects/utils/date',
     'common-objects/views/documents/checkbox_list_item',
     'text!templates/workflows/workflow_list_item.html'
-], function (require, Date, CheckboxListItemView, template) {
+], function (require, date, CheckboxListItemView, template) {
 	'use strict';
     var WorkflowListItemView = CheckboxListItemView.extend({
 
@@ -20,7 +20,7 @@ define([
         modelToJSON: function () {
             var data = this.model.toJSON();
 
-            data.creationDate = Date.formatTimestamp(
+            data.creationDate = date.formatTimestamp(
                 App.config.i18n._DATE_FORMAT,
                 data.creationDate
             );
@@ -31,6 +31,7 @@ define([
         rendered: function () {
             CheckboxListItemView.prototype.rendered.apply(this, arguments);
             this.$('.author-popover').userPopover(this.model.attributes.author.login, this.model.id, 'left');
+            date.dateHelper(this.$('.date-popover'));
         },
 
         actionEdit: function () {

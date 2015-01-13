@@ -5,8 +5,9 @@ define([
     'text!templates/milestones/milestone_edition.html',
     'common-objects/views/linked/linked_requests',
     'common-objects/collections/linked/linked_change_item_collection',
-    'common-objects/views/linked/linked_orders'
-], function (Backbone, Mustache, template, LinkedRequestsView, LinkedChangeItemCollection, LinkedOrdersView) {
+    'common-objects/views/linked/linked_orders',
+    'common-objects/utils/date'
+], function (Backbone, Mustache, template, LinkedRequestsView, LinkedChangeItemCollection, LinkedOrdersView, date) {
     'use strict';
     var MilestoneEditionView = Backbone.View.extend({
         events: {
@@ -31,7 +32,7 @@ define([
             var hasOrder = this.model.getNumberOfOrders() > 0;
             this.removeSubviews();
             this.editMode = this.model.isWritable();
-            this.$el.html(Mustache.render(template, {i18n: App.config.i18n, hasRequest: hasRequest, hasOrder: hasOrder, model: this.model}));
+            this.$el.html(Mustache.render(template, {timeZone:App.config.timeZone,i18n: App.config.i18n, hasRequest: hasRequest, hasOrder: hasOrder, model: this.model}));
             this.bindDomElements();
             this.initValue();
             this.linkManagement();
@@ -47,7 +48,7 @@ define([
 
         initValue: function () {
             this.$inputMilestoneTitle.val(this.model.getTitle());
-            this.$inputMilestoneDueDate.val(this.model.getDueDateToPrint());
+            this.$inputMilestoneDueDate.val(this.model.getDueDateDatePicker());
             this.$inputMilestoneDescription.val(this.model.getDescription());
         },
 
@@ -91,7 +92,7 @@ define([
             var data = {
                 title: this.$inputMilestoneTitle.val(),
                 description: this.$inputMilestoneDescription.val(),
-                dueDate: this.$inputMilestoneDueDate.val() + 'T00:00:00'
+                dueDate: date.toUTCWithTimeZoneOffset(this.$inputMilestoneDueDate.val())
             };
 
             this.model.save(data, {

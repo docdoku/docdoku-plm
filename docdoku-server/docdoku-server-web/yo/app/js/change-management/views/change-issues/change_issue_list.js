@@ -45,6 +45,7 @@ define([
                 that.addIssue(model);
             });
             this.dataTable();
+
         },
 
         addNewIssue: function (model) {
@@ -149,6 +150,7 @@ define([
         },
 
         redraw: function () {
+
             this.dataTable();
             this.eachChecked(function (view) {
                 view.unCheck();
