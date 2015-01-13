@@ -96,6 +96,8 @@ define([
                 this.initLinkedDocumentsView();
                 this.initLifeCycleView();
             }
+
+            date.dateHelper(this.$('.date-popover'));
             return this;
         },
 

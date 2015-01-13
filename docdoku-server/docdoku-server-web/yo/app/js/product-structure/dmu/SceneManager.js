@@ -3,8 +3,9 @@ define([
     'backbone',
     'views/marker_create_modal_view',
     'views/blocker_view',
-    'dmu/LayerManager'
-], function (Backbone,MarkerCreateModalView, BlockerView, LayerManager) {
+    'dmu/LayerManager',
+    'common-objects/utils/date'
+], function (Backbone,MarkerCreateModalView, BlockerView, LayerManager, date) {
 	'use strict';
     var SceneManager = function (pOptions) {
         var _this = this;
@@ -773,8 +774,7 @@ define([
         this.takeScreenShot = function () {
 
             var imageSource = _this.renderer.domElement.toDataURL('image/png');
-            var now = new Date();
-            var filename = App.config.productId + '-' + now.getFullYear() + '-' + now.getMonth() + '-' + now.getDay();
+            var filename = App.config.productId + '-' + date.formatTimestamp(App.config.i18n._DATE_SHORT_FORMAT,Date.now());
 
             var save = document.createElement('a');
             save.href = imageSource;

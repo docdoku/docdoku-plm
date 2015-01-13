@@ -3,8 +3,9 @@ define([
     'backbone',
     'mustache',
     'text!templates/change-requests/change_request_list_item.html',
-    'views/change-requests/change_request_edition'
-], function (Backbone, Mustache, template, ChangeRequestEditionView) {
+    'views/change-requests/change_request_edition',
+    'common-objects/utils/date'
+], function (Backbone, Mustache, template, ChangeRequestEditionView,date) {
 	'use strict';
 	var ChangeRequestListItemView = Backbone.View.extend({
 
@@ -26,6 +27,7 @@ define([
             this.$el.html(Mustache.render(template, {model: this.model, i18n: App.config.i18n}));
             this.$checkbox = this.$('input[type=checkbox]');
             this.bindUserPopover();
+            date.dateHelper(this.$('.date-popover'));
             this.trigger('rendered', this);
             return this;
         },

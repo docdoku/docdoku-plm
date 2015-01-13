@@ -32,6 +32,7 @@ define([
         },
 
         modelToJSON: function () {
+
             var data = this.model.toJSON();
             if (this.model.hasIterations()) {
                 data.lastIteration = this.model.getLastIteration().toJSON();
@@ -79,6 +80,8 @@ define([
             if (this.model.isCheckout()) {
                 this.$('.checkout-user-popover').userPopover(this.model.getCheckoutUser().login, this.model.id, 'left');
             }
+
+            date.dateHelper(this.$('.date-popover'));
 
         },
 

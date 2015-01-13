@@ -95,7 +95,7 @@ define({
 		CURRENT_WORKFLOW: "Current workflow",
 		CUTPLAN: "Cut plan",
 		DATE: "Date",
-		_DATE_FORMAT: "MM-DD-YYYY HH:MM:ss",
+		_DATE_FORMAT: "MM-DD-YYYY HH:mm:ss",
 		_DATE_PICKER_DATE_FORMAT: "YYYY-MM-DD",
 		_DATE_SHORT_FORMAT: "YYYY-MM-DD",
 		DATE_SORT: "date_sort",

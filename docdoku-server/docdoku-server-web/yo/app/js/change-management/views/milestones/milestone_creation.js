@@ -3,8 +3,9 @@ define([
     'backbone',
     'mustache',
     'text!templates/milestones/milestone_creation.html',
-    'models/milestone'
-], function (Backbone, Mustache, template, MilestoneModel) {
+    'models/milestone',
+    'common-objects/utils/date'
+], function (Backbone, Mustache, template, MilestoneModel,date) {
     'use strict';
     var MilestoneCreationView = Backbone.View.extend({
         events: {
@@ -19,7 +20,7 @@ define([
         },
 
         render: function () {
-            this.$el.html(Mustache.render(template, {i18n: App.config.i18n}));
+            this.$el.html(Mustache.render(template, {timeZone:App.config.timeZone,i18n: App.config.i18n}));
             this.bindDomElements();
             this.$('input[required]').customValidity(App.config.i18n.REQUIRED_FIELD);
             return this;
@@ -36,7 +37,7 @@ define([
             var data = {
                 title: this.$inputMilestoneTitle.val(),
                 description: this.$inputMilestoneDescription.val(),
-                dueDate: this.$inputMilestoneDueDate.val() + 'T00:00:00'
+                dueDate: date.toUTCWithTimeZoneOffset(this.$inputMilestoneDueDate.val())
             };
 
             this.model.save(data, {

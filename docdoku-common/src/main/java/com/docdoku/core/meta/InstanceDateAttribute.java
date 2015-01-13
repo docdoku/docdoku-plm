@@ -22,6 +22,7 @@ package com.docdoku.core.meta;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import java.time.Instant;
 import java.util.Date;
 
 /**
@@ -57,13 +58,9 @@ public class InstanceDateAttribute extends InstanceAttribute{
             dateValue=(Date)pValue;
             return true;
         }else if(pValue instanceof String){
-            try {
-                dateValue = new Date(Long.parseLong((String) pValue));
-                return true;
-            }catch(NumberFormatException e){
-                dateValue = null;
-                return false;
-            }
+            Date dateTime = Date.from(Instant.parse((CharSequence) pValue));
+            dateValue = dateTime;
+            return true;
         }else{
             dateValue=null;
             return false;

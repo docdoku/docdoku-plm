@@ -16,6 +16,9 @@ define([
 
         initialize: function () {
             AttributeListItemView.prototype.initialize.apply(this, arguments);
+            this.templateExtraData = {
+                timeZone : App.config.timeZone
+            };
         },
 
         /**
@@ -36,7 +39,7 @@ define([
          * format date from html5 input to timestamp string
          */
         getValue: function (el) {
-            return new Date(el.val()).getTime().toString();
+            return date.toUTCWithTimeZoneOffset(el.val());
         },
 
         /**

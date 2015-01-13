@@ -205,6 +205,8 @@ define([
                 this.$('.checkout-user-popover').userPopover(this.model.getCheckoutUser().login, this.model.id, 'right');
             }
 
+            date.dateHelper(this.$('.date-popover'));
+
             this.tagsManagement(editMode);
 
             return this;
