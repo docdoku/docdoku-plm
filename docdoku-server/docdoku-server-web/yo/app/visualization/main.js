@@ -92,6 +92,8 @@ require.config({
         date:'../../bower_components/date.format/date.format',
         dat:'../../bower_components/dat.gui/dat.gui',
         localization: '../localization',
+        moment:'../../bower_components/moment/min/moment-with-locales',
+        momentTimeZone:'../../bower_components/moment-timezone/builds/moment-timezone-with-data',
         'common-objects': '../common-objects',
         pointerlockcontrols: 'dmu/controls/PointerLockControls',
         trackballcontrols: 'dmu/controls/TrackballControls',
