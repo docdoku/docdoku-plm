@@ -53,6 +53,7 @@ define([
 
         bindUserPopover: function () {
             this.$('.author-popover').userPopover(this.model.getAuthor(), this.model.getName(), 'left');
+            this.$('.assigned-user-popover').userPopover(this.model.getAssignee(), this.model.getName(), 'left');
         },
 
         openEditionView: function () {
