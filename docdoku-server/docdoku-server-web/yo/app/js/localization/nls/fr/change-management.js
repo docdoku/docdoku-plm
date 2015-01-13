@@ -8,5 +8,6 @@ define({
     ERROR_WORKFLOW_REFERENCE_MISSING:"Veuillez renseigner le nom de votre workflow",
     NEW_ROLES_NAME:"Entrer le nom du nouveau rôle",
     WARNING_ANY_ROLE:"Veuillez créer des rôles avant de créer un workflow",
-    WARNING_FINAL_STATE_MISSING:"Vous devriez renseigner le nom de l'état final de votre workflow"
+    WARNING_FINAL_STATE_MISSING:"Vous devriez renseigner le nom de l'état final de votre workflow",
+    WARNING_ACTIVITIES_MISSING:"Vous devriez créer au moins une activité et des tâches"
 });
