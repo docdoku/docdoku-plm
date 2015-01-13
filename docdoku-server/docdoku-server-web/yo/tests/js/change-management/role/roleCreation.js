@@ -65,7 +65,7 @@ casper.test.begin('Role creation tests suite',6, function roleCreationTestsSuite
      */
     casper.then(function tryToAddRole(){
         this.sendKeys('#roles-modal #form-new-role .role-name',roles.role1.name,{reset:true});
-        this.click('#roles-modal #form-new-role #new-role');
+        this.click('#new-role');
 
         this.waitForSelector('#form-roles > div > input[value="'+roles.role1.name+'"]',function roleAdded(){
             this.test.assert(true,'Role added');
@@ -79,7 +79,7 @@ casper.test.begin('Role creation tests suite',6, function roleCreationTestsSuite
      * Try to create the added role
      */
     casper.then(function tryToCreateRole(){
-        this.click('#roles-modal .modal-footer .btn-primary');
+        this.click('#save-roles');
 
         this.waitWhileSelector('#roles-modal',function modalClosed(){
             this.test.assert(true,'Modal closed');
