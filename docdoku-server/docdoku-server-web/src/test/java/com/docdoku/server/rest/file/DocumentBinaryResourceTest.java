@@ -3,19 +3,23 @@ package com.docdoku.server.rest.file;
 
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.document.DocumentIterationKey;
+import com.docdoku.core.product.PartMasterTemplateKey;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.services.IDocumentPostUploaderManagerLocal;
 import com.docdoku.core.services.IDocumentResourceGetterManagerLocal;
+import com.docdoku.server.util.PartImp;
 import com.docdoku.server.util.ResourceUtil;
-import com.jayway.restassured.RestAssured;
+
 import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.Part;
+import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 import java.io.File;
 import java.io.FileInputStream;
@@ -25,9 +29,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
-import static com.jayway.restassured.RestAssured.basic;
-import static com.jayway.restassured.RestAssured.get;
-import static com.jayway.restassured.RestAssured.given;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class DocumentBinaryResourceTest {
@@ -44,142 +45,161 @@ public class DocumentBinaryResourceTest {
     @Mock
     private IDocumentPostUploaderManagerLocal documentPostUploaderService;
 
+    @Spy
+    BinaryResource binaryResource;
+
     @Before
     public void setup() throws Exception {
-     initMocks(this);
-        RestAssured.authentication = basic("asmae","password");
-
+        initMocks(this);
     }
+
     /**
      * Test the upload of file to a document
+     *
      * @throws Exception
      */
     @Test
-    public void testUploadDocumentFiles1() throws Exception {
+    public void testUploadDocumentFiles() throws Exception {
         //Given
-        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-        Part part = Mockito.mock(Part.class);
+        HttpServletRequestWrapper request = Mockito.mock(HttpServletRequestWrapper.class);
+        Collection<Part> filesParts = new ArrayList<Part>();
+        filesParts.add(new PartImp(new File(ResourceUtil.SOURCE_FILE_STORAGE + ResourceUtil.FILENAME1)));
 
-        Collection<Part> parts = new ArrayList(1);
-        Mockito.when(part.getSubmittedFileName()).thenReturn(ResourceUtil.FILENAME1);
-        File sourceFile = new File(ResourceUtil.SOURCE_FILE_STORAGE+ResourceUtil.FILENAME1);
-        File targetFile = new File(ResourceUtil.TARGET_FILE_STORAGE+ResourceUtil.FILENAME1);
-        FileInputStream fileInputStream = Mockito.spy(new FileInputStream(getClass().getResource(ResourceUtil.SOURCE_FILE_STORAGE + ResourceUtil.FILENAME1).getFile()));
-        Mockito.when(part.getInputStream()).thenReturn(fileInputStream);
+        BinaryResource binaryResource = new BinaryResource(ResourceUtil.FILENAME1, ResourceUtil.DOCUMENT_SIZE, new Date());
 
-        BinaryResource binaryResource = Mockito.spy(new BinaryResource(ResourceUtil.SOURCE_FILE_STORAGE+ResourceUtil.FILENAME1,12, new Date()));
-        OutputStream outputstream = Mockito.spy(new FileOutputStream(getClass().getResource(ResourceUtil.TARGET_FILE_STORAGE+ResourceUtil.FILENAME1).getFile()));
-        Mockito.when(documentService.saveFileInDocument(Matchers.any(DocumentIterationKey.class),Matchers.anyString(), Matchers.anyInt())).thenReturn(binaryResource);
-        Mockito.when(dataManager.getBinaryResourceOutputStream(binaryResource)).thenReturn(outputstream);
-        Mockito.when(request.getRequestURI()).thenReturn("/com/docdoku/server/rest/file/toUpload/");
-        parts.add(part);
+        File uploadedFile1 = new File(ResourceUtil.TARGET_FILE_STORAGE + "new_" + ResourceUtil.FILENAME1);
+        if (!uploadedFile1.getParentFile().exists()){
+            uploadedFile1.getParentFile().mkdirs();
+        }
+        else {
+            for(File file:uploadedFile1.getParentFile().listFiles())
+                file.delete();
+        }
+        OutputStream outputStream1 = new FileOutputStream(uploadedFile1);
 
-        Mockito.when(request.getParts()).thenReturn(parts);
+        Mockito.when(request.getParts()).thenReturn(filesParts);
+        Mockito.when(documentService.saveFileInDocument(Matchers.any(DocumentIterationKey.class), Matchers.anyString(), Matchers.anyInt())).thenReturn(binaryResource);
+        Mockito.when(dataManager.getBinaryResourceOutputStream(Matchers.any(BinaryResource.class))).thenReturn(outputStream1);
+        Mockito.when(request.getRequestURI()).thenReturn(ResourceUtil.WORKSPACE_ID + "/documents/" + ResourceUtil.DOCUMENT_ID + "/" + ResourceUtil.FILENAME1);
+
         //When
         Response response = documentBinaryResource.uploadDocumentFiles(request, ResourceUtil.WORKSPACE_ID, ResourceUtil.DOCUMENT_ID, ResourceUtil.VERSION, ResourceUtil.ITERATION);
+
         //Then
-        Assert.assertTrue(response.getStatus() == 201);
-
-
-
-            //User Case1
-            //workspaceId = WORKSPACE_ID
-            //documentId = DOCUMENT_ID
-            //version = VERSION
-            //iteration = ITERATION
-            //formParts = [{fileName = FILENAME1,
-            //              repository= SOURCE_FILE_STORAGE,
-            //              tempFile= SOURCE_FILE_STORAGE+"/"+SOURCE_FILENAME1}]
-            //binaryResource = {
-            //                    fullName= WORKSPACE_ID+"/"+DOCUMENT_ID+"/"+VERSION+"/"+ITERATION+"/"+FILENAME1
-            //                    contentLenght=O
-            //                    lastModified = new Date();
-            //                  }
-
-            // assert uploaded file exist in TARGET_FILE_STORAGE+"/"+FILENAME1 et length > 0
-            // assert response.status.code = "201"
-            // assert response.getLocation().toString() = "/api/files/"+WORKSPACE_ID+"/"+DOCUMENT_ID+"/"+VERSION+"/"+ITERATION+"/"+FILENAME1
+        org.junit.Assert.assertNotNull(response);
+        org.junit.Assert.assertEquals(response.getStatus(), 201);
+        org.junit.Assert.assertEquals(response.getStatusInfo(), Response.Status.OK);
     }
 
     /**
      * Test to upload a file to a document with special characters
+     *
      * @throws Exception
      */
     @Test
-    public void testUploadDocumentFiles2() throws Exception {
+    public void testUploadFileWithSpecialCharactersToDocumentTemplates() throws Exception {
 
-     File file = new File(getClass().getClassLoader().getResource(ResourceUtil.SOURCE_FILE_STORAGE+"/"+ResourceUtil.FILENAME1).getFile());
+        //Given
+        HttpServletRequestWrapper request = Mockito.mock(HttpServletRequestWrapper.class);
+        Collection<Part> filesParts = new ArrayList<Part>();
+        filesParts.add(new PartImp(new File(ResourceUtil.SOURCE_FILE_STORAGE + ResourceUtil.FILENAME2)));
 
-     Assert.assertNotNull(file);
-     Assert.assertTrue(file.canRead());
-     given().multiPart(file).expect().when().post("http://www.docdokuplm.net/files/asmae/documents/doc1/B/2/newFile.txt");
+        BinaryResource binaryResource = new BinaryResource(ResourceUtil.FILENAME2, ResourceUtil.DOCUMENT_SIZE, new Date());
 
-        //User Case2
-            //workspaceId = WORKSPACE_ID
-            //documentId = DOCUMENT_ID
-            //version = VERSION
-            //iteration = ITERATION
-            //formParts = [{fileName = FILENAME1,
-            //              repository= SOURCE_FILE_STORAGE,
-            //              tempFile= SOURCE_FILE_STORAGE+"/"+SOURCE_FILENAME1}]
-            //binaryResource = {
-            //                    fullName= WORKSPACE_ID+"/"+DOCUMENT_ID+"/"+VERSION+"/"+ITERATION+"/"+FILENAME2
-            //                    contentLenght=O
-            //                    lastModified = new Date();
-            //                  }
+        File uploadedFile1 = new File(ResourceUtil.TARGET_FILE_STORAGE + "new_" + ResourceUtil.FILENAME2);
+        if (!uploadedFile1.getParentFile().exists()){
+            uploadedFile1.getParentFile().mkdirs();
+        }
+        else {
+            for(File file:uploadedFile1.getParentFile().listFiles())
+                file.delete();
+        }
+        OutputStream outputStream1 = new FileOutputStream(uploadedFile1);
 
-            // assert uploaded file exist in TARGET_FILE_STORAGE+"/"+FILENAME2 et length > 0
-            // assert response.status.code = "201"
-            // assert response.getLocation().toString() = "/api/files/"+WORKSPACE_ID+"/"+DOCUMENT_ID+"/"+VERSION+"/"+ITERATION+"/"+FILENAME2
+        Mockito.when(request.getParts()).thenReturn(filesParts);
+        Mockito.when(documentService.saveFileInDocument(Matchers.any(DocumentIterationKey.class), Matchers.anyString(), Matchers.anyInt())).thenReturn(binaryResource);
+        Mockito.when(dataManager.getBinaryResourceOutputStream(Matchers.any(BinaryResource.class))).thenReturn(outputStream1);
+        Mockito.when(request.getRequestURI()).thenReturn(ResourceUtil.WORKSPACE_ID + "/documents/" + ResourceUtil.DOCUMENT_ID + "/" + ResourceUtil.FILENAME2);
+
+
+        //When
+        Response response = documentBinaryResource.uploadDocumentFiles(request, ResourceUtil.WORKSPACE_ID, ResourceUtil.DOCUMENT_ID, ResourceUtil.VERSION, ResourceUtil.ITERATION);
+
+        //Then
+        org.junit.Assert.assertNotNull(response);
+        org.junit.Assert.assertEquals(response.getStatus(), 200);
+        org.junit.Assert.assertEquals(response.getStatusInfo(), Response.Status.OK);
     }
 
     /**
      * Test to upload several file to a document
+     *
      * @throws Exception
      */
     @Test
-    public void testUploadDocumentFiles3() throws Exception {
-        //User Case3
-            //workspaceId = WORKSPACE_ID
-            //documentId = DOCUMENT_ID
-            //version = VERSION
-            //iteration = ITERATION
-            //formParts = [{
-            //                  fileName = FILENAME3_1,
-            //                  repository= SOURCE_FILE_STORAGE,
-            //                  tempFile= SOURCE_FILE_STORAGE+"/"+SOURCE_FILENAME2_1
-            //              },{
-            //                  fileName = FILENAME3_2,
-            //                  repository= SOURCE_FILE_STORAGE,
-            //                  tempFile= SOURCE_FILE_STORAGE+"/"+SOURCE_FILENAME2_1
-            //              }
-            //            ]
-            //getBinaryResource(pk,filename,length) = {
-            //                    fullName= WORKSPACE_ID+"/"+DOCUMENT_ID+"/"+VERSION+"/"+ITERATION+"/"+filename
-            //                    contentLength=length
-            //                    lastModified = new Date();
-            //                  }
+    public void testUploadSeveralFilesToDocumentsTemplates() throws Exception {
 
-            // assert uploaded file exist in TARGET_FILE_STORAGE+"/"+FILENAME3_1  et length > 0
-            // assert uploaded file exist in TARGET_FILE_STORAGE+"/"+FILENAME3_2  et length > 0
-            // assert response.status.code = "200"
+        //Given
+        HttpServletRequestWrapper request = Mockito.mock(HttpServletRequestWrapper.class);
+        Collection<Part> filesParts = new ArrayList<Part>();
+        filesParts.add(new PartImp(new File(ResourceUtil.SOURCE_FILE_STORAGE + ResourceUtil.FILENAME1)));
+        filesParts.add(new PartImp(new File(ResourceUtil.SOURCE_FILE_STORAGE + ResourceUtil.FILENAME2)));
+        filesParts.add(new PartImp(new File(ResourceUtil.SOURCE_FILE_STORAGE + ResourceUtil.FILENAME3)));
+
+        BinaryResource binaryResource1 = new BinaryResource(ResourceUtil.FILENAME1, ResourceUtil.DOCUMENT_SIZE, new Date());
+        BinaryResource binaryResource2 = new BinaryResource(ResourceUtil.FILENAME2, ResourceUtil.DOCUMENT_SIZE, new Date());
+        BinaryResource binaryResource3 = new BinaryResource(ResourceUtil.FILENAME3, ResourceUtil.DOCUMENT_SIZE, new Date());
+
+        File uploadedFile1 = new File(ResourceUtil.TARGET_FILE_STORAGE + "new_" + ResourceUtil.FILENAME1);
+        File uploadedFile2 = new File(ResourceUtil.TARGET_FILE_STORAGE + "new_" + ResourceUtil.FILENAME2);
+        File uploadedFile3 = new File(ResourceUtil.TARGET_FILE_STORAGE + "new_" + ResourceUtil.FILENAME3);
+        if (!uploadedFile1.getParentFile().exists()){
+            uploadedFile1.getParentFile().mkdirs();
+        }
+        OutputStream outputStream1 = new FileOutputStream(uploadedFile1);
+        OutputStream outputStream2 = new FileOutputStream(uploadedFile2);
+        OutputStream outputStream3 = new FileOutputStream(uploadedFile3);
+        Mockito.when(request.getParts()).thenReturn(filesParts);
+        Mockito.when(documentService.saveFileInDocument(Matchers.any(DocumentIterationKey.class), Matchers.anyString(), Matchers.anyInt())).thenReturn(binaryResource1, binaryResource1, binaryResource2, binaryResource2, binaryResource3, binaryResource3);
+        Mockito.when(dataManager.getBinaryResourceOutputStream(Matchers.any(BinaryResource.class))).thenReturn(outputStream1, outputStream2, outputStream3);
+        //When
+        Response response = documentBinaryResource.uploadDocumentFiles(request, ResourceUtil.WORKSPACE_ID, ResourceUtil.DOCUMENT_ID, ResourceUtil.VERSION, ResourceUtil.ITERATION);
+
+        //Then
+        org.junit.Assert.assertNotNull(response);
+        org.junit.Assert.assertEquals(response.getStatus(), 200);
+        org.junit.Assert.assertEquals(response.getStatusInfo(), Response.Status.OK);
     }
 
     /**
      * Test to download a document file as a guest and the document is public
+     *
      * @throws Exception
      */
     @Test
     public void testDownloadDocumentFile1() throws Exception {
 
-        given().auth().basic("asmae", "password");
-        //downloadDocumentFile
-        com.jayway.restassured.response.Response response =  get("http://www.docdokuplm.net/files/asmae/documents/doc1/B/2/Fiche%20TU%20(2).pdf");
+        //Given
+        Request request = Mockito.mock(Request.class);
 
+
+        String output = null;
+        BinaryResource binaryResource = new BinaryResource(ResourceUtil.FILENAME1, ResourceUtil.DOCUMENT_SIZE, new Date());
+        Mockito.when(documentService.canAccess(new DocumentIterationKey(ResourceUtil.WORKSPACE_ID, ResourceUtil.DOCUMENT_ID, ResourceUtil.VERSION,ResourceUtil.ITERATION))).thenReturn(false);
+        Mockito.when(documentService.getBinaryResource( ResourceUtil.WORKSPACE_ID+"/documents/" +ResourceUtil.DOCUMENT_ID+"/"+ResourceUtil.VERSION  +"/" + ResourceUtil.ITERATION + "/"+ResourceUtil.FILENAME1)).thenReturn(binaryResource);
+        Mockito.when(dataManager.getBinaryResourceInputStream(binaryResource)).thenReturn(new FileInputStream(new File(ResourceUtil.SOURCE_FILE_STORAGE+ResourceUtil.FILENAME1)));
+        //When
+        Response response = documentBinaryResource.downloadDocumentFile(request, ResourceUtil.RANGE, ResourceUtil.WORKSPACE_ID,ResourceUtil.DOCUMENT_ID, ResourceUtil.VERSION, ResourceUtil.ITERATION,ResourceUtil.FILENAME1,null,ResourceUtil.FILE_TYPE,output);
+
+        //Then
+        org.junit.Assert.assertNotNull(response);
+        org.junit.Assert.assertEquals(response.getStatus(), 200);
+        org.junit.Assert.assertEquals(response.getStatusInfo(), Response.Status.PARTIAL_CONTENT);
     }
 
     /**
      * Test to download a document file as a guest but the document is not public
+     *
      * @throws Exception
      */
     @Test
@@ -189,6 +209,7 @@ public class DocumentBinaryResourceTest {
 
     /**
      * Test to download a document file as a regular user who has read access on it
+     *
      * @throws Exception
      */
     @Test
@@ -198,6 +219,7 @@ public class DocumentBinaryResourceTest {
 
     /**
      * Test to download a document file as a regular user who has no read access on it
+     *
      * @throws Exception
      */
     @Test
@@ -207,6 +229,7 @@ public class DocumentBinaryResourceTest {
 
     /**
      * Test to download a document SCORM sub-resource
+     *
      * @throws Exception
      */
     @Test

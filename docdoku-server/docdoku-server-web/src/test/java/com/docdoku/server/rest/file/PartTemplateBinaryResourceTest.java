@@ -5,6 +5,7 @@ import com.docdoku.core.product.PartMasterTemplate;
 import com.docdoku.core.product.PartMasterTemplateKey;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
+import com.docdoku.server.rest.file.util.BinaryResourceBinaryStreamingOutput;
 import com.docdoku.server.util.PartImp;
 import com.docdoku.server.util.ResourceUtil;
 import org.apache.commons.httpclient.methods.multipart.ByteArrayPartSource;
@@ -22,6 +23,7 @@ import javax.servlet.ServletRequestWrapper;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.Part;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Request;
@@ -157,13 +159,12 @@ public class PartTemplateBinaryResourceTest {
 
 
     /**
-     * test the upload of a file (that contains special characters) in parts templates
+     * test the upload of several files to parts templates
      * @throws Exception
      */
     @Test
     public void testUploadPartTemplateSeveralFiles() throws Exception {
         //Given
-
         final File fileToUpload1  = new File(ResourceUtil.SOURCE_PART_STORAGE+ResourceUtil.FILENAME_TO_UPLOAD_PART_SPECIAL_CHARACTER);
         final File fileToUpload2  = new File(ResourceUtil.SOURCE_PART_STORAGE+ResourceUtil.TEST_PART_FILENAME1);
         final File fileToUpload3  = new File(ResourceUtil.SOURCE_PART_STORAGE+ResourceUtil.TEST_PART_FILENAME2);
@@ -186,7 +187,6 @@ public class PartTemplateBinaryResourceTest {
         if (!uploadedFile.exists()){
             uploadedFile.createNewFile();
         }
-
         //When
         Response response = partTemplateBinaryResource.uploadPartTemplateFiles(request, ResourceUtil.WORKSPACE_ID, ResourceUtil.PART_TEMPLATE_ID);
         //Then
@@ -195,8 +195,56 @@ public class PartTemplateBinaryResourceTest {
         Assert.assertEquals(response.getStatusInfo(), Response.Status.OK);
     }
 
+    /**
+     * test the download of file from part templates with non null range
+     * @throws Exception
+     */
     @Test
-    public void testDownloadPartTemplateFile() throws Exception {
+    public void testDownloadPartTemplateFileNonNullRange() throws Exception {
+
+        //Given
+        Request request = Mockito.mock(Request.class);
+        binaryResource = new BinaryResource(ResourceUtil.TEST_PART_FILENAME1,ResourceUtil.PART_SIZE,new Date());
+        File file = new File(ResourceUtil.SOURCE_PART_STORAGE+ResourceUtil.TEST_PART_FILENAME1);
+        FileInputStream fileInputStream = new FileInputStream(file);
+        Mockito.when(productService.getTemplateBinaryResource(ResourceUtil.WORKSPACE_ID+"/part-templates/" + ResourceUtil.PART_TEMPLATE_ID + "/" + ResourceUtil.TEST_PART_FILENAME1)).thenReturn(binaryResource);
+        Mockito.when(dataManager.getBinaryResourceInputStream(binaryResource)).thenReturn(fileInputStream);
+        //When
+        Response response = partTemplateBinaryResource.downloadPartTemplateFile(request,ResourceUtil.RANGE, ResourceUtil.WORKSPACE_ID, ResourceUtil.PART_TEMPLATE_ID,ResourceUtil.TEST_PART_FILENAME1);
+        //Then
+        Assert.assertNotNull(response);
+        Assert.assertEquals(response.getStatusInfo(), Response.Status.PARTIAL_CONTENT);
+        Assert.assertEquals(response.getStatus(),206);
+        Assert.assertTrue(response.hasEntity());
+        Assert.assertTrue(response.getEntity() instanceof BinaryResourceBinaryStreamingOutput);
+
+
+    }
+
+    /**
+     * test the download of file from part templates with null range
+     * @throws Exception
+     */
+    @Test
+    public void testDownloadPartTemplateFileNullRange() throws Exception {
+
+        //Given
+        Request request = Mockito.mock(Request.class);
+        binaryResource = new BinaryResource(ResourceUtil.TEST_PART_FILENAME1,ResourceUtil.PART_SIZE,new Date());
+        File file = new File(ResourceUtil.SOURCE_PART_STORAGE+ResourceUtil.TEST_PART_FILENAME1);
+        FileInputStream fileInputStream = new FileInputStream(file);
+        Mockito.when(productService.getTemplateBinaryResource(ResourceUtil.WORKSPACE_ID+"/part-templates/" + ResourceUtil.PART_TEMPLATE_ID + "/" + ResourceUtil.TEST_PART_FILENAME1)).thenReturn(binaryResource);
+        Mockito.when(dataManager.getBinaryResourceInputStream(binaryResource)).thenReturn(fileInputStream);
+        //When
+        Response response = partTemplateBinaryResource.downloadPartTemplateFile(request,null, ResourceUtil.WORKSPACE_ID, ResourceUtil.PART_TEMPLATE_ID,ResourceUtil.TEST_PART_FILENAME1);
+        //Then
+        Assert.assertNotNull(response);
+        Assert.assertEquals(response.getStatusInfo(), Response.Status.OK);
+        Assert.assertTrue(response.hasEntity());
+        Assert.assertTrue(response.getEntity() instanceof BinaryResourceBinaryStreamingOutput);
+        Assert.assertNotNull(response.getHeaders().getFirst("Content-Disposition"));
+        Assert.assertNotNull(response.getHeaders().getFirst("Content-Disposition").equals("attachement;filename=\""+ResourceUtil.TEST_PART_FILENAME1+"\""));
+
 
     }
 
