@@ -1,15 +1,17 @@
+/*global jQuery*/
 (function ($) {
     'use strict';
 
-    var removePopoversIfClickOutside = function(e){
+    function removePopoversIfClickOutside(e){
         var $elem = $(e.target);
         if (!$elem.parents('.popover').length && !$elem.hasClass('popover') ) {
             removePopovers();
         }
-    };
-    var removePopovers = function(){
+    }
+
+    function removePopovers(){
         $('.popover').remove();
-    };
+    }
 
     addEventListener('mousewheel',removePopovers);
     addEventListener('click',removePopoversIfClickOutside);
