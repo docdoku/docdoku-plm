@@ -64,8 +64,13 @@ define([
                     title: '<b>' + App.config.timeZone + '</b><br /><i class="fa fa-clock-o"></i> ' + _date + '<br />' + fromNow,
                     html: true,
                     content: '<b>UTC</b><br /><i class="fa fa-clock-o"></i>  ' + moment.utc(_date,App.config.i18n._DATE_FORMAT).zone(-offset).format(App.config.i18n._DATE_FORMAT),
-                    trigger: 'click',
+                    trigger: 'manual',
                     placement: "top"
+                }).click(function (e) {
+                    $(this).popover('show');
+                    e.stopPropagation();
+                    e.preventDefault();
+                    return false;
                 });
             });
         }
