@@ -9,7 +9,7 @@
     "requirejs-text": "~2.0.10",
     "modernizr": "~2.7.1",
     "mustache": "~0.8.2",
-    "bootstrap": "~2.2.2",
+    "bootstrap": "~2.3.2",
     "bootbox": "~3.3.0",
     "datatables": "1.9.4",
     "fontawesome": "~4.2.0",

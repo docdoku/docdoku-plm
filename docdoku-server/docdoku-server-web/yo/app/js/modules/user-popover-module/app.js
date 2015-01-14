@@ -12,9 +12,9 @@ function (Backbone, Users) {
     var tipContent = '<div>' +
         '<span class="user-status"></span>' +
         '<hr />' +
-        '<span class="btn btn-default webRTC_invite_button"><i class="fa fa-video-camera"></i> Video </span> ' +
-        '<span class="btn btn-default new_chat_session_button"><i class="fa fa-comments"></i> Chat </span> ' +
-        '<a class="btn btn-default mailto_button" href="" target="_blank"><i class="fa fa-envelope"></i> Mail </a>' +
+        '<button class="btn btn-success webRTC_invite_button"><i class="fa fa-video-camera"></i> Video </button> ' +
+        '<button class="btn btn-info new_chat_session_button"><i class="fa fa-comments"></i> Chat </button> ' +
+        '<a class="btn btn-warning mailto_button" href="" target="_blank"><i class="fa fa-envelope"></i> Mail </a>' +
         '</div>';
 
     var users = new Users();
@@ -32,6 +32,7 @@ function (Backbone, Users) {
             title: '',
             html: true,
             content: tipContent,
+            container: 'body',
             trigger: 'manual',
             placement: placement
         }).click(function (e) {
@@ -46,15 +47,15 @@ function (Backbone, Users) {
                 users.fetch({reset: true, success: function () {
 
                     // find user in collection
-                    var user = users.where({'login': userLogin})[0];
+                    var user = users.findWhere({login: userLogin});
 
                     if (user) {
+
 
                         $(that).popover('show');
 
                         // get the popover tip element
                         var $tip = $(that).data('popover').$tip;
-
                         $tip.addClass('reach-user-popover');
 
                         // Listen for the status request done
