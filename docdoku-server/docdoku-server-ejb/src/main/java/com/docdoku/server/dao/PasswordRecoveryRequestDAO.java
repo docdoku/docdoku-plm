@@ -43,10 +43,11 @@ public class PasswordRecoveryRequestDAO {
     
     public PasswordRecoveryRequest loadPasswordRecoveryRequest(String pPasswordRRUuid) throws PasswordRecoveryRequestNotFoundException {
         PasswordRecoveryRequest passwdRR = em.find(PasswordRecoveryRequest.class,pPasswordRRUuid);
-        if (passwdRR == null)
+        if (passwdRR == null) {
             throw new PasswordRecoveryRequestNotFoundException(mLocale, pPasswordRRUuid);
-        else
+        } else {
             return passwdRR;
+        }
     }
     
 

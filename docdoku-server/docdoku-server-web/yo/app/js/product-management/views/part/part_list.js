@@ -177,13 +177,16 @@ define([
         },
 
         releaseSelectedParts: function () {
-            if (confirm(App.config.i18n.RELEASE_SELECTION_QUESTION)) {
-                _(this.listItemViews).each(function (view) {
-                    if (view.isChecked()) {
-                        view.model.release();
-                    }
-                });
-            }
+            var that = this;
+            bootbox.confirm(App.config.i18n.RELEASE_SELECTION_QUESTION, function(result){
+                if(result){
+                    _(that.listItemViews).each(function (view) {
+                        if (view.isChecked()) {
+                            view.model.release();
+                        }
+                    });
+                }
+            });
         },
 
         getSelectedPart: function () {
@@ -233,7 +236,7 @@ define([
                 sDom: 'ft',
                 aoColumnDefs: [
                     { 'bSortable': false, 'aTargets': [ 0, 11, 12 ] },
-                    { 'sType': App.config.i18n.DATE_SORT, 'aTargets': [7, 8] }
+                    { 'sType': App.config.i18n.DATE_SORT, 'aTargets': [8, 9] }
                 ]
             });
             this.$el.parent().find('.dataTables_filter input').attr('placeholder', App.config.i18n.FILTER);

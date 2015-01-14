@@ -28,7 +28,7 @@ define([], function () {
             _.each(userGroups, function (group) {
 
                 var groupFullAccess = _(groupEntries).filter(function (a) {
-                    return a.key === group && a.value === 'FULL_ACCESS';
+                    return a.key === group.memberId && a.value === 'FULL_ACCESS';
                 })[0];
 
                 if (groupFullAccess) {
@@ -53,7 +53,7 @@ define([], function () {
             _.each(userGroups, function (group) {
 
                 var groupFullAccess = _(groupEntries).filter(function (a) {
-                    return a.key === group && a.value === 'READ_ONLY';
+                    return a.key === group.memberId && a.value === 'READ_ONLY';
                 })[0];
 
                 if (groupFullAccess) {
@@ -78,7 +78,7 @@ define([], function () {
             _.each(userGroups, function (group) {
 
                 var groupForbidden = _(groupEntries).filter(function (a) {
-                    return a.key === group && a.value === 'FORBIDDEN';
+                    return a.key === group.memberId && a.value === 'FORBIDDEN';
                 })[0];
 
                 if (groupForbidden) {

@@ -47,10 +47,11 @@ public class TaskDAO {
     
     public Task loadTask(TaskKey pTaskKey) throws TaskNotFoundException {
         Task task = em.find(Task.class,pTaskKey);
-        if (task == null)
+        if (task == null) {
             throw new TaskNotFoundException(mLocale, pTaskKey);
-        else
+        } else {
             return task;
+        }
     }
     
     public Task[] findTasks(User pUser){
@@ -59,8 +60,9 @@ public class TaskDAO {
         query.setParameter("user",pUser);
         List listTasks = query.getResultList();
         tasks = new Task[listTasks.size()];
-        for(int i=0;i<listTasks.size();i++)
-            tasks[i]=(Task) listTasks.get(i);
+        for(int i=0;i<listTasks.size();i++) {
+            tasks[i] = (Task) listTasks.get(i);
+        }
         
         return tasks;
     }

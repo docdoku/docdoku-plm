@@ -65,7 +65,7 @@ public class BinaryResourceDownloadResponseBuilder {
                     .header("Content-Type", binaryResourceDownloadMeta.getContentType())
                     .entity(new BinaryResourceBinaryStreamingOutput(binaryContentInputStream, 0, length - 1, length));
 
-            // Converting files modify its length so we don't specify the lenght on converted content
+            // Converting files modify its length so we don't specify the length on converted content
             if(!binaryResourceDownloadMeta.isConverted()){
                 responseBuilder.header("Content-Length", length);
             }
@@ -86,9 +86,16 @@ public class BinaryResourceDownloadResponseBuilder {
         }
 
         String[] ranges = range.split("=")[1].split("-");
-        final int from = Integer.parseInt(ranges[0]);
+        final long from = Integer.parseInt(ranges[0]);
+        long to;
+        if(ranges.length>1){
+            to = Integer.parseInt(ranges[1]);
+            to = (to> length -1) ? length-1 : to;
+        }else{
+            to = length - 1;
+        }
 
-        final String responseRange = String.format("bytes %d-%d/%d", from, length - 1, length);
+        final String responseRange = String.format("bytes %d-%d/%d", from, to, length);
 
         return Response.status(Response.Status.PARTIAL_CONTENT)
                 .header("Content-Disposition", binaryResourceDownloadMeta.getContentDisposition())

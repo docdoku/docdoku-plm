@@ -89,7 +89,7 @@ public class PartPermalinkServlet extends HttpServlet {
 
         String geometryFileURI = "";
         if(partRevision.getLastIteration().getGeometries().size()>0){
-            geometryFileURI = "/api/files/"+partRevision.getLastIteration().getGeometries().get(0).getFullName();
+            geometryFileURI = "/api/files/"+partRevision.getLastIteration().getSortedGeometries().get(0).getFullName();
         }
 
         pRequest.setAttribute("partRevision", partRevision);

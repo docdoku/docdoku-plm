@@ -109,11 +109,17 @@ public class Milestone implements Serializable {
         this.title = title;
     }
 
-    public ACL getACL() {return acl;}
-    public void setACL(ACL acl) {this.acl = acl;}
+    public ACL getACL() {
+        return acl;
+    }
+    public void setACL(ACL acl) {
+        this.acl = acl;
+    }
 
     @Override
-    public int hashCode() {return id;}
+    public int hashCode() {
+        return id;
+    }
     
     @Override
     public boolean equals(Object pObj) {

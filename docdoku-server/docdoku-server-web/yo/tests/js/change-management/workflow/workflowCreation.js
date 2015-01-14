@@ -30,7 +30,7 @@ casper.test.begin('Workflow creation tests suite',8, function workflowCreationTe
      * Wait for workflow button
      */
     casper.then(function waitForNewWorkflowButton(){
-        this.waitForSelector('.actions .new',function clickOnNewWorkflowButton(){
+        this.waitForSelector('.actions .new:enabled',function clickOnNewWorkflowButton(){
             this.click('.actions .new');
             this.test.assert(true,'New Workflow button is displayed');
         },function fail() {

@@ -22,7 +22,11 @@ package com.docdoku.core.meta;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
 /**
  * Defines a date type custom attribute of a document.
@@ -48,7 +52,9 @@ public class InstanceDateAttribute extends InstanceAttribute{
     }
 
     @Override
-    public Date getValue() {return dateValue;}
+    public Date getValue() {
+        return dateValue;
+    }
     @Override
     public boolean setValue(Object pValue) {
         if(pValue instanceof Date){
@@ -56,20 +62,34 @@ public class InstanceDateAttribute extends InstanceAttribute{
             return true;
         }else if(pValue instanceof String){
             try {
-                dateValue = new Date(Long.parseLong((String) pValue));
+                TimeZone tz = TimeZone.getTimeZone("UTC");
+                DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+                df.setTimeZone(tz);
+                Date date = df.parse((String) pValue);
+                dateValue = date;
                 return true;
-            }catch(NumberFormatException e){
-                dateValue = null;
-                return false;
+            } catch (ParseException pe) {
+                try {
+                    dateValue = new Date(Long.parseLong((String) pValue));
+                    return true;
+                }catch(NumberFormatException nfe){
+                    dateValue = null;
+                    return false;
+                }
             }
+
         }else{
             dateValue=null;
             return false;
         }
     }
 
-    public Date getDateValue() {return dateValue;}
-    public void setDateValue(Date dateValue) {this.dateValue = dateValue;}
+    public Date getDateValue() {
+        return dateValue;
+    }
+    public void setDateValue(Date dateValue) {
+        this.dateValue = dateValue;
+    }
     
     
     /**

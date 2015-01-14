@@ -9,10 +9,15 @@ var contextPath = casper.cli.get("contextPath");
 
 var homeUrl = 'http://'+domain+':'+port + contextPath;
 
+function twoDigit(n){
+    'use strict';
+    return n > 9 ? n : "0" + n;
+}
+
 var tomorrow = new Date(Date.now()+86400000);
 var yesterday = new Date(Date.now()-86400000);
-var tomorrowValue = tomorrow.getFullYear()+'-'+(tomorrow.getMonth()+1)+'-'+tomorrow.getDate();
-var yesterdayValue = yesterday.getFullYear()+'-'+(yesterday.getMonth()+1)+'-'+yesterday.getDate();
+var tomorrowValue = tomorrow.getFullYear()+'-'+twoDigit(tomorrow.getMonth()+1)+'-'+twoDigit(tomorrow.getDate());
+var yesterdayValue = yesterday.getFullYear()+'-'+twoDigit(yesterday.getMonth()+1)+'-'+twoDigit(yesterday.getDate());
 
 var documents = {
 	template1 : {
@@ -49,7 +54,27 @@ var products = {
 	product1: {
 		number : '000-AAA-CasperJsTestProduct',
 		name : 'CasperJsTestProduct'
-	}
+	},
+    assembly:{
+        parts: {
+            '100-AAA-CasperJsAssemblyP1':{
+                tx:100,ty:150,tz:-140,
+                rx:Math.PI/2,ry:Math.PI/4,rz:-Math.PI/2
+            },
+            '200-AAA-CasperJsAssemblyP2':{
+                tx:-100,ty:-150,tz:-140,
+                rx:-Math.PI/2,ry:-Math.PI/4,rz:-Math.PI/2
+            },
+            '300-AAA-CasperJsAssemblyP3':{
+                tx:-100,ty:150,tz:-140,
+                rx:Math.PI/2,ry:Math.PI/4,rz:-Math.PI/2
+            },
+            '400-AAA-CasperJsAssemblyP4':{
+                tx:100,ty:-150,tz:140,
+                rx:-Math.PI/2,ry:Math.PI/4,rz:Math.PI/2
+            }
+        }
+    }
 };
 
 var productInstances = {
@@ -113,6 +138,7 @@ var workflows = {
 
 var urls = {
 	productManagement : homeUrl+'product-management/#'+workspace,
+    productStructure : homeUrl+'product-structure/#'+workspace+'/' + products.product1.number,
 	documentManagement : homeUrl+'document-management/#'+workspace,
 	changeManagement : homeUrl+'change-management/#'+workspace,
     documentPermalink:homeUrl+'documents/'+workspace+'/'+documents.document1.number+'/A',
@@ -134,5 +160,8 @@ var apiUrls = {
 	deleteProduct : homeUrl+'api/workspaces/'+workspace+'/products/'+products.product1.number,
 	deleteFolder : homeUrl+'api/workspaces/'+workspace+'/folders/'+workspace+":"+documents.folder1,
 	getBaselines : homeUrl+'api/workspaces/'+workspace+'/products/'+products.product1.number+'/baselines',
-    deleteProductInstance : homeUrl+'api/workspaces/'+workspace+'/products/'+products.product1.number+'/product-instances/'+productInstances.productInstance1.serialNumber
+    deleteProductInstance : homeUrl+'api/workspaces/'+workspace+'/products/'+products.product1.number+'/product-instances/'+productInstances.productInstance1.serialNumber,
+    getWorkflows : homeUrl+'api/workspaces/'+workspace+'/workflows',
+    getRoles : homeUrl+'api/workspaces/'+workspace+'/roles',
+    getTags : homeUrl+'api/workspaces/'+workspace+'/tags'
 };

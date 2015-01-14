@@ -115,11 +115,15 @@ public class SearchQuery  implements Serializable {
         public String getName() {
             return name;
         }
-        public String getNameWithoutWhiteSpace(){ return this.name.replaceAll(" ","_"); }
+        public String getNameWithoutWhiteSpace(){
+            return this.name.replaceAll(" ","_");
+        }
         public void setName(String name) {
             this.name = name;
         }
-        public AbstractAttributeQuery(){}
+        public AbstractAttributeQuery(){
+
+        }
         public AbstractAttributeQuery(String name){
             this.name=name;
         }

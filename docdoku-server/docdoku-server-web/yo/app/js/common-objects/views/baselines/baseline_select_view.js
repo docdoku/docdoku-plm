@@ -1,4 +1,4 @@
-/*global define,App*/
+/*global define,bootbox,App*/
 define([
 	'backbone',
 	'mustache',
@@ -55,17 +55,25 @@ define([
 
 		onCollectionChange:function(){
 			var that = this ;
-			if(this.$select){
-				this.$select.find('option').remove();
-				this.$select.append('<option value="latest">'+App.config.i18n.LATEST_SHORT+'</option>');
-				//this.$select.append('<option value="released">'+App.config.i18n.RELEASED_SHORT+'</option>');
-				this.collection.each(function(baseline){
-					that.$select.append('<option value="'+baseline.getId()+'">'+baseline.getName()+'</option>');
-				});
-			}
-			if(App.config.configSpec){
-				this.$select.val(App.config.configSpec);
-			}
+            if(this.$select){
+                this.$select.find('option').remove();
+
+                this.collection.getLastReleaseRevision({
+                    success : function (lastReleaseRevision){
+                        if(lastReleaseRevision){
+                            that.$select.prepend('<option value="released">'+App.config.i18n.RELEASED_SHORT+'</option>');
+                        }
+                    }
+                });
+
+                this.$select.append('<option value="latest">'+App.config.i18n.LATEST_SHORT+'</option>');
+                this.collection.each(function(baseline){
+                    that.$select.append('<option value="'+baseline.getId()+'">'+baseline.getName()+'</option>');
+                });
+            }
+            if(App.config.configSpec){
+                this.$select.val(App.config.configSpec);
+            }
 		},
 
 		onSelectorChanged:function(e){
@@ -86,7 +94,7 @@ define([
 			if(this.type==='document'){
 				snapBaselineView = new SnapBaselineView({type: 'DOCUMENT', collection: this.collection});
 			}
-			//Todo add baseline on product-structure
+			//Todo Allow to add baseline on product-structure
 			$('body').append(snapBaselineView.render().el);
 			snapBaselineView.openModal();
 		},
@@ -94,22 +102,23 @@ define([
 		deleteBaseline:function(){
 			var that = this;
 
-			if(confirm(App.config.i18n.DELETE_SELECTION_QUESTION)){
-				this.collection.each(function(baseline){
-
-					if(parseInt(that.$select.val(),10)===baseline.getId()){
-						baseline.destroy({
-							dataType: 'text', // server doesn't send a json hash in the response body
-							success:function(){
-								that.$select.find('option[value='+baseline.getId()+']').remove();
-								that.$select.val('latest').change();
-							},
-							error:function(model,err){
-								alert(err.responseText);
-						}});
-					}
-				});
-			}
+            bootbox.confirm(App.config.i18n.DELETE_SELECTION_QUESTION, function(result){
+                if(result){
+                    that.collection.each(function(baseline){
+                        if(parseInt(that.$select.val(),10)===baseline.getId()){
+                            baseline.destroy({
+                                dataType: 'text', // server doesn't send a json hash in the response body
+                                success:function(){
+                                    that.$select.find('option[value='+baseline.getId()+']').remove();
+                                    that.$select.val('latest').change();
+                                },
+                                error:function(model,err){
+                                    alert(err.responseText);
+                                }});
+                        }
+                    });
+                }
+            });
 		},
 
 		showMenu: function(){

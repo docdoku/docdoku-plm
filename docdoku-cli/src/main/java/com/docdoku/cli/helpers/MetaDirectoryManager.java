@@ -42,8 +42,9 @@ public class MetaDirectoryManager {
 
     public MetaDirectoryManager(File workingDirectory) throws IOException {
         this.metaDirectory=new File(workingDirectory,META_DIRECTORY_NAME);
-        if(!metaDirectory.exists())
+        if(!metaDirectory.exists()) {
             metaDirectory.mkdir();
+        }
 
         File indexFile = new File(metaDirectory,INDEX_FILE_NAME);
         indexProps = new Properties();
@@ -58,8 +59,9 @@ public class MetaDirectoryManager {
 
     private void saveIndex() throws IOException {
         File indexFile = new File(metaDirectory,INDEX_FILE_NAME);
-        if(!indexFile.exists())
+        if(!indexFile.exists()) {
             indexFile.createNewFile();
+        }
 
         OutputStream out = new BufferedOutputStream(new FileOutputStream(indexFile));
         indexProps.storeToXML(out, null);

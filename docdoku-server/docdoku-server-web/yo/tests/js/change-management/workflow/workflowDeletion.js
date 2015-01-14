@@ -43,11 +43,23 @@ casper.test.begin('Workflow Deletion tests suite',2, function workflowDeletionTe
      */
     casper.then(function checkForDeleteButton(){
         this.waitForSelector('.actions .delete',function buttonDisplayed(){
-            this.click('.actions .delete');
             this.test.assert(true,'Delete button displayed');
+            this.click('.actions .delete');
         },function fail() {
             this.capture('screenshot/workflowDeletion/checkForDeleteButton-error.png');
             this.test.assert(false,'Delete workflow button can not be found');
+        });
+    });
+
+    /**
+    * Check if the delete button appears, and click it
+    */
+    casper.then(function waitForConfirmationModal(){
+        this.waitForSelector('.bootbox',function confirmWorkflowDeletion(){
+            this.click('.bootbox .modal-footer .btn-primary');
+        },function fail() {
+            this.capture('screenshot/workflowDeletion/waitForConfirmationModal-error.png');
+            this.test.assert(false,'Workflow deletion confirmation modal can not be found');
         });
     });
 

@@ -38,7 +38,9 @@ public class SharedDocumentDTO implements Serializable {
     private String documentMasterId;
     private String documentMasterVersion;
 
-    public SharedDocumentDTO(){}
+    public SharedDocumentDTO(){
+
+    }
 
     public SharedDocumentDTO(String uuid, String workspaceId, String password, Date expireDate, String userLogin) {
         this.uuid = uuid;

@@ -5,8 +5,9 @@ define([
     'common-objects/models/part',
     'text!templates/part/part_list_item.html',
     'common-objects/views/share/share_entity',
-    'common-objects/views/part/part_modal_view'
-], function (Backbone, Mustache, Part, template, ShareView, PartModalView) {
+    'common-objects/views/part/part_modal_view',
+    'common-objects/utils/date'
+], function (Backbone, Mustache, Part, template, ShareView, PartModalView, date) {
     'use strict';
     var PartListItemView = Backbone.View.extend({
 
@@ -32,6 +33,7 @@ define([
                 this.trigger('selectionChanged', this);
             }
             this.bindUserPopover();
+            date.dateHelper(this.$('.date-popover'));
             this.trigger('rendered', this);
             return this;
         },
@@ -57,13 +59,12 @@ define([
 
         toPartModal: function () {
             var self = this;
-            var model = new Part({partKey: self.model.getNumber() + '-' + self.model.getVersion()});
-            model.fetch().success(function () {
-                new PartModalView({
-                    model: model
-                }).show();
+            self.model.fetch().success(function () {
+                var partModalView = new PartModalView({
+                    model: self.model
+                });
+                partModalView.show();
             });
-
         },
 
         bindUserPopover: function () {
@@ -74,12 +75,9 @@ define([
         },
 
         sharePart: function () {
-            var that = this;
-
-            var shareView = new ShareView({model: that.model, entityType: 'parts'});
+            var shareView = new ShareView({model: this.model, entityType: 'parts'});
             window.document.body.appendChild(shareView.render().el);
             shareView.openModal();
-
         }
 
     });

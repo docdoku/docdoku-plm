@@ -49,7 +49,7 @@ define([
             var self = this;
             if (list) {
                 list.each(function (milestone) {
-                    self.$inputRequestMilestone.append('<option value="' + milestone.get('id') + ' " ' + '>' + milestone.get('title') + '</option>');
+                    self.$inputRequestMilestone.append('<option value="' + milestone.get('id') + '" ' + '>' + milestone.get('title') + '</option>');
                 });
             }
         },
@@ -57,20 +57,20 @@ define([
             var self = this;
             if (list) {
                 list.each(function (user) {
-                    self.$inputRequestAssignee.append('<option value="' + user.get('login') + ' " ' + '>' + user.get('name') + '</option>');
+                    self.$inputRequestAssignee.append('<option value="' + user.get('login') + '" ' + '>' + user.get('name') + '</option>');
                 });
             }
         },
         fillPriorityList: function () {
             var self = this;
             _.each(this.model.priorities, function(priority){
-                self.$inputRequestPriority.append('<option value="' + priority + ' " ' + '>' + priority + '</option>');
+                self.$inputRequestPriority.append('<option value="' + priority + '" ' + '>' + priority + '</option>');
             });
         },
         fillCategoryList: function () {
             var self = this;
             _.each(this.model.categories, function(category){
-                self.$inputRequestCategory.append('<option value="' + category + ' " ' + '>' + category + '</option>');
+                self.$inputRequestCategory.append('<option value="' + category + '" ' + '>' + category + '</option>');
             });
         },
 

@@ -6,7 +6,7 @@ if(!workspace){
 var App = {
     debug:false,
 	config:{
-		workspaceId: workspace[1] || null,
+		workspaceId: decodeURIComponent(workspace[1]).trim() || null,
 		login: '',
 		groups: [],
 		contextPath: '',
@@ -28,6 +28,7 @@ require.config({
     shim: {
         jqueryUI: { deps: ['jquery'], exports: 'jQuery' },
         effects: { deps: ['jquery'], exports: 'jQuery' },
+        popoverUtils: { deps: ['jquery'], exports: 'jQuery' },
         inputValidity: { deps: ['jquery'], exports: 'jQuery' },
         bootstrap: { deps: ['jquery', 'jqueryUI'], exports: 'jQuery' },
         bootbox: { deps: ['jquery'], exports: 'jQuery' },
@@ -51,11 +52,14 @@ require.config({
         bootstrapSwitch:'../../bower_components/bootstrap-switch/static/js/bootstrap-switch',
         date:'../../bower_components/date.format/date.format',
         unorm:'../../bower_components/unorm/lib/unorm',
+        moment:'../../bower_components/moment/min/moment-with-locales',
+        momentTimeZone:'../../bower_components/moment-timezone/builds/moment-timezone-with-data',
         localization: '../localization',
         modules: '../modules',
         'common-objects': '../common-objects',
         userPopover: 'modules/user-popover-module/app',
         effects: '../lib/effects',
+        popoverUtils: '../lib/popover.utils',
         datatablesOsortExt: '../lib/datatables.oSort.ext',
         stringprototype: '../lib/string.prototype',
         inputValidity: '../lib/input-validity'
@@ -70,6 +74,7 @@ require.config({
         'bootstrapSwitch',
         'jqueryUI',
         'effects',
+        'popoverUtils',
         'datatables',
         'datatablesOsortExt',
         'stringprototype',

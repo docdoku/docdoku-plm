@@ -6,17 +6,15 @@ import java.io.InputStream;
 
 public class ScormUtil {
 
-    private ScormUtil(){}
+    private ScormUtil(){
+
+    }
 
     public static final String IMS_MANIFEST = "imsmanifest.xml";
     public static final String SCORM_FOLDER = "scorm";
 
     public static boolean isScormArchive(String fileName, InputStream inputStream) {
-        if (FileIO.isArchiveFile(fileName)) {
-            return FileIO.existsInArchive(inputStream, IMS_MANIFEST);
-        } else {
-            return false;
-        }
+        return FileIO.isArchiveFile(fileName) && FileIO.existsInArchive(inputStream, IMS_MANIFEST);
     }
 
     public static String getScormSubResourceVirtualPath(String uriSubResource) {

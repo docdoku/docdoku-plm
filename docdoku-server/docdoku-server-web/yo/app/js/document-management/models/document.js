@@ -1,4 +1,4 @@
-/*global $,define,App*/
+/*global $,_,define,App*/
 define(['backbone', 'collections/document_iteration', 'common-objects/utils/acl-checker'], function (Backbone, DocumentIterationList, ACLChecker) {
 	'use strict';
 	var Document = Backbone.Model.extend({
@@ -18,11 +18,11 @@ define(['backbone', 'collections/document_iteration', 'common-objects/utils/acl-
 		},
 
 		baseUrl: function () {
-			return this.urlRoot() + '/' + this.getId();
+			return this.urlRoot() + '/' + encodeURIComponent(this.getId());
 		},
 
 		getAbortedWorkflowsUrl: function () {
-			return this.urlRoot() + '/' + this.getId() + '/aborted-workflows';
+			return this.urlRoot() + '/' + encodeURIComponent(this.getId()) + '/aborted-workflows';
 		},
 
 		parse: function (data) {

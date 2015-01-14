@@ -1,4 +1,4 @@
-/*global _,define,App*/
+/*global _,define,bootbox,App*/
 define([
 	'backbone',
 	'views/content',
@@ -126,11 +126,14 @@ define([
 		},
 
 		actionUndocheckout: function () {
-			if (confirm(App.config.i18n.UNDO_CHECKOUT_QUESTION)) {
-				this.listView.eachChecked(function (view) {
-					view.model.undocheckout();
-				});
-			}
+            var that = this ;
+            bootbox.confirm(App.config.i18n.UNDO_CHECKOUT_QUESTION, function(result){
+                if(result){
+                    that.listView.eachChecked(function (view) {
+                        view.model.undocheckout();
+                    });
+                }
+            });
 			return false;
 		},
 
@@ -170,22 +173,24 @@ define([
 
 		actionDelete: function () {
 			var that = this;
-			if (confirm(App.config.i18n.DELETE_SELECTION_QUESTION)) {
-				this.listView.eachChecked(function (view) {
-					view.model.destroy({
-						dataType: 'text', // server doesn't send a json hash in the response body
-						success: function () {
-							that.listView.redraw();
-							that.collection.fetch();
-						},
-						error: function (model, err) {
-							alert(err.responseText);
-							that.listView.redraw();
-							that.collection.fetch();
-						}
-					});
-				});
-			}
+            bootbox.confirm(App.config.i18n.DELETE_SELECTION_QUESTION, function(result){
+                if(result){
+                    that.listView.eachChecked(function (view) {
+                        view.model.destroy({
+                            dataType: 'text', // server doesn't send a json hash in the response body
+                            success: function () {
+                                that.listView.redraw();
+                                that.collection.fetch();
+                            },
+                            error: function (model, err) {
+                                alert(err.responseText);
+                                that.listView.redraw();
+                                that.collection.fetch();
+                            }
+                        });
+                    });
+                }
+            });
 			return false;
 		},
 

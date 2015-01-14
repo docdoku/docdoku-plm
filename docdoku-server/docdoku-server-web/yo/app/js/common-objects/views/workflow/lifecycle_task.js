@@ -115,7 +115,7 @@ define([
                     data: dto,
                     contentType: 'application/json;charset=UTF-8',
                     success: function () {
-                        this.task.closureDate = new Date().getTime();
+                        this.task.closureDate = Date.now();
                         this.task.closureComment = closureComment;
                         this.task.signature = signature;
                         this.task.status = 'approved';
@@ -135,7 +135,7 @@ define([
                     data: dto,
                     contentType: 'application/json;charset=UTF-8',
                     success: function () {
-                        this.task.closureDate = new Date().getTime();
+                        this.task.closureDate = Date.now();
                         this.task.closureComment = closureComment;
                         this.task.signature = signature;
                         this.task.status = 'rejected';

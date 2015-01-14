@@ -18,8 +18,8 @@
 <td>{{model.getName}}</td>
 <td><a class="author-popover">{{model.getAuthorName}}</a></td>
 <td>{{model.getLifeCycleState}}</td>
-<td>{{model.getFormattedCreationDate}}</td>
-<td>{{model.getFormattedCheckoutDate}}</td>
+<td><a class="date-popover">{{model.getFormattedCreationDate}}</a></td>
+<td><a class="date-popover">{{model.getFormattedCheckoutDate}}</a></td>
 <td><a class="checkout-user-popover">{{model.getCheckOutUserName}}</a></td>
 <td class="part-acl-info">
     {{#model.isReadOnly}}

@@ -22,13 +22,14 @@ package com.docdoku.server.resourcegetters;
 
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.document.DocumentIteration;
+import com.docdoku.core.exceptions.ConvertedResourceException;
 
 import java.io.InputStream;
 import java.util.Locale;
 
 public interface DocumentResourceGetter {
     boolean canGetConvertedResource(String outputFormat, BinaryResource binaryResource);
-    InputStream getConvertedResource(String outputFormat, BinaryResource binaryResource, DocumentIteration docI, Locale locale) throws Exception;
+    InputStream getConvertedResource(String outputFormat, BinaryResource binaryResource, DocumentIteration docI, Locale locale) throws ConvertedResourceException;
     boolean canGetSubResourceVirtualPath(BinaryResource binaryResource);
     String getSubResourceVirtualPath(BinaryResource binaryResource, String subResourceUri);
 }

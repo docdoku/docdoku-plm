@@ -45,13 +45,19 @@ public class InstanceBooleanAttribute extends InstanceAttribute{
     }
 
     @Override
-    public Boolean getValue() {return booleanValue;}
+    public Boolean getValue() {
+        return booleanValue;
+    }
     @Override
     public boolean setValue(Object pValue) {
         booleanValue=Boolean.parseBoolean(pValue + "");
         return true;
     }
 
-    public boolean isBooleanValue() {return booleanValue;}
-    public void setBooleanValue(boolean booleanValue) {this.booleanValue = booleanValue;}
+    public boolean isBooleanValue() {
+        return booleanValue;
+    }
+    public void setBooleanValue(boolean booleanValue) {
+        this.booleanValue = booleanValue;
+    }
 }

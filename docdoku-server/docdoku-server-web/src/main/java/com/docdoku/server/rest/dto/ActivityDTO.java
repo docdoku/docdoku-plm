@@ -60,7 +60,6 @@ public class ActivityDTO implements Serializable {
     public Integer getTasksToComplete() {
         return tasksToComplete;
     }
-
     public void setTasksToComplete(Integer tasksToComplete) {
         this.tasksToComplete = tasksToComplete;
     }
@@ -68,7 +67,6 @@ public class ActivityDTO implements Serializable {
     public Type getType() {
         return type;
     }
-
     public void setType(Type type) {
         this.type = type;
     }
@@ -76,7 +74,6 @@ public class ActivityDTO implements Serializable {
     public List<TaskDTO> getTasks() {
         return tasks;
     }
-
     public void setTasks(List<TaskDTO> tasks) {
         this.tasks = tasks;
     }
@@ -84,7 +81,6 @@ public class ActivityDTO implements Serializable {
     public boolean isStopped() {
         return stopped;
     }
-
     public void setStopped(boolean stopped) {
         this.stopped = stopped;
     }
@@ -92,23 +88,27 @@ public class ActivityDTO implements Serializable {
     public boolean isComplete() {
         return complete;
     }
-
     public void setComplete(boolean complete) {
         this.complete = complete;
     }
 
-    public boolean isInProgress() { return inProgress; }
+    public boolean isInProgress() {
+        return inProgress;
+    }
+    public void setInProgress(boolean inProgress) {
+        this.inProgress = inProgress;
+    }
 
-    public void setInProgress(boolean inProgress) { this.inProgress = inProgress;}
-
-    public boolean isToDo() { return toDo; }
-
-    public void setToDo(boolean toDo) { this.toDo = toDo; }
+    public boolean isToDo() {
+        return toDo;
+    }
+    public void setToDo(boolean toDo) {
+        this.toDo = toDo;
+    }
 
     public String getLifeCycleState() {
         return lifeCycleState;
     }
-
     public void setLifeCycleState(String lifeCycleState) {
         this.lifeCycleState = lifeCycleState;
     }

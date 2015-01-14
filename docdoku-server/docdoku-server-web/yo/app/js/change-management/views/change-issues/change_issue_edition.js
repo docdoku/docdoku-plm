@@ -48,21 +48,21 @@ function (Backbone, Mustache, template, UserList, Tag, TagView, LinkedDocumentsV
         fillUserList: function (list) {
             var self = this;
             list.each(function (user) {
-                self.$inputIssueAssignee.append('<option value="' + user.get('login') + ' " ' + '>' + user.get('name') + '</option>');
+                self.$inputIssueAssignee.append('<option value="' + user.get('login') + '" ' + '>' + user.get('name') + '</option>');
             });
             this.$inputIssueAssignee.val(this.model.getAssignee());
         },
         fillPriorityList: function () {
 	        var self = this;
 	        _.each(this.model.priorities, function(priority){
-		        self.$inputIssuePriority.append('<option value="' + priority + ' " ' + '>' + priority + '</option>');
+		        self.$inputIssuePriority.append('<option value="' + priority + '" ' + '>' + priority + '</option>');
 	        });
             this.$inputIssuePriority.val(this.model.getPriority());
         },
         fillCategoryList: function () {
 	        var self = this;
 	        _.each(this.model.categories, function(category){
-		        self.$inputIssueCategory.append('<option value="' + category + ' " ' + '>' + category + '</option>');
+		        self.$inputIssueCategory.append('<option value="' + category + '" ' + '>' + category + '</option>');
 	        });
             this.$inputIssueCategory.val(this.model.getCategory());
         },

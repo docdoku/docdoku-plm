@@ -21,6 +21,7 @@ package com.docdoku.server.resourcegetters;
 
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.document.DocumentIteration;
+import com.docdoku.core.exceptions.ConvertedResourceException;
 import com.docdoku.core.exceptions.StorageException;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.services.IDocumentManagerLocal;
@@ -56,42 +57,49 @@ public class OfficeDocumentResourceGetter implements DocumentResourceGetter {
     }
 
     @Override
-    public InputStream getConvertedResource(String outputFormat, BinaryResource binaryResource, DocumentIteration docI, Locale locale)
-            throws StorageException, IOException, DocumentException {
+    public InputStream getConvertedResource(String outputFormat, BinaryResource binaryResource, DocumentIteration docI, Locale locale) throws ConvertedResourceException {
+        try {
+            InputStream inputStream=null;
 
-        String extension = FileIO.getExtension(binaryResource.getName());
-
-        InputStream inputStream = null;
-
-        if ("pdf".equals(outputFormat)) {
-
-            if ("pdf".equals(extension)) {
-                inputStream = dataManager.getBinaryResourceInputStream(binaryResource);
-            } else {
-                String subResourceVirtualPath = FileIO.getFileNameWithoutExtension(binaryResource.getName()) + ".pdf";
-                if (dataManager.exists(binaryResource, subResourceVirtualPath) &&
-                        dataManager.getLastModified(binaryResource, subResourceVirtualPath).after(binaryResource.getLastModified())) {
-                    //if the resource is already converted, return it
-                    inputStream = dataManager.getBinarySubResourceInputStream(binaryResource, subResourceVirtualPath);
-                } else {
-                    //copy the converted file for further reuse
-                    OutputStream outputStream = dataManager.getBinarySubResourceOutputStream(binaryResource, subResourceVirtualPath);
-                    InputStream binaryResourceInputStream = dataManager.getBinaryResourceInputStream(binaryResource);
-                    try (InputStream inputStreamConverted = fileConverter.convertToPDF(binaryResource.getName(),
-                                                                                       binaryResourceInputStream)) {
-                        ByteStreams.copy(inputStreamConverted, outputStream);
-                    } finally {
-                        binaryResourceInputStream.close();
-                        outputStream.flush();
-                        outputStream.close();
-                    }
-                    inputStream = dataManager.getBinarySubResourceInputStream(binaryResource, subResourceVirtualPath);
-                }
+            if ("pdf".equals(outputFormat)) {
+                inputStream = getPdfConvertedResource(binaryResource);
             }
-        }
 
-        if("documents".equals(binaryResource.getOwnerType()) && docI != null){
-            return TitleBlockGenerator.addBlockTitleToPDF(inputStream, docI, locale);
+            if ("documents".equals(binaryResource.getOwnerType()) && docI != null){
+                return TitleBlockGenerator.addBlockTitleToPDF(inputStream, docI, locale);
+            }
+
+            return inputStream;
+        } catch (StorageException | DocumentException | IOException e) {
+            throw new ConvertedResourceException(Locale.getDefault(),e);
+        }
+    }
+
+    private InputStream getPdfConvertedResource(BinaryResource binaryResource) throws StorageException, IOException {
+        String extension = FileIO.getExtension(binaryResource.getName());
+        InputStream inputStream;
+
+        if ("pdf".equals(extension)) {
+            inputStream = dataManager.getBinaryResourceInputStream(binaryResource);
+        } else {
+            String subResourceVirtualPath = FileIO.getFileNameWithoutExtension(binaryResource.getName()) + ".pdf";
+            if (dataManager.exists(binaryResource, subResourceVirtualPath) &&
+                    dataManager.getLastModified(binaryResource, subResourceVirtualPath).after(binaryResource.getLastModified())) {
+                //if the resource is already converted, return it
+                inputStream = dataManager.getBinarySubResourceInputStream(binaryResource, subResourceVirtualPath);
+            } else {
+                //copy the converted file for further reuse
+                OutputStream outputStream = dataManager.getBinarySubResourceOutputStream(binaryResource, subResourceVirtualPath);
+                InputStream binaryResourceInputStream = dataManager.getBinaryResourceInputStream(binaryResource);
+                try (InputStream inputStreamConverted = fileConverter.convertToPDF(binaryResource.getName(),binaryResourceInputStream)) {
+                    ByteStreams.copy(inputStreamConverted, outputStream);
+                } finally {
+                    binaryResourceInputStream.close();
+                    outputStream.flush();
+                    outputStream.close();
+                }
+                inputStream = dataManager.getBinarySubResourceInputStream(binaryResource, subResourceVirtualPath);
+            }
         }
 
         return inputStream;

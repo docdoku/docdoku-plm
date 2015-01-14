@@ -15,7 +15,7 @@
             });
         })
 
-        .controller('WorkspaceController', function ($scope, $filter, $window, $timeout, $routeParams, CliService, ConfigurationService, NotificationService) {
+        .controller('WorkspaceController', function ($scope, $filter, $window, $timeout, $routeParams, CliService, ConfigurationService, NotificationService, WorkspaceService) {
 
             $scope.workspace = $routeParams.workspace;
             $scope.count = 0;
@@ -33,6 +33,8 @@
                 released: false,
                 checkouted: false
             };
+
+            WorkspaceService.addLastVisited($scope.workspace);
 
             var resetList = function () {
                 $scope.start = 0;

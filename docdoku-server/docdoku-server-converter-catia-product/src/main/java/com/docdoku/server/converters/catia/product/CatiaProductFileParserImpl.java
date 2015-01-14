@@ -28,7 +28,6 @@ import com.docdoku.core.product.PartMaster;
 import com.docdoku.core.product.PartUsageLink;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
-import com.docdoku.core.util.FileIO;
 import com.docdoku.server.converters.CADConverter;
 import com.docdoku.server.converters.catia.product.parser.ComponentDTK;
 import com.docdoku.server.converters.catia.product.parser.ComponentDTKSaxHandler;
@@ -78,17 +77,17 @@ public class CatiaProductFileParserImpl implements CADConverter {
     }
 
     @Override
-    public File convert(PartIteration partToConvert, final BinaryResource cadFile) throws IOException, InterruptedException, UserNotActiveException, PartRevisionNotFoundException, WorkspaceNotFoundException, CreationException, UserNotFoundException, NotAllowedException, FileAlreadyExistsException, StorageException {
-        File tmpDir = Files.createTempDir();
+    public File convert(PartIteration partToConvert, final BinaryResource cadFile, File tempDir) throws IOException, InterruptedException, UserNotActiveException, PartRevisionNotFoundException, WorkspaceNotFoundException, CreationException, UserNotFoundException, NotAllowedException, FileAlreadyExistsException, StorageException {
+
         File tmpCadFile;
-        File tmpXMLFile = new File(tmpDir, cadFile.getName() + "_dtk.xml");
+        File tmpXMLFile = new File(tempDir, cadFile.getName() + "_dtk.xml");
         InputStreamReader isr = null;
         BufferedReader br = null;
         try {
 
             String catProductReader = CONF.getProperty("catProductReader");
 
-            tmpCadFile = new File(tmpDir, cadFile.getName());
+            tmpCadFile = new File(tempDir, cadFile.getName());
 
             Files.copy(new InputSupplier<InputStream>() {
                 @Override
@@ -137,7 +136,6 @@ public class CatiaProductFileParserImpl implements CADConverter {
         } catch (Exception e) {
             Logger.getLogger(CatiaProductFileParserImpl.class.getName()).log(Level.INFO, null, e);
         } finally {
-            FileIO.rmDir(tmpDir);
             try{
                 if(isr!=null){
                     isr.close();
@@ -219,7 +217,7 @@ public class CatiaProductFileParserImpl implements CADConverter {
 
 
     @Override
-    public boolean canConvertToJSON(String cadFileExtension) {
+    public boolean canConvertToOBJ(String cadFileExtension) {
         return "catproduct".equals(cadFileExtension);
     }
 

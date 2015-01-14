@@ -1,4 +1,4 @@
-/*global define*/
+/*global define,App*/
 define([
     'mustache',
     'common-objects/common/singleton_decorator',
@@ -18,7 +18,7 @@ define([
             this.templateExtraData = {
                 isReadOnly: App.appView.isReadOnly()
             };
-            this.render()
+            this.render();
         }
     });
     FolderNavView = singletonDecorator(FolderNavView);

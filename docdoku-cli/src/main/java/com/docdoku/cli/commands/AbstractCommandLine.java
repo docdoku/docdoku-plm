@@ -49,7 +49,10 @@ public abstract class AbstractCommandLine implements CommandLine {
     @Option(name="-F", aliases = "--format", metaVar = "<format>", usage="output format, possible value : json")
     protected CliOutput.formats format = CliOutput.formats.HUMAN;
 
-    protected CliOutput output;
+    //A default value is set in case an exception is raised
+    //inside the CmdLineParser.parseArgument(args) method.
+
+    protected CliOutput output = CliOutput.getOutput(format);
 
     private void promptForUser(){
         Console c = System.console();

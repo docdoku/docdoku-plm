@@ -1,7 +1,7 @@
 /*global define*/
 define([
     "backbone",
-    "models/part"
+    "common-objects/models/part"
 ], function (Backbone, Part) {
     var PartList = Backbone.Collection.extend({
 

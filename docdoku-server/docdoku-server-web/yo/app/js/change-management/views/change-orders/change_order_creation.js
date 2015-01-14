@@ -63,13 +63,13 @@ define([
         fillPriorityList: function () {
 	        var self = this;
 	        _.each(this.model.priorities, function(priority){
-		        self.$inputOrderPriority.append('<option value="' + priority + ' " ' + '>' + priority + '</option>');
+		        self.$inputOrderPriority.append('<option value="' + priority + '" ' + '>' + priority + '</option>');
 	        });
         },
         fillCategoryList: function () {
 	        var self = this;
 	        _.each(this.model.categories, function(category){
-		        self.$inputOrderCategory.append('<option value="' + category + ' " ' + '>' + category + '</option>');
+		        self.$inputOrderCategory.append('<option value="' + category + '" ' + '>' + category + '</option>');
 	        });
         },
 

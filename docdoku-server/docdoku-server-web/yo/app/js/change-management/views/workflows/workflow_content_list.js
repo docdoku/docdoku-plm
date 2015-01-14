@@ -1,59 +1,48 @@
-/*global define,App*/
+/*global define,bootbox,App*/
 define([
     'require',
+    'backbone',
+    'mustache',
     'collections/roles',
     'views/workflows/workflow_list',
     'views/workflows/roles_modal_view',
     'text!templates/workflows/workflow_content_list.html',
     'text!common-objects/templates/buttons/delete_button.html',
-    'common-objects/views/base',
     'common-objects/views/alert'
-], function (require, RoleList, WorkflowListView, RolesModalView, template, deleteButton, BaseView, AlertView) {
+], function (require, Backbone, Mustache, RoleList, WorkflowListView, RolesModalView, template, deleteButton,  AlertView) {
 	'use strict';
-    var WorkflowContentListView = BaseView.extend({
-        el: '#change-management-content',
-        template: template,
+    var WorkflowContentListView = Backbone.View.extend({
+
+        events:{
+            'click .actions .new':'actionNew',
+            'click .actions .delete':'actionDelete',
+            'click .actions .roles':'actionRoles'
+        },
 
         partials: {
             deleteButton: deleteButton
         },
 
         initialize: function () {
-            BaseView.prototype.initialize.apply(this, arguments);
-
-            // destroy previous content view if any
-            if (WorkflowContentListView._instance) {
-                WorkflowContentListView._instance.destroy();
-            }
-
-            // keep track of the created content view
-            WorkflowContentListView._instance = this;
-
-            this.events['click .actions .new'] = 'actionNew';
-            this.events['click .actions .delete'] = 'actionDelete';
-            this.events['click .actions .roles'] = 'actionRoles';
-
             this.rolesList = new RoleList();
         },
-        rendered: function () {
-            var _this = this;
-            this.bindDomElement();
-            this.listView = this.addSubView(
-                new WorkflowListView({
-                    el: '#list-' + this.cid
-                })
-            );
-            this.listView.on('selectionChange', this.selectionChanged);
-            this.bindCollections();
 
+        render:function(){
+            this.$el.html(Mustache.render(template, {i18n: App.config.i18n, workspaceId: App.config.workspaceId},this.partials));
+            this.bindDomElement();
+            this.listView = new WorkflowListView({
+                el: this.$('.workflow-table')
+            });
+            this.listView.on('selectionChange', this.selectionChanged.bind(this));
+            this.bindCollections();
         },
         destroyed: function () {
             this.$el.html('');
         },
 
         bindDomElement : function(){
-            this.$notifications = this.$el.find('.notifications').first();
-            this.$newWorflowBtn = this.$el.find('.btn.new').first();
+            this.$notifications = this.$el.find('.notifications');
+            this.$newWorflowBtn = this.$el.find('.actions .new');
         },
         bindCollections : function(){
             this.listenTo(this.listView.collection, 'reset', this.onWorkflowsListChange);
@@ -75,16 +64,19 @@ define([
         },
         actionDelete: function () {
             var _this = this;
-            this.listView.eachChecked(function (view) {
-                view.model.destroy({
-                    dataType: 'text', // server doesn't send a json hash in the response body
-                    success: _this.render
-                });
+            bootbox.confirm(App.config.i18n.CONFIRM_DELETE_WORKFLOW, function(result){
+                if(result){
+                    _this.listView.eachChecked(function (view) {
+                        view.model.destroy({
+                            dataType: 'text',
+                            success: _this.render.bind(_this)
+                        });
+                    });
+                }
             });
             return false;
         },
         actionRoles: function () {
-            var _this = this;
             this.$notifications.html('');
             new RolesModalView({
                 collection: this.rolesList

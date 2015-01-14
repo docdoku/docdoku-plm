@@ -34,7 +34,6 @@ import javax.ws.rs.Path;
 @Stateless
 @Path("files")
 @DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.GUEST_PROXY_ROLE_ID})
-@RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.GUEST_PROXY_ROLE_ID})
 public class FileResource {
     @EJB
     private DocumentBinaryResource documentBinaryResource;
@@ -48,23 +47,25 @@ public class FileResource {
     public FileResource() {
     }
 
-    @Path("/{workspaceId}/documents/{documentId}/{version}/{iteration}")
-    public DocumentBinaryResource downloadDocumentFile(){
+    @Path("/{workspaceId}/documents/{documentId}/{version}")
+    public DocumentBinaryResource documentFile(){
         return documentBinaryResource;
     }
 
-    @Path("/{workspaceId}/parts/{partNumber}/{version}/{iteration}")
-    public PartBinaryResource downloadPartFile(){
+    @Path("/{workspaceId}/parts/{partNumber}/{version}")
+    public PartBinaryResource partFile(){
         return partBinaryResource;
     }
 
     @Path("/{workspaceId}/document-templates/{templateId}/")
-    public DocumentTemplateBinaryResource downloadDocumentTemplateFile(){
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
+    public DocumentTemplateBinaryResource documentTemplateFile(){
         return documentTemplateBinaryResource;
     }
 
     @Path("/{workspaceId}/part-templates/{templateId}/")
-    public PartTemplateBinaryResource downloadPartTemplateFile(){
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
+    public PartTemplateBinaryResource partTemplateFile(){
         return partTemplateBinaryResource;
     }
 }

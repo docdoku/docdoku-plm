@@ -321,6 +321,23 @@ public class ProductResource {
         return instanceCollections;
     }
 
+    @GET
+    @Path("{ciId}/releases/last")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getLastRelease(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId)
+            throws EntityNotFoundException, AccessRightException, UserNotActiveException {
+        ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
+
+        PartRevision partRevision = productService.getLastReleasePartRevision(ciKey);
+        PartDTO partDTO = mapper.map(partRevision,PartDTO.class);
+        partDTO.setNumber(partRevision.getPartNumber());
+        partDTO.setPartKey(partRevision.getPartNumber() + "-" + partRevision.getVersion());
+        partDTO.setName(partRevision.getPartMaster().getName());
+        partDTO.setStandardPart(partRevision.getPartMaster().isStandardPart());
+
+        return Response.ok(partDTO).build();
+    }
+
     @Path("baselines")
     public BaselinesResource getAllBaselines(@PathParam("workspaceId") String workspaceId){
         return baselinesResource;

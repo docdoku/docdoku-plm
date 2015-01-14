@@ -7,7 +7,7 @@ var App = {
 	debug:false,
 
 	config:{
-		workspaceId: workspace[1] || null,
+		workspaceId: decodeURIComponent(workspace[1]).trim() || null,
 		login: '',
 		groups: [],
 		contextPath: '',
@@ -27,6 +27,7 @@ require.config({
     shim: {
         jqueryUI: { deps: ['jquery'], exports: 'jQuery' },
         effects: { deps: ['jquery'], exports: 'jQuery' },
+        popoverUtils: { deps: ['jquery'], exports: 'jQuery' },
         bootstrap:{ deps: ['jquery','jqueryUI'], exports: 'jQuery' },
         bootbox: { deps: ['jquery'], exports: 'jQuery' },
         datatables:{ deps: ['jquery'], exports: 'jQuery' },
@@ -53,6 +54,8 @@ require.config({
         bootstrapCombobox:'../../bower_components/bootstrap-combobox/js/bootstrap-combobox',
         bootstrapSwitch:'../../bower_components/bootstrap-switch/static/js/bootstrap-switch',
         unorm:'../../bower_components/unorm/lib/unorm',
+        moment:'../../bower_components/moment/min/moment-with-locales',
+        momentTimeZone:'../../bower_components/moment-timezone/builds/moment-timezone-with-data',
         date:'../../bower_components/date.format/date.format',
         unmaskConfig:'../lib/jquery.maskedinput-config',
         localization: '../localization',
@@ -60,6 +63,7 @@ require.config({
         'common-objects': '../common-objects',
         userPopover:'modules/user-popover-module/app',
         effects:'../lib/effects',
+        popoverUtils: '../lib/popover.utils',
         inputValidity: '../lib/input-validity',
         datatablesOsortExt: '../lib/datatables.oSort.ext',
         stringprototype:'../lib/string.prototype'
@@ -73,6 +77,7 @@ require.config({
         'bootbox',
         'jqueryUI',
         'effects',
+        'popoverUtils',
         'datatables',
         'datatablesOsortExt',
         'bootstrapCombobox',

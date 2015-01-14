@@ -27,11 +27,18 @@
                     <h:outputLabel value="#{i18nAccountEdition['section.email']}*:" for="email"/>
                     <h:inputText id="email" value="#{accountBean.email}" size="20" maxlength="255"/>
 
-                    <h:outputLabel value="#{i18nAccountEdition['section.language']}*:" for="email"/>
+                    <h:outputLabel value="#{i18nAccountEdition['section.language']}*:" for="language"/>
                     <h:selectOneMenu id="language" value="#{accountBean.language}">
                         <f:selectItem id="browser-language-item" itemLabel="#{i18nAccountEdition['section.language.browser']} : #{accountBean.browserLanguage}" itemValue="" />
                         <f:selectItem id="en-language-item" itemLabel="#{i18nAccountEdition['section.language.en']}" itemValue="en" />
                         <f:selectItem id="fr-language-item" itemLabel="#{i18nAccountEdition['section.language.fr']}" itemValue="fr" />
+                    </h:selectOneMenu>
+
+                    <br />
+
+                    <h:outputLabel value="#{i18nAccountEdition['section.timeZone']}*:" for="timeZone"/>
+                    <h:selectOneMenu id="timeZone" value="#{accountBean.timeZone}">
+                        <f:selectItems value="#{accountBean.availableTimeZones}" var="t" itemLabel="#{t}" itemValue="#{t}" />
                     </h:selectOneMenu>
 
                     <br/>

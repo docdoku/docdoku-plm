@@ -6,6 +6,7 @@ define(['views/progress_bar_view'], function (ProgressBarView) {
         this.ColladaLoader = null;
         this.STLLoader = null;
         this.BinaryLoader = null;
+        this.OBJLoader = null;
 
         _.extend(this, options);
 
@@ -82,6 +83,38 @@ define(['views/progress_bar_view'], function (ProgressBarView) {
             var extension = filename.substr(filename.lastIndexOf('.') + 1).toLowerCase();
 
             switch (extension) {
+
+                case 'obj' :
+
+                    if (this.OBJLoader === null) {
+                        this.OBJLoader = new THREE.OBJLoader();
+                    }
+
+                    material = new THREE.MeshPhongMaterial({  transparent: true, color: new THREE.Color(0xbbbbbb) });
+                    material.side = THREE.doubleSided;
+
+                    this.OBJLoader.load(filename, function ( object ) {
+
+                        var geometries = [], combined = new THREE.Geometry();
+                        getMeshGeometries(object, geometries);
+
+                        // Merge all sub meshes into one
+                        _.each(geometries, function (geometry) {
+                            combined.merge(geometry);
+                        });
+
+                        combined.dynamic = false;
+                        combined.mergeVertices();
+
+                        combined.computeBoundingSphere();
+
+                        callbacks.success(combined, material);
+
+                    }, function onProgress(){},  function onError(){});
+
+
+                    break;
+
                 case 'dae':
                      material = new THREE.MeshPhongMaterial({ transparent: true, color: new THREE.Color(0xbbbbbb) });
 
@@ -96,7 +129,7 @@ define(['views/progress_bar_view'], function (ProgressBarView) {
 
                         // Merge all sub meshes into one
                         _.each(geometries, function (geometry) {
-                            THREE.GeometryUtils.merge(combined, geometry);
+                            combined.merge(geometry);
                         });
 
                         combined.dynamic = false;

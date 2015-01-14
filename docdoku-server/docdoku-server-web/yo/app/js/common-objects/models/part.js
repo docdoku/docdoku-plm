@@ -114,6 +114,10 @@ function (Backbone, Date, PartIterationList, ACLChecker) {
             return this.get('author').name;
         },
 
+        getAuthor: function () {
+            return this.get('author').name;
+        },
+
         getCheckOutUserName: function () {
             if (this.isCheckout()) {
                 return this.getCheckoutUser().name;
@@ -183,14 +187,6 @@ function (Backbone, Date, PartIterationList, ACLChecker) {
         isCheckout: function () {
             return !_.isNull(this.get('checkOutDate'));
         },
-
-        url: function () {
-            if (this.getPartKey()) {
-                return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/' + this.getPartKey();
-            }
-            return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/';
-        },
-
 
         getPermalink: function () {
             return encodeURI(
@@ -292,6 +288,13 @@ function (Backbone, Date, PartIterationList, ACLChecker) {
                     this.fetch();
                 }
             });
+        },
+
+        url: function () {
+            if (this.getPartKey()) {
+                return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/' + this.getPartKey();
+            }
+            return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/';
         }
 
     });

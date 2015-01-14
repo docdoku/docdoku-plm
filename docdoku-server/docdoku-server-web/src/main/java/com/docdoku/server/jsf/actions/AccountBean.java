@@ -43,6 +43,8 @@ public class AccountBean {
     private String name;
     private String email;
     private String language;
+    private String timeZone;
+    private String[] availableTimeZones = TimeZone.getAvailableIDs();
 
     private boolean superAdmin;
 
@@ -59,7 +61,7 @@ public class AccountBean {
         if(language == null || "".equals(language) || " ".equals(language)){
             language = FacesContext.getCurrentInstance().getViewRoot().getLocale().getLanguage();
         }
-        userManager.updateAccount(name, email, language, password);
+        userManager.updateAccount(name, email, language, password,timeZone);
         HttpServletRequest request = (HttpServletRequest) (FacesContext.getCurrentInstance().getExternalContext().getRequest());
         return request.getContextPath()+"/";
     }
@@ -135,6 +137,18 @@ public class AccountBean {
     }
     public void setOrganizationAdmin(String organizationAdmin) {
         this.organizationAdmin = organizationAdmin;
+    }
+
+    public String[] getAvailableTimeZones() {
+        return availableTimeZones.clone();
+    }
+
+    public String getTimeZone() {
+        return timeZone;
+    }
+
+    public void setTimeZone(String timeZone) {
+        this.timeZone = timeZone;
     }
 
     public Set<Workspace> getWorkspaces(){

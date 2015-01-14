@@ -4,8 +4,9 @@ define([
     'mustache',
     'models/part_template',
     'text!templates/part-template/part_template_list_item.html',
-    'views/part-template/part_template_edit_view'
-], function (Backbone, Mustache, PartTemplate, template, PartTemplateEditView) {
+    'views/part-template/part_template_edit_view',
+    'common-objects/utils/date'
+], function (Backbone, Mustache, PartTemplate, template, PartTemplateEditView, date) {
     'use strict';
     var PartTemplateListItemView = Backbone.View.extend({
 
@@ -30,6 +31,7 @@ define([
                 this.trigger('selectionChanged', this);
             }
             this.bindUserPopover();
+            date.dateHelper(this.$('.date-popover'));
             this.trigger('rendered', this);
             return this;
         },

@@ -5,10 +5,11 @@
     angular.module('dplm.home', [])
         .config(function ($routeProvider) {
             $routeProvider.when('/', {
-                controller: function ($scope, $filter, ConfigurationService,FolderService) {
+                controller: function ($scope, $filter, ConfigurationService,FolderService,WorkspaceService) {
                     $scope.configuration = ConfigurationService.configuration;
                     $scope.save = ConfigurationService.save;
                     $scope.folders = $filter('filter')(FolderService.folders,{favorite:true});
+                    $scope.workspaces = WorkspaceService.getLastVisitedWorkspaces();
                 },
                 resolve:{
                     conf:function(ConfigurationService,WorkspaceService){

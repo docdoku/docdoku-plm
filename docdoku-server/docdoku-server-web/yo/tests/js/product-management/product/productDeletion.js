@@ -45,7 +45,7 @@ casper.test.begin('Product deletion tests suite',1, function productDeletionTest
         this.waitForSelector('.bootbox',function confirmProductDeletion(){
             this.click('.bootbox .modal-footer .btn-primary');
         },function fail() {
-            this.capture('screenshot/productCreation/waitForDeletionConfirmationModal-error.png');
+            this.capture('screenshot/productDeletion/waitForDeletionConfirmationModal-error.png');
             this.test.assert(false,'Product deletion confirmation modal can not be found');
         });
     });

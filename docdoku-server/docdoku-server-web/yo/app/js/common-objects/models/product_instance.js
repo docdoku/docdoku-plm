@@ -1,6 +1,6 @@
 /*global _,define,App*/
-define(['backbone', 'common-objects/collections/product_instance_iterations'
-], function (Backbone, ProductInstanceList) {
+define(['backbone', 'common-objects/collections/product_instance_iterations','common-objects/utils/date'
+], function (Backbone, ProductInstanceList,date) {
 	'use strict';
     var ProductInstance = Backbone.Model.extend({
 
@@ -52,7 +52,10 @@ define(['backbone', 'common-objects/collections/product_instance_iterations'
             return this.get('updateAuthorName');
         },
         getUpdateDate: function () {
-            return this.get('updateDate');
+            return date.formatTimestamp(
+                App.config.i18n._DATE_FORMAT,
+                this.get('updateDate')
+            );
         }
     });
 

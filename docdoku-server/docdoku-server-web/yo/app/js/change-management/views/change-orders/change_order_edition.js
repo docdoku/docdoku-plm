@@ -1,26 +1,26 @@
 /*global _,define,App*/
 define([
     'backbone',
-    "mustache",
-    "text!templates/change-orders/change_order_edition.html",
-    "models/change_order",
-    "common-objects/collections/users",
-    "collections/milestone_collection",
-    "common-objects/models/tag",
-    "common-objects/views/tags/tag",
-    "common-objects/views/linked/linked_documents",
-    "common-objects/collections/linked/linked_document_collection",
-    "common-objects/views/linked/linked_parts",
-    "common-objects/collections/linked/linked_part_collection",
-    "common-objects/views/linked/linked_requests",
-    "common-objects/collections/linked/linked_change_item_collection"
+    'mustache',
+    'text!templates/change-orders/change_order_edition.html',
+    'models/change_order',
+    'common-objects/collections/users',
+    'collections/milestone_collection',
+    'common-objects/models/tag',
+    'common-objects/views/tags/tag',
+    'common-objects/views/linked/linked_documents',
+    'common-objects/collections/linked/linked_document_collection',
+    'common-objects/views/linked/linked_parts',
+    'common-objects/collections/linked/linked_part_collection',
+    'common-objects/views/linked/linked_requests',
+    'common-objects/collections/linked/linked_change_item_collection'
 ],
 function (Backbone, Mustache, template, ChangeOrderModel, UserList, MilestoneList, Tag, TagView, LinkedDocumentsView, LinkedDocumentCollection, LinkedPartsView, LinkedPartCollection, LinkedRequestsView, LinkedChangeItemCollection) {
     'use strict';
     var ChangeOrderEditionView = Backbone.View.extend({
         events: {
-            "submit #order_edition_form": "onSubmitForm",
-            "hidden #order_edition_modal": "onHidden"
+            'submit #order_edition_form': 'onSubmitForm',
+            'hidden #order_edition_modal': 'onHidden'
         },
 
 
@@ -29,11 +29,11 @@ function (Backbone, Mustache, template, ChangeOrderModel, UserList, MilestoneLis
             this._subViews = [];
             this.model.fetch();
             _.bindAll(this);
-            this.$el.on("remove", this.removeSubviews);                                                                  // Remove cascade
+            this.$el.on('remove', this.removeSubviews);                                                                  // Remove cascade
         },
 
         removeSubviews: function () {
-            _(this._subViews).invoke("remove");
+            _(this._subViews).invoke('remove');
         },
 
         render: function () {
@@ -55,7 +55,7 @@ function (Backbone, Mustache, template, ChangeOrderModel, UserList, MilestoneLis
             var self = this;
             if (list) {
                 list.each(function (milestone) {
-                    self.$inputOrderMilestone.append("<option value='" + milestone.get("id") + "'" + ">" + milestone.get("title") + "</option>");
+                    self.$inputOrderMilestone.append('<option value="' + milestone.get('id') + '"' + '>' + milestone.get('title') + '</option>');
                 });
             }
             this.$inputOrderMilestone.val(this.model.getMilestoneId());
@@ -63,21 +63,21 @@ function (Backbone, Mustache, template, ChangeOrderModel, UserList, MilestoneLis
         fillUserList: function (list) {
             var self = this;
             list.each(function (user) {
-                self.$inputOrderAssignee.append("<option value='" + user.get("login") + "'" + ">" + user.get("name") + "</option>");
+                self.$inputOrderAssignee.append('<option value="' + user.get('login') + '"' + '>' + user.get('name') + '</option>');
             });
             this.$inputOrderAssignee.val(this.model.getAssignee());
         },
         fillPriorityList: function () {
 	        var self = this;
 	        _.each(this.model.priorities, function(priority){
-		        self.$inputOrderPriority.append('<option value="' + priority + ' " ' + '>' + priority + '</option>');
+		        self.$inputOrderPriority.append('<option value="' + priority + '"' + '>' + priority + '</option>');
 	        });
             this.$inputOrderPriority.val(this.model.getPriority());
         },
         fillCategoryList: function () {
 	        var self = this;
 	        _.each(this.model.categories, function(category){
-		        self.$inputOrderCategory.append('<option value="' + category + ' " ' + '>' + category + '</option>');
+		        self.$inputOrderCategory.append('<option value="' + category + '"' + '>' + category + '</option>');
 	        });
             this.$inputOrderCategory.val(this.model.getCategory());
         },
@@ -87,7 +87,7 @@ function (Backbone, Mustache, template, ChangeOrderModel, UserList, MilestoneLis
 
             if (this.model.attributes.tags.length) {
 
-                var $tagsZone = this.$(".master-tags-list");
+                var $tagsZone = this.$('.master-tags-list');
                 _.each(that.model.attributes.tags, function (tagLabel) {
                     var tagView;
                     var tagViewParams = {
@@ -111,7 +111,7 @@ function (Backbone, Mustache, template, ChangeOrderModel, UserList, MilestoneLis
         linkManagement: function () {
             var that = this;
             var affectedDocuments = this.model.getAffectedDocuments();
-            var $affectedDocumentsLinkZone = this.$("#documents-affected-links");
+            var $affectedDocumentsLinkZone = this.$('#documents-affected-links');
 
             that._affectedDocumentsCollection = new LinkedDocumentCollection(affectedDocuments);
             that._linkedDocumentsView = new LinkedDocumentsView({
@@ -123,7 +123,7 @@ function (Backbone, Mustache, template, ChangeOrderModel, UserList, MilestoneLis
             $affectedDocumentsLinkZone.html(that._linkedDocumentsView.el);
 
             var affectedParts = this.model.getAffectedParts();
-            var $affectedPartsLinkZone = this.$("#parts-affected-links");
+            var $affectedPartsLinkZone = this.$('#parts-affected-links');
 
             that._affectedPartsCollection = new LinkedPartCollection(affectedParts);
             that._linkedPartsView = new LinkedPartsView({
@@ -135,7 +135,7 @@ function (Backbone, Mustache, template, ChangeOrderModel, UserList, MilestoneLis
             $affectedPartsLinkZone.html(that._linkedPartsView.el);
 
             var affectedRequests = this.model.getAddressedChangeRequests();
-            var $affectedRequestsLinkZone = this.$("#requests-affected-links");
+            var $affectedRequestsLinkZone = this.$('#requests-affected-links');
 
             that._affectedRequestsCollection = new LinkedChangeItemCollection(affectedRequests);
             var linkedRequestsView = new LinkedRequestsView({
@@ -192,7 +192,7 @@ function (Backbone, Mustache, template, ChangeOrderModel, UserList, MilestoneLis
         },
 
         onError: function (model, error) {
-            alert(App.config.i18n.EDITION_ERROR + " : " + error.responseText);
+            alert(App.config.i18n.EDITION_ERROR + ' : ' + error.responseText);
         },
 
         openModal: function () {

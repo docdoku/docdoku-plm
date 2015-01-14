@@ -18,7 +18,7 @@ var App = {
     },
 
 	config:{
-		workspaceId: workspace[1] || null,
+		workspaceId: decodeURIComponent(workspace[1]).trim() || null,
 		productId: window.location.hash.split('/')[1] || null,
 		login: '',
 		groups: [],
@@ -84,6 +84,7 @@ require.config({
     shim: {
         jqueryUI: { deps: ['jquery'], exports: 'jQuery' },
         effects: { deps: ['jquery'], exports: 'jQuery' },
+        popoverUtils: { deps: ['jquery'], exports: 'jQuery' },
         inputValidity: { deps: ['jquery'], exports: 'jQuery' },
         bootstrap:{ deps: ['jquery','jqueryUI'], exports: 'jQuery' },
         datatables:{ deps: ['jquery'], exports: 'jQuery' },
@@ -97,6 +98,7 @@ require.config({
         binaryloader:{deps:['threecore'],exports:'THREE'},
         colladaloader:{deps:['threecore'],exports:'THREE'},
         stlloader:{deps:['threecore'],exports:'THREE'},
+        objloader:{deps:['threecore'],exports:'THREE'},
         buffergeometryutils:{deps:['threecore'],exports:'THREE'}
     },
     paths: {
@@ -110,6 +112,8 @@ require.config({
         bootstrap:'../../bower_components/bootstrap/docs/assets/js/bootstrap',
         datatables:'../../bower_components/datatables/media/js/jquery.dataTables',
         unorm:'../../bower_components/unorm/lib/unorm',
+        moment:'../../bower_components/moment/min/moment-with-locales',
+        momentTimeZone:'../../bower_components/moment-timezone/builds/moment-timezone-with-data',
         threecore:'../../bower_components/threejs/build/three',
         jqueryUI: '../../bower_components/jqueryui/ui/jquery-ui',
         async: '../../bower_components/async/lib/async',
@@ -123,6 +127,7 @@ require.config({
         'common-objects': '../common-objects',
         userPopover:'modules/user-popover-module/app',
         effects:'../lib/effects',
+        popoverUtils: '../lib/popover.utils',
         inputValidity: '../lib/input-validity',
         datatablesOsortExt: '../lib/datatables.oSort.ext',
         stringprototype:'../lib/string.prototype',
@@ -133,6 +138,7 @@ require.config({
         binaryloader:'dmu/loaders/BinaryLoader',
         colladaloader:'dmu/loaders/ColladaLoader',
         stlloader:'dmu/loaders/STLLoader',
+        objloader:'dmu/loaders/OBJLoader',
         buffergeometryutils: 'dmu/utils/BufferGeometryUtils',
         stats:'dmu/utils/Stats'
     },
@@ -144,6 +150,7 @@ require.config({
         'jqueryUI',
         'bootstrap',
         'effects',
+        'popoverUtils',
         'datatables',
         'datatablesOsortExt',
         'bootstrapCombobox',
@@ -157,6 +164,7 @@ require.config({
         'binaryloader',
         'colladaloader',
         'stlloader',
+        'objloader',
         'buffergeometryutils',
         'stats',
         'dat',

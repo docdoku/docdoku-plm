@@ -62,17 +62,6 @@ define([
         },
 
         initialize: function () {
-            if (!this.has('color')) {
-                var randomColor = Math.ceil((Math.random() * (0xF))).toString(16) +
-                    Math.ceil((Math.random() * (0xF))).toString(16) +
-                    Math.ceil((Math.random() * (0xF))).toString(16) +
-                    Math.ceil((Math.random() * (0xF))).toString(16) +
-                    Math.ceil((Math.random() * (0xF))).toString(16) +
-                    Math.ceil((Math.random() * (0xF))).toString(16);
-
-                this.set('color', randomColor);
-                this.save();
-            }
             this.material = new THREE.MeshLambertMaterial({
                 color: parseInt('0x' + this.get('color'), 16),
                 opacity: 1,

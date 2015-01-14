@@ -35,17 +35,18 @@
     <filter>
         <filter-name>AuthFilter</filter-name>
         <filter-class>com.docdoku.server.filters.AuthFilter</filter-class>
+        <init-param>
+            <param-name>excludedPaths</param-name>
+            <param-value>/api/files/*/documents/**,/api/files/*/parts/**</param-value>
+        </init-param>
     </filter>
     <filter>
         <filter-name>PermalinkFilter</filter-name>
         <filter-class>com.docdoku.server.filters.PermalinkFilter</filter-class>
     </filter>
-    <filter>
-        <filter-name>FilesFilter</filter-name>
-        <filter-class>com.docdoku.server.filters.FilesFilter</filter-class>
-    </filter>
     <filter-mapping>
         <filter-name>AuthFilter</filter-name>
+        <url-pattern>/api/*</url-pattern>
         <url-pattern>/admin/*</url-pattern>
         <url-pattern>/faces/admin/*</url-pattern>
         <url-pattern>/document-management/*</url-pattern>
@@ -60,13 +61,6 @@
         <url-pattern>/documents/*</url-pattern>
         <url-pattern>/parts/*</url-pattern>
     </filter-mapping>
-    <filter-mapping>
-        <filter-name>FilesFilter</filter-name>
-        <url-pattern>/files/*</url-pattern>
-        <url-pattern>/shared-files/*</url-pattern>
-    </filter-mapping>
-
-
     <servlet>
         <servlet-name>VoteServlet</servlet-name>
         <servlet-class>com.docdoku.server.http.VoteServlet</servlet-class>
@@ -82,10 +76,6 @@
     <servlet>
         <servlet-name>PrivateShareServlet</servlet-name>
         <servlet-class>com.docdoku.server.http.PrivateShareServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>UploadDownloadServlet</servlet-name>
-        <servlet-class>com.docdoku.server.http.UploadDownloadServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>VoteServlet</servlet-name>
@@ -103,13 +93,6 @@
         <servlet-name>PrivateShareServlet</servlet-name>
         <url-pattern>/shared/*</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>UploadDownloadServlet</servlet-name>
-        <url-pattern>/upload/*</url-pattern>
-        <url-pattern>/files/*</url-pattern>
-        <url-pattern>/shared-files/*</url-pattern>
-    </servlet-mapping>
-
     <servlet>
         <servlet-name>DocumentManagement</servlet-name>
         <jsp-file>document-management/index.html</jsp-file>
@@ -176,17 +159,6 @@
         <web-resource-collection>
             <web-resource-name>Action command</web-resource-name>
             <url-pattern>/action/vote</url-pattern>
-        </web-resource-collection>
-        <auth-constraint>
-            <description/>
-            <role-name>users</role-name>
-        </auth-constraint>
-    </security-constraint>
-    <security-constraint>
-        <display-name>REST Resources</display-name>
-        <web-resource-collection>
-            <web-resource-name>Resources</web-resource-name>
-            <url-pattern>/api/*</url-pattern>
         </web-resource-collection>
         <auth-constraint>
             <description/>

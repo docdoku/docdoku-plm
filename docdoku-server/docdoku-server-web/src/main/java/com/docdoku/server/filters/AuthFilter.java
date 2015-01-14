@@ -39,10 +39,14 @@ import java.net.URLEncoder;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 public class AuthFilter implements Filter {
     private static final Logger LOGGER = Logger.getLogger(AuthFilter.class.getName());
     private static final String ENCODING = "UTF-8";
+
+    private String[] excludedPaths;
+
 
     @Inject
     private AccountBean accountBean;
@@ -55,17 +59,21 @@ public class AuthFilter implements Filter {
             FilterChain chain) throws IOException, ServletException {
 
         HttpServletRequest httpRequest = (HttpServletRequest) request;
+        String remoteUser=httpRequest.getRemoteUser();
 
-        if (httpRequest.getRemoteUser()==null) {
+        if(isExcludedURL(httpRequest) && remoteUser==null) {
+            chain.doFilter(request, response);
+        }else if (remoteUser==null) {
             redirectLogin(httpRequest,response);
         } else {
             try {
-                Account user = userManager.getAccount(httpRequest.getRemoteUser());
+                Account user = userManager.getAccount(remoteUser);
                 boolean isAdmin = userManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID);
                 accountBean.setLogin(user.getLogin());
                 accountBean.setEmail(user.getEmail());
                 accountBean.setLanguage(user.getLanguage());
                 accountBean.setName(user.getName());
+                accountBean.setTimeZone(user.getTimeZone());
                 Organization organization = user.getOrganization();
                 if(organization!=null){
                     accountBean.setOrganizationName(user.getOrganization().getName());
@@ -97,6 +105,19 @@ public class AuthFilter implements Filter {
 
     }
 
+    private boolean isExcludedURL(HttpServletRequest httpRequest){
+        String path = httpRequest.getRequestURI();
+        String method=httpRequest.getMethod();
+        if(path!=null && excludedPaths !=null && "GET".equals(method)){
+            for(String excludedPath: excludedPaths){
+                if(Pattern.matches(excludedPath, path)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     private void redirectLogin(HttpServletRequest httpRequest, ServletResponse response) throws IOException, ServletException {
         String qs=httpRequest.getQueryString();
         String originURL = httpRequest.getRequestURI() + (qs==null?"": "?" + qs);
@@ -118,5 +139,22 @@ public class AuthFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) {
+        String parameter=filterConfig.getInitParameter("excludedPaths");
+        if(parameter !=null) {
+            excludedPaths = parameter.split(",");
+            for(int i=0;i<excludedPaths.length;i++) {
+                boolean endLess=false;
+                if(excludedPaths[i].endsWith("/**")) {
+                    excludedPaths[i]=excludedPaths[i].substring(0,excludedPaths[i].length()-2);
+                    endLess=true;
+                }
+                excludedPaths[i] = excludedPaths[i].replace("*", "[^/]+?");
+                if(endLess) {
+                    excludedPaths[i] += ".*";
+                }
+            }
+        } else {
+            excludedPaths = null;
+        }
     }
 }

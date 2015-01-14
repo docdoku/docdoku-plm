@@ -3,8 +3,9 @@ define([
     'backbone',
     'views/marker_create_modal_view',
     'views/blocker_view',
-    'dmu/LayerManager'
-], function (Backbone,MarkerCreateModalView, BlockerView, LayerManager) {
+    'dmu/LayerManager',
+    'common-objects/utils/date'
+], function (Backbone,MarkerCreateModalView, BlockerView, LayerManager, date) {
 	'use strict';
     var SceneManager = function (pOptions) {
         var _this = this;
@@ -773,8 +774,7 @@ define([
         this.takeScreenShot = function () {
 
             var imageSource = _this.renderer.domElement.toDataURL('image/png');
-            var now = new Date();
-            var filename = App.config.productId + '-' + now.getFullYear() + '-' + now.getMonth() + '-' + now.getDay();
+            var filename = App.config.productId + '-' + date.formatTimestamp(App.config.i18n._DATE_SHORT_FORMAT,Date.now());
 
             var save = document.createElement('a');
             save.href = imageSource;
@@ -988,6 +988,11 @@ define([
             _this.reDraw();
         };
 
+        this.debugPoint = function(v){
+            var cogMesh = new THREE.Mesh(new THREE.SphereGeometry(2,1,1),new THREE.MeshNormalMaterial({color:0xFFFF00}));
+            cogMesh.position.copy(v);
+            _this.scene.add(cogMesh);
+        };
     };
 
     return SceneManager;

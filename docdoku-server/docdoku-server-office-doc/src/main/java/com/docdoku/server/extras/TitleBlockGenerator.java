@@ -54,7 +54,9 @@ public class TitleBlockGenerator {
 
     private static final String BASE_NAME = "com.docdoku.server.viewers.localization.TitleBlockGenerator";
 
-    private TitleBlockGenerator(){}
+    private TitleBlockGenerator(){
+
+    }
 
     /*
     * Merge two pdf from input streams

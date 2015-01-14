@@ -32,9 +32,6 @@ import java.io.Serializable;
  */
 @Embeddable
 public class BaselinedPartKey implements Serializable{
-
-
-
     @Column(name = "PARTCOLLECTION_ID", nullable = false, insertable = false, updatable = false)
     private int partCollectionId;
 
@@ -80,14 +77,18 @@ public class BaselinedPartKey implements Serializable{
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof BaselinedPartKey)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof BaselinedPartKey)) {
+            return false;
+        }
 
         BaselinedPartKey that = (BaselinedPartKey) o;
 
-        if (partCollectionId != that.partCollectionId) return false;
-        if (!targetPartNumber.equals(that.targetPartNumber)) return false;
-        return targetPartWorkspaceId.equals(that.targetPartWorkspaceId);
+        return partCollectionId == that.partCollectionId &&
+               targetPartNumber.equals(that.targetPartNumber) &&
+               targetPartWorkspaceId.equals(that.targetPartWorkspaceId);
 
     }
 

@@ -4,7 +4,6 @@ import com.docdoku.server.rest.exceptions.InterruptedStreamException;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.InputSupplier;
 
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.StreamingOutput;
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,7 +22,7 @@ public class BinaryResourceBinaryStreamingOutput implements StreamingOutput {
     }
 
     @Override
-    public void write(OutputStream outputStream) throws WebApplicationException, IOException {
+    public void write(OutputStream outputStream) throws IOException {
         try {
             if(binaryContentInputStream==null){
                 LOGGER.log(Level.SEVERE,"The file input stream is null");

@@ -76,6 +76,7 @@ require.config({
         binaryloader: {deps: ['threecore'], exports: 'THREE'},
         colladaloader: {deps: ['threecore'], exports: 'THREE'},
         stlloader: {deps: ['threecore'], exports: 'THREE'},
+        objloader: {deps: ['threecore'], exports: 'THREE'},
         buffergeometryutils: {deps: ['threecore'], exports: 'THREE'}
     },
     paths: {
@@ -91,6 +92,8 @@ require.config({
         date:'../../bower_components/date.format/date.format',
         dat:'../../bower_components/dat.gui/dat.gui',
         localization: '../localization',
+        moment:'../../bower_components/moment/min/moment-with-locales',
+        momentTimeZone:'../../bower_components/moment-timezone/builds/moment-timezone-with-data',
         'common-objects': '../common-objects',
         pointerlockcontrols: 'dmu/controls/PointerLockControls',
         trackballcontrols: 'dmu/controls/TrackballControls',
@@ -99,6 +102,7 @@ require.config({
         colladaloader: 'dmu/loaders/ColladaLoader',
         buffergeometryutils: 'dmu/utils/BufferGeometryUtils',
         stlloader: 'dmu/loaders/STLLoader',
+        objloader: 'dmu/loaders/OBJLoader',
         stats:'dmu/utils/Stats'
     },
 
@@ -110,6 +114,7 @@ require.config({
         'binaryloader',
         'colladaloader',
         'stlloader',
+        'objloader',
         'buffergeometryutils',
         'stats',
         'dat',

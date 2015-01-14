@@ -99,6 +99,12 @@ public class PartBinaryResourceTest {
         // assert response.status.code = "200"
     }
 
+    /**
+     * Test to upload a native cad to a part
+     */
+    @Test
+    public void testUploadPartFiles4() throws Exception {
+    }
 
     /**
      * Test to download a part file as a guest and the part is public

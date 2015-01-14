@@ -46,19 +46,19 @@ function (Backbone, Mustache, template, ChangeIssueModel, UserList, LinkedDocume
         fillUserList: function (list) {
             var self = this;
             list.each(function (user) {
-                self.$inputIssueAssignee.append('<option value="' + user.get('login') + ' " ' + '>' + user.get('name') + '</option>');
+                self.$inputIssueAssignee.append('<option value="' + user.get('login') + '" ' + '>' + user.get('name') + '</option>');
             });
         },
         fillPriorityList: function () {
 	        var self = this;
 	        _.each(this.model.priorities, function(priority){
-		        self.$inputIssuePriority.append('<option value="' + priority + ' " ' + '>' + priority + '</option>');
+		        self.$inputIssuePriority.append('<option value="' + priority + '" ' + '>' + priority + '</option>');
 	        });
         },
         fillCategoryList: function () {
 	        var self = this;
 	        _.each(this.model.categories, function(category){
-		        self.$inputIssueCategory.append('<option value="' + category + ' " ' + '>' + category + '</option>');
+		        self.$inputIssueCategory.append('<option value="' + category + '" ' + '>' + category + '</option>');
 	        });
         },
 
