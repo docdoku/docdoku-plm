@@ -4,13 +4,10 @@ define([
     'mustache',
     'text!common-objects/templates/share/share_entity.html',
     'text!common-objects/templates/share/shared_entity.html',
-    'common-objects/utils/date',
-
-    ],
-function (Backbone, Mustache, template, templateShared, date) {
+    'common-objects/utils/date'
+], function (Backbone, Mustache, template, templateShared, date) {
 	'use strict';
     var ShareView = Backbone.View.extend({
-
         tagName: 'div',
 
         events: {

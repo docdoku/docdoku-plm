@@ -1,4 +1,4 @@
-/*global define,App*/
+/*global define,bootbox,App*/
 define([
     'collections/template',
     'views/content',

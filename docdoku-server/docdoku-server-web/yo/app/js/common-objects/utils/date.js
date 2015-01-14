@@ -1,9 +1,8 @@
-/*global define,App*/
+/*global _,$,define,App*/
 define([
     'moment',
     'momentTimeZone'
 ],function (moment, momentTimeZone) {
-
     'use strict';
 
     console.log('Using timezone ' +  App.config.timeZone + ' and locale ' + App.config.locale);
@@ -75,5 +74,4 @@ define([
             });
         }
     };
-
 });

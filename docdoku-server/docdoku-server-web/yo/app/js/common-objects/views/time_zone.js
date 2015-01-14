@@ -1,51 +1,49 @@
-/*global define*/
+/*global _,define,App*/
 define([
-        "backbone",
-        "mustache",
-        "text!common-objects/templates/time_zone.html",
-        'moment',
-        'common-objects/utils/date'
-    ], function (Backbone, Mustache, template, moment, date) {
+    'backbone',
+    'mustache',
+    'text!common-objects/templates/time_zone.html',
+    'moment',
+    'common-objects/utils/date'
+], function (Backbone, Mustache, template, moment, date) {
+    'use strict';
+    var TimeZoneView = Backbone.View.extend({
+        events: {
+            'hidden #exportSceneModal': 'onHidden'
+        },
 
-        var TimeZoneView = Backbone.View.extend({
+        initialize: function () {
+            _.bindAll(this);
+        },
 
-            events: {
-                "hidden #exportSceneModal": "onHidden"
-            },
+        render: function () {
+            this.$el.html(Mustache.render(template, {
+                i18n: App.config.i18n,
+                dates:this.dates
+            }));
+            this.$modal = this.$('#timezone_modal');
+            return this;
+        },
 
-            initialize: function () {
-                _.bindAll(this);
-            },
+        setTimestamp:function(timestamp){
+            this.dates = date.getMainZonesDates(timestamp);
+            return this;
+        },
 
-            render: function () {
-                this.$el.html(Mustache.render(template, {
-                    i18n: App.config.i18n,
-                    dates:this.dates
-                }));
-                this.$modal = this.$("#timezone_modal");
-                return this;
-            },
+        openModal: function () {
+            this.$modal.modal('show');
+        },
 
-            setTimestamp:function(timestamp){
-                this.dates = date.getMainZonesDates(timestamp);
-                return this;
-            },
+        closeModal: function () {
+            this.$modal.modal('hide');
+        },
 
-            openModal: function () {
-                this.$modal.modal('show');
-            },
-
-            closeModal: function () {
-                this.$modal.modal('hide');
-            },
-
-            onHidden: function () {
-                this.remove();
-            }
+        onHidden: function () {
+            this.remove();
+        }
 
 
-        });
+    });
 
-        return TimeZoneView;
-    }
-);
+    return TimeZoneView;
+});
