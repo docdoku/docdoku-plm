@@ -53,6 +53,21 @@ casper.test.begin('Document template deletion tests suite',1, function documentT
         });
     });
 
+
+    /**
+     * Confirm template deletion
+     */
+
+    casper.then(function confirmTemplateDeletion(){
+        this.waitForSelector('.bootbox',function confirmBoxAppeared(){
+            this.click('.bootbox .modal-footer .btn-primary');
+        },function fail() {
+            this.capture('screenshot/templateDeletion/confirmTemplateDeletion-error.png');
+            this.test.assert(false,'Template deletion confirmation modal can not be found');
+        });
+    });
+
+
     /**
      * Wait for template to be removed
      */

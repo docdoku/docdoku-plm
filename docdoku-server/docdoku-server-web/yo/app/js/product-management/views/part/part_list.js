@@ -177,13 +177,16 @@ define([
         },
 
         releaseSelectedParts: function () {
-            if (confirm(App.config.i18n.RELEASE_SELECTION_QUESTION)) {
-                _(this.listItemViews).each(function (view) {
-                    if (view.isChecked()) {
-                        view.model.release();
-                    }
-                });
-            }
+            var that = this;
+            bootbox.confirm(App.config.i18n.RELEASE_SELECTION_QUESTION, function(result){
+                if(result){
+                    _(that.listItemViews).each(function (view) {
+                        if (view.isChecked()) {
+                            view.model.release();
+                        }
+                    });
+                }
+            });
         },
 
         getSelectedPart: function () {

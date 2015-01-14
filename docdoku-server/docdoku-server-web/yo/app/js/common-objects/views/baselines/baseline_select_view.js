@@ -102,22 +102,23 @@ define([
 		deleteBaseline:function(){
 			var that = this;
 
-			if(confirm(App.config.i18n.DELETE_SELECTION_QUESTION)){
-				this.collection.each(function(baseline){
-
-					if(parseInt(that.$select.val(),10)===baseline.getId()){
-						baseline.destroy({
-							dataType: 'text', // server doesn't send a json hash in the response body
-							success:function(){
-								that.$select.find('option[value='+baseline.getId()+']').remove();
-								that.$select.val('latest').change();
-							},
-							error:function(model,err){
-								alert(err.responseText);
-						}});
-					}
-				});
-			}
+            bootbox.confirm(App.config.i18n.DELETE_SELECTION_QUESTION, function(result){
+                if(result){
+                    that.collection.each(function(baseline){
+                        if(parseInt(that.$select.val(),10)===baseline.getId()){
+                            baseline.destroy({
+                                dataType: 'text', // server doesn't send a json hash in the response body
+                                success:function(){
+                                    that.$select.find('option[value='+baseline.getId()+']').remove();
+                                    that.$select.val('latest').change();
+                                },
+                                error:function(model,err){
+                                    alert(err.responseText);
+                                }});
+                        }
+                    });
+                }
+            });
 		},
 
 		showMenu: function(){
