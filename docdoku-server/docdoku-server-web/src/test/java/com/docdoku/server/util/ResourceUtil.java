@@ -19,12 +19,14 @@ public class ResourceUtil {
     public static final String FILENAME3_2="TestFile3.txt";
     public static final String DOC_TEMPLATE_ID ="temp_01" ;
     public static final String FILE_TYPE = "application/pdf";
+    public static final String SHARED_ENTITY_UUID ="documents/share/shareuuid01";
     public static final String RANGE= "bytes=0-366828";
     public static final long DOCUMENT_SIZE = 26 ;
     public static final String PART_TEMPLATE_ID = "part_templ_01";
     public static final String TEST_PART_FILENAME1 = "part_file_test1.txt";
     public static final String TEST_PART_FILENAME2 = "part_file_test1.txt";
-    public static final String VIRTUAL_SUB_RESOURCE = "doc_sub_file";
+    public static final String VIRTUAL_SUB_RESOURCE = "scormFile.zip";
+    public static final String REFER ="refers/073dd114-e13b-46a9-a348-2c61138aba20" ;
 
     public static String FILENAME_TO_UPLOAD_PART_SPECIAL_CHARACTER="part_file_to_upload-èé_spécial&.txt";
     public static final long PART_SIZE =363666 ;
