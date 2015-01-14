@@ -40,7 +40,8 @@ function (Backbone,singletonDecorator, WorkflowNavView, MilestoneNavView, Change
 	    },
 
 	    cleanContent: function () {
-		    MilestoneNavView.getInstance().cleanView();
+            WorkflowNavView.getInstance().cleanView();
+            MilestoneNavView.getInstance().cleanView();
 		    ChangeIssueNavView.getInstance().cleanView();
 		    ChangeOrderNavView.getInstance().cleanView();
 		    ChangeRequestNavView.getInstance().cleanView();
