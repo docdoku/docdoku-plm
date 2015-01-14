@@ -3,6 +3,7 @@ module.exports = {
     failFast:true,
     logLevel: "warning",
     xunit: "results.xml",
+    protocol: "http",
     domain: "val.docdoku.net",
     workspace: "test",
     port: "8080",
