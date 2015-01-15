@@ -20,7 +20,10 @@
 
 package com.docdoku.server.dao;
 
-import com.docdoku.core.configuration.*;
+import com.docdoku.core.configuration.BaselinedPart;
+import com.docdoku.core.configuration.ProductInstanceIteration;
+import com.docdoku.core.configuration.ProductInstanceIterationKey;
+import com.docdoku.core.configuration.ProductInstanceMasterKey;
 import com.docdoku.core.exceptions.ProductInstanceIterationNotFoundException;
 import com.docdoku.core.exceptions.ProductInstanceMasterNotFoundException;
 
@@ -49,11 +52,6 @@ public class ProductInstanceIterationDAO {
 
     public void createProductInstanceIteration(ProductInstanceIteration productInstanceIteration){
         try {
-            PartCollection partCollection = productInstanceIteration.getPartCollection();
-            if(partCollection!=null){
-                em.persist(partCollection);
-            }
-
             em.persist(productInstanceIteration);
             em.flush();
         }catch (Exception e){
