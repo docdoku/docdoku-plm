@@ -157,7 +157,7 @@ define({
 	FOLDER_S_NAME: "Folder name",
 	FOLD_TASK: "Minimize task",
 	FORBIDDEN: "Forbidden",
-	FORM_HELPER: "Let these inputs empty if you don't want to specify a password or an expiration date",
+	FORM_HELPER: "Leave these inputs empty if you don't want to specify a password or an expiration date",
 	FULL_ACCESS: "Full access",
 	FULL_SCREEN: "Full screen",
 	GENERAL: "General",
