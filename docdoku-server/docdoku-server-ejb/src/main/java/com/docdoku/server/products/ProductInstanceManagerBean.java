@@ -131,9 +131,12 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         Locale userLocal = new Locale(user.getLanguage());
         ProductInstanceMasterDAO productInstanceMasterDAO = new ProductInstanceMasterDAO(userLocal,em);
         ProductInstanceMaster productInstanceMaster= productInstanceMasterDAO.loadProductInstanceMaster(new ProductInstanceMasterKey(serialNumber,configurationItemKey.getWorkspace(),configurationItemKey.getId()));
+
         ProductInstanceIteration productInstanceIteration = productInstanceMaster.createNextIteration();
         productInstanceIteration.setIterationNote(iterationNote);
         PartCollection partCollection = new PartCollection();
+        new ProductInstanceIterationDAO(userLocal,em).createProductInstanceIteration(productInstanceIteration);
+
         partCollection.setAuthor(user);
         partCollection.setCreationDate(new Date());
         for(PartIterationKey partIterationKey : partIterationKeys){

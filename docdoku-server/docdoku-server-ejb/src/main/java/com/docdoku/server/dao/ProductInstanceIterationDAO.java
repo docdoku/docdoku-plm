@@ -20,10 +20,7 @@
 
 package com.docdoku.server.dao;
 
-import com.docdoku.core.configuration.BaselinedPart;
-import com.docdoku.core.configuration.ProductInstanceIteration;
-import com.docdoku.core.configuration.ProductInstanceIterationKey;
-import com.docdoku.core.configuration.ProductInstanceMasterKey;
+import com.docdoku.core.configuration.*;
 import com.docdoku.core.exceptions.ProductInstanceIterationNotFoundException;
 import com.docdoku.core.exceptions.ProductInstanceMasterNotFoundException;
 
@@ -31,11 +28,15 @@ import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ProductInstanceIterationDAO {
 
     private EntityManager em;
     private Locale mLocale;
+
+    private static Logger LOGGER = Logger.getLogger(ProductInstanceIterationDAO.class.getName());
 
     public ProductInstanceIterationDAO(EntityManager pEM) {
         em = pEM;
@@ -44,6 +45,20 @@ public class ProductInstanceIterationDAO {
     public ProductInstanceIterationDAO(Locale pLocale, EntityManager pEM) {
         em = pEM;
         mLocale = pLocale;
+    }
+
+    public void createProductInstanceIteration(ProductInstanceIteration productInstanceIteration){
+        try {
+            PartCollection partCollection = productInstanceIteration.getPartCollection();
+            if(partCollection!=null){
+                em.persist(partCollection);
+            }
+
+            em.persist(productInstanceIteration);
+            em.flush();
+        }catch (Exception e){
+            LOGGER.log(Level.SEVERE,"Fail to create product instance iteration",e);
+        }
     }
 
     public List<ProductInstanceIteration> findProductInstanceIterationsByMaster(ProductInstanceMasterKey prodInstMKey) {
