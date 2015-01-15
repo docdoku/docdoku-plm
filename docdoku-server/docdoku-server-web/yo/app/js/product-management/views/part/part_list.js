@@ -26,7 +26,10 @@ define([
         },
 
         render: function () {
-            this.collection.fetch({reset: true});
+            var that = this;
+            this.collection.fetch({reset: true}).error(function(err){
+                that.trigger('error',null,err);
+            });
             return this;
         },
 
