@@ -11,8 +11,6 @@ define([
 
         events: {
             'submit form#nav_list_search': 'onSearchSubmit',
-            'click #nav_list_search_mini_icon i': 'toggleHelp',
-            'click .popover': 'toggleHelp'
         },
 
         initialize: function () {
@@ -37,6 +35,11 @@ define([
                 content: function () {
                     return self.$helpPopover.html();
                 }
+            }).click(function (e) {
+                $(this).popover('show');
+                e.stopPropagation();
+                e.preventDefault();
+                return false;
             });
         },
 
@@ -71,16 +74,8 @@ define([
 
         onResetSelection: function () {
             this.collection.reset();
-        },
-
-        toggleHelp: function () {
-            if (this.oppened) {
-                this.$helpLink.popover('hide');
-            } else {
-                this.$helpLink.popover('show');
-            }
-            this.oppened = !this.oppened;
         }
+
     });
     return SearchView;
 });
