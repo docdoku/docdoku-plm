@@ -76,7 +76,7 @@ public class DocumentBinaryResourceTest {
      * @throws Exception
      */
     @Test
-    public void testUploadDocumentFiles() throws Exception {
+    public void uploadDocumentFiles() throws Exception {
         //Given
         HttpServletRequestWrapper request = Mockito.mock(HttpServletRequestWrapper.class);
         Collection<Part> filesParts = new ArrayList<Part>();
@@ -105,7 +105,7 @@ public class DocumentBinaryResourceTest {
         //Then
         org.junit.Assert.assertNotNull(response);
         org.junit.Assert.assertEquals(response.getStatus(), 201);
-        org.junit.Assert.assertEquals(response.getStatusInfo(), Response.Status.OK);
+        org.junit.Assert.assertEquals(response.getStatusInfo(), Response.Status.CREATED);
     }
 
     /**
@@ -114,7 +114,7 @@ public class DocumentBinaryResourceTest {
      * @throws Exception
      */
     @Test
-    public void testUploadFileWithSpecialCharactersToDocumentTemplates() throws Exception {
+    public void uploadFileWithSpecialCharactersToDocumentTemplates() throws Exception {
 
         //Given
         HttpServletRequestWrapper request = Mockito.mock(HttpServletRequestWrapper.class);
@@ -144,8 +144,8 @@ public class DocumentBinaryResourceTest {
 
         //Then
         org.junit.Assert.assertNotNull(response);
-        org.junit.Assert.assertEquals(response.getStatus(), 200);
-        org.junit.Assert.assertEquals(response.getStatusInfo(), Response.Status.OK);
+        org.junit.Assert.assertEquals(response.getStatus(), 201);
+        org.junit.Assert.assertEquals(response.getStatusInfo(), Response.Status.CREATED);
     }
 
     /**
@@ -154,7 +154,7 @@ public class DocumentBinaryResourceTest {
      * @throws Exception
      */
     @Test
-    public void testUploadSeveralFilesToDocumentsTemplates() throws Exception {
+    public void uploadSeveralFilesToDocumentsTemplates() throws Exception {
 
         //Given
         HttpServletRequestWrapper request = Mockito.mock(HttpServletRequestWrapper.class);
@@ -194,7 +194,7 @@ public class DocumentBinaryResourceTest {
      * @throws Exception
      */
     @Test
-    public void testDownloadDocumentFileAsGuestDocumentIsPublic() throws Exception {
+    public void downloadDocumentFileAsGuestDocumentIsPublic() throws Exception {
 
         //Given
         Request request = Mockito.mock(Request.class);
@@ -226,7 +226,7 @@ public class DocumentBinaryResourceTest {
      * @throws Exception
      */
     @Test
-    public void testDownloadDocumentFileAsGuestDocumentIsPrivate() throws Exception {
+    public void downloadDocumentFileAsGuestDocumentIsPrivate() throws Exception {
         //Given
         Request request = Mockito.mock(Request.class);
         //Workspace workspace, User author, Date expireDate, String password, DocumentRevision documentRevision
@@ -266,7 +266,7 @@ public class DocumentBinaryResourceTest {
      * @throws Exception
      */
     @Test
-    public void testDownloadDocumentFileAsRegularUserWithAccessRights() throws Exception {
+    public void downloadDocumentFileAsRegularUserWithAccessRights() throws Exception {
         //Given
         Request request = Mockito.mock(Request.class);
         //Workspace workspace, User author, Date expireDate, String password, DocumentRevision documentRevision
@@ -307,7 +307,7 @@ public class DocumentBinaryResourceTest {
      * @throws Exception
      */
     @Test(expected = NotAllowedException.class)
-    public void testDownloadDocumentFileAsUserWithNoAccessRights() throws Exception {
+    public void downloadDocumentFileAsUserWithNoAccessRights() throws Exception {
 
         //Given
         Request request = Mockito.mock(Request.class);
@@ -334,7 +334,7 @@ public class DocumentBinaryResourceTest {
      * @throws Exception
      */
     @Test
-    public void testDownloadDocumentScormSubResource() throws Exception {
+    public void downloadDocumentScormSubResource() throws Exception {
 
         //Given
         Request request = Mockito.mock(Request.class);

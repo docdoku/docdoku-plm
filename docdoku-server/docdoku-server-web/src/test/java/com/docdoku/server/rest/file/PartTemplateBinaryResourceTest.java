@@ -58,9 +58,8 @@ public class PartTemplateBinaryResourceTest {
      * @throws Exception
      */
     @Test
-    public void testUploadPartTemplateFiles() throws Exception {
+    public void uploadPartTemplateFiles() throws Exception {
         //Given
-
         final File fileToUpload  = new File(ResourceUtil.SOURCE_PART_STORAGE+ResourceUtil.TEST_PART_FILENAME1);
         File fuploadedFile  = new File(ResourceUtil.TARGET_PART_STORAGE+ResourceUtil.FILENAME_TARGET_PART);
         HttpServletRequestWrapper request = Mockito.mock(HttpServletRequestWrapper.class);
@@ -94,7 +93,7 @@ public class PartTemplateBinaryResourceTest {
      * @throws Exception
      */
     @Test
-    public void testUploadPartTemplateFilesUnderANameContainingSpecialCharacters() throws Exception {
+    public void uploadPartTemplateFilesUnderANameContainingSpecialCharacters() throws Exception {
         //Given
 
         final File fileToUpload  = new File(ResourceUtil.SOURCE_PART_STORAGE+ResourceUtil.TEST_PART_FILENAME1);
@@ -127,7 +126,7 @@ public class PartTemplateBinaryResourceTest {
      * @throws Exception
      */
     @Test
-    public void testUploadPartTemplateFilesNameContainingSpecialCharacters() throws Exception {
+    public void uploadPartTemplateFilesNameContainingSpecialCharacters() throws Exception {
         //Given
 
         final File fileToUpload  = new File(ResourceUtil.SOURCE_PART_STORAGE+ResourceUtil.FILENAME_TO_UPLOAD_PART_SPECIAL_CHARACTER);
@@ -163,7 +162,7 @@ public class PartTemplateBinaryResourceTest {
      * @throws Exception
      */
     @Test
-    public void testUploadPartTemplateSeveralFiles() throws Exception {
+    public void uploadPartTemplateSeveralFiles() throws Exception {
         //Given
         final File fileToUpload1  = new File(ResourceUtil.SOURCE_PART_STORAGE+ResourceUtil.FILENAME_TO_UPLOAD_PART_SPECIAL_CHARACTER);
         final File fileToUpload2  = new File(ResourceUtil.SOURCE_PART_STORAGE+ResourceUtil.TEST_PART_FILENAME1);
@@ -200,7 +199,7 @@ public class PartTemplateBinaryResourceTest {
      * @throws Exception
      */
     @Test
-    public void testDownloadPartTemplateFileNonNullRange() throws Exception {
+    public void downloadPartTemplateFileNonNullRange() throws Exception {
 
         //Given
         Request request = Mockito.mock(Request.class);
@@ -226,7 +225,7 @@ public class PartTemplateBinaryResourceTest {
      * @throws Exception
      */
     @Test
-    public void testDownloadPartTemplateFileNullRange() throws Exception {
+    public void downloadPartTemplateFileNullRange() throws Exception {
 
         //Given
         Request request = Mockito.mock(Request.class);

@@ -27,6 +27,8 @@ public class ResourceUtil {
     public static final String TEST_PART_FILENAME2 = "part_file_test1.txt";
     public static final String VIRTUAL_SUB_RESOURCE = "scormFile.zip";
     public static final String REFER ="refers/073dd114-e13b-46a9-a348-2c61138aba20" ;
+    public static final String PART_NUMBER = "PART01";
+    public static final String SUBTYPE ="obj" ;
 
     public static String FILENAME_TO_UPLOAD_PART_SPECIAL_CHARACTER="part_file_to_upload-èé_spécial&.txt";
     public static final long PART_SIZE =363666 ;
