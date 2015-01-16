@@ -156,24 +156,30 @@ public class PartTemplateBinaryResourceTest {
         final File fileToUpload1  = new File(ResourceUtil.SOURCE_PART_STORAGE+ResourceUtil.FILENAME_TO_UPLOAD_PART_SPECIAL_CHARACTER);
         final File fileToUpload2  = new File(ResourceUtil.SOURCE_PART_STORAGE+ResourceUtil.TEST_PART_FILENAME1);
         final File fileToUpload3  = new File(ResourceUtil.SOURCE_PART_STORAGE+ResourceUtil.TEST_PART_FILENAME2);
-        File uploadedFile  = new File(ResourceUtil.TARGET_PART_STORAGE+"new_"+ResourceUtil.FILENAME_TO_UPLOAD_PART_SPECIAL_CHARACTER);
+        File uploadedFile1  = new File(ResourceUtil.TARGET_PART_STORAGE+"new_"+ResourceUtil.TEST_PART_FILENAME1);
+        File uploadedFile2  = new File(ResourceUtil.TARGET_PART_STORAGE+"new_"+ResourceUtil.TEST_PART_FILENAME2);
+        File uploadedFile3  = new File(ResourceUtil.TARGET_PART_STORAGE+"new_"+ResourceUtil.FILENAME_TO_UPLOAD_PART_SPECIAL_CHARACTER);
         HttpServletRequestWrapper request = Mockito.mock(HttpServletRequestWrapper.class);
         Collection<Part> parts = new ArrayList<Part>();
         parts.add(new PartImp(fileToUpload1) );
         parts.add(new PartImp(fileToUpload2) );
         parts.add(new PartImp(fileToUpload3) );
         Mockito.when(request.getParts()).thenReturn(parts);
-        binaryResource = new BinaryResource(ResourceUtil.FILENAME1,ResourceUtil.DOCUMENT_SIZE,new Date());
-        if (!uploadedFile.getParentFile().exists()){
-            uploadedFile.getParentFile().mkdirs();
+        BinaryResource binaryResource1 = new BinaryResource(ResourceUtil.TEST_PART_FILENAME1,ResourceUtil.DOCUMENT_SIZE,new Date());
+        BinaryResource binaryResource2 = new BinaryResource(ResourceUtil.TEST_PART_FILENAME2,ResourceUtil.DOCUMENT_SIZE,new Date());
+        BinaryResource binaryResource3 = new BinaryResource(ResourceUtil.FILENAME_TO_UPLOAD_PART_SPECIAL_CHARACTER,ResourceUtil.DOCUMENT_SIZE,new Date());
+        if (!uploadedFile1.getParentFile().exists()){
+            uploadedFile1.getParentFile().mkdirs();
         }
-        if (!uploadedFile.exists()){
-            uploadedFile.createNewFile();
+        if (!uploadedFile1.exists()){
+            uploadedFile1.createNewFile();
         }
-        OutputStream outputStream= new FileOutputStream(uploadedFile);
-        Mockito.when(productService.saveFileInTemplate(Matchers.any(PartMasterTemplateKey.class),Matchers.anyString(), Matchers.anyInt())).thenReturn(binaryResource);
+        OutputStream outputStream1= new FileOutputStream(uploadedFile1);
+        OutputStream outputStream2= new FileOutputStream(uploadedFile2);
+        OutputStream outputStream3= new FileOutputStream(uploadedFile3);
+        Mockito.when(productService.saveFileInTemplate(Matchers.any(PartMasterTemplateKey.class),Matchers.anyString(), Matchers.anyInt())).thenReturn(binaryResource1,binaryResource1,binaryResource2,binaryResource2,binaryResource3,binaryResource3);
 
-        Mockito.when(dataManager.getBinaryResourceOutputStream(binaryResource)).thenReturn(outputStream);
+        Mockito.when(dataManager.getBinaryResourceOutputStream(Matchers.any(BinaryResource.class))).thenReturn(outputStream1,outputStream2,outputStream3);
         Mockito.when(request.getRequestURI()).thenReturn(ResourceUtil.WORKSPACE_ID+"/parts-templates/"+ResourceUtil.PART_TEMPLATE_ID+"/"+ResourceUtil.FILENAME_TARGET_PART);
 
         //When

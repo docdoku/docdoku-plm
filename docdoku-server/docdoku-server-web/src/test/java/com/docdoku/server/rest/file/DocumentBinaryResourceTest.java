@@ -83,10 +83,7 @@ public class DocumentBinaryResourceTest {
         if (!uploadedFile1.getParentFile().exists()){
             uploadedFile1.getParentFile().mkdirs();
         }
-        else {
-            for(File file:uploadedFile1.getParentFile().listFiles())
-                file.delete();
-        }
+
         OutputStream outputStream1 = new FileOutputStream(uploadedFile1);
 
         Mockito.when(request.getParts()).thenReturn(filesParts);
@@ -122,10 +119,7 @@ public class DocumentBinaryResourceTest {
         if (!uploadedFile1.getParentFile().exists()){
             uploadedFile1.getParentFile().mkdirs();
         }
-        else {
-            for(File file:uploadedFile1.getParentFile().listFiles())
-                file.delete();
-        }
+
         OutputStream outputStream1 = new FileOutputStream(uploadedFile1);
 
         Mockito.when(request.getParts()).thenReturn(filesParts);
