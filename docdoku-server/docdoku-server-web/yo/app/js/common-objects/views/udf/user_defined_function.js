@@ -35,7 +35,6 @@ define([
             var baselineList = this.$baselineList;
             new ConfigurationItemCollection().fetch({success:function(products){
                 products.each(function(product){
-                    console.log(product)
                     productList.append('<option value="'+product.getId()+'">'+product.getId()+'</option>');
                     baselineList.empty().append('<option value="latest">'+App.config.i18n.LATEST+'</option>');
                 });
@@ -50,7 +49,6 @@ define([
             if(productId){
                 new Baselines({},{type:'product',productId:productId}).fetch({success:function(baselines) {
                     baselines.each(function(baseline){
-                        console.log(baseline)
                         baselineList.append('<option value="'+baseline.getId()+'">'+baseline.getName()+'</option>');
                     });
                 }});
@@ -70,8 +68,7 @@ define([
         },
 
         run: function(e){
-
-            alert('run')
+            alert('run');
             e.preventDefault();
             e.stopPropagation();
             return false;
