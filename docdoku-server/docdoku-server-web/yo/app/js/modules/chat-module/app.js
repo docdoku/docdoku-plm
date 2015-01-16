@@ -38,7 +38,7 @@ define([
         onMessage: function (message) {
 
             if (App.config.login !== message.sender && message.message.match(/^\/invite /)) {
-                var url = 'http://' + window.location.host + '/product-structure/' + message.message.substring(8);
+                var url = window.location.origin + App.config.contextPath + '/product-structure/' + message.message.substring(8);
                 message.message = '<em>' + App.config.i18n.COLLABORATIVE_INVITE + ' : </em>' + url;
             } else if (App.config.login !== message.sender && message.message.match(/^\/withdrawInvitation/)) {
                 message.message = App.config.i18n.COLLABORATIVE_WITHDRAW_INVITATION;

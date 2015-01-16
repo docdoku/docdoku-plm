@@ -2,12 +2,11 @@
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
         <h3><a><span class="icon"></span>
-            {{model.getSerialNumber}}
+            {{i18n.EDIT_PRODUCT_INSTANCE}} {{model.getSerialNumber}}
         </a></h3>
     </div>
     <div class="modal-body">
         <div class="notifications"></div>
-        <h4></h4>
         <form id="product_instance_edit_form" class="form-horizontal">
             <div class="control-group">
                 <label class="control-label" for="inputConfigurationItemId">{{i18n.PRODUCT_ID}}</label>
@@ -26,8 +25,6 @@
                 </div>
             </div>
             <hr/>
-            <h4>{{i18n.EDIT_PRODUCT_INSTANCE}}</h4>
-
             <div id="baselinedPartListArea"></div>
         </form>
     </div>

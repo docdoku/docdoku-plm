@@ -15,9 +15,12 @@ casper.test.begin('Login tests suite',2, function loginTestsSuite(){
     /**
      * Test to find the login form
      */
-    casper.then(function(){
+    casper.then(function waitForLoginForm(){
         this.waitForSelector('form[id="login_form"]',function loginFormFound(){
             this.test.assert(true,'Login form found');
+        },function fail(){
+            this.capture('screenshot/login/waitForLoginForm-error.png');
+            this.test.assert(false,'Login form not found');
         });
     });
 
@@ -35,7 +38,7 @@ casper.test.begin('Login tests suite',2, function loginTestsSuite(){
      * Submit the login form
      */
     casper.then(function submitLoginForm(){
-        casper.click('#login_button_container input');
+        this.click('#login_button_container input');
     });
 
     /**

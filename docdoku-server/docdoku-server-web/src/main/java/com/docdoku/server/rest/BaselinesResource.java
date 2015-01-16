@@ -115,15 +115,21 @@ public class BaselinesResource {
     @PUT
     @Path("{baselineId}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String pCiId, @PathParam("baselineId") String baselineId, ProductBaselineDTO productBaselineDTO)
+    @Produces(MediaType.APPLICATION_JSON)
+    public ProductBaselineDTO updateBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String pCiId, @PathParam("baselineId") String baselineId, ProductBaselineDTO pProductBaselineDTO)
             throws UserNotActiveException, EntityNotFoundException, ConfigurationItemNotReleasedException {
-        String ciId = (pCiId != null) ? pCiId : productBaselineDTO.getConfigurationItemId();
+        String ciId = (pCiId != null) ? pCiId : pProductBaselineDTO.getConfigurationItemId();
         List<PartIterationKey> partIterationKeys = new ArrayList<>();
-        for(BaselinedPartDTO baselinedPartDTO : productBaselineDTO.getBaselinedParts()){
+        for(BaselinedPartDTO baselinedPartDTO : pProductBaselineDTO.getBaselinedParts()){
             partIterationKeys.add(new PartIterationKey(workspaceId, baselinedPartDTO.getNumber(),baselinedPartDTO.getVersion(),baselinedPartDTO.getIteration()));
         }
-        productBaselineService.updateBaseline(new ConfigurationItemKey(workspaceId,ciId),Integer.parseInt(baselineId), productBaselineDTO.getName(), productBaselineDTO.getType(), productBaselineDTO.getDescription(),partIterationKeys);
-        return Response.ok().build();
+
+        ProductBaseline productBaseline = productBaselineService.updateBaseline(new ConfigurationItemKey(workspaceId, ciId), Integer.parseInt(baselineId), pProductBaselineDTO.getName(), pProductBaselineDTO.getType(), pProductBaselineDTO.getDescription(), partIterationKeys);
+
+        ProductBaselineDTO productBaselineDTO = mapper.map(productBaseline,ProductBaselineDTO.class);
+        productBaselineDTO.setConfigurationItemId(productBaseline.getConfigurationItem().getId());
+
+        return productBaselineDTO;
     }
 
     @DELETE

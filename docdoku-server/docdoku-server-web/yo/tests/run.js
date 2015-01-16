@@ -17,6 +17,8 @@ var local = require('./config.local');
 var conf = _.extend(ci, local);
 
 var casperCommand = 'casperjs test' +
+                    ' --ignore-ssl-errors=true '+
+                    ' --protocol=' + conf.protocol +
                     ' --domain=' + conf.domain +
                     ' --port=' + conf.port +
                     ' --login=' + conf.login +

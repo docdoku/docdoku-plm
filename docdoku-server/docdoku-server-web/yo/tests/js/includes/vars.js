@@ -6,8 +6,9 @@ var login = casper.cli.get("login");
 var pass = casper.cli.get("pass");
 var workspace = casper.cli.get("workspace");
 var contextPath = casper.cli.get("contextPath");
+var protocol = casper.cli.get("protocol");
 
-var homeUrl = 'http://'+domain+':'+port + contextPath;
+var homeUrl = protocol + '://' + domain + ':' + port + contextPath;
 
 function twoDigit(n){
     'use strict';

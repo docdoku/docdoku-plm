@@ -31,7 +31,7 @@ define([
         },
 
         bindDomElements: function () {
-            this.$notifications = this.$el.find('.notifications').first();
+            this.$notifications = this.$('.notifications');
             this.$modal = this.$('#baseline_edit_modal');
             this.$baselinedPartListArea = this.$('#baselinedPartListArea');
         },
@@ -47,7 +47,7 @@ define([
                 success: function () {
                     _this.closeModal();
                 },
-                error: _this.onError
+                error: _this.onError.bind(_this)
             });
 
             e.preventDefault();

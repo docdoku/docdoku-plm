@@ -74,7 +74,7 @@ define([
                 list.each(function (product) {
                     self.$inputProductId.append('<option value="' + product.getId() + '"' + '>' + product.getId() + '</option>');
                 });
-                this.$inputProductId.combobox({bsVersion: '2'});
+                this.$inputProductId.combobox({bsVersion: 2});
             }
         },
 

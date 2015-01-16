@@ -38,7 +38,8 @@ define([
     App.mainChannel.addChannelListener(userStatusListener);
     App.mainChannel.addChannelListener(webRTCInvitationListener);
     App.mainChannel.addChannelListener(chatListener);
-    App.mainChannel.init('ws://' + window.location.host + App.config.contextPath + '/mainChannelSocket');
+    var wsProtocol = window.location.protocol === "https:" ? 'wss://':'ws://';
+    App.mainChannel.init(wsProtocol + window.location.host + App.config.contextPath + '/mainChannelSocket');
 
     return {
         CoWorkersAccessModuleView: CoWorkersAccessModuleView
