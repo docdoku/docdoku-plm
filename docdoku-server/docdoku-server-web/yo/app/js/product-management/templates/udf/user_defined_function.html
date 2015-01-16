@@ -1,0 +1,26 @@
+<div id="user_defined_function_modal" class="modal hide fade" tabindex="-1" role="dialog"
+     aria-hidden="true">
+
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3>{{i18n.USER_DEFINED_FUNCTION}}</h3>
+    </div>
+
+    <div class="modal-body">
+
+        Choose product <select class="product-select"></select>
+        Choose Baseline <select class="baseline-select"></select>
+
+        <textarea>
+            function(part,memo){
+                memo += part.instancesAttributes.weight
+            }
+        </textarea>
+
+    </div>
+
+    <div class="modal-footer">
+        <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">{{i18n.CLOSE}}</button>
+    </div>
+
+</div>
