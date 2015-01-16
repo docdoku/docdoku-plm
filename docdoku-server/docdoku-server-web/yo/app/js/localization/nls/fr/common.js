@@ -195,6 +195,7 @@ define({
 	LEFT_CLICK: "clic gauche",
 	LIFECYCLE_STATE: "Etat du cycle de vie",
 	LINKS: "Liens",
+    LOADING:'Chargement',
 	LOCK_ATTRIBUTES: "Geler la structure des attributs",
 	LOGOUT: 'Se déconnecter',
 	LOOK_AT: "Regarder",

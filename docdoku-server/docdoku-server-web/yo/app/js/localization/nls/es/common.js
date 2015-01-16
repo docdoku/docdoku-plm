@@ -194,6 +194,7 @@ define({
 	LEFT_CLICK: "left click",
 	LIFECYCLE_STATE: "Life cycle state",
 	LINKS: "Links",
+    LOADING:'Loading',
 	LOCK_ATTRIBUTES: "Freeze attributes structure",
 	LOGOUT: 'Logout',
 	LOOK_AT: "Look at",

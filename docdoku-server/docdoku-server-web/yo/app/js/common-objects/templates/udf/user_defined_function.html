@@ -7,8 +7,8 @@
     </div>
 
     <div class="modal-body">
-        <form id="user_defined_function_form" class="form-horizontal">
 
+        <form id="user_defined_function_form" class="form-horizontal">
 
             <div class="control-group">
                 <label class="control-label">{{i18n.PRODUCT_ID}}</label>
@@ -25,12 +25,10 @@
             </div>
 
             <div class="control-group">
-                <label class="control-label">{{i18n.INIT_VALUE}}</label>
+                <label class="control-label">{{i18n.INIT_VALUE}} (memo)</label>
                 <div class="controls">
                     <span class="help-inline">
-                        <textarea class="user-defined-init">function initMem(){
-    return 0;
-}</textarea>
+                        <textarea class="user-defined-init">return 0;</textarea>
                     </span>
                 </div>
             </div>
@@ -39,9 +37,7 @@
                 <label class="control-label">{{i18n.UDF_DEF}}</label>
                 <div class="controls">
                     <span class="help-inline">
-                          <textarea class="user-defined-function-def">function(part,mem){
-    mem += part.instancesAttributes.weight;
-}</textarea>
+                          <textarea class="user-defined-function-def">return memo + (part.attrs.weight || 0);</textarea>
                     </span>
                 </div>
             </div>
@@ -50,7 +46,16 @@
                 <label class="control-label"></label>
                 <div class="controls">
                     <span class="help-inline">
-                         <button class="btn btn-primary" aria-hidden="true">{{i18n.RUN}}</button>
+                         <button class="btn btn-primary run-udf" aria-hidden="true">{{i18n.RUN}}</button>
+                    </span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label"></label>
+                <div class="controls">
+                    <span class="help-inline udf-result">
+
                     </span>
                 </div>
             </div>
