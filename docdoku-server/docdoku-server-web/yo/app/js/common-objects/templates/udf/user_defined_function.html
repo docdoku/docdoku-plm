@@ -1,0 +1,65 @@
+<div id="user_defined_function_modal" class="modal hide fade" tabindex="-1" role="dialog"
+     aria-hidden="true">
+
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3>{{i18n.USER_DEFINED_FUNCTION}}</h3>
+    </div>
+
+    <div class="modal-body">
+        <form id="user_defined_function_form" class="form-horizontal">
+
+
+            <div class="control-group">
+                <label class="control-label">{{i18n.PRODUCT_ID}}</label>
+                <div class="controls">
+                     <span class="help-inline"><select class="user-defined-product-select"></select></span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">{{i18n.BASELINE}}</label>
+                <div class="controls">
+                     <span class="help-inline"><select class="user-defined-baseline-select"></select></span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">{{i18n.INIT_VALUE}}</label>
+                <div class="controls">
+                    <span class="help-inline">
+                        <textarea class="user-defined-init">function initMem(){
+    return 0;
+}</textarea>
+                    </span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">{{i18n.UDF_DEF}}</label>
+                <div class="controls">
+                    <span class="help-inline">
+                          <textarea class="user-defined-function-def">function(part,mem){
+    mem += part.instancesAttributes.weight;
+}</textarea>
+                    </span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label"></label>
+                <div class="controls">
+                    <span class="help-inline">
+                         <button class="btn btn-primary" aria-hidden="true">{{i18n.RUN}}</button>
+                    </span>
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+    <div class="modal-footer">
+        <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">{{i18n.CLOSE}}</button>
+    </div>
+
+</div>
