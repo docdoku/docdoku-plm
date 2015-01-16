@@ -18,7 +18,7 @@ define([
         'views/control_clipping_view',
         'views/control_explode_view',
         'views/control_measure_view',
-        'common-objects/views/baselines/baseline_select_view',
+        'views/baselines/baseline_select_view',
         'dmu/SceneManager',
         'dmu/collaborativeController',
         'dmu/InstancesManager',
