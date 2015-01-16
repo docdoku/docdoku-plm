@@ -105,7 +105,7 @@ define({
 		DELETE_FOLDER_QUESTION: "Delete the folder?",
 		DELETE_LINKED_ITEM: "Delete link",
 		DELETE_MARKER: "Delete marker",
-		DELETE_PRODUCT_CONFIRM: "Are you sure to want to delete this product ?",
+		DELETE_PRODUCT_CONFIRM: "Are you sure to want to delete this product?",
 		DELETE_PRODUCT: "Delete Product",
 		DELETE_PRODUCT_ERROR: "Error on product deletion",
 		DELETE_SELECTION: "Delete selection",

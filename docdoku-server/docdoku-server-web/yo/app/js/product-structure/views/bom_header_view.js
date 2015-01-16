@@ -81,8 +81,12 @@ define([
         },
 
         onOneComponentSelected: function (component) {
-            this.checkoutGroup.show();
-            this.aclButton.show();
+            if(!component.isReleased()){
+                this.checkoutGroup.show();
+            }
+            if(App.config.workspaceAdmin || component.getAuthorLogin() === App.config.login){
+                this.aclButton.show();
+            }
 
             if (component.isCheckout()) {
                 if (component.isCheckoutByConnectedUser()) {
