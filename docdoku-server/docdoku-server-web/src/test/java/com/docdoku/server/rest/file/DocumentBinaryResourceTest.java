@@ -116,7 +116,7 @@ public class DocumentBinaryResourceTest {
 
         BinaryResource binaryResource = new BinaryResource(Tools.unAccent(ResourceUtil.FILENAME2), ResourceUtil.DOCUMENT_SIZE, new Date());
 
-        File uploadedFile1 = new File(getClass().getResource(ResourceUtil.TARGET_FILE_STORAGE + "new_" + ResourceUtil.FILENAME2).getFile());
+        File uploadedFile1 = new File(getClass().getResource(ResourceUtil.TARGET_FILE_STORAGE).getFile() + "new_" + ResourceUtil.FILENAME2);
         if (!uploadedFile1.getParentFile().exists()){
             uploadedFile1.getParentFile().mkdirs();
         }
@@ -158,7 +158,7 @@ public class DocumentBinaryResourceTest {
         BinaryResource binaryResource3 = new BinaryResource(ResourceUtil.FILENAME3, ResourceUtil.DOCUMENT_SIZE, new Date());
 
         File uploadedFile1 = new File(getClass().getResource(ResourceUtil.TARGET_FILE_STORAGE + "new_" + ResourceUtil.FILENAME1).getFile());
-        File uploadedFile2 = new File(getClass().getResource(ResourceUtil.TARGET_FILE_STORAGE + "new_" + ResourceUtil.FILENAME2).getFile());
+        File uploadedFile2 = new File(getClass().getResource(ResourceUtil.TARGET_FILE_STORAGE).getFile() + "new_" + ResourceUtil.FILENAME2);
         File uploadedFile3 = new File(getClass().getResource(ResourceUtil.TARGET_FILE_STORAGE + "new_" + ResourceUtil.FILENAME3).getFile());
         if (!uploadedFile1.getParentFile().exists()){
             uploadedFile1.getParentFile().mkdirs();

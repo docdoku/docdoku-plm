@@ -145,7 +145,7 @@ public class PartBinaryResourceTest {
     public void uploadFileWithSpecialCharactersToPart() throws Exception {
         //Given
         final File fileToUpload = new File(getClass().getResource(ResourceUtil.SOURCE_PART_STORAGE).getFile() + ResourceUtil.FILENAME_TO_UPLOAD_PART_SPECIAL_CHARACTER);
-        File uploadedFile = new File(getClass().getResource(ResourceUtil.TARGET_PART_STORAGE + ResourceUtil.FILENAME_TO_UPLOAD_PART_SPECIAL_CHARACTER).getFile());
+        File uploadedFile = new File(getClass().getResource(ResourceUtil.TARGET_PART_STORAGE).getFile() + ResourceUtil.FILENAME_TO_UPLOAD_PART_SPECIAL_CHARACTER);
         HttpServletRequestWrapper request = Mockito.mock(HttpServletRequestWrapper.class);
         Collection<Part> parts = new ArrayList<Part>();
         parts.add(new PartImp(fileToUpload));
@@ -184,7 +184,7 @@ public class PartBinaryResourceTest {
         File fileToUpload3 = new File(getClass().getResource(ResourceUtil.SOURCE_PART_STORAGE).getFile() + ResourceUtil.FILENAME_TO_UPLOAD_PART_SPECIAL_CHARACTER);
         File uploadedFile1 = new File(getClass().getResource(ResourceUtil.TARGET_PART_STORAGE + ResourceUtil.TEST_PART_FILENAME1).getFile());
         File uploadedFile2 = new File(getClass().getResource(ResourceUtil.TARGET_PART_STORAGE + ResourceUtil.TEST_PART_FILENAME2).getFile());
-        File uploadedFile3 = new File(getClass().getResource(ResourceUtil.TARGET_PART_STORAGE + ResourceUtil.FILENAME_TO_UPLOAD_PART_SPECIAL_CHARACTER).getFile());
+        File uploadedFile3 = new File(getClass().getResource(ResourceUtil.TARGET_PART_STORAGE).getFile() + ResourceUtil.FILENAME_TO_UPLOAD_PART_SPECIAL_CHARACTER);
         HttpServletRequestWrapper request = Mockito.mock(HttpServletRequestWrapper.class);
         Collection<Part> parts = new ArrayList<Part>();
         parts.add(new PartImp(fileToUpload1));
