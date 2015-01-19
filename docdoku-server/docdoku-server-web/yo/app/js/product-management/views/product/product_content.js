@@ -10,19 +10,23 @@ define([
     'text!common-objects/templates/buttons/snap_latest_button.html',
     'text!common-objects/templates/buttons/snap_released_button.html',
     'text!common-objects/templates/buttons/delete_button.html',
-    'common-objects/views/alert'
-], function (Backbone, Mustache, ConfigurationItemCollection, template, ProductListView, ProductCreationView, SnapBaselineView, snapLatestButton, snapReleasedButton, deleteButton, AlertView) {
+    'text!common-objects/templates/buttons/udf_button.html',
+    'common-objects/views/alert',
+    'common-objects/views/udf/user_defined_function'
+], function (Backbone, Mustache, ConfigurationItemCollection, template, ProductListView, ProductCreationView, SnapBaselineView, snapLatestButton, snapReleasedButton, deleteButton, udfButton,  AlertView, UserDefinedFunctionView) {
     'use strict';
 	var ProductContentView = Backbone.View.extend({
         partials: {
             snapLatestButton: snapLatestButton,
             snapReleasedButton: snapReleasedButton,
-            deleteButton: deleteButton
+            deleteButton: deleteButton,
+            udfButton: udfButton
         },
 
         events: {
             'click button.new-product': 'newProduct',
             'click button.delete': 'deleteProduct',
+            'click button.udf': 'openUdfView',
             'click button.new-latest-baseline': 'createLatestBaseline',
             'click button.new-released-baseline': 'createReleasedBaseline'
         },
@@ -133,6 +137,12 @@ define([
                 type: 'warning',
                 message: errorMessage
             }).render().$el);
+        },
+        openUdfView:function(){
+            var view = new UserDefinedFunctionView();
+            view.render();
+            document.body.appendChild(view.el);
+            view.openModal();
         }
 
     });

@@ -110,17 +110,20 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
 
         ProductInstanceIteration productInstanceIteration = productInstanceMaster.createNextIteration();
         productInstanceIteration.setIterationNote("Initial");
+
         PartCollection partCollection = new PartCollection();
+        new PartCollectionDAO(em).createPartCollection(partCollection);
         partCollection.setAuthor(user);
         partCollection.setCreationDate(new Date());
 
         ProductBaseline productBaseline = new ProductBaselineDAO(em).loadBaseline(baselineId);
+        productInstanceMasterDAO.createProductInstanceMaster(productInstanceMaster);
+
+
         for(BaselinedPart baselinedPart : productBaseline.getBaselinedParts().values()){
             partCollection.addBaselinedPart(baselinedPart.getTargetPart());
         }
         productInstanceIteration.setPartCollection(partCollection);
-
-        productInstanceMasterDAO.createProductInstanceMaster(productInstanceMaster);
         return productInstanceMaster;
     }
 
@@ -131,9 +134,14 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         Locale userLocal = new Locale(user.getLanguage());
         ProductInstanceMasterDAO productInstanceMasterDAO = new ProductInstanceMasterDAO(userLocal,em);
         ProductInstanceMaster productInstanceMaster= productInstanceMasterDAO.loadProductInstanceMaster(new ProductInstanceMasterKey(serialNumber,configurationItemKey.getWorkspace(),configurationItemKey.getId()));
+
         ProductInstanceIteration productInstanceIteration = productInstanceMaster.createNextIteration();
+        new ProductInstanceIterationDAO(userLocal,em).createProductInstanceIteration(productInstanceIteration);
+
         productInstanceIteration.setIterationNote(iterationNote);
         PartCollection partCollection = new PartCollection();
+        new PartCollectionDAO(em).createPartCollection(partCollection);
+
         partCollection.setAuthor(user);
         partCollection.setCreationDate(new Date());
         for(PartIterationKey partIterationKey : partIterationKeys){

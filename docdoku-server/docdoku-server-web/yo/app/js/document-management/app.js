@@ -4,7 +4,7 @@ define([
     'mustache',
     'common-objects/models/workspace',
 	'common-objects/collections/baselines',
-	'common-objects/views/baselines/baseline_select_view',
+	'views/baselines/baseline_select_view',
     'text!templates/content.html'
 ], function (Backbone, Mustache, Workspace, Baselines, BaselineSelectView, template) {
 	'use strict';

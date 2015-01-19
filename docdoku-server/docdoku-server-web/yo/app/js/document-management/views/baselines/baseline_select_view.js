@@ -3,7 +3,7 @@ define([
 	'backbone',
 	'mustache',
 	'common-objects/collections/baselines',
-	'text!common-objects/templates/baselines/baseline_select.html',
+	'text!templates/baselines/baseline_select.html',
 	'common-objects/views/baselines/snap_baseline_view'
 ], function (Backbone, Mustache, Baselines, template, SnapBaselineView) {
 	'use strict';
@@ -21,9 +21,6 @@ define([
 				var data = {
 					type : this.type
 				};
-				if(this.type==='product'){
-					data.productId = App.config.productId;
-				}
 				this.collection = new Baselines({},data);
 			}
 			this.listenToOnce(this.collection,'reset',this.onCollectionReset);
@@ -94,7 +91,6 @@ define([
 			if(this.type==='document'){
 				snapBaselineView = new SnapBaselineView({type: 'DOCUMENT', collection: this.collection});
 			}
-			//Todo Allow to add baseline on product-structure
 			$('body').append(snapBaselineView.render().el);
 			snapBaselineView.openModal();
 		},

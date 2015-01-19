@@ -1,5 +1,6 @@
 package com.docdoku.cli.helpers;
 
+import com.docdoku.cli.commands.HelpCommand;
 import com.docdoku.cli.interfaces.CommandLine;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.configuration.ProductBaseline;
@@ -34,6 +35,10 @@ public class HumanOutput extends CliOutput{
         System.out.println(cl.getDescription());
         System.out.println();
         parser.printUsage(System.out);
+        System.out.println();
+        if(cl instanceof HelpCommand){
+            printAvailableCommands();
+        }
     }
 
     @Override
@@ -42,6 +47,12 @@ public class HumanOutput extends CliOutput{
         System.err.println("DocDokuPLM command-line client, version 1.0.");
         System.err.println("Type 'dplm help <command>' for help on a specific command.");
         System.err.println();
+        printAvailableCommands();
+        System.err.println();
+        System.err.println("For additional information, see http://www.docdokuplm.com");
+    }
+
+    private void printAvailableCommands(){
         System.err.println("Available commands:");
         System.err.println("   checkin (ci)");
         System.err.println("   checkout (co)");
@@ -51,8 +62,6 @@ public class HumanOutput extends CliOutput{
         System.err.println("   put");
         System.err.println("   status (stat, st)");
         System.err.println("   undocheckout (uco)");
-        System.err.println();
-        System.err.println("For additional information, see http://www.docdokuplm.com");
     }
 
     @Override

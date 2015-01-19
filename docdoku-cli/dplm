@@ -19,9 +19,6 @@ do
         esac
     shift
 done
-echo "---------------"
-echo $ARGS
-echo "---------------"
 java -Xmx1024M -classpath $dir/target/docdoku-cli-jar-with-dependencies.jar com.docdoku.cli.MainCommand $ARGS
 
 

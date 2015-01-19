@@ -121,7 +121,7 @@ public class ProductResource {
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException {
 
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
-        ConfigSpec cs = getConfigSpec(workspaceId,configSpecType);
+        ConfigSpec cs = getConfigSpec(workspaceId,configSpecType,ciId);
 
         PartUsageLink rootUsageLink = productConfigSpecService.filterProductStructure(ciKey, cs, partUsageLink, 1);
 
@@ -148,7 +148,7 @@ public class ProductResource {
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException {
 
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
-        ConfigSpec cs = getConfigSpec(workspaceId,configSpecType);
+        ConfigSpec cs = getConfigSpec(workspaceId,configSpecType,ciId);
 
         PartUsageLink rootUsageLink = productConfigSpecService.filterProductStructure(ciKey, cs, partUsageLink, depth);
 
@@ -274,7 +274,7 @@ public class ProductResource {
             cc.setMaxAge(60 * 15);
 
             ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
-            ConfigSpec cs = getConfigSpec(workspaceId, configSpecType);
+            ConfigSpec cs = getConfigSpec(workspaceId, configSpecType,ciId);
 
             InstanceCollection instanceCollection = getInstancesCollection(ciKey,cs,path);
 
@@ -297,7 +297,7 @@ public class ProductResource {
             //this request is resources consuming so we cache the response for 30 minutes
             cc.setMaxAge(60 * 15);
 
-            ConfigSpec cs = getConfigSpec(workspaceId,pathsDTO.getConfigSpec());
+            ConfigSpec cs = getConfigSpec(workspaceId,pathsDTO.getConfigSpec(),ciId);
             List<InstanceCollection> instanceCollections = getInstancesCollectionsList(workspaceId,ciId, cs,pathsDTO.getPaths());
 
             return Response.ok().lastModified(new Date()).cacheControl(cc).entity(new PathFilteredListInstanceCollection(instanceCollections, cs)).build();
@@ -368,7 +368,8 @@ public class ProductResource {
      * @throws WorkspaceNotFoundException If the workspace doesn't exist
      * @throws BaselineNotFoundException If the baseline doesn't exist
      */
-    private ConfigSpec getConfigSpec(String workspaceId, String configSpecType) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, BaselineNotFoundException {
+    private ConfigSpec getConfigSpec(String workspaceId, String configSpecType, String ciId)
+            throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, BaselineNotFoundException, ProductInstanceMasterNotFoundException {
         if(configSpecType==null){
             return productConfigSpecService.getLatestConfigSpec(workspaceId);
         }
@@ -383,7 +384,12 @@ public class ProductResource {
                 cs = productConfigSpecService.getLatestReleasedConfigSpec(workspaceId);
                 break;
             default:
-                cs = productConfigSpecService.getConfigSpecForBaseline(Integer.parseInt(configSpecType));
+                if(configSpecType.startsWith("pi-")){
+                    String serialNumber = configSpecType.substring(3);
+                    cs = productConfigSpecService.getConfigSpecForProductInstance(workspaceId,ciId,serialNumber);
+                }else{
+                    cs = productConfigSpecService.getConfigSpecForBaseline(Integer.parseInt(configSpecType));
+                }
                 break;
         }
         return cs;
