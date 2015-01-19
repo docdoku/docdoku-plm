@@ -79,7 +79,7 @@ public class DocumentTemplateBinaryResourceTest {
         Mockito.when(request.getRequestURI()).thenReturn(ResourceUtil.WORKSPACE_ID + "/documents/" + ResourceUtil.DOCUMENT_ID + "/" + ResourceUtil.FILENAME1);
 
         //When
-        Response response =documentTemplateBinaryResource.downloadDocumentTemplateFilementTemplateFiles(request, ResourceUtil.WORKSPACE_ID, ResourceUtil.DOC_TEMPLATE_ID);
+        Response response =documentTemplateBinaryResource.uploadDocumentTemplateFiles(request, ResourceUtil.WORKSPACE_ID, ResourceUtil.DOC_TEMPLATE_ID);
 
         //Then
         Assert.assertNotNull(response);

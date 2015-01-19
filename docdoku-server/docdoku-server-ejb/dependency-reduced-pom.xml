@@ -24,9 +24,6 @@
           <exclude>**/*.properties</exclude>
         </excludes>
       </resource>
-      <resource>
-        <directory>src/test/resources</directory>
-      </resource>
     </resources>
     <finalName>${project.artifactId}</finalName>
     <plugins>
