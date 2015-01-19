@@ -131,11 +131,13 @@ public class ConverterBean implements IConverterManagerLocal {
 
             File convertedFile = selectedConverter.convert(partI, cadBinaryResource, tempDir);
 
-            double[] box = GeometryParser.calculateBox(convertedFile);
-
             if (convertedFile != null) {
+                double[] box = GeometryParser.calculateBox(convertedFile);
                 boolean succeed = decimate(pPartIPK, convertedFile, tempDir, box);
                 conversion.setSucceed(succeed);
+            }else{
+                conversion.setSucceed(false);
+                LOGGER.log(Level.WARNING, "Cannot convert " + cadBinaryResource.getName());
             }
 
         } else {

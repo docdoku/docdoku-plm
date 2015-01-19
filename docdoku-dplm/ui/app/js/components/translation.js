@@ -76,7 +76,12 @@
                     MODIFIED:'Modified',
                     NOT_SYNC:'Not synchronised',
                     LAST_WORKSPACES_VISITED:'Last workspaces visited',
-                    NOTHING_TO_SHOW:'Nothing to show'
+                    NOTHING_TO_SHOW:'Nothing to show',
+                    CONVERSION_STATUS:'Conversion status',
+                    PENDING:'Pending',
+                    SUCCESS:'Success',
+                    FAIL:'Fail',
+                    NO_CONVERSION:'No conversion currently'
                 })
                 .translations('fr', {
                     CUT: 'Couper',
@@ -149,7 +154,12 @@
                     MODIFIED:'Modifié',
                     NOT_SYNC:'Non synchronisé',
                     LAST_WORKSPACES_VISITED:'Derniers espaces de travail utilisés',
-                    NOTHING_TO_SHOW:'Aucune entrée'
+                    NOTHING_TO_SHOW:'Aucune entrée',
+                    CONVERSION_STATUS:'Statut de la conversion',
+                    PENDING:'En cours',
+                    SUCCESS:'Succès',
+                    FAIL:'Echoué',
+                    NO_CONVERSION:'Pas de conversion en cours'
                 });
 
             $translateProvider.preferredLanguage(localStorage.lang || 'en');

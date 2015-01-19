@@ -118,7 +118,7 @@
 
                 templateUrl: 'js/folder/file-actions.html',
 
-                controller: function ($scope, $element, $attrs, $transclude, $timeout, CliService, WorkspaceService) {
+                controller: function ($scope, $element, $attrs, $transclude, $timeout, $filter, CliService, WorkspaceService, NotificationService) {
 
                     $scope.options = {force: true,recursive:true};
                     $scope.workspaces = WorkspaceService.workspaces;
@@ -167,6 +167,18 @@
                             $scope.newPart = {workspace: $scope.workspaces[0]};
                             return $scope.fetchStatus();
                         }, null, onProgress).then(onFinish);
+                    };
+
+                    $scope.conversionStatus = function () {
+                        CliService.getConversionStatus($scope.file.part).then(function (conversion) {
+                            var message = conversion.pending ? $filter('translate')('PENDING') :
+                                conversion.succeed ? $filter('translate')('SUCCESS') :
+                                    $filter('translate')('FAIL');
+
+                                NotificationService.toast(message);
+                        },function(){
+                            NotificationService.toast($filter('translate')('NO_CONVERSION'));
+                        });
                     };
 
                 }

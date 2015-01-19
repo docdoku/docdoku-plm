@@ -344,7 +344,7 @@
                 return run(args);
             };
 
-            this.getConversionStatus = function (part, path, options) {
+            this.getConversionStatus = function (part) {
 
                 var args = [
                     'cv',
@@ -356,7 +356,7 @@
                     '-w', part.workspace,
                     '-o', part.partNumber,
                     '-r', part.version,
-                    '-i', part.iteration
+                    '-i', part.iterations[part.iterations.length-1]
                 ];
 
                 return run(args);
