@@ -75,7 +75,7 @@ public class PartBinaryResourceTest {
     public void uploadFileToPart() throws Exception {
         //Given
         final File fileToUpload = new File(getClass().getResource(ResourceUtil.SOURCE_PART_STORAGE + ResourceUtil.TEST_PART_FILENAME1).getFile());
-        File uploadedFile = new File(getClass().getResource(ResourceUtil.TARGET_PART_STORAGE + ResourceUtil.FILENAME_TARGET_PART).getFile());
+        File uploadedFile = new File(getClass().getResource(ResourceUtil.TARGET_PART_STORAGE).getFile() + ResourceUtil.FILENAME_TARGET_PART);
         HttpServletRequestWrapper request = Mockito.mock(HttpServletRequestWrapper.class);
         Collection<Part> parts = new ArrayList<Part>();
         parts.add(new PartImp(fileToUpload));
@@ -110,7 +110,7 @@ public class PartBinaryResourceTest {
 
         //Given
         final File fileToUpload = new File(getClass().getResource(ResourceUtil.SOURCE_PART_STORAGE + ResourceUtil.TEST_PART_FILENAME1).getFile());
-        File uploadedFile = new File(getClass().getResource(ResourceUtil.TARGET_PART_STORAGE + ResourceUtil.FILENAME_TARGET_PART).getFile());
+        File uploadedFile = new File(getClass().getResource(ResourceUtil.TARGET_PART_STORAGE).getFile() + ResourceUtil.FILENAME_TARGET_PART);
         HttpServletRequestWrapper request = Mockito.mock(HttpServletRequestWrapper.class);
         Collection<Part> parts = new ArrayList<Part>();
         parts.add(new PartImp(fileToUpload));
@@ -182,8 +182,8 @@ public class PartBinaryResourceTest {
         File fileToUpload1 = new File(getClass().getResource(ResourceUtil.SOURCE_PART_STORAGE + ResourceUtil.TEST_PART_FILENAME1).getFile());
         File fileToUpload2 = new File(getClass().getResource(ResourceUtil.SOURCE_PART_STORAGE + ResourceUtil.TEST_PART_FILENAME2).getFile());
         File fileToUpload3 = new File(getClass().getResource(ResourceUtil.SOURCE_PART_STORAGE).getFile() + ResourceUtil.FILENAME_TO_UPLOAD_PART_SPECIAL_CHARACTER);
-        File uploadedFile1 = new File(getClass().getResource(ResourceUtil.TARGET_PART_STORAGE + ResourceUtil.TEST_PART_FILENAME1).getFile());
-        File uploadedFile2 = new File(getClass().getResource(ResourceUtil.TARGET_PART_STORAGE + ResourceUtil.TEST_PART_FILENAME2).getFile());
+        File uploadedFile1 = new File(getClass().getResource(ResourceUtil.TARGET_PART_STORAGE).getFile() + ResourceUtil.TEST_PART_FILENAME1);
+        File uploadedFile2 = new File(getClass().getResource(ResourceUtil.TARGET_PART_STORAGE).getFile() + ResourceUtil.TEST_PART_FILENAME2);
         File uploadedFile3 = new File(getClass().getResource(ResourceUtil.TARGET_PART_STORAGE).getFile() + ResourceUtil.FILENAME_TO_UPLOAD_PART_SPECIAL_CHARACTER);
         HttpServletRequestWrapper request = Mockito.mock(HttpServletRequestWrapper.class);
         Collection<Part> parts = new ArrayList<Part>();
@@ -315,7 +315,7 @@ public class PartBinaryResourceTest {
      *
      * @throws Exception
      */
-    @Test(expected = NotAllowedException.class)
+    @Test
     public void downloadPartFileAsRegularUserNoReadAccess() throws Exception {
 
         //Given
@@ -328,8 +328,11 @@ public class PartBinaryResourceTest {
         Mockito.when(dataManager.getBinaryResourceInputStream(binaryResource)).thenReturn(new FileInputStream(new File(getClass().getResource(ResourceUtil.SOURCE_PART_STORAGE + ResourceUtil.TEST_PART_FILENAME1).getFile())));
         Mockito.when(guestProxy.getBinaryResourceForPart(Matchers.anyString())).thenReturn(binaryResource);
         //When
-        partBinaryResource.downloadPartFile(request, ResourceUtil.RANGE, ResourceUtil.DOC_REFER, ResourceUtil.WORKSPACE_ID, ResourceUtil.PART_NUMBER, ResourceUtil.VERSION, ResourceUtil.ITERATION, ResourceUtil.FILE_TYPE, ResourceUtil.TEST_PART_FILENAME1, ResourceUtil.FILE_TYPE, null, null);
+        Response response= partBinaryResource.downloadPartFile(request, ResourceUtil.RANGE, ResourceUtil.DOC_REFER, ResourceUtil.WORKSPACE_ID, ResourceUtil.PART_NUMBER, ResourceUtil.VERSION, ResourceUtil.ITERATION, ResourceUtil.FILE_TYPE, ResourceUtil.TEST_PART_FILENAME1, ResourceUtil.FILE_TYPE, null, null);
 
+        assertNotNull(response);
+        assertEquals(response.getStatus(), 401);
+        assertEquals(response.getStatusInfo(), Response.Status.UNAUTHORIZED);
 
     }
 }

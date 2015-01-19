@@ -36,6 +36,9 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class DocumentBinaryResourceTest {
@@ -296,7 +299,7 @@ public class DocumentBinaryResourceTest {
      *
      * @throws Exception
      */
-    @Test(expected = NotAllowedException.class)
+    @Test
     public void downloadDocumentFileAsUserWithNoAccessRights() throws Exception {
 
         //Given
@@ -307,13 +310,17 @@ public class DocumentBinaryResourceTest {
         BinaryResource binaryResource = new BinaryResource(ResourceUtil.FILENAME1, ResourceUtil.DOCUMENT_SIZE, new Date());
         Mockito.when(documentService.canAccess(new DocumentIterationKey(ResourceUtil.WORKSPACE_ID, ResourceUtil.DOCUMENT_ID, ResourceUtil.VERSION,ResourceUtil.ITERATION))).thenReturn(false);
         Mockito.when(documentService.getBinaryResource(fullName)).thenReturn(binaryResource);
-        Mockito.when(dataManager.getBinaryResourceInputStream(binaryResource)).thenReturn(new FileInputStream(new File(getClass().getResource(ResourceUtil.SOURCE_FILE_STORAGE+ResourceUtil.FILENAME1).getFile())));
+        Mockito.when(dataManager.getBinaryResourceInputStream(binaryResource)).thenReturn(new FileInputStream(new File(getClass().getResource(ResourceUtil.SOURCE_FILE_STORAGE).getFile()+ResourceUtil.FILENAME1)));
         Mockito.when(guestProxy.getBinaryResourceForDocument(fullName)).thenReturn(binaryResource);
         Mockito.when(ctx.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)).thenReturn(true);
         Mockito.when(guestProxy.canAccess(Matchers.any(DocumentIterationKey.class))).thenReturn(false);
 
         //When
-        documentBinaryResource.downloadDocumentFile(request, ResourceUtil.RANGE,ResourceUtil.DOC_REFER, ResourceUtil.WORKSPACE_ID,ResourceUtil.DOCUMENT_ID, ResourceUtil.VERSION, ResourceUtil.ITERATION,ResourceUtil.FILENAME1,null,ResourceUtil.FILE_TYPE,output,null);
+        Response response= documentBinaryResource.downloadDocumentFile(request, ResourceUtil.RANGE,ResourceUtil.DOC_REFER, ResourceUtil.WORKSPACE_ID,ResourceUtil.DOCUMENT_ID, ResourceUtil.VERSION, ResourceUtil.ITERATION,ResourceUtil.FILENAME1,null,ResourceUtil.FILE_TYPE,output,null);
+        //Then
+        assertNotNull(response);
+        assertEquals(response.getStatus(), 401);
+        assertEquals(response.getStatusInfo(), Response.Status.UNAUTHORIZED);
 
 
     }
