@@ -123,7 +123,7 @@ public class FileHelper {
             String lineEnd = "\r\n";
             String twoHyphens = "--";
             String boundary = "--------------------" + Long.toString(System.currentTimeMillis(), 16);
-            byte[] header = (twoHyphens + boundary + lineEnd + "Content-Disposition: form-data; name=\"upload\";" + " filename=\"" + pLocalFile + "\"" + lineEnd + lineEnd).getBytes("ISO-8859-1");
+            byte[] header = (twoHyphens + boundary + lineEnd + "Content-Disposition: form-data; name=\"upload\";" + " filename=\"" + pLocalFile.getName() + "\"" + lineEnd + lineEnd).getBytes("ISO-8859-1");
             byte[] footer = (lineEnd + twoHyphens + boundary + twoHyphens + lineEnd).getBytes("ISO-8859-1");
 
             conn.setRequestMethod("POST");
@@ -193,6 +193,16 @@ public class FileHelper {
                 + URLEncoder.encode(pRemoteFileName, "UTF-8");
     }
 
+    public static String getPartURLUpload(URL serverURL, PartIterationKey pPart, String pRemoteFileName) throws UnsupportedEncodingException, MalformedURLException {
+        return serverURL
+                + "/api/files/"
+                + URLEncoder.encode(pPart.getWorkspaceId(), "UTF-8") + "/"
+                + "parts/"
+                + URLEncoder.encode(pPart.getPartMasterNumber(), "UTF-8") + "/"
+                + pPart.getPartRevision().getVersion() + "/"
+                + pPart.getIteration() + "/nativecad/";
+    }
+
     public static boolean confirmOverwrite(String fileName){
         Console c = System.console();
         String response = c.readLine("The file '" + fileName + "' has been modified locally, do you want to overwrite it [y/N]?");
@@ -201,7 +211,7 @@ public class FileHelper {
 
     public void uploadNativeCADFile(URL serverURL, File cadFile, PartIterationKey partIPK) throws IOException, LoginException, NoSuchAlgorithmException {
         String fileName = cadFile.getName();
-        String digest = uploadFile(cadFile, FileHelper.getPartURL(serverURL, partIPK, fileName));
+        String digest = uploadFile(cadFile, FileHelper.getPartURLUpload(serverURL, partIPK, fileName));
 
         File path = cadFile.getParentFile();
         MetaDirectoryManager meta = new MetaDirectoryManager(path);
