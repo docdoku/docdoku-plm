@@ -44,7 +44,8 @@ public class AccountBean {
     private String email;
     private String language;
     private String timeZone;
-    private String[] availableTimeZones = TimeZone.getAvailableIDs();
+
+    private static String[] availableTimeZones = TimeZone.getAvailableIDs();
 
     private boolean superAdmin;
 
