@@ -157,7 +157,7 @@ public class DocumentBinaryResource {
             // Check access right
             DocumentIterationKey docIK = new DocumentIterationKey(workspaceId, documentId, version, iteration);
             if (!canAccess(docIK)) {
-                throw new NotAllowedException(Locale.getDefault(), "NotAllowedException34");
+                return Response.status(Response.Status.UNAUTHORIZED).build();
             }
 
             fullName = workspaceId + "/documents/" + documentId + "/" + version + "/" + iteration + "/" + fileName;
