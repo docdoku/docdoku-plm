@@ -1,7 +1,6 @@
 package com.docdoku.server.rest.file;
 
 import com.docdoku.core.common.BinaryResource;
-import com.docdoku.core.product.PartMasterTemplate;
 import com.docdoku.core.product.PartMasterTemplateKey;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
@@ -51,8 +50,8 @@ public class PartTemplateBinaryResourceTest {
     @Test
     public void uploadPartTemplateFiles() throws Exception {
         //Given
-        final File fileToUpload  = new File(ResourceUtil.SOURCE_PART_STORAGE+ResourceUtil.TEST_PART_FILENAME1);
-        File fuploadedFile  = new File(ResourceUtil.TARGET_PART_STORAGE+ResourceUtil.FILENAME_TARGET_PART);
+        final File fileToUpload  = new File(getClass().getResource(ResourceUtil.SOURCE_PART_STORAGE+ResourceUtil.TEST_PART_FILENAME1).getFile());
+        File fuploadedFile  = new File(getClass().getResource(ResourceUtil.TARGET_PART_STORAGE+ResourceUtil.FILENAME_TARGET_PART).getFile());
         HttpServletRequestWrapper request = Mockito.mock(HttpServletRequestWrapper.class);
         Collection<Part> parts = new ArrayList<Part>();
         parts.add(new PartImp(fileToUpload));
@@ -86,8 +85,8 @@ public class PartTemplateBinaryResourceTest {
     public void uploadPartTemplateFilesUnderANameContainingSpecialCharacters() throws Exception {
         //Given
 
-        final File fileToUpload  = new File(ResourceUtil.SOURCE_PART_STORAGE+ResourceUtil.TEST_PART_FILENAME1);
-        File uploadedFile  = new File(ResourceUtil.TARGET_PART_STORAGE+ResourceUtil.FILENAME_TO_UPLOAD_PART_SPECIAL_CHARACTER);
+        final File fileToUpload  = new File(getClass().getResource(ResourceUtil.SOURCE_PART_STORAGE+ResourceUtil.TEST_PART_FILENAME1).getFile());
+        File uploadedFile  = new File(getClass().getResource(ResourceUtil.TARGET_PART_STORAGE).getFile()+ResourceUtil.FILENAME_TO_UPLOAD_PART_SPECIAL_CHARACTER);
         HttpServletRequestWrapper request = Mockito.mock(HttpServletRequestWrapper.class);
         Collection<Part> parts = new ArrayList<Part>();
         parts.add(new PartImp(fileToUpload) );
@@ -118,8 +117,8 @@ public class PartTemplateBinaryResourceTest {
     public void uploadPartTemplateFilesNameContainingSpecialCharacters() throws Exception {
         //Given
 
-        final File fileToUpload  = new File(ResourceUtil.SOURCE_PART_STORAGE+ResourceUtil.FILENAME_TO_UPLOAD_PART_SPECIAL_CHARACTER);
-        File uploadedFile  = new File(ResourceUtil.TARGET_PART_STORAGE+"new_"+ResourceUtil.FILENAME_TO_UPLOAD_PART_SPECIAL_CHARACTER);
+        final File fileToUpload  = new File(getClass().getResource(ResourceUtil.SOURCE_PART_STORAGE).getFile() + ResourceUtil.FILENAME_TO_UPLOAD_PART_SPECIAL_CHARACTER);
+        File uploadedFile  = new File(getClass().getResource(ResourceUtil.TARGET_PART_STORAGE+"new_"+ResourceUtil.FILENAME_TO_UPLOAD_PART_SPECIAL_CHARACTER).getFile());
         HttpServletRequestWrapper request = Mockito.mock(HttpServletRequestWrapper.class);
         Collection<Part> parts = new ArrayList<Part>();
         parts.add(new PartImp(fileToUpload) );
@@ -153,12 +152,12 @@ public class PartTemplateBinaryResourceTest {
     @Test
     public void uploadPartTemplateSeveralFiles() throws Exception {
         //Given
-        final File fileToUpload1  = new File(ResourceUtil.SOURCE_PART_STORAGE+ResourceUtil.FILENAME_TO_UPLOAD_PART_SPECIAL_CHARACTER);
-        final File fileToUpload2  = new File(ResourceUtil.SOURCE_PART_STORAGE+ResourceUtil.TEST_PART_FILENAME1);
-        final File fileToUpload3  = new File(ResourceUtil.SOURCE_PART_STORAGE+ResourceUtil.TEST_PART_FILENAME2);
-        File uploadedFile1  = new File(ResourceUtil.TARGET_PART_STORAGE+"new_"+ResourceUtil.TEST_PART_FILENAME1);
-        File uploadedFile2  = new File(ResourceUtil.TARGET_PART_STORAGE+"new_"+ResourceUtil.TEST_PART_FILENAME2);
-        File uploadedFile3  = new File(ResourceUtil.TARGET_PART_STORAGE+"new_"+ResourceUtil.FILENAME_TO_UPLOAD_PART_SPECIAL_CHARACTER);
+        final File fileToUpload1  = new File(getClass().getResource(ResourceUtil.SOURCE_PART_STORAGE).getFile()+ResourceUtil.FILENAME_TO_UPLOAD_PART_SPECIAL_CHARACTER);
+        final File fileToUpload2  = new File(getClass().getResource(ResourceUtil.SOURCE_PART_STORAGE+ResourceUtil.TEST_PART_FILENAME1).getFile());
+        final File fileToUpload3  = new File(getClass().getResource(ResourceUtil.SOURCE_PART_STORAGE+ResourceUtil.TEST_PART_FILENAME2).getFile());
+        File uploadedFile1  = new File(getClass().getResource(ResourceUtil.TARGET_PART_STORAGE+"new_"+ResourceUtil.TEST_PART_FILENAME1).getFile());
+        File uploadedFile2  = new File(getClass().getResource(ResourceUtil.TARGET_PART_STORAGE+"new_"+ResourceUtil.TEST_PART_FILENAME2).getFile());
+        File uploadedFile3  = new File(getClass().getResource(ResourceUtil.TARGET_PART_STORAGE+"new_"+ResourceUtil.FILENAME_TO_UPLOAD_PART_SPECIAL_CHARACTER).getFile());
         HttpServletRequestWrapper request = Mockito.mock(HttpServletRequestWrapper.class);
         Collection<Part> parts = new ArrayList<Part>();
         parts.add(new PartImp(fileToUpload1) );
@@ -200,7 +199,7 @@ public class PartTemplateBinaryResourceTest {
         //Given
         Request request = Mockito.mock(Request.class);
         binaryResource = new BinaryResource(ResourceUtil.TEST_PART_FILENAME1,ResourceUtil.PART_SIZE,new Date());
-        File file = new File(ResourceUtil.SOURCE_PART_STORAGE+ResourceUtil.TEST_PART_FILENAME1);
+        File file = new File(getClass().getResource(ResourceUtil.SOURCE_PART_STORAGE+ResourceUtil.TEST_PART_FILENAME1).getFile());
         FileInputStream fileInputStream = new FileInputStream(file);
         Mockito.when(productService.getTemplateBinaryResource(ResourceUtil.WORKSPACE_ID+"/part-templates/" + ResourceUtil.PART_TEMPLATE_ID + "/" + ResourceUtil.TEST_PART_FILENAME1)).thenReturn(binaryResource);
         Mockito.when(dataManager.getBinaryResourceInputStream(binaryResource)).thenReturn(fileInputStream);
@@ -226,7 +225,7 @@ public class PartTemplateBinaryResourceTest {
         //Given
         Request request = Mockito.mock(Request.class);
         binaryResource = new BinaryResource(ResourceUtil.TEST_PART_FILENAME1,ResourceUtil.PART_SIZE,new Date());
-        File file = new File(ResourceUtil.SOURCE_PART_STORAGE+ResourceUtil.TEST_PART_FILENAME1);
+        File file = new File(getClass().getResource(ResourceUtil.SOURCE_PART_STORAGE+ResourceUtil.TEST_PART_FILENAME1).getFile());
         FileInputStream fileInputStream = new FileInputStream(file);
         Mockito.when(productService.getTemplateBinaryResource(ResourceUtil.WORKSPACE_ID+"/part-templates/" + ResourceUtil.PART_TEMPLATE_ID + "/" + ResourceUtil.TEST_PART_FILENAME1)).thenReturn(binaryResource);
         Mockito.when(dataManager.getBinaryResourceInputStream(binaryResource)).thenReturn(fileInputStream);

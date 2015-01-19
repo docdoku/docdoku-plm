@@ -94,7 +94,7 @@ public class DocumentManagerBeanTest {
     @Before
     public void setup() throws Exception {
         initMocks(this);
-        account = Mockito.spy(new Account("user2" , "user2", "user2@docdoku.com", "en",new Date()));
+        account = Mockito.spy(new Account("user2" , "user2", "user2@docdoku.com", "en",new Date(),null));
         workspace = new Workspace(WORKSPACE_ID,account, "pDescription", false);
         user = new User(workspace, "user1" , "user1", "user1@docdoku.com", "en");
         documentMasterTemplate= new DocumentMasterTemplate(workspace, DOCUMENT_TEMPLATE_ID, user,"","");

@@ -44,7 +44,7 @@ public class DocumentTemplateBinaryResourceTest {
     }
 
     @Test
-    public void testDownloadDocumentTemplateFile() throws Exception {
+    public void downloadDocumentTemplateFile() throws Exception {
         Request request = Mockito.mock(Request.class);
 
         binaryResource = Mockito.spy(new BinaryResource(ResourceUtil.FILENAME1,ResourceUtil.DOCUMENT_SIZE,new Date()));
@@ -53,7 +53,7 @@ public class DocumentTemplateBinaryResourceTest {
         String fullName = ResourceUtil.WORKSPACE_ID + "/document-templates/" + ResourceUtil.DOC_TEMPLATE_ID + "/" + ResourceUtil.FILENAME1;
         Mockito.when(documentService.getTemplateBinaryResource(fullName)).thenReturn(binaryResource);
 
-        Mockito.when(dataManager.getBinaryResourceInputStream(binaryResource)).thenReturn(new FileInputStream(new File(ResourceUtil.SOURCE_FILE_STORAGE+ResourceUtil.FILENAME1)));
+        Mockito.when(dataManager.getBinaryResourceInputStream(binaryResource)).thenReturn(new FileInputStream(new File(getClass().getResource(ResourceUtil.SOURCE_FILE_STORAGE+ResourceUtil.FILENAME1).getFile())));
         //When
         Response response =documentTemplateBinaryResource.downloadDocumentTemplateFile(request,ResourceUtil.RANGE, ResourceUtil.WORKSPACE_ID, ResourceUtil.DOC_TEMPLATE_ID,ResourceUtil.FILENAME1,ResourceUtil.FILE_TYPE,null);
 
@@ -71,7 +71,7 @@ public class DocumentTemplateBinaryResourceTest {
         binaryResource = Mockito.spy(new BinaryResource(ResourceUtil.FILENAME1,ResourceUtil.DOCUMENT_SIZE,new Date()));
         Collection<Part> filesParts = new ArrayList<Part>();
         filesParts.add(new PartImp(new File(ResourceUtil.SOURCE_FILE_STORAGE + ResourceUtil.FILENAME1)));
-        File uploadedFile1 = new File(ResourceUtil.TARGET_FILE_STORAGE + "new_" + ResourceUtil.FILENAME1);
+        File uploadedFile1 = new File(getClass().getResource(ResourceUtil.TARGET_FILE_STORAGE + "new_" + ResourceUtil.FILENAME1).getFile());
 
         OutputStream outputStream = new FileOutputStream(uploadedFile1);
         Mockito.when(documentService.saveFileInTemplate(Matchers.any(DocumentMasterTemplateKey.class),Matchers.anyString(), Matchers.anyInt())).thenReturn(binaryResource);
