@@ -33,8 +33,11 @@ import javax.el.PropertyNotFoundException;
 import javax.inject.Inject;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.xml.bind.DatatypeConverter;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.*;
 import java.util.logging.Level;
@@ -46,6 +49,7 @@ public class AuthFilter implements Filter {
     private static final String ENCODING = "UTF-8";
 
     private String[] excludedPaths;
+    private String apiPath;
 
 
     @Inject
@@ -61,9 +65,17 @@ public class AuthFilter implements Filter {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         String remoteUser=httpRequest.getRemoteUser();
 
+        if(remoteUser == null){
+            remoteUser = authenticateUserWithHeaders(request);
+        }
+
         if(isExcludedURL(httpRequest) && remoteUser==null) {
             chain.doFilter(request, response);
-        }else if (remoteUser==null) {
+        }
+        else if(isApiRequest(httpRequest) && remoteUser==null){
+            sendUnauthorized(response);
+        }
+        else if (remoteUser==null) {
             redirectLogin(httpRequest,response);
         } else {
             try {
@@ -103,6 +115,43 @@ public class AuthFilter implements Filter {
 
         }
 
+    }
+
+    private void sendUnauthorized(ServletResponse pResponse) throws ServletException, IOException {
+        HttpServletResponse response = (HttpServletResponse) pResponse;
+        response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+    }
+
+    private boolean isApiRequest(HttpServletRequest httpRequest) {
+        String path = httpRequest.getRequestURI();
+        return Pattern.matches(apiPath, path);
+    }
+
+    private String authenticateUserWithHeaders(ServletRequest pRequest) {
+
+        HttpServletRequest httpRequest = (HttpServletRequest) pRequest;
+        String authorization = httpRequest.getHeader("Authorization");
+
+        if(authorization != null && !authorization.isEmpty()){
+            String[] splitAuthorization = authorization.split(" ");
+            if(splitAuthorization.length == 2){
+                byte[] decoded = DatatypeConverter.parseBase64Binary(splitAuthorization[1]);
+                try {
+                    String credentials = new String(decoded, "US-ASCII");
+                    String[] splitCredentials = credentials.split(":");
+                    String userLogin = splitCredentials[0];
+                    String userPassword = splitCredentials[1];
+                    httpRequest.login(userLogin, userPassword);
+                    Account account = userManager.getAccount(userLogin);
+                    if(account!=null) {
+                        return account.getLogin();
+                    }
+                } catch (UnsupportedEncodingException | ServletException | AccountNotFoundException e) {
+                    LOGGER.log(Level.FINEST, null, e);
+                }
+            }
+        }
+        return null;
     }
 
     private boolean isExcludedURL(HttpServletRequest httpRequest){
@@ -155,6 +204,11 @@ public class AuthFilter implements Filter {
             }
         } else {
             excludedPaths = null;
+        }
+
+        String apiPathParam=filterConfig.getInitParameter("apiPath");
+        if(apiPathParam !=null) {
+            apiPath = apiPathParam.replace("*", ".*");
         }
     }
 }
