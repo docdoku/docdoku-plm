@@ -75,14 +75,18 @@ public abstract class AbstractCommandLine implements CommandLine {
 
         output = CliOutput.getOutput(format);
 
-        if(user==null && format.equals(CliOutput.formats.HUMAN)){
-            promptForUser();
-        }
-        if(password==null && format.equals(CliOutput.formats.HUMAN)){
-            promptForPassword();
-        }
+        if(!(this instanceof HelpCommand)){
 
+            if(user==null && format.equals(CliOutput.formats.HUMAN)){
+                promptForUser();
+            }
+            if(password==null && format.equals(CliOutput.formats.HUMAN)){
+                promptForPassword();
+            }
+
+        }
         execImpl();
+
     }
 
     public CliOutput getOutput(){
