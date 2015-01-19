@@ -852,6 +852,31 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
+    public Conversion getConversion(PartIterationKey partIterationKey) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException, PartIterationNotFoundException {
+        User user = checkPartRevisionReadAccess(partIterationKey.getPartRevision());
+        Locale locale = new Locale(user.getLanguage());
+        PartIterationDAO partIterationDAO = new PartIterationDAO(locale,em);
+        PartIteration partIteration = partIterationDAO.loadPartI(partIterationKey);
+        ConversionDAO conversionDAO = new ConversionDAO(locale,em);
+        Conversion conversion = conversionDAO.findConversion(partIteration);
+        return conversion;
+    }
+
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
+    public Conversion createConversion(PartIterationKey partIterationKey) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException, PartIterationNotFoundException, CreationException {
+        User user = checkPartRevisionWriteAccess(partIterationKey.getPartRevision());
+        Locale locale = new Locale(user.getLanguage());
+        PartIterationDAO partIterationDAO = new PartIterationDAO(locale,em);
+        PartIteration partIteration = partIterationDAO.loadPartI(partIterationKey);
+        ConversionDAO conversionDAO = new ConversionDAO(locale,em);
+        Conversion conversion = new Conversion(partIteration);
+        conversionDAO.createConversion(conversion);
+        return conversion;
+    }
+
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
     public PartRevision[] getPartRevisionsWithReference(String pWorkspaceId, String reference, int maxResults) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
         List<PartRevision> partRs = new PartRevisionDAO(new Locale(user.getLanguage()), em).findPartsRevisionsWithReferenceLike(pWorkspaceId, reference, maxResults);

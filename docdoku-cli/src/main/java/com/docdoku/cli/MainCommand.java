@@ -60,6 +60,10 @@ public class MainCommand {
                 case "bl":
                      execCommand(new BaselineListCommand(), Arrays.copyOfRange(args, 1, args.length));
                     break;
+                case "conversion":
+                case "cv":
+                    execCommand(new ConversionCommand(), Arrays.copyOfRange(args, 1, args.length));
+                    break;
                 case "help":
                 case "?":
                 case "h":

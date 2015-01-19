@@ -24,6 +24,7 @@ import com.docdoku.cli.interfaces.CommandLine;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.configuration.ProductBaseline;
+import com.docdoku.core.product.Conversion;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartMaster;
 import com.docdoku.core.product.PartRevision;
@@ -152,6 +153,14 @@ public class JSONOutput  extends CliOutput {
         }
 
         System.out.println(getPartRevision(pm.getLastRevision(), lastModified));
+    }
+
+    @Override
+    public void printConversion(Conversion conversion) throws JSONException {
+        JSONObject cv = new JSONObject();
+        cv.put("pending",conversion.isPending());
+        cv.put("succeed",conversion.isSucceed());
+        System.out.println(cv.toString());
     }
 
     @Override

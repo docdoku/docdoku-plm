@@ -20,6 +20,7 @@
 package com.docdoku.server;
 
 import com.docdoku.core.common.BinaryResource;
+import com.docdoku.core.product.Conversion;
 import com.docdoku.core.product.Geometry;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartIterationKey;
@@ -94,6 +95,17 @@ public class ConverterBean implements IConverterManagerLocal {
     @Asynchronous
     public void convertCADFileToOBJ(PartIterationKey pPartIPK, BinaryResource cadBinaryResource) throws Exception {
 
+        // Are there any conversion pending ?
+
+        Conversion existingConversion = productService.getConversion(pPartIPK);
+
+        if(existingConversion != null && existingConversion.isPending()){
+            LOGGER.log(Level.SEVERE, "Conversion already running for part iteration " + pPartIPK);
+            return;
+        }
+
+        Conversion conversion = productService.createConversion(pPartIPK);
+
         File tempDir = Files.createTempDir();
 
         String ext = FileIO.getExtension(cadBinaryResource.getName());
@@ -117,7 +129,8 @@ public class ConverterBean implements IConverterManagerLocal {
             double[] box = GeometryParser.calculateBox(convertedFile);
 
             if (convertedFile != null) {
-                decimate(pPartIPK, convertedFile, tempDir, box);
+                boolean succeed = decimate(pPartIPK, convertedFile, tempDir, box);
+                conversion.setSucceed(succeed);
             }
 
         } else {
@@ -125,10 +138,11 @@ public class ConverterBean implements IConverterManagerLocal {
         }
 
         FileIO.rmDir(tempDir);
+        conversion.setPending(false);
 
     }
 
-    private void decimate(PartIterationKey pPartIPK, File file, File tempDir, double[] box) {
+    private boolean decimate(PartIterationKey pPartIPK, File file, File tempDir, double[] box) {
 
         String decimater = CONF.getProperty("decimater");
 
@@ -156,6 +170,7 @@ public class ConverterBean implements IConverterManagerLocal {
                 saveFile(pPartIPK, 0, new File(baseName + "100.obj"), box);
                 saveFile(pPartIPK, 1, new File(baseName + "60.obj"), box);
                 saveFile(pPartIPK, 2, new File(baseName + "20.obj"), box);
+                return true;
             } else {
                 LOGGER.log(Level.SEVERE, "Decimation failed with code = " + proc.exitValue(), output.toString());
             }
@@ -166,6 +181,7 @@ public class ConverterBean implements IConverterManagerLocal {
             FileIO.rmDir(tempDir);
         }
 
+        return false;
     }
 
     private void saveFile(PartIterationKey partIPK, int quality, File file, double[] box) {
