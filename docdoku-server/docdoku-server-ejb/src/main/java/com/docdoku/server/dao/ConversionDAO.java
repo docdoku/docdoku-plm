@@ -66,4 +66,9 @@ public class ConversionDAO {
             return null;
         }
     }
+
+    public void deleteConversion(Conversion conversion) {
+        em.remove(conversion);
+        em.flush();
+    }
 }

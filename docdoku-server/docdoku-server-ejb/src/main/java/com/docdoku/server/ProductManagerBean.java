@@ -877,6 +877,16 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
+    public void removeConversion(Conversion conversion) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
+        User user = checkPartRevisionWriteAccess(conversion.getPartIteration().getPartRevision().getKey());
+        Locale locale = new Locale(user.getLanguage());
+        PartIterationDAO partIterationDAO = new PartIterationDAO(locale,em);
+        ConversionDAO conversionDAO = new ConversionDAO(locale,em);
+        conversionDAO.deleteConversion(conversion);
+    }
+
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
     public PartRevision[] getPartRevisionsWithReference(String pWorkspaceId, String reference, int maxResults) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
         List<PartRevision> partRs = new PartRevisionDAO(new Locale(user.getLanguage()), em).findPartsRevisionsWithReferenceLike(pWorkspaceId, reference, maxResults);

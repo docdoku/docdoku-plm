@@ -95,13 +95,18 @@ public class ConverterBean implements IConverterManagerLocal {
     @Asynchronous
     public void convertCADFileToOBJ(PartIterationKey pPartIPK, BinaryResource cadBinaryResource) throws Exception {
 
-        // Are there any conversion pending ?
-
+        // Are there any existing conversions
         Conversion existingConversion = productService.getConversion(pPartIPK);
 
+        // Don't try to convert if any conversions pending
         if(existingConversion != null && existingConversion.isPending()){
             LOGGER.log(Level.SEVERE, "Conversion already running for part iteration " + pPartIPK);
             return;
+        }
+
+        // Clean old non pending conversions
+        if(existingConversion != null){
+            productService.removeConversion(existingConversion);
         }
 
         Conversion conversion = productService.createConversion(pPartIPK);
@@ -191,7 +196,7 @@ public class ConverterBean implements IConverterManagerLocal {
             Geometry lod = (Geometry) productService.saveGeometryInPartIteration(partIPK, file.getName(), quality, file.length(), box);
             os = dataManager.getBinaryResourceOutputStream(lod);
             Files.copy(file, os);
-            LOGGER.log(Level.INFO, "Decimation and savedone");
+            LOGGER.log(Level.INFO, "Decimation and save done");
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Cannot save geometry to part iteration", e);
         } finally {
