@@ -30,7 +30,7 @@ public class ResourceUtil {
 
     public static String FILENAME_TO_UPLOAD_PART_SPECIAL_CHARACTER="part_file_to_upload-èé_spécial&.txt";
     public static final long PART_SIZE =363666 ;
-    public static final String TARGET_PART_STORAGE = "/com/docdoku/server/rest/part/uploaded/";
+    public static final String TARGET_PART_STORAGE = "docdoku-server-web/src/test/resources/com/docdoku/server/rest/part/uploaded/";
     public static final String SOURCE_PART_STORAGE = "com/docdoku/server/rest/part/toUpload/";
     public static String FILENAME_TARGET_PART ="new_part_file.txt";
 

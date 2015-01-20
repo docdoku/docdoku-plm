@@ -178,8 +178,8 @@ public class PartBinaryResourceTest {
      *
      * @throws Exception
      */
-    @Test
     @Ignore
+    @Test
     public void uploadSeveralFilesToPart() throws Exception {
         //Given
         File fileToUpload1 = new File(getClass().getClassLoader().getResource(ResourceUtil.SOURCE_PART_STORAGE + ResourceUtil.TEST_PART_FILENAME1).getFile());
