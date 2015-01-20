@@ -42,6 +42,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.io.*;
+import java.util.Date;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -95,6 +96,8 @@ public class ConverterBean implements IConverterManagerLocal {
     @Asynchronous
     public void convertCADFileToOBJ(PartIterationKey pPartIPK, BinaryResource cadBinaryResource) throws Exception {
 
+        boolean succeed = false;
+
         // Are there any existing conversions
         Conversion existingConversion = productService.getConversion(pPartIPK);
 
@@ -106,7 +109,7 @@ public class ConverterBean implements IConverterManagerLocal {
 
         // Clean old non pending conversions
         if(existingConversion != null){
-            productService.removeConversion(existingConversion);
+            productService.removeConversion(pPartIPK);
         }
 
         Conversion conversion = productService.createConversion(pPartIPK);
@@ -133,10 +136,8 @@ public class ConverterBean implements IConverterManagerLocal {
 
             if (convertedFile != null) {
                 double[] box = GeometryParser.calculateBox(convertedFile);
-                boolean succeed = decimate(pPartIPK, convertedFile, tempDir, box);
-                conversion.setSucceed(succeed);
+                succeed = decimate(pPartIPK, convertedFile, tempDir, box);
             }else{
-                conversion.setSucceed(false);
                 LOGGER.log(Level.WARNING, "Cannot convert " + cadBinaryResource.getName());
             }
 
@@ -144,14 +145,23 @@ public class ConverterBean implements IConverterManagerLocal {
             LOGGER.log(Level.WARNING, "No CAD converter able to handle " + cadBinaryResource.getName());
         }
 
-        FileIO.rmDir(tempDir);
-        conversion.setPending(false);
+        // Needs to fetch the object that was created in an other transaction
+        Conversion conversionCreated = productService.getConversion(pPartIPK);
 
+        if(conversionCreated != null){
+            conversionCreated.setSucceed(succeed);
+            conversionCreated.setPending(false);
+            conversionCreated.setEndDate(new Date());
+        }
+
+        FileIO.rmDir(tempDir);
     }
 
     private boolean decimate(PartIterationKey pPartIPK, File file, File tempDir, double[] box) {
 
         String decimater = CONF.getProperty("decimater");
+
+        boolean decimateSucced = false;
 
         try {
             String[] args = {decimater, "-i", file.getAbsolutePath(), "-o", tempDir.getAbsolutePath(), "1", "0.6", "0.2"};
@@ -177,7 +187,7 @@ public class ConverterBean implements IConverterManagerLocal {
                 saveFile(pPartIPK, 0, new File(baseName + "100.obj"), box);
                 saveFile(pPartIPK, 1, new File(baseName + "60.obj"), box);
                 saveFile(pPartIPK, 2, new File(baseName + "20.obj"), box);
-                return true;
+                decimateSucced = true;
             } else {
                 LOGGER.log(Level.SEVERE, "Decimation failed with code = " + proc.exitValue(), output.toString());
             }
@@ -188,10 +198,15 @@ public class ConverterBean implements IConverterManagerLocal {
             FileIO.rmDir(tempDir);
         }
 
-        return false;
+        return decimateSucced;
     }
 
     private void saveFile(PartIterationKey partIPK, int quality, File file, double[] box) {
+
+        if(!file.exists()){
+            return;
+        }
+
         OutputStream os = null;
 
         try {

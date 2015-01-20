@@ -123,6 +123,7 @@
                     $scope.options = {force: true,recursive:true};
                     $scope.workspaces = WorkspaceService.workspaces;
                     $scope.newPart = {workspace: $scope.workspaces[0]};
+                    $scope.show3D = false;
 
                     var onFinish = function () {
                         $scope.file.busy = false;
@@ -179,6 +180,10 @@
                         },function(){
                             NotificationService.toast($filter('translate')('NO_CONVERSION'));
                         });
+                    };
+
+                    $scope.toggle3D = function(){
+                        $scope.show3D = !$scope.show3D;
                     };
 
                 }

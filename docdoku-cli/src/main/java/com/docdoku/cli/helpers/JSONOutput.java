@@ -160,6 +160,8 @@ public class JSONOutput  extends CliOutput {
         JSONObject cv = new JSONObject();
         cv.put("pending",conversion.isPending());
         cv.put("succeed",conversion.isSucceed());
+        cv.put("startDate",conversion.getStartDate());
+        cv.put("endDate",conversion.getEndDate());
         System.out.println(cv.toString());
     }
 

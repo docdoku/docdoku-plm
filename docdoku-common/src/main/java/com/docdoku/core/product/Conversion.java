@@ -14,6 +14,9 @@ public class Conversion implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date startDate;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date endDate;
+
     private boolean pending;
 
     private boolean succeed;
@@ -25,11 +28,12 @@ public class Conversion implements Serializable {
     }
 
     public Conversion(PartIteration partIteration) {
-        this(new Date(),true, false, partIteration);
+        this(new Date(), null, true, false, partIteration);
     }
 
-    public Conversion(Date startDate, boolean pending, boolean succeed, PartIteration partIteration) {
+    public Conversion(Date startDate, Date endDate, boolean pending, boolean succeed, PartIteration partIteration) {
         this.startDate = startDate;
+        this.endDate = endDate;
         this.pending = pending;
         this.succeed = succeed;
         this.partIteration = partIteration;
@@ -73,5 +77,13 @@ public class Conversion implements Serializable {
 
     public void setPartIteration(PartIteration partIteration) {
         this.partIteration = partIteration;
+    }
+
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
     }
 }

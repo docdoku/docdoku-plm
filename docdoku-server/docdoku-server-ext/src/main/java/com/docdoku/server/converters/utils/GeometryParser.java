@@ -20,12 +20,12 @@
 
 package com.docdoku.server.converters.utils;
 
-import org.codehaus.jettison.json.JSONException;
-
 import javax.json.Json;
+import javax.json.JsonException;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import java.io.*;
+import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Properties;
@@ -41,7 +41,7 @@ public class GeometryParser {
     private GeometryParser() {
     }
 
-    public static double[] calculateBox(File file) throws JSONException {
+    public static double[] calculateBox(File file) {
         InputStream inputStream = null;
         try{
             inputStream = GeometryParser.class.getResourceAsStream(CONF_PROPERTIES);
@@ -87,7 +87,11 @@ public class GeometryParser {
                     max.getJsonNumber("z").doubleValue()
             };
 
+        } catch (ConnectException e) {
+            LOGGER.log(Level.INFO, null, e);
         } catch (IOException e) {
+            LOGGER.log(Level.INFO, null, e);
+        } catch (JsonException e) {
             LOGGER.log(Level.INFO, null, e);
         } finally {
             try{
@@ -99,6 +103,6 @@ public class GeometryParser {
             }
         }
 
-        return new double[0];
+        return new double[6];
     }
 }

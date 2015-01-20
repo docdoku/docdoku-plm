@@ -122,6 +122,7 @@ public class HumanOutput extends CliOutput{
         } else{
             System.out.println("Conversion failed, try to re-launch");
         }
+        System.out.println("Conversion started at " + conversion.getStartDate() + ", ended at " + conversion.getEndDate());
     }
 
     @Override

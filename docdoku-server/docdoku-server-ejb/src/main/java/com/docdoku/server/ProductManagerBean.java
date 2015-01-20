@@ -47,10 +47,7 @@ import com.docdoku.server.esindexer.ESSearcher;
 import javax.annotation.Resource;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
-import javax.ejb.EJB;
-import javax.ejb.Local;
-import javax.ejb.SessionContext;
-import javax.ejb.Stateless;
+import javax.ejb.*;
 import javax.jws.WebService;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -794,7 +791,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         PartRevisionDAO partRevisionDAO = new PartRevisionDAO(locale,em);
         PartRevision partRevision = partRevisionDAO.loadPartR(revisionKey);
 
-        if (isAuthor(user,partRevision) || user.isAdministrator()) {
+        if (isAuthor(user, partRevision) || user.isAdministrator()) {
             ACL acl = partRevision.getACL();
             if (acl != null) {
                 new ACLDAO(em).removeACLEntries(acl);
@@ -863,6 +860,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @TransactionAttribute(value = TransactionAttributeType.REQUIRES_NEW)
     @Override
     public Conversion createConversion(PartIterationKey partIterationKey) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException, PartIterationNotFoundException, CreationException {
         User user = checkPartRevisionWriteAccess(partIterationKey.getPartRevision());
@@ -876,12 +874,15 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @TransactionAttribute(value = TransactionAttributeType.REQUIRES_NEW)
     @Override
-    public void removeConversion(Conversion conversion) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
-        User user = checkPartRevisionWriteAccess(conversion.getPartIteration().getPartRevision().getKey());
+    public void removeConversion(PartIterationKey partIterationKey) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException, PartIterationNotFoundException {
+        User user = checkPartRevisionWriteAccess(partIterationKey.getPartRevision());
         Locale locale = new Locale(user.getLanguage());
         PartIterationDAO partIterationDAO = new PartIterationDAO(locale,em);
+        PartIteration partIteration = partIterationDAO.loadPartI(partIterationKey);
         ConversionDAO conversionDAO = new ConversionDAO(locale,em);
+        Conversion conversion = conversionDAO.findConversion(partIteration);
         conversionDAO.deleteConversion(conversion);
     }
 
