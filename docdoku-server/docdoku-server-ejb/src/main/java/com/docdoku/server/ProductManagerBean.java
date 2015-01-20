@@ -1619,7 +1619,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         PartRevision partRevision;
         if(ctx.isCallerInRole(UserGroupMapping.GUEST_PROXY_ROLE_ID)){
             partRevision = new PartRevisionDAO(em).loadPartR(partIKey.getPartRevision());
-            return partRevision.isPublicShared() && partRevision.getLastIteration().getIteration() > partIKey.getIteration();
+            return partRevision.isPublicShared() && partRevision.getLastCheckedInIteration().getIteration() >= partIKey.getIteration();
         }
 
         User user = userManager.checkWorkspaceReadAccess(partIKey.getWorkspaceId());

@@ -39,6 +39,10 @@
             <param-name>excludedPaths</param-name>
             <param-value>/api/files/*/documents/**,/api/files/*/parts/**</param-value>
         </init-param>
+        <init-param>
+            <param-name>apiPath</param-name>
+            <param-value>/api/*</param-value>
+        </init-param>
     </filter>
     <filter>
         <filter-name>PermalinkFilter</filter-name>
