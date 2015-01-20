@@ -112,7 +112,7 @@ public class ConverterBean implements IConverterManagerLocal {
             productService.removeConversion(pPartIPK);
         }
 
-        Conversion conversion = productService.createConversion(pPartIPK);
+        productService.createConversion(pPartIPK);
 
         File tempDir = Files.createTempDir();
 
@@ -135,8 +135,16 @@ public class ConverterBean implements IConverterManagerLocal {
             File convertedFile = selectedConverter.convert(partI, cadBinaryResource, tempDir);
 
             if (convertedFile != null) {
+
                 double[] box = GeometryParser.calculateBox(convertedFile);
+
                 succeed = decimate(pPartIPK, convertedFile, tempDir, box);
+
+                // Copy the converted file if decimation failed, ignore decimated files
+                if(!succeed){
+                    saveFile(pPartIPK, 0, convertedFile, box);
+                }
+
             }else{
                 LOGGER.log(Level.WARNING, "Cannot convert " + cadBinaryResource.getName());
             }
@@ -146,12 +154,12 @@ public class ConverterBean implements IConverterManagerLocal {
         }
 
         // Needs to fetch the object that was created in an other transaction
-        Conversion conversionCreated = productService.getConversion(pPartIPK);
+        Conversion conversion = productService.getConversion(pPartIPK);
 
-        if(conversionCreated != null){
-            conversionCreated.setSucceed(succeed);
-            conversionCreated.setPending(false);
-            conversionCreated.setEndDate(new Date());
+        if(conversion != null){
+            conversion.setSucceed(succeed);
+            conversion.setPending(false);
+            conversion.setEndDate(new Date());
         }
 
         FileIO.rmDir(tempDir);
@@ -161,7 +169,7 @@ public class ConverterBean implements IConverterManagerLocal {
 
         String decimater = CONF.getProperty("decimater");
 
-        boolean decimateSucced = false;
+        boolean decimateSucceed = false;
 
         try {
             String[] args = {decimater, "-i", file.getAbsolutePath(), "-o", tempDir.getAbsolutePath(), "1", "0.6", "0.2"};
@@ -187,7 +195,7 @@ public class ConverterBean implements IConverterManagerLocal {
                 saveFile(pPartIPK, 0, new File(baseName + "100.obj"), box);
                 saveFile(pPartIPK, 1, new File(baseName + "60.obj"), box);
                 saveFile(pPartIPK, 2, new File(baseName + "20.obj"), box);
-                decimateSucced = true;
+                decimateSucceed = true;
             } else {
                 LOGGER.log(Level.SEVERE, "Decimation failed with code = " + proc.exitValue(), output.toString());
             }
@@ -198,7 +206,7 @@ public class ConverterBean implements IConverterManagerLocal {
             FileIO.rmDir(tempDir);
         }
 
-        return decimateSucced;
+        return decimateSucceed;
     }
 
     private void saveFile(PartIterationKey partIPK, int quality, File file, double[] box) {
