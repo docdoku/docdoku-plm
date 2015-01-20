@@ -87,21 +87,6 @@
 
     </dependencies>
     <build>
-        <resources>
-            <resource>
-                <directory>src/test/resources/com/docdoku/server/rest/file/toUpload/*</directory>
-                <includes>
-                    <include>*.*</include>
-                </includes>
-            </resource>
-            <resource>
-                <directory>src/test/resources/com/docdoku/server/rest/part/toUpload/*</directory>
-                <includes>
-                    <include>*.*</include>
-                </includes>
-            </resource>
-        </resources>
-
         <plugins>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -169,6 +154,11 @@
             </plugin>
         </plugins>
         <finalName>${project.artifactId}</finalName>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+            </testResource>
+        </testResources>
 
     </build>
     <profiles>

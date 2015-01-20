@@ -146,8 +146,8 @@ public class PartBinaryResourceTest {
     @Ignore
     public void uploadFileWithSpecialCharactersToPart() throws Exception {
         //Given
-        final File fileToUpload = new File(getClass().getClassLoader().getResource(ResourceUtil.SOURCE_PART_STORAGE + ResourceUtil.FILENAME_TO_UPLOAD_PART_SPECIAL_CHARACTER).getFile());
-        File uploadedFile = new File(getClass().getClassLoader().getResource(ResourceUtil.TARGET_PART_STORAGE).getFile() + ResourceUtil.FILENAME_TO_UPLOAD_PART_SPECIAL_CHARACTER);
+        File fileToUpload = new File(getClass().getClassLoader().getResource(ResourceUtil.SOURCE_PART_STORAGE + ResourceUtil.FILENAME_TO_UPLOAD_PART_SPECIAL_CHARACTER).toURI());
+        File uploadedFile = new File(ResourceUtil.TARGET_PART_STORAGE + ResourceUtil.FILENAME_TO_UPLOAD_PART_SPECIAL_CHARACTER);
         HttpServletRequestWrapper request = Mockito.mock(HttpServletRequestWrapper.class);
         Collection<Part> parts = new ArrayList<Part>();
         parts.add(new PartImp(fileToUpload));
@@ -178,13 +178,14 @@ public class PartBinaryResourceTest {
      *
      * @throws Exception
      */
-    @Ignore
+
     @Test
+    @Ignore
     public void uploadSeveralFilesToPart() throws Exception {
         //Given
         File fileToUpload1 = new File(getClass().getClassLoader().getResource(ResourceUtil.SOURCE_PART_STORAGE + ResourceUtil.TEST_PART_FILENAME1).getFile());
         File fileToUpload2 = new File(getClass().getClassLoader().getResource(ResourceUtil.SOURCE_PART_STORAGE + ResourceUtil.TEST_PART_FILENAME2).getFile());
-        File fileToUpload3 = new File(getClass().getClassLoader().getResource(ResourceUtil.SOURCE_PART_STORAGE).getFile() + ResourceUtil.FILENAME_TO_UPLOAD_PART_SPECIAL_CHARACTER);
+        File fileToUpload3 = new File(getClass().getClassLoader().getResource(ResourceUtil.SOURCE_PART_STORAGE + ResourceUtil.FILENAME_TO_UPLOAD_PART_SPECIAL_CHARACTER).toURI());
         File uploadedFile1 = new File(ResourceUtil.TARGET_PART_STORAGE + ResourceUtil.TEST_PART_FILENAME1);
         File uploadedFile2 = new File(ResourceUtil.TARGET_PART_STORAGE + ResourceUtil.TEST_PART_FILENAME2);
         File uploadedFile3 = new File(ResourceUtil.TARGET_PART_STORAGE + ResourceUtil.FILENAME_TO_UPLOAD_PART_SPECIAL_CHARACTER);
