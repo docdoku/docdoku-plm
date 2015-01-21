@@ -4,6 +4,7 @@ import com.docdoku.cli.commands.HelpCommand;
 import com.docdoku.cli.interfaces.CommandLine;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.configuration.ProductBaseline;
+import com.docdoku.core.product.Conversion;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartMaster;
 import com.docdoku.core.product.PartRevision;
@@ -110,6 +111,18 @@ public class HumanOutput extends CliOutput{
         for(PartRevision pr:pm.getPartRevisions()){
             printRevisionStatus(revColSize,pr);
         }
+    }
+
+    @Override
+    public void printConversion(Conversion conversion) {
+        if(conversion.isSucceed()){
+            System.out.println("Conversion succeed");
+        }else if(conversion.isPending()){
+            System.out.println("Conversion in progress");
+        } else{
+            System.out.println("Conversion failed, try to re-launch");
+        }
+        System.out.println("Conversion started at " + conversion.getStartDate() + ", ended at " + conversion.getEndDate());
     }
 
     @Override

@@ -3,8 +3,10 @@ package com.docdoku.cli.helpers;
 import com.docdoku.cli.interfaces.CommandLine;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.configuration.ProductBaseline;
+import com.docdoku.core.product.Conversion;
 import com.docdoku.core.product.PartMaster;
 import com.docdoku.core.product.PartRevision;
+import org.codehaus.jettison.json.JSONException;
 
 import java.io.FilterInputStream;
 import java.io.InputStream;
@@ -46,6 +48,7 @@ public abstract class CliOutput {
     public abstract void printBaselines(List<ProductBaseline> productBaselines);
     public abstract void printPartRevision(PartRevision pr, long lastModified);
     public abstract void printPartMaster(PartMaster pm, long lastModified);
+    public abstract void printConversion(Conversion conversion) throws JSONException;
 
     public abstract FilterInputStream getMonitor(long maximum, InputStream in);
 

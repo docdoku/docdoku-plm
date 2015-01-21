@@ -1,12 +1,8 @@
-node_modules
 dist
 test/temp
 .sass-cache
-app/bower_components
 .tmp
-test/bower_components/
 tests/conf.local.js
-npm-debug.log
 app/document-management/main.css
 app/product-management/main.css
 app/product-structure/main.css

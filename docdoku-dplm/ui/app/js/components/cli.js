@@ -344,6 +344,24 @@
                 return run(args);
             };
 
+            this.getConversionStatus = function (part) {
+
+                var args = [
+                    'cv',
+                    '-F', 'json',
+                    '-h', configuration.host,
+                    '-P', configuration.port,
+                    '-u', configuration.user,
+                    '-p', configuration.password,
+                    '-w', part.workspace,
+                    '-o', part.partNumber,
+                    '-r', part.version,
+                    '-i', part.iterations[part.iterations.length-1]
+                ];
+
+                return run(args);
+
+            };
 
         });
 })();

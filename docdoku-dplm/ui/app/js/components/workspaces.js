@@ -45,13 +45,13 @@
 
             this.addLastVisited = function(workspace){
 
-                var alreadyIndexed = lastVisitedWorkspaces.indexOf(workspace)
+                var alreadyIndexed = lastVisitedWorkspaces.indexOf(workspace);
                 if(alreadyIndexed !== -1){
                     lastVisitedWorkspaces.splice(alreadyIndexed,1);
                 }
 
                 lastVisitedWorkspaces.unshift(workspace);
-                lastVisitedWorkspaces.splice(4,lastVisitedWorkspaces.length-1)
+                lastVisitedWorkspaces.splice(4,lastVisitedWorkspaces.length-1);
                 localStorage.lastVisitedWorkspaces = JSON.stringify(lastVisitedWorkspaces);
             };
 
