@@ -13,10 +13,8 @@ module.exports = function(grunt) {
                 'clean:server',
                 'less',
                 'connect:app',
-                'open:dev',
-                'watch:livereload',
-                'watch:less'
-                ]);
+                'open:dev'
+            ]);
 		}
 
 		grunt.task.run([
@@ -24,8 +22,7 @@ module.exports = function(grunt) {
 			'less',
 			'connect:livereload',
 			'open:dev',
-			'watch:livereload',
-			'watch:less'
+			'watch'
 		]);
 	});
 
