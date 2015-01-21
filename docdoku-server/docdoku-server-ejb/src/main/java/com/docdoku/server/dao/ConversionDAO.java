@@ -23,6 +23,7 @@ package com.docdoku.server.dao;
 import com.docdoku.core.exceptions.CreationException;
 import com.docdoku.core.product.Conversion;
 import com.docdoku.core.product.PartIteration;
+import com.docdoku.core.product.PartRevision;
 
 import javax.persistence.*;
 import java.util.Locale;
@@ -70,5 +71,17 @@ public class ConversionDAO {
     public void deleteConversion(Conversion conversion) {
         em.remove(conversion);
         em.flush();
+    }
+
+    public void removePartRevisionConversions(PartRevision pPartR) {
+        em.createQuery("DELETE FROM Conversion c WHERE c.partIteration.partRevision = :partRevision", Conversion.class)
+                .setParameter("partRevision", pPartR)
+                .executeUpdate();
+    }
+
+    public void removePartIterationConversion(PartIteration pPartI) {
+        em.createQuery("DELETE FROM Conversion c WHERE c.partIteration = :partIteration", Conversion.class)
+                .setParameter("partIteration", pPartI)
+                .executeUpdate();
     }
 }

@@ -5,11 +5,12 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Entity
+@IdClass(PartIterationKey.class)
 public class Conversion implements Serializable {
 
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
     @Id
-    private int id;
+    @OneToOne(optional = false, fetch = FetchType.EAGER)
+    private PartIteration partIteration;
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date startDate;
@@ -20,9 +21,6 @@ public class Conversion implements Serializable {
     private boolean pending;
 
     private boolean succeed;
-
-    @OneToOne(optional = false, fetch = FetchType.EAGER)
-    private PartIteration partIteration;
 
     public Conversion() {
     }
@@ -37,14 +35,6 @@ public class Conversion implements Serializable {
         this.pending = pending;
         this.succeed = succeed;
         this.partIteration = partIteration;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public Date getStartDate() {

@@ -61,6 +61,7 @@ public class PartIterationDAO {
     }
 
     public void removeIteration(PartIteration pPartI){
+        new ConversionDAO(em).removePartIterationConversion(pPartI);
         em.remove(pPartI);
     }
 }
