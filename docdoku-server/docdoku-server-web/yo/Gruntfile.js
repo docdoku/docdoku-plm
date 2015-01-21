@@ -410,6 +410,7 @@ module.exports = function (grunt) {
                             'images/{,*/}*',
                             'sounds/{,*/}*',
                             'fonts/{,*/}*',
+                            'download/{,*/}*',
 	                        'js/home/main.js',
 	                        'js/lib/plugin-detect.js'
                         ]

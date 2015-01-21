@@ -1,0 +1,5 @@
+tmp
+ui/dist
+ui/tmp
+ui/app/docdoku-cli-jar-with-dependencies.jar
+tests/worskpace

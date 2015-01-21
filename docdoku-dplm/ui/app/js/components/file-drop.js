@@ -13,8 +13,8 @@
                     return {
                         post: function postLink(scope, iElement, iAttrs, controller) {
 
-                            window.ondragover = function(e) {e.preventDefault(); return false };
-                            window.ondrop = function(e) { e.preventDefault(); return false };
+                            window.ondragover = function(e) {e.preventDefault(); return false; };
+                            window.ondrop = function(e) { e.preventDefault(); return false; };
 
                             var holder = iElement;
                             holder.on('dragover', function () { holder.addClass('hover'); return false; });
@@ -36,9 +36,9 @@
                             });
 
                         }
-                    }
+                    };
                 }
             };
-        })
+        });
 
 })();
