@@ -5,7 +5,10 @@
                                                                                                            name="amount"
                                                                                                            value="{{model.amount}}"
                                                                                                            title="{{i18n.AMOUNT}}"
-                                                                                                           disabled/> <i
+                                                                                                           disabled/>
+    <input type="text" value="{{model.unit}}"disabled/>
+    <select name="unitMeasure" class="measure"><option value="unit" selected>Unit</option><option value="Kg">Kg</option><option value="L">l</option><option value="m">m</option></select>
+    <i
         class="fa fa-plus add-cadInstance"></i>
     {{/model.component.number}}
     {{^model.component.number}}
@@ -17,5 +20,7 @@
     <input type="text" name="amount" value="{{model.amount}}" title="{{i18n.AMOUNT}}" disabled/><i
         class="fa fa-plus add-cadInstance"></i>
     {{/model.component.number}}
+    <div><i class="fa fa-angle-double-down collapse-cadInstance"></i></div>
+
     <div class="cadInstances"></div>
 </div>
