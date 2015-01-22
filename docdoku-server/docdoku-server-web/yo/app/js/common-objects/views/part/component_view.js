@@ -125,7 +125,7 @@ define([
                 this.$amount.removeAttr('disabled');
                 this.$('.add-cadInstance').hide();
             }else{
-                this.$amount.val(parseInt(this.$amount.val()));
+                this.$amount.val(parseInt(this.$amount.val())== 0 ? 1:parseInt(this.$amount.val()));
                 this.$amount.attr('disabled','disabled');
                 this.$('.add-cadInstance').show();
             }
