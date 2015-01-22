@@ -34,6 +34,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.net.URL;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -62,7 +63,6 @@ public class ConnectionBean {
         HttpSession newSession = request.getSession(true);
         newSession.setAttribute("hasFail", false);
         newSession.setAttribute("hasLogout", true);
-        ec.redirect(request.getContextPath()+"/");
         return request.getContextPath()+"/";
     }
 
@@ -74,13 +74,15 @@ public class ConnectionBean {
         //Logout in case of user is already logged in,
         //that could happen when using multiple tabs
         request.logout();
-        if(tryLoggin(request)) {
+        if(tryLogin(request)) {
             checkAccount(request);
             session.setAttribute("remoteUser",login);
             boolean isAdmin=userManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID);
 
             if(isAdmin){
-                ec.redirect(request.getContextPath() + "/faces/admin/workspace/workspacesMenu.xhtml");
+                URL url=new URL(request.getRequestURL().toString());
+                URL redirectURL=new URL(url.getProtocol(),url.getHost(), url.getPort(),request.getContextPath() + "/faces/admin/workspace/workspacesMenu.xhtml");
+                ec.redirect(redirectURL.toString());
             }else{
                 redirectionPostLogin(request,ec);
             }
@@ -114,7 +116,7 @@ public class ConnectionBean {
         this.originURL = originURL;
     }
 
-    private boolean tryLoggin(HttpServletRequest request){
+    private boolean tryLogin(HttpServletRequest request){
         try {
             request.login(login, password);
             return true;
@@ -146,8 +148,10 @@ public class ConnectionBean {
     }
 
     private void redirectionPostLogin(HttpServletRequest request,ExternalContext ec) throws IOException {
+        URL url=new URL(request.getRequestURL().toString());
         if(originURL!=null && originURL.length()>1){
-            ec.redirect(originURL);
+            URL redirectURL=new URL(url.getProtocol(),url.getHost(), url.getPort(),originURL);
+            ec.redirect(redirectURL.toString());
         }else{
             String workspaceID = null;
             Workspace[] workspaces = userManager.getWorkspacesWhereCallerIsActive();
@@ -155,9 +159,11 @@ public class ConnectionBean {
                 workspaceID = workspaces[0].getId();
             }
             if(workspaceID == null){
-                ec.redirect(request.getContextPath() + "/faces/admin/workspace/workspacesMenu.xhtml");
+                URL redirectURL=new URL(url.getProtocol(),url.getHost(), url.getPort(),request.getContextPath() + "/faces/admin/workspace/workspacesMenu.xhtml");
+                ec.redirect(redirectURL.toString());
             }else{
-                ec.redirect(request.getContextPath() + "/document-management/#" + workspaceID);
+                URL redirectURL=new URL(url.getProtocol(),url.getHost(), url.getPort(),request.getContextPath() + "/document-management/#" + workspaceID);
+                ec.redirect(redirectURL.toString());
             }
         }
     }
