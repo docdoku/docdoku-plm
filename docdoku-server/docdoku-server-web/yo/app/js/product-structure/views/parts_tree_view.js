@@ -38,6 +38,7 @@ define(['backbone', 'models/component_module', 'views/component_views'
                 //the default selected component is the root
                 self.rootComponent = collection.first();
                 self.setSelectedComponent(self.rootComponent);
+                self.trigger('collection:fetched');
             });
 
             this.componentViews = new ComponentViews.Components({

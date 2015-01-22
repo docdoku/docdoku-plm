@@ -19,6 +19,7 @@
  */
 package com.docdoku.server.rest;
 
+import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.common.Workspace;
@@ -31,6 +32,7 @@ import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.security.UserGroupMapping;
+import com.docdoku.core.services.IConverterManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.core.sharing.SharedPart;
@@ -58,7 +60,9 @@ public class PartResource {
     private IProductManagerLocal productService;
     @EJB
     private IUserManagerLocal userManager;
-
+    @EJB
+    private IConverterManagerLocal converterService;
+    
     private Mapper mapper;
 
     public PartResource() {
@@ -118,6 +122,35 @@ public class PartResource {
         return Response.ok(partDTO).build();
     }
 
+    @GET
+    @Path("/iterations/{partIteration}/conversion")
+    @Produces(MediaType.APPLICATION_JSON)
+    public ConversionDTO getConversionStatus(@PathParam("workspaceId") String pWorkspaceId, @PathParam("partNumber") String partNumber , @PathParam("partVersion") String partVersion, @PathParam("partIteration") int partIteration) throws UserNotActiveException, PartRevisionNotFoundException, WorkspaceNotFoundException, UserNotFoundException, PartIterationNotFoundException, AccessRightException {
+        PartIterationKey partIPK = new PartIterationKey(pWorkspaceId,partNumber,partVersion,partIteration);
+        Conversion conversion = productService.getConversion(partIPK);
+        if(conversion != null){
+            return mapper.map(conversion,ConversionDTO.class);
+        }
+        return null;
+    }
+    
+    @PUT
+    @Path("/iterations/{partIteration}/conversion")
+    public Response retryConversion(@PathParam("workspaceId") String pWorkspaceId, @PathParam("partNumber") String partNumber , @PathParam("partVersion") String partVersion, @PathParam("partIteration") int iteration) throws UserNotActiveException, PartRevisionNotFoundException, WorkspaceNotFoundException, UserNotFoundException, PartIterationNotFoundException, AccessRightException {
+        
+        PartIterationKey partIPK = new PartIterationKey(pWorkspaceId,partNumber,partVersion,iteration);
+        PartIteration partIteration = productService.getPartIteration(partIPK);
+        BinaryResource nativeCADFile = partIteration.getNativeCADFile();
+        if(nativeCADFile != null){
+            try {
+                converterService.convertCADFileToOBJ(partIPK, nativeCADFile);
+                return Response.ok().build();
+            }catch(Exception e){
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+            }
+        }
+        return Response.status(Response.Status.BAD_REQUEST).build();
+    }
 
     @PUT
     @Path("/checkin")

@@ -12,7 +12,7 @@ CONFIG   += console
 CONFIG   -= app_bundle
 CONFIG+=c++11
 #QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.9
-QMAKE_CXXFLAGS+=  -std=c++11 #-stdlib=libc++ -mmacosx-version-min=10.7
+##QMAKE_CXXFLAGS+=  -std=c++11 #-stdlib=libc++ -mmacosx-version-min=10.7
 INCLUDEPATH += $$PWD/
 HEADERS += \
     lod.h

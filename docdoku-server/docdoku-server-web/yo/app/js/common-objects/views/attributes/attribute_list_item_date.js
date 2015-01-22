@@ -29,7 +29,7 @@ define([
             if (!_.isEmpty(data.value)) {
                 data.value = date.formatTimestamp(
                     App.config.i18n._DATE_PICKER_DATE_FORMAT,
-                    parseInt(data.value, 10)
+                    new Date(data.value)
                 );
             }
             return data;

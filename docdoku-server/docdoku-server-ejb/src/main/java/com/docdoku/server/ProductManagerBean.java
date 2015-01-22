@@ -724,6 +724,27 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         }
         return partR;
     }
+    
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
+    public PartIteration getPartIteration(PartIterationKey pPartIPK) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException, PartIterationNotFoundException {
+
+        PartRevisionKey partRevisionKey = pPartIPK.getPartRevision();
+        User user = checkPartRevisionReadAccess(partRevisionKey);
+        Locale locale = new Locale(user.getLanguage());        
+        PartIterationDAO partIterationDAO = new PartIterationDAO(locale,em);
+        
+        PartIteration partI = partIterationDAO.loadPartI(pPartIPK);
+        PartRevision partR = partI.getPartRevision();
+        partR.getIteration(pPartIPK.getIteration());
+        PartIteration lastIteration = partR.getLastIteration();
+        
+        if(isCheckoutByAnotherUser(user,partR) && lastIteration.getKey().equals(pPartIPK)){
+            throw new AccessRightException("NotAllowedException25");
+        }
+
+        return partI;
+    }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
@@ -884,6 +905,21 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         ConversionDAO conversionDAO = new ConversionDAO(locale,em);
         Conversion conversion = conversionDAO.findConversion(partIteration);
         conversionDAO.deleteConversion(conversion);
+    }
+    
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @TransactionAttribute(value = TransactionAttributeType.REQUIRES_NEW)
+    @Override
+    public void endConversion(PartIterationKey partIterationKey, boolean succeed) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException, PartIterationNotFoundException {
+        User user = checkPartRevisionWriteAccess(partIterationKey.getPartRevision());
+        Locale locale = new Locale(user.getLanguage());
+        PartIterationDAO partIterationDAO = new PartIterationDAO(locale,em);
+        PartIteration partIteration = partIterationDAO.loadPartI(partIterationKey);
+        ConversionDAO conversionDAO = new ConversionDAO(locale,em);
+        Conversion conversion = conversionDAO.findConversion(partIteration);
+        conversion.setPending(false);
+        conversion.setSucceed(succeed);
+        conversion.setEndDate(new Date());
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)

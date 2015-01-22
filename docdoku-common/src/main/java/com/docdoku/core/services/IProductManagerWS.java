@@ -475,7 +475,25 @@ public interface IProductManagerWS{
      * @throws PartRevisionNotFoundException
      */
     PartRevision getPartRevision(PartRevisionKey partRPK) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException, AccessRightException;
-
+   
+    /**
+     * Returns a specific <a href="PartIteration.html">PartIteration</a>.
+     *
+     * @param pPartIPK
+     * The id of the part iteration to get
+     *
+     * @return
+     * The part iteration
+     *
+     * @throws UserNotFoundException
+     * @throws UserNotActiveException
+     * @throws WorkspaceNotFoundException
+     * @throws PartIterationNotFoundException
+     * @throws PartRevisionNotFoundException
+     * @throws AccessRightException
+     */
+    PartIteration getPartIteration(PartIterationKey pPartIPK) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException, PartIterationNotFoundException;
+    
     /**
      * Finds part masters by their part number using like style query.
      *
@@ -593,5 +611,7 @@ public interface IProductManagerWS{
     Conversion createConversion(PartIterationKey partIterationKey) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException, PartIterationNotFoundException, CreationException;
 
     void removeConversion(PartIterationKey partIterationKey) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException, PartIterationNotFoundException;
+    
+    void endConversion(PartIterationKey partIterationKey, boolean succeed) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException, PartIterationNotFoundException;
 
 }
