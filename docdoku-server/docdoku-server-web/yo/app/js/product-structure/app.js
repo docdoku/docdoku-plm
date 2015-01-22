@@ -165,18 +165,19 @@ define([
         },
 
         sceneMode: function () {
-            this.inBomMode = false;
-            this.bomModeButton.removeClass('active');
-            this.sceneModeButton.addClass('active');
-            this.bomContainer.hide();
-            this.centerSceneContainer.show();
-            this.fullScreenSceneButton.show();
-            App.bomView.bomHeaderView.hideButtons();
+            if(this.isInBomMode()) {
+                this.inBomMode = false;
+                this.bomModeButton.removeClass('active');
+                this.sceneModeButton.addClass('active');
+                this.bomContainer.hide();
+                this.centerSceneContainer.show();
+                this.fullScreenSceneButton.show();
+                App.bomView.bomHeaderView.hideButtons();
 
-            if (App.partsTreeView.componentSelected) {
-                this.exportSceneButton.show();
+                if (App.partsTreeView.componentSelected) {
+                    this.exportSceneButton.show();
+                }
             }
-
         },
 
         bomMode: function () {

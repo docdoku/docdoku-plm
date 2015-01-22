@@ -184,7 +184,7 @@ define(['dmu/LoaderManager', 'async'],
                     return;
                 }
                 evalRunning = true;
-                var sceneContext = App.sceneManager.getSceneContext();
+                var sceneContext = App.sceneManager.getControlsContext();
                 App.log('%c Updating worker', 'IM');
                 worker.postMessage({fn: 'context', obj: {
                     camera: sceneContext.camPos,
@@ -192,6 +192,10 @@ define(['dmu/LoaderManager', 'async'],
                     WorkerManagedValues: App.WorkerManagedValues,
                     debug: App.debug
                 }});
+
+                if(App.router){
+                    App.router.updateRoute(sceneContext);
+                }
             }
 
 	        function onSuccessLoadPath(instances){
