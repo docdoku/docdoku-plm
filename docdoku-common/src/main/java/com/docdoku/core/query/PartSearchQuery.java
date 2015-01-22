@@ -35,20 +35,34 @@ public class PartSearchQuery extends SearchQuery implements Serializable{
     protected String name;
     protected Boolean standardPart;
 
-    public PartSearchQuery(){}
-    public PartSearchQuery(String workspaceId, String partNumber, String name, String version, String author, String type, Date creationDateFrom, Date creationDateTo, SearchQuery.AbstractAttributeQuery[] attributes, Boolean standardPart){
-        super(workspaceId,partNumber,version,author,type,creationDateFrom,creationDateTo,attributes);
+    public PartSearchQuery(){
+
+    }
+    public PartSearchQuery(String workspaceId, String fullText, String partNumber, String name, String version, String author, String type, Date creationDateFrom, Date creationDateTo, SearchQuery.AbstractAttributeQuery[] attributes, Boolean standardPart){
+        super(workspaceId,fullText,version,author,type,creationDateFrom,creationDateTo,attributes);
         this.partNumber=partNumber;
         this.name=name;
         this.standardPart=standardPart;
     }
 
     //Getter
-    public String getPartNumber() {return partNumber;}
-    public String getName() {return name;}
-    public Boolean isStandardPart() {return standardPart;}
+    public String getPartNumber() {
+        return partNumber;
+    }
+    public String getName() {
+        return name;
+    }
+    public Boolean isStandardPart() {
+        return standardPart;
+    }
     //Setter
-    public void setPartNumber(String partNumber) {this.partNumber = partNumber;}
-    public void setName(String name) {this.name = name;}
-    public void setStandardPart(Boolean standardPart) {this.standardPart = standardPart;}
+    public void setPartNumber(String partNumber) {
+        this.partNumber = partNumber;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+    public void setStandardPart(Boolean standardPart) {
+        this.standardPart = standardPart;
+    }
 }

@@ -117,10 +117,18 @@ public class ChangeRequest extends ChangeItem {
     public Milestone getMilestone() {
         return milestone;
     }
-    public void setMilestone(Milestone milestone) {this.milestone = milestone;}
+    public void setMilestone(Milestone milestone) {
+        this.milestone = milestone;
+    }
 
-    public Set<ChangeIssue> getAddressedChangeIssues() {return addressedChangeIssues;}
-    public void setAddressedChangeIssues(Set<ChangeIssue> addressedChangeIssues) {this.addressedChangeIssues = addressedChangeIssues;}
+    public Set<ChangeIssue> getAddressedChangeIssues() {
+        return addressedChangeIssues;
+    }
+    public void setAddressedChangeIssues(Set<ChangeIssue> addressedChangeIssues) {
+        this.addressedChangeIssues = addressedChangeIssues;
+    }
 
-    public int getMilestoneId(){ return (milestone!=null) ? milestone.getId() : -1;}
+    public int getMilestoneId(){
+        return (milestone!=null) ? milestone.getId() : -1;
+    }
 }

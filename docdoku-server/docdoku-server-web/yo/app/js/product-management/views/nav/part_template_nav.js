@@ -1,14 +1,14 @@
-/*global define*/
+/*global define,App*/
 define([
     'backbone',
-    "mustache",
-    "common-objects/common/singleton_decorator",
-    "text!templates/nav/part_template_nav.html",
-    "views/part_template_content"
+    'mustache',
+    'common-objects/common/singleton_decorator',
+    'text!templates/nav/part_template_nav.html',
+    'views/part-template/part_template_content'
 ], function (Backbone, Mustache, singletonDecorator, template, PartTemplateContentView) {
+    'use strict';
     var PartTemplateNavView = Backbone.View.extend({
-
-        el: "#part-template-nav",
+        el: '#part-template-nav',
 
         initialize: function () {
             this.render();
@@ -19,18 +19,27 @@ define([
         },
 
         setActive: function () {
-            $("#product-management-menu").find(".active").removeClass("active");
-            this.$el.find(".nav-list-entry").first().addClass("active");
+            if (App.$productManagementMenu) {
+                App.$productManagementMenu.find('.active').removeClass('active');
+            }
+            this.$el.find('.nav-list-entry').first().addClass('active');
         },
 
         showContent: function () {
             this.setActive();
+            this.cleanView();
+            if(!this.partTemplateContentView){
+                this.partTemplateContentView = new PartTemplateContentView();
+            }
+            this.partTemplateContentView.render();
+            App.$productManagementContent.html(this.partTemplateContentView.el);
+        },
 
+        cleanView: function () {
             if (this.partTemplateContentView) {
                 this.partTemplateContentView.undelegateEvents();
+                App.$productManagementContent.html('');
             }
-
-            this.partTemplateContentView = new PartTemplateContentView().render();
         }
 
     });

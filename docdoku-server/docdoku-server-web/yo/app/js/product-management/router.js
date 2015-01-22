@@ -11,7 +11,6 @@ define([
 function (Backbone, singletonDecorator, ProductNavView, BaselinesNavView, ProductInstancesNavView, PartNavView, PartTemplateNavView) {
     'use strict';
     var Router = Backbone.Router.extend({
-        contentSelector: '#product-management-content',
         routes: {
             ':workspaceId/products': 'products',
             ':workspaceId/baselines': 'baselines',
@@ -23,7 +22,7 @@ function (Backbone, singletonDecorator, ProductNavView, BaselinesNavView, Produc
         },
 
         executeOrReload:function(workspaceId,fn){
-	        if(workspaceId !== App.config.workspaceId) {
+	        if(workspaceId !== App.config.workspaceId && decodeURIComponent(workspaceId).trim() !== App.config.workspaceId) {
 		        location.reload();
 	        }else{
 		        fn.bind(this).call();
@@ -31,11 +30,11 @@ function (Backbone, singletonDecorator, ProductNavView, BaselinesNavView, Produc
         },
 
         initNavViews: function () {
-	        ProductNavView.getInstance();
-	        BaselinesNavView.getInstance();
-	        ProductInstancesNavView.getInstance();
-	        PartNavView.getInstance();
-	        PartTemplateNavView.getInstance();
+	        ProductNavView.getInstance().cleanView();
+	        BaselinesNavView.getInstance().cleanView();
+	        ProductInstancesNavView.getInstance().cleanView();
+	        PartNavView.getInstance().cleanView();
+	        PartTemplateNavView.getInstance().cleanView();
         },
 
         products: function (workspaceId) {
@@ -47,13 +46,13 @@ function (Backbone, singletonDecorator, ProductNavView, BaselinesNavView, Produc
         baselines: function (workspaceId) {
             this.executeOrReload(workspaceId,function(){
 	            this.initNavViews();
-	            BaselinesNavView.getInstance().showContent(this.contentSelector);
+	            BaselinesNavView.getInstance().showContent();
             });
         },
         productInstances: function (workspaceId) {
             this.executeOrReload(workspaceId,function(){
 	            this.initNavViews();
-	            ProductInstancesNavView.getInstance().showContent(this.contentSelector);
+	            ProductInstancesNavView.getInstance().showContent();
             });
         },
         parts: function (workspaceId) {

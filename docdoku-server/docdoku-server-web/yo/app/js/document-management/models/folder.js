@@ -1,5 +1,6 @@
-/*global define*/
+/*global define,App*/
 define(['backbone'], function (Backbone) {
+    'use strict';
     var Folder = Backbone.Model.extend({
 
         initialize: function () {

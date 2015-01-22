@@ -78,7 +78,10 @@ public class DocumentResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public DocumentRevisionDTO getDocumentRevision(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion, @QueryParam("configSpec") String configSpecType)
+    public DocumentRevisionDTO getDocumentRevision(@PathParam("workspaceId") String workspaceId,
+                                                   @PathParam("documentId") String documentId,
+                                                   @PathParam("documentVersion") String documentVersion,
+                                                   @QueryParam("configSpec") String configSpecType)
             throws EntityNotFoundException, AccessRightException, NotAllowedException, UserNotActiveException {
         DocumentRevision docR;
         DocumentRevisionKey documentRevisionKey = new DocumentRevisionKey(workspaceId, documentId, documentVersion);
@@ -384,7 +387,7 @@ public class DocumentResource {
     @Path("acl")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateACL(@PathParam("workspaceId") String pWorkspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion, ACLDTO acl)
-            throws EntityNotFoundException, AccessRightException, UserNotActiveException {
+            throws EntityNotFoundException, AccessRightException, UserNotActiveException, NotAllowedException {
         DocumentRevisionKey documentRevisionKey = new DocumentRevisionKey(pWorkspaceId, documentId, documentVersion);
 
         if (!acl.getGroupEntries().isEmpty() || !acl.getUserEntries().isEmpty()) {

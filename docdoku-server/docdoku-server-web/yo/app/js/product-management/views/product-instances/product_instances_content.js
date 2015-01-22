@@ -1,14 +1,16 @@
-/*global define*/
+/*global _.define,App*/
 define([
     'backbone',
-    "mustache",
-    "common-objects/collections/product_instances",
-    "common-objects/collections/configuration_items",
-    "text!templates/product-instances/product_instances_content.html",
-    "views/product-instances/product_instances_list",
-    "views/product-instances/product_instances_creation",
-    "text!common-objects/templates/buttons/delete_button.html"
-], function (Backbone, Mustache, ProductInstancesCollection, ConfigurationItemCollection, template, ProductInstancesListView, ProductInstanceCreationView, deleteButton) {
+    'mustache',
+    'common-objects/collections/product_instances',
+    'collections/configuration_items',
+    'text!templates/product-instances/product_instances_content.html',
+    'views/product-instances/product_instances_list',
+    'views/product-instances/product_instances_creation',
+    'text!common-objects/templates/buttons/delete_button.html',
+    'common-objects/views/alert'
+], function (Backbone, Mustache, ProductInstancesCollection, ConfigurationItemCollection, template, ProductInstancesListView, ProductInstanceCreationView, deleteButton, AlertView) {
+    'use strict';
     var BaselinesContentView = Backbone.View.extend({
 
         partials: {
@@ -16,8 +18,8 @@ define([
         },
 
         events: {
-            "click button.new-product-instance": "newProductInstance",
-            "click button.delete": "deleteBaseline"
+            'click button.new-product-instance': 'newProductInstance',
+            'click button.delete': 'deleteBaseline'
         },
 
         initialize: function () {
@@ -26,20 +28,33 @@ define([
 
         render: function () {
             this.$el.html(Mustache.render(template, {i18n: App.config.i18n}, this.partials));
-
             this.bindDomElements();
-            new ConfigurationItemCollection().fetch({success: this.fillProductList});
-            var self = this;
-            this.$inputProductId.change(function () {
-                self.createProductInstancesView();
+
+            if(!this.configurationItemCollection){
+                this.configurationItemCollection = new ConfigurationItemCollection();
+            }
+            this.configurationItemCollection.fetch({
+                success: this.fillProductList,
+                error: this.onError
             });
+
+            this.bindEvent();
             this.createProductInstancesView();
             return this;
         },
 
         bindDomElements: function () {
-            this.deleteButton = this.$(".delete");
-            this.$inputProductId = this.$("#inputProductId");
+            this.$notifications = this.$el.find('.notifications').first();
+            this.deleteButton = this.$('.delete');
+            this.$inputProductId = this.$('#inputProductId');
+        },
+
+        bindEvent: function () {
+            var _this = this;
+            this.$inputProductId.change(function () {
+                _this.createProductInstancesView();
+            });
+            this.delegateEvents();
         },
 
         newProductInstance: function () {
@@ -57,9 +72,9 @@ define([
             var self = this;
             if (list) {
                 list.each(function (product) {
-                    self.$inputProductId.append("<option value='" + product.getId() + "'" + ">" + product.getId() + "</option>");
+                    self.$inputProductId.append('<option value="' + product.getId() + '"' + '>' + product.getId() + '</option>');
                 });
-                this.$inputProductId.combobox({bsVersion: '2'});
+                this.$inputProductId.combobox({bsVersion: 2});
             }
         },
 
@@ -77,7 +92,9 @@ define([
                 collection: this.collection
             }).render();
             this.$el.append(this.listView.el);
-            this.listView.on("delete-button:display", this.changeDeleteButtonDisplay);
+            this.listView.on('error', this.onError);
+            this.listView.on('warning', this.onWarning);
+            this.listView.on('delete-button:display', this.changeDeleteButtonDisplay);
         },
 
         deleteBaseline: function () {
@@ -94,10 +111,28 @@ define([
 
         lockButton: function (state) {
             if (state) {
-                $("button.new-product-instance").attr("disabled", "disabled");
+                $('button.new-product-instance').attr('disabled', 'disabled');
             } else {
-                $("button.new-product-instance").removeAttr("disabled");
+                $('button.new-product-instance').removeAttr('disabled');
             }
+        },
+
+        onError:function(model, error){
+            var errorMessage = error ? error.responseText : model;
+
+            this.$notifications.append(new AlertView({
+                type: 'error',
+                message: errorMessage
+            }).render().$el);
+        },
+
+        onWarning:function(model, error){
+            var errorMessage = error ? error.responseText : model;
+
+            this.$notifications.append(new AlertView({
+                type: 'warning',
+                message: errorMessage
+            }).render().$el);
         }
     });
 

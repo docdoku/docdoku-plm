@@ -1,5 +1,6 @@
 package com.docdoku.server.mainchannel.collaborative;
 
+
 import javax.json.*;
 import javax.websocket.Session;
 import java.util.*;
@@ -34,7 +35,7 @@ public class CollaborativeRoom {
         put();
     }
 
-    /** Retrieve a {@link com.docdoku.server.mainchannel.util.Room} instance from database */
+    /** Retrieve a {@link com.docdoku.server.mainchannel.collaborative.CollaborativeRoom} instance from database */
     public static CollaborativeRoom getByKeyName(String roomKey) {
         if(roomKey==null) {
             return null;
@@ -42,18 +43,11 @@ public class CollaborativeRoom {
         return DB.get(roomKey);
     }
 
-    public static void removeSessionFromCollaborativeRoom(Session userSession) {
-        Set<Map.Entry<String, CollaborativeRoom>> roomsEntries = new HashSet<>(DB.entrySet());
-        for (Map.Entry<String, CollaborativeRoom> entry : roomsEntries) {
-            CollaborativeRoom room = entry.getValue();
-            if (room.getSlaves().contains(userSession)){
-                CollaborativeRoomController.processExit(userSession,userSession.getUserPrincipal().getName(),room);
-            }
-            if (room.getMaster()==userSession){
-                CollaborativeRoomController.processExit(userSession,userSession.getUserPrincipal().getName(),room);
-            }
-        }
+    public static Set<CollaborativeRoom> getAllCollaborativeRooms() {
+
+        return new HashSet<>(DB.values());
     }
+
 
     public String getLastMaster() {
         return lastMaster;
@@ -74,8 +68,7 @@ public class CollaborativeRoom {
         }
 
         JsonArrayBuilder contextPendingUsers = Json.createArrayBuilder();
-        for (Iterator<String> iter = this.getPendingUsers().listIterator(); iter.hasNext(); ) {
-            String s = iter.next();
+        for (String s : this.getPendingUsers()) {
             contextPendingUsers.add(s);
         }
 

@@ -29,14 +29,18 @@ import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ProductBaselineDAO {
 
-    private EntityManager em;
-    private Locale mLocale;
+    private final EntityManager em;
+    private final Locale mLocale;
+    private static final Logger LOGGER = Logger.getLogger(ProductBaselineDAO.class.getName());
 
     public ProductBaselineDAO(EntityManager pEM) {
         em = pEM;
+        mLocale = Locale.getDefault();
     }
 
     public ProductBaselineDAO(Locale pLocale, EntityManager pEM) {
@@ -58,8 +62,12 @@ public class ProductBaselineDAO {
     }
 
     public void createBaseline(ProductBaseline productBaseline) {
-        em.persist(productBaseline);
-        em.flush();
+        try {
+            em.persist(productBaseline);
+            em.flush();
+        }catch (Exception e){
+            LOGGER.log(Level.WARNING,"Fail to create baseline",e);
+        }
     }
 
     public ProductBaseline loadBaseline(int pId) throws BaselineNotFoundException {

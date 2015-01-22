@@ -1,15 +1,19 @@
 /*global _,require,window*/
+var workspace = /^#([^/]+)/.exec(window.location.hash);
+if(!workspace){
+    location.href = '../';
+}
 var App = {
     debug:false,
-
 	config:{
-		workspaceId: /^#([^/]+)/.exec(window.location.hash)[1] || null,
+		workspaceId: decodeURIComponent(workspace[1]).trim() || null,
 		login: '',
 		groups: [],
 		contextPath: '',
 		locale: window.localStorage.getItem('locale') || 'en'
 	}
 };
+
 
 App.log=function(message){
     'use strict';
@@ -25,6 +29,8 @@ require.config({
     shim: {
         jqueryUI: { deps: ['jquery'], exports: 'jQuery' },
         effects: { deps: ['jquery'], exports: 'jQuery' },
+        popoverUtils: { deps: ['jquery'], exports: 'jQuery' },
+        inputValidity: { deps: ['jquery'], exports: 'jQuery' },
         bootstrap: { deps: ['jquery', 'jqueryUI'], exports: 'jQuery' },
         bootbox: { deps: ['jquery'], exports: 'jQuery' },
         datatables: { deps: ['jquery'], exports: 'jQuery' },
@@ -50,11 +56,15 @@ require.config({
         bootstrapSwitch:'../../bower_components/bootstrap-switch/static/js/bootstrap-switch',
         date:'../../bower_components/date.format/date.format',
         unorm:'../../bower_components/unorm/lib/unorm',
+        moment:'../../bower_components/moment/min/moment-with-locales',
+        momentTimeZone:'../../bower_components/moment-timezone/builds/moment-timezone-with-data',
         unmaskConfig:'../lib/jquery.maskedinput-config',
         localization: '../localization',
         modules: '../modules',
         'common-objects': '../common-objects',
         effects: '../lib/effects',
+        popoverUtils: '../lib/popover.utils',
+        inputValidity: '../lib/input-validity',
         datatablesOsortExt: '../lib/datatables.oSort.ext',
         stringprototype: '../lib/string.prototype',
         userPopover: 'modules/user-popover-module/app'
@@ -69,6 +79,8 @@ require.config({
         'bootstrapSwitch',
         'jqueryUI',
         'effects',
+        'popoverUtils',
+        'inputValidity',
         'datatables',
         'datatablesOsortExt',
         'unmaskConfig',

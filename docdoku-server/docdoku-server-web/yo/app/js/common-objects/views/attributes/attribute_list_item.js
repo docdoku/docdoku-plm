@@ -32,6 +32,7 @@ define([
                 this.$el.find("div.type").html(type.toLowerCase());
             }
             this.$el.addClass("well");
+            this.$('input[required]').customValidity(App.config.i18n.REQUIRED_FIELD);
         },
 
         removeAction: function () {

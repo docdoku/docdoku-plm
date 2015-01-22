@@ -20,9 +20,9 @@
 
 package com.docdoku.cli.commands;
 
-import com.docdoku.cli.ScriptingTools;
 import com.docdoku.cli.helpers.FileHelper;
 import com.docdoku.cli.helpers.MetaDirectoryManager;
+import com.docdoku.cli.tools.ScriptingTools;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.Version;
 import com.docdoku.core.configuration.ConfigSpec;
@@ -126,7 +126,7 @@ public class GetCommand extends AbstractCommandLine{
 
             pr = pi.getPartRevision();
 
-            if(null != pRevision && pr.getVersion() != pRevision){
+            if(null != pRevision && !pr.getVersion().equals(pRevision)){
                 throw new IllegalArgumentException("Config spec "+ cs.getId() + " and revision "+pRevision+" doesn't match");
             }
 

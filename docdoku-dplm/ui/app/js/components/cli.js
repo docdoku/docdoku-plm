@@ -73,40 +73,6 @@
 
             };
 
-            this.checkRequirements = function () {
-
-                $log.info('Checking requirements');
-
-                return $q(function (resolve, reject) {
-
-                    try{
-
-                        var spawn = require('child_process').spawn(configuration.java ||'java', ['-version']);
-
-                        spawn.on('error', function (err) {
-                            $log.log('spawn.onerror');
-                            return reject('No java found');
-                        });
-
-                        spawn.stderr.on('data', function (data) {
-                            data = data.toString().split('\n')[0];
-                            var javaVersion = new RegExp('java version').test(data) ? data.split(' ')[2].replace(/"/g, '') : false;
-                            if (javaVersion && javaVersion >= '1.7') {
-                                $log.log('javaVersion' + javaVersion);
-                                resolve(javaVersion);
-                            } else {
-                                reject('No java found or version not matching');
-                            }
-                        });
-
-                    } catch(e){
-                        reject(e);
-                    }
-
-                });
-
-            };
-
             this.getWorkspaces = function () {
                 var args = [
                     'wl',
@@ -378,6 +344,24 @@
                 return run(args);
             };
 
+            this.getConversionStatus = function (part) {
+
+                var args = [
+                    'cv',
+                    '-F', 'json',
+                    '-h', configuration.host,
+                    '-P', configuration.port,
+                    '-u', configuration.user,
+                    '-p', configuration.password,
+                    '-w', part.workspace,
+                    '-o', part.partNumber,
+                    '-r', part.version,
+                    '-i', part.iterations[part.iterations.length-1]
+                ];
+
+                return run(args);
+
+            };
 
         });
 })();

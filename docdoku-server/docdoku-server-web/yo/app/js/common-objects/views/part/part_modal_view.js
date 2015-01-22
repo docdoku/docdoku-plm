@@ -10,8 +10,9 @@ define([
     'common-objects/views/linked/linked_documents',
     'common-objects/collections/linked/linked_document_collection',
     'common-objects/views/workflow/lifecycle',
+    'common-objects/views/part/conversion_status_view',
     'common-objects/utils/date'
-], function (Backbone,Mustache, ModalView, FileListView, template, AttributesView, PartsManagementView, LinkedDocumentsView, LinkedDocumentCollection, LifecycleView, date) {
+], function (Backbone,Mustache, ModalView, FileListView, template, AttributesView, PartsManagementView, LinkedDocumentsView, LinkedDocumentCollection, LifecycleView, ConversionStatusView, date) {
     'use strict';
     var PartModalView = ModalView.extend({
 
@@ -96,6 +97,8 @@ define([
                 this.initLinkedDocumentsView();
                 this.initLifeCycleView();
             }
+
+            date.dateHelper(this.$('.date-popover'));
             return this;
         },
 
@@ -169,6 +172,11 @@ define([
             }).render();
 
             this.$('#iteration-files').html(this.fileListView.el);
+
+            if(this.editMode){
+                this.conversionStatusView = new ConversionStatusView({model:this.iteration}).render();
+                this.$('#iteration-files').append(this.conversionStatusView.el);
+            }
 
         },
 

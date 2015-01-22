@@ -20,6 +20,7 @@
 
 package com.docdoku.test.smoke;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static junit.framework.Assert.fail;
@@ -27,6 +28,7 @@ import static junit.framework.Assert.fail;
 
 public class MailSendingTest {
 
+    @Ignore
     @Test
     public void test(){
     MailSending mailSending = new MailSending();

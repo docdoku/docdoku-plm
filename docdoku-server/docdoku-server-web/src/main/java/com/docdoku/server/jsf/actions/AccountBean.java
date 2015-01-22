@@ -43,6 +43,9 @@ public class AccountBean {
     private String name;
     private String email;
     private String language;
+    private String timeZone;
+
+    private static String[] availableTimeZones = TimeZone.getAvailableIDs();
 
     private boolean superAdmin;
 
@@ -56,8 +59,10 @@ public class AccountBean {
     }
 
     public String updateAccount() throws AccountNotFoundException {
-        language = FacesContext.getCurrentInstance().getViewRoot().getLocale().getLanguage();
-        userManager.updateAccount(name, email, language, password);
+        if(language == null || "".equals(language) || " ".equals(language)){
+            language = FacesContext.getCurrentInstance().getViewRoot().getLocale().getLanguage();
+        }
+        userManager.updateAccount(name, email, language, password,timeZone);
         HttpServletRequest request = (HttpServletRequest) (FacesContext.getCurrentInstance().getExternalContext().getRequest());
         return request.getContextPath()+"/";
     }
@@ -96,6 +101,9 @@ public class AccountBean {
     public void setLanguage(String language) {
         this.language = language;
     }
+    public String getBrowserLanguage() {
+        return FacesContext.getCurrentInstance().getViewRoot().getLocale().getLanguage();
+    }
 
     public String getOrganizationName() {
         return organizationName;
@@ -112,7 +120,7 @@ public class AccountBean {
     }
 
     public Map<String, Workspace> getAdministeredWorkspaces() {
-        return administeredWorkspaces;
+        return new TreeMap<>(administeredWorkspaces);
     }
     public void setAdministeredWorkspaces(Map<String, Workspace> administeredWorkspaces) {
         this.administeredWorkspaces = administeredWorkspaces;
@@ -130,6 +138,18 @@ public class AccountBean {
     }
     public void setOrganizationAdmin(String organizationAdmin) {
         this.organizationAdmin = organizationAdmin;
+    }
+
+    public String[] getAvailableTimeZones() {
+        return availableTimeZones.clone();
+    }
+
+    public String getTimeZone() {
+        return timeZone;
+    }
+
+    public void setTimeZone(String timeZone) {
+        this.timeZone = timeZone;
     }
 
     public Set<Workspace> getWorkspaces(){

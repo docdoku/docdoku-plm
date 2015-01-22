@@ -28,7 +28,6 @@ import com.docdoku.core.product.Geometry;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartUsageLink;
 import com.docdoku.core.services.IProductConfigSpecManagerLocal;
-import com.docdoku.server.rest.dto.GeometryDTO;
 import com.docdoku.server.rest.dto.InstanceAttributeDTO;
 import org.apache.commons.lang.StringUtils;
 import org.dozer.DozerBeanMapperSingletonWrapper;
@@ -135,10 +134,6 @@ public class InstanceBodyWriterTools {
     private static void writeLeaf(PartIteration partI, Matrix4d combinedMatrix, List<Integer> copyInstanceIds, JsonGenerator jg){
         String id = StringUtils.join(copyInstanceIds.toArray(), "-");
         String partIterationId = partI.toString();
-        List<GeometryDTO> files = new ArrayList<>();
-        for (Geometry geometry : partI.getGeometries()) {
-            files.add(mapper.map(geometry, GeometryDTO.class));
-        }
         List<InstanceAttributeDTO> attributes = new ArrayList<>();
         for (InstanceAttribute attr : partI.getInstanceAttributes().values()) {
             attributes.add(mapper.map(attr, InstanceAttributeDTO.class));
@@ -149,7 +144,7 @@ public class InstanceBodyWriterTools {
         jg.write("partIterationId", partIterationId);
 
         writeMatrix(combinedMatrix,jg);
-        writeGeometries(files,jg);
+        writeGeometries(partI.getSortedGeometries(),jg);
         writeAttributes(attributes,jg);
 
         jg.writeEnd();
@@ -165,13 +160,24 @@ public class InstanceBodyWriterTools {
         }
         jg.writeEnd();
     }
-    private static void writeGeometries(List<GeometryDTO> files,JsonGenerator jg){
+    private static void writeGeometries(List<Geometry> files,JsonGenerator jg){
+        jg.write("qualities",files.size());
+
+        if(!files.isEmpty()){
+            Geometry geometry = files.get(0);
+            jg.write("xMin", geometry.getxMin());
+            jg.write("yMin", geometry.getyMin());
+            jg.write("zMin", geometry.getzMin());
+            jg.write("xMax", geometry.getxMax());
+            jg.write("yMax", geometry.getyMax());
+            jg.write("zMax", geometry.getzMax());
+        }
+
         jg.writeStartArray("files");
-        for (GeometryDTO g : files) {
+
+        for (Geometry g : files) {
             jg.writeStartObject();
-            jg.write("fullName", g.getFullName());
-            jg.write("quality", g.getQuality());
-            jg.write("radius", g.getRadius());
+            jg.write("fullName", "api/files/" + g.getFullName());
             jg.writeEnd();
         }
         jg.writeEnd();

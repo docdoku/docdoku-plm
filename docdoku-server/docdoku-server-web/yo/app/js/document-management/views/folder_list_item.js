@@ -1,4 +1,4 @@
-/*global define,App*/
+/*global $,_,define,bootbox,App*/
 define([
     'backbone',
     'mustache',
@@ -58,7 +58,6 @@ define([
             return data;
         },
         rendered: function () {
-
             var isHome = this.model ? this.model.get('home') : false;
             var isRoot = _.isUndefined(this.model);
             if (isHome) {
@@ -190,11 +189,14 @@ define([
         },
         actionDelete: function () {
             this.hideActions();
-            if (confirm(App.config.i18n.DELETE_FOLDER_QUESTION)) {
-                this.model.destroy({
-                    dataType: 'text' // server doesn't send a json hash in the response body
-                });
-            }
+            var that = this;
+            bootbox.confirm(App.config.i18n.DELETE_FOLDER_QUESTION, function(result){
+                if(result){
+                    that.model.destroy({
+                        dataType: 'text' // server doesn't send a json hash in the response body
+                    });
+                }
+            });
             return false;
         },
 

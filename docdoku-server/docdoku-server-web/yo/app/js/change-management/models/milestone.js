@@ -28,6 +28,13 @@ define([
 
         getDueDateToPrint: function () {
             return (this.getDueDate()) ? Date.formatTimestamp(
+                App.config.i18n._DATE_FORMAT,
+                this.getDueDate()
+            ) : null;
+        },
+
+        getDueDateDatePicker: function () {
+            return (this.getDueDate()) ? Date.formatTimestamp(
                 App.config.i18n._DATE_PICKER_DATE_FORMAT,
                 this.getDueDate()
             ) : null;

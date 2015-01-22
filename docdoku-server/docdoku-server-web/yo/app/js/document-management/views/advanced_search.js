@@ -1,13 +1,14 @@
-/*global define,App*/
+/*global _,define,App*/
 define([
     'backbone',
     'mustache',
     'text!templates/search_document_advanced_form.html',
     'common-objects/collections/users',
     'common-objects/views/attributes/attribute_list',
-    'collections/template'
+    'collections/template',
+    'common-objects/utils/date'
 ],
-function (Backbone,Mustache, template, Users, DocumentAttributeListView, Templates) {
+function (Backbone,Mustache, template, Users, DocumentAttributeListView, Templates, date) {
 	'use strict';
     var AdvancedSearchView = Backbone.View.extend({
 
@@ -24,7 +25,7 @@ function (Backbone,Mustache, template, Users, DocumentAttributeListView, Templat
         },
 
         render: function () {
-            this.$el.html(Mustache.render(template, {i18n: App.config.i18n}));
+            this.$el.html(Mustache.render(template, {i18n: App.config.i18n, timeZone:App.config.timeZone}));
             this.bindDomElements();
             this.fillInputs();
             this.initAttributesView();
@@ -164,10 +165,10 @@ function (Backbone,Mustache, template, Users, DocumentAttributeListView, Templat
                 queryString += '&content=' + content;
             }
             if (from) {
-                queryString += '&from=' + new Date(from).getTime().toString();
+                queryString += '&from=' + date.toUTCWithTimeZoneOffset(from);
             }
             if (to) {
-                queryString += '&to=' + new Date(to).getTime().toString();
+                queryString += '&to=' + date.toUTCWithTimeZoneOffset(to);
             }
 
             if (this.attributes.length) {

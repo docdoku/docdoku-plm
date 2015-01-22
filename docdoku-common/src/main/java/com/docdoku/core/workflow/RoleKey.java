@@ -59,15 +59,17 @@ public class RoleKey implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         RoleKey roleKey = (RoleKey) o;
 
-        if (!name.equals(roleKey.name)) return false;
-        if (!workspace.equals(roleKey.workspace)) return false;
+        return name.equals(roleKey.name) && workspace.equals(roleKey.workspace);
 
-        return true;
     }
 
     @Override

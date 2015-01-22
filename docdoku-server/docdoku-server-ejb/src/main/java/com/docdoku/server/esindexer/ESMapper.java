@@ -81,26 +81,26 @@ public class ESMapper {
         try {
             float nbIteration = doc.getDocumentRevision().getLastIteration().getIteration();                            // Calcul of the number of iteration
             float seniority = nbIteration - doc.getIteration();                                                         // Calcul of iteration seniority
-            float coef = (seniority/nbIteration) * 10;                                                                  // Calcul of decrease factor
+            float coef = (seniority/nbIteration) * 15;                                                                  // Calcul of decrease factor
             XContentBuilder tmp = XContentFactory.jsonBuilder()
                     .startObject();
-            setField(tmp,WORKSPACEID_KEY,doc.getWorkspaceId(), 1f);
-            setField(tmp,"docMId",doc.getDocumentRevision().getDocumentMasterId(), 2.75f);
-            setField(tmp,"title",doc.getDocumentRevision().getTitle(),3f);
-            setField(tmp,VERSION_KEY,doc.getDocumentVersion(), 0.5f);
-            setField(tmp,"iteration",""+doc.getIteration(),0.5f);
+            setField(tmp,WORKSPACEID_KEY,doc.getWorkspaceId(), 0.6f);
+            setField(tmp,"docMId",doc.getDocumentRevision().getDocumentMasterId(), 4.75f);
+            setField(tmp,"title",doc.getDocumentRevision().getTitle(),5f);
+            setField(tmp,VERSION_KEY,doc.getDocumentVersion(), 0.10f);
+            setField(tmp,"iteration",""+doc.getIteration(),0.10f);
             if(doc.getAuthor() != null){
                 tmp.startObject(AUTHOR_KEY);
-                setField(tmp,"login",doc.getAuthor().getLogin(),1f);
-                setField(tmp,"name",doc.getAuthor().getName(),1f);
+                setField(tmp,"login",doc.getAuthor().getLogin(),0.6f);
+                setField(tmp,"name",doc.getAuthor().getName(),0.6f);
                 tmp.endObject();
             }
-            setField(tmp,TYPE_KEY, doc.getDocumentRevision().getDocumentMaster().getType(), 1f);
-            setField(tmp,CREATION_DATE_KEY,doc.getDocumentRevision().getCreationDate(),1f);
-            setField(tmp,"description",doc.getDocumentRevision().getDescription(),1f);
+            setField(tmp,TYPE_KEY, doc.getDocumentRevision().getDocumentMaster().getType(), 2f);
+            setField(tmp,CREATION_DATE_KEY,doc.getDocumentRevision().getCreationDate(),0.4f);
+            setField(tmp,"description",doc.getDocumentRevision().getDescription(),2f);
             setField(tmp,"revisionNote",doc.getRevisionNote(),0.5f);
-            setField(tmp,"workflow",doc.getDocumentRevision().getWorkflow(),0.25f);
-            setField(tmp,"folder",doc.getDocumentRevision().getLocation().getShortName(),0.25f);
+            setField(tmp,"workflow",doc.getDocumentRevision().getWorkflow(),0.5f);
+            setField(tmp,"folder",doc.getDocumentRevision().getLocation().getShortName(),0.5f);
             if(!doc.getDocumentRevision().getTags().isEmpty()){
                 tmp.startArray("tags");
                 for(Tag tag:doc.getDocumentRevision().getTags()){
@@ -112,7 +112,7 @@ public class ESMapper {
                 tmp.startObject("attributes");
                 Collection<InstanceAttribute> listAttr = doc.getInstanceAttributes().values();
                 for(InstanceAttribute attr:listAttr){
-                    setField(tmp,attr.getNameWithoutWhiteSpace(),""+attr.getValue(),1f);
+                    setField(tmp,attr.getNameWithoutWhiteSpace(),""+attr.getValue(),0.6f);
                 }
                 tmp.endObject();
             }
@@ -120,8 +120,8 @@ public class ESMapper {
                 tmp.startObject("files");
                 for(Map.Entry<String, String> contentInput : contentInputs.entrySet()) {
                     tmp.startObject(contentInput.getKey());
-                    setField(tmp,"name",contentInput.getKey(),1f);
-                    setField(tmp, "content", contentInput.getValue(), 1f);
+                    setField(tmp,"name",contentInput.getKey(),0.8f);
+                    setField(tmp, "content", contentInput.getValue(), 0.6f);
                     tmp.endObject();
                 }
                 tmp.endObject();
@@ -144,31 +144,31 @@ public class ESMapper {
         try {
             float nbIteration = part.getPartRevision().getLastIteration().getIteration();                               // Calcul of the number of iteration
             float seniority = nbIteration - part.getIteration();                                                        // Calcul of iteration seniority
-            float coef = (seniority/nbIteration) * 10;                                                                  // Calcul of decrease factor
+            float coef = (seniority/nbIteration) * 15;                                                                  // Calcul of decrease factor
             XContentBuilder tmp = XContentFactory.jsonBuilder()
                     .startObject();
-            setField(tmp,WORKSPACEID_KEY,part.getWorkspaceId(), 1f);
-            setField(tmp,"partNumber",part.getPartNumber(), 2.75f);
-            setField(tmp,"name",part.getPartRevision().getPartMaster().getName(), 3f);
-            setField(tmp,VERSION_KEY,part.getPartVersion(), 0.5f);
-            setField(tmp,"iteration",part.getIteration(), 0.5f);
-            setField(tmp,"standardPart",part.getPartRevision().getPartMaster().isStandardPart(), 0.25f);
+            setField(tmp,WORKSPACEID_KEY,part.getWorkspaceId(), 0.6f);
+            setField(tmp,"partNumber",part.getPartNumber(), 4.75f);
+            setField(tmp,"name",part.getPartRevision().getPartMaster().getName(), 5f);
+            setField(tmp,VERSION_KEY,part.getPartVersion(), 0.10f);
+            setField(tmp,"iteration",part.getIteration(), 0.10f);
+            setField(tmp,"standardPart",part.getPartRevision().getPartMaster().isStandardPart(), 0.05f);
             if(part.getAuthor() != null){
                 tmp.startObject(AUTHOR_KEY);
-                setField(tmp,"login",part.getAuthor().getLogin(),1f);
-                setField(tmp,"name",part.getAuthor().getName(),1f);
+                setField(tmp,"login",part.getAuthor().getLogin(),0.6f);
+                setField(tmp,"name",part.getAuthor().getName(),0.6f);
                 tmp.endObject();
             }
-            setField(tmp,TYPE_KEY,part.getPartRevision().getPartMaster().getType(),1f);
-            setField(tmp,CREATION_DATE_KEY,part.getCreationDate(),1f);
-            setField(tmp,"description",part.getPartRevision().getDescription(),1f);
+            setField(tmp,TYPE_KEY,part.getPartRevision().getPartMaster().getType(),2f);
+            setField(tmp,CREATION_DATE_KEY,part.getCreationDate(),0.4f);
+            setField(tmp,"description",part.getPartRevision().getDescription(),2f);
             setField(tmp,"revisionNote",part.getIterationNote(),0.5f);
-            setField(tmp,"workflow",part.getPartRevision().getWorkflow(),0.25f);
+            setField(tmp,"workflow",part.getPartRevision().getWorkflow(),0.5f);
             if(! part.getInstanceAttributes().isEmpty()){
                 tmp.startObject("attributes");
                 Collection<InstanceAttribute> listAttr = part.getInstanceAttributes().values();
                 for(InstanceAttribute attr:listAttr){
-                    setField(tmp,attr.getNameWithoutWhiteSpace(),""+attr.getValue(),1f);
+                    setField(tmp,attr.getNameWithoutWhiteSpace(),""+attr.getValue(),0.6f);
                 }
                 tmp.endObject();
             }
@@ -194,7 +194,9 @@ public class ESMapper {
 
     private static XContentBuilder setField(XContentBuilder object, String field, Workflow value, float coef ) throws IOException {
         if(value != null){
-            return object.field(field, value.getFinalLifeCycleState(), coef);
+            String finalLifeCycleState = value.getFinalLifeCycleState();
+            finalLifeCycleState = (finalLifeCycleState != null && !"".equals(finalLifeCycleState)) ? finalLifeCycleState : " ";
+            return object.field(field, ""+finalLifeCycleState, coef);
         }
         return null;
     }

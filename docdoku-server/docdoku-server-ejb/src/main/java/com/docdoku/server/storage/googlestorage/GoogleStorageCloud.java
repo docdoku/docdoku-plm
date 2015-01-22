@@ -39,7 +39,9 @@ import java.util.logging.Logger;
  */
 public class GoogleStorageCloud {
 
-    private GoogleStorageCloud(){}
+    private GoogleStorageCloud(){
+
+    }
 
     private static final GoogleStorageProperties properties = new GoogleStorageProperties();
     private static final Logger LOGGER = Logger.getLogger(GoogleStorageCloud.class.getName());
@@ -202,12 +204,20 @@ public class GoogleStorageCloud {
             JsonObject jsonResponse = (JsonObject)parser.parse(sb.toString());
             shortenURI =jsonResponse.get("id").getAsString();
         }finally {
-            try{if(inputStream!=null){
+            try{
+                if(inputStream!=null){
                     inputStream.close();
-            }}catch (IOException ignored){}
-            try{if(br!=null){
-                br.close();
-            }}catch (IOException ignored){}
+                }
+            }catch (IOException e){
+                LOGGER.log(Level.SEVERE,null,e);
+            }
+            try{
+                if(br!=null){
+                    br.close();
+                }
+            }catch (IOException e){
+                LOGGER.log(Level.SEVERE,null,e);
+            }
         }
 
         return shortenURI;

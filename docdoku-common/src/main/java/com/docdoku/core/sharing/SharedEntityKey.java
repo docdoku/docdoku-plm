@@ -65,15 +65,18 @@ public class SharedEntityKey implements Serializable{
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         SharedEntityKey that = (SharedEntityKey) o;
 
-        if (uuid != null ? !uuid.equals(that.uuid) : that.uuid != null) return false;
-        if (workspace != null ? !workspace.equals(that.workspace) : that.workspace != null) return false;
+        return !(uuid != null ? !uuid.equals(that.uuid) : that.uuid != null) &&
+               !(workspace != null ? !workspace.equals(that.workspace) : that.workspace != null);
 
-        return true;
     }
 
     @Override

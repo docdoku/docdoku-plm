@@ -23,12 +23,9 @@ package com.docdoku.server.converters.step;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.PartIteration;
-import com.docdoku.core.product.PartIterationKey;
 import com.docdoku.core.services.IDataManagerLocal;
-import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.core.util.FileIO;
 import com.docdoku.server.converters.CADConverter;
-import com.docdoku.server.converters.utils.RadiusCalculator;
 import com.google.common.io.Files;
 import com.google.common.io.InputSupplier;
 
@@ -44,13 +41,9 @@ import java.util.logging.Logger;
 public class StepFileConverterImpl implements CADConverter{
 
     private static final String PYTHON_SCRIPT_TO_OBJ="/com/docdoku/server/converters/step/convert_step_obj.py";
-    private static final String PYTHON_SCRIPT_TO_JS="/com/docdoku/server/converters/step/convert_obj_three.py";
     private static final String CONF_PROPERTIES="/com/docdoku/server/converters/step/conf.properties";
     private static final Properties CONF = new Properties();
     private static final Logger LOGGER = Logger.getLogger(StepFileConverterImpl.class.getName());
-
-    @EJB
-    private IProductManagerLocal productService;
 
     @EJB
     private IDataManagerLocal dataManager;
@@ -74,110 +67,59 @@ public class StepFileConverterImpl implements CADConverter{
     }
 
     @Override
-    public File convert(PartIteration partToConvert, final BinaryResource cadFile) throws IOException, InterruptedException, UserNotActiveException, PartRevisionNotFoundException, WorkspaceNotFoundException, CreationException, UserNotFoundException, NotAllowedException, FileAlreadyExistsException, StorageException {
+    public File convert(PartIteration partToConvert, final BinaryResource cadFile, File tempDir) throws IOException, InterruptedException, UserNotActiveException, PartRevisionNotFoundException, WorkspaceNotFoundException, CreationException, UserNotFoundException, NotAllowedException, FileAlreadyExistsException, StorageException {
 
-        String woExName = FileIO.getFileNameWithoutExtension(cadFile.getName());
-        File tmpDir = Files.createTempDir();
-        File tmpCadFile;
-        File tmpOBJFile = new File(tmpDir, woExName+".obj");
-        File tmpJSFile = new File(tmpDir, woExName+".js");
-        File tmpBINFile = new File(tmpDir, woExName + ".bin");
-        File jsFile = null;
-        InputStreamReader isr1 = null;
-        BufferedReader br1 = null;
-        InputStreamReader isr2 = null;
-        BufferedReader br2 = null;
+        String extension = FileIO.getExtension(cadFile.getName());
+        File tmpCadFile = new File(tempDir, partToConvert.getKey() + "." + extension);
+        File tmpOBJFile = new File(tempDir.getAbsolutePath() + "/" + partToConvert.getKey() + ".obj");
 
-        try {
-            // 1st step : convert cadFile to OBJ
-            String pythonInterpreter = CONF.getProperty("pythonInterpreter");
-            String freeCadLibPath = CONF.getProperty("freeCadLibPath");
+        String pythonInterpreter = CONF.getProperty("pythonInterpreter");
+        String freeCadLibPath = CONF.getProperty("freeCadLibPath");
 
-            File scriptToOBJ =  FileIO.urlToFile(StepFileConverterImpl.class.getResource(PYTHON_SCRIPT_TO_OBJ));
-            tmpCadFile = new File(tmpDir, cadFile.getName());
+        File scriptToOBJ =  FileIO.urlToFile(StepFileConverterImpl.class.getResource(PYTHON_SCRIPT_TO_OBJ));
 
-            Files.copy(new InputSupplier<InputStream>() {
-                @Override
-                public InputStream getInput() throws IOException {
-                    try {
-                        return dataManager.getBinaryResourceInputStream(cadFile);
-                    } catch (StorageException e) {
-                        Logger.getLogger(StepFileConverterImpl.class.getName()).log(Level.WARNING, null, e);
-                        throw new IOException(e);
-                    }
-                }
-            }, tmpCadFile);
-
-            String[] args1 = {pythonInterpreter, scriptToOBJ.getAbsolutePath(), "-l" , freeCadLibPath, "-i", tmpCadFile.getAbsolutePath(), "-o", tmpOBJFile.getAbsolutePath()};
-            ProcessBuilder pb1 = new ProcessBuilder(args1);
-
-            Process p1 = pb1.start();
-            isr1 = new InputStreamReader(p1.getInputStream());
-            br1 = new BufferedReader(isr1);
-
-            // read the output buffer (prevent waitFor to be never called)
-            while (br1.readLine() != null);
-
-            p1.waitFor();
-
-            if(p1.exitValue() == 0){
-
-                // 2nd step : convert temp obj file to bin/js
-                File script =  FileIO.urlToFile(StepFileConverterImpl.class.getResource(PYTHON_SCRIPT_TO_JS));
-
-                String[] args2 = {pythonInterpreter, script.getAbsolutePath(), "-t" ,"binary", "-i", tmpOBJFile.getAbsolutePath(), "-o", tmpJSFile.getAbsolutePath()};
-                ProcessBuilder pb2 = new ProcessBuilder(args2);
-
-                Process p2 = pb2.start();
-                isr2 = new InputStreamReader(p2.getInputStream());
-                br2 = new BufferedReader(isr2);
-                while (br2.readLine() != null);
-
-                p2.waitFor();
-
-                if (p2.exitValue()==0) {
-
-                    PartIterationKey partIPK = partToConvert.getKey();
-                    BinaryResource binBinaryResource = productService.saveFileInPartIteration(partIPK, woExName + ".bin", tmpBINFile.length());
-                    OutputStream binOutputStream = null;
-                    try {
-                        binOutputStream = dataManager.getBinaryResourceOutputStream(binBinaryResource);
-                        Files.copy(tmpBINFile, binOutputStream);
-                    } finally {
-                        if(binOutputStream!=null){
-                            binOutputStream.flush();
-                            binOutputStream.close();
-                        }
-                    }
-
-                    double radius = RadiusCalculator.calculateRadius(tmpJSFile);
-
-                    BinaryResource jsBinaryResource = productService.saveGeometryInPartIteration(partIPK, woExName+".js", 0, tmpJSFile.length(),radius);
-                    OutputStream jsOutputStream = null;
-                    try {
-                        jsOutputStream = dataManager.getBinaryResourceOutputStream(jsBinaryResource);
-                        Files.copy(tmpJSFile, jsOutputStream);
-                    } finally {
-                        if(jsOutputStream!=null){
-                            jsOutputStream.flush();
-                            jsOutputStream.close();
-                        }
-                    }
-
+        Files.copy(new InputSupplier<InputStream>() {
+            @Override
+            public InputStream getInput() throws IOException {
+                try {
+                    return dataManager.getBinaryResourceInputStream(cadFile);
+                } catch (StorageException e) {
+                    Logger.getLogger(StepFileConverterImpl.class.getName()).log(Level.WARNING, null, e);
+                    throw new IOException(e);
                 }
             }
-            return jsFile;
-        } finally {
-            FileIO.rmDir(tmpDir);
-            closeStream(isr1);
-            closeStream(isr2);
-            closeStream(br1);
-            closeStream(br2);
+        }, tmpCadFile);
+
+        String[] args = {pythonInterpreter, scriptToOBJ.getAbsolutePath(), "-l" , freeCadLibPath, "-i", tmpCadFile.getAbsolutePath(), "-o", tmpOBJFile.getAbsolutePath()};
+        ProcessBuilder pb = new ProcessBuilder(args);
+
+        Process p = pb.start();
+
+        StringBuilder output = new StringBuilder();
+        String line;
+
+        InputStreamReader isr = new InputStreamReader(p.getInputStream(),"UTF-8");
+        BufferedReader br = new BufferedReader(isr);
+
+        while ((line=br.readLine()) != null){
+            output.append(line).append("\n");
         }
+
+        p.waitFor();
+
+        closeStream(isr);
+        closeStream(br);
+
+        if(p.exitValue() == 0){
+            return tmpOBJFile;
+        }
+
+        LOGGER.log(Level.SEVERE, "Cannot convert to obj : " + tmpCadFile.getAbsolutePath(), output.toString());
+        return null;
     }
 
     @Override
-    public boolean canConvertToJSON(String cadFileExtension) {
+    public boolean canConvertToOBJ(String cadFileExtension) {
         return Arrays.asList("stp", "step", "igs", "iges").contains(cadFileExtension);
     }
 

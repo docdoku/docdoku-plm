@@ -1,0 +1,25 @@
+<b>{{i18n.CONVERSION_STATUS}}</b>
+<br />
+{{#status}}
+    {{#pending}}
+        {{i18n.CONVERSION_PENDING}}
+    {{/pending}}
+    {{^pending}}
+        {{#succeed}}
+            {{i18n.CONVERSION_SUCCEED}}
+        {{/succeed}}
+        {{^succeed}}
+            {{i18n.CONVERSION_FAILED}}
+            <br />
+            <button type="button" class="btn btn-default btn-small launch">{{i18n.RETRY}}</button>
+        {{/succeed}}
+    {{/pending}}
+{{/status}}
+{{^status}}
+    {{i18n.NO_CONVERSION}}
+    <br />
+    <button type="button" class="btn btn-default btn-small launch">{{i18n.RETRY}}</button>
+{{/status}}
+<br />
+<button type="button" class="btn btn-default btn-small reload">{{i18n.RELOAD}}</button>
+

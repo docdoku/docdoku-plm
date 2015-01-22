@@ -7,7 +7,6 @@
     "underscore": "^1.7.0"
   },
   "scripts": {
-    "preinstall":"npm install -g casperjs;npm install -g phantomjs;",
     "start": "node run.js",
     "prestart": "npm install"
   }

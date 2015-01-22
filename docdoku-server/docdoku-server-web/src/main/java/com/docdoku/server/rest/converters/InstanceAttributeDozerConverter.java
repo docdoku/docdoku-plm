@@ -24,7 +24,10 @@ import com.docdoku.core.meta.*;
 import com.docdoku.server.rest.dto.InstanceAttributeDTO;
 import org.dozer.DozerConverter;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
 /**
  * @author Florent Garin
@@ -51,8 +54,12 @@ public class InstanceAttributeDozerConverter extends DozerConverter<InstanceAttr
             value=source.getValue()+"";
         } else if (source instanceof InstanceDateAttribute) {
             type = InstanceAttributeDTO.Type.DATE;
-            if(((InstanceDateAttribute)source).getDateValue() != null)
-                value=((InstanceDateAttribute)source).getDateValue().getTime()+"";
+            Date date = ((InstanceDateAttribute)source).getDateValue();
+            if(date != null) {
+                DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+                df.setTimeZone(TimeZone.getTimeZone("UTC"));
+                value = df.format(date);
+            }
         } else if (source instanceof InstanceURLAttribute) {
             type = InstanceAttributeDTO.Type.URL;
             value=source.getValue()+"";

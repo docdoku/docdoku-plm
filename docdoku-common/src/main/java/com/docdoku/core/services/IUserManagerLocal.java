@@ -47,8 +47,8 @@ public interface IUserManagerLocal{
      */
     Account getAccount(String pLogin) throws AccountNotFoundException;
 
-    Account createAccount(String pLogin, String pName, String pEmail, String pLanguage, String pPassword) throws AccountAlreadyExistsException, CreationException;
-    void updateAccount(String pName, String pEmail, String pLanguage, String pPassword) throws AccountNotFoundException;
+    Account createAccount(String pLogin, String pName, String pEmail, String pLanguage, String pPassword, String pTimeZone) throws AccountAlreadyExistsException, CreationException;
+    void updateAccount(String pName, String pEmail, String pLanguage, String pPassword, String pTimeZone) throws AccountNotFoundException;
 
     void recoverPassword(String pPasswdRRUuid, String pPassword) throws PasswordRecoveryRequestNotFoundException;
     PasswordRecoveryRequest createPasswordRecoveryRequest(String login);

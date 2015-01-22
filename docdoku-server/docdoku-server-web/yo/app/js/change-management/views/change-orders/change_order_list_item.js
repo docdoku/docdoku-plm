@@ -3,8 +3,9 @@ define([
     'backbone',
     'mustache',
     'text!templates/change-orders/change_order_list_item.html',
-    'views/change-orders/change_order_edition'
-], function (Backbone, Mustache, template, ChangeOrderEditionView) {
+    'views/change-orders/change_order_edition',
+    'common-objects/utils/date'
+], function (Backbone, Mustache, template, ChangeOrderEditionView, date) {
 	'use strict';
 	var ChangeOrderListItemView = Backbone.View.extend({
 
@@ -24,6 +25,7 @@ define([
             this.$el.html(Mustache.render(template, {model: this.model, i18n: App.config.i18n}));
             this.$checkbox = this.$('input[type=checkbox]');
             this.bindUserPopover();
+            date.dateHelper(this.$('.date-popover'));
             this.trigger('rendered', this);
             return this;
         },
@@ -51,6 +53,7 @@ define([
 
         bindUserPopover: function () {
             this.$('.author-popover').userPopover(this.model.getAuthor(), this.model.getName(), 'left');
+            this.$('.assigned-user-popover').userPopover(this.model.getAssignee(), this.model.getName(), 'left');
         },
 
         openEditionView: function () {

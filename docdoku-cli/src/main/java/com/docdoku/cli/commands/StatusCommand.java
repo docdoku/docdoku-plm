@@ -20,19 +20,20 @@
 
 package com.docdoku.cli.commands;
 
-import com.docdoku.cli.ScriptingTools;
 import com.docdoku.cli.helpers.MetaDirectoryManager;
+import com.docdoku.cli.tools.ScriptingTools;
 import com.docdoku.core.common.Version;
 import com.docdoku.core.exceptions.PartMasterNotFoundException;
-import com.docdoku.core.product.*;
+import com.docdoku.core.product.PartMaster;
+import com.docdoku.core.product.PartMasterKey;
+import com.docdoku.core.product.PartRevision;
+import com.docdoku.core.product.PartRevisionKey;
 import com.docdoku.core.services.IProductManagerWS;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.util.Locale;
 
 /**
  *

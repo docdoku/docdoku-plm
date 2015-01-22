@@ -3,18 +3,16 @@ define([
     'backbone',
     'mustache',
     'text!common-objects/templates/share/share_entity.html',
-    'text!common-objects/templates/share/shared_entity.html'
-],
-function (Backbone, Mustache, template, templateShared) {
+    'text!common-objects/templates/share/shared_entity.html',
+    'common-objects/utils/date'
+], function (Backbone, Mustache, template, templateShared, date) {
 	'use strict';
     var ShareView = Backbone.View.extend({
-
         tagName: 'div',
 
-        templateShared: Mustache.parse(templateShared),
-
         events: {
-            'click #generate-private-share': 'createShare'
+            'click #generate-private-share': 'createShare',
+            'hidden #share-modal': 'closeModal'
         },
 
         initialize: function () {
@@ -35,7 +33,7 @@ function (Backbone, Mustache, template, templateShared) {
                     break;
             }
 
-            this.$el.html(Mustache.render(template, {i18n: App.config.i18n, title: title, permalink: this.model.getPermalink()}));
+            this.$el.html(Mustache.render(template, {timeZone:App.config.timeZone,i18n: App.config.i18n, title: title, permalink: this.model.getPermalink()}));
             this.bindDomElements();
 
             this.$badPasswordLabel.hide();
@@ -65,10 +63,6 @@ function (Backbone, Mustache, template, templateShared) {
         },
 
         closeModal: function () {
-            this.$modal.modal('hide');
-        },
-
-        onHidden: function () {
             this.remove();
         },
 
@@ -76,7 +70,7 @@ function (Backbone, Mustache, template, templateShared) {
             this.$modal = this.$('#share-modal');
             this.$password = this.$('.password');
             this.$confirmPassword = this.$('.confirm-password');
-            this.$badPasswordLabel = this.$('.help-block');
+            this.$badPasswordLabel = this.$('.bad-password');
             this.$passwordControl = this.$('#password-control');
             this.$expireDate = this.$('.expire-date');
             this.$publicSharedSwitch = this.$('.public-shared-switch');
@@ -106,11 +100,10 @@ function (Backbone, Mustache, template, templateShared) {
                 this.$badPasswordLabel.show();
             } else {
                 data.password = this.$password.val() ? this.$password.val() : null;
-                data.expireDate = this.$expireDate.val() ? this.$expireDate.val() : null;
-
+                data.expireDate = this.$expireDate.val() ? date.toUTCWithTimeZoneOffset(this.$expireDate.val()) : null;
                 this.model.createShare({data: data, success: function (pData) {
                     that.$privateShare.empty();
-                    that.$privateShare.html(that.templateShared({i18n: App.config.i18n, generatedUrl: that.generateUrlFromUUID(pData.uuid)}));
+                    that.$privateShare.html(Mustache.render(templateShared,{i18n: App.config.i18n, generatedUrl: that.generateUrlFromUUID(pData.uuid)}));
                 }});
             }
 

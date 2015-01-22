@@ -18,20 +18,20 @@ define([
         'views/control_clipping_view',
         'views/control_explode_view',
         'views/control_measure_view',
-        'common-objects/views/baselines/baseline_select_view',
+        'views/baselines/baseline_select_view',
         'dmu/SceneManager',
         'dmu/collaborativeController',
         'dmu/InstancesManager',
         'text!templates/content.html',
-        'models/part'
+        'common-objects/models/part'
 ], function (Backbone, Mustache, SearchView, PartsTreeView, BomView, CollaborativeView, PartMetadataView, PartInstanceView, ExportSceneModalView, ControlNavigationView, ControlModesView, ControlTransformView, ControlMarkersView, ControlLayersView, ControlOptionsView, ControlClippingView, ControlExplodeView, ControlMeasureView, BaselineSelectView, SceneManager, CollaborativeController, InstancesManager, template, Part) {
 	'use strict';
     var AppView = Backbone.View.extend({
         el: '#content',
 
         events: {
-            'click #scene_view_btn': 'sceneMode',
-            'click #bom_view_btn': 'bomMode',
+            'click #scene_view_btn': 'sceneButton',
+            'click #bom_view_btn': 'bomButton',
             'click #export_scene_btn': 'exportScene',
             'click #fullscreen_scene_btn': 'fullScreenScene'
         },
@@ -89,6 +89,20 @@ define([
             this.bindDatGUIControls();
 
             return this;
+        },
+
+        initBom:function(){
+
+            var _this = this;
+            if(App.partsTreeView.componentSelected){
+                this.bomMode()
+            }else{
+                App.partsTreeView.on('collection:fetched',function(){
+                    _this.bomMode();
+                });
+            }
+
+            this.initBom = this.bomMode;
         },
 
         requestJoinRoom: function (key) {
@@ -151,18 +165,19 @@ define([
         },
 
         sceneMode: function () {
-            this.inBomMode = false;
-            this.bomModeButton.removeClass('active');
-            this.sceneModeButton.addClass('active');
-            this.bomContainer.hide();
-            this.centerSceneContainer.show();
-            this.fullScreenSceneButton.show();
-            App.bomView.bomHeaderView.hideCheckGroup();
+            if(this.isInBomMode()) {
+                this.inBomMode = false;
+                this.bomModeButton.removeClass('active');
+                this.sceneModeButton.addClass('active');
+                this.bomContainer.hide();
+                this.centerSceneContainer.show();
+                this.fullScreenSceneButton.show();
+                App.bomView.bomHeaderView.hideButtons();
 
-            if (App.partsTreeView.componentSelected) {
-                this.exportSceneButton.show();
+                if (App.partsTreeView.componentSelected) {
+                    this.exportSceneButton.show();
+                }
             }
-
         },
 
         bomMode: function () {
@@ -179,6 +194,13 @@ define([
 
         isInBomMode: function () {
             return this.inBomMode;
+        },
+
+        sceneButton:function(){
+            App.router.navigate(App.config.workspaceId + '/' + App.config.productId + '/' + 'scene',{trigger:true});
+        },
+        bomButton:function(){
+            App.router.navigate(App.config.workspaceId + '/' + App.config.productId + '/' + 'bom',{trigger:true});
         },
 
         setSpectatorView: function () {
@@ -330,8 +352,14 @@ define([
             valuesControllers.push(gui.add(App.SceneOptions, 'zoomSpeed').min(0).max(10).step(0.01));
             valuesControllers.push(gui.add(App.SceneOptions, 'panSpeed').min(0).max(10).step(0.01));
 
-            valuesControllers.push(gui.addColor(App.SceneOptions, 'ambientLightColor'));
-            valuesControllers.push(gui.addColor(App.SceneOptions, 'cameraLightColor'));
+            var ambientLightColorController = gui.addColor(App.SceneOptions, 'ambientLightColor');
+            ambientLightColorController.onChange(App.sceneManager.updateAmbientLight);
+            valuesControllers.push(ambientLightColorController);
+
+            var cameraLightColorController = gui.addColor(App.SceneOptions, 'cameraLightColor');
+            cameraLightColorController.onChange(App.sceneManager.updateCameraLight);
+            valuesControllers.push(cameraLightColorController);
+
             return this;
         },
 

@@ -25,6 +25,7 @@ import com.docdoku.core.document.DocumentMasterTemplateKey;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.PartIterationKey;
 import com.docdoku.core.product.PartMasterKey;
+import com.docdoku.core.product.PartMasterTemplateKey;
 import com.docdoku.core.product.PartRevisionKey;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.*;
@@ -80,7 +81,7 @@ public class UploadDownloadService implements IUploadDownloadWS {
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @XmlMimeType("application/octet-stream")
     @Override
-    public DataHandler downloadNativeFromPart(String workspaceId, String partMNumber, String partRVersion, int iteration, String fileName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, FileNotFoundException, NotAllowedException {
+    public DataHandler downloadNativeFromPart(String workspaceId, String partMNumber, String partRVersion, int iteration, String fileName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, FileNotFoundException, NotAllowedException, AccessRightException {
         String fullName = workspaceId + "/parts/" + partMNumber + "/" + partRVersion + "/" + iteration + "/nativecad/" + fileName;
         BinaryResource binaryResource = productService.getBinaryResource(fullName);
         return new DataHandler(getBinaryResourceDataSource(binaryResource));
@@ -89,7 +90,7 @@ public class UploadDownloadService implements IUploadDownloadWS {
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @XmlMimeType("application/octet-stream")
     @Override
-    public DataHandler downloadFromPart(String workspaceId, String partMNumber, String partRVersion, int iteration, String fileName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, FileNotFoundException, NotAllowedException {
+    public DataHandler downloadFromPart(String workspaceId, String partMNumber, String partRVersion, int iteration, String fileName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, FileNotFoundException, NotAllowedException, AccessRightException {
         String fullName = workspaceId + "/parts/" + partMNumber + "/" + partRVersion + "/" + iteration + "/" + fileName;
         BinaryResource binaryResource = productService.getBinaryResource(fullName);
         return new DataHandler(getBinaryResourceDataSource(binaryResource));
@@ -100,7 +101,7 @@ public class UploadDownloadService implements IUploadDownloadWS {
     @Override
     public DataHandler downloadFromTemplate(String workspaceId, String templateID, String fileName) throws NotAllowedException, FileNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException {
         String fullName = workspaceId + "/templates/" + templateID + "/" + fileName;
-        BinaryResource binaryResource = documentService.getBinaryResource(fullName);
+        BinaryResource binaryResource = documentService.getTemplateBinaryResource(fullName);
         return new DataHandler(getBinaryResourceDataSource(binaryResource));
     }
 
@@ -110,24 +111,8 @@ public class UploadDownloadService implements IUploadDownloadWS {
             @XmlMimeType("application/octet-stream") DataHandler data) throws IOException, CreationException, WorkspaceNotFoundException, NotAllowedException, DocumentRevisionNotFoundException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException, AccessRightException {
 
         DocumentIterationKey docPK = new DocumentIterationKey(workspaceId, docMId, docMVersion, iteration);
-
         BinaryResource binaryResource = documentService.saveFileInDocument(docPK, fileName, 0);
-
-        long length = 0;
-
-        OutputStream outputStream = null;
-        try (InputStream inputStream = data.getInputStream()) {
-            outputStream = dataManager.getBinaryResourceOutputStream(binaryResource);
-            length = ByteStreams.copy(inputStream, outputStream);
-        } catch (StorageException e) {
-            Logger.getLogger(UploadDownloadService.class.getName()).log(Level.INFO, null, e);
-        } finally {
-            if(outputStream!=null){
-                outputStream.flush();
-                outputStream.close();
-            }
-        }
-
+        long length = uploadAFile(data,binaryResource);
         documentService.saveFileInDocument(docPK, fileName, length);
     }
     
@@ -137,24 +122,9 @@ public class UploadDownloadService implements IUploadDownloadWS {
             @XmlMimeType("application/octet-stream") DataHandler data) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, PartRevisionNotFoundException, FileAlreadyExistsException, CreationException, IOException {
 
         PartIterationKey partIPK = new PartIterationKey(new PartRevisionKey(new PartMasterKey(workspaceId, partMNumber), partRVersion), iteration);
-        BinaryResource binaryResource = productService.saveGeometryInPartIteration(partIPK, fileName, quality, 0, 0);
-
-        long length = 0;
-
-        OutputStream outputStream = null;
-        try (InputStream inputStream = data.getInputStream()) {
-            outputStream = dataManager.getBinaryResourceOutputStream(binaryResource);
-            length = ByteStreams.copy(inputStream, outputStream);
-        } catch (StorageException e) {
-            Logger.getLogger(UploadDownloadService.class.getName()).log(Level.INFO, null, e);
-        } finally {
-            if(outputStream!=null){
-                outputStream.flush();
-                outputStream.close();
-            }
-        }
-
-        productService.saveGeometryInPartIteration(partIPK, fileName, quality, length, 0);
+        BinaryResource binaryResource = productService.saveGeometryInPartIteration(partIPK, fileName, quality, 0, null);
+        long length = uploadAFile(data,binaryResource);
+        productService.saveGeometryInPartIteration(partIPK, fileName, quality, length, null);
     }
 
 
@@ -165,76 +135,45 @@ public class UploadDownloadService implements IUploadDownloadWS {
 
         PartIterationKey partIPK = new PartIterationKey(workspaceId, partMNumber, partRVersion, iteration);
         BinaryResource binaryResource = productService.saveNativeCADInPartIteration(partIPK, fileName, 0);
-
-        long length = 0;
-
-        OutputStream outputStream = null;
-        try (InputStream inputStream = data.getInputStream()) {
-            outputStream = dataManager.getBinaryResourceOutputStream(binaryResource);
-            length = ByteStreams.copy(inputStream, outputStream);
-        } catch (StorageException e) {
-            Logger.getLogger(UploadDownloadService.class.getName()).log(Level.INFO, null, e);
-        } finally {
-            if(outputStream!=null){
-                outputStream.flush();
-                outputStream.close();
-            }
-        }
-
+        long length = uploadAFile(data,binaryResource);
         productService.saveNativeCADInPartIteration(partIPK, fileName, length);
-        converterService.convertCADFileToJSON(partIPK, binaryResource);
+        converterService.convertCADFileToOBJ(partIPK, binaryResource);
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public void uploadToPart(String workspaceId, String partMNumber, String partRVersion, int iteration, String fileName,
-            @XmlMimeType("application/octet-stream") DataHandler data) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, PartRevisionNotFoundException, FileAlreadyExistsException, CreationException, IOException {
+                             @XmlMimeType("application/octet-stream") DataHandler data)
+            throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, PartRevisionNotFoundException, FileAlreadyExistsException, CreationException, IOException {
 
         PartIterationKey partIPK = new PartIterationKey(new PartRevisionKey(new PartMasterKey(workspaceId, partMNumber), partRVersion), iteration);
         BinaryResource binaryResource = productService.saveFileInPartIteration(partIPK, fileName, 0);
-
-        long length = 0;
-
-        OutputStream outputStream = null;
-        try (InputStream inputStream = data.getInputStream()) {
-            outputStream = dataManager.getBinaryResourceOutputStream(binaryResource);
-            length = ByteStreams.copy(inputStream, outputStream);
-        } catch (StorageException e) {
-            Logger.getLogger(UploadDownloadService.class.getName()).log(Level.INFO, null, e);
-        } finally {
-            if(outputStream!=null){
-                outputStream.flush();
-                outputStream.close();
-            }
-        }
-
+        long length = uploadAFile(data,binaryResource);
         productService.saveFileInPartIteration(partIPK, fileName, length);
     }    
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public void uploadToTemplate(String workspaceId, String templateID, String fileName,
-            @XmlMimeType("application/octet-stream") DataHandler data) throws IOException, CreationException, WorkspaceNotFoundException, NotAllowedException, DocumentMasterTemplateNotFoundException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException, AccessRightException {
+                                 @XmlMimeType("application/octet-stream") DataHandler data)
+            throws IOException, CreationException, WorkspaceNotFoundException, NotAllowedException, DocumentMasterTemplateNotFoundException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException, AccessRightException {
 
         DocumentMasterTemplateKey templatePK = new DocumentMasterTemplateKey(workspaceId, templateID);
         BinaryResource binaryResource = documentService.saveFileInTemplate(templatePK, fileName, 0);
-
-        long length = 0;
-
-        OutputStream outputStream = null;
-        try (InputStream inputStream = data.getInputStream()) {
-            outputStream = dataManager.getBinaryResourceOutputStream(binaryResource);
-            length = ByteStreams.copy(inputStream, outputStream);
-        } catch (StorageException e) {
-            Logger.getLogger(UploadDownloadService.class.getName()).log(Level.INFO, null, e);
-        } finally {
-            if(outputStream!=null){
-                outputStream.flush();
-                outputStream.close();
-            }
-        }
-
+        long length = uploadAFile(data,binaryResource);
         documentService.saveFileInTemplate(templatePK, fileName, length);
+    }
+
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
+    public void uploadToPartTemplate(String workspaceId, String templateId, String fileName,
+                                     @XmlMimeType("application/octet-stream") DataHandler data)
+            throws IOException, CreationException, WorkspaceNotFoundException, NotAllowedException, PartMasterTemplateNotFoundException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException, AccessRightException {
+
+        PartMasterTemplateKey templateKey = new PartMasterTemplateKey(workspaceId,templateId);
+        BinaryResource binaryResource = productService.saveFileInTemplate(templateKey,fileName, 0);
+        long length = uploadAFile(data,binaryResource);
+        productService.saveFileInTemplate(templateKey,fileName,length);
     }
 
     private DataSource getBinaryResourceDataSource(final BinaryResource binaryResource) {
@@ -264,5 +203,22 @@ public class UploadDownloadService implements IUploadDownloadWS {
             Logger.getLogger(UploadDownloadService.class.getName()).log(Level.INFO, null, e);
             return null;
         }
+    }
+
+    private long uploadAFile(DataHandler data, BinaryResource binaryResource) throws IOException {
+        long length = 0;
+        OutputStream outputStream = null;
+        try (InputStream inputStream = data.getInputStream()) {
+            outputStream = dataManager.getBinaryResourceOutputStream(binaryResource);
+            length = ByteStreams.copy(inputStream, outputStream);
+        } catch (StorageException e) {
+            Logger.getLogger(UploadDownloadService.class.getName()).log(Level.INFO, null, e);
+        } finally {
+            if(outputStream!=null){
+                outputStream.flush();
+                outputStream.close();
+            }
+        }
+        return length;
     }
 }

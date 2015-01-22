@@ -20,8 +20,8 @@
 
 package com.docdoku.cli.commands;
 
-import com.docdoku.cli.ScriptingTools;
 import com.docdoku.cli.helpers.FileHelper;
+import com.docdoku.cli.tools.ScriptingTools;
 import com.docdoku.core.product.PartIterationKey;
 import com.docdoku.core.product.PartMaster;
 import com.docdoku.core.product.PartRevision;

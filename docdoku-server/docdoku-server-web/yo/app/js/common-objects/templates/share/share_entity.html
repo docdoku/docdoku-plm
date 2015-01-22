@@ -45,7 +45,7 @@
 
                     <div class="controls">
                         <input type="password" class="confirm-password"/>
-                        <span class="help-block">{{i18n.PASSWORD_NOT_CONFIRMED}}</span>
+                        <span class="help-block bad-password">{{i18n.PASSWORD_NOT_CONFIRMED}}</span>
                     </div>
                 </div>
                 <div class="control-group">
@@ -53,6 +53,7 @@
 
                     <div class="controls">
                         <input type="date" class="expire-date"/>
+                        <span class="help-block"><i class="fa fa-clock-o"></i> {{timeZone}}</span>
                     </div>
                 </div>
                 <div class="control-group">

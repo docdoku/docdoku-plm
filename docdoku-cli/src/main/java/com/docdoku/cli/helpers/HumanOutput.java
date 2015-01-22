@@ -1,9 +1,10 @@
 package com.docdoku.cli.helpers;
 
-import com.docdoku.cli.commands.CommandLine;
-import com.docdoku.core.common.Version;
+import com.docdoku.cli.commands.HelpCommand;
+import com.docdoku.cli.interfaces.CommandLine;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.configuration.ProductBaseline;
+import com.docdoku.core.product.Conversion;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartMaster;
 import com.docdoku.core.product.PartRevision;
@@ -35,6 +36,10 @@ public class HumanOutput extends CliOutput{
         System.out.println(cl.getDescription());
         System.out.println();
         parser.printUsage(System.out);
+        System.out.println();
+        if(cl instanceof HelpCommand){
+            printAvailableCommands();
+        }
     }
 
     @Override
@@ -43,6 +48,12 @@ public class HumanOutput extends CliOutput{
         System.err.println("DocDokuPLM command-line client, version 1.0.");
         System.err.println("Type 'dplm help <command>' for help on a specific command.");
         System.err.println();
+        printAvailableCommands();
+        System.err.println();
+        System.err.println("For additional information, see http://www.docdokuplm.com");
+    }
+
+    private void printAvailableCommands(){
         System.err.println("Available commands:");
         System.err.println("   checkin (ci)");
         System.err.println("   checkout (co)");
@@ -52,8 +63,6 @@ public class HumanOutput extends CliOutput{
         System.err.println("   put");
         System.err.println("   status (stat, st)");
         System.err.println("   undocheckout (uco)");
-        System.err.println();
-        System.err.println("For additional information, see http://www.docdokuplm.com");
     }
 
     @Override
@@ -82,7 +91,7 @@ public class HumanOutput extends CliOutput{
 
     @Override
     public void printBaselines(List<ProductBaseline> productBaselines) {
-        if(productBaselines.size() == 0){
+        if(productBaselines.isEmpty()){
             System.out.println("No baseline");
             return;
         }
@@ -105,14 +114,27 @@ public class HumanOutput extends CliOutput{
     }
 
     @Override
+    public void printConversion(Conversion conversion) {
+        if(conversion.isSucceed()){
+            System.out.println("Conversion succeed");
+        }else if(conversion.isPending()){
+            System.out.println("Conversion in progress");
+        } else{
+            System.out.println("Conversion failed, try to re-launch");
+        }
+        System.out.println("Conversion started at " + conversion.getStartDate() + ", ended at " + conversion.getEndDate());
+    }
+
+    @Override
     public FilterInputStream getMonitor(long maximum, InputStream in) {
         return new ConsoleProgressMonitorInputStream(maximum,in);
     }
 
     private String fillWithEmptySpace(String txt, int totalChar){
         StringBuilder b = new StringBuilder(txt);
-        for(int i = 0; i < totalChar-txt.length();i++)
-            b.insert(0,' ');
+        for(int i = 0; i < totalChar-txt.length();i++) {
+            b.insert(0, ' ');
+        }
 
         return b.toString();
     }

@@ -1,13 +1,15 @@
-/*global define*/
+/*global define,App*/
 define([
     'backbone',
-    "mustache",
-    "text!templates/baseline/baseline_duplicate.html"
-], function (Backbone, Mustache, template) {
+    'mustache',
+    'text!templates/baseline/baseline_duplicate.html',
+    'common-objects/views/alert'
+], function (Backbone, Mustache, template,AlertView) {
+    'use strict';
     var BaselineDuplicateView = Backbone.View.extend({
         events: {
-            "submit #baseline_duplicate_form": "onSubmit",
-            "hidden #baseline_duplicate_modal": "onHidden"
+            'submit #baseline_duplicate_form': 'onSubmit',
+            'hidden #baseline_duplicate_modal': 'onHidden'
         },
 
         initialize: function () {
@@ -22,7 +24,8 @@ define([
         },
 
         bindDomElements: function () {
-            this.$modal = this.$("#baseline_duplicate_modal");
+            this.$notifications = this.$el.find('.notifications').first();
+            this.$modal = this.$('#baseline_duplicate_modal');
             this.$inputBaselineName = this.$('#inputBaselineName');
             this.$inputBaselineType = this.$('#inputBaselineType');
             this.$inputBaselineDescription = this.$('#inputBaselineDescription');
@@ -34,23 +37,23 @@ define([
         },
 
         onSubmit: function (e) {
-            var that = this;
+            var _this = this;
             var data = {
                 name: this.$inputBaselineName.val(),
                 type: this.model.getType(),
                 description: this.$inputBaselineDescription.val()
             };
 
-            this.model.duplicate({
-                data: data,
-                success: function (baseline) {
-                    that.closeModal();
-                    that.model = baseline;
-                },
-                error: function (status, err) {
-                    that.$("#baseline_duplicate_form").after(err.responseText);
-                }
-            });
+            if(data.name.trim()){
+                this.model.duplicate({
+                    data: data,
+                    success: function (baseline) {
+                        _this.closeModal();
+                        _this.model = baseline;
+                    },
+                    error: _this.onError
+                });
+            }
 
             e.preventDefault();
             e.stopPropagation();
@@ -59,7 +62,12 @@ define([
         },
 
         onError: function (model, error) {
-            alert(App.config.i18n.CREATION_ERROR + " : " + error.responseText);
+            var errorMessage = error ? error.responseText : model;
+
+            this.$notifications.append(new AlertView({
+                type: 'error',
+                message: errorMessage
+            }).render().$el);
         },
 
         openModal: function () {

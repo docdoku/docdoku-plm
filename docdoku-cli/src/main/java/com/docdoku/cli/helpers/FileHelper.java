@@ -88,12 +88,15 @@ public class FileHelper {
             byte[] digest = md.digest();
             return Base64.encodeBase64String(digest);
         } finally {
-            if(out!=null)
+            if(out!=null) {
                 out.close();
-            if(in!=null)
+            }
+            if(in!=null) {
                 in.close();
-            if(conn!=null)
+            }
+            if(conn!=null) {
                 conn.disconnect();
+            }
         }
     }
 
@@ -120,7 +123,7 @@ public class FileHelper {
             String lineEnd = "\r\n";
             String twoHyphens = "--";
             String boundary = "--------------------" + Long.toString(System.currentTimeMillis(), 16);
-            byte[] header = (twoHyphens + boundary + lineEnd + "Content-Disposition: form-data; name=\"upload\";" + " filename=\"" + pLocalFile + "\"" + lineEnd + lineEnd).getBytes("ISO-8859-1");
+            byte[] header = (twoHyphens + boundary + lineEnd + "Content-Disposition: form-data; name=\"upload\";" + " filename=\"" + pLocalFile.getName() + "\"" + lineEnd + lineEnd).getBytes("ISO-8859-1");
             byte[] footer = (lineEnd + twoHyphens + boundary + twoHyphens + lineEnd).getBytes("ISO-8859-1");
 
             conn.setRequestMethod("POST");
@@ -146,12 +149,15 @@ public class FileHelper {
             byte[] digest = md.digest();
             return Base64.encodeBase64String(digest);
         } finally {
-            if(out!=null)
+            if(out!=null) {
                 out.close();
-            if(in!=null)
+            }
+            if(in!=null) {
                 in.close();
-            if(conn!=null)
+            }
+            if(conn!=null) {
                 conn.disconnect();
+            }
         }
     }
 
@@ -178,13 +184,23 @@ public class FileHelper {
 
     public static String getPartURL(URL serverURL, PartIterationKey pPart, String pRemoteFileName) throws UnsupportedEncodingException, MalformedURLException {
         return serverURL
-                + "/files/"
+                + "/api/files/"
                 + URLEncoder.encode(pPart.getWorkspaceId(), "UTF-8") + "/"
                 + "parts/"
                 + URLEncoder.encode(pPart.getPartMasterNumber(), "UTF-8") + "/"
                 + pPart.getPartRevision().getVersion() + "/"
                 + pPart.getIteration() + "/nativecad/"
                 + URLEncoder.encode(pRemoteFileName, "UTF-8");
+    }
+
+    public static String getPartURLUpload(URL serverURL, PartIterationKey pPart, String pRemoteFileName) throws UnsupportedEncodingException, MalformedURLException {
+        return serverURL
+                + "/api/files/"
+                + URLEncoder.encode(pPart.getWorkspaceId(), "UTF-8") + "/"
+                + "parts/"
+                + URLEncoder.encode(pPart.getPartMasterNumber(), "UTF-8") + "/"
+                + pPart.getPartRevision().getVersion() + "/"
+                + pPart.getIteration() + "/nativecad/";
     }
 
     public static boolean confirmOverwrite(String fileName){
@@ -194,9 +210,8 @@ public class FileHelper {
     }
 
     public void uploadNativeCADFile(URL serverURL, File cadFile, PartIterationKey partIPK) throws IOException, LoginException, NoSuchAlgorithmException {
-        String workspace = partIPK.getWorkspaceId();
         String fileName = cadFile.getName();
-        String digest = uploadFile(cadFile, FileHelper.getPartURL(serverURL, partIPK, fileName));
+        String digest = uploadFile(cadFile, FileHelper.getPartURLUpload(serverURL, partIPK, fileName));
 
         File path = cadFile.getParentFile();
         MetaDirectoryManager meta = new MetaDirectoryManager(path);
@@ -215,8 +230,9 @@ public class FileHelper {
 
         if(localFile.exists() && !force && localFile.lastModified()!=meta.getLastModifiedDate(localFile.getAbsolutePath())){
             boolean confirm = FileHelper.confirmOverwrite(localFile.getAbsolutePath());
-            if(!confirm)
+            if(!confirm) {
                 return;
+            }
         }
         localFile.delete();
         String digest = downloadFile(localFile, FileHelper.getPartURL(serverURL, partIPK, fileName));

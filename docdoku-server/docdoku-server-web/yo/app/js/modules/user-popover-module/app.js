@@ -1,4 +1,4 @@
-/*global define,App*/
+/*global $,define,App*/
 define(['backbone','common-objects/collections/users'],
 function (Backbone, Users) {
     'use strict';
@@ -12,9 +12,9 @@ function (Backbone, Users) {
     var tipContent = '<div>' +
         '<span class="user-status"></span>' +
         '<hr />' +
-        '<span class="btn btn-default webRTC_invite_button"><i class="fa fa-video-camera"></i> Video </span> ' +
-        '<span class="btn btn-default new_chat_session_button"><i class="fa fa-comments"></i> Chat </span> ' +
-        '<a class="btn btn-default mailto_button" href="" target="_blank"><i class="fa fa-envelope"></i> Mail </a>' +
+        '<button type="button" class="btn btn-success webRTC_invite_button"><i class="fa fa-video-camera"></i> Video </button> ' +
+        '<button type="button" class="btn btn-info new_chat_session_button"><i class="fa fa-comments"></i> Chat </button> ' +
+        '<a class="btn btn-warning mailto_button" href="" target="_blank"><i class="fa fa-envelope"></i> Mail </a>' +
         '</div>';
 
     var users = new Users();
@@ -26,77 +26,69 @@ function (Backbone, Users) {
             return $(this).addClass('is-connected-user');
         }
 
-        var shown = false;
-
         var popoverLink = $(this).popover({
             title: '',
             html: true,
             content: tipContent,
+            container: 'body',
             trigger: 'manual',
             placement: placement
         }).click(function (e) {
 
             var that = this;
 
-            if (!shown) {
+            // Fetch and display user data
+            users.fetch({reset: true, success: function () {
 
-                shown = true;
+                // find user in collection
+                var user = users.findWhere({login: userLogin});
 
-                // Fetch and display user data
-                users.fetch({reset: true, success: function () {
+                if (user) {
 
-                    // find user in collection
-                    var user = users.where({'login': userLogin})[0];
+                    $(that).popover('show').on('hidden', function(e) {
+                        // Fix bug (modal closing on popover close https://github.com/twbs/bootstrap/issues/6942)
+                        e.stopPropagation();
+                    });
 
-                    if (user) {
+                    // get the popover tip element
+                    var $tip = $(that).data('popover').$tip;
+                    $tip.addClass('reach-user-popover');
+                    $tip.toggleClass('above-modal-popover',$('.modal').length > 0);
 
-                        $(that).popover('show');
+                    // Listen for the status request done
+                    Backbone.Events.on('UserStatusRequestDone', function (message) {
+                        if (message.remoteUser === userLogin && message.status !== null) {
+                            $tip.find('.user-status').html(statusHtml[message.status]);
+                        }
+                    });
 
-                        // get the popover tip element
-                        var $tip = $(that).data('popover').$tip;
+                    // trigger the status request
+                    Backbone.Events.trigger('UserStatusRequest', user.get('login'));
 
-                        $tip.addClass('reach-user-popover');
+                    // set the popover title
+                    $tip.find('.popover-title').html(user.get('name') + ' | ' + App.config.workspaceId + ' : ' + context);
 
-                        // Listen for the status request done
-                        Backbone.Events.on('UserStatusRequestDone', function (message) {
-                            if (message.remoteUser === userLogin && message.status !== null) {
-                                $tip.find('.user-status').html(statusHtml[message.status]);
-                            }
-                        });
+                    // handle webrtc button click event
+                    $tip.find('.webRTC_invite_button').one('click', function () {
+                        Backbone.Events.trigger('NewOutgoingCall', { remoteUser: user.get('login'), context: App.config.workspaceId + ' : ' + context});
+                        $(that).popover('hide');
+                    });
 
-                        // trigger the status request
-                        Backbone.Events.trigger('UserStatusRequest', user.get('login'));
+                    // handle chat button click event
+                    $tip.find('.new_chat_session_button').one('click', function () {
+                        Backbone.Events.trigger('NewChatSession', {remoteUser: user.get('login'), context: App.config.workspaceId + ' : ' + context});
+                        $(that).popover('hide');
+                    });
 
-                        // set the popover title
-                        $tip.find('.popover-title').html(user.get('name') + ' | ' + App.config.workspaceId + ' : ' + context);
+                    // handle mail button click event
+                    var mailToString = encodeURI('mailto:' + user.get('email') + '?subject=' + App.config.workspaceId + ' : ' + context);
+                    $tip.find('.mailto_button').attr('href', mailToString).one('click', function () {
+                        $(that).popover('hide');
+                    });
+                }
 
-                        // handle webrtc button click event
-                        $tip.find('.webRTC_invite_button').one('click', function () {
-                            Backbone.Events.trigger('NewOutgoingCall', { remoteUser: user.get('login'), context: App.config.workspaceId + ' : ' + context});
-                            $(that).popover('hide');
-                            shown = false;
-                        });
+            }});
 
-                        // handle chat button click event
-                        $tip.find('.new_chat_session_button').one('click', function () {
-                            Backbone.Events.trigger('NewChatSession', {remoteUser: user.get('login'), context: App.config.workspaceId + ' : ' + context});
-                            $(that).popover('hide');
-                            shown = false;
-                        });
-
-                        // handle mail button click event
-                        var mailToString = encodeURI('mailto:' + user.get('email') + '?subject=' + App.config.workspaceId + ' : ' + context);
-                        $tip.find('.mailto_button').attr('href', mailToString).one('click', function () {
-                            $(that).popover('hide');
-                            shown = false;
-                        });
-                    }
-
-                }});
-            } else {
-                $(that).popover('hide');
-                shown = false;
-            }
             e.stopPropagation();
             e.preventDefault();
             return false;

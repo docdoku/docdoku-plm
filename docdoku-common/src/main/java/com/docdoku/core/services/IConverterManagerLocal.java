@@ -23,14 +23,10 @@ package com.docdoku.core.services;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.product.PartIterationKey;
 
-import java.io.File;
-import java.util.concurrent.Future;
-
-
 /**
  *
  * @author Florent Garin
  */
 public interface IConverterManagerLocal {
-    Future<File> convertCADFileToJSON(PartIterationKey pPartIPK, BinaryResource cadFile) throws Exception;
+    void convertCADFileToOBJ(PartIterationKey pPartIPK, BinaryResource cadFile) throws Exception;
 }

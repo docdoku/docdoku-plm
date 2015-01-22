@@ -38,7 +38,9 @@ public class SharedPartDTO implements Serializable {
     private String partMasterNumber;
     private String partMasterVersion;
 
-    public SharedPartDTO(){}
+    public SharedPartDTO(){
+
+    }
 
     public SharedPartDTO(String uuid, String workspaceId, String password, Date expireDate, String userLogin) {
         this.uuid = uuid;

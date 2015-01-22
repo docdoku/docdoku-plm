@@ -86,14 +86,28 @@ define([
             return this.get('lifeCycleState');
         },
 
+        getConversionUrl:function(){
+            return App.config.contextPath +
+                '/api/workspaces/' + this.getWorkspace() +
+                '/parts/' + this.getNumber() + '-' + this.getVersion() +
+                '/iterations/' + this.get('iteration') +
+                '/conversion';
+        },
 
+        getConversionStatus:function(){
+            return $.get(this.getConversionUrl());
+        },
+
+        launchConversion:function(){
+            return $.ajax({method:'PUT',url:this.getConversionUrl()});
+        },
         /**
          * file Upload uses the old servlet, not the JAXRS Api         *
          * return /files/{workspace}/parts/{docId}/{version}/{iteration}/
          * @returns string
          */
         getUploadBaseUrl: function () {
-            return App.config.contextPath + '/files/' + this.getWorkspace() + '/parts/' + this.getNumber() + '/' + this.getVersion() + '/' + this.get('iteration') + '/nativecad/';
+            return App.config.contextPath + '/api/files/' + this.getWorkspace() + '/parts/' + this.getNumber() + '/' + this.getVersion() + '/' + this.get('iteration') + '/nativecad/';
         }
 
     });

@@ -1,21 +1,23 @@
 package com.docdoku.cli.helpers;
 
-import com.docdoku.cli.commands.CommandLine;
-import com.docdoku.core.common.Version;
+import com.docdoku.cli.interfaces.CommandLine;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.configuration.ProductBaseline;
+import com.docdoku.core.product.Conversion;
 import com.docdoku.core.product.PartMaster;
 import com.docdoku.core.product.PartRevision;
-import org.kohsuke.args4j.CmdLineException;
+import org.codehaus.jettison.json.JSONException;
 
 import java.io.FilterInputStream;
 import java.io.InputStream;
 import java.util.List;
 
-import static com.docdoku.cli.helpers.CliOutput.formats.*;
+import static com.docdoku.cli.helpers.CliOutput.formats.HUMAN;
 
 /**
- * Created by morgan on 14/11/14.
+ * @author Morgan GUIMARD
+ * @version 1.0, 14/11/14
+ * @since   V2.0
  */
 public abstract class CliOutput {
 
@@ -23,7 +25,8 @@ public abstract class CliOutput {
         HUMAN,
         JSON
     }
-    public static CliOutput GetOutput(formats format) {
+    public static CliOutput getOutput(formats pFormat) {
+        formats format = pFormat;
         if(format == null){
             format = HUMAN;
         }
@@ -45,6 +48,7 @@ public abstract class CliOutput {
     public abstract void printBaselines(List<ProductBaseline> productBaselines);
     public abstract void printPartRevision(PartRevision pr, long lastModified);
     public abstract void printPartMaster(PartMaster pm, long lastModified);
+    public abstract void printConversion(Conversion conversion) throws JSONException;
 
     public abstract FilterInputStream getMonitor(long maximum, InputStream in);
 

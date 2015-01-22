@@ -1,18 +1,19 @@
-/*global define*/
+/*global _,define,App*/
 define([
     'backbone',
     'mustache',
     'common-objects/collections/baselines',
-    'common-objects/collections/configuration_items',
+    'collections/configuration_items',
     'text!templates/baseline/baselines_content.html',
     'views/baseline/baselines_list',
     'views/baseline/baseline_duplicate_view',
     'text!common-objects/templates/buttons/delete_button.html',
-    'text!common-objects/templates/buttons/duplicate_button.html'
-], function (Backbone, Mustache, BaselinesCollection, ConfigurationItemCollection, template, BaselinesListView, BaselineDuplicateView, deleteButton, duplicateButton) {
+    'text!common-objects/templates/buttons/duplicate_button.html',
+    'common-objects/views/alert'
+], function (Backbone, Mustache, BaselinesCollection, ConfigurationItemCollection, template, BaselinesListView, BaselineDuplicateView, deleteButton, duplicateButton, AlertView) {
 	'use strict';
-    var BaselinesContentView = Backbone.View.extend({
 
+    var BaselinesContentView = Backbone.View.extend({
         partials: {
             deleteButton: deleteButton,
             duplicateButton: duplicateButton
@@ -29,21 +30,35 @@ define([
 
         render: function () {
             this.$el.html(Mustache.render(template, {i18n: App.config.i18n}, this.partials));
-
             this.bindDomElements();
-            new ConfigurationItemCollection().fetch({success: this.fillProductList});
-            var self = this;
-            this.$inputProductId.change(function () {
-                self.createBaselineView();
+
+            if(!this.configurationItemCollection){
+                this.configurationItemCollection = new ConfigurationItemCollection();
+            }
+
+            this.configurationItemCollection.fetch({
+                success: this.fillProductList,
+                error: this.onError
             });
+
+            this.bindEvent();
             this.createBaselineView();
             return this;
         },
 
         bindDomElements: function () {
+            this.$notifications = this.$el.find('.notifications').first();
             this.deleteButton = this.$('.delete');
             this.duplicateButton = this.$('.duplicate');
             this.$inputProductId = this.$('#inputProductId');
+        },
+
+        bindEvent: function(){
+            var _this = this;
+            this.$inputProductId.change(function () {
+                _this.createBaselineView();
+            });
+            this.delegateEvents();
         },
 
         fillProductList: function (list) {
@@ -52,7 +67,7 @@ define([
                 list.each(function (product) {
                     self.$inputProductId.append('<option value="' + product.getId() + ' ">' + product.getId() + '</option>');
                 });
-                this.$inputProductId.combobox({bsVersion: '2'});
+                this.$inputProductId.combobox({bsVersion: 2});
             }
         },
 
@@ -72,6 +87,8 @@ define([
                 }).render();
             }
             this.$el.append(this.listView.el);
+            this.listView.on('error', this.onError);
+            this.listView.on('warning', this.onWarning);
             this.listView.on('delete-button:display', this.changeDeleteButtonDisplay);
             this.listView.on('duplicate-button:display', this.changeDuplicateButtonDisplay);
         },
@@ -100,6 +117,24 @@ define([
             } else {
                 this.duplicateButton.hide();
             }
+        },
+
+        onError:function(model, error){
+            var errorMessage = error ? error.responseText : model;
+
+            this.$notifications.append(new AlertView({
+                type: 'error',
+                message: errorMessage
+            }).render().$el);
+        },
+
+        onWarning:function(model, error){
+            var errorMessage = error ? error.responseText : model;
+
+            this.$notifications.append(new AlertView({
+                type: 'warning',
+                message: errorMessage
+            }).render().$el);
         }
     });
 

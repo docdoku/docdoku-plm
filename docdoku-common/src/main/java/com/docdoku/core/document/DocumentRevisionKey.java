@@ -74,10 +74,11 @@ public class DocumentRevisionKey implements Serializable, Comparable<DocumentRev
         if (this == pObj) {
             return true;
         }
-        if (!(pObj instanceof DocumentRevisionKey))
+        if (!(pObj instanceof DocumentRevisionKey)) {
             return false;
+        }
         DocumentRevisionKey key = (DocumentRevisionKey) pObj;
-        return ((key.documentMaster.equals(documentMaster)) && (key.version.equals(version)));
+        return key.documentMaster.equals(documentMaster) && key.version.equals(version);
     }
 
     @Override
@@ -90,15 +91,16 @@ public class DocumentRevisionKey implements Serializable, Comparable<DocumentRev
 
     public int compareTo(DocumentRevisionKey pKey) {
         int wksMaster = documentMaster.compareTo(pKey.documentMaster);
-        if (wksMaster != 0)
+        if (wksMaster != 0) {
             return wksMaster;
-        else
+        } else {
             return version.compareTo(pKey.version);
+        }
     }
 
     @Override
     public DocumentRevisionKey clone() {
-        DocumentRevisionKey clone = null;
+        DocumentRevisionKey clone;
         try {
             clone = (DocumentRevisionKey) super.clone();
         } catch (CloneNotSupportedException e) {

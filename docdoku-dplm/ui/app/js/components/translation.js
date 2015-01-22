@@ -67,7 +67,21 @@
                     FAVORITE_FOLDERS:'Favorite folders',
                     NO_FOLDERS:'No folders',
                     CONNECTED_TO:'connected to',
-                    NEW_STUFF:'New files'
+                    NEW_STUFF:'New files',
+                    AVAILABLE:'Available',
+                    CHECKOUTED_BY_ME:'Checkouted by me',
+                    RELEASED:'Released',
+                    LOCKED:'Locked',
+                    UP_TO_DATE:'Up to date',
+                    MODIFIED:'Modified',
+                    NOT_SYNC:'Not synchronised',
+                    LAST_WORKSPACES_VISITED:'Last workspaces visited',
+                    NOTHING_TO_SHOW:'Nothing to show',
+                    CONVERSION_STATUS:'Conversion status',
+                    PENDING:'Pending',
+                    SUCCESS:'Success',
+                    FAIL:'Fail',
+                    NO_CONVERSION:'No conversion currently'
                 })
                 .translations('fr', {
                     CUT: 'Couper',
@@ -131,7 +145,21 @@
                     FAVORITE_FOLDERS:'Dossiers favoris',
                     NO_FOLDERS:'Aucun dossier',
                     CONNECTED_TO:'connecté à',
-                    NEW_STUFF:'Nouveaux fichiers'
+                    NEW_STUFF:'Nouveaux fichiers',
+                    AVAILABLE:'Disponible',
+                    CHECKOUTED_BY_ME:'Réservé par moi',
+                    RELEASED:'Finalisé',
+                    LOCKED:'Vérrouillé',
+                    UP_TO_DATE:'À jour',
+                    MODIFIED:'Modifié',
+                    NOT_SYNC:'Non synchronisé',
+                    LAST_WORKSPACES_VISITED:'Derniers espaces de travail utilisés',
+                    NOTHING_TO_SHOW:'Aucune entrée',
+                    CONVERSION_STATUS:'Statut de la conversion',
+                    PENDING:'En cours',
+                    SUCCESS:'Succès',
+                    FAIL:'Echoué',
+                    NO_CONVERSION:'Pas de conversion en cours'
                 });
 
             $translateProvider.preferredLanguage(localStorage.lang || 'en');

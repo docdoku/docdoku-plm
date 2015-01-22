@@ -16,6 +16,7 @@ define([
     'use strict';
     var ChangeOrderCreationView = Backbone.View.extend({
         events: {
+            'click .modal-footer .btn-primary': 'interceptSubmit',
             'submit #order_creation_form': 'onSubmitForm',
             'hidden #order_creation_modal': 'onHidden'
         },
@@ -39,6 +40,7 @@ define([
             this.fillPriorityList();
             this.fillCategoryList();
             this.linkManagement();
+            this.$inputOrderName.customValidity(App.config.i18n.REQUIRED_FIELD);
             return this;
         },
 
@@ -61,13 +63,13 @@ define([
         fillPriorityList: function () {
 	        var self = this;
 	        _.each(this.model.priorities, function(priority){
-		        self.$inputOrderPriority.append('<option value="' + priority + ' " ' + '>' + priority + '</option>');
+		        self.$inputOrderPriority.append('<option value="' + priority + '" ' + '>' + priority + '</option>');
 	        });
         },
         fillCategoryList: function () {
 	        var self = this;
 	        _.each(this.model.categories, function(category){
-		        self.$inputOrderCategory.append('<option value="' + category + ' " ' + '>' + category + '</option>');
+		        self.$inputOrderCategory.append('<option value="' + category + '" ' + '>' + category + '</option>');
 	        });
         },
 
@@ -120,23 +122,28 @@ define([
             this.$inputOrderCategory = this.$('#inputOrderCategory');
         },
 
+        interceptSubmit : function(){
+            this.isValid = ! this.$('.tabs').invalidFormTabSwitcher();
+        },
+
         onSubmitForm: function (e) {
-            var data = {
-                name: this.$inputOrderName.val(),
-                description: this.$inputOrderDescription.val(),
-                author: App.config.login,
-                assignee: this.$inputOrderAssignee.val(),
-                priority: this.$inputOrderPriority.val(),
-                category: this.$inputOrderCategory.val(),
-                milestoneId: parseInt(this.$inputOrderMilestone.val(), 10)
-            };
+            if(this.isValid){
+                var data = {
+                    name: this.$inputOrderName.val(),
+                    description: this.$inputOrderDescription.val(),
+                    author: App.config.login,
+                    assignee: this.$inputOrderAssignee.val(),
+                    priority: this.$inputOrderPriority.val(),
+                    category: this.$inputOrderCategory.val(),
+                    milestoneId: parseInt(this.$inputOrderMilestone.val(), 10)
+                };
 
-            this.model.save(data, {
-                success: this.onOrderCreated,
-                error: this.error,
-                wait: true
-            });
-
+                this.model.save(data, {
+                    success: this.onOrderCreated,
+                    error: this.error,
+                    wait: true
+                });
+            }
             e.preventDefault();
             e.stopPropagation();
             return false;

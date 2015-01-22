@@ -66,15 +66,17 @@ public class ProductInstanceMasterKey implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         ProductInstanceMasterKey that = (ProductInstanceMasterKey) o;
 
-        if (!instanceOf.equals(that.instanceOf)) return false;
-        if (!serialNumber.equals(that.serialNumber)) return false;
+        return instanceOf.equals(that.instanceOf) && serialNumber.equals(that.serialNumber);
 
-        return true;
     }
 
     @Override

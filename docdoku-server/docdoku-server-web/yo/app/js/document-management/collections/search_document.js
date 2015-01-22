@@ -1,10 +1,10 @@
-/*global define*/
+/*global define,App*/
 define([
     'backbone',
     'models/document'
 ], function (Backbone,Document) {
+    'use strict';
     var SearchDocumentList = Backbone.Collection.extend({
-
         model: Document,
 
         className: 'SearchDocumentList',

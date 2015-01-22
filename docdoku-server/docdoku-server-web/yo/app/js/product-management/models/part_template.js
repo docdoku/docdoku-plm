@@ -1,12 +1,11 @@
 /*global _,define,App*/
-'use strict';
 define([
     'backbone',
     'common-objects/collections/file/attached_file_collection',
     'common-objects/utils/date'
 ], function (Backbone, AttachedFileCollection, Date) {
+    'use strict';
     var Template = Backbone.Model.extend({
-
         className: 'PartTemplate',
 
         initialize: function () {
@@ -40,7 +39,7 @@ define([
         },
 
         getUploadBaseUrl: function () {
-            return App.config.contextPath + '/files/' + this.get('workspaceId') + '/part-templates/' + this.get('id') + '/';
+            return App.config.contextPath + '/api/files/' + this.get('workspaceId') + '/part-templates/' + this.get('id') + '/';
         },
 
         getId: function () {

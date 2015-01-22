@@ -11,7 +11,7 @@
     </h1>
 </md-toolbar>
 
-<md-content class="md-padding">  
+<md-content class="md-padding">
 
    <h3>
     <i class="fa fa-folder-open"></i> 
@@ -25,9 +25,7 @@
        </md-button>
     </h3>
 
-
-
-  <md-content style="max-height:150px">
+  <md-content class="menu-list" ng-class="{expanded: foldersExpanded}" droppable on-file-dropped="onFileDropped(path)">
    <md-list>
     <md-item ng-repeat="folder in folders | orderBy:'-favorite'" ng-controller="FolderMenuController">
       <md-item-content>
@@ -42,13 +40,14 @@
     </md-item>
   </md-list>
   </md-content>
+  <i class="list-toggle fa" ng-class="{'fa-caret-up': foldersExpanded,'fa-caret-down': !foldersExpanded}" ng-click="toggleFolders()"></i>
 
   <h3>
     <i class="fa fa-globe"></i> 
     {{ configuration.host + ':' + configuration.port }}
   </h3>
 
-  <md-content style="max-height:150px">
+    <md-content class="menu-list" ng-class="{expanded: workspacesExpanded}">
    <md-list>
     <md-item ng-repeat="workspace in workspaces" ng-controller="WorkspaceMenuController">
       <md-item-content 
@@ -65,6 +64,7 @@
     </md-item>
   </md-list>
   </md-content>
+    <i class="list-toggle fa" ng-class="{'fa-caret-up': workspacesExpanded,'fa-caret-down': !workspacesExpanded}" ng-click="toggleWorkspaces()"></i>
 
 
 </md-content>

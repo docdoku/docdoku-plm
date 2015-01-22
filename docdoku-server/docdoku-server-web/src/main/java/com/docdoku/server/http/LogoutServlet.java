@@ -4,6 +4,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 public class LogoutServlet extends HttpServlet {
@@ -11,8 +12,9 @@ public class LogoutServlet extends HttpServlet {
     protected void doGet(HttpServletRequest pRequest, HttpServletResponse pResponse) throws ServletException, IOException {
         pRequest.logout();
         pRequest.getSession().invalidate();
-        pRequest.getSession().setAttribute("hasFail", false);
-        pRequest.getSession().setAttribute("hasLogout", true);
+        HttpSession newSession = pRequest.getSession(true);
+        newSession.setAttribute("hasFail", false);
+        newSession.setAttribute("hasLogout", true);
         pResponse.sendRedirect(pRequest.getContextPath()+"/");
     }
 }

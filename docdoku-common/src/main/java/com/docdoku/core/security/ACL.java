@@ -89,9 +89,11 @@ public class ACL implements Serializable, Cloneable{
             return !userAccess.getPermission().equals(Permission.FORBIDDEN);
         else{
             for(Map.Entry<UserGroup, ACLUserGroupEntry> entry:groupEntries.entrySet()){
-                if(entry.getKey().isMember(user))
-                    if(!entry.getValue().getPermission().equals(Permission.FORBIDDEN))
+                if(entry.getKey().isMember(user)) {
+                    if (!entry.getValue().getPermission().equals(Permission.FORBIDDEN)) {
                         return true;
+                    }
+                }
             }
         }
         return false;
@@ -103,9 +105,11 @@ public class ACL implements Serializable, Cloneable{
             return userAccess.getPermission().equals(Permission.FULL_ACCESS);
         else{
             for(Map.Entry<UserGroup, ACLUserGroupEntry> entry:groupEntries.entrySet()){
-                if(entry.getKey().isMember(user))
-                    if(entry.getValue().getPermission().equals(Permission.FULL_ACCESS))
+                if(entry.getKey().isMember(user)) {
+                    if (entry.getValue().getPermission().equals(Permission.FULL_ACCESS)) {
                         return true;
+                    }
+                }
             }
         }
         return false;
@@ -148,14 +152,14 @@ public class ACL implements Serializable, Cloneable{
      */
     @Override
     public ACL clone() {
-        ACL clone = null;
+        ACL clone;
         try {
             clone = (ACL) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new InternalError();
         }
         //perform a deep copy
-        Map<User,ACLUserEntry> clonedUserEntries = new HashMap<User,ACLUserEntry>();
+        Map<User,ACLUserEntry> clonedUserEntries = new HashMap<>();
         for (Map.Entry<User,ACLUserEntry> entry : userEntries.entrySet()) {
             ACLUserEntry aclEntry = entry.getValue().clone();
             aclEntry.setACL(clone);
@@ -164,7 +168,7 @@ public class ACL implements Serializable, Cloneable{
         clone.userEntries = clonedUserEntries;
 
         //perform a deep copy
-        Map<UserGroup,ACLUserGroupEntry> clonedGroupEntries = new HashMap<UserGroup,ACLUserGroupEntry>();
+        Map<UserGroup,ACLUserGroupEntry> clonedGroupEntries = new HashMap<>();
         for (Map.Entry<UserGroup,ACLUserGroupEntry> entry : groupEntries.entrySet()) {
             ACLUserGroupEntry aclEntry = entry.getValue().clone();
             aclEntry.setACL(clone);

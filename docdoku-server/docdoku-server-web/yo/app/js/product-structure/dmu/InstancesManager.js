@@ -140,7 +140,8 @@ define(['dmu/LoaderManager', 'async'],
                 }
 
                 // Else : load the instance
-                var quality = instance.qualities[directive.quality];
+                var quality = App.config.contextPath+"/"+instance.files[directive.quality].fullName;
+
                 var texturePath = quality.substring(0, quality.lastIndexOf('/'));
                 loaderManager.parseFile(quality, texturePath, {
                     success: function (geometry, material) {
@@ -171,23 +172,6 @@ define(['dmu/LoaderManager', 'async'],
                 });
             }
 
-            function findQualities(files) {
-                var q = [];
-                _(files).each(function (f) {
-                    q[f.quality] = App.config.contextPath + '/files/' + f.fullName;
-                });
-                return q;
-            }
-            function findRadius(files) {
-                var r = 0;
-                _(files).each(function (f) {
-                    if (f.radius) {
-                        r = f.radius;
-                    }
-                });
-                return r || 1;
-            }
-
             function adaptMatrix(matrix) {
                 return new THREE.Matrix4(matrix[0], matrix[1], matrix[2], matrix[3],
                     matrix[4], matrix[5], matrix[6], matrix[7],
@@ -200,7 +184,7 @@ define(['dmu/LoaderManager', 'async'],
                     return;
                 }
                 evalRunning = true;
-                var sceneContext = App.sceneManager.getSceneContext();
+                var sceneContext = App.sceneManager.getControlsContext();
                 App.log('%c Updating worker', 'IM');
                 worker.postMessage({fn: 'context', obj: {
                     camera: sceneContext.camPos,
@@ -208,6 +192,10 @@ define(['dmu/LoaderManager', 'async'],
                     WorkerManagedValues: App.WorkerManagedValues,
                     debug: App.debug
                 }});
+
+                if(App.router){
+                    App.router.updateRoute(sceneContext);
+                }
             }
 
 	        function onSuccessLoadPath(instances){
@@ -215,20 +203,27 @@ define(['dmu/LoaderManager', 'async'],
 			        if (instancesIndexed[instance.id]) {
 				        worker.postMessage({fn: 'check', obj: instance.id});
 			        } else {
+
 				        instancesIndexed[instance.id] = instance;
 				        instance.matrix = adaptMatrix(instance.matrix);
-				        var radius = findRadius(instance.files);
-				        var instanceBox = new THREE.Box3().setFromCenterAndSize(new THREE.Vector3(radius / 2, radius / 2, radius / 2), new THREE.Vector3(radius, radius, radius));
-				        var cog = instanceBox.center().applyMatrix4(instance.matrix);
-				        instance.currentQuality = undefined;
-				        instance.qualities = findQualities(instance.files);
 
-				        worker.postMessage({
+                        var min =  new THREE.Vector3(instance.xMin,instance.yMin,instance.zMin);
+                        var max = new THREE.Vector3(instance.xMax,instance.yMax,instance.zMax);
+                        var box = new THREE.Box3(min,max).applyMatrix4(instance.matrix);
+
+                        var cog = box.center();
+
+                        // Allow parts that don't have box to be displayed
+                        var radius = box.size().length() || 0.01;
+
+                        worker.postMessage({
 					        fn: 'addInstance',
 					        obj: {
+                                instanceRow:instance,
 						        id: instance.id,
+						        box: box,
 						        cog: cog,
-						        radius: radius,
+                                radius: radius,
 						        qualities: instance.qualities,
 						        checked: true
 					        }

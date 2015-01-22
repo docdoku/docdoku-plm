@@ -113,8 +113,6 @@ public class BaselineConfigSpec extends ConfigSpec {
             if(docI!=null){
                 return docI;
             }
-            // the document isn't in baseline, choose the latest checked in version-iteration
-            return new LatestConfigSpec(user).filterConfigSpec(documentRevision);
         }
 
         return null;

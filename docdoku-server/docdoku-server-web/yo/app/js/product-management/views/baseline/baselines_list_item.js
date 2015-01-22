@@ -1,18 +1,18 @@
-/*global define*/
+/*global define,App*/
 define([
     'backbone',
-    "mustache",
-    "text!templates/baseline/baselines_list_item.html",
-    "views/baseline/baseline_edit_view"
+    'mustache',
+    'text!templates/baseline/baselines_list_item.html',
+    'views/baseline/baseline_edit_view'
 ], function (Backbone, Mustache, template, BaselineEditView) {
+    'use strict';
     var BaselineListItemView = Backbone.View.extend({
-
         events: {
-            "click input[type=checkbox]": "selectionChanged",
-            "click td.reference": "openEditView"
+            'click input[type=checkbox]': 'selectionChanged',
+            'click td.reference': 'openEditView'
         },
 
-        tagName: "tr",
+        tagName: 'tr',
 
         initialize: function () {
             this._isChecked = false;
@@ -20,14 +20,14 @@ define([
 
         render: function () {
             this.$el.html(Mustache.render(template, {model: this.model, i18n: App.config.i18n}));
-            this.$checkbox = this.$("input[type=checkbox]");
-            this.trigger("rendered", this);
+            this.$checkbox = this.$('input[type=checkbox]');
+            this.trigger('rendered', this);
             return this;
         },
 
         selectionChanged: function () {
-            this._isChecked = this.$checkbox.prop("checked");
-            this.trigger("selectionChanged", this);
+            this._isChecked = this.$checkbox.prop('checked');
+            this.trigger('selectionChanged', this);
         },
 
         isChecked: function () {
@@ -35,12 +35,12 @@ define([
         },
 
         check: function () {
-            this.$checkbox.prop("checked", true);
+            this.$checkbox.prop('checked', true);
             this._isChecked = true;
         },
 
         unCheck: function () {
-            this.$checkbox.prop("checked", false);
+            this.$checkbox.prop('checked', false);
             this._isChecked = false;
         },
 

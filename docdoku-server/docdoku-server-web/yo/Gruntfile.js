@@ -40,13 +40,13 @@ module.exports = function (grunt) {
                     '<%= yeoman.app %>/product-structure/*.html',
                     '<%= yeoman.app %>/visualization/*.html',
                     '<%= yeoman.app %>/change-management/*.html',
-                    '{.tmp,<%= yeoman.app %>}/js/{,*/}*.{js,html}',
-                    '<%= yeoman.app %>/images/{,*/}*.{png,jpg,jpeg,gif,webp}',
+                    '{.tmp,<%= yeoman.app %>}/js/**',
+                    '<%= yeoman.app %>/images/**',
                     'test/spec/**/*.js'
                 ]
             },
             less: {
-                files: ['<%= yeoman.app %>/less/{,*/}*.less'],
+                files: ['<%= yeoman.app %>/less/**'],
                 tasks: ['less']
             },
             tests:{
@@ -410,6 +410,7 @@ module.exports = function (grunt) {
                             'images/{,*/}*',
                             'sounds/{,*/}*',
                             'fonts/{,*/}*',
+                            'download/{,*/}*',
 	                        'js/home/main.js',
 	                        'js/lib/plugin-detect.js'
                         ]

@@ -42,7 +42,7 @@ public class DocumentPostUploaderBean implements IDocumentPostUploaderManagerLoc
 
     @Override
     @Asynchronous
-    public void process(BinaryResource binaryResource) throws Exception {
+    public void process(BinaryResource binaryResource){
         for (DocumentPostUploader documentPostUploader : documentPostUploaders) {
             if (documentPostUploader.canProcess(binaryResource)) {
                 documentPostUploader.process(binaryResource);

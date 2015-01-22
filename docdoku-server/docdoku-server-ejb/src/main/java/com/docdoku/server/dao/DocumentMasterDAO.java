@@ -29,8 +29,11 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class DocumentMasterDAO {
+    private static final Logger LOGGER = Logger.getLogger(DocumentMasterDAO.class.getName());
 
     private EntityManager em;
     private Locale mLocale;
@@ -51,11 +54,13 @@ public class DocumentMasterDAO {
             em.persist(pDocumentMaster);
             em.flush();
         } catch (EntityExistsException pEEEx) {
+            LOGGER.log(Level.FINER,null,pEEEx);
             throw new DocumentMasterAlreadyExistsException(mLocale, pDocumentMaster);
         } catch (PersistenceException pPEx) {
             //EntityExistsException is case sensitive
             //whereas MySQL is not thus PersistenceException could be
             //thrown instead of EntityExistsException
+            LOGGER.log(Level.FINER,null,pPEx);
             throw new CreationException(mLocale);
         }
     }

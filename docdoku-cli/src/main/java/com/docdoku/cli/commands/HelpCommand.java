@@ -20,8 +20,8 @@
 
 package com.docdoku.cli.commands;
 
+import com.docdoku.cli.interfaces.CommandLine;
 import org.kohsuke.args4j.Argument;
-import org.kohsuke.args4j.CmdLineParser;
 
 /**
  *

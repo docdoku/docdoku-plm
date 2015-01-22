@@ -1,6 +1,6 @@
-/*global define*/
+/*global define,App*/
 define([
-    "backbone",
+    'backbone',
     'models/folder'
 ], function (Backbone,Folder) {
 	'use strict';
@@ -22,7 +22,7 @@ define([
         },
 
         parse: function (data) {
-            if (!this.parent) {
+            if (!this.parent && App.config.configSpec === 'latest') {
                 // inject the user home folder
                 data.unshift({
                     id: App.config.workspaceId + ':~' + App.config.login,

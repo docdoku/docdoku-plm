@@ -14,6 +14,7 @@ function (Backbone, Mustache, template, ChangeIssueModel, UserList, LinkedDocume
     'use strict';
     var ChangeIssueCreationView = Backbone.View.extend({
         events: {
+            'click .modal-footer .btn-primary': 'interceptSubmit',
             'submit #issue_creation_form': 'onSubmitForm',
             'hidden #issue_creation_modal': 'onHidden'
         },
@@ -36,25 +37,28 @@ function (Backbone, Mustache, template, ChangeIssueModel, UserList, LinkedDocume
             this.fillPriorityList();
             this.fillCategoryList();
             this.linkManagement();
+
+            this.$inputIssueName.customValidity(App.config.i18n.REQUIRED_FIELD);
+
             return this;
         },
 
         fillUserList: function (list) {
             var self = this;
             list.each(function (user) {
-                self.$inputIssueAssignee.append('<option value="' + user.get('login') + ' " ' + '>' + user.get('name') + '</option>');
+                self.$inputIssueAssignee.append('<option value="' + user.get('login') + '" ' + '>' + user.get('name') + '</option>');
             });
         },
         fillPriorityList: function () {
 	        var self = this;
 	        _.each(this.model.priorities, function(priority){
-		        self.$inputIssuePriority.append('<option value="' + priority + ' " ' + '>' + priority + '</option>');
+		        self.$inputIssuePriority.append('<option value="' + priority + '" ' + '>' + priority + '</option>');
 	        });
         },
         fillCategoryList: function () {
 	        var self = this;
 	        _.each(this.model.categories, function(category){
-		        self.$inputIssueCategory.append('<option value="' + category + ' " ' + '>' + category + '</option>');
+		        self.$inputIssueCategory.append('<option value="' + category + '" ' + '>' + category + '</option>');
 	        });
         },
 
@@ -93,22 +97,29 @@ function (Backbone, Mustache, template, ChangeIssueModel, UserList, LinkedDocume
             this.$inputIssueCategory = this.$('#inputIssueCategory');
         },
 
-        onSubmitForm: function (e) {
-            var data = {
-                name: this.$inputIssueName.val(),
-                description: this.$inputIssueDescription.val(),
-                author: App.config.login,
-                assignee: this.$inputIssueAssignee.val(),
-                priority: this.$inputIssuePriority.val(),
-                category: this.$inputIssueCategory.val(),
-                initiator: App.config.login
-            };
+        interceptSubmit : function(){
+            this.isValid = ! this.$('.tabs').invalidFormTabSwitcher();
+        },
 
-            this.model.save(data, {
-                success: this.onIssueCreated,
-                error: this.onError,
-                wait: true
-            });
+        onSubmitForm: function (e) {
+
+            if(this.isValid){
+                var data = {
+                    name: this.$inputIssueName.val(),
+                    description: this.$inputIssueDescription.val(),
+                    author: App.config.login,
+                    assignee: this.$inputIssueAssignee.val(),
+                    priority: this.$inputIssuePriority.val(),
+                    category: this.$inputIssueCategory.val(),
+                    initiator: App.config.login
+                };
+
+                this.model.save(data, {
+                    success: this.onIssueCreated,
+                    error: this.onError,
+                    wait: true
+                });
+            }
 
             e.preventDefault();
             e.stopPropagation();

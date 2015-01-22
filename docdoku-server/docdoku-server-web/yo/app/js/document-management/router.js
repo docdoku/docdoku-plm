@@ -26,7 +26,7 @@ function (Backbone, singletonDecorator, FolderNavView, TagNavView, SearchNavView
         },
 
 	    executeOrReload:function(workspaceId,fn){
-		    if(workspaceId !== App.config.workspaceId) {
+		    if(workspaceId !== App.config.workspaceId && decodeURIComponent(workspaceId).trim() !== App.config.workspaceId) {
 			    location.reload();
 		    }else{
 			    fn.bind(this).call();

@@ -20,7 +20,7 @@
 
 package com.docdoku.cli.commands;
 
-import com.docdoku.cli.ScriptingTools;
+import com.docdoku.cli.tools.ScriptingTools;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.query.PartSearchQuery;
 import com.docdoku.core.services.IProductManagerWS;
@@ -49,7 +49,7 @@ public class SearchPartsCommand extends AbstractCommandLine {
         IProductManagerWS productS = ScriptingTools.createProductService(getServerURL(), user, password);
 
         List<PartRevision> partRevisions = productS.searchPartRevisions(
-                new PartSearchQuery(workspace, searchValue, null, null, null, null, null, null, null, null)
+                new PartSearchQuery(workspace, searchValue, null, null, null, null, null, null, null, null, null)
         );
 
         output.printPartRevisions(partRevisions);

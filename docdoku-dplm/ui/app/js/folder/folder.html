@@ -40,13 +40,13 @@
                        type="text"></md-text-float>
     </div>
     <div style="padding-right:8px;">
-        <md-checkbox ng-model="filters.sync" aria-label="">
+        <md-checkbox ng-model="filters.sync" aria-label="" title="{{'UP_TO_DATE' | translate}}">
             <i class="fa fa-check-circle-o file-sync"></i>
         </md-checkbox>
-        <md-checkbox ng-model="filters.modified" aria-label="">
+        <md-checkbox ng-model="filters.modified" aria-label="" title="{{'MODIFIED' | translate}}">
             <i class="fa fa-cloud-upload file-modified"></i>
         </md-checkbox>
-        <md-checkbox ng-model="filters.notSync" aria-label="">
+        <md-checkbox ng-model="filters.notSync" aria-label="" title="{{'NOT_SYNC' | translate}}">
             <i class="fa  fa-plus-circle file-notSync"></i>
         </md-checkbox>
     </div>
@@ -67,10 +67,6 @@
                         <i class="fa fa-check-circle-o fa-lg file-sync" ng-show="file.sync"></i>
                         <i class="fa fa-cloud-upload fa-lg file-modified" ng-show="file.modified"></i>
                         <i class="fa fa-plus-circle fa-lg file-notSync" ng-show="file.notSync"></i>
-                    </div>
-
-                    <div class="md-tile-left md-tile-top" ng-if="file === openedFile && isViewable">
-                        <div class="row" model-viewer filename="file.path" width="120" height="80"></div>
                     </div>
 
                     <div class="md-tile-content">

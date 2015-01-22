@@ -1,9 +1,9 @@
-/*global define*/
-'use strict';
+/*global _,define,App*/
 define([
     'backbone',
     'models/document_iteration'
 ], function (Backbone,DocumentIteration) {
+    'use strict';
     var DocumentIterationList = Backbone.Collection.extend({
 
         model: DocumentIteration,

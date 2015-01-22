@@ -46,15 +46,17 @@ public class ConsoleProgressMonitorInputStream extends FilterInputStream {
         int percentage = (int)((totalRead * 100.0f) / maximum);
 
         String percentageToPrint;
-        if(percentage==100)
-            percentageToPrint=""+percentage;
-        else
-            percentageToPrint=(percentage<10)?"  "+percentage:" "+percentage;
+        if(percentage==100) {
+            percentageToPrint = "" + percentage;
+        } else {
+            percentageToPrint = (percentage < 10) ? "  " + percentage : " " + percentage;
+        }
 
-        if(length ==-1)
+        if(length ==-1) {
             System.out.println("\r" + 100);
-        else
+        }else {
             System.out.print("\r" + percentageToPrint + "% Total " + FileUtils.byteCountToDisplaySize(maximum) + " " + ROTATION[rotationChar % ROTATION.length]);
+        }
 
         rotationChar++;
         return length;

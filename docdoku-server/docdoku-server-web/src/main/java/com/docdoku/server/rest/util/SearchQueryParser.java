@@ -37,6 +37,7 @@ public class SearchQueryParser {
     }
 
     public static DocumentSearchQuery parseDocumentStringQuery(String workspaceId , String pQuery){
+        String fullText = null;
         String pDocMId = null;
         String pTitle = null;
         String pVersion = null;
@@ -54,6 +55,9 @@ public class SearchQueryParser {
             String[] filter = filters.split("=");
             if(filter.length == 2){
                 switch (filter[0]){
+                    case "q" :
+                        fullText = filter[1];
+                        break;
                     case "id" :
                         pDocMId = filter[1];
                         break;
@@ -94,12 +98,12 @@ public class SearchQueryParser {
 
         DocumentSearchQuery.AbstractAttributeQuery[] pAttributesArray = pAttributes.toArray(new DocumentSearchQuery.AbstractAttributeQuery[pAttributes.size()]);
 
-        return  new DocumentSearchQuery(workspaceId, pDocMId, pTitle, pVersion, pAuthor,
+        return  new DocumentSearchQuery(workspaceId, fullText, pDocMId, pTitle, pVersion, pAuthor,
                 pType, pCreationDateFrom, pCreationDateTo, pAttributesArray, pTags, pContent);
 
     }
     public static PartSearchQuery parsePartStringQuery(String workspaceId , String pQuery){
-
+        String fullText = null;
         String pNumber = null;
         String pName = null;
         String pVersion = null;
@@ -116,6 +120,9 @@ public class SearchQueryParser {
             String[] filter = filters.split("=");
             if(filter.length == 2){
                 switch (filter[0]){
+                    case "q" :
+                        fullText = filter[1];
+                        break;
                     case "number" :
                         pNumber = filter[1];
                         break;
@@ -141,7 +148,7 @@ public class SearchQueryParser {
                         standardPart = Boolean.valueOf(filter[1]);
                         break;
                     case "attributes" :
-                        parsePartAttributeStringQuery(filter[1]);
+                        pAttributes = parsePartAttributeStringQuery(filter[1]);
                         break;
                 }
             }
@@ -149,7 +156,7 @@ public class SearchQueryParser {
 
         PartSearchQuery.AbstractAttributeQuery[] pAttributesArray = pAttributes.toArray(new PartSearchQuery.AbstractAttributeQuery[pAttributes.size()]);
 
-        return  new PartSearchQuery(workspaceId, pNumber, pName, pVersion, pAuthor,
+        return  new PartSearchQuery(workspaceId, fullText, pNumber, pName, pVersion, pAuthor,
                 pType, pCreationDateFrom, pCreationDateTo, pAttributesArray,standardPart);
 
     }

@@ -276,7 +276,7 @@ public interface IProductManagerWS{
      * @throws FileAlreadyExistsException
      * @throws CreationException
      */
-    BinaryResource saveGeometryInPartIteration(PartIterationKey partIPK, String name, int quality, long size, double radius) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, PartRevisionNotFoundException, FileAlreadyExistsException, CreationException;
+    BinaryResource saveGeometryInPartIteration(PartIterationKey partIPK, String name, int quality, long size, double[] box) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, PartRevisionNotFoundException, FileAlreadyExistsException, CreationException;
     
     /**
      * Creates a regular file, <a href="BinaryResource.html">BinaryResource</a>
@@ -344,24 +344,6 @@ public interface IProductManagerWS{
      * @throws PartMasterNotFoundException
      */
     PartRevision updatePartIteration(PartIterationKey key, java.lang.String iterationNote, PartIteration.Source source, java.util.List<PartUsageLink> usageLinks, java.util.List<InstanceAttribute> attributes, DocumentIterationKey[] linkKeys) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, PartRevisionNotFoundException, PartMasterNotFoundException;
-    
-    /**
-     * Returns the BinaryResource object given his Id.
-     * 
-     * @param fullName
-     * Id of the <a href="BinaryResource.html">BinaryResource</a> of which the
-     * data file will be returned
-     * 
-     * @return
-     * The binary resource, a BinaryResource instance, that now needs to be created
-     * 
-     * @throws UserNotFoundException
-     * @throws UserNotActiveException
-     * @throws WorkspaceNotFoundException
-     * @throws FileNotFoundException
-     * @throws NotAllowedException
-     */
-    BinaryResource getBinaryResource(String fullName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, FileNotFoundException, NotAllowedException;
     
     /**
      * Retrieves all product structures that belong to the given workspace.
@@ -493,7 +475,25 @@ public interface IProductManagerWS{
      * @throws PartRevisionNotFoundException
      */
     PartRevision getPartRevision(PartRevisionKey partRPK) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException, AccessRightException;
-
+   
+    /**
+     * Returns a specific <a href="PartIteration.html">PartIteration</a>.
+     *
+     * @param pPartIPK
+     * The id of the part iteration to get
+     *
+     * @return
+     * The part iteration
+     *
+     * @throws UserNotFoundException
+     * @throws UserNotActiveException
+     * @throws WorkspaceNotFoundException
+     * @throws PartIterationNotFoundException
+     * @throws PartRevisionNotFoundException
+     * @throws AccessRightException
+     */
+    PartIteration getPartIteration(PartIterationKey pPartIPK) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException, PartIterationNotFoundException;
+    
     /**
      * Finds part masters by their part number using like style query.
      *
@@ -565,7 +565,7 @@ public interface IProductManagerWS{
      * @throws WorkspaceNotFoundException
      * @throws PartIterationNotFoundException
      */
-    void removeCADFileFromPartIteration(PartIterationKey partIKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartIterationNotFoundException;
+    void removeCADFileFromPartIteration(PartIterationKey partIKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartIterationNotFoundException, PartRevisionNotFoundException;
 
     PartMasterTemplate createPartMasterTemplate(String pWorkspaceId, String pId, String pPartType, String pMask, InstanceAttributeTemplate[] pAttributeTemplates, boolean idGenerated, boolean attributesLocked) throws WorkspaceNotFoundException, AccessRightException, PartMasterTemplateAlreadyExistsException, UserNotFoundException, NotAllowedException, CreationException;
     BinaryResource saveFileInTemplate(PartMasterTemplateKey pPartMTemplateKey, String pName, long pSize) throws WorkspaceNotFoundException, NotAllowedException, PartMasterTemplateNotFoundException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException, CreationException ;
@@ -600,11 +600,18 @@ public interface IProductManagerWS{
 
     void removeACLFromPartRevision(PartRevisionKey revisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException, AccessRightException;
 
-    void setRadiusForPartIteration(PartIterationKey partIPK, Float radius) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartIterationNotFoundException;
-
     List<PartRevision> searchPartRevisions(PartSearchQuery partSearchQuery) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ESServerException;
 
     List<ProductBaseline> findBaselinesWherePartRevisionHasIterations(PartRevisionKey partRevisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException;
 
     PartMaster findPartMasterByCADFileName(String workspaceId, String cadFileName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
+
+    Conversion getConversion(PartIterationKey partIterationKey) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException, PartIterationNotFoundException ;
+
+    Conversion createConversion(PartIterationKey partIterationKey) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException, PartIterationNotFoundException, CreationException;
+
+    void removeConversion(PartIterationKey partIterationKey) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException, PartIterationNotFoundException;
+    
+    void endConversion(PartIterationKey partIterationKey, boolean succeed) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException, PartIterationNotFoundException;
+
 }

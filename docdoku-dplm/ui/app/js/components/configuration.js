@@ -33,7 +33,7 @@
 
                     spawn.stderr.on('data', function (data) {
                         data = data.toString().split('\n')[0];
-                        var javaVersion = new RegExp('java version').test(data) ? data.split(' ')[2].replace(/"/g, '') : false;
+                        var javaVersion = new RegExp('java|openjdk version').test(data) ? data.split(' ')[2].replace(/"/g, '') : false;
                         if (javaVersion && javaVersion >= '1.7') {
                             $log.info('Java version found' + javaVersion);
                             deferred.resolve();

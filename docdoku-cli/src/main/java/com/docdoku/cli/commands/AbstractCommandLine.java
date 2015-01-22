@@ -21,7 +21,9 @@
 package com.docdoku.cli.commands;
 
 import com.docdoku.cli.helpers.CliOutput;
+import com.docdoku.cli.interfaces.CommandLine;
 import org.kohsuke.args4j.Option;
+
 import java.io.Console;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -30,7 +32,7 @@ import java.net.URL;
  *
  * @author Florent Garin
  */
-public abstract class AbstractCommandLine implements CommandLine{
+public abstract class AbstractCommandLine implements CommandLine {
 
     @Option(name="-P", aliases = "--port", metaVar = "<port>", usage="port number to use for connection; default is 80")
     protected int port=80;
@@ -47,7 +49,10 @@ public abstract class AbstractCommandLine implements CommandLine{
     @Option(name="-F", aliases = "--format", metaVar = "<format>", usage="output format, possible value : json")
     protected CliOutput.formats format = CliOutput.formats.HUMAN;
 
-    protected CliOutput output;
+    //A default value is set in case an exception is raised
+    //inside the CmdLineParser.parseArgument(args) method.
+
+    protected CliOutput output = CliOutput.getOutput(format);
 
     private void promptForUser(){
         Console c = System.console();
@@ -68,16 +73,20 @@ public abstract class AbstractCommandLine implements CommandLine{
     @Override
     public void exec() throws Exception {
 
-        output = CliOutput.GetOutput(format);
+        output = CliOutput.getOutput(format);
 
-        if(user==null && format.equals(CliOutput.formats.HUMAN)){
-            promptForUser();
-        }
-        if(password==null && format.equals(CliOutput.formats.HUMAN)){
-            promptForPassword();
-        }
+        if(!(this instanceof HelpCommand)){
 
+            if(user==null && format.equals(CliOutput.formats.HUMAN)){
+                promptForUser();
+            }
+            if(password==null && format.equals(CliOutput.formats.HUMAN)){
+                promptForPassword();
+            }
+
+        }
         execImpl();
+
     }
 
     public CliOutput getOutput(){

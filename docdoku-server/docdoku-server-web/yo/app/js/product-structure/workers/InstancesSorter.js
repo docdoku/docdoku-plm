@@ -1,8 +1,24 @@
-/*global WorkerManagedValues,AppWorker,Context*/
+/*global _,WorkerManagedValues,AppWorker,Context,THREE*/
 var InstancesSorter = {};
 
 (function (IS) {
     'use strict';
+    var cameraDist = function (instance) {
+        return Math.min(
+            new THREE.Vector3().subVectors(instance.box.min, Context.camera).length(),
+            new THREE.Vector3().subVectors(instance.box.max, Context.camera).length(),
+            new THREE.Vector3().subVectors(instance.cog, Context.camera).length()
+        );
+    };
+
+    var cameraAngle = function (instance) {
+        return Math.min(
+            new THREE.Vector3().subVectors(instance.box.min, Context.camera).normalize().angleTo(Context.ct),
+            new THREE.Vector3().subVectors(instance.box.max, Context.camera).normalize().angleTo(Context.ct),
+            new THREE.Vector3().subVectors(instance.cog, Context.camera).normalize().angleTo(Context.ct)
+        );
+    };
+
     IS.sort = function (instances) {
 
         /*
@@ -32,7 +48,7 @@ var InstancesSorter = {};
             /*
              * No geometric data
              * */
-            if (!instance.cog || !instance.radius) {
+            if (!instance.cog) {
                 instance.globalRating = -1;
                 result.eliminated++;
                 return;
@@ -52,14 +68,14 @@ var InstancesSorter = {};
              * Max distance/angle/projectedSize filtering
              * */
 
-            var dist = Context.cameraDist(instance);
+            var dist = cameraDist(instance);
             if (dist > WorkerManagedValues.maxDist) {
                 instance.globalRating = -1; // eliminated
                 result.eliminated++;
                 return;
             }
 
-            var angle = Context.cameraAngle(instance);
+            var angle = cameraAngle(instance);
             if (angle > WorkerManagedValues.maxAngle) {
                 instance.globalRating = -1; // eliminated
                 result.eliminated++;
@@ -67,7 +83,6 @@ var InstancesSorter = {};
             }
 
             var projectedSize = (instance.radius * 2) / dist;
-
 
             if (projectedSize < minProjectedSize) {
                 instance.globalRating = -1; // eliminated

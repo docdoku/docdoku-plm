@@ -73,13 +73,23 @@ public class ProductInstanceMaster implements Serializable {
         this.serialNumber = serialNumber;
     }
 
-    public ConfigurationItem getInstanceOf() {return instanceOf;}
-    public void setInstanceOf(ConfigurationItem instanceOf) {this.instanceOf = instanceOf;}
+    public ConfigurationItem getInstanceOf() {
+        return instanceOf;
+    }
+    public void setInstanceOf(ConfigurationItem instanceOf) {
+        this.instanceOf = instanceOf;
+    }
 
-    public String getSerialNumber() {return serialNumber;}
-    public void setSerialNumber(String serialNumber) {this.serialNumber = serialNumber;}
+    public String getSerialNumber() {
+        return serialNumber;
+    }
+    public void setSerialNumber(String serialNumber) {
+        this.serialNumber = serialNumber;
+    }
 
-    public List<ProductInstanceIteration> getProductInstanceIterations() {return productInstanceIterations;}
+    public List<ProductInstanceIteration> getProductInstanceIterations() {
+        return productInstanceIterations;
+    }
 
     public ProductInstanceIteration createNextIteration() {
         ProductInstanceIteration lastProductInstanceIteration = getLastIteration();

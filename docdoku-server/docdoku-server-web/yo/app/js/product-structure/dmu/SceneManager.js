@@ -3,8 +3,9 @@ define([
     'backbone',
     'views/marker_create_modal_view',
     'views/blocker_view',
-    'dmu/LayerManager'
-], function (Backbone,MarkerCreateModalView, BlockerView, LayerManager) {
+    'dmu/LayerManager',
+    'common-objects/utils/date'
+], function (Backbone,MarkerCreateModalView, BlockerView, LayerManager, date) {
 	'use strict';
     var SceneManager = function (pOptions) {
         var _this = this;
@@ -50,13 +51,10 @@ define([
         }
 
         function initDOM() {
-            _this.$container = $('div#container');
+            _this.$container = App.$SceneContainer.find('#container');
             _this.$container[0].setAttribute('tabindex', '-1');
             _this.$blocker = new BlockerView().render().$el;
             _this.$container.append(_this.$blocker);
-            _this.$flyingModeButton = $('#flying_mode_view_btn');
-            _this.$trackingModeButton = $('#tracking_mode_view_btn');
-            _this.$orbitModeButton = $('#orbit_mode_view_btn');
         }
         function initRenderer() {
             _this.renderer = new THREE.WebGLRenderer({preserveDrawingBuffer: true, alpha: true});
@@ -80,18 +78,22 @@ define([
         }
         function initStats() {
             _this.stats = new Stats();
-            App.$SceneContainer.append(_this.stats.domElement);
-            _this.$stats = $(_this.stats.domElement);
-            _this.$stats.attr('id', 'statsWin');
-            _this.$stats.attr('class', 'statsWinMaximized');
-            _this.$statsArrow = $('<i id="statsArrow" class="fa fa-chevron-down"></i>');
-            _this.$stats.prepend(_this.$statsArrow);
-            _this.$statsArrow.bind('click', function () {
-                _this.$stats.toggleClass('statsWinMinimized statsWinMaximized');
-            });
+            var statsElement = _this.stats.domElement;
+            App.$SceneContainer.append(statsElement);
+            statsElement.id='statsWin';
+            statsElement.className='statsWinMaximized';
+            var statsArrow=document.createElement('i');
+            statsArrow.id='statsArrow';
+            statsArrow.className='fa fa-chevron-down';
+            statsElement.insertBefore(statsArrow,statsElement.firstChild);
+            statsArrow.onclick = function () {
+                var statsClass = _this.stats.domElement.classList;
+                statsClass.toggle('statsWinMinimized');
+                statsClass.toggle('statsWinMaximized');
+            };
         }
         function initGrid() {
-            var size = 500, step = 25;
+            var size = 500000, step = 2500;
             var geometry = new THREE.Geometry();
             var material = new THREE.LineBasicMaterial({ vertexColors: THREE.VertexColors });
             var color1 = new THREE.Color(0x444444), color2 = new THREE.Color(0x888888);
@@ -270,12 +272,7 @@ define([
                 mesh.material.opacity = _this.measureState ? 0.5 : 1;
             }
         }
-        function updateAmbientLight(color){
-            App.sceneManager.scene.getObjectByName('AmbientLight').color.setHex(color);
-        }
-        function updateCameraLight(color){
-            App.sceneManager.cameraObject.getObjectByName('CameraLight').color.setHex(color);
-        }
+
         function showGrid() {
             if (_this.grid.added) {
                 return;
@@ -293,8 +290,6 @@ define([
             _this.reDraw();
         }
         function watchSceneOptions() {
-            updateAmbientLight(App.SceneOptions.ambientLightColor);
-            updateCameraLight(App.SceneOptions.cameraLightColor);
             if (App.SceneOptions.grid) {
                 showGrid();
             } else {
@@ -345,7 +340,7 @@ define([
             if (intersects.length > 0 && intersects[0].object.partIterationId) {
                 if (_this.markerCreationMode) {
                     var mcmv = new MarkerCreateModalView({model: currentLayer, intersectPoint: intersects[0].point});
-                    window.document.body.appendChild(mcmv.render().el);
+                    document.body.appendChild(mcmv.render().el);
                     mcmv.openModal();
                 }
                 else if (_this.measureState) {
@@ -779,16 +774,14 @@ define([
         this.takeScreenShot = function () {
 
             var imageSource = _this.renderer.domElement.toDataURL('image/png');
-            var now = new Date();
-            var filename = App.config.productId + '-' + now.getFullYear() + '-' + now.getMonth() + '-' + now.getDay();
+            var filename = App.config.productId + '-' + date.formatTimestamp(App.config.i18n._DATE_SHORT_FORMAT,Date.now());
 
             var save = document.createElement('a');
             save.href = imageSource;
             save.download = filename;
             var event = document.createEvent("MouseEvents");
             event.initMouseEvent(
-                "click", true, false, window, 0, 0, 0, 0, 0
-                , false, false, false, false, 0, null
+                "click", true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null
             );
             save.dispatchEvent(event);
 
@@ -824,7 +817,6 @@ define([
 
             _this.stateControl = _this.STATECONTROL.PLC;
             deleteAllControls();
-            _this.$flyingModeButton.addClass('active');
             _this.$blocker.show();
 
             _this.cameraObject = _this.pointerLockCamera;
@@ -849,8 +841,6 @@ define([
             _this.stateControl = _this.STATECONTROL.TBC;
             deleteAllControls();
 
-            _this.$trackingModeButton.addClass('active');
-
             controlsObject = _this.trackBallControls;
             _this.cameraObject = _this.trackBallCamera;
 
@@ -870,8 +860,6 @@ define([
 
             _this.stateControl = _this.STATECONTROL.ORB;
             deleteAllControls();
-
-            _this.$orbitModeButton.addClass('active');
 
             controlsObject = _this.orbitControls;
             controlsObject.enabled = true;
@@ -990,6 +978,21 @@ define([
             return editedMeshesColoured;
         };
 
+        this.updateAmbientLight = function(color){
+            _this.scene.getObjectByName('AmbientLight').color.set(color);
+            _this.reDraw();
+        };
+
+        this.updateCameraLight = function(color){
+            _this.cameraObject.getObjectByName('CameraLight').color.set(color);
+            _this.reDraw();
+        };
+
+        this.debugPoint = function(v){
+            var cogMesh = new THREE.Mesh(new THREE.SphereGeometry(2,1,1),new THREE.MeshNormalMaterial({color:0xFFFF00}));
+            cogMesh.position.copy(v);
+            _this.scene.add(cogMesh);
+        };
     };
 
     return SceneManager;

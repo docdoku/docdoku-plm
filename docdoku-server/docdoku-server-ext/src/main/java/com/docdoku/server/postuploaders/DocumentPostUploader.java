@@ -24,5 +24,5 @@ import com.docdoku.core.common.BinaryResource;
 
 public interface DocumentPostUploader {
     boolean canProcess(BinaryResource binaryResource);
-    void process(BinaryResource binaryResource) throws Exception;
+    void process(BinaryResource binaryResource);
 }

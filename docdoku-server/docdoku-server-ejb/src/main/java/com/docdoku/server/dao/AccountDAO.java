@@ -28,7 +28,10 @@ import com.docdoku.core.exceptions.CreationException;
 import com.docdoku.core.security.Credential;
 import com.docdoku.core.security.UserGroupMapping;
 
-import javax.persistence.*;
+import javax.persistence.EntityExistsException;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceException;
+import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.Locale;
 
@@ -79,10 +82,11 @@ public class AccountDAO {
     
     public Account loadAccount(String pLogin) throws AccountNotFoundException {
         Account account = em.find(Account.class,pLogin);
-        if (account == null)
+        if (account == null) {
             throw new AccountNotFoundException(mLocale, pLogin);
-        else
+        } else {
             return account;
+        }
     }
     
     public Workspace[] getAdministratedWorkspaces(Account pAdmin) {
@@ -90,8 +94,9 @@ public class AccountDAO {
         TypedQuery<Workspace> query = em.createQuery("SELECT DISTINCT w FROM Workspace w WHERE w.admin = :admin", Workspace.class);
         List<Workspace> listWorkspaces = query.setParameter("admin",pAdmin).getResultList();
         workspaces = new Workspace[listWorkspaces.size()];
-        for(int i=0;i<listWorkspaces.size();i++)
-            workspaces[i]=listWorkspaces.get(i);
+        for(int i=0;i<listWorkspaces.size();i++) {
+            workspaces[i] = listWorkspaces.get(i);
+        }
         
         return workspaces;    
     }
@@ -101,8 +106,9 @@ public class AccountDAO {
         TypedQuery<Workspace> query = em.createQuery("SELECT DISTINCT w FROM Workspace w", Workspace.class);
         List<Workspace> listWorkspaces = query.getResultList();
         workspaces = new Workspace[listWorkspaces.size()];
-        for(int i=0;i<listWorkspaces.size();i++)
-            workspaces[i]=listWorkspaces.get(i);
+        for(int i=0;i<listWorkspaces.size();i++) {
+            workspaces[i] = listWorkspaces.get(i);
+        }
 
         return workspaces;
     }

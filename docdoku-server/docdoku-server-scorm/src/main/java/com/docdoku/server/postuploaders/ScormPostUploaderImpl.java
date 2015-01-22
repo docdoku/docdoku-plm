@@ -52,7 +52,7 @@ public class ScormPostUploaderImpl implements DocumentPostUploader {
     }
 
     @Override
-    public void process(final BinaryResource archiveBinaryResource) throws Exception {
+    public void process(final BinaryResource archiveBinaryResource){
         unzipScormArchive(archiveBinaryResource);
     }
 

@@ -98,6 +98,7 @@ public class Room {
 
     /** @return true if one the participant is named as the input parameter, false otherwise */
     public boolean hasUser(String user) {
+
         if(user != null) {
             if(userSession1 != null && user.equals(getUser1Login())){
                 return true;
@@ -106,6 +107,7 @@ public class Room {
             if(userSession2 != null && user.equals(getUser2Login())){
                 return true;
             }
+
         }
         return false;
     }
@@ -140,6 +142,7 @@ public class Room {
             }
 
         }
+
     }
 
     /** Add a new participant to this room
@@ -213,6 +216,7 @@ public class Room {
         } else if (userSession2 != null && userLogin.equals(getUser2Login())){
             return userSession2;
         }
+
         return null;
     }
 

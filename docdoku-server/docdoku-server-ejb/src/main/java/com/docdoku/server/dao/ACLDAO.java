@@ -32,7 +32,7 @@ import java.util.Map;
 
 public class ACLDAO {
 
-    private EntityManager em;
+    private final EntityManager em;
 
     public ACLDAO(EntityManager pEM) {
         em = pEM;

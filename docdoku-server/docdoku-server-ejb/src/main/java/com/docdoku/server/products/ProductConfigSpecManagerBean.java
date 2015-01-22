@@ -12,6 +12,7 @@ import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.dao.ConfigurationItemDAO;
 import com.docdoku.server.dao.PartUsageLinkDAO;
 import com.docdoku.server.dao.ProductBaselineDAO;
+import com.docdoku.server.dao.ProductInstanceMasterDAO;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
@@ -68,15 +69,26 @@ public class ProductConfigSpecManagerBean implements IProductConfigSpecManagerWS
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
+    public ConfigSpec getConfigSpecForProductInstance(String workspaceId, String ciId, String serialNumber) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductInstanceMasterNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+        ProductInstanceMasterKey pimk = new ProductInstanceMasterKey(serialNumber,workspaceId,ciId);
+        ProductInstanceMaster productIM = new ProductInstanceMasterDAO(em).loadProductInstanceMaster(pimk);
+        ProductInstanceIteration productII = productIM.getLastIteration();
+        return new ProductInstanceConfigSpec(productII,user);
+    }
+
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
     public PartUsageLink filterProductStructure(ConfigurationItemKey pKey, ConfigSpec configSpec, Integer partUsageLink, Integer pDepth) throws ConfigurationItemNotFoundException, WorkspaceNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException, PartUsageLinkNotFoundException, AccessRightException {
         User user = userManager.checkWorkspaceReadAccess(pKey.getWorkspace());
+        Locale userLocal = new Locale(user.getLanguage());
         int depth = (pDepth == null) ? -1 : pDepth;
         PartUsageLink rootUsageLink;
 
         if (partUsageLink == null || partUsageLink == -1) {                                                             // If no partUsageLink specified, we get the rootPartUsageLink
             rootUsageLink = getRootPartUsageLink(pKey);
         } else {
-            rootUsageLink = new PartUsageLinkDAO(new Locale(user.getLanguage()), em).loadPartUsageLink(partUsageLink);
+            rootUsageLink = new PartUsageLinkDAO(userLocal, em).loadPartUsageLink(partUsageLink);
         }
 
         PartMaster component = rootUsageLink.getComponent();
@@ -90,7 +102,7 @@ public class ProductConfigSpecManagerBean implements IProductConfigSpecManagerWS
 
             return rootUsageLink;
         }else{
-            throw new AccessRightException(new Locale(user.getLanguage()), user);
+            throw new AccessRightException(userLocal, user);
         }
     }
 
@@ -146,7 +158,7 @@ public class ProductConfigSpecManagerBean implements IProductConfigSpecManagerWS
         if(partI!=null){
             try {
                 // Check PartIteration access
-                canRead = productManager.canAccess(user, partI.getKey());
+                canRead = productManager.canUserAccess(user, partI.getKey());
 
                 // Filter the childs and childs substitute
                 if (canRead && depth != 0) {

@@ -36,7 +36,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Logger;
 
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @Local(IDataManagerLocal.class)
@@ -48,8 +47,6 @@ public class DataManagerBean implements IDataManagerLocal {
 
     private StorageProvider defaultStorageProvider;
     private FileStorageProvider fileStorageProvider;
-
-    private static final Logger LOGGER = Logger.getLogger(DataManagerBean.class.getName());
 
     @PostConstruct
     private void init() {
@@ -64,9 +61,9 @@ public class DataManagerBean implements IDataManagerLocal {
             return defaultStorageProvider.getBinaryResourceInputStream(binaryResource);
         } catch (FileNotFoundException e) {
             BinaryResource previous = binaryResource.getPrevious();
-            if (previous != null)
+            if (previous != null) {
                 return getBinaryResourceInputStream(previous);
-            else {
+            } else {
                 throw new StorageException(new StringBuilder().append("Can't find ").append(binaryResource.getFullName()).toString());
             }
         }
@@ -78,9 +75,9 @@ public class DataManagerBean implements IDataManagerLocal {
             return fileStorageProvider.getBinarySubResourceInputStream(binaryResource, subResourceVirtualPath);
         } catch (FileNotFoundException e) {
             BinaryResource previous = binaryResource.getPrevious();
-            if (previous != null)
+            if (previous != null) {
                 return getBinarySubResourceInputStream(previous, subResourceVirtualPath);
-            else {
+            } else {
                 throw new StorageException(new StringBuilder().append("Can't find sub resource ").append(subResourceVirtualPath).append(" of ").append(binaryResource.getFullName()).toString());
             }
         }
@@ -113,9 +110,9 @@ public class DataManagerBean implements IDataManagerLocal {
             fileStorageProvider.copySubResources(source, destination);
         } catch (FileNotFoundException e) {
             BinaryResource previous = source.getPrevious();
-            if (previous != null)
+            if (previous != null) {
                 copyData(previous, destination);
-            else {
+            } else {
                 throw new StorageException(new StringBuilder().append("Can't find source file to copy ").append(source.getFullName()).toString());
             }
         }
@@ -134,9 +131,9 @@ public class DataManagerBean implements IDataManagerLocal {
             return fileStorageProvider.getLastModified(binaryResource, subResourceVirtualPath);
         } catch (FileNotFoundException e) {
             BinaryResource previous = binaryResource.getPrevious();
-            if (previous != null)
+            if (previous != null) {
                 return getLastModified(previous, subResourceVirtualPath);
-            else {
+            } else {
                 throw new StorageException(new StringBuilder().append("Can't find source file to get last modified date ").append(binaryResource.getFullName()).toString());
             }
         }

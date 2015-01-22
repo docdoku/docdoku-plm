@@ -39,6 +39,7 @@
         'dplm.services.3d',
         'dplm.directives.filechange',
         'dplm.directives.scrollend',
+        'dplm.directives.filedrop',
         'dplm.filters.fileshortname',
         'dplm.filters.timeago',
         'dplm.filters.last',
@@ -75,7 +76,18 @@
 
         })
 
-        .controller('MenuController', function () {
+        .controller('MenuController', function ($scope,FolderService) {
+            $scope.toggleFolders = function(){
+                $scope.foldersExpanded=!$scope.foldersExpanded;
+            };
+            $scope.toggleWorkspaces = function(){
+                $scope.workspacesExpanded=!$scope.workspacesExpanded;
+            };
+            $scope.onFileDropped = function(path){
+                if(path){
+                    FolderService.add(path);
+                }
+            };
         })
 
         .controller('FolderMenuController', function ($scope) {

@@ -27,10 +27,12 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.Query;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class SubscriptionDAO {
-
-    private EntityManager em;
+    private static final Logger LOGGER = Logger.getLogger(SubscriptionDAO.class.getName());
+    private final EntityManager em;
 
     public SubscriptionDAO(EntityManager pEM) {
         em = pEM;
@@ -49,8 +51,10 @@ public class SubscriptionDAO {
             //em.getReference throws a NullPointerException when entity
             //doesn't exist. It's probably a bug, as a workaround
             //we silently catch this exception
+            LOGGER.log(Level.FINER,null,pNPEx);
         } catch (EntityNotFoundException pENFEx) {
             //not subscribed, no need to unsubscribe
+            LOGGER.log(Level.FINER,null,pENFEx);
         }
     }
 
@@ -67,8 +71,10 @@ public class SubscriptionDAO {
             //em.getReference throws a NullPointerException when entity
             //doesn't exist. It's probably a bug, as a workaround
             //we silently catch this exception
+            LOGGER.log(Level.FINER,null,pNPEx);
         } catch (EntityNotFoundException pENFEx) {
             //not subscribed, no need to unsubscribe
+            LOGGER.log(Level.FINER,null,pENFEx);
         }
     }
 

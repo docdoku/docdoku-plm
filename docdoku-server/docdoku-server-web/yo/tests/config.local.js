@@ -4,7 +4,7 @@
 module.exports = {
     //"domain":"localhost",
     //"workspace": "foo",
-    //"port": "8080",
+    //"port": "8989",
     //"login": "foo",
     //"pass": "bar",
     //"contextPath": "/"

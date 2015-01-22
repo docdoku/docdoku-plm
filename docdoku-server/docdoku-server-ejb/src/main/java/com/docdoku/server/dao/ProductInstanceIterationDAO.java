@@ -31,11 +31,15 @@ import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ProductInstanceIterationDAO {
 
     private EntityManager em;
     private Locale mLocale;
+
+    private static Logger LOGGER = Logger.getLogger(ProductInstanceIterationDAO.class.getName());
 
     public ProductInstanceIterationDAO(EntityManager pEM) {
         em = pEM;
@@ -44,6 +48,15 @@ public class ProductInstanceIterationDAO {
     public ProductInstanceIterationDAO(Locale pLocale, EntityManager pEM) {
         em = pEM;
         mLocale = pLocale;
+    }
+
+    public void createProductInstanceIteration(ProductInstanceIteration productInstanceIteration){
+        try {
+            em.persist(productInstanceIteration);
+            em.flush();
+        }catch (Exception e){
+            LOGGER.log(Level.SEVERE,"Fail to create product instance iteration",e);
+        }
     }
 
     public List<ProductInstanceIteration> findProductInstanceIterationsByMaster(ProductInstanceMasterKey prodInstMKey) {
@@ -73,7 +86,9 @@ public class ProductInstanceIterationDAO {
         for(BaselinedPart baselinedPart : baselinedPartList){
             if(baselinedPart.getPartCollection().getId()==collectionId){
                 returnList.add(baselinedPart);
-                if(returnList.size()>=maxResults){break;}
+                if(returnList.size()>=maxResults){
+                    break;
+                }
             }
         }
         return returnList;

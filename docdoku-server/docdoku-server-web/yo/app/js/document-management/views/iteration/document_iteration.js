@@ -25,6 +25,7 @@ define([
 
             this.events['click a#previous-iteration'] = 'onPreviousIteration';
             this.events['click a#next-iteration'] = 'onNextIteration';
+            this.events["click .modal-footer button.btn-primary"] = "interceptSubmit";
             this.events['submit form'] = 'onSubmitForm';
             this.events['click a.document-path'] = 'onFolderPathClicked';
 
@@ -204,42 +205,52 @@ define([
                 this.$('.checkout-user-popover').userPopover(this.model.getCheckoutUser().login, this.model.id, 'right');
             }
 
+            date.dateHelper(this.$('.date-popover'));
+
             this.tagsManagement(editMode);
 
             return this;
         },
 
+        interceptSubmit:function(){
+            this.isValid = !this.$('.tabs').invalidFormTabSwitcher();
+        },
+
         onSubmitForm: function (e) {
 
-            /*saving iteration*/
-            this.iteration.save({
-                revisionNote: this.$('#inputRevisionNote').val(),
-                instanceAttributes: this.attributesView.collection.toJSON(),
-                linkedDocuments: this.linkedDocumentsView.collection.toJSON()
-            });
+            if(this.isValid){
 
-            /*There is a parsing problem at saving time*/
-            var files = this.iteration.get('attachedFiles');
+                /*saving iteration*/
+                this.iteration.save({
+                    revisionNote: this.$('#inputRevisionNote').val(),
+                    instanceAttributes: this.attributesView.collection.toJSON(),
+                    linkedDocuments: this.linkedDocumentsView.collection.toJSON()
+                });
 
-            /*tracking back files*/
-            this.iteration.set({
-                attachedFiles: files
-            });
+                /*There is a parsing problem at saving time*/
+                var files = this.iteration.get('attachedFiles');
 
-            /*
-             *saving new files : nothing to do : it's already saved
-             *deleting unwanted files
-             */
-            this.fileListView.deleteFilesToDelete();
+                /*tracking back files*/
+                this.iteration.set({
+                    attachedFiles: files
+                });
 
-            /*
-             * Delete tags if needed
-             * */
+                /*
+                 *saving new files : nothing to do : it's already saved
+                 *deleting unwanted files
+                 */
+                this.fileListView.deleteFilesToDelete();
 
-            this.deleteClickedTags();
+                /*
+                 * Delete tags if needed
+                 * */
+
+                this.deleteClickedTags();
 
 
-            this.hide();
+                this.hide();
+
+            }
 
             // prevent page reload when pressing enter
             e.preventDefault();

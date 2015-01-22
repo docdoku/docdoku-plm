@@ -20,6 +20,7 @@
 
 package com.docdoku.test.smoke;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static junit.framework.Assert.fail;
@@ -29,6 +30,7 @@ public class DocumentCreationTest {
 
 
     @Test
+    @Ignore
     public void test() {
         DocumentCreation documentCreationTest = new DocumentCreation();
         try {

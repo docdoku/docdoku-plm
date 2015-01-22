@@ -1,11 +1,13 @@
 /*global _,define,App*/
-'use strict';
 define([
 	'backbone',
 	'mustache',
 	'common-objects/collections/baselines',
-	'text!common-objects/templates/baselines/snap_baseline_view.html'
-], function (Backbone, Mustache, Baselines, template) {
+	'text!common-objects/templates/baselines/snap_baseline_view.html',
+    'common-objects/views/alert'
+], function (Backbone, Mustache, Baselines, template, AlertView) {
+    'use strict';
+
 	var SnapLatestBaselineView = Backbone.View.extend({
 		events: {
 			'submit #baseline_creation_form': 'onSubmitForm',
@@ -36,45 +38,65 @@ define([
 			if (this.isProduct) {
 				this.$inputBaselineType.val(this.options.type);
 			}
-			return this;
+            this.$inputBaselineName.customValidity(App.config.i18n.REQUIRED_FIELD);
+            return this;
 		},
 
 		bindDomElements: function () {
 			this.$modal = this.$('#baseline_creation_modal');
+            this.$notifications = this.$el.find('.notifications').first();
 			this.$inputBaselineName = this.$('#inputBaselineName');
 			this.$inputBaselineDescription = this.$('#inputBaselineDescription');
+            this.$submitButton = this.$('button.btn-primary').first();
 			if (this.isProduct) {
 				this.$inputBaselineType = this.$('#inputBaselineType');
 			}
 		},
 
 		onSubmitForm: function (e) {
-			var data = {
+            this.$submitButton.attr('disabled', 'disabled');
+            var data = {
 				name: this.$inputBaselineName.val(),
 				description: this.$inputBaselineDescription.val()
 			};
-			var callbacks = {
-				success: this.onBaselineCreated,
-				error: this.onError
-			};
-			if (this.isProduct) {
-				data.type = this.$inputBaselineType.val();
-				this.model.createBaseline(data, callbacks);
-			} else {
-				var baselinesCollection = this.collection;
-				baselinesCollection.create(data, callbacks);
-			}
+            if(data.name.trim()){
+                var _this = this;
+                var callbacks = {
+                    success: this.onBaselineCreated,
+                    error: function(error){
+                        _this.onError(data,error);
+                        _this.$submitButton.removeAttr('disabled');
+                    }
+                };
+                if (this.isProduct) {
+                    data.type = this.$inputBaselineType.val();
+                    this.model.createBaseline(data, callbacks);
+                } else {
+                    var baselinesCollection = this.collection;
+                    baselinesCollection.create(data, callbacks);
+                }
+            }else{
+                this.$submitButton.removeAttr('disabled');
+            }
 			e.preventDefault();
 			e.stopPropagation();
 			return false;
 		},
 
-		onBaselineCreated: function () {
+		onBaselineCreated: function (e) {
+            if (typeof(e) === 'string') {
+                this.trigger('warning',e);
+            }
 			this.closeModal();
 		},
 
-		onError: function (error) {
-			alert(App.config.i18n.CREATION_ERROR + ' : ' + error.responseText);
+		onError: function (model, error) {
+            var errorMessage = error ? error.responseText : model;
+
+            this.$notifications.append(new AlertView({
+                type: 'error',
+                message: errorMessage
+            }).render().$el);
 		},
 
 		openModal: function () {

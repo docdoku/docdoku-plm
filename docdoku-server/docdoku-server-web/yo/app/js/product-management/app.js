@@ -7,7 +7,6 @@ define([
 ], function (Backbone, Mustache, Workspace, template) {
 	'use strict';
     var AppView = Backbone.View.extend({
-
         el: '#content',
 
         events: {},
@@ -23,6 +22,7 @@ define([
             this.$el.html(Mustache.render(template, {model: this.model, i18n: App.config.i18n}));
 
             App.$productManagementMenu = this.$('#product-management-menu');
+            App.$productManagementContent = this.$('#product-management-content');
 
             App.$productManagementMenu.customResizable({
                 containment: this.$el

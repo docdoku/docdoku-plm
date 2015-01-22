@@ -71,15 +71,7 @@ public class WorkflowManagerBean implements IWorkflowManagerWS, IWorkflowManager
         User user = userManager.checkWorkspaceWriteAccess(pWorkspaceId);
         Locale userLocale = new Locale(user.getLanguage());
 
-        if(pActivityModels.length==0){
-            throw new NotAllowedException(userLocale,"NotAllowedException2");
-        }
-
-        for(ActivityModel activity : pActivityModels){
-            if(activity.getLifeCycleState()==null || "".equals(activity.getLifeCycleState())){
-                throw new NotAllowedException(userLocale,"NotAllowedException3");
-            }
-        }
+        checkWorkflowValidity(userLocale,pId,pActivityModels);
 
         WorkflowModelDAO modelDAO = new WorkflowModelDAO(userLocale, em);
         WorkflowModel model = new WorkflowModel(user.getWorkspace(), pId, user, pFinalLifeCycleState, pActivityModels);
@@ -171,4 +163,26 @@ public class WorkflowManagerBean implements IWorkflowManagerWS, IWorkflowManager
         roleDAO.deleteRole(role);
     }
 
+
+    private void checkWorkflowValidity(Locale userLocale,String pId,ActivityModel[] pActivityModels) throws NotAllowedException {
+        if(pId == null || " ".equals(pId)){
+            throw new NotAllowedException(userLocale,"WorkflowNameEmptyException");
+        }
+
+        if(pActivityModels.length==0){
+            throw new NotAllowedException(userLocale,"NotAllowedException2");
+        }
+
+        for(ActivityModel activity : pActivityModels){
+            if(activity.getLifeCycleState()==null || "".equals(activity.getLifeCycleState() ) || activity.getTaskModels().isEmpty()){
+                throw new NotAllowedException(userLocale,"NotAllowedException3");
+
+            }
+            for (TaskModel taskModel : activity.getTaskModels()) {
+                if (taskModel.getRole() == null || "".equals(taskModel.getRole().getName())) {
+                    throw new NotAllowedException(userLocale, "NotAllowedException13");
+                }
+            }
+        }
+    }
 }

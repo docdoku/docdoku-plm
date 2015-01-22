@@ -1,34 +1,35 @@
 /*global define*/
 define([
-    "common-objects/views/components/modal",
-    "text!templates/folder_edit.html"
+    'common-objects/views/components/modal',
+    'text!templates/folder_edit.html'
 ], function (ModalView, template) {
     var FolderEditView = ModalView.extend({
         template: template,
-        tagName: "div",
+        tagName: 'div',
         initialize: function () {
             ModalView.prototype.initialize.apply(this, arguments);
-            this.events["submit form"] = "primaryAction";
+            this.events['submit #edit-folder-form'] = 'onSubmitForm';
         },
         rendered: function () {
-            this.nameInput = this.$el.find("input.name").first();
-            this.nameInput.val(this.model.get("name"));
-            this.previousName = this.model.get("name");
+            this.nameInput = this.$('input.name');
+            this.nameInput.customValidity(App.config.i18n.REQUIRED_FIELD);
+            this.nameInput.val(this.model.get('name'));
+            this.previousName = this.model.get('name');
         },
-        primaryAction: function () {
+
+        onSubmitForm: function (e) {
             var name = $.trim(this.nameInput.val());
 
-            if (name != this.model.get("name") && name != "") {
+            if (name != this.model.get('name') && name != '') {
                 this.model.save({
                     name: name
                 }, {
                     success: this.success,
                     error: this.error
                 });
-            } else {
-                this.hide();
             }
-
+            e.preventDefault();
+            e.stopPropagation();
             return false;
         },
         success: function (model, response) {
@@ -36,10 +37,10 @@ define([
             this.hide();
         },
         error: function (model, error) {
-            this.model.set("name",this.previousName);
+            this.model.set('name',this.previousName);
             if (error.responseText) {
                 this.alert({
-                    type: "error",
+                    type: 'error',
                     message: error.responseText
                 });
             } else {

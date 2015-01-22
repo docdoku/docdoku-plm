@@ -73,8 +73,9 @@ public class PartRevisionKey implements Serializable, Comparable<PartRevisionKey
         if (this == pObj) {
             return true;
         }
-        if (!(pObj instanceof PartRevisionKey))
+        if (!(pObj instanceof PartRevisionKey)) {
             return false;
+        }
         PartRevisionKey key = (PartRevisionKey) pObj;
         return ((key.partMaster.equals(partMaster)) && (key.version.equals(version)));
     }
@@ -89,10 +90,11 @@ public class PartRevisionKey implements Serializable, Comparable<PartRevisionKey
 
     public int compareTo(PartRevisionKey pKey) {
         int wksMaster = partMaster.compareTo(pKey.partMaster);
-        if (wksMaster != 0)
+        if (wksMaster != 0) {
             return wksMaster;
-        else
+        } else {
             return version.compareTo(pKey.version);
+        }
     }
 
     @Override

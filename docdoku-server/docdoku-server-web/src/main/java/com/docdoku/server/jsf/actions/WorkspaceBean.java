@@ -30,6 +30,7 @@ import com.docdoku.core.services.IWorkspaceManagerLocal;
 
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -124,7 +125,7 @@ public class WorkspaceBean {
         return request.getContextPath() + "/admin/workspace/editWorkspace.xhtml";
     }
 
-    public String createWorkspace() throws FolderAlreadyExistsException, UserAlreadyExistsException, WorkspaceAlreadyExistsException, CreationException, NotAllowedException, AccountNotFoundException, ESIndexNamingException {
+    public String createWorkspace() throws FolderAlreadyExistsException, UserAlreadyExistsException, WorkspaceAlreadyExistsException, CreationException, NotAllowedException, AccountNotFoundException, ESIndexNamingException, IOException {
         String remoteUser = FacesContext.getCurrentInstance().getExternalContext().getRemoteUser();
         Account account;
         if(userManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID)){
@@ -135,8 +136,11 @@ public class WorkspaceBean {
         Workspace workspace = userManager.createWorkspace(workspaceId, account, workspaceDescription, freezeFolders);
         adminState.setSelectedWorkspace(workspace.getId());
         adminState.setSelectedGroup(null);
-        HttpServletRequest request = (HttpServletRequest) (FacesContext.getCurrentInstance().getExternalContext().getRequest());
-        return request.getContextPath() +"/admin/workspace/createWorkspace.xhtml";
+
+        ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+        HttpServletRequest request = (HttpServletRequest) ec.getRequest();
+        ec.redirect(request.getContextPath() + "/faces/admin/workspace/createWorkspace.xhtml");
+        return "";
     }
 
     public void read() throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException {

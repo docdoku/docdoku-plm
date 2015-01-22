@@ -124,6 +124,23 @@
 
             };
 
+            this.isFolder = function(path){
+                return $q(function(resolve,reject){
+                    var fs = require('fs');
+                    fs.stat(path, function(err,stats){
+                        if(err){
+                            reject(err);
+                        }
+                        else if(stats.isDirectory()){
+                            resolve();
+                        }else{
+                            reject(null);
+                        }
+                    });
+                });
+
+            };
+
         });
 
 })();

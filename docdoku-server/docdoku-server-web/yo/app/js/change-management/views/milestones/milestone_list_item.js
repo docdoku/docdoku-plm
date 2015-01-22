@@ -3,8 +3,9 @@ define([
     'backbone',
     'mustache',
     'text!templates/milestones/milestone_list_item.html',
-    'views/milestones/milestone_edition'
-], function (Backbone, Mustache, template, MilestoneEditionView) {
+    'views/milestones/milestone_edition',
+    'common-objects/utils/date'
+], function (Backbone, Mustache, template, MilestoneEditionView,date) {
 	'use strict';
 	var MilestoneListItemView = Backbone.View.extend({
 
@@ -24,6 +25,7 @@ define([
             this.$el.html(Mustache.render(template, {model: this.model, i18n: App.config.i18n}));
             this.$checkbox = this.$('input[type=checkbox]');
             this.trigger('rendered', this);
+            date.dateHelper(this.$('.date-popover'));
             return this;
         },
 

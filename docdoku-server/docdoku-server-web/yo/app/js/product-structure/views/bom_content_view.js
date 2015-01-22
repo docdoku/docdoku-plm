@@ -4,8 +4,10 @@ define([
 	'mustache',
 	'views/bom_item_view',
 	'text!templates/bom_content.html',
-	'collections/part_collection'
-],function (Backbone, Mustache, BomItemView, template, PartList) {
+	'collections/part_collection',
+    'common-objects/views/prompt',
+    'common-objects/views/security/acl_edit'
+],function (Backbone, Mustache, BomItemView, template, PartList, PromptView, ACLEditView) {
 	'use strict';
     var BomContentView = Backbone.View.extend({
 
@@ -92,10 +94,69 @@ define([
         },
 
         actionCheckin: function () {
+            var self = this ;
             _.each(this.checkedViews(), function (view) {
-                view.model.checkin();
+                if (!view.model.getLastIteration().get('iterationNote')) {
+                    var promptView = new PromptView();
+                    promptView.setPromptOptions(App.config.i18n.ITERATION_NOTE, App.config.i18n.ITERATION_NOTE_PROMPT_LABEL, App.config.i18n.ITERATION_NOTE_PROMPT_OK, App.config.i18n.ITERATION_NOTE_PROMPT_CANCEL);
+                    window.document.body.appendChild(promptView.render().el);
+                    promptView.openModal();
+
+                    self.listenTo(promptView, 'prompt-ok', function (args) {
+                        var iterationNote = args[0];
+                        if (_.isEqual(iterationNote, '')) {
+                            iterationNote = null;
+                        }
+                        view.model.getLastIteration().save({
+                            iterationNote: iterationNote
+                        }).success(function () {
+                            view.model.checkin();
+                        });
+
+                    });
+
+                    self.listenTo(promptView, 'prompt-cancel', function () {
+                        view.model.checkin();
+                    });
+
+                } else {
+                    view.model.checkin();
+                }
+
             });
             return false;
+        },
+
+        actionUpdateACL:function(){
+            var _this = this;
+
+            var selectedPart = this.checkedViews()[0].model;
+
+            var aclEditView = new ACLEditView({
+                editMode: true,
+                acl: selectedPart.get('acl')
+            });
+
+            aclEditView.setTitle(selectedPart.getPartKey());
+
+            window.document.body.appendChild(aclEditView.render().el);
+
+            aclEditView.openModal();
+
+            aclEditView.on('acl:update', function () {
+
+                var acl = aclEditView.toList();
+
+                selectedPart.updateACL({
+                    acl: acl || {userEntries: {}, groupEntries: {}},
+                    success: function () {
+                        selectedPart.set('acl', acl);
+                        aclEditView.closeModal();
+                    },
+                    error: _this.onError
+                });
+
+            });
         },
 
         dataTable: function () {
@@ -118,11 +179,16 @@ define([
                 },
                 sDom: 'ft',
                 aoColumnDefs: [
-                    { 'bSortable': false, 'aTargets': [ 0 ] },
+                    { 'bSortable': false, 'aTargets': [ 0, 10, 11 ] },
                     { 'sType': App.config.i18n.DATE_SORT, 'aTargets': [7, 8] }
                 ]
             });
             this.$el.parent().find('.dataTables_filter input').attr('placeholder', App.config.i18n.FILTER);
+        },
+
+        onError:function(model, error){
+            var errorMessage = error ? error.responseText : model;
+            alert(errorMessage);
         }
 
     });
