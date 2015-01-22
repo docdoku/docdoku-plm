@@ -8,10 +8,18 @@ function (Backbone, singletonDecorator) {
     var Router = Backbone.Router.extend({
         routes: {
             ':workspaceId/:productId': 'defaults',
+            ':workspaceId/:productId/scene': 'scene',
+            ':workspaceId/:productId/bom': 'bom',
             ':workspaceId/:productId/room/:key': 'joinCollaborative'
         },
         defaults: function (workspaceId, productId) {
-
+            this.navigate(workspaceId+'/'+productId+'/scene',{trigger:true});
+        },
+        scene:function(workspaceId, productId){
+            App.appView.sceneMode();
+        },
+        bom:function(workspaceId, productId){
+            App.appView.initBom();
         },
         joinCollaborative: function (workspaceId, productId, key) {
             if (!App.collaborativeView.isMaster) {

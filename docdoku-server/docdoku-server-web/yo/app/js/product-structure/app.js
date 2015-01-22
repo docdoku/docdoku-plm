@@ -30,8 +30,8 @@ define([
         el: '#content',
 
         events: {
-            'click #scene_view_btn': 'sceneMode',
-            'click #bom_view_btn': 'bomMode',
+            'click #scene_view_btn': 'sceneButton',
+            'click #bom_view_btn': 'bomButton',
             'click #export_scene_btn': 'exportScene',
             'click #fullscreen_scene_btn': 'fullScreenScene'
         },
@@ -89,6 +89,20 @@ define([
             this.bindDatGUIControls();
 
             return this;
+        },
+
+        initBom:function(){
+
+            var _this = this;
+            if(App.partsTreeView.componentSelected){
+                this.bomMode()
+            }else{
+                App.partsTreeView.on('collection:fetched',function(){
+                    _this.bomMode();
+                });
+            }
+
+            this.initBom = this.bomMode;
         },
 
         requestJoinRoom: function (key) {
@@ -179,6 +193,13 @@ define([
 
         isInBomMode: function () {
             return this.inBomMode;
+        },
+
+        sceneButton:function(){
+            App.router.navigate(App.config.workspaceId + '/' + App.config.productId + '/' + 'scene',{trigger:true});
+        },
+        bomButton:function(){
+            App.router.navigate(App.config.workspaceId + '/' + App.config.productId + '/' + 'bom',{trigger:true});
         },
 
         setSpectatorView: function () {

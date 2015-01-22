@@ -29,6 +29,15 @@ define(['backbone'], function (Backbone) {
             return App.config.contextPath + '/product-structure/#' + App.config.workspaceId + '/' + encodeURIComponent(this.getId());
         },
 
+        getBomUrl: function () {
+            return App.config.contextPath + '/product-structure/#' + App.config.workspaceId + '/' + encodeURIComponent(this.getId()) + '/bom' ;
+        },
+
+        getSceneUrl: function () {
+            return App.config.contextPath + '/product-structure/#' + App.config.workspaceId + '/' + encodeURIComponent(this.getId()) + '/scene';
+        },
+
+
         getFrameUrl: function () {
             return  App.config.contextPath + '/visualization/#' + App.config.workspaceId + '/' + this.getId() + '/0/10/1000/null/'+App.config.configSpec;
         },
