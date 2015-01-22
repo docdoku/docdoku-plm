@@ -20,7 +20,6 @@
 package com.docdoku.server;
 
 import com.docdoku.core.common.BinaryResource;
-import com.docdoku.core.product.Conversion;
 import com.docdoku.core.product.Geometry;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartIterationKey;
@@ -42,7 +41,6 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.io.*;
-import java.util.Date;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -94,25 +92,10 @@ public class ConverterBean implements IConverterManagerLocal {
 
     @Override
     @Asynchronous
-    public void convertCADFileToOBJ(PartIterationKey pPartIPK, BinaryResource cadBinaryResource) throws Exception {
+    @CADConvert
+    public void convertCADFileToOBJ(PartIterationKey pPartIPK, BinaryResource cadBinaryResource) throws Exception{
 
         boolean succeed = false;
-
-        // Are there any existing conversions
-        Conversion existingConversion = productService.getConversion(pPartIPK);
-
-        // Don't try to convert if any conversions pending
-        if(existingConversion != null && existingConversion.isPending()){
-            LOGGER.log(Level.SEVERE, "Conversion already running for part iteration " + pPartIPK);
-            return;
-        }
-
-        // Clean old non pending conversions
-        if(existingConversion != null){
-            productService.removeConversion(pPartIPK);
-        }
-
-        productService.createConversion(pPartIPK);
 
         File tempDir = Files.createTempDir();
 
@@ -130,8 +113,7 @@ public class ConverterBean implements IConverterManagerLocal {
         if (selectedConverter != null) {
 
             PartIterationDAO partIDAO = new PartIterationDAO(em);
-            PartIteration partI = partIDAO.loadPartI(pPartIPK);
-
+            PartIteration  partI = partIDAO.loadPartI(pPartIPK);
             File convertedFile = selectedConverter.convert(partI, cadBinaryResource, tempDir);
 
             if (convertedFile != null) {
@@ -143,6 +125,7 @@ public class ConverterBean implements IConverterManagerLocal {
                 // Copy the converted file if decimation failed, ignore decimated files
                 if(!succeed){
                     saveFile(pPartIPK, 0, convertedFile, box);
+                    succeed = true;
                 }
 
             }else{
@@ -153,16 +136,11 @@ public class ConverterBean implements IConverterManagerLocal {
             LOGGER.log(Level.WARNING, "No CAD converter able to handle " + cadBinaryResource.getName());
         }
 
-        // Needs to fetch the object that was created in an other transaction
-        Conversion conversion = productService.getConversion(pPartIPK);
-
-        if(conversion != null){
-            conversion.setSucceed(succeed);
-            conversion.setPending(false);
-            conversion.setEndDate(new Date());
-        }
-
         FileIO.rmDir(tempDir);
+        
+        if(!succeed){
+            throw new Exception("Conversion Failed");
+        }
     }
 
     private boolean decimate(PartIterationKey pPartIPK, File file, File tempDir, double[] box) {
@@ -202,10 +180,8 @@ public class ConverterBean implements IConverterManagerLocal {
 
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Decimation failed for " + file.getAbsolutePath(), e);
-        } finally {
-            FileIO.rmDir(tempDir);
         }
-
+        
         return decimateSucceed;
     }
 
