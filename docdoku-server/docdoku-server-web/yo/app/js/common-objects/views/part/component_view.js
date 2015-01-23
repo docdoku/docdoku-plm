@@ -39,7 +39,7 @@ define([
             var self = this;
             _(this.model.get('cadInstances')).each(function (instance) {
                 self.addCadInstanceView(instance);
-                self.collapseTransformations();
+                self.$cadInstances.hide();
             });
         }
         ,initUnit:function(){
