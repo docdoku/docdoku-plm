@@ -27,6 +27,7 @@
     .well{
       float: left;
       padding:9px;
+      width: 95%;
 
       a.remove {
 
@@ -60,6 +61,9 @@
         }
 
       }
+      select[name="unitMeasure"]{
+        width:72px;
+      }
 
       .add-cadInstance{
         margin-top: 8px;
@@ -70,11 +74,19 @@
           opacity: 1;
         }
       }
+      .collapse-cadInstance{
+        float: right;
+        margin-top: 8px;
+        cursor: pointer;
+        opacity: 0.5;
+        &:hover{
+          opacity: 1;
+        }
+      }
 
       .cadInstances{
         float:left;
         clear:both;
-
         .cadInstance{
           h5{
             font-weight:normal;

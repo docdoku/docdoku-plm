@@ -421,8 +421,9 @@ public class PartResource {
                     }
                 }
                 partUsageLink.setComponent(component);
-                partUsageLink.setAmount(cadInstances.size());
+                partUsageLink.setAmount(partUsageLinkDTO.getAmount());
                 partUsageLink.setCadInstances(cadInstances);
+                partUsageLink.setUnit(partUsageLinkDTO.getUnit());
                 components.add(partUsageLink);
             }
 

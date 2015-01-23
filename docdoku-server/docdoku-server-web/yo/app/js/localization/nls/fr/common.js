@@ -397,6 +397,7 @@ define({
 	UNDO_CHECKOUT: "Annuler la r\u00e9servation",
 	UNDO_CHECKOUT_QUESTION: "Annuler la r\u00e9servation ?",
 	UNFOLD_TASK: "Editer la tâche",
+    UNIT:"Unité",
 	UNREACHABLE: "Impossible d'envoyer l'invitation, l'utilisateur distant est hors-ligne",
 	UNSUBSCRIBE_ITERATION_CHANGE: "Se désabonner des notifications de changement d'itération",
 	UNSUBSCRIBE_STATE_CHANGE: "Se désabonner des notifications de changement d'état",

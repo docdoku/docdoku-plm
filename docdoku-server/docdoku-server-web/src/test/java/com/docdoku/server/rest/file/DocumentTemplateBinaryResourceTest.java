@@ -72,9 +72,14 @@ public class DocumentTemplateBinaryResourceTest {
         binaryResource = Mockito.spy(new BinaryResource(ResourceUtil.FILENAME1,ResourceUtil.DOCUMENT_SIZE,new Date()));
         Collection<Part> filesParts = new ArrayList<Part>();
         filesParts.add(new PartImp(new File(getClass().getClassLoader().getResource(ResourceUtil.SOURCE_FILE_STORAGE + ResourceUtil.FILENAME1).getFile())));
-        File uploadedFile1 = new File(getClass().getResource(ResourceUtil.TARGET_FILE_STORAGE + "new_" + ResourceUtil.FILENAME1).getFile());
-
-        OutputStream outputStream = new FileOutputStream(uploadedFile1);
+        File uploadedFile = new File(ResourceUtil.TARGET_FILE_STORAGE + "new_" + ResourceUtil.FILENAME1);
+        if (!uploadedFile.getParentFile().exists()){
+            uploadedFile.getParentFile().mkdirs();
+        }
+        if (!uploadedFile.exists()){
+            uploadedFile.createNewFile();
+        }
+        OutputStream outputStream = new FileOutputStream(uploadedFile);
         Mockito.when(documentService.saveFileInTemplate(Matchers.any(DocumentMasterTemplateKey.class),Matchers.anyString(), Matchers.anyInt())).thenReturn(binaryResource);
         Mockito.when(dataManager.getBinaryResourceOutputStream(binaryResource)).thenReturn(outputStream);
         Mockito.when(request.getRequestURI()).thenReturn(ResourceUtil.WORKSPACE_ID + "/documents/" + ResourceUtil.DOCUMENT_ID + "/" + ResourceUtil.FILENAME1);
