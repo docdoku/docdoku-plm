@@ -1,4 +1,4 @@
-/*global _,define,App,bootbox*/
+/*global _,define,App,bootbox,window*/
 define([
     'backbone',
     'mustache',
@@ -288,7 +288,7 @@ define([
         },
 
         goToPage: function () {
-            var requestedPage = prompt(App.config.i18n.GO_TO_PAGE, '1');
+            var requestedPage = window.prompt(App.config.i18n.GO_TO_PAGE, '1');
             if (requestedPage - 1 >= 0 && requestedPage <= this.partListView.collection.getPageCount()) {
                 this.partListView.collection.setCurrentPage(requestedPage - 1).fetch({reset: true});
                 this.updatePageIndicator();
