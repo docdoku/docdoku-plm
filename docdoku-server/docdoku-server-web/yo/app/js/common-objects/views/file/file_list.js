@@ -68,7 +68,7 @@ define([
         fileDropHandler: function (e) {
             this.fileDragHover(e);
             if(this.options.singleFile && e.dataTransfer.files.length > 1){
-                window.alert(App.config.i18n.SINGLE_FILE_RESTRICTION)
+                window.alert(App.config.i18n.SINGLE_FILE_RESTRICTION);
                 return;
             }
 

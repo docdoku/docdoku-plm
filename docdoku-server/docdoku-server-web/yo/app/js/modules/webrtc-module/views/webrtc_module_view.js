@@ -1,4 +1,4 @@
-/*global define,App,preferOpus,setDefaultCodec,removeCN,RTCSessionDescription,_*/
+/*global define,App,preferOpus,setDefaultCodec,removeCN,RTCSessionDescription,RTCIceCandidate,_*/
 define([
     'backbone',
     'modules/webrtc-module/adapters/attachMediaStream',

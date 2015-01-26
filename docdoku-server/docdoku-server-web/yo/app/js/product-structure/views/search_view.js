@@ -10,7 +10,7 @@ define([
         el: '#nav_list_action_bar',
 
         events: {
-            'submit form#nav_list_search': 'onSearchSubmit',
+            'submit form#nav_list_search': 'onSearchSubmit'
         },
 
         initialize: function () {
