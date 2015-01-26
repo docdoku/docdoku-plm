@@ -14,12 +14,13 @@ define([
             'blur .edit': 'stopEditingName',
             'keypress .edit': 'stopEditingNameOnEnter',
             'click i.end': 'toggleEditingMarkers',
-            'click i.fa-times': 'removeLayer'
+            'click i.fa-times': 'removeLayer',
+            'change input[type="color"]':'colorChanged'
         },
 
         initialize: function () {
             this.listenTo(this.model, 'destroy', this.remove)
-                .listenTo(this.model, 'change:editingName change:editingMarkers change:shown', this.render)
+                .listenTo(this.model, 'change:editingName change:editingMarkers change:shown change:color', this.render)
                 .listenTo(this.model.getMarkers(), 'add remove reset', this.render);
         },
 
@@ -83,6 +84,11 @@ define([
                 collection.onEmpty();
             }
 
+        },
+        colorChanged:function(e){
+            this.model.setColor(e.target.value.replace('#',''));
+            App.sceneManager.reDraw();
+            this.model.save();
         }
 
     });

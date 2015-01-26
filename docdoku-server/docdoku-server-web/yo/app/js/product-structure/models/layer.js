@@ -26,6 +26,8 @@ define([
             return this.get('color');
         },
         setColor: function (color) {
+            this.material.color.set(parseInt('0x' + color, 16));
+            this.material.needsUpdate = true;
             return this.set('color', color);
         },
 
