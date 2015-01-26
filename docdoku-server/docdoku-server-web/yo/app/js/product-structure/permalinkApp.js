@@ -15,9 +15,9 @@ var App = {
 define(function () {
 	'use strict';
     function PermalinkApp(filename, width, height) {
-        var container = $('#container');
+        var container = document.getElementById('container');
         var scene = new THREE.Scene();
-        var camera = new THREE.PerspectiveCamera(45, container.width() / container.height(), App.SceneOptions.cameraNear, App.SceneOptions.cameraFar);
+        var camera = new THREE.PerspectiveCamera(45, container.innerWidth / container.innerHeight, App.SceneOptions.cameraNear, App.SceneOptions.cameraFar);
         var control;
         var renderer = new THREE.WebGLRenderer({alpha: true});
         var texturePath = filename.substring(0, filename.lastIndexOf('/'));
@@ -33,10 +33,10 @@ define(function () {
         camera.position.copy(App.SceneOptions.defaultCameraPosition);
         addLightsToCamera(camera);
         renderer.setSize(width, height);
-        container.append(renderer.domElement);
+        container.appendChild(renderer.domElement);
         scene.add(camera);
         scene.updateMatrixWorld();
-        control = new THREE.TrackballControls(camera, container[0]);
+        control = new THREE.TrackballControls(camera, container);
 
         function centerOn(mesh) {
             mesh.geometry.computeBoundingBox();

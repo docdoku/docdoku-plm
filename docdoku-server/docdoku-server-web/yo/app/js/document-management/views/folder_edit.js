@@ -18,9 +18,10 @@ define([
         },
 
         onSubmitForm: function (e) {
-            var name = $.trim(this.nameInput.val());
 
-            if (name != this.model.get('name') && name != '') {
+            var name = this.nameInput.val() ? this.nameInput.val().trim():'';
+
+            if (name && name != this.model.get('name')) {
                 this.model.save({
                     name: name
                 }, {
@@ -28,6 +29,7 @@ define([
                     error: this.error
                 });
             }
+            
             e.preventDefault();
             e.stopPropagation();
             return false;

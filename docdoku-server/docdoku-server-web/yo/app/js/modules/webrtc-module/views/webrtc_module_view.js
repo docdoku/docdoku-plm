@@ -54,7 +54,7 @@ function (Backbone, attachMediaStream, RTCPeerConnection, getUserMedia, template
 
         render: function () {
 
-            $(this.el).html(template);
+            this.$el.html(template);
 
             this.videoContainer = this.$('#webrtc_video_container')[0];
             this.localVideo = this.$('#webrtc_local_video')[0];

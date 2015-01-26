@@ -91,7 +91,7 @@ define([
 			if(this.type==='document'){
 				snapBaselineView = new SnapBaselineView({type: 'DOCUMENT', collection: this.collection});
 			}
-			$('body').append(snapBaselineView.render().el);
+            window.document.body.appendChild(snapBaselineView.render().el);
 			snapBaselineView.openModal();
 		},
 

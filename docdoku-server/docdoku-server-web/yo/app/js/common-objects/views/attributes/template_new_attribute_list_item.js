@@ -29,7 +29,7 @@ define([
         },
         typeChanged: function (evt) {
             this.model.set({
-                attributeType: $(evt.target).val()
+                attributeType: evt.target.value
             });
         },
         updateName: function () {

@@ -10,7 +10,8 @@ define([
             this.events['click ' + this.checkToggle] = 'toggle';
         },
         toggle: function () {
-            if ($(this.checkToggle).is(':checked')) {
+
+            if (this.$(this.checkToggle).is(':checked')) {
                 _.each(_.values(this.subViews), function (view) {
                     view.check();
                 });

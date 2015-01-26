@@ -36,7 +36,7 @@ define([
         },
 
         selected: function () {
-            var id = $("#select-" + this.cid).val();
+            var id = this.$("#select-" + this.cid).val();
             var model = this.collection.get(id);
             return model;
         }

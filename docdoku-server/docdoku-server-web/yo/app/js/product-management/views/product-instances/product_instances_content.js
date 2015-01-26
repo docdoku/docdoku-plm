@@ -58,14 +58,11 @@ define([
         },
 
         newProductInstance: function () {
-            var self = this;
-            this.lockButton(true);
             var productInstanceCreationView = new ProductInstanceCreationView({
-                collection: self.collection
+                collection: this.collection
             });
             window.document.body.appendChild(productInstanceCreationView.render().el);
             productInstanceCreationView.openModal();
-            self.lockButton(false);
         },
 
         fillProductList: function (list) {
@@ -102,19 +99,7 @@ define([
         },
 
         changeDeleteButtonDisplay: function (state) {
-            if (state) {
-                this.deleteButton.show();
-            } else {
-                this.deleteButton.hide();
-            }
-        },
-
-        lockButton: function (state) {
-            if (state) {
-                $('button.new-product-instance').attr('disabled', 'disabled');
-            } else {
-                $('button.new-product-instance').removeAttr('disabled');
-            }
+            this.deleteButton.toggle(state);
         },
 
         onError:function(model, error){

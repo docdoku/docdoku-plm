@@ -42,7 +42,7 @@ define([
             }).render();
 
             // Add the fileListView to the tab
-            $('#tab-files-' + this.cid).append(this.fileListView.el);
+            this.$('#tab-files-' + this.cid).append(this.fileListView.el);
 
             this.$('a#mask-help').popover({
                 title: App.config.i18n.MASK,
@@ -62,9 +62,9 @@ define([
             if(this.isValid){
                 this.model.unset('reference');
                 this.model.save({
-                    documentType: $('#form-' + this.cid + ' .type').val(),
-                    mask: $('#form-' + this.cid + ' .mask').val(),
-                    idGenerated: $('#form-' + this.cid + ' .id-generated').is(':checked'),
+                    documentType: this.$('#form-' + this.cid + ' .type').val(),
+                    mask: this.$('#form-' + this.cid + ' .mask').val(),
+                    idGenerated: this.$('#form-' + this.cid + ' .id-generated').is(':checked'),
                     attributeTemplates: this.attributesView.collection.toJSON(),
                     attributesLocked: this.attributesView.isAttributesLocked()
                 }, {

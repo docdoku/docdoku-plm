@@ -16,7 +16,7 @@ define([
         },
 
         gridSwitch: function () {
-            var gridSwitch = $('#gridSwitch');
+            var gridSwitch = this.$('#gridSwitch');
             gridSwitch.toggleClass('active');
             App.SceneOptions.grid = !!gridSwitch.hasClass('active');
         },
@@ -31,7 +31,7 @@ define([
         },
 
         showEditedMeshes: function () {
-            var showEditedMeshes = $('#show_edited_meshes');
+            var showEditedMeshes = this.$('#show_edited_meshes');
             showEditedMeshes.toggleClass('active');
             if (showEditedMeshes.hasClass('active')) {
                 App.sceneManager.colourEditedMeshes();

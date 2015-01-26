@@ -31,12 +31,12 @@ define([
                 this.$('a#collaborative_create').hide();
                 this.$('#collaborative_room').show();
                 if (this.isMaster) {
-                    $('#coworkers_access_module_entries').find('.fa-globe').removeClass('corworker-action-disable').addClass('corworker-action');
+                    App.headerView.removeActionDisabled();
                     App.appView.leaveSpectatorView();
                     App.sceneManager.enableControlsObject();
                     this.reduceAllCommands();
                 } else {
-                    $('#coworkers_access_module_entries').find('.fa-globe').removeClass('corworker-action').addClass('corworker-action-disable');
+                    App.headerView.addActionDisabled();
                     App.sceneManager.disableControlsObject();
                     App.appView.setSpectatorView();
                     this.$('.fa-chevron-right').hide();

@@ -42,7 +42,7 @@ define([
         },
 
         typeChanged: function (evt) {
-            var type = $(evt.target).val();
+            var type = evt.target.value;
             this.model.set({
                 type: type,
                 value: "" // TODO: Validate and convert if possible between types

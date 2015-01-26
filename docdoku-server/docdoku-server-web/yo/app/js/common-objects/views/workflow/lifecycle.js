@@ -1,4 +1,4 @@
-/*global _,define,App*/
+/*global _,$,define,App*/
 define([
     'backbone',
     'mustache',
@@ -91,7 +91,7 @@ define([
         currentWorkflow: function (e) {
             this.displayWorkflow(this.workflow);
             this.$historyContent.find('a.active').removeClass('active');
-            $(e.target).addClass('active');
+            e.target.classList.add('active');
         },
 
         abortedWorkflow: function (e) {
@@ -102,7 +102,7 @@ define([
             })[0];
             if (workflow) {
                 this.$historyContent.find('a.active').removeClass('active');
-                $(e.target).addClass('active');
+                e.target.classList.add('active');
                 this.displayWorkflow(workflow);
             }
         },

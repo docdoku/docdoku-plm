@@ -39,15 +39,15 @@ define([
 
             this.$el.empty();
 
-            $.each(this.rolesItemViews, function (index, view) {
-                self.$el.append(view.$el);
-            });
+            _.each(this.rolesItemViews, function (view) {
+                this.$el.append(view.$el);
+            },this);
 
         },
 
         toList: function () {
             var list = [];
-            $.each(this.rolesItemViews, function (index, view) {
+            _.each(this.rolesItemViews, function (view) {
                 list.push({roleName: view.model.get('name'), userLogin: view.model.get('defaultUserMapped').login });
             });
             return list;
