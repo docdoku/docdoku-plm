@@ -1,4 +1,4 @@
-/*global define*/
+/*global define,_*/
 define(['backbone'], function (Backbone) {
     'use strict';
     var ChatMessageView = Backbone.View.extend({

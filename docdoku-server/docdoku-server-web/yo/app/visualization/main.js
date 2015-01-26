@@ -1,4 +1,4 @@
-/*global $,require,window*/
+/*global $,require,window,_*/
 var App = {
     debug: false,
 
@@ -8,7 +8,7 @@ var App = {
 		login: '',
 		groups: [],
 		contextPath: '',
-		locale: localStorage.getItem('locale') || 'en'
+		locale: window.localStorage.getItem('locale') || 'en'
 	},
 
     WorkerManagedValues: {

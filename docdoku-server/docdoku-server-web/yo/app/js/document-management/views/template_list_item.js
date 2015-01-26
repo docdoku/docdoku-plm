@@ -1,4 +1,4 @@
-/*global define,App*/
+/*global define,App,_*/
 define([
     "common-objects/utils/date",
     "common-objects/views/documents/checkbox_list_item",

@@ -137,7 +137,7 @@ define([
 
             this.xhr.open('POST', this.options.uploadBaseUrl);
 
-            var fd = new FormData();
+            var fd = new window.FormData();
             fd.append('upload', file);
 
             this.xhr.send(fd);

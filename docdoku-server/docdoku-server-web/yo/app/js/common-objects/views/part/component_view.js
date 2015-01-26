@@ -111,8 +111,8 @@ define([
               }
 
             } else {
-                if ( parseInt(this.$amount.val()) > this.$('.cadInstance').length) {
-                    while (this.$('.cadInstance').length < parseInt(this.$amount.val()) ) {
+                if ( parseInt(this.$amount.val(),10) > this.$('.cadInstance').length) {
+                    while (this.$('.cadInstance').length < parseInt(this.$amount.val(),10) ) {
                         var instance = {tx: 0, ty: 0, tz: 0, rx: 0, ry: 0, rz: 0};
                         this.model.get('cadInstances').push(instance);
                         this.addCadInstanceView(instance);
@@ -125,7 +125,7 @@ define([
                 this.$amount.removeAttr('disabled');
                 this.$('.add-cadInstance').hide();
             }else{
-                this.$amount.val(parseInt(this.$amount.val())== 0 ? 1:parseInt(this.$amount.val()));
+                this.$amount.val(parseInt(this.$amount.val())== 0 ? 1:parseInt(this.$amount.val(),10));
                 this.$amount.attr('disabled','disabled');
                 this.$('.add-cadInstance').show();
             }

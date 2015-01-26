@@ -1,3 +1,4 @@
+/*global _,jQuery*/
 (function ($) {
 	'use strict';
     $.fn.highlightEffect = function () {

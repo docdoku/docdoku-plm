@@ -1,4 +1,4 @@
-/*global define*/
+/*global define,_*/
 define(['backbone'], function (Backbone) {
 
     var Marker = Backbone.Model.extend({
