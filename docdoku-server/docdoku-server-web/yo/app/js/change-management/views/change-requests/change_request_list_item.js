@@ -59,15 +59,12 @@ define([
         },
 
         openEditionView: function () {
-            var that = this;
-            this.model.fetch();
             var editionView = new ChangeRequestEditionView({
-                collection: that.collection,
-                model: that.model
+                collection: this.collection,
+                model: this.model
             });
             window.document.body.appendChild(editionView.render().el);
             editionView.openModal();
-
         }
     });
 

@@ -92,7 +92,6 @@ define([
                 data: JSON.stringify(tags),
                 contentType: 'application/json; charset=utf-8',
                 success: function () {
-                    this.fetch();
                 }
             });
         },
@@ -134,7 +133,6 @@ define([
                 data: JSON.stringify(documents),
                 contentType: 'application/json; charset=utf-8',
                 success: function () {
-                    this.fetch();
                     if (callback) {
                         callback();
                     }
@@ -150,7 +148,6 @@ define([
                 data: JSON.stringify(parts),
                 contentType: 'application/json; charset=utf-8',
                 success: function () {
-                    this.fetch();
                     if (callback) {
                         callback();
                     }
