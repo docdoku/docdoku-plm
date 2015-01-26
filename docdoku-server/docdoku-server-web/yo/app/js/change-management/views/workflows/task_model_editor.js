@@ -102,7 +102,7 @@ define([
             if(roleName){
                 var selectedRole = this.roles.findWhere({name: roleName});
                 if(!selectedRole){
-                    var selectedRole={
+                    selectedRole={
                         workspaceId: App.config.workspaceId,
                         name: roleName,
                         defaultUserMapped: null

@@ -1,4 +1,4 @@
-/*global define,bootbox,App*/
+/*global define,bootbox,App,window*/
 define([
 	'backbone',
 	'mustache',
@@ -109,7 +109,7 @@ define([
                                     that.$select.val('latest').change();
                                 },
                                 error:function(model,err){
-                                    alert(err.responseText);
+                                    window.alert(err.responseText);
                                 }});
                         }
                     });

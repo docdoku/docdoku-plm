@@ -1,4 +1,4 @@
-/*global define,App*/
+/*global define,App,window*/
 define([
     'backbone',
     'mustache',
@@ -122,7 +122,7 @@ define([
                         this.refreshTask();
                     },
                     error: function (error) {
-                        alert(error.responseText);
+                        window.alert(error.responseText);
                     }
                 });
 
@@ -142,7 +142,7 @@ define([
                         this.refreshTask();
                     },
                     error: function (error) {
-                        alert(error.responseText);
+                        window.alert(error.responseText);
                     }
                 });
 

@@ -1,4 +1,4 @@
-/*global _,define,App*/
+/*global _,define,App,window*/
 define([
 	'backbone',
 	'mustache',
@@ -188,7 +188,7 @@ define([
 
         onError:function(model, error){
             var errorMessage = error ? error.responseText : model;
-            alert(errorMessage);
+            window.alert(errorMessage);
         }
 
     });

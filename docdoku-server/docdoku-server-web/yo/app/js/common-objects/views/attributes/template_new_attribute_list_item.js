@@ -1,4 +1,4 @@
-/*global define*/
+/*global define,App*/
 define([
     "common-objects/views/components/list_item",
     "text!common-objects/templates/attributes/template_new_attribute_list_item.html"

@@ -138,6 +138,7 @@ define({
 	EDIT_PRODUCT: "Edit product",
 	EDIT_PRODUCT_INSTANCE: "Edit the deliverable",
 	EDIT_REQUEST: "Edit the request",
+    EDITION_ERROR:"An error occurred while the edition",
 	EMBED_SCENE: "Embed Scene",
 	ENTER_NAV: "Start the navigation",
 	ERROR: "Error",

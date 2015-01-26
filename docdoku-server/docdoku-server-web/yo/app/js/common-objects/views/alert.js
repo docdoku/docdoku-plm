@@ -1,9 +1,9 @@
 /*global define*/
 define([
-    'common-objects/views/base',
+    'backbone',
     'mustache',
     'text!common-objects/templates/alert.html'
-], function (BaseView, Mustache, template) {
+], function (Backbone, Mustache, template) {
     'use strict';
     var AlertView = Backbone.View.extend({
         event:{

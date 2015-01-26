@@ -1,4 +1,4 @@
-/*global _,$,define,App*/
+/*global _,$,define,App,window*/
 define([
     'backbone',
     'mustache',
@@ -122,7 +122,7 @@ define([
             this.xhr.addEventListener('load', function (e) {
 
                 if (e.currentTarget.status !== 200 && e.currentTarget.status !== 201) {
-                    alert(e.currentTarget.statusText);
+                    window.alert(e.currentTarget.statusText);
                     self.finished();
                     return false;
                 }
@@ -178,7 +178,7 @@ define([
 			file.destroy({
 				dataType: 'text', // server doesn't send a json hash in the response body
 				error: function () {
-					alert(App.config.i18n.FILE_DELETION_ERROR.replace('%{id}',file.id));
+					window.alert(App.config.i18n.FILE_DELETION_ERROR.replace('%{id}',file.id));
 				}
 			});
 		},

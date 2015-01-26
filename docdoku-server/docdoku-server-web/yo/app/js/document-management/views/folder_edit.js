@@ -1,4 +1,4 @@
-/*global define*/
+/*global define,App*/
 define([
     'common-objects/views/components/modal',
     'text!templates/folder_edit.html'

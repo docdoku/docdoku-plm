@@ -1,4 +1,4 @@
-/*global _,define,App,bootbox*/
+/*global _,define,App,bootbox,window*/
 define([
     'backbone',
     'mustache',
@@ -143,7 +143,7 @@ define([
                                     that.onSelectionChanged();
                                 },
                                 error: function (model, err) {
-                                    alert(err.responseText);
+                                    window.alert(err.responseText);
                                     that.onSelectionChanged();
                                 }
                             });

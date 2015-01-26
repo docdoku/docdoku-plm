@@ -29,7 +29,7 @@ define([
             this.$runButton = this.$('.run-udf');
             this.$udfResult = this.$('.udf-result');
             this.$userDefineInit = this.$('.user-defined-init');
-            this.$userDefineFunctionDef = this.$('.user-defined-function-def')
+            this.$userDefineFunctionDef = this.$('.user-defined-function-def');
             this.fetchProducts();
             return this;
         },
@@ -110,14 +110,15 @@ define([
 
         doUDF:function(pRootComponent,callback){
 
+            var memo;
+
             try {
 
                 var initFunction = new Function(this.$userDefineInit.val());
                 var reduceFunction =  new Function('part','memo',this.$userDefineFunctionDef.val());
 
+                memo = initFunction();
 
-
-                var memo = initFunction();
                 var assemblyVisited = 0;
                 var instancesVisited = 0;
 
@@ -156,16 +157,16 @@ define([
                 if(typeof memo !== 'String'){
                     try{
                         memo = JSON.stringify(memo);
-                    }catch(e){
-                        memo = App.config.i18n.ERROR + ' : "' + e +'"';
+                    }catch(e1){
+                        memo = App.config.i18n.ERROR + ' : "' + e1 +'"';
                     }
                 }
 
-            }catch(e){
-                memo = App.config.i18n.ERROR + ' : "' + e+'"';
+            }catch(e2){
+                memo = App.config.i18n.ERROR + ' : "' + e2+'"';
             }
 
-            this.$udfResult.html('memo = ' + memo); // + ' <br />' + assemblyVisited + ' assemblies visited  <br />' + instancesVisited + ' instances visited');
+            this.$udfResult.html('memo = ' + memo);
 
             callback();
         }
