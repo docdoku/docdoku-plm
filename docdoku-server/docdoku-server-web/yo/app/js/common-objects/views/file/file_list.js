@@ -26,6 +26,8 @@ define([
         initialize: function () {
             this.editMode = this.options.editMode;
 
+            this.xhrs = [];
+
             // jQuery creates it's own event object, and it doesn't have a
             // dataTransfer property yet. This adds dataTransfer to the event object.
             $.event.props.push('dataTransfer');
@@ -65,11 +67,16 @@ define([
 
         fileDropHandler: function (e) {
             this.fileDragHover(e);
-            this.uploadNewFile(e.dataTransfer.files[0]);
+            if(this.options.singleFile && e.dataTransfer.files.length > 1){
+                window.alert(App.config.i18n.SINGLE_FILE_RESTRICTION)
+                return;
+            }
+
+            _.each(e.dataTransfer.files, this.uploadNewFile.bind(this));
         },
 
         fileSelectHandler: function (e) {
-            this.uploadNewFile(e.target.files[0]);
+            _.each(e.target.files, this.uploadNewFile.bind(this));
         },
 
         addAllFiles: function () {
@@ -98,10 +105,13 @@ define([
         },
 
         uploadNewFile: function (file) {
-            var self = this;
-            var fileName = unorm.nfc(file.name);
 
-            this.uploadFileNameP.html(fileName);
+            var self = this;
+
+            var fileName = unorm.nfc(file.name);
+            var progressBar = $('<div class="progress progress-striped"><div class="bar">'+fileName+'</div></div>');
+            var bar = progressBar.find('.bar');
+            this.progressBars.append(progressBar);
 
             this.gotoUploadingState();
 
@@ -110,24 +120,28 @@ define([
                 shortName: fileName
             });
 
-            this.xhr = new XMLHttpRequest();
 
-            this.xhr.upload.addEventListener('progress', function (evt) {
+            var xhr = new XMLHttpRequest();
+
+
+            xhr.upload.addEventListener('progress', function (evt) {
                 if (evt.lengthComputable) {
                     var percentComplete = Math.round(evt.loaded * 100 / evt.total);
-                    self.progressBar.width(percentComplete + '%');
+                    bar.width(percentComplete + '%');
                 }
             }, false);
 
-            this.xhr.addEventListener('load', function (e) {
+            xhr.addEventListener('load', function (e) {
 
                 if (e.currentTarget.status !== 200 && e.currentTarget.status !== 201) {
                     window.alert(e.currentTarget.statusText);
-                    self.finished();
+                    self.xhrFinished(xhr);
+                    progressBar.remove();
                     return false;
                 }
 
-                self.finished();
+                self.xhrFinished(xhr);
+                progressBar.remove();
                 newFile.isNew = function () {
                     return false;
                 };
@@ -135,12 +149,21 @@ define([
                 self.newItems.add(newFile);
             }, false);
 
-            this.xhr.open('POST', this.options.uploadBaseUrl);
+            xhr.open('POST', this.options.uploadBaseUrl);
 
             var fd = new window.FormData();
             fd.append('upload', file);
 
-            this.xhr.send(fd);
+            xhr.send(fd);
+
+            this.xhrs.push(xhr);
+        },
+
+        xhrFinished : function(xhr){
+            this.xhrs.splice(this.xhrs.indexOf(xhr),1);
+            if(!this.xhrs.length){
+                this.gotoIdleState();
+            }
         },
 
         finished: function () {
@@ -148,7 +171,7 @@ define([
         },
 
         cancelButtonClicked: function () {
-            this.xhr.abort();
+            _.invoke(this.xhrs,'abort');
             this.finished();
         },
 
@@ -162,9 +185,7 @@ define([
 
         deleteNewFiles: function () {
             //Abort file upload if there is one
-            if (!_.isUndefined(this.xhr)) {
-                this.xhr.abort();
-            }
+            _.invoke(this.xhrs,'abort');
 
             /*deleting unwanted files that have been added by upload*/
             /*we need to reverse read because model.destroy() remove elements from collection*/
@@ -187,7 +208,6 @@ define([
             this.$el.removeClass('uploading');
             this.$el.addClass('idle');
             this.uploadInput.val('');
-            this.progressBar.width('0%');
         },
 
         gotoUploadingState: function () {
@@ -196,7 +216,7 @@ define([
         },
 
         render: function () {
-            this.$el.html(Mustache.render(template, {i18n: App.config.i18n, editMode: this.editMode}));
+            this.$el.html(Mustache.render(template, {i18n: App.config.i18n, editMode: this.editMode, multiple:!this.options.singleFile}));
 
             this.bindDomElements();
 
@@ -209,8 +229,8 @@ define([
             this.filedroparea = this.$('#filedroparea');
             this.filesUL = this.$('ul.file-list');
             this.uploadFileNameP = this.$('p#upload-file-shortname');
-            this.progressBar = this.$('div.bar');
             this.uploadInput = this.$('input#upload-btn');
+            this.progressBars = this.$('div.progress-bars');
         }
     });
     return FileListView;
