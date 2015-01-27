@@ -6,10 +6,10 @@
                                                                                                            value="{{model.amount}}"
                                                                                                            title="{{i18n.AMOUNT}}"
                                                                                                            disabled/>
-    <select name="unitMeasure" class="unit unitEdit"><option value="unit" selected>{{i18n.UNIT}}</option><option value="kg">{{i18n.KG}}</option><option value="l">{{i18n.LITER}}</option><option value="m">{{i18n.METER}}</option><option value="m²">{{i18n.SQUARE_METER}}</option>
+    <select name="unitMeasure" class="unit unitEdit"><option value="" selected="selected">{{i18n.UNIT}}</option><option value="kg">{{i18n.KG}}</option><option value="l">{{i18n.LITER}}</option><option value="m">{{i18n.METER}}</option><option value="m²">{{i18n.SQUARE_METER}}</option>
 
     </select>
-    <input type="text" name="newUnit" placeholder="{{i18n.NEW_UNIT}}" />
+    <input type="text" name="newUnit" value="{{i18n.UNIT}}" placeholder="{{i18n.UNIT}}"  />
 
     <input type="text" name="comment" value="{{model.comment}}"
            placeholder="{{i18n.PART_DESCRIPTION}}"/>

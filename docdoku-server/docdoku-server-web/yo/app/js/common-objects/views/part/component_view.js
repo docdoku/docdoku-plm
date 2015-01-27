@@ -48,8 +48,13 @@ define([
         }
         ,initUnit:function(){
             var unit = this.model.get('unit');
-            this.$unitText.val(unit);
             this.$('.unitEdit option[value='+unit+']').attr('selected','selected');
+            if (this.$('.unitEdit option:selected').val() != "")
+            {
+                this.$unitText.val(this.$('.unitEdit option:selected').val());
+            }else{
+                this.$unitText.val( this.$unitText.attr("placeholder"));
+            }
             this.disableEnableAmount(unit);
         },
 
@@ -118,15 +123,7 @@ define([
         },
         checkIntegrity: function (unit) {
 
-            if (unit != "unit") {
-                if( this.$('.cadInstance').length > 1){
-                    this.$(".cadInstance:not(:first)").remove();
-                    while(this.model.get('cadInstances').length > 1){
-                        this.model.get('cadInstances').pop();
-                    }
-                }
-
-            } else {
+             if (unit == "null" || unit == "" ) {
                 if ( parseInt(this.$amount.val(),10) > this.$('.cadInstance').length) {
                     while (this.$('.cadInstance').length < parseInt(this.$amount.val(),10) ) {
                         var instance = {tx: 0, ty: 0, tz: 0, rx: 0, ry: 0, rz: 0};
@@ -134,16 +131,28 @@ define([
                         this.addCadInstanceView(instance);
                     }
                 }
-            }
+            }else  {
+                 if( this.$('.cadInstance').length > 1){
+                     this.$(".cadInstance:not(:first)").remove();
+                     while(this.model.get('cadInstances').length > 1){
+                         this.model.get('cadInstances').pop();
+                     }
+                 }
+
+             }
         },
         disableEnableAmount: function(unit){
-            if (unit != "unit"){
-                this.$amount.removeAttr('disabled');
-                this.$('.add-cadInstance').hide();
-            }else{
+
+            if (unit == "null" || unit == "" || unit == undefined)
+            {
                 this.$amount.val(parseInt(this.$amount.val(),10)== 0 ? 1:parseInt(this.$amount.val(),10));
                 this.$amount.attr('disabled','disabled');
                 this.$('.add-cadInstance').show();
+                this.$unitText.val(this.$unitText.attr('placeholder'));
+            }
+            else{
+                this.$amount.removeAttr('disabled');
+                this.$('.add-cadInstance').hide();
             }
             this.checkIntegrity(unit);
 
