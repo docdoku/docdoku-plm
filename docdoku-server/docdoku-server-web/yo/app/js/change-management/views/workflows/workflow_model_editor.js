@@ -83,10 +83,17 @@ define([
             if(_.isUndefined(this.options.workflowModelId)) {
                 this.model = new WorkflowModel();
                 this.model.attributes.activityModels.bind('add', this.addActivity, this);
+                
                 this.$notifications.append(new AlertView({
                     type: 'info',
                     message: App.config.i18n.WARNING_ACTIVITIES_MISSING
                 }).render().$el);
+
+                this.$notifications.append(new AlertView({
+                    type: 'info',
+                    message: App.config.i18n.WARNING_FINAL_STATE_MISSING
+                }).render().$el);
+
             } else {
                 this.model = new WorkflowModel({
                     id: this.options.workflowModelId
