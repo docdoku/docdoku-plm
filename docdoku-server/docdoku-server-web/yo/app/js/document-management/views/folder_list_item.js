@@ -47,7 +47,8 @@ define([
             });
             this.events['click [data-target="#items-' + this.cid + '"]'] = 'forceShow';
             this.events['click .status'] = 'toggle';
-
+            this.bind('shown', this.shown);
+            this.bind('hidden', this.hidden);
         },
         modelToJSON: function () {
             var data = this.model.toJSON();
@@ -74,8 +75,6 @@ define([
                     collection: this.collection
                 })
             ).render();
-            this.bind('shown', this.shown);
-            this.bind('hidden', this.hidden);
 
             this.folderDiv = this.$('>.nav-list-entry');
 
