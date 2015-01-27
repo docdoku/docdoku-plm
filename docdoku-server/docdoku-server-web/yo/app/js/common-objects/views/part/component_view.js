@@ -5,14 +5,16 @@ define([
     'text!common-objects/templates/part/component_view.html',
     'common-objects/views/part/cad_instance_view'
 ], function (Backbone, Mustache, template, CadInstanceView) {
-	'use strict';
+    'use strict';
     var ComponentView = Backbone.View.extend({
 
         events: {
             'click a.remove': 'onRemove',
             'change input[name=amount]': 'changeAmount',
+            'change input[name=comment]': 'changeComment',
             'change input[name=number]': 'changeNumber',
             'change input[name=name]': 'changeName',
+            'change input[name=newUnit]': 'addNewUnit',
             'change select[name=unitMeasure]': 'changeMeasureUnit',
             'click .add-cadInstance': 'addCadInstance',
             'click .collapse-cadInstance': 'collapseTransformations'
@@ -33,6 +35,8 @@ define([
         bindDomElements: function () {
             this.$cadInstances = this.$('.cadInstances');
             this.$amount = this.$('input[name=amount]');
+            this.$comment = this.$('input[name=comment]');
+            this.$unitText = this.$('input[name=newUnit]');
         },
 
         initCadInstanceViews: function () {
@@ -44,11 +48,12 @@ define([
         }
         ,initUnit:function(){
             var unit = this.model.get('unit');
+            this.$unitText.val(unit);
             this.$('.unitEdit option[value='+unit+']').attr('selected','selected');
             this.disableEnableAmount(unit);
         },
 
-    addCadInstanceView: function (instance) {
+        addCadInstanceView: function (instance) {
             var self = this;
             var instanceView = new CadInstanceView();
             instanceView.setInstance(instance).render();
@@ -74,21 +79,31 @@ define([
             this.model.get('cadInstances').push(instance);
             this.addCadInstanceView(instance);
             this.$amount.val(parseInt(this.$amount.val(), 10) + 1);
+            this.model.set('amount',this.$amount.val());
         },
+
+        addNewUnit: function(e){
+            this.model.set('unit',e.target.value);
+
+        },
+
         collapseTransformations: function () {
-           if(this.$cadInstances.is(":visible")){
-               this.$cadInstances.hide();
-               this.$('.collapse-cadInstance').addClass("fa-angle-double-down").removeClass("fa-angle-double-up");
-           }
-           else{
-               this.$cadInstances.show();
-               this.$('.collapse-cadInstance').removeClass("fa-angle-double-down").addClass("fa-angle-double-up");
-           }
+            if(this.$cadInstances.is(":visible")){
+                this.$cadInstances.hide();
+                this.$('.collapse-cadInstance').addClass("fa-angle-double-down").removeClass("fa-angle-double-up");
+            }
+            else{
+                this.$cadInstances.show();
+                this.$('.collapse-cadInstance').removeClass("fa-angle-double-down").addClass("fa-angle-double-up");
+            }
 
         },
         changeAmount: function (e) {
             this.model.set('amount',e.target.value);
             this.model.get('component').amount= e.target.value;
+        },
+        changeComment: function (e) {
+            this.model.set('comment',e.target.value);
         },
         changeNumber: function (e) {
             this.model.get('component').number = e.target.value;
@@ -99,16 +114,17 @@ define([
         changeMeasureUnit: function(e){
             this.model.set('unit',e.target.value);
             this.disableEnableAmount(e.target.value);
+            this.$unitText.val(e.target.value);
         },
         checkIntegrity: function (unit) {
 
             if (unit != "unit") {
-              if( this.$('.cadInstance').length > 1){
-                  this.$(".cadInstance:not(:first)").remove();
-                  while(this.model.get('cadInstances').length > 1){
-                      this.model.get('cadInstances').pop();
-                  }
-              }
+                if( this.$('.cadInstance').length > 1){
+                    this.$(".cadInstance:not(:first)").remove();
+                    while(this.model.get('cadInstances').length > 1){
+                        this.model.get('cadInstances').pop();
+                    }
+                }
 
             } else {
                 if ( parseInt(this.$amount.val(),10) > this.$('.cadInstance').length) {
@@ -131,7 +147,7 @@ define([
             }
             this.checkIntegrity(unit);
 
-         }
+        }
 
 
     });
