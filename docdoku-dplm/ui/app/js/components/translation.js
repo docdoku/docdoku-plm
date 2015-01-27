@@ -148,7 +148,7 @@
                     NEW_STUFF:'Nouveaux fichiers',
                     AVAILABLE:'Disponible',
                     CHECKOUTED_BY_ME:'Réservé par moi',
-                    RELEASED:'Finalisé',
+                    RELEASED:'Finalisée',
                     LOCKED:'Vérrouillé',
                     UP_TO_DATE:'À jour',
                     MODIFIED:'Modifié',
