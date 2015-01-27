@@ -44,6 +44,7 @@ public class AccountBean {
     private String email;
     private String language;
     private String timeZone;
+    private Locale locale;
 
     private static String[] availableTimeZones = TimeZone.getAvailableIDs();
 
@@ -62,6 +63,7 @@ public class AccountBean {
         if(language == null || "".equals(language) || " ".equals(language)){
             language = FacesContext.getCurrentInstance().getViewRoot().getLocale().getLanguage();
         }
+        FacesContext.getCurrentInstance().getViewRoot().setLocale(new Locale(language));
         userManager.updateAccount(name, email, language, password,timeZone);
         HttpServletRequest request = (HttpServletRequest) (FacesContext.getCurrentInstance().getExternalContext().getRequest());
         return request.getContextPath()+"/";
@@ -100,6 +102,7 @@ public class AccountBean {
     }
     public void setLanguage(String language) {
         this.language = language;
+        this.locale = new Locale(language);
     }
     public String getBrowserLanguage() {
         return FacesContext.getCurrentInstance().getViewRoot().getLocale().getLanguage();
@@ -161,5 +164,9 @@ public class AccountBean {
             workspaces.add(wk);
         }
         return workspaces;
+    }
+
+    public Locale getLocale() {
+        return locale;
     }
 }

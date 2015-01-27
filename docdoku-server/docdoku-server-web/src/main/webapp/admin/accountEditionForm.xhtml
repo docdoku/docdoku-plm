@@ -10,6 +10,11 @@
             <f:loadBundle var="i18nAccountEdition" basename="com.docdoku.server.localization.admin.accountEditionForm_resource"/>
             #{i18nAccountEdition['title']}
         </ui:define>
+        <ui:define name="additional-scripts">
+            <script type="text/javascript">
+                localStorage.locale="${accountBean.language}";
+            </script>
+        </ui:define>
         <ui:define name="content">
             <h:outputScript library="default" name="js/admin.js" target="head" />
             <h2>#{i18nAccountEdition['main.title']}</h2>
