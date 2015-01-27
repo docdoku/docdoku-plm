@@ -20,11 +20,11 @@
 
 package com.docdoku.server.dao;
 
-import com.docdoku.core.document.DocumentIteration;
-import com.docdoku.core.document.DocumentRevisionKey;
 import com.docdoku.core.configuration.BaselinedDocument;
 import com.docdoku.core.configuration.BaselinedDocumentKey;
 import com.docdoku.core.configuration.BaselinedFolderKey;
+import com.docdoku.core.document.DocumentIteration;
+import com.docdoku.core.document.DocumentRevisionKey;
 import com.docdoku.core.exceptions.DocumentRevisionNotFoundException;
 
 import javax.persistence.EntityManager;
@@ -65,18 +65,21 @@ public class BaselinedDocumentDAO {
              .getResultList();
     }
 
-    public List<BaselinedDocument> findDocumentRevision(String documentMasterId, String version) {
+    public List<DocumentIteration> findDocumentRevision(DocumentRevisionKey pDocumentRevisionKey) {
         return em.createQuery("" +
-                "SELECT DISTINCT d " +
-                "FROM BaselinedDocument d " +
-                "WHERE d.targetDocument.documentRevision.documentMasterId = :documentMasterId " +
-                "AND d.targetDocument.documentRevision.version = :version", BaselinedDocument.class)
-                .setParameter("documentMasterId",documentMasterId)
-                .setParameter("version", version)
+                "SELECT d " +
+                "FROM BaselinedFolder d, DocumentIteration i "  +
+                "WHERE i member of d.documentIterations " +
+                "AND i.documentRevision.documentMaster.workspace.id = :workspaceId " +
+                "AND i.documentRevision.documentMasterId = :documentMasterId " +
+                "AND i.documentRevision.version = :version",DocumentIteration.class)
+                .setParameter("documentMasterId", pDocumentRevisionKey.getDocumentMasterId())
+                .setParameter("version", pDocumentRevisionKey.getVersion())
+                .setParameter("workspaceId", pDocumentRevisionKey.getWorkspaceId())
                 .getResultList();
     }
 
-    public boolean hasDocumentRevision(String documentMasterId, String version) {
-        return !findDocumentRevision(documentMasterId, version).isEmpty();
+    public boolean hasDocumentRevision(DocumentRevisionKey pDocumentRevisionKey) {
+        return !findDocumentRevision(pDocumentRevisionKey).isEmpty();
     }
 }
