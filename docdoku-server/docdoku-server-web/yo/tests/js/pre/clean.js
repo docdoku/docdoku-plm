@@ -46,7 +46,7 @@ casper.test.begin('Cleaning potential data', 0, function cleanTestsSuite() {
         this.open(apiUrls.getTags, {method: 'GET'}).then(function (response) {
             if (response.status === 200) {
                 var tags = JSON.parse(this.getPageContent());
-                tags.forEach(function(tag) {
+                tags.forEach(function(tag){
                     that.log('Deleting tag '+tag.id,'info');
                     that.open(apiUrls.getTags+'/'+tag.id,{method: 'DELETE'}).then(function(){
                         that.log('Tag '+tag.id+' deleted','info');
@@ -98,7 +98,7 @@ casper.test.begin('Cleaning potential data', 0, function cleanTestsSuite() {
         this.open(apiUrls.getBaselines, {method: 'GET'}).then(function (response) {
             if (response.status === 200) {
                 var baselines = JSON.parse(this.getPageContent());
-                baselines.forEach(function(baseline) {
+                baselines.forEach(function(baseline){
                     that.log('Deleting baseline '+baseline.id,'info');
                     that.open(apiUrls.getBaselines+'/'+baseline.id,{method: 'DELETE'}).then(function(){
                         that.log('Baseline '+baseline.id+' deleted','info');

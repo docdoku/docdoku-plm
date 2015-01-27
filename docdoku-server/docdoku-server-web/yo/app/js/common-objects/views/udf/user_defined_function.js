@@ -110,12 +110,13 @@ define([
 
         doUDF:function(pRootComponent,callback){
 
+            var Fn = Function;
             var memo;
 
             try {
 
-                var initFunction = new Function(this.$userDefineInit.val());
-                var reduceFunction =  new Function('part','memo',this.$userDefineFunctionDef.val());
+                var initFunction = new Fn(this.$userDefineInit.val());
+                var reduceFunction =  new Fn('part','memo',this.$userDefineFunctionDef.val());
 
                 memo = initFunction();
 
