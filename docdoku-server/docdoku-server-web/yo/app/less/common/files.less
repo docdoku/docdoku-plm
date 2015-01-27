@@ -1,10 +1,9 @@
 div.attachedFiles {
 
-  &.idle {
-
-    p#upload-file-shortname {
-      display: none;
+    div.progress .bar{
+        color: #333;
     }
+  &.idle {
 
     div.progress {
       width: 0%;
@@ -50,17 +49,19 @@ div.attachedFiles {
   }
 
   input#upload-btn {
-    position: absolute;
-    left: 20px;
-    top: 20px;
-    width: 150px;
-    height: 28px;
-    line-height: normal;
-    opacity: 0;
+      height: 100%;
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      opacity: 0;
   }
 
   button.droppable {
     width: 150px;
+  }
+  span.droppable {
+    margin: 0 0 0 18px;
   }
 
   ul#file-list {

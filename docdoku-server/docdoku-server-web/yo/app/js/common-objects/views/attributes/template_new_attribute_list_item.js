@@ -1,4 +1,4 @@
-/*global define*/
+/*global define,App*/
 define([
     "common-objects/views/components/list_item",
     "text!common-objects/templates/attributes/template_new_attribute_list_item.html"
@@ -29,7 +29,7 @@ define([
         },
         typeChanged: function (evt) {
             this.model.set({
-                attributeType: $(evt.target).val()
+                attributeType: evt.target.value
             });
         },
         updateName: function () {

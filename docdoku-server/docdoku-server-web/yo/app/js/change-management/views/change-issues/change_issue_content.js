@@ -115,9 +115,7 @@ define([
                             aclEditView.closeModal();
                             self.listView.redraw();
                         },
-                        error: function () {
-                            alert('Error on update acl');
-                        }
+                        error: self.onError
                     });
 
                 });

@@ -1,4 +1,4 @@
-/*global define*/
+/*global define,App,_*/
 define([
     'backbone',
     "mustache",
@@ -27,14 +27,12 @@ define([
         render: function () {
             var self = this;
 
-            this.$el.html(Mustache.render(template,
-                {
-                    i18n: App.config.i18n,
-                    editMode: this.options.editMode,
-                    label: this.options.label,
-                    view: this
-                }
-            ));
+            this.$el.html(Mustache.render(template,{
+                i18n: App.config.i18n,
+                editMode: this.options.editMode,
+                label: this.options.label,
+                view: this
+            }));
 
             this.bindDomElements();
             this.bindTypeahead();
@@ -62,8 +60,8 @@ define([
 
         addLinkView: function (linkedChangeItem) {
             var alreadyExist = false;
-            $.each(this._subViews, function (index, value) {
-                if (value.model.getId() == linkedChangeItem.getId()) {
+            _.each(this._subViews, function (view) {
+                if (view.model.getId() == linkedChangeItem.getId()) {
                     alreadyExist = true;
                 }
             });

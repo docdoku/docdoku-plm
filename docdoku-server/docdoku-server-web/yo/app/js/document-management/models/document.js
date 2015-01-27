@@ -1,4 +1,4 @@
-/*global $,_,define,App*/
+/*global $,_,define,App,window*/
 define(['backbone', 'collections/document_iteration', 'common-objects/utils/acl-checker'], function (Backbone, DocumentIterationList, ACLChecker) {
 	'use strict';
 	var Document = Backbone.Model.extend({
@@ -99,7 +99,7 @@ define(['backbone', 'collections/document_iteration', 'common-objects/utils/acl-
 					this.fetch();
 				},
 				error: function (xhr, status, errorThrown) {
-					alert(xhr.responseText);
+                    window.alert(xhr.responseText);
 				}
 			});
 		},
@@ -113,7 +113,7 @@ define(['backbone', 'collections/document_iteration', 'common-objects/utils/acl-
 					this.fetch();
 				},
 				error: function (xhr, status, errorThrown) {
-					alert(xhr.responseText);
+                    window.alert(xhr.responseText);
 				}
 			});
 		},
@@ -127,7 +127,7 @@ define(['backbone', 'collections/document_iteration', 'common-objects/utils/acl-
 					this.fetch();
 				},
 				error: function (xhr, status, errorThrown) {
-					alert(xhr.responseText);
+                    window.alert(xhr.responseText);
 				}
 			});
 		},
@@ -262,7 +262,7 @@ define(['backbone', 'collections/document_iteration', 'common-objects/utils/acl-
 					}
 				},
 				error: function (xhr, status, errorThrown) {
-					alert(xhr.responseText);
+                    window.alert(xhr.responseText);
 					error();
 				}
 			});

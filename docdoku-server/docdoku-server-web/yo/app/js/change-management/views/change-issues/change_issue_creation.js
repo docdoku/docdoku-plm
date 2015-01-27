@@ -1,4 +1,4 @@
-/*global _,define,App*/
+/*global _,define,App,window*/
 define([
     'backbone',
     'mustache',
@@ -134,7 +134,7 @@ function (Backbone, Mustache, template, ChangeIssueModel, UserList, LinkedDocume
         },
 
         onError: function (model, error) {
-            alert(App.config.i18n.CREATION_ERROR + ' : ' + error.responseText);
+            window.alert(App.config.i18n.CREATION_ERROR + ' : ' + error.responseText);
         },
 
         openModal: function () {

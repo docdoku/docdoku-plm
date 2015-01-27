@@ -8,8 +8,9 @@ define([
     'views/milestones/milestone_creation',
     'common-objects/views/security/acl_edit',
     'text!common-objects/templates/buttons/delete_button.html',
-    'text!common-objects/templates/buttons/ACL_button.html'
-], function (Backbone, Mustache, MilestoneCollection, template, MilestoneListView, MilestoneCreationView, ACLEditView, deleteButton, aclButton) {
+    'text!common-objects/templates/buttons/ACL_button.html',
+    'common-objects/views/alert'
+], function (Backbone, Mustache, MilestoneCollection, template, MilestoneListView, MilestoneCreationView, ACLEditView, deleteButton, aclButton, AlertView) {
 	'use strict';
 	var MilestoneContentView = Backbone.View.extend({
         events: {
@@ -86,9 +87,7 @@ define([
                             aclEditView.closeModal();
                             self.listView.redraw();
                         },
-                        error: function () {
-                            alert('Error on update acl');
-                        }
+                        error: self.onError
                     });
 
                 });
@@ -109,7 +108,18 @@ define([
             } else {
                 this.aclButton.hide();
             }
+        },
+
+        onError:function(model, error){
+            var errorMessage = error ? error.responseText : model;
+
+            this.$notifications.append(new AlertView({
+                type: 'error',
+                message: errorMessage
+            }).render().$el);
+            this.collection.fetch();
         }
+
     });
 
     return MilestoneContentView;

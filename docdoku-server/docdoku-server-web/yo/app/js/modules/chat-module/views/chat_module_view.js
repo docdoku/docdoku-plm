@@ -41,7 +41,7 @@ define(['backbone', 'modules/chat-module/views/chat_session_view'], function (Ba
 
             // render if not already done
             if (!sessionChatView._rendered) {
-                $(this.$el).append(sessionChatView.render().$el);
+                this.$el.append(sessionChatView.render().$el);
             } else {
                 sessionChatView.refreshTitle().$el.show();
             }

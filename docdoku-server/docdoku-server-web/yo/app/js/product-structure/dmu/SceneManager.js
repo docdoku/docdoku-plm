@@ -988,6 +988,14 @@ define([
             _this.reDraw();
         };
 
+        this.createLayerMaterial = function(color){
+            return new THREE.MeshLambertMaterial({
+                color: color,
+                opacity: 1,
+                transparent: true
+            });
+        };
+
         this.debugPoint = function(v){
             var cogMesh = new THREE.Mesh(new THREE.SphereGeometry(2,1,1),new THREE.MeshNormalMaterial({color:0xFFFF00}));
             cogMesh.position.copy(v);

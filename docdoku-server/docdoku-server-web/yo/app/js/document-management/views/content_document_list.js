@@ -1,4 +1,4 @@
-/*global _,define,bootbox,App*/
+/*global _,define,bootbox,App,window*/
 define([
 	'backbone',
 	'views/content',
@@ -183,7 +183,7 @@ define([
                                 that.collection.fetch();
                             },
                             error: function (model, err) {
-                                alert(err.responseText);
+                                window.alert(err.responseText);
                                 that.listView.redraw();
                                 that.collection.fetch();
                             }
@@ -280,7 +280,7 @@ define([
 							that.listView.redraw();
 						},
 						error: function () {
-							alert('Error on update acl');
+                            window.alert(App.config.i18n.EDITION_ERROR);
 						}
 					});
 				});

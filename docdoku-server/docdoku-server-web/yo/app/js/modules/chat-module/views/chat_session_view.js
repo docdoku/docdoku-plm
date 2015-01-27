@@ -21,6 +21,8 @@ define([
             'click a.reject-webrtc': 'onWebRTCReject'
         },
 
+        className:'chat_session',
+
         initialize: function () {
 
             this.isOnTop = false;
@@ -50,13 +52,13 @@ define([
 
                 // append new message
                 var $ul = this.$('ul.chat_session_messages');
-                $ul.append($(cmv.render().el));
+                $ul.append(cmv.render().el);
                 $ul[0].scrollTop = $ul[0].scrollHeight;
 
                 // stick to bottom if needed
                 var thatElHeight = that.$el.height();
                 var offsetTop = that.$el.offset().top;
-                var windowHeight = $(window).height();
+                var windowHeight = window.innerHeight;
 
                 if (windowHeight - thatElHeight - offsetTop < 15) {
                     this.$el.css({'bottom': '0', 'top': 'auto'});
@@ -98,7 +100,7 @@ define([
 
             var that = this;
 
-            this.$el = $(Mustache.render(template, {
+            this.$el.html(Mustache.render(template, {
                 chatSession: {
                     remoteUser: this.remoteUser,
                     context: this.context

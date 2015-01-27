@@ -1,4 +1,4 @@
-/*global define*/
+/*global define,App*/
 define([
     'common-objects/views/components/modal',
     'text!templates/folder_new.html'
@@ -11,11 +11,14 @@ define([
             this.events['submit #new-folder-form'] = 'onSubmitForm';
         },
         rendered:function(){
-            this.$('input.name').customValidity(App.config.i18n.REQUIRED_FIELD);
+            this.nameInput = this.$('input.name');
+            this.nameInput.customValidity(App.config.i18n.REQUIRED_FIELD);
         },
 
         onSubmitForm: function (e) {
-            var name = $.trim(this.$('input.name').val());
+
+            var name = this.nameInput.val() ? this.nameInput.val().trim():'';
+
             if (name) {
                 this.collection.create({
                     name: name
@@ -25,6 +28,7 @@ define([
                     error: this.error
                 });
             }
+            
             e.preventDefault();
             e.stopPropagation();
             return false;

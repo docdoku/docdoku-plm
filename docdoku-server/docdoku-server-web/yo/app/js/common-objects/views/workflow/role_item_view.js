@@ -54,7 +54,7 @@ function (Backbone, Mustache, template) {
                 if(_.isFunction(this.options.onError)){
                     this.options.onError(App.config.i18n.ALERT_ROLE_IN_USE);
                 } else {
-                    alert(App.config.i18n.ALERT_ROLE_IN_USE);
+                    window.alert(App.config.i18n.ALERT_ROLE_IN_USE);
                 }
             }
         },

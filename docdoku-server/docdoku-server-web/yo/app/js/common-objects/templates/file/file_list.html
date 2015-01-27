@@ -1,16 +1,13 @@
 <ul id="file-list" class="file-list"></ul>
 
-<p id="upload-file-shortname"></p>
-<div class='progress progress-striped'>
-    <div class='bar'></div>
-</div>
+<div class="progress-bars"></div>
 {{#editMode}}
-<form enctype='multipart/form-data' id='upload-form'>
+<form enctype="multipart/form-data" id="upload-form">
     <div id="filedroparea" class="droppable">
-        <input id="upload-btn" name="upload" type='file' class='input-xlarge droppable'/>
-        <button class="btn btn-success droppable">{{i18n.SELECT_FILE}}</button>
-        <span class="droppable">{{i18n.DROP_FILE_HERE}}</span>
+        <input id="upload-btn" name="upload" type="file" class="input-xlarge droppable" {{#multiple}}multiple{{/multiple}}/>
+        <button class="btn btn-success droppable">{{#multiple}}{{i18n.SELECT_FILES}}{{/multiple}}{{^multiple}}{{i18n.SELECT_FILE}}{{/multiple}}</button>
+        <span class="droppable">{{#multiple}}{{i18n.DROP_FILES_HERE}}{{/multiple}}{{^multiple}}{{i18n.DROP_FILE_HERE}}{{/multiple}}</span>
     </div>
-    <button type="button" class='btn cancel cancel-upload-btn'>{{i18n.CANCEL}}</button>
+    <button type="button" class="btn cancel cancel-upload-btn">{{i18n.CANCEL}}</button>
 </form>
 {{/editMode}}

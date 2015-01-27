@@ -65,7 +65,7 @@ public class BaselinedDocumentDAO {
              .getResultList();
     }
 
-    public List<BaselinedDocument> findPartRevision(String documentMasterId, String version) {
+    public List<BaselinedDocument> findDocumentRevision(String documentMasterId, String version) {
         return em.createQuery("" +
                 "SELECT DISTINCT d " +
                 "FROM BaselinedDocument d " +
@@ -76,7 +76,7 @@ public class BaselinedDocumentDAO {
                 .getResultList();
     }
 
-    public boolean hasPartRevision(String documentMasterId, String version) {
-        return !findPartRevision(documentMasterId,version).isEmpty();
+    public boolean hasDocumentRevision(String documentMasterId, String version) {
+        return !findDocumentRevision(documentMasterId, version).isEmpty();
     }
 }

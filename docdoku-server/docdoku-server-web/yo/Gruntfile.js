@@ -407,12 +407,14 @@ module.exports = function (grunt) {
                         cwd: '<%= yeoman.app %>',
                         dest: '<%= yeoman.dist %>',
                         src: [
-                            'images/{,*/}*',
-                            'sounds/{,*/}*',
-                            'fonts/{,*/}*',
-                            'download/{,*/}*',
+                            'css/**',
+                            'images/**',
+                            'sounds/**',
+                            'fonts/**',
+                            'download/**',
 	                        'js/home/main.js',
-	                        'js/lib/plugin-detect.js'
+	                        'js/lib/plugin-detect.js',
+	                        'js/lib/charts/**'
                         ]
                     },{
                         expand: true,
