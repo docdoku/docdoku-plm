@@ -54,14 +54,6 @@ define([
                 });
             }
 
-            // Check if tooltips is necessary
-            if(!this.inputFinalState.val()){
-                this.$notifications.append(new AlertView({
-                    type: 'info',
-                    message: App.config.i18n.WARNING_FINAL_STATE_MISSING
-                }).render().$el);
-            }
-
             return this;
         },
         bindDomElements: function () {
@@ -107,6 +99,14 @@ define([
             }
         },
         onModelFetch: function(){
+
+            if(!this.model.get('finalLifeCycleState')){
+                this.$notifications.append(new AlertView({
+                    type: 'info',
+                    message: App.config.i18n.WARNING_FINAL_STATE_MISSING
+                }).render().$el);
+            }
+
             this.inputFinalState.val(this.model.get('finalLifeCycleState'));
             this.model.attributes.activityModels.bind('add', this.addActivity, this);
             this.model.attributes.activityModels.each(this.addActivity, this);
