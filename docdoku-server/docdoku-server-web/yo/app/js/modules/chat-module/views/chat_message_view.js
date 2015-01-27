@@ -6,7 +6,7 @@ define(['backbone'], function (Backbone) {
         tagName: 'li',
 
         template: _.template(
-            "<span><b><%= chatMessage.sender %></b> : <%= chatMessage.message.replaceUrl('_blank') %></span>"
+            "<span><b><%= chatMessage.sender %></b> : <%= chatMessage.message.replaceUrl() %></span>"
         ),
 
         render: function () {
