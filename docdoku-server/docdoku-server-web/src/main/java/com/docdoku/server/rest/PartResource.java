@@ -9,13 +9,13 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * DocDokuPLM is distributed in the hope that it will be useful,  
- * but WITHOUT ANY WARRANTY; without even the implied warranty of  
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the  
- * GNU Affero General Public License for more details.  
- *  
- * You should have received a copy of the GNU Affero General Public License  
- * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.  
+ * DocDokuPLM is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.docdoku.server.rest;
 
@@ -62,7 +62,7 @@ public class PartResource {
     private IUserManagerLocal userManager;
     @EJB
     private IConverterManagerLocal converterService;
-    
+
     private Mapper mapper;
 
     public PartResource() {
@@ -133,11 +133,11 @@ public class PartResource {
         }
         return null;
     }
-    
+
     @PUT
     @Path("/iterations/{partIteration}/conversion")
     public Response retryConversion(@PathParam("workspaceId") String pWorkspaceId, @PathParam("partNumber") String partNumber , @PathParam("partVersion") String partVersion, @PathParam("partIteration") int iteration) throws UserNotActiveException, PartRevisionNotFoundException, WorkspaceNotFoundException, UserNotFoundException, PartIterationNotFoundException, AccessRightException {
-        
+
         PartIterationKey partIPK = new PartIterationKey(pWorkspaceId,partNumber,partVersion,iteration);
         PartIteration partIteration = productService.getPartIteration(partIPK);
         BinaryResource nativeCADFile = partIteration.getNativeCADFile();
@@ -280,9 +280,9 @@ public class PartResource {
     public Response deletePartRevision(@PathParam("workspaceId") String workspaceId, @PathParam("partNumber") String partNumber , @PathParam("partVersion") String partVersion)
             throws EntityNotFoundException, UserNotActiveException, EntityConstraintException, ESServerException {
 
-            PartRevisionKey revisionKey = new PartRevisionKey(workspaceId,partNumber,partVersion);
-            productService.deletePartRevision(revisionKey);
-            return Response.ok().build();
+        PartRevisionKey revisionKey = new PartRevisionKey(workspaceId,partNumber,partVersion);
+        productService.deletePartRevision(revisionKey);
+        return Response.ok().build();
     }
 
     @DELETE
@@ -422,6 +422,7 @@ public class PartResource {
                 }
                 partUsageLink.setComponent(component);
                 partUsageLink.setAmount(partUsageLinkDTO.getAmount());
+                partUsageLink.setComment(partUsageLinkDTO.getComment());
                 partUsageLink.setCadInstances(cadInstances);
                 partUsageLink.setUnit(partUsageLinkDTO.getUnit());
                 components.add(partUsageLink);
@@ -440,7 +441,7 @@ public class PartResource {
         if(productService.partMasterExists(partMasterKey)){
             return new PartMaster(userManager.getWorkspace(workspaceId),componentNumber);
         }else{
-           return productService.createPartMaster(workspaceId, componentDTO.getNumber(), componentDTO.getName(), componentDTO.isStandardPart(), null, componentDTO.getDescription(), null, null, null, null);
+            return productService.createPartMaster(workspaceId, componentDTO.getNumber(), componentDTO.getName(), componentDTO.isStandardPart(), null, componentDTO.getDescription(), null, null, null, null);
         }
     }
 

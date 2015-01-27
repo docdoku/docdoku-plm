@@ -6,9 +6,15 @@
                                                                                                            value="{{model.amount}}"
                                                                                                            title="{{i18n.AMOUNT}}"
                                                                                                            disabled/>
-                                                    <select name="unitMeasure" class="unit unitEdit"><option value="unit" selected>{{i18n.UNIT}}</option><option value="kg">{{i18n.KG}}</option><option value="l">{{i18n.LITER}}</option><option value="m">{{i18n.METER}}</option><option value="m">{{i18n.SQUARE_METER}}</option></select>
+    <select name="unitMeasure" class="unit unitEdit"><option value="unit" selected>{{i18n.UNIT}}</option><option value="kg">{{i18n.KG}}</option><option value="l">{{i18n.LITER}}</option><option value="m">{{i18n.METER}}</option><option value="m²">{{i18n.SQUARE_METER}}</option>
+
+    </select>
+    <input type="text" name="newUnit" placeholder="{{i18n.NEW_UNIT}}" />
+
+    <input type="text" name="comment" value="{{model.comment}}"
+           placeholder="{{i18n.PART_DESCRIPTION}}"/>
     <i
-        class="fa fa-plus add-cadInstance"></i>
+            class="fa fa-plus add-cadInstance"></i>
     {{/model.component.number}}
     {{^model.component.number}}
     {{#editMode}}<a class="remove">×</a>{{/editMode}} <input type="text" name="number" value=""
