@@ -28,7 +28,7 @@ casper.test.begin('Cleaning potential data', 0, function cleanTestsSuite() {
         this.open(apiUrls.getWorkflows, {method: 'GET'}).then(function (response) {
             if (response.status === 200) {
                 var workflows = JSON.parse(this.getPageContent());
-                workflows.forEach(function(workflow) {
+                workflows.forEach(function(workflow){
                     that.log('Deleting workflow '+workflow.id,'info');
                     that.open(apiUrls.getWorkflows+'/'+workflow.id,{method: 'DELETE'}).then(function(){
                         that.log('Workflow '+workflow.id+' deleted','info');

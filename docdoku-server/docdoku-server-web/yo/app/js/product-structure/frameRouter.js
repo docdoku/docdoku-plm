@@ -34,6 +34,9 @@ define([
                 });
 
             }
+        },
+        updateRoute:function(){
+            /* nothing to do, but needs to be present*/
         }
     });
     Router = singletonDecorator(Router);

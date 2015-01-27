@@ -11,9 +11,9 @@ var App = {
         'use strict';
         App.debug = state;
         if(state){
-            $('body').addClass('debug');
+            document.body.classList.add('debug');
         }else{
-            $('body').removeClass('debug');
+            document.body.classList.remove('debug');
         }
     },
 

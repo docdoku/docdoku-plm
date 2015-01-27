@@ -12,7 +12,7 @@ define([
     var LayerManager = function () {
         this.meshs = [];
         this.state = STATE.FULL;
-        this.markerStateControl = $('#markerState').find('i');
+        this.markerStateControl = App.$ControlsContainer ? App.$ControlsContainer.find('#markerState i') : [];
         this.layersCollection = new LayerCollection();
         this.markerScale = new THREE.Vector3(1, 1, 1);
         this.markers = [];
