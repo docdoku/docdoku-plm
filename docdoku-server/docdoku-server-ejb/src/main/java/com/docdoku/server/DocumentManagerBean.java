@@ -46,10 +46,7 @@ import com.docdoku.server.esindexer.ESSearcher;
 import javax.annotation.Resource;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
-import javax.ejb.EJB;
-import javax.ejb.Local;
-import javax.ejb.SessionContext;
-import javax.ejb.Stateless;
+import javax.ejb.*;
 import javax.jws.WebService;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -734,11 +731,16 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         DocumentRevisionDAO docRDAO = new DocumentRevisionDAO(new Locale(user.getLanguage()), em);
         DocumentRevision docR = docRDAO.loadDocR(pDocRPK);
 
+        // You cannot move a document to someone else's home directory        
         if(isInAnotherUserHomeFolder(user,docR)) {
             throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException6");
         } else {
+
             docR.setLocation(newLocation);
+            
             if (isCheckoutByAnotherUser(user,docR)) {
+                // won't persist newLocation if not flushing
+                em.flush();
                 em.detach(docR);
                 docR.removeLastIteration();
             }
