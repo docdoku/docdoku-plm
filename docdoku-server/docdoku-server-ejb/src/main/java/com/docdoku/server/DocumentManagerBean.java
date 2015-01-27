@@ -1029,7 +1029,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             throw new NotAllowedException(userLocale, "NotAllowedException22");
         }
 
-        if(baselinedDocumentDAO.hasPartRevision(pDocRPK.getDocumentMasterId(),pDocRPK.getVersion())) {
+        if(baselinedDocumentDAO.hasDocumentRevision(pDocRPK.getDocumentMasterId(), pDocRPK.getVersion())) {
             throw new EntityConstraintException(userLocale,"EntityConstraintException6");
         }
 
