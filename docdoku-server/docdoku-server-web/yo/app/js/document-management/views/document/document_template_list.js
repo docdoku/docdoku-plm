@@ -1,4 +1,4 @@
-/*global define*/
+/*global define,$*/
 define([
     'collections/template',
     'common-objects/views/base',
@@ -28,7 +28,7 @@ define([
             return data;
         },
         selected: function () {
-            var id = $('#select-' + this.cid).val();
+            var id = this.$('#select-' + this.cid).val();
             return this.collection.get(id);
         },
         changed: function () {

@@ -16,7 +16,7 @@ define([
 	        if(this.document.getId()){
 		        return this.baseUrl()+ '?configSpec='+App.config.configSpec;
 		    }else{
-		    	return this.document.urlRoot()+ '/iterations';
+                return this.document.urlRoot()+ '/iterations';
 		    }
 	    },
 

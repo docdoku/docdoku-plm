@@ -84,10 +84,12 @@ public class ActivityModelDozerConverter extends DozerConverter<ActivityModel, A
         switch (activityModelDTO.getType()){
             case SERIAL:{
                 activityModel = new SerialActivityModel();
+                activityModel.setTaskModels(taskModels);
                 break;
             }
             case PARALLEL:{
                 activityModel = new ParallelActivityModel();
+                activityModel.setTaskModels(taskModels);
                 ((ParallelActivityModel) activityModel).setTasksToComplete(activityModelDTO.getTasksToComplete());
                 break;
             }
@@ -97,7 +99,6 @@ public class ActivityModelDozerConverter extends DozerConverter<ActivityModel, A
         }
 
         activityModel.setStep(activityModelDTO.getStep());
-        activityModel.setTaskModels(taskModels);
         activityModel.setLifeCycleState(activityModelDTO.getLifeCycleState());
         return activityModel;
     }

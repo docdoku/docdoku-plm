@@ -1,4 +1,4 @@
-/*global define,App*/
+/*global $,define,App*/
 define(['datatables','moment','momentTimeZone'], function (DT,moment,momentTimeZone) {
 	'use strict';
 

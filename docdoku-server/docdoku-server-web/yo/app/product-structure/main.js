@@ -11,9 +11,9 @@ var App = {
         'use strict';
         App.debug = state;
         if(state){
-            $('body').addClass('debug');
+            document.body.classList.add('debug');
         }else{
-            $('body').removeClass('debug');
+            document.body.classList.remove('debug');
         }
     },
 
@@ -23,7 +23,7 @@ var App = {
 		login: '',
 		groups: [],
 		contextPath: '',
-		locale: localStorage.getItem('locale') || 'en'
+		locale: window.localStorage.getItem('locale') || 'en'
 	},
 
     WorkerManagedValues: {

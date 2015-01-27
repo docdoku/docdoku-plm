@@ -1,4 +1,4 @@
-/*global _,$,define,App*/
+/*global _,$,define,App,window*/
 define(['backbone', 'common-objects/utils/date', 'common-objects/collections/part_iteration_collection', 'common-objects/utils/acl-checker'],
 function (Backbone, Date, PartIterationList, ACLChecker) {
     'use strict';
@@ -168,7 +168,7 @@ function (Backbone, Date, PartIterationList, ACLChecker) {
                     this.fetch();
                 },
                 error: function (xhr) {
-                    alert(xhr.responseText);
+                    window.alert(xhr.responseText);
                 }
             });
         },

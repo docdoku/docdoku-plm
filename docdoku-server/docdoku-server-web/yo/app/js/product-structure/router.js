@@ -22,9 +22,9 @@ function (Backbone, singletonDecorator) {
                 var t = target.split(';');
                 var u = up.split(';');
                 App.sceneManager.setControlsContext({
-                    target: new THREE.Vector3(parseFloat(t[0]), parseFloat(t[1]), parseFloat(t[2])),
-                    camPos: new THREE.Vector3(parseFloat(c[0]), parseFloat(c[1]), parseFloat(c[2])),
-                    camOrientation: new THREE.Vector3(parseFloat(u[0]), parseFloat(u[1]), parseFloat(u[2]))
+                    target: {x:parseFloat(t[0]),y: parseFloat(t[1]),z: parseFloat(t[2])},
+                    camPos: {x:parseFloat(c[0]),y: parseFloat(c[1]),z: parseFloat(c[2])},
+                    camOrientation: {x:parseFloat(u[0]),y:parseFloat(u[1]),z: parseFloat(u[2])}
                 });
             }
         },

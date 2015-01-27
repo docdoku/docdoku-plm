@@ -1,4 +1,4 @@
-/*global define,App*/
+/*global define,App,_*/
 define([
 	'backbone',
 	'mustache',
@@ -29,7 +29,9 @@ define([
 				this.model.destroy({
 					dataType: 'text', // server doesn't send a json hash in the response body
 					success: function () {
-						App.collaborativeController.sendMarkersRefresh('remove marker');
+                        if(App.collaborativeController){
+                            App.collaborativeController.sendMarkersRefresh('remove marker');
+                        }
 					}
 				});
 			}

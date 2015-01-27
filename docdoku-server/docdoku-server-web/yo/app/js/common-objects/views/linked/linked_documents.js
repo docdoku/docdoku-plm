@@ -1,4 +1,4 @@
-/*global _,define,App*/
+/*global _,$,define,App*/
 define([
     'backbone',
     'mustache',
@@ -24,14 +24,12 @@ define([
         render: function () {
             var self = this;
 
-            this.$el.html(Mustache.render(template,
-                {
+            this.$el.html(Mustache.render(template,{
                     i18n: App.config.i18n,
                     editMode: this.options.editMode,
                     label: App.config.i18n.ADD_DOCUMENT,
                     view: this
-                }
-            ));
+            }));
 
             this.bindDomElements();
             this.bindTypeahead();

@@ -38,8 +38,6 @@
         <module>docdoku-cli</module>
         <module>docdoku-dplm</module>
         <module>docdoku-server</module>
-        <module>docdoku-smoke-tests</module>
-        <module>docdoku-sample-loader</module>
     </modules>
     <build>
         <plugins>

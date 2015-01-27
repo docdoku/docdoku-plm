@@ -26,6 +26,8 @@ define([
             return this.get('color');
         },
         setColor: function (color) {
+            this.material.color.set(parseInt('0x' + color, 16));
+            this.material.needsUpdate = true;
             return this.set('color', color);
         },
 
@@ -62,11 +64,7 @@ define([
         },
 
         initialize: function () {
-            this.material = new THREE.MeshLambertMaterial({
-                color: parseInt('0x' + this.get('color'), 16),
-                opacity: 1,
-                transparent: true
-            });
+            this.material = App.sceneManager.createLayerMaterial(parseInt('0x' + this.get('color'), 16));
             this.markers = new MarkerCollection();
             this.markers.on('add', this._addMarkerToScene, this);
             this.markers.on('remove', this._removeMarkerFromScene, this);

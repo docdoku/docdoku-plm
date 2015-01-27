@@ -1,4 +1,4 @@
-/*global define*/
+/*global define,_*/
 define(['backbone'], function (Backbone) {
     'use strict';
     var ChatMessageView = Backbone.View.extend({
@@ -6,7 +6,7 @@ define(['backbone'], function (Backbone) {
         tagName: 'li',
 
         template: _.template(
-            "<span><b><%= chatMessage.sender %></b> : <%= chatMessage.message.replaceUrl('_blank') %></span>"
+            "<span><b><%= chatMessage.sender %></b> : <%= chatMessage.message.replaceUrl() %></span>"
         ),
 
         render: function () {

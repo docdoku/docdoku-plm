@@ -1,4 +1,4 @@
-/*global define*/
+/*global define,App*/
 define([
     'collections/task_document',
     'views/content_document_list',

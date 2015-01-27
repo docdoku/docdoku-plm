@@ -9,7 +9,7 @@ public class ResourceUtil {
     public static final String VERSION="A";
     public static final int ITERATION=1;
     public static final String SOURCE_FILE_STORAGE="com/docdoku/server/rest/file/toUpload/";
-    public static final String TARGET_FILE_STORAGE="/com/docdoku/server/rest/file/uploaded/";
+    public static final String TARGET_FILE_STORAGE="src/test/resources/com/docdoku/server/rest/file/uploaded/";
     public static final String FILENAME1= "TestFile.txt";
     public static final String FILENAME2="TestFile_With_éàè.txt";
     public static final String FILENAME3="TestFile_3.txt";
@@ -30,7 +30,7 @@ public class ResourceUtil {
 
     public static String FILENAME_TO_UPLOAD_PART_SPECIAL_CHARACTER="part_file_to_upload-èé_spécial&.txt";
     public static final long PART_SIZE =363666 ;
-    public static final String TARGET_PART_STORAGE = "docdoku-server-web/src/test/resources/com/docdoku/server/rest/part/uploaded/";
+    public static final String TARGET_PART_STORAGE = "src/test/resources/com/docdoku/server/rest/part/uploaded/";
     public static final String SOURCE_PART_STORAGE = "com/docdoku/server/rest/part/toUpload/";
     public static String FILENAME_TARGET_PART ="new_part_file.txt";
 

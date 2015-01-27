@@ -1,4 +1,4 @@
-/*global define*/
+/*global define,_*/
 'use strict';
 define(['backbone'], function (Backbone) {
 

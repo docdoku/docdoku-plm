@@ -27,10 +27,25 @@ define([
 
                     success();
                 });
-            }, function () {
-                var forbiddenView = new ForbiddenView().render();
-                $('body').append(forbiddenView.$el);
-                forbiddenView.openModal();
+            }, function (res) {
+
+                // Connected but no access to given workspace
+                if(res.status === 403){
+                    var forbiddenView = new ForbiddenView().render();
+                    document.body.appendChild(forbiddenView.el);
+                    forbiddenView.openModal();
+                }
+                // Connected but the workspace doesn't exist
+                else if(res.status === 404){
+                    window.location.href = App.config.contextPath;
+                }
+                // UnAuthorized
+                // We shouldn't get a 401 code, due to AuthFilter which has normally redirected us on login page.
+                // See : docdoku-server/docdoku-server-web/src/main/webapp/WEB-INF/web.xml
+                // However, for dev purposes, if we catch an error, we just reset the url. Should happen only in dev env.
+                else{
+                    window.location.href = App.config.contextPath;
+                }
             });
         });
     };

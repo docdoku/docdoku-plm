@@ -63,7 +63,7 @@ public class ConnectionBean {
         HttpSession newSession = request.getSession(true);
         newSession.setAttribute("hasFail", false);
         newSession.setAttribute("hasLogout", true);
-        return request.getContextPath()+"/";
+        return "/login.xhtml";
     }
 
     public void logIn() throws ServletException, AccountNotFoundException, IOException {

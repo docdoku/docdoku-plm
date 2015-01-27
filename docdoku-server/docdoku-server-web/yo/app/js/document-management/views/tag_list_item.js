@@ -1,4 +1,4 @@
-/*global define,bootbox,App*/
+/*global define,bootbox,App,_*/
 define([
     'common-objects/views/components/list_item',
     'views/tag_document_list',

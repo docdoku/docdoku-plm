@@ -24,6 +24,7 @@ import com.docdoku.core.common.User;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.document.DocumentRevisionKey;
+import com.docdoku.core.document.Folder;
 import com.docdoku.core.exceptions.CreationException;
 import com.docdoku.core.exceptions.DocumentRevisionAlreadyExistsException;
 import com.docdoku.core.exceptions.DocumentRevisionNotFoundException;
@@ -238,4 +239,5 @@ public class DocumentRevisionDAO {
                 .setParameter("excludedFolders", excludedFolders)
                 .getSingleResult()).intValue();
     }
+
 }

@@ -1,3 +1,4 @@
+/*global jQuery*/
 (function ($) {
 
     // Find a tab where's the first error found, and show it, returns true if the form is invalid, false otherwise

@@ -1,4 +1,4 @@
-/*global define,bootbox,App*/
+/*global define,bootbox,App,window*/
 define([
 	'backbone',
 	'mustache',
@@ -91,7 +91,7 @@ define([
 			if(this.type==='document'){
 				snapBaselineView = new SnapBaselineView({type: 'DOCUMENT', collection: this.collection});
 			}
-			$('body').append(snapBaselineView.render().el);
+            window.document.body.appendChild(snapBaselineView.render().el);
 			snapBaselineView.openModal();
 		},
 
@@ -109,7 +109,7 @@ define([
                                     that.$select.val('latest').change();
                                 },
                                 error:function(model,err){
-                                    alert(err.responseText);
+                                    window.alert(err.responseText);
                                 }});
                         }
                     });

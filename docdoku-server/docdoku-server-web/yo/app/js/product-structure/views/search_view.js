@@ -10,7 +10,7 @@ define([
         el: '#nav_list_action_bar',
 
         events: {
-            'submit form#nav_list_search': 'onSearchSubmit',
+            'submit form#nav_list_search': 'onSearchSubmit'
         },
 
         initialize: function () {
@@ -27,7 +27,8 @@ define([
 
         initHelpPopover: function () {
             var self = this;
-            this.$helpLink.popover({
+            var $link = this.$helpLink;
+            $link.popover({
                 html: true,
                 placement: 'bottom',
                 title: App.config.i18n.SEARCH_OPTIONS,
@@ -36,7 +37,7 @@ define([
                     return self.$helpPopover.html();
                 }
             }).click(function (e) {
-                $(this).popover('show');
+                $link.popover('show');
                 e.stopPropagation();
                 e.preventDefault();
                 return false;

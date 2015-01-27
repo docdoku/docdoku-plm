@@ -95,7 +95,7 @@ define([
 
             var _this = this;
             if(App.partsTreeView.componentSelected){
-                this.bomMode()
+                this.bomMode();
             }else{
                 App.partsTreeView.on('collection:fetched',function(){
                     _this.bomMode();

@@ -84,9 +84,12 @@ public class DocumentBinaryResourceTest {
 
         BinaryResource binaryResource = new BinaryResource(ResourceUtil.FILENAME1, ResourceUtil.DOCUMENT_SIZE, new Date());
 
-        File uploadedFile1 = new File(getClass().getResource(ResourceUtil.TARGET_FILE_STORAGE + "new_" + ResourceUtil.FILENAME1).getFile());
+        File uploadedFile1 = new File(ResourceUtil.TARGET_FILE_STORAGE + "new_" + ResourceUtil.FILENAME1);
         if (!uploadedFile1.getParentFile().exists()){
             uploadedFile1.getParentFile().mkdirs();
+        }
+        if (!uploadedFile1.exists()){
+            uploadedFile1.createNewFile();
         }
 
         OutputStream outputStream1 = new FileOutputStream(uploadedFile1);
@@ -121,7 +124,7 @@ public class DocumentBinaryResourceTest {
 
         BinaryResource binaryResource = new BinaryResource(Tools.unAccent(ResourceUtil.FILENAME2), ResourceUtil.DOCUMENT_SIZE, new Date());
 
-        File uploadedFile1 = new File(getClass().getResource(ResourceUtil.TARGET_FILE_STORAGE).getFile() + "new_" + ResourceUtil.FILENAME2);
+        File uploadedFile1 = new File(ResourceUtil.TARGET_FILE_STORAGE + "new_" + ResourceUtil.FILENAME2);
         if (!uploadedFile1.getParentFile().exists()){
             uploadedFile1.getParentFile().mkdirs();
         }
@@ -163,9 +166,9 @@ public class DocumentBinaryResourceTest {
         BinaryResource binaryResource2 = new BinaryResource(ResourceUtil.FILENAME2, ResourceUtil.DOCUMENT_SIZE, new Date());
         BinaryResource binaryResource3 = new BinaryResource(ResourceUtil.FILENAME3, ResourceUtil.DOCUMENT_SIZE, new Date());
 
-        File uploadedFile1 = new File(getClass().getResource(ResourceUtil.TARGET_FILE_STORAGE + "new_" + ResourceUtil.FILENAME1).getFile());
-        File uploadedFile2 = new File(getClass().getResource(ResourceUtil.TARGET_FILE_STORAGE + "new_" + ResourceUtil.FILENAME2).getFile());
-        File uploadedFile3 = new File(getClass().getResource(ResourceUtil.TARGET_FILE_STORAGE + "new_" + ResourceUtil.FILENAME3).getFile());
+        File uploadedFile1 = new File(ResourceUtil.TARGET_FILE_STORAGE + "new_" + ResourceUtil.FILENAME1);
+        File uploadedFile2 = new File(ResourceUtil.TARGET_FILE_STORAGE + "new_" + ResourceUtil.FILENAME2);
+        File uploadedFile3 = new File(ResourceUtil.TARGET_FILE_STORAGE + "new_" + ResourceUtil.FILENAME3);
         if (!uploadedFile1.getParentFile().exists()){
             uploadedFile1.getParentFile().mkdirs();
         }

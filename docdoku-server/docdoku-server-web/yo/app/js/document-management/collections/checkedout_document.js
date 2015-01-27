@@ -1,4 +1,4 @@
-/*global define*/
+/*global define,App*/
 define([
     'backbone',
     'models/document'
@@ -13,7 +13,7 @@ define([
         url: function () {
             return  App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/documents/checkedout';
         }
-
+        
     });
 
     return CheckedoutDocumentList;

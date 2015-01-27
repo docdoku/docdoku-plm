@@ -56,6 +56,7 @@ define([
             this.deleteButton = this.$('.delete');
             this.aclButton = this.$('.edit-acl');
             this.tagsButton = this.$('.tags');
+            this.$notifications = this.$el.find('.notifications').first();
         },
 
         newOrder: function () {
@@ -114,9 +115,7 @@ define([
                             aclEditView.closeModal();
                             self.listView.redraw();
                         },
-                        error: function () {
-                            alert('Error on update acl');
-                        }
+                        error: self.onError
                     });
 
                 });

@@ -1,7 +1,8 @@
-/*global define*/
+/*global define,App*/
 define([
+    'backbone',
     'models/document'
-], function (Document) {
+], function (Backbone,Document) {
 	'use strict';
     var TaskDocumentList = Backbone.Collection.extend({
 

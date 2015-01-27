@@ -1,4 +1,4 @@
-/*global $,require,window*/
+/*global $,require,window,_*/
 var App = {
     debug: false,
 
@@ -8,7 +8,7 @@ var App = {
 		login: '',
 		groups: [],
 		contextPath: '',
-		locale: localStorage.getItem('locale') || 'en'
+		locale: window.localStorage.getItem('locale') || 'en'
 	},
 
     WorkerManagedValues: {
@@ -81,7 +81,9 @@ require.config({
     },
     paths: {
         jquery: '../../bower_components/jquery/jquery',
+        jqueryUI: '../../bower_components/jqueryui/ui/jquery-ui',
         backbone: '../../bower_components/backbone/backbone',
+        bootstrap:'../../bower_components/bootstrap/docs/assets/js/bootstrap',
         underscore: '../../bower_components/underscore/underscore',
         mustache: '../../bower_components/mustache/mustache',
         text: '../../bower_components/requirejs-text/text',
@@ -103,7 +105,8 @@ require.config({
         buffergeometryutils: 'dmu/utils/BufferGeometryUtils',
         stlloader: 'dmu/loaders/STLLoader',
         objloader: 'dmu/loaders/OBJLoader',
-        stats:'dmu/utils/Stats'
+        stats:'dmu/utils/Stats',
+        stringprototype:'../lib/string.prototype'
     },
 
     deps: [
@@ -118,7 +121,9 @@ require.config({
         'buffergeometryutils',
         'stats',
         'dat',
-        'tween'
+        'tween',
+        'stringprototype',
+        'bootstrap',
     ],
     config: {
         i18n: {

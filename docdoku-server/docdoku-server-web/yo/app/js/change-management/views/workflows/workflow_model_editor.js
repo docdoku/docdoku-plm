@@ -54,14 +54,6 @@ define([
                 });
             }
 
-            // Check if tooltips is necessary
-            if(!this.inputFinalState.val()){
-                this.$notifications.append(new AlertView({
-                    type: 'info',
-                    message: App.config.i18n.WARNING_FINAL_STATE_MISSING
-                }).render().$el);
-            }
-
             return this;
         },
         bindDomElements: function () {
@@ -91,10 +83,17 @@ define([
             if(_.isUndefined(this.options.workflowModelId)) {
                 this.model = new WorkflowModel();
                 this.model.attributes.activityModels.bind('add', this.addActivity, this);
+                
                 this.$notifications.append(new AlertView({
                     type: 'info',
                     message: App.config.i18n.WARNING_ACTIVITIES_MISSING
                 }).render().$el);
+
+                this.$notifications.append(new AlertView({
+                    type: 'info',
+                    message: App.config.i18n.WARNING_FINAL_STATE_MISSING
+                }).render().$el);
+
             } else {
                 this.model = new WorkflowModel({
                     id: this.options.workflowModelId
@@ -107,6 +106,14 @@ define([
             }
         },
         onModelFetch: function(){
+
+            if(!this.model.get('finalLifeCycleState')){
+                this.$notifications.append(new AlertView({
+                    type: 'info',
+                    message: App.config.i18n.WARNING_FINAL_STATE_MISSING
+                }).render().$el);
+            }
+
             this.inputFinalState.val(this.model.get('finalLifeCycleState'));
             this.model.attributes.activityModels.bind('add', this.addActivity, this);
             this.model.attributes.activityModels.each(this.addActivity, this);

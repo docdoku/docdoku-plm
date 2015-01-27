@@ -1,4 +1,4 @@
-/*global define*/
+/*global define,_*/
 define([
         "backbone",
         "text!templates/progress_bar.html"

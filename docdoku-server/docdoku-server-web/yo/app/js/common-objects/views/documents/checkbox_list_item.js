@@ -11,19 +11,19 @@ define([
         },
         rendered: function () {
             // Restore check state
-            $(this.checkToggle).prop("checked", this.isChecked);
+            this.$(this.checkToggle).prop("checked", this.isChecked);
         },
         stateChanged: function () {
             this.trigger(this.isChecked ? "checked" : "unchecked");
         },
         toggle: function () {
             // Save check state to restore it after render
-            this.isChecked = $(this.checkToggle).prop("checked");
+            this.isChecked = this.$(this.checkToggle).prop("checked");
             this.stateChanged();
         },
         setCheckState: function (value) {
             this.isChecked = value;
-            $(this.checkToggle).prop("checked", value);
+            this.$(this.checkToggle).prop("checked", value);
             this.stateChanged();
         },
         check: function () {

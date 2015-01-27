@@ -5,11 +5,11 @@
   }
   #tab-part-files{
     .conversion-status{
-        margin: 18px 0 0 4px;
-        button.reload{
-            float:right;
+      margin: 18px 0 0 4px;
+      button.reload{
+        float:right;
 
-        }
+      }
     }
   }
   #iteration-components{
@@ -27,6 +27,7 @@
     .well{
       float: left;
       padding:9px;
+      width: 95%;
 
       a.remove {
 
@@ -59,6 +60,21 @@
           width:20px;
         }
 
+        &[name="comment"]{
+          width:120px;
+        }
+        &[name="newUnit"]{
+          width: 43px;
+          position: absolute;
+          margin-left: -74px;
+          border-radius: 0px;
+          border: 0px;
+          margin-top: 1.3px;
+          box-shadow: none;
+        }
+      }
+      select[name="unitMeasure"]{
+        width:72px;
       }
 
       .add-cadInstance{
@@ -70,11 +86,19 @@
           opacity: 1;
         }
       }
+      .collapse-cadInstance{
+        float: right;
+        margin-top: 8px;
+        cursor: pointer;
+        opacity: 0.5;
+        &:hover{
+          opacity: 1;
+        }
+      }
 
       .cadInstances{
         float:left;
         clear:both;
-
         .cadInstance{
           h5{
             font-weight:normal;

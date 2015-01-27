@@ -1,6 +1,11 @@
 /*global jQuery*/
 (function ($) {
+
     'use strict';
+
+    function removePopovers(){
+        $('.popover').remove();
+    }
 
     function removePopoversIfClickOutside(e){
         var $elem = $(e.target);
@@ -9,13 +14,7 @@
         }
     }
 
-    function removePopovers(){
-        $('.popover').remove();
-    }
-
     addEventListener('mousewheel',removePopovers);
     addEventListener('click',removePopoversIfClickOutside);
-
-
 
 })(jQuery);

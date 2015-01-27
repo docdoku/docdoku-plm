@@ -97,15 +97,6 @@
 
     margin : 0 auto 20px auto!important;
 
-    .sorting_asc {
-      background: url('../images/sort_asc.png') no-repeat center right;
-      text-decoration: underline;
-    }
-
-    .sorting_desc {
-      background: url('../images/sort_desc.png') no-repeat center right;
-      text-decoration: underline;
-    }
 
     thead th, thead td{
       padding-right:14px!important;
@@ -113,6 +104,25 @@
       &:active {
         outline: none;
       }
+
+      &.sorting{
+          background:none;
+          &:hover{
+            background: url('../images/sort_both.png')  no-repeat center right;
+            text-decoration: underline;
+          }
+      }
+
+      &.sorting_asc {
+        background: url('../images/sort_asc.png') no-repeat center right;
+        text-decoration: underline;
+      }
+
+      &.sorting_desc {
+        background: url('../images/sort_desc.png') no-repeat center right;
+        text-decoration: underline;
+      }
+
     }
 
   }
