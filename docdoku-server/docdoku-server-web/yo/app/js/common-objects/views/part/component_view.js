@@ -14,7 +14,7 @@ define([
             'change input[name=comment]': 'changeComment',
             'change input[name=number]': 'changeNumber',
             'change input[name=name]': 'changeName',
-            'change input[name=newUnit]': 'addNewUnit',
+            'change input[name=newUnit]': 'changeMeasureUnit',
             'change select[name=unitMeasure]': 'changeMeasureUnit',
             'click .add-cadInstance': 'addCadInstance',
             'click .collapse-cadInstance': 'collapseTransformations'
@@ -53,7 +53,13 @@ define([
             {
                 this.$unitText.val(this.$('.unitEdit option:selected').val());
             }else{
-                this.$unitText.val( this.$unitText.attr("placeholder"));
+                if (unit == "" || unit == null || unit == undefined){
+                    this.$unitText.val( this.$unitText.attr("placeholder"));
+                }
+                else{
+                    this.$unitText.val( unit);
+                }
+
             }
             this.disableEnableAmount(unit);
         },
@@ -87,11 +93,6 @@ define([
             this.model.set('amount',this.$amount.val());
         },
 
-        addNewUnit: function(e){
-            this.model.set('unit',e.target.value);
-
-        },
-
         collapseTransformations: function () {
             if(this.$cadInstances.is(":visible")){
                 this.$cadInstances.hide();
@@ -118,8 +119,8 @@ define([
         },
         changeMeasureUnit: function(e){
             this.model.set('unit',e.target.value);
-            this.disableEnableAmount(e.target.value);
             this.$unitText.val(e.target.value);
+            this.disableEnableAmount(e.target.value);
         },
         checkIntegrity: function (unit) {
 
