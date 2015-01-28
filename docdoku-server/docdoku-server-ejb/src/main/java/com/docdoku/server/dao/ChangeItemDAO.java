@@ -23,6 +23,8 @@ import com.docdoku.core.change.ChangeIssue;
 import com.docdoku.core.change.ChangeItem;
 import com.docdoku.core.change.ChangeOrder;
 import com.docdoku.core.change.ChangeRequest;
+import com.docdoku.core.document.DocumentRevisionKey;
+import com.docdoku.core.document.Folder;
 import com.docdoku.core.exceptions.ChangeIssueNotFoundException;
 import com.docdoku.core.exceptions.ChangeOrderNotFoundException;
 import com.docdoku.core.exceptions.ChangeRequestNotFoundException;
@@ -136,4 +138,63 @@ public class ChangeItemDAO {
                 .getResultList());
         return changeItems;
     }
+
+    public List<ChangeItem> findChangeItemByDoc(DocumentRevisionKey documentRevisionKey){
+        List<ChangeItem> changeItems = new ArrayList<>();
+        changeItems.addAll(em.createQuery("SELECT c FROM ChangeIssue c , DocumentIteration i WHERE i member of c.affectedDocuments AND i.documentRevision.documentMaster.workspace.id = :workspaceId AND i.documentRevision.version = :version AND i.documentRevision.documentMasterId = :documentMasterId", ChangeIssue.class)
+                .setParameter("workspaceId", documentRevisionKey.getWorkspaceId())
+                .setParameter("documentMasterId", documentRevisionKey.getDocumentMasterId())
+                .setParameter("version", documentRevisionKey.getVersion())                
+                .getResultList());
+        changeItems.addAll(em.createQuery("SELECT c FROM ChangeRequest c , DocumentIteration i WHERE i member of c.affectedDocuments AND i.documentRevision.documentMaster.workspace.id = :workspaceId AND i.documentRevision.version = :version AND i.documentRevision.documentMasterId = :documentMasterId", ChangeRequest.class)
+                .setParameter("workspaceId", documentRevisionKey.getWorkspaceId())
+                .setParameter("documentMasterId", documentRevisionKey.getDocumentMasterId())
+                .setParameter("version", documentRevisionKey.getVersion())
+                .getResultList());
+        changeItems.addAll(em.createQuery("SELECT c FROM ChangeOrder c , DocumentIteration i WHERE i member of c.affectedDocuments AND i.documentRevision.documentMaster.workspace.id = :workspaceId AND i.documentRevision.version = :version AND i.documentRevision.documentMasterId = :documentMasterId", ChangeOrder.class)
+                .setParameter("workspaceId", documentRevisionKey.getWorkspaceId())
+                .setParameter("documentMasterId", documentRevisionKey.getDocumentMasterId())
+                .setParameter("version", documentRevisionKey.getVersion())
+                .getResultList());
+        return changeItems;
+    }
+    
+    public boolean hasChangeItems(DocumentRevisionKey documentRevisionKey){
+        return !findChangeItemByDoc(documentRevisionKey).isEmpty();
+    }
+
+
+    public List<ChangeItem> findChangeItemByFolder(Folder folder){
+        List<ChangeItem> changeItems = new ArrayList<>();
+        changeItems.addAll(em.createQuery("SELECT c FROM ChangeIssue c , DocumentIteration i WHERE i member of c.affectedDocuments AND i.documentRevision.location = :folder", ChangeIssue.class)
+                .setParameter("folder", folder)
+                .getResultList());
+        changeItems.addAll(em.createQuery("SELECT c FROM ChangeRequest c , DocumentIteration i WHERE i member of c.affectedDocuments AND i.documentRevision.location = :folder", ChangeRequest.class)
+                .setParameter("folder", folder)
+                .getResultList());
+        changeItems.addAll(em.createQuery("SELECT c FROM ChangeOrder c , DocumentIteration i WHERE i member of c.affectedDocuments AND i.documentRevision.location = :folder", ChangeOrder.class)
+                .setParameter("folder", folder)
+                .getResultList());
+        return changeItems;
+    }
+
+
+    public boolean hasConstraintsInFolderHierarchy(Folder folder) {
+        boolean hasConstraints = false;
+
+        FolderDAO folderDAO = new FolderDAO(mLocale,em);
+
+        for(Folder subFolder : folderDAO.getSubFolders(folder)){
+            hasConstraints |= hasConstraintsInFolderHierarchy(subFolder);
+        }
+
+        return hasConstraints || hasChangeItems(folder);
+
+    }
+
+    public boolean hasChangeItems(Folder folder) {
+        return !findChangeItemByFolder(folder).isEmpty();
+    }
+
+
 }

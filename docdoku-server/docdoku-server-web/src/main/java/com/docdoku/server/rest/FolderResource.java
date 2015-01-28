@@ -179,14 +179,14 @@ public class FolderResource {
     @Path("{folderId}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteRootFolder(@PathParam("folderId") String completePath)
-            throws EntityNotFoundException, NotAllowedException, AccessRightException, UserNotActiveException, ESServerException {
+            throws EntityNotFoundException, NotAllowedException, AccessRightException, UserNotActiveException, ESServerException, EntityConstraintException {
 
         deleteFolder(completePath);
         return Response.status(Response.Status.OK).build();
     }
     
     private DocumentRevisionKey[] deleteFolder(String pCompletePath)
-            throws EntityNotFoundException, ESServerException, AccessRightException, NotAllowedException {
+            throws EntityNotFoundException, ESServerException, AccessRightException, NotAllowedException, EntityConstraintException {
 
         String decodedCompletePath = FolderDTO.replaceColonWithSlash(pCompletePath);
         String completePath = Tools.stripTrailingSlash(decodedCompletePath);

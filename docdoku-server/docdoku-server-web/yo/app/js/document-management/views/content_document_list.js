@@ -7,8 +7,9 @@ define([
 	'views/advanced_search',
 	'common-objects/views/prompt',
 	'common-objects/views/security/acl_edit',
-	'common-objects/views/tags/tags_management'
-], function (Backbone, ContentView, DocumentListView, DocumentNewVersionView, AdvancedSearchView, PromptView, ACLEditView, TagsManagementView) {
+	'common-objects/views/tags/tags_management',
+	'common-objects/views/alert'
+], function (Backbone, ContentView, DocumentListView, DocumentNewVersionView, AdvancedSearchView, PromptView, ACLEditView, TagsManagementView,AlertView) {
 	'use strict';
 	var ContentDocumentListView = ContentView.extend({
 
@@ -35,6 +36,7 @@ define([
 			this.tagsButton = this.$('.actions .tags');
 			this.newVersionButton = this.$('.actions .new-version');
 			this.aclButton = this.$('.actions .edit-acl');
+			this.notifications = this.$('>.notifications');
 
 			this.tagsButton.show();
 
@@ -173,26 +175,46 @@ define([
 
 		actionDelete: function () {
 			var that = this;
+
             bootbox.confirm(App.config.i18n.DELETE_SELECTION_QUESTION, function(result){
                 if(result){
+
+                    var checkedViews = that.listView.checkedViews();
+                    var requestsToBeDone = checkedViews.length;
+
+                    var onRequestOver = function(){
+                        if(++requestsToBeDone === requestsToBeDone){
+                            that.listView.redraw();
+                            that.collection.fetch();
+                        }
+                    };
+
                     that.listView.eachChecked(function (view) {
                         view.model.destroy({
+                            wait:true,
                             dataType: 'text', // server doesn't send a json hash in the response body
-                            success: function () {
-                                that.listView.redraw();
-                                that.collection.fetch();
-                            },
+                            success: onRequestOver,
                             error: function (model, err) {
-                                window.alert(err.responseText);
-                                that.listView.redraw();
-                                that.collection.fetch();
+                                that.onError(model,err);
+                                onRequestOver();
                             }
                         });
+
                     });
                 }
             });
+
 			return false;
 		},
+
+        onError: function (model, error) {
+            var errorMessage = error ? error.responseText : model;
+
+            this.notifications.append(new AlertView({
+                type: 'error',
+                message: errorMessage
+            }).render().$el);
+        },
 
 		actionTags: function () {
 			var self = this;
