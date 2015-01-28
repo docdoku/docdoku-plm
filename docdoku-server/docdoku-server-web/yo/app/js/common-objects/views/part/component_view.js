@@ -126,20 +126,21 @@ define([
 
              if (unit == "null" || unit == "" || unit == undefined) {
                 if ( parseInt(this.$amount.val(),10) > this.$('.cadInstance').length) {
-                    while (this.$('.cadInstance').length < parseInt(this.$amount.val(),10) ) {
-                        var instance = {tx: 0, ty: 0, tz: 0, rx: 0, ry: 0, rz: 0};
-                        this.model.get('cadInstances').push(instance);
-                        this.addCadInstanceView(instance);
-                    }
+                    for(var i=0;i<= parseInt(this.$amount.val(),10) - this.$('.cadInstance').length;i++){
+                            var instance = {tx: 0, ty: 0, tz: 0, rx: 0, ry: 0, rz: 0};
+                            this.model.get('cadInstances').push(instance);
+                            this.addCadInstanceView(instance);
+                        }
                 }
             }else  {
                  if( this.$('.cadInstance').length > 1){
                      this.$(".cadInstance:not(:first)").remove();
-                     while(this.model.get('cadInstances').length > 1){
-                         this.model.get('cadInstances').pop();
-                     }
-                 }
+                     var self= this;
+                     _.each(self.model.get('cadInstances'),function(){
+                         self.model.get('cadInstances').pop();
+                     });
 
+                     }
              }
         },
         disableEnableAmount: function(unit){
