@@ -192,7 +192,12 @@ define([
             bootbox.confirm(App.config.i18n.DELETE_FOLDER_QUESTION, function(result){
                 if(result){
                     that.model.destroy({
-                        dataType: 'text' // server doesn't send a json hash in the response body
+                        wait:true,
+                        dataType: 'text', // server doesn't send a json hash in the response body,
+                        success:function(){},
+                        error:function(model,res){
+                            window.alert(res.responseText);
+                        }
                     });
                 }
             });

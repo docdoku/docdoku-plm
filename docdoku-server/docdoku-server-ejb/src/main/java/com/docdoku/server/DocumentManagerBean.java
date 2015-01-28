@@ -954,7 +954,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public DocumentRevisionKey[] deleteFolder(String pCompletePath) throws WorkspaceNotFoundException, NotAllowedException, AccessRightException, UserNotFoundException, FolderNotFoundException, ESServerException {
+    public DocumentRevisionKey[] deleteFolder(String pCompletePath) throws WorkspaceNotFoundException, NotAllowedException, AccessRightException, UserNotFoundException, FolderNotFoundException, ESServerException, EntityConstraintException {
         User user = userManager.checkWorkspaceWriteAccess(Folder.parseWorkspaceId(pCompletePath));
         Locale userLocale = new Locale(user.getLanguage());
 
@@ -964,8 +964,16 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         if (isAnotherUserHomeFolder(user, folder) || folder.isRoot() || folder.isHome()) {
             throw new NotAllowedException(userLocale, "NotAllowedException21");
         } else {
+           
+            ChangeItemDAO changeItemDAO = new ChangeItemDAO(userLocale,em);
+            
+            if(changeItemDAO.hasConstraintsInFolderHierarchy(folder)){
+                throw new EntityConstraintException(userLocale,"EntityConstraintException7");
+            }
+            
             List<DocumentRevision> docRs = folderDAO.removeFolder(folder);
             DocumentRevisionKey[] pks = new DocumentRevisionKey[docRs.size()];
+            
             int i = 0;
             for (DocumentRevision docR : docRs) {
                 pks[i++] = docR.getKey();
@@ -1022,17 +1030,20 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
         DocumentMasterDAO documentMasterDAO = new DocumentMasterDAO(userLocale, em);
         DocumentRevisionDAO docRDAO = new DocumentRevisionDAO(userLocale, em);
-        BaselinedDocumentDAO baselinedDocumentDAO = new BaselinedDocumentDAO(userLocale, em);
+        
         DocumentRevision docR = docRDAO.loadDocR(pDocRPK);
-        DocumentMaster documentMaster = docR.getDocumentMaster();
-        boolean isLastRevision = documentMaster.getDocumentRevisions().size() == 1;
-
         if (isInAnotherUserHomeFolder(user, docR)) {
             throw new NotAllowedException(userLocale, "NotAllowedException22");
         }
-
+        
+        BaselinedDocumentDAO baselinedDocumentDAO = new BaselinedDocumentDAO(userLocale, em);
         if(baselinedDocumentDAO.hasDocumentRevision(pDocRPK)){
             throw new EntityConstraintException(userLocale,"EntityConstraintException6");
+        }
+        
+        ChangeItemDAO changeItemDAO = new ChangeItemDAO(userLocale,em);
+        if(changeItemDAO.hasChangeItems(pDocRPK)){
+            throw new EntityConstraintException(userLocale,"EntityConstraintException7");
         }
 
         for (DocumentIteration doc : docR.getDocumentIterations()) {
@@ -1047,6 +1058,10 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             }
         }
 
+
+        DocumentMaster documentMaster = docR.getDocumentMaster();
+        boolean isLastRevision = documentMaster.getDocumentRevisions().size() == 1;
+        
         if (isLastRevision) {
             documentMasterDAO.removeDocM(documentMaster);
         } else {
