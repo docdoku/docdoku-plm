@@ -49,18 +49,11 @@ define([
         }
         ,initUnit:function(){
             var unit = this.model.get('unit');
-            this.$('.unitEdit option[value='+unit+']').attr('selected','selected');
-            if (this.$('.unitEdit option:selected').val() != "")
-            {
-                this.$unitText.val(this.$('.unitEdit option:selected').val());
-            }else{
-                if (unit == "" || unit == null || unit == undefined){
-                    this.$unitText.val( this.$unitText.attr("default-unity"));
-                }
-                else{
-                    this.$unitText.val( unit);
-                }
-
+            if (unit == "" || unit == null || unit == undefined){
+                this.$unitText.val( this.$unitText.attr("default-unity"));
+            }
+            else{
+                this.$unitText.val(unit);
             }
             this.disableEnableAmount(unit);
         },
@@ -129,12 +122,16 @@ define([
 
              if (unit == "null" || unit == "" || unit == undefined || unit == this.$defaultUnity ) {
                 if ( parseInt(this.$amount.val(),10) > this.$('.cadInstance').length) {
-                    var totalUnit =  parseInt(this.$amount.val(),10) - this.$('.cadInstance').length;
-                    for(var i=0;i<totalUnit;i++){
+                    var totalUnitToAdd =  parseInt(this.$amount.val(),10) - this.$('.cadInstance').length;
+                    for(var i=0;i<totalUnitToAdd;i++){
                             var instance = {tx: 0, ty: 0, tz: 0, rx: 0, ry: 0, rz: 0};
                             this.model.get('cadInstances').push(instance);
                             this.addCadInstanceView(instance);
                         }
+                }
+                 if(parseInt(this.$amount.val(),10) < this.$('.cadInstance').length) {
+                     var totalToDelete= this.$('.cadInstance').length-parseInt(this.$amount.val(),10);
+                     this.$(".cadInstance").slice(-totalToDelete).remove();
                 }
             }else  {
                  if( this.$('.cadInstance').length > 1){
