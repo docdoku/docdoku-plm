@@ -123,7 +123,7 @@ define([
         },
         checkIntegrity: function (unit) {
 
-             if (unit == "null" || unit == "" ) {
+             if (unit == "null" || unit == "" || unit == undefined) {
                 if ( parseInt(this.$amount.val(),10) > this.$('.cadInstance').length) {
                     while (this.$('.cadInstance').length < parseInt(this.$amount.val(),10) ) {
                         var instance = {tx: 0, ty: 0, tz: 0, rx: 0, ry: 0, rz: 0};
