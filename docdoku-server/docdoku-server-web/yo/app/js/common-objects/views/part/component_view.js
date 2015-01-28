@@ -15,7 +15,7 @@ define([
             'change input[name=number]': 'changeNumber',
             'change input[name=name]': 'changeName',
             'change input[name=newUnit]': 'changeMeasureUnit',
-            'change select[name=unitMeasure]': 'changeMeasureUnit',
+            'click datalist[name=unitMeasure]': 'changeMeasureUnit',
             'click .add-cadInstance': 'addCadInstance',
             'click .collapse-cadInstance': 'collapseTransformations'
         },
@@ -37,6 +37,7 @@ define([
             this.$amount = this.$('input[name=amount]');
             this.$comment = this.$('input[name=comment]');
             this.$unitText = this.$('input[name=newUnit]');
+            this.$defaultUnity = this.$unitText.attr('default-unity');
         },
 
         initCadInstanceViews: function () {
@@ -54,7 +55,7 @@ define([
                 this.$unitText.val(this.$('.unitEdit option:selected').val());
             }else{
                 if (unit == "" || unit == null || unit == undefined){
-                    this.$unitText.val( this.$unitText.attr("placeholder"));
+                    this.$unitText.val( this.$unitText.attr("default-unity"));
                 }
                 else{
                     this.$unitText.val( unit);
@@ -83,6 +84,8 @@ define([
         onRemoveCadInstance: function (instance) {
             this.model.set('cadInstances', _(this.model.get('cadInstances')).without(instance));
             this.$amount.val(parseInt(this.$amount.val(), 10) - 1);
+            this.model.set('amount',this.$amount.val());
+            this.model.get('component').amount= this.$amount.val();
         },
 
         addCadInstance: function () {
@@ -124,9 +127,10 @@ define([
         },
         checkIntegrity: function (unit) {
 
-             if (unit == "null" || unit == "" || unit == undefined) {
+             if (unit == "null" || unit == "" || unit == undefined || unit == this.$defaultUnity ) {
                 if ( parseInt(this.$amount.val(),10) > this.$('.cadInstance').length) {
-                    for(var i=0;i<= parseInt(this.$amount.val(),10) - this.$('.cadInstance').length;i++){
+                    var totalUnit =  parseInt(this.$amount.val(),10) - this.$('.cadInstance').length;
+                    for(var i=0;i<totalUnit;i++){
                             var instance = {tx: 0, ty: 0, tz: 0, rx: 0, ry: 0, rz: 0};
                             this.model.get('cadInstances').push(instance);
                             this.addCadInstanceView(instance);
@@ -145,12 +149,12 @@ define([
         },
         disableEnableAmount: function(unit){
 
-            if (unit == "null" || unit == "" || unit == undefined)
+            if (unit == "null" || unit == "" || unit == undefined || unit == this.$defaultUnity)
             {
                 this.$amount.val(parseInt(this.$amount.val(),10)== 0 ? 1:parseInt(this.$amount.val(),10));
                 this.$amount.attr('disabled','disabled');
                 this.$('.add-cadInstance').show();
-                this.$unitText.val(this.$unitText.attr('placeholder'));
+                this.$unitText.val(this.$unitText.attr('default-unity'));
             }
             else{
                 this.$amount.removeAttr('disabled');
