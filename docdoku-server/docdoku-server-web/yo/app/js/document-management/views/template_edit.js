@@ -44,11 +44,20 @@ define([
             // Add the fileListView to the tab
             this.$('#tab-files-' + this.cid).append(this.fileListView.el);
 
-            this.$('a#mask-help').popover({
+            var $popoverLink = this.$('a#mask-help');
+
+            $popoverLink.popover({
                 title: App.config.i18n.MASK,
                 placement: 'left',
                 html: true,
-                content: App.config.i18n.MASK_HELP
+                content: App.config.i18n.MASK_HELP,
+                trigger:'manual',
+                container:'.modal.new-template'
+            }).click(function(e){
+                $popoverLink.popover('show');
+                e.stopPropagation();
+                e.preventDefault();
+                return false;
             });
 
         },

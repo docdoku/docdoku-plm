@@ -20,11 +20,20 @@ define([
                 })
             ).render();
 
-            this.$('a#mask-help').popover({
+            var $popoverLink = this.$('#mask-help');
+
+            $popoverLink.popover({
                 title: App.config.i18n.MASK,
                 placement: 'left',
                 html: true,
-                content: App.config.i18n.MASK_HELP
+                trigger: 'manual',
+                content: App.config.i18n.MASK_HELP,
+                container:'.modal.new-template'
+            }).click(function(e){
+                $popoverLink.popover('show');
+                e.stopPropagation();
+                e.preventDefault();
+                return false;
             });
 
             this.$('input.reference').customValidity(App.config.i18n.REQUIRED_FIELD);
