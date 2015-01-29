@@ -22,10 +22,7 @@ package com.docdoku.server.rest;
 import com.docdoku.core.change.ChangeOrder;
 import com.docdoku.core.change.ChangeRequest;
 import com.docdoku.core.change.Milestone;
-import com.docdoku.core.exceptions.AccessRightException;
-import com.docdoku.core.exceptions.EntityAlreadyExistsException;
-import com.docdoku.core.exceptions.EntityNotFoundException;
-import com.docdoku.core.exceptions.UserNotActiveException;
+import com.docdoku.core.exceptions.*;
 import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IChangeManagerLocal;
@@ -125,9 +122,9 @@ public class ChangeMilestonesResource {
     @DELETE
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("{milestoneId}")
-    public Response removeIssue(@PathParam("milestoneId") int milestoneId)
-            throws EntityNotFoundException, UserNotActiveException, AccessRightException {
-        changeManager.deleteChangeMilestone(milestoneId);
+    public Response removeMilestone(@PathParam("workspaceId") String workspaceId, @PathParam("milestoneId") int milestoneId)
+            throws EntityNotFoundException, UserNotActiveException, AccessRightException, EntityConstraintException {
+        changeManager.deleteChangeMilestone(workspaceId,milestoneId);
         return Response.ok().build();
     }
 

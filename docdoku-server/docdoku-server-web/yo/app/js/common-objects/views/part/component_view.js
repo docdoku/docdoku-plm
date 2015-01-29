@@ -14,8 +14,8 @@ define([
             'change input[name=comment]': 'changeComment',
             'change input[name=number]': 'changeNumber',
             'change input[name=name]': 'changeName',
-            'change input[name=newUnit]': 'addNewUnit',
-            'change select[name=unitMeasure]': 'changeMeasureUnit',
+            'change input[name=newUnit]': 'changeMeasureUnit',
+            'click datalist[name=unitMeasure]': 'changeMeasureUnit',
             'click .add-cadInstance': 'addCadInstance',
             'click .collapse-cadInstance': 'collapseTransformations'
         },
@@ -37,6 +37,7 @@ define([
             this.$amount = this.$('input[name=amount]');
             this.$comment = this.$('input[name=comment]');
             this.$unitText = this.$('input[name=newUnit]');
+            this.$defaultUnity = this.$unitText.attr('default-unity');
         },
 
         initCadInstanceViews: function () {
@@ -48,12 +49,11 @@ define([
         }
         ,initUnit:function(){
             var unit = this.model.get('unit');
-            this.$('.unitEdit option[value='+unit+']').attr('selected','selected');
-            if (this.$('.unitEdit option:selected').val() != "")
-            {
-                this.$unitText.val(this.$('.unitEdit option:selected').val());
-            }else{
-                this.$unitText.val( this.$unitText.attr("placeholder"));
+            if (unit == "" || unit == null || unit == undefined){
+                this.$unitText.val( this.$unitText.attr("default-unity"));
+            }
+            else{
+                this.$unitText.val(unit);
             }
             this.disableEnableAmount(unit);
         },
@@ -77,6 +77,8 @@ define([
         onRemoveCadInstance: function (instance) {
             this.model.set('cadInstances', _(this.model.get('cadInstances')).without(instance));
             this.$amount.val(parseInt(this.$amount.val(), 10) - 1);
+            this.model.set('amount',this.$amount.val());
+            this.model.get('component').amount= this.$amount.val();
         },
 
         addCadInstance: function () {
@@ -85,11 +87,6 @@ define([
             this.addCadInstanceView(instance);
             this.$amount.val(parseInt(this.$amount.val(), 10) + 1);
             this.model.set('amount',this.$amount.val());
-        },
-
-        addNewUnit: function(e){
-            this.model.set('unit',e.target.value);
-
         },
 
         collapseTransformations: function () {
@@ -118,37 +115,43 @@ define([
         },
         changeMeasureUnit: function(e){
             this.model.set('unit',e.target.value);
-            this.disableEnableAmount(e.target.value);
             this.$unitText.val(e.target.value);
+            this.disableEnableAmount(e.target.value);
         },
         checkIntegrity: function (unit) {
 
-             if (unit == "null" || unit == "" ) {
+             if (unit == "null" || unit == "" || unit == undefined || unit == this.$defaultUnity ) {
                 if ( parseInt(this.$amount.val(),10) > this.$('.cadInstance').length) {
-                    while (this.$('.cadInstance').length < parseInt(this.$amount.val(),10) ) {
-                        var instance = {tx: 0, ty: 0, tz: 0, rx: 0, ry: 0, rz: 0};
-                        this.model.get('cadInstances').push(instance);
-                        this.addCadInstanceView(instance);
-                    }
+                    var totalUnitToAdd =  parseInt(this.$amount.val(),10) - this.$('.cadInstance').length;
+                    for(var i=0;i<totalUnitToAdd;i++){
+                            var instance = {tx: 0, ty: 0, tz: 0, rx: 0, ry: 0, rz: 0};
+                            this.model.get('cadInstances').push(instance);
+                            this.addCadInstanceView(instance);
+                        }
+                }
+                 if(parseInt(this.$amount.val(),10) < this.$('.cadInstance').length) {
+                     var totalToDelete= this.$('.cadInstance').length-parseInt(this.$amount.val(),10);
+                     this.$(".cadInstance").slice(-totalToDelete).remove();
                 }
             }else  {
                  if( this.$('.cadInstance').length > 1){
                      this.$(".cadInstance:not(:first)").remove();
-                     while(this.model.get('cadInstances').length > 1){
-                         this.model.get('cadInstances').pop();
-                     }
-                 }
+                     var self= this;
+                     _.each(self.model.get('cadInstances'),function(){
+                         self.model.get('cadInstances').pop();
+                     });
 
+                     }
              }
         },
         disableEnableAmount: function(unit){
 
-            if (unit == "null" || unit == "" || unit == undefined)
+            if (unit == "null" || unit == "" || unit == undefined || unit == this.$defaultUnity)
             {
                 this.$amount.val(parseInt(this.$amount.val(),10)== 0 ? 1:parseInt(this.$amount.val(),10));
                 this.$amount.attr('disabled','disabled');
                 this.$('.add-cadInstance').show();
-                this.$unitText.val(this.$unitText.attr('placeholder'));
+                this.$unitText.val(this.$unitText.attr('default-unity'));
             }
             else{
                 this.$amount.removeAttr('disabled');

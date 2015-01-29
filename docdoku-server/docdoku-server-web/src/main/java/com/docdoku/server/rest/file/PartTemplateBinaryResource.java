@@ -49,6 +49,7 @@ import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URLEncoder;
 import java.util.Collection;
 
 @Stateless
@@ -87,7 +88,7 @@ public class PartTemplateBinaryResource {
             }
 
             if(formParts.size()==1) {
-                return BinaryResourceUpload.tryToRespondCreated(request.getRequestURI()+fileName);
+                return BinaryResourceUpload.tryToRespondCreated(request.getRequestURI()+ URLEncoder.encode(fileName, "UTF-8"));
             }
             return Response.ok().build();
 

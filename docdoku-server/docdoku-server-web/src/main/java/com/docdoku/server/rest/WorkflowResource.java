@@ -23,7 +23,9 @@ import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IWorkflowManagerLocal;
-import com.docdoku.core.workflow.*;
+import com.docdoku.core.workflow.ActivityModel;
+import com.docdoku.core.workflow.WorkflowModel;
+import com.docdoku.core.workflow.WorkflowModelKey;
 import com.docdoku.server.rest.dto.ActivityModelDTO;
 import com.docdoku.server.rest.dto.WorkflowModelDTO;
 import org.dozer.DozerBeanMapperSingletonWrapper;
@@ -39,7 +41,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -111,16 +112,13 @@ public class WorkflowResource {
     @Produces(MediaType.APPLICATION_JSON)
     public WorkflowModelDTO createWorkflowModelInWorkspace(@PathParam("workspaceId") String workspaceId, WorkflowModelDTO workflowModelDTOToPersist)
             throws EntityNotFoundException, EntityAlreadyExistsException, UserNotActiveException, NotAllowedException, AccessRightException, CreationException {
-
-        Role[] roles = workflowService.getRoles(workspaceId);
         List<ActivityModelDTO> activityModelDTOsList = workflowModelDTOToPersist.getActivityModels();
-        ActivityModel[] activityModels = extractActivityModelFromDTO(activityModelDTOsList,roles);
-
+        ActivityModel[] activityModels = extractActivityModelFromDTO(activityModelDTOsList);
         WorkflowModel workflowModel = workflowService.createWorkflowModel(workspaceId, workflowModelDTOToPersist.getReference(), workflowModelDTOToPersist.getFinalLifeCycleState(), activityModels);
         return mapper.map(workflowModel, WorkflowModelDTO.class);
     }
 
-    private ActivityModel[] extractActivityModelFromDTO(List<ActivityModelDTO> activityModelDTOsList, Role[] roles) throws NotAllowedException {
+    private ActivityModel[] extractActivityModelFromDTO(List<ActivityModelDTO> activityModelDTOsList) throws NotAllowedException {
         Map<Integer,ActivityModel> activityModels = new HashMap<>();
 
         for(int i=0; i<activityModelDTOsList.size(); i++){
@@ -133,31 +131,9 @@ public class WorkflowResource {
                 ActivityModel relaunchActivity = activityModels.get(relaunchStep);
                 activityModel.setRelaunchActivity(relaunchActivity);
             }
-
-            assignRoleToTasks(activityModel,roles);
         }
 
         return activityModels.values().toArray(new ActivityModel[activityModels.size()]);
-    }
-
-    private void assignRoleToTasks(ActivityModel activityModel,Role[] roles) throws NotAllowedException {
-        List<TaskModel> modelTask = activityModel.getTaskModels();
-        if(modelTask==null || modelTask.isEmpty()){
-            throw new NotAllowedException(Locale.getDefault(),"NotAllowedException3");
-        }
-        for(TaskModel taskModel : activityModel.getTaskModels()){
-            Role modelRole = taskModel.getRole();
-            if(modelRole==null){
-                throw new NotAllowedException(Locale.getDefault(),"NotAllowedException13");
-            }
-            String roleName = modelRole.getName();
-            for (Role role : roles) {
-                if (role.getName().equals(roleName)) {
-                    taskModel.setRole(role);
-                    break;
-                }
-            }
-        }
     }
     
 }

@@ -172,6 +172,11 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         if(templateId != null){
 
             PartMasterTemplate partMasterTemplate = new PartMasterTemplateDAO(locale,em).loadPartMTemplate(new PartMasterTemplateKey(pWorkspaceId,templateId));
+           
+            if(!Tools.validateMask(partMasterTemplate.getMask(),pNumber)){
+                throw new NotAllowedException(locale,"NotAllowedException42");
+            }
+            
             pm.setType(partMasterTemplate.getPartType());
             pm.setAttributesLocked(partMasterTemplate.isAttributesLocked());
 

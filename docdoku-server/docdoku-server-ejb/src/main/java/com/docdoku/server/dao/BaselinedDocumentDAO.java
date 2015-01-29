@@ -28,6 +28,7 @@ import com.docdoku.core.document.DocumentRevisionKey;
 import com.docdoku.core.exceptions.DocumentRevisionNotFoundException;
 
 import javax.persistence.EntityManager;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -57,12 +58,15 @@ public class BaselinedDocumentDAO {
     }
 
     public List<DocumentIteration> findDocRsByFolder(BaselinedFolderKey baselinedFolderKey){
-        return em.createQuery("" +
+        List<DocumentIteration> list = em.createQuery("" +
                 "SELECT d.documentIterations " +
                 "FROM BaselinedFolder d " +
                 "WHERE d.baselinedFolderKey = :pk ", DocumentIteration.class)
-             .setParameter("pk",baselinedFolderKey)
-             .getResultList();
+                .setParameter("pk", baselinedFolderKey)
+                .getResultList();
+        // TODO : find out why the list can contains a null value and remove this workaround :
+        list.removeAll(Collections.singleton(null));
+        return list;
     }
 
     public List<DocumentIteration> findDocumentRevision(DocumentRevisionKey pDocumentRevisionKey) {

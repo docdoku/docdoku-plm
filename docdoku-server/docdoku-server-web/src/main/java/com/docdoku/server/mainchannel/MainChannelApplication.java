@@ -55,6 +55,7 @@ public class MainChannelApplication {
 
     public static boolean hasChannels(String userLogin) {
         return CHANNELS!=null
+                && userLogin !=null
                 && CHANNELS.get(userLogin) != null
                 && !CHANNELS.get(userLogin).isEmpty();
     }

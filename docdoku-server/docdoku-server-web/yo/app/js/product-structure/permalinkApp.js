@@ -6,7 +6,7 @@ var App = {
         zoomSpeed: 1.2,
         rotateSpeed: 1.0,
         panSpeed: 0.3,
-        cameraNear: 10,
+        cameraNear: 1,
         cameraFar: 10000,
         defaultCameraPosition: {x: 0, y: 50, z: 200}
     }
@@ -17,7 +17,7 @@ define(function () {
     function PermalinkApp(filename, width, height) {
         var container = document.getElementById('container');
         var scene = new THREE.Scene();
-        var camera = new THREE.PerspectiveCamera(45, container.innerWidth / container.innerHeight, App.SceneOptions.cameraNear, App.SceneOptions.cameraFar);
+        var camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, App.SceneOptions.cameraNear, App.SceneOptions.cameraFar);
         var control;
         var renderer = new THREE.WebGLRenderer({alpha: true});
         var texturePath = filename.substring(0, filename.lastIndexOf('/'));

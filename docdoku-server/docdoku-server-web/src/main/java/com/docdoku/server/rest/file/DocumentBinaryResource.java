@@ -45,13 +45,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Part;
 import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Request;
-import javax.ws.rs.core.Response;
+import javax.ws.rs.core.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URLEncoder;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Locale;
@@ -83,10 +81,10 @@ public class DocumentBinaryResource {
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     public Response uploadDocumentFiles(@Context HttpServletRequest request,
-                                       @PathParam("workspaceId") final String workspaceId,
-                                       @PathParam("documentId") final String documentId,
-                                       @PathParam("version") final String version,
-                                       @PathParam("iteration") final int iteration)
+                                        @PathParam("workspaceId") final String workspaceId,
+                                        @PathParam("documentId") final String documentId,
+                                        @PathParam("version") final String version,
+                                        @PathParam("iteration") final int iteration)
             throws EntityNotFoundException, EntityAlreadyExistsException, UserNotActiveException, AccessRightException, NotAllowedException, CreationException {
         try {
             String fileName=null;
@@ -98,7 +96,7 @@ public class DocumentBinaryResource {
             }
 
             if(formParts.size()==1) {
-                return BinaryResourceUpload.tryToRespondCreated(request.getRequestURI()+fileName);
+                return BinaryResourceUpload.tryToRespondCreated(request.getRequestURI()+ URLEncoder.encode(fileName, "UTF-8"));
             }
             return Response.ok().build();
 

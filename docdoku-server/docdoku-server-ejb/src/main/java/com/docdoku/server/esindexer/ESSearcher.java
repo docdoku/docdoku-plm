@@ -299,7 +299,7 @@ public class ESSearcher {
             }
             if (docQuery.getAuthor() != null) {
                 ((BoolQueryBuilder) qr).should(
-                        QueryBuilders.fuzzyLikeThisFieldQuery(ESMapper.AUTHOR_KEY).likeText(docQuery.getAuthor()));
+                        QueryBuilders.fuzzyLikeThisFieldQuery(ESMapper.AUTHOR_SEARCH_KEY).likeText(docQuery.getAuthor()));
             }
             if (docQuery.getType() != null) {
                 ((BoolQueryBuilder) qr).should(
@@ -357,7 +357,7 @@ public class ESSearcher {
                 ((BoolQueryBuilder) qr).should(QueryBuilders.fuzzyLikeThisFieldQuery(ESMapper.VERSION_KEY).likeText(partQuery.getVersion()));
             }
             if (partQuery.getAuthor() != null) {
-                ((BoolQueryBuilder) qr).should(QueryBuilders.fuzzyLikeThisFieldQuery(ESMapper.AUTHOR_KEY).likeText(partQuery.getAuthor()));
+                ((BoolQueryBuilder) qr).should(QueryBuilders.fuzzyLikeThisFieldQuery(ESMapper.AUTHOR_SEARCH_KEY).likeText(partQuery.getAuthor()));
             }
             if (partQuery.getType() != null) {
                 ((BoolQueryBuilder) qr).should(QueryBuilders.fuzzyLikeThisFieldQuery(ESMapper.TYPE_KEY).likeText(partQuery.getType()));
@@ -407,7 +407,7 @@ public class ESSearcher {
                 ((BoolQueryBuilder) qr).should(QueryBuilders.fuzzyLikeThisFieldQuery(ESMapper.VERSION_KEY).likeText(query.getVersion()));
             }
             if (query.getAuthor() != null) {
-                ((BoolQueryBuilder) qr).should(QueryBuilders.fuzzyLikeThisFieldQuery(ESMapper.AUTHOR_KEY).likeText(query.getAuthor()));
+                ((BoolQueryBuilder) qr).should(QueryBuilders.fuzzyLikeThisFieldQuery(ESMapper.AUTHOR_SEARCH_KEY).likeText(query.getAuthor()));
             }
             if (query.getType() != null) {
                 ((BoolQueryBuilder) qr).should(QueryBuilders.fuzzyLikeThisFieldQuery(ESMapper.TYPE_KEY).likeText(query.getType()));

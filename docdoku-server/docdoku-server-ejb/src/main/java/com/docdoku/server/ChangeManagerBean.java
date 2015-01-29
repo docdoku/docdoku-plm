@@ -320,11 +320,19 @@ public class ChangeManagerBean implements IChangeManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public void deleteChangeRequest(int pId) throws ChangeRequestNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException {
-        ChangeRequest changeRequest = new ChangeItemDAO(em).loadChangeRequest(pId);                                     // Load the Change-Request
-        User user = userManager.checkWorkspaceReadAccess(changeRequest.getWorkspaceId());                               // Check the read access to the workspace
-        checkChangeItemWriteAccess(changeRequest,user);                                                                 // Check the write access to the Change-Request
-        new ChangeItemDAO(new Locale(user.getLanguage()),em).deleteChangeItem(changeRequest);                           // Delete the Change-Request
+    public void deleteChangeRequest(String pWorkspaceId, int pId) throws ChangeRequestNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, EntityConstraintException {
+        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
+        Locale userLocale = new Locale(user.getLanguage());
+                
+        ChangeItemDAO changeItemDAO = new ChangeItemDAO(userLocale, em);
+        ChangeRequest changeRequest = changeItemDAO.loadChangeRequest(pId);                                     
+        
+        if(changeItemDAO.hasChangeOrdersLinked(changeRequest)){
+            throw new EntityConstraintException(userLocale,"EntityConstraintException10");
+        }
+        
+        checkChangeItemWriteAccess(changeRequest,user);
+        changeItemDAO.deleteChangeItem(changeRequest);                           
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
@@ -665,11 +673,29 @@ public class ChangeManagerBean implements IChangeManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public void deleteChangeMilestone(int pId) throws MilestoneNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException {
-        Milestone milestone = new MilestoneDAO(em).loadMilestone(pId);                                                  // Load the Milestone
-        User user = userManager.checkWorkspaceReadAccess(milestone.getWorkspaceId());                                   // Check the read access to the workspace
-        checkMilestoneWriteAccess(milestone,user);                                                                      // Check the write access to the milestone
-        new MilestoneDAO(new Locale(user.getLanguage()),em).deleteMilestone(milestone);                                 // Delete the milestone
+    public void deleteChangeMilestone(String pWorkspaceId, int pId) throws MilestoneNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, EntityConstraintException {
+        
+        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);            
+        Locale userLocale = new Locale(user.getLanguage());
+        MilestoneDAO milestoneDAO = new MilestoneDAO(userLocale, em);
+        
+        Milestone milestone = milestoneDAO.loadMilestone(pId);
+        
+        checkMilestoneWriteAccess(milestone, user);
+
+        int numberOfOrders = milestoneDAO.getNumberOfOrders(milestone.getId(), milestone.getWorkspaceId());
+        
+        if(numberOfOrders > 0){
+            throw new EntityConstraintException(userLocale,"EntityConstraintException8");
+        }
+
+        int numberOfRequests = milestoneDAO.getNumberOfRequests(milestone.getId(), milestone.getWorkspaceId());
+        
+        if(numberOfRequests > 0){
+            throw new EntityConstraintException(userLocale,"EntityConstraintException9");
+        }
+
+        milestoneDAO.deleteMilestone(milestone);                                 
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
