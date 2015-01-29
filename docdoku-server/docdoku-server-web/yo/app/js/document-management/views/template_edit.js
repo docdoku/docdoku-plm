@@ -50,7 +50,7 @@ define([
                 title: App.config.i18n.MASK,
                 placement: 'left',
                 html: true,
-                content: App.config.i18n.MASK_HELP,
+                content: App.config.i18n.MASK_HELP.nl2br(),
                 trigger:'manual',
                 container:'.modal.new-template'
             }).click(function(e){

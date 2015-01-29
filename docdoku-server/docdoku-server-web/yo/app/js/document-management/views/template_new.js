@@ -27,7 +27,7 @@ define([
                 placement: 'left',
                 html: true,
                 trigger: 'manual',
-                content: App.config.i18n.MASK_HELP,
+                content: App.config.i18n.MASK_HELP.nl2br(),
                 container:'.modal.new-template'
             }).click(function(e){
                 $popoverLink.popover('show');

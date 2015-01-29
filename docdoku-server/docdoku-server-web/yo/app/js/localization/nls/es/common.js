@@ -212,7 +212,7 @@ define({
 	MARKERS_OPACITY: "Change markers opacity",
 	MARKERS_SIZE_MAX: "Increase markers size",
 	MARKERS_SIZE_MIN: "Reduce markers size",
-	MASK_HELP: "Define the mask format for the IDs of documents/parts that will instanciate this template.</br></br>Additionally to any regular characters, you can use '#' symbol for any valid number and '*' for any character.</br></br>For instance 'FAX-***-##' will accept 'FAX-AZE-12' as a valid ID.",
+	MASK_HELP: "Define the mask format for the IDs of documents/parts that will instanciate this template.\n\nAdditionally to any regular characters, you can use '#' symbol for any valid number and '*' for any character.\n\nFor instance 'FAX-***-##' will accept 'FAX-AZE-12' as a valid ID.\n\nA mask wihtout any wildcards character won't be usable more than once.",
 	MASK: "Mask",
 	MEASURE: "Measure",
 	MILESTONE: "Milestone",

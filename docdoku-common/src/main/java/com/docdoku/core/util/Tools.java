@@ -128,6 +128,35 @@ public class Tools {
         }
         return formatter.valueToString(newValue.reverse().toString());
     }
+    
+    public static boolean validateMask(String mask, String str){
+
+        // '*' goes for any alpha-numeric char, '#' for numbers only
+        
+        if(mask == null || str == null){
+            return false;
+        }
+
+        // Not same length or empty
+        if(mask.length() != str.length()){
+            return false;
+        }
+
+        Pattern alphaNum = Pattern.compile("[^a-zA-Z0-9]");
+
+        for (int i = 0; i < mask.length(); i++) {
+
+            if('*' == mask.charAt(i) && !alphaNum.matcher(str.charAt(i)+"").find()){
+                return false;
+            }
+            if ('#' == mask.charAt(i) && !Character.isDigit(str.charAt(i))){
+                return false;
+            }
+        }
+
+        return true;
+
+    }
 
     public static String convertMask(String inputMask) {
         StringBuilder maskBuilder = new StringBuilder();

@@ -600,6 +600,11 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             newDoc = docR.createNextIteration(user);
         } else {
             DocumentMasterTemplate template = new DocumentMasterTemplateDAO(locale, em).loadDocMTemplate(new DocumentMasterTemplateKey(user.getWorkspaceId(), pDocMTemplateId));
+
+            if(!Tools.validateMask(template.getMask(),pDocMId)){
+                throw new NotAllowedException(locale,"NotAllowedException42");
+            }
+            
             docM = new DocumentMaster(user.getWorkspace(), pDocMId, user);
             docM.setType(template.getDocumentType());
             docM.setAttributesLocked(template.isAttributesLocked());

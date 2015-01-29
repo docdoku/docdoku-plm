@@ -30,7 +30,7 @@ define([
                 title: App.config.i18n.MASK,
                 placement: 'left',
                 html: true,
-                content: App.config.i18n.MASK_HELP
+                content: App.config.i18n.MASK_HELP.nl2br()
             });
 
             this.$partTemplateReference.customValidity(App.config.i18n.REQUIRED_FIELD);
