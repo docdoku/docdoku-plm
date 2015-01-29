@@ -43,11 +43,11 @@ public class PermalinkFilter implements Filter {
     private static final Logger LOGGER = Logger.getLogger(PermalinkFilter.class.getName());
     private static final String ENCODING = "UTF-8";
     private static final String ERROR_ENCODING = "The HttpRequest path information can not be decoding.";
-    private static final String ERROR_ENTITY_TYPE = "Tentation of access to a unknow type of entity.";
-    private static final String ERROR_403_DOCUMENT = "Tentation of access to a forbidden document.";
-    private static final String ERROR_404_DOCUMENT = "Tentation of access to a not found document.";
-    private static final String ERROR_403_PART = "Tentation of access to a forbidden part.";
-    private static final String ERROR_404_PART = "Tentation of access to a not found part.";
+    private static final String ERROR_ENTITY_TYPE = "Attempt of access to a unknown type of entity.";
+    private static final String ERROR_403_DOCUMENT = "Attempt of access to a forbidden document.";
+    private static final String ERROR_404_DOCUMENT = "Attempt of access to a not found document.";
+    private static final String ERROR_403_PART = "Attempt of access to a forbidden part.";
+    private static final String ERROR_404_PART = "Attempt of access to a not found part.";
 
     @EJB
     private GuestProxy guestProxy;
