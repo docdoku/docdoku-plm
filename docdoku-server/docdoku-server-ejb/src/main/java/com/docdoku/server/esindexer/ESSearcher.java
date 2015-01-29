@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2013 DocDoku SARL
+ * Copyright 2006 - 2015 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.docdoku.server.esindexer;
 
 import com.docdoku.core.common.Workspace;
