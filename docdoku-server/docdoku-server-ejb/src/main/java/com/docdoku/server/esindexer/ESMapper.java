@@ -45,6 +45,9 @@ public class ESMapper {
     public static final String WORKSPACEID_KEY ="workspaceId";
     public static final String VERSION_KEY ="version";
     public static final String AUTHOR_KEY ="author";
+    public static final String AUTHOR_LOGIN_KEY ="login";
+    public static final String AUTHOR_NAME_KEY ="name";
+    public static final String AUTHOR_SEARCH_KEY =AUTHOR_KEY+"."+AUTHOR_LOGIN_KEY;
     public static final String CREATION_DATE_KEY ="creationDate";
     public static final String TYPE_KEY ="type";
 
@@ -91,8 +94,8 @@ public class ESMapper {
             setField(tmp,"iteration",""+doc.getIteration(),0.10f);
             if(doc.getAuthor() != null){
                 tmp.startObject(AUTHOR_KEY);
-                setField(tmp,"login",doc.getAuthor().getLogin(),0.6f);
-                setField(tmp,"name",doc.getAuthor().getName(),0.6f);
+                setField(tmp,AUTHOR_LOGIN_KEY,doc.getAuthor().getLogin(),0.6f);
+                setField(tmp,AUTHOR_NAME_KEY,doc.getAuthor().getName(),0.6f);
                 tmp.endObject();
             }
             setField(tmp,TYPE_KEY, doc.getDocumentRevision().getDocumentMaster().getType(), 2f);
@@ -120,7 +123,7 @@ public class ESMapper {
                 tmp.startObject("files");
                 for(Map.Entry<String, String> contentInput : contentInputs.entrySet()) {
                     tmp.startObject(contentInput.getKey());
-                    setField(tmp,"name",contentInput.getKey(),0.8f);
+                    setField(tmp,AUTHOR_NAME_KEY,contentInput.getKey(),0.8f);
                     setField(tmp, "content", contentInput.getValue(), 0.6f);
                     tmp.endObject();
                 }
@@ -155,8 +158,8 @@ public class ESMapper {
             setField(tmp,"standardPart",part.getPartRevision().getPartMaster().isStandardPart(), 0.05f);
             if(part.getAuthor() != null){
                 tmp.startObject(AUTHOR_KEY);
-                setField(tmp,"login",part.getAuthor().getLogin(),0.6f);
-                setField(tmp,"name",part.getAuthor().getName(),0.6f);
+                setField(tmp,AUTHOR_LOGIN_KEY,part.getAuthor().getLogin(),0.6f);
+                setField(tmp,AUTHOR_NAME_KEY,part.getAuthor().getName(),0.6f);
                 tmp.endObject();
             }
             setField(tmp,TYPE_KEY,part.getPartRevision().getPartMaster().getType(),2f);
