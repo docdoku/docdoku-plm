@@ -84,7 +84,8 @@ import java.util.Set;
         @NamedQuery(name="ChangeOrder.findChangeOrdersByWorkspace",query="SELECT DISTINCT c FROM ChangeOrder c WHERE c.workspace.id = :workspaceId"),
         @NamedQuery(name="ChangeOrder.countOrderByMilestonesAndWorkspace",query="SELECT COUNT(o) FROM ChangeOrder o WHERE o.workspace.id = :workspaceId AND o.milestone.id = :milestoneId"),
         @NamedQuery(name="ChangeOrder.getOrderByMilestonesAndWorkspace",query="SELECT DISTINCT o FROM ChangeOrder o WHERE o.workspace.id = :workspaceId AND o.milestone.id = :milestoneId"),
-        @NamedQuery(name="ChangeOrder.findByReference", query="SELECT c FROM ChangeOrder c WHERE c.name LIKE :name AND c.workspace.id = :workspaceId")
+        @NamedQuery(name="ChangeOrder.findByReference", query="SELECT c FROM ChangeOrder c WHERE c.name LIKE :name AND c.workspace.id = :workspaceId"),
+        @NamedQuery(name="ChangeOrder.findByChangeRequest", query="SELECT c FROM ChangeOrder c WHERE c.workspace.id = :workspaceId AND :changeRequest member of c.addressedChangeRequests")
 })
 public class ChangeOrder extends ChangeItem {
 

@@ -137,13 +137,14 @@ define([
                     _(that.listItemViews).each(function (view) {
                         if (view.isChecked()) {
                             view.model.destroy({
+                                wait:true,
                                 dataType: 'text', // server doesn't send a json hash in the response body
                                 success: function () {
                                     that.removeMilestone(view.model);
                                     that.onSelectionChanged();
                                 },
                                 error: function (model, err) {
-                                    window.alert(err.responseText);
+                                    that.trigger('error', model, err);
                                     that.onSelectionChanged();
                                 }
                             });

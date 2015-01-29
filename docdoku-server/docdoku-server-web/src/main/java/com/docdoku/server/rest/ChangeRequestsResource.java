@@ -22,6 +22,7 @@ package com.docdoku.server.rest;
 import com.docdoku.core.change.ChangeRequest;
 import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.exceptions.AccessRightException;
+import com.docdoku.core.exceptions.EntityConstraintException;
 import com.docdoku.core.exceptions.EntityNotFoundException;
 import com.docdoku.core.exceptions.UserNotActiveException;
 import com.docdoku.core.meta.Tag;
@@ -147,9 +148,9 @@ public class ChangeRequestsResource {
     @DELETE
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("{requestId}")
-    public Response removeRequest(@PathParam("requestId") int requestId)
-            throws EntityNotFoundException, UserNotActiveException, AccessRightException{
-        changeManager.deleteChangeRequest(requestId);
+    public Response removeRequest(@PathParam("workspaceId") String workspaceId, @PathParam("requestId") int requestId)
+            throws EntityNotFoundException, UserNotActiveException, AccessRightException, EntityConstraintException {
+        changeManager.deleteChangeRequest(workspaceId,requestId);
         return Response.ok().build();
     }
 

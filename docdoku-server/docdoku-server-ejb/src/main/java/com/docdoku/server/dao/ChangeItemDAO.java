@@ -196,5 +196,15 @@ public class ChangeItemDAO {
         return !findChangeItemByFolder(folder).isEmpty();
     }
 
+    public List<ChangeOrder> findAllChangeOrdersByChangeRequest(ChangeRequest changeRequest) {
+        return em.createNamedQuery("ChangeOrder.findByChangeRequest",ChangeOrder.class)
+                .setParameter("workspaceId", changeRequest.getWorkspaceId())
+                .setParameter("changeRequest", changeRequest)
+                .getResultList();
+    }
+    
+    public boolean hasChangeOrdersLinked( ChangeRequest changeRequest){
+        return !findAllChangeOrdersByChangeRequest(changeRequest).isEmpty();
+    }
 
 }

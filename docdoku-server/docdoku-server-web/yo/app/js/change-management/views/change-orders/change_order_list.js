@@ -127,6 +127,7 @@ define([
                     _(_this.listItemViews).each(function (view) {
                         if (view.isChecked()) {
                             view.model.destroy({
+                                wait:true,
                                 dataType: 'text', // server doesn't send a json hash in the response body
                                 success: function () {
                                     _this.removeOrder(view.model);
