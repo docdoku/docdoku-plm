@@ -68,7 +68,7 @@ public class DocumentLink implements Serializable, Cloneable{
     
     @Column(name = "TARGET_WORKSPACE_ID", length=100, insertable = false, updatable = false)
     private String targetDocumentWorkspaceId="";
-    
+
     @Column(name="COMMENTDATA")
     private String comment;
     

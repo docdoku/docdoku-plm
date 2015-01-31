@@ -47,7 +47,6 @@ public class PartUsageLink implements Serializable, Cloneable {
     private double amount;
     private String unit;
 
-    @Lob
     private String referenceDescription;
 
     @Column(name = "COMMENTDATA")

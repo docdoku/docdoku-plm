@@ -39,7 +39,6 @@ import java.io.Serializable;
 public class PartAlternateLink implements Serializable {
 
 
-    @Lob
     private String referenceDescription;
     
     @Column(name="COMMENTDATA")

@@ -39,8 +39,10 @@ public class PartSubstituteLink implements Serializable, Cloneable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private int id;
+    private double amount;
+    private String unit;
 
-    @Lob
+
     private String referenceDescription;
     
     @Column(name="COMMENTDATA")
@@ -67,6 +69,30 @@ public class PartSubstituteLink implements Serializable, Cloneable {
     public PartSubstituteLink() {
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(double amount) {
+        this.amount = amount;
+    }
+
+    public String getUnit() {
+        return unit;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
+    }
+    
     public PartMaster getSubstitute() {
         return substitute;
     }
