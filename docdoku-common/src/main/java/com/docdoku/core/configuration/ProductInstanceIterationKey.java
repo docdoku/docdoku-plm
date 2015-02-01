@@ -23,7 +23,7 @@ package com.docdoku.core.configuration;
 import java.io.Serializable;
 
 /**
- * Identity class of <a href="ProductInstanceIteration.html">ProductInstanceIteration</a> objects.
+ * Identity class of {@link ProductInstanceIteration} objects.
  * 
  * @author Florent Garin
  */

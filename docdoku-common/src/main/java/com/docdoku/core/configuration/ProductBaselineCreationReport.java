@@ -22,22 +22,21 @@ package com.docdoku.core.configuration;
 import com.docdoku.core.product.PartRevision;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
-public class BaselineCreation implements Serializable{
+public class ProductBaselineCreationReport implements Serializable{
     ProductBaseline productBaseline;
     String message;
-    List<PartRevision> conflit;
+    Set<PartRevision> conflits;
 
-    public BaselineCreation(){
+    public ProductBaselineCreationReport(){
 
     }
 
-    public BaselineCreation(ProductBaseline productBaseline) {
+    public ProductBaselineCreationReport(ProductBaseline productBaseline) {
         this.productBaseline = productBaseline;
         this.message = null;
-        this.conflit = new ArrayList<>();
+        this.conflits = new HashSet<>();
     }
 
     public ProductBaseline getProductBaseline() {
@@ -54,14 +53,14 @@ public class BaselineCreation implements Serializable{
         this.message = message;
     }
 
-    public List<PartRevision> getConflit() {
-        return conflit;
+    public Set<PartRevision> getConflits() {
+        return conflits;
     }
 
     public void addConflit(PartRevision partRevision) {
-        this.conflit.add(partRevision);
+        this.conflits.add(partRevision);
     }
-    public void addConflit(List<PartRevision> partRevisions) {
-        this.conflit.addAll(partRevisions);
+    public void addConflits(Collection<PartRevision> partRevisions) {
+        this.conflits.addAll(partRevisions);
     }
 }

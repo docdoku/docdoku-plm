@@ -21,8 +21,7 @@
 package com.docdoku.server.products;
 
 import com.docdoku.core.common.User;
-import com.docdoku.core.common.Workspace;
-import com.docdoku.core.configuration.BaselineCreation;
+import com.docdoku.core.configuration.ProductBaselineCreationReport;
 import com.docdoku.core.configuration.ProductBaseline;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.*;
@@ -32,7 +31,6 @@ import com.docdoku.server.DataManagerBean;
 import com.docdoku.server.UserManagerBean;
 import com.docdoku.server.dao.ConfigurationItemDAO;
 import com.docdoku.server.dao.PartIterationDAO;
-import com.docdoku.server.products.ProductBaselineManagerBean;
 import com.docdoku.server.util.BaselineRule;
 import com.docdoku.server.util.FastTestCategory;
 
@@ -138,13 +136,13 @@ public class ProductBaselineManagerBeanTest {
 
 
         //When
-        BaselineCreation baselineCreation = productBaselineService.createBaseline(baselineRuleReleased.getConfigurationItemKey(), baselineRuleReleased.getName(), baselineRuleReleased.getType(), baselineRuleReleased.getDescription());
+        ProductBaselineCreationReport productBaselineCreationReport = productBaselineService.createBaseline(baselineRuleReleased.getConfigurationItemKey(), baselineRuleReleased.getName(), baselineRuleReleased.getType(), baselineRuleReleased.getDescription());
 
         //Then
-        Assert.assertTrue(baselineCreation != null);
-        Assert.assertTrue(baselineCreation.getProductBaseline().getDescription().equals(baselineRuleReleased.getDescription()));
-        Assert.assertTrue(baselineCreation.getProductBaseline().getType().equals(baselineRuleReleased.getType()));
-        Assert.assertTrue(baselineCreation.getProductBaseline().getConfigurationItem().getWorkspaceId().equals(baselineRuleReleased.getWorkspace().getId()));
+        Assert.assertTrue(productBaselineCreationReport != null);
+        Assert.assertTrue(productBaselineCreationReport.getProductBaseline().getDescription().equals(baselineRuleReleased.getDescription()));
+        Assert.assertTrue(productBaselineCreationReport.getProductBaseline().getType().equals(baselineRuleReleased.getType()));
+        Assert.assertTrue(productBaselineCreationReport.getProductBaseline().getConfigurationItem().getWorkspaceId().equals(baselineRuleReleased.getWorkspace().getId()));
 
     }
 
@@ -176,13 +174,13 @@ public class ProductBaselineManagerBeanTest {
         Mockito.when(new PartIterationDAO(new Locale("en"), em).loadPartI(baselineRuleReleased.getPartMaster().getLastReleasedRevision().getIteration(1).getKey())).thenReturn(baselineRuleReleased.getPartMaster().getLastReleasedRevision().getIteration(1));
 
         //When
-        BaselineCreation baselineCreation = productBaselineService.createBaseline(baselineRuleReleased.getConfigurationItemKey(), baselineRuleReleased.getName(), baselineRuleReleased.getType(), baselineRuleReleased.getDescription());
+        ProductBaselineCreationReport productBaselineCreationReport = productBaselineService.createBaseline(baselineRuleReleased.getConfigurationItemKey(), baselineRuleReleased.getName(), baselineRuleReleased.getType(), baselineRuleReleased.getDescription());
 
         //Then
-        Assert.assertTrue(baselineCreation != null);
-        Assert.assertTrue(baselineCreation.getProductBaseline().getDescription().equals(baselineRuleReleased.getDescription()));
-        Assert.assertTrue(baselineCreation.getProductBaseline().getType().equals(ProductBaseline.BaselineType.LATEST));
-        Assert.assertTrue(baselineCreation.getProductBaseline().getConfigurationItem().getWorkspaceId().equals(baselineRuleReleased.getWorkspace().getId()));
+        Assert.assertTrue(productBaselineCreationReport != null);
+        Assert.assertTrue(productBaselineCreationReport.getProductBaseline().getDescription().equals(baselineRuleReleased.getDescription()));
+        Assert.assertTrue(productBaselineCreationReport.getProductBaseline().getType().equals(ProductBaseline.BaselineType.LATEST));
+        Assert.assertTrue(productBaselineCreationReport.getProductBaseline().getConfigurationItem().getWorkspaceId().equals(baselineRuleReleased.getWorkspace().getId()));
     }
 
     /**
@@ -210,13 +208,13 @@ public class ProductBaselineManagerBeanTest {
         Mockito.when(new PartIterationDAO(new Locale("en"), em).loadPartI(baselineRuleReleased.getPartMaster().getLastReleasedRevision().getIteration(1).getKey())).thenReturn(baselineRuleReleased.getPartMaster().getLastReleasedRevision().getIteration(1));
 
         //When
-        BaselineCreation baselineCreation = productBaselineService.createBaseline(baselineRuleReleased.getConfigurationItemKey(), baselineRuleReleased.getName(), baselineRuleReleased.getType(), baselineRuleReleased.getDescription());
+        ProductBaselineCreationReport productBaselineCreationReport = productBaselineService.createBaseline(baselineRuleReleased.getConfigurationItemKey(), baselineRuleReleased.getName(), baselineRuleReleased.getType(), baselineRuleReleased.getDescription());
 
         //Then
-        Assert.assertTrue(baselineCreation != null);
-        Assert.assertTrue(baselineCreation.getProductBaseline().getDescription().equals(baselineRuleReleased.getDescription()));
-        Assert.assertTrue(baselineCreation.getProductBaseline().getType().equals(ProductBaseline.BaselineType.LATEST));
-        Assert.assertTrue(baselineCreation.getProductBaseline().getConfigurationItem().getWorkspaceId().equals(baselineRuleReleased.getWorkspace().getId()));
+        Assert.assertTrue(productBaselineCreationReport != null);
+        Assert.assertTrue(productBaselineCreationReport.getProductBaseline().getDescription().equals(baselineRuleReleased.getDescription()));
+        Assert.assertTrue(productBaselineCreationReport.getProductBaseline().getType().equals(ProductBaseline.BaselineType.LATEST));
+        Assert.assertTrue(productBaselineCreationReport.getProductBaseline().getConfigurationItem().getWorkspaceId().equals(baselineRuleReleased.getWorkspace().getId()));
 
     }
 
@@ -237,7 +235,7 @@ public class ProductBaselineManagerBeanTest {
         thrown.expect(NotAllowedException.class);
 
         //When
-        BaselineCreation baselineCreation = productBaselineService.createBaseline(baselineRuleACL.getConfigurationItemKey(), baselineRuleACL.getName(), baselineRuleACL.getType(), baselineRuleACL.getDescription());
+        ProductBaselineCreationReport productBaselineCreationReport = productBaselineService.createBaseline(baselineRuleACL.getConfigurationItemKey(), baselineRuleACL.getName(), baselineRuleACL.getType(), baselineRuleACL.getDescription());
     }
 
 }

@@ -22,7 +22,7 @@ package com.docdoku.server.products;
 
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
-import com.docdoku.core.configuration.BaselineCreation;
+import com.docdoku.core.configuration.ProductBaselineCreationReport;
 import com.docdoku.core.configuration.BaselinedPart;
 import com.docdoku.core.configuration.BaselinedPartKey;
 import com.docdoku.core.configuration.ProductBaseline;
@@ -56,7 +56,7 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public BaselineCreation createBaseline(ConfigurationItemKey configurationItemKey, String name, ProductBaseline.BaselineType pType, String description) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, ConfigurationItemNotReleasedException, PartIterationNotFoundException, UserNotActiveException, NotAllowedException{
+    public ProductBaselineCreationReport createBaseline(ConfigurationItemKey configurationItemKey, String name, ProductBaseline.BaselineType pType, String description) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, ConfigurationItemNotReleasedException, PartIterationNotFoundException, UserNotActiveException, NotAllowedException{
         User user = userManager.checkWorkspaceWriteAccess(configurationItemKey.getWorkspace());
         Locale locale = new Locale(user.getLanguage());
         ConfigurationItem configurationItem = new ConfigurationItemDAO(locale,em).loadConfigurationItem(configurationItemKey);
@@ -72,7 +72,7 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
 
         new ProductBaselineDAO(em).createBaseline(productBaseline);
 
-        BaselineCreation baselineCreation = new BaselineCreation(productBaseline);
+        ProductBaselineCreationReport productBaselineCreationReport = new ProductBaselineCreationReport(productBaseline);
 
         PartRevision lastRevision;
         PartIteration baselinedIteration = null;
@@ -88,25 +88,24 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
             // case LATEST:
             default:
                 List<PartRevision> partRevisions = configurationItem.getDesignItem().getPartRevisions();
-                boolean isPartFinded = false;
+                boolean isPartFound = false;
 
                 lastRevision =configurationItem.getDesignItem().getLastRevision();
                 if(lastRevision.isCheckedOut()){
-                    baselineCreation.addConflit(lastRevision);
+                    productBaselineCreationReport.addConflit(lastRevision);
                 }
 
-                for(int j= partRevisions.size()-1; j>=0 && !isPartFinded;j--){
+                for(int j= partRevisions.size()-1; j>=0 && !isPartFound;j--){
                     lastRevision = partRevisions.get(j);
 
-                    for(int i= lastRevision.getLastIteration().getIteration(); i>0 && !isPartFinded; i--){
+                    for(int i= lastRevision.getLastIteration().getIteration(); i>0 && !isPartFound; i--){
                         try{
                             checkPartIterationForBaseline(user,new PartIterationKey(lastRevision.getKey(),i));
                             baselinedIteration = lastRevision.getIteration(i);
-                            isPartFinded=true;
+                            isPartFound=true;
                         }catch (AccessRightException e){
-                            if(!baselineCreation.getConflit().contains(lastRevision)){
-                                baselineCreation.addConflit(lastRevision);
-                            }
+                            productBaselineCreationReport.addConflit(lastRevision);
+
                         }
                     }
                 }
@@ -116,15 +115,15 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
                 break;
         }
 
-        baselineCreation.addConflit(fillBaselineParts(productBaseline, baselinedIteration, type, user));
+        productBaselineCreationReport.addConflits(fillBaselineParts(productBaseline, baselinedIteration, type, user));
 
-        if(!baselineCreation.getConflit().isEmpty()){
+        if(!productBaselineCreationReport.getConflits().isEmpty()){
             String message = ResourceBundle.getBundle("com.docdoku.core.i18n.LocalStrings", locale).getString("BaselineWarningException1");
-            baselineCreation.setMessage(MessageFormat.format(message, productBaseline.getName()));
+            productBaselineCreationReport.setMessage(MessageFormat.format(message, productBaseline.getName()));
         }
 
 
-        return baselineCreation;
+        return productBaselineCreationReport;
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)

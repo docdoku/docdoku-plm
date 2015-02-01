@@ -19,7 +19,7 @@
  */
 package com.docdoku.core.services;
 
-import com.docdoku.core.configuration.BaselineCreation;
+import com.docdoku.core.configuration.ProductBaselineCreationReport;
 import com.docdoku.core.configuration.BaselinedPart;
 import com.docdoku.core.configuration.ProductBaseline;
 import com.docdoku.core.exceptions.*;
@@ -35,7 +35,7 @@ import java.util.List;
  * @since   V2.0
  */
 public interface IProductBaselineManagerLocal {
-    BaselineCreation createBaseline(ConfigurationItemKey configurationItemKey, String name, ProductBaseline.BaselineType type, String description) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, ConfigurationItemNotReleasedException, PartIterationNotFoundException, UserNotActiveException, NotAllowedException;
+    ProductBaselineCreationReport createBaseline(ConfigurationItemKey configurationItemKey, String name, ProductBaseline.BaselineType type, String description) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, ConfigurationItemNotReleasedException, PartIterationNotFoundException, UserNotActiveException, NotAllowedException;
     List<ProductBaseline> getAllBaselines(String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
     List<ProductBaseline> getBaselines(ConfigurationItemKey configurationItemKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
     void deleteBaseline(int baselineId) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, BaselineNotFoundException;

@@ -25,7 +25,7 @@ import com.docdoku.core.product.ConfigurationItemKey;
 import java.io.Serializable;
 
 /**
- * Identity class of <a href="ProductInstanceMaster.html">ProductInstanceMaster</a> objects.
+ * Identity class of {@link ProductInstanceMaster} objects.
  * 
  * @author Florent Garin
  */

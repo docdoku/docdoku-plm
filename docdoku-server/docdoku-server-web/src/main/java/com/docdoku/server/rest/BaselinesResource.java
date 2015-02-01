@@ -19,7 +19,7 @@
  */
 package com.docdoku.server.rest;
 
-import com.docdoku.core.configuration.BaselineCreation;
+import com.docdoku.core.configuration.ProductBaselineCreationReport;
 import com.docdoku.core.configuration.BaselinedPart;
 import com.docdoku.core.configuration.ProductBaseline;
 import com.docdoku.core.exceptions.*;
@@ -98,10 +98,10 @@ public class BaselinesResource {
     public Response createBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String pCiId, ProductBaselineCreationDTO productBaselineCreationDTO)
             throws UserNotActiveException, EntityNotFoundException, NotAllowedException, AccessRightException, ConfigurationItemNotReleasedException {
         String ciId = (pCiId != null) ? pCiId : productBaselineCreationDTO.getConfigurationItemId();
-        BaselineCreation baselineCreation = productBaselineService.createBaseline(new ConfigurationItemKey(workspaceId,ciId), productBaselineCreationDTO.getName(), productBaselineCreationDTO.getType(), productBaselineCreationDTO.getDescription());
-        ProductBaselineDTO productBaselineDTO = mapper.map(baselineCreation.getProductBaseline(),ProductBaselineDTO.class);
-        if(!baselineCreation.getConflit().isEmpty()){
-            return Response.status(202).entity(baselineCreation.getMessage()).type("text/plain").build();
+        ProductBaselineCreationReport productBaselineCreationReport = productBaselineService.createBaseline(new ConfigurationItemKey(workspaceId,ciId), productBaselineCreationDTO.getName(), productBaselineCreationDTO.getType(), productBaselineCreationDTO.getDescription());
+        ProductBaselineDTO productBaselineDTO = mapper.map(productBaselineCreationReport.getProductBaseline(),ProductBaselineDTO.class);
+        if(!productBaselineCreationReport.getConflits().isEmpty()){
+            return Response.status(202).entity(productBaselineCreationReport.getMessage()).type("text/plain").build();
         }
 
         try {
