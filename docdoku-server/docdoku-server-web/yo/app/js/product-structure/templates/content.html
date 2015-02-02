@@ -16,21 +16,28 @@
 
 <div id="product-content">
 
-    <div id="top_controls_container" class="actions well">
-        <div class="btn-group" data-toggle="buttons-radio" id="top_buttons">
+    <div class="actions well">
+
+        <div class="mode-controls btn-group" data-toggle="buttons-radio" id="top_buttons">
             <button class="btn btn-custom active" id="scene_view_btn" title="{{i18n.SCENE_VIEW}}"><i
-                    class="fa fa-eye"></i></button>
+                class="fa fa-eye"></i></button>
             <button class="btn btn-custom" id="bom_view_btn" title="{{i18n.BOM_VIEW}}"><i class="fa fa-list"></i>
             </button>
         </div>
-        <button class="btn btn-custom" id="export_scene_btn"><i class="fa fa-upload"></i> <b>{{i18n.EXPORT}}</b>
-        </button>
-        <button class="btn btn-custom" id="fullscreen_scene_btn"><i class="fa fa-arrows-alt"></i> <b>{{i18n.FULL_SCREEN}}</b>
-        </button>
-        <div id="progress_bar_container" class="progress progress-striped active"></div>
+
+        <div class="dmu-controls">
+            <button class="btn btn-custom" id="export_scene_btn"><i class="fa fa-upload"></i> <b>{{i18n.EXPORT}}</b>
+            </button>
+            <button class="btn btn-custom" id="fullscreen_scene_btn"><i class="fa fa-arrows-alt"></i> <b>{{i18n.FULL_SCREEN}}</b>
+            </button>
+            <div id="progress_bar_container" class="progress progress-striped active"></div>
+        </div>
+
+        <div class="bom-controls"></div>
+
     </div>
 
-    <div id="center_container">
+    <div id="dmu_container">
 
         <div id="side_controls_container">
         </div>
@@ -42,6 +49,5 @@
     </div>
 
     <div id="bom_table_container"></div>
-    <div id="part_metadata_container" class="minimized"></div>
 
 </div>

@@ -120,6 +120,7 @@ define([
         },
 
 		onSelectorChanged:function(e){
+            this.$selectConfSpec.show();
 			if(this.$selectConfSpec[0].value==='latest' || this.$selectConfSpec[0].value==='released'){
                 this.$selectBaselineSpec.hide();
                 this.$selectProdInstSpec.hide();
@@ -183,7 +184,24 @@ define([
                 }else{
                     this.$selectBaselineSpec.val(App.config.configSpec);
                 }
+            }
+        },
 
+        refresh:function(){
+            if(App.config.configSpec){
+                if(App.config.configSpec==='latest' || App.config.configSpec==='released'){
+                    this.$selectConfSpec.val(App.config.configSpec);
+                    this.$selectBaselineSpec.hide();
+                    this.$selectProdInstSpec.hide();
+                }else if(App.config.configSpec.indexOf('pi-')===0){
+                    this.$selectConfSpec.val('serial-number');
+                    this.$selectProdInstSpec.val(App.config.configSpec).show();
+                    this.$selectBaselineSpec.hide();
+                }else{
+                    this.$selectConfSpec.val('baseline');
+                    this.$selectBaselineSpec.val(App.config.configSpec).show();
+                    this.$selectProdInstSpec.hide();
+                }
             }
         }
 

@@ -7,8 +7,6 @@ define([
     'use strict';
     var BomHeaderView = Backbone.View.extend({
 
-        el: '#top_controls_container',
-
         events: {
             "click .checkout": "actionCheckout",
             "click .undocheckout": "actionUndocheckout",
@@ -60,11 +58,6 @@ define([
                     break;
             }
 
-        },
-
-        hideButtons:function(){
-            this.hideCheckGroup();
-            this.hideACLButton();
         },
 
         hideCheckGroup: function () {

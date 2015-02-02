@@ -1,0 +1,27 @@
+#product-content{
+
+    .mode-controls{
+        display: inline-block;
+    }
+
+    .dmu-controls,.bom-controls,#side_controls_container,#scene_container,#bom_table_container{
+        display: none;
+    }
+
+    &.bom-mode{
+        #bom_table_container{
+            display: block;
+        }
+        .bom-controls{
+            display: inline-block;
+        }
+    }
+    &.scene-mode{
+        #side_controls_container,#scene_container{
+            display: block;
+        }
+        .dmu-controls{
+            display: inline;
+        }
+    }
+}

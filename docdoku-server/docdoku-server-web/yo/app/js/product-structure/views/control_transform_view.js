@@ -7,7 +7,7 @@ define(
         "text!templates/control_transform.html"
     ], function (Backbone, Mustache, template) {
 
-        var PartMetadataView = Backbone.View.extend({
+        var ControlTransformView = Backbone.View.extend({
 
             className: "side_control_group",
 
@@ -65,5 +65,5 @@ define(
 
         });
 
-        return PartMetadataView;
+        return ControlTransformView;
     });

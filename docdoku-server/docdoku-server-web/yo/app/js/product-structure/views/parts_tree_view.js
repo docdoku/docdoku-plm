@@ -10,16 +10,16 @@ define(['backbone', 'models/component_module', 'views/component_views'
             'change input': 'checkChildrenInputs',
             'change li': 'checkParentsInputs',
             'component:selected a': 'onComponentSelected',
-            'click #product_title': 'onProductRootNode'
+            'click #product_title': 'onProductTitleClicked'
         },
 
         setSelectedComponent: function (component) {
             this.componentSelected = component;
         },
 
-        onProductRootNode: function () {
+        onProductTitleClicked: function () {
             this.setSelectedComponent(this.rootComponent);
-            this.trigger('component:selected', true);
+            App.appView.onComponentSelected(true);
         },
 
         render: function () {
@@ -167,7 +167,7 @@ define(['backbone', 'models/component_module', 'views/component_views'
             this.$('li.active').removeClass('active');
             li.addClass('active');
             this.setSelectedComponent(componentModel);
-            this.trigger('component:selected');
+            App.appView.onComponentSelected();
         },
 
         refreshAll: function () {

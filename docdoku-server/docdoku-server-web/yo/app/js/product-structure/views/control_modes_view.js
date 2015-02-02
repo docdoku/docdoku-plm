@@ -40,10 +40,11 @@ define([
             this.$el.html(Mustache.render(template, {i18n: App.config.i18n}));
             this.shortcutsview = new ShortcutsView().render();
             this.$('.nav-header').after(this.shortcutsview.$el);
+            this.bindDomElements();
             return this;
         },
 
-        bindDomElement: function(){
+        bindDomElements: function(){
             this.$flyingModeButton = this.$("button#flying_mode_view_btn");
             this.$orbitModeButton = this.$("button#orbit_mode_view_btn");
             this.$trackingModeButton = this.$("button#tracking_mode_view_btn");
