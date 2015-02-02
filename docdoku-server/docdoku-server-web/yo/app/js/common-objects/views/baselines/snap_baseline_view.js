@@ -84,8 +84,8 @@ define([
 		},
 
 		onBaselineCreated: function (e) {
-            if (typeof(e) === 'string') {
-                this.trigger('warning',e);
+            if (e.message) {
+                this.trigger('warning', e.message);
             }
 			this.closeModal();
 		},
