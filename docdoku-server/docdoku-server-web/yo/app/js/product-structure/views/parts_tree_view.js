@@ -3,17 +3,13 @@ define(['backbone', 'models/component_module', 'views/component_views'
 ], function (Backbone, ComponentModule, ComponentViews) {
 	'use strict';
 
-    function isChildOfPath(parentPath, path){
-        return path.startsWith(parentPath);
-    }
-
     var PartsTreeView = Backbone.View.extend({
         el: '#product_nav_list',
 
         events: {
             'change input': 'checkChildrenInputs',
             'change li': 'checkParentsInputs',
-            'component_selected a': 'onComponentSelected',
+            'component:selected a': 'onComponentSelected',
             'click #product_title': 'onProductRootNode'
         },
 
@@ -23,7 +19,7 @@ define(['backbone', 'models/component_module', 'views/component_views'
 
         onProductRootNode: function () {
             this.setSelectedComponent(this.rootComponent);
-            this.trigger('component_selected', true);
+            this.trigger('component:selected', true);
         },
 
         render: function () {
@@ -35,9 +31,13 @@ define(['backbone', 'models/component_module', 'views/component_views'
             this.rootComponent = undefined;
 
             this.listenTo(rootCollection, 'reset', function (collection) {
-                //the default selected component is the root
+
                 self.rootComponent = collection.first();
-                self.setSelectedComponent(self.rootComponent);
+
+                if(!self.componentSelected){
+                    self.setSelectedComponent(self.rootComponent);
+                }
+
                 self.trigger('collection:fetched');
             });
 
@@ -167,16 +167,11 @@ define(['backbone', 'models/component_module', 'views/component_views'
             this.$('li.active').removeClass('active');
             li.addClass('active');
             this.setSelectedComponent(componentModel);
-            this.trigger('component_selected');
+            this.trigger('component:selected');
         },
 
         refreshAll: function () {
-            App.instancesManager.clear();
             this.componentViews.fetchAll();
-        },
-
-        onRefreshComponent: function (partKey) {
-            this.componentViews.refreshComponent(partKey);
         }
 
     });

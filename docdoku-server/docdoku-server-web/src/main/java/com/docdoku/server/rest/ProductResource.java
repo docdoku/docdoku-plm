@@ -214,6 +214,7 @@ public class ProductResource {
         dto.setAuthor(pm.getAuthor().getName());
         dto.setAuthorLogin(pm.getAuthor().getLogin());
         dto.setAmount(usageLink.getCadInstances().size());
+        dto.setReleased(partR.isReleased());
 
         List<InstanceAttributeDTO> lstAttributes = new ArrayList<>();
         List<ComponentDTO> components = new ArrayList<>();

@@ -100,7 +100,7 @@ define([
 
         bindEvent: function(){
             // Try to remove this
-            Backbone.Events.on('refresh_tree', this.resetCollection);
+            Backbone.Events.on('part:saved', this.resetCollection);
 
             this.partListView.collection.on('page-count:fetch', this.onPageCountFetched);
             this.partListView.collection.fetchPageCount();

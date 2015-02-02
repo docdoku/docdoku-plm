@@ -46,6 +46,7 @@ public class ComponentDTO implements Serializable{
     private List<InstanceAttributeDTO> attributes;
     private UserDTO checkOutUser;
     private Date checkOutDate;
+    private boolean released;
     @XmlElement(nillable = true)
     private int lastIterationNumber;
     @XmlElement(nillable = true)
@@ -176,5 +177,13 @@ public class ComponentDTO implements Serializable{
     }
     public void setAccessDeny(boolean accessDeny) {
         this.accessDeny = accessDeny;
+    }
+
+    public boolean isReleased() {
+        return released;
+    }
+
+    public void setReleased(boolean released) {
+        this.released = released;
     }
 }

@@ -69,7 +69,6 @@ define([
             App.$ControlsContainer.append(App.controlModesView.$el);
             App.$ControlsContainer.append(App.controlTransformView.$el);
 
-            // Todo maybe save controls views
             App.$ControlsContainer.append(new ControlOptionsView().render().$el);
             App.$ControlsContainer.append(new ControlClippingView().render().$el);
             App.$ControlsContainer.append(new ControlExplodeView().render().$el);
@@ -136,11 +135,11 @@ define([
         },
 
         listenEvents: function () {
-            App.partsTreeView.on('component_selected', this.onComponentSelected, this);
-            Backbone.Events.on('refresh_tree', this.onRefreshTree, this);
+            App.partsTreeView.on('component:selected', this.onComponentSelected, this);
             App.baselineSelectView.on('config_spec:changed', this.onConfigSpecChange, this);
             Backbone.Events.on('mesh:selected', this.onMeshSelected, this);
             Backbone.Events.on('selection:reset', this.onResetSelection, this);
+            Backbone.Events.on('part:saved', this.refreshTree, this);
         },
 
         bindDomElements: function () {
@@ -261,15 +260,8 @@ define([
             App.sceneManager.requestFullScreen();
         },
 
-        onRefreshTree: function () {
-            if (this.isInBomMode()) {
-                this.updateBom();
-            }
+        refreshTree: function () {
             App.partsTreeView.refreshAll();
-        },
-
-        onRefreshComponent: function (partKey) {
-            App.partsTreeView.onRefreshComponent(partKey);
         },
 
         showPartMetadata: function () {
@@ -298,7 +290,7 @@ define([
 		    App.config.configSpec = configSpec;
 		    App.sceneManager.clear();
 		    App.instancesManager.clear();
-		    Backbone.Events.trigger('refresh_tree');
+            App.partsTreeView.refreshAll();
 	    },
 
         onMeshSelected: function (mesh) {

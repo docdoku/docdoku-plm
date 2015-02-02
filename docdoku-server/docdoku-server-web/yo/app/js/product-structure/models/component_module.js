@@ -123,6 +123,10 @@ define(['backbone', 'common-objects/utils/date'],
                 return this.get('accessDeny');
             },
 
+            isReleased : function(){
+                return this.get('released');
+            },
+
             getInstancesUrl: function () {
                 return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + App.config.productId + '/instances?configSpec=' + App.config.configSpec + '&path=' + this.getPath();
             },
