@@ -25,6 +25,7 @@
     }
 
     .well{
+      position: relative;
       float: left;
       padding:9px;
       width: 95%;
@@ -49,11 +50,11 @@
       input{
 
         &[name="number"]{
-          width:190px;
+          width:180px;
         }
 
         &[name="name"]{
-          width:190px;
+          width:180px;
         }
 
         &[name="amount"]{
@@ -74,24 +75,20 @@
         width:72px;
       }
 
-      .add-cadInstance{
-        margin-top: 8px;
-        cursor: pointer;
-        opacity: 0.5;
-        float: right;
+      .add-cadInstance,.collapse-cadInstance{
+          position: absolute;
+          margin-top: 8px;
+          cursor: pointer;
+          opacity: 0.5;
+          top: 10px;
+
         &:hover{
           opacity: 1;
         }
       }
-      .collapse-cadInstance{
-        float: right;
-        margin-top: 8px;
-        cursor: pointer;
-        opacity: 0.5;
-        &:hover{
-          opacity: 1;
-        }
-      }
+
+      .add-cadInstance{right: 22px;}
+      .collapse-cadInstance{right: 8px;}
 
       .cadInstances{
         float:left;
