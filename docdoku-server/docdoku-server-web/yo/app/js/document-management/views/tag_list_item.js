@@ -2,8 +2,9 @@
 define([
     'common-objects/views/components/list_item',
     'views/tag_document_list',
-    'text!templates/tag_list_item.html'
-], function (ListItemView, TagDocumentListView, template) {
+    'text!templates/tag_list_item.html',
+    'models/document'
+], function (ListItemView, TagDocumentListView, template, Document) {
     'use strict';
     var TagListItemView = ListItemView.extend({
 
@@ -14,9 +15,16 @@ define([
             ListItemView.prototype.initialize.apply(this, arguments);
             this.events = _.extend(this.events, {
                 'click .delete': 'actionDelete',
-                'mouseleave .header': 'hideActions'
+                'mouseleave .header': 'hideActions',
+                'dragenter >.nav-list-entry': 'onDragEnter',
+                'dragover >.nav-list-entry': 'checkDrag',
+                'dragleave >.nav-list-entry': 'onDragLeave',
+                'drop >.nav-list-entry': 'onDrop'
             });
 
+        },
+        rendered:function(){
+            this.tagDiv= this.$('>.nav-list-entry');
         },
         hideActions: function () {
             // Prevents the actions menu to stay opened all the time
@@ -47,6 +55,41 @@ define([
                 }
             });
             return false;
+        },
+        onDragEnter: function () {
+            this.tagDiv.hasClass('move-doc-into')
+        },
+
+        checkDrag: function (e) {
+            e.dataTransfer.dropEffect = 'copy';
+            this.tagDiv.addClass('move-doc-into');
+            return false;
+        },
+
+        onDragLeave: function (e) {
+            e.dataTransfer.dropEffect = 'none';
+            this.tagDiv.removeClass('move-doc-into');
+        },
+
+        onDrop: function (e) {
+            if(e.dataTransfer.getData('document:text/plain')){
+                this.tagDocument(e);
+            }
+        },
+
+        tagDocument : function(e) {
+            var that = this;
+            var document = new Document(JSON.parse(e.dataTransfer.getData('document:text/plain')));
+
+            document.addTags([this.model]).success(function () {
+                Backbone.Events.trigger('document-moved');
+                that.tagDiv.removeClass('move-doc-into');
+                that.tagDiv.highlightEffect();
+            }).error(function () {
+                Backbone.Events.trigger('document-error-moved');
+                that.tagDiv.removeClass('move-doc-into');
+            });
+
         }
     });
     return TagListItemView;
