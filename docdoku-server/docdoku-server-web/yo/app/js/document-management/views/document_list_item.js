@@ -100,6 +100,9 @@ define([
                 that.$el.removeClass('moving');
             });
             var data = JSON.stringify(this.model);
+            var img = document.createElement("img");
+            img.src = App.config.contextPath + '/images/icon-action-document-move.png';
+            e.dataTransfer.setDragImage(img, 0, 0);
             e.dataTransfer.setData('document:text/plain', data);
             e.dataTransfer.dropEffect = 'none';
             e.dataTransfer.effectAllowed = 'copyMove';
