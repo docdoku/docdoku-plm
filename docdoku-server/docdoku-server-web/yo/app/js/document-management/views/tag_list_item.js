@@ -82,11 +82,9 @@ define([
             var document = new Document(JSON.parse(e.dataTransfer.getData('document:text/plain')));
 
             document.addTags([this.model]).success(function () {
-                Backbone.Events.trigger('document-moved');
                 that.tagDiv.removeClass('move-doc-into');
                 that.tagDiv.highlightEffect();
             }).error(function () {
-                Backbone.Events.trigger('document-error-moved');
                 that.tagDiv.removeClass('move-doc-into');
             });
 
