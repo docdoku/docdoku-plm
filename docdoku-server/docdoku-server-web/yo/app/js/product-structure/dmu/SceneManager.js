@@ -1011,7 +1011,7 @@ define([
 
         this.onContainerShown = function(){
             handleResize();
-        }
+        };
     };
 
     return SceneManager;

@@ -305,8 +305,7 @@ define([
 
         moveFolder: function(e){
             var data = JSON.parse(e.dataTransfer.getData('folder:text/plain'));
-            var model = this.model || {id:App.config.workspaceId};
-
+            var model = this.model||{id:App.config.workspaceId};
             if(!model){
                 // This should be the root folder
                 model = {id:App.config.workspaceId}
