@@ -132,7 +132,6 @@ public class Tools {
     public static boolean validateMask(String mask, String str){
 
         // '*' goes for any alpha-numeric char, '#' for numbers only
-
         if(mask == null || mask.length() == 0){
             return true;
         }
@@ -142,7 +141,7 @@ public class Tools {
             return false;
         }
 
-        Pattern alphaNum = Pattern.compile("[^a-zA-Z0-9]");
+        Pattern alphaNum = Pattern.compile("[a-zA-Z0-9]");
 
         for (int i = 0; i < mask.length(); i++) {
 
