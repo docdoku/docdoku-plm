@@ -79,6 +79,7 @@ define({
 	CONTENT_HELP: "Contenu du document",
 	CONTROLS_SHORTCUTS: "Raccourcis clavier/souris",
 	COPY: "Copier",
+    CONVERSION:"Conversion",
     CONVERSION_STATUS:"Statut de la conversion",
     CONVERSION_PENDING:"Conversion en cours",
     CONVERSION_SUCCEED:"Conversion réussie",

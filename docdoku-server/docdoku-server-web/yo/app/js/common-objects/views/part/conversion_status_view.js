@@ -15,9 +15,9 @@ define([
             var _this = this;
             _this.$el.html('...');
             this.model.getConversionStatus().success(function(status){
-                _this.$el.html(Mustache.render(template, {status:status,i18n:App.config.i18n}));
+                _this.$el.html(Mustache.render(template, {status:status,hasCadFile:_this.model.get('nativeCADFile'),i18n:App.config.i18n}));
             }).error(function(){
-                _this.$el.html(Mustache.render(template, {status:null,i18n:App.config.i18n}));
+                _this.$el.html(Mustache.render(template, {status:null,hasCadFile:_this.model.get('nativeCADFile'),i18n:App.config.i18n}));
             });
             return this;
         },
