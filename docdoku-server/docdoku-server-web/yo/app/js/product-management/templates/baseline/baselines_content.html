@@ -1,9 +1,9 @@
 <div class="actions well">
-    <div class="baselines-filter-bar ">
-        <label for="inputProductId"><span class="fa fa-cogs"></span></label>
-        <select id="inputProductId">
-            <option value="" disabled selected>{{i18n.CHOOSE_A_PRODUCT}}</option>
-        </select>
+    <div class="baselines-filter-bar">
+        <div class="input-prepend">
+            <label for="inputProductId" class="btn btn-custom">{{i18n.PRODUCTS}}</label>
+            <input id="inputProductId" type="text" class="form-controls" placeholder="{{i18n.PRODUCT_ID}}"/>
+        </div>
     </div>
     {{> duplicateButton}}
     {{> deleteButton}}

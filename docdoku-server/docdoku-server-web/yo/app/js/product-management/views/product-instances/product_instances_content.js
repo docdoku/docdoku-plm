@@ -31,12 +31,16 @@ define([
             this.$el.html(Mustache.render(template, {i18n: App.config.i18n}, this.partials));
             this.bindDomElements();
 
-            if(!this.configurationItemCollection){
-                this.configurationItemCollection = new ConfigurationItemCollection();
-            }
-            this.configurationItemCollection.fetch({
-                success: this.fillProductList,
-                error: this.onError
+            this.$inputProductId.typeahead({
+                source: function (query, process) {
+                    $.getJSON(App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products', function (data) {
+                        var ids = [];
+                        _(data).each(function (d) {
+                            ids.push(d.id);
+                        });
+                        process(ids);
+                    });
+                }
             });
 
             var self = this ;
@@ -77,21 +81,6 @@ define([
             });
             window.document.body.appendChild(productInstanceCreationView.render().el);
             productInstanceCreationView.openModal();
-        },
-
-        fillProductList: function (list) {
-            var self = this;
-            if (list && list.length) {
-                list.each(function (product) {
-                    self.$inputProductId.append('<option value="' + product.getId() + '"' + '>' + product.getId() + '</option>');
-                });
-                this.$inputProductId.combobox({bsVersion: 2});
-            }else{
-                this.$notifications.append(new AlertView({
-                    type: 'info',
-                    message: App.config.i18n.CREATE_PRODUCT_BEFORE_PRODUCT_INSTANCE
-                }).render().$el);
-            }
         },
 
         createProductInstancesView: function () {
