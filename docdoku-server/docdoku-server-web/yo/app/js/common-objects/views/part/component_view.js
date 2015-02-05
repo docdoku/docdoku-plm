@@ -61,7 +61,7 @@ define([
 
         addCadInstanceView: function (instance) {
             var self = this;
-            var instanceView = new CadInstanceView();
+            var instanceView = new CadInstanceView({editMode:this.options.editMode});
             instanceView.setInstance(instance).render();
             self.$cadInstances.append(instanceView.$el);
             instanceView.on('instance:remove', function () {
@@ -109,53 +109,50 @@ define([
         changeName: function (e) {
             this.model.get('component').name = e.target.value;
         },
-        changeMeasureUnit: function (e) {
-            this.model.set('unit', e.target.value);
+        changeMeasureUnit: function(e){
+            this.model.set('unit',e.target.value);
             this.$unitText.val(e.target.value);
             this.disableEnableAmount(e.target.value);
         },
         checkIntegrity: function (unit) {
 
-            if (!unit || unit == this.$defaultUnity) {
-
-                var amount = parseInt(this.$amount.val(), 10);
-
-                if (amount > this.$('.cadInstance').length) {
-                    var totalUnitToAdd = amount - this.$('.cadInstance').length;
-                    for (var i = 0; i < totalUnitToAdd; i++) {
+            if (unit == "null" || unit == "" || unit == undefined || unit == this.$defaultUnity ) {
+                if ( parseInt(this.$amount.val(),10) > this.$('.cadInstance').length) {
+                    var totalUnitToAdd =  parseInt(this.$amount.val(),10) - this.$('.cadInstance').length;
+                    for(var i=0;i<totalUnitToAdd;i++){
                         var instance = {tx: 0, ty: 0, tz: 0, rx: 0, ry: 0, rz: 0};
                         this.model.get('cadInstances').push(instance);
                         this.addCadInstanceView(instance);
                     }
                 }
-
-                if (amount < this.$('.cadInstance').length) {
-                    var totalToDelete = this.$('.cadInstance').length - amount;
-                    this.$('.cadInstance').slice(-totalToDelete).remove();
+                if(parseInt(this.$amount.val(),10) < this.$('.cadInstance').length) {
+                    var totalToDelete= this.$('.cadInstance').length-parseInt(this.$amount.val(),10);
+                    this.$(".cadInstance").slice(-totalToDelete).remove();
                 }
+            }else  {
+                if( this.$('.cadInstance').length > 1){
+                    this.$(".cadInstance:not(:first)").remove();
+                    var self= this;
+                    _.each(self.model.get('cadInstances'),function(){
+                        self.model.get('cadInstances').pop();
+                    });
 
-            } else  if (this.$('.cadInstance').length > 1) {
-                this.$('.cadInstance:not(:first)').remove();
-                _.each(this.model.get('cadInstances'), function () {
-                    this.model.get('cadInstances').pop();
-                },this);
+                }
             }
-
         },
-        disableEnableAmount: function (unit) {
+        disableEnableAmount: function(unit){
 
-            if (!unit || unit == this.$defaultUnity) {
-                var amount = parseInt(this.$amount.val(), 10);
-                this.$amount.val(amount >= 0 ? 1 : amount);
-                this.$amount.attr('disabled', 'disabled');
+            if (unit == "null" || unit == "" || unit == undefined || unit == this.$defaultUnity)
+            {
+                this.$amount.val(parseInt(this.$amount.val(),10)== 0 ? 1:parseInt(this.$amount.val(),10));
+                this.$amount.attr('disabled','disabled');
                 this.$('.add-cadInstance').show();
                 this.$unitText.val(this.$unitText.attr('default-unity'));
             }
-            else {
+            else{
                 this.$amount.removeAttr('disabled');
                 this.$('.add-cadInstance').hide();
             }
-
             this.checkIntegrity(unit);
 
         }
