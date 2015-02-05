@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2014 DocDoku SARL
+ * Copyright 2006 - 2015 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -25,8 +25,8 @@ import javax.persistence.Embeddable;
 import java.io.Serializable;
 
 /**
- * Identity class of <a href="BaselinedPart.html">BaselinedPart</a> objects defined as an embeddable object in order
- * to be used inside the baselined parts map in the <a href="PartCollection.html">PartCollection</a> class.
+ * Identity class of {@link BaselinedPart} objects defined as an embeddable object in order
+ * to be used inside the baselined parts map in the {@link PartCollection} class.
  *
  * @author Florent Garin
  */

@@ -55,6 +55,7 @@ define([
             this.$el.empty();
             this.collection.fetch({reset: true});
         }
+
     });
 
     ComponentViews.Leaf = Backbone.View.extend({
@@ -66,7 +67,7 @@ define([
             '<%} else {%>' +
             '<input type="checkbox" disabled <%if (checkedAtInit) {%>checked="checked"<%}%>>' +
             '<%}%>' +
-            '<a><label class="checkbox"><%= number %> (<%= amount %>)</label></a>' +
+            '<a><label class="checkbox"><%= number %> (<%= amount %> <%= unit %>)</label></a>' +
             '<%if(isForbidden) {%> ' +
             '<i class="fa fa-file"></i>' +
             '<i class="fa fa-ban"></i>' +
@@ -76,10 +77,14 @@ define([
             '<%} else if(isCheckoutByConnectedUser) {%> ' +
             '<i class="fa fa-file openModal"></i>' +
             '<i class="fa fa-pencil"></i>' +
+            '<%} else if(isReleased){%> ' +
+            '<i class="fa fa-file openModal"></i>' +
+            '<i class="fa fa-check"></i>' +
             '<%} else{%> ' +
             '<i class="fa fa-file openModal"></i>' +
             '<i class="fa fa-eye"></i>' +
-            '<%}%>'),
+            '<%}%>'
+        ),
 
         events: {
             'click a': 'onComponentSelected',
@@ -116,10 +121,12 @@ define([
             var data = {
                 number: this.model.attributes.number,
                 amount: this.model.getAmount(),
+                unit: this.model.getUnit(),
                 checkedAtInit: this.options.checkedAtInit,
                 isForbidden: this.model.isForbidden(),
                 isCheckoutByAnotherUser: this.model.isCheckout() && !this.model.isCheckoutByConnectedUser(),
                 isCheckoutByConnectedUser: this.model.isCheckout() && this.model.isCheckoutByConnectedUser(),
+                isReleased: this.model.isReleased(),
                 isLock: this.isLock
             };
 
@@ -143,7 +150,7 @@ define([
 
         onComponentSelected: function (e) {
             e.stopPropagation();
-            this.$('>a').trigger('component_selected', [this.model, this.$el]);
+            this.$('>a').trigger('component:selected', [this.model, this.$el]);
         },
 
 	    onEditPart: function () {
@@ -179,10 +186,14 @@ define([
             '<%} else if(isCheckoutByConnectedUser) {%> ' +
             '<i class="fa fa-file openModal"></i>' +
             '<i class="fa fa-pencil"></i> ' +
+            '<%} else if(isReleased){%> ' +
+            '<i class="fa fa-file openModal"></i>' +
+            '<i class="fa fa-check"></i>' +
             '<%} else{%> ' +
             '<i class="fa fa-file openModal"></i>' +
-            '<i class="fa fa-eye"></i> ' +
-            '<%}%>'),
+            '<i class="fa fa-eye"></i>' +
+            '<%}%>'
+        ),
 
         events: {
             'click a:first': 'onComponentSelected',
@@ -224,10 +235,12 @@ define([
             var data = {
                 number: this.model.attributes.number,
                 amount: this.model.getAmount(),
+                unit: this.model.getUnit(),
                 checkedAtInit: this.options.checkedAtInit,
                 isForbidden: this.isForbidden,
                 isCheckoutByAnotherUser: this.model.isCheckout() && !this.model.isCheckoutByConnectedUser(),
                 isCheckoutByConnectedUser: this.model.isCheckout() && this.model.isCheckoutByConnectedUser(),
+                isReleased: this.model.isReleased(),
                 isLock: this.isLock
             };
 
@@ -309,7 +322,7 @@ define([
 
         onComponentSelected: function (e) {
             e.stopPropagation();
-            this.$('>a').trigger('component_selected', [this.model, this.$el]);
+            this.$('>a').trigger('component:selected', [this.model, this.$el]);
         },
 
         isChecked: function () {

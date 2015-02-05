@@ -5,14 +5,11 @@ define([ "backbone", "mustache", 'text!templates/part_meta_data.html'], function
 
         tagName: 'div',
 
-        id: 'part_metadata_container',
-
-
         events: {
             'click .author-join': 'authorClicked'
         },
 
-        className: 'side_control_group',
+        className: 'side_control_group part_metadata_container',
 
         initialize: function () {
             this.listenTo(this.model, 'change', this.render);

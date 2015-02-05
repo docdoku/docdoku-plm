@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2014 DocDoku SARL
+ * Copyright 2006 - 2015 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -47,7 +47,6 @@ public class PartUsageLink implements Serializable, Cloneable {
     private double amount;
     private String unit;
 
-    @Lob
     private String referenceDescription;
 
     @Column(name = "COMMENTDATA")
@@ -79,6 +78,8 @@ public class PartUsageLink implements Serializable, Cloneable {
     })
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<CADInstance> cadInstances = new LinkedList<>();
+
+    private boolean optional;
 
     public PartUsageLink() {
     }
@@ -137,6 +138,14 @@ public class PartUsageLink implements Serializable, Cloneable {
 
     public void setReferenceDescription(String referenceDescription) {
         this.referenceDescription = referenceDescription;
+    }
+
+    public void setOptional(boolean optional) {
+        this.optional = optional;
+    }
+
+    public boolean isOptional() {
+        return optional;
     }
 
     public List<CADInstance> getCadInstances() {

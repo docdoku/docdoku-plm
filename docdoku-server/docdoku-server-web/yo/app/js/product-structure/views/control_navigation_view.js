@@ -5,7 +5,7 @@ define([
     'text!templates/control_navigation.html'
 ], function (Backbone, Mustache, template) {
     'use strict';
-    var PartMetadataView = Backbone.View.extend({
+    var ControlNavigationView = Backbone.View.extend({
         className: 'side_control_group',
 
         events: {
@@ -44,5 +44,5 @@ define([
         }
     });
 
-    return PartMetadataView;
+    return ControlNavigationView;
 });

@@ -43,6 +43,7 @@ define([
         },
 
         render: function () {
+
             this.$el.html(Mustache.render(template, {
                 productId: App.config.productId,
                 contextPath: App.config.contextPath,
@@ -55,7 +56,6 @@ define([
             App.instancesManager = new InstancesManager();
             App.collaborativeController = new CollaborativeController();
 
-            App.collaborativeView = new CollaborativeView().render();
             App.searchView = new SearchView().render();
             App.partsTreeView = new PartsTreeView({resultPathCollection: App.searchView.collection}).render();
             App.controlNavigationView = new ControlNavigationView().render();
@@ -63,13 +63,15 @@ define([
             App.baselineSelectView = new BaselineSelectView({el:'#config_spec_container'}).render();
             App.controlModesView = new ControlModesView().render();
             App.controlTransformView = new ControlTransformView().render();
+            App.partMetadataView = new PartMetadataView({model:new Backbone.Model()});
+            App.collaborativeView = new CollaborativeView().render();
 
             App.$ControlsContainer.append(App.collaborativeView.$el);
             App.$ControlsContainer.append(App.controlNavigationView.$el);
             App.$ControlsContainer.append(App.controlModesView.$el);
             App.$ControlsContainer.append(App.controlTransformView.$el);
+            App.$ControlsContainer.append(App.partMetadataView.$el);
 
-            // Todo maybe save controls views
             App.$ControlsContainer.append(new ControlOptionsView().render().$el);
             App.$ControlsContainer.append(new ControlClippingView().render().$el);
             App.$ControlsContainer.append(new ControlExplodeView().render().$el);
@@ -77,8 +79,11 @@ define([
             App.$ControlsContainer.append(new ControlLayersView().render().$el);
             App.$ControlsContainer.append(new ControlMeasureView().render().$el);
 
+            this.bomControls.append(App.bomView.bomHeaderView.$el);
+
             try {
                 App.sceneManager.init();
+                this.bindDatGUIControls();
             } catch (ex) {
                 console.error('Got exception in dmu');
                 App.log(ex);
@@ -86,36 +91,20 @@ define([
             }
 
             this.listenEvents();
-            this.bindDatGUIControls();
 
             return this;
         },
 
-        initBom:function(){
-
-            var _this = this;
-            if(App.partsTreeView.componentSelected){
-                this.bomMode();
-            }else{
-                App.partsTreeView.on('collection:fetched',function(){
-                    _this.bomMode();
-                });
-            }
-
-            this.initBom = this.bomMode;
-        },
-
-        requestJoinRoom: function (key) {
-            if (!App.mainChannel.isReady()) {
-                // Retry to connect every 500ms
-                App.log('%c [App] %c Websocket is not openned',true);
-                var _this = this;
-                setTimeout(function () {
-                    _this.requestJoinRoom(key);
-                }, 250);
-            } else {
-                App.collaborativeController.sendJoinRequest(key);
-            }
+        bindDomElements: function () {
+            this.$contentContainer = this.$('#product-content');
+            this.$productMenu = this.$('#product-menu');
+            this.sceneModeButton = this.$('#scene_view_btn');
+            this.bomModeButton = this.$('#bom_view_btn');
+            this.exportSceneButton = this.$('#export_scene_btn');
+            this.bomControls =  this.$('.bom-controls');
+            this.dmuControls=  this.$('.dmu-controls');
+            App.$ControlsContainer = this.$('#side_controls_container');
+            App.$SceneContainer = this.$('#scene_container');
         },
 
         menuResizable: function () {
@@ -135,25 +124,24 @@ define([
             });
         },
 
+        bomMode: function () {
+            this.$contentContainer.attr('class','bom-mode');
+            this.bomModeButton.addClass('active');
+            this.sceneModeButton.removeClass('active');
+        },
+
+        sceneMode: function () {
+            this.$contentContainer.attr('class','scene-mode');
+            this.bomModeButton.removeClass('active');
+            this.sceneModeButton.addClass('active');
+            App.sceneManager.onContainerShown();
+        },
+
         listenEvents: function () {
-            App.partsTreeView.on('component_selected', this.onComponentSelected, this);
-            Backbone.Events.on('refresh_tree', this.onRefreshTree, this);
             App.baselineSelectView.on('config_spec:changed', this.onConfigSpecChange, this);
             Backbone.Events.on('mesh:selected', this.onMeshSelected, this);
             Backbone.Events.on('selection:reset', this.onResetSelection, this);
-        },
-
-        bindDomElements: function () {
-            this.$productMenu = this.$('#product-menu');
-            this.sceneModeButton = this.$('#scene_view_btn');
-            this.bomModeButton = this.$('#bom_view_btn');
-            this.exportSceneButton = this.$('#export_scene_btn');
-            this.fullScreenSceneButton = this.$('#fullscreen_scene_btn');
-            this.bomContainer = this.$('#bom_table_container');
-            this.centerSceneContainer = this.$('#center_container');
-            this.partMetadataContainer = this.$('#part_metadata_container');
-            App.$ControlsContainer = this.$('#side_controls_container');
-            App.$SceneContainer = this.$('#scene_container');
+            Backbone.Events.on('part:saved', this.refreshTree, this);
         },
 
         updateBom: function (showRoot) {
@@ -164,51 +152,20 @@ define([
             }
         },
 
-        sceneMode: function () {
-            if(this.isInBomMode()) {
-                this.inBomMode = false;
-                this.bomModeButton.removeClass('active');
-                this.sceneModeButton.addClass('active');
-                this.bomContainer.hide();
-                this.centerSceneContainer.show();
-                this.fullScreenSceneButton.show();
-                App.bomView.bomHeaderView.hideButtons();
-
-                if (App.partsTreeView.componentSelected) {
-                    this.exportSceneButton.show();
-                }
-            }
-        },
-
-        bomMode: function () {
-            this.inBomMode = true;
-            this.sceneModeButton.removeClass('active');
-            this.bomModeButton.addClass('active');
-            this.partMetadataContainer.removeClass('active');
-            this.centerSceneContainer.hide();
-            this.exportSceneButton.hide();
-            this.fullScreenSceneButton.hide();
-            this.bomContainer.show();
-            this.updateBom();
-        },
-
-        isInBomMode: function () {
-            return this.inBomMode;
-        },
-
         sceneButton:function(){
             App.router.navigate(App.config.workspaceId + '/' + App.config.productId + '/' + 'scene',{trigger:true});
         },
+
         bomButton:function(){
             App.router.navigate(App.config.workspaceId + '/' + App.config.productId + '/' + 'bom',{trigger:true});
         },
 
         setSpectatorView: function () {
-            this.$('.side_control_group:not(#part_metadata_container)').hide();
+            this.$('.side_control_group:not(.part_metadata_container)').hide();
         },
 
         leaveSpectatorView: function () {
-            this.$('.side_control_group:not(#part_metadata_container)').show();
+            this.$('.side_control_group:not(.part_metadata_container)').show();
         },
 
         transformControlMode: function () {
@@ -224,11 +181,8 @@ define([
         },
 
         onComponentSelected: function (showRoot) {
-            if (this.isInBomMode()) {
-                this.updateBom(showRoot);
-            } else {
-                this.exportSceneButton.show();
-            }
+            this.exportSceneButton.show();
+            this.updateBom(showRoot);
             this.showPartMetadata();
             App.sceneManager.setPathForIFrame(App.partsTreeView.componentSelected.getPath());
         },
@@ -261,26 +215,12 @@ define([
             App.sceneManager.requestFullScreen();
         },
 
-        onRefreshTree: function () {
-            if (this.isInBomMode()) {
-                this.updateBom();
-            }
+        refreshTree: function () {
             App.partsTreeView.refreshAll();
         },
 
-        onRefreshComponent: function (partKey) {
-            App.partsTreeView.onRefreshComponent(partKey);
-        },
-
         showPartMetadata: function () {
-            if (!this.isInBomMode()) {
-                if (this.partMetadataView === undefined) {
-                    this.partMetadataView = new PartMetadataView({model: App.partsTreeView.componentSelected}).render();
-                    App.$ControlsContainer.append(this.partMetadataView.$el);
-                } else {
-                    this.partMetadataView.setModel(App.partsTreeView.componentSelected).render();
-                }
-            }
+            App.partMetadataView.setModel(App.partsTreeView.componentSelected).render();
         },
 
         onNoWebGLSupport: function () {
@@ -288,7 +228,7 @@ define([
         },
 
         onConfigSpecChange: function (configSpec) {
-	        this.setConfigSpec(configSpec);
+            this.setConfigSpec(configSpec);
 	        if(App.collaborativeController){
 		        App.collaborativeController.sendBaseline(configSpec);
 	        }
@@ -298,38 +238,32 @@ define([
 		    App.config.configSpec = configSpec;
 		    App.sceneManager.clear();
 		    App.instancesManager.clear();
-		    Backbone.Events.trigger('refresh_tree');
+            App.partsTreeView.refreshAll();
+            this.updateBom();
 	    },
 
         onMeshSelected: function (mesh) {
+
             var partKey = mesh.partIterationId.substr(0, mesh.partIterationId.lastIndexOf('-'));
             var part = new Part({partKey: partKey});
-            var self = this;
+
             part.fetch({success: function () {
                 // Search the part in the tree
                 App.searchView.trigger('instance:selected', part.getNumber());
-                if (!self.isInBomMode()) {
-                    App.controlNavigationView.setMesh(mesh);
-                    App.controlTransformView.setMesh(mesh).render();
-                    if (self.partMetadataView === undefined) {
-                        self.partMetadataView = new PartMetadataView({model: part}).render();
-                        App.$ControlsContainer.append(self.partMetadataView.$el);
-                    } else {
-                        self.partMetadataView.setModel(part).render();
-                    }
-                }
+                App.controlNavigationView.setMesh(mesh);
+                App.controlTransformView.setMesh(mesh).render();
+                App.partMetadataView.setModel(part).render();
             }});
+
         },
 
         onResetSelection: function () {
             App.searchView.trigger('selection:reset');
-            if (!this.isInBomMode() && this.partMetadataView !== undefined) {
-                this.partMetadataView.reset();
-                App.controlNavigationView.reset();
-                App.controlTransformView.mesh = undefined;
-                App.controlTransformView.reset();
-            }
-
+            App.partMetadataView.reset();
+            App.controlNavigationView.reset();
+            App.controlTransformView.mesh = undefined;
+            App.controlTransformView.reset();
+            this.exportSceneButton.hide();
         },
 
         bindDatGUIControls: function () {
@@ -365,10 +299,23 @@ define([
 
 		crashWithMessage: function(htmlMessage){
             App.$SceneContainer.html('<span class="crashMessage">'+htmlMessage+ '</span>');
-            App.$ControlsContainer.empty();
-			this.exportSceneButton.remove();
-			this.fullScreenSceneButton.remove();
-		}
+            App.$ControlsContainer.hide();
+            this.dmuControls.hide();
+		},
+
+        requestJoinRoom: function (key) {
+            if (!App.mainChannel.isReady()) {
+                // Retry to connect every 500ms
+                App.log('%c [App] %c Websocket is not opened',true);
+                var _this = this;
+                setTimeout(function () {
+                    _this.requestJoinRoom(key);
+                }, 250);
+            } else {
+                App.collaborativeController.sendJoinRequest(key);
+            }
+        }
+
     });
 
     return AppView;

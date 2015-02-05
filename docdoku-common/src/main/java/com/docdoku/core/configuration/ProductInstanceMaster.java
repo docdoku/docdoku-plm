@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2014 DocDoku SARL
+ * Copyright 2006 - 2015 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -34,7 +34,7 @@ import java.util.List;
  *
  * The composition of the instance may vary according to modifications
  * applied on it so to track this evolution the part collection is kept
- * on several <a href="ProductInstanceIteration.html">ProductInstanceIteration</a>.
+ * on several {@link ProductInstanceIteration}.
  *
  * @author Florent Garin
  * @version 2.0, 24/02/14

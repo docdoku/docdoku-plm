@@ -78,6 +78,7 @@ define({
 	CONTENT: "Content",
 	CONTENT_HELP: "Document content",
 	CONTROLS_SHORTCUTS: "Mouse/keyboard shortcuts",
+    CONVERSION:"Conversion",
     CONVERSION_STATUS:"Conversion status",
     CONVERSION_PENDING:"Conversion pending",
     CONVERSION_SUCCEED:"Conversion succeed",

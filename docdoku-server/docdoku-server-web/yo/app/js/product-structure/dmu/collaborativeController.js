@@ -55,8 +55,8 @@ define([
 				    App.sceneManager.setEditedMeshes(message.messageBroadcast.editedMeshes);
 			    } else if (message.messageBroadcast.baseline){
 				    App.appView.setConfigSpec(message.messageBroadcast.baseline);
-				    App.baselineSelectView.$select.val(message.messageBroadcast.baseline);
-			    } else if (message.messageBroadcast.colourEditedMeshes !== undefined) {
+                    App.baselineSelectView.refresh();
+                } else if (message.messageBroadcast.colourEditedMeshes !== undefined) {
 				    App.sceneManager.setEditedMeshesColor(message.messageBroadcast.colourEditedMeshes);
 			    } else if (message.messageBroadcast.explode) {
 				    App.$ControlsContainer.find('#slider-explode').val(message.messageBroadcast.explode);

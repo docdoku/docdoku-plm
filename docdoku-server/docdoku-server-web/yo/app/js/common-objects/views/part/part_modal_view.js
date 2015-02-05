@@ -146,7 +146,7 @@ define([
                 instanceAttributes: this.attributesView.collection.toJSON(),
                 linkedDocuments: this.linkedDocumentsView.collection.toJSON()
             }, {success: function () {
-                Backbone.Events.trigger('refresh_tree');
+                Backbone.Events.trigger('part:saved');
             }});
 
 

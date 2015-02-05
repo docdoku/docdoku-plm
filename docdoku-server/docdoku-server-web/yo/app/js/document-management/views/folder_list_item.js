@@ -4,6 +4,7 @@ define([
     'mustache',
     'require',
     'models/document',
+    'models/folder',
     'collections/folder',
     'common-objects/views/components/list_item',
     'views/folder_list',
@@ -11,7 +12,7 @@ define([
     'views/folder_new',
     'views/folder_edit',
     'text!templates/folder_list_item.html'
-], function (Backbone,Mustache, require, Document, FolderList, ListItemView, FolderListView, FolderDocumentListView, FolderNewView, FolderEditView, template) {
+], function (Backbone,Mustache, require, Document, Folder, FolderList, ListItemView, FolderListView, FolderDocumentListView, FolderNewView, FolderEditView, template) {
     'use strict';
 	var FolderListItemView = ListItemView.extend({
 
@@ -43,6 +44,8 @@ define([
                 'dragenter >.nav-list-entry': 'onDragEnter',
                 'dragover >.nav-list-entry': 'checkDrag',
                 'dragleave >.nav-list-entry': 'onDragLeave',
+                'dragstart >.nav-list-entry': 'onDragStart',
+                'dragend >.nav-list-entry': 'onDragEnd',
                 'drop >.nav-list-entry': 'onDrop'
             });
             this.events['click [data-target="#items-' + this.cid + '"]'] = 'forceShow';
@@ -219,12 +222,9 @@ define([
         },
 
         checkDrag: function (e) {
-            if (!_.isUndefined(e.dataTransfer.getData('document:text/plain'))) {
-                e.dataTransfer.dropEffect = 'copy';
-                this.folderDiv.addClass('move-doc-into');
-                return this.isActive();
-            }
-            return true;
+            e.dataTransfer.dropEffect = 'copy';
+            this.folderDiv.addClass('move-doc-into');
+            return this.isActive();
         },
 
         onDragLeave: function (e) {
@@ -232,7 +232,58 @@ define([
             this.folderDiv.removeClass('move-doc-into');
         },
 
+        onDragStart : function(e){
+
+            var data = JSON.stringify(this.model);
+
+            if(!data || this.model.get('home')){
+                e.preventDefault();
+                e.stopPropagation();
+                return false;
+            }
+
+            this.$el.addClass('moving');
+            var that = this;
+            Backbone.Events.on('folder-moved', function () {
+                Backbone.Events.off('folder-moved');
+                Backbone.Events.off('folder-error-moved');
+                that.remove();
+            });
+            Backbone.Events.on('folder-error-moved', function () {
+                Backbone.Events.off('folder-moved');
+                Backbone.Events.off('folder-error-moved');
+                that.$el.removeClass('moving');
+            });
+
+
+            e.dataTransfer.setData('folder:text/plain',data);
+
+            var img = document.createElement("img");
+            img.src = App.config.contextPath + '/images/icon-nav-folder-opened.png';
+            e.dataTransfer.setDragImage(img, 0, 0);
+
+
+            e.dataTransfer.dropEffect = 'none';
+            e.dataTransfer.effectAllowed = 'copyMove';
+            return e;
+
+
+        },
+
+        onDragEnd : function(e){
+
+        },
+
         onDrop: function (e) {
+            if(e.dataTransfer.getData('document:text/plain')){
+                this.moveDocument(e);
+            } else if(e.dataTransfer.getData('folder:text/plain')){
+                this.moveFolder(e);
+            }
+        },
+
+        moveDocument: function(e){
+
             var that = this;
             var document = new Document(JSON.parse(e.dataTransfer.getData('document:text/plain')));
 
@@ -249,7 +300,31 @@ define([
                 that.folderDiv.removeClass('move-doc-into');
 
             });
+
+        },
+
+        moveFolder: function(e){
+            var data = JSON.parse(e.dataTransfer.getData('folder:text/plain'));
+            var model = this.model||{id:App.config.workspaceId};
+            if(!model){
+                // This should be the root folder
+                model = {id:App.config.workspaceId}
+            }
+            var folder = new Folder(data);
+            var that = this ;
+
+            folder.moveTo(model).success(function(){
+                Backbone.Events.trigger('folder-moved');
+                that.folderDiv.removeClass('move-doc-into');
+                that.folderDiv.highlightEffect();
+                that.show();
+            }).error(function(){
+                Backbone.Events.trigger('folder-error-moved');
+                that.folderDiv.removeClass('move-doc-into');
+            });
+
         }
+
     });
     return FolderListItemView;
 });

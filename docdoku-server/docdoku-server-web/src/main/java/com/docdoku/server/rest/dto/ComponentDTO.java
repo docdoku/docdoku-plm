@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2014 DocDoku SARL
+ * Copyright 2006 - 2015 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -42,10 +42,12 @@ public class ComponentDTO implements Serializable{
     private boolean assembly;
     private int partUsageLinkId;
     private List<ComponentDTO> components;
-    private int amount;
+    private double amount;
+    private String unit;
     private List<InstanceAttributeDTO> attributes;
     private UserDTO checkOutUser;
     private Date checkOutDate;
+    private boolean released;
     @XmlElement(nillable = true)
     private int lastIterationNumber;
     @XmlElement(nillable = true)
@@ -143,10 +145,10 @@ public class ComponentDTO implements Serializable{
         this.authorLogin = authorLogin;
     }
 
-    public int getAmount() {
+    public double getAmount() {
         return amount;
     }
-    public void setAmount(int amount) {
+    public void setAmount(double amount) {
         this.amount = amount;
     }
 
@@ -176,5 +178,21 @@ public class ComponentDTO implements Serializable{
     }
     public void setAccessDeny(boolean accessDeny) {
         this.accessDeny = accessDeny;
+    }
+
+    public boolean isReleased() {
+        return released;
+    }
+
+    public void setReleased(boolean released) {
+        this.released = released;
+    }
+
+    public String getUnit() {
+        return unit;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
     }
 }

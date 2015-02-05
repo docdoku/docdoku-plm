@@ -4,14 +4,15 @@ define([
     'mustache',
     'common-objects/collections/product_instances',
     'collections/configuration_items',
+    'common-objects/collections/baselines',
     'text!templates/product-instances/product_instances_content.html',
     'views/product-instances/product_instances_list',
     'views/product-instances/product_instances_creation',
     'text!common-objects/templates/buttons/delete_button.html',
     'common-objects/views/alert'
-], function (Backbone, Mustache, ProductInstancesCollection, ConfigurationItemCollection, template, ProductInstancesListView, ProductInstanceCreationView, deleteButton, AlertView) {
+], function (Backbone, Mustache, ProductInstancesCollection, ConfigurationItemCollection, BaselinesCollection, template, ProductInstancesListView, ProductInstanceCreationView, deleteButton, AlertView) {
     'use strict';
-    var BaselinesContentView = Backbone.View.extend({
+    var ProductInstancesContentView = Backbone.View.extend({
 
         partials: {
             deleteButton: deleteButton
@@ -19,7 +20,7 @@ define([
 
         events: {
             'click button.new-product-instance': 'newProductInstance',
-            'click button.delete': 'deleteBaseline'
+            'click button.delete': 'deleteProductInstances'
         },
 
         initialize: function () {
@@ -30,12 +31,29 @@ define([
             this.$el.html(Mustache.render(template, {i18n: App.config.i18n}, this.partials));
             this.bindDomElements();
 
-            if(!this.configurationItemCollection){
-                this.configurationItemCollection = new ConfigurationItemCollection();
-            }
-            this.configurationItemCollection.fetch({
-                success: this.fillProductList,
-                error: this.onError
+            this.$inputProductId.typeahead({
+                source: function (query, process) {
+                    $.getJSON(App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products', function (data) {
+                        var ids = [];
+                        _(data).each(function (d) {
+                            ids.push(d.id);
+                        });
+                        process(ids);
+                    });
+                }
+            });
+
+            var self = this ;
+            new BaselinesCollection({}, {productId: ""}).fetch({
+                success: function (list) {
+                   if(!list.length){
+                       self.$notifications.append(new AlertView({
+                           type: 'info',
+                           message: App.config.i18n.CREATE_BASELINE_BEFORE_PRODUCT_INSTANCE
+                       }).render().$el);
+
+                   }
+                }
             });
 
             this.bindEvent();
@@ -65,16 +83,6 @@ define([
             productInstanceCreationView.openModal();
         },
 
-        fillProductList: function (list) {
-            var self = this;
-            if (list) {
-                list.each(function (product) {
-                    self.$inputProductId.append('<option value="' + product.getId() + '"' + '>' + product.getId() + '</option>');
-                });
-                this.$inputProductId.combobox({bsVersion: 2});
-            }
-        },
-
         createProductInstancesView: function () {
             if (this.listView) {
                 this.listView.remove();
@@ -94,7 +102,7 @@ define([
             this.listView.on('delete-button:display', this.changeDeleteButtonDisplay);
         },
 
-        deleteBaseline: function () {
+        deleteProductInstances: function () {
             this.listView.deleteSelectedProductInstances();
         },
 
@@ -121,5 +129,5 @@ define([
         }
     });
 
-    return BaselinesContentView;
+    return ProductInstancesContentView;
 });

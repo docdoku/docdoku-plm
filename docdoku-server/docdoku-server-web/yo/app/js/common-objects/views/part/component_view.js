@@ -14,7 +14,7 @@ define([
             'change input[name=comment]': 'changeComment',
             'change input[name=number]': 'changeNumber',
             'change input[name=name]': 'changeName',
-            'change input[name=newUnit]': 'changeMeasureUnit',
+            'input input[name=newUnit]': 'changeMeasureUnit',
             'click datalist[name=unitMeasure]': 'changeMeasureUnit',
             'click .add-cadInstance': 'addCadInstance',
             'click .collapse-cadInstance': 'collapseTransformations'
@@ -25,7 +25,11 @@ define([
         },
 
         render: function () {
-            this.$el.html(Mustache.render(template, {model: this.model.attributes, i18n: App.config.i18n, editMode: this.options.editMode}));
+            this.$el.html(Mustache.render(template, {
+                model: this.model.attributes,
+                i18n: App.config.i18n,
+                editMode: this.options.editMode
+            }));
             this.bindDomElements();
             this.initCadInstanceViews();
             this.initUnit();
@@ -38,6 +42,7 @@ define([
             this.$comment = this.$('input[name=comment]');
             this.$unitText = this.$('input[name=newUnit]');
             this.$defaultUnity = this.$unitText.attr('default-unity');
+            this.$collapseButton = this.$('.collapse-cadInstance');
         },
 
         initCadInstanceViews: function () {
@@ -46,21 +51,17 @@ define([
                 self.addCadInstanceView(instance);
                 self.$cadInstances.hide();
             });
-        }
-        ,initUnit:function(){
+        },
+
+        initUnit: function () {
             var unit = this.model.get('unit');
-            if (unit == "" || unit == null || unit == undefined){
-                this.$unitText.val( this.$unitText.attr("default-unity"));
-            }
-            else{
-                this.$unitText.val(unit);
-            }
+            this.$unitText.val(unit ? unit : this.$unitText.attr('default-unity'));
             this.disableEnableAmount(unit);
         },
 
         addCadInstanceView: function (instance) {
             var self = this;
-            var instanceView = new CadInstanceView();
+            var instanceView = new CadInstanceView({editMode:this.options.editMode});
             instanceView.setInstance(instance).render();
             self.$cadInstances.append(instanceView.$el);
             instanceView.on('instance:remove', function () {
@@ -77,8 +78,8 @@ define([
         onRemoveCadInstance: function (instance) {
             this.model.set('cadInstances', _(this.model.get('cadInstances')).without(instance));
             this.$amount.val(parseInt(this.$amount.val(), 10) - 1);
-            this.model.set('amount',this.$amount.val());
-            this.model.get('component').amount= this.$amount.val();
+            this.model.set('amount', this.$amount.val());
+            this.model.get('component').amount = this.$amount.val();
         },
 
         addCadInstance: function () {
@@ -86,26 +87,21 @@ define([
             this.model.get('cadInstances').push(instance);
             this.addCadInstanceView(instance);
             this.$amount.val(parseInt(this.$amount.val(), 10) + 1);
-            this.model.set('amount',this.$amount.val());
+            this.model.set('amount', this.$amount.val());
         },
 
         collapseTransformations: function () {
-            if(this.$cadInstances.is(":visible")){
-                this.$cadInstances.hide();
-                this.$('.collapse-cadInstance').addClass("fa-angle-double-down").removeClass("fa-angle-double-up");
-            }
-            else{
-                this.$cadInstances.show();
-                this.$('.collapse-cadInstance').removeClass("fa-angle-double-down").addClass("fa-angle-double-up");
-            }
-
+            var isVisible = this.$cadInstances.is(':visible');
+            this.$cadInstances.toggle(!isVisible);
+            this.$collapseButton.toggleClass('fa-angle-double-down', isVisible);
+            this.$collapseButton.toggleClass('fa-angle-double-up', !isVisible);
         },
         changeAmount: function (e) {
-            this.model.set('amount',e.target.value);
-            this.model.get('component').amount= e.target.value;
+            this.model.set('amount', e.target.value);
+            this.model.get('component').amount = e.target.value;
         },
         changeComment: function (e) {
-            this.model.set('comment',e.target.value);
+            this.model.set('comment', e.target.value);
         },
         changeNumber: function (e) {
             this.model.get('component').number = e.target.value;
@@ -120,29 +116,29 @@ define([
         },
         checkIntegrity: function (unit) {
 
-             if (unit == "null" || unit == "" || unit == undefined || unit == this.$defaultUnity ) {
+            if (unit == "null" || unit == "" || unit == undefined || unit == this.$defaultUnity ) {
                 if ( parseInt(this.$amount.val(),10) > this.$('.cadInstance').length) {
                     var totalUnitToAdd =  parseInt(this.$amount.val(),10) - this.$('.cadInstance').length;
                     for(var i=0;i<totalUnitToAdd;i++){
-                            var instance = {tx: 0, ty: 0, tz: 0, rx: 0, ry: 0, rz: 0};
-                            this.model.get('cadInstances').push(instance);
-                            this.addCadInstanceView(instance);
-                        }
+                        var instance = {tx: 0, ty: 0, tz: 0, rx: 0, ry: 0, rz: 0};
+                        this.model.get('cadInstances').push(instance);
+                        this.addCadInstanceView(instance);
+                    }
                 }
-                 if(parseInt(this.$amount.val(),10) < this.$('.cadInstance').length) {
-                     var totalToDelete= this.$('.cadInstance').length-parseInt(this.$amount.val(),10);
-                     this.$(".cadInstance").slice(-totalToDelete).remove();
+                if(parseInt(this.$amount.val(),10) < this.$('.cadInstance').length) {
+                    var totalToDelete= this.$('.cadInstance').length-parseInt(this.$amount.val(),10);
+                    this.$(".cadInstance").slice(-totalToDelete).remove();
                 }
             }else  {
-                 if( this.$('.cadInstance').length > 1){
-                     this.$(".cadInstance:not(:first)").remove();
-                     var self= this;
-                     _.each(self.model.get('cadInstances'),function(){
-                         self.model.get('cadInstances').pop();
-                     });
+                if( this.$('.cadInstance').length > 1){
+                    this.$(".cadInstance:not(:first)").remove();
+                    var self= this;
+                    _.each(self.model.get('cadInstances'),function(){
+                        self.model.get('cadInstances').pop();
+                    });
 
-                     }
-             }
+                }
+            }
         },
         disableEnableAmount: function(unit){
 

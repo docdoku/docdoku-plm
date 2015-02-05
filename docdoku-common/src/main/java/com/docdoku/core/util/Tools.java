@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2014 DocDoku SARL
+ * Copyright 2006 - 2015 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -132,17 +132,16 @@ public class Tools {
     public static boolean validateMask(String mask, String str){
 
         // '*' goes for any alpha-numeric char, '#' for numbers only
-        
-        if(mask == null || str == null){
-            return false;
+        if(mask == null || mask.length() == 0){
+            return true;
         }
 
-        // Not same length or empty
+        // Not same length
         if(mask.length() != str.length()){
             return false;
         }
 
-        Pattern alphaNum = Pattern.compile("[^a-zA-Z0-9]");
+        Pattern alphaNum = Pattern.compile("[a-zA-Z0-9]");
 
         for (int i = 0; i < mask.length(); i++) {
 

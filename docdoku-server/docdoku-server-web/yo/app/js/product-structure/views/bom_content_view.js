@@ -80,20 +80,31 @@ define([
         },
 
         actionCheckout: function () {
+            var onSuccess = function(){
+                Backbone.Events.trigger('part:saved');
+            };
             _.each(this.checkedViews(), function (view) {
-                view.model.checkout();
+                view.model.checkout().then(onSuccess);
             });
             return false;
         },
 
         actionUndocheckout: function () {
+            var onSuccess = function(){
+                Backbone.Events.trigger('part:saved');
+            };
             _.each(this.checkedViews(), function (view) {
-                view.model.undocheckout();
+                view.model.undocheckout().then(onSuccess);
             });
             return false;
         },
 
         actionCheckin: function () {
+
+            var onSuccess = function(){
+                Backbone.Events.trigger('part:saved');
+            };
+
             var self = this ;
             _.each(this.checkedViews(), function (view) {
                 if (!view.model.getLastIteration().get('iterationNote')) {
@@ -110,17 +121,17 @@ define([
                         view.model.getLastIteration().save({
                             iterationNote: iterationNote
                         }).success(function () {
-                            view.model.checkin();
+                            view.model.checkin().then(onSuccess);
                         });
 
                     });
 
                     self.listenTo(promptView, 'prompt-cancel', function () {
-                        view.model.checkin();
+                        view.model.checkin().then(onSuccess);
                     });
 
                 } else {
-                    view.model.checkin();
+                    view.model.checkin().then(onSuccess);
                 }
 
             });

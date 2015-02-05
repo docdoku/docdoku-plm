@@ -149,7 +149,7 @@ function (Backbone, Date, PartIterationList, ACLChecker) {
         },
 
         checkout: function () {
-            $.ajax({
+            return $.ajax({
                 context: this,
                 type: 'PUT',
                 url: this.url() + '/checkout',
@@ -160,7 +160,7 @@ function (Backbone, Date, PartIterationList, ACLChecker) {
         },
 
         undocheckout: function () {
-            $.ajax({
+            return $.ajax({
                 context: this,
                 type: 'PUT',
                 url: this.url() + '/undocheckout',
@@ -174,7 +174,7 @@ function (Backbone, Date, PartIterationList, ACLChecker) {
         },
 
         checkin: function () {
-            $.ajax({
+            return $.ajax({
                 context: this,
                 type: 'PUT',
                 url: this.url() + '/checkin',

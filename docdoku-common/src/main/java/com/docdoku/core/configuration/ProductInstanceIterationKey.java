@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2014 DocDoku SARL
+ * Copyright 2006 - 2015 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -23,7 +23,7 @@ package com.docdoku.core.configuration;
 import java.io.Serializable;
 
 /**
- * Identity class of <a href="ProductInstanceIteration.html">ProductInstanceIteration</a> objects.
+ * Identity class of {@link ProductInstanceIteration} objects.
  * 
  * @author Florent Garin
  */

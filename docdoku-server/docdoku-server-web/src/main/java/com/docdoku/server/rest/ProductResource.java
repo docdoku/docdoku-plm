@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2014 DocDoku SARL
+ * Copyright 2006 - 2015 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -213,7 +213,9 @@ public class ProductResource {
         dto.setStandardPart(pm.isStandardPart());
         dto.setAuthor(pm.getAuthor().getName());
         dto.setAuthorLogin(pm.getAuthor().getLogin());
-        dto.setAmount(usageLink.getCadInstances().size());
+        dto.setAmount(usageLink.getAmount());
+        dto.setReleased(partR.isReleased());
+        dto.setUnit(usageLink.getUnit());
 
         List<InstanceAttributeDTO> lstAttributes = new ArrayList<>();
         List<ComponentDTO> components = new ArrayList<>();

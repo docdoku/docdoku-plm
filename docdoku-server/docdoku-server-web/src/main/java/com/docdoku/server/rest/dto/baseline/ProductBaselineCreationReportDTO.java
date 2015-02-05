@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2014 DocDoku SARL
+ * Copyright 2006 - 2015 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -17,32 +17,34 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.docdoku.core.configuration;
 
-import com.docdoku.core.product.PartRevision;
+package com.docdoku.server.rest.dto.baseline;
+
+import com.docdoku.core.configuration.ProductBaseline;
+import com.docdoku.server.rest.dto.PartDTO;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 
-public class BaselineCreation implements Serializable{
-    ProductBaseline productBaseline;
-    String message;
-    List<PartRevision> conflit;
+public class ProductBaselineCreationReportDTO implements Serializable {
+    
+    private ProductBaseline productBaseline;
+    private String message;
+    private Set<PartDTO> conflits;
 
-    public BaselineCreation(){
-
+    public ProductBaselineCreationReportDTO() {
     }
 
-    public BaselineCreation(ProductBaseline productBaseline) {
+    public ProductBaselineCreationReportDTO(ProductBaseline productBaseline, String message, Set<PartDTO> conflits) {
         this.productBaseline = productBaseline;
-        this.message = null;
-        this.conflit = new ArrayList<>();
+        this.message = message;
+        this.conflits = conflits;
     }
 
     public ProductBaseline getProductBaseline() {
         return productBaseline;
     }
+
     public void setProductBaseline(ProductBaseline productBaseline) {
         this.productBaseline = productBaseline;
     }
@@ -50,18 +52,16 @@ public class BaselineCreation implements Serializable{
     public String getMessage() {
         return message;
     }
+
     public void setMessage(String message) {
         this.message = message;
     }
 
-    public List<PartRevision> getConflit() {
-        return conflit;
+    public Set<PartDTO> getConflits() {
+        return conflits;
     }
 
-    public void addConflit(PartRevision partRevision) {
-        this.conflit.add(partRevision);
-    }
-    public void addConflit(List<PartRevision> partRevisions) {
-        this.conflit.addAll(partRevisions);
+    public void setConflits(Set<PartDTO> conflits) {
+        this.conflits = conflits;
     }
 }

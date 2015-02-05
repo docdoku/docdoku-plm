@@ -511,6 +511,13 @@ define([
         }
 
         function resetCameraAnimation(target, duration, position, camUp) {
+
+            // Not working with pointer lock controls, pointer lock doesn't have a target
+            // TODO : We must reset it an other way
+            if(controlsObject instanceof THREE.PointerLockControls){
+                return;
+            }
+
             var curTar = controlsObject.target;
             var curCamUp = _this.cameraObject.up;
             var endTarPos = target;
@@ -1000,6 +1007,10 @@ define([
             var cogMesh = new THREE.Mesh(new THREE.SphereGeometry(2,1,1),new THREE.MeshNormalMaterial({color:0xFFFF00}));
             cogMesh.position.copy(v);
             _this.scene.add(cogMesh);
+        };
+
+        this.onContainerShown = function(){
+            handleResize();
         };
     };
 

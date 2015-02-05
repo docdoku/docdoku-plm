@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2014 DocDoku SARL
+ * Copyright 2006 - 2015 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -70,23 +70,23 @@ public class FolderResource {
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public FolderDTO[] getRootFoldersJson(@PathParam("workspaceId") String workspaceId, @QueryParam("configSpec") String configSpecType)
+    public FolderDTO[] getRootFolders(@PathParam("workspaceId") String workspaceId, @QueryParam("configSpec") String configSpecType)
             throws EntityNotFoundException, UserNotActiveException {
         String completePath = Tools.stripTrailingSlash(workspaceId);
-        return getFoldersJson(workspaceId, completePath, true, configSpecType);
+        return getFolders(workspaceId, completePath, true, configSpecType);
     }
     
     @GET
     @Path("{completePath}/folders")
     @Produces(MediaType.APPLICATION_JSON)
-    public FolderDTO[] getSubFoldersJson(@PathParam("workspaceId") String workspaceId, @PathParam("completePath") String folderId, @QueryParam("configSpec") String configSpecType)
+    public FolderDTO[] getSubFolders(@PathParam("workspaceId") String workspaceId, @PathParam("completePath") String folderId, @QueryParam("configSpec") String configSpecType)
             throws EntityNotFoundException, UserNotActiveException {
         String decodedCompletePath = FolderDTO.replaceColonWithSlash(folderId);
         String completePath = Tools.stripTrailingSlash(decodedCompletePath);
-        return getFoldersJson(workspaceId, completePath, false, configSpecType);
+        return getFolders(workspaceId, completePath, false, configSpecType);
     }
 
-    private FolderDTO[] getFoldersJson(String workspaceId, String completePath, boolean rootFolder, String configSpecType)
+    private FolderDTO[] getFolders(String workspaceId, String completePath, boolean rootFolder, String configSpecType)
             throws EntityNotFoundException, UserNotActiveException {
         String[] folderNames;
         if(configSpecType==null || "latest".equals(configSpecType)){
@@ -125,13 +125,13 @@ public class FolderResource {
     @Path("{folderId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public FolderDTO renameFolderJson(@PathParam("folderId") String folderPath, FolderDTO folder)
+    public FolderDTO renameFolder(@PathParam("folderId") String folderPath, FolderDTO folderDTO)
             throws EntityNotFoundException, EntityAlreadyExistsException, NotAllowedException, AccessRightException, CreationException {
 
         String decodedCompletePath = FolderDTO.replaceColonWithSlash(folderPath);
         String completePath = Tools.stripTrailingSlash(decodedCompletePath);
         String destParentFolder = FolderDTO.extractParentFolder(completePath);
-        String folderName = folder.getName();
+        String folderName = folderDTO.getName();
 
         documentService.moveFolder(completePath, destParentFolder, folderName);
 
@@ -145,7 +145,36 @@ public class FolderResource {
 
         return renamedFolderDto;
     }
+    
+    /**
+     * PUT method for moving folder into an other
+     */
+    @PUT
+    @Path("{folderId}/move")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public FolderDTO moveFolder(@PathParam("folderId") String folderPath, FolderDTO folderDTO)
+            throws EntityNotFoundException, EntityAlreadyExistsException, NotAllowedException, AccessRightException, CreationException {
 
+        String decodedCompletePath = FolderDTO.replaceColonWithSlash(folderPath);
+        String completePath = Tools.stripTrailingSlash(decodedCompletePath);
+        
+        String destParentFolder = FolderDTO.replaceColonWithSlash(folderDTO.getId());
+        String folderName = Tools.stripLeadingSlash(FolderDTO.extractName(completePath));
+
+        documentService.moveFolder(completePath, destParentFolder, folderName);
+        
+        String completeRenamedFolderId=destParentFolder+'/'+folderName;
+        String encodedRenamedFolderId=FolderDTO.replaceSlashWithColon(completeRenamedFolderId);
+
+        FolderDTO renamedFolderDto = new FolderDTO();
+        renamedFolderDto.setPath(destParentFolder);
+        renamedFolderDto.setName(folderName);
+        renamedFolderDto.setId(encodedRenamedFolderId);
+
+        return renamedFolderDto;
+    }
+    
     @POST
     @Path("{parentFolderPath}/folders")
     @Consumes(MediaType.APPLICATION_JSON)

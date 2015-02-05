@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2014 DocDoku SARL
+ * Copyright 2006 - 2015 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -24,8 +24,7 @@ import com.docdoku.core.product.PartIteration;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Date;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Baseline refers to a specific configuration, it could be seen as
@@ -70,6 +69,38 @@ public class ProductBaseline implements Serializable {
 
     @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY, orphanRemoval = true)
     private PartCollection partCollection=new PartCollection();
+
+
+    /**
+     * Set of substitute links (actually their path from the root node)
+     * that have been included into the baseline.
+     * Only selected substitute links are stored as part usage links are considered as the default
+     * choices for baselines.
+     *
+     * Paths are strings made of ordered lists of usage link ids joined by "-".
+     */
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "PRODUCTBASELINE_SUBSTITUTELINK",
+        joinColumns= {
+            @JoinColumn(name = "PRODUCTBASELINE_ID", referencedColumnName = "ID")
+        }
+    )
+    private Set<String> substituteLinks=new HashSet<>();
+
+    /**
+     * Set of optional usage links (actually their path from the root node)
+     * that have been included into the baseline.
+     *
+     * Paths are strings made of ordered lists of usage link ids joined by "-".
+     */
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "PRODUCTBASELINE_OPTIONALLINK",
+        joinColumns={
+            @JoinColumn(name = "PRODUCTBASELINE_ID", referencedColumnName="ID")
+        }
+    )
+    private Set<String> optionalUsageLinks=new HashSet<>();
+
 
     public enum BaselineType {
         LATEST, RELEASED
@@ -129,6 +160,30 @@ public class ProductBaseline implements Serializable {
     }
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Set<String> getOptionalUsageLinks() {
+        return optionalUsageLinks;
+    }
+
+    public Set<String> getSubstituteLinks() {
+        return substituteLinks;
+    }
+
+    public boolean removeOptionalUsageLink(String usageLinkPath){
+        return optionalUsageLinks.remove(usageLinkPath);
+    }
+
+    public boolean addOptionalUsageLink(String usageLinkPath){
+        return optionalUsageLinks.add(usageLinkPath);
+    }
+
+    public boolean removeSubstituteLink(String substituteLinkPath){
+        return substituteLinks.remove(substituteLinkPath);
+    }
+
+    public boolean addSubstituteLink(String substituteLinkPath){
+        return substituteLinks.add(substituteLinkPath);
     }
 
     public PartCollection getPartCollection() {

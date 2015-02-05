@@ -29,7 +29,7 @@ define([
         },
 
         render: function () {
-            this.$el.html(Mustache.render(template, {instance: this.instance, i18n: App.config.i18n}));
+            this.$el.html(Mustache.render(template, {editMode:this.options.editMode,instance: this.instance, i18n: App.config.i18n}));
             return this;
         },
 

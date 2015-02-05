@@ -1,9 +1,9 @@
 <div class="actions well">
-    <div class="product-instances-filter-bar ">
-        <label for="inputProductId"><span class="fa fa-cogs"></span></label>
-        <select id="inputProductId">
-            <option value="" disabled selected>{{i18n.CHOOSE_A_PRODUCT}}</option>
-        </select>
+    <div class="product-instances-filter-bar">
+        <div class="input-prepend">
+            <label for="inputProductId" class="btn btn-custom">{{i18n.PRODUCTS}}</label>
+            <input id="inputProductId" type="text" class="form-controls" placeholder="{{i18n.PRODUCT_ID}}"/>
+        </div>
     </div>
     <button class="btn btn-default new-product-instance" title="{{i18n.NEW_PRODUCT_INSTANCE}}">
         <span class="icon"></span>

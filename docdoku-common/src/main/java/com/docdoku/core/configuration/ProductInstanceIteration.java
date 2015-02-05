@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2014 DocDoku SARL
+ * Copyright 2006 - 2015 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -33,7 +33,7 @@ import java.util.Map;
 
 /**
  * This class represents a state, identified by its iteration, of an instance of
- * a product <a href="ProductInstanceMaster.html">ProductInstanceMaster</a>.
+ * a product {@link ProductInstanceMaster}.
  * 
  * @author Florent Garin
  * @version 2.0, 24/02/14

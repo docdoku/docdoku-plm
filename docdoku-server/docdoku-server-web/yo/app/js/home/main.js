@@ -1,4 +1,4 @@
-/*global THREE,requestAnimationFrame*/
+/*global THREE,TWEEN,requestAnimationFrame*/
 // Application option for DMU
 var App = {
     SceneOptions: {
@@ -43,6 +43,32 @@ window.onload = function() {
     var model;
 
     // FUNCTIONS
+    function update(){
+        if(model){
+            model.rotation.set(0.45, model.rotation.y+0.005, model.rotation.z+0.005);
+        }
+        controls.update();
+    }
+
+    function animateCamera(){
+        camera.position.copy(App.SceneOptions.startCameraPosition);
+        new TWEEN.Tween(camera.position)
+            .to(App.SceneOptions.endCameraPosition, 1000)
+            .interpolation(TWEEN.Interpolation.CatmullRom)
+            .easing(TWEEN.Easing.Sinusoidal.InOut)
+            .start();
+    }
+
+    function render(){
+        renderer.render( scene, camera );
+    }
+
+    function animate(){
+        requestAnimationFrame(animate);
+        update();
+        TWEEN.update();
+        render();
+    }
 
     function addModelToScene( geometry ){
         var material = new THREE.MeshLambertMaterial( { color: 0xffffff, shading: THREE.FlatShading, overdraw: true } );
@@ -55,6 +81,12 @@ window.onload = function() {
         controls.target.copy(model.geometry.boundingBox.center());
         animate();
         animateCamera();
+    }
+
+    function handleResize() {
+        camera.updateProjectionMatrix();
+        renderer.setSize(container.clientWidth , container.clientHeight);
+        controls.handleResize();
     }
 
     function init(){
@@ -95,38 +127,6 @@ window.onload = function() {
 
     }
 
-    function handleResize() {
-        camera.updateProjectionMatrix();
-        renderer.setSize(container.clientWidth , container.clientHeight);
-        controls.handleResize();
-    }
-
-    function update(){
-        if(model){
-            model.rotation.set(0.45, model.rotation.y+0.005, model.rotation.z+0.005);
-        }
-        controls.update();
-    }
-
-    function render(){
-        renderer.render( scene, camera );
-    }
-
-    function animate(){
-        requestAnimationFrame(animate);
-        update();
-        TWEEN.update();
-        render();
-    }
-
-    function animateCamera(){
-        camera.position.copy(App.SceneOptions.startCameraPosition);
-        new TWEEN.Tween(camera.position)
-            .to(App.SceneOptions.endCameraPosition, 1000)
-            .interpolation(TWEEN.Interpolation.CatmullRom)
-            .easing(TWEEN.Easing.Sinusoidal.InOut)
-            .start();
-    }
 
     init();
 };

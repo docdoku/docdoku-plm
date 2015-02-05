@@ -2,7 +2,7 @@
 define(['backbone', 'mustache', 'text!templates/part_instance.html'],
 function (Backbone, Mustache, template) {
     'use strict';
-    var PartMetadataView = Backbone.View.extend({
+    var PartInstanceView = Backbone.View.extend({
 
         tagName: 'div',
 
@@ -66,5 +66,5 @@ function (Backbone, Mustache, template) {
 
     });
 
-    return PartMetadataView;
+    return PartInstanceView;
 });

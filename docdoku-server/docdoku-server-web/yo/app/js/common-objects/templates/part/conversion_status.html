@@ -1,25 +1,24 @@
-<b>{{i18n.CONVERSION_STATUS}}</b>
-<br />
+{{#hasCadFile}}
+<div class="conversion-status">
 {{#status}}
     {{#pending}}
-        {{i18n.CONVERSION_PENDING}}
+    <i class="fa fa-refresh fa-spin" title="{{i18n.CONVERSION_PENDING}}"></i>
     {{/pending}}
     {{^pending}}
         {{#succeed}}
-            {{i18n.CONVERSION_SUCCEED}}
+            <i class="fa fa-check" title="{{i18n.CONVERSION_SUCCEED}}"></i>
         {{/succeed}}
         {{^succeed}}
-            {{i18n.CONVERSION_FAILED}}
-            <br />
-            <button type="button" class="btn btn-default btn-small launch">{{i18n.RETRY}}</button>
+            <i class="fa fa-times" title="{{i18n.CONVERSION_FAILED}}"></i>
         {{/succeed}}
     {{/pending}}
 {{/status}}
 {{^status}}
-    {{i18n.NO_CONVERSION}}
-    <br />
-    <button type="button" class="btn btn-default btn-small launch">{{i18n.RETRY}}</button>
+    <i class="fa fa-times" title="{{i18n.NO_CONVERSION}}"></i>
 {{/status}}
-<br />
-<button type="button" class="btn btn-default btn-small reload">{{i18n.RELOAD}}</button>
-
+    <b>{{i18n.CONVERSION}}</b>
+    <span class="conversion-status-actions">
+            <a class="launch">{{i18n.RETRY}}</a> -  <a class="reload">{{i18n.RELOAD}}</a>
+    </span>
+</div>
+{{/hasCadFile}}

@@ -180,7 +180,7 @@ define(['backbone', 'collections/document_iteration', 'common-objects/utils/acl-
 
 		addTags: function (tags) {
 
-			$.ajax({
+			return $.ajax({
 				context: this,
 				type: 'POST',
 				url: this.baseUrl() + '/tags',

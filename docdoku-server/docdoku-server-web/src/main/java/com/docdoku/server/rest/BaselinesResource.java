@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2014 DocDoku SARL
+ * Copyright 2006 - 2015 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -19,9 +19,9 @@
  */
 package com.docdoku.server.rest;
 
-import com.docdoku.core.configuration.BaselineCreation;
 import com.docdoku.core.configuration.BaselinedPart;
 import com.docdoku.core.configuration.ProductBaseline;
+import com.docdoku.core.configuration.ProductBaselineCreationReport;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.product.ConfigurationItemKey;
@@ -30,6 +30,7 @@ import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IProductBaselineManagerLocal;
 import com.docdoku.server.rest.dto.baseline.BaselinedPartDTO;
 import com.docdoku.server.rest.dto.baseline.ProductBaselineCreationDTO;
+import com.docdoku.server.rest.dto.baseline.ProductBaselineCreationReportDTO;
 import com.docdoku.server.rest.dto.baseline.ProductBaselineDTO;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
@@ -42,12 +43,8 @@ import javax.ejb.Stateless;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -95,21 +92,12 @@ public class BaselinesResource {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response createBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String pCiId, ProductBaselineCreationDTO productBaselineCreationDTO)
+    @Produces(MediaType.APPLICATION_JSON)
+    public ProductBaselineCreationReportDTO createBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String pCiId, ProductBaselineCreationDTO productBaselineCreationDTO)
             throws UserNotActiveException, EntityNotFoundException, NotAllowedException, AccessRightException, ConfigurationItemNotReleasedException {
         String ciId = (pCiId != null) ? pCiId : productBaselineCreationDTO.getConfigurationItemId();
-        BaselineCreation baselineCreation = productBaselineService.createBaseline(new ConfigurationItemKey(workspaceId,ciId), productBaselineCreationDTO.getName(), productBaselineCreationDTO.getType(), productBaselineCreationDTO.getDescription());
-        ProductBaselineDTO productBaselineDTO = mapper.map(baselineCreation.getProductBaseline(),ProductBaselineDTO.class);
-        if(!baselineCreation.getConflit().isEmpty()){
-            return Response.status(202).entity(baselineCreation.getMessage()).type("text/plain").build();
-        }
-
-        try {
-            return Response.created(URI.create(URLEncoder.encode(String.valueOf(productBaselineDTO.getId()),"UTF-8"))).entity(productBaselineDTO).build();
-        } catch (UnsupportedEncodingException ex) {
-            LOGGER.log(Level.FINEST,null,ex);
-            return Response.ok().build();
-        }
+        ProductBaselineCreationReport productBaselineCreationReport = productBaselineService.createBaseline(new ConfigurationItemKey(workspaceId,ciId), productBaselineCreationDTO.getName(), productBaselineCreationDTO.getType(), productBaselineCreationDTO.getDescription());
+        return mapper.map(productBaselineCreationReport,ProductBaselineCreationReportDTO.class);
     }
 
     @PUT

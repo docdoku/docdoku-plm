@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2014 DocDoku SARL
+ * Copyright 2006 - 2015 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -39,7 +39,6 @@ import java.io.Serializable;
 public class PartAlternateLink implements Serializable {
 
 
-    @Lob
     private String referenceDescription;
     
     @Column(name="COMMENTDATA")

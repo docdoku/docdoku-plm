@@ -123,7 +123,7 @@ require.config({
         'dat',
         'tween',
         'stringprototype',
-        'bootstrap',
+        'bootstrap'
     ],
     config: {
         i18n: {
