@@ -3,6 +3,7 @@ define([
     'backbone',
     'mustache',
     'collections/configuration_items',
+    'common-objects/collections/part_collection',
     'text!templates/product/product_content.html',
     'views/product/product_list',
     'views/product/product_creation_view',
@@ -13,7 +14,7 @@ define([
     'text!common-objects/templates/buttons/udf_button.html',
     'common-objects/views/alert',
     'common-objects/views/udf/user_defined_function'
-], function (Backbone, Mustache, ConfigurationItemCollection, template, ProductListView, ProductCreationView, SnapBaselineView, snapLatestButton, snapReleasedButton, deleteButton, udfButton,  AlertView, UserDefinedFunctionView) {
+], function (Backbone, Mustache, ConfigurationItemCollection, PartCollection, template, ProductListView, ProductCreationView, SnapBaselineView, snapLatestButton, snapReleasedButton, deleteButton, udfButton,  AlertView, UserDefinedFunctionView) {
     'use strict';
 	var ProductContentView = Backbone.View.extend({
         partials: {
@@ -50,7 +51,13 @@ define([
                 el: this.$('#product_table'),
                 collection: this.configurationItemCollection
             }).render();
+
             this.bindEvent();
+
+            this.partsCollection = new PartCollection();
+            this.partsCollection.on('page-count:fetch',this.checkForPartCount);
+            this.partsCollection.fetchPageCount();
+
             return this;
         },
         bindDomElements: function () {
@@ -143,6 +150,15 @@ define([
             view.render();
             document.body.appendChild(view.el);
             view.openModal();
+        },
+
+        checkForPartCount:function(){
+            if(!this.partsCollection.pageCount){
+                this.$notifications.append(new AlertView({
+                    type: 'info',
+                    message: App.config.i18n.CREATE_PART_BEFORE_PRODUCT
+                }).render().$el);
+            }
         }
 
     });

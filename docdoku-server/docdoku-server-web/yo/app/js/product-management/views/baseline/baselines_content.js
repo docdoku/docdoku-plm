@@ -63,11 +63,16 @@ define([
 
         fillProductList: function (list) {
             var self = this;
-            if (list) {
+            if (list && list.length) {
                 list.each(function (product) {
                     self.$inputProductId.append('<option value="' + product.getId() + ' ">' + product.getId() + '</option>');
                 });
                 this.$inputProductId.combobox({bsVersion: 2});
+            }else{
+                this.$notifications.append(new AlertView({
+                    type: 'info',
+                    message: App.config.i18n.CREATE_PRODUCT_BEFORE_BASELINE
+                }).render().$el);
             }
         },
 

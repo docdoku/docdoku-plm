@@ -7,7 +7,11 @@ define({
         CONFIRM_DELETE_PRODUCT:"Do you want to delete selected products?",
         CONFIRM_DELETE_PRODUCT_INSTANCE:"Do you want to delete selected products instances?",
         CREATE_BASELINE_LATEST: "Create baseline with last part",
-        CREATE_BASELINE_RELEASED: "Create baseline with last released part"
+        CREATE_BASELINE_RELEASED: "Create baseline with last released part",
+        CREATE_PRODUCT_BEFORE_BASELINE:"You must have created at least one product to create a baseline",
+        CREATE_PART_BEFORE_PRODUCT:"You must have created at least one part to create a product",
+        CREATE_BASELINE_BEFORE_PRODUCT_INSTANCE:"You must have created at least one baseline to create a product instance",
+        CREATE_PRODUCT_BEFORE_PRODUCT_INSTANCE:"You must have created at least one product to create a product instance"
     },
     'fr': true,
     'es': true

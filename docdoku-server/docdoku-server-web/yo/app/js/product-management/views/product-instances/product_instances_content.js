@@ -4,14 +4,15 @@ define([
     'mustache',
     'common-objects/collections/product_instances',
     'collections/configuration_items',
+    'common-objects/collections/baselines',
     'text!templates/product-instances/product_instances_content.html',
     'views/product-instances/product_instances_list',
     'views/product-instances/product_instances_creation',
     'text!common-objects/templates/buttons/delete_button.html',
     'common-objects/views/alert'
-], function (Backbone, Mustache, ProductInstancesCollection, ConfigurationItemCollection, template, ProductInstancesListView, ProductInstanceCreationView, deleteButton, AlertView) {
+], function (Backbone, Mustache, ProductInstancesCollection, ConfigurationItemCollection, BaselinesCollection, template, ProductInstancesListView, ProductInstanceCreationView, deleteButton, AlertView) {
     'use strict';
-    var BaselinesContentView = Backbone.View.extend({
+    var ProductInstancesContentView = Backbone.View.extend({
 
         partials: {
             deleteButton: deleteButton
@@ -19,7 +20,7 @@ define([
 
         events: {
             'click button.new-product-instance': 'newProductInstance',
-            'click button.delete': 'deleteBaseline'
+            'click button.delete': 'deleteProductInstances'
         },
 
         initialize: function () {
@@ -36,6 +37,19 @@ define([
             this.configurationItemCollection.fetch({
                 success: this.fillProductList,
                 error: this.onError
+            });
+
+            var self = this ;
+            new BaselinesCollection({}, {productId: ""}).fetch({
+                success: function (list) {
+                   if(!list.length){
+                       self.$notifications.append(new AlertView({
+                           type: 'info',
+                           message: App.config.i18n.CREATE_BASELINE_BEFORE_PRODUCT_INSTANCE
+                       }).render().$el);
+
+                   }
+                }
             });
 
             this.bindEvent();
@@ -67,11 +81,16 @@ define([
 
         fillProductList: function (list) {
             var self = this;
-            if (list) {
+            if (list && list.length) {
                 list.each(function (product) {
                     self.$inputProductId.append('<option value="' + product.getId() + '"' + '>' + product.getId() + '</option>');
                 });
                 this.$inputProductId.combobox({bsVersion: 2});
+            }else{
+                this.$notifications.append(new AlertView({
+                    type: 'info',
+                    message: App.config.i18n.CREATE_PRODUCT_BEFORE_PRODUCT_INSTANCE
+                }).render().$el);
             }
         },
 
@@ -94,7 +113,7 @@ define([
             this.listView.on('delete-button:display', this.changeDeleteButtonDisplay);
         },
 
-        deleteBaseline: function () {
+        deleteProductInstances: function () {
             this.listView.deleteSelectedProductInstances();
         },
 
@@ -121,5 +140,5 @@ define([
         }
     });
 
-    return BaselinesContentView;
+    return ProductInstancesContentView;
 });
