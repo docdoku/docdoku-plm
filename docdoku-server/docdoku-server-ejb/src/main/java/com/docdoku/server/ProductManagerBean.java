@@ -644,6 +644,12 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
             }
             if (pUsageLinks != null) {
+                try {
+                    checkCyclicAssembly(partRev.getPartMaster(),pUsageLinks,new HashSet<PartMasterKey>(),partRev.getPartMasterKey());
+                } catch (Exception e) {
+                    throw new EntityConstraintException(locale,"EntityConstraintException11");
+                }
+
                 List<PartUsageLink> usageLinks = new LinkedList<>();
                 for (PartUsageLink usageLink : pUsageLinks) {
                     PartUsageLink ul = new PartUsageLink();
@@ -1879,7 +1885,42 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         }
         return user;
     }
+    
+    private void checkCyclicAssembly(PartMaster partMaster, List<PartUsageLink> usageLinks, Set<PartMasterKey> visitedPartsKeys, PartMasterKey rootKey) throws Exception{
 
+        PartUsageLinkDAO partUsageLinkDAO = new PartUsageLinkDAO(em);
+        
+        PartMasterKey key = partMaster.getKey();
+        
+        if(!visitedPartsKeys.isEmpty() && key.equals(rootKey)){
+            throw new Exception();
+        }
+
+        visitedPartsKeys.add(key);
+
+        for(PartUsageLink partUsageLink: usageLinks){
+
+            // Direct part usage link
+            PartMasterKey partUsageComponentKey = partUsageLink.getComponent().getKey();
+            List<PartUsageLink[]> partUsagePaths = partUsageLinkDAO.findPartUsagePaths(partUsageComponentKey);
+
+            for(PartUsageLink[] links : partUsagePaths){
+                checkCyclicAssembly(partUsageLink.getComponent(), Arrays.asList(links),visitedPartsKeys,rootKey);
+            }
+
+            // Substitutes
+            for(PartSubstituteLink substituteLink:partUsageLink.getSubstitutes()){
+                PartMasterKey substitutePartUsageComponentKey = substituteLink.getSubstitute().getKey();
+                List<PartUsageLink[]> substitutePartUsagePaths = partUsageLinkDAO.findPartUsagePaths(substitutePartUsageComponentKey);
+                for(PartUsageLink[] links : substitutePartUsagePaths){
+                    checkCyclicAssembly(substituteLink.getSubstitute(), Arrays.asList(links),visitedPartsKeys,rootKey);
+                }
+            }
+            
+        }
+        
+    } 
+    
     private User checkPartRevisionWriteAccess(PartRevisionKey partRevisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException, AccessRightException {
         String workspaceId = partRevisionKey.getPartMaster().getWorkspace();
         User user = userManager.checkWorkspaceReadAccess(workspaceId);

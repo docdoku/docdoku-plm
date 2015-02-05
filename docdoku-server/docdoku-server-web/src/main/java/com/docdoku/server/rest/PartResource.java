@@ -88,10 +88,10 @@ public class PartResource {
     @Path("/iterations/{partIteration}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updatePartIteration(@PathParam("workspaceId") String pWorkspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion, @PathParam("partIteration") int partIteration, PartIterationDTO data)
-            throws EntityNotFoundException, EntityAlreadyExistsException, AccessRightException, UserNotActiveException, NotAllowedException, CreationException {
-
-        PartRevisionKey revisionKey = new PartRevisionKey(pWorkspaceId, partNumber, partVersion);
+    public Response updatePartIteration(@PathParam("workspaceId") String pWorkspaceId, @PathParam("partNumber") String partNumber , @PathParam("partVersion") String partVersion, @PathParam("partIteration") int partIteration, PartIterationDTO data)
+            throws EntityNotFoundException, EntityAlreadyExistsException, AccessRightException, UserNotActiveException, NotAllowedException, CreationException, EntityConstraintException {
+   
+       PartRevisionKey revisionKey = new PartRevisionKey(pWorkspaceId, partNumber, partVersion);
         PartRevision partRevision = productService.getPartRevision(revisionKey);
 
         PartIterationKey pKey = new PartIterationKey(revisionKey, partIteration);
