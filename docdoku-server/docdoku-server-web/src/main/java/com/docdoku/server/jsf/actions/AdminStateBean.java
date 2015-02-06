@@ -161,9 +161,12 @@ public class AdminStateBean implements Serializable {
             if(userArray==null) {
                 userArray = Json.createArrayBuilder();
                 userArrays.put(userLogin, userArray);
-                statsByUserBuilder.add(userLogin, userArray);
             }
             userArray.add(Json.createObjectBuilder().add("date",documentRevision.getCheckOutDate().getTime()).build());
+        }
+
+        for(Map.Entry<String,JsonArrayBuilder> entry : userArrays.entrySet()){
+            statsByUserBuilder.add(entry.getKey(),entry.getValue().build());
         }
 
         return statsByUserBuilder.build();
@@ -183,11 +186,14 @@ public class AdminStateBean implements Serializable {
             if(userArray==null) {
                 userArray = Json.createArrayBuilder();
                 userArrays.put(userLogin, userArray);
-                statsByUserBuilder.add(userLogin, userArray);
             }
-            userArray.add(Json.createObjectBuilder().add("date",partRevision.getCheckOutDate().getTime()).build());
-        }
+            userArray.add(Json.createObjectBuilder().add("date", partRevision.getCheckOutDate().getTime()).build());
+        }               
 
+        for(Map.Entry<String,JsonArrayBuilder> entry : userArrays.entrySet()){
+            statsByUserBuilder.add(entry.getKey(),entry.getValue().build());
+        }
+        
         return statsByUserBuilder.build();
 
     }
