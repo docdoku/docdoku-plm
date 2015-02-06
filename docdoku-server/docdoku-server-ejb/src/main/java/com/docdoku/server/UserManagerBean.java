@@ -196,13 +196,13 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
     public Organization createOrganization(String pName, Account pOwner, String pDescription) throws OrganizationAlreadyExistsException, CreationException, NotAllowedException {
         if(pOwner.getOrganization()==null) {
             Organization organization = new Organization(pName, pOwner, pDescription);
-            new OrganizationDAO(em).createOrganization(organization);
+            new OrganizationDAO(new Locale(pOwner.getLanguage()),em).createOrganization(organization);
             pOwner.setOrganization(organization);
             organization.addMember(pOwner);
             em.merge(pOwner);
             return organization;
         }else{
-            throw new NotAllowedException(Locale.getDefault(), "NotAllowedException11");
+            throw new NotAllowedException(new Locale(pOwner.getLanguage()), "NotAllowedException11");
         }
     }
 
