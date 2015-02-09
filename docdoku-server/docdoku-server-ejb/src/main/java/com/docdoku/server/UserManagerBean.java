@@ -453,11 +453,16 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.ADMIN_ROLE_ID})
     @Override
-    public void removeUserGroups(String pWorkspaceId, String[] pIds) throws UserGroupNotFoundException, AccessRightException, AccountNotFoundException, WorkspaceNotFoundException {
+    public void removeUserGroups(String pWorkspaceId, String[] pIds) throws UserGroupNotFoundException, AccessRightException, AccountNotFoundException, WorkspaceNotFoundException, EntityConstraintException {
         Account account = checkAdmin(pWorkspaceId);
-        UserGroupDAO groupDAO = new UserGroupDAO(new Locale(account.getLanguage()), em);
+        Locale locale = new Locale(account.getLanguage());
+        UserGroupDAO groupDAO = new UserGroupDAO(locale, em);
         for (String id : pIds) {
-            groupDAO.removeUserGroup(new UserGroupKey(pWorkspaceId, id));
+            UserGroupKey userGroupKey = new UserGroupKey(pWorkspaceId, id);
+            if(groupDAO.hasACLConstraint(userGroupKey)){
+                throw new EntityConstraintException(locale,"EntityConstraintException11");
+            }
+            groupDAO.removeUserGroup(userGroupKey);
         }
     }
 
