@@ -184,7 +184,7 @@ public class WorkflowManagerBean implements IWorkflowManagerWS, IWorkflowManager
 
                 Role modelRole = taskModel.getRole();
                 if(modelRole==null){
-                    throw new NotAllowedException(Locale.getDefault(),"NotAllowedException13");
+                    throw new NotAllowedException(userLocale,"NotAllowedException13");
                 }
                 String roleName = modelRole.getName();
                 for (Role role : roles) {

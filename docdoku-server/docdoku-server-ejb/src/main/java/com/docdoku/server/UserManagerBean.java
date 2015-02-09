@@ -152,17 +152,21 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
     public void addAccountInOrganization(String pOrganizationName, String pLogin) throws OrganizationNotFoundException, AccountNotFoundException, AccessRightException, NotAllowedException {
         OrganizationDAO organizationDAO = new OrganizationDAO(em);
         Organization organization = organizationDAO.loadOrganization(pOrganizationName);
+        Locale locale;
 
         if(!isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID)){
             Account account = new AccountDAO(em).loadAccount(ctx.getCallerPrincipal().toString());
+            locale = new Locale(account.getLanguage());
             if(!organization.getOwner().getLogin().equals(ctx.getCallerPrincipal().toString())){
-                throw new AccessRightException(new Locale(account.getLanguage()),account);
+                throw new AccessRightException(locale,account);
             }
+        }else{
+            locale = Locale.getDefault();
         }
 
-        Account accountToAdd = new AccountDAO(em).loadAccount(pLogin);
+        Account accountToAdd = new AccountDAO(locale,em).loadAccount(pLogin);
         if(accountToAdd.getOrganization()!=null){
-            throw new NotAllowedException(Locale.getDefault(), "NotAllowedException12");
+            throw new NotAllowedException(locale, "NotAllowedException12");
         }else {
             accountToAdd.setOrganization(organization);
             organization.addMember(accountToAdd);
@@ -268,17 +272,20 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.ADMIN_ROLE_ID})
     @Override
-    public Workspace getWorkspace(String workspaceId) throws WorkspaceNotFoundException {
-        Locale locale= Locale.getDefault();
+    public Workspace getWorkspace(String workspaceId) throws WorkspaceNotFoundException, AccountNotFoundException{
+       
         if(ctx.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID)){
-            return new WorkspaceDAO(locale,em).loadWorkspace(workspaceId);
+            return new WorkspaceDAO(em).loadWorkspace(workspaceId);
         }
-
-        User[] users = new UserDAO(locale,em).getUsers(ctx.getCallerPrincipal().toString());
+        
+        User[] users = new UserDAO(em).getUsers(ctx.getCallerPrincipal().toString());
+        Account account = new AccountDAO(em).loadAccount(ctx.getCallerPrincipal().toString());
+        Locale locale = new Locale(account.getLanguage());
+        
         Workspace workspace=null;
         for (User user : users) {
             if (user.getWorkspace().getId().equals(workspaceId)) {
-                workspace = user.getWorkspace();
+                workspace = user.getWorkspace();                
                 break;
             }
         }
@@ -533,7 +540,7 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
         if (groupMS.length > 0) {
             return user;
         } else {
-            throw new UserNotActiveException(Locale.getDefault(), login);
+            throw new UserNotActiveException(new Locale(user.getLanguage()), login);
         }
     }
 

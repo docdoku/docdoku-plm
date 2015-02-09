@@ -63,7 +63,7 @@ public class WorkspaceBean {
     public WorkspaceBean() {
     }
 
-    public String editWorkspace() throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
+    public String editWorkspace() throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccountNotFoundException {
         Workspace wks = adminState.getCurrentWorkspace();
         this.workspaceId = wks.getId();
         this.workspaceDescription = wks.getDescription();

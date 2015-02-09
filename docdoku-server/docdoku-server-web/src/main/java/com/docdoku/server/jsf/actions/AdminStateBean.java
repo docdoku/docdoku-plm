@@ -235,7 +235,7 @@ public class AdminStateBean implements Serializable {
 
 
 
-    public Workspace getCurrentWorkspace() throws WorkspaceNotFoundException {
+    public Workspace getCurrentWorkspace() throws WorkspaceNotFoundException, AccountNotFoundException {
         return userManager.getWorkspace(selectedWorkspace); 
     }
     
