@@ -82,6 +82,10 @@ define(['backbone', 'common-objects/utils/date'],
                 return this.get('amount');
             },
 
+            getUnit: function () {
+                return this.get('unit');
+            },
+
             getName: function () {
                 return this.get('name');
             },

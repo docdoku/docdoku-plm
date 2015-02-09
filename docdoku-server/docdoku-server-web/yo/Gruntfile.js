@@ -1,11 +1,10 @@
 'use strict';
-var LIVERELOAD_PORT = 35729;
+var LIVERELOAD_PORT = 35730;
 var SERVER_HOSTNAME = 'localhost';
 var SERVER_PORT = 9001;
 var DEV_HOSTNAME = 'localhost';
 var DEV_PORT = 8989;
 var lrSnippet = require('connect-livereload')({port: LIVERELOAD_PORT});
-
 
 var mountFolder = function (connect, dir) {
     return connect.static(require('path').resolve(dir));
@@ -28,7 +27,7 @@ module.exports = function (grunt) {
         watch: {
             options: {
                 nospawn: true,
-                livereload: true
+                livereload: LIVERELOAD_PORT
             },
             livereload: {
                 options: {
@@ -393,8 +392,7 @@ module.exports = function (grunt) {
                             'bower_components/threejs/build/three.min.js',
                             'bower_components/tweenjs/build/tween.min.js',
                             'bower_components/bootstrap/docs/assets/js/bootstrap.min.js',
-                            'bower_components/backbone/backbone-min.js',
-                            'bower_components/less/dist/less-1.3.3.min.js'
+                            'bower_components/backbone/backbone-min.js'
                         ]
                     }
                 ]

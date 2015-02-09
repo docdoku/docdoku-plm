@@ -586,10 +586,12 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.ADMIN_ROLE_ID})
     @Override
     public List<ConfigurationItem> getConfigurationItems(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
-        Locale locale = Locale.getDefault();
+        Locale locale;
         if(!userManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID)){
             User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
             locale = new Locale(user.getLanguage());
+        }else{
+            locale = Locale.getDefault();
         }
 
         return new ConfigurationItemDAO(locale, em).findAllConfigurationItems(pWorkspaceId);
@@ -1327,10 +1329,12 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.ADMIN_ROLE_ID})
     @Override
     public int getTotalNumberOfParts(String pWorkspaceId) throws AccessRightException, WorkspaceNotFoundException, AccountNotFoundException, UserNotFoundException, UserNotActiveException {
-        Locale locale = Locale.getDefault();
+        Locale locale;
         if(!userManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID)){
             User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
             locale = new Locale(user.getLanguage());
+        }else{
+            locale = Locale.getDefault();
         }
         //Todo count only part you can see
         return new PartRevisionDAO(locale, em).getTotalNumberOfParts(pWorkspaceId);

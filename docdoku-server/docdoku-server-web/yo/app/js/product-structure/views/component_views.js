@@ -55,7 +55,7 @@ define([
             this.$el.empty();
             this.collection.fetch({reset: true});
         }
-        
+
     });
 
     ComponentViews.Leaf = Backbone.View.extend({
@@ -67,7 +67,7 @@ define([
             '<%} else {%>' +
             '<input type="checkbox" disabled <%if (checkedAtInit) {%>checked="checked"<%}%>>' +
             '<%}%>' +
-            '<a><label class="checkbox"><%= number %> (<%= amount %>)</label></a>' +
+            '<a><label class="checkbox"><%= number %> (<%= amount %> <%= unit %>)</label></a>' +
             '<%if(isForbidden) {%> ' +
             '<i class="fa fa-file"></i>' +
             '<i class="fa fa-ban"></i>' +
@@ -121,6 +121,7 @@ define([
             var data = {
                 number: this.model.attributes.number,
                 amount: this.model.getAmount(),
+                unit: this.model.getUnit(),
                 checkedAtInit: this.options.checkedAtInit,
                 isForbidden: this.model.isForbidden(),
                 isCheckoutByAnotherUser: this.model.isCheckout() && !this.model.isCheckoutByConnectedUser(),
@@ -234,6 +235,7 @@ define([
             var data = {
                 number: this.model.attributes.number,
                 amount: this.model.getAmount(),
+                unit: this.model.getUnit(),
                 checkedAtInit: this.options.checkedAtInit,
                 isForbidden: this.isForbidden,
                 isCheckoutByAnotherUser: this.model.isCheckout() && !this.model.isCheckoutByConnectedUser(),

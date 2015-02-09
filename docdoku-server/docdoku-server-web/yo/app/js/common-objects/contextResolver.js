@@ -4,9 +4,19 @@ define([
     'common-objects/models/workspace',
     'common-objects/views/forbidden'
 ], function (User, Workspace, ForbiddenView) {
+
     'use strict';
+    
     var ContextResolver = function () {
     };
+
+    $.ajaxSetup({
+        statusCode: {
+            401: function(){
+                location.href = App.config.contextPath;
+            }
+        }
+    });
 
     ContextResolver.prototype.resolve = function (success) {
         $.getJSON('../server.properties.json').success(function (properties) {
@@ -39,9 +49,6 @@ define([
                 else if(res.status === 404){
                     window.location.href = App.config.contextPath;
                 }
-                // UnAuthorized
-                // We shouldn't get a 401 code, due to AuthFilter which has normally redirected us on login page.
-                // See : docdoku-server/docdoku-server-web/src/main/webapp/WEB-INF/web.xml
                 // However, for dev purposes, if we catch an error, we just reset the url. Should happen only in dev env.
                 else{
                     window.location.href = App.config.contextPath;

@@ -144,7 +144,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             }
             return binaryResource;
         } else {
-            throw new NotAllowedException(Locale.getDefault(), "NotAllowedException4");
+            throw new NotAllowedException(locale, "NotAllowedException4");
         }
     }
 
