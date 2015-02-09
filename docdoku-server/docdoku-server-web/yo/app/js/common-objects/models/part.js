@@ -1,6 +1,6 @@
 /*global _,$,define,App,window*/
-define(['backbone', 'common-objects/utils/date', 'common-objects/collections/part_iteration_collection', 'common-objects/utils/acl-checker'],
-function (Backbone, Date, PartIterationList, ACLChecker) {
+define(['backbone', 'common-objects/utils/date', 'common-objects/collections/part_iteration_collection','common-objects/utils/acl-checker'],
+function (Backbone, Date, PartIterationList,ACLChecker) {
     'use strict';
 
     var Part = Backbone.Model.extend({
@@ -14,6 +14,7 @@ function (Backbone, Date, PartIterationList, ACLChecker) {
             this.iterations = new PartIterationList(data.partIterations);
             this.iterations.setPart(this);
             delete data.partIterations;
+            delete data.partList;
             return data;
         },
 
@@ -296,6 +297,7 @@ function (Backbone, Date, PartIterationList, ACLChecker) {
             }
             return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/';
         }
+
 
     });
 

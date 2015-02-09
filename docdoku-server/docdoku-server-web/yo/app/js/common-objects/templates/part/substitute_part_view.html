@@ -1,0 +1,29 @@
+
+<div class="well substitute">
+
+
+    {{#editMode}}<a class="remove-substitute">×</a>{{/editMode}}
+    <i class="fa fa-check"></i>
+    <br/>
+    <input type="text" name="substitute-number" value="{{substitute.number}}" title="{{i18n.PART_NUMBER}}" placeholder="{{i18n.PART_NUMBER}}"/>
+    <input type="text" name="substitute-name" value="{{substitute.number}}" placeholder="{{i18n.PART_NAME}}"/>
+    <input type="text" name="substitute-reference" value="{{substitute.comment}}" placeholder="{{i18n.PART_DESCRIPTION}}"/>
+    <input type="text" name="substitute-reference-description" value="{{substitute.reference-description}}" placeholder="{{i18n.COMMENT}}"/>
+
+    <input type="text"  name="substitute-amount"  value="{{substitute.amount}}" title="{{i18n.AMOUNT}}"/>
+    <input type="text" list="substitute-unityChoice" name="substitute-newUnit" value="{{i18n.UNIT}}" substitute-default-unity="{{i18n.UNIT}}"/>
+    <datalist id="substitute-unityChoice" name="substitute-unitMeasure" class="unit unitEdit">
+        <option value="{{i18n.UNIT}}">
+        <option value="{{i18n.KG}}">
+        <option value="{{i18n.LITER}}">
+        <option value="{{i18n.METER}}">
+        <option value="{{i18n.SQUARE_METER}}">
+    </datalist>
+    <i class="fa fa-plus add-substitute-cadInstance"></i>
+
+
+    <i class="fa fa-angle-double-down collapse-substitute-cadInstance"></i>
+
+
+    <div class="cadInstances"></div>
+</div>

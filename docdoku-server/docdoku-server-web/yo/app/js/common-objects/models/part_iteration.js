@@ -50,6 +50,9 @@ define([
             return this.getPartKey() + '-' + this.getIteration();
         },
 
+        getSubstituteParts: function(){
+            return this.get('substitutes');
+        },
         getIteration: function () {
             return this.get('iteration');
         },

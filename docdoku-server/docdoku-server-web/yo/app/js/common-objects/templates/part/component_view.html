@@ -16,6 +16,10 @@
     <input type="text" name="comment" value="{{model.comment}}" placeholder="{{i18n.PART_DESCRIPTION}}"/>
     <i class="fa fa-plus add-cadInstance"></i>
     <i class="fa fa-angle-double-down collapse-cadInstance"></i>
+    <i class="fa fa-list-ul add-substitute-part"></i>
+
+
+
     {{/model.component.number}}
 
 
@@ -37,6 +41,14 @@
     <i class="fa fa-plus add-cadInstance"></i>
     <i class="fa fa-angle-double-down collapse-cadInstance"></i>
     {{/model.component.number}}
+    <div class="substitute-parts">
+        <div>Substitute Parts:</div>
+        <a class="btn create-substitute-part">{{i18n.CREATE_NEW_PART}}</a>  <input type="text" id="existingSubstituteParts"
+                                                                                      placeholder="{{i18n.OR_ADD_PART}}"/>
+        <hr/>
+        <div class="substitutes">
 
+        </div>
+    </div>
     <div class="cadInstances"></div>
 </div>

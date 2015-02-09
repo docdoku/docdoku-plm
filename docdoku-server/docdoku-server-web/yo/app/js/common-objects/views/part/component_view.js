@@ -3,8 +3,9 @@ define([
     'backbone',
     'mustache',
     'text!common-objects/templates/part/component_view.html',
+    'common-objects/views/part/substitute_part_view',
     'common-objects/views/part/cad_instance_view'
-], function (Backbone, Mustache, template, CadInstanceView) {
+], function (Backbone, Mustache, template, SubstitutePartView, CadInstanceView) {
     'use strict';
     var ComponentView = Backbone.View.extend({
 
@@ -17,7 +18,10 @@ define([
             'input input[name=newUnit]': 'changeMeasureUnit',
             'click datalist[name=unitMeasure]': 'changeMeasureUnit',
             'click .add-cadInstance': 'addCadInstance',
-            'click .collapse-cadInstance': 'collapseTransformations'
+            'click .collapse-cadInstance': 'collapseTransformations',
+             'click .add-substitute-part': 'displaySubstituteParts',
+             'click .create-substitute-part': 'addSubstitutePart',
+             'click .hide-substitute-part': 'hideSubstitutePartsView'
         },
 
 
@@ -25,6 +29,7 @@ define([
         },
 
         render: function () {
+            this.substitutePartViews = [];
             this.$el.html(Mustache.render(template, {
                 model: this.model.attributes,
                 i18n: App.config.i18n,
@@ -32,6 +37,7 @@ define([
             }));
             this.bindDomElements();
             this.initCadInstanceViews();
+            this.initSubstitutePartView();
             this.initUnit();
             return this;
         },
@@ -43,6 +49,8 @@ define([
             this.$unitText = this.$('input[name=newUnit]');
             this.$defaultUnity = this.$unitText.attr('default-unity');
             this.$collapseButton = this.$('.collapse-cadInstance');
+            this.$substitutePartButton = this.$('.substitute-part');
+            this.$subtituteParts = this.$('.substitutes');
         },
 
         initCadInstanceViews: function () {
@@ -53,6 +61,14 @@ define([
             });
         },
 
+        initSubstitutePartView: function (){
+
+            var self = this;
+            _(this.model.get('substitutes')).each(function (instance) {
+                self.addSubstitutePartsView(instance);
+            });
+//            self.$('.substitute-parts').hide();
+        },
         initUnit: function () {
             var unit = this.model.get('unit');
             this.$unitText.val(unit ? unit : this.$unitText.attr('default-unity'));
@@ -68,6 +84,40 @@ define([
                 self.onRemoveCadInstance(instance);
             });
         },
+        addSubstitutePartsView: function (instance) {
+
+            var self = this;
+            self.$substitutePartButton.hide();
+            var substitutePartView = new SubstitutePartView({model:  this.model, editMode: this.options.editMode, removeHandler: function () {
+                self.collection.remove( this.model);
+            }});
+            substitutePartView.setInstance(instance).render();
+            this.substitutePartViews.push(substitutePartView);
+            this.$subtituteParts.append(substitutePartView.$el);
+
+        },
+        /*addSubtitutePart: function(){
+
+            if (!this.$editSubtituteMode){
+                $("#iteration-components .well").hide();
+                this.$(".well").show();
+                this.$(".subtitute-parts").show();
+                $("#createPart").hide();
+                $("#existingParts").hide();
+                this.$collapseButton.hide();
+                this.$(".add-cadInstance").hide();
+                this.$editSubtituteMode = true;
+            }
+            else{
+                $("#createPart").show();
+                $("#existingParts").show();
+                this.$(".subtitute-parts").hide();
+                $("#iteration-components .well").show();
+                this.$collapseButton.show();
+                this.$(".add-cadInstance").show();
+                this.$editSubtituteMode = false;
+            }
+        },*/
 
         onRemove: function () {
             if (this.options.removeHandler && this.options.editMode) {
@@ -90,6 +140,23 @@ define([
             this.model.set('amount', this.$amount.val());
         },
 
+        addSubstitutePart: function(){
+            var substitutePart = {
+                number:'',
+                name:'',
+                amount: this.model.get('amount'),
+                substitute:this.model.get('component'),
+                cadInstances: [
+                    {tx: 0, ty: 0, tz: 0, rx: 0, ry: 0, rz: 0}
+                ],
+                unit: this.model.get('unit'),
+                comment: '',
+                referenceDescription : ''
+            };
+
+            this.model.get('substitutes').push(substitutePart);
+            this.addSubstitutePartsView(substitutePart);
+        },
         collapseTransformations: function () {
             var isVisible = this.$cadInstances.is(':visible');
             this.$cadInstances.toggle(!isVisible);

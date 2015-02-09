@@ -30,7 +30,7 @@
       padding:9px;
       width: 95%;
 
-      a.remove {
+      a.remove{
 
         margin: 5px;
         float: left;
@@ -45,6 +45,19 @@
           text-decoration: none;
           color: #F00;
           opacity: 1;
+        }
+      }
+      a.subtitute-part {
+        margin: 12px 0px 20px 26px;
+        text-shadow: 0 1px 0 #ffffff;
+        opacity: 0.6;
+        color: #000000;
+        &:hover {
+          text-decoration: none;
+          opacity: 1;
+        }
+        span{
+          margin-left: 10px;
         }
       }
       input{
@@ -62,10 +75,22 @@
         }
 
         &[name="comment"]{
-          width:120px;
+          width:106px;
         }
-        &[name="newUnit"]{
+        &[name*="substitute-"]{
+          width: 118px;
+          margin: 10px 0px 10px 0px;
+        }
+        &[name="newUnit"],&[name="substitute-newUnit"]{
           width: 60px;
+        }
+
+        &[name="substitute-reference-description"] {
+          width: 100px;;
+        }
+        &[name="substitute-amount"],&[name="substitute-unityChoice"] {
+          width: 100px;
+          margin: 0px 33px 0px 20px;
         }
         &[list="unityChoice"] {
           margin: 10px 22px;
@@ -86,7 +111,13 @@
           opacity: 1;
         }
       }
-
+      .collapse-substitute-cadInstance{
+        float: right;
+        margin-top: 17px;
+      }
+      .add-substitute-cadInstance {
+        margin-left: 10px;
+      }
       .add-cadInstance{right: 22px;}
       .collapse-cadInstance{right: 8px;}
 
@@ -134,6 +165,10 @@
 
   .pager {
     margin: 0;
+  }
+
+  .substitute-parts {
+    margin: 18px 20px 0px 21px;
   }
 
 }

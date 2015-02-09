@@ -19,22 +19,20 @@
  */
 package com.docdoku.server.rest.dto;
 
+import com.docdoku.core.product.CADInstance;
+import com.docdoku.core.product.PartMaster;
 
-import com.docdoku.core.product.PartSubstituteLink;
-
-import java.util.LinkedList;
 import java.util.List;
 
-public class PartUsageLinkDTO {
+public class PartSubstituteLinkDTO {
 
     private int id;
     private double amount;
-    private String comment;
-    private ComponentDTO component;
-    private String referenceDescription;
     private String unit;
-    private List<CADInstanceDTO> cadInstances;
-    private List<PartSubstituteLinkDTO> substitutes;
+    private String referenceDescription;
+    private String comment;
+    private PartMaster substitute;
+    private List<CADInstance> cadInstances;
 
     public int getId() {
         return id;
@@ -52,20 +50,12 @@ public class PartUsageLinkDTO {
         this.amount = amount;
     }
 
-    public String getComment() {
-        return comment;
+    public String getUnit() {
+        return unit;
     }
 
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
-
-    public ComponentDTO getComponent() {
-        return component;
-    }
-
-    public void setComponent(ComponentDTO component) {
-        this.component = component;
+    public void setUnit(String unit) {
+        this.unit = unit;
     }
 
     public String getReferenceDescription() {
@@ -76,27 +66,27 @@ public class PartUsageLinkDTO {
         this.referenceDescription = referenceDescription;
     }
 
-    public String getUnit() {
-        return unit;
+    public String getComment() {
+        return comment;
     }
 
-    public void setUnit(String unit) {
-        this.unit = unit;
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 
-    public List<CADInstanceDTO> getCadInstances() {
+    public PartMaster getSubstitute() {
+        return substitute;
+    }
+
+    public void setSubstitute(PartMaster substitute) {
+        this.substitute = substitute;
+    }
+
+    public List<CADInstance> getCadInstances() {
         return cadInstances;
     }
 
-    public void setCadInstances(List<CADInstanceDTO> cadInstances) {
+    public void setCadInstances(List<CADInstance> cadInstances) {
         this.cadInstances = cadInstances;
-    }
-
-    public List<PartSubstituteLinkDTO> getSubstitutes() {
-        return substitutes;
-    }
-
-    public void setSubstitutes(List<PartSubstituteLinkDTO> substitutes) {
-        this.substitutes = substitutes;
     }
 }

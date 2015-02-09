@@ -90,6 +90,7 @@ define([
             model.set('cadInstances', [
                 {tx: 0, ty: 0, tz: 0, rx: 0, ry: 0, rz: 0}
             ]);
+            model.set('substitutes', []);
             this.addView(model);
         },
 
@@ -103,7 +104,8 @@ define([
                 cadInstances: [
                     {tx: 0, ty: 0, tz: 0, rx: 0, ry: 0, rz: 0}
                 ],
-                unit:this.unit
+                unit:this.unit,
+                substitutes : []
 
             };
             this.collection.push(newPart);
