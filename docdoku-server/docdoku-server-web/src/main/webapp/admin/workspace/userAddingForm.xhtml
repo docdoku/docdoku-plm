@@ -30,7 +30,7 @@
             </div>
 
             <h2>#{i18nUserAddingForm['main.title']}</h2>
-            <h3>#{i18nUserAddingForm['section.title']} #{adminStateBean.selectedWorkspace}</h3>
+            <h3>#{i18nUserAddingForm['section.title']} #{adminStateBean.selectedGroup != "" ? adminStateBean.selectedGroup : adminStateBean.selectedWorkspace}</h3>
 
 
             <h:form>
