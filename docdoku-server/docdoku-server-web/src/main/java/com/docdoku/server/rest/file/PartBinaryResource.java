@@ -237,7 +237,7 @@ public class PartBinaryResource{
             // Check access right
             PartIterationKey partIK = new PartIterationKey(workspaceId, partNumber, version,iteration);
             if(!canAccess(partIK)){
-                return Response.status(Response.Status.FORBIDDEN).build();
+                return Response.status(Response.Status.UNAUTHORIZED).build();
             }
 
             fullName = workspaceId+"/parts/" + partNumber + "/" + version + "/" + iteration + "/";
