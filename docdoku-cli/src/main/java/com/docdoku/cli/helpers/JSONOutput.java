@@ -35,12 +35,19 @@ import org.kohsuke.args4j.CmdLineParser;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FilterInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class JSONOutput  extends CliOutput {
 
+    private Locale locale;
+
+    public JSONOutput(Locale pLocale) {
+        locale = pLocale;
+    }
 
     @Override
     public void printException(Exception e) {
@@ -54,7 +61,7 @@ public class JSONOutput  extends CliOutput {
     }
 
     @Override
-    public void printCommandUsage(CommandLine cl) {
+    public void printCommandUsage(CommandLine cl) throws IOException {
         CmdLineParser parser = new CmdLineParser(cl);
         JSONObject jsonObj = new JSONObject();
         ByteArrayOutputStream o = new ByteArrayOutputStream();

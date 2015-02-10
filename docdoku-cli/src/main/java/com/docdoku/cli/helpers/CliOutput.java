@@ -29,8 +29,10 @@ import com.docdoku.core.product.PartRevision;
 import org.codehaus.jettison.json.JSONException;
 
 import java.io.FilterInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Locale;
 
 import static com.docdoku.cli.helpers.CliOutput.formats.HUMAN;
 
@@ -45,20 +47,20 @@ public abstract class CliOutput {
         HUMAN,
         JSON
     }
-    public static CliOutput getOutput(formats pFormat) {
+    public static CliOutput getOutput(formats pFormat, Locale pLocale) {
         formats format = pFormat;
         if(format == null){
             format = HUMAN;
         }
         switch(format){
-            case HUMAN: return new HumanOutput();
-            case JSON: return new JSONOutput();
-            default: return new HumanOutput();
+            case HUMAN: return new HumanOutput(pLocale);
+            case JSON: return new JSONOutput(pLocale);
+            default: return new HumanOutput(pLocale);
         }
     }
 
     public abstract void printException(Exception e);
-    public abstract void printCommandUsage(CommandLine cl);
+    public abstract void printCommandUsage(CommandLine cl) throws IOException;
     public abstract void printUsage();
     public abstract void printInfo(String s);
 

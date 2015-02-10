@@ -20,11 +20,14 @@
 
 package com.docdoku.cli.commands;
 
+import com.docdoku.cli.helpers.LangHelper;
 import com.docdoku.cli.tools.ScriptingTools;
 import com.docdoku.core.product.Conversion;
 import com.docdoku.core.product.PartIterationKey;
 import com.docdoku.core.services.IProductManagerWS;
 import org.kohsuke.args4j.Option;
+
+import java.io.IOException;
 
 /**
  *
@@ -54,7 +57,7 @@ public class ConversionCommand extends AbstractCommandLine {
     }
 
     @Override
-    public String getDescription() {
-        return "Retrieve conversion status for given part iteration";
+    public String getDescription() throws IOException {
+        return LangHelper.getLocalizedMessage("ConversionCommandDescription",user);
     }
 }

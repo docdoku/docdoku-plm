@@ -20,8 +20,10 @@
 
 package com.docdoku.core.services;
 
+import com.docdoku.core.common.Account;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
+import com.docdoku.core.exceptions.AccountNotFoundException;
 import com.docdoku.core.exceptions.UserNotActiveException;
 import com.docdoku.core.exceptions.UserNotFoundException;
 import com.docdoku.core.exceptions.WorkspaceNotFoundException;
@@ -37,5 +39,6 @@ import javax.jws.WebService;
 @WebService
 public interface IUserManagerWS {
     User whoAmI(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException;
+    Account getMyAccount() throws AccountNotFoundException;
     Workspace[] getWorkspacesWhereCallerIsActive();
 }

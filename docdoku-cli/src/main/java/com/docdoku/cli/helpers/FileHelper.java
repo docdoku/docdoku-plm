@@ -35,6 +35,7 @@ import java.net.URLEncoder;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Locale;
 
 public class FileHelper {
 
@@ -44,11 +45,13 @@ public class FileHelper {
     private String login;
     private String password;
     private CliOutput output;
+    private Locale locale;
 
-    public FileHelper(String login, String password, CliOutput output) {
+    public FileHelper(String login, String password, CliOutput output, Locale locale) {
         this.login = login;
         this.password = password;
         this.output = output;
+        this.locale = locale;
     }
 
     public String downloadFile(File pLocalFile, String pURL) throws IOException, LoginException, NoSuchAlgorithmException {
@@ -57,9 +60,16 @@ public class FileHelper {
         HttpURLConnection conn = null;
         try {
             //Hack for NTLM proxy
-            //perform a head method to negociate the NTLM proxy authentication
+            //perform a head method to negotiate the NTLM proxy authentication
             URL url = new URL(pURL);
-            output.printInfo("Downloading file: " + pLocalFile.getName() + " from " + url.getHost());
+
+            output.printInfo(
+                    LangHelper.getLocalizedMessage("DownloadingFile",locale)
+                    + " : "
+                    + pLocalFile.getName()
+                    + LangHelper.getLocalizedMessage("From",locale)
+                    + url.getHost());
+
             performHeadHTTPMethod(url);
 
             out = new BufferedOutputStream(new FileOutputStream(pLocalFile), BUFFER_CAPACITY);
@@ -108,7 +118,13 @@ public class FileHelper {
             //Hack for NTLM proxy
             //perform a head method to negociate the NTLM proxy authentication
             URL url = new URL(pURL);
-            output.printInfo("Uploading file: " + pLocalFile.getName() + " to " + url.getHost());
+
+            output.printInfo(
+                    LangHelper.getLocalizedMessage("UploadingFile",locale)
+                    + " : "
+                    + pLocalFile.getName()
+                    + LangHelper.getLocalizedMessage("To",locale)
+                    + url.getHost());
             performHeadHTTPMethod(url);
 
 
@@ -165,7 +181,7 @@ public class FileHelper {
         int code = conn.getResponseCode();
         switch (code){
             case 401: case 403:
-                throw new LoginException("Error trying to login");
+                throw new LoginException(LangHelper.getLocalizedMessage("LoginError",locale));
             case 500:
                 throw new IOException(conn.getHeaderField("Reason-Phrase"));
         }

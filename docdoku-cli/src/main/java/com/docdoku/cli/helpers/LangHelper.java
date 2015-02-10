@@ -18,15 +18,23 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.cli.interfaces;
+package com.docdoku.cli.helpers;
 
 import java.io.IOException;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
-/**
- *
- * @author Florent Garin
- */
-public interface CommandLine {
-    void exec() throws Exception;
-    String getDescription() throws IOException;
+public class LangHelper {
+
+    private final static String BUNDLE_NAME = "com.docdoku.cli.i18n.LocalStrings";
+
+    public static String getLocalizedMessage(String key, String userLogin) throws IOException {
+        return getLocalizedMessage(key, new AccountsManager().getUserLocale(userLogin));
+    }
+
+    public static String getLocalizedMessage(String key, Locale locale){
+        ResourceBundle bundle = ResourceBundle.getBundle(BUNDLE_NAME, locale);
+        return bundle.getString(key);
+    }
+
 }

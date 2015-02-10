@@ -20,13 +20,16 @@
 
 package com.docdoku.cli.commands;
 
+import com.docdoku.cli.helpers.AccountsManager;
 import com.docdoku.cli.helpers.CliOutput;
+import com.docdoku.cli.helpers.LangHelper;
 import com.docdoku.cli.interfaces.CommandLine;
 import org.kohsuke.args4j.Option;
 
 import java.io.Console;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Locale;
 
 /**
  *
@@ -51,37 +54,38 @@ public abstract class AbstractCommandLine implements CommandLine {
 
     //A default value is set in case an exception is raised
     //inside the CmdLineParser.parseArgument(args) method.
+    protected CliOutput output = CliOutput.getOutput(format, Locale.getDefault());
 
-    protected CliOutput output = CliOutput.getOutput(format);
-
-    private void promptForUser(){
+    private void promptForUser(Locale locale){
         Console c = System.console();
         if(c == null){
             return;
         }
-        user = c.readLine("Please enter user for '" + host + "': ");
+
+        user = c.readLine(LangHelper.getLocalizedMessage("PromptUser",locale) + " '" + host + "': ");
     }
 
-    private void promptForPassword(){
+    private void promptForPassword(Locale locale){
         Console c = System.console();
         if(c == null){
             return;
         }
-        password = new String(c.readPassword("Please enter password for '" + user +"@" + host +"': "));
+        password = new String(c.readPassword(LangHelper.getLocalizedMessage("PromptPassword",locale) + " '"  + user + "@" + host +"': "));
     }
 
     @Override
     public void exec() throws Exception {
 
-        output = CliOutput.getOutput(format);
+        Locale userLocale = new AccountsManager().getUserLocale(user);
+        output = CliOutput.getOutput(format,userLocale);
 
         if(!(this instanceof HelpCommand)){
 
             if(user==null && format.equals(CliOutput.formats.HUMAN)){
-                promptForUser();
+                promptForUser(userLocale);
             }
             if(password==null && format.equals(CliOutput.formats.HUMAN)){
-                promptForPassword();
+                promptForPassword(userLocale);
             }
 
         }

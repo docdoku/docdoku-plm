@@ -20,6 +20,7 @@
 
 package com.docdoku.cli.commands;
 
+import com.docdoku.cli.helpers.LangHelper;
 import com.docdoku.cli.helpers.MetaDirectoryManager;
 import com.docdoku.cli.tools.ScriptingTools;
 import com.docdoku.core.common.Version;
@@ -85,7 +86,7 @@ public class StatusCommand extends AbstractCommandLine{
 
     private void loadMetadata() throws IOException {
         if(cadFile==null){
-            throw new IllegalArgumentException("<partnumber> or <revision> are not specified and no cad file is supplied");
+            throw new IllegalArgumentException(LangHelper.getLocalizedMessage("PartNumberOrRevisionNotSpecified1",user));
         }
         MetaDirectoryManager meta = new MetaDirectoryManager(cadFile.getParentFile());
         String filePath = cadFile.getAbsolutePath();
@@ -94,14 +95,14 @@ public class StatusCommand extends AbstractCommandLine{
         lastModified = meta.getLastModifiedDate(filePath);
         String strRevision = meta.getRevision(filePath);
         if(partNumber==null || strRevision==null || workspace == null){
-            throw new IllegalArgumentException("<partnumber> or <revision> are not specified and cannot be inferred from file");
+            throw new IllegalArgumentException(LangHelper.getLocalizedMessage("PartNumberOrRevisionNotSpecified2",user));
         }
         revision = new Version(strRevision);
     }
 
     @Override
-    public String getDescription() {
-        return "Print the status of the selected part.";
+    public String getDescription() throws IOException {
+        return LangHelper.getLocalizedMessage("StatusCommandDescription",user);
     }
 
 }

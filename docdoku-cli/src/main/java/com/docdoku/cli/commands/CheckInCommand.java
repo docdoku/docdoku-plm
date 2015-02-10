@@ -20,7 +20,9 @@
 
 package com.docdoku.cli.commands;
 
+import com.docdoku.cli.helpers.AccountsManager;
 import com.docdoku.cli.helpers.FileHelper;
+import com.docdoku.cli.helpers.LangHelper;
 import com.docdoku.cli.helpers.MetaDirectoryManager;
 import com.docdoku.cli.tools.ScriptingTools;
 import com.docdoku.core.common.BinaryResource;
@@ -76,7 +78,7 @@ public class CheckInCommand extends AbstractCommandLine{
                 File localFile = new File(path,fileName);
                 if(localFile.exists()){
                     PartIterationKey partIPK = new PartIterationKey(partRPK, pi.getIteration());
-                    FileHelper fh = new FileHelper(user,password,output);
+                    FileHelper fh = new FileHelper(user,password,output,new AccountsManager().getUserLocale(user));
                     fh.uploadNativeCADFile(getServerURL(), localFile, partIPK);
                     localFile.setWritable(false);
                 }
@@ -85,19 +87,19 @@ public class CheckInCommand extends AbstractCommandLine{
 
         PartRevision pr = productS.checkInPart(partRPK);
         PartIteration pi = pr.getLastIteration();
-        output.printInfo("Checking in part: " + partNumber + " " + pr.getVersion() + "." + pi.getIteration() + " (" + workspace + ")");
+        output.printInfo(LangHelper.getLocalizedMessage("CheckingInPart",user)  + " : " + partNumber + " " + pr.getVersion() + "." + pi.getIteration() + " (" + workspace + ")");
     }
 
     private void loadMetadata() throws IOException {
         if(path.isDirectory()){
-            throw new IllegalArgumentException("<partnumber> or <revision> are not specified and the supplied path is not a file");
+            throw new IllegalArgumentException(LangHelper.getLocalizedMessage("PartNumberOrRevisionNotSpecified1",user));
         }
         MetaDirectoryManager meta = new MetaDirectoryManager(path.getParentFile());
         String filePath = path.getAbsolutePath();
         partNumber = meta.getPartNumber(filePath);
         String strRevision = meta.getRevision(filePath);
         if(partNumber==null || strRevision==null){
-            throw new IllegalArgumentException("<partnumber> or <revision> are not specified and cannot be inferred from file");
+            throw new IllegalArgumentException(LangHelper.getLocalizedMessage("PartNumberOrRevisionNotSpecified2",user));
         }
         revision = new Version(strRevision);
         //once partNumber and revision have been inferred, set path to folder where files are stored
@@ -106,7 +108,7 @@ public class CheckInCommand extends AbstractCommandLine{
     }
 
     @Override
-    public String getDescription() {
-        return "Perform a check in operation in order to validate the working copy of the part and hence make it visible to the whole team.";
+    public String getDescription() throws IOException {
+        return LangHelper.getLocalizedMessage("CheckInCommandDescription",user);
     }
 }
