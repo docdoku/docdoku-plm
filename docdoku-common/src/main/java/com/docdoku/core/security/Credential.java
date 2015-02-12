@@ -22,8 +22,11 @@ package com.docdoku.core.security;
 
 import javax.persistence.Column;
 import javax.persistence.Table;
+import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Useful class for storing credential, login/password pair, to the persistence
@@ -42,8 +45,9 @@ public class Credential implements java.io.Serializable {
     private String login="";
     
     private String password;
-    
-    
+
+    private static final Logger LOGGER = Logger.getLogger(Credential.class.getName());
+
     public Credential() {
     }
     
@@ -52,14 +56,14 @@ public class Credential implements java.io.Serializable {
         credential.login = pLogin;
         try {
             credential.password=md5Sum(pClearPassword);
-        } catch (NoSuchAlgorithmException pEx) {
-            System.err.println(pEx.getMessage());
+        } catch (NoSuchAlgorithmException | UnsupportedEncodingException pEx) {
+            LOGGER.log(Level.SEVERE, null, pEx);
         }
         return credential;
     }
     
-    private static String md5Sum(String pText) throws NoSuchAlgorithmException{
-        byte[] digest = MessageDigest.getInstance("MD5").digest(pText.getBytes());
+    private static String md5Sum(String pText) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+        byte[] digest = MessageDigest.getInstance("MD5").digest(pText.getBytes("UTF-8"));
         StringBuffer hexString = new StringBuffer();
         for (byte aDigest : digest) {
             String hex = Integer.toHexString(0xFF & aDigest);
