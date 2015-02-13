@@ -9,7 +9,8 @@ define([
     var PartsManagementView = Backbone.View.extend({
 
         events: {
-            'click #createPart': 'createPart'
+            'click #createPart': 'createPart',
+            'click #createSubstitutePart':'createSubstitute'
         },
 
         initialize: function () {
@@ -67,7 +68,11 @@ define([
 
         addView: function (model) {
             var that = this;
-            var componentView = new ComponentView({model: model, editMode: this.options.editMode, removeHandler: function () {
+            this.iteration = this.model.getLastIteration();
+            var componentView = new ComponentView({
+                model: model, editMode: this.options.editMode,
+                collection: new Backbone.Collection(this.iteration.getSubstituteParts()),
+                removeHandler: function () {
                 that.collection.remove(model);
             }}).render();
             this.componentViews.push(componentView);
@@ -110,6 +115,32 @@ define([
             };
             this.collection.push(newPart);
         }
+        ,
+        createSubstitute: function () {
+
+            _(this.componentViews).select(function (view) {
+                if (view.isSelected()) {
+                    var substitutePart = {
+                        comment: '',
+                        amount: view.model.attributes.amount,
+                        substitute:{
+                            name:'',
+                            number:""
+                        },
+                        cadInstances: [
+                            {tx: 0, ty: 0, tz: 0, rx: 0, ry: 0, rz: 0}
+                        ],
+                        unit: view.model.attributes.unit
+
+                    };
+
+                    view.model.get('substitutes').push(substitutePart);
+                    view.collection.push(substitutePart);
+
+                }
+            })[0];
+        }
+
 
     });
 

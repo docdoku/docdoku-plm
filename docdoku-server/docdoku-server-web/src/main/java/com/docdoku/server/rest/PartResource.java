@@ -404,6 +404,7 @@ public class PartResource {
                 PartUsageLink partUsageLink = new PartUsageLink();
 
                 List<CADInstance> cadInstances = new ArrayList<>();
+                List<PartSubstituteLink> partSubstituteLinks = new ArrayList<>();
 
                 if( partUsageLinkDTO.getCadInstances() != null){
                     for(CADInstanceDTO cadInstanceDTO : partUsageLinkDTO.getCadInstances()){
@@ -415,9 +416,38 @@ public class PartResource {
                                 cadInstanceDTO.getRy(),
                                 cadInstanceDTO.getRz()));
                     }
-                }else{
+                }else if(partUsageLinkDTO.getUnit()==null || partUsageLinkDTO.getUnit().isEmpty()){
                     for(double i = 0 ; i < partUsageLinkDTO.getAmount() ; i ++){
                         cadInstances.add(new CADInstance(0, 0, 0, 0, 0, 0));
+                    }
+                }else{
+                    cadInstances.add(new CADInstance(0, 0, 0, 0, 0, 0));
+                }
+                for(PartSubstituteLinkDTO substituteLinkDTO:partUsageLinkDTO.getSubstitutes()){
+                    PartMaster substitute = findOrCreatePartMaster(workspaceId, substituteLinkDTO.getSubstitute());
+                    if(substitute != null) {
+                        PartSubstituteLink partSubstituteLink = mapper.map(substituteLinkDTO, PartSubstituteLink.class);
+                        List<CADInstance> subCADInstances = new ArrayList<>();
+                        if( substituteLinkDTO.getCadInstances() != null){
+                            for(CADInstanceDTO cadInstanceDTO : substituteLinkDTO.getCadInstances()){
+                                subCADInstances.add(new CADInstance(
+                                        cadInstanceDTO.getTx(),
+                                        cadInstanceDTO.getTy(),
+                                        cadInstanceDTO.getTz(),
+                                        cadInstanceDTO.getRx(),
+                                        cadInstanceDTO.getRy(),
+                                        cadInstanceDTO.getRz()));
+                            }
+                        }else if(substituteLinkDTO.getUnit()==null || substituteLinkDTO.getUnit().isEmpty()){
+                            for(double i = 0 ; i < substituteLinkDTO.getAmount() ; i ++){
+                                subCADInstances.add(new CADInstance(0, 0, 0, 0, 0, 0));
+                            }
+                        }else{
+                            cadInstances.add(new CADInstance(0, 0, 0, 0, 0, 0));
+                        }
+                        partSubstituteLink.setCadInstances(subCADInstances);
+                        partSubstituteLink.setSubstitute(substitute);
+                        partSubstituteLinks.add(partSubstituteLink);
                     }
                 }
                 partUsageLink.setComponent(component);
@@ -425,6 +455,7 @@ public class PartResource {
                 partUsageLink.setComment(partUsageLinkDTO.getComment());
                 partUsageLink.setCadInstances(cadInstances);
                 partUsageLink.setUnit(partUsageLinkDTO.getUnit());
+                partUsageLink.setSubstitutes(partSubstituteLinks);
                 components.add(partUsageLink);
             }
 

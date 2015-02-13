@@ -16,11 +16,11 @@
 
     min-height:250px;
 
-    input#createPart{
+    input#createPart,input#createSubstitutePart{
       float:left;
     }
 
-    input#existingParts{
+    input#existingParts,input#existingSubParts{
       float:right;
     }
 
@@ -30,7 +30,8 @@
       padding:9px;
       width: 95%;
 
-      a.remove{
+
+      a.remove,a.removeSub{
 
         margin: 5px;
         float: left;
@@ -47,51 +48,40 @@
           opacity: 1;
         }
       }
-      a.subtitute-part {
-        margin: 12px 0px 20px 26px;
-        text-shadow: 0 1px 0 #ffffff;
-        opacity: 0.6;
-        color: #000000;
-        &:hover {
-          text-decoration: none;
-          opacity: 1;
-        }
-        span{
-          margin-left: 10px;
-        }
-      }
       input{
 
+        &[id="existingSubstituteParts"] {
+          float: right;
+        }
         &[name="number"]{
           width:180px;
         }
-
+        &[name="substitute-number"]{
+          width:120px;
+        }
         &[name="name"]{
           width:180px;
         }
+        &[name="substitute-name"]{
+          width:120px;
+        }
+        &[name="substitute-comment-edit"]{
+          margin: 10px 0px 0px 21px;
+          width:120px;
+        }
 
-        &[name="amount"]{
+        &[name="amount"],&[name="substitute-amount"]{
           width:20px;
         }
 
-        &[name="comment"]{
+        &[name="comment"],&[name="substitute-comment"]{
           width:106px;
         }
-        &[name*="substitute-"]{
-          width: 118px;
-          margin: 10px 0px 10px 0px;
-        }
+
         &[name="newUnit"],&[name="substitute-newUnit"]{
           width: 60px;
         }
 
-        &[name="substitute-reference-description"] {
-          width: 100px;;
-        }
-        &[name="substitute-amount"],&[name="substitute-unityChoice"] {
-          width: 100px;
-          margin: 0px 33px 0px 20px;
-        }
         &[list="unityChoice"] {
           margin: 10px 22px;
         }
@@ -100,7 +90,7 @@
         width:72px;
       }
 
-      .add-cadInstance,.collapse-cadInstance{
+      .add-cadInstance{
           position: absolute;
           margin-top: 8px;
           cursor: pointer;
@@ -111,16 +101,21 @@
           opacity: 1;
         }
       }
-      .collapse-substitute-cadInstance{
+      .collapse-subParts-cadInstances,.collapse-substitute-cadInstance{
         float: right;
-        margin-top: 17px;
+        margin-top: 9px;
       }
-      .add-substitute-cadInstance {
-        margin-left: 10px;
-      }
-      .add-cadInstance{right: 22px;}
+
+      .add-cadInstance,.add-substitute-cadInstance{right: 22px;}
       .collapse-cadInstance{right: 8px;}
 
+
+
+
+      .substitute {
+        border-style: dashed;
+        border-radius: 5px;
+      }
       .cadInstances{
         float:left;
         clear:both;
@@ -158,7 +153,6 @@
         }
       }
 
-
     }
   }
 
@@ -170,5 +164,18 @@
   .substitute-parts {
     margin: 18px 20px 0px 21px;
   }
+  .display-substitute-part{
+    margin-left: 6px;
+    color: rgba(103, 103, 103, 0.5);
+
+  }
+  .selected-part{
+    background-color: rgba(180, 182, 186, 0.31);
+    box-shadow: inset 0 1px 1px rgba(157, 148, 148, 0.52);
+  }
+  .subParts-CADInstance{
+    display: none;
+  }
+
 
 }

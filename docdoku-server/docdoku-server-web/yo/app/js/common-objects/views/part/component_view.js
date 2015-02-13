@@ -18,23 +18,63 @@ define([
             'input input[name=newUnit]': 'changeMeasureUnit',
             'click datalist[name=unitMeasure]': 'changeMeasureUnit',
             'click .add-cadInstance': 'addCadInstance',
-            'click .collapse-cadInstance': 'collapseTransformations',
-             'click .add-substitute-part': 'displaySubstituteParts',
-             'click .create-substitute-part': 'addSubstitutePart',
-             'click .hide-substitute-part': 'hideSubstitutePartsView'
+            'click .collapse-subParts-cadInstances': 'collapseTransformations',
+            'click .well':'selectPart'
         },
 
 
         initialize: function () {
+            this.$selectPart = false;
+            this.collection.bind('add', this.createSubPart, this);
+            this.collection.bind('remove', this.removeSubPart, this);
         },
 
+        bindTypeahead: function () {
+
+            var that = this;
+            $('#existingSubParts').typeahead({
+                source: function (query, process) {
+                    $.getJSON(App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/numbers?q=' + query, function (data) {
+                        var partNumbers = [];
+                        _(data).each(function (d) {
+                            if ((!that.model.attributes.component.number) || (that.model.attributes.component.number !== d.partNumber)) {
+                                partNumbers.push(d.partNumber);
+                            }
+                        });
+                        process(partNumbers);
+                    });
+                },
+                updater: function (partKey) {
+                    var existingPart = {
+                        amount: 1,
+                        unit:'',
+                        substitute: {
+                            number: partKey
+                        }
+                    };
+                    that.model.get('substitutes').push(existingPart);
+                    that.collection.push(existingPart);
+
+                }
+            });
+        },
         render: function () {
+            var that = this;
             this.substitutePartViews = [];
+
+            this.collection.each(function (model) {
+                that.addSubstitutePartsView(model);
+            });
+
             this.$el.html(Mustache.render(template, {
                 model: this.model.attributes,
                 i18n: App.config.i18n,
                 editMode: this.options.editMode
             }));
+
+            if (this.options.editMode) {
+                this.bindTypeahead();
+            }
             this.bindDomElements();
             this.initCadInstanceViews();
             this.initSubstitutePartView();
@@ -43,31 +83,28 @@ define([
         },
 
         bindDomElements: function () {
+            this.$extraInformation = this.$('.subParts-CADInstance');
             this.$cadInstances = this.$('.cadInstances');
             this.$amount = this.$('input[name=amount]');
             this.$comment = this.$('input[name=comment]');
             this.$unitText = this.$('input[name=newUnit]');
             this.$defaultUnity = this.$unitText.attr('default-unity');
-            this.$collapseButton = this.$('.collapse-cadInstance');
-            this.$substitutePartButton = this.$('.substitute-part');
-            this.$subtituteParts = this.$('.substitutes');
+            this.$collapseButton = this.$('.collapse-subParts-cadInstances');
+
         },
 
         initCadInstanceViews: function () {
             var self = this;
             _(this.model.get('cadInstances')).each(function (instance) {
                 self.addCadInstanceView(instance);
-                self.$cadInstances.hide();
             });
         },
 
-        initSubstitutePartView: function (){
-
+        initSubstitutePartView: function () {
             var self = this;
             _(this.model.get('substitutes')).each(function (instance) {
                 self.addSubstitutePartsView(instance);
             });
-//            self.$('.substitute-parts').hide();
         },
         initUnit: function () {
             var unit = this.model.get('unit');
@@ -77,47 +114,23 @@ define([
 
         addCadInstanceView: function (instance) {
             var self = this;
-            var instanceView = new CadInstanceView({editMode:this.options.editMode});
+            var instanceView = new CadInstanceView({editMode: this.options.editMode});
             instanceView.setInstance(instance).render();
             self.$cadInstances.append(instanceView.$el);
             instanceView.on('instance:remove', function () {
                 self.onRemoveCadInstance(instance);
             });
         },
-        addSubstitutePartsView: function (instance) {
-
+        addSubstitutePartsView: function (model) {
             var self = this;
-            self.$substitutePartButton.hide();
-            var substitutePartView = new SubstitutePartView({model:  this.model, editMode: this.options.editMode, removeHandler: function () {
-                self.collection.remove( this.model);
-            }});
-            substitutePartView.setInstance(instance).render();
-            this.substitutePartViews.push(substitutePartView);
-            this.$subtituteParts.append(substitutePartView.$el);
-
+            var substitutePartView = new SubstitutePartView({model: model, editMode: this.options.editMode, removeSubHandler: function () {
+                self.collection.remove(model);
+                self.model.attributes.substitutes = _(self.model.attributes.substitutes).without(model);
+                self.removeSubPart(model);
+            }}).render();
+            self.substitutePartViews.push(substitutePartView);
+            self.$(".substitute-parts").append(substitutePartView.$el);
         },
-        /*addSubtitutePart: function(){
-
-            if (!this.$editSubtituteMode){
-                $("#iteration-components .well").hide();
-                this.$(".well").show();
-                this.$(".subtitute-parts").show();
-                $("#createPart").hide();
-                $("#existingParts").hide();
-                this.$collapseButton.hide();
-                this.$(".add-cadInstance").hide();
-                this.$editSubtituteMode = true;
-            }
-            else{
-                $("#createPart").show();
-                $("#existingParts").show();
-                this.$(".subtitute-parts").hide();
-                $("#iteration-components .well").show();
-                this.$collapseButton.show();
-                this.$(".add-cadInstance").show();
-                this.$editSubtituteMode = false;
-            }
-        },*/
 
         onRemove: function () {
             if (this.options.removeHandler && this.options.editMode) {
@@ -140,29 +153,48 @@ define([
             this.model.set('amount', this.$amount.val());
         },
 
-        addSubstitutePart: function(){
-            var substitutePart = {
-                number:'',
-                name:'',
-                amount: this.model.get('amount'),
-                substitute:this.model.get('component'),
-                cadInstances: [
-                    {tx: 0, ty: 0, tz: 0, rx: 0, ry: 0, rz: 0}
-                ],
-                unit: this.model.get('unit'),
-                comment: '',
-                referenceDescription : ''
-            };
+        createSubPart: function (model) {
 
-            this.model.get('substitutes').push(substitutePart);
-            this.addSubstitutePartsView(substitutePart);
+            var substitutePart = {
+                unit:this.model.get('unit'),
+                amount:this.model.get('amount')
+            };
+            if(!substitutePart.unit ||(substitutePart.unit ==  this.$defaultUnity) && substitutePart.amount > 1){
+                substitutePart.cadInstances =[];
+                for(var i=0;i<substitutePart.amount;i++){
+                    substitutePart.cadInstances.push({tx: 0, ty: 0, tz: 0, rx: 0, ry: 0, rz: 0});
+                }
+            }else{
+                substitutePart.cadInstances.push({tx: 0, ty: 0, tz: 0, rx: 0, ry: 0, rz: 0});
+            }
+            substitutePart.amount=  this.model.get('amount');
+            substitutePart.unit = this.model.get('unit');
+
+            model.set('amount',this.model.get('amount'));
+            model.set('unit',this.model.get('unit'));
+            model.set('cadInstances',substitutePart.cadInstances);
+            this.addSubstitutePartsView(model.attributes);
         },
+
+        removeSubPart: function(modelToRemove){
+           var viewToRemove = _(this.substitutePartViews).select(function (view) {
+                return view.model === modelToRemove;
+            })[0];
+
+             if (viewToRemove !== null) {
+                this.substitutePartViews = _(this.substitutePartViews).without(viewToRemove);
+                viewToRemove.remove();
+            }
+
+        },
+
         collapseTransformations: function () {
-            var isVisible = this.$cadInstances.is(':visible');
-            this.$cadInstances.toggle(!isVisible);
+            var isVisible = this.$extraInformation.is(':visible');
+            this.$extraInformation.toggle(!isVisible);
             this.$collapseButton.toggleClass('fa-angle-double-down', isVisible);
             this.$collapseButton.toggleClass('fa-angle-double-up', !isVisible);
         },
+
         changeAmount: function (e) {
             this.model.set('amount', e.target.value);
             this.model.get('component').amount = e.target.value;
@@ -176,52 +208,63 @@ define([
         changeName: function (e) {
             this.model.get('component').name = e.target.value;
         },
-        changeMeasureUnit: function(e){
-            this.model.set('unit',e.target.value);
+        changeMeasureUnit: function (e) {
+            this.model.set('unit',(e.target.value == this.$defaultUnity ? '' : e.target.value));
             this.$unitText.val(e.target.value);
             this.disableEnableAmount(e.target.value);
         },
         checkIntegrity: function (unit) {
 
-            if (unit == "null" || unit == "" || unit == undefined || unit == this.$defaultUnity ) {
-                if ( parseInt(this.$amount.val(),10) > this.$('.cadInstance').length) {
-                    var totalUnitToAdd =  parseInt(this.$amount.val(),10) - this.$('.cadInstance').length;
-                    for(var i=0;i<totalUnitToAdd;i++){
+            if (!unit || unit == this.$defaultUnity) {
+                if (parseInt(this.$amount.val(), 10) > this.$('.subParts-CADInstance>.cadInstances >.cadInstance').length) {
+                    var totalUnitToAdd = parseInt(this.$amount.val(), 10) - this.$('.subParts-CADInstance>.cadInstances >.cadInstance').length;
+                    for (var i = 0; i < totalUnitToAdd; i++) {
                         var instance = {tx: 0, ty: 0, tz: 0, rx: 0, ry: 0, rz: 0};
                         this.model.get('cadInstances').push(instance);
                         this.addCadInstanceView(instance);
                     }
                 }
-                if(parseInt(this.$amount.val(),10) < this.$('.cadInstance').length) {
-                    var totalToDelete= this.$('.cadInstance').length-parseInt(this.$amount.val(),10);
-                    this.$(".cadInstance").slice(-totalToDelete).remove();
+                if (parseInt(this.$amount.val(), 10) < this.$('.subParts-CADInstance>.cadInstances >.cadInstance').length) {
+                    var totalToDelete = this.$('.subParts-CADInstance>.cadInstances >.cadInstance').length - parseInt(this.$amount.val(), 10);
+                    this.$(".subParts-CADInstance>.cadInstances >.cadInstance").slice(-totalToDelete).remove();
                 }
-            }else  {
-                if( this.$('.cadInstance').length > 1){
-                    this.$(".cadInstance:not(:first)").remove();
-                    var self= this;
-                    _.each(self.model.get('cadInstances'),function(){
+            } else {
+                if (this.$('.subParts-CADInstance>.cadInstances >.cadInstance').length > 1) {
+                    this.$(".subParts-CADInstance>.cadInstances >.cadInstance:not(:first)").remove();
+                    var self = this;
+                    _.each(self.model.get('cadInstances'), function () {
                         self.model.get('cadInstances').pop();
                     });
 
                 }
             }
         },
-        disableEnableAmount: function(unit){
+        disableEnableAmount: function (unit) {
 
-            if (unit == "null" || unit == "" || unit == undefined || unit == this.$defaultUnity)
-            {
-                this.$amount.val(parseInt(this.$amount.val(),10)== 0 ? 1:parseInt(this.$amount.val(),10));
-                this.$amount.attr('disabled','disabled');
+            if (unit == "null" || unit == "" || unit == undefined || unit == this.$defaultUnity) {
+                this.$amount.val(parseInt(this.$amount.val(), 10) == 0 ? 1 : parseInt(this.$amount.val(), 10));
+                this.$amount.attr('disabled', 'disabled');
                 this.$('.add-cadInstance').show();
                 this.$unitText.val(this.$unitText.attr('default-unity'));
             }
-            else{
+            else {
                 this.$amount.removeAttr('disabled');
                 this.$('.add-cadInstance').hide();
             }
             this.checkIntegrity(unit);
 
+        },
+
+
+        selectPart: function () {
+            this.$selectPart = !this.$selectPart;
+            $('.component').toggleClass("selected-part", false);
+            this.$('.component').toggleClass("selected-part", this.$selectPart);
+            $("#createPartMenu").toggleClass('hidden',this.$selectPart);
+            $("#createSubPartMenu").toggleClass('hidden',!this.$selectPart);
+        },
+        isSelected: function () {
+            return this.$selectPart;
         }
 
 

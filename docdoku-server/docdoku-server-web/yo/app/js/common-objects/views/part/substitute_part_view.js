@@ -9,14 +9,14 @@ define([
     var SubstituteView = Backbone.View.extend({
 
         events: {
-            'click remove-substitute': 'removeSubstitutePart',
+            'click a.removeSub': 'onRemove',
             'change input[name=substitute-amount]': 'changeSubstituteAmount',
-            'change input[name=substitute-comment]': 'changeSubstituteComment',
-            'change input[name=substitute-number]': 'changeSubstituteNumber',
+            'change input[name=substitute-comment-edit]': 'changeSubstituteComment',
             'change input[name=substitute-name]': 'changeSubstituteName',
+            'change input[name=substitute-number]': 'changeSubstituteNumber',
             'input input[name=substitute-newUnit]': 'changeSubstituteMeasureUnit',
             'click datalist[name=substitute-unitMeasure]': 'changeSubstituteMeasureUnit',
-            'click .add-substitute-cadInstance': 'addSubstituteCadInstance',
+            'click .add-substitute-cadInstance': 'addCadInstance',
             'click .collapse-substitute-cadInstance': 'collapseSubstituteTransformations'
         },
 
@@ -25,109 +25,80 @@ define([
 
         },
 
-        setInstance: function (instance) {
-            this.instance = instance;
-            return this;
-        },
-
-        bindTypeahead: function () {
-
-            var that = this;
-
-            this.$('#existingSubstituteParts').typeahead({
-                source: function (query, process) {
-                    $.getJSON(App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/numbers?q=' + query, function (data) {
-                        var partNumbers = [];
-                        _(data).each(function (d) {
-                            if ((!that.model.getNumber()) || (that.model.getNumber() !== d.partNumber)) {
-                                partNumbers.push(d.partNumber);
-                            }
-                        });
-                        process(partNumbers);
-                    });
-                },
-                updater: function (partKey) {
-                    var existingPart = {
-                        amount: 1,
-                        component: {
-                            number: partKey
-                        }
-                    };
-
-                    that.collection.push(existingPart);
-
-                }
-            });
-        },
-
 
 
         render: function () {
             this.$el.html(Mustache.render(template, {
-                model: this.model.attributes,
+
+                model:this.model,
                 i18n: App.config.i18n,
                 editMode: this.options.editMode
             }));
 
-            this.bindTypeahead();
+
+
             this.bindDomElements();
-            this.initSubstituteCadInstanceViews();
             this.initSubstituteUnitAmount();
+            //init the amount first then instanciate the CAD instances
+            this.initSubstituteCadInstanceViews();
+
             return this;
         },
 
         bindDomElements: function () {
-            this.$cadInstances = this.$('.substitute .cadInstances');
+            this.$cadInstances = this.$('.cadInstances');
             this.$amount = this.$('input[name=substitute-amount]');
             this.$comment = this.$('input[name=substitute-comment]');
             this.$unitText = this.$('input[name=substitute-newUnit]');
+            this.$defaultUnity = this.$unitText.attr('default-substitute-unity');
             this.$collapseButton = this.$('.collapse-substitute-cadInstance');
+
         },
 
         initSubstituteCadInstanceViews: function () {
             var self = this;
-            _(this.instance.cadInstances).each(function (instance) {
+            _(this.model.cadInstances).each(function (instance) {
                 self.addCadInstanceView(instance);
                 self.$cadInstances.hide();
             });
         },
 
         initSubstituteUnitAmount: function () {
-            var unit = this.instance.unit;
-            this.$unitText.val(unit ? unit : this.$unitText.attr('substitute-default-unity'));
-            this.disableEnableAmount(unit);
-            this.$amount.val(this.instance.amount);
+            var unit =this.model.unit;
+            this.$unitText.val(unit ? unit : this.$defaultUnity);
+            this.$amount.val(this.model.amount);
+//            this.disableEnableAmount(unit);
+
         },
 
         addCadInstanceView: function (instance) {
             var self = this;
-            var instanceView = new CadInstanceView();
-            instanceView.setInstance(instance).render();
-            self.$cadInstances.append(instanceView.$el);
-            instanceView.on('instance:remove', function () {
+            var substituteCADInstanceView = new CadInstanceView({editMode:this.options.editMode});
+            substituteCADInstanceView.setInstance(instance).render();
+            self.$cadInstances.append(substituteCADInstanceView.$el);
+            substituteCADInstanceView.on('instance:remove', function () {
                 self.onRemoveCadInstance(instance);
             });
         },
 
-
-
-        removeSubstitutePart: function () {
-
+        onRemove: function () {
+            if (this.options.removeSubHandler && this.options.editMode) {
+                this.options.removeSubHandler();
+            }
         },
-
         onRemoveCadInstance: function (instance) {
-            this.model.set('substitute-cadInstances', _(this.model.get('substitute-cadInstances')).without(instance));
+            this.model.cadInstances = _(this.model.cadInstances).without(instance);
             this.$amount.val(parseInt(this.$amount.val(), 10) - 1);
-            this.instance.amount= this.$amount.val();
+            this.model.amount= this.$amount.val();
             this.model.get('component').amount = this.$amount.val();
         },
 
         addCadInstance: function () {
             var instance = {tx: 0, ty: 0, tz: 0, rx: 0, ry: 0, rz: 0};
-            this.model.get('substitute-cadInstances').push(instance);
+            this.model.cadInstances.push(instance);
             this.addCadInstanceView(instance);
             this.$amount.val(parseInt(this.$amount.val(), 10) + 1);
-            this.instance.amount= this.$amount.val();
+            this.model.amount= this.$amount.val();
         },
 
         collapseSubstituteTransformations: function () {
@@ -137,48 +108,60 @@ define([
             this.$collapseButton.toggleClass('fa-angle-double-up', !isVisible);
         },
         changeSubstituteAmount: function (e) {
-            this.instance.amount= e.target.value;
+            this.model.amount= e.target.value;
         },
         changeSubstituteComment: function (e) {
-            this.instance.comment= e.target.value;
+            this.model.referenceDescription = e.target.value;
         },
-        changeSubstituteNumber: function (e) {
-            this.instance.number = e.target.value;
+        changeSubstituteName: function(e){
+            this.model.substitute.name = e.target.value;
         },
-        changeSubstituteName: function (e) {
-            this.instance.name = e.target.value;
+        changeSubstituteNumber: function(e){
+            this.model.substitute.number = e.target.value;
         },
         changeSubstituteMeasureUnit: function (e) {
-            this.instance.unit=e.target.value;
+            this.model.unit= (e.target.value == this.$defaultUnity ? '' : e.target.value);
             this.$unitText.val(e.target.value);
+            if(e.target.value == this.$defaultUnity){
+                this.model.amount = 1;
+            }
             this.disableEnableAmount(e.target.value);
         },
         checkIntegrity: function (unit) {
 
             if (!unit || unit == this.$defaultUnity) {
 
-                var amount = parseInt(this.$amount.val(), 10);
+                var amount = parseInt(this.model.amount, 10);
 
-                if (amount > this.$('.cadInstance').length) {
-                    var totalUnitToAdd = amount - this.$('.cadInstance').length;
+                if (amount > this.$('.substitute .cadInstance').length) {
+                    var totalUnitToAdd = amount - this.$('.substitute .cadInstance').length;
                     for (var i = 0; i < totalUnitToAdd; i++) {
                         var instance = {tx: 0, ty: 0, tz: 0, rx: 0, ry: 0, rz: 0};
-                        this.model.get('cadInstances').push(instance);
+//                       this.model.cadInstances.push(instance);
                         this.addCadInstanceView(instance);
                     }
                 }
 
-                if (amount < this.$('.cadInstance').length) {
-                    var totalToDelete = this.$('.cadInstance').length - amount;
-                    this.$('.cadInstance').slice(-totalToDelete).remove();
+                if (amount < this.$('.substitute .cadInstance').length) {
+                    var totalToDelete = this.$('.substitute .cadInstance').length - amount;
+                    this.$('.substitute .cadInstance').slice(-totalToDelete).remove();
                 }
 
-            } else  if (this.$('.cadInstance').length > 1) {
-                this.$('.cadInstance:not(:first)').remove();
-                _.each(this.model.get('cadInstances'), function () {
-                    this.model.get('cadInstances').pop();
-                },this);
+            } else {
+                this.$('.substitute .cadInstance:not(:first)').remove();
+
+                if(this.model.cadInstances.length > 1){
+                    var firstElt = _.first(this.model.cadInstances);
+                    var self = this;
+                    _.each(this.model.cadInstances, function () {
+                        self.model.cadInstances.pop();
+                    });
+                    self.model.cadInstances.push(firstElt);
+                }
+
             }
+
+
 
         },
         disableEnableAmount: function (unit) {
@@ -187,16 +170,14 @@ define([
                 var amount = parseInt(this.$amount.val(), 10);
                 this.$amount.val(amount >= 0 ? 1 : amount);
                 this.$amount.attr('disabled', 'disabled');
-                this.$('.add-cadInstance').show();
-                this.$unitText.val(this.$unitText.attr('default-unity'));
+                this.$('.add-substitute-cadInstance').show();
+                this.$unitText.val(this.$defaultUnity);
             }
             else {
                 this.$amount.removeAttr('disabled');
-                this.$('.add-cadInstance').hide();
+                this.$('.add-substitute-cadInstance').hide();
             }
-
             this.checkIntegrity(unit);
-
         }
 
 

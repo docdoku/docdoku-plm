@@ -659,6 +659,8 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                     List<PartSubstituteLink> substitutes = new LinkedList<>();
                     for (PartSubstituteLink substitute : usageLink.getSubstitutes()) {
                         PartSubstituteLink sub = new PartSubstituteLink();
+                        sub.setAmount(substitute.getAmount());
+                        sub.setUnit(substitute.getUnit());
                         sub.setCadInstances(substitute.getCadInstances());
                         sub.setComment(substitute.getComment());
                         sub.setReferenceDescription(substitute.getReferenceDescription());

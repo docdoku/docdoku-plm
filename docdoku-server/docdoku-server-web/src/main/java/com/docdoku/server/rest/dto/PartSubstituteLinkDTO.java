@@ -31,8 +31,8 @@ public class PartSubstituteLinkDTO {
     private String unit;
     private String referenceDescription;
     private String comment;
-    private PartMaster substitute;
-    private List<CADInstance> cadInstances;
+    private ComponentDTO substitute;
+    private List<CADInstanceDTO> cadInstances;
 
     public int getId() {
         return id;
@@ -74,19 +74,19 @@ public class PartSubstituteLinkDTO {
         this.comment = comment;
     }
 
-    public PartMaster getSubstitute() {
+    public ComponentDTO getSubstitute() {
         return substitute;
     }
 
-    public void setSubstitute(PartMaster substitute) {
+    public void setSubstitute(ComponentDTO substitute) {
         this.substitute = substitute;
     }
 
-    public List<CADInstance> getCadInstances() {
+    public List<CADInstanceDTO> getCadInstances() {
         return cadInstances;
     }
 
-    public void setCadInstances(List<CADInstance> cadInstances) {
+    public void setCadInstances(List<CADInstanceDTO> cadInstances) {
         this.cadInstances = cadInstances;
     }
 }

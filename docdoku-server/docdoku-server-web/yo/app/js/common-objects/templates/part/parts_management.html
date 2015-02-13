@@ -1,5 +1,13 @@
 {{#editMode}}
-<a class="btn" id="createPart">{{i18n.CREATE_NEW_PART}}</a>  <input type="text" id="existingParts"
-                                                                    placeholder="{{i18n.OR_ADD_PART}}"/>
+<div id="createPartMenu">
+    <a class="btn" id="createPart">{{i18n.CREATE_NEW_PART}}</a> <input type="text" id="existingParts"
+                                                                       placeholder="{{i18n.OR_ADD_PART}}"/>
+</div>
+<div id="createSubPartMenu" class="hidden">
+    <a class="btn" id="createSubstitutePart">{{i18n.CREATE_NEW_PART_AS_SUBSTITUTE}}</a> <input type="text"
+                                                                                               id="existingSubParts"
+                                                                                               placeholder="{{i18n.OR_ADD_PART}}"/>
+</div>
+
 <hr/>
 {{/editMode}}
