@@ -44,9 +44,6 @@ define([
                 editMode: this.options.editMode
             }));
 
-//            if (this.options.editMode) {
-//                this.bindTypeahead();
-//            }
             this.bindDomElements();
             this.initCadInstanceViews();
             this.initSubstitutePartView();

@@ -443,7 +443,7 @@ public class PartResource {
                                 subCADInstances.add(new CADInstance(0, 0, 0, 0, 0, 0));
                             }
                         }else{
-                            cadInstances.add(new CADInstance(0, 0, 0, 0, 0, 0));
+                            subCADInstances.add(new CADInstance(0, 0, 0, 0, 0, 0));
                         }
                         partSubstituteLink.setCadInstances(subCADInstances);
                         partSubstituteLink.setSubstitute(substitute);

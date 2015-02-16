@@ -65,7 +65,7 @@ define([
             var unit = this.model.unit;
             this.$unitText.val(unit ? unit : this.$defaultUnity);
             this.$amount.val(this.model.amount);
-//            this.disableEnableAmount(unit);
+            this.disableEnableAmount(unit);
 
         },
 
@@ -88,7 +88,6 @@ define([
             this.model.cadInstances = _(this.model.cadInstances).without(instance);
             this.$amount.val(parseInt(this.$amount.val(), 10) - 1);
             this.model.amount = this.$amount.val();
-            this.model.get('component').amount = this.$amount.val();
         },
 
         addCadInstance: function () {
@@ -122,8 +121,11 @@ define([
             this.$unitText.val(e.target.value);
             if (e.target.value == this.$defaultUnity) {
                 this.model.amount = 1;
+                this.$amount.val(1);
             }
+
             this.disableEnableAmount(e.target.value);
+            this.checkIntegrity(e.target.value);
         },
         checkIntegrity: function (unit) {
 
@@ -165,7 +167,6 @@ define([
 
             if (!unit || unit == this.$defaultUnity) {
                 var amount = parseInt(this.$amount.val(), 10);
-                this.$amount.val(amount >= 0 ? 1 : amount);
                 this.$amount.attr('disabled', 'disabled');
                 this.$('.add-substitute-cadInstance').show();
                 this.$unitText.val(this.$defaultUnity);
@@ -174,7 +175,7 @@ define([
                 this.$amount.removeAttr('disabled');
                 this.$('.add-substitute-cadInstance').hide();
             }
-            this.checkIntegrity(unit);
+
         }
 
 
