@@ -4,7 +4,7 @@ define([
     'mustache',
     'text!common-objects/templates/part/substitute_part_view.html',
     'common-objects/views/part/cad_instance_view'
-], function (Backbone, Mustache, template,CadInstanceView) {
+], function (Backbone, Mustache, template, CadInstanceView) {
     'use strict';
     var SubstituteView = Backbone.View.extend({
 
@@ -26,15 +26,13 @@ define([
         },
 
 
-
         render: function () {
             this.$el.html(Mustache.render(template, {
 
-                model:this.model,
+                model: this.model,
                 i18n: App.config.i18n,
                 editMode: this.options.editMode
             }));
-
 
 
             this.bindDomElements();
@@ -64,7 +62,7 @@ define([
         },
 
         initSubstituteUnitAmount: function () {
-            var unit =this.model.unit;
+            var unit = this.model.unit;
             this.$unitText.val(unit ? unit : this.$defaultUnity);
             this.$amount.val(this.model.amount);
 //            this.disableEnableAmount(unit);
@@ -73,7 +71,7 @@ define([
 
         addCadInstanceView: function (instance) {
             var self = this;
-            var substituteCADInstanceView = new CadInstanceView({editMode:this.options.editMode});
+            var substituteCADInstanceView = new CadInstanceView({editMode: this.options.editMode});
             substituteCADInstanceView.setInstance(instance).render();
             self.$cadInstances.append(substituteCADInstanceView.$el);
             substituteCADInstanceView.on('instance:remove', function () {
@@ -89,7 +87,7 @@ define([
         onRemoveCadInstance: function (instance) {
             this.model.cadInstances = _(this.model.cadInstances).without(instance);
             this.$amount.val(parseInt(this.$amount.val(), 10) - 1);
-            this.model.amount= this.$amount.val();
+            this.model.amount = this.$amount.val();
             this.model.get('component').amount = this.$amount.val();
         },
 
@@ -98,7 +96,7 @@ define([
             this.model.cadInstances.push(instance);
             this.addCadInstanceView(instance);
             this.$amount.val(parseInt(this.$amount.val(), 10) + 1);
-            this.model.amount= this.$amount.val();
+            this.model.amount = this.$amount.val();
         },
 
         collapseSubstituteTransformations: function () {
@@ -108,21 +106,21 @@ define([
             this.$collapseButton.toggleClass('fa-angle-double-up', !isVisible);
         },
         changeSubstituteAmount: function (e) {
-            this.model.amount= e.target.value;
+            this.model.amount = e.target.value;
         },
         changeSubstituteComment: function (e) {
             this.model.referenceDescription = e.target.value;
         },
-        changeSubstituteName: function(e){
+        changeSubstituteName: function (e) {
             this.model.substitute.name = e.target.value;
         },
-        changeSubstituteNumber: function(e){
+        changeSubstituteNumber: function (e) {
             this.model.substitute.number = e.target.value;
         },
         changeSubstituteMeasureUnit: function (e) {
-            this.model.unit= (e.target.value == this.$defaultUnity ? '' : e.target.value);
+            this.model.unit = (e.target.value == this.$defaultUnity ? '' : e.target.value);
             this.$unitText.val(e.target.value);
-            if(e.target.value == this.$defaultUnity){
+            if (e.target.value == this.$defaultUnity) {
                 this.model.amount = 1;
             }
             this.disableEnableAmount(e.target.value);
@@ -150,7 +148,7 @@ define([
             } else {
                 this.$('.substitute .cadInstance:not(:first)').remove();
 
-                if(this.model.cadInstances.length > 1){
+                if (this.model.cadInstances.length > 1) {
                     var firstElt = _.first(this.model.cadInstances);
                     var self = this;
                     _.each(this.model.cadInstances, function () {
@@ -160,7 +158,6 @@ define([
                 }
 
             }
-
 
 
         },

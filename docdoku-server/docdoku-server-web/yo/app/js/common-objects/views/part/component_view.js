@@ -19,7 +19,7 @@ define([
             'click datalist[name=unitMeasure]': 'changeMeasureUnit',
             'click .add-cadInstance': 'addCadInstance',
             'click .collapse-subParts-cadInstances': 'collapseTransformations',
-            'click .well':'selectPart'
+            'click .component': 'selectPart'
         },
 
 
@@ -37,7 +37,7 @@ define([
                     $.getJSON(App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/numbers?q=' + query, function (data) {
                         var partNumbers = [];
                         _(data).each(function (d) {
-                            if ((!that.model.attributes.component.number) || (that.model.attributes.component.number !== d.partNumber)) {
+                            if ((!that.model.get('component').number) || (that.model.get('component').number !== d.partNumber)) {
                                 partNumbers.push(d.partNumber);
                             }
                         });
@@ -47,7 +47,7 @@ define([
                 updater: function (partKey) {
                     var existingPart = {
                         amount: 1,
-                        unit:'',
+                        unit: '',
                         substitute: {
                             number: partKey
                         }
@@ -156,32 +156,32 @@ define([
         createSubPart: function (model) {
 
             var substitutePart = {
-                unit:this.model.get('unit'),
-                amount:this.model.get('amount')
+                unit: this.model.get('unit'),
+                amount: this.model.get('amount')
             };
-            if(!substitutePart.unit ||(substitutePart.unit ==  this.$defaultUnity) && substitutePart.amount > 1){
-                substitutePart.cadInstances =[];
-                for(var i=0;i<substitutePart.amount;i++){
+            if (!substitutePart.unit || (substitutePart.unit == this.$defaultUnity) && substitutePart.amount > 1) {
+                substitutePart.cadInstances = [];
+                for (var i = 0; i < substitutePart.amount; i++) {
                     substitutePart.cadInstances.push({tx: 0, ty: 0, tz: 0, rx: 0, ry: 0, rz: 0});
                 }
-            }else{
+            } else {
                 substitutePart.cadInstances.push({tx: 0, ty: 0, tz: 0, rx: 0, ry: 0, rz: 0});
             }
-            substitutePart.amount=  this.model.get('amount');
+            substitutePart.amount = this.model.get('amount');
             substitutePart.unit = this.model.get('unit');
 
-            model.set('amount',this.model.get('amount'));
-            model.set('unit',this.model.get('unit'));
-            model.set('cadInstances',substitutePart.cadInstances);
+            model.set('amount', this.model.get('amount'));
+            model.set('unit', this.model.get('unit'));
+            model.set('cadInstances', substitutePart.cadInstances);
             this.addSubstitutePartsView(model.attributes);
         },
 
-        removeSubPart: function(modelToRemove){
-           var viewToRemove = _(this.substitutePartViews).select(function (view) {
+        removeSubPart: function (modelToRemove) {
+            var viewToRemove = _(this.substitutePartViews).select(function (view) {
                 return view.model === modelToRemove;
             })[0];
 
-             if (viewToRemove !== null) {
+            if (viewToRemove !== null) {
                 this.substitutePartViews = _(this.substitutePartViews).without(viewToRemove);
                 viewToRemove.remove();
             }
@@ -209,7 +209,7 @@ define([
             this.model.get('component').name = e.target.value;
         },
         changeMeasureUnit: function (e) {
-            this.model.set('unit',(e.target.value == this.$defaultUnity ? '' : e.target.value));
+            this.model.set('unit', (e.target.value == this.$defaultUnity ? '' : e.target.value));
             this.$unitText.val(e.target.value);
             this.disableEnableAmount(e.target.value);
         },
@@ -256,12 +256,16 @@ define([
         },
 
 
-        selectPart: function () {
+        selectPart: function (e) {
+            if (e.target !== this)
+                return;
+
             this.$selectPart = !this.$selectPart;
             $('.component').toggleClass("selected-part", false);
             this.$('.component').toggleClass("selected-part", this.$selectPart);
-            $("#createPartMenu").toggleClass('hidden',this.$selectPart);
-            $("#createSubPartMenu").toggleClass('hidden',!this.$selectPart);
+            $("#createPartMenu").toggleClass('hidden', this.$selectPart);
+            $("#createSubPartMenu").toggleClass('hidden', !this.$selectPart);
+
         },
         isSelected: function () {
             return this.$selectPart;
