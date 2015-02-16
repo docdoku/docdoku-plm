@@ -88,7 +88,6 @@ define([
             this.model.cadInstances = _(this.model.cadInstances).without(instance);
             this.$amount.val(parseInt(this.$amount.val(), 10) - 1);
             this.model.amount = this.$amount.val();
-            this.model.get('component').amount = this.$amount.val();
         },
 
         addCadInstance: function () {
