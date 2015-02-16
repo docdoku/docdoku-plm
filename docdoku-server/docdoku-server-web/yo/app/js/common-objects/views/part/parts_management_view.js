@@ -16,7 +16,6 @@ define([
         initialize: function () {
             this.collection.bind('add', this.addPart, this);
             this.collection.bind('remove', this.removePart, this);
-            this.$selectedComponent =null;
         },
 
         bindTypeahead: function () {
@@ -62,7 +61,6 @@ define([
 
             if (this.options.editMode) {
                 this.bindTypeahead();
-                this.bindTypeaheadSub();
             }
 
             return this;
@@ -140,47 +138,6 @@ define([
 
                 }
             })[0];
-        },
-        bindTypeaheadSub: function () {
-
-            var that = this;
-            that.$('#existingSubParts').typeahead({
-                source: function (query, process) {
-                    $.getJSON(App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/numbers?q=' + query, function (data) {
-                        var partNumbers = [];
-                        that.getSelectedComponent();
-                        _(data).each(function (d) {
-                            if ((!that.model.get('number')) || (that.model.get('number') !== d.partNumber) && ((!that.$selectedComponent.model.get('component').number) || (that.$selectedComponent.model.get('component').number !== d.partNumber))) {
-                                partNumbers.push(d.partNumber);
-                            }
-                        });
-                        process(partNumbers)
-                    });
-                },
-                updater: function (partKey) {
-                    var existingPart = {
-                        amount: 1,
-                        unit: '',
-                        substitute: {
-                            number: partKey
-                        }
-                    };
-
-                    that.getSelectedComponent();
-                    that.$selectedComponent.model.get('substitutes').push(existingPart);
-                    that.$selectedComponent.collection.push(existingPart);
-
-                }
-            });
-        },
-
-        getSelectedComponent: function () {
-            var self = this ;
-            _(this.componentViews).select(function (view) {
-                if (view.isSelected()) {
-                     self.$selectedComponent = view;
-                }
-            });
         }
 
 

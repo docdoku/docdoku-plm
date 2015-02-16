@@ -29,7 +29,35 @@ define([
             this.collection.bind('remove', this.removeSubPart, this);
         },
 
+        bindTypeahead: function () {
 
+            var that = this;
+            $('#existingSubParts').typeahead({
+                source: function (query, process) {
+                    $.getJSON(App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/numbers?q=' + query, function (data) {
+                        var partNumbers = [];
+                        _(data).each(function (d) {
+                            if ((!that.model.get('component').number) || (that.model.get('component').number !== d.partNumber)) {
+                                partNumbers.push(d.partNumber);
+                            }
+                        });
+                        process(partNumbers);
+                    });
+                },
+                updater: function (partKey) {
+                    var existingPart = {
+                        amount: 1,
+                        unit: '',
+                        substitute: {
+                            number: partKey
+                        }
+                    };
+                    that.model.get('substitutes').push(existingPart);
+                    that.collection.push(existingPart);
+
+                }
+            });
+        },
         render: function () {
             var that = this;
             this.substitutePartViews = [];
@@ -44,9 +72,9 @@ define([
                 editMode: this.options.editMode
             }));
 
-//            if (this.options.editMode) {
-//                this.bindTypeahead();
-//            }
+            if (this.options.editMode) {
+                this.bindTypeahead();
+            }
             this.bindDomElements();
             this.initCadInstanceViews();
             this.initSubstitutePartView();
@@ -146,7 +174,6 @@ define([
             model.set('unit', this.model.get('unit'));
             model.set('cadInstances', substitutePart.cadInstances);
             this.addSubstitutePartsView(model.attributes);
-            this.$extraInformation.toggle(true);
         },
 
         removeSubPart: function (modelToRemove) {
@@ -229,12 +256,16 @@ define([
         },
 
 
-        selectPart: function () {
-            $('.component').toggleClass("selected-part", false);
+        selectPart: function (e) {
+            if (e.target !== this)
+                return;
+
             this.$selectPart = !this.$selectPart;
+            $('.component').toggleClass("selected-part", false);
             this.$('.component').toggleClass("selected-part", this.$selectPart);
             $("#createPartMenu").toggleClass('hidden', this.$selectPart);
             $("#createSubPartMenu").toggleClass('hidden', !this.$selectPart);
+
         },
         isSelected: function () {
             return this.$selectPart;

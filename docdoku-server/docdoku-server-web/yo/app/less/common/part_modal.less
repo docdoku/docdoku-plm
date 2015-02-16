@@ -30,6 +30,7 @@
       padding:9px;
       width: 95%;
 
+
       a.remove,a.removeSub{
 
         margin: 5px;
@@ -45,7 +46,6 @@
           text-decoration: none;
           color: #F00;
           opacity: 1;
-          cursor: hand;
         }
       }
       input{
@@ -104,16 +104,13 @@
       .collapse-subParts-cadInstances,.collapse-substitute-cadInstance{
         float: right;
         margin-top: 9px;
-        cursor: pointer;
-        opacity: 0.5;
-
-        &:hover{
-          opacity: 1;
-        }
       }
 
       .add-cadInstance,.add-substitute-cadInstance{right: 22px;}
       .collapse-cadInstance{right: 8px;}
+
+
+
 
       .substitute {
         border-style: dashed;
@@ -156,22 +153,7 @@
         }
       }
 
-
     }
-    .component{
-      opacity: 0.6;
-
-      &:hover{
-        opacity: 1;
-        cursor: hand;
-      }
-    }
-    .selected-part{
-      opacity: 1;
-      background-color: rgba(180, 182, 186, 0.31);
-      box-shadow: inset 0 1px 1px rgba(157, 148, 148, 0.52);
-    }
-
   }
 
 
@@ -187,7 +169,10 @@
     color: rgba(103, 103, 103, 0.5);
 
   }
-
+  .selected-part{
+    background-color: rgba(180, 182, 186, 0.31);
+    box-shadow: inset 0 1px 1px rgba(157, 148, 148, 0.52);
+  }
   .subParts-CADInstance{
     display: none;
   }
