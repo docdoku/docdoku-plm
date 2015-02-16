@@ -181,6 +181,8 @@ define([
                      self.$selectedComponent = view;
                 }
             });
+
+//            var view = _.findWhere(taList,{selected:true});
         }
 
 
