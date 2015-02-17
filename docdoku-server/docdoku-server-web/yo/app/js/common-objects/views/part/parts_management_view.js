@@ -10,7 +10,7 @@ define([
 
         events: {
             'click #createPart': 'createPart',
-            'click #createSubstitutePart': 'createSubstitute'
+            'click #createSubstitutePart': 'createSubstitutePart'
         },
 
         initialize: function () {
@@ -118,10 +118,9 @@ define([
             };
             this.collection.push(newPart);
         },
-        createSubstitute: function () {
+        createSubstitutePart: function () {
             var that = this;
             that.getSelectedComponent();
-
             var substitutePart = {
                 comment: '',
                 amount: that.$selectedComponent.model.attributes.amount,
@@ -138,30 +137,8 @@ define([
             that.$selectedComponent.model.get('substitutes').push(substitutePart);
             that.$selectedComponent.collection.push(substitutePart);
 
-//            _(this.componentViews).select(function (view) {
-//                if (view.isSelected()) {
-//                    var substitutePart = {
-//                        comment: '',
-//                        amount: view.model.attributes.amount,
-//                        substitute: {
-//                            name: '',
-//                            number: ""
-//                        },
-//                        cadInstances: [
-//                            {tx: 0, ty: 0, tz: 0, rx: 0, ry: 0, rz: 0}
-//                        ],
-//                        unit: view.model.attributes.unit
-//
-//                    };
-//
-//                    view.model.get('substitutes').push(substitutePart);
-//                    view.collection.push(substitutePart);
-//
-//                }
-//            })[0];
         },
         bindTypeaheadSub: function () {
-
             var that = this;
             that.$('#existingSubParts').typeahead({
                 source: function (query, process) {
@@ -184,7 +161,6 @@ define([
                             number: partKey
                         }
                     };
-
                     that.getSelectedComponent();
                     that.$selectedComponent.model.get('substitutes').push(existingPart);
                     that.$selectedComponent.collection.push(existingPart);
@@ -200,8 +176,6 @@ define([
                     self.$selectedComponent = view;
                 }
             });
-
-//            var view = _.findWhere(taList,{selected:true});
         }
 
 

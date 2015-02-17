@@ -26,7 +26,7 @@ define([
 
         initialize: function () {
             this.$selectPart = false;
-            this.collection.bind('add', this.createSubPart, this);
+            this.collection.bind('add', this.addSubPart, this);
             this.collection.bind('remove', this.removeSubPart, this);
         },
 
@@ -125,42 +125,6 @@ define([
             this.model.set('amount', this.$amount.val());
         },
 
-        createSubPart: function (model) {
-
-            var substitutePart = {
-                unit: this.model.get('unit'),
-                amount: this.model.get('amount')
-            };
-            if (!substitutePart.unit || (substitutePart.unit == this.$defaultUnity) && substitutePart.amount > 1) {
-                substitutePart.cadInstances = [];
-                for (var i = 0; i < substitutePart.amount; i++) {
-                    substitutePart.cadInstances.push({tx: 0, ty: 0, tz: 0, rx: 0, ry: 0, rz: 0});
-                }
-            } else {
-                substitutePart.cadInstances.push({tx: 0, ty: 0, tz: 0, rx: 0, ry: 0, rz: 0});
-            }
-            substitutePart.amount = this.model.get('amount');
-            substitutePart.unit = this.model.get('unit');
-
-            model.set('amount', this.model.get('amount'));
-            model.set('unit', this.model.get('unit'));
-            model.set('cadInstances', substitutePart.cadInstances);
-            this.$extraInformation.toggle(true);
-            this.addSubstitutePartsView(model.attributes);
-        },
-
-        removeSubPart: function (modelToRemove) {
-            var viewToRemove = _(this.substitutePartViews).select(function (view) {
-                return view.model === modelToRemove;
-            })[0];
-
-            if (viewToRemove !== null) {
-                this.substitutePartViews = _(this.substitutePartViews).without(viewToRemove);
-                viewToRemove.remove();
-            }
-
-        },
-
         collapseTransformations: function () {
             var isVisible = this.$extraInformation.is(':visible');
             this.$extraInformation.toggle(!isVisible);
@@ -181,8 +145,8 @@ define([
         changeName: function (e) {
             this.model.get('component').name = e.target.value;
         },
-        changeIsOptional: function(){
-            this.model.set('optional',this.$isOptional.is(':checked'));
+        changeIsOptional: function () {
+            this.model.set('optional', this.$isOptional.is(':checked'));
         },
         changeMeasureUnit: function (e) {
             this.model.set('unit', (e.target.value == this.$defaultUnity ? '' : e.target.value));
@@ -191,21 +155,23 @@ define([
         },
         checkIntegrity: function (unit) {
 
+            var totalCADInstances= this.$('.subParts-CADInstance>.cadInstances >.cadInstance').length;
             if (!unit || unit == this.$defaultUnity) {
-                if (parseInt(this.$amount.val(), 10) > this.$('.subParts-CADInstance>.cadInstances >.cadInstance').length) {
-                    var totalUnitToAdd = parseInt(this.$amount.val(), 10) - this.$('.subParts-CADInstance>.cadInstances >.cadInstance').length;
+
+                if (parseInt(this.$amount.val(), 10) > totalCADInstances) {
+                    var totalUnitToAdd = parseInt(this.$amount.val(), 10) - totalCADInstances;
                     for (var i = 0; i < totalUnitToAdd; i++) {
                         var instance = {tx: 0, ty: 0, tz: 0, rx: 0, ry: 0, rz: 0};
                         this.model.get('cadInstances').push(instance);
                         this.addCadInstanceView(instance);
                     }
                 }
-                if (parseInt(this.$amount.val(), 10) < this.$('.subParts-CADInstance>.cadInstances >.cadInstance').length) {
-                    var totalToDelete = this.$('.subParts-CADInstance>.cadInstances >.cadInstance').length - parseInt(this.$amount.val(), 10);
+                if (parseInt(this.$amount.val(), 10) < totalCADInstances){
+                    var totalToDelete = totalCADInstances - parseInt(this.$amount.val(), 10);
                     this.$(".subParts-CADInstance>.cadInstances >.cadInstance").slice(-totalToDelete).remove();
                 }
             } else {
-                if (this.$('.subParts-CADInstance>.cadInstances >.cadInstance').length > 1) {
+                if (totalCADInstances > 1) {
                     this.$(".subParts-CADInstance>.cadInstances >.cadInstance:not(:first)").remove();
                     var self = this;
                     _.each(self.model.get('cadInstances'), function () {
@@ -241,6 +207,42 @@ define([
         },
         isSelected: function () {
             return this.$selectPart;
+        },
+
+        addSubPart: function (model) {
+
+            var substitutePart = {
+                unit: this.model.get('unit'),
+                amount: this.model.get('amount')
+            };
+            if (!substitutePart.unit || (substitutePart.unit == this.$defaultUnity) && substitutePart.amount > 1) {
+                substitutePart.cadInstances = [];
+                for (var i = 0; i < substitutePart.amount; i++) {
+                    substitutePart.cadInstances.push({tx: 0, ty: 0, tz: 0, rx: 0, ry: 0, rz: 0});
+                }
+            } else {
+                substitutePart.cadInstances.push({tx: 0, ty: 0, tz: 0, rx: 0, ry: 0, rz: 0});
+            }
+            substitutePart.amount = this.model.get('amount');
+            substitutePart.unit = this.model.get('unit');
+
+            model.set('amount', this.model.get('amount'));
+            model.set('unit', this.model.get('unit'));
+            model.set('cadInstances', substitutePart.cadInstances);
+            this.$extraInformation.toggle(true);
+            this.addSubstitutePartsView(model.attributes);
+        },
+
+        removeSubPart: function (modelToRemove) {
+            var viewToRemove = _(this.substitutePartViews).select(function (view) {
+                return view.model === modelToRemove;
+            })[0];
+
+            if (viewToRemove !== null) {
+                this.substitutePartViews = _(this.substitutePartViews).without(viewToRemove);
+                viewToRemove.remove();
+            }
+
         }
 
 

@@ -156,7 +156,7 @@ define([
                     _.each(this.model.cadInstances, function () {
                         self.model.cadInstances.pop();
                     });
-                    self.model.cadInstances.push(firstElt);
+
                 }
 
             }
