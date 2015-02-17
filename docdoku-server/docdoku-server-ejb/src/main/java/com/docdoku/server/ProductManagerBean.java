@@ -649,6 +649,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 for (PartUsageLink usageLink : pUsageLinks) {
                     PartUsageLink ul = new PartUsageLink();
                     ul.setAmount(usageLink.getAmount());
+                    ul.setOptional(usageLink.isOptional());
                     ul.setCadInstances(usageLink.getCadInstances());
                     ul.setComment(usageLink.getComment());
                     ul.setReferenceDescription(usageLink.getReferenceDescription());

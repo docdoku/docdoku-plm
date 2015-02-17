@@ -1,36 +1,36 @@
-#part-modal{
+#part-modal {
 
   #tab-part-links {
     min-height: 280px;
   }
-  #tab-part-files{
-    .conversion-status{
+  #tab-part-files {
+    .conversion-status {
       margin: 18px 0 0 4px;
-      button.reload{
-        float:right;
+      button.reload {
+        float: right;
 
       }
     }
   }
-  #iteration-components{
+  #iteration-components {
 
-    min-height:250px;
+    min-height: 250px;
 
-    input#createPart,input#createSubstitutePart{
-      float:left;
+    input#createPart, input#createSubstitutePart {
+      float: left;
     }
 
-    input#existingParts,input#existingSubParts{
-      float:right;
+    input#existingParts, input#existingSubParts {
+      float: right;
     }
 
-    .well{
+    .well {
       position: relative;
       float: left;
-      padding:9px;
+      padding: 9px;
       width: 95%;
 
-      a.remove,a.removeSub{
+      a.remove, a.removeSub {
 
         margin: 5px;
         float: left;
@@ -48,37 +48,37 @@
           cursor: hand;
         }
       }
-      input{
+      input {
 
         &[id="existingSubstituteParts"] {
           float: right;
         }
-        &[name="number"]{
-          width:180px;
+        &[name="number"] {
+          width: 180px;
         }
-        &[name="substitute-number"]{
-          width:120px;
+        &[name="substitute-number"] {
+          width: 120px;
         }
-        &[name="name"]{
-          width:180px;
+        &[name="name"] {
+          width: 180px;
         }
-        &[name="substitute-name"]{
-          width:120px;
+        &[name="substitute-name"] {
+          width: 120px;
         }
-        &[name="substitute-comment-edit"]{
+        &[name="substitute-comment-edit"] {
           margin: 10px 0px 0px 21px;
-          width:120px;
+          width: 120px;
         }
 
-        &[name="amount"],&[name="substitute-amount"]{
-          width:20px;
+        &[name="amount"], &[name="substitute-amount"] {
+          width: 20px;
         }
 
-        &[name="comment"],&[name="substitute-comment"]{
-          width:106px;
+        &[name="comment"], &[name="substitute-comment"] {
+          width: 106px;
         }
 
-        &[name="newUnit"],&[name="substitute-newUnit"]{
+        &[name="newUnit"], &[name="substitute-newUnit"] {
           width: 60px;
         }
 
@@ -86,100 +86,100 @@
           margin: 10px 22px;
         }
       }
-      select[name="unitMeasure"]{
-        width:72px;
+      select[name="unitMeasure"] {
+        width: 72px;
       }
 
-      .add-cadInstance{
-          position: absolute;
-          margin-top: 8px;
-          cursor: pointer;
-          opacity: 0.5;
-          top: 10px;
+      .add-cadInstance {
+        position: absolute;
+        margin-top: 8px;
+        cursor: pointer;
+        opacity: 0.5;
+        top: 10px;
 
-        &:hover{
+        &:hover {
           opacity: 1;
         }
       }
-      .collapse-subParts-cadInstances,.collapse-substitute-cadInstance{
+      .collapse-subParts-cadInstances, .collapse-substitute-cadInstance {
         float: right;
         margin-top: 9px;
         cursor: pointer;
         opacity: 0.5;
 
-        &:hover{
+        &:hover {
           opacity: 1;
         }
       }
 
-      .add-cadInstance,.add-substitute-cadInstance{
+      .add-cadInstance, .add-substitute-cadInstance {
         right: 22px;
         opacity: 0.4;
-        &:hover{
+        &:hover {
           opacity: 1;
         }
       }
-      .collapse-cadInstance{right: 8px;}
+      .collapse-cadInstance {
+        right: 8px;
+      }
 
       .substitute {
         border-style: dashed;
         border-radius: 5px;
       }
-      .cadInstances{
-        float:left;
-        clear:both;
-        .cadInstance{
-          h5{
-            font-weight:normal;
+      .cadInstances {
+        float: left;
+        clear: both;
+        .cadInstance {
+          h5 {
+            font-weight: normal;
           }
-          float:left;
-          clear:both;
-          .coord-group{
-            float:left;
-            width:33%;
-            input.coord{
-              width:20%;
+          float: left;
+          clear: both;
+          .coord-group {
+            float: left;
+            width: 33%;
+            input.coord {
+              width: 20%;
             }
-            select{
-              width:90%;
+            select {
+              width: 90%;
             }
-            .remove-cadInstance{
+            .remove-cadInstance {
               margin-top: 42px;
               float: left;
               cursor: pointer;
               opacity: 0.5;
-              &:hover{
+              &:hover {
                 opacity: 1;
               }
             }
           }
 
-          &:only-child{
-            .remove-cadInstance{
+          &:only-child {
+            .remove-cadInstance {
               display: none;
             }
           }
         }
       }
 
-
     }
-    .component{
+    .component {
       opacity: 0.6;
 
-      &:hover{
+      &:hover {
         opacity: 1;
         cursor: hand;
       }
     }
-    .selected-part{
+    .selected-part {
       opacity: 1;
       background-color: rgba(180, 182, 186, 0.31);
       box-shadow: inset 0 1px 1px rgba(157, 148, 148, 0.52);
     }
 
   }
-
 
   .pager {
     margin: 0;
@@ -188,15 +188,14 @@
   .substitute-parts {
     margin: 18px 20px 0px 21px;
   }
-  .display-substitute-part{
+  .display-substitute-part {
     margin-left: 6px;
     color: rgba(103, 103, 103, 0.5);
 
   }
 
-  .subParts-CADInstance{
+  .subParts-CADInstance {
     display: none;
   }
-
 
 }

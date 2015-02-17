@@ -392,7 +392,7 @@ public class PartResource {
     }
 
 
-    private List<PartUsageLink> createComponents(String workspaceId, List<PartUsageLinkDTO> pComponents)
+    public List<PartUsageLink> createComponents(String workspaceId, List<PartUsageLinkDTO> pComponents)
             throws EntityNotFoundException, EntityAlreadyExistsException, AccessRightException, NotAllowedException, CreationException, UserNotActiveException {
 
         List<PartUsageLink> components = new ArrayList<>();
@@ -427,7 +427,7 @@ public class PartResource {
                                 subCADInstances.add(mapper.map(cadInstanceDTO, CADInstance.class));
                             }
                         } else if (substituteLinkDTO.getUnit() == null || substituteLinkDTO.getUnit().isEmpty()) {
-                            for (double i = 0; i < substituteLinkDTO.getAmount(); i++) {
+                            for (double i = 0; i <substituteLinkDTO.getAmount() ; i++) {
                                 subCADInstances.add(new CADInstance(0, 0, 0, 0, 0, 0));
                             }
                         } else {
@@ -443,6 +443,7 @@ public class PartResource {
                 partUsageLink.setComment(partUsageLinkDTO.getComment());
                 partUsageLink.setCadInstances(cadInstances);
                 partUsageLink.setUnit(partUsageLinkDTO.getUnit());
+                partUsageLink.setOptional(partUsageLinkDTO.isOptional());
                 partUsageLink.setSubstitutes(partSubstituteLinks);
                 components.add(partUsageLink);
             }
@@ -453,7 +454,7 @@ public class PartResource {
 
     }
 
-    private PartMaster findOrCreatePartMaster(String workspaceId, ComponentDTO componentDTO)
+    public PartMaster findOrCreatePartMaster(String workspaceId, ComponentDTO componentDTO)
             throws EntityNotFoundException, EntityAlreadyExistsException, NotAllowedException, UserNotActiveException, AccessRightException, CreationException {
         String componentNumber = componentDTO.getNumber();
         PartMasterKey partMasterKey = new PartMasterKey(workspaceId, componentNumber);

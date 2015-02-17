@@ -33,6 +33,7 @@ public class PartUsageLinkDTO {
     private ComponentDTO component;
     private String referenceDescription;
     private String unit;
+    private boolean optional;
     private List<CADInstanceDTO> cadInstances;
     private List<PartSubstituteLinkDTO> substitutes;
 
@@ -74,6 +75,14 @@ public class PartUsageLinkDTO {
 
     public void setReferenceDescription(String referenceDescription) {
         this.referenceDescription = referenceDescription;
+    }
+
+    public boolean isOptional() {
+        return optional;
+    }
+
+    public void setOptional(boolean optional) {
+        this.optional = optional;
     }
 
     public String getUnit() {

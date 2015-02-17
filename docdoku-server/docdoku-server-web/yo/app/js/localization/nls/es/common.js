@@ -269,6 +269,7 @@ define({
 	OK: "OK",
 	ONLINE: "Online",
 	OPEN_NEW_WINDOW:"Open in a new window",
+    OPTIONAL:"Optional",
 	OPTIONS: "Options",
 	OR_ADD_PART: "Or add an existing part",
 	ORBIT_MODE: "Orbit mode",

@@ -15,6 +15,7 @@
     </datalist>
     <input type="text" name="comment" value="{{model.comment}}" placeholder="{{i18n.PART_DESCRIPTION}}"
     {{^editMode}}readonly{{/editMode}}/>
+    <input type="checkbox" name="optional" title="{{i18n.OPTIONAL}}" value="{{model.optional}}" {{^editMode}}readonly{{/editMode}}/>
     {{#editMode}}<i class="fa fa-plus add-cadInstance"></i>{{/editMode}}
     <i class="fa fa-angle-double-down collapse-subParts-cadInstances"></i>
     {{/model.component.number}}
@@ -36,8 +37,8 @@
         <option value="{{i18n.SQUARE_METER}}">
             {{/editMode}}
     </datalist>
-    <input type="text" name="comment" value="{{model.comment}}" placeholder="{{i18n.PART_DESCRIPTION}}"
-    {{^editMode}}readonly{{/editMode}}/>
+    <input type="text" name="comment" value="" placeholder="{{i18n.PART_DESCRIPTION}}" {{^editMode}}readonly{{/editMode}}/>
+    <input type="checkbox" name="optional" title="{{i18n.OPTIONAL}}" value="" {{^editMode}}readonly{{/editMode}}/>
     {{#editMode}}<i class="fa fa-plus add-cadInstance"></i>{{/editMode}}
     <i class="fa fa-angle-double-down collapse-subParts-cadInstances"></i>
     {{/model.component.number}}

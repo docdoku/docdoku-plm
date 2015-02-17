@@ -16,7 +16,7 @@ define([
         initialize: function () {
             this.collection.bind('add', this.addPart, this);
             this.collection.bind('remove', this.removePart, this);
-            this.$selectedComponent =null;
+            this.$selectedComponent = null;
         },
 
         bindTypeahead: function () {
@@ -112,34 +112,53 @@ define([
                     {tx: 0, ty: 0, tz: 0, rx: 0, ry: 0, rz: 0}
                 ],
                 unit: this.unit,
+                optional: false,
                 substitutes: []
 
             };
             this.collection.push(newPart);
         },
         createSubstitute: function () {
+            var that = this;
+            that.getSelectedComponent();
 
-            _(this.componentViews).select(function (view) {
-                if (view.isSelected()) {
-                    var substitutePart = {
-                        comment: '',
-                        amount: view.model.attributes.amount,
-                        substitute: {
-                            name: '',
-                            number: ""
-                        },
-                        cadInstances: [
-                            {tx: 0, ty: 0, tz: 0, rx: 0, ry: 0, rz: 0}
-                        ],
-                        unit: view.model.attributes.unit
+            var substitutePart = {
+                comment: '',
+                amount: that.$selectedComponent.model.attributes.amount,
+                substitute: {
+                    name: '',
+                    number: ""
+                },
+                cadInstances: [
+                    {tx: 0, ty: 0, tz: 0, rx: 0, ry: 0, rz: 0}
+                ],
+                unit: that.$selectedComponent.model.attributes.unit
 
-                    };
+            };
+            that.$selectedComponent.model.get('substitutes').push(substitutePart);
+            that.$selectedComponent.collection.push(substitutePart);
 
-                    view.model.get('substitutes').push(substitutePart);
-                    view.collection.push(substitutePart);
-
-                }
-            })[0];
+//            _(this.componentViews).select(function (view) {
+//                if (view.isSelected()) {
+//                    var substitutePart = {
+//                        comment: '',
+//                        amount: view.model.attributes.amount,
+//                        substitute: {
+//                            name: '',
+//                            number: ""
+//                        },
+//                        cadInstances: [
+//                            {tx: 0, ty: 0, tz: 0, rx: 0, ry: 0, rz: 0}
+//                        ],
+//                        unit: view.model.attributes.unit
+//
+//                    };
+//
+//                    view.model.get('substitutes').push(substitutePart);
+//                    view.collection.push(substitutePart);
+//
+//                }
+//            })[0];
         },
         bindTypeaheadSub: function () {
 
@@ -175,10 +194,10 @@ define([
         },
 
         getSelectedComponent: function () {
-            var self = this ;
+            var self = this;
             _(this.componentViews).select(function (view) {
                 if (view.isSelected()) {
-                     self.$selectedComponent = view;
+                    self.$selectedComponent = view;
                 }
             });
 

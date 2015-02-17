@@ -15,6 +15,7 @@ define([
             'change input[name=comment]': 'changeComment',
             'change input[name=number]': 'changeNumber',
             'change input[name=name]': 'changeName',
+            'change input[name=optional]': 'changeIsOptional',
             'input input[name=newUnit]': 'changeMeasureUnit',
             'click datalist[name=unitMeasure]': 'changeMeasureUnit',
             'click .add-cadInstance': 'addCadInstance',
@@ -57,8 +58,10 @@ define([
             this.$amount = this.$('input[name=amount]');
             this.$comment = this.$('input[name=comment]');
             this.$unitText = this.$('input[name=newUnit]');
+            this.$isOptional = this.$('input[name=optional]');
             this.$defaultUnity = this.$unitText.attr('default-unity');
             this.$collapseButton = this.$('.collapse-subParts-cadInstances');
+
 
         },
 
@@ -177,6 +180,9 @@ define([
         },
         changeName: function (e) {
             this.model.get('component').name = e.target.value;
+        },
+        changeIsOptional: function(){
+            this.model.set('optional',this.$isOptional.is(':checked'));
         },
         changeMeasureUnit: function (e) {
             this.model.set('unit', (e.target.value == this.$defaultUnity ? '' : e.target.value));
