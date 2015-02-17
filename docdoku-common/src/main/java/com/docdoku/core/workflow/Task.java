@@ -28,7 +28,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * <a href="Task.html">Task</a> is the smallest unit of work in a workflow.
+ * Task is the smallest unit of work in a workflow.
  *
  * @author Florent Garin
  * @version 1.0, 02/06/08

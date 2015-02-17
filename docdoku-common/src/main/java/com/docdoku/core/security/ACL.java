@@ -29,8 +29,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This class can be attached to a
- * <a href="DocumentMaster.html">DocumentMaster</a> so that an access control
+ * This class can be attached to any entity so that an access control
  * list will be applied.
  * In that way, the default access rights defined at the workspace level will be
  * overridden.

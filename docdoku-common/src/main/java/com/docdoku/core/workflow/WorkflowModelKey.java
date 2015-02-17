@@ -23,7 +23,7 @@ package com.docdoku.core.workflow;
 import java.io.Serializable;
 
 /**
- * Identity class of <a href="WorkflowModel.html">WorkflowModel</a> objects.
+ * Identity class of {@link WorkflowModel} objects.
  *
  * @author Florent Garin
  */

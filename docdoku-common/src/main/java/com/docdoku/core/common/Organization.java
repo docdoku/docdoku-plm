@@ -27,7 +27,7 @@ import java.util.Set;
 
 /**
  * The Organization class represents an entity which groups users
- * or more precisely <a href="Account.html">Account</a>
+ * or more precisely {@link Account}
  * as its validity spreads across workspaces.
  *
  * @author Florent Garin

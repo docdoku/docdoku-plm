@@ -28,7 +28,7 @@ import java.util.Date;
 
 /**
  * The Account class holds personal user data applicable inside the whole application.
- * However <a href="User.html">User</a> objects encapsulate personal information
+ * However {@link User} objects encapsulate personal information
  * only in the context of a particular workspace.
  *
  * @author Florent Garin
