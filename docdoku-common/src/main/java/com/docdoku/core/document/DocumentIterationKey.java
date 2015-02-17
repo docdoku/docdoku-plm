@@ -23,7 +23,7 @@ package com.docdoku.core.document;
 import java.io.Serializable;
 
 /**
- * Identity class of <a href="DocumentIteration.html">DocumentIteration</a> objects.
+ * Identity class of {@link DocumentIteration} objects.
  *
  * @author Florent Garin
  */

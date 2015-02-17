@@ -28,8 +28,7 @@ import java.io.Serializable;
 import java.util.Stack;
 
 /**
- * The <a href="Folder.html">Folder</a>
- * class is the unitary element of the tree structure.
+ * The {@link Folder} class is the unitary element of the tree structure.
  * Like in a regular file system, folder may contain other folders or documents.  
  * 
  * @author Florent Garin

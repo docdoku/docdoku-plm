@@ -27,8 +27,7 @@ import java.io.Serializable;
  * An Effectivity is an abstract subclass which is
  * a kind of qualification object.
  * 
- * Effectivities are primarily applied to
- * <a href="PartRevision.html">PartRevision</a> objects.
+ * Effectivities are primarily applied to {@link PartRevision} objects.
  * 
  * 
  * @author Florent Garin

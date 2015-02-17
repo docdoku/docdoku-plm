@@ -25,7 +25,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * The <code>WorkspaceLog</code> class represents an entry in the log
+ * The WorkspaceLog class represents an entry in the log
  * table that keeps track of all activities around a specific workspace.
  * 
  * @author Florent Garin

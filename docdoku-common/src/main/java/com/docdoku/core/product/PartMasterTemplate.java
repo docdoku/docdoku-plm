@@ -32,8 +32,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * A model object from which we can create a
- * <a href="PartMaster.html">PartMaster</a>.
+ * A model object from which we can create a {@link PartMaster}.
  * Creating a part through a model offers the ability to enforce a input
  * mask for the part ID, as well as some insuring that the starting
  * iteration defines some custom attributes or has some specific binary files.

@@ -30,8 +30,7 @@ import java.util.Map;
 
 /**
  * This class is the model used to create instances
- * of <a href="ParallelActivity.html">ParallelActivity</a> attached to
- * workflows.
+ * of {@link ParallelActivity} attached to workflows.
  * 
  * @author Florent Garin
  * @version 1.0, 02/06/08
