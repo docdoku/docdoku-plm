@@ -216,10 +216,10 @@ define([
 
             var substitutePart = {
                 unit: this.model.get('unit'),
-                amount: this.model.get('amount')
+                amount: this.model.get('amount'),
+                cadInstances : []
             };
             if (!substitutePart.unit || (substitutePart.unit == this.$defaultUnity) && substitutePart.amount > 1) {
-                substitutePart.cadInstances = [];
                 for (var i = 0; i < substitutePart.amount; i++) {
                     substitutePart.cadInstances.push({tx: 0, ty: 0, tz: 0, rx: 0, ry: 0, rz: 0});
                 }
