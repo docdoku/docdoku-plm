@@ -264,4 +264,14 @@ public class DocumentManagerBeanTest {
         Assert.assertNotNull(binaryResource);
         Assert.assertTrue(binaryResource.getContentLength() == DOCUMENT_SIZE);
     }
+
+    /**
+     *
+     * This test will check if the attributs is well manages if the documents has a template with freeze attributs
+     *
+     */
+    @Test
+    public void changeAttributs()throws Exception{
+
+    }
 }

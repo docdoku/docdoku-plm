@@ -680,6 +680,22 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 }
 
                 Set<InstanceAttribute> currentAttrs = new HashSet<>(partIte.getInstanceAttributes().values());
+                if (partRev.getPartMaster().isAttributesLocked()){
+                    //Check attributs haven't changed
+                    if (currentAttrs.size() != attrs.size()){
+                        throw new NotAllowedException(locale, "NotAllowedException45");
+                    } else {
+                        for (InstanceAttribute attr:currentAttrs){
+                            InstanceAttribute newVersion = attrs.get(attr.getName());
+                            if (newVersion == null
+                                    || newVersion.getClass().equals(attr.getClass()) == false){
+                                //Attribut has been swapped with a new attributs or his type has changed
+                                throw new NotAllowedException(locale, "NotAllowedException45");
+                            }
+                        }
+                    }
+                }
+
                 for (InstanceAttribute attr : currentAttrs) {
                     if (!attrs.containsKey(attr.getName())) {
                         partIte.getInstanceAttributes().remove(attr.getName());
