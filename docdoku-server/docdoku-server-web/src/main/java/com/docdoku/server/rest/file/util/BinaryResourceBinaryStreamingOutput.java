@@ -46,8 +46,9 @@ public class BinaryResourceBinaryStreamingOutput implements StreamingOutput {
         try {
             if(binaryContentInputStream==null){
                 LOGGER.log(Level.SEVERE,"The file input stream is null");
+            }else {
+                copy(binaryContentInputStream, outputStream, fullRange.start, fullRange.length, fullRange.total);
             }
-            copy(binaryContentInputStream, outputStream, fullRange.start, fullRange.length,fullRange.total);
         } catch (InterruptedStreamException e) {
             LOGGER.log(Level.WARNING,"Downloading file interrupted");
             LOGGER.log(Level.FINE,"Streaming file interruption",e);
