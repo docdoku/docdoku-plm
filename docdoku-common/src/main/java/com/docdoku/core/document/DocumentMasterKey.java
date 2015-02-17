@@ -23,7 +23,7 @@ package com.docdoku.core.document;
 import java.io.Serializable;
 
 /**
- * Identity class of <a href="DocumentMaster.html">DocumentMaster</a> objects.
+ * Identity class of {@link DocumentMaster} objects.
  *
  * @author Florent Garin
  */

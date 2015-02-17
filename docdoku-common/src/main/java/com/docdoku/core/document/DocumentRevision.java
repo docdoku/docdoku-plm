@@ -32,8 +32,7 @@ import java.io.Serializable;
 import java.util.*;
 
 /**
- * This class stands between <a href="DocumentMaster.html">DocumentMaster</a>
- * and <a href="DocumentIteration.html">DocumentIteration</a>.
+ * This class stands between {@link DocumentMaster} and {@link DocumentIteration}.
  * It represents a formal revision of a document and can have an attached workflow.
  * 
  * @author Florent Garin

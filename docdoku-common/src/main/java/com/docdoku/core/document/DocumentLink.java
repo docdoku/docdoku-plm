@@ -25,8 +25,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 
 /**
- * This is a link class used to connect an object to a
- * <a href="DocumentIteration.html">DocumentIteration</a>.
+ * This is a link class used to connect an object to a {@link DocumentIteration}.
  * Documents are not linked directly but rather through this class to get
  * a loosely coupling and to carry additional information.
  * 

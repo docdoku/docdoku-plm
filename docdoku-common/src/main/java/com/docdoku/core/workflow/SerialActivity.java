@@ -27,10 +27,10 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * <a href="SerialActivity.html">SerialActivity</a> is an activity where
+ * SerialActivity is an activity where
  * all tasks are launched subsequently in a specific order.
  * For the workflow to proceed to the next step, all tasks of 
- * <a href="SerialActivity.html">SerialActivity</a> should have been completed.
+ * SerialActivity should have been completed.
  * 
  * @author Florent Garin
  * @version 1.0, 02/06/08

@@ -33,7 +33,7 @@ import java.util.*;
 
 /**
  * This class encapsulates the various states of a part whereas its unchanging
- * attributes are hold on a <a href="PartMaster.html">PartMaster</a>.
+ * attributes are hold on a {@link PartMaster}.
  *
  * @author Florent Garin
  * @version 1.1, 18/05/11
