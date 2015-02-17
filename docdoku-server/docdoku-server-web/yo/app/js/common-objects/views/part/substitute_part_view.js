@@ -137,7 +137,6 @@ define([
                     var totalUnitToAdd = amount - this.$('.substitute .cadInstance').length;
                     for (var i = 0; i < totalUnitToAdd; i++) {
                         var instance = {tx: 0, ty: 0, tz: 0, rx: 0, ry: 0, rz: 0};
-//                       this.model.cadInstances.push(instance);
                         this.addCadInstanceView(instance);
                     }
                 }
