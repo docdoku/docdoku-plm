@@ -64,13 +64,14 @@ public class PartResourceTest {
     }
 
     @Test
-    public void updatePartIteration() {
+    public void createComponents() {
         //Given
         PartIterationDTO data = new PartIterationDTO(ResourceUtil.WORKSPACE_ID, "partNumber", "A", 1);
         List partUsageLinkDTOs = new ArrayList<PartUsageLinkDTO>();
         PartUsageLinkDTO partUsageLinkDTO = new PartUsageLinkDTO();
         partUsageLinkDTO.setAmount(2);
         partUsageLinkDTO.setUnit("");
+        partUsageLinkDTO.setOptional(true);
         partUsageLinkDTO.setComment("");
         ComponentDTO componentDTO = new ComponentDTO("component01");
         componentDTO.setStandardPart(false);
@@ -110,20 +111,14 @@ public class PartResourceTest {
             fail("Part Creation failed");
         }
 
-//        try {
-////            Method createComponentsMethod = ps.getClass().getDeclaredMethod("createComponents", String.class, List.class);
-////            createComponentsMethod.setAccessible(true);
-////            newComponents = (List<PartUsageLink>) createComponentsMethod.invoke(ps, "workspace", partUsageLinkDTOs);
-//
-//        } catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException e) {
-//            fail(" Part update failed");
-//        }
         //Then
         assertNotNull(newComponents);
         assertTrue(newComponents.size() == 1);
 
         //check the amount of substitutes parts
         assertTrue(newComponents.get(0).getCadInstances().size() == 2);
+        //check that the component is optional
+        assertTrue(newComponents.get(0).isOptional());
         // check if the cad instances mapping of the part usage link is correct
         assertTrue(newComponents.get(0).getCadInstances().get(0).getRx() == (Double) 12.0);
         assertTrue(newComponents.get(0).getCadInstances().get(0).getRy() == (Double) 12.0);
