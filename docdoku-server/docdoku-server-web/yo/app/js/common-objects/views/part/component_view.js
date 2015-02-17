@@ -20,7 +20,7 @@ define([
             'click datalist[name=unitMeasure]': 'changeMeasureUnit',
             'click .add-cadInstance': 'addCadInstance',
             'click .collapse-subParts-cadInstances': 'collapseTransformations',
-            'click .component': 'selectPart'
+            'click  #component': 'selectPart'
         },
 
 
@@ -198,12 +198,15 @@ define([
         },
 
 
-        selectPart: function () {
-            $('.component').toggleClass("selected-part", false);
-            this.$selectPart = !this.$selectPart;
-            this.$('.component').toggleClass("selected-part", this.$selectPart);
-            $("#createPartMenu").toggleClass('hidden', this.$selectPart);
-            $("#createSubPartMenu").toggleClass('hidden', !this.$selectPart);
+        selectPart: function (e) {
+            if(e.target.id == "component"){
+                $('.component').toggleClass("selected-part", false);
+                this.$selectPart = !this.$selectPart;
+                this.$('.component').toggleClass("selected-part", this.$selectPart);
+                $("#createPartMenu").toggleClass('hidden', this.$selectPart);
+                $("#createSubPartMenu").toggleClass('hidden', !this.$selectPart);
+            }
+
         },
         isSelected: function () {
             return this.$selectPart;

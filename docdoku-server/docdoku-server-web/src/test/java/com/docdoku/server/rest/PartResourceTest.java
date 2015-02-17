@@ -72,7 +72,8 @@ public class PartResourceTest {
         partUsageLinkDTO.setAmount(2);
         partUsageLinkDTO.setUnit("");
         partUsageLinkDTO.setOptional(true);
-        partUsageLinkDTO.setComment("");
+        partUsageLinkDTO.setComment("comment part usage link");
+        partUsageLinkDTO.setReferenceDescription("description part usage link");
         ComponentDTO componentDTO = new ComponentDTO("component01");
         componentDTO.setStandardPart(false);
         partUsageLinkDTO.setComponent(componentDTO);
@@ -114,11 +115,15 @@ public class PartResourceTest {
         //Then
         assertNotNull(newComponents);
         assertTrue(newComponents.size() == 1);
-
-        //check the amount of substitutes parts
-        assertTrue(newComponents.get(0).getCadInstances().size() == 2);
+        assertTrue(newComponents.get(0).getReferenceDescription().equals("description part usage link"));
+        assertTrue(newComponents.get(0).getComponent().getNumber().equals(componentDTO.getNumber()));
+        assertTrue(newComponents.get(0).getAmount() == 2);
+        assertTrue(newComponents.get(0).getUnit().isEmpty());
         //check that the component is optional
         assertTrue(newComponents.get(0).isOptional());
+        //check the amount of CADInstances
+        assertTrue(newComponents.get(0).getCadInstances().size() == 2);
+
         // check if the cad instances mapping of the part usage link is correct
         assertTrue(newComponents.get(0).getCadInstances().get(0).getRx() == (Double) 12.0);
         assertTrue(newComponents.get(0).getCadInstances().get(0).getRy() == (Double) 12.0);
@@ -133,7 +138,7 @@ public class PartResourceTest {
         assertTrue(newComponents.get(0).getCadInstances().get(1).getTx() == (Double) 52.0);
         assertTrue(newComponents.get(0).getCadInstances().get(1).getTy() == (Double) 14.0);
         assertTrue(newComponents.get(0).getCadInstances().get(1).getTz() == (Double) 45.0);
-
+        // check if the cad instances mapping of the substitute part usage link is correct
         assertTrue(newComponents.get(0).getSubstitutes().get(0).getCadInstances().size() == 3);
         assertTrue(newComponents.get(0).getSubstitutes().get(0).getCadInstances().get(0).getRx() == 10);
         assertTrue(newComponents.get(0).getSubstitutes().get(0).getCadInstances().get(0).getRy() == 11);
