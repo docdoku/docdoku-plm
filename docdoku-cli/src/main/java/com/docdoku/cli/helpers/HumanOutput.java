@@ -22,12 +22,14 @@ package com.docdoku.cli.helpers;
 
 import com.docdoku.cli.commands.HelpCommand;
 import com.docdoku.cli.interfaces.CommandLine;
+import com.docdoku.core.common.Account;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.configuration.ProductBaseline;
 import com.docdoku.core.product.Conversion;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartMaster;
 import com.docdoku.core.product.PartRevision;
+import org.codehaus.jettison.json.JSONException;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 
@@ -146,6 +148,14 @@ public class HumanOutput extends CliOutput{
         }
         System.out.println(LangHelper.getLocalizedMessage("ConversionStarted",locale) + " : " + conversion.getStartDate());
         System.out.println(LangHelper.getLocalizedMessage("ConversionEnded",locale) + " : " + conversion.getEndDate());
+    }
+
+    @Override
+    public void printAccount(Account account) throws JSONException {
+        System.out.println(account.getLogin());
+        System.out.println(account.getEmail());
+        System.out.println(account.getLanguage());
+        System.out.println(account.getTimeZone());
     }
 
     @Override

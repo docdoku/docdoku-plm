@@ -21,6 +21,7 @@
 package com.docdoku.cli.helpers;
 
 import com.docdoku.cli.interfaces.CommandLine;
+import com.docdoku.core.common.Account;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.configuration.ProductBaseline;
@@ -169,6 +170,16 @@ public class JSONOutput  extends CliOutput {
         cv.put("succeed",conversion.isSucceed());
         cv.put("startDate",conversion.getStartDate());
         cv.put("endDate",conversion.getEndDate());
+        System.out.println(cv.toString());
+    }
+
+    @Override
+    public void printAccount(Account account) throws JSONException {
+        JSONObject cv = new JSONObject();
+        cv.put("login",account.getLogin());
+        cv.put("language",account.getLanguage());
+        cv.put("email",account.getEmail());
+        cv.put("timezone",account.getTimeZone());
         System.out.println(cv.toString());
     }
 

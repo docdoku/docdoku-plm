@@ -21,6 +21,7 @@
 package com.docdoku.cli.helpers;
 
 import com.docdoku.cli.interfaces.CommandLine;
+import com.docdoku.core.common.Account;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.configuration.ProductBaseline;
 import com.docdoku.core.product.Conversion;
@@ -71,6 +72,7 @@ public abstract class CliOutput {
     public abstract void printPartRevision(PartRevision pr, long lastModified);
     public abstract void printPartMaster(PartMaster pm, long lastModified);
     public abstract void printConversion(Conversion conversion) throws JSONException;
+    public abstract void printAccount(Account account) throws JSONException;
 
     public abstract FilterInputStream getMonitor(long maximum, InputStream in);
 

@@ -20,14 +20,6 @@
                 $location.path('home');
             };
 
-            $scope.lang = localStorage.lang || 'en';
-
-            $scope.$watch('lang', function (newValue) {
-                if (newValue) {
-                    localStorage.lang = $scope.lang;
-                    $translate.use(newValue);
-                }
-            });
 
         });
 })();
