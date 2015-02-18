@@ -45,7 +45,7 @@ import java.util.List;
  *
  * @author Florent Garin
  */
-public class GetCommand extends AbstractCommandLine{
+public class PartGetCommand extends AbstractCommandLine{
 
 
     @Option(metaVar = "<revision>", name="-r", aliases = "--revision", usage="specify revision of the part to retrieve ('A', 'B'...); default is the latest")
@@ -173,6 +173,6 @@ public class GetCommand extends AbstractCommandLine{
 
     @Override
     public String getDescription() throws IOException {
-        return LangHelper.getLocalizedMessage("GetCommandDescription",user);
+        return LangHelper.getLocalizedMessage("PartGetCommandDescription",user);
     }
 }

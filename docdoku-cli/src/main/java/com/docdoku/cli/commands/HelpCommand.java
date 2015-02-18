@@ -50,7 +50,7 @@ public class HelpCommand extends AbstractCommandLine{
                 break;
 
             case "get":
-                cl=new GetCommand();
+                cl=new PartGetCommand();
                 break;
 
             case "put":

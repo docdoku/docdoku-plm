@@ -53,7 +53,13 @@ public class MainCommand {
                     }
                     break;
                 case "get":
-                     execCommand(new GetCommand(), Arrays.copyOfRange(args, 1, args.length));
+                    if(PART.equals(args[1])){
+                        execCommand(new PartGetCommand(), Arrays.copyOfRange(args, 2, args.length));
+                    } else if(DOCUMENT.equals(args[1])){
+                        execCommand(new DocumentGetCommand(), Arrays.copyOfRange(args, 2, args.length));
+                    }else{
+                        execCommand(new HelpCommand(), Arrays.copyOfRange(args, 1, args.length));
+                    }
                     break;
                 case "put":
                      execCommand(new PutCommand(), Arrays.copyOfRange(args, 1, args.length));
