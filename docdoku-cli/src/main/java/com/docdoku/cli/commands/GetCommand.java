@@ -20,7 +20,9 @@
 
 package com.docdoku.cli.commands;
 
+import com.docdoku.cli.helpers.AccountsManager;
 import com.docdoku.cli.helpers.FileHelper;
+import com.docdoku.cli.helpers.LangHelper;
 import com.docdoku.cli.helpers.MetaDirectoryManager;
 import com.docdoku.cli.tools.ScriptingTools;
 import com.docdoku.core.common.BinaryResource;
@@ -94,14 +96,14 @@ public class GetCommand extends AbstractCommandLine{
 
     private void loadMetadata() throws IOException {
         if(path.isDirectory()){
-            throw new IllegalArgumentException("<partnumber> or <revision> are not specified and the supplied path is not a file");
+            throw new IllegalArgumentException(LangHelper.getLocalizedMessage("PartNumberOrRevisionNotSpecified1",user));
         }
         MetaDirectoryManager meta = new MetaDirectoryManager(path.getParentFile());
         String filePath = path.getAbsolutePath();
         partNumber = meta.getPartNumber(filePath);
         String strRevision = meta.getRevision(filePath);
         if(partNumber==null || strRevision==null){
-            throw new IllegalArgumentException("<partnumber> or <revision> are not specified and cannot be inferred from file");
+            throw new IllegalArgumentException(LangHelper.getLocalizedMessage("PartNumberOrRevisionNotSpecified2",user));
         }
         revision = new Version(strRevision);
         //The part is inferred from the cad file, hence fetch the fresh (latest) iteration
@@ -121,13 +123,13 @@ public class GetCommand extends AbstractCommandLine{
             pi = cs.filterConfigSpec(pm);
 
             if(pi == null){
-                throw new IllegalArgumentException("Cannot find a part iteration in configuration "+ cs.getId());
+                throw new IllegalArgumentException(LangHelper.getLocalizedMessage("PartIterationNotFoundForConfiguration",user) + " " + cs.getId());
             }
 
             pr = pi.getPartRevision();
 
             if(null != pRevision && !pr.getVersion().equals(pRevision)){
-                throw new IllegalArgumentException("Config spec "+ cs.getId() + " and revision "+pRevision+" doesn't match");
+                throw new IllegalArgumentException(LangHelper.getLocalizedMessage("ConfigSpecNotMatchingRevision",user));
             }
 
         }else {
@@ -137,7 +139,7 @@ public class GetCommand extends AbstractCommandLine{
                 if(pIteration == 0){
                     pi = pr.getLastIteration();
                 }else if(pIteration > pr.getNumberOfIterations()){
-                    throw new IllegalArgumentException("Iteration " + pIteration + " doesn't exist");
+                    throw new IllegalArgumentException(LangHelper.getLocalizedMessage("IterationNotExisting",user));
                 }else{
                     pi = pr.getIteration(pIteration);
                 }
@@ -151,10 +153,10 @@ public class GetCommand extends AbstractCommandLine{
         BinaryResource bin = pi.getNativeCADFile();
 
         if(bin!=null){
-            FileHelper fh = new FileHelper(user,password,output);
+            FileHelper fh = new FileHelper(user,password,output,new AccountsManager().getUserLocale(user));
             fh.downloadNativeCADFile(getServerURL(), path, workspace, pPartNumber, pr, pi, force);
         }else{
-            output.printInfo("No file for part: "  + pPartNumber + " " + pr.getVersion() + "." + pi.getIteration() + " (" + workspace + ")");
+            output.printInfo(LangHelper.getLocalizedMessage("NoFileForPart",user) + " : "  + pPartNumber + " " + pr.getVersion() + "." + pi.getIteration() + " (" + workspace + ")");
         }
 
         if(recursive){
@@ -170,7 +172,7 @@ public class GetCommand extends AbstractCommandLine{
     }
 
     @Override
-    public String getDescription() {
-        return "Retrieve the cad file of the given part as well as its sub-components if the command is performed recursively.";
+    public String getDescription() throws IOException {
+        return LangHelper.getLocalizedMessage("GetCommandDescription",user);
     }
 }

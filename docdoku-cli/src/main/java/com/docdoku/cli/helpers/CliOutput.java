@@ -21,6 +21,7 @@
 package com.docdoku.cli.helpers;
 
 import com.docdoku.cli.interfaces.CommandLine;
+import com.docdoku.core.common.Account;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.configuration.ProductBaseline;
 import com.docdoku.core.product.Conversion;
@@ -29,8 +30,10 @@ import com.docdoku.core.product.PartRevision;
 import org.codehaus.jettison.json.JSONException;
 
 import java.io.FilterInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Locale;
 
 import static com.docdoku.cli.helpers.CliOutput.formats.HUMAN;
 
@@ -45,20 +48,20 @@ public abstract class CliOutput {
         HUMAN,
         JSON
     }
-    public static CliOutput getOutput(formats pFormat) {
+    public static CliOutput getOutput(formats pFormat, Locale pLocale) {
         formats format = pFormat;
         if(format == null){
             format = HUMAN;
         }
         switch(format){
-            case HUMAN: return new HumanOutput();
-            case JSON: return new JSONOutput();
-            default: return new HumanOutput();
+            case HUMAN: return new HumanOutput(pLocale);
+            case JSON: return new JSONOutput(pLocale);
+            default: return new HumanOutput(pLocale);
         }
     }
 
     public abstract void printException(Exception e);
-    public abstract void printCommandUsage(CommandLine cl);
+    public abstract void printCommandUsage(CommandLine cl) throws IOException;
     public abstract void printUsage();
     public abstract void printInfo(String s);
 
@@ -69,6 +72,7 @@ public abstract class CliOutput {
     public abstract void printPartRevision(PartRevision pr, long lastModified);
     public abstract void printPartMaster(PartMaster pm, long lastModified);
     public abstract void printConversion(Conversion conversion) throws JSONException;
+    public abstract void printAccount(Account account) throws JSONException;
 
     public abstract FilterInputStream getMonitor(long maximum, InputStream in);
 

@@ -629,7 +629,7 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
     public void deleteGCMAccount() throws AccountNotFoundException, GCMAccountNotFoundException {
         String callerLogin = ctx.getCallerPrincipal().toString();
         Account account = getAccount(callerLogin);
-        GCMAccountDAO gcmAccountDAO = new GCMAccountDAO(em);
+        GCMAccountDAO gcmAccountDAO = new GCMAccountDAO(new Locale(account.getLanguage()),em);
         GCMAccount gcmAccount = gcmAccountDAO.loadGCMAccount(account);
         gcmAccountDAO.deleteGCMAccount(gcmAccount);
     }
@@ -665,5 +665,11 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
     @Override
     public User whoAmI(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
         return checkWorkspaceReadAccess(pWorkspaceId);
+    }
+
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
+    @Override
+    public Account getMyAccount() throws AccountNotFoundException {
+        return getAccount(ctx.getCallerPrincipal().getName());
     }
 }

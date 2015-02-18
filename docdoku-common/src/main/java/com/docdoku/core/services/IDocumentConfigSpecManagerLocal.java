@@ -60,6 +60,9 @@ public interface IDocumentConfigSpecManagerLocal {
      * @param cs The current confSpec
      * @param completePath The complete path of the parent folder
      * @return The first level of subfolder filtered by a confSpec
+     * @throws UserNotFoundException
+     * @throws UserNotActiveException
+     * @throws WorkspaceNotFoundException
      */
     String[] getFilteredFolders(String workspaceId, ConfigSpec cs, String completePath) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
 
@@ -70,6 +73,10 @@ public interface IDocumentConfigSpecManagerLocal {
      * @param start Start with the start'th result
      * @param pMaxResults Number of result max
      * @return All documents with the tag filtered by a confSpec
+     * @throws UserNotFoundException
+     * @throws UserNotActiveException
+     * @throws WorkspaceNotFoundException
+     * @throws DocumentRevisionNotFoundException
      */
     DocumentRevision[] getFilteredDocuments(String workspaceId, ConfigSpec cs, int start, int pMaxResults) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentRevisionNotFoundException;
 
@@ -79,6 +86,9 @@ public interface IDocumentConfigSpecManagerLocal {
      * @param cs The current confSpec
      * @param completePath The complete path of the folder
      * @return All documents of the folder filtered by a confSpec
+     * @throws UserNotFoundException
+     * @throws UserNotActiveException
+     * @throws WorkspaceNotFoundException
      */
     DocumentRevision[] getFilteredDocumentsByFolder(String workspaceId, ConfigSpec cs, String completePath) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
 
@@ -87,6 +97,10 @@ public interface IDocumentConfigSpecManagerLocal {
      * @param workspaceId Workspace of the confspec
      * @param cs The current confSpec
      * @param tagKey The key of a specific tag
+     * @throws UserNotFoundException
+     * @throws UserNotActiveException
+     * @throws WorkspaceNotFoundException
+     * @throws DocumentRevisionNotFoundException
      * @return All documents with the tag filtered by a confSpec
      */
     DocumentRevision[] getFilteredDocumentsByTag(String workspaceId, ConfigSpec cs, TagKey tagKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentRevisionNotFoundException;
@@ -96,6 +110,11 @@ public interface IDocumentConfigSpecManagerLocal {
      * @param workspaceId Workspace of the confspec
      * @param cs The current confSpec
      * @param pQuery The search query
+     * @throws UserNotFoundException
+     * @throws UserNotActiveException
+     * @throws WorkspaceNotFoundException
+     * @throws DocumentRevisionNotFoundException
+     * @throws ESServerException
      * @return All documents with the tag filtered by a confSpec
      */
     DocumentRevision[] searchFilteredDocuments(String workspaceId, ConfigSpec cs, DocumentSearchQuery pQuery) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentRevisionNotFoundException, ESServerException;
@@ -104,6 +123,12 @@ public interface IDocumentConfigSpecManagerLocal {
      * Get a document revision filtered by a configuration specification
      * @param documentRevisionKey The document revision wanted
      * @param configSpec The current confSpec
+     * @throws AccessRightException
+     * @throws NotAllowedException
+     * @throws WorkspaceNotFoundException
+     * @throws UserNotFoundException
+     * @throws DocumentRevisionNotFoundException
+     * @throws UserNotActiveException
      * @return The document revision without the iteration following the baselined document
      */
     DocumentRevision getFilteredDocumentRevision(DocumentRevisionKey documentRevisionKey, ConfigSpec configSpec) throws AccessRightException, NotAllowedException, WorkspaceNotFoundException, UserNotFoundException, DocumentRevisionNotFoundException, UserNotActiveException;

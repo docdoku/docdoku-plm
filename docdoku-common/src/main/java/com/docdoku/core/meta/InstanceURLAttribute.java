@@ -26,7 +26,7 @@ import javax.persistence.Table;
 /**
  * Defines an URL type custom attribute of a document.
  * 
- * @author Emmanuel Nhan <emmanuel.nhan@insa-lyon.fr>
+ * @author Emmanuel Nhan
  * @version 1.0 23/07/2009
  * @since   V1.0
  */

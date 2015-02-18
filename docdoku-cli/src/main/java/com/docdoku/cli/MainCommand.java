@@ -84,6 +84,10 @@ public class MainCommand {
                 case "cv":
                     execCommand(new ConversionCommand(), Arrays.copyOfRange(args, 1, args.length));
                     break;
+                case "account":
+                case "a":
+                    execCommand(new AccountInfosCommand(), Arrays.copyOfRange(args, 1, args.length));
+                    break;
                 case "help":
                 case "?":
                 case "h":

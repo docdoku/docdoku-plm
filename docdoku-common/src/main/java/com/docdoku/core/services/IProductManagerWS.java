@@ -94,10 +94,11 @@ public interface IProductManagerWS{
      * 
      * @throws UserNotFoundException
      * @throws WorkspaceNotFoundException
-     * @throws com.docdoku.core.exceptions.AccessRightException
+     * @throws AccessRightException
      * @throws NotAllowedException
-     * @throws com.docdoku.core.exceptions.ConfigurationItemAlreadyExistsException
-     * @throws com.docdoku.core.exceptions.CreationException
+     * @throws ConfigurationItemAlreadyExistsException
+     * @throws CreationException
+     * @throws PartMasterNotFoundException
      */
     ConfigurationItem createConfigurationItem(String workspaceId, String id, String description, String designItemNumber) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, ConfigurationItemAlreadyExistsException, CreationException, PartMasterNotFoundException;
     
@@ -156,6 +157,9 @@ public interface IProductManagerWS{
      * @throws WorkflowModelNotFoundException
      * @throws PartMasterAlreadyExistsException
      * @throws CreationException
+     * @throws PartMasterTemplateNotFoundException
+     * @throws FileAlreadyExistsException
+     * @throws RoleNotFoundException
      */
     PartMaster createPartMaster(String workspaceId, String number, String name, boolean standardPart, String workflowModelId, String partRevisionDescription, String templateId, Map<String, String> roleMappings, ACLUserEntry[] userEntries, ACLUserGroupEntry[] userGroupEntries) throws NotAllowedException, UserNotFoundException, WorkspaceNotFoundException, AccessRightException, WorkflowModelNotFoundException, PartMasterAlreadyExistsException, CreationException, PartMasterTemplateNotFoundException, FileAlreadyExistsException, RoleNotFoundException;
 
@@ -196,6 +200,7 @@ public interface IProductManagerWS{
      * @throws UserNotFoundException
      * @throws UserNotActiveException
      * @throws WorkspaceNotFoundException
+     * @throws AccessRightException
      */
     PartRevision undoCheckOutPart(PartRevisionKey partRPK) throws NotAllowedException, PartRevisionNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException;
     
@@ -215,6 +220,7 @@ public interface IProductManagerWS{
      * @throws WorkspaceNotFoundException
      * @throws AccessRightException
      * @throws NotAllowedException
+     * @throws ESServerException
      */
     PartRevision checkInPart(PartRevisionKey partRPK) throws PartRevisionNotFoundException, UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, ESServerException;
 
@@ -473,6 +479,7 @@ public interface IProductManagerWS{
      * @throws UserNotActiveException
      * @throws WorkspaceNotFoundException
      * @throws PartRevisionNotFoundException
+     * @throws AccessRightException
      */
     PartRevision getPartRevision(PartRevisionKey partRPK) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException, AccessRightException;
    
@@ -492,7 +499,7 @@ public interface IProductManagerWS{
      * @throws PartRevisionNotFoundException
      * @throws AccessRightException
      */
-    PartIteration getPartIteration(PartIterationKey pPartIPK) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException, PartIterationNotFoundException;
+    PartIteration getPartIteration(PartIterationKey pPartIPK) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartIterationNotFoundException, PartRevisionNotFoundException, AccessRightException;
     
     /**
      * Finds part masters by their part number using like style query.
@@ -564,6 +571,7 @@ public interface IProductManagerWS{
      * @throws UserNotActiveException
      * @throws WorkspaceNotFoundException
      * @throws PartIterationNotFoundException
+     * @throws PartRevisionNotFoundException
      */
     void removeCADFileFromPartIteration(PartIterationKey partIKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartIterationNotFoundException, PartRevisionNotFoundException;
 

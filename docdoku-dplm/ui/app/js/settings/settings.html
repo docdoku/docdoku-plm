@@ -15,13 +15,6 @@
     <md-content class="md-padding">
         <form ng-submit="save()">
             <div class="row">
-                <md-radio-group ng-model="lang">
-                    <span>{{'LANG'|translate}}</span>
-                    <md-radio-button value="fr" aria-label="">{{'FR'|translate}}</md-radio-button>
-                    <md-radio-button value="en" aria-label=""> {{'EN'|translate}}</md-radio-button>
-                </md-radio-group>
-            </div>
-            <div class="row">
                 <md-text-float label="{{'USER' | translate}}" ng-model="configuration.user" required></md-text-float>
                 <md-text-float label="{{'PASSWORD' | translate}}" ng-model="configuration.password" type="password"
                                required></md-text-float>

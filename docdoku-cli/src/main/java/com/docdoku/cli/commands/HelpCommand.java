@@ -20,8 +20,11 @@
 
 package com.docdoku.cli.commands;
 
+import com.docdoku.cli.helpers.LangHelper;
 import com.docdoku.cli.interfaces.CommandLine;
 import org.kohsuke.args4j.Argument;
+
+import java.io.IOException;
 
 /**
  *
@@ -80,7 +83,7 @@ public class HelpCommand extends AbstractCommandLine{
     }
 
     @Override
-    public String getDescription() {
-        return "Describe the usage of this program or its subcommands.";
+    public String getDescription() throws IOException {
+        return LangHelper.getLocalizedMessage("HelpCommandDescription", user);
     }
 }

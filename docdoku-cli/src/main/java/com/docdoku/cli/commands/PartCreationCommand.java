@@ -20,7 +20,9 @@
 
 package com.docdoku.cli.commands;
 
+import com.docdoku.cli.helpers.AccountsManager;
 import com.docdoku.cli.helpers.FileHelper;
+import com.docdoku.cli.helpers.LangHelper;
 import com.docdoku.cli.tools.ScriptingTools;
 import com.docdoku.core.product.PartIterationKey;
 import com.docdoku.core.product.PartMaster;
@@ -31,6 +33,7 @@ import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  *
@@ -62,12 +65,12 @@ public class PartCreationCommand extends AbstractCommandLine {
         PartRevision pr = partMaster.getLastRevision();
         PartRevisionKey partRPK = new PartRevisionKey(workspace, partNumber, pr.getVersion());
         PartIterationKey partIPK = new PartIterationKey(partRPK, pr.getLastIteration().getIteration());
-        FileHelper fh = new FileHelper(user,password,output);
+        FileHelper fh = new FileHelper(user,password,output,new AccountsManager().getUserLocale(user));
         fh.uploadNativeCADFile(getServerURL(), cadFile, partIPK);
     }
 
     @Override
-    public String getDescription() {
-        return "Save the current local copy of the cad file to the server. The part will remain checked out.";
+    public String getDescription() throws IOException {
+        return LangHelper.getLocalizedMessage("PartCreationCommandDescription",user);
     }
 }

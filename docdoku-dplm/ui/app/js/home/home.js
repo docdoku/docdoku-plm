@@ -12,8 +12,14 @@
                     $scope.workspaces = WorkspaceService.getLastVisitedWorkspaces();
                 },
                 resolve:{
-                    conf:function(ConfigurationService,WorkspaceService){
-                        return ConfigurationService.checkAtStartup().then(WorkspaceService.getWorkspaces);
+                    conf:function(ConfigurationService,WorkspaceService,CliService,$translate){
+                        return ConfigurationService.checkAtStartup()
+                            .then(WorkspaceService.getWorkspaces)
+                            .then(CliService.fetchAccount)
+                            .then(function(account){
+                                localStorage.lang = account.language || 'en';
+                                $translate.use(localStorage.lang);
+                            });
                     }
                 },
                 templateUrl: 'js/home/home.html'

@@ -18,15 +18,31 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.cli.interfaces;
+package com.docdoku.cli.commands;
+
+import com.docdoku.cli.helpers.LangHelper;
+import com.docdoku.cli.tools.ScriptingTools;
+import com.docdoku.core.common.Account;
+import com.docdoku.core.services.IUserManagerWS;
 
 import java.io.IOException;
 
 /**
  *
- * @author Florent Garin
+ * @author Morgan Guimard
  */
-public interface CommandLine {
-    void exec() throws Exception;
-    String getDescription() throws IOException;
+public class AccountInfosCommand extends AbstractCommandLine{
+
+    private IUserManagerWS userS;
+
+    public void execImpl() throws Exception {
+        userS = ScriptingTools.createUserManagerService(getServerURL(),user,password);
+        Account account = userS.getMyAccount();
+        output.printAccount(account);
+    }
+
+    @Override
+    public String getDescription() throws IOException {
+        return LangHelper.getLocalizedMessage("AccountInfosCommandDescription",user);
+    }
 }

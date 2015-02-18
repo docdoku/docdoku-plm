@@ -363,5 +363,19 @@
 
             };
 
+            this.fetchAccount = function(){
+
+                var args = [
+                    'a',
+                    '-F', 'json',
+                    '-h', configuration.host,
+                    '-P', configuration.port,
+                    '-u', configuration.user,
+                    '-p', configuration.password
+                ];
+
+                return run(args);
+            }
+
         });
 })();

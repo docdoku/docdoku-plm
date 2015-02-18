@@ -20,7 +20,9 @@
 
 package com.docdoku.cli.commands;
 
+import com.docdoku.cli.helpers.AccountsManager;
 import com.docdoku.cli.helpers.FileHelper;
+import com.docdoku.cli.helpers.LangHelper;
 import com.docdoku.cli.helpers.MetaDirectoryManager;
 import com.docdoku.cli.tools.ScriptingTools;
 import com.docdoku.core.common.Version;
@@ -65,7 +67,7 @@ public class PutCommand extends AbstractCommandLine{
         PartIteration pi = pr.getLastIteration();
         PartIterationKey partIPK = new PartIterationKey(partRPK, pi.getIteration());
 
-        FileHelper fh = new FileHelper(user,password,output);
+        FileHelper fh = new FileHelper(user,password,output, new AccountsManager().getUserLocale(user));
         fh.uploadNativeCADFile(getServerURL(), cadFile, partIPK);
     }
 
@@ -75,12 +77,12 @@ public class PutCommand extends AbstractCommandLine{
         partNumber = meta.getPartNumber(filePath);
         String strRevision = meta.getRevision(filePath);
         if(partNumber==null || strRevision==null){
-            throw new IllegalArgumentException("<partnumber> or <revision> are not specified and cannot be inferred from file");
+            throw new IllegalArgumentException(LangHelper.getLocalizedMessage("PartNumberOrRevisionNotSpecified2",user));
         }
         revision = new Version(strRevision);
     }
     @Override
-    public String getDescription() {
-        return "Save the current local copy of the cad file to the server. The part will remain checked out.";
+    public String getDescription() throws IOException {
+        return LangHelper.getLocalizedMessage("PutCommandDescription", user);
     }
 }
