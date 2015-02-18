@@ -107,6 +107,7 @@ define([
         onRemove: function () {
             if (this.options.removeHandler && this.options.editMode) {
                 this.options.removeHandler();
+                this.$selectPart= false;
             }
         },
 
@@ -200,6 +201,7 @@ define([
 
         selectPart: function (e) {
             if(e.target.id == "component"){
+                this.options.undoSelect(this);
                 $('.component').toggleClass("selected-part", false);
                 this.$selectPart = !this.$selectPart;
                 this.$('.component').toggleClass("selected-part", this.$selectPart);
@@ -207,6 +209,12 @@ define([
                 $("#createSubPartMenu").toggleClass('hidden', !this.$selectPart);
             }
 
+        },
+        undoSelectPart: function(){
+            $('.component').toggleClass("selected-part", false);
+            this.$selectPart = false;
+            $("#createPartMenu").toggleClass('hidden', this.$selectPart);
+            $("#createSubPartMenu").toggleClass('hidden', !this.$selectPart);
         },
         isSelected: function () {
             return this.$selectPart;
