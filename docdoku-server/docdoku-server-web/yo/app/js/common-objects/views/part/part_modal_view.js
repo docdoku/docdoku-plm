@@ -12,7 +12,7 @@ define([
     'common-objects/views/workflow/lifecycle',
     'common-objects/views/part/conversion_status_view',
     'common-objects/utils/date'
-], function (Backbone,Mustache, ModalView, FileListView, template, AttributesView, PartsManagementView, LinkedDocumentsView, LinkedDocumentCollection, LifecycleView, ConversionStatusView, date) {
+], function (Backbone, Mustache, ModalView, FileListView, template, AttributesView, PartsManagementView, LinkedDocumentsView, LinkedDocumentCollection, LifecycleView, ConversionStatusView, date) {
     'use strict';
     var PartModalView = ModalView.extend({
 

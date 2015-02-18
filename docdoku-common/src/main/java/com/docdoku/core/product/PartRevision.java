@@ -220,6 +220,10 @@ public class PartRevision implements Serializable, Comparable<PartRevision>, Clo
         this.version = version;
     }
 
+    public String getType() {
+        return partMaster.getType();
+    }
+
     public Workflow getWorkflow() {
         return workflow;
     }

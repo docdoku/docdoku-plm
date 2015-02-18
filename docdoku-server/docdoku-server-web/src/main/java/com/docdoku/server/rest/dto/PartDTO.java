@@ -34,6 +34,7 @@ public class PartDTO implements Serializable {
     private String partKey;
     private String number;
     private String version;
+    private String type;
     private String name;
     private UserDTO author;
     private Date creationDate;
@@ -72,6 +73,14 @@ public class PartDTO implements Serializable {
     }
     public void setVersion(String version) {
         this.version = version;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public UserDTO getAuthor() {

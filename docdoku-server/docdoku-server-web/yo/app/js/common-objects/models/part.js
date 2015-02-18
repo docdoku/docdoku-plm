@@ -1,6 +1,6 @@
 /*global _,$,define,App,window*/
 define(['backbone', 'common-objects/utils/date', 'common-objects/collections/part_iteration_collection','common-objects/utils/acl-checker'],
-function (Backbone, Date, PartIterationList,ACLChecker) {
+function (Backbone, Date, PartIterationList, ACLChecker) {
     'use strict';
 
     var Part = Backbone.Model.extend({
@@ -26,6 +26,10 @@ function (Backbone, Date, PartIterationList,ACLChecker) {
 
         getNumber: function () {
             return this.get('number');
+        },
+
+        getType: function () {
+            return this.get('type');
         },
 
         getName: function () {
