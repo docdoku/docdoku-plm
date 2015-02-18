@@ -24,6 +24,7 @@ import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.meta.InstanceAttributeTemplate;
+import com.docdoku.core.workflow.WorkflowModel;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -90,6 +91,19 @@ public class PartMasterTemplate implements Serializable, Comparable<PartMasterTe
     @ManyToOne(optional=false, fetch=FetchType.EAGER)
     private Workspace workspace;
 
+
+    @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumns({
+            @JoinColumn(name="WORKFLOWMODEL_ID", referencedColumnName="ID"),
+            @JoinColumn(name="WORKFLOWMODEL_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID")
+    })
+    private WorkflowModel workflowModel;
+
+
+    @Column(name = "WORKFLOWMODEL_ID", length=100, insertable = false, updatable = false)
+    private String workflowModelId;
+
+
     public PartMasterTemplate() {
     }
 
@@ -108,6 +122,22 @@ public class PartMasterTemplate implements Serializable, Comparable<PartMasterTe
 
     public void setPartType(String partType) {
         this.partType = partType;
+    }
+
+    public String getWorkflowModelId() {
+        return workflowModelId;
+    }
+
+    public void setWorkflowModelId(String workflowModelId) {
+        this.workflowModelId = workflowModelId;
+    }
+
+    public WorkflowModel getWorkflowModel() {
+        return workflowModel;
+    }
+
+    public void setWorkflowModel(WorkflowModel workflowModel) {
+        this.workflowModel = workflowModel;
     }
 
     public String getMask(){
