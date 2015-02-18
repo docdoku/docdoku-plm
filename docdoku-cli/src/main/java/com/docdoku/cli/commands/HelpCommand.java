@@ -46,7 +46,7 @@ public class HelpCommand extends AbstractCommandLine{
         CommandLine cl;
         switch(command){
             case "status": case "stat": case "st":
-                cl=new StatusCommand();
+                cl=new PartStatusCommand();
                 break;
 
             case "get":

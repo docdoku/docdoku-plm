@@ -25,6 +25,8 @@ import com.docdoku.core.common.Account;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.configuration.ProductBaseline;
+import com.docdoku.core.document.DocumentIteration;
+import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.product.Conversion;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartMaster;
@@ -184,6 +186,11 @@ public class JSONOutput  extends CliOutput {
     }
 
     @Override
+    public void printDocumentRevision(DocumentRevision documentRevision, long lastModified) {
+        System.out.println(getDocumentRevision(documentRevision, lastModified));
+    }
+
+    @Override
     public FilterInputStream getMonitor(long maximum, InputStream in) {
         return new JSONProgressMonitorInputStream(maximum,in);
     }
@@ -223,6 +230,46 @@ public class JSONOutput  extends CliOutput {
                         partIterationJSonArray.put(partIteration.getIteration());
                     }
                     status.put("iterations", partIterationJSonArray);
+                }
+
+            }catch (JSONException e){
+
+            }
+        }
+
+        return status;
+    }
+
+    private JSONObject getDocumentRevision(DocumentRevision dr, long lastModified) {
+
+        JSONObject status = new JSONObject();
+
+        if(dr != null){
+
+            try{
+
+                User user = dr.getCheckOutUser();
+                String login = user != null ? user.getLogin() : "";
+                Date checkoutDate = dr.getCheckOutDate();
+                Long timeStamp = checkoutDate != null ? checkoutDate.getTime() : null;
+                status.put("isCheckedOut", dr.isCheckedOut());
+                status.put("id", dr.getDocumentMasterKey().getId());
+                status.put("checkoutUser", login);
+                status.put("checkoutDate", timeStamp);
+                status.put("workspace", dr.getWorkspaceId());
+                status.put("version", dr.getVersion());
+                status.put("description", dr.getDescription());
+                status.put("lastModified", lastModified);
+
+                if(dr.getLastIteration() != null && dr.getLastIteration().getAttachedFiles() != null) {
+                    JSONArray files = new JSONArray(dr.getLastIteration().getAttachedFiles());
+                    status.put("cadFileName", files);
+                }
+
+                List<DocumentIteration> documentIterations = dr.getDocumentIterations();
+                if (documentIterations != null) {
+                    JSONArray documentIterationsArray = new JSONArray(documentIterations);
+                    status.put("iterations", documentIterationsArray);
                 }
 
             }catch (JSONException e){

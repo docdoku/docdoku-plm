@@ -34,13 +34,23 @@ public class MainCommand {
   /*
   * Main function wrapper
   * */
-    public static void main(String[] args) {
+
+    private static final String PART = "part";
+    private static final String DOCUMENT = "document";
+
+     public static void main(String[] args) {
         try {
             switch (args[0]) {
                 case "status":
                 case "stat":
                 case "st":
-                    execCommand(new StatusCommand(), Arrays.copyOfRange(args, 1, args.length));
+                    if(PART.equals(args[1])){
+                        execCommand(new PartStatusCommand(), Arrays.copyOfRange(args, 2, args.length));
+                    } else if(DOCUMENT.equals(args[1])){
+                        execCommand(new DocumentStatusCommand(), Arrays.copyOfRange(args, 2, args.length));
+                    }else{
+                        execCommand(new HelpCommand(), Arrays.copyOfRange(args, 1, args.length));
+                    }
                     break;
                 case "get":
                      execCommand(new GetCommand(), Arrays.copyOfRange(args, 1, args.length));

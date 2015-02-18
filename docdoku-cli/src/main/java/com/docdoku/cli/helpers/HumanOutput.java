@@ -25,6 +25,8 @@ import com.docdoku.cli.interfaces.CommandLine;
 import com.docdoku.core.common.Account;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.configuration.ProductBaseline;
+import com.docdoku.core.document.DocumentIteration;
+import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.product.Conversion;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartMaster;
@@ -159,6 +161,11 @@ public class HumanOutput extends CliOutput{
     }
 
     @Override
+    public void printDocumentRevision(DocumentRevision dr, long lastModified) {
+        printRevisionStatus(1,dr);
+    }
+
+    @Override
     public FilterInputStream getMonitor(long maximum, InputStream in) {
         return new ConsoleProgressMonitorInputStream(maximum,in);
     }
@@ -215,4 +222,45 @@ public class HumanOutput extends CliOutput{
     }
 
 
+    private void printRevisionStatus(int revColSize, DocumentRevision dr){
+
+        String revision = fillWithEmptySpace(dr.getVersion(),revColSize);
+        DateFormat df = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.SHORT, Locale.US);
+
+        System.out.println("# " + dr.getDocumentMasterId());
+
+        String checkout = "";
+        if(dr.isCheckedOut()){
+            checkout = " "
+                    + LangHelper.getLocalizedMessage("CheckedOutBy",locale)
+                    + " "
+                    + dr.getCheckOutUser()
+                    + " "
+                    + LangHelper.getLocalizedMessage("On",locale)
+                    + " "
+                    + df.format(dr.getCheckOutDate());
+        }
+        System.out.println(LangHelper.getLocalizedMessage("Revision",locale) + " " + revision + checkout);
+        int iteColSize = (dr.getLastIteration().getIteration() +"").length();
+        int dateColSize=0;
+        int authorColSize=0;
+
+        for(DocumentIteration di:dr.getDocumentIterations()){
+            dateColSize = Math.max(dateColSize, df.format(di.getCreationDate()).length());
+            authorColSize = Math.max(authorColSize, di.getAuthor().toString().length());
+        }
+        for(DocumentIteration di:dr.getDocumentIterations()){
+            printIterationStatus(di, iteColSize, dateColSize +1, authorColSize+1);
+        }
+        System.out.println("");
+    }
+
+    private void printIterationStatus(DocumentIteration di, int iteColSize, int dateColSize, int authorColSize){
+        String iteration = fillWithEmptySpace(di.getIteration()+"", iteColSize+1);
+        DateFormat df = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.SHORT, Locale.US);
+        String date = fillWithEmptySpace(df.format(di.getCreationDate()), dateColSize);
+        String author = fillWithEmptySpace(di.getAuthor()+"", authorColSize);
+        String note = di.getRevisionNote()==null?"" : di.getRevisionNote();
+        System.out.println(iteration + " |" + date + " |" + author + " | " + note);
+    }
 }
