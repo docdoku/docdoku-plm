@@ -1209,7 +1209,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         template.setCreationDate(now);
         template.setIdGenerated(idGenerated);
 
-        Set<InstanceAttributeTemplate> attrs = new HashSet<>();
+        List<InstanceAttributeTemplate> attrs = new ArrayList<>();
         Collections.addAll(attrs, pAttributeTemplates);
         template.setAttributeTemplates(attrs);
 
@@ -1232,7 +1232,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         template.setIdGenerated(idGenerated);
         template.setAttributesLocked(attributesLocked);
 
-        Set<InstanceAttributeTemplate> attrs = new HashSet<>();
+        List<InstanceAttributeTemplate> attrs = new ArrayList<>();
         Collections.addAll(attrs, pAttributeTemplates);
 
         Set<InstanceAttributeTemplate> attrsToRemove = new HashSet<>(template.getAttributeTemplates());
