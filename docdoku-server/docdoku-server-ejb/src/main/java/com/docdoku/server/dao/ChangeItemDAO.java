@@ -140,20 +140,22 @@ public class ChangeItemDAO {
     }
 
     public List<ChangeItem> findChangeItemByDoc(DocumentRevisionKey documentRevisionKey){
+        String workspaceId = documentRevisionKey.getDocumentMaster().getWorkspace();
+        String id = documentRevisionKey.getDocumentMaster().getId();
         List<ChangeItem> changeItems = new ArrayList<>();
         changeItems.addAll(em.createQuery("SELECT c FROM ChangeIssue c , DocumentIteration i WHERE i member of c.affectedDocuments AND i.documentRevision.documentMaster.workspace.id = :workspaceId AND i.documentRevision.version = :version AND i.documentRevision.documentMasterId = :documentMasterId", ChangeIssue.class)
-                .setParameter("workspaceId", documentRevisionKey.getWorkspaceId())
-                .setParameter("documentMasterId", documentRevisionKey.getDocumentMasterId())
+                .setParameter("workspaceId", workspaceId)
+                .setParameter("documentMasterId", id)
                 .setParameter("version", documentRevisionKey.getVersion())                
                 .getResultList());
         changeItems.addAll(em.createQuery("SELECT c FROM ChangeRequest c , DocumentIteration i WHERE i member of c.affectedDocuments AND i.documentRevision.documentMaster.workspace.id = :workspaceId AND i.documentRevision.version = :version AND i.documentRevision.documentMasterId = :documentMasterId", ChangeRequest.class)
-                .setParameter("workspaceId", documentRevisionKey.getWorkspaceId())
-                .setParameter("documentMasterId", documentRevisionKey.getDocumentMasterId())
+                .setParameter("workspaceId", workspaceId)
+                .setParameter("documentMasterId", id)
                 .setParameter("version", documentRevisionKey.getVersion())
                 .getResultList());
         changeItems.addAll(em.createQuery("SELECT c FROM ChangeOrder c , DocumentIteration i WHERE i member of c.affectedDocuments AND i.documentRevision.documentMaster.workspace.id = :workspaceId AND i.documentRevision.version = :version AND i.documentRevision.documentMasterId = :documentMasterId", ChangeOrder.class)
-                .setParameter("workspaceId", documentRevisionKey.getWorkspaceId())
-                .setParameter("documentMasterId", documentRevisionKey.getDocumentMasterId())
+                .setParameter("workspaceId", workspaceId)
+                .setParameter("documentMasterId", id)
                 .setParameter("version", documentRevisionKey.getVersion())
                 .getResultList());
         return changeItems;

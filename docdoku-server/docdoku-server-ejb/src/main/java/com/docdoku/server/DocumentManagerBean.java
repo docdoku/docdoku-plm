@@ -255,7 +255,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             return documentRevision;
         }
 
-        User user = userManager.checkWorkspaceReadAccess(pDocRPK.getWorkspaceId());
+        User user = userManager.checkWorkspaceReadAccess(pDocRPK.getDocumentMaster().getWorkspace());
         Locale userLocale = new Locale(user.getLanguage());
         DocumentRevision docR = new DocumentRevisionDAO(userLocale, em).loadDocR(pDocRPK);
         if (isAnotherUserHomeFolder(user,docR.getLocation())) {
@@ -1233,7 +1233,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public DocumentRevision[] createDocumentRevision(DocumentRevisionKey pOriginalDocRPK, String pTitle, String pDescription, String pWorkflowModelId, ACLUserEntry[] pACLUserEntries, ACLUserGroupEntry[] pACLUserGroupEntries, Map<String,String> roleMappings) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, NotAllowedException, DocumentRevisionAlreadyExistsException, CreationException, WorkflowModelNotFoundException, RoleNotFoundException, DocumentRevisionNotFoundException, FileAlreadyExistsException {
-        User user = userManager.checkWorkspaceWriteAccess(pOriginalDocRPK.getWorkspaceId());
+        User user = userManager.checkWorkspaceWriteAccess(pOriginalDocRPK.getDocumentMaster().getWorkspace());
         Locale userLocale = new Locale(user.getLanguage());
         DocumentRevisionDAO docRDAO = new DocumentRevisionDAO(userLocale, em);
         DocumentRevision originalDocR = docRDAO.loadDocR(pOriginalDocRPK);
@@ -1298,8 +1298,8 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
                 Map.Entry pairs = (Map.Entry) o;
                 String roleName = (String) pairs.getKey();
                 String userLogin = (String) pairs.getValue();
-                User worker = userDAO.loadUser(new UserKey(pOriginalDocRPK.getWorkspaceId(), userLogin));
-                Role role = roleDAO.loadRole(new RoleKey(pOriginalDocRPK.getWorkspaceId(), roleName));
+                User worker = userDAO.loadUser(new UserKey(pOriginalDocRPK.getDocumentMaster().getWorkspace(), userLogin));
+                Role role = roleDAO.loadRole(new RoleKey(pOriginalDocRPK.getDocumentMaster().getWorkspace(), roleName));
                 roleUserMap.put(role, worker);
             }
 

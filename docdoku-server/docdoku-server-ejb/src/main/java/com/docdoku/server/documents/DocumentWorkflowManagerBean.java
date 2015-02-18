@@ -67,7 +67,7 @@ public class DocumentWorkflowManagerBean implements IDocumentWorkflowManagerLoca
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public Workflow getCurrentWorkflow(DocumentRevisionKey documentRevisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentRevisionNotFoundException, AccessRightException, WorkflowNotFoundException {
-        User user = userManager.checkWorkspaceReadAccess(documentRevisionKey.getWorkspaceId());
+        User user = userManager.checkWorkspaceReadAccess(documentRevisionKey.getDocumentMaster().getWorkspace());
         if(!documentManager.canUserAccess(user, documentRevisionKey)) {
             throw new AccessRightException(new Locale(user.getLanguage()), user);
         }
@@ -80,7 +80,7 @@ public class DocumentWorkflowManagerBean implements IDocumentWorkflowManagerLoca
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public Workflow[] getAbortedWorkflow(DocumentRevisionKey documentRevisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentRevisionNotFoundException, AccessRightException {
-        User user = userManager.checkWorkspaceReadAccess(documentRevisionKey.getWorkspaceId());
+        User user = userManager.checkWorkspaceReadAccess(documentRevisionKey.getDocumentMaster().getWorkspace());
         if(!documentManager.canUserAccess(user, documentRevisionKey)) {
             throw new AccessRightException(new Locale(user.getLanguage()), user);
         }

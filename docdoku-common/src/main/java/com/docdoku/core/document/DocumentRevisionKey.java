@@ -109,12 +109,4 @@ public class DocumentRevisionKey implements Serializable, Comparable<DocumentRev
         return clone;
     }
 
-
-    public String getWorkspaceId() {
-        return documentMaster.getWorkspace();
-    }
-
-    public String getDocumentMasterId() {
-        return documentMaster.getId();
-    }
 }

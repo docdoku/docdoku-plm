@@ -170,8 +170,8 @@ public class DocumentRevision implements Serializable, Comparable<DocumentRevisi
     }
     public void setDocumentMaster(DocumentMaster documentMaster) {
         this.documentMaster = documentMaster;
-        documentMasterId=documentMaster.getId();
-        documentMasterWorkspaceId=documentMaster.getWorkspaceId();
+        setDocumentMasterId(documentMaster.getId());
+        setDocumentMasterWorkspaceId(documentMaster.getWorkspaceId());
     }
 
     public DocumentRevisionKey getKey() {
@@ -344,6 +344,14 @@ public class DocumentRevision implements Serializable, Comparable<DocumentRevisi
         return documentMaster==null?"":documentMaster.getId();
     }
 
+
+    public void setDocumentMasterId(String pDocumentMasterId) {
+        documentMasterId=pDocumentMasterId;
+    }
+
+    public void setDocumentMasterWorkspaceId(String pDocumentMasterWorkspaceId) {
+        documentMasterWorkspaceId=pDocumentMasterWorkspaceId;
+    }
 
     public String getDocumentMasterId() {
         return documentMasterId;
