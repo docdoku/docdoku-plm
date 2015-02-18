@@ -30,6 +30,7 @@
       padding: 9px;
       width: 95%;
 
+
       a.remove, a.removeSub {
 
         margin: 5px;
@@ -53,45 +54,52 @@
         &[id="existingSubstituteParts"] {
           float: right;
         }
-        &[name="number"] {
-          width: 180px;
+        &[name="number"],&[name="substitute-number"] {
+          width: 160px;
         }
-        &[name="substitute-number"] {
-          width: 120px;
+
+        &[name="name"],&[name="substitute-name"] {
+          width: 160px;
         }
-        &[name="name"] {
-          width: 180px;
-        }
-        &[name="substitute-name"] {
-          width: 120px;
-        }
+
         &[name="substitute-comment-edit"] {
-          margin: 10px 0px 0px 21px;
-          width: 120px;
+          width: 160px;
         }
 
         &[name="amount"], &[name="substitute-amount"] {
-          width: 20px;
+          width: 61px;
         }
 
         &[name="comment"], &[name="substitute-comment"] {
-          width: 106px;
+          width: 158px;
+          margin-right: 6px
         }
 
         &[name="newUnit"], &[name="substitute-newUnit"] {
-          width: 60px;
+          width: 77px;
         }
 
-        &[list="unityChoice"] {
-          margin: 10px 22px;
-        }
+      &[name = "optional" ] {
+        margin-left: 10px;
+        margin-right: 5px;
+      }
+
+
       }
       select[name="unitMeasure"] {
         width: 72px;
       }
+      label {
+        &[name="optional"] {
+          display: inline;
+          vertical-align: middle;
+          padding-right: 15px;
+        }
+
+
+      }
 
       .add-cadInstance {
-        position: absolute;
         margin-top: 8px;
         cursor: pointer;
         opacity: 0.5;
@@ -128,8 +136,9 @@
         border-radius: 5px;
       }
       .cadInstances {
-        float: left;
+        margin: 10px 0px 0px 21px;
         clear: both;
+        display: inline-table;
         .cadInstance {
           h5 {
             font-weight: normal;
@@ -138,9 +147,9 @@
           clear: both;
           .coord-group {
             float: left;
-            width: 33%;
+            width: 45%;
             input.coord {
-              width: 20%;
+              width: 22%;
             }
             select {
               width: 90%;
@@ -155,6 +164,10 @@
               }
             }
           }
+          .coord-group-remove{
+            width: 10%;
+            margin-top: 4px;
+          }
 
           &:only-child {
             .remove-cadInstance {
@@ -164,19 +177,46 @@
         }
       }
 
+      .dataAlign{
+        margin: 10px 0px 0px 21px;
+      }
+
+
+
+
     }
     .component {
       opacity: 0.6;
-
       &:hover {
         opacity: 1;
-        cursor: hand;
+        cursor: pointer;
       }
     }
     .selected-part {
       opacity: 1;
       background-color: rgba(180, 182, 186, 0.31);
       box-shadow: inset 0 1px 1px rgba(157, 148, 148, 0.52);
+    }
+    .tooltip{
+      position: relative;
+      color: rgba(0, 0, 0, 0.4);
+      margin-right: 5px;
+      font-size: 14px;
+      text-decoration: none;
+      opacity: 1;
+    }
+    .tooltip:hover:after{
+      background: #333;
+      background: rgba(0,0,0,.8);
+      border-radius: 5px;
+      bottom: 26px;
+      color: #fff;
+      content: attr(data-tooltip);
+      left: 20%;
+      padding: 5px 15px;
+      position: absolute;
+      z-index: 98;
+      width: 220px;
     }
 
   }
@@ -194,8 +234,9 @@
 
   }
 
-  .subParts-CADInstance {
+  .subParts-CADInstance, .data-sub-part {
     display: none;
   }
+
 
 }

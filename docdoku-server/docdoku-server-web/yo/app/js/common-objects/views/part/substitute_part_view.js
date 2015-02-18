@@ -57,7 +57,7 @@ define([
             var self = this;
             _(this.model.cadInstances).each(function (instance) {
                 self.addCadInstanceView(instance);
-                self.$cadInstances.hide();
+//                self.$cadInstances.hide();
             });
         },
 
@@ -99,8 +99,8 @@ define([
         },
 
         collapseSubstituteTransformations: function () {
-            var isVisible = this.$cadInstances.is(':visible');
-            this.$cadInstances.toggle(!isVisible);
+            var isVisible = this.$(".data-sub-part").is(':visible');
+            this.$(".data-sub-part").toggle(!isVisible);
             this.$collapseButton.toggleClass('fa-angle-double-down', isVisible);
             this.$collapseButton.toggleClass('fa-angle-double-up', !isVisible);
         },
