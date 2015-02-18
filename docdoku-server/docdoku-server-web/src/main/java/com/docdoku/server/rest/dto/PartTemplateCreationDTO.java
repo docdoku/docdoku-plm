@@ -32,6 +32,7 @@ public class PartTemplateCreationDTO {
     private String attachedFiles;
     private Set<InstanceAttributeTemplateDTO> attributeTemplates;
     private boolean attributesLocked;
+    private String workflowModelId;
 
     public PartTemplateCreationDTO(){
     }
@@ -55,6 +56,14 @@ public class PartTemplateCreationDTO {
 
     public void setMask(String mask) {
         this.mask = mask;
+    }
+
+    public String getWorkflowModelId() {
+        return workflowModelId;
+    }
+
+    public void setWorkflowModelId(String workflowModelId) {
+        this.workflowModelId = workflowModelId;
     }
 
     public String getWorkspaceId() {

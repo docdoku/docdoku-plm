@@ -38,6 +38,7 @@ public class DocumentMasterTemplateDTO implements Serializable{
     private Date creationDate;
     private boolean idGenerated;
     private String mask;
+    private String workflowModelId;
 
     private List<String> attachedFiles;
     private Set<InstanceAttributeTemplateDTO> attributeTemplates;
@@ -78,9 +79,15 @@ public class DocumentMasterTemplateDTO implements Serializable{
         this.mask = mask;
     }
 
-    
-    
-    
+
+    public String getWorkflowModelId() {
+        return workflowModelId;
+    }
+
+    public void setWorkflowModelId(String workflowModelId) {
+        this.workflowModelId = workflowModelId;
+    }
+
     public String getId() {
         return id;
     }
