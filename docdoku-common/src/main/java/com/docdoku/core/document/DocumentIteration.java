@@ -103,7 +103,7 @@ public class DocumentIteration implements Serializable, FileHolder, Comparable<D
     private Set<DocumentLink> linkedDocuments = new HashSet<>();
     
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @MapKey(name = "name")
+    @OrderColumn(name="ATTRIBUTE_ORDER")
     @JoinTable(name = "DOCUMENTITERATION_ATTRIBUTE",
     inverseJoinColumns = {
         @JoinColumn(name = "INSTANCEATTRIBUTE_ID", referencedColumnName = "ID")
@@ -114,7 +114,7 @@ public class DocumentIteration implements Serializable, FileHolder, Comparable<D
         @JoinColumn(name = "DOCUMENTREVISION_VERSION", referencedColumnName = "DOCUMENTREVISION_VERSION"),
         @JoinColumn(name = "ITERATION", referencedColumnName = "ITERATION")
     })
-    private Map<String, InstanceAttribute> instanceAttributes = new HashMap<>();
+    private List<InstanceAttribute> instanceAttributes = new ArrayList<>();
 
     public DocumentIteration() {
     }
@@ -246,11 +246,11 @@ public class DocumentIteration implements Serializable, FileHolder, Comparable<D
         linkedDocuments=pLinkedDocuments;
     }
 
-    public Map<String, InstanceAttribute> getInstanceAttributes() {
+    public List<InstanceAttribute> getInstanceAttributes() {
         return instanceAttributes;
     }
 
-    public void setInstanceAttributes(Map<String, InstanceAttribute> pInstanceAttributes) {
+    public void setInstanceAttributes(List<InstanceAttribute> pInstanceAttributes) {
         instanceAttributes=pInstanceAttributes;
     }
 
@@ -328,10 +328,10 @@ public class DocumentIteration implements Serializable, FileHolder, Comparable<D
         clone.linkedDocuments = clonedLinks;
 
         //perform a deep copy
-        Map<String, InstanceAttribute> clonedInstanceAttributes = new HashMap<>();
-        for (InstanceAttribute attribute : instanceAttributes.values()) {
+        List<InstanceAttribute> clonedInstanceAttributes = new ArrayList<>();
+        for (InstanceAttribute attribute : instanceAttributes) {
             InstanceAttribute clonedAttribute = attribute.clone();
-            clonedInstanceAttributes.put(clonedAttribute.getName(), clonedAttribute);
+            clonedInstanceAttributes.add(clonedAttribute);
         }
         clone.instanceAttributes = clonedInstanceAttributes;
 

@@ -614,10 +614,10 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             newDoc = docR.createNextIteration(user);
 
 
-            Map<String, InstanceAttribute> attrs = new HashMap<>();
+            List<InstanceAttribute> attrs = new ArrayList<>();
             for (InstanceAttributeTemplate attrTemplate : template.getAttributeTemplates()) {
                 InstanceAttribute attr = attrTemplate.createInstanceAttribute();
-                attrs.put(attr.getName(), attr);
+                attrs.add(attr);
             }
             newDoc.setInstanceAttributes(attrs);
 
@@ -814,12 +814,12 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             newDoc.setLinkedDocuments(links);
 
             InstanceAttributeDAO attrDAO = new InstanceAttributeDAO(em);
-            Map<String, InstanceAttribute> attrs = new HashMap<>();
-            for (InstanceAttribute attr : beforeLastDocument.getInstanceAttributes().values()) {
+            List<InstanceAttribute> attrs = new ArrayList<>();
+            for (InstanceAttribute attr : beforeLastDocument.getInstanceAttributes()) {
                 InstanceAttribute newAttr = attr.clone();
                 //Workaround for the NULL DTYPE bug
                 attrDAO.createAttribute(newAttr);
-                attrs.put(newAttr.getName(), newAttr);
+                attrs.add(newAttr);
             }
             newDoc.setInstanceAttributes(attrs);
         }
@@ -1144,7 +1144,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public DocumentRevision updateDocument(DocumentIterationKey iKey, String pRevisionNote, InstanceAttribute[] pAttributes, DocumentIterationKey[] pLinkKeys) throws WorkspaceNotFoundException, NotAllowedException, DocumentRevisionNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException {
+    public DocumentRevision updateDocument(DocumentIterationKey iKey, String pRevisionNote, List<InstanceAttribute> pAttributes, DocumentIterationKey[] pLinkKeys) throws WorkspaceNotFoundException, NotAllowedException, DocumentRevisionNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException {
         DocumentRevisionKey rKey = new DocumentRevisionKey(iKey.getWorkspaceId(), iKey.getDocumentMasterId(), iKey.getDocumentRevisionVersion());
         User user = checkDocumentRevisionWriteAccess(rKey);
         Locale userLocale = new Locale(user.getLanguage());
@@ -1177,47 +1177,49 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
                     doc.getLinkedDocuments().add(newLink);
                 }
             }
-            
-            Map<String, InstanceAttribute> attrs = new HashMap<>();
-            for (InstanceAttribute attr : pAttributes) {
-                attrs.put(attr.getName(), attr);
-            }
 
-            Set<InstanceAttribute> currentAttrs = new HashSet<>(doc.getInstanceAttributes().values());
-
-            if (docR.getDocumentMaster().isAttributesLocked()){
-                //Check attributs haven't changed
-                if (currentAttrs.size() != attrs.size()){
-                    throw new NotAllowedException(userLocale, "NotAllowedException44");
-                } else {
-                    for (InstanceAttribute attr:currentAttrs){
-                        InstanceAttribute newVersion = attrs.get(attr.getName());
-                        if (newVersion == null
-                                || newVersion.getClass().equals(attr.getClass()) == false){
-                            //Attribut has been swapped with a new attributs or his type has changed
-                            throw new NotAllowedException(userLocale, "NotAllowedException44");
+            if (pAttributes != null) {
+                List<InstanceAttribute> currentAttrs = new ArrayList<>(doc.getInstanceAttributes());
+                if (docR.isAttributesLocked()){
+                    //Check attributs haven't changed
+                    if (currentAttrs.size() != pAttributes.size()){
+                        throw new NotAllowedException(userLocale, "NotAllowedException44");
+                    } else {
+                        for (int i=0;i<currentAttrs.size();i++){
+                            InstanceAttribute currentAttr=currentAttrs.get(i);
+                            InstanceAttribute newAttr = pAttributes.get(i);
+                            if (newAttr == null
+                                    || !newAttr.getName().equals(currentAttr.getName())
+                                    || !newAttr.getClass().equals(currentAttr.getClass())){
+                                //Attribut has been swapped with a new attributs or his type has changed
+                                throw new NotAllowedException(userLocale, "NotAllowedException44");
+                            }
                         }
                     }
                 }
-            }
 
-            for(InstanceAttribute attr:currentAttrs){
-                if(!attrs.containsKey(attr.getName())){
-                    doc.getInstanceAttributes().remove(attr.getName());
+                for (int i=0;i<currentAttrs.size();i++) {
+                    InstanceAttribute currentAttr=currentAttrs.get(i);
+
+                    if(i<pAttributes.size()) {
+                        InstanceAttribute newAttr = pAttributes.get(i);
+                        if (currentAttr.getClass() != newAttr.getClass()) {
+                            doc.getInstanceAttributes().set(i,newAttr);
+                        } else {
+                            doc.getInstanceAttributes().get(i).setName(newAttr.getName());
+                            doc.getInstanceAttributes().get(i).setValue(newAttr.getValue());
+                            doc.getInstanceAttributes().get(i).setMandatory(newAttr.isMandatory());
+                        }
+                    }else{
+                        //no more attribute to add remove all of them still end of iteration
+                        doc.getInstanceAttributes().remove(doc.getInstanceAttributes().size()-1);
+                    }
+                }
+                for(int i=currentAttrs.size();i<pAttributes.size();i++){
+                    InstanceAttribute newAttr = pAttributes.get(i);
+                    doc.getInstanceAttributes().add(newAttr);
                 }
             }
-
-            for(InstanceAttribute attr:attrs.values()){
-                if(!doc.getInstanceAttributes().containsKey(attr.getName())){
-                    doc.getInstanceAttributes().put(attr.getName(), attr);
-                }else if(doc.getInstanceAttributes().get(attr.getName()).getClass() != attr.getClass()){
-                    doc.getInstanceAttributes().remove(attr.getName());
-                    doc.getInstanceAttributes().put(attr.getName(), attr);
-                }else{
-                    doc.getInstanceAttributes().get(attr.getName()).setValue(attr.getValue());
-                }
-            }
-
             doc.setRevisionNote(pRevisionNote);
             Date now = new Date();
             doc.setModificationDate(now);
@@ -1279,10 +1281,10 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             }
             firstIte.setLinkedDocuments(links);
 
-            Map<String, InstanceAttribute> attrs = new HashMap<>();
-            for (InstanceAttribute attr : lastDoc.getInstanceAttributes().values()) {
+            List<InstanceAttribute> attrs = new ArrayList<>();
+            for (InstanceAttribute attr : lastDoc.getInstanceAttributes()) {
                 InstanceAttribute clonedAttribute = attr.clone();
-                attrs.put(clonedAttribute.getName(), clonedAttribute);
+                attrs.add(clonedAttribute);
             }
             firstIte.setInstanceAttributes(attrs);
         }

@@ -93,7 +93,7 @@ public class PartPermalinkServlet extends HttpServlet {
         }
 
         pRequest.setAttribute("partRevision", partRevision);
-        pRequest.setAttribute("attr",  new ArrayList<InstanceAttribute>(partIteration.getInstanceAttributes().values()));
+        pRequest.setAttribute("attr",  new ArrayList<>(partIteration.getInstanceAttributes()));
         pRequest.setAttribute("nativeCadFileURI",nativeCadFileURI);
         pRequest.setAttribute("geometryFileURI",geometryFileURI);
         pRequest.getRequestDispatcher(pRequest.getContextPath()+"/faces/partPermalink.xhtml").forward(pRequest, pResponse);
