@@ -8,26 +8,25 @@
 
     <i class="fa fa-angle-double-down collapse-subParts-cadInstances"></i>
 
-    <div class="subParts-CADInstance">
-        <div class="dataAlign">
+    <div class="dataAlign">
 
-            <input type="text" name="comment" value="{{model.comment}}" placeholder="{{i18n.PART_DESCRIPTION}}"{{^editMode}}readonly{{/editMode}}/>
-            <input type="text" name="amount" value="{{model.amount}}" title="{{i18n.AMOUNT}}"/>
-            <input type="text" name="newUnit" value="{{i18n.UNIT}}" default-unity="{{i18n.UNIT}}"
-            {{#editMode}}list="unity"{{/editMode}} {{^editMode}}readonly{{/editMode}}/>
-            <datalist id="unity" name="unitMeasure" class="unit unitEdit">
-                <option value="{{i18n.UNIT}}">
-                <option value="{{i18n.KG}}">
-                <option value="{{i18n.LITER}}">
-                <option value="{{i18n.METER}}">
-                <option value="{{i18n.SQUARE_METER}}">
-            </datalist>
-            {{#editMode}}<i class="fa fa-plus add-cadInstance"></i>{{/editMode}}
-        </div>
+        <input type="text" name="comment" value="{{model.comment}}" placeholder="{{i18n.PART_DESCRIPTION}}"{{^editMode}}readonly{{/editMode}}/>
+        <input type="text" name="amount" value="{{model.amount}}" title="{{i18n.AMOUNT}}"/>
+        <input type="text" name="newUnit" value="{{i18n.UNIT}}" default-unity="{{i18n.UNIT}}"
+        {{#editMode}}list="unity"{{/editMode}} {{^editMode}}readonly{{/editMode}}/>
+        <datalist id="unity" name="unitMeasure" class="unit unitEdit">
+            <option value="{{i18n.UNIT}}">
+            <option value="{{i18n.KG}}">
+            <option value="{{i18n.LITER}}">
+            <option value="{{i18n.METER}}">
+            <option value="{{i18n.SQUARE_METER}}">
+        </datalist>
+        {{#editMode}}<i class="fa fa-plus add-cadInstance"></i>{{/editMode}}
+    </div>
+    <div class="subParts-CADInstance">
 
         <div class="cadInstances"></div>
         <div class="substitute-parts"></div>
-
 
     </div>
 
@@ -40,6 +39,8 @@
     <input type="text" name="name" value="" placeholder="{{i18n.PART_NAME}}"/>
     <input type="checkbox" name="optional" title="{{i18n.OPTIONAL}}" {{^editMode}}readonly{{/editMode}}/><label
         name="optional">{{i18n.OPTIONAL}}</label>
+
+    <i class="fa fa-angle-double-down collapse-subParts-cadInstances"></i>
 
     <div class="dataAlign">
         <input type="text" name="comment" value="" placeholder="{{i18n.PART_DESCRIPTION}}"
@@ -57,11 +58,9 @@
                 {{/editMode}}
         </datalist>
 
-
         {{#editMode}}<i class="fa fa-plus add-cadInstance"></i>{{/editMode}}
 
     </div>
-    <i class="fa fa-angle-double-down collapse-subParts-cadInstances"></i>
 
     <div class="subParts-CADInstance">
         <div  class="cadInstances"></div>
