@@ -1,19 +1,34 @@
+/*
+ * DocDoku, Professional Open Source
+ * Copyright 2006 - 2015 DocDoku SARL
+ *
+ * This file is part of DocDokuPLM.
+ *
+ * DocDokuPLM is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * DocDokuPLM is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package com.docdoku.server;
 
 import com.docdoku.core.common.Account;
-import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.document.*;
 import com.docdoku.core.exceptions.NotAllowedException;
-import com.docdoku.core.exceptions.UserNotActiveException;
-import com.docdoku.core.exceptions.UserNotFoundException;
-import com.docdoku.core.exceptions.WorkspaceNotFoundException;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.meta.InstanceDateAttribute;
 import com.docdoku.core.meta.InstanceTextAttribute;
 import com.docdoku.core.product.*;
-import com.docdoku.core.security.ACL;
 import com.docdoku.core.services.IUserManagerLocal;
 import org.junit.Assert;
 import org.junit.Before;
@@ -21,8 +36,6 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.Spy;
-
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.Date;
@@ -30,9 +43,6 @@ import java.util.HashMap;
 
 import static org.mockito.MockitoAnnotations.initMocks;
 
-/**
- * Created by lebeaujulien on 19/02/15.
- */
 public class ProductManagerBeanTest {
 
     private static final String WORKSPACE_ID="TestWorkspace";
