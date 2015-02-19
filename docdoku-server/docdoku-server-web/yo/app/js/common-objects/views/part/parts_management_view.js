@@ -30,17 +30,18 @@ define([
                         var partNumbers = [];
                         _(data).each(function (d) {
                             if ((!that.model.getNumber()) || (that.model.getNumber() !== d.partNumber)) {
-                                partNumbers.push(d.partNumber);
+                                partNumbers.push(d.partNumber+", "+d.partName);
                             }
                         });
                         process(partNumbers);
                     });
                 },
-                updater: function (partKey) {
+                updater: function (part) {
                     var existingPart = {
                         amount: 1,
                         component: {
-                            number: partKey
+                            number: part.split(",")[0],
+                            name: part.split(",")[1].trim()
                         }
                     };
 
@@ -134,7 +135,7 @@ define([
                 comment: '',
                 amount: that.$selectedComponent.model.attributes.amount,
                 substitute: {
-                    name: '',
+                    name: "",
                     number: ""
                 },
                 cadInstances: [
@@ -155,20 +156,21 @@ define([
                         var partNumbers = [];
                         that.getSelectedComponent();
                         _(data).each(function (d) {
-                            if ((!that.model.get('number')) || (that.model.get('number') !== d.partNumber) && ((!that.$selectedComponent.model.get('component').number) || (that.$selectedComponent.model.get('component').number !== d.partNumber))) {
-                                partNumbers.push(d.partNumber);
+                            if ((!that.model.get('number')) || (that.model.get('number') !== d.partNumber)) {
+                                partNumbers.push(d.partNumber+", "+d.partName);
                             }
                         });
                         process(partNumbers)
                     });
                 },
-                updater: function (partKey) {
+                updater: function (part) {
                     var existingPart = {
                         amount: 1,
                         unit: '',
                         substitute: {
-                            number: partKey
-                        }
+                            number: part.split(",")[0],
+                            name: part.split(",")[1].trim()
+                }
                     };
                     that.getSelectedComponent();
                     that.$selectedComponent.model.get('substitutes').push(existingPart);

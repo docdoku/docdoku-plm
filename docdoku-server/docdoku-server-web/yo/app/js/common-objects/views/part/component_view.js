@@ -97,7 +97,13 @@ define([
             var self = this;
             var substitutePartView = new SubstitutePartView({model: model, editMode: this.options.editMode, removeSubHandler: function () {
                 self.collection.remove(model);
-                self.model.attributes.substitutes = _(self.model.attributes.substitutes).without(model);
+
+                if(self.model.attributes.substitutes.length == 1){
+                    self.model.attributes.substitutes = [];
+                }
+                else{
+                    self.model.attributes.substitutes = _(self.model.attributes.substitutes).without(model);
+                }
                 self.removeSubPart(model);
             }}).render();
             self.substitutePartViews.push(substitutePartView);
@@ -225,6 +231,7 @@ define([
             var substitutePart = {
                 unit: this.model.get('unit'),
                 amount: this.model.get('amount'),
+                comment:'',
                 cadInstances: []
             };
             if (!substitutePart.unit || (substitutePart.unit == this.$defaultUnity) && substitutePart.amount > 1) {
