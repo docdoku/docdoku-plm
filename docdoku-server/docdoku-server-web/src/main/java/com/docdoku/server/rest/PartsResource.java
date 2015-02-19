@@ -78,6 +78,7 @@ public class PartsResource {
 
         int maxResults = 20;
         List<PartRevision> partRevisions = productService.getPartRevisions(Tools.stripTrailingSlash(workspaceId), start, maxResults);
+
         List<PartDTO> partDTOs = new ArrayList<>();
 
         for(PartRevision partRevision : partRevisions){
@@ -123,7 +124,8 @@ public class PartsResource {
         List<PartMaster> partMasters = productService.findPartMasters(Tools.stripTrailingSlash(workspaceId), "%" + q + "%", 8);
         List<LightPartMasterDTO> partsMastersDTO = new ArrayList<>();
         for(PartMaster p : partMasters){
-            partsMastersDTO.add(new LightPartMasterDTO(p.getNumber()));
+            LightPartMasterDTO lightPartMasterDTO= new LightPartMasterDTO(p.getNumber(),p.getName());
+            partsMastersDTO.add(lightPartMasterDTO);
         }
         return partsMastersDTO;
     }

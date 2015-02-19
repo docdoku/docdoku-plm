@@ -23,12 +23,15 @@ package com.docdoku.server.rest.dto;
 public class LightPartMasterDTO {
 
     private String partNumber;
+    private String partName;
 
     public LightPartMasterDTO() {
     }
 
-    public LightPartMasterDTO(String partNumber) {
+
+    public LightPartMasterDTO(String partNumber,String partName) {
         this.partNumber = partNumber;
+        this.partName = partName;
     }
 
     public String getPartNumber() {
@@ -37,5 +40,13 @@ public class LightPartMasterDTO {
 
     public void setPartNumber(String partNumber) {
         this.partNumber = partNumber;
+    }
+
+    public String getPartName() {
+        return partName;
+    }
+
+    public void setPartName(String partName) {
+        this.partName = partName;
     }
 }

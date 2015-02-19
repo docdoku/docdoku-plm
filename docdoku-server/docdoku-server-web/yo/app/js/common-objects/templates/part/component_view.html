@@ -11,7 +11,7 @@
     <div class="subParts-CADInstance">
         <div class="dataAlign">
 
-            <input type="text" name="comment" value="{{model.comment}}" placeholder="{{i18n.PART_DESCRIPTION}}"{{^editMode}}readonly{{/editMode}}/>
+            <input type="text" name="comment" value="{{model.comment}}" placeholder="{{i18n.LINK_DESCRIPTION}}"{{^editMode}}readonly{{/editMode}}/>
             <input type="text" name="amount" value="{{model.amount}}" title="{{i18n.AMOUNT}}"/>
             <input type="text" name="newUnit" value="{{i18n.UNIT}}" default-unity="{{i18n.UNIT}}"
             {{#editMode}}list="unity"{{/editMode}} {{^editMode}}readonly{{/editMode}}/>
@@ -42,7 +42,7 @@
         name="optional">{{i18n.OPTIONAL}}</label>
 
     <div class="dataAlign">
-        <input type="text" name="comment" value="" placeholder="{{i18n.PART_DESCRIPTION}}"
+        <input type="text" name="comment" value="" placeholder="{{i18n.LINK_DESCRIPTION}}"
         {{^editMode}}readonly{{/editMode}}/>
         <input type="text" name="amount" value="{{model.amount}}" title="{{i18n.AMOUNT}}" disabled/>
         <input type="text" list="unityChoice" name="newUnit" value="{{i18n.UNIT}}" default-unity="{{i18n.UNIT}}"

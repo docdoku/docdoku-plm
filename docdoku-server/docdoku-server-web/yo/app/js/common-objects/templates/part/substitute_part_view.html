@@ -9,7 +9,7 @@
    <i class="fa fa-angle-double-down collapse-substitute-cadInstance"></i>
     <div class="data-sub-part">
         <div class="dataAlign">
-            <input type="text" name="substitute-comment" value="{{substitute.referenceDescription}}" />
+            <input type="text" name="substitute-comment" value="{{model.comment}}" placeholder="{{i18n.LINK_DESCRIPTION}}" />
             <input type="text" name="substitute-amount" value="{{model.amount}}" title="{{i18n.AMOUNT}}" disabled/>
             <input type="text" {{#editMode}}list="substitute-unityChoice"{{/editMode}} {{^editMode}}readonly{{/editMode}}
             name="substitute-newUnit" value="{{i18n.UNIT}}" default-substitute-unity="{{i18n.UNIT}}"/>
@@ -38,7 +38,7 @@
     <input type="text" name="substitute-number" value="" placeholder="{{i18n.PART_NUMBER}}" required/>
     <input type="text" name="substitute-name" value="" placeholder="{{i18n.PART_NAME}}"/>
     <div class="dataAlign">
-    <input type="text" name="substitute-comment-edit" value="" placeholder="{{i18n.DESCRIPTION}}"/>
+    <input type="text" name="substitute-comment-edit"  placeholder="{{i18n.LINK_DESCRIPTION}}"/>
     <input type="text" name="substitute-amount" value="" title="{{i18n.AMOUNT}}"/>
     <input type="text" {{#editMode}}list="substitute-unity"{{/editMode}} {{^editMode}}readonly{{/editMode}}
     name="substitute-newUnit" value="{{i18n.UNIT}}" default-substitute-unity="{{i18n.UNIT}}"/>

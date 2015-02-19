@@ -203,6 +203,7 @@ define({
 	LEAVE_NAV: "Stop the navigation",
 	LEFT_CLICK: "left click",
 	LIFECYCLE_STATE: "Life cycle state",
+    LINK_DESCRIPTION: "Link description",
 	LINKS: "Links",
     LOADING:'Loading',
 	LOCK_ATTRIBUTES: "Freeze attributes structure",
