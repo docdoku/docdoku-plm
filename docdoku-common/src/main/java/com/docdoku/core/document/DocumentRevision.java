@@ -386,7 +386,14 @@ public class DocumentRevision implements Serializable, Comparable<DocumentRevisi
     public boolean removeTag(Tag pTag){
         return tags.remove(pTag);
     }
-    
+
+    public boolean isAttributesLocked(){
+        if (this.documentMaster != null){
+            return this.documentMaster.isAttributesLocked();
+        }
+        return false;
+    }
+
     @Override
     public String toString() {
         return documentMaster.getId() + "-" + version;
@@ -433,12 +440,5 @@ public class DocumentRevision implements Serializable, Comparable<DocumentRevisi
     
     public void setLocation(Folder pLocation) {
         location = pLocation;
-    }
-
-    public String getAttributesLocked(){
-        if (this.documentMaster != null && this.documentMaster.isAttributesLocked()){
-            return this.documentMaster.isAttributesLocked() ? "true" : "false";
-        }
-        return "false";
     }
 }

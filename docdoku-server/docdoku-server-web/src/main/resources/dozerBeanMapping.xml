@@ -30,17 +30,6 @@
     </configuration>
     
     <mapping>
-        <class-a>com.docdoku.core.document.DocumentIteration</class-a>
-        <class-b>com.docdoku.server.rest.dto.DocumentIterationDTO</class-b>
-        <field custom-converter="com.docdoku.server.rest.converters.MapToListDozerConverter">
-            <a>instanceAttributes</a>
-            <b>instanceAttributes</b>
-            <a-hint>java.util.HashMap</a-hint>
-            <b-hint>java.util.ArrayList</b-hint>
-        </field>
-    </mapping>
-    
-    <mapping>
         <class-a>com.docdoku.core.document.DocumentLink</class-a>
         <class-b>com.docdoku.server.rest.dto.DocumentIterationDTO</class-b>
         <field>
@@ -58,17 +47,6 @@
         <field>
             <a>targetDocumentWorkspaceId</a>
             <b>workspaceId</b>
-        </field>
-    </mapping>
-
-    <mapping>
-        <class-a>com.docdoku.core.product.PartIteration</class-a>
-        <class-b>com.docdoku.server.rest.dto.PartIterationDTO</class-b>
-        <field custom-converter="com.docdoku.server.rest.converters.MapToListDozerConverter">
-            <a>instanceAttributes</a>
-            <b>instanceAttributes</b>
-            <a-hint>java.util.HashMap</a-hint>
-            <b-hint>java.util.ArrayList</b-hint>
         </field>
     </mapping>
 

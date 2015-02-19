@@ -180,10 +180,10 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             pm.setType(partMasterTemplate.getPartType());
             pm.setAttributesLocked(partMasterTemplate.isAttributesLocked());
 
-            Map<String, InstanceAttribute> attrs = new HashMap<>();
+            List<InstanceAttribute> attrs = new ArrayList<>();
             for (InstanceAttributeTemplate attrTemplate : partMasterTemplate.getAttributeTemplates()) {
                 InstanceAttribute attr = attrTemplate.createInstanceAttribute();
-                attrs.put(attr.getName(), attr);
+                attrs.add(attr);
             }
             ite.setInstanceAttributes(attrs);
 
@@ -364,12 +364,12 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             newPartIteration.setLinkedDocuments(links);
 
             InstanceAttributeDAO attrDAO = new InstanceAttributeDAO(em);
-            Map<String, InstanceAttribute> attrs = new HashMap<>();
-            for (InstanceAttribute attr : beforeLastPartIteration.getInstanceAttributes().values()) {
+            List<InstanceAttribute> attrs = new ArrayList<>();
+            for (InstanceAttribute attr : beforeLastPartIteration.getInstanceAttributes()) {
                 InstanceAttribute newAttr = attr.clone();
                 //Workaround for the NULL DTYPE bug
                 attrDAO.createAttribute(newAttr);
-                attrs.put(newAttr.getName(), newAttr);
+                attrs.add(newAttr);
             }
             newPartIteration.setInstanceAttributes(attrs);
         }
@@ -673,22 +673,19 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 partIte.setComponents(usageLinks);
             }
             if (pAttributes != null) {
-                // set doc for all attributes
-                Map<String, InstanceAttribute> attrs = new HashMap<>();
-                for (InstanceAttribute attr : pAttributes) {
-                    attrs.put(attr.getName(), attr);
-                }
 
-                Set<InstanceAttribute> currentAttrs = new HashSet<>(partIte.getInstanceAttributes().values());
-                if (partRev.getPartMaster().isAttributesLocked()){
+                List<InstanceAttribute> currentAttrs = partIte.getInstanceAttributes();
+                if (partRev.isAttributesLocked()){
                     //Check attributs haven't changed
-                    if (currentAttrs.size() != attrs.size()){
+                    if (currentAttrs.size() != pAttributes.size()){
                         throw new NotAllowedException(locale, "NotAllowedException45");
                     } else {
-                        for (InstanceAttribute attr:currentAttrs){
-                            InstanceAttribute newVersion = attrs.get(attr.getName());
-                            if (newVersion == null
-                                    || newVersion.getClass().equals(attr.getClass()) == false){
+                        for (int i=0;i<currentAttrs.size();i++){
+                            InstanceAttribute currentAttr=currentAttrs.get(i);
+                            InstanceAttribute newAttr = pAttributes.get(i);
+                            if (newAttr == null
+                                    || !newAttr.getName().equals(currentAttr.getName())
+                                    || !newAttr.getClass().equals(currentAttr.getClass())){
                                 //Attribut has been swapped with a new attributs or his type has changed
                                 throw new NotAllowedException(locale, "NotAllowedException45");
                             }
@@ -696,21 +693,26 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                     }
                 }
 
-                for (InstanceAttribute attr : currentAttrs) {
-                    if (!attrs.containsKey(attr.getName())) {
-                        partIte.getInstanceAttributes().remove(attr.getName());
+                for (int i=0;i<currentAttrs.size();i++) {
+                    InstanceAttribute currentAttr=currentAttrs.get(i);
+
+                    if(i<pAttributes.size()) {
+                        InstanceAttribute newAttr = pAttributes.get(i);
+                        if (currentAttr.getClass() != newAttr.getClass()) {
+                            partIte.getInstanceAttributes().set(i,newAttr);
+                        } else {
+                            partIte.getInstanceAttributes().get(i).setName(newAttr.getName());
+                            partIte.getInstanceAttributes().get(i).setValue(newAttr.getValue());
+                            partIte.getInstanceAttributes().get(i).setMandatory(newAttr.isMandatory());
+                        }
+                    }else{
+                        //no more attribute to add remove all of them still end of iteration
+                        partIte.getInstanceAttributes().remove(partIte.getInstanceAttributes().size()-1);
                     }
                 }
-
-                for (InstanceAttribute attr : attrs.values()) {
-                    if(!partIte.getInstanceAttributes().containsKey(attr.getName())){
-                        partIte.getInstanceAttributes().put(attr.getName(), attr);
-                    }else if(partIte.getInstanceAttributes().get(attr.getName()).getClass() != attr.getClass()){
-                        partIte.getInstanceAttributes().remove(attr.getName());
-                        partIte.getInstanceAttributes().put(attr.getName(), attr);
-                    }else{
-                        partIte.getInstanceAttributes().get(attr.getName()).setValue(attr.getValue());
-                    }
+                for(int i=currentAttrs.size();i<pAttributes.size();i++){
+                    InstanceAttribute newAttr = pAttributes.get(i);
+                    partIte.getInstanceAttributes().add(newAttr);
                 }
             }
 
@@ -1564,10 +1566,10 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             }
             firstPartI.setLinkedDocuments(links);
 
-            Map<String, InstanceAttribute> attrs = new HashMap<>();
-            for (InstanceAttribute attr : lastPartI.getInstanceAttributes().values()) {
+            List<InstanceAttribute> attrs = new ArrayList<>();
+            for (InstanceAttribute attr : lastPartI.getInstanceAttributes()) {
                 InstanceAttribute clonedAttribute = attr.clone();
-                attrs.put(clonedAttribute.getName(), clonedAttribute);
+                attrs.add(clonedAttribute);
             }
             firstPartI.setInstanceAttributes(attrs);
 

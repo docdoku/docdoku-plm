@@ -217,7 +217,7 @@ public class DocumentResource {
         }
 
         List<InstanceAttributeDTO> instanceAttributes = data.getInstanceAttributes();
-        InstanceAttribute[] attributes = null;
+        List<InstanceAttribute> attributes = null;
         if (instanceAttributes != null) {
             attributes = createInstanceAttributes(instanceAttributes);
         }
@@ -427,14 +427,13 @@ public class DocumentResource {
         return abortedWorkflowsDTO;
     }
 
-    private InstanceAttribute[] createInstanceAttributes(List<InstanceAttributeDTO> dtos) {
+    private List<InstanceAttribute> createInstanceAttributes(List<InstanceAttributeDTO> dtos) {
         if (dtos == null) {
-            return new InstanceAttribute[0];
+            return new ArrayList<>();
         }
-        InstanceAttribute[] data = new InstanceAttribute[dtos.size()];
-        int i = 0;
+        List<InstanceAttribute> data = new ArrayList<>();
         for (InstanceAttributeDTO dto : dtos) {
-            data[i++] = createInstanceAttribute(dto);
+            data.add(createInstanceAttribute(dto));
         }
 
         return data;

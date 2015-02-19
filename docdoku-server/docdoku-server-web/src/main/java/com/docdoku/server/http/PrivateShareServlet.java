@@ -159,7 +159,7 @@ public class PrivateShareServlet extends HttpServlet {
             }
 
             pRequest.setAttribute("documentRevision", documentRevision);
-            pRequest.setAttribute("attr",  new ArrayList<>(documentIteration.getInstanceAttributes().values()));
+            pRequest.setAttribute("attr", new ArrayList<>(documentIteration.getInstanceAttributes()));
             pRequest.getRequestDispatcher(pRequest.getContextPath()+"/faces/documentPermalink.xhtml").forward(pRequest, pResponse);
 
         }else if(sharedEntity instanceof SharedPart){
@@ -186,7 +186,7 @@ public class PrivateShareServlet extends HttpServlet {
             }
 
             pRequest.setAttribute("partRevision", partRevision);
-            pRequest.setAttribute("attr",  new ArrayList<>(partIteration.getInstanceAttributes().values()));
+            pRequest.setAttribute("attr", new ArrayList<>(partIteration.getInstanceAttributes()));
             pRequest.setAttribute("nativeCadFileURI",nativeCadFileURI);
             pRequest.setAttribute("geometryFileURI",geometryFileURI);
             pRequest.getRequestDispatcher(pRequest.getContextPath()+"/faces/partPermalink.xhtml").forward(pRequest, pResponse);

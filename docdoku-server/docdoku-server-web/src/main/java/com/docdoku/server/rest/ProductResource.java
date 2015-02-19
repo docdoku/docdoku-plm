@@ -242,7 +242,7 @@ public class ProductResource {
             }
 
             if (partI != null) {
-                for (InstanceAttribute attr : partI.getInstanceAttributes().values()) {
+                for (InstanceAttribute attr : partI.getInstanceAttributes()) {
                     lstAttributes.add(mapper.map(attr, InstanceAttributeDTO.class));
                 }
                 if (newdepth != 0) {
