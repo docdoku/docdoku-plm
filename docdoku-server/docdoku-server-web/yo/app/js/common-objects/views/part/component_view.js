@@ -107,7 +107,7 @@ define([
         onRemove: function () {
             if (this.options.removeHandler && this.options.editMode) {
                 this.options.removeHandler();
-                this.$selectPart= false;
+                this.$selectPart = false;
             }
         },
 
@@ -156,7 +156,7 @@ define([
         },
         checkIntegrity: function (unit) {
 
-            var totalCADInstances= this.$('.subParts-CADInstance>.cadInstances >.cadInstance').length;
+            var totalCADInstances = this.$('.subParts-CADInstance>.cadInstances >.cadInstance').length;
             if (!unit || unit == this.$defaultUnity) {
 
                 if (parseInt(this.$amount.val(), 10) > totalCADInstances) {
@@ -167,7 +167,7 @@ define([
                         this.addCadInstanceView(instance);
                     }
                 }
-                if (parseInt(this.$amount.val(), 10) < totalCADInstances){
+                if (parseInt(this.$amount.val(), 10) < totalCADInstances) {
                     var totalToDelete = totalCADInstances - parseInt(this.$amount.val(), 10);
                     this.$(".subParts-CADInstance>.cadInstances >.cadInstance").slice(-totalToDelete).remove();
                 }
@@ -200,7 +200,7 @@ define([
 
 
         selectPart: function (e) {
-            if(e.target.id == "component" || e.target.parentNode.className == "cadInstance" || e.target.parentNode.className== "cadInstances"){
+            if (e.target.id == "component" || e.target.parentNode.className == "cadInstance" || e.target.parentNode.className == "cadInstances") {
                 this.options.undoSelect(this);
                 $('.component').toggleClass("selected-part", false);
                 this.$selectPart = !this.$selectPart;
@@ -210,7 +210,7 @@ define([
             }
 
         },
-        undoSelectPart: function(){
+        undoSelectPart: function () {
             $('.component').toggleClass("selected-part", false);
             this.$selectPart = false;
             $("#createPartMenu").toggleClass('hidden', this.$selectPart);
@@ -225,7 +225,7 @@ define([
             var substitutePart = {
                 unit: this.model.get('unit'),
                 amount: this.model.get('amount'),
-                cadInstances : []
+                cadInstances: []
             };
             if (!substitutePart.unit || (substitutePart.unit == this.$defaultUnity) && substitutePart.amount > 1) {
                 for (var i = 0; i < substitutePart.amount; i++) {
