@@ -26,12 +26,17 @@ import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.document.*;
 import com.docdoku.core.exceptions.NotAllowedException;
+import com.docdoku.core.meta.InstanceAttribute;
+import com.docdoku.core.meta.InstanceAttributeTemplate;
+import com.docdoku.core.meta.InstanceDateAttribute;
+import com.docdoku.core.meta.InstanceTextAttribute;
 import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.services.IGCMSenderLocal;
 import com.docdoku.core.services.IMailerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
+import com.docdoku.server.dao.DocumentRevisionDAO;
 import com.docdoku.server.esindexer.ESIndexer;
 import com.docdoku.server.esindexer.ESSearcher;
 import org.junit.Assert;
@@ -46,8 +51,7 @@ import javax.ejb.SessionContext;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
-import java.util.ArrayList;
-import java.util.Date;
+import java.util.*;
 
 import static org.mockito.MockitoAnnotations.initMocks;
 
@@ -271,7 +275,103 @@ public class DocumentManagerBeanTest {
      *
      */
     @Test
-    public void changeAttributs()throws Exception{
+    public void changeAttributsWithLockedTemplate()throws Exception{
 
+        DocumentMaster documentMaster = new DocumentMaster(workspace, DOCUMENT_ID,user);
+
+
+        documentRevision = new DocumentRevision(documentMaster, "A", user);
+        documentIteration = new DocumentIteration(documentRevision, 1, user);
+        documentRevision.setCheckOutUser(user);
+        documentRevision.setCheckOutDate(new Date());
+        ArrayList<DocumentIteration> iterations = new ArrayList<DocumentIteration>();
+        iterations.add(documentIteration);
+        documentRevision.setDocumentIterations(iterations);
+
+        DocumentRevisionKey rKey = new DocumentRevisionKey(workspace.getId(), documentMaster.getId(), documentRevision.getVersion());
+
+        //Creation of current attributs of the iteration
+        InstanceAttribute attribut = new InstanceTextAttribute("Nom", "Testeur", false);
+        HashMap<String, InstanceAttribute> attributsOfIteration = new HashMap<>();
+        attributsOfIteration.put(attribut.getName(), attribut);
+        documentIteration.setInstanceAttributes(attributsOfIteration);
+
+        documentMaster.setAttributesLocked(true);
+
+        Mockito.when(userManager.checkWorkspaceReadAccess(workspace.getId())).thenReturn(user);
+        Mockito.when(userManager.checkWorkspaceWriteAccess(workspace.getId())).thenReturn(user);
+        Mockito.when(em.find(DocumentRevision.class, null)).thenReturn(documentRevision);
+        Mockito.when(em.find(DocumentRevision.class, rKey)).thenReturn(documentRevision);
+
+
+        try{
+            //Test to remove attribut
+            documentManagerBean.updateDocument(documentIteration.getKey(), "test", new InstanceAttribute[]{}, new DocumentIterationKey[]{});
+            Assert.assertTrue("updateDocument should have raise an exception because we have removed attributs", false);
+        }catch (NotAllowedException notAllowedException){
+            try{
+                //Test with a swipe of attribut
+                documentManagerBean.updateDocument(documentIteration.getKey(), "test", new InstanceAttribute[]{new InstanceDateAttribute("Nom", new Date(), false)}, new DocumentIterationKey[]{});
+                Assert.assertTrue("updateDocument should have raise an exception because we have changed the attribut type attributs", false);
+            }catch (NotAllowedException notAllowedException2){
+                try {
+                    //Test without modifying the attribut
+                    documentManagerBean.updateDocument(documentIteration.getKey(), "test", new InstanceAttribute[]{attribut}, new DocumentIterationKey[]{});
+                    //Test with a new value of the attribut
+                    documentManagerBean.updateDocument(documentIteration.getKey(), "test", new InstanceAttribute[]{new InstanceTextAttribute("Nom", "Testeur change", false)}, new DocumentIterationKey[]{});
+                } catch (NotAllowedException notAllowedException3){
+                    Assert.assertTrue("updateDocument shouldn't have raised an exception because we haven't change the number of attribut or the type", false);
+                }
+            }
+        }
+    }
+
+    /**
+     *
+     * This test will check if the attributs is well manages if the documents has a template with freeze attributs
+     *
+     */
+    @Test
+    public void changeAttributsWithUnlockedTemplate()throws Exception{
+
+        DocumentMaster documentMaster = new DocumentMaster(workspace, DOCUMENT_ID,user);
+
+
+        documentRevision = new DocumentRevision(documentMaster, "A", user);
+        documentIteration = new DocumentIteration(documentRevision, 1, user);
+        documentRevision.setCheckOutUser(user);
+        documentRevision.setCheckOutDate(new Date());
+        ArrayList<DocumentIteration> iterations = new ArrayList<DocumentIteration>();
+        iterations.add(documentIteration);
+        documentRevision.setDocumentIterations(iterations);
+
+        DocumentRevisionKey rKey = new DocumentRevisionKey(workspace.getId(), documentMaster.getId(), documentRevision.getVersion());
+
+        //Creation of current attributs of the iteration
+        InstanceAttribute attribut = new InstanceTextAttribute("Nom", "Testeur", false);
+        HashMap<String, InstanceAttribute> attributsOfIteration = new HashMap<>();
+        attributsOfIteration.put(attribut.getName(), attribut);
+        documentIteration.setInstanceAttributes(attributsOfIteration);
+
+        documentMaster.setAttributesLocked(false);
+
+        Mockito.when(userManager.checkWorkspaceReadAccess(workspace.getId())).thenReturn(user);
+        Mockito.when(userManager.checkWorkspaceWriteAccess(workspace.getId())).thenReturn(user);
+        Mockito.when(em.find(DocumentRevision.class, null)).thenReturn(documentRevision);
+        Mockito.when(em.find(DocumentRevision.class, rKey)).thenReturn(documentRevision);
+
+
+        try{
+            //Test to remove attribute
+            documentManagerBean.updateDocument(documentIteration.getKey(), "test", new InstanceAttribute[]{}, new DocumentIterationKey[]{});
+            //Add the attribut
+            documentManagerBean.updateDocument(documentIteration.getKey(), "test", new InstanceAttribute[]{attribut}, new DocumentIterationKey[]{});
+            //Change the value of the attribut
+            documentManagerBean.updateDocument(documentIteration.getKey(), "test", new InstanceAttribute[]{new InstanceTextAttribute("Nom", "Testeur change", false)}, new DocumentIterationKey[]{});
+            //Change the type of the attribut
+            documentManagerBean.updateDocument(documentIteration.getKey(), "test", new InstanceAttribute[]{new InstanceDateAttribute("Nom", new Date(), false)}, new DocumentIterationKey[]{});
+        } catch (NotAllowedException notAllowedException3){
+            Assert.assertTrue("updateDocument shouldn't have raised an exception because the attribut are not frozen", false);
+        }
     }
 }
