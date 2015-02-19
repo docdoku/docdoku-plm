@@ -1,36 +1,37 @@
-#part-modal{
+#part-modal {
 
   #tab-part-links {
     min-height: 280px;
   }
-  #tab-part-files{
-    .conversion-status{
+  #tab-part-files {
+    .conversion-status {
       margin: 18px 0 0 4px;
-      button.reload{
-        float:right;
+      button.reload {
+        float: right;
 
       }
     }
   }
-  #iteration-components{
+  #iteration-components {
 
-    min-height:250px;
+    min-height: 250px;
 
-    input#createPart{
-      float:left;
+    input#createPart, input#createSubstitutePart {
+      float: left;
     }
 
-    input#existingParts{
-      float:right;
+    input#existingParts, input#existingSubParts {
+      float: right;
     }
 
-    .well{
+    .well {
       position: relative;
       float: left;
-      padding:9px;
+      padding: 9px;
       width: 95%;
 
-      a.remove {
+
+      a.remove, a.removeSub {
 
         margin: 5px;
         float: left;
@@ -45,95 +46,200 @@
           text-decoration: none;
           color: #F00;
           opacity: 1;
+          cursor: hand;
         }
       }
-      input{
+      input {
 
-        &[name="number"]{
-          width:180px;
+        &[id="existingSubstituteParts"] {
+          float: right;
         }
-
-        &[name="name"]{
-          width:180px;
-        }
-
-        &[name="amount"]{
-          width:20px;
+        &[name="number"],&[name="substitute-number"] {
+          width: 160px;
         }
 
-        &[name="comment"]{
-          width:120px;
+        &[name="name"],&[name="substitute-name"] {
+          width: 160px;
         }
-        &[name="newUnit"]{
-          width: 60px;
+
+        &[name="substitute-comment-edit"] {
+          width: 160px;
         }
-        &[list="unityChoice"] {
-          margin: 10px 22px;
+
+        &[name="amount"], &[name="substitute-amount"] {
+          width: 61px;
+        }
+
+        &[name="comment"], &[name="substitute-comment"] {
+          width: 158px;
+          margin-right: 6px
+        }
+
+        &[name="newUnit"], &[name="substitute-newUnit"] {
+          width: 77px;
+        }
+
+      &[name = "optional" ] {
+        margin-left: 10px;
+        margin-right: 5px;
+      }
+
+
+      }
+      select[name="unitMeasure"] {
+        width: 72px;
+      }
+      label {
+        &[name="optional"] {
+          display: inline;
+          vertical-align: middle;
+          padding-right: 15px;
+        }
+
+
+      }
+
+      .add-cadInstance {
+        margin-top: 8px;
+        cursor: pointer;
+        opacity: 0.5;
+        top: 10px;
+
+        &:hover {
+          opacity: 1;
         }
       }
-      select[name="unitMeasure"]{
-        width:72px;
-      }
+      .collapse-subParts-cadInstances, .collapse-substitute-cadInstance {
+        float: right;
+        margin-top: 9px;
+        cursor: pointer;
+        opacity: 0.5;
 
-      .add-cadInstance,.collapse-cadInstance{
-          position: absolute;
-          margin-top: 8px;
-          cursor: pointer;
-          opacity: 0.5;
-          top: 10px;
-
-        &:hover{
+        &:hover {
           opacity: 1;
         }
       }
 
-      .add-cadInstance{right: 22px;}
-      .collapse-cadInstance{right: 8px;}
+      .add-cadInstance, .add-substitute-cadInstance {
+        right: 22px;
+        opacity: 0.4;
+        &:hover {
+          opacity: 1;
+        }
+      }
+      .collapse-cadInstance {
+        right: 8px;
+      }
 
-      .cadInstances{
-        float:left;
-        clear:both;
-        .cadInstance{
-          h5{
-            font-weight:normal;
+      .substitute {
+        border-style: dashed;
+        border-radius: 5px;
+      }
+      .cadInstances {
+        margin: 10px 0px 0px 21px;
+        clear: both;
+        display: inline-table;
+        .cadInstance {
+          cursor: pointer;
+          h5 {
+            font-weight: normal;
+            cursor: not-allowed;
           }
-          float:left;
-          clear:both;
-          .coord-group{
-            float:left;
-            width:33%;
-            input.coord{
-              width:20%;
+          float: left;
+          clear: both;
+          .coord-group {
+            float: left;
+            width: 45%;
+            input.coord {
+              width: 22%;
             }
-            select{
-              width:90%;
+            select {
+              width: 90%;
             }
-            .remove-cadInstance{
+            .remove-cadInstance {
               margin-top: 42px;
               float: left;
               cursor: pointer;
               opacity: 0.5;
-              &:hover{
+              &:hover {
                 opacity: 1;
               }
             }
           }
+          .coord-group-remove{
+            width: 10%;
+            margin-top: 4px;
+          }
 
-          &:only-child{
-            .remove-cadInstance{
+          &:only-child {
+            .remove-cadInstance {
               display: none;
             }
           }
         }
       }
 
+      .dataAlign{
+        margin: 10px 0px 0px 21px;
+      }
+
+
+
 
     }
-  }
+    .component {
+      opacity: 0.6;
+      &:hover {
+        opacity: 1;
+        cursor: pointer;
+      }
+    }
+    .selected-part {
+      opacity: 1;
+      background-color: rgba(180, 182, 186, 0.31);
+      box-shadow: inset 0 1px 1px rgba(157, 148, 148, 0.52);
+    }
+    .tooltip{
+      position: relative;
+      color: rgba(0, 0, 0, 0.4);
+      margin-right: 5px;
+      font-size: 14px;
+      text-decoration: none;
+      opacity: 1;
+    }
+    .tooltip:hover:after{
+      background: #333;
+      background: rgba(0,0,0,.8);
+      border-radius: 5px;
+      bottom: 26px;
+      color: #fff;
+      content: attr(data-tooltip);
+      left: 20%;
+      padding: 5px 15px;
+      position: absolute;
+      z-index: 98;
+      width: 220px;
+    }
 
+  }
 
   .pager {
     margin: 0;
   }
+
+  .substitute-parts {
+    margin: 18px 20px 0px 21px;
+  }
+  .display-substitute-part {
+    margin-left: 6px;
+    color: rgba(103, 103, 103, 0.5);
+
+  }
+
+  .subParts-CADInstance, .data-sub-part {
+    display: none;
+    cursor: not-allowed;
+  }
+
 
 }

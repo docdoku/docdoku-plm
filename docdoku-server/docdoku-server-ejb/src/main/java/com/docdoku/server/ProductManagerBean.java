@@ -649,6 +649,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 for (PartUsageLink usageLink : pUsageLinks) {
                     PartUsageLink ul = new PartUsageLink();
                     ul.setAmount(usageLink.getAmount());
+                    ul.setOptional(usageLink.isOptional());
                     ul.setCadInstances(usageLink.getCadInstances());
                     ul.setComment(usageLink.getComment());
                     ul.setReferenceDescription(usageLink.getReferenceDescription());
@@ -659,6 +660,8 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                     List<PartSubstituteLink> substitutes = new LinkedList<>();
                     for (PartSubstituteLink substitute : usageLink.getSubstitutes()) {
                         PartSubstituteLink sub = new PartSubstituteLink();
+                        sub.setAmount(substitute.getAmount());
+                        sub.setUnit(substitute.getUnit());
                         sub.setCadInstances(substitute.getCadInstances());
                         sub.setComment(substitute.getComment());
                         sub.setReferenceDescription(substitute.getReferenceDescription());

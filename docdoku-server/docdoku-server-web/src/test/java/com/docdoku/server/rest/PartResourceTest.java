@@ -1,0 +1,152 @@
+package com.docdoku.server.rest;
+
+import com.docdoku.core.common.User;
+import com.docdoku.core.common.Workspace;
+import com.docdoku.core.exceptions.*;
+import com.docdoku.core.product.*;
+import com.docdoku.core.services.IDataManagerLocal;
+import com.docdoku.core.services.IMailerLocal;
+import com.docdoku.core.services.IProductManagerLocal;
+import com.docdoku.core.services.IUserManagerLocal;
+import com.docdoku.server.rest.dto.*;
+import com.docdoku.server.util.ResourceUtil;
+import com.sun.org.apache.xerces.internal.impl.xpath.regex.Match;
+import org.dozer.DozerBeanMapperSingletonWrapper;
+import org.dozer.Mapper;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.*;
+
+import javax.ejb.EJB;
+import javax.persistence.EntityManager;
+import javax.servlet.http.HttpServletRequestWrapper;
+import javax.ws.rs.core.Response;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+
+import static org.junit.Assert.*;
+import static org.mockito.MockitoAnnotations.initMocks;
+
+public class PartResourceTest {
+
+    @InjectMocks
+    PartResource partResource = new PartResource();
+    @Mock
+    private IProductManagerLocal productService;
+    @Mock
+    private IDataManagerLocal dataManager;
+    @Mock
+    private EntityManager em;
+    @Mock
+    private IMailerLocal mailer;
+    @Mock
+    private IUserManagerLocal userManager;
+    @Spy
+    Workspace workspace = new Workspace();
+    @Spy
+    private User user = new User(workspace, "login", "user", "@docdoku.com", "en");
+    @Spy
+    private PartMaster partMaster = new PartMaster(workspace, "partNumber", user);
+    @Spy
+    private PartMaster subPartMaster = new PartMaster(workspace, "SubPartNumber", user);
+    @Spy
+    Mapper mapper = DozerBeanMapperSingletonWrapper.getInstance();
+
+    @Before
+    public void setup() throws Exception {
+        initMocks(this);
+
+    }
+
+    @Test
+    public void createComponents() {
+        //Given
+        PartIterationDTO data = new PartIterationDTO(ResourceUtil.WORKSPACE_ID, "partNumber", "A", 1);
+        List partUsageLinkDTOs = new ArrayList<PartUsageLinkDTO>();
+        PartUsageLinkDTO partUsageLinkDTO = new PartUsageLinkDTO();
+        partUsageLinkDTO.setAmount(2);
+        partUsageLinkDTO.setUnit("");
+        partUsageLinkDTO.setOptional(true);
+        partUsageLinkDTO.setComment("comment part usage link");
+        partUsageLinkDTO.setReferenceDescription("description part usage link");
+        ComponentDTO componentDTO = new ComponentDTO("component01");
+        componentDTO.setStandardPart(false);
+        partUsageLinkDTO.setComponent(componentDTO);
+        List<PartSubstituteLinkDTO> substituteDTOs = new ArrayList<>();
+        PartSubstituteLinkDTO substituteLinkDTO = new PartSubstituteLinkDTO();
+        substituteLinkDTO.setAmount(3);
+        substituteLinkDTO.setUnit("Kg");
+        ComponentDTO subComponentDTO = new ComponentDTO("subComponent01");
+        substituteLinkDTO.setSubstitute(subComponentDTO);
+        List<CADInstanceDTO> cadInstanceDTOs = new ArrayList<CADInstanceDTO>();
+        List<CADInstanceDTO> subCadInstanceDTOs = new ArrayList<CADInstanceDTO>();
+        cadInstanceDTOs.add(new CADInstanceDTO((Double) 12.0, (Double) 12.0, (Double) 12.0, (Double) 62.0, (Double) 24.0, (Double) 95.0));
+        cadInstanceDTOs.add(new CADInstanceDTO((Double) 22.0, (Double) 12.0, (Double) 72.0, (Double) 52.0, (Double) 14.0, (Double) 45.0));
+        subCadInstanceDTOs.add(new CADInstanceDTO((Double) 10.0, (Double) 11.0, (Double) 12.0, (Double) 13.0, (Double) 14.0, (Double) 15.0));
+        subCadInstanceDTOs.add(new CADInstanceDTO((Double) 110.0, (Double) 10.0, (Double) 10.0, (Double) 52.0, (Double) 14.0, (Double) 45.0));
+        subCadInstanceDTOs.add(new CADInstanceDTO((Double) 120.0, (Double) 10.0, (Double) 10.0, (Double) 52.0, (Double) 14.0, (Double) 45.0));
+
+        substituteLinkDTO.setCadInstances(subCadInstanceDTOs);
+        substituteDTOs.add(substituteLinkDTO);
+        partUsageLinkDTO.setSubstitutes(substituteDTOs);
+        partUsageLinkDTO.setCadInstances(cadInstanceDTOs);
+        partUsageLinkDTOs.add(partUsageLinkDTO);
+        data.setComponents(partUsageLinkDTOs);
+        List<PartUsageLink> newComponents = new ArrayList<>();
+
+        //when
+        try {
+            Mockito.when(productService.partMasterExists(Matchers.any(PartMasterKey.class))).thenReturn(false);
+            Mockito.when(userManager.checkWorkspaceWriteAccess(ResourceUtil.WORKSPACE_ID)).thenReturn(user);
+            Mockito.when(partResource.findOrCreatePartMaster(ResourceUtil.WORKSPACE_ID, componentDTO)).thenReturn(partMaster);
+            Mockito.when(partResource.findOrCreatePartMaster(ResourceUtil.WORKSPACE_ID, subComponentDTO)).thenReturn(subPartMaster);
+
+            newComponents = partResource.createComponents(ResourceUtil.WORKSPACE_ID, partUsageLinkDTOs);
+
+        } catch (Exception e) {
+            fail("Part Creation failed");
+        }
+
+        //Then
+        assertNotNull(newComponents);
+        assertTrue(newComponents.size() == 1);
+        assertTrue(newComponents.get(0).getReferenceDescription().equals("description part usage link"));
+        assertTrue(newComponents.get(0).getComponent().getNumber().equals(componentDTO.getNumber()));
+        assertTrue(newComponents.get(0).getAmount() == 2);
+        assertTrue(newComponents.get(0).getUnit().isEmpty());
+        //check that the component is optional
+        assertTrue(newComponents.get(0).isOptional());
+        //check the amount of CADInstances
+        assertTrue(newComponents.get(0).getCadInstances().size() == 2);
+
+        // check if the cad instances mapping of the part usage link is correct
+        assertTrue(newComponents.get(0).getCadInstances().get(0).getRx() == (Double) 12.0);
+        assertTrue(newComponents.get(0).getCadInstances().get(0).getRy() == (Double) 12.0);
+        assertTrue(newComponents.get(0).getCadInstances().get(0).getRz() == (Double) 12.0);
+        assertTrue(newComponents.get(0).getCadInstances().get(0).getTx() == (Double) 62.0);
+        assertTrue(newComponents.get(0).getCadInstances().get(0).getTy() == (Double) 24.0);
+        assertTrue(newComponents.get(0).getCadInstances().get(0).getTz() == (Double) 95.0);
+
+        assertTrue(newComponents.get(0).getCadInstances().get(1).getRx() == (Double) 22.0);
+        assertTrue(newComponents.get(0).getCadInstances().get(1).getRy() == (Double) 12.0);
+        assertTrue(newComponents.get(0).getCadInstances().get(1).getRz() == (Double) 72.0);
+        assertTrue(newComponents.get(0).getCadInstances().get(1).getTx() == (Double) 52.0);
+        assertTrue(newComponents.get(0).getCadInstances().get(1).getTy() == (Double) 14.0);
+        assertTrue(newComponents.get(0).getCadInstances().get(1).getTz() == (Double) 45.0);
+        // check if the cad instances mapping of the substitute part usage link is correct
+        assertTrue(newComponents.get(0).getSubstitutes().get(0).getCadInstances().size() == 3);
+        assertTrue(newComponents.get(0).getSubstitutes().get(0).getCadInstances().get(0).getRx() == 10);
+        assertTrue(newComponents.get(0).getSubstitutes().get(0).getCadInstances().get(0).getRy() == 11);
+        assertTrue(newComponents.get(0).getSubstitutes().get(0).getCadInstances().get(0).getRz() == 12);
+        assertTrue(newComponents.get(0).getSubstitutes().get(0).getCadInstances().get(0).getTx() == 13.0);
+        assertTrue(newComponents.get(0).getSubstitutes().get(0).getCadInstances().get(0).getTy() == 14.0);
+        assertTrue(newComponents.get(0).getSubstitutes().get(0).getCadInstances().get(0).getTz() == 15.0);
+
+
+    }
+}
