@@ -140,7 +140,7 @@ define([
             } else {
                 this.iteration.set('nativeCADFile', '');
             }
-
+            var that = this;
             this.iteration.save({
                 iterationNote: this.$inputIterationNote.val(),
                 components: this.partsManagementView.collection.toJSON(),
@@ -148,6 +148,7 @@ define([
                 linkedDocuments: this.linkedDocumentsView.collection.toJSON()
             }, {success: function () {
                 Backbone.Events.trigger('part:saved');
+                that.hide();
             },
                 error: this.onError
             });
