@@ -82,6 +82,9 @@ public class DocumentIteration implements Serializable, FileHolder, Comparable<D
     
     @javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date creationDate;
+
+    @javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
+    private Date modificationDate;
     
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(name = "DOCUMENTITERATION_DOCUMENTLINK",
@@ -113,10 +116,15 @@ public class DocumentIteration implements Serializable, FileHolder, Comparable<D
     public DocumentIteration() {
     }
 
-    public DocumentIteration(DocumentRevision pDocumentRevision, int pIteration, User pAuthor) {
+    public DocumentIteration(DocumentRevision pDocumentRevision, User pAuthor) {
+        DocumentIteration lastDoc = pDocumentRevision.getLastIteration();
+        int newIteration = lastDoc==null?1:lastDoc.getIteration() + 1;
+        Date lastModificationDate = lastDoc.modificationDate;
+
         setDocumentRevision(pDocumentRevision);
-        iteration = pIteration;
+        iteration = newIteration;
         author = pAuthor;
+        modificationDate = lastModificationDate;
     }
 
     public void setDocumentRevision(DocumentRevision documentRevision) {
@@ -204,6 +212,14 @@ public class DocumentIteration implements Serializable, FileHolder, Comparable<D
 
     public Date getCreationDate() {
         return (creationDate!=null) ? (Date) creationDate.clone() : null;
+    }
+
+    public void setModificationDate(Date modificationDate) {
+        this.modificationDate = (modificationDate!=null) ? (Date) modificationDate.clone() : null;
+    }
+
+    public Date getModificationDate() {
+        return (modificationDate!=null) ? (Date) modificationDate.clone() : null;
     }
 
     public Set<DocumentLink> getLinkedDocuments() {

@@ -36,9 +36,9 @@ define([
             var data = this.model.toJSON();
             if (this.model.hasIterations()) {
                 data.lastIteration = this.model.getLastIteration().toJSON();
-                data.lastIteration.creationDate = date.formatTimestamp(
+                data.lastIteration.modificationDate = date.formatTimestamp(
                     App.config.i18n._DATE_FORMAT,
-                    data.lastIteration.creationDate
+                    data.lastIteration.modificationDate
                 );
             }
 

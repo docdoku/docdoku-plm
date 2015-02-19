@@ -1201,6 +1201,8 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             }
 
             doc.setRevisionNote(pRevisionNote);
+            Date now = new Date();
+            doc.setModificationDate(now);
             //doc.setLinkedDocuments(links);
             return docR;
 

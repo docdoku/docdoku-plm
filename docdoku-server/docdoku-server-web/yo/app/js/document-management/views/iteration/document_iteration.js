@@ -221,11 +221,15 @@ define([
             if(this.isValid){
 
                 /*saving iteration*/
+                var _this = this;
+                
                 this.iteration.save({
                     revisionNote: this.$('#inputRevisionNote').val(),
                     instanceAttributes: this.attributesView.collection.toJSON(),
                     linkedDocuments: this.linkedDocumentsView.collection.toJSON()
-                });
+                }, {success: function () {
+                    _this.model.fetch();
+                }});
 
                 /*There is a parsing problem at saving time*/
                 var files = this.iteration.get('attachedFiles');

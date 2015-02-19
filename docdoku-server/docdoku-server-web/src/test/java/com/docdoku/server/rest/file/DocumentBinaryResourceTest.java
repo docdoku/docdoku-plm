@@ -235,7 +235,7 @@ public class DocumentBinaryResourceTest {
         DocumentMaster documentMaster = new DocumentMaster(workspace,ResourceUtil.DOCUMENT_ID,user);
         DocumentRevision documentRevision = new DocumentRevision(documentMaster,ResourceUtil.VERSION,user);
         List<DocumentIteration> iterations = new ArrayList<>();
-        DocumentIteration documentIteration =new DocumentIteration(documentRevision,ResourceUtil.ITERATION,user);
+        DocumentIteration documentIteration = new DocumentIteration(documentRevision, user);
         iterations.add(documentIteration);
         documentRevision.setDocumentIterations(iterations);
         SharedDocument sharedEntity = new SharedDocument(workspace,user,new Date(2025,12,02),"password",documentRevision);
@@ -275,7 +275,7 @@ public class DocumentBinaryResourceTest {
         DocumentMaster documentMaster = new DocumentMaster(workspace,ResourceUtil.DOCUMENT_ID,user);
         DocumentRevision documentRevision = new DocumentRevision(documentMaster,ResourceUtil.VERSION,user);
         List<DocumentIteration> iterations = new ArrayList<>();
-        DocumentIteration documentIteration =new DocumentIteration(documentRevision,ResourceUtil.ITERATION,user);
+        DocumentIteration documentIteration =new DocumentIteration(documentRevision, user);
         iterations.add(documentIteration);
         documentRevision.setDocumentIterations(iterations);
         SharedDocument sharedEntity = new SharedDocument(workspace,user,new Date(2025,12,02),"password",documentRevision);
