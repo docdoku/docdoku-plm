@@ -94,6 +94,7 @@ define({
 		CREATE_NEW_VERSION: "Create new version",
 		CREATE_PART: "Create part",
         CREATE_PART_SUBSTITUTE_TOOLTIP: "If you want to create a substitute of this part, you should select it first",
+        CREATE_PART_TOOLTIP: "If you want to create a new part, none of the below should be selected",
 		CREATE_PRODUCT: "Create Product",
 		CREATE_ROOM: "Start a digital mockup review",
 		CREATION_DATE: "Creation date",

@@ -93,6 +93,7 @@ define({
 	CREATE_NEW_VERSION: "Cr\u00e9er une nouvelle version",
 	CREATE_PART: "Créer l'article",
     CREATE_PART_SUBSTITUTE_TOOLTIP: "Pour créer un article de variante, vous devez dabord en selectionner un",
+    CREATE_PART_TOOLTIP: "Pour créer un article, aucun élément ne doit être selectionné",
 	CREATE_PRODUCT: "Créer le produit",
 	CREATE_ROOM: "Démarrer une revue de maquette",
 	CREATION_DATE: "Date de création",

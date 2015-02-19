@@ -200,7 +200,7 @@ define([
 
 
         selectPart: function (e) {
-            if(e.target.id == "component"){
+            if(e.target.id == "component" || e.target.parentNode.className == "cadInstance" || e.target.parentNode.className== "cadInstances"){
                 this.options.undoSelect(this);
                 $('.component').toggleClass("selected-part", false);
                 this.$selectPart = !this.$selectPart;
