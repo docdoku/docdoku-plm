@@ -103,12 +103,20 @@ define([
         },
         addSubstitutePartsView: function (model) {
             var self = this;
-            var substitutePartView = new SubstitutePartView({model: model, editMode: this.options.editMode, removeSubHandler: function () {
-                self.collection.remove(model);
-                self.model.attributes.substitutes = _(self.model.attributes.substitutes).without(model);
+            var substitutePartView = new SubstitutePartView({
+                model: model,
+                editMode: this.options.editMode,
+                removeSubHandler: function () {
+                    self.collection.remove(model.attributes);
+                    self.model.attributes.substitutes = _(self.model.attributes.substitutes).without(model);
+//self.collection.models[0].attributes == model
+                    self.removeSubPart(model);
+                    /**
+                     * this.collection.push(subModel);
+                     this.model.get('substitutes').push(subModel);
+                     */
 
-                self.removeSubPart(model);
-            }}).render();
+                }}).render();
             this.substitutePartViews.push(substitutePartView);
             this.$(".substitute-parts").append(substitutePartView.$el);
         },
@@ -241,8 +249,8 @@ define([
             } else {
                 cadInstances.push({tx: 0, ty: 0, tz: 0, rx: 0, ry: 0, rz: 0});
             }
-            subModel.set('unit',unit);
-            subModel.set('amount',amount);
+            subModel.set('unit', unit);
+            subModel.set('amount', amount);
             subModel.set('cadInstances', cadInstances);
             this.$extraInformation.toggle(true);
             this.collection.push(subModel);
