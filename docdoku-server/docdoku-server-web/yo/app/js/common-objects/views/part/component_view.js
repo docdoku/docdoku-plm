@@ -12,7 +12,7 @@ define([
         events: {
             'click a.remove': 'onRemove',
             'change input[name=amount]': 'changeAmount',
-            'change input[name=comment]': 'changeComment',
+            'change input[name=referenceDescription]': 'changeReferenceDescription',
             'change input[name=number]': 'changeNumber',
             'change input[name=name]': 'changeName',
             'change input[name=optional]': 'changeIsOptional',
@@ -56,7 +56,7 @@ define([
             this.$extraInformation = this.$('.subParts-CADInstance');
             this.$cadInstances = this.$('.cadInstances');
             this.$amount = this.$('input[name=amount]');
-            this.$comment = this.$('input[name=comment]');
+            this.$referenceDescription = this.$('input[name=referenceDescription]');
             this.$unitText = this.$('input[name=newUnit]');
             this.$isOptional = this.$('input[name=optional]');
             this.$defaultUnity = this.$unitText.attr('default-unity');
@@ -142,8 +142,8 @@ define([
             this.model.set('amount', e.target.value);
             this.model.get('component').amount = e.target.value;
         },
-        changeComment: function (e) {
-            this.model.set('comment', e.target.value);
+        changeReferenceDescription: function (e) {
+            this.model.set('referenceDescription', e.target.value);
         },
         changeNumber: function (e) {
             this.model.get('component').number = e.target.value;
