@@ -116,7 +116,7 @@ public class PartResourceTest {
         assertNotNull(newComponents);
         assertTrue(newComponents.size() == 1);
         assertTrue(newComponents.get(0).getReferenceDescription().equals("description part usage link"));
-        assertTrue(newComponents.get(0).getComponent().getNumber().equals(componentDTO.getNumber()));
+        assertTrue(newComponents.get(0).getComponent().getNumber().equals("partNumber"));
         assertTrue(newComponents.get(0).getAmount() == 2);
         assertTrue(newComponents.get(0).getUnit().isEmpty());
         //check that the component is optional
