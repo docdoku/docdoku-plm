@@ -45,7 +45,7 @@
     <div class="dataAlign">
         <input type="text" name="referenceDescription" value="" placeholder="{{i18n.LINK_DESCRIPTION}}"
         {{^editMode}}readonly{{/editMode}}/>
-        <input type="text" name="amount" value="" title="{{i18n.AMOUNT}}" disabled/>
+        <input type="text" name="amount" value="{{model.amount}}" title="{{i18n.AMOUNT}}" disabled/>
         <input type="text" list="unityChoice" name="newUnit" value="{{i18n.UNIT}}" default-unity="{{i18n.UNIT}}"
         {{#editMode}}list="unity"{{/editMode}} {{^editMode}}readonly{{/editMode}}/>
         <datalist id="unityChoice" name="unitMeasure" class="unit unitEdit">
