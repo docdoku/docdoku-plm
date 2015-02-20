@@ -172,7 +172,6 @@ define([
                         ]
                     };
                     that.getSelectedComponent();
-                    that.$selectedComponent.model.get('substitutes').push(existingPart);
                     that.$selectedComponent.collection.push(existingPart);
 
                 }
