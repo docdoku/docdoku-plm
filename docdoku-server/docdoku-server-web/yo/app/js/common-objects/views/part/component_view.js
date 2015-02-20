@@ -73,6 +73,13 @@ define([
         },
 
         initSubstitutePartView: function () {
+
+            /***
+             * this.collection.each(function (model) {
+                that.addView(model);
+            });
+             * @type {ComponentView}
+             */
             var self = this;
             _(this.model.get('substitutes')).each(function (instance) {
                 self.addSubstitutePartsView(instance);
@@ -82,6 +89,7 @@ define([
             var unit = this.model.get('unit');
             this.$unitText.val(unit ? unit : this.$unitText.attr('default-unity'));
             this.disableEnableAmount(unit);
+
         },
 
         addCadInstanceView: function (instance) {
@@ -97,17 +105,12 @@ define([
             var self = this;
             var substitutePartView = new SubstitutePartView({model: model, editMode: this.options.editMode, removeSubHandler: function () {
                 self.collection.remove(model);
+                self.model.attributes.substitutes = _(self.model.attributes.substitutes).without(model);
 
-                if(self.model.attributes.substitutes.length == 1){
-                    self.model.attributes.substitutes = [];
-                }
-                else{
-                    self.model.attributes.substitutes = _(self.model.attributes.substitutes).without(model);
-                }
                 self.removeSubPart(model);
             }}).render();
-            self.substitutePartViews.push(substitutePartView);
-            self.$(".substitute-parts").append(substitutePartView.$el);
+            this.substitutePartViews.push(substitutePartView);
+            this.$(".substitute-parts").append(substitutePartView.$el);
         },
 
         onRemove: function () {
@@ -226,29 +229,25 @@ define([
             return this.$selectPart;
         },
 
-        addSubPart: function (model) {
+        addSubPart: function (subModel) {
+            var unit = this.model.get('unit');
+            var cadInstances = [];
+            var amount = this.model.get('amount');
 
-            var substitutePart = {
-                unit: this.model.get('unit'),
-                amount: this.model.get('amount'),
-                comment:'',
-                cadInstances: []
-            };
-            if (!substitutePart.unit || (substitutePart.unit == this.$defaultUnity) && substitutePart.amount > 1) {
-                for (var i = 0; i < substitutePart.amount; i++) {
-                    substitutePart.cadInstances.push({tx: 0, ty: 0, tz: 0, rx: 0, ry: 0, rz: 0});
+            if (!unit || (unit == this.$defaultUnity) && amount > 1) {
+                for (var i = 0; i < amount; i++) {
+                    cadInstances.push({tx: 0, ty: 0, tz: 0, rx: 0, ry: 0, rz: 0});
                 }
             } else {
-                substitutePart.cadInstances.push({tx: 0, ty: 0, tz: 0, rx: 0, ry: 0, rz: 0});
+                cadInstances.push({tx: 0, ty: 0, tz: 0, rx: 0, ry: 0, rz: 0});
             }
-            substitutePart.amount = this.model.get('amount');
-            substitutePart.unit = this.model.get('unit');
-
-            model.set('amount', this.model.get('amount'));
-            model.set('unit', this.model.get('unit'));
-            model.set('cadInstances', substitutePart.cadInstances);
+            subModel.set('unit',unit);
+            subModel.set('amount',amount);
+            subModel.set('cadInstances', cadInstances);
             this.$extraInformation.toggle(true);
-            this.addSubstitutePartsView(model.attributes);
+            this.collection.push(subModel);
+            this.model.get('substitutes').push(subModel);
+            this.addSubstitutePartsView(subModel.attributes);
         },
 
         removeSubPart: function (modelToRemove) {
@@ -258,6 +257,7 @@ define([
 
             if (viewToRemove !== null) {
                 this.substitutePartViews = _(this.substitutePartViews).without(viewToRemove);
+                _(this.model.get('substitutes')).without(viewToRemove);
                 viewToRemove.remove();
             }
 
