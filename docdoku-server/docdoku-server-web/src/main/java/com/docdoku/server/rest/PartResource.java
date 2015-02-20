@@ -441,6 +441,7 @@ public class PartResource {
                 partUsageLink.setComponent(component);
                 partUsageLink.setAmount(partUsageLinkDTO.getAmount());
                 partUsageLink.setComment(partUsageLinkDTO.getComment());
+                partUsageLink.setReferenceDescription(partUsageLinkDTO.getReferenceDescription());
                 partUsageLink.setCadInstances(cadInstances);
                 partUsageLink.setUnit(partUsageLinkDTO.getUnit());
                 partUsageLink.setOptional(partUsageLinkDTO.isOptional());
