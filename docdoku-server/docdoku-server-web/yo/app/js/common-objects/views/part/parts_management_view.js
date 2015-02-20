@@ -108,6 +108,7 @@ define([
                 {tx: 0, ty: 0, tz: 0, rx: 0, ry: 0, rz: 0}
             ]);
             model.set('substitutes', []);
+            model.set('amount',1);
             this.addView(model);
         },
 
@@ -115,7 +116,6 @@ define([
             var newPart = {
                 amount: 1,
                 component: {
-                    description: '',
                     standardPart: false
                 },
                 cadInstances: [
@@ -132,11 +132,9 @@ define([
             var that = this;
             that.getSelectedComponent();
             var substitutePart = {
-                comment: '',
                 amount: that.$selectedComponent.model.attributes.amount,
                 substitute: {
-                    name: "",
-                    number: ""
+                    standardPart: false
                 },
                 cadInstances: [
                     {tx: 0, ty: 0, tz: 0, rx: 0, ry: 0, rz: 0}
@@ -144,7 +142,6 @@ define([
                 unit: that.$selectedComponent.model.attributes.unit
 
             };
-            that.$selectedComponent.model.get('substitutes').push(substitutePart);
             that.$selectedComponent.collection.push(substitutePart);
 
         },
@@ -170,7 +167,9 @@ define([
                         substitute: {
                             number: part.split(",")[0],
                             name: part.split(",")[1].trim()
-                }
+                }, cadInstances: [
+                            {tx: 0, ty: 0, tz: 0, rx: 0, ry: 0, rz: 0}
+                        ]
                     };
                     that.getSelectedComponent();
                     that.$selectedComponent.model.get('substitutes').push(existingPart);

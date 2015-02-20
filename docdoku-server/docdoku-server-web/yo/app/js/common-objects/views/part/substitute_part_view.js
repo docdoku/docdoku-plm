@@ -11,8 +11,7 @@ define([
         events: {
             'click a.removeSub': 'onRemove',
             'change input[name=substitute-amount]': 'changeSubstituteAmount',
-            'change input[name=substitute-comment-edit]': 'changeSubstituteComment',
-            'change input[name=substitute-comment]': 'changeSubstituteComment',
+            'change input[name=substitute-referenceDescription]': 'changeSubstituteReferenceDescription',
             'change input[name=substitute-name]': 'changeSubstituteName',
             'change input[name=substitute-number]': 'changeSubstituteNumber',
             'input input[name=substitute-newUnit]': 'changeSubstituteMeasureUnit',
@@ -108,8 +107,8 @@ define([
         changeSubstituteAmount: function (e) {
             this.model.amount = e.target.value;
         },
-        changeSubstituteComment: function (e) {
-            this.model.comment = e.target.value;
+        changeSubstituteReferenceDescription: function (e) {
+            this.model.referenceDescription = e.target.value;
         },
         changeSubstituteName: function (e) {
             this.model.substitute.name = e.target.value;
