@@ -74,12 +74,7 @@ define([
 
         initSubstitutePartView: function () {
 
-            /***
-             * this.collection.each(function (model) {
-                that.addView(model);
-            });
-             * @type {ComponentView}
-             */
+
             var self = this;
             _(this.model.get('substitutes')).each(function (instance) {
                 self.addSubstitutePartsView(instance);
@@ -107,15 +102,8 @@ define([
                 model: model,
                 editMode: this.options.editMode,
                 removeSubHandler: function () {
-                    self.collection.remove(model.attributes);
                     self.model.attributes.substitutes = _(self.model.attributes.substitutes).without(model);
-//self.collection.models[0].attributes == model
                     self.removeSubPart(model);
-                    /**
-                     * this.collection.push(subModel);
-                     this.model.get('substitutes').push(subModel);
-                     */
-
                 }}).render();
             this.substitutePartViews.push(substitutePartView);
             this.$(".substitute-parts").append(substitutePartView.$el);
@@ -254,7 +242,7 @@ define([
             subModel.set('cadInstances', cadInstances);
             this.$extraInformation.toggle(true);
             this.collection.push(subModel);
-            this.model.get('substitutes').push(subModel);
+            this.model.get('substitutes').push(subModel.attributes);
             this.addSubstitutePartsView(subModel.attributes);
         },
 
@@ -265,7 +253,6 @@ define([
 
             if (viewToRemove !== null) {
                 this.substitutePartViews = _(this.substitutePartViews).without(viewToRemove);
-                _(this.model.get('substitutes')).without(viewToRemove);
                 viewToRemove.remove();
             }
 
