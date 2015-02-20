@@ -22,16 +22,19 @@ package com.docdoku.cli.helpers;
 
 import com.docdoku.cli.commands.HelpCommand;
 import com.docdoku.cli.interfaces.CommandLine;
+import com.docdoku.core.common.Account;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.configuration.ProductBaseline;
 import com.docdoku.core.product.Conversion;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartMaster;
 import com.docdoku.core.product.PartRevision;
+import org.codehaus.jettison.json.JSONException;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 
 import java.io.FilterInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.text.DateFormat;
 import java.util.List;
@@ -39,19 +42,22 @@ import java.util.Locale;
 
 public class HumanOutput extends CliOutput{
 
+    private Locale locale;
+
+    public HumanOutput(Locale pLocale) {
+        locale = pLocale;
+    }
 
     @Override
     public void printException(Exception e) {
+        System.err.println(e.getMessage());
         if(e instanceof CmdLineException){
-            System.err.println(e.getMessage());
             printUsage();
-        }else{
-            System.err.println(e.getMessage());
         }
     }
 
     @Override
-    public void printCommandUsage(CommandLine cl) {
+    public void printCommandUsage(CommandLine cl) throws IOException {
         CmdLineParser parser = new CmdLineParser(cl);
         System.out.println(cl.getDescription());
         System.out.println();
@@ -64,17 +70,15 @@ public class HumanOutput extends CliOutput{
 
     @Override
     public void printUsage() {
-        System.err.println("usage: dplm <command> [<args>]");
-        System.err.println("DocDokuPLM command-line client, version 1.0.");
-        System.err.println("Type 'dplm help <command>' for help on a specific command.");
+        System.err.println(LangHelper.getLocalizedMessage("Usage",locale));
         System.err.println();
         printAvailableCommands();
         System.err.println();
-        System.err.println("For additional information, see http://www.docdokuplm.com");
+        System.err.println(LangHelper.getLocalizedMessage("AdditionalInfos",locale));
     }
 
     private void printAvailableCommands(){
-        System.err.println("Available commands:");
+        System.err.println(LangHelper.getLocalizedMessage("AvailableCommands",locale) +" :");
         System.err.println("   checkin (ci)");
         System.err.println("   checkout (co)");
         System.err.println("   create (cr)");
@@ -99,7 +103,7 @@ public class HumanOutput extends CliOutput{
 
     @Override
     public void printPartRevisionsCount(int partRevisionsCount) {
-        System.out.println("Count : " + partRevisionsCount);
+        System.out.println(LangHelper.getLocalizedMessage("Count",locale) + " : " + partRevisionsCount);
     }
 
     @Override
@@ -112,7 +116,7 @@ public class HumanOutput extends CliOutput{
     @Override
     public void printBaselines(List<ProductBaseline> productBaselines) {
         if(productBaselines.isEmpty()){
-            System.out.println("No baseline");
+            System.out.println(LangHelper.getLocalizedMessage("NoBaseline",locale));
             return;
         }
         for(ProductBaseline productBaseline : productBaselines) {
@@ -136,13 +140,22 @@ public class HumanOutput extends CliOutput{
     @Override
     public void printConversion(Conversion conversion) {
         if(conversion.isSucceed()){
-            System.out.println("Conversion succeed");
+            System.out.println(LangHelper.getLocalizedMessage("ConversionSucceed",locale));
         }else if(conversion.isPending()){
-            System.out.println("Conversion in progress");
+            System.out.println(LangHelper.getLocalizedMessage("ConversionInProgress",locale));
         } else{
-            System.out.println("Conversion failed, try to re-launch");
+            System.out.println(LangHelper.getLocalizedMessage("ConversionFailed",locale));
         }
-        System.out.println("Conversion started at " + conversion.getStartDate() + ", ended at " + conversion.getEndDate());
+        System.out.println(LangHelper.getLocalizedMessage("ConversionStarted",locale) + " : " + conversion.getStartDate());
+        System.out.println(LangHelper.getLocalizedMessage("ConversionEnded",locale) + " : " + conversion.getEndDate());
+    }
+
+    @Override
+    public void printAccount(Account account) throws JSONException {
+        System.out.println(account.getLogin());
+        System.out.println(account.getEmail());
+        System.out.println(account.getLanguage());
+        System.out.println(account.getTimeZone());
     }
 
     @Override
@@ -168,9 +181,16 @@ public class HumanOutput extends CliOutput{
 
         String checkout = "";
         if(pr.isCheckedOut()){
-            checkout = " checked out by " + pr.getCheckOutUser() + " on " + df.format(pr.getCheckOutDate());
+            checkout = " "
+                    + LangHelper.getLocalizedMessage("CheckedOutBy",locale)
+                    + " "
+                    + pr.getCheckOutUser()
+                    + " "
+                    + LangHelper.getLocalizedMessage("On",locale)
+                    + " "
+                    + df.format(pr.getCheckOutDate());
         }
-        System.out.println("Revision " + revision + checkout);
+        System.out.println(LangHelper.getLocalizedMessage("Revision",locale) + " " + revision + checkout);
         int iteColSize = (pr.getLastIteration().getIteration() +"").length();
         int dateColSize=0;
         int authorColSize=0;

@@ -12,15 +12,14 @@
     <title>#{i18nPart['title']}</title>
 
     <link rel="Shortcut Icon" type="image/ico" href="#{request.contextPath}/images/favicon.ico"/>
-    <link rel="stylesheet/less" type="text/css" href="#{request.contextPath}/less/permalink/style.less"/>
+    <link rel="stylesheet" type="text/css" href="#{request.contextPath}/css/permalink.css"/>
     <link rel="stylesheet" type="text/css" href="#{request.contextPath}/css/font-awesome.min.css"/>
 
-    <script type="text/javascript" src="#{request.contextPath}/bower_components/tweenjs/build/tween.min.js"></script>
-    <script type="text/javascript" src="#{request.contextPath}/bower_components/less/dist/less-1.3.3.min.js"></script>
     <script type="text/javascript" src="#{request.contextPath}/bower_components/jquery/jquery.min.js"></script>
     <script type="text/javascript" src="#{request.contextPath}/bower_components/bootstrap/docs/assets/js/bootstrap.min.js"></script>
 
     <c:if test="${!geometryFileURI.isEmpty()}">
+        <script type="text/javascript" src="#{request.contextPath}/bower_components/tweenjs/build/tween.min.js"></script>
         <script type="text/javascript" src="#{request.contextPath}/bower_components/underscore/underscore-min.js"></script>
         <script type="text/javascript" src="#{request.contextPath}/bower_components/backbone/backbone-min.js"></script>
         <script type="text/javascript" src="#{request.contextPath}/bower_components/requirejs/require.js"></script>

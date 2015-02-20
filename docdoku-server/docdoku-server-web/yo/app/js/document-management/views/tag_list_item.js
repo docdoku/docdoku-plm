@@ -57,7 +57,7 @@ define([
             return false;
         },
         onDragEnter: function () {
-            this.tagDiv.hasClass('move-doc-into')
+            this.tagDiv.hasClass('move-doc-into');
         },
 
         checkDrag: function (e) {

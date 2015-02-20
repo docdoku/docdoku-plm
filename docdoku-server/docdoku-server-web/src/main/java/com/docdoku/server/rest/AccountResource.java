@@ -34,11 +34,9 @@ import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
-import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -55,9 +53,6 @@ public class AccountResource {
     @EJB
     private IUserManagerLocal userManager;
 
-    @Resource
-    private SessionContext ctx;
-
     private Mapper mapper;
 
     public AccountResource() {
@@ -71,9 +66,8 @@ public class AccountResource {
     @GET
     @Path("/me")
     @Produces(MediaType.APPLICATION_JSON)
-    public AccountDTO getAccount()
-            throws AccountNotFoundException {
-        Account account = userManager.getAccount(ctx.getCallerPrincipal().getName());
+    public AccountDTO getAccount() throws AccountNotFoundException {
+        Account account = userManager.getMyAccount();
         return mapper.map(account,AccountDTO.class);
     }
 
@@ -82,11 +76,11 @@ public class AccountResource {
     @Path("/workspaces")
     @Produces(MediaType.APPLICATION_JSON)
     public List<WorkspaceDTO> getWorkspaces(){
-        Workspace[] workspacesWhereCallerIsActive = userManager.getWorkspacesWhereCallerIsActive();
+        Workspace[] workspaces = userManager.getWorkspacesWhereCallerIsActive();
 
         List<WorkspaceDTO> workspaceDTOs = new ArrayList<>();
-        for (Workspace aWorkspacesWhereCallerIsActive : workspacesWhereCallerIsActive) {
-            workspaceDTOs.add(mapper.map(aWorkspacesWhereCallerIsActive, WorkspaceDTO.class));
+        for (Workspace workspace : workspaces) {
+            workspaceDTOs.add(mapper.map(workspace, WorkspaceDTO.class));
         }
 
         return workspaceDTOs;

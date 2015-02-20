@@ -21,6 +21,7 @@
 package com.docdoku.cli.helpers;
 
 import com.docdoku.cli.interfaces.CommandLine;
+import com.docdoku.core.common.Account;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.configuration.ProductBaseline;
@@ -35,12 +36,19 @@ import org.kohsuke.args4j.CmdLineParser;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FilterInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class JSONOutput  extends CliOutput {
 
+    private Locale locale;
+
+    public JSONOutput(Locale pLocale) {
+        locale = pLocale;
+    }
 
     @Override
     public void printException(Exception e) {
@@ -54,7 +62,7 @@ public class JSONOutput  extends CliOutput {
     }
 
     @Override
-    public void printCommandUsage(CommandLine cl) {
+    public void printCommandUsage(CommandLine cl) throws IOException {
         CmdLineParser parser = new CmdLineParser(cl);
         JSONObject jsonObj = new JSONObject();
         ByteArrayOutputStream o = new ByteArrayOutputStream();
@@ -162,6 +170,16 @@ public class JSONOutput  extends CliOutput {
         cv.put("succeed",conversion.isSucceed());
         cv.put("startDate",conversion.getStartDate());
         cv.put("endDate",conversion.getEndDate());
+        System.out.println(cv.toString());
+    }
+
+    @Override
+    public void printAccount(Account account) throws JSONException {
+        JSONObject cv = new JSONObject();
+        cv.put("login",account.getLogin());
+        cv.put("language",account.getLanguage());
+        cv.put("email",account.getEmail());
+        cv.put("timezone",account.getTimeZone());
         System.out.println(cv.toString());
     }
 

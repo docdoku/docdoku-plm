@@ -20,12 +20,14 @@
 
 package com.docdoku.cli.commands;
 
+import com.docdoku.cli.helpers.LangHelper;
 import com.docdoku.cli.tools.ScriptingTools;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.query.PartSearchQuery;
 import com.docdoku.core.services.IProductManagerWS;
 import org.kohsuke.args4j.Option;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -56,7 +58,7 @@ public class SearchPartsCommand extends AbstractCommandLine {
     }
 
     @Override
-    public String getDescription() {
-        return "Retrieve all part revisions matching the provided search value (expressed as a part number or a name)";
+    public String getDescription() throws IOException {
+        return LangHelper.getLocalizedMessage("SearchPartsCommandDescription",user);
     }
 }

@@ -425,4 +425,11 @@ public class PartRevision implements Serializable, Comparable<PartRevision>, Clo
             return version.compareTo(pPartR.version);
         }
     }
+
+    public String getAttributesLocked(){
+        if (this.partMaster != null){
+            return this.partMaster.isAttributesLocked() ? "true" : "false";
+        }
+        return "false";
+    }
 }

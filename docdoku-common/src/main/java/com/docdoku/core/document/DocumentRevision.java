@@ -434,4 +434,11 @@ public class DocumentRevision implements Serializable, Comparable<DocumentRevisi
     public void setLocation(Folder pLocation) {
         location = pLocation;
     }
+
+    public String getAttributesLocked(){
+        if (this.documentMaster != null && this.documentMaster.isAttributesLocked()){
+            return this.documentMaster.isAttributesLocked() ? "true" : "false";
+        }
+        return "false";
+    }
 }

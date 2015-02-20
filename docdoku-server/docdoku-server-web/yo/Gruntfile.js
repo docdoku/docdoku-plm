@@ -392,8 +392,7 @@ module.exports = function (grunt) {
                             'bower_components/threejs/build/three.min.js',
                             'bower_components/tweenjs/build/tween.min.js',
                             'bower_components/bootstrap/docs/assets/js/bootstrap.min.js',
-                            'bower_components/backbone/backbone-min.js',
-                            'bower_components/less/dist/less-1.3.3.min.js'
+                            'bower_components/backbone/backbone-min.js'
                         ]
                     }
                 ]

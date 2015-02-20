@@ -25,6 +25,10 @@ define(['backbone'], function (Backbone) {
             return this.get('designItemNumber');
         },
 
+        getDescription: function () {
+            return this.get('description');
+        },
+
         getIndexUrl: function () {
             return App.config.contextPath + '/product-structure/#' + App.config.workspaceId + '/' + encodeURIComponent(this.getId());
         },

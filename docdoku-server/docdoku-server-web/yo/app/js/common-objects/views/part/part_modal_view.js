@@ -8,11 +8,12 @@ define([
     'common-objects/views/attributes/attributes',
     'common-objects/views/part/parts_management_view',
     'common-objects/views/linked/linked_documents',
+    'common-objects/views/alert',
     'common-objects/collections/linked/linked_document_collection',
     'common-objects/views/workflow/lifecycle',
     'common-objects/views/part/conversion_status_view',
     'common-objects/utils/date'
-], function (Backbone,Mustache, ModalView, FileListView, template, AttributesView, PartsManagementView, LinkedDocumentsView, LinkedDocumentCollection, LifecycleView, ConversionStatusView, date) {
+], function (Backbone,Mustache, ModalView, FileListView, template, AttributesView, PartsManagementView, LinkedDocumentsView,AlertView, LinkedDocumentCollection, LifecycleView, ConversionStatusView, date) {
     'use strict';
     var PartModalView = ModalView.extend({
 
@@ -139,7 +140,7 @@ define([
             } else {
                 this.iteration.set('nativeCADFile', '');
             }
-
+            var that = this;
             this.iteration.save({
                 iterationNote: this.$inputIterationNote.val(),
                 components: this.partsManagementView.collection.toJSON(),
@@ -147,12 +148,13 @@ define([
                 linkedDocuments: this.linkedDocumentsView.collection.toJSON()
             }, {success: function () {
                 Backbone.Events.trigger('part:saved');
-            }});
+                that.hide();
+            },
+                error: this.onError
+            });
 
 
             this.fileListView.deleteFilesToDelete();
-
-            this.hide();
 
             e.preventDefault();
             e.stopPropagation();
@@ -217,6 +219,14 @@ define([
             } else {
                 this.$('a[href=#tab-iteration-lifecycle]').hide();
             }
+        },
+        onError: function (model, error) {
+            var errorMessage = error ? error.responseText : model;
+
+            this.$el.find('.notifications').first().append(new AlertView({
+                type: 'error',
+                message: errorMessage
+            }).render().$el);
         }
 
     });

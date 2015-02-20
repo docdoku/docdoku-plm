@@ -9,6 +9,9 @@ define([
 
         className: 'PartList',
 
+        setMainPart: function (part) {
+            this.part = part;
+        },
         initialize: function (start) {
 
             this.currentPage = 0;

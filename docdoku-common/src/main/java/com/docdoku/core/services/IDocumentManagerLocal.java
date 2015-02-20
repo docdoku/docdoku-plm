@@ -87,6 +87,7 @@ public interface IDocumentManagerLocal {
      * @throws WorkspaceNotFoundException
      * @throws FileNotFoundException
      * @throws NotAllowedException
+     * @throws AccessRightException
      */
     BinaryResource getBinaryResource(String fullName) throws WorkspaceNotFoundException, NotAllowedException, FileNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException;
     /**
@@ -103,7 +104,6 @@ public interface IDocumentManagerLocal {
      * @throws UserNotActiveException
      * @throws WorkspaceNotFoundException
      * @throws FileNotFoundException
-     * @throws NotAllowedException
      */
     BinaryResource getTemplateBinaryResource(String fullName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, FileNotFoundException;
 

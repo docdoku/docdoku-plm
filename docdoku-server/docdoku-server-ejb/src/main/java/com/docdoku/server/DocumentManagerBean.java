@@ -144,7 +144,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             }
             return binaryResource;
         } else {
-            throw new NotAllowedException(Locale.getDefault(), "NotAllowedException4");
+            throw new NotAllowedException(locale, "NotAllowedException4");
         }
     }
 
@@ -1174,7 +1174,6 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
                     doc.getLinkedDocuments().add(newLink);
                 }
             }
-
             
             Map<String, InstanceAttribute> attrs = new HashMap<>();
             for (InstanceAttribute attr : pAttributes) {
@@ -1182,6 +1181,22 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             }
 
             Set<InstanceAttribute> currentAttrs = new HashSet<>(doc.getInstanceAttributes().values());
+
+            if (docR.getDocumentMaster().isAttributesLocked()){
+                //Check attributs haven't changed
+                if (currentAttrs.size() != attrs.size()){
+                    throw new NotAllowedException(userLocale, "NotAllowedException44");
+                } else {
+                    for (InstanceAttribute attr:currentAttrs){
+                        InstanceAttribute newVersion = attrs.get(attr.getName());
+                        if (newVersion == null
+                                || newVersion.getClass().equals(attr.getClass()) == false){
+                            //Attribut has been swapped with a new attributs or his type has changed
+                            throw new NotAllowedException(userLocale, "NotAllowedException44");
+                        }
+                    }
+                }
+            }
 
             for(InstanceAttribute attr:currentAttrs){
                 if(!attrs.containsKey(attr.getName())){

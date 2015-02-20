@@ -20,11 +20,13 @@
 
 package com.docdoku.cli.interfaces;
 
+import java.io.IOException;
+
 /**
  *
  * @author Florent Garin
  */
 public interface CommandLine {
     void exec() throws Exception;
-    String getDescription();
+    String getDescription() throws IOException;
 }

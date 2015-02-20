@@ -71,7 +71,7 @@ public class OfficeDocumentResourceGetter implements DocumentResourceGetter {
 
             return inputStream;
         } catch (StorageException | DocumentException | IOException e) {
-            throw new ConvertedResourceException(Locale.getDefault(),e);
+            throw new ConvertedResourceException(locale,e);
         }
     }
 

@@ -586,10 +586,12 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.ADMIN_ROLE_ID})
     @Override
     public List<ConfigurationItem> getConfigurationItems(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
-        Locale locale = Locale.getDefault();
+        Locale locale;
         if(!userManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID)){
             User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
             locale = new Locale(user.getLanguage());
+        }else{
+            locale = Locale.getDefault();
         }
 
         return new ConfigurationItemDAO(locale, em).findAllConfigurationItems(pWorkspaceId);
@@ -647,6 +649,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 for (PartUsageLink usageLink : pUsageLinks) {
                     PartUsageLink ul = new PartUsageLink();
                     ul.setAmount(usageLink.getAmount());
+                    ul.setOptional(usageLink.isOptional());
                     ul.setCadInstances(usageLink.getCadInstances());
                     ul.setComment(usageLink.getComment());
                     ul.setReferenceDescription(usageLink.getReferenceDescription());
@@ -657,6 +660,8 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                     List<PartSubstituteLink> substitutes = new LinkedList<>();
                     for (PartSubstituteLink substitute : usageLink.getSubstitutes()) {
                         PartSubstituteLink sub = new PartSubstituteLink();
+                        sub.setAmount(substitute.getAmount());
+                        sub.setUnit(substitute.getUnit());
                         sub.setCadInstances(substitute.getCadInstances());
                         sub.setComment(substitute.getComment());
                         sub.setReferenceDescription(substitute.getReferenceDescription());
@@ -678,6 +683,22 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 }
 
                 Set<InstanceAttribute> currentAttrs = new HashSet<>(partIte.getInstanceAttributes().values());
+                if (partRev.getPartMaster().isAttributesLocked()){
+                    //Check attributs haven't changed
+                    if (currentAttrs.size() != attrs.size()){
+                        throw new NotAllowedException(locale, "NotAllowedException45");
+                    } else {
+                        for (InstanceAttribute attr:currentAttrs){
+                            InstanceAttribute newVersion = attrs.get(attr.getName());
+                            if (newVersion == null
+                                    || newVersion.getClass().equals(attr.getClass()) == false){
+                                //Attribut has been swapped with a new attributs or his type has changed
+                                throw new NotAllowedException(locale, "NotAllowedException45");
+                            }
+                        }
+                    }
+                }
+
                 for (InstanceAttribute attr : currentAttrs) {
                     if (!attrs.containsKey(attr.getName())) {
                         partIte.getInstanceAttributes().remove(attr.getName());
@@ -1327,10 +1348,12 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.ADMIN_ROLE_ID})
     @Override
     public int getTotalNumberOfParts(String pWorkspaceId) throws AccessRightException, WorkspaceNotFoundException, AccountNotFoundException, UserNotFoundException, UserNotActiveException {
-        Locale locale = Locale.getDefault();
+        Locale locale;
         if(!userManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID)){
             User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
             locale = new Locale(user.getLanguage());
+        }else{
+            locale = Locale.getDefault();
         }
         //Todo count only part you can see
         return new PartRevisionDAO(locale, em).getTotalNumberOfParts(pWorkspaceId);

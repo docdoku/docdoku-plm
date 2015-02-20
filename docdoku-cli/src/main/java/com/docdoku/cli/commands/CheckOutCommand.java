@@ -20,7 +20,9 @@
 
 package com.docdoku.cli.commands;
 
+import com.docdoku.cli.helpers.AccountsManager;
 import com.docdoku.cli.helpers.FileHelper;
+import com.docdoku.cli.helpers.LangHelper;
 import com.docdoku.cli.helpers.MetaDirectoryManager;
 import com.docdoku.cli.tools.ScriptingTools;
 import com.docdoku.core.common.BinaryResource;
@@ -92,14 +94,14 @@ public class CheckOutCommand extends AbstractCommandLine{
 
     private void loadMetadata() throws IOException {
         if(path.isDirectory()){
-            throw new IllegalArgumentException("<partnumber> or <revision> are not specified and the supplied path is not a file");
+            throw new IllegalArgumentException(LangHelper.getLocalizedMessage("PartNumberOrRevisionNotSpecified1",user));
         }
         MetaDirectoryManager meta = new MetaDirectoryManager(path.getParentFile());
         String filePath = path.getAbsolutePath();
         partNumber = meta.getPartNumber(filePath);
         String strRevision = meta.getRevision(filePath);
         if(partNumber==null || strRevision==null){
-            throw new IllegalArgumentException("<partnumber> or <revision> are not specified and cannot be inferred from file");
+            throw new IllegalArgumentException(LangHelper.getLocalizedMessage("PartNumberOrRevisionNotSpecified2",user));
         }
         revision = new Version(strRevision);
         //once partNumber and revision have been inferred, set path to folder where files are stored
@@ -118,13 +120,13 @@ public class CheckOutCommand extends AbstractCommandLine{
             pi = cs.filterConfigSpec(pm);
 
             if(pi == null){
-                throw new IllegalArgumentException("Cannot find a part iteration in configuration "+ cs.getId());
+                throw new IllegalArgumentException(LangHelper.getLocalizedMessage("PartIterationNotFoundForConfiguration",user) + " " + cs.getId());
             }
 
             pr = pi.getPartRevision();
 
             if(null != pRevision && !pr.getVersion().equals(pRevision)){
-                throw new IllegalArgumentException("Config spec "+ cs.getId() + " and revision "+pRevision+" doesn't match");
+                throw new IllegalArgumentException(LangHelper.getLocalizedMessage("ConfigSpecNotMatchingRevision",user));
             }
 
         }else {
@@ -150,7 +152,7 @@ public class CheckOutCommand extends AbstractCommandLine{
         BinaryResource bin = pi.getNativeCADFile();
 
         if(bin!=null && !noDownload){
-            FileHelper fh = new FileHelper(user,password,output);
+            FileHelper fh = new FileHelper(user,password,output,new AccountsManager().getUserLocale(user));
             fh.downloadNativeCADFile(getServerURL(), path, workspace, pPartNumber, pr, pi, force);
         }
 
@@ -167,7 +169,7 @@ public class CheckOutCommand extends AbstractCommandLine{
     }
 
     @Override
-    public String getDescription() {
-        return "Perform a check out operation and thus reserve the part for modification.";
+    public String getDescription() throws IOException {
+        return LangHelper.getLocalizedMessage("CheckOutCommandDescription",user);
     }
 }

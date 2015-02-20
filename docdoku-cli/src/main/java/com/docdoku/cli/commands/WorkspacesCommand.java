@@ -20,9 +20,13 @@
 
 package com.docdoku.cli.commands;
 
+import com.docdoku.cli.helpers.AccountsManager;
+import com.docdoku.cli.helpers.LangHelper;
 import com.docdoku.cli.tools.ScriptingTools;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.services.IUserManagerWS;
+
+import java.io.IOException;
 
 /**
  *
@@ -32,12 +36,13 @@ public class WorkspacesCommand extends AbstractCommandLine{
 
     public void execImpl() throws Exception {
         IUserManagerWS userS = ScriptingTools.createUserManagerService(getServerURL(), user, password);
+        new AccountsManager().saveAccount(userS.getMyAccount());
         Workspace[] workspaces = userS.getWorkspacesWhereCallerIsActive();
         output.printWorkspaces(workspaces);
     }
 
     @Override
-    public String getDescription() {
-        return "List all workspaces the user belongs to.";
+    public String getDescription() throws IOException {
+        return LangHelper.getLocalizedMessage("WorkspaceCommandDescription",user);
     }
 }

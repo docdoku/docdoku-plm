@@ -27,10 +27,7 @@ import com.docdoku.core.configuration.BaselinedPart;
 import com.docdoku.core.configuration.DocumentBaseline;
 import com.docdoku.core.configuration.ProductBaseline;
 import com.docdoku.core.document.DocumentIteration;
-import com.docdoku.core.product.CADInstance;
-import com.docdoku.core.product.PartIteration;
-import com.docdoku.core.product.PartRevision;
-import com.docdoku.core.product.PartUsageLink;
+import com.docdoku.core.product.*;
 import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;
@@ -156,7 +153,14 @@ public class Tools {
                 CADInstanceDTO cadInstanceDTO = mapper.map(cadInstance,CADInstanceDTO.class);
                 cadInstancesDTO.add(cadInstanceDTO);
             }
+            List<PartSubstituteLinkDTO> substituteLinkDTOs = new ArrayList<>();
+            for(PartSubstituteLink partSubstituteLink:partUsageLink.getSubstitutes()){
+                PartSubstituteLinkDTO  substituteLinkDTO = mapper.map(partSubstituteLink,PartSubstituteLinkDTO.class);
+                substituteLinkDTOs.add(substituteLinkDTO);
+
+            }
             partUsageLinkDTO.setCadInstances(cadInstancesDTO);
+            partUsageLinkDTO.setSubstitutes(substituteLinkDTOs);
             usageLinksDTO.add(partUsageLinkDTO);
         }
         partIterationDTO.setComponents(usageLinksDTO);
