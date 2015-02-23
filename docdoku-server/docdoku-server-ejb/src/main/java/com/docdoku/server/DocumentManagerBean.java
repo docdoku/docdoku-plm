@@ -939,6 +939,9 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             docR.setCheckOutDate(null);
             docR.setCheckOutUser(null);
 
+            DocumentIteration lastIteration = docR.getLastIteration();
+            lastIteration.setCheckInDate(new Date());
+
             if (subscribers.length != 0) {
                 mailer.sendIterationNotification(subscribers, docR);
             }

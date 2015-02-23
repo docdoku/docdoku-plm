@@ -40,13 +40,19 @@ define([
                     App.config.i18n._DATE_FORMAT,
                     data.lastIteration.modificationDate
                 );
-            }
 
-            if (this.model.isCheckout()) {
-                data.checkOutDate = date.formatTimestamp(
-                    App.config.i18n._DATE_FORMAT,
-                    data.checkOutDate
-                );
+                if (data.lastIteration.checkInDate) {
+                    data.lastIteration.revisionDate = date.formatTimestamp(
+                        App.config.i18n._DATE_FORMAT,
+                        data.lastIteration.checkInDate
+                    );
+                } else {
+                    data.lastIteration.revisionDate = date.formatTimestamp(
+                        App.config.i18n._DATE_FORMAT,
+                        data.lastIteration.creationDate
+                    );
+                }
+
             }
 
             if (this.model.hasACLForCurrentUser()) {

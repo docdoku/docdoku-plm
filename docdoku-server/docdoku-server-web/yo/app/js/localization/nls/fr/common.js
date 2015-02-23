@@ -333,6 +333,7 @@ define({
     REQUIRED_FIELD:"Veuillez renseigner ce champ",
     RESET_CAMERA: "Repositionner la caméra",
     RETRY: "Re-essayer",
+    REVISION_DATE: "Date de révision",
 	REVISION_NOTE: "Note de révision",
 	REVISION_NOTE_PROMPT_CANCEL: "Ignorer",
 	REVISION_NOTE_PROMPT_LABEL: "La note de révision n'a pas été définie. Souhaitez-vous l'ajouter ?",
