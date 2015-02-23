@@ -45,7 +45,7 @@ import java.util.List;
  *
  * @author Florent Garin
  */
-public class CheckOutCommand extends AbstractCommandLine{
+public class PartCheckOutCommand extends AbstractCommandLine{
 
     @Option(metaVar = "<revision>", name="-r", aliases = "--revision", usage="specify revision of the part to check out ('A', 'B'...); if not specified the part identity (number and revision) corresponding to the cad file will be selected")
     private Version revision;

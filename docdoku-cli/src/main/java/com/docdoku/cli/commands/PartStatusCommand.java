@@ -77,7 +77,7 @@ public class PartStatusCommand extends AbstractCommandLine{
         } catch (PartMasterNotFoundException pmnfe) {
 
             MetaDirectoryManager meta = new MetaDirectoryManager(cadFile.getParentFile());
-            meta.deletePartInfo(cadFile.getAbsolutePath());
+            meta.deleteEntryInfo(cadFile.getAbsolutePath());
 
             output.printException(pmnfe);
 

@@ -46,27 +46,47 @@ public class MainCommand {
                 case "st":
                     if(PART.equals(args[1])){
                         execCommand(new PartStatusCommand(), Arrays.copyOfRange(args, 2, args.length));
-                    } else if(DOCUMENT.equals(args[1])){
+                    }
+                    else if(DOCUMENT.equals(args[1])){
                         execCommand(new DocumentStatusCommand(), Arrays.copyOfRange(args, 2, args.length));
-                    }else{
+                    }
+                    else{
                         execCommand(new HelpCommand(), Arrays.copyOfRange(args, 1, args.length));
                     }
                     break;
                 case "get":
                     if(PART.equals(args[1])){
                         execCommand(new PartGetCommand(), Arrays.copyOfRange(args, 2, args.length));
-                    } else if(DOCUMENT.equals(args[1])){
+                    }
+                    else if(DOCUMENT.equals(args[1])){
                         execCommand(new DocumentGetCommand(), Arrays.copyOfRange(args, 2, args.length));
-                    }else{
+                    }
+                    else{
                         execCommand(new HelpCommand(), Arrays.copyOfRange(args, 1, args.length));
                     }
                     break;
                 case "put":
-                     execCommand(new PutCommand(), Arrays.copyOfRange(args, 1, args.length));
+                    if(PART.equals(args[1])){
+                        execCommand(new PartPutCommand(), Arrays.copyOfRange(args, 2, args.length));
+                    }
+                    else if(DOCUMENT.equals(args[1])){
+                        execCommand(new DocumentPutCommand(), Arrays.copyOfRange(args, 2, args.length));
+                    }
+                    else{
+                        execCommand(new HelpCommand(), Arrays.copyOfRange(args, 1, args.length));
+                    }
                     break;
                 case "checkout":
                 case "co":
-                     execCommand(new CheckOutCommand(), Arrays.copyOfRange(args, 1, args.length));
+                    if(PART.equals(args[1])){
+                        execCommand(new PartCheckOutCommand(), Arrays.copyOfRange(args, 2, args.length));
+                    }
+                    else if(DOCUMENT.equals(args[1])){
+                        execCommand(new DocumentCheckOutCommand(), Arrays.copyOfRange(args, 2, args.length));
+                    }
+                    else{
+                        execCommand(new HelpCommand(), Arrays.copyOfRange(args, 1, args.length));
+                    }
                     break;
                 case "undocheckout":
                 case "uco":
@@ -80,13 +100,15 @@ public class MainCommand {
                 case "cr":
                      execCommand(new PartCreationCommand(), Arrays.copyOfRange(args, 1, args.length));
                     break;
+
+                case "search":
+                case "s":
+                    execCommand(new SearchPartsCommand(), Arrays.copyOfRange(args, 1, args.length));
+                    break;
+
                 case "partlist":
                 case "pl":
                      execCommand(new PartListCommand(), Arrays.copyOfRange(args, 1, args.length));
-                    break;
-                case "search":
-                case "s":
-                     execCommand(new SearchPartsCommand(), Arrays.copyOfRange(args, 1, args.length));
                     break;
                 case "workspaces":
                 case "wl":

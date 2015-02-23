@@ -136,7 +136,7 @@
 
                     $scope.checkout = function () {
                         $scope.file.busy = true;
-                        CliService.checkout($scope.file.part, $scope.folder.path, $scope.options).then(function () {
+                        CliService.checkoutPart($scope.file.part, $scope.folder.path, $scope.options).then(function () {
                             return $scope.fetchStatus();
                         }, null, onProgress).then(onFinish);
                     };
@@ -150,7 +150,7 @@
 
                     $scope.put = function () {
                         $scope.file.busy = true;
-                        CliService.put($scope.file.part.workspace, $scope.file.path).then(function () {
+                        CliService.putCADFile($scope.file.part.workspace, $scope.file.path).then(function () {
                             return $scope.fetchStatus();
                         }, null, onProgress).then(onFinish);
                     };

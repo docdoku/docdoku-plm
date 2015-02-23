@@ -54,11 +54,11 @@ public class HelpCommand extends AbstractCommandLine{
                 break;
 
             case "put":
-                cl=new PutCommand();
+                cl=new PartPutCommand();
                 break;
 
             case "checkout": case "co":
-                cl=new CheckOutCommand();
+                cl=new PartCheckOutCommand();
                 break;
 
             case "undocheckout": case "uco":

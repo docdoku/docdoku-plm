@@ -87,10 +87,10 @@
 
             };
 
-            this.getStatusForFile = function (file) {
+            this.getPartStatusForFile = function (file) {
 
                 var args = [
-                    'st',
+                    'st', 'part',
                     '-F', 'json',
                     '-h', configuration.host,
                     '-P', configuration.port,
@@ -110,7 +110,7 @@
             this.getStatusForPart = function (part) {
 
                 var args = [
-                    'st',
+                    'st', 'part',
                     '-F', 'json',
                     '-h', configuration.host,
                     '-P', configuration.port,
@@ -127,10 +127,10 @@
 
             };
 
-            this.checkout = function (part, path, options) {
+            this.checkoutPart = function (part, path, options) {
 
                 var args = [
-                    'co',
+                    'co', 'part',
                     '-F', 'json',
                     '-h', configuration.host,
                     '-P', configuration.port,
@@ -197,10 +197,10 @@
                 return run(args);
             };
 
-            this.download = function (part, path, options) {
+            this.downloadNativeCad = function (part, path, options) {
 
                 var args = [
-                    'get',
+                    'get', 'part',
                     '-F', 'json',
                     '-h', configuration.host,
                     '-P', configuration.port,
@@ -228,10 +228,10 @@
 
             };
 
-            this.put = function (workspace, file) {
+            this.putCADFile = function (workspace, file) {
 
                 var args = [
-                    'put',
+                    'put', 'part',
                     '-F', 'json',
                     '-h', configuration.host,
                     '-P', configuration.port,

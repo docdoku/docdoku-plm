@@ -43,19 +43,19 @@ import java.security.NoSuchAlgorithmException;
  *
  * @author Morgan Guimard
  */
-public class DocumentGetCommand extends AbstractCommandLine{
+public class DocumentCheckOutCommand extends AbstractCommandLine{
 
-    @Option(metaVar = "<revision>", name="-r", aliases = "--revision", usage="specify revision of the document to retrieve ('A', 'B'...); default is the latest")
+    @Option(metaVar = "<revision>", name="-r", aliases = "--revision", usage="specify revision of the document to check out ('A', 'B'...); if not specified the document identity (number and revision) corresponding to the file will be selected")
     private Version revision;
 
-    @Option(name="-i", aliases = "--iteration", metaVar = "<iteration>", usage="specify iteration of the document to retrieve ('1','2', '24'...); default is the latest")
-    private int iteration;
-
-    @Option(metaVar = "<id>", name = "-o", aliases = "--id", usage = "the id of the document to fetch; if not specified choose the document corresponding to the file")
+    @Option(metaVar = "<id>", name = "-o", aliases = "--id", usage = "the id of the document to check out; if not specified choose the document corresponding to the file")
     private String id;
 
-    @Argument(metaVar = "[<file>] | <dir>]", index=0, usage = "specify the cad file of the document to fetch or the path where cad files are stored (default is working directory)")
+    @Argument(metaVar = "[<file>] | <dir>]", index=0, usage = "specify the file of the document to check out or the path where files are stored (default is working directory)")
     private File path = new File(System.getProperty("user.dir"));
+
+    @Option(name="-n", aliases = "--no-download", usage="do not download the files of the document if any")
+    private boolean noDownload;
 
     @Option(name="-f", aliases = "--force", usage="overwrite existing files even if they have been modified locally")
     private boolean force;
@@ -63,19 +63,18 @@ public class DocumentGetCommand extends AbstractCommandLine{
     @Option(name="-w", aliases = "--workspace", required = true, metaVar = "<workspace>", usage="workspace on which operations occur")
     protected String workspace;
 
-    private IDocumentManagerWS documenS;
+
+    private IDocumentManagerWS documentS;
 
     public void execImpl() throws Exception {
-
-        if(id==null){
+        if(id==null || revision==null){
             loadMetadata();
         }
+        documentS = ScriptingTools.createDocumentService(getServerURL(), user, password);
 
-        documenS = ScriptingTools.createDocumentService(getServerURL(), user, password);
         String strRevision = revision==null?null:revision.toString();
 
-        getDocument(id,strRevision,iteration);
-
+        checkoutDocument(id, strRevision);
     }
 
     private void loadMetadata() throws IOException {
@@ -90,27 +89,26 @@ public class DocumentGetCommand extends AbstractCommandLine{
             throw new IllegalArgumentException(LangHelper.getLocalizedMessage("DocumentIdOrRevisionNotSpecified2",user));
         }
         revision = new Version(strRevision);
-        iteration=0;
         path=path.getParentFile();
     }
 
-    private void getDocument(String pId, String pRevision, int pIteration) throws IOException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, LoginException, NoSuchAlgorithmException, NotAllowedException, AccessRightException, DocumentRevisionNotFoundException {
+    private void checkoutDocument(String id, String pRevision) throws IOException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, LoginException, NoSuchAlgorithmException, NotAllowedException, FileAlreadyExistsException, AccessRightException, CreationException, DocumentRevisionNotFoundException {
 
-        DocumentRevision dr = documenS.getDocumentRevision(new DocumentRevisionKey(workspace,pId,pRevision));
+        DocumentRevisionKey documentRevisionKey = new DocumentRevisionKey(workspace, id, pRevision);
 
-        DocumentIteration di;
+        DocumentRevision dr = documentS.getDocumentRevision(documentRevisionKey);
+        DocumentIteration di = dr.getLastIteration();
 
-        if(pIteration == 0){
-            di = dr.getLastIteration();
-        }else if(pIteration > dr.getNumberOfIterations()){
-            throw new IllegalArgumentException(LangHelper.getLocalizedMessage("IterationNotExisting",user));
-        }else{
-            di = dr.getIteration(pIteration);
+        if(!dr.isCheckedOut()) {
+            try{
+                dr = documentS.checkOutDocument(documentRevisionKey);
+                di = dr.getLastIteration();
+            }catch (Exception e){
+                output.printException(e);
+            }
         }
 
-        if(di.getAttachedFiles().isEmpty()){
-            output.printInfo(LangHelper.getLocalizedMessage("NoFilesForDocument",user) + " : "  + id + " " + dr.getVersion() + "." + di.getIteration() + " (" + workspace + ")");
-        }else{
+        if(!noDownload && !di.getAttachedFiles().isEmpty()){
             FileHelper fh = new FileHelper(user,password,output,new AccountsManager().getUserLocale(user));
             fh.downloadDocumentFiles(getServerURL(), path, workspace, id, dr, di, force);
         }
@@ -119,6 +117,6 @@ public class DocumentGetCommand extends AbstractCommandLine{
 
     @Override
     public String getDescription() throws IOException {
-        return LangHelper.getLocalizedMessage("DocumentGetCommandDescription",user);
+        return LangHelper.getLocalizedMessage("DocumentCheckOutCommandDescription",user);
     }
 }

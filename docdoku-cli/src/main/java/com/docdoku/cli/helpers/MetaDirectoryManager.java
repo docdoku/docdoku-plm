@@ -131,7 +131,7 @@ public class MetaDirectoryManager {
         return Integer.parseInt(indexProps.getProperty(filePath + "." + ITERATION_PROP,"0"));
     }
 
-    public void deletePartInfo(String filePath) throws IOException {
+    public void deleteEntryInfo(String filePath) throws IOException {
         indexProps.remove(filePath + "." + ID_PROP);
         indexProps.remove(filePath + "." + PART_NUMBER_PROP);
         indexProps.remove(filePath + "." + REVISION_PROP);

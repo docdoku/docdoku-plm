@@ -196,14 +196,14 @@
 
                     $scope.download = function () {
                         $scope.part.busy = true;
-                        CliService.download($scope.part, $scope.folder.path, $scope.options).then(function () {
+                        CliService.downloadNativeCad($scope.part, $scope.folder.path, $scope.options).then(function () {
                             return CliService.getStatusForPart($scope.part);
                         }, null, onProgress).then(onFinish).then(newStuff);
                     };
 
                     $scope.checkout = function () {
                         $scope.part.busy = true;
-                        CliService.checkout($scope.part, $scope.folder.path, $scope.options).then(function () {
+                        CliService.checkoutPart($scope.part, $scope.folder.path, $scope.options).then(function () {
                             return CliService.getStatusForPart($scope.part);
                         }, null, onProgress).then(onFinish).then(newStuff).then(checkForWorkspaceReload);
                     };
