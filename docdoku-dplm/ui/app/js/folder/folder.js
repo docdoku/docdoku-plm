@@ -143,7 +143,7 @@
 
                     $scope.checkin = function () {
                         $scope.file.busy = true;
-                        CliService.checkin($scope.file.part,$scope.folder.path).then(function () {
+                        CliService.checkinPart($scope.file.part,$scope.folder.path).then(function () {
                             return $scope.fetchStatus();
                         }, null, onProgress).then(onFinish);
                     };
@@ -157,7 +157,7 @@
 
                     $scope.undoCheckout = function () {
                         $scope.file.busy = true;
-                        CliService.undoCheckout($scope.file.part).then(function () {
+                        CliService.undoCheckoutPart($scope.file.part).then(function () {
                             return $scope.fetchStatus();
                         }).then(onFinish);
                     };

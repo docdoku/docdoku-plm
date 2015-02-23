@@ -75,6 +75,8 @@ public abstract class CliOutput {
     public abstract void printConversion(Conversion conversion) throws JSONException;
     public abstract void printAccount(Account account) throws JSONException;
     public abstract void printDocumentRevision(DocumentRevision dr, long lastModified);
+    public abstract void printDocumentRevisions(DocumentRevision[] documentRevisions);
+    public abstract void printFolders(String[] folders) throws JSONException;
 
     public abstract FilterInputStream getMonitor(long maximum, InputStream in);
 

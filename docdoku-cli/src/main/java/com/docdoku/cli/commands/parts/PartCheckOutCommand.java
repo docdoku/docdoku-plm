@@ -171,6 +171,6 @@ public class PartCheckOutCommand extends AbstractCommandLine {
 
     @Override
     public String getDescription() throws IOException {
-        return LangHelper.getLocalizedMessage("CheckOutCommandDescription",user);
+        return LangHelper.getLocalizedMessage("PartCheckOutCommandDescription",user);
     }
 }

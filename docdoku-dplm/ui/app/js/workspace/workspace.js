@@ -210,14 +210,14 @@
 
                     $scope.checkin = function () {
                         $scope.part.busy = true;
-                        CliService.checkin($scope.part).then(function () {
+                        CliService.checkinPart($scope.part).then(function () {
                             return CliService.getStatusForPart($scope.part);
                         }, null, onProgress).then(onFinish);
                     };
 
                     $scope.undoCheckout = function () {
                         $scope.part.busy = true;
-                        CliService.undoCheckout($scope.part).then(function () {
+                        CliService.undoCheckoutPart($scope.part).then(function () {
                             return CliService.getStatusForPart($scope.part);
                         }).then(onFinish);
                     };

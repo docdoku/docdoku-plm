@@ -191,6 +191,24 @@ public class JSONOutput  extends CliOutput {
     }
 
     @Override
+    public void printDocumentRevisions(DocumentRevision[] documentRevisions) {
+        JSONArray jsonArray = new JSONArray();
+        for (DocumentRevision documentRevision : documentRevisions) {
+            jsonArray.put(getDocumentRevision(documentRevision, 0L));
+        }
+        System.out.println(jsonArray.toString());
+    }
+
+    @Override
+    public void printFolders(String[] folders) throws JSONException {
+        JSONArray jsonArray = new JSONArray();
+        for (String folder : folders) {
+            jsonArray.put(folder);
+        }
+        System.out.println(jsonArray.toString());
+    }
+
+    @Override
     public FilterInputStream getMonitor(long maximum, InputStream in) {
         return new JSONProgressMonitorInputStream(maximum,in);
     }

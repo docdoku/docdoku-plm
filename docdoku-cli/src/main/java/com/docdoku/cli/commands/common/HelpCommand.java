@@ -64,11 +64,11 @@ public class HelpCommand extends AbstractCommandLine {
                 break;
 
             case "undocheckout": case "uco":
-                cl=new UndoCheckOutCommand();
+                cl=new PartUndoCheckOutCommand();
                 break;
 
             case "checkin": case "ci":
-                cl=new CheckInCommand();
+                cl=new PartCheckInCommand();
                 break;
 
             case "create": case "cr":

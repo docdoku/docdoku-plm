@@ -73,6 +73,9 @@
 
             };
 
+            //////////////////////////////////////////////
+            // Common services
+
             this.getWorkspaces = function () {
                 var args = [
                     'wl',
@@ -86,6 +89,25 @@
                 return run(args);
 
             };
+
+            this.fetchAccount = function(){
+
+                var args = [
+                    'a',
+                    '-F', 'json',
+                    '-h', configuration.host,
+                    '-P', configuration.port,
+                    '-u', configuration.user,
+                    '-p', configuration.password
+                ];
+
+                return run(args);
+            };
+
+
+
+            //////////////////////////////////////////////
+            // Part services
 
             this.getPartStatusForFile = function (file) {
 
@@ -158,10 +180,10 @@
 
             };
 
-            this.checkin = function (part,path) {
+            this.checkinPart = function (part,path) {
 
                 var args = [
-                    'ci',
+                    'ci', 'part',
                     '-F', 'json',
                     '-h', configuration.host,
                     '-P', configuration.port,
@@ -180,10 +202,10 @@
 
             };
 
-            this.undoCheckout = function (part) {
+            this.undoCheckoutPart = function (part) {
 
                 var args = [
-                    'uco',
+                    'uco', 'part',
                     '-F', 'json',
                     '-h', configuration.host,
                     '-P', configuration.port,
@@ -280,7 +302,7 @@
             this.getPartMastersCount = function (workspace) {
 
                 var args = [
-                    'pl',
+                    'l', 'part',
                     '-F', 'json',
                     '-h', configuration.host,
                     '-P', configuration.port,
@@ -297,7 +319,7 @@
             this.getPartMasters = function (workspace, start, max) {
 
                 var args = [
-                    'pl',
+                    'l', 'part',
                     '-F', 'json',
                     '-h', configuration.host,
                     '-P', configuration.port,
@@ -315,7 +337,7 @@
             this.searchPartMasters = function (workspace, search) {
 
                 var args = [
-                    's',
+                    's', 'part',
                     '-F', 'json',
                     '-h', configuration.host,
                     '-P', configuration.port,
@@ -363,19 +385,11 @@
 
             };
 
-            this.fetchAccount = function(){
 
-                var args = [
-                    'a',
-                    '-F', 'json',
-                    '-h', configuration.host,
-                    '-P', configuration.port,
-                    '-u', configuration.user,
-                    '-p', configuration.password
-                ];
+            //////////////////////////////////////////////
+            // Document services
 
-                return run(args);
-            }
+
 
         });
 })();

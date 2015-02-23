@@ -166,6 +166,20 @@ public class HumanOutput extends CliOutput{
     }
 
     @Override
+    public void printDocumentRevisions(DocumentRevision[] documentRevisions) {
+        for(DocumentRevision dr: documentRevisions) {
+            printDocumentRevision(dr, 1);
+        }
+    }
+
+    @Override
+    public void printFolders(String[] folders) {
+        for (String folder : folders) {
+            System.out.println(folder);
+        }
+    }
+
+    @Override
     public FilterInputStream getMonitor(long maximum, InputStream in) {
         return new ConsoleProgressMonitorInputStream(maximum,in);
     }
