@@ -5,7 +5,7 @@ OPTIONS_JSON="-u foo -p bar -h localhost -P 8080 -F json"
 WRONG_AUTH_HUMAN="-u azerty -p azerty -h localhost -P 8080"
 WRONG_AUTH_JSON="-u azerty -p azerty -h localhost -P 8080 -F json"
 
-DPLM="java -Xmx1024M -cp ../../ui/dplm/docdoku-cli-jar-with-dependencies.jar com.docdoku.cli.MainCommand"
+DPLM="java -Xmx1024M -cp ../../ui/app/docdoku-cli-jar-with-dependencies.jar com.docdoku.cli.MainCommand"
 SEP="--------------------------------------------------------"
 
 mkdir -p workspace && cd workspace;
@@ -46,85 +46,85 @@ ${DPLM} wl ${OPTIONS_JSON}
 echo ${SEP}
 
 echo "Part count"
-${DPLM} pl ${OPTIONS_HUMAN} -w foo -c
+${DPLM} list part ${OPTIONS_HUMAN} -w cli -c
 echo ${SEP}
-${DPLM} pl ${OPTIONS_JSON} -w foo -c
+${DPLM} list part ${OPTIONS_JSON} -w cli -c
 echo ${SEP}
 
 echo "Part list"
 echo ${SEP}
-${DPLM} pl ${OPTIONS_HUMAN} -w foo
+${DPLM} list part ${OPTIONS_HUMAN} -w cli
 echo ${SEP}
-${DPLM} pl ${OPTIONS_JSON} -w foo
+${DPLM} list part ${OPTIONS_JSON} -w cli
 echo ${SEP}
 
 echo "Part list with start and max"
 echo ${SEP}
-${DPLM} pl ${OPTIONS_HUMAN} -w foo -s 2 -m 1
+${DPLM} list part ${OPTIONS_HUMAN} -w cli -s 2 -m 1
 echo ${SEP}
-${DPLM} pl ${OPTIONS_JSON} -w foo -s 2 -m 1
+${DPLM} list part ${OPTIONS_JSON} -w cli -s 2 -m 1
 echo ${SEP}
 
 echo "Part list without workspace"
 echo ${SEP}
-${DPLM} pl ${OPTIONS_HUMAN}
+${DPLM} list part ${OPTIONS_HUMAN}
 echo ${SEP}
-${DPLM} pl ${OPTIONS_JSON}
+${DPLM} list part ${OPTIONS_JSON}
 echo ${SEP}
 
 echo "Baseline list"
 echo ${SEP}
-${DPLM} bl ${OPTIONS_HUMAN} -w foo -o test-part-001 -r A
+${DPLM} bl ${OPTIONS_HUMAN} -w cli -o test-part-001 -r A
 echo ${SEP}
-${DPLM} bl ${OPTIONS_JSON} -w foo -o test-part-001 -r A
+${DPLM} bl ${OPTIONS_JSON} -w cli -o test-part-001 -r A
 echo ${SEP}
 
 echo "Checkout part, then undo co"
 echo ${SEP}
-${DPLM} co ${OPTIONS_HUMAN} -w foo -o test-part-001 -r A
+${DPLM} co part ${OPTIONS_HUMAN} -w cli -o test-part-001 -r A
 echo ${SEP}
-${DPLM} uco ${OPTIONS_HUMAN} -w foo -o test-part-001 -r A
+${DPLM} uco part ${OPTIONS_HUMAN} -w cli -o test-part-001 -r A
 echo ${SEP}
 
 echo "Checkout part, then undo co (json)"
 echo ${SEP}
-${DPLM} co ${OPTIONS_JSON} -w foo -o test-part-001 -r A
+${DPLM} co part ${OPTIONS_JSON} -w cli -o test-part-001 -r A
 echo ${SEP}
-${DPLM} uco ${OPTIONS_JSON} -w foo -o test-part-001 -r A
+${DPLM} uco part ${OPTIONS_JSON} -w cli -o test-part-001 -r A
 echo ${SEP}
 
 echo "Download part"
 echo ${SEP}
-${DPLM} get ${OPTIONS_HUMAN} -w foo -o objfile -r A
+${DPLM} get part ${OPTIONS_HUMAN} -w cli -o objfile -r A
 echo ${SEP}
-${DPLM} get ${OPTIONS_JSON} -w foo -o objfile -r A
+${DPLM} get part ${OPTIONS_JSON} -w cli -o objfile -r A
 echo ${SEP}
 
 echo "Checkout part, then checkin with part number (human)"
 echo ${SEP}
-${DPLM} co ${OPTIONS_HUMAN} -w foo -o objfile -r A
+${DPLM} co part ${OPTIONS_HUMAN} -w cli -o objfile -r A
 echo ${SEP}
-${DPLM} ci ${OPTIONS_HUMAN} -w foo -o objfile -r A
+${DPLM} ci part ${OPTIONS_HUMAN} -w cli -o objfile -r A
 echo ${SEP}
 
 echo "Checkout part, then checkin via file name (human)"
 echo ${SEP}
-${DPLM} co ${OPTIONS_HUMAN} -w foo -o objfile -r A
+${DPLM} co part ${OPTIONS_HUMAN} -w cli -o objfile -r A
 echo ${SEP}
-${DPLM} ci ${OPTIONS_HUMAN} -w foo pumpkin_tall_10k.obj
+${DPLM} ci part ${OPTIONS_HUMAN} -w cli pumpkin_tall_10k.obj
 echo ${SEP}
 
 echo "Checkout part, then checkin with part number (json)"
 echo ${SEP}
-${DPLM} co ${OPTIONS_JSON} -w foo -o objfile -r A
+${DPLM} co part ${OPTIONS_JSON} -w cli -o objfile -r A
 echo ${SEP}
-${DPLM} ci ${OPTIONS_JSON} -w foo -o objfile -r A
+${DPLM} ci part ${OPTIONS_JSON} -w cli -o objfile -r A
 echo ${SEP}
 
 echo "Checkout part, then checkin via file name (json)"
 echo ${SEP}
-${DPLM} co ${OPTIONS_JSON} -w foo -o objfile -r A
+${DPLM} co part ${OPTIONS_JSON} -w cli -o objfile -r A
 echo ${SEP}
-${DPLM} ci ${OPTIONS_JSON} -w foo pumpkin_tall_10k.obj
+${DPLM} ci part ${OPTIONS_JSON} -w cli pumpkin_tall_10k.obj
 echo ${SEP}
 
