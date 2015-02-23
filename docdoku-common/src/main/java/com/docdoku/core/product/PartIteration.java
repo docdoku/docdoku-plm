@@ -109,6 +109,9 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
     @Temporal(TemporalType.TIMESTAMP)
     private Date creationDate;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date modificationDate;
+
     @OneToMany(orphanRemoval=true, cascade=CascadeType.ALL, fetch=FetchType.EAGER)
     @MapKey(name="name")
     @JoinTable(name="PARTITERATION_ATTRIBUTE",
@@ -147,12 +150,27 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
         MAKE, BUY
     }
     
-    public PartIteration(){
+    public PartIteration() {
     }
-    public PartIteration(PartRevision pPartRevision, int pIteration, User pAuthor) {
+
+    public PartIteration(PartRevision pPartRevision, User pAuthor) {
+        PartIteration lastPart = pPartRevision.getLastIteration();
+        int newIteration = 1;
+
+        if (lastPart != null) {
+            newIteration = lastPart.getIteration() + 1;
+            Date lastModificationDate = lastPart.modificationDate;
+            setModificationDate(lastModificationDate);
+        }
+
         setPartRevision(pPartRevision);
-        iteration = pIteration;
+        iteration = newIteration;
         author = pAuthor;
+    }
+
+    public PartIteration(PartRevision pPartRevision, int pIteration, User pAuthor) {
+        this(pPartRevision, pAuthor);
+        iteration = pIteration;
     }
     
     public String getWorkspaceId() {
@@ -239,6 +257,13 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
     }
     public void setCreationDate(Date creationDate) {
         this.creationDate = (creationDate!=null) ? (Date) creationDate.clone() : null;
+    }
+
+    public Date getModificationDate() {
+        return (modificationDate!=null) ? (Date) modificationDate.clone() : null;
+    }
+    public void setModificationDate(Date modificationDate) {
+        this.modificationDate = (modificationDate!=null) ? (Date) modificationDate.clone() : null;
     }
 
     public Map<String, InstanceAttribute> getInstanceAttributes() {

@@ -702,6 +702,8 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             }
 
             partIte.setIterationNote(pIterationNote);
+            Date now = new Date();
+            partIte.setModificationDate(now);
             partIte.setSource(source);
             return partRev;
 

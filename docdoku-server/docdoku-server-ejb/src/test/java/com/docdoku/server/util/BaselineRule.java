@@ -40,7 +40,7 @@ public class BaselineRule implements TestRule {
             List<PartRevision> revisions = new ArrayList<PartRevision>();
             List<PartIteration> iterationLists = new ArrayList<PartIteration>();
             PartRevision revision = new PartRevision(partMaster, "A", user1);
-            iterationLists.add(new PartIteration(revision, 1, user1));
+            iterationLists.add(new PartIteration(revision, user1));
             revision.setPartIterations(iterationLists);
             revision.setStatus(PartRevision.RevisionStatus.RELEASED);
             if (permission != null)
@@ -64,10 +64,10 @@ public class BaselineRule implements TestRule {
         }
 
 
-            }
+    }
 
 
-        @Override
+    @Override
     public Statement apply(Statement statement, Description description) {
         return new BaselineStatement(statement,this.configurationItem);
     }

@@ -77,12 +77,23 @@ function (Backbone, Date, PartIterationList, ACLChecker) {
             );
         },
 
+        getFormattedModificationDate: function () {
+            return Date.formatTimestamp(
+                App.config.i18n._DATE_FORMAT,
+                this.getModificationDate()
+            );
+        },
+
         getCheckoutDate: function () {
             return this.get('checkOutDate');
         },
 
         getCreationDate: function () {
             return this.get('creationDate');
+        },
+
+        getModificationDate: function () {
+            return this.getLastIteration().get('modificationDate');
         },
 
 
