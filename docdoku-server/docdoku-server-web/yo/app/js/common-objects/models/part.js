@@ -84,6 +84,13 @@ function (Backbone, Date, PartIterationList, ACLChecker) {
             );
         },
 
+        getFormattedRevisionDate: function () {
+            return Date.formatTimestamp(
+                App.config.i18n._DATE_FORMAT,
+                this.getRevisionDate()
+            );
+        },
+
         getCheckoutDate: function () {
             return this.get('checkOutDate');
         },
@@ -94,6 +101,15 @@ function (Backbone, Date, PartIterationList, ACLChecker) {
 
         getModificationDate: function () {
             return this.getLastIteration().get('modificationDate');
+        },
+
+        getRevisionDate: function () {
+            var lastIteration = this.getLastIteration();
+            if (lastIteration.get('checkInDate')) {
+                return lastIteration.get('checkInDate');
+            } else {
+                return lastIteration.get('creationDate');
+            }
         },
 
 

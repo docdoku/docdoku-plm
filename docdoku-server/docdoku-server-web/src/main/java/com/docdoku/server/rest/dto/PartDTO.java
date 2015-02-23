@@ -39,6 +39,7 @@ public class PartDTO implements Serializable {
     private UserDTO author;
     private Date creationDate;
     private Date modificationDate;
+    private Date checkInDate;
     private String description;
     private List<PartIterationDTO> partIterations;
     @XmlElement(nillable = true)
@@ -103,6 +104,14 @@ public class PartDTO implements Serializable {
     }
     public void setModificationDate(Date modificationDate) {
         this.modificationDate = (modificationDate!=null) ? (Date) modificationDate.clone() : null;
+    }
+
+    public Date getCheckInDate() {
+        return (checkInDate!=null) ? (Date) checkInDate.clone() : null;
+    }
+
+    public void setCheckInDate(Date checkInDate) {
+        this.checkInDate = (checkInDate!=null) ? (Date) checkInDate.clone() : null;
     }
 
     public String getDescription() {

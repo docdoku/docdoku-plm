@@ -112,6 +112,9 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
     @Temporal(TemporalType.TIMESTAMP)
     private Date modificationDate;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date checkInDate;
+
     @OneToMany(orphanRemoval=true, cascade=CascadeType.ALL, fetch=FetchType.EAGER)
     @MapKey(name="name")
     @JoinTable(name="PARTITERATION_ATTRIBUTE",
@@ -166,6 +169,7 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
         setPartRevision(pPartRevision);
         iteration = newIteration;
         author = pAuthor;
+        checkInDate = null;
     }
 
     public PartIteration(PartRevision pPartRevision, int pIteration, User pAuthor) {
@@ -264,6 +268,13 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
     }
     public void setModificationDate(Date modificationDate) {
         this.modificationDate = (modificationDate!=null) ? (Date) modificationDate.clone() : null;
+    }
+
+    public Date getCheckInDate() {
+        return (checkInDate!=null) ? (Date) checkInDate.clone() : null;
+    }
+    public void setCheckInDate(Date checkInDate) {
+        this.checkInDate = (checkInDate!=null) ? (Date) checkInDate.clone() : null;
     }
 
     public Map<String, InstanceAttribute> getInstanceAttributes() {
@@ -395,6 +406,12 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
 
         if (creationDate != null) {
             clone.creationDate = (Date) creationDate.clone();
+        }
+        if (modificationDate != null) {
+            clone.modificationDate = (Date) modificationDate.clone();
+        }
+        if (checkInDate != null) {
+            clone.checkInDate = (Date) checkInDate.clone();
         }
         return clone;
     }
