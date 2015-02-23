@@ -222,7 +222,7 @@ define([
 
                 /*saving iteration*/
                 var _this = this;
-                
+
                 this.iteration.save({
                     revisionNote: this.$('#inputRevisionNote').val(),
                     instanceAttributes: this.attributesView.collection.toJSON(),

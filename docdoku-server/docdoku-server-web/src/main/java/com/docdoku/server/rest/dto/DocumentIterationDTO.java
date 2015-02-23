@@ -36,7 +36,6 @@ public class DocumentIterationDTO implements Serializable {
     private String documentRevisionVersion;
     private int iteration;
     private Date creationDate;
-
     private Date modificationDate;
     private UserDTO author;
     @XmlElement(nillable = true)

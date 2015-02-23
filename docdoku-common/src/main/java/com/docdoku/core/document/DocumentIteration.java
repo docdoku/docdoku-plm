@@ -118,13 +118,17 @@ public class DocumentIteration implements Serializable, FileHolder, Comparable<D
 
     public DocumentIteration(DocumentRevision pDocumentRevision, User pAuthor) {
         DocumentIteration lastDoc = pDocumentRevision.getLastIteration();
-        int newIteration = lastDoc==null?1:lastDoc.getIteration() + 1;
-        Date lastModificationDate = lastDoc.modificationDate;
+        int newIteration = 1;
+
+        if (lastDoc != null) {
+            newIteration = lastDoc.getIteration() + 1;
+            Date lastModificationDate = lastDoc.modificationDate;
+            modificationDate = lastModificationDate;
+        }
 
         setDocumentRevision(pDocumentRevision);
         iteration = newIteration;
         author = pAuthor;
-        modificationDate = lastModificationDate;
     }
 
     public void setDocumentRevision(DocumentRevision documentRevision) {
