@@ -18,8 +18,9 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.cli.commands;
+package com.docdoku.cli.commands.documents;
 
+import com.docdoku.cli.commands.AbstractCommandLine;
 import com.docdoku.cli.helpers.AccountsManager;
 import com.docdoku.cli.helpers.FileHelper;
 import com.docdoku.cli.helpers.LangHelper;
@@ -41,7 +42,7 @@ import java.io.IOException;
  *
  * @author Morgan Guimard
  */
-public class DocumentPutCommand extends AbstractCommandLine{
+public class DocumentPutCommand extends AbstractCommandLine {
 
     @Option(metaVar = "<revision>", name="-r", aliases = "--revision", usage="specify revision of the document to save ('A', 'B'...); if not specified the document identity (id and revision) corresponding to the file will be selected")
     private Version revision;

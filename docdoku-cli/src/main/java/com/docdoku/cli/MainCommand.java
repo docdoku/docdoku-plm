@@ -21,6 +21,14 @@
 package com.docdoku.cli;
 
 import com.docdoku.cli.commands.*;
+import com.docdoku.cli.commands.common.AccountInfosCommand;
+import com.docdoku.cli.commands.common.HelpCommand;
+import com.docdoku.cli.commands.common.WorkspacesCommand;
+import com.docdoku.cli.commands.documents.DocumentCheckOutCommand;
+import com.docdoku.cli.commands.documents.DocumentGetCommand;
+import com.docdoku.cli.commands.documents.DocumentPutCommand;
+import com.docdoku.cli.commands.documents.DocumentStatusCommand;
+import com.docdoku.cli.commands.parts.*;
 import com.docdoku.core.common.Version;
 import org.kohsuke.args4j.CmdLineParser;
 

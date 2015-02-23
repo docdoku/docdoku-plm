@@ -18,8 +18,9 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.cli.commands;
+package com.docdoku.cli.commands.documents;
 
+import com.docdoku.cli.commands.AbstractCommandLine;
 import com.docdoku.cli.helpers.LangHelper;
 import com.docdoku.cli.helpers.MetaDirectoryManager;
 import com.docdoku.cli.tools.ScriptingTools;
@@ -38,7 +39,7 @@ import java.io.IOException;
  *
  * @author Morgan Guimard
  */
-public class DocumentStatusCommand extends AbstractCommandLine{
+public class DocumentStatusCommand extends AbstractCommandLine {
 
     @Option(metaVar = "<revision>", name="-r", aliases = "--revision", usage="specify revision of the document to get a status ('A', 'B'...); if not specified the document identity (id and revision) corresponding to the file will be selected")
     private Version revision;

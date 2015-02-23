@@ -18,8 +18,9 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.cli.commands;
+package com.docdoku.cli.commands.parts;
 
+import com.docdoku.cli.commands.AbstractCommandLine;
 import com.docdoku.cli.helpers.AccountsManager;
 import com.docdoku.cli.helpers.FileHelper;
 import com.docdoku.cli.helpers.LangHelper;
@@ -45,19 +46,20 @@ import java.util.List;
  *
  * @author Florent Garin
  */
-public class PartCheckOutCommand extends AbstractCommandLine{
+public class PartGetCommand extends AbstractCommandLine {
 
-    @Option(metaVar = "<revision>", name="-r", aliases = "--revision", usage="specify revision of the part to check out ('A', 'B'...); if not specified the part identity (number and revision) corresponding to the cad file will be selected")
+
+    @Option(metaVar = "<revision>", name="-r", aliases = "--revision", usage="specify revision of the part to retrieve ('A', 'B'...); default is the latest")
     private Version revision;
 
-    @Option(metaVar = "<partnumber>", name = "-o", aliases = "--part", usage = "the part number of the part to check out; if not specified choose the part corresponding to the cad file")
+    @Option(name="-i", aliases = "--iteration", metaVar = "<iteration>", usage="specify iteration of the part to retrieve ('1','2', '24'...); default is the latest")
+    private int iteration;
+
+    @Option(metaVar = "<partnumber>", name = "-o", aliases = "--part", usage = "the part number of the part to fetch; if not specified choose the part corresponding to the cad file")
     private String partNumber;
 
-    @Argument(metaVar = "[<cadfile>] | <dir>]", index=0, usage = "specify the cad file of the part to check out or the path where cad files are stored (default is working directory)")
+    @Argument(metaVar = "[<cadfile>] | <dir>]", index=0, usage = "specify the cad file of the part to fetch or the path where cad files are stored (default is working directory)")
     private File path = new File(System.getProperty("user.dir"));
-
-    @Option(name="-n", aliases = "--no-download", usage="do not download the native cad file of the part if any")
-    private boolean noDownload;
 
     @Option(name="-f", aliases = "--force", usage="overwrite existing files even if they have been modified locally")
     private boolean force;
@@ -75,12 +77,13 @@ public class PartCheckOutCommand extends AbstractCommandLine{
     private IProductConfigSpecManagerWS productConfigSpecS;
 
     public void execImpl() throws Exception {
-        if(partNumber==null || revision==null){
+
+        if(partNumber==null){
             loadMetadata();
         }
+
         productS = ScriptingTools.createProductService(getServerURL(), user, password);
         productConfigSpecS = ScriptingTools.createProductConfigSpecService(getServerURL(), user, password);
-
         String strRevision = revision==null?null:revision.toString();
 
         ConfigSpec cs = null;
@@ -89,7 +92,7 @@ public class PartCheckOutCommand extends AbstractCommandLine{
             cs = productConfigSpecS.getConfigSpecForBaseline(baselineId);
         }
 
-        checkoutPart(partNumber,strRevision,cs);
+        getPart(partNumber, strRevision, iteration, cs);
     }
 
     private void loadMetadata() throws IOException {
@@ -104,13 +107,14 @@ public class PartCheckOutCommand extends AbstractCommandLine{
             throw new IllegalArgumentException(LangHelper.getLocalizedMessage("PartNumberOrRevisionNotSpecified2",user));
         }
         revision = new Version(strRevision);
+        //The part is inferred from the cad file, hence fetch the fresh (latest) iteration
+        iteration=0;
         //once partNumber and revision have been inferred, set path to folder where files are stored
         //in order to implement perform the rest of the treatment
         path=path.getParentFile();
     }
 
-    private void checkoutPart(String pPartNumber, String pRevision, ConfigSpec cs) throws IOException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartMasterNotFoundException, PartRevisionNotFoundException, LoginException, NoSuchAlgorithmException, PartIterationNotFoundException, NotAllowedException, FileAlreadyExistsException, AccessRightException, CreationException {
-
+    private void getPart(String pPartNumber, String pRevision, int pIteration, ConfigSpec cs) throws IOException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartMasterNotFoundException, PartRevisionNotFoundException, LoginException, NoSuchAlgorithmException, PartIterationNotFoundException, NotAllowedException, AccessRightException {
         PartMaster pm = productS.getPartMaster(new PartMasterKey(workspace, pPartNumber));
         PartRevision pr;
         PartIteration pi;
@@ -133,27 +137,27 @@ public class PartCheckOutCommand extends AbstractCommandLine{
 
             if(pRevision != null){
                 pr = productS.getPartRevision(new PartRevisionKey(workspace, pPartNumber, pRevision));
+                if(pIteration == 0){
+                    pi = pr.getLastIteration();
+                }else if(pIteration > pr.getNumberOfIterations()){
+                    throw new IllegalArgumentException(LangHelper.getLocalizedMessage("IterationNotExisting",user));
+                }else{
+                    pi = pr.getIteration(pIteration);
+                }
             }else{
                 pr = pm.getLastRevision();
-            }
-
-            pi = pr.getLastIteration();
-        }
-
-        if(!pr.isCheckedOut()) {
-            try{
-                pr = productS.checkOutPart(new PartRevisionKey(workspace, pPartNumber, pr.getVersion()));
                 pi = pr.getLastIteration();
-            }catch (Exception e){
-                output.printException(e);
             }
+
         }
 
         BinaryResource bin = pi.getNativeCADFile();
 
-        if(bin!=null && !noDownload){
+        if(bin!=null){
             FileHelper fh = new FileHelper(user,password,output,new AccountsManager().getUserLocale(user));
             fh.downloadNativeCADFile(getServerURL(), path, workspace, pPartNumber, pr, pi, force);
+        }else{
+            output.printInfo(LangHelper.getLocalizedMessage("NoFileForPart",user) + " : "  + pPartNumber + " " + pr.getVersion() + "." + pi.getIteration() + " (" + workspace + ")");
         }
 
         if(recursive){
@@ -162,7 +166,7 @@ public class PartCheckOutCommand extends AbstractCommandLine{
 
             for(PartUsageLink link:usageLinks){
                 PartMaster subPM = link.getComponent();
-                checkoutPart(subPM.getNumber(), null, cs);
+                getPart(subPM.getNumber(),null,0,cs);
             }
         }
 
@@ -170,6 +174,6 @@ public class PartCheckOutCommand extends AbstractCommandLine{
 
     @Override
     public String getDescription() throws IOException {
-        return LangHelper.getLocalizedMessage("CheckOutCommandDescription",user);
+        return LangHelper.getLocalizedMessage("PartGetCommandDescription",user);
     }
 }

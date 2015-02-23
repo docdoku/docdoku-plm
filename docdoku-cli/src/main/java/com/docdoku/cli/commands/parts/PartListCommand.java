@@ -18,46 +18,50 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.cli.commands;
+package com.docdoku.cli.commands.parts;
 
+import com.docdoku.cli.commands.AbstractCommandLine;
 import com.docdoku.cli.helpers.LangHelper;
 import com.docdoku.cli.tools.ScriptingTools;
-import com.docdoku.core.product.Conversion;
-import com.docdoku.core.product.PartIterationKey;
+import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.services.IProductManagerWS;
 import org.kohsuke.args4j.Option;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  *
  * @author Morgan Guimard
  */
-public class ConversionCommand extends AbstractCommandLine {
+public class PartListCommand extends AbstractCommandLine {
 
     @Option(name="-w", aliases = "--workspace", required = true, metaVar = "<workspace>", usage="workspace on which operations occur")
     protected String workspace;
 
-    @Option(metaVar = "<partnumber>", required = true, name = "-o", aliases = "--part", usage = "the part number of the part to verify the existence of conversion")
-    private String number;
+    @Option(name="-c", aliases = "--count", usage="return the number of part revisions within the workspace")
+    private boolean count;
 
-    @Option(metaVar = "<revision>", required = true, name="-r", aliases = "--revision", usage="specify revision of the part to analyze ('A', 'B'...)")
-    private String revision;
+    @Option(name="-s", aliases = "--start", usage="start offset")
+    private int start;
 
-    @Option(name="-i", aliases = "--iteration", metaVar = "<iteration>", usage="specify iteration of the part to retrieve ('1','2', '24'...); default is the latest")    private int iteration;
-
-    private IProductManagerWS productS;
+    @Option(name="-m", aliases = "--max-results", usage="max results")
+    private int max;
 
     @Override
     public void execImpl() throws Exception {
-        productS = ScriptingTools.createProductService(getServerURL(), user, password);
-        PartIterationKey pK = new PartIterationKey(workspace,number,revision, iteration);
-        Conversion conversion = productS.getConversion(pK);
-        output.printConversion(conversion);
+        IProductManagerWS productS = ScriptingTools.createProductService(getServerURL(), user, password);
+        if(count){
+            int partRevisionsCount = productS.getPartsInWorkspaceCount(workspace);
+            output.printPartRevisionsCount(partRevisionsCount);
+        }else{
+            List<PartRevision> partRevisions = productS.getPartRevisions(workspace, start, max);
+            output.printPartRevisions(partRevisions);
+        }
     }
 
     @Override
     public String getDescription() throws IOException {
-        return LangHelper.getLocalizedMessage("ConversionCommandDescription",user);
+        return LangHelper.getLocalizedMessage("PartListCommandDescription",user);
     }
 }

@@ -18,16 +18,17 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.cli.commands;
+package com.docdoku.cli.commands.parts;
 
+import com.docdoku.cli.commands.AbstractCommandLine;
 import com.docdoku.cli.helpers.AccountsManager;
 import com.docdoku.cli.helpers.FileHelper;
 import com.docdoku.cli.helpers.LangHelper;
 import com.docdoku.cli.helpers.MetaDirectoryManager;
 import com.docdoku.cli.tools.ScriptingTools;
-import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.Version;
 import com.docdoku.core.product.PartIteration;
+import com.docdoku.core.product.PartIterationKey;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.product.PartRevisionKey;
 import com.docdoku.core.services.IProductManagerWS;
@@ -41,25 +42,19 @@ import java.io.IOException;
  *
  * @author Florent Garin
  */
-public class UndoCheckOutCommand extends AbstractCommandLine{
+public class PartPutCommand extends AbstractCommandLine {
 
-    @Option(metaVar = "<revision>", name="-r", aliases = "--revision", usage="specify revision of the part to undo check out ('A', 'B'...); if not specified the part identity (number and revision) corresponding to the cad file will be selected")
+    @Option(metaVar = "<revision>", name="-r", aliases = "--revision", usage="specify revision of the part to save ('A', 'B'...); if not specified the part identity (number and revision) corresponding to the cad file will be selected")
     private Version revision;
 
-    @Option(metaVar = "<partnumber>", name = "-o", aliases = "--part", usage = "the part number of the part to undo check out; if not specified choose the part corresponding to the cad file")
+    @Option(metaVar = "<partnumber>", name = "-o", aliases = "--part", usage = "the part number of the part to save; if not specified choose the part corresponding to the cad file if it has already been imported")
     private String partNumber;
 
     @Option(name="-w", aliases = "--workspace", required = true, metaVar = "<workspace>", usage="workspace on which operations occur")
     protected String workspace;
 
-    @Argument(metaVar = "[<cadfile>] | <dir>]", index=0, usage = "specify the cad file of the part to undo check out or the path where cad files are stored (default is working directory)")
-    private File path = new File(System.getProperty("user.dir"));
-
-    @Option(name="-d", aliases = "--download", usage="download the previous cad file of the part if any to revert the local copy")
-    private boolean download;
-
-    @Option(name="-f", aliases = "--force", usage="overwrite existing files even if they have been modified locally")
-    private boolean force;
+    @Argument(metaVar = "<cadfile>", required = true, index=0, usage = "specify the cad file of the part to import")
+    private File cadFile;
 
     public void execImpl() throws Exception {
         if(partNumber==null || revision==null){
@@ -67,36 +62,28 @@ public class UndoCheckOutCommand extends AbstractCommandLine{
         }
 
         IProductManagerWS productS = ScriptingTools.createProductService(getServerURL(), user, password);
-        PartRevision pr = productS.undoCheckOutPart(new PartRevisionKey(workspace, partNumber, revision.toString()));
-        PartIteration pi = pr.getLastIteration();
-        output.printInfo(LangHelper.getLocalizedMessage("UndoCheckoutPart",user) + " : " + partNumber + " " + pr.getVersion() + "." + pi.getIteration()+1 + " (" + workspace + ")");
+        PartRevisionKey partRPK = new PartRevisionKey(workspace,partNumber,revision.toString());
 
-        BinaryResource bin = pi.getNativeCADFile();
-        if(bin!=null && download){
-            FileHelper fh = new FileHelper(user,password,output,new AccountsManager().getUserLocale(user));
-            fh.downloadNativeCADFile(getServerURL(), path, workspace, partNumber, pr, pi, force);
-        }
+        PartRevision pr = productS.getPartRevision(partRPK);
+        PartIteration pi = pr.getLastIteration();
+        PartIterationKey partIPK = new PartIterationKey(partRPK, pi.getIteration());
+
+        FileHelper fh = new FileHelper(user,password,output, new AccountsManager().getUserLocale(user));
+        fh.uploadNativeCADFile(getServerURL(), cadFile, partIPK);
     }
 
     private void loadMetadata() throws IOException {
-        if(path.isDirectory()){
-            throw new IllegalArgumentException(LangHelper.getLocalizedMessage("PartNumberOrRevisionNotSpecified1",user));
-        }
-        MetaDirectoryManager meta = new MetaDirectoryManager(path.getParentFile());
-        String filePath = path.getAbsolutePath();
+        MetaDirectoryManager meta = new MetaDirectoryManager(cadFile.getParentFile());
+        String filePath = cadFile.getAbsolutePath();
         partNumber = meta.getPartNumber(filePath);
         String strRevision = meta.getRevision(filePath);
         if(partNumber==null || strRevision==null){
             throw new IllegalArgumentException(LangHelper.getLocalizedMessage("PartNumberOrRevisionNotSpecified2",user));
         }
         revision = new Version(strRevision);
-        //once partNumber and revision have been inferred, set path to folder where files are stored
-        //in order to implement perform the rest of the treatment
-        path=path.getParentFile();
     }
-
     @Override
     public String getDescription() throws IOException {
-        return LangHelper.getLocalizedMessage("UndoCheckOutCommandDescription",user);
+        return LangHelper.getLocalizedMessage("PartPutCommandDescription", user);
     }
 }
