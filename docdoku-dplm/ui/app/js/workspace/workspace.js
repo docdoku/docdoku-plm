@@ -3,6 +3,7 @@
     'use strict';
 
     angular.module('dplm.workspace', [])
+
         .config(function ($routeProvider) {
             $routeProvider.when('/workspace/:workspace', {
                 controller: 'WorkspaceController',
@@ -15,9 +16,23 @@
             });
         })
 
-        .controller('WorkspaceController', function ($scope, $filter, $window, $timeout, $routeParams, CliService, ConfigurationService, NotificationService, WorkspaceService) {
+        .controller('WorkspaceController', function ($scope,$routeParams) {
+
+            $scope.data={
+                selectedIndex:0
+            };
 
             $scope.workspace = $routeParams.workspace;
+
+        })
+
+        .controller('WorkspaceDocumentsController', function ($scope, $filter, $window, $timeout, $routeParams, CliService, ConfigurationService, NotificationService, WorkspaceService) {
+
+        })
+
+        .controller('WorkspacePartsController', function ($scope, $filter, $window, $timeout, $routeParams, CliService, ConfigurationService, NotificationService, WorkspaceService) {
+
+
             $scope.count = 0;
             $scope.start = 0;
             $scope.max = 20;
