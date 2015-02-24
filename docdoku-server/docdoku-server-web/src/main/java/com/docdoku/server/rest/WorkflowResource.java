@@ -112,7 +112,7 @@ public class WorkflowResource {
     @PUT
     @Path("{workflowModelId}/acl")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateACL(@PathParam("workspaceId") String pWorkspaceId, @PathParam("workflowModelId") int workflowModelId, ACLDTO acl)
+    public Response updateACL(@PathParam("workspaceId") String pWorkspaceId, @PathParam("workflowModelId") String workflowModelId, ACLDTO acl)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
         if (acl.getGroupEntries().size() > 0 || acl.getUserEntries().size() > 0) {
 

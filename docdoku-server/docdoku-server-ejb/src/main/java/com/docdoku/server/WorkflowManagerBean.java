@@ -166,34 +166,36 @@ public class WorkflowManagerBean implements IWorkflowManagerWS, IWorkflowManager
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public void removeACLFromWorkflow(String pWorkspaceId, int workflowModelId) throws WorkflowNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+    public void removeACLFromWorkflow(String pWorkspaceId, String workflowModelId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, WorkflowModelNotFoundException {
 
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);                                                 // Check the read access to the workspace
-        Workflow workflow = new WorkflowDAO(new Locale(user.getLanguage()), em).loadWorkflow(workflowModelId);            // Load the change item
-        checkWorkflowGrantAccess(workflow, user);
-        removeACLFromWorkflow(workflow);
+        WorkflowModelKey workflowModelKey = new WorkflowModelKey(pWorkspaceId,workflowModelId);
+        WorkflowModel workflowModel = new WorkflowModelDAO(new Locale(user.getLanguage()), em).loadWorkflowModel(workflowModelKey);            // Load the change item
+        checkWorkflowGrantAccess(workflowModel, user);
+        removeACLFromWorkflow(workflowModel);
     }
 
-    private void removeACLFromWorkflow(Workflow workflow) {
+    private void removeACLFromWorkflow(WorkflowModel workflow) {
     }
 
-    private void checkWorkflowGrantAccess(Workflow workflow, User user) {
+    private void checkWorkflowGrantAccess(WorkflowModel workflow, User user) {
     }
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public void updateACLForWorkflow(String pWorkspaceId, int workflowModelId, Map<String, String> userEntries, Map<String, String> groupEntries) throws WorkflowNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+    public void updateACLForWorkflow(String pWorkspaceId, String workflowModelId, Map<String, String> userEntries, Map<String, String> groupEntries) throws WorkflowNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, WorkflowModelNotFoundException {
         // Check the read access to the workspace
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
-        // Load the change item
-        Workflow workflow = new WorkflowDAO(em).loadWorkflow(workflowModelId);
+        WorkflowModelKey workflowModelKey = new WorkflowModelKey(pWorkspaceId,workflowModelId);
+        // Load the workflow model
+        WorkflowModel workflowModel = new WorkflowModelDAO(new Locale(user.getLanguage()), em).loadWorkflowModel(workflowModelKey);
         // Check the grant access to the workflow
-        checkWorkflowGrantAccess(workflow, user);
+        checkWorkflowGrantAccess(workflowModel, user);
 
-        if (workflow.getAcl() == null) {                                                                               // Check if already a ACL Rule
+        if (workflowModel.getAcl() == null) {                                                                               // Check if already a ACL Rule
             ACL acl = createACL(pWorkspaceId,userEntries,groupEntries);
-            workflow.setAcl(acl);
+            workflowModel.setAcl(acl);
         }else{                                                                                                          // Else change existing ACL Rule
-            ACL acl = workflow.getAcl();
+            ACL acl = workflowModel.getAcl();
             updateACL(acl, userEntries, groupEntries);
         }
     }

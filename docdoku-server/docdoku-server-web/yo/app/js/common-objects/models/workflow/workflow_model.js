@@ -43,10 +43,10 @@ define([
         getACLPermissionForCurrentUser: function () {
             return ACLChecker.getPermission(this.get('acl'));
         },
-        updateACL: function (args) {
+        updateWorkflowACL: function (args) {
             $.ajax({
-                type: 'POST',
-                url: this.urlRoot()+this.get('id')+'/acl',
+                type: 'PUT',
+                url: this.url()+'/acl',
                 data: JSON.stringify(args.acl),
                 contentType: 'application/json; charset=utf-8',
                 success: args.success,

@@ -164,7 +164,7 @@ define([
 
                 var acl = aclEditView.toList();
 
-                workflowSelected.updateACL({
+                workflowSelected.updateWorkflowACL({
                     acl: acl || {userEntries: {}, groupEntries: {}},
                     success: function () {
                         workflowSelected.set('acl', acl);

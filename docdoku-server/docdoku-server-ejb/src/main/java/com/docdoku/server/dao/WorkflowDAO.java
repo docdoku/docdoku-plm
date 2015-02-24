@@ -19,11 +19,8 @@
  */
 package com.docdoku.server.dao;
 
-import com.docdoku.core.change.ChangeIssue;
 import com.docdoku.core.common.User;
 import com.docdoku.core.document.DocumentRevision;
-import com.docdoku.core.exceptions.ChangeIssueNotFoundException;
-import com.docdoku.core.exceptions.WorkflowNotFoundException;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.workflow.*;
 
@@ -32,21 +29,14 @@ import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 public class WorkflowDAO {
 
     private EntityManager em;
-    private Locale mLocale;
 
     public WorkflowDAO(EntityManager pEM) {
         this.em = pEM;
-        mLocale = Locale.getDefault();
-    }
-    public WorkflowDAO(Locale locale, EntityManager pEM) {
-        this.em = pEM;
-        mLocale = locale;
     }
 
     public void createWorkflow(Workflow pWf) {
@@ -143,14 +133,5 @@ public class WorkflowDAO {
             }
         }
         em.flush();
-    }
-
-    public Workflow loadWorkflow(int pId) throws WorkflowNotFoundException {
-        Workflow workflow = em.find(Workflow.class, pId);
-        if (workflow == null) {
-            throw new WorkflowNotFoundException( mLocale,pId);
-        } else {
-            return workflow;
-        }
     }
 }

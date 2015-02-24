@@ -19,8 +19,6 @@
  */
 package com.docdoku.core.workflow;
 
-import com.docdoku.core.security.ACL;
-
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.*;
@@ -46,9 +44,6 @@ public class Workflow implements Serializable, Cloneable {
 
     @javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date abortedDate;
-
-    @OneToOne(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private ACL acl;
 
     private String finalLifeCycleState;
 
@@ -110,14 +105,6 @@ public class Workflow implements Serializable, Cloneable {
     }
     public void setAbortedDate(Date abortedDate) {
         this.abortedDate = (abortedDate!=null) ? (Date) abortedDate.clone() : null;
-    }
-
-    public ACL getAcl() {
-        return acl;
-    }
-
-    public void setAcl(ACL acl) {
-        this.acl = acl;
     }
 
     public Collection<Task> getRunningTasks() {
