@@ -279,7 +279,7 @@ public class DocumentManagerBeanTest {
 
 
         documentRevision = new DocumentRevision(documentMaster, "A", user);
-        documentIteration = new DocumentIteration(documentRevision, 1, user);
+        documentIteration = new DocumentIteration(documentRevision, user);
         documentRevision.setCheckOutUser(user);
         documentRevision.setCheckOutDate(new Date());
         ArrayList<DocumentIteration> iterations = new ArrayList<DocumentIteration>();
@@ -336,7 +336,7 @@ public class DocumentManagerBeanTest {
 
 
         documentRevision = new DocumentRevision(documentMaster, "A", user);
-        documentIteration = new DocumentIteration(documentRevision, 1, user);
+        documentIteration = new DocumentIteration(documentRevision, user);
         documentRevision.setCheckOutUser(user);
         documentRevision.setCheckOutDate(new Date());
         ArrayList<DocumentIteration> iterations = new ArrayList<DocumentIteration>();
