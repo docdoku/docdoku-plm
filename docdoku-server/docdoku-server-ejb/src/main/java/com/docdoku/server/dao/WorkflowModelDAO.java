@@ -66,6 +66,11 @@ public class WorkflowModelDAO {
 
     public void createWorkflowModel(WorkflowModel pModel) throws WorkflowModelAlreadyExistsException, CreationException {
         try {
+
+            if(pModel.getAcl()!=null){
+                ACLDAO aclDAO = new ACLDAO(em);
+                aclDAO.createACL(pModel.getAcl());
+            }
             //the EntityExistsException is thrown only when flush occurs
             em.persist(pModel);
             em.flush();

@@ -6,6 +6,9 @@ define([
 	'use strict';
     var WorkflowModel = Backbone.Model.extend({
 
+        initialize: function () {
+            _.bindAll(this);
+        },
         urlRoot: function () {
             return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/workflows';
         },

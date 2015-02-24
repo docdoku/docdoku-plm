@@ -132,9 +132,7 @@ define([
         },
 
         onOneWorkflowSelected: function (workflow) {
-            if ((App.config.workspaceAdmin || workflow.attributes.author.login === App.config.login)) {
-                this.$aclButton.show();
-        }
+            this.$aclButton.show();
             this.$deleteButton.show();
 
         },
@@ -144,13 +142,13 @@ define([
         },
         onEditAcl: function () {
 
-            var that = this;
-            var that = this;
             var workflowSelected;
 
             this.listView.eachChecked(function (view) {
                 workflowSelected = view.model;
+
             });
+            var self = this;
             var aclEditView = new ACLEditView({
                 editMode: true,
                 acl: workflowSelected.get('acl')
@@ -169,7 +167,7 @@ define([
                     success: function () {
                         workflowSelected.set('acl', acl);
                         aclEditView.closeModal();
-                        that.listView.redraw();
+                        self.listView.redraw();
                     },
                     error: function () {
                         window.alert(App.config.i18n.EDITION_ERROR);

@@ -45,7 +45,12 @@ define([
                 ]
             });
             this.$el.parent().find('.dataTables_filter input').attr('placeholder', App.config.i18n.FILTER);
+        },
+        redraw: function () {
+            this.dataTable();
+
         }
+
     });
     return WorkflowListView;
 });
