@@ -22,6 +22,8 @@ package com.docdoku.core.services;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.workflow.*;
 
+import java.util.Map;
+
 /**
  *
  * @author Florent Garin
@@ -39,4 +41,6 @@ public interface IWorkflowManagerLocal {
     Role updateRole(RoleKey roleKey, String userLogin) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException, RoleNotFoundException;
     void deleteRole(RoleKey roleKey) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException, RoleNotFoundException, EntityConstraintException;
 
+    void removeACLFromWorkflow(String pWorkspaceId, int workflowModelId) throws WorkflowNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
+    void updateACLForWorkflow(String pWorkspaceId, int workflowModelId, Map<String, String> userEntries, Map<String, String> groupEntries) throws WorkflowNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
 }

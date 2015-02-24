@@ -21,11 +21,13 @@ package com.docdoku.server.rest;
 
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
+import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IWorkflowManagerLocal;
 import com.docdoku.core.workflow.ActivityModel;
 import com.docdoku.core.workflow.WorkflowModel;
 import com.docdoku.core.workflow.WorkflowModelKey;
+import com.docdoku.server.rest.dto.ACLDTO;
 import com.docdoku.server.rest.dto.ActivityModelDTO;
 import com.docdoku.server.rest.dto.WorkflowModelDTO;
 import org.dozer.DozerBeanMapperSingletonWrapper;
@@ -106,6 +108,30 @@ public class WorkflowResource {
 
         workflowService.deleteWorkflowModel(new WorkflowModelKey(workspaceId, workflowModelId));
         return this.createWorkflowModelInWorkspace(workspaceId, workflowModelDTOToPersist);
+    }
+    @PUT
+    @Path("{workflowModelId}/acl")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response updateACL(@PathParam("workspaceId") String pWorkspaceId, @PathParam("workflowModelId") int workflowModelId, ACLDTO acl)
+            throws EntityNotFoundException, UserNotActiveException, AccessRightException {
+        if (acl.getGroupEntries().size() > 0 || acl.getUserEntries().size() > 0) {
+
+            Map<String,String> userEntries = new HashMap<>();
+            Map<String,String> groupEntries = new HashMap<>();
+
+            for (Map.Entry<String, ACL.Permission> entry : acl.getUserEntries().entrySet()) {
+                userEntries.put(entry.getKey(), entry.getValue().name());
+            }
+
+            for (Map.Entry<String, ACL.Permission> entry : acl.getGroupEntries().entrySet()) {
+                groupEntries.put(entry.getKey(), entry.getValue().name());
+            }
+
+            workflowService.updateACLForWorkflow(pWorkspaceId, workflowModelId, userEntries, groupEntries);
+        }else{
+            workflowService.removeACLFromWorkflow(pWorkspaceId, workflowModelId);
+        }
+        return Response.ok().build();
     }
 
     @POST

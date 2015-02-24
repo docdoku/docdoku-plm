@@ -19,20 +19,20 @@
  */
 package com.docdoku.server;
 
-import com.docdoku.core.common.User;
-import com.docdoku.core.common.UserKey;
-import com.docdoku.core.common.Workspace;
+import com.docdoku.core.change.ChangeIssue;
+import com.docdoku.core.change.Milestone;
+import com.docdoku.core.common.*;
 import com.docdoku.core.exceptions.*;
+import com.docdoku.core.security.ACL;
+import com.docdoku.core.security.ACLUserEntry;
+import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.core.services.IWorkflowManagerLocal;
 import com.docdoku.core.services.IWorkflowManagerWS;
 import com.docdoku.core.util.Tools;
 import com.docdoku.core.workflow.*;
-import com.docdoku.server.dao.RoleDAO;
-import com.docdoku.server.dao.UserDAO;
-import com.docdoku.server.dao.WorkflowModelDAO;
-import com.docdoku.server.dao.WorkspaceDAO;
+import com.docdoku.server.dao.*;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
@@ -45,6 +45,7 @@ import javax.persistence.PersistenceContext;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @Local(IWorkflowManagerLocal.class)
@@ -163,6 +164,40 @@ public class WorkflowManagerBean implements IWorkflowManagerWS, IWorkflowManager
         roleDAO.deleteRole(role);
     }
 
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
+    public void removeACLFromWorkflow(String pWorkspaceId, int workflowModelId) throws WorkflowNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+
+        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);                                                 // Check the read access to the workspace
+        Workflow workflow = new WorkflowDAO(new Locale(user.getLanguage()), em).loadWorkflow(workflowModelId);            // Load the change item
+        checkWorkflowGrantAccess(workflow, user);
+        removeACLFromWorkflow(workflow);
+    }
+
+    private void removeACLFromWorkflow(Workflow workflow) {
+    }
+
+    private void checkWorkflowGrantAccess(Workflow workflow, User user) {
+    }
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
+    public void updateACLForWorkflow(String pWorkspaceId, int workflowModelId, Map<String, String> userEntries, Map<String, String> groupEntries) throws WorkflowNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+        // Check the read access to the workspace
+        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
+        // Load the change item
+        Workflow workflow = new WorkflowDAO(em).loadWorkflow(workflowModelId);
+        // Check the grant access to the workflow
+        checkWorkflowGrantAccess(workflow, user);
+
+        if (workflow.getAcl() == null) {                                                                               // Check if already a ACL Rule
+            ACL acl = createACL(pWorkspaceId,userEntries,groupEntries);
+            workflow.setAcl(acl);
+        }else{                                                                                                          // Else change existing ACL Rule
+            ACL acl = workflow.getAcl();
+            updateACL(acl, userEntries, groupEntries);
+        }
+    }
+
 
     private void checkWorkflowValidity(String workspaceId, Locale userLocale,String pId,ActivityModel[] pActivityModels) throws NotAllowedException {
        
@@ -195,6 +230,44 @@ public class WorkflowManagerBean implements IWorkflowManagerWS, IWorkflowManager
                 }
             }
         }
+    }
+
+    private ACL createACL(String pWorkspaceId,Map<String, String> pUserEntries,Map<String, String> pGroupEntries){
+        ACL acl = new ACL();
+        if (pUserEntries != null) {
+            for (Map.Entry<String, String> entry : pUserEntries.entrySet()) {
+                acl.addEntry(em.find(User.class, new UserKey(pWorkspaceId, entry.getKey())),
+                        ACL.Permission.valueOf(entry.getValue()));
+            }
+        }
+        if (pGroupEntries != null) {
+            for (Map.Entry<String, String> entry : pGroupEntries.entrySet()) {
+                acl.addEntry(em.find(UserGroup.class,new UserGroupKey(pWorkspaceId,entry.getKey())),
+                        ACL.Permission.valueOf(entry.getValue()));
+            }
+        }
+        new ACLDAO(em).createACL(acl);
+        return acl;
+    }
+
+    private ACL updateACL(ACL acl,Map<String, String> pUserEntries,Map<String, String> pGroupEntries){
+        if (pUserEntries != null) {
+            for (ACLUserEntry entry : acl.getUserEntries().values()) {
+                ACL.Permission newPermission = ACL.Permission.valueOf(pUserEntries.get(entry.getPrincipalLogin()));
+                if(newPermission != null){
+                    entry.setPermission(newPermission);
+                }
+            }
+        }
+        if (pGroupEntries != null) {
+            for (ACLUserGroupEntry entry : acl.getGroupEntries().values()) {
+                ACL.Permission newPermission = ACL.Permission.valueOf(pGroupEntries.get(entry.getPrincipalId()));
+                if(newPermission != null){
+                    entry.setPermission(newPermission);
+                }
+            }
+        }
+        return acl;
     }
     
 }
