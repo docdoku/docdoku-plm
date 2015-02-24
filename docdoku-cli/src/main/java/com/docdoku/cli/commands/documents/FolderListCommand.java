@@ -38,7 +38,7 @@ public class FolderListCommand extends AbstractCommandLine {
     protected String workspace;
 
     @Option(name="-f", aliases = "--folder", usage="remote folder to list sub folders, default is workspace root folder")
-    private String folder;
+    private String folder = null;
 
     @Override
     public void execImpl() throws Exception {

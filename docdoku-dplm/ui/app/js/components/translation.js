@@ -31,6 +31,7 @@
                     SAVE_TO: 'Save to',
                     ADD_FOLDER: 'Add folder',
                     RECURSIVE: 'Recursive',
+                    PARTS: 'Parts',
                     NO_PARTS: 'No parts',
                     CONFIGURATION_ERROR: 'Configuration error',
                     REQUIREMENTS_MISSING: 'Requirements not satisfied',
@@ -81,7 +82,14 @@
                     PENDING:'Pending',
                     SUCCESS:'Success',
                     FAIL:'Fail',
-                    NO_CONVERSION:'No conversion currently'
+                    NO_CONVERSION:'No conversion currently',
+                    NO_ATTACHED_FILES:'No attached files',
+                    DOCUMENTS:'Documents',
+                    UNKNOWN:'Unknown',
+                    CHECKOUTED:'Checkouted',
+                    HOME_FOLDER:'Home folder',
+                    ROOT_FOLDER:'Root folder',
+                    NO_DOCUMENTS:'No documents'
                 })
                 .translations('fr', {
                     CUT: 'Couper',
@@ -109,6 +117,7 @@
                     SAVE_TO: 'Enregistrer dans',
                     ADD_FOLDER: 'Ajouter un dossier',
                     RECURSIVE: 'Récursif',
+                    PARTS: 'Articles',
                     NO_PARTS: 'Aucun article',
                     CONFIGURATION_ERROR: 'Erreur de configuration',
                     REQUIREMENTS_MISSING: 'Prérequis non satisfaits',
@@ -159,7 +168,14 @@
                     PENDING:'En cours',
                     SUCCESS:'Succès',
                     FAIL:'Echoué',
-                    NO_CONVERSION:'Pas de conversion en cours'
+                    NO_CONVERSION:'Pas de conversion en cours',
+                    NO_ATTACHED_FILES:'Pas de fichiers attachés',
+                    DOCUMENTS:'Documents',
+                    NO_DOCUMENTS:'Aucun document',
+                    UNKNOWN:'Inconnus',
+                    CHECKOUTED:'Réservés',
+                    HOME_FOLDER:'Dossier personnel',
+                    ROOT_FOLDER:'Dossier racine'
                 });
 
             $translateProvider.preferredLanguage(localStorage.lang || 'en');

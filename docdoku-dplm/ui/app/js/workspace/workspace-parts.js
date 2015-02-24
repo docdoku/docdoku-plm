@@ -13,16 +13,14 @@
             $scope.loadingParts = true;
             $scope.loadingMore = false;
             $scope.openedPart = null;
-            $scope.search = '';
 
             $scope.filters = {
                 checkoutable: true,
                 checkoutedByMe: true,
                 released: false,
-                checkouted: false
+                checkouted: false,
+                search:''
             };
-
-            WorkspaceService.addLastVisited($scope.workspace);
 
             var resetList = function () {
                 $scope.start = 0;
@@ -58,7 +56,7 @@
 
             var searchTimeout;
 
-            $scope.$watch('search', function (newValue, oldValue) {
+            $scope.$watch('filters.search', function (newValue, oldValue) {
                 if (searchTimeout) {
                     $timeout.cancel(searchTimeout);
                 }

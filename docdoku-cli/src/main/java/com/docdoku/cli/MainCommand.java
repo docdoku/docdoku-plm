@@ -23,6 +23,7 @@ package com.docdoku.cli;
 import com.docdoku.cli.commands.AbstractCommandLine;
 import com.docdoku.cli.commands.VersionOptionHandler;
 import com.docdoku.cli.commands.common.AccountInfosCommand;
+import com.docdoku.cli.commands.common.FileStatusCommand;
 import com.docdoku.cli.commands.common.HelpCommand;
 import com.docdoku.cli.commands.common.WorkspacesCommand;
 import com.docdoku.cli.commands.documents.*;
@@ -57,7 +58,7 @@ public class MainCommand {
                         execCommand(new DocumentStatusCommand(), Arrays.copyOfRange(args, 2, args.length));
                     }
                     else{
-                        execCommand(new HelpCommand(), Arrays.copyOfRange(args, 1, args.length));
+                        execCommand(new FileStatusCommand(), Arrays.copyOfRange(args, 1, args.length));
                     }
                     break;
                 case "get":

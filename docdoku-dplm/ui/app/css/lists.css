@@ -18,8 +18,13 @@
 	background: #E0E0E0;
 	border-radius: 4px;
 }
+document-actions,
 part-actions {
-	padding: 18px;
+	padding-top: 18px;
+}
+
+.file{
+    width: 100%;
 }
 
 .subtitle{

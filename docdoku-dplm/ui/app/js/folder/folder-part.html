@@ -1,0 +1,36 @@
+<div class="md-tile-content">
+
+    <div class="cursor" ng-click="toggleOpenedFile(file)">
+
+        <i style="float:right" class="fa"
+           ng-class="{'fa-angle-down': file != openedFile, 'fa-angle-up': file === openedFile}"></i>
+
+        <h3>
+            <i class="fa fa-check" ng-show="file.part && file.part.isReleased"></i>
+            <i class="fa fa-eye" ng-show="file.part && !file.part.isReleased && !file.part.checkoutUser"></i>
+            <i class="fa fa-pencil"
+               ng-show="file.part && file.part.checkoutUser === configuration.user"></i>
+            <i class="fa fa-lock"
+               ng-show="file.part && file.part.checkoutUser && file.part.checkoutUser !== configuration.user"></i>
+
+            {{file.path | fileshortname}}
+            <small class="cad-file-name" ng-if="file.part.partNumber">
+                {{file.part.partNumber}}-{{file.part.version}}-{{file.part.iterations | last}}
+            </small>
+        </h3>
+        <h4 ng-show="file.part.checkoutUser">
+            {{'CHECKOUT_BY' | translate }} {{file.part.checkoutUser}} {{file.part.checkoutDate |
+            timeago}}
+        </h4>
+        <h4 ng-show="file.part.lastModified">
+            {{'LAST_MODIFIED' | translate }} {{file.part.lastModified | timeago}}
+        </h4><h4 ng-show="file.mtime">
+        {{'LAST_ACTION' | translate }} {{file.mtime | timeago}}
+    </h4>
+    </div>
+
+    <div>
+        <file-part-actions class="slide-down" ng-if="file === openedFile"></file-part-actions>
+    </div>
+
+</div>

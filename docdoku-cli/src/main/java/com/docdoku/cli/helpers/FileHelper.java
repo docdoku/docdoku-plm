@@ -295,7 +295,7 @@ public class FileHelper {
     private void saveMetadata(MetaDirectoryManager meta, DocumentIterationKey docIPK, String digest, File localFile) throws IOException {
         String filePath=localFile.getAbsolutePath();
         meta.setDigest(filePath,digest);
-        meta.setPartNumber(filePath,docIPK.getDocumentMasterId());
+        meta.setDocumentId(filePath,docIPK.getDocumentMasterId());
         meta.setWorkspace(filePath,docIPK.getWorkspaceId());
         meta.setRevision(filePath,docIPK.getDocumentRevision().getVersion());
         meta.setIteration(filePath,docIPK.getIteration());

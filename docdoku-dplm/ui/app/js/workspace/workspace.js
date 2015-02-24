@@ -10,11 +10,10 @@
                 .when('/workspace/:workspace', {
                     template:'',
                     controller: function($routeParams,$location){
-                        console.log('Redirect to ' + 'workspace/'+$routeParams.workspace+'/documents/folders')
                         $location.path('workspace/'+$routeParams.workspace+'/documents/folders');
                     }
                 })
-                .when('/workspace/:workspace/:entity/:action/:params?', {
+                .when('/workspace/:workspace/:entity/:action/:path?', {
                     controller: 'WorkspaceController',
                     templateUrl: 'js/workspace/workspace.html',
                     resolve:{
@@ -25,9 +24,7 @@
                 });
         })
 
-        .controller('WorkspaceController', function ($scope,$routeParams) {
-
-            console.log($routeParams)
+        .controller('WorkspaceController', function ($scope,$routeParams,WorkspaceService) {
 
             $scope.tabs={
                 selected:
@@ -39,6 +36,9 @@
             };
 
             $scope.workspace = $routeParams.workspace;
+
+            WorkspaceService.addLastVisited($scope.workspace);
+
         });
 
 })();

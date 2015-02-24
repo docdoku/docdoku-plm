@@ -271,22 +271,25 @@ public class JSONOutput  extends CliOutput {
                 Date checkoutDate = dr.getCheckOutDate();
                 Long timeStamp = checkoutDate != null ? checkoutDate.getTime() : null;
                 status.put("isCheckedOut", dr.isCheckedOut());
-                status.put("id", dr.getDocumentMasterKey().getId());
+                status.put("id", dr.getDocumentMasterId());
                 status.put("checkoutUser", login);
                 status.put("checkoutDate", timeStamp);
-                status.put("workspace", dr.getWorkspaceId());
+                status.put("workspace", dr.getDocumentMasterWorkspaceId());
                 status.put("version", dr.getVersion());
                 status.put("description", dr.getDescription());
                 status.put("lastModified", lastModified);
 
                 if(dr.getLastIteration() != null && dr.getLastIteration().getAttachedFiles() != null) {
                     JSONArray files = new JSONArray(dr.getLastIteration().getAttachedFiles());
-                    status.put("cadFileName", files);
+                    status.put("files", files);
                 }
 
                 List<DocumentIteration> documentIterations = dr.getDocumentIterations();
                 if (documentIterations != null) {
-                    JSONArray documentIterationsArray = new JSONArray(documentIterations);
+                    JSONArray documentIterationsArray = new JSONArray();
+                    for(DocumentIteration documentIteration : documentIterations) {
+                        documentIterationsArray.put(documentIteration.getIteration());
+                    }
                     status.put("iterations", documentIterationsArray);
                 }
 

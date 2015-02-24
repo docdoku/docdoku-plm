@@ -21,7 +21,6 @@
 package com.docdoku.cli.helpers;
 
 import java.io.*;
-import java.util.Date;
 import java.util.Properties;
 
 public class MetaDirectoryManager {
@@ -68,12 +67,13 @@ public class MetaDirectoryManager {
         indexProps.storeToXML(out, null);
     }
 
-    public void deletePartEntries(String filePath, String partNumber) throws  IOException {
-        indexProps.getProperty(filePath + "." + DIGEST_PROP);
-    }
-
     public void setPartNumber(String filePath, String partNumber) throws IOException {
         indexProps.setProperty(filePath + "." + PART_NUMBER_PROP, partNumber);
+        saveIndex();
+    }
+
+    public void setDocumentId(String filePath, String id) throws IOException {
+        indexProps.setProperty(filePath + "." + ID_PROP, id);
         saveIndex();
     }
 
@@ -97,18 +97,9 @@ public class MetaDirectoryManager {
         saveIndex();
     }
 
-    public void setLastModifiedDate(String filePath, Date lastModifiedDate) throws IOException {
-        setLastModifiedDate(filePath, lastModifiedDate.getTime());
-    }
-
     public void setDigest(String filePath, String digest) throws IOException {
         indexProps.setProperty(filePath + "." + DIGEST_PROP, digest);
         saveIndex();
-    }
-
-
-    public String getDigest(String filePath){
-        return indexProps.getProperty(filePath + "." + DIGEST_PROP);
     }
 
     public long getLastModifiedDate(String filePath){
@@ -144,5 +135,13 @@ public class MetaDirectoryManager {
 
     public String getDocumentId(String filePath) {
         return indexProps.getProperty(filePath + "." + ID_PROP);
+    }
+
+    public boolean isDocumentRelated(String filePath) {
+        return getDocumentId(filePath) != null;
+    }
+
+    public boolean isPartRelated(String filePath) {
+        return getPartNumber(filePath) != null;
     }
 }

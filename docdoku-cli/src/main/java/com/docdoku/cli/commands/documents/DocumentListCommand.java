@@ -39,14 +39,24 @@ public class DocumentListCommand extends AbstractCommandLine {
     protected String workspace;
 
     @Option(name="-f", aliases = "--folder", usage="remote folder to list, default is workspace root folder")
-    private String folder = "";
+    private String folder = null;
+
+    @Option(name="-c", aliases = "--checkouted", usage="list only checkouted files")
+    private boolean checkoutedDocsOnly = false;
 
     @Override
     public void execImpl() throws Exception {
         IDocumentManagerWS documentS = ScriptingTools.createDocumentService(getServerURL(),user,password);
-        String decodedPath = folder == null ? workspace : workspace+"/"+folder;
-        DocumentRevision[] documentRevisions = documentS.findDocumentRevisionsByFolder(decodedPath);
-        output.printDocumentRevisions(documentRevisions);
+
+        if(checkoutedDocsOnly){
+            DocumentRevision[] documentRevisions = documentS.getCheckedOutDocumentRevisions(workspace);
+            output.printDocumentRevisions(documentRevisions);
+        }else{
+            String decodedPath = folder == null ? workspace : workspace+"/"+folder;
+            DocumentRevision[] documentRevisions = documentS.findDocumentRevisionsByFolder(decodedPath);
+            output.printDocumentRevisions(documentRevisions);
+        }
+
     }
 
     @Override
