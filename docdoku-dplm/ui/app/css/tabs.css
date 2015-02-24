@@ -1,0 +1,18 @@
+.tabs{
+    width:100%;
+    height: 42px;
+    background: #03a9f4;
+}
+.tabs > div{
+    text-align: center;
+}
+.tabs > div.selected{
+    border-bottom:2px solid #ffff85;
+}
+.tabs > div > a {
+    display: block;
+    width: 100%;
+    height: 100%;
+    text-decoration: none;
+    color: white;
+}

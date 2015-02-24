@@ -14,15 +14,19 @@
     </div>
 </md-toolbar>
 
-<md-tabs md-theme="default" selected="data.selectedIndex" flex>
-    <md-tab active="true" label="{{'DOCUMENTS' | translate }}">
-        <div class="tab-documents">
-            <div ng-if="data.selectedIndex == 0" ng-controller="WorkspaceDocumentsController" ng-include="'js/workspace/tab-documents.html'"></div>
-        </div>
-    </md-tab>
-    <md-tab label="{{'PARTS' | translate }}">
-        <div class="tab-parts">
-            <div ng-if="data.selectedIndex == 1" ng-controller="WorkspacePartsController" ng-include="'js/workspace/tab-parts.html'"></div>
-        </div>
-    </md-tab>
-</md-tabs>
+<div class="tabs" layout="horizontal">
+    <div flex ng-class="{selected:tabs.selected == tabs.documents}">
+        <a ng-href="#/workspace/{{workspace}}/documents/folders">{{'DOCUMENTS' | translate}}</a>
+    </div>
+    <div flex ng-class="{selected:tabs.selected == tabs.parts}">
+        <a ng-href="#/workspace/{{workspace}}/parts/list">{{'PARTS' | translate}}</a>
+    </div>
+</div>
+
+<div ng-if="tabs.selected == tabs.documents">
+    <div ng-controller="WorkspaceDocumentsController" ng-include="'js/workspace/workspace-documents.html'"></div>
+</div>
+
+<div ng-if="tabs.selected == tabs.parts">
+    <div ng-controller="WorkspacePartsController" ng-include="'js/workspace/workspace-parts.html'"></div>
+</div>
