@@ -69,14 +69,10 @@
                         <table class="table table-striped table-condensed">
                             <tbody>
                             <tr>
-                                <th scope="row">#{i18nPart['general.author']}:</th>
-                                <td>${partRevision.author.name}</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">#{i18nPart['general.date']}:</th>
+                                <th scope="row">#{i18nPart['general.creation_date']}:</th>
                                 <td>
                                     <h:outputText value="#{partRevision.creationDate}">
-                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
                                     </h:outputText>
                                 </td>
                             </tr>
@@ -85,8 +81,20 @@
                                 <td>${partRevision.partMaster.type}</td>
                             </tr>
                             <tr>
-                                <th scope="row">#{i18nPart['general.name']}:</th>
+                                <th scope="row">#{i18nPart['general.partName']}:</th>
                                 <td>${partRevision.partMaster.name}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">#{i18nPart['general.standardPart']}:</th>
+                                <td>${partRevision.partMaster.standardPart}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">#{i18nPart['general.author']}:</th>
+                                <td>${partRevision.author.name}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">#{i18nPart['general.lifeCycleState']}:</th>
+                                <td>${partRevision.lifeCycleState}</td>
                             </tr>
                             <tr>
                                 <th scope="row">#{i18nPart['general.checkout_user']}:</th>
@@ -96,13 +104,9 @@
                                 <th scope="row">#{i18nPart['general.checkout_date']}:</th>
                                 <td>
                                     <h:outputText value="#{partRevision.checkOutDate}">
-                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
                                     </h:outputText>
                                 </td>
-                            </tr>
-                            <tr>
-                                <th scope="row">#{i18nPart['general.lifeCycleState']}:</th>
-                                <td>${partRevision.lifeCycleState}</td>
                             </tr>
                             <tr>
                                 <th scope="row">#{i18nPart['general.description']}:</th>
@@ -120,20 +124,28 @@
                                 <td>${partRevision.lastIteration.iteration}</td>
                             </tr>
                             <tr>
-                                <th scope="row">#{i18nPart['iteration.author']}:</th>
-                                <td>${partRevision.lastIteration.author.name}</td>
+                                <th scope="row">#{i18nPart['iteration.iterationNote']}:</th>
+                                <td>${partRevision.lastIteration.iterationNote}</td>
                             </tr>
                             <tr>
-                                <th scope="row">#{i18nPart['iteration.date']}:</th>
+                                <th scope="row">#{i18nPart['iteration.revision_date']}:</th>
                                 <td>
-                                    <h:outputText value="#{partRevision.lastIteration.creationDate}">
-                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                    <h:outputText value="#{partRevision.isCheckedOut() ? partRevision.lastIteration.creationDate : partRevision.lastIteration.checkInDate}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
                                     </h:outputText>
                                 </td>
                             </tr>
                             <tr>
-                                <th scope="row">#{i18nPart['iteration.iterationNote']}:</th>
-                                <td>${partRevision.lastIteration.iterationNote}</td>
+                                <th scope="row">#{i18nPart['iteration.modification_date']}:</th>
+                                <td>
+                                    <h:outputText value="#{partRevision.lastIteration.modificationDate}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+                                    </h:outputText>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">#{i18nPart['iteration.author']}:</th>
+                                <td>${partRevision.lastIteration.author.name}</td>
                             </tr>
                             </tbody>
                         </table>
@@ -232,7 +244,7 @@
                         <c:if test="${partRevision.lastIteration.linkedDocuments.size()!=0}">
                             <ul>
                                 <c:forEach var="item" items="${partRevision.lastIteration.linkedDocuments}">
-                                    <li><a href="#{request.contextPath}/documents/${item.targetDocumentWorkspaceId}/${item.targetDocumentDocumentMasterId}/${item.targetDocumentDocumentMasterVersion}">${item.targetDocumentDocumentMasterId}-${item.targetDocumentDocumentMasterVersion}-${item.targetDocumentIteration}</a></li>
+                                    <li><a href="#{request.contextPath}/documents/${item.targetDocumentWorkspaceId}/${item.targetDocumentDocumentMasterId}/${item.targetDocumentDocumentRevisionVersion}">${item.targetDocumentDocumentMasterId}-${item.targetDocumentDocumentRevisionVersion}-${item.targetDocumentIteration}</a></li>
                                 </c:forEach>
                             </ul>
                         </c:if>

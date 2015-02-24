@@ -143,8 +143,8 @@ public class DocumentBaselineManagerBeanTest {
 
         revisions[0] = documentRevision2;
         revisions[1] = documentRevision;
-        Mockito.when(documentRevision.getLastIteration()).thenReturn(new DocumentIteration(documentRevision,1,user));
-        Mockito.when(documentRevision2.getLastIteration()).thenReturn(new DocumentIteration(documentRevision2,1,user));
+        Mockito.when(documentRevision.getLastIteration()).thenReturn(new DocumentIteration(documentRevision, user));
+        Mockito.when(documentRevision2.getLastIteration()).thenReturn(new DocumentIteration(documentRevision2, user));
         Mockito.when(documentRevision.getLocation()).thenReturn(folder);
         Mockito.when(documentRevision2.getLocation()).thenReturn(folder);
 
