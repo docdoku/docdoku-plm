@@ -93,7 +93,7 @@
                             <th scope="row">#{i18nDocument['general.checkout_date']}:</th>
                             <td>
                                 <h:outputText value="#{documentRevision.checkOutDate}">
-                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
                                 </h:outputText>
                             </td>
                         </tr>
@@ -124,7 +124,7 @@
                         <tr>
                             <th scope="row">#{i18nDocument['iteration.revision_date']}:</th>
                             <td>
-                                <h:outputText value="#{documentRevision.lastIteration.revisionDate}">
+                                <h:outputText value="#{documentRevision.isCheckedOut() ? documentRevision.lastIteration.creationDate : documentRevision.lastIteration.checkInDate}">
                                     <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
                                 </h:outputText>
                             </td>
