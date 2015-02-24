@@ -82,6 +82,12 @@ public class DocumentIteration implements Serializable, FileHolder, Comparable<D
     
     @javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date creationDate;
+
+    @javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
+    private Date modificationDate;
+
+    @javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
+    private Date checkInDate;
     
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(name = "DOCUMENTITERATION_DOCUMENTLINK",
@@ -113,10 +119,20 @@ public class DocumentIteration implements Serializable, FileHolder, Comparable<D
     public DocumentIteration() {
     }
 
-    public DocumentIteration(DocumentRevision pDocumentRevision, int pIteration, User pAuthor) {
+    public DocumentIteration(DocumentRevision pDocumentRevision, User pAuthor) {
+        DocumentIteration lastDoc = pDocumentRevision.getLastIteration();
+        int newIteration = 1;
+
+        if (lastDoc != null) {
+            newIteration = lastDoc.getIteration() + 1;
+            Date lastModificationDate = lastDoc.modificationDate;
+            modificationDate = lastModificationDate;
+        }
+
         setDocumentRevision(pDocumentRevision);
-        iteration = pIteration;
+        iteration = newIteration;
         author = pAuthor;
+        checkInDate = null;
     }
 
     public void setDocumentRevision(DocumentRevision documentRevision) {
@@ -204,6 +220,22 @@ public class DocumentIteration implements Serializable, FileHolder, Comparable<D
 
     public Date getCreationDate() {
         return (creationDate!=null) ? (Date) creationDate.clone() : null;
+    }
+
+    public void setModificationDate(Date modificationDate) {
+        this.modificationDate = (modificationDate!=null) ? (Date) modificationDate.clone() : null;
+    }
+
+    public Date getModificationDate() {
+        return (modificationDate!=null) ? (Date) modificationDate.clone() : null;
+    }
+
+    public void setCheckInDate(Date checkInDate) {
+        this.checkInDate = (checkInDate!=null) ? (Date) checkInDate.clone() : null;
+    }
+
+    public Date getCheckInDate() {
+        return (checkInDate!=null) ? (Date) checkInDate.clone() : null;
     }
 
     public Set<DocumentLink> getLinkedDocuments() {
@@ -305,6 +337,12 @@ public class DocumentIteration implements Serializable, FileHolder, Comparable<D
 
         if (creationDate != null) {
             clone.creationDate = (Date) creationDate.clone();
+        }
+        if (modificationDate != null) {
+            clone.modificationDate = (Date) modificationDate.clone();
+        }
+        if (checkInDate != null) {
+            clone.checkInDate = (Date) checkInDate.clone();
         }
         return clone;
     }

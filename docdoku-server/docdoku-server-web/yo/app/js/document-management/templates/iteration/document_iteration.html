@@ -55,10 +55,10 @@
                             </div>
                         </div>
                         <div class="control-group">
-                            <label class="control-label">{{i18n.AUTHOR}}</label>
+                            <label class="control-label">{{i18n.VERSION}}</label>
 
                             <div class="controls">
-                                <span class="help-inline"><a class="author-popover">{{master.author.name}}</a></span>
+                                <span class="help-inline">{{master.version}}</span>
                             </div>
                         </div>
                         <div class="control-group">
@@ -83,6 +83,20 @@
                             </div>
                         </div>
                         <div class="control-group">
+                            <label class="control-label">{{i18n.AUTHOR}}</label>
+
+                            <div class="controls">
+                                <span class="help-inline"><a class="author-popover">{{master.author.name}}</a></span>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">{{i18n.LIFECYCLE_STATE}}</label>
+
+                            <div class="controls">
+                                <span class="help-inline">{{master.lifeCycleState}}</span>
+                            </div>
+                        </div>
+                        <div class="control-group">
                             <label class="control-label">{{i18n.CHECKOUT_BY}}</label>
 
                             <div class="controls">
@@ -95,13 +109,6 @@
 
                             <div class="controls">
                                 <span class="help-inline"><a class="date-popover">{{master.checkOutDate}}</a></span>
-                            </div>
-                        </div>
-                        <div class="control-group">
-                            <label class="control-label">{{i18n.LIFECYCLE_STATE}}</label>
-
-                            <div class="controls">
-                                <span class="help-inline">{{master.lifeCycleState}}</span>
                             </div>
                         </div>
                         <div class="control-group">
@@ -139,10 +146,17 @@
                             </div>
                         </div>
                         <div class="control-group">
+                            <label class="control-label">{{i18n.REVISION_DATE}}</label>
+
+                            <div class="controls">
+                                <span class="help-inline"><a class="date-popover">{{iteration.revisionDate}}</a></span>
+                            </div>
+                        </div>
+                        <div class="control-group">
                             <label class="control-label">{{i18n.MODIFICATION_DATE}}</label>
 
                             <div class="controls">
-                                <span class="help-inline"><a class="date-popover">{{iteration.creationDate}}</a></span>
+                                <span class="help-inline"><a class="date-popover">{{iteration.modificationDate}}</a></span>
                             </div>
                         </div>
                         <div class="control-group">

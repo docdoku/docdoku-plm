@@ -54,6 +54,27 @@
                             </div>
                         </div>
                         <div class="control-group">
+                            <label class="control-label">{{i18n.VERSION}}</label>
+
+                            <div class="controls">
+                                <span class="help-inline">{{part.getVersion}}</span>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">{{i18n.CREATION_DATE}}</label>
+
+                            <div class="controls">
+                                <span class="help-inline"><a class="date-popover">{{part.getFormattedCreationDate}}</a></span>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">{{i18n.TYPE}}</label>
+
+                            <div class="controls">
+                                <span class="help-inline">{{part.getType}}</span>
+                            </div>
+                        </div>
+                        <div class="control-group">
                             <label class="control-label">{{i18n.PART_NAME}}</label>
 
                             <div class="controls">
@@ -65,13 +86,6 @@
 
                             <div class="controls">
                                 <span class="help-inline">{{part.isStandardPartReadable}}</span>
-                            </div>
-                        </div>
-                        <div class="control-group">
-                            <label class="control-label">{{i18n.VERSION}}</label>
-
-                            <div class="controls">
-                                <span class="help-inline">{{part.getVersion}}</span>
                             </div>
                         </div>
                         <div class="control-group">
@@ -130,10 +144,17 @@
                             </div>
                         </div>
                         <div class="control-group">
+                            <label class="control-label">{{i18n.REVISION_DATE}}</label>
+
+                            <div class="controls">
+                                <span class="help-inline"><a class="date-popover">{{iteration.revisionDate}}</a></span>
+                            </div>
+                        </div>
+                        <div class="control-group">
                             <label class="control-label">{{i18n.MODIFICATION_DATE}}</label>
 
                             <div class="controls">
-                                <span class="help-inline"><a class="date-popover">{{iteration.creationDate}}</a></span>
+                                <span class="help-inline"><a class="date-popover">{{iteration.modificationDate}}</a></span>
                             </div>
                         </div>
                         <div class="control-group">

@@ -268,9 +268,7 @@ public class DocumentRevision implements Serializable, Comparable<DocumentRevisi
     }
 
     public DocumentIteration createNextIteration(User pUser){
-        DocumentIteration lastDoc=getLastIteration();
-        int iteration = lastDoc==null?1:lastDoc.getIteration() + 1;
-        DocumentIteration doc = new DocumentIteration(this,iteration,pUser);
+        DocumentIteration doc = new DocumentIteration(this, pUser);
         documentIterations.add(doc);
         return doc;
     }

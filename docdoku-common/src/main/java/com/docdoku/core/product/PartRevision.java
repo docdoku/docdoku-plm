@@ -73,7 +73,6 @@ public class PartRevision implements Serializable, Comparable<PartRevision>, Clo
     @Temporal(TemporalType.TIMESTAMP)
     private java.util.Date creationDate;
 
-
     @Lob
     private String description;
     
@@ -220,6 +219,10 @@ public class PartRevision implements Serializable, Comparable<PartRevision>, Clo
         this.version = version;
     }
 
+    public String getType() {
+        return partMaster.getType();
+    }
+
     public Workflow getWorkflow() {
         return workflow;
     }
@@ -254,9 +257,7 @@ public class PartRevision implements Serializable, Comparable<PartRevision>, Clo
     }
     
     public PartIteration createNextIteration(User pUser){
-        PartIteration lastPart=getLastIteration();
-        int iteration = lastPart==null?1:lastPart.getIteration() + 1;
-        PartIteration part = new PartIteration(this,iteration,pUser);
+        PartIteration part = new PartIteration(this, pUser);
         partIterations.add(part);
         return part;
     }

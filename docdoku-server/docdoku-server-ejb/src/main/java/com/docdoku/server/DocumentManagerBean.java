@@ -939,6 +939,9 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             docR.setCheckOutDate(null);
             docR.setCheckOutUser(null);
 
+            DocumentIteration lastIteration = docR.getLastIteration();
+            lastIteration.setCheckInDate(new Date());
+
             if (subscribers.length != 0) {
                 mailer.sendIterationNotification(subscribers, docR);
             }
@@ -1216,6 +1219,8 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             }
 
             doc.setRevisionNote(pRevisionNote);
+            Date now = new Date();
+            doc.setModificationDate(now);
             //doc.setLinkedDocuments(links);
             return docR;
 
