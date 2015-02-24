@@ -120,6 +120,10 @@ define([
                     App.config.i18n._DATE_FORMAT,
                     data.iteration.creationDate
                 );
+                data.iteration.checkInDate = date.formatTimestamp(
+                    App.config.i18n._DATE_FORMAT,
+                    data.iteration.checkInDate
+                );
             }
 
             if (this.model.isCheckout()) {

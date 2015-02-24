@@ -105,10 +105,10 @@ function (Backbone, Date, PartIterationList, ACLChecker) {
 
         getRevisionDate: function () {
             var lastIteration = this.getLastIteration();
-            if (lastIteration.get('checkInDate')) {
-                return lastIteration.get('checkInDate');
-            } else {
+            if (this.isCheckout()) {
                 return lastIteration.get('creationDate');
+            } else {
+                return lastIteration.get('checkInDate');
             }
         },
 
