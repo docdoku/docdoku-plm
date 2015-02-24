@@ -55,7 +55,7 @@ public class FileStorageProvider implements StorageProvider {
     }
 
     public InputStream getBinarySubResourceInputStream(BinaryResource pBinaryResource, String subResourceVirtualPath) throws StorageException, FileNotFoundException {
-        File subResourceFile = new File(getSubResourceFolder(pBinaryResource), subResourceVirtualPath);
+        File subResourceFile = new File(getSubResourceFolder(pBinaryResource), Tools.unAccent(subResourceVirtualPath));
         return getInputStream(subResourceFile);
     }
 
@@ -88,7 +88,7 @@ public class FileStorageProvider implements StorageProvider {
     }
 
     public OutputStream getBinarySubResourceOutputStream(BinaryResource binaryResource, String subResourceVirtualPath) throws StorageException {
-        File subResourceFile = new File(getSubResourceFolder(binaryResource), subResourceVirtualPath);
+        File subResourceFile = new File(getSubResourceFolder(binaryResource), Tools.unAccent(subResourceVirtualPath));
         subResourceFile.getParentFile().mkdirs();
         try {
             return new BufferedOutputStream(new FileOutputStream(subResourceFile));
@@ -138,7 +138,7 @@ public class FileStorageProvider implements StorageProvider {
     }
 
     public boolean exists(BinaryResource binaryResource, String subResourceVirtualPath) {
-        File subResourceFile = new File(getSubResourceFolder(binaryResource), subResourceVirtualPath);
+        File subResourceFile = new File(getSubResourceFolder(binaryResource), Tools.unAccent(subResourceVirtualPath));
         return subResourceFile.exists();
     }
 
@@ -162,7 +162,7 @@ public class FileStorageProvider implements StorageProvider {
     }
 
     public Date getLastModified(BinaryResource binaryResource, String subResourceVirtualPath) throws FileNotFoundException {
-        File subResourceFile = new File(getSubResourceFolder(binaryResource), subResourceVirtualPath);
+        File subResourceFile = new File(getSubResourceFolder(binaryResource), Tools.unAccent(subResourceVirtualPath));
         if (subResourceFile.exists()) {
             return new Date(subResourceFile.lastModified());
         } else {
@@ -179,7 +179,7 @@ public class FileStorageProvider implements StorageProvider {
                     FileUtils.deleteDirectory(rootFolder);
                 }
             } catch (IOException e) {
-                throw new StorageException(new StringBuilder().append("Error in deletind workspace directory for workspace : ").append(workspaceId).toString(), e);
+                throw new StorageException(new StringBuilder().append("Error in deleting workspace directory for workspace : ").append(workspaceId).toString(), e);
             }
         }
     }
