@@ -78,6 +78,14 @@ define([
                     App.config.i18n._DATE_FORMAT,
                     data.iteration.creationDate
                 );
+                data.iteration.modificationDate = date.formatTimestamp(
+                    App.config.i18n._DATE_FORMAT,
+                    data.iteration.modificationDate
+                );
+                data.iteration.revisionDate = date.formatTimestamp(
+                    App.config.i18n._DATE_FORMAT,
+                    data.iteration.revisionDate
+                );
             }
 
             this.$el.html(Mustache.render(template, data));

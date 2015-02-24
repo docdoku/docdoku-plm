@@ -120,10 +120,22 @@ define([
                     App.config.i18n._DATE_FORMAT,
                     data.iteration.creationDate
                 );
-                data.iteration.checkInDate = date.formatTimestamp(
+                data.iteration.modificationDate = date.formatTimestamp(
                     App.config.i18n._DATE_FORMAT,
-                    data.iteration.checkInDate
+                    data.iteration.modificationDate
                 );
+
+                if (this.model.isCheckout()) {
+                    data.iteration.revisionDate = date.formatTimestamp(
+                        App.config.i18n._DATE_FORMAT,
+                        data.iteration.creationDate
+                    );
+                } else {
+                    data.iteration.revisionDate = date.formatTimestamp(
+                        App.config.i18n._DATE_FORMAT,
+                        data.iteration.checkInDate
+                    );
+                }
             }
 
             if (this.model.isCheckout()) {
