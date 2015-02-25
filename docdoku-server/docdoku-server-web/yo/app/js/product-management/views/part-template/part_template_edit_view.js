@@ -5,8 +5,9 @@ define([
     'models/part_template',
     'common-objects/views/file/file_list',
     'common-objects/views/attributes/template_new_attributes',
+    "common-objects/views/workflow/workflow_list",
     'common-objects/views/alert'
-], function (ModalView, template, PartTemplate, FileListView, TemplateNewAttributesView, AlertView) {
+], function (ModalView, template, PartTemplate, FileListView, TemplateNewAttributesView, WorkflowListView, AlertView) {
 	'use strict';
     var PartTemplateEditView = ModalView.extend({
 
@@ -21,6 +22,10 @@ define([
         rendered: function () {
 
             this.bindDomElements();
+
+            this.workflowsView = new WorkflowListView({
+                el: this.$('#workflows-list')
+            });
 
             this.attributesView = this.addSubView(
                 new TemplateNewAttributesView({
@@ -67,6 +72,8 @@ define([
         onSubmitForm: function (e) {
 
             if(this.isValid){
+                var workflow = this.workflowsView.selected();
+
                 // cannot pass a collection of cad file to server.
                 var attachedFile = this.fileListView.collection.first();
                 if (attachedFile) {
@@ -81,7 +88,8 @@ define([
                     mask: this.$partTemplateMask.val(),
                     idGenerated: this.$partTemplateIdGenerated.is(':checked'),
                     attributeTemplates: this.attributesView.collection.toJSON(),
-                    attributesLocked: this.attributesView.isAttributesLocked()
+                    attributesLocked: this.attributesView.isAttributesLocked(),
+                    workflowModelId: workflow ? workflow.get('id') : null
                 }, {
                     wait: true,
                     success: this.onPartTemplateCreated,
