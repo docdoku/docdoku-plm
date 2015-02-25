@@ -4,7 +4,7 @@
 
     angular.module('dplm.workspace.documents', [])
 
-        .controller('WorkspaceDocumentsController', function ($scope, $filter, $window, $timeout, $routeParams, CliService, ConfigurationService, NotificationService, WorkspaceService) {
+        .controller('WorkspaceDocumentsController', function ($scope, $q, $filter, $window, $timeout, $routeParams, CliService, ConfigurationService, FolderService, NotificationService) {
 
             $scope.path = $routeParams.path;
             $scope.decodedPath = $filter('decodePath')($routeParams.path);
@@ -32,6 +32,9 @@
                 checkouted:1
             };
 
+            $scope.folders = FolderService.folders;
+            $scope.options = {force: true};
+            $scope.folder = angular.copy($scope.folders[0])||{};
             $scope.documents = [];
             $scope.loadingDocuments = true;
             $scope.loadingMore = false;
@@ -74,7 +77,18 @@
                 });
             };
 
-
+            $scope.downloadAll = function(){
+                var downloadPromises = [];
+                angular.forEach($scope.documents,function(document){
+                    downloadPromises.push($q(function(resolve,reject){
+                        CliService.downloadDocumentFiles(document, $scope.folder.path, $scope.options).then(resolve,resolve);
+                    }));
+                });
+                $q.all(downloadPromises).then(function(){
+                   NotificationService.toast($filter('translate')('DOWNLOADS_FINISHED'));
+                    FolderService.getFolder({path:$scope.folder.path}).newStuff = true;
+                });
+            };
 
             // if action = folders
             if($routeParams.action === 'folders'){

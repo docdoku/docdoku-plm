@@ -1,34 +1,60 @@
 <md-progress-linear ng-if="file.busy" mode="determinate" ng-value="file.progress"></md-progress-linear>
 
-<div class="md-actions md-padding" ng-if="file.notSync && !file.busy" layout="horizontal">
+<div class="md-actions md-padding" ng-if="!file.busy" layout="vertical">
 
-    <form name="creationForm" ng-submit="creationForm.$valid && createPart()">
-        <div class="row">{{'CREATE_PART'|translate}}</div>
-        <div class="row">
-            <md-text-float label="{{'PART_NUMBER' | translate}}" ng-model="newPart.id"
-                           required="true"></md-text-float>
-            <md-text-float label="{{'PART_NAME' | translate}}" ng-model="newDocument.name"></md-text-float>
+    <div>
+        <form name="partCreationForm" ng-submit="partCreationForm.$valid && createPart()">
+            <div class="row">{{'CREATE_PART'|translate}}</div>
+            <div class="row">
+                <md-text-float label="{{'PART_NUMBER' | translate}}" ng-model="newPart.id"
+                               required="true"></md-text-float>
+                <md-text-float label="{{'PART_NAME' | translate}}" ng-model="newPart.name"></md-text-float>
 
-            <md-text-float label="{{'PART_DESCRIPTION' | translate}}" ng-model="newPart.description"></md-text-float>
+                <md-text-float label="{{'PART_DESCRIPTION' | translate}}" ng-model="newPart.description"></md-text-float>
 
-            <md-checkbox ng-model="newPart.standard" aria-label="">
-                {{'STANDARD'|translate}}
-            </md-checkbox>
+                <md-checkbox ng-model="newPart.standard" aria-label="">
+                    {{'STANDARD'|translate}}
+                </md-checkbox>
 
-            <label class="label-margin">{{'WORKSPACE' | translate}}</label>
-            <i class="fa fa-globe"></i>
-            <select ng-model="folder.path">
-                <option ng-repeat="workspace in workspaces" value="{{workspace}}">
-                    {{workspace}}
-                </option>
-            </select>
-        </div>
-        <div class="row">
+                <label class="label-margin">{{'WORKSPACE' | translate}}</label>
+                <i class="fa fa-globe"></i>
+                <select ng-model="newPart.workspace">
+                    <option ng-repeat="workspace in workspaces" value="{{workspace}}">
+                        {{workspace}}
+                    </option>
+                </select>
+            </div>
+            <div class="row">
 
-            <md-button aria-label="" class="md-raised md-primary">
-                {{'SAVE'|translate}}
-            </md-button>
-        </div>
-    </form>
+                <md-button aria-label="" class="md-raised md-primary">
+                    {{'SAVE'|translate}}
+                </md-button>
+            </div>
+        </form>
+    </div>
 
+    <div>
+        <form name="documentCreationForm" ng-submit="documentCreationForm.$valid && createDocument()">
+            <div class="row">{{'CREATE_DOCUMENT'|translate}}</div>
+            <div class="row">
+
+                <md-text-float label="{{'DOCUMENT_ID' | translate}}" ng-model="newDocument.id"required="true"></md-text-float>
+                <md-text-float label="{{'DOCUMENT_TITLE' | translate}}" ng-model="newDocument.title"></md-text-float>
+                <md-text-float label="{{'DOCUMENT_DESCRIPTION' | translate}}" ng-model="newDocument.description"></md-text-float>
+
+                <label class="label-margin">{{'WORKSPACE' | translate}}</label>
+                <i class="fa fa-globe"></i>
+                <select ng-model="newDocument.workspace">
+                    <option ng-repeat="workspace in workspaces" value="{{workspace}}">
+                        {{workspace}}
+                    </option>
+                </select>
+            </div>
+            <div class="row">
+                <md-button aria-label="" class="md-raised md-primary">
+                    {{'SAVE'|translate}}
+                </md-button>
+            </div>
+        </form>
+    </div>
 </div>

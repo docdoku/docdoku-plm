@@ -19,7 +19,10 @@
 	border-radius: 4px;
 }
 document-actions,
-part-actions {
+part-actions,
+file-unknown-actions,
+file-document-actions,
+file-part-actions{
 	padding-top: 18px;
 }
 

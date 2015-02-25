@@ -153,7 +153,6 @@
 
                     $scope.options = {force: true,recursive:true};
                     $scope.workspaces = WorkspaceService.workspaces;
-                    $scope.newPart = {workspace: $scope.workspaces[0]};
                     $scope.show3D = false;
 
                     var onFinish = function () {
@@ -191,14 +190,6 @@
                         CliService.undoCheckoutPart($scope.file.part).then(function () {
                             return $scope.fetchStatus();
                         }).then(onFinish);
-                    };
-
-                    $scope.createPart = function () {
-                        $scope.file.busy = true;
-                        CliService.createPart($scope.newPart, $scope.file.path).then(function () {
-                            $scope.newPart = {workspace: $scope.workspaces[0]};
-                            return $scope.fetchStatus();
-                        }, null, onProgress).then(onFinish);
                     };
 
                     $scope.conversionStatus = function () {
@@ -246,28 +237,28 @@
 
                     $scope.checkout = function () {
                         $scope.file.busy = true;
-                        CliService.checkoutPart($scope.file.part, $scope.folder.path, $scope.options).then(function () {
+                        CliService.checkoutDocument($scope.file.document, $scope.folder.path, $scope.options).then(function () {
                             return $scope.fetchStatus();
                         }, null, onProgress).then(onFinish);
                     };
 
                     $scope.checkin = function () {
                         $scope.file.busy = true;
-                        CliService.checkinPart($scope.file.part,$scope.folder.path).then(function () {
+                        CliService.checkinDocument($scope.file.document,$scope.folder.path).then(function () {
                             return $scope.fetchStatus();
                         }, null, onProgress).then(onFinish);
                     };
 
                     $scope.put = function () {
                         $scope.file.busy = true;
-                        CliService.putCADFile($scope.file.part.workspace, $scope.file.path).then(function () {
+                        CliService.putDocumentFile($scope.file.document.workspace, $scope.file.path).then(function () {
                             return $scope.fetchStatus();
                         }, null, onProgress).then(onFinish);
                     };
 
                     $scope.undoCheckout = function () {
                         $scope.file.busy = true;
-                        CliService.undoCheckoutPart($scope.file.part).then(function () {
+                        CliService.undoCheckoutDocument($scope.file.document).then(function () {
                             return $scope.fetchStatus();
                         }).then(onFinish);
                     };
@@ -305,9 +296,10 @@
                             return $scope.fetchStatus();
                         }, null, onProgress).then(onFinish);
                     };
+
                     $scope.createDocument = function () {
                         $scope.file.busy = true;
-                        CliService.createPart($scope.newDocument, $scope.file.path).then(function () {
+                        CliService.createDocument($scope.newDocument, $scope.file.path).then(function () {
                             $scope.newDocument = {workspace: $scope.workspaces[0]};
                             return $scope.fetchStatus();
                         }, null, onProgress).then(onFinish);

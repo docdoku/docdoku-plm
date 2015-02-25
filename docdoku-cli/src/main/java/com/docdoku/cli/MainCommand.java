@@ -135,9 +135,16 @@ public class MainCommand {
 
                 case "create":
                 case "cr":
-                     execCommand(new PartCreationCommand(), Arrays.copyOfRange(args, 1, args.length));
+                    if(PART.equals(args[1])){
+                        execCommand(new PartCreationCommand(), Arrays.copyOfRange(args, 2, args.length));
+                    }
+                    else if(DOCUMENT.equals(args[1])){
+                        execCommand(new DocumentCreationCommand(), Arrays.copyOfRange(args, 2, args.length));
+                    }
+                    else{
+                        execCommand(new HelpCommand(), Arrays.copyOfRange(args, 1, args.length));
+                    }
                     break;
-
                 case "list":
                 case "l":
                     if(PART.equals(args[1])){

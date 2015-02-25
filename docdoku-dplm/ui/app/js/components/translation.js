@@ -15,6 +15,7 @@
                     PUT: 'Put',
                     FORCE: 'Force rewrite',
                     CREATE_PART: 'Create a new part',
+                    CREATE_DOCUMENT: 'Create a new document',
                     STANDARD: 'Standard part',
                     WORKSPACE: 'Workspace',
                     SAVE: 'Save',
@@ -38,6 +39,9 @@
                     PART_NUMBER: 'Part number',
                     PART_NAME: 'Part name',
                     PART_DESCRIPTION: 'Description',
+                    DOCUMENT_ID: 'Document id',
+                    DOCUMENT_TITLE: 'Document title',
+                    DOCUMENT_DESCRIPTION: 'Description',
                     SEARCH: 'Search',
                     USER: 'User login',
                     PASSWORD: 'Password',
@@ -89,7 +93,8 @@
                     CHECKOUTED:'Checkouted',
                     HOME_FOLDER:'Home folder',
                     ROOT_FOLDER:'Root folder',
-                    NO_DOCUMENTS:'No documents'
+                    NO_DOCUMENTS:'No documents',
+                    DOWNLOADS_FINISHED:'All downloads are finished'
                 })
                 .translations('fr', {
                     CUT: 'Couper',
@@ -101,6 +106,7 @@
                     PUT: 'Envoyer',
                     FORCE: 'Ecraser',
                     CREATE_PART: 'Créer un nouvel article',
+                    CREATE_DOCUMENT: 'Créer un nouveau document',
                     STANDARD: 'Article standard',
                     WORKSPACE: 'Espace de travail',
                     SAVE: 'Enregistrer',
@@ -124,6 +130,9 @@
                     PART_NUMBER: 'Identifiant de l\'article',
                     PART_NAME: 'Nom de l\'article',
                     PART_DESCRIPTION: 'Description',
+                    DOCUMENT_ID: 'Identifiant du document',
+                    DOCUMENT_TITLE: 'Titre du document',
+                    DOCUMENT_DESCRIPTION: 'Description',
                     SEARCH: 'Rechercher',
                     USER: 'Identifiant',
                     PASSWORD: 'Mot de passe',
@@ -175,7 +184,8 @@
                     UNKNOWN:'Inconnus',
                     CHECKOUTED:'Réservés',
                     HOME_FOLDER:'Dossier personnel',
-                    ROOT_FOLDER:'Dossier racine'
+                    ROOT_FOLDER:'Dossier racine',
+                    DOWNLOADS_FINISHED:'Tous les téléchargements sont terminés'
                 });
 
             $translateProvider.preferredLanguage(localStorage.lang || 'en');

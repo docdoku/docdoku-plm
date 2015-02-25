@@ -7,11 +7,26 @@
     </div>
 </div>
 
-<folders ng-if="action.selected == action.folders"></folders>
-
 <div class="fullscreen-wrapper offset-toolbar">
 
     <md-content class="md-padding">
+
+        <div ng-if="action.selected == action.folders">
+            <folders></folders>
+        </div>
+        <div ng-if="action.selected == action.checkouted && !loadingDocuments && documents.length">
+            <div class="row">
+                <label>{{'SAVE_TO' | translate}}</label>
+                <i class="fa fa-folder-open"></i>
+                <select ng-model="folder.path" class="cursor">
+                    <option ng-repeat="folder in folders | orderBy:'-favorite'" value="{{folder.path}}">
+                        {{folder.path | fileshortname}}
+                    </option>
+                </select>
+
+                <md-button class="md-raised md-primary" ng-click="downloadAll()" aria-label="">{{'DOWNLOAD_ALL'}}</md-button>
+            </div>
+        </div>
 
         <md-progress-linear ng-show="loadingDocuments" mode="indeterminate"></md-progress-linear>
 

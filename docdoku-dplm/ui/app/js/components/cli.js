@@ -279,7 +279,7 @@
             this.createPart = function (part, filePath) {
 
                 var args = [
-                    'cr',
+                    'cr', 'part',
                     '-F', 'json',
                     '-h', configuration.host,
                     '-P', configuration.port,
@@ -555,6 +555,52 @@
                 ];
 
                 return run(args);
+            };
+
+            this.putDocumentFile = function (workspace, file) {
+
+                var args = [
+                    'put', 'document',
+                    '-F', 'json',
+                    '-h', configuration.host,
+                    '-P', configuration.port,
+                    '-u', configuration.user,
+                    '-p', configuration.password,
+                    '-w', workspace
+                ];
+
+                args.push(file);
+
+                return run(args);
+
+            };
+
+            this.createDocument = function (document, filePath) {
+
+                var args = [
+                    'cr', 'document',
+                    '-F', 'json',
+                    '-h', configuration.host,
+                    '-P', configuration.port,
+                    '-u', configuration.user,
+                    '-p', configuration.password,
+                    '-w', document.workspace,
+                    '-o', document.id
+                ];
+
+                if (document.title) {
+                    args.push('-N');
+                    args.push(document.title);
+                }
+                if (document.description) {
+                    args.push('-d');
+                    args.push(document.description);
+                }
+
+                args.push(filePath);
+
+                return run(args);
+
             };
 
 
