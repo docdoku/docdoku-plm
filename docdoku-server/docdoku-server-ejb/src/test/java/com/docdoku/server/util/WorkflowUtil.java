@@ -19,6 +19,7 @@ package com.docdoku.server.util;
     public static final String USER3_LOGIN = "tomy";
     public static final String USER3_NAME = "tomy";
     public static final String USER3_MAIL ="tomy@docdoku.com" ;
+    public static final String GRP1_ID = "grp001" ;
 
     public static String WORKFLOW_MODEL_ID ="workflowModel01";
     public static String WORKSPACE_ID ="workspace01";

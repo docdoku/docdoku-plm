@@ -1,9 +1,6 @@
 package com.docdoku.server;
 
-import com.docdoku.core.common.Account;
-import com.docdoku.core.common.User;
-import com.docdoku.core.common.UserKey;
-import com.docdoku.core.common.Workspace;
+import com.docdoku.core.common.*;
 import com.docdoku.core.exceptions.AccessRightException;
 import com.docdoku.core.security.ACL;
 import com.docdoku.core.services.IUserManagerLocal;
@@ -89,8 +86,8 @@ public class WorkflowManagerBeanTest {
 
         // User has read access to the workspace
         Mockito.when(userManager.checkWorkspaceReadAccess(WorkflowUtil.WORKSPACE_ID)).thenReturn(user);
-        Mockito.when(em.find(WorkflowModel.class, new WorkflowModelKey(WorkflowUtil.WORKSPACE_ID,WorkflowUtil.WORKFLOW_MODEL_ID))).thenReturn(workflowModel);
-        Mockito.when(em.find(User.class, new UserKey(WorkflowUtil.WORKSPACE_ID,WorkflowUtil.USER_LOGIN))).thenReturn(user);
+        Mockito.when(em.find(WorkflowModel.class, new WorkflowModelKey(WorkflowUtil.WORKSPACE_ID, WorkflowUtil.WORKFLOW_MODEL_ID))).thenReturn(workflowModel);
+        Mockito.when(em.find(User.class, new UserKey(WorkflowUtil.WORKSPACE_ID, WorkflowUtil.USER_LOGIN))).thenReturn(user);
         Mockito.when(em.find(User.class, new UserKey(WorkflowUtil.WORKSPACE_ID,WorkflowUtil.USER2_LOGIN))).thenReturn(user2);
         Mockito.when(em.find(User.class, new UserKey(WorkflowUtil.WORKSPACE_ID,WorkflowUtil.USER3_LOGIN))).thenReturn(user3);
 
@@ -107,17 +104,51 @@ public class WorkflowManagerBeanTest {
     }
 
     @Test
-    public void testUpdateACLForWorkflowANExistentACL() throws Exception {
+    public void testUpdateACLForWorkflowWithAnExistingACL() throws Exception {
+        //Given
+        Map<String, String> userEntries = new HashMap<>();
+        Map<String, String> grpEntries = new HashMap<>();
+        User user2 = new User(workspace,WorkflowUtil.USER2_LOGIN , WorkflowUtil.USER2_NAME,WorkflowUtil.USER2_MAIL, "en");
+        User user3 = new User(workspace,WorkflowUtil.USER3_LOGIN , WorkflowUtil.USER3_NAME,WorkflowUtil.USER3_MAIL, "en");
+        UserGroup group1 = new UserGroup(workspace,WorkflowUtil.GRP1_ID);
+
+        WorkflowModel workflowModel = new WorkflowModel(workspace, WorkflowUtil.WORKSPACE_ID, user, "");
+        ACL acl = new ACL();
+        // user2 had READ_ONLY access in the existing acl
+        acl.addEntry(user2, ACL.Permission.READ_ONLY);
+        acl.addEntry(group1, ACL.Permission.FULL_ACCESS);
+        workflowModel.setAcl(acl);
+
+        userEntries.put(user.getLogin(), ACL.Permission.FORBIDDEN.name());
+        // user2 has non access FORBIDDEN in the new acl
+        userEntries.put(user2.getLogin(), ACL.Permission.FORBIDDEN.name());
+        userEntries.put(user3.getLogin(), ACL.Permission.FULL_ACCESS.name());
+
+
+        //user2 belong to group1
+        group1.addUser(user2);
+        group1.addUser(user);
+        //group1 has FULL_ACCESS
+        grpEntries.put(group1.getId(),ACL.Permission.FULL_ACCESS.name());
+
+
+        // User has read access to the workspace
+        Mockito.when(userManager.checkWorkspaceReadAccess(WorkflowUtil.WORKSPACE_ID)).thenReturn(user);
+        Mockito.when(em.find(WorkflowModel.class, new WorkflowModelKey(WorkflowUtil.WORKSPACE_ID,WorkflowUtil.WORKFLOW_MODEL_ID))).thenReturn(workflowModel);
+        Mockito.when(em.find(User.class, new UserKey(WorkflowUtil.WORKSPACE_ID,WorkflowUtil.USER_LOGIN))).thenReturn(user);
+        Mockito.when(em.find(User.class, new UserKey(WorkflowUtil.WORKSPACE_ID,WorkflowUtil.USER2_LOGIN))).thenReturn(user2);
+        Mockito.when(em.find(User.class, new UserKey(WorkflowUtil.WORKSPACE_ID,WorkflowUtil.USER3_LOGIN))).thenReturn(user3);
+
+        //When
+        WorkflowModel workflow= workflowManagerBean.updateACLForWorkflow(WorkflowUtil.WORKSPACE_ID, WorkflowUtil.WORKFLOW_MODEL_ID, userEntries, grpEntries);
+        //Then
+        Assert.assertEquals(workflow.getAcl().getGroupEntries().size(),1 );
+        Assert.assertEquals(workflow.getAcl().getUserEntries().size() , 3);
+        Assert.assertEquals(workflow.getAcl().getUserEntries().get(user).getPermission() , ACL.Permission.FORBIDDEN);
+        Assert.assertEquals(workflow.getAcl().getUserEntries().get(user2).getPermission() , ACL.Permission.FULL_ACCESS);
+        Assert.assertEquals(workflow.getAcl().getUserEntries().get(user3).getPermission() , ACL.Permission.FULL_ACCESS);
 
     }
 
-    @Test
-    public void testUpdateACLForWorkflowUserNoWriteAccess() throws Exception {
 
-    }
-
-    @Test
-    public void testUpdateACLForWorkflowUserNoWriteAccessInGrpFullAccess() throws Exception {
-
-    }
 }

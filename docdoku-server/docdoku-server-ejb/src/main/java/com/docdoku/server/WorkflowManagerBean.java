@@ -192,18 +192,12 @@ public class WorkflowManagerBean implements IWorkflowManagerWS, IWorkflowManager
         WorkflowModel workflowModel = new WorkflowModelDAO(new Locale(user.getLanguage()), em).loadWorkflowModel(workflowModelKey);
         // Check the access to the workflow
         checkWorkflowWriteAccess(workflowModel, user);
-
-        if (workflowModel.getAcl() == null) {
-             // Check if there is already an ACL
-            ACL acl = createACL(pWorkspaceId, userEntries, groupEntries);
-            workflowModel.setAcl(acl);
-            return workflowModel;
-        } else {
-            // Else change existing ACL Rule
-            ACL acl = workflowModel.getAcl();
-            updateACL(acl, userEntries, groupEntries);
-        }
+        ACL acl = createACL(pWorkspaceId, userEntries, groupEntries);
+        // remove old acl if and reset it
+        workflowModel.setAcl(acl);
         return workflowModel;
+
+
     }
 
 
