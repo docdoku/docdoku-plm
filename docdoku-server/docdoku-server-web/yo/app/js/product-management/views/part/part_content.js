@@ -56,6 +56,12 @@ define([
             _.bindAll(this);
             this.query = null;
         },
+
+        setCollection:function(collection){
+            this.partsCollection = collection;
+            return this;
+        },
+
         setQuery: function (query) {
             this.query = query;
             this.partsCollection = null;
