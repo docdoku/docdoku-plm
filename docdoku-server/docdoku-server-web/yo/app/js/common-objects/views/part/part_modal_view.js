@@ -71,6 +71,7 @@ define([
             if (this.model.hasIterations()) {
                 var hasNextIteration = this.iterations.hasNextIteration(this.iteration);
                 var hasPreviousIteration = this.iterations.hasPreviousIteration(this.iteration);
+                data.iterations = this.model.getIterations().length;
                 data.iteration = this.iteration.toJSON();
                 data.iteration.hasNextIteration = hasNextIteration;
                 data.iteration.hasPreviousIteration = hasPreviousIteration;
