@@ -27,6 +27,10 @@ define([
                 data.creationDate
             );
 
+            if (this.model.hasACLForCurrentUser()) {
+                data.isReadOnly = this.model.isReadOnly();
+                data.isFullAccess = this.model.isFullAccess();
+            }
             return data;
         },
 
