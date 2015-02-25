@@ -145,7 +145,7 @@ public class WorkflowManagerBeanTest {
         Assert.assertEquals(workflow.getAcl().getGroupEntries().size(),1 );
         Assert.assertEquals(workflow.getAcl().getUserEntries().size() , 3);
         Assert.assertEquals(workflow.getAcl().getUserEntries().get(user).getPermission() , ACL.Permission.FORBIDDEN);
-        Assert.assertEquals(workflow.getAcl().getUserEntries().get(user2).getPermission() , ACL.Permission.FULL_ACCESS);
+        Assert.assertEquals(workflow.getAcl().getUserEntries().get(user2).getPermission() , ACL.Permission.FORBIDDEN);
         Assert.assertEquals(workflow.getAcl().getUserEntries().get(user3).getPermission() , ACL.Permission.FULL_ACCESS);
 
     }
