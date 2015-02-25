@@ -32,7 +32,6 @@ define([
         render: function () {
             this.$el.html(Mustache.render(template, {i18n: App.config.i18n}));
             this.bindDomElements();
-            this.initSigningPopover();
             this.initCanvas();
             return this;
         },
@@ -40,19 +39,7 @@ define([
         bindDomElements: function () {
             this.$signingLink = this.$(".lifecycle-task-signing-link");
             this.$signingPopover = this.$(".lifecycle-task-signing-popover");
-        },
-
-        initSigningPopover: function () {
-            var self = this;
-            this.$signingLink.popover({
-                html: true,
-                placement: "top",
-                title: App.config.i18n.SIGN_TASK,
-                trigger: "manual",
-                content: function () {
-                    return self.$signingPopover.html();
-                }
-            });
+            this.$signingImg = this.$(".lifecycle-task-signing-img");
         },
 
         initCanvas: function () {
@@ -69,7 +56,8 @@ define([
         },
 
         openSigningCanvas: function () {
-            this.$signingLink.popover('show');
+            this.$signingPopover.show();
+            this.$signingImg.hide();
             this.canvas = this.$(".lifecycle-activities-canvas").get(0);
             this.context = this.canvas.getContext("2d");
             this.canvas.width = 200;
@@ -77,7 +65,8 @@ define([
         },
 
         closeSigningCanvas: function () {
-            this.$signingLink.popover('hide');
+            this.$signingPopover.hide();
+            this.$signingImg.show();
         },
 
         canvasMouseDown: function (e) {
@@ -107,7 +96,7 @@ define([
         },
 
         redraw: function () {
-            this.context.strokeStyle = "#000000";
+            this.context.strokeStyle = "#333333";
             this.context.lineJoin = "round";
             this.context.lineWidth = 3;
 
