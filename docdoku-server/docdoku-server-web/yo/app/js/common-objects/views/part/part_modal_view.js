@@ -13,7 +13,7 @@ define([
     'common-objects/views/workflow/lifecycle',
     'common-objects/views/part/conversion_status_view',
     'common-objects/utils/date'
-], function (Backbone,Mustache, ModalView, FileListView, template, AttributesView, PartsManagementView, LinkedDocumentsView,AlertView, LinkedDocumentCollection, LifecycleView, ConversionStatusView, date) {
+], function (Backbone, Mustache, ModalView, FileListView, template, AttributesView, PartsManagementView, LinkedDocumentsView, AlertView, LinkedDocumentCollection, LifecycleView, ConversionStatusView, date) {
     'use strict';
     var PartModalView = ModalView.extend({
 
@@ -78,6 +78,14 @@ define([
                 data.iteration.creationDate = date.formatTimestamp(
                     App.config.i18n._DATE_FORMAT,
                     data.iteration.creationDate
+                );
+                data.iteration.modificationDate = date.formatTimestamp(
+                    App.config.i18n._DATE_FORMAT,
+                    data.iteration.modificationDate
+                );
+                data.iteration.revisionDate = date.formatTimestamp(
+                    App.config.i18n._DATE_FORMAT,
+                    data.iteration.revisionDate
                 );
             }
 

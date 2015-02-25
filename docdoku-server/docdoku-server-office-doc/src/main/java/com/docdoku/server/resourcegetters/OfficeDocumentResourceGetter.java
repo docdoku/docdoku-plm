@@ -26,6 +26,7 @@ import com.docdoku.core.exceptions.StorageException;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.util.FileIO;
+import com.docdoku.core.util.Tools;
 import com.docdoku.server.extras.TitleBlockGenerator;
 import com.google.common.io.ByteStreams;
 import com.itextpdf.text.DocumentException;
@@ -91,7 +92,8 @@ public class OfficeDocumentResourceGetter implements DocumentResourceGetter {
                 //copy the converted file for further reuse
                 OutputStream outputStream = dataManager.getBinarySubResourceOutputStream(binaryResource, subResourceVirtualPath);
                 InputStream binaryResourceInputStream = dataManager.getBinaryResourceInputStream(binaryResource);
-                try (InputStream inputStreamConverted = fileConverter.convertToPDF(binaryResource.getName(),binaryResourceInputStream)) {
+                String normalizedName = Tools.unAccent(binaryResource.getName());
+                try (InputStream inputStreamConverted = fileConverter.convertToPDF(normalizedName,binaryResourceInputStream)) {
                     ByteStreams.copy(inputStreamConverted, outputStream);
                 } finally {
                     binaryResourceInputStream.close();

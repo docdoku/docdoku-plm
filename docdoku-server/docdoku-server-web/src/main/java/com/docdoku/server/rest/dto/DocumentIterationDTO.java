@@ -36,6 +36,8 @@ public class DocumentIterationDTO implements Serializable {
     private String documentRevisionVersion;
     private int iteration;
     private Date creationDate;
+    private Date modificationDate;
+    private Date checkInDate;
     private UserDTO author;
     @XmlElement(nillable = true)
     private String revisionNote;
@@ -75,6 +77,22 @@ public class DocumentIterationDTO implements Serializable {
 
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
+    }
+
+    public Date getModificationDate() {
+        return modificationDate;
+    }
+
+    public void setModificationDate(Date modificationDate) {
+        this.modificationDate = modificationDate;
+    }
+
+    public Date getCheckInDate() {
+        return checkInDate;
+    }
+
+    public void setCheckInDate(Date checkInDate) {
+        this.checkInDate = checkInDate;
     }
 
     public void setRevisionNote(String pRevisionNote) {

@@ -161,7 +161,7 @@ public class DocumentManagerBeanTest {
         DocumentMaster documentMaster = Mockito.spy(new DocumentMaster(workspace, DOCUMENT_ID,user));
         DocumentRevision documentRevision = Mockito.spy(new DocumentRevision(documentMaster, VERSION,user));
         ArrayList<DocumentIteration> iterations =new ArrayList<DocumentIteration>();
-        iterations.add(new DocumentIteration(documentRevision, ITERATION,user));
+        iterations.add(new DocumentIteration(documentRevision, user));
         documentRevision.setDocumentIterations(iterations);
         documentRevision.setCheckOutUser(user);
         DocumentRevisionKey documentRevisionKey = Mockito.spy(new DocumentRevisionKey(WORKSPACE_ID, DOCUMENT_ID, VERSION));
@@ -191,7 +191,7 @@ public class DocumentManagerBeanTest {
         DocumentMaster documentMaster = Mockito.spy(new DocumentMaster(workspace, DOCUMENT_ID,user));
         DocumentRevision documentRevision = Mockito.spy(new DocumentRevision(documentMaster, VERSION,user));
         ArrayList<DocumentIteration> iterations =new ArrayList<DocumentIteration>();
-        iterations.add(new DocumentIteration(documentRevision, ITERATION,user));
+        iterations.add(new DocumentIteration(documentRevision, user));
         documentRevision.setDocumentIterations(iterations);
         documentRevision.setCheckOutUser(user);
         DocumentRevisionKey documentRevisionKey = Mockito.spy(new DocumentRevisionKey(WORKSPACE_ID, DOCUMENT_ID, VERSION));
@@ -221,7 +221,7 @@ public class DocumentManagerBeanTest {
         DocumentMaster documentMaster = Mockito.spy(new DocumentMaster(workspace, DOCUMENT_ID,user));
         DocumentRevision documentRevision = Mockito.spy(new DocumentRevision(documentMaster, VERSION,user));
         ArrayList<DocumentIteration> iterations =new ArrayList<DocumentIteration>();
-        iterations.add(new DocumentIteration(documentRevision, ITERATION,user));
+        iterations.add(new DocumentIteration(documentRevision, user));
         documentRevision.setDocumentIterations(iterations);
         documentRevision.setCheckOutUser(user);
         DocumentRevisionKey documentRevisionKey = Mockito.spy(new DocumentRevisionKey(WORKSPACE_ID, DOCUMENT_ID, VERSION));
@@ -279,7 +279,7 @@ public class DocumentManagerBeanTest {
 
 
         documentRevision = new DocumentRevision(documentMaster, "A", user);
-        documentIteration = new DocumentIteration(documentRevision, 1, user);
+        documentIteration = new DocumentIteration(documentRevision, user);
         documentRevision.setCheckOutUser(user);
         documentRevision.setCheckOutDate(new Date());
         ArrayList<DocumentIteration> iterations = new ArrayList<DocumentIteration>();
@@ -336,7 +336,7 @@ public class DocumentManagerBeanTest {
 
 
         documentRevision = new DocumentRevision(documentMaster, "A", user);
-        documentIteration = new DocumentIteration(documentRevision, 1, user);
+        documentIteration = new DocumentIteration(documentRevision, user);
         documentRevision.setCheckOutUser(user);
         documentRevision.setCheckOutDate(new Date());
         ArrayList<DocumentIteration> iterations = new ArrayList<DocumentIteration>();

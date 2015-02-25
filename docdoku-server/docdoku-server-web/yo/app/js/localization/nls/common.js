@@ -342,6 +342,7 @@ define({
         REQUIRED_FIELD:"Please fill out his field",
 		RESET_CAMERA: "Reset camera",
         RETRY: "Retry",
+        REVISION_DATE: "Revision date",
         REVISION_NOTE_PROMPT_CANCEL: "Ignore",
 		REVISION_NOTE_PROMPT_LABEL: "The revision note has not been defined. Do you want to add it?",
 		REVISION_NOTE_PROMPT_OK: "Add the revision note",

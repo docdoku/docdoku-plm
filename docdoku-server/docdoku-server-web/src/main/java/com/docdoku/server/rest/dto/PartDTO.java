@@ -34,9 +34,12 @@ public class PartDTO implements Serializable {
     private String partKey;
     private String number;
     private String version;
+    private String type;
     private String name;
     private UserDTO author;
     private Date creationDate;
+    private Date modificationDate;
+    private Date checkInDate;
     private String description;
     private List<PartIterationDTO> partIterations;
     @XmlElement(nillable = true)
@@ -74,6 +77,14 @@ public class PartDTO implements Serializable {
         this.version = version;
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
     public UserDTO getAuthor() {
         return author;
     }
@@ -86,6 +97,21 @@ public class PartDTO implements Serializable {
     }
     public void setCreationDate(Date creationDate) {
         this.creationDate = (creationDate!=null) ? (Date) creationDate.clone() : null;
+    }
+
+    public Date getModificationDate() {
+        return (modificationDate!=null) ? (Date) modificationDate.clone() : null;
+    }
+    public void setModificationDate(Date modificationDate) {
+        this.modificationDate = (modificationDate!=null) ? (Date) modificationDate.clone() : null;
+    }
+
+    public Date getCheckInDate() {
+        return (checkInDate!=null) ? (Date) checkInDate.clone() : null;
+    }
+
+    public void setCheckInDate(Date checkInDate) {
+        this.checkInDate = (checkInDate!=null) ? (Date) checkInDate.clone() : null;
     }
 
     public String getDescription() {

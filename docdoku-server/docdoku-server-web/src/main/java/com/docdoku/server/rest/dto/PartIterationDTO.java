@@ -32,7 +32,10 @@ public class PartIterationDTO implements Serializable {
     private String nativeCADFile;
     private String iterationNote;
     private UserDTO author;
+
     private Date creationDate;
+    private Date modificationDate;
+    private Date checkInDate;
     private List<InstanceAttributeDTO> instanceAttributes;
     private List<PartUsageLinkDTO> components;
     private List<DocumentIterationDTO> linkedDocuments;
@@ -95,6 +98,22 @@ public class PartIterationDTO implements Serializable {
 
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
+    }
+
+    public Date getModificationDate() {
+        return modificationDate;
+    }
+
+    public void setModificationDate(Date modificationDate) {
+        this.modificationDate = modificationDate;
+    }
+
+    public Date getCheckInDate() {
+        return checkInDate;
+    }
+
+    public void setCheckInDate(Date checkInDate) {
+        this.checkInDate = checkInDate;
     }
 
     public List<InstanceAttributeDTO> getInstanceAttributes() {

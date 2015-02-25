@@ -120,6 +120,22 @@ define([
                     App.config.i18n._DATE_FORMAT,
                     data.iteration.creationDate
                 );
+                data.iteration.modificationDate = date.formatTimestamp(
+                    App.config.i18n._DATE_FORMAT,
+                    data.iteration.modificationDate
+                );
+
+                if (this.model.isCheckout()) {
+                    data.iteration.revisionDate = date.formatTimestamp(
+                        App.config.i18n._DATE_FORMAT,
+                        data.iteration.creationDate
+                    );
+                } else {
+                    data.iteration.revisionDate = date.formatTimestamp(
+                        App.config.i18n._DATE_FORMAT,
+                        data.iteration.checkInDate
+                    );
+                }
             }
 
             if (this.model.isCheckout()) {
@@ -221,11 +237,15 @@ define([
             if(this.isValid){
 
                 /*saving iteration*/
+                var _this = this;
+
                 this.iteration.save({
                     revisionNote: this.$('#inputRevisionNote').val(),
                     instanceAttributes: this.attributesView.collection.toJSON(),
                     linkedDocuments: this.linkedDocumentsView.collection.toJSON()
-                });
+                }, {success: function () {
+                    _this.model.fetch();
+                }});
 
                 /*There is a parsing problem at saving time*/
                 var files = this.iteration.get('attachedFiles');
