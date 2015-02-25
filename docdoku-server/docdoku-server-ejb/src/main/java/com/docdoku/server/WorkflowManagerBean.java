@@ -184,7 +184,7 @@ public class WorkflowManagerBean implements IWorkflowManagerWS, IWorkflowManager
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public void updateACLForWorkflow(String pWorkspaceId, String workflowModelId, Map<String, String> userEntries, Map<String, String> groupEntries) throws WorkflowNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, WorkflowModelNotFoundException, AccessRightException {
+    public WorkflowModel updateACLForWorkflow(String pWorkspaceId, String workflowModelId, Map<String, String> userEntries, Map<String, String> groupEntries) throws WorkflowNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, WorkflowModelNotFoundException, AccessRightException {
         // Check the read access to the workspace
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
         // Load the workflowModel
@@ -197,11 +197,13 @@ public class WorkflowManagerBean implements IWorkflowManagerWS, IWorkflowManager
              // Check if there is already an ACL
             ACL acl = createACL(pWorkspaceId, userEntries, groupEntries);
             workflowModel.setAcl(acl);
+            return workflowModel;
         } else {
             // Else change existing ACL Rule
             ACL acl = workflowModel.getAcl();
             updateACL(acl, userEntries, groupEntries);
         }
+        return workflowModel;
     }
 
 
