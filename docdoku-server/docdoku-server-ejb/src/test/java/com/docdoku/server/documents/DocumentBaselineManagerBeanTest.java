@@ -122,33 +122,29 @@ public class DocumentBaselineManagerBeanTest {
         Mockito.when(em.find(Folder.class,workspace.getId())).thenReturn(folder);
         DocumentRevision[] revisions= new DocumentRevision[2];
 
-        DocumentMaster documentMaster = Mockito.spy(new DocumentMaster(workspace,"doc1",user));
-        DocumentMaster documentMaster2 = Mockito.spy(new DocumentMaster(workspace,"doc2",user));
-        documentMaster.setId("doc001");
-        DocumentRevision documentRevision = Mockito.spy(new DocumentRevision(documentMaster,user));
-        DocumentRevision documentRevision2 = Mockito.spy(new DocumentRevision(documentMaster2,user));
-        documentRevision.setDocumentMaster(documentMaster);
-        documentRevision.setCheckOutUser(user);
-        documentRevision2.setDocumentMaster(documentMaster2);
-        documentRevision2.setCheckOutUser(user);
-        documentRevision2.setDocumentIterations(new ArrayList<DocumentIteration>(1));
-        documentRevision.setDocumentIterations(new ArrayList<DocumentIteration>(1));
+        DocumentMaster documentMaster1 = new DocumentMaster(workspace,"doc1",user);
+        DocumentMaster documentMaster2 = new DocumentMaster(workspace,"doc2",user);
+        documentMaster1.setId("doc001");
+        documentMaster2.setId("doc002");
 
-        ACL acl = Mockito.spy(new ACL());
-        ACL acl2 = Mockito.spy(new ACL());
-        acl.addEntry(user, ACL.Permission.FORBIDDEN);
+        DocumentRevision documentRevision1 = documentMaster1.createNextRevision(user);
+        DocumentRevision documentRevision2 = documentMaster2.createNextRevision(user);
+
+        ACL acl1=new ACL();
+        ACL acl2=new ACL();
+
+        acl1.addEntry(user, ACL.Permission.FORBIDDEN);
         acl2.addEntry(user, ACL.Permission.READ_ONLY);
-        Mockito.when(documentRevision.getACL()).thenReturn(acl);
-        Mockito.when(documentRevision2.getACL()).thenReturn(acl2);
+        documentRevision1.setACL(acl1);
+        documentRevision2.setACL(acl2);
 
         revisions[0] = documentRevision2;
-        revisions[1] = documentRevision;
-        Mockito.when(documentRevision.getLastIteration()).thenReturn(new DocumentIteration(documentRevision, user));
-        Mockito.when(documentRevision2.getLastIteration()).thenReturn(new DocumentIteration(documentRevision2, user));
-        Mockito.when(documentRevision.getLocation()).thenReturn(folder);
-        Mockito.when(documentRevision2.getLocation()).thenReturn(folder);
-
-        Mockito.when(em.find(DocumentRevision.class, documentRevision.getKey())).thenReturn(documentRevision);
+        revisions[1] = documentRevision1;
+        documentRevision2.createNextIteration(user);
+        documentRevision1.createNextIteration(user);
+        documentRevision1.setLocation(folder);
+        documentRevision2.setLocation(folder);
+        Mockito.when(em.find(DocumentRevision.class, documentRevision1.getKey())).thenReturn(documentRevision1);
         Mockito.when(em.find(DocumentRevision.class, documentRevision2.getKey())).thenReturn(documentRevision2);
 
         Mockito.when(documentService.getAllDocumentsInWorkspace(workspace.getId())).thenReturn(revisions);
@@ -161,8 +157,8 @@ public class DocumentBaselineManagerBeanTest {
         Assert.assertTrue(documentBaseline != null);
         Assert.assertTrue(documentBaseline.hasBasedLinedFolder(workspace.getId()));
         Assert.assertTrue(documentBaseline.getBaselinedFolders().size() == 1);
-        Assert.assertTrue(documentBaseline.getBaselinedDocument(documentRevision.getKey()) == null);
-        Assert.assertTrue(documentBaseline.getBaselinedDocument(documentRevision2.getKey()) != null);
+        Assert.assertNull(documentBaseline.getBaselinedDocument(documentRevision1.getKey()));
+        Assert.assertNotNull(documentBaseline.getBaselinedDocument(documentRevision2.getKey()));
 
 
     }
