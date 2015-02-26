@@ -21,7 +21,7 @@
 package com.docdoku.server.rest.dto;
 
 import java.util.Date;
-import java.util.Set;
+import java.util.List;
 
 public class PartMasterTemplateDTO {
 
@@ -34,7 +34,7 @@ public class PartMasterTemplateDTO {
     private boolean idGenerated;
     private String mask;
     private String attachedFile;
-    private Set<InstanceAttributeTemplateDTO> attributeTemplates;
+    private List<InstanceAttributeTemplateDTO> attributeTemplates;
     private boolean attributesLocked;
 
     public PartMasterTemplateDTO(){
@@ -102,11 +102,11 @@ public class PartMasterTemplateDTO {
         this.id = id;
     }
 
-    public void setAttributeTemplates(Set<InstanceAttributeTemplateDTO> attributeTemplates) {
+    public void setAttributeTemplates(List<InstanceAttributeTemplateDTO> attributeTemplates) {
         this.attributeTemplates = attributeTemplates;
     }
 
-    public Set<InstanceAttributeTemplateDTO> getAttributeTemplates() {
+    public List<InstanceAttributeTemplateDTO> getAttributeTemplates() {
         return attributeTemplates;
     }
 

@@ -15,6 +15,7 @@ define([
             this.events["change .name"] = "updateName";
             this.events["click .fa-times"] = "removeAction";
             this.events["change .attribute-mandatory input"] = "mandatoryChanged";
+            this.events[ "drop"] = "drop";
         },
         rendered: function () {
             var type = this.model.get("attributeType");
@@ -41,6 +42,9 @@ define([
             this.model.set({
                 mandatory: this.$el.find(".attribute-mandatory input")[0].checked
             });
+        },
+        drop: function(event, index) {
+            this.$el.trigger('update-sort', [this.model, index]);
         }
     });
     return TemplateNewAttributeListItemView;

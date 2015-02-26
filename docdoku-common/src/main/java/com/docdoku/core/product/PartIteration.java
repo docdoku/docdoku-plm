@@ -263,7 +263,6 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
         this.creationDate = (creationDate!=null) ? (Date) creationDate.clone() : null;
     }
 
-    public List<InstanceAttribute> getInstanceAttributes() {
     public Date getModificationDate() {
         return (modificationDate!=null) ? (Date) modificationDate.clone() : null;
     }
@@ -274,13 +273,15 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
     public Date getCheckInDate() {
         return (checkInDate!=null) ? (Date) checkInDate.clone() : null;
     }
+
     public void setCheckInDate(Date checkInDate) {
         this.checkInDate = (checkInDate!=null) ? (Date) checkInDate.clone() : null;
     }
 
-    public Map<String, InstanceAttribute> getInstanceAttributes() {
+    public List<InstanceAttribute> getInstanceAttributes() {
         return instanceAttributes;
     }
+
     public void setInstanceAttributes(List<InstanceAttribute> instanceAttributes) {
         this.instanceAttributes = instanceAttributes;
     }
