@@ -26,12 +26,16 @@ define([
         },
 
         rendered: function () {
-
             this.workflowsView = this.addSubView(
                 new DocumentWorkflowListView({
                     el: '#workflows-' + this.cid
                 })
             );
+
+            var _this = this;
+            this.workflowsView.collection.on('reset', function() {
+                _this.workflowsView.setValue(_this.model.get('workflowModelId'));
+            });
 
             this.attributesView = this.addSubView(
                 new TemplateNewAttributesView({

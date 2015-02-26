@@ -27,6 +27,11 @@ define([
                 el: this.$('#workflows-list')
             });
 
+            var _this = this;
+            this.workflowsView.collection.on('reset', function() {
+                _this.workflowsView.setValue(_this.model.get('workflowModelId'));
+            });
+
             this.attributesView = this.addSubView(
                 new TemplateNewAttributesView({
                     el: '#tab-attributes',
@@ -92,7 +97,7 @@ define([
                     workflowModelId: workflow ? workflow.get('id') : null
                 }, {
                     wait: true,
-                    success: this.onPartTemplateCreated,
+                    success: this.onPartTemplateSaved,
                     error: this.onError
                 });
 
@@ -108,7 +113,7 @@ define([
             this.fileListView.deleteNewFiles();
         },
 
-        onPartTemplateCreated: function () {
+        onPartTemplateSaved: function () {
             this.model.fetch();
             this.hide();
         },

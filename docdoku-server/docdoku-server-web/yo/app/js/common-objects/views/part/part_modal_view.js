@@ -154,10 +154,11 @@ define([
                 components: this.partsManagementView.collection.toJSON(),
                 instanceAttributes: this.attributesView.collection.toJSON(),
                 linkedDocuments: this.linkedDocumentsView.collection.toJSON()
-            }, {success: function () {
-                Backbone.Events.trigger('part:saved');
-                that.hide();
-            },
+            }, {
+                success: function () {
+                    Backbone.Events.trigger('part:saved');
+                    that.hide();
+                },
                 error: this.onError
             });
 

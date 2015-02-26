@@ -1259,10 +1259,11 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
         template.setAttributeTemplates(attrs);
 
-        if (pWorkflowModelId != null){
-            WorkflowModel workflowModel = new WorkflowModelDAO(locale, em).loadWorkflowModel(new WorkflowModelKey(user.getWorkspaceId(), pWorkflowModelId));
-            template.setWorkflowModel(workflowModel);
+        WorkflowModel workflowModel = null;
+        if (pWorkflowModelId != null) {
+            workflowModel = new WorkflowModelDAO(locale, em).loadWorkflowModel(new WorkflowModelKey(user.getWorkspaceId(), pWorkflowModelId));
         }
+        template.setWorkflowModel(workflowModel);
 
         return template;
     }
