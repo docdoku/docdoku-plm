@@ -682,7 +682,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
         docR.setTitle(pTitle);
         docR.setDescription(pDescription);
-
+        //TODO refactor call ACLFactory
         if ((pACLUserEntries != null && pACLUserEntries.length > 0) || (pACLUserGroupEntries != null && pACLUserGroupEntries.length > 0)) {
             ACL acl = new ACL();
             if (pACLUserEntries != null) {
@@ -1329,6 +1329,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         }
         docR.setTitle(pTitle);
         docR.setDescription(pDescription);
+        //TODO call ACLFactory
         if ((pACLUserEntries != null && pACLUserEntries.length > 0) || (pACLUserGroupEntries != null && pACLUserGroupEntries.length > 0)) {
             ACL acl = new ACL();
             if (pACLUserEntries != null) {

@@ -205,7 +205,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             }
 
         }
-
+        //TODO refactor call ACLFactory
         if ((pACLUserEntries != null && pACLUserEntries.length > 0) || (pACLUserGroupEntries != null && pACLUserGroupEntries.length > 0)) {
             ACL acl = new ACL();
              if (pACLUserEntries != null) {
