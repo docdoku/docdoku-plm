@@ -43,6 +43,7 @@ define([
 
         setValue: function (value) {
             this.$("#select-" + this.cid).val(value);
+            this.trigger("workflow:change", this.selected());
         }
 
     });
