@@ -25,7 +25,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * <a href="BinaryResource.html">BinaryResource</a> is the representation
+ * BinaryResource is the representation
  * of a file contained in either a document, part or template.
  * 
  * @author Florent Garin

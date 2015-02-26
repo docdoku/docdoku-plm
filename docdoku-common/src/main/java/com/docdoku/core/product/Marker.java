@@ -30,9 +30,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Represents a marker on the 3D scene, actually a
- * <a href="ConfigurationItem.html">ConfigurationItem</a>.
- * May be attached to one or several <a href="PartMaster.html">PartMaster</a>s.
+ * Represents a marker on the 3D scene, actually a {@link ConfigurationItem}.
+ * May be attached to one or several {@link PartMaster}s.
  * 
  * @author Florent Garin
  * @version 1.1, 14/08/12

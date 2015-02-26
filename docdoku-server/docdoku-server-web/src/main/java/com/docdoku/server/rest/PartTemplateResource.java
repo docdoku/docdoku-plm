@@ -109,6 +109,7 @@ public class PartTemplateResource {
 
         String id =templateCreationDTO.getReference();
         String partType = templateCreationDTO.getPartType();
+        String workflowModelId = templateCreationDTO.getWorkflowModelId();
         String mask = templateCreationDTO.getMask();
         boolean idGenerated = templateCreationDTO.isIdGenerated();
         boolean attributesLocked = templateCreationDTO.isAttributesLocked();
@@ -121,7 +122,7 @@ public class PartTemplateResource {
             attributeTemplatesDtos[i] = attributeTemplatesList.get(i);
         }
 
-        PartMasterTemplate template = productService.createPartMasterTemplate(workspaceId, id, partType, mask, createInstanceAttributeTemplateFromDto(attributeTemplatesDtos), idGenerated, attributesLocked);
+        PartMasterTemplate template = productService.createPartMasterTemplate(workspaceId, id, partType, workflowModelId, mask, createInstanceAttributeTemplateFromDto(attributeTemplatesDtos), idGenerated, attributesLocked);
         return mapper.map(template, PartMasterTemplateDTO.class);
     }
     
@@ -134,6 +135,7 @@ public class PartTemplateResource {
 
         String partType = partMsTemplateDTO.getPartType();
         String mask = partMsTemplateDTO.getMask();
+        String workflowModelId = partMsTemplateDTO.getWorkflowModelId();
         boolean idGenerated = partMsTemplateDTO.isIdGenerated();
         boolean attributesLocked = partMsTemplateDTO.isAttributesLocked();
 
@@ -145,7 +147,7 @@ public class PartTemplateResource {
             attributeTemplatesDtos[i] = attributeTemplatesList.get(i);
         }
 
-        PartMasterTemplate template = productService.updatePartMasterTemplate(new PartMasterTemplateKey(workspaceId, templateId), partType, mask, createInstanceAttributeTemplateFromDto(attributeTemplatesDtos), idGenerated, attributesLocked);
+        PartMasterTemplate template = productService.updatePartMasterTemplate(new PartMasterTemplateKey(workspaceId, templateId), partType, workflowModelId, mask, createInstanceAttributeTemplateFromDto(attributeTemplatesDtos), idGenerated, attributesLocked);
         return mapper.map(template, PartMasterTemplateDTO.class);
     }
 

@@ -23,7 +23,7 @@ package com.docdoku.core.product;
 import java.io.Serializable;
 
 /**
- * Identity class of <a href="ConfigurationItem.html">ConfigurationItem</a>
+ * Identity class of {@link ConfigurationItem}.
  * objects.
  * 
  * @author Florent Garin

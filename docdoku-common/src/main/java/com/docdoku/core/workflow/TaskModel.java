@@ -28,9 +28,9 @@ import java.io.Serializable;
 import java.util.Map;
 
 /**
- * This is the model for creating instances of <a href="Task.html">Task</a>
- * that belong to instances of <a href="Activity.html">Activity</a> themselves
- * attached to instances of <a href="Workflow.html">Workflow</a>.
+ * This is the model for creating instances of {@link Task}
+ * that belong to instances of {@link Activity} themselves
+ * attached to instances of {@link Workflow}.
  * 
  * @author Florent Garin
  * @version 1.0, 02/06/08

@@ -30,8 +30,7 @@ import java.io.Serializable;
 import java.util.*;
 
 /**
- * This class stands between <a href="PartMaster.html">PartMaster</a>
- * and <a href="PartIteration.html">PartIteration</a>.
+ * This class stands between {@link PartMaster} and {@link PartIteration}.
  * Its main purpose is to hold effectivities. It represents a formal revision of a part.
  *
  * @author Florent Garin

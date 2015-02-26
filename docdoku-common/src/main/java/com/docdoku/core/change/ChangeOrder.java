@@ -30,7 +30,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * A directive to implement an approved <a href="ChangeRequest.html">ChangeRequest</a>.
+ * A directive to implement an approved {@link ChangeRequest}.
  *
  * @author Florent Garin
  * @version 2.0, 09/01/14

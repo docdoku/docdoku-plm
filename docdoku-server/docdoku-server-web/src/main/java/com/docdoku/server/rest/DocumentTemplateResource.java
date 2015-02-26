@@ -108,6 +108,7 @@ public class DocumentTemplateResource {
 
         String id =templateCreationDTO.getReference();
         String documentType = templateCreationDTO.getDocumentType();
+        String workflowModelId=templateCreationDTO.getWorkflowModelId();
         String mask = templateCreationDTO.getMask();
         boolean idGenerated = templateCreationDTO.isIdGenerated();
         boolean attributesLocked = templateCreationDTO.isAttributesLocked();
@@ -120,7 +121,7 @@ public class DocumentTemplateResource {
             attributeTemplatesDtos[i] = attributeTemplatesList.get(i);
         }
 
-        DocumentMasterTemplate template = documentService.createDocumentMasterTemplate(workspaceId, id, documentType, mask, createInstanceAttributeTemplateFromDto(attributeTemplatesDtos), idGenerated, attributesLocked);
+        DocumentMasterTemplate template = documentService.createDocumentMasterTemplate(workspaceId, id, documentType, workflowModelId, mask, createInstanceAttributeTemplateFromDto(attributeTemplatesDtos), idGenerated, attributesLocked);
         return mapper.map(template, DocumentMasterTemplateDTO.class);
     }
     
@@ -132,6 +133,7 @@ public class DocumentTemplateResource {
             throws EntityNotFoundException, AccessRightException {
 
         String documentType = docMsTemplateDTO.getDocumentType();
+        String workflowModelId = docMsTemplateDTO.getWorkflowModelId();
         String mask = docMsTemplateDTO.getMask();
         boolean idGenerated = docMsTemplateDTO.isIdGenerated();
         boolean attributesLocked = docMsTemplateDTO.isAttributesLocked();
@@ -144,7 +146,7 @@ public class DocumentTemplateResource {
             attributeTemplatesDtos[i] = attributeTemplatesList.get(i);
         }
 
-        DocumentMasterTemplate template = documentService.updateDocumentMasterTemplate(new DocumentMasterTemplateKey(workspaceId, templateId), documentType, mask, createInstanceAttributeTemplateFromDto(attributeTemplatesDtos), idGenerated, attributesLocked);
+        DocumentMasterTemplate template = documentService.updateDocumentMasterTemplate(new DocumentMasterTemplateKey(workspaceId, templateId), documentType, workflowModelId, mask, createInstanceAttributeTemplateFromDto(attributeTemplatesDtos), idGenerated, attributesLocked);
         return mapper.map(template, DocumentMasterTemplateDTO.class);
     }
 

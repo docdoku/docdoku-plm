@@ -25,14 +25,14 @@ import com.docdoku.core.common.FileHolder;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.meta.InstanceAttributeTemplate;
+import com.docdoku.core.workflow.WorkflowModel;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.*;
 
 /**
- * A model object from which we can create a
- * <a href="DocumentMaster.html">DocumentMaster</a>.
+ * A model object from which we can create a {@link DocumentMaster}.
  * Creating a document through a model offers the ability to enforce a input
  * mask for the document ID, as well as some insuring that the starting
  * iteration defines some custom attributes or has some specific binary files.
@@ -99,7 +99,20 @@ public class DocumentMasterTemplate implements Serializable, FileHolder, Compara
     
     @javax.persistence.ManyToOne(optional=false, fetch=FetchType.EAGER)
     private Workspace workspace;
-    
+
+    @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumns({
+            @JoinColumn(name="WORKFLOWMODEL_ID", referencedColumnName="ID"),
+            @JoinColumn(name="WORKFLOWMODEL_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID")
+    })
+    private WorkflowModel workflowModel;
+
+
+    @Column(name = "WORKFLOWMODEL_ID", length=100, insertable = false, updatable = false)
+    private String workflowModelId;
+
+
+
     public DocumentMasterTemplate() {
     }
     
@@ -118,8 +131,23 @@ public class DocumentMasterTemplate implements Serializable, FileHolder, Compara
     public void setDocumentType(String documentType) {
         this.documentType = documentType;
     }
-    
-    
+
+    public String getWorkflowModelId() {
+        return workflowModelId;
+    }
+
+    public void setWorkflowModelId(String workflowModelId) {
+        this.workflowModelId = workflowModelId;
+    }
+
+    public WorkflowModel getWorkflowModel() {
+        return workflowModel;
+    }
+
+    public void setWorkflowModel(WorkflowModel workflowModel) {
+        this.workflowModel = workflowModel;
+    }
+
     public String getMask(){
         return mask;
     }

@@ -30,8 +30,7 @@ import java.io.Serializable;
 import java.util.*;
 
 /**
- * This <a href="DocumentIteration.html">DocumentIteration</a>
- * class represents the iterated part of a document.
+ * This DocumentIteration class represents the iterated part of a document.
  * The iteration attribute indicates the order in which the modifications
  * have been made on the document.
  * 
