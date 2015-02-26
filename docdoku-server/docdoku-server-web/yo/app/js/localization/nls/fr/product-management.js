@@ -10,5 +10,6 @@ define({
     CREATE_PRODUCT_BEFORE_BASELINE:"Vous devez avoir créé au moins un produit pour créer des baselines",
     CREATE_PART_BEFORE_PRODUCT:"Vous devez avoir créé au moins un article pour créer des produits",
     CREATE_BASELINE_BEFORE_PRODUCT_INSTANCE:"Vous devez avoir créé au moins une baseline pour créer un exemplaire de produit",
-    CREATE_PRODUCT_BEFORE_PRODUCT_INSTANCE:"Vous devez avoir créé au moins un produit pour créer un exemplaire de produit"
+    CREATE_PRODUCT_BEFORE_PRODUCT_INSTANCE:"Vous devez avoir créé au moins un produit pour créer un exemplaire de produit",
+    PRODUCT_CREATED:'Le produit a été créé'
 });

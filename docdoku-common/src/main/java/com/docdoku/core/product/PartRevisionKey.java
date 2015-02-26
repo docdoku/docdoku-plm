@@ -23,7 +23,7 @@ package com.docdoku.core.product;
 import java.io.Serializable;
 
 /**
- * Identity class of <a href="PartRevision.html">PartRevision</a> objects.
+ * Identity class of {@link PartRevision} objects.
  *
  * @author Florent Garin
  */

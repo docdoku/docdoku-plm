@@ -69,7 +69,11 @@ public class AccountsManager {
         if(userLogin == null || userLogin.isEmpty()){
             return Locale.getDefault();
         }else{
-            return new Locale(getUserLanguage(userLogin));
+            String userLanguage = getUserLanguage(userLogin);
+            if(userLanguage == null)
+                return Locale.getDefault();
+            else
+                return new Locale(getUserLanguage(userLogin));
         }
     }
 

@@ -24,16 +24,14 @@ import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.meta.InstanceAttributeTemplate;
+import com.docdoku.core.workflow.WorkflowModel;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
- * A model object from which we can create a
- * <a href="PartMaster.html">PartMaster</a>.
+ * A model object from which we can create a {@link PartMaster}.
  * Creating a part through a model offers the ability to enforce a input
  * mask for the part ID, as well as some insuring that the starting
  * iteration defines some custom attributes or has some specific binary files.
@@ -64,6 +62,7 @@ public class PartMasterTemplate implements Serializable, Comparable<PartMasterTe
     @OneToOne(orphanRemoval=true, cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, fetch = FetchType.EAGER)
     private BinaryResource attachedFile;
 
+    @OrderColumn(name="ATTR_ORDER")
     @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
     @JoinTable(name="PARTMASTERTEMPLATE_ATTR",
             inverseJoinColumns={
@@ -74,7 +73,7 @@ public class PartMasterTemplate implements Serializable, Comparable<PartMasterTe
                     @JoinColumn(name="PARTMASTERTEMPLATE_ID", referencedColumnName="ID")
             }
     )
-    private Set<InstanceAttributeTemplate> attributeTemplates=new HashSet<>();
+    private List<InstanceAttributeTemplate> attributeTemplates=new ArrayList<>();
 
     private boolean attributesLocked;
 
@@ -90,6 +89,19 @@ public class PartMasterTemplate implements Serializable, Comparable<PartMasterTe
 
     @ManyToOne(optional=false, fetch=FetchType.EAGER)
     private Workspace workspace;
+
+
+    @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumns({
+            @JoinColumn(name="WORKFLOWMODEL_ID", referencedColumnName="ID"),
+            @JoinColumn(name="WORKFLOWMODEL_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID")
+    })
+    private WorkflowModel workflowModel;
+
+
+    @Column(name = "WORKFLOWMODEL_ID", length=100, insertable = false, updatable = false)
+    private String workflowModelId;
+
 
     public PartMasterTemplate() {
     }
@@ -109,6 +121,27 @@ public class PartMasterTemplate implements Serializable, Comparable<PartMasterTe
 
     public void setPartType(String partType) {
         this.partType = partType;
+    }
+
+    public String getWorkflowModelId() {
+        return workflowModelId;
+    }
+
+    public void setWorkflowModelId(String workflowModelId) {
+        this.workflowModelId = workflowModelId;
+    }
+
+    public WorkflowModel getWorkflowModel() {
+        return workflowModel;
+    }
+
+    public void setWorkflowModel(WorkflowModel workflowModel) {
+        this.workflowModel = workflowModel;
+        if (workflowModel == null) {
+            setWorkflowModelId(null);
+        } else {
+            setWorkflowModelId(workflowModel.getId());
+        }
     }
 
     public String getMask(){
@@ -139,11 +172,11 @@ public class PartMasterTemplate implements Serializable, Comparable<PartMasterTe
         this.attachedFile = attachedFile;
     }
 
-    public Set<InstanceAttributeTemplate> getAttributeTemplates() {
+    public List<InstanceAttributeTemplate> getAttributeTemplates() {
         return attributeTemplates;
     }
     
-    public void setAttributeTemplates(Set<InstanceAttributeTemplate> pAttributeTemplates) {
+    public void setAttributeTemplates(List<InstanceAttributeTemplate> pAttributeTemplates) {
         attributeTemplates.retainAll(pAttributeTemplates);
         for(InstanceAttributeTemplate currentAttr:attributeTemplates){
             for(InstanceAttributeTemplate attr:pAttributeTemplates){

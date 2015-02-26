@@ -18,8 +18,9 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.cli.commands;
+package com.docdoku.cli.commands.parts;
 
+import com.docdoku.cli.commands.AbstractCommandLine;
 import com.docdoku.cli.helpers.LangHelper;
 import com.docdoku.cli.tools.ScriptingTools;
 import com.docdoku.core.product.Conversion;

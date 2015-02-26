@@ -16,9 +16,11 @@ define([
     'text!common-objects/templates/buttons/new_version_button.html',
     'text!common-objects/templates/buttons/release_button.html',
     'text!common-objects/templates/buttons/ACL_button.html',
+    'text!common-objects/templates/buttons/new_product_button.html',
 	'text!templates/part/search_part_form.html',
-    'common-objects/views/alert'
-], function (Backbone, Mustache, PartCollection, PartSearchCollection, template, PartListView, PartCreationView, PartNewVersionView, PromptView, ACLEditView, AdvancedSearchView, deleteButton, checkoutButtonGroup, newVersionButton, releaseButton, aclButton, searchForm, AlertView) {
+    'common-objects/views/alert',
+    'views/product/product_creation_view'
+], function (Backbone, Mustache, PartCollection, PartSearchCollection, template, PartListView, PartCreationView, PartNewVersionView, PromptView, ACLEditView, AdvancedSearchView, deleteButton, checkoutButtonGroup, newVersionButton, releaseButton, aclButton, newProductButton, searchForm, AlertView, ProductCreationView) {
     'use strict';
 	var PartContentView = Backbone.View.extend({
         events: {
@@ -35,6 +37,7 @@ define([
             'click button.first-page': 'toFirstPage',
             'click button.last-page': 'toLastPage',
             'click button.current-page': 'goToPage',
+            'click button.new-product': 'newProduct',
             'submit #part-search-form': 'onQuickSearch',
             'click .advanced-search-button': 'onAdvancedSearch'
         },
@@ -45,13 +48,20 @@ define([
             checkoutButtonGroup: checkoutButtonGroup,
             newVersionButton: newVersionButton,
             releaseButton: releaseButton,
-            searchForm: searchForm
+            searchForm: searchForm,
+            newProductButton:newProductButton
         },
 
         initialize: function () {
             _.bindAll(this);
             this.query = null;
         },
+
+        setCollection:function(collection){
+            this.partsCollection = collection;
+            return this;
+        },
+
         setQuery: function (query) {
             this.query = query;
             this.partsCollection = null;
@@ -93,6 +103,7 @@ define([
             this.aclButton = this.$('.edit-acl');
             this.checkinButton = this.$('.checkin');
             this.newVersionButton = this.$('.new-version');
+            this.newProductButton = this.$('.new-product');
             this.releaseButton = this.$('.new-release');
             this.currentPageIndicator = this.$('.current-page');
             this.pageControls = this.$('.page-controls');
@@ -113,6 +124,7 @@ define([
             this.partListView.on('acl-edit-button:display', this.changeACLButtonDisplay);
             this.partListView.on('new-version-button:display', this.changeVersionButtonDisplay);
             this.partListView.on('release-button:display', this.changeReleaseButtonDisplay);
+            this.partListView.on('new-product-button:display', this.changeNewProductButtonDisplay);
 
             this.delegateEvents();
 
@@ -171,6 +183,14 @@ define([
                 this.newVersionButton.show();
             } else {
                 this.newVersionButton.hide();
+            }
+        },
+
+        changeNewProductButtonDisplay: function (state) {
+            if (state) {
+                this.newProductButton.show();
+            } else {
+                this.newProductButton.hide();
             }
         },
 
@@ -353,6 +373,20 @@ define([
                 type: 'warning',
                 message: errorMessage
             }).render().$el);
+        },
+
+        newProduct:function(){
+            var productCreationView = new ProductCreationView();
+            window.document.body.appendChild(productCreationView.render().el);
+            var that = this ;
+            productCreationView.on('product:created',function(){
+                that.$notifications.append(new AlertView({
+                    type: 'info',
+                    message: App.config.i18n.PRODUCT_CREATED
+                }).render().$el);
+            });
+            productCreationView.setRootPartNumber(this.partListView.getSelectedPart().getNumber())
+                .openModal();
         }
 
     });

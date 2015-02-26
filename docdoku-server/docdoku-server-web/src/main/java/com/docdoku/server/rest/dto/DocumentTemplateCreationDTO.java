@@ -22,7 +22,6 @@ package com.docdoku.server.rest.dto;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Set;
 
 /**
  *
@@ -35,9 +34,10 @@ public class DocumentTemplateCreationDTO implements Serializable{
     private String documentType;
     private boolean idGenerated;
     private String mask;
+    private String workflowModelId;
 
     private List<String> attachedFiles;
-    private Set<InstanceAttributeTemplateDTO> attributeTemplates;
+    private List<InstanceAttributeTemplateDTO> attributeTemplates;
     private boolean attributesLocked;
     
     public DocumentTemplateCreationDTO(){
@@ -65,7 +65,13 @@ public class DocumentTemplateCreationDTO implements Serializable{
         this.mask = mask;
     }
 
-   
+    public String getWorkflowModelId() {
+        return workflowModelId;
+    }
+
+    public void setWorkflowModelId(String workflowModelId) {
+        this.workflowModelId = workflowModelId;
+    }
 
     public String getWorkspaceId() {
         return workspaceId;
@@ -91,11 +97,11 @@ public class DocumentTemplateCreationDTO implements Serializable{
         this.workspaceId = workspaceId;
     }
 
-    public void setAttributeTemplates(Set<InstanceAttributeTemplateDTO> attributeTemplates) {
+    public void setAttributeTemplates(List<InstanceAttributeTemplateDTO> attributeTemplates) {
         this.attributeTemplates = attributeTemplates;
     }
 
-    public Set<InstanceAttributeTemplateDTO> getAttributeTemplates() {
+    public List<InstanceAttributeTemplateDTO> getAttributeTemplates() {
         return attributeTemplates;
     }
 

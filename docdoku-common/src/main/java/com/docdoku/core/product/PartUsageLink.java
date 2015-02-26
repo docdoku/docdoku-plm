@@ -25,9 +25,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * A link between an assembly represented as
- * <a href="PartIteration.html">PartIteration</a>
- * and a part represented as <a href="PartMaster.html">PartMaster</a>. 
+ * A link between an assembly represented as {@link PartIteration}
+ * and a part represented as {@link PartMaster}.
  * 
  * @author Florent Garin
  * @version 1.1, 15/10/11

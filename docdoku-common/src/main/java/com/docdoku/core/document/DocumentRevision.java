@@ -32,8 +32,7 @@ import java.io.Serializable;
 import java.util.*;
 
 /**
- * This class stands between <a href="DocumentMaster.html">DocumentMaster</a>
- * and <a href="DocumentIteration.html">DocumentIteration</a>.
+ * This class stands between {@link DocumentMaster} and {@link DocumentIteration}.
  * It represents a formal revision of a document and can have an attached workflow.
  * 
  * @author Florent Garin
@@ -170,8 +169,8 @@ public class DocumentRevision implements Serializable, Comparable<DocumentRevisi
     }
     public void setDocumentMaster(DocumentMaster documentMaster) {
         this.documentMaster = documentMaster;
-        documentMasterId=documentMaster.getId();
-        documentMasterWorkspaceId=documentMaster.getWorkspaceId();
+        setDocumentMasterId(documentMaster.getId());
+        setDocumentMasterWorkspaceId(documentMaster.getWorkspaceId());
     }
 
     public DocumentRevisionKey getKey() {
@@ -345,6 +344,14 @@ public class DocumentRevision implements Serializable, Comparable<DocumentRevisi
     }
 
 
+    public void setDocumentMasterId(String pDocumentMasterId) {
+        documentMasterId=pDocumentMasterId;
+    }
+
+    public void setDocumentMasterWorkspaceId(String pDocumentMasterWorkspaceId) {
+        documentMasterWorkspaceId=pDocumentMasterWorkspaceId;
+    }
+
     public String getDocumentMasterId() {
         return documentMasterId;
     }
@@ -384,7 +391,14 @@ public class DocumentRevision implements Serializable, Comparable<DocumentRevisi
     public boolean removeTag(Tag pTag){
         return tags.remove(pTag);
     }
-    
+
+    public boolean isAttributesLocked(){
+        if (this.documentMaster != null){
+            return this.documentMaster.isAttributesLocked();
+        }
+        return false;
+    }
+
     @Override
     public String toString() {
         return documentMaster.getId() + "-" + version;
@@ -431,12 +445,5 @@ public class DocumentRevision implements Serializable, Comparable<DocumentRevisi
     
     public void setLocation(Folder pLocation) {
         location = pLocation;
-    }
-
-    public String getAttributesLocked(){
-        if (this.documentMaster != null && this.documentMaster.isAttributesLocked()){
-            return this.documentMaster.isAttributesLocked() ? "true" : "false";
-        }
-        return "false";
     }
 }

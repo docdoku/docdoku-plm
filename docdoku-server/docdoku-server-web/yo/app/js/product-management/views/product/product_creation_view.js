@@ -27,6 +27,11 @@ define([
             return this;
         },
 
+        setRootPartNumber:function(partNumber){
+            this.$inputPartNumber.val(partNumber);
+            return this;
+        },
+
         bindDomElements: function () {
             this.$notifications = this.$el.find('.notifications').first();
             this.$modal = this.$('#product_creation_modal');

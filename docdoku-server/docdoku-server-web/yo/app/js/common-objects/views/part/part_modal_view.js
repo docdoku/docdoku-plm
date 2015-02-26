@@ -71,6 +71,7 @@ define([
             if (this.model.hasIterations()) {
                 var hasNextIteration = this.iterations.hasNextIteration(this.iteration);
                 var hasPreviousIteration = this.iterations.hasPreviousIteration(this.iteration);
+                data.iterations = this.model.getIterations().length;
                 data.iteration = this.iteration.toJSON();
                 data.iteration.hasNextIteration = hasNextIteration;
                 data.iteration.hasPreviousIteration = hasPreviousIteration;
@@ -154,10 +155,11 @@ define([
                 components: this.partsManagementView.collection.toJSON(),
                 instanceAttributes: this.attributesView.collection.toJSON(),
                 linkedDocuments: this.linkedDocumentsView.collection.toJSON()
-            }, {success: function () {
-                Backbone.Events.trigger('part:saved');
-                that.hide();
-            },
+            }, {
+                success: function () {
+                    Backbone.Events.trigger('part:saved');
+                    that.hide();
+                },
                 error: this.onError
             });
 

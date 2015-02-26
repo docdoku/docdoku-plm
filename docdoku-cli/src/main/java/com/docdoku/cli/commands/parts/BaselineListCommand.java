@@ -18,12 +18,13 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.cli.commands;
+package com.docdoku.cli.commands.parts;
 
+import com.docdoku.cli.commands.AbstractCommandLine;
 import com.docdoku.cli.helpers.LangHelper;
 import com.docdoku.cli.tools.ScriptingTools;
-import com.docdoku.core.product.PartRevision;
-import com.docdoku.core.query.PartSearchQuery;
+import com.docdoku.core.configuration.ProductBaseline;
+import com.docdoku.core.product.PartRevisionKey;
 import com.docdoku.core.services.IProductManagerWS;
 import org.kohsuke.args4j.Option;
 
@@ -34,31 +35,29 @@ import java.util.List;
  *
  * @author Morgan Guimard
  */
-public class SearchPartsCommand extends AbstractCommandLine {
+public class BaselineListCommand extends AbstractCommandLine {
 
-    @Option(name = "-w", aliases = "--workspace", required = true, metaVar = "<workspace>", usage = "workspace on which operations occur")
+    @Option(name="-w", aliases = "--workspace", required = true, metaVar = "<workspace>", usage="workspace on which operations occur")
     protected String workspace;
 
-    @Option(name = "-s", aliases = "--search", required = true, metaVar = "<search>", usage = "search string")
-    protected String searchValue;
+    @Option(metaVar = "<partnumber>", required = true, name = "-o", aliases = "--part", usage = "the part number of the part to verify the existence of baselines")
+    private String number;
 
-    @Option(name = "-j", aliases = "--jsonparser", usage = "return the list of the parts in JSON format")
-    private boolean jsonParser;
+    @Option(metaVar = "<revision>", required = true, name="-r", aliases = "--revision", usage="specify revision of the part to analyze ('A', 'B'...)")
+    private String revision;
 
+    private IProductManagerWS productS;
 
     @Override
     public void execImpl() throws Exception {
-        IProductManagerWS productS = ScriptingTools.createProductService(getServerURL(), user, password);
-
-        List<PartRevision> partRevisions = productS.searchPartRevisions(
-                new PartSearchQuery(workspace, searchValue, null, null, null, null, null, null, null, null, null)
-        );
-
-        output.printPartRevisions(partRevisions);
+        productS = ScriptingTools.createProductService(getServerURL(), user, password);
+        PartRevisionKey pK = new PartRevisionKey(workspace,number,revision);
+        List<ProductBaseline> productBaselines = productS.findBaselinesWherePartRevisionHasIterations(pK);
+        output.printBaselines(productBaselines);
     }
 
     @Override
     public String getDescription() throws IOException {
-        return LangHelper.getLocalizedMessage("SearchPartsCommandDescription",user);
+        return LangHelper.getLocalizedMessage("BaselineListCommandDescription",user);
     }
 }

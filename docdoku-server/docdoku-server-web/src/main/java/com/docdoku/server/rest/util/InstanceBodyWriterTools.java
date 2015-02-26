@@ -135,7 +135,7 @@ public class InstanceBodyWriterTools {
         String id = StringUtils.join(copyInstanceIds.toArray(), "-");
         String partIterationId = partI.toString();
         List<InstanceAttributeDTO> attributes = new ArrayList<>();
-        for (InstanceAttribute attr : partI.getInstanceAttributes().values()) {
+        for (InstanceAttribute attr : partI.getInstanceAttributes()) {
             attributes.add(mapper.map(attr, InstanceAttributeDTO.class));
         }
 

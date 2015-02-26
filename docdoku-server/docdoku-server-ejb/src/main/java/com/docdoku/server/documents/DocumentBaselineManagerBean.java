@@ -121,7 +121,7 @@ public class DocumentBaselineManagerBean implements IDocumentBaselineManagerLoca
     private void fillBaselineDocument(DocumentBaseline baseline, List<DocumentRevisionKey> revisionKeys) throws DocumentRevisionNotFoundException, FolderNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         // Add all document
         for(DocumentRevisionKey revisionKey : revisionKeys){
-            User user = userManager.checkWorkspaceReadAccess(revisionKey.getWorkspaceId());
+            User user = userManager.checkWorkspaceReadAccess(revisionKey.getDocumentMaster().getWorkspace());
 
             // Ignore already existing document
             if(baseline.hasBaselinedDocument(revisionKey)){

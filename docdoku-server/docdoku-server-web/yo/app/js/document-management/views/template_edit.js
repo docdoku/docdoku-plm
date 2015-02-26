@@ -2,10 +2,11 @@
 define([
     'common-objects/utils/date',
     'common-objects/views/components/modal',
+    "common-objects/views/workflow/workflow_list",
     'common-objects/views/attributes/template_new_attributes',
     'common-objects/views/file/file_list',
     'text!templates/template_new.html'
-], function (date, ModalView, TemplateNewAttributesView, FileListView, template) {
+], function (date, ModalView, DocumentWorkflowListView, TemplateNewAttributesView, FileListView, template) {
 	'use strict';
     var TemplateEditView = ModalView.extend({
 
@@ -25,6 +26,17 @@ define([
         },
 
         rendered: function () {
+            this.workflowsView = this.addSubView(
+                new DocumentWorkflowListView({
+                    el: '#workflows-' + this.cid
+                })
+            );
+
+            var _this = this;
+            this.workflowsView.collection.on('reset', function() {
+                _this.workflowsView.setValue(_this.model.get('workflowModelId'));
+            });
+
             this.attributesView = this.addSubView(
                 new TemplateNewAttributesView({
                     el: '#tab-attributes-' + this.cid,
@@ -68,12 +80,15 @@ define([
 
         onSubmitForm: function (e) {
 
-            if(this.isValid){
+            if (this.isValid) {
+                var workflow = this.workflowsView.selected();
+
                 this.model.unset('reference');
                 this.model.save({
                     documentType: this.$('#form-' + this.cid + ' .type').val(),
                     mask: this.$('#form-' + this.cid + ' .mask').val(),
                     idGenerated: this.$('#form-' + this.cid + ' .id-generated').is(':checked'),
+                    workflowModelId: workflow ? workflow.get('id') : null,
                     attributeTemplates: this.attributesView.collection.toJSON(),
                     attributesLocked: this.attributesView.isAttributesLocked()
                 }, {

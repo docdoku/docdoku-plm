@@ -29,9 +29,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * A base class which represents a group of <a href="Task.html">Task</a> 
- * linked to a step of a <a href="Workflow.html">Workflow</a>.
- * It's the responsability of the concrete implementation to decide how
+ * A base class which represents a group of {@link Task}
+ * linked to a step of a {@link Workflow}.
+ * It's the responsibility of the concrete implementation to decide how
  * the workflow will progress to the next step and thus launch the execution
  * of the next Activity.
  *

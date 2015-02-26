@@ -21,7 +21,6 @@
 package com.docdoku.cli.helpers;
 
 import java.io.*;
-import java.util.Date;
 import java.util.Properties;
 
 public class MetaDirectoryManager {
@@ -37,6 +36,7 @@ public class MetaDirectoryManager {
     private static final String REVISION_PROP = "revision";
     private static final String ITERATION_PROP = "iteration";
     private static final String WORKSPACE_PROP = "workspace";
+    private static final String ID_PROP = "id";
     private static final String LAST_MODIFIED_DATE_PROP = "lastModifiedDate";
     private static final String DIGEST_PROP = "digest";
 
@@ -67,12 +67,13 @@ public class MetaDirectoryManager {
         indexProps.storeToXML(out, null);
     }
 
-    public void deletePartEntries(String filePath, String partNumber) throws  IOException {
-        indexProps.getProperty(filePath + "." + DIGEST_PROP);
-    }
-
     public void setPartNumber(String filePath, String partNumber) throws IOException {
         indexProps.setProperty(filePath + "." + PART_NUMBER_PROP, partNumber);
+        saveIndex();
+    }
+
+    public void setDocumentId(String filePath, String id) throws IOException {
+        indexProps.setProperty(filePath + "." + ID_PROP, id);
         saveIndex();
     }
 
@@ -96,18 +97,9 @@ public class MetaDirectoryManager {
         saveIndex();
     }
 
-    public void setLastModifiedDate(String filePath, Date lastModifiedDate) throws IOException {
-        setLastModifiedDate(filePath, lastModifiedDate.getTime());
-    }
-
     public void setDigest(String filePath, String digest) throws IOException {
         indexProps.setProperty(filePath + "." + DIGEST_PROP, digest);
         saveIndex();
-    }
-
-
-    public String getDigest(String filePath){
-        return indexProps.getProperty(filePath + "." + DIGEST_PROP);
     }
 
     public long getLastModifiedDate(String filePath){
@@ -130,7 +122,8 @@ public class MetaDirectoryManager {
         return Integer.parseInt(indexProps.getProperty(filePath + "." + ITERATION_PROP,"0"));
     }
 
-    public void deletePartInfo(String filePath) throws IOException {
+    public void deleteEntryInfo(String filePath) throws IOException {
+        indexProps.remove(filePath + "." + ID_PROP);
         indexProps.remove(filePath + "." + PART_NUMBER_PROP);
         indexProps.remove(filePath + "." + REVISION_PROP);
         indexProps.remove(filePath + "." + ITERATION_PROP);
@@ -138,5 +131,17 @@ public class MetaDirectoryManager {
         indexProps.remove(filePath + "." + DIGEST_PROP);
         indexProps.remove(filePath + "." + WORKSPACE_PROP);
         saveIndex();
+    }
+
+    public String getDocumentId(String filePath) {
+        return indexProps.getProperty(filePath + "." + ID_PROP);
+    }
+
+    public boolean isDocumentRelated(String filePath) {
+        return getDocumentId(filePath) != null;
+    }
+
+    public boolean isPartRelated(String filePath) {
+        return getPartNumber(filePath) != null;
     }
 }

@@ -73,6 +73,9 @@
 
             };
 
+            //////////////////////////////////////////////
+            // Common services
+
             this.getWorkspaces = function () {
                 var args = [
                     'wl',
@@ -85,6 +88,20 @@
 
                 return run(args);
 
+            };
+
+            this.fetchAccount = function(){
+
+                var args = [
+                    'a',
+                    '-F', 'json',
+                    '-h', configuration.host,
+                    '-P', configuration.port,
+                    '-u', configuration.user,
+                    '-p', configuration.password
+                ];
+
+                return run(args);
             };
 
             this.getStatusForFile = function (file) {
@@ -100,17 +117,31 @@
                 ];
 
                 return run(args, true).then(function (status) {
-                    if (!file.part) {
-                        file.part = {};
+
+                    if(status.id){
+                        if (!file.document) {
+                            file.document = {};
+                        }
+                        angular.extend(file.document, status);
+                    }else if(status.partNumber){
+                        if (!file.part) {
+                            file.part = {};
+                        }
+                        angular.extend(file.part, status);
                     }
-                    angular.extend(file.part, status);
+
                 });
             };
+
+
+            //////////////////////////////////////////////
+            // Part services
+
 
             this.getStatusForPart = function (part) {
 
                 var args = [
-                    'st',
+                    'st', 'part',
                     '-F', 'json',
                     '-h', configuration.host,
                     '-P', configuration.port,
@@ -127,10 +158,10 @@
 
             };
 
-            this.checkout = function (part, path, options) {
+            this.checkoutPart = function (part, path, options) {
 
                 var args = [
-                    'co',
+                    'co', 'part',
                     '-F', 'json',
                     '-h', configuration.host,
                     '-P', configuration.port,
@@ -158,10 +189,10 @@
 
             };
 
-            this.checkin = function (part,path) {
+            this.checkinPart = function (part,path) {
 
                 var args = [
-                    'ci',
+                    'ci', 'part',
                     '-F', 'json',
                     '-h', configuration.host,
                     '-P', configuration.port,
@@ -180,10 +211,10 @@
 
             };
 
-            this.undoCheckout = function (part) {
+            this.undoCheckoutPart = function (part) {
 
                 var args = [
-                    'uco',
+                    'uco', 'part',
                     '-F', 'json',
                     '-h', configuration.host,
                     '-P', configuration.port,
@@ -197,10 +228,10 @@
                 return run(args);
             };
 
-            this.download = function (part, path, options) {
+            this.downloadNativeCad = function (part, path, options) {
 
                 var args = [
-                    'get',
+                    'get', 'part',
                     '-F', 'json',
                     '-h', configuration.host,
                     '-P', configuration.port,
@@ -228,10 +259,10 @@
 
             };
 
-            this.put = function (workspace, file) {
+            this.putCADFile = function (workspace, file) {
 
                 var args = [
-                    'put',
+                    'put', 'part',
                     '-F', 'json',
                     '-h', configuration.host,
                     '-P', configuration.port,
@@ -248,7 +279,7 @@
             this.createPart = function (part, filePath) {
 
                 var args = [
-                    'cr',
+                    'cr', 'part',
                     '-F', 'json',
                     '-h', configuration.host,
                     '-P', configuration.port,
@@ -280,7 +311,7 @@
             this.getPartMastersCount = function (workspace) {
 
                 var args = [
-                    'pl',
+                    'l', 'part',
                     '-F', 'json',
                     '-h', configuration.host,
                     '-P', configuration.port,
@@ -297,7 +328,7 @@
             this.getPartMasters = function (workspace, start, max) {
 
                 var args = [
-                    'pl',
+                    'l', 'part',
                     '-F', 'json',
                     '-h', configuration.host,
                     '-P', configuration.port,
@@ -315,7 +346,7 @@
             this.searchPartMasters = function (workspace, search) {
 
                 var args = [
-                    's',
+                    's', 'part',
                     '-F', 'json',
                     '-h', configuration.host,
                     '-P', configuration.port,
@@ -363,19 +394,215 @@
 
             };
 
-            this.fetchAccount = function(){
 
+            //////////////////////////////////////////////
+            // Document services
+
+            this.getFolders=function(workspace,folder){
                 var args = [
-                    'a',
+                    'f',
                     '-F', 'json',
                     '-h', configuration.host,
                     '-P', configuration.port,
                     '-u', configuration.user,
-                    '-p', configuration.password
+                    '-p', configuration.password,
+                    '-w', workspace
+                ];
+
+                if(folder){
+                    args.push('-f');
+                    args.push(folder);
+                }
+
+                return run(args);
+            };
+
+            this.getDocumentsRevisionsInFolder=function(workspace,folder){
+                var args = [
+                    'l', 'document',
+                    '-F', 'json',
+                    '-h', configuration.host,
+                    '-P', configuration.port,
+                    '-u', configuration.user,
+                    '-p', configuration.password,
+                    '-w', workspace
+                ];
+
+                if(folder){
+                    args.push('-f');
+                    args.push(folder);
+                }
+
+                return run(args);
+            };
+
+            this.getCheckoutedDocumentsRevisions=function(workspace){
+                var args = [
+                    'l', 'document',
+                    '-F', 'json',
+                    '-h', configuration.host,
+                    '-P', configuration.port,
+                    '-u', configuration.user,
+                    '-p', configuration.password,
+                    '-w', workspace,
+                    '-c'
                 ];
 
                 return run(args);
-            }
+            };
+
+            this.downloadDocumentFiles=function(document,path,options){
+
+                var args = [
+                    'get', 'document',
+                    '-F', 'json',
+                    '-h', configuration.host,
+                    '-P', configuration.port,
+                    '-u', configuration.user,
+                    '-p', configuration.password,
+                    '-w', document.workspace,
+                    '-o', document.id,
+                    '-r', document.version
+                ];
+
+                if (options.force) {
+                    args.push('-f');
+                }
+
+                args.push(path);
+
+                return run(args);
+            };
+
+            this.getStatusForDocument = function(document) {
+
+                var args = [
+                    'st', 'document',
+                    '-F', 'json',
+                    '-h', configuration.host,
+                    '-P', configuration.port,
+                    '-u', configuration.user,
+                    '-p', configuration.password,
+                    '-w', document.workspace,
+                    '-o', document.id,
+                    '-r', document.version
+                ];
+
+                return run(args, true).then(function (newDocument) {
+                    angular.extend(document,newDocument);
+                });
+
+            };
+
+            this.checkoutDocument = function (document, path, options) {
+
+                var args = [
+                    'co', 'document',
+                    '-F', 'json',
+                    '-h', configuration.host,
+                    '-P', configuration.port,
+                    '-u', configuration.user,
+                    '-p', configuration.password,
+                    '-w', document.workspace,
+                    '-o', document.id,
+                    '-r', document.version
+                ];
+
+                if (options.force) {
+                    args.push('-f');
+                }
+
+                args.push(path);
+
+                return run(args);
+
+            };
+
+            this.checkinDocument = function (document,path) {
+
+                var args = [
+                    'ci', 'document',
+                    '-F', 'json',
+                    '-h', configuration.host,
+                    '-P', configuration.port,
+                    '-u', configuration.user,
+                    '-p', configuration.password,
+                    '-w', document.workspace,
+                    '-o', document.id,
+                    '-r', document.version
+                ];
+
+                if(path){
+                    args.push(path);
+                }
+
+                return run(args);
+
+            };
+
+            this.undoCheckoutDocument = function (document) {
+
+                var args = [
+                    'uco', 'document',
+                    '-F', 'json',
+                    '-h', configuration.host,
+                    '-P', configuration.port,
+                    '-u', configuration.user,
+                    '-p', configuration.password,
+                    '-w', document.workspace,
+                    '-o', document.id,
+                    '-r', document.version
+                ];
+
+                return run(args);
+            };
+
+            this.putDocumentFile = function (workspace, file) {
+
+                var args = [
+                    'put', 'document',
+                    '-F', 'json',
+                    '-h', configuration.host,
+                    '-P', configuration.port,
+                    '-u', configuration.user,
+                    '-p', configuration.password,
+                    '-w', workspace
+                ];
+
+                args.push(file);
+
+                return run(args);
+
+            };
+
+            this.createDocument = function (document, filePath) {
+
+                var args = [
+                    'cr', 'document',
+                    '-F', 'json',
+                    '-h', configuration.host,
+                    '-P', configuration.port,
+                    '-u', configuration.user,
+                    '-p', configuration.password,
+                    '-w', document.workspace,
+                    '-o', document.id
+                ];
+
+                if (document.title) {
+                    args.push('-N');
+                    args.push(document.title);
+                }
+                if (document.description) {
+                    args.push('-d');
+                    args.push(document.description);
+                }
+
+                args.push(filePath);
+
+                return run(args);
+
+            };
+
 
         });
 })();

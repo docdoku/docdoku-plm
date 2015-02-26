@@ -1,0 +1,15 @@
+<div class="md-tile-content">
+
+    <div class="cursor" ng-click="toggleOpenedFile(file)">
+        <i style="float:right" class="fa" ng-class="{'fa-angle-down': file != openedFile, 'fa-angle-up': file === openedFile}"></i>
+        <h3>
+          {{file.path | fileshortname}}
+        </h3>
+        {{'LAST_ACTION' | translate }} {{file.mtime | timeago}}
+    </div>
+
+    <div>
+        <file-unknown-actions class="slide-down" ng-if="file === openedFile"></file-unknown-actions>
+    </div>
+
+</div>

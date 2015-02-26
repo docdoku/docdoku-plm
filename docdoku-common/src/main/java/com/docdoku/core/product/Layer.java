@@ -30,9 +30,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * A Layer is a collection of <a href="Marker.html">Marker</a>s that can be
- * manipulated as a whole.
- * Layers belong to a <a href="ConfigurationItem.html">ConfigurationItem</a>.
+ * A Layer is a collection of {@link Marker}s that can be manipulated as a whole.
+ * Layers belong to a {@link ConfigurationItem}.
  * 
  * @author Florent Garin
  * @version 1.1, 14/08/12

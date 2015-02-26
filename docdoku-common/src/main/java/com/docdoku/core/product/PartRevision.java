@@ -30,8 +30,7 @@ import java.io.Serializable;
 import java.util.*;
 
 /**
- * This class stands between <a href="PartMaster.html">PartMaster</a>
- * and <a href="PartIteration.html">PartIteration</a>.
+ * This class stands between {@link PartMaster} and {@link PartIteration}.
  * Its main purpose is to hold effectivities. It represents a formal revision of a part.
  *
  * @author Florent Garin
@@ -179,7 +178,7 @@ public class PartRevision implements Serializable, Comparable<PartRevision>, Clo
     public PartRevisionKey getKey() {
         return new PartRevisionKey(getPartMasterKey(),version);
     }
-    
+
     public boolean isCheckedOut() {
         return checkOutUser != null;
     }
@@ -386,6 +385,14 @@ public class PartRevision implements Serializable, Comparable<PartRevision>, Clo
         this.status=RevisionStatus.RELEASED;
     }
 
+
+    public boolean isAttributesLocked(){
+        if (this.partMaster != null){
+            return this.partMaster.isAttributesLocked();
+        }
+        return false;
+    }
+
     @Override
     public String toString() {
         return getPartNumber() + "-" + version;
@@ -427,10 +434,4 @@ public class PartRevision implements Serializable, Comparable<PartRevision>, Clo
         }
     }
 
-    public String getAttributesLocked(){
-        if (this.partMaster != null){
-            return this.partMaster.isAttributesLocked() ? "true" : "false";
-        }
-        return "false";
-    }
 }

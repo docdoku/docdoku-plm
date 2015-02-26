@@ -61,8 +61,7 @@ define([
 
         toPartTemplateEditModal: function () {
             var that = this;
-            var partTemplateEditView = new PartTemplateEditView({model: that.model}).render();
-            partTemplateEditView.show();
+            var partTemplateEditView = new PartTemplateEditView({model: that.model});
         }
 
     });

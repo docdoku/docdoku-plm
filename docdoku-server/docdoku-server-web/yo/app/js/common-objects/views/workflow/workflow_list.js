@@ -39,6 +39,11 @@ define([
             var id = this.$("#select-" + this.cid).val();
             var model = this.collection.get(id);
             return model;
+        },
+
+        setValue: function (value) {
+            this.$("#select-" + this.cid).val(value);
+            this.trigger("workflow:change", this.selected());
         }
 
     });

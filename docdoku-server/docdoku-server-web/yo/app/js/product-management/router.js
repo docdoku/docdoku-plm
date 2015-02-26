@@ -6,9 +6,10 @@ define([
     'views/nav/baselines_nav',
     'views/nav/product_instances_nav',
     'views/nav/part_nav',
-    'views/nav/part_template_nav'
+    'views/nav/part_template_nav',
+    'views/nav/checkedouts_nav'
 ],
-function (Backbone, singletonDecorator, ProductNavView, BaselinesNavView, ProductInstancesNavView, PartNavView, PartTemplateNavView) {
+function (Backbone, singletonDecorator, ProductNavView, BaselinesNavView, ProductInstancesNavView, PartNavView, PartTemplateNavView, CheckedOutNavView) {
     'use strict';
     var Router = Backbone.Router.extend({
         routes: {
@@ -16,6 +17,7 @@ function (Backbone, singletonDecorator, ProductNavView, BaselinesNavView, Produc
             ':workspaceId/baselines': 'baselines',
             ':workspaceId/product-instances': 'productInstances',
             ':workspaceId/parts': 'parts',
+            ':workspaceId/checkedouts': 'checkedoutsParts',
             ':workspaceId/part-templates': 'partsTemplate',
             ':workspaceId/parts-search/:query': 'search',
             ':workspaceId': 'products'
@@ -35,6 +37,7 @@ function (Backbone, singletonDecorator, ProductNavView, BaselinesNavView, Produc
 	        ProductInstancesNavView.getInstance().cleanView();
 	        PartNavView.getInstance().cleanView();
 	        PartTemplateNavView.getInstance().cleanView();
+	        CheckedOutNavView.getInstance().cleanView();
         },
 
         products: function (workspaceId) {
@@ -59,6 +62,12 @@ function (Backbone, singletonDecorator, ProductNavView, BaselinesNavView, Produc
             this.executeOrReload(workspaceId,function(){
 	            this.initNavViews();
 	            PartNavView.getInstance().showContent();
+            });
+        },
+        checkedoutsParts:function(workspaceId){
+            this.executeOrReload(workspaceId,function(){
+                this.initNavViews();
+                CheckedOutNavView.getInstance().showContent();
             });
         },
         search: function (workspaceId, query) {

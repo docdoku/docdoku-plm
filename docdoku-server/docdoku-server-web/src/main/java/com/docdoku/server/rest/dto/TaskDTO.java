@@ -71,8 +71,8 @@ public class TaskDTO implements Serializable {
     public Date getClosureDate() {
         return (closureDate!=null) ? (Date) closureDate.clone() : null;
     }
-    public void setClosureDate(java.util.Date date) {
-        this.closureDate = (closureDate!=null) ? (Date) closureDate.clone() : null;
+    public void setClosureDate(Date date) {
+        this.closureDate = (date!=null) ? (Date) date.clone() : null;
     }
 
     public Status getStatus() {

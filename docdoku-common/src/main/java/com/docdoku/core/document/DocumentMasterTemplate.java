@@ -25,16 +25,14 @@ import com.docdoku.core.common.FileHolder;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.meta.InstanceAttributeTemplate;
+import com.docdoku.core.workflow.WorkflowModel;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
- * A model object from which we can create a
- * <a href="DocumentMaster.html">DocumentMaster</a>.
+ * A model object from which we can create a {@link DocumentMaster}.
  * Creating a document through a model offers the ability to enforce a input
  * mask for the document ID, as well as some insuring that the starting
  * iteration defines some custom attributes or has some specific binary files.
@@ -74,7 +72,7 @@ public class DocumentMasterTemplate implements Serializable, FileHolder, Compara
     )
     private Set<BinaryResource> attachedFiles = new HashSet<>();
 
-
+    @OrderColumn(name="ATTR_ORDER")
     @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
     @JoinTable(name="DOCUMENTMASTERTEMPLATE_ATTR",
             inverseJoinColumns={
@@ -85,7 +83,7 @@ public class DocumentMasterTemplate implements Serializable, FileHolder, Compara
                     @JoinColumn(name="DOCUMENTMASTERTEMPLATE_ID", referencedColumnName="ID")
             }
     )
-    private Set<InstanceAttributeTemplate> attributeTemplates=new HashSet<>();
+    private List<InstanceAttributeTemplate> attributeTemplates=new ArrayList<>();
 
     private boolean attributesLocked;
     
@@ -101,7 +99,20 @@ public class DocumentMasterTemplate implements Serializable, FileHolder, Compara
     
     @javax.persistence.ManyToOne(optional=false, fetch=FetchType.EAGER)
     private Workspace workspace;
-    
+
+    @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumns({
+            @JoinColumn(name="WORKFLOWMODEL_ID", referencedColumnName="ID"),
+            @JoinColumn(name="WORKFLOWMODEL_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID")
+    })
+    private WorkflowModel workflowModel;
+
+
+    @Column(name = "WORKFLOWMODEL_ID", length=100, insertable = false, updatable = false)
+    private String workflowModelId;
+
+
+
     public DocumentMasterTemplate() {
     }
     
@@ -120,8 +131,28 @@ public class DocumentMasterTemplate implements Serializable, FileHolder, Compara
     public void setDocumentType(String documentType) {
         this.documentType = documentType;
     }
-    
-    
+
+    public String getWorkflowModelId() {
+        return workflowModelId;
+    }
+
+    public void setWorkflowModelId(String workflowModelId) {
+        this.workflowModelId = workflowModelId;
+    }
+
+    public WorkflowModel getWorkflowModel() {
+        return workflowModel;
+    }
+
+    public void setWorkflowModel(WorkflowModel workflowModel) {
+        this.workflowModel = workflowModel;
+        if (workflowModel == null) {
+            setWorkflowModelId(null);
+        } else {
+            setWorkflowModelId(workflowModel.getId());
+        }
+    }
+
     public String getMask(){
         return mask;
     }
@@ -159,11 +190,11 @@ public class DocumentMasterTemplate implements Serializable, FileHolder, Compara
         return attachedFiles;
     }
 
-    public Set<InstanceAttributeTemplate> getAttributeTemplates() {
+    public List<InstanceAttributeTemplate> getAttributeTemplates() {
         return attributeTemplates;
     }
     
-    public void setAttributeTemplates(Set<InstanceAttributeTemplate> pAttributeTemplates) {
+    public void setAttributeTemplates(List<InstanceAttributeTemplate> pAttributeTemplates) {
         attributeTemplates.retainAll(pAttributeTemplates);
         for(InstanceAttributeTemplate currentAttr:attributeTemplates){
             for(InstanceAttributeTemplate attr:pAttributeTemplates){
