@@ -43,6 +43,7 @@ import com.docdoku.core.workflow.*;
 import com.docdoku.server.dao.*;
 import com.docdoku.server.esindexer.ESIndexer;
 import com.docdoku.server.esindexer.ESSearcher;
+import com.docdoku.server.factory.ACLFactory;
 
 import javax.annotation.Resource;
 import javax.annotation.security.DeclareRoles;
@@ -783,53 +784,24 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         Locale locale = new Locale(user.getLanguage());
+        ACLFactory aclFactory = new ACLFactory(em);
 
-        PartRevisionDAO partRevisionDAO = new PartRevisionDAO(locale,em);
+        PartRevisionDAO partRevisionDAO = new PartRevisionDAO(locale, em);
         PartRevision partRevision = partRevisionDAO.loadPartR(revisionKey);
 
-        if (isAuthor(user,partRevision) || user.isAdministrator()) {
+        if (isAuthor(user, partRevision) || user.isAdministrator()) {
+
             if (partRevision.getACL() == null) {
-                ACL acl = new ACL();
-
-                if (pACLUserEntries != null) {
-                    for (Map.Entry<String, String> entry : pACLUserEntries.entrySet()) {
-                        acl.addEntry(em.getReference(User.class,new UserKey(workspaceId,entry.getKey())),ACL.Permission.valueOf(entry.getValue()));
-                    }
-                }
-
-                if (pACLUserGroupEntries != null) {
-                    for (Map.Entry<String, String> entry : pACLUserGroupEntries.entrySet()) {
-                        acl.addEntry(em.getReference(UserGroup.class,new UserGroupKey(workspaceId,entry.getKey())),ACL.Permission.valueOf(entry.getValue()));
-                    }
-                }
-
-                new ACLDAO(em).createACL(acl);
+                ACL acl = aclFactory.createACL(workspaceId, pACLUserEntries, pACLUserGroupEntries);
                 partRevision.setACL(acl);
-
-            }else{
-                if (pACLUserEntries != null) {
-                    for (ACLUserEntry entry : partRevision.getACL().getUserEntries().values()) {
-                        ACL.Permission newPermission = ACL.Permission.valueOf(pACLUserEntries.get(entry.getPrincipalLogin()));
-                        if(newPermission != null){
-                            entry.setPermission(newPermission);
-                        }
-                    }
-                }
-
-                if (pACLUserGroupEntries != null) {
-                    for (ACLUserGroupEntry entry : partRevision.getACL().getGroupEntries().values()) {
-                        ACL.Permission newPermission = ACL.Permission.valueOf(pACLUserGroupEntries.get(entry.getPrincipalId()));
-                        if(newPermission != null){
-                            entry.setPermission(newPermission);
-                        }
-                    }
-                }
+            } else {
+                aclFactory.updateACL(partRevision.getACL(), pACLUserEntries, pACLUserGroupEntries);
             }
 
-        }else {
+
+        } else {
             throw new AccessRightException(locale, user);
         }
-
 
     }
 

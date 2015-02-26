@@ -42,6 +42,7 @@ import com.docdoku.core.workflow.*;
 import com.docdoku.server.dao.*;
 import com.docdoku.server.esindexer.ESIndexer;
 import com.docdoku.server.esindexer.ESSearcher;
+import com.docdoku.server.factory.ACLFactory;
 
 import javax.annotation.Resource;
 import javax.annotation.security.DeclareRoles;
@@ -292,46 +293,18 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     public void updateDocumentACL(String pWorkspaceId, DocumentRevisionKey docKey, Map<String,String> pACLUserEntries, Map<String,String> pACLUserGroupEntries) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentRevisionNotFoundException, AccessRightException, NotAllowedException {
         User user = checkDocumentRevisionWriteAccess(docKey);
         Locale userLocale = new Locale(user.getLanguage());
+        ACLFactory aclFactory = new ACLFactory(em);
 
         DocumentRevisionDAO documentRevisionDAO = new DocumentRevisionDAO(userLocale, em);
         DocumentRevision docR = documentRevisionDAO.loadDocR(docKey);
         if (user.isAdministrator() || isAuthor(user,docR)) {
 
             if (docR.getACL() == null) {
-                ACL acl = new ACL();
-                if (pACLUserEntries != null) {
-                    for (Map.Entry<String, String> entry : pACLUserEntries.entrySet()) {
-                        acl.addEntry(em.getReference(User.class,new UserKey(pWorkspaceId,entry.getKey())),ACL.Permission.valueOf(entry.getValue()));
-                    }
-                }
-
-                if (pACLUserGroupEntries != null) {
-                    for (Map.Entry<String, String> entry : pACLUserGroupEntries.entrySet()) {
-                        acl.addEntry(em.getReference(UserGroup.class,new UserGroupKey(pWorkspaceId,entry.getKey())),ACL.Permission.valueOf(entry.getValue()));
-                    }
-                }
-
-                new ACLDAO(em).createACL(acl);
+                ACL acl = aclFactory.createACL(pWorkspaceId,pACLUserEntries,pACLUserGroupEntries);
                 docR.setACL(acl);
 
             }else{
-                if (pACLUserEntries != null) {
-                    for (ACLUserEntry entry : docR.getACL().getUserEntries().values()) {
-                        ACL.Permission newPermission = ACL.Permission.valueOf(pACLUserEntries.get(entry.getPrincipalLogin()));
-                        if(newPermission != null){
-                            entry.setPermission(newPermission);
-                        }
-                    }
-                }
-
-                if (pACLUserGroupEntries != null) {
-                    for (ACLUserGroupEntry entry : docR.getACL().getGroupEntries().values()) {
-                        ACL.Permission newPermission = ACL.Permission.valueOf(pACLUserGroupEntries.get(entry.getPrincipalId()));
-                        if(newPermission != null){
-                            entry.setPermission(newPermission);
-                        }
-                    }
-                }
+                aclFactory.updateACL(docR.getACL(),pACLUserEntries,pACLUserGroupEntries);
             }
 
         }else {

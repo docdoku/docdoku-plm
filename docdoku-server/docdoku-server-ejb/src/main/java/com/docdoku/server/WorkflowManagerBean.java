@@ -32,6 +32,7 @@ import com.docdoku.core.services.IWorkflowManagerWS;
 import com.docdoku.core.util.Tools;
 import com.docdoku.core.workflow.*;
 import com.docdoku.server.dao.*;
+import com.docdoku.server.factory.ACLFactory;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
@@ -192,9 +193,15 @@ public class WorkflowManagerBean implements IWorkflowManagerWS, IWorkflowManager
         WorkflowModel workflowModel = new WorkflowModelDAO(new Locale(user.getLanguage()), em).loadWorkflowModel(workflowModelKey);
         // Check the access to the workflow
         checkWorkflowWriteAccess(workflowModel, user);
-        ACL acl = createACL(pWorkspaceId, userEntries, groupEntries);
-        // remove old acl if and reset it
-        workflowModel.setAcl(acl);
+        ACLFactory aclFactory = new ACLFactory(em);
+
+        if(workflowModel.getAcl() == null){
+            ACL acl = aclFactory.createACL(pWorkspaceId, userEntries, groupEntries);
+            workflowModel.setAcl(acl);
+        }else{
+            aclFactory.updateACL(workflowModel.getAcl(),userEntries, groupEntries);
+        }
+
         return workflowModel;
 
 
@@ -234,43 +241,6 @@ public class WorkflowManagerBean implements IWorkflowManagerWS, IWorkflowManager
         }
     }
 
-    private ACL createACL(String pWorkspaceId, Map<String, String> pUserEntries, Map<String, String> pGroupEntries) {
-        ACL acl = new ACL();
-        if (pUserEntries != null) {
-            for (Map.Entry<String, String> entry : pUserEntries.entrySet()) {
-                acl.addEntry(em.find(User.class, new UserKey(pWorkspaceId, entry.getKey())),
-                        ACL.Permission.valueOf(entry.getValue()));
-            }
-        }
-        if (pGroupEntries != null) {
-            for (Map.Entry<String, String> entry : pGroupEntries.entrySet()) {
-                acl.addEntry(em.find(UserGroup.class, new UserGroupKey(pWorkspaceId, entry.getKey())),
-                        ACL.Permission.valueOf(entry.getValue()));
-            }
-        }
-        new ACLDAO(em).createACL(acl);
-        return acl;
-    }
-
-    private ACL updateACL(ACL acl, Map<String, String> pUserEntries, Map<String, String> pGroupEntries) {
-        if (pUserEntries != null) {
-            for (ACLUserEntry entry : acl.getUserEntries().values()) {
-                ACL.Permission newPermission = ACL.Permission.valueOf(pUserEntries.get(entry.getPrincipalLogin()));
-                if (newPermission != null) {
-                    entry.setPermission(newPermission);
-                }
-            }
-        }
-        if (pGroupEntries != null) {
-            for (ACLUserGroupEntry entry : acl.getGroupEntries().values()) {
-                ACL.Permission newPermission = ACL.Permission.valueOf(pGroupEntries.get(entry.getPrincipalId()));
-                if (newPermission != null) {
-                    entry.setPermission(newPermission);
-                }
-            }
-        }
-        return acl;
-    }
 
 
     private User checkWorkflowWriteAccess(WorkflowModel workflow, User user) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException {
