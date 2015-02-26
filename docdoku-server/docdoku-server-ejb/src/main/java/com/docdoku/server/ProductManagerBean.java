@@ -21,9 +21,7 @@ package com.docdoku.server;
 
 import com.docdoku.core.common.*;
 import com.docdoku.core.configuration.ProductBaseline;
-import com.docdoku.core.document.DocumentIteration;
-import com.docdoku.core.document.DocumentIterationKey;
-import com.docdoku.core.document.DocumentLink;
+import com.docdoku.core.document.*;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.meta.InstanceAttributeTemplate;
@@ -925,6 +923,51 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         conversion.setEndDate(new Date());
     }
 
+    @Override
+    public void updateACLForPartMasterTemplate(String pWorkspaceId, String templateId, Map<String, String> userEntries, Map<String, String> groupEntries) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, PartMasterTemplateNotFoundException {
+
+        ACLFactory aclFactory = new ACLFactory(em);
+
+        // Check the read access to the workspace
+        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
+        // Load the part template
+        PartMasterTemplateKey pKey = new PartMasterTemplateKey(pWorkspaceId,templateId);
+        PartMasterTemplate partMasterTemplate = new PartMasterTemplateDAO(new Locale(user.getLanguage()), em).loadPartMTemplate(pKey);
+
+        // Check the access to the part template
+        checkPartTemplateWriteAccess(partMasterTemplate, user);
+
+        if (partMasterTemplate.getAcl() == null) {
+            ACL acl = aclFactory.createACL(pWorkspaceId, userEntries, groupEntries);
+            partMasterTemplate.setAcl(acl);
+        } else {
+            aclFactory.updateACL(partMasterTemplate.getAcl(), userEntries, groupEntries);
+        }
+    }
+
+    @Override
+    public void removeACLFromPartMasterTemplate(String workspaceId, String partTemplateId) throws PartMasterNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartMasterTemplateNotFoundException, AccessRightException {
+
+        // Check the read access to the workspace
+        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+        Locale locale = new Locale(user.getLanguage());
+        // Load the part template
+        PartMasterTemplateKey pKey = new PartMasterTemplateKey(workspaceId,partTemplateId);
+        PartMasterTemplate partMaster = new PartMasterTemplateDAO(new Locale(user.getLanguage()), em).loadPartMTemplate(pKey);
+
+        // Check the access to the part template
+        checkPartTemplateWriteAccess(partMaster, user);
+
+        ACL acl = partMaster.getAcl();
+        if (acl != null) {
+            new ACLDAO(em).removeACLEntries(acl);
+            partMaster.setAcl(null);
+        }
+
+    }
+
+
+
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public PartRevision[] getPartRevisionsWithReference(String pWorkspaceId, String reference, int maxResults) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
@@ -1742,6 +1785,26 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             return user;
         }
         throw new AccessRightException(new Locale(user.getLanguage()),user);                                            // Else throw a AccessRightException
+    }
+
+    private User checkPartTemplateWriteAccess(PartMasterTemplate partMaster, User user) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException {
+
+        if (user.isAdministrator()) {
+            // Check if it is the workspace's administrator
+            return user;
+        }
+        if (partMaster.getAcl() == null) {
+            // Check if the item haven't ACL
+            return userManager.checkWorkspaceWriteAccess(partMaster.getWorkspaceId());
+        } else if (partMaster.getAcl().hasWriteAccess(user)) {
+            // Check if there is a write access
+            return user;
+        } else {
+            // Else throw a AccessRightException
+            throw new AccessRightException(new Locale(user.getLanguage()), user);
+        }
+
+
     }
 
     /**

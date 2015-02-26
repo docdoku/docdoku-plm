@@ -3,8 +3,9 @@ define([
     'backbone',
     'mustache',
     'text!templates/part-template/part_template_list.html',
-    'views/part-template/part_template_list_item'
-], function (Backbone, Mustache, template, PartTemplateListItemView) {
+    'views/part-template/part_template_list_item',
+    'common-objects/views/security/acl_edit'
+], function (Backbone, Mustache, template, PartTemplateListItemView,ACLEditView) {
 	'use strict';
     var PartTemplateListView = Backbone.View.extend({
 
@@ -124,12 +125,15 @@ define([
 
         onNoPartTemplateSelected: function () {
             this.trigger('delete-button:display', false);
+            this.trigger('acl-button:display', false);
         },
         onOnePartTemplateSelected: function () {
             this.trigger('delete-button:display', true);
+            this.trigger('acl-button:display', true);
         },
         onSeveralPartTemplatesSelected: function () {
             this.trigger('delete-button:display', true);
+            this.trigger('acl-button:display', false);
         },
 
         deleteSelectedPartTemplates: function () {
@@ -151,6 +155,44 @@ define([
                     });
                 }
             });
+        },
+
+        editSelectedPartTemplateACL: function () {
+            var templateSelected;
+            var _this = this;
+            _(_this.listItemViews).each(function (view) {
+                if (view.isChecked()) {
+                    templateSelected = view.model;
+                }
+            });
+
+            var aclEditView = new ACLEditView({
+                editMode: true,
+                acl: templateSelected.get('acl')
+            });
+
+            aclEditView.setTitle(templateSelected.getId());
+            window.document.body.appendChild(aclEditView.render().el);
+
+            aclEditView.openModal();
+            aclEditView.on('acl:update', function () {
+
+                var acl = aclEditView.toList();
+
+                templateSelected.updateACL({
+                    acl: acl || {userEntries: {}, groupEntries: {}},
+                    success: function () {
+                        templateSelected.set('acl', acl);
+                        aclEditView.closeModal();
+                        _this.listItemViews.redraw();
+                    },
+                    error: function () {
+                        window.alert(App.config.i18n.EDITION_ERROR);
+                    }
+                });
+            });
+
+            return false;
         },
 
         redraw: function () {

@@ -24,6 +24,7 @@ import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.meta.InstanceAttributeTemplate;
+import com.docdoku.core.security.ACL;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -60,6 +61,9 @@ public class PartMasterTemplate implements Serializable, Comparable<PartMasterTe
     private String partType;
 
     private String mask;
+
+    @OneToOne(orphanRemoval = true, cascade=CascadeType.ALL, fetch=FetchType.EAGER)
+    private ACL acl;
 
     @OneToOne(orphanRemoval=true, cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, fetch = FetchType.EAGER)
     private BinaryResource attachedFile;
@@ -137,6 +141,14 @@ public class PartMasterTemplate implements Serializable, Comparable<PartMasterTe
 
     public void setAttachedFile(BinaryResource attachedFile) {
         this.attachedFile = attachedFile;
+    }
+
+    public ACL getAcl() {
+        return acl;
+    }
+
+    public void setAcl(ACL acl) {
+        this.acl = acl;
     }
 
     public Set<InstanceAttributeTemplate> getAttributeTemplates() {
