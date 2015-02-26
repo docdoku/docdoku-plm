@@ -312,6 +312,27 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         }
     }
 
+    @Override
+    public void updateACLForDocumentMasterTemplate(String pWorkspaceId, String pDocMTemplateId, Map<String, String> userEntries, Map<String, String> userGroupEntries) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, DocumentMasterTemplateNotFoundException {
+        ACLFactory aclFactory = new ACLFactory(em);
+
+        // Check the read access to the workspace
+        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
+        // Load the documentTemplateModel
+        Locale locale = new Locale(user.getLanguage());
+        DocumentMasterTemplate docTemplate = new DocumentMasterTemplateDAO(locale, em).loadDocMTemplate(new DocumentMasterTemplateKey(user.getWorkspaceId(), pDocMTemplateId));
+        // Check the access to the documentTemplate
+        checkDocumentTemplateWriteAccess(docTemplate, user);
+        if (docTemplate.getAcl() == null) {
+            ACL acl = aclFactory.createACL(pWorkspaceId, userEntries, userGroupEntries);
+            docTemplate.setAcl(acl);
+        } else {
+            aclFactory.updateACL(docTemplate.getAcl(), userEntries, userGroupEntries);
+        }
+    }
+
+
+
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public void removeACLFromDocumentRevision(DocumentRevisionKey documentRevisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentRevisionNotFoundException, AccessRightException {
@@ -329,6 +350,26 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         }else{
             throw new AccessRightException(locale, user);
         }
+    }
+
+    @Override
+    public void removeACLFromDocumentMasterTemplate(String pWorkspaceId, String documentTemplateId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, DocumentMasterTemplateNotFoundException {
+
+        // Check the read access to the workspace
+        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
+        // Load the documentTemplateModel
+        Locale locale = new Locale(user.getLanguage());
+        DocumentMasterTemplate docTemplate = new DocumentMasterTemplateDAO(locale, em).loadDocMTemplate(new DocumentMasterTemplateKey(user.getWorkspaceId(), documentTemplateId));
+
+        // Check the access to the workflow
+        checkDocumentTemplateWriteAccess(docTemplate, user);
+
+        ACL acl = docTemplate.getAcl();
+        if (acl != null) {
+            new ACLDAO(em).removeACLEntries(acl);
+            docTemplate.setAcl(null);
+        }
+
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
@@ -1633,5 +1674,22 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         if (!NamingConvention.correctNameFile(name)) {
             throw new NotAllowedException(locale, "NotAllowedException9");
         }
+    }
+    private User checkDocumentTemplateWriteAccess(DocumentMasterTemplate docTemplate, User user) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException {
+        if (user.isAdministrator()) {
+            // Check if it is the workspace's administrator
+            return user;
+        }
+        if (docTemplate.getAcl() == null) {
+            // Check if the item haven't ACL
+            return userManager.checkWorkspaceWriteAccess(docTemplate.getWorkspaceId());
+        } else if (docTemplate.getAcl().hasWriteAccess(user)) {
+            // Check if there is a write access
+            return user;
+        } else {
+            // Else throw a AccessRightException
+            throw new AccessRightException(new Locale(user.getLanguage()), user);
+        }
+
     }
 }

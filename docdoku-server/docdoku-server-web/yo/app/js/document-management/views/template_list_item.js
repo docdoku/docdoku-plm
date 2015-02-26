@@ -28,6 +28,10 @@ define([
                     App.config.i18n._DATE_FORMAT,
                     data.creationDate);
             }
+            if (this.model.hasACLForCurrentUser()) {
+                data.isReadOnly = this.model.isReadOnly();
+                data.isFullAccess = this.model.isFullAccess();
+            }
             return data;
         },
         actionEdit: function (evt) {

@@ -24,12 +24,10 @@ import com.docdoku.core.document.DocumentMasterTemplateKey;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.meta.InstanceAttributeTemplate;
+import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentManagerLocal;
-import com.docdoku.server.rest.dto.DocumentMasterTemplateDTO;
-import com.docdoku.server.rest.dto.DocumentTemplateCreationDTO;
-import com.docdoku.server.rest.dto.InstanceAttributeTemplateDTO;
-import com.docdoku.server.rest.dto.TemplateGeneratedIdDTO;
+import com.docdoku.server.rest.dto.*;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -41,9 +39,7 @@ import javax.ejb.Stateless;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  *
@@ -147,6 +143,33 @@ public class DocumentTemplateResource {
 
         DocumentMasterTemplate template = documentService.updateDocumentMasterTemplate(new DocumentMasterTemplateKey(workspaceId, templateId), documentType, mask, createInstanceAttributeTemplateFromDto(attributeTemplatesDtos), idGenerated, attributesLocked);
         return mapper.map(template, DocumentMasterTemplateDTO.class);
+    }
+
+    @PUT
+    @Path("{templateId}/acl")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response updateDocMsTemplateACL(@PathParam("workspaceId") String workspaceId,@PathParam("templateId") String templateId, ACLDTO acl)
+            throws EntityNotFoundException, AccessRightException, UserNotActiveException, NotAllowedException {
+
+        if (acl.getGroupEntries().size() > 0 || acl.getUserEntries().size() > 0) {
+
+            Map<String,String> userEntries = new HashMap<>();
+            Map<String,String> groupEntries = new HashMap<>();
+
+            for (Map.Entry<String, ACL.Permission> entry : acl.getUserEntries().entrySet()) {
+                userEntries.put(entry.getKey(), entry.getValue().name());
+            }
+
+            for (Map.Entry<String, ACL.Permission> entry : acl.getGroupEntries().entrySet()) {
+                groupEntries.put(entry.getKey(), entry.getValue().name());
+            }
+
+            documentService.updateACLForDocumentMasterTemplate(workspaceId, templateId, userEntries, groupEntries);
+        }else{
+            documentService.removeACLFromDocumentMasterTemplate(workspaceId, templateId);
+        }
+
+        return Response.ok().build();
     }
 
     @DELETE

@@ -25,6 +25,7 @@ import com.docdoku.core.common.FileHolder;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.meta.InstanceAttributeTemplate;
+import com.docdoku.core.security.ACL;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -61,7 +62,10 @@ public class DocumentMasterTemplate implements Serializable, FileHolder, Compara
     private String documentType;
     
     private String mask;
-    
+
+    @OneToOne(orphanRemoval = true, cascade=CascadeType.ALL, fetch=FetchType.EAGER)
+    private ACL acl;
+
     @OneToMany(cascade={CascadeType.REMOVE,CascadeType.REFRESH}, fetch=FetchType.EAGER)
     @JoinTable(name="DOCUMENTMASTERTEMPLATE_BINRES",
         inverseJoinColumns={
@@ -204,7 +208,13 @@ public class DocumentMasterTemplate implements Serializable, FileHolder, Compara
         workspace=pWorkspace;
         workspaceId=workspace.getId();
     }
-    
+    public ACL getAcl() {
+        return acl;
+    }
+
+    public void setAcl(ACL acl) {
+        this.acl = acl;
+    }
     public Workspace getWorkspace(){
         return workspace;
     }
