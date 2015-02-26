@@ -6,8 +6,7 @@
         <form name="partCreationForm" ng-submit="partCreationForm.$valid && createPart()">
             <div class="row">{{'CREATE_PART'|translate}}</div>
             <div class="row">
-                <md-text-float label="{{'PART_NUMBER' | translate}}" ng-model="newPart.id"
-                               required="true"></md-text-float>
+                <md-text-float label="{{'PART_NUMBER' | translate}}" ng-model="newPart.partNumber"  required="true"></md-text-float>
                 <md-text-float label="{{'PART_NAME' | translate}}" ng-model="newPart.name"></md-text-float>
 
                 <md-text-float label="{{'PART_DESCRIPTION' | translate}}" ng-model="newPart.description"></md-text-float>
@@ -38,7 +37,7 @@
             <div class="row">{{'CREATE_DOCUMENT'|translate}}</div>
             <div class="row">
 
-                <md-text-float label="{{'DOCUMENT_ID' | translate}}" ng-model="newDocument.id"required="true"></md-text-float>
+                <md-text-float label="{{'DOCUMENT_ID' | translate}}" ng-model="newDocument.id" required="true"></md-text-float>
                 <md-text-float label="{{'DOCUMENT_TITLE' | translate}}" ng-model="newDocument.title"></md-text-float>
                 <md-text-float label="{{'DOCUMENT_DESCRIPTION' | translate}}" ng-model="newDocument.description"></md-text-float>
 
