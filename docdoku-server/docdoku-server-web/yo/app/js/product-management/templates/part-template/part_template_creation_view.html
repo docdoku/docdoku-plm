@@ -12,6 +12,7 @@
         <div class="tabs">
             <ul class="nav nav-tabs">
                 <li class="active"><a href="#tab-main" data-toggle="tab">{{i18n.GENERAL}}</a></li>
+                <li><a href="#tab-workflow" data-toggle="tab">{{i18n.WORKFLOW}}</a></li>
                 <li><a href="#tab-attributes" data-toggle="tab">{{i18n.ATTRIBUTES}}</a></li>
                 {{#model.id}}
                 <li>
@@ -58,6 +59,9 @@
                             <p class="help-block"></p>
                         </div>
                     </div>
+                </div>
+                <div id="tab-workflow" class="tab-pane">
+                    <div id="workflows-list"></div>
                 </div>
                 <div class="tab-pane attributes attributes-edit" id="tab-attributes"></div>
                 {{#model.id}}

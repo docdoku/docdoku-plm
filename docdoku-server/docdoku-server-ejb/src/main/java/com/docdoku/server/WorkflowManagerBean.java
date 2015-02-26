@@ -61,6 +61,7 @@ public class WorkflowManagerBean implements IWorkflowManagerWS, IWorkflowManager
     @Override
     public void deleteWorkflowModel(WorkflowModelKey pKey) throws WorkspaceNotFoundException, AccessRightException, WorkflowModelNotFoundException, UserNotFoundException {
         User user = userManager.checkWorkspaceWriteAccess(pKey.getWorkspaceId());
+        // TODO: check if a template exists with this workflowmodel and show exception "metier"
         new WorkflowModelDAO(new Locale(user.getLanguage()), em).removeWorkflowModel(pKey);
         em.flush();
     }

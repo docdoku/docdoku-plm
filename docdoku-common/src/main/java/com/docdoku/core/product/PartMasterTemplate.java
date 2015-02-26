@@ -137,6 +137,11 @@ public class PartMasterTemplate implements Serializable, Comparable<PartMasterTe
 
     public void setWorkflowModel(WorkflowModel workflowModel) {
         this.workflowModel = workflowModel;
+        if (workflowModel == null) {
+            setWorkflowModelId(null);
+        } else {
+            setWorkflowModelId(workflowModel.getId());
+        }
     }
 
     public String getMask(){
