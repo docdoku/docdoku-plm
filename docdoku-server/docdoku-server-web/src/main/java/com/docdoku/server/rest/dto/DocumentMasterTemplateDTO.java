@@ -23,7 +23,6 @@ package com.docdoku.server.rest.dto;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 /**
  *
@@ -40,7 +39,7 @@ public class DocumentMasterTemplateDTO implements Serializable{
     private String mask;
 
     private List<String> attachedFiles;
-    private Set<InstanceAttributeTemplateDTO> attributeTemplates;
+    private List<InstanceAttributeTemplateDTO> attributeTemplates;
     private boolean attributesLocked;
     
     public DocumentMasterTemplateDTO(){
@@ -121,12 +120,12 @@ public class DocumentMasterTemplateDTO implements Serializable{
         this.id = id;
     }
 
-    public void setAttributeTemplates(Set<InstanceAttributeTemplateDTO> attributeTemplates) {
-        this.attributeTemplates = attributeTemplates;
+    public List<InstanceAttributeTemplateDTO> getAttributeTemplates() {
+        return attributeTemplates;
     }
 
-    public Set<InstanceAttributeTemplateDTO> getAttributeTemplates() {
-        return attributeTemplates;
+    public void setAttributeTemplates(List<InstanceAttributeTemplateDTO> attributeTemplates) {
+        this.attributeTemplates = attributeTemplates;
     }
 
     public boolean isAttributesLocked() {

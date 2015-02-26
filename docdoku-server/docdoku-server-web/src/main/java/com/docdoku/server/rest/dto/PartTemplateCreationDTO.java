@@ -20,7 +20,7 @@
 
 package com.docdoku.server.rest.dto;
 
-import java.util.Set;
+import java.util.List;
 
 public class PartTemplateCreationDTO {
 
@@ -30,7 +30,7 @@ public class PartTemplateCreationDTO {
     private boolean idGenerated;
     private String mask;
     private String attachedFiles;
-    private Set<InstanceAttributeTemplateDTO> attributeTemplates;
+    private List<InstanceAttributeTemplateDTO> attributeTemplates;
     private boolean attributesLocked;
 
     public PartTemplateCreationDTO(){
@@ -81,11 +81,11 @@ public class PartTemplateCreationDTO {
         this.workspaceId = workspaceId;
     }
 
-    public void setAttributeTemplates(Set<InstanceAttributeTemplateDTO> attributeTemplates) {
+    public void setAttributeTemplates(List<InstanceAttributeTemplateDTO> attributeTemplates) {
         this.attributeTemplates = attributeTemplates;
     }
 
-    public Set<InstanceAttributeTemplateDTO> getAttributeTemplates() {
+    public List<InstanceAttributeTemplateDTO> getAttributeTemplates() {
         return attributeTemplates;
     }
 

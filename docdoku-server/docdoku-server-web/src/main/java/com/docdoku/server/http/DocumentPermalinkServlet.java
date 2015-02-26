@@ -81,7 +81,7 @@ public class DocumentPermalinkServlet extends HttpServlet {
             throw new NotAllowedException(Locale.getDefault(), "NotAllowedException27");
         }
 
-        pRequest.setAttribute("attr", new ArrayList<InstanceAttribute>(docI.getInstanceAttributes().values()));
+        pRequest.setAttribute("attr", new ArrayList<>(docI.getInstanceAttributes()));
         pRequest.getRequestDispatcher(pRequest.getContextPath() + "/faces/documentPermalink.xhtml").forward(pRequest, pResponse);
     }
 

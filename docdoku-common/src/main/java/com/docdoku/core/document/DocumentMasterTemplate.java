@@ -28,9 +28,7 @@ import com.docdoku.core.meta.InstanceAttributeTemplate;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * A model object from which we can create a
@@ -74,7 +72,7 @@ public class DocumentMasterTemplate implements Serializable, FileHolder, Compara
     )
     private Set<BinaryResource> attachedFiles = new HashSet<>();
 
-
+    @OrderColumn(name="ATTR_ORDER")
     @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
     @JoinTable(name="DOCUMENTMASTERTEMPLATE_ATTR",
             inverseJoinColumns={
@@ -85,7 +83,7 @@ public class DocumentMasterTemplate implements Serializable, FileHolder, Compara
                     @JoinColumn(name="DOCUMENTMASTERTEMPLATE_ID", referencedColumnName="ID")
             }
     )
-    private Set<InstanceAttributeTemplate> attributeTemplates=new HashSet<>();
+    private List<InstanceAttributeTemplate> attributeTemplates=new ArrayList<>();
 
     private boolean attributesLocked;
     
@@ -159,11 +157,11 @@ public class DocumentMasterTemplate implements Serializable, FileHolder, Compara
         return attachedFiles;
     }
 
-    public Set<InstanceAttributeTemplate> getAttributeTemplates() {
+    public List<InstanceAttributeTemplate> getAttributeTemplates() {
         return attributeTemplates;
     }
     
-    public void setAttributeTemplates(Set<InstanceAttributeTemplate> pAttributeTemplates) {
+    public void setAttributeTemplates(List<InstanceAttributeTemplate> pAttributeTemplates) {
         attributeTemplates.retainAll(pAttributeTemplates);
         for(InstanceAttributeTemplate currentAttr:attributeTemplates){
             for(InstanceAttributeTemplate attr:pAttributeTemplates){
