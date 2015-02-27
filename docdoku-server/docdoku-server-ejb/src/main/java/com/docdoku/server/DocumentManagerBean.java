@@ -1179,6 +1179,42 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
+    public BinaryResource renameFileInDocument(String pFullName, String pNewName) throws WorkspaceNotFoundException, DocumentRevisionNotFoundException, NotAllowedException, AccessRightException, FileNotFoundException, UserNotFoundException, UserNotActiveException, FileAlreadyExistsException, CreationException {
+
+        User user = userManager.checkWorkspaceReadAccess(BinaryResource.parseWorkspaceId(pFullName));
+        Locale userLocale = new Locale(user.getLanguage());
+        checkNameFileValidity(pNewName, userLocale);
+
+        BinaryResourceDAO binDAO = new BinaryResourceDAO(userLocale, em);
+        BinaryResource file = binDAO.loadBinaryResource(pFullName);
+        DocumentIteration document = binDAO.getDocumentOwner(file);
+        DocumentRevision docR = document.getDocumentRevision();
+
+        //check access rights on docR
+        user = checkDocumentRevisionWriteAccess(docR.getKey());
+
+        if (isCheckoutByUser(user,docR) && docR.getLastIteration().equals(document)) {
+            try {
+                dataManager.renameFile(file, pNewName);
+                document.removeFile(file);
+                binDAO.removeBinaryResource(file);
+
+                BinaryResource newFile = new BinaryResource(file.getNewFullName(pNewName),file.getContentLength(), file.getLastModified());
+                binDAO.createBinaryResource(newFile);
+                document.addFile(newFile);
+                return newFile;
+            } catch (StorageException e) {
+                LOGGER.log(Level.INFO, null, e);
+                return null;
+            }
+        } else {
+            throw new NotAllowedException(userLocale, "NotAllowedException29");
+        }
+
+    }
+
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
     public DocumentMasterTemplate removeFileFromTemplate(String pFullName) throws WorkspaceNotFoundException, DocumentMasterTemplateNotFoundException, AccessRightException, FileNotFoundException, UserNotFoundException, UserNotActiveException {
         User user = userManager.checkWorkspaceReadAccess(BinaryResource.parseWorkspaceId(pFullName));
 
@@ -1196,6 +1232,35 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         template.removeFile(file);
         binDAO.removeBinaryResource(file);
         return template;
+    }
+
+    @Override
+    public BinaryResource renameFileInTemplate(String pFullName, String pNewName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, FileNotFoundException, AccessRightException, FileAlreadyExistsException, CreationException {
+        User user = userManager.checkWorkspaceReadAccess(BinaryResource.parseWorkspaceId(pFullName));
+        Locale userLocale = new Locale(user.getLanguage());
+        checkNameFileValidity(pNewName, userLocale);
+
+        BinaryResourceDAO binDAO = new BinaryResourceDAO(userLocale, em);
+        BinaryResource file = binDAO.loadBinaryResource(pFullName);
+
+        DocumentMasterTemplate template = binDAO.getDocumentTemplateOwner(file);
+
+        checkDocumentTemplateWriteAccess(template,user);
+
+        try {
+            dataManager.renameFile(file, pNewName);
+            template.removeFile(file);
+            binDAO.removeBinaryResource(file);
+
+            BinaryResource newFile = new BinaryResource(file.getNewFullName(pNewName),file.getContentLength(), file.getLastModified());
+            binDAO.createBinaryResource(newFile);
+            template.addFile(newFile);
+            return newFile;
+        } catch (StorageException e) {
+            LOGGER.log(Level.INFO, null, e);
+            return null;
+        }
+
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)

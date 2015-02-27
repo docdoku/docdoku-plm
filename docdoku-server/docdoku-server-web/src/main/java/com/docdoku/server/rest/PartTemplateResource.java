@@ -19,6 +19,7 @@
  */
 package com.docdoku.server.rest;
 
+import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.meta.InstanceAttributeTemplate;
@@ -196,6 +197,20 @@ public class PartTemplateResource {
         productService.removeFileFromTemplate(fileFullName);
         return Response.ok().build();
     }
+
+    @PUT
+    @Path("{templateId}/files/{fileName}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public FileDTO renameAttachedFile(@PathParam("workspaceId") String workspaceId, @PathParam("templateId") String templateId, @PathParam("fileName") String fileName, FileDTO fileDTO)
+            throws UserNotActiveException, WorkspaceNotFoundException, CreationException, UserNotFoundException, FileNotFoundException, AccessRightException, FileAlreadyExistsException {
+
+        String fileFullName = workspaceId + "/part-templates/" + templateId + "/" + fileName;
+        BinaryResource binaryResource = productService.renameFileInTemplate(fileFullName, fileDTO.getShortName());
+        return new FileDTO(true,binaryResource.getFullName(),binaryResource.getName());
+    }
+
+
 
     private InstanceAttributeTemplate[] createInstanceAttributeTemplateFromDto(InstanceAttributeTemplateDTO[] dtos) {
         InstanceAttributeTemplate[] data = new InstanceAttributeTemplate[dtos.length];

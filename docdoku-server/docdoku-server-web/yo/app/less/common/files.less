@@ -1,104 +1,145 @@
 div.attachedFiles {
 
-    div.progress .bar{
+    div.progress .bar {
         color: #333;
     }
-  &.idle {
+    &.idle {
 
-    div.progress {
-      width: 0%;
-      display: none;
+        div.progress {
+            width: 0%;
+            display: none;
+        }
+
+        button.cancel-upload-btn {
+            display: none;
+        }
     }
 
-    button.cancel-upload-btn {
-      display: none;
-    }
-  }
+    &.uploading {
 
-  &.uploading {
+        input#upload-btn {
+            display: none;
+        }
+
+        div#filedroparea {
+            display: none;
+        }
+    }
+
+    form#upload-form {
+        position: relative;
+        margin: 20px 0 0 0;
+    }
+
+    #filedroparea {
+        position: relative;
+        font-weight: bold;
+        padding: 20px;
+        margin: 10px 0 0 0;
+        color: #555;
+        border: 2px dashed #555;
+        border-radius: 7px;
+        cursor: default;
+    }
+    #filedroparea.hover {
+        color: #555;
+        border-color: #9acd32;
+        border-style: solid;
+        box-shadow: inset 0 1px 4px #888;
+    }
 
     input#upload-btn {
-      display: none;
+        height: 100%;
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        opacity: 0;
     }
 
-    div#filedroparea {
-      display: none;
+    button.droppable {
+        width: 150px;
     }
-  }
-
-  form#upload-form {
-    position: relative;
-    margin: 20px 0 0 0;
-  }
-
-  #filedroparea {
-    position: relative;
-    font-weight: bold;
-    padding: 20px;
-    margin: 10px 0 0 0;
-    color: #555;
-    border: 2px dashed #555;
-    border-radius: 7px;
-    cursor: default;
-  }
-  #filedroparea.hover {
-    color: #555;
-    border-color: #9acd32;
-    border-style: solid;
-    box-shadow: inset 0 1px 4px #888;
-  }
-
-  input#upload-btn {
-      height: 100%;
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 100%;
-      opacity: 0;
-  }
-
-  button.droppable {
-    width: 150px;
-  }
-  span.droppable {
-    margin: 0 0 0 18px;
-  }
-
-  ul#file-list {
-    margin: 0;
-  }
-  li {
-
-    margin: 4px;
-
-    list-style: none;
-
-    input[type="checkbox"].file-check{
-      margin: 0 0 3px 0;
+    span.droppable {
+        margin: 0 0 0 18px;
     }
 
-    div.item-component {
-      display: inline-block;
+    ul#file-list {
+        margin: 0;
+    }
+    li {
+
+        margin: 4px;
+
+        list-style: none;
+
+        input[type="checkbox"].file-check {
+            margin: 0 0 3px 0;
+        }
+
+        div.item-component {
+            display: inline-block;
+        }
+
+        .stroke {
+            text-decoration: line-through;
+            color: red;
+        }
+
+        .stroke, a.stroke, a.stroke {
+            text-decoration: line-through;
+            color: red;
+        }
+
+        .edit-name {
+            cursor: pointer;
+            &:hover {
+                color: #0088cc;
+            }
+        }
+
+        &.edition {
+            .filename-edit-form {
+                font-size: 13px;
+                display: inline-block;
+                i{
+                    cursor: pointer;
+                }
+                .validate-name{
+                    color: #33ae24;
+                }
+                .cancel-name{
+                    color: #ff5622;
+                }
+            }
+            .edit-name, .fileName {
+                display: none;
+            }
+        }
+
+        .filename-edit-form {
+            display: none;
+        }
+        .edit-name,.fileName {
+            display: inline-block;
+        }
+
+        input[name=filename]{
+            line-height: 18px;
+            height: 19px;
+            font-size: 13px;
+            padding: 0;
+            border: none;
+
+        }
     }
 
-    .stroke {
-      text-decoration: line-through;
-      color: red;
+    li.stroke {
+        text-decoration: line-through;
+        color: red;
     }
 
-    .stroke, a.stroke, a.stroke {
-      text-decoration: line-through;
-      color: red;
+    input.file-delete {
+        margin: 5px;
     }
-
-  }
-
-  li.stroke {
-    text-decoration: line-through;
-    color: red;
-  }
-
-  input.file-delete {
-    margin: 5px;
-  }
 }

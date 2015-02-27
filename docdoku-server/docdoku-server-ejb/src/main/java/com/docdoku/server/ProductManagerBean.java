@@ -1084,6 +1084,44 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         }
     }
 
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
+    public BinaryResource renameCADFileInPartIteration(String pFullName, String pNewName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, FileNotFoundException, FileAlreadyExistsException, CreationException {
+
+        User user = userManager.checkWorkspaceReadAccess(BinaryResource.parseWorkspaceId(pFullName));
+        Locale userLocale = new Locale(user.getLanguage());
+        checkNameFileValidity(pNewName, userLocale);
+
+        BinaryResourceDAO binDAO = new BinaryResourceDAO(userLocale, em);
+        BinaryResource file = binDAO.loadBinaryResource(pFullName);
+        PartIteration partIteration = binDAO.getPartOwner(file);
+
+        PartRevision partR = partIteration.getPartRevision();
+
+        if (isCheckoutByUser(user,partR) && partR.getLastIteration().equals(partIteration)) {
+            try {
+
+                dataManager.renameFile(file, pNewName);
+
+                partIteration.setNativeCADFile(null);
+                binDAO.removeBinaryResource(file);
+
+                BinaryResource newFile = new BinaryResource(file.getNewFullName(pNewName),file.getContentLength(), file.getLastModified());
+
+                binDAO.createBinaryResource(newFile);
+                partIteration.setNativeCADFile(newFile);
+
+                return newFile;
+            } catch (StorageException e) {
+                LOGGER.log(Level.INFO, null, e);
+                return null;
+            }
+        }
+        return file;
+
+
+    }
+
     private void removeCADFile(PartIteration partIteration)
             throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartIterationNotFoundException {
 
@@ -1366,6 +1404,39 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         template.setAttachedFile(null);
         binDAO.removeBinaryResource(file);
         return template;
+    }
+
+    @Override
+    public BinaryResource renameFileInTemplate(String pFullName, String pNewName) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, FileNotFoundException, UserNotActiveException, FileAlreadyExistsException, CreationException {
+        User user = userManager.checkWorkspaceReadAccess(BinaryResource.parseWorkspaceId(pFullName));
+
+        BinaryResourceDAO binDAO = new BinaryResourceDAO(new Locale(user.getLanguage()), em);
+        BinaryResource file = binDAO.loadBinaryResource(pFullName);
+
+        PartMasterTemplate template = binDAO.getPartTemplateOwner(file);
+
+        checkPartTemplateWriteAccess(template,user);
+
+        try {
+
+            dataManager.renameFile(file, pNewName);
+
+            template.setAttachedFile(null);
+            binDAO.removeBinaryResource(file);
+
+            BinaryResource newFile = new BinaryResource(file.getNewFullName(pNewName),file.getContentLength(), file.getLastModified());
+
+            binDAO.createBinaryResource(newFile);
+            template.setAttachedFile(newFile);
+
+            return newFile;
+
+        } catch (StorageException e) {
+            LOGGER.log(Level.INFO, null, e);
+            return null;
+        }
+
+
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
