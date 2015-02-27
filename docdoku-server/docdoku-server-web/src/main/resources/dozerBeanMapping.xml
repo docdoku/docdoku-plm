@@ -48,6 +48,14 @@
             <a>targetDocumentWorkspaceId</a>
             <b>workspaceId</b>
         </field>
+        <field>
+            <a>comment</a>
+            <b>commentLink</b>
+        </field>
+        <field>
+            <a>documentTitle</a>
+            <b>documentTitle</b>
+        </field>
     </mapping>
 
 </mappings>

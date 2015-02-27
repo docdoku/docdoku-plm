@@ -304,19 +304,19 @@ public class DocumentManagerBeanTest {
 
         try{
             //Test to remove attribute
-            documentManagerBean.updateDocument(documentIteration.getKey(), "test", Arrays.asList(new InstanceAttribute[]{}), new DocumentIterationKey[]{});
+            documentManagerBean.updateDocument(documentIteration.getKey(), "test", Arrays.asList(new InstanceAttribute[]{}), new DocumentIterationKey[]{}, null);
             Assert.assertTrue("updateDocument should have raise an exception because we have removed attributes", false);
         }catch (NotAllowedException notAllowedException){
             try{
                 //Test with a swipe of attribute
-                documentManagerBean.updateDocument(documentIteration.getKey(), "test", Arrays.asList(new InstanceAttribute[]{new InstanceDateAttribute("Nom", new Date(), false)}), new DocumentIterationKey[]{});
+                documentManagerBean.updateDocument(documentIteration.getKey(), "test", Arrays.asList(new InstanceAttribute[]{new InstanceDateAttribute("Nom", new Date(), false)}), new DocumentIterationKey[]{}, null);
                 Assert.assertTrue("updateDocument should have raise an exception because we have changed the attribute type attributes", false);
             }catch (NotAllowedException notAllowedException2){
                 try {
                     //Test without modifying the attribute
-                    documentManagerBean.updateDocument(documentIteration.getKey(), "test", Arrays.asList(new InstanceAttribute[]{attribute}), new DocumentIterationKey[]{});
+                    documentManagerBean.updateDocument(documentIteration.getKey(), "test", Arrays.asList(new InstanceAttribute[]{attribute}), new DocumentIterationKey[]{}, null);
                     //Test with a new value of the attribute
-                    documentManagerBean.updateDocument(documentIteration.getKey(), "test", Arrays.asList(new InstanceAttribute[]{new InstanceTextAttribute("Nom", "Testeur change", false)}), new DocumentIterationKey[]{});
+                    documentManagerBean.updateDocument(documentIteration.getKey(), "test", Arrays.asList(new InstanceAttribute[]{new InstanceTextAttribute("Nom", "Testeur change", false)}), new DocumentIterationKey[]{}, null);
                 } catch (NotAllowedException notAllowedException3){
                     Assert.assertTrue("updateDocument shouldn't have raised an exception because we haven't change the number of attribute or the type", false);
                 }
@@ -361,13 +361,13 @@ public class DocumentManagerBeanTest {
 
         try{
             //Test to remove attribute
-            documentManagerBean.updateDocument(documentIteration.getKey(), "test", Arrays.asList(new InstanceAttribute[]{}), new DocumentIterationKey[]{});
+            documentManagerBean.updateDocument(documentIteration.getKey(), "test", Arrays.asList(new InstanceAttribute[]{}), new DocumentIterationKey[]{}, null);
             //Add the attribute
-            documentManagerBean.updateDocument(documentIteration.getKey(), "test", Arrays.asList(new InstanceAttribute[]{attribute}), new DocumentIterationKey[]{});
+            documentManagerBean.updateDocument(documentIteration.getKey(), "test", Arrays.asList(new InstanceAttribute[]{attribute}), new DocumentIterationKey[]{}, null);
             //Change the value of the attribute
-            documentManagerBean.updateDocument(documentIteration.getKey(), "test", Arrays.asList(new InstanceAttribute[]{new InstanceTextAttribute("Nom", "Testeur change", false)}), new DocumentIterationKey[]{});
+            documentManagerBean.updateDocument(documentIteration.getKey(), "test", Arrays.asList(new InstanceAttribute[]{new InstanceTextAttribute("Nom", "Testeur change", false)}), new DocumentIterationKey[]{}, null);
             //Change the type of the attribute
-            documentManagerBean.updateDocument(documentIteration.getKey(), "test", Arrays.asList(new InstanceAttribute[]{new InstanceDateAttribute("Nom", new Date(), false)}), new DocumentIterationKey[]{});
+            documentManagerBean.updateDocument(documentIteration.getKey(), "test", Arrays.asList(new InstanceAttribute[]{new InstanceDateAttribute("Nom", new Date(), false)}), new DocumentIterationKey[]{}, null);
         } catch (NotAllowedException notAllowedException3){
             Assert.assertTrue("updateDocument shouldn't have raised an exception because the attribute are not frozen", false);
         }

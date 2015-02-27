@@ -45,6 +45,18 @@ define(['backbone'], function (Backbone) {
                     '/' +
                     this.getDocumentRevisionVersion()
             );
+        },
+
+        setDocumentLinkComment:function(comment){
+            this.set('commentLink', comment);
+        },
+
+        getDocumentLinkComment:function(comment){
+            return this.get('commentLink');
+        },
+
+        getDocumentTitle:function(comment){
+            return this.get('documentTitle');
         }
     });
     return linkedDocument;

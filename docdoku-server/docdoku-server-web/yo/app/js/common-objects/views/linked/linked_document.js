@@ -11,7 +11,10 @@ define([
         className: 'linked-item well',
 
         events: {
-            'click .delete-linked-item': 'deleteButtonClicked'
+            'click .delete-linked-item': 'deleteButtonClicked',
+            'click .edit-linked-item-comment' : 'showEditCommentField',
+            'click .delete-comment' : 'deleteComment',
+            'click .validate-comment' : 'validateComment'
         },
 
         initialize: function () {
@@ -31,6 +34,21 @@ define([
             this.model.collection.remove(this.model);
             this.remove();
             return false;
+        },
+
+        showEditCommentField: function(){
+            this.$el.toggleClass("edition");
+        },
+
+        deleteComment: function(){
+            this.$('input.commentInput')[0].value = "";
+        },
+
+        validateComment:function(){
+            var commentValue = this.$el.find('input.commentInput')[0].value;
+            this.model.setDocumentLinkComment(commentValue);
+            this.$('span.comment').html(commentValue);
+            this.$el.toggleClass("edition");
         }
     });
     return LinkedDocumentView;

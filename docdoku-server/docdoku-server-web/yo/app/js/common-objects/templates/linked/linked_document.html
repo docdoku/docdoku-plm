@@ -2,3 +2,19 @@
 <a class="fa fa-times delete-linked-item" title="{{i18n.DELETE_LINKED_ITEM}}"></a>
 {{/editMode}}
 <a target="_blank" href="{{linkedDocument.getDocumentMasterPermalink}}" class="reference">{{linkedDocument.getDocumentMasterId}}-{{linkedDocument.getDocumentRevisionVersion}}</a>
+<span class="documentTitle"> {{linkedDocument.getDocumentTitle}}</span>
+{{#editMode}}
+<a class="fa fa-pencil edit-linked-item-comment" title="{{i18n.DELETE_LINKED_ITEM}}"></a>
+
+<span class="comment">{{linkedDocument.getDocumentLinkComment}}</span>
+<div name="comment">
+    <input class="commentInput" type="text" value="{{linkedDocument.getDocumentLinkComment}}">
+    <button type="button" class="delete-comment">Erase
+    </button>
+    <button type="button" class="validate-comment">Ok
+    </button>
+</div>
+{{/editMode}}
+{{^editMode}}
+<span class="comment">{{linkedDocument.getDocumentLinkComment}}</span>
+{{/editMode}}

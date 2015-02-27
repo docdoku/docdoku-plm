@@ -81,6 +81,10 @@ div.linked-items-view{
           color:#333;
         }
       }
+        .edit-linked-item-comment{
+            color: #333;
+            opacity: 0.8;
+        }
 
       .reference {
           padding: 0 6px;
@@ -88,6 +92,28 @@ div.linked-items-view{
           margin: 0;
           display: inline-block;
       }
+
+        div[name="comment"]{
+            display: none;
+        }
+        span.documentTitle{
+            font-weight: bold;
+        }
+        span.comment{
+            display: block;
+            font-style: italic;
+            color: #333;
+            opacity: 0.8;
+        }
+
+        &.edition{
+            div[name="comment"]{
+                display: block;
+            }
+            span.comment{
+                    display: none;
+            }
+        }
     }
   }
 }

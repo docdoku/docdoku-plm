@@ -23,6 +23,7 @@ import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.configuration.ConfigSpec;
 import com.docdoku.core.document.DocumentIteration;
+import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
@@ -374,7 +375,9 @@ public class DocumentsResource {
         for (DocumentRevision docR : docRs) {
             DocumentIteration docLastIter = docR.getLastIteration();
             if (docLastIter != null) {
-                docsLastIter.add(new DocumentIterationDTO(docLastIter.getWorkspaceId(), docLastIter.getId(), docLastIter.getDocumentVersion(), docLastIter.getIteration()));
+                DocumentIterationDTO iterationDTO = new DocumentIterationDTO(docLastIter.getWorkspaceId(), docLastIter.getId(), docLastIter.getDocumentVersion(), docLastIter.getIteration());
+                iterationDTO.setDocumentTitle(docR.getTitle());
+                docsLastIter.add(iterationDTO);
             }
         }
 
