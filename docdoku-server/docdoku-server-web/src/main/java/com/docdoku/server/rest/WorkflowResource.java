@@ -94,8 +94,7 @@ public class WorkflowResource {
     @DELETE
     @Path("{workflowModelId}")
     public Response delWorkflowModel(@PathParam("workspaceId") String workspaceId, @PathParam("workflowModelId") String workflowModelId)
-            throws EntityNotFoundException, AccessRightException {
-
+            throws EntityNotFoundException, AccessRightException, UserNotActiveException {
         workflowService.deleteWorkflowModel(new WorkflowModelKey(workspaceId, workflowModelId));
         return Response.status(Response.Status.OK).build();
     }
@@ -106,8 +105,11 @@ public class WorkflowResource {
     public WorkflowModelDTO updateWorkflowModelInWorkspace(@PathParam("workspaceId") String workspaceId, @PathParam("workflowModelId") String workflowModelId, WorkflowModelDTO workflowModelDTOToPersist)
             throws EntityNotFoundException, AccessRightException, EntityAlreadyExistsException, CreationException, UserNotActiveException, NotAllowedException {
 
-        workflowService.deleteWorkflowModel(new WorkflowModelKey(workspaceId, workflowModelId));
-        return this.createWorkflowModelInWorkspace(workspaceId, workflowModelDTOToPersist);
+        WorkflowModelKey workflowModelKey = new WorkflowModelKey(workspaceId, workflowModelId);
+        List<ActivityModelDTO> activityModelDTOsList = workflowModelDTOToPersist.getActivityModels();
+        ActivityModel[] activityModels = extractActivityModelFromDTO(activityModelDTOsList);
+        WorkflowModel workflowModel = workflowService.updateWorkflowModel(workflowModelKey, workflowModelDTOToPersist.getReference(), workflowModelDTOToPersist.getFinalLifeCycleState(), activityModels);
+        return mapper.map(workflowModel, WorkflowModelDTO.class);
     }
     @PUT
     @Path("{workflowModelId}/acl")

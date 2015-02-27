@@ -1214,7 +1214,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         ListIterator<PartMasterTemplate> ite = templates.listIterator();
         while (ite.hasNext()){
             PartMasterTemplate template = ite.next();
-            if(!hasPartRevisionReadAccess(user,template)){
+            if(!hasPartTemplateReadAccess(user, template)){
                 ite.remove();
             }
         }
@@ -1838,7 +1838,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         return user.isAdministrator() || isACLGrantReadAccess(user,partRevision);
     }
 
-    private boolean hasPartRevisionReadAccess(User user, PartMasterTemplate template){
+    private boolean hasPartTemplateReadAccess(User user, PartMasterTemplate template){
         return user.isAdministrator() || isACLGrantReadAccess(user,template);
     }
     /**
