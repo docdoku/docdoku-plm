@@ -793,7 +793,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 ACL acl = aclFactory.createACL(workspaceId, pACLUserEntries, pACLUserGroupEntries);
                 partRevision.setACL(acl);
             } else {
-                aclFactory.updateACL(partRevision.getACL(), pACLUserEntries, pACLUserGroupEntries);
+                aclFactory.updateACL(workspaceId,partRevision.getACL(), pACLUserEntries, pACLUserGroupEntries);
             }
 
 
@@ -941,7 +941,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             ACL acl = aclFactory.createACL(pWorkspaceId, userEntries, groupEntries);
             partMasterTemplate.setAcl(acl);
         } else {
-            aclFactory.updateACL(partMasterTemplate.getAcl(), userEntries, groupEntries);
+            aclFactory.updateACL(pWorkspaceId,partMasterTemplate.getAcl(), userEntries, groupEntries);
         }
     }
 

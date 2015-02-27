@@ -796,7 +796,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
             milestone.setACL(acl);
         } else {                                                                                                          // Else change existing ACL Rule
             ACL acl = milestone.getACL();
-            aclFactory.updateACL(acl, pUserEntries, pGroupEntries);
+            aclFactory.updateACL(pWorkspaceId,acl, pUserEntries, pGroupEntries);
         }
     }
 
@@ -877,7 +877,7 @@ public class ChangeManagerBean implements IChangeManagerLocal {
             changeItem.setACL(acl);
         } else {                                                                                                         // Else change existing ACL Rule
 
-            aclFactory.updateACL(changeItem.getACL(), pUserEntries, pGroupEntries);
+            aclFactory.updateACL(pWorkspaceId,changeItem.getACL(), pUserEntries, pGroupEntries);
         }
     }
 

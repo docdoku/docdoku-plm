@@ -138,8 +138,12 @@ public class WorkflowManagerBeanTest {
         Mockito.when(em.find(User.class, new UserKey(WorkflowUtil.WORKSPACE_ID,WorkflowUtil.USER_LOGIN))).thenReturn(user);
         Mockito.when(em.find(User.class, new UserKey(WorkflowUtil.WORKSPACE_ID,WorkflowUtil.USER2_LOGIN))).thenReturn(user2);
         Mockito.when(em.find(User.class, new UserKey(WorkflowUtil.WORKSPACE_ID,WorkflowUtil.USER3_LOGIN))).thenReturn(user3);
+        Mockito.when(em.getReference(UserGroup.class, new UserGroupKey(WorkflowUtil.WORKSPACE_ID, group1.getId()))).thenReturn(group1);
+        Mockito.when(em.getReference(User.class, user.getKey())).thenReturn(user);
+        Mockito.when(em.getReference(User.class, user2.getKey())).thenReturn(user2);
+        Mockito.when(em.getReference(User.class, user3.getKey())).thenReturn(user3);
 
-        //When
+          //When
         WorkflowModel workflow= workflowManagerBean.updateACLForWorkflow(WorkflowUtil.WORKSPACE_ID, WorkflowUtil.WORKFLOW_MODEL_ID, userEntries, grpEntries);
         //Then
         Assert.assertEquals(workflow.getAcl().getGroupEntries().size(),1 );

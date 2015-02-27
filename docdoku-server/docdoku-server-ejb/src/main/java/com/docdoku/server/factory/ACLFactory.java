@@ -30,6 +30,7 @@ import com.docdoku.server.dao.ACLDAO;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.HashMap;
 import java.util.Map;
 
 /*
@@ -61,23 +62,20 @@ public class ACLFactory {
         return acl;
     }
 
-    public ACL updateACL(ACL acl, Map<String, String> pUserEntries, Map<String, String> pGroupEntries) {
-        if (pUserEntries != null) {
-            for (ACLUserEntry entry : acl.getUserEntries().values()) {
-                ACL.Permission newPermission = ACL.Permission.valueOf(pUserEntries.get(entry.getPrincipalLogin()));
-                if (newPermission != null) {
-                    entry.setPermission(newPermission);
-                }
-            }
-        }
-        if (pGroupEntries != null) {
-            for (ACLUserGroupEntry entry : acl.getGroupEntries().values()) {
-                ACL.Permission newPermission = ACL.Permission.valueOf(pGroupEntries.get(entry.getPrincipalId()));
-                if (newPermission != null) {
-                    entry.setPermission(newPermission);
-                }
-            }
-        }
+    public ACL updateACL(String workspaceId, ACL acl, Map<String, String> pUserEntries, Map<String, String> pGroupEntries) {
+
+       if(acl != null) {
+           new ACLDAO(em).removeACLEntries(acl);
+           acl.setUserEntries(new HashMap<User, ACLUserEntry>());
+           acl.setGroupEntries(new HashMap<UserGroup, ACLUserGroupEntry>());
+           for (Map.Entry<String, String> entry : pUserEntries.entrySet()) {
+               acl.addEntry(em.getReference(User.class, new UserKey(workspaceId, entry.getKey())), ACL.Permission.valueOf(entry.getValue()));
+           }
+
+           for (Map.Entry<String, String> entry : pGroupEntries.entrySet()) {
+               acl.addEntry(em.getReference(UserGroup.class, new UserGroupKey(workspaceId, entry.getKey())), ACL.Permission.valueOf(entry.getValue()));
+           }
+       }
         return acl;
     }
 }

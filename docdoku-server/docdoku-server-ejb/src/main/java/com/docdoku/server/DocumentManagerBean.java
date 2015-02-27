@@ -304,7 +304,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
                 docR.setACL(acl);
 
             }else{
-                aclFactory.updateACL(docR.getACL(),pACLUserEntries,pACLUserGroupEntries);
+                aclFactory.updateACL(pWorkspaceId,docR.getACL(),pACLUserEntries,pACLUserGroupEntries);
             }
 
         }else {
@@ -327,7 +327,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             ACL acl = aclFactory.createACL(pWorkspaceId, userEntries, userGroupEntries);
             docTemplate.setAcl(acl);
         } else {
-            aclFactory.updateACL(docTemplate.getAcl(), userEntries, userGroupEntries);
+            aclFactory.updateACL(pWorkspaceId,docTemplate.getAcl(), userEntries, userGroupEntries);
         }
     }
 

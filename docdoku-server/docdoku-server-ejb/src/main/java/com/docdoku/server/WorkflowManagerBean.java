@@ -199,7 +199,7 @@ public class WorkflowManagerBean implements IWorkflowManagerWS, IWorkflowManager
             ACL acl = aclFactory.createACL(pWorkspaceId, userEntries, groupEntries);
             workflowModel.setAcl(acl);
         }else{
-            aclFactory.updateACL(workflowModel.getAcl(),userEntries, groupEntries);
+            aclFactory.updateACL(pWorkspaceId,workflowModel.getAcl(),userEntries, groupEntries);
         }
 
         return workflowModel;
