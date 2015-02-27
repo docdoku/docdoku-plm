@@ -19,23 +19,3 @@
   opacity:1;
   transform:scale(1,1);
 }
-
-[ng-view] {
-}
-
-[ng-view].ng-enter{
-  position: relative;
-  left:-100%;
-  transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
-}
-
-[ng-view].ng-enter,
-[ng-view].ng-leave.ng-leave-active {
-  opacity:0;
-}
-
-[ng-view].ng-leave,
-[ng-view].ng-enter.ng-enter-active {
-  left:0;
-  opacity:1;
-}

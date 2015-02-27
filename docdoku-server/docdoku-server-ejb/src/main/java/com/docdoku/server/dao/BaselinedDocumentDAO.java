@@ -77,9 +77,9 @@ public class BaselinedDocumentDAO {
                 "AND i.documentRevision.documentMaster.workspace.id = :workspaceId " +
                 "AND i.documentRevision.documentMasterId = :documentMasterId " +
                 "AND i.documentRevision.version = :version",DocumentIteration.class)
-                .setParameter("documentMasterId", pDocumentRevisionKey.getDocumentMasterId())
+                .setParameter("documentMasterId", pDocumentRevisionKey.getDocumentMaster().getId())
                 .setParameter("version", pDocumentRevisionKey.getVersion())
-                .setParameter("workspaceId", pDocumentRevisionKey.getWorkspaceId())
+                .setParameter("workspaceId", pDocumentRevisionKey.getDocumentMaster().getWorkspace())
                 .getResultList();
     }
 

@@ -32,6 +32,12 @@ define([
             _.bindAll(this);
             BaseView.prototype.initialize.apply(this, arguments);
             this.events['click .add'] = this.addAttribute;
+            this.events['update-sort'] = this.updateSort;
+        },
+
+        updateSort: function(event,model,index){
+            this.collection.remove(model,{silent:true});
+            this.collection.add(model, {at: index,silent:true});
         },
 
         render: function () {
@@ -54,6 +60,15 @@ define([
             );
             this.attributesView.setEditMode(this.editMode);
             this.attributesView.setAttributesLocked(this.attributesLocked);
+            if(this.editMode){
+                this.attributesView.$el.sortable({
+                    handle: ".sortable-handler",
+                    placeholder: "list-item well highlight",
+                    stop: function(event, ui) {
+                        ui.item.trigger('drop', ui.item.index());
+                    }
+                });
+            }
         },
 
         addAttribute: function () {

@@ -33,7 +33,7 @@ import java.util.*;
 
 /**
  * This class encapsulates the various states of a part whereas its unchanging
- * attributes are hold on a <a href="PartMaster.html">PartMaster</a>.
+ * attributes are hold on a {@link PartMaster}.
  *
  * @author Florent Garin
  * @version 1.1, 18/05/11
@@ -116,7 +116,7 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
     private Date checkInDate;
 
     @OneToMany(orphanRemoval=true, cascade=CascadeType.ALL, fetch=FetchType.EAGER)
-    @MapKey(name="name")
+    @OrderColumn(name="ATTRIBUTE_ORDER")
     @JoinTable(name="PARTITERATION_ATTRIBUTE",
     inverseJoinColumns={
         @JoinColumn(name="INSTANCEATTRIBUTE_ID", referencedColumnName="ID")
@@ -127,7 +127,7 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
         @JoinColumn(name="PARTREVISION_VERSION", referencedColumnName="PARTREVISION_VERSION"),
         @JoinColumn(name="ITERATION", referencedColumnName="ITERATION")
     })
-    private Map<String, InstanceAttribute> instanceAttributes=new HashMap<>();
+    private List<InstanceAttribute> instanceAttributes=new ArrayList<>();
 
     @OrderColumn(name="COMPONENT_ORDER")
     @OneToMany(orphanRemoval=true, cascade=CascadeType.ALL, fetch=FetchType.LAZY)
@@ -273,14 +273,16 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
     public Date getCheckInDate() {
         return (checkInDate!=null) ? (Date) checkInDate.clone() : null;
     }
+
     public void setCheckInDate(Date checkInDate) {
         this.checkInDate = (checkInDate!=null) ? (Date) checkInDate.clone() : null;
     }
 
-    public Map<String, InstanceAttribute> getInstanceAttributes() {
+    public List<InstanceAttribute> getInstanceAttributes() {
         return instanceAttributes;
     }
-    public void setInstanceAttributes(Map<String, InstanceAttribute> instanceAttributes) {
+
+    public void setInstanceAttributes(List<InstanceAttribute> instanceAttributes) {
         this.instanceAttributes = instanceAttributes;
     }
 
@@ -397,10 +399,10 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
         clone.linkedDocuments = clonedLinks;
 
         //perform a deep copy
-        Map<String, InstanceAttribute> clonedInstanceAttributes = new HashMap<>();
-        for (InstanceAttribute attribute : instanceAttributes.values()) {
+        List<InstanceAttribute> clonedInstanceAttributes = new ArrayList<>();
+        for (InstanceAttribute attribute : instanceAttributes) {
             InstanceAttribute clonedAttribute = attribute.clone();
-            clonedInstanceAttributes.put(clonedAttribute.getName(), clonedAttribute);
+            clonedInstanceAttributes.add(clonedAttribute);
         }
         clone.instanceAttributes = clonedInstanceAttributes;
 

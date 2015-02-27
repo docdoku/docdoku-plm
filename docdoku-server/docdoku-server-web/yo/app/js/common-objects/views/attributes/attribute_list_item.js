@@ -21,6 +21,11 @@ define([
             this.events[ "change .name"] = "updateName";
             this.events[ "change .value"] = "updateValue";
             this.events[ "click .fa-times"] = "removeAction";
+            this.events[ "drop"] = "drop";
+        },
+
+        drop: function(event, index) {
+            this.$el.trigger('update-sort', [this.model, index]);
         },
 
         rendered: function () {
@@ -82,6 +87,7 @@ define([
         setAttributesLocked: function (attributesLocked) {
             this.attributesLocked = attributesLocked;
         }
+
 
     });
 

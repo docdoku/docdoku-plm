@@ -16,28 +16,11 @@ define([
 
         initialize: function () {
             ModalView.prototype.initialize.apply(this, arguments);
-            this.events["click .modal-footer button.btn-primary"] = "interceptSubmit";
+            this.events['click .modal-footer button.btn-primary'] = 'interceptSubmit';
             this.events['submit #form-' + this.cid] = 'onSubmitForm';
         },
 
         rendered: function () {
-
-            this.attributesView = this.addSubView(
-                new AttributesView({
-                    el: '#tab-attributes-' + this.cid
-                })
-            );
-
-            this.attributesView.render();
-
-            this.templatesView = this.addSubView(
-                new DocumentTemplateListView({
-                    el: '#templates-' + this.cid,
-                    attributesView: this.attributesView
-                })
-            );
-
-            this.templatesView.collection.fetch({reset: true});
 
             this.workflowsView = this.addSubView(
                 new DocumentWorkflowListView({
@@ -52,6 +35,24 @@ define([
             );
 
             this.workflowsView.on('workflow:change', this.workflowsMappingView.updateMapping);
+
+            this.attributesView = this.addSubView(
+                new AttributesView({
+                    el: '#tab-attributes-' + this.cid
+                })
+            );
+
+            this.attributesView.render();
+
+            this.templatesView = this.addSubView(
+                new DocumentTemplateListView({
+                    el: '#templates-' + this.cid,
+                    workflowsView: this.workflowsView,
+                    attributesView: this.attributesView
+                })
+            );
+
+            this.templatesView.collection.fetch({reset: true});
 
             this.workspaceMembershipsView = new ACLView({
                 el: this.$('#acl-mapping-' + this.cid),

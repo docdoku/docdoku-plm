@@ -20,10 +20,16 @@ define([
             BaseView.prototype.initialize.apply(this, arguments);
             this.events['click .add'] = this.addAttribute;
             this.events['change .lock input'] = this.attributesLockedChange;
+            this.events['update-sort'] = this.updateSort;
 
             if (this.options.attributesLocked) {
                 this.attributesLocked = this.options.attributesLocked;
             }
+        },
+
+        updateSort: function(event,model,index){
+            this.collection.remove(model,{silent:true});
+            this.collection.add(model, {at: index,silent:true});
         },
 
         rendered: function () {
@@ -36,6 +42,14 @@ define([
 
             this.$el.find('.lock input')[0].checked = this.attributesLocked;
             this.$el.toggleClass('attributes-locked', this.attributesLocked);
+
+            this.attributesView.$el.sortable({
+                handle: ".sortable-handler",
+                placeholder: "list-item well highlight",
+                stop: function(event, ui) {
+                    ui.item.trigger('drop', ui.item.index());
+                }
+            });
         },
 
         addAttribute: function () {

@@ -269,11 +269,11 @@ public class DocumentManagerBeanTest {
 
     /**
      *
-     * This test will check if the attributs is well manages if the documents has a template with freeze attributs
+     * This test will check if the attributes is well manages if the documents has a template with freeze attributes
      *
      */
     @Test
-    public void changeAttributsWithLockedTemplate()throws Exception{
+    public void changeAttributesWithLockedTemplate()throws Exception{
 
         DocumentMaster documentMaster = new DocumentMaster(workspace, DOCUMENT_ID,user);
 
@@ -288,11 +288,11 @@ public class DocumentManagerBeanTest {
 
         DocumentRevisionKey rKey = new DocumentRevisionKey(workspace.getId(), documentMaster.getId(), documentRevision.getVersion());
 
-        //Creation of current attributs of the iteration
-        InstanceAttribute attribut = new InstanceTextAttribute("Nom", "Testeur", false);
-        HashMap<String, InstanceAttribute> attributsOfIteration = new HashMap<>();
-        attributsOfIteration.put(attribut.getName(), attribut);
-        documentIteration.setInstanceAttributes(attributsOfIteration);
+        //Creation of current attributes of the iteration
+        InstanceAttribute attribute = new InstanceTextAttribute("Nom", "Testeur", false);
+        List<InstanceAttribute> attributesOfIteration = new ArrayList<>();
+        attributesOfIteration.add(attribute);
+        documentIteration.setInstanceAttributes(attributesOfIteration);
 
         documentMaster.setAttributesLocked(true);
 
@@ -303,22 +303,22 @@ public class DocumentManagerBeanTest {
 
 
         try{
-            //Test to remove attribut
-            documentManagerBean.updateDocument(documentIteration.getKey(), "test", new InstanceAttribute[]{}, new DocumentIterationKey[]{});
-            Assert.assertTrue("updateDocument should have raise an exception because we have removed attributs", false);
+            //Test to remove attribute
+            documentManagerBean.updateDocument(documentIteration.getKey(), "test", Arrays.asList(new InstanceAttribute[]{}), new DocumentIterationKey[]{});
+            Assert.assertTrue("updateDocument should have raise an exception because we have removed attributes", false);
         }catch (NotAllowedException notAllowedException){
             try{
-                //Test with a swipe of attribut
-                documentManagerBean.updateDocument(documentIteration.getKey(), "test", new InstanceAttribute[]{new InstanceDateAttribute("Nom", new Date(), false)}, new DocumentIterationKey[]{});
-                Assert.assertTrue("updateDocument should have raise an exception because we have changed the attribut type attributs", false);
+                //Test with a swipe of attribute
+                documentManagerBean.updateDocument(documentIteration.getKey(), "test", Arrays.asList(new InstanceAttribute[]{new InstanceDateAttribute("Nom", new Date(), false)}), new DocumentIterationKey[]{});
+                Assert.assertTrue("updateDocument should have raise an exception because we have changed the attribute type attributes", false);
             }catch (NotAllowedException notAllowedException2){
                 try {
-                    //Test without modifying the attribut
-                    documentManagerBean.updateDocument(documentIteration.getKey(), "test", new InstanceAttribute[]{attribut}, new DocumentIterationKey[]{});
-                    //Test with a new value of the attribut
-                    documentManagerBean.updateDocument(documentIteration.getKey(), "test", new InstanceAttribute[]{new InstanceTextAttribute("Nom", "Testeur change", false)}, new DocumentIterationKey[]{});
+                    //Test without modifying the attribute
+                    documentManagerBean.updateDocument(documentIteration.getKey(), "test", Arrays.asList(new InstanceAttribute[]{attribute}), new DocumentIterationKey[]{});
+                    //Test with a new value of the attribute
+                    documentManagerBean.updateDocument(documentIteration.getKey(), "test", Arrays.asList(new InstanceAttribute[]{new InstanceTextAttribute("Nom", "Testeur change", false)}), new DocumentIterationKey[]{});
                 } catch (NotAllowedException notAllowedException3){
-                    Assert.assertTrue("updateDocument shouldn't have raised an exception because we haven't change the number of attribut or the type", false);
+                    Assert.assertTrue("updateDocument shouldn't have raised an exception because we haven't change the number of attribute or the type", false);
                 }
             }
         }
@@ -326,11 +326,11 @@ public class DocumentManagerBeanTest {
 
     /**
      *
-     * This test will check if the attributs is well manages if the documents has a template with freeze attributs
+     * This test will check if the attributes is well manages if the documents has a template with freeze attributes
      *
      */
     @Test
-    public void changeAttributsWithUnlockedTemplate()throws Exception{
+    public void changeAttributesWithUnlockedTemplate()throws Exception{
 
         DocumentMaster documentMaster = new DocumentMaster(workspace, DOCUMENT_ID,user);
 
@@ -345,11 +345,11 @@ public class DocumentManagerBeanTest {
 
         DocumentRevisionKey rKey = new DocumentRevisionKey(workspace.getId(), documentMaster.getId(), documentRevision.getVersion());
 
-        //Creation of current attributs of the iteration
-        InstanceAttribute attribut = new InstanceTextAttribute("Nom", "Testeur", false);
-        HashMap<String, InstanceAttribute> attributsOfIteration = new HashMap<>();
-        attributsOfIteration.put(attribut.getName(), attribut);
-        documentIteration.setInstanceAttributes(attributsOfIteration);
+        //Creation of current attributes of the iteration
+        InstanceAttribute attribute = new InstanceTextAttribute("Nom", "Testeur", false);
+        List<InstanceAttribute> attributesOfIteration = new ArrayList<>();
+        attributesOfIteration.add(attribute);
+        documentIteration.setInstanceAttributes(attributesOfIteration);
 
         documentMaster.setAttributesLocked(false);
 
@@ -361,15 +361,15 @@ public class DocumentManagerBeanTest {
 
         try{
             //Test to remove attribute
-            documentManagerBean.updateDocument(documentIteration.getKey(), "test", new InstanceAttribute[]{}, new DocumentIterationKey[]{});
-            //Add the attribut
-            documentManagerBean.updateDocument(documentIteration.getKey(), "test", new InstanceAttribute[]{attribut}, new DocumentIterationKey[]{});
-            //Change the value of the attribut
-            documentManagerBean.updateDocument(documentIteration.getKey(), "test", new InstanceAttribute[]{new InstanceTextAttribute("Nom", "Testeur change", false)}, new DocumentIterationKey[]{});
-            //Change the type of the attribut
-            documentManagerBean.updateDocument(documentIteration.getKey(), "test", new InstanceAttribute[]{new InstanceDateAttribute("Nom", new Date(), false)}, new DocumentIterationKey[]{});
+            documentManagerBean.updateDocument(documentIteration.getKey(), "test", Arrays.asList(new InstanceAttribute[]{}), new DocumentIterationKey[]{});
+            //Add the attribute
+            documentManagerBean.updateDocument(documentIteration.getKey(), "test", Arrays.asList(new InstanceAttribute[]{attribute}), new DocumentIterationKey[]{});
+            //Change the value of the attribute
+            documentManagerBean.updateDocument(documentIteration.getKey(), "test", Arrays.asList(new InstanceAttribute[]{new InstanceTextAttribute("Nom", "Testeur change", false)}), new DocumentIterationKey[]{});
+            //Change the type of the attribute
+            documentManagerBean.updateDocument(documentIteration.getKey(), "test", Arrays.asList(new InstanceAttribute[]{new InstanceDateAttribute("Nom", new Date(), false)}), new DocumentIterationKey[]{});
         } catch (NotAllowedException notAllowedException3){
-            Assert.assertTrue("updateDocument shouldn't have raised an exception because the attribut are not frozen", false);
+            Assert.assertTrue("updateDocument shouldn't have raised an exception because the attribute are not frozen", false);
         }
     }
 }

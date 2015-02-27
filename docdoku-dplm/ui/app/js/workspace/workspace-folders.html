@@ -1,0 +1,39 @@
+<md-content class="md-padding">
+    <div layout="horizontal" class="md-padding">
+        <div>
+            <md-button aria-label="" href="#/workspace/{{workspace}}/documents/folders/~{{configuration.user}}">
+                <i class="path fa fa-home" ng-class="{selected:path==='~'+configuration.user}"></i>
+                <md-tooltip>
+                    {{'HOME_FOLDER'|translate}}
+                </md-tooltip>
+            </md-button>
+        </div>
+        <div>
+            <md-button aria-label="" href="#/workspace/{{workspace}}/documents/folders">
+                <i class="fa fa-globe path" ng-class="{selected:!path}"></i>
+                <md-tooltip>
+                    {{'ROOT_FOLDER'|translate}}
+                </md-tooltip>
+            </md-button>
+        </div>
+        <div ng-repeat="pathPart in pathParts">
+            <md-button aria-label="" href="#/workspace/{{workspace}}/documents/folders/{{pathPart}}">
+                <i class="path" ng-class="{'fa fa-folder-open-o':$last, 'fa fa-folder-o':!$last,'selected':$last}"></i>
+                {{pathPart | folderShortName}}
+                <md-tooltip>
+                    {{pathPart}}
+                </md-tooltip>
+            </md-button>
+        </div>
+    </div>
+
+    <div layout="horizontal">
+        <div ng-repeat="remoteFolder in remoteFolders">
+            <md-button class="sub-folder" aria-label="" href="#/workspace/{{workspace}}/documents/folders/{{remoteFolder}}">
+                <i class="fa fa-folder"></i>
+                {{remoteFolder | folderShortName}}
+            </md-button>
+        </div>
+    </div>
+
+</md-content>

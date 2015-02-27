@@ -39,6 +39,7 @@ define([
             this.createItemView(model);
         },
 
+
         setEditMode: function (editMode) {
             this.editMode = editMode;
         },

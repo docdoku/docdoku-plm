@@ -95,7 +95,8 @@
             this.fetchFileStatus = function (file) {
                 return CliService.getStatusForFile(file).then(function () {
                     var userModif = parseInt(file.mtime.getTime() / 1000);
-                    var dplmModif = parseInt(file.part.lastModified / 1000);
+                    var lastModified = file.part ? file.part.lastModified : file.document ? file.document.lastModified:0;
+                    var dplmModif = parseInt(lastModified / 1000);
                     file.modified = userModif > dplmModif;
                     file.sync = !file.modified;
                     file.notSync = false;

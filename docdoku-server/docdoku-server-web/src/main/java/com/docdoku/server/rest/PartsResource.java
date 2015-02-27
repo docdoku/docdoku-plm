@@ -22,6 +22,7 @@ package com.docdoku.server.rest;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.common.Workspace;
+import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.product.PartIteration;
@@ -111,6 +112,18 @@ public class PartsResource {
             partDTOs.add(Tools.mapPartRevisionToPartDTO(partRevision));
         }
 
+        return partDTOs;
+    }
+
+    @GET
+    @Path("checkedout")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<PartDTO> getCheckedOutPartRevisions(@PathParam("workspaceId") String workspaceId) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, AccountNotFoundException {
+        PartRevision[] checkedOutPartRevisions = productService.getCheckedOutPartRevisions(workspaceId);
+        List<PartDTO> partDTOs = new ArrayList<>();
+        for(PartRevision partRevision : checkedOutPartRevisions){
+            partDTOs.add(Tools.mapPartRevisionToPartDTO(partRevision));
+        }
         return partDTOs;
     }
 

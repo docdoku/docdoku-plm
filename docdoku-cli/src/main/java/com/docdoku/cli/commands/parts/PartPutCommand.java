@@ -18,8 +18,9 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.cli.commands;
+package com.docdoku.cli.commands.parts;
 
+import com.docdoku.cli.commands.AbstractCommandLine;
 import com.docdoku.cli.helpers.AccountsManager;
 import com.docdoku.cli.helpers.FileHelper;
 import com.docdoku.cli.helpers.LangHelper;
@@ -41,7 +42,7 @@ import java.io.IOException;
  *
  * @author Florent Garin
  */
-public class PutCommand extends AbstractCommandLine{
+public class PartPutCommand extends AbstractCommandLine {
 
     @Option(metaVar = "<revision>", name="-r", aliases = "--revision", usage="specify revision of the part to save ('A', 'B'...); if not specified the part identity (number and revision) corresponding to the cad file will be selected")
     private Version revision;
@@ -83,6 +84,6 @@ public class PutCommand extends AbstractCommandLine{
     }
     @Override
     public String getDescription() throws IOException {
-        return LangHelper.getLocalizedMessage("PutCommandDescription", user);
+        return LangHelper.getLocalizedMessage("PartPutCommandDescription", user);
     }
 }

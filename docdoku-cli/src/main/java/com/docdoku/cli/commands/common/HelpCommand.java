@@ -18,8 +18,10 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.cli.commands;
+package com.docdoku.cli.commands.common;
 
+import com.docdoku.cli.commands.AbstractCommandLine;
+import com.docdoku.cli.commands.parts.*;
 import com.docdoku.cli.helpers.LangHelper;
 import com.docdoku.cli.interfaces.CommandLine;
 import org.kohsuke.args4j.Argument;
@@ -30,7 +32,7 @@ import java.io.IOException;
  *
  * @author Florent Garin
  */
-public class HelpCommand extends AbstractCommandLine{
+public class HelpCommand extends AbstractCommandLine {
 
     @Argument(metaVar = "<command>", index=0, usage = "the command to display the help information")
     private String command;
@@ -46,27 +48,27 @@ public class HelpCommand extends AbstractCommandLine{
         CommandLine cl;
         switch(command){
             case "status": case "stat": case "st":
-                cl=new StatusCommand();
+                cl=new PartStatusCommand();
                 break;
 
             case "get":
-                cl=new GetCommand();
+                cl=new PartGetCommand();
                 break;
 
             case "put":
-                cl=new PutCommand();
+                cl=new PartPutCommand();
                 break;
 
             case "checkout": case "co":
-                cl=new CheckOutCommand();
+                cl=new PartCheckOutCommand();
                 break;
 
             case "undocheckout": case "uco":
-                cl=new UndoCheckOutCommand();
+                cl=new PartUndoCheckOutCommand();
                 break;
 
             case "checkin": case "ci":
-                cl=new CheckInCommand();
+                cl=new PartCheckInCommand();
                 break;
 
             case "create": case "cr":

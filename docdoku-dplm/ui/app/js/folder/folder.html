@@ -29,9 +29,21 @@
             </md-button>
         </h3>
     </div>
-    <md-progress-linear ng-show="loadingFiles" mode="indeterminate"></md-progress-linear>
 
 </md-toolbar>
+
+
+<div class="tabs default" layout="horizontal">
+    <div flex ng-class="{selected:tabs.selected == tabs.documents}">
+        <a ng-href="#/folder/{{folder.uuid}}/documents">{{'DOCUMENTS' | translate}}</a>
+    </div>
+    <div flex ng-class="{selected:tabs.selected == tabs.parts}">
+        <a ng-href="#/folder/{{folder.uuid}}/parts">{{'PARTS' | translate}}</a>
+    </div>
+    <div flex ng-class="{selected:tabs.selected == tabs.unknown}">
+        <a ng-href="#/folder/{{folder.uuid}}/unknown">{{'UNKNOWN' | translate}}</a>
+    </div>
+</div>
 
 <div class="row list-header" layout="horizontal">
     <div flex>
@@ -46,13 +58,13 @@
         <md-checkbox ng-model="filters.modified" aria-label="" title="{{'MODIFIED' | translate}}">
             <i class="fa fa-cloud-upload file-modified"></i>
         </md-checkbox>
-        <md-checkbox ng-model="filters.notSync" aria-label="" title="{{'NOT_SYNC' | translate}}">
-            <i class="fa  fa-plus-circle file-notSync"></i>
-        </md-checkbox>
     </div>
 </div>
+
 <div on-scroll-end="onScrollEnd()" class="fullscreen-wrapper offset-toolbar">
     <md-content class="md-padding">
+        <md-progress-linear ng-show="loadingFiles" mode="indeterminate"></md-progress-linear>
+
         <md-list>
             <md-item ng-show="!loadingFiles && !files.length">{{'NO_FILES'|translate}}</md-item>
 
@@ -69,43 +81,9 @@
                         <i class="fa fa-plus-circle fa-lg file-notSync" ng-show="file.notSync"></i>
                     </div>
 
-                    <div class="md-tile-content">
-
-                        <div class="cursor" ng-click="toggleOpenedFile(file)">
-                            <i style="float:right" class="fa"
-                               ng-class="{'fa-angle-down': file != openedFile, 'fa-angle-up': file === openedFile}"></i>
-
-                            <h3>
-
-                                <i class="fa fa-check" ng-show="file.part && file.part.isReleased"></i>
-                                <i class="fa fa-eye" ng-show="file.part && !file.part.isReleased
-      && !file.part.checkoutUser"></i>
-                                <i class="fa fa-pencil"
-                                   ng-show="file.part && file.part.checkoutUser === configuration.user"></i>
-                                <i class="fa fa-lock"
-                                   ng-show="file.part && file.part.checkoutUser && file.part.checkoutUser !== configuration.user"></i>
-
-                                {{file.path | fileshortname}}
-                                <small class="cad-file-name" ng-if="file.part.partNumber">
-                                    {{file.part.partNumber}}-{{file.part.version}}-{{file.part.iterations | last}}
-                                </small>
-                            </h3>
-                            <h4 ng-show="file.part.checkoutUser">
-                                {{'CHECKOUT_BY' | translate }} {{file.part.checkoutUser}} {{file.part.checkoutDate |
-                                timeago}}
-                            </h4>
-                            <h4 ng-show="file.part.lastModified">
-                                {{'LAST_MODIFIED' | translate }} {{file.part.lastModified | timeago}}
-                            </h4><h4 ng-show="file.mtime">
-                            {{'LAST_ACTION' | translate }} {{file.mtime | timeago}}
-                        </h4>
-                        </div>
-
-                        <div>
-                            <file-actions class="slide-down" ng-if="file === openedFile"></file-actions>
-                        </div>
-
-                    </div>
+                    <div class="file" ng-if="file.part" ng-include="'js/folder/folder-part.html'"></div>
+                    <div class="file" ng-if="file.document" ng-include="'js/folder/folder-document.html'"></div>
+                    <div class="file" ng-if="!file.document && !file.part" ng-include="'js/folder/folder-unknown.html'"></div>
 
                 </md-item-content>
                 <md-divider ng-if="!$last"></md-divider>

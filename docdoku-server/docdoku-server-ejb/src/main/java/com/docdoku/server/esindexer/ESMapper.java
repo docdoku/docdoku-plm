@@ -114,7 +114,7 @@ public class ESMapper {
             }
             if(!doc.getInstanceAttributes().isEmpty()){
                 tmp.startObject("attributes");
-                Collection<InstanceAttribute> listAttr = doc.getInstanceAttributes().values();
+                Collection<InstanceAttribute> listAttr = doc.getInstanceAttributes();
                 for(InstanceAttribute attr:listAttr){
                     setField(tmp,attr.getNameWithoutWhiteSpace(),""+attr.getValue(),0.6f);
                 }
@@ -170,7 +170,7 @@ public class ESMapper {
             setField(tmp,"workflow",part.getPartRevision().getWorkflow(),0.5f);
             if(! part.getInstanceAttributes().isEmpty()){
                 tmp.startObject("attributes");
-                Collection<InstanceAttribute> listAttr = part.getInstanceAttributes().values();
+                Collection<InstanceAttribute> listAttr = part.getInstanceAttributes();
                 for(InstanceAttribute attr:listAttr){
                     setField(tmp,attr.getNameWithoutWhiteSpace(),""+attr.getValue(),0.6f);
                 }

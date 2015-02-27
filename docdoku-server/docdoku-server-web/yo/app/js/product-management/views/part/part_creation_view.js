@@ -71,6 +71,10 @@ define([
             }).render();
         },
 
+        setWorkflowModel: function(template) {
+            this.workflowsView.setValue(template.get('workflowModelId'));
+        },
+
         addAttributes: function (template) {
             var that = this;
 
@@ -164,7 +168,6 @@ define([
             this.resetMask();
             this.bindAttributesView();
 
-
             var templateId = this.$inputPartTemplate.val();
 
             if (templateId) {
@@ -178,10 +181,13 @@ define([
                     this.generateId(template);
                 }
 
+                if (template.get('workflowModelId')) {
+                    this.setWorkflowModel(template);
+                }
+
                 if (template.get('attributeTemplates')) {
                     this.addAttributes(template);
                 }
-
             }
         },
 

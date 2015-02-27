@@ -25,7 +25,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * This class is related to a <a href="PartUsageLink.html">PartUsageLink</a>
+ * This class is related to a {@link PartUsageLink}
  * to indicate a replacement part that could be used instead.
  * 
  * @author Florent Garin

@@ -24,7 +24,7 @@ package com.docdoku.core.document;
 import java.io.Serializable;
 
 /**
- * Identity class of <a href="DocumentRevision.html">DocumentRevision</a> objects.
+ * Identity class of {@link DocumentRevision} objects.
  *
  * @author Florent Garin
  */
@@ -109,12 +109,4 @@ public class DocumentRevisionKey implements Serializable, Comparable<DocumentRev
         return clone;
     }
 
-
-    public String getWorkspaceId() {
-        return documentMaster.getWorkspace();
-    }
-
-    public String getDocumentMasterId() {
-        return documentMaster.getId();
-    }
 }

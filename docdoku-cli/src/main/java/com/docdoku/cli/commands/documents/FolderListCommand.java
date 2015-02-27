@@ -18,49 +18,38 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.cli.commands;
+package com.docdoku.cli.commands.documents;
 
+import com.docdoku.cli.commands.AbstractCommandLine;
 import com.docdoku.cli.helpers.LangHelper;
 import com.docdoku.cli.tools.ScriptingTools;
-import com.docdoku.core.product.PartRevision;
-import com.docdoku.core.services.IProductManagerWS;
+import com.docdoku.core.services.IDocumentManagerWS;
 import org.kohsuke.args4j.Option;
 
 import java.io.IOException;
-import java.util.List;
 
 /**
  *
  * @author Morgan Guimard
  */
-public class PartListCommand extends AbstractCommandLine {
+public class FolderListCommand extends AbstractCommandLine {
 
     @Option(name="-w", aliases = "--workspace", required = true, metaVar = "<workspace>", usage="workspace on which operations occur")
     protected String workspace;
 
-    @Option(name="-c", aliases = "--count", usage="return the number of part revisions within the workspace")
-    private boolean count;
-
-    @Option(name="-s", aliases = "--start", usage="start offset")
-    private int start;
-
-    @Option(name="-m", aliases = "--max-results", usage="max results")
-    private int max;
+    @Option(name="-f", aliases = "--folder", usage="remote folder to list sub folders, default is workspace root folder")
+    private String folder = null;
 
     @Override
     public void execImpl() throws Exception {
-        IProductManagerWS productS = ScriptingTools.createProductService(getServerURL(), user, password);
-        if(count){
-            int partRevisionsCount = productS.getPartsInWorkspaceCount(workspace);
-            output.printPartRevisionsCount(partRevisionsCount);
-        }else{
-            List<PartRevision> partRevisions = productS.getPartRevisions(workspace, start, max);
-            output.printPartRevisions(partRevisions);
-        }
+        IDocumentManagerWS documentS = ScriptingTools.createDocumentService(getServerURL(),user,password);
+        String decodedPath = folder == null ? workspace : workspace+"/"+folder;
+        String[] folders = documentS.getFolders(decodedPath);
+        output.printFolders(folders);
     }
 
     @Override
     public String getDescription() throws IOException {
-        return LangHelper.getLocalizedMessage("PartListCommandDescription",user);
+        return LangHelper.getLocalizedMessage("FolderListCommandDescription",user);
     }
 }

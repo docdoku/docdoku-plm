@@ -1,19 +1,29 @@
 /*global define,App*/
 define([
     'common-objects/views/components/modal',
+    "common-objects/views/workflow/workflow_list",
     'common-objects/views/attributes/template_new_attributes',
     'text!templates/template_new.html'
-], function (ModalView, TemplateNewAttributesView, template) {
+], function (ModalView, DocumentWorkflowListView, TemplateNewAttributesView, template) {
     'use strict';
     var TemplateNewView = ModalView.extend({
 
         template: template,
+
         initialize: function () {
             ModalView.prototype.initialize.apply(this, arguments);
             this.events['click .modal-footer button.btn-primary'] = 'interceptSubmit';
             this.events['submit form'] = 'onSubmitForm';
         },
+
         rendered: function () {
+
+            this.workflowsView = this.addSubView(
+                new DocumentWorkflowListView({
+                    el: '#workflows-' + this.cid
+                })
+            );
+
             this.attributesView = this.addSubView(
                 new TemplateNewAttributesView({
                     el: '#tab-attributes-' + this.cid
@@ -46,11 +56,14 @@ define([
 
         onSubmitForm: function (e) {
             if (this.isValid) {
+                var workflow = this.workflowsView.selected();
+
                 this.collection.create({
                     reference:  this.$('#form-' + this.cid + ' .reference').val(),
                     documentType: this.$('#form-' + this.cid + ' .type').val(),
                     mask: this.$('#form-' + this.cid + ' .mask').val(),
                     idGenerated: this.$('#form-' + this.cid + ' .id-generated').is(':checked'),
+                    workflowModelId: workflow ? workflow.get('id') : null,
                     attributeTemplates: this.attributesView.collection.toJSON(),
                     attributesLocked: this.attributesView.isAttributesLocked()
                 }, {

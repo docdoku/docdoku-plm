@@ -28,8 +28,8 @@ import javax.persistence.*;
 import java.util.Date;
 
 /**
- * Represents an identified order.
- * The order may result in one or more <a href="ChangeRequest.html">ChangeRequest</a>.
+ * Represents an identified issue.
+ * The issue may result in one or more {@link ChangeRequest}.
  *
  * @author Florent Garin
  * @version 2.0, 06/01/14

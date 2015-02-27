@@ -21,6 +21,9 @@
 package com.docdoku.cli.helpers;
 
 import com.docdoku.core.common.BinaryResource;
+import com.docdoku.core.document.DocumentIteration;
+import com.docdoku.core.document.DocumentIterationKey;
+import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartIterationKey;
 import com.docdoku.core.product.PartRevision;
@@ -36,6 +39,7 @@ import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Locale;
+import java.util.Set;
 
 public class FileHelper {
 
@@ -54,7 +58,7 @@ public class FileHelper {
         this.locale = locale;
     }
 
-    public String downloadFile(File pLocalFile, String pURL) throws IOException, LoginException, NoSuchAlgorithmException {
+    private String downloadFile(File pLocalFile, String pURL) throws IOException, LoginException, NoSuchAlgorithmException {
         FilterInputStream in = null;
         OutputStream out = null;
         HttpURLConnection conn = null;
@@ -66,8 +70,8 @@ public class FileHelper {
             output.printInfo(
                     LangHelper.getLocalizedMessage("DownloadingFile",locale)
                     + " : "
-                    + pLocalFile.getName()
-                    + LangHelper.getLocalizedMessage("From",locale)
+                    + pLocalFile.getName() + " "
+                    + LangHelper.getLocalizedMessage("From",locale) + " "
                     + url.getHost());
 
             performHeadHTTPMethod(url);
@@ -110,7 +114,7 @@ public class FileHelper {
         }
     }
 
-    public String uploadFile(File pLocalFile, String pURL) throws IOException, LoginException, NoSuchAlgorithmException {
+    private String uploadFile(File pLocalFile, String pURL) throws IOException, LoginException, NoSuchAlgorithmException {
         InputStream in = null;
         OutputStream out = null;
         HttpURLConnection conn = null;
@@ -122,8 +126,8 @@ public class FileHelper {
             output.printInfo(
                     LangHelper.getLocalizedMessage("UploadingFile",locale)
                     + " : "
-                    + pLocalFile.getName()
-                    + LangHelper.getLocalizedMessage("To",locale)
+                    + pLocalFile.getName() + " "
+                    + LangHelper.getLocalizedMessage("To",locale) + " "
                     + url.getHost());
             performHeadHTTPMethod(url);
 
@@ -198,18 +202,29 @@ public class FileHelper {
         conn.connect();
     }
 
-    public static String getPartURL(URL serverURL, PartIterationKey pPart, String pRemoteFileName) throws UnsupportedEncodingException, MalformedURLException {
+    private static String getPartURL(URL serverURL, PartIterationKey pPartIPK, String pRemoteFileName) throws UnsupportedEncodingException, MalformedURLException {
         return serverURL
                 + "/api/files/"
-                + URLEncoder.encode(pPart.getWorkspaceId(), "UTF-8") + "/"
+                + URLEncoder.encode(pPartIPK.getWorkspaceId(), "UTF-8") + "/"
                 + "parts/"
-                + URLEncoder.encode(pPart.getPartMasterNumber(), "UTF-8") + "/"
-                + pPart.getPartRevision().getVersion() + "/"
-                + pPart.getIteration() + "/nativecad/"
+                + URLEncoder.encode(pPartIPK.getPartMasterNumber(), "UTF-8") + "/"
+                + pPartIPK.getPartRevision().getVersion() + "/"
+                + pPartIPK.getIteration() + "/nativecad/"
                 + URLEncoder.encode(pRemoteFileName, "UTF-8");
     }
 
-    public static String getPartURLUpload(URL serverURL, PartIterationKey pPart, String pRemoteFileName) throws UnsupportedEncodingException, MalformedURLException {
+    private static String getDocumentURL(URL serverURL, DocumentIterationKey pDocIPK, String pRemoteFileName) throws UnsupportedEncodingException, MalformedURLException {
+        return serverURL
+                + "/api/files/"
+                + URLEncoder.encode(pDocIPK.getWorkspaceId(), "UTF-8") + "/"
+                + "documents/"
+                + URLEncoder.encode(pDocIPK.getDocumentMasterId(), "UTF-8") + "/"
+                + pDocIPK.getDocumentRevision().getVersion() + "/"
+                + pDocIPK.getIteration() + "/"
+                + URLEncoder.encode(pRemoteFileName, "UTF-8");
+    }
+
+    public static String getPartURLUpload(URL serverURL, PartIterationKey pPart) throws UnsupportedEncodingException, MalformedURLException {
         return serverURL
                 + "/api/files/"
                 + URLEncoder.encode(pPart.getWorkspaceId(), "UTF-8") + "/"
@@ -217,6 +232,16 @@ public class FileHelper {
                 + URLEncoder.encode(pPart.getPartMasterNumber(), "UTF-8") + "/"
                 + pPart.getPartRevision().getVersion() + "/"
                 + pPart.getIteration() + "/nativecad/";
+    }
+
+    private static String getDocumentURLUpload(URL serverURL, DocumentIterationKey docIPK) throws UnsupportedEncodingException {
+        return serverURL
+                + "/api/files/"
+                + URLEncoder.encode(docIPK.getWorkspaceId(), "UTF-8") + "/"
+                + "parts/"
+                + URLEncoder.encode(docIPK.getDocumentMasterId(), "UTF-8") + "/"
+                + docIPK.getDocumentRevision().getVersion() + "/"
+                + docIPK.getIteration();
     }
 
     public static boolean confirmOverwrite(String fileName){
@@ -227,7 +252,7 @@ public class FileHelper {
 
     public void uploadNativeCADFile(URL serverURL, File cadFile, PartIterationKey partIPK) throws IOException, LoginException, NoSuchAlgorithmException {
         String fileName = cadFile.getName();
-        String digest = uploadFile(cadFile, FileHelper.getPartURLUpload(serverURL, partIPK, fileName));
+        String digest = uploadFile(cadFile, FileHelper.getPartURLUpload(serverURL, partIPK));
 
         File path = cadFile.getParentFile();
         MetaDirectoryManager meta = new MetaDirectoryManager(path);
@@ -266,4 +291,53 @@ public class FileHelper {
         meta.setIteration(filePath,partIPK.getIteration());
         meta.setLastModifiedDate(filePath, localFile.lastModified());
     }
+
+    private void saveMetadata(MetaDirectoryManager meta, DocumentIterationKey docIPK, String digest, File localFile) throws IOException {
+        String filePath=localFile.getAbsolutePath();
+        meta.setDigest(filePath,digest);
+        meta.setDocumentId(filePath,docIPK.getDocumentMasterId());
+        meta.setWorkspace(filePath,docIPK.getWorkspaceId());
+        meta.setRevision(filePath,docIPK.getDocumentRevision().getVersion());
+        meta.setIteration(filePath,docIPK.getIteration());
+        meta.setLastModifiedDate(filePath, localFile.lastModified());
+    }
+
+    public void downloadDocumentFiles(URL serverURL, File path, String workspace, String id, DocumentRevision dr, DocumentIteration di, boolean force) throws IOException, LoginException, NoSuchAlgorithmException {
+        Set<BinaryResource> bins = di.getAttachedFiles();
+        for(BinaryResource bin:bins){
+            String fileName =  bin.getName();
+
+
+            DocumentIterationKey docIPK = new DocumentIterationKey(workspace,id,dr.getVersion(),di.getIteration());
+            boolean writable = (dr.isCheckedOut()) && (dr.getCheckOutUser().getLogin().equals(login)) && (dr.getLastIteration().getIteration()==di.getIteration());
+            File localFile = new File(path,fileName);
+            MetaDirectoryManager meta = new MetaDirectoryManager(path);
+
+            if(localFile.exists() && !force && localFile.lastModified()!=meta.getLastModifiedDate(localFile.getAbsolutePath())){
+                boolean confirm = FileHelper.confirmOverwrite(localFile.getAbsolutePath());
+                if(!confirm) {
+                    return;
+                }
+            }
+
+            localFile.delete();
+            String digest = downloadFile(localFile, FileHelper.getDocumentURL(serverURL, docIPK, fileName));
+            localFile.setWritable(writable);
+
+            saveMetadata(meta, docIPK, digest, localFile);
+
+        }
+    }
+
+
+    public void uploadDocumentFile(URL serverURL, File file, DocumentIterationKey docIPK) throws IOException, LoginException, NoSuchAlgorithmException {
+        String fileName = file.getName();
+        String digest = uploadFile(file, FileHelper.getDocumentURLUpload(serverURL, docIPK));
+
+        File path = file.getParentFile();
+        MetaDirectoryManager meta = new MetaDirectoryManager(path);
+
+        saveMetadata(meta, docIPK, digest, file);
+    }
+
 }

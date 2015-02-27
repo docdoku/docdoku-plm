@@ -460,7 +460,7 @@ public class ESSearcher {
             return new DocumentRevisionDAO(em).loadDocR(docRevisionKey);
         } catch (DocumentRevisionNotFoundException e) {
             String logMessage = ResourceBundle.getBundle(I18N_CONF, Locale.getDefault()).getString("DocumentRevisionNotFoundException");
-            logMessage = MessageFormat.format(logMessage, docRevisionKey.getDocumentMasterId(), docRevisionKey.getVersion());
+            logMessage = MessageFormat.format(logMessage, docRevisionKey.getDocumentMaster().getWorkspace(), docRevisionKey.getVersion());
             LOGGER.log(Level.INFO, logMessage, e);
             return null;
         }

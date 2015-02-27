@@ -25,7 +25,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * The <code>PartLog</code> class represents an entry in the log
+ * The PartLog class represents an entry in the log
  * table that keeps track of all activities around a specific part.
  * 
  * @author Florent Garin

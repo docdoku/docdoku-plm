@@ -20,6 +20,7 @@
 
 package com.docdoku.cli.commands;
 
+import com.docdoku.cli.commands.common.HelpCommand;
 import com.docdoku.cli.helpers.AccountsManager;
 import com.docdoku.cli.helpers.CliOutput;
 import com.docdoku.cli.helpers.LangHelper;

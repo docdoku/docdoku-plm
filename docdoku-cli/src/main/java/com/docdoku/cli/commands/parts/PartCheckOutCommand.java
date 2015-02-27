@@ -18,8 +18,9 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.cli.commands;
+package com.docdoku.cli.commands.parts;
 
+import com.docdoku.cli.commands.AbstractCommandLine;
 import com.docdoku.cli.helpers.AccountsManager;
 import com.docdoku.cli.helpers.FileHelper;
 import com.docdoku.cli.helpers.LangHelper;
@@ -45,7 +46,7 @@ import java.util.List;
  *
  * @author Florent Garin
  */
-public class CheckOutCommand extends AbstractCommandLine{
+public class PartCheckOutCommand extends AbstractCommandLine {
 
     @Option(metaVar = "<revision>", name="-r", aliases = "--revision", usage="specify revision of the part to check out ('A', 'B'...); if not specified the part identity (number and revision) corresponding to the cad file will be selected")
     private Version revision;
@@ -170,6 +171,6 @@ public class CheckOutCommand extends AbstractCommandLine{
 
     @Override
     public String getDescription() throws IOException {
-        return LangHelper.getLocalizedMessage("CheckOutCommandDescription",user);
+        return LangHelper.getLocalizedMessage("PartCheckOutCommandDescription",user);
     }
 }

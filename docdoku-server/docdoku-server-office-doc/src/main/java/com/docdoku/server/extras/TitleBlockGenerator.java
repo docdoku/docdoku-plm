@@ -116,7 +116,7 @@ public class TitleBlockGenerator {
         Set<Tag> tags = docI.getDocumentRevision().getTags();
         String keywords = tags.toString();
         String description = docI.getDocumentRevision().getDescription();
-        Map<String,InstanceAttribute> instanceAttributes = docI.getInstanceAttributes();
+        java.util.List<InstanceAttribute> instanceAttributes = docI.getInstanceAttributes();
         String currentIteration = String.valueOf(docI.getIteration());
 
         Document document = new Document();
@@ -228,12 +228,10 @@ public class TitleBlockGenerator {
 
             // Table body
 
-            for (Object o : instanceAttributes.entrySet()) {
-                Map.Entry pairs = (Map.Entry) o;
-                InstanceAttribute instanceAttr = (InstanceAttribute) pairs.getValue();
-                cell = new PdfPCell(new Phrase((String) pairs.getKey()));
+            for (InstanceAttribute attr : instanceAttributes) {
+                cell = new PdfPCell(new Phrase(attr.getName()));
                 attributesTable.addCell(cell);
-                cell = new PdfPCell(new Phrase(String.valueOf(instanceAttr.getValue())));
+                cell = new PdfPCell(new Phrase(String.valueOf(attr.getValue())));
                 attributesTable.addCell(cell);
             }
 

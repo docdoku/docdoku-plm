@@ -81,6 +81,13 @@ public class PartRevisionDAO {
         return query.getResultList();
     }
 
+    public List<PartRevision> findCheckedOutPartRevisionsForUser(String pWorkspaceId, String pUserLogin) {
+        TypedQuery<PartRevision> query = em.createQuery("SELECT DISTINCT p FROM PartRevision p WHERE p.checkOutUser is not null and p.partMaster.workspace.id = :workspaceId and p.checkOutUser.login = :userLogin", PartRevision.class);
+        query.setParameter("workspaceId", pWorkspaceId);
+        query.setParameter("userLogin", pUserLogin);
+        return query.getResultList();
+    }
+
     public List<PartRevision> getPartRevisions(String pWorkspaceId, int pStart, int pMaxResults) {
         return em.createNamedQuery("PartRevision.findByWorkspace", PartRevision.class)
                 .setParameter("workspaceId", pWorkspaceId)
