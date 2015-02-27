@@ -6,18 +6,22 @@ define([
     'text!templates/part-template/part_template_content.html',
     'views/part-template/part_template_list',
     'views/part-template/part_template_creation_view',
-    'text!common-objects/templates/buttons/delete_button.html'
-], function (Backbone, Mustache, PartTemplateCollection, template, PartTemplateListView, PartTemplateCreationView, deleteButton) {
+    'common-objects/views/security/acl_edit',
+    'text!common-objects/templates/buttons/delete_button.html',
+    'text!common-objects/templates/buttons/ACL_button.html'
+], function (Backbone, Mustache, PartTemplateCollection, template, PartTemplateListView, PartTemplateCreationView,ACLEditView, deleteButton,aclButton) {
     'use strict';
     var PartTemplateContentView = Backbone.View.extend({
         partials: {
-            deleteButton: deleteButton
+            deleteButton: deleteButton,
+            aclButton: aclButton
         },
 
         events: {
             'click button.new-template': 'newPartTemplate',
-            'click button.delete': 'deletePartTemplate'
-        },
+            'click button.delete': 'deletePartTemplate',
+            'click .actions .edit-acl': 'onEditAcl'
+    },
 
         initialize: function () {
             _.bindAll(this);
@@ -45,12 +49,16 @@ define([
         bindDomElements: function () {
             this.$notifications = this.$el.find('.notifications').first();
             this.deleteButton = this.$('.delete');
+            this.aclButton = this.$('.actions .edit-acl');
+
         },
         bindEvent: function(){
             this.partTemplateListView.on('error', this.onError);
             this.partTemplateListView.on('warning', this.onWarning);
             this.partTemplateListView.on('delete-button:display', this.changeDeleteButtonDisplay);
+            this.partTemplateListView.on('acl-button:display', this.changeACLButtonDisplay);
             this.delegateEvents();
+
         },
 
 
@@ -70,6 +78,17 @@ define([
             } else {
                 this.deleteButton.hide();
             }
+        },
+        changeACLButtonDisplay: function(state){
+            if (state) {
+                this.aclButton.show();
+
+            } else {
+                this.aclButton.hide();
+            }
+        },
+        onEditAcl: function () {
+            this.partTemplateListView.editSelectedPartTemplateACL();
         }
 
     });

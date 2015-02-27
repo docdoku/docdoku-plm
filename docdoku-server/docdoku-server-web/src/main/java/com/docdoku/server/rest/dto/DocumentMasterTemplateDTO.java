@@ -20,6 +20,8 @@
 
 package com.docdoku.server.rest.dto;
 
+import com.docdoku.core.security.ACL;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -42,6 +44,7 @@ public class DocumentMasterTemplateDTO implements Serializable{
     private List<String> attachedFiles;
     private List<InstanceAttributeTemplateDTO> attributeTemplates;
     private boolean attributesLocked;
+    private ACLDTO acl;
     
     public DocumentMasterTemplateDTO(){
         
@@ -141,5 +144,13 @@ public class DocumentMasterTemplateDTO implements Serializable{
 
     public void setAttributesLocked(boolean attributesLocked) {
         this.attributesLocked = attributesLocked;
+    }
+
+    public ACLDTO getAcl() {
+        return acl;
+    }
+
+    public void setAcl(ACLDTO acl) {
+        this.acl = acl;
     }
 }

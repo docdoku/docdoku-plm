@@ -20,6 +20,8 @@
 
 package com.docdoku.server.rest.dto;
 
+import com.docdoku.core.security.ACL;
+
 import java.util.Date;
 import java.util.List;
 
@@ -37,6 +39,7 @@ public class PartMasterTemplateDTO {
     private List<InstanceAttributeTemplateDTO> attributeTemplates;
     private boolean attributesLocked;
     private String workflowModelId;
+    private ACLDTO acl;
 
     public PartMasterTemplateDTO(){
     }
@@ -141,5 +144,13 @@ public class PartMasterTemplateDTO {
 
     public void setAttributesLocked(boolean attributesLocked) {
         this.attributesLocked = attributesLocked;
+    }
+
+    public ACLDTO getAcl() {
+        return acl;
+    }
+
+    public void setAcl(ACLDTO acl) {
+        this.acl = acl;
     }
 }

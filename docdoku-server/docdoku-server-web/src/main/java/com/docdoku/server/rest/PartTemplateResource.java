@@ -24,12 +24,10 @@ import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.meta.InstanceAttributeTemplate;
 import com.docdoku.core.product.PartMasterTemplate;
 import com.docdoku.core.product.PartMasterTemplateKey;
+import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IProductManagerLocal;
-import com.docdoku.server.rest.dto.InstanceAttributeTemplateDTO;
-import com.docdoku.server.rest.dto.PartMasterTemplateDTO;
-import com.docdoku.server.rest.dto.PartTemplateCreationDTO;
-import com.docdoku.server.rest.dto.TemplateGeneratedIdDTO;
+import com.docdoku.server.rest.dto.*;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -41,6 +39,7 @@ import javax.ejb.Stateless;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -131,7 +130,7 @@ public class PartTemplateResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public PartMasterTemplateDTO updatePartMsTemplate(@PathParam("workspaceId") String workspaceId,@PathParam("templateId") String templateId, PartMasterTemplateDTO partMsTemplateDTO)
-            throws EntityNotFoundException, AccessRightException {
+            throws EntityNotFoundException, AccessRightException, UserNotActiveException {
 
         String partType = partMsTemplateDTO.getPartType();
         String mask = partMsTemplateDTO.getMask();
@@ -151,10 +150,37 @@ public class PartTemplateResource {
         return mapper.map(template, PartMasterTemplateDTO.class);
     }
 
+    @PUT
+    @Path("{templateId}/acl")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response updatePartMsTemplateACL(@PathParam("workspaceId") String workspaceId,@PathParam("templateId") String templateId, ACLDTO acl)
+            throws EntityNotFoundException, AccessRightException, UserNotActiveException, NotAllowedException {
+
+        if (acl.getGroupEntries().size() > 0 || acl.getUserEntries().size() > 0) {
+
+            Map<String,String> userEntries = new HashMap<>();
+            Map<String,String> groupEntries = new HashMap<>();
+
+            for (Map.Entry<String, ACL.Permission> entry : acl.getUserEntries().entrySet()) {
+                userEntries.put(entry.getKey(), entry.getValue().name());
+            }
+
+            for (Map.Entry<String, ACL.Permission> entry : acl.getGroupEntries().entrySet()) {
+                groupEntries.put(entry.getKey(), entry.getValue().name());
+            }
+
+            productService.updateACLForPartMasterTemplate(workspaceId, templateId, userEntries, groupEntries);
+        }else{
+            productService.removeACLFromPartMasterTemplate(workspaceId, templateId);
+        }
+
+        return Response.ok().build();
+    }
+
     @DELETE
     @Path("{templateId}")
     public Response deletePartMasterTemplate(@PathParam("workspaceId") String workspaceId, @PathParam("templateId") String templateId)
-            throws EntityNotFoundException, AccessRightException {
+            throws EntityNotFoundException, AccessRightException, UserNotActiveException {
 
         productService.deletePartMasterTemplate(new PartMasterTemplateKey(workspaceId, templateId));
         return Response.ok().build();

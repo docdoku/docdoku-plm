@@ -3,3 +3,11 @@
 <td>{{model.documentType}}</td>
 <td><a class="author-popover">{{model.author.name}}</a></td>
 <td><a class="date-popover">{{model.creationDate}}</a></td>
+<td class="template-acl-info">
+    {{#model.isReadOnly}}
+    <i class="fa fa-ban read-only" title="{{i18n.READ_ONLY}}"></i>
+    {{/model.isReadOnly}}
+    {{#model.isFullAccess}}
+    <i class="fa fa-ban full-access" title="{{i18n.FULL_ACCESS}}"></i>
+    {{/model.isFullAccess}}
+</td>

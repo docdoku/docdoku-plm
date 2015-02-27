@@ -22,6 +22,8 @@ package com.docdoku.core.workflow;
 
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
+import com.docdoku.core.exceptions.WorkflowNotFoundException;
+import com.docdoku.core.security.ACL;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -69,6 +71,9 @@ public class WorkflowModel implements Serializable, Cloneable {
 
     @javax.persistence.ManyToOne(optional=false, fetch=FetchType.EAGER)
     private Workspace workspace;
+
+    @OneToOne(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private ACL acl;
 
 
     public WorkflowModel() {
@@ -122,6 +127,14 @@ public class WorkflowModel implements Serializable, Cloneable {
     public ActivityModel setActivityModel(int pStep, ActivityModel pActivity) {
         pActivity.setStep(pStep);
         return activityModels.set(pStep, pActivity);
+    }
+
+    public ACL getAcl() {
+        return acl;
+    }
+
+    public void setAcl(ACL acl) {
+        this.acl = acl;
     }
 
     public Workflow createWorkflow(Map<Role, User> roleUserMap) {
@@ -256,5 +269,6 @@ public class WorkflowModel implements Serializable, Cloneable {
         }
         return clone;
     }
+
 
 }
