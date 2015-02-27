@@ -127,7 +127,7 @@ public class PartTemplateResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public PartMasterTemplateDTO updatePartMsTemplate(@PathParam("workspaceId") String workspaceId,@PathParam("templateId") String templateId, PartMasterTemplateDTO partMsTemplateDTO)
-            throws EntityNotFoundException, AccessRightException {
+            throws EntityNotFoundException, AccessRightException, UserNotActiveException {
 
         String partType = partMsTemplateDTO.getPartType();
         String mask = partMsTemplateDTO.getMask();
@@ -176,7 +176,7 @@ public class PartTemplateResource {
     @DELETE
     @Path("{templateId}")
     public Response deletePartMasterTemplate(@PathParam("workspaceId") String workspaceId, @PathParam("templateId") String templateId)
-            throws EntityNotFoundException, AccessRightException {
+            throws EntityNotFoundException, AccessRightException, UserNotActiveException {
 
         productService.deletePartMasterTemplate(new PartMasterTemplateKey(workspaceId, templateId));
         return Response.ok().build();

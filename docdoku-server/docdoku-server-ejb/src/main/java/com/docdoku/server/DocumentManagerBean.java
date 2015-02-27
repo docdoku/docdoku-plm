@@ -47,7 +47,10 @@ import com.docdoku.server.factory.ACLFactory;
 import javax.annotation.Resource;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
-import javax.ejb.*;
+import javax.ejb.EJB;
+import javax.ejb.Local;
+import javax.ejb.SessionContext;
+import javax.ejb.Stateless;
 import javax.jws.WebService;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -522,7 +525,19 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @Override
     public DocumentMasterTemplate[] getDocumentMasterTemplates(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
-        return new DocumentMasterTemplateDAO(new Locale(user.getLanguage()), em).findAllDocMTemplates(pWorkspaceId);
+        List<DocumentMasterTemplate> templates = new DocumentMasterTemplateDAO(new Locale(user.getLanguage()), em).findAllDocMTemplates(pWorkspaceId);
+
+        ListIterator<DocumentMasterTemplate> ite = templates.listIterator();
+
+        while (ite.hasNext()) {
+            DocumentMasterTemplate template = ite.next();
+            if (!hasDocumentMasterTemplateReadAccess(template,user)) {
+                ite.remove();
+            }
+        }
+
+        return templates.toArray(new DocumentMasterTemplate[templates.size()]);
+
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
@@ -1640,6 +1655,10 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
                 (user.isAdministrator() || isACLGrantReadAccess(user,documentRevision)) &&
                 !isInAnotherUserHomeFolder(user, documentRevision);
     }
+
+    private boolean hasDocumentMasterTemplateReadAccess(DocumentMasterTemplate template, User user){
+        return isInSameWorkspace(user, template) && (user.isAdministrator() || isACLGrantReadAccess(user,template));
+    }
     /**
      * Say if a user, which have access to the workspace, have write access to a document revision
      * @param user A user which have read access to the workspace
@@ -1652,15 +1671,20 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
                 !isInAnotherUserHomeFolder(user, documentRevision);
     }
 
-
     private boolean isInSameWorkspace(User user, DocumentRevision documentRevision){
         return user.getWorkspaceId().equals(documentRevision.getWorkspaceId());
+    }
+    private boolean isInSameWorkspace(User user, DocumentMasterTemplate template){
+        return user.getWorkspaceId().equals(template.getWorkspaceId());
     }
     private boolean isAuthor(User user, DocumentRevision documentRevision){
         return documentRevision.getAuthor().getLogin().equals(user.getLogin());
     }
     private boolean isACLGrantReadAccess(User user, DocumentRevision documentRevision){
         return documentRevision.getACL()==null || documentRevision.getACL().hasReadAccess(user);
+    }
+    private boolean isACLGrantReadAccess(User user, DocumentMasterTemplate template){
+        return template.getAcl()==null || template.getAcl().hasReadAccess(user);
     }
     private boolean isACLGrantWriteAccess(User user, DocumentRevision documentRevision){
         return documentRevision.getACL()==null || documentRevision.getACL().hasWriteAccess(user);

@@ -1209,7 +1209,17 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     @Override
     public PartMasterTemplate[] getPartMasterTemplates(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
-        return new PartMasterTemplateDAO(new Locale(user.getLanguage()), em).findAllPartMTemplates(pWorkspaceId);
+        List<PartMasterTemplate> templates = new PartMasterTemplateDAO(new Locale(user.getLanguage()), em).findAllPartMTemplates(pWorkspaceId);
+
+        ListIterator<PartMasterTemplate> ite = templates.listIterator();
+        while (ite.hasNext()){
+            PartMasterTemplate template = ite.next();
+            if(!hasPartRevisionReadAccess(user,template)){
+                ite.remove();
+            }
+        }
+
+        return templates.toArray(new PartMasterTemplate[templates.size()]);
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
@@ -1827,6 +1837,10 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     private boolean hasPartRevisionReadAccess(User user, PartRevision partRevision){
         return user.isAdministrator() || isACLGrantReadAccess(user,partRevision);
     }
+
+    private boolean hasPartRevisionReadAccess(User user, PartMasterTemplate template){
+        return user.isAdministrator() || isACLGrantReadAccess(user,template);
+    }
     /**
      * Say if a user, which have access to the workspace, have write access to a part revision
      * @param user A user which have read access to the workspace
@@ -1842,6 +1856,9 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     }
     private boolean isACLGrantReadAccess(User user, PartRevision partRevision){
         return partRevision.getACL()==null || partRevision.getACL().hasReadAccess(user);
+    }
+    private boolean isACLGrantReadAccess(User user, PartMasterTemplate template){
+        return template.getAcl()==null || template.getAcl().hasReadAccess(user);
     }
     private boolean isACLGrantWriteAccess(User user, PartRevision partRevision){
         return partRevision.getACL()==null || partRevision.getACL().hasWriteAccess(user);
