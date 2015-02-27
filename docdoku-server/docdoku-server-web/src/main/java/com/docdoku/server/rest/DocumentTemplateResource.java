@@ -126,7 +126,7 @@ public class DocumentTemplateResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public DocumentMasterTemplateDTO updateDocMsTemplate(@PathParam("workspaceId") String workspaceId,@PathParam("templateId") String templateId, DocumentMasterTemplateDTO docMsTemplateDTO)
-            throws EntityNotFoundException, AccessRightException {
+            throws EntityNotFoundException, AccessRightException, UserNotActiveException {
 
         String documentType = docMsTemplateDTO.getDocumentType();
         String mask = docMsTemplateDTO.getMask();
@@ -175,7 +175,7 @@ public class DocumentTemplateResource {
     @DELETE
     @Path("{templateId}")
     public Response deleteDocumentMasterTemplate(@PathParam("workspaceId") String workspaceId, @PathParam("templateId") String templateId)
-            throws EntityNotFoundException, AccessRightException {
+            throws EntityNotFoundException, AccessRightException, UserNotActiveException {
 
         documentService.deleteDocumentMasterTemplate(new DocumentMasterTemplateKey(workspaceId, templateId));
         return Response.ok().build();

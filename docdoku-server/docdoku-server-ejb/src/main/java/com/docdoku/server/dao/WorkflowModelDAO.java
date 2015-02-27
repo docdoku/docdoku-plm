@@ -52,16 +52,10 @@ public class WorkflowModelDAO {
         em.remove(model);
     }
 
-    public WorkflowModel[] findAllWorkflowModels(String pWorkspaceId) {
+    public List<WorkflowModel> findAllWorkflowModels(String pWorkspaceId) {
         WorkflowModel[] models;
         Query query = em.createQuery("SELECT DISTINCT w FROM WorkflowModel w WHERE w.workspaceId = :workspaceId");
-        List listModels = query.setParameter("workspaceId", pWorkspaceId).getResultList();
-        models = new WorkflowModel[listModels.size()];
-        for (int i = 0; i < listModels.size(); i++) {
-            models[i] = (WorkflowModel) listModels.get(i);
-        }
-
-        return models;
+        return query.setParameter("workspaceId", pWorkspaceId).getResultList();
     }
 
     public void createWorkflowModel(WorkflowModel pModel) throws WorkflowModelAlreadyExistsException, CreationException {

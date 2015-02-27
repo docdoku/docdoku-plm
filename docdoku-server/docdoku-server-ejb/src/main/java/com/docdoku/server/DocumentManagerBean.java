@@ -47,7 +47,10 @@ import com.docdoku.server.factory.ACLFactory;
 import javax.annotation.Resource;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
-import javax.ejb.*;
+import javax.ejb.EJB;
+import javax.ejb.Local;
+import javax.ejb.SessionContext;
+import javax.ejb.Stateless;
 import javax.jws.WebService;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -87,12 +90,15 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public BinaryResource saveFileInTemplate(DocumentMasterTemplateKey pDocMTemplateKey, String pName, long pSize) throws WorkspaceNotFoundException, NotAllowedException, DocumentMasterTemplateNotFoundException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException, CreationException, AccessRightException {
-        User user = userManager.checkWorkspaceWriteAccess(pDocMTemplateKey.getWorkspaceId());
+        User user = userManager.checkWorkspaceReadAccess(pDocMTemplateKey.getWorkspaceId());
         Locale locale = new Locale(user.getLanguage());
         checkNameFileValidity(pName, locale);
 
         DocumentMasterTemplateDAO templateDAO = new DocumentMasterTemplateDAO(locale,em);
         DocumentMasterTemplate template = templateDAO.loadDocMTemplate(pDocMTemplateKey);
+
+        checkDocumentTemplateWriteAccess(template,user);
+
         BinaryResource binaryResource = null;
         String fullName = template.getWorkspaceId() + "/document-templates/" + template.getId() + "/" + pName;
 
@@ -519,7 +525,19 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @Override
     public DocumentMasterTemplate[] getDocumentMasterTemplates(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
-        return new DocumentMasterTemplateDAO(new Locale(user.getLanguage()), em).findAllDocMTemplates(pWorkspaceId);
+        List<DocumentMasterTemplate> templates = new DocumentMasterTemplateDAO(new Locale(user.getLanguage()), em).findAllDocMTemplates(pWorkspaceId);
+
+        ListIterator<DocumentMasterTemplate> ite = templates.listIterator();
+
+        while (ite.hasNext()) {
+            DocumentMasterTemplate template = ite.next();
+            if (!hasDocumentMasterTemplateReadAccess(template,user)) {
+                ite.remove();
+            }
+        }
+
+        return templates.toArray(new DocumentMasterTemplate[templates.size()]);
+
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
@@ -532,11 +550,14 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public DocumentMasterTemplate updateDocumentMasterTemplate(DocumentMasterTemplateKey pKey, String pDocumentType, String pMask, InstanceAttributeTemplate[] pAttributeTemplates, boolean idGenerated, boolean attributesLocked) throws WorkspaceNotFoundException, AccessRightException, DocumentMasterTemplateNotFoundException, UserNotFoundException {
-        User user = userManager.checkWorkspaceWriteAccess(pKey.getWorkspaceId());
+    public DocumentMasterTemplate updateDocumentMasterTemplate(DocumentMasterTemplateKey pKey, String pDocumentType, String pMask, InstanceAttributeTemplate[] pAttributeTemplates, boolean idGenerated, boolean attributesLocked) throws WorkspaceNotFoundException, AccessRightException, DocumentMasterTemplateNotFoundException, UserNotFoundException, UserNotActiveException {
+        User user = userManager.checkWorkspaceReadAccess(pKey.getWorkspaceId());
 
         DocumentMasterTemplateDAO templateDAO = new DocumentMasterTemplateDAO(new Locale(user.getLanguage()), em);
         DocumentMasterTemplate template = templateDAO.loadDocMTemplate(pKey);
+
+        checkDocumentTemplateWriteAccess(template,user);
+
         Date now = new Date();
         template.setCreationDate(now);
         template.setAuthor(user);
@@ -1095,10 +1116,15 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public void deleteDocumentMasterTemplate(DocumentMasterTemplateKey pKey)
-            throws WorkspaceNotFoundException, AccessRightException, DocumentMasterTemplateNotFoundException, UserNotFoundException {
-        User user = userManager.checkWorkspaceWriteAccess(pKey.getWorkspaceId());
+            throws WorkspaceNotFoundException, AccessRightException, DocumentMasterTemplateNotFoundException, UserNotFoundException, UserNotActiveException {
+        User user = userManager.checkWorkspaceReadAccess(pKey.getWorkspaceId());
         DocumentMasterTemplateDAO templateDAO = new DocumentMasterTemplateDAO(new Locale(user.getLanguage()), em);
+
+        DocumentMasterTemplate documentMasterTemplate = templateDAO.loadDocMTemplate(pKey);
+        checkDocumentTemplateWriteAccess(documentMasterTemplate,user);
+
         DocumentMasterTemplate template = templateDAO.removeDocMTemplate(pKey);
+
         for (BinaryResource file : template.getAttachedFiles()) {
             try {
                 dataManager.deleteData(file);
@@ -1140,12 +1166,14 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public DocumentMasterTemplate removeFileFromTemplate(String pFullName) throws WorkspaceNotFoundException, DocumentMasterTemplateNotFoundException, AccessRightException, FileNotFoundException, UserNotFoundException, UserNotActiveException {
-        User user = userManager.checkWorkspaceWriteAccess(BinaryResource.parseWorkspaceId(pFullName));
+        User user = userManager.checkWorkspaceReadAccess(BinaryResource.parseWorkspaceId(pFullName));
 
         BinaryResourceDAO binDAO = new BinaryResourceDAO(new Locale(user.getLanguage()), em);
         BinaryResource file = binDAO.loadBinaryResource(pFullName);
 
         DocumentMasterTemplate template = binDAO.getDocumentTemplateOwner(file);
+        checkDocumentTemplateWriteAccess(template,user);
+
         try {
             dataManager.deleteData(file);
         } catch (StorageException e) {
@@ -1627,6 +1655,10 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
                 (user.isAdministrator() || isACLGrantReadAccess(user,documentRevision)) &&
                 !isInAnotherUserHomeFolder(user, documentRevision);
     }
+
+    private boolean hasDocumentMasterTemplateReadAccess(DocumentMasterTemplate template, User user){
+        return isInSameWorkspace(user, template) && (user.isAdministrator() || isACLGrantReadAccess(user,template));
+    }
     /**
      * Say if a user, which have access to the workspace, have write access to a document revision
      * @param user A user which have read access to the workspace
@@ -1639,15 +1671,20 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
                 !isInAnotherUserHomeFolder(user, documentRevision);
     }
 
-
     private boolean isInSameWorkspace(User user, DocumentRevision documentRevision){
         return user.getWorkspaceId().equals(documentRevision.getWorkspaceId());
+    }
+    private boolean isInSameWorkspace(User user, DocumentMasterTemplate template){
+        return user.getWorkspaceId().equals(template.getWorkspaceId());
     }
     private boolean isAuthor(User user, DocumentRevision documentRevision){
         return documentRevision.getAuthor().getLogin().equals(user.getLogin());
     }
     private boolean isACLGrantReadAccess(User user, DocumentRevision documentRevision){
         return documentRevision.getACL()==null || documentRevision.getACL().hasReadAccess(user);
+    }
+    private boolean isACLGrantReadAccess(User user, DocumentMasterTemplate template){
+        return template.getAcl()==null || template.getAcl().hasReadAccess(user);
     }
     private boolean isACLGrantWriteAccess(User user, DocumentRevision documentRevision){
         return documentRevision.getACL()==null || documentRevision.getACL().hasWriteAccess(user);

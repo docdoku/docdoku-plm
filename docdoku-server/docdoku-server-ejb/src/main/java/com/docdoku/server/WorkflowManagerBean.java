@@ -20,11 +20,11 @@
 package com.docdoku.server;
 
 
-import com.docdoku.core.common.*;
+import com.docdoku.core.common.User;
+import com.docdoku.core.common.UserKey;
+import com.docdoku.core.common.Workspace;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.security.ACL;
-import com.docdoku.core.security.ACLUserEntry;
-import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.core.services.IWorkflowManagerLocal;
@@ -42,10 +42,7 @@ import javax.ejb.Stateless;
 import javax.jws.WebService;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @Local(IWorkflowManagerLocal.class)
@@ -60,9 +57,16 @@ public class WorkflowManagerBean implements IWorkflowManagerWS, IWorkflowManager
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public void deleteWorkflowModel(WorkflowModelKey pKey) throws WorkspaceNotFoundException, AccessRightException, WorkflowModelNotFoundException, UserNotFoundException {
-        User user = userManager.checkWorkspaceWriteAccess(pKey.getWorkspaceId());
-        new WorkflowModelDAO(new Locale(user.getLanguage()), em).removeWorkflowModel(pKey);
+    public void deleteWorkflowModel(WorkflowModelKey pKey) throws WorkspaceNotFoundException, AccessRightException, WorkflowModelNotFoundException, UserNotFoundException, UserNotActiveException {
+        User user = userManager.checkWorkspaceReadAccess(pKey.getWorkspaceId());
+
+        WorkflowModelDAO workflowModelDAO = new WorkflowModelDAO(new Locale(user.getLanguage()), em);
+        WorkflowModel workflowModel = workflowModelDAO.loadWorkflowModel(pKey);
+
+        checkWorkflowWriteAccess(workflowModel,user);
+
+        workflowModelDAO.removeWorkflowModel(pKey);
+        new WorkflowModelDAO(new Locale(user.getLanguage()), em);
         em.flush();
     }
 
@@ -85,9 +89,34 @@ public class WorkflowManagerBean implements IWorkflowManagerWS, IWorkflowManager
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
+    public WorkflowModel updateWorkflowModel(WorkflowModelKey workflowModelKey, String pId, String pFinalLifeCycleState, ActivityModel[] pActivityModels) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, WorkflowModelNotFoundException, NotAllowedException, WorkflowModelAlreadyExistsException, CreationException {
+        deleteWorkflowModel(workflowModelKey);
+        return createWorkflowModel(workflowModelKey.getWorkspaceId(),pId,pFinalLifeCycleState,pActivityModels);
+    }
+
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
     public WorkflowModel[] getWorkflowModels(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
-        return new WorkflowModelDAO(new Locale(user.getLanguage()), em).findAllWorkflowModels(pWorkspaceId);
+
+        List<WorkflowModel> allWorkflowModels = new WorkflowModelDAO(new Locale(user.getLanguage()), em).findAllWorkflowModels(pWorkspaceId);
+
+        ListIterator<WorkflowModel> ite = allWorkflowModels.listIterator();
+        while(ite.hasNext()){
+            WorkflowModel workflowModel = ite.next();
+            if(!hasWorkflowModelReadAccess(workflowModel, user)){
+                ite.remove();
+            }
+        }
+        return allWorkflowModels.toArray(new WorkflowModel[allWorkflowModels.size()]);
+    }
+
+    private boolean hasWorkflowModelReadAccess(WorkflowModel workflowModel, User user) {
+        return user.isAdministrator() || isACLGrantReadAccess(user,workflowModel);
+    }
+
+    private boolean isACLGrantReadAccess(User user, WorkflowModel workflowModel) {
+        return workflowModel.getAcl()==null || workflowModel.getAcl().hasReadAccess(user);
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
