@@ -1,6 +1,7 @@
 package com.docdoku.server;
 
 import com.docdoku.core.common.*;
+import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.exceptions.AccessRightException;
 import com.docdoku.core.security.ACL;
 import com.docdoku.core.services.IUserManagerLocal;
@@ -17,6 +18,9 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import javax.persistence.StoredProcedureQuery;
+import javax.persistence.TypedQuery;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -35,6 +39,12 @@ public class WorkflowManagerBeanTest {
     private EntityManager em;
     @Mock
     private IUserManagerLocal userManager;
+
+    @Mock
+    TypedQuery<ACL> aclTypedQuery;
+
+    @Mock
+    StoredProcedureQuery storedProcedureQuery;
 
     private User user;
     private Account account;
@@ -134,7 +144,7 @@ public class WorkflowManagerBeanTest {
 
         // User has read access to the workspace
         Mockito.when(userManager.checkWorkspaceReadAccess(WorkflowUtil.WORKSPACE_ID)).thenReturn(user);
-        Mockito.when(em.find(WorkflowModel.class, new WorkflowModelKey(WorkflowUtil.WORKSPACE_ID,WorkflowUtil.WORKFLOW_MODEL_ID))).thenReturn(workflowModel);
+        Mockito.when(em.find(WorkflowModel.class, new WorkflowModelKey(WorkflowUtil.WORKSPACE_ID, WorkflowUtil.WORKFLOW_MODEL_ID))).thenReturn(workflowModel);
         Mockito.when(em.find(User.class, new UserKey(WorkflowUtil.WORKSPACE_ID,WorkflowUtil.USER_LOGIN))).thenReturn(user);
         Mockito.when(em.find(User.class, new UserKey(WorkflowUtil.WORKSPACE_ID,WorkflowUtil.USER2_LOGIN))).thenReturn(user2);
         Mockito.when(em.find(User.class, new UserKey(WorkflowUtil.WORKSPACE_ID,WorkflowUtil.USER3_LOGIN))).thenReturn(user3);
@@ -142,6 +152,8 @@ public class WorkflowManagerBeanTest {
         Mockito.when(em.getReference(User.class, user.getKey())).thenReturn(user);
         Mockito.when(em.getReference(User.class, user2.getKey())).thenReturn(user2);
         Mockito.when(em.getReference(User.class, user3.getKey())).thenReturn(user3);
+        Mockito.when(aclTypedQuery.setParameter(Matchers.anyString(),Matchers.any())).thenReturn(aclTypedQuery);
+        Mockito.when(em.createNamedQuery(Matchers.<String>any())).thenReturn(aclTypedQuery);
 
           //When
         WorkflowModel workflow= workflowManagerBean.updateACLForWorkflow(WorkflowUtil.WORKSPACE_ID, WorkflowUtil.WORKFLOW_MODEL_ID, userEntries, grpEntries);
