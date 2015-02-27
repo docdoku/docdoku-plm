@@ -2,32 +2,24 @@ package com.docdoku.server.rest;
 
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
-import com.docdoku.core.exceptions.*;
-import com.docdoku.core.product.*;
+import com.docdoku.core.product.PartMaster;
+import com.docdoku.core.product.PartMasterKey;
+import com.docdoku.core.product.PartUsageLink;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.services.IMailerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.rest.dto.*;
 import com.docdoku.server.util.ResourceUtil;
-import com.sun.org.apache.xerces.internal.impl.xpath.regex.Match;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.*;
 
-import javax.ejb.EJB;
 import javax.persistence.EntityManager;
-import javax.servlet.http.HttpServletRequestWrapper;
-import javax.ws.rs.core.Response;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
 
 import static org.junit.Assert.*;
 import static org.mockito.MockitoAnnotations.initMocks;
