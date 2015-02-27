@@ -21,9 +21,7 @@ package com.docdoku.server;
 
 import com.docdoku.core.common.*;
 import com.docdoku.core.configuration.ProductBaseline;
-import com.docdoku.core.document.DocumentIteration;
-import com.docdoku.core.document.DocumentIterationKey;
-import com.docdoku.core.document.DocumentLink;
+import com.docdoku.core.document.*;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.meta.InstanceAttributeTemplate;
@@ -43,6 +41,7 @@ import com.docdoku.core.workflow.*;
 import com.docdoku.server.dao.*;
 import com.docdoku.server.esindexer.ESIndexer;
 import com.docdoku.server.esindexer.ESSearcher;
+import com.docdoku.server.factory.ACLFactory;
 
 import javax.annotation.Resource;
 import javax.annotation.security.DeclareRoles;
@@ -206,7 +205,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             }
 
         }
-
+        //TODO refactor call ACLFactory
         if ((pACLUserEntries != null && pACLUserEntries.length > 0) || (pACLUserGroupEntries != null && pACLUserGroupEntries.length > 0)) {
             ACL acl = new ACL();
              if (pACLUserEntries != null) {
@@ -785,53 +784,22 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         Locale locale = new Locale(user.getLanguage());
+        ACLFactory aclFactory = new ACLFactory(em);
 
-        PartRevisionDAO partRevisionDAO = new PartRevisionDAO(locale,em);
+        PartRevisionDAO partRevisionDAO = new PartRevisionDAO(locale, em);
         PartRevision partRevision = partRevisionDAO.loadPartR(revisionKey);
 
-        if (isAuthor(user,partRevision) || user.isAdministrator()) {
+        if (isAuthor(user, partRevision) || user.isAdministrator()) {
+
             if (partRevision.getACL() == null) {
-                ACL acl = new ACL();
-
-                if (pACLUserEntries != null) {
-                    for (Map.Entry<String, String> entry : pACLUserEntries.entrySet()) {
-                        acl.addEntry(em.getReference(User.class,new UserKey(workspaceId,entry.getKey())),ACL.Permission.valueOf(entry.getValue()));
-                    }
-                }
-
-                if (pACLUserGroupEntries != null) {
-                    for (Map.Entry<String, String> entry : pACLUserGroupEntries.entrySet()) {
-                        acl.addEntry(em.getReference(UserGroup.class,new UserGroupKey(workspaceId,entry.getKey())),ACL.Permission.valueOf(entry.getValue()));
-                    }
-                }
-
-                new ACLDAO(em).createACL(acl);
+                ACL acl = aclFactory.createACL(workspaceId, pACLUserEntries, pACLUserGroupEntries);
                 partRevision.setACL(acl);
-
-            }else{
-                if (pACLUserEntries != null) {
-                    for (ACLUserEntry entry : partRevision.getACL().getUserEntries().values()) {
-                        ACL.Permission newPermission = ACL.Permission.valueOf(pACLUserEntries.get(entry.getPrincipalLogin()));
-                        if(newPermission != null){
-                            entry.setPermission(newPermission);
-                        }
-                    }
-                }
-
-                if (pACLUserGroupEntries != null) {
-                    for (ACLUserGroupEntry entry : partRevision.getACL().getGroupEntries().values()) {
-                        ACL.Permission newPermission = ACL.Permission.valueOf(pACLUserGroupEntries.get(entry.getPrincipalId()));
-                        if(newPermission != null){
-                            entry.setPermission(newPermission);
-                        }
-                    }
-                }
+            } else {
+                aclFactory.updateACL(workspaceId,partRevision.getACL(), pACLUserEntries, pACLUserGroupEntries);
             }
-
-        }else {
+        } else {
             throw new AccessRightException(locale, user);
         }
-
 
     }
 
@@ -955,6 +923,51 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         conversion.setEndDate(new Date());
     }
 
+    @Override
+    public void updateACLForPartMasterTemplate(String pWorkspaceId, String templateId, Map<String, String> userEntries, Map<String, String> groupEntries) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, PartMasterTemplateNotFoundException {
+
+        ACLFactory aclFactory = new ACLFactory(em);
+
+        // Check the read access to the workspace
+        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
+        // Load the part template
+        PartMasterTemplateKey pKey = new PartMasterTemplateKey(pWorkspaceId,templateId);
+        PartMasterTemplate partMasterTemplate = new PartMasterTemplateDAO(new Locale(user.getLanguage()), em).loadPartMTemplate(pKey);
+
+        // Check the access to the part template
+        checkPartTemplateWriteAccess(partMasterTemplate, user);
+
+        if (partMasterTemplate.getAcl() == null) {
+            ACL acl = aclFactory.createACL(pWorkspaceId, userEntries, groupEntries);
+            partMasterTemplate.setAcl(acl);
+        } else {
+            aclFactory.updateACL(pWorkspaceId,partMasterTemplate.getAcl(), userEntries, groupEntries);
+        }
+    }
+
+    @Override
+    public void removeACLFromPartMasterTemplate(String workspaceId, String partTemplateId) throws PartMasterNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartMasterTemplateNotFoundException, AccessRightException {
+
+        // Check the read access to the workspace
+        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+        Locale locale = new Locale(user.getLanguage());
+        // Load the part template
+        PartMasterTemplateKey pKey = new PartMasterTemplateKey(workspaceId,partTemplateId);
+        PartMasterTemplate partMaster = new PartMasterTemplateDAO(new Locale(user.getLanguage()), em).loadPartMTemplate(pKey);
+
+        // Check the access to the part template
+        checkPartTemplateWriteAccess(partMaster, user);
+
+        ACL acl = partMaster.getAcl();
+        if (acl != null) {
+            new ACLDAO(em).removeACLEntries(acl);
+            partMaster.setAcl(null);
+        }
+
+    }
+
+
+
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public PartRevision[] getPartRevisionsWithReference(String pWorkspaceId, String reference, int maxResults) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
@@ -1069,6 +1082,44 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         if (isCheckoutByUser(user,partR) && partR.getLastIteration().equals(partIteration)) {
             removeCADFile(partIteration);
         }
+    }
+
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
+    public BinaryResource renameCADFileInPartIteration(String pFullName, String pNewName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, FileNotFoundException, FileAlreadyExistsException, CreationException {
+
+        User user = userManager.checkWorkspaceReadAccess(BinaryResource.parseWorkspaceId(pFullName));
+        Locale userLocale = new Locale(user.getLanguage());
+        checkNameFileValidity(pNewName, userLocale);
+
+        BinaryResourceDAO binDAO = new BinaryResourceDAO(userLocale, em);
+        BinaryResource file = binDAO.loadBinaryResource(pFullName);
+        PartIteration partIteration = binDAO.getPartOwner(file);
+
+        PartRevision partR = partIteration.getPartRevision();
+
+        if (isCheckoutByUser(user,partR) && partR.getLastIteration().equals(partIteration)) {
+            try {
+
+                dataManager.renameFile(file, pNewName);
+
+                partIteration.setNativeCADFile(null);
+                binDAO.removeBinaryResource(file);
+
+                BinaryResource newFile = new BinaryResource(file.getNewFullName(pNewName),file.getContentLength(), file.getLastModified());
+
+                binDAO.createBinaryResource(newFile);
+                partIteration.setNativeCADFile(newFile);
+
+                return newFile;
+            } catch (StorageException e) {
+                LOGGER.log(Level.INFO, null, e);
+                return null;
+            }
+        }
+        return file;
+
+
     }
 
     private void removeCADFile(PartIteration partIteration)
@@ -1196,7 +1247,17 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     @Override
     public PartMasterTemplate[] getPartMasterTemplates(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
-        return new PartMasterTemplateDAO(new Locale(user.getLanguage()), em).findAllPartMTemplates(pWorkspaceId);
+        List<PartMasterTemplate> templates = new PartMasterTemplateDAO(new Locale(user.getLanguage()), em).findAllPartMTemplates(pWorkspaceId);
+
+        ListIterator<PartMasterTemplate> ite = templates.listIterator();
+        while (ite.hasNext()){
+            PartMasterTemplate template = ite.next();
+            if(!hasPartTemplateReadAccess(user, template)){
+                ite.remove();
+            }
+        }
+
+        return templates.toArray(new PartMasterTemplate[templates.size()]);
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
@@ -1234,12 +1295,15 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public PartMasterTemplate updatePartMasterTemplate(PartMasterTemplateKey pKey, String pPartType, String pWorkflowModelId, String pMask, InstanceAttributeTemplate[] pAttributeTemplates, boolean idGenerated, boolean attributesLocked) throws WorkspaceNotFoundException, AccessRightException, PartMasterTemplateNotFoundException, UserNotFoundException, WorkflowModelNotFoundException {
-        User user = userManager.checkWorkspaceWriteAccess(pKey.getWorkspaceId());
+    public PartMasterTemplate updatePartMasterTemplate(PartMasterTemplateKey pKey, String pPartType, String pWorkflowModelId, String pMask, InstanceAttributeTemplate[] pAttributeTemplates, boolean idGenerated, boolean attributesLocked) throws WorkspaceNotFoundException, AccessRightException, PartMasterTemplateNotFoundException, UserNotFoundException, WorkflowModelNotFoundException, UserNotActiveException {
+        User user = userManager.checkWorkspaceReadAccess(pKey.getWorkspaceId());
         Locale locale = new Locale(user.getLanguage());
 
         PartMasterTemplateDAO templateDAO = new PartMasterTemplateDAO(new Locale(user.getLanguage()), em);
         PartMasterTemplate template = templateDAO.loadPartMTemplate(pKey);
+
+        checkPartTemplateWriteAccess(template,user);
+
         Date now = new Date();
         template.setCreationDate(now);
         template.setAuthor(user);
@@ -1272,9 +1336,13 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public void deletePartMasterTemplate(PartMasterTemplateKey pKey) throws WorkspaceNotFoundException, AccessRightException, PartMasterTemplateNotFoundException, UserNotFoundException {
-        User user = userManager.checkWorkspaceWriteAccess(pKey.getWorkspaceId());
+    public void deletePartMasterTemplate(PartMasterTemplateKey pKey) throws WorkspaceNotFoundException, AccessRightException, PartMasterTemplateNotFoundException, UserNotFoundException, UserNotActiveException {
+        User user = userManager.checkWorkspaceReadAccess(pKey.getWorkspaceId());
         PartMasterTemplateDAO templateDAO = new PartMasterTemplateDAO(new Locale(user.getLanguage()), em);
+
+        PartMasterTemplate partMasterTemplate = templateDAO.loadPartMTemplate(pKey);
+        checkPartTemplateWriteAccess(partMasterTemplate,user);
+
         PartMasterTemplate template = templateDAO.removePartMTemplate(pKey);
         BinaryResource file = template.getAttachedFile();
         if(file != null){
@@ -1288,14 +1356,16 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public BinaryResource saveFileInTemplate(PartMasterTemplateKey pPartMTemplateKey, String pName, long pSize) throws WorkspaceNotFoundException, NotAllowedException, PartMasterTemplateNotFoundException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException, CreationException {
+    public BinaryResource saveFileInTemplate(PartMasterTemplateKey pPartMTemplateKey, String pName, long pSize) throws WorkspaceNotFoundException, NotAllowedException, PartMasterTemplateNotFoundException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException, CreationException, AccessRightException {
         User user = userManager.checkWorkspaceReadAccess(pPartMTemplateKey.getWorkspaceId());
-        //TODO checkWorkspaceWriteAccess ?
         Locale locale = new Locale(user.getLanguage());
         checkNameFileValidity(pName,locale);
 
         PartMasterTemplateDAO templateDAO = new PartMasterTemplateDAO(locale,em);
         PartMasterTemplate template = templateDAO.loadPartMTemplate(pPartMTemplateKey);
+
+        checkPartTemplateWriteAccess(template,user);
+
         BinaryResource binaryResource = null;
         String fullName = template.getWorkspaceId() + "/part-templates/" + template.getId() + "/" + pName;
 
@@ -1319,11 +1389,13 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     @Override
     public PartMasterTemplate removeFileFromTemplate(String pFullName) throws WorkspaceNotFoundException, PartMasterTemplateNotFoundException, AccessRightException, FileNotFoundException, UserNotFoundException, UserNotActiveException {
         User user = userManager.checkWorkspaceReadAccess(BinaryResource.parseWorkspaceId(pFullName));
-        //TODO checkWorkspaceWriteAccess ?
         BinaryResourceDAO binDAO = new BinaryResourceDAO(new Locale(user.getLanguage()), em);
         BinaryResource file = binDAO.loadBinaryResource(pFullName);
 
         PartMasterTemplate template = binDAO.getPartTemplateOwner(file);
+
+        checkPartTemplateWriteAccess(template,user);
+
         try {
             dataManager.deleteData(file);
         } catch (StorageException e) {
@@ -1332,6 +1404,39 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         template.setAttachedFile(null);
         binDAO.removeBinaryResource(file);
         return template;
+    }
+
+    @Override
+    public BinaryResource renameFileInTemplate(String pFullName, String pNewName) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, FileNotFoundException, UserNotActiveException, FileAlreadyExistsException, CreationException {
+        User user = userManager.checkWorkspaceReadAccess(BinaryResource.parseWorkspaceId(pFullName));
+
+        BinaryResourceDAO binDAO = new BinaryResourceDAO(new Locale(user.getLanguage()), em);
+        BinaryResource file = binDAO.loadBinaryResource(pFullName);
+
+        PartMasterTemplate template = binDAO.getPartTemplateOwner(file);
+
+        checkPartTemplateWriteAccess(template,user);
+
+        try {
+
+            dataManager.renameFile(file, pNewName);
+
+            template.setAttachedFile(null);
+            binDAO.removeBinaryResource(file);
+
+            BinaryResource newFile = new BinaryResource(file.getNewFullName(pNewName),file.getContentLength(), file.getLastModified());
+
+            binDAO.createBinaryResource(newFile);
+            template.setAttachedFile(newFile);
+
+            return newFile;
+
+        } catch (StorageException e) {
+            LOGGER.log(Level.INFO, null, e);
+            return null;
+        }
+
+
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
@@ -1750,7 +1855,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         }
 
         User user = userManager.checkWorkspaceReadAccess(partIKey.getWorkspaceId());
-        return canUserAccess(user,partIKey);
+        return canUserAccess(user, partIKey);
     }
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.ADMIN_ROLE_ID})
     @Override
@@ -1794,6 +1899,26 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         throw new AccessRightException(new Locale(user.getLanguage()),user);                                            // Else throw a AccessRightException
     }
 
+    private User checkPartTemplateWriteAccess(PartMasterTemplate template, User user) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException {
+
+        if (user.isAdministrator()) {
+            // Check if it is the workspace's administrator
+            return user;
+        }
+        if (template.getAcl() == null) {
+            // Check if the item haven't ACL
+            return userManager.checkWorkspaceWriteAccess(template.getWorkspaceId());
+        } else if (template.getAcl().hasWriteAccess(user)) {
+            // Check if there is a write access
+            return user;
+        } else {
+            // Else throw a AccessRightException
+            throw new AccessRightException(new Locale(user.getLanguage()), user);
+        }
+
+
+    }
+
     /**
      * Say if a user, which have access to the workspace, have read access to a part revision
      * @param user A user which have read access to the workspace
@@ -1802,6 +1927,10 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
      */
     private boolean hasPartRevisionReadAccess(User user, PartRevision partRevision){
         return user.isAdministrator() || isACLGrantReadAccess(user,partRevision);
+    }
+
+    private boolean hasPartTemplateReadAccess(User user, PartMasterTemplate template){
+        return user.isAdministrator() || isACLGrantReadAccess(user,template);
     }
     /**
      * Say if a user, which have access to the workspace, have write access to a part revision
@@ -1818,6 +1947,9 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     }
     private boolean isACLGrantReadAccess(User user, PartRevision partRevision){
         return partRevision.getACL()==null || partRevision.getACL().hasReadAccess(user);
+    }
+    private boolean isACLGrantReadAccess(User user, PartMasterTemplate template){
+        return template.getAcl()==null || template.getAcl().hasReadAccess(user);
     }
     private boolean isACLGrantWriteAccess(User user, PartRevision partRevision){
         return partRevision.getACL()==null || partRevision.getACL().hasWriteAccess(user);

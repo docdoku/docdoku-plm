@@ -6,14 +6,14 @@ define([
 ], function (User, Workspace, ForbiddenView) {
 
     'use strict';
-    
+
     var ContextResolver = function () {
     };
 
     $.ajaxSetup({
         statusCode: {
             401: function(){
-                location.href = App.config.contextPath;
+                window.location.href = App.config.contextPath + '/faces/login.xhtml?originURL=' + window.location.pathname + window.location.hash;
             }
         }
     });
@@ -47,11 +47,11 @@ define([
                 }
                 // Connected but the workspace doesn't exist
                 else if(res.status === 404){
-                    window.location.href = App.config.contextPath;
+                    window.location.href = App.config.contextPath + '/faces/admin/workspace/workspacesMenu.xhtml';
                 }
                 // However, for dev purposes, if we catch an error, we just reset the url. Should happen only in dev env.
                 else{
-                    window.location.href = App.config.contextPath;
+                    window.location.href = App.config.contextPath + '/faces/admin/workspace/workspacesMenu.xhtml';
                 }
             });
         });

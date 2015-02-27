@@ -107,6 +107,10 @@ public class BinaryResource implements Serializable, Comparable<BinaryResource>{
         return split[0];
     }
 
+    public String getNewFullName(String newName){
+        int index = fullName.lastIndexOf('/');
+        return fullName.substring(0,index) + '/' + newName;
+    }
 
     public void setFullName(String pFullName) {
         fullName = pFullName;
@@ -161,7 +165,7 @@ public class BinaryResource implements Serializable, Comparable<BinaryResource>{
         int index= fullName.lastIndexOf('/');
         return fullName.substring(index+1);
     }
-    
+
     public long getContentLength() {
         return contentLength;
     }

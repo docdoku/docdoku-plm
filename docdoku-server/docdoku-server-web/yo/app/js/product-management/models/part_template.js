@@ -2,8 +2,9 @@
 define([
     'backbone',
     'common-objects/collections/file/attached_file_collection',
-    'common-objects/utils/date'
-], function (Backbone, AttachedFileCollection, Date) {
+    'common-objects/utils/date',
+    'common-objects/utils/acl-checker'
+], function (Backbone, AttachedFileCollection, Date,ACLChecker) {
     'use strict';
     var Template = Backbone.Model.extend({
         className: 'PartTemplate',
@@ -95,6 +96,35 @@ define([
 
         isAttributesLocked: function () {
             return this.get('attributesLocked');
+        },
+        hasACLForCurrentUser: function () {
+            return this.getACLPermissionForCurrentUser() !== false;
+        },
+
+        isForbidden: function () {
+            return this.getACLPermissionForCurrentUser() === 'FORBIDDEN';
+        },
+
+        isReadOnly: function () {
+            return this.getACLPermissionForCurrentUser() === 'READ_ONLY';
+        },
+
+        isFullAccess: function () {
+            return this.getACLPermissionForCurrentUser() === 'FULL_ACCESS';
+        },
+
+        getACLPermissionForCurrentUser: function () {
+            return ACLChecker.getPermission(this.get('acl'));
+        },
+        updateACL: function (args) {
+            $.ajax({
+                type: 'PUT',
+                url: this.url()+'/acl',
+                data: JSON.stringify(args.acl),
+                contentType: 'application/json; charset=utf-8',
+                success: args.success,
+                error: args.error
+            });
         }
 
     });

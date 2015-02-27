@@ -51,7 +51,7 @@ define([
             //setTimeout(function(){
             //    location.reload();
             //},10);
-            window.location.href=App.config.contextPath;
+            window.location.href = App.config.contextPath + '/faces/admin/workspace/workspacesMenu.xhtml';
         },
 
         disconnect:function(){

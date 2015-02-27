@@ -4,3 +4,11 @@
 <td>{{getMask}}</td>
 <td><a class="author-popover">{{getAuthorName}}</a></td>
 <td><a class="date-popover">{{getFormattedCreationDate}}</a></td>
+<td class="template-acl-info">
+    {{#isReadOnly}}
+    <i class="fa fa-ban read-only" title="{{i18n.READ_ONLY}}"></i>
+    {{/isReadOnly}}
+    {{#isFullAccess}}
+    <i class="fa fa-ban full-access" title="{{i18n.FULL_ACCESS}}"></i>
+    {{/isFullAccess}}
+</td>

@@ -36,4 +36,5 @@ public interface StorageProvider {
     String getExternalResourceURI(BinaryResource binaryResource);
     String getShortenExternalResourceURI(BinaryResource binaryResource);
     public void deleteWorkspaceFolder(String workspaceId, List<BinaryResource> binaryResourcesInWorkspace) throws StorageException;
+    void renameData(BinaryResource pBinaryResource, String pNewName) throws StorageException;
 }

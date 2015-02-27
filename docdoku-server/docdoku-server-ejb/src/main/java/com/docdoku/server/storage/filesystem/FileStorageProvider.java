@@ -183,4 +183,10 @@ public class FileStorageProvider implements StorageProvider {
             }
         }
     }
+
+    @Override
+    public void renameData(BinaryResource pBinaryResource, String pNewName) throws StorageException {
+        File src = new File(getVirtualPath(pBinaryResource));
+        src.renameTo(new File(new StringBuilder().append(src.getParentFile().getAbsolutePath()).append("/").append(pNewName).toString()));
+    }
 }
