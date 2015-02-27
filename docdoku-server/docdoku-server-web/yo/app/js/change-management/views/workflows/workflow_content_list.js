@@ -169,13 +169,20 @@ define([
                         aclEditView.closeModal();
                         self.listView.redraw();
                     },
-                    error: function () {
-                        window.alert(App.config.i18n.EDITION_ERROR);
-                    }
+                    error: self.onError
                 });
             });
 
             return false;
+        },
+        onError:function(model, error){
+            var errorMessage = model.responseText;
+
+            $("#acl_edit_modal").find('.notifications').first().append(new AlertView({
+                type: 'error',
+                message: errorMessage
+            }).render().$el);
+            this.collection.fetch();
         }
 
 

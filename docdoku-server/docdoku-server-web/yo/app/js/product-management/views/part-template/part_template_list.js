@@ -4,8 +4,9 @@ define([
     'mustache',
     'text!templates/part-template/part_template_list.html',
     'views/part-template/part_template_list_item',
-    'common-objects/views/security/acl_edit'
-], function (Backbone, Mustache, template, PartTemplateListItemView,ACLEditView) {
+    'common-objects/views/security/acl_edit',
+    'common-objects/views/alert'
+], function (Backbone, Mustache, template, PartTemplateListItemView,ACLEditView,AlertView) {
 	'use strict';
     var PartTemplateListView = Backbone.View.extend({
 
@@ -184,10 +185,10 @@ define([
                     success: function () {
                         templateSelected.set('acl', acl);
                         aclEditView.closeModal();
-                        _this.listItemViews.redraw();
                     },
-                    error: function () {
-                        window.alert(App.config.i18n.EDITION_ERROR);
+                    error: function (model, err) {
+                       _this.onError(model,err);
+
                     }
                 });
             });
@@ -222,6 +223,14 @@ define([
                 ]
             });
             this.$el.parent().find('.dataTables_filter input').attr('placeholder', App.config.i18n.FILTER);
+        },
+        onError: function (model) {
+            var errorMessage = model.responseText;
+
+            $("#acl_edit_modal").find('.notifications').first().append(new AlertView({
+                type: 'error',
+                message: errorMessage
+            }).render().$el);
         }
 
     });

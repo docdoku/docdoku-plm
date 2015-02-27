@@ -7,8 +7,9 @@ define([
     'common-objects/views/security/acl_edit',
     'text!templates/template_content_list.html',
     'text!common-objects/templates/buttons/delete_button.html',
-    'text!common-objects/templates/buttons/ACL_button.html'
-], function (TemplateList, ContentView, TemplateListView, TemplateNewView,ACLEditView, template, deleteButton,aclButton) {
+    'text!common-objects/templates/buttons/ACL_button.html',
+    'common-objects/views/alert'
+], function (TemplateList, ContentView, TemplateListView, TemplateNewView,ACLEditView, template, deleteButton,aclButton,AlertView) {
 	'use strict';
 	var TemplateContentListView = ContentView.extend({
 
@@ -102,9 +103,7 @@ define([
                         aclEditView.closeModal();
                         self.listView.redraw();
                     },
-                    error: function () {
-                        window.alert(App.config.i18n.EDITION_ERROR);
-                    }
+                    error: self.onError
                 });
             });
 
@@ -137,6 +136,15 @@ define([
             });
 
             return false;
+        },
+        onError:function(model, error){
+            var errorMessage = model.responseText;
+
+            $("#acl_edit_modal").find('.notifications').first().append(new AlertView({
+                type: 'error',
+                message: errorMessage
+            }).render().$el);
+            this.collection.fetch();
         }
     });
     return TemplateContentListView;
