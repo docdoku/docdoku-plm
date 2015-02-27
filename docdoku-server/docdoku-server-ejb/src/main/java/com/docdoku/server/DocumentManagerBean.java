@@ -87,12 +87,15 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public BinaryResource saveFileInTemplate(DocumentMasterTemplateKey pDocMTemplateKey, String pName, long pSize) throws WorkspaceNotFoundException, NotAllowedException, DocumentMasterTemplateNotFoundException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException, CreationException, AccessRightException {
-        User user = userManager.checkWorkspaceWriteAccess(pDocMTemplateKey.getWorkspaceId());
+        User user = userManager.checkWorkspaceReadAccess(pDocMTemplateKey.getWorkspaceId());
         Locale locale = new Locale(user.getLanguage());
         checkNameFileValidity(pName, locale);
 
         DocumentMasterTemplateDAO templateDAO = new DocumentMasterTemplateDAO(locale,em);
         DocumentMasterTemplate template = templateDAO.loadDocMTemplate(pDocMTemplateKey);
+
+        checkDocumentTemplateWriteAccess(template,user);
+
         BinaryResource binaryResource = null;
         String fullName = template.getWorkspaceId() + "/document-templates/" + template.getId() + "/" + pName;
 
@@ -532,11 +535,14 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public DocumentMasterTemplate updateDocumentMasterTemplate(DocumentMasterTemplateKey pKey, String pDocumentType, String pMask, InstanceAttributeTemplate[] pAttributeTemplates, boolean idGenerated, boolean attributesLocked) throws WorkspaceNotFoundException, AccessRightException, DocumentMasterTemplateNotFoundException, UserNotFoundException {
-        User user = userManager.checkWorkspaceWriteAccess(pKey.getWorkspaceId());
+    public DocumentMasterTemplate updateDocumentMasterTemplate(DocumentMasterTemplateKey pKey, String pDocumentType, String pMask, InstanceAttributeTemplate[] pAttributeTemplates, boolean idGenerated, boolean attributesLocked) throws WorkspaceNotFoundException, AccessRightException, DocumentMasterTemplateNotFoundException, UserNotFoundException, UserNotActiveException {
+        User user = userManager.checkWorkspaceReadAccess(pKey.getWorkspaceId());
 
         DocumentMasterTemplateDAO templateDAO = new DocumentMasterTemplateDAO(new Locale(user.getLanguage()), em);
         DocumentMasterTemplate template = templateDAO.loadDocMTemplate(pKey);
+
+        checkDocumentTemplateWriteAccess(template,user);
+
         Date now = new Date();
         template.setCreationDate(now);
         template.setAuthor(user);
@@ -1095,10 +1101,15 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public void deleteDocumentMasterTemplate(DocumentMasterTemplateKey pKey)
-            throws WorkspaceNotFoundException, AccessRightException, DocumentMasterTemplateNotFoundException, UserNotFoundException {
-        User user = userManager.checkWorkspaceWriteAccess(pKey.getWorkspaceId());
+            throws WorkspaceNotFoundException, AccessRightException, DocumentMasterTemplateNotFoundException, UserNotFoundException, UserNotActiveException {
+        User user = userManager.checkWorkspaceReadAccess(pKey.getWorkspaceId());
         DocumentMasterTemplateDAO templateDAO = new DocumentMasterTemplateDAO(new Locale(user.getLanguage()), em);
+
+        DocumentMasterTemplate documentMasterTemplate = templateDAO.loadDocMTemplate(pKey);
+        checkDocumentTemplateWriteAccess(documentMasterTemplate,user);
+
         DocumentMasterTemplate template = templateDAO.removeDocMTemplate(pKey);
+
         for (BinaryResource file : template.getAttachedFiles()) {
             try {
                 dataManager.deleteData(file);
@@ -1140,12 +1151,14 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public DocumentMasterTemplate removeFileFromTemplate(String pFullName) throws WorkspaceNotFoundException, DocumentMasterTemplateNotFoundException, AccessRightException, FileNotFoundException, UserNotFoundException, UserNotActiveException {
-        User user = userManager.checkWorkspaceWriteAccess(BinaryResource.parseWorkspaceId(pFullName));
+        User user = userManager.checkWorkspaceReadAccess(BinaryResource.parseWorkspaceId(pFullName));
 
         BinaryResourceDAO binDAO = new BinaryResourceDAO(new Locale(user.getLanguage()), em);
         BinaryResource file = binDAO.loadBinaryResource(pFullName);
 
         DocumentMasterTemplate template = binDAO.getDocumentTemplateOwner(file);
+        checkDocumentTemplateWriteAccess(template,user);
+
         try {
             dataManager.deleteData(file);
         } catch (StorageException e) {

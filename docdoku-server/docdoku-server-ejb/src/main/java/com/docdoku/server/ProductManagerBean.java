@@ -1242,11 +1242,14 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public PartMasterTemplate updatePartMasterTemplate(PartMasterTemplateKey pKey, String pPartType, String pMask, InstanceAttributeTemplate[] pAttributeTemplates, boolean idGenerated, boolean attributesLocked) throws WorkspaceNotFoundException, AccessRightException, PartMasterTemplateNotFoundException, UserNotFoundException {
-        User user = userManager.checkWorkspaceWriteAccess(pKey.getWorkspaceId());
+    public PartMasterTemplate updatePartMasterTemplate(PartMasterTemplateKey pKey, String pPartType, String pMask, InstanceAttributeTemplate[] pAttributeTemplates, boolean idGenerated, boolean attributesLocked) throws WorkspaceNotFoundException, AccessRightException, PartMasterTemplateNotFoundException, UserNotFoundException, UserNotActiveException {
+        User user = userManager.checkWorkspaceReadAccess(pKey.getWorkspaceId());
 
         PartMasterTemplateDAO templateDAO = new PartMasterTemplateDAO(new Locale(user.getLanguage()), em);
         PartMasterTemplate template = templateDAO.loadPartMTemplate(pKey);
+
+        checkPartTemplateWriteAccess(template,user);
+
         Date now = new Date();
         template.setCreationDate(now);
         template.setAuthor(user);
@@ -1272,9 +1275,13 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public void deletePartMasterTemplate(PartMasterTemplateKey pKey) throws WorkspaceNotFoundException, AccessRightException, PartMasterTemplateNotFoundException, UserNotFoundException {
-        User user = userManager.checkWorkspaceWriteAccess(pKey.getWorkspaceId());
+    public void deletePartMasterTemplate(PartMasterTemplateKey pKey) throws WorkspaceNotFoundException, AccessRightException, PartMasterTemplateNotFoundException, UserNotFoundException, UserNotActiveException {
+        User user = userManager.checkWorkspaceReadAccess(pKey.getWorkspaceId());
         PartMasterTemplateDAO templateDAO = new PartMasterTemplateDAO(new Locale(user.getLanguage()), em);
+
+        PartMasterTemplate partMasterTemplate = templateDAO.loadPartMTemplate(pKey);
+        checkPartTemplateWriteAccess(partMasterTemplate,user);
+
         PartMasterTemplate template = templateDAO.removePartMTemplate(pKey);
         BinaryResource file = template.getAttachedFile();
         if(file != null){
@@ -1288,14 +1295,16 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public BinaryResource saveFileInTemplate(PartMasterTemplateKey pPartMTemplateKey, String pName, long pSize) throws WorkspaceNotFoundException, NotAllowedException, PartMasterTemplateNotFoundException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException, CreationException {
+    public BinaryResource saveFileInTemplate(PartMasterTemplateKey pPartMTemplateKey, String pName, long pSize) throws WorkspaceNotFoundException, NotAllowedException, PartMasterTemplateNotFoundException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException, CreationException, AccessRightException {
         User user = userManager.checkWorkspaceReadAccess(pPartMTemplateKey.getWorkspaceId());
-        //TODO checkWorkspaceWriteAccess ?
         Locale locale = new Locale(user.getLanguage());
         checkNameFileValidity(pName,locale);
 
         PartMasterTemplateDAO templateDAO = new PartMasterTemplateDAO(locale,em);
         PartMasterTemplate template = templateDAO.loadPartMTemplate(pPartMTemplateKey);
+
+        checkPartTemplateWriteAccess(template,user);
+
         BinaryResource binaryResource = null;
         String fullName = template.getWorkspaceId() + "/part-templates/" + template.getId() + "/" + pName;
 
@@ -1319,11 +1328,13 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     @Override
     public PartMasterTemplate removeFileFromTemplate(String pFullName) throws WorkspaceNotFoundException, PartMasterTemplateNotFoundException, AccessRightException, FileNotFoundException, UserNotFoundException, UserNotActiveException {
         User user = userManager.checkWorkspaceReadAccess(BinaryResource.parseWorkspaceId(pFullName));
-        //TODO checkWorkspaceWriteAccess ?
         BinaryResourceDAO binDAO = new BinaryResourceDAO(new Locale(user.getLanguage()), em);
         BinaryResource file = binDAO.loadBinaryResource(pFullName);
 
         PartMasterTemplate template = binDAO.getPartTemplateOwner(file);
+
+        checkPartTemplateWriteAccess(template,user);
+
         try {
             dataManager.deleteData(file);
         } catch (StorageException e) {
@@ -1743,7 +1754,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         }
 
         User user = userManager.checkWorkspaceReadAccess(partIKey.getWorkspaceId());
-        return canUserAccess(user,partIKey);
+        return canUserAccess(user, partIKey);
     }
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.ADMIN_ROLE_ID})
     @Override
@@ -1787,16 +1798,16 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         throw new AccessRightException(new Locale(user.getLanguage()),user);                                            // Else throw a AccessRightException
     }
 
-    private User checkPartTemplateWriteAccess(PartMasterTemplate partMaster, User user) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException {
+    private User checkPartTemplateWriteAccess(PartMasterTemplate template, User user) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException {
 
         if (user.isAdministrator()) {
             // Check if it is the workspace's administrator
             return user;
         }
-        if (partMaster.getAcl() == null) {
+        if (template.getAcl() == null) {
             // Check if the item haven't ACL
-            return userManager.checkWorkspaceWriteAccess(partMaster.getWorkspaceId());
-        } else if (partMaster.getAcl().hasWriteAccess(user)) {
+            return userManager.checkWorkspaceWriteAccess(template.getWorkspaceId());
+        } else if (template.getAcl().hasWriteAccess(user)) {
             // Check if there is a write access
             return user;
         } else {
