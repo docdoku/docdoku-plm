@@ -207,6 +207,7 @@ define({
 	LIFECYCLE_STATE: "Etat du cycle de vie",
     LINK_DESCRIPTION: "Description du lien",
     LINKS: "Liens",
+    LIST_LOV:"Ensemble des listes de valeurs",
     LOADING:'Chargement',
 	LOCK_ATTRIBUTES: "Geler la structure des attributs",
 	LOGOUT: 'Se déconnecter',

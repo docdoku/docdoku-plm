@@ -8,8 +8,9 @@ define([
     'text!templates/template_content_list.html',
     'text!common-objects/templates/buttons/delete_button.html',
     'text!common-objects/templates/buttons/ACL_button.html',
-    'common-objects/views/alert'
-], function (TemplateList, ContentView, TemplateListView, TemplateNewView,ACLEditView, template, deleteButton,aclButton,AlertView) {
+    'common-objects/views/alert',
+    'common-objects/views/lov/lov_modal'
+], function (TemplateList, ContentView, TemplateListView, TemplateNewView,ACLEditView, template, deleteButton,aclButton,AlertView, LOVModalView) {
 	'use strict';
 	var TemplateContentListView = ContentView.extend({
 
@@ -29,6 +30,7 @@ define([
             this.events['click .actions .new-template'] = 'actionNew';
             this.events['click .actions .delete'] = 'actionDelete';
             this.events['click .actions .edit-acl'] = 'onEditAcl';
+            this.events['click .actions .list-lov'] = 'showLovs';
         },
         bindDomElement : function(){
             this.$aclButton = this.$('.actions .edit-acl');
@@ -145,6 +147,13 @@ define([
                 message: errorMessage
             }).render().$el);
             this.collection.fetch();
+        },
+
+        showLovs: function(){
+          var lovmodal = new LOVModalView({
+          });
+            window.document.body.appendChild(lovmodal.render().el);
+            lovmodal.openModal();
         }
     });
     return TemplateContentListView;
