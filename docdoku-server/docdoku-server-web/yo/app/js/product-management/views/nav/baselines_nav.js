@@ -4,7 +4,7 @@ define([
     'mustache',
     'common-objects/common/singleton_decorator',
     'text!templates/nav/baselines_nav.html',
-    'views/baseline/baselines_content'
+    'views/baselines/baselines_content'
 ], function (Backbone, Mustache, singletonDecorator, template, BaselinesContentView) {
     'use strict';
     var BaselinesNavView = Backbone.View.extend({

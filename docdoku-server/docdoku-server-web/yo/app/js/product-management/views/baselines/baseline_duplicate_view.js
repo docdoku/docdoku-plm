@@ -2,7 +2,7 @@
 define([
     'backbone',
     'mustache',
-    'text!templates/baseline/baseline_duplicate.html',
+    'text!templates/baselines/baseline_duplicate.html',
     'common-objects/views/alert'
 ], function (Backbone, Mustache, template,AlertView) {
     'use strict';

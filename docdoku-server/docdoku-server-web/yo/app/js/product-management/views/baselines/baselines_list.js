@@ -2,8 +2,8 @@
 define([
     'backbone',
     'mustache',
-    'text!templates/baseline/baselines_list.html',
-    'views/baseline/baselines_list_item'
+    'text!templates/baselines/baselines_list.html',
+    'views/baselines/baselines_list_item'
 ], function (Backbone, Mustache, template, BaselinesListItemView) {
     'use strict';
 

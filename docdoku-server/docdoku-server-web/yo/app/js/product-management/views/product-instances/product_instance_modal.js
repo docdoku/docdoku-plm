@@ -3,7 +3,7 @@ define([
     'backbone',
     'mustache',
     'text!templates/product-instances/product_instance_modal.html',
-    'views/baseline/baselined_part_list',
+    'views/baselines/baselined_part_list',
     'common-objects/utils/date',
     'common-objects/views/alert'
 ], function (Backbone, Mustache, template, BaselinedPartListView, date,AlertView) {

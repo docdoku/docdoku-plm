@@ -2,8 +2,8 @@
 define([
     'backbone',
     'mustache',
-    'text!templates/baseline/baselined_part_list.html',
-    'views/baseline/baselined_part_list_item',
+    'text!templates/baselines/baselined_part_list.html',
+    'views/baselines/baselined_part_list_item',
     'common-objects/models/baselined_part'
 ], function (Backbone, Mustache, template, BaselinedPartListItemView, BaselinedPart) {
 	'use strict';

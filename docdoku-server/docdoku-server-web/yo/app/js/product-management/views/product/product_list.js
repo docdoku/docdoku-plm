@@ -126,20 +126,17 @@ define([
 
         onNoProductSelected: function () {
             this.trigger('delete-button:display', false);
-            this.trigger('snap-latest-baseline-button:display', false);
-            this.trigger('snap-released-baseline-button:display', false);
+            this.trigger('create-baseline-button:display', false);
         },
 
         onOneProductSelected: function () {
             this.trigger('delete-button:display', true);
-            this.trigger('snap-latest-baseline-button:display', true);
-            this.trigger('snap-released-baseline-button:display', true);
+            this.trigger('create-baseline-button:display', true);
         },
 
         onSeveralProductsSelected: function () {
             this.trigger('delete-button:display', true);
-            this.trigger('snap-latest-baseline-button:display', false);
-            this.trigger('snap-released-baseline-button:display', false);
+            this.trigger('create-baseline-button:display', false);
         },
 
         getSelectedProduct: function () {

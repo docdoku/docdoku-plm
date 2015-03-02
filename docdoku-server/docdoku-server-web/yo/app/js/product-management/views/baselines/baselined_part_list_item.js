@@ -2,7 +2,7 @@
 define([
     'backbone',
     'mustache',
-    'text!templates/baseline/baselined_part_list_item.html'
+    'text!templates/baselines/baselined_part_list_item.html'
 ], function (Backbone, Mustache, template) {
     'use strict';
     var BaselinedPartListItemView = Backbone.View.extend({

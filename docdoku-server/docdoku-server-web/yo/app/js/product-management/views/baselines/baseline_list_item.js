@@ -2,7 +2,7 @@
 define([
     'backbone',
     'mustache',
-    'text!templates/baseline/baseline_list_item.html'
+    'text!templates/baselines/baseline_list_item.html'
 ], function (Backbone, Mustache, template) {
     'use strict';
     var BaselineItemView = Backbone.View.extend({

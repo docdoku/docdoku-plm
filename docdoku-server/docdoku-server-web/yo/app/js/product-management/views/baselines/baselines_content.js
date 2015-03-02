@@ -4,9 +4,9 @@ define([
     'mustache',
     'common-objects/collections/baselines',
     'collections/configuration_items',
-    'text!templates/baseline/baselines_content.html',
-    'views/baseline/baselines_list',
-    'views/baseline/baseline_duplicate_view',
+    'text!templates/baselines/baselines_content.html',
+    'views/baselines/baselines_list',
+    'views/baselines/baseline_duplicate_view',
     'text!common-objects/templates/buttons/delete_button.html',
     'text!common-objects/templates/buttons/duplicate_button.html',
     'common-objects/views/alert'

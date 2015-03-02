@@ -4,8 +4,8 @@ define([
 	'mustache',
 	'common-objects/collections/baselines',
 	'text!templates/baselines/baseline_select.html',
-	'common-objects/views/baselines/snap_baseline_view'
-], function (Backbone, Mustache, Baselines, template, SnapBaselineView) {
+	'views/baselines/baseline_creation_view'
+], function (Backbone, Mustache, Baselines, template, BaselineCreationView) {
 	'use strict';
 
 	var BaselineSelectView = Backbone.View.extend({
@@ -16,7 +16,7 @@ define([
 		},
 
 		initialize:function(){
-			this.type = (this.options && this.options.type) ? this.options.type : 'product';
+			this.type = 'document';
 			if(!this.collection){
 				var data = {
 					type : this.type
@@ -87,12 +87,9 @@ define([
 		},
 
 		createBaseline:function(){
-			var snapBaselineView;
-			if(this.type==='document'){
-				snapBaselineView = new SnapBaselineView({type: 'DOCUMENT', collection: this.collection});
-			}
-            window.document.body.appendChild(snapBaselineView.render().el);
-			snapBaselineView.openModal();
+			var baselineCreationView = new BaselineCreationView({collection: this.collection});
+            window.document.body.appendChild(baselineCreationView.render().el);
+            baselineCreationView.openModal();
 		},
 
 		deleteBaseline:function(){

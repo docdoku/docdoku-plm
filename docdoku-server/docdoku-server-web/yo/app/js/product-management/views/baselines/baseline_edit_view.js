@@ -2,8 +2,8 @@
 define([
     'backbone',
     'mustache',
-    'text!templates/baseline/baseline_edit.html',
-    'views/baseline/baselined_part_list',
+    'text!templates/baselines/baseline_edit.html',
+    'views/baselines/baselined_part_list',
     'common-objects/views/alert'
 ], function (Backbone, Mustache, template, BaselinePartListView,AlertView) {
     'use strict';

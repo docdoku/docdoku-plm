@@ -3,8 +3,8 @@ define([
     'backbone',
     'mustache',
     'text!templates/product/product_details.html',
-    'views/baseline/baseline_list',
-    'views/baseline/baseline_edit_view',
+    'views/baselines/baseline_list',
+    'views/baselines/baseline_edit_view',
     'common-objects/views/alert'
 ], function (Backbone, Mustache, template, BaselineListView, BaselineEditView, AlertView) {
     'use strict';

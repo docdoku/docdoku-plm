@@ -57,6 +57,10 @@ public class ProductBaselineCreationReport implements Serializable{
         return conflits;
     }
 
+    public void setConflits(Set<PartRevision> conflits) {
+        this.conflits = conflits;
+    }
+
     public void addConflit(PartRevision partRevision) {
         this.conflits.add(partRevision);
     }

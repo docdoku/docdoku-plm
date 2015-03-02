@@ -4,9 +4,8 @@ define([
 	'mustache',
 	'common-objects/collections/baselines',
     'common-objects/collections/product_instances',
-	'text!templates/baselines/baseline_select.html',
-	'common-objects/views/baselines/snap_baseline_view'
-], function (Backbone, Mustache, Baselines, ProductInstances, template, SnapBaselineView) {
+	'text!templates/baselines/baseline_select.html'
+], function (Backbone, Mustache, Baselines, ProductInstances, template) {
 	'use strict';
 
 	var BaselineSelectView = Backbone.View.extend({
