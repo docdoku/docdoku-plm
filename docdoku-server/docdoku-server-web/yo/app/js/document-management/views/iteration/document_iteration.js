@@ -88,19 +88,19 @@ define([
                 isCheckoutByConnectedUser: this.model.isCheckoutByConnectedUser(),
                 isCheckout: this.model.isCheckout(),
                 editMode: editMode,
-                master: this.model.toJSON(),
+                partRevision: this.model.toJSON(),
                 i18n: App.config.i18n,
                 permalink: this.model.getPermalink(),
                 hasIterations: this.iterations.length
             };
 
-            data.master.creationDate = date.formatTimestamp(
+            data.partRevision.creationDate = date.formatTimestamp(
                 App.config.i18n._DATE_FORMAT,
-                data.master.creationDate
+                data.partRevision.creationDate
             );
 
 
-            var fullPath = data.master.path;
+            var fullPath = data.partRevision.path;
             var re = new RegExp(App.config.workspaceId, '');
             fullPath = fullPath.replace(re, '');
             this.folderPath = fullPath.replace(/\//g, ':');
@@ -139,9 +139,9 @@ define([
             }
 
             if (this.model.isCheckout()) {
-                data.master.checkOutDate = date.formatTimestamp(
+                data.partRevision.checkOutDate = date.formatTimestamp(
                     App.config.i18n._DATE_FORMAT,
-                    data.master.checkOutDate
+                    data.partRevision.checkOutDate
                 );
             }
 
