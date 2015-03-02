@@ -24,6 +24,7 @@ define([
             this.$el.html(Mustache.render(template,{
                 i18n: App.config.i18n,
                 linkedDocument: this.model,
+                commentEditable: this.options.commentEditable,
                 editMode: this.options.editMode
             }));
 

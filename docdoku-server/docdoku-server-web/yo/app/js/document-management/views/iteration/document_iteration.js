@@ -189,6 +189,7 @@ define([
 
                 this.linkedDocumentsView = new LinkedDocumentsView({
                     editMode: editMode,
+                    commentEditable:true,
                     documentIteration: this.iteration,
                     collection: new LinkedDocumentCollection(this.iteration.getLinkedDocuments())
                 }).render();

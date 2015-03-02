@@ -27,6 +27,7 @@ define([
             this.$el.html(Mustache.render(template,{
                     i18n: App.config.i18n,
                     editMode: this.options.editMode,
+                    commentEditable: this.options.commentEditable,
                     label: App.config.i18n.ADD_DOCUMENT,
                     view: this
             }));
@@ -49,6 +50,7 @@ define([
         addLinkView: function (linkedDocument) {
             var linkView = new LinkedDocumentView({
                 editMode: this.options.editMode,
+                commentEditable: this.options.commentEditable,
                 model: linkedDocument
             }).render();
 
