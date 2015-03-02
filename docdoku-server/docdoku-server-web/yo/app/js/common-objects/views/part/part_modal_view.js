@@ -157,7 +157,7 @@ define([
                 linkedDocuments: this.linkedDocumentsView.collection.toJSON()
             }, {
                 success: function () {
-                    Backbone.Events.trigger('part:saved');
+                    that.model.fetch();
                     that.hide();
                 },
                 error: this.onError

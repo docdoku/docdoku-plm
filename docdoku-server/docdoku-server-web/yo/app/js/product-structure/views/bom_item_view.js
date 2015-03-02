@@ -19,6 +19,7 @@ define([
 
         initialize: function () {
             this.listenTo(this.model, 'change', this.render);
+            this.listenTo(this.model, 'reset', this.render);
         },
 
         render: function () {
@@ -37,7 +38,7 @@ define([
             self.model.fetch().success(function () {
                 new PartModalView({
                     model: self.model
-                }).show();
+                });
             });
         },
 
