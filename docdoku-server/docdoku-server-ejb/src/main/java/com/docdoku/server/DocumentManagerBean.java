@@ -1355,7 +1355,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         User user = userManager.checkWorkspaceWriteAccess(pOriginalDocRPK.getDocumentMaster().getWorkspace());
         Locale userLocale = new Locale(user.getLanguage());
         DocumentRevisionDAO docRDAO = new DocumentRevisionDAO(userLocale, em);
-        DocumentRevision originalDocR = docRDAO.loadDocR(pOriginalDocRPK);git stat
+        DocumentRevision originalDocR = docRDAO.loadDocR(pOriginalDocRPK);
         DocumentMaster docM = originalDocR.getDocumentMaster();
         Folder folder = originalDocR.getLocation();
         checkFolderWritingRight(user, folder);
