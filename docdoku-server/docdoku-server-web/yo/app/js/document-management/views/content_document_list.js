@@ -186,6 +186,7 @@ define([
                         if(++requestsToBeDone === requestsToBeDone){
                             that.listView.redraw();
                             that.collection.fetch();
+                            that.onStateChange();
                         }
                     };
 
