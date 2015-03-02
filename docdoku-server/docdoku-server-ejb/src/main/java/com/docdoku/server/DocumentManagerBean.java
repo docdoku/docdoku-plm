@@ -1438,22 +1438,21 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         }
         docR.setTitle(pTitle);
         docR.setDescription(pDescription);
-        //TODO call ACLFactory
-        if ((pACLUserEntries != null && pACLUserEntries.length > 0) || (pACLUserGroupEntries != null && pACLUserGroupEntries.length > 0)) {
-            ACL acl = new ACL();
-            if (pACLUserEntries != null) {
-                for (ACLUserEntry entry : pACLUserEntries) {
-                    acl.addEntry(em.getReference(User.class, new UserKey(user.getWorkspaceId(), entry.getPrincipalLogin())), entry.getPermission());
-                }
-            }
+        Map<String, String> userEntries = new HashMap<>();
+        Map<String, String> groupEntries = new HashMap<>();
 
-            if (pACLUserGroupEntries != null) {
-                for (ACLUserGroupEntry entry : pACLUserGroupEntries) {
-                    acl.addEntry(em.getReference(UserGroup.class, new UserGroupKey(user.getWorkspaceId(), entry.getPrincipalId())), entry.getPermission());
-                }
-            }
-            docR.setACL(acl);
+        for (ACLUserEntry entry : pACLUserEntries) {
+            userEntries.put(entry.getPrincipalLogin(), entry.getPermission().name());
         }
+
+        for (ACLUserGroupEntry entry : pACLUserGroupEntries) {
+            groupEntries.put(entry.getPrincipal().getId(), entry.getPermission().name());
+        }
+
+        ACLFactory aclFactory = new ACLFactory(em);
+        ACL acl = aclFactory.createACL(docR.getWorkspaceId(), userEntries, groupEntries);
+        docR.setACL(acl);
+
         Date now = new Date();
         docR.setCreationDate(now);
         docR.setLocation(folder);
