@@ -20,8 +20,12 @@
 package com.docdoku.server;
 
 import com.docdoku.core.common.*;
+import com.docdoku.core.configuration.ConfigSpec;
+import com.docdoku.core.configuration.LatestConfigSpec;
 import com.docdoku.core.configuration.ProductBaseline;
-import com.docdoku.core.document.*;
+import com.docdoku.core.document.DocumentIteration;
+import com.docdoku.core.document.DocumentIterationKey;
+import com.docdoku.core.document.DocumentLink;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.meta.InstanceAttributeTemplate;
@@ -605,7 +609,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public PartRevision updatePartIteration(PartIterationKey pKey, String pIterationNote, Source source, List<PartUsageLink> pUsageLinks, List<InstanceAttribute> pAttributes, DocumentIterationKey[] pLinkKeys, String[] documentLinkComments)
-            throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, PartRevisionNotFoundException, PartMasterNotFoundException {
+            throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, PartRevisionNotFoundException, PartMasterNotFoundException, EntityConstraintException {
 
         User user = userManager.checkWorkspaceWriteAccess(pKey.getWorkspaceId());
         Locale locale = new Locale(user.getLanguage());
@@ -644,11 +648,8 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
             }
             if (pUsageLinks != null) {
-                try {
-                    checkCyclicAssembly(partRev.getPartMaster(),pUsageLinks,new HashSet<PartMasterKey>(),partRev.getPartMasterKey());
-                } catch (Exception e) {
-                    throw new EntityConstraintException(locale,"EntityConstraintException11");
-                }
+
+                checkCyclicAssembly(pKey.getWorkspaceId(),partRev.getPartMaster(),pUsageLinks,new LatestConfigSpec(user),new Locale(user.getLanguage()));
 
                 List<PartUsageLink> usageLinks = new LinkedList<>();
                 for (PartUsageLink usageLink : pUsageLinks) {
@@ -1885,41 +1886,34 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         }
         return user;
     }
-    
-    private void checkCyclicAssembly(PartMaster partMaster, List<PartUsageLink> usageLinks, Set<PartMasterKey> visitedPartsKeys, PartMasterKey rootKey) throws Exception{
 
-        PartUsageLinkDAO partUsageLinkDAO = new PartUsageLinkDAO(em);
-        
-        PartMasterKey key = partMaster.getKey();
-        
-        if(!visitedPartsKeys.isEmpty() && key.equals(rootKey)){
-            throw new Exception();
-        }
 
-        visitedPartsKeys.add(key);
+    private void checkCyclicAssembly(String workspaceId, PartMaster root, List<PartUsageLink> usageLinks, ConfigSpec ci, Locale locale) throws EntityConstraintException, PartMasterNotFoundException {
 
-        for(PartUsageLink partUsageLink: usageLinks){
-
-            // Direct part usage link
-            PartMasterKey partUsageComponentKey = partUsageLink.getComponent().getKey();
-            List<PartUsageLink[]> partUsagePaths = partUsageLinkDAO.findPartUsagePaths(partUsageComponentKey);
-
-            for(PartUsageLink[] links : partUsagePaths){
-                checkCyclicAssembly(partUsageLink.getComponent(), Arrays.asList(links),visitedPartsKeys,rootKey);
+        for(PartUsageLink usageLink:usageLinks){
+            if(root.getNumber().equals(usageLink.getComponent().getNumber())){
+                throw new EntityConstraintException(locale,"EntityConstraintException12");
             }
-
-            // Substitutes
-            for(PartSubstituteLink substituteLink:partUsageLink.getSubstitutes()){
-                PartMasterKey substitutePartUsageComponentKey = substituteLink.getSubstitute().getKey();
-                List<PartUsageLink[]> substitutePartUsagePaths = partUsageLinkDAO.findPartUsagePaths(substitutePartUsageComponentKey);
-                for(PartUsageLink[] links : substitutePartUsagePaths){
-                    checkCyclicAssembly(substituteLink.getSubstitute(), Arrays.asList(links),visitedPartsKeys,rootKey);
+            for(PartSubstituteLink substituteLink:usageLink.getSubstitutes()){
+                if(root.getNumber().equals(substituteLink.getSubstitute().getNumber())){
+                    throw new EntityConstraintException(locale,"EntityConstraintException12");
                 }
             }
-            
         }
-        
-    } 
+
+        for(PartUsageLink usageLink: usageLinks){
+            PartMaster pm = new PartMasterDAO(locale,em).loadPartM(new PartMasterKey(workspaceId,usageLink.getComponent().getNumber()));
+            PartIteration partIteration = ci.filterConfigSpec(pm);
+            checkCyclicAssembly(workspaceId,root,partIteration.getComponents(),ci, locale);
+
+            for(PartSubstituteLink substituteLink:usageLink.getSubstitutes()){
+                PartMaster substitute = new PartMasterDAO(locale,em).loadPartM(new PartMasterKey(workspaceId,substituteLink.getSubstitute().getNumber()));
+                PartIteration substituteIteration = ci.filterConfigSpec(substitute);
+                checkCyclicAssembly(workspaceId, root, substituteIteration.getComponents(),ci, locale);
+            }
+        }
+
+    }
     
     private User checkPartRevisionWriteAccess(PartRevisionKey partRevisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException, AccessRightException {
         String workspaceId = partRevisionKey.getPartMaster().getWorkspace();
