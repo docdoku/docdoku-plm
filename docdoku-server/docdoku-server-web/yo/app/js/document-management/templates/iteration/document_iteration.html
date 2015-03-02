@@ -15,7 +15,7 @@
             {{#hasIterations}}
                 <a target="_blank" href="{{permalink}}">
             {{/hasIterations}}
-                    {{master.title}} ({{master.id}})
+                    {{partRevision.title}} ({{partRevision.id}})
             {{#hasIterations}}
                 </a>
             {{/hasIterations}}
@@ -44,56 +44,56 @@
 
                             <div class="controls">
                                 <span class="help-inline"><a class="document-path"><i class="fa fa-folder"></i>
-                                    {{master.path}}</a></span>
+                                    {{partRevision.path}}</a></span>
                             </div>
                         </div>
                         <div class="control-group">
                             <label class="control-label">{{i18n.REFERENCE}}</label>
 
                             <div class="controls">
-                                <span class="help-inline">{{master.id}}</span>
+                                <span class="help-inline">{{partRevision.id}}</span>
                             </div>
                         </div>
                         <div class="control-group">
                             <label class="control-label">{{i18n.VERSION}}</label>
 
                             <div class="controls">
-                                <span class="help-inline">{{master.version}}</span>
+                                <span class="help-inline">{{partRevision.version}}</span>
                             </div>
                         </div>
                         <div class="control-group">
                             <label class="control-label">{{i18n.CREATION_DATE}}</label>
 
                             <div class="controls">
-                                <span class="help-inline"><a class="date-popover">{{master.creationDate}}</a></span>
+                                <span class="help-inline"><a class="date-popover">{{partRevision.creationDate}}</a></span>
                             </div>
                         </div>
                         <div class="control-group">
                             <label class="control-label">{{i18n.TYPE}}</label>
 
                             <div class="controls">
-                                <span class="help-inline">{{master.type}}</span>
+                                <span class="help-inline">{{partRevision.type}}</span>
                             </div>
                         </div>
                         <div class="control-group">
                             <label class="control-label">{{i18n.TITLE}}</label>
 
                             <div class="controls">
-                                <span class="help-inline">{{master.title}}</span>
+                                <span class="help-inline">{{partRevision.title}}</span>
                             </div>
                         </div>
                         <div class="control-group">
                             <label class="control-label">{{i18n.AUTHOR}}</label>
 
                             <div class="controls">
-                                <span class="help-inline"><a class="author-popover">{{master.author.name}}</a></span>
+                                <span class="help-inline"><a class="author-popover">{{partRevision.author.name}}</a></span>
                             </div>
                         </div>
                         <div class="control-group">
                             <label class="control-label">{{i18n.LIFECYCLE_STATE}}</label>
 
                             <div class="controls">
-                                <span class="help-inline">{{master.lifeCycleState}}</span>
+                                <span class="help-inline">{{partRevision.lifeCycleState}}</span>
                             </div>
                         </div>
                         <div class="control-group">
@@ -101,21 +101,21 @@
 
                             <div class="controls">
                                 <span class="help-inline"><a
-                                        class="checkout-user-popover">{{master.checkOutUser.name}}</a></span>
+                                        class="checkout-user-popover">{{partRevision.checkOutUser.name}}</a></span>
                             </div>
                         </div>
                         <div class="control-group">
                             <label class="control-label">{{i18n.CHECKOUT_DATE}}</label>
 
                             <div class="controls">
-                                <span class="help-inline"><a class="date-popover">{{master.checkOutDate}}</a></span>
+                                <span class="help-inline"><a class="date-popover">{{partRevision.checkOutDate}}</a></span>
                             </div>
                         </div>
                         <div class="control-group">
                             <label class="control-label">{{i18n.DESCRIPTION}}</label>
 
                             <div class="controls">
-                                <span class="help-inline">{{master.description}}</span>
+                                <span class="help-inline">{{partRevision.description}}</span>
                             </div>
                         </div>
                         {{^isForBaseline}}
