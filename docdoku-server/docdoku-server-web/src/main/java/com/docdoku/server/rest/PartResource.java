@@ -110,13 +110,23 @@ public class PartResource {
 
         List<DocumentIterationDTO> linkedDocs = data.getLinkedDocuments();
         DocumentIterationKey[] links = null;
+        String[] documentLinkComments = null;
         if (linkedDocs != null) {
+            documentLinkComments = new String[linkedDocs.size()];
             links = createDocumentIterationKey(linkedDocs);
+            int i = 0;
+            for (DocumentIterationDTO docItereationForLink : linkedDocs){
+                String comment = docItereationForLink.getCommentLink();
+                if (comment == null){
+                    comment = "";
+                }
+                documentLinkComments[i++] = comment;
+            }
         }
 
         PartIteration.Source sameSource = partRevision.getIteration(partIteration).getSource();
 
-        PartRevision partRevisionUpdated = productService.updatePartIteration(pKey, data.getIterationNote(), sameSource, newComponents, attributes, links);
+        PartRevision partRevisionUpdated = productService.updatePartIteration(pKey, data.getIterationNote(), sameSource, newComponents, attributes, links, documentLinkComments);
 
         PartDTO partDTO = Tools.mapPartRevisionToPartDTO(partRevisionUpdated);
         return Response.ok(partDTO).build();

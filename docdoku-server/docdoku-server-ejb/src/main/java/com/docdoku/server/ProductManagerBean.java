@@ -604,7 +604,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     * */
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public PartRevision updatePartIteration(PartIterationKey pKey, String pIterationNote, Source source, List<PartUsageLink> pUsageLinks, List<InstanceAttribute> pAttributes, DocumentIterationKey[] pLinkKeys)
+    public PartRevision updatePartIteration(PartIterationKey pKey, String pIterationNote, Source source, List<PartUsageLink> pUsageLinks, List<InstanceAttribute> pAttributes, DocumentIterationKey[] pLinkKeys, String[] documentLinkComments)
             throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, PartRevisionNotFoundException, PartMasterNotFoundException {
 
         User user = userManager.checkWorkspaceWriteAccess(pKey.getWorkspaceId());
@@ -624,27 +624,24 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
         if (isCheckoutByUser(user,partRev) && partIte.getKey().equals(pKey)) {
             if (pLinkKeys != null) {
-                Set<DocumentIterationKey> linkKeys = new HashSet<>(Arrays.asList(pLinkKeys));
-                Set<DocumentIterationKey> currentLinkKeys = new HashSet<>();
+                ArrayList<DocumentIterationKey> linkKeys = new ArrayList<>(Arrays.asList(pLinkKeys));
+                ArrayList<DocumentIterationKey> currentLinkKeys = new ArrayList<>();
 
                 Set<DocumentLink> currentLinks = new HashSet<>(partIte.getLinkedDocuments());
 
                 for (DocumentLink link : currentLinks) {
-                    DocumentIterationKey linkKey = link.getTargetDocumentKey();
-                    if (!linkKeys.contains(linkKey)) {
-                        partIte.getLinkedDocuments().remove(link);
-                    } else {
-                        currentLinkKeys.add(linkKey);
-                    }
+                    partIte.getLinkedDocuments().remove(link);
                 }
 
+                int counter = 0;
                 for (DocumentIterationKey link : linkKeys) {
-                    if (!currentLinkKeys.contains(link)) {
-                        DocumentLink newLink = new DocumentLink(em.getReference(DocumentIteration.class, link));
-                        linkDAO.createLink(newLink);
-                        partIte.getLinkedDocuments().add(newLink);
-                    }
+                    DocumentLink newLink = new DocumentLink(em.getReference(DocumentIteration.class, link));
+                    newLink.setComment(documentLinkComments[counter]);
+                    linkDAO.createLink(newLink);
+                    partIte.getLinkedDocuments().add(newLink);
+                    counter++;
                 }
+
             }
             if (pUsageLinks != null) {
                 List<PartUsageLink> usageLinks = new LinkedList<>();

@@ -157,7 +157,7 @@ define([
                 linkedDocuments: this.linkedDocumentsView.collection.toJSON()
             }, {
                 success: function () {
-                    Backbone.Events.trigger('part:saved');
+                    that.model.fetch();
                     that.hide();
                 },
                 error: this.onError
@@ -204,6 +204,7 @@ define([
         initLinkedDocumentsView: function () {
             this.linkedDocumentsView = new LinkedDocumentsView({
                 editMode: this.editMode,
+                commentEditable:true,
                 documentIteration: this.iteration,
                 collection: new LinkedDocumentCollection(this.iteration.getLinkedDocuments())
             }).render();

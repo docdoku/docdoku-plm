@@ -138,6 +138,7 @@ define({
 	EDIT: "Editer",
 	EDIT_ISSUE: "Editer l'anomalie",
 	EDIT_LINKED_DOCUMENTS: "Editer les liens",
+    EDIT_LINKED_DOCUMENT_COMMENT: "Editer le commentaire",
 	EDIT_MILESTONE: "Editer le jalon",
 	EDIT_ORDER: "Editer l'ordre de modification",
 	EDIT_PRODUCT: "Editer le produit",

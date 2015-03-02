@@ -138,6 +138,7 @@ define({
 	EDIT: "Edit",
 	EDIT_ISSUE: "Edit the issue",
 	EDIT_LINKED_DOCUMENTS: "Edit links",
+    EDIT_LINKED_DOCUMENT_COMMENT: "Edit comment",
 	EDIT_MILESTONE: "Edit the milestone",
 	EDIT_ORDER: "Edit the order",
 	EDIT_PRODUCT: "Edit product",
