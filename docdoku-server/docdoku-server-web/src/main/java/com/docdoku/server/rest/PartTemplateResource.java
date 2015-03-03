@@ -22,9 +22,9 @@ package com.docdoku.server.rest;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
-import com.docdoku.core.meta.DefaultInstanceAttributeTemplate;
+import com.docdoku.core.meta.DefaultAttributeTemplate;
 import com.docdoku.core.meta.InstanceAttributeTemplate;
-import com.docdoku.core.meta.InstanceListOfValuesAttributeTemplate;
+import com.docdoku.core.meta.ListOfValuesAttributeTemplate;
 import com.docdoku.core.product.PartMasterTemplate;
 import com.docdoku.core.product.PartMasterTemplateKey;
 import com.docdoku.core.security.ACL;
@@ -43,7 +43,6 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.*;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -219,12 +218,12 @@ public class PartTemplateResource {
     private InstanceAttributeTemplate createInstanceAttributeTemplateObject(InstanceAttributeTemplateDTO dto) {
         InstanceAttributeTemplate data;
         if(dto.getLovName()==null || dto.getLovName().isEmpty()) {
-            DefaultInstanceAttributeTemplate defaultIA = new DefaultInstanceAttributeTemplate();
-            defaultIA.setAttributeType(DefaultInstanceAttributeTemplate.AttributeType.valueOf(dto.getAttributeType().name()));
+            DefaultAttributeTemplate defaultIA = new DefaultAttributeTemplate();
+            defaultIA.setAttributeType(DefaultAttributeTemplate.AttributeType.valueOf(dto.getAttributeType().name()));
             data=defaultIA;
         }
         else {
-            InstanceListOfValuesAttributeTemplate lovA = new InstanceListOfValuesAttributeTemplate();
+            ListOfValuesAttributeTemplate lovA = new ListOfValuesAttributeTemplate();
             data=lovA;
         }
 

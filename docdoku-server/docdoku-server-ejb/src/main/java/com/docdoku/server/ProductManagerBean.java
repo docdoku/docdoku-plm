@@ -29,8 +29,7 @@ import com.docdoku.core.document.DocumentLink;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.meta.InstanceAttributeTemplate;
-import com.docdoku.core.meta.InstanceListOfValuesAttributeTemplate;
-import com.docdoku.core.meta.ListOfValues;
+import com.docdoku.core.meta.ListOfValuesAttributeTemplate;
 import com.docdoku.core.product.*;
 import com.docdoku.core.product.PartIteration.Source;
 import com.docdoku.core.query.PartSearchQuery;
@@ -1289,8 +1288,9 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
         List<InstanceAttributeTemplate> attrs = new ArrayList<>();
         for(int i=0;i<pAttributeTemplates.length;i++){
-            if(pAttributeTemplates[i] instanceof InstanceListOfValuesAttributeTemplate){
-                InstanceListOfValuesAttributeTemplate lovAttr=(InstanceListOfValuesAttributeTemplate)pAttributeTemplates[i];
+            attrs.add(pAttributeTemplates[i]);
+            if(pAttributeTemplates[i] instanceof ListOfValuesAttributeTemplate){
+                ListOfValuesAttributeTemplate lovAttr=(ListOfValuesAttributeTemplate)pAttributeTemplates[i];
                 lovAttr.setLov(lovDAO.loadLOV(lovNames[i]));
             }
         }
@@ -1327,8 +1327,9 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
         List<InstanceAttributeTemplate> attrs = new ArrayList<>();
         for(int i=0;i<pAttributeTemplates.length;i++){
-            if(pAttributeTemplates[i] instanceof InstanceListOfValuesAttributeTemplate){
-                InstanceListOfValuesAttributeTemplate lovAttr=(InstanceListOfValuesAttributeTemplate)pAttributeTemplates[i];
+            attrs.add(pAttributeTemplates[i]);
+            if(pAttributeTemplates[i] instanceof ListOfValuesAttributeTemplate){
+                ListOfValuesAttributeTemplate lovAttr=(ListOfValuesAttributeTemplate)pAttributeTemplates[i];
                 lovAttr.setLov(lovDAO.loadLOV(lovNames[i]));
             }
         }
