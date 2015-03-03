@@ -9,19 +9,23 @@ define([
     'views/baselines/baseline_duplicate_view',
     'text!common-objects/templates/buttons/delete_button.html',
     'text!common-objects/templates/buttons/duplicate_button.html',
-    'common-objects/views/alert'
-], function (Backbone, Mustache, BaselinesCollection, ConfigurationItemCollection, template, BaselinesListView, BaselineDuplicateView, deleteButton, duplicateButton, AlertView) {
+    'text!common-objects/templates/buttons/snap_button.html',
+    'common-objects/views/alert',
+    'views/baselines/baseline_creation_view'
+], function (Backbone, Mustache, BaselinesCollection, ConfigurationItemCollection, template, BaselinesListView, BaselineDuplicateView, deleteButton, duplicateButton, snapButton, AlertView, BaselineCreationView) {
 	'use strict';
 
     var BaselinesContentView = Backbone.View.extend({
         partials: {
             deleteButton: deleteButton,
-            duplicateButton: duplicateButton
+            duplicateButton: duplicateButton,
+            snapButton:snapButton
         },
 
         events: {
             'click button.delete': 'deleteBaseline',
-            'click button.duplicate': 'duplicateBaseline'
+            'click button.duplicate': 'duplicateBaseline',
+            'click button.new-baseline': 'createBaseline'
         },
 
         initialize: function () {
@@ -34,6 +38,7 @@ define([
 
             this.$el.html(Mustache.render(template, {i18n: App.config.i18n}, this.partials));
             this.bindDomElements();
+            this.createBaselineButton.show();
 
             new ConfigurationItemCollection().fetch().success(function(collection){
                 if(!collection.length){
@@ -65,6 +70,7 @@ define([
             this.$notifications = this.$el.find('.notifications').first();
             this.deleteButton = this.$('.delete');
             this.duplicateButton = this.$('.duplicate');
+            this.createBaselineButton = this.$('.new-baseline');
             this.$inputProductId = this.$('#inputProductId');
         },
 
@@ -74,6 +80,13 @@ define([
                 _this.createBaselineView();
             });
             this.delegateEvents();
+        },
+
+        createBaseline: function () {
+            var baselineCreationView = new BaselineCreationView({collection:this.listView.collection});
+            window.document.body.appendChild(baselineCreationView.render().el);
+            baselineCreationView.on('warning', this.onWarning);
+            baselineCreationView.openModal();
         },
 
         createBaselineView: function () {

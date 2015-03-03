@@ -3,9 +3,10 @@ define([
 	'backbone',
 	'mustache',
 	'common-objects/collections/baselines',
+	'models/configuration_item',
 	'text!templates/baselines/baseline_creation_view.html',
     'common-objects/views/alert'
-], function (Backbone, Mustache, Baselines, template, AlertView) {
+], function (Backbone, Mustache, Baselines, ConfigurationItem, template, AlertView) {
 
     'use strict';
 
@@ -21,15 +22,34 @@ define([
 		},
 
 		render: function () {
+
 			var data = {
 				i18n: App.config.i18n,
                 isReleased : this.options.type === 'RELEASED',
-                isLatest : this.options.type === 'LATEST'
+                isLatest : this.options.type === 'LATEST',
+                model:this.model
 			};
 
 			this.$el.html(Mustache.render(template, data));
 			this.bindDomElements();
 			this.$inputBaselineType.val(this.options.type);
+
+            if(this.$inputConfigurationItem){
+                this.$inputConfigurationItem.customValidity(App.config.i18n.REQUIRED_FIELD);
+
+                this.$inputConfigurationItem.typeahead({
+                    source: function (query, process) {
+                        $.getJSON(App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products', function (data) {
+                            var ids = [];
+                            _(data).each(function (d) {
+                                ids.push(d.id);
+                            });
+                            process(ids);
+                        });
+                    }
+                });
+
+            }
 
             this.$inputBaselineName.customValidity(App.config.i18n.REQUIRED_FIELD);
             return this;
@@ -42,11 +62,17 @@ define([
 			this.$inputBaselineDescription = this.$('#inputBaselineDescription');
             this.$submitButton = this.$('button.btn-primary').first();
             this.$inputBaselineType = this.$('#inputBaselineType');
-
+            this.$inputConfigurationItem = this.$('#inputConfigurationItem');
 		},
 
 		onSubmitForm: function (e) {
+
+            if(!this.model){
+                this.model = new ConfigurationItem({id:this.$inputConfigurationItem.val()});
+            }
+
             this.$submitButton.attr('disabled', 'disabled');
+
             var data = {
 				name: this.$inputBaselineName.val(),
 				description: this.$inputBaselineDescription.val()
@@ -60,7 +86,9 @@ define([
                         _this.$submitButton.removeAttr('disabled');
                     }
                 };
+
                 data.type = this.$inputBaselineType.val();
+
                 this.model.createBaseline(data, callbacks);
 
             }else{
@@ -74,6 +102,10 @@ define([
 		onBaselineCreated: function (e) {
             if (e.message) {
                 this.trigger('warning', e.message);
+            }
+            if(this.collection){
+                e.productBaseline.configurationItemId = this.model.getId();
+                this.collection.add(e.productBaseline)
             }
 			this.closeModal();
 		},

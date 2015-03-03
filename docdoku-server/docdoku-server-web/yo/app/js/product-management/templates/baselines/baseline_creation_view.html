@@ -15,6 +15,15 @@
         <h4></h4>
         <form id="baseline_creation_form" class="form-horizontal">
 
+            {{^model}}
+            <div class="control-group">
+                <label class="control-label" for="inputConfigurationItem">{{i18n.PRODUCT_ID}}</label>
+                <div class="controls">
+                    <input type="text" id="inputConfigurationItem" placeholder="{{i18n.PRODUCT_ID}}" required/>
+                </div>
+            </div>
+            {{/model}}
+
             <div class="control-group">
                 <label class="control-label" for="inputBaselineName">{{i18n.NAME}}</label>
 

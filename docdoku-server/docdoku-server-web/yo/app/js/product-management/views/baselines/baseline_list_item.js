@@ -2,8 +2,9 @@
 define([
     'backbone',
     'mustache',
-    'text!templates/baselines/baseline_list_item.html'
-], function (Backbone, Mustache, template) {
+    'text!templates/baselines/baseline_list_item.html',
+    'views/baselines/baseline_detail_view'
+], function (Backbone, Mustache, template,BaselineDetailView) {
     'use strict';
     var BaselineItemView = Backbone.View.extend({
         tagName: 'li',
@@ -12,7 +13,7 @@ define([
 
         events: {
             'change input[type=checkbox]': 'toggleStroke',
-            'click a': 'toBaselineEditView'
+            'click a': 'toBaselineDetailView'
         },
 
         render: function () {
@@ -34,8 +35,11 @@ define([
             return this.$checkbox.is(':checked');
         },
 
-        toBaselineEditView: function () {
-            this.trigger('baseline:to-edit-modal', this.model);
+        toBaselineDetailView: function () {
+            this.trigger('open-baseline-modal');
+            setTimeout(function(){
+                new BaselineDetailView({model: this.model}, {productId: this.model.getConfigurationItemId()}).render();
+            }.bind(this),200)
         }
 
     });

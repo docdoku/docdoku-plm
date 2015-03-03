@@ -2,9 +2,11 @@
     <input name="number" type="text" class="number-input"
            value="{{model.getNumber}}{{#released}} ({{i18n.RELEASED}}){{/released}}"
            title="{{i18n.NUMBER}}{{#released}} ({{i18n.RELEASED}}){{/released}}" readonly required/>
-    <select name="version" class="input-small version-input" required></select>
-    <select name="iteration" class="input-small iteration-input" required></select>
+    <select name="version" class="input-small version-input" {{^editMode}}disabled{{/editMode}} required></select>
+    <select name="iteration" class="input-small iteration-input" {{^editMode}}disabled{{/editMode}} required></select>
     {{#isForBaseline}}
+    {{#editMode}}
     <input name="exclude" type="checkbox" class="exclude-input" title="{{i18n.EXCLUDE}}"/>
+    {{/editMode}}
     {{/isForBaseline}}
 </div>

@@ -4,9 +4,9 @@ define([
     'mustache',
     'text!templates/product/product_details.html',
     'views/baselines/baseline_list',
-    'views/baselines/baseline_edit_view',
+    'views/baselines/baseline_detail_view',
     'common-objects/views/alert'
-], function (Backbone, Mustache, template, BaselineListView, BaselineEditView, AlertView) {
+], function (Backbone, Mustache, template, BaselineListView, BaselineDetailView, AlertView) {
     'use strict';
     var ProductDetailsView = Backbone.View.extend({
 
@@ -51,13 +51,10 @@ define([
         },
 
         initBaselinesView: function () {
-            var that = this;
             this.baselineListView = new BaselineListView({}, {productId: this.model.getId()}).render();
             this.$tabBaselines.append(this.baselineListView.$el);
-            this.listenToOnce(this.baselineListView, 'baseline:to-edit-modal', function (baseline) {
-                that.closeModal();
-                new BaselineEditView({model: baseline}, {productId: that.model.getId()}).render();
-            });
+            this.baselineListView.on('open-baseline-modal',this.closeModal.bind(this))
+            //new BaselineDetailView({model: baseline}, {productId: that.model.getId()}).render();
         },
 
         onError: function (model, error) {

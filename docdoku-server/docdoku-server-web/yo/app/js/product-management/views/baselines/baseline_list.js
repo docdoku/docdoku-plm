@@ -30,13 +30,9 @@ define([
 
             this.collection.each(function (baseline) {
                 var view = new BaselineListItemView({model: baseline}).render();
-
                 that.subViews.push(view);
                 that.$el.append(view.$el);
-
-                that.listenToOnce(view, 'baseline:to-edit-modal', function (baseline) {
-                    that.trigger('baseline:to-edit-modal', baseline);
-                });
+                view.on('open-baseline-modal',that.trigger.bind(that,'open-baseline-modal'));
             });
         },
 
