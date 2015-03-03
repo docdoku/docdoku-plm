@@ -20,44 +20,42 @@
 
 package com.docdoku.core.meta;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.Embeddable;
+import java.io.Serializable;
 
 /**
- * Defines an URL type custom attribute of a document, part, product and other objects.
- * 
- * @author Emmanuel Nhan
- * @version 1.0 23/07/2009
- * @since   V1.0
+ * Embeddable name-value pair.
+ *
+ * @author Florent Garin
+ * @version 2.0, 27/02/15
+ * @since V2.0
  */
-@Table(name="INSTANCEURLATTRIBUTE")
-@Entity
-public class InstanceURLAttribute extends InstanceAttribute {
+@Embeddable
+public class NameValuePair implements Serializable {
 
-    private String urlValue;
+    private String name, value;
 
-    public InstanceURLAttribute() {
+    public NameValuePair() {
     }
 
-    public InstanceURLAttribute(String pName, String pValue, boolean pMandatory) {
-        super(pName, pMandatory);
-        setUrlValue(pValue);
+    public NameValuePair(String name, String value) {
+        this.name = name;
+        this.value = value;
     }
 
-    @Override
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    public String getName() {
+        return name;
+    }
+
     public String getValue() {
-        return urlValue;
-    }
-    @Override
-    public boolean setValue(Object pValue) {
-        urlValue = pValue + "";
-        return true;
-    }
-
-    public String getUrlValue() {
-        return urlValue;
-    }
-    public void setUrlValue(String urlValue) {
-        this.urlValue = urlValue;
+        return value;
     }
 }

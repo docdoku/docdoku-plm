@@ -24,7 +24,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 /**
- * Defines a numerical custom attribute of a document.
+ * Defines a numerical custom attribute of a document, part, product and other objects.
  * 
  * @author Florent Garin
  * @version 1.0, 02/06/08
@@ -56,7 +56,6 @@ public class InstanceNumberAttribute extends InstanceAttribute{
             numberValue=Float.parseFloat(pValue + "");
             return true;
         }catch(NumberFormatException ex){
-            numberValue=0;
             return false;
         }
     }

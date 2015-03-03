@@ -24,10 +24,7 @@ import com.docdoku.core.common.*;
 import com.docdoku.core.document.*;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.gcm.GCMAccount;
-import com.docdoku.core.meta.InstanceAttribute;
-import com.docdoku.core.meta.InstanceAttributeTemplate;
-import com.docdoku.core.meta.Tag;
-import com.docdoku.core.meta.TagKey;
+import com.docdoku.core.meta.*;
 import com.docdoku.core.query.DocumentSearchQuery;
 import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.ACLUserEntry;
@@ -551,7 +548,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public DocumentMasterTemplate updateDocumentMasterTemplate(DocumentMasterTemplateKey pKey, String pDocumentType, String pWorkflowModelId, String pMask, InstanceAttributeTemplate[] pAttributeTemplates, boolean idGenerated, boolean attributesLocked) throws WorkspaceNotFoundException, AccessRightException, DocumentMasterTemplateNotFoundException, UserNotFoundException, WorkflowModelNotFoundException, UserNotActiveException {
+    public DocumentMasterTemplate updateDocumentMasterTemplate(DocumentMasterTemplateKey pKey, String pDocumentType, String pWorkflowModelId, String pMask, InstanceAttributeTemplate[] pAttributeTemplates, String[] lovNames, boolean idGenerated, boolean attributesLocked) throws WorkspaceNotFoundException, AccessRightException, DocumentMasterTemplateNotFoundException, UserNotFoundException, WorkflowModelNotFoundException, UserNotActiveException, ListOfValuesNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(pKey.getWorkspaceId());
         Locale locale = new Locale(user.getLanguage());
 
@@ -567,16 +564,14 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         template.setMask(pMask);
         template.setIdGenerated(idGenerated);
         template.setAttributesLocked(attributesLocked);
+        LOVDAO lovDAO=new LOVDAO(locale,em);
 
         List<InstanceAttributeTemplate> attrs = new ArrayList<>();
-        Collections.addAll(attrs, pAttributeTemplates);
-
-        Set<InstanceAttributeTemplate> attrsToRemove = new HashSet<>(template.getAttributeTemplates());
-        attrsToRemove.removeAll(attrs);
-
-        InstanceAttributeTemplateDAO attrDAO = new InstanceAttributeTemplateDAO(em);
-        for (InstanceAttributeTemplate attrToRemove : attrsToRemove) {
-            attrDAO.removeAttribute(attrToRemove);
+        for(int i=0;i<pAttributeTemplates.length;i++){
+            if(pAttributeTemplates[i] instanceof InstanceListOfValuesAttributeTemplate){
+                InstanceListOfValuesAttributeTemplate lovAttr=(InstanceListOfValuesAttributeTemplate)pAttributeTemplates[i];
+                lovAttr.setLov(lovDAO.loadLOV(lovNames[i]));
+            }
         }
 
         template.setAttributeTemplates(attrs);
@@ -750,7 +745,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public DocumentMasterTemplate createDocumentMasterTemplate(String pWorkspaceId, String pId, String pDocumentType, String pWorkflowModelId,
-            String pMask, InstanceAttributeTemplate[] pAttributeTemplates, boolean idGenerated, boolean attributesLocked) throws WorkspaceNotFoundException, AccessRightException, DocumentMasterTemplateAlreadyExistsException, UserNotFoundException, NotAllowedException, CreationException, WorkflowModelNotFoundException {
+            String pMask, InstanceAttributeTemplate[] pAttributeTemplates, String[] lovNames, boolean idGenerated, boolean attributesLocked) throws WorkspaceNotFoundException, AccessRightException, DocumentMasterTemplateAlreadyExistsException, UserNotFoundException, NotAllowedException, CreationException, WorkflowModelNotFoundException, ListOfValuesNotFoundException {
         User user = userManager.checkWorkspaceWriteAccess(pWorkspaceId);
         Locale locale = new Locale(user.getLanguage());
         checkNameValidity(pId, locale);
@@ -761,8 +756,15 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         template.setIdGenerated(idGenerated);
         template.setAttributesLocked(attributesLocked);
 
+        LOVDAO lovDAO=new LOVDAO(locale,em);
+
         List<InstanceAttributeTemplate> attrs = new ArrayList<>();
-        Collections.addAll(attrs, pAttributeTemplates);
+        for(int i=0;i<pAttributeTemplates.length;i++){
+            if(pAttributeTemplates[i] instanceof InstanceListOfValuesAttributeTemplate){
+                InstanceListOfValuesAttributeTemplate lovAttr=(InstanceListOfValuesAttributeTemplate)pAttributeTemplates[i];
+                lovAttr.setLov(lovDAO.loadLOV(lovNames[i]));
+            }
+        }
         template.setAttributeTemplates(attrs);
 
         if (pWorkflowModelId != null){
@@ -1434,22 +1436,21 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         }
         docR.setTitle(pTitle);
         docR.setDescription(pDescription);
-        //TODO call ACLFactory
-        if ((pACLUserEntries != null && pACLUserEntries.length > 0) || (pACLUserGroupEntries != null && pACLUserGroupEntries.length > 0)) {
-            ACL acl = new ACL();
-            if (pACLUserEntries != null) {
-                for (ACLUserEntry entry : pACLUserEntries) {
-                    acl.addEntry(em.getReference(User.class, new UserKey(user.getWorkspaceId(), entry.getPrincipalLogin())), entry.getPermission());
-                }
-            }
+        Map<String, String> userEntries = new HashMap<>();
+        Map<String, String> groupEntries = new HashMap<>();
 
-            if (pACLUserGroupEntries != null) {
-                for (ACLUserGroupEntry entry : pACLUserGroupEntries) {
-                    acl.addEntry(em.getReference(UserGroup.class, new UserGroupKey(user.getWorkspaceId(), entry.getPrincipalId())), entry.getPermission());
-                }
-            }
-            docR.setACL(acl);
+        for (ACLUserEntry entry : pACLUserEntries) {
+            userEntries.put(entry.getPrincipalLogin(), entry.getPermission().name());
         }
+
+        for (ACLUserGroupEntry entry : pACLUserGroupEntries) {
+            groupEntries.put(entry.getPrincipal().getId(), entry.getPermission().name());
+        }
+
+        ACLFactory aclFactory = new ACLFactory(em);
+        ACL acl = aclFactory.createACL(docR.getWorkspaceId(), userEntries, groupEntries);
+        docR.setACL(acl);
+
         Date now = new Date();
         docR.setCreationDate(now);
         docR.setLocation(folder);

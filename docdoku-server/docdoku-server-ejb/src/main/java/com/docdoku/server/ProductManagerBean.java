@@ -20,11 +20,17 @@
 package com.docdoku.server;
 
 import com.docdoku.core.common.*;
+import com.docdoku.core.configuration.ConfigSpec;
+import com.docdoku.core.configuration.LatestConfigSpec;
 import com.docdoku.core.configuration.ProductBaseline;
-import com.docdoku.core.document.*;
+import com.docdoku.core.document.DocumentIteration;
+import com.docdoku.core.document.DocumentIterationKey;
+import com.docdoku.core.document.DocumentLink;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.meta.InstanceAttributeTemplate;
+import com.docdoku.core.meta.InstanceListOfValuesAttributeTemplate;
+import com.docdoku.core.meta.ListOfValues;
 import com.docdoku.core.product.*;
 import com.docdoku.core.product.PartIteration.Source;
 import com.docdoku.core.query.PartSearchQuery;
@@ -605,7 +611,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public PartRevision updatePartIteration(PartIterationKey pKey, String pIterationNote, Source source, List<PartUsageLink> pUsageLinks, List<InstanceAttribute> pAttributes, DocumentIterationKey[] pLinkKeys, String[] documentLinkComments)
-            throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, PartRevisionNotFoundException, PartMasterNotFoundException {
+            throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, PartRevisionNotFoundException, PartMasterNotFoundException, EntityConstraintException {
 
         User user = userManager.checkWorkspaceWriteAccess(pKey.getWorkspaceId());
         Locale locale = new Locale(user.getLanguage());
@@ -644,6 +650,9 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
             }
             if (pUsageLinks != null) {
+
+                checkCyclicAssembly(pKey.getWorkspaceId(),partRev.getPartMaster(),pUsageLinks,new LatestConfigSpec(user),new Locale(user.getLanguage()));
+
                 List<PartUsageLink> usageLinks = new LinkedList<>();
                 for (PartUsageLink usageLink : pUsageLinks) {
                     PartUsageLink ul = new PartUsageLink();
@@ -1267,7 +1276,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public PartMasterTemplate createPartMasterTemplate(String pWorkspaceId, String pId, String pPartType, String pWorkflowModelId, String pMask, InstanceAttributeTemplate[] pAttributeTemplates, boolean idGenerated, boolean attributesLocked) throws WorkspaceNotFoundException, AccessRightException, PartMasterTemplateAlreadyExistsException, UserNotFoundException, NotAllowedException, CreationException, WorkflowModelNotFoundException {
+    public PartMasterTemplate createPartMasterTemplate(String pWorkspaceId, String pId, String pPartType, String pWorkflowModelId, String pMask, InstanceAttributeTemplate[] pAttributeTemplates, String[] lovNames, boolean idGenerated, boolean attributesLocked) throws WorkspaceNotFoundException, AccessRightException, PartMasterTemplateAlreadyExistsException, UserNotFoundException, NotAllowedException, CreationException, WorkflowModelNotFoundException, ListOfValuesNotFoundException {
         User user = userManager.checkWorkspaceWriteAccess(pWorkspaceId);
         Locale locale = new Locale(user.getLanguage());
         checkNameValidity(pId,locale);
@@ -1276,9 +1285,15 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         Date now = new Date();
         template.setCreationDate(now);
         template.setIdGenerated(idGenerated);
+        LOVDAO lovDAO=new LOVDAO(locale,em);
 
         List<InstanceAttributeTemplate> attrs = new ArrayList<>();
-        Collections.addAll(attrs, pAttributeTemplates);
+        for(int i=0;i<pAttributeTemplates.length;i++){
+            if(pAttributeTemplates[i] instanceof InstanceListOfValuesAttributeTemplate){
+                InstanceListOfValuesAttributeTemplate lovAttr=(InstanceListOfValuesAttributeTemplate)pAttributeTemplates[i];
+                lovAttr.setLov(lovDAO.loadLOV(lovNames[i]));
+            }
+        }
         template.setAttributeTemplates(attrs);
 
         if (pWorkflowModelId != null){
@@ -1292,7 +1307,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public PartMasterTemplate updatePartMasterTemplate(PartMasterTemplateKey pKey, String pPartType, String pWorkflowModelId, String pMask, InstanceAttributeTemplate[] pAttributeTemplates, boolean idGenerated, boolean attributesLocked) throws WorkspaceNotFoundException, AccessRightException, PartMasterTemplateNotFoundException, UserNotFoundException, WorkflowModelNotFoundException, UserNotActiveException {
+    public PartMasterTemplate updatePartMasterTemplate(PartMasterTemplateKey pKey, String pPartType, String pWorkflowModelId, String pMask, InstanceAttributeTemplate[] pAttributeTemplates, String[] lovNames, boolean idGenerated, boolean attributesLocked) throws WorkspaceNotFoundException, AccessRightException, PartMasterTemplateNotFoundException, UserNotFoundException, WorkflowModelNotFoundException, UserNotActiveException, ListOfValuesNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(pKey.getWorkspaceId());
         Locale locale = new Locale(user.getLanguage());
 
@@ -1308,16 +1323,14 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         template.setMask(pMask);
         template.setIdGenerated(idGenerated);
         template.setAttributesLocked(attributesLocked);
+        LOVDAO lovDAO=new LOVDAO(locale,em);
 
         List<InstanceAttributeTemplate> attrs = new ArrayList<>();
-        Collections.addAll(attrs, pAttributeTemplates);
-
-        Set<InstanceAttributeTemplate> attrsToRemove = new HashSet<>(template.getAttributeTemplates());
-        attrsToRemove.removeAll(attrs);
-
-        InstanceAttributeTemplateDAO attrDAO = new InstanceAttributeTemplateDAO(em);
-        for (InstanceAttributeTemplate attrToRemove : attrsToRemove) {
-            attrDAO.removeAttribute(attrToRemove);
+        for(int i=0;i<pAttributeTemplates.length;i++){
+            if(pAttributeTemplates[i] instanceof InstanceListOfValuesAttributeTemplate){
+                InstanceListOfValuesAttributeTemplate lovAttr=(InstanceListOfValuesAttributeTemplate)pAttributeTemplates[i];
+                lovAttr.setLov(lovDAO.loadLOV(lovNames[i]));
+            }
         }
 
         template.setAttributeTemplates(attrs);
@@ -1880,6 +1893,34 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         return user;
     }
 
+
+    private void checkCyclicAssembly(String workspaceId, PartMaster root, List<PartUsageLink> usageLinks, ConfigSpec ci, Locale locale) throws EntityConstraintException, PartMasterNotFoundException {
+
+        for(PartUsageLink usageLink:usageLinks){
+            if(root.getNumber().equals(usageLink.getComponent().getNumber())){
+                throw new EntityConstraintException(locale,"EntityConstraintException12");
+            }
+            for(PartSubstituteLink substituteLink:usageLink.getSubstitutes()){
+                if(root.getNumber().equals(substituteLink.getSubstitute().getNumber())){
+                    throw new EntityConstraintException(locale,"EntityConstraintException12");
+                }
+            }
+        }
+
+        for(PartUsageLink usageLink: usageLinks){
+            PartMaster pm = new PartMasterDAO(locale,em).loadPartM(new PartMasterKey(workspaceId,usageLink.getComponent().getNumber()));
+            PartIteration partIteration = ci.filterConfigSpec(pm);
+            checkCyclicAssembly(workspaceId,root,partIteration.getComponents(),ci, locale);
+
+            for(PartSubstituteLink substituteLink:usageLink.getSubstitutes()){
+                PartMaster substitute = new PartMasterDAO(locale,em).loadPartM(new PartMasterKey(workspaceId,substituteLink.getSubstitute().getNumber()));
+                PartIteration substituteIteration = ci.filterConfigSpec(substitute);
+                checkCyclicAssembly(workspaceId, root, substituteIteration.getComponents(),ci, locale);
+            }
+        }
+
+    }
+    
     private User checkPartRevisionWriteAccess(PartRevisionKey partRevisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException, AccessRightException {
         String workspaceId = partRevisionKey.getPartMaster().getWorkspace();
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
