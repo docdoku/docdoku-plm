@@ -29,6 +29,7 @@ import com.docdoku.core.document.DocumentLink;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.meta.InstanceAttributeTemplate;
+import com.docdoku.core.meta.Tag;
 import com.docdoku.core.product.*;
 import com.docdoku.core.product.PartIteration.Source;
 import com.docdoku.core.query.PartSearchQuery;
@@ -970,6 +971,67 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     }
 
+    @Override
+
+    public PartRevision saveTags(PartRevisionKey revisionKey, String[] pTags) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
+
+        User user = checkPartRevisionWriteAccess(revisionKey);
+
+        Locale userLocale = new Locale(user.getLanguage());
+        PartRevisionDAO partRevDAO = new PartRevisionDAO(userLocale, em);
+        PartRevision partRevision = partRevDAO.loadPartR(revisionKey);
+
+        Set<Tag> tags = new HashSet<>();
+        for (String label : pTags) {
+            tags.add(new Tag(user.getWorkspace(), label));
+        }
+
+        TagDAO tagDAO = new TagDAO(userLocale, em);
+        List<Tag> existingTags = Arrays.asList(tagDAO.findAllTags(user.getWorkspaceId()));
+
+        Set<Tag> tagsToCreate = new HashSet<>(tags);
+        tagsToCreate.removeAll(existingTags);
+
+        for (Tag t : tagsToCreate) {
+            try {
+                tagDAO.createTag(t);
+            } catch (CreationException | TagAlreadyExistsException ex) {
+                LOGGER.log(Level.SEVERE, null, ex);
+            }
+        }
+
+        partRevision.setTags(tags);
+
+        if (isCheckoutByAnotherUser(user,partRevision)) {
+            em.detach(partRevision);
+            partRevision.removeLastIteration();
+        }
+
+        for (PartIteration partIteration:partRevision.getPartIterations()){
+            esIndexer.index(partIteration);
+        }
+        return partRevision;
+
+    }
+
+    @Override
+    public PartRevision removeTag(PartRevisionKey partRevisionKey, String tagName) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
+        User user = checkPartRevisionWriteAccess(partRevisionKey);
+
+        PartRevision partRevision = getPartRevision(partRevisionKey);
+        Tag tagToRemove = new Tag(user.getWorkspace(), tagName);
+        partRevision.getTags().remove(tagToRemove);
+
+        if (isCheckoutByAnotherUser(user,partRevision)) {
+            em.detach(partRevision);
+            partRevision.removeLastIteration();
+        }
+
+        for (PartIteration partIteration:partRevision.getPartIterations()){
+            esIndexer.index(partIteration);
+        }
+        return partRevision;
+    }
 
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
