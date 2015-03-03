@@ -31,8 +31,10 @@ public class InstanceAttributeTemplateDTO implements Serializable {
 
     private AttributeType attributeType;
 
+    private String lovName;
+
     public enum AttributeType {
-        TEXT, NUMBER, DATE, BOOLEAN, URL
+        TEXT, NUMBER, DATE, BOOLEAN, URL, LOV
     }
 
     public InstanceAttributeTemplateDTO() {
@@ -67,6 +69,14 @@ public class InstanceAttributeTemplateDTO implements Serializable {
 
     public void setAttributeType(InstanceAttributeTemplateDTO.AttributeType attributeType) {
         this.attributeType = attributeType;
+    }
+
+    public String getLovName() {
+        return lovName;
+    }
+
+    public void setLovName(String lovName) {
+        this.lovName = lovName;
     }
 
     @Override

@@ -29,14 +29,18 @@ import java.util.List;
  * attributes.
  * 
  * @author Florent Garin
- * @version 1.1, 23/01/12
- * @since   V1.0
+ * @version 2.0, 02/03/15
+ * @since   V2.0
  */
 @Table(name="ILOVATTRIBUTETEMPLATE")
 @Entity
 public class InstanceListOfValuesAttributeTemplate extends InstanceAttributeTemplate {
 
 
+    @JoinColumns({
+            @JoinColumn(name = "LOV_NAME", referencedColumnName = "NAME"),
+            @JoinColumn(name = "LOV_WORKSPACE_ID", referencedColumnName = "WORKSPACE_ID")
+    })
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private ListOfValues lov;
 
@@ -48,7 +52,13 @@ public class InstanceListOfValuesAttributeTemplate extends InstanceAttributeTemp
         lov=pLov;
     }
 
+    public ListOfValues getLov() {
+        return lov;
+    }
 
+    public void setLov(ListOfValues lov) {
+        this.lov = lov;
+    }
 
     public InstanceAttribute createInstanceAttribute() {
         InstanceListOfValuesAttribute attr = new InstanceListOfValuesAttribute();
