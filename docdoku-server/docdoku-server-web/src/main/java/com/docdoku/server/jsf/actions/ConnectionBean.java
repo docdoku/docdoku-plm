@@ -148,23 +148,15 @@ public class ConnectionBean {
     }
 
     private void redirectionPostLogin(HttpServletRequest request,ExternalContext ec) throws IOException {
-        URL url=new URL(request.getRequestURL().toString());
-        if(originURL!=null && originURL.length()>1){
-            URL redirectURL=new URL(url.getProtocol(),url.getHost(), url.getPort(),originURL);
+        URL url = new URL(request.getRequestURL().toString());
+
+        if (originURL != null && originURL.length() > 1) {
+            URL redirectURL = new URL(url.getProtocol(), url.getHost(), url.getPort(), originURL);
             ec.redirect(redirectURL.toString());
-        }else{
-            String workspaceID = null;
-            Workspace[] workspaces = userManager.getWorkspacesWhereCallerIsActive();
-            if (workspaces != null && workspaces.length > 0) {
-                workspaceID = workspaces[0].getId();
-            }
-            if(workspaceID == null){
-                URL redirectURL=new URL(url.getProtocol(),url.getHost(), url.getPort(),request.getContextPath() + "/faces/admin/workspace/workspacesMenu.xhtml");
-                ec.redirect(redirectURL.toString());
-            }else{
-                URL redirectURL=new URL(url.getProtocol(),url.getHost(), url.getPort(),request.getContextPath() + "/document-management/#" + workspaceID);
-                ec.redirect(redirectURL.toString());
-            }
+
+        } else {
+            URL redirectURL = new URL(url.getProtocol(), url.getHost(), url.getPort(), request.getContextPath() + "/faces/admin/workspace/workspacesMenu.xhtml");
+            ec.redirect(redirectURL.toString());
         }
     }
 }
