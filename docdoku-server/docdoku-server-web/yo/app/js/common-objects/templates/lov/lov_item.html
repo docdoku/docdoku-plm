@@ -1,3 +1,25 @@
-<div>
-    lov
+<div class="lovItem">
+    <div class="controls deleteLovItem">
+        <a class="fa fa-times"></a>
+    </div>
+
+    <span class="lovItemName">{{model.getLovName}}</span>
+    <input type="text" class="input-xlarge name lovItemNameInput" placeholder="{{i18n.NAME}}" value="{{model.getLOVName}}"/>
+    <div class="lovValueDiv">
+        <span class="lovNumberOfValue">{{model.getNumberOfValue}} {{i18n.POSSIBLE_VALUE}}</span>
+        <div class="lovValues">
+        {{#model.getLOVValues}}
+            <span>
+                <input type="text" class="input-xlarge name lovItemValueInput" placeholder="{{i18n.VALUE}}" value="{{.}}"/>
+                <div class="controls deleteLovItem">
+                    <a class="fa fa-times"></a>
+                </div>
+            </span>
+        {{/#model.getLOVValues}}
+        </div>
+        <button class="btn btn-primary addLOVValue">{{i18n.ADD}}</button>
+    </div>
+
+    <i class="fa fa-angle-double-down expandIcon"></i>
+
 </div>

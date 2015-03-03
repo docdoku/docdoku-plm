@@ -8,7 +8,7 @@ define([
 
         model: lov,
 
-        url: App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + ''
+        url: App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/lov'
 
     });
 

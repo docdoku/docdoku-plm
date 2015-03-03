@@ -303,6 +303,7 @@ define({
 		PATH: "Folder",
 		PENDING: "Absent participant",
 		PERMALINK: "Permalink",
+        POSSIBLE_VALUE: "possible values",
 		PREVIOUS_PAGE: "Previous page",
 		PRIVATE_SHARE_TITLE: "Private share",
 		PRODUCT_ID: "Product Id",
