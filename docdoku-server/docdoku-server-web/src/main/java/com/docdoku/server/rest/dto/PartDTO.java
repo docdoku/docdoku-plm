@@ -59,6 +59,7 @@ public class PartDTO implements Serializable {
     private PartRevision.RevisionStatus status;
     @XmlElement(nillable = true)
     int lastIterationNumber;
+    private String[] tags;
 
     public PartDTO() {
     }
@@ -217,5 +218,13 @@ public class PartDTO implements Serializable {
     }
     public void setLastIterationNumber(int lastIterationNumber) {
         this.lastIterationNumber = lastIterationNumber;
+    }
+
+    public String[] getTags() {
+        return tags;
+    }
+
+    public void setTags(String[] tags) {
+        this.tags = tags;
     }
 }

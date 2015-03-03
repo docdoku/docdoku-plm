@@ -24,34 +24,34 @@ import com.docdoku.core.common.Account;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.document.DocumentIterationKey;
-import com.docdoku.core.exceptions.NotAllowedException;
+import com.docdoku.core.exceptions.*;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.meta.InstanceDateAttribute;
 import com.docdoku.core.meta.InstanceTextAttribute;
+import com.docdoku.core.meta.Tag;
 import com.docdoku.core.product.*;
+import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IUserManagerLocal;
+import com.docdoku.server.esindexer.ESIndexer;
+import com.docdoku.server.util.ProductUtil;
+import com.docdoku.server.util.ProductUtil.*;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.Spy;
 
+import javax.ejb.SessionContext;
 import javax.persistence.EntityManager;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import javax.persistence.TypedQuery;
+import java.util.*;
 
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class ProductManagerBeanTest {
 
-    private static final String WORKSPACE_ID="TestWorkspace";
-    private static final String VERSION ="A" ;
-    private static final int ITERATION = 1;
-    private static final String PART_ID ="TestPart";
-    private static final String PART_MASTER_TEMPLATE_ID="template";
-    private static final String PART_TYPE="PartType";
 
 
     @InjectMocks
@@ -61,35 +61,41 @@ public class ProductManagerBeanTest {
     private EntityManager em;
     @Mock
     private IUserManagerLocal userManager;
+    @Mock
+    SessionContext ctx;
+    @Spy
+    private ESIndexer esIndexer = new ESIndexer();
 
-    @Mock
+
     private Account account;
-    @Mock
+
     private Workspace workspace ;
-    @Mock
+
     private User user;
 
+    private PartMaster partMaster;
+
+    private PartMasterTemplate partMasterTemplate;
+
+    private PartIteration partIteration;
+
+    private PartRevision partRevision;
+
     @Mock
-    PartMaster partMaster;
-    @Mock
-    PartMasterTemplate partMasterTemplate;
-    @Mock
-    PartIteration partIteration;
-    @Mock
-    PartRevision partRevision;
+    TypedQuery<Tag> tagsQuery;
 
 
     @Before
     public void setup() throws Exception {
         initMocks(this);
-        account = new Account("user2", "user2", "user2@docdoku.com", "en", new Date(), null);
-        workspace = new Workspace(WORKSPACE_ID,account, "pDescription", false);
+        account = new Account(ProductUtil.USER_2_LOGIN, ProductUtil.USER_2_NAME, "user2@docdoku.com", "en", new Date(), null);
+        workspace = new Workspace(ProductUtil.WORKSPACE_ID,account, "pDescription", false);
         user = new User(workspace, "user1" , "user1", "user1@docdoku.com", "en");
 
-        partMaster = new PartMaster(workspace, PART_ID, user);
-        partMasterTemplate = new PartMasterTemplate(workspace, PART_MASTER_TEMPLATE_ID, user, PART_TYPE, "", true);
-        partRevision = new PartRevision(partMaster,VERSION,user);
-        partIteration = new PartIteration(partRevision, ITERATION,user);
+        partMaster = new PartMaster(workspace, ProductUtil.PART_ID, user);
+        partMasterTemplate = new PartMasterTemplate(workspace, ProductUtil.PART_MASTER_TEMPLATE_ID, user, ProductUtil.PART_TYPE, "", true);
+        partRevision = new PartRevision(partMaster,ProductUtil.VERSION,user);
+        partIteration = new PartIteration(partRevision, ProductUtil.ITERATION,user);
         ArrayList<PartIteration> iterations = new ArrayList<PartIteration>();
         iterations.add(partIteration);
 
@@ -109,7 +115,7 @@ public class ProductManagerBeanTest {
         attributesOfIteration.add(attribute);
         partIteration.setInstanceAttributes(attributesOfIteration);
 
-        PartRevisionKey partRevisionKey = new PartRevisionKey(workspace.getId(),PART_ID, VERSION);
+        PartRevisionKey partRevisionKey = new PartRevisionKey(workspace.getId(), ProductUtil.PART_ID, ProductUtil.VERSION);
         partMaster.setAttributesLocked(true);
 
         Mockito.when(userManager.checkWorkspaceReadAccess(workspace.getId())).thenReturn(user);
@@ -160,7 +166,7 @@ public class ProductManagerBeanTest {
         attributesOfIteration.add(attribute);
         partIteration.setInstanceAttributes(attributesOfIteration);
 
-        PartRevisionKey partRevisionKey = new PartRevisionKey(workspace.getId(),PART_ID, VERSION);
+        PartRevisionKey partRevisionKey = new PartRevisionKey(workspace.getId(),ProductUtil.PART_ID, ProductUtil.VERSION);
         partMaster.setAttributesLocked(false);
 
         Mockito.when(userManager.checkWorkspaceReadAccess(workspace.getId())).thenReturn(user);
@@ -193,6 +199,68 @@ public class ProductManagerBeanTest {
         }catch (NotAllowedException notAllowedException){
             Assert.assertTrue("updateDocument shouldn't have raised an exception because the attributes are not frozen", false);
         }
+
+    }
+
+    /**
+     * test the add of new tags to a part that doesn't have any tag
+     * @throws UserNotFoundException
+     * @throws WorkspaceNotFoundException
+     * @throws UserNotActiveException
+     * @throws PartRevisionNotFoundException
+     * @throws AccessRightException
+     */
+    @Test
+    public void addTagToPartWithNoTags() throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
+
+
+        PartRevisionKey partRevisionKey = partRevision.getKey();
+
+        String[]tags = new String[3];
+        tags[0]="Important";
+        tags[1]="ToCheck";
+        tags[2]="ToDelete";
+
+        Mockito.when(userManager.checkWorkspaceReadAccess(ProductUtil.WORKSPACE_ID)).thenReturn(user);
+        Mockito.when(userManager.checkWorkspaceWriteAccess(ProductUtil.WORKSPACE_ID)).thenReturn(user);
+        Mockito.when(em.find(PartRevision.class, partRevisionKey)).thenReturn(partRevision);
+
+        Mockito.when(em.createQuery("SELECT DISTINCT t FROM Tag t WHERE t.workspaceId = :workspaceId")).thenReturn(tagsQuery);
+        Mockito.when(tagsQuery.setParameter("workspaceId", ProductUtil.WORKSPACE_ID)).thenReturn(tagsQuery);
+        Mockito.when(tagsQuery.getResultList()).thenReturn(new ArrayList<Tag>());
+
+        PartRevision partRevisionResult = productManagerBean.saveTags(partRevisionKey, (String[]) tags);
+
+        Assert.assertEquals(partRevisionResult.getTags().size() ,3);
+        int i = 0;
+        for (Iterator<Tag> it = partRevisionResult.getTags().iterator(); it.hasNext(); ) {
+            Tag tag = it.next();
+            Assert.assertEquals(tag.getLabel() ,tags[i++]);
+        }
+
+    }
+
+
+    @Test
+    public void removeTagFrom() throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
+        Set<Tag> tags = new LinkedHashSet<Tag>();
+        tags.add(new Tag(workspace, "Important"));
+        tags.add(new Tag(workspace, "ToRemove"));
+        tags.add(new Tag(workspace, "Urgent"));
+        partRevision.setTags(tags);
+
+        PartRevisionKey partRevisionKey = partRevision.getKey();
+        Mockito.when(ctx.isCallerInRole(UserGroupMapping.GUEST_PROXY_ROLE_ID)).thenReturn(true);
+        Mockito.when(userManager.checkWorkspaceReadAccess(ProductUtil.WORKSPACE_ID)).thenReturn(user);
+        Mockito.when(userManager.checkWorkspaceWriteAccess(ProductUtil.WORKSPACE_ID)).thenReturn(user);
+        Mockito.when(em.find(PartRevision.class, partRevisionKey)).thenReturn(partRevision);
+
+        PartRevision partRevisionResult = productManagerBean.removeTag(partRevision.getKey(), "Important");
+
+        Assert.assertEquals(partRevisionResult.getTags().size() ,2);
+        Assert.assertFalse(partRevisionResult.getTags().contains(new Tag(workspace,"Important")));
+        Assert.assertTrue(partRevisionResult.getTags().contains(new Tag(workspace,"Urgent")));
+        Assert.assertTrue(partRevisionResult.getTags().contains(new Tag(workspace,"ToRemove")));
 
     }
 }

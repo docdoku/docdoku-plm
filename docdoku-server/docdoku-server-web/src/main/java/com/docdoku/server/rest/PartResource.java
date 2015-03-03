@@ -372,6 +372,60 @@ public class PartResource {
         return abortedWorkflowsDTO;
     }
 
+    @PUT
+    @Path("/tags")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public PartDTO savePartTags(@PathParam("workspaceId") String workspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion, List<TagDTO> tagDtos)
+            throws EntityNotFoundException, NotAllowedException, ESServerException, AccessRightException, UserNotActiveException{
+
+
+        String[] tagLabels = new String[tagDtos.size()];
+
+        for (int i = 0; i < tagDtos.size(); i++) {
+            tagLabels[i] = tagDtos.get(i).getLabel();
+        }
+        PartRevisionKey revisionKey = new PartRevisionKey(workspaceId, partNumber, partVersion);
+
+        PartRevision partRevision =  productService.saveTags(revisionKey,tagLabels);
+        PartDTO  partDTO = mapper.map(partRevision, PartDTO.class);
+
+        return partDTO;
+    }
+
+    @POST
+    @Path("/tags")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response addPartTag(@PathParam("workspaceId") String workspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion, List<TagDTO> tagDtos)
+            throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException, ESServerException {
+
+        PartRevisionKey revisionKey = new PartRevisionKey(workspaceId, partNumber, partVersion);
+        PartRevision partRevision = productService.getPartRevision(revisionKey);
+        Set<Tag> tags = partRevision.getTags();
+        Set<String> tagLabels = new HashSet<>();
+
+        for(TagDTO tagDto:tagDtos){
+            tagLabels.add(tagDto.getLabel());
+        }
+
+        for(Tag tag : tags){
+            tagLabels.add(tag.getLabel());
+        }
+
+        productService.saveTags(revisionKey,tagLabels.toArray(new String[tagLabels.size()]));
+        return Response.ok().build();
+    }
+
+    @DELETE
+    @Path("/tags/{tagName}")
+    public Response removePartTags(@PathParam("workspaceId") String workspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion, @PathParam("tagName") String tagName)
+            throws EntityNotFoundException, NotAllowedException, AccessRightException, UserNotActiveException, ESServerException {
+        productService.removeTag(new PartRevisionKey(workspaceId, partNumber, partVersion), tagName);
+        return Response.ok().build();
+    }
+
+
     private List<InstanceAttribute> createInstanceAttributes(List<InstanceAttributeDTO> dtos) {
         if (dtos == null) {
             return new ArrayList<>();
