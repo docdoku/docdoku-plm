@@ -29,6 +29,8 @@ import com.docdoku.core.document.DocumentLink;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.meta.InstanceAttributeTemplate;
+import com.docdoku.core.meta.InstanceListOfValuesAttributeTemplate;
+import com.docdoku.core.meta.ListOfValues;
 import com.docdoku.core.product.*;
 import com.docdoku.core.product.PartIteration.Source;
 import com.docdoku.core.query.PartSearchQuery;
@@ -1274,7 +1276,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public PartMasterTemplate createPartMasterTemplate(String pWorkspaceId, String pId, String pPartType, String pWorkflowModelId, String pMask, InstanceAttributeTemplate[] pAttributeTemplates, boolean idGenerated, boolean attributesLocked) throws WorkspaceNotFoundException, AccessRightException, PartMasterTemplateAlreadyExistsException, UserNotFoundException, NotAllowedException, CreationException, WorkflowModelNotFoundException {
+    public PartMasterTemplate createPartMasterTemplate(String pWorkspaceId, String pId, String pPartType, String pWorkflowModelId, String pMask, InstanceAttributeTemplate[] pAttributeTemplates, String[] lovNames, boolean idGenerated, boolean attributesLocked) throws WorkspaceNotFoundException, AccessRightException, PartMasterTemplateAlreadyExistsException, UserNotFoundException, NotAllowedException, CreationException, WorkflowModelNotFoundException, ListOfValuesNotFoundException {
         User user = userManager.checkWorkspaceWriteAccess(pWorkspaceId);
         Locale locale = new Locale(user.getLanguage());
         checkNameValidity(pId,locale);
@@ -1283,9 +1285,15 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         Date now = new Date();
         template.setCreationDate(now);
         template.setIdGenerated(idGenerated);
+        LOVDAO lovDAO=new LOVDAO(locale,em);
 
         List<InstanceAttributeTemplate> attrs = new ArrayList<>();
-        Collections.addAll(attrs, pAttributeTemplates);
+        for(int i=0;i<pAttributeTemplates.length;i++){
+            if(pAttributeTemplates[i] instanceof InstanceListOfValuesAttributeTemplate){
+                InstanceListOfValuesAttributeTemplate lovAttr=(InstanceListOfValuesAttributeTemplate)pAttributeTemplates[i];
+                lovAttr.setLov(lovDAO.loadLOV(lovNames[i]));
+            }
+        }
         template.setAttributeTemplates(attrs);
 
         if (pWorkflowModelId != null){
@@ -1299,7 +1307,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public PartMasterTemplate updatePartMasterTemplate(PartMasterTemplateKey pKey, String pPartType, String pWorkflowModelId, String pMask, InstanceAttributeTemplate[] pAttributeTemplates, boolean idGenerated, boolean attributesLocked) throws WorkspaceNotFoundException, AccessRightException, PartMasterTemplateNotFoundException, UserNotFoundException, WorkflowModelNotFoundException, UserNotActiveException {
+    public PartMasterTemplate updatePartMasterTemplate(PartMasterTemplateKey pKey, String pPartType, String pWorkflowModelId, String pMask, InstanceAttributeTemplate[] pAttributeTemplates, String[] lovNames, boolean idGenerated, boolean attributesLocked) throws WorkspaceNotFoundException, AccessRightException, PartMasterTemplateNotFoundException, UserNotFoundException, WorkflowModelNotFoundException, UserNotActiveException, ListOfValuesNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(pKey.getWorkspaceId());
         Locale locale = new Locale(user.getLanguage());
 
@@ -1315,16 +1323,14 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         template.setMask(pMask);
         template.setIdGenerated(idGenerated);
         template.setAttributesLocked(attributesLocked);
+        LOVDAO lovDAO=new LOVDAO(locale,em);
 
         List<InstanceAttributeTemplate> attrs = new ArrayList<>();
-        Collections.addAll(attrs, pAttributeTemplates);
-
-        Set<InstanceAttributeTemplate> attrsToRemove = new HashSet<>(template.getAttributeTemplates());
-        attrsToRemove.removeAll(attrs);
-
-        InstanceAttributeTemplateDAO attrDAO = new InstanceAttributeTemplateDAO(em);
-        for (InstanceAttributeTemplate attrToRemove : attrsToRemove) {
-            attrDAO.removeAttribute(attrToRemove);
+        for(int i=0;i<pAttributeTemplates.length;i++){
+            if(pAttributeTemplates[i] instanceof InstanceListOfValuesAttributeTemplate){
+                InstanceListOfValuesAttributeTemplate lovAttr=(InstanceListOfValuesAttributeTemplate)pAttributeTemplates[i];
+                lovAttr.setLov(lovDAO.loadLOV(lovNames[i]));
+            }
         }
 
         template.setAttributeTemplates(attrs);
