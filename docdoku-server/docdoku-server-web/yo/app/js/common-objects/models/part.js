@@ -100,7 +100,11 @@ function (Backbone, Date, PartIterationList, ACLChecker) {
         },
 
         getModificationDate: function () {
-            return this.getLastIteration().get('modificationDate');
+            var lastIteration = this.getLastIteration();
+            if (lastIteration) {
+                return lastIteration.get('modificationDate');
+            }
+            return null;
         },
 
         getRevisionDate: function () {
