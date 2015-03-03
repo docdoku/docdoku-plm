@@ -20,8 +20,6 @@
 package com.docdoku.core.meta;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlSeeAlso;
-import java.io.Serializable;
 
 /**
  * A generic implementation of {@link InstanceAttributeTemplate} that can instantiate
@@ -33,7 +31,7 @@ import java.io.Serializable;
  */
 @Table(name="DEFAULTIATTRIBUTETEMPLATE")
 @Entity
-public class DefaultInstanceAttributeTemplate extends InstanceAttributeTemplate {
+public class DefaultAttributeTemplate extends InstanceAttributeTemplate {
 
 
     private AttributeType attributeType;
@@ -43,20 +41,20 @@ public class DefaultInstanceAttributeTemplate extends InstanceAttributeTemplate 
         TEXT, NUMBER, DATE, BOOLEAN, URL
     }
 
-    public DefaultInstanceAttributeTemplate() {
+    public DefaultAttributeTemplate() {
     }
 
-    public DefaultInstanceAttributeTemplate(String pName, AttributeType pAttributeType) {
+    public DefaultAttributeTemplate(String pName, AttributeType pAttributeType) {
         super(pName);
         attributeType = pAttributeType;
     }
 
 
-    public DefaultInstanceAttributeTemplate.AttributeType getAttributeType() {
+    public DefaultAttributeTemplate.AttributeType getAttributeType() {
         return attributeType;
     }
 
-    public void setAttributeType(DefaultInstanceAttributeTemplate.AttributeType attributeType) {
+    public void setAttributeType(DefaultAttributeTemplate.AttributeType attributeType) {
         this.attributeType = attributeType;
     }
 

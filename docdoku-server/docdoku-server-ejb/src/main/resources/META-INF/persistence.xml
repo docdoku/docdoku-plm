@@ -43,13 +43,13 @@
     <class>com.docdoku.core.log.DocumentLog</class>
     <class>com.docdoku.core.log.PartLog</class>
     <class>com.docdoku.core.log.WorkspaceLog</class>
-    <class>com.docdoku.core.meta.DefaultInstanceAttributeTemplate</class>
+    <class>com.docdoku.core.meta.DefaultAttributeTemplate</class>
     <class>com.docdoku.core.meta.InstanceAttribute</class>
     <class>com.docdoku.core.meta.InstanceAttributeTemplate</class>
     <class>com.docdoku.core.meta.InstanceBooleanAttribute</class>
     <class>com.docdoku.core.meta.InstanceDateAttribute</class>
     <class>com.docdoku.core.meta.InstanceListOfValuesAttribute</class>
-    <class>com.docdoku.core.meta.InstanceListOfValuesAttributeTemplate</class>
+    <class>com.docdoku.core.meta.ListOfValuesAttributeTemplate</class>
     <class>com.docdoku.core.meta.InstanceNumberAttribute</class>
     <class>com.docdoku.core.meta.InstanceTextAttribute</class>
     <class>com.docdoku.core.meta.InstanceURLAttribute</class>

@@ -34,7 +34,7 @@ import java.util.List;
  */
 @Table(name="ILOVATTRIBUTETEMPLATE")
 @Entity
-public class InstanceListOfValuesAttributeTemplate extends InstanceAttributeTemplate {
+public class ListOfValuesAttributeTemplate extends InstanceAttributeTemplate {
 
 
     @JoinColumns({
@@ -44,10 +44,10 @@ public class InstanceListOfValuesAttributeTemplate extends InstanceAttributeTemp
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private ListOfValues lov;
 
-    public InstanceListOfValuesAttributeTemplate() {
+    public ListOfValuesAttributeTemplate() {
     }
 
-    public InstanceListOfValuesAttributeTemplate(String pName, ListOfValues pLov) {
+    public ListOfValuesAttributeTemplate(String pName, ListOfValues pLov) {
         super(pName);
         lov=pLov;
     }

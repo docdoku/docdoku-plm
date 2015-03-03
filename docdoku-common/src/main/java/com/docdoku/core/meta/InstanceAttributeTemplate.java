@@ -32,7 +32,7 @@ import java.io.Serializable;
  * @since   V1.0
  */
 @Table(name="INSTANCEATTRIBUTETEMPLATE")
-@XmlSeeAlso({DefaultInstanceAttributeTemplate.class, InstanceListOfValuesAttributeTemplate.class})
+@XmlSeeAlso({DefaultAttributeTemplate.class, ListOfValuesAttributeTemplate.class})
 @Inheritance()
 @Entity
 public abstract class InstanceAttributeTemplate implements Serializable {
