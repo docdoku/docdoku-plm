@@ -96,6 +96,9 @@ public class WorkspaceResource {
     @EJB
     private IUserManagerLocal userManager;
 
+    @EJB
+    private LOVResource lov;
+
     private Mapper mapper;
 
     public WorkspaceResource() {
@@ -213,4 +216,7 @@ public class WorkspaceResource {
     public DocumentBaselinesResource documentBaselines(){
         return documentBaselines;
     }
+
+    @Path("/{workspaceId}/lov")
+    public LOVResource lov(){ return lov;}
 }

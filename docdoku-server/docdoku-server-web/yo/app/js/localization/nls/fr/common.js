@@ -299,6 +299,7 @@ define({
 	PATH: "Dossier",
 	PENDING: "Participant absent",
 	PERMALINK: "Permalien",
+    POSSIBLE_VALUE: "valeurs possibles",
 	PREVIOUS_PAGE: "Page précédente",
 	PRIVATE_SHARE_TITLE: "Accès privé",
 	PRODUCT_ID: "Référence",

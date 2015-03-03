@@ -27,6 +27,8 @@ import com.docdoku.core.meta.ListOfValues;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
+import javax.persistence.TypedQuery;
+import java.util.List;
 import java.util.Locale;
 
 public class LOVDAO {
@@ -51,6 +53,12 @@ public class LOVDAO {
         } else {
             return lov;
         }
+    }
+
+    public List<ListOfValues> loadLOVList(String pWorkspaceId){
+        TypedQuery<ListOfValues> query = em.createQuery("SELECT DISTINCT l FROM ListOfValues l WHERE l.workspaceId = :workspaceId", ListOfValues.class);
+        query.setParameter("workspaceId", pWorkspaceId);
+        return query.getResultList();
     }
 
     public void createLOV(ListOfValues pLov) throws CreationException, ListOfValuesAlreadyExistsException {

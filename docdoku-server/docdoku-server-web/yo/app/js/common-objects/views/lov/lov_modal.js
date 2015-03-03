@@ -12,7 +12,8 @@ define([
         template: template,
 
         events: {
-            "hidden .modal.list_lov": "onHidden"
+            "hidden .modal.list_lov": "onHidden",
+            "click .addLOVButton": "addLov"
         },
 
         collection: new LOVCollection(),
@@ -47,12 +48,25 @@ define([
         },
 
         onCollectionReset: function() {
-            this.collection.each(this.addLovView);
+            this.collection.each(this.addLovView.bind(this, false));
         },
 
-        addLovView: function(lov){
-            //append
-            this.lovListDiv.append(new LOVItemView)
+        addLovView: function(lov, isExpand){
+            var lovView = new LOVItemView({
+                model: lov,
+                isExpand: isExpand
+            });
+            lovView.on('remove', this.removeLovView.bind(this, [lovView]));
+            this.lovViews.push(lovView);
+            this.lovListDiv.append(lovView.$el);
+        },
+
+        addLov: function(){
+            this.addLovView({}, true);
+        },
+
+        removeLovView:function(lovView){
+            this.lovViews = _.without(this.lovViews, lovView);
         }
 
 
