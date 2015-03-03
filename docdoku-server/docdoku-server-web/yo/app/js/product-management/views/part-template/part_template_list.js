@@ -205,7 +205,11 @@ define([
             ];
             if (this.oTable) {
                 oldSort = this.oTable.fnSettings().aaSorting;
-                this.oTable.fnDestroy();
+                try {
+                    this.oTable.fnDestroy();
+                } catch (e) {
+                    console.error(e);
+                }
             }
             this.oTable = this.$el.dataTable({
                 aaSorting: oldSort,
@@ -218,7 +222,7 @@ define([
                 },
                 sDom: 'ft',
                 aoColumnDefs: [
-                    { 'bSortable': false, 'aTargets': [ 0 ] },
+                    { 'bSortable': false, 'aTargets': [ 0, 6 ] },
                     { 'sType': App.config.i18n.DATE_SORT, 'aTargets': [5] }
                 ]
             });
