@@ -27,20 +27,20 @@ import java.util.Locale;
  *
  * @author Florent Garin
  */
-public class ConfigurationItemNotReleasedException extends ApplicationException {
+public class PartRevisionNotReleasedException extends ApplicationException {
     private final String mCIId;
 
 
-    public ConfigurationItemNotReleasedException(String pMessage) {
+    public PartRevisionNotReleasedException(String pMessage) {
         super(pMessage);
         mCIId=null;
     }
 
-    public ConfigurationItemNotReleasedException(Locale pLocale, String pCIID) {
+    public PartRevisionNotReleasedException(Locale pLocale, String pCIID) {
         this(pLocale, pCIID, null);
     }
 
-    public ConfigurationItemNotReleasedException(Locale pLocale, String pCIId, Throwable pCause) {
+    public PartRevisionNotReleasedException(Locale pLocale, String pCIId, Throwable pCause) {
         super(pLocale, pCause);
         mCIId=pCIId;
     }

@@ -1,8 +1,0 @@
-<div class="well">
-    <input name="number" type="text" class="number-input" value="{{model.getNumber}}" title="{{i18n.PRODUCT_ID}}"
-           readonly required/>
-    <input name="version" type="text" class="input-small version-input" value="{{model.getVersion}}"
-           title="{{i18n.VERSION}} : A -> {{model.getLastVersion}}" pattern="[A-{{model.getLastVersion}}]{1}" required/>
-    <input name="iteration" type="number" class="input-small iteration-input" min="1" max="{{model.getLastIteration}}"
-           title="{{i18n.ITERATION}}" step="1" value="{{model.getIteration}}" required/>
-</div>

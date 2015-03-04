@@ -4,6 +4,7 @@ define([
     'mustache',
     'common-objects/collections/baselines',
     'collections/configuration_items',
+    'models/configuration_item',
     'text!templates/baselines/baselines_content.html',
     'views/baselines/baselines_list',
     'views/baselines/baseline_duplicate_view',
@@ -12,7 +13,7 @@ define([
     'text!common-objects/templates/buttons/snap_button.html',
     'common-objects/views/alert',
     'views/baselines/baseline_creation_view'
-], function (Backbone, Mustache, BaselinesCollection, ConfigurationItemCollection, template, BaselinesListView, BaselineDuplicateView, deleteButton, duplicateButton, snapButton, AlertView, BaselineCreationView) {
+], function (Backbone, Mustache, BaselinesCollection, ConfigurationItemCollection,ConfigurationItem, template, BaselinesListView, BaselineDuplicateView, deleteButton, duplicateButton, snapButton, AlertView, BaselineCreationView) {
 	'use strict';
 
     var BaselinesContentView = Backbone.View.extend({
@@ -83,7 +84,7 @@ define([
         },
 
         createBaseline: function () {
-            var baselineCreationView = new BaselineCreationView({collection:this.listView.collection});
+            var baselineCreationView = new BaselineCreationView({collection:this.listView.collection,model:new ConfigurationItem()});
             window.document.body.appendChild(baselineCreationView.render().el);
             baselineCreationView.on('warning', this.onWarning);
             baselineCreationView.openModal();

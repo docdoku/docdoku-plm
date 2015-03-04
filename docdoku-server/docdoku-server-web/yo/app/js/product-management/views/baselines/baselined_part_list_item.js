@@ -2,8 +2,9 @@
 define([
     'backbone',
     'mustache',
-    'text!templates/baselines/baselined_part_list_item.html'
-], function (Backbone, Mustache, template) {
+    'text!templates/baselines/baselined_part_list_item.html',
+    'common-objects/models/part'
+], function (Backbone, Mustache, template, Part) {
     'use strict';
     var BaselinedPartListItemView = Backbone.View.extend({
         tagName: 'li',
@@ -11,105 +12,60 @@ define([
         className: 'baselined-part-item',
 
         events: {
-            'change .iteration-input': 'changeIteration',
-            'change .version-input': 'changeVersion',
-            'change input.exclude-input': 'excludePart'
+            'change input[type=radio]': 'changeChoice',
+            'click .release': 'release'
         },
 
         template: Mustache.parse(template),
 
         initialize: function () {
-            this.isForBaseline = (this.options.isForBaseline) ? this.options.isForBaseline : false;
-            this.isLocked = (this.options.isLocked) ? this.options.isLocked : false;
+            _.bindAll(this);
+            this.editMode = (this.options.editMode) ? this.options.editMode : false;
             this.availableIterations = _(this.model.getAvailableIterations());
         },
 
         render: function () {
-            var data = {
+            this.$el.html(Mustache.render(template, {
                 model: this.model,
-                i18n: App.config.i18n
-            };
-            if (this.isForBaseline) {
-                data.released = this.options.released;
-                data.isForBaseline = this.isForBaseline;
-            }
-            this.$el.html(Mustache.render(template, data));
-            this.bindDomElements();
-            this.fillInputs();
+                i18n: App.config.i18n,
+                editMode:this.editMode
+            }));
+            this.$loader = this.$('.loader');
+            this.$loader.hide();
+            this.$release = this.$('.release');
+            this.checkFirstInput();
             return this;
         },
 
-        bindDomElements: function () {
-            this.$versionInput = this.$el.find('.version-input');
-            this.$iterationInput = this.$el.find('.iteration-input');
+        checkFirstInput:function(){
+            this.$('input[type=radio]').first().prop('checked',true)
         },
 
-        fillInputs: function () {
-            var _this = this;
-            var availableVersion = [];
-            this.availableIterations.each(function (optionI) {
-                availableVersion.push({
-                    version: optionI.version,
-                    released: optionI.released
-                });
-            });
-            availableVersion = _.uniq(availableVersion);
-            _(availableVersion).each(function (optionV) {
-                if (!_this.isForBaseline || !_this.options.released || optionV.released) {
-                    _this.$versionInput.append('<option value="' + optionV.version + '" >' + optionV.version + '</option>');
-                }
-            });
-            this.$versionInput.on('change', this, this.fillIteration.bind(this));
-            this.$versionInput.val(this.model.getVersion());
-            if (_this.isLocked) {
-                this.$versionInput.prop('disabled', 'disabled');
-                this.$iterationInput.prop('disabled', 'disabled');
-            } else if (_this.isForBaseline && _this.options.released) {
-                this.$iterationInput.prop('disabled', 'disabled');
-
-            }
-            this.fillIteration();
-        },
-
-        fillIteration: function () {
-            var _this = this;
-            var iteration = 1;
-            var version = this.$versionInput.val();
-            this.$iterationInput.html('');
-            this.availableIterations.each(function (optionI) {
-                if (optionI.version === version) {
-                    iteration = optionI.lastIteration;
-                    if (_this.isForBaseline && _this.options.released) {
-                        _this.$iterationInput.append('<option value="' + iteration + '">' + iteration + '</option>');
-                    } else {
-                        _(_.range(1, iteration + 1)).each(function (value) {
-                            _this.$iterationInput.append('<option value="' + value + '">' + value + '</option>');
-                        });
-                    }
-                }
-            });
-            this.$iterationInput.val(_this.model.getIteration());
-        },
-
-        changeIteration: function (e) {
+        changeChoice:function(e){
             if (e.target.value) {
-                this.model.setIteration(e.target.value);
+                var versionIteration = e.target.value.split('-');
+                var version = versionIteration[0];
+                var iteration = versionIteration[1];
+                this.model.setVersion(version);
+                this.model.setIteration(iteration);
             }
         },
-        changeVersion: function (e) {
-            if (e.target.value) {
-                this.model.setVersion(e.target.value);
-            }
+
+        release:function(){
+            this.$loader.show();
+            this.$release.hide();
+            var part = new Part({partKey: this.model.getNumber()+'-'+this.model.getVersion()});
+            part.release().success(this.onReleased).error(this.onReleaseError);
         },
-        excludePart: function (e) {
-            if (e.target.checked) {
-                this.$el.css('opacity', 0.5);
-            } else {
-                this.$el.css('opacity', 1);
-            }
-            this.model.setExcluded(e.target.checked);
+        onReleased:function(){
+            this.$loader.hide();
+            _.findWhere(this.model.getAvailableIterations(),{version:this.model.getVersion()}).released = true;
+            this.render();
+        },
+        onReleaseError:function(){
+            this.$loader.hide();
+            this.$release.show();
         }
-
     });
 
     return BaselinedPartListItemView;

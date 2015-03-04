@@ -31,11 +31,14 @@ define([
         bindDomElements: function () {
             this.$notifications = this.$('.notifications');
             this.$modal = this.$('#baseline_detail_modal');
-            this.$baselinedPartListArea = this.$('#baselinedPartListArea');
+            this.$baselinedPartListArea = this.$('.baselinedPartListArea');
         },
 
         initBaselinedPartListView: function () {
-            this.baselinePartListView = new BaselinePartListView({model: this.model, isForBaseline: true}).render();
+            this.baselinePartListView = new BaselinePartListView({
+                model: this.model,
+                editMode:false
+            }).render();
             this.$baselinedPartListArea.html(this.baselinePartListView.$el);
         },
 

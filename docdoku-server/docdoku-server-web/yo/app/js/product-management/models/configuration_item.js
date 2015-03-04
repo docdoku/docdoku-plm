@@ -57,6 +57,10 @@ define(['backbone'], function (Backbone) {
             });
         },
 
+        getReleasedParts : function(){
+            return $.getJSON(this.urlRoot() + '/' + this.getId() + '/latest-released');
+        },
+
         deleteBaselines: function (baselines, callbacks) {
             var _this = this;
             var toDelete = _.size(baselines);

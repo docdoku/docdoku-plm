@@ -78,12 +78,12 @@ define([
             this.$notifications = this.$el.find('.notifications').first();
             this.$modal = this.$('#product_instance_modal');
             this.$inputIterationNote = this.$('#inputIterationNote');
-            this.$baselinedPartListArea = this.$('#baselinedPartListArea');
+            this.$baselinedPartListArea = this.$('.baselinedPartListArea');
             this.$authorLink = this.$('.author-popover');
         },
 
         initBaselinedPartListView: function (view) {
-            view.baselinePartListView = new BaselinedPartListView({model: view.iteration, isLocked: !view.editMode}).render();
+            view.baselinePartListView = new BaselinedPartListView({model: view.iteration, editMode:false}).render();
             view.$baselinedPartListArea.html(view.baselinePartListView.$el);
         },
 

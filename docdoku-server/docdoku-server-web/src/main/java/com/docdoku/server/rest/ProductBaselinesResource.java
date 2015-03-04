@@ -21,7 +21,6 @@ package com.docdoku.server.rest;
 
 import com.docdoku.core.configuration.BaselinedPart;
 import com.docdoku.core.configuration.ProductBaseline;
-import com.docdoku.core.configuration.ProductBaselineCreationReport;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.product.ConfigurationItemKey;
@@ -29,8 +28,6 @@ import com.docdoku.core.product.PartIterationKey;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IProductBaselineManagerLocal;
 import com.docdoku.server.rest.dto.baseline.BaselinedPartDTO;
-import com.docdoku.server.rest.dto.baseline.ProductBaselineCreationDTO;
-import com.docdoku.server.rest.dto.baseline.ProductBaselineCreationReportDTO;
 import com.docdoku.server.rest.dto.baseline.ProductBaselineDTO;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
@@ -54,15 +51,15 @@ import java.util.logging.Logger;
 @Stateless
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
-public class BaselinesResource {
+public class ProductBaselinesResource {
 
     @EJB
     private IProductBaselineManagerLocal productBaselineService;
 
-    private static final Logger LOGGER = Logger.getLogger(BaselinesResource.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ProductBaselinesResource.class.getName());
     private Mapper mapper;
 
-    public BaselinesResource() {
+    public ProductBaselinesResource() {
     }
 
     @PostConstruct
@@ -93,31 +90,24 @@ public class BaselinesResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ProductBaselineCreationReportDTO createBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String pCiId, ProductBaselineCreationDTO productBaselineCreationDTO)
-            throws UserNotActiveException, EntityNotFoundException, NotAllowedException, AccessRightException, ConfigurationItemNotReleasedException {
-        String ciId = (pCiId != null) ? pCiId : productBaselineCreationDTO.getConfigurationItemId();
-        ProductBaselineCreationReport productBaselineCreationReport = productBaselineService.createBaseline(new ConfigurationItemKey(workspaceId,ciId), productBaselineCreationDTO.getName(), productBaselineCreationDTO.getType(), productBaselineCreationDTO.getDescription());
-        return mapper.map(productBaselineCreationReport,ProductBaselineCreationReportDTO.class);
-    }
+    public ProductBaselineDTO createBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String pCiId, ProductBaselineDTO productBaselineDTO)
+            throws UserNotActiveException, EntityNotFoundException, NotAllowedException, AccessRightException, PartRevisionNotReleasedException {
 
-    @PUT
-    @Path("{baselineId}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public ProductBaselineDTO updateBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String pCiId, @PathParam("baselineId") String baselineId, ProductBaselineDTO pProductBaselineDTO)
-            throws UserNotActiveException, EntityNotFoundException, ConfigurationItemNotReleasedException {
-        String ciId = (pCiId != null) ? pCiId : pProductBaselineDTO.getConfigurationItemId();
+        String ciId = (pCiId != null) ? pCiId : productBaselineDTO.getConfigurationItemId();
+        ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId,ciId);
+        String description = productBaselineDTO.getDescription();
+        String name = productBaselineDTO.getName();
+        ProductBaseline.BaselineType type = productBaselineDTO.getType();
+
+        List<BaselinedPartDTO> baselinedPartsDTO = productBaselineDTO.getBaselinedParts();
         List<PartIterationKey> partIterationKeys = new ArrayList<>();
-        for(BaselinedPartDTO baselinedPartDTO : pProductBaselineDTO.getBaselinedParts()){
-            partIterationKeys.add(new PartIterationKey(workspaceId, baselinedPartDTO.getNumber(),baselinedPartDTO.getVersion(),baselinedPartDTO.getIteration()));
+        for(BaselinedPartDTO part:baselinedPartsDTO){
+            partIterationKeys.add(new PartIterationKey(workspaceId,part.getNumber(),part.getVersion(),part.getIteration()));
         }
 
-        ProductBaseline productBaseline = productBaselineService.updateBaseline(new ConfigurationItemKey(workspaceId, ciId), Integer.parseInt(baselineId), pProductBaselineDTO.getName(), pProductBaselineDTO.getType(), pProductBaselineDTO.getDescription(), partIterationKeys);
-
-        ProductBaselineDTO productBaselineDTO = mapper.map(productBaseline,ProductBaselineDTO.class);
-        productBaselineDTO.setConfigurationItemId(productBaseline.getConfigurationItem().getId());
-
-        return productBaselineDTO;
+        ProductBaseline baseline = productBaselineService.createBaseline(ciKey,
+                name, type, description, partIterationKeys);
+        return mapper.map(baseline,ProductBaselineDTO.class);
     }
 
     @DELETE
@@ -154,15 +144,5 @@ public class BaselinesResource {
             baselinedPartDTOList.add(Tools.mapBaselinedPartToBaselinedPartDTO(baselinedPart));
         }
         return baselinedPartDTOList;
-    }
-
-    @POST
-    @Path("{baselineId}/duplicate")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public ProductBaselineDTO duplicateBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @PathParam("baselineId") int baselineId,  ProductBaselineCreationDTO productBaselineCreationDTO)
-            throws EntityNotFoundException, AccessRightException {
-        ProductBaseline productBaseline = productBaselineService.duplicateBaseline(baselineId, productBaselineCreationDTO.getName(), productBaselineCreationDTO.getType(), productBaselineCreationDTO.getDescription());
-        return mapper.map(productBaseline, ProductBaselineDTO.class);
     }
 }

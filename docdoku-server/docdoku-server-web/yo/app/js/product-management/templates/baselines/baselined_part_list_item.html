@@ -1,12 +1,14 @@
-<div class="well">
-    <input name="number" type="text" class="number-input"
-           value="{{model.getNumber}}{{#released}} ({{i18n.RELEASED}}){{/released}}"
-           title="{{i18n.NUMBER}}{{#released}} ({{i18n.RELEASED}}){{/released}}" readonly required/>
-    <select name="version" class="input-small version-input" {{^editMode}}disabled{{/editMode}} required></select>
-    <select name="iteration" class="input-small iteration-input" {{^editMode}}disabled{{/editMode}} required></select>
-    {{#isForBaseline}}
-    {{#editMode}}
-    <input name="exclude" type="checkbox" class="exclude-input" title="{{i18n.EXCLUDE}}"/>
-    {{/editMode}}
-    {{/isForBaseline}}
-</div>
+{{#editMode}}
+    <a class="model-ref">{{model.getNumber}}</a>
+{{#model.getAvailableIterations}}
+    <label class="radio">
+        <input type="radio" name="partIteration-selector-{{model.getNumber}}" value="{{version}}-{{lastIteration}}" />
+        {{version}}-{{lastIteration}}
+        {{#released}}<i class="fa fa-check" title="{{i18n.RELEASED}}"></i>{{/released}}
+        {{^released}}<a class="release">{{i18n.RELEASE}}</a> <i class="fa fa-spin fa-refresh loader"></i> {{/released}}
+    </label>
+{{/model.getAvailableIterations}}
+{{/editMode}}
+{{^editMode}}
+    <a class="model-ref">{{model.getNumber}}-{{model.getVersion}}-{{model.getIteration}}</a>
+{{/editMode}}

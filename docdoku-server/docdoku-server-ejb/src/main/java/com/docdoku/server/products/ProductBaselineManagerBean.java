@@ -22,9 +22,7 @@ package com.docdoku.server.products;
 
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
-import com.docdoku.core.configuration.ProductBaselineCreationReport;
 import com.docdoku.core.configuration.BaselinedPart;
-import com.docdoku.core.configuration.BaselinedPartKey;
 import com.docdoku.core.configuration.ProductBaseline;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.*;
@@ -42,8 +40,9 @@ import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.text.MessageFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 @DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID, UserGroupMapping.GUEST_PROXY_ROLE_ID})
 @Local(IProductBaselineManagerLocal.class)
@@ -56,74 +55,145 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public ProductBaselineCreationReport createBaseline(ConfigurationItemKey configurationItemKey, String name, ProductBaseline.BaselineType pType, String description) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, ConfigurationItemNotReleasedException, PartIterationNotFoundException, UserNotActiveException, NotAllowedException{
+    public ProductBaseline createBaseline(ConfigurationItemKey configurationItemKey, String name, ProductBaseline.BaselineType pType, String description, List<PartIterationKey> partIterationKeys) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, PartRevisionNotReleasedException, PartIterationNotFoundException, UserNotActiveException, NotAllowedException{
+
         User user = userManager.checkWorkspaceWriteAccess(configurationItemKey.getWorkspace());
         Locale locale = new Locale(user.getLanguage());
+
         ConfigurationItem configurationItem = new ConfigurationItemDAO(locale,em).loadConfigurationItem(configurationItemKey);
 
-        ProductBaseline.BaselineType type = pType;
-        if(type == null){
-            type = ProductBaseline.BaselineType.LATEST;
-        }
-        ProductBaseline productBaseline = new ProductBaseline(configurationItem, name, type, description);
-        Date now = new Date();
-        productBaseline.getPartCollection().setCreationDate(now);
+        ProductBaseline productBaseline = new ProductBaseline(configurationItem, name, pType, description);
+        productBaseline.getPartCollection().setCreationDate(new Date());
         productBaseline.getPartCollection().setAuthor(user);
 
-        new ProductBaselineDAO(em).createBaseline(productBaseline);
+        new ProductBaselineDAO(locale,em).createBaseline(productBaseline);
 
-        ProductBaselineCreationReport productBaselineCreationReport = new ProductBaselineCreationReport(productBaseline);
+        switch (pType){
 
-        PartRevision lastRevision;
-        PartIteration baselinedIteration = null;
+            case RELEASED: createReleasedBaseline(productBaseline, user, partIterationKeys); break;
+            case LATEST: createLatestBaseline(productBaseline,user); break;
 
-        switch(type){
-            case RELEASED:
-                lastRevision = configurationItem.getDesignItem().getLastReleasedRevision();
-                if(lastRevision==null){
-                    throw new ConfigurationItemNotReleasedException(locale, configurationItemKey.getId());
-                }
-                baselinedIteration = lastRevision.getLastIteration();
-                break;
-            // case LATEST:
+            // Implement existing configuration baseline
+
             default:
-                List<PartRevision> partRevisions = configurationItem.getDesignItem().getPartRevisions();
-                boolean isPartFound = false;
-
-                lastRevision =configurationItem.getDesignItem().getLastRevision();
-                if(lastRevision.isCheckedOut()){
-                    productBaselineCreationReport.addConflit(lastRevision);
-                }
-
-                for(int j= partRevisions.size()-1; j>=0 && !isPartFound;j--){
-                    lastRevision = partRevisions.get(j);
-
-                    for(int i= lastRevision.getLastIteration().getIteration(); i>0 && !isPartFound; i--){
-                        try{
-                            checkPartIterationForBaseline(user,new PartIterationKey(lastRevision.getKey(),i));
-                            baselinedIteration = lastRevision.getIteration(i);
-                            isPartFound=true;
-                        }catch (AccessRightException e){
-                            productBaselineCreationReport.addConflit(lastRevision);
-
-                        }
-                    }
-                }
-                if(baselinedIteration==null){
-                    throw new NotAllowedException(locale, "NotAllowedException1");
-                }
-                break;
+                throw new IllegalArgumentException();
+                // Should not occur
         }
 
-        productBaselineCreationReport.addConflits(fillBaselineParts(productBaseline, baselinedIteration, type, user));
+        // TODO : check cyclic assembly before transaction ends
 
-        if(!productBaselineCreationReport.getConflits().isEmpty()){
-            String message = ResourceBundle.getBundle("com.docdoku.core.i18n.LocalStrings", locale).getString("BaselineWarningException1");
-            productBaselineCreationReport.setMessage(MessageFormat.format(message, productBaseline.getName()));
+        return productBaseline;
+    }
+
+    private void createLatestBaseline(ProductBaseline productBaseline, User user) throws NotAllowedException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartIterationNotFoundException, PartRevisionNotReleasedException {
+        // Get the latest design part for the given product
+        ConfigurationItem configurationItem = productBaseline.getConfigurationItem();
+        PartRevision lastRevision = configurationItem.getDesignItem().getLastRevision();
+        PartIteration baselinedIteration = lastRevision.getLastCheckedInIteration();
+        fillLatestBaselineParts(productBaseline, baselinedIteration, user);
+    }
+
+    private void fillLatestBaselineParts(ProductBaseline productBaseline, PartIteration pIteration, User user) throws PartRevisionNotReleasedException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartIterationNotFoundException, NotAllowedException{
+
+        Locale locale = new Locale(user.getLanguage());
+
+        if(pIteration==null){
+            throw new NotAllowedException(locale, "NotAllowedException1");
         }
 
+        // Ignore already existing parts (unique part number)
+        if(productBaseline.hasBasedLinedPart(pIteration.getWorkspaceId(), pIteration.getPartNumber())) {
+            return;
+        }
 
-        return productBaselineCreationReport;
+        // Add current
+        productBaseline.addBaselinedPart(pIteration);
+
+        // Iterate usage Links - recursive
+        for(PartUsageLink partUsageLink : pIteration.getComponents()){
+            PartRevision lastRevision = partUsageLink.getComponent().getLastRevision();
+            PartIteration iteration = lastRevision.getLastCheckedInIteration();
+            fillLatestBaselineParts(productBaseline, iteration, user);
+        }
+
+    }
+
+    private void createReleasedBaseline(ProductBaseline productBaseline, User user, List<PartIterationKey> partIterationKeys) throws PartRevisionNotReleasedException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, NotAllowedException, PartIterationNotFoundException {
+
+        Locale locale = new Locale(user.getLanguage());
+
+        // Get the latest released design part for the given product and check in overrides
+        ConfigurationItem configurationItem = productBaseline.getConfigurationItem();
+
+        PartRevision lastReleasedRevision = configurationItem.getDesignItem().getLastReleasedRevision();
+
+        if(lastReleasedRevision==null){
+            throw new PartRevisionNotReleasedException(locale, configurationItem.getDesignItem().getNumber());
+        }
+
+        PartIteration partIteration;
+        PartIterationKey overridePartIterationKey = findOverride(partIterationKeys, lastReleasedRevision);
+
+        if(overridePartIterationKey != null){
+            partIteration = new PartIterationDAO(locale, em).loadPartI(overridePartIterationKey);
+        }else{
+            partIteration = lastReleasedRevision.getLastCheckedInIteration();
+        }
+
+        fillReleasedBaselineParts(productBaseline, partIteration, user, partIterationKeys);
+
+    }
+
+
+    private void fillReleasedBaselineParts(ProductBaseline productBaseline, PartIteration iteration, User user, List<PartIterationKey> partIterationKeys) throws PartRevisionNotReleasedException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartIterationNotFoundException, NotAllowedException{
+
+        Locale locale = new Locale(user.getLanguage());
+
+        if(iteration==null){
+            throw new NotAllowedException(locale, "NotAllowedException1");
+        }
+
+        // Ignore already existing parts
+        if(productBaseline.hasBasedLinedPart(iteration.getWorkspaceId(), iteration.getPartNumber())) {
+            return;
+        }
+
+        // Add current
+        productBaseline.addBaselinedPart(iteration);
+
+        // Iterate usage Links - recursive
+        for(PartUsageLink partUsageLink : iteration.getComponents()){
+
+            PartRevision lastReleasedRevision = partUsageLink.getComponent().getLastReleasedRevision();
+
+            if(lastReleasedRevision==null){
+                throw new PartRevisionNotReleasedException(locale,  partUsageLink.getComponent().getNumber());
+            }
+
+            PartIteration partIteration;
+            PartIterationKey overridePartIterationKey = findOverride(partIterationKeys, lastReleasedRevision);
+
+            if(overridePartIterationKey != null){
+                partIteration = new PartIterationDAO(locale, em).loadPartI(overridePartIterationKey);
+                if(!partIteration.getPartRevision().isReleased()){
+                    throw new PartRevisionNotReleasedException(locale, partIteration.getPartNumber());
+                }
+            }else{
+                partIteration = lastReleasedRevision.getLastCheckedInIteration();
+            }
+
+            fillReleasedBaselineParts(productBaseline, partIteration, user, partIterationKeys);
+        }
+
+    }
+
+    private PartIterationKey findOverride(List<PartIterationKey> partIterationKeys, PartRevision lastReleasedRevision) {
+        for(PartIterationKey partIterationKey:partIterationKeys){
+            if(partIterationKey.getPartMasterNumber().equals(lastReleasedRevision.getPartMasterNumber())){
+                return partIterationKey;
+            }
+        }
+        return null;
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
@@ -169,59 +239,6 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public ProductBaseline duplicateBaseline(int baselineId, String name, ProductBaseline.BaselineType pType, String description) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, BaselineNotFoundException{
-        ProductBaselineDAO productBaselineDAO = new ProductBaselineDAO(em);
-        ProductBaseline productBaseline = productBaselineDAO.loadBaseline(baselineId);
-        ConfigurationItem configurationItem = productBaseline.getConfigurationItem();
-        User user = userManager.checkWorkspaceWriteAccess(configurationItem.getWorkspaceId());
-
-        ProductBaseline.BaselineType type = pType;
-        if(pType == null){
-            type = ProductBaseline.BaselineType.LATEST;
-        }
-        ProductBaseline duplicatedProductBaseline = new ProductBaseline(configurationItem,name, type, description);
-        productBaselineDAO.createBaseline(duplicatedProductBaseline);
-        Date now = new Date();
-        productBaseline.getPartCollection().setCreationDate(now);
-        productBaseline.getPartCollection().setAuthor(user);
-
-        // copy partIterations
-        Set<Map.Entry<BaselinedPartKey, BaselinedPart>> entries = productBaseline.getBaselinedParts().entrySet();
-        for(Map.Entry<BaselinedPartKey,BaselinedPart> entry : entries){
-            duplicatedProductBaseline.addBaselinedPart(entry.getValue().getTargetPart());
-        }
-
-        return duplicatedProductBaseline;
-    }
-
-    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
-    @Override
-    public ProductBaseline updateBaseline(ConfigurationItemKey configurationItemKey, int baselineId, String name, ProductBaseline.BaselineType type, String description, List<PartIterationKey> partIterationKeys) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartIterationNotFoundException, BaselineNotFoundException, ConfigurationItemNotReleasedException {
-        ProductBaselineDAO productBaselineDAO = new ProductBaselineDAO(em);
-        ProductBaseline productBaseline = productBaselineDAO.loadBaseline(baselineId);
-        User user = userManager.checkWorkspaceReadAccess(productBaseline.getConfigurationItem().getWorkspaceId());
-
-        productBaseline.setDescription(description);
-        productBaseline.setName(name);
-        productBaseline.setType(type);
-        productBaselineDAO.flushBaselinedParts(productBaseline);
-
-        Locale locale = new Locale(user.getLanguage());
-        PartIterationDAO partIterationDAO = new PartIterationDAO(locale,em);
-        for(PartIterationKey partIterationKey : partIterationKeys){
-            PartIteration partIteration = partIterationDAO.loadPartI(partIterationKey);
-            if(type== ProductBaseline.BaselineType.LATEST || (type== ProductBaseline.BaselineType.RELEASED && partIteration.getPartRevision().isReleased())){
-                productBaseline.addBaselinedPart(partIteration);
-            }else{
-                throw new ConfigurationItemNotReleasedException(locale,partIteration.getPartRevisionKey().toString());
-            }
-        }
-
-        return productBaseline;
-    }
-
-    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
-    @Override
     public List<BaselinedPart> getBaselinedPartWithReference(int baselineId, String q, int maxResults) throws BaselineNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         ProductBaselineDAO productBaselineDAO = new ProductBaselineDAO(em);
         ProductBaseline productBaseline = productBaselineDAO.loadBaseline(baselineId);
@@ -229,70 +246,4 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
         return new ProductBaselineDAO(new Locale(user.getLanguage()), em).findBaselinedPartWithReferenceLike(productBaseline.getPartCollection().getId(), q, maxResults);
     }
 
-    private List<PartRevision> fillBaselineParts(ProductBaseline productBaseline, PartIteration lastIteration, ProductBaseline.BaselineType type,User user) throws ConfigurationItemNotReleasedException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartIterationNotFoundException, NotAllowedException{
-        Locale locale = new Locale(user.getLanguage());
-        // Ignore already existing parts
-        List<PartRevision> ignoredRevisions = new ArrayList<>();
-        if(productBaseline.hasBasedLinedPart(lastIteration.getWorkspaceId(), lastIteration.getPartNumber())) return ignoredRevisions;
-        // Add current
-        productBaseline.addBaselinedPart(lastIteration);
-        // Add components
-        for(PartUsageLink partUsageLink : lastIteration.getComponents()){
-            PartRevision lastRevision;
-            PartIteration baselinedIteration = null;
-            switch(type){
-                case RELEASED:
-                    lastRevision = partUsageLink.getComponent().getLastReleasedRevision();
-                    if(lastRevision==null){
-                        throw new ConfigurationItemNotReleasedException(locale, partUsageLink.getComponent().getNumber());
-                    }
-                    baselinedIteration = lastRevision.getLastIteration();
-                    break;
-                case LATEST:
-                default:
-                    List<PartRevision> partRevisions = partUsageLink.getComponent().getPartRevisions();
-                    boolean isPartFinded = false;
-
-                    lastRevision =partUsageLink.getComponent().getLastRevision();
-                    if(lastRevision.isCheckedOut()){
-                        ignoredRevisions.add(lastRevision);
-                    }
-
-                    for(int j= partRevisions.size()-1; j>=0 && !isPartFinded;j--){
-                        lastRevision = partRevisions.get(j);
-                        for(int i= lastRevision.getLastIteration().getIteration(); i>0 && !isPartFinded; i--){
-                            try{
-                                checkPartIterationForBaseline(user,new PartIterationKey(lastRevision.getKey(), i));
-                                baselinedIteration = lastRevision.getIteration(i);
-                                isPartFinded=true;
-                            }catch (AccessRightException e){
-                                if(!ignoredRevisions.contains(lastRevision)){
-                                    ignoredRevisions.add(lastRevision);
-                                }
-                            }
-                        }
-                    }
-                    if(baselinedIteration==null){
-                        throw new NotAllowedException(Locale.getDefault(), "NotAllowedException1");
-                    }
-                    break;
-            }
-            List<PartRevision> ignoredUsageLinkRevisions = fillBaselineParts(productBaseline, baselinedIteration, type, user);
-            ignoredRevisions.addAll(ignoredUsageLinkRevisions);
-        }
-        return ignoredRevisions;
-    }
-
-    private User checkPartIterationForBaseline(User user,PartIterationKey partIterationKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartIterationNotFoundException, AccessRightException, NotAllowedException {
-
-        Locale locale = new Locale(user.getLanguage());
-        PartIteration partIteration = new PartIterationDAO(locale, em).loadPartI(partIterationKey);
-        PartRevision partRevision = partIteration.getPartRevision();
-        if ((partRevision.getACL() == null || partRevision.getACL().hasReadAccess(user)) &&
-                (!partRevision.isCheckedOut() || !partRevision.getLastIteration().equals(partIteration))) {              // Check if the ACL grant write access
-            return user;
-        }
-        throw new AccessRightException(locale, user);                                                                    // Else throw a AccessRightException
-
-    }
 }

@@ -388,7 +388,7 @@ function (Backbone, Date, PartIterationList, ACLChecker,AlertView) {
             });
         },
         release: function () {
-            $.ajax({
+            return $.ajax({
                 context: this,
                 type: 'PUT',
                 url: this.url() + '/release',
