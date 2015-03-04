@@ -26,6 +26,7 @@ define({
 	APPEND_LAYER: "Créer un nouveau calque",
 	APPROVE_TASK: "Marquer la tâche comme effectuée",
 	ATTACHED_FILES: "Fichiers",
+    ATTACHED_FILES_DOCUMENT: "Fichiers joints",
 	ATTRIBUTES: "Attributs",
 	AUTHOR: "Auteur",
 	AUTHOR_DOCUMENT_HELP: "Auteur du document",

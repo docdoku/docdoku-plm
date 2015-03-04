@@ -25,6 +25,7 @@ define([
             this.events['click .state-subscription'] = this.toggleStateSubscription;
             this.events['click .iteration-subscription'] = this.toggleIterationSubscription;
             this.events['click .document-master-share i'] = this.shareDocument;
+            this.events['click .document-attached-files i'] = this.openDocumentModal;
             this.events['dragstart a.dochandle'] = this.dragStart;
             this.events['dragend a.dochandle'] = this.dragEnd;
             this.events['dragstart td.doc-ref'] = this.dragStart;
@@ -49,6 +50,7 @@ define([
 
             data.isCheckoutByConnectedUser = this.model.isCheckoutByConnectedUser();
             data.isCheckout = this.model.isCheckout();
+            data.hasAttachedFiles = this.model.getLastIteration().getAttachedFiles().length;
 
             return data;
         },
@@ -119,6 +121,16 @@ define([
             });
         },
 
+        openDocumentModal: function(){
+            var that = this;
+            this.model.fetch().success(function () {
+                new IterationView({
+                    model: that.model
+                }).show();
+                $('a[href$="tab-iteration-files"]').click();
+            });
+
+        },
         toggleStateSubscription: function () {
             this.model.toggleStateSubscribe(this.model.isStateChangedSubscribed());
         },

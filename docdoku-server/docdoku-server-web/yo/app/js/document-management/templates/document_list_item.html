@@ -33,3 +33,8 @@
 <td class="document-master-share">
     <i class="fa fa-globe" title="{{i18n.PUBLISH}}"></i>
 </td>
+<td class="document-attached-files">
+    {{#model.hasAttachedFiles}}
+    <i class="fa fa-paperclip" title="{{i18n.ATTACHED_FILES_DOCUMENT}}"></i>
+    {{/model.hasAttachedFiles}}
+</td>

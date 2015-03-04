@@ -91,7 +91,7 @@ define([
                 partRevision: this.model.toJSON(),
                 i18n: App.config.i18n,
                 permalink: this.model.getPermalink(),
-                hasIterations: this.iterations.length
+                hasIterations: this.iterations.length,
             };
 
             data.partRevision.creationDate = date.formatTimestamp(

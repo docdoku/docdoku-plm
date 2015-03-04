@@ -27,6 +27,7 @@ define({
 		APPEND_LAYER: "Create a new layer",
 		APPROVE_TASK: "Mark task as done",
 		ATTACHED_FILES: "Files",
+        ATTACHED_FILES_DOCUMENT: "Attached files",
 		ATTRIBUTES: "Attributes",
 		AUTHOR: "Author",
 		AUTHOR_DOCUMENT_HELP: "Author of the document",
