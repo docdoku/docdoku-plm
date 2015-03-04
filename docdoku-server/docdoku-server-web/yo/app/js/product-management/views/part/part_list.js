@@ -207,6 +207,23 @@ define([
             return null;
         },
 
+        getSelectedParts: function () {
+            var checkedViews = [];
+            _(this.listItemViews).select(function (itemView) {
+                if (itemView.isChecked()){
+                    checkedViews.push( itemView.model);
+                }
+
+            });
+            return checkedViews;
+        },
+        eachChecked: function (callback) {
+            _(this.listItemViews).each(function (view) {
+                if (view.isChecked()) {
+                    callback(view);
+                }
+            });
+        },
         isSelectedPartsReleasable: function () {
             var isPartReleasable = true;
             _(this.listItemViews).each(function (view) {

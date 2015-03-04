@@ -109,6 +109,7 @@ define([
             }
 
             date.dateHelper(this.$('.date-popover'));
+            this.tagsManagement(this.editMode);
             return this;
         },
 
@@ -231,6 +232,61 @@ define([
                 this.$('a[href=#tab-iteration-lifecycle]').hide();
             }
         },
+        tagsManagement: function (editMode) {
+
+            var $tagsZone = this.$('.master-tags-list');
+            var that = this;
+
+            _.each(this.model.attributes.tags, function (tagLabel) {
+
+                var tagView;
+
+                var tagViewParams = editMode ?
+                {
+                    model: new Tag({id: tagLabel, label: tagLabel}),
+                    isAdded: true,
+                    clicked: function () {
+                        that.tagsToRemove.push(tagLabel);
+                        tagView.$el.remove();
+                    }} :
+                {
+                    model: new Tag({id: tagLabel, label: tagLabel}),
+                    isAdded: true,
+                    clicked: function () {
+                        that.tagsToRemove.push(tagLabel);
+                        tagView.$el.remove();
+                        that.model.removeTag(tagLabel, function () {
+                            if (that.model.collection.parent) {
+                                if (_.contains(that.tagsToRemove, that.model.collection.parent.id)) {
+                                    that.model.collection.remove(that.model);
+                                }
+                            }
+                        });
+                        tagView.$el.remove();
+                    }
+                };
+
+                tagView = new TagView(tagViewParams).render();
+
+                $tagsZone.append(tagView.el);
+
+            });
+
+        },
+
+        deleteClickedTags: function () {
+            if (this.tagsToRemove.length) {
+                var that = this;
+                this.model.removeTags(this.tagsToRemove, function () {
+                    if (that.model.collection.parent) {
+                        if (_.contains(that.tagsToRemove, that.model.collection.parent.id)) {
+                            that.model.collection.remove(that.model);
+                        }
+                    }
+                });
+            }
+        },
+
         onError: function (model, error) {
             var errorMessage = error ? error.responseText : model;
 
