@@ -8,6 +8,7 @@
         {{^released}}<a class="release">{{i18n.RELEASE}}</a> <i class="fa fa-spin fa-refresh loader"></i> {{/released}}
     </label>
 {{/model.getAvailableIterations}}
+<span class="errors"></span>
 {{/editMode}}
 {{^editMode}}
     <a class="model-ref">{{model.getNumber}}-{{model.getVersion}}-{{model.getIteration}}</a>

@@ -9,7 +9,8 @@ define([
     var BaselineDetailView = Backbone.View.extend({
 
         events: {
-            'hidden #baseline_detail_modal': 'onHidden'
+            'hidden #baseline_detail_modal': 'onHidden',
+            'close-modal-request':'closeModal'
         },
 
         initialize: function () {

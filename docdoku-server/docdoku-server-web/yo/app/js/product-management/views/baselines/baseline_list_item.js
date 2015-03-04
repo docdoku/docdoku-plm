@@ -36,10 +36,12 @@ define([
         },
 
         toBaselineDetailView: function () {
-            this.trigger('open-baseline-modal');
-            setTimeout(function(){
-                new BaselineDetailView({model: this.model}, {productId: this.model.getConfigurationItemId()}).render();
-            }.bind(this),200)
+            setTimeout(this.openBaselineDetailView.bind(this),500);
+            this.$el.trigger('close-modal-request');
+        },
+
+        openBaselineDetailView :function(){
+            new BaselineDetailView({model: this.model}, {productId: this.model.getConfigurationItemId()}).render();
         }
 
     });

@@ -22,15 +22,19 @@ package com.docdoku.server.products;
 
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
+import com.docdoku.core.configuration.BaselineConfigSpec;
 import com.docdoku.core.configuration.BaselinedPart;
+import com.docdoku.core.configuration.ConfigSpec;
 import com.docdoku.core.configuration.ProductBaseline;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.*;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IProductBaselineManagerLocal;
+import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.dao.ConfigurationItemDAO;
 import com.docdoku.server.dao.PartIterationDAO;
+import com.docdoku.server.dao.PartMasterDAO;
 import com.docdoku.server.dao.ProductBaselineDAO;
 
 import javax.annotation.security.DeclareRoles;
@@ -52,10 +56,12 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
     private EntityManager em;
     @EJB
     private IUserManagerLocal userManager;
+    @EJB
+    private IProductManagerLocal productManager;
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public ProductBaseline createBaseline(ConfigurationItemKey configurationItemKey, String name, ProductBaseline.BaselineType pType, String description, List<PartIterationKey> partIterationKeys) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, PartRevisionNotReleasedException, PartIterationNotFoundException, UserNotActiveException, NotAllowedException{
+    public ProductBaseline createBaseline(ConfigurationItemKey configurationItemKey, String name, ProductBaseline.BaselineType pType, String description, List<PartIterationKey> partIterationKeys) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, PartRevisionNotReleasedException, PartIterationNotFoundException, UserNotActiveException, NotAllowedException, EntityConstraintException, PartMasterNotFoundException {
 
         User user = userManager.checkWorkspaceWriteAccess(configurationItemKey.getWorkspace());
         Locale locale = new Locale(user.getLanguage());
@@ -80,17 +86,19 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
                 // Should not occur
         }
 
-        // TODO : check cyclic assembly before transaction ends
-
         return productBaseline;
     }
 
-    private void createLatestBaseline(ProductBaseline productBaseline, User user) throws NotAllowedException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartIterationNotFoundException, PartRevisionNotReleasedException {
+    private void createLatestBaseline(ProductBaseline productBaseline, User user) throws NotAllowedException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartIterationNotFoundException, PartRevisionNotReleasedException, EntityConstraintException, PartMasterNotFoundException {
         // Get the latest design part for the given product
         ConfigurationItem configurationItem = productBaseline.getConfigurationItem();
         PartRevision lastRevision = configurationItem.getDesignItem().getLastRevision();
         PartIteration baselinedIteration = lastRevision.getLastCheckedInIteration();
         fillLatestBaselineParts(productBaseline, baselinedIteration, user);
+
+        BaselineConfigSpec baselineConfigSpec = new BaselineConfigSpec(productBaseline, user);
+        checkCyclicAssembly(configurationItem.getWorkspaceId(),baselinedIteration.getPartRevision().getPartMaster(),baselinedIteration.getComponents(), baselineConfigSpec, new Locale(user.getLanguage()));
+
     }
 
     private void fillLatestBaselineParts(ProductBaseline productBaseline, PartIteration pIteration, User user) throws PartRevisionNotReleasedException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartIterationNotFoundException, NotAllowedException{
@@ -118,7 +126,7 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
 
     }
 
-    private void createReleasedBaseline(ProductBaseline productBaseline, User user, List<PartIterationKey> partIterationKeys) throws PartRevisionNotReleasedException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, NotAllowedException, PartIterationNotFoundException {
+    private void createReleasedBaseline(ProductBaseline productBaseline, User user, List<PartIterationKey> partIterationKeys) throws PartRevisionNotReleasedException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, NotAllowedException, PartIterationNotFoundException, EntityConstraintException, PartMasterNotFoundException {
 
         Locale locale = new Locale(user.getLanguage());
 
@@ -141,6 +149,9 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
         }
 
         fillReleasedBaselineParts(productBaseline, partIteration, user, partIterationKeys);
+
+        BaselineConfigSpec baselineConfigSpec = new BaselineConfigSpec(productBaseline, user);
+        checkCyclicAssembly(configurationItem.getWorkspaceId(), partIteration.getPartRevision().getPartMaster(), partIteration.getComponents(), baselineConfigSpec, new Locale(user.getLanguage()));
 
     }
 
@@ -246,4 +257,32 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
         return new ProductBaselineDAO(new Locale(user.getLanguage()), em).findBaselinedPartWithReferenceLike(productBaseline.getPartCollection().getId(), q, maxResults);
     }
 
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.ADMIN_ROLE_ID})
+    @Override
+    public void checkCyclicAssembly(String workspaceId, PartMaster root, List<PartUsageLink> usageLinks, ConfigSpec ci, Locale locale) throws EntityConstraintException, PartMasterNotFoundException {
+
+        for(PartUsageLink usageLink:usageLinks){
+            if(root.getNumber().equals(usageLink.getComponent().getNumber())){
+                throw new EntityConstraintException(locale,"EntityConstraintException12");
+            }
+            for(PartSubstituteLink substituteLink:usageLink.getSubstitutes()){
+                if(root.getNumber().equals(substituteLink.getSubstitute().getNumber())){
+                    throw new EntityConstraintException(locale,"EntityConstraintException12");
+                }
+            }
+        }
+
+        for(PartUsageLink usageLink: usageLinks){
+            PartMaster pm = new PartMasterDAO(locale,em).loadPartM(new PartMasterKey(workspaceId,usageLink.getComponent().getNumber()));
+            PartIteration partIteration = ci.filterConfigSpec(pm);
+            checkCyclicAssembly(workspaceId,root,partIteration.getComponents(),ci, locale);
+
+            for(PartSubstituteLink substituteLink:usageLink.getSubstitutes()){
+                PartMaster substitute = new PartMasterDAO(locale,em).loadPartM(new PartMasterKey(workspaceId,substituteLink.getSubstitute().getNumber()));
+                PartIteration substituteIteration = ci.filterConfigSpec(substitute);
+                checkCyclicAssembly(workspaceId, root, substituteIteration.getComponents(),ci, locale);
+            }
+        }
+
+    }
 }

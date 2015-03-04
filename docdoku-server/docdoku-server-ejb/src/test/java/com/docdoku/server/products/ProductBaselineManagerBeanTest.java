@@ -21,15 +21,18 @@
 package com.docdoku.server.products;
 
 import com.docdoku.core.common.User;
+import com.docdoku.core.configuration.LatestConfigSpec;
 import com.docdoku.core.configuration.ProductBaseline;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.ConfigurationItem;
 import com.docdoku.core.product.PartIteration;
+import com.docdoku.core.product.PartMaster;
 import com.docdoku.server.DataManagerBean;
 import com.docdoku.server.UserManagerBean;
 import com.docdoku.server.dao.ConfigurationItemDAO;
 import com.docdoku.server.dao.PartIterationDAO;
 import com.docdoku.server.util.BaselineRule;
+import com.docdoku.server.util.CyclicAssemblyRule;
 import com.docdoku.server.util.FastTestCategory;
 import org.junit.Assert;
 import org.junit.Before;
@@ -56,7 +59,6 @@ import static org.mockito.MockitoAnnotations.initMocks;
 @RunWith(MockitoJUnitRunner.class)
 public class ProductBaselineManagerBeanTest {
 
-
     @InjectMocks
     ProductBaselineManagerBean productBaselineService = new ProductBaselineManagerBean();
 
@@ -71,17 +73,17 @@ public class ProductBaselineManagerBeanTest {
     @Mock
     DataManagerBean dataManager;
 
-
     @Rule
     public BaselineRule baselineRuleNotReleased;
     @Rule
     public BaselineRule baselineRuleReleased;
     @Rule
-    public BaselineRule baselineRuleACL;
+    public BaselineRule baselineRuleLatest;
+    @Rule
+    public CyclicAssemblyRule cyclicAssemblyRule;
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
-
 
     @Before
     public void setup() throws Exception {
@@ -91,41 +93,18 @@ public class ProductBaselineManagerBeanTest {
 
     }
 
-    /**
-     * test the creation of baseline with a product that contains a part that has not been released yet
-     *
-     * @throws Exception PartRevisionNotReleasedException
-     */
-    @Category(FastTestCategory.class)
-    @Test
-    public void createBaselineUsingPartNotReleasedYet() throws Exception{
-
-        //Given
-
-        baselineRuleNotReleased = new BaselineRule("myBaseline", ProductBaseline.BaselineType.RELEASED, "description", "workspace01", "user1", "part01", "product01", false, null);
-
-        doReturn(new User("en")).when(userManager).checkWorkspaceWriteAccess(Matchers.anyString());
-        Mockito.when(userManager.checkWorkspaceWriteAccess(Matchers.anyString())).thenReturn(baselineRuleNotReleased.getUser1());
-        Mockito.when(em.find(ConfigurationItem.class, baselineRuleNotReleased.getConfigurationItemKey())).thenReturn(baselineRuleNotReleased.getConfigurationItem());
-        Mockito.when(new ConfigurationItemDAO(new Locale("en"), em).loadConfigurationItem(baselineRuleNotReleased.getConfigurationItemKey())).thenReturn(baselineRuleNotReleased.getConfigurationItem());
-        thrown.expect(PartRevisionNotReleasedException.class);
-        //When
-        productBaselineService.createBaseline(baselineRuleNotReleased.getConfigurationItemKey(), baselineRuleNotReleased.getName(), baselineRuleNotReleased.getType(), baselineRuleNotReleased.getDescription(),new ArrayList<>());
-
-
-    }
 
     /**
      * test the creation of Released baseline
      */
     @Category(FastTestCategory.class)
     @Test
-    public void createReleasedBaseline() throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, NotAllowedException, UserNotActiveException, PartIterationNotFoundException, PartRevisionNotReleasedException {
+    public void createReleasedBaseline() throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, NotAllowedException, UserNotActiveException, PartIterationNotFoundException, PartRevisionNotReleasedException, EntityConstraintException, PartMasterNotFoundException {
 
         //Given
-        baselineRuleReleased = new BaselineRule("myBaseline", ProductBaseline.BaselineType.RELEASED, "description", "workspace01", "user1", "part01", "product01", true, null);
+        baselineRuleReleased = new BaselineRule("myBaseline", ProductBaseline.BaselineType.RELEASED, "description", "workspace01", "user1", "part01", "product01", true);
         doReturn(new User("en")).when(userManager).checkWorkspaceWriteAccess(Matchers.anyString());
-        Mockito.when(userManager.checkWorkspaceWriteAccess(Matchers.anyString())).thenReturn(baselineRuleReleased.getUser1());
+        Mockito.when(userManager.checkWorkspaceWriteAccess(Matchers.anyString())).thenReturn(baselineRuleReleased.getUser());
         Mockito.when(em.find(ConfigurationItem.class, baselineRuleReleased.getConfigurationItemKey())).thenReturn(baselineRuleReleased.getConfigurationItem()
         );
         Mockito.when(new ConfigurationItemDAO(new Locale("en"), em).loadConfigurationItem(baselineRuleReleased.getConfigurationItemKey())).thenReturn(baselineRuleReleased.getConfigurationItem());
@@ -142,32 +121,41 @@ public class ProductBaselineManagerBeanTest {
 
     }
 
-
     /**
-     * Create  baseline with the latest version of the products
+     * test the creation of a released baseline with a product that contains a part that has not been released yet
      *
-     * @throws UserNotFoundException
-     * @throws AccessRightException
-     * @throws WorkspaceNotFoundException
-     * @throws ConfigurationItemNotFoundException
-     * @throws NotAllowedException
-     * @throws UserNotActiveException
-     * @throws PartIterationNotFoundException
-     * @throws com.docdoku.core.exceptions.PartRevisionNotReleasedException
+     * @throws Exception PartRevisionNotReleasedException
      */
     @Category(FastTestCategory.class)
     @Test
-    public void createBaselineWithoutSpecifiyingType() throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, NotAllowedException, UserNotActiveException, PartIterationNotFoundException, PartRevisionNotReleasedException {
+    public void createReleasedBaselineUsingPartNotReleased() throws Exception{
 
         //Given
-        baselineRuleReleased = new BaselineRule("myBaseline", null, "description", "workspace01", "user1", "part01", "product01", true, null);
+        baselineRuleNotReleased = new BaselineRule("myBaseline", ProductBaseline.BaselineType.RELEASED, "description", "workspace01", "user1", "part01", "product01", false);
+
         doReturn(new User("en")).when(userManager).checkWorkspaceWriteAccess(Matchers.anyString());
-        Mockito.when(userManager.checkWorkspaceWriteAccess(Matchers.anyString())).thenReturn(baselineRuleReleased.getUser1());
+        Mockito.when(userManager.checkWorkspaceWriteAccess(Matchers.anyString())).thenReturn(baselineRuleNotReleased.getUser());
+        Mockito.when(em.find(ConfigurationItem.class, baselineRuleNotReleased.getConfigurationItemKey())).thenReturn(baselineRuleNotReleased.getConfigurationItem());
+        Mockito.when(new ConfigurationItemDAO(new Locale("en"), em).loadConfigurationItem(baselineRuleNotReleased.getConfigurationItemKey())).thenReturn(baselineRuleNotReleased.getConfigurationItem());
+        thrown.expect(PartRevisionNotReleasedException.class);
+        //When
+        productBaselineService.createBaseline(baselineRuleNotReleased.getConfigurationItemKey(), baselineRuleNotReleased.getName(), baselineRuleNotReleased.getType(), baselineRuleNotReleased.getDescription(),new ArrayList<>());
+
+    }
+    /**
+     * test the creation of latest baseline
+     */
+    @Category(FastTestCategory.class)
+    @Test
+    public void createLatestBaseline() throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, EntityConstraintException, UserNotActiveException, NotAllowedException, PartIterationNotFoundException, PartRevisionNotReleasedException, PartMasterNotFoundException {
+
+        //Given
+        baselineRuleLatest = new BaselineRule("myBaseline", ProductBaseline.BaselineType.LATEST, "description", "workspace01", "user1", "part01", "product01", true);
+        doReturn(new User("en")).when(userManager).checkWorkspaceWriteAccess(Matchers.anyString());
+        Mockito.when(userManager.checkWorkspaceWriteAccess(Matchers.anyString())).thenReturn(baselineRuleReleased.getUser());
         Mockito.when(em.find(ConfigurationItem.class, baselineRuleReleased.getConfigurationItemKey())).thenReturn(baselineRuleReleased.getConfigurationItem()
         );
         Mockito.when(new ConfigurationItemDAO(new Locale("en"), em).loadConfigurationItem(baselineRuleReleased.getConfigurationItemKey())).thenReturn(baselineRuleReleased.getConfigurationItem());
-        Mockito.when(em.find(PartIteration.class, baselineRuleReleased.getPartMaster().getLastReleasedRevision().getIteration(1).getKey())).thenReturn(baselineRuleReleased.getPartMaster().getLastReleasedRevision().getIteration(1));
-        Mockito.when(new PartIterationDAO(new Locale("en"), em).loadPartI(baselineRuleReleased.getPartMaster().getLastReleasedRevision().getIteration(1).getKey())).thenReturn(baselineRuleReleased.getPartMaster().getLastReleasedRevision().getIteration(1));
 
         //When
         ProductBaseline baseline = productBaselineService.createBaseline(baselineRuleReleased.getConfigurationItemKey(), baselineRuleReleased.getName(), baselineRuleReleased.getType(), baselineRuleReleased.getDescription(), new ArrayList<>());
@@ -175,8 +163,9 @@ public class ProductBaselineManagerBeanTest {
         //Then
         Assert.assertTrue(baseline != null);
         Assert.assertTrue(baseline.getDescription().equals(baselineRuleReleased.getDescription()));
-        Assert.assertTrue(baseline.getType().equals(ProductBaseline.BaselineType.LATEST));
+        Assert.assertTrue(baseline.getType().equals(baselineRuleReleased.getType()));
         Assert.assertTrue(baseline.getConfigurationItem().getWorkspaceId().equals(baselineRuleReleased.getWorkspace().getId()));
+
     }
 
     /**
@@ -191,12 +180,12 @@ public class ProductBaselineManagerBeanTest {
      */
     @Category(FastTestCategory.class)
     @Test
-    public void createLatestBaselineWithCheckedPart() throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, NotAllowedException, UserNotActiveException, PartIterationNotFoundException, PartRevisionNotReleasedException {
+    public void createLatestBaselineWithCheckedPart() throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, NotAllowedException, UserNotActiveException, PartIterationNotFoundException, PartRevisionNotReleasedException, EntityConstraintException, PartMasterNotFoundException {
 
         //Given
-        baselineRuleReleased = new BaselineRule("myBaseline", null, "description", "workspace01", "user1", "part01", "product01", true, false);
+        baselineRuleReleased = new BaselineRule("myBaseline", ProductBaseline.BaselineType.LATEST , "description", "workspace01", "user1", "part01", "product01", true, false);
         doReturn(new User("en")).when(userManager).checkWorkspaceWriteAccess(Matchers.anyString());
-        Mockito.when(userManager.checkWorkspaceWriteAccess(Matchers.anyString())).thenReturn(baselineRuleReleased.getUser1());
+        Mockito.when(userManager.checkWorkspaceWriteAccess(Matchers.anyString())).thenReturn(baselineRuleReleased.getUser());
         Mockito.when(em.find(ConfigurationItem.class, baselineRuleReleased.getConfigurationItemKey())).thenReturn(baselineRuleReleased.getConfigurationItem()
         );
         Mockito.when(new ConfigurationItemDAO(new Locale("en"), em).loadConfigurationItem(baselineRuleReleased.getConfigurationItemKey())).thenReturn(baselineRuleReleased.getConfigurationItem());
@@ -213,5 +202,25 @@ public class ProductBaselineManagerBeanTest {
         Assert.assertTrue(baseline.getConfigurationItem().getWorkspaceId().equals(baselineRuleReleased.getWorkspace().getId()));
 
     }
+
+    @Category(FastTestCategory.class)
+    @Test
+    public void checkCyclicDetection() throws EntityConstraintException, PartMasterNotFoundException {
+
+        cyclicAssemblyRule = new CyclicAssemblyRule("user1");
+        Mockito.when(em.find(PartMaster.class, cyclicAssemblyRule.getP1().getKey())).thenReturn(cyclicAssemblyRule.getP1());
+        Mockito.when(em.find(PartMaster.class, cyclicAssemblyRule.getP2().getKey())).thenReturn(cyclicAssemblyRule.getP2());
+
+        thrown.expect(EntityConstraintException.class);
+
+        productBaselineService.checkCyclicAssembly(
+                    cyclicAssemblyRule.getWorkspaceId(),
+                    cyclicAssemblyRule.getP1(),
+                    cyclicAssemblyRule.getP1().getLastRevision().getLastIteration().getComponents(),
+                    new LatestConfigSpec(cyclicAssemblyRule.getUser()), new Locale(cyclicAssemblyRule.getUser().getLanguage()));
+
+    }
+
+
 
 }

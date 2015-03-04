@@ -18,8 +18,9 @@ define([
 			'change #inputConfigurationItem': 'onProductChange',
 			'submit #baseline_creation_form': 'onSubmitForm',
 			'hidden #baseline_creation_modal': 'onHidden',
-            'change select#inputBaselineType':'changeBaselineType'
-		},
+            'change select#inputBaselineType':'changeBaselineType',
+            'close-request':'closeModal'
+        },
 
 		initialize: function () {
 			_.bindAll(this);
@@ -91,8 +92,10 @@ define([
 
         fillLatestBaselinedParts:function(){
             this.productBaseline = null;
-            this.baselinePartListView.remove();
-            this.baselinePartListView = null;
+            if(this.baselinePartListView){
+                this.baselinePartListView.remove();
+                this.baselinePartListView = null;
+            }
         },
 
         fillReleasedBaselinedParts:function(){
@@ -111,6 +114,7 @@ define([
                 model: this.productBaseline,
                 editMode:true
             }).render();
+            this.baselinePartListView.on('part-modal:open',this.closeModal.bind(this))
             this.$baselinedPartListArea.html(this.baselinePartListView.$el);
         },
 
@@ -163,9 +167,13 @@ define([
 		},
 
 		onBaselineCreated: function (e) {
+
             if (e.message) {
                 this.trigger('warning', e.message);
             }
+
+            this.trigger('info',App.config.i18n.BASELINE_CREATED);
+
             if(this.collection){
                 e.productBaseline.configurationItemId = this.model.getId();
                 this.collection.add(e.productBaseline)
@@ -194,16 +202,6 @@ define([
 			this.remove();
 		}
 	});
-
-    setTimeout(function(){
-        $('#product_table > tbody > tr:nth-child(1) > td.sorting_1 > input[type="checkbox"]').click();
-        setTimeout(function(){
-            $('#product-management-content > div > div.actions.well > button.btn.btn-default.new-baseline').click();
-            setTimeout(function(){
-                $('#inputBaselineType').val('RELEASED').trigger('change');
-            },500);
-        },500);
-    },500);
 
 	return BaselineCreationView;
 });

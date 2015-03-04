@@ -12,7 +12,8 @@ define([
 
         events: {
             'submit #product_details_form': 'onSubmitForm',
-            'hidden #product_details_modal': 'onHidden'
+            'hidden #product_details_modal': 'onHidden',
+            'close-modal-request':'closeModal'
         },
 
         template: Mustache.parse(template),
@@ -53,8 +54,6 @@ define([
         initBaselinesView: function () {
             this.baselineListView = new BaselineListView({}, {productId: this.model.getId()}).render();
             this.$tabBaselines.append(this.baselineListView.$el);
-            this.baselineListView.on('open-baseline-modal',this.closeModal.bind(this))
-            //new BaselineDetailView({model: baseline}, {productId: that.model.getId()}).render();
         },
 
         onError: function (model, error) {

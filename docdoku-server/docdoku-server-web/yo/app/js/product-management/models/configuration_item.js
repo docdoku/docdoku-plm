@@ -47,7 +47,7 @@ define(['backbone'], function (Backbone) {
         },
 
         createBaseline: function (baselineArgs, callbacks) {
-            $.ajax({
+            return $.ajax({
                 type: 'POST',
                 url: this.urlRoot() + '/' + this.getId() + '/baselines',
                 data: JSON.stringify(baselineArgs),

@@ -149,7 +149,6 @@ define({
     EMBED_SCENE: "Exporter la scène",
 	ENTER_NAV: "Commencer la navigation",
 	ERROR: "Erreur",
-	EXCLUDE: 'Exclure l\'article de la baseline',
 	EXISTING_TAGS: "Libellé disponible",
 	EXIT: "Quitter la revue de maquette",
 	EXPIRE_DATE: "Date d'expiration",

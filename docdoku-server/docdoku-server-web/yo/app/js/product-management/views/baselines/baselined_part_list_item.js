@@ -3,8 +3,9 @@ define([
     'backbone',
     'mustache',
     'text!templates/baselines/baselined_part_list_item.html',
-    'common-objects/models/part'
-], function (Backbone, Mustache, template, Part) {
+    'common-objects/models/part',
+    'common-objects/views/part/part_modal_view'
+], function (Backbone, Mustache, template, Part, PartModalView) {
     'use strict';
     var BaselinedPartListItemView = Backbone.View.extend({
         tagName: 'li',
@@ -13,7 +14,8 @@ define([
 
         events: {
             'change input[type=radio]': 'changeChoice',
-            'click .release': 'release'
+            'click .release': 'releasePart',
+            'click .model-ref':'toPartModal'
         },
 
         template: Mustache.parse(template),
@@ -33,6 +35,7 @@ define([
             this.$loader = this.$('.loader');
             this.$loader.hide();
             this.$release = this.$('.release');
+            this.$errors = this.$('.errors');
             this.checkFirstInput();
             return this;
         },
@@ -51,7 +54,8 @@ define([
             }
         },
 
-        release:function(){
+        releasePart:function(){
+            this.$errors.text('');
             this.$loader.show();
             this.$release.hide();
             var part = new Part({partKey: this.model.getNumber()+'-'+this.model.getVersion()});
@@ -62,10 +66,25 @@ define([
             _.findWhere(this.model.getAvailableIterations(),{version:this.model.getVersion()}).released = true;
             this.render();
         },
-        onReleaseError:function(){
+        onReleaseError:function(xhr){
+            this.$errors.text(xhr.responseText);
             this.$loader.hide();
             this.$release.show();
+        },
+        toPartModal:function(){
+            setTimeout(this.openPartModal.bind(this),500);
+            this.$el.trigger('close-modal-request');
+        },
+        openPartModal:function(){
+            var model = new Part({partKey:this.model.getNumber()+'-'+this.model.getVersion()});
+            model.fetch().success(function () {
+                var partModalView = new PartModalView({
+                    model: model
+                });
+                partModalView.show();
+            });
         }
+
     });
 
     return BaselinedPartListItemView;

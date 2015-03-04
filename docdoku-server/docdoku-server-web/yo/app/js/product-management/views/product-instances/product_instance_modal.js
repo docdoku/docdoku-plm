@@ -13,7 +13,8 @@ define([
             'submit #product_instance_edit_form': 'onSubmitForm',
             'hidden #product_instance_modal': 'onHidden',
             'click a#previous-iteration': 'onPreviousIteration',
-            'click a#next-iteration': 'onNextIteration'
+            'click a#next-iteration': 'onNextIteration',
+            'close-modal-request':'closeModal'
         },
 
         template: Mustache.parse(template),

@@ -32,7 +32,6 @@ define([
                 var view = new BaselineListItemView({model: baseline}).render();
                 that.subViews.push(view);
                 that.$el.append(view.$el);
-                view.on('open-baseline-modal',that.trigger.bind(that,'open-baseline-modal'));
             });
         },
 

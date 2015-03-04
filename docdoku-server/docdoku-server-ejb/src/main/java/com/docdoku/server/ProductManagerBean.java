@@ -20,7 +20,6 @@
 package com.docdoku.server;
 
 import com.docdoku.core.common.*;
-import com.docdoku.core.configuration.ConfigSpec;
 import com.docdoku.core.configuration.LatestConfigSpec;
 import com.docdoku.core.configuration.ProductBaseline;
 import com.docdoku.core.document.DocumentIteration;
@@ -77,6 +76,8 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     private IUserManagerLocal userManager;
     @EJB
     private IDataManagerLocal dataManager;
+    @EJB
+    private IProductBaselineManagerLocal productBaselineManager;
     @EJB
     private ESIndexer esIndexer;
     @EJB
@@ -650,7 +651,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             }
             if (pUsageLinks != null) {
 
-                checkCyclicAssembly(pKey.getWorkspaceId(),partRev.getPartMaster(),pUsageLinks,new LatestConfigSpec(user),new Locale(user.getLanguage()));
+                productBaselineManager.checkCyclicAssembly(pKey.getWorkspaceId(), partRev.getPartMaster(), pUsageLinks, new LatestConfigSpec(user), new Locale(user.getLanguage()));
 
                 List<PartUsageLink> usageLinks = new LinkedList<>();
                 for (PartUsageLink usageLink : pUsageLinks) {
@@ -1075,7 +1076,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         PartRevision partRevision = partRevisionDAO.loadPartR(pRevisionKey);
 
         if(partRevision.isCheckedOut()){
-            throw new NotAllowedException(locale, "NotAllowedException40");
+            throw new NotAllowedException(locale, "NotAllowedException46");
         }
 
         if (partRevision.getNumberOfIterations() == 0) {
@@ -1970,34 +1971,6 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             throw new AccessRightException(new Locale(user.getLanguage()),user);
         }
         return user;
-    }
-
-
-    private void checkCyclicAssembly(String workspaceId, PartMaster root, List<PartUsageLink> usageLinks, ConfigSpec ci, Locale locale) throws EntityConstraintException, PartMasterNotFoundException {
-
-        for(PartUsageLink usageLink:usageLinks){
-            if(root.getNumber().equals(usageLink.getComponent().getNumber())){
-                throw new EntityConstraintException(locale,"EntityConstraintException12");
-            }
-            for(PartSubstituteLink substituteLink:usageLink.getSubstitutes()){
-                if(root.getNumber().equals(substituteLink.getSubstitute().getNumber())){
-                    throw new EntityConstraintException(locale,"EntityConstraintException12");
-                }
-            }
-        }
-
-        for(PartUsageLink usageLink: usageLinks){
-            PartMaster pm = new PartMasterDAO(locale,em).loadPartM(new PartMasterKey(workspaceId,usageLink.getComponent().getNumber()));
-            PartIteration partIteration = ci.filterConfigSpec(pm);
-            checkCyclicAssembly(workspaceId,root,partIteration.getComponents(),ci, locale);
-
-            for(PartSubstituteLink substituteLink:usageLink.getSubstitutes()){
-                PartMaster substitute = new PartMasterDAO(locale,em).loadPartM(new PartMasterKey(workspaceId,substituteLink.getSubstitute().getNumber()));
-                PartIteration substituteIteration = ci.filterConfigSpec(substitute);
-                checkCyclicAssembly(workspaceId, root, substituteIteration.getComponents(),ci, locale);
-            }
-        }
-
     }
     
     private User checkPartRevisionWriteAccess(PartRevisionKey partRevisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException, AccessRightException {

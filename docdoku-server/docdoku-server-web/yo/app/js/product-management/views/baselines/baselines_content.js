@@ -7,25 +7,21 @@ define([
     'models/configuration_item',
     'text!templates/baselines/baselines_content.html',
     'views/baselines/baselines_list',
-    'views/baselines/baseline_duplicate_view',
     'text!common-objects/templates/buttons/delete_button.html',
-    'text!common-objects/templates/buttons/duplicate_button.html',
     'text!common-objects/templates/buttons/snap_button.html',
     'common-objects/views/alert',
     'views/baselines/baseline_creation_view'
-], function (Backbone, Mustache, BaselinesCollection, ConfigurationItemCollection,ConfigurationItem, template, BaselinesListView, BaselineDuplicateView, deleteButton, duplicateButton, snapButton, AlertView, BaselineCreationView) {
+], function (Backbone, Mustache, BaselinesCollection, ConfigurationItemCollection,ConfigurationItem, template, BaselinesListView, deleteButton, snapButton, AlertView, BaselineCreationView) {
 	'use strict';
 
     var BaselinesContentView = Backbone.View.extend({
         partials: {
             deleteButton: deleteButton,
-            duplicateButton: duplicateButton,
             snapButton:snapButton
         },
 
         events: {
             'click button.delete': 'deleteBaseline',
-            'click button.duplicate': 'duplicateBaseline',
             'click button.new-baseline': 'createBaseline'
         },
 
@@ -70,7 +66,6 @@ define([
         bindDomElements: function () {
             this.$notifications = this.$el.find('.notifications').first();
             this.deleteButton = this.$('.delete');
-            this.duplicateButton = this.$('.duplicate');
             this.createBaselineButton = this.$('.new-baseline');
             this.$inputProductId = this.$('#inputProductId');
         },
@@ -94,7 +89,6 @@ define([
             if (this.listView) {
                 this.listView.remove();
                 this.changeDeleteButtonDisplay(false);
-                this.changeDuplicateButtonDisplay(false);
             }
             if (this.$inputProductId.val()) {
                 this.listView = new BaselinesListView({
@@ -109,17 +103,10 @@ define([
             this.listView.on('error', this.onError);
             this.listView.on('warning', this.onWarning);
             this.listView.on('delete-button:display', this.changeDeleteButtonDisplay);
-            this.listView.on('duplicate-button:display', this.changeDuplicateButtonDisplay);
         },
 
         deleteBaseline: function () {
             this.listView.deleteSelectedBaselines();
-        },
-
-        duplicateBaseline: function () {
-            var baselineDuplicateView = new BaselineDuplicateView({model: this.listView.getSelectedBaseline()});
-            window.document.body.appendChild(baselineDuplicateView.render().el);
-            baselineDuplicateView.openModal();
         },
 
         changeDeleteButtonDisplay: function (state) {
@@ -127,14 +114,6 @@ define([
                 this.deleteButton.show();
             } else {
                 this.deleteButton.hide();
-            }
-        },
-
-        changeDuplicateButtonDisplay: function (state) {
-            if (state) {
-                this.duplicateButton.show();
-            } else {
-                this.duplicateButton.hide();
             }
         },
 
@@ -153,6 +132,13 @@ define([
             this.$notifications.append(new AlertView({
                 type: 'warning',
                 message: errorMessage
+            }).render().$el);
+        },
+
+        onInfo:function(message){
+            this.$notifications.append(new AlertView({
+                type: 'info',
+                message: message
             }).render().$el);
         }
     });

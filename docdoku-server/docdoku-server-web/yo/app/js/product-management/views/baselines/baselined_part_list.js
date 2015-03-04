@@ -65,6 +65,7 @@ define([
                         model:baselinedPart,
                         editMode:_this.editMode
                     }).render();
+                    baselinedPartItemView.on('part-modal:open',_this.trigger.bind(_this));
                     _this.baselinedPartsViews.push(baselinedPartItemView);
                     _this.partsUL.append(baselinedPartItemView.$el);
                 }
