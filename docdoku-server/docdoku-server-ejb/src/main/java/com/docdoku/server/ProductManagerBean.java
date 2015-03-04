@@ -1026,6 +1026,25 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         return partRevision;
     }
 
+    @Override
+    public PartRevision[] findPartRevisionsByTag(String workspaceId, String tagId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+
+        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+
+        List<PartRevision> partsRevision = new PartRevisionDAO(new Locale(user.getLanguage()),em).findPartByTag(new Tag(user.getWorkspace(),tagId));
+        ListIterator<PartRevision> iterator = partsRevision.listIterator();
+        while (iterator.hasNext()) {
+            PartRevision partRevision = iterator.next();
+            if (!hasPartRevisionReadAccess(user,partRevision)){
+                iterator.remove();
+            }else if(isCheckoutByAnotherUser(user,partRevision)){
+                em.detach(partRevision);
+                partRevision.removeLastIteration();
+            }
+        }
+        return partsRevision.toArray(new PartRevision[partsRevision.size()]);
+    }
+
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override

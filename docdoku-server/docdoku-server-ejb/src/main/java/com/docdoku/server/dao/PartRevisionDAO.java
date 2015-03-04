@@ -24,6 +24,7 @@ import com.docdoku.core.common.User;
 import com.docdoku.core.exceptions.CreationException;
 import com.docdoku.core.exceptions.PartRevisionAlreadyExistsException;
 import com.docdoku.core.exceptions.PartRevisionNotFoundException;
+import com.docdoku.core.meta.Tag;
 import com.docdoku.core.product.PartIterationKey;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.product.PartRevisionKey;
@@ -274,5 +275,11 @@ public class PartRevisionDAO {
     public boolean isCheckoutedIteration(PartIterationKey partIKey) throws PartRevisionNotFoundException {
         PartRevision partR = loadPartR(partIKey.getPartRevision());
         return partR.isCheckedOut() && (partIKey.getIteration() == partR.getLastIterationNumber());
+    }
+
+    public List<PartRevision> findPartByTag(Tag tag) {
+        TypedQuery<PartRevision> query = em.createQuery("SELECT DISTINCT d FROM PartRevision d WHERE :tag MEMBER OF d.tags", PartRevision.class);
+        query.setParameter("tag", tag);
+        return query.getResultList();
     }
 }

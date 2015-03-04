@@ -32,6 +32,9 @@ function (Backbone, Date, PartIterationList, ACLChecker) {
             return this.get('type');
         },
 
+        getTags: function () {
+            return this.get('tags');
+        },
         getName: function () {
             return this.get('name');
         },
@@ -157,6 +160,7 @@ function (Backbone, Date, PartIterationList, ACLChecker) {
             return null;
         },
 
+
         getCheckOutUserLogin: function () {
             if (this.isCheckout()) {
                 return this.getCheckoutUser().login;
@@ -179,6 +183,101 @@ function (Backbone, Date, PartIterationList, ACLChecker) {
         isAttributesLocked: function () {
             return this.get('attributesLocked');
         },
+
+        addTags: function (tags) {
+
+            return $.ajax({
+                context: this,
+                type: 'POST',
+                url: this.url() + '/tags',
+                data: JSON.stringify(tags),
+                contentType: 'application/json; charset=utf-8',
+                success: function () {
+                    this.fetch();
+                },
+                error: function () {
+                    this.onError
+                }
+            });
+
+        },
+
+        removeTag: function (tag, callback) {
+            $.ajax({
+                type: 'DELETE',
+                url: this.url() + '/tags/' + tag,
+                success: function () {
+                    callback();
+                },
+                error: function () {
+                    this.onError
+                }
+            });
+        },
+
+        removeTags: function (tags, callback) {
+            var baseUrl = this.baseUrl() + '/tags/';
+            var count = 0;
+            var total = _(tags).length;
+            _(tags).each(function (tag) {
+                $.ajax({
+                    type: 'DELETE',
+                    url: baseUrl + tag,
+                    success: function () {
+                        count++;
+                        if (count >= total) {
+                            callback();
+                        }
+                    },
+                    error: function () {
+                    this.onError
+                }
+                });
+            });
+
+        }
+        ,
+        tagsManagement: function (editMode) {
+
+        var $tagsZone = this.$('.master-tags-list');
+        var that = this;
+
+        _.each(this.model.attributes.tags, function (tagLabel) {
+
+            var tagView;
+
+            var tagViewParams = editMode ?
+            {
+                model: new Tag({id: tagLabel, label: tagLabel}),
+                isAdded: true,
+                clicked: function () {
+                    that.tagsToRemove.push(tagLabel);
+                    tagView.$el.remove();
+                }} :
+            {
+                model: new Tag({id: tagLabel, label: tagLabel}),
+                isAdded: true,
+                clicked: function () {
+                    that.tagsToRemove.push(tagLabel);
+                    tagView.$el.remove();
+                    that.model.removeTag(tagLabel, function () {
+                        if (that.model.collection.parent) {
+                            if (_.contains(that.tagsToRemove, that.model.collection.parent.id)) {
+                                that.model.collection.remove(that.model);
+                            }
+                        }
+                    });
+                    tagView.$el.remove();
+                }
+            };
+
+            tagView = new TagView(tagViewParams).render();
+
+            $tagsZone.append(tagView.el);
+
+        });
+
+    },
 
         checkout: function () {
             return $.ajax({
@@ -310,7 +409,6 @@ function (Backbone, Date, PartIterationList, ACLChecker) {
                 }
             });
         },
-
         release: function () {
             $.ajax({
                 context: this,
