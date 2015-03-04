@@ -28,6 +28,7 @@ import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.meta.InstanceAttributeTemplate;
 import com.docdoku.core.meta.Tag;
 import com.docdoku.core.meta.TagKey;
+import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.query.DocumentSearchQuery;
 import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.ACLUserEntry;
@@ -603,6 +604,11 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         List<ChangeItem> changeItems = new ChangeItemDAO(userLocale, em).findChangeItemByTag(pKey.getWorkspaceId(),tagToRemove);
         for (ChangeItem changeItem : changeItems) {
             changeItem.getTags().remove(tagToRemove);
+        }
+
+        List<PartRevision> partRevisions = new PartRevisionDAO(userLocale,em).findPartByTag(tagToRemove);
+        for (PartRevision partRevision : partRevisions) {
+            partRevision.getTags().remove(tagToRemove);
         }
 
         new TagDAO(userLocale, em).removeTag(pKey);

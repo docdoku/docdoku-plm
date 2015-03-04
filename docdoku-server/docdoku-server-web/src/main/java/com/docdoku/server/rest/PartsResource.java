@@ -100,7 +100,7 @@ public class PartsResource {
     }
 
     @GET
-    @Path("tags")
+    @Path("tags/{tagId}")
     @Produces(MediaType.APPLICATION_JSON)
     public List<PartDTO> getPartRevisions(@PathParam("workspaceId") String workspaceId,@PathParam("tagId") String tagId)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException {
