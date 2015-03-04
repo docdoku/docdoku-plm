@@ -1,25 +1,23 @@
-<div class="lovItem">
+    <i class="fa fa-bars sortable-handler"></i>
     <div class="controls deleteLovItem">
         <a class="fa fa-times"></a>
     </div>
 
-    <span class="lovItemName">{{model.getLovName}}</span>
-    <input type="text" class="input-xlarge name lovItemNameInput" placeholder="{{i18n.NAME}}" value="{{model.getLOVName}}"/>
+    <span class="lovItemName">{{model.getLOVName}}</span>
+    <input type="text" class="input-medium name lovItemNameInput" placeholder="{{i18n.NAME}}" value="{{model.getLOVName}}"/>
     <div class="lovValueDiv">
         <span class="lovNumberOfValue">{{model.getNumberOfValue}} {{i18n.POSSIBLE_VALUE}}</span>
         <div class="lovValues">
         {{#model.getLOVValues}}
-            <span>
-                <input type="text" class="input-xlarge name lovItemValueInput" placeholder="{{i18n.VALUE}}" value="{{.}}"/>
+            <div>
+                <input type="text" class="input-large name lovItemValueInput" placeholder="{{i18n.VALUE}}" value="{{name}}"/>
                 <div class="controls deleteLovItem">
                     <a class="fa fa-times"></a>
                 </div>
-            </span>
-        {{/#model.getLOVValues}}
+            </div>
+        {{/model.getLOVValues}}
         </div>
         <button class="btn btn-primary addLOVValue">{{i18n.ADD}}</button>
     </div>
 
     <i class="fa fa-angle-double-down expandIcon"></i>
-
-</div>
