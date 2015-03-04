@@ -1,17 +1,86 @@
-&.edition{
-    div.lovValues{
-        display: block;
+.lovItem {
+
+    .sortable-handler {
+        opacity: 0.2;
+        cursor: move;
+        display: inline-block;
+        vertical-align: text-top;
+        margin-right: 5px;
     }
 
-    span.lovItemName{
-        display:none;
+    .fa-times {
+        color: black;
+        opacity: 0.2;
+        display: inline-block;
+        vertical-align: text-top;
+        margin-right: 5px;
+
+        &:hover {
+            text-decoration: none;
+            color: #F00;
+            opacity: 1;
+        }
+    }
+
+    .expandIcon{
+        float: right;
+        margin-top: 5px;
+    }
+
+    .deleteLovItem{
+        display : inline-block
+    }
+
+    .lovValueDiv{
+        display: inline-block;
+        vertical-align: top;
+    }
+
+    div.lovValues{
+        display: none;
     }
 
     input.lovItemNameInput{
-        display: block;
+        display: none;
+    }
+
+    button.addLOVValue{
+        display: none;
     }
 
     span.lovNumberOfValue{
-        display: none;
+        vertical-align: top;
+    }
+
+    span.lovItemName{
+        vertical-align:top;
+    }
+
+    &.edition{
+        div.lovValues{
+            display: inline-block;
+            vertical-align: top;
+            margin-left: 5px;
+        }
+
+        span.lovItemName{
+            display:none;
+        }
+
+        input.lovItemNameInput{
+            display: inline-block;
+        }
+
+        span.lovNumberOfValue{
+            display: none;
+        }
+
+        i.expandIcon{
+            transform: rotate(180deg);
+        }
+
+        button.addLOVValue{
+            display: block;
+        }
     }
 }

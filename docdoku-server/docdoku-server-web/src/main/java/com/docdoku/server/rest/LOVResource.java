@@ -51,6 +51,8 @@ public class LOVResource {
 
     private Mapper mapper;
 
+    public LOVResource(){}
+
     @PostConstruct
     public void init() {
         mapper = DozerBeanMapperSingletonWrapper.getInstance();
@@ -62,8 +64,8 @@ public class LOVResource {
         List<ListOfValuesDTO> lovsDTO = new ArrayList<>();
         List<ListOfValues> lovs = lovManager.findLOVFromWorkspace(workspaceId);
 
-        if (lovs != null){
-            lovsDTO.add(mapper.map(lovs, ListOfValuesDTO.class));
+        for (ListOfValues lov : lovs){
+            lovsDTO.add(mapper.map(lov, ListOfValuesDTO.class));
         }
 
         return lovsDTO;

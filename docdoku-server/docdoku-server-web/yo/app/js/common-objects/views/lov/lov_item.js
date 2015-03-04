@@ -13,6 +13,7 @@ define([
             'drop': 'drop'
         },
 
+        className: 'lovItem ui-sortable well',
 
         isExpand:false,
 
@@ -24,10 +25,12 @@ define([
 
         render: function () {
             this.$el.html(Mustache.render(template,{
-                i18n: App.config.i18n
+                i18n: App.config.i18n,
+                model: this.model,
+                isExpand: this.isExpand
             }));
             if(this.isExpand){
-                this.$el.addClass("edition");
+                this.$el.addClass('edition');
             }
             this.lovListDiv = this.$('.lovValues');
             return this;
@@ -46,7 +49,7 @@ define([
         },
 
         showEditMode:function(){
-            this.$el.toggleClass("edition");
+            this.$el.toggleClass('edition');
         }
     });
 

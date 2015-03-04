@@ -25,6 +25,8 @@ import com.docdoku.core.services.ILOVManagerLocal;
 import com.docdoku.server.dao.LOVDAO;
 
 import javax.annotation.security.RolesAllowed;
+import javax.ejb.Local;
+import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
@@ -32,6 +34,8 @@ import java.util.List;
 /**
  * Created by lebeaujulien on 03/03/15.
  */
+@Local(ILOVManagerLocal.class)
+@Stateless(name = "LOVManagerBean")
 public class LOVManagerBean implements ILOVManagerLocal {
 
     @PersistenceContext

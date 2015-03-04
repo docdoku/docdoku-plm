@@ -12,8 +12,8 @@ define([
         template: template,
 
         events: {
-            "hidden .modal.list_lov": "onHidden",
-            "click .addLOVButton": "addLov"
+            'hidden .modal.list_lov': 'onHidden',
+            'click .addLOVButton': 'addLov'
         },
 
         collection: new LOVCollection(),
@@ -29,9 +29,9 @@ define([
 
         render: function () {
             this.$el.html(Mustache.render(template, {i18n: App.config.i18n}));
-            this.$modal = this.$(".modal.list_lov");
-            this.lovListDiv = this.$(".modal .modal-body .list_of_lov");
-            this.collection.fetch();
+            this.$modal = this.$('.modal.list_lov');
+            this.lovListDiv = this.$('.modal .modal-body .list_of_lov');
+            this.collection.fetch({reset: true});
             return this;
         },
 
@@ -51,18 +51,19 @@ define([
             this.collection.each(this.addLovView.bind(this, false));
         },
 
-        addLovView: function(lov, isExpand){
+        addLovView: function(isExpand, lov){
             var lovView = new LOVItemView({
                 model: lov,
                 isExpand: isExpand
             });
             lovView.on('remove', this.removeLovView.bind(this, [lovView]));
             this.lovViews.push(lovView);
+            lovView.render();
             this.lovListDiv.append(lovView.$el);
         },
 
         addLov: function(){
-            this.addLovView({}, true);
+            this.addLovView(true, {});
         },
 
         removeLovView:function(lovView){
