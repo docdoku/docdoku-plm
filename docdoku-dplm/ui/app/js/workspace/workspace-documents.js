@@ -16,7 +16,7 @@
                 var fullPath='';
                 angular.forEach(parts,function(part){
                     if(fullPath){
-                        fullPath+=':'
+                        fullPath+=':';
                     }
                     fullPath+=part;
                     $scope.pathParts.push(fullPath);
@@ -107,26 +107,26 @@
                 }).then(getDocumentsRevisions);
 
             } else if($routeParams.action === 'checkouted'){
-                getCheckoutedDocumentsRevisions()
+                getCheckoutedDocumentsRevisions();
             }
         })
 
         .filter('folderShortName',function () {
             return function (path) {
                 return path ? path.substr(path.lastIndexOf(':')+1,path.length):'';
-            }
+            };
         })
 
         .filter('decodePath',function () {
             return function (path) {
                 return path ? path.replace(/:/g,'/') : '';
-            }
+            };
         })
 
         .filter('encodePath',function () {
             return function (path) {
                 return path ? path.replace(/\//g,':') : '';
-            }
+            };
         })
 
         .controller('DocumentController', function ($scope, ConfigurationService) {
@@ -141,7 +141,7 @@
                 controller: function ($scope,CliService) {
 
                 }
-            }
+            };
         })
 
         .directive('documentActions', function () {

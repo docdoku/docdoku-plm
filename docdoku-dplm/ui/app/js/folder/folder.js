@@ -10,7 +10,7 @@
             .when('/folder/:uuid', {
                 template: '',
                 controller: function($location,$routeParams){
-                    $location.path('folder/'+$routeParams.uuid+'/documents')
+                    $location.path('folder/'+$routeParams.uuid+'/documents');
                 }
             })
             .when('/folder/:uuid/:entity', {
