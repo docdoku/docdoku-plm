@@ -12,8 +12,10 @@ define([
     'common-objects/collections/linked/linked_document_collection',
     'common-objects/views/workflow/lifecycle',
     'common-objects/views/part/conversion_status_view',
-    'common-objects/utils/date'
-], function (Backbone, Mustache, ModalView, FileListView, template, AttributesView, PartsManagementView, LinkedDocumentsView, AlertView, LinkedDocumentCollection, LifecycleView, ConversionStatusView, date) {
+    'common-objects/utils/date',
+    'common-objects/views/tags/tag',
+    'common-objects/models/tag'
+], function (Backbone, Mustache, ModalView, FileListView, template, AttributesView, PartsManagementView, LinkedDocumentsView, AlertView, LinkedDocumentCollection, LifecycleView, ConversionStatusView, date,TagView,Tag) {
     'use strict';
     var PartModalView = ModalView.extend({
 
@@ -25,6 +27,7 @@ define([
             this.events['click a#previous-iteration'] = 'onPreviousIteration';
             this.events['click a#next-iteration'] = 'onNextIteration';
             this.events['submit #form-part'] = 'onSubmitForm';
+            this.tagsToRemove = [];
         },
 
         onPreviousIteration: function () {
@@ -166,6 +169,8 @@ define([
 
 
             this.fileListView.deleteFilesToDelete();
+            that.deleteClickedTags();
+
 
             e.preventDefault();
             e.stopPropagation();
@@ -286,7 +291,6 @@ define([
                 });
             }
         },
-
         onError: function (model, error) {
             var errorMessage = error ? error.responseText : model;
 

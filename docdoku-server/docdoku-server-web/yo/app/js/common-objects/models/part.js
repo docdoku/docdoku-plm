@@ -1,6 +1,6 @@
 /*global _,$,define,App,window*/
-define(['backbone', 'common-objects/utils/date', 'common-objects/collections/part_iteration_collection','common-objects/utils/acl-checker'],
-function (Backbone, Date, PartIterationList, ACLChecker) {
+define(['backbone', 'common-objects/utils/date', 'common-objects/collections/part_iteration_collection','common-objects/utils/acl-checker','common-objects/views/alert'],
+function (Backbone, Date, PartIterationList, ACLChecker,AlertView) {
     'use strict';
 
     var Part = Backbone.Model.extend({
@@ -220,7 +220,7 @@ function (Backbone, Date, PartIterationList, ACLChecker) {
         },
 
         removeTags: function (tags, callback) {
-            var baseUrl = this.baseUrl() + '/tags/';
+            var baseUrl = this.url() + '/tags/';
             var count = 0;
             var total = _(tags).length;
             _(tags).each(function (tag) {
@@ -236,52 +236,12 @@ function (Backbone, Date, PartIterationList, ACLChecker) {
                     error: function () {
                     this.onError
                 }
+
                 });
             });
 
-        }
-        ,
-        tagsManagement: function (editMode) {
+        },
 
-        var $tagsZone = this.$('.master-tags-list');
-        var that = this;
-
-        _.each(this.model.attributes.tags, function (tagLabel) {
-
-            var tagView;
-
-            var tagViewParams = editMode ?
-            {
-                model: new Tag({id: tagLabel, label: tagLabel}),
-                isAdded: true,
-                clicked: function () {
-                    that.tagsToRemove.push(tagLabel);
-                    tagView.$el.remove();
-                }} :
-            {
-                model: new Tag({id: tagLabel, label: tagLabel}),
-                isAdded: true,
-                clicked: function () {
-                    that.tagsToRemove.push(tagLabel);
-                    tagView.$el.remove();
-                    that.model.removeTag(tagLabel, function () {
-                        if (that.model.collection.parent) {
-                            if (_.contains(that.tagsToRemove, that.model.collection.parent.id)) {
-                                that.model.collection.remove(that.model);
-                            }
-                        }
-                    });
-                    tagView.$el.remove();
-                }
-            };
-
-            tagView = new TagView(tagViewParams).render();
-
-            $tagsZone.append(tagView.el);
-
-        });
-
-    },
 
         checkout: function () {
             return $.ajax({
@@ -429,6 +389,14 @@ function (Backbone, Date, PartIterationList, ACLChecker) {
                 return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/' + this.getPartKey();
             }
             return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/';
+        },
+        onError: function (model, error) {
+            var errorMessage = error ? error.responseText : model;
+
+            this.$el.find('.notifications').first().append(new AlertView({
+                type: 'error',
+                message: errorMessage
+            }).render().$el);
         }
 
 
