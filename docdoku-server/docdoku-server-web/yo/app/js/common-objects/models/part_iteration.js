@@ -65,6 +65,10 @@ define([
             return this.get('nativeCADFile');
         },
 
+        getNativeCADFile: function () {
+            return this.get('nativeCADFile');
+        },
+
         getBaseName: function () {
             return this.getWorkspace() + '/parts/' + this.getNumber() + '/' + this.getVersion() + '/' + this.get('iteration') + '/nativecad';
         },
@@ -79,6 +83,11 @@ define([
 
         getComponents: function () {
             return this.get('components');
+        },
+
+        isAssembly: function () {
+            var components = this.getComponents();
+            return components && components.length > 0;
         },
 
         getLinkedDocuments: function () {
