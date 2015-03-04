@@ -205,11 +205,7 @@ define([
             ];
             if (this.oTable) {
                 oldSort = this.oTable.fnSettings().aaSorting;
-                try {
-                    this.oTable.fnDestroy();
-                } catch (e) {
-                    console.error(e);
-                }
+                this.oTable.fnDestroy();
             }
             this.oTable = this.$el.dataTable({
                 aaSorting: oldSort,
