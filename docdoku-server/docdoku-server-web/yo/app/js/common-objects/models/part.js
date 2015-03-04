@@ -141,6 +141,20 @@ function (Backbone, Date, PartIterationList, ACLChecker,AlertView) {
             return this.get('lastIterationNumber') === iterationNumber;
         },
 
+        isLastIterationAssembly: function () {
+            if (this.hasIterations()) {
+                return this.getLastIteration().isAssembly();
+            }
+            return false;
+        },
+
+        isLastIteration3DSheet: function () {
+            if (this.hasIterations()) {
+                return this.getLastIteration().getNativeCADFile();
+            }
+            return false;
+        },
+
         getIterations: function () {
             return this.iterations;
         },
