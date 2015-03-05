@@ -108,7 +108,7 @@ public class WorkflowResource {
         WorkflowModelKey workflowModelKey = new WorkflowModelKey(workspaceId, workflowModelId);
         List<ActivityModelDTO> activityModelDTOsList = workflowModelDTOToPersist.getActivityModels();
         ActivityModel[] activityModels = extractActivityModelFromDTO(activityModelDTOsList);
-        WorkflowModel workflowModel = workflowService.updateWorkflowModel(workflowModelKey, workflowModelDTOToPersist.getReference(), workflowModelDTOToPersist.getFinalLifeCycleState(), activityModels);
+        WorkflowModel workflowModel = workflowService.updateWorkflowModel(workflowModelKey, workflowModelDTOToPersist.getFinalLifeCycleState(), activityModels);
         return mapper.map(workflowModel, WorkflowModelDTO.class);
     }
     @PUT
