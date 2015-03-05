@@ -4,7 +4,7 @@
         opacity: 0.2;
         cursor: move;
         display: inline-block;
-        vertical-align: text-top;
+        vertical-align: super;
         margin-right: 5px;
     }
 
@@ -31,9 +31,21 @@
         display : inline-block
     }
 
+    .deleteLovItemPossibleValue{
+        display: inline-block;
+    }
+
     .lovValueDiv{
         display: inline-block;
         vertical-align: top;
+    }
+
+    .lovValueTitle{
+        vertical-align: top;
+    }
+
+    .lovValueDiv{
+        margin-left: 20px;
     }
 
     div.lovValues{
@@ -53,7 +65,12 @@
     }
 
     span.lovItemName{
-        vertical-align:top;
+        vertical-align: bottom;
+        font-weight: bold;
+        display:inline-block;
+        text-overflow:ellipsis;
+        overflow:hidden;
+        width:50%;
     }
 
     &.edition{
@@ -69,6 +86,7 @@
 
         input.lovItemNameInput{
             display: inline-block;
+            margin: 5px;
         }
 
         span.lovNumberOfValue{
@@ -81,6 +99,12 @@
 
         button.addLOVValue{
             display: block;
+            margin-left: 5px;
+        }
+
+        .lovValueDiv{
+            margin: 5px;
+            margin-left: 30px;
         }
     }
 }

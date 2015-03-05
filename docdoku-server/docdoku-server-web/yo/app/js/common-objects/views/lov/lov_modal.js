@@ -5,7 +5,8 @@ define([
     'text!common-objects/templates/lov/lov_modal.html',
     'common-objects/collections/lovs',
     'common-objects/views/lov/lov_item',
-], function (Backbone, Mustache, template, LOVCollection, LOVItemView) {
+    'common-objects/models/lov/lov',
+], function (Backbone, Mustache, template, LOVCollection, LOVItemView, LOVModel) {
     'use strict';
     var LOVModalView = Backbone.View.extend({
 
@@ -13,7 +14,8 @@ define([
 
         events: {
             'hidden .modal.list_lov': 'onHidden',
-            'click .addLOVButton': 'addLov'
+            'click .addLOVButton': 'addLov',
+            'click .btn-saveLovs': 'onSaveLovs'
         },
 
         collection: new LOVCollection(),
@@ -21,6 +23,8 @@ define([
         lovViews: [],
 
         lovListDiv: null,
+
+        workspaceID:App.config.workspaceId,
 
         initialize: function () {
             _.bindAll(this);
@@ -32,6 +36,7 @@ define([
             this.$modal = this.$('.modal.list_lov');
             this.lovListDiv = this.$('.modal .modal-body .list_of_lov');
             this.collection.fetch({reset: true});
+
             return this;
         },
 
@@ -56,18 +61,28 @@ define([
                 model: lov,
                 isExpand: isExpand
             });
-            lovView.on('remove', this.removeLovView.bind(this, [lovView]));
+            this.collection.push(lov);
+            lovView.on('remove', this.removeLovView.bind(this, lovView));
             this.lovViews.push(lovView);
             lovView.render();
             this.lovListDiv.append(lovView.$el);
         },
 
         addLov: function(){
-            this.addLovView(true, {});
+            this.addLovView(true, new LOVModel({
+                name:"",
+                values:[{name:"", value:""}],
+                workspaceId:this.workspaceId
+            }) );
         },
 
         removeLovView:function(lovView){
+            this.collection.remove(lovView.model);
             this.lovViews = _.without(this.lovViews, lovView);
+        },
+
+        onSaveLovs: function(){
+            //this.collection.sync();
         }
 
 

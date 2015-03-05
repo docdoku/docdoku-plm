@@ -67,7 +67,7 @@ require.config({
         popoverUtils: '../lib/popover.utils',
         inputValidity: '../lib/input-validity',
         datatablesOsortExt: '../lib/datatables.oSort.ext',
-        stringprototype:'../lib/string.prototype'
+        utilsprototype:'../lib/utils.prototype'
     },
 
     deps:[
@@ -83,7 +83,7 @@ require.config({
         'datatablesOsortExt',
         'bootstrapCombobox',
         'bootstrapSwitch',
-        'stringprototype',
+        'utilsprototype',
         'unmaskConfig',
         'inputValidity'
     ],

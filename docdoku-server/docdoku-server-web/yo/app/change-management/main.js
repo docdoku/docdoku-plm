@@ -62,7 +62,7 @@ require.config({
         effects: '../lib/effects',
         popoverUtils: '../lib/popover.utils',
         datatablesOsortExt: '../lib/datatables.oSort.ext',
-        stringprototype: '../lib/string.prototype',
+        utilsprototype: '../lib/utils.prototype',
         inputValidity: '../lib/input-validity'
     },
 
@@ -78,7 +78,7 @@ require.config({
         'popoverUtils',
         'datatables',
         'datatablesOsortExt',
-        'stringprototype',
+        'utilsprototype',
         'inputValidity'
     ],
     config: {

@@ -67,7 +67,7 @@ require.config({
         popoverUtils: '../lib/popover.utils',
         inputValidity: '../lib/input-validity',
         datatablesOsortExt: '../lib/datatables.oSort.ext',
-        stringprototype: '../lib/string.prototype',
+        utilsprototype: '../lib/utils.prototype',
         userPopover: 'modules/user-popover-module/app'
     },
 
@@ -85,7 +85,7 @@ require.config({
         'datatables',
         'datatablesOsortExt',
         'unmaskConfig',
-        'stringprototype'
+        'utilsprototype'
     ],
     config: {
         i18n: {
