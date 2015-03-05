@@ -152,19 +152,19 @@ public class ProductBaselineManagerBeanTest {
         //Given
         baselineRuleLatest = new BaselineRule("myBaseline", ProductBaseline.BaselineType.LATEST, "description", "workspace01", "user1", "part01", "product01", true);
         doReturn(new User("en")).when(userManager).checkWorkspaceWriteAccess(Matchers.anyString());
-        Mockito.when(userManager.checkWorkspaceWriteAccess(Matchers.anyString())).thenReturn(baselineRuleReleased.getUser());
-        Mockito.when(em.find(ConfigurationItem.class, baselineRuleReleased.getConfigurationItemKey())).thenReturn(baselineRuleReleased.getConfigurationItem()
+        Mockito.when(userManager.checkWorkspaceWriteAccess(Matchers.anyString())).thenReturn(baselineRuleLatest.getUser());
+        Mockito.when(em.find(ConfigurationItem.class, baselineRuleLatest.getConfigurationItemKey())).thenReturn(baselineRuleLatest.getConfigurationItem()
         );
-        Mockito.when(new ConfigurationItemDAO(new Locale("en"), em).loadConfigurationItem(baselineRuleReleased.getConfigurationItemKey())).thenReturn(baselineRuleReleased.getConfigurationItem());
+        Mockito.when(new ConfigurationItemDAO(new Locale("en"), em).loadConfigurationItem(baselineRuleLatest.getConfigurationItemKey())).thenReturn(baselineRuleLatest.getConfigurationItem());
 
         //When
-        ProductBaseline baseline = productBaselineService.createBaseline(baselineRuleReleased.getConfigurationItemKey(), baselineRuleReleased.getName(), baselineRuleReleased.getType(), baselineRuleReleased.getDescription(), new ArrayList<>());
+        ProductBaseline baseline = productBaselineService.createBaseline(baselineRuleLatest.getConfigurationItemKey(), baselineRuleLatest.getName(), baselineRuleLatest.getType(), baselineRuleLatest.getDescription(), new ArrayList<>());
 
         //Then
         Assert.assertTrue(baseline != null);
-        Assert.assertTrue(baseline.getDescription().equals(baselineRuleReleased.getDescription()));
-        Assert.assertTrue(baseline.getType().equals(baselineRuleReleased.getType()));
-        Assert.assertTrue(baseline.getConfigurationItem().getWorkspaceId().equals(baselineRuleReleased.getWorkspace().getId()));
+        Assert.assertTrue(baseline.getDescription().equals(baselineRuleLatest.getDescription()));
+        Assert.assertTrue(baseline.getType().equals(baselineRuleLatest.getType()));
+        Assert.assertTrue(baseline.getConfigurationItem().getWorkspaceId().equals(baselineRuleLatest.getWorkspace().getId()));
 
     }
 
