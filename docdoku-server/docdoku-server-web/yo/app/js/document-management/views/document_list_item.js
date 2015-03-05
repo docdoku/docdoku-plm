@@ -50,7 +50,10 @@ define([
 
             data.isCheckoutByConnectedUser = this.model.isCheckoutByConnectedUser();
             data.isCheckout = this.model.isCheckout();
-            data.hasAttachedFiles = this.model.getLastIteration().getAttachedFiles().length;
+            if (this.model.getLastIteration()){
+                data.hasAttachedFiles = this.model.getLastIteration().getAttachedFiles().length;
+            }
+
 
             return data;
         },
