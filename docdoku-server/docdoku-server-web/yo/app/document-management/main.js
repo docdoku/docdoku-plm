@@ -63,11 +63,11 @@ require.config({
         localization: '../localization',
         modules: '../modules',
         'common-objects': '../common-objects',
-        effects: '../utils/effects',
+        effects: '../lib/effects',
         popoverUtils: '../utils/popover.utils',
         inputValidity: '../utils/input-validity',
         datatablesOsortExt: '../utils/datatables.oSort.ext',
-        stringprototype: '../utils/string.prototype',
+        utilsprototype: '../lib/utils.prototype',
         userPopover: 'modules/user-popover-module/app'
     },
 
@@ -85,7 +85,7 @@ require.config({
         'datatables',
         'datatablesOsortExt',
         'unmaskConfig',
-        'stringprototype'
+        'utilsprototype'
     ],
     config: {
         i18n: {

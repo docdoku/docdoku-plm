@@ -432,6 +432,7 @@ define({
 	_VALIDATION_PATTERN_NUMBER: "^\\-?\\d+(\\.\\d+)?$",
 	_VALIDATION_PATTERN_TIME: "\\d{2}:\\d{2}",
 	VALUE: "Valeur",
+    VALUES: "Valeurs",
 	VERSION_HELP: "Version de l'article",
 	VERSION: "Version",
 	VIDEO_INVITATION_SENT: "L'invitation a été envoyée à l'utilisateur distant, en attente de l'acceptation ...",
