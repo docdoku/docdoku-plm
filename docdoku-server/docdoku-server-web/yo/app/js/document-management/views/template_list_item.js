@@ -45,6 +45,7 @@ define([
                     })
                 );
                 window.document.body.appendChild(that.editView.el);
+                that.editView.redraw();
             });
         },
         openDocumentTemplateModal: function (evt) {
