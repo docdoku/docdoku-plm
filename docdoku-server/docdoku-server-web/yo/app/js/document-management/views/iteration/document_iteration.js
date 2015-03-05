@@ -10,8 +10,9 @@ define([
     'common-objects/views/tags/tag',
     'common-objects/collections/linked/linked_document_collection',
     'text!templates/iteration/document_iteration.html',
+    'common-objects/views/prompt',
     'common-objects/utils/date'
-], function (Mustache, ModalView, FileListView, DocumentAttributesView, LifecycleView, LinkedDocumentsView, Tag, TagView, LinkedDocumentCollection, template, date) {
+], function (Mustache, ModalView, FileListView, DocumentAttributesView, LifecycleView, LinkedDocumentsView, Tag, TagView, LinkedDocumentCollection, template, PromptView, date) {
     'use strict';
 
     var IterationView = ModalView.extend({
@@ -28,11 +29,20 @@ define([
             this.events["click .modal-footer button.btn-primary"] = "interceptSubmit";
             this.events['submit form'] = 'onSubmitForm';
             this.events['click a.document-path'] = 'onFolderPathClicked';
+            this.events['click .action-checkin'] = 'actionCheckin';
+            this.events['click .action-checkout'] = 'actionCheckout';
+            this.events['click .action-undocheckout'] = 'actionUndoCheckout';
+
 
             this.tagsToRemove = [];
 
+            this.bindDom();
+
         },
 
+        bindDom: function () {
+            this.revisionNote = this.$('#inputRevisionNote');
+        },
         onPreviousIteration: function () {
             if (this.iterations.hasPreviousIteration(this.iteration)) {
                 this.switchIteration(this.iterations.previous(this.iteration));
@@ -91,7 +101,7 @@ define([
                 partRevision: this.model.toJSON(),
                 i18n: App.config.i18n,
                 permalink: this.model.getPermalink(),
-                hasIterations: this.iterations.length,
+                hasIterations: this.iterations.length
             };
 
             data.partRevision.creationDate = date.formatTimestamp(
@@ -145,8 +155,8 @@ define([
                 );
             }
 
-            if(App.config.configSpec!=='latest'){
-                data.isForBaseline=true;
+            if (App.config.configSpec !== 'latest') {
+                data.isForBaseline = true;
             }
 
             /*Main window*/
@@ -171,9 +181,12 @@ define([
             var that = this;
 
             if (this.model.hasIterations()) {
-                this.iteration.getAttributes().each(function (item) {
-                    that.attributesView.addAndFillAttribute(item);
-                });
+                if(this.iteration.getAttributes().length){
+                    this.iteration.getAttributes().each(function (item) {
+                        that.attributesView.addAndFillAttribute(item);
+                    });
+                }
+
 
                 this.fileListView = new FileListView({
                     baseName: this.iteration.getBaseName(),
@@ -189,7 +202,7 @@ define([
 
                 this.linkedDocumentsView = new LinkedDocumentsView({
                     editMode: editMode,
-                    commentEditable:true,
+                    commentEditable: true,
                     documentIteration: this.iteration,
                     collection: new LinkedDocumentCollection(this.iteration.getLinkedDocuments())
                 }).render();
@@ -229,13 +242,13 @@ define([
             return this;
         },
 
-        interceptSubmit:function(){
+        interceptSubmit: function () {
             this.isValid = !this.$('.tabs').invalidFormTabSwitcher();
         },
 
         onSubmitForm: function (e) {
 
-            if(this.isValid){
+            if (this.isValid) {
 
                 /*saving iteration*/
                 var _this = this;
@@ -345,6 +358,63 @@ define([
                     }
                 });
             }
+        },
+
+        setRevisionNote: function () {
+            var note;
+            if (_.isEqual(this.$('#inputRevisionNote').val(), '')) {
+                note = null;
+                this.revisionNote.addClass("highlight");
+                this.revisionNote.attr("placeHolder", App.config.i18n.REVISION_NOTE);
+            } else {
+                this.revisionNote.removeClass("highlight");
+                note = this.$('#inputRevisionNote').val();
+            }
+            return note;
+        },
+        actionCheckin: function () {
+            var self = this;
+            var note= self.setRevisionNote();
+            if (note) {
+
+                self.iteration.save({
+                    revisionNote: note
+
+                }).success(function () {
+                    self.model.checkin().success(function () {
+                        self.onSuccess();
+                    });
+
+                });
+
+            }
+
+         else {
+                this.$('#inputRevisionNote').addClass("highlight");
+            }
+        },
+
+        actionCheckout: function () {
+            var self = this;
+            self.model.checkout().success(function () {
+                self.onSuccess();
+            });
+
+        },
+        actionUndoCheckout: function () {
+            var self = this;
+            self.model.undocheckout().success(function () {
+                self.onSuccess();
+            });
+
+        },
+
+        onSuccess: function () {
+            var self = this;
+            self.model.fetch().success(function () {
+                self.render();
+                self.$("a[href*='#tab-iteration-iteration']").click();
+            });
         },
 
         onFolderPathClicked: function () {
