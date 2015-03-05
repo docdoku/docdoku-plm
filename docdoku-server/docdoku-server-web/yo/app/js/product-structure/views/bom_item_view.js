@@ -14,7 +14,8 @@ define([
 
         events: {
             'click .part_number': 'onPartClicked',
-            'click td.part-revision-share i': 'sharePart'
+            'click td.part-revision-share i': 'sharePart',
+            'click td.part-attached-files i': 'toPartModalOnFilesTab'
         },
 
         initialize: function () {
@@ -39,6 +40,16 @@ define([
                 new PartModalView({
                     model: self.model
                 });
+            });
+        },
+
+        toPartModalOnFilesTab: function () {
+            var self = this;
+            self.model.fetch().success(function () {
+                new PartModalView({
+                    model: self.model
+                });
+                $('a[href$="tab-part-files"]').click();
             });
         },
 
