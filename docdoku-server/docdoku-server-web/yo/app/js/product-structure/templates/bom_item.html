@@ -13,7 +13,7 @@
     <i class="fa fa-cubes"></i>
     {{/model.isLastIterationAssembly}}
     {{^model.isLastIterationAssembly}}
-    {{#model.isLastIteration3DSheet}}<i class="fa fa-cube"></i>{{/model.isLastIteration3DSheet}}
+    <i class="fa fa-cube"></i>
     {{/model.isLastIterationAssembly}}
 
     {{model.getNumber}}
@@ -43,4 +43,9 @@
 </td>
 <td class="part-revision-share">
     <i class="fa fa-globe" title="{{i18n.PUBLISH}}"></i>
+</td>
+<td class="part-attached-files">
+    {{#model.hasLastIterationAttachedFiles}}
+    <i class="fa fa-paperclip" title="{{i18n.ATTACHED_FILES_DOCUMENT}}"></i>
+    {{/model.hasLastIterationAttachedFiles}}
 </td>
