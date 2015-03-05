@@ -8,6 +8,14 @@
     {{#model.isReleased}}<i class="fa fa-check"></i>{{/model.isReleased}}
     {{^model.isReleased}}<i class="fa fa-eye"></i>{{/model.isReleased}}
     {{/model.isCheckout}}
+
+    {{#model.isLastIterationAssembly}}
+    <i class="fa fa-cubes"></i>
+    {{/model.isLastIterationAssembly}}
+    {{^model.isLastIterationAssembly}}
+    {{#model.isLastIteration3DSheet}}<i class="fa fa-cube"></i>{{/model.isLastIteration3DSheet}}
+    {{/model.isLastIterationAssembly}}
+
     {{model.getNumber}}
 </td>
 <td>{{model.getVersion}}</td>
