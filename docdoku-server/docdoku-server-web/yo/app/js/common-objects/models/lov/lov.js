@@ -10,6 +10,10 @@ define(['backbone'], function (Backbone) {
             return this.get('name');
         },
 
+        setLOVName:function(newName){
+            this.set('name', newName);
+        },
+
         getLOVValues:function(){
             return this.get('values');
         },
