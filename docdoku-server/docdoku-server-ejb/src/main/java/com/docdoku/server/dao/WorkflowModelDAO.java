@@ -32,8 +32,13 @@ import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class WorkflowModelDAO {
+
+    private static final Logger LOGGER = Logger.getLogger(WorkflowModelDAO.class.getName());
+
 
     private EntityManager em;
     private Locale mLocale;
@@ -41,6 +46,15 @@ public class WorkflowModelDAO {
     public WorkflowModelDAO(Locale pLocale, EntityManager pEM) {
         em = pEM;
         mLocale = pLocale;
+    }
+
+    public void removeAllActivityModels(WorkflowModelKey pKey) throws WorkflowModelNotFoundException {
+        em.createQuery("DELETE FROM TaskModel t WHERE t.activityModel.workflowModel.id = :id AND t.activityModel.workflowModel.workspaceId = :workspaceId")
+                .setParameter("id", pKey.getId())
+                .setParameter("workspaceId", pKey.getWorkspaceId()).executeUpdate();
+        em.createQuery("DELETE FROM ActivityModel a WHERE a.workflowModel.id = :id AND a.workflowModel.workspaceId = :workspaceId")
+                .setParameter("id", pKey.getId())
+                .setParameter("workspaceId", pKey.getWorkspaceId()).executeUpdate();
     }
 
     public void removeWorkflowModel(WorkflowModelKey pKey) throws WorkflowModelNotFoundException {
@@ -52,16 +66,10 @@ public class WorkflowModelDAO {
         em.remove(model);
     }
 
-    public WorkflowModel[] findAllWorkflowModels(String pWorkspaceId) {
+    public List<WorkflowModel> findAllWorkflowModels(String pWorkspaceId) {
         WorkflowModel[] models;
         Query query = em.createQuery("SELECT DISTINCT w FROM WorkflowModel w WHERE w.workspaceId = :workspaceId");
-        List listModels = query.setParameter("workspaceId", pWorkspaceId).getResultList();
-        models = new WorkflowModel[listModels.size()];
-        for (int i = 0; i < listModels.size(); i++) {
-            models[i] = (WorkflowModel) listModels.get(i);
-        }
-
-        return models;
+        return query.setParameter("workspaceId", pWorkspaceId).getResultList();
     }
 
     public void createWorkflowModel(WorkflowModel pModel) throws WorkflowModelAlreadyExistsException, CreationException {

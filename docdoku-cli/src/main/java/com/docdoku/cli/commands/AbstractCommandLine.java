@@ -53,6 +53,9 @@ public abstract class AbstractCommandLine implements CommandLine {
     @Option(name="-F", aliases = "--format", metaVar = "<format>", usage="output format, possible value : json")
     protected CliOutput.formats format = CliOutput.formats.HUMAN;
 
+    @Option(name="-S", aliases = "--ssl", usage="use a ssl connection")
+    protected boolean ssl;
+
     //A default value is set in case an exception is raised
     //inside the CmdLineParser.parseArgument(args) method.
     protected CliOutput output = CliOutput.getOutput(format, Locale.getDefault());
@@ -99,7 +102,7 @@ public abstract class AbstractCommandLine implements CommandLine {
     }
 
     public URL getServerURL() throws MalformedURLException {
-        return new URL("http",host,port,"");
+        return new URL( ssl ? "https":"http",host,port,"");
     }
     public abstract void execImpl() throws Exception;
 }

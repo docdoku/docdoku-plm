@@ -17,10 +17,12 @@ define([
     'text!common-objects/templates/buttons/release_button.html',
     'text!common-objects/templates/buttons/ACL_button.html',
     'text!common-objects/templates/buttons/new_product_button.html',
+    'text!common-objects/templates/buttons/tags_button.html',
 	'text!templates/part/search_part_form.html',
     'common-objects/views/alert',
+    'common-objects/views/tags/tags_management',
     'views/product/product_creation_view'
-], function (Backbone, Mustache, PartCollection, PartSearchCollection, template, PartListView, PartCreationView, PartNewVersionView, PromptView, ACLEditView, AdvancedSearchView, deleteButton, checkoutButtonGroup, newVersionButton, releaseButton, aclButton, newProductButton, searchForm, AlertView, ProductCreationView) {
+], function (Backbone, Mustache, PartCollection, PartSearchCollection, template, PartListView, PartCreationView, PartNewVersionView, PromptView, ACLEditView, AdvancedSearchView, deleteButton, checkoutButtonGroup, newVersionButton, releaseButton, aclButton, newProductButton,tagsButton, searchForm, AlertView,TagsManagementView,ProductCreationView) {
     'use strict';
 	var PartContentView = Backbone.View.extend({
         events: {
@@ -34,6 +36,7 @@ define([
             'click button.new-release': 'releasePart',
             'click button.next-page': 'toNextPage',
             'click button.previous-page': 'toPreviousPage',
+            'click .actions .tags': 'actionTags',
             'click button.first-page': 'toFirstPage',
             'click button.last-page': 'toLastPage',
             'click button.current-page': 'goToPage',
@@ -49,7 +52,8 @@ define([
             newVersionButton: newVersionButton,
             releaseButton: releaseButton,
             searchForm: searchForm,
-            newProductButton:newProductButton
+            newProductButton:newProductButton,
+            tagsButton: tagsButton
         },
 
         initialize: function () {
@@ -71,6 +75,8 @@ define([
         render: function () {
             this.$el.html(Mustache.render(template, {i18n: App.config.i18n}, this.partials));
             this.bindDomElements();
+            //always show tag button
+            this.tagsButton.show();
 
             if(!this.partsCollection){
                 if (this.query) {
@@ -105,6 +111,7 @@ define([
             this.newVersionButton = this.$('.new-version');
             this.newProductButton = this.$('.new-product');
             this.releaseButton = this.$('.new-release');
+            this.tagsButton = this.$('.actions .tags');
             this.currentPageIndicator = this.$('.current-page');
             this.pageControls = this.$('.page-controls');
         },
@@ -387,6 +394,23 @@ define([
             });
             productCreationView.setRootPartNumber(this.partListView.getSelectedPart().getNumber())
                 .openModal();
+        },
+        actionTags: function () {
+
+            var partsChecked = new Backbone.Collection();
+
+            this.partListView.eachChecked(function (view) {
+                partsChecked.push(view.model);
+            });
+
+            var tagsManagementView = new TagsManagementView({
+                collection: partsChecked
+            });
+            window.document.body.appendChild(tagsManagementView.el);
+            tagsManagementView.show();
+
+            return false;
+
         }
 
     });

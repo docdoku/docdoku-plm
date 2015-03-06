@@ -85,6 +85,11 @@ public class GoogleStorageProvider implements StorageProvider {
     }
 
     @Override
+    public void renameData(BinaryResource pBinaryResource, String pNewName) throws StorageException {
+        throw new StorageException("Not implemented");
+    }
+
+    @Override
     public String getExternalResourceURI(BinaryResource binaryResource) {
 
         String baseUrl =  "https://storage.cloud.google.com/" + properties.getBucketName() + "/";

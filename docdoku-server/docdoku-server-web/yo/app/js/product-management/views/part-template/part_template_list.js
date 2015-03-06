@@ -3,8 +3,10 @@ define([
     'backbone',
     'mustache',
     'text!templates/part-template/part_template_list.html',
-    'views/part-template/part_template_list_item'
-], function (Backbone, Mustache, template, PartTemplateListItemView) {
+    'views/part-template/part_template_list_item',
+    'common-objects/views/security/acl_edit',
+    'common-objects/views/alert'
+], function (Backbone, Mustache, template, PartTemplateListItemView,ACLEditView,AlertView) {
 	'use strict';
     var PartTemplateListView = Backbone.View.extend({
 
@@ -124,12 +126,15 @@ define([
 
         onNoPartTemplateSelected: function () {
             this.trigger('delete-button:display', false);
+            this.trigger('acl-button:display', false);
         },
         onOnePartTemplateSelected: function () {
             this.trigger('delete-button:display', true);
+            this.trigger('acl-button:display', true);
         },
         onSeveralPartTemplatesSelected: function () {
             this.trigger('delete-button:display', true);
+            this.trigger('acl-button:display', false);
         },
 
         deleteSelectedPartTemplates: function () {
@@ -151,6 +156,44 @@ define([
                     });
                 }
             });
+        },
+
+        editSelectedPartTemplateACL: function () {
+            var templateSelected;
+            var _this = this;
+            _(_this.listItemViews).each(function (view) {
+                if (view.isChecked()) {
+                    templateSelected = view.model;
+                }
+            });
+
+            var aclEditView = new ACLEditView({
+                editMode: true,
+                acl: templateSelected.get('acl')
+            });
+
+            aclEditView.setTitle(templateSelected.getId());
+            window.document.body.appendChild(aclEditView.render().el);
+
+            aclEditView.openModal();
+            aclEditView.on('acl:update', function () {
+
+                var acl = aclEditView.toList();
+
+                templateSelected.updateACL({
+                    acl: acl || {userEntries: {}, groupEntries: {}},
+                    success: function () {
+                        templateSelected.set('acl', acl);
+                        aclEditView.closeModal();
+                    },
+                    error: function (model, err) {
+                       _this.onError(model,err);
+
+                    }
+                });
+            });
+
+            return false;
         },
 
         redraw: function () {
@@ -175,11 +218,19 @@ define([
                 },
                 sDom: 'ft',
                 aoColumnDefs: [
-                    { 'bSortable': false, 'aTargets': [ 0 ] },
+                    { 'bSortable': false, 'aTargets': [ 0, 6 ] },
                     { 'sType': App.config.i18n.DATE_SORT, 'aTargets': [5] }
                 ]
             });
             this.$el.parent().find('.dataTables_filter input').attr('placeholder', App.config.i18n.FILTER);
+        },
+        onError: function (model) {
+            var errorMessage = model.responseText;
+
+            $("#acl_edit_modal").find('.notifications').first().append(new AlertView({
+                type: 'error',
+                message: errorMessage
+            }).render().$el);
         }
 
     });

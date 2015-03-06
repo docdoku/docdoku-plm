@@ -88,8 +88,8 @@ public class PartResource {
     @Path("/iterations/{partIteration}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updatePartIteration(@PathParam("workspaceId") String pWorkspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion, @PathParam("partIteration") int partIteration, PartIterationDTO data)
-            throws EntityNotFoundException, EntityAlreadyExistsException, AccessRightException, UserNotActiveException, NotAllowedException, CreationException {
+    public Response updatePartIteration(@PathParam("workspaceId") String pWorkspaceId, @PathParam("partNumber") String partNumber , @PathParam("partVersion") String partVersion, @PathParam("partIteration") int partIteration, PartIterationDTO data)
+            throws EntityNotFoundException, EntityAlreadyExistsException, AccessRightException, UserNotActiveException, NotAllowedException, CreationException, EntityConstraintException {
 
         PartRevisionKey revisionKey = new PartRevisionKey(pWorkspaceId, partNumber, partVersion);
         PartRevision partRevision = productService.getPartRevision(revisionKey);
@@ -110,13 +110,23 @@ public class PartResource {
 
         List<DocumentIterationDTO> linkedDocs = data.getLinkedDocuments();
         DocumentIterationKey[] links = null;
+        String[] documentLinkComments = null;
         if (linkedDocs != null) {
+            documentLinkComments = new String[linkedDocs.size()];
             links = createDocumentIterationKey(linkedDocs);
+            int i = 0;
+            for (DocumentIterationDTO docItereationForLink : linkedDocs){
+                String comment = docItereationForLink.getCommentLink();
+                if (comment == null){
+                    comment = "";
+                }
+                documentLinkComments[i++] = comment;
+            }
         }
 
         PartIteration.Source sameSource = partRevision.getIteration(partIteration).getSource();
 
-        PartRevision partRevisionUpdated = productService.updatePartIteration(pKey, data.getIterationNote(), sameSource, newComponents, attributes, links);
+        PartRevision partRevisionUpdated = productService.updatePartIteration(pKey, data.getIterationNote(), sameSource, newComponents, attributes, links, documentLinkComments);
 
         PartDTO partDTO = Tools.mapPartRevisionToPartDTO(partRevisionUpdated);
         return Response.ok(partDTO).build();
@@ -296,6 +306,16 @@ public class PartResource {
         return Response.ok().build();
     }
 
+    @PUT
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/iterations/{partIteration}/files/{fileName}")
+    public FileDTO renameAttachedFile(@PathParam("workspaceId") String workspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion, @PathParam("partIteration") int partIteration, @PathParam("fileName") String fileName, FileDTO fileDTO) throws UserNotActiveException, WorkspaceNotFoundException, CreationException, UserNotFoundException, FileNotFoundException, NotAllowedException, FileAlreadyExistsException {
+        String fileFullName = workspaceId + "/parts/" + partNumber + "/" + partVersion+ "/" + partIteration+ "/nativecad/" + fileName;
+        BinaryResource binaryResource = productService.renameCADFileInPartIteration(fileFullName, fileDTO.getShortName());
+        return new FileDTO(true,binaryResource.getFullName(),binaryResource.getName());
+    }
+
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -351,6 +371,60 @@ public class PartResource {
 
         return abortedWorkflowsDTO;
     }
+
+    @PUT
+    @Path("/tags")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public PartDTO savePartTags(@PathParam("workspaceId") String workspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion, List<TagDTO> tagDtos)
+            throws EntityNotFoundException, NotAllowedException, ESServerException, AccessRightException, UserNotActiveException{
+
+
+        String[] tagLabels = new String[tagDtos.size()];
+
+        for (int i = 0; i < tagDtos.size(); i++) {
+            tagLabels[i] = tagDtos.get(i).getLabel();
+        }
+        PartRevisionKey revisionKey = new PartRevisionKey(workspaceId, partNumber, partVersion);
+
+        PartRevision partRevision =  productService.saveTags(revisionKey,tagLabels);
+        PartDTO  partDTO = mapper.map(partRevision, PartDTO.class);
+
+        return partDTO;
+    }
+
+    @POST
+    @Path("/tags")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response addPartTag(@PathParam("workspaceId") String workspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion, List<TagDTO> tagDtos)
+            throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException, ESServerException {
+
+        PartRevisionKey revisionKey = new PartRevisionKey(workspaceId, partNumber, partVersion);
+        PartRevision partRevision = productService.getPartRevision(revisionKey);
+        Set<Tag> tags = partRevision.getTags();
+        Set<String> tagLabels = new HashSet<>();
+
+        for(TagDTO tagDto:tagDtos){
+            tagLabels.add(tagDto.getLabel());
+        }
+
+        for(Tag tag : tags){
+            tagLabels.add(tag.getLabel());
+        }
+
+        productService.saveTags(revisionKey,tagLabels.toArray(new String[tagLabels.size()]));
+        return Response.ok().build();
+    }
+
+    @DELETE
+    @Path("/tags/{tagName}")
+    public Response removePartTags(@PathParam("workspaceId") String workspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion, @PathParam("tagName") String tagName)
+            throws EntityNotFoundException, NotAllowedException, AccessRightException, UserNotActiveException, ESServerException {
+        productService.removeTag(new PartRevisionKey(workspaceId, partNumber, partVersion), tagName);
+        return Response.ok().build();
+    }
+
 
     private List<InstanceAttribute> createInstanceAttributes(List<InstanceAttributeDTO> dtos) {
         if (dtos == null) {

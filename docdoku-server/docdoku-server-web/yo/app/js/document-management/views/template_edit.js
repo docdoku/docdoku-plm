@@ -23,6 +23,7 @@ define([
 
             this.events["click .modal-footer button.btn-primary"] = "interceptSubmit";
             this.events["submit form"] = "onSubmitForm";
+            this.tabs = this.$('.nav-tabs li');
         },
 
         rendered: function () {
@@ -110,6 +111,12 @@ define([
             this.fileListView.deleteNewFiles();
         },
 
+        activateTab: function (index) {
+            this.tabs.eq(index).children().tab('show');
+        },
+        activateFileTab: function(){
+            this.activateTab(3);
+        },
         success: function () {
             this.hide();
         },

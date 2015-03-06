@@ -238,7 +238,7 @@ public class FileHelper {
         return serverURL
                 + "/api/files/"
                 + URLEncoder.encode(docIPK.getWorkspaceId(), "UTF-8") + "/"
-                + "parts/"
+                + "documents/"
                 + URLEncoder.encode(docIPK.getDocumentMasterId(), "UTF-8") + "/"
                 + docIPK.getDocumentRevision().getVersion() + "/"
                 + docIPK.getIteration();

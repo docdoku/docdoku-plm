@@ -13,6 +13,10 @@
 
             var run = function (args, silent) {
 
+                if(configuration.ssl){
+                    args.push('--ssl');
+                }
+
                 var deferred = $q.defer();
 
                 $log.info(([memOptions, '-cp', classPath, mainClass].concat(args)).join(' '));

@@ -19,6 +19,7 @@
  */
 package com.docdoku.server.rest;
 
+import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.common.Workspace;
@@ -212,8 +213,18 @@ public class DocumentResource {
 
         List<DocumentIterationDTO> linkedDocs = data.getLinkedDocuments();
         DocumentIterationKey[] links = null;
+        String[] documentLinkComments = null;
         if (linkedDocs != null) {
+            documentLinkComments = new String[linkedDocs.size()];
             links = createDocumentIterationKeys(linkedDocs);
+            int i = 0;
+            for (DocumentIterationDTO docItereationForLink : linkedDocs){
+                String comment = docItereationForLink.getCommentLink();
+                if (comment == null){
+                    comment = "";
+                }
+                documentLinkComments[i++] = comment;
+            }
         }
 
         List<InstanceAttributeDTO> instanceAttributes = data.getInstanceAttributes();
@@ -222,7 +233,7 @@ public class DocumentResource {
             attributes = createInstanceAttributes(instanceAttributes);
         }
 
-        DocumentRevision docR = documentService.updateDocument(new DocumentIterationKey(workspaceId, documentId, documentVersion, pIteration), pRevisionNote, attributes, links);
+        DocumentRevision docR = documentService.updateDocument(new DocumentIterationKey(workspaceId, documentId, documentVersion, pIteration), pRevisionNote, attributes, links, documentLinkComments);
         return mapper.map(docR.getLastIteration(), DocumentIterationDTO.class);
     }
 
@@ -336,6 +347,17 @@ public class DocumentResource {
             throws EntityNotFoundException, NotAllowedException, AccessRightException, UserNotActiveException, ESServerException, EntityConstraintException {
         documentService.deleteDocumentRevision(new DocumentRevisionKey(workspaceId, documentId, documentVersion));
         return Response.ok().build();
+    }
+
+     @PUT
+     @Path("/iterations/{docIteration}/files/{fileName}")
+     @Consumes(MediaType.APPLICATION_JSON)
+     @Produces(MediaType.APPLICATION_JSON)
+     public FileDTO renameAttachedFile(@PathParam("workspaceId") String workspaceId, @PathParam("documentId") String documentId, @PathParam("documentVersion") String documentVersion, @PathParam("docIteration") int docIteration, @PathParam("fileName") String fileName, FileDTO fileDTO)
+             throws EntityNotFoundException, NotAllowedException, AccessRightException, UserNotActiveException, FileAlreadyExistsException, CreationException {
+        String fileFullName = workspaceId + "/documents/" + documentId + "/" + documentVersion + "/" + docIteration + "/" + fileName;
+        BinaryResource binaryResource = documentService.renameFileInDocument(fileFullName, fileDTO.getShortName());
+        return new FileDTO(true,binaryResource.getFullName(),binaryResource.getName());
     }
 
     @DELETE

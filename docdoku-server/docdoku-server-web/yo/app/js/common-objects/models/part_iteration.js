@@ -18,6 +18,7 @@ define([
             this.set('instanceAttributes', attributes);
             this.resetNativeCADFile();
 
+
         },
 
         resetNativeCADFile: function () {
@@ -81,6 +82,11 @@ define([
             return this.get('components');
         },
 
+        isAssembly: function () {
+            var components = this.getComponents();
+            return components && components.length > 0;
+        },
+
         getLinkedDocuments: function () {
             return this.get('linkedDocuments');
         },
@@ -88,6 +94,7 @@ define([
         getLifeCycleState: function () {
             return this.get('lifeCycleState');
         },
+
 
         getConversionUrl:function(){
             return App.config.contextPath +

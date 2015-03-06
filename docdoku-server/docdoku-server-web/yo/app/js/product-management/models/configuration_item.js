@@ -25,6 +25,10 @@ define(['backbone'], function (Backbone) {
             return this.get('designItemNumber');
         },
 
+        getDesignItemLatestVersion: function () {
+            return this.get('designItemLatestVersion');
+        },
+
         getDescription: function () {
             return this.get('description');
         },
@@ -47,7 +51,7 @@ define(['backbone'], function (Backbone) {
         },
 
         createBaseline: function (baselineArgs, callbacks) {
-            $.ajax({
+            return $.ajax({
                 type: 'POST',
                 url: this.urlRoot() + '/' + this.getId() + '/baselines',
                 data: JSON.stringify(baselineArgs),
@@ -55,6 +59,10 @@ define(['backbone'], function (Backbone) {
                 success: callbacks.success,
                 error: callbacks.error
             });
+        },
+
+        getReleasedParts : function(){
+            return $.getJSON(this.urlRoot() + '/' + this.getId() + '/latest-released');
         },
 
         deleteBaselines: function (baselines, callbacks) {

@@ -3,7 +3,7 @@ define([
     'backbone',
     'mustache',
     'text!templates/product-instances/product_instance_modal.html',
-    'views/baseline/baselined_part_list',
+    'views/baselines/baselined_part_list',
     'common-objects/utils/date',
     'common-objects/views/alert'
 ], function (Backbone, Mustache, template, BaselinedPartListView, date,AlertView) {
@@ -13,7 +13,8 @@ define([
             'submit #product_instance_edit_form': 'onSubmitForm',
             'hidden #product_instance_modal': 'onHidden',
             'click a#previous-iteration': 'onPreviousIteration',
-            'click a#next-iteration': 'onNextIteration'
+            'click a#next-iteration': 'onNextIteration',
+            'close-modal-request':'closeModal'
         },
 
         template: Mustache.parse(template),
@@ -78,12 +79,12 @@ define([
             this.$notifications = this.$el.find('.notifications').first();
             this.$modal = this.$('#product_instance_modal');
             this.$inputIterationNote = this.$('#inputIterationNote');
-            this.$baselinedPartListArea = this.$('#baselinedPartListArea');
+            this.$baselinedPartListArea = this.$('.baselinedPartListArea');
             this.$authorLink = this.$('.author-popover');
         },
 
         initBaselinedPartListView: function (view) {
-            view.baselinePartListView = new BaselinedPartListView({model: view.iteration, isLocked: !view.editMode}).render();
+            view.baselinePartListView = new BaselinedPartListView({model: view.iteration, editMode:false}).render();
             view.$baselinedPartListArea.html(view.baselinePartListView.$el);
         },
 

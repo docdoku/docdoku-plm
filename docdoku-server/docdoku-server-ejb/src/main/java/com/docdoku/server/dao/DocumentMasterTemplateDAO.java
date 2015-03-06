@@ -57,16 +57,10 @@ public class DocumentMasterTemplateDAO {
         return template;
     }
 
-    public DocumentMasterTemplate[] findAllDocMTemplates(String pWorkspaceId) {
+    public List<DocumentMasterTemplate> findAllDocMTemplates(String pWorkspaceId) {
         DocumentMasterTemplate[] templates;
         Query query = em.createQuery("SELECT DISTINCT t FROM DocumentMasterTemplate t WHERE t.workspaceId = :workspaceId");
-        List listTemplates = query.setParameter("workspaceId", pWorkspaceId).getResultList();
-        templates = new DocumentMasterTemplate[listTemplates.size()];
-        for (int i = 0; i < listTemplates.size(); i++) {
-            templates[i] = (DocumentMasterTemplate) listTemplates.get(i);
-        }
-
-        return templates;
+        return query.setParameter("workspaceId", pWorkspaceId).getResultList();
     }
 
     public DocumentMasterTemplate loadDocMTemplate(DocumentMasterTemplateKey pKey)

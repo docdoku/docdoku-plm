@@ -33,6 +33,7 @@ public class WorkflowModelDTO implements Serializable {
     private String finalLifeCycleState;
     private UserDTO author;
     private Date creationDate;
+    private ACLDTO acl;
 
     @XmlElement(nillable = false, required = true)
     private List<ActivityModelDTO> activityModels;
@@ -52,6 +53,7 @@ public class WorkflowModelDTO implements Serializable {
         this.author = author;
         this.creationDate = creationDate;
         this.activityModels = activityModels;
+
     }
 
     public WorkflowModelDTO(String id, UserDTO pAuthor) {
@@ -116,5 +118,10 @@ public class WorkflowModelDTO implements Serializable {
         this.reference = reference;
     }
 
-
+    public ACLDTO getAcl() {
+        return acl;
+    }
+    public void setAcl(ACLDTO acl) {
+        this.acl = acl;
+    }
 }

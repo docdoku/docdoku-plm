@@ -2,8 +2,8 @@
 define([
     'backbone',
     'mustache',
-    'text!templates/baseline/baselines_list.html',
-    'views/baseline/baselines_list_item'
+    'text!templates/baselines/baselines_list.html',
+    'views/baselines/baselines_list_item'
 ], function (Backbone, Mustache, template, BaselinesListItemView) {
     'use strict';
 
@@ -122,27 +122,14 @@ define([
 
         onNoBaselineSelected: function () {
             this.trigger('delete-button:display', false);
-            this.trigger('duplicate-button:display', false);
         },
 
         onOneBaselineSelected: function () {
             this.trigger('delete-button:display', true);
-            this.trigger('duplicate-button:display', true);
         },
 
         onSeveralBaselinesSelected: function () {
             this.trigger('delete-button:display', true);
-            this.trigger('duplicate-button:display', false);
-        },
-
-        getSelectedBaseline: function () {
-            var model = null;
-            _(this.listItemViews).each(function (view) {
-                if (view.isChecked()) {
-                    model = view.model;
-                }
-            });
-            return model;
         },
 
         deleteSelectedBaselines: function () {

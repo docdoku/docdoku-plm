@@ -150,7 +150,22 @@ public class Folder implements Serializable, Comparable<Folder> {
 
     public String getRoutePath() {
         int index = completePath.indexOf('/');
-        return completePath.substring(index + 1).replaceAll("/", ":");
+
+        if (index == -1) {
+            return "";
+        } else {
+            return completePath.substring(index + 1).replaceAll("/", ":");
+        }
+    }
+
+    public String getFoldersPath() {
+        String path = getRoutePath();
+
+        if (path != null && path.length() > 0) {
+            return "folders/" + path;
+        } else {
+            return "folders";
+        }
     }
     
     public static Folder createRootFolder(String pWorkspaceId) {

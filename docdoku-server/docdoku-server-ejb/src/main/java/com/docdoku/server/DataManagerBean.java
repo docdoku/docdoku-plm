@@ -126,6 +126,11 @@ public class DataManagerBean implements IDataManagerLocal {
     }
 
     @Override
+    public void renameFile(BinaryResource binaryResource, String pNewName) throws StorageException {
+        fileStorageProvider.renameData(binaryResource,pNewName);
+    }
+
+    @Override
     public Date getLastModified(BinaryResource binaryResource, String subResourceVirtualPath) throws StorageException {
         try {
             return fileStorageProvider.getLastModified(binaryResource, subResourceVirtualPath);

@@ -1,6 +1,6 @@
 /*global _,$,define,App,window*/
-define(['backbone', 'common-objects/utils/date', 'common-objects/collections/part_iteration_collection','common-objects/utils/acl-checker'],
-function (Backbone, Date, PartIterationList, ACLChecker) {
+define(['backbone', 'common-objects/utils/date', 'common-objects/collections/part_iteration_collection','common-objects/utils/acl-checker','common-objects/views/alert'],
+function (Backbone, Date, PartIterationList, ACLChecker,AlertView) {
     'use strict';
 
     var Part = Backbone.Model.extend({
@@ -32,6 +32,9 @@ function (Backbone, Date, PartIterationList, ACLChecker) {
             return this.get('type');
         },
 
+        getTags: function () {
+            return this.get('tags');
+        },
         getName: function () {
             return this.get('name');
         },
@@ -100,7 +103,11 @@ function (Backbone, Date, PartIterationList, ACLChecker) {
         },
 
         getModificationDate: function () {
-            return this.getLastIteration().get('modificationDate');
+            var lastIteration = this.getLastIteration();
+            if (lastIteration) {
+                return lastIteration.get('modificationDate');
+            }
+            return null;
         },
 
         getRevisionDate: function () {
@@ -134,6 +141,20 @@ function (Backbone, Date, PartIterationList, ACLChecker) {
             return this.get('lastIterationNumber') === iterationNumber;
         },
 
+        isLastIterationAssembly: function () {
+            if (this.hasIterations()) {
+                return this.getLastIteration().isAssembly();
+            }
+            return false;
+        },
+
+        hasLastIterationAttachedFiles: function () {
+            if (this.hasIterations()) {
+                return this.getLastIteration().getAttachedFiles();
+            }
+            return false;
+        },
+
         getIterations: function () {
             return this.iterations;
         },
@@ -156,6 +177,7 @@ function (Backbone, Date, PartIterationList, ACLChecker) {
             }
             return null;
         },
+
 
         getCheckOutUserLogin: function () {
             if (this.isCheckout()) {
@@ -180,15 +202,70 @@ function (Backbone, Date, PartIterationList, ACLChecker) {
             return this.get('attributesLocked');
         },
 
+        addTags: function (tags) {
+
+            return $.ajax({
+                context: this,
+                type: 'POST',
+                url: this.url() + '/tags',
+                data: JSON.stringify(tags),
+                contentType: 'application/json; charset=utf-8',
+                success: function () {
+                    this.fetch();
+                },
+                error: function () {
+                    this.onError
+                }
+            });
+
+        },
+
+        removeTag: function (tag, callback) {
+            $.ajax({
+                type: 'DELETE',
+                url: this.url() + '/tags/' + tag,
+                success: function () {
+                    callback();
+                },
+                error: function () {
+                    this.onError
+                }
+            });
+        },
+
+        removeTags: function (tags, callback) {
+            var baseUrl = this.url() + '/tags/';
+            var count = 0;
+            var total = _(tags).length;
+            _(tags).each(function (tag) {
+                $.ajax({
+                    type: 'DELETE',
+                    url: baseUrl + tag,
+                    success: function () {
+                        count++;
+                        if (count >= total) {
+                            callback();
+                        }
+                    },
+                    error: function () {
+                    this.onError
+                }
+
+                });
+            });
+
+        },
+
+
         checkout: function () {
             return $.ajax({
                 context: this,
                 type: 'PUT',
                 url: this.url() + '/checkout',
-                success: function () {
-                    this.fetch();
+                error: function (xhr) {
+                    window.alert(xhr.responseText);
                 }
-            });
+            }).success(this.fetch.bind(this));
         },
 
         undocheckout: function () {
@@ -196,13 +273,10 @@ function (Backbone, Date, PartIterationList, ACLChecker) {
                 context: this,
                 type: 'PUT',
                 url: this.url() + '/undocheckout',
-                success: function () {
-                    this.fetch();
-                },
                 error: function (xhr) {
                     window.alert(xhr.responseText);
                 }
-            });
+            }).success(this.fetch.bind(this));
         },
 
         checkin: function () {
@@ -210,10 +284,10 @@ function (Backbone, Date, PartIterationList, ACLChecker) {
                 context: this,
                 type: 'PUT',
                 url: this.url() + '/checkin',
-                success: function () {
-                    this.fetch();
+                error: function (xhr) {
+                    window.alert(xhr.responseText);
                 }
-            });
+            }).success(this.fetch.bind(this));
         },
 
         isCheckout: function () {
@@ -310,9 +384,8 @@ function (Backbone, Date, PartIterationList, ACLChecker) {
                 }
             });
         },
-
         release: function () {
-            $.ajax({
+            return $.ajax({
                 context: this,
                 type: 'PUT',
                 url: this.url() + '/release',
@@ -327,6 +400,14 @@ function (Backbone, Date, PartIterationList, ACLChecker) {
                 return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/' + this.getPartKey();
             }
             return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/';
+        },
+        onError: function (model, error) {
+            var errorMessage = error ? error.responseText : model;
+
+            this.$el.find('.notifications').first().append(new AlertView({
+                type: 'error',
+                message: errorMessage
+            }).render().$el);
         }
 
 

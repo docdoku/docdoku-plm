@@ -6,21 +6,25 @@ define([
     'collections/roles',
     'views/workflows/workflow_list',
     'views/workflows/roles_modal_view',
+    'common-objects/views/security/acl_edit',
     'text!templates/workflows/workflow_content_list.html',
     'text!common-objects/templates/buttons/delete_button.html',
+    'text!common-objects/templates/buttons/ACL_button.html',
     'common-objects/views/alert'
-], function (require, Backbone, Mustache, RoleList, WorkflowListView, RolesModalView, template, deleteButton,  AlertView) {
+], function (require, Backbone, Mustache, RoleList, WorkflowListView, RolesModalView,ACLEditView, template, deleteButton,aclButton, AlertView) {
 	'use strict';
     var WorkflowContentListView = Backbone.View.extend({
 
         events:{
             'click .actions .new':'actionNew',
             'click .actions .delete':'actionDelete',
-            'click .actions .roles':'actionRoles'
+            'click .actions .roles': 'actionRoles',
+            'click .actions .edit-acl': 'onEditAcl'
         },
 
         partials: {
-            deleteButton: deleteButton
+            deleteButton: deleteButton,
+            aclButton:  aclButton
         },
 
         initialize: function () {
@@ -43,18 +47,32 @@ define([
         bindDomElement : function(){
             this.$notifications = this.$el.find('.notifications');
             this.$newWorflowBtn = this.$el.find('.actions .new');
+            this.$aclButton = this.$('.actions .edit-acl');
+            this.$deleteButton = this.$('.actions .delete');
+
         },
         bindCollections : function(){
             this.listenTo(this.listView.collection, 'reset', this.onWorkflowsListChange);
             this.listView.collection.fetch({reset: true});
             this.listenTo(this.rolesList, 'reset', this.onRolesListChange);
             this.rolesList.fetch({reset: true});
+            this.listenTo(this.listView.collection, 'change', this.onWorkflowsListChange);
         },
 
         selectionChanged: function () {
-            var showOrHide = this.listView.checkedViews().length > 0;
-            var action = showOrHide ? 'show' : 'hide';
-            this.$el.find('.actions .delete')[action]();
+
+            var checkedViews = this.listView.checkedViews();
+            switch (checkedViews.length) {
+                case 0:
+                    this.onNoWorkflowSelected();
+                    break;
+                case 1:
+                    this.onOneWorkflowSelected(checkedViews[0].model);
+                    break;
+                default:
+                    this.onSeveralWorkflowSelected();
+                    break;
+            }
         },
 
         actionNew: function () {
@@ -64,12 +82,16 @@ define([
         },
         actionDelete: function () {
             var _this = this;
-            bootbox.confirm(App.config.i18n.CONFIRM_DELETE_WORKFLOW, function(result){
-                if(result){
+
+            bootbox.confirm(App.config.i18n.CONFIRM_DELETE_WORKFLOW, function(result) {
+                if (result) {
+
                     _this.listView.eachChecked(function (view) {
                         view.model.destroy({
                             dataType: 'text',
-                            success: _this.render.bind(_this)
+                            success: function () {
+                                _this.listView.redraw();
+                            }
                         });
                     });
                 }
@@ -106,7 +128,67 @@ define([
                     message: App.config.i18n.ADVICE_CREATE_WORKFLOW
                 }).render().$el);
             }
+        },
+
+        onNoWorkflowSelected: function () {
+            this.$aclButton.hide();
+            this.$deleteButton.hide();
+        },
+
+        onOneWorkflowSelected: function (workflow) {
+            this.$aclButton.show();
+            this.$deleteButton.show();
+
+        },
+        onSeveralWorkflowSelected: function () {
+            this.$aclButton.hide();
+            this.$deleteButton.show();
+        },
+        onEditAcl: function () {
+
+            var workflowSelected;
+
+            this.listView.eachChecked(function (view) {
+                workflowSelected = view.model;
+
+            });
+            var self = this;
+            var aclEditView = new ACLEditView({
+                editMode: true,
+                acl: workflowSelected.get('acl')
+            });
+
+            aclEditView.setTitle(workflowSelected.getId());
+            window.document.body.appendChild(aclEditView.render().el);
+
+            aclEditView.openModal();
+            aclEditView.on('acl:update', function () {
+
+                var acl = aclEditView.toList();
+
+                workflowSelected.updateWorkflowACL({
+                    acl: acl || {userEntries: {}, groupEntries: {}},
+                    success: function () {
+                        workflowSelected.set('acl', acl);
+                        aclEditView.closeModal();
+                        self.listView.redraw();
+                    },
+                    error: self.onError
+                });
+            });
+
+            return false;
+        },
+        onError:function(model, error){
+            var errorMessage = model.responseText;
+
+            $("#acl_edit_modal").find('.notifications').first().append(new AlertView({
+                type: 'error',
+                message: errorMessage
+            }).render().$el);
+            this.collection.fetch();
         }
+
     });
 
     return WorkflowContentListView;

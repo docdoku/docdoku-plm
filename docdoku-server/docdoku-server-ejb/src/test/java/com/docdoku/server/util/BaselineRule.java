@@ -1,10 +1,29 @@
+/*
+ * DocDoku, Professional Open Source
+ * Copyright 2006 - 2015 DocDoku SARL
+ *
+ * This file is part of DocDokuPLM.
+ *
+ * DocDokuPLM is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * DocDokuPLM is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package com.docdoku.server.util;
 
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.configuration.ProductBaseline;
 import com.docdoku.core.product.*;
-import com.docdoku.core.security.ACL;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
@@ -21,35 +40,28 @@ public class BaselineRule implements TestRule {
     private ProductBaseline.BaselineType type;
     private String description;
     private Workspace workspace;
-    private User user1;
+    private User user;
     private PartMaster partMaster;
     private ConfigurationItemKey configurationItemKey;
     private ConfigurationItem configurationItem;
 
-    public BaselineRule(String baselineName,ProductBaseline.BaselineType type,String description,String workspaceId,String login,String partId,String productId,boolean released,ACL.Permission permission){
+    public BaselineRule(String baselineName,ProductBaseline.BaselineType type,String description,String workspaceId,String login,String partId,String productId,boolean released){
         name = baselineName;
         this.type = type;
         this.description = description;
         this.workspace = new Workspace(workspaceId);
-        user1 = new User(workspace, login,login,login+"@docdoku.com", "en");
-        partMaster = new PartMaster(workspace, partId, user1);
+        user = new User(workspace, login,login,login+"@docdoku.com", "en");
+        partMaster = new PartMaster(workspace, partId, user);
         configurationItemKey = new ConfigurationItemKey("workspace1",productId);
         configurationItem = new ConfigurationItem(workspace, productId, "description");
         partMaster.setPartRevisions(new ArrayList<PartRevision>());
         if (released){
             List<PartRevision> revisions = new ArrayList<PartRevision>();
             List<PartIteration> iterationLists = new ArrayList<PartIteration>();
-            PartRevision revision = new PartRevision(partMaster, "A", user1);
-            iterationLists.add(new PartIteration(revision, user1));
+            PartRevision revision = new PartRevision(partMaster, "A", user);
+            iterationLists.add(new PartIteration(revision, user));
             revision.setPartIterations(iterationLists);
             revision.setStatus(PartRevision.RevisionStatus.RELEASED);
-            if (permission != null)
-            {
-                ACL acl = new ACL();
-                acl.addEntry(user1,permission);
-                revision.setACL(acl);
-            }
-
             revisions.add(revision);
             partMaster.setPartRevisions(revisions);
         }
@@ -58,9 +70,9 @@ public class BaselineRule implements TestRule {
     }
 
     public BaselineRule(String baselineName,ProductBaseline.BaselineType type,String description,String workspaceId,String login,String partId,String productId,boolean released,boolean checkouted){
-        this(baselineName,type,description,workspaceId,login,partId,productId,released,null);
+        this(baselineName,type,description,workspaceId,login,partId,productId,released);
         if (checkouted){
-            this.partMaster.getLastReleasedRevision().getIteration(1).getPartRevision().setCheckOutUser(this.user1);
+            this.partMaster.getLastReleasedRevision().getIteration(1).getPartRevision().setCheckOutUser(this.user);
         }
 
 
@@ -103,8 +115,8 @@ public class BaselineRule implements TestRule {
         return workspace;
     }
 
-    public User getUser1() {
-        return user1;
+    public User getUser() {
+        return user;
     }
 
     public PartMaster getPartMaster() {

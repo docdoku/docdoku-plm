@@ -41,7 +41,7 @@
             <div class="nav-collapse collapse">
                 <div class="container-fluid">
                     <h:graphicImage id="brand-logo" alt="docdoku_plm" library="default" name="images/plm_logo2.png" />
-                    <a class="brand" href="/">DocDoku<strong>PLM</strong></a>
+                    <a class="brand" href="#{request.contextPath}/faces/admin/workspace/workspacesMenu.xhtml">DocDoku<strong>PLM</strong></a>
                 </div>
             </div>
         </div>
@@ -111,6 +111,10 @@
                             <tr>
                                 <th scope="row">#{i18nPart['general.description']}:</th>
                                 <td>${partRevision.description}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">#{i18nPart['general.tags']}:</th>
+                                <td>${partRevision.tags}</td>
                             </tr>
                             </tbody>
                         </table>

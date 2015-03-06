@@ -12,6 +12,7 @@ define([
         initialize: function () {
             CheckboxListItemView.prototype.initialize.apply(this, arguments);
             this.events["click .reference"] = this.actionEdit;
+            this.events['click .document-attached-files i'] = this.openDocumentTemplateModal;
         },
 
         rendered: function () {
@@ -28,6 +29,11 @@ define([
                     App.config.i18n._DATE_FORMAT,
                     data.creationDate);
             }
+            if (this.model.hasACLForCurrentUser()) {
+                data.isReadOnly = this.model.isReadOnly();
+                data.isFullAccess = this.model.isFullAccess();
+            }
+            data.hasAttachedFiles = this.model.getAttachedFiles().length;
             return data;
         },
         actionEdit: function (evt) {
@@ -39,6 +45,23 @@ define([
                     })
                 );
                 window.document.body.appendChild(that.editView.el);
+                that.editView.redraw();
+            });
+        },
+
+        openDocumentTemplateModal: function (evt) {
+            var that = this;
+            this.model.fetch().success(function () {
+                that.editView = that.addSubView(
+                    new TemplateEditView({
+                        model: that.model
+                    })
+                );
+                that.editView.activateFileTab();
+                window.document.body.appendChild(that.editView.el);
+
+
+
             });
         }
     });

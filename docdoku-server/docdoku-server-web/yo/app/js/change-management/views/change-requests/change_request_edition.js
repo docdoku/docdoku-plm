@@ -116,6 +116,7 @@ define([
                 that._affectedDocumentsCollection = new LinkedDocumentCollection(affectedDocuments);
                 that._linkedDocumentsView = new LinkedDocumentsView({
                     editMode: that.editMode,
+                    commentEditable:false,
                     collection: that._affectedDocumentsCollection
                 }).render();
 

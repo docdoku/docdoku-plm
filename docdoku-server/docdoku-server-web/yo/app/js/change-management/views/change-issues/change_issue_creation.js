@@ -69,6 +69,7 @@ function (Backbone, Mustache, template, ChangeIssueModel, UserList, LinkedDocume
             that._affectedDocumentsCollection = new LinkedDocumentCollection();
             var linkedDocumentsView = new LinkedDocumentsView({
                 editMode: true,
+                commentEditable: false,
                 collection: that._affectedDocumentsCollection
             }).render();
 

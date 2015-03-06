@@ -3,12 +3,14 @@ define([
 	'backbone',
 	'mustache',
 	'common-objects/collections/baselines',
-	'text!common-objects/templates/baselines/snap_baseline_view.html',
+	'text!templates/baselines/baseline_creation_view.html',
     'common-objects/views/alert'
 ], function (Backbone, Mustache, Baselines, template, AlertView) {
+
     'use strict';
 
-	var SnapLatestBaselineView = Backbone.View.extend({
+	var BaselineCreationView = Backbone.View.extend({
+
 		events: {
 			'submit #baseline_creation_form': 'onSubmitForm',
 			'hidden #baseline_creation_modal': 'onHidden'
@@ -16,29 +18,18 @@ define([
 
 		initialize: function () {
 			_.bindAll(this);
-			this.isProduct = false;
-			if (this.options && this.options.type) {
-				this.isProduct = this.options.type === 'RELEASED' || this.options.type === 'LATEST' || this.options.type === 'PRODUCT';
-			} else if (!this.collection) {
-				this.collection = new Baselines({}, {type: 'document'});
-			}
 		},
 
 		render: function () {
-			var data = {
-				i18n: App.config.i18n,
-				isProduct: this.isProduct
-			};
-			if (this.isProduct) {
-				data.isReleased = this.options.type === 'RELEASED';
-				data.isLatest = this.options.type === 'LATEST';
-			}
-			this.$el.html(Mustache.render(template, data));
+
+			this.$el.html(Mustache.render(template, {
+                i18n: App.config.i18n
+            }));
+
 			this.bindDomElements();
-			if (this.isProduct) {
-				this.$inputBaselineType.val(this.options.type);
-			}
+
             this.$inputBaselineName.customValidity(App.config.i18n.REQUIRED_FIELD);
+
             return this;
 		},
 
@@ -48,9 +39,6 @@ define([
 			this.$inputBaselineName = this.$('#inputBaselineName');
 			this.$inputBaselineDescription = this.$('#inputBaselineDescription');
             this.$submitButton = this.$('button.btn-primary').first();
-			if (this.isProduct) {
-				this.$inputBaselineType = this.$('#inputBaselineType');
-			}
 		},
 
 		onSubmitForm: function (e) {
@@ -68,13 +56,9 @@ define([
                         _this.$submitButton.removeAttr('disabled');
                     }
                 };
-                if (this.isProduct) {
-                    data.type = this.$inputBaselineType.val();
-                    this.model.createBaseline(data, callbacks);
-                } else {
-                    var baselinesCollection = this.collection;
-                    baselinesCollection.create(data, callbacks);
-                }
+
+                this.collection.create(data, callbacks);
+
             }else{
                 this.$submitButton.removeAttr('disabled');
             }
@@ -112,5 +96,5 @@ define([
 		}
 	});
 
-	return SnapLatestBaselineView;
+	return BaselineCreationView;
 });

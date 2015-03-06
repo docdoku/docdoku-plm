@@ -10,8 +10,9 @@ define([
     'common-objects/views/tags/tag',
     'common-objects/collections/linked/linked_document_collection',
     'text!templates/iteration/document_iteration.html',
+    'common-objects/views/prompt',
     'common-objects/utils/date'
-], function (Mustache, ModalView, FileListView, DocumentAttributesView, LifecycleView, LinkedDocumentsView, Tag, TagView, LinkedDocumentCollection, template, date) {
+], function (Mustache, ModalView, FileListView, DocumentAttributesView, LifecycleView, LinkedDocumentsView, Tag, TagView, LinkedDocumentCollection, template, PromptView, date) {
     'use strict';
 
     var IterationView = ModalView.extend({
@@ -28,11 +29,20 @@ define([
             this.events["click .modal-footer button.btn-primary"] = "interceptSubmit";
             this.events['submit form'] = 'onSubmitForm';
             this.events['click a.document-path'] = 'onFolderPathClicked';
+            this.events['click .action-checkin'] = 'actionCheckin';
+            this.events['click .action-checkout'] = 'actionCheckout';
+            this.events['click .action-undocheckout'] = 'actionUndoCheckout';
+
 
             this.tagsToRemove = [];
 
+            this.bindDom();
+
         },
 
+        bindDom: function () {
+            this.revisionNote = this.$('#inputRevisionNote');
+        },
         onPreviousIteration: function () {
             if (this.iterations.hasPreviousIteration(this.iteration)) {
                 this.switchIteration(this.iterations.previous(this.iteration));
@@ -59,9 +69,12 @@ define([
         },
 
         activateTab: function (index) {
-            this.tabs.eq(index).children().tab('show');
-        },
 
+           this.tabs.eq(index).children().tab('show');
+        },
+        activateFileTab: function(){
+            this.activateTab(3);
+        },
         validation: function () {
 
             /*checking attributes*/
@@ -88,19 +101,20 @@ define([
                 isCheckoutByConnectedUser: this.model.isCheckoutByConnectedUser(),
                 isCheckout: this.model.isCheckout(),
                 editMode: editMode,
-                master: this.model.toJSON(),
+                docRevision: this.model.toJSON(),
                 i18n: App.config.i18n,
                 permalink: this.model.getPermalink(),
                 hasIterations: this.iterations.length
             };
 
-            data.master.creationDate = date.formatTimestamp(
+            data.docRevision.reference = this.model.getReference();
+            data.docRevision.creationDate = date.formatTimestamp(
                 App.config.i18n._DATE_FORMAT,
-                data.master.creationDate
+                data.docRevision.creationDate
             );
 
 
-            var fullPath = data.master.path;
+            var fullPath = data.docRevision.path;
             var re = new RegExp(App.config.workspaceId, '');
             fullPath = fullPath.replace(re, '');
             this.folderPath = fullPath.replace(/\//g, ':');
@@ -139,14 +153,14 @@ define([
             }
 
             if (this.model.isCheckout()) {
-                data.master.checkOutDate = date.formatTimestamp(
+                data.docRevision.checkOutDate = date.formatTimestamp(
                     App.config.i18n._DATE_FORMAT,
-                    data.master.checkOutDate
+                    data.docRevision.checkOutDate
                 );
             }
 
-            if(App.config.configSpec!=='latest'){
-                data.isForBaseline=true;
+            if (App.config.configSpec !== 'latest') {
+                data.isForBaseline = true;
             }
 
             /*Main window*/
@@ -171,9 +185,12 @@ define([
             var that = this;
 
             if (this.model.hasIterations()) {
-                this.iteration.getAttributes().each(function (item) {
-                    that.attributesView.addAndFillAttribute(item);
-                });
+                if(this.iteration.getAttributes().length){
+                    this.iteration.getAttributes().each(function (item) {
+                        that.attributesView.addAndFillAttribute(item);
+                    });
+                }
+
 
                 this.fileListView = new FileListView({
                     baseName: this.iteration.getBaseName(),
@@ -189,6 +206,7 @@ define([
 
                 this.linkedDocumentsView = new LinkedDocumentsView({
                     editMode: editMode,
+                    commentEditable: true,
                     documentIteration: this.iteration,
                     collection: new LinkedDocumentCollection(this.iteration.getLinkedDocuments())
                 }).render();
@@ -228,13 +246,13 @@ define([
             return this;
         },
 
-        interceptSubmit:function(){
+        interceptSubmit: function () {
             this.isValid = !this.$('.tabs').invalidFormTabSwitcher();
         },
 
         onSubmitForm: function (e) {
 
-            if(this.isValid){
+            if (this.isValid) {
 
                 /*saving iteration*/
                 var _this = this;
@@ -345,6 +363,64 @@ define([
                 });
             }
         },
+
+        setRevisionNote: function () {
+            var note;
+            if (_.isEqual(this.$('#inputRevisionNote').val(), '')) {
+                note = null;
+
+            } else {
+                note = this.$('#inputRevisionNote').val();
+            }
+            return note;
+        },
+        actionCheckin: function () {
+            if (!this.model.getLastIteration().get('revisionNote')) {
+                var self = this;
+                var note = self.setRevisionNote();
+                self.iteration.save({
+                    revisionNote: note
+
+                }).success(function () {
+                    self.model.checkin().success(function () {
+                        self.onSuccess();
+                    });
+                });
+
+            } else {
+                this.model.checkin().success(function () {
+                    this.onSuccess();
+                });
+            }
+        }
+        ,
+
+        actionCheckout: function () {
+            var self = this;
+            self.model.checkout().success(function () {
+                self.onSuccess();
+            });
+
+        },
+        actionUndoCheckout: function () {
+            var self = this;
+            self.model.undocheckout().success(function () {
+                self.onSuccess();
+            });
+
+        },
+
+        onSuccess: function () {
+            this.model.fetch().success(function () {
+                this.iteration = this.model.getLastIteration();
+                this.iterations = this.model.getIterations();
+                this.render();
+                this.activateTab(1);
+
+            }.bind(this));
+
+        },
+
 
         onFolderPathClicked: function () {
             var redirectPath = this.folderPath ? 'folders/' + encodeURIComponent(this.folderPath) : 'folders';
