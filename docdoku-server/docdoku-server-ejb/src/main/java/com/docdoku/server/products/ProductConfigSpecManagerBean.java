@@ -128,6 +128,36 @@ public class ProductConfigSpecManagerBean implements IProductConfigSpecManagerWS
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
+    public List<PartIteration> findAllReleasedParts(ConfigurationItemKey ciKey) throws ConfigurationItemNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(ciKey.getWorkspace());
+        List<PartIteration> parts = new ArrayList<>();
+        ConfigurationItemDAO configurationItemDAO = new ConfigurationItemDAO(new Locale(user.getLanguage()), em);
+        ConfigurationItem configurationItem = configurationItemDAO.loadConfigurationItem(ciKey);
+        findAllReleasedPartsRecursive(parts, configurationItem.getDesignItem());
+        return parts;
+    }
+
+    private void findAllReleasedPartsRecursive(List<PartIteration> partIterations, PartMaster root) {
+        List<PartRevision> releasedRevisions = root.getAllReleasedRevisions();
+
+        if(releasedRevisions.isEmpty()){
+            releasedRevisions.add(root.getLastRevision());
+        }
+
+        for(PartRevision partRevision : releasedRevisions){
+            PartIteration partIteration = partRevision.getLastCheckedInIteration();
+            if(partIteration != null && !partIterations.contains(partIteration)){
+                partIterations.add(partIteration);
+                for(PartUsageLink partUsageLink : partIteration.getComponents()){
+                    findAllReleasedPartsRecursive(partIterations,partUsageLink.getComponent());
+                }
+            }
+        }
+
+    }
+
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
     public PartUsageLink filterProductStructure(PartUsageLink rootUsageLink, ConfigSpec configSpec, Integer pDepth) throws ConfigurationItemNotFoundException, WorkspaceNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException, PartUsageLinkNotFoundException, AccessRightException {
         User user = userManager.checkWorkspaceReadAccess(rootUsageLink.getComponent().getWorkspaceId());
         int depth = (pDepth == null) ? -1 : pDepth;

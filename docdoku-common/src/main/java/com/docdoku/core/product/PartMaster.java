@@ -163,6 +163,17 @@ public class PartMaster implements Serializable {
         }
     }
 
+    public List<PartRevision> getAllReleasedRevisions(){
+        List<PartRevision> releasedRevisions = new ArrayList<>();
+        for(int index = partRevisions.size()-1; index>=0; index--){
+            PartRevision partRevision = partRevisions.get(index);
+            if(partRevision.isReleased()){
+                releasedRevisions.add(partRevision);
+            }
+        }
+        return releasedRevisions;
+    }
+
     public PartRevision getLastReleasedRevision(){
         for(int index = partRevisions.size()-1; index>=0; index--){
             PartRevision partRevision = partRevisions.get(index);

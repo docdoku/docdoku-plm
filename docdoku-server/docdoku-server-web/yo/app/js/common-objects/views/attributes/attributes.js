@@ -90,5 +90,6 @@ define([
         }
 
     });
+
     return AttributesView;
 });

@@ -148,9 +148,9 @@ function (Backbone, Date, PartIterationList, ACLChecker,AlertView) {
             return false;
         },
 
-        isLastIteration3DSheet: function () {
+        hasLastIterationAttachedFiles: function () {
             if (this.hasIterations()) {
-                return this.getLastIteration().getNativeCADFile();
+                return this.getLastIteration().getAttachedFiles();
             }
             return false;
         },
@@ -388,7 +388,7 @@ function (Backbone, Date, PartIterationList, ACLChecker,AlertView) {
             });
         },
         release: function () {
-            $.ajax({
+            return $.ajax({
                 context: this,
                 type: 'PUT',
                 url: this.url() + '/release',

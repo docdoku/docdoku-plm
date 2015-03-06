@@ -16,32 +16,52 @@
         <form id="baseline_creation_form" class="form-horizontal">
 
             <div class="control-group">
-                <label class="control-label" for="inputBaselineName">{{i18n.NAME}}</label>
+                {{#model.getId}}
+                <label class="control-label" for="inputConfigurationItem">{{i18n.PRODUCT_ID}}</label>
+                <div class="controls">
+                    {{model.getId}}
+                </div>
+                {{/model.getId}}
+                {{^model.getId}}
+                <label class="control-label" for="inputConfigurationItem">{{i18n.PRODUCT_ID}}</label>
+                <div class="controls">
+                    <input type="text" id="inputConfigurationItem" placeholder="{{i18n.PRODUCT_ID}}" required/>
+                </div>
+                {{/model.getId}}
+            </div>
 
+            <div class="control-group">
+                <label class="control-label" for="inputBaselineName">{{i18n.NAME}}</label>
                 <div class="controls">
                     <input type="text" id="inputBaselineName" placeholder="{{i18n.NAME}}" required/>
                 </div>
             </div>
 
             <div class="control-group">
-                <label class="control-label" for="inputBaselineType">{{i18n.TYPE}}</label>
-
-                <div class="controls">
-                    <select id="inputBaselineType"
-                    {{#isReleased}}disabled{{/isReleased}}{{#isLatest}}disabled{{/isLatest}}>
-                    <option value="LATEST">{{i18n.LATEST}}</option>
-                    <option value="RELEASED">{{i18n.RELEASED}}</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="control-group">
                 <label class="control-label" for="inputBaselineDescription">{{i18n.DESCRIPTION}}</label>
-
                 <div class="controls">
                     <textarea id="inputBaselineDescription"></textarea>
                 </div>
             </div>
+
+            <div class="control-group">
+                <label class="control-label" for="inputBaselineType">{{i18n.TYPE}}</label>
+                <div class="controls">
+                    <select id="inputBaselineType" {{^model.getId}}disabled{{/model.getId}}>
+                        <option value="LATEST">{{i18n.LATEST}}</option>
+                        <option value="RELEASED">{{i18n.RELEASED}}</option>
+                    </select>
+
+                </div>
+            </div>
+
+            <div class="control-group resolve-group">
+                <label class="control-label" for="resolveBaselineParts">{{i18n.RESOLVE}}</label>
+                <div id="resolveBaselineParts" class="controls baselinedPartListArea">
+                    <i class="fa fa-spin fa-refresh loader"></i>
+                </div>
+            </div>
+
         </form>
     </div>
 

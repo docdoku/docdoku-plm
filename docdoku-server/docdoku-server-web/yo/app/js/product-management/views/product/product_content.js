@@ -7,7 +7,7 @@ define([
     'text!templates/product/product_content.html',
     'views/product/product_list',
     'views/product/product_creation_view',
-    'views/baselines/baseline_creation_view',
+        'views/baselines/baseline_creation_view',
     'text!common-objects/templates/buttons/snap_button.html',
     'text!common-objects/templates/buttons/delete_button.html',
     'text!common-objects/templates/buttons/udf_button.html',
@@ -66,6 +66,7 @@ define([
             this.delegateEvents();
             this.productListView.on('error', this.onError);
             this.productListView.on('warning', this.onWarning);
+            this.productListView.on('info', this.onInfo);
             this.productListView.on('delete-button:display', this.changeDeleteButtonDisplay);
             this.productListView.on('create-baseline-button:display', this.changeSnapBaselineButtonDisplay);
         },
@@ -81,15 +82,20 @@ define([
         },
 
         createBaseline: function () {
-
             var baselineCreationView = new BaselineCreationView({
                 model: this.productListView.getSelectedProduct()
             });
-
             window.document.body.appendChild(baselineCreationView.render().el);
             baselineCreationView.on('warning', this.onWarning);
+            baselineCreationView.on('info', this.onInfo);
             baselineCreationView.openModal();
+        },
 
+        onInfo:function(message){
+            this.$notifications.append(new AlertView({
+                type: 'info',
+                message: message
+            }).render().$el);
         },
 
         changeDeleteButtonDisplay: function (state) {

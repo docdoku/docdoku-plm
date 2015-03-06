@@ -120,7 +120,7 @@ public class WorkflowModel implements Serializable, Cloneable {
     }
 
     public void setActivityModels(List<ActivityModel> activityModels) {
-        this.activityModels = activityModels;
+        this.activityModels=activityModels;
     }
 
 
@@ -249,6 +249,7 @@ public class WorkflowModel implements Serializable, Cloneable {
      */
     @Override
     public WorkflowModel clone() {
+        //TODO relaunchActivity reference should be changed!
         WorkflowModel clone;
         try {
             clone = (WorkflowModel) super.clone();

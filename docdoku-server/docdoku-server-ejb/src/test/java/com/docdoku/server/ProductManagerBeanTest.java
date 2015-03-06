@@ -33,8 +33,8 @@ import com.docdoku.core.product.*;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.esindexer.ESIndexer;
+import com.docdoku.server.products.ProductBaselineManagerBean;
 import com.docdoku.server.util.ProductUtil;
-import com.docdoku.server.util.ProductUtil.*;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -51,8 +51,6 @@ import java.util.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class ProductManagerBeanTest {
-
-
 
     @InjectMocks
     ProductManagerBean productManagerBean = new ProductManagerBean();
@@ -83,6 +81,9 @@ public class ProductManagerBeanTest {
 
     @Mock
     TypedQuery<Tag> tagsQuery;
+
+    @Mock
+    ProductBaselineManagerBean productBaselineManager;
 
 
     @Before

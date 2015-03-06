@@ -149,7 +149,6 @@ define({
 	EMBED_SCENE: "Embed Scene",
 	ENTER_NAV: "Start the navigation",
 	ERROR: "Error",
-	EXCLUDE: 'Exclude part from baseline',
 	EXISTING_TAGS: "Tags available",
 	EXIT: "Leave digital mockup review",
 	EXPIRE_DATE: "Expiration date",

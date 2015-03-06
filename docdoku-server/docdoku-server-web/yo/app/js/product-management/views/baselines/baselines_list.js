@@ -122,27 +122,14 @@ define([
 
         onNoBaselineSelected: function () {
             this.trigger('delete-button:display', false);
-            this.trigger('duplicate-button:display', false);
         },
 
         onOneBaselineSelected: function () {
             this.trigger('delete-button:display', true);
-            this.trigger('duplicate-button:display', true);
         },
 
         onSeveralBaselinesSelected: function () {
             this.trigger('delete-button:display', true);
-            this.trigger('duplicate-button:display', false);
-        },
-
-        getSelectedBaseline: function () {
-            var model = null;
-            _(this.listItemViews).each(function (view) {
-                if (view.isChecked()) {
-                    model = view.model;
-                }
-            });
-            return model;
         },
 
         deleteSelectedBaselines: function () {

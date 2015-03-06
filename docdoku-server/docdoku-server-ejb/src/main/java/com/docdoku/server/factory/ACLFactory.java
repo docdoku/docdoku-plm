@@ -1,4 +1,4 @@
-package com.docdoku.server.factory; /*
+/*
  * DocDoku, Professional Open Source
  * Copyright 2006 - 2015 DocDoku SARL
  *
@@ -17,6 +17,7 @@ package com.docdoku.server.factory; /*
  * You should have received a copy of the GNU Affero General Public License
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
+package com.docdoku.server.factory;
 
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.UserGroup;

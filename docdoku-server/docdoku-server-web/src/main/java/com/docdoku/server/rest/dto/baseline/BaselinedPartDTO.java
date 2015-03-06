@@ -24,6 +24,7 @@ import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartRevision;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class BaselinedPartDTO {
@@ -48,6 +49,21 @@ public class BaselinedPartDTO {
                                                                        partRevision.isReleased());
             this.availableIterations.add(option);
         }
+    }
+
+    public BaselinedPartDTO(List<PartIteration> availableParts){
+
+        PartIteration max = Collections.max(availableParts);
+
+        this.number = max.getPartNumber();
+        this.version = max.getVersion();
+        this.iteration = max.getIteration();
+
+        this.availableIterations = new ArrayList<>();
+        for(PartIteration partIteration : availableParts){
+            this.availableIterations.add(new BaselinedPartOptionDTO(partIteration.getVersion(),partIteration.getIteration(),partIteration.getPartRevision().isReleased()));
+        }
+
     }
 
     public BaselinedPartDTO(String number, String version, int iteration) {

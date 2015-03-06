@@ -66,10 +66,6 @@ define([
             return this.get('nativeCADFile');
         },
 
-        getNativeCADFile: function () {
-            return this.get('nativeCADFile');
-        },
-
         getBaseName: function () {
             return this.getWorkspace() + '/parts/' + this.getNumber() + '/' + this.getVersion() + '/' + this.get('iteration') + '/nativecad';
         },
