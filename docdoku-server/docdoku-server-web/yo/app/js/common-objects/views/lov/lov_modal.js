@@ -69,11 +69,14 @@ define([
         },
 
         addLov: function(){
-            this.addLovView(true, new LOVModel({
-                name:"",
+            var newModel = new LOVModel(
+            {name:"",
                 values:[{name:"", value:""}],
-                workspaceId:this.workspaceId
-            }) );
+                workspaceId:this.workspaceId}
+            );
+            newModel.setNew(true);
+
+            this.addLovView(true, newModel);
         },
 
         removeLovView:function(lovView){
@@ -82,7 +85,7 @@ define([
         },
 
         onSaveLovs: function(){
-            //this.collection.sync();
+            _.invoke(this.collection.models, 'save');
         }
 
 
