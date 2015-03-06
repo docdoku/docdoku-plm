@@ -2,8 +2,8 @@ define([
     'backbone',
     'mustache',
     'text!common-objects/templates/lov/lov_item.html',
-    'text!common-objects/templates/lov/lov_possible_value.html',
-], function (Backbone, Mustache, template, itemTemplate) {
+    'common-objects/views/lov/lov_possible_value',
+], function (Backbone, Mustache, template, LOVPossibleValueView) {
     'use strict';
     var LOVItemView = Backbone.View.extend({
 
@@ -11,7 +11,7 @@ define([
             'click .deleteLovItem': 'removeItem',
             'click .addLOVValue': 'addValueInList',
             'click .expandIcon': 'showEditMode',
-            'click .deleteLovItemPossibleValue': 'deletePossibleValue'
+            'blur .lovItemNameInput': 'onItemNameChanged'
         },
 
         className: 'lovItem ui-sortable well',
@@ -61,19 +61,21 @@ define([
             this.remove();
         },
 
-        deletePossibleValue:function(event){
-            var possibleValueView = event.currentTarget.parentElement;
-            var indexOfPossibleValue = $(possibleValueView).index();
-            possibleValueView.remove();
-            this.model.getLOVValues().splice(indexOfPossibleValue, 1);
-            debugger;
+        deletePossibleValue:function(possibleValueView){
+            var indexInModel = _.indexOf(this.model.getLOVValues(),possibleValueView.model);
+            this.model.getLOVValues().splice(indexInModel, 1);
+            this.onNumberOfPossibleValueChanged();
         },
 
         addPossibleValueView:function(possibleValue){
-            this.lovListDiv.append(Mustache.render(itemTemplate,{
-                i18n: App.config.i18n,
-                possibleValue:possibleValue
-            }));
+            var possibleValueView = new LOVPossibleValueView({
+                model:possibleValue
+            });
+
+            possibleValueView.on('remove', this.deletePossibleValue.bind(this, possibleValueView));
+            possibleValueView.render();
+            this.lovListDiv.append(possibleValueView.$el);
+            this.onNumberOfPossibleValueChanged();
         },
 
         addValueInList:function(){
@@ -85,6 +87,16 @@ define([
         showEditMode:function(){
             this.isExpand = !this.isExpand;
             this.$el.toggleClass('edition');
+        },
+
+        onNumberOfPossibleValueChanged:function(){
+            this.$('.lovNumberOfValue').html(this.model.getNumberOfValue());
+        },
+
+        onItemNameChanged: function(){
+            var newName = this.$('.lovItemNameInput').val();
+            this.$('.lovItemName').html(newName);
+            this.model.setLOVName(newName);
         }
 
     });
