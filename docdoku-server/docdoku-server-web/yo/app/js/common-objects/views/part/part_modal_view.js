@@ -27,6 +27,9 @@ define([
             this.events['click a#previous-iteration'] = 'onPreviousIteration';
             this.events['click a#next-iteration'] = 'onNextIteration';
             this.events['submit #form-part'] = 'onSubmitForm';
+            this.events['click .action-checkin'] = 'actionCheckin';
+            this.events['click .action-checkout'] = 'actionCheckout';
+            this.events['click .action-undocheckout'] = 'actionUndoCheckout';
             this.tagsToRemove = [];
         },
 
@@ -70,7 +73,7 @@ define([
             this.editMode = this.model.isCheckoutByConnectedUser() && this.iterations.isLast(this.iteration);
             data.editMode = this.editMode;
             data.isLockedMode = !this.iteration || (this.model.isCheckout() && this.model.isLastIteration(this.iteration.getIteration()) && !this.model.isCheckoutByConnectedUser());
-
+            data.isCheckout = this.model.isCheckout() ;
             if (this.model.hasIterations()) {
                 var hasNextIteration = this.iterations.hasNextIteration(this.iteration);
                 var hasPreviousIteration = this.iterations.hasPreviousIteration(this.iteration);
@@ -291,6 +294,63 @@ define([
                 });
             }
         },
+        actionCheckin: function () {
+            if (!this.model.getLastIteration().get('iterationNote')) {
+
+                var note = this.setRevisionNote();
+                this.iteration.save({
+                    iterationNote: note
+
+                }).success(function () {
+                    this.model.checkin().success(function () {
+                        this.onSuccess();
+                    }.bind(this));
+                }.bind(this));
+
+            } else {
+                this.model.checkin().success(function () {
+                    this.onSuccess();
+                }.bind(this));
+            }
+        }
+        ,
+
+        actionCheckout: function () {
+            var self = this;
+            self.model.checkout().success(function () {
+                self.onSuccess();
+            });
+
+        },
+        actionUndoCheckout: function () {
+            var self = this;
+            self.model.undocheckout().success(function () {
+                self.onSuccess();
+            });
+
+        },
+        setRevisionNote: function () {
+            var note;
+            if (_.isEqual(this.$('#inputRevisionNote').val(), '')) {
+                note = null;
+
+            } else {
+                note = this.$('#inputRevisionNote').val();
+            }
+            return note;
+        },
+
+        onSuccess: function () {
+            this.model.fetch().success(function () {
+                this.iteration = this.model.getLastIteration();
+                this.iterations = this.model.getIterations();
+                this.render();
+                this.activateTab(1);
+
+            }.bind(this));
+
+        },
+
         onError: function (model, error) {
             var errorMessage = error ? error.responseText : model;
 

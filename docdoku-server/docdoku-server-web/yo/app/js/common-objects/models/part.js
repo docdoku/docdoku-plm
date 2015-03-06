@@ -262,10 +262,10 @@ function (Backbone, Date, PartIterationList, ACLChecker,AlertView) {
                 context: this,
                 type: 'PUT',
                 url: this.url() + '/checkout',
-                success: function () {
-                    this.fetch();
+                error: function (xhr) {
+                    window.alert(xhr.responseText);
                 }
-            });
+            }).success(this.fetch.bind(this));
         },
 
         undocheckout: function () {
@@ -273,13 +273,10 @@ function (Backbone, Date, PartIterationList, ACLChecker,AlertView) {
                 context: this,
                 type: 'PUT',
                 url: this.url() + '/undocheckout',
-                success: function () {
-                    this.fetch();
-                },
                 error: function (xhr) {
                     window.alert(xhr.responseText);
                 }
-            });
+            }).success(this.fetch.bind(this));
         },
 
         checkin: function () {
@@ -287,10 +284,10 @@ function (Backbone, Date, PartIterationList, ACLChecker,AlertView) {
                 context: this,
                 type: 'PUT',
                 url: this.url() + '/checkin',
-                success: function () {
-                    this.fetch();
+                error: function (xhr) {
+                    window.alert(xhr.responseText);
                 }
-            });
+            }).success(this.fetch.bind(this));
         },
 
         isCheckout: function () {

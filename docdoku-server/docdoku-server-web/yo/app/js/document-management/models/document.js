@@ -101,6 +101,7 @@ define(['backbone', 'collections/document_iteration', 'common-objects/utils/acl-
 			}).success(this.fetch.bind(this));
 		},
 
+
 		undocheckout: function () {
 			return $.ajax({
 				context: this,

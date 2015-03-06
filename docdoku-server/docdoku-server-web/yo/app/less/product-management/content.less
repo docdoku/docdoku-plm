@@ -35,7 +35,24 @@
 
 }
 
-.modal-subtitle{
+.modal-subtitle {
   font-style: italic;
   line-height: 20px;
+}
+
+.action-checkin-checkout {
+  text-align: center;
+  margin-bottom: 15px;
+
+  .action-checkin, .action-checkout, .action-undocheckout {
+    opacity: 0.6;
+    cursor: pointer;
+    &:hover {
+      opacity: 1;
+    }
+
+  }
+  .fa {
+    padding-right: 10px;
+  }
 }
