@@ -90,45 +90,52 @@ define(['backbone', 'collections/document_iteration', 'common-objects/utils/acl-
 			return this.get('path');
 		},
 
-		checkout: function () {
-			$.ajax({
+		checkout: function (refresh) {
+			return $.ajax({
 				context: this,
 				type: 'PUT',
 				url: this.baseUrl() + '/checkout',
-				success: function () {
-					this.fetch();
-				},
 				error: function (xhr, status, errorThrown) {
                     window.alert(xhr.responseText);
-				}
+				},
+                success:function(){
+                    if(refresh){
+                        this.fetch()
+                    }
+                }
 			});
 		},
 
-		undocheckout: function () {
-			$.ajax({
+
+		undocheckout: function (refresh) {
+			return $.ajax({
 				context: this,
 				type: 'PUT',
 				url: this.baseUrl() + '/undocheckout',
-				success: function () {
-					this.fetch();
-				},
 				error: function (xhr, status, errorThrown) {
                     window.alert(xhr.responseText);
-				}
+				},
+                success:function(){
+                    if(refresh){
+                        this.fetch()
+                    }
+                }
 			});
 		},
 
-		checkin: function () {
-			$.ajax({
+		checkin: function (refresh) {
+			return $.ajax({
 				context: this,
 				type: 'PUT',
 				url: this.baseUrl() + '/checkin',
-				success: function () {
-					this.fetch();
-				},
 				error: function (xhr, status, errorThrown) {
                     window.alert(xhr.responseText);
-				}
+				},
+                success:function(){
+                    if(refresh){
+                        this.fetch()
+                    }
+                }
 			});
 		},
 

@@ -83,6 +83,13 @@ public class PartUsageLink implements Serializable, Cloneable {
     public PartUsageLink() {
     }
 
+    public PartUsageLink(PartMaster pComponent, double pAmount, String pUnit, boolean pOptional) {
+        component=pComponent;
+        amount=pAmount;
+        unit=pUnit;
+        optional=pOptional;
+    }
+
     public int getId() {
         return id;
     }

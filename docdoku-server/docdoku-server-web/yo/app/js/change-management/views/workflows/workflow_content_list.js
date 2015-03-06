@@ -82,12 +82,16 @@ define([
         },
         actionDelete: function () {
             var _this = this;
-            bootbox.confirm(App.config.i18n.CONFIRM_DELETE_WORKFLOW, function(result){
-                if(result){
+
+            bootbox.confirm(App.config.i18n.CONFIRM_DELETE_WORKFLOW, function(result) {
+                if (result) {
+
                     _this.listView.eachChecked(function (view) {
                         view.model.destroy({
                             dataType: 'text',
-                            success: _this.render.bind(_this)
+                            success: function () {
+                                _this.listView.redraw();
+                            }
                         });
                     });
                 }
@@ -184,7 +188,6 @@ define([
             }).render().$el);
             this.collection.fetch();
         }
-
 
     });
 

@@ -4,24 +4,25 @@ define([
     'mustache',
     'common-objects/collections/baselines',
     'collections/configuration_items',
-    'text!templates/baseline/baselines_content.html',
-    'views/baseline/baselines_list',
-    'views/baseline/baseline_duplicate_view',
+    'models/configuration_item',
+    'text!templates/baselines/baselines_content.html',
+    'views/baselines/baselines_list',
     'text!common-objects/templates/buttons/delete_button.html',
-    'text!common-objects/templates/buttons/duplicate_button.html',
-    'common-objects/views/alert'
-], function (Backbone, Mustache, BaselinesCollection, ConfigurationItemCollection, template, BaselinesListView, BaselineDuplicateView, deleteButton, duplicateButton, AlertView) {
+    'text!common-objects/templates/buttons/snap_button.html',
+    'common-objects/views/alert',
+    'views/baselines/baseline_creation_view'
+], function (Backbone, Mustache, BaselinesCollection, ConfigurationItemCollection,ConfigurationItem, template, BaselinesListView, deleteButton, snapButton, AlertView, BaselineCreationView) {
 	'use strict';
 
     var BaselinesContentView = Backbone.View.extend({
         partials: {
             deleteButton: deleteButton,
-            duplicateButton: duplicateButton
+            snapButton:snapButton
         },
 
         events: {
             'click button.delete': 'deleteBaseline',
-            'click button.duplicate': 'duplicateBaseline'
+            'click button.new-baseline': 'createBaseline'
         },
 
         initialize: function () {
@@ -34,6 +35,7 @@ define([
 
             this.$el.html(Mustache.render(template, {i18n: App.config.i18n}, this.partials));
             this.bindDomElements();
+            this.createBaselineButton.show();
 
             new ConfigurationItemCollection().fetch().success(function(collection){
                 if(!collection.length){
@@ -64,7 +66,7 @@ define([
         bindDomElements: function () {
             this.$notifications = this.$el.find('.notifications').first();
             this.deleteButton = this.$('.delete');
-            this.duplicateButton = this.$('.duplicate');
+            this.createBaselineButton = this.$('.new-baseline');
             this.$inputProductId = this.$('#inputProductId');
         },
 
@@ -76,11 +78,17 @@ define([
             this.delegateEvents();
         },
 
+        createBaseline: function () {
+            var baselineCreationView = new BaselineCreationView({collection:this.listView.collection,model:new ConfigurationItem()});
+            window.document.body.appendChild(baselineCreationView.render().el);
+            baselineCreationView.on('warning', this.onWarning);
+            baselineCreationView.openModal();
+        },
+
         createBaselineView: function () {
             if (this.listView) {
                 this.listView.remove();
                 this.changeDeleteButtonDisplay(false);
-                this.changeDuplicateButtonDisplay(false);
             }
             if (this.$inputProductId.val()) {
                 this.listView = new BaselinesListView({
@@ -95,17 +103,10 @@ define([
             this.listView.on('error', this.onError);
             this.listView.on('warning', this.onWarning);
             this.listView.on('delete-button:display', this.changeDeleteButtonDisplay);
-            this.listView.on('duplicate-button:display', this.changeDuplicateButtonDisplay);
         },
 
         deleteBaseline: function () {
             this.listView.deleteSelectedBaselines();
-        },
-
-        duplicateBaseline: function () {
-            var baselineDuplicateView = new BaselineDuplicateView({model: this.listView.getSelectedBaseline()});
-            window.document.body.appendChild(baselineDuplicateView.render().el);
-            baselineDuplicateView.openModal();
         },
 
         changeDeleteButtonDisplay: function (state) {
@@ -113,14 +114,6 @@ define([
                 this.deleteButton.show();
             } else {
                 this.deleteButton.hide();
-            }
-        },
-
-        changeDuplicateButtonDisplay: function (state) {
-            if (state) {
-                this.duplicateButton.show();
-            } else {
-                this.duplicateButton.hide();
             }
         },
 
@@ -139,6 +132,13 @@ define([
             this.$notifications.append(new AlertView({
                 type: 'warning',
                 message: errorMessage
+            }).render().$el);
+        },
+
+        onInfo:function(message){
+            this.$notifications.append(new AlertView({
+                type: 'info',
+                message: message
             }).render().$el);
         }
     });

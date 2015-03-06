@@ -213,8 +213,18 @@ public class DocumentResource {
 
         List<DocumentIterationDTO> linkedDocs = data.getLinkedDocuments();
         DocumentIterationKey[] links = null;
+        String[] documentLinkComments = null;
         if (linkedDocs != null) {
+            documentLinkComments = new String[linkedDocs.size()];
             links = createDocumentIterationKeys(linkedDocs);
+            int i = 0;
+            for (DocumentIterationDTO docItereationForLink : linkedDocs){
+                String comment = docItereationForLink.getCommentLink();
+                if (comment == null){
+                    comment = "";
+                }
+                documentLinkComments[i++] = comment;
+            }
         }
 
         List<InstanceAttributeDTO> instanceAttributes = data.getInstanceAttributes();
@@ -223,7 +233,7 @@ public class DocumentResource {
             attributes = createInstanceAttributes(instanceAttributes);
         }
 
-        DocumentRevision docR = documentService.updateDocument(new DocumentIterationKey(workspaceId, documentId, documentVersion, pIteration), pRevisionNote, attributes, links);
+        DocumentRevision docR = documentService.updateDocument(new DocumentIterationKey(workspaceId, documentId, documentVersion, pIteration), pRevisionNote, attributes, links, documentLinkComments);
         return mapper.map(docR.getLastIteration(), DocumentIterationDTO.class);
     }
 

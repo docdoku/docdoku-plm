@@ -2,7 +2,7 @@
 define([
     'backbone',
     'common-objects/collections/baselines',
-    'views/baseline/baseline_list_item'
+    'views/baselines/baseline_list_item'
 ], function (Backbone, Baselines, BaselineListItemView) {
 	'use strict';
     var BaselineListView = Backbone.View.extend({
@@ -30,13 +30,8 @@ define([
 
             this.collection.each(function (baseline) {
                 var view = new BaselineListItemView({model: baseline}).render();
-
                 that.subViews.push(view);
                 that.$el.append(view.$el);
-
-                that.listenToOnce(view, 'baseline:to-edit-modal', function (baseline) {
-                    that.trigger('baseline:to-edit-modal', baseline);
-                });
             });
         },
 

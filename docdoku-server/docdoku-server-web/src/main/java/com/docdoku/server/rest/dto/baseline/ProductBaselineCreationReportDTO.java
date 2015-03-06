@@ -20,32 +20,25 @@
 
 package com.docdoku.server.rest.dto.baseline;
 
-import com.docdoku.core.configuration.ProductBaseline;
 import com.docdoku.server.rest.dto.PartDTO;
 
 import java.io.Serializable;
-import java.util.Set;
+import java.util.List;
 
 public class ProductBaselineCreationReportDTO implements Serializable {
     
-    private ProductBaseline productBaseline;
+    private ProductBaselineDTO productBaseline;
     private String message;
-    private Set<PartDTO> conflits;
+    private List<PartDTO> conflits;
 
     public ProductBaselineCreationReportDTO() {
     }
 
-    public ProductBaselineCreationReportDTO(ProductBaseline productBaseline, String message, Set<PartDTO> conflits) {
-        this.productBaseline = productBaseline;
-        this.message = message;
-        this.conflits = conflits;
-    }
-
-    public ProductBaseline getProductBaseline() {
+    public ProductBaselineDTO getProductBaseline() {
         return productBaseline;
     }
 
-    public void setProductBaseline(ProductBaseline productBaseline) {
+    public void setProductBaseline(ProductBaselineDTO productBaseline) {
         this.productBaseline = productBaseline;
     }
 
@@ -57,11 +50,11 @@ public class ProductBaselineCreationReportDTO implements Serializable {
         this.message = message;
     }
 
-    public Set<PartDTO> getConflits() {
+    public List<PartDTO> getConflits() {
         return conflits;
     }
 
-    public void setConflits(Set<PartDTO> conflits) {
+    public void setConflits(List<PartDTO> conflits) {
         this.conflits = conflits;
     }
 }

@@ -70,6 +70,9 @@ public class DocumentLink implements Serializable, Cloneable{
 
     @Column(name="COMMENTDATA")
     private String comment;
+
+
+    @Transient private String documentTitle;
     
     
     public DocumentLink() {
@@ -186,4 +189,9 @@ public class DocumentLink implements Serializable, Cloneable{
         
         return clone;
     }
+
+    public String getDocumentTitle() {
+        return this.getTargetDocument().getDocumentRevision().getTitle();
+    }
+
 }

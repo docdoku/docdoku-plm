@@ -4,7 +4,7 @@
     <a title="{{model.path}}/{{model.id}}">{{#model.isCheckout}}{{#model.isCheckoutByConnectedUser}}<i
             class="fa fa-pencil"></i>{{/model.isCheckoutByConnectedUser}}{{^model.isCheckoutByConnectedUser}}<i
             class="fa fa-lock"></i>{{/model.isCheckoutByConnectedUser}}{{/model.isCheckout}}{{^model.isCheckout}}<i
-            class="fa fa-eye"></i>{{/model.isCheckout}}{{model.id}}</a>
+            class="fa fa-eye"></i>{{/model.isCheckout}} {{model.reference}}</a>
 </td>
 <td>{{model.version}}</td>
 <td>
@@ -32,4 +32,9 @@
 </td>
 <td class="document-master-share">
     <i class="fa fa-globe" title="{{i18n.PUBLISH}}"></i>
+</td>
+<td class="document-attached-files">
+    {{#model.hasAttachedFiles}}
+    <i class="fa fa-paperclip" title="{{i18n.ATTACHED_FILES_DOCUMENT}}"></i>
+    {{/model.hasAttachedFiles}}
 </td>

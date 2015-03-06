@@ -15,7 +15,7 @@
             {{#hasIterations}}
                 <a target="_blank" href="{{permalink}}">
             {{/hasIterations}}
-                    {{master.title}} ({{master.id}})
+                    {{docRevision.title}} ({{docRevision.id}})
             {{#hasIterations}}
                 </a>
             {{/hasIterations}}
@@ -44,56 +44,56 @@
 
                             <div class="controls">
                                 <span class="help-inline"><a class="document-path"><i class="fa fa-folder"></i>
-                                    {{master.path}}</a></span>
+                                    {{docRevision.path}}</a></span>
                             </div>
                         </div>
                         <div class="control-group">
                             <label class="control-label">{{i18n.REFERENCE}}</label>
 
                             <div class="controls">
-                                <span class="help-inline">{{master.id}}</span>
+                                <span class="help-inline">{{docRevision.reference}}</span>
                             </div>
                         </div>
                         <div class="control-group">
                             <label class="control-label">{{i18n.VERSION}}</label>
 
                             <div class="controls">
-                                <span class="help-inline">{{master.version}}</span>
+                                <span class="help-inline">{{docRevision.version}}</span>
                             </div>
                         </div>
                         <div class="control-group">
                             <label class="control-label">{{i18n.CREATION_DATE}}</label>
 
                             <div class="controls">
-                                <span class="help-inline"><a class="date-popover">{{master.creationDate}}</a></span>
+                                <span class="help-inline"><a class="date-popover">{{docRevision.creationDate}}</a></span>
                             </div>
                         </div>
                         <div class="control-group">
                             <label class="control-label">{{i18n.TYPE}}</label>
 
                             <div class="controls">
-                                <span class="help-inline">{{master.type}}</span>
+                                <span class="help-inline">{{docRevision.type}}</span>
                             </div>
                         </div>
                         <div class="control-group">
                             <label class="control-label">{{i18n.TITLE}}</label>
 
                             <div class="controls">
-                                <span class="help-inline">{{master.title}}</span>
+                                <span class="help-inline">{{docRevision.title}}</span>
                             </div>
                         </div>
                         <div class="control-group">
                             <label class="control-label">{{i18n.AUTHOR}}</label>
 
                             <div class="controls">
-                                <span class="help-inline"><a class="author-popover">{{master.author.name}}</a></span>
+                                <span class="help-inline"><a class="author-popover">{{docRevision.author.name}}</a></span>
                             </div>
                         </div>
                         <div class="control-group">
                             <label class="control-label">{{i18n.LIFECYCLE_STATE}}</label>
 
                             <div class="controls">
-                                <span class="help-inline">{{master.lifeCycleState}}</span>
+                                <span class="help-inline">{{docRevision.lifeCycleState}}</span>
                             </div>
                         </div>
                         <div class="control-group">
@@ -101,21 +101,21 @@
 
                             <div class="controls">
                                 <span class="help-inline"><a
-                                        class="checkout-user-popover">{{master.checkOutUser.name}}</a></span>
+                                        class="checkout-user-popover">{{docRevision.checkOutUser.name}}</a></span>
                             </div>
                         </div>
                         <div class="control-group">
                             <label class="control-label">{{i18n.CHECKOUT_DATE}}</label>
 
                             <div class="controls">
-                                <span class="help-inline"><a class="date-popover">{{master.checkOutDate}}</a></span>
+                                <span class="help-inline"><a class="date-popover">{{docRevision.checkOutDate}}</a></span>
                             </div>
                         </div>
                         <div class="control-group">
                             <label class="control-label">{{i18n.DESCRIPTION}}</label>
 
                             <div class="controls">
-                                <span class="help-inline">{{master.description}}</span>
+                                <span class="help-inline">{{docRevision.description}}</span>
                             </div>
                         </div>
                         {{^isForBaseline}}
@@ -139,10 +139,16 @@
                         </div>
                         <div class="control-group">
                             <label class="control-label" for="inputRevisionNote">{{i18n.REVISION_NOTE}}</label>
-
                             <div class="controls">
-                                <input type="text" id="inputRevisionNote" value="{{iteration.revisionNote}}"
+                                <input type="text" id="inputRevisionNote"  value="{{iteration.revisionNote}}"
                                 {{^editMode}}disabled="disabled"{{/editMode}} />
+
+                            </div>
+                            <div class="action-checkin-checkout" >
+                                {{^isCheckout}}<button type="button" class="btn btn-small btn-warning action-checkout"> <i class="fa fa-pencil"></i> {{i18n.CHECKOUT}}</button>{{/isCheckout}}
+                                {{#isCheckout}}<button type="button" class="btn btn-small btn-success action-checkin"> <i class="fa fa-eye"></i> {{i18n.CHECKIN}}</button>
+                                <button type="button" class="btn btn-small btn-info action-undocheckout"> <i class="fa fa-reply"></i>{{i18n.UNDO_CHECKOUT}}</button>{{/isCheckout}}
+
                             </div>
                         </div>
                         <div class="control-group">

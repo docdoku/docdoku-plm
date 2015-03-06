@@ -44,6 +44,7 @@ import java.util.Map;
 @Entity
 public abstract class ActivityModel implements Serializable, Cloneable {
 
+
     @ManyToOne(optional=false, fetch=FetchType.EAGER)
     @JoinColumns({
         @JoinColumn(name="WORKFLOWMODEL_ID", referencedColumnName="ID"),
@@ -101,7 +102,15 @@ public abstract class ActivityModel implements Serializable, Cloneable {
         workflowModelId=workflowModel.getId();
         workspaceId=workflowModel.getWorkspaceId();
     }
-    
+
+    public ActivityModelKey getKey(){
+        ActivityModelKey key = new ActivityModelKey();
+        key.setWorkspaceId(workspaceId);
+        key.setWorkflowModelId(workflowModelId);
+        key.setStep(step);
+        return key;
+
+    }
     public int getStep(){
         return step;
     }

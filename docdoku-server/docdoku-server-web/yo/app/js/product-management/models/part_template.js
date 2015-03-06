@@ -67,6 +67,9 @@ define([
             return this.get('creationDate');
         },
 
+        hasAttachedFiles: function(){
+            return this._attachedFile.length;
+        },
         getFormattedCreationDate: function () {
             return Date.formatTimestamp(
                 App.config.i18n._DATE_FORMAT,

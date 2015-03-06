@@ -179,7 +179,8 @@ define([
                 sDom: 'ft',
                 aoColumnDefs: [
                     { 'bSortable': false, 'aTargets': [ 0, 5 ] },
-                    { 'sType': App.config.i18n.DATE_SORT, 'aTargets': [6] }
+                    { 'sType': App.config.i18n.DATE_SORT, 'aTargets': [6] },
+                    { 'sType': 'strip_html', 'aTargets': [1] }
                 ]
             });
             this.$el.parent().find('.dataTables_filter input').attr('placeholder', App.config.i18n.FILTER);

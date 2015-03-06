@@ -207,6 +207,23 @@ define([
             return null;
         },
 
+        getSelectedParts: function () {
+            var checkedViews = [];
+            _(this.listItemViews).select(function (itemView) {
+                if (itemView.isChecked()){
+                    checkedViews.push( itemView.model);
+                }
+
+            });
+            return checkedViews;
+        },
+        eachChecked: function (callback) {
+            _(this.listItemViews).each(function (view) {
+                if (view.isChecked()) {
+                    callback(view);
+                }
+            });
+        },
         isSelectedPartsReleasable: function () {
             var isPartReleasable = true;
             _(this.listItemViews).each(function (view) {
@@ -242,8 +259,9 @@ define([
                 },
                 sDom: 'ft',
                 aoColumnDefs: [
-                    { 'bSortable': false, 'aTargets': [ 0, 10, 11 ] },
-                    { 'sType': App.config.i18n.DATE_SORT, 'aTargets': [7] }
+                    { 'bSortable': false, 'aTargets': [ 0, 10, 11, 12 ] },
+                    { 'sType': App.config.i18n.DATE_SORT, 'aTargets': [7] },
+                    { 'sType': 'strip_html', 'aTargets': [1] },
                 ]
             });
             this.$el.parent().find('.dataTables_filter input').attr('placeholder', App.config.i18n.FILTER);

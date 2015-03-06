@@ -21,6 +21,7 @@ package com.docdoku.core.product;
 
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Version;
+import com.docdoku.core.meta.Tag;
 import com.docdoku.core.security.ACL;
 import com.docdoku.core.workflow.Workflow;
 
@@ -126,6 +127,19 @@ public class PartRevision implements Serializable, Comparable<PartRevision>, Clo
 
     @OneToOne(orphanRemoval = true, cascade=CascadeType.ALL, fetch=FetchType.EAGER)
     private ACL acl;
+
+    @ManyToMany(fetch=FetchType.EAGER)
+    @JoinTable(name="PARTREVISION_TAG",
+            inverseJoinColumns={
+                    @JoinColumn(name="TAG_LABEL", referencedColumnName="LABEL"),
+                    @JoinColumn(name="TAG_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID")
+            },
+            joinColumns={
+                    @JoinColumn(name="PARTMASTER_PARTNUMBER", referencedColumnName="PARTMASTER_PARTNUMBER"),
+                    @JoinColumn(name="PARTREVISION_VERSION", referencedColumnName="VERSION"),
+                    @JoinColumn(name="PARTMASTER_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID")
+            })
+    private Set<Tag> tags=new HashSet<>();
 
     private boolean publicShared;
 
@@ -248,6 +262,22 @@ public class PartRevision implements Serializable, Comparable<PartRevision>, Clo
         this.acl = acl;
     }
 
+    public Set<Tag> getTags() {
+        return tags;
+    }
+
+    public void setTags(Set<Tag> pTags) {
+        tags.retainAll(pTags);
+        pTags.removeAll(tags);
+        tags.addAll(pTags);
+    }
+
+    public boolean addTag(Tag pTag) {
+        return tags.add(pTag);
+    }
+    public boolean removeTag(Tag pTag){
+        return tags.remove(pTag);
+    }
     public List<Workflow> getAbortedWorkflows() {
         return abortedWorkflows;
     }

@@ -38,6 +38,9 @@ define([
           return this.get('id');
         },
 
+        getAttachedFiles: function(){
+          return this.get('attachedFiles');
+        },
         getUploadBaseUrl: function () {
             return App.config.contextPath + '/api/files/' + this.get('workspaceId') + '/document-templates/' + this.get('id') + '/';
         },

@@ -19,8 +19,8 @@ define([
         },
 
         setActive: function () {
-            if (App.$searchMenu) {
-                App.$searchMenu.find('.active').removeClass('active');
+            if (App.$documentManagementMenu) {
+                App.$documentManagementMenu.find('.active').removeClass('active');
             }
             this.$el.find('.nav-list-entry').first().addClass('active');
         },

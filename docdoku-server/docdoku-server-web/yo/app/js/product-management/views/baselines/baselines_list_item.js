@@ -2,14 +2,14 @@
 define([
     'backbone',
     'mustache',
-    'text!templates/baseline/baselines_list_item.html',
-    'views/baseline/baseline_edit_view'
-], function (Backbone, Mustache, template, BaselineEditView) {
+    'text!templates/baselines/baselines_list_item.html',
+    'views/baselines/baseline_detail_view'
+], function (Backbone, Mustache, template, BaselineDetailView) {
     'use strict';
     var BaselineListItemView = Backbone.View.extend({
         events: {
             'click input[type=checkbox]': 'selectionChanged',
-            'click td.reference': 'openEditView'
+            'click td.reference': 'openDetailView'
         },
 
         tagName: 'tr',
@@ -44,8 +44,8 @@ define([
             this._isChecked = false;
         },
 
-        openEditView: function () {
-            new BaselineEditView({model: this.model, isForBaseline: true}).render();
+        openDetailView: function () {
+            new BaselineDetailView({model: this.model, isForBaseline: true}).render();
         }
     });
 

@@ -31,6 +31,7 @@ import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.rest.collections.InstanceCollection;
 import com.docdoku.server.rest.collections.PathFilteredListInstanceCollection;
 import com.docdoku.server.rest.dto.*;
+import com.docdoku.server.rest.dto.baseline.BaselinedPartDTO;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -65,7 +66,7 @@ public class ProductResource {
     @EJB
     private LayerResource layerResource;
     @EJB
-    private BaselinesResource baselinesResource;
+    private ProductBaselinesResource productBaselinesResource;
     @EJB
     private ProductInstancesResource productInstancesResource;
 
@@ -91,7 +92,8 @@ public class ProductResource {
         ConfigurationItemDTO[] dtos = new ConfigurationItemDTO[cis.size()];
 
         for (int i = 0; i < cis.size(); i++) {
-            dtos[i] = new ConfigurationItemDTO(cis.get(i).getId(), cis.get(i).getWorkspaceId(), cis.get(i).getDescription(), cis.get(i).getDesignItem().getNumber());
+            ConfigurationItem ci = cis.get(i);
+            dtos[i] = new ConfigurationItemDTO(ci.getId(), ci.getWorkspaceId(), ci.getDescription(), ci.getDesignItem().getNumber(), ci.getDesignItem().getLastRevision().getVersion());
         }
 
         return dtos;
@@ -105,6 +107,7 @@ public class ProductResource {
         ConfigurationItem configurationItem = productService.createConfigurationItem(configurationItemDTO.getWorkspaceId(), configurationItemDTO.getId(), configurationItemDTO.getDescription(), configurationItemDTO.getDesignItemNumber());
         ConfigurationItemDTO configurationItemDTOCreated = mapper.map(configurationItem, ConfigurationItemDTO.class);
         configurationItemDTOCreated.setDesignItemNumber(configurationItem.getDesignItem().getNumber());
+        configurationItemDTOCreated.setDesignItemLatestVersion(configurationItem.getDesignItem().getLastRevision().getVersion());
 
         try{
             return Response.created(URI.create(URLEncoder.encode(configurationItemDTOCreated.getId(),"UTF-8"))).entity(configurationItemDTOCreated).build();
@@ -197,6 +200,37 @@ public class ProductResource {
     @Path("{ciId}/layers")
     public LayerResource processLayers(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId) {
         return layerResource;
+    }
+
+    @GET
+    @Path("{ciId}/latest-released")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<BaselinedPartDTO> filterReleasedParts(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId) throws ConfigurationItemNotFoundException, WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException {
+
+        ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
+
+        List<PartIteration> parts = productConfigSpecService.findAllReleasedParts(ciKey);
+
+        HashMap<PartMaster,List<PartIteration>> map = new HashMap<>();
+
+        for(PartIteration partIteration : parts){
+            PartMaster partMaster = partIteration.getPartRevision().getPartMaster();
+            if(map.get(partMaster) == null){
+                map.put(partMaster,new ArrayList<>());
+            }
+            map.get(partMaster).add(partIteration);
+        }
+
+        List<BaselinedPartDTO> partsDTO = new ArrayList<>();
+
+        for(Map.Entry<PartMaster, List<PartIteration>> entry : map.entrySet()){
+            List<PartIteration> availableParts = entry.getValue();
+            if(availableParts.size() == 1 && !availableParts.get(0).getPartRevision().isReleased() || availableParts.size() > 1){
+                partsDTO.add(new BaselinedPartDTO(availableParts));
+            }
+        }
+
+        return partsDTO;
     }
 
     private ComponentDTO createDTO(PartUsageLink usageLink, int depth)
@@ -341,13 +375,13 @@ public class ProductResource {
     }
 
     @Path("baselines")
-    public BaselinesResource getAllBaselines(@PathParam("workspaceId") String workspaceId){
-        return baselinesResource;
+    public ProductBaselinesResource getAllBaselines(@PathParam("workspaceId") String workspaceId){
+        return productBaselinesResource;
     }
 
     @Path("{ciId}/baselines")
-    public BaselinesResource getBaselines(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId){
-        return baselinesResource;
+    public ProductBaselinesResource getBaselines(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId){
+        return productBaselinesResource;
     }
 
     @Path("product-instances")

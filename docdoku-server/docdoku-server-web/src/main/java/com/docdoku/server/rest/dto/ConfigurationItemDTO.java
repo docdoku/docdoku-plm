@@ -31,15 +31,17 @@ public class ConfigurationItemDTO implements Serializable {
     private String workspaceId;
     private String description;
     private String designItemNumber;
+    private String designItemLatestVersion;
 
     public ConfigurationItemDTO() {
     }
 
-    public ConfigurationItemDTO(String id, String workspaceId, String description, String designItemNumber) {
+    public ConfigurationItemDTO(String id, String workspaceId, String description, String designItemNumber, String designItemLatestVersion) {
         this.id = id;
         this.workspaceId = workspaceId;
         this.description = description;
         this.designItemNumber = designItemNumber;
+        this.designItemLatestVersion = designItemLatestVersion;
     }
  
     public String getId() {
@@ -74,4 +76,11 @@ public class ConfigurationItemDTO implements Serializable {
         this.designItemNumber = designItemNumber;
     }
 
+    public String getDesignItemLatestVersion() {
+        return designItemLatestVersion;
+    }
+
+    public void setDesignItemLatestVersion(String designItemLatestVersion) {
+        this.designItemLatestVersion = designItemLatestVersion;
+    }
 }

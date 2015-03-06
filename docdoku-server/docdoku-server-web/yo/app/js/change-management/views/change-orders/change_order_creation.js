@@ -80,6 +80,7 @@ define([
             that._affectedDocumentsCollection = new LinkedDocumentCollection();
             that._linkedDocumentsView = new LinkedDocumentsView({
                 editMode: true,
+                commentEditable:false,
                 collection: that._affectedDocumentsCollection
             }).render();
 

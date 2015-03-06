@@ -21,6 +21,9 @@ define([
         rendered: function () {
             this.once('_ready', this.dataTable);
         },
+        redraw: function () {
+            this.dataTable();
+        },
         dataTable: function () {
             var oldSort = [
                 [0, 'asc']
@@ -29,6 +32,7 @@ define([
                 oldSort = this.oTable.fnSettings().aaSorting;
                 this.oTable.fnDestroy();
             }
+
             this.oTable = this.$el.dataTable({
                 aaSorting: oldSort,
                 bDestroy: true,
@@ -44,11 +48,8 @@ define([
                     { 'sType': App.config.i18n.DATE_SORT, 'aTargets': [4] }
                 ]
             });
-            this.$el.parent().find('.dataTables_filter input').attr('placeholder', App.config.i18n.FILTER);
-        },
-        redraw: function () {
-            this.dataTable();
 
+            this.$el.parent().find('.dataTables_filter input').attr('placeholder', App.config.i18n.FILTER);
         }
 
     });

@@ -22,9 +22,11 @@ package com.docdoku.core.services;
 import com.docdoku.core.configuration.ConfigSpec;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.ConfigurationItemKey;
+import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartUsageLink;
 
 import javax.jws.WebService;
+import java.util.List;
 
 /**
  * The product confiSpec service which is the entry point for the API related to products configSpec
@@ -69,4 +71,7 @@ public interface IProductConfigSpecManagerWS {
      * @throws UserNotActiveException
      */
     PartUsageLink filterProductStructure(ConfigurationItemKey ciKey, ConfigSpec configSpec, Integer partUsageLink, Integer depth) throws ConfigurationItemNotFoundException, WorkspaceNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException, PartUsageLinkNotFoundException, AccessRightException;
+
+    List<PartIteration> findAllReleasedParts(ConfigurationItemKey ciKey) throws ConfigurationItemNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
+
 }

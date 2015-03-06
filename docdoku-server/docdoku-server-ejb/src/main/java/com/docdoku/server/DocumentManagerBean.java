@@ -28,6 +28,7 @@ import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.meta.InstanceAttributeTemplate;
 import com.docdoku.core.meta.Tag;
 import com.docdoku.core.meta.TagKey;
+import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.query.DocumentSearchQuery;
 import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.ACLUserEntry;
@@ -603,6 +604,11 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         List<ChangeItem> changeItems = new ChangeItemDAO(userLocale, em).findChangeItemByTag(pKey.getWorkspaceId(),tagToRemove);
         for (ChangeItem changeItem : changeItems) {
             changeItem.getTags().remove(tagToRemove);
+        }
+
+        List<PartRevision> partRevisions = new PartRevisionDAO(userLocale,em).findPartByTag(tagToRemove);
+        for (PartRevision partRevision : partRevisions) {
+            partRevision.getTags().remove(tagToRemove);
         }
 
         new TagDAO(userLocale, em).removeTag(pKey);
@@ -1265,7 +1271,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public DocumentRevision updateDocument(DocumentIterationKey iKey, String pRevisionNote, List<InstanceAttribute> pAttributes, DocumentIterationKey[] pLinkKeys) throws WorkspaceNotFoundException, NotAllowedException, DocumentRevisionNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException {
+    public DocumentRevision updateDocument(DocumentIterationKey iKey, String pRevisionNote, List<InstanceAttribute> pAttributes, DocumentIterationKey[] pLinkKeys, String[] documentLinkComments) throws WorkspaceNotFoundException, NotAllowedException, DocumentRevisionNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException {
         DocumentRevisionKey rKey = new DocumentRevisionKey(iKey.getWorkspaceId(), iKey.getDocumentMasterId(), iKey.getDocumentRevisionVersion());
         User user = checkDocumentRevisionWriteAccess(rKey);
         Locale userLocale = new Locale(user.getLanguage());
@@ -1277,26 +1283,22 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         if (isCheckoutByUser(user,docR) && docR.getLastIteration().getKey().equals(iKey)) {
             DocumentIteration doc = docR.getLastIteration();
 
-            Set<DocumentIterationKey> linkKeys = new HashSet<>(Arrays.asList(pLinkKeys));
-            Set<DocumentIterationKey> currentLinkKeys = new HashSet<>();
+            ArrayList<DocumentIterationKey> linkKeys = new ArrayList<>(Arrays.asList(pLinkKeys));
+            ArrayList<DocumentIterationKey> currentLinkKeys = new ArrayList<>();
 
             Set<DocumentLink> currentLinks = new HashSet<>(doc.getLinkedDocuments());
 
             for(DocumentLink link:currentLinks){
-                DocumentIterationKey linkKey = link.getTargetDocumentKey();
-                if(!linkKeys.contains(linkKey)){
-                    doc.getLinkedDocuments().remove(link);
-                }else {
-                    currentLinkKeys.add(linkKey);
-                }
+                doc.getLinkedDocuments().remove(link);
             }
 
+            int counter = 0;
             for(DocumentIterationKey link:linkKeys){
-                if(!currentLinkKeys.contains(link)){
-                    DocumentLink newLink = new DocumentLink(em.getReference(DocumentIteration.class,link));
-                    linkDAO.createLink(newLink);
-                    doc.getLinkedDocuments().add(newLink);
-                }
+                DocumentLink newLink = new DocumentLink(em.getReference(DocumentIteration.class, link));
+                newLink.setComment(documentLinkComments[counter]);
+                linkDAO.createLink(newLink);
+                doc.getLinkedDocuments().add(newLink);
+                counter++;
             }
 
             if (pAttributes != null) {
@@ -1438,22 +1440,21 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         }
         docR.setTitle(pTitle);
         docR.setDescription(pDescription);
-        //TODO call ACLFactory
-        if ((pACLUserEntries != null && pACLUserEntries.length > 0) || (pACLUserGroupEntries != null && pACLUserGroupEntries.length > 0)) {
-            ACL acl = new ACL();
-            if (pACLUserEntries != null) {
-                for (ACLUserEntry entry : pACLUserEntries) {
-                    acl.addEntry(em.getReference(User.class, new UserKey(user.getWorkspaceId(), entry.getPrincipalLogin())), entry.getPermission());
-                }
-            }
+        Map<String, String> userEntries = new HashMap<>();
+        Map<String, String> groupEntries = new HashMap<>();
 
-            if (pACLUserGroupEntries != null) {
-                for (ACLUserGroupEntry entry : pACLUserGroupEntries) {
-                    acl.addEntry(em.getReference(UserGroup.class, new UserGroupKey(user.getWorkspaceId(), entry.getPrincipalId())), entry.getPermission());
-                }
-            }
-            docR.setACL(acl);
+        for (ACLUserEntry entry : pACLUserEntries) {
+            userEntries.put(entry.getPrincipalLogin(), entry.getPermission().name());
         }
+
+        for (ACLUserGroupEntry entry : pACLUserGroupEntries) {
+            groupEntries.put(entry.getPrincipal().getId(), entry.getPermission().name());
+        }
+
+        ACLFactory aclFactory = new ACLFactory(em);
+        ACL acl = aclFactory.createACL(docR.getWorkspaceId(), userEntries, groupEntries);
+        docR.setACL(acl);
+
         Date now = new Date();
         docR.setCreationDate(now);
         docR.setLocation(folder);

@@ -12,7 +12,8 @@ define({
         CREATE_PART_BEFORE_PRODUCT:"You must have created at least one part to create a product",
         CREATE_BASELINE_BEFORE_PRODUCT_INSTANCE:"You must have created at least one baseline to create a product instance",
         CREATE_PRODUCT_BEFORE_PRODUCT_INSTANCE:"You must have created at least one product to create a product instance",
-        PRODUCT_CREATED:'Product created'
+        PRODUCT_CREATED:'Product created',
+        BASELINE_CREATED:'Baseline created'
     },
     'fr': true,
     'es': true

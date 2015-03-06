@@ -88,6 +88,8 @@ public class PartsResource {
         return partDTOs;
     }
 
+
+
     @GET
     @Path("count")
     @Produces(MediaType.APPLICATION_JSON)
@@ -95,6 +97,22 @@ public class PartsResource {
             throws EntityNotFoundException, AccessRightException, UserNotActiveException {
 
         return new CountDTO(productService.getTotalNumberOfParts(Tools.stripTrailingSlash(workspaceId)));
+    }
+
+    @GET
+    @Path("tags/{tagId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<PartDTO> getPartRevisions(@PathParam("workspaceId") String workspaceId,@PathParam("tagId") String tagId)
+            throws EntityNotFoundException, AccessRightException, UserNotActiveException {
+
+        PartRevision[] partRevisions = productService.findPartRevisionsByTag(Tools.stripTrailingSlash(workspaceId), tagId);
+        List<PartDTO> partDTOs = new ArrayList<>();
+
+        for(PartRevision partRevision : partRevisions){
+            partDTOs.add(Tools.mapPartRevisionToPartDTO(partRevision));
+        }
+
+        return partDTOs;
     }
 
     @GET

@@ -40,7 +40,9 @@ import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.jws.WebService;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceUnit;
 import java.util.*;
 
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
@@ -51,6 +53,10 @@ public class WorkflowManagerBean implements IWorkflowManagerWS, IWorkflowManager
 
     @PersistenceContext
     private EntityManager em;
+
+    //@PersistenceUnit
+    //private EntityManagerFactory emf;
+
     @EJB
     private IUserManagerLocal userManager;
 
@@ -65,8 +71,6 @@ public class WorkflowManagerBean implements IWorkflowManagerWS, IWorkflowManager
         checkWorkflowWriteAccess(workflowModel,user);
 
         workflowModelDAO.removeWorkflowModel(pKey);
-        new WorkflowModelDAO(new Locale(user.getLanguage()), em);
-        em.flush();
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
@@ -75,7 +79,7 @@ public class WorkflowManagerBean implements IWorkflowManagerWS, IWorkflowManager
         User user = userManager.checkWorkspaceWriteAccess(pWorkspaceId);
         Locale userLocale = new Locale(user.getLanguage());
 
-        checkWorkflowValidity(pWorkspaceId, userLocale, pId, pActivityModels);
+        checkWorkflowValidity(pWorkspaceId, pId, userLocale, pActivityModels);
 
         WorkflowModelDAO modelDAO = new WorkflowModelDAO(userLocale, em);
         WorkflowModel model = new WorkflowModel(user.getWorkspace(), pId, user, pFinalLifeCycleState, pActivityModels);
@@ -88,9 +92,36 @@ public class WorkflowManagerBean implements IWorkflowManagerWS, IWorkflowManager
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public WorkflowModel updateWorkflowModel(WorkflowModelKey workflowModelKey, String pId, String pFinalLifeCycleState, ActivityModel[] pActivityModels) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, WorkflowModelNotFoundException, NotAllowedException, WorkflowModelAlreadyExistsException, CreationException {
-        deleteWorkflowModel(workflowModelKey);
-        return createWorkflowModel(workflowModelKey.getWorkspaceId(),pId,pFinalLifeCycleState,pActivityModels);
+    public WorkflowModel updateWorkflowModel(WorkflowModelKey workflowModelKey, String pFinalLifeCycleState, ActivityModel[] pActivityModels) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, WorkflowModelNotFoundException, NotAllowedException, WorkflowModelAlreadyExistsException, CreationException {
+        //remove all activities from workflow model
+        //but do not remove it to maintain associated links
+        //for instance document or part templates
+        //and also ACL, author, creation date...
+        User user = userManager.checkWorkspaceReadAccess(workflowModelKey.getWorkspaceId());
+        Locale userLocale = new Locale(user.getLanguage());
+        WorkflowModelDAO workflowModelDAO = new WorkflowModelDAO(userLocale, em);
+
+        workflowModelDAO.removeAllActivityModels(workflowModelKey);
+        //What's following is a little bit border
+        //as we remove and recreate entities with the same PK
+        //on the same transaction.
+        //JPA does not like very much that, hence we take precautions
+
+        WorkflowModel workflowModel = workflowModelDAO.loadWorkflowModel(workflowModelKey);
+        checkWorkflowWriteAccess(workflowModel,user);
+
+        checkWorkflowValidity(workflowModelKey.getWorkspaceId(), workflowModelKey.getId(), userLocale, pActivityModels);
+        workflowModel.setFinalLifeCycleState(pFinalLifeCycleState);
+        List<ActivityModel> activityModels = new ArrayList<>();
+        Collections.addAll(activityModels, pActivityModels);
+        workflowModel.setActivityModels(activityModels);
+        Tools.resetParentReferences(workflowModel);
+
+        for(ActivityModel activityModel:activityModels) {
+            em.persist(activityModel);
+        }
+
+        return workflowModel;
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
@@ -236,7 +267,7 @@ public class WorkflowManagerBean implements IWorkflowManagerWS, IWorkflowManager
     }
 
 
-    private void checkWorkflowValidity(String workspaceId, Locale userLocale, String pId, ActivityModel[] pActivityModels) throws NotAllowedException {
+    private void checkWorkflowValidity(String workspaceId, String pId, Locale userLocale, ActivityModel[] pActivityModels) throws NotAllowedException {
 
         List<Role> roles = new RoleDAO(userLocale, em).findRolesInWorkspace(workspaceId);
 

@@ -34,7 +34,7 @@
         <div class="nav-collapse collapse">
             <div class="container-fluid">
                 <h:graphicImage id="brand-logo" alt="docdoku_plm" library="default" name="images/plm_logo2.png" />
-                <a class="brand" href="#{request.contextPath}/">DocDoku<strong>PLM</strong></a>
+                <a class="brand" href="#{request.contextPath}/faces/admin/workspace/workspacesMenu.xhtml">DocDoku<strong>PLM</strong></a>
             </div>
         </div>
     </div>
@@ -215,7 +215,7 @@
 
     </div>
 
-    <a href="/document-management/##{documentRevision.documentMaster.workspace.id}/folders/#{documentRevision.location.getRoutePath()}">#{i18nDocument['toApplicationLink']}</a>
+    <a href="/document-management/##{documentRevision.documentMaster.workspace.id}/#{documentRevision.location.getFoldersPath()}">#{i18nDocument['toApplicationLink']}</a>
 
 </div>
 </body>
