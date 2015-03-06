@@ -166,17 +166,17 @@ define([
 			return false;
 		},
 
-		onBaselineCreated: function (e) {
+		onBaselineCreated: function (model) {
 
-            if (e.message) {
-                this.trigger('warning', e.message);
+            if (model.message) {
+                this.trigger('warning', model.message);
             }
 
             this.trigger('info',App.config.i18n.BASELINE_CREATED);
 
             if(this.collection){
-                e.productBaseline.configurationItemId = this.model.getId();
-                this.collection.add(e.productBaseline)
+                model.configurationItemId = this.model.getId();
+                this.collection.add(model)
             }
 			this.closeModal();
 		},

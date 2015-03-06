@@ -36,6 +36,8 @@ define([
         modelToJSON: function () {
 
             var data = this.model.toJSON();
+            data.reference = this.model.getReference();
+
             if (this.model.hasIterations()) {
                 data.lastIteration = this.model.getLastIteration().toJSON();
                 data.lastIteration.modificationDate = date.formatTimestamp(
@@ -54,7 +56,6 @@ define([
             if (this.model.getLastIteration()){
                 data.hasAttachedFiles = this.model.getLastIteration().getAttachedFiles().length;
             }
-
 
             return data;
         },
