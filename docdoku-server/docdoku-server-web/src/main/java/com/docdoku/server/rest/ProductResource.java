@@ -92,7 +92,8 @@ public class ProductResource {
         ConfigurationItemDTO[] dtos = new ConfigurationItemDTO[cis.size()];
 
         for (int i = 0; i < cis.size(); i++) {
-            dtos[i] = new ConfigurationItemDTO(cis.get(i).getId(), cis.get(i).getWorkspaceId(), cis.get(i).getDescription(), cis.get(i).getDesignItem().getNumber());
+            ConfigurationItem ci = cis.get(i);
+            dtos[i] = new ConfigurationItemDTO(ci.getId(), ci.getWorkspaceId(), ci.getDescription(), ci.getDesignItem().getNumber(), ci.getDesignItem().getLastRevision().getVersion());
         }
 
         return dtos;
@@ -106,6 +107,7 @@ public class ProductResource {
         ConfigurationItem configurationItem = productService.createConfigurationItem(configurationItemDTO.getWorkspaceId(), configurationItemDTO.getId(), configurationItemDTO.getDescription(), configurationItemDTO.getDesignItemNumber());
         ConfigurationItemDTO configurationItemDTOCreated = mapper.map(configurationItem, ConfigurationItemDTO.class);
         configurationItemDTOCreated.setDesignItemNumber(configurationItem.getDesignItem().getNumber());
+        configurationItemDTOCreated.setDesignItemLatestVersion(configurationItem.getDesignItem().getLastRevision().getVersion());
 
         try{
             return Response.created(URI.create(URLEncoder.encode(configurationItemDTOCreated.getId(),"UTF-8"))).entity(configurationItemDTOCreated).build();

@@ -3,14 +3,17 @@ define([
     'backbone',
     'mustache',
     'text!templates/product/product_list_item.html',
-    'views/product/product_details_view'
-], function (Backbone, Mustache, template, ProductDetailsView) {
+    'views/product/product_details_view',
+    'common-objects/views/part/part_modal_view',
+    'common-objects/models/part'
+], function (Backbone, Mustache, template, ProductDetailsView, PartModalView, Part) {
     'use strict';
     var ProductListItemView = Backbone.View.extend({
 
         events: {
             'click input[type=checkbox]': 'selectionChanged',
-            'click td.product_id': 'openDetailsView'
+            'click td.product_id': 'openDetailsView',
+            'click a.design_item': 'openPartView'
         },
 
         tagName: 'tr',
@@ -50,6 +53,17 @@ define([
             var pdv = new ProductDetailsView({model: that.model});
             window.document.body.appendChild(pdv.render().el);
             pdv.openModal();
+        },
+
+        openPartView:function(){
+            var part = new Part({partKey:this.model.getDesignItemNumber() + '-' +this.model.getDesignItemLatestVersion()});
+
+            part.fetch().success(function () {
+                var partModalView = new PartModalView({
+                    model: part
+                });
+                partModalView.show();
+            });
         }
 
     });

@@ -25,6 +25,10 @@ define(['backbone'], function (Backbone) {
             return this.get('designItemNumber');
         },
 
+        getDesignItemLatestVersion: function () {
+            return this.get('designItemLatestVersion');
+        },
+
         getDescription: function () {
             return this.get('description');
         },

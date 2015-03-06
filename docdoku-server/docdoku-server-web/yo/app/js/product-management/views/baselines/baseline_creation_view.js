@@ -19,7 +19,7 @@ define([
 			'submit #baseline_creation_form': 'onSubmitForm',
 			'hidden #baseline_creation_modal': 'onHidden',
             'change select#inputBaselineType':'changeBaselineType',
-            'close-request':'closeModal'
+            'close-modal-request':'closeModal'
         },
 
 		initialize: function () {
