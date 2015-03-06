@@ -24,8 +24,6 @@ define([
 
         lovListDiv: null,
 
-        workspaceID:App.config.workspaceId,
-
         initialize: function () {
             _.bindAll(this);
             this.listenTo(this.collection, 'reset', this.onCollectionReset);
@@ -72,7 +70,7 @@ define([
             var newModel = new LOVModel(
             {name:"",
                 values:[{name:"", value:""}],
-                workspaceId:this.workspaceId}
+                workspaceId:App.config.workspaceId}
             );
             newModel.setNew(true);
 
