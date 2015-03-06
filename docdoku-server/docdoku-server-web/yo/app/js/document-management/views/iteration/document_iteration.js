@@ -364,19 +364,16 @@ define([
             var note;
             if (_.isEqual(this.$('#inputRevisionNote').val(), '')) {
                 note = null;
-                this.revisionNote.addClass("highlight");
-                this.revisionNote.attr("placeHolder", App.config.i18n.REVISION_NOTE);
+
             } else {
-                this.revisionNote.removeClass("highlight");
                 note = this.$('#inputRevisionNote').val();
             }
             return note;
         },
         actionCheckin: function () {
-            var self = this;
-            var note= self.setRevisionNote();
-            if (note) {
-
+            if (!this.model.getLastIteration().get('revisionNote')) {
+                var self = this;
+                var note = self.setRevisionNote();
                 self.iteration.save({
                     revisionNote: note
 
@@ -384,15 +381,15 @@ define([
                     self.model.checkin().success(function () {
                         self.onSuccess();
                     });
-
                 });
 
+            } else {
+                this.model.checkin().success(function () {
+                    this.onSuccess();
+                });
             }
-
-         else {
-                this.$('#inputRevisionNote').addClass("highlight");
-            }
-        },
+        }
+        ,
 
         actionCheckout: function () {
             var self = this;
@@ -410,11 +407,14 @@ define([
         },
 
         onSuccess: function () {
-            var self = this;
-            self.model.fetch().success(function () {
-                self.render();
-                self.$("a[href*='#tab-iteration-iteration']").click();
-            });
+            this.model.fetch().success(function () {
+                this.iteration = this.model.getLastIteration();
+                this.iterations = this.model.getIterations();
+                this.render();
+                this.$("a[href*='#tab-iteration-iteration']").click();
+
+            }.bind(this));
+
         },
 
         onFolderPathClicked: function () {
