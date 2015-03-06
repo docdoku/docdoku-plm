@@ -113,13 +113,11 @@ define([
         },
 
         onError:function(model, error){
-            var errorMessage = error ? error.responseText : model;
-
-            this.$notifications.append(new AlertView({
+            var errorMessage = error ? model.responseText : error;
+            $("#acl_edit_modal").find('.notifications').first().append(new AlertView({
                 type: 'error',
                 message: errorMessage
             }).render().$el);
-            this.collection.fetch();
         }
 
     });

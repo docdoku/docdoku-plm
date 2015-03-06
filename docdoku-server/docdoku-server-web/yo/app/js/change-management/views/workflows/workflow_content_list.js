@@ -180,13 +180,12 @@ define([
             return false;
         },
         onError:function(model, error){
-            var errorMessage = model.responseText;
-
+            var errorMessage = error ? model.responseText : error;
             $("#acl_edit_modal").find('.notifications').first().append(new AlertView({
                 type: 'error',
                 message: errorMessage
             }).render().$el);
-            this.collection.fetch();
+
         }
 
     });
