@@ -100,8 +100,16 @@ define([
                 instanceAttributes: this.attributesView.collection.toJSON()
             }, {
                 success: function () {
-                    that.hide();
-                    model.fetch();
+                    debugger
+                    if(that.options.autoAddTag){
+                        model.addTags([that.options.autoAddTag]).success(function(){
+                            that.hide();
+                            model.fetch();
+                        })
+                    }else{
+                        that.hide();
+                        model.fetch();
+                    }
                 },
                 error: this.error
             });
