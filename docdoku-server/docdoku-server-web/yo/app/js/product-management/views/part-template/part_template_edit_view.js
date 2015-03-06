@@ -68,6 +68,7 @@ define([
             this.$partTemplateType = this.$('#part-template-type');
             this.$partTemplateMask = this.$('#part-template-mask');
             this.$partTemplateIdGenerated = this.$('#part-template-id-generated');
+            this.tabs =this.$('.nav-tabs li');
         },
 
         interceptSubmit:function(){
@@ -109,6 +110,13 @@ define([
             return false;
         },
 
+        activateTab: function (index) {
+
+            this.tabs.eq(index).children().tab('show');
+        },
+        activateFileTab: function(){
+            this.activateTab(3);
+        },
         cancelAction: function () {
             this.fileListView.deleteNewFiles();
         },

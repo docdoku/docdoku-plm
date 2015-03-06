@@ -62,6 +62,10 @@ define([
             this.$tabs.eq(index).children().tab('show');
         },
 
+        activateFileTab: function(){
+            this.activateTab(3);
+        },
+
         render: function () {
 
             var data = {

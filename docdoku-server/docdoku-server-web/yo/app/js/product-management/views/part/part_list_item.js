@@ -75,7 +75,8 @@ define([
                     model: self.model
                 });
                 partModalView.show();
-                $('a[href$="tab-part-files"]').click();
+                partModalView.activateFileTab();
+
             });
         },
 

@@ -48,6 +48,7 @@ define([
                 that.editView.redraw();
             });
         },
+
         openDocumentTemplateModal: function (evt) {
             var that = this;
             this.model.fetch().success(function () {
@@ -56,8 +57,11 @@ define([
                         model: that.model
                     })
                 );
+                that.editView.activateFileTab();
                 window.document.body.appendChild(that.editView.el);
-                $('a[href*="tab-files-"]').click();
+
+
+
             });
         }
     });

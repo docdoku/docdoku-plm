@@ -30,6 +30,7 @@ define([
             this.events['dragend a.dochandle'] = this.dragEnd;
             this.events['dragstart td.doc-ref'] = this.dragStart;
             this.events['dragend td.doc-ref'] = this.dragEnd;
+
         },
 
         modelToJSON: function () {
@@ -127,10 +128,12 @@ define([
         openDocumentModal: function(){
             var that = this;
             this.model.fetch().success(function () {
-                new IterationView({
+                var view = new IterationView({
                     model: that.model
-                }).show();
-                $('a[href$="tab-iteration-files"]').click();
+                });
+                view.show();
+                view.activateFileTab();
+
             });
 
         },

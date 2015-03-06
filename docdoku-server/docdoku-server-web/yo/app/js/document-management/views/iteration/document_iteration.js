@@ -69,9 +69,12 @@ define([
         },
 
         activateTab: function (index) {
-            this.tabs.eq(index).children().tab('show');
-        },
 
+           this.tabs.eq(index).children().tab('show');
+        },
+        activateFileTab: function(){
+            this.activateTab(3);
+        },
         validation: function () {
 
             /*checking attributes*/
@@ -411,11 +414,12 @@ define([
                 this.iteration = this.model.getLastIteration();
                 this.iterations = this.model.getIterations();
                 this.render();
-                this.$("a[href*='#tab-iteration-iteration']").click();
+                this.activateTab(1);
 
             }.bind(this));
 
         },
+
 
         onFolderPathClicked: function () {
             var redirectPath = this.folderPath ? 'folders/' + encodeURIComponent(this.folderPath) : 'folders';

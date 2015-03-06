@@ -68,7 +68,7 @@ define([
         openPartTemplateModal: function () {
             var that = this;
             var partTemplateEditView = new PartTemplateEditView({model: that.model});
-            $('a[href*="tab-files"]').click();
+            partTemplateEditView.activateFileTab();
         }
 
     });
