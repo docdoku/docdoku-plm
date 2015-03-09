@@ -110,6 +110,7 @@ public class PartTemplateBinaryResourceTest {
      * @throws Exception
      */
     @Test
+    @Ignore
     public void uploadPartTemplateFilesNameContainingSpecialCharacters() throws Exception {
         //Given
 
@@ -144,6 +145,7 @@ public class PartTemplateBinaryResourceTest {
      * @throws Exception
      */
     @Test
+    @Ignore
     public void uploadPartTemplateSeveralFiles() throws Exception {
         //Given
         final File fileToUpload1  = new File(getClass().getClassLoader().getResource(ResourceUtil.SOURCE_PART_STORAGE).getFile()+ResourceUtil.FILENAME_TO_UPLOAD_PART_SPECIAL_CHARACTER);
