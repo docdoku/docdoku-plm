@@ -27,7 +27,7 @@ module.exports = function (grunt) {
         watch: {
             dev: {
                 options: {
-                    nospawn: true,
+                    //nospawn: true,
                     livereload: grunt.option('livereloadport') || LIVERELOAD_PORT
                 },
                 files: [
