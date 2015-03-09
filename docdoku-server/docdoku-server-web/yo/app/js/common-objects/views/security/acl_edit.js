@@ -16,7 +16,7 @@ define([
 	var ACLEditView = Backbone.View.extend({
 
         events: {
-            'destroy #acl_edit_modal': 'destroy',
+            'hidden #acl_edit_modal': 'onRemove',
             'submit form': 'onSubmit'
         },
 
@@ -175,7 +175,10 @@ define([
             var errorMessage = error ? model.responseText : error;
             var alertView =new AlertView({type: 'error',message: errorMessage}).render();
             this.$notifications.append(alertView.$el);
-            }
+            },
+        onRemove: function () {
+            this.remove();
+        }
 
 
     });
