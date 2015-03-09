@@ -18,18 +18,18 @@
             <div class="well" id="general_presentation">
                 <div id="login_form_container">
                     <h3><i class="fa fa-lock"></i>#{i18nLogin['login.title']}</h3>
-                    <c:if test="${sessionScope['hasLogout']}">
-                        <div class="alert alert-info alert-dismissible" role="alert">
-                            <button type="button" class="close" data-dismiss="alert">&times;</button>
-                            <span class='error'>#{i18nLogin['login.logouted']}</span>
-                        </div>
-                    </c:if>
-                    <c:if test="${sessionScope['hasFail']}">
-                        <div class="alert alert-error alert-dismissible" role="alert">
-                            <button type="button" class="close" data-dismiss="alert">&times;</button>
-                            <span class='error'>#{i18nLogin['login.fail']}</span>
-                        </div>
-                    </c:if>
+                        <c:if test="${sessionScope['hasLogout']}">
+                            <div class="alert alert-info alert-dismissible" role="alert">
+                                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                                <span class='error'>#{i18nLogin['login.logouted']}</span>
+                            </div>
+                        </c:if>
+                        <c:if test="${sessionScope['hasFail']}">
+                            <div class="alert alert-error alert-dismissible" role="alert">
+                                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                                <span class='error'>#{i18nLogin['login.fail']}</span>
+                            </div>
+                        </c:if>
                     <h:form id="login_form">
                         <h:inputHidden value="#{connectionBean.originURL}" id="originURL"/>
                         <p>

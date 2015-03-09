@@ -65,7 +65,9 @@ define([
 
         onShown: function () {
             this.$promptInput.focus();
+            this.$promptInput.addClass('ready');
         },
+
         onHidden: function () {
             this.remove();
         }

@@ -27,7 +27,7 @@ var documents = {
 	folder1: 'CasperJsTestFolder',
 	document1 : {
 		number : '000-AAA-CasperJsTestDocument',
-        iterationNote:'This is the first iteration',
+        iterationNote:'This is the first iteration of this document',
         sharedPassword:'azertyuiop',
         expireDate:tomorrowValue,
         expireDate2:yesterdayValue
@@ -47,7 +47,7 @@ var products = {
 	part1 : {
 		number : '000-AAA-CasperJsTestPart',
 		name : 'CasperJsTestPart',
-        iterationNote:'This is the first iteration',
+        iterationNote:'This is the first iteration of this part',
         sharedPassword:'azertyuiop',
         expireDate:tomorrowValue,
         expireDate2:yesterdayValue

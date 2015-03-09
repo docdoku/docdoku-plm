@@ -2,8 +2,8 @@
 define([
     'backbone',
     'common-objects/common/singleton_decorator'
-],function (Backbone, singletonDecorator) {
-	 'use strict';
+], function (Backbone, singletonDecorator) {
+    'use strict';
     var Router = Backbone.Router.extend({
         routes: {
             ':workspaceId/:productId/:cameraX/:cameraY/:cameraZ/:pathToLoad(/:configSpec)': 'load'
@@ -35,7 +35,7 @@ define([
 
             }
         },
-        updateRoute:function(){
+        updateRoute: function () {
             /* nothing to do, but needs to be present*/
         }
     });

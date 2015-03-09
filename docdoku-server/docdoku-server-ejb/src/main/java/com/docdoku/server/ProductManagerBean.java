@@ -22,6 +22,7 @@ package com.docdoku.server;
 import com.docdoku.core.common.*;
 import com.docdoku.core.configuration.LatestConfigSpec;
 import com.docdoku.core.configuration.ProductBaseline;
+import com.docdoku.core.configuration.ProductInstanceMaster;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.document.DocumentLink;
@@ -1145,11 +1146,21 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     public void deleteConfigurationItem(ConfigurationItemKey configurationItemKey) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, UserNotActiveException, ConfigurationItemNotFoundException, LayerNotFoundException, EntityConstraintException {
         User user = userManager.checkWorkspaceReadAccess(configurationItemKey.getWorkspace());
         Locale locale = new Locale(user.getLanguage());
+
         ProductBaselineDAO productBaselineDAO = new ProductBaselineDAO(locale,em);
         List<ProductBaseline> productBaselines = productBaselineDAO.findBaselines(configurationItemKey.getId(), configurationItemKey.getWorkspace());
+
         if(!productBaselines.isEmpty() ){
             throw new EntityConstraintException(locale,"EntityConstraintException4");
         }
+
+        ProductInstanceMasterDAO productInstanceMasterDAO = new ProductInstanceMasterDAO(locale,em);
+        List<ProductInstanceMaster> productInstanceMasters = productInstanceMasterDAO.findProductInstanceMasters(configurationItemKey.getId(),configurationItemKey.getWorkspace());
+
+        if(!productInstanceMasters.isEmpty()){
+            throw new EntityConstraintException(locale,"EntityConstraintException13");
+        }
+
         new ConfigurationItemDAO(locale,em).removeConfigurationItem(configurationItemKey);
     }
 

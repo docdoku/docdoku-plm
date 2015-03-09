@@ -54,18 +54,18 @@ function (Backbone, singletonDecorator) {
 
                 this.navigate(
                     App.config.workspaceId+'/'+App.config.productId+'/scene' +
-                    '/camera/'
-                    + c[0].toFixed(positionPrecision) + ';'
-                    + c[1].toFixed(positionPrecision) + ';'
-                    + c[2].toFixed(positionPrecision) +
-                    '/target/'
-                    + t[0].toFixed(positionPrecision) + ';'
-                    + t[1].toFixed(positionPrecision) + ';'
-                    + t[2].toFixed(positionPrecision) +
-                    '/up/'
-                    + u[0].toFixed(positionPrecision) + ';'
-                    + u[1].toFixed(positionPrecision) + ';'
-                    + u[2].toFixed(positionPrecision),{
+                    '/camera/' +
+                    c[0].toFixed(positionPrecision) + ';' +
+                    c[1].toFixed(positionPrecision) + ';' +
+                    c[2].toFixed(positionPrecision) +
+                    '/target/' +
+                    t[0].toFixed(positionPrecision) + ';' +
+                    t[1].toFixed(positionPrecision) + ';' +
+                    t[2].toFixed(positionPrecision) +
+                    '/up/' +
+                    u[0].toFixed(positionPrecision) + ';' +
+                    u[1].toFixed(positionPrecision) + ';' +
+                    u[2].toFixed(positionPrecision),{
                     trigger: false
                 });
 

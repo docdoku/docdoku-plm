@@ -38,7 +38,6 @@ define([
 
         closeModal: function () {
             this.$modal.modal('hide');
-            this.remove();
         },
 
         bindDomElements: function () {
@@ -175,7 +174,7 @@ define([
             var errorMessage = error ? model.responseText : error;
             var alertView =new AlertView({type: 'error',message: errorMessage}).render();
             this.$notifications.append(alertView.$el);
-            },
+        },
         onRemove: function () {
             this.remove();
         }

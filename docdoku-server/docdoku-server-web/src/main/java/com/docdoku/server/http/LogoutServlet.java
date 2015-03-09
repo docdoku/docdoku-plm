@@ -35,6 +35,6 @@ public class LogoutServlet extends HttpServlet {
         HttpSession newSession = pRequest.getSession(true);
         newSession.setAttribute("hasFail", false);
         newSession.setAttribute("hasLogout", true);
-        pResponse.sendRedirect(pRequest.getContextPath()+"/");
+        pResponse.sendRedirect(pRequest.getContextPath()+"/faces/login.xhtml");
     }
 }
