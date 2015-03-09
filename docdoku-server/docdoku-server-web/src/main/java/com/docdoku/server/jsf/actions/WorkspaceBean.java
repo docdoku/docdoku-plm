@@ -143,6 +143,27 @@ public class WorkspaceBean {
         return "";
     }
 
+    public void goToDocuments() throws AccountNotFoundException, IOException, WorkspaceNotFoundException {
+        Workspace workspace = adminState.getCurrentWorkspace();
+        ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+        HttpServletRequest request = (HttpServletRequest) ec.getRequest();
+        ec.redirect(request.getContextPath() + "/document-management/#" + workspace.getId() + "/folders");
+    }
+
+    public void goToProducts() throws AccountNotFoundException, IOException, WorkspaceNotFoundException {
+        Workspace workspace = adminState.getCurrentWorkspace();
+        ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+        HttpServletRequest request = (HttpServletRequest) ec.getRequest();
+        ec.redirect(request.getContextPath() + "/product-management/#" + workspace.getId() + "/products");
+    }
+
+    public void goToChangeManagement() throws AccountNotFoundException, IOException, WorkspaceNotFoundException {
+        Workspace workspace = adminState.getCurrentWorkspace();
+        ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+        HttpServletRequest request = (HttpServletRequest) ec.getRequest();
+        ec.redirect(request.getContextPath() + "/change-management/#" + workspace.getId() + "/workflows");
+    }
+
     public void read() throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException {
         if (!selectedLogins.isEmpty()) {
             userManager.grantUserAccess(adminState.getSelectedWorkspace(), getLogins(), true);
