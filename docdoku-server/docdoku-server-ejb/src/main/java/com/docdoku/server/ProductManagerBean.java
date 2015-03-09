@@ -30,6 +30,7 @@ import com.docdoku.core.exceptions.*;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.meta.InstanceAttributeTemplate;
 import com.docdoku.core.meta.ListOfValuesAttributeTemplate;
+import com.docdoku.core.meta.ListOfValuesKey;
 import com.docdoku.core.product.*;
 import com.docdoku.core.product.PartIteration.Source;
 import com.docdoku.core.query.PartSearchQuery;
@@ -1291,7 +1292,8 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             attrs.add(pAttributeTemplates[i]);
             if(pAttributeTemplates[i] instanceof ListOfValuesAttributeTemplate){
                 ListOfValuesAttributeTemplate lovAttr=(ListOfValuesAttributeTemplate)pAttributeTemplates[i];
-                lovAttr.setLov(lovDAO.loadLOV(lovNames[i]));
+                ListOfValuesKey lovKey = new ListOfValuesKey(user.getWorkspaceId(), lovNames[i]);
+                lovAttr.setLov(lovDAO.loadLOV(lovKey));
             }
         }
         template.setAttributeTemplates(attrs);
@@ -1330,7 +1332,8 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             attrs.add(pAttributeTemplates[i]);
             if(pAttributeTemplates[i] instanceof ListOfValuesAttributeTemplate){
                 ListOfValuesAttributeTemplate lovAttr=(ListOfValuesAttributeTemplate)pAttributeTemplates[i];
-                lovAttr.setLov(lovDAO.loadLOV(lovNames[i]));
+                ListOfValuesKey lovKey = new ListOfValuesKey(user.getWorkspaceId(), lovNames[i]);
+                lovAttr.setLov(lovDAO.loadLOV(lovKey));
             }
         }
 
