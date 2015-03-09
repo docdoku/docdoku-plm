@@ -1455,9 +1455,11 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             }
         }
 
-        ACLFactory aclFactory = new ACLFactory(em);
-        ACL acl = aclFactory.createACL(docR.getWorkspaceId(), userEntries, groupEntries);
-        docR.setACL(acl);
+        if(!userEntries.isEmpty() || !groupEntries.isEmpty()){
+            ACLFactory aclFactory = new ACLFactory(em);
+            ACL acl = aclFactory.createACL(docR.getWorkspaceId(), userEntries, groupEntries);
+            docR.setACL(acl);
+        }
 
         Date now = new Date();
         docR.setCreationDate(now);
