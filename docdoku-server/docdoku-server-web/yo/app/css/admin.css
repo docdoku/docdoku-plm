@@ -7822,6 +7822,11 @@ fieldset#admin .actions-btn {
 fieldset#admin .actions-btn .btn {
   margin: 5px;
 }
+fieldset#admin .actions-btn p {
+    display: inline;
+    margin-left: 5px;
+    vertical-align: text-bottom;
+}
 #general_presentation {
   display: inline-block;
   width: 100%;
