@@ -36,22 +36,23 @@ import java.util.Date;
 
 public class DataManagerBeanTest {
 
-    public static final String TARGET_FILE_STORAGE="docdoku-server/docdoku-server-ejb/src/test/resources/com/docdoku/server/file/uploaded";
+    public static final String TARGET_FILE_STORAGE="";
 
-    public static final String FULLNAME= "TestFile.txt";
+    public static final String FULLNAME= "/home/asmae/projects/plm/docdoku-plm/docdoku-server/docdoku-server-web/src/test/resources/com/docdoku/server/rest/file/toUpload/TestFile.txt";
     private StorageProvider defaultStorageProvider;
     private FileStorageProvider fileStorageProvider;
 
     @Before
     public void setUp() throws Exception {
 
-        defaultStorageProvider = new FileStorageProvider(TARGET_FILE_STORAGE);
+        defaultStorageProvider = new FileStorageProvider(System.getProperty("java.io.tmpdir")+TARGET_FILE_STORAGE);
     }
 
     @Test
     public void testGetBinaryResourceOutputStream() throws Exception {
+
         //Given
-        BinaryResource binaryResource = Mockito.spy(new BinaryResource( FULLNAME, 22,new Date()));
+        BinaryResource binaryResource = new BinaryResource( FULLNAME, 22,new Date());
         //When
         BufferedOutputStream outputStream = (BufferedOutputStream)defaultStorageProvider.getBinaryResourceOutputStream(binaryResource);
         //Then

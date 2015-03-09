@@ -63,36 +63,29 @@ public class ProductManagerBeanTest {
     SessionContext ctx;
     @Spy
     private ESIndexer esIndexer = new ESIndexer();
+    @Mock
+    TypedQuery<Tag> tagsQuery;
+    @Mock
+    ProductBaselineManagerBean productBaselineManager;
 
 
     private Account account;
-
     private Workspace workspace ;
-
     private User user;
-
     private PartMaster partMaster;
-
     private PartMasterTemplate partMasterTemplate;
-
     private PartIteration partIteration;
-
     private PartRevision partRevision;
 
-    @Mock
-    TypedQuery<Tag> tagsQuery;
 
-    @Mock
-    ProductBaselineManagerBean productBaselineManager;
 
 
     @Before
     public void setup() throws Exception {
         initMocks(this);
-        account = new Account(ProductUtil.USER_2_LOGIN, ProductUtil.USER_2_NAME, "user2@docdoku.com", "en", new Date(), null);
+        account = new Account(ProductUtil.USER_2_LOGIN, ProductUtil.USER_2_NAME, ProductUtil.USER_1_MAIL, ProductUtil.USER_1_LANGUAGE, new Date(), null);
         workspace = new Workspace(ProductUtil.WORKSPACE_ID,account, "pDescription", false);
-        user = new User(workspace, "user1" , "user1", "user1@docdoku.com", "en");
-
+        user = new User(workspace, ProductUtil.USER_1_LOGIN , ProductUtil.USER_1_LOGIN, ProductUtil.USER_2_MAIL,ProductUtil.USER_2_LANGUAGE);
         partMaster = new PartMaster(workspace, ProductUtil.PART_ID, user);
         partMasterTemplate = new PartMasterTemplate(workspace, ProductUtil.PART_MASTER_TEMPLATE_ID, user, ProductUtil.PART_TYPE, "", true);
         partRevision = new PartRevision(partMaster,ProductUtil.VERSION,user);
@@ -103,7 +96,6 @@ public class ProductManagerBeanTest {
         partRevision.setPartIterations(iterations);
         partRevision.setCheckOutUser(user);
         partRevision.setCheckOutDate(new Date());
-
         partIteration.setPartRevision(partRevision);
 
     }

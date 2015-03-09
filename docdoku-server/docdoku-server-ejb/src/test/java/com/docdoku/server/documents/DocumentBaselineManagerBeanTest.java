@@ -34,6 +34,8 @@ import com.docdoku.server.UserManagerBean;
 import com.docdoku.server.dao.ConfigurationItemDAO;
 import com.docdoku.server.dao.FolderDAO;
 import com.docdoku.server.dao.WorkspaceDAO;
+import com.docdoku.server.util.DocumentUtil;
+import com.docdoku.server.util.ProductUtil;
 import org.apache.poi.ss.formula.functions.Match;
 import org.junit.Assert;
 import org.junit.Test;
@@ -63,18 +65,18 @@ public class DocumentBaselineManagerBeanTest {
     EntityManager em;
     @Mock
     DataManagerBean dataManager;
-    Account account = Mockito.spy(new Account("user2" , "user2", "user2@docdoku.com", "en",new Date(),null));
-    @Spy
-    Workspace workspace = new Workspace("workspace01",account, "pDescription", false);
-    @Spy
-    User user = new User(workspace, "user1" , "user1", "user1@docdoku.com", "en");
-
-    Folder folder = Mockito.mock(Folder.class);
-
     @Mock
     TypedQuery<Folder> folderTypedQuery;
     @Mock
-    private IDocumentManagerLocal documentService;
+     IDocumentManagerLocal documentService;
+
+
+    private Account account = new Account(DocumentUtil.USER_2_LOGIN, DocumentUtil.USER_2_NAME, DocumentUtil.USER2_MAIL, DocumentUtil.LANGUAGE,new Date(),null);
+    private Workspace workspace = new Workspace("workspace01",account, DocumentUtil.WORKSPACE_DESCRIPTION, false);
+    private User user = new User(workspace, DocumentUtil.USER_1_LOGIN , DocumentUtil.USER_1_NAME, DocumentUtil.USER1_MAIL, DocumentUtil.LANGUAGE);
+    private Folder folder = new Folder("workspace01");
+
+
 
     /**
      * test that we cannot baseline an empty workspace
@@ -84,7 +86,6 @@ public class DocumentBaselineManagerBeanTest {
     public void shouldNotBaselineEmptyWorkspace() throws Exception {
         //Given
         Mockito.when(userManager.checkWorkspaceWriteAccess(workspace.getId())).thenReturn(user);
-        Mockito.when(folder.getCompletePath()).thenReturn("workspace01");
         Mockito.when(em.find(Workspace.class, workspace.getId())).thenReturn(workspace);
         Mockito.when(em.createQuery("SELECT DISTINCT f FROM Folder f WHERE f.parentFolder.completePath = :completePath", Folder.class)).thenReturn(folderTypedQuery);
         Mockito.when(folderTypedQuery.getResultList()).thenReturn(new ArrayList<Folder>(0));
@@ -113,8 +114,6 @@ public class DocumentBaselineManagerBeanTest {
 
         //Given
         Mockito.when(userManager.checkWorkspaceWriteAccess(workspace.getId())).thenReturn(user);
-        Mockito.when(workspace.getAdmin()).thenReturn(account);
-        Mockito.when(folder.getCompletePath()).thenReturn("workspace01");
         Mockito.when(em.find(Workspace.class, workspace.getId())).thenReturn(workspace);
         Mockito.when(em.createQuery("SELECT DISTINCT f FROM Folder f WHERE f.parentFolder.completePath = :completePath", Folder.class)).thenReturn(folderTypedQuery);
         Mockito.when(folderTypedQuery.getResultList()).thenReturn(new ArrayList<Folder>(0));
