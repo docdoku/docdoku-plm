@@ -19,17 +19,26 @@
  */
 package com.docdoku.server;
 
+import com.docdoku.core.common.User;
+import com.docdoku.core.common.Workspace;
+import com.docdoku.core.exceptions.*;
 import com.docdoku.core.meta.ListOfValues;
+import com.docdoku.core.meta.ListOfValuesKey;
+import com.docdoku.core.meta.NameValuePair;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.ILOVManagerLocal;
+import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.dao.LOVDAO;
+import com.docdoku.server.dao.WorkspaceDAO;
 
 import javax.annotation.security.RolesAllowed;
+import javax.ejb.EJB;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by lebeaujulien on 03/03/15.
@@ -41,11 +50,85 @@ public class LOVManagerBean implements ILOVManagerLocal {
     @PersistenceContext
     private EntityManager em;
 
+    @EJB
+    private IUserManagerLocal userManager;
+
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public List<ListOfValues> findLOVFromWorkspace(String workspaceId) {
+    public List<ListOfValues> findLOVFromWorkspace(String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
 
-        LOVDAO lovDAO = new LOVDAO(em);
+        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+        LOVDAO lovDAO = new LOVDAO(new Locale(user.getLanguage()),em);
         return lovDAO.loadLOVList(workspaceId);
     }
+
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
+    public ListOfValues findLov(ListOfValuesKey lovKey) throws ListOfValuesNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(lovKey.getWorkspaceId());
+        LOVDAO lovDAO = new LOVDAO(new Locale(user.getLanguage()),em);
+
+        return lovDAO.loadLOV(lovKey);
+    }
+
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
+    public void createLov(String workspaceId, String name, List<NameValuePair> nameValuePairList) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, ListOfValuesAlreadyExistsException, CreationException {
+        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+        userManager.checkWorkspaceWriteAccess(workspaceId);
+        Locale locale = new Locale(user.getLanguage());
+        LOVDAO lovDAO = new LOVDAO(locale, em);
+
+        WorkspaceDAO workspaceDAO = new WorkspaceDAO(locale, em);
+        Workspace workspace = workspaceDAO.loadWorkspace(workspaceId);
+
+        ListOfValues lov = new ListOfValues(workspace, name);
+        lov.setValues(nameValuePairList);
+        /*//Check if the lov as a name
+        if (lov == null || lov.getName() == null || lov.getName().trim().equals("")){
+            throw new CreationException(locale);
+        }
+        //Check if there is at least 1 name value and not empty
+        List<NameValuePair> values = lov.getValues();
+        boolean asEmptyField = false;
+        if (values != null){
+            for (NameValuePair valuePair:values){
+                String name = valuePair.getName();
+                String value = valuePair.getValue();
+
+                if (name == null || value == null || name.trim().equalsIgnoreCase("") || value.trim().equalsIgnoreCase("")){
+                    asEmptyField = true;
+                }
+            }
+        }
+
+        if (values == null || asEmptyField == true){
+            throw new CreationException(locale);
+        }*/
+
+        lovDAO.createLOV(lov);
+    }
+
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
+    public void deleteLov(ListOfValuesKey lovKey) throws ListOfValuesNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException {
+        User user = userManager.checkWorkspaceReadAccess(lovKey.getWorkspaceId());
+        userManager.checkWorkspaceWriteAccess(lovKey.getWorkspaceId());
+        LOVDAO lovDAO = new LOVDAO(new Locale(user.getLanguage()),em);
+        ListOfValues lov = lovDAO.loadLOV(lovKey);
+        lovDAO.deleteLOV(lov);
+    }
+
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
+    public ListOfValues updateLov(ListOfValuesKey lovKey, String name, String workspaceId, List<NameValuePair> nameValuePairList) throws ListOfValuesAlreadyExistsException, CreationException, ListOfValuesNotFoundException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException {
+        User user = userManager.checkWorkspaceReadAccess(lovKey.getWorkspaceId());
+        userManager.checkWorkspaceWriteAccess(lovKey.getWorkspaceId());
+        this.deleteLov(lovKey);
+        this.createLov(workspaceId, name, nameValuePairList);
+        ListOfValuesKey newLovKey = new ListOfValuesKey(workspaceId, name);
+        return this.findLov(newLovKey);
+    }
+
+
 }

@@ -572,7 +572,8 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             attrs.add(pAttributeTemplates[i]);
             if(pAttributeTemplates[i] instanceof ListOfValuesAttributeTemplate){
                 ListOfValuesAttributeTemplate lovAttr=(ListOfValuesAttributeTemplate)pAttributeTemplates[i];
-                lovAttr.setLov(lovDAO.loadLOV(lovNames[i]));
+                ListOfValuesKey lovKey = new ListOfValuesKey(user.getWorkspaceId(), lovNames[i]);
+                lovAttr.setLov(lovDAO.loadLOV(lovKey));
             }
         }
 
@@ -770,7 +771,8 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             attrs.add(pAttributeTemplates[i]);
             if(pAttributeTemplates[i] instanceof ListOfValuesAttributeTemplate){
                 ListOfValuesAttributeTemplate lovAttr=(ListOfValuesAttributeTemplate)pAttributeTemplates[i];
-                lovAttr.setLov(lovDAO.loadLOV(lovNames[i]));
+                ListOfValuesKey lovKey = new ListOfValuesKey(user.getWorkspaceId(), lovNames[i]);
+                lovAttr.setLov(lovDAO.loadLOV(lovKey));
             }
         }
         template.setAttributeTemplates(attrs);

@@ -23,6 +23,7 @@ import com.docdoku.core.exceptions.CreationException;
 import com.docdoku.core.exceptions.ListOfValuesAlreadyExistsException;
 import com.docdoku.core.exceptions.ListOfValuesNotFoundException;
 import com.docdoku.core.meta.ListOfValues;
+import com.docdoku.core.meta.ListOfValuesKey;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
@@ -46,10 +47,10 @@ public class LOVDAO {
         mLocale = Locale.getDefault();
     }
     
-    public ListOfValues loadLOV(String pName) throws ListOfValuesNotFoundException {
-        ListOfValues lov=em.find(ListOfValues.class,pName);
+    public ListOfValues loadLOV(ListOfValuesKey lovKey) throws ListOfValuesNotFoundException {
+        ListOfValues lov=em.find(ListOfValues.class,lovKey);
         if (lov == null) {
-            throw new ListOfValuesNotFoundException(mLocale, pName);
+            throw new ListOfValuesNotFoundException(mLocale, lovKey.getName());
         } else {
             return lov;
         }
