@@ -122,7 +122,7 @@ define([
 
 		actionCheckout: function () {
 			this.listView.eachChecked(function (view) {
-				view.model.checkout();
+				view.model.checkout(true);
 			});
 			return false;
 		},
@@ -132,7 +132,7 @@ define([
             bootbox.confirm(App.config.i18n.UNDO_CHECKOUT_QUESTION, function(result){
                 if(result){
                     that.listView.eachChecked(function (view) {
-                        view.model.undocheckout();
+                        view.model.undocheckout(true);
                     });
                 }
             });
@@ -156,17 +156,17 @@ define([
 						view.model.getLastIteration().save({
 							revisionNote: revisionNote
 						}).success(function () {
-							view.model.checkin();
+							view.model.checkin(true);
 						});
 
 					});
 
 					self.listenTo(promptView, 'prompt-cancel', function () {
-						view.model.checkin();
+						view.model.checkin(true);
 					});
 
 				} else {
-					view.model.checkin();
+					view.model.checkin(true);
 				}
 
 			});

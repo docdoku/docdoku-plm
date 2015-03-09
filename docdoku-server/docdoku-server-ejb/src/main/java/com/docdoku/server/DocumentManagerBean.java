@@ -1443,17 +1443,23 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         Map<String, String> userEntries = new HashMap<>();
         Map<String, String> groupEntries = new HashMap<>();
 
-        for (ACLUserEntry entry : pACLUserEntries) {
-            userEntries.put(entry.getPrincipalLogin(), entry.getPermission().name());
+        if(pACLUserEntries != null) {
+            for (ACLUserEntry entry : pACLUserEntries) {
+                userEntries.put(entry.getPrincipalLogin(), entry.getPermission().name());
+            }
         }
 
-        for (ACLUserGroupEntry entry : pACLUserGroupEntries) {
-            groupEntries.put(entry.getPrincipal().getId(), entry.getPermission().name());
+        if(pACLUserGroupEntries != null){
+            for (ACLUserGroupEntry entry : pACLUserGroupEntries) {
+                groupEntries.put(entry.getPrincipal().getId(), entry.getPermission().name());
+            }
         }
 
-        ACLFactory aclFactory = new ACLFactory(em);
-        ACL acl = aclFactory.createACL(docR.getWorkspaceId(), userEntries, groupEntries);
-        docR.setACL(acl);
+        if(!userEntries.isEmpty() || !groupEntries.isEmpty()){
+            ACLFactory aclFactory = new ACLFactory(em);
+            ACL acl = aclFactory.createACL(docR.getWorkspaceId(), userEntries, groupEntries);
+            docR.setACL(acl);
+        }
 
         Date now = new Date();
         docR.setCreationDate(now);
