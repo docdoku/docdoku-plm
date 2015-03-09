@@ -41,8 +41,8 @@ casper.test.begin('Baseline creation tests suite',2, function baselineCreationTe
      * Click on baseline creation button
      */
     casper.then(function waitForBaselineCreationButton(){
-        this.waitForSelector('.actions .new-latest-baseline',function openBaselineCreationModal() {
-            this.click('.actions .new-latest-baseline');
+        this.waitForSelector('.actions .new-baseline',function openBaselineCreationModal() {
+            this.click('.actions .new-baseline');
         },function fail() {
             this.capture('screenshot/baselineCreation/waitForBaselineCreationButton-error.png');
             this.test.assert(false,'New baseline button can not be found');

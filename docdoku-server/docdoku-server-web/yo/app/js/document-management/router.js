@@ -101,7 +101,7 @@ function (Backbone, singletonDecorator, FolderNavView, TagNavView, SearchNavView
         },
 
         home:function(workspaceId){
-          this.navigate(workspaceId+'/configspec/latest/folders',{trigger:true});
+            this.navigate(workspaceId+'/configspec/latest/folders',{trigger:true});
         },
 
 	    configSpecAdaptMenu:function(configSpec){

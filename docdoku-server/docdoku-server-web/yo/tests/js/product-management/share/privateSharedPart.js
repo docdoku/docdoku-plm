@@ -47,7 +47,7 @@ casper.test.begin('Private shared part tests suite',3, function privateSharedPar
     casper.then(function checkIterationNote(){
         this.click('.nav-tabs a[href="#tab-part-iteration"]');
         this.waitForSelector('#page > h3',function iterationNoteDisplayed(){
-            this.test.assertSelectorHasText('#tab-part-iteration > table > tbody > tr:nth-child(4) > td',products.part1.iterationNote);
+            this.test.assertSelectorHasText('#tab-part-iteration > table > tbody > tr:nth-child(2) > td',products.part1.iterationNote);
         },function fail() {
             this.capture('screenshot/privateSharedPart/checkIterationNote-error.png');
             this.test.assert(false,'Iteration note can not be found');

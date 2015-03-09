@@ -1,31 +1,31 @@
 /*global define,App,dat*/
 define([
-        'backbone',
-        'mustache',
-        'views/search_view',
-        'views/parts_tree_view',
-        'views/bom_view',
-        'views/collaborative_view',
-        'views/part_metadata_view',
-        'views/part_instance_view',
-        'views/export_scene_modal_view',
-        'views/control_navigation_view',
-        'views/control_modes_view',
-        'views/control_transform_view',
-        'views/control_markers_view',
-        'views/control_layers_view',
-        'views/control_options_view',
-        'views/control_clipping_view',
-        'views/control_explode_view',
-        'views/control_measure_view',
-        'views/baselines/baseline_select_view',
-        'dmu/SceneManager',
-        'dmu/collaborativeController',
-        'dmu/InstancesManager',
-        'text!templates/content.html',
-        'common-objects/models/part'
+    'backbone',
+    'mustache',
+    'views/search_view',
+    'views/parts_tree_view',
+    'views/bom_view',
+    'views/collaborative_view',
+    'views/part_metadata_view',
+    'views/part_instance_view',
+    'views/export_scene_modal_view',
+    'views/control_navigation_view',
+    'views/control_modes_view',
+    'views/control_transform_view',
+    'views/control_markers_view',
+    'views/control_layers_view',
+    'views/control_options_view',
+    'views/control_clipping_view',
+    'views/control_explode_view',
+    'views/control_measure_view',
+    'views/baselines/baseline_select_view',
+    'dmu/SceneManager',
+    'dmu/collaborativeController',
+    'dmu/InstancesManager',
+    'text!templates/content.html',
+    'common-objects/models/part'
 ], function (Backbone, Mustache, SearchView, PartsTreeView, BomView, CollaborativeView, PartMetadataView, PartInstanceView, ExportSceneModalView, ControlNavigationView, ControlModesView, ControlTransformView, ControlMarkersView, ControlLayersView, ControlOptionsView, ControlClippingView, ControlExplodeView, ControlMeasureView, BaselineSelectView, SceneManager, CollaborativeController, InstancesManager, template, Part) {
-	'use strict';
+    'use strict';
     var AppView = Backbone.View.extend({
         el: '#content',
 
@@ -47,7 +47,8 @@ define([
             this.$el.html(Mustache.render(template, {
                 productId: App.config.productId,
                 contextPath: App.config.contextPath,
-                i18n: App.config.i18n})).show();
+                i18n: App.config.i18n
+            })).show();
 
             this.bindDomElements();
             this.menuResizable();
@@ -60,10 +61,10 @@ define([
             App.partsTreeView = new PartsTreeView({resultPathCollection: App.searchView.collection}).render();
             App.controlNavigationView = new ControlNavigationView().render();
             App.bomView = new BomView().render();
-            App.baselineSelectView = new BaselineSelectView({el:'#config_spec_container'}).render();
+            App.baselineSelectView = new BaselineSelectView({el: '#config_spec_container'}).render();
             App.controlModesView = new ControlModesView().render();
             App.controlTransformView = new ControlTransformView().render();
-            App.partMetadataView = new PartMetadataView({model:new Backbone.Model()});
+            App.partMetadataView = new PartMetadataView({model: new Backbone.Model()});
             App.collaborativeView = new CollaborativeView().render();
 
             App.$ControlsContainer.append(App.collaborativeView.$el);
@@ -101,8 +102,8 @@ define([
             this.sceneModeButton = this.$('#scene_view_btn');
             this.bomModeButton = this.$('#bom_view_btn');
             this.exportSceneButton = this.$('#export_scene_btn');
-            this.bomControls =  this.$('.bom-controls');
-            this.dmuControls=  this.$('.dmu-controls');
+            this.bomControls = this.$('.bom-controls');
+            this.dmuControls = this.$('.dmu-controls');
             App.$ControlsContainer = this.$('#side_controls_container');
             App.$SceneContainer = this.$('#scene_container');
         },
@@ -125,13 +126,13 @@ define([
         },
 
         bomMode: function () {
-            this.$contentContainer.attr('class','bom-mode');
+            this.$contentContainer.attr('class', 'bom-mode');
             this.bomModeButton.addClass('active');
             this.sceneModeButton.removeClass('active');
         },
 
         sceneMode: function () {
-            this.$contentContainer.attr('class','scene-mode');
+            this.$contentContainer.attr('class', 'scene-mode');
             this.bomModeButton.removeClass('active');
             this.sceneModeButton.addClass('active');
             App.sceneManager.onContainerShown();
@@ -152,12 +153,12 @@ define([
             }
         },
 
-        sceneButton:function(){
-            App.router.navigate(App.config.workspaceId + '/' + App.config.productId + '/' + 'scene',{trigger:true});
+        sceneButton: function () {
+            App.router.navigate(App.config.workspaceId + '/' + App.config.productId + '/' + 'scene', {trigger: true});
         },
 
-        bomButton:function(){
-            App.router.navigate(App.config.workspaceId + '/' + App.config.productId + '/' + 'bom',{trigger:true});
+        bomButton: function () {
+            App.router.navigate(App.config.workspaceId + '/' + App.config.productId + '/' + 'bom', {trigger: true});
         },
 
         setSpectatorView: function () {
@@ -224,36 +225,38 @@ define([
         },
 
         onNoWebGLSupport: function () {
-	        this.crashWithMessage(App.config.i18n.NO_WEBGL);
+            this.crashWithMessage(App.config.i18n.NO_WEBGL);
         },
 
         onConfigSpecChange: function (configSpec) {
             this.setConfigSpec(configSpec);
-	        if(App.collaborativeController){
-		        App.collaborativeController.sendBaseline(configSpec);
-	        }
+            if (App.collaborativeController) {
+                App.collaborativeController.sendBaseline(configSpec);
+            }
         },
 
-	    setConfigSpec : function(configSpec){
-		    App.config.configSpec = configSpec;
-		    App.sceneManager.clear();
-		    App.instancesManager.clear();
+        setConfigSpec: function (configSpec) {
+            App.config.configSpec = configSpec;
+            App.sceneManager.clear();
+            App.instancesManager.clear();
             App.partsTreeView.refreshAll();
             this.updateBom();
-	    },
+        },
 
         onMeshSelected: function (mesh) {
 
             var partKey = mesh.partIterationId.substr(0, mesh.partIterationId.lastIndexOf('-'));
             var part = new Part({partKey: partKey});
 
-            part.fetch({success: function () {
-                // Search the part in the tree
-                App.searchView.trigger('instance:selected', part.getNumber());
-                App.controlNavigationView.setMesh(mesh);
-                App.controlTransformView.setMesh(mesh).render();
-                App.partMetadataView.setModel(part).render();
-            }});
+            part.fetch({
+                success: function () {
+                    // Search the part in the tree
+                    App.searchView.trigger('instance:selected', part.getNumber());
+                    App.controlNavigationView.setMesh(mesh);
+                    App.controlTransformView.setMesh(mesh).render();
+                    App.partMetadataView.setModel(part).render();
+                }
+            });
 
         },
 
@@ -268,7 +271,7 @@ define([
 
         bindDatGUIControls: function () {
             // Dat.gui controls
-            var gui = new dat.GUI({ autoPlace: false });
+            var gui = new dat.GUI({autoPlace: false});
             var valuesControllers = [];
             this.$el.append(gui.domElement);
 
@@ -297,16 +300,16 @@ define([
             return this;
         },
 
-		crashWithMessage: function(htmlMessage){
-            App.$SceneContainer.html('<span class="crashMessage">'+htmlMessage+ '</span>');
+        crashWithMessage: function (htmlMessage) {
+            App.$SceneContainer.html('<span class="crashMessage">' + htmlMessage + '</span>');
             App.$ControlsContainer.hide();
             this.dmuControls.hide();
-		},
+        },
 
         requestJoinRoom: function (key) {
             if (!App.mainChannel.isReady()) {
                 // Retry to connect every 500ms
-                App.log('%c [App] %c Websocket is not opened',true);
+                App.log('%c [App] %c Websocket is not opened', true);
                 var _this = this;
                 setTimeout(function () {
                     _this.requestJoinRoom(key);

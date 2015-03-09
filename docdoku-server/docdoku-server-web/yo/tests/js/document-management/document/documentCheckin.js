@@ -56,14 +56,9 @@ casper.test.begin('Document checkin tests suite', 1, function documentCheckinTes
      * Set an iteration note
      */
     casper.then(function waitForIterationNotePrompt(){
-        this.waitForSelector('#prompt_modal #prompt_input',function fillIterationNote() {
-
-            // Huh WTF ? Must wait, otherwise, this make 5 modals pop !
-            this.wait(200,function(){
-                this.sendKeys('#prompt_modal #prompt_input', documents.document1.iterationNote, {reset:true});
-                this.click('#prompt_modal .modal-footer .btn-primary');
-            });
-
+        this.waitForSelector('#prompt_modal #prompt_input.ready',function fillIterationNote() {
+            this.sendKeys('#prompt_modal #prompt_input', documents.document1.iterationNote, {reset:true});
+            this.click('#prompt_modal .modal-footer .btn-primary');
         },function fail() {
             this.capture('screenshot/documentCheckin/waitForIterationNotePrompt-error.png');
             this.test.assert(false,'Iteration note modal not found');
