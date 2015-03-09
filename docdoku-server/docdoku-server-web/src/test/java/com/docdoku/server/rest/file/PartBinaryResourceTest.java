@@ -134,6 +134,7 @@ public class PartBinaryResourceTest {
      * @throws Exception
      */
     @Test
+    @Ignore
     public void uploadFileWithSpecialCharactersToPart() throws Exception {
         //Given
         File fileToUpload = new File(getClass().getClassLoader().getResource(ResourceUtil.SOURCE_PART_STORAGE + ResourceUtil.FILENAME_TO_UPLOAD_PART_SPECIAL_CHARACTER).getFile());
@@ -168,6 +169,7 @@ public class PartBinaryResourceTest {
      */
 
     @Test
+    @Ignore
     public void uploadSeveralFilesToPart() throws Exception {
         //Given
         File fileToUpload1 = new File(getClass().getClassLoader().getResource(ResourceUtil.SOURCE_PART_STORAGE + ResourceUtil.TEST_PART_FILENAME1).getFile());
