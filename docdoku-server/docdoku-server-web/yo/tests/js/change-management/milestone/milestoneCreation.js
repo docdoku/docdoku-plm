@@ -43,9 +43,9 @@ casper.test.begin('Milestone creation tests suite',4, function milestoneCreation
      * Try to create an milestone without a title
      */
     casper.then(function waitForMilestoneCreationModal(){
-        this.waitForSelector('#milestone_creation_modal .modal-footer .btn-primary',function createMilestoneWithoutName(){
+        this.waitForSelector('#milestone_creation_modal.ready',function createMilestoneWithoutName(){
             this.click('#milestone_creation_modal .modal-footer .btn-primary');
-            this.test.assertExists('#milestone_creation_modal #inputMilestoneTitle:invalid', 'Should not create an milestone without a name');
+            this.test.assertExists('#milestone_creation_modal #inputMilestoneTitle:invalid', 'Should not create a milestone without a name');
         },function fail() {
             this.capture('screenshot/milestoneCreation/waitForMilestoneCreationModal-error.png');
             this.test.assert(false,'Milestone modal can not be found');
@@ -59,7 +59,7 @@ casper.test.begin('Milestone creation tests suite',4, function milestoneCreation
         this.waitForSelector('#milestone_creation_modal .modal-footer .btn-primary',function createMilestoneWithoutDate(){
             this.click('#milestone_creation_modal .modal-footer .btn-primary');
             this.sendKeys('#milestone_creation_modal input#inputMilestoneTitle',changeItems.milestone1.title,{reset:true});
-            this.test.assertExists('#milestone_creation_modal #inputMilestoneDueDate:invalid', 'Should not create an milestone without a date');
+            this.test.assertExists('#milestone_creation_modal #inputMilestoneDueDate:invalid', 'Should not create a milestone without a date');
         },function fail() {
             this.capture('screenshot/milestoneCreation/waitForMilestoneCreationModal-error.png');
             this.test.assert(false,'Milestone modal can not be found');
@@ -70,7 +70,7 @@ casper.test.begin('Milestone creation tests suite',4, function milestoneCreation
      * Fill the form and create the milestone
      */
     casper.then(function fillAndSubmitMilestoneCreationModal(){
-        this.waitForSelector('#milestone_creation_modal input#inputMilestoneTitle',function fillForm(){
+        this.waitForSelector('#milestone_creation_modal.ready',function fillForm(){
             this.sendKeys('#milestone_creation_modal input#inputMilestoneTitle',changeItems.milestone1.title,{reset:true});
             this.sendKeys('#milestone_creation_modal input#inputMilestoneDueDate',changeItems.milestone1.date,{reset:true});
             this.click('#milestone_creation_modal .modal-footer .btn-primary');
