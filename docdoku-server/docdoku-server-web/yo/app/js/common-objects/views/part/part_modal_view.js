@@ -168,7 +168,6 @@ define([
                 linkedDocuments: this.linkedDocumentsView.collection.toJSON()
             }, {
                 success: function () {
-                    that.model.fetch();
                     that.model.collection.fetch();
                     that.hide();
                 },
