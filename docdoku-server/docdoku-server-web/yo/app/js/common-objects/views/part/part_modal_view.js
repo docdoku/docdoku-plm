@@ -169,6 +169,7 @@ define([
             }, {
                 success: function () {
                     that.model.fetch();
+                    that.model.collection.fetch();
                     that.hide();
                 },
                 error: this.onError
