@@ -33,6 +33,7 @@ public class ListOfValuesDTO implements Serializable {
     private String name;
     private WorkspaceDTO workspace;
     private List<NameValuePairDTO> values;
+    private String id;
 
     public ListOfValuesDTO(){}
 
@@ -50,6 +51,14 @@ public class ListOfValuesDTO implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getId() {
+        return name;
+    }
+
+    public void setId(String id){
+        this.id = id;
     }
 
     public WorkspaceDTO getWorkspace() {
