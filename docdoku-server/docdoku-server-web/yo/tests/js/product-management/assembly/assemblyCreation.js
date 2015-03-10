@@ -127,7 +127,6 @@ casper.test.begin('Assembly creation tests suite',13, function assemblyCreationT
 
     casper.then(function checkAssemblyIconsSet(){
         this.waitForSelector('#part_table .fa.fa-cube', function check() {
-            this.capture('screenshot/assemblyCreation/test-error.png');
             this.test.assertElementCount('#part_table .fa.fa-cube',4,'found 4 leaf parts');
             this.test.assertElementCount('#part_table .fa.fa-cubes',1,'found 1 assembly part');
         });
