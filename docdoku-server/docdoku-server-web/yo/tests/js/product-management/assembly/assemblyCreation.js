@@ -86,12 +86,16 @@ casper.test.begin('Assembly creation tests suite',11, function assemblyCreationT
     });
 
     /**
-     * Save it && Wait for modal to be closed
+     * Save it
      */
     casper.then(function saveParts(){
-
         this.click('#part-modal #save-part');
+    });
 
+    /**
+     * Wait for modal to be closed
+     */
+    casper.then(function closePartsModal(){
         this.waitWhileSelector('#part-modal',function modalClosed(){
             this.test.assert(true, 'Modal has been closed');
         },function fail(){
