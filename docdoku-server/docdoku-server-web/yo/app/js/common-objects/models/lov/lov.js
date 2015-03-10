@@ -2,7 +2,7 @@ define(['backbone'], function (Backbone) {
     'use strict';
     var LOVModel = Backbone.Model.extend({
 
-        idAttribute:'name',
+        idAttribute:'id',
 
         /*
            The backend name is the name use to modified the lov from backend side
@@ -16,6 +16,18 @@ define(['backbone'], function (Backbone) {
                 this.backendName = name;
             }
             _.bindAll(this);
+            this.on('sync', function(){
+                //this.setNew(false);
+                this.backendName = this.getLOVName();
+            })
+        },
+
+        getLOVId:function(){
+            return this.get('id');
+        },
+
+        setLOVId:function(){
+            this.set('id', this.getLOVName());
         },
 
         getLOVName:function(){
@@ -41,11 +53,11 @@ define(['backbone'], function (Backbone) {
         /*
            Override the isNew function of backbone to send the good request POST for new and PUT for update
          */
-        setNew:function(isNew){
+        /*setNew:function(isNew){
             this.isNew = function(){
                 return isNew;
             };
-        },
+        },*/
 
         url:function(){
             var endUrl = '';

@@ -11,14 +11,14 @@ define([
             'click .deleteLovItem': 'removeItem',
             'click .addLOVValue': 'addValueInList',
             'click .expandIcon': 'showEditMode',
-            'blur .lovItemNameInput': 'onItemNameChanged'
+            'blur .lovItemNameInput': 'onItemNameChanged',
         },
 
         className: 'lovItem ui-sortable well',
 
         isExpand:false,
 
-        lovListDiv : '',
+        $lovListDiv : '',
 
         initialize: function () {
             this.isExpand = this.options.isExpand;
@@ -33,14 +33,14 @@ define([
             if(this.isExpand){
                 this.$el.addClass('edition');
             }
-            this.lovListDiv = this.$('.lovValues');
+            this.$lovListDiv = this.$('.lovValues');
 
             _.each(this.model.getLOVValues(), this.addPossibleValueView.bind(this));
 
             //Reorganise possible value order
             var oldIndex = null;
             var that = this;
-            this.lovListDiv.sortable({
+            this.$lovListDiv.sortable({
                 handle: ".sortable-handler",
                 placeholder: "list-item well highlight",
                 start: function(event, ui){
@@ -74,7 +74,7 @@ define([
 
             possibleValueView.on('remove', this.deletePossibleValue.bind(this, possibleValueView));
             possibleValueView.render();
-            this.lovListDiv.append(possibleValueView.$el);
+            this.$lovListDiv.append(possibleValueView.$el);
             this.onNumberOfPossibleValueChanged();
         },
 
