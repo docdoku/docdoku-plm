@@ -1,5 +1,5 @@
 /*global $,define,App*/
-define(['datatables','moment','momentTimeZone'], function (DT,moment,momentTimeZone) {
+define(['datatables','../../bower_components/moment/moment','momentTimeZone'], function (DT,moment,momentTimeZone) {
 	'use strict';
 
     // sorting eu dates with current format and timezone

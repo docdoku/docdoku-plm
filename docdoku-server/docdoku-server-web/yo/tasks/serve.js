@@ -21,19 +21,19 @@ module.exports = function(grunt) {
             ]);
 		}
 
-		grunt.task.run([
+        // Default serve command
+
+        grunt.task.run([
 			'clean:server',
 			'less',
 			'connect:livereload',
 			'open:dev',
 			'watch:dev'
 		]);
+
 	});
 
-
-    // on watch events :
-    // configure jshint:all to only run on changed file
-    // run less task if file is a less source file
+    // On watch events, configure jshint to only run on changed file, run less task if file is a less source file
 
     var filesTask = {
         less:function(filepath){

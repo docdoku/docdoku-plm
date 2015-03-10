@@ -106,7 +106,7 @@ require.config({
         stlloader: 'dmu/loaders/STLLoader',
         objloader: 'dmu/loaders/OBJLoader',
         stats:'dmu/utils/Stats',
-        stringprototype:'../lib/string.prototype'
+        stringprototype:'../utils/string.prototype'
     },
 
     deps: [

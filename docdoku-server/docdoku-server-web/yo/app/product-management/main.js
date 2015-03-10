@@ -58,16 +58,16 @@ require.config({
         moment:'../../bower_components/moment/min/moment-with-locales',
         momentTimeZone:'../../bower_components/moment-timezone/builds/moment-timezone-with-data',
         date:'../../bower_components/date.format/date.format',
-        unmaskConfig:'../lib/jquery.maskedinput-config',
+        unmaskConfig:'../utils/jquery.maskedinput-config',
         localization: '../localization',
         modules: '../modules',
         'common-objects': '../common-objects',
         userPopover:'modules/user-popover-module/app',
-        effects:'../lib/effects',
-        popoverUtils: '../lib/popover.utils',
-        inputValidity: '../lib/input-validity',
-        datatablesOsortExt: '../lib/datatables.oSort.ext',
-        stringprototype:'../lib/string.prototype'
+        effects:'../utils/effects',
+        popoverUtils: '../utils/popover.utils',
+        inputValidity: '../utils/input-validity',
+        datatablesOsortExt: '../utils/datatables.oSort.ext',
+        stringprototype:'../utils/string.prototype'
     },
 
     deps:[
