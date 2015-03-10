@@ -38,7 +38,7 @@ import java.util.List;
     @NamedQuery(name="PartUsageLink.findByComponent",query="SELECT u FROM PartUsageLink u WHERE u.component.number LIKE :partNumber AND u.component.workspace.id = :workspaceId"),
     @NamedQuery(name="PartUsageLink.getPartOwner",query="SELECT p FROM PartIteration p WHERE :usage MEMBER OF p.components")
 })
-public class PartUsageLink implements Serializable, Cloneable {
+public class PartUsageLink implements Serializable, Cloneable, PartLink {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -90,76 +90,84 @@ public class PartUsageLink implements Serializable, Cloneable {
         optional=pOptional;
     }
 
+    @Override
     public int getId() {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
+    @Override
     public double getAmount() {
         return amount;
     }
 
-    public void setAmount(double amount) {
-        this.amount = amount;
-    }
-
+    @Override
     public String getUnit() {
         return unit;
     }
 
-    public void setUnit(String unit) {
-        this.unit = unit;
-    }
-
-    public void setComponent(PartMaster component) {
-        this.component = component;
-    }
-
-    public PartMaster getComponent() {
-        return component;
-    }
-
-    public List<PartSubstituteLink> getSubstitutes() {
-        return substitutes;
-    }
-
-    public void setSubstitutes(List<PartSubstituteLink> substitutes) {
-        this.substitutes = substitutes;
-    }
-
+    @Override
     public String getComment() {
         return comment;
     }
 
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
-
-    public String getReferenceDescription() {
-        return referenceDescription;
-    }
-
-    public void setReferenceDescription(String referenceDescription) {
-        this.referenceDescription = referenceDescription;
-    }
-
-    public void setOptional(boolean optional) {
-        this.optional = optional;
-    }
-
+    @Override
     public boolean isOptional() {
         return optional;
+    }
+
+    @Override
+    public PartMaster getComponent() {
+        return component;
+    }
+
+    @Override
+    public List<PartSubstituteLink> getSubstitutes() {
+        return substitutes;
+    }
+
+    @Override
+    public String getReferenceDescription() {
+        return referenceDescription;
     }
 
     public List<CADInstance> getCadInstances() {
         return cadInstances;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setAmount(double amount) {
+        this.amount = amount;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
+    }
+
+    public void setReferenceDescription(String referenceDescription) {
+        this.referenceDescription = referenceDescription;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    public void setComponent(PartMaster component) {
+        this.component = component;
+    }
+
+    public void setSubstitutes(List<PartSubstituteLink> substitutes) {
+        this.substitutes = substitutes;
+    }
+
     public void setCadInstances(List<CADInstance> cadInstances) {
         this.cadInstances = cadInstances;
+    }
+
+    public void setOptional(boolean optional) {
+        this.optional = optional;
     }
 
     @Override

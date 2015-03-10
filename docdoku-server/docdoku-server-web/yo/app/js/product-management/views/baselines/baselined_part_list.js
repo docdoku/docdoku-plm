@@ -13,21 +13,17 @@ define([
 
         className: 'baselined-parts-list',
 
-        removeSubviews: function () {
-            _(this.baselinedPartsViews).invoke('remove');
-        },
-
         initialize: function () {
             _.bindAll(this);
             this.editMode = (this.options.editMode) ? this.options.editMode : false;
             this.$el.on('remove', this.removeSubviews());
-            this.initPartsList();
+            this.baselinedParts = [];
+            this.baselinedPartsViews = [];
         },
 
         render: function () {
             this.$el.html(Mustache.render(template, {i18n: App.config.i18n}));
             this.bindDomElements();
-            this.resetList();
             return this;
         },
 
@@ -35,41 +31,30 @@ define([
             this.partsUL = this.$('.baselined-parts');
         },
 
-        initPartsList: function () {
-            var _this = this;
+        renderList: function () {
+
+            this.clear();
+
             var collection = this.model.getBaselinedParts();
+
             this.baselinedParts = [];
-            _.each(collection, function (bpData) {
-                var baselinedPart = new BaselinedPart(bpData);
-                _this.baselinedParts.push(baselinedPart);
-            });
-        },
-
-        resetList: function () {
-            if (this.model) {
-                this.updateList(this.model.getBaselinedParts());
-            }
-        },
-
-        updateList: function (collection) {
-            var _this = this;
-            this.removeSubviews();
-
             this.baselinedPartsViews = [];
+
             _.each(collection, function (bpData) {
-                var baselinedPart = _.find(_this.baselinedParts, function (bp) {
-                    return bp.getNumber() === bpData.number;
-                });
-                if (baselinedPart) {
-                    var baselinedPartItemView = new BaselinedPartListItemView({
-                        model:baselinedPart,
-                        editMode:_this.editMode
-                    }).render();
-                    baselinedPartItemView.on('part-modal:open',_this.trigger.bind(_this));
-                    _this.baselinedPartsViews.push(baselinedPartItemView);
-                    _this.partsUL.append(baselinedPartItemView.$el);
-                }
-            });
+
+                var baselinedPart = new BaselinedPart(bpData);
+
+                var baselinedPartItemView = new BaselinedPartListItemView({
+                    model:baselinedPart,
+                    editMode:this.editMode
+                }).render();
+
+                this.baselinedParts.push(baselinedPart);
+                this.baselinedPartsViews.push(baselinedPartItemView);
+
+                this.partsUL.append(baselinedPartItemView.$el);
+
+            },this);
         },
 
         getBaselinedParts: function () {
@@ -82,7 +67,19 @@ define([
                 });
             });
             return baselinedParts;
+        },
+
+        clear:function(){
+            this.baselinedParts = [];
+            this.baselinedPartsViews = [];
+            this.removeSubviews();
+            this.partsUL.empty();
+        },
+
+        removeSubviews: function () {
+            _(this.baselinedPartsViews).invoke('remove');
         }
+
     });
 
     return BaselinedPartsView;

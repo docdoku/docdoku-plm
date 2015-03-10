@@ -65,6 +65,8 @@ import java.util.List;
     private PartMaster partMaster;
     private ConfigurationItemKey configurationItemKey;
     private ConfigurationItem configurationItem;
+    private List<String> substituteLinks = new ArrayList<>();
+    private List<String> optionalUsageLinks = new ArrayList<>();;
 
     public BaselineRule(String baselineName,ProductBaseline.BaselineType type,String description,String workspaceId,String login,String partId,String productId,boolean released){
         name = baselineName;
@@ -95,8 +97,6 @@ import java.util.List;
         if (checkouted){
             this.partMaster.getLastReleasedRevision().getIteration(1).getPartRevision().setCheckOutUser(this.user);
         }
-
-
     }
 
 
@@ -146,5 +146,13 @@ import java.util.List;
 
     public ConfigurationItemKey getConfigurationItemKey() {
         return configurationItemKey;
+    }
+
+    public List<String> getOptionalUsageLinks() {
+        return optionalUsageLinks;
+    }
+
+    public List<String> getSubstituteLinks() {
+        return substituteLinks;
     }
 }

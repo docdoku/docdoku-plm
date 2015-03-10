@@ -6,26 +6,55 @@
     </div>
 
     <div class="modal-body">
+
         <div class="notifications"></div>
-        <div class="form-horizontal">
-            <div class="control-group">
-                <label class="control-label">{{i18n.PRODUCT_ID}}</label>
-                <div class="controls">
-                    {{model.getConfigurationItemId}}
+
+        <div class="ModalTabs ModalBody-tabs tabs">
+
+            <ul class="ModalTabs-nav nav nav-tabs">
+                <li class="active"><a href="#tab-baseline-general" data-toggle="tab">{{i18n.GENERAL}}</a></li>
+                <li><a href="#tab-baseline-versions" data-toggle="tab">{{i18n.VERSIONS}}</a></li>
+                <!--<li><a href="#tab-baseline-choices" data-toggle="tab">{{i18n.CONFIGURATION}}</a></li>-->
+            </ul>
+
+            <div class="ModalTabsContent tab-content form-horizontal">
+                <div id="tab-baseline-general" class="ModalTabsPane tab-pane active">
+                    <div class="form-horizontal">
+                        <div class="control-group">
+                            <label class="control-label">{{i18n.PRODUCT_ID}}</label>
+
+                            <div class="controls">
+                                {{model.getConfigurationItemId}}
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">{{i18n.DESCRIPTION}}</label>
+
+                            <div class="controls">
+                                {{model.getDescription}}
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">{{i18n.PARTS}}</label>
+                        </div>
+
+                    </div>
                 </div>
-            </div>
-            <div class="control-group">
-                <label class="control-label">{{i18n.DESCRIPTION}}</label>
-                <div class="controls">
-                    {{model.getDescription}}
+
+                <div id="tab-baseline-versions" class="ModalTabsPane tab-pane baselinedPartListArea">
                 </div>
-            </div>
-            <div class="control-group">
-                <label class="control-label">{{i18n.PARTS}}</label>
-                <div class="controls baselinedPartListArea"></div>
+                <!--<div id="tab-baseline-choices" class="ModalTabsPane tab-pane">-->
+                    <!--<div class="baselinedSubstituteLinks">-->
+                        <!--{{model.getSubstituteLinks}}-->
+                    <!--</div>-->
+                    <!--<div class="optionalUsageLinks">-->
+                        <!--{{model.getOptionalLinks}}-->
+                    <!--</div>-->
+                <!--</div>-->
             </div>
         </div>
     </div>
+
 
     <div class="modal-footer">
         <button class="btn" data-dismiss="modal" aria-hidden="true">{{i18n.CLOSE}}</button>
