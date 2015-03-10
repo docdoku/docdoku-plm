@@ -62,9 +62,12 @@ casper.test.begin('Product instance creation tests suite',3, function productIns
      * Try to create the product instance
      */
     casper.then(function tryToCreateProductInstance(){
-        this.wait(100,function(){
+        this.waitForSelector('#product_instance_creation_modal',function fillForm(){
             this.sendKeys('#product_instance_creation_modal #inputSerialNumber',productInstances.productInstance1.serialNumber,{reset:true});
             this.click('#product_instance_creation_modal .modal-footer .btn.btn-primary');
+        },function fail() {
+            this.capture('screenshot/productInstanceCreation/tryToCreateProductInstance-error.png');
+            this.test.assert(false,'Product instance modal can not be found');
         });
     });
 
