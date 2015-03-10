@@ -1,6 +1,6 @@
 /*global casper,urls,products*/
 
-casper.test.begin('Part upload native cad file tests suite', 2, function partUploadCadTestsSuite(){
+casper.test.begin('Part upload native cad file tests suite', 3, function partUploadCadTestsSuite(){
     'use strict';
 
     casper.open('');
@@ -81,8 +81,16 @@ casper.test.begin('Part upload native cad file tests suite', 2, function partUpl
             this.capture('screenshot/partUpload/setFileAndUpload-error.png');
             this.test.assert(false,'Cannot upload the file');
         });
+    });
 
+    /**
+     * Check if CAD file icons are well set
+     */
 
+    casper.then(function checkCADFileIconsSet(){
+        this.waitForSelector('#part_table .fa.fa-paperclip', function check() {
+            this.test.assertElementCount('#part_table .fa.fa-paperclip',1,'found 1 part with CAD file');
+        });
     });
 
 
