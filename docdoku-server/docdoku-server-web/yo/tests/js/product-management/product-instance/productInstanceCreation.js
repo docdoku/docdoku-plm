@@ -75,7 +75,7 @@ casper.test.begin('Product instance creation tests suite',3, function productIns
      * Wait for the modal to be closed
      */
     casper.then(function waitForProductInstanceModalToBeClosed(){
-        this.waitWhileSelector('#product_instance_creation_modal',function onModalClosed(){
+        this.waitWhileSelector('#product_instance_creation_modal.ready',function onModalClosed(){
            this.test.assert(true,'Product instance creation modal closed');
         },function fail(){
             this.capture('screenshot/productInstanceCreation/waitForProductInstanceModalToBeClosed-error.png');

@@ -12,6 +12,7 @@ define([
         events: {
             'submit #product_instance_edit_form': 'onSubmitForm',
             'hidden #product_instance_modal': 'onHidden',
+            'shown #product_instance_modal': 'onShown',
             'click a#previous-iteration': 'onPreviousIteration',
             'click a#next-iteration': 'onNextIteration',
             'close-modal-request':'closeModal'
@@ -130,6 +131,10 @@ define([
 
         onHidden: function () {
             this.remove();
+        },
+
+        onShown: function () {
+            this.$modal.addClass('ready');
         }
     });
     return ProductInstancesModalView;
