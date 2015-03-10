@@ -5,7 +5,7 @@ define([
     'text!templates/part/part_new_version.html',
     'common-objects/views/workflow/workflow_mapping',
     'common-objects/views/workflow/workflow_list',
-    'common-objects/views/security/acl'
+    'common-objects/views/security/acl_clone_edit'
 ], function (Backbone, Mustache, template, WorkflowMappingView, WorkflowListView, ACLView) {
     'use strict';
     var PartNewVersionView = Backbone.View.extend({
@@ -44,7 +44,8 @@ define([
 
             this.aclView = new ACLView({
                 el: this.$('#acl-mapping'),
-                editMode: true
+                editMode: true,
+                acl: this.model.get('acl')
             }).render();
 
             this.$('.tabs').tabs();
