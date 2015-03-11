@@ -170,6 +170,7 @@ define([
                 success: function () {
                     that.model.collection.fetch();
                     that.hide();
+                    that.model.trigger('change');
                 },
                 error: this.onError
             });

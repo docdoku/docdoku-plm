@@ -10,7 +10,8 @@ define([
     var MilestoneCreationView = Backbone.View.extend({
         events: {
             'submit #milestone_creation_form': 'onSubmitForm',
-            'hidden #milestone_creation_modal': 'onHidden'
+            'hidden #milestone_creation_modal': 'onHidden',
+            'shown #milestone_creation_modal': 'onShown'
         },
 
 
@@ -66,6 +67,10 @@ define([
 
         closeModal: function () {
             this.$modal.modal('hide');
+        },
+
+        onShown: function () {
+            this.$modal.addClass('ready');
         },
 
         onHidden: function () {

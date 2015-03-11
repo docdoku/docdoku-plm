@@ -1,6 +1,6 @@
 /*global casper,urls,products,homeUrl,workspace*/
 
-casper.test.begin('Assembly creation tests suite',11, function assemblyCreationTestsSuite(){
+casper.test.begin('Assembly creation tests suite',13, function assemblyCreationTestsSuite(){
 
     'use strict';
 
@@ -86,19 +86,22 @@ casper.test.begin('Assembly creation tests suite',11, function assemblyCreationT
     });
 
     /**
-     * Save it && Wait for modal to be closed
+     * Save it
      */
     casper.then(function saveParts(){
-
         this.click('#part-modal #save-part');
+    });
 
+    /**
+     * Wait for modal to be closed
+     */
+    casper.then(function closePartsModal(){
         this.waitWhileSelector('#part-modal',function modalClosed(){
             this.test.assert(true, 'Modal has been closed');
         },function fail(){
             this.capture('screenshot/assemblyCreation/waitModalToBeClosed-error.png');
             this.test.assert(false,'Modal is still not closed');
         });
-
     });
 
     /**
@@ -116,6 +119,18 @@ casper.test.begin('Assembly creation tests suite',11, function assemblyCreationT
             this.capture('screenshot/assemblyCreation/checkIfPartsInAssemblyAreCreated-error.png');
             this.test.assert(false,'There are not 5 entries in the table');
         });
+    });
+
+    /**
+     * Check if assembly / leaf icons are well set
+     */
+
+    casper.then(function checkAssemblyIconsSet(){
+        this.waitForSelector('#part_table .fa.fa-cube', function check() {
+            this.test.assertElementCount('#part_table .fa.fa-cube',4,'found 4 leaf parts');
+            this.test.assertElementCount('#part_table .fa.fa-cubes',1,'found 1 assembly part');
+        });
+
     });
 
     /**

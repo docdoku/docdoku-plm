@@ -62,9 +62,12 @@ casper.test.begin('Product instance creation tests suite',3, function productIns
      * Try to create the product instance
      */
     casper.then(function tryToCreateProductInstance(){
-        this.wait(100,function(){
+        this.waitForSelector('#product_instance_creation_modal',function fillForm(){
             this.sendKeys('#product_instance_creation_modal #inputSerialNumber',productInstances.productInstance1.serialNumber,{reset:true});
             this.click('#product_instance_creation_modal .modal-footer .btn.btn-primary');
+        },function fail() {
+            this.capture('screenshot/productInstanceCreation/tryToCreateProductInstance-error.png');
+            this.test.assert(false,'Product instance modal can not be found');
         });
     });
 
@@ -72,7 +75,7 @@ casper.test.begin('Product instance creation tests suite',3, function productIns
      * Wait for the modal to be closed
      */
     casper.then(function waitForProductInstanceModalToBeClosed(){
-        this.waitWhileSelector('#product_instance_creation_modal',function onModalClosed(){
+        this.waitWhileSelector('#product_instance_creation_modal.ready',function onModalClosed(){
            this.test.assert(true,'Product instance creation modal closed');
         },function fail(){
             this.capture('screenshot/productInstanceCreation/waitForProductInstanceModalToBeClosed-error.png');
