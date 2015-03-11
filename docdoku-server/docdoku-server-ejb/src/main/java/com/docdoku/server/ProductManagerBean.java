@@ -977,7 +977,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public PartRevision saveTags(PartRevisionKey revisionKey, String[] pTags) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
+    public PartRevision saveTags(PartRevisionKey revisionKey, String[] pTags) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException, TagException {
 
         User user = checkPartRevisionWriteAccess(revisionKey);
 
@@ -986,34 +986,41 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         PartRevision partRevision = partRevDAO.loadPartR(revisionKey);
 
         Set<Tag> tags = new HashSet<>();
-        for (String label : pTags) {
-            tags.add(new Tag(user.getWorkspace(), label));
-        }
+        if (pTags !=  null){
+            for (String label : pTags) {
+                tags.add(new Tag(user.getWorkspace(), label));
+            }
 
-        TagDAO tagDAO = new TagDAO(userLocale, em);
-        List<Tag> existingTags = Arrays.asList(tagDAO.findAllTags(user.getWorkspaceId()));
+            TagDAO tagDAO = new TagDAO(userLocale, em);
+            List<Tag> existingTags = Arrays.asList(tagDAO.findAllTags(user.getWorkspaceId()));
 
-        Set<Tag> tagsToCreate = new HashSet<>(tags);
-        tagsToCreate.removeAll(existingTags);
+            Set<Tag> tagsToCreate = new HashSet<>(tags);
+            tagsToCreate.removeAll(existingTags);
 
-        for (Tag t : tagsToCreate) {
-            try {
-                tagDAO.createTag(t);
-            } catch (CreationException | TagAlreadyExistsException ex) {
-                LOGGER.log(Level.SEVERE, null, ex);
+            for (Tag t : tagsToCreate) {
+                try {
+                    tagDAO.createTag(t);
+                } catch (CreationException | TagAlreadyExistsException ex) {
+                    LOGGER.log(Level.SEVERE, null, ex);
+                }
+            }
+
+            partRevision.setTags(tags);
+
+            if (isCheckoutByAnotherUser(user,partRevision)) {
+                em.detach(partRevision);
+                partRevision.removeLastIteration();
+            }
+
+            for (PartIteration partIteration:partRevision.getPartIterations()){
+                esIndexer.index(partIteration);
             }
         }
-
-        partRevision.setTags(tags);
-
-        if (isCheckoutByAnotherUser(user,partRevision)) {
-            em.detach(partRevision);
-            partRevision.removeLastIteration();
+        else{
+            throw new TagException("null tag");
         }
 
-        for (PartIteration partIteration:partRevision.getPartIterations()){
-            esIndexer.index(partIteration);
-        }
+
         return partRevision;
 
     }

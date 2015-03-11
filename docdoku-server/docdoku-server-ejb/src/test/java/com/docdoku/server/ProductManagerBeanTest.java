@@ -204,7 +204,7 @@ public class ProductManagerBeanTest {
      * @throws AccessRightException
      */
     @Test
-    public void addTagToPartWithNoTags() throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
+    public void addTagToPartWithNoTags() throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException, TagException {
 
 
         PartRevisionKey partRevisionKey = partRevision.getKey();
@@ -235,7 +235,7 @@ public class ProductManagerBeanTest {
 
 
     @Test
-    public void removeTagFrom() throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
+    public void removeTagFromPart() throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
         Set<Tag> tags = new LinkedHashSet<Tag>();
         tags.add(new Tag(workspace, "Important"));
         tags.add(new Tag(workspace, "ToRemove"));
@@ -255,5 +255,17 @@ public class ProductManagerBeanTest {
         Assert.assertTrue(partRevisionResult.getTags().contains(new Tag(workspace,"Urgent")));
         Assert.assertTrue(partRevisionResult.getTags().contains(new Tag(workspace,"ToRemove")));
 
+    }
+
+    @Test(expected = TagException.class)
+    public void addNullTagToOnePart() throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException, TagException {
+        String[] tags = null;
+        partRevision.setTags(null);
+        PartRevisionKey partRevisionKey = partRevision.getKey();
+        Mockito.when(ctx.isCallerInRole(UserGroupMapping.GUEST_PROXY_ROLE_ID)).thenReturn(true);
+        Mockito.when(userManager.checkWorkspaceReadAccess(ProductUtil.WORKSPACE_ID)).thenReturn(user);
+        Mockito.when(userManager.checkWorkspaceWriteAccess(ProductUtil.WORKSPACE_ID)).thenReturn(user);
+        Mockito.when(em.find(PartRevision.class, partRevisionKey)).thenReturn(partRevision);
+        PartRevision partRevisionResult = productManagerBean.saveTags(partRevisionKey,tags);
     }
 }

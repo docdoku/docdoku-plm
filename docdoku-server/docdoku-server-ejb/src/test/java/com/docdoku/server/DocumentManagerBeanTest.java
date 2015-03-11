@@ -355,4 +355,8 @@ public class DocumentManagerBeanTest {
             Assert.assertTrue("updateDocument shouldn't have raised an exception because the attribute are not frozen", false);
         }
     }
+
+    public void removeTagFromDocument(){
+
+    }
 }
