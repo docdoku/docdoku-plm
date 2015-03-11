@@ -40,6 +40,7 @@ public class ProductUtil {
     public static final String USER_1_LANGUAGE = "fr";
     public static final String USER_2_MAIL = "user2@docdoku.com";
     public static final String USER_2_LANGUAGE = "en";
+    public static final String USER_GRP1 = "grp1" ;
 
     public static String WORKSPACE_DESCRIPTION ="description of the workspace";
 }

@@ -22,6 +22,7 @@ package com.docdoku.server;
 
 import com.docdoku.core.common.Account;
 import com.docdoku.core.common.User;
+import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.exceptions.*;
@@ -30,6 +31,9 @@ import com.docdoku.core.meta.InstanceDateAttribute;
 import com.docdoku.core.meta.InstanceTextAttribute;
 import com.docdoku.core.meta.Tag;
 import com.docdoku.core.product.*;
+import com.docdoku.core.security.ACL;
+import com.docdoku.core.security.ACLUserEntry;
+import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.esindexer.ESIndexer;
@@ -72,6 +76,7 @@ public class ProductManagerBeanTest {
     private Account account;
     private Workspace workspace ;
     private User user;
+    private User user2;
     private PartMaster partMaster;
     private PartMasterTemplate partMasterTemplate;
     private PartIteration partIteration;
@@ -85,7 +90,8 @@ public class ProductManagerBeanTest {
         initMocks(this);
         account = new Account(ProductUtil.USER_2_LOGIN, ProductUtil.USER_2_NAME, ProductUtil.USER_1_MAIL, ProductUtil.USER_1_LANGUAGE, new Date(), null);
         workspace = new Workspace(ProductUtil.WORKSPACE_ID,account, "pDescription", false);
-        user = new User(workspace, ProductUtil.USER_1_LOGIN , ProductUtil.USER_1_LOGIN, ProductUtil.USER_2_MAIL,ProductUtil.USER_2_LANGUAGE);
+        user = new User(workspace, ProductUtil.USER_1_LOGIN , ProductUtil.USER_1_LOGIN, ProductUtil.USER_1_MAIL,ProductUtil.USER_1_LANGUAGE);
+        user2 = new User(workspace, ProductUtil.USER_2_LOGIN , ProductUtil.USER_2_LOGIN, ProductUtil.USER_2_MAIL,ProductUtil.USER_2_LANGUAGE);
         partMaster = new PartMaster(workspace, ProductUtil.PART_ID, user);
         partMasterTemplate = new PartMasterTemplate(workspace, ProductUtil.PART_MASTER_TEMPLATE_ID, user, ProductUtil.PART_TYPE, "", true);
         partRevision = new PartRevision(partMaster,ProductUtil.VERSION,user);
@@ -268,4 +274,6 @@ public class ProductManagerBeanTest {
         Mockito.when(em.find(PartRevision.class, partRevisionKey)).thenReturn(partRevision);
         PartRevision partRevisionResult = productManagerBean.saveTags(partRevisionKey,tags);
     }
+
+
 }
