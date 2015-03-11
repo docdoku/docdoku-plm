@@ -84,27 +84,6 @@ public class LOVManagerBean implements ILOVManagerLocal {
 
         ListOfValues lov = new ListOfValues(workspace, name);
         lov.setValues(nameValuePairList);
-        /*//Check if the lov as a name
-        if (lov == null || lov.getName() == null || lov.getName().trim().equals("")){
-            throw new CreationException(locale);
-        }
-        //Check if there is at least 1 name value and not empty
-        List<NameValuePair> values = lov.getValues();
-        boolean asEmptyField = false;
-        if (values != null){
-            for (NameValuePair valuePair:values){
-                String name = valuePair.getName();
-                String value = valuePair.getValue();
-
-                if (name == null || value == null || name.trim().equalsIgnoreCase("") || value.trim().equalsIgnoreCase("")){
-                    asEmptyField = true;
-                }
-            }
-        }
-
-        if (values == null || asEmptyField == true){
-            throw new CreationException(locale);
-        }*/
 
         lovDAO.createLOV(lov);
     }
