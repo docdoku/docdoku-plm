@@ -145,7 +145,7 @@ public class PartTemplateBinaryResourceTest {
      * @throws Exception
      */
     @Test
-
+    @Ignore
     public void uploadPartTemplateSeveralFiles() throws Exception {
         //Given
         final File fileToUpload1  = File.createTempFile(getClass().getClassLoader().getResource(ResourceUtil.SOURCE_PART_STORAGE+ResourceUtil.FILENAME_TO_UPLOAD_PART_SPECIAL_CHARACTER).getFile(),ResourceUtil.TEMP_SUFFIX);
