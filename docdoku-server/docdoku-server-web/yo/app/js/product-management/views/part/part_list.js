@@ -247,6 +247,7 @@ define([
                     oldSort = this.oTable.fnSettings().aaSorting;
                     this.oTable.fnDestroy();
                 }
+                this.bindDomElements();
             }
             this.oTable = this.$el.dataTable({
                 aaSorting: oldSort,
