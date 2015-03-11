@@ -85,8 +85,7 @@ define([
             this.lovViews = _.without(this.lovViews, lovView);
         },
 
-        onSaveLovs: function(){
-
+        onSaveLovs: function(event){
 
                 var nbError = 0;
 
@@ -137,11 +136,10 @@ define([
                 }else{
                     queueDelete.push(this.deletedLovModel);
                 }
-            }
 
-
-
-
+            event.preventDefault();
+            return false;
+        }
     });
     return LOVModalView;
 });
