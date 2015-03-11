@@ -63,7 +63,7 @@ require.config({
         localization: '../localization',
         modules: '../modules',
         'common-objects': '../common-objects',
-        effects: '../lib/effects',
+        effects: '../utils/effects',
         popoverUtils: '../utils/popover.utils',
         inputValidity: '../utils/input-validity',
         datatablesOsortExt: '../utils/datatables.oSort.ext',
