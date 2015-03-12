@@ -13,12 +13,27 @@ function(Baseline){
 		getBaselinedParts:function(){
 			return this.get('baselinedParts');
 		},
+        setBaselinedParts:function(baselinedParts){
+            return this.set('baselinedParts',baselinedParts);
+        },
 		getConfigurationItemId: function(){
 			return this.get('configurationItemId');
 		},
 		setConfigurationItemId: function(configurationItemId){
 			this.set('configurationItemId',configurationItemId);
 		},
+        getSubstituteLinks:function(){
+            return this.get('substituteLinks');
+        },
+        setSubstituteLinks:function(substituteLinks){
+            this.set('substituteLinks',substituteLinks);
+        },
+        getOptionalUsageLinks:function(){
+            return this.get('optionalUsageLinks');
+        },
+        setOptionalUsageLinks:function(optionalUsageLinks){
+            this.set('optionalUsageLinks',optionalUsageLinks);
+        },
 		getBaselinePartsWithReference:function(ref,callback){
 			var baselinedParts=null;
 			$.getJSON(this.url()+'/parts?q='+ref)

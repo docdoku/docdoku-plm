@@ -4,11 +4,13 @@ define([
 	'mustache',
 	'common-objects/collections/baselines',
 	'models/configuration_item',
+    'common-objects/models/product_baseline',
+	'collections/configuration_items',
 	'text!templates/baselines/baseline_creation_view.html',
     'common-objects/views/alert',
-    'views/baselines/baselined_part_list',
-    'common-objects/models/product_baseline'
-], function (Backbone, Mustache, Baselines, ConfigurationItem, template, AlertView, BaselinePartListView, ProductBaseline) {
+    'views/baselines/baseline_choice_list',
+    'views/baselines/baselined_part_list'
+], function (Backbone, Mustache, Baselines, ConfigurationItem, ProductBaseline, ConfigurationItemCollection, template, AlertView, BaselineChoiceListView, BaselinedPartsView) {
 
     'use strict';
 
@@ -17,6 +19,7 @@ define([
 		events: {
 			'change #inputConfigurationItem': 'onProductChange',
 			'submit #baseline_creation_form': 'onSubmitForm',
+			'click button[form=baseline_creation_form]': 'interceptSubmit',
 			'hidden #baseline_creation_modal': 'onHidden',
             'change select#inputBaselineType':'changeBaselineType',
             'close-modal-request':'closeModal'
@@ -24,6 +27,13 @@ define([
 
 		initialize: function () {
 			_.bindAll(this);
+
+            this.choiceView = new BaselineChoiceListView().render();
+            this.baselinePartListView = new BaselinedPartsView({
+                editMode:true
+            }).render();
+            this.productBaseline = new ProductBaseline();
+            this.baselinePartListView.model = this.productBaseline;
 		},
 
 		render: function () {
@@ -35,17 +45,21 @@ define([
 
 			this.bindDomElements();
             this.hideLoader();
-            this.bindTypeAhead();
+            this.fillProductSelect();
+
+            this.$baselineChoicesListArea.html(this.choiceView.$el);
+            this.$baselinedPartListArea.html(this.baselinePartListView.$el);
 
             this.$inputBaselineName.customValidity(App.config.i18n.REQUIRED_FIELD);
+
+            this.changeBaselineType();
             return this;
 		},
 
         onProductChange:function(){
             this.model.set('id',this.$inputConfigurationItem.val());
-            this.$inputBaselineType.val("LATEST").trigger('change');
-            this.$inputBaselineType.prop("disabled",!this.model.getId());
-
+            this.$inputBaselineType.val('LATEST').trigger('change');
+            this.$inputBaselineType.prop('disabled',!this.model.getId());
         },
 
 		bindDomElements: function () {
@@ -57,70 +71,64 @@ define([
             this.$inputBaselineType = this.$('#inputBaselineType');
             this.$inputConfigurationItem = this.$('#inputConfigurationItem');
             this.$baselinedPartListArea = this.$('.baselinedPartListArea');
+            this.$baselineChoicesListArea = this.$('.baselineChoicesListArea');
             this.$loader = this.$('.loader');
-            this.$resolveBaselineParts = this.$('#resolveBaselineParts');
-		},
+        },
 
-        bindTypeAhead:function(){
+        fillProductSelect:function(){
             if(this.$inputConfigurationItem){
-                this.$inputConfigurationItem.customValidity(App.config.i18n.REQUIRED_FIELD);
-
-                this.$inputConfigurationItem.typeahead({
-                    source: function (query, process) {
-                        $.getJSON(App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products', function (data) {
-                            var ids = [];
-                            _(data).each(function (d) {
-                                ids.push(d.id);
-                            });
-                            process(ids);
-                        });
-                    }
+                var _this = this;
+                var products = new ConfigurationItemCollection();
+                products.fetch().success(function(){
+                    products.each(function(product){
+                        _this.$inputConfigurationItem.append('<option value="'+product.getId()+'">'+product.getId()+'</option>');
+                    });
+                    _this.$inputConfigurationItem.trigger('change');
                 });
-
             }
         },
+
         changeBaselineType:function(){
             var type = this.$inputBaselineType.val();
-            if(type === 'RELEASED'){
-                this.fillReleasedBaselinedParts();
-            } else if (type === 'LATEST'){
-                this.fillLatestBaselinedParts();
-            } else {
-                this.fillConfigurationBaselinedParts();
+            this.resetViews();
+            this.fetchChoices(type);
+        },
+
+        resetViews:function(){
+            this.baselinePartListView.clear();
+            this.choiceView.clear();
+        },
+
+        fetchChoices:function(type){
+            if(this.model.getId()){
+                if(type === 'RELEASED'){
+                    this.showLoader();
+                    this.model.getReleasedChoices().success(this.fillChoices).error(this.onRequestsError);
+                    this.model.getReleasedParts().success(this.fillPartsResolutionView).error(this.onRequestsError);
+                } else if (type === 'LATEST'){
+                    this.showLoader();
+                    this.model.getLatestChoices().success(this.fillChoices).error(this.onRequestsError);
+                }
             }
         },
-
-        fillLatestBaselinedParts:function(){
-            this.productBaseline = null;
-            if(this.baselinePartListView){
-                this.baselinePartListView.remove();
-                this.baselinePartListView = null;
-            }
-        },
-
-        fillReleasedBaselinedParts:function(){
-            this.showLoader();
-            this.model.getReleasedParts().success(this.fillPartsResolutionView).error(this.showResolutionError);
-        },
-
-        fillConfigurationBaselinedParts:function(){},
 
         fillPartsResolutionView:function(partIterations){
             this.hideLoader();
-            this.productBaseline = new ProductBaseline({
-                baselinedParts:partIterations
-            });
-            this.baselinePartListView = new BaselinePartListView({
-                model: this.productBaseline,
-                editMode:true
-            }).render();
-            this.baselinePartListView.on('part-modal:open',this.closeModal.bind(this))
-            this.$baselinedPartListArea.html(this.baselinePartListView.$el);
+            this.productBaseline.setBaselinedParts(partIterations);
+            this.baselinePartListView.renderList();
         },
 
-        showResolutionError:function(xhr,type,message){
+        fillChoices:function(pathChoices){
+            this.hideLoader();
+            this.choiceView.renderList(pathChoices);
+        },
+
+        onRequestsError:function(xhr,type,message){
             this.$loader.hide();
-            this.$resolveBaselineParts.append(message);
+            this.$notifications.append(new AlertView({
+                type:'error',
+                message:message
+            }).render().$el);
         },
 
         showLoader:function(){
@@ -130,37 +138,58 @@ define([
             this.$loader.hide();
         },
 
+        interceptSubmit:function(){
+            this.isValid = !this.$('.tabs').invalidFormTabSwitcher();
+        },
+
 		onSubmitForm: function (e) {
 
-            if(!this.model){
-                this.model = new ConfigurationItem({id:this.$inputConfigurationItem.val()});
-            }
+            if(this.isValid){
 
-            this.$submitButton.attr('disabled', 'disabled');
-            var baselinedParts = this.baselinePartListView ? this.baselinePartListView.getBaselinedParts() : [];
-            var data = {
-				name: this.$inputBaselineName.val(),
-				description: this.$inputBaselineDescription.val(),
-                baselinedParts:baselinedParts
-			};
+                var optionalUsageLinks = [];
+                var substituteLinks = [];
 
-            if(data.name.trim()){
-                var _this = this;
-                var callbacks = {
-                    success: this.onBaselineCreated,
-                    error: function(error){
-                        _this.onError(data,error);
-                        _this.$submitButton.removeAttr('disabled');
+                _.each(this.choiceView.getChoices(),function(choice){
+                    if(choice && choice.optional){
+                        optionalUsageLinks.push(choice.path);
+                    } else if(choice && choice.path){
+                        substituteLinks.push(choice.path);
                     }
+                });
+
+                if(!this.model){
+                    this.model = new ConfigurationItem({id:this.$inputConfigurationItem.val()});
+                }
+
+                this.$submitButton.attr('disabled', 'disabled');
+                var baselinedParts = this.baselinePartListView.getBaselinedParts();
+                var data = {
+                    name: this.$inputBaselineName.val(),
+                    description: this.$inputBaselineDescription.val(),
+                    baselinedParts:baselinedParts,
+                    substituteLinks:substituteLinks,
+                    optionalUsageLinks:optionalUsageLinks
                 };
 
-                data.type = this.$inputBaselineType.val();
+                if(data.name.trim()){
+                    var _this = this;
+                    var callbacks = {
+                        success: this.onBaselineCreated,
+                        error: function(error){
+                            _this.onError(data,error);
+                            _this.$submitButton.removeAttr('disabled');
+                        }
+                    };
 
-                this.model.createBaseline(data, callbacks);
+                    data.type = this.$inputBaselineType.val();
 
-            }else{
-                this.$submitButton.removeAttr('disabled');
+                    this.model.createBaseline(data, callbacks);
+
+                }else{
+                    this.$submitButton.removeAttr('disabled');
+                }
             }
+
 			e.preventDefault();
 			e.stopPropagation();
 			return false;
@@ -176,7 +205,7 @@ define([
 
             if(this.collection){
                 model.configurationItemId = this.model.getId();
-                this.collection.add(model)
+                this.collection.add(model);
             }
 			this.closeModal();
 		},

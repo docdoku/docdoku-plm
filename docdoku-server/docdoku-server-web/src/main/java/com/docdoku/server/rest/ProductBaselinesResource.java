@@ -80,6 +80,7 @@ public class ProductBaselinesResource {
         for(ProductBaseline productBaseline : productBaselines){
             ProductBaselineDTO productBaselineDTO = mapper.map(productBaseline,ProductBaselineDTO.class);
             productBaselineDTO.setConfigurationItemId(productBaseline.getConfigurationItem().getId());
+            productBaselineDTO.setConfigurationItemLatestRevision(productBaseline.getConfigurationItem().getDesignItem().getLastRevision().getVersion());
             baselinesDTO.add(productBaselineDTO);
         }
         return baselinesDTO;
@@ -104,8 +105,10 @@ public class ProductBaselinesResource {
         }
 
         ProductBaseline baseline = productBaselineService.createBaseline(ciKey,
-                name, type, description, partIterationKeys);
-        return mapper.map(baseline,ProductBaselineDTO.class);
+                name, type, description, partIterationKeys, productBaselineDTO.getSubstituteLinks(),productBaselineDTO.getOptionalUsageLinks());
+        ProductBaselineDTO dto = mapper.map(baseline, ProductBaselineDTO.class);
+        dto.setConfigurationItemLatestRevision(baseline.getConfigurationItem().getDesignItem().getLastRevision().getVersion());
+        return dto;
     }
 
     @DELETE
@@ -125,6 +128,7 @@ public class ProductBaselinesResource {
         ProductBaseline productBaseline = productBaselineService.getBaseline(baselineId);
         ProductBaselineDTO productBaselineDTO = mapper.map(productBaseline,ProductBaselineDTO.class);
         productBaselineDTO.setConfigurationItemId(productBaseline.getConfigurationItem().getId());
+        productBaselineDTO.setConfigurationItemLatestRevision(productBaseline.getConfigurationItem().getDesignItem().getLastRevision().getVersion());
         productBaselineDTO.setBaselinedParts(Tools.mapBaselinedPartsToBaselinedPartDTO(productBaseline));
         return productBaselineDTO;
     }

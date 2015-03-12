@@ -42,10 +42,7 @@ import javax.ejb.Stateless;
 import javax.jws.WebService;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -123,6 +120,129 @@ public class ProductConfigSpecManagerBean implements IProductConfigSpecManagerWS
             return rootUsageLink;
         }else{
             throw new AccessRightException(userLocal, user);
+        }
+    }
+
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
+    public List<PathChoice> filterPartUsageLinksOnReleased(ConfigurationItemKey ciKey) throws ConfigurationItemNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(ciKey.getWorkspace());
+        List<PathChoice> choices = new ArrayList<>();
+        ConfigurationItemDAO configurationItemDAO = new ConfigurationItemDAO(new Locale(user.getLanguage()), em);
+        ConfigurationItem configurationItem = configurationItemDAO.loadConfigurationItem(ciKey);
+
+        PartUsageLink productVirtualLink = new PartUsageLink();
+        productVirtualLink.setId(-1);
+        productVirtualLink.setAmount(1d);
+        List<PartLink> partLinks = new ArrayList<>();
+        partLinks.add(productVirtualLink);
+
+        filterPartUsageLinksOnReleased(choices, configurationItem.getDesignItem(), new ArrayList<>(), partLinks);
+
+        removeVoidChoices(choices);
+
+        return choices;
+    }
+
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
+    public List<PathChoice> filterPartUsageLinksOnLatest(ConfigurationItemKey ciKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ConfigurationItemNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(ciKey.getWorkspace());
+        List<PathChoice> choices = new ArrayList<>();
+        ConfigurationItemDAO configurationItemDAO = new ConfigurationItemDAO(new Locale(user.getLanguage()), em);
+        ConfigurationItem configurationItem = configurationItemDAO.loadConfigurationItem(ciKey);
+
+        PartUsageLink rootPartUsageLink = getRootPartUsageLink(ciKey);
+        List<PartLink> partLinks = new ArrayList<>();
+        partLinks.add(rootPartUsageLink);
+
+        filterPartUsageLinksOnLatest(choices, configurationItem.getDesignItem(), new ArrayList<>(), partLinks);
+
+        removeVoidChoices(choices);
+
+        return choices;
+    }
+
+
+    private void filterPartUsageLinksOnReleased(List<PathChoice> choices, PartMaster root, List<PartRevision> partRevisions, List<PartLink> partUsageLinks){
+
+        List<PartRevision> releasedRevisions = root.getAllReleasedRevisions();
+
+        // Take latest revision if not released,
+        if(releasedRevisions.isEmpty()){
+            releasedRevisions.add(root.getLastRevision());
+        }
+
+        for(PartRevision partRevision : releasedRevisions){
+            PartIteration partIteration = partRevision.getLastCheckedInIteration();
+            if(partIteration != null){
+
+                List<PartRevision> copyPartRevisions = new ArrayList<>(partRevisions);
+                copyPartRevisions.add(partRevision);
+
+                for(PartUsageLink partUsageLink : partIteration.getComponents()){
+
+                    PathChoice choice = new PathChoice(copyPartRevisions,new ArrayList<>(partUsageLinks),partUsageLink);
+                    choices.add(choice);
+
+                    List<PartLink> copyPartUsageLinks = new ArrayList<>(partUsageLinks);
+                    copyPartUsageLinks.add(partUsageLink);
+                    filterPartUsageLinksOnReleased(choices, partUsageLink.getComponent(), copyPartRevisions, copyPartUsageLinks);
+
+                    // Dive into substitutes
+                    for(PartSubstituteLink substituteLink:partUsageLink.getSubstitutes()){
+                        List<PartLink> copyPartSubstituteLinks = new ArrayList<>(partUsageLinks);
+                        copyPartSubstituteLinks.add(substituteLink);
+                        filterPartUsageLinksOnReleased(choices, substituteLink.getComponent(), copyPartRevisions, copyPartSubstituteLinks);
+                    }
+
+                }
+
+
+            }
+        }
+
+    }
+
+    private void filterPartUsageLinksOnLatest(List<PathChoice> choices, PartMaster root, List<PartRevision> partRevisions, List<PartLink> partUsageLinks){
+
+        PartRevision partRevision = root.getLastRevision();
+        PartIteration partIteration = partRevision.getLastCheckedInIteration();
+
+        if(partIteration != null){
+
+            // Copy part masters and push current part master
+            List<PartRevision> copyPartRevisions = new ArrayList<>(partRevisions);
+            copyPartRevisions.add(partRevision);
+
+            for(PartUsageLink partUsageLink : partIteration.getComponents()){
+
+                PathChoice choice = new PathChoice(copyPartRevisions,new ArrayList<>(partUsageLinks),partUsageLink);
+                choices.add(choice);
+
+                List<PartLink> copyPartUsageLinks = new ArrayList<>(partUsageLinks);
+                copyPartUsageLinks.add(partUsageLink);
+                filterPartUsageLinksOnLatest(choices, partUsageLink.getComponent(),copyPartRevisions,copyPartUsageLinks);
+
+                // Dive into substitutes
+                for(PartSubstituteLink substituteLink:partUsageLink.getSubstitutes()){
+                    List<PartLink> copyPartSubstituteLinks = new ArrayList<>(partUsageLinks);
+                    copyPartSubstituteLinks.add(substituteLink);
+                    filterPartUsageLinksOnLatest(choices, substituteLink.getComponent(),copyPartRevisions,copyPartSubstituteLinks);
+                }
+
+            }
+        }
+    }
+
+
+    private void removeVoidChoices(List<PathChoice> choices) {
+        ListIterator<PathChoice> ite = choices.listIterator();
+        while(ite.hasNext()){
+            PathChoice choice = ite.next();
+            if(!choice.getPartUsageLink().isOptional() && choice.getPartUsageLink().getSubstitutes().isEmpty()){
+                ite.remove();
+            }
         }
     }
 

@@ -34,7 +34,7 @@ import java.util.List;
  */
 @Table(name="PARTSUBSTITUTELINK")
 @Entity
-public class PartSubstituteLink implements Serializable, Cloneable {
+public class PartSubstituteLink implements Serializable, Cloneable, PartLink {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -69,56 +69,78 @@ public class PartSubstituteLink implements Serializable, Cloneable {
     public PartSubstituteLink() {
     }
 
+    @Override
     public int getId() {
         return id;
+    }
+
+    @Override
+    public double getAmount() {
+        return amount;
+    }
+
+    @Override
+    public String getUnit() {
+        return unit;
+    }
+
+    @Override
+    public String getComment() {
+        return comment;
+    }
+
+    @Override
+    public boolean isOptional() {
+        // A substitute cannot be optional
+        return false;
+    }
+
+    @Override
+    public PartMaster getComponent() {
+        return substitute;
+    }
+
+    @Override
+    public List<PartSubstituteLink> getSubstitutes() {
+        // A substitute cannot have substitutes
+        return null;
+    }
+
+    @Override
+    public String getReferenceDescription() {
+        return referenceDescription;
+    }
+
+    public PartMaster getSubstitute() {
+        return substitute;
+    }
+
+    public List<CADInstance> getCadInstances() {
+        return cadInstances;
     }
 
     public void setId(int id) {
         this.id = id;
     }
 
-    public double getAmount() {
-        return amount;
-    }
-
     public void setAmount(double amount) {
         this.amount = amount;
     }
 
-    public String getUnit() {
-        return unit;
-    }
-
     public void setUnit(String unit) {
         this.unit = unit;
-    }
-    
-    public PartMaster getSubstitute() {
-        return substitute;
-    }
-
-    public void setSubstitute(PartMaster substitute) {
-        this.substitute = substitute;
-    }
-
-    public String getComment() {
-        return comment;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
-
-    public String getReferenceDescription() {
-        return referenceDescription;
     }
 
     public void setReferenceDescription(String referenceDescription) {
         this.referenceDescription = referenceDescription;
     }
 
-    public List<CADInstance> getCadInstances() {
-        return cadInstances;
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    public void setSubstitute(PartMaster substitute) {
+        this.substitute = substitute;
     }
 
     public void setCadInstances(List<CADInstance> cadInstances) {
@@ -144,4 +166,5 @@ public class PartSubstituteLink implements Serializable, Cloneable {
 
         return clone;
     }
+
 }
