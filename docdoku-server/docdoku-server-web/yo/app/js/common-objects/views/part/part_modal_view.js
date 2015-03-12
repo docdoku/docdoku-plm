@@ -170,7 +170,9 @@ define([
                 linkedDocuments: this.linkedDocumentsView.collection.toJSON()
             }, {
                 success: function () {
-                    that.model.collection.fetch();
+                    if (that.model.collection){
+                        that.model.collection.fetch();
+                    }
                     that.hide();
                     that.model.trigger('change');
                 },
