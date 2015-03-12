@@ -20,6 +20,7 @@ define([
             'click datalist[name=unitMeasure]': 'changeMeasureUnit',
             'click .add-cadInstance': 'addCadInstance',
             'click .collapse-subParts-cadInstances': 'collapseTransformations',
+            'click .totalSubParts a, .dataDisplayed a': 'collapseTransformations',
             'click  #component': 'selectPart'
         },
 
@@ -34,7 +35,6 @@ define([
         render: function () {
             var that = this;
             this.substitutePartViews = [];
-
             this.collection.each(function (model) {
                 that.addSubstitutePartsView(model);
             });
@@ -42,7 +42,8 @@ define([
             this.$el.html(Mustache.render(template, {
                 model: this.model.attributes,
                 i18n: App.config.i18n,
-                editMode: this.options.editMode
+                editMode: this.options.editMode,
+                isReleased:this.options.isReleased
             }));
 
             this.bindDomElements();
@@ -74,10 +75,10 @@ define([
 
         initSubstitutePartView: function () {
 
-
             var self = this;
             _(this.model.get('substitutes')).each(function (instance) {
                 self.addSubstitutePartsView(instance);
+
             });
         },
         initUnit: function () {
@@ -104,9 +105,12 @@ define([
                 removeSubHandler: function () {
                     self.model.attributes.substitutes = _(self.model.attributes.substitutes).without(model);
                     self.removeSubPart(model);
+                    self.$('.substitute-count').text(self.model.get('substitutes').length);
                 }}).render();
+            this.$('.substitute-count').text(this.model.get('substitutes').length);
             this.substitutePartViews.push(substitutePartView);
             this.$(".substitute-parts").append(substitutePartView.$el);
+
         },
 
         onRemove: function () {
@@ -205,7 +209,7 @@ define([
 
 
         selectPart: function (e) {
-            if (e.target.id == "component" || e.target.parentNode.className == "cadInstance" || e.target.parentNode.className == "cadInstances") {
+            if (e.target.className.indexOf("component") != -1 || e.target.parentNode.className == "cadInstance" || e.target.parentNode.className == "cadInstances") {
                 this.options.undoSelect(this);
                 $('.component').toggleClass("selected-part", false);
                 this.$selectPart = !this.$selectPart;

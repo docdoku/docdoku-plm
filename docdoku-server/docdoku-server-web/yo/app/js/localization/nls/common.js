@@ -295,6 +295,7 @@ define({
 		PART_NUMBER: "Part Number",
 		PARTS: "Parts",
         PART_SUBSTITUTE: "Substitute part",
+        PARTS_SUBSTITUTES: "substitute parts",
 		PART_TEMPLATE: "Part template",
 		PART_TEMPLATES: "Templates",
 		PART_TYPE_HELP: "Type of the part",
