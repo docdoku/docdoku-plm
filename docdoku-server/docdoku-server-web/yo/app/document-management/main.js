@@ -67,7 +67,7 @@ require.config({
         popoverUtils: '../utils/popover.utils',
         inputValidity: '../utils/input-validity',
         datatablesOsortExt: '../utils/datatables.oSort.ext',
-        utilsprototype: '../lib/utils.prototype',
+        utilsprototype: '../utils/utils.prototype',
         userPopover: 'modules/user-popover-module/app',
         async: '../../bower_components/async/lib/async'
     },
