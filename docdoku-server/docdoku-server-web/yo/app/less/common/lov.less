@@ -4,7 +4,8 @@
         opacity: 0.2;
         cursor: move;
         display: inline-block;
-        vertical-align: super;
+        vertical-align: top;
+        margin-top: 8px;
         margin-right: 5px;
     }
 
@@ -25,19 +26,28 @@
     .expandIcon{
         float: right;
         margin-top: 5px;
+        cursor: pointer;
     }
 
     .deleteLovItem{
-        display : inline-block
+        display : inline-block;
+        vertical-align: bottom;
     }
 
     .deleteLovItemPossibleValue{
         display: inline-block;
+        vertical-align: top;
+        margin-top: 6px;
     }
 
     .lovValueDiv{
         display: inline-block;
         vertical-align: top;
+        margin-top: 2px;
+    }
+
+    .lovItemNameTitle{
+        vertical-align: middle;
     }
 
     .lovValueTitle{
@@ -65,7 +75,8 @@
     }
 
     span.lovItemName{
-        vertical-align: bottom;
+        vertical-align: middle;
+        margin-bottom: 2px;
         font-weight: bold;
         display:inline-block;
         text-overflow:ellipsis;
@@ -109,6 +120,15 @@
         .lovValueDiv{
             margin: 5px;
             margin-left: 30px;
+        }
+
+        .deleteLovItem{
+            display : inline-block;
+            vertical-align: text-top;
+        }
+
+        .expandIcon{
+            margin-top: 12px;
         }
     }
 }
