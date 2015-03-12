@@ -1,7 +1,8 @@
+/*global define,App,_*/
 define([
     'backbone',
     'mustache',
-    'text!common-objects/templates/lov/lov_possible_value.html',
+    'text!common-objects/templates/lov/lov_possible_value.html'
 ], function (Backbone, Mustache, template){
     'use strict';
     var LOVPossibleValueView = Backbone.View.extend({
@@ -30,11 +31,7 @@ define([
 
             this.nameInput = this.$('.lovItemNameValueNameInput');
             this.valueInput = this.$('.lovItemNameValueValueInput');
-
-            var allInputRequired = this.$('input[required]');
-            _.forEach(allInputRequired, function(input){
-                $(input).customValidity(App.config.i18n.REQUIRED_FIELD);
-            });
+            this.$('input[required]').customValidity(App.config.i18n.REQUIRED_FIELD);
             return this;
         },
 

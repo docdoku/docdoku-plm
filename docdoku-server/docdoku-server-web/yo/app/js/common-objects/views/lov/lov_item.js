@@ -1,8 +1,9 @@
+/*global define,App,_*/
 define([
     'backbone',
     'mustache',
     'text!common-objects/templates/lov/lov_item.html',
-    'common-objects/views/lov/lov_possible_value',
+    'common-objects/views/lov/lov_possible_value'
 ], function (Backbone, Mustache, template, LOVPossibleValueView) {
     'use strict';
     var LOVItemView = Backbone.View.extend({
@@ -11,7 +12,7 @@ define([
             'click .deleteLovItem': 'removeItem',
             'click .addLOVValue': 'addValueInList',
             'click .expandIcon': 'showEditMode',
-            'blur .lovItemNameInput': 'onItemNameChanged',
+            'blur .lovItemNameInput': 'onItemNameChanged'
         },
 
         className: 'lovItem ui-sortable well',
@@ -41,8 +42,8 @@ define([
             var oldIndex = null;
             var that = this;
             this.$lovListDiv.sortable({
-                handle: ".sortable-handler",
-                placeholder: "list-item well highlight",
+                handle: '.sortable-handler',
+                placeholder: 'list-item well highlight',
                 start: function(event, ui){
                     oldIndex = ui.item.index();
                 },
@@ -53,10 +54,7 @@ define([
                 }
             });
 
-            var allInputRequired = this.$('input[required]');
-            _.forEach(allInputRequired, function(input){
-                $(input).customValidity(App.config.i18n.REQUIRED_FIELD);
-            });
+            this.$('input[required]').customValidity(App.config.i18n.REQUIRED_FIELD);
 
             return this;
         },
@@ -84,7 +82,7 @@ define([
         },
 
         addValueInList:function(){
-            var newPossibleValue = {name:"", value:""};
+            var newPossibleValue = {name:'', value:''};
             this.model.getLOVValues().push(newPossibleValue);
             this.addPossibleValueView(newPossibleValue);
         },
@@ -104,8 +102,8 @@ define([
             this.model.setLOVName(newName);
         },
 
-        arrayMove: function (array, old_index, new_index) {
-            array.splice(new_index, 0, array.splice(old_index, 1)[0]);
+        arrayMove: function (array, oldIndex, newIndex) {
+            array.splice(newIndex, 0, array.splice(oldIndex, 1)[0]);
         }
 
     });

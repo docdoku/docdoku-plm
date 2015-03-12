@@ -57,7 +57,7 @@ define([
             this.deleteButton = this.$('.delete');
             this.aclButton = this.$('.edit-acl');
             this.tagsButton = this.$('.tags');
-            this.$notifications = this.$el.find('.notifications').first();
+            this.$notifications = this.$('.notifications').first();
         },
 
         newIssue: function () {
@@ -115,7 +115,9 @@ define([
                             aclEditView.closeModal();
                             self.listView.redraw();
                         },
-                        error: self.onError
+                        error: function(model, error){
+                            aclEditView.onError(model, error);
+                        }
                     });
 
                 });
@@ -140,11 +142,10 @@ define([
 
         onError:function(model, error){
             var errorMessage = error ? model.responseText : error;
-            $("#acl_edit_modal").find('.notifications').first().append(new AlertView({
+            this.$notifications.append(new AlertView({
                 type: 'error',
                 message: errorMessage
             }).render().$el);
-
         }
     });
 

@@ -17,6 +17,7 @@
 
     // Changes the custom validity message
     $.fn.customValidity = function (message) {
+
         var element = this;
 
         var onInvalid = function(e){

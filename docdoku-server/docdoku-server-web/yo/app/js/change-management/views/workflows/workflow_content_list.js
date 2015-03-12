@@ -45,8 +45,8 @@ define([
         },
 
         bindDomElement : function(){
-            this.$notifications = this.$el.find('.notifications');
-            this.$newWorflowBtn = this.$el.find('.actions .new');
+            this.$notifications = this.$('.notifications');
+            this.$newWorflowBtn = this.$('.actions .new');
             this.$aclButton = this.$('.actions .edit-acl');
             this.$deleteButton = this.$('.actions .delete');
 
@@ -173,7 +173,9 @@ define([
                         aclEditView.closeModal();
                         self.listView.redraw();
                     },
-                    error: self.onError
+                    error: function(model, error){
+                        aclEditView.onError(model, error);
+                    }
                 });
             });
 
@@ -181,11 +183,10 @@ define([
         },
         onError:function(model, error){
             var errorMessage = error ? model.responseText : error;
-            $("#acl_edit_modal").find('.notifications').first().append(new AlertView({
+            this.$notifications.append(new AlertView({
                 type: 'error',
                 message: errorMessage
             }).render().$el);
-
         }
 
     });

@@ -17,7 +17,8 @@ define([
         events: {
             'hidden .modal.list_lov': 'onHidden',
             'click .addLOVButton': 'addLov',
-            'submit form': 'onSaveLovs'
+            'submit form': 'onSaveLovs',
+            'click .btn-saveLovs': 'interceptSubmit'
         },
 
         collection: new LOVCollection(),
@@ -85,8 +86,18 @@ define([
             this.lovViews = _.without(this.lovViews, lovView);
         },
 
-        onSaveLovs: function(event){
+        interceptSubmit:function(){
+            this.isValid = this.checkEmptyHiddenFields();
+        },
 
+        checkEmptyHiddenFields:function(){
+            var invalidItems = this.$('input:invalid');
+            invalidItems.closest('.lovItem').addClass('edition');
+            return !invalidItems.length;
+        },
+
+        onSaveLovs: function(event){
+            if(this.isValid){
                 var nbError = 0;
 
                 var that = this;
@@ -136,6 +147,7 @@ define([
                 }else{
                     queueDelete.push(this.deletedLovModel);
                 }
+            }
 
             event.preventDefault();
             return false;
