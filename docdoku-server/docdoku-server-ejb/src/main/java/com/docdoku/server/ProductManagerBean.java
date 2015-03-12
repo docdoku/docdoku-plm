@@ -27,12 +27,7 @@ import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.document.DocumentLink;
 import com.docdoku.core.exceptions.*;
-import com.docdoku.core.meta.InstanceAttribute;
-import com.docdoku.core.meta.InstanceAttributeTemplate;
-import com.docdoku.core.meta.ListOfValuesAttributeTemplate;
-import com.docdoku.core.meta.ListOfValuesKey;
-import com.docdoku.core.meta.ListOfValues;
-import com.docdoku.core.meta.Tag;
+import com.docdoku.core.meta.*;
 import com.docdoku.core.product.*;
 import com.docdoku.core.product.PartIteration.Source;
 import com.docdoku.core.query.PartSearchQuery;
@@ -310,7 +305,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         }
 
         if (partR.isReleased()) {
-            throw new NotAllowedException(locale, "NotAllowedException11");
+            throw new NotAllowedException(locale, "NotAllowedException47");
         }
 
         PartIteration beforeLastPartIteration = partR.getLastIteration();
