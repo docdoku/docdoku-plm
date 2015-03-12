@@ -53,6 +53,11 @@ define([
                 }
             });
 
+            var allInputRequired = this.$('input[required]');
+            _.forEach(allInputRequired, function(input){
+                $(input).customValidity(App.config.i18n.REQUIRED_FIELD);
+            });
+
             return this;
         },
 
