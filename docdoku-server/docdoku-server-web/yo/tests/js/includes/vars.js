@@ -162,6 +162,7 @@ var apiUrls = {
 	userInfo : homeUrl+'api/workspaces/'+workspace+'/users/me',
 	deletePart : homeUrl+'api/workspaces/'+workspace+'/parts/'+products.part1.number+'-A',
     deletePartTemplate : homeUrl+'api/workspaces/'+workspace+'/part-templates/'+products.template1.number,
+    deleteLov : homeUrl+'api/workspaces/'+workspace+'/lov/'+documents.lov.itemName,
 	deleteDocument : homeUrl+'api/workspaces/'+workspace+'/documents/'+documents.document1.number+'-A',
 	deleteProduct : homeUrl+'api/workspaces/'+workspace+'/products/'+products.product1.number,
 	deleteFolder : homeUrl+'api/workspaces/'+workspace+'/folders/'+workspace+":"+documents.folder1,

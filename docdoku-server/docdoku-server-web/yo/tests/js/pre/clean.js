@@ -159,6 +159,17 @@ casper.test.begin('Cleaning potential data', 0, function cleanTestsSuite() {
         });
     });
 
+    // LOV
+    casper.then(function cleanupLovs() {
+        this.open(apiUrls.deleteLov, {method: 'DELETE'}).then(function (response) {
+            if (response.status === 200) {
+                this.log('Lov has been deleted', 'info');
+            } else {
+                this.log('Cannot delete lov, reason : ' + helpers.findReasonInResponseHeaders(response.headers), 'warning');
+            }
+        });
+    });
+
     casper.run(function allDone(){
         this.test.done();
     });
