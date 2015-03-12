@@ -79,6 +79,14 @@ public class LOVManagerBean implements ILOVManagerLocal {
         Locale locale = new Locale(user.getLanguage());
         LOVDAO lovDAO = new LOVDAO(locale, em);
 
+        if (name == null || name.trim().equalsIgnoreCase("")){
+            throw new CreationException("LOVNameEmptyException");
+        }
+
+        if (nameValuePairList == null || nameValuePairList.size() == 0){
+            throw new CreationException("LOVPossibleValueException");
+        }
+
         WorkspaceDAO workspaceDAO = new WorkspaceDAO(locale, em);
         Workspace workspace = workspaceDAO.loadWorkspace(workspaceId);
 
