@@ -35,6 +35,11 @@ var documents = {
     tags:{
         tag1:'Foo',
         tag2:'Bar'
+    },
+    lov : {
+        itemName : 'casperTestItemName',
+        possibleValueName : 'None',
+        possibleValueValue : '0'
     }
 };
 
