@@ -81,7 +81,8 @@ module.exports = {
         "js/change-management/order/orderCreation.js",
         "js/change-management/milestone/milestoneCreation.js",
 
-
+        //LOV Creation
+        "js/document-management/lov/lovCreation.js",
 
         // Deletions
         "js/document-management/tag/tagDeletion.js",
@@ -99,7 +100,8 @@ module.exports = {
         "js/product-management/baseline/baselineDeletion.js",
         "js/product-management/product/productDeletion.js",
         "js/product-management/part/partDeletion.js",
-        "js/product-management/template/partTemplateDeletion.js"
+        "js/product-management/template/partTemplateDeletion.js",
+        "js/document-management/lov/lovDeletion.js"
 
 
     ]
