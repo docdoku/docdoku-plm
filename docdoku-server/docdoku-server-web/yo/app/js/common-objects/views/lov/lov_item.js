@@ -48,7 +48,7 @@ define([
                 },
                 stop: function(event, ui) {
                     var newIndex = ui.item.index();
-                    that.model.getLOVValues().move(oldIndex, newIndex);
+                    that.arrayMove(that.model.getLOVValues(),oldIndex, newIndex);
                     oldIndex = null;
                 }
             });
@@ -102,6 +102,10 @@ define([
             var newName = this.$('.lovItemNameInput').val();
             this.$('.lovItemName').html(newName);
             this.model.setLOVName(newName);
+        },
+
+        arrayMove: function (array, old_index, new_index) {
+            array.splice(new_index, 0, array.splice(old_index, 1)[0]);
         }
 
     });
