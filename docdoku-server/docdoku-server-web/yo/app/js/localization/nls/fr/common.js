@@ -325,6 +325,7 @@ define({
 	RELEASED: "Finalisé",
 	RELEASED_SHORT:"Dernière versions finalisés",
 	RELEASE: "Finaliser",
+	RELEASE_NOW: "Finaliser maintenant",
 	RELEASE_SELECTION_QUESTION: "Finaliser la sélection ?",
     RELOAD:"Recharger",
 	REMOTE_ACCEPT: "L'utilisateur distant a accepté l'appel. En attente de connexion ...",

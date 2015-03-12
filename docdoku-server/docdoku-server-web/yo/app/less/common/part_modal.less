@@ -110,10 +110,12 @@
         }
       }
       .collapse-subParts-cadInstances, .collapse-substitute-cadInstance {
-        float: right;
-        margin-top: 9px;
-        cursor: pointer;
-        opacity: 0.5;
+          font-size: 18px;
+          cursor: pointer;
+          opacity: 0.5;
+          position: absolute;
+          bottom: 12px;
+          right: 12px;
 
         &:hover {
           opacity: 1;
@@ -202,15 +204,15 @@
         background-color: rgba(193, 193, 193, 0.61);
         cursor: pointer;
       }
+        border: 1px solid transparent;
+        &.selected-part {
+            opacity: 1;
+            background-color: rgba(193, 193, 193, 0.61);
+            border: 1px dashed #ACACAC;
+            box-shadow: none;
+        }
     }
-    .selected-part {
-      opacity: 1;
-      background-color: rgba(129, 129, 129, 0.61);
-      box-shadow: inset 0 1px 1px rgba(157, 148, 148, 0.52);
-      &:hover {
-        background-color: rgba(129, 129, 129, 0.61);
-      }
-    }
+
     .tooltip{
       position: relative;
       color: rgba(0, 0, 0, 0.4);

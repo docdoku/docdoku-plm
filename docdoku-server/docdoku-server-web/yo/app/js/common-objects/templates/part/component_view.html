@@ -37,8 +37,6 @@
             <div class="dataDisplayed">
                 {{/isReleased}}
                 {{^isReleased}}
-                <div class="totalSubParts">
-                    {{/isReleased}}<a> <span class="substitute-count">{{model.substitutes.length}}</span>  {{i18n.PARTS_SUBSTITUTES}}</a></div>
 
                 <div class="subParts-CADInstance">
 
@@ -46,6 +44,9 @@
                     <div class="substitute-parts"></div>
 
                 </div>
+
+                <div class="totalSubParts">
+                    {{/isReleased}}<a> <span class="substitute-count">{{model.substitutes.length}}</span>  {{i18n.PARTS_SUBSTITUTES}}</a></div>
 
 
                 {{/model.component.number}}
@@ -85,12 +86,12 @@
                 <div class="dataDisplayed">
                     {{/isReleased}}
                     {{^isReleased}}
-                    <div class="totalSubParts">
-                        {{/isReleased}}<a> <span class="substitute-count">{{model.substitutes.length}}</span> {{i18n.PARTS_SUBSTITUTES}} </a></div>
                     <div class="subParts-CADInstance">
                         <div class="cadInstances"></div>
                         <div class="substitute-parts"></div>
                     </div>
+                    <div class="totalSubParts">
+                        {{/isReleased}}<a> <span class="substitute-count">{{model.substitutes.length}}</span> {{i18n.PARTS_SUBSTITUTES}} </a></div>
 
                     {{/model.component.number}}
 

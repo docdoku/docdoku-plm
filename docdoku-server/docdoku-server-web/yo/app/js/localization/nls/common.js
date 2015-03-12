@@ -330,6 +330,7 @@ define({
 		RELEASED: "Released",
 		RELEASED_SHORT:"Latest released versions",
 		RELEASE: "Release",
+		RELEASE_NOW: "Release now",
 		RELEASE_SELECTION_QUESTION: "Release selection?",
         RELOAD:"Reload",
 		REMOTE_ACCEPT: "Remote user has accepted the call. Waiting for connection ...",
