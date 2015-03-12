@@ -150,13 +150,6 @@
                                 {{^editMode}}disabled="disabled"{{/editMode}} />
                             </div>
                         </div>
-                        <div class="control-group">
-                            <label class="control-label">{{i18n.REVISION_DATE}}</label>
-
-                            <div class="controls">
-                                <span class="help-inline"><a class="date-popover">{{iteration.revisionDate}}</a></span>
-                            </div>
-                        </div>
                         {{^isReleased}}
                         <div class="action-checkin-checkout" >
                             {{^isCheckout}}<button type="button" class="btn btn-small btn-warning action-checkout"> <i class="fa fa-pencil"></i> {{i18n.CHECKOUT}}</button>{{/isCheckout}}
@@ -165,6 +158,15 @@
 
                         </div>
                         {{/isReleased}}
+
+                        <div class="control-group">
+                            <label class="control-label">{{i18n.REVISION_DATE}}</label>
+
+                            <div class="controls">
+                                <span class="help-inline"><a class="date-popover">{{iteration.revisionDate}}</a></span>
+                            </div>
+                        </div>
+
 
                         <div class="control-group">
                             <label class="control-label">{{i18n.MODIFICATION_DATE}}</label>
