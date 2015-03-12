@@ -134,6 +134,7 @@
       .substitute {
         border-style: dashed;
         border-radius: 5px;
+        border-color: rgb(161, 160, 160);
       }
       .cadInstances {
         margin: 10px 0px 0px 21px;
@@ -181,23 +182,34 @@
 
       .dataAlign{
         margin: 10px 0px 0px 21px;
+       display: inline-block;
+      }
+      .dataDisplayed {
+        margin-top: 7px;
+
       }
 
-
+      .totalSubParts{
+        margin-left: 10px;
+        display: inline-block;
+      }
 
 
     }
     .component {
-      opacity: 0.6;
+
       &:hover {
-        opacity: 1;
+        background-color: rgba(193, 193, 193, 0.61);
         cursor: pointer;
       }
     }
     .selected-part {
       opacity: 1;
-      background-color: rgba(180, 182, 186, 0.31);
+      background-color: rgba(129, 129, 129, 0.61);
       box-shadow: inset 0 1px 1px rgba(157, 148, 148, 0.52);
+      &:hover {
+        background-color: rgba(129, 129, 129, 0.61);
+      }
     }
     .tooltip{
       position: relative;

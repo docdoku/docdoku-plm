@@ -1,73 +1,98 @@
-<div id="component" class="well component">
-    {{#model.component.number}}
-    {{#editMode}}<a class="remove">×</a>{{/editMode}}
-    <input type="text" name="number" value="{{model.component.number}}" title="{{i18n.PART_NUMBER}}" disabled/>
-    <input type="text" name="name" value="{{model.component.name}}" title="{{i18n.PART_NAME}}" disabled/>
-    <input type="checkbox" name="optional" title="{{i18n.OPTIONAL}}" {{#model.optional}}checked{{/model.optional}}
-    {{^editMode}}readonly{{/editMode}}/><label name="optional">{{i18n.OPTIONAL}}</label>
+{{#isReleased}}
+<div class="well">
+    {{/isReleased}}
+    {{^isReleased}}
+    <div id="component" class="well component">
+        {{/isReleased}}
+        {{#model.component.number}}
+        {{#editMode}}<a class="remove">×</a>{{/editMode}}
+        <input type="text" name="number" value="{{model.component.number}}" title="{{i18n.PART_NUMBER}}" disabled/>
+        <input type="text" name="name" value="{{model.component.name}}" title="{{i18n.PART_NAME}}" disabled/>
+        <label name="optional"> <input type="checkbox" name="optional" title="{{i18n.OPTIONAL}}"
+            {{#model.optional}}checked{{/model.optional}}
+            {{^editMode}}readonly{{/editMode}}/>{{i18n.OPTIONAL}}</label>
 
-    <i class="fa fa-angle-double-down collapse-subParts-cadInstances"></i>
+        <i class="fa fa-angle-double-down collapse-subParts-cadInstances"></i>
+        {{#isReleased}}
+        <div class="dataDisplayed">
+            {{/isReleased}}
+            {{^isReleased}}
+            <div class="dataAlign">
+                {{/isReleased}}
+                <input type="text" name="referenceDescription" value="{{model.referenceDescription}}"
+                       placeholder="{{i18n.LINK_DESCRIPTION}}"{{^editMode}}readonly{{/editMode}}/>
+                <input type="text" name="amount" value="{{model.amount}}" title="{{i18n.AMOUNT}}"/>
+                <input type="text" name="newUnit" value="{{i18n.UNIT}}" default-unity="{{i18n.UNIT}}"
+                {{#editMode}}list="unity"{{/editMode}} {{^editMode}}readonly{{/editMode}}/>
+                <datalist id="unity" name="unitMeasure" class="unit unitEdit">
+                    <option value="{{i18n.UNIT}}">
+                    <option value="{{i18n.KG}}">
+                    <option value="{{i18n.LITER}}">
+                    <option value="{{i18n.METER}}">
+                    <option value="{{i18n.SQUARE_METER}}">
+                </datalist>
+                {{#editMode}}<i class="fa fa-plus add-cadInstance"></i>{{/editMode}}
+            </div>
+            {{#isReleased}}
+            <div class="dataDisplayed">
+                {{/isReleased}}
+                {{^isReleased}}
+                <div class="totalSubParts">
+                    {{/isReleased}}<a> <span class="substitute-count">{{model.substitutes.length}}</span>  {{i18n.PARTS_SUBSTITUTES}}</a></div>
 
-    <div class="dataAlign">
+                <div class="subParts-CADInstance">
 
-        <input type="text" name="referenceDescription" value="{{model.referenceDescription}}" placeholder="{{i18n.LINK_DESCRIPTION}}"{{^editMode}}readonly{{/editMode}}/>
-        <input type="text" name="amount" value="{{model.amount}}" title="{{i18n.AMOUNT}}"/>
-        <input type="text" name="newUnit" value="{{i18n.UNIT}}" default-unity="{{i18n.UNIT}}"
-        {{#editMode}}list="unity"{{/editMode}} {{^editMode}}readonly{{/editMode}}/>
-        <datalist id="unity" name="unitMeasure" class="unit unitEdit">
-            <option value="{{i18n.UNIT}}">
-            <option value="{{i18n.KG}}">
-            <option value="{{i18n.LITER}}">
-            <option value="{{i18n.METER}}">
-            <option value="{{i18n.SQUARE_METER}}">
-        </datalist>
-        {{#editMode}}<i class="fa fa-plus add-cadInstance"></i>{{/editMode}}
-    </div>
-    <div class="subParts-CADInstance">
+                    <div class="cadInstances"></div>
+                    <div class="substitute-parts"></div>
 
-        <div class="cadInstances"></div>
-        <div class="substitute-parts"></div>
-
-    </div>
-
-    {{/model.component.number}}
-
-
-    {{^model.component.number}}
-    {{#editMode}}<a class="remove">×</a>{{/editMode}}
-    <input type="text" name="number" value="" placeholder="{{i18n.PART_NUMBER}}" required/>
-    <input type="text" name="name" value="" placeholder="{{i18n.PART_NAME}}"/>
-    <input type="checkbox" name="optional" title="{{i18n.OPTIONAL}}" {{^editMode}}readonly{{/editMode}}/><label
-        name="optional">{{i18n.OPTIONAL}}</label>
-
-    <i class="fa fa-angle-double-down collapse-subParts-cadInstances"></i>
-
-    <div class="dataAlign">
-        <input type="text" name="referenceDescription" value="" placeholder="{{i18n.LINK_DESCRIPTION}}"
-        {{^editMode}}readonly{{/editMode}}/>
-        <input type="text" name="amount" value="{{model.amount}}" title="{{i18n.AMOUNT}}" disabled/>
-        <input type="text" list="unityChoice" name="newUnit" value="{{i18n.UNIT}}" default-unity="{{i18n.UNIT}}"
-        {{#editMode}}list="unity"{{/editMode}} {{^editMode}}readonly{{/editMode}}/>
-        <datalist id="unityChoice" name="unitMeasure" class="unit unitEdit">
-            {{#editMode}}
-            <option value="{{i18n.UNIT}}">
-            <option value="{{i18n.KG}}">
-            <option value="{{i18n.LITER}}">
-            <option value="{{i18n.METER}}">
-            <option value="{{i18n.SQUARE_METER}}">
-                {{/editMode}}
-        </datalist>
-
-        {{#editMode}}<i class="fa fa-plus add-cadInstance"></i>{{/editMode}}
-
-    </div>
-
-    <div class="subParts-CADInstance">
-        <div  class="cadInstances"></div>
-        <div class="substitute-parts"></div>
-    </div>
-
-    {{/model.component.number}}
+                </div>
 
 
-</div>
+                {{/model.component.number}}
+
+
+                {{^model.component.number}}
+                {{#editMode}}<a class="remove">×</a>{{/editMode}}
+                <input type="text" name="number" value="" placeholder="{{i18n.PART_NUMBER}}" required/>
+                <input type="text" name="name" value="" placeholder="{{i18n.PART_NAME}}"/>
+                <label name="optional"><input type="checkbox" name="optional" title="{{i18n.OPTIONAL}}"
+                    {{^editMode}}readonly{{/editMode}}/>{{i18n.OPTIONAL}}</label>
+
+                <i class="fa fa-angle-double-down collapse-subParts-cadInstances"></i>
+
+                <div>
+                    <input type="text" name="referenceDescription" value="" placeholder="{{i18n.LINK_DESCRIPTION}}"
+                    {{^editMode}}readonly{{/editMode}}/>
+                    <input type="text" name="amount" value="{{model.amount}}" title="{{i18n.AMOUNT}}" disabled/>
+                    <input type="text" list="unityChoice" name="newUnit" value="{{i18n.UNIT}}"
+                           default-unity="{{i18n.UNIT}}"
+                    {{#editMode}}list="unity"{{/editMode}} {{^editMode}}readonly{{/editMode}}/>
+                    <datalist id="unityChoice" name="unitMeasure" class="unit unitEdit">
+                        {{#editMode}}
+                        <option value="{{i18n.UNIT}}">
+                        <option value="{{i18n.KG}}">
+                        <option value="{{i18n.LITER}}">
+                        <option value="{{i18n.METER}}">
+                        <option value="{{i18n.SQUARE_METER}}">
+                            {{/editMode}}
+                    </datalist>
+
+                    {{#editMode}}<i class="fa fa-plus add-cadInstance"></i>{{/editMode}}
+
+                </div>
+
+                {{#isReleased}}
+                <div class="dataDisplayed">
+                    {{/isReleased}}
+                    {{^isReleased}}
+                    <div class="totalSubParts">
+                        {{/isReleased}}<a> <span class="substitute-count">{{model.substitutes.length}}</span> Substitutes </a></div>
+                    <div class="subParts-CADInstance">
+                        <div class="cadInstances"></div>
+                        <div class="substitute-parts"></div>
+                    </div>
+
+                    {{/model.component.number}}
+
+
+                </div>

@@ -78,6 +78,8 @@ define([
             data.editMode = this.editMode;
             data.isLockedMode = !this.iteration || (this.model.isCheckout() && this.model.isLastIteration(this.iteration.getIteration()) && !this.model.isCheckoutByConnectedUser());
             data.isCheckout = this.model.isCheckout() ;
+            data.isReleased = this.model.attributes.status == "RELEASED" ;
+            this.isReleased = this.model.attributes.status == "RELEASED" ;
             if (this.model.hasIterations()) {
                 var hasNextIteration = this.iterations.hasNextIteration(this.iteration);
                 var hasPreviousIteration = this.iterations.hasPreviousIteration(this.iteration);
@@ -211,6 +213,7 @@ define([
                 el: '#iteration-components',
                 collection: new Backbone.Collection(this.iteration.getComponents()),
                 editMode: this.editMode,
+                isReleased:this.isReleased,
                 model: this.model
             }).render();
         },
