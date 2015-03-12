@@ -20,6 +20,7 @@
 package com.docdoku.core.meta;
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlSeeAlso;
 import java.io.Serializable;
 
 /**
@@ -31,31 +32,26 @@ import java.io.Serializable;
  * @since   V1.0
  */
 @Table(name="INSTANCEATTRIBUTETEMPLATE")
+@XmlSeeAlso({DefaultAttributeTemplate.class, ListOfValuesAttributeTemplate.class})
+@Inheritance()
 @Entity
-public class InstanceAttributeTemplate implements Serializable {
+public abstract class InstanceAttributeTemplate implements Serializable {
 
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Id
-    private int id;
+    protected int id;
 
     @Column(length=100)
-    private String name = "";
+    protected String name = "";
 
-    private  boolean mandatory;
+    protected  boolean mandatory;
 
-    private AttributeType attributeType;
-
-    public enum AttributeType {
-
-        TEXT, NUMBER, DATE, BOOLEAN, URL
-    }
 
     public InstanceAttributeTemplate() {
     }
 
-    public InstanceAttributeTemplate(String pName, AttributeType pAttributeType) {
+    public InstanceAttributeTemplate(String pName) {
         name = pName;
-        attributeType = pAttributeType;
     }
 
     public int getId() {
@@ -82,43 +78,9 @@ public class InstanceAttributeTemplate implements Serializable {
         this.mandatory = mandatory;
     }
 
-    public InstanceAttributeTemplate.AttributeType getAttributeType() {
-        return attributeType;
-    }
 
-    public void setAttributeType(InstanceAttributeTemplate.AttributeType attributeType) {
-        this.attributeType = attributeType;
-    }
 
-    public InstanceAttribute createInstanceAttribute() {
-        InstanceAttribute attr = null;
-        if(attributeType!=null){
-            switch (attributeType) {
-                case TEXT:
-                    attr = new InstanceTextAttribute();
-                    break;
-                case NUMBER:
-                    attr = new InstanceNumberAttribute();
-                    break;
-                case BOOLEAN:
-                    attr = new InstanceBooleanAttribute();
-                    break;
-                case DATE:
-                    attr = new InstanceDateAttribute();
-                    break;
-                case URL :
-                    attr = new InstanceURLAttribute();
-                    break;
-                default:
-                    return null;
-            }
-
-            attr.setName(name);
-            attr.setMandatory(mandatory);
-        }
-
-        return attr;
-    }
+    public abstract InstanceAttribute createInstanceAttribute();
 
 
     @Override
@@ -132,19 +94,17 @@ public class InstanceAttributeTemplate implements Serializable {
 
         InstanceAttributeTemplate that = (InstanceAttributeTemplate) o;
 
-        return id == that.id && name.equals(that.name);
+        return id == that.id;
 
     }
 
     @Override
     public int hashCode() {
-        int result = id;
-        result = 31 * result + name.hashCode();
-        return result;
+        return id;
     }
 
     @Override
     public String toString() {
-        return name + "-" + attributeType;
+        return name;
     }
 }
