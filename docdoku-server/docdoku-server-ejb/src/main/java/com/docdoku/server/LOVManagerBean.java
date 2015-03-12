@@ -41,7 +41,7 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * Created by lebeaujulien on 03/03/15.
+ * Created by Lebeau Julien on 03/03/15.
  */
 @Local(ILOVManagerLocal.class)
 @Stateless(name = "LOVManagerBean")
