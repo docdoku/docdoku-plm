@@ -61,6 +61,14 @@ define(['backbone'], function (Backbone) {
             });
         },
 
+        getReleasedChoices : function(){
+            return $.getJSON(this.urlRoot() + '/' + this.getId() + '/choices?type=RELEASED');
+        },
+
+        getLatestChoices : function(){
+            return $.getJSON(this.urlRoot() + '/' + this.getId() + '/choices?type=LATEST');
+        },
+
         getReleasedParts : function(){
             return $.getJSON(this.urlRoot() + '/' + this.getId() + '/latest-released');
         },

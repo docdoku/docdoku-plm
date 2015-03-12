@@ -20,10 +20,10 @@
 package com.docdoku.core.services;
 
 import com.docdoku.core.configuration.ConfigSpec;
+import com.docdoku.core.configuration.PathChoice;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.ConfigurationItemKey;
 import com.docdoku.core.product.PartIteration;
-import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.product.PartUsageLink;
 
 import java.util.List;
@@ -44,6 +44,8 @@ public interface IProductConfigSpecManagerLocal {
     PartUsageLink filterProductStructure(PartUsageLink rootUsageLink, ConfigSpec configSpec, Integer pDepth) throws ConfigurationItemNotFoundException, WorkspaceNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException, PartUsageLinkNotFoundException, AccessRightException;
     PartUsageLink getRootPartUsageLink(ConfigurationItemKey pKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ConfigurationItemNotFoundException;
 
+    List<PathChoice> filterPartUsageLinksOnReleased(ConfigurationItemKey ciKey) throws ConfigurationItemNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
+    List<PathChoice> filterPartUsageLinksOnLatest(ConfigurationItemKey ciKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ConfigurationItemNotFoundException;
     List<PartIteration> findAllReleasedParts(ConfigurationItemKey ciKey) throws ConfigurationItemNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
 
 }

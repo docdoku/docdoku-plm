@@ -21,6 +21,7 @@ package com.docdoku.server.rest;
 
 import com.docdoku.core.common.User;
 import com.docdoku.core.configuration.ConfigSpec;
+import com.docdoku.core.configuration.PathChoice;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.meta.InstanceAttribute;
@@ -32,6 +33,7 @@ import com.docdoku.server.rest.collections.InstanceCollection;
 import com.docdoku.server.rest.collections.PathFilteredListInstanceCollection;
 import com.docdoku.server.rest.dto.*;
 import com.docdoku.server.rest.dto.baseline.BaselinedPartDTO;
+import com.docdoku.server.rest.dto.baseline.PathChoiceDTO;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -200,6 +202,35 @@ public class ProductResource {
     @Path("{ciId}/layers")
     public LayerResource processLayers(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId) {
         return layerResource;
+    }
+
+    @GET
+    @Path("{ciId}/choices")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<PathChoiceDTO> getBaselineChoices(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("type") String type) throws ConfigurationItemNotFoundException, WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException {
+
+        ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
+        List<PathChoice> choices = null;
+
+        if(type!= null) {
+            if(type.equals("LATEST")){
+                choices = productConfigSpecService.filterPartUsageLinksOnLatest(ciKey);
+            }else if(type.equals("RELEASED")){
+                choices = productConfigSpecService.filterPartUsageLinksOnReleased(ciKey);
+            }else{
+                throw new IllegalArgumentException("Type must be either RELEASED or LATEST");
+            }
+        }else{
+            throw new IllegalArgumentException("Type must be defined");
+        }
+
+        List<PathChoiceDTO> pathChoiceDTOs = new ArrayList<>();
+
+        for(PathChoice choice :choices){
+            pathChoiceDTOs.add(new PathChoiceDTO(choice));
+        }
+
+        return pathChoiceDTOs;
     }
 
     @GET

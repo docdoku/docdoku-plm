@@ -1,15 +1,25 @@
-{{#editMode}}
-    <a class="model-ref">{{model.getNumber}}</a>
-{{#model.getAvailableIterations}}
-    <label class="radio">
-        <input type="radio" name="partIteration-selector-{{model.getNumber}}" value="{{version}}-{{lastIteration}}" />
-        {{version}}-{{lastIteration}}
-        {{#released}}<i class="fa fa-check" title="{{i18n.RELEASED}}"></i>{{/released}}
-        {{^released}}<a class="release">{{i18n.RELEASE}}</a> <i class="fa fa-spin fa-refresh loader"></i> {{/released}}
-    </label>
-{{/model.getAvailableIterations}}
-<span class="errors"></span>
-{{/editMode}}
-{{^editMode}}
-    <a class="model-ref">{{model.getNumber}}-{{model.getVersion}}-{{model.getIteration}}</a>
-{{/editMode}}
+<div class="control-group">
+    {{#editMode}}
+    <label class="control-label model-ref">{{model.getNumber}}</label>
+    {{#model.getAvailableIterations}}
+    <div class="controls">
+        <label class="radio">
+            <input type="radio" name="partIteration-selector-{{model.getNumber}}"
+                   value="{{version}}-{{lastIteration}}"/>
+            {{version}}-{{lastIteration}}
+            {{#released}}<i class="fa fa-check" title="{{i18n.RELEASED}}"></i>{{/released}}
+            {{^released}}<a class="release">{{i18n.RELEASE}}</a> <i class="fa fa-spin fa-refresh loader"></i>
+            {{/released}}
+        </label>
+        <span class="errors"></span>
+    </div>
+    {{/model.getAvailableIterations}}
+
+    {{/editMode}}
+    {{^editMode}}
+    <a class="control-label model-ref">{{model.getNumber}}</a>
+    <div class="controls">
+        {{model.getVersion}}-{{model.getIteration}}
+    </div>
+    {{/editMode}}
+</div>
