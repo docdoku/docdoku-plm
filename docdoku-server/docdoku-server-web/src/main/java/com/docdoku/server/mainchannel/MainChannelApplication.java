@@ -348,7 +348,7 @@ public class MainChannelApplication {
 
     private void process(Session session, String callerLogin, ChatMessage chat) {
         if (!MainChannelApplication.hasChannels(chat.getRemoteUser())) {
-            MainChannelDispatcher.send(session, new ChatMessage(ChannelMessagesType.CHAT_MESSAGE, chat.getRemoteUser(), null, null, chat.getContext(), ChatMessage.CHAT_MESSAGE_UNREACHABLE));
+            MainChannelDispatcher.send(session, new ChatMessage(ChannelMessagesType.CHAT_MESSAGE, chat.getRemoteUser(), "", "", chat.getContext(), ChatMessage.CHAT_MESSAGE_UNREACHABLE));
         } else {
             MainChannelDispatcher.sendToAllUserChannels(callerLogin, new ChatMessage(ChannelMessagesType.CHAT_MESSAGE_ACK, chat.getRemoteUser(), callerLogin, chat.getMessage(), chat.getContext(), null));
             MainChannelDispatcher.sendToAllUserChannels(chat.getRemoteUser(), new ChatMessage(ChannelMessagesType.CHAT_MESSAGE, callerLogin, callerLogin, chat.getMessage(), chat.getContext(), null));
