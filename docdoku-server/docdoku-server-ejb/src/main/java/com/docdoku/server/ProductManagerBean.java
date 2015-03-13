@@ -19,6 +19,7 @@
  */
 package com.docdoku.server;
 
+import com.docdoku.core.change.ModificationNotification;
 import com.docdoku.core.common.*;
 import com.docdoku.core.configuration.LatestConfigSpec;
 import com.docdoku.core.configuration.ProductBaseline;
@@ -761,7 +762,18 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         }
         return partR;
     }
-    
+
+
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
+    @Override
+    public List<ModificationNotification> getModificationNotifications(PartIterationKey pPartIPK) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
+        PartRevisionKey partRevisionKey = pPartIPK.getPartRevision();
+        User user = checkPartRevisionReadAccess(partRevisionKey);
+        Locale locale = new Locale(user.getLanguage());
+        return new ModificationNotificationDAO(locale,em).getModificationNotifications(pPartIPK);
+    }
+
+
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public PartIteration getPartIteration(PartIterationKey pPartIPK) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException, PartIterationNotFoundException {

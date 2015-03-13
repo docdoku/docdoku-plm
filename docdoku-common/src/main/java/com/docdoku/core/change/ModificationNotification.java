@@ -36,6 +36,9 @@ import java.io.Serializable;
  * @since V2.0
  */
 @Entity
+@NamedQueries ({
+        @NamedQuery(name="ModificationNotification.findByImpactedPartIteration", query = "SELECT n FROM ModificationNotification n WHERE n.impactedPart = :impactedPart")
+})
 @Table(name="MODIFICATIONNOTIFICATION")
 public class ModificationNotification implements Serializable {
 
