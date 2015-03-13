@@ -21,11 +21,18 @@ package com.docdoku.server.listeners;
 
 
 import com.docdoku.core.change.ModificationNotification;
+import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.PartIteration;
+import com.docdoku.core.services.IProductManagerLocal;
+import com.docdoku.server.dao.ModificationNotificationDAO;
 
+import javax.ejb.EJB;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PostPersist;
 import javax.persistence.PrePersist;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author Florent Garin
@@ -36,14 +43,28 @@ public class PartIterationListener {
     @PersistenceContext
     private EntityManager em;
 
-    @PrePersist
-    private void addModificationNotification(Object object) {
+    @EJB
+    private IProductManagerLocal productService;
+
+
+    @PostPersist
+    private void addModificationNotification(Object object) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
         if(object instanceof PartIteration) {
             PartIteration partIteration = (PartIteration) object;
-            ModificationNotification notification=new ModificationNotification();
-            notification.setImpactedPart(partIteration);
-            notification.setModifiedPart(partIteration);
-            em.persist(notification);
+            if(!partIteration.getPartRevision().isCheckedOut()) {
+                Set<PartIteration> impactedParts = new HashSet<>();
+                impactedParts.addAll(productService.getUsedByAsComponent(partIteration.getKey()));
+                impactedParts.addAll(productService.getUsedByAsSubstitute(partIteration.getKey()));
+
+                ModificationNotificationDAO dao = new ModificationNotificationDAO(em);
+                for (PartIteration impactedPart : impactedParts) {
+                    ModificationNotification notification = new ModificationNotification();
+                    notification.setImpactedPart(impactedPart);
+                    notification.setModifiedPart(partIteration);
+                    dao.createModificationNotification(notification);
+                }
+            }
+
         }
     }
 }

@@ -773,6 +773,26 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         return new ModificationNotificationDAO(locale,em).getModificationNotifications(pPartIPK);
     }
 
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
+    @Override
+    public List<PartIteration> getUsedByAsComponent(PartIterationKey pPartIPK) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
+        PartRevisionKey partRevisionKey = pPartIPK.getPartRevision();
+        User user = checkPartRevisionReadAccess(partRevisionKey);
+        Locale locale = new Locale(user.getLanguage());
+        return new PartIterationDAO(locale,em).findUsedByAsComponent(partRevisionKey.getPartMaster());
+    }
+
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
+    @Override
+    public List<PartIteration> getUsedByAsSubstitute(PartIterationKey pPartIPK) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
+        PartRevisionKey partRevisionKey = pPartIPK.getPartRevision();
+        User user = checkPartRevisionReadAccess(partRevisionKey);
+        Locale locale = new Locale(user.getLanguage());
+        return new PartIterationDAO(locale,em).findUsedByAsSubstitute(partRevisionKey.getPartMaster());
+    }
+
+
+
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
