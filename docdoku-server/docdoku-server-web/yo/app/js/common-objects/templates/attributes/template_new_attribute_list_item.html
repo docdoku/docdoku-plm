@@ -12,6 +12,14 @@
         <option value="DATE">{{i18n.DATE}}</option>
         <option value="NUMBER">{{i18n.NUMBER}}</option>
         <option value="URL">{{i18n.URL}}</option>
+        <option value="LOV">{{i18n.LOV}}</option>
+    </select>
+</div>
+<div class="lovNameList">
+    <select class="lovNameChoice">
+        {{#lovs}}
+        <option value="{{getLOVName}}">{{getLOVName}}</option>
+        {{/lovs}}
     </select>
 </div>
 <label class="checkbox attribute-mandatory">

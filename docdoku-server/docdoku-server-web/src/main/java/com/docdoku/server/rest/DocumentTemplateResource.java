@@ -120,7 +120,8 @@ public class DocumentTemplateResource {
             lovNames[i]=attributeTemplates.get(i).getLovName();
 
         DocumentMasterTemplate template = documentService.createDocumentMasterTemplate(workspaceId, id, documentType, workflowModelId, mask, createInstanceAttributeTemplateFromDto(attributeTemplates), lovNames, idGenerated, attributesLocked);
-        return mapper.map(template, DocumentMasterTemplateDTO.class);
+        DocumentMasterTemplateDTO response = mapper.map(template, DocumentMasterTemplateDTO.class);
+        return response;
     }
     
     @PUT

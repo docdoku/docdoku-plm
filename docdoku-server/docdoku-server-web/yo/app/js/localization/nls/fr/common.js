@@ -213,6 +213,7 @@ define({
     LINK_DESCRIPTION: "Description du lien",
     LINKS: "Liens",
     LIST_LOV:"Ensemble des listes de valeurs",
+    LOV:"Liste",
     LOADING:'Chargement',
 	LOCK_ATTRIBUTES: "Geler la structure des attributs",
 	LOGOUT: 'Se déconnecter',

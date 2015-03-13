@@ -52,12 +52,20 @@ public class ListOfValuesAttributeTemplate extends InstanceAttributeTemplate {
         lov=pLov;
     }
 
+    public DefaultAttributeTemplate.AttributeType getAttributeType() {
+        return AttributeType.LOV;
+    }
+
     public ListOfValues getLov() {
         return lov;
     }
 
     public void setLov(ListOfValues lov) {
         this.lov = lov;
+    }
+
+    public String getLovName(){
+        return this.lov.getName();
     }
 
     public InstanceAttribute createInstanceAttribute() {

@@ -279,6 +279,7 @@ define({
 		NUMBER: "Number",
         LITER: "l",
         LIST_LOV:"Edit list of values",
+        LOV:"List",
 		OBJECTS: "Objects",
 		OFFLINE: "Offline",
 		OK: "OK",

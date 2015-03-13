@@ -3,8 +3,9 @@ define([
     'backbone',
     'common-objects/views/base',
     'common-objects/views/attributes/template_new_attribute_list',
-    'text!common-objects/templates/attributes/template_new_attributes.html'
-], function (Backbone,BaseView, TemplateNewAttributeListView, template) {
+    'text!common-objects/templates/attributes/template_new_attributes.html',
+    'common-objects/collections/lovs'
+], function (Backbone,BaseView, TemplateNewAttributeListView, template, LOVCollection) {
 	'use strict';
     var TemplateNewAttributesView = BaseView.extend({
 
@@ -18,6 +19,7 @@ define([
 
         initialize: function () {
             BaseView.prototype.initialize.apply(this, arguments);
+            this.lovs = new LOVCollection(),
             this.events['click .add'] = this.addAttribute;
             this.events['change .lock input'] = this.attributesLockedChange;
             this.events['update-sort'] = this.updateSort;
@@ -33,12 +35,19 @@ define([
         },
 
         rendered: function () {
+            this.lovs.fetch().success(this.displayAttribute);
+        },
+
+        displayAttribute: function(){
+            var listViewAttributs = new TemplateNewAttributeListView({
+                el: '#items-' + this.cid,
+                collection: this.collection,
+                lovs:this.lovs
+            });
             this.attributesView = this.addSubView(
-                new TemplateNewAttributeListView({
-                    el: '#items-' + this.cid,
-                    collection: this.collection
-                })
+                listViewAttributs
             );
+            listViewAttributs.collectionReset();
 
             this.$el.find('.lock input')[0].checked = this.attributesLocked;
             this.$el.toggleClass('attributes-locked', this.attributesLocked);

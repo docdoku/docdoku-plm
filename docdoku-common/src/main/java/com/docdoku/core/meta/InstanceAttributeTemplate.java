@@ -46,6 +46,11 @@ public abstract class InstanceAttributeTemplate implements Serializable {
 
     protected  boolean mandatory;
 
+    public enum AttributeType {
+
+        TEXT, NUMBER, DATE, BOOLEAN, URL, LOV
+    }
+
 
     public InstanceAttributeTemplate() {
     }
