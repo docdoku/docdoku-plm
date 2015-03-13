@@ -36,6 +36,7 @@ define([
         render: function () {
             var that = this;
             this.substitutePartViews = [];
+            this.cadInstanceViews = [];
             this.collection.each(function (model) {
                 that.addSubstitutePartsView(model);
             });
