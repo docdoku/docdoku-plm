@@ -8,10 +8,10 @@ define([
     var BomHeaderView = Backbone.View.extend({
 
         events: {
-            "click .checkout": "actionCheckout",
-            "click .undocheckout": "actionUndocheckout",
-            "click .checkin": "actionCheckin",
-            "click .edit-acl": "actionUpdateACL"
+            'click .checkout': 'actionCheckout',
+            'click .undocheckout': 'actionUndocheckout',
+            'click .checkin': 'actionCheckin',
+            'click .edit-acl': 'actionUpdateACL'
         },
 
         actionCheckout: function () {
@@ -36,10 +36,10 @@ define([
 
         render: function () {
             this.$el.append(Mustache.render(template, {i18n: App.config.i18n}));
-            this.checkoutGroup = this.$(".checkout-group");
-            this.checkoutButton = this.$(".checkout");
-            this.undoCheckoutButton = this.$(".undocheckout");
-            this.checkinButton = this.$(".checkin");
+            this.checkoutGroup = this.$('.checkout-group');
+            this.checkoutButton = this.$('.checkout');
+            this.undoCheckoutButton = this.$('.undocheckout');
+            this.checkinButton = this.$('.checkin');
             this.aclButton = this.$('.edit-acl');
             return this;
         },

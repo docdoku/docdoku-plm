@@ -1,14 +1,16 @@
 /*global define,_*/
 define([
-        "backbone",
-        "text!templates/progress_bar.html"
+        'backbone',
+        'text!templates/progress_bar.html'
     ],
     function (Backbone, template) {
 
+        'use strict';
+
         var ProgressBar = Backbone.View.extend({
 
-            tagName: "div",
-            el: "#progress_bar_container",
+            tagName: 'div',
+            el: '#progress_bar_container',
 
             initialize: function () {
                 _.bindAll(this);
@@ -18,7 +20,7 @@ define([
 
             render: function () {
                 this.$el.html(template);
-                this.$bar = this.$(".bar");
+                this.$bar = this.$('.bar');
                 this.$bar.width(0);
                 return this;
             },
@@ -45,7 +47,7 @@ define([
 
             updateState: function () {
                 if (this.total) {
-                    this.$bar.css("width", this.percentValue() + "%");
+                    this.$bar.css('width', this.percentValue() + '%');
                 } else {
                     this.hideProgressBar();
                 }

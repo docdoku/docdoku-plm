@@ -1,14 +1,16 @@
 /*global define,App*/
-define([ "backbone", "mustache", "text!templates/control_markers.html"], function (Backbone, Mustache, template) {
+define([ 'backbone', 'mustache', 'text!templates/control_markers.html'], function (Backbone, Mustache, template) {
+
+    'use strict';
 
     var ControlMarkersView = Backbone.View.extend({
 
-        className: "side_control_group",
+        className: 'side_control_group',
 
         events: {
-            "click button#markerZoomLess": "markerZoomLess",
-            "click button#markerState": "markerState",
-            "click button#markerZoomMore": "markerZoomMore"
+            'click button#markerZoomLess': 'markerZoomLess',
+            'click button#markerState': 'markerState',
+            'click button#markerZoomMore': 'markerZoomMore'
         },
 
         initialize: function () {

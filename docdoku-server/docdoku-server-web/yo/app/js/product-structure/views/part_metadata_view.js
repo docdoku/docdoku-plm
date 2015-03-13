@@ -1,6 +1,9 @@
 /*global define,App*/
-'use strict';
-define([ "backbone", "mustache", 'text!templates/part_meta_data.html'], function (Backbone, Mustache, template) {
+
+define([ 'backbone', 'mustache', 'text!templates/part_meta_data.html'], function (Backbone, Mustache, template) {
+
+    'use strict';
+
     var PartMetadataView = Backbone.View.extend({
 
         tagName: 'div',

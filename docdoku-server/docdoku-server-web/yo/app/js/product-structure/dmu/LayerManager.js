@@ -109,7 +109,7 @@ define([
             }
 
             this.layersCollection.create(layer, {success: function () {
-                App.collaborativeController.sendLayersRefresh("create layer");
+                App.collaborativeController.sendLayersRefresh('create layer');
             }});
             return layer;
         },

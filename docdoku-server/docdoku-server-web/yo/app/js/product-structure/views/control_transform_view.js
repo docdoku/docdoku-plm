@@ -1,19 +1,20 @@
 /*global define,App*/
-'use strict';
 define(
     [
-        "backbone",
-        "mustache",
-        "text!templates/control_transform.html"
+        'backbone',
+        'mustache',
+        'text!templates/control_transform.html'
     ], function (Backbone, Mustache, template) {
+
+        'use strict';
 
         var ControlTransformView = Backbone.View.extend({
 
-            className: "side_control_group",
+            className: 'side_control_group',
 
             events: {
-                "click #transform_mode_view_btn > button": "transformView",
-                "click button#cancel_transformation": "cancelTransformation"
+                'click #transform_mode_view_btn > button': 'transformView',
+                'click button#cancel_transformation': 'cancelTransformation'
             },
 
             initialize: function () {
@@ -25,7 +26,7 @@ define(
                     App.sceneManager.deleteTransformControls(this.mesh);
                     App.sceneManager.setTransformControls(mesh);
                 }
-                this.$("button").removeAttr("disabled");
+                this.$('button').removeAttr('disabled');
                 this.mesh = mesh;
                 return this;
             },
@@ -35,10 +36,10 @@ define(
                 // TransformControls enabled
                 if (App.sceneManager.transformControlsEnabled()) {
                     var mode = App.sceneManager.getTransformControlsMode();
-                    this.$("button#" + mode).addClass("active");
+                    this.$('button#' + mode).addClass('active');
                 } // A mesh is selected
                 else if (!this.mesh) {
-                    this.$("button").attr("disabled", "disabled");
+                    this.$('button').attr('disabled', 'disabled');
                 }
             },
 
@@ -59,7 +60,6 @@ define(
             },
 
             cancelTransformation: function () {
-                //$('#transform_mode_view_btn').removeClass("active");
                 App.sceneManager.cancelTransformation(this.mesh);
             }
 

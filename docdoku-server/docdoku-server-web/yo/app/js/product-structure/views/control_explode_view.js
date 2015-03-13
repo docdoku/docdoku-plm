@@ -1,18 +1,20 @@
 /*global define,App*/
 define(
     [
-        "backbone",
-        "mustache",
-        "text!templates/control_explode.html"
+        'backbone',
+        'mustache',
+        'text!templates/control_explode.html'
     ],
     function (Backbone, Mustache, template) {
 
+        'use strict';
+
         var ControlOptionsView = Backbone.View.extend({
 
-            className: "side_control_group",
+            className: 'side_control_group',
 
             events: {
-                "input input#slider-explode": "explode"
+                'input input#slider-explode': 'explode'
             },
 
             initialize: function () {

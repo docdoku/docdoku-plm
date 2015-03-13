@@ -45,9 +45,9 @@ define([
         },
 
         bindDomElements: function(){
-            this.$flyingModeButton = this.$("button#flying_mode_view_btn");
-            this.$orbitModeButton = this.$("button#orbit_mode_view_btn");
-            this.$trackingModeButton = this.$("button#tracking_mode_view_btn");
+            this.$flyingModeButton = this.$('button#flying_mode_view_btn');
+            this.$orbitModeButton = this.$('button#orbit_mode_view_btn');
+            this.$trackingModeButton = this.$('button#tracking_mode_view_btn');
         }
 
     });

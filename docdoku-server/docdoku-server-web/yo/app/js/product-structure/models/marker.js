@@ -1,6 +1,8 @@
 /*global define,_*/
 define(['backbone'], function (Backbone) {
 
+    'use strict';
+
     var Marker = Backbone.Model.extend({
 
         toJSON: function () {

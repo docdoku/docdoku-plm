@@ -1,4 +1,4 @@
-/*global define,bootbox,App*/
+/*global define,App*/
 define([
 	'backbone',
 	'mustache',
@@ -61,7 +61,7 @@ define([
             this.onCollectionChange();
             if(this.$selectBaselineSpec) {
                 this.$selectBaselineSpec.find('option').remove();
-                that.$selectBaselineSpec.append('<option disabled>'+App.config.i18n.BASELINE+'</option>');
+                this.$selectBaselineSpec.append('<option disabled>'+App.config.i18n.BASELINE+'</option>');
                 this.baselineCollection.each(function(baseline){
                     that.$selectBaselineSpec.append('<option value="'+baseline.getId()+'">'+baseline.getName()+'</option>');
                 });
@@ -79,7 +79,7 @@ define([
             this.onCollectionChange();
             if(this.$selectProdInstSpec) {
                 this.$selectProdInstSpec.find('option').remove();
-                that.$selectProdInstSpec.append('<option disabled>'+App.config.i18n.SERIAL_NUMBER+'</option>');
+                this.$selectProdInstSpec.append('<option disabled>'+App.config.i18n.SERIAL_NUMBER+'</option>');
                 this.productInstanceCollection.each(function(productInstance){
                     that.$selectProdInstSpec.append('<option value="pi-'+productInstance.getSerialNumber()+'">'+productInstance.getSerialNumber()+'</option>');
                 });
@@ -88,7 +88,6 @@ define([
         },
 
         onCollectionChange:function(){
-            var that = this ;
             if(this.$selectConfSpec) {
                 this.$selectConfSpec.find('option').remove();
 
@@ -124,11 +123,11 @@ define([
                 this.$selectBaselineSpec.hide();
                 this.$selectProdInstSpec.hide();
                 this.trigger('config_spec:changed', e.target.value);
-			}else if(this.$selectConfSpec[0].value==="baseline"){
+			}else if(this.$selectConfSpec[0].value==='baseline'){
                 this.$selectBaselineSpec.show();
                 this.$selectProdInstSpec.hide();
                 this.trigger('config_spec:changed', this.$selectBaselineSpec[0].value);
-			}else if(this.$selectConfSpec[0].value==="serial-number"){
+			}else if(this.$selectConfSpec[0].value==='serial-number'){
                 this.$selectBaselineSpec.hide();
                 this.$selectProdInstSpec.show();
                 this.trigger('config_spec:changed', this.$selectProdInstSpec[0].value);
