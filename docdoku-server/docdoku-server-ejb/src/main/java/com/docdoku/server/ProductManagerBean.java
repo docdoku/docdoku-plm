@@ -19,6 +19,7 @@
  */
 package com.docdoku.server;
 
+import com.docdoku.core.change.ModificationNotification;
 import com.docdoku.core.common.*;
 import com.docdoku.core.configuration.LatestConfigSpec;
 import com.docdoku.core.configuration.ProductBaseline;
@@ -761,7 +762,60 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         }
         return partR;
     }
-    
+
+
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
+    @Override
+    public List<ModificationNotification> getModificationNotifications(PartIterationKey pPartIPK) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
+        PartRevisionKey partRevisionKey = pPartIPK.getPartRevision();
+        User user = checkPartRevisionReadAccess(partRevisionKey);
+        Locale locale = new Locale(user.getLanguage());
+        return new ModificationNotificationDAO(locale,em).getModificationNotifications(pPartIPK);
+    }
+
+
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
+    @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void createModificationNotifications(PartIteration modifiedPartIteration) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
+
+        Set<PartIteration> impactedParts = new HashSet<>();
+        impactedParts.addAll(getUsedByAsComponent(modifiedPartIteration.getKey()));
+        impactedParts.addAll(getUsedByAsSubstitute(modifiedPartIteration.getKey()));
+
+        ModificationNotificationDAO dao = new ModificationNotificationDAO(em);
+        for (PartIteration impactedPart : impactedParts) {
+            ModificationNotification notification = new ModificationNotification();
+            notification.setImpactedPart(impactedPart);
+            notification.setModifiedPart(modifiedPartIteration);
+            dao.createModificationNotification(notification);
+        }
+    }
+
+
+
+
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
+    @Override
+    public List<PartIteration> getUsedByAsComponent(PartIterationKey pPartIPK) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
+        PartRevisionKey partRevisionKey = pPartIPK.getPartRevision();
+        User user = checkPartRevisionReadAccess(partRevisionKey);
+        Locale locale = new Locale(user.getLanguage());
+        return new PartIterationDAO(locale,em).findUsedByAsComponent(partRevisionKey.getPartMaster());
+    }
+
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
+    @Override
+    public List<PartIteration> getUsedByAsSubstitute(PartIterationKey pPartIPK) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
+        PartRevisionKey partRevisionKey = pPartIPK.getPartRevision();
+        User user = checkPartRevisionReadAccess(partRevisionKey);
+        Locale locale = new Locale(user.getLanguage());
+        return new PartIterationDAO(locale,em).findUsedByAsSubstitute(partRevisionKey.getPartMaster());
+    }
+
+
+
+
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public PartIteration getPartIteration(PartIterationKey pPartIPK) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException, PartIterationNotFoundException {

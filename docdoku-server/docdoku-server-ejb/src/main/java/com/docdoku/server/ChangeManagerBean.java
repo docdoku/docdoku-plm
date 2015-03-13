@@ -52,7 +52,6 @@ import java.util.logging.Logger;
 /**
  * @author Florent Garin
  */
-
 @Local(IChangeManagerLocal.class)
 @Stateless(name = "ChangeManagerBean")
 public class ChangeManagerBean implements IChangeManagerLocal {

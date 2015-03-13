@@ -25,10 +25,7 @@ import com.docdoku.core.exceptions.CreationException;
 import com.docdoku.core.exceptions.DocumentMasterTemplateAlreadyExistsException;
 import com.docdoku.core.exceptions.DocumentMasterTemplateNotFoundException;
 
-import javax.persistence.EntityExistsException;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceException;
-import javax.persistence.Query;
+import javax.persistence.*;
 import java.util.List;
 import java.util.Locale;
 
@@ -58,8 +55,7 @@ public class DocumentMasterTemplateDAO {
     }
 
     public List<DocumentMasterTemplate> findAllDocMTemplates(String pWorkspaceId) {
-        DocumentMasterTemplate[] templates;
-        Query query = em.createQuery("SELECT DISTINCT t FROM DocumentMasterTemplate t WHERE t.workspaceId = :workspaceId");
+        TypedQuery<DocumentMasterTemplate> query = em.createQuery("SELECT DISTINCT t FROM DocumentMasterTemplate t WHERE t.workspaceId = :workspaceId", DocumentMasterTemplate.class);
         return query.setParameter("workspaceId", pWorkspaceId).getResultList();
     }
 

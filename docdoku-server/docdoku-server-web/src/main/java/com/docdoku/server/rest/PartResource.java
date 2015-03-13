@@ -19,6 +19,7 @@
  */
 package com.docdoku.server.rest;
 
+import com.docdoku.core.change.ModificationNotification;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.UserGroup;
@@ -77,10 +78,15 @@ public class PartResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPartDTO(@PathParam("workspaceId") String pWorkspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException {
-
         PartRevisionKey revisionKey = new PartRevisionKey(pWorkspaceId, partNumber, partVersion);
         PartRevision partRevision = productService.getPartRevision(revisionKey);
         PartDTO partDTO = Tools.mapPartRevisionToPartDTO(partRevision);
+
+        PartIterationKey iterationKey = new PartIterationKey(revisionKey, partRevision.getLastIterationNumber());
+        List<ModificationNotification> notifications=productService.getModificationNotifications(iterationKey);
+        List<ModificationNotificationDTO> notificationDTOs=Tools.mapModificationNotificationsToModificationNotificationDTO(notifications);
+
+        partDTO.setNotifications(notificationDTOs);
         return Response.ok(partDTO).build();
     }
 

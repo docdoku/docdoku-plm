@@ -40,6 +40,9 @@
                 <li><a href="#tab-part-links" data-toggle="tab">{{i18n.LINKS}}</a></li>
                 <li><a href="#tab-iteration-lifecycle" data-toggle="tab">{{i18n.LIFECYCLE_STATE}}</a></li>
                 {{/isLockedMode}}
+                {{#isShowingLast}}{{#part.isLastIterationAssembly}}
+                <li><a href="#tab-part-modification-notifications" data-toggle="tab">{{i18n.NOTIFICATIONS}}</a></li>
+                {{/part.isLastIterationAssembly}}{{/isShowingLast}}
             </ul>
 
             <form id="form-part" class="form-horizontal">
@@ -196,7 +199,13 @@
                     <div id="tab-part-sub-parts" class="tab-pane">
                         <div id="iteration-components"></div>
                     </div>
+                    {{/isLockedMode}}
 
+                    <div id="tab-part-modification-notifications" class="tab-pane">
+                        <div id="iteration-modification-notifications"></div>
+                    </div>
+
+                    {{^isLockedMode}}
                     <div id="tab-part-links" class="tab-pane">
                         <div id="iteration-links"></div>
                     </div>

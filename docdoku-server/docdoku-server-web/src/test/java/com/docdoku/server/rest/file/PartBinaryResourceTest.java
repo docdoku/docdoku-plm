@@ -156,7 +156,7 @@ public class PartBinaryResourceTest {
         assertNotNull(response);
         assertEquals(response.getStatus(), 201);
         assertEquals(response.getStatusInfo(), Response.Status.CREATED);
-        assertEquals(response.getLocation().toString(), (ResourceUtil.WORKSPACE_ID + "/parts/" + ResourceUtil.PART_TEMPLATE_ID +"/"+ URLEncoder.encode(getClass().getClassLoader().getResource(ResourceUtil.SOURCE_PART_STORAGE).getFile() + ResourceUtil.FILENAME_TO_UPLOAD_PART_SPECIAL_CHARACTER)));
+        assertEquals(response.getLocation().toString(), (ResourceUtil.WORKSPACE_ID + "/parts/" + ResourceUtil.PART_TEMPLATE_ID +"/"+ URLEncoder.encode(getClass().getClassLoader().getResource(ResourceUtil.SOURCE_PART_STORAGE).getFile() + ResourceUtil.FILENAME_TO_UPLOAD_PART_SPECIAL_CHARACTER, "UTF-8")));
         //delete temp file
         uploadedFile.deleteOnExit();
 
