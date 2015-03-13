@@ -81,7 +81,8 @@ define([
             data.isCheckout = this.model.isCheckout() ;
             data.isReleased = this.model.attributes.status == "RELEASED" ;
             this.isReleased = this.model.attributes.status == "RELEASED" ;
-            this.modificationNotifications = this.model.getModificationNotifications();
+            data.isShowingLast = this.iterations.isLast(this.iteration);
+
             if (this.model.hasIterations()) {
                 var hasNextIteration = this.iterations.hasNextIteration(this.iteration);
                 var hasPreviousIteration = this.iterations.hasPreviousIteration(this.iteration);
@@ -227,7 +228,6 @@ define([
         initModificationNotificationListView: function () {
             this.modificationNotificationListView = new ModificationNotificationListView({
                 el: '#iteration-modification-notifications',
-                collection: new Backbone.Collection(this.modificationNotifications),
                 model: this.model
             }).render();
         },
