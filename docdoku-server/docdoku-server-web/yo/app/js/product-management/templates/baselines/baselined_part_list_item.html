@@ -1,6 +1,6 @@
 <div class="control-group">
     {{#editMode}}
-    <label class="control-label"><a class="model-ref">{{model.getNumber}}</a></label>
+    <label class="control-label"><a class="model-ref">{{model.getNumber}}</a> - {{model.getName}}</label>
     {{#model.getAvailableIterations}}
     <div class="controls">
         <label class="radio">
@@ -19,7 +19,7 @@
     {{^editMode}}
     <a class="control-label model-ref">{{model.getNumber}}</a>
     <div class="controls">
-        {{model.getVersion}}-{{model.getIteration}}
+        {{model.getVersion}}-{{model.getIteration}} - {{model.getName}}
     </div>
     {{/editMode}}
 </div>

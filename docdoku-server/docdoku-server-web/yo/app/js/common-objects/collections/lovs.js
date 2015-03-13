@@ -1,4 +1,4 @@
-/*global define*/
+/*global define,App*/
 define([
     'backbone',
     'common-objects/models/lov/lov'

@@ -2,7 +2,7 @@
 define([
     'common-objects/utils/date',
     'common-objects/views/components/modal',
-    "common-objects/views/workflow/workflow_list",
+    'common-objects/views/workflow/workflow_list',
     'common-objects/views/attributes/template_new_attributes',
     'common-objects/views/file/file_list',
     'text!templates/template_new.html'
@@ -21,8 +21,8 @@ define([
             // keep track of the created template edit view
             TemplateEditView._instance = this;
 
-            this.events["click .modal-footer button.btn-primary"] = "interceptSubmit";
-            this.events["submit form"] = "onSubmitForm";
+            this.events['click .modal-footer button.btn-primary'] = 'interceptSubmit';
+            this.events['submit form'] = 'onSubmitForm';
             this.tabs = this.$('.nav-tabs li');
         },
 

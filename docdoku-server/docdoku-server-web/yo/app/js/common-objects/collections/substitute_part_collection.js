@@ -1,4 +1,4 @@
-/*global $,define,App*/
+/*global define*/
 define([
     'backbone',
     'common-objects/models/part'
@@ -15,10 +15,6 @@ define([
         initialize: function () {
 
         }
-
-
-
-
     });
 
     return SubstitutePartList;
