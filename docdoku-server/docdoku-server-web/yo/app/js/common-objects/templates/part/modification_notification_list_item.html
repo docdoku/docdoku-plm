@@ -1,43 +1,30 @@
 <div class="control-group">
-    <label class="control-label">{{i18n.PART_NUMBER}}</label>
+    <label class="control-label">{{i18n.REFERENCE}}</label>
 
     <div class="controls">
-        <span class="help-inline">{{part.modifiedPartNumber}}</span>
+        <span class="help-inline">{{modificationNotification.getModifiedPartNumber}}-{{modificationNotification.getModifiedPartVersion}}-{{modificationNotification.getModifiedPartIteration}}</span>
     </div>
 </div>
-<div class="control-group">
-    <label class="control-label">{{i18n.VERSION}}</label>
 
-    <div class="controls">
-        <span class="help-inline">{{part.modifiedPartVersion}}</span>
-    </div>
-</div>
-<div class="control-group">
-    <label class="control-label">{{i18n.ITERATION}}</label>
-
-    <div class="controls">
-        <span class="help-inline">{{part.modifiedPartIteration}}</span>
-    </div>
-</div>
 <div class="control-group">
     <label class="control-label">{{i18n.CHECKIN_DATE}}</label>
 
     <div class="controls">
-        <span class="help-inline"><a class="date-popover">{{part.checkInDate}}</a></span>
+        <span class="help-inline"><a class="date-popover">{{modificationNotification.getFormattedCheckInDate}}</a></span>
     </div>
 </div>
 <div class="control-group">
     <label class="control-label">{{i18n.REVISION_NOTE}}</label>
 
     <div class="controls">
-        <span class="help-inline">{{part.iterationNote}}</span>
+        <span class="help-inline">{{modificationNotification.getIterationNote}}</span>
     </div>
 </div>
 <div class="control-group">
     <label class="control-label">{{i18n.AUTHOR}}</label>
 
     <div class="controls">
-        <span class="help-inline"><a class="author-popover">{{part.author.name}}</a></span>
+        <span class="help-inline"><a class="author-popover">{{modificationNotification.getAuthorName}}</a></span>
     </div>
 </div>
 
