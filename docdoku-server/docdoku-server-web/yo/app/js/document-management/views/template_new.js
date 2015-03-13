@@ -1,7 +1,7 @@
 /*global define,App*/
 define([
     'common-objects/views/components/modal',
-    "common-objects/views/workflow/workflow_list",
+    'common-objects/views/workflow/workflow_list',
     'common-objects/views/attributes/template_new_attributes',
     'text!templates/template_new.html'
 ], function (ModalView, DocumentWorkflowListView, TemplateNewAttributesView, template) {

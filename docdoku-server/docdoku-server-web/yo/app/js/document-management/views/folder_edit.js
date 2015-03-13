@@ -3,6 +3,9 @@ define([
     'common-objects/views/components/modal',
     'text!templates/folder_edit.html'
 ], function (ModalView, template) {
+
+    'use strict';
+
     var FolderEditView = ModalView.extend({
         template: template,
         tagName: 'div',
@@ -29,7 +32,7 @@ define([
                     error: this.error
                 });
             }
-            
+
             e.preventDefault();
             e.stopPropagation();
             return false;

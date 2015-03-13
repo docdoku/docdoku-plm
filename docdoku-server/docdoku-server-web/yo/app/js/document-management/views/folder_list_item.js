@@ -258,7 +258,7 @@ define([
 
             e.dataTransfer.setData('folder:text/plain',data);
 
-            var img = document.createElement("img");
+            var img = document.createElement('img');
             img.src = App.config.contextPath + '/images/icon-nav-folder-opened.png';
             e.dataTransfer.setDragImage(img, 0, 0);
 

@@ -25,7 +25,7 @@ define([
 
         toUTCWithTimeZoneOffset:function(dateString){
             var dateUTCWithOffset = moment.utc(dateString).toDate().getTime() + moffset;
-            return moment(dateUTCWithOffset).utc().format("YYYY-MM-DDTHH:mm:ss");
+            return moment(dateUTCWithOffset).utc().format('YYYY-MM-DDTHH:mm:ss');
         },
 
         getMainZonesDates : function(timestamp){
@@ -64,7 +64,7 @@ define([
                     html: true,
                     content: '<b>UTC</b><br /><i class="fa fa-clock-o"></i>  ' + moment.utc(_date,App.config.i18n._DATE_FORMAT).zone(-offset).format(App.config.i18n._DATE_FORMAT),
                     trigger: 'manual',
-                    placement: "top"
+                    placement: 'top'
                 }).click(function (e) {
                     $(this).popover('show');
                     e.stopPropagation();
