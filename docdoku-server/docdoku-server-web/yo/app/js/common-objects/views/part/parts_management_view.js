@@ -73,7 +73,7 @@ define([
             var that = this;
             this.iteration = this.model.getLastIteration();
             var componentView = new ComponentView({
-                model: model, editMode: this.options.editMode,isReleased:this.options.isReleased,
+                model: model, editMode: this.options.editMode,isReleased:this.options.isReleased,isCheckout:this.options.isCheckout,
                 otherComponentViews: new Backbone.Collection(this.componentViews),
                 collection: new Backbone.Collection(this.iteration.getSubstituteParts()),
                 removeHandler: function () {

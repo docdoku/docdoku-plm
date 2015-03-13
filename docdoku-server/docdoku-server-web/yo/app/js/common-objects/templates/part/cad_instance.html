@@ -1,14 +1,14 @@
 <div class="coord-group">
     <h5>Translation (x y z)</h5>
-    <input class="coord" type="text" name="tx" title="tx" value="{{instance.tx}}" {{#isReleased}} disabled {{/isReleased}}/>
-    <input class="coord" type="text" name="ty" title="ty" value="{{instance.ty}}" {{#isReleased}} disabled {{/isReleased}}/>
-    <input class="coord" type="text" name="tz" title="tz" value="{{instance.tz}}" {{#isReleased}} disabled {{/isReleased}}/>
+    <input class="coord" type="text" name="tx" title="tx" value="{{instance.tx}}" {{#isReleased}} disabled {{/isReleased}}  {{#isCheckout}} disabled {{/isCheckout}}/>
+    <input class="coord" type="text" name="ty" title="ty" value="{{instance.ty}}" {{#isReleased}} disabled {{/isReleased}}  {{#isCheckout}} disabled {{/isCheckout}}/>
+    <input class="coord" type="text" name="tz" title="tz" value="{{instance.tz}}" {{#isReleased}} disabled {{/isReleased}}  {{#isCheckout}} disabled {{/isCheckout}}/>
 </div>
 <div class="coord-group">
     <h5>Rotation (x y z)</h5>
-    <input class="coord" type="text" name="rx" title="rx" value="{{instance.rx}}" {{#isReleased}} disabled {{/isReleased}}/>
-    <input class="coord" type="text" name="ry" title="ry" value="{{instance.ry}}" {{#isReleased}} disabled {{/isReleased}}/>
-    <input class="coord" type="text" name="rz" title="rz" value="{{instance.rz}}" {{#isReleased}} disabled {{/isReleased}}/>
+    <input class="coord" type="text" name="rx" title="rx" value="{{instance.rx}}" {{#isReleased}} disabled {{/isReleased}} {{#isCheckout}} disabled {{/isCheckout}}   />
+    <input class="coord" type="text" name="ry" title="ry" value="{{instance.ry}}" {{#isReleased}} disabled {{/isReleased}}  {{#isCheckout}} disabled {{/isCheckout}}/>
+    <input class="coord" type="text" name="rz" title="rz" value="{{instance.rz}}" {{#isReleased}} disabled {{/isReleased}}  {{#isCheckout}} disabled {{/isCheckout}}/>
 </div>
 {{#editMode}}
 <div class="coord-group coord-group-remove">

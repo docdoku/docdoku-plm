@@ -45,7 +45,8 @@ define([
                 model: this.model.attributes,
                 i18n: App.config.i18n,
                 editMode: this.options.editMode,
-                isReleased:this.options.isReleased
+                isReleased:this.options.isReleased,
+                isCheckout:this.options.isCheckout
             }));
 
             this.bindDomElements();
@@ -82,6 +83,10 @@ define([
                 self.addSubstitutePartsView(instance);
 
             });
+            if (this.model.get('substitutes').length == 0){
+                self.$('.substitute-count-text').text(App.config.i18n.PARTS_SUBSTITUTES);
+
+            }
         },
         initUnit: function () {
             var unit = this.model.get('unit');
@@ -92,7 +97,7 @@ define([
 
         addCadInstanceView: function (instance) {
             var self = this;
-            var instanceView = new CadInstanceView({editMode: this.options.editMode, isReleased: this.options.isReleased});
+            var instanceView = new CadInstanceView({editMode: this.options.editMode, isReleased: this.options.isReleased,isCheckout:this.options.isCheckout});
             instanceView.setInstance(instance).render();
             self.$cadInstances.append(instanceView.$el);
             instanceView.on('instance:remove', function () {
@@ -103,15 +108,20 @@ define([
         },
         addSubstitutePartsView: function (model) {
             var self = this;
+            self.$('.substitute-count').text("");
             var substitutePartView = new SubstitutePartView({
                 model: model,
                 editMode: this.options.editMode,
                 removeSubHandler: function () {
                     self.model.attributes.substitutes = _(self.model.attributes.substitutes).without(model);
                     self.removeSubPart(model);
+                    var countText = (self.model.get('substitutes').length == 1 ? App.config.i18n.PART_SUBSTITUTE :  App.config.i18n.PARTS_SUBSTITUTES);
                     self.$('.substitute-count').text(self.model.get('substitutes').length);
+                    self.$('.substitute-count-text').text(" "+ countText);
                 }}).render();
-            this.$('.substitute-count').text(this.model.get('substitutes').length);
+            var countText = (self.model.get('substitutes').length == 1 ? App.config.i18n.PART_SUBSTITUTE :  App.config.i18n.PARTS_SUBSTITUTES);
+
+            self.$('.substitute-count').text(self.model.get('substitutes').length + " "+ countText );
             this.substitutePartViews.push(substitutePartView);
             this.$(".substitute-parts").append(substitutePartView.$el);
 
