@@ -85,9 +85,14 @@ public class PartResource {
         List<ModificationNotificationDTO> notifications=new ArrayList<>();
         ModificationNotificationDTO notification1=new ModificationNotificationDTO();
         ModificationNotificationDTO notification2=new ModificationNotificationDTO();
-        notification1.setImpactedPart(new ComponentDTO());
+        notification1.setAuthor(new UserDTO("demo","flo","Florent"));
+        notification1.setCheckInDate(new Date());
+        notification1.setIterationNote("changement très important");
+        notification1.setModifiedPartIteration(3);
+        notification1.setModifiedPartNumber("PARRT5");
+        notification1.setModifiedPartVersion("A");
         notifications.add(notification1);
-        notifications.add(notification2);
+        notifications.add(notification1);
         partDTO.setNotifications(notifications);
         return Response.ok(partDTO).build();
     }

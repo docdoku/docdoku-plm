@@ -36,6 +36,51 @@ public class ModificationNotificationDTO {
     public ModificationNotificationDTO() {
     }
 
-    
+    public String getModifiedPartNumber() {
+        return modifiedPartNumber;
+    }
 
+    public void setModifiedPartNumber(String modifiedPartNumber) {
+        this.modifiedPartNumber = modifiedPartNumber;
+    }
+
+    public String getModifiedPartVersion() {
+        return modifiedPartVersion;
+    }
+
+    public void setModifiedPartVersion(String modifiedPartVersion) {
+        this.modifiedPartVersion = modifiedPartVersion;
+    }
+
+    public int getModifiedPartIteration() {
+        return modifiedPartIteration;
+    }
+
+    public void setModifiedPartIteration(int modifiedPartIteration) {
+        this.modifiedPartIteration = modifiedPartIteration;
+    }
+
+    public Date getCheckInDate() {
+        return checkInDate;
+    }
+
+    public void setCheckInDate(Date checkInDate) {
+        this.checkInDate = checkInDate;
+    }
+
+    public String getIterationNote() {
+        return iterationNote;
+    }
+
+    public void setIterationNote(String iterationNote) {
+        this.iterationNote = iterationNote;
+    }
+
+    public UserDTO getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(UserDTO author) {
+        this.author = author;
+    }
 }
