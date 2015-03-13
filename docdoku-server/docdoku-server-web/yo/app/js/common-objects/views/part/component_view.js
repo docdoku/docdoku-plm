@@ -19,9 +19,10 @@ define([
             'input input[name=newUnit]': 'changeMeasureUnit',
             'click datalist[name=unitMeasure]': 'changeMeasureUnit',
             'click .add-cadInstance': 'addCadInstance',
+            'click .decrease-cadInstance': 'removeCadInstance',
             'click .collapse-subParts-cadInstances': 'collapseTransformations',
             'click .totalSubParts a, .dataDisplayed a': 'collapseTransformations',
-            'click  #component': 'selectPart'
+            'click .component': 'selectPart'
         },
 
 
@@ -35,6 +36,7 @@ define([
         render: function () {
             var that = this;
             this.substitutePartViews = [];
+            this.cadInstanceViews = [];
             this.collection.each(function (model) {
                 that.addSubstitutePartsView(model);
             });
@@ -43,7 +45,7 @@ define([
                 model: this.model.attributes,
                 i18n: App.config.i18n,
                 editMode: this.options.editMode,
-                isReleased:this.options.isReleased
+                isReleased: this.options.isReleased
             }));
 
             this.bindDomElements();
@@ -90,12 +92,14 @@ define([
 
         addCadInstanceView: function (instance) {
             var self = this;
-            var instanceView = new CadInstanceView({editMode: this.options.editMode,isReleased:this.options.isReleased});
+            var instanceView = new CadInstanceView({editMode: this.options.editMode, isReleased: this.options.isReleased});
             instanceView.setInstance(instance).render();
             self.$cadInstances.append(instanceView.$el);
             instanceView.on('instance:remove', function () {
                 self.onRemoveCadInstance(instance);
+                self.cadInstanceViews = _(self.cadInstanceViews).without(instance);
             });
+            self.cadInstanceViews.push(instance);
         },
         addSubstitutePartsView: function (model) {
             var self = this;
@@ -125,6 +129,9 @@ define([
             this.$amount.val(parseInt(this.$amount.val(), 10) - 1);
             this.model.set('amount', this.$amount.val());
             this.model.get('component').amount = this.$amount.val();
+            if (this.$amount.val() <= 1) {
+                this.$('.decrease-cadInstance').hide();
+            }
         },
 
         addCadInstance: function () {
@@ -133,7 +140,15 @@ define([
             this.addCadInstanceView(instance);
             this.$amount.val(parseInt(this.$amount.val(), 10) + 1);
             this.model.set('amount', this.$amount.val());
+            if (this.$amount.val() > 1) {
+                this.$('.decrease-cadInstance').show();
+            }
         },
+        removeCadInstance: function () {
+            this.onRemoveCadInstance(_(this.model.get('cadInstances')).last());
+            this.$cadInstances.find('.cadInstance :last').remove();
+        },
+
 
         collapseTransformations: function () {
             var isVisible = this.$extraInformation.is(':visible');
@@ -197,11 +212,15 @@ define([
                 this.$amount.val(parseInt(this.$amount.val(), 10) == 0 ? 1 : parseInt(this.$amount.val(), 10));
                 this.$amount.attr('disabled', 'disabled');
                 this.$('.add-cadInstance').show();
+                if (this.$amount.val() > 1) {
+                    this.$('.decrease-cadInstance').show();
+                }
                 this.$unitText.val(this.$unitText.attr('default-unity'));
             }
             else {
                 this.$amount.removeAttr('disabled');
                 this.$('.add-cadInstance').hide();
+                this.$('.decrease-cadInstance').hide();
             }
             this.checkIntegrity(unit);
 

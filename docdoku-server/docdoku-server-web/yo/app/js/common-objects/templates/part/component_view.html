@@ -2,7 +2,7 @@
 <div class="well">
     {{/isReleased}}
     {{^isReleased}}
-    <div id="component" class="well component">
+    <div class="well component">
         {{/isReleased}}
         {{#model.component.number}}
         {{#editMode}}<a class="remove">×</a>{{/editMode}}
@@ -32,6 +32,7 @@
                     <option value="{{i18n.SQUARE_METER}}">
                 </datalist>
                 {{#editMode}}<i class="fa fa-plus add-cadInstance"></i>{{/editMode}}
+                {{#editMode}}<i class="fa fa-minus decrease-cadInstance"></i>{{/editMode}}
             </div>
             {{#isReleased}}
             <div class="dataDisplayed">

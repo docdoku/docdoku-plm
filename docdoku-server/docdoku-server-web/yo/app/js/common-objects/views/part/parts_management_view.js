@@ -10,8 +10,7 @@ define([
 
         events: {
             'click #createPart': 'createPart',
-            'click #createSubstitutePart': 'createSubstitutePart',
-            'click  #component': 'undoSelectPart'
+            'click #createSubstitutePart': 'createSubstitutePart'
         },
 
         initialize: function () {
