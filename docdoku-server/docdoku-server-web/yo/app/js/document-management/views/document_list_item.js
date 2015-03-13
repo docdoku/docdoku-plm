@@ -113,8 +113,8 @@ define([
             if (e.dataTransfer.dropEffect === 'none') {
                 Backbone.Events.off('document-moved');
                 Backbone.Events.off('document-error-moved');
-                this.$el.removeClass('moving');
             }
+            this.$el.removeClass('moving');
         },
 
         actionEdit: function () {
