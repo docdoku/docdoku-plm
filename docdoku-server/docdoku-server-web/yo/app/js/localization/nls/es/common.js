@@ -37,7 +37,7 @@ define({
 	BASELINES: "Baselines",
 	BLOCKER_TEXT: "(Z, Q, S, D = Move, SPACE = Up, CTRL = Down, MOUSE = Look around, ESC = Quit)",
 	BLOCKER_TITLE: "Click to launch the scene",
-	BOM_VIEW: "Bom View",
+	BOM_VIEW: "Components View",
 	BOOLEAN: "Boolean",
 	CAD_FILE: "CAD File",
 	CALL_TO_TITLE: "Call to",
