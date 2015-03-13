@@ -2,8 +2,8 @@
 <div class="well">
     {{/isReleased}}
     {{^isReleased}}
-    <div class="well component">
-        {{/isReleased}}
+    <div class="well component" data-part-number="{{model.component.number}}">
+           {{/isReleased}}
         {{#model.component.number}}
         {{#editMode}}<a class="remove">×</a>{{/editMode}}
         <input type="text" name="number" value="{{model.component.number}}" title="{{i18n.PART_NUMBER}}" disabled/>

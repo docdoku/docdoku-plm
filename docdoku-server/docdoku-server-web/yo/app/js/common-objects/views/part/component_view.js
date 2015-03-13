@@ -36,7 +36,6 @@ define([
         render: function () {
             var that = this;
             this.substitutePartViews = [];
-            this.cadInstanceViews = [];
             this.collection.each(function (model) {
                 that.addSubstitutePartsView(model);
             });
@@ -45,7 +44,7 @@ define([
                 model: this.model.attributes,
                 i18n: App.config.i18n,
                 editMode: this.options.editMode,
-                isReleased: this.options.isReleased
+                isReleased:this.options.isReleased
             }));
 
             this.bindDomElements();
