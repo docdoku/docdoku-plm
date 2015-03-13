@@ -22,7 +22,7 @@ define([
         },
 
         urlBase:function(){
-            return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/tags/'+ this.tag;
+            return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/tags/'+ encodeURIComponent(this.tag);
         },
 
         initialize: function () {
