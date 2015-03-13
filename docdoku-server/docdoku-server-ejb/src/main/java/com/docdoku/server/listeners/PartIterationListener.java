@@ -27,10 +27,7 @@ import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.dao.ModificationNotificationDAO;
 
 import javax.ejb.EJB;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.PostPersist;
-import javax.persistence.PrePersist;
+import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -47,7 +44,7 @@ public class PartIterationListener {
     private IProductManagerLocal productService;
 
 
-    @PostPersist
+    @PostUpdate
     private void addModificationNotification(Object object) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
         if(object instanceof PartIteration) {
             PartIteration partIteration = (PartIteration) object;
