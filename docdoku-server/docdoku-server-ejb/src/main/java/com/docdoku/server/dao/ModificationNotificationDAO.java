@@ -51,14 +51,15 @@ public class ModificationNotificationDAO {
     }
 
     public List<ModificationNotification> getModificationNotifications(PartIterationKey pPartIPK) {
-        return  getModificationNotifications(em.getReference(PartIteration.class,pPartIPK));
-    }
-
-    public List<ModificationNotification> getModificationNotifications(PartIteration pPart) {
         List<ModificationNotification> notifications =  em.createNamedQuery("ModificationNotification.findByImpactedPartIteration", ModificationNotification.class)
-                .setParameter("impactedPart", pPart).getResultList();
+                .setParameter("workspaceId", pPartIPK.getWorkspaceId())
+                .setParameter("partNumber", pPartIPK.getPartMasterNumber())
+                .setParameter("version", pPartIPK.getPartRevisionVersion())
+                .setParameter("iteration", pPartIPK.getIteration()).getResultList();
         return notifications;
     }
+
+
 
 
 
