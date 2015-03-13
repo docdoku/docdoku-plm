@@ -21,7 +21,7 @@ define([
             'click .add-cadInstance': 'addCadInstance',
             'click .collapse-subParts-cadInstances': 'collapseTransformations',
             'click .totalSubParts a, .dataDisplayed a': 'collapseTransformations',
-            'click  #component': 'selectPart'
+            'click  .component': 'selectPart'
         },
 
 

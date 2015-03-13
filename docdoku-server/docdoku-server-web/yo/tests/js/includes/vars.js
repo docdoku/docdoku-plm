@@ -65,19 +65,19 @@ var products = {
         parts: {
             '100-AAA-CasperJsAssemblyP1':{
                 tx:100,ty:150,tz:-140,
-                rx:Math.PI/2,ry:Math.PI/4,rz:-Math.PI/2
+                rx:1.57,ry:1.57,rz:0
             },
             '200-AAA-CasperJsAssemblyP2':{
                 tx:-100,ty:-150,tz:-140,
-                rx:-Math.PI/2,ry:-Math.PI/4,rz:-Math.PI/2
+                rx:-1.57,ry:1.57,rz:1.57
             },
             '300-AAA-CasperJsAssemblyP3':{
                 tx:-100,ty:150,tz:-140,
-                rx:Math.PI/2,ry:Math.PI/4,rz:-Math.PI/2
+                rx:1.57,ry:0.95,rz:-1.57
             },
             '400-AAA-CasperJsAssemblyP4':{
                 tx:100,ty:-150,tz:140,
-                rx:-Math.PI/2,ry:Math.PI/4,rz:Math.PI/2
+                rx:-1.57,ry:0.95,rz:1.57
             }
         }
     }

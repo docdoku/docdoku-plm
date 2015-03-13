@@ -72,8 +72,15 @@ casper.test.begin('Assembly creation tests suite',13, function assemblyCreationT
 
     partNumbers.forEach(function(partNumber){
         casper.then(function createNewParts(){
+
             this.click('#part-modal #createPart');
+
             var element = '#part-modal #iteration-components > div:last-child';
+
+            // Expand view
+            this.click( element +' .collapse-subParts-cadInstances');
+
+            // Fill coordinates
             this.sendKeys( element +' input[name="number"]',partNumber,{reset:true});
             this.sendKeys( element +' input[name="tx"]',parts[partNumber].tx.toString(),{reset:true});
             this.sendKeys( element +' input[name="ty"]',parts[partNumber].ty.toString(),{reset:true});
@@ -82,6 +89,7 @@ casper.test.begin('Assembly creation tests suite',13, function assemblyCreationT
             this.sendKeys( element +' input[name="ry"]',parts[partNumber].ry.toString(),{reset:true});
             this.sendKeys( element +' input[name="rz"]',parts[partNumber].rz.toString(),{reset:true});
             this.test.assert(true,partNumber + ' created');
+
         });
     });
 
