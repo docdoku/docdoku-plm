@@ -9,6 +9,7 @@ define([
         idAttribute: 'modificationNotification',
 
         initialize: function () {
+            _.bindAll(this);
             this.className = 'ModificationNotification';
         },
 
@@ -31,7 +32,7 @@ define([
         getFormattedCheckInDate: function () {
             var checkInDate = this.getCheckInDate();
             if (checkInDate) {
-                return Date.formatTimestamp(
+                return date.formatTimestamp(
                     App.config.i18n._DATE_FORMAT,
                     checkInDate
                 );

@@ -14,8 +14,12 @@ define([
         },
 
         render: function () {
+            var data = {
+                modificationNotification: this.model,
+                i18n: App.config.i18n
+            };
 
-            this.$el.html(Mustache.render(template, {part: this.model, i18n: App.config.i18n}));
+            this.$el.html(Mustache.render(template, data));
 
             return this;
         }
