@@ -60,6 +60,7 @@ public class PartDTO implements Serializable {
     @XmlElement(nillable = true)
     int lastIterationNumber;
     private String[] tags;
+    private List<ModificationNotificationDTO> notifications;
 
     public PartDTO() {
     }
@@ -142,6 +143,9 @@ public class PartDTO implements Serializable {
     public void setPartIterations(List<PartIterationDTO> partIterations) {
         this.partIterations = partIterations;
     }
+
+    public List<ModificationNotificationDTO> getNotifications() {return notifications;}
+    public void setNotifications(List<ModificationNotificationDTO> notifications) {this.notifications = notifications;}
 
     public UserDTO getCheckOutUser() {
         return checkOutUser;
