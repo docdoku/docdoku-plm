@@ -20,6 +20,7 @@
 
 package com.docdoku.server.rest;
 
+import com.docdoku.core.change.ModificationNotification;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.configuration.BaselinedFolder;
@@ -37,10 +38,7 @@ import com.docdoku.server.rest.dto.baseline.BaselinedPartDTO;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  *
@@ -100,6 +98,27 @@ public class Tools {
 
         return aclDTO;
 
+    }
+
+    public static List<ModificationNotificationDTO> mapModificationNotificationsToModificationNotificationDTO(Collection<ModificationNotification> pNotifications){
+        List<ModificationNotificationDTO> dtos = new ArrayList<>();
+        for(ModificationNotification notification : pNotifications){
+            dtos.add(mapModificationNotificationToModificationNotificationDTO(notification));
+        }
+        return dtos;
+    }
+
+    public static ModificationNotificationDTO mapModificationNotificationToModificationNotificationDTO(ModificationNotification pNotification){
+        ModificationNotificationDTO dto = new ModificationNotificationDTO();
+        Mapper mapper = DozerBeanMapperSingletonWrapper.getInstance();
+        UserDTO userDTO = mapper.map(pNotification.getModifiedPart().getAuthor(),UserDTO.class);
+        dto.setAuthor(userDTO);
+        dto.setCheckInDate(pNotification.getModifiedPart().getCheckInDate());
+        dto.setIterationNote(pNotification.getModifiedPart().getIterationNote());
+        dto.setModifiedPartIteration(pNotification.getModifiedPart().getIteration());
+        dto.setModifiedPartNumber(pNotification.getModifiedPart().getPartNumber());
+        dto.setModifiedPartVersion(pNotification.getModifiedPart().getPartVersion());
+        return dto;
     }
 
     public static PartDTO mapPartRevisionToPartDTO(PartRevision partRevision){

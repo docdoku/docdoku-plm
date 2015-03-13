@@ -82,18 +82,11 @@ public class PartResource {
         PartRevision partRevision = productService.getPartRevision(revisionKey);
         PartDTO partDTO = Tools.mapPartRevisionToPartDTO(partRevision);
 
-        List<ModificationNotificationDTO> notifications=new ArrayList<>();
-        ModificationNotificationDTO notification1=new ModificationNotificationDTO();
-        ModificationNotificationDTO notification2=new ModificationNotificationDTO();
-        notification1.setAuthor(new UserDTO("demo","flo","Florent"));
-        notification1.setCheckInDate(new Date());
-        notification1.setIterationNote("changement très important");
-        notification1.setModifiedPartIteration(3);
-        notification1.setModifiedPartNumber("PARRT5");
-        notification1.setModifiedPartVersion("A");
-        notifications.add(notification1);
-        notifications.add(notification1);
-        partDTO.setNotifications(notifications);
+        PartIterationKey iterationKey = new PartIterationKey(revisionKey, partRevision.getLastIterationNumber());
+        List<ModificationNotification> notifications=productService.getModificationNotifications(iterationKey);
+        List<ModificationNotificationDTO> notificationDTOs=Tools.mapModificationNotificationsToModificationNotificationDTO(notifications);
+
+        partDTO.setNotifications(notificationDTOs);
         return Response.ok(partDTO).build();
     }
 
