@@ -90,7 +90,7 @@ define([
 
         addCadInstanceView: function (instance) {
             var self = this;
-            var instanceView = new CadInstanceView({editMode: this.options.editMode});
+            var instanceView = new CadInstanceView({editMode: this.options.editMode,isReleased:this.options.isReleased});
             instanceView.setInstance(instance).render();
             self.$cadInstances.append(instanceView.$el);
             instanceView.on('instance:remove', function () {

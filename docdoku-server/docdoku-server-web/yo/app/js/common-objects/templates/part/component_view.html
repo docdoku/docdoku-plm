@@ -37,6 +37,8 @@
             <div class="dataDisplayed">
                 {{/isReleased}}
                 {{^isReleased}}
+                <div class="totalSubParts">
+                    {{/isReleased}}<a> <span class="substitute-count">{{model.substitutes.length}}</span>  {{i18n.PARTS_SUBSTITUTES}}</a></div>
 
                 <div class="subParts-CADInstance">
 
@@ -44,9 +46,6 @@
                     <div class="substitute-parts"></div>
 
                 </div>
-
-                <div class="totalSubParts">
-                    {{/isReleased}}<a> <span class="substitute-count">{{model.substitutes.length}}</span>  {{i18n.PARTS_SUBSTITUTES}}</a></div>
 
 
                 {{/model.component.number}}
@@ -61,7 +60,7 @@
 
                 <i class="fa fa-angle-double-down collapse-subParts-cadInstances"></i>
 
-                <div class="dataAlign">
+                <div>
                     <input type="text" name="referenceDescription" value="" placeholder="{{i18n.LINK_DESCRIPTION}}"
                     {{^editMode}}readonly{{/editMode}}/>
                     <input type="text" name="amount" value="{{model.amount}}" title="{{i18n.AMOUNT}}" disabled/>
@@ -86,12 +85,12 @@
                 <div class="dataDisplayed">
                     {{/isReleased}}
                     {{^isReleased}}
+                    <div class="totalSubParts">
+                        {{/isReleased}}<a> <span class="substitute-count">{{model.substitutes.length}}</span> Substitutes </a></div>
                     <div class="subParts-CADInstance">
                         <div class="cadInstances"></div>
                         <div class="substitute-parts"></div>
                     </div>
-                    <div class="totalSubParts">
-                        {{/isReleased}}<a> <span class="substitute-count">{{model.substitutes.length}}</span> {{i18n.PARTS_SUBSTITUTES}} </a></div>
 
                     {{/model.component.number}}
 
