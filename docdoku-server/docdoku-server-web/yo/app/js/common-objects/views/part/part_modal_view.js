@@ -173,6 +173,7 @@ define([
                     if (that.model.collection){
                         that.model.collection.fetch();
                     }
+                    that.model.fetch();
                     that.hide();
                     that.model.trigger('change');
                 },
