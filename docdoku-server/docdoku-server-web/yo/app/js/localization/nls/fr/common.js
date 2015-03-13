@@ -53,6 +53,7 @@ define({
 	CHANGES_MANAGEMENT: 'Gestion des changements',
 	CHANNEL_NOT_READY_ERROR: "Impossible de se connecter au serveur d'appel, vérifiez que votre navigateur supporte les websocket, ou que votre FAI ne les bloque pas",
 	CHECKIN: "Libérer",
+    CHECKIN_DATE: "Date de libération",
 	CHECKOUT_BY: "Réservé par",
 	CHECKOUT_DATE: "Date de réservation",
 	CHECKOUT: "Réserver",

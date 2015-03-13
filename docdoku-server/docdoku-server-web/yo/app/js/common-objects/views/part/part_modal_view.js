@@ -7,6 +7,7 @@ define([
     'text!common-objects/templates/part/part_modal.html',
     'common-objects/views/attributes/attributes',
     'common-objects/views/part/parts_management_view',
+    'common-objects/views/part/modification_notification_list_view',
     'common-objects/views/linked/linked_documents',
     'common-objects/views/alert',
     'common-objects/collections/linked/linked_document_collection',
@@ -15,7 +16,7 @@ define([
     'common-objects/utils/date',
     'common-objects/views/tags/tag',
     'common-objects/models/tag'
-], function (Backbone, Mustache, ModalView, FileListView, template, AttributesView, PartsManagementView, LinkedDocumentsView, AlertView, LinkedDocumentCollection, LifecycleView, ConversionStatusView, date,TagView,Tag) {
+], function (Backbone, Mustache, ModalView, FileListView, template, AttributesView, PartsManagementView, ModificationNotificationListView, LinkedDocumentsView, AlertView, LinkedDocumentCollection, LifecycleView, ConversionStatusView, date,TagView,Tag) {
     'use strict';
     var PartModalView = ModalView.extend({
 
@@ -80,6 +81,7 @@ define([
             data.isCheckout = this.model.isCheckout() ;
             data.isReleased = this.model.attributes.status == "RELEASED" ;
             this.isReleased = this.model.attributes.status == "RELEASED" ;
+            this.modificationNotifications = this.model.getModificationNotifications();
             if (this.model.hasIterations()) {
                 var hasNextIteration = this.iterations.hasNextIteration(this.iteration);
                 var hasPreviousIteration = this.iterations.hasPreviousIteration(this.iteration);
@@ -116,6 +118,8 @@ define([
                 this.initAttributesView();
 
                 this.initPartsManagementView();
+                this.initModificationNotificationListView();
+
                 this.initLinkedDocumentsView();
                 this.initLifeCycleView();
             }
@@ -216,6 +220,14 @@ define([
                 collection: new Backbone.Collection(this.iteration.getComponents()),
                 editMode: this.editMode,
                 isReleased:this.isReleased,
+                model: this.model
+            }).render();
+        },
+
+        initModificationNotificationListView: function () {
+            this.modificationNotificationListView = new ModificationNotificationListView({
+                el: '#iteration-modification-notifications',
+                collection: new Backbone.Collection(this.modificationNotifications),
                 model: this.model
             }).render();
         },
