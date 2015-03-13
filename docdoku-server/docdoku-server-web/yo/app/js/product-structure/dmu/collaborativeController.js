@@ -109,7 +109,7 @@ define([
 					    break;
 			    }
 		    },
-		    onStatusChanged: function (status) {
+		    onStatusChanged: function (/*status*/) {
 			    // only for compliance
 		    }
 	    });

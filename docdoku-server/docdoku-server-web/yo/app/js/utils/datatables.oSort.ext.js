@@ -1,5 +1,5 @@
 /*global $,define,App*/
-define(['datatables','../../bower_components/moment/moment','momentTimeZone'], function (DT,moment,momentTimeZone) {
+define(['datatables','moment'], function (DT,moment) {
 	'use strict';
 
     // sorting eu dates with current format and timezone
@@ -9,7 +9,7 @@ define(['datatables','../../bower_components/moment/moment','momentTimeZone'], f
         return moment(date,App.config.i18n._DATE_FORMAT).toDate().getTime();
     };
 
-    var strip_tags = function(input, allowed) {
+    var stripTags = function(input, allowed) {
         allowed = (((allowed || '') + '').toLowerCase().match(/<[a-z][a-z0-9]*>/g) || []).join('');
         var tags = /<\/?([a-z][a-z0-9]*)\b[^>]*>/gi, commentsAndPhpTags = /<!--[\s\S]*?-->|<\?(?:php)?[\s\S]*?\?>/gi;
         return input.replace(commentsAndPhpTags, '').replace(tags, function ($0, $1) {
@@ -27,11 +27,11 @@ define(['datatables','../../bower_components/moment/moment','momentTimeZone'], f
 
     $.fn.dataTableExt.oSort['strip_html-asc'] = function (x, y) {
 
-        return strip_tags(x).trim() > strip_tags(y).trim() ? 1:-1;
+        return stripTags(x).trim() > stripTags(y).trim() ? 1:-1;
     };
 
     $.fn.dataTableExt.oSort['strip_html-desc'] = function (x, y) {
-        return strip_tags(x).trim() <= strip_tags(y).trim() ? 1:-1;
+        return stripTags(x).trim() <= stripTags(y).trim() ? 1:-1;
     };
 
 });

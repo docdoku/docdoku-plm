@@ -138,7 +138,7 @@ var InstancesSorter = {};
             return (b.globalRating - a.globalRating);
         });
 
-        AppWorker.log("%c " + JSON.stringify(result), 'IS');
+        AppWorker.log('%c ' + JSON.stringify(result), 'IS');
 
         result.sortedInstances = sortedInstances;
 

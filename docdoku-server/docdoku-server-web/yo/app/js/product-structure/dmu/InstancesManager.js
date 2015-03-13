@@ -1,4 +1,4 @@
-/*global _,$,define,App,THREE,Worker,console*/
+/*global _,$,define,App,THREE,Worker*/
 define(['dmu/LoaderManager', 'async'],
     function (LoaderManager, async) {
 	    'use strict';
@@ -140,7 +140,7 @@ define(['dmu/LoaderManager', 'async'],
                 }
 
                 // Else : load the instance
-                var quality = App.config.contextPath+"/"+instance.files[directive.quality].fullName;
+                var quality = App.config.contextPath+'/'+instance.files[directive.quality].fullName;
 
                 var texturePath = quality.substring(0, quality.lastIndexOf('/'));
                 loaderManager.parseFile(quality, texturePath, {

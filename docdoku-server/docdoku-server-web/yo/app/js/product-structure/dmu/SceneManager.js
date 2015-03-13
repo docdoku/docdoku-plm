@@ -786,9 +786,9 @@ define([
             var save = document.createElement('a');
             save.href = imageSource;
             save.download = filename;
-            var event = document.createEvent("MouseEvents");
+            var event = document.createEvent('MouseEvents');
             event.initMouseEvent(
-                "click", true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null
+                'click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null
             );
             save.dispatchEvent(event);
 

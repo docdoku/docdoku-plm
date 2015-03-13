@@ -17,7 +17,7 @@ define({
 	ADVANCED: "Avancé",
 	ADVANCED_SEARCH: "Recherche avancée",
 	AFFECTED_ELEMENT: "Eléments affectés",
-	ALERT_ROLE_IN_USE: "Ce rôle ne peut être supprimé car il est utilisé dans un workflow",
+	ALERT_ROLE_IN_USE: "Ce rôle ne peut être supprimé car il est utilisé dans un processus",
 	ALL: 'Tous',
 	ALL_PRODUCTS: "Tous les produits",
 	ALL_TASKS: "Toutes",
