@@ -5,6 +5,9 @@ define([
     'views/template_edit',
     'text!templates/template_list_item.html'
 ], function (date, CheckboxListItemView, TemplateEditView, template) {
+
+    'use strict';
+
     var TemplateListItemView = CheckboxListItemView.extend({
 
         template: template,

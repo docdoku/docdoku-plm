@@ -5,6 +5,9 @@ define([
     'views/checked_out_document_list',
     'text!templates/checkedout_nav.html'
 ], function (singletonDecorator, BaseView, CheckedoutContentListView, template) {
+
+    'use strict';
+
     var CheckedOutNavView = BaseView.extend({
 
         template: template,
