@@ -174,11 +174,10 @@
 
       .dataAlign{
         margin: 10px 0px 0px 21px;
-       display: inline-block;
+        display: inline-block;
       }
       .dataDisplayed {
         margin-top: 7px;
-
       }
 
       .totalSubParts{
@@ -198,7 +197,7 @@
         &.selected-part {
             opacity: 1;
             background-color: rgba(193, 193, 193, 0.61);
-            border: 1px dashed #ACACAC;
+            border: 2px dashed #ACACAC;
             box-shadow: none;
         }
     }
@@ -246,4 +245,16 @@
   }
 
 
+  .action-checkin-checkout {
+    text-align: center;
+    margin-bottom: 15px;
+
+    .action-checkin, .action-checkout, .action-undocheckout {
+      cursor: pointer;
+
+    }
+    .fa {
+      padding-right: 10px;
+    }
+  }
 }
