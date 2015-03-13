@@ -95,7 +95,6 @@ define([
             return this.get('lifeCycleState');
         },
 
-
         getConversionUrl:function(){
             return App.config.contextPath +
                 '/api/workspaces/' + this.getWorkspace() +

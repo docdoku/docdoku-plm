@@ -54,6 +54,7 @@ define({
 		CHANGES_MANAGEMENT: 'Changes management',
 		CHANNEL_NOT_READY_ERROR: "Cannot communicate with the call server. Please insure that your browser is websocket capable, or your internet provider doesn't block them.",
 		CHECKIN: "Check in",
+        CHECKIN_DATE: "Checkin date",
 		CHECKOUT_BY: "Checked out by",
 		CHECKOUT: "Check out",
 		CHECKOUT_DATE: "Checkout date",
