@@ -44,11 +44,11 @@ public class PartIterationListener {
     private IProductManagerLocal productService;
 
 
-    @PostUpdate
+    @PrePersist
     private void addModificationNotification(Object object) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
         if(object instanceof PartIteration) {
             PartIteration partIteration = (PartIteration) object;
-            if(!partIteration.getPartRevision().isCheckedOut()) {
+            //if(!partIteration.getPartRevision().isCheckedOut()) {
                 Set<PartIteration> impactedParts = new HashSet<>();
                 impactedParts.addAll(productService.getUsedByAsComponent(partIteration.getKey()));
                 impactedParts.addAll(productService.getUsedByAsSubstitute(partIteration.getKey()));
@@ -60,7 +60,7 @@ public class PartIterationListener {
                     notification.setModifiedPart(partIteration);
                     dao.createModificationNotification(notification);
                 }
-            }
+            //}
 
         }
     }
