@@ -45,12 +45,19 @@ import com.docdoku.core.workflow.*;
 import com.docdoku.server.dao.*;
 import com.docdoku.server.esindexer.ESIndexer;
 import com.docdoku.server.esindexer.ESSearcher;
+import com.docdoku.server.events.ChangePartIterationEvent;
+import com.docdoku.server.events.ChangePartRevisionEvent;
+import com.docdoku.server.events.CheckedIn;
+import com.docdoku.server.events.Removed;
 import com.docdoku.server.factory.ACLFactory;
 
 import javax.annotation.Resource;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.*;
+import javax.enterprise.event.Event;
+import javax.enterprise.util.AnnotationLiteral;
+import javax.inject.Inject;
 import javax.jws.WebService;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -82,6 +89,12 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     private ESIndexer esIndexer;
     @EJB
     private ESSearcher esSearcher;
+
+
+    @Inject
+    private Event<ChangePartIterationEvent> partIterationEvent;
+    @Inject
+    private Event<ChangePartRevisionEvent> partRevisionEvent;
 
     private static final Logger LOGGER = Logger.getLogger(ProductManagerBean.class.getName());
 
@@ -406,6 +419,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             for(PartIteration partIteration : partR.getPartIterations()){
                 esIndexer.index(partIteration);                                                                         // Index all iterations in ElasticSearch (decrease old iteration boost factor)
             }
+            partIterationEvent.select(new AnnotationLiteral<CheckedIn>(){}).fire(new ChangePartIterationEvent(lastIteration));
             return partR;
         } else {
             throw new NotAllowedException(locale, "NotAllowedException20");
@@ -773,26 +787,31 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         return new ModificationNotificationDAO(locale,em).getModificationNotifications(pPartIPK);
     }
 
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
+    @Override
+    public void removeModificationNotifications(PartRevisionKey pPartRPK) {
+        //TODO insure access rights
+        new ModificationNotificationDAO(em).removeModificationNotifications(pPartRPK);
+    }
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     @Override
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void createModificationNotifications(PartIteration modifiedPartIteration) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
-
+        //TODO insure access rights
         Set<PartIteration> impactedParts = new HashSet<>();
         impactedParts.addAll(getUsedByAsComponent(modifiedPartIteration.getKey()));
         impactedParts.addAll(getUsedByAsSubstitute(modifiedPartIteration.getKey()));
 
         ModificationNotificationDAO dao = new ModificationNotificationDAO(em);
         for (PartIteration impactedPart : impactedParts) {
-            ModificationNotification notification = new ModificationNotification();
-            notification.setImpactedPart(impactedPart);
-            notification.setModifiedPart(modifiedPartIteration);
-            dao.createModificationNotification(notification);
+            if(impactedPart.isLastIteration()) {
+                ModificationNotification notification = new ModificationNotification();
+                notification.setImpactedPart(impactedPart);
+                notification.setModifiedPart(modifiedPartIteration);
+                dao.createModificationNotification(notification);
+            }
         }
     }
-
-
 
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
@@ -1681,7 +1700,9 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         }
 
         // delete CAD files attached with this partMaster
+        // and notified remove part observers
         for (PartRevision partRevision : partMaster.getPartRevisions()) {
+            partRevisionEvent.select(new AnnotationLiteral<Removed>(){}).fire(new ChangePartRevisionEvent(partRevision));
             for (PartIteration partIteration : partRevision.getPartIterations()) {
                 try {
                     removeCADFile(partIteration);
@@ -1752,7 +1773,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 LOGGER.log(Level.INFO, null, e);
             }
         }
-
+        partRevisionEvent.select(new AnnotationLiteral<Removed>(){}).fire(new ChangePartRevisionEvent(partR));
         if(isLastRevision){
             partMasterDAO.removePartM(partMaster);
         }else{
