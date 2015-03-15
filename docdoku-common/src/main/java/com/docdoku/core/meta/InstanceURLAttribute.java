@@ -24,7 +24,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 /**
- * Defines an URL type custom attribute of a document.
+ * Defines an URL type custom attribute of a document, part, product and other objects.
  * 
  * @author Emmanuel Nhan
  * @version 1.0 23/07/2009
@@ -45,7 +45,7 @@ public class InstanceURLAttribute extends InstanceAttribute {
     }
 
     @Override
-    public Object getValue() {
+    public String getValue() {
         return urlValue;
     }
     @Override

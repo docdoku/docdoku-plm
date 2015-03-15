@@ -25,12 +25,9 @@ module.exports = function (grunt) {
     grunt.initConfig({
         yeoman: yeoman,
         watch: {
-            options: {
-                nospawn: true,
-                livereload: LIVERELOAD_PORT
-            },
-            livereload: {
+            dev: {
                 options: {
+                    nospawn: true,
                     livereload: grunt.option('livereloadport') || LIVERELOAD_PORT
                 },
                 files: [
@@ -39,14 +36,10 @@ module.exports = function (grunt) {
                     '<%= yeoman.app %>/product-structure/*.html',
                     '<%= yeoman.app %>/visualization/*.html',
                     '<%= yeoman.app %>/change-management/*.html',
-                    '{.tmp,<%= yeoman.app %>}/js/**',
                     '<%= yeoman.app %>/images/**',
-                    'test/spec/**/*.js'
+                    '{.tmp,<%= yeoman.app %>}/js/**',
+                    '<%= yeoman.app %>/less/**'
                 ]
-            },
-            less: {
-                files: ['<%= yeoman.app %>/less/**'],
-                tasks: ['less']
             },
             tests:{
                 files:['<%= yeoman.tests %>/js/**/*.js'],
@@ -480,10 +473,14 @@ module.exports = function (grunt) {
                 jshintrc: '.jshintrc',
                 reporter: require('jshint-stylish')
             },
-            all: [
-                'Gruntfile.js',
-                '<%= yeoman.app %>/js/{,*/}*.js'
-            ]
+            all: {
+                src:[
+                    'Gruntfile.js',
+                    '<%= yeoman.app %>/js/{,*/}/{,*/}*.js',
+                    '!<%= yeoman.app %>/js/lib/**',
+                    '!<%= yeoman.app %>/js/localization/**'
+                ]
+            }
         },
         execute:{
             tests:{

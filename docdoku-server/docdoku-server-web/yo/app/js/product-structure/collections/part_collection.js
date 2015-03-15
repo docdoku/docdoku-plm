@@ -1,13 +1,14 @@
 /*global define*/
 define([
-    "backbone",
-    "common-objects/models/part"
+    'backbone',
+    'common-objects/models/part'
 ], function (Backbone, Part) {
+    'use strict';
     var PartList = Backbone.Collection.extend({
 
         model: Part,
 
-        className: "PartList",
+        className: 'PartList',
 
         initialize: function () {
             this.filterUrl = undefined;

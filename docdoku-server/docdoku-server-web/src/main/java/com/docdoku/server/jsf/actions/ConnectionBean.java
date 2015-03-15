@@ -20,7 +20,6 @@
 package com.docdoku.server.jsf.actions;
 
 import com.docdoku.core.common.Account;
-import com.docdoku.core.common.Workspace;
 import com.docdoku.core.exceptions.AccountNotFoundException;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IUserManagerLocal;
@@ -53,6 +52,15 @@ public class ConnectionBean {
     private String originURL;
     
     public ConnectionBean() {
+        ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+        HttpServletRequest request = (HttpServletRequest) (ec.getRequest());
+        HttpSession session = request.getSession();
+        if(session.getAttribute("hasFail") == null) {
+            session.setAttribute("hasFail", false);
+        }
+        if(session.getAttribute("hasLogout") == null) {
+            session.setAttribute("hasLogout", false);
+        }
     }
 
     public String logOut() throws ServletException, IOException {

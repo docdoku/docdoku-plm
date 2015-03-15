@@ -26,9 +26,17 @@
                 <fieldset id="admin">
                     <h:link value="#{i18nWorkspacesMenu['section.create']}" outcome="/admin/workspace/workspaceCreationForm.xhtml"/>
                     <h:outputLabel value="#{i18nWorkspacesMenu['section.select']}:" for="selectedWorkspace"/>
-                    <h:selectOneMenu label="#{i18nWorkspacesMenu['section.selectName']}" required="true" id="selectedWorkspace" value="#{adminStateBean.selectedWorkspace}">
-                        <f:selectItems value="#{accountBean.administeredWorkspaces}" var="w" itemLabel="#{w.value.id}" itemValue="#{w.value.id}" />
-                    </h:selectOneMenu>
+
+                    <div class="actions-btn">
+                        <h:selectOneMenu label="#{i18nWorkspacesMenu['section.selectName']}" required="true" id="selectedWorkspace" value="#{adminStateBean.selectedWorkspace}">
+                            <f:selectItems value="#{accountBean.administeredWorkspaces}" var="w" itemLabel="#{w.value.id}" itemValue="#{w.value.id}" />
+                        </h:selectOneMenu>
+                        <p>
+                            <h:commandLink value="#{i18nWorkspacesMenu['section.document']}" action="#{workspaceBean.goToDocuments}"/> |
+                            <h:commandLink value="#{i18nWorkspacesMenu['section.product']}" action="#{workspaceBean.goToProducts}"/> |
+                            <h:commandLink value="#{i18nWorkspacesMenu['section.change']}" action="#{workspaceBean.goToChangeManagement}"/>
+                        </p>
+                        </div>
 
                     <div class="actions-btn">
                         <h:commandLink value="#{i18nWorkspacesMenu['section.edit']}" action="#{workspaceBean.editWorkspace}"/> |

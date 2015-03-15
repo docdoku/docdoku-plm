@@ -8,8 +8,9 @@ define([
     'views/part-template/part_template_creation_view',
     'common-objects/views/security/acl_edit',
     'text!common-objects/templates/buttons/delete_button.html',
-    'text!common-objects/templates/buttons/ACL_button.html'
-], function (Backbone, Mustache, PartTemplateCollection, template, PartTemplateListView, PartTemplateCreationView,ACLEditView, deleteButton,aclButton) {
+    'text!common-objects/templates/buttons/ACL_button.html',
+    'common-objects/views/lov/lov_modal'
+], function (Backbone, Mustache, PartTemplateCollection, template, PartTemplateListView, PartTemplateCreationView,ACLEditView, deleteButton,aclButton, LOVModalView) {
     'use strict';
     var PartTemplateContentView = Backbone.View.extend({
         partials: {
@@ -20,7 +21,8 @@ define([
         events: {
             'click button.new-template': 'newPartTemplate',
             'click button.delete': 'deletePartTemplate',
-            'click .actions .edit-acl': 'onEditAcl'
+            'click .actions .edit-acl': 'onEditAcl',
+            'click .actions .list-lov' : 'showLovs'
     },
 
         initialize: function () {
@@ -89,6 +91,12 @@ define([
         },
         onEditAcl: function () {
             this.partTemplateListView.editSelectedPartTemplateACL();
+        },
+        showLovs: function(){
+            var lovmodal = new LOVModalView({
+            });
+            window.document.body.appendChild(lovmodal.render().el);
+            lovmodal.openModal();
         }
 
     });

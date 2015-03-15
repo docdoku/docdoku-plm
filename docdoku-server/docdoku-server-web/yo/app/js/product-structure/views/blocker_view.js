@@ -2,15 +2,17 @@
 define(
     [
         'backbone',
-        "mustache",
-        "text!templates/blocker.html"
+        'mustache',
+        'text!templates/blocker.html'
     ], function (Backbone, Mustache, template) {
+
+        'use strict';
 
         var BlockerView = Backbone.View.extend({
 
-            tagName: "div",
+            tagName: 'div',
 
-            id: "blocker",
+            id: 'blocker',
 
             render: function () {
                 this.$el.html(Mustache.render(template, {i18n: App.config.i18n}));

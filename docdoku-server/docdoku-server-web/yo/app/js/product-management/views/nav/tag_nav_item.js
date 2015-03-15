@@ -14,7 +14,7 @@ define([
             this.$el.html(Mustache.render(template, {i18n: App.config.i18n, workspaceId: App.config.workspaceId, model:this.model}));
             return this;
         },
-        hideActions:function() {
+        hideActions:function() {
             this.$('.header .btn-group').first().removeClass('open');
         },
         actionDelete:function() {

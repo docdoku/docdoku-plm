@@ -67,7 +67,7 @@ public class PartMasterTemplate implements Serializable, Comparable<PartMasterTe
     private BinaryResource attachedFile;
 
     @OrderColumn(name="ATTR_ORDER")
-    @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
+    @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER, orphanRemoval = true)
     @JoinTable(name="PARTMASTERTEMPLATE_ATTR",
             inverseJoinColumns={
                     @JoinColumn(name="INSTANCEATTRIBUTETEMPLATE_ID", referencedColumnName="ID")
@@ -189,16 +189,7 @@ public class PartMasterTemplate implements Serializable, Comparable<PartMasterTe
     }
     
     public void setAttributeTemplates(List<InstanceAttributeTemplate> pAttributeTemplates) {
-        attributeTemplates.retainAll(pAttributeTemplates);
-        for(InstanceAttributeTemplate currentAttr:attributeTemplates){
-            for(InstanceAttributeTemplate attr:pAttributeTemplates){
-                if(attr.equals(currentAttr)) {
-                    currentAttr.setAttributeType(attr.getAttributeType());
-                }
-            }
-        }
-        pAttributeTemplates.removeAll(attributeTemplates);
-        attributeTemplates.addAll(pAttributeTemplates);
+        attributeTemplates=pAttributeTemplates;
     }
 
     public boolean isAttributesLocked() {

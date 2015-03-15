@@ -106,7 +106,7 @@ require.config({
         stlloader: 'dmu/loaders/STLLoader',
         objloader: 'dmu/loaders/OBJLoader',
         stats:'dmu/utils/Stats',
-        stringprototype:'../lib/string.prototype'
+        utilsprototype:'../utils/utils.prototype'
     },
 
     deps: [
@@ -122,7 +122,7 @@ require.config({
         'stats',
         'dat',
         'tween',
-        'stringprototype',
+        'utilsprototype',
         'bootstrap'
     ],
     config: {

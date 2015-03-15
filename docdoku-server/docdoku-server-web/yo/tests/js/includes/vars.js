@@ -27,7 +27,7 @@ var documents = {
 	folder1: 'CasperJsTestFolder',
 	document1 : {
 		number : '000-AAA-CasperJsTestDocument',
-        iterationNote:'This is the first iteration',
+        iterationNote:'This is the first iteration of this document',
         sharedPassword:'azertyuiop',
         expireDate:tomorrowValue,
         expireDate2:yesterdayValue
@@ -35,6 +35,11 @@ var documents = {
     tags:{
         tag1:'Foo',
         tag2:'Bar'
+    },
+    lov : {
+        itemName : 'casperTestItemName',
+        possibleValueName : 'None',
+        possibleValueValue : '0'
     }
 };
 
@@ -47,7 +52,7 @@ var products = {
 	part1 : {
 		number : '000-AAA-CasperJsTestPart',
 		name : 'CasperJsTestPart',
-        iterationNote:'This is the first iteration',
+        iterationNote:'This is the first iteration of this part',
         sharedPassword:'azertyuiop',
         expireDate:tomorrowValue,
         expireDate2:yesterdayValue
@@ -60,19 +65,19 @@ var products = {
         parts: {
             '100-AAA-CasperJsAssemblyP1':{
                 tx:100,ty:150,tz:-140,
-                rx:Math.PI/2,ry:Math.PI/4,rz:-Math.PI/2
+                rx:1.57,ry:1.57,rz:0
             },
             '200-AAA-CasperJsAssemblyP2':{
                 tx:-100,ty:-150,tz:-140,
-                rx:-Math.PI/2,ry:-Math.PI/4,rz:-Math.PI/2
+                rx:-1.57,ry:1.57,rz:1.57
             },
             '300-AAA-CasperJsAssemblyP3':{
                 tx:-100,ty:150,tz:-140,
-                rx:Math.PI/2,ry:Math.PI/4,rz:-Math.PI/2
+                rx:1.57,ry:0.95,rz:-1.57
             },
             '400-AAA-CasperJsAssemblyP4':{
                 tx:100,ty:-150,tz:140,
-                rx:-Math.PI/2,ry:Math.PI/4,rz:Math.PI/2
+                rx:-1.57,ry:0.95,rz:1.57
             }
         }
     }
@@ -157,6 +162,7 @@ var apiUrls = {
 	userInfo : homeUrl+'api/workspaces/'+workspace+'/users/me',
 	deletePart : homeUrl+'api/workspaces/'+workspace+'/parts/'+products.part1.number+'-A',
     deletePartTemplate : homeUrl+'api/workspaces/'+workspace+'/part-templates/'+products.template1.number,
+    deleteLov : homeUrl+'api/workspaces/'+workspace+'/lov/'+documents.lov.itemName,
 	deleteDocument : homeUrl+'api/workspaces/'+workspace+'/documents/'+documents.document1.number+'-A',
 	deleteProduct : homeUrl+'api/workspaces/'+workspace+'/products/'+products.product1.number,
 	deleteFolder : homeUrl+'api/workspaces/'+workspace+'/folders/'+workspace+":"+documents.folder1,

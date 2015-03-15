@@ -40,6 +40,7 @@ define([
                 model: this.model,
                 editMode:false
             }).render();
+            this.baselinePartListView.renderList();
             this.$baselinedPartListArea.html(this.baselinePartListView.$el);
         },
 

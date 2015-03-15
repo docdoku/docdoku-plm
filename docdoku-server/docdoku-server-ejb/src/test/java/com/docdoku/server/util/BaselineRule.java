@@ -31,10 +31,31 @@ import org.junit.runners.model.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by asmae on 19/12/14.
+ /*
+ * DocDoku, Professional Open Source
+ * Copyright 2006 - 2015 DocDoku SARL
+ *
+ * This file is part of DocDokuPLM.
+ *
+ * DocDokuPLM is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * DocDokuPLM is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
-public class BaselineRule implements TestRule {
+
+/*
+ *
+ * @author Asmae CHADID on 19/12/14.
+ */
+     public class BaselineRule implements TestRule {
 
     private String name ;
     private ProductBaseline.BaselineType type;
@@ -44,6 +65,8 @@ public class BaselineRule implements TestRule {
     private PartMaster partMaster;
     private ConfigurationItemKey configurationItemKey;
     private ConfigurationItem configurationItem;
+    private List<String> substituteLinks = new ArrayList<>();
+    private List<String> optionalUsageLinks = new ArrayList<>();;
 
     public BaselineRule(String baselineName,ProductBaseline.BaselineType type,String description,String workspaceId,String login,String partId,String productId,boolean released){
         name = baselineName;
@@ -74,8 +97,6 @@ public class BaselineRule implements TestRule {
         if (checkouted){
             this.partMaster.getLastReleasedRevision().getIteration(1).getPartRevision().setCheckOutUser(this.user);
         }
-
-
     }
 
 
@@ -125,5 +146,13 @@ public class BaselineRule implements TestRule {
 
     public ConfigurationItemKey getConfigurationItemKey() {
         return configurationItemKey;
+    }
+
+    public List<String> getOptionalUsageLinks() {
+        return optionalUsageLinks;
+    }
+
+    public List<String> getSubstituteLinks() {
+        return substituteLinks;
     }
 }

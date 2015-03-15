@@ -1,0 +1,36 @@
+<label class="control-label" >
+    {{#model.getPartRevisionsKeys}}<a data-part-key="{{.}}" class="model-ref">{{.}}</a>  <i class="fa fa-chevron-right"></i> {{/model.getPartRevisionsKeys}}
+</label>
+<div class="controls">
+    <ul class="baseline-choice-item">
+        {{#model.getPartUsageLink}}
+
+            <li class="part-link">
+                <label class="radio">
+                    <input type="radio" name="path-selector-{{model.getPartUsageLinkPath}}" value="{{id}}"/>
+                    {{component.number}}
+                </label>
+                <span class="baseline-choice-details">{{referenceDescription}} {{comment}} - {{amount}} {{#unit}}{{.}}{{/unit}} {{^unit}}{{i18n.UNIT}}(s){{/unit}} </span>
+            </li>
+            {{#substitutes}}
+                <li class="part-link substitute">
+                    {{#substitute}}
+                    <label class="radio">
+                    <input type="radio" name="path-selector-{{model.getPartUsageLinkPath}}" value="{{id}}"/>
+                    {{number}}
+                    </label>
+                    {{/substitute}}
+                    <span class="baseline-choice-details">{{referenceDescription}} {{comment}} - {{amount}} {{#unit}}{{.}}{{/unit}} {{^unit}}{{i18n.UNIT}}(s){{/unit}} </span>
+
+                </li>
+            {{/substitutes}}
+        {{#optional}}
+        <li>
+            <label class="radio"><input type="checkbox" class="baseline-choice-optional"/> {{i18n.OPTIONAL_REMOVE}}</label>
+        </li>
+        {{/optional}}
+        {{/model.getPartUsageLink}}
+
+    </ul>
+    </label>
+</div>

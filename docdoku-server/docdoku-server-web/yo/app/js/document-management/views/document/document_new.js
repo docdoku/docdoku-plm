@@ -100,7 +100,6 @@ define([
                 instanceAttributes: this.attributesView.collection.toJSON()
             }, {
                 success: function () {
-                    debugger
                     if(that.options.autoAddTag){
                         model.addTags([that.options.autoAddTag]).success(function(){
                             that.hide();

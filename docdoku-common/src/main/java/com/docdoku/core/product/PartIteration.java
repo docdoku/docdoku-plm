@@ -41,6 +41,10 @@ import java.util.*;
  */
 @Table(name="PARTITERATION")
 @IdClass(com.docdoku.core.product.PartIterationKey.class)
+@NamedQueries({
+        @NamedQuery(name="PartIteration.findUsedByAsSubstitute", query="SELECT p FROM PartIteration p JOIN p.components l JOIN l.substitutes s WHERE s.substitute = :partMaster"),
+        @NamedQuery(name="PartIteration.findUsedByAsComponent", query="SELECT p FROM PartIteration p JOIN p.components l WHERE l.component = :partMaster")
+})
 @Entity
 public class PartIteration implements Serializable, FileHolder, Comparable<PartIteration>, Cloneable {
     

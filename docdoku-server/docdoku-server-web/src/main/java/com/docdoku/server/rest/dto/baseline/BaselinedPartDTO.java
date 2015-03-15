@@ -30,6 +30,7 @@ import java.util.List;
 public class BaselinedPartDTO {
 
     private String number;
+    private String name;
     private String version;
     private int iteration;
     private List<BaselinedPartOptionDTO> availableIterations;
@@ -40,6 +41,7 @@ public class BaselinedPartDTO {
     public BaselinedPartDTO(PartIteration partIteration){
         this.number = partIteration.getPartNumber();
         this.version = partIteration.getVersion();
+        this.name = partIteration.getPartRevision().getPartMaster().getName();
         this.iteration = partIteration.getIteration();
 
         this.availableIterations = new ArrayList<>();
@@ -57,6 +59,7 @@ public class BaselinedPartDTO {
 
         this.number = max.getPartNumber();
         this.version = max.getVersion();
+        this.name = max.getPartRevision().getPartMaster().getName();
         this.iteration = max.getIteration();
 
         this.availableIterations = new ArrayList<>();
@@ -77,6 +80,14 @@ public class BaselinedPartDTO {
     }
     public void setNumber(String number) {
         this.number = number;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getVersion() {

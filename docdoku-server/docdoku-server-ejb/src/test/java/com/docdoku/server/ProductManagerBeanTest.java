@@ -22,6 +22,7 @@ package com.docdoku.server;
 
 import com.docdoku.core.common.Account;
 import com.docdoku.core.common.User;
+import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.exceptions.*;
@@ -30,6 +31,9 @@ import com.docdoku.core.meta.InstanceDateAttribute;
 import com.docdoku.core.meta.InstanceTextAttribute;
 import com.docdoku.core.meta.Tag;
 import com.docdoku.core.product.*;
+import com.docdoku.core.security.ACL;
+import com.docdoku.core.security.ACLUserEntry;
+import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.esindexer.ESIndexer;
@@ -63,36 +67,31 @@ public class ProductManagerBeanTest {
     SessionContext ctx;
     @Spy
     private ESIndexer esIndexer = new ESIndexer();
+    @Mock
+    TypedQuery<Tag> tagsQuery;
+    @Mock
+    ProductBaselineManagerBean productBaselineManager;
 
 
     private Account account;
-
     private Workspace workspace ;
-
     private User user;
-
+    private User user2;
     private PartMaster partMaster;
-
     private PartMasterTemplate partMasterTemplate;
-
     private PartIteration partIteration;
-
     private PartRevision partRevision;
 
-    @Mock
-    TypedQuery<Tag> tagsQuery;
 
-    @Mock
-    ProductBaselineManagerBean productBaselineManager;
 
 
     @Before
     public void setup() throws Exception {
         initMocks(this);
-        account = new Account(ProductUtil.USER_2_LOGIN, ProductUtil.USER_2_NAME, "user2@docdoku.com", "en", new Date(), null);
+        account = new Account(ProductUtil.USER_2_LOGIN, ProductUtil.USER_2_NAME, ProductUtil.USER_1_MAIL, ProductUtil.USER_1_LANGUAGE, new Date(), null);
         workspace = new Workspace(ProductUtil.WORKSPACE_ID,account, "pDescription", false);
-        user = new User(workspace, "user1" , "user1", "user1@docdoku.com", "en");
-
+        user = new User(workspace, ProductUtil.USER_1_LOGIN , ProductUtil.USER_1_LOGIN, ProductUtil.USER_1_MAIL,ProductUtil.USER_1_LANGUAGE);
+        user2 = new User(workspace, ProductUtil.USER_2_LOGIN , ProductUtil.USER_2_LOGIN, ProductUtil.USER_2_MAIL,ProductUtil.USER_2_LANGUAGE);
         partMaster = new PartMaster(workspace, ProductUtil.PART_ID, user);
         partMasterTemplate = new PartMasterTemplate(workspace, ProductUtil.PART_MASTER_TEMPLATE_ID, user, ProductUtil.PART_TYPE, "", true);
         partRevision = new PartRevision(partMaster,ProductUtil.VERSION,user);
@@ -103,7 +102,6 @@ public class ProductManagerBeanTest {
         partRevision.setPartIterations(iterations);
         partRevision.setCheckOutUser(user);
         partRevision.setCheckOutDate(new Date());
-
         partIteration.setPartRevision(partRevision);
 
     }
@@ -212,7 +210,7 @@ public class ProductManagerBeanTest {
      * @throws AccessRightException
      */
     @Test
-    public void addTagToPartWithNoTags() throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
+    public void addTagToPartWithNoTags() throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException, TagException {
 
 
         PartRevisionKey partRevisionKey = partRevision.getKey();
@@ -243,7 +241,7 @@ public class ProductManagerBeanTest {
 
 
     @Test
-    public void removeTagFrom() throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
+    public void removeTagFromPart() throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
         Set<Tag> tags = new LinkedHashSet<Tag>();
         tags.add(new Tag(workspace, "Important"));
         tags.add(new Tag(workspace, "ToRemove"));
@@ -264,4 +262,18 @@ public class ProductManagerBeanTest {
         Assert.assertTrue(partRevisionResult.getTags().contains(new Tag(workspace,"ToRemove")));
 
     }
+
+    @Test(expected = TagException.class)
+    public void addNullTagToOnePart() throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException, TagException {
+        String[] tags = null;
+        partRevision.setTags(null);
+        PartRevisionKey partRevisionKey = partRevision.getKey();
+        Mockito.when(ctx.isCallerInRole(UserGroupMapping.GUEST_PROXY_ROLE_ID)).thenReturn(true);
+        Mockito.when(userManager.checkWorkspaceReadAccess(ProductUtil.WORKSPACE_ID)).thenReturn(user);
+        Mockito.when(userManager.checkWorkspaceWriteAccess(ProductUtil.WORKSPACE_ID)).thenReturn(user);
+        Mockito.when(em.find(PartRevision.class, partRevisionKey)).thenReturn(partRevision);
+        PartRevision partRevisionResult = productManagerBean.saveTags(partRevisionKey,tags);
+    }
+
+
 }

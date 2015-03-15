@@ -1,17 +1,19 @@
 /*global define,App,_*/
 define([
-        "backbone",
-        "mustache",
-        "text!templates/marker_create_modal.html"
+        'backbone',
+        'mustache',
+        'text!templates/marker_create_modal.html'
     ],
 
     function (Backbone, Mustache, template) {
 
+        'use strict';
+
         var MarkerCreateModalView = Backbone.View.extend({
 
             events: {
-                "submit form#save-marker": "saveMarker",
-                "hidden #creationMarkersModal": "onHidden"
+                'submit form#save-marker': 'saveMarker',
+                'hidden #creationMarkersModal': 'onHidden'
             },
 
             initialize: function () {
@@ -20,7 +22,7 @@ define([
 
             render: function () {
                 this.$el.html(Mustache.render(template, {i18n: App.config.i18n}));
-                this.$modal = this.$("#creationMarkersModal");
+                this.$modal = this.$('#creationMarkersModal');
                 this.$markersModalInputName = this.$('input[name=makerName]');
                 this.$markersModalInputDescription = this.$('textarea');
 

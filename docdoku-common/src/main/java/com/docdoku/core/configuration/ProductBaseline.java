@@ -204,6 +204,8 @@ public class ProductBaseline implements Serializable {
         this.configurationItem = configurationItem;
     }
 
+
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

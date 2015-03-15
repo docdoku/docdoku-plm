@@ -167,6 +167,9 @@ public class AccountBean {
     }
 
     public Locale getLocale() {
-        return locale;
+        if(locale != null){
+            return locale;
+        }
+        return Locale.getDefault();
     }
 }

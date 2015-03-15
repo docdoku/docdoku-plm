@@ -1,21 +1,23 @@
 /*global define,App*/
 define(
     [
-        "backbone",
-        "mustache",
-        "text!templates/shortcuts.html",
-        "views/controls_infos_modal_view"
+        'backbone',
+        'mustache',
+        'text!templates/shortcuts.html',
+        'views/controls_infos_modal_view'
     ]
     , function (Backbone, Mustache, template, ControlsInfosModalView) {
 
+        'use strict';
+
         var ShortcutsView = Backbone.View.extend({
 
-            tagName: "div",
+            tagName: 'div',
 
-            id: "shortcuts",
+            id: 'shortcuts',
 
             events: {
-                "click a": "clicked"
+                'click a': 'clicked'
             },
 
             initialize: function () {

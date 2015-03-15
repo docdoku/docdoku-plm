@@ -39,10 +39,8 @@ public class WorkflowManagerBeanTest {
     private EntityManager em;
     @Mock
     private IUserManagerLocal userManager;
-
     @Mock
     TypedQuery<ACL> aclTypedQuery;
-
     @Mock
     StoredProcedureQuery storedProcedureQuery;
 

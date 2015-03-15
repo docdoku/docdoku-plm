@@ -30,7 +30,7 @@ casper.test.begin('Workflow Deletion tests suite',2, function workflowDeletionTe
      * Select the first workflow by its checkbox
      */
     casper.then(function clickOnWorkflowCheckbox(){
-        this.waitForSelector('.workflow-table',function tableDisplayed(){
+        this.waitForSelector('.workflow-table tbody tr:first-child td:first-child input',function tableDisplayed(){
             this.click('.workflow-table tbody tr:first-child td:first-child input');
         },function fail() {
             this.capture('screenshot/workflowDeletion/clickOnWorkflowCheckbox-error.png');

@@ -1,18 +1,20 @@
 /*global define,App*/
 define(
     [
-        "backbone",
-        "mustache",
-        "text!templates/control_clipping.html"
+        'backbone',
+        'mustache',
+        'text!templates/control_clipping.html'
     ],
     function (Backbone, Mustache, template) {
 
+        'use strict';
+
         var ControlOptionsView = Backbone.View.extend({
 
-            className: "side_control_group",
+            className: 'side_control_group',
 
             events: {
-                "input input#slider-clipping": "clipping"
+                'input input#slider-clipping': 'clipping'
             },
 
             initialize: function () {

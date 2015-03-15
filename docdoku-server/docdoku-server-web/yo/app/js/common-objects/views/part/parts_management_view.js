@@ -10,8 +10,7 @@ define([
 
         events: {
             'click #createPart': 'createPart',
-            'click #createSubstitutePart': 'createSubstitutePart',
-            'click  #component': 'undoSelectPart'
+            'click #createSubstitutePart': 'createSubstitutePart'
         },
 
         initialize: function () {
@@ -74,7 +73,7 @@ define([
             var that = this;
             this.iteration = this.model.getLastIteration();
             var componentView = new ComponentView({
-                model: model, editMode: this.options.editMode,
+                model: model, editMode: this.options.editMode,isReleased:this.options.isReleased,isCheckout:this.options.isCheckout,
                 otherComponentViews: new Backbone.Collection(this.componentViews),
                 collection: new Backbone.Collection(this.iteration.getSubstituteParts()),
                 removeHandler: function () {
@@ -144,6 +143,7 @@ define([
             };
             that.$selectedComponent.collection.push(substitutePart);
 
+
         },
         bindTypeaheadSub: function () {
             var that = this;
@@ -187,7 +187,7 @@ define([
             })[0];
         }
 
-// var view = _.findWhere(taList,{selected:true});
+
 
     });
 

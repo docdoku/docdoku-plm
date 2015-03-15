@@ -267,9 +267,12 @@ public class PartRevision implements Serializable, Comparable<PartRevision>, Clo
     }
 
     public void setTags(Set<Tag> pTags) {
-        tags.retainAll(pTags);
-        pTags.removeAll(tags);
-        tags.addAll(pTags);
+       if (pTags != null){
+           tags.retainAll(pTags);
+           pTags.removeAll(tags);
+           tags.addAll(pTags);
+       }
+
     }
 
     public boolean addTag(Tag pTag) {

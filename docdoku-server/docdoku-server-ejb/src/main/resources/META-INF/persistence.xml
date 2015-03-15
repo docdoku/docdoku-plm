@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <persistence version="1.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd">
   <persistence-unit name="DocDoku-PU" transaction-type="JTA">
-    <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
     <jta-data-source>jdbc/docdokuPU</jta-data-source>
     <class>com.docdoku.core.common.Account</class>
     <class>com.docdoku.core.common.BinaryResource</class>
@@ -14,6 +13,7 @@
     <class>com.docdoku.core.change.ChangeOrder</class>
     <class>com.docdoku.core.change.ChangeRequest</class>
     <class>com.docdoku.core.change.Milestone</class>
+    <class>com.docdoku.core.change.ModificationNotification</class>
     <class>com.docdoku.core.configuration.ProductBaseline</class>
     <class>com.docdoku.core.configuration.BaselineConfigSpec</class>
     <class>com.docdoku.core.configuration.BaselinedPart</class>
@@ -43,13 +43,17 @@
     <class>com.docdoku.core.log.DocumentLog</class>
     <class>com.docdoku.core.log.PartLog</class>
     <class>com.docdoku.core.log.WorkspaceLog</class>
+    <class>com.docdoku.core.meta.DefaultAttributeTemplate</class>
     <class>com.docdoku.core.meta.InstanceAttribute</class>
+    <class>com.docdoku.core.meta.InstanceAttributeTemplate</class>
     <class>com.docdoku.core.meta.InstanceBooleanAttribute</class>
     <class>com.docdoku.core.meta.InstanceDateAttribute</class>
+    <class>com.docdoku.core.meta.InstanceListOfValuesAttribute</class>
+    <class>com.docdoku.core.meta.ListOfValuesAttributeTemplate</class>
     <class>com.docdoku.core.meta.InstanceNumberAttribute</class>
     <class>com.docdoku.core.meta.InstanceTextAttribute</class>
     <class>com.docdoku.core.meta.InstanceURLAttribute</class>
-    <class>com.docdoku.core.meta.InstanceAttributeTemplate</class>
+    <class>com.docdoku.core.meta.ListOfValues</class>
     <class>com.docdoku.core.meta.Tag</class>
     <class>com.docdoku.core.product.ConfigurationItem</class>
     <class>com.docdoku.core.product.DateBasedEffectivity</class>

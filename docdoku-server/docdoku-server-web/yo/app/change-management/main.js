@@ -59,11 +59,11 @@ require.config({
         modules: '../modules',
         'common-objects': '../common-objects',
         userPopover: 'modules/user-popover-module/app',
-        effects: '../lib/effects',
-        popoverUtils: '../lib/popover.utils',
-        datatablesOsortExt: '../lib/datatables.oSort.ext',
-        stringprototype: '../lib/string.prototype',
-        inputValidity: '../lib/input-validity'
+        effects: '../utils/effects',
+        popoverUtils: '../utils/popover.utils',
+        datatablesOsortExt: '../utils/datatables.oSort.ext',
+        utilsprototype: '../utils/utils.prototype',
+        inputValidity: '../utils/input-validity'
     },
 
     deps: [
@@ -78,7 +78,7 @@ require.config({
         'popoverUtils',
         'datatables',
         'datatablesOsortExt',
-        'stringprototype',
+        'utilsprototype',
         'inputValidity'
     ],
     config: {

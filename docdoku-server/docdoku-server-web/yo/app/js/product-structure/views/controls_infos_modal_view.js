@@ -1,16 +1,18 @@
 /*global define,App,_*/
 define([
-        "backbone",
-        "mustache",
-        "text!templates/controls_infos_modal.html"
+        'backbone',
+        'mustache',
+        'text!templates/controls_infos_modal.html'
     ],
 
     function (Backbone, Mustache, template) {
 
+        'use strict';
+
         var ControlsInfosModalView = Backbone.View.extend({
 
             events: {
-                "hidden #controlsInfosModal": "onHidden"
+                'hidden #controlsInfosModal': 'onHidden'
             },
 
             initialize: function () {
@@ -26,7 +28,7 @@ define([
                     this.$el.html(Mustache.render(template, {i18n: App.config.i18n, isORC: true}));
                 }
 
-                this.$modal = this.$("#controlsInfosModal");
+                this.$modal = this.$('#controlsInfosModal');
 
                 return this;
             },

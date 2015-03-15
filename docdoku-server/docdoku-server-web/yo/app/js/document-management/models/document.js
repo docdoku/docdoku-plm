@@ -100,7 +100,7 @@ define(['backbone', 'collections/document_iteration', 'common-objects/utils/acl-
 				},
                 success:function(){
                     if(refresh){
-                        this.fetch()
+                        this.fetch();
                     }
                 }
 			});
@@ -117,7 +117,7 @@ define(['backbone', 'collections/document_iteration', 'common-objects/utils/acl-
 				},
                 success:function(){
                     if(refresh){
-                        this.fetch()
+                        this.fetch();
                     }
                 }
 			});
@@ -133,7 +133,7 @@ define(['backbone', 'collections/document_iteration', 'common-objects/utils/acl-
 				},
                 success:function(){
                     if(refresh){
-                        this.fetch()
+                        this.fetch();
                     }
                 }
 			});

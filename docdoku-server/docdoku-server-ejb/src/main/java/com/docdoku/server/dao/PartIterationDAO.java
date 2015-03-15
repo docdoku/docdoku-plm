@@ -23,8 +23,11 @@ package com.docdoku.server.dao;
 import com.docdoku.core.exceptions.PartIterationNotFoundException;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartIterationKey;
+import com.docdoku.core.product.PartMaster;
+import com.docdoku.core.product.PartMasterKey;
 
 import javax.persistence.EntityManager;
+import java.util.List;
 import java.util.Locale;
 
 
@@ -64,4 +67,27 @@ public class PartIterationDAO {
         new ConversionDAO(em).removePartIterationConversion(pPartI);
         em.remove(pPartI);
     }
+
+    public List<PartIteration> findUsedByAsComponent(PartMasterKey pPart) {
+        return findUsedByAsComponent(em.getReference(PartMaster.class,pPart));
+    }
+
+    public List<PartIteration> findUsedByAsComponent(PartMaster pPart) {
+        List<PartIteration> usedByParts =  em.createNamedQuery("PartIteration.findUsedByAsComponent", PartIteration.class)
+                .setParameter("partMaster", pPart).getResultList();
+        return usedByParts;
+    }
+
+    public List<PartIteration> findUsedByAsSubstitute(PartMasterKey pPart) {
+        return findUsedByAsSubstitute(em.getReference(PartMaster.class,pPart));
+    }
+
+    public List<PartIteration> findUsedByAsSubstitute(PartMaster pPart) {
+        List<PartIteration> usedByParts =  em.createNamedQuery("PartIteration.findUsedByAsSubstitute", PartIteration.class)
+                .setParameter("partMaster", pPart).getResultList();
+        return usedByParts;
+    }
+
+
+
 }

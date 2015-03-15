@@ -1,0 +1,24 @@
+<div class="modal fade in list_lov">
+    <div class="modal-header">
+        <a class="close" data-dismiss="modal">×</a>
+        <h3>
+            {{i18n.LIST_LOV}}
+        </h3>
+    </div>
+    <div class="modal-body">
+        <div class="notifications"></div>
+        <form id="lovCreationform">
+        <div class="list_of_lov ui-sortable">
+        </div>
+        </form>
+        <button type="button" class="btn btn-primary addLOVButton">
+            {{i18n.ADD}}
+        </button>
+    </div>
+    <div class="modal-footer">
+        <a class="btn cancel" data-dismiss="modal">{{i18n.CANCEL}}</a>
+        <button type="submit" class="btn btn-primary btn-saveLovs" form="lovCreationform">
+            {{i18n.SAVE}}
+        </button>
+    </div>
+</div>

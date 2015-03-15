@@ -37,7 +37,7 @@ define([
             this.$('.items').empty();
             this.collection.each(this.addTagView.bind(this));
             if(this.tag){
-                this.$('.items').find('.header[data-tag='+this.tag+']').addClass('active');
+                this.$('.items').find('.header[data-tag="'+this.tag+'"]').addClass('active');
             }
         },
 
@@ -54,7 +54,7 @@ define([
             this.tag = tag;
             this.$('.items').show();
             App.$productManagementMenu.find('.active').removeClass('active');
-            this.$('.items').find('.header[data-tag='+this.tag+']').addClass('active');
+            this.$('.items').find('.header[data-tag="'+this.tag+'"]').addClass('active');
             this.partContentView = new PartContentView();
             this.tagPartCollection.setTag(this.tag);
             this.partContentView.setCollection(this.tagPartCollection).render();

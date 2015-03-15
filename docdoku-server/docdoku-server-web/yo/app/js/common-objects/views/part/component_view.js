@@ -19,8 +19,10 @@ define([
             'input input[name=newUnit]': 'changeMeasureUnit',
             'click datalist[name=unitMeasure]': 'changeMeasureUnit',
             'click .add-cadInstance': 'addCadInstance',
+            'click .decrease-cadInstance': 'removeCadInstance',
             'click .collapse-subParts-cadInstances': 'collapseTransformations',
-            'click  #component': 'selectPart'
+            'click .totalSubParts a, .dataDisplayed a': 'collapseTransformations',
+            'click .component': 'selectPart'
         },
 
 
@@ -34,7 +36,7 @@ define([
         render: function () {
             var that = this;
             this.substitutePartViews = [];
-
+            this.cadInstanceViews = [];
             this.collection.each(function (model) {
                 that.addSubstitutePartsView(model);
             });
@@ -42,7 +44,9 @@ define([
             this.$el.html(Mustache.render(template, {
                 model: this.model.attributes,
                 i18n: App.config.i18n,
-                editMode: this.options.editMode
+                editMode: this.options.editMode,
+                isReleased:this.options.isReleased,
+                isCheckout:this.options.isCheckout
             }));
 
             this.bindDomElements();
@@ -74,11 +78,15 @@ define([
 
         initSubstitutePartView: function () {
 
-
             var self = this;
             _(this.model.get('substitutes')).each(function (instance) {
                 self.addSubstitutePartsView(instance);
+
             });
+            if (this.model.get('substitutes').length == 0){
+                self.$('.substitute-count-text').text(App.config.i18n.PARTS_SUBSTITUTES);
+
+            }
         },
         initUnit: function () {
             var unit = this.model.get('unit');
@@ -89,24 +97,34 @@ define([
 
         addCadInstanceView: function (instance) {
             var self = this;
-            var instanceView = new CadInstanceView({editMode: this.options.editMode});
+            var instanceView = new CadInstanceView({editMode: this.options.editMode, isReleased: this.options.isReleased,isCheckout:this.options.isCheckout});
             instanceView.setInstance(instance).render();
             self.$cadInstances.append(instanceView.$el);
             instanceView.on('instance:remove', function () {
                 self.onRemoveCadInstance(instance);
+                self.cadInstanceViews = _(self.cadInstanceViews).without(instance);
             });
+            self.cadInstanceViews.push(instance);
         },
         addSubstitutePartsView: function (model) {
             var self = this;
+            self.$('.substitute-count').text("");
             var substitutePartView = new SubstitutePartView({
                 model: model,
                 editMode: this.options.editMode,
                 removeSubHandler: function () {
                     self.model.attributes.substitutes = _(self.model.attributes.substitutes).without(model);
                     self.removeSubPart(model);
+                    var countText = (self.model.get('substitutes').length == 1 ? App.config.i18n.PART_SUBSTITUTE :  App.config.i18n.PARTS_SUBSTITUTES);
+                    self.$('.substitute-count').text(self.model.get('substitutes').length);
+                    self.$('.substitute-count-text').text(" "+ countText);
                 }}).render();
+            var countText = (self.model.get('substitutes').length == 1 ? App.config.i18n.PART_SUBSTITUTE :  App.config.i18n.PARTS_SUBSTITUTES);
+
+            self.$('.substitute-count').text(self.model.get('substitutes').length + " "+ countText );
             this.substitutePartViews.push(substitutePartView);
             this.$(".substitute-parts").append(substitutePartView.$el);
+
         },
 
         onRemove: function () {
@@ -121,6 +139,9 @@ define([
             this.$amount.val(parseInt(this.$amount.val(), 10) - 1);
             this.model.set('amount', this.$amount.val());
             this.model.get('component').amount = this.$amount.val();
+            if (this.$amount.val() <= 1) {
+                this.$('.decrease-cadInstance').hide();
+            }
         },
 
         addCadInstance: function () {
@@ -129,7 +150,15 @@ define([
             this.addCadInstanceView(instance);
             this.$amount.val(parseInt(this.$amount.val(), 10) + 1);
             this.model.set('amount', this.$amount.val());
+            if (this.$amount.val() > 1) {
+                this.$('.decrease-cadInstance').show();
+            }
         },
+        removeCadInstance: function () {
+            this.onRemoveCadInstance(_(this.model.get('cadInstances')).last());
+            this.$cadInstances.find('.cadInstance :last').remove();
+        },
+
 
         collapseTransformations: function () {
             var isVisible = this.$extraInformation.is(':visible');
@@ -193,11 +222,15 @@ define([
                 this.$amount.val(parseInt(this.$amount.val(), 10) == 0 ? 1 : parseInt(this.$amount.val(), 10));
                 this.$amount.attr('disabled', 'disabled');
                 this.$('.add-cadInstance').show();
+                if (this.$amount.val() > 1) {
+                    this.$('.decrease-cadInstance').show();
+                }
                 this.$unitText.val(this.$unitText.attr('default-unity'));
             }
             else {
                 this.$amount.removeAttr('disabled');
                 this.$('.add-cadInstance').hide();
+                this.$('.decrease-cadInstance').hide();
             }
             this.checkIntegrity(unit);
 
@@ -205,7 +238,7 @@ define([
 
 
         selectPart: function (e) {
-            if (e.target.id == "component" || e.target.parentNode.className == "cadInstance" || e.target.parentNode.className == "cadInstances") {
+            if (e.target.className.indexOf("component") != -1 || e.target.parentNode.className == "cadInstance" || e.target.parentNode.className == "cadInstances") {
                 this.options.undoSelect(this);
                 $('.component').toggleClass("selected-part", false);
                 this.$selectPart = !this.$selectPart;

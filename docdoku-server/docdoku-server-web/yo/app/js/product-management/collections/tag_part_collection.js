@@ -1,4 +1,4 @@
-/*global $,define,App*/
+/*global define,App*/
 define([
     'backbone',
     'common-objects/models/part'
@@ -22,7 +22,7 @@ define([
         },
 
         urlBase:function(){
-            return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/tags/'+ this.tag;
+            return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/tags/'+ encodeURIComponent(this.tag);
         },
 
         initialize: function () {

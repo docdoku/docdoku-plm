@@ -1,14 +1,16 @@
 /*global define,App*/
 define(
     [
-        "backbone",
-        "mustache",
-        "text!templates/control_layers.html"
+        'backbone',
+        'mustache',
+        'text!templates/control_layers.html'
     ], function (Backbone, Mustache, template) {
+
+        'use strict';
 
         var ControlLayersView = Backbone.View.extend({
 
-            className: "side_control_group",
+            className: 'side_control_group',
 
             initialize: function () {
             },

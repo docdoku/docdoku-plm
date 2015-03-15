@@ -61,7 +61,7 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public ProductBaseline createBaseline(ConfigurationItemKey configurationItemKey, String name, ProductBaseline.BaselineType pType, String description, List<PartIterationKey> partIterationKeys) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, PartRevisionNotReleasedException, PartIterationNotFoundException, UserNotActiveException, NotAllowedException, EntityConstraintException, PartMasterNotFoundException {
+    public ProductBaseline createBaseline(ConfigurationItemKey configurationItemKey, String name, ProductBaseline.BaselineType pType, String description, List<PartIterationKey> partIterationKeys, List<String> substituteLinks, List<String> optionalUsageLinks) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, PartRevisionNotReleasedException, PartIterationNotFoundException, UserNotActiveException, NotAllowedException, EntityConstraintException, PartMasterNotFoundException {
 
         User user = userManager.checkWorkspaceWriteAccess(configurationItemKey.getWorkspace());
         Locale locale = new Locale(user.getLanguage());
@@ -71,6 +71,8 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
         ProductBaseline productBaseline = new ProductBaseline(configurationItem, name, pType, description);
         productBaseline.getPartCollection().setCreationDate(new Date());
         productBaseline.getPartCollection().setAuthor(user);
+        productBaseline.getSubstituteLinks().addAll(substituteLinks);
+        productBaseline.getOptionalUsageLinks().addAll(optionalUsageLinks);
 
         new ProductBaselineDAO(locale,em).createBaseline(productBaseline);
 
@@ -95,10 +97,8 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
         PartRevision lastRevision = configurationItem.getDesignItem().getLastRevision();
         PartIteration baselinedIteration = lastRevision.getLastCheckedInIteration();
         fillLatestBaselineParts(productBaseline, baselinedIteration, user);
-
         BaselineConfigSpec baselineConfigSpec = new BaselineConfigSpec(productBaseline, user);
         checkCyclicAssembly(configurationItem.getWorkspaceId(),baselinedIteration.getPartRevision().getPartMaster(),baselinedIteration.getComponents(), baselineConfigSpec, new Locale(user.getLanguage()));
-
     }
 
     private void fillLatestBaselineParts(ProductBaseline productBaseline, PartIteration pIteration, User user) throws PartRevisionNotReleasedException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartIterationNotFoundException, NotAllowedException{
@@ -275,7 +275,10 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
         for(PartUsageLink usageLink: usageLinks){
             PartMaster pm = new PartMasterDAO(locale,em).loadPartM(new PartMasterKey(workspaceId,usageLink.getComponent().getNumber()));
             PartIteration partIteration = ci.filterConfigSpec(pm);
-            checkCyclicAssembly(workspaceId,root,partIteration.getComponents(),ci, locale);
+            if (partIteration != null){
+                checkCyclicAssembly(workspaceId,root,partIteration.getComponents(),ci, locale);
+            }
+
 
             for(PartSubstituteLink substituteLink:usageLink.getSubstitutes()){
                 PartMaster substitute = new PartMasterDAO(locale,em).loadPartM(new PartMasterKey(workspaceId,substituteLink.getSubstitute().getNumber()));

@@ -40,6 +40,9 @@
                 <li><a href="#tab-part-links" data-toggle="tab">{{i18n.LINKS}}</a></li>
                 <li><a href="#tab-iteration-lifecycle" data-toggle="tab">{{i18n.LIFECYCLE_STATE}}</a></li>
                 {{/isLockedMode}}
+                {{#isShowingLast}}{{#part.isLastIterationAssembly}}
+                <li><a href="#tab-part-modification-notifications" data-toggle="tab">{{i18n.NOTIFICATIONS}}</a></li>
+                {{/part.isLastIterationAssembly}}{{/isShowingLast}}
             </ul>
 
             <form id="form-part" class="form-horizontal">
@@ -150,6 +153,15 @@
                                 {{^editMode}}disabled="disabled"{{/editMode}} />
                             </div>
                         </div>
+                        {{^isReleased}}
+                        <div class="action-checkin-checkout" >
+                            {{^isCheckout}}<button type="button" class="btn btn-small btn-warning action-checkout"> <i class="fa fa-pencil"></i> {{i18n.CHECKOUT}}</button>{{/isCheckout}}
+                            {{#isCheckout}}<button type="button" class="btn btn-small btn-success action-checkin"> <i class="fa fa-eye"></i> {{i18n.CHECKIN}}</button>
+                            <button type="button" class="btn btn-small btn-info action-undocheckout"> <i class="fa fa-reply"></i>{{i18n.UNDO_CHECKOUT}}</button>{{/isCheckout}}
+
+                        </div>
+                        {{/isReleased}}
+
                         <div class="control-group">
                             <label class="control-label">{{i18n.REVISION_DATE}}</label>
 
@@ -157,12 +169,7 @@
                                 <span class="help-inline"><a class="date-popover">{{iteration.revisionDate}}</a></span>
                             </div>
                         </div>
-                        <div class="action-checkin-checkout" >
-                            {{^isCheckout}}<button type="button" class="btn btn-small btn-warning action-checkout"> <i class="fa fa-pencil"></i> {{i18n.CHECKOUT}}</button>{{/isCheckout}}
-                            {{#isCheckout}}<button type="button" class="btn btn-small btn-success action-checkin"> <i class="fa fa-eye"></i> {{i18n.CHECKIN}}</button>
-                            <button type="button" class="btn btn-small btn-info action-undocheckout"> <i class="fa fa-reply"></i>{{i18n.UNDO_CHECKOUT}}</button>{{/isCheckout}}
 
-                        </div>
 
                         <div class="control-group">
                             <label class="control-label">{{i18n.MODIFICATION_DATE}}</label>
@@ -192,7 +199,13 @@
                     <div id="tab-part-sub-parts" class="tab-pane">
                         <div id="iteration-components"></div>
                     </div>
+                    {{/isLockedMode}}
 
+                    <div id="tab-part-modification-notifications" class="tab-pane">
+                        <div id="iteration-modification-notifications"></div>
+                    </div>
+
+                    {{^isLockedMode}}
                     <div id="tab-part-links" class="tab-pane">
                         <div id="iteration-links"></div>
                     </div>

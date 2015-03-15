@@ -90,4 +90,8 @@ public class PartIterationKey implements Serializable {
     public String getPartMasterNumber() {
         return partRevision.getPartMaster().getNumber();
     }
+
+    public String getPartRevisionVersion() {
+        return partRevision.getVersion();
+    }
 }

@@ -24,7 +24,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 /**
- * Defines a text type custom attribute of a document.
+ * Defines a text type custom attribute of a document, part, product and other objects.
  * 
  * @author Florent Garin
  * @version 1.0, 02/06/08

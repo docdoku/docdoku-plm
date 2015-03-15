@@ -18,43 +18,44 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.server.rest.dto.baseline;
+package com.docdoku.core.meta;
 
-import com.docdoku.server.rest.dto.PartDTO;
-
+import javax.persistence.Embeddable;
 import java.io.Serializable;
-import java.util.List;
 
-public class ProductBaselineCreationReportDTO implements Serializable {
-    
-    private ProductBaselineDTO productBaseline;
-    private String message;
-    private List<PartDTO> conflits;
+/**
+ * Embeddable name-value pair.
+ *
+ * @author Florent Garin
+ * @version 2.0, 27/02/15
+ * @since V2.0
+ */
+@Embeddable
+public class NameValuePair implements Serializable {
 
-    public ProductBaselineCreationReportDTO() {
+    private String name, value;
+
+    public NameValuePair() {
     }
 
-    public ProductBaselineDTO getProductBaseline() {
-        return productBaseline;
+    public NameValuePair(String name, String value) {
+        this.name = name;
+        this.value = value;
     }
 
-    public void setProductBaseline(ProductBaselineDTO productBaseline) {
-        this.productBaseline = productBaseline;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getMessage() {
-        return message;
+    public void setValue(String value) {
+        this.value = value;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public String getName() {
+        return name;
     }
 
-    public List<PartDTO> getConflits() {
-        return conflits;
-    }
-
-    public void setConflits(List<PartDTO> conflits) {
-        this.conflits = conflits;
+    public String getValue() {
+        return value;
     }
 }

@@ -25,6 +25,7 @@ define([
 
             User.whoami(App.config.workspaceId, function (user, groups) {
                 Workspace.getWorkspaces(function (workspaces) {
+
                     App.config.login = user.login;
                     App.config.userName = user.name;
                     App.config.timeZone = user.timeZone;
@@ -33,7 +34,14 @@ define([
                     App.config.workspaceAdmin = _.select(App.config.workspaces.administratedWorkspaces, function (workspace) {
                         return workspace.id === App.config.workspaceId;
                     }).length === 1;
-                    window.localStorage.setItem('locale', user.language || 'en');
+
+                    if(window.localStorage.locale === 'unset'){
+                        window.localStorage.locale = user.language || 'en';
+                        window.location.reload();
+                        return;
+                    }else{
+                        window.localStorage.locale = user.language || 'en';
+                    }
 
                     success();
                 });

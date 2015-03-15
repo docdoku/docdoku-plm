@@ -1,4 +1,4 @@
-/*global define,App*/
+/*global define,App,$*/
 define([
     'backbone',
     'common-objects/collections/activity_models','common-objects/utils/acl-checker'
@@ -47,7 +47,7 @@ define([
             return ACLChecker.getPermission(this.get('acl'));
         },
         updateWorkflowACL: function (args) {
-            $.ajax({
+            return $.ajax({
                 type: 'PUT',
                 url: this.url()+'/acl',
                 data: JSON.stringify(args.acl),

@@ -1,4 +1,4 @@
-/*global _,self,THREE,InstancesSorter,DegradationLevelBalancer*/
+/*global _,self,THREE,InstancesSorter,DegradationLevelBalancer,importScripts*/
 
 'use strict';
 

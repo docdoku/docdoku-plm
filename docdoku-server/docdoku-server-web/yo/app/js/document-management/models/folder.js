@@ -6,17 +6,17 @@ define(['backbone'], function (Backbone) {
             home: false
         },
         initialize: function () {
-            this.className = "Folder";
+            this.className = 'Folder';
         },
         getPath: function () {
-            return this.get("path");
+            return this.get('path');
         },
         getName: function () {
-            return this.get("name");
+            return this.get('name');
         },
         url: function () {
-            if (this.get("id")) {
-                return App.config.contextPath + "/api/workspaces/" + App.config.workspaceId + "/folders/" + this.get("id");
+            if (this.get('id')) {
+                return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/folders/' + this.get('id');
             } else if (this.collection) {
                 return this.collection.url;
             }

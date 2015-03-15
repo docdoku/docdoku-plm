@@ -24,7 +24,9 @@ import com.docdoku.core.document.DocumentMasterTemplate;
 import com.docdoku.core.document.DocumentMasterTemplateKey;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
+import com.docdoku.core.meta.DefaultAttributeTemplate;
 import com.docdoku.core.meta.InstanceAttributeTemplate;
+import com.docdoku.core.meta.ListOfValuesAttributeTemplate;
 import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentManagerLocal;
@@ -41,7 +43,6 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.*;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -114,14 +115,11 @@ public class DocumentTemplateResource {
         boolean attributesLocked = templateCreationDTO.isAttributesLocked();
 
         List<InstanceAttributeTemplateDTO> attributeTemplates = templateCreationDTO.getAttributeTemplates();
-        List<InstanceAttributeTemplateDTO> attributeTemplatesList = new ArrayList<>(attributeTemplates);
-        InstanceAttributeTemplateDTO[] attributeTemplatesDtos = new InstanceAttributeTemplateDTO[attributeTemplatesList.size()];
+        String[] lovNames=new String[attributeTemplates.size()];
+        for (int i=0;i<attributeTemplates.size();i++)
+            lovNames[i]=attributeTemplates.get(i).getLovName();
 
-        for (int i = 0; i < attributeTemplatesDtos.length; i++) {
-            attributeTemplatesDtos[i] = attributeTemplatesList.get(i);
-        }
-
-        DocumentMasterTemplate template = documentService.createDocumentMasterTemplate(workspaceId, id, documentType, workflowModelId, mask, createInstanceAttributeTemplateFromDto(attributeTemplatesDtos), idGenerated, attributesLocked);
+        DocumentMasterTemplate template = documentService.createDocumentMasterTemplate(workspaceId, id, documentType, workflowModelId, mask, createInstanceAttributeTemplateFromDto(attributeTemplates), lovNames, idGenerated, attributesLocked);
         return mapper.map(template, DocumentMasterTemplateDTO.class);
     }
     
@@ -139,14 +137,11 @@ public class DocumentTemplateResource {
         boolean attributesLocked = docMsTemplateDTO.isAttributesLocked();
 
         List<InstanceAttributeTemplateDTO> attributeTemplates = docMsTemplateDTO.getAttributeTemplates();
-        List<InstanceAttributeTemplateDTO> attributeTemplatesList = new ArrayList<>(attributeTemplates);
-        InstanceAttributeTemplateDTO[] attributeTemplatesDtos = new InstanceAttributeTemplateDTO[attributeTemplatesList.size()];
+        String[] lovNames=new String[attributeTemplates.size()];
+        for (int i=0;i<attributeTemplates.size();i++)
+            lovNames[i]=attributeTemplates.get(i).getLovName();
 
-        for (int i = 0; i < attributeTemplatesDtos.length; i++) {
-            attributeTemplatesDtos[i] = attributeTemplatesList.get(i);
-        }
-
-        DocumentMasterTemplate template = documentService.updateDocumentMasterTemplate(new DocumentMasterTemplateKey(workspaceId, templateId), documentType, workflowModelId, mask, createInstanceAttributeTemplateFromDto(attributeTemplatesDtos), idGenerated, attributesLocked);
+        DocumentMasterTemplate template = documentService.updateDocumentMasterTemplate(new DocumentMasterTemplateKey(workspaceId, templateId), documentType, workflowModelId, mask, createInstanceAttributeTemplateFromDto(attributeTemplates), lovNames, idGenerated, attributesLocked);
         return mapper.map(template, DocumentMasterTemplateDTO.class);
     }
 
@@ -209,21 +204,30 @@ public class DocumentTemplateResource {
         return new FileDTO(true,binaryResource.getFullName(),binaryResource.getName());
     }
 
-    private InstanceAttributeTemplate[] createInstanceAttributeTemplateFromDto(InstanceAttributeTemplateDTO[] dtos) {
-        InstanceAttributeTemplate[] data = new InstanceAttributeTemplate[dtos.length];
+    private InstanceAttributeTemplate[] createInstanceAttributeTemplateFromDto(List<InstanceAttributeTemplateDTO> dtos) {
+        InstanceAttributeTemplate[] data = new InstanceAttributeTemplate[dtos.size()];
 
-        for (int i = 0; i < dtos.length; i++) {
-            data[i] = createInstanceAttributeTemplateObject(dtos[i]);
+        for (int i = 0; i < dtos.size(); i++) {
+            data[i] = createInstanceAttributeTemplateObject(dtos.get(i));
         }
 
         return data;
     }
 
-    private InstanceAttributeTemplate createInstanceAttributeTemplateObject(InstanceAttributeTemplateDTO instanceAttributeTemplateDTO) {
-        InstanceAttributeTemplate data = new InstanceAttributeTemplate();
-        data.setName(instanceAttributeTemplateDTO.getName());
-        data.setAttributeType(InstanceAttributeTemplate.AttributeType.valueOf(instanceAttributeTemplateDTO.getAttributeType().name()));
-        data.setMandatory(instanceAttributeTemplateDTO.isMandatory());
+    private InstanceAttributeTemplate createInstanceAttributeTemplateObject(InstanceAttributeTemplateDTO dto) {
+        InstanceAttributeTemplate data;
+        if(dto.getLovName()==null || dto.getLovName().isEmpty()) {
+            DefaultAttributeTemplate defaultIA = new DefaultAttributeTemplate();
+            defaultIA.setAttributeType(DefaultAttributeTemplate.AttributeType.valueOf(dto.getAttributeType().name()));
+            data=defaultIA;
+        }
+        else {
+            ListOfValuesAttributeTemplate lovA = new ListOfValuesAttributeTemplate();
+            data=lovA;
+        }
+
+        data.setName(dto.getName());
+        data.setMandatory(dto.isMandatory());
         return data;
     }
 }

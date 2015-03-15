@@ -18,6 +18,8 @@ import com.docdoku.server.filters.GuestProxy;
 import com.docdoku.server.util.PartImp;
 import com.docdoku.server.util.ResourceUtil;
 
+
+
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -37,9 +39,9 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class DocumentBinaryResourceTest {
@@ -84,14 +86,8 @@ public class DocumentBinaryResourceTest {
 
         BinaryResource binaryResource = new BinaryResource(ResourceUtil.FILENAME1, ResourceUtil.DOCUMENT_SIZE, new Date());
 
-        File uploadedFile1 = new File(ResourceUtil.TARGET_FILE_STORAGE + "new_" + ResourceUtil.FILENAME1);
-        if (!uploadedFile1.getParentFile().exists()){
-            uploadedFile1.getParentFile().mkdirs();
-        }
-        if (!uploadedFile1.exists()){
-            uploadedFile1.createNewFile();
-        }
-
+        File uploadedFile1 = File.createTempFile(ResourceUtil.TARGET_FILE_STORAGE + "new_" + ResourceUtil.FILENAME1, ResourceUtil.TEMP_SUFFIX);
+        
         OutputStream outputStream1 = new FileOutputStream(uploadedFile1);
 
         Mockito.when(request.getParts()).thenReturn(filesParts);
@@ -103,9 +99,12 @@ public class DocumentBinaryResourceTest {
         Response response = documentBinaryResource.uploadDocumentFiles(request, ResourceUtil.WORKSPACE_ID, ResourceUtil.DOCUMENT_ID, ResourceUtil.VERSION, ResourceUtil.ITERATION);
 
         //Then
-        org.junit.Assert.assertNotNull(response);
-        org.junit.Assert.assertEquals(response.getStatus(), 201);
-        org.junit.Assert.assertEquals(response.getStatusInfo(), Response.Status.CREATED);
+        assertNotNull(response);
+        assertEquals(response.getStatus(), 201);
+        assertEquals(response.getStatusInfo(), Response.Status.CREATED);
+        
+        //delete tem file
+        uploadedFile1.deleteOnExit();
     }
 
     /**
@@ -124,10 +123,8 @@ public class DocumentBinaryResourceTest {
 
         BinaryResource binaryResource = new BinaryResource(Tools.unAccent(ResourceUtil.FILENAME2), ResourceUtil.DOCUMENT_SIZE, new Date());
 
-        File uploadedFile1 = new File(ResourceUtil.TARGET_FILE_STORAGE + "new_" + ResourceUtil.FILENAME2);
-        if (!uploadedFile1.getParentFile().exists()){
-            uploadedFile1.getParentFile().mkdirs();
-        }
+        File uploadedFile1 = File.createTempFile(ResourceUtil.TARGET_FILE_STORAGE + "new_" + ResourceUtil.FILENAME2,ResourceUtil.TEMP_SUFFIX);
+       
 
         OutputStream outputStream1 = new FileOutputStream(uploadedFile1);
 
@@ -141,9 +138,12 @@ public class DocumentBinaryResourceTest {
         Response response = documentBinaryResource.uploadDocumentFiles(request, ResourceUtil.WORKSPACE_ID, ResourceUtil.DOCUMENT_ID, ResourceUtil.VERSION, ResourceUtil.ITERATION);
 
         //Then
-        org.junit.Assert.assertNotNull(response);
-        org.junit.Assert.assertEquals(response.getStatus(), 201);
-        org.junit.Assert.assertEquals(response.getStatusInfo(), Response.Status.CREATED);
+        assertNotNull(response);
+        assertEquals(response.getStatus(), 201);
+        assertEquals(response.getStatusInfo(), Response.Status.CREATED);
+
+        //delete tem file
+        uploadedFile1.deleteOnExit();
     }
 
     /**
@@ -166,12 +166,10 @@ public class DocumentBinaryResourceTest {
         BinaryResource binaryResource2 = new BinaryResource(ResourceUtil.FILENAME2, ResourceUtil.DOCUMENT_SIZE, new Date());
         BinaryResource binaryResource3 = new BinaryResource(ResourceUtil.FILENAME3, ResourceUtil.DOCUMENT_SIZE, new Date());
 
-        File uploadedFile1 = new File(ResourceUtil.TARGET_FILE_STORAGE + "new_" + ResourceUtil.FILENAME1);
-        File uploadedFile2 = new File(ResourceUtil.TARGET_FILE_STORAGE + "new_" + ResourceUtil.FILENAME2);
-        File uploadedFile3 = new File(ResourceUtil.TARGET_FILE_STORAGE + "new_" + ResourceUtil.FILENAME3);
-        if (!uploadedFile1.getParentFile().exists()){
-            uploadedFile1.getParentFile().mkdirs();
-        }
+        File uploadedFile1 = File.createTempFile(ResourceUtil.TARGET_FILE_STORAGE + "new_" + ResourceUtil.FILENAME1, ResourceUtil.TEMP_SUFFIX);
+        File uploadedFile2 = File.createTempFile(ResourceUtil.TARGET_FILE_STORAGE + "new_" + ResourceUtil.FILENAME2, ResourceUtil.TEMP_SUFFIX);
+        File uploadedFile3 = File.createTempFile( ResourceUtil.TARGET_FILE_STORAGE + "new_" + ResourceUtil.FILENAME3,ResourceUtil.TEMP_SUFFIX);
+
         OutputStream outputStream1 = new FileOutputStream(uploadedFile1);
         OutputStream outputStream2 = new FileOutputStream(uploadedFile2);
         OutputStream outputStream3 = new FileOutputStream(uploadedFile3);
@@ -182,9 +180,15 @@ public class DocumentBinaryResourceTest {
         Response response = documentBinaryResource.uploadDocumentFiles(request, ResourceUtil.WORKSPACE_ID, ResourceUtil.DOCUMENT_ID, ResourceUtil.VERSION, ResourceUtil.ITERATION);
 
         //Then
-        org.junit.Assert.assertNotNull(response);
-        org.junit.Assert.assertEquals(response.getStatus(), 200);
-        org.junit.Assert.assertEquals(response.getStatusInfo(), Response.Status.OK);
+        assertNotNull(response);
+        assertEquals(response.getStatus(), 200);
+        assertEquals(response.getStatusInfo(), Response.Status.OK);
+
+        //delete temp files
+        uploadedFile1.deleteOnExit();
+        uploadedFile2.deleteOnExit();
+        uploadedFile3.deleteOnExit();
+
     }
 
     /**
@@ -214,9 +218,9 @@ public class DocumentBinaryResourceTest {
         Response response = documentBinaryResource.downloadDocumentFile(request, ResourceUtil.RANGE,ResourceUtil.DOC_REFER, ResourceUtil.WORKSPACE_ID,ResourceUtil.DOCUMENT_ID, ResourceUtil.VERSION, ResourceUtil.ITERATION,ResourceUtil.FILENAME1,null,ResourceUtil.FILE_TYPE,output,null);
 
         //Then
-        org.junit.Assert.assertNotNull(response);
-        org.junit.Assert.assertEquals(response.getStatus(), 206);
-        org.junit.Assert.assertEquals(response.getStatusInfo(), Response.Status.PARTIAL_CONTENT);
+        assertNotNull(response);
+        assertEquals(response.getStatus(), 206);
+        assertEquals(response.getStatusInfo(), Response.Status.PARTIAL_CONTENT);
     }
 
     /**
@@ -252,9 +256,9 @@ public class DocumentBinaryResourceTest {
         Response response = documentBinaryResource.downloadDocumentFile(request, ResourceUtil.RANGE,"refers/"+sharedEntity.getUuid(), ResourceUtil.WORKSPACE_ID,ResourceUtil.DOCUMENT_ID, ResourceUtil.VERSION, ResourceUtil.ITERATION,ResourceUtil.FILENAME1,null,ResourceUtil.FILE_TYPE,output,ResourceUtil.SHARED_DOC_ENTITY_UUID);
 
         //Then
-        org.junit.Assert.assertNotNull(response);
-        org.junit.Assert.assertEquals(response.getStatus(), 206);
-        org.junit.Assert.assertEquals(response.getStatusInfo(), Response.Status.PARTIAL_CONTENT);
+        assertNotNull(response);
+        assertEquals(response.getStatus(), 206);
+        assertEquals(response.getStatusInfo(), Response.Status.PARTIAL_CONTENT);
 
 
     }
@@ -293,9 +297,9 @@ public class DocumentBinaryResourceTest {
         Response response = documentBinaryResource.downloadDocumentFile(request, ResourceUtil.RANGE,"refers/"+sharedEntity.getUuid(), ResourceUtil.WORKSPACE_ID,ResourceUtil.DOCUMENT_ID, ResourceUtil.VERSION, ResourceUtil.ITERATION,ResourceUtil.FILENAME1,null,ResourceUtil.FILE_TYPE,output,ResourceUtil.SHARED_DOC_ENTITY_UUID);
 
         //Then
-        org.junit.Assert.assertNotNull(response);
-        org.junit.Assert.assertEquals(response.getStatus(), 206);
-        org.junit.Assert.assertEquals(response.getStatusInfo(), Response.Status.PARTIAL_CONTENT);
+        assertNotNull(response);
+        assertEquals(response.getStatus(), 206);
+        assertEquals(response.getStatusInfo(), Response.Status.PARTIAL_CONTENT);
 
 
     }
@@ -358,9 +362,9 @@ public class DocumentBinaryResourceTest {
         //When
         Response response = documentBinaryResource.downloadDocumentFile(request, ResourceUtil.RANGE,ResourceUtil.DOC_REFER, ResourceUtil.WORKSPACE_ID,ResourceUtil.DOCUMENT_ID, ResourceUtil.VERSION, ResourceUtil.ITERATION,ResourceUtil.FILENAME1,ResourceUtil.VIRTUAL_SUB_RESOURCE,ResourceUtil.FILE_TYPE,null,null);
         //Then
-        org.junit.Assert.assertNotNull(response);
-        org.junit.Assert.assertEquals(response.getStatus(), 206);
-        org.junit.Assert.assertEquals(response.getStatusInfo(), Response.Status.PARTIAL_CONTENT);
+        assertNotNull(response);
+        assertEquals(response.getStatus(), 206);
+        assertEquals(response.getStatusInfo(), Response.Status.PARTIAL_CONTENT);
 
 
     }

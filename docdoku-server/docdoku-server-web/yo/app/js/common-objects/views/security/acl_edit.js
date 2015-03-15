@@ -9,13 +9,14 @@ define([
     'common-objects/models/security/acl_user_group_entry',
     'common-objects/views/security/acl_item',
     'common-objects/models/security/admin',
-    'text!common-objects/templates/security/acl_edit.html'
-], function (Backbone, Mustache, WorkspaceUserMemberships, WorkspaceUserGroupMemberships, MembershipItemView, ACLUserEntry, ACLUserGroupEntry, ACLItemView, Admin, template) {
+    'text!common-objects/templates/security/acl_edit.html',
+    'common-objects/views/alert'
+], function (Backbone, Mustache, WorkspaceUserMemberships, WorkspaceUserGroupMemberships, MembershipItemView, ACLUserEntry, ACLUserGroupEntry, ACLItemView, Admin, template,AlertView) {
     'use strict';
 	var ACLEditView = Backbone.View.extend({
 
         events: {
-            'hidden #acl_edit_modal': 'destroy',
+            'hidden #acl_edit_modal': 'onRemove',
             'submit form': 'onSubmit'
         },
 
@@ -37,7 +38,6 @@ define([
 
         closeModal: function () {
             this.$modal.modal('hide');
-            this.remove();
         },
 
         bindDomElements: function () {
@@ -46,6 +46,7 @@ define([
             this.$userGroupsAcls = this.$('#groups-acl-entries');
             this.$usingAcl = this.$('.using-acl');
             this.$aclSwitch = this.$('.acl-switch');
+            this.$notifications =this.$('#acl_edit_modal .notifications');
         },
 
         render: function () {
@@ -168,7 +169,17 @@ define([
             e.preventDefault();
             e.stopPropagation();
             return false;
+        },
+        onError:function(model, error){
+            var errorMessage = error ? model.responseText : error;
+            var alertView =new AlertView({type: 'error',message: errorMessage}).render();
+            this.$notifications.append(alertView.$el);
+        },
+        onRemove: function () {
+            this.remove();
         }
+
+
     });
 
     return ACLEditView;

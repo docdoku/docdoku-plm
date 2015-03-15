@@ -28,14 +28,26 @@ import java.util.List;
 public class ProductBaselineDTO extends BaselineDTO {
 
     private String configurationItemId;
+    private String configurationItemLatestRevision;
     private ProductBaseline.BaselineType type;
     private List<BaselinedPartDTO> baselinedParts;
+    private List<String> substituteLinks;
+    private List<String> optionalUsageLinks;
 
     public ProductBaselineDTO() {
     }
 
     public ProductBaselineDTO(int id, String name, String description, Date creationDate) {
         super(id, name, description, creationDate);
+    }
+
+    public ProductBaselineDTO(int id, String name, String description, Date creationDate, String configurationItemId, ProductBaseline.BaselineType type, List<BaselinedPartDTO> baselinedParts, List<String> substituteLinks, List<String> optionalUsageLinks) {
+        super(id, name, description, creationDate);
+        this.configurationItemId = configurationItemId;
+        this.type = type;
+        this.baselinedParts = baselinedParts;
+        this.substituteLinks = substituteLinks;
+        this.optionalUsageLinks = optionalUsageLinks;
     }
 
     public List<BaselinedPartDTO> getBaselinedParts() {
@@ -57,5 +69,29 @@ public class ProductBaselineDTO extends BaselineDTO {
     }
     public void setConfigurationItemId(String configurationItemId) {
         this.configurationItemId = configurationItemId;
+    }
+
+    public List<String> getSubstituteLinks() {
+        return substituteLinks;
+    }
+
+    public void setSubstituteLinks(List<String> substituteLinks) {
+        this.substituteLinks = substituteLinks;
+    }
+
+    public List<String> getOptionalUsageLinks() {
+        return optionalUsageLinks;
+    }
+
+    public void setOptionalUsageLinks(List<String> optionalUsageLinks) {
+        this.optionalUsageLinks = optionalUsageLinks;
+    }
+
+    public String getConfigurationItemLatestRevision() {
+        return configurationItemLatestRevision;
+    }
+
+    public void setConfigurationItemLatestRevision(String configurationItemLatestRevision) {
+        this.configurationItemLatestRevision = configurationItemLatestRevision;
     }
 }
