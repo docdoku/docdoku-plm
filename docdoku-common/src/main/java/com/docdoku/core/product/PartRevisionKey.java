@@ -54,6 +54,11 @@ public class PartRevisionKey implements Serializable, Comparable<PartRevisionKey
         this.partMaster = partMaster;
     }
 
+    public String getWorkspaceId() {return partMaster.getWorkspace();}
+
+    public String getPartMasterNumber() {
+        return partMaster.getNumber();
+    }
 
     public String getVersion() {
         return version;

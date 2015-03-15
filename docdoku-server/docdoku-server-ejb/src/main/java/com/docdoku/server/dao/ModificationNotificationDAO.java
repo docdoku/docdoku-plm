@@ -22,6 +22,8 @@ package com.docdoku.server.dao;
 import com.docdoku.core.change.ModificationNotification;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartIterationKey;
+import com.docdoku.core.product.PartRevision;
+import com.docdoku.core.product.PartRevisionKey;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
@@ -45,6 +47,13 @@ public class ModificationNotificationDAO {
         mLocale = Locale.getDefault();
     }
 
+
+    public void removeModificationNotifications(PartRevisionKey pPartRPK){
+        em.createNamedQuery("ModificationNotification.removeAllOnPartRevision")
+                .setParameter("workspaceId", pPartRPK.getWorkspaceId())
+                .setParameter("partNumber", pPartRPK.getPartMasterNumber())
+                .setParameter("version", pPartRPK.getVersion()).executeUpdate();
+    }
 
     public void createModificationNotification(ModificationNotification pNotification) {
         em.persist(pNotification);

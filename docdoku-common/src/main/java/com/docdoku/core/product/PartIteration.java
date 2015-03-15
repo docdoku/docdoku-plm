@@ -332,6 +332,10 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
         return components != null && !components.isEmpty();
     }
 
+    public boolean isLastIteration(){
+        return equals(partRevision.getLastIteration());
+    }
+
     @Override
     public String toString() {
         return partRevision + "-" + iteration;
