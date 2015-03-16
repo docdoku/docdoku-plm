@@ -17,6 +17,7 @@ define([
             'input input[name=substitute-newUnit]': 'changeSubstituteMeasureUnit',
             'click datalist[name=substitute-unitMeasure]': 'changeSubstituteMeasureUnit',
             'click .add-substitute-cadInstance': 'addCadInstance',
+            'click .decrease-substitute-cadInstance': 'removeCadInstance',
             'click .collapse-substitute-cadInstance': 'collapseSubstituteTransformations'
         },
 
@@ -57,8 +58,10 @@ define([
             var self = this;
             _(this.model.cadInstances).each(function (instance) {
                 self.addCadInstanceView(instance);
-//                self.$cadInstances.hide();
             });
+            if (this.$amount.val() <= 1) {
+                this.$('.decrease-substitute-cadInstance').hide();
+            }
         },
 
         initSubstituteUnitAmount: function () {
@@ -79,6 +82,10 @@ define([
             });
         },
 
+        removeCadInstance: function () {
+            this.onRemoveCadInstance(_(this.model.cadInstances).last());
+            this.$cadInstances.find('.cadInstance :last').remove();
+        },
         onRemove: function () {
             if (this.options.removeSubHandler && this.options.editMode) {
                 this.options.removeSubHandler();
@@ -88,6 +95,9 @@ define([
             this.model.cadInstances = _(this.model.cadInstances).without(instance);
             this.$amount.val(parseInt(this.$amount.val(), 10) - 1);
             this.model.amount = this.$amount.val();
+            if (this.$amount.val() <= 1) {
+                this.$('.decrease-substitute-cadInstance').hide();
+            }
         },
 
         addCadInstance: function () {
@@ -96,6 +106,9 @@ define([
             this.addCadInstanceView(instance);
             this.$amount.val(parseInt(this.$amount.val(), 10) + 1);
             this.model.amount = this.$amount.val();
+            if (this.$amount.val() > 1) {
+                this.$('.decrease-substitute-cadInstance').show();
+            }
         },
 
         collapseSubstituteTransformations: function () {
@@ -165,14 +178,18 @@ define([
         disableEnableAmount: function (unit) {
 
             if (!unit || unit == this.$defaultUnity) {
-                var amount = parseInt(this.$amount.val(), 10);
+
                 this.$amount.attr('disabled', 'disabled');
                 this.$('.add-substitute-cadInstance').show();
+                if (this.$amount.val() > 1) {
+                    this.$('.decrease-substitute-cadInstance').show();
+                }
                 this.$unitText.val(this.$defaultUnity);
             }
             else {
                 this.$amount.removeAttr('disabled');
                 this.$('.add-substitute-cadInstance').hide();
+                this.$('.decrease-substitute-cadInstance').hide();
             }
 
         }

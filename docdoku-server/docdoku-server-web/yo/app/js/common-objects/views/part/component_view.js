@@ -74,6 +74,10 @@ define([
             _(this.model.get('cadInstances')).each(function (instance) {
                 self.addCadInstanceView(instance);
             });
+
+            if (this.$amount.val() <= 1) {
+                this.$('.decrease-cadInstance').hide();
+            }
         },
 
         initSubstitutePartView: function () {
@@ -84,7 +88,7 @@ define([
 
             });
             if (this.model.get('substitutes').length == 0){
-                self.$('.substitute-count-text').text(App.config.i18n.PARTS_SUBSTITUTES);
+                self.$('.substitute-count-text').text(App.config.i18n.PART_SUBSTITUTE);
 
             }
         },
