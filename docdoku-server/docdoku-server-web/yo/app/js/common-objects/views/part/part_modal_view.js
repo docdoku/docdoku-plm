@@ -226,7 +226,7 @@ define([
         },
 
         initModificationNotificationListView: function () {
-            this.modificationNotificationListView = new ModificationNotificationListView({
+            new ModificationNotificationListView({
                 el: '#iteration-modification-notifications',
                 model: this.model
             }).render();

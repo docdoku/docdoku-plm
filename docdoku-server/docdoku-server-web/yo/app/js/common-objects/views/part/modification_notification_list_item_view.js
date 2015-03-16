@@ -7,12 +7,6 @@ define([
     'use strict';
     var ModificationNotificationListItemView = Backbone.View.extend({
 
-        events: {
-        },
-
-        initialize: function () {
-        },
-
         render: function () {
             var data = {
                 modificationNotification: this.model,

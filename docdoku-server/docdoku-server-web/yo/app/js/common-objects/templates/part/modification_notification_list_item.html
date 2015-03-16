@@ -1,31 +1,6 @@
-<div class="control-group">
-    <label class="control-label">{{i18n.REFERENCE}}</label>
-
-    <div class="controls">
-        <span class="help-inline">{{modificationNotification.getModifiedPartNumber}}-{{modificationNotification.getModifiedPartVersion}}-{{modificationNotification.getModifiedPartIteration}}</span>
-    </div>
-</div>
-
-<div class="control-group">
-    <label class="control-label">{{i18n.CHECKIN_DATE}}</label>
-
-    <div class="controls">
-        <span class="help-inline"><a class="date-popover">{{modificationNotification.getFormattedCheckInDate}}</a></span>
-    </div>
-</div>
-<div class="control-group">
-    <label class="control-label">{{i18n.REVISION_NOTE}}</label>
-
-    <div class="controls">
-        <span class="help-inline">{{modificationNotification.getIterationNote}}</span>
-    </div>
-</div>
-<div class="control-group">
-    <label class="control-label">{{i18n.AUTHOR}}</label>
-
-    <div class="controls">
-        <span class="help-inline"><a class="author-popover">{{modificationNotification.getAuthorName}}</a></span>
-    </div>
-</div>
+{{modificationNotification.getModifiedPartNumber}}-{{modificationNotification.getModifiedPartVersion}}-{{modificationNotification.getModifiedPartIteration}} {{i18n.CHECKED_IN}}
+{{#modificationNotification.hasCheckInDate}} {{i18n.ON}} <a class="date-popover">{{modificationNotification.getFormattedCheckInDate}}</a>{{/modificationNotification.hasCheckInDate}}
+{{#modificationNotification.hasAuthor}} {{i18n.BY}} <a class="author-popover">{{modificationNotification.getAuthorName}}</a>{{/modificationNotification.hasAuthor}}
+{{#modificationNotification.getIterationNote}} {{i18n.WITH}} {{i18n.THE_NOTE}} "{{modificationNotification.getIterationNote}}"{{/modificationNotification.getIterationNote}}
 
 <hr/>
