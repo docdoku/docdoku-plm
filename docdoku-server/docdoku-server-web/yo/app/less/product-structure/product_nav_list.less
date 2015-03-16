@@ -124,20 +124,31 @@
 
     }
 
-    i.fa-lock,
-    i.fa-pencil,
-    i.fa-eye,
-    i.fa-check,
-    i.fa-ban{
-      font-size: x-small;
-      margin-left: -8px;
-      vertical-align: bottom;
+    i.fa-pencil {
+      color:#f89406;
+    }
+
+    i.fa-lock {
+      color:#ee5f5b;
+    }
+
+    i.fa-check {
+      color:#51a351;
     }
 
     i.fa-ban{
       color: red;
     }
 
+    i.fa-lock,
+    i.fa-pencil,
+    i.fa-eye,
+    i.fa-check,
+    i.fa-ban{
+      &:hover{
+        cursor: pointer;
+      }
+    }
     i.fa-lock,
     i.fa-ban{
       + ul{

@@ -69,20 +69,16 @@ define([
             '<%}%>' +
             '<a><label class="checkbox"><%= number %> (<%= amount %> <%= unit %>)</label></a>' +
             '<%if(isForbidden) {%> ' +
-            '<i class="fa fa-file"></i>' +
+
             '<i class="fa fa-ban"></i>' +
             '<%} else if(isCheckoutByAnotherUser) {%> ' +
-            '<i class="fa fa-file openModal"></i>' +
-            '<i class="fa fa-lock"></i>' +
+            '<i class="fa openModal fa-lock"></i>' +
             '<%} else if(isCheckoutByConnectedUser) {%> ' +
-            '<i class="fa fa-file openModal"></i>' +
-            '<i class="fa fa-pencil"></i>' +
+            '<i class="fa openModal fa-pencil"></i>' +
             '<%} else if(isReleased){%> ' +
-            '<i class="fa fa-file openModal"></i>' +
-            '<i class="fa fa-check"></i>' +
+            '<i class="fa openModal fa-check"></i>' +
             '<%} else{%> ' +
-            '<i class="fa fa-file openModal"></i>' +
-            '<i class="fa fa-eye"></i>' +
+            '<i class="fa openModal fa-eye"></i>' +
             '<%}%>'
         ),
 
@@ -178,20 +174,16 @@ define([
             '<%}%>' +
             '<a><label class="checkbox isNode"><%= number %> (<%= amount %>)</label></a>' +
             '<%if(isForbidden) {%> ' +
-            '<i class="fa fa-file"></i>' +
             '<i class="fa fa-ban"></i>' +
             '<%} else if(isCheckoutByAnotherUser) {%> ' +
-            '<i class="fa fa-file openModal"></i>' +
-            '<i class="fa fa-lock"></i>' +
+            '<i class="fa openModal fa-lock"></i>' +
             '<%} else if(isCheckoutByConnectedUser) {%> ' +
-            '<i class="fa fa-file openModal"></i>' +
-            '<i class="fa fa-pencil"></i> ' +
+
+            '<i class="fa openModal fa-pencil"></i> ' +
             '<%} else if(isReleased){%> ' +
-            '<i class="fa fa-file openModal"></i>' +
-            '<i class="fa fa-check"></i>' +
+            '<i class="fa openModal fa-check"></i>' +
             '<%} else{%> ' +
-            '<i class="fa fa-file openModal"></i>' +
-            '<i class="fa fa-eye"></i>' +
+            '<i class="fa openModal fa-eye"></i>' +
             '<%}%>'
         ),
 
