@@ -293,7 +293,7 @@ define({
 	PART_NUMBER_HELP: "Numéro de l'article",
 	PART_NUMBER: "Numéro",
 	PARTS: "Articles",
-    PART_SUBSTITUTE: "Article variante",
+    PART_SUBSTITUTE: "article variante",
     PARTS_SUBSTITUTES: "articles variantes",
     PART_TEMPLATE: "Modèle d'article",
 	PART_TEMPLATES: "Modèles",

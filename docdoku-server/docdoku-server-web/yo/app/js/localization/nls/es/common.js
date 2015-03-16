@@ -290,7 +290,7 @@ define({
 	PART_NUMBER_HELP: "Number of the part",
 	PART_NUMBER: "Part Number",
 	PARTS: "Parts",
-    PART_SUBSTITUTE: "Part substitute",
+    PART_SUBSTITUTE: "substitute part",
     PARTS_SUBSTITUTES: "substitute parts",
 	PART_TEMPLATE: "Part template",
 	PART_TEMPLATES: "Templates",
