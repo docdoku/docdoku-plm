@@ -37,30 +37,18 @@ import java.util.Set;
 
 public class PartIterationListener {
 
-    @PersistenceContext
-    private EntityManager em;
 
     @EJB
     private IProductManagerLocal productService;
 
 
-    @PrePersist
+    @PostUpdate
     private void addModificationNotification(Object object) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
         if(object instanceof PartIteration) {
             PartIteration partIteration = (PartIteration) object;
-            //if(!partIteration.getPartRevision().isCheckedOut()) {
-                Set<PartIteration> impactedParts = new HashSet<>();
-                impactedParts.addAll(productService.getUsedByAsComponent(partIteration.getKey()));
-                impactedParts.addAll(productService.getUsedByAsSubstitute(partIteration.getKey()));
-
-                ModificationNotificationDAO dao = new ModificationNotificationDAO(em);
-                for (PartIteration impactedPart : impactedParts) {
-                    ModificationNotification notification = new ModificationNotification();
-                    notification.setImpactedPart(impactedPart);
-                    notification.setModifiedPart(partIteration);
-                    dao.createModificationNotification(notification);
-                }
-            //}
+            if(!partIteration.getPartRevision().isCheckedOut()) {
+                productService.createModificationNotifications(partIteration);
+            }
 
         }
     }

@@ -773,6 +773,28 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         return new ModificationNotificationDAO(locale,em).getModificationNotifications(pPartIPK);
     }
 
+
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
+    @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void createModificationNotifications(PartIteration modifiedPartIteration) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
+
+        Set<PartIteration> impactedParts = new HashSet<>();
+        impactedParts.addAll(getUsedByAsComponent(modifiedPartIteration.getKey()));
+        impactedParts.addAll(getUsedByAsSubstitute(modifiedPartIteration.getKey()));
+
+        ModificationNotificationDAO dao = new ModificationNotificationDAO(em);
+        for (PartIteration impactedPart : impactedParts) {
+            ModificationNotification notification = new ModificationNotification();
+            notification.setImpactedPart(impactedPart);
+            notification.setModifiedPart(modifiedPartIteration);
+            dao.createModificationNotification(notification);
+        }
+    }
+
+
+
+
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     @Override
     public List<PartIteration> getUsedByAsComponent(PartIterationKey pPartIPK) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
