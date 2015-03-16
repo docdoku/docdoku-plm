@@ -129,6 +129,15 @@
         display: none;
     }
 
+    td.modification_notification, td.part-revision-share, td.part-attached-files {
+        i {
+            cursor: pointer;
+            &:hover{
+                color:#333;
+            }
+        }
+    }
+
     td.modification_notification {
         i.fa-exclamation {
             color:#ee5f5b;
@@ -146,15 +155,6 @@
 
         i.fa-check {
             color:#51a351;
-        }
-    }
-
-    td.part-revision-share, td.part-attached-files {
-        i {
-            cursor: pointer;
-            &:hover{
-                color:#333;
-            }
         }
     }
 
