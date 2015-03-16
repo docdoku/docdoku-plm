@@ -67,6 +67,10 @@ define([
             this.activateTab(3);
         },
 
+        activateNotificationsTab: function(){
+            this.activateTab(this.$tabs.length - 1);
+        },
+
         render: function () {
 
             var data = {
