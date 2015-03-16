@@ -119,7 +119,7 @@ define([
                     self.$('.substitute-count').text(self.model.get('substitutes').length);
                     self.$('.substitute-count-text').text(" "+ countText);
                 }}).render();
-            var countText = (self.model.get('substitutes').length == 1 ? App.config.i18n.PART_SUBSTITUTE :  App.config.i18n.PARTS_SUBSTITUTES);
+            var countText = (self.model.get('substitutes').length <= 1 ? App.config.i18n.PART_SUBSTITUTE :  App.config.i18n.PARTS_SUBSTITUTES);
 
             self.$('.substitute-count').text(self.model.get('substitutes').length + " " );
             self.$('.substitute-count-text').text(" "+ countText);
