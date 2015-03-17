@@ -4,8 +4,9 @@ define([
     'mustache',
     'common-objects/views/base',
     'common-objects/views/attributes/attribute_list',
-    'text!common-objects/templates/attributes/attributes.html'
-], function (Backbone,Mustache, BaseView, AttributeListView, template) {
+    'text!common-objects/templates/attributes/attributes.html',
+    'common-objects/collections/lovs'
+], function (Backbone,Mustache, BaseView, AttributeListView, template, LOVCollection) {
     'use strict';
 	var AttributesView = BaseView.extend({
 
@@ -14,6 +15,8 @@ define([
         editMode: true,
 
         attributesLocked: false,
+
+        lovs:new LOVCollection(),
 
         collection: function () {
             return new Backbone.Collection();
@@ -47,17 +50,23 @@ define([
                 i18n: App.config.i18n
             };
             this.$el.html(Mustache.render(template, data));
-            this.rendered();
+            var that = this;
+            this.lovs.fetch().success(function(){
+                that.rendered();
+            });
             return this;
         },
 
         rendered: function () {
+            var attributesViewList = new AttributeListView({
+                el: this.$('#items-' + this.cid),
+                collection: this.collection,
+                lovs:this.lovs
+            });
             this.attributesView = this.addSubView(
-                new AttributeListView({
-                    el: this.$('#items-' + this.cid),
-                    collection: this.collection
-                })
+                attributesViewList
             );
+
             this.attributesView.setEditMode(this.editMode);
             this.attributesView.setAttributesLocked(this.attributesLocked);
             if(this.editMode){
@@ -69,6 +78,8 @@ define([
                     }
                 });
             }
+
+            attributesViewList.collectionReset();
         },
 
         addAttribute: function () {
@@ -76,7 +87,8 @@ define([
                 mandatory: false,
                 name: '',
                 type: 'TEXT',
-                value: ''
+                value: '',
+                lovName:null
             });
         },
 
@@ -85,7 +97,9 @@ define([
                 mandatory: attribute.isMandatory(),
                 name: attribute.getName(),
                 type: attribute.getType(),
-                value: attribute.getValue()
+                value: attribute.getValue(),
+                lovName: attribute.getLOVName(),
+                items:attribute.getItems()
             });
         }
 

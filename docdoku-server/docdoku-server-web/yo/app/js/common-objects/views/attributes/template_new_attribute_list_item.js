@@ -10,8 +10,6 @@ define([
 
         tagName: 'div',
 
-        lovNameChoiceDiv : null,
-
         lovList:null,
 
         initialize: function () {
@@ -22,22 +20,20 @@ define([
             this.events['click .fa-times'] = 'removeAction';
             this.events['change .attribute-mandatory input'] = 'mandatoryChanged';
             this.events.drop = 'drop';
-            this.events['change .lovNameChoice'] = 'lovChoiceChanged';
             this.templateExtraData = {lovs : this.lovList.models};
         },
         rendered: function () {
-            var type = this.model.get('attributeType');
-            this.$('select.type:first').val(type);
+
             this.$el.addClass('well');
             this.$('input[required]').customValidity(App.config.i18n.REQUIRED_FIELD);
-            this.lovNameChoiceDiv = this.$('.lovNameChoice');
 
-            var lovNameSelected = this.model.get('lovName');
-            if(lovNameSelected){
-                this.displayLOVList();
-                this.$('.lovNameChoice').val(lovNameSelected);
+            var type = this.model.get('attributeType');
+            if (type !== 'LOV'){
+                this.$('select.type:first').val(type);
+            }else{
+                var lovNameSelected = this.model.get('lovName');
+                this.$('select.type:first').val(lovNameSelected);
             }
-
         },
         removeAction: function () {
             this.model.destroy({
@@ -46,15 +42,17 @@ define([
         },
         typeChanged: function (evt) {
             var typeValue = evt.target.value;
-            if (typeValue === 'LOV'){
-                this.displayLOVList();
-                this.setChoice(this.lovList.models[0].getLOVName());
+            if (typeValue == 'TEXT' || typeValue === 'BOOLEAN' || typeValue === 'DATE' || typeValue === 'NUMBER' || typeValue === 'URL' ){
+                this.model.set({
+                    attributeType: typeValue
+                });
+                this.setChoice(null);
             }else{
-                this.hideLovList();
+                this.model.set({
+                    attributeType: "LOV"
+                });
+                this.setChoice(typeValue);
             }
-            this.model.set({
-                attributeType: typeValue
-            });
         },
         updateName: function () {
             this.model.set({
@@ -68,16 +66,6 @@ define([
         },
         drop: function(event, index) {
             this.$el.trigger('update-sort', [this.model, index]);
-        },
-        displayLOVList:function(){
-            this.$el.addClass('lovChoiceType');
-        },
-        hideLovList:function(){
-            this.$el.removeClass('lovChoiceType');
-            this.setChoice(null);
-        },
-        lovChoiceChanged: function(event){
-            this.setChoice(event.target.value);
         },
         setChoice:function(value){
             this.model.set({

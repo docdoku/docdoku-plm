@@ -22,11 +22,16 @@ package com.docdoku.server.rest.converters;
 
 import com.docdoku.core.meta.*;
 import com.docdoku.server.rest.dto.InstanceAttributeDTO;
+import com.docdoku.server.rest.dto.NameValuePairDTO;
+import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.DozerConverter;
+import org.dozer.Mapper;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.TimeZone;
 
 /**
@@ -41,8 +46,10 @@ public class InstanceAttributeDozerConverter extends DozerConverter<InstanceAttr
 
     @Override
     public InstanceAttributeDTO convertTo(InstanceAttribute source, InstanceAttributeDTO bdestination) {
+        Mapper mapper = DozerBeanMapperSingletonWrapper.getInstance();
         InstanceAttributeDTO.Type type;
         String value = "";
+        List<NameValuePairDTO> itemsDTO = null;
         if (source instanceof InstanceBooleanAttribute) {
             type = InstanceAttributeDTO.Type.BOOLEAN;
             value=source.getValue()+"";
@@ -63,11 +70,25 @@ public class InstanceAttributeDozerConverter extends DozerConverter<InstanceAttr
         } else if (source instanceof InstanceURLAttribute) {
             type = InstanceAttributeDTO.Type.URL;
             value=source.getValue()+"";
-        } else {
+        } else if(source instanceof InstanceListOfValuesAttribute){
+            type = InstanceAttributeDTO.Type.LOV;
+            value = ((InstanceListOfValuesAttribute) source).getIndexValue()+"";
+
+            List<NameValuePair> items = null;
+            items = ((InstanceListOfValuesAttribute) source).getItems();
+            itemsDTO = new ArrayList<>();
+            for (NameValuePair item : items){
+                itemsDTO.add(mapper.map(item, NameValuePairDTO.class));
+            }
+        }
+        else {
             throw new IllegalArgumentException("Instance attribute not supported");
         }
-        
-        return new InstanceAttributeDTO(source.getName(), type, value, source.isMandatory());
+        InstanceAttributeDTO dto = new InstanceAttributeDTO(source.getName(), type, value, source.isMandatory());
+        if (itemsDTO != null){
+            dto.setItems(itemsDTO);
+        }
+        return dto;
     }
 
     @Override

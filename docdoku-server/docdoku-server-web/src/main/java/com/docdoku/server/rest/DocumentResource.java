@@ -479,6 +479,18 @@ public class DocumentResource {
             case URL :
                 attr = new InstanceURLAttribute();
                 break;
+            case LOV :
+                attr = new InstanceListOfValuesAttribute();
+                List<NameValuePairDTO> itemsDTO = dto.getItems();
+                List<NameValuePair> items = new ArrayList<>();
+                if (itemsDTO!= null){
+                    for (NameValuePairDTO itemDTO : itemsDTO){
+                        items.add(mapper.map(itemDTO, NameValuePair.class));
+                    }
+                }
+                ((InstanceListOfValuesAttribute) attr).setItems(items);
+
+                break;
             default:
                 throw new IllegalArgumentException("Instance attribute not supported");
         }

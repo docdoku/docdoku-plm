@@ -5,8 +5,9 @@ define([
     "common-objects/views/attributes/attribute_list_item_date",
     "common-objects/views/attributes/attribute_list_item_number",
     "common-objects/views/attributes/attribute_list_item_text",
-    "common-objects/views/attributes/attribute_list_item_url"
-], function (ListView, AttributeListItemBooleanView, AttributeListItemDateView, AttributeListItemNumberView, AttributeListItemTextView, AttributeListItemUrlView) {
+    "common-objects/views/attributes/attribute_list_item_url",
+    "common-objects/views/attributes/attribute_list_item_lov"
+], function (ListView, AttributeListItemBooleanView, AttributeListItemDateView, AttributeListItemNumberView, AttributeListItemTextView, AttributeListItemUrlView, AttributeListItemLOVView) {
     var AttributeListView = ListView.extend({
 
         typeViewMapping: {
@@ -14,21 +15,32 @@ define([
             "DATE": AttributeListItemDateView,
             "NUMBER": AttributeListItemNumberView,
             "TEXT": AttributeListItemTextView,
-            "URL": AttributeListItemUrlView
+            "URL": AttributeListItemUrlView,
+            "LOV": AttributeListItemLOVView
         },
 
         editMode: true,
 
         attributesLocked: false,
 
+        initialize: function () {
+            ListView.prototype.initialize.apply(this, arguments);
+            this.lovs = this.options.lovs;
+        },
+
         itemViewFactory: function (model) {
             var type = model.get("type");
             if (!type) {
                 type = model.get("attributeType");
             }
+
+            if(type !== 'TEXT' && type !== 'BOOLEAN' && type !== 'NUMBER' && type !== 'URL' && type !== 'DATE'){
+                type = 'LOV'
+            }
             var constructor = this.typeViewMapping[type];
             var view = new constructor({
-                model: model
+                model: model,
+                lovs:this.lovs.models
             });
             view.setEditMode(this.editMode);
             view.setAttributesLocked(this.attributesLocked);

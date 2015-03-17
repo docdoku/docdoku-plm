@@ -11,6 +11,8 @@ define([
 
         attributesLocked: false,
 
+        lovs:null,
+
         setEditMode: function (editMode) {
             this.editMode = editMode;
         },
@@ -22,6 +24,7 @@ define([
             this.events[ "change .value"] = "updateValue";
             this.events[ "click .fa-times"] = "removeAction";
             this.events[ "drop"] = "drop";
+            this.lovs = this.options.lovs;
         },
 
         drop: function(event, index) {
@@ -48,10 +51,19 @@ define([
 
         typeChanged: function (evt) {
             var type = evt.target.value;
-            this.model.set({
-                type: type,
-                value: "" // TODO: Validate and convert if possible between types
-            });
+
+            if(type!== 'TEXT' && type!== 'NUMBER' && type!== 'BOOLEAN' && type!== 'DATE' && type!== 'URL'){
+                this.model.set({
+                    type: 'LOV',
+                    lovName: type,
+                    value: "" // TODO: Validate and convert if possible between types
+                });
+            }else{
+                this.model.set({
+                    type: type,
+                    value: "" // TODO: Validate and convert if possible between types
+                });
+            }
             this.model.collection.trigger("reset");
         },
 
@@ -62,7 +74,7 @@ define([
         },
 
         updateValue: function () {
-            var el = this.$el.find("input.value:first");
+            var el = this.$el.find("value:first");
             this.model.set({
                 value: this.getValue(el)
             });
@@ -79,6 +91,8 @@ define([
             data.lockMode = this.editMode && !this.attributesLocked;
             data.editMode = this.editMode;
             data.attribute = this.model.attributes;
+            data.lovs = this.lovs;
+            data.items = this.model.get('items');
             this.$el.html(Mustache.render(this.template, data, partials));
             this.rendered();
             return this;
