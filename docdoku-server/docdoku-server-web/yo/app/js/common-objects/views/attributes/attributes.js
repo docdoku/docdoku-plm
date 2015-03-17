@@ -28,7 +28,6 @@ define([
 
         setAttributesLocked: function (attributesLocked) {
             this.attributesLocked = attributesLocked;
-            this.render();
         },
 
         initialize: function () {
