@@ -105,7 +105,7 @@ define([
                     data.iteration.revisionDate
                 );
             }
-
+            data.hasOneIteration= (this.iterations.length < 1);
             this.$el.html(Mustache.render(template, data));
 
             this.$authorLink = this.$('.author-popover');
