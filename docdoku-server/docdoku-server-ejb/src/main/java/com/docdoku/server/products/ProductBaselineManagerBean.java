@@ -275,15 +275,16 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
         for(PartUsageLink usageLink: usageLinks){
             PartMaster pm = new PartMasterDAO(locale,em).loadPartM(new PartMasterKey(workspaceId,usageLink.getComponent().getNumber()));
             PartIteration partIteration = ci.filterConfigSpec(pm);
-            if (partIteration != null){
-                checkCyclicAssembly(workspaceId,root,partIteration.getComponents(),ci, locale);
+            if (partIteration != null) {
+                checkCyclicAssembly(workspaceId, root, partIteration.getComponents(), ci, locale);
             }
-
 
             for(PartSubstituteLink substituteLink:usageLink.getSubstitutes()){
                 PartMaster substitute = new PartMasterDAO(locale,em).loadPartM(new PartMasterKey(workspaceId,substituteLink.getSubstitute().getNumber()));
                 PartIteration substituteIteration = ci.filterConfigSpec(substitute);
-                checkCyclicAssembly(workspaceId, root, substituteIteration.getComponents(),ci, locale);
+                if (substituteIteration != null){
+                    checkCyclicAssembly(workspaceId, root, substituteIteration.getComponents(),ci, locale);
+                }
             }
         }
 
