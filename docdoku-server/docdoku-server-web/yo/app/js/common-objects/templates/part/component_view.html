@@ -16,7 +16,7 @@
             <input type="text" name="name" value="{{model.component.name}}" title="{{i18n.PART_NAME}}" disabled/>
             <label name="optional"> <input type="checkbox" name="optional" title="{{i18n.OPTIONAL}}"
                 {{#model.optional}}checked{{/model.optional}}
-                {{^editMode}}readonly{{/editMode}}/>{{i18n.OPTIONAL}}</label>
+                {{^editMode}}disabled{{/editMode}}/>{{i18n.OPTIONAL}}</label>
 
             <i class="fa fa-angle-double-down collapse-subParts-cadInstances"></i>
             {{#isReleased}}
@@ -31,7 +31,7 @@
                         {{/isCheckout}}
                         {{/isReleased}}
                         <input type="text" name="referenceDescription" value="{{model.referenceDescription}}"
-                               placeholder="{{i18n.LINK_DESCRIPTION}}"{{^editMode}}readonly{{/editMode}}/>
+                               placeholder="{{i18n.LINK_DESCRIPTION}}"{{^editMode}}disabled{{/editMode}}/>
                         <input type="text" name="amount" value="{{model.amount}}" title="{{i18n.AMOUNT}}"/>
                         <input type="text" name="newUnit" value="{{i18n.UNIT}}" default-unity="{{i18n.UNIT}}"
                         {{#editMode}}list="unity"{{/editMode}} {{^editMode}}readonly{{/editMode}}/>
