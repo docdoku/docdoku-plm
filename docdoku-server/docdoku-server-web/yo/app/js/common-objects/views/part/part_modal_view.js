@@ -371,7 +371,7 @@ define([
                 this.iterations = this.model.getIterations();
                 this.render();
                 this.activateTab(1);
-
+                Backbone.Events.trigger('part:saved');
             }.bind(this));
 
         },
