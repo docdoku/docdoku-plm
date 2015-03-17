@@ -20,7 +20,7 @@
 
 package com.docdoku.server.rest.collections;
 
-import com.docdoku.core.configuration.ConfigSpec;
+import com.docdoku.core.configuration.PSFilter;
 import com.docdoku.core.product.PartUsageLink;
 
 import java.util.List;
@@ -34,20 +34,20 @@ public class InstanceCollection {
     
     private PartUsageLink rootUsageLink;
     private List<Integer> usageLinkPaths;
-    private ConfigSpec configSpec;
+    private PSFilter filter;
     
     public InstanceCollection(){
         
     }
     
-    public InstanceCollection(PartUsageLink rootUsageLink, List<Integer> usageLinkPaths, ConfigSpec configSpec){
+    public InstanceCollection(PartUsageLink rootUsageLink, List<Integer> usageLinkPaths, PSFilter filter){
         this.rootUsageLink=rootUsageLink;
         this.usageLinkPaths=usageLinkPaths;
-        this.configSpec=configSpec;
+        this.filter=filter;
     }
 
-    public ConfigSpec getConfigSpec() {
-        return configSpec;
+    public PSFilter getFilter() {
+        return filter;
     }
 
     public PartUsageLink getRootUsageLink() {

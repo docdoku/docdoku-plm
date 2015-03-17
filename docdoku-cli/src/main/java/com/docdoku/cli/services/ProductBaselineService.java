@@ -31,30 +31,31 @@ import java.util.logging.Logger;
  *
  * @author Taylor LABEJOF
  */
-@WebServiceClient(name = "ProductConfigSpecService", targetNamespace = "http://server.docdoku.com/", wsdlLocation = "http://localhost:8080/services/productConfigSpec?wsdl")
-public class ProductConfigSpecService extends Service{
-    private static final URL PRODUCTCONFIGSPECSERVICE_WSDL_LOCATION;
-    private static final QName PRODUCTCONFIGSPECSERVICE_QNAME = new QName("http://server.docdoku.com/", "ProductConfigSpecManagerBeanService");
-    private static final Logger LOGGER = Logger.getLogger(ProductConfigSpecService.class.getName());
+@WebServiceClient(name = "ProductBaselineService", targetNamespace = "http://server.docdoku.com/", wsdlLocation = "http://localhost:8080/services/productBaseline?wsdl")
+public class ProductBaselineService extends Service{
+    
+    private static final URL PRODUCTBASELINESERVICE_WSDL_LOCATION;
+    private static final QName PRODUCTBASELINESERVICE_QNAME = new QName("http://server.docdoku.com/", "ProductBaselineManagerBeanService");
+    private static final Logger LOGGER = Logger.getLogger(ProductBaselineService.class.getName());
 
     static {
         URL url = null;
         try {
             URL baseUrl;
-            baseUrl = ProductConfigSpecService.class.getResource(".");
-            url = new URL(baseUrl, "http://localhost:8080/services/productConfigSpec?wsdl");
+            baseUrl = ProductBaselineService.class.getResource(".");
+            url = new URL(baseUrl, "http://localhost:8080/services/productBaseline?wsdl");
         } catch (MalformedURLException e) {
-            LOGGER.warning("Failed to create URL for the wsdl Location: 'http://localhost:8080/services/productConfigSpec?wsdl', retrying as a local file");
+            LOGGER.warning("Failed to create URL for the wsdl Location: 'http://localhost:8080/services/productBaseline?wsdl', retrying as a local file");
             LOGGER.warning(e.getMessage());
         }
-        PRODUCTCONFIGSPECSERVICE_WSDL_LOCATION = url;
+        PRODUCTBASELINESERVICE_WSDL_LOCATION = url;
     }
 
-    public ProductConfigSpecService(URL wsdlLocation, QName serviceName) {
+    public ProductBaselineService(URL wsdlLocation, QName serviceName) {
         super(wsdlLocation, serviceName);
     }
 
-    public ProductConfigSpecService() {
-        super(PRODUCTCONFIGSPECSERVICE_WSDL_LOCATION, PRODUCTCONFIGSPECSERVICE_QNAME);
+    public ProductBaselineService() {
+        super(PRODUCTBASELINESERVICE_WSDL_LOCATION, PRODUCTBASELINESERVICE_QNAME);
     }
 }

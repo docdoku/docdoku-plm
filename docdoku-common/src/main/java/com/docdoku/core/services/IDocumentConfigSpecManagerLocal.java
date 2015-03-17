@@ -19,8 +19,7 @@
  */
 package com.docdoku.core.services;
 
-import com.docdoku.core.configuration.BaselineConfigSpec;
-import com.docdoku.core.configuration.ConfigSpec;
+import com.docdoku.core.configuration.DocumentConfigSpec;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.document.DocumentRevisionKey;
 import com.docdoku.core.exceptions.*;
@@ -35,16 +34,16 @@ import com.docdoku.core.query.DocumentSearchQuery;
  */
 public interface IDocumentConfigSpecManagerLocal {
     /**
-     * Get the {@link com.docdoku.core.configuration.LatestConfigSpec} for a specific workspace
+     * Get the {@link com.docdoku.core.configuration.DocumentConfigSpec} for a specific workspace
      * @param workspaceId The specific workspace
      * @return The LatestConfigSpec of the specific workspace
      * @throws UserNotFoundException If no user is connected to this workspace
      * @throws UserNotActiveException If the connected user is disable
      * @throws WorkspaceNotFoundException If the workspace cann't be found
      */
-    ConfigSpec getLatestConfigSpec(String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
+    DocumentConfigSpec getLatestConfigSpec(String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
     /**
-     * Get the {@link com.docdoku.core.configuration.BaselineConfigSpec} for a specific baseline
+     * Get the {@link com.docdoku.core.configuration.DocumentConfigSpec} for a specific baseline
      * @param baselineId The specific baseline
      * @return The LatestConfigSpec of the specific workspace
      * @throws UserNotFoundException If no user is connected to this workspace
@@ -52,7 +51,7 @@ public interface IDocumentConfigSpecManagerLocal {
      * @throws WorkspaceNotFoundException If the workspace cann't be found
      * @throws BaselineNotFoundException If the baseline cann't be found
      */
-    BaselineConfigSpec getConfigSpecForBaseline(int baselineId) throws BaselineNotFoundException, WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException;
+    DocumentConfigSpec getConfigSpecForBaseline(int baselineId) throws BaselineNotFoundException, WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException;
 
     /**
      * Get the list of folder filtered by a configuration specification
@@ -64,7 +63,7 @@ public interface IDocumentConfigSpecManagerLocal {
      * @throws UserNotActiveException
      * @throws WorkspaceNotFoundException
      */
-    String[] getFilteredFolders(String workspaceId, ConfigSpec cs, String completePath) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
+    String[] getFilteredFolders(String workspaceId, DocumentConfigSpec cs, String completePath) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
 
     /**
      * Get the list of documents filtered by a configuration specification and a tag
@@ -78,7 +77,7 @@ public interface IDocumentConfigSpecManagerLocal {
      * @throws WorkspaceNotFoundException
      * @throws DocumentRevisionNotFoundException
      */
-    DocumentRevision[] getFilteredDocuments(String workspaceId, ConfigSpec cs, int start, int pMaxResults) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentRevisionNotFoundException;
+    DocumentRevision[] getFilteredDocuments(String workspaceId, DocumentConfigSpec cs, int start, int pMaxResults) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentRevisionNotFoundException;
 
     /**
      * Get the list of documents filtered by a configuration specification and a folder
@@ -90,7 +89,7 @@ public interface IDocumentConfigSpecManagerLocal {
      * @throws UserNotActiveException
      * @throws WorkspaceNotFoundException
      */
-    DocumentRevision[] getFilteredDocumentsByFolder(String workspaceId, ConfigSpec cs, String completePath) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
+    DocumentRevision[] getFilteredDocumentsByFolder(String workspaceId, DocumentConfigSpec cs, String completePath) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
 
     /**
      * Get the list of documents filtered by a configuration specification and a tag
@@ -103,7 +102,7 @@ public interface IDocumentConfigSpecManagerLocal {
      * @throws DocumentRevisionNotFoundException
      * @return All documents with the tag filtered by a confSpec
      */
-    DocumentRevision[] getFilteredDocumentsByTag(String workspaceId, ConfigSpec cs, TagKey tagKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentRevisionNotFoundException;
+    DocumentRevision[] getFilteredDocumentsByTag(String workspaceId, DocumentConfigSpec cs, TagKey tagKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentRevisionNotFoundException;
 
     /**
      * Get the list of documents filtered by a configuration specification and a query
@@ -117,7 +116,7 @@ public interface IDocumentConfigSpecManagerLocal {
      * @throws ESServerException
      * @return All documents with the tag filtered by a confSpec
      */
-    DocumentRevision[] searchFilteredDocuments(String workspaceId, ConfigSpec cs, DocumentSearchQuery pQuery) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentRevisionNotFoundException, ESServerException;
+    DocumentRevision[] searchFilteredDocuments(String workspaceId, DocumentConfigSpec cs, DocumentSearchQuery pQuery) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentRevisionNotFoundException, ESServerException;
 
     /**
      * Get a document revision filtered by a configuration specification
@@ -131,5 +130,5 @@ public interface IDocumentConfigSpecManagerLocal {
      * @throws UserNotActiveException
      * @return The document revision without the iteration following the baselined document
      */
-    DocumentRevision getFilteredDocumentRevision(DocumentRevisionKey documentRevisionKey, ConfigSpec configSpec) throws AccessRightException, NotAllowedException, WorkspaceNotFoundException, UserNotFoundException, DocumentRevisionNotFoundException, UserNotActiveException;
+    DocumentRevision getFilteredDocumentRevision(DocumentRevisionKey documentRevisionKey, DocumentConfigSpec configSpec) throws AccessRightException, NotAllowedException, WorkspaceNotFoundException, UserNotFoundException, DocumentRevisionNotFoundException, UserNotActiveException;
 }

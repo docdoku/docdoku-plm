@@ -27,9 +27,6 @@
             <ejb-name>ProductBaselineManagerBean</ejb-name>
         </session>
         <session>
-            <ejb-name>ProductConfigSpecManagerBean</ejb-name>
-        </session>
-        <session>
             <ejb-name>ProductInstanceManagerBean</ejb-name>
         </session>
         <session>

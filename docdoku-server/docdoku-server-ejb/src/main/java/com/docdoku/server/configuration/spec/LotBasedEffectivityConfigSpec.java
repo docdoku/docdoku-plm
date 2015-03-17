@@ -19,36 +19,50 @@
  */
 
 
-package com.docdoku.core.configuration;
+package com.docdoku.server.configuration.spec;
 
-import javax.persistence.*;
-import java.util.Date;
+import com.docdoku.core.product.PartIteration;
+import com.docdoku.core.product.PartLink;
+import com.docdoku.core.product.PartMaster;
+
+import java.util.List;
 
 /**
- * A kind of {@link EffectivityConfigSpec} expressed by date and time.
+ * A kind of {@link EffectivityConfigSpec} based on a specific lot.
  * 
  * @author Florent Garin
  * @version 1.1, 30/10/11
  * @since   V1.1
  */
-@Table(name="DATEBASEDEFFCS")
-@Entity
-public class DateBasedEffectivityConfigSpec extends EffectivityConfigSpec {
+public class LotBasedEffectivityConfigSpec extends EffectivityConfigSpec {
+
     /**
-     * The date and/or time of the context.
+     * The lot id of the particular batch of items specified by the context.
      */
-    @Column(name="DATECONFIG")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date date;
+    private String lotId;
 
-    public DateBasedEffectivityConfigSpec() {
+    public LotBasedEffectivityConfigSpec() {
     }
 
-    public Date getDate() {
-        return date;
+    @Override
+    public PartIteration filterPartIteration(PartMaster partMaster) {
+        // TODO : implement filter
+        return null;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
+    @Override
+    public PartLink filterPartLink(List<PartLink> path) {
+        // TODO : implement filter
+        return null;
     }
+
+
+    public String getLotId() {
+        return lotId;
+    }
+
+    public void setLotId(String lotId) {
+        this.lotId = lotId;
+    }
+    
 }

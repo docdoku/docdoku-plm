@@ -19,40 +19,50 @@
  */
 
 
-package com.docdoku.core.configuration;
+package com.docdoku.server.configuration.spec;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import com.docdoku.core.product.PartIteration;
+import com.docdoku.core.product.PartLink;
+import com.docdoku.core.product.PartMaster;
+
+import java.util.Date;
+import java.util.List;
 
 /**
- * A kind of {@link EffectivityConfigSpec} based on serial number.
+ * A kind of {@link EffectivityConfigSpec} expressed by date and time.
  * 
  * @author Florent Garin
  * @version 1.1, 30/10/11
  * @since   V1.1
  */
-@Table(name="SERIALNUMBERBASEDEFFCS")
-@Entity
-public class SerialNumberBasedEffectivityConfigSpec extends EffectivityConfigSpec {
 
+public class DateBasedEffectivityConfigSpec extends EffectivityConfigSpec {
     /**
-     * The serial number of the particular item specified by the context.
+     * The date and/or time of the context.
      */
-    @Column(name="NUMBERCONFIG")
-    private String number;
 
-    public SerialNumberBasedEffectivityConfigSpec() {
+    private Date date;
+
+    public DateBasedEffectivityConfigSpec() {
     }
 
-    public void setNumber(String number) {
-        this.number = number;
+    @Override
+    public PartIteration filterPartIteration(PartMaster partMaster) {
+        // TODO : implement filter
+        return null;
     }
 
-    public String getNumber() {
-        return number;
+    @Override
+    public PartLink filterPartLink(List<PartLink> path) {
+        // TODO : implement filter
+        return null;
     }
-    
-    
-    
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
 }

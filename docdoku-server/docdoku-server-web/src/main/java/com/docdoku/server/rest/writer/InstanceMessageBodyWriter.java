@@ -19,7 +19,7 @@
  */
 package com.docdoku.server.rest.writer;
 
-import com.docdoku.core.configuration.ConfigSpec;
+import com.docdoku.core.configuration.PSFilter;
 import com.docdoku.core.product.PartUsageLink;
 import com.docdoku.server.rest.collections.InstanceCollection;
 import com.docdoku.server.rest.util.InstanceBodyWriterTools;
@@ -63,13 +63,13 @@ public class InstanceMessageBodyWriter implements MessageBodyWriter<InstanceColl
         JsonGenerator jg = Json.createGenerator(new OutputStreamWriter(entityStream, charSet));
         jg.writeStartArray();
 
-        ConfigSpec cs=object.getConfigSpec();
+        PSFilter filter = object.getFilter();
         PartUsageLink rootUsageLink = object.getRootUsageLink();
         List<Integer> usageLinkPaths = object.getUsageLinkPaths();
 
         Matrix4d gM=new Matrix4d();
         gM.setIdentity();
-        InstanceBodyWriterTools.generateInstanceStreamWithGlobalMatrix(rootUsageLink, gM, usageLinkPaths, cs, new ArrayList<Integer>(), jg);
+        InstanceBodyWriterTools.generateInstanceStreamWithGlobalMatrix(rootUsageLink, gM, usageLinkPaths, filter, new ArrayList<Integer>(), jg);
 
         jg.writeEnd();
         jg.flush();

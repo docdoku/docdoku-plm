@@ -20,14 +20,18 @@
 
 package com.docdoku.cli.tools;
 
-import com.docdoku.cli.services.*;
-import com.docdoku.core.services.*;
+import com.docdoku.cli.services.DocumentService;
+import com.docdoku.cli.services.ProductBaselineService;
+import com.docdoku.cli.services.ProductService;
+import com.docdoku.cli.services.UserService;
+import com.docdoku.core.services.IDocumentManagerWS;
+import com.docdoku.core.services.IProductBaselineManagerWS;
+import com.docdoku.core.services.IProductManagerWS;
+import com.docdoku.core.services.IUserManagerWS;
 
 import javax.xml.ws.BindingProvider;
-import javax.xml.ws.soap.MTOMFeature;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Map;
 
 /**
  *
@@ -37,7 +41,7 @@ public class ScriptingTools {
 
     private static final String DOCUMENT_WSDL_LOCATION = "/services/document?wsdl";
     private static final String PRODUCT_WSDL_LOCATION = "/services/product?wsdl";
-    private static final String PRODUCT_CONFIGSPEC_WSDL_LOCATION = "/services/productConfigSpec?wsdl";
+    private static final String PRODUCT_BASELINE_WSDL_LOCATION = "/services/productBaseline?wsdl";
     private static final String USER_WSDL_LOCATION = "/services/user?wsdl";
     private static final String LOV_WSDL_LOCATION = "/services/lov?wsdl";
 
@@ -65,9 +69,9 @@ public class ScriptingTools {
         return port;
     }
 
-    public static IProductConfigSpecManagerWS createProductConfigSpecService(URL url, String login, String password) throws Exception {
-        ProductConfigSpecService service = new ProductConfigSpecService(new URL(url, PRODUCT_CONFIGSPEC_WSDL_LOCATION), new javax.xml.namespace.QName(PRODUCT_NAMESPACEURI, "ProductConfigSpecManagerBeanService"));
-        IProductConfigSpecManagerWS port = service.getPort(IProductConfigSpecManagerWS.class);
+    public static IProductBaselineManagerWS createProductBaselineService(URL url, String login, String password) throws Exception {
+        ProductBaselineService service = new ProductBaselineService(new URL(url, PRODUCT_BASELINE_WSDL_LOCATION), new javax.xml.namespace.QName(PRODUCT_NAMESPACEURI, "ProductBaselineManagerBeanService"));
+        IProductBaselineManagerWS port = service.getPort(IProductBaselineManagerWS.class);
         ((BindingProvider) port).getRequestContext().put(BindingProvider.USERNAME_PROPERTY, login);
         ((BindingProvider) port).getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, password);
         return port;

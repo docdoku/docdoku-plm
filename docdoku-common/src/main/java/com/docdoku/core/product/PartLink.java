@@ -22,6 +22,7 @@ package com.docdoku.core.product;
 import java.util.List;
 
 /**
+ * @author: Morgan Guimard
  */
 public interface PartLink {
     int getId();

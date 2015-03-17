@@ -10,9 +10,7 @@ define([
 
 	var BaselineSelectView = Backbone.View.extend({
 		events:{
-			'change select' : 'onSelectorChanged',
-			'click button.newBaseline':'createBaseline',
-			'click button.deleteBaseline':'deleteBaseline'
+			'change select' : 'onSelectorChanged'
 		},
 
 		initialize:function(){
@@ -30,7 +28,7 @@ define([
 		render:function(){
 			this.$el.html(Mustache.render(template, {i18n:App.config.i18n}));
 			this.bindDomElements();
-			this.hideMenu();
+
             this.$selectBaselineSpec.hide();
             this.$selectProdInstSpec.hide();
 			this.baselineCollection.fetch({reset:true});
@@ -40,6 +38,7 @@ define([
 
 		bindDomElements:function(){
 			this.$selectConfSpec = this.$('#config_spec_type_selector_list');
+			this.$selectLatestFilter = this.$('#latest_selector_list');
 			this.$selectBaselineSpec = this.$('#baseline_selector_list');
 			this.$selectProdInstSpec = this.$('#product_instance1_selector_list');
 			this.$menu = this.$('.ConfigSpecSelector-menu');
@@ -98,22 +97,6 @@ define([
                 if(this.productInstanceCollection && this.productInstanceCollection.length > 0){
                     this.$selectConfSpec.append('<option value="serial-number">'+App.config.i18n.SERIAL_NUMBER+'</option>');
                 }
-
-                // Todo https://github.com/docdoku/docdoku-plm/issues/321
-                //this.baselineCollection.getLastReleaseRevision({
-                //    success: function (lastReleaseRevision) {
-                //        var alreadyExist = false;
-                //        that.$selectConfSpec.find('option').each(function(){
-                //            if (this.value === 'released') {
-                //                alreadyExist = true;
-                //                return false;
-                //            }
-                //        });
-                //        if (lastReleaseRevision && !alreadyExist) {
-                //            that.$selectConfSpec.prepend('<option value="released">' + App.config.i18n.RELEASED_SHORT + '</option>');
-                //        }
-                //    }
-                //});
             }
         },
 
@@ -132,45 +115,6 @@ define([
                 this.$selectProdInstSpec.show();
                 this.trigger('config_spec:changed', this.$selectProdInstSpec[0].value);
             }
-            //this.trigger('config_spec:changed', e.target.value);
-		},
-
-		createBaseline:function(){
-            //Todo Allow to add baseline on product-structure
-            //var snapBaselineView;
-            //SnapBaselineView = new SnapBaselineView({type: 'PRODUCT', collection: this.baselineCollection});
-            //$('body').append(snapBaselineView.render().el);
-            //snapBaselineView.openModal();
-		},
-
-		deleteBaseline:function(){
-			//Todo Allow to delete baseline on product-structure
-			//var that = this;
-            //bootbox.confirm(App.config.i18n.DELETE_SELECTION_QUESTION, function(result){
-            //    if(result){
-            //        that.baselineCollection.each(function(baseline){
-            //            if(parseInt(that.$selectConfSpec.val(),10)===baseline.getId()){
-            //                baseline.destroy({
-            //                    dataType: 'text', // server doesn't send a json hash in the response body
-            //                    success:function(){
-            //                        that.$selectConfSpec.find('option[value='+baseline.getId()+']').remove();
-            //                        that.$selectConfSpec.val('latest').change();
-            //                    },
-            //                    error:function(model,err){
-            //                        alert(err.responseText);
-            //                    }});
-            //            }
-            //        });
-            //    }
-            //});
-		},
-
-		showMenu: function(){
-			this.$menu.show();
-		},
-
-		hideMenu: function(){
-			this.$menu.hide();
 		},
 
         selectCurrentBaseline:function(){

@@ -15,17 +15,10 @@
     <class>com.docdoku.core.change.Milestone</class>
     <class>com.docdoku.core.change.ModificationNotification</class>
     <class>com.docdoku.core.configuration.ProductBaseline</class>
-    <class>com.docdoku.core.configuration.BaselineConfigSpec</class>
     <class>com.docdoku.core.configuration.BaselinedPart</class>
-    <class>com.docdoku.core.configuration.ConfigSpec</class>
-    <class>com.docdoku.core.configuration.DateBasedEffectivityConfigSpec</class>
-    <class>com.docdoku.core.configuration.EffectivityConfigSpec</class>
-    <class>com.docdoku.core.configuration.LatestConfigSpec</class>
-    <class>com.docdoku.core.configuration.LotBasedEffectivityConfigSpec</class>
     <class>com.docdoku.core.configuration.PartCollection</class>
     <class>com.docdoku.core.configuration.ProductInstanceIteration</class>
     <class>com.docdoku.core.configuration.ProductInstanceMaster</class>
-    <class>com.docdoku.core.configuration.SerialNumberBasedEffectivityConfigSpec</class>
     <class>com.docdoku.core.document.DocumentIteration</class>
     <class>com.docdoku.core.document.DocumentLink</class>
     <class>com.docdoku.core.document.DocumentMaster</class>

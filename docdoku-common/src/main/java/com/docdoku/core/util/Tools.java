@@ -19,6 +19,7 @@
  */
 package com.docdoku.core.util;
 
+import com.docdoku.core.product.PartLink;
 import com.docdoku.core.workflow.ActivityModel;
 import com.docdoku.core.workflow.TaskModel;
 import com.docdoku.core.workflow.WorkflowModel;
@@ -26,6 +27,8 @@ import com.docdoku.core.workflow.WorkflowModel;
 import javax.swing.text.MaskFormatter;
 import java.text.Normalizer;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
@@ -201,4 +204,14 @@ public class Tools {
         }
         return maskBuilder.toString();
     }
+
+    public static String getPathAsString(List<PartLink> path) {
+        List<String> ids = new ArrayList<>();
+        for (PartLink link : path) {
+            ids.add(String.valueOf(link.getId()));
+        }
+        return String.join("-", ids); // java 8
+    }
+
+
 }

@@ -17,55 +17,42 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.docdoku.core.configuration;
+package com.docdoku.server.configuration.spec;
 
 import com.docdoku.core.common.User;
+import com.docdoku.core.configuration.*;
 import com.docdoku.core.document.DocumentIteration;
-import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.product.PartIteration;
+import com.docdoku.core.product.PartLink;
 import com.docdoku.core.product.PartMaster;
+import com.docdoku.core.product.PartSubstituteLink;
+import com.docdoku.core.util.Tools;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
- * A {@link ConfigSpec} which returns the {@link PartIteration} and {@link DocumentIteration}
+ * A {@link com.docdoku.core.configuration.ProductConfigSpec} which returns the {@link PartIteration} and {@link DocumentIteration}
  * which belong to the given baseline.
+ *
+ * As a baseline should have no ambiguities, if a filter returns null the spec is considered as invalid.
  *
  * @author Florent Garin
  * @version 1.1, 30/10/11
  * @since   V1.1
  */
-@Table(name="BASELINECONFIGSPEC")
-@Entity
-public class BaselineConfigSpec extends ConfigSpec {
+public class BaselineProductConfigSpec extends ProductConfigSpec {
 
-    @ManyToOne(optional = true, fetch = FetchType.EAGER)
     private ProductBaseline productBaseline;
-    @ManyToOne(optional = true, fetch = FetchType.EAGER)
-    private DocumentBaseline documentBaseline;
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private User user;
 
-    public BaselineConfigSpec(){
-    }
-    public BaselineConfigSpec(ProductBaseline productBaseline, User user) {
-        this.productBaseline = productBaseline;
-        this.user = user;
-    }
-    public BaselineConfigSpec(DocumentBaseline documentBaseline, User user) {
-        this.documentBaseline = documentBaseline;
-        this.user = user;
+    public BaselineProductConfigSpec(){
     }
 
-    public DocumentBaseline getDocumentBaseline() {
-        return documentBaseline;
-    }
-    public void setDocumentBaseline(DocumentBaseline documentBaseline) {
-        this.documentBaseline = documentBaseline;
+    public BaselineProductConfigSpec(ProductBaseline productBaseline, User user) {
+        this.productBaseline = productBaseline;
+        this.user = user;
     }
 
     public ProductBaseline getProductBaseline() {
@@ -85,36 +72,44 @@ public class BaselineConfigSpec extends ConfigSpec {
     public int getPartCollectionId(){
         return productBaseline.getPartCollection().getId();
     }
-    public int getFolderCollectionId(){
-        return documentBaseline.getFolderCollection().getId();
-    }
 
     @Override
-    public PartIteration filterConfigSpec(PartMaster part) {
+    public PartIteration filterPartIteration(PartMaster partMaster) {
         PartCollection partCollection = productBaseline==null ? null : productBaseline.getPartCollection();             // Prevent NullPointerException
         if(partCollection != null) {
-            BaselinedPartKey baselinedRootPartKey = new BaselinedPartKey(partCollection.getId(), part.getWorkspaceId(), part.getNumber());
+            BaselinedPartKey baselinedRootPartKey = new BaselinedPartKey(partCollection.getId(), partMaster.getWorkspaceId(), partMaster.getNumber());
             BaselinedPart baselinedRootPart = productBaseline.getBaselinedPart(baselinedRootPartKey);
             if (baselinedRootPart != null) {
                 return baselinedRootPart.getTargetPart();
             }
-            // the part isn't in baseline, choose the latest checked in version-iteration
-            return new LatestConfigSpec(user).filterConfigSpec(part);
         }
-
         return null;
     }
 
     @Override
-    public DocumentIteration filterConfigSpec(DocumentRevision documentRevision) {
-        FolderCollection folderCollection = documentBaseline==null ? null : documentBaseline.getFolderCollection();     // Prevent NullPointerException
-        if(folderCollection != null){
-            DocumentIteration docI = folderCollection.getDocumentIteration(documentRevision.getKey());
-            if(docI!=null){
-                return docI;
-            }
+    public PartLink filterPartLink(List<PartLink> path) {
+
+        // No ambiguities here, must return 1 value
+        // Check if optional or substitute, nominal link else
+
+        PartLink nominalLink = path.get(path.size()-1);
+
+        if(nominalLink.isOptional() && productBaseline.isLinkOptional(Tools.getPathAsString(path))){
+            return null;
         }
 
-        return null;
+        for(PartSubstituteLink substituteLink:nominalLink.getSubstitutes()){
+
+            List<PartLink> substitutePath = new ArrayList<>(path);
+            substitutePath.set(substitutePath.size()-1,substituteLink);
+
+            if(productBaseline.hasSubstituteLink(Tools.getPathAsString(substitutePath))){
+                return substituteLink;
+            }
+
+        }
+
+        return nominalLink;
     }
+
 }

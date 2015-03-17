@@ -19,7 +19,7 @@
  */
 package com.docdoku.server.rest.writer;
 
-import com.docdoku.core.configuration.ConfigSpec;
+import com.docdoku.core.configuration.PSFilter;
 import com.docdoku.core.product.PartUsageLink;
 import com.docdoku.server.rest.collections.InstanceCollection;
 import com.docdoku.server.rest.collections.PathFilteredListInstanceCollection;
@@ -64,7 +64,7 @@ public class PathFilteredInstanceMessageBodyWriter implements MessageBodyWriter<
         JsonGenerator jg = Json.createGenerator(new OutputStreamWriter(entityStream, charSet));
         jg.writeStartArray();
 
-        ConfigSpec cs=object.getConfigSpec();
+        PSFilter cs = object.getFilter();
         for(InstanceCollection instanceCollection : object.getInstanceCollections()){
             PartUsageLink rootUsageLink = instanceCollection.getRootUsageLink();
             List<Integer> usageLinkPaths = instanceCollection.getUsageLinkPaths();

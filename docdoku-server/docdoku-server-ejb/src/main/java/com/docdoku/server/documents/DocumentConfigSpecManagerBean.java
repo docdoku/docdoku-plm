@@ -20,7 +20,10 @@
 package com.docdoku.server.documents;
 
 import com.docdoku.core.common.User;
-import com.docdoku.core.configuration.*;
+import com.docdoku.core.configuration.BaselinedFolder;
+import com.docdoku.core.configuration.BaselinedFolderKey;
+import com.docdoku.core.configuration.DocumentBaseline;
+import com.docdoku.core.configuration.DocumentConfigSpec;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.document.DocumentRevisionKey;
@@ -34,6 +37,8 @@ import com.docdoku.core.services.IDocumentBaselineManagerLocal;
 import com.docdoku.core.services.IDocumentConfigSpecManagerLocal;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
+import com.docdoku.server.configuration.spec.BaselineDocumentConfigSpec;
+import com.docdoku.server.configuration.spec.LatestDocumentConfigSpec;
 import com.docdoku.server.dao.BaselinedDocumentDAO;
 import com.docdoku.server.dao.BaselinedFolderDAO;
 import com.docdoku.server.dao.FolderDAO;
@@ -64,27 +69,27 @@ public class DocumentConfigSpecManagerBean implements IDocumentConfigSpecManager
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public ConfigSpec getLatestConfigSpec(String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+    public DocumentConfigSpec getLatestConfigSpec(String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
-        return new LatestConfigSpec(user);
+        return new LatestDocumentConfigSpec(user);
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public BaselineConfigSpec getConfigSpecForBaseline(int baselineId) throws BaselineNotFoundException, WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException {
+    public DocumentConfigSpec getConfigSpecForBaseline(int baselineId) throws BaselineNotFoundException, WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException {
         DocumentBaseline documentBaseline = documentBaselineService.getBaseline(baselineId);
         User user = userManager.checkWorkspaceReadAccess(documentBaseline.getWorkspace().getId());
-        return new BaselineConfigSpec(documentBaseline,user);
+        return new BaselineDocumentConfigSpec(documentBaseline,user);
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public String[] getFilteredFolders(String workspaceId, ConfigSpec cs, String completePath) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+    public String[] getFilteredFolders(String workspaceId, DocumentConfigSpec cs, String completePath) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         Locale locale = new Locale(user.getLanguage());
         String[] shortNames;
-        if(cs!=null&& cs instanceof BaselineConfigSpec){
-            int collectionId = ((BaselineConfigSpec) cs).getDocumentBaseline().getFolderCollection().getId();
+        if(cs!=null&& cs instanceof BaselineDocumentConfigSpec){
+            int collectionId = ((BaselineDocumentConfigSpec) cs).getDocumentBaseline().getFolderCollection().getId();
             BaselinedFolderKey key = new BaselinedFolderKey(collectionId,completePath);
             List<BaselinedFolder> subFolders = new BaselinedFolderDAO(locale, em).getSubFolders(key);
             shortNames = new String[subFolders.size()];
@@ -105,7 +110,7 @@ public class DocumentConfigSpecManagerBean implements IDocumentConfigSpecManager
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public DocumentRevision[] getFilteredDocuments(String workspaceId, ConfigSpec cs, int start, int pMaxResults) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentRevisionNotFoundException {
+    public DocumentRevision[] getFilteredDocuments(String workspaceId, DocumentConfigSpec cs, int start, int pMaxResults) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentRevisionNotFoundException {
         userManager.checkWorkspaceReadAccess(workspaceId);
         List<DocumentRevision> docRs = Arrays.asList(documentService.getAllDocumentsInWorkspace(workspaceId, start, pMaxResults));
         List<DocumentRevision> documentRevisionList = new ArrayList<>(docRs);
@@ -114,19 +119,16 @@ public class DocumentConfigSpecManagerBean implements IDocumentConfigSpecManager
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public DocumentRevision[] getFilteredDocumentsByFolder(String workspaceId, ConfigSpec cs, String completePath) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+    public DocumentRevision[] getFilteredDocumentsByFolder(String workspaceId, DocumentConfigSpec cs, String completePath) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
-
-        if(cs instanceof BaselineConfigSpec){
-            return getFilteredDocumentsByFolder((BaselineConfigSpec) cs,completePath,user);
-        }else if(cs instanceof EffectivityConfigSpec){
-            return new DocumentRevision[0];
+        if(cs instanceof BaselineDocumentConfigSpec){
+            return getFilteredDocumentsByFolder((BaselineDocumentConfigSpec) cs,completePath,user);
         }else{
             return documentService.findDocumentRevisionsByFolder(completePath);
         }
     }
 
-    private DocumentRevision[] getFilteredDocumentsByFolder(BaselineConfigSpec cs, String completePath, User user) {
+    private DocumentRevision[] getFilteredDocumentsByFolder(BaselineDocumentConfigSpec cs, String completePath, User user) {
         BaselinedFolderKey key = new BaselinedFolderKey(cs.getFolderCollectionId(),completePath);
         List<DocumentIteration> baselinedDocuments = new BaselinedDocumentDAO(new Locale(user.getLanguage()),em).findDocRsByFolder(key);
         List<DocumentRevision> returnList = new ArrayList<>();
@@ -139,7 +141,7 @@ public class DocumentConfigSpecManagerBean implements IDocumentConfigSpecManager
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public DocumentRevision[] getFilteredDocumentsByTag(String workspaceId, ConfigSpec cs, TagKey tagKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentRevisionNotFoundException {
+    public DocumentRevision[] getFilteredDocumentsByTag(String workspaceId, DocumentConfigSpec cs, TagKey tagKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentRevisionNotFoundException {
         userManager.checkWorkspaceReadAccess(workspaceId);
         List<DocumentRevision> docRs = Arrays.asList(documentService.findDocumentRevisionsByTag(tagKey));
         List<DocumentRevision> documentRevisionList = new ArrayList<>(docRs);
@@ -148,7 +150,7 @@ public class DocumentConfigSpecManagerBean implements IDocumentConfigSpecManager
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public DocumentRevision[] searchFilteredDocuments(String workspaceId, ConfigSpec cs, DocumentSearchQuery pQuery) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentRevisionNotFoundException, ESServerException {
+    public DocumentRevision[] searchFilteredDocuments(String workspaceId, DocumentConfigSpec cs, DocumentSearchQuery pQuery) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentRevisionNotFoundException, ESServerException {
         userManager.checkWorkspaceReadAccess(workspaceId);
         List<DocumentRevision> docRs = Arrays.asList(documentService.searchDocumentRevisions(pQuery));
         List<DocumentRevision> documentRevisionList = new ArrayList<>(docRs);
@@ -157,13 +159,13 @@ public class DocumentConfigSpecManagerBean implements IDocumentConfigSpecManager
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public DocumentRevision getFilteredDocumentRevision(DocumentRevisionKey documentRevisionKey, ConfigSpec configSpec) throws AccessRightException, NotAllowedException, WorkspaceNotFoundException, UserNotFoundException, DocumentRevisionNotFoundException, UserNotActiveException {
+    public DocumentRevision getFilteredDocumentRevision(DocumentRevisionKey documentRevisionKey, DocumentConfigSpec configSpec) throws AccessRightException, NotAllowedException, WorkspaceNotFoundException, UserNotFoundException, DocumentRevisionNotFoundException, UserNotActiveException {
         DocumentRevision docR = documentService.getDocumentRevision(documentRevisionKey);
         docR = filterDocumentRevision(configSpec,docR);
         return docR;
     }
 
-    private List<DocumentRevision> filterDocumentRevisionList(ConfigSpec configSpec, List<DocumentRevision> pDocumentRs) throws DocumentRevisionNotFoundException {
+    private List<DocumentRevision> filterDocumentRevisionList(DocumentConfigSpec configSpec, List<DocumentRevision> pDocumentRs) throws DocumentRevisionNotFoundException {
         List<DocumentRevision> returnList = new ArrayList<>();
         for(DocumentRevision documentRevision : pDocumentRs){
             returnList.add(filterDocumentRevision(configSpec, documentRevision));
@@ -171,13 +173,13 @@ public class DocumentConfigSpecManagerBean implements IDocumentConfigSpecManager
         return returnList;
     }
 
-    private DocumentRevision filterDocumentRevision(ConfigSpec configSpec, DocumentRevision documentRevision) throws DocumentRevisionNotFoundException {
+    private DocumentRevision filterDocumentRevision(DocumentConfigSpec configSpec, DocumentRevision documentRevision) throws DocumentRevisionNotFoundException {
         Locale locale = Locale.getDefault();
         if(documentRevision==null){
             throw new DocumentRevisionNotFoundException("");
         }
 
-        DocumentIteration docI = configSpec.filterConfigSpec(documentRevision);
+        DocumentIteration docI = configSpec.filter(documentRevision);
         if(docI!=null){
             em.detach(documentRevision);
 

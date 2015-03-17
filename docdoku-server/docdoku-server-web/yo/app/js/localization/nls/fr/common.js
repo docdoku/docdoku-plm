@@ -186,6 +186,8 @@ define({
 	GOTO_SERIAL_MODE: "Transformer l'activité en serie",
 	GRID_SWITCH: "Afficher/Masquer la grille",
 	GROUPS: "Groupes",
+    HEAD_CHECKIN:"Derniers articles libérés",
+    HEAD_WIP:"Derniers articles",
     HOME_PAGE: "Accueil",
 	HISTORY: "Historique",
 	ID_GENERATION: "Génération de l'id",

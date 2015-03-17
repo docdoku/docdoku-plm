@@ -1,14 +1,10 @@
 <span class="ConfigSpecSelector-title">{{i18n.CONFIG_SPEC}}</span>
-<div class="ConfigSpecSelector-menu">
-    <button class="btn newBaseline" title="{{i18n.CREATE_BASELINE_LATEST}}">
-        <span class="icon fa fa-plus"></span>
-    </button>
-    <button class="btn deleteBaseline" title="{{i18n.DELETE_BASELINE}}">
-        <span class="icon fa fa-times"></span>
-    </button>
-</div>
 <select id="config_spec_type_selector_list" class="ConfigSpecSelector-list">
     <option value="latest" selected="">{{i18n.LATEST_SHORT}}</option>
+</select>
+<select id="latest_selector_list" class="ConfigSpecSelector-list">
+    <option value="latest">{{i18n.HEAD_CHECKIN}}</option>
+    <option value="wip">{{i18n.HEAD_WIP}}</option>
 </select>
 <select id="baseline_selector_list" class="ConfigSpecSelector-list">
     <option disabled>{{i18n.BASELINE}}</option>

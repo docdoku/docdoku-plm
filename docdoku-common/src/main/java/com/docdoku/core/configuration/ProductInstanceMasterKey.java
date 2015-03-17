@@ -43,6 +43,11 @@ public class ProductInstanceMasterKey implements Serializable {
         this.instanceOf=new ConfigurationItemKey(pWorkspaceId,pId);
     }
 
+    public ProductInstanceMasterKey(String serialNumber, ConfigurationItemKey ciKey) {
+        this.serialNumber=serialNumber;
+        this.instanceOf=ciKey;
+    }
+
     public String getSerialNumber() {
         return serialNumber;
     }

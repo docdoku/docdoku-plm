@@ -17,35 +17,28 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.docdoku.core.configuration;
+package com.docdoku.server.configuration.spec;
 
 import com.docdoku.core.common.User;
-import com.docdoku.core.document.DocumentIteration;
-import com.docdoku.core.document.DocumentRevision;
+import com.docdoku.core.configuration.*;
 import com.docdoku.core.product.PartIteration;
+import com.docdoku.core.product.PartLink;
 import com.docdoku.core.product.PartMaster;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import java.util.List;
 
 
 /**
- * A {@link com.docdoku.core.configuration.ConfigSpec} which returns the {@link com.docdoku.core.product.PartIteration} and {@link com.docdoku.core.document.DocumentIteration}
+ * A {@link com.docdoku.core.configuration.ProductConfigSpec} which returns the {@link com.docdoku.core.product.PartIteration} and {@link com.docdoku.core.document.DocumentIteration}
  * which belong to the given baseline.
  *
  * @author Florent Garin
  * @version 1.1, 30/10/11
  * @since   V1.1
  */
-@Table(name="BASELINECONFIGSPEC")
-@Entity
-public class ProductInstanceConfigSpec extends ConfigSpec {
+public class ProductInstanceConfigSpec extends ProductConfigSpec {
 
-    @ManyToOne(optional = true, fetch = FetchType.EAGER)
     private ProductInstanceIteration productInstanceIteration;
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private User user;
 
     public ProductInstanceConfigSpec(){
@@ -74,7 +67,7 @@ public class ProductInstanceConfigSpec extends ConfigSpec {
     }
 
     @Override
-    public PartIteration filterConfigSpec(PartMaster part) {
+    public PartIteration filterPartIteration(PartMaster part) {
         PartCollection partCollection = productInstanceIteration==null ? null : productInstanceIteration.getPartCollection();// Prevent NullPointerException
         if(partCollection != null) {
             BaselinedPartKey baselinedRootPartKey = new BaselinedPartKey(partCollection.getId(), part.getWorkspaceId(), part.getNumber());
@@ -82,15 +75,14 @@ public class ProductInstanceConfigSpec extends ConfigSpec {
             if (baselinedRootPart != null) {
                 return baselinedRootPart.getTargetPart();
             }
-            // the part isn't in baseline, choose the latest checked in version-iteration
-            return new LatestConfigSpec(user).filterConfigSpec(part);
         }
-
         return null;
     }
 
     @Override
-    public DocumentIteration filterConfigSpec(DocumentRevision documentRevision) {
+    public PartLink filterPartLink(List<PartLink> path) {
+        // TODO : implement filter
         return null;
     }
+
 }

@@ -20,14 +20,14 @@
 
 package com.docdoku.server.rest.util;
 
-import com.docdoku.core.configuration.ConfigSpec;
+import com.docdoku.core.configuration.PSFilter;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.product.CADInstance;
 import com.docdoku.core.product.Geometry;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartUsageLink;
-import com.docdoku.core.services.IProductConfigSpecManagerLocal;
+import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.rest.dto.InstanceAttributeDTO;
 import org.apache.commons.lang.StringUtils;
 import org.dozer.DozerBeanMapperSingletonWrapper;
@@ -50,17 +50,17 @@ import java.util.logging.Logger;
  */
 public class InstanceBodyWriterTools {
     private static Context context;
-    private static IProductConfigSpecManagerLocal productConfigSpecService;
+    private static IProductManagerLocal productService;
     private static final Logger LOGGER = Logger.getLogger(InstanceBodyWriterTools.class.getName());
     private static Mapper mapper;
 
     static {
         try {
             context = new InitialContext();
-            productConfigSpecService = (IProductConfigSpecManagerLocal) context.lookup("java:global/docdoku-server-ear/docdoku-server-ejb/ProductConfigSpecManagerBean");
+            productService = (IProductManagerLocal) context.lookup("java:global/docdoku-server-ear/docdoku-server-ejb/ProductManagerBean");
             mapper = DozerBeanMapperSingletonWrapper.getInstance();
         } catch (NamingException e) {
-            Logger.getLogger(InstanceBodyWriterTools.class.getName()).log(Level.WARNING,null,e);
+            LOGGER.log(Level.WARNING, null, e);
         }
     }
 
@@ -91,9 +91,9 @@ public class InstanceBodyWriterTools {
         return gM;
     }
 
-    public static void generateInstanceStreamWithGlobalMatrix(PartUsageLink pUsageLink, Matrix4d matrix, List<Integer> filteredPath, ConfigSpec cs, List<Integer> instanceIds, JsonGenerator jg) {
+    public static void generateInstanceStreamWithGlobalMatrix(PartUsageLink pUsageLink, Matrix4d matrix, List<Integer> filteredPath, PSFilter filter, List<Integer> instanceIds, JsonGenerator jg) {
         try {
-            PartUsageLink usageLink = productConfigSpecService.filterProductStructure(pUsageLink, cs, 0);
+            PartUsageLink usageLink = productService.getPartUsageLinkFiltered(pUsageLink, filter, 0);
             PartIteration partI = usageLink.getComponent().getLastRevision().getLastIteration();
 
             for (CADInstance instance : usageLink.getCadInstances()) {
@@ -109,7 +109,7 @@ public class InstanceBodyWriterTools {
                 if (!partI.isAssembly() && !partI.getGeometries().isEmpty() && filteredPath.isEmpty()) {
                     writeLeaf(partI,combinedMatrix,copyInstanceIds,jg);
                 } else {
-                    writeNode(partI,cs,filteredPath,combinedMatrix,copyInstanceIds,jg);
+                    writeNode(partI,filter,filteredPath,combinedMatrix,copyInstanceIds,jg);
                 }
             }
         } catch (NotAllowedException | UserNotFoundException | UserNotActiveException | AccessRightException e) {
@@ -119,15 +119,15 @@ public class InstanceBodyWriterTools {
         }
     }
 
-    private static void writeNode(PartIteration partI, ConfigSpec cs, List<Integer> filteredPath, Matrix4d combinedMatrix, List<Integer> copyInstanceIds, JsonGenerator jg){
+    private static void writeNode(PartIteration partI, PSFilter filter, List<Integer> filteredPath, Matrix4d combinedMatrix, List<Integer> copyInstanceIds, JsonGenerator jg){
         for (PartUsageLink component : partI.getComponents()) {
             if (filteredPath.isEmpty()) {
-                generateInstanceStreamWithGlobalMatrix(component, combinedMatrix, filteredPath, cs, copyInstanceIds, jg);
+                generateInstanceStreamWithGlobalMatrix(component, combinedMatrix, filteredPath, filter, copyInstanceIds, jg);
 
             } else if (component.getId() == filteredPath.get(0)) {
                 List<Integer> copyWithoutCurrentId = new ArrayList<>(filteredPath);
                 copyWithoutCurrentId.remove(0);
-                generateInstanceStreamWithGlobalMatrix(component, combinedMatrix, copyWithoutCurrentId, cs, copyInstanceIds, jg);
+                generateInstanceStreamWithGlobalMatrix(component, combinedMatrix, copyWithoutCurrentId, filter, copyInstanceIds, jg);
             }
         }
     }

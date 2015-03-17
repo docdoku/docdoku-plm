@@ -204,7 +204,13 @@ public class ProductBaseline implements Serializable {
         this.configurationItem = configurationItem;
     }
 
+    public boolean hasSubstituteLink(String link){
+        return substituteLinks.contains(link);
+    }
 
+    public boolean isLinkOptional(String link){
+        return optionalUsageLinks.contains(link);
+    }
 
     @Override
     public boolean equals(Object o) {

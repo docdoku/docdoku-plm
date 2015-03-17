@@ -20,7 +20,7 @@
 
 package com.docdoku.server.rest.collections;
 
-import com.docdoku.core.configuration.ConfigSpec;
+import com.docdoku.core.configuration.PSFilter;
 
 import java.util.List;
 
@@ -33,15 +33,15 @@ public class PathFilteredListInstanceCollection {
 
     private List<InstanceCollection> instanceCollections;
 
-    private ConfigSpec configSpec;
+    private PSFilter filter;
 
     public PathFilteredListInstanceCollection(){
 
     }
 
-    public PathFilteredListInstanceCollection(List<InstanceCollection> instanceCollections, ConfigSpec configSpec) {
+    public PathFilteredListInstanceCollection(List<InstanceCollection> instanceCollections, PSFilter filter) {
         this.instanceCollections = instanceCollections;
-        this.configSpec = configSpec;
+        this.filter = filter;
     }
 
     public List<InstanceCollection> getInstanceCollections() {
@@ -52,11 +52,11 @@ public class PathFilteredListInstanceCollection {
         this.instanceCollections = instanceCollections;
     }
 
-    public ConfigSpec getConfigSpec() {
-        return configSpec;
+    public PSFilter getFilter() {
+        return filter;
     }
 
-    public void setConfigSpec(ConfigSpec configSpec) {
-        this.configSpec = configSpec;
+    public void setFilter(PSFilter filter) {
+        this.filter = filter;
     }
 }
