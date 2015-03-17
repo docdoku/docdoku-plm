@@ -156,6 +156,7 @@ public class Tools {
             partDTO.setAcl(null);
         }
 
+
         return partDTO;
     }
 
