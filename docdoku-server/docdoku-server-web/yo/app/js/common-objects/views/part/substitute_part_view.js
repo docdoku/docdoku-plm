@@ -32,7 +32,8 @@ define([
 
                 model: this.model,
                 i18n: App.config.i18n,
-                editMode: this.options.editMode
+                editMode: this.options.editMode,
+                isCheckout:this.model.isCheckout
             }));
 
 
@@ -74,7 +75,7 @@ define([
 
         addCadInstanceView: function (instance) {
             var self = this;
-            var substituteCADInstanceView = new CadInstanceView({editMode: this.options.editMode});
+            var substituteCADInstanceView = new CadInstanceView({editMode: this.options.editMode,isCheckout:this.options.isCheckout});
             substituteCADInstanceView.setInstance(instance).render();
             self.$cadInstances.append(substituteCADInstanceView.$el);
             substituteCADInstanceView.on('instance:remove', function () {

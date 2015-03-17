@@ -116,6 +116,7 @@ define([
             var substitutePartView = new SubstitutePartView({
                 model: model,
                 editMode: this.options.editMode,
+                isCheckout: this.options.isCheckout,
                 removeSubHandler: function () {
                     self.model.attributes.substitutes = _(self.model.attributes.substitutes).without(model);
                     self.removeSubPart(model);
