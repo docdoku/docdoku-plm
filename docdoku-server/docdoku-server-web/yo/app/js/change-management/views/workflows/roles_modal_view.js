@@ -37,15 +37,14 @@ define([
             }
             this.rolesInUse = new RoleInUseList();
 
+            this.userList.fetch({reset: true, success: function () {
+                _this.createRoleViews();
+                _this.rolesInUse.fetch({reset: true});
+            }});
+
             this.rolesToDelete = [];
 
             this.listenTo(this.collection, 'add', this.onModelAddedToCollection);
-
-            this.createRoleViews();
-            
-            this.userList.fetch({reset: true, success: function () {
-                _this.rolesInUse.fetch({reset: true});
-            }});
 
             return this;
         },
