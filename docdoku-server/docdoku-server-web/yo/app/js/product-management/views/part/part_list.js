@@ -5,7 +5,7 @@ define([
     'text!templates/part/part_list.html',
     'views/part/part_list_item'
 ], function (Backbone, Mustache, template, PartListItemView) {
-	'use strict';
+    'use strict';
     var PartListView = Backbone.View.extend({
 
         events: {
@@ -27,8 +27,8 @@ define([
 
         render: function () {
             var that = this;
-            this.collection.fetch({reset: true}).error(function(err){
-                that.trigger('error',null,err);
+            this.collection.fetch({reset: true}).error(function (err) {
+                that.trigger('error', null, err);
             });
             return this;
         },
@@ -129,6 +129,9 @@ define([
 
             } else {
                 this.onSeveralPartsSelected();
+                this.canCheckinCheckoutOrUndoCheckout();
+
+
             }
 
         },
@@ -154,7 +157,6 @@ define([
 
         onSeveralPartsSelected: function () {
             this.trigger('delete-button:display', true);
-            this.trigger('checkout-group:display', false);
             this.trigger('acl-edit-button:display', false);
             this.trigger('new-version-button:display', false);
             this.trigger('release-button:display', this.isSelectedPartsReleasable());
@@ -163,18 +165,18 @@ define([
 
         deleteSelectedParts: function () {
             var _this = this;
-            bootbox.confirm(App.config.i18n.CONFIRM_DELETE_PART, function(result){
-                if(result){
+            bootbox.confirm(App.config.i18n.CONFIRM_DELETE_PART, function (result) {
+                if (result) {
                     _(_this.listItemViews).each(function (view) {
                         if (view.isChecked()) {
                             view.model.destroy({
-                                wait:true,
+                                wait: true,
                                 dataType: 'text', // server doesn't send a json hash in the response body
                                 success: function () {
                                     _this.removePart(view.model);
                                     _this.onSelectionChanged();
                                 }, error: function (model, err) {
-                                    _this.trigger('error',model,err);
+                                    _this.trigger('error', model, err);
                                     _this.onSelectionChanged();
                                 }});
                         }
@@ -185,8 +187,8 @@ define([
 
         releaseSelectedParts: function () {
             var that = this;
-            bootbox.confirm(App.config.i18n.RELEASE_SELECTION_QUESTION, function(result){
-                if(result){
+            bootbox.confirm(App.config.i18n.RELEASE_SELECTION_QUESTION, function (result) {
+                if (result) {
                     _(that.listItemViews).each(function (view) {
                         if (view.isChecked()) {
                             view.model.release();
@@ -210,8 +212,8 @@ define([
         getSelectedParts: function () {
             var checkedViews = [];
             _(this.listItemViews).select(function (itemView) {
-                if (itemView.isChecked()){
-                    checkedViews.push( itemView.model);
+                if (itemView.isChecked()) {
+                    checkedViews.push(itemView.model);
                 }
 
             });
@@ -232,6 +234,77 @@ define([
                 }
             });
             return isPartReleasable;
+        },
+        areSelectedPartsCheckoutable: function () {
+            var isPartCheckout = true;
+            _(this.getSelectedParts()).each(function (view) {
+                if (view.isReleased() || view.isCheckout()) {
+                    isPartCheckout = false;
+                }
+            });
+            return isPartCheckout;
+        },
+        areSelectedPartsCheckouted: function () {
+            var isPartCheckouted = true;
+            _(this.getSelectedParts()).each(function (view) {
+                if (!view.isCheckout()) {
+                    isPartCheckouted = false;
+                }
+            });
+            return isPartCheckouted;
+        },
+        areSelectedPartsAllNotCheckouted: function () {
+            var isPartNotCheckouted = true;
+            _(this.getSelectedParts()).each(function (view) {
+                if (view.isCheckout() || view.isReleased()) {
+                    isPartNotCheckouted = false;
+                }
+            });
+            return isPartNotCheckouted;
+        },
+        areSelectedPartsCheckoutedByConnectedUser: function () {
+            var isPartCheckoutedByConnectedUser = true;
+            _(this.getSelectedParts()).each(function (view) {
+                if (!view.isCheckoutByConnectedUser()) {
+                    isPartCheckoutedByConnectedUser = false;
+                }
+            });
+            return isPartCheckoutedByConnectedUser;
+        },
+        haveMoreThanOneIteration: function () {
+            var hasMoreThanOneIteration = true;
+            _(this.getSelectedParts()).each(function (view) {
+                if (view.getLastIteration().get('iteration') <= 1) {
+                    hasMoreThanOneIteration = false;
+                }
+            });
+            return hasMoreThanOneIteration;
+        },
+
+        canCheckinCheckoutOrUndoCheckout: function () {
+
+            if (this.areSelectedPartsCheckouted()) {
+                if (this.areSelectedPartsCheckoutedByConnectedUser()) {
+                    this.trigger('checkout-group:display', true);
+                    this.trigger('checkout-group:update', {canCheckout: false, canUndo: this.haveMoreThanOneIteration(), canCheckin: true});
+                } else {
+                    this.trigger('checkout-group:display', true);
+                    this.trigger('checkout-group:update', {canCheckout: false, canUndo: false, canCheckin: false});
+                }
+            } else if(this.areSelectedPartsAllNotCheckouted()) {
+                this.trigger('checkout-group:display', true);
+                this.trigger('checkout-group:update', {canCheckout: true, canUndo: false, canCheckin: false});
+            }
+
+            else if ( this.areSelectedPartsCheckoutable()){
+                this.trigger('checkout-group:display', true);
+                this.trigger('checkout-group:update', {canCheckout: true, canUndo: false, canCheckin: false});
+            }
+            else{
+                this.trigger('checkout-group:display', false);
+            }
+
+
         },
 
         redraw: function () {
