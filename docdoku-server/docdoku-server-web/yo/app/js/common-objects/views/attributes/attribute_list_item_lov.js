@@ -58,7 +58,11 @@ define([
                 if(typeCopy === 'LOV'){
                     var lovName = this.model.get("lovName");
                     if(!lovName){
-                        this.$el.find("select.type").parent().html("Liste");
+                        if (this.editMode && !this.attributesLocked) {
+                            this.$el.find("select.type").parent().html(App.config.i18n.LOV);
+                        }else{
+                            this.$("div.type").html(App.config.i18n.LOV);
+                        }
                     }
                     this.addOptions(items);
                 }
