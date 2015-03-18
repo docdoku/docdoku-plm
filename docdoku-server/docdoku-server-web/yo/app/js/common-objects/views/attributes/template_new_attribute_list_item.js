@@ -14,7 +14,7 @@ define([
 
         initialize: function () {
             ListItemView.prototype.initialize.apply(this, arguments);
-            this.lovList = this.options.lovs,
+            this.lovList = this.options.lovs;
             this.events['change .type'] = 'typeChanged';
             this.events['change .name'] = 'updateName';
             this.events['click .fa-times'] = 'removeAction';
@@ -42,14 +42,14 @@ define([
         },
         typeChanged: function (evt) {
             var typeValue = evt.target.value;
-            if (typeValue == 'TEXT' || typeValue === 'BOOLEAN' || typeValue === 'DATE' || typeValue === 'NUMBER' || typeValue === 'URL' ){
+            if (typeValue === 'TEXT' || typeValue === 'BOOLEAN' || typeValue === 'DATE' || typeValue === 'NUMBER' || typeValue === 'URL' ){
                 this.model.set({
                     attributeType: typeValue
                 });
                 this.setChoice(null);
             }else{
                 this.model.set({
-                    attributeType: "LOV"
+                    attributeType: 'LOV'
                 });
                 this.setChoice(typeValue);
             }

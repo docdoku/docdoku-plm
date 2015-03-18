@@ -1,22 +1,23 @@
 /*global define*/
 define([
-    "common-objects/views/components/list",
-    "common-objects/views/attributes/attribute_list_item_boolean",
-    "common-objects/views/attributes/attribute_list_item_date",
-    "common-objects/views/attributes/attribute_list_item_number",
-    "common-objects/views/attributes/attribute_list_item_text",
-    "common-objects/views/attributes/attribute_list_item_url",
-    "common-objects/views/attributes/attribute_list_item_lov"
+    'common-objects/views/components/list',
+    'common-objects/views/attributes/attribute_list_item_boolean',
+    'common-objects/views/attributes/attribute_list_item_date',
+    'common-objects/views/attributes/attribute_list_item_number',
+    'common-objects/views/attributes/attribute_list_item_text',
+    'common-objects/views/attributes/attribute_list_item_url',
+    'common-objects/views/attributes/attribute_list_item_lov'
 ], function (ListView, AttributeListItemBooleanView, AttributeListItemDateView, AttributeListItemNumberView, AttributeListItemTextView, AttributeListItemUrlView, AttributeListItemLOVView) {
+    'use strict';
     var AttributeListView = ListView.extend({
 
         typeViewMapping: {
-            "BOOLEAN": AttributeListItemBooleanView,
-            "DATE": AttributeListItemDateView,
-            "NUMBER": AttributeListItemNumberView,
-            "TEXT": AttributeListItemTextView,
-            "URL": AttributeListItemUrlView,
-            "LOV": AttributeListItemLOVView
+            'BOOLEAN': AttributeListItemBooleanView,
+            'DATE': AttributeListItemDateView,
+            'NUMBER': AttributeListItemNumberView,
+            'TEXT': AttributeListItemTextView,
+            'URL': AttributeListItemUrlView,
+            'LOV': AttributeListItemLOVView
         },
 
         editMode: true,
@@ -29,16 +30,16 @@ define([
         },
 
         itemViewFactory: function (model) {
-            var type = model.get("type");
+            var type = model.get('type');
             if (!type) {
-                type = model.get("attributeType");
+                type = model.get('attributeType');
             }
 
             if(type !== 'TEXT' && type !== 'BOOLEAN' && type !== 'NUMBER' && type !== 'URL' && type !== 'DATE'){
-                type = 'LOV'
+                type = 'LOV';
             }
-            var constructor = this.typeViewMapping[type];
-            var view = new constructor({
+            var Constructor = this.typeViewMapping[type];
+            var view = new Constructor({
                 model: model,
                 lovs:this.lovs.models
             });

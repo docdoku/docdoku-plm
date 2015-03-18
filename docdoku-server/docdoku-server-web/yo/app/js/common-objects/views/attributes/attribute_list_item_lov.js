@@ -1,9 +1,10 @@
-/*global define*/
+/*global define,App*/
 define([
-    "common-objects/views/attributes/attribute_list_item",
-    "text!common-objects/templates/attributes/attribute_list_item.html",
-    "text!common-objects/templates/attributes/attribute_list_item_lov.html"
+    'common-objects/views/attributes/attribute_list_item',
+    'text!common-objects/templates/attributes/attribute_list_item.html',
+    'text!common-objects/templates/attributes/attribute_list_item_lov.html'
 ], function (AttributeListItemView, attribute_list_item, template) {
+    'use strict';
     var AttributeListItemLOVView = AttributeListItemView.extend({
 
         template: template,
@@ -19,21 +20,21 @@ define([
 
         rendered:function(){
 
-            this.modelChange = function(){}
+            this.modelChange = function(){};
 
-            var type = this.model.get("type");
-            var items = this.model.get("items");
+            var type = this.model.get('type');
+            var items = this.model.get('items');
             var typeCopy = type;
             if(type === 'LOV'){
-                type = this.model.get("lovName");
+                type = this.model.get('lovName');
             }
 
             if (this.editMode && !this.attributesLocked) {
-                this.$el.find("select.type").val(type);
+                this.$el.find('select.type').val(type);
             }else{
-                this.$("div.type").html(type);
+                this.$('div.type').html(type);
             }
-            this.$el.addClass("well");
+            this.$el.addClass('well');
             this.$('input[required]').customValidity(App.config.i18n.REQUIRED_FIELD);
 
 
@@ -56,12 +57,12 @@ define([
                 }
             }else{
                 if(typeCopy === 'LOV'){
-                    var lovName = this.model.get("lovName");
+                    var lovName = this.model.get('lovName');
                     if(!lovName){
                         if (this.editMode && !this.attributesLocked) {
-                            this.$el.find("select.type").parent().html(App.config.i18n.LOV);
+                            this.$el.find('select.type').parent().html(App.config.i18n.LOV);
                         }else{
-                            this.$("div.type").html(App.config.i18n.LOV);
+                            this.$('div.type').html(App.config.i18n.LOV);
                         }
                     }
                     this.addOptions(items);
@@ -96,7 +97,7 @@ define([
         },
 
         updateValue: function () {
-            var el = this.$el.find(".value");
+            var el = this.$el.find('.value');
             this.model.set({
                 value: el.val()
             });

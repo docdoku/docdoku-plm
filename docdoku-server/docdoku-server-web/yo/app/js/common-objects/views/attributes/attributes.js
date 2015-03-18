@@ -70,8 +70,8 @@ define([
             this.attributesView.setAttributesLocked(this.attributesLocked);
             if(this.editMode){
                 this.attributesView.$el.sortable({
-                    handle: ".sortable-handler",
-                    placeholder: "list-item well highlight",
+                    handle: '.sortable-handler',
+                    placeholder: 'list-item well highlight',
                     stop: function(event, ui) {
                         ui.item.trigger('drop', ui.item.index());
                     }

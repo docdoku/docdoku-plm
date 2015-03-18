@@ -19,11 +19,10 @@ define([
 
         initialize: function () {
             BaseView.prototype.initialize.apply(this, arguments);
-            this.lovs = new LOVCollection(),
+            this.lovs = new LOVCollection();
             this.events['click .add'] = this.addAttribute;
             this.events['change .lock input'] = this.attributesLockedChange;
             this.events['update-sort'] = this.updateSort;
-
             if (this.options.attributesLocked) {
                 this.attributesLocked = this.options.attributesLocked;
             }
@@ -53,8 +52,8 @@ define([
             this.$el.toggleClass('attributes-locked', this.attributesLocked);
 
             this.attributesView.$el.sortable({
-                handle: ".sortable-handler",
-                placeholder: "list-item well highlight",
+                handle: '.sortable-handler',
+                placeholder: 'list-item well highlight',
                 stop: function(event, ui) {
                     ui.item.trigger('drop', ui.item.index());
                 }
