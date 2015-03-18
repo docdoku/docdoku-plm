@@ -216,42 +216,47 @@ define([
         },
 
         checkin: function () {
-            var self = this;
-            var selectedPart = this.partListView.getSelectedPart();
 
-            if (!selectedPart.getLastIteration().get('iterationNote')) {
+            var selectedParts = this.partListView.getSelectedParts();
                 var promptView = new PromptView();
                 promptView.setPromptOptions(App.config.i18n.ITERATION_NOTE, App.config.i18n.ITERATION_NOTE_PROMPT_LABEL, App.config.i18n.ITERATION_NOTE_PROMPT_OK, App.config.i18n.ITERATION_NOTE_PROMPT_CANCEL);
                 window.document.body.appendChild(promptView.render().el);
                 promptView.openModal();
 
-                self.listenTo(promptView, 'prompt-ok', function (args) {
+                this.listenTo(promptView, 'prompt-ok', function (args) {
                     var iterationNote = args[0];
                     if (_.isEqual(iterationNote, '')) {
                         iterationNote = null;
                     }
-                    selectedPart.getLastIteration().save({
-                        iterationNote: iterationNote
-                    }).success(function () {
-                        selectedPart.checkin();
-                    });
+                        _(selectedParts).each(function (view) {
+                            view.getLastIteration().save({
+                                iterationNote: iterationNote
+                            }).success(function () {
+                                view.checkin();
+                            });
+                        });
+
                 });
 
-                self.listenTo(promptView, 'prompt-cancel', function () {
-                    selectedPart.checkin();
+                this.listenTo(promptView, 'prompt-cancel', function () {
+                        _(selectedParts).each(function (view) {
+                            view.checkin();
+                        });
                 });
-            } else {
-                selectedPart.checkin();
-            }
+
         },
         checkout: function () {
-            this.partListView.getSelectedPart().checkout();
+            _(this.partListView.getSelectedParts()).each(function (view) {
+                view.checkout();
+            });
         },
         undocheckout: function () {
             var _this= this;
             bootbox.confirm(App.config.i18n.UNDO_CHECKOUT_QUESTION, function(result){
                 if(result){
-                    _this.partListView.getSelectedPart().undocheckout();
+                    _(_this.partListView.getSelectedParts()).each(function (view) {
+                        view.undocheckout();
+                    });
                 }
 
             });
