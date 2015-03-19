@@ -172,7 +172,7 @@ define({
 	FOLD_TASK: "Réduire la tâche",
 	FORBIDDEN: "Interdit",
 	FORBIDDEN_MESSAGE: "Vous n'avez pas accès à cette ressource, vous devez vous déconnecter pour continuer",
-	FORM_HELPER: "Laissez ces champs vide si vous ne voulez pas spécifier de mot de passe ou de date d'expiration",
+	FORM_HELPER: "Laissez ces champs vides si vous ne voulez pas spécifier de mot de passe ou de date d'expiration",
 	FULL_ACCESS: "Accès complet",
 	FULL_SCREEN: "Plein écran",
 	GENERAL: "Général",
