@@ -102,7 +102,7 @@ public class RoleDAO {
     }
 
     public void removeUserFromRoles(User pUser) {
-        Query query = em.createQuery("UPDATE Role r SET r.defaultUserMapped = NULL WHERE r.defaultUserMapped = :user");
+        Query query = em.createQuery("UPDATE Role r SET r.defaultAssignee = NULL WHERE r.defaultAssignee = :user");
         query.setParameter("user", pUser).executeUpdate();
     }
 }
