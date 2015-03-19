@@ -1,6 +1,15 @@
-{{modificationNotification.getModifiedPartNumber}}-{{modificationNotification.getModifiedPartVersion}}-{{modificationNotification.getModifiedPartIteration}} {{i18n.CHECKED_IN}}
-{{#modificationNotification.hasCheckInDate}} {{i18n.ON}} <a class="date-popover">{{modificationNotification.getFormattedCheckInDate}}</a>{{/modificationNotification.hasCheckInDate}}
-{{#modificationNotification.hasAuthor}} {{i18n.BY}} <a class="author-popover">{{modificationNotification.getAuthorName}}</a>{{/modificationNotification.hasAuthor}}
-{{#modificationNotification.getIterationNote}} {{i18n.WITH}} {{i18n.THE_NOTE}} "{{modificationNotification.getIterationNote}}"{{/modificationNotification.getIterationNote}}
+<!--{{#isFullAccess}}<a class="remove">×</a>{{/isFullAccess}}-->
+
+{{#modificationNotification.getIterationNote}}
+<div class="modification-notification-note">
+    {{modificationNotification.getIterationNote}}
+</div>
+{{/modificationNotification.getIterationNote}}
+
+<div class="modification-notification-details">
+    {{modificationNotification.getModifiedPartNumber}}-{{modificationNotification.getModifiedPartVersion}}-{{modificationNotification.getModifiedPartIteration}} {{i18n.CHECKED_IN}}
+    {{#modificationNotification.hasCheckInDate}} {{i18n.ON}} <a class="date-popover">{{modificationNotification.getFormattedCheckInDate}}</a>{{/modificationNotification.hasCheckInDate}}
+    {{#modificationNotification.hasAuthor}} {{i18n.BY}} <a class="author-popover">{{modificationNotification.getAuthorName}}</a>{{/modificationNotification.hasAuthor}}
+</div>
 
 <hr/>
