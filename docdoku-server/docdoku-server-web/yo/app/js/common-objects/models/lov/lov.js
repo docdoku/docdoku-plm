@@ -37,6 +37,9 @@ define(['backbone'], function (Backbone) {
             return this.get('workspaceId');
         },
 
+        isDeletable:function(){
+            return this.get('deletable');
+        },
         /*
            Override the isNew function of backbone to send the good request POST for new and PUT for update
          */

@@ -70,7 +70,9 @@ public class LOVResource {
         List<ListOfValues> lovs = lovManager.findLOVFromWorkspace(workspaceId);
 
         for (ListOfValues lov : lovs){
-            lovsDTO.add(mapper.map(lov, ListOfValuesDTO.class));
+            ListOfValuesDTO lovDTO = mapper.map(lov, ListOfValuesDTO.class);
+            lovDTO.setDeletable(lovManager.isLOVDeletable(new ListOfValuesKey(lov.getWorkspaceId(), lov.getName())));
+            lovsDTO.add(lovDTO);
         }
 
         return lovsDTO;

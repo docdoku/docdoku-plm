@@ -1,6 +1,8 @@
-    <div class="controls deleteLovItem">
+{{#model.isDeletable}}
+<div class="controls deleteLovItem">
         <a class="fa fa-times"></a>
     </div>
+{{/model.isDeletable}}
 
     <span class="lovItemNameTitle">{{i18n.NAME}}:</span>
     <span class="lovItemName">{{model.getLOVName}}</span>

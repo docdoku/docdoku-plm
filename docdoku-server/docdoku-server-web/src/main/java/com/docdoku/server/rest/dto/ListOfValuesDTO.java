@@ -35,6 +35,8 @@ public class ListOfValuesDTO implements Serializable {
     private List<NameValuePairDTO> values;
     private String id;
 
+    private boolean isDeletable = true;
+
     public ListOfValuesDTO(){}
 
     public String getWorkspaceId() {
@@ -75,5 +77,13 @@ public class ListOfValuesDTO implements Serializable {
 
     public void setValues(List<NameValuePairDTO> values) {
         this.values = values;
+    }
+
+    public boolean isDeletable() {
+        return isDeletable;
+    }
+
+    public void setDeletable(boolean isDeletable) {
+        this.isDeletable = isDeletable;
     }
 }

@@ -108,22 +108,13 @@ public class LOVManagerBean implements ILOVManagerLocal {
         Locale locale = new Locale(user.getLanguage());
         LOVDAO lovDAO = new LOVDAO(locale,em);
 
-        DocumentMasterTemplateDAO documentMasterTemplateDAO = new DocumentMasterTemplateDAO(locale,em);
-
-        PartMasterTemplateDAO partMasterTemplateDAO = new PartMasterTemplateDAO(locale, em);
-
-        List<DocumentMasterTemplate> documentsUsingLOV = documentMasterTemplateDAO.findAllDocMTemplatesFromLOV(lovKey);
-
-        if (documentsUsingLOV != null && documentsUsingLOV.size() > 0){
+        if (this.isLovUsedInDocument(lovKey)){
             throw new EntityConstraintException(locale,"EntityConstraintException14");
         }
 
-        List<PartMasterTemplate> partsUsingLOV = partMasterTemplateDAO.findAllPartMTemplatesFromLOV(lovKey);
-
-        if (partsUsingLOV != null && partsUsingLOV.size() > 0){
+        if (this.isLovUsedInPart(lovKey)){
             throw new EntityConstraintException(locale,"EntityConstraintException15");
         }
-
 
         ListOfValues lov = lovDAO.loadLOV(lovKey);
         lovDAO.deleteLOV(lov);
@@ -141,6 +132,34 @@ public class LOVManagerBean implements ILOVManagerLocal {
         lovToUpdate.setValues(nameValuePairList);
 
         return lovDAO.updateLOV(lovToUpdate);
+    }
+
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
+    public boolean isLOVDeletable(ListOfValuesKey lovKey){
+        return !this.isLovUsedInDocument(lovKey) && !this.isLovUsedInPart(lovKey);
+    }
+
+    private boolean isLovUsedInDocument(ListOfValuesKey lovKey){
+        DocumentMasterTemplateDAO documentMasterTemplateDAO = new DocumentMasterTemplateDAO(em);
+
+        List<DocumentMasterTemplate> documentsUsingLOV = documentMasterTemplateDAO.findAllDocMTemplatesFromLOV(lovKey);
+        if (documentsUsingLOV != null && documentsUsingLOV.size() > 0){
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean isLovUsedInPart(ListOfValuesKey lovKey){
+        PartMasterTemplateDAO partMasterTemplateDAO = new PartMasterTemplateDAO(em);
+
+        List<PartMasterTemplate> partsUsingLOV = partMasterTemplateDAO.findAllPartMTemplatesFromLOV(lovKey);
+        if (partsUsingLOV != null && partsUsingLOV.size() > 0){
+            return true;
+        }
+
+        return false;
     }
 
 
