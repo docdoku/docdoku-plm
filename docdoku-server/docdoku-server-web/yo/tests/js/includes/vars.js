@@ -32,6 +32,20 @@ var documents = {
         expireDate:tomorrowValue,
         expireDate2:yesterdayValue
 	},
+    document2 : {
+        number : '100-AAA-CasperJsTestDocument',
+        iterationNote:'This is the first iteration of this document',
+        sharedPassword:'azertyuiop',
+        expireDate:tomorrowValue,
+        expireDate2:yesterdayValue
+    },
+    document3 : {
+        number : '200-AAA-CasperJsTestDocument',
+        iterationNote:'This is the first iteration of this document',
+        sharedPassword:'azertyuiop',
+        expireDate:tomorrowValue,
+        expireDate2:yesterdayValue
+    },
     tags:{
         tag1:'Foo',
         tag2:'Bar'

@@ -31,8 +31,9 @@ casper.test.begin('Document deletion tests suite',1, function documentDeletionTe
      */
 
     casper.then(function waitForDocumentDisplayed(){
-        this.waitForSelector('#document-management-content table.dataTable tr td.reference',function documentIsDisplayed(){
+        this.waitForSelector('#document-management-content table.dataTable tr:nth-child(4)  td.reference',function documentIsDisplayed(){
             this.click('#document-management-content table.dataTable tr td:nth-child(2) input[type=checkbox]');
+
         },function fail() {
             this.capture('screenshot/documentDeletion/waitForDocumentDisplayed-error.png');
             this.test.assert(false,'Document to delete rows can not be found');
@@ -71,7 +72,7 @@ casper.test.begin('Document deletion tests suite',1, function documentDeletionTe
      */
 
     casper.then(function waitForDocumentDeletion(){
-        this.waitWhileSelector('#document-management-content table.dataTable tr:nth-child(3) td.reference',function documentDeleted(){
+        this.waitWhileSelector('#document-management-content table.dataTable tr td.reference',function documentDeleted(){
             this.test.assert(true,'Document has been deleted');
         },function fail() {
             this.capture('screenshot/documentDeletion/waitForDocumentDeletion-error.png');
