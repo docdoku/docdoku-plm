@@ -106,11 +106,62 @@ define([
 			}
 
 		},
-
+        areAllDocumentsCheckouted:  function(){
+           var isCheckouted = true;
+            this.listView.eachChecked(function (view) {
+                if(!view.model.isCheckout()){
+                   isCheckouted = false;
+                }
+            });
+            return isCheckouted;
+        },
+        areAllDocumentsNotCheckouted:  function(){
+           var isNotCheckouted = true;
+            this.listView.eachChecked(function (view) {
+                if(view.model.isCheckout()){
+                    isNotCheckouted = false;
+                }
+            });
+            return isNotCheckouted;
+        },
+        areAllDocumentsCheckoutedByConnectedUser:  function(){
+           var isCheckoutedByMe = true;
+            this.listView.eachChecked(function (view) {
+                if(!view.model.isCheckoutByConnectedUser()){
+                    isCheckoutedByMe = false;
+                }
+            });
+            return isCheckoutedByMe;
+        },
+        isNotThefirstIteration:  function(){
+           var notFirstIteration = true;
+            this.listView.eachChecked(function (view) {
+                if(view.model.getLastIteration().get('iteration') <= 1){
+                    notFirstIteration = false;
+                }
+            });
+            return notFirstIteration;
+        },
+        showCheckinCheckoutUndoCheckoutButtons: function(){
+           if (this.areAllDocumentsCheckouted()) {
+               if(this.areAllDocumentsCheckoutedByConnectedUser()){
+                   this.updateActionsButton(false, this.isNotThefirstIteration(), true);
+               }else{
+                   this.updateActionsButton(false, false, false);
+               }
+           } else{
+               if (this.areAllDocumentsNotCheckouted()){
+                   this.updateActionsButton(true, false, false);
+               }else{
+                   this.updateActionsButton(false, false, false);
+               }
+           }
+        },
 		onSeveralDocumentsSelected: function () {
 			this.deleteButton.show();
 			this.newVersionButton.hide();
-			this.checkoutGroup.hide();
+            this.checkoutGroup.css('display', 'inline-block');
+			this.showCheckinCheckoutUndoCheckoutButtons();
 			this.aclButton.hide();
 		},
 
@@ -140,13 +191,16 @@ define([
 		},
 
 		actionCheckin: function () {
+
+            var promptView = new PromptView();
+            promptView.setPromptOptions(App.config.i18n.REVISION_NOTE, App.config.i18n.REVISION_NOTE_PROMPT_LABEL, App.config.i18n.REVISION_NOTE_PROMPT_OK, App.config.i18n.REVISION_NOTE_PROMPT_CANCEL);
+            window.document.body.appendChild(promptView.render().el);
+            promptView.openModal();
+
 			var self = this;
 			this.listView.eachChecked(function (view) {
 				if (!view.model.getLastIteration().get('revisionNote')) {
-					var promptView = new PromptView();
-					promptView.setPromptOptions(App.config.i18n.REVISION_NOTE, App.config.i18n.REVISION_NOTE_PROMPT_LABEL, App.config.i18n.REVISION_NOTE_PROMPT_OK, App.config.i18n.REVISION_NOTE_PROMPT_CANCEL);
-					window.document.body.appendChild(promptView.render().el);
-					promptView.openModal();
+
 
 					self.listenTo(promptView, 'prompt-ok', function (args) {
 						var revisionNote = args[0];
