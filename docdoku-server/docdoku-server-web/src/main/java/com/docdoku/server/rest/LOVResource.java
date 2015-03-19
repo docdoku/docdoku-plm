@@ -115,7 +115,7 @@ public class LOVResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response deletelov(@PathParam("workspaceId") String workspaceId, @PathParam("name") String name)
-            throws ListOfValuesNotFoundException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException {
+            throws ListOfValuesNotFoundException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, EntityConstraintException {
         ListOfValuesKey lovKey = new ListOfValuesKey(workspaceId, name);
         lovManager.deleteLov(lovKey);
         return Response.ok().build();
