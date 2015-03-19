@@ -1,13 +1,13 @@
 /*global casper,urls,products*/
 
-casper.test.begin('Part multiple checkin tests suite', 1, function partsMultipleCheckinTestsSuite(){
+casper.test.begin('Parts  multiple checkout tests suite', 1, function partsMultipleUndoCheckoutTestsSuite(){
     'use strict';
 
     casper.open('');
 
     /**
-     * Open product management URL
-     * */
+    * Open product management URL
+    * */
 
     casper.then(function(){
         this.open(urls.productManagement);
@@ -20,19 +20,19 @@ casper.test.begin('Part multiple checkin tests suite', 1, function partsMultiple
         this.waitForSelector('#part-nav > .nav-list-entry > a',function clickPartNavLink() {
             this.click('#part-nav > .nav-list-entry > a');
         },function fail(){
-            this.capture('screenshot/MultiplePartsCheckin/waitForPartNavLink-error.png');
+            this.capture('screenshot/partUndoCheckout/waitForPartNavLink-error.png');
             this.test.assert(false,'Part nav link can not be found');
         });
     });
 
     /**
-     * Select the checkout parts with checkbox
+     * Select the parts with checkbox
      */
     casper.then(function waitForPartTable(){
         this.waitForSelector('#part_table tbody tr:nth-child(2)  td:first-child input',function clickOnPartCheckbox() {
             this.click('#part_table tbody tr:nth-child(2)  td:first-child input');
         },function fail(){
-            this.capture('screenshot/MultiplePartsCheckin/waitForPartTable-error.png');
+            this.capture('screenshot/partUndoCheckout/waitForPartTable-error.png');
             this.test.assert(false,'Part cannot be found');
         });
     });
@@ -40,53 +40,53 @@ casper.test.begin('Part multiple checkin tests suite', 1, function partsMultiple
         this.waitForSelector('#part_table tbody tr:nth-child(3)  td:first-child input',function clickOnPartCheckbox() {
             this.click('#part_table tbody tr:nth-child(3)  td:first-child input');
         },function fail(){
-            this.capture('screenshot/MultiplePartsCheckin/waitForPartTable-error.png');
+            this.capture('screenshot/partUndoCheckout/waitForPartTable-error.png');
             this.test.assert(false,'Part cannot be found');
         });
     });
-    casper.then(function waitForPartTable(){
+     casper.then(function waitForPartTable(){
         this.waitForSelector('#part_table tbody tr:nth-child(5)  td:first-child input',function clickOnPartCheckbox() {
             this.click('#part_table tbody tr:nth-child(5)  td:first-child input');
         },function fail(){
-            this.capture('screenshot/MultiplePartsCheckin/waitForPartTable-error.png');
+            this.capture('screenshot/partUndoCheckout/waitForPartTable-error.png');
             this.test.assert(false,'Part cannot be found');
         });
     });
 
+
     /**
-     * Click on checkin button
+     * Click on checkout button
      */
-    casper.then(function waitForCheckinButton(){
-        this.waitForSelector('.actions .checkin',function clickOnCheckinButton() {
-            this.click('.actions .checkin');
+    casper.then(function waitForUndoCheckoutButton(){
+        this.waitForSelector('.actions .undocheckout',function clickOnUndoCheckoutButton() {
+            this.click('.actions .undocheckout');
         },function fail() {
-            this.capture('screenshot/MultiplePartsCheckin/waitForCheckinButton-error.png');
-            this.test.assert(false,'Checkin button can not be found');
+            this.capture('screenshot/partUndoCheckout/waitForUndoCheckoutButton-error.png');
+            this.test.assert(false,'undoCheckout button can not be found');
         });
     });
 
     /**
-     * Set an iteration note
+     * Wait for confirmation box
      */
-    casper.then(function waitForIterationNotePrompt(){
-        this.waitForSelector('#prompt_modal #prompt_input.ready',function fillIterationNote() {
-            this.sendKeys('#prompt_modal #prompt_input', products.part1.iterationNote, {reset:true});
-            this.click('#prompt_modal .modal-footer .btn-primary');
+    casper.then(function waitForConfirmationBox(){
+
+        this.waitForSelector('div.modal-body',function fillIterationNote() {
+            this.click('.modal-footer a[data-handler="1"]');
         },function fail() {
             this.capture('screenshot/MultiplePartsCheckin/waitForIterationNotePrompt-error.png');
-            this.test.assert(false,'Iteration note modal not found');
-        });
+            this.test.assert(false,'Iteration note modal not found');});
     });
 
     /**
-     * Wait for the checkin button to be disabled
+     * Wait for the checkout button to be disabled
      */
-    casper.then(function waitForCheckinButtonDisabled(){
-        this.waitForSelector('.actions .checkin:disabled',function partIsCheckin() {
-            this.test.assert(true,'Parts have been checkin');
+    casper.then(function waitForCheckoutButtonDisabled(){
+        this.waitForSelector('.actions .undocheckout:disabled',function partIsCheckout() {
+            this.test.assert(true,'Parts have been undocheckout');
         },function fail() {
-            this.capture('screenshot/MultiplePartsCheckin/waitForCheckinButtonDisabled-error.png');
-            this.test.assert(false,'Parts havent been checkin');
+            this.capture('screenshot/partUndoCheckout/waitForCheckoutButtonDisabled-error.png');
+            this.test.assert(false,'Parts have not been checkout');
         });
     });
 

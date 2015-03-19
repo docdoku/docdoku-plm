@@ -40,6 +40,10 @@ module.exports = {
         "js/product-management/assembly/assemblyCreation.js",
         "js/product-management/assembly/assemblyCheck.js",
         "js/product-management/part/partCheckin.js",
+        "js/product-management/part/partsMultipleCheckout.js",
+        "js/product-management/part/partsMultipleCheckin.js",
+        "js/product-management/part/partsMultipleCheckout.js",
+        "js/product-management/part/partsMultipleUndoCheckout.js",
 
         // Part sharing
         "js/product-management/share/sharedPartCreation.js",
