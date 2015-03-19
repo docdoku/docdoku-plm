@@ -34,6 +34,9 @@ define([
             if(this.isExpand){
                 this.$el.addClass('edition');
             }
+            if(this.model.getLOVName()){
+                this.$el.addClass('isOldItem');
+            }
             this.$lovListDiv = this.$('.lovValues');
 
             _.each(this.model.getLOVValues(), this.addPossibleValueView.bind(this));

@@ -1,4 +1,4 @@
-/*global _,$,define,App*/
+/*global _,define,App*/
 define([
     'backbone',
     'mustache',
@@ -69,8 +69,8 @@ define([
 
         addLov: function(){
             var newModel = new LOVModel(
-            {name:"",
-                values:[{name:"", value:""}],
+            {name:'',
+                values:[{name:'', value:''}],
                 workspaceId:App.config.workspaceId}
             );
             //newModel.setNew(true);
@@ -112,7 +112,7 @@ define([
                 };
 
                 var queueDelete = async.queue(function(model, callback){
-                    model.destroy({dataType : 'text'}).success(function(emptyModel, response){
+                    model.destroy({dataType : 'text'}).success(function(){
                         that.deletedLovModel = _.without(that.deletedLovModel,model);
                         callback();
                     }).error(function(response){
@@ -121,7 +121,7 @@ define([
                 });
 
                 var queueSave = async.queue(function(model,callback){
-                    model.save().success(function(model, response){
+                    model.save().success(function(){
                         callback();
                     }).error(function(response){
                         errorFunction(response, callback);
@@ -129,20 +129,20 @@ define([
                 });
 
                 queueSave.drain = function(){
-                    if(nbError == 0){
+                    if(!nbError){
                         that.closeModal();
                     }
                 };
 
                 queueDelete.drain = function(){
-                    if(nbError == 0 && that.collection.models.length == 0){
+                    if(!nbError && that.collection.models.length === 0){
                         that.closeModal();
                     }else{
                         queueSave.push(that.collection.models);
                     }
                 };
 
-                if(this.deletedLovModel.length == 0){
+                if(this.deletedLovModel.length === 0){
                     queueSave.push(this.collection.models);
                 }else{
                     queueDelete.push(this.deletedLovModel);
