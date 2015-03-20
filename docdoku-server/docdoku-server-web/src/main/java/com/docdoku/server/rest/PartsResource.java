@@ -19,13 +19,14 @@
  */
 package com.docdoku.server.rest;
 
+import com.docdoku.core.change.ModificationNotification;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.common.Workspace;
-import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.product.PartIteration;
+import com.docdoku.core.product.PartIterationKey;
 import com.docdoku.core.product.PartMaster;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.query.PartSearchQuery;
@@ -82,13 +83,16 @@ public class PartsResource {
         List<PartDTO> partDTOs = new ArrayList<>();
 
         for(PartRevision partRevision : partRevisions){
-            partDTOs.add(Tools.mapPartRevisionToPartDTO(partRevision));
+            PartDTO partDTO = Tools.mapPartRevisionToPartDTO(partRevision);
+
+            List<ModificationNotificationDTO> notificationDTOs = getModificationNotificationDTOs(partRevision);
+            partDTO.setNotifications(notificationDTOs);
+
+            partDTOs.add(partDTO);
         }
 
         return partDTOs;
     }
-
-
 
     @GET
     @Path("count")
@@ -109,7 +113,12 @@ public class PartsResource {
         List<PartDTO> partDTOs = new ArrayList<>();
 
         for(PartRevision partRevision : partRevisions){
-            partDTOs.add(Tools.mapPartRevisionToPartDTO(partRevision));
+            PartDTO partDTO = Tools.mapPartRevisionToPartDTO(partRevision);
+
+            List<ModificationNotificationDTO> notificationDTOs = getModificationNotificationDTOs(partRevision);
+            partDTO.setNotifications(notificationDTOs);
+
+            partDTOs.add(partDTO);
         }
 
         return partDTOs;
@@ -119,7 +128,7 @@ public class PartsResource {
     @Path("search/{query}")
     @Produces(MediaType.APPLICATION_JSON)
     public List<PartDTO> searchPartRevisions(@PathParam("workspaceId") String workspaceId, @PathParam("query") String pStringQuery)
-            throws EntityNotFoundException, ESServerException, UserNotActiveException {
+            throws EntityNotFoundException, ESServerException, UserNotActiveException, AccessRightException {
 
         PartSearchQuery partSearchQuery = SearchQueryParser.parsePartStringQuery(workspaceId, pStringQuery);
 
@@ -127,7 +136,12 @@ public class PartsResource {
         List<PartDTO> partDTOs = new ArrayList<>();
 
         for(PartRevision partRevision : partRevisions){
-            partDTOs.add(Tools.mapPartRevisionToPartDTO(partRevision));
+            PartDTO partDTO = Tools.mapPartRevisionToPartDTO(partRevision);
+
+            List<ModificationNotificationDTO> notificationDTOs = getModificationNotificationDTOs(partRevision);
+            partDTO.setNotifications(notificationDTOs);
+
+            partDTOs.add(partDTO);
         }
 
         return partDTOs;
@@ -136,11 +150,19 @@ public class PartsResource {
     @GET
     @Path("checkedout")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<PartDTO> getCheckedOutPartRevisions(@PathParam("workspaceId") String workspaceId) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, AccountNotFoundException {
+    public List<PartDTO> getCheckedOutPartRevisions(@PathParam("workspaceId") String workspaceId)
+            throws EntityNotFoundException, UserNotActiveException, AccessRightException {
+
         PartRevision[] checkedOutPartRevisions = productService.getCheckedOutPartRevisions(workspaceId);
         List<PartDTO> partDTOs = new ArrayList<>();
+
         for(PartRevision partRevision : checkedOutPartRevisions){
-            partDTOs.add(Tools.mapPartRevisionToPartDTO(partRevision));
+            PartDTO partDTO = Tools.mapPartRevisionToPartDTO(partRevision);
+
+            List<ModificationNotificationDTO> notificationDTOs = getModificationNotificationDTOs(partRevision);
+            partDTO.setNotifications(notificationDTOs);
+
+            partDTOs.add(partDTO);
         }
         return partDTOs;
     }
@@ -220,4 +242,21 @@ public class PartsResource {
 
         return partsLastIter.toArray(new PartIterationDTO[partsLastIter.size()]);
     }
+
+    /**
+     * Return a list of ModificationNotificationDTO matching with a given PartRevision
+     * @param partRevision The specified PartRevision
+     * @return A list of ModificationNotificationDTO
+     * @throws EntityNotFoundException If an entity doesn't exist
+     * @throws AccessRightException If the user can not get the modification notifications
+     * @throws UserNotActiveException If the user is disabled
+     */
+    private List<ModificationNotificationDTO> getModificationNotificationDTOs(PartRevision partRevision)
+            throws EntityNotFoundException, AccessRightException, UserNotActiveException {
+
+        PartIterationKey iterationKey = new PartIterationKey(partRevision.getKey(), partRevision.getLastIterationNumber());
+        List<ModificationNotification> notifications = productService.getModificationNotifications(iterationKey);
+        return Tools.mapModificationNotificationsToModificationNotificationDTO(notifications);
+    }
+
 }

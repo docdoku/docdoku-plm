@@ -67,6 +67,10 @@ define([
             this.activateTab(3);
         },
 
+        activateNotificationsTab: function(){
+            this.activateTab(this.$tabs.length - 1);
+        },
+
         render: function () {
 
             var data = {
@@ -229,7 +233,7 @@ define([
         },
 
         initModificationNotificationListView: function () {
-            this.modificationNotificationListView = new ModificationNotificationListView({
+            new ModificationNotificationListView({
                 el: '#iteration-modification-notifications',
                 model: this.model
             }).render();

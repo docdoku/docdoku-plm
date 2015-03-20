@@ -1,44 +1,15 @@
-<div class="control-group">
-    <label class="control-label">{{i18n.PART_NUMBER}}</label>
+<!--{{#isFullAccess}}<a class="remove">×</a>{{/isFullAccess}}-->
 
-    <div class="controls">
-        <span class="help-inline">{{part.modifiedPartNumber}}</span>
-    </div>
+{{#modificationNotification.getIterationNote}}
+<div class="modification-notification-note">
+    {{modificationNotification.getIterationNote}}
 </div>
-<div class="control-group">
-    <label class="control-label">{{i18n.VERSION}}</label>
+{{/modificationNotification.getIterationNote}}
 
-    <div class="controls">
-        <span class="help-inline">{{part.modifiedPartVersion}}</span>
-    </div>
-</div>
-<div class="control-group">
-    <label class="control-label">{{i18n.ITERATION}}</label>
-
-    <div class="controls">
-        <span class="help-inline">{{part.modifiedPartIteration}}</span>
-    </div>
-</div>
-<div class="control-group">
-    <label class="control-label">{{i18n.CHECKIN_DATE}}</label>
-
-    <div class="controls">
-        <span class="help-inline"><a class="date-popover">{{part.checkInDate}}</a></span>
-    </div>
-</div>
-<div class="control-group">
-    <label class="control-label">{{i18n.REVISION_NOTE}}</label>
-
-    <div class="controls">
-        <span class="help-inline">{{part.iterationNote}}</span>
-    </div>
-</div>
-<div class="control-group">
-    <label class="control-label">{{i18n.AUTHOR}}</label>
-
-    <div class="controls">
-        <span class="help-inline"><a class="author-popover">{{part.author.name}}</a></span>
-    </div>
+<div class="modification-notification-details">
+    {{modificationNotification.getModifiedPartNumber}}-{{modificationNotification.getModifiedPartVersion}}-{{modificationNotification.getModifiedPartIteration}} {{i18n.CHECKED_IN}}
+    {{#modificationNotification.hasCheckInDate}} {{i18n.ON}} <a class="date-popover">{{modificationNotification.getFormattedCheckInDate}}</a>{{/modificationNotification.hasCheckInDate}}
+    {{#modificationNotification.hasAuthor}} {{i18n.BY}} <a class="author-popover">{{modificationNotification.getAuthorName}}</a>{{/modificationNotification.hasAuthor}}
 </div>
 
 <hr/>

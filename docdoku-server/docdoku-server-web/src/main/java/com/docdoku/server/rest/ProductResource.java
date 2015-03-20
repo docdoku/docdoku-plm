@@ -19,6 +19,7 @@
  */
 package com.docdoku.server.rest;
 
+import com.docdoku.core.change.ModificationNotification;
 import com.docdoku.core.common.User;
 import com.docdoku.core.configuration.ConfigSpec;
 import com.docdoku.core.configuration.PathChoice;
@@ -141,6 +142,9 @@ public class ProductResource {
             partsDTO[i].setPartKey(lastRevision.getPartNumber() + "-" + lastRevision.getVersion());
             partsDTO[i].setName(lastRevision.getPartMaster().getName());
             partsDTO[i].setStandardPart(lastRevision.getPartMaster().isStandardPart());
+
+            List<ModificationNotificationDTO> notificationDTOs = getModificationNotificationDTOs(lastRevision);
+            partsDTO[i].setNotifications(notificationDTOs);
         }
 
         return partsDTO;
@@ -365,7 +369,7 @@ public class ProductResource {
             cc.setMaxAge(60 * 15);
 
             ConfigSpec cs = getConfigSpec(workspaceId,pathsDTO.getConfigSpec(),ciId);
-            List<InstanceCollection> instanceCollections = getInstancesCollectionsList(workspaceId,ciId, cs,pathsDTO.getPaths());
+            List<InstanceCollection> instanceCollections = getInstancesCollectionsList(workspaceId, ciId, cs, pathsDTO.getPaths());
 
             return Response.ok().lastModified(new Date()).cacheControl(cc).entity(new PathFilteredListInstanceCollection(instanceCollections, cs)).build();
         }
@@ -500,5 +504,21 @@ public class ProductResource {
             }
         }
         return new InstanceCollection(rootUsageLink, usageLinkPaths, cs);
+    }
+
+    /**
+     * Return a list of ModificationNotificationDTO matching with a given PartRevision
+     * @param partRevision The specified PartRevision
+     * @return A list of ModificationNotificationDTO
+     * @throws EntityNotFoundException If an entity doesn't exist
+     * @throws AccessRightException If the user can not get the modification notifications
+     * @throws UserNotActiveException If the user is disabled
+     */
+    private List<ModificationNotificationDTO> getModificationNotificationDTOs(PartRevision partRevision)
+            throws EntityNotFoundException, AccessRightException, UserNotActiveException {
+
+        PartIterationKey iterationKey = new PartIterationKey(partRevision.getKey(), partRevision.getLastIterationNumber());
+        List<ModificationNotification> notifications = productService.getModificationNotifications(iterationKey);
+        return Tools.mapModificationNotificationsToModificationNotificationDTO(notifications);
     }
 }

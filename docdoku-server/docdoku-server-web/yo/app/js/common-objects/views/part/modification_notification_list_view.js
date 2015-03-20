@@ -1,8 +1,9 @@
 /*global _,$,define,App*/
 define([
     'backbone',
-    'common-objects/views/part/modification_notification_list_item_view'
-], function (Backbone, ModificationNotificationListItemView) {
+    'common-objects/views/part/modification_notification_list_item_view',
+    'common-objects/models/modification_notification'
+], function (Backbone, ModificationNotificationListItemView, ModificationNotification) {
     'use strict';
     var ModificationNotificationListView = Backbone.View.extend({
 
@@ -11,7 +12,7 @@ define([
             this.modificationNotificationViews = [];
 
             _.each(this.model.getModificationNotifications(), function (model) {
-                    this.addView(model);
+                    this.addView(new ModificationNotification(model));
                 }, this);
 
             return this;
