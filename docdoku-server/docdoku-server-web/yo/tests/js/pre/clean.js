@@ -159,9 +159,30 @@ casper.test.begin('Cleaning potential data', 0, function cleanTestsSuite() {
         });
     });
 
+    // Part templates
+    casper.then(function cleanupDocumentTemplates() {
+        this.open(apiUrls.deleteDocumentTemplate, {method: 'DELETE'}).then(function (response) {
+            if (response.status === 200) {
+                this.log('Test document template has been deleted', 'info');
+            } else {
+                this.log('Cannot delete test document template, reason : ' + helpers.findReasonInResponseHeaders(response.headers), 'warning');
+            }
+        });
+    });
+
     // LOV
     casper.then(function cleanupLovs() {
-        this.open(apiUrls.deleteLov, {method: 'DELETE'}).then(function (response) {
+        this.open(apiUrls.deleteLov1, {method: 'DELETE'}).then(function (response) {
+            if (response.status === 200) {
+                this.log('Lov has been deleted', 'info');
+            } else {
+                this.log('Cannot delete lov, reason : ' + helpers.findReasonInResponseHeaders(response.headers), 'warning');
+            }
+        });
+    });
+
+    casper.then(function cleanupLovs() {
+        this.open(apiUrls.deleteLov2, {method: 'DELETE'}).then(function (response) {
             if (response.status === 200) {
                 this.log('Lov has been deleted', 'info');
             } else {
