@@ -1,14 +1,13 @@
-<span class="ConfigSpecSelector-title">{{i18n.CONFIG_SPEC}}</span>
-<select id="config_spec_type_selector_list" class="ConfigSpecSelector-list">
-    <option value="latest" selected="">{{i18n.LATEST_SHORT}}</option>
+<select id="config_spec_type_selector_list" class="form-control">
+    <option value="latest-filters" selected="">{{i18n.LATEST_SHORT}}</option>
+    <option value="baseline" disabled>{{i18n.BASELINE}}</option>
+    <option value="serial-number" disabled>{{i18n.SERIAL_NUMBER}}</option>
 </select>
-<select id="latest_selector_list" class="ConfigSpecSelector-list">
-    <option value="latest">{{i18n.HEAD_CHECKIN}}</option>
+<select id="latest_selector_list" class="form-control">
     <option value="wip">{{i18n.HEAD_WIP}}</option>
+    <option value="latest">{{i18n.HEAD_CHECKIN}}</option>
+    <option value="latest-released">{{i18n.HEAD_RELEASED}}</option>
 </select>
-<select id="baseline_selector_list" class="ConfigSpecSelector-list">
-    <option disabled>{{i18n.BASELINE}}</option>
-</select>
-<select id="product_instance1_selector_list" class="ConfigSpecSelector-list">
-    <option disabled>{{i18n.SERIAL_NUMBER}}</option>
-</select>
+<select id="baseline_selector_list" class="form-control"></select>
+<select id="product_instance1_selector_list" class="form-control"></select>
+<span class="description"></span>

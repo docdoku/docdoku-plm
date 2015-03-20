@@ -9,16 +9,21 @@ function (Backbone, singletonDecorator) {
 
         routes: {
             ':workspaceId/:productId': 'defaults',
-            ':workspaceId/:productId/scene(/camera/:camera)(/target/:target)(/up/:up)': 'scene',
-            ':workspaceId/:productId/bom': 'bom',
-            ':workspaceId/:productId/room/:key': 'joinCollaborative'
+            ':workspaceId/:productId/config-spec/:configSpecType': 'defaults',
+            ':workspaceId/:productId/config-spec/:configSpecType/scene(/camera/:camera)(/target/:target)(/up/:up)': 'scene',
+            ':workspaceId/:productId/config-spec/:configSpecType/bom': 'bom',
+            ':workspaceId/:productId/config-spec/:configSpecType/room/:key': 'joinCollaborative'
         },
 
-        defaults: function (workspaceId, productId) {
-            this.navigate(workspaceId+'/'+productId+'/scene',{trigger:true});
+        defaults: function (workspaceId, productId, configSpecType) {
+            if(!configSpecType){
+                configSpecType = 'wip';
+            }
+            this.navigate(workspaceId+'/'+productId+'/config-spec/'+configSpecType+'/scene',{trigger:true});
         },
 
-        scene:function(workspaceId, productId, camera, target, up){
+        scene:function(workspaceId, productId, configSpecType, camera, target, up){
+            App.config.configSpec = configSpecType;
             App.appView.sceneMode();
             if (camera && target && up) {
                 var c = camera.split(';');
@@ -32,11 +37,12 @@ function (Backbone, singletonDecorator) {
             }
         },
 
-        bom:function(workspaceId, productId){
+        bom:function(workspaceId, productId, configSpecType){
+            App.config.configSpec = configSpecType;
             App.appView.bomMode();
         },
 
-        joinCollaborative: function (workspaceId, productId, key) {
+        joinCollaborative: function (workspaceId, productId, configSpecType,  key) {
             App.appView.sceneMode();
             if (!App.collaborativeView.isMaster) {
                 App.appView.requestJoinRoom(key);
@@ -53,8 +59,9 @@ function (Backbone, singletonDecorator) {
                 var positionPrecision = 2;
 
                 this.navigate(
-                    App.config.workspaceId+'/'+App.config.productId+'/scene' +
-                    '/camera/' +
+                    App.config.workspaceId + '/' + App.config.productId+
+                    '/config-spec/' + App.config.configSpec +
+                    '/scene/camera/' +
                     c[0].toFixed(positionPrecision) + ';' +
                     c[1].toFixed(positionPrecision) + ';' +
                     c[2].toFixed(positionPrecision) +

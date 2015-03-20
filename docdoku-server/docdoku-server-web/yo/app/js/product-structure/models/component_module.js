@@ -135,17 +135,29 @@ define(['backbone', 'common-objects/utils/date'],
             },
 
             getInstancesUrl: function () {
-                return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + App.config.productId + '/instances?configSpec=' + App.config.configSpec + '&path=' + this.getPath();
+                return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + App.config.productId + '/instances?configSpec=' + App.config.configSpec + '&path=' + this.getEncodedPath();
+            },
+
+            getEncodedPath : function(){
+                var path = this.getPath();
+                if(!path){
+                    return  '-1';
+                }else{
+                    return '-1-'+path;
+                }
             },
 
             getUrlForBom: function () {
-
                 if (this.isAssembly()) {
-                    return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + App.config.productId + '/bom?configSpec=' + App.config.configSpec + '&partUsageLink=' + this.getPartUsageLinkId();
+                    return App.config.contextPath +
+                        '/api/workspaces/' +
+                        App.config.workspaceId +
+                        '/products/' + App.config.productId +
+                        '/bom?configSpec=' + App.config.configSpec +
+                        '&path=' + this.getEncodedPath();
                 } else {
                     return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/' + this.getNumber() + '-' + this.getVersion();
                 }
-
             },
 
             getRootUrlForBom: function () {
@@ -166,10 +178,15 @@ define(['backbone', 'common-objects/utils/date'],
             },
 
             url: function () {
+
+                var path = this.path ? '-1-'+this.path : '-1';
+                return this.urlBase() + '?configSpec=' + App.config.configSpec + '&path=' + path + '&depth=1';
+
                 if (this.isRoot) {
                     return this.urlBase() + '?configSpec=' + App.config.configSpec + '&depth=0';
                 } else {
-                    return this.urlBase() + '?configSpec=' + App.config.configSpec + '&partUsageLink=' + this.parentUsageLinkId + '&depth=1';
+                    return this.urlBase() + '?configSpec=' + App.config.configSpec +
+                        '&path=' + this.path + '&depth=1' + ''
                 }
             },
 

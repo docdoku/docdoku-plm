@@ -81,7 +81,29 @@ public class ProductInstanceConfigSpec extends ProductConfigSpec {
 
     @Override
     public PartLink filterPartLink(List<PartLink> path) {
-        // TODO : implement filter
+        // No ambiguities here, must return 1 value
+        // Check if optional or substitute, nominal link else
+
+        // TODO : Uncomment this code when substitutes will implement isLinkOptional and hasSubstituteLink
+//
+//        PartLink nominalLink = path.get(path.size()-1);
+//
+//        if(nominalLink.isOptional() && productInstanceIteration.isLinkOptional(Tools.getPathAsString(path))){
+//            return null;
+//        }
+//
+//        for(PartSubstituteLink substituteLink:nominalLink.getSubstitutes()){
+//
+//            List<PartLink> substitutePath = new ArrayList<>(path);
+//            substitutePath.set(substitutePath.size()-1,substituteLink);
+//
+//            if(productInstanceIteration.hasSubstituteLink(Tools.getPathAsString(substitutePath))){
+//                return substituteLink;
+//            }
+//
+//        }
+//
+//        return nominalLink;
         return null;
     }
 

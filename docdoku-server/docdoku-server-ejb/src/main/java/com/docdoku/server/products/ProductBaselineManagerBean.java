@@ -38,6 +38,7 @@ import com.docdoku.server.configuration.filter.ReleasedPSFilter;
 import com.docdoku.server.configuration.spec.BaselineProductConfigSpec;
 import com.docdoku.server.configuration.spec.BaselineProductCreationConfigSpec;
 import com.docdoku.server.dao.ConfigurationItemDAO;
+import com.docdoku.server.dao.PartCollectionDAO;
 import com.docdoku.server.dao.ProductBaselineDAO;
 
 import javax.annotation.security.DeclareRoles;
@@ -70,20 +71,17 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
         ConfigurationItemDAO configurationItemDAO = new ConfigurationItemDAO(locale, em);
         ConfigurationItem configurationItem = configurationItemDAO.loadConfigurationItem(ciKey);
 
-        ProductBaseline baseline = new ProductBaseline(configurationItem, name, pType , description);
-        PSFilter filter = new BaselineProductCreationConfigSpec(baseline,user);
-
+        List<PartIteration> partIterations = new ArrayList<>();
         for(PartIterationKey piKey: partIterationKeys){
-            baseline.addBaselinedPart(em.find(PartIteration.class,piKey));
+            partIterations.add(em.find(PartIteration.class,piKey));
         }
 
-        baseline.getSubstituteLinks().addAll(substituteLinks);
-        baseline.getOptionalUsageLinks().addAll(optionalUsageLinks);
+        BaselineProductCreationConfigSpec filter = new BaselineProductCreationConfigSpec(user,pType,partIterations,substituteLinks,optionalUsageLinks);
 
-        PSFilterVisitor visitor = new PSFilterVisitor(em, user, filter, configurationItem.getDesignItem(),-1) {
+        new PSFilterVisitor(em, user, filter, configurationItem.getDesignItem(), null, -1) {
             @Override
             public void onIndeterminateVersion(PartMaster partMaster, List<PartIteration> partIterations) throws NotAllowedException{
-                throw new NotAllowedException(locale,"NotAllowedException49");
+                throw new NotAllowedException(locale,"NotAllowedException48");
             }
 
             @Override
@@ -92,37 +90,42 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
             }
 
             @Override
-            public void onIndeterminatePath(List<PartLink> pCurrentPath, List<PartIteration> pCurrentPathPartIterations, PartUsageLink usageLink) throws NotAllowedException {
-                throw new NotAllowedException(locale,"NotAllowedException48");
+            public void onIndeterminatePath(List<PartLink> pCurrentPath, List<PartIteration> pCurrentPathPartIterations) throws NotAllowedException {
+                throw new NotAllowedException(locale,"NotAllowedException50");
             }
 
             @Override
-            public void onUnresolvedPath(List<PartLink> pCurrentPath) throws NotAllowedException {
-                throw new NotAllowedException(locale,"NotAllowedException48");
+            public void onUnresolvedPath(List<PartLink> pCurrentPath, List<PartIteration> partIterations) throws NotAllowedException {
+                throw new NotAllowedException(locale,"NotAllowedException51");
             }
 
             @Override
             public void onBranchDiscovered(List<PartLink> pCurrentPath, List<PartIteration> copyPartIteration) {
+            }
 
+            @Override
+            public void onOptionalPath(List<PartLink> partLinks, List<PartIteration> partIterations) {
+            }
+
+            @Override
+            public void onPathWalk(List<PartLink> path, List<PartMaster> parts) {
             }
 
         };
 
         // Visitor has finished, and should have thrown an exception if errors
+        ProductBaseline baseline = new ProductBaseline(configurationItem, name, pType , description);
+        new PartCollectionDAO(em).createPartCollection(baseline.getPartCollection());
 
         baseline.getPartCollection().setCreationDate(new Date());
         baseline.getPartCollection().setAuthor(user);
 
-        List<PartIteration> retainedBaselinedIterations = visitor.getRetainedBaselinedIterations();
-        List<String> retainedOptionals = visitor.getRetainedOptionals();
-        List<String> retainedSubstitutes = visitor.getRetainedSubstitutes();
-
-        for(PartIteration partIteration: retainedBaselinedIterations){
+        for(PartIteration partIteration: filter.getRetainedPartIterations() ){
             baseline.addBaselinedPart(partIteration);
         }
 
-        baseline.getSubstituteLinks().addAll(retainedSubstitutes);
-        baseline.getOptionalUsageLinks().addAll(retainedOptionals);
+        baseline.getSubstituteLinks().addAll(filter.getRetainedSubstituteLinks());
+        baseline.getOptionalUsageLinks().addAll(filter.getRetainedOptionalUsageLinks());
 
         new ProductBaselineDAO(locale, em).createBaseline(baseline);
 
@@ -205,19 +208,24 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
 
         List<PathChoice> choices = new ArrayList<>();
 
-        new PSFilterVisitor(em, user, filter, configurationItem.getDesignItem(), -1) {
+        new PSFilterVisitor(em, user, filter, configurationItem.getDesignItem(), null, -1) {
 
             @Override
             public void onIndeterminateVersion(PartMaster partMaster, List<PartIteration> partIterations)  throws NotAllowedException{
             }
 
             @Override
-            public void onIndeterminatePath(List<PartLink> pCurrentPath, List<PartIteration> pCurrentPathPartIterations, PartUsageLink usageLink) {
+            public void onIndeterminatePath(List<PartLink> pCurrentPath, List<PartIteration> pCurrentPathPartIterations) {
                 List<PartRevision> partRevisions = new ArrayList<>();
                 for (PartIteration partIteration : pCurrentPathPartIterations) {
                     partRevisions.add(partIteration.getPartRevision());
                 }
-                choices.add(new PathChoice(partRevisions, new ArrayList<>(pCurrentPath), usageLink));
+                choices.add(new PathChoice(partRevisions, pCurrentPath));
+            }
+
+            @Override
+            public void onUnresolvedPath(List<PartLink> pCurrentPath, List<PartIteration> partIterations) throws NotAllowedException {
+
             }
 
             @Override
@@ -225,13 +233,21 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
             }
 
             @Override
-            public void onUnresolvedPath(List<PartLink> pCurrentPath) {
+            public void onOptionalPath(List<PartLink> pCurrentPath, List<PartIteration> pCurrentPathPartIterations) {
+                List<PartRevision> partRevisions = new ArrayList<>();
+                for (PartIteration partIteration : pCurrentPathPartIterations) {
+                    partRevisions.add(partIteration.getPartRevision());
+                }
+                choices.add(new PathChoice(partRevisions, pCurrentPath));
+            }
+
+            @Override
+            public void onPathWalk(List<PartLink> path, List<PartMaster> parts) {
 
             }
 
             @Override
             public void onUnresolvedVersion(PartMaster partMaster) {
-
             }
         };
 
@@ -252,14 +268,19 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
 
         PSFilter filter = new ReleasedPSFilter(user, true);
 
-        new PSFilterVisitor(em, user, filter, configurationItem.getDesignItem(), -1) {
+        new PSFilterVisitor(em, user, filter, configurationItem.getDesignItem(), null, -1) {
             @Override
             public void onIndeterminateVersion(PartMaster partMaster, List<PartIteration> partIterations) throws NotAllowedException {
                 parts.addAll(partIterations);
             }
 
             @Override
-            public void onIndeterminatePath(List<PartLink> pCurrentPath, List<PartIteration> pCurrentPathPartIterations, PartUsageLink usageLink) {
+            public void onIndeterminatePath(List<PartLink> pCurrentPath, List<PartIteration> pCurrentPathPartIterations) {
+            }
+
+            @Override
+            public void onUnresolvedPath(List<PartLink> pCurrentPath, List<PartIteration> partIterations) throws NotAllowedException {
+
             }
 
             @Override
@@ -267,7 +288,12 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
             }
 
             @Override
-            public void onUnresolvedPath(List<PartLink> pCurrentPath) {
+            public void onOptionalPath(List<PartLink> partLinks, List<PartIteration> partIterations) {
+
+            }
+
+            @Override
+            public void onPathWalk(List<PartLink> path, List<PartMaster> parts) {
 
             }
 

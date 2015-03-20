@@ -14,7 +14,7 @@ define([
 
                 App.config.workspaceId = workspaceId;
                 App.config.productId = productId;
-                App.config.configSpec = configSpec || 'latest';
+                App.config.configSpec = configSpec || 'wip';
 
                 App.config.defaultCameraPosition = {
                     x: parseFloat(cameraX || 0),

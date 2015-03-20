@@ -20,34 +20,42 @@
 package com.docdoku.server.configuration.spec;
 
 import com.docdoku.core.common.User;
-import com.docdoku.core.configuration.*;
+import com.docdoku.core.configuration.ProductBaseline;
+import com.docdoku.core.configuration.ProductConfigSpec;
 import com.docdoku.core.product.*;
 import com.docdoku.core.util.Tools;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Morgan Guimard
  */
 public class BaselineProductCreationConfigSpec extends ProductConfigSpec {
 
-    private ProductBaseline productBaseline;
+    private List<PartIteration> partIterations;
+    private List<String> substituteLinks;
+    private List<String> optionalUsageLinks;
+
+    private Set<PartIteration> retainedPartIterations = new HashSet<>();
+    private Set<String> retainedSubstituteLinks = new HashSet<>();
+    private Set<String> retainedOptionalUsageLinks = new HashSet<>();
+
+    private ProductBaseline.BaselineType type;
+
     private User user;
 
     public BaselineProductCreationConfigSpec(){
     }
 
-    public BaselineProductCreationConfigSpec(ProductBaseline productBaseline, User user) {
-        this.productBaseline = productBaseline;
+    public BaselineProductCreationConfigSpec(User user, ProductBaseline.BaselineType type ,List<PartIteration> partIterations, List<String> substituteLinks, List<String> optionalUsageLinks) {
         this.user = user;
-    }
-
-    public ProductBaseline getProductBaseline() {
-        return productBaseline;
-    }
-    public void setProductBaseline(ProductBaseline productBaseline) {
-        this.productBaseline = productBaseline;
+        this.partIterations = partIterations;
+        this.substituteLinks = substituteLinks;
+        this.optionalUsageLinks = optionalUsageLinks;
+        this.type = type;
     }
 
     public User getUser() {
@@ -57,32 +65,33 @@ public class BaselineProductCreationConfigSpec extends ProductConfigSpec {
         this.user = user;
     }
 
-    public int getPartCollectionId(){
-        return productBaseline.getPartCollection().getId();
-    }
-
     @Override
     public PartIteration filterPartIteration(PartMaster partMaster) {
 
-        if(productBaseline.getType().equals(ProductBaseline.BaselineType.RELEASED)){
+        if(type.equals(ProductBaseline.BaselineType.RELEASED)){
 
-            // Try to identify the version
-            PartCollection partCollection = productBaseline==null ? null : productBaseline.getPartCollection();
-            if(partCollection != null) {
-                BaselinedPartKey baselinedRootPartKey = new BaselinedPartKey(partCollection.getId(), partMaster.getWorkspaceId(), partMaster.getNumber());
-                BaselinedPart baselinedRootPart = productBaseline.getBaselinedPart(baselinedRootPartKey);
-                if (baselinedRootPart != null) {
-                    return baselinedRootPart.getTargetPart();
+            for(PartIteration pi : partIterations){
+                if(pi.getPartRevision().getPartMaster().getKey().equals(partMaster.getKey())){
+                    retainedPartIterations.add(pi);
+                    return pi;
                 }
             }
-
             // Else, take the latest released
             PartRevision lastReleasedRevision = partMaster.getLastReleasedRevision();
-            return lastReleasedRevision == null ? null : lastReleasedRevision.getLastIteration();
+            if(lastReleasedRevision != null){
+                PartIteration pi = lastReleasedRevision.getLastIteration();
+                retainedPartIterations.add(pi);
+                return pi;
+            }
 
-        }else if(productBaseline.getType().equals(ProductBaseline.BaselineType.LATEST)){
-            PartIteration partIteration = partMaster.getLastRevision().getLastCheckedInIteration();
-            return partIteration;
+        }else if(type.equals(ProductBaseline.BaselineType.LATEST)){
+
+            PartIteration pi = partMaster.getLastRevision().getLastCheckedInIteration();
+
+            if(pi!=null){
+                retainedPartIterations.add(pi);
+                return pi;
+            }
         }
 
         return null;
@@ -96,7 +105,8 @@ public class BaselineProductCreationConfigSpec extends ProductConfigSpec {
 
         PartLink nominalLink = path.get(path.size()-1);
 
-        if(nominalLink.isOptional() && productBaseline.isLinkOptional(Tools.getPathAsString(path))){
+        if(nominalLink.isOptional() && optionalUsageLinks.contains(Tools.getPathAsString(path))){
+            retainedOptionalUsageLinks.add(Tools.getPathAsString(path));
             return null;
         }
 
@@ -105,7 +115,8 @@ public class BaselineProductCreationConfigSpec extends ProductConfigSpec {
             List<PartLink> substitutePath = new ArrayList<>(path);
             substitutePath.set(substitutePath.size()-1,substituteLink);
 
-            if(productBaseline.hasSubstituteLink(Tools.getPathAsString(substitutePath))){
+            if(substituteLinks.contains(Tools.getPathAsString(substitutePath))){
+                retainedSubstituteLinks.add(Tools.getPathAsString(substitutePath));
                 return substituteLink;
             }
 
@@ -114,4 +125,16 @@ public class BaselineProductCreationConfigSpec extends ProductConfigSpec {
         return nominalLink;
     }
 
+
+    public Set<PartIteration> getRetainedPartIterations() {
+        return retainedPartIterations;
+    }
+
+    public Set<String> getRetainedSubstituteLinks() {
+        return retainedSubstituteLinks;
+    }
+
+    public Set<String> getRetainedOptionalUsageLinks() {
+        return retainedOptionalUsageLinks;
+    }
 }

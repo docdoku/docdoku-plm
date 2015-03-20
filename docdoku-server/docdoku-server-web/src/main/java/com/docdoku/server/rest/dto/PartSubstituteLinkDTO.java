@@ -19,14 +19,12 @@
  */
 package com.docdoku.server.rest.dto;
 
-import com.docdoku.core.product.CADInstance;
-import com.docdoku.core.product.PartMaster;
-
 import java.util.List;
 
 public class PartSubstituteLinkDTO {
 
     private int id;
+    private String fullId;
     private double amount;
     private String unit;
     private String referenceDescription;
@@ -88,5 +86,13 @@ public class PartSubstituteLinkDTO {
 
     public void setCadInstances(List<CADInstanceDTO> cadInstances) {
         this.cadInstances = cadInstances;
+    }
+
+    public String getFullId() {
+        return fullId;
+    }
+
+    public void setFullId(String fullId) {
+        this.fullId = fullId;
     }
 }

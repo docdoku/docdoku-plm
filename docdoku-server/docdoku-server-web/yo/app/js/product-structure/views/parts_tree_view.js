@@ -11,6 +11,7 @@ define(['backbone', 'models/component_module', 'views/component_views'
             'change li': 'checkParentsInputs',
             'component:selected a': 'onComponentSelected',
             'click #product_title': 'onProductTitleClicked',
+            'load:root': 'onProductTitleClicked',
             'click .fa-refresh': 'refreshProductView'
         },
 
@@ -26,6 +27,7 @@ define(['backbone', 'models/component_module', 'views/component_views'
         refreshProductView: function(){
           this.refreshAll();
         },
+
         render: function () {
             var self = this;
             var rootCollection = new ComponentModule.Collection([], { isRoot: true });
@@ -43,6 +45,7 @@ define(['backbone', 'models/component_module', 'views/component_views'
                 }
 
                 self.trigger('collection:fetched');
+
             });
 
             this.componentViews = new ComponentViews.Components({
@@ -160,10 +163,9 @@ define(['backbone', 'models/component_module', 'views/component_views'
 
         setCheckboxes: function () {
             this.$('li input').prop('checked', false);
-            var self = this;
             _.each(this.smartPath, function (path) {
-                self.$('li[id^="path_' + path + '"] input').prop('checked', true);
-            });
+                this.$('li[id^="path_' + path + '"] input').prop('checked', true);
+            },this);
         },
 
         onComponentSelected: function (e, componentModel, li) {

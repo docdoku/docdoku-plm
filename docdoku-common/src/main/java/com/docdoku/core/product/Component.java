@@ -60,7 +60,9 @@ public class Component implements Serializable {
     public List<PartLink> getPath() {
         return path;
     }
-
+    public PartLink getPartLink() {
+        return path.get(path.size()-1);
+    }
     public void setPath(List<PartLink> path) {
         this.path = path;
     }

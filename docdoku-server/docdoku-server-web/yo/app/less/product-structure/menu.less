@@ -10,7 +10,7 @@
   min-width: 15%;
   max-width: 55%;
   border: none;
-  border-radius: none;
+  border-radius: 0;
   padding: 0;
   margin: 0;
   z-index: 1;
@@ -19,16 +19,33 @@
   -moz-transition: background-color .4s ease;
   transition: background-color .4s ease;
 
+  .nav.well {
+    margin: 10px 0 0 6px;
+    padding: 0;
+    overflow: auto;
+    background: none;
+    box-shadow:none;
+    border: none;
+    .nav-header {
+        font-size: 12px;
+        padding: 3px 10px;
+        display: block;
+        font-weight: bold;
+        line-height: 18px;
+        color: #999999;
+        text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+        text-transform: uppercase;
+    }
+  }
+
   &.alpha{
     background-color: rgba(245,245,245,0.7);
   }
 
   #product-menu-inner {
     height: 100%;
-    position: relative;
 
     #nav_list_action_bar {
-      padding: 16px 0 0 0;
 
       i {
         background-image: none;
@@ -40,6 +57,7 @@
         #nav_list_search {
           margin: 0;
           position: relative;
+          height: 45px;
 
           input {
             position: absolute;
@@ -61,13 +79,12 @@
 
           span {
             position: absolute;
-            top: 0;
+            top: 6px;
             bottom: 0;
             right:60px;
             height: auto;
             color: #999;
             font-size: 15px;
-            line-height: 28px;
 
             .popover-content {
               padding:0;
@@ -107,11 +124,11 @@
       }
     }
     #product_nav_list_container {
-      bottom: 65px;
-      top: 55px;
-      position: absolute;
-      width: 100%;
-      overflow-y: auto;
+        top: 0;
+        width: 100%;
+        overflow-y: auto;
+        bottom: 0;
+        position: absolute;
       -webkit-overflow-scrolling: touch;
     }
 
@@ -157,5 +174,21 @@
     }
 
   }
+
+    #config_spec_container{
+        select{
+            margin: 0 16px 4px 16px;
+            width: calc(~"100% - 32px");
+            border:none;
+            border-radius: 0;
+            border-bottom: 1px solid #ccc;
+        }
+        .description{
+            font-size: 12px;
+            font-style: italic;
+            margin: 0 16px 0px 16px;
+            display: inline-block;
+        }
+    }
 
 }

@@ -17,23 +17,41 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.docdoku.core.product;
 
-import java.util.List;
+
+package com.docdoku.server.configuration.spec;
+
+import com.docdoku.core.common.User;
+import com.docdoku.core.configuration.DocumentConfigSpec;
+import com.docdoku.core.document.DocumentIteration;
+import com.docdoku.core.document.DocumentRevision;
 
 /**
- * @author: Morgan Guimard
+ * @author Morgan Guimard
+ *
  */
-public interface PartLink {
-    int getId();
-    Character getCode();
-    String getFullId();
-    double getAmount();
-    String getUnit();
-    String getComment();
-    boolean isOptional();
-    PartMaster getComponent();
-    List<PartSubstituteLink> getSubstitutes();
-    String getReferenceDescription();
-    List<CADInstance> getCadInstances();
+
+public class LatestDocumentConfigSpec extends DocumentConfigSpec {
+
+    private User user;
+    public LatestDocumentConfigSpec() {
+    }
+
+    public LatestDocumentConfigSpec(User user) {
+        this.user = user;
+    }
+
+    @Override
+    public DocumentIteration filter(DocumentRevision documentRevision) {
+        return documentRevision.getLastIteration();
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
 }

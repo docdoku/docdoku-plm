@@ -20,14 +20,12 @@
 package com.docdoku.server.rest.dto;
 
 
-import com.docdoku.core.product.PartSubstituteLink;
-
-import java.util.LinkedList;
 import java.util.List;
 
 public class PartUsageLinkDTO {
 
     private int id;
+    private String fullId;
     private double amount;
     private String comment;
     private ComponentDTO component;
@@ -107,5 +105,13 @@ public class PartUsageLinkDTO {
 
     public void setSubstitutes(List<PartSubstituteLinkDTO> substitutes) {
         this.substitutes = substitutes;
+    }
+
+    public String getFullId() {
+        return fullId;
+    }
+
+    public void setFullId(String fullId) {
+        this.fullId = fullId;
     }
 }

@@ -19,8 +19,6 @@
  */
 package com.docdoku.server.rest.writer;
 
-import com.docdoku.core.configuration.PSFilter;
-import com.docdoku.core.product.PartUsageLink;
 import com.docdoku.server.rest.collections.InstanceCollection;
 import com.docdoku.server.rest.util.InstanceBodyWriterTools;
 
@@ -38,7 +36,6 @@ import java.io.UnsupportedEncodingException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  *
@@ -58,19 +55,14 @@ public class InstanceMessageBodyWriter implements MessageBodyWriter<InstanceColl
     }
 
     @Override
-    public void writeTo(InstanceCollection object, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream) throws UnsupportedEncodingException {
+    public void writeTo(InstanceCollection instanceCollection, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream) throws UnsupportedEncodingException {
         String charSet="UTF-8";
         JsonGenerator jg = Json.createGenerator(new OutputStreamWriter(entityStream, charSet));
         jg.writeStartArray();
 
-        PSFilter filter = object.getFilter();
-        PartUsageLink rootUsageLink = object.getRootUsageLink();
-        List<Integer> usageLinkPaths = object.getUsageLinkPaths();
-
         Matrix4d gM=new Matrix4d();
         gM.setIdentity();
-        InstanceBodyWriterTools.generateInstanceStreamWithGlobalMatrix(rootUsageLink, gM, usageLinkPaths, filter, new ArrayList<Integer>(), jg);
-
+        InstanceBodyWriterTools.generateInstanceStreamWithGlobalMatrix(null, gM, instanceCollection, new ArrayList<Integer>(), jg);
         jg.writeEnd();
         jg.flush();
     }

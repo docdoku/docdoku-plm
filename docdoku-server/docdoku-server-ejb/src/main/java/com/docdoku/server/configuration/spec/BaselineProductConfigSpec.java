@@ -47,10 +47,11 @@ public class BaselineProductConfigSpec extends ProductConfigSpec {
     private ProductBaseline productBaseline;
     private User user;
 
-    public BaselineProductConfigSpec(){
-    }
-
     public BaselineProductConfigSpec(ProductBaseline productBaseline, User user) {
+        // Prevent NullPointerException
+        if(productBaseline == null){
+            throw new IllegalArgumentException("Cannot instantiate a BaselineProductConfigSpec without a baseline");
+        }
         this.productBaseline = productBaseline;
         this.user = user;
     }
@@ -75,14 +76,15 @@ public class BaselineProductConfigSpec extends ProductConfigSpec {
 
     @Override
     public PartIteration filterPartIteration(PartMaster partMaster) {
-        PartCollection partCollection = productBaseline==null ? null : productBaseline.getPartCollection();             // Prevent NullPointerException
-        if(partCollection != null) {
-            BaselinedPartKey baselinedRootPartKey = new BaselinedPartKey(partCollection.getId(), partMaster.getWorkspaceId(), partMaster.getNumber());
-            BaselinedPart baselinedRootPart = productBaseline.getBaselinedPart(baselinedRootPartKey);
-            if (baselinedRootPart != null) {
-                return baselinedRootPart.getTargetPart();
-            }
+
+        PartCollection partCollection = productBaseline.getPartCollection();
+        BaselinedPartKey baselinedRootPartKey = new BaselinedPartKey(partCollection.getId(), partMaster.getWorkspaceId(), partMaster.getNumber());
+        BaselinedPart baselinedRootPart = partCollection.getBaselinedPart(baselinedRootPartKey);
+
+        if (baselinedRootPart != null) {
+            return baselinedRootPart.getTargetPart();
         }
+
         return null;
     }
 

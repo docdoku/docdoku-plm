@@ -37,11 +37,10 @@ public class PathChoice {
     public PathChoice() {
     }
 
-    public PathChoice(List<PartRevision> partRevisions, List<PartLink> paths, PartLink partUsageLink) {
+    public PathChoice(List<PartRevision> partRevisions, List<PartLink> paths) {
         this.partRevisions =  partRevisions;
         this.paths = paths;
-        this.partUsageLink = partUsageLink;
-        this.paths.add(partUsageLink);
+        this.partUsageLink =  this.paths.get(this.paths.size()-1);
     }
 
     public List<PartRevision> getPartRevisions() {

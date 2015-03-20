@@ -26,11 +26,12 @@ import com.docdoku.core.exceptions.EntityConstraintException;
 import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.exceptions.PartMasterNotFoundException;
 import com.docdoku.core.product.*;
-import com.docdoku.core.util.Tools;
 import com.docdoku.server.dao.PartMasterDAO;
 
 import javax.persistence.EntityManager;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 import java.util.logging.Logger;
 
 
@@ -47,15 +48,9 @@ public abstract class PSFilterVisitor {
     private Component component;
     private int stopAtDepth = -1;
 
-    // Walked parts and paths
-    private Set<String> retainedSubstitutes = new HashSet();
-    private Set<String> retainedOptionals = new HashSet();
-    private Set<PartIteration> retainedBaselinedIterations = new HashSet();
-
-
     private String workspaceId;
 
-    public PSFilterVisitor(EntityManager pEm, User pUser, PSFilter pFilter, PartMaster nodeFrom, Integer pDepth)
+    public PSFilterVisitor(EntityManager pEm, User pUser, PSFilter pFilter, PartMaster pNodeFrom, List<PartLink> pStartingPath, Integer pDepth)
             throws PartMasterNotFoundException, NotAllowedException, EntityConstraintException {
 
         filter = pFilter;
@@ -65,22 +60,46 @@ public abstract class PSFilterVisitor {
         locale = new Locale(user.getLanguage());
         partMasterDAO = new PartMasterDAO(locale, em);
 
-        stopAtDepth = (pDepth == null) ? -1 : pDepth;
+        if(pNodeFrom != null){
+            startVisit(pNodeFrom,pDepth);
+        }else if(pStartingPath != null){
+            startVisit(pStartingPath,pDepth);
+        }else{
+            throw new IllegalArgumentException("Provide either a node from which starting visit or a resolved part links list");
+        }
 
+    }
 
-        // Lists that will be copied through the tree
+    private void startVisit(List<PartLink> pStartingPath, Integer pDepth) throws NotAllowedException, EntityConstraintException, PartMasterNotFoundException {
+        List<PartLink> currentPath = pStartingPath;
+        List<PartMaster> currentPathParts = new ArrayList<>();
+        List<PartIteration> currentPathPartIterations = new ArrayList<>();
+
+        // Visit last
+        PartMaster rootNode = currentPath.get(currentPath.size()-1).getComponent();
+        currentPathParts.add(rootNode);
+
+        stopAtDepth = (pDepth == null) ? -1 : pDepth + currentPath.size();
+
+        component = new Component(rootNode.getAuthor(),rootNode,currentPath,null);
+        component.setComponents(visit(component,currentPathPartIterations, currentPathParts, currentPath));
+
+    }
+
+    private void startVisit(PartMaster pNodeFrom, Integer pDepth) throws NotAllowedException, EntityConstraintException, PartMasterNotFoundException {
+
         List<PartLink> currentPath = new ArrayList<>();
         List<PartMaster> currentPathParts = new ArrayList<>();
         List<PartIteration> currentPathPartIterations = new ArrayList<>();
 
-        PartMaster rootNode = nodeFrom;
+        PartMaster rootNode = pNodeFrom;
 
         // Add root node and its virtual link
         currentPathParts.add(rootNode);
         currentPath.add(new PartLink() {
             @Override
             public int getId() {
-                return -1;
+                return 1;
             }
 
             @Override
@@ -117,46 +136,55 @@ public abstract class PSFilterVisitor {
             public String getReferenceDescription() {
                 return null;
             }
+
+            @Override
+            public Character getCode() {
+                return '-';
+            }
+
+            @Override
+            public String getFullId() {
+                return "-1";
+            }
+
+            @Override
+            public List<CADInstance> getCadInstances() {
+                return null;
+            }
         });
 
-        // Start visiting
-        log(0, "Starting visit method");
-        component = new Component(rootNode.getAuthor(),rootNode,currentPath,
-                visit(currentPathPartIterations, currentPathParts, currentPath));
+        stopAtDepth = (pDepth == null) ? -1 : pDepth;
+
+        component = new Component(rootNode.getAuthor(),rootNode,currentPath,null);
+        component.setComponents(visit(component,currentPathPartIterations, currentPathParts, currentPath));
     }
 
 
-    private List<Component> visit(List<PartIteration> pCurrentPathPartIterations, List<PartMaster> pCurrentPathParts, List<PartLink> pCurrentPath) throws PartMasterNotFoundException, NotAllowedException, EntityConstraintException {
+    private List<Component> visit(Component currentComponent, List<PartIteration> pCurrentPathPartIterations, List<PartMaster> pCurrentPathParts, List<PartLink> pCurrentPath) throws PartMasterNotFoundException, NotAllowedException, EntityConstraintException {
+
+        onPathWalk(new ArrayList<>(pCurrentPath), new ArrayList<>(pCurrentPathParts));
 
         List<Component> components = new ArrayList<>();
 
+        // Current depth
         int depth = pCurrentPathParts.size() - 1;
 
         // Current part master is the last from pCurrentPathParts
         PartMaster currentUsagePartMaster = pCurrentPathParts.get(depth);
 
-        log(depth, "Visit " + currentUsagePartMaster.getNumber());
-
         // Find filtered iterations to visit
         List<PartIteration> partIterations = filter.filter(currentUsagePartMaster);
 
         if(partIterations.isEmpty()){
-            log(depth, "No iteration available for " + currentUsagePartMaster.getNumber() + ". Should raise an error in strict mode.");
             onUnresolvedVersion(currentUsagePartMaster);
         }
 
-        if(partIterations.size() == 1){
-            log(depth, "One iteration available for " + currentUsagePartMaster.getNumber() + ". Not diverging.");
-        }
-
         if(partIterations.size() > 1){
-            log(depth, "Many iterations available for " + currentUsagePartMaster.getNumber() + ". Should raise an error in strict mode.");
-            onIndeterminateVersion(currentUsagePartMaster, partIterations);
+            onIndeterminateVersion(currentUsagePartMaster, new ArrayList<>(partIterations));
         }
 
-        // Retain filtered iterations
-        if(!partIterations.isEmpty()){
-            retainedBaselinedIterations.addAll(partIterations);
+        if(partIterations.size()==1){
+            currentComponent.setRetainedIteration(partIterations.get(0));
         }
 
         // Visit them all, potentially diverging branches
@@ -168,13 +196,10 @@ public abstract class PSFilterVisitor {
 
             // Is branch over ?
             if(partIteration.getComponents().isEmpty()){
-                log(depth, "This branch is over");
-                log(depth, "------------------------------------------------------------");
-                onBranchDiscovered(pCurrentPath,copyPartIteration);
+                onBranchDiscovered(new ArrayList<>(pCurrentPath),new ArrayList<>(copyPartIteration));
             }
 
             // Navigate links
-
             for (PartUsageLink usageLink : partIteration.getComponents()) {
 
                 List<PartLink> currentPath = new ArrayList<>(pCurrentPath);
@@ -183,34 +208,45 @@ public abstract class PSFilterVisitor {
                 // Filter the current path, potentially diverging branches
                 List<PartLink> eligibleLinks = filter.filter(currentPath);
 
-                if(eligibleLinks.isEmpty() && usageLink.isOptional()){
-                    retainedOptionals.add(Tools.getPathAsString(currentPath));
-                }
-
-                log(depth, "No link chosen " + usageLink.getComponent().getNumber() + " ! ");
-
                 if(eligibleLinks.isEmpty() && !usageLink.isOptional()){
-                    // This should not happen, however this is invalid, some cases should throw an exception here
-                    onUnresolvedPath(currentPath);
+                    onUnresolvedPath(new ArrayList<>(currentPath), new ArrayList<>(copyPartIteration));
                 }
 
-                if(eligibleLinks.size() == 1){
-                    PartLink partLink = eligibleLinks.get(0);
-                    log(depth, "One link chosen " + partLink.getComponent().getNumber() + " ! ");
+                if(eligibleLinks.size() > 1 ){
+                    onIndeterminatePath(new ArrayList<>(currentPath), new ArrayList<>(copyPartIteration));
                 }
 
-                if(eligibleLinks.size() > 1){
-                    log(depth, "Cannot decide for usage link " + usageLink.getComponent().getNumber() + " ! Walking through usage link and substitutes");
-                    onIndeterminatePath(pCurrentPath, copyPartIteration, usageLink);
+                if (eligibleLinks.size() == 1 && eligibleLinks.get(0).isOptional()){
+                    onOptionalPath(new ArrayList<>(currentPath), new ArrayList<>(copyPartIteration));
                 }
 
                 for(PartLink link : eligibleLinks){
-                    if(link instanceof PartSubstituteLink){
-                        List<PartLink> substitutePath = new ArrayList<>(pCurrentPath);
-                        substitutePath.add(link);
-                        retainedSubstitutes.add(Tools.getPathAsString(substitutePath));
+                    List<PartLink> nextPath = new ArrayList<>(pCurrentPath);
+                    nextPath.add(link);
+
+                    // Stop if depth reached
+                    if (stopAtDepth == -1 || stopAtDepth >= pCurrentPathParts.size()) {
+
+                        // Going on a new path
+                        PartMaster pm = loadPartMaster(link.getComponent().getNumber());
+
+                        // Run cyclic integrity check here
+                        if(pCurrentPathParts.contains(pm)){
+                            throw new EntityConstraintException(locale,"EntityConstraintException12");
+                        }
+
+                        // Continue tree walking on pm
+                        List<PartMaster> copyPathParts = new ArrayList<>(pCurrentPathParts);
+                        List<PartLink> copyPath = new ArrayList<>(nextPath);
+                        List<PartIteration> copyPartIterations = new ArrayList<>(copyPartIteration);
+                        copyPathParts.add(pm);
+
+                        // Recursive
+                        Component subComponent= new Component(pm.getAuthor(), pm, copyPath, null);
+                        subComponent.setComponents(visit(subComponent,copyPartIterations, copyPathParts, copyPath));
+                        components.add(subComponent);
                     }
-                    visitLink(link, pCurrentPathParts, pCurrentPath, copyPartIteration, components);
+
                 }
 
             }
@@ -219,64 +255,15 @@ public abstract class PSFilterVisitor {
         return components;
     }
 
-    private void visitLink(PartLink link, List<PartMaster> pCurrentPathParts, List<PartLink> pCurrentPath, List<PartIteration> pCurrentPathPartIterations, List<Component> components) throws PartMasterNotFoundException, NotAllowedException, EntityConstraintException {
 
-        // Going on a new path
-        PartMaster pm = loadPartMaster(link.getComponent().getNumber());
-
-        // Run cyclic integrity check here
-        if(pCurrentPathParts.contains(pm)){
-            throw new EntityConstraintException(locale,"EntityConstraintException12");
-        }
-
-        // Stop if depth reached
-        if(stopAtDepth > pCurrentPathParts.size()){
-            return;
-        }
-
-        // Continue tree walking on pm
-        List<PartMaster> copyPathParts = new ArrayList<>(pCurrentPathParts);
-        List<PartLink> copyPath = new ArrayList<>(pCurrentPath);
-        List<PartIteration> copPartIterations = new ArrayList<>(pCurrentPathPartIterations);
-        copyPathParts.add(pm);
-        copyPath.add(link);
-
-        // Recursive
-        components.add(new Component(pm.getAuthor(), pm, copyPath, visit(copPartIterations, copyPathParts, copyPath)));
-
-    }
 
     private PartMaster loadPartMaster(String partNumber) throws PartMasterNotFoundException {
         return partMasterDAO.loadPartM(new PartMasterKey(workspaceId, partNumber));
     }
 
     /**
-    * Utils
-    * */
-
-    private void log(int depth, String message){
-        char[] whiteSpace = new char[depth*4];
-        Arrays.fill(whiteSpace, ' ');
-        String whiteSpaces = new String(whiteSpace);
-        LOGGER.info("[VISITOR] "+whiteSpaces+message);
-    }
-
-    /**
      * Getters
      */
-
-    public List<String> getRetainedSubstitutes() {
-        return new ArrayList(retainedSubstitutes);
-    }
-
-    public List<String> getRetainedOptionals() {
-        return new ArrayList(retainedOptionals);
-    }
-
-    public List<PartIteration> getRetainedBaselinedIterations() {
-        return new ArrayList(retainedBaselinedIterations);
-    }
-
     public Component getComponent() {
         return component;
     }
@@ -287,8 +274,9 @@ public abstract class PSFilterVisitor {
 
     public abstract void onIndeterminateVersion(PartMaster partMaster, List<PartIteration> partIterations) throws NotAllowedException;
     public abstract void onUnresolvedVersion(PartMaster partMaster) throws NotAllowedException;
-    public abstract void onIndeterminatePath(List<PartLink> pCurrentPath, List<PartIteration> pCurrentPathPartIterations, PartUsageLink usageLink) throws NotAllowedException;
-    public abstract void onUnresolvedPath(List<PartLink> pCurrentPath) throws NotAllowedException;
+    public abstract void onIndeterminatePath(List<PartLink> pCurrentPath, List<PartIteration> pCurrentPathPartIterations) throws NotAllowedException;
+    public abstract void onUnresolvedPath(List<PartLink> pCurrentPath, List<PartIteration> partIterations) throws NotAllowedException;
     public abstract void onBranchDiscovered(List<PartLink> pCurrentPath, List<PartIteration> copyPartIteration);
-
+    public abstract void onOptionalPath(List<PartLink> partLinks, List<PartIteration> partIterations);
+    public abstract void onPathWalk(List<PartLink> path, List<PartMaster> parts);
 }

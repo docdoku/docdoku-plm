@@ -39,7 +39,7 @@ define([
         inBomMode: false,
 
         initialize: function () {
-            App.config.configSpec = 'latest';
+
         },
 
         render: function () {
@@ -56,6 +56,19 @@ define([
             App.sceneManager = new SceneManager();
             App.instancesManager = new InstancesManager();
             App.collaborativeController = new CollaborativeController();
+
+            try {
+                App.sceneManager.init();
+                this.bindDatGUIControls();
+            } catch (ex) {
+                console.error('Got exception in dmu');
+                App.log(ex);
+                this.onNoWebGLSupport();
+            }
+
+            return this;
+        },
+        initModules:function(){
 
             App.searchView = new SearchView().render();
             App.partsTreeView = new PartsTreeView({resultPathCollection: App.searchView.collection}).render();
@@ -82,18 +95,14 @@ define([
 
             this.bomControls.append(App.bomView.bomHeaderView.$el);
 
-            try {
-                App.sceneManager.init();
-                this.bindDatGUIControls();
-            } catch (ex) {
-                console.error('Got exception in dmu');
-                App.log(ex);
-                this.onNoWebGLSupport();
-            }
-
             this.listenEvents();
 
+            App.partsTreeView.once('collection:fetched',function(){
+                App.partsTreeView.$el.trigger('load:root');
+            });
+
             return this;
+
         },
 
         bindDomElements: function () {
@@ -154,11 +163,11 @@ define([
         },
 
         sceneButton: function () {
-            App.router.navigate(App.config.workspaceId + '/' + App.config.productId + '/' + 'scene', {trigger: true});
+            App.router.navigate(App.config.workspaceId + '/' + App.config.productId + '/config-spec/' + App.config.configSpec + '/scene', {trigger: true});
         },
 
         bomButton: function () {
-            App.router.navigate(App.config.workspaceId + '/' + App.config.productId + '/' + 'bom', {trigger: true});
+            App.router.navigate(App.config.workspaceId + '/' + App.config.productId + '/config-spec/' + App.config.configSpec + '/bom', {trigger: true});
         },
 
         setSpectatorView: function () {
@@ -237,6 +246,7 @@ define([
 
         setConfigSpec: function (configSpec) {
             App.config.configSpec = configSpec;
+            App.router.navigate(App.config.workspaceId + '/' + App.config.productId + '/config-spec/' + App.config.configSpec + '/bom', {trigger: false});
             App.sceneManager.clear();
             App.instancesManager.clear();
             App.partsTreeView.refreshAll();

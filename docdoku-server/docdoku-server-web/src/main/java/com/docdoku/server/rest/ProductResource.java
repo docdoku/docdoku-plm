@@ -32,7 +32,6 @@ import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IProductBaselineManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.rest.collections.InstanceCollection;
-import com.docdoku.server.rest.collections.PathFilteredListInstanceCollection;
 import com.docdoku.server.rest.dto.*;
 import com.docdoku.server.rest.dto.baseline.BaselinedPartDTO;
 import com.docdoku.server.rest.dto.baseline.PathChoiceDTO;
@@ -129,7 +128,8 @@ public class ProductResource {
 
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
         PSFilter filter = productService.getPSFilter(ciKey, configSpecType);
-        Component component = productService.filterProductStructure(ciKey, filter, path, 1);
+        List<PartLink> decodedPath = productService.decodePath(ciKey, path);
+        Component component = productService.filterProductStructure(ciKey, filter, decodedPath, 1);
 
         List<Component> components = component.getComponents();
         PartDTO[] partsDTO = new PartDTO[components.size()];
@@ -156,8 +156,9 @@ public class ProductResource {
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException, EntityConstraintException {
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
         PSFilter filter = productService.getPSFilter(ciKey, configSpecType);
-        Component component = productService.filterProductStructure(ciKey,filter,path,depth);
-        return createComponentDTO(component,depth == null ? -1 : depth);
+        List<PartLink> decodedPath = productService.decodePath(ciKey, path);
+        Component component = productService.filterProductStructure(ciKey,filter,decodedPath,depth);
+        return createComponentDTO(component);
     }
 
     @DELETE
@@ -174,24 +175,20 @@ public class ProductResource {
     @GET
     @Path("{ciId}/paths")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<PathDTO> searchPaths(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("partNumber") String partNumber)
-            throws EntityNotFoundException, UserNotActiveException {
+    public List<PathDTO> searchPaths(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("partNumber") String partNumber, @QueryParam("configSpec") String configSpecType)
+            throws EntityNotFoundException, UserNotActiveException, EntityConstraintException, NotAllowedException {
 
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
-        List<PartUsageLink[]> usagePaths = productService.findPartUsages(ciKey, new PartMasterKey(workspaceId,partNumber));
+        PSFilter filter = productService.getPSFilter(ciKey, configSpecType);
+        List<PartLink[]> usagePaths = productService.findPartUsages(ciKey, filter,partNumber);
 
         List<PathDTO> pathsDTO = new ArrayList<>();
 
-        for(PartUsageLink[] usagePath : usagePaths){
-            StringBuilder sb=new StringBuilder();
-
-            for(PartUsageLink link:usagePath){
-                sb.append(link.getId());
-                sb.append("-");
-            }
-            sb.deleteCharAt(sb.length()-1);
-            pathsDTO.add(new PathDTO(sb.toString()));
+        for(PartLink[] usagePath : usagePaths){
+            String pathAsString = com.docdoku.core.util.Tools.getPathAsString(Arrays.asList(usagePath));
+            pathsDTO.add(new PathDTO(pathAsString));
         }
+
         return pathsDTO;
     }
     
@@ -277,7 +274,17 @@ public class ProductResource {
             cc.setMaxAge(60 * 15);
             ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
             PSFilter filter = productService.getPSFilter(ciKey, configSpecType);
-            return Response.ok().lastModified(new Date()).cacheControl(cc).entity(getInstancesCollection(ciKey,filter,path)).build();
+            List<PartLink> decodedPath = productService.decodePath(ciKey,path);
+
+            List<List<PartLink>> paths = new ArrayList<>();
+
+            if(decodedPath != null){
+                paths.add(decodedPath);
+            }
+
+            InstanceCollection instanceCollection = new InstanceCollection(ciKey, filter, paths);
+
+            return Response.ok().lastModified(new Date()).cacheControl(cc).entity(instanceCollection).build();
         }
     }
 
@@ -285,7 +292,7 @@ public class ProductResource {
     @Path("{ciId}/instances")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getInstancesByMultiplePath(@Context Request request, @PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, PathListDTO pathsDTO)
+    public Response getInstancesByMultiplePath(@Context Request request, @PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("configSpec") String configSpecType, PathListDTO pathsDTO)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException {
 
         Response.ResponseBuilder rb = fakeSimilarBehavior(request);
@@ -296,42 +303,23 @@ public class ProductResource {
             //this request is resources consuming so we cache the response for 30 minutes
             cc.setMaxAge(60 * 15);
 
-            ConfigSpec cs = getConfigSpec(workspaceId,pathsDTO.getConfigSpec(),ciId);
-            List<InstanceCollection> instanceCollections = getInstancesCollectionsList(workspaceId,ciId, cs,pathsDTO.getPaths());
+            ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
 
-            List<InstanceCollection> instanceCollections = getInstancesCollectionsList(workspaceId,ciId, filter, pathsDTO.getPaths());
+            PSFilter filter = productService.getPSFilter(ciKey, configSpecType);
 
-            return Response.ok().lastModified(new Date()).cacheControl(cc).entity(new PathFilteredListInstanceCollection(instanceCollections, filter)).build();
-        }
-    }
+            List<List<PartLink>> paths = new ArrayList<>();
 
-    private List<InstanceCollection> getInstancesCollectionsList(String workspaceId, String ciId, PSFilter filter, String[] paths)
-            throws EntityNotFoundException, UserNotActiveException, NotAllowedException, AccessRightException{
-
-        ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
-
-        List<InstanceCollection> instanceCollections = new ArrayList<>();
-        for(String path : paths){
-            InstanceCollection instanceCollection = getInstancesCollection(ciKey,filter,path);
-
-            if(path == null || "null".equals(path) || "".equals(path)){
-                instanceCollections.clear();
+            for(String path : pathsDTO.getPaths()){
+                List<PartLink> decodedPath = productService.decodePath(ciKey,path);
+                if(decodedPath != null) {
+                    paths.add(decodedPath);
+                }
             }
-            instanceCollections.add(instanceCollection);
-        }
-        return instanceCollections;
-    }
 
-    private InstanceCollection getInstancesCollection(ConfigurationItemKey ciKey, PSFilter filter, String path) throws AccessRightException, NotAllowedException, WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException {
-        PartUsageLink rootUsageLink = productService.getRootPartUsageLink(ciKey);
-        List<Integer> usageLinkPaths = new ArrayList<>();
-        if(path != null && !"null".equals(path) && !"".equals(path)) {
-            String[] partUsageIdsString = path.split("-");
-            for (String partUsageIdString : partUsageIdsString) {
-                usageLinkPaths.add(Integer.parseInt(partUsageIdString));
-            }
+            InstanceCollection instanceCollection = new InstanceCollection(ciKey,filter,paths);
+
+            return Response.ok().lastModified(new Date()).cacheControl(cc).entity(instanceCollection).build();
         }
-        return new InstanceCollection(rootUsageLink, usageLinkPaths, filter);
     }
 
     @GET
@@ -384,66 +372,68 @@ public class ProductResource {
         return request.evaluatePreconditions(cal.getTime());
     }
 
-    private ComponentDTO createComponentDTO(Component component, int depth)
+    private ComponentDTO createComponentDTO(Component component)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
 
         PartMaster pm = component.getPartMaster();
-        PartRevision partR = pm.getLastRevision();
-        int newDepth = depth;
+        PartIteration retainedIteration = component.getRetainedIteration();
+
+        if(retainedIteration == null){
+            return null;
+        }
+
+        PartRevision partR = retainedIteration.getPartRevision();
 
         List<PartLink> path = component.getPath();
         PartLink usageLink = path.get(path.size()-1);
 
         ComponentDTO dto = new ComponentDTO();
         dto.setNumber(pm.getNumber());
-        dto.setPartUsageLinkId(usageLink.getId());
+        dto.setPartUsageLinkId(usageLink.getFullId());
         dto.setName(pm.getName());
         dto.setStandardPart(pm.isStandardPart());
         dto.setAuthor(pm.getAuthor().getName());
         dto.setAuthorLogin(pm.getAuthor().getLogin());
         dto.setAmount(usageLink.getAmount());
-        dto.setReleased(partR.isReleased());
         dto.setUnit(usageLink.getUnit());
+        dto.setSubstitute(usageLink instanceof PartSubstituteLink);
+        dto.setVersion(retainedIteration.getVersion());
+        dto.setIteration(retainedIteration.getIteration());
+        dto.setReleased(partR.isReleased());
+        dto.setDescription(partR.getDescription());
 
         List<InstanceAttributeDTO> lstAttributes = new ArrayList<>();
         List<ComponentDTO> components = new ArrayList<>();
 
-        if (partR != null) {
-            dto.setDescription(partR.getDescription());
-            PartIteration partI = partR.getLastIteration();
+        User checkoutUser = partR.getCheckOutUser();
+        if (checkoutUser != null) {
+            dto.setCheckOutUser(mapper.map(partR.getCheckOutUser(), UserDTO.class));
+            dto.setCheckOutDate(partR.getCheckOutDate());
+        }
 
-            User checkoutUser = partR.getCheckOutUser();
-            if (checkoutUser != null) {
-                dto.setCheckOutUser(mapper.map(partR.getCheckOutUser(), UserDTO.class));
-                dto.setCheckOutDate(partR.getCheckOutDate());
-            }
+        try {
+            productService.checkPartRevisionReadAccess(partR.getKey());
+            dto.setAccessDeny(false);
+            dto.setLastIterationNumber(productService.getNumberOfIteration(partR.getKey()));
+        }catch (Exception e){
+            LOGGER.log(Level.FINEST,null,e);
+            dto.setLastIterationNumber(-1);
+            dto.setAccessDeny(true);
+        }
 
-            dto.setVersion(partR.getVersion());
-            try {
-                productService.checkPartRevisionReadAccess(partR.getKey());
-                dto.setAccessDeny(false);
-                dto.setLastIterationNumber(productService.getNumberOfIteration(partR.getKey()));
-            }catch (Exception e){
-                LOGGER.log(Level.FINEST,null,e);
-                dto.setLastIterationNumber(-1);
-                dto.setAccessDeny(true);
-            }
 
-            if (partI != null) {
-                for (InstanceAttribute attr : partI.getInstanceAttributes()) {
-                    lstAttributes.add(mapper.map(attr, InstanceAttributeDTO.class));
-                }
-                if (newDepth != 0) {
-                    newDepth--;
-                    for (Component subComponent : component.getComponents()) {
-                        components.add(createComponentDTO(subComponent, newDepth));
-                    }
-                }
-                dto.setAssembly(partI.isAssembly());
-                dto.setIteration(partI.getIteration());
+        for (InstanceAttribute attr : retainedIteration.getInstanceAttributes()) {
+            lstAttributes.add(mapper.map(attr, InstanceAttributeDTO.class));
+        }
+
+        for (Component subComponent : component.getComponents()) {
+            ComponentDTO componentDTO = createComponentDTO(subComponent);
+            if(componentDTO != null) {
+                components.add(componentDTO);
             }
         }
 
+        dto.setAssembly(retainedIteration.isAssembly());
         dto.setAttributes(lstAttributes);
         dto.setComponents(components);
 
