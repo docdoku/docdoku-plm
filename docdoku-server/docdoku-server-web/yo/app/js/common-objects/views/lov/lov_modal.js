@@ -69,9 +69,12 @@ define([
 
         addLov: function(){
             var newModel = new LOVModel(
-            {name:'',
-                values:[{name:'', value:''}],
-                workspaceId:App.config.workspaceId}
+                {
+                    name:'',
+                    values:[{name:'', value:''}],
+                    workspaceId:App.config.workspaceId,
+                    deletable: true
+                }
             );
             //newModel.setNew(true);
 
