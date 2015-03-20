@@ -35,7 +35,11 @@ public class ModificationNotificationDTO {
     private UserDTO author;
 
     @XmlElement(nillable = true)
-    private boolean acknowledgeable;
+    private boolean acknowledged;
+
+
+    private String ackComment;
+    private UserDTO ackAuthor;
 
     public ModificationNotificationDTO() {
     }
@@ -64,6 +68,14 @@ public class ModificationNotificationDTO {
         this.modifiedPartIteration = modifiedPartIteration;
     }
 
+    public String getModifiedPartName() {
+        return modifiedPartName;
+    }
+
+    public void setModifiedPartName(String modifiedPartName) {
+        this.modifiedPartName = modifiedPartName;
+    }
+
     public Date getCheckInDate() {
         return checkInDate;
     }
@@ -88,11 +100,27 @@ public class ModificationNotificationDTO {
         this.author = author;
     }
 
-    public String getModifiedPartName() {
-        return modifiedPartName;
+    public boolean isAcknowledged() {
+        return acknowledged;
     }
 
-    public void setModifiedPartName(String modifiedPartName) {
-        this.modifiedPartName = modifiedPartName;
+    public void setAcknowledged(boolean acknowledged) {
+        this.acknowledged = acknowledged;
+    }
+
+    public String getAckComment() {
+        return ackComment;
+    }
+
+    public void setAckComment(String ackComment) {
+        this.ackComment = ackComment;
+    }
+
+    public UserDTO getAckAuthor() {
+        return ackAuthor;
+    }
+
+    public void setAckAuthor(UserDTO ackAuthor) {
+        this.ackAuthor = ackAuthor;
     }
 }

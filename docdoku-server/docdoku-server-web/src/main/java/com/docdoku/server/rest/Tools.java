@@ -113,6 +113,14 @@ public class Tools {
         Mapper mapper = DozerBeanMapperSingletonWrapper.getInstance();
         UserDTO userDTO = mapper.map(pNotification.getModifiedPart().getAuthor(),UserDTO.class);
         dto.setAuthor(userDTO);
+
+        User ackAuthor = pNotification.getAcknowledgementAuthor();
+        if(ackAuthor!=null){
+            UserDTO ackDTO = mapper.map(ackAuthor,UserDTO.class);
+            dto.setAckAuthor(ackDTO);
+        }
+        dto.setAcknowledged(pNotification.isAcknowledged());
+        dto.setAckComment(pNotification.getAcknowledgementComment());
         dto.setCheckInDate(pNotification.getModifiedPart().getCheckInDate());
         dto.setIterationNote(pNotification.getModifiedPart().getIterationNote());
         dto.setModifiedPartIteration(pNotification.getModifiedPart().getIteration());
