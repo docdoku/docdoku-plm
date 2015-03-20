@@ -66,7 +66,7 @@ var documents = {
 
         template : {
             number : 'TemplateWithLOVAttributeColor',
-            attributName : 'colorAttribut'
+            attributeName : 'colorAttributes'
         }
 
     }

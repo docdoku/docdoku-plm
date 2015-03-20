@@ -106,7 +106,10 @@ module.exports = {
         "js/product-management/product/productDeletion.js",
         "js/product-management/part/partDeletion.js",
         "js/product-management/template/partTemplateDeletion.js",
-        "js/document-management/lov/lovDeletion.js"
+        "js/document-management/lov/lovDeletion.js",
+
+        //Create a document template with a LOV attribut, needs an empty list of documents template, and an empty list of LOV
+        "js/document-management/lov/lovInTemplateCreation.js"
 
 
     ]
