@@ -73,13 +73,15 @@ public class ModificationNotification implements Serializable {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumns({
-            @JoinColumn(name = "ACKNOWLEDGEMENTAUTHOR_LOGIN", referencedColumnName = "LOGIN"),
-            @JoinColumn(name = "ACKNOWLEDGEMENTAUTHOR_WORKSPACE_ID", referencedColumnName = "WORKSPACE_ID")
+            @JoinColumn(name = "ACKAUTHOR_LOGIN", referencedColumnName = "LOGIN"),
+            @JoinColumn(name = "ACKAUTHOR_WORKSPACE_ID", referencedColumnName = "WORKSPACE_ID")
     })
     private User acknowledgementAuthor;
 
+    @Temporal(TemporalType.TIMESTAMP)
     private Date acknowledgementDate;
 
+    @Lob
     private String acknowledgementComment;
 
     public ModificationNotification() {
