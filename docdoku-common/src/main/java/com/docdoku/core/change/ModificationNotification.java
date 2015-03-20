@@ -78,6 +78,7 @@ public class ModificationNotification implements Serializable {
     })
     private User acknowledgementAuthor;
 
+    @Temporal(TemporalType.TIMESTAMP)
     private Date acknowledgementDate;
 
     private String acknowledgementComment;
