@@ -53,7 +53,22 @@ var documents = {
     lov : {
         itemName : 'casperTestItemName',
         possibleValueName : 'None',
-        possibleValueValue : '0'
+        possibleValueValue : '0',
+        color : {
+            itemName : 'Color',
+            namePairValueNameRed : 'Red',
+            namePairValueValueRed : 'rouge',
+            namePairValueNameGreen : 'Green',
+            namePairValueValueGreen : 'vert',
+            namePairValueNameBlue : 'Blue',
+            namePairValueValueBlue : 'bleu'
+        },
+
+        template : {
+            number : 'TemplateWithLOVAttributeColor',
+            attributName : 'colorAttribut'
+        }
+
     }
 };
 
