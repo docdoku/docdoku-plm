@@ -40,7 +40,7 @@ define({
 	BOM_VIEW: "Liste des composants",
 	BOOLEAN: "Booléen",
     BY: "par",
-	CAD_FILE: "Fichier CAD",
+	CAD_FILE: "Fichier CAO",
 	CALL_TO_TITLE: "Appel en cours",
 	CANCEL: "Annuler",
 	CANCEL_CHECKOUT: "Annuler la réservation",
