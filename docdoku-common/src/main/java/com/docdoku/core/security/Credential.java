@@ -40,7 +40,7 @@ import java.util.logging.Logger;
 @javax.persistence.Entity
 public class Credential implements java.io.Serializable {
 
-    @Column(length = 50)
+
     @javax.persistence.Id
     private String login="";
     
