@@ -13,6 +13,7 @@ define([
         tagName: 'tr',
 
         events: {
+            'click td.modification_notification i': 'toPartModalOnNotificationsTab',
             'click .part_number': 'onPartClicked',
             'click td.part-revision-share i': 'sharePart',
             'click td.part-attached-files i': 'toPartModalOnFilesTab'
@@ -40,6 +41,16 @@ define([
                 new PartModalView({
                     model: self.model
                 });
+            });
+        },
+
+        toPartModalOnNotificationsTab: function () {
+            var self = this;
+            self.model.fetch().success(function () {
+                new PartModalView({
+                    model: self.model
+                });
+                $('a[href$="tab-part-modification-notifications"]').click();
             });
         },
 

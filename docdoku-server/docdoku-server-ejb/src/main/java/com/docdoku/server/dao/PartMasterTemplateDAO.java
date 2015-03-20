@@ -22,6 +22,7 @@ package com.docdoku.server.dao;
 import com.docdoku.core.exceptions.CreationException;
 import com.docdoku.core.exceptions.PartMasterTemplateAlreadyExistsException;
 import com.docdoku.core.exceptions.PartMasterTemplateNotFoundException;
+import com.docdoku.core.meta.ListOfValuesKey;
 import com.docdoku.core.product.PartMasterTemplate;
 import com.docdoku.core.product.PartMasterTemplateKey;
 
@@ -86,5 +87,12 @@ public class PartMasterTemplateDAO {
             //thrown instead of EntityExistsException
             throw new CreationException(mLocale);
         }
+    }
+
+    public List<PartMasterTemplate> findAllPartMTemplatesFromLOV(ListOfValuesKey lovKey){
+        return em.createNamedQuery("PartMasterTemplate.findWhereLOV", PartMasterTemplate.class)
+                .setParameter("lovName", lovKey.getName())
+                .setParameter("workspace_id", lovKey.getWorkspaceId())
+                .getResultList();
     }
 }

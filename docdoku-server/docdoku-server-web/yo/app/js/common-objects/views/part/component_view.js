@@ -74,6 +74,10 @@ define([
             _(this.model.get('cadInstances')).each(function (instance) {
                 self.addCadInstanceView(instance);
             });
+
+            if (this.$amount.val() <= 1) {
+                this.$('.decrease-cadInstance').hide();
+            }
         },
 
         initSubstitutePartView: function () {
@@ -84,7 +88,7 @@ define([
 
             });
             if (this.model.get('substitutes').length == 0){
-                self.$('.substitute-count-text').text(App.config.i18n.PARTS_SUBSTITUTES);
+                self.$('.substitute-count-text').text(App.config.i18n.PART_SUBSTITUTE);
 
             }
         },
@@ -108,10 +112,11 @@ define([
         },
         addSubstitutePartsView: function (model) {
             var self = this;
-            self.$('.substitute-count').text("");
+            self.$('.substitute-count-text').text("");
             var substitutePartView = new SubstitutePartView({
                 model: model,
                 editMode: this.options.editMode,
+                isCheckout: this.options.isCheckout,
                 removeSubHandler: function () {
                     self.model.attributes.substitutes = _(self.model.attributes.substitutes).without(model);
                     self.removeSubPart(model);
@@ -119,9 +124,10 @@ define([
                     self.$('.substitute-count').text(self.model.get('substitutes').length);
                     self.$('.substitute-count-text').text(" "+ countText);
                 }}).render();
-            var countText = (self.model.get('substitutes').length == 1 ? App.config.i18n.PART_SUBSTITUTE :  App.config.i18n.PARTS_SUBSTITUTES);
+            var countText = (self.model.get('substitutes').length <= 1 ? App.config.i18n.PART_SUBSTITUTE :  App.config.i18n.PARTS_SUBSTITUTES);
 
-            self.$('.substitute-count').text(self.model.get('substitutes').length + " "+ countText );
+            self.$('.substitute-count').text(self.model.get('substitutes').length + " " );
+            self.$('.substitute-count-text').text(" "+ countText);
             this.substitutePartViews.push(substitutePartView);
             this.$(".substitute-parts").append(substitutePartView.$el);
 

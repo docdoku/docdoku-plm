@@ -36,11 +36,6 @@ public class DefaultAttributeTemplate extends InstanceAttributeTemplate {
 
     private AttributeType attributeType;
 
-    public enum AttributeType {
-
-        TEXT, NUMBER, DATE, BOOLEAN, URL
-    }
-
     public DefaultAttributeTemplate() {
     }
 

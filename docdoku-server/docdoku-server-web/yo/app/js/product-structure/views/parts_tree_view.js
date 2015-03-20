@@ -10,7 +10,8 @@ define(['backbone', 'models/component_module', 'views/component_views'
             'change input': 'checkChildrenInputs',
             'change li': 'checkParentsInputs',
             'component:selected a': 'onComponentSelected',
-            'click #product_title': 'onProductTitleClicked'
+            'click #product_title': 'onProductTitleClicked',
+            'click .fa-refresh': 'refreshProductView'
         },
 
         setSelectedComponent: function (component) {
@@ -22,6 +23,9 @@ define(['backbone', 'models/component_module', 'views/component_views'
             App.appView.onComponentSelected(true);
         },
 
+        refreshProductView: function(){
+          this.refreshAll();
+        },
         render: function () {
             var self = this;
             var rootCollection = new ComponentModule.Collection([], { isRoot: true });

@@ -7,11 +7,17 @@
 </div>
 <div class="controls">
     <select class="type">
+
         <option value="TEXT">{{i18n.TEXT}}</option>
         <option value="BOOLEAN">{{i18n.BOOLEAN}}</option>
         <option value="DATE">{{i18n.DATE}}</option>
         <option value="NUMBER">{{i18n.NUMBER}}</option>
         <option value="URL">{{i18n.URL}}</option>
+        <optgroup label="{{i18n.LOV}}">
+            {{#lovs}}
+            <option value="{{getLOVName}}">{{getLOVName}}</option>
+            {{/lovs}}
+        </optgroup>
     </select>
 </div>
 <label class="checkbox attribute-mandatory">

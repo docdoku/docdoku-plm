@@ -21,14 +21,18 @@ package com.docdoku.server;
 
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
+import com.docdoku.core.document.DocumentMasterTemplate;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.meta.ListOfValues;
 import com.docdoku.core.meta.ListOfValuesKey;
 import com.docdoku.core.meta.NameValuePair;
+import com.docdoku.core.product.PartMasterTemplate;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.ILOVManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
+import com.docdoku.server.dao.DocumentMasterTemplateDAO;
 import com.docdoku.server.dao.LOVDAO;
+import com.docdoku.server.dao.PartMasterTemplateDAO;
 import com.docdoku.server.dao.WorkspaceDAO;
 
 import javax.annotation.security.RolesAllowed;
@@ -98,10 +102,20 @@ public class LOVManagerBean implements ILOVManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public void deleteLov(ListOfValuesKey lovKey) throws ListOfValuesNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException {
+    public void deleteLov(ListOfValuesKey lovKey) throws ListOfValuesNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, EntityConstraintException {
         User user = userManager.checkWorkspaceReadAccess(lovKey.getWorkspaceId());
         userManager.checkWorkspaceWriteAccess(lovKey.getWorkspaceId());
-        LOVDAO lovDAO = new LOVDAO(new Locale(user.getLanguage()),em);
+        Locale locale = new Locale(user.getLanguage());
+        LOVDAO lovDAO = new LOVDAO(locale,em);
+
+        if (this.isLovUsedInDocument(lovKey)){
+            throw new EntityConstraintException(locale,"EntityConstraintException14");
+        }
+
+        if (this.isLovUsedInPart(lovKey)){
+            throw new EntityConstraintException(locale,"EntityConstraintException15");
+        }
+
         ListOfValues lov = lovDAO.loadLOV(lovKey);
         lovDAO.deleteLOV(lov);
     }
@@ -111,10 +125,41 @@ public class LOVManagerBean implements ILOVManagerLocal {
     public ListOfValues updateLov(ListOfValuesKey lovKey, String name, String workspaceId, List<NameValuePair> nameValuePairList) throws ListOfValuesAlreadyExistsException, CreationException, ListOfValuesNotFoundException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException {
         User user = userManager.checkWorkspaceReadAccess(lovKey.getWorkspaceId());
         userManager.checkWorkspaceWriteAccess(lovKey.getWorkspaceId());
-        this.deleteLov(lovKey);
-        this.createLov(workspaceId, name, nameValuePairList);
-        ListOfValuesKey newLovKey = new ListOfValuesKey(workspaceId, name);
-        return this.findLov(newLovKey);
+        LOVDAO lovDAO = new LOVDAO(new Locale(user.getLanguage()),em);
+
+        ListOfValues lovToUpdate = this.findLov(lovKey);
+
+        lovToUpdate.setValues(nameValuePairList);
+
+        return lovDAO.updateLOV(lovToUpdate);
+    }
+
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
+    public boolean isLOVDeletable(ListOfValuesKey lovKey){
+        return !this.isLovUsedInDocument(lovKey) && !this.isLovUsedInPart(lovKey);
+    }
+
+    private boolean isLovUsedInDocument(ListOfValuesKey lovKey){
+        DocumentMasterTemplateDAO documentMasterTemplateDAO = new DocumentMasterTemplateDAO(em);
+
+        List<DocumentMasterTemplate> documentsUsingLOV = documentMasterTemplateDAO.findAllDocMTemplatesFromLOV(lovKey);
+        if (documentsUsingLOV != null && documentsUsingLOV.size() > 0){
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean isLovUsedInPart(ListOfValuesKey lovKey){
+        PartMasterTemplateDAO partMasterTemplateDAO = new PartMasterTemplateDAO(em);
+
+        List<PartMasterTemplate> partsUsingLOV = partMasterTemplateDAO.findAllPartMTemplatesFromLOV(lovKey);
+        if (partsUsingLOV != null && partsUsingLOV.size() > 0){
+            return true;
+        }
+
+        return false;
     }
 
 

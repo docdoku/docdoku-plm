@@ -82,6 +82,7 @@ define([
 
                 // cannot pass a collection of cad file to server.
                 var attachedFile = this.fileListView.collection.first();
+                this.fileListView.collection.reset(this.fileListView.collection.last());
                 if (attachedFile) {
                     this.model.set('attachedFile', attachedFile.get('fullName'));
                 } else {

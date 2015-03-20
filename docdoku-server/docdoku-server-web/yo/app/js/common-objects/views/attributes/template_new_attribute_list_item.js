@@ -1,27 +1,39 @@
 /*global define,App*/
 define([
-    "common-objects/views/components/list_item",
-    "text!common-objects/templates/attributes/template_new_attribute_list_item.html"
+    'common-objects/views/components/list_item',
+    'text!common-objects/templates/attributes/template_new_attribute_list_item.html'
 ], function (ListItemView, template) {
+    'use strict';
     var TemplateNewAttributeListItemView = ListItemView.extend({
 
         template: template,
 
-        tagName: "div",
+        tagName: 'div',
+
+        lovList:null,
 
         initialize: function () {
             ListItemView.prototype.initialize.apply(this, arguments);
-            this.events["change .type"] = "typeChanged";
-            this.events["change .name"] = "updateName";
-            this.events["click .fa-times"] = "removeAction";
-            this.events["change .attribute-mandatory input"] = "mandatoryChanged";
-            this.events[ "drop"] = "drop";
+            this.lovList = this.options.lovs;
+            this.events['change .type'] = 'typeChanged';
+            this.events['change .name'] = 'updateName';
+            this.events['click .fa-times'] = 'removeAction';
+            this.events['change .attribute-mandatory input'] = 'mandatoryChanged';
+            this.events.drop = 'drop';
+            this.templateExtraData = {lovs : this.lovList.models};
         },
         rendered: function () {
-            var type = this.model.get("attributeType");
-            this.$el.find("select.type:first").val(type);
-            this.$el.addClass("well");
+
+            this.$el.addClass('well');
             this.$('input[required]').customValidity(App.config.i18n.REQUIRED_FIELD);
+
+            var type = this.model.get('attributeType');
+            if (type !== 'LOV'){
+                this.$('select.type:first').val(type);
+            }else{
+                var lovNameSelected = this.model.get('lovName');
+                this.$('select.type:first').val(lovNameSelected);
+            }
         },
         removeAction: function () {
             this.model.destroy({
@@ -29,22 +41,36 @@ define([
             });
         },
         typeChanged: function (evt) {
-            this.model.set({
-                attributeType: evt.target.value
-            });
+            var typeValue = evt.target.value;
+            if (typeValue === 'TEXT' || typeValue === 'BOOLEAN' || typeValue === 'DATE' || typeValue === 'NUMBER' || typeValue === 'URL' ){
+                this.model.set({
+                    attributeType: typeValue
+                });
+                this.setChoice(null);
+            }else{
+                this.model.set({
+                    attributeType: 'LOV'
+                });
+                this.setChoice(typeValue);
+            }
         },
         updateName: function () {
             this.model.set({
-                name: this.$el.find("input.name:first").val()
+                name: this.$el.find('input.name:first').val()
             });
         },
         mandatoryChanged: function () {
             this.model.set({
-                mandatory: this.$el.find(".attribute-mandatory input")[0].checked
+                mandatory: this.$el.find('.attribute-mandatory input')[0].checked
             });
         },
         drop: function(event, index) {
             this.$el.trigger('update-sort', [this.model, index]);
+        },
+        setChoice:function(value){
+            this.model.set({
+                lovName:value
+            });
         }
     });
     return TemplateNewAttributeListItemView;

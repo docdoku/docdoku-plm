@@ -32,6 +32,20 @@ var documents = {
         expireDate:tomorrowValue,
         expireDate2:yesterdayValue
 	},
+    document2 : {
+        number : '100-AAA-CasperJsTestDocument',
+        iterationNote:'This is the first iteration of this document',
+        sharedPassword:'azertyuiop',
+        expireDate:tomorrowValue,
+        expireDate2:yesterdayValue
+    },
+    document3 : {
+        number : '200-AAA-CasperJsTestDocument',
+        iterationNote:'This is the first iteration of this document',
+        sharedPassword:'azertyuiop',
+        expireDate:tomorrowValue,
+        expireDate2:yesterdayValue
+    },
     tags:{
         tag1:'Foo',
         tag2:'Bar'
@@ -39,7 +53,22 @@ var documents = {
     lov : {
         itemName : 'casperTestItemName',
         possibleValueName : 'None',
-        possibleValueValue : '0'
+        possibleValueValue : '0',
+        color : {
+            itemName : 'Color',
+            namePairValueNameRed : 'Red',
+            namePairValueValueRed : 'rouge',
+            namePairValueNameGreen : 'Green',
+            namePairValueValueGreen : 'vert',
+            namePairValueNameBlue : 'Blue',
+            namePairValueValueBlue : 'bleu'
+        },
+
+        template : {
+            number : 'TemplateWithLOVAttributeColor',
+            attributeName : 'colorAttributes'
+        }
+
     }
 };
 
@@ -162,7 +191,9 @@ var apiUrls = {
 	userInfo : homeUrl+'api/workspaces/'+workspace+'/users/me',
 	deletePart : homeUrl+'api/workspaces/'+workspace+'/parts/'+products.part1.number+'-A',
     deletePartTemplate : homeUrl+'api/workspaces/'+workspace+'/part-templates/'+products.template1.number,
-    deleteLov : homeUrl+'api/workspaces/'+workspace+'/lov/'+documents.lov.itemName,
+    deleteDocumentTemplate : homeUrl+'api/workspaces/'+workspace+'/document-templates/'+documents.lov.template.number,
+    deleteLov1 : homeUrl+'api/workspaces/'+workspace+'/lov/'+documents.lov.itemName,
+    deleteLov2 : homeUrl+'api/workspaces/'+workspace+'/lov/'+documents.lov.color.itemName,
 	deleteDocument : homeUrl+'api/workspaces/'+workspace+'/documents/'+documents.document1.number+'-A',
 	deleteProduct : homeUrl+'api/workspaces/'+workspace+'/products/'+products.product1.number,
 	deleteFolder : homeUrl+'api/workspaces/'+workspace+'/folders/'+workspace+":"+documents.folder1,

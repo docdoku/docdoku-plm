@@ -37,7 +37,9 @@ public interface ILOVManagerLocal {
 
     void createLov(String workspaceId, String name, List<NameValuePair> nameValuePairList) throws ListOfValuesAlreadyExistsException, CreationException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException;
 
-    void deleteLov(ListOfValuesKey lovKey) throws ListOfValuesNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException;
+    void deleteLov(ListOfValuesKey lovKey) throws ListOfValuesNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, EntityConstraintException;
 
     ListOfValues updateLov(ListOfValuesKey lovKey, String name, String workspaceId, List<NameValuePair> nameValuePairList) throws ListOfValuesAlreadyExistsException, CreationException, ListOfValuesNotFoundException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException;
+
+    boolean isLOVDeletable(ListOfValuesKey lovKey);
 }

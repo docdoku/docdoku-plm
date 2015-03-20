@@ -35,18 +35,18 @@ import javax.persistence.Table;
 
 /**
  * A {@link ConfigSpec} which selects the latest iteration.
- * 
+ *
  * @author Florent Garin
  * @version 1.1, 30/10/11
- * @since   V1.1
+ * @since V1.1
  */
-@Table(name="LATESTCONFIGSPEC")
+@Table(name = "LATESTCONFIGSPEC")
 @Entity
 public class LatestConfigSpec extends ConfigSpec {
 
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private User user;
-    
+
     public LatestConfigSpec() {
     }
 
@@ -57,6 +57,7 @@ public class LatestConfigSpec extends ConfigSpec {
     public User getUser() {
         return user;
     }
+
     public void setUser(User user) {
         this.user = user;
     }
@@ -64,17 +65,20 @@ public class LatestConfigSpec extends ConfigSpec {
     @Override
     public PartIteration filterConfigSpec(PartMaster part) {
         PartRevision partRevision = part.getLastRevision();
-        PartIteration partI = partRevision.getLastIteration();
-        if(partRevision.isCheckedOut() && !partRevision.getCheckOutUser().equals(user)){
-            partI = partRevision.getLastCheckedInIteration();
+        if (partRevision != null) {
+            PartIteration partI = partRevision.getLastIteration();
+            if (partRevision.isCheckedOut() && !partRevision.getCheckOutUser().equals(user)) {
+                partI = partRevision.getLastCheckedInIteration();
+            }
+            return partI;
         }
-        return partI;
+        return null;
     }
 
     @Override
     public DocumentIteration filterConfigSpec(DocumentRevision documentRevision) {
         DocumentIteration documentIteration = documentRevision.getLastIteration();
-        if(documentRevision.isCheckedOut() && !documentRevision.getCheckOutUser().equals(user)){
+        if (documentRevision.isCheckedOut() && !documentRevision.getCheckOutUser().equals(user)) {
             documentIteration = documentRevision.getLastCheckedInIteration();
         }
         return documentIteration;

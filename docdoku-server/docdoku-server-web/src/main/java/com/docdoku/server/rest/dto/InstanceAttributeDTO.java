@@ -20,6 +20,7 @@
 package com.docdoku.server.rest.dto;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  *
@@ -31,10 +32,14 @@ public class InstanceAttributeDTO  implements Serializable{
     private boolean mandatory;
     private Type type;
     public enum Type {
-        TEXT, NUMBER, DATE, BOOLEAN, URL
+        TEXT, NUMBER, DATE, BOOLEAN, URL, LOV
     }
     private String value;
-    
+
+    private String lovName;
+
+    private List<NameValuePairDTO> items;
+
     public InstanceAttributeDTO(){
     
     }
@@ -76,5 +81,21 @@ public class InstanceAttributeDTO  implements Serializable{
     }
     public void setMandatory(boolean mandatory) {
         this.mandatory = mandatory;
+    }
+
+    public String getLovName() {
+        return lovName;
+    }
+
+    public void setLovName(String lovName) {
+        this.lovName = lovName;
+    }
+
+    public List<NameValuePairDTO> getItems() {
+        return items;
+    }
+
+    public void setItems(List<NameValuePairDTO> items) {
+        this.items = items;
     }
 }

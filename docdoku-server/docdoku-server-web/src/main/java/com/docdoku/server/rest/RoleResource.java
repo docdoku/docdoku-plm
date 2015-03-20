@@ -160,8 +160,8 @@ public class RoleResource {
     private RoleDTO mapRoleToDTO(Role role){
         RoleDTO roleDTO = mapper.map(role,RoleDTO.class);
         roleDTO.setWorkspaceId(role.getWorkspace().getId());
-        if(role.getDefaultUserMapped() != null){
-            roleDTO.setDefaultUserMapped(mapper.map(role.getDefaultUserMapped(), UserDTO.class));
+        if(role.getDefaultAssignee() != null){
+            roleDTO.setDefaultUserMapped(mapper.map(role.getDefaultAssignee(), UserDTO.class));
         }
         roleDTO.setId(role.getName());
 

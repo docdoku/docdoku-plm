@@ -45,6 +45,10 @@ import java.util.*;
 @Table(name="DOCUMENTMASTERTEMPLATE")
 @javax.persistence.IdClass(com.docdoku.core.document.DocumentMasterTemplateKey.class)
 @javax.persistence.Entity
+@NamedQueries({
+        @NamedQuery(name="DocumentMasterTemplate.findWhereLOV",
+                query="SELECT d FROM DocumentMasterTemplate d WHERE EXISTS ( SELECT i FROM InstanceAttributeTemplate i, ListOfValuesAttributeTemplate il WHERE i member of d.attributeTemplates AND i = il AND il.lov.name = :lovName AND il.lov.workspaceId = :workspace_id)")
+})
 public class DocumentMasterTemplate implements Serializable, FileHolder, Comparable<DocumentMasterTemplate> {
 
     @Column(length=100)

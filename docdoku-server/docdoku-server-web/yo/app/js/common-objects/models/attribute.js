@@ -15,8 +15,16 @@ define(['backbone'], function (Backbone) {
             return this.get('name');
         },
 
+        getLOVName: function () {
+            return this.get('lovName');
+        },
+
         getValue: function () {
             return this.get('value');
+        },
+
+        getItems: function () {
+            return this.get('items');
         },
 
         toString: function () {
@@ -26,7 +34,7 @@ define(['backbone'], function (Backbone) {
     });
 
     Attribute.types = {
-        NUMBER: 'NUMBER', DATE: 'DATE', BOOLEAN: 'BOOLEAN', TEXT: 'TEXT', URL: 'URL'};
+        NUMBER: 'NUMBER', DATE: 'DATE', BOOLEAN: 'BOOLEAN', TEXT: 'TEXT', URL: 'URL', LOV:'LOV'};
 
     return Attribute;
 });

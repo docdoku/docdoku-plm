@@ -63,7 +63,7 @@ public class InstanceListOfValuesAttribute extends InstanceAttribute{
     public boolean setValue(Object pValue) {
         try{
             int index=Integer.parseInt(pValue + "");
-            return setIndexValue(indexValue);
+            return setIndexValue(index);
         }catch(NumberFormatException ex){
             return false;
         }

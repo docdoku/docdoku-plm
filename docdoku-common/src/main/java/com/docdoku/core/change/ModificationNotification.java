@@ -21,10 +21,12 @@
 
 package com.docdoku.core.change;
 
+import com.docdoku.core.common.User;
 import com.docdoku.core.product.PartIteration;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * Class which instances are attached to assemblies in order to track
@@ -37,7 +39,7 @@ import java.io.Serializable;
  */
 @Entity
 @NamedQueries ({
-        @NamedQuery(name="ModificationNotification.findByImpactedPartIteration", query = "SELECT n FROM ModificationNotification n WHERE n.impactedPart.iteration = :iteration AND n.impactedPart.partRevision.version = :version AND n.impactedPart.partRevision.partMaster.number = :partNumber AND n.impactedPart.partRevision.partMaster.workspace.id = :workspaceId"),
+        @NamedQuery(name="ModificationNotification.findByImpactedPartIteration", query = "SELECT n FROM ModificationNotification n WHERE n.impactedPart.iteration = :iteration AND n.impactedPart.partRevision.version = :version AND n.impactedPart.partRevision.partMaster.number = :partNumber AND n.impactedPart.partRevision.partMaster.workspace.id = :workspaceId ORDER BY n.modifiedPart.modificationDate"),
         @NamedQuery(name="ModificationNotification.removeAllOnPartRevision", query = "DELETE FROM ModificationNotification n WHERE n.impactedPart.partRevision.version = :version AND n.impactedPart.partRevision.partMaster.number = :partNumber AND n.impactedPart.partRevision.partMaster.workspace.id = :workspaceId")
 })
 @Table(name="MODIFICATIONNOTIFICATION")
@@ -67,6 +69,21 @@ public class ModificationNotification implements Serializable {
     })
     private PartIteration impactedPart;
 
+    private boolean acknowledged;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumns({
+            @JoinColumn(name = "ACKAUTHOR_LOGIN", referencedColumnName = "LOGIN"),
+            @JoinColumn(name = "ACKAUTHOR_WORKSPACE_ID", referencedColumnName = "WORKSPACE_ID")
+    })
+    private User acknowledgementAuthor;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date acknowledgementDate;
+
+    @Lob
+    private String acknowledgementComment;
+
     public ModificationNotification() {
     }
 
@@ -88,5 +105,37 @@ public class ModificationNotification implements Serializable {
 
     public void setModifiedPart(PartIteration modifiedPart) {
         this.modifiedPart = modifiedPart;
+    }
+
+    public boolean isAcknowledged() {
+        return acknowledged;
+    }
+
+    public void setAcknowledged(boolean acknowledged) {
+        this.acknowledged = acknowledged;
+    }
+
+    public User getAcknowledgementAuthor() {
+        return acknowledgementAuthor;
+    }
+
+    public void setAcknowledgementAuthor(User acknowledgementAuthor) {
+        this.acknowledgementAuthor = acknowledgementAuthor;
+    }
+
+    public Date getAcknowledgementDate() {
+        return acknowledgementDate;
+    }
+
+    public void setAcknowledgementDate(Date acknowledgementDate) {
+        this.acknowledgementDate = acknowledgementDate;
+    }
+
+    public String getAcknowledgementComment() {
+        return acknowledgementComment;
+    }
+
+    public void setAcknowledgementComment(String acknowledgementComment) {
+        this.acknowledgementComment = acknowledgementComment;
     }
 }

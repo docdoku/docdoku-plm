@@ -72,7 +72,7 @@ casper.test.begin('Part creation tests suite', 4, function partCreationTestsSuit
     casper.then(function waitForPartToBeCreated(){
         this.waitForSelector('#part_table .part_number span',function partHasBeenCreated(){
             this.test.assertSelectorHasText('#part_table tbody tr:first-child td.part_number span',products.part1.number);
-            this.test.assertSelectorHasText('#part_table tbody tr:first-child td:nth-child(6)',products.part1.name);
+            this.test.assertSelectorHasText('#part_table tbody tr:first-child td:nth-child(7)',products.part1.name);
         },function fail() {
             this.capture('screenshot/partCreation/waitForPartToBeCreated-error.png');
             this.test.assert(false,'New part created can not be found');

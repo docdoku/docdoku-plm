@@ -188,6 +188,9 @@
                                             <c:when test="${item.class=='class com.docdoku.core.meta.InstanceURLAttribute'}">
                                                 <td><a href="${item.value}">${item.value}</a></td>
                                             </c:when>
+                                            <c:when test="${item.class=='class com.docdoku.core.meta.InstanceListOfValuesAttribute'}">
+                                                <td>${item.getSelectedName()}</td>
+                                            </c:when>
                                             <c:otherwise>
                                                 <td>${item.value}</td>
                                             </c:otherwise>

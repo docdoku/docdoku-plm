@@ -50,10 +50,10 @@ public class Role implements Serializable {
 
     @ManyToOne(fetch=FetchType.EAGER)
     @JoinColumns({
-            @JoinColumn(name="DEFAULT_USER_MAPPED_LOGIN", referencedColumnName="LOGIN"),
-            @JoinColumn(name="DEFAULT_USER_MAPPED_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID")
+            @JoinColumn(name="DEFAULT_ASSIGNEE_LOGIN", referencedColumnName="LOGIN"),
+            @JoinColumn(name="DEFAULT_ASSIGNEE_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID")
     })
-    private User defaultUserMapped;
+    private User defaultAssignee;
 
     public Role(){
     }
@@ -63,10 +63,10 @@ public class Role implements Serializable {
         this.workspace = workspace;
     }
 
-    public Role(String name, Workspace workspace, User defaultUserMapped){
+    public Role(String name, Workspace workspace, User defaultAssignee){
         this.name = name;
         this.workspace = workspace;
-        this.defaultUserMapped = defaultUserMapped;
+        this.defaultAssignee = defaultAssignee;
     }
 
 
@@ -86,11 +86,11 @@ public class Role implements Serializable {
         this.workspace = workspace;
     }
 
-    public User getDefaultUserMapped() {
-        return defaultUserMapped;
+    public User getDefaultAssignee() {
+        return defaultAssignee;
     }
 
-    public void setDefaultUserMapped(User defaultUserMapped) {
-        this.defaultUserMapped = defaultUserMapped;
+    public void setDefaultAssignee(User defaultAssignee) {
+        this.defaultAssignee = defaultAssignee;
     }
 }

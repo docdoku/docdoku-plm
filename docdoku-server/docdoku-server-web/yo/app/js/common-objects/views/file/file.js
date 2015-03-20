@@ -2,8 +2,9 @@
 define([
     'backbone',
     'mustache',
-    'text!common-objects/templates/file/file.html'
-], function (Backbone, Mustache, template) {
+    'text!common-objects/templates/file/file.html',
+    'common-objects/views/alert'
+], function (Backbone, Mustache, template,AlertView) {
 	'use strict';
     var FileView = Backbone.View.extend({
 
@@ -60,6 +61,7 @@ define([
             this.checkbox = this.$('input.file-check');
             this.fileNameEl = this.$('.fileName');
             this.fileNameInput = this.$('input[name=filename]');
+            this.notifications = $('.modal .notifications');
         },
 
         editName:function(){
@@ -70,7 +72,7 @@ define([
         validateName:function(){
 
             var _this = this;
-            var oldModel = this.model.clone();
+            var oldModel = _this.model.clone();
             var newName = this.fileNameInput.val();
 
             if( this.model.getShortName() !== newName){
@@ -78,11 +80,25 @@ define([
                 this.model.save().success(function(){
                     _this.model.rewriteUrl();
                     _this.onModelChanged();
+                    _this.notifications.text("");
                     _this.render();
                     _this.$el.toggleClass('edition');
-                }).error(function(){
-                    _this.model = oldModel;
+                }).error(function(error){
+
+                    _this.model = oldModel.clone();
+                    _this.model.url = this.url;
+                    _this.model.rewriteUrl();
                     _this.render();
+                    _this.$el.toggleClass('edition');
+
+                    var errorMessage = error ? error.responseText : _this.model;
+
+                    _this.notifications.append(new AlertView({
+                        type: 'error',
+                        message: errorMessage
+                    }).render().$el);
+
+
                 });
             }else{
                 this.$el.toggleClass('edition');

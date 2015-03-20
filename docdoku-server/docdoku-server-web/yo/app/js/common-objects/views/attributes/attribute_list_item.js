@@ -1,15 +1,18 @@
 /*global define,App*/
 define([
-    "mustache",
-    "common-objects/views/components/list_item"
+    'mustache',
+    'common-objects/views/components/list_item'
 ], function (Mustache, ListItemView) {
+    'use strict';
     var AttributeListItemView = ListItemView.extend({
 
-        tagName: "div",
+        tagName: 'div',
 
         editMode: true,
 
         attributesLocked: false,
+
+        lovs:null,
 
         setEditMode: function (editMode) {
             this.editMode = editMode;
@@ -17,11 +20,12 @@ define([
 
         initialize: function () {
             ListItemView.prototype.initialize.apply(this, arguments);
-            this.events[ "change .type"] = "typeChanged";
-            this.events[ "change .name"] = "updateName";
-            this.events[ "change .value"] = "updateValue";
-            this.events[ "click .fa-times"] = "removeAction";
-            this.events[ "drop"] = "drop";
+            this.events[ 'change .type'] = 'typeChanged';
+            this.events[ 'change .name'] = 'updateName';
+            this.events[ 'change .value'] = 'updateValue';
+            this.events[ 'click .fa-times'] = 'removeAction';
+            this.events.drop = 'drop';
+            this.lovs = this.options.lovs;
         },
 
         drop: function(event, index) {
@@ -29,14 +33,14 @@ define([
         },
 
         rendered: function () {
-            var type = this.model.get("type");
+            var type = this.model.get('type');
             if (this.editMode && !this.attributesLocked) {
-                this.$el.find("select.type").val(type);
+                this.$el.find('select.type').val(type);
             }
             else {
-                this.$el.find("div.type").html(type.toLowerCase());
+                this.$el.find('div.type').html(type.toLowerCase());
             }
-            this.$el.addClass("well");
+            this.$el.addClass('well');
             this.$('input[required]').customValidity(App.config.i18n.REQUIRED_FIELD);
         },
 
@@ -48,21 +52,30 @@ define([
 
         typeChanged: function (evt) {
             var type = evt.target.value;
-            this.model.set({
-                type: type,
-                value: "" // TODO: Validate and convert if possible between types
-            });
-            this.model.collection.trigger("reset");
+
+            if(type!== 'TEXT' && type!== 'NUMBER' && type!== 'BOOLEAN' && type!== 'DATE' && type!== 'URL'){
+                this.model.set({
+                    type: 'LOV',
+                    lovName: type,
+                    value: '' // TODO: Validate and convert if possible between types
+                });
+            }else{
+                this.model.set({
+                    type: type,
+                    value: '' // TODO: Validate and convert if possible between types
+                });
+            }
+            this.model.collection.trigger('reset');
         },
 
         updateName: function () {
             this.model.set({
-                name: this.$el.find("input.name:first").val()
+                name: this.$el.find('input.name:first').val()
             });
         },
 
         updateValue: function () {
-            var el = this.$el.find("input.value:first");
+            var el = this.$el.find('input.value:first');
             this.model.set({
                 value: this.getValue(el)
             });
@@ -79,6 +92,8 @@ define([
             data.lockMode = this.editMode && !this.attributesLocked;
             data.editMode = this.editMode;
             data.attribute = this.model.attributes;
+            data.lovs = this.lovs;
+            data.items = this.model.get('items');
             this.$el.html(Mustache.render(this.template, data, partials));
             this.rendered();
             return this;

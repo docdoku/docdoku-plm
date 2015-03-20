@@ -24,6 +24,7 @@ import com.docdoku.core.document.DocumentMasterTemplateKey;
 import com.docdoku.core.exceptions.CreationException;
 import com.docdoku.core.exceptions.DocumentMasterTemplateAlreadyExistsException;
 import com.docdoku.core.exceptions.DocumentMasterTemplateNotFoundException;
+import com.docdoku.core.meta.ListOfValuesKey;
 
 import javax.persistence.*;
 import java.util.List;
@@ -82,5 +83,12 @@ public class DocumentMasterTemplateDAO {
             //thrown instead of EntityExistsException
             throw new CreationException(mLocale);
         }
+    }
+
+    public List<DocumentMasterTemplate> findAllDocMTemplatesFromLOV(ListOfValuesKey lovKey){
+        return em.createNamedQuery("DocumentMasterTemplate.findWhereLOV", DocumentMasterTemplate.class)
+                .setParameter("lovName", lovKey.getName())
+                .setParameter("workspace_id", lovKey.getWorkspaceId())
+                .getResultList();
     }
 }

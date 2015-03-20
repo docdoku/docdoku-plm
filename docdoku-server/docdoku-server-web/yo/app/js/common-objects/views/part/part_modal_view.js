@@ -67,6 +67,10 @@ define([
             this.activateTab(3);
         },
 
+        activateNotificationsTab: function(){
+            this.activateTab(this.$tabs.length - 1);
+        },
+
         render: function () {
 
             var data = {
@@ -105,7 +109,7 @@ define([
                     data.iteration.revisionDate
                 );
             }
-
+            data.hasOneIteration= (this.iterations.length < 1);
             this.$el.html(Mustache.render(template, data));
 
             this.$authorLink = this.$('.author-popover');
@@ -229,7 +233,7 @@ define([
         },
 
         initModificationNotificationListView: function () {
-            this.modificationNotificationListView = new ModificationNotificationListView({
+            new ModificationNotificationListView({
                 el: '#iteration-modification-notifications',
                 model: this.model
             }).render();
@@ -371,7 +375,7 @@ define([
                 this.iterations = this.model.getIterations();
                 this.render();
                 this.activateTab(1);
-
+                Backbone.Events.trigger('part:saved');
             }.bind(this));
 
         },

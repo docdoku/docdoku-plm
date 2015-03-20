@@ -81,4 +81,8 @@ public class LOVDAO {
         em.remove(pLov);
         em.flush();
     }
+
+    public ListOfValues updateLOV(ListOfValues pLov){
+        return em.merge(pLov);
+    }
 }

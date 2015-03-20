@@ -44,6 +44,10 @@ import java.util.*;
 @Table(name="PARTMASTERTEMPLATE")
 @IdClass(PartMasterTemplateKey.class)
 @Entity
+@NamedQueries({
+        @NamedQuery(name="PartMasterTemplate.findWhereLOV",
+                query="SELECT p FROM PartMasterTemplate p WHERE EXISTS ( SELECT i FROM InstanceAttributeTemplate i, ListOfValuesAttributeTemplate il WHERE i member of p.attributeTemplates AND i = il AND il.lov.name = :lovName AND il.lov.workspaceId = :workspace_id)")
+})
 public class PartMasterTemplate implements Serializable, Comparable<PartMasterTemplate> {
 
     @Column(length=100)

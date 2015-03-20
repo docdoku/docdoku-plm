@@ -40,9 +40,7 @@ import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.jws.WebService;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceUnit;
 import java.util.*;
 
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
@@ -184,7 +182,7 @@ public class WorkflowManagerBean implements IWorkflowManagerWS, IWorkflowManager
 
         if (userLogin != null) {
             User userMapped = new UserDAO(locale, em).loadUser(new UserKey(workspaceId, userLogin));
-            role.setDefaultUserMapped(userMapped);
+            role.setDefaultAssignee(userMapped);
         }
 
         new RoleDAO(locale, em).createRole(role);
@@ -200,9 +198,9 @@ public class WorkflowManagerBean implements IWorkflowManagerWS, IWorkflowManager
 
         if (userLogin != null) {
             User userMapped = new UserDAO(new Locale(user.getLanguage()), em).loadUser(new UserKey(roleKey.getWorkspace(), userLogin));
-            role.setDefaultUserMapped(userMapped);
+            role.setDefaultAssignee(userMapped);
         } else {
-            role.setDefaultUserMapped(null);
+            role.setDefaultAssignee(null);
         }
 
         return role;

@@ -52,7 +52,8 @@ define([
                         type: attributes[i].attributeType,
                         name: attributes[i].name,
                         mandatory: attributes[i].mandatory,
-                        value: ''
+                        value: '',
+                        lovName:attributes[i].lovName
                     });
                 }
                 if (template.get('mask')) {

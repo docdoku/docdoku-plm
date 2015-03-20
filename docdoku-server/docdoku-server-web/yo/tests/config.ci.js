@@ -40,6 +40,10 @@ module.exports = {
         "js/product-management/assembly/assemblyCreation.js",
         "js/product-management/assembly/assemblyCheck.js",
         "js/product-management/part/partCheckin.js",
+        "js/product-management/part/partsMultipleCheckout.js",
+        "js/product-management/part/partsMultipleCheckin.js",
+        "js/product-management/part/partsMultipleCheckout.js",
+        "js/product-management/part/partsMultipleUndoCheckout.js",
 
         // Part sharing
         "js/product-management/share/sharedPartCreation.js",
@@ -68,7 +72,10 @@ module.exports = {
         "js/document-management/folder/folderCreation.js",
         "js/document-management/document/documentCreation.js",
         "js/document-management/document/documentUploadFile.js",
-        "js/document-management/document/documentCheckin.js",
+        "js/document-management/document/documentMultipleCheckin.js",
+        "js/document-management/document/documentMultipleCheckout.js",
+        "js/document-management/document/documentMultipleUndoCheckout.js",
+
 
         // Document sharing
         "js/document-management/share/sharedDocumentCreation.js",
@@ -102,7 +109,10 @@ module.exports = {
         "js/product-management/product/productDeletion.js",
         "js/product-management/part/partDeletion.js",
         "js/product-management/template/partTemplateDeletion.js",
-        "js/document-management/lov/lovDeletion.js"
+        "js/document-management/lov/lovDeletion.js",
+
+        //Create a document template with a LOV attribut, needs an empty list of documents template, and an empty list of LOV
+        "js/document-management/lov/lovInTemplateCreation.js"
 
 
     ]
