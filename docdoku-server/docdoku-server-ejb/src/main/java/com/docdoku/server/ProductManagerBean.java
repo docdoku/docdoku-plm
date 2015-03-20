@@ -1599,7 +1599,9 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
         BinaryResourceDAO binDAO = new BinaryResourceDAO(new Locale(user.getLanguage()), em);
         BinaryResource file = binDAO.loadBinaryResource(pFullName);
-
+        if (file == null){
+            throw new FileNotFoundException(new Locale(user.getLanguage()),pFullName);
+        }
         PartMasterTemplate template = binDAO.getPartTemplateOwner(file);
 
         checkPartTemplateWriteAccess(template,user);

@@ -77,13 +77,10 @@ public class BinaryResourceDAO {
         em.flush();
     }
 
-    public BinaryResource loadBinaryResource(String pFullName) throws FileNotFoundException {
+    public BinaryResource loadBinaryResource(String pFullName)  {
         BinaryResource file = em.find(BinaryResource.class, pFullName);
-        if (file == null) {
-            throw new FileNotFoundException(mLocale, pFullName);
-        } else {
             return file;
-        }
+
     }
 
     public PartIteration getPartOwner(BinaryResource pBinaryResource) {

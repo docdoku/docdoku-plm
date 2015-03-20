@@ -72,7 +72,10 @@ module.exports = {
         "js/document-management/folder/folderCreation.js",
         "js/document-management/document/documentCreation.js",
         "js/document-management/document/documentUploadFile.js",
-        "js/document-management/document/documentCheckin.js",
+        "js/document-management/document/documentMultipleCheckin.js",
+        "js/document-management/document/documentMultipleCheckout.js",
+        "js/document-management/document/documentMultipleUndoCheckout.js",
+
 
         // Document sharing
         "js/document-management/share/sharedDocumentCreation.js",
