@@ -59,6 +59,10 @@ public class ModificationNotificationDAO {
         em.persist(pNotification);
     }
 
+    public ModificationNotification getModificationNotification(int pId) {
+        return em.find(ModificationNotification.class, pId);
+    }
+
     public List<ModificationNotification> getModificationNotifications(PartIterationKey pPartIPK) {
         List<ModificationNotification> notifications =  em.createNamedQuery("ModificationNotification.findByImpactedPartIteration", ModificationNotification.class)
                 .setParameter("workspaceId", pPartIPK.getWorkspaceId())
