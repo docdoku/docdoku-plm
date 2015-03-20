@@ -159,6 +159,10 @@ function (Backbone, Date, PartIterationList, ACLChecker,AlertView) {
             return this.iterations;
         },
 
+        hasModificationNotifications: function () {
+            return this.get('notifications') && this.get('notifications').length != 0;
+        },
+
         getModificationNotifications: function () {
             return this.get('notifications');
         },

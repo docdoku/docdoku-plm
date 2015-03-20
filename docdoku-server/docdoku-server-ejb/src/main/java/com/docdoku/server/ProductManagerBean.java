@@ -813,6 +813,33 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         }
     }
 
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
+    @Override
+    public void updateModificationNotification(String pWorkspaceId, int pModificationNotificationId, String pAcknowledgementComment) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, PartRevisionNotFoundException {
+
+        ModificationNotification modificationNotification = new ModificationNotificationDAO(em).getModificationNotification(pModificationNotificationId);
+        PartIterationKey partIKey = modificationNotification.getImpactedPart().getKey();
+        PartRevisionKey partRKey = partIKey.getPartRevision();
+
+        User user = userManager.checkWorkspaceWriteAccess(partRKey.getPartMaster().getWorkspace());
+        Locale locale = new Locale(user.getLanguage());
+
+        PartRevisionDAO partRDAO = new PartRevisionDAO(locale, em);
+        PartRevision partR = partRDAO.loadPartR(partRKey);
+
+        //Check access rights on partR
+        if (!hasPartRevisionWriteAccess(user,partR)) {
+            throw new AccessRightException(locale, user);
+        }
+        Date now = new Date();
+        modificationNotification.setAcknowledgementComment(pAcknowledgementComment);
+        modificationNotification.setAcknowledged(true);
+        modificationNotification.setAcknowledgementDate(now);
+        modificationNotification.setAcknowledgementAuthor(user);
+
+    }
+
+
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     @Override

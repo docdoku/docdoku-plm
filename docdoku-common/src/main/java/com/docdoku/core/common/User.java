@@ -39,7 +39,7 @@ public class User implements Serializable, Cloneable {
     private String name;
     private String email;
     private String language;
-    @javax.persistence.Column(name = "WORKSPACE_ID", length = 50, nullable = false, insertable = false, updatable = false)
+    @javax.persistence.Column(name = "WORKSPACE_ID", length = 100, nullable = false, insertable = false, updatable = false)
     @javax.persistence.Id
     private String workspaceId = "";
     @javax.persistence.Id

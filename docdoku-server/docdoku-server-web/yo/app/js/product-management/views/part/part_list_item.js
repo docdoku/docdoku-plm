@@ -13,6 +13,7 @@ define([
 
         events: {
             'click input[type=checkbox]': 'selectionChanged',
+            'click td.modification_notification i': 'toPartModalOnNotificationsTab',
             'click td.part_number': 'toPartModal',
             'click td.part-revision-share i': 'sharePart',
             'click td.part-attached-files i': 'toPartModalOnFilesTab'
@@ -76,6 +77,18 @@ define([
                 });
                 partModalView.show();
                 partModalView.activateFileTab();
+
+            });
+        },
+
+        toPartModalOnNotificationsTab: function () {
+            var self = this;
+            self.model.fetch().success(function () {
+                var partModalView = new PartModalView({
+                    model: self.model
+                });
+                partModalView.show();
+                partModalView.activateNotificationsTab();
 
             });
         },

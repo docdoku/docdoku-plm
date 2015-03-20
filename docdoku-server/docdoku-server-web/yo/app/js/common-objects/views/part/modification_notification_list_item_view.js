@@ -7,15 +7,13 @@ define([
     'use strict';
     var ModificationNotificationListItemView = Backbone.View.extend({
 
-        events: {
-        },
-
-        initialize: function () {
-        },
-
         render: function () {
+            var data = {
+                modificationNotification: this.model,
+                i18n: App.config.i18n
+            };
 
-            this.$el.html(Mustache.render(template, {part: this.model, i18n: App.config.i18n}));
+            this.$el.html(Mustache.render(template, data));
 
             return this;
         }
