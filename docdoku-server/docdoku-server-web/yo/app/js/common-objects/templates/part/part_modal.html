@@ -40,9 +40,11 @@
                 <li><a href="#tab-part-links" data-toggle="tab">{{i18n.LINKS}}</a></li>
                 <li><a href="#tab-iteration-lifecycle" data-toggle="tab">{{i18n.LIFECYCLE_STATE}}</a></li>
                 {{/isLockedMode}}
+                {{#isShowingLast}}
                 {{#part.hasModificationNotifications}}
                 <li><a href="#tab-part-modification-notifications" data-toggle="tab">{{i18n.NOTIFICATIONS}}</a></li>
                 {{/part.hasModificationNotifications}}
+                {{/isShowingLast}}
             </ul>
 
             <form id="form-part" class="form-horizontal">
