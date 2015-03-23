@@ -80,9 +80,11 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public List<ProductInstanceIteration> getProductInstanceIterations(ProductInstanceMasterKey productInstanceMasterKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
-        userManager.checkWorkspaceReadAccess(productInstanceMasterKey.getInstanceOf().getWorkspace());
-        return new ProductInstanceIterationDAO(em).findProductInstanceIterationsByMaster(productInstanceMasterKey);
+    public List<ProductInstanceIteration> getProductInstanceIterations(ProductInstanceMasterKey productInstanceMasterKey) throws ProductInstanceMasterNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(productInstanceMasterKey.getInstanceOf().getWorkspace());
+        Locale userLocal = new Locale(user.getLanguage());
+        ProductInstanceMaster productInstanceMaster = new ProductInstanceMasterDAO(userLocal,em).loadProductInstanceMaster(productInstanceMasterKey);
+        return productInstanceMaster.getProductInstanceIterations();
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
@@ -129,7 +131,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         ProductInstanceMaster productInstanceMaster = new ProductInstanceMaster(configurationItem,serialNumber);
 
         ProductInstanceIteration productInstanceIteration = productInstanceMaster.createNextIteration();
-        productInstanceIteration.setIterationNote("Initial");
+        productInstanceIteration.setIterationNote("-");
 
         PartCollection partCollection = new PartCollection();
         new PartCollectionDAO(em).createPartCollection(partCollection);
@@ -137,6 +139,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         partCollection.setCreationDate(new Date());
 
         ProductBaseline productBaseline = new ProductBaselineDAO(em).loadBaseline(baselineId);
+        productInstanceIteration.setBasedOn(productBaseline);
         productInstanceMasterDAO.createProductInstanceMaster(productInstanceMaster);
 
 
@@ -174,10 +177,10 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public void deleteProductInstance(String workspaceId, String configurationItemId, String serialNumber) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, UserNotActiveException, ProductInstanceMasterNotFoundException {
-        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+        User user = userManager.checkWorkspaceWriteAccess(workspaceId);
         Locale userLocal = new Locale(user.getLanguage());
         ProductInstanceMasterDAO productInstanceMasterDAO = new ProductInstanceMasterDAO(userLocal,em);
-        ProductInstanceMaster prodInstM = productInstanceMasterDAO.loadProductInstanceMaster(new ProductInstanceMasterKey(serialNumber,workspaceId,configurationItemId));
+        ProductInstanceMaster prodInstM = productInstanceMasterDAO.loadProductInstanceMaster(new ProductInstanceMasterKey(serialNumber, workspaceId, configurationItemId));
         productInstanceMasterDAO.deleteProductInstanceMaster(prodInstM);
     }
 }

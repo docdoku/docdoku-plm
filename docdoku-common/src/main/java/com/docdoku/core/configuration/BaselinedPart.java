@@ -43,7 +43,7 @@ import java.util.List;
 @Entity
 @NamedQueries({
         @NamedQuery(name="BaselinedPart.existBaselinedPart", query="SELECT count(b) FROM BaselinedPart b WHERE b.baselinedPartKey.targetPartNumber = :partNumber AND b.baselinedPartKey.targetPartWorkspaceId = :workspaceId"),
-        @NamedQuery(name="BaselinedPart.findByReference", query="SELECT b FROM BaselinedPart b WHERE b.baselinedPartKey.targetPartNumber LIKE :id")
+        @NamedQuery(name="BaselinedPart.findByReference", query="SELECT b FROM BaselinedPart b WHERE b.partCollection.id = :partCollection AND b.baselinedPartKey.targetPartNumber LIKE :id")
 })
 public class BaselinedPart implements Serializable{
 

@@ -20,16 +20,17 @@
 package com.docdoku.core.configuration;
 
 
+import com.docdoku.core.common.BinaryResource;
+import com.docdoku.core.common.FileHolder;
 import com.docdoku.core.common.User;
+import com.docdoku.core.document.DocumentLink;
+import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.product.PartIteration;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * This class represents a state, identified by its iteration, of an instance of
@@ -42,7 +43,7 @@ import java.util.Map;
 @Table(name="PRODUCTINSTANCEITERATION")
 @IdClass(com.docdoku.core.configuration.ProductInstanceIterationKey.class)
 @Entity
-public class ProductInstanceIteration implements Serializable {
+public class ProductInstanceIteration implements Serializable, FileHolder {
 
     @Id
     @ManyToOne(optional=false, fetch=FetchType.EAGER)
@@ -50,7 +51,6 @@ public class ProductInstanceIteration implements Serializable {
             @JoinColumn(name="PRDINSTANCEMASTER_SERIALNUMBER", referencedColumnName="SERIALNUMBER"),
             @JoinColumn(name="CONFIGURATIONITEM_ID", referencedColumnName="CONFIGURATIONITEM_ID"),
             @JoinColumn(name="WORKSPACE_ID", referencedColumnName="WORKSPACE_ID")
-
     })
     private ProductInstanceMaster productInstanceMaster;
 
@@ -61,6 +61,53 @@ public class ProductInstanceIteration implements Serializable {
 
     @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY, orphanRemoval = true)
     private PartCollection partCollection;
+
+
+    @OneToMany(cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, fetch = FetchType.EAGER)
+    @JoinTable(name = "PRDINSTITERATION_BINRES",
+            inverseJoinColumns = {
+                    @JoinColumn(name = "ATTACHEDFILE_FULLNAME", referencedColumnName = "FULLNAME")
+            },
+            joinColumns = {
+                    @JoinColumn(name="PRDINSTANCEMASTER_SERIALNUMBER", referencedColumnName="SERIALNUMBER"),
+                    @JoinColumn(name="CONFIGURATIONITEM_ID", referencedColumnName="CONFIGURATIONITEM_ID"),
+                    @JoinColumn(name="WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
+                    @JoinColumn(name="ITERATION", referencedColumnName = "ITERATION")
+            })
+    private Set<BinaryResource> attachedFiles = new HashSet<>();
+
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(name = "PRDINSTITERATION_DOCUMENTLINK",
+            inverseJoinColumns = {
+                    @JoinColumn(name = "DOCUMENTLINK_ID", referencedColumnName = "ID")
+            },
+            joinColumns = {
+                    @JoinColumn(name="PRDINSTANCEMASTER_SERIALNUMBER", referencedColumnName="SERIALNUMBER"),
+                    @JoinColumn(name="CONFIGURATIONITEM_ID", referencedColumnName="CONFIGURATIONITEM_ID"),
+                    @JoinColumn(name="WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
+                    @JoinColumn(name="ITERATION", referencedColumnName = "ITERATION")
+            })
+    private Set<DocumentLink> linkedDocuments = new HashSet<>();
+
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OrderColumn(name="ATTRIBUTE_ORDER")
+    @JoinTable(name = "PRDINSTITERATION_ATTRIBUTE",
+            inverseJoinColumns = {
+                    @JoinColumn(name = "INSTANCEATTRIBUTE_ID", referencedColumnName = "ID")
+            },
+            joinColumns = {
+                    @JoinColumn(name="PRDINSTANCEMASTER_SERIALNUMBER", referencedColumnName="SERIALNUMBER"),
+                    @JoinColumn(name="CONFIGURATIONITEM_ID", referencedColumnName="CONFIGURATIONITEM_ID"),
+                    @JoinColumn(name="WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
+                    @JoinColumn(name="ITERATION", referencedColumnName = "ITERATION")
+            })
+    private List<InstanceAttribute> instanceAttributes = new ArrayList<>();
+
+
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "PRODUCTBASELINE_ID", referencedColumnName = "ID")
+    private ProductBaseline basedOn;
 
     public ProductInstanceIteration() {
     }
@@ -80,9 +127,6 @@ public class ProductInstanceIteration implements Serializable {
 
     public String getSerialNumber(){
         return this.productInstanceMaster.getSerialNumber();
-    }
-    public String getConfigurationItemId(){
-        return this.productInstanceMaster.getInstanceOf().getId();
     }
 
     public int getIteration() {
@@ -106,6 +150,35 @@ public class ProductInstanceIteration implements Serializable {
         this.partCollection = partCollection;
     }
 
+    public void addFile(BinaryResource pBinaryResource) {
+        attachedFiles.add(pBinaryResource);
+    }
+
+    public Set<DocumentLink> getLinkedDocuments() {
+        return linkedDocuments;
+    }
+
+    public void setLinkedDocuments(Set<DocumentLink> pLinkedDocuments) {
+        linkedDocuments=pLinkedDocuments;
+    }
+
+    public List<InstanceAttribute> getInstanceAttributes() {
+        return instanceAttributes;
+    }
+
+    public void setInstanceAttributes(List<InstanceAttribute> pInstanceAttributes) {
+        instanceAttributes=pInstanceAttributes;
+    }
+
+    public void setAttachedFiles(Set<BinaryResource> attachedFiles) {
+        this.attachedFiles = attachedFiles;
+    }
+
+    @Override
+    public Set<BinaryResource> getAttachedFiles() {
+        return attachedFiles;
+    }
+
     public Map<BaselinedPartKey, BaselinedPart> getBaselinedParts() {
         return partCollection.getBaselinedParts();
     }
@@ -117,6 +190,14 @@ public class ProductInstanceIteration implements Serializable {
     }
     public BaselinedPart getBaselinedPart(BaselinedPartKey baselinedPartKey){
         return partCollection.getBaselinedPart(baselinedPartKey);
+    }
+
+    public ProductBaseline getBasedOn() {
+        return basedOn;
+    }
+
+    public void setBasedOn(ProductBaseline basedOn) {
+        this.basedOn = basedOn;
     }
 
     public User getUpdateAuthor(){
