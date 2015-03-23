@@ -322,11 +322,15 @@ public class ProductResource {
                 }
                 dto.setAssembly(partI.isAssembly());
                 dto.setIteration(partI.getIteration());
+                List<ModificationNotification> notifications=productService.getModificationNotifications(partI.getKey());
+                List<ModificationNotificationDTO> notificationDTOs=Tools.mapModificationNotificationsToModificationNotificationDTO(notifications);
+                dto.setNotifications(notificationDTOs);
             }
         }
 
         dto.setAttributes(lstAttributes);
         dto.setComponents(components);
+
         return dto;
     }
 

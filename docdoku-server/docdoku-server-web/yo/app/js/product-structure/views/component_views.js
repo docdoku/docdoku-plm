@@ -79,7 +79,9 @@ define([
             '<i class="fa openModal fa-check"></i>' +
             '<%} else{%> ' +
             '<i class="fa openModal fa-eye"></i>' +
-            '<%}%>'
+            '<%}%>'+
+                '<%if(hasModificationNotifications) {%> ' +
+                '<i class="fa fa-exclamation"></i>' +'<%}%>'
         ),
 
         events: {
@@ -123,6 +125,7 @@ define([
                 isCheckoutByAnotherUser: this.model.isCheckout() && !this.model.isCheckoutByConnectedUser(),
                 isCheckoutByConnectedUser: this.model.isCheckout() && this.model.isCheckoutByConnectedUser(),
                 isReleased: this.model.isReleased(),
+                hasModificationNotifications: this.model.hasModificationNotifications(),
                 isLock: this.isLock
             };
 
@@ -184,7 +187,9 @@ define([
             '<i class="fa openModal fa-check"></i>' +
             '<%} else{%> ' +
             '<i class="fa openModal fa-eye"></i>' +
-            '<%}%>'
+            '<%}%>'+
+            '<%if(hasModificationNotifications) {%> ' +
+                '<i class="fa fa-exclamation"></i>' +'<%}%>'
         ),
 
         events: {
@@ -232,6 +237,7 @@ define([
                 isForbidden: this.isForbidden,
                 isCheckoutByAnotherUser: this.model.isCheckout() && !this.model.isCheckoutByConnectedUser(),
                 isCheckoutByConnectedUser: this.model.isCheckout() && this.model.isCheckoutByConnectedUser(),
+                hasModificationNotifications: this.model.hasModificationNotifications(),
                 isReleased: this.model.isReleased(),
                 isLock: this.isLock
             };

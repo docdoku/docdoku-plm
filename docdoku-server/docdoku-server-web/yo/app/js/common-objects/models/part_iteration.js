@@ -87,6 +87,7 @@ define([
             return components && components.length > 0;
         },
 
+
         getLinkedDocuments: function () {
             return this.get('linkedDocuments');
         },

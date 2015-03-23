@@ -52,6 +52,8 @@ public class ComponentDTO implements Serializable{
     private int lastIterationNumber;
     @XmlElement(nillable = true)
     private boolean accessDeny;
+    List<ModificationNotificationDTO> notifications;
+
 
     public ComponentDTO() {
 
@@ -194,5 +196,13 @@ public class ComponentDTO implements Serializable{
 
     public void setUnit(String unit) {
         this.unit = unit;
+    }
+
+    public List<ModificationNotificationDTO> getNotifications() {
+        return notifications;
+    }
+
+    public void setNotifications(List<ModificationNotificationDTO> notifications) {
+        this.notifications = notifications;
     }
 }
