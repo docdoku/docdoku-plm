@@ -89,6 +89,8 @@ define([
                     lovName:object.lovName
                 });
             });
+
+            this.attributesView.render();
         },
 
         interceptSubmit:function(){
