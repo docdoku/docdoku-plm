@@ -6,11 +6,23 @@ define([
     'use strict';
     var ModificationNotification = Backbone.Model.extend({
 
-        idAttribute: 'modificationNotification',
+        idAttribute: 'id',
 
         initialize: function () {
             _.bindAll(this);
             this.className = 'ModificationNotification';
+        },
+
+        getId: function () {
+            return this.get('id');
+        },
+
+        getImpactedPartNumber: function () {
+            return this.get('impactedPartNumber');
+        },
+
+        getImpactedPartVersion: function () {
+            return this.get('impactedPartVersion');
         },
 
         getModifiedPartNumber: function () {
@@ -23,6 +35,10 @@ define([
 
         getModifiedPartIteration: function () {
             return this.get('modifiedPartIteration');
+        },
+
+        getModifiedPartName: function () {
+            return this.get('modifiedPartName');
         },
 
         hasCheckInDate: function () {
@@ -60,6 +76,29 @@ define([
 
         getIterationNote: function () {
             return this.get('iterationNote');
+        },
+
+        isAcknowledged: function () {
+            return this.get('acknowledged');
+        },
+
+        setAcknowledged: function (callback) {
+            return $.ajax({
+                context: this,
+                type: 'PUT',
+                url: this.url() + '/modificationNotifications/' + this.getId() + '/acknowledge',
+                error: function (xhr) {
+                    window.alert(xhr.responseText);
+                }
+            }).success(callback());
+        },
+
+        url: function () {
+            var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/';
+            if (this.getImpactedPartNumber() && this.getImpactedPartVersion()) {
+                return url + this.getImpactedPartNumber() + '-' + this.getImpactedPartVersion();
+            }
+            return url;
         }
 
     });

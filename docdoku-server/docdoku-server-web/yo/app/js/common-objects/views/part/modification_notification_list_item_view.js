@@ -7,6 +7,10 @@ define([
     'use strict';
     var ModificationNotificationListItemView = Backbone.View.extend({
 
+        events: {
+            'click i': 'setAcknowledged'
+        },
+
         render: function () {
             var data = {
                 modificationNotification: this.model,
@@ -16,6 +20,18 @@ define([
             this.$el.html(Mustache.render(template, data));
 
             return this;
+        },
+
+        setAcknowledged: function () {
+            var _this = this;
+            this.model.setAcknowledged(function () {
+                _this.isAcknowledged();
+            });
+        },
+
+        isAcknowledged: function () {
+            this.model.set('acknowledged', true);
+            this.render();
         }
 
     });

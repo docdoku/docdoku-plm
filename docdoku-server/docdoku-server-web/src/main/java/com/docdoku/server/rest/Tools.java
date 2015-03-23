@@ -111,8 +111,14 @@ public class Tools {
     public static ModificationNotificationDTO mapModificationNotificationToModificationNotificationDTO(ModificationNotification pNotification){
         ModificationNotificationDTO dto = new ModificationNotificationDTO();
         Mapper mapper = DozerBeanMapperSingletonWrapper.getInstance();
+
         UserDTO userDTO = mapper.map(pNotification.getModifiedPart().getAuthor(),UserDTO.class);
         dto.setAuthor(userDTO);
+
+        dto.setId(pNotification.getId());
+
+        dto.setImpactedPartNumber(pNotification.getImpactedPart().getNumber());
+        dto.setImpactedPartVersion(pNotification.getImpactedPart().getVersion());
 
         User ackAuthor = pNotification.getAcknowledgementAuthor();
         if(ackAuthor!=null){
@@ -121,12 +127,17 @@ public class Tools {
         }
         dto.setAcknowledged(pNotification.isAcknowledged());
         dto.setAckComment(pNotification.getAcknowledgementComment());
+
         dto.setCheckInDate(pNotification.getModifiedPart().getCheckInDate());
         dto.setIterationNote(pNotification.getModifiedPart().getIterationNote());
+
         dto.setModifiedPartIteration(pNotification.getModifiedPart().getIteration());
         dto.setModifiedPartNumber(pNotification.getModifiedPart().getPartNumber());
         dto.setModifiedPartName(pNotification.getModifiedPart().getPartName());
         dto.setModifiedPartVersion(pNotification.getModifiedPart().getPartVersion());
+
+        dto.setAcknowledged(pNotification.isAcknowledged());
+
         return dto;
     }
 

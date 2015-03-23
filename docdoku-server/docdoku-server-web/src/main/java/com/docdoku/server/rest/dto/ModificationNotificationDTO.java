@@ -25,6 +25,11 @@ import java.util.Date;
 
 public class ModificationNotificationDTO {
 
+    private int id;
+
+    private String impactedPartNumber;
+    private String impactedPartVersion;
+
     private String modifiedPartNumber;
     private String modifiedPartName;
     private String modifiedPartVersion;
@@ -37,11 +42,34 @@ public class ModificationNotificationDTO {
     @XmlElement(nillable = true)
     private boolean acknowledged;
 
-
     private String ackComment;
     private UserDTO ackAuthor;
 
     public ModificationNotificationDTO() {
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getImpactedPartNumber() {
+        return impactedPartNumber;
+    }
+
+    public void setImpactedPartNumber(String impactedPartNumber) {
+        this.impactedPartNumber = impactedPartNumber;
+    }
+
+    public String getImpactedPartVersion() {
+        return impactedPartVersion;
+    }
+
+    public void setImpactedPartVersion(String impactedPartVersion) {
+        this.impactedPartVersion = impactedPartVersion;
     }
 
     public String getModifiedPartNumber() {
@@ -123,4 +151,5 @@ public class ModificationNotificationDTO {
     public void setAckAuthor(UserDTO ackAuthor) {
         this.ackAuthor = ackAuthor;
     }
+
 }

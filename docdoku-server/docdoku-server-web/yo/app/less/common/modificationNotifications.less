@@ -1,11 +1,24 @@
 div#iteration-modification-notifications{
-    margin-left: 14px;
+
+    i.fa-circle{
+        float: left;
+        cursor: pointer;
+        color:#62697B;
+        &:hover {
+            color:#333;
+        }
+    }
+
+    div.modification-notification{
+        padding: 10px;
+        margin-top: 10px;
+    }
+
+    div.modification-notification-note, div.modification-notification-details{
+        margin-left: 20px;
+    }
 
     div.modification-notification-note{
         font-weight: bold;
-    }
-
-    div.modification-notification-details{
-
     }
 }
