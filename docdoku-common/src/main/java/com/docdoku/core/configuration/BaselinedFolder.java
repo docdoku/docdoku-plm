@@ -56,12 +56,13 @@ public class BaselinedFolder implements Serializable, Comparable<BaselinedFolder
 
     @ManyToOne
     @JoinColumns({
-            @JoinColumn(name="PARENTFOLDER_FOLDERCOLLECTION_ID", referencedColumnName="FOLDERCOLLECTION_ID", insertable = true, updatable = true),
-            @JoinColumn(name="PARENTFOLDER_COMPLETEPATH", referencedColumnName="COMPLETEPATH", insertable = true, updatable = true),
+            @JoinColumn(name="PARENT_FOLDERCOLLECTION_ID", referencedColumnName="FOLDERCOLLECTION_ID", insertable = true, updatable = true),
+            @JoinColumn(name="PARENT_COMPLETEPATH", referencedColumnName="COMPLETEPATH", insertable = true, updatable = true),
     })
     private BaselinedFolder parentFolder;
 
-    @OneToMany
+    @ManyToMany
+    @JoinTable(name = "BASELINEDFOLDER_DOCITERATION")
     private List<DocumentIteration> documentIterations = new ArrayList<>();
 
 
