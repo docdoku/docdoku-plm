@@ -5,8 +5,9 @@ define([
     'text!templates/product-instances/product_instance_modal.html',
     'views/baselines/baselined_part_list',
     'common-objects/utils/date',
+    'common-objects/views/attributes/attribute_list',
     'common-objects/views/alert'
-], function (Backbone, Mustache, template, BaselinedPartListView, date,AlertView) {
+], function (Backbone, Mustache, template, BaselinedPartListView,date,ProductInstanceAttributeListView,AlertView) {
     'use strict';
     var ProductInstancesModalView = Backbone.View.extend({
         events: {
@@ -50,6 +51,7 @@ define([
             this.bindUserPopover();
             var that = this;
             this.iteration.initBaselinedParts(that, {success: that.initBaselinedPartListView});
+            this.initAttributesView();
             this.openModal();
             return this;
         },
@@ -87,6 +89,18 @@ define([
         initBaselinedPartListView: function (view) {
             view.baselinePartListView = new BaselinedPartListView({model: view.iteration, editMode:false}).render();
             view.$baselinedPartListArea.html(view.baselinePartListView.$el);
+        },
+
+        initAttributesView: function () {
+
+            this.attributes = new Backbone.Collection();
+
+            this.attributesView = new ProductInstanceAttributeListView({
+                collection: this.attributes
+            });
+
+            this.$('#attributes-list').html(this.attributesView.$el);
+
         },
 
         bindUserPopover: function () {
