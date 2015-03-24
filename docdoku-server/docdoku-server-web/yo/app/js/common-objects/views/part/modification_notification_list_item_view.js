@@ -8,7 +8,12 @@ define([
     var ModificationNotificationListItemView = Backbone.View.extend({
 
         events: {
-            'click i': 'setAcknowledged'
+            'click i': 'acknowledge'
+        },
+
+        initialize: function () {
+            _.bindAll(this);
+            this.listenTo(this.model, 'change:acknowledged', this.render);
         },
 
         render: function () {
@@ -22,16 +27,8 @@ define([
             return this;
         },
 
-        setAcknowledged: function () {
-            var _this = this;
-            this.model.setAcknowledged(function () {
-                _this.isAcknowledged();
-            });
-        },
-
-        isAcknowledged: function () {
-            this.model.set('acknowledged', true);
-            this.render();
+        acknowledge: function () {
+            this.model.setAcknowledged();
         }
 
     });

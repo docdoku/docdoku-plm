@@ -82,23 +82,18 @@ define([
             return this.get('acknowledged');
         },
 
-        setAcknowledged: function (callback) {
+        setAcknowledged: function () {
             return $.ajax({
                 context: this,
                 type: 'PUT',
-                url: this.url() + '/modificationNotifications/' + this.getId() + '/acknowledge',
+                url: this.collection.url() + '/modificationNotifications/' + this.getId() + '/acknowledge',
                 error: function (xhr) {
                     window.alert(xhr.responseText);
+                    this.set('acknowledged', false);
                 }
-            }).success(callback());
-        },
-
-        url: function () {
-            var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/';
-            if (this.getImpactedPartNumber() && this.getImpactedPartVersion()) {
-                return url + this.getImpactedPartNumber() + '-' + this.getImpactedPartVersion();
-            }
-            return url;
+            }).success(function () {
+                this.set('acknowledged', true);
+            });
         }
 
     });

@@ -124,10 +124,13 @@ define([
                 this.initAttributesView();
 
                 this.initPartsManagementView();
-                this.initModificationNotificationListView();
 
                 this.initLinkedDocumentsView();
                 this.initLifeCycleView();
+
+                if (!data.iteration.hasNextIteration) {
+                    this.initModificationNotificationListView();
+                }
             }
 
             date.dateHelper(this.$('.date-popover'));
@@ -235,7 +238,7 @@ define([
         initModificationNotificationListView: function () {
             new ModificationNotificationListView({
                 el: '#iteration-modification-notifications',
-                model: this.model
+                collection: this.model.getModificationNotifications()
             }).render();
         },
 
@@ -269,6 +272,7 @@ define([
                 this.$('a[href=#tab-iteration-lifecycle]').hide();
             }
         },
+
         tagsManagement: function (editMode) {
 
             var $tagsZone = this.$('.master-tags-list');
@@ -308,7 +312,6 @@ define([
                 $tagsZone.append(tagView.el);
 
             });
-
         },
 
         deleteClickedTags: function () {
@@ -323,6 +326,7 @@ define([
                 });
             }
         },
+
         actionCheckin: function () {
             if (!this.model.getLastIteration().get('iterationNote')) {
 
@@ -341,8 +345,7 @@ define([
                     this.onSuccess();
                 }.bind(this));
             }
-        }
-        ,
+        },
 
         actionCheckout: function () {
             var self = this;
@@ -351,6 +354,7 @@ define([
             });
 
         },
+
         actionUndoCheckout: function () {
             var self = this;
             self.model.undocheckout().success(function () {
@@ -358,6 +362,7 @@ define([
             });
 
         },
+
         setRevisionNote: function () {
             var note;
             if (_.isEqual(this.$('#inputRevisionNote').val(), '')) {

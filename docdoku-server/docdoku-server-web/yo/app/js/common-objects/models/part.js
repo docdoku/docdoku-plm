@@ -1,6 +1,12 @@
 /*global _,$,define,App,window*/
-define(['backbone', 'common-objects/utils/date', 'common-objects/collections/part_iteration_collection','common-objects/utils/acl-checker','common-objects/views/alert'],
-function (Backbone, Date, PartIterationList, ACLChecker,AlertView) {
+define([
+        'backbone',
+        'common-objects/utils/date',
+        'common-objects/collections/part_iteration_collection',
+        'common-objects/collections/modification_notification_collection',
+        'common-objects/utils/acl-checker',
+        'common-objects/views/alert'],
+function (Backbone, Date, PartIterationList, ModificationNotificationCollection, ACLChecker, AlertView) {
     'use strict';
 
     var Part = Backbone.Model.extend({
@@ -15,6 +21,9 @@ function (Backbone, Date, PartIterationList, ACLChecker,AlertView) {
             this.iterations.setPart(this);
             delete data.partIterations;
             delete data.partList;
+            this.modificationNotifications = new ModificationNotificationCollection(data.notifications);
+            this.modificationNotifications.setUrl(this.url);
+            delete data.notifications;
             return data;
         },
 
@@ -160,9 +169,12 @@ function (Backbone, Date, PartIterationList, ACLChecker,AlertView) {
         },
 
         hasModificationNotifications: function () {
-           return this.get('notifications') && this.get('notifications').length != 0;
+            return this.modificationNotifications && this.modificationNotifications.length != 0;
         },
 
+        getModificationNotifications: function () {
+            return this.modificationNotifications;
+        },
 
         getAuthorLogin: function () {
             return this.get('author').login;
