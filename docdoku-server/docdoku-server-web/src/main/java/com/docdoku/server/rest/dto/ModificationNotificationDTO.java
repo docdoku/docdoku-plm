@@ -26,6 +26,7 @@ import java.util.Date;
 public class ModificationNotificationDTO {
 
     private String modifiedPartNumber;
+    private String modifiedPartName;
     private String modifiedPartVersion;
     private int modifiedPartIteration;
 
@@ -85,5 +86,13 @@ public class ModificationNotificationDTO {
 
     public void setAuthor(UserDTO author) {
         this.author = author;
+    }
+
+    public String getModifiedPartName() {
+        return modifiedPartName;
+    }
+
+    public void setModifiedPartName(String modifiedPartName) {
+        this.modifiedPartName = modifiedPartName;
     }
 }

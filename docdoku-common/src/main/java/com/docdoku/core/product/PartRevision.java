@@ -374,6 +374,11 @@ public class PartRevision implements Serializable, Comparable<PartRevision>, Clo
         return partMaster==null?"":partMaster.getNumber();
     }
 
+    public String getPartName() {
+        return partMaster==null?"":partMaster.getName();
+    }
+
+
     public String getPartMasterNumber() {
         return partMasterNumber;
     }

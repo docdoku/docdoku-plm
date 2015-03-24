@@ -117,6 +117,7 @@ public class Tools {
         dto.setIterationNote(pNotification.getModifiedPart().getIterationNote());
         dto.setModifiedPartIteration(pNotification.getModifiedPart().getIteration());
         dto.setModifiedPartNumber(pNotification.getModifiedPart().getPartNumber());
+        dto.setModifiedPartName(pNotification.getModifiedPart().getPartName());
         dto.setModifiedPartVersion(pNotification.getModifiedPart().getPartVersion());
         return dto;
     }

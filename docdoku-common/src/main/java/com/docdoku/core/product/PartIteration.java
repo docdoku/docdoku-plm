@@ -208,6 +208,10 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
         return partRevision==null?"":partRevision.getPartNumber();
     }
 
+    public String getPartName() {
+        return partRevision==null?"":partRevision.getPartName();
+    }
+
     public String getVersion() {
         return getPartVersion();
     }
