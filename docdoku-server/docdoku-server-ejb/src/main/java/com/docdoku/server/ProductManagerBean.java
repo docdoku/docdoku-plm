@@ -361,7 +361,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             throw new NotAllowedException(locale, "NotAllowedException37");
         }
 
-        if (partR.isReleased()) {
+        if (partR.isReleased() || partR.isObsolete()) {
             throw new NotAllowedException(locale, "NotAllowedException47");
         }
 
