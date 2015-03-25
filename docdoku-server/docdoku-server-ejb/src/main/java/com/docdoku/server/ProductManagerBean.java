@@ -1237,7 +1237,28 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             throw new NotAllowedException(locale, "NotAllowedException41");
         }
 
+        if(partRevision.isObsolete()){
+            throw new NotAllowedException(locale, "NotAllowedException38");
+        }
+
         partRevision.release();
+        return partRevision;
+    }
+
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
+    public PartRevision markPartRevisionAsObsolete(PartRevisionKey pRevisionKey) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException, NotAllowedException {
+        User user = checkPartRevisionWriteAccess(pRevisionKey);                                                         // Check if the user can write the part
+        Locale locale = new Locale(user.getLanguage());
+
+        PartRevisionDAO partRevisionDAO = new PartRevisionDAO(locale,em);
+        PartRevision partRevision = partRevisionDAO.loadPartR(pRevisionKey);
+
+        if(!partRevision.isReleased()){
+            throw new NotAllowedException(locale, "NotAllowedException36");
+        }
+
+        partRevision.markAsObsolete();
         return partRevision;
     }
 
