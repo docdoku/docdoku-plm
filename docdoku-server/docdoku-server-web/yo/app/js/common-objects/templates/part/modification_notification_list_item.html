@@ -16,12 +16,19 @@
         {{i18n.CHECKED_IN}}
         {{#modificationNotification.hasCheckInDate}} {{i18n.ON}} <a class="date-popover">{{modificationNotification.getFormattedCheckInDate}}</a>{{/modificationNotification.hasCheckInDate}}
         {{#modificationNotification.hasAuthor}} {{i18n.BY}} <a class="author-popover">{{modificationNotification.getAuthorName}}</a>{{/modificationNotification.hasAuthor}}
+
+        {{#modificationNotification.getAckComment}}
+        <div class="comment-italic">
+            {{modificationNotification.getAckComment}}
+        </div>
+        {{/modificationNotification.getAckComment}}
     </div>
 
-    <!--{{#isFullAccess}}{{/isFullAccess}}-->
-
-    <!--<input type="text" class="input-xlarge comment" placeholder="{{i18n.COMMENT}}" required />-->
-    <!--<button type="button" class="btn btn-primary action-ignoreResolveComment">{{i18n.IGNORE}}</button>-->
-    <!--<button type="button" class="btn btn-primary action-addResolveComment">{{i18n.ADD}}</button>-->
+    {{^modificationNotification.isAcknowledged}}
+    <div class="comment">
+        <input id="acknowledgement-comment" type="text" placeholder="{{i18n.COMMENT}}">
+        <button type="button" class="btn btn-primary action-acknowledge">{{i18n.VERIFIED}}</button>
+    </div>
+    {{/modificationNotification.isAcknowledged}}
 
 </div>

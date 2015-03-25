@@ -8,12 +8,12 @@ define([
     var ModificationNotificationListItemView = Backbone.View.extend({
 
         events: {
-            'click i': 'acknowledge'
+            'click .action-acknowledge': 'acknowledge'
         },
 
         initialize: function () {
             _.bindAll(this);
-            this.listenTo(this.model, 'change:acknowledged', this.render);
+            this.listenTo(this.model, 'change', this.render);
         },
 
         render: function () {
@@ -28,7 +28,18 @@ define([
         },
 
         acknowledge: function () {
-            this.model.setAcknowledged();
+            var data = {ackComment: this.getAcknowledgementComment()};
+            this.model.setAcknowledged(data);
+        },
+
+        getAcknowledgementComment: function () {
+            var comment;
+            if (_.isEqual(this.$('#acknowledgement-comment').val(), '')) {
+                comment = null;
+            } else {
+                comment = this.$('#acknowledgement-comment').val();
+            }
+            return comment;
         }
 
     });

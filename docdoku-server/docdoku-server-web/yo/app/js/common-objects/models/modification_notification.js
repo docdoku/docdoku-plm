@@ -82,17 +82,28 @@ define([
             return this.get('acknowledged');
         },
 
-        setAcknowledged: function () {
+        getAckComment: function () {
+            return this.get('ackComment');
+        },
+
+        getAckAuthor: function () {
+            return this.get('ackAuthor');
+        },
+
+        setAcknowledged: function (data) {
             return $.ajax({
                 context: this,
                 type: 'PUT',
-                url: this.collection.url() + '/modificationNotifications/' + this.getId() + '/acknowledge',
+                url: this.collection.url() + this.getId(),
+                data: JSON.stringify(data),
+                contentType: 'application/json; charset=utf-8',
                 error: function (xhr) {
                     window.alert(xhr.responseText);
                     this.set('acknowledged', false);
                 }
             }).success(function () {
                 this.set('acknowledged', true);
+                this.set('ackComment', data.ackComment);
             });
         }
 

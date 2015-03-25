@@ -2,11 +2,7 @@ div#iteration-modification-notifications{
 
     i.fa-circle{
         float: left;
-        cursor: pointer;
         color:#62697B;
-        &:hover {
-            color:#333;
-        }
     }
 
     div.modification-notification{
@@ -14,11 +10,24 @@ div#iteration-modification-notifications{
         margin-top: 10px;
     }
 
-    div.modification-notification-note, div.modification-notification-details{
+    div.modification-notification-note, div.modification-notification-details, div.comment{
         margin-left: 20px;
     }
 
     div.modification-notification-note{
         font-weight: bold;
     }
+
+    div.comment-italic {
+        font-style:italic;
+    }
+
+    div.comment input#acknowledgement-comment {
+        width: calc(~"100% - 87px");
+    }
+
+    div.comment button.action-acknowledge {
+        cursor: pointer;
+    }
+
 }

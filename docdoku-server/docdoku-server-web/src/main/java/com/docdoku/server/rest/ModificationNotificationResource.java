@@ -47,20 +47,21 @@ import javax.ws.rs.core.Response;
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class ModificationNotificationResource {
 
-
     @EJB
     private IProductManagerLocal productService;
 
     public ModificationNotificationResource() {
     }
 
-
     @PUT
-    @Path("{notificationId}")
+    @Path("/{notificationId}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response acknowledgeNotification(@PathParam("workspaceId") String workspaceId, @PathParam("notificationId") int notificationId, ModificationNotificationDTO notificationDTO) throws UserNotFoundException, AccessRightException, PartRevisionNotFoundException, WorkspaceNotFoundException {
-        productService.updateModificationNotification(workspaceId,notificationId,notificationDTO.getAckComment());
-        
+    public Response acknowledgeNotification(@PathParam("workspaceId") String workspaceId, @PathParam("notificationId") int notificationId, ModificationNotificationDTO notificationDTO)
+            throws UserNotFoundException, AccessRightException, PartRevisionNotFoundException, WorkspaceNotFoundException {
+
+        productService.updateModificationNotification(workspaceId, notificationId, notificationDTO.getAckComment());
         return Response.ok().build();
     }
+
+
 }

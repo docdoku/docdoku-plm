@@ -446,6 +446,7 @@ define({
 	_VALIDATION_PATTERN_TIME: "\\d{2}:\\d{2}",
 	VALUE: "Valeur",
     VALUES: "Valeurs",
+    VERIFIED: "Vérifiée",
 	VERSION_HELP: "Version de l'article",
 	VERSION: "Version",
 	VERSIONS: "Versions",

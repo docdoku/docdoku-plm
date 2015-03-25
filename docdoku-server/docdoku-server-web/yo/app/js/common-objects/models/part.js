@@ -22,7 +22,6 @@ function (Backbone, Date, PartIterationList, ModificationNotificationCollection,
             delete data.partIterations;
             delete data.partList;
             this.modificationNotifications = new ModificationNotificationCollection(data.notifications);
-            this.modificationNotifications.setUrl(this.url);
             delete data.notifications;
             return data;
         },

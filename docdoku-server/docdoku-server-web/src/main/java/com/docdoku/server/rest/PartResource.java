@@ -431,19 +431,6 @@ public class PartResource {
         return Response.ok().build();
     }
 
-    @PUT
-    @Path("/modificationNotifications/{modificationNotificationId}/acknowledge")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response acknowledge(@PathParam("workspaceId") String workspaceId, @PathParam("modificationNotificationId") int modificationNotificationId/*, ModificationNotificationDTO modificationNotificationDTO*/)
-            throws EntityNotFoundException, AccessRightException {
-
-        // TODO: add comment
-        productService.updateModificationNotification(workspaceId, modificationNotificationId, "");
-        return Response.ok().build();
-    }
-
-
     private List<InstanceAttribute> createInstanceAttributes(List<InstanceAttributeDTO> dtos) {
         if (dtos == null) {
             return new ArrayList<>();

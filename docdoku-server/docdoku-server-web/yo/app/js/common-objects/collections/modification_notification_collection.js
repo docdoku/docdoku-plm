@@ -9,8 +9,8 @@ define([
         model: ModificationNotification,
         className: 'ModificationNotificationCollection',
 
-        setUrl: function (url) {
-            this.url = url;
+        url: function (url) {
+            return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/notifications/';
         }
 
     });
