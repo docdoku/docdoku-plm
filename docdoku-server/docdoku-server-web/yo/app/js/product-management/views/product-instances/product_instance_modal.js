@@ -6,8 +6,9 @@ define([
     'views/baselines/baselined_part_list',
     'common-objects/utils/date',
     'common-objects/views/attributes/attribute_list',
+    'common-objects/views/file/file_list',
     'common-objects/views/alert'
-], function (Backbone, Mustache, template, BaselinedPartListView,date,ProductInstanceAttributeListView,AlertView) {
+], function (Backbone, Mustache, template, BaselinedPartListView,date,ProductInstanceAttributeListView,FileListView,AlertView) {
     'use strict';
     var ProductInstancesModalView = Backbone.View.extend({
         events: {
@@ -52,6 +53,7 @@ define([
             var that = this;
             this.iteration.initBaselinedParts(that, {success: that.initBaselinedPartListView});
             this.initAttributesView();
+           // this.initAttachedFileView();
             this.openModal();
             return this;
         },
@@ -103,6 +105,18 @@ define([
 
         },
 
+        initAttachedFileView:   function(){
+            var _this = this;
+            this.fileListView = new FileListView({
+                deleteBaseUrl: this.model.url(),
+                uploadBaseUrl: _this.model.getUploadBaseUrl(),
+                collection: this.model.get('attachedFiles'),
+                editMode: true
+            }).render();
+
+            // Add the fileListView to the tab
+            this.$('#tab-products-instances-files').append(this.fileListView.el);
+        },
         bindUserPopover: function () {
             this.$authorLink.userPopover(this.model.getUpdateAuthor(), this.model.getSerialNumber(), 'right');
         },
@@ -113,6 +127,8 @@ define([
             this.iteration.unset('iteration');
             this.iteration.setIterationNote(this.$inputIterationNote.val());
             this.iteration.setBaselinedParts(this.baselinePartListView.getBaselinedParts());
+//            this.iteration.setACL();
+//            this.iteration.setInstancesAttributes();
             this.iteration.save(JSON.stringify(this.iteration), '', {
                 success: function () {
                     _this.model.fetch();

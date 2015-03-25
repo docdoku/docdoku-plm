@@ -26,6 +26,7 @@ import com.docdoku.core.common.User;
 import com.docdoku.core.document.DocumentLink;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.product.PartIteration;
+import com.docdoku.core.security.ACL;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlTransient;
@@ -108,6 +109,37 @@ public class ProductInstanceIteration implements Serializable, FileHolder {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PRODUCTBASELINE_ID", referencedColumnName = "ID")
     private ProductBaseline basedOn;
+
+
+    /**
+     * Set of substitute links (actually their path from the root node)
+     * that have been included into the baseline.
+     * Only selected substitute links are stored as part usage links are considered as the default
+     * choices for baselines.
+     *
+     * Paths are strings made of ordered lists of usage link ids joined by "-".
+     */
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "PRDINSTITERATION_SUBSTITUTELINK",
+            joinColumns= {
+                    @JoinColumn(name = "PRODUCTBASELINE_ID", referencedColumnName = "ID")
+            }
+    )
+    private Set<String> substituteLinks=new HashSet<>();
+
+    /**
+     * Set of optional usage links (actually their path from the root node)
+     * that have been included into the baseline.
+     *
+     * Paths are strings made of ordered lists of usage link ids joined by "-".
+     */
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "PRDINSTITERATION_OPTIONALLINK",
+            joinColumns={
+                    @JoinColumn(name = "PRODUCTBASELINE_ID", referencedColumnName="ID")
+            }
+    )
+    private Set<String> optionalUsageLinks=new HashSet<>();
 
     public ProductInstanceIteration() {
     }
@@ -215,5 +247,21 @@ public class ProductInstanceIteration implements Serializable, FileHolder {
     }
     public List<BaselinedPart> getBaselinedPartsList(){
         return new ArrayList<>(this.getBaselinedParts().values());
+    }
+
+    public Set<String> getSubstituteLinks() {
+        return substituteLinks;
+    }
+
+    public void setSubstituteLinks(Set<String> substituteLinks) {
+        this.substituteLinks = substituteLinks;
+    }
+
+    public Set<String> getOptionalUsageLinks() {
+        return optionalUsageLinks;
+    }
+
+    public void setOptionalUsageLinks(Set<String> optionalUsageLinks) {
+        this.optionalUsageLinks = optionalUsageLinks;
     }
 }

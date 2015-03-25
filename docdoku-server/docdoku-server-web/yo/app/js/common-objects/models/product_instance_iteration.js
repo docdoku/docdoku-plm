@@ -18,7 +18,7 @@ define(['backbone'], function (Backbone) {
                 success: function (baselinedParts) {
                     that.setBaselinedParts(baselinedParts);
                     callbacks.success(this);
-                }
+                    }
             });
         },
 
@@ -60,6 +60,23 @@ define(['backbone'], function (Backbone) {
         getBaselinedParts: function () {
             return this.get('baselinedPartsList');
         },
+        getACL: function(){
+          return this.get('acl');
+        },
+        getInstanceAttributes:  function(){
+            return this.get('instanceAttributes');
+        },
+        getlinkedDocuments:  function(){
+            return this.get('linkedDocuments');
+        },
+        getAttachedFiles: function(){
+          return this.get('attachedFiles');
+        },
+
+        getUploadBaseUrl: function () {
+            return App.config.contextPath + '/api/files/' + this.url() + '/';
+        },
+
         setBaselinedParts: function (baselinedParts) {
             this.set('baselinedPartsList', baselinedParts);
         },

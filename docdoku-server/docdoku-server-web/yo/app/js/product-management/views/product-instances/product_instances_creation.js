@@ -85,7 +85,10 @@ define([
             var data = {
                 serialNumber: this.$inputSerialNumber.val(),
                 configurationItemId: this.$inputConfigurationItem.val(),
-                baselineId: this.$inputBaseline.val()
+                baselineId: this.$inputBaseline.val(),
+                instanceAttributes: this.attributesView.collection.toJSON(),
+                acl: this.workspaceMembershipsView.toList()
+
             };
 
             if (data.serialNumber && data.configurationItemId && data.baselineId) {

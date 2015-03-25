@@ -21,6 +21,7 @@ package com.docdoku.core.configuration;
 
 import com.docdoku.core.common.User;
 import com.docdoku.core.product.ConfigurationItem;
+import com.docdoku.core.security.ACL;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -64,7 +65,8 @@ public class ProductInstanceMaster implements Serializable {
     @OneToMany(mappedBy = "productInstanceMaster", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @OrderBy("iteration ASC")
     private List<ProductInstanceIteration> productInstanceIterations = new ArrayList<>();
-
+    @OneToOne(orphanRemoval = true, cascade=CascadeType.ALL, fetch=FetchType.EAGER)
+    private ACL acl;
     public ProductInstanceMaster() {
     }
 
@@ -138,5 +140,13 @@ public class ProductInstanceMaster implements Serializable {
         }else{
             return getLastIteration().getUpdateDate();
         }
+    }
+
+    public ACL getAcl() {
+        return acl;
+    }
+
+    public void setAcl(ACL acl) {
+        this.acl = acl;
     }
 }

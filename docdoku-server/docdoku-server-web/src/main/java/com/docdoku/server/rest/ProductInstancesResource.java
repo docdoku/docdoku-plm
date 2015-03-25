@@ -19,16 +19,25 @@
  */
 package com.docdoku.server.rest;
 
+import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.configuration.*;
 import com.docdoku.core.exceptions.*;
+import com.docdoku.core.exceptions.NotAllowedException;
+import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.product.ConfigurationItemKey;
 import com.docdoku.core.product.PartIterationKey;
+import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IProductInstanceManagerLocal;
+import com.docdoku.server.rest.dto.ACLDTO;
+import com.docdoku.server.rest.dto.FileDTO;
+import com.docdoku.server.rest.dto.InstanceAttributeDTO;
+import com.docdoku.server.rest.dto.InstanceAttributeTemplateDTO;
 import com.docdoku.server.rest.dto.baseline.BaselinedPartDTO;
 import com.docdoku.server.rest.dto.product.ProductInstanceCreationDTO;
 import com.docdoku.server.rest.dto.product.ProductInstanceIterationDTO;
 import com.docdoku.server.rest.dto.product.ProductInstanceMasterDTO;
+import com.docdoku.server.rest.util.InstanceAttributeFactory;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -92,7 +101,15 @@ public class ProductInstancesResource {
     public ProductInstanceMasterDTO createProductInstanceMaster(@PathParam("workspaceId") String workspaceId, ProductInstanceCreationDTO productInstanceCreationDTO)
             throws EntityNotFoundException, EntityAlreadyExistsException, AccessRightException, CreationException {
 
-        ProductInstanceMaster productInstanceMaster = productInstanceService.createProductInstance(new ConfigurationItemKey(workspaceId, productInstanceCreationDTO.getConfigurationItemId()), productInstanceCreationDTO.getSerialNumber(), productInstanceCreationDTO.getBaselineId());
+        InstanceAttributeFactory factory = new InstanceAttributeFactory();
+        ACLDTO acldto = productInstanceCreationDTO.getAcl();
+
+        List<InstanceAttributeDTO> instanceAttributes = productInstanceCreationDTO.getInstanceAttributes();
+        List<InstanceAttribute> attributes = new ArrayList<>();
+        if (instanceAttributes != null) {
+            attributes = factory.createInstanceAttributes(instanceAttributes);
+        }
+        ProductInstanceMaster productInstanceMaster = productInstanceService.createProductInstance(workspaceId,new ConfigurationItemKey(workspaceId, productInstanceCreationDTO.getConfigurationItemId()), productInstanceCreationDTO.getSerialNumber(), productInstanceCreationDTO.getBaselineId(),acldto.getUserEntries(),acldto.getGroupEntries(),attributes);
         return mapper.map(productInstanceMaster, ProductInstanceMasterDTO.class);
     }
 
@@ -143,7 +160,7 @@ public class ProductInstancesResource {
         for(BaselinedPartDTO baselinedPartDTO : productInstanceIterationDTO.getBaselinedPartsList()){
             partIterationKeys.add(new PartIterationKey(workspaceId, baselinedPartDTO.getNumber(),baselinedPartDTO.getVersion(),baselinedPartDTO.getIteration()));
         }
-        ProductInstanceIteration productInstanceIteration = productInstanceService.updateProductInstance(new ConfigurationItemKey(workspaceId, cId), productInstanceIterationDTO.getSerialNumber(), productInstanceIterationDTO.getIterationNote(), partIterationKeys);
+        ProductInstanceIteration productInstanceIteration = productInstanceService.updateProductInstance(new ConfigurationItemKey(workspaceId, cId), serialNumber, productInstanceIterationDTO.getIterationNote(), partIterationKeys);
         return mapper.map(productInstanceIteration,ProductInstanceIterationDTO.class);
     }
 
@@ -172,5 +189,24 @@ public class ProductInstancesResource {
         }
 
         return Tools.mapBaselinedPartsToBaselinedPartDTO(baselinedParts);
+    }
+
+
+    @DELETE
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path("{serialNumber}/iterations/{iteration}/files/{fileName}")
+    public Response removeAttachedFile(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, @PathParam("iteration") int iteration, @PathParam("fileName") String fileName)
+            throws EntityNotFoundException, UserNotActiveException {
+
+        return Response.ok().build();
+    }
+
+    @PUT
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("{serialNumber}/iterations/{iteration}/files/{fileName}")
+    public FileDTO renameAttachedFile(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, @PathParam("iteration") int iteration, @PathParam("fileName") String fileName, FileDTO fileDTO) throws UserNotActiveException, WorkspaceNotFoundException, CreationException, UserNotFoundException, FileNotFoundException, NotAllowedException, FileAlreadyExistsException {
+
+        return new FileDTO(true,"name","name01");
     }
 }

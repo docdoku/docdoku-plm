@@ -23,13 +23,16 @@ package com.docdoku.server.products;
 import com.docdoku.core.common.User;
 import com.docdoku.core.configuration.*;
 import com.docdoku.core.exceptions.*;
+import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.product.ConfigurationItem;
 import com.docdoku.core.product.ConfigurationItemKey;
 import com.docdoku.core.product.PartIterationKey;
+import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IProductInstanceManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.dao.*;
+import com.docdoku.server.factory.ACLFactory;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
@@ -38,10 +41,7 @@ import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -115,12 +115,12 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public ProductInstanceMaster createProductInstance(ConfigurationItemKey configurationItemKey, String serialNumber, int baselineId) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, BaselineNotFoundException, CreationException, ProductInstanceAlreadyExistsException {
+    public ProductInstanceMaster createProductInstance(String workspaceId, ConfigurationItemKey configurationItemKey, String serialNumber, int baselineId, Map<String, ACL.Permission> userEntries, Map<String, ACL.Permission> groupEntries, List<InstanceAttribute> attributes) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, BaselineNotFoundException, CreationException, ProductInstanceAlreadyExistsException {
         User user = userManager.checkWorkspaceWriteAccess(configurationItemKey.getWorkspace());
         Locale userLocal = new Locale(user.getLanguage());
         ProductInstanceMasterDAO productInstanceMasterDAO = new ProductInstanceMasterDAO(userLocal,em);
 
-        try{                                                                                                            // Check if ths product instance already exist
+        try{// Check if ths product instance already exist
             ProductInstanceMaster productInstanceMaster= productInstanceMasterDAO.loadProductInstanceMaster(new ProductInstanceMasterKey(serialNumber,configurationItemKey.getWorkspace(),configurationItemKey.getId()));
             throw new ProductInstanceAlreadyExistsException(userLocal, productInstanceMaster);
         }catch (ProductInstanceMasterNotFoundException e){
@@ -130,8 +130,12 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         ConfigurationItem configurationItem = new ConfigurationItemDAO(em).loadConfigurationItem(configurationItemKey);
         ProductInstanceMaster productInstanceMaster = new ProductInstanceMaster(configurationItem,serialNumber);
 
+        ACLFactory aclFactory = new ACLFactory(em);
+        ACL acl= aclFactory.createACLFromPermissions(workspaceId,userEntries,groupEntries);
+        productInstanceMaster.setAcl(acl);
+
         ProductInstanceIteration productInstanceIteration = productInstanceMaster.createNextIteration();
-        productInstanceIteration.setIterationNote("-");
+        productInstanceIteration.setIterationNote("Initial");
 
         PartCollection partCollection = new PartCollection();
         new PartCollectionDAO(em).createPartCollection(partCollection);
@@ -147,6 +151,8 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
             partCollection.addBaselinedPart(baselinedPart.getTargetPart());
         }
         productInstanceIteration.setPartCollection(partCollection);
+
+        productInstanceIteration.setInstanceAttributes(attributes);
         return productInstanceMaster;
     }
 
