@@ -235,13 +235,6 @@ define([
             }).render();
         },
 
-        initModificationNotificationListView: function () {
-            new ModificationNotificationListView({
-                el: '#iteration-modification-notifications',
-                collection: this.model.getModificationNotifications()
-            }).render();
-        },
-
         initLinkedDocumentsView: function () {
             this.linkedDocumentsView = new LinkedDocumentsView({
                 editMode: this.editMode,
@@ -271,6 +264,13 @@ define([
             } else {
                 this.$('a[href=#tab-iteration-lifecycle]').hide();
             }
+        },
+
+        initModificationNotificationListView: function () {
+            new ModificationNotificationListView({
+                el: '#iteration-modification-notifications',
+                collection: this.model.getModificationNotifications()
+            }).render();
         },
 
         tagsManagement: function (editMode) {

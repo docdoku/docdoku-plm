@@ -23,8 +23,12 @@ define([
             };
 
             this.$el.html(Mustache.render(template, data));
-
+            this.bindUserPopover();
             return this;
+        },
+
+        bindUserPopover: function () {
+            this.$('.author-popover').userPopover(this.model.getAuthor().login, this.model.getImpactedPartNumber(), 'right');
         },
 
         acknowledge: function () {
