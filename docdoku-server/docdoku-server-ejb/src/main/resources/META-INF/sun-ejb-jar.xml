@@ -24,6 +24,18 @@
             </webservice-endpoint>
         </ejb>
         <ejb>
+            <ejb-name>LOVManagerBean</ejb-name>
+            <jndi-name>ejb/LOVManagerBean</jndi-name>
+            <webservice-endpoint>
+                <port-component-name>LOVManagerBean</port-component-name>
+                <endpoint-address-uri>services/lov</endpoint-address-uri>
+                <login-config>
+                    <auth-method>BASIC</auth-method>
+                    <realm>docdokuRealm</realm>
+                </login-config>
+            </webservice-endpoint>
+        </ejb>
+        <ejb>
             <ejb-name>ProductManagerBean</ejb-name>
             <jndi-name>ejb/ProductManagerBean</jndi-name>
             <webservice-endpoint>

@@ -29,6 +29,7 @@ import com.docdoku.core.meta.NameValuePair;
 import com.docdoku.core.product.PartMasterTemplate;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.ILOVManagerLocal;
+import com.docdoku.core.services.ILOVManagerWS;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.dao.DocumentMasterTemplateDAO;
 import com.docdoku.server.dao.LOVDAO;
@@ -39,6 +40,7 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
+import javax.jws.WebService;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
@@ -49,7 +51,8 @@ import java.util.Locale;
  */
 @Local(ILOVManagerLocal.class)
 @Stateless(name = "LOVManagerBean")
-public class LOVManagerBean implements ILOVManagerLocal {
+@WebService(endpointInterface = "com.docdoku.core.services.ILOVManagerWS")
+public class LOVManagerBean implements ILOVManagerLocal, ILOVManagerWS {
 
     @PersistenceContext
     private EntityManager em;
