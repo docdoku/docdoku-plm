@@ -8,6 +8,7 @@ define({
 		ACTIVITY_STATE_PLACEHOLDER: "New state",
 		ADD_ACTIVITY: "Add activity",
 		ADD: "Add",
+        ADD_COMMENT: "Add comment",
 		ADD_DOCUMENT: "Add document",
 		ADD_ISSUE: "Add a issue",
 		ADD_NEW_TAG: "Enter a new tag",
