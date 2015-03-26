@@ -59,12 +59,30 @@ casper.test.begin('Cleaning potential data', 0, function cleanTestsSuite() {
     });
 
     // Documents
-    casper.then(function cleanupDocuments() {
-        this.open(apiUrls.deleteDocument, {method: 'DELETE'}).then(function (response) {
+    casper.then(function cleanupDocument1() {
+        this.open(apiUrls.deleteDocument1, {method: 'DELETE'}).then(function (response) {
             if (response.status === 200) {
-                this.log('Test document has been deleted', 'info');
+                this.log('Test document1 has been deleted', 'info');
             } else {
-                this.log('Cannot delete test document, reason : ' + helpers.findReasonInResponseHeaders(response.headers), 'warning');
+                this.log('Cannot delete test document1, reason : ' + helpers.findReasonInResponseHeaders(response.headers), 'warning');
+            }
+        });
+    });
+    casper.then(function cleanupDocument2() {
+        this.open(apiUrls.deleteDocument2, {method: 'DELETE'}).then(function (response) {
+            if (response.status === 200) {
+                this.log('Test document2 has been deleted', 'info');
+            } else {
+                this.log('Cannot delete test document2, reason : ' + helpers.findReasonInResponseHeaders(response.headers), 'warning');
+            }
+        });
+    });
+    casper.then(function cleanupDocument3() {
+        this.open(apiUrls.deleteDocument3, {method: 'DELETE'}).then(function (response) {
+            if (response.status === 200) {
+                this.log('Test document3 has been deleted', 'info');
+            } else {
+                this.log('Cannot delete test document3, reason : ' + helpers.findReasonInResponseHeaders(response.headers), 'warning');
             }
         });
     });
