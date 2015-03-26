@@ -98,7 +98,7 @@ define([
         initialize: function () {
             _.bindAll(this, ['onChangeCheckbox']);
             this.listenTo(this.options.resultPathCollection, 'reset', this.onAllResultPathAdded);
-            this.$el.attr('id', 'path_' + String(this.model.attributes.path));
+            this.$el.attr('id', 'path_' + String(this.model.getEncodedPath()));
             this.isForbidden = this.model.isForbidden();
             this.isLock = this.model.isCheckout() && this.model.isLastIteration(this.model.get('iteration')) && !this.model.isCheckoutByConnectedUser();
         },
@@ -188,7 +188,7 @@ define([
             this.isExpanded = false;
             _.bindAll(this, ['onChangeCheckbox']);
             this.listenTo(this.options.resultPathCollection, 'reset', this.onAllResultPathAdded);
-            this.$el.attr('id', 'path_' + String(this.model.attributes.path || '-1'));
+            this.$el.attr('id', 'path_' + String(this.model.getEncodedPath() || '-1'));
             this.isForbidden = this.model.isForbidden();
             this.isLock = this.model.isCheckout() && this.model.isLastIteration(this.model.get('iteration')) && !this.model.isCheckoutByConnectedUser();
         },

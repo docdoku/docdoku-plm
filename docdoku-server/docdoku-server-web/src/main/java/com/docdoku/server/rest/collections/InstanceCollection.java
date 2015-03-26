@@ -72,7 +72,6 @@ public class InstanceCollection {
     }
 
     private boolean filter(List<PartLink> path, List<PartLink> currentPath){
-        return path.size() > currentPath.size() || Tools.getPathAsString(currentPath)
-                .startsWith(Tools.getPathAsString(path));
+        return Tools.getPathAsString(currentPath).startsWith(Tools.getPathAsString(path));
     }
 }

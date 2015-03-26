@@ -40,12 +40,18 @@ function (Backbone, singletonDecorator) {
         bom:function(workspaceId, productId, configSpecType){
             App.config.configSpec = configSpecType;
             App.appView.bomMode();
+            App.appView.once('app:ready',function() {
+                App.partsTreeView.$el.trigger('load:root');
+            });
         },
 
         joinCollaborative: function (workspaceId, productId, configSpecType,  key) {
+            App.config.configSpec = configSpecType;
             App.appView.sceneMode();
             if (!App.collaborativeView.isMaster) {
-                App.appView.requestJoinRoom(key);
+                App.appView.once('app:ready',function(){
+                    App.collaborativeController.sendJoinRequest(key);
+                });
             }
         },
 

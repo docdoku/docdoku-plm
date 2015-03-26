@@ -90,16 +90,13 @@ public class InstanceBodyWriterTools {
                 Vector3d instanceRotation = new Vector3d(instance.getRx(), instance.getRy(), instance.getRz());
                 Matrix4d combinedMatrix = combineTransformation(matrix, instanceTranslation, instanceRotation);
 
-                if(instanceCollection.isFiltered(currentPath)) {
-                    if (!partI.isAssembly() && !partI.getGeometries().isEmpty()) {
-                        writeLeaf(currentPath, copyInstanceIds, partI, combinedMatrix, jg);
-                    } else {
-                        for (Component subComponent : component.getComponents()) {
-                            generateInstanceStreamWithGlobalMatrix(subComponent.getPath(), combinedMatrix, instanceCollection, copyInstanceIds, jg);
-                        }
+                if (!partI.isAssembly() && !partI.getGeometries().isEmpty() && instanceCollection.isFiltered(currentPath)) {
+                    writeLeaf(currentPath, copyInstanceIds, partI, combinedMatrix, jg);
+                } else {
+                    for (Component subComponent : component.getComponents()) {
+                        generateInstanceStreamWithGlobalMatrix(subComponent.getPath(), combinedMatrix, instanceCollection, copyInstanceIds, jg);
                     }
                 }
-
             }
 
         } catch (PartMasterNotFoundException | PartUsageLinkNotFoundException | UserNotFoundException | WorkspaceNotFoundException | ConfigurationItemNotFoundException e) {

@@ -136,8 +136,28 @@ define([
 
         setDescription:function(desc){
             this.$('.description').text(desc);
-        }
+        },
 
+
+        refresh:function(){
+            var selectedConfigSpecOption = this.$('option[value="'+App.config.configSpec+'"]');
+
+            if(selectedConfigSpecOption){
+                this.$selectBaselineSpec.hide();
+                this.$selectLatestFilter.hide();
+                this.$selectProdInstSpec.hide();
+
+                selectedConfigSpecOption.parent().val(App.config.configSpec).show();
+
+                if(_.contains(this.availableFilters,App.config.configSpec)){
+                    this.$selectConfSpec.val('latest-filters');
+                }else if(App.config.configSpec.match(/^pi-/)){
+                    this.$selectConfSpec.val('serial-number');
+                }else{
+                    this.$selectConfSpec.val('baseline');
+                }
+            }
+        }
 	});
 
 	return BaselineSelectView;

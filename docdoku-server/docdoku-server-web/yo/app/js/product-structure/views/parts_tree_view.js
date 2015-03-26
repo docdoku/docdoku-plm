@@ -112,7 +112,7 @@ define(['backbone', 'models/component_module', 'views/component_views'
                 }
             }
 
-            if (relativeInput.parentNode.id === 'path_null') {
+            if (relativeInput.parentNode.id === 'path_-1') {
                 // Root node : master send the new smartPaths
 	            App.collaborativeController.sendSmartPath(this.smartPath);
             }
@@ -129,6 +129,7 @@ define(['backbone', 'models/component_module', 'views/component_views'
         },
 
         setSmartPaths: function (arrayPaths) {
+
 	        arrayPaths = (arrayPaths) ? arrayPaths : [];
             var pathsToLoad = _.difference(arrayPaths, this.smartPath);
             var pathsToUnload = _.difference(this.smartPath, arrayPaths);
