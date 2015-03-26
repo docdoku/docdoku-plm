@@ -431,7 +431,6 @@ public class PartResource {
         return Response.ok().build();
     }
 
-
     private List<InstanceAttribute> createInstanceAttributes(List<InstanceAttributeDTO> dtos) {
         if (dtos == null) {
             return new ArrayList<>();

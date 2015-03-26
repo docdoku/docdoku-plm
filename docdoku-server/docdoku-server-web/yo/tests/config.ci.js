@@ -71,6 +71,7 @@ module.exports = {
         // Folder and document creation
         "js/document-management/folder/folderCreation.js",
         "js/document-management/document/documentCreation.js",
+        "js/document-management/document/documentsCreation.js",
         "js/document-management/document/documentUploadFile.js",
         "js/document-management/document/documentMultipleCheckin.js",
         "js/document-management/document/documentMultipleCheckout.js",
@@ -95,6 +96,7 @@ module.exports = {
         // Deletions
         "js/document-management/tag/tagDeletion.js",
         "js/document-management/document/documentDeletion.js",
+        "js/document-management/document/documentMultipleDeletion.js",
         "js/document-management/template/templateDeletion.js",
         "js/document-management/folder/folderDeletion.js",
 
