@@ -1668,10 +1668,18 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
         List<PartRevision> partRevisions = new PartRevisionDAO(new Locale(user.getLanguage()), em).getPartRevisions(pWorkspaceId, start, pMaxResults);
         List<PartRevision> filteredPartRevisions = new ArrayList<>();
+
         for(PartRevision partRevision : partRevisions){
             try{
                 checkPartRevisionReadAccess(partRevision.getKey());
+
+                if (isCheckoutByAnotherUser(user,partRevision)) {
+                    em.detach(partRevision);
+                    partRevision.removeLastIteration();
+                }
+
                 filteredPartRevisions.add(partRevision);
+
             } catch (AccessRightException | PartRevisionNotFoundException e) {
                 LOGGER.log(Level.FINER,null,e);
             }
