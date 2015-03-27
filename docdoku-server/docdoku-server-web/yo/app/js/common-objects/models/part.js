@@ -71,6 +71,10 @@ define([
                 return this.get('status') === 'RELEASED';
             },
 
+            isObsolete : function(){
+                return this.get('status') === 'OBSOLETE';
+            },
+
             getFormattedCheckoutDate: function () {
                 if (this.isCheckout()) {
                     return Date.formatTimestamp(

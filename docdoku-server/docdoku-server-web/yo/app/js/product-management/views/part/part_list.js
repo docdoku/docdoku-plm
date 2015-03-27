@@ -143,16 +143,18 @@ define([
             this.trigger('new-version-button:display', false);
             this.trigger('release-button:display', false);
             this.trigger('new-product-button:display', false);
+            this.trigger('obsolete-button:display', false);
         },
 
         onOnePartSelected: function () {
-            this.trigger('delete-button:display', true);
             var partSelected = this.getSelectedPart();
+            this.trigger('delete-button:display', true);
             this.trigger('checkout-group:display', !partSelected.isReleased());
             this.trigger('acl-edit-button:display', partSelected ? (App.config.workspaceAdmin || partSelected.getAuthorLogin() === App.config.login) : false);
             this.trigger('new-version-button:display', !partSelected.isCheckout());
             this.trigger('release-button:display', (!partSelected.isCheckout() && !partSelected.isReleased()));
             this.trigger('new-product-button:display', true);
+            this.trigger('obsolete-button:display', true);
         },
 
         onSeveralPartsSelected: function () {
@@ -161,6 +163,7 @@ define([
             this.trigger('new-version-button:display', false);
             this.trigger('release-button:display', this.isSelectedPartsReleasable());
             this.trigger('new-product-button:display', false);
+            this.trigger('obsolete-button:display', true);
         },
 
         deleteSelectedParts: function () {

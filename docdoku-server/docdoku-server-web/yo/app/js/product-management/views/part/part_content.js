@@ -18,11 +18,12 @@ define([
     'text!common-objects/templates/buttons/ACL_button.html',
     'text!common-objects/templates/buttons/new_product_button.html',
     'text!common-objects/templates/buttons/tags_button.html',
+    'text!common-objects/templates/buttons/obsolete_button.html',
 	'text!templates/part/search_part_form.html',
     'common-objects/views/alert',
     'common-objects/views/tags/tags_management',
     'views/product/product_creation_view'
-], function (Backbone, Mustache, PartCollection, PartSearchCollection, template, PartListView, PartCreationView, PartNewVersionView, PromptView, ACLEditView, AdvancedSearchView, deleteButton, checkoutButtonGroup, newVersionButton, releaseButton, aclButton, newProductButton,tagsButton, searchForm, AlertView,TagsManagementView,ProductCreationView) {
+], function (Backbone, Mustache, PartCollection, PartSearchCollection, template, PartListView, PartCreationView, PartNewVersionView, PromptView, ACLEditView, AdvancedSearchView, deleteButton, checkoutButtonGroup, newVersionButton, releaseButton, aclButton, newProductButton, tagsButton, obsoleteButton, searchForm, AlertView,TagsManagementView,ProductCreationView) {
     'use strict';
 	var PartContentView = Backbone.View.extend({
         events: {
@@ -34,6 +35,7 @@ define([
             'click button.edit-acl': 'updateACL',
             'click button.new-version': 'newVersion',
             'click button.new-release': 'releasePart',
+            'click button.mark-as-obsolete': 'markAsObsolete',
             'click button.next-page': 'toNextPage',
             'click button.previous-page': 'toPreviousPage',
             'click .actions .tags': 'actionTags',
@@ -53,7 +55,8 @@ define([
             releaseButton: releaseButton,
             searchForm: searchForm,
             newProductButton:newProductButton,
-            tagsButton: tagsButton
+            tagsButton: tagsButton,
+            obsoleteButton:obsoleteButton
         },
 
         initialize: function () {
@@ -111,6 +114,7 @@ define([
             this.newVersionButton = this.$('.new-version');
             this.newProductButton = this.$('.new-product');
             this.releaseButton = this.$('.new-release');
+            this.obsoleteButton = this.$('.mark-as-obsolete');
             this.tagsButton = this.$('.actions .tags');
             this.currentPageIndicator = this.$('.current-page');
             this.pageControls = this.$('.page-controls');
@@ -131,6 +135,7 @@ define([
             this.partListView.on('acl-edit-button:display', this.changeACLButtonDisplay);
             this.partListView.on('new-version-button:display', this.changeVersionButtonDisplay);
             this.partListView.on('release-button:display', this.changeReleaseButtonDisplay);
+            this.partListView.on('obsolete-button:display', this.changeObsoleteButtonDisplay);
             this.partListView.on('new-product-button:display', this.changeNewProductButtonDisplay);
 
             this.delegateEvents();
@@ -162,51 +167,31 @@ define([
         },
 
         changeDeleteButtonDisplay: function (state) {
-            if (state) {
-                this.deleteButton.show();
-            } else {
-                this.deleteButton.hide();
-            }
+            this.deleteButton.toggle(state);
         },
 
         changeACLButtonDisplay: function (state) {
-            if (state) {
-                this.aclButton.show();
-            } else {
-                this.aclButton.hide();
-            }
+            this.aclButton.toggle(state);
         },
 
         changeCheckoutGroupDisplay: function (state) {
-            if (state) {
-                this.checkoutGroup.show();
-            } else {
-                this.checkoutGroup.hide();
-            }
+            this.checkoutGroup.toggle(state);
         },
 
         changeVersionButtonDisplay: function (state) {
-            if (state) {
-                this.newVersionButton.show();
-            } else {
-                this.newVersionButton.hide();
-            }
+            this.newVersionButton.toggle(state);
         },
 
         changeNewProductButtonDisplay: function (state) {
-            if (state) {
-                this.newProductButton.show();
-            } else {
-                this.newProductButton.hide();
-            }
+            this.newProductButton.toggle(state);
         },
 
         changeReleaseButtonDisplay: function (state) {
-            if (state) {
-                this.releaseButton.show();
-            } else {
-                this.releaseButton.hide();
-            }
+            this.releaseButton.toggle(state);
+        },
+
+        changeObsoleteButtonDisplay: function(state) {
+            this.obsoleteButton.toggle(state);
         },
 
         updateCheckoutButtons: function (values) {
