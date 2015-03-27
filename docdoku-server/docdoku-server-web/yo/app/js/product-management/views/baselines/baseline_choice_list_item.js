@@ -46,7 +46,7 @@ define([
                 return null;
             }
             if(this.optional){
-                return {optional:true,path:this.model.getPath()}
+                return {optional:true,path:this.model.getPath()};
             }
 
             var paths = this.model.getPaths();

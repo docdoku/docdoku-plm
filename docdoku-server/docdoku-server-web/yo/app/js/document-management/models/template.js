@@ -1,9 +1,9 @@
-/*global _,define,App*/
+/*global _,$,define,App*/
 define([
     'backbone',
     'common-objects/collections/file/attached_file_collection',
     'common-objects/utils/acl-checker'
-], function (Backbone, AttachedFileCollection,ACLChecker) {
+], function (Backbone, AttachedFileCollection, ACLChecker) {
     'use strict';
     var Template = Backbone.Model.extend({
         initialize: function () {
@@ -27,19 +27,21 @@ define([
         },
 
         toJSON: function () {
-            return this.clone().set({attributeTemplates: _.reject(this.get('attributeTemplates'),
-                function (attribute) {
-                    return attribute.name === '';
-                }
-            )}, {silent: true}).attributes;
+            return this.clone().set({
+                attributeTemplates: _.reject(this.get('attributeTemplates'),
+                    function (attribute) {
+                        return attribute.name === '';
+                    }
+                )
+            }, {silent: true}).attributes;
         },
 
-        getId: function(){
-          return this.get('id');
+        getId: function () {
+            return this.get('id');
         },
 
-        getAttachedFiles: function(){
-          return this.get('attachedFiles');
+        getAttachedFiles: function () {
+            return this.get('attachedFiles');
         },
         getUploadBaseUrl: function () {
             return App.config.contextPath + '/api/files/' + this.get('workspaceId') + '/document-templates/' + this.get('id') + '/';
@@ -70,7 +72,7 @@ define([
         updateACL: function (args) {
             $.ajax({
                 type: 'PUT',
-                url: this.url()+'/acl',
+                url: this.url() + '/acl',
                 data: JSON.stringify(args.acl),
                 contentType: 'application/json; charset=utf-8',
                 success: args.success,

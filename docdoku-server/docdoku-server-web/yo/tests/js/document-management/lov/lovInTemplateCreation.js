@@ -1,4 +1,4 @@
-/*global casper,urls,documents*/
+/*global $,casper,urls,documents*/
 
 casper.test.begin('LOV creation and use in template',5, function LOVTemplateCreationTestsSuite(){
     'use strict';
@@ -14,7 +14,7 @@ casper.test.begin('LOV creation and use in template',5, function LOVTemplateCrea
 
     function cantFindElement(selector){
         this.test.assertNotExists(selector, selector+' should be displayed');
-    };
+    }
 
     /**
      * Open template nav
@@ -40,7 +40,7 @@ casper.test.begin('LOV creation and use in template',5, function LOVTemplateCrea
                 this.click('.addLOVValue');
                 this.click('.addLOVValue');
                 this.sendKeys('input.lovItemNameInput',documents.lov.color.itemName);
-                var firstItemSelector = '#lovCreationform .lovValues .lovPossibleValue:nth-child(1)'
+                var firstItemSelector = '#lovCreationform .lovValues .lovPossibleValue:nth-child(1)';
                 this.waitForSelector(firstItemSelector ,function (){
                     this.sendKeys('#lovCreationform .lovValues .lovPossibleValue:nth-child(1) .lovItemNameValueNameInput',documents.lov.color.namePairValueNameRed);
                     this.sendKeys('#lovCreationform .lovValues .lovPossibleValue:nth-child(1) .lovItemNameValueValueInput',documents.lov.color.namePairValueValueRed);

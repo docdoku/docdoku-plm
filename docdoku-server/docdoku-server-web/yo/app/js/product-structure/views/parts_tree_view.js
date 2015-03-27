@@ -25,7 +25,7 @@ define(['backbone', 'models/component_module', 'views/component_views'
         },
 
         refreshProductView: function(){
-          this.refreshAll();
+            this.refreshAll();
         },
 
         render: function () {

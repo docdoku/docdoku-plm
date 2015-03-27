@@ -178,16 +178,8 @@ define(['backbone', 'common-objects/utils/date'],
             },
 
             url: function () {
-
                 var path = this.path ? '-1-'+this.path : '-1';
                 return this.urlBase() + '?configSpec=' + App.config.configSpec + '&path=' + path + '&depth=1';
-
-                if (this.isRoot) {
-                    return this.urlBase() + '?configSpec=' + App.config.configSpec + '&depth=0';
-                } else {
-                    return this.urlBase() + '?configSpec=' + App.config.configSpec +
-                        '&path=' + this.path + '&depth=1' + ''
-                }
             },
 
             urlBase: function () {

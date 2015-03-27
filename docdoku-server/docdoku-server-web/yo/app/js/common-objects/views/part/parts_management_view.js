@@ -157,7 +157,7 @@ define([
                                 partNumbers.push(d.partNumber+", "+d.partName);
                             }
                         });
-                        process(partNumbers)
+                        process(partNumbers);
                     });
                 },
                 updater: function (part) {
@@ -179,15 +179,10 @@ define([
         },
 
         getSelectedComponent: function () {
-            var self = this;
-            _(this.componentViews).select(function (view) {
-                if (view.isSelected()) {
-                    self.$selectedComponent = view;
-                }
+            this.$selectedComponent = _(this.componentViews).select(function (view) {
+                return view.isSelected();
             })[0];
         }
-
-
 
     });
 
