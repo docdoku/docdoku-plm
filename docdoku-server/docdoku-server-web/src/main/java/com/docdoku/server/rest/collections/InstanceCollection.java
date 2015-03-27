@@ -20,8 +20,10 @@
 
 package com.docdoku.server.rest.collections;
 
-import com.docdoku.core.configuration.ConfigSpec;
-import com.docdoku.core.product.PartUsageLink;
+import com.docdoku.core.configuration.PSFilter;
+import com.docdoku.core.product.ConfigurationItemKey;
+import com.docdoku.core.product.PartLink;
+import com.docdoku.core.util.Tools;
 
 import java.util.List;
 
@@ -31,32 +33,45 @@ import java.util.List;
  */
 
 public class InstanceCollection {
-    
-    private PartUsageLink rootUsageLink;
-    private List<Integer> usageLinkPaths;
-    private ConfigSpec configSpec;
-    
-    public InstanceCollection(){
-        
-    }
-    
-    public InstanceCollection(PartUsageLink rootUsageLink, List<Integer> usageLinkPaths, ConfigSpec configSpec){
-        this.rootUsageLink=rootUsageLink;
-        this.usageLinkPaths=usageLinkPaths;
-        this.configSpec=configSpec;
+
+    // Used for services call
+    private ConfigurationItemKey ciKey;
+
+    // Used to walk the structure
+    private PSFilter filter;
+
+    // All instances under these paths
+    private List<List<PartLink>> paths;
+
+    public InstanceCollection(ConfigurationItemKey ciKey, PSFilter filter, List<List<PartLink>> paths){
+        this.ciKey = ciKey;
+        this.filter = filter;
+        this.paths = paths;
     }
 
-    public ConfigSpec getConfigSpec() {
-        return configSpec;
+
+    public PSFilter getFilter() {
+        return filter;
     }
 
-    public PartUsageLink getRootUsageLink() {
-        return rootUsageLink;
+    public ConfigurationItemKey getCiKey() {
+        return ciKey;
     }
 
-    public List<Integer> getUsageLinkPaths() {
-        return usageLinkPaths;
+    public List<List<PartLink>> getPaths() {
+        return paths;
     }
-    
-    
+
+    public boolean isFiltered(List<PartLink> currentPath) {
+        for(List<PartLink> path : paths){
+            if(filter(path,currentPath)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean filter(List<PartLink> path, List<PartLink> currentPath){
+        return Tools.getPathAsString(currentPath).startsWith(Tools.getPathAsString(path));
+    }
 }

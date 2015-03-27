@@ -46,9 +46,13 @@ define([
                 return null;
             }
             if(this.optional){
-                return {optional:true,path:this.model.getPartUsageLinkPath()}
+                return {optional:true,path:this.model.getPath()}
             }
-            return {path:this.model.getPath()+'-'+this.choice};
+
+            var paths = this.model.getPaths();
+            paths.pop();
+            paths.push(this.choice);
+            return {path:paths.join('-')};
         },
         changeChoice:function(e){
             this.choice = e.target.value;

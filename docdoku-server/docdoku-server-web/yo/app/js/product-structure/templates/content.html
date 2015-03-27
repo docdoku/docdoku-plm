@@ -1,8 +1,13 @@
 <div id="product-menu">
     <div id="product-menu-inner">
-        <div id="nav_list_action_bar"></div>
-
         <div id="product_nav_list_container">
+            <ul class="nav well">
+                <li class="nav-header">{{i18n.PRODUCT}} : {{productId}}</li>
+            </ul>
+
+            <div id="nav_list_action_bar"></div>
+            <div id="config_spec_container"></div>
+
             <nav class="nav nav-list treeview" id="product_nav_list">
                 <div id='product_title'><i class="fa fa-refresh"></i><i class="fa fa-briefcase"></i> {{productId}} <img class="loader"
                                                                                            src="{{contextPath}}/images/product-loader.gif"/>
@@ -10,7 +15,6 @@
             </nav>
         </div>
 
-        <div id="config_spec_container" class="ConfigSpecSelector"></div>
     </div>
 </div>
 

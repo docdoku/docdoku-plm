@@ -19,54 +19,39 @@
  */
 
 
-package com.docdoku.core.configuration;
+package com.docdoku.server.configuration.spec;
 
 import com.docdoku.core.common.User;
+import com.docdoku.core.configuration.DocumentConfigSpec;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentRevision;
-import com.docdoku.core.product.PartIteration;
-import com.docdoku.core.product.PartMaster;
-
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
 
 /**
- * A {@link ConfigSpec} which selects the latest released iteration.
+ * @author Morgan Guimard
  *
- * @author Taylor LABEJOF
- * @version 2.0, 29/08/14
- * @since   V2.0
  */
-@Table(name="LATESTRELEASEDCONFIGSPEC")
-@Entity
-public class LatestReleasedConfigSpec extends ConfigSpec {
 
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+public class LatestDocumentConfigSpec extends DocumentConfigSpec {
+
     private User user;
-
-    public LatestReleasedConfigSpec() {
+    public LatestDocumentConfigSpec() {
     }
 
-    public LatestReleasedConfigSpec(User user) {
+    public LatestDocumentConfigSpec(User user) {
         this.user = user;
+    }
+
+    @Override
+    public DocumentIteration filter(DocumentRevision documentRevision) {
+        return documentRevision.getLastIteration();
     }
 
     public User getUser() {
         return user;
     }
+
     public void setUser(User user) {
         this.user = user;
     }
 
-    @Override
-    public PartIteration filterConfigSpec(PartMaster part) {
-        return part.getLastReleasedRevision().getLastIteration();
-    }
-
-    @Override
-    public DocumentIteration filterConfigSpec(DocumentRevision documentRevision) {
-        return null;
-    }
 }

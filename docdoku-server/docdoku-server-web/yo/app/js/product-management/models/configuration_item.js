@@ -38,13 +38,12 @@ define(['backbone'], function (Backbone) {
         },
 
         getBomUrl: function () {
-            return App.config.contextPath + '/product-structure/#' + App.config.workspaceId + '/' + encodeURIComponent(this.getId()) + '/bom' ;
+            return App.config.contextPath + '/product-structure/#' + App.config.workspaceId + '/' + encodeURIComponent(this.getId()) + '/config-spec/wip/bom' ;
         },
 
         getSceneUrl: function () {
-            return App.config.contextPath + '/product-structure/#' + App.config.workspaceId + '/' + encodeURIComponent(this.getId()) + '/scene';
+            return App.config.contextPath + '/product-structure/#' + App.config.workspaceId + '/' + encodeURIComponent(this.getId()) + '/config-spec/wip/scene' ;
         },
-
 
         getFrameUrl: function () {
             return  App.config.contextPath + '/visualization/#' + App.config.workspaceId + '/' + this.getId() + '/0/10/1000/null/'+App.config.configSpec;
@@ -62,15 +61,15 @@ define(['backbone'], function (Backbone) {
         },
 
         getReleasedChoices : function(){
-            return $.getJSON(this.urlRoot() + '/' + this.getId() + '/choices?type=RELEASED');
+            return $.getJSON(this.urlRoot() + '/' + this.getId() + '/path-choices?type=RELEASED');
         },
 
         getLatestChoices : function(){
-            return $.getJSON(this.urlRoot() + '/' + this.getId() + '/choices?type=LATEST');
+            return $.getJSON(this.urlRoot() + '/' + this.getId() + '/path-choices?type=LATEST');
         },
 
         getReleasedParts : function(){
-            return $.getJSON(this.urlRoot() + '/' + this.getId() + '/latest-released');
+            return $.getJSON(this.urlRoot() + '/' + this.getId() + '/versions-choices');
         },
 
         deleteBaselines: function (baselines, callbacks) {

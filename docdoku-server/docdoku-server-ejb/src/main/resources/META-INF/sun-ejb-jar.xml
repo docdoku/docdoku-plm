@@ -48,11 +48,11 @@
             </webservice-endpoint>
         </ejb>
         <ejb>
-            <ejb-name>ProductConfigSpecManagerBean</ejb-name>
-            <jndi-name>ejb/ProductConfigSpecManagerBean</jndi-name>
+            <ejb-name>ProductBaselineManagerBean</ejb-name>
+            <jndi-name>ejb/ProductBaselineManagerBean</jndi-name>
             <webservice-endpoint>
-                <port-component-name>ProductConfigSpecManagerBean</port-component-name>
-                <endpoint-address-uri>services/productConfigSpec</endpoint-address-uri>
+                <port-component-name>ProductBaselineManagerBean</port-component-name>
+                <endpoint-address-uri>services/productBaseline</endpoint-address-uri>
                 <login-config>
                     <auth-method>BASIC</auth-method>
                     <realm>docdokuRealm</realm>

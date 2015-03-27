@@ -19,6 +19,7 @@
  */
 package com.docdoku.core.util;
 
+import com.docdoku.core.product.PartLink;
 import com.docdoku.core.workflow.ActivityModel;
 import com.docdoku.core.workflow.TaskModel;
 import com.docdoku.core.workflow.WorkflowModel;
@@ -26,6 +27,8 @@ import com.docdoku.core.workflow.WorkflowModel;
 import javax.swing.text.MaskFormatter;
 import java.text.Normalizer;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
@@ -200,5 +203,31 @@ public class Tools {
 
         }
         return maskBuilder.toString();
+    }
+
+    public static String getPathAsString(List<PartLink> path) {
+        List<String> ids = new ArrayList<>();
+        for (PartLink link : path) {
+            ids.add(link.getFullId());
+        }
+        return String.join("-", ids); // java 8
+    }
+
+    public static String getPathInstanceAsString(List<PartLink> path, List<Integer> instancesIds) {
+
+        if(path.size() != instancesIds.size()){
+           throw new IllegalArgumentException("Path and instances must be same sized");
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for(int i = 0; i < path.size(); i++){
+            sb.append(path.get(i).getFullId());
+            sb.append("-");
+            sb.append(instancesIds.get(i));
+            sb.append("-");
+        }
+
+        String s = sb.toString();
+        return s.substring(0,s.length()-1);
     }
 }

@@ -19,7 +19,7 @@
  */
 package com.docdoku.server.rest;
 
-import com.docdoku.core.configuration.ConfigSpec;
+import com.docdoku.core.configuration.DocumentConfigSpec;
 import com.docdoku.core.document.DocumentRevisionKey;
 import com.docdoku.core.document.Folder;
 import com.docdoku.core.exceptions.*;
@@ -92,7 +92,7 @@ public class FolderResource {
         if(configSpecType==null || "latest".equals(configSpecType)){
             folderNames = documentService.getFolders(completePath);
         }else{
-            ConfigSpec cs = getConfigSpec(workspaceId, configSpecType);
+            DocumentConfigSpec cs = getConfigSpec(workspaceId, configSpecType);
             folderNames = documentConfigSpecService.getFilteredFolders(workspaceId,cs,completePath);
         }
 
@@ -247,8 +247,8 @@ public class FolderResource {
      * @throws WorkspaceNotFoundException If the workspace doesn't exist
      * @throws BaselineNotFoundException If the baseline doesn't exist
      */
-    private ConfigSpec getConfigSpec(String workspaceId, String configSpecType) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, BaselineNotFoundException {
-        ConfigSpec cs;
+    private DocumentConfigSpec getConfigSpec(String workspaceId, String configSpecType) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, BaselineNotFoundException {
+        DocumentConfigSpec cs;
         switch (configSpecType) {
             case "latest":
             case "undefined":

@@ -10,10 +10,9 @@ define(['backbone'], function (Backbone) {
 
         parse: function (response) {
             if (response) {
-                this.partUsageLinks = _.map(response.path.split('-'), function (partUsageLinkIdString) {
-                    return parseInt(partUsageLinkIdString, 10);
-                });
-                this.partUsageLinks.unshift(-1);
+                var linkIds = response.path.substr(3).split('-');
+                linkIds.unshift('-1');
+                this.partUsageLinks = linkIds;
             }
         },
 

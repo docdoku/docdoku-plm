@@ -21,40 +21,23 @@
 
 package com.docdoku.core.configuration;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import com.docdoku.core.product.PartIteration;
+import com.docdoku.core.product.PartLink;
+import com.docdoku.core.product.PartMaster;
+
+import java.io.Serializable;
+import java.util.List;
 
 /**
- * A kind of {@link EffectivityConfigSpec} based on a specific lot.
- * 
- * @author Florent Garin
- * @version 1.1, 30/10/11
- * @since   V1.1
+ * A PSFilter is used to select for each {@link com.docdoku.core.product.PartMaster}s
+ * the right {@link com.docdoku.core.product.PartIteration}s
+ *
+ * @author Morgan Guimard
  */
-@Table(name="LOTBASEDEFFCS")
-@Entity
-public class LotBasedEffectivityConfigSpec extends EffectivityConfigSpec {
 
-    /**
-     * The lot id of the particular batch of items specified by the context.
-     */
-    @Column(name="LOTIDCONFIG")
-    private String lotId;
-
-    public LotBasedEffectivityConfigSpec() {
+public abstract class PSFilter implements Serializable{
+    public PSFilter() {
     }
-
-    
-    
-    public String getLotId() {
-        return lotId;
-    }
-
-    public void setLotId(String lotId) {
-        this.lotId = lotId;
-    }
-    
-    
-    
+    public abstract List<PartIteration> filter(PartMaster partMaster);
+    public abstract List<PartLink> filter(List<PartLink> path);
 }

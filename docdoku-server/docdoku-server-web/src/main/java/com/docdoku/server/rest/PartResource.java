@@ -173,7 +173,7 @@ public class PartResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response checkIn(@PathParam("workspaceId") String workspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion)
-            throws EntityNotFoundException, ESServerException, AccessRightException, NotAllowedException {
+            throws EntityNotFoundException, ESServerException, AccessRightException, NotAllowedException, EntityConstraintException, UserNotActiveException {
 
         PartRevisionKey revisionKey = new PartRevisionKey(workspaceId, partNumber, partVersion);
         productService.checkInPart(revisionKey);

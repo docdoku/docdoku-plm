@@ -62,7 +62,16 @@ define(['backbone'], function (Backbone) {
                 },
                 error: args.error
             });
+        },
+
+        getBomUrl: function () {
+            return App.config.contextPath + '/product-structure/#' + App.config.workspaceId + '/' + encodeURIComponent(this.getConfigurationItemId()) + '/config-spec/'+this.getId()+'/bom' ;
+        },
+
+        getSceneUrl: function () {
+            return App.config.contextPath + '/product-structure/#' + App.config.workspaceId + '/' + encodeURIComponent(this.getConfigurationItemId()) + '/config-spec/'+this.getId()+'/scene' ;
         }
+
     });
 
     return Baseline;

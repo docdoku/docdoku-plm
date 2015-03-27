@@ -20,16 +20,13 @@
 
 package com.docdoku.server.rest.util;
 
-import com.docdoku.core.configuration.ConfigSpec;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.meta.InstanceAttribute;
-import com.docdoku.core.product.CADInstance;
-import com.docdoku.core.product.Geometry;
-import com.docdoku.core.product.PartIteration;
-import com.docdoku.core.product.PartUsageLink;
-import com.docdoku.core.services.IProductConfigSpecManagerLocal;
+import com.docdoku.core.product.*;
+import com.docdoku.core.services.IProductManagerLocal;
+import com.docdoku.core.util.Tools;
+import com.docdoku.server.rest.collections.InstanceCollection;
 import com.docdoku.server.rest.dto.InstanceAttributeDTO;
-import org.apache.commons.lang.StringUtils;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -50,23 +47,66 @@ import java.util.logging.Logger;
  */
 public class InstanceBodyWriterTools {
     private static Context context;
-    private static IProductConfigSpecManagerLocal productConfigSpecService;
+    private static IProductManagerLocal productService;
     private static final Logger LOGGER = Logger.getLogger(InstanceBodyWriterTools.class.getName());
     private static Mapper mapper;
 
     static {
         try {
             context = new InitialContext();
-            productConfigSpecService = (IProductConfigSpecManagerLocal) context.lookup("java:global/docdoku-server-ear/docdoku-server-ejb/ProductConfigSpecManagerBean");
+            productService = (IProductManagerLocal) context.lookup("java:global/docdoku-server-ear/docdoku-server-ejb/ProductManagerBean");
             mapper = DozerBeanMapperSingletonWrapper.getInstance();
         } catch (NamingException e) {
-            Logger.getLogger(InstanceBodyWriterTools.class.getName()).log(Level.WARNING,null,e);
+            LOGGER.log(Level.WARNING, null, e);
         }
     }
 
     private InstanceBodyWriterTools(){
         super();
     }
+
+    public static void generateInstanceStreamWithGlobalMatrix(List<PartLink> currentPath, Matrix4d matrix, InstanceCollection instanceCollection, List<Integer> instanceIds, JsonGenerator jg) {
+
+        try {
+
+            if(currentPath == null){
+                PartLink rootPartUsageLink = productService.getRootPartUsageLink(instanceCollection.getCiKey());
+                currentPath = new ArrayList<>();
+                currentPath.add(rootPartUsageLink);
+            }
+
+            Component component = productService.filterProductStructure(instanceCollection.getCiKey(),
+                    instanceCollection.getFilter(), currentPath,1);
+
+            PartLink partLink = component.getPartLink();
+            PartIteration partI = component.getRetainedIteration();
+
+            for (CADInstance instance : partLink.getCadInstances()) {
+
+                List<Integer> copyInstanceIds = new ArrayList<>(instanceIds);
+                copyInstanceIds.add(instance.getId());
+
+                Vector3d instanceTranslation = new Vector3d(instance.getTx(), instance.getTy(), instance.getTz());
+                Vector3d instanceRotation = new Vector3d(instance.getRx(), instance.getRy(), instance.getRz());
+                Matrix4d combinedMatrix = combineTransformation(matrix, instanceTranslation, instanceRotation);
+
+                if (!partI.isAssembly() && !partI.getGeometries().isEmpty() && instanceCollection.isFiltered(currentPath)) {
+                    writeLeaf(currentPath, copyInstanceIds, partI, combinedMatrix, jg);
+                } else {
+                    for (Component subComponent : component.getComponents()) {
+                        generateInstanceStreamWithGlobalMatrix(subComponent.getPath(), combinedMatrix, instanceCollection, copyInstanceIds, jg);
+                    }
+                }
+            }
+
+        } catch (PartMasterNotFoundException | PartUsageLinkNotFoundException | UserNotFoundException | WorkspaceNotFoundException | ConfigurationItemNotFoundException e) {
+            e.printStackTrace();
+        } catch (AccessRightException | EntityConstraintException | NotAllowedException | UserNotActiveException e) {
+            e.printStackTrace();
+        }
+
+    }
+
 
     public static Matrix4d combineTransformation(Matrix4d matrix, Vector3d translation, Vector3d rotation){
         Matrix4d gM=new Matrix4d(matrix);
@@ -91,48 +131,7 @@ public class InstanceBodyWriterTools {
         return gM;
     }
 
-    public static void generateInstanceStreamWithGlobalMatrix(PartUsageLink pUsageLink, Matrix4d matrix, List<Integer> filteredPath, ConfigSpec cs, List<Integer> instanceIds, JsonGenerator jg) {
-        try {
-            PartUsageLink usageLink = productConfigSpecService.filterProductStructure(pUsageLink, cs, 0);
-            PartIteration partI = usageLink.getComponent().getLastRevision().getLastIteration();
-
-            for (CADInstance instance : usageLink.getCadInstances()) {
-                List<Integer> copyInstanceIds = new ArrayList<>(instanceIds);
-                if (instance.getId() != -1) {
-                    copyInstanceIds.add(instance.getId());
-                }
-
-                Vector3d instanceTranslation = new Vector3d(instance.getTx(), instance.getTy(), instance.getTz());
-                Vector3d instanceRotation = new Vector3d(instance.getRx(), instance.getRy(), instance.getRz());
-                Matrix4d combinedMatrix = combineTransformation(matrix, instanceTranslation, instanceRotation);
-
-                if (!partI.isAssembly() && !partI.getGeometries().isEmpty() && filteredPath.isEmpty()) {
-                    writeLeaf(partI,combinedMatrix,copyInstanceIds,jg);
-                } else {
-                    writeNode(partI,cs,filteredPath,combinedMatrix,copyInstanceIds,jg);
-                }
-            }
-        } catch (NotAllowedException | UserNotFoundException | UserNotActiveException | AccessRightException e) {
-            LOGGER.log(Level.WARNING, "You have no right to filter the usageLink : " + pUsageLink.getId(), e);
-        } catch (WorkspaceNotFoundException | ConfigurationItemNotFoundException | PartUsageLinkNotFoundException e) {
-            LOGGER.log(Level.WARNING, "Some resources are missing :", e);
-        }
-    }
-
-    private static void writeNode(PartIteration partI, ConfigSpec cs, List<Integer> filteredPath, Matrix4d combinedMatrix, List<Integer> copyInstanceIds, JsonGenerator jg){
-        for (PartUsageLink component : partI.getComponents()) {
-            if (filteredPath.isEmpty()) {
-                generateInstanceStreamWithGlobalMatrix(component, combinedMatrix, filteredPath, cs, copyInstanceIds, jg);
-
-            } else if (component.getId() == filteredPath.get(0)) {
-                List<Integer> copyWithoutCurrentId = new ArrayList<>(filteredPath);
-                copyWithoutCurrentId.remove(0);
-                generateInstanceStreamWithGlobalMatrix(component, combinedMatrix, copyWithoutCurrentId, cs, copyInstanceIds, jg);
-            }
-        }
-    }
-    private static void writeLeaf(PartIteration partI, Matrix4d combinedMatrix, List<Integer> copyInstanceIds, JsonGenerator jg){
-        String id = StringUtils.join(copyInstanceIds.toArray(), "-");
+    private static void writeLeaf(List<PartLink> currentPath, List<Integer> copyInstanceIds, PartIteration partI, Matrix4d combinedMatrix, JsonGenerator jg){
         String partIterationId = partI.toString();
         List<InstanceAttributeDTO> attributes = new ArrayList<>();
         for (InstanceAttribute attr : partI.getInstanceAttributes()) {
@@ -140,7 +139,7 @@ public class InstanceBodyWriterTools {
         }
 
         jg.writeStartObject();
-        jg.write("id", id);
+        jg.write("id", Tools.getPathInstanceAsString(currentPath, copyInstanceIds));
         jg.write("partIterationId", partIterationId);
 
         writeMatrix(combinedMatrix,jg);

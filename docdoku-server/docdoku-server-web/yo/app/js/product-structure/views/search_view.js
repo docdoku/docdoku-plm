@@ -33,6 +33,7 @@ define([
                 placement: 'bottom',
                 title: App.config.i18n.SEARCH_OPTIONS,
                 trigger: 'manual',
+                container:'body',
                 content: function () {
                     return self.$helpPopover.html();
                 }

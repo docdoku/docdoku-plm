@@ -1041,6 +1041,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             List<DocumentRevision> docRs = folderDAO.removeFolder(folder);
             DocumentRevisionKey[] pks = new DocumentRevisionKey[docRs.size()];
 
+            DocumentMasterDAO mdocDAO = new DocumentMasterDAO(userLocale, em);
             int i = 0;
             for (DocumentRevision docR : docRs) {
                 pks[i++] = docR.getKey();
@@ -1055,6 +1056,12 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
                     }
                     esIndexer.delete(doc);
                     // Remove ElasticSearch Index for this DocumentIteration
+                }
+                DocumentMaster docM = docR.getDocumentMaster();
+                boolean noRevision = docM.getDocumentRevisions().size() == 0;
+
+                if (noRevision) {
+                    mdocDAO.removeDocM(docM);
                 }
             }
             return pks;
@@ -1125,14 +1132,12 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             }
         }
 
-
         DocumentMaster documentMaster = docR.getDocumentMaster();
         boolean isLastRevision = documentMaster.getDocumentRevisions().size() == 1;
 
         if (isLastRevision) {
             documentMasterDAO.removeDocM(documentMaster);
         } else {
-            documentMaster.removeRevision(docR);
             docRDAO.removeRevision(docR);
         }
     }

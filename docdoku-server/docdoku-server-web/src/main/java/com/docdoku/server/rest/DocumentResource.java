@@ -23,7 +23,7 @@ import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.common.Workspace;
-import com.docdoku.core.configuration.ConfigSpec;
+import com.docdoku.core.configuration.DocumentConfigSpec;
 import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.document.DocumentRevisionKey;
@@ -89,7 +89,7 @@ public class DocumentResource {
         if (configSpecType == null || BASELINE_UNDEFINED.equals(configSpecType) || BASELINE_LATEST.equals(configSpecType)) {
             docR = documentService.getDocumentRevision(documentRevisionKey);
         } else {
-            ConfigSpec configSpec = getConfigSpec(workspaceId, configSpecType);
+            DocumentConfigSpec configSpec = getConfigSpec(workspaceId, configSpecType);
             docR = documentConfigSpecService.getFilteredDocumentRevision(documentRevisionKey, configSpec);
         }
 
@@ -520,8 +520,8 @@ public class DocumentResource {
      * @throws com.docdoku.core.exceptions.WorkspaceNotFoundException If the workspace doesn't exist
      * @throws com.docdoku.core.exceptions.BaselineNotFoundException If the baseline doesn't exist
      */
-    private ConfigSpec getConfigSpec(String workspaceId, String configSpecType) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, BaselineNotFoundException {
-        ConfigSpec cs;
+    private DocumentConfigSpec getConfigSpec(String workspaceId, String configSpecType) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, BaselineNotFoundException {
+        DocumentConfigSpec cs;
         switch (configSpecType) {
             case BASELINE_LATEST:
             case BASELINE_UNDEFINED:

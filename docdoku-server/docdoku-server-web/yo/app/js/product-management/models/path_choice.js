@@ -28,7 +28,7 @@ define(['backbone'], function (Backbone) {
         },
 
         getPartUsageLinkId: function () {
-            return this.get('partUsageLink').id;
+            return this.getPartUsageLink().fullId;
         }
     });
 

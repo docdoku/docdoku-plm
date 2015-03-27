@@ -197,6 +197,7 @@ require(['common-objects/contextResolver','i18n!localization/nls/common','i18n!l
                 App.router = Router.getInstance();
                 App.coworkersView = new Modules.CoWorkersAccessModuleView().render();
                 Backbone.history.start();
+                App.appView.initModules();
             });
         });
     });

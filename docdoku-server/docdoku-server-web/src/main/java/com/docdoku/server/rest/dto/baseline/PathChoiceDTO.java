@@ -33,7 +33,7 @@ import java.util.List;
 public class PathChoiceDTO {
 
     private List<String> partRevisionsKeys = new ArrayList<>();
-    private List<Integer> paths = new ArrayList<>();
+    private List<String> paths = new ArrayList<>();
     private PartUsageLinkDTO partUsageLink;
 
     public PathChoiceDTO() {
@@ -43,8 +43,8 @@ public class PathChoiceDTO {
         for(PartRevision partRevision:choice.getPartRevisions()){
             partRevisionsKeys.add(partRevision.getPartMasterNumber()+"-"+partRevision.getVersion());
         }
-        for(PartLink partUsageLink:choice.getPaths()){
-            paths.add(partUsageLink.getId());
+        for(PartLink link:choice.getPaths()){
+            paths.add(link.getFullId());
         }
         Mapper mapper = DozerBeanMapperSingletonWrapper.getInstance();
         partUsageLink = mapper.map(choice.getPartUsageLink(),PartUsageLinkDTO.class);
@@ -58,11 +58,11 @@ public class PathChoiceDTO {
         this.partRevisionsKeys = partRevisionsKeys;
     }
 
-    public List<Integer> getPaths() {
+    public List<String> getPaths() {
         return paths;
     }
 
-    public void setPaths(List<Integer> paths) {
+    public void setPaths(List<String> paths) {
         this.paths = paths;
     }
 

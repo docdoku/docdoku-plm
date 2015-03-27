@@ -13,7 +13,7 @@ define([
 	    }
 	    function onJoinMessage(message){
 		    App.collaborativeView.setRoomKey(message.key);
-		    App.appView.setConfigSpec(message.messageBroadcast.baseline);
+		    App.appView.setConfigSpec(message.messageBroadcast.configSpec);
 		    App.appView.updateTreeView(message.messageBroadcast.smartPath);
 		    App.sceneManager.setControlsContext(message.messageBroadcast.cameraInfos);
 		    App.sceneManager.setEditedMeshes(message.messageBroadcast.editedMeshes);
@@ -53,8 +53,8 @@ define([
 				    App.appView.updateTreeView(message.messageBroadcast.smartPath);
 			    } else if (message.messageBroadcast.editedMeshes) {
 				    App.sceneManager.setEditedMeshes(message.messageBroadcast.editedMeshes);
-			    } else if (message.messageBroadcast.baseline){
-				    App.appView.setConfigSpec(message.messageBroadcast.baseline);
+			    } else if (message.messageBroadcast.configSpec){
+				    App.appView.setConfigSpec(message.messageBroadcast.configSpec);
                     App.baselineSelectView.refresh();
                 } else if (message.messageBroadcast.colourEditedMeshes !== undefined) {
 				    App.sceneManager.setEditedMeshesColor(message.messageBroadcast.colourEditedMeshes);
@@ -129,6 +129,7 @@ define([
             });
         };
 	    this.sendSmartPath = function(value) {
+
 		    if (App.collaborativeView && App.collaborativeView.isMaster) {
 			    App.mainChannel.sendJSON({
 				    type: ChannelMessagesType.COLLABORATIVE_COMMANDS,
@@ -140,7 +141,7 @@ define([
 			    });
 		    }
 	    };
-	    this.sendBaseline = function(value) {
+	    this.sendConfigSpec = function(value) {
 		    value = (value) ? value : App.config.configSpec;
 		    if (App.collaborativeView && App.collaborativeView.isMaster) {
 			    App.mainChannel.sendJSON({
@@ -148,7 +149,7 @@ define([
 				    key: App.collaborativeView.roomKey,
 				    remoteUser: '',
 				    messageBroadcast: {
-					    baseline: value
+					    configSpec: value
 				    }
 			    });
 		    }

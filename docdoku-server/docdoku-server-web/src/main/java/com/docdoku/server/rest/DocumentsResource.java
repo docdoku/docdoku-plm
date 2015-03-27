@@ -21,9 +21,8 @@ package com.docdoku.server.rest;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.common.Workspace;
-import com.docdoku.core.configuration.ConfigSpec;
+import com.docdoku.core.configuration.DocumentConfigSpec;
 import com.docdoku.core.document.DocumentIteration;
-import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
@@ -134,7 +133,7 @@ public class DocumentsResource {
         if(configSpecType==null || BASELINE_UNDEFINED.equals(configSpecType) || BASELINE_LATEST.equals(configSpecType)) {
             docRs = documentService.getAllDocumentsInWorkspace(workspaceId, start, maxResult);
         }else{
-            ConfigSpec configSpec = getConfigSpec(workspaceId,configSpecType);
+            DocumentConfigSpec configSpec = getConfigSpec(workspaceId,configSpecType);
             docRs = documentConfigSpecService.getFilteredDocuments(workspaceId,configSpec,start,maxResult);
         }
         DocumentRevisionDTO[] docRsDTOs = new DocumentRevisionDTO[docRs.length];
@@ -173,7 +172,7 @@ public class DocumentsResource {
         if (configSpecType == null || BASELINE_UNDEFINED.equals(configSpecType) || BASELINE_LATEST.equals(configSpecType)) {
             docRs = documentService.findDocumentRevisionsByFolder(decodedCompletePath);
         } else {
-            ConfigSpec configSpec = getConfigSpec(workspaceId, configSpecType);
+            DocumentConfigSpec configSpec = getConfigSpec(workspaceId, configSpecType);
             docRs = documentConfigSpecService.getFilteredDocumentsByFolder(workspaceId, configSpec, decodedCompletePath);
         }
         DocumentRevisionDTO[] docRsDTOs = new DocumentRevisionDTO[docRs.length];
@@ -203,7 +202,7 @@ public class DocumentsResource {
         if(configSpecType==null || BASELINE_UNDEFINED.equals(configSpecType) || BASELINE_LATEST.equals(configSpecType)) {
             docRs = documentService.findDocumentRevisionsByTag(tagKey);
         }else{
-            ConfigSpec configSpec = getConfigSpec(workspaceId,configSpecType);
+            DocumentConfigSpec configSpec = getConfigSpec(workspaceId,configSpecType);
             docRs = documentConfigSpecService.getFilteredDocumentsByTag(workspaceId,configSpec,tagKey);
         }
         DocumentRevisionDTO[] docRsDTOs = new DocumentRevisionDTO[docRs.length];
@@ -263,7 +262,7 @@ public class DocumentsResource {
         if(configSpecType==null || BASELINE_UNDEFINED.equals(configSpecType) || BASELINE_LATEST.equals(configSpecType)) {
             docRs = documentService.searchDocumentRevisions(documentSearchQuery);
         }else{
-            ConfigSpec configSpec = getConfigSpec(workspaceId,configSpecType);
+            DocumentConfigSpec configSpec = getConfigSpec(workspaceId,configSpecType);
             docRs = documentConfigSpecService.searchFilteredDocuments(workspaceId,configSpec,documentSearchQuery);
         }
         DocumentRevisionDTO[] docRsDTOs = new DocumentRevisionDTO[docRs.length];
@@ -399,8 +398,8 @@ public class DocumentsResource {
      * @throws com.docdoku.core.exceptions.WorkspaceNotFoundException If the workspace doesn't exist
      * @throws com.docdoku.core.exceptions.BaselineNotFoundException If the baseline doesn't exist
      */
-    private ConfigSpec getConfigSpec(String workspaceId, String configSpecType) throws UserNotActiveException, EntityNotFoundException {
-        ConfigSpec cs;
+    private DocumentConfigSpec getConfigSpec(String workspaceId, String configSpecType) throws UserNotActiveException, EntityNotFoundException {
+        DocumentConfigSpec cs;
         switch (configSpecType) {
             case BASELINE_LATEST:
             case BASELINE_UNDEFINED:
