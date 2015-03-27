@@ -1,4 +1,4 @@
-/*global define,App,$*/
+/*global _,define,App,$*/
 define([
     'backbone',
     'common-objects/collections/activity_models','common-objects/utils/acl-checker'

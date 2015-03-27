@@ -1,6 +1,6 @@
 /*global define*/
 define(['backbone'], function (Backbone) {
-	'use strict';
+    'use strict';
     var Attribute = Backbone.Model.extend({
 
         getType: function () {
@@ -34,7 +34,13 @@ define(['backbone'], function (Backbone) {
     });
 
     Attribute.types = {
-        NUMBER: 'NUMBER', DATE: 'DATE', BOOLEAN: 'BOOLEAN', TEXT: 'TEXT', URL: 'URL', LOV:'LOV'};
+        NUMBER: 'NUMBER',
+        DATE: 'DATE',
+        BOOLEAN: 'BOOLEAN',
+        TEXT: 'TEXT',
+        URL: 'URL',
+        LOV: 'LOV'
+    };
 
     return Attribute;
 });

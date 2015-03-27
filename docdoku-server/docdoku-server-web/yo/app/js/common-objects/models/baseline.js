@@ -1,4 +1,4 @@
-/*global _,$,define*/
+/*global _,$,define,App*/
 define(['backbone'], function (Backbone) {
 	'use strict';
     var Baseline = Backbone.Model.extend({

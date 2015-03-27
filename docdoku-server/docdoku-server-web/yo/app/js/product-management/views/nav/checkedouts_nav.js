@@ -5,7 +5,7 @@ define([
     'common-objects/common/singleton_decorator',
     'text!templates/nav/checkedouts_nav.html',
     'views/part/part_content',
-    'collections/checkedouts_part_collection',
+    'collections/checkedouts_part_collection'
 ], function (Backbone, Mustache, singletonDecorator, template, PartContentView,CheckedOutPartsCollection) {
 	'use strict';
     var CheckedOutNavView = Backbone.View.extend({
