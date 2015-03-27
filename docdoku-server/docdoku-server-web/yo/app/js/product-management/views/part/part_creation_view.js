@@ -45,6 +45,8 @@ define([
                 editMode: true
             }).render();
 
+            this.attributesView.render();
+
             this.$inputPartNumber.customValidity(App.config.i18n.REQUIRED_FIELD);
 
             return this;
@@ -68,7 +70,7 @@ define([
         bindAttributesView: function () {
             this.attributesView = new AttributesView({
                 el: this.$('#tab-attributes')
-            }).render();
+            });
         },
 
         setWorkflowModel: function(template) {
