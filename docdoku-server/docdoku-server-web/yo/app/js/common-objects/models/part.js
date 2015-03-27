@@ -71,6 +71,10 @@ define([
                 return this.get('status') === 'RELEASED';
             },
 
+            isObsolete : function(){
+                return this.get('status') === 'OBSOLETE';
+            },
+
             getFormattedCheckoutDate: function () {
                 if (this.isCheckout()) {
                     return Date.formatTimestamp(
@@ -416,7 +420,16 @@ define([
                     }
                 });
             },
-
+            markAsObsolete: function () {
+                return $.ajax({
+                    context: this,
+                    type: 'PUT',
+                    url: this.url() + '/obsolete',
+                    success: function () {
+                        this.fetch();
+                    }
+                });
+            },
             url: function () {
                 if (this.getPartKey()) {
                     return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/' + this.getPartKey();
@@ -431,7 +444,6 @@ define([
                     message: errorMessage
                 }).render().$el);
             }
-
 
         });
 

@@ -47,6 +47,13 @@ public class ModificationNotificationDAO {
         mLocale = Locale.getDefault();
     }
 
+    public void removeModificationNotifications(PartIterationKey pPartIPK){
+        em.createNamedQuery("ModificationNotification.removeAllOnPartIteration")
+                .setParameter("workspaceId", pPartIPK.getWorkspaceId())
+                .setParameter("partNumber", pPartIPK.getPartMasterNumber())
+                .setParameter("version", pPartIPK.getPartRevisionVersion())
+                .setParameter("iteration", pPartIPK.getIteration()).executeUpdate();
+    }
 
     public void removeModificationNotifications(PartRevisionKey pPartRPK){
         em.createNamedQuery("ModificationNotification.removeAllOnPartRevision")

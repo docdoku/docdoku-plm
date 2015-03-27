@@ -28,7 +28,7 @@ define([
                 App.sceneManager.resetCameraPlace();
 
                 App.instancesManager.loadComponent({
-                    getPath: function () {
+                    getEncodedPath: function () {
                         return pathToLoad;
                     }
                 });

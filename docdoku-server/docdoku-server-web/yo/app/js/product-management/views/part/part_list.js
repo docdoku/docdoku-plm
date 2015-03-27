@@ -143,16 +143,18 @@ define([
             this.trigger('new-version-button:display', false);
             this.trigger('release-button:display', false);
             this.trigger('new-product-button:display', false);
+            this.trigger('obsolete-button:display', false);
         },
 
         onOnePartSelected: function () {
-            this.trigger('delete-button:display', true);
             var partSelected = this.getSelectedPart();
-            this.trigger('checkout-group:display', !partSelected.isReleased());
+            this.trigger('delete-button:display', true);
+            this.trigger('checkout-group:display', !partSelected.isReleased() && !partSelected.isObsolete());
             this.trigger('acl-edit-button:display', partSelected ? (App.config.workspaceAdmin || partSelected.getAuthorLogin() === App.config.login) : false);
             this.trigger('new-version-button:display', !partSelected.isCheckout());
-            this.trigger('release-button:display', (!partSelected.isCheckout() && !partSelected.isReleased()));
+            this.trigger('release-button:display', (!partSelected.isCheckout() && !partSelected.isReleased() && !partSelected.isObsolete()));
             this.trigger('new-product-button:display', true);
+            this.trigger('obsolete-button:display', partSelected.isReleased());
         },
 
         onSeveralPartsSelected: function () {
@@ -161,6 +163,7 @@ define([
             this.trigger('new-version-button:display', false);
             this.trigger('release-button:display', this.isSelectedPartsReleasable());
             this.trigger('new-product-button:display', false);
+            this.trigger('obsolete-button:display', false);
         },
 
         deleteSelectedParts: function () {
@@ -229,7 +232,7 @@ define([
         isSelectedPartsReleasable: function () {
             var isPartReleasable = true;
             _(this.listItemViews).each(function (view) {
-                if (view.isChecked() && (view.model.isCheckout() || view.model.isReleased())) {
+                if (view.isChecked() && (view.model.isCheckout() || view.model.isReleased() || view.model.isObsolete())) {
                     isPartReleasable = false;
                 }
             });
@@ -238,7 +241,7 @@ define([
         areSelectedPartsCheckoutable: function () {
             var isPartCheckout = true;
             _(this.getSelectedParts()).each(function (view) {
-                if (view.isReleased() || view.isCheckout()) {
+                if (view.isReleased() || view.isCheckout() || view.isObsolete()) {
                     isPartCheckout = false;
                 }
             });
@@ -256,7 +259,7 @@ define([
         areSelectedPartsAllNotCheckouted: function () {
             var isPartNotCheckouted = true;
             _(this.getSelectedParts()).each(function (view) {
-                if (view.isCheckout() || view.isReleased()) {
+                if (view.isCheckout() || view.isReleased() || view.isObsolete()) {
                     isPartNotCheckouted = false;
                 }
             });

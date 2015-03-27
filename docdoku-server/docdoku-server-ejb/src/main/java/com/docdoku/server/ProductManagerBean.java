@@ -308,6 +308,8 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 throw new NotAllowedException(locale, "NotAllowedException41");
             }
             PartIteration partIte = partR.removeLastIteration();
+            partIterationEvent.select(new AnnotationLiteral<Removed>(){}).fire(new ChangePartIterationEvent(partIte));
+
             for (Geometry file : partIte.getGeometries()) {
                 try {
                     dataManager.deleteData(file);
@@ -337,6 +339,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             partIDAO.removeIteration(partIte);
             partR.setCheckOutDate(null);
             partR.setCheckOutUser(null);
+
             return partR;
         } else {
             throw new NotAllowedException(locale, "NotAllowedException19");
@@ -361,7 +364,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             throw new NotAllowedException(locale, "NotAllowedException37");
         }
 
-        if (partR.isReleased()) {
+        if (partR.isReleased() || partR.isObsolete()) {
             throw new NotAllowedException(locale, "NotAllowedException47");
         }
 
@@ -837,7 +840,14 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     @Override
-    public void removeModificationNotifications(PartRevisionKey pPartRPK) {
+    public void removeModificationNotificationsOnIteration(PartIterationKey pPartIPK) {
+        //TODO insure access rights
+        new ModificationNotificationDAO(em).removeModificationNotifications(pPartIPK);
+    }
+
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
+    @Override
+    public void removeModificationNotificationsOnRevision(PartRevisionKey pPartRPK) {
         //TODO insure access rights
         new ModificationNotificationDAO(em).removeModificationNotifications(pPartRPK);
     }
@@ -1237,7 +1247,28 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             throw new NotAllowedException(locale, "NotAllowedException41");
         }
 
+        if(partRevision.isObsolete()){
+            throw new NotAllowedException(locale, "NotAllowedException38");
+        }
+
         partRevision.release();
+        return partRevision;
+    }
+
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
+    public PartRevision markPartRevisionAsObsolete(PartRevisionKey pRevisionKey) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException, NotAllowedException {
+        User user = checkPartRevisionWriteAccess(pRevisionKey);                                                         // Check if the user can write the part
+        Locale locale = new Locale(user.getLanguage());
+
+        PartRevisionDAO partRevisionDAO = new PartRevisionDAO(locale,em);
+        PartRevision partRevision = partRevisionDAO.loadPartR(pRevisionKey);
+
+        if(!partRevision.isReleased()){
+            throw new NotAllowedException(locale, "NotAllowedException36");
+        }
+
+        partRevision.markAsObsolete();
         return partRevision;
     }
 

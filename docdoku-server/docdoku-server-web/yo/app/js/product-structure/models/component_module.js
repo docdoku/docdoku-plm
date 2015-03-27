@@ -138,6 +138,10 @@ define(['backbone', 'common-objects/utils/date'],
                 return this.get('released');
             },
 
+            isObsolete : function(){
+                return this.get('obsolete');
+            },
+
             getInstancesUrl: function () {
                 return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + App.config.productId + '/instances?configSpec=' + App.config.configSpec + '&path=' + this.getEncodedPath();
             },

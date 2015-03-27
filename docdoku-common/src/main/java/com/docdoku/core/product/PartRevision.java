@@ -146,7 +146,7 @@ public class PartRevision implements Serializable, Comparable<PartRevision>, Clo
     private RevisionStatus status=RevisionStatus.WIP;
 
     public enum RevisionStatus {
-        WIP, RELEASED
+        WIP, RELEASED, OBSOLETE
     }
 
     public PartRevision(){
@@ -419,9 +419,28 @@ public class PartRevision implements Serializable, Comparable<PartRevision>, Clo
     public boolean isReleased(){
         return status==RevisionStatus.RELEASED;
     }
-    public void release(){
-        this.status=RevisionStatus.RELEASED;
+    public boolean isObsolete(){
+        return status==RevisionStatus.OBSOLETE;
     }
+    public boolean release(){
+        if(this.status==RevisionStatus.WIP){
+            this.status=RevisionStatus.RELEASED;
+            return true;
+        }else{
+            return false;
+        }
+
+    }
+    public boolean markAsObsolete(){
+        if(this.status==RevisionStatus.RELEASED){
+            this.status=RevisionStatus.OBSOLETE;
+            return true;
+        }else{
+            return false;
+        }
+
+    }
+
 
 
     public boolean isAttributesLocked(){
