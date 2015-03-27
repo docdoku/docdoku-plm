@@ -53,7 +53,7 @@ public class ComponentDTO implements Serializable{
     private int lastIterationNumber;
     @XmlElement(nillable = true)
     private boolean accessDeny;
-    List<ModificationNotificationDTO> notifications;
+    private List<ModificationNotificationDTO> notifications;
 
 
     public ComponentDTO() {

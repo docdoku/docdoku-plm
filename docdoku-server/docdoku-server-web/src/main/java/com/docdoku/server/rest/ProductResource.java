@@ -435,6 +435,7 @@ public class ProductResource {
 
         dto.setAssembly(retainedIteration.isAssembly());
         dto.setAttributes(lstAttributes);
+        dto.setNotifications(getModificationNotificationDTOs(partR));
         dto.setComponents(components);
 
         return dto;
