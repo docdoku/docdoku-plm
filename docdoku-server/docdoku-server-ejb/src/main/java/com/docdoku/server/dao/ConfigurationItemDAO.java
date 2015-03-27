@@ -20,7 +20,6 @@
 package com.docdoku.server.dao;
 
 
-import com.docdoku.server.configuration.spec.EffectivityConfigSpec;
 import com.docdoku.core.exceptions.ConfigurationItemAlreadyExistsException;
 import com.docdoku.core.exceptions.ConfigurationItemNotFoundException;
 import com.docdoku.core.exceptions.CreationException;
@@ -58,7 +57,6 @@ public class ConfigurationItemDAO {
 
         removeLayersFromConfigurationItem(pKey);
         removeEffectivitiesFromConfigurationItem(pKey);
-        removeEffectivityConfigSpecFromConfigurationItem(pKey);
 
         em.remove(ci);
         return ci;
@@ -73,13 +71,6 @@ public class ConfigurationItemDAO {
 
     public void removeEffectivitiesFromConfigurationItem(ConfigurationItemKey pKey){
         TypedQuery<Effectivity> query = em.createNamedQuery("Effectivity.removeEffectivitiesFromConfigurationItem", Effectivity.class);
-        query.setParameter("workspaceId", pKey.getWorkspace());
-        query.setParameter("configurationItemId", pKey.getId());
-        query.executeUpdate();
-    }
-
-    public void removeEffectivityConfigSpecFromConfigurationItem(ConfigurationItemKey pKey){
-        TypedQuery<EffectivityConfigSpec> query = em.createNamedQuery("EffectivityConfigSpec.removeEffectivityConfigSpecFromConfigurationItem", EffectivityConfigSpec.class);
         query.setParameter("workspaceId", pKey.getWorkspace());
         query.setParameter("configurationItemId", pKey.getId());
         query.executeUpdate();

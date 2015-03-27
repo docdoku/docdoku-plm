@@ -20,14 +20,8 @@
 
 package com.docdoku.cli.tools;
 
-import com.docdoku.cli.services.DocumentService;
-import com.docdoku.cli.services.ProductBaselineService;
-import com.docdoku.cli.services.ProductService;
-import com.docdoku.cli.services.UserService;
-import com.docdoku.core.services.IDocumentManagerWS;
-import com.docdoku.core.services.IProductBaselineManagerWS;
-import com.docdoku.core.services.IProductManagerWS;
-import com.docdoku.core.services.IUserManagerWS;
+import com.docdoku.cli.services.*;
+import com.docdoku.core.services.*;
 
 import javax.xml.ws.BindingProvider;
 import java.net.MalformedURLException;

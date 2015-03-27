@@ -68,7 +68,7 @@ casper.test.begin('Document creation tests suite',4, function documentsCreationT
      */
 
     casper.then(function checkForDocumentCreation(){
-        this.waitForSelector('#document-management-content table.dataTable tr td.reference',function documentHasBeenCreated(){
+        this.waitForSelector('#document-management-content table.dataTable tr:nth-child(2) td.reference a',function documentHasBeenCreated(){
             this.test.assertSelectorHasText('#document-management-content table.dataTable tr:nth-child(2) td.reference a',documents.document2.number);
         },function fail() {
             this.capture('screenshot/documentsCreation/checkForDocumentCreation-error.png');
@@ -130,7 +130,7 @@ casper.test.begin('Document creation tests suite',4, function documentsCreationT
      */
 
     casper.then(function checkForDocumentCreation(){
-        this.waitForSelector('#document-management-content table.dataTable tr:nth-child(3) td.reference',function documentHasBeenCreated(){
+        this.waitForSelector('#document-management-content table.dataTable tr:nth-child(3) td.reference a',function documentHasBeenCreated(){
             this.test.assertSelectorHasText('#document-management-content table.dataTable tr:nth-child(3) td.reference a',documents.document3.number);
         },function fail() {
             this.capture('screenshot/documentsCreation/checkForDocumentCreation-error.png');
