@@ -1,4 +1,4 @@
-/*global _,define,App*/
+/*global define,App*/
 define([
     'backbone',
     'common-objects/models/modification_notification'
@@ -9,7 +9,7 @@ define([
         model: ModificationNotification,
         className: 'ModificationNotificationCollection',
 
-        url: function (url) {
+        url: function () {
             return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/notifications/';
         }
 

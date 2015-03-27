@@ -95,7 +95,7 @@ define(['backbone', 'collections/document_iteration', 'common-objects/utils/acl-
 				context: this,
 				type: 'PUT',
 				url: this.baseUrl() + '/checkout',
-				error: function (xhr, status, errorThrown) {
+				error: function (xhr) {
                     window.alert(xhr.responseText);
 				},
                 success:function(){
@@ -112,7 +112,7 @@ define(['backbone', 'collections/document_iteration', 'common-objects/utils/acl-
 				context: this,
 				type: 'PUT',
 				url: this.baseUrl() + '/undocheckout',
-				error: function (xhr, status, errorThrown) {
+				error: function (xhr) {
                     window.alert(xhr.responseText);
 				},
                 success:function(){
@@ -128,7 +128,7 @@ define(['backbone', 'collections/document_iteration', 'common-objects/utils/acl-
 				context: this,
 				type: 'PUT',
 				url: this.baseUrl() + '/checkin',
-				error: function (xhr, status, errorThrown) {
+				error: function (xhr) {
                     window.alert(xhr.responseText);
 				},
                 success:function(){
@@ -268,7 +268,7 @@ define(['backbone', 'collections/document_iteration', 'common-objects/utils/acl-
 						callback();
 					}
 				},
-				error: function (xhr, status, errorThrown) {
+				error: function (xhr) {
                     window.alert(xhr.responseText);
 					error();
 				}
