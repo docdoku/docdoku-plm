@@ -21,6 +21,9 @@
 package com.docdoku.core.meta;
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,6 +72,16 @@ public class InstanceListOfValuesAttribute extends InstanceAttribute{
         }
     }
 
+    @XmlElement(name="indexValue")
+    private int getUncheckedIndexValue(){
+        return indexValue;
+    }
+
+    private void setUncheckedIndexValue(int value){
+        indexValue = value;
+    }
+
+    @XmlTransient
     public int getIndexValue() {
         return indexValue;
     }

@@ -1,7 +1,7 @@
 <div class="modification-notification well">
 
     {{^modificationNotification.isAcknowledged}}
-    <i class="fa fa-circle" title="{{i18n.MARK_AS_READ}}"></i>
+    <i class="fa fa-circle"></i>
     {{/modificationNotification.isAcknowledged}}
 
     {{#modificationNotification.getIterationNote}}
@@ -18,17 +18,17 @@
         {{#modificationNotification.hasCheckInDate}} {{i18n.ON}} <a class="date-popover">{{modificationNotification.getFormattedCheckInDate}}</a>{{/modificationNotification.hasCheckInDate}}
         {{#modificationNotification.hasAuthor}} {{i18n.BY}} <a class="author-popover">{{modificationNotification.getAuthorName}}</a>{{/modificationNotification.hasAuthor}}
 
-        {{#modificationNotification.getAckComment}}
+        {{#modificationNotification.isAcknowledged}}
         <div class="comment-italic">
             {{modificationNotification.getAckComment}}
         </div>
-        {{/modificationNotification.getAckComment}}
+        {{/modificationNotification.isAcknowledged}}
     </div>
 
     {{^modificationNotification.isAcknowledged}}
     <div class="comment">
         <input id="acknowledgement-comment" type="text" placeholder="{{i18n.COMMENT}}">
-        <button type="button" class="btn btn-primary action-acknowledge">{{i18n.VERIFIED}}</button>
+        <a class="action-acknowledge">{{i18n.MARK_AS_VERIFIED}}</a>
     </div>
     {{/modificationNotification.isAcknowledged}}
 
