@@ -40,7 +40,8 @@ import java.util.Date;
 @Entity
 @NamedQueries ({
         @NamedQuery(name="ModificationNotification.findByImpactedPartIteration", query = "SELECT n FROM ModificationNotification n WHERE n.impactedPart.iteration = :iteration AND n.impactedPart.partRevision.version = :version AND n.impactedPart.partRevision.partMaster.number = :partNumber AND n.impactedPart.partRevision.partMaster.workspace.id = :workspaceId ORDER BY n.modifiedPart.modificationDate"),
-        @NamedQuery(name="ModificationNotification.removeAllOnPartRevision", query = "DELETE FROM ModificationNotification n WHERE n.impactedPart.partRevision.version = :version AND n.impactedPart.partRevision.partMaster.number = :partNumber AND n.impactedPart.partRevision.partMaster.workspace.id = :workspaceId")
+        @NamedQuery(name="ModificationNotification.removeAllOnPartRevision", query = "DELETE FROM ModificationNotification n WHERE n.impactedPart.partRevision.version = :version AND n.impactedPart.partRevision.partMaster.number = :partNumber AND n.impactedPart.partRevision.partMaster.workspace.id = :workspaceId"),
+        @NamedQuery(name="ModificationNotification.removeAllOnPartIteration", query = "DELETE FROM ModificationNotification n WHERE n.impactedPart.partRevision.version = :version AND n.impactedPart.partRevision.partMaster.number = :partNumber AND n.impactedPart.partRevision.partMaster.workspace.id = :workspaceId AND n.impactedPart.iteration = :iteration")
 })
 @Table(name="MODIFICATIONNOTIFICATION")
 public class ModificationNotification implements Serializable {
