@@ -93,6 +93,8 @@ module.exports = {
         //LOV Creation
         "js/document-management/lov/lovCreation.js",
 
+        "js/common/attributes.js",
+
         // Deletions
         "js/document-management/tag/tagDeletion.js",
         "js/document-management/document/documentDeletion.js",
