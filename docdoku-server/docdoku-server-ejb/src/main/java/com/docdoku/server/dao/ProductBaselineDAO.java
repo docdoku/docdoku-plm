@@ -23,9 +23,11 @@ package com.docdoku.server.dao;
 import com.docdoku.core.configuration.BaselinedPart;
 import com.docdoku.core.configuration.ProductBaseline;
 import com.docdoku.core.exceptions.BaselineNotFoundException;
+import com.docdoku.core.exceptions.CreationException;
 import com.docdoku.core.product.PartRevision;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -61,12 +63,16 @@ public class ProductBaselineDAO {
                 .getResultList();
     }
 
-    public void createBaseline(ProductBaseline productBaseline) {
+    public void createBaseline(ProductBaseline productBaseline) throws CreationException {
+        em.persist(productBaseline);
+        em.flush();
+
         try {
             em.persist(productBaseline);
             em.flush();
-        }catch (Exception e){
-            LOGGER.log(Level.WARNING,"Fail to create baseline",e);
+        } catch (PersistenceException pPEx) {
+            LOGGER.log(Level.FINEST,null,pPEx);
+            throw new CreationException(mLocale);
         }
     }
 
@@ -80,6 +86,7 @@ public class ProductBaselineDAO {
     }
 
     public void deleteBaseline(ProductBaseline productBaseline) {
+        flushBaselinedParts(productBaseline);
         em.remove(productBaseline);
         em.flush();
     }

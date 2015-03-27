@@ -69,6 +69,7 @@ define([
                 }
 
                 this.attributesView.setAttributesLocked(template.isAttributesLocked());
+                this.attributesView.render();
             }
 
 

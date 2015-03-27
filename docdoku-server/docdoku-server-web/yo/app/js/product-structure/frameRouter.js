@@ -14,7 +14,7 @@ define([
 
                 App.config.workspaceId = workspaceId;
                 App.config.productId = productId;
-                App.config.configSpec = configSpec || 'latest';
+                App.config.configSpec = configSpec || 'wip';
 
                 App.config.defaultCameraPosition = {
                     x: parseFloat(cameraX || 0),
@@ -28,7 +28,7 @@ define([
                 App.sceneManager.resetCameraPlace();
 
                 App.instancesManager.loadComponent({
-                    getPath: function () {
+                    getEncodedPath: function () {
                         return pathToLoad;
                     }
                 });

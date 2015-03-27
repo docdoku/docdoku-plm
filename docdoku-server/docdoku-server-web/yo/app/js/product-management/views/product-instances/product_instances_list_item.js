@@ -21,7 +21,7 @@ define([
         },
 
         render: function () {
-            this.$el.html(Mustache.render(template, {model: this.model, i18n: App.config.i18n}));
+            this.$el.html(Mustache.render(template, {model: this.model, i18n: App.config.i18n,bomUrl: this.model.getBomUrl(), sceneUrl:this.model.getSceneUrl()}));
             this.$checkbox = this.$('input[type=checkbox]');
             this.model.on('change', this.render, this);
             this.bindUserPopover();

@@ -56,6 +56,14 @@ define(['backbone', 'common-objects/collections/product_instance_iterations','co
                 App.config.i18n._DATE_FORMAT,
                 this.get('updateDate')
             );
+        },
+
+        getBomUrl: function () {
+            return App.config.contextPath + '/product-structure/#' + App.config.workspaceId + '/' + encodeURIComponent(this.getConfigurationItemId()) + '/config-spec/pi-'+encodeURIComponent(this.getSerialNumber())+'/bom' ;
+        },
+
+        getSceneUrl: function () {
+            return App.config.contextPath + '/product-structure/#' + App.config.workspaceId + '/' + encodeURIComponent(this.getConfigurationItemId()) + '/config-spec/pi-'+encodeURIComponent(this.getSerialNumber())+'/scene' ;
         }
     });
 

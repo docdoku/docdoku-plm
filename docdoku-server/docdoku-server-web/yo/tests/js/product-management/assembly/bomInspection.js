@@ -21,7 +21,7 @@ casper.test.begin('Bom inspection tests suite',13, function bomInspectionTestsSu
     casper.then(function waitTree(){
         this.waitForSelector('#product_nav_list_container > .treeview > ul > li', function treeDisplayed(){
             this.test.assert(true,'Tree is displayed');
-            this.test.assertSelectorHasText('#product_nav_list_container > .treeview > ul > li > a > label',products.part1.number + ' (1)','The first node is correctly named');
+            this.test.assertSelectorHasText('#product_nav_list_container > .treeview > ul > li > a > label',products.part1.name + ' ' +products.part1.number + '-A-2 (1)','The first node is correctly named');
         },function fail(){
             this.capture('screenshot/assembly/waitTree-error.png');
             this.test.assert(false,'Product tree can not be found');

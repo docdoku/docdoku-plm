@@ -24,10 +24,8 @@ import com.docdoku.cli.services.*;
 import com.docdoku.core.services.*;
 
 import javax.xml.ws.BindingProvider;
-import javax.xml.ws.soap.MTOMFeature;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Map;
 
 /**
  *
@@ -37,8 +35,9 @@ public class ScriptingTools {
 
     private static final String DOCUMENT_WSDL_LOCATION = "/services/document?wsdl";
     private static final String PRODUCT_WSDL_LOCATION = "/services/product?wsdl";
-    private static final String PRODUCT_CONFIGSPEC_WSDL_LOCATION = "/services/productConfigSpec?wsdl";
+    private static final String PRODUCT_BASELINE_WSDL_LOCATION = "/services/productBaseline?wsdl";
     private static final String USER_WSDL_LOCATION = "/services/user?wsdl";
+    private static final String LOV_WSDL_LOCATION = "/services/lov?wsdl";
 
     private static final String NAMESPACEURI = "http://server.docdoku.com/";
     private static final String PRODUCT_NAMESPACEURI = "http://products.server.docdoku.com/";
@@ -64,9 +63,9 @@ public class ScriptingTools {
         return port;
     }
 
-    public static IProductConfigSpecManagerWS createProductConfigSpecService(URL url, String login, String password) throws Exception {
-        ProductConfigSpecService service = new ProductConfigSpecService(new URL(url, PRODUCT_CONFIGSPEC_WSDL_LOCATION), new javax.xml.namespace.QName(PRODUCT_NAMESPACEURI, "ProductConfigSpecManagerBeanService"));
-        IProductConfigSpecManagerWS port = service.getPort(IProductConfigSpecManagerWS.class);
+    public static IProductBaselineManagerWS createProductBaselineService(URL url, String login, String password) throws Exception {
+        ProductBaselineService service = new ProductBaselineService(new URL(url, PRODUCT_BASELINE_WSDL_LOCATION), new javax.xml.namespace.QName(PRODUCT_NAMESPACEURI, "ProductBaselineManagerBeanService"));
+        IProductBaselineManagerWS port = service.getPort(IProductBaselineManagerWS.class);
         ((BindingProvider) port).getRequestContext().put(BindingProvider.USERNAME_PROPERTY, login);
         ((BindingProvider) port).getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, password);
         return port;
@@ -75,6 +74,15 @@ public class ScriptingTools {
     public static IUserManagerWS createUserManagerService(URL url, String login, String password) throws MalformedURLException {
         UserService service = new UserService(new URL(url, USER_WSDL_LOCATION), new javax.xml.namespace.QName(NAMESPACEURI, "UserManagerBeanService"));
         IUserManagerWS port = service.getPort(IUserManagerWS.class);
+        ((BindingProvider) port).getRequestContext().put(BindingProvider.USERNAME_PROPERTY, login);
+        ((BindingProvider) port).getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, password);
+
+        return port;
+    }
+
+    public static ILOVManagerWS createLOVService(URL url, String login, String password) throws Exception {
+        LOVService service = new LOVService(new URL(url, LOV_WSDL_LOCATION), new javax.xml.namespace.QName(NAMESPACEURI, "LOVManagerBean"));
+        ILOVManagerWS port = service.getPort(ILOVManagerWS.class);
         ((BindingProvider) port).getRequestContext().put(BindingProvider.USERNAME_PROPERTY, login);
         ((BindingProvider) port).getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, password);
 

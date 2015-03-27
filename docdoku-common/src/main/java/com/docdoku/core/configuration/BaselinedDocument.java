@@ -41,6 +41,7 @@ public class BaselinedDocument implements Serializable{
     @EmbeddedId
     private BaselinedDocumentKey baselinedDocumentKey;
 
+    //@MapsId("documentCollectionId")
     @ManyToOne(optional=false, fetch=FetchType.EAGER)
     @JoinColumn(name="DOCUMENTCOLLECTION_ID", referencedColumnName="ID")
     private DocumentCollection documentCollection;
@@ -49,12 +50,12 @@ public class BaselinedDocument implements Serializable{
     @JoinColumns({
             @JoinColumn(name="TARGET_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
             @JoinColumn(name="TARGET_DOCUMENTMASTER_ID", referencedColumnName="DOCUMENTMASTER_ID"),
-            @JoinColumn(name="TARGET_DOCUMENTREVISION_VERSION", referencedColumnName="DOCUMENTREVISION_VERSION"),
+            @JoinColumn(name="TARGET_DOCREVISION_VERSION", referencedColumnName="DOCUMENTREVISION_VERSION"),
             @JoinColumn(name="TARGET_ITERATION", referencedColumnName="ITERATION")
     })
     private DocumentIteration targetDocument;
 
-    @Column(name = "TARGET_DOCUMENTREVISION_VERSION", length=10, nullable = false, insertable = false, updatable = false)
+    @Column(name = "TARGET_DOCREVISION_VERSION", length=10, nullable = false, insertable = false, updatable = false)
     private String targetDocumentVersion="";
     @Column(name = "TARGET_ITERATION", nullable = false, insertable = false, updatable = false)
     private int targetDocumentIteration;

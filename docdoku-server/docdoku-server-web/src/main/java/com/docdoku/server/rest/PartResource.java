@@ -173,7 +173,7 @@ public class PartResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response checkIn(@PathParam("workspaceId") String workspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion)
-            throws EntityNotFoundException, ESServerException, AccessRightException, NotAllowedException {
+            throws EntityNotFoundException, ESServerException, AccessRightException, NotAllowedException, EntityConstraintException, UserNotActiveException {
 
         PartRevisionKey revisionKey = new PartRevisionKey(workspaceId, partNumber, partVersion);
         productService.checkInPart(revisionKey);
@@ -288,6 +288,19 @@ public class PartResource {
         PartRevisionKey revisionKey = new PartRevisionKey(workspaceId, partNumber, partVersion);
 
         productService.releasePartRevision(revisionKey);
+        return Response.ok().build();
+    }
+
+    @PUT
+    @Path("/obsolete")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response markPartRevisionAsObsolete(@PathParam("workspaceId") String workspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion)
+            throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException {
+
+        PartRevisionKey revisionKey = new PartRevisionKey(workspaceId, partNumber, partVersion);
+
+        productService.markPartRevisionAsObsolete(revisionKey);
         return Response.ok().build();
     }
 
@@ -430,7 +443,6 @@ public class PartResource {
         productService.removeTag(new PartRevisionKey(workspaceId, partNumber, partVersion), tagName);
         return Response.ok().build();
     }
-
 
     private List<InstanceAttribute> createInstanceAttributes(List<InstanceAttributeDTO> dtos) {
         if (dtos == null) {

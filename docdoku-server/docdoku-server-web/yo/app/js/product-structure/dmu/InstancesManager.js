@@ -323,7 +323,7 @@ define(['dmu/LoaderManager', 'async'],
 
             this.loadComponent = function (component) {
                 loaderIndicator.show();
-                _this.loadQueue.push({'process': 'loadOne', 'path': [component.getPath()]});
+                _this.loadQueue.push({'process': 'loadOne', 'path': [component.getEncodedPath()]});
             };
 	        this.loadComponentsByPaths = function(paths){
 		        loaderIndicator.show();
@@ -337,7 +337,7 @@ define(['dmu/LoaderManager', 'async'],
 		        _this.loadQueue.push(directive);
 	        };
             this.unLoadComponent = function (component) {
-                _this.loadQueue.push({'process': 'unload', 'path': component.getPath()});
+                _this.loadQueue.push({'process': 'unload', 'path': component.getEncodedPath()});
             };
 	        this.unLoadComponentsByPaths = function (pathsToUnload) {
 		        _(pathsToUnload).each(function(path){

@@ -90,7 +90,7 @@ public class ProductBaselinesResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public ProductBaselineDTO createBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String pCiId, ProductBaselineDTO productBaselineDTO)
-            throws UserNotActiveException, EntityNotFoundException, NotAllowedException, AccessRightException, PartRevisionNotReleasedException, EntityConstraintException {
+            throws UserNotActiveException, EntityNotFoundException, NotAllowedException, AccessRightException, PartRevisionNotReleasedException, EntityConstraintException, CreationException {
 
         String ciId = (pCiId != null) ? pCiId : productBaselineDTO.getConfigurationItemId();
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId,ciId);
@@ -115,8 +115,8 @@ public class ProductBaselinesResource {
     @Path("{baselineId}")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response deleteBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @PathParam("baselineId") int baselineId)
-            throws EntityNotFoundException, AccessRightException{
-        productBaselineService.deleteBaseline(baselineId);
+            throws EntityNotFoundException, AccessRightException, UserNotActiveException {
+        productBaselineService.deleteBaseline(workspaceId,baselineId);
         return Response.ok().build();
     }
 

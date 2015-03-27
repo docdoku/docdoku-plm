@@ -39,7 +39,7 @@ define([
         inBomMode: false,
 
         initialize: function () {
-            App.config.configSpec = 'latest';
+
         },
 
         render: function () {
@@ -56,16 +56,12 @@ define([
             App.sceneManager = new SceneManager();
             App.instancesManager = new InstancesManager();
             App.collaborativeController = new CollaborativeController();
+            App.collaborativeView = new CollaborativeView().render();
 
-            App.searchView = new SearchView().render();
-            App.partsTreeView = new PartsTreeView({resultPathCollection: App.searchView.collection}).render();
-            App.controlNavigationView = new ControlNavigationView().render();
-            App.bomView = new BomView().render();
-            App.baselineSelectView = new BaselineSelectView({el: '#config_spec_container'}).render();
             App.controlModesView = new ControlModesView().render();
             App.controlTransformView = new ControlTransformView().render();
             App.partMetadataView = new PartMetadataView({model: new Backbone.Model()});
-            App.collaborativeView = new CollaborativeView().render();
+            App.controlNavigationView = new ControlNavigationView().render();
 
             App.$ControlsContainer.append(App.collaborativeView.$el);
             App.$ControlsContainer.append(App.controlNavigationView.$el);
@@ -80,8 +76,6 @@ define([
             App.$ControlsContainer.append(new ControlLayersView().render().$el);
             App.$ControlsContainer.append(new ControlMeasureView().render().$el);
 
-            this.bomControls.append(App.bomView.bomHeaderView.$el);
-
             try {
                 App.sceneManager.init();
                 this.bindDatGUIControls();
@@ -91,9 +85,25 @@ define([
                 this.onNoWebGLSupport();
             }
 
+            return this;
+        },
+        initModules:function(){
+
+            App.searchView = new SearchView().render();
+            App.partsTreeView = new PartsTreeView({resultPathCollection: App.searchView.collection}).render();
+            App.bomView = new BomView().render();
+            App.baselineSelectView = new BaselineSelectView({el: '#config_spec_container'}).render();
+
+            this.bomControls.append(App.bomView.bomHeaderView.$el);
+
             this.listenEvents();
 
+            App.partsTreeView.once('collection:fetched',function(){
+                App.appView.trigger('app:ready');
+            });
+
             return this;
+
         },
 
         bindDomElements: function () {
@@ -154,11 +164,11 @@ define([
         },
 
         sceneButton: function () {
-            App.router.navigate(App.config.workspaceId + '/' + App.config.productId + '/' + 'scene', {trigger: true});
+            App.router.navigate(App.config.workspaceId + '/' + App.config.productId + '/config-spec/' + App.config.configSpec + '/scene', {trigger: true});
         },
 
         bomButton: function () {
-            App.router.navigate(App.config.workspaceId + '/' + App.config.productId + '/' + 'bom', {trigger: true});
+            App.router.navigate(App.config.workspaceId + '/' + App.config.productId + '/config-spec/' + App.config.configSpec + '/bom', {trigger: true});
         },
 
         setSpectatorView: function () {
@@ -199,9 +209,9 @@ define([
                 '/' + App.sceneManager.cameraObject.position.z;
 
             if (App.partsTreeView.componentSelected.getPath()) {
-                iframeSrc += '/' + App.partsTreeView.componentSelected.getPath();
+                iframeSrc += '/' + App.partsTreeView.componentSelected.getEncodedPath();
             } else {
-                iframeSrc += '/null';
+                iframeSrc += '/-1';
             }
 
             iframeSrc += '/' + App.config.configSpec;
@@ -231,12 +241,19 @@ define([
         onConfigSpecChange: function (configSpec) {
             this.setConfigSpec(configSpec);
             if (App.collaborativeController) {
-                App.collaborativeController.sendBaseline(configSpec);
+                App.collaborativeController.sendConfigSpec(configSpec);
             }
         },
 
         setConfigSpec: function (configSpec) {
-            App.config.configSpec = configSpec;
+            App.config.configSpec = configSpec || App.config.configSpec;
+
+            if(App.collaborativeView.roomKey){
+                App.router.navigate(App.config.workspaceId + '/' + App.config.productId + '/config-spec/' + App.config.configSpec + '/room/' + App.collaborativeView.roomKey, {trigger: false});
+            }else{
+                App.router.navigate(App.config.workspaceId + '/' + App.config.productId + '/config-spec/' + App.config.configSpec + '/bom', {trigger: false});
+            }
+
             App.sceneManager.clear();
             App.instancesManager.clear();
             App.partsTreeView.refreshAll();
@@ -304,19 +321,6 @@ define([
             App.$SceneContainer.html('<span class="crashMessage">' + htmlMessage + '</span>');
             App.$ControlsContainer.hide();
             this.dmuControls.hide();
-        },
-
-        requestJoinRoom: function (key) {
-            if (!App.mainChannel.isReady()) {
-                // Retry to connect every 500ms
-                App.log('%c [App] %c Websocket is not opened', true);
-                var _this = this;
-                setTimeout(function () {
-                    _this.requestJoinRoom(key);
-                }, 250);
-            } else {
-                App.collaborativeController.sendJoinRequest(key);
-            }
         }
 
     });

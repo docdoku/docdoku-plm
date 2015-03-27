@@ -22,6 +22,7 @@ package com.docdoku.server.dao;
 import com.docdoku.core.exceptions.PartUsageLinkNotFoundException;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartMasterKey;
+import com.docdoku.core.product.PartSubstituteLink;
 import com.docdoku.core.product.PartUsageLink;
 
 import javax.persistence.EntityManager;
@@ -56,7 +57,7 @@ public class PartUsageLinkDAO {
         
         return usagePaths;
     }
-    
+
     private void createPath(PartUsageLink currentUsage, List<PartUsageLink> currentPath, List<PartUsageLink[]> usagePaths){
         
         PartIteration owner = em.createNamedQuery("PartUsageLink.getPartOwner",PartIteration.class)
@@ -87,13 +88,21 @@ public class PartUsageLinkDAO {
     }
     
     public PartUsageLink loadPartUsageLink(int pId) throws PartUsageLinkNotFoundException {
-        PartUsageLink usageLink = em.find(PartUsageLink.class, pId);
-        if (usageLink == null) {
+        PartUsageLink link = em.find(PartUsageLink.class, pId);
+        if (link == null) {
             throw new PartUsageLinkNotFoundException(mLocale, pId);
         } else {
-            return usageLink;
+            return link;
         }
     }
 
+    public PartSubstituteLink loadPartSubstituteLink(int pId) throws PartUsageLinkNotFoundException {
+        PartSubstituteLink link = em.find(PartSubstituteLink.class, pId);
+        if (link == null) {
+            throw new PartUsageLinkNotFoundException(mLocale, pId);
+        } else {
+            return link;
+        }
+    }
 
 }

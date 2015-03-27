@@ -28,10 +28,10 @@ import com.docdoku.cli.helpers.MetaDirectoryManager;
 import com.docdoku.cli.tools.ScriptingTools;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.Version;
-import com.docdoku.core.configuration.ConfigSpec;
+import com.docdoku.core.configuration.PSFilter;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.*;
-import com.docdoku.core.services.IProductConfigSpecManagerWS;
+import com.docdoku.core.services.IProductBaselineManagerWS;
 import com.docdoku.core.services.IProductManagerWS;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
@@ -74,7 +74,7 @@ public class PartGetCommand extends AbstractCommandLine {
     protected int baselineId;
 
     private IProductManagerWS productS;
-    private IProductConfigSpecManagerWS productConfigSpecS;
+    private IProductBaselineManagerWS productBaselineManager;
 
     public void execImpl() throws Exception {
 
@@ -83,16 +83,16 @@ public class PartGetCommand extends AbstractCommandLine {
         }
 
         productS = ScriptingTools.createProductService(getServerURL(), user, password);
-        productConfigSpecS = ScriptingTools.createProductConfigSpecService(getServerURL(), user, password);
+        productBaselineManager = ScriptingTools.createProductBaselineService(getServerURL(), user, password);
         String strRevision = revision==null?null:revision.toString();
 
-        ConfigSpec cs = null;
+        PSFilter filter = null;
 
         if(baselineId != 0){
-            cs = productConfigSpecS.getConfigSpecForBaseline(baselineId);
+            filter = productBaselineManager.getBaselinePSFilter(baselineId);
         }
 
-        getPart(partNumber, strRevision, iteration, cs);
+        getPart(partNumber, strRevision, iteration, filter);
     }
 
     private void loadMetadata() throws IOException {
@@ -114,17 +114,17 @@ public class PartGetCommand extends AbstractCommandLine {
         path=path.getParentFile();
     }
 
-    private void getPart(String pPartNumber, String pRevision, int pIteration, ConfigSpec cs) throws IOException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartMasterNotFoundException, PartRevisionNotFoundException, LoginException, NoSuchAlgorithmException, PartIterationNotFoundException, NotAllowedException, AccessRightException {
+    private void getPart(String pPartNumber, String pRevision, int pIteration, PSFilter filter) throws IOException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartMasterNotFoundException, PartRevisionNotFoundException, LoginException, NoSuchAlgorithmException, PartIterationNotFoundException, NotAllowedException, AccessRightException {
         PartMaster pm = productS.getPartMaster(new PartMasterKey(workspace, pPartNumber));
         PartRevision pr;
         PartIteration pi;
 
-        if(cs != null){
+        if(filter != null){
 
-            pi = cs.filterConfigSpec(pm);
+            pi = filter.filter(pm).get(0);
 
             if(pi == null){
-                throw new IllegalArgumentException(LangHelper.getLocalizedMessage("PartIterationNotFoundForConfiguration",user) + " " + cs.getId());
+                throw new IllegalArgumentException(LangHelper.getLocalizedMessage("PartIterationNotFoundForConfiguration",user));
             }
 
             pr = pi.getPartRevision();
@@ -166,7 +166,7 @@ public class PartGetCommand extends AbstractCommandLine {
 
             for(PartUsageLink link:usageLinks){
                 PartMaster subPM = link.getComponent();
-                getPart(subPM.getNumber(),null,0,cs);
+                getPart(subPM.getNumber(),null,0,filter);
             }
         }
 

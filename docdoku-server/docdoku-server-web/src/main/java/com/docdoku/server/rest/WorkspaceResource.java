@@ -19,6 +19,7 @@
  */
 package com.docdoku.server.rest;
 
+import com.docdoku.core.change.ModificationNotification;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.exceptions.EntityNotFoundException;
 import com.docdoku.core.security.UserGroupMapping;
@@ -89,6 +90,9 @@ public class WorkspaceResource {
 
     @EJB
     private RoleResource roles;
+
+    @EJB
+    private ModificationNotificationResource notifications;
 
     @EJB
     private WorkspaceMembershipResource workspaceMemberships;
@@ -183,8 +187,13 @@ public class WorkspaceResource {
     }
 
     @Path("/{workspaceId}/tasks")
-    public TaskResource task() {
+    public TaskResource tasks() {
         return tasks;
+    }
+
+    @Path("/{workspaceId}/notifications")
+    public ModificationNotificationResource notifications() {
+        return notifications;
     }
 
     @Path("/{workspaceId}/workflows")

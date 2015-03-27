@@ -111,10 +111,21 @@ public class PartSubstituteLink implements Serializable, Cloneable, PartLink {
         return referenceDescription;
     }
 
+    @Override
+    public Character getCode() {
+        return 's';
+    }
+
+    @Override
+    public String getFullId() {
+        return getCode()+""+getId();
+    }
+
     public PartMaster getSubstitute() {
         return substitute;
     }
 
+    @Override
     public List<CADInstance> getCadInstances() {
         return cadInstances;
     }

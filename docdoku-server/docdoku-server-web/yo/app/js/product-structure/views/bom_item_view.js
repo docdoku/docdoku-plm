@@ -45,22 +45,24 @@ define([
         },
 
         toPartModalOnNotificationsTab: function () {
-            var self = this;
-            self.model.fetch().success(function () {
-                new PartModalView({
-                    model: self.model
+            var model = this.model;
+            model.fetch().success(function () {
+                var partModalView = new PartModalView({
+                    model: model
                 });
-                $('a[href$="tab-part-modification-notifications"]').click();
+                partModalView.show();
+                partModalView.activateNotificationsTab();
             });
         },
 
         toPartModalOnFilesTab: function () {
-            var self = this;
-            self.model.fetch().success(function () {
-                new PartModalView({
-                    model: self.model
+            var model = this.model;
+            model.fetch().success(function () {
+                var partModalView = new PartModalView({
+                    model: model
                 });
-                $('a[href$="tab-part-files"]').click();
+                partModalView.show();
+                partModalView.activateFileTab();
             });
         },
 

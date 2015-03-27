@@ -24,7 +24,7 @@ window.onload = function() {
         }
     }
 
-    localStorage.locale = 'unset';
+    window.localStorage.locale = 'unset';
 
     var errorMessage = window.WebGLRenderingContext ? [
         'Your graphics card does not seem to support <a href="http://khronos.org/webgl/wiki/Getting_a_WebGL_Implementation">WebGL</a>.<br />',

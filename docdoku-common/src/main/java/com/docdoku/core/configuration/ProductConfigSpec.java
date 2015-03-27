@@ -24,11 +24,13 @@ package com.docdoku.core.configuration;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.product.PartIteration;
+import com.docdoku.core.product.PartLink;
 import com.docdoku.core.product.PartMaster;
 
-import javax.persistence.*;
-import javax.xml.bind.annotation.XmlSeeAlso;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * A ConfigSpec is used to select for each {@link PartMaster}s and {@link DocumentRevision}s
@@ -38,29 +40,31 @@ import java.io.Serializable;
  * @version 1.1, 30/10/11
  * @since   V1.1
  */
-@Table(name="CONFIGSPEC")
-@XmlSeeAlso({EffectivityConfigSpec.class, LatestReleasedConfigSpec.class, LatestConfigSpec.class, BaselineConfigSpec.class})
-@Inheritance()
-@Entity
-public abstract class ConfigSpec implements Serializable{
 
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    @Id
-    private int id;
+public abstract class ProductConfigSpec extends PSFilter implements Serializable{
 
-    public ConfigSpec() {
+    public ProductConfigSpec() {
     }
 
-    public int getId() {
-        return id;
+    // Config specs are strict and returns a single value
+    // Do not override them
+    public final List<PartLink> filter(List<PartLink> path) {
+        PartLink partLink = filterPartLink(path);
+        if(partLink != null){
+            return Arrays.asList(new PartLink[]{partLink});
+        }
+        return new ArrayList<>();
+    }
+    public final List<PartIteration> filter(PartMaster partMaster) {
+        PartIteration partIteration = filterPartIteration(partMaster);
+        if(partIteration != null){
+            return Arrays.asList(new PartIteration[]{partIteration});
+        }
+        return new ArrayList<>();
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public abstract PartIteration filterConfigSpec(PartMaster partMaster);
-
-    public abstract DocumentIteration filterConfigSpec(DocumentRevision documentRevision);
+    // All config specs must implement a strict filter
+    public abstract PartIteration filterPartIteration(PartMaster partMaster);
+    public abstract PartLink filterPartLink(List<PartLink> path);
 
 }

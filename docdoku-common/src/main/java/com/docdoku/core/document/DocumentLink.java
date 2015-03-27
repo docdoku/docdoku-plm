@@ -50,7 +50,7 @@ public class DocumentLink implements Serializable, Cloneable{
     @JoinColumns({
         @JoinColumn(name="TARGET_ITERATION", referencedColumnName="ITERATION"),
         @JoinColumn(name="TARGET_DOCUMENTMASTER_ID", referencedColumnName="DOCUMENTMASTER_ID"),
-        @JoinColumn(name="TARGET_DOCUMENTREVISION_VERSION", referencedColumnName="DOCUMENTREVISION_VERSION"),
+        @JoinColumn(name="TARGET_DOCREVISION_VERSION", referencedColumnName="DOCUMENTREVISION_VERSION"),
         @JoinColumn(name="TARGET_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID")
     })
     private DocumentIteration targetDocument;
@@ -62,7 +62,7 @@ public class DocumentLink implements Serializable, Cloneable{
     @Column(name = "TARGET_DOCUMENTMASTER_ID", length=100, insertable = false, updatable = false)
     private String targetDocumentDocumentMasterId="";
     
-    @Column(name = "TARGET_DOCUMENTREVISION_VERSION", length=10, insertable = false, updatable = false)
+    @Column(name = "TARGET_DOCREVISION_VERSION", length=10, insertable = false, updatable = false)
     private String targetDocumentDocumentRevisionVersion ="";
     
     @Column(name = "TARGET_WORKSPACE_ID", length=100, insertable = false, updatable = false)

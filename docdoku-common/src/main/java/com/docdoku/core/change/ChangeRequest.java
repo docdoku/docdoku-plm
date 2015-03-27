@@ -53,7 +53,7 @@ import java.util.Set;
         ),
         @AssociationOverride(
                 name="affectedDocuments",
-                joinTable = @JoinTable(name="CHANGEREQUEST_AFFECTED_DOCUMENT",
+                joinTable = @JoinTable(name="CHANGEREQ_AFFECTED_DOCUMENT",
                         inverseJoinColumns={
                                 @JoinColumn(name="DOCUMENTMASTER_ID", referencedColumnName="DOCUMENTMASTER_ID"),
                                 @JoinColumn(name="DOCUMENTREVISION_VERSION", referencedColumnName="DOCUMENTREVISION_VERSION"),
@@ -67,7 +67,7 @@ import java.util.Set;
         ),
         @AssociationOverride(
                 name="affectedParts",
-                joinTable = @JoinTable(name="CHANGEREQUEST_AFFECTED_PART",
+                joinTable = @JoinTable(name="CHANGEREQ_AFFECTED_PART",
                         inverseJoinColumns={
                                 @JoinColumn(name="PARTMASTER_PARTNUMBER", referencedColumnName="PARTMASTER_PARTNUMBER"),
                                 @JoinColumn(name="PARTREVISION_VERSION", referencedColumnName="PARTREVISION_VERSION"),

@@ -1,15 +1,35 @@
-<!--{{#isFullAccess}}<a class="remove">×</a>{{/isFullAccess}}-->
+<div class="modification-notification well">
 
-{{#modificationNotification.getIterationNote}}
-<div class="modification-notification-note">
-    {{modificationNotification.getIterationNote}}
+    {{^modificationNotification.isAcknowledged}}
+    <i class="fa fa-circle"></i>
+    {{/modificationNotification.isAcknowledged}}
+
+    {{#modificationNotification.getIterationNote}}
+    <div class="modification-notification-note">
+        {{modificationNotification.getIterationNote}}
+    </div>
+    {{/modificationNotification.getIterationNote}}
+
+    <div class="modification-notification-details">
+        {{#modificationNotification.getModifiedPartName}}{{modificationNotification.getModifiedPartName}}{{/modificationNotification.getModifiedPartName}}
+
+        {{modificationNotification.getModifiedPartNumber}}-{{modificationNotification.getModifiedPartVersion}}-{{modificationNotification.getModifiedPartIteration}}
+        {{i18n.CHECKED_IN}}
+        {{#modificationNotification.hasCheckInDate}} {{i18n.ON}} <a class="date-popover">{{modificationNotification.getFormattedCheckInDate}}</a>{{/modificationNotification.hasCheckInDate}}
+        {{#modificationNotification.hasAuthor}} {{i18n.BY}} <a class="author-popover">{{modificationNotification.getAuthorName}}</a>{{/modificationNotification.hasAuthor}}
+
+        {{#modificationNotification.isAcknowledged}}
+        <div class="comment-italic">
+            {{modificationNotification.getAckComment}}
+        </div>
+        {{/modificationNotification.isAcknowledged}}
+    </div>
+
+    {{^modificationNotification.isAcknowledged}}
+    <div class="comment">
+        <input id="acknowledgement-comment" type="text" placeholder="{{i18n.COMMENT}}">
+        <a class="action-acknowledge">{{i18n.MARK_AS_VERIFIED}}</a>
+    </div>
+    {{/modificationNotification.isAcknowledged}}
+
 </div>
-{{/modificationNotification.getIterationNote}}
-
-<div class="modification-notification-details">
-    {{modificationNotification.getModifiedPartNumber}}-{{modificationNotification.getModifiedPartVersion}}-{{modificationNotification.getModifiedPartIteration}} {{i18n.CHECKED_IN}}
-    {{#modificationNotification.hasCheckInDate}} {{i18n.ON}} <a class="date-popover">{{modificationNotification.getFormattedCheckInDate}}</a>{{/modificationNotification.hasCheckInDate}}
-    {{#modificationNotification.hasAuthor}} {{i18n.BY}} <a class="author-popover">{{modificationNotification.getAuthorName}}</a>{{/modificationNotification.hasAuthor}}
-</div>
-
-<hr/>

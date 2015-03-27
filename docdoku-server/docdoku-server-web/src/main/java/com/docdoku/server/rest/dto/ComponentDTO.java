@@ -40,7 +40,8 @@ public class ComponentDTO implements Serializable{
     private String description;
     private boolean standardPart;
     private boolean assembly;
-    private int partUsageLinkId;
+    private boolean substitute;
+    private String partUsageLinkId;
     private List<ComponentDTO> components;
     private double amount;
     private String unit;
@@ -48,10 +49,13 @@ public class ComponentDTO implements Serializable{
     private UserDTO checkOutUser;
     private Date checkOutDate;
     private boolean released;
+    private boolean obsolete;
     @XmlElement(nillable = true)
     private int lastIterationNumber;
     @XmlElement(nillable = true)
     private boolean accessDeny;
+    private List<ModificationNotificationDTO> notifications;
+
 
     public ComponentDTO() {
 
@@ -117,10 +121,11 @@ public class ComponentDTO implements Serializable{
         this.version = version;
     }
 
-    public int getPartUsageLinkId() {
+    public String getPartUsageLinkId() {
         return partUsageLinkId;
     }
-    public void setPartUsageLinkId(int partUsageLinkId) {
+
+    public void setPartUsageLinkId(String partUsageLinkId) {
         this.partUsageLinkId = partUsageLinkId;
     }
 
@@ -194,5 +199,29 @@ public class ComponentDTO implements Serializable{
 
     public void setUnit(String unit) {
         this.unit = unit;
+    }
+
+    public boolean isSubstitute() {
+        return substitute;
+    }
+
+    public void setSubstitute(boolean substitute) {
+        this.substitute = substitute;
+    }
+
+    public List<ModificationNotificationDTO> getNotifications() {
+        return notifications;
+    }
+
+    public void setNotifications(List<ModificationNotificationDTO> notifications) {
+        this.notifications = notifications;
+    }
+
+    public boolean isObsolete() {
+        return obsolete;
+    }
+
+    public void setObsolete(boolean obsolete) {
+        this.obsolete = obsolete;
     }
 }

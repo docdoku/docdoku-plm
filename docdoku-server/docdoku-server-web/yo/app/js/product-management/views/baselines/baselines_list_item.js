@@ -19,7 +19,7 @@ define([
         },
 
         render: function () {
-            this.$el.html(Mustache.render(template, {model: this.model, i18n: App.config.i18n}));
+            this.$el.html(Mustache.render(template, {model: this.model, bomUrl: this.model.getBomUrl(), sceneUrl:this.model.getSceneUrl(), i18n: App.config.i18n}));
             this.$checkbox = this.$('input[type=checkbox]');
             this.trigger('rendered', this);
             return this;

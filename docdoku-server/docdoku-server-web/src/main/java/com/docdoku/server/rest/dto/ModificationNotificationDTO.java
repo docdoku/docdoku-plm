@@ -25,7 +25,13 @@ import java.util.Date;
 
 public class ModificationNotificationDTO {
 
+    private int id;
+
+    private String impactedPartNumber;
+    private String impactedPartVersion;
+
     private String modifiedPartNumber;
+    private String modifiedPartName;
     private String modifiedPartVersion;
     private int modifiedPartIteration;
 
@@ -34,9 +40,36 @@ public class ModificationNotificationDTO {
     private UserDTO author;
 
     @XmlElement(nillable = true)
-    private boolean acknowledgeable;
+    private boolean acknowledged;
+
+    private String ackComment;
+    private UserDTO ackAuthor;
 
     public ModificationNotificationDTO() {
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getImpactedPartNumber() {
+        return impactedPartNumber;
+    }
+
+    public void setImpactedPartNumber(String impactedPartNumber) {
+        this.impactedPartNumber = impactedPartNumber;
+    }
+
+    public String getImpactedPartVersion() {
+        return impactedPartVersion;
+    }
+
+    public void setImpactedPartVersion(String impactedPartVersion) {
+        this.impactedPartVersion = impactedPartVersion;
     }
 
     public String getModifiedPartNumber() {
@@ -63,6 +96,14 @@ public class ModificationNotificationDTO {
         this.modifiedPartIteration = modifiedPartIteration;
     }
 
+    public String getModifiedPartName() {
+        return modifiedPartName;
+    }
+
+    public void setModifiedPartName(String modifiedPartName) {
+        this.modifiedPartName = modifiedPartName;
+    }
+
     public Date getCheckInDate() {
         return checkInDate;
     }
@@ -86,4 +127,29 @@ public class ModificationNotificationDTO {
     public void setAuthor(UserDTO author) {
         this.author = author;
     }
+
+    public boolean isAcknowledged() {
+        return acknowledged;
+    }
+
+    public void setAcknowledged(boolean acknowledged) {
+        this.acknowledged = acknowledged;
+    }
+
+    public String getAckComment() {
+        return ackComment;
+    }
+
+    public void setAckComment(String ackComment) {
+        this.ackComment = ackComment;
+    }
+
+    public UserDTO getAckAuthor() {
+        return ackAuthor;
+    }
+
+    public void setAckAuthor(UserDTO ackAuthor) {
+        this.ackAuthor = ackAuthor;
+    }
+
 }

@@ -21,34 +21,23 @@
 
 package com.docdoku.core.configuration;
 
-import javax.persistence.*;
-import java.util.Date;
+import com.docdoku.core.common.User;
+import com.docdoku.core.document.DocumentIteration;
+import com.docdoku.core.document.DocumentRevision;
+
+import java.io.Serializable;
 
 /**
- * A kind of {@link EffectivityConfigSpec} expressed by date and time.
- * 
- * @author Florent Garin
- * @version 1.1, 30/10/11
- * @since   V1.1
+ * @author Morgan Guimard
  */
-@Table(name="DATEBASEDEFFCS")
-@Entity
-public class DateBasedEffectivityConfigSpec extends EffectivityConfigSpec {
-    /**
-     * The date and/or time of the context.
-     */
-    @Column(name="DATECONFIG")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date date;
 
-    public DateBasedEffectivityConfigSpec() {
-    }
+public abstract class DocumentConfigSpec implements Serializable{
 
-    public Date getDate() {
-        return date;
+    public DocumentConfigSpec() {
     }
-
-    public void setDate(Date date) {
-        this.date = date;
+    public DocumentConfigSpec(User user) {
     }
+    public DocumentConfigSpec(DocumentBaseline documentBaseline, User user) {
+    }
+    public abstract DocumentIteration filter(DocumentRevision documentRevision);
 }

@@ -27,6 +27,7 @@ import com.docdoku.core.exceptions.DocumentMasterAlreadyExistsException;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.logging.Level;
@@ -67,8 +68,8 @@ public class DocumentMasterDAO {
 
     public void removeDocM(DocumentMaster pDocM) {
         DocumentRevisionDAO documentRevisionDAO = new DocumentRevisionDAO(mLocale, em);
-
-        for(DocumentRevision documentRevision:pDocM.getDocumentRevisions()){
+        List<DocumentRevision> docRs = new ArrayList<>(pDocM.getDocumentRevisions());
+        for(DocumentRevision documentRevision:docRs){
             documentRevisionDAO.removeRevision(documentRevision);
         }
         em.remove(pDocM);

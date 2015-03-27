@@ -1,4 +1,4 @@
-/*global _,$,define*/
+/*global _,$,define,App*/
 define(['backbone'], function (Backbone) {
 	'use strict';
     var Baseline = Backbone.Model.extend({
@@ -62,7 +62,16 @@ define(['backbone'], function (Backbone) {
                 },
                 error: args.error
             });
+        },
+
+        getBomUrl: function () {
+            return App.config.contextPath + '/product-structure/#' + App.config.workspaceId + '/' + encodeURIComponent(this.getConfigurationItemId()) + '/config-spec/'+this.getId()+'/bom' ;
+        },
+
+        getSceneUrl: function () {
+            return App.config.contextPath + '/product-structure/#' + App.config.workspaceId + '/' + encodeURIComponent(this.getConfigurationItemId()) + '/config-spec/'+this.getId()+'/scene' ;
         }
+
     });
 
     return Baseline;

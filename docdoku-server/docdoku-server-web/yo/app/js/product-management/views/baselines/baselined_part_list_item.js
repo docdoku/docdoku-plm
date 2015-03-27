@@ -41,7 +41,7 @@ define([
         },
 
         checkFirstInput:function(){
-            this.$('input[type=radio]').first().prop('checked',true)
+            this.$('input[type=radio]').first().prop('checked',true);
         },
 
         changeChoice:function(e){

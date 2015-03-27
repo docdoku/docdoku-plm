@@ -38,7 +38,7 @@ define([
                 this.$el.find('select.type').val(type);
             }
             else {
-                this.$el.find('div.type').html(type.toLowerCase());
+                this.$el.find('div.type').html(App.config.i18n[type]);
             }
             this.$el.addClass('well');
             this.$('input[required]').customValidity(App.config.i18n.REQUIRED_FIELD);

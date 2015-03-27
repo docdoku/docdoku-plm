@@ -22,9 +22,12 @@ package com.docdoku.core.product;
 import java.util.List;
 
 /**
+ * @author: Morgan Guimard
  */
 public interface PartLink {
     int getId();
+    Character getCode();
+    String getFullId();
     double getAmount();
     String getUnit();
     String getComment();
@@ -32,4 +35,5 @@ public interface PartLink {
     PartMaster getComponent();
     List<PartSubstituteLink> getSubstitutes();
     String getReferenceDescription();
+    List<CADInstance> getCadInstances();
 }

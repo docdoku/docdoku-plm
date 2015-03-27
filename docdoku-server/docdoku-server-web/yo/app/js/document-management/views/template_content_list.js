@@ -10,15 +10,15 @@ define([
     'text!common-objects/templates/buttons/ACL_button.html',
     'common-objects/views/alert',
     'common-objects/views/lov/lov_modal'
-], function (TemplateList, ContentView, TemplateListView, TemplateNewView,ACLEditView, template, deleteButton,aclButton,AlertView, LOVModalView) {
-	'use strict';
-	var TemplateContentListView = ContentView.extend({
+], function (TemplateList, ContentView, TemplateListView, TemplateNewView, ACLEditView, template, deleteButton, aclButton, AlertView, LOVModalView) {
+    'use strict';
+    var TemplateContentListView = ContentView.extend({
 
         template: template,
 
         partials: {
             deleteButton: deleteButton,
-            aclButton:  aclButton
+            aclButton: aclButton
 
         },
 
@@ -32,7 +32,7 @@ define([
             this.events['click .actions .edit-acl'] = 'onEditAcl';
             this.events['click .actions .list-lov'] = 'showLovs';
         },
-        bindDomElement : function(){
+        bindDomElement: function () {
             this.$aclButton = this.$('.actions .edit-acl');
             this.$deleteButton = this.$('.actions .delete');
 
@@ -124,8 +124,8 @@ define([
         actionDelete: function () {
             var that = this;
 
-            bootbox.confirm(App.config.i18n.DELETE_SELECTION_QUESTION, function(result){
-                if(result){
+            bootbox.confirm(App.config.i18n.DELETE_SELECTION_QUESTION, function (result) {
+                if (result) {
                     that.listView.eachChecked(function (view) {
                         view.model.destroy({
                             dataType: 'text', // server doesn't send a json hash in the response body
@@ -139,7 +139,7 @@ define([
 
             return false;
         },
-        onError:function(model, error){
+        onError: function (model, error) {
             var errorMessage = model.responseText;
 
             $('#acl_edit_modal').find('.notifications').first().append(new AlertView({
@@ -149,9 +149,8 @@ define([
             this.collection.fetch();
         },
 
-        showLovs: function(){
-          var lovmodal = new LOVModalView({
-          });
+        showLovs: function () {
+            var lovmodal = new LOVModalView({});
             window.document.body.appendChild(lovmodal.render().el);
             lovmodal.openModal();
         }

@@ -22,6 +22,7 @@ package com.docdoku.core.services;
 
 import com.docdoku.core.change.ModificationNotification;
 import com.docdoku.core.common.BinaryResource;
+import com.docdoku.core.configuration.PSFilter;
 import com.docdoku.core.configuration.ProductBaseline;
 import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.exceptions.*;
@@ -58,11 +59,11 @@ public interface IProductManagerWS{
      * serie of usage links, from the top of the structure to their own usage
      * link.
      * 
-     * @param ciKey
+     * @param pKey
      * The configuration item under which context the search is made
      * 
-     * @param partMKey
-     * The id of the part master to search on the structure
+     * @param search
+     * The search pattern, matching part number
      * 
      * 
      * @return
@@ -71,8 +72,10 @@ public interface IProductManagerWS{
      * @throws WorkspaceNotFoundException
      * @throws UserNotFoundException
      * @throws UserNotActiveException
+     *
+     * Do not expose until we have a workaround to send interfaces.
      */
-    List<PartUsageLink[]> findPartUsages(ConfigurationItemKey ciKey, PartMasterKey partMKey) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException;
+    // public List<PartLink[]> findPartUsages(ConfigurationItemKey pKey, PSFilter filter, String search) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, NotAllowedException, EntityConstraintException, PartMasterNotFoundException, ConfigurationItemNotFoundException ;
 
     /**
      * Creates a new product structure.
@@ -223,7 +226,7 @@ public interface IProductManagerWS{
      * @throws NotAllowedException
      * @throws ESServerException
      */
-    PartRevision checkInPart(PartRevisionKey partRPK) throws PartRevisionNotFoundException, UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, ESServerException;
+    PartRevision checkInPart(PartRevisionKey partRPK) throws PartRevisionNotFoundException, UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, ESServerException, EntityConstraintException, UserNotActiveException, PartMasterNotFoundException;
 
     /**
      * Creates the <a href="BinaryResource.html">BinaryResource</a> file,
@@ -350,7 +353,7 @@ public interface IProductManagerWS{
      * @throws PartRevisionNotFoundException
      * @throws PartMasterNotFoundException
      */
-    PartRevision updatePartIteration(PartIterationKey key, java.lang.String iterationNote, PartIteration.Source source, java.util.List<PartUsageLink> usageLinks, java.util.List<InstanceAttribute> attributes, DocumentIterationKey[] linkKeys, String[] documentLinkComments) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, PartRevisionNotFoundException, PartMasterNotFoundException, EntityConstraintException;
+    PartRevision updatePartIteration(PartIterationKey key, java.lang.String iterationNote, PartIteration.Source source, java.util.List<PartUsageLink> usageLinks, java.util.List<InstanceAttribute> attributes, DocumentIterationKey[] linkKeys, String[] documentLinkComments) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, PartRevisionNotFoundException, PartMasterNotFoundException, EntityConstraintException, UserNotActiveException;
     
     /**
      * Retrieves all product structures that belong to the given workspace.
@@ -634,4 +637,11 @@ public interface IProductManagerWS{
     List<PartIteration> getUsedByAsSubstitute(PartIterationKey pPartIPK) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException;
 
     void updateModificationNotification(String pWorkspaceId, int pModificationNotificationId, String pAcknowledgementComment) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, PartRevisionNotFoundException;
+
+    void checkCyclicAssemblyForPartIteration(PartIteration partIteration) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, EntityConstraintException, PartMasterNotFoundException ;
+    // Component filterProductStructure(ConfigurationItemKey ciKey, PSFilter filter, List<PartLink> path, Integer depth) throws ConfigurationItemNotFoundException, WorkspaceNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException, PartUsageLinkNotFoundException, AccessRightException, PartMasterNotFoundException, EntityConstraintException;
+    //PartLink getRootPartUsageLink(ConfigurationItemKey pKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ConfigurationItemNotFoundException;
+    PSFilter getPSFilter(ConfigurationItemKey ciKey, String filterType) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductInstanceMasterNotFoundException, BaselineNotFoundException;
+
+    //List<PartLink> decodePath(ConfigurationItemKey ciKey, String path) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartUsageLinkNotFoundException, ConfigurationItemNotFoundException;
 }
