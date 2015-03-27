@@ -17,7 +17,7 @@ define([
         hideActions:function() {
             this.$('.header .btn-group').first().removeClass('open');
         },
-        actionDelete:function() {
+        actionDelete:function() {
             this.hideActions();
             var that = this ;
             bootbox.confirm(App.config.i18n.DELETE_TAG_QUESTION, function(result){

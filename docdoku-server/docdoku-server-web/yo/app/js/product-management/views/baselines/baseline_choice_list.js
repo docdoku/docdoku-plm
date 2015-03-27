@@ -4,7 +4,7 @@ define([
     'mustache',
     'text!templates/baselines/baseline_choice_list.html',
     'views/baselines/baseline_choice_list_item',
-    'models/path_choice',
+    'models/path_choice'
 ], function (Backbone, Mustache, template, BaselineChoiceItemView, PathChoice) {
 	'use strict';
     var BaselineChoicesView = Backbone.View.extend({

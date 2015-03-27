@@ -7,7 +7,7 @@ define([
     'common-objects/views/lov/lov_item',
     'common-objects/models/lov/lov',
     'async',
-    'common-objects/views/alert',
+    'common-objects/views/alert'
 ], function (Backbone, Mustache, template, LOVCollection, LOVItemView, LOVModel, async, AlertView) {
     'use strict';
     var LOVModalView = Backbone.View.extend({

@@ -104,7 +104,7 @@ define([
                         model.addTags([that.options.autoAddTag]).success(function(){
                             that.hide();
                             model.fetch();
-                        })
+                        });
                     }else{
                         that.hide();
                         model.fetch();

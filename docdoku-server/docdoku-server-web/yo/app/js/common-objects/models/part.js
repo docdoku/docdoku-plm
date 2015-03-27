@@ -230,7 +230,7 @@ function (Backbone, Date, PartIterationList, ModificationNotificationCollection,
                     this.fetch();
                 },
                 error: function () {
-                    this.onError
+                    this.onError();
                 }
             });
 
@@ -244,7 +244,7 @@ function (Backbone, Date, PartIterationList, ModificationNotificationCollection,
                     callback();
                 },
                 error: function () {
-                    this.onError
+                    this.onError();
                 }
             });
         },
@@ -264,8 +264,8 @@ function (Backbone, Date, PartIterationList, ModificationNotificationCollection,
                         }
                     },
                     error: function () {
-                    this.onError
-                }
+                        this.onError();
+                    }
 
                 });
             });
