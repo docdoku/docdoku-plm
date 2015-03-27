@@ -240,7 +240,7 @@ define({
 	MILESTONE: "Jalon",
 	MILESTONES: "Jalons",
 	MODIFICATION_DATE: "Date de modification",
-    MODIFICATION_NOTIFICATION_LIST_DESCRIPTION: "Liste des modifications sur les liens d'usage",
+    MODIFICATION_NOTIFICATION_LIST_DESCRIPTION: "Journal des modifications des sous-composants",
 	MOUSE_CONTROLS: "Contrôles de la souris",
 	MOVE: "Déplacer",
 	MOVE_BACKWARD: "Reculer",

@@ -240,7 +240,7 @@ define({
 		MILESTONE: "Milestone",
 		MILESTONES: "Milestones",
 		MODIFICATION_DATE: "Modification date",
-        MODIFICATION_NOTIFICATION_LIST_DESCRIPTION: "List of the modifications on the part usage links",
+        MODIFICATION_NOTIFICATION_LIST_DESCRIPTION: "Subcomponents changelog",
 		MOUSE_CONTROLS: "Mouse controls",
 		MOVE: "move",
 		MOVE_BACKWARD: "Move backward",
