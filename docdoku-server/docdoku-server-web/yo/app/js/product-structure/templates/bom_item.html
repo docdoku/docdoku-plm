@@ -1,5 +1,9 @@
 <td><input type="checkbox"/></td>
-<td class="modification_notification">{{#model.hasModificationNotifications}}<i class="fa fa-exclamation"></i>{{/model.hasModificationNotifications}}</td>
+<td class="modification_notification">
+    {{#model.hasUnreadModificationNotifications}}
+    <i class="fa fa-exclamation"></i>
+    {{/model.hasUnreadModificationNotifications}}
+</td>
 <td class="part_number">
     {{#model.isCheckout}}
     {{#model.isCheckoutByConnectedUser}}<i class="fa fa-pencil"></i>{{/model.isCheckoutByConnectedUser}}

@@ -29,7 +29,7 @@ define([
         '<%} else{%> ' +
             '<i class="fa openModal fa-eye"></i>' +
         '<%}%>'+
-        '<%if(hasModificationNotifications) {%> ' +
+        '<%if(hasUnreadModificationNotifications) {%> ' +
             '<i class="fa fa-exclamation"></i>' +
         '<%}%>'
     );
@@ -133,7 +133,7 @@ define([
                 isCheckoutByAnotherUser: this.model.isCheckout() && !this.model.isCheckoutByConnectedUser(),
                 isCheckoutByConnectedUser: this.model.isCheckout() && this.model.isCheckoutByConnectedUser(),
                 isReleased: this.model.isReleased(),
-                hasModificationNotifications: this.model.hasModificationNotifications(),
+                hasUnreadModificationNotifications: this.model.hasUnreadModificationNotifications(),
                 isLock: this.isLock
             };
 
@@ -224,7 +224,7 @@ define([
                 isForbidden: this.isForbidden,
                 isCheckoutByAnotherUser: this.model.isCheckout() && !this.model.isCheckoutByConnectedUser(),
                 isCheckoutByConnectedUser: this.model.isCheckout() && this.model.isCheckoutByConnectedUser(),
-                hasModificationNotifications: this.model.hasModificationNotifications(),
+                hasUnreadModificationNotifications: this.model.hasUnreadModificationNotifications(),
                 isReleased: this.model.isReleased(),
                 isLock: this.isLock
             };

@@ -168,7 +168,13 @@ define([
             },
 
             hasModificationNotifications: function () {
-                return this.modificationNotifications && this.modificationNotifications.length != 0;
+                return this.modificationNotifications && this.modificationNotifications.models.length != 0;
+            },
+
+            hasUnreadModificationNotifications: function () {
+                return _.select(this.modificationNotifications.models || [], function(notif) {
+                        return !notif.isAcknowledged();
+                }).length;
             },
 
             getModificationNotifications: function () {

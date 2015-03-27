@@ -62,9 +62,13 @@ define(['backbone', 'common-objects/utils/date'],
                 return this.isCheckout() ? this.getCheckoutUser().login === App.config.login : false;
             },
 
-            hasModificationNotifications: function () {
-                return this.get('notifications') && this.get('notifications').length != 0;
+            hasUnreadModificationNotifications: function () {
+                // TODO: get the modification notification collection
+                return _.select(this.get('notifications') || [], function(notif) {
+                    return !notif.acknowledged;
+                }).length;
             },
+
             isAssembly: function () {
                 return this.get('assembly');
             },
