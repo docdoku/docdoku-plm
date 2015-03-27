@@ -10,11 +10,12 @@ define(['backbone'], function (Backbone) {
         },
 
         initBaselinedParts: function (context, callbacks) {
+            this.setConfigurationItemId(context.model.attributes.configurationItemId);
             var that = this;
             $.ajax({
                 context: context,
                 type: 'GET',
-                url: this.url() + '/baselined-parts',
+                url:  this.url()+'/baselined-parts',
                 success: function (baselinedParts) {
                     that.setBaselinedParts(baselinedParts);
                     callbacks.success(this);
@@ -29,6 +30,9 @@ define(['backbone'], function (Backbone) {
             } else {
                 return this.prototype.urlRoot();
             }
+        },
+        getUploadBaseUrl: function () {
+            return App.config.contextPath + '/api/files/' + this.url() + '/';
         },
         getSerialNumber: function () {
             return this.get('serialNumber');
@@ -46,7 +50,7 @@ define(['backbone'], function (Backbone) {
             this.set('iterationNote', iterationNote);
         },
         getConfigurationItemId: function () {
-            return this.get('configurationItemId');
+           debugger; return this.get('configurationItemId');
         },
         getUpdateAuthor: function () {
             return this.get('updateAuthor');
@@ -73,12 +77,15 @@ define(['backbone'], function (Backbone) {
           return this.get('attachedFiles');
         },
 
-        getUploadBaseUrl: function () {
-            return App.config.contextPath + '/api/files/' + this.url() + '/';
+        setInstanceAttributes:  function(instanceAttributes){
+            return this.set('instanceAttributes',instanceAttributes);
         },
 
         setBaselinedParts: function (baselinedParts) {
             this.set('baselinedPartsList', baselinedParts);
+        },
+        setConfigurationItemId:function(configurationItemId){
+            this.set('configurationItemId', configurationItemId);
         },
         getBaselinePartsWithReference: function (ref, callback) {
             var baselinedParts = null;

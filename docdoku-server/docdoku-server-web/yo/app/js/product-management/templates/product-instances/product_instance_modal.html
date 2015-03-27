@@ -11,25 +11,36 @@
             <ul class="nav nav-tabs">
                 <li class="active"><a href="#tab-main" data-toggle="tab">{{i18n.GENERAL}}</a></li>
                 <li><a href="#tab-products-instances-iteration" data-toggle="tab">{{i18n.ITERATION}}</a></li>
+                    <li><a href="#tab-products-instances-versions" data-toggle="tab">{{i18n.VERSIONS}}</a></li>
                 <li><a href="#tab-products-instances-attributes" data-toggle="tab">{{i18n.ATTRIBUTES}}</a></li>
                 <li><a href="#tab-products-instances-files" data-toggle="tab">{{i18n.FILES}}</a></li>
                 <li><a href="#tab-products-instances-links" data-toggle="tab">{{i18n.LINKS}}</a></li>
-                <li><a href="#tab-products-instances-acl" data-toggle="tab">{{i18n.ACL}}</a></li>
             </ul>
             <form id="product_instance_edit_form" class="tab-content form-horizontal">
                 <div class="tab-pane active" id="tab-main">
                     <div class="control-group">
-                        <label class="control-label" for="inputConfigurationItemId">{{i18n.PRODUCT_ID}}</label>
+                        <label class="control-label" >{{i18n.PRODUCT_INSTANCES}}</label>
 
                         <div class="controls">
-                            <input type="text" id="inputConfigurationItemId" value="{{model.getConfigurationItemId}}"
+                            <input type="text" id="inputConfigurationItemId" value=" {{model.getSerialNumber}}"
                                    disabled="disabled"/>
                         </div>
+                      </div>
+                    <div class="control-group">
+                            <label class="control-label" for="inputConfigurationItemId">{{i18n.PRODUCT_ID}}</label>
+
+                            <div class="controls">
+                                <input type="text" id="inputConfigurationItemId" value="{{model.getConfigurationItemId}}"
+                                       disabled="disabled"/>
+                            </div>
+
                     </div>
 
+
+                </div>
+                <div class="tab-pane" id="tab-products-instances-versions">
                     <div class="control-group">
-                        <label class="control-label">{{i18n.PARTS}}</label>
-                        <div class="controls baselinedPartListArea"></div>
+                        <div id ="baselinedPartListArea" class="baselinedPartListArea"></div>
                     </div>
                 </div>
 
@@ -56,9 +67,7 @@
                 <div id="tab-products-instances-links" class="tab-pane links links-edit">
                     <div id="iteration-links"></div>
                 </div>
-                <div id="tab-products-instances-acl" class="tab-pane">
-                    <div id="acl-mapping"></div>
-                </div>
+
 
             </form>
     </div>

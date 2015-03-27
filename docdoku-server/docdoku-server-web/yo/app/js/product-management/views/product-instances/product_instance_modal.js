@@ -5,10 +5,12 @@ define([
     'text!templates/product-instances/product_instance_modal.html',
     'views/baselines/baselined_part_list',
     'common-objects/utils/date',
-    'common-objects/views/attributes/attribute_list',
+    'common-objects/views/attributes/attributes',
     'common-objects/views/file/file_list',
+    'common-objects/collections/linked/linked_document_collection',
+    'common-objects/views/linked/linked_documents',
     'common-objects/views/alert'
-], function (Backbone, Mustache, template, BaselinedPartListView,date,ProductInstanceAttributeListView,FileListView,AlertView) {
+], function (Backbone, Mustache, template, BaselinedPartListView,date,ProductInstanceAttributeListView,FileListView,LinkedDocumentCollection,LinkedDocumentsView,AlertView) {
     'use strict';
     var ProductInstancesModalView = Backbone.View.extend({
         events: {
@@ -23,6 +25,7 @@ define([
         template: Mustache.parse(template),
 
         initialize: function () {
+            debugger;
             this.productId = this.options.productId;
             this.iteration = this.model.getLastIteration();
             this.iterations = this.model.getIterations();
@@ -51,9 +54,11 @@ define([
             this.bindDomElements();
             this.bindUserPopover();
             var that = this;
-            this.iteration.initBaselinedParts(that, {success: that.initBaselinedPartListView});
+            this.iteration.initBaselinedParts(that,
+                {success: that.initBaselinedPartListView
+                });
             this.initAttributesView();
-           // this.initAttachedFileView();
+           this.initAttachedFileView();
             this.openModal();
             return this;
         },
@@ -91,6 +96,21 @@ define([
         initBaselinedPartListView: function (view) {
             view.baselinePartListView = new BaselinedPartListView({model: view.iteration, editMode:false}).render();
             view.$baselinedPartListArea.html(view.baselinePartListView.$el);
+            view.baselinePartListView.renderList();
+            view.$baselinedPartListArea.html(view.baselinePartListView.$el);
+
+        },
+
+        initLinkedDocumentsView: function () {
+            this.linkedDocumentsView = new LinkedDocumentsView({
+                editMode: this.editMode,
+                commentEditable:true,
+                documentIteration: this.iteration,
+                collection: new LinkedDocumentCollection(this.iteration.getLinkedDocuments())
+            }).render();
+
+            /* Add the documentLinksView to the tab */
+            this.$('#iteration-links').html(this.linkedDocumentsView.el);
         },
 
         initAttributesView: function () {
@@ -103,19 +123,38 @@ define([
 
             this.$('#attributes-list').html(this.attributesView.$el);
 
+            this.attributesView.setEditMode(this.editMode);
+
+            var that = this;
+            _.each(that.iteration.getInstanceAttributes(), function (object) {
+                that.attributesView.collection.add({
+                    name: object.name,
+                    type: object.type,
+                    value: object.value,
+                    lovName:object.lovName,
+                    mandatory: object.mandatory
+                });
+            });
+
+            this.attributesView.render();
         },
 
         initAttachedFileView:   function(){
+            this.files = new Backbone.Collection();
             var _this = this;
             this.fileListView = new FileListView({
                 deleteBaseUrl: this.model.url(),
                 uploadBaseUrl: _this.model.getUploadBaseUrl(),
-                collection: this.model.get('attachedFiles'),
+                collection: this.files,
                 editMode: true
             }).render();
 
             // Add the fileListView to the tab
             this.$('#tab-products-instances-files').append(this.fileListView.el);
+//            _.each(_this.iteration.getAttachedFiles(), function (object) {
+//                this.fileListView.upload
+//            });
+
         },
         bindUserPopover: function () {
             this.$authorLink.userPopover(this.model.getUpdateAuthor(), this.model.getSerialNumber(), 'right');
@@ -127,8 +166,8 @@ define([
             this.iteration.unset('iteration');
             this.iteration.setIterationNote(this.$inputIterationNote.val());
             this.iteration.setBaselinedParts(this.baselinePartListView.getBaselinedParts());
-//            this.iteration.setACL();
-//            this.iteration.setInstancesAttributes();
+            this.iteration.setInstanceAttributes(this.attributesView.collection.toJSON());
+
             this.iteration.save(JSON.stringify(this.iteration), '', {
                 success: function () {
                     _this.model.fetch();

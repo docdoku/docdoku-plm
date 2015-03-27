@@ -50,7 +50,9 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -123,6 +125,33 @@ public class ProductInstancesResource {
         return mapper.map(productInstanceMaster,ProductInstanceMasterDTO.class);
     }
 
+    @PUT
+    @Path("{serialNumber}/acl")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response updateProductInstanceACL(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber,ACLDTO acl)
+            throws EntityNotFoundException, AccessRightException, UserNotActiveException, NotAllowedException {
+
+        if (acl.getGroupEntries().size() > 0 || acl.getUserEntries().size() > 0) {
+
+            Map<String,String> userEntries = new HashMap<>();
+            Map<String,String> groupEntries = new HashMap<>();
+
+            for (Map.Entry<String, ACL.Permission> entry : acl.getUserEntries().entrySet()) {
+                userEntries.put(entry.getKey(), entry.getValue().name());
+            }
+
+            for (Map.Entry<String, ACL.Permission> entry : acl.getGroupEntries().entrySet()) {
+                groupEntries.put(entry.getKey(), entry.getValue().name());
+            }
+
+            productInstanceService.updateACLForProductInstanceMaster(workspaceId, configurationItemId,serialNumber, userEntries, groupEntries);
+        }else{
+            productInstanceService.removeACLFromProductInstanceMaster(workspaceId, configurationItemId,serialNumber);
+        }
+
+        return Response.ok().build();
+    }
+
     @DELETE
     @Path("{serialNumber}")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -160,7 +189,14 @@ public class ProductInstancesResource {
         for(BaselinedPartDTO baselinedPartDTO : productInstanceIterationDTO.getBaselinedPartsList()){
             partIterationKeys.add(new PartIterationKey(workspaceId, baselinedPartDTO.getNumber(),baselinedPartDTO.getVersion(),baselinedPartDTO.getIteration()));
         }
-        ProductInstanceIteration productInstanceIteration = productInstanceService.updateProductInstance(new ConfigurationItemKey(workspaceId, cId), serialNumber, productInstanceIterationDTO.getIterationNote(), partIterationKeys);
+        InstanceAttributeFactory factory = new InstanceAttributeFactory();
+
+        List<InstanceAttributeDTO> instanceAttributes = productInstanceIterationDTO.getInstanceAttributes();
+        List<InstanceAttribute> attributes = new ArrayList<>();
+        if (instanceAttributes != null) {
+            attributes = factory.createInstanceAttributes(instanceAttributes);
+        }
+        ProductInstanceIteration productInstanceIteration = productInstanceService.updateProductInstance(new ConfigurationItemKey(workspaceId, cId), serialNumber, productInstanceIterationDTO.getIterationNote(), partIterationKeys,attributes);
         return mapper.map(productInstanceIteration,ProductInstanceIterationDTO.class);
     }
 

@@ -30,7 +30,7 @@ import java.util.*;
 
 @XmlRootElement
 public class ProductInstanceIterationDTO {
-
+    private String serialNumber;
     private int iteration;
     private String iterationNote;
     private String configurationItemId;
@@ -46,6 +46,12 @@ public class ProductInstanceIterationDTO {
     public ProductInstanceIterationDTO() {
     }
 
+    public String getSerialNumber() {
+        return serialNumber;
+    }
+    public void setSerialNumber(String serialNumber) {
+        this.serialNumber = serialNumber;
+    }
 
     public int getIteration() {
         return iteration;

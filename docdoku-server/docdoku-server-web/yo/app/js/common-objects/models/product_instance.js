@@ -16,6 +16,9 @@ define(['backbone', 'common-objects/collections/product_instance_iterations','co
                 return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/product-instances';
             }
         },
+        getUploadBaseUrl: function () {
+            debugger; return this.url() + '/files';
+        },
         parse: function (data) {
             if (data) {
                 this.iterations = new ProductInstanceList(data.productInstanceIterations);
@@ -51,12 +54,26 @@ define(['backbone', 'common-objects/collections/product_instance_iterations','co
         getUpdateAuthorName: function () {
             return this.get('updateAuthorName');
         },
+        getInstanceAttributes:  function(){
+            return this.get('instanceAttributes');
+        },
         getUpdateDate: function () {
             return date.formatTimestamp(
                 App.config.i18n._DATE_FORMAT,
                 this.get('updateDate')
             );
+        },
+        updateACL: function (args) {
+            $.ajax({
+                type: 'PUT',
+                url: this.url()+'/acl',
+                data: JSON.stringify(args.acl),
+                contentType: 'application/json; charset=utf-8',
+                success: args.success,
+                error: args.error
+            });
         }
+
     });
 
     return ProductInstance;

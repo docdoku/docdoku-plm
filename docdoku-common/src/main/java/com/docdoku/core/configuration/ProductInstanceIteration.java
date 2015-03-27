@@ -70,7 +70,7 @@ public class ProductInstanceIteration implements Serializable, FileHolder {
                     @JoinColumn(name = "ATTACHEDFILE_FULLNAME", referencedColumnName = "FULLNAME")
             },
             joinColumns = {
-                    @JoinColumn(name="PRDINSTANCEMASTER_SERIALNUMBER", referencedColumnName="SERIALNUMBER"),
+                    @JoinColumn(name="PRDINSTANCEMASTER_SERIALNUMBER", referencedColumnName="PRDINSTANCEMASTER_SERIALNUMBER"),
                     @JoinColumn(name="CONFIGURATIONITEM_ID", referencedColumnName="CONFIGURATIONITEM_ID"),
                     @JoinColumn(name="WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
                     @JoinColumn(name="ITERATION", referencedColumnName = "ITERATION")
@@ -83,7 +83,7 @@ public class ProductInstanceIteration implements Serializable, FileHolder {
                     @JoinColumn(name = "DOCUMENTLINK_ID", referencedColumnName = "ID")
             },
             joinColumns = {
-                    @JoinColumn(name="PRDINSTANCEMASTER_SERIALNUMBER", referencedColumnName="SERIALNUMBER"),
+                    @JoinColumn(name="PRDINSTANCEMASTER_SERIALNUMBER", referencedColumnName="PRDINSTANCEMASTER_SERIALNUMBER"),
                     @JoinColumn(name="CONFIGURATIONITEM_ID", referencedColumnName="CONFIGURATIONITEM_ID"),
                     @JoinColumn(name="WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
                     @JoinColumn(name="ITERATION", referencedColumnName = "ITERATION")
@@ -97,7 +97,7 @@ public class ProductInstanceIteration implements Serializable, FileHolder {
                     @JoinColumn(name = "INSTANCEATTRIBUTE_ID", referencedColumnName = "ID")
             },
             joinColumns = {
-                    @JoinColumn(name="PRDINSTANCEMASTER_SERIALNUMBER", referencedColumnName="SERIALNUMBER"),
+                    @JoinColumn(name="PRDINSTANCEMASTER_SERIALNUMBER", referencedColumnName="PRDINSTANCEMASTER_SERIALNUMBER"),
                     @JoinColumn(name="CONFIGURATIONITEM_ID", referencedColumnName="CONFIGURATIONITEM_ID"),
                     @JoinColumn(name="WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
                     @JoinColumn(name="ITERATION", referencedColumnName = "ITERATION")
@@ -120,9 +120,12 @@ public class ProductInstanceIteration implements Serializable, FileHolder {
      * Paths are strings made of ordered lists of usage link ids joined by "-".
      */
     @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(name = "PRDINSTITERATION_SUBSTITUTELINK",
-            joinColumns= {
-                    @JoinColumn(name = "PRODUCTBASELINE_ID", referencedColumnName = "ID")
+    @CollectionTable(name = "PRDINSTANCEMASTER_SUBSTITUTELINK",
+            joinColumns = {
+                    @JoinColumn(name="PRDINSTANCEMASTER_SERIALNUMBER", referencedColumnName="PRDINSTANCEMASTER_SERIALNUMBER"),
+                    @JoinColumn(name="CONFIGURATIONITEM_ID", referencedColumnName="CONFIGURATIONITEM_ID"),
+                    @JoinColumn(name="WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
+                    @JoinColumn(name="ITERATION", referencedColumnName = "ITERATION")
             }
     )
     private Set<String> substituteLinks=new HashSet<>();
@@ -134,11 +137,15 @@ public class ProductInstanceIteration implements Serializable, FileHolder {
      * Paths are strings made of ordered lists of usage link ids joined by "-".
      */
     @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(name = "PRDINSTITERATION_OPTIONALLINK",
-            joinColumns={
-                    @JoinColumn(name = "PRODUCTBASELINE_ID", referencedColumnName="ID")
+    @CollectionTable(name = "PRDINSTANCEMASTER_OPTIONALLINK",
+            joinColumns = {
+                    @JoinColumn(name="PRDINSTANCEMASTER_SERIALNUMBER", referencedColumnName="PRDINSTANCEMASTER_SERIALNUMBER"),
+                    @JoinColumn(name="CONFIGURATIONITEM_ID", referencedColumnName="CONFIGURATIONITEM_ID"),
+                    @JoinColumn(name="WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
+                    @JoinColumn(name="ITERATION", referencedColumnName = "ITERATION")
             }
     )
+
     private Set<String> optionalUsageLinks=new HashSet<>();
 
     public ProductInstanceIteration() {
@@ -263,5 +270,8 @@ public class ProductInstanceIteration implements Serializable, FileHolder {
 
     public void setOptionalUsageLinks(Set<String> optionalUsageLinks) {
         this.optionalUsageLinks = optionalUsageLinks;
+    }
+    public String getConfigurationItemId() {
+        return this.productInstanceMaster.getInstanceOf().getId();
     }
 }
