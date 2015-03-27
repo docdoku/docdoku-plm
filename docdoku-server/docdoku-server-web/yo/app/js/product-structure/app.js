@@ -209,9 +209,9 @@ define([
                 '/' + App.sceneManager.cameraObject.position.z;
 
             if (App.partsTreeView.componentSelected.getPath()) {
-                iframeSrc += '/' + App.partsTreeView.componentSelected.getPath();
+                iframeSrc += '/' + App.partsTreeView.componentSelected.getEncodedPath();
             } else {
-                iframeSrc += '/null';
+                iframeSrc += '/-1';
             }
 
             iframeSrc += '/' + App.config.configSpec;
