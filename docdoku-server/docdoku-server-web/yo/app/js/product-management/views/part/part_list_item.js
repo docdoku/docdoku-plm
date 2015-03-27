@@ -70,10 +70,10 @@ define([
         },
 
         toPartModalOnFilesTab: function () {
-            var self = this;
-            self.model.fetch().success(function () {
+            var model = this.model;
+            model.fetch().success(function () {
                 var partModalView = new PartModalView({
-                    model: self.model
+                    model: model
                 });
                 partModalView.show();
                 partModalView.activateFileTab();
@@ -82,14 +82,13 @@ define([
         },
 
         toPartModalOnNotificationsTab: function () {
-            var self = this;
-            self.model.fetch().success(function () {
+            var model = this.model;
+            model.fetch().success(function () {
                 var partModalView = new PartModalView({
-                    model: self.model
+                    model: model
                 });
                 partModalView.show();
                 partModalView.activateNotificationsTab();
-
             });
         },
 
