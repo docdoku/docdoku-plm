@@ -10,7 +10,8 @@
         <i class="fa fa-check"></i>
         {{/part.isReleased}}
         {{^part.isReleased}}
-        <i class="fa fa-eye"></i>
+        {{#part.isObsolete}}<i class="fa fa-frown-o"></i>{{/part.isObsolete}}
+        {{^part.isObsolete}}<i class="fa fa-eye"></i>{{/part.isObsolete}}
         {{/part.isReleased}}
         {{/part.isCheckout}}
 
@@ -156,12 +157,14 @@
                             </div>
                         </div>
                         {{^isReleased}}
+                        {{^isObsolete}}
                         <div class="action-checkin-checkout" >
                             {{^isCheckout}}<button type="button" class="btn btn-small btn-warning action-checkout"> <i class="fa fa-pencil"></i> {{i18n.CHECKOUT}}</button>{{/isCheckout}}
                             {{#isCheckout}}<button type="button" class="btn btn-small btn-success action-checkin"> <i class="fa fa-eye"></i> {{i18n.CHECKIN}}</button>
                             <button type="button" class="btn btn-small btn-info action-undocheckout"> <i class="fa fa-reply"></i>{{i18n.UNDO_CHECKOUT}}</button>{{/isCheckout}}
 
                         </div>
+                        {{/isObsolete}}
                         {{/isReleased}}
 
                         <div class="control-group">

@@ -291,6 +291,19 @@ public class PartResource {
         return Response.ok().build();
     }
 
+    @PUT
+    @Path("/obsolete")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response markPartRevisionAsObsolete(@PathParam("workspaceId") String workspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion)
+            throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException {
+
+        PartRevisionKey revisionKey = new PartRevisionKey(workspaceId, partNumber, partVersion);
+
+        productService.markPartRevisionAsObsolete(revisionKey);
+        return Response.ok().build();
+    }
+
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
     public Response deletePartRevision(@PathParam("workspaceId") String workspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion)

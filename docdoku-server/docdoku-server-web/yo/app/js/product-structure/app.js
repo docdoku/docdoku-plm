@@ -58,6 +58,24 @@ define([
             App.collaborativeController = new CollaborativeController();
             App.collaborativeView = new CollaborativeView().render();
 
+            App.controlModesView = new ControlModesView().render();
+            App.controlTransformView = new ControlTransformView().render();
+            App.partMetadataView = new PartMetadataView({model: new Backbone.Model()});
+            App.controlNavigationView = new ControlNavigationView().render();
+
+            App.$ControlsContainer.append(App.collaborativeView.$el);
+            App.$ControlsContainer.append(App.controlNavigationView.$el);
+            App.$ControlsContainer.append(App.controlModesView.$el);
+            App.$ControlsContainer.append(App.controlTransformView.$el);
+            App.$ControlsContainer.append(App.partMetadataView.$el);
+
+            App.$ControlsContainer.append(new ControlOptionsView().render().$el);
+            App.$ControlsContainer.append(new ControlClippingView().render().$el);
+            App.$ControlsContainer.append(new ControlExplodeView().render().$el);
+            App.$ControlsContainer.append(new ControlMarkersView().render().$el);
+            App.$ControlsContainer.append(new ControlLayersView().render().$el);
+            App.$ControlsContainer.append(new ControlMeasureView().render().$el);
+
             try {
                 App.sceneManager.init();
                 this.bindDatGUIControls();
@@ -73,25 +91,8 @@ define([
 
             App.searchView = new SearchView().render();
             App.partsTreeView = new PartsTreeView({resultPathCollection: App.searchView.collection}).render();
-            App.controlNavigationView = new ControlNavigationView().render();
             App.bomView = new BomView().render();
             App.baselineSelectView = new BaselineSelectView({el: '#config_spec_container'}).render();
-            App.controlModesView = new ControlModesView().render();
-            App.controlTransformView = new ControlTransformView().render();
-            App.partMetadataView = new PartMetadataView({model: new Backbone.Model()});
-
-            App.$ControlsContainer.append(App.collaborativeView.$el);
-            App.$ControlsContainer.append(App.controlNavigationView.$el);
-            App.$ControlsContainer.append(App.controlModesView.$el);
-            App.$ControlsContainer.append(App.controlTransformView.$el);
-            App.$ControlsContainer.append(App.partMetadataView.$el);
-
-            App.$ControlsContainer.append(new ControlOptionsView().render().$el);
-            App.$ControlsContainer.append(new ControlClippingView().render().$el);
-            App.$ControlsContainer.append(new ControlExplodeView().render().$el);
-            App.$ControlsContainer.append(new ControlMarkersView().render().$el);
-            App.$ControlsContainer.append(new ControlLayersView().render().$el);
-            App.$ControlsContainer.append(new ControlMeasureView().render().$el);
 
             this.bomControls.append(App.bomView.bomHeaderView.$el);
 

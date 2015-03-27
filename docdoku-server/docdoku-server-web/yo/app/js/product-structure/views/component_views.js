@@ -26,6 +26,8 @@ define([
             '<i class="fa openModal fa-pencil"></i> ' +
         '<%} else if(isReleased){%> ' +
             '<i class="fa openModal fa-check"></i>' +
+        '<%} else if(isObsolete){%> ' +
+            '<i class="fa openModal fa-frown-o"></i>' +
         '<%} else{%> ' +
             '<i class="fa openModal fa-eye"></i>' +
         '<%}%>'+
@@ -133,6 +135,7 @@ define([
                 isCheckoutByAnotherUser: this.model.isCheckout() && !this.model.isCheckoutByConnectedUser(),
                 isCheckoutByConnectedUser: this.model.isCheckout() && this.model.isCheckoutByConnectedUser(),
                 isReleased: this.model.isReleased(),
+                isObsolete: this.model.isObsolete(),
                 hasModificationNotifications: this.model.hasModificationNotifications(),
                 isLock: this.isLock
             };
@@ -226,6 +229,7 @@ define([
                 isCheckoutByConnectedUser: this.model.isCheckout() && this.model.isCheckoutByConnectedUser(),
                 hasModificationNotifications: this.model.hasModificationNotifications(),
                 isReleased: this.model.isReleased(),
+                isObsolete: this.model.isObsolete(),
                 isLock: this.isLock
             };
 
