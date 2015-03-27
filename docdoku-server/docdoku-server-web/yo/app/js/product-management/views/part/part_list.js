@@ -232,7 +232,7 @@ define([
         isSelectedPartsReleasable: function () {
             var isPartReleasable = true;
             _(this.listItemViews).each(function (view) {
-                if (view.isChecked() && (view.model.isCheckout() || view.model.isReleased())) {
+                if (view.isChecked() && (view.model.isCheckout() || view.model.isReleased() || view.model.isObsolete())) {
                     isPartReleasable = false;
                 }
             });
@@ -241,7 +241,7 @@ define([
         areSelectedPartsCheckoutable: function () {
             var isPartCheckout = true;
             _(this.getSelectedParts()).each(function (view) {
-                if (view.isReleased() || view.isCheckout()) {
+                if (view.isReleased() || view.isCheckout() || view.isObsolete()) {
                     isPartCheckout = false;
                 }
             });
@@ -259,7 +259,7 @@ define([
         areSelectedPartsAllNotCheckouted: function () {
             var isPartNotCheckouted = true;
             _(this.getSelectedParts()).each(function (view) {
-                if (view.isCheckout() || view.isReleased()) {
+                if (view.isCheckout() || view.isReleased() || view.isObsolete()) {
                     isPartNotCheckouted = false;
                 }
             });
