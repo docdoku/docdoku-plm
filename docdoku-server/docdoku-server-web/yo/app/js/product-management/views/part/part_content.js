@@ -412,7 +412,6 @@ define([
                 }
 
             });
-            this.partListView.getSelectedPart().markAsObsolete();
         }
 
     });
