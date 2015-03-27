@@ -135,7 +135,7 @@ define(['backbone', 'common-objects/utils/date'],
             },
 
             isObsolete : function(){
-                return this.get('osbsolete');
+                return this.get('obsolete');
             },
 
             getInstancesUrl: function () {

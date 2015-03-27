@@ -7,7 +7,10 @@
     {{/model.isCheckout}}
     {{^model.isCheckout}}
     {{#model.isReleased}}<i class="fa fa-check"></i>{{/model.isReleased}}
-    {{^model.isReleased}}<i class="fa fa-eye"></i>{{/model.isReleased}}
+    {{^model.isReleased}}
+        {{#model.isObsolete}}<i class="fa fa-frown-o"></i>{{/model.isObsolete}}
+        {{^model.isObsolete}}<i class="fa fa-eye"></i>{{/model.isObsolete}}
+    {{/model.isReleased}}
     {{/model.isCheckout}}
 
     {{#model.isLastIterationAssembly}}

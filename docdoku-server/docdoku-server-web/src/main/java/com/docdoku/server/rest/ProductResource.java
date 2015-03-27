@@ -400,6 +400,7 @@ public class ProductResource {
         dto.setVersion(retainedIteration.getVersion());
         dto.setIteration(retainedIteration.getIteration());
         dto.setReleased(partR.isReleased());
+        dto.setObsolete(partR.isObsolete());
         dto.setDescription(partR.getDescription());
 
         List<InstanceAttributeDTO> lstAttributes = new ArrayList<>();

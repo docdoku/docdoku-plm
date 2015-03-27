@@ -154,7 +154,7 @@ define([
             this.trigger('new-version-button:display', !partSelected.isCheckout());
             this.trigger('release-button:display', (!partSelected.isCheckout() && !partSelected.isReleased()));
             this.trigger('new-product-button:display', true);
-            this.trigger('obsolete-button:display', true);
+            this.trigger('obsolete-button:display', partSelected.isReleased());
         },
 
         onSeveralPartsSelected: function () {
@@ -163,7 +163,7 @@ define([
             this.trigger('new-version-button:display', false);
             this.trigger('release-button:display', this.isSelectedPartsReleasable());
             this.trigger('new-product-button:display', false);
-            this.trigger('obsolete-button:display', true);
+            this.trigger('obsolete-button:display', false);
         },
 
         deleteSelectedParts: function () {

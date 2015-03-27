@@ -401,6 +401,18 @@ define([
 
             return false;
 
+        },
+        markAsObsolete:function(){
+            var _this = this;
+            bootbox.confirm(App.config.i18n.MARK_AS_OBSOLETE_QUESTION, function(result){
+                if(result){
+                    _(_this.partListView.getSelectedParts()).each(function (part) {
+                        part.markAsObsolete();
+                    });
+                }
+
+            });
+            this.partListView.getSelectedPart().markAsObsolete();
         }
 
     });
