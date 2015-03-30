@@ -44,6 +44,7 @@ public class ModificationNotificationDTO {
 
     private String ackComment;
     private UserDTO ackAuthor;
+    private Date ackDate;
 
     public ModificationNotificationDTO() {
     }
@@ -150,6 +151,14 @@ public class ModificationNotificationDTO {
 
     public void setAckAuthor(UserDTO ackAuthor) {
         this.ackAuthor = ackAuthor;
+    }
+
+    public Date getAckDate() {
+        return ackDate;
+    }
+
+    public void setAckDate(Date ackDate) {
+        this.ackDate = ackDate;
     }
 
 }

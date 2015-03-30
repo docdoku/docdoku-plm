@@ -50,13 +50,10 @@ define([
         },
 
         getFormattedCheckInDate: function () {
-            if (this.hasCheckInDate()) {
-                return Date.formatTimestamp(
-                    App.config.i18n._DATE_FORMAT,
-                    this.getCheckInDate()
-                );
-            }
-            return null;
+            return Date.formatTimestamp(
+                App.config.i18n._DATE_FORMAT,
+                this.getCheckInDate()
+            );
         },
 
         hasAuthor: function () {
@@ -68,10 +65,7 @@ define([
         },
 
         getAuthorName: function () {
-            if (this.hasAuthor()) {
-                return this.getAuthor().name;
-            }
-            return null;
+            return this.getAuthor().name;
         },
 
         getIterationNote: function () {
@@ -86,8 +80,31 @@ define([
             return this.get('ackComment');
         },
 
+        hasAckAuthor: function () {
+            return !_.isNull(this.get('ackAuthor'));
+        },
+
         getAckAuthor: function () {
             return this.get('ackAuthor');
+        },
+
+        getAckAuthorName: function () {
+            return this.getAckAuthor().name;
+        },
+
+        hasAckDate: function () {
+            return !_.isNull(this.get('ackDate'));
+        },
+
+        getAckDate: function () {
+            return this.get('ackDate');
+        },
+
+        getFormattedAckDate: function () {
+            return Date.formatTimestamp(
+                App.config.i18n._DATE_FORMAT,
+                this.getCheckInDate()
+            );
         },
 
         setAcknowledged: function (data) {

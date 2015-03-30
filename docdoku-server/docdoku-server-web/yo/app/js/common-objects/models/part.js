@@ -209,7 +209,6 @@ define([
                 return null;
             },
 
-
             getCheckOutUserLogin: function () {
                 if (this.isCheckout()) {
                     return this.getCheckoutUser().login;
