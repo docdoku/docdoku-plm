@@ -20,9 +20,9 @@
 
 package com.docdoku.server.rest.dto.product;
 
-import com.docdoku.server.rest.dto.ACLDTO;
 import com.docdoku.server.rest.dto.DocumentIterationDTO;
 import com.docdoku.server.rest.dto.InstanceAttributeDTO;
+import com.docdoku.server.rest.dto.baseline.BaselineDTO;
 import com.docdoku.server.rest.dto.baseline.BaselinedPartDTO;
 
 import javax.xml.bind.annotation.XmlRootElement;
@@ -37,8 +37,11 @@ public class ProductInstanceIterationDTO {
     private String updateAuthor;
     private String updateAuthorName;
     private Date updateDate;
-    private List<BaselinedPartDTO> baselinedPartsList;
+    private List<BaselinedPartDTO> baselinedParts;
+    private List<String> substituteLinks;
+    private List<String> optionalUsageLinks;
 
+    private BaselineDTO basedOn;
     private List<InstanceAttributeDTO> instanceAttributes = new ArrayList<>();
     private Set<DocumentIterationDTO> linkedDocuments = new HashSet<>();
     private List<String> attachedFiles;
@@ -95,14 +98,21 @@ public class ProductInstanceIterationDTO {
         this.updateDate = updateDate;
     }
 
-    public List<BaselinedPartDTO> getBaselinedPartsList() {
-        return baselinedPartsList;
-    }
-    public void setBaselinedPartsList(List<BaselinedPartDTO> baselinedPartsList) {
-        this.baselinedPartsList = baselinedPartsList;
+    public List<BaselinedPartDTO> getBaselinedParts() {
+        return baselinedParts;
     }
 
+    public void setBaselinedParts(List<BaselinedPartDTO> baselinedParts) {
+        this.baselinedParts = baselinedParts;
+    }
 
+    public List<String> getOptionalUsageLinks() {
+        return optionalUsageLinks;
+    }
+
+    public void setOptionalUsageLinks(List<String> optionalUsageLinks) {
+        this.optionalUsageLinks = optionalUsageLinks;
+    }
 
     public List<InstanceAttributeDTO> getInstanceAttributes() {
         return instanceAttributes;
@@ -126,5 +136,21 @@ public class ProductInstanceIterationDTO {
 
     public void setAttachedFiles(List<String> attachedFiles) {
         this.attachedFiles = attachedFiles;
+    }
+
+    public BaselineDTO getBasedOn() {
+        return basedOn;
+    }
+
+    public void setBasedOn(BaselineDTO basedOn) {
+        this.basedOn = basedOn;
+    }
+
+    public List<String> getSubstituteLinks() {
+        return substituteLinks;
+    }
+
+    public void setSubstituteLinks(List<String> substituteLinks) {
+        this.substituteLinks = substituteLinks;
     }
 }

@@ -19,7 +19,7 @@ define(['backbone'], function (Backbone) {
                 success: function (baselinedParts) {
                     that.setBaselinedParts(baselinedParts);
                     callbacks.success(this);
-                    }
+                }
             });
         },
 
@@ -50,7 +50,10 @@ define(['backbone'], function (Backbone) {
             this.set('iterationNote', iterationNote);
         },
         getConfigurationItemId: function () {
-           debugger; return this.get('configurationItemId');
+            return this.get('configurationItemId');
+        },
+        getBasedOn:function(){
+            return this.get('basedOn').name;
         },
         getUpdateAuthor: function () {
             return this.get('updateAuthor');
@@ -62,7 +65,7 @@ define(['backbone'], function (Backbone) {
             return this.get('updateDate');
         },
         getBaselinedParts: function () {
-            return this.get('baselinedPartsList');
+            return this.get('baselinedParts');
         },
         getACL: function(){
           return this.get('acl');
@@ -82,7 +85,7 @@ define(['backbone'], function (Backbone) {
         },
 
         setBaselinedParts: function (baselinedParts) {
-            this.set('baselinedPartsList', baselinedParts);
+            this.set('baselinedParts', baselinedParts);
         },
         setConfigurationItemId:function(configurationItemId){
             this.set('configurationItemId', configurationItemId);

@@ -35,8 +35,8 @@ import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.configuration.PSFilterVisitor;
 import com.docdoku.server.configuration.filter.LatestPSFilter;
 import com.docdoku.server.configuration.filter.ReleasedPSFilter;
-import com.docdoku.server.configuration.spec.BaselineProductConfigSpec;
-import com.docdoku.server.configuration.spec.BaselineProductCreationConfigSpec;
+import com.docdoku.server.configuration.spec.ProductBaselineConfigSpec;
+import com.docdoku.server.configuration.spec.ProductBaselineCreationConfigSpec;
 import com.docdoku.server.dao.ConfigurationItemDAO;
 import com.docdoku.server.dao.PartCollectionDAO;
 import com.docdoku.server.dao.ProductBaselineDAO;
@@ -76,7 +76,7 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
             partIterations.add(em.find(PartIteration.class,piKey));
         }
 
-        BaselineProductCreationConfigSpec filter = new BaselineProductCreationConfigSpec(user,pType,partIterations,substituteLinks,optionalUsageLinks);
+        ProductBaselineCreationConfigSpec filter = new ProductBaselineCreationConfigSpec(user,pType,partIterations,substituteLinks,optionalUsageLinks);
 
         new PSFilterVisitor(em, user, filter, configurationItem.getDesignItem(), null, -1) {
             @Override
@@ -312,7 +312,7 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
         ProductBaselineDAO productBaselineDAO = new ProductBaselineDAO(em);
         ProductBaseline productBaseline = productBaselineDAO.loadBaseline(baselineId);
         User user = userManager.checkWorkspaceReadAccess(productBaseline.getConfigurationItem().getWorkspaceId());
-        return new BaselineProductConfigSpec(productBaseline, user);
+        return new ProductBaselineConfigSpec(productBaseline, user);
     }
 
 }

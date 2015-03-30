@@ -19,7 +19,6 @@
  */
 package com.docdoku.server.rest;
 
-import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.configuration.*;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
@@ -32,7 +31,6 @@ import com.docdoku.core.services.IProductInstanceManagerLocal;
 import com.docdoku.server.rest.dto.ACLDTO;
 import com.docdoku.server.rest.dto.FileDTO;
 import com.docdoku.server.rest.dto.InstanceAttributeDTO;
-import com.docdoku.server.rest.dto.InstanceAttributeTemplateDTO;
 import com.docdoku.server.rest.dto.baseline.BaselinedPartDTO;
 import com.docdoku.server.rest.dto.product.ProductInstanceCreationDTO;
 import com.docdoku.server.rest.dto.product.ProductInstanceIterationDTO;
@@ -192,7 +190,7 @@ public class ProductInstancesResource {
 
         String cId = (configurationId != null) ? configurationId : productInstanceIterationDTO.getConfigurationItemId();
         List<PartIterationKey> partIterationKeys = new ArrayList<>();
-        for(BaselinedPartDTO baselinedPartDTO : productInstanceIterationDTO.getBaselinedPartsList()){
+        for(BaselinedPartDTO baselinedPartDTO : productInstanceIterationDTO.getBaselinedParts()){
             partIterationKeys.add(new PartIterationKey(workspaceId, baselinedPartDTO.getNumber(),baselinedPartDTO.getVersion(),baselinedPartDTO.getIteration()));
         }
         InstanceAttributeFactory factory = new InstanceAttributeFactory();

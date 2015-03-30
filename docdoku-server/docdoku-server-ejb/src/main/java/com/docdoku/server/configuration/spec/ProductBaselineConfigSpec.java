@@ -42,12 +42,12 @@ import java.util.List;
  * @version 1.1, 30/10/11
  * @since   V1.1
  */
-public class BaselineProductConfigSpec extends ProductConfigSpec {
+public class ProductBaselineConfigSpec extends ProductConfigSpec {
 
     private ProductBaseline productBaseline;
     private User user;
 
-    public BaselineProductConfigSpec(ProductBaseline productBaseline, User user) {
+    public ProductBaselineConfigSpec(ProductBaseline productBaseline, User user) {
         // Prevent NullPointerException
         if(productBaseline == null){
             throw new IllegalArgumentException("Cannot instantiate a BaselineProductConfigSpec without a baseline");

@@ -274,4 +274,13 @@ public class ProductInstanceIteration implements Serializable, FileHolder {
     public String getConfigurationItemId() {
         return this.productInstanceMaster.getInstanceOf().getId();
     }
+
+
+    public boolean hasSubstituteLink(String link){
+        return substituteLinks.contains(link);
+    }
+
+    public boolean isLinkOptional(String link){
+        return optionalUsageLinks.contains(link);
+    }
 }

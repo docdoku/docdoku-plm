@@ -142,6 +142,9 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
 
         ProductBaseline productBaseline = new ProductBaselineDAO(em).loadBaseline(baselineId);
         productInstanceIteration.setBasedOn(productBaseline);
+        productInstanceIteration.setSubstituteLinks(new HashSet<>(productBaseline.getSubstituteLinks()));
+        productInstanceIteration.setOptionalUsageLinks(new HashSet<>(productBaseline.getOptionalUsageLinks()));
+
         productInstanceMasterDAO.createProductInstanceMaster(productInstanceMaster);
 
 
@@ -162,6 +165,8 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         ProductInstanceMasterDAO productInstanceMasterDAO = new ProductInstanceMasterDAO(userLocal, em);
         ProductInstanceMaster productInstanceMaster = productInstanceMasterDAO.loadProductInstanceMaster(new ProductInstanceMasterKey(serialNumber, configurationItemKey.getWorkspace(), configurationItemKey.getId()));
 
+        ProductInstanceIteration lastIteration = productInstanceMaster.getLastIteration();
+
         ProductInstanceIteration productInstanceIteration = productInstanceMaster.createNextIteration();
         new ProductInstanceIterationDAO(userLocal, em).createProductInstanceIteration(productInstanceIteration);
 
@@ -175,6 +180,11 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
             partCollection.addBaselinedPart(new PartIterationDAO(userLocal, em).loadPartI(partIterationKey));
         }
         productInstanceIteration.setPartCollection(partCollection);
+
+        // TODO : use params instead of recopy.
+        productInstanceIteration.setBasedOn(lastIteration.getBasedOn());
+        productInstanceIteration.setSubstituteLinks(new HashSet<>(lastIteration.getSubstituteLinks()));
+        productInstanceIteration.setOptionalUsageLinks(new HashSet<>(lastIteration.getOptionalUsageLinks()));
 
         productInstanceIteration.setInstanceAttributes(attributes);
         return productInstanceIteration;
@@ -190,6 +200,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         productInstanceMasterDAO.deleteProductInstanceMaster(prodInstM);
     }
 
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public void updateACLForProductInstanceMaster(String workspaceId, String configurationItemId, String serialNumber, Map<String, String> userEntries, Map<String, String> groupEntries) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException {
 
@@ -231,6 +242,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         }
     }
 
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public void removeACLFromProductInstanceMaster(String workspaceId, String configurationItemId, String serialNumber) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, ProductInstanceMasterNotFoundException {
 
