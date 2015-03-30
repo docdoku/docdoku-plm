@@ -2,6 +2,7 @@
 define([
     'backbone',
     'mustache',
+    'async',
     'common-objects/collections/part_collection',
     'common-objects/collections/part_search_collection',
     'text!templates/part/part_content.html',
@@ -23,7 +24,7 @@ define([
     'common-objects/views/alert',
     'common-objects/views/tags/tags_management',
     'views/product/product_creation_view'
-], function (Backbone, Mustache, PartCollection, PartSearchCollection, template, PartListView, PartCreationView, PartNewVersionView, PromptView, ACLEditView, AdvancedSearchView, deleteButton, checkoutButtonGroup, newVersionButton, releaseButton, aclButton, newProductButton, tagsButton, obsoleteButton, searchForm, AlertView,TagsManagementView,ProductCreationView) {
+], function (Backbone, Mustache, Async, PartCollection, PartSearchCollection, template, PartListView, PartCreationView, PartNewVersionView, PromptView, ACLEditView, AdvancedSearchView, deleteButton, checkoutButtonGroup, newVersionButton, releaseButton, aclButton, newProductButton, tagsButton, obsoleteButton, searchForm, AlertView,TagsManagementView,ProductCreationView) {
     'use strict';
 	var PartContentView = Backbone.View.extend({
         events: {
@@ -214,15 +215,20 @@ define([
                         iterationNote = null;
                     }
 
-                    var ajaxes = [];
-                    _(selectedParts).each(function (part) {
+                    var _this = this;
+                    Async.each(selectedParts, function(part, callback) {
                         part.getLastIteration().save({
                             iterationNote: iterationNote
                         }).success(function () {
-                            ajaxes.push(part.checkin());
+                            part.checkin().success(callback);
                         });
+
+                    }, function(err) {
+                        if (!err) {
+                            _this.allCheckinDone();
+                        }
                     });
-                    $.when.apply($, ajaxes).done(this.allCheckinDone);
+
                 });
 
                 this.listenTo(promptView, 'prompt-cancel', function () {
@@ -230,7 +236,7 @@ define([
                     _(selectedParts).each(function (part) {
                         ajaxes.push(part.checkin());
                     });
-                    $.when.apply($, ajaxes).done(this.allCheckinDone);
+                    $.when.apply($, ajaxes).then(this.allCheckinDone);
                 });
 
         },
