@@ -32,7 +32,7 @@ define(['backbone'], function (Backbone) {
             }
         },
         getUploadBaseUrl: function () {
-            return App.config.contextPath + '/api/files/' + this.url() + '/';
+            return App.config.contextPath + '/api/files';
         },
         getSerialNumber: function () {
             return this.get('serialNumber');

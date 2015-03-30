@@ -16,9 +16,7 @@ define(['backbone', 'common-objects/collections/product_instance_iterations','co
                 return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/product-instances';
             }
         },
-        getUploadBaseUrl: function () {
-            debugger; return this.url() + '/files';
-        },
+
         parse: function (data) {
             if (data) {
                 this.iterations = new ProductInstanceList(data.productInstanceIterations);

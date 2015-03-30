@@ -143,17 +143,17 @@ define([
             this.files = new Backbone.Collection();
             var _this = this;
             this.fileListView = new FileListView({
-                deleteBaseUrl: this.model.url(),
-                uploadBaseUrl: _this.model.getUploadBaseUrl(),
+                deleteBaseUrl: this.iteration.url(),
+                uploadBaseUrl: _this.iteration.getUploadBaseUrl(),
                 collection: this.files,
                 editMode: true
             }).render();
 
             // Add the fileListView to the tab
             this.$('#tab-products-instances-files').append(this.fileListView.el);
-//            _.each(_this.iteration.getAttachedFiles(), function (object) {
-//                this.fileListView.upload
-//            });
+            _.each(_this.iteration.getAttachedFiles(), function (object) {
+              //  this.fileListView.upload
+            });
 
         },
         bindUserPopover: function () {
@@ -175,7 +175,7 @@ define([
                 },
                 error: _this.onError
             });
-
+            this.fileListView.deleteFilesToDelete();
             e.preventDefault();
             e.stopPropagation();
             return false;

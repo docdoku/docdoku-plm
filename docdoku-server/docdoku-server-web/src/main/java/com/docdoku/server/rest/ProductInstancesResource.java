@@ -105,13 +105,19 @@ public class ProductInstancesResource {
 
         InstanceAttributeFactory factory = new InstanceAttributeFactory();
         ACLDTO acldto = productInstanceCreationDTO.getAcl();
-
+        Map<String,ACL.Permission> userEntries=new HashMap<>();
+        Map<String,ACL.Permission> grpEntries=new HashMap<>();
         List<InstanceAttributeDTO> instanceAttributes = productInstanceCreationDTO.getInstanceAttributes();
         List<InstanceAttribute> attributes = new ArrayList<>();
         if (instanceAttributes != null) {
             attributes = factory.createInstanceAttributes(instanceAttributes);
         }
-        ProductInstanceMaster productInstanceMaster = productInstanceService.createProductInstance(workspaceId,new ConfigurationItemKey(workspaceId, productInstanceCreationDTO.getConfigurationItemId()), productInstanceCreationDTO.getSerialNumber(), productInstanceCreationDTO.getBaselineId(),acldto.getUserEntries(),acldto.getGroupEntries(),attributes);
+        if(acldto != null){
+            userEntries = acldto.getUserEntries();
+            grpEntries= acldto.getGroupEntries();
+        }
+        ProductInstanceMaster productInstanceMaster = productInstanceService.createProductInstance(workspaceId,new ConfigurationItemKey(workspaceId, productInstanceCreationDTO.getConfigurationItemId()), productInstanceCreationDTO.getSerialNumber(), productInstanceCreationDTO.getBaselineId(),userEntries,grpEntries,attributes);
+
         return mapper.map(productInstanceMaster, ProductInstanceMasterDTO.class);
     }
 
