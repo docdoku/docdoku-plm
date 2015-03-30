@@ -293,10 +293,14 @@ define([
                     context: this,
                     type: 'PUT',
                     url: this.url() + '/checkout',
+                    success:function(){
+                        this.fetch();
+                        Backbone.Events.trigger('part:iterationChange');
+                    },
                     error: function (xhr) {
                         window.alert(xhr.responseText);
                     }
-                }).success(this.fetch.bind(this));
+                });
             },
 
             undocheckout: function () {
@@ -304,10 +308,14 @@ define([
                     context: this,
                     type: 'PUT',
                     url: this.url() + '/undocheckout',
+                    success:function(){
+                        this.fetch();
+                        Backbone.Events.trigger('part:iterationChange');
+                    },
                     error: function (xhr) {
                         window.alert(xhr.responseText);
                     }
-                }).success(this.fetch.bind(this));
+                });
             },
 
             checkin: function () {
@@ -315,10 +323,14 @@ define([
                     context: this,
                     type: 'PUT',
                     url: this.url() + '/checkin',
+                    success:function(){
+                        this.fetch();
+                        Backbone.Events.trigger('part:iterationChange');
+                    },
                     error: function (xhr) {
                         window.alert(xhr.responseText);
                     }
-                }).success(this.fetch.bind(this));
+                });
             },
 
             isCheckout: function () {

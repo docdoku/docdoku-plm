@@ -13,10 +13,32 @@ define([
 
         initialize: function () {
             this.render();
+            Backbone.Events.on('part:iterationChange', this.refreshCount, this);
         },
 
         render: function () {
             this.$el.html(Mustache.render(template, {i18n: App.config.i18n, workspaceId: App.config.workspaceId}));
+            this.refreshCount();
+        },
+
+        refreshCount:function(){
+            var that = this;
+            $.ajax({
+                context :this,
+                type:'GET',
+                url:App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/countCheckedOut'
+            }).success(function(countDto){
+                var numberOfItem = countDto.count;
+                var badge = that.$('.badge.nav-checkedOut-number-item');
+                badge.html(numberOfItem);
+                if(numberOfItem === 0){
+                    badge.addClass('badge-success');
+                    badge.removeClass('badge-info');
+                } else{
+                    badge.addClass('badge-info');
+                    badge.removeClass('badge-success');
+                }
+            });
         },
 
         setActive: function () {

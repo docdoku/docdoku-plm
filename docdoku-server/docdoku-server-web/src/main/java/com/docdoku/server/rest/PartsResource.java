@@ -168,6 +168,13 @@ public class PartsResource {
     }
 
     @GET
+    @Path("countCheckedOut")
+    @Produces(MediaType.APPLICATION_JSON)
+    public CountDTO getCheckedOutNumberOfItems(@PathParam("workspaceId") String workspaceId) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, AccountNotFoundException {
+        return new CountDTO(productService.getCheckedOutPartRevisions(workspaceId).length);
+    }
+
+    @GET
     @Path("numbers")
     @Produces(MediaType.APPLICATION_JSON)
     public List<LightPartMasterDTO> searchPartNumbers(@PathParam("workspaceId") String workspaceId, @QueryParam("q") String q)
