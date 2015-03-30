@@ -120,7 +120,7 @@ public class ProductInstanceIteration implements Serializable, FileHolder {
      * Paths are strings made of ordered lists of usage link ids joined by "-".
      */
     @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(name = "PRDINSTANCEMASTER_SUBSTITUTELINK",
+    @CollectionTable(name = "PRDINSTANCEMASTER_SUBLINK",
             joinColumns = {
                     @JoinColumn(name="PRDINSTANCEMASTER_SERIALNUMBER", referencedColumnName="PRDINSTANCEMASTER_SERIALNUMBER"),
                     @JoinColumn(name="CONFIGURATIONITEM_ID", referencedColumnName="CONFIGURATIONITEM_ID"),
@@ -137,7 +137,7 @@ public class ProductInstanceIteration implements Serializable, FileHolder {
      * Paths are strings made of ordered lists of usage link ids joined by "-".
      */
     @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(name = "PRDINSTANCEMASTER_OPTIONALLINK",
+    @CollectionTable(name = "PRDINSTANCEMASTER_OPTLINK",
             joinColumns = {
                     @JoinColumn(name="PRDINSTANCEMASTER_SERIALNUMBER", referencedColumnName="PRDINSTANCEMASTER_SERIALNUMBER"),
                     @JoinColumn(name="CONFIGURATIONITEM_ID", referencedColumnName="CONFIGURATIONITEM_ID"),
