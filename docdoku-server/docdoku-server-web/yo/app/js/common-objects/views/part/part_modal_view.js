@@ -27,6 +27,7 @@ define([
             ModalView.prototype.initialize.apply(this, arguments);
             this.events['click a#previous-iteration'] = 'onPreviousIteration';
             this.events['click a#next-iteration'] = 'onNextIteration';
+            this.events["click .modal-footer button.btn-primary"] = "interceptSubmit";
             this.events['submit #form-part'] = 'onSubmitForm';
             this.events['click .action-checkin'] = 'actionCheckin';
             this.events['click .action-checkout'] = 'actionCheckout';
@@ -166,6 +167,10 @@ define([
                 that.attributesView.addAndFillAttribute(item);
             });
 
+        },
+
+        interceptSubmit: function () {
+            this.isValid = !this.$('.tabs').invalidFormTabSwitcher();
         },
 
         onSubmitForm: function (e) {
