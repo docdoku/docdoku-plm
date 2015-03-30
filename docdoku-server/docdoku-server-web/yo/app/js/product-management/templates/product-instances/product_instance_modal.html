@@ -19,24 +19,19 @@
             <form id="product_instance_edit_form" class="tab-content form-horizontal">
                 <div class="tab-pane active" id="tab-main">
                     <div class="control-group">
-                        <label class="control-label" >{{i18n.PRODUCT_INSTANCES}}</label>
-
+                        <label class="control-label" for="inputSerialNUmber">{{i18n.SERIAL_NUMBER}}</label>
                         <div class="controls">
-                            <input type="text" id="inputConfigurationItemId" value=" {{model.getSerialNumber}}"
+                            <input type="text" id="inputSerialNUmber" value=" {{model.getSerialNumber}}"
                                    disabled="disabled"/>
                         </div>
                       </div>
                     <div class="control-group">
-                            <label class="control-label" for="inputConfigurationItemId">{{i18n.PRODUCT_ID}}</label>
-
+                            <label class="control-label" for="inputConfigurationItemId">{{i18n.PRODUCT}}</label>
                             <div class="controls">
                                 <input type="text" id="inputConfigurationItemId" value="{{model.getConfigurationItemId}}"
                                        disabled="disabled"/>
                             </div>
-
                     </div>
-
-
                 </div>
                 <div class="tab-pane" id="tab-products-instances-versions">
                     <div class="control-group">
