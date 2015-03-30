@@ -79,6 +79,7 @@ define({
 	COMPONENT_SELECTED: "Article sélectionné",
 	CONFIG_SPEC: "Config spec",
 	CONFIGURATION: "Configuration",
+	CONFIGURATIONS: "Configuration",
 	CONFIRM: "Confirmer le mot de passe",
 	CONNECTED: "Connecté",
 	CONNECTING: "Connexion ...",
