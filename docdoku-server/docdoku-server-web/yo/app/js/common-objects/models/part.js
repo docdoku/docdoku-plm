@@ -93,10 +93,15 @@ define([
             },
 
             getFormattedModificationDate: function () {
-                return Date.formatTimestamp(
+                if(!this.getModificationDate()){
+                    return "";
+                }
+                var timestampFormated = Date.formatTimestamp(
                     App.config.i18n._DATE_FORMAT,
                     this.getModificationDate()
                 );
+
+                return timestampFormated ? timestampFormated : "";
             },
 
             getFormattedRevisionDate: function () {
