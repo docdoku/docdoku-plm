@@ -10,6 +10,8 @@
         <div class="tabs">
             <ul class="nav nav-tabs">
                 <li class="active"><a href="#tab-main" data-toggle="tab">{{i18n.GENERAL}}</a></li>
+                <li class=""><a href="#tab-products-instances-attributes" data-toggle="tab">{{i18n.ATTRIBUTES}}</a></li>
+                <li><a href="#tab-products-instances-acl" data-toggle="tab">{{i18n.ACL}}</a></li>
             </ul>
 
             <form id="product_instance_creation_form" class="form-horizontal tab-content">
@@ -38,6 +40,12 @@
                         </div>
                     </div>
                 </div>
+                <div id="tab-products-instances-attributes" class="tab-pane attributes attributes-edit">
+                </div>
+                <div id="tab-products-instances-acl" class="tab-pane">
+                    <div id="acl-mapping"></div>
+                </div>
+
             </form>
         </div>
     </div>

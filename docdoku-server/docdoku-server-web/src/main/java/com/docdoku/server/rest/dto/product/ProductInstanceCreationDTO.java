@@ -20,11 +20,27 @@
 
 package com.docdoku.server.rest.dto.product;
 
+import com.docdoku.core.document.DocumentLink;
+import com.docdoku.core.meta.InstanceAttribute;
+import com.docdoku.core.security.ACL;
+import com.docdoku.server.rest.dto.ACLDTO;
+import com.docdoku.server.rest.dto.DocumentIterationDTO;
+import com.docdoku.server.rest.dto.InstanceAttributeDTO;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 public class ProductInstanceCreationDTO {
 
     private String serialNumber;
     private String configurationItemId;
     private int baselineId;
+    private ACLDTO acl;
+    private List<InstanceAttributeDTO> instanceAttributes = new ArrayList<>();
+    private Set<DocumentIterationDTO> linkedDocuments = new HashSet<>();
+    private List<String> attachedFiles;
 
     public ProductInstanceCreationDTO() {
     }
@@ -48,5 +64,37 @@ public class ProductInstanceCreationDTO {
     }
     public void setBaselineId(int baselineId) {
         this.baselineId = baselineId;
+    }
+
+    public ACLDTO getAcl() {
+        return acl;
+    }
+
+    public void setAcl(ACLDTO acl) {
+        this.acl = acl;
+    }
+
+    public List<InstanceAttributeDTO> getInstanceAttributes() {
+        return instanceAttributes;
+    }
+
+    public void setInstanceAttributes(List<InstanceAttributeDTO> instanceAttributes) {
+        this.instanceAttributes = instanceAttributes;
+    }
+
+    public Set<DocumentIterationDTO> getLinkedDocuments() {
+        return linkedDocuments;
+    }
+
+    public void setLinkedDocuments(Set<DocumentIterationDTO> linkedDocuments) {
+        this.linkedDocuments = linkedDocuments;
+    }
+
+    public List<String> getAttachedFiles() {
+        return attachedFiles;
+    }
+
+    public void setAttachedFiles(List<String> attachedFiles) {
+        this.attachedFiles = attachedFiles;
     }
 }

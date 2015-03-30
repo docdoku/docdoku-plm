@@ -23,13 +23,14 @@ package com.docdoku.server.products;
 import com.docdoku.core.common.User;
 import com.docdoku.core.configuration.*;
 import com.docdoku.core.exceptions.*;
-import com.docdoku.core.product.ConfigurationItem;
-import com.docdoku.core.product.ConfigurationItemKey;
-import com.docdoku.core.product.PartIterationKey;
+import com.docdoku.core.meta.InstanceAttribute;
+import com.docdoku.core.product.*;
+import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IProductInstanceManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.dao.*;
+import com.docdoku.server.factory.ACLFactory;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
@@ -38,10 +39,7 @@ import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -75,14 +73,16 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
     public ProductInstanceMaster getProductInstanceMaster(ProductInstanceMasterKey productInstanceMasterKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductInstanceMasterNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(productInstanceMasterKey.getInstanceOf().getWorkspace());
         Locale userLocal = new Locale(user.getLanguage());
-        return new ProductInstanceMasterDAO(userLocal,em).loadProductInstanceMaster(productInstanceMasterKey);
+        return new ProductInstanceMasterDAO(userLocal, em).loadProductInstanceMaster(productInstanceMasterKey);
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public List<ProductInstanceIteration> getProductInstanceIterations(ProductInstanceMasterKey productInstanceMasterKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
-        userManager.checkWorkspaceReadAccess(productInstanceMasterKey.getInstanceOf().getWorkspace());
-        return new ProductInstanceIterationDAO(em).findProductInstanceIterationsByMaster(productInstanceMasterKey);
+    public List<ProductInstanceIteration> getProductInstanceIterations(ProductInstanceMasterKey productInstanceMasterKey) throws ProductInstanceMasterNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(productInstanceMasterKey.getInstanceOf().getWorkspace());
+        Locale userLocal = new Locale(user.getLanguage());
+        ProductInstanceMaster productInstanceMaster = new ProductInstanceMasterDAO(userLocal, em).loadProductInstanceMaster(productInstanceMasterKey);
+        return productInstanceMaster.getProductInstanceIterations();
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
@@ -90,7 +90,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
     public ProductInstanceIteration getProductInstanceIteration(ProductInstanceIterationKey productInstanceIterationKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductInstanceIterationNotFoundException, ProductInstanceMasterNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(productInstanceIterationKey.getProductInstanceMaster().getInstanceOf().getWorkspace());
         Locale userLocal = new Locale(user.getLanguage());
-        return new ProductInstanceIterationDAO(userLocal,em).loadProductInstanceIteration(productInstanceIterationKey);
+        return new ProductInstanceIterationDAO(userLocal, em).loadProductInstanceIteration(productInstanceIterationKey);
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
@@ -98,7 +98,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
     public List<BaselinedPart> getProductInstanceIterationBaselinedPart(ProductInstanceIterationKey productInstanceIterationKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductInstanceIterationNotFoundException, ProductInstanceMasterNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(productInstanceIterationKey.getProductInstanceMaster().getInstanceOf().getWorkspace());
         Locale userLocal = new Locale(user.getLanguage());
-        ProductInstanceIteration productInstanceIteration = new ProductInstanceIterationDAO(userLocal,em).loadProductInstanceIteration(productInstanceIterationKey);
+        ProductInstanceIteration productInstanceIteration = new ProductInstanceIterationDAO(userLocal, em).loadProductInstanceIteration(productInstanceIterationKey);
         return new ArrayList<>(productInstanceIteration.getPartCollection().getBaselinedParts().values());
     }
 
@@ -106,27 +106,31 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
     @Override
     public List<BaselinedPart> getProductInstanceIterationPartWithReference(ProductInstanceIterationKey productInstanceIterationKey, String q, int maxResults) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductInstanceIterationNotFoundException, ProductInstanceMasterNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(productInstanceIterationKey.getProductInstanceMaster().getInstanceOf().getWorkspace());
-        ProductInstanceIterationDAO productInstanceIterationDAO = new ProductInstanceIterationDAO(new Locale(user.getLanguage()),em);
+        ProductInstanceIterationDAO productInstanceIterationDAO = new ProductInstanceIterationDAO(new Locale(user.getLanguage()), em);
         ProductInstanceIteration productInstanceIteration = productInstanceIterationDAO.loadProductInstanceIteration(productInstanceIterationKey);
         return productInstanceIterationDAO.findBaselinedPartWithReferenceLike(productInstanceIteration.getPartCollection().getId(), q, maxResults);
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public ProductInstanceMaster createProductInstance(ConfigurationItemKey configurationItemKey, String serialNumber, int baselineId) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, BaselineNotFoundException, CreationException, ProductInstanceAlreadyExistsException {
+    public ProductInstanceMaster createProductInstance(String workspaceId, ConfigurationItemKey configurationItemKey, String serialNumber, int baselineId, Map<String, ACL.Permission> userEntries, Map<String, ACL.Permission> groupEntries, List<InstanceAttribute> attributes) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, BaselineNotFoundException, CreationException, ProductInstanceAlreadyExistsException {
         User user = userManager.checkWorkspaceWriteAccess(configurationItemKey.getWorkspace());
         Locale userLocal = new Locale(user.getLanguage());
-        ProductInstanceMasterDAO productInstanceMasterDAO = new ProductInstanceMasterDAO(userLocal,em);
+        ProductInstanceMasterDAO productInstanceMasterDAO = new ProductInstanceMasterDAO(userLocal, em);
 
-        try{                                                                                                            // Check if ths product instance already exist
-            ProductInstanceMaster productInstanceMaster= productInstanceMasterDAO.loadProductInstanceMaster(new ProductInstanceMasterKey(serialNumber,configurationItemKey.getWorkspace(),configurationItemKey.getId()));
+        try {// Check if ths product instance already exist
+            ProductInstanceMaster productInstanceMaster = productInstanceMasterDAO.loadProductInstanceMaster(new ProductInstanceMasterKey(serialNumber, configurationItemKey.getWorkspace(), configurationItemKey.getId()));
             throw new ProductInstanceAlreadyExistsException(userLocal, productInstanceMaster);
-        }catch (ProductInstanceMasterNotFoundException e){
-            LOGGER.log(Level.FINEST,null,e);
+        } catch (ProductInstanceMasterNotFoundException e) {
+            LOGGER.log(Level.FINEST, null, e);
         }
 
         ConfigurationItem configurationItem = new ConfigurationItemDAO(em).loadConfigurationItem(configurationItemKey);
-        ProductInstanceMaster productInstanceMaster = new ProductInstanceMaster(configurationItem,serialNumber);
+        ProductInstanceMaster productInstanceMaster = new ProductInstanceMaster(configurationItem, serialNumber);
+
+        ACLFactory aclFactory = new ACLFactory(em);
+        ACL acl = aclFactory.createACLFromPermissions(workspaceId, userEntries, groupEntries);
+        productInstanceMaster.setAcl(acl);
 
         ProductInstanceIteration productInstanceIteration = productInstanceMaster.createNextIteration();
         productInstanceIteration.setIterationNote("Initial");
@@ -137,26 +141,29 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         partCollection.setCreationDate(new Date());
 
         ProductBaseline productBaseline = new ProductBaselineDAO(em).loadBaseline(baselineId);
+        productInstanceIteration.setBasedOn(productBaseline);
         productInstanceMasterDAO.createProductInstanceMaster(productInstanceMaster);
 
 
-        for(BaselinedPart baselinedPart : productBaseline.getBaselinedParts().values()){
+        for (BaselinedPart baselinedPart : productBaseline.getBaselinedParts().values()) {
             partCollection.addBaselinedPart(baselinedPart.getTargetPart());
         }
         productInstanceIteration.setPartCollection(partCollection);
+
+        productInstanceIteration.setInstanceAttributes(attributes);
         return productInstanceMaster;
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public ProductInstanceIteration updateProductInstance(ConfigurationItemKey configurationItemKey, String serialNumber, String iterationNote, List<PartIterationKey> partIterationKeys) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ProductInstanceMasterNotFoundException, PartIterationNotFoundException {
+    public ProductInstanceIteration updateProductInstance(ConfigurationItemKey configurationItemKey, String serialNumber, String iterationNote, List<PartIterationKey> partIterationKeys, List<InstanceAttribute> attributes) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ProductInstanceMasterNotFoundException, PartIterationNotFoundException {
         User user = userManager.checkWorkspaceWriteAccess(configurationItemKey.getWorkspace());
         Locale userLocal = new Locale(user.getLanguage());
-        ProductInstanceMasterDAO productInstanceMasterDAO = new ProductInstanceMasterDAO(userLocal,em);
-        ProductInstanceMaster productInstanceMaster= productInstanceMasterDAO.loadProductInstanceMaster(new ProductInstanceMasterKey(serialNumber,configurationItemKey.getWorkspace(),configurationItemKey.getId()));
+        ProductInstanceMasterDAO productInstanceMasterDAO = new ProductInstanceMasterDAO(userLocal, em);
+        ProductInstanceMaster productInstanceMaster = productInstanceMasterDAO.loadProductInstanceMaster(new ProductInstanceMasterKey(serialNumber, configurationItemKey.getWorkspace(), configurationItemKey.getId()));
 
         ProductInstanceIteration productInstanceIteration = productInstanceMaster.createNextIteration();
-        new ProductInstanceIterationDAO(userLocal,em).createProductInstanceIteration(productInstanceIteration);
+        new ProductInstanceIterationDAO(userLocal, em).createProductInstanceIteration(productInstanceIteration);
 
         productInstanceIteration.setIterationNote(iterationNote);
         PartCollection partCollection = new PartCollection();
@@ -164,20 +171,84 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
 
         partCollection.setAuthor(user);
         partCollection.setCreationDate(new Date());
-        for(PartIterationKey partIterationKey : partIterationKeys){
-            partCollection.addBaselinedPart(new PartIterationDAO(userLocal,em).loadPartI(partIterationKey));
+        for (PartIterationKey partIterationKey : partIterationKeys) {
+            partCollection.addBaselinedPart(new PartIterationDAO(userLocal, em).loadPartI(partIterationKey));
         }
         productInstanceIteration.setPartCollection(partCollection);
+
+        productInstanceIteration.setInstanceAttributes(attributes);
         return productInstanceIteration;
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public void deleteProductInstance(String workspaceId, String configurationItemId, String serialNumber) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, UserNotActiveException, ProductInstanceMasterNotFoundException {
+        User user = userManager.checkWorkspaceWriteAccess(workspaceId);
+        Locale userLocal = new Locale(user.getLanguage());
+        ProductInstanceMasterDAO productInstanceMasterDAO = new ProductInstanceMasterDAO(userLocal, em);
+        ProductInstanceMaster prodInstM = productInstanceMasterDAO.loadProductInstanceMaster(new ProductInstanceMasterKey(serialNumber, workspaceId, configurationItemId));
+        productInstanceMasterDAO.deleteProductInstanceMaster(prodInstM);
+    }
+
+    @Override
+    public void updateACLForProductInstanceMaster(String workspaceId, String configurationItemId, String serialNumber, Map<String, String> userEntries, Map<String, String> groupEntries) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException {
+
+        ACLFactory aclFactory = new ACLFactory(em);
+
+        // Check the read access to the workspace
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         Locale userLocal = new Locale(user.getLanguage());
-        ProductInstanceMasterDAO productInstanceMasterDAO = new ProductInstanceMasterDAO(userLocal,em);
-        ProductInstanceMaster prodInstM = productInstanceMasterDAO.loadProductInstanceMaster(new ProductInstanceMasterKey(serialNumber,workspaceId,configurationItemId));
-        productInstanceMasterDAO.deleteProductInstanceMaster(prodInstM);
+        // Load the product instance
+        ProductInstanceMasterDAO productInstanceMasterDAO = new ProductInstanceMasterDAO(userLocal, em);
+        ProductInstanceMaster prodInstM = productInstanceMasterDAO.loadProductInstanceMaster(new ProductInstanceMasterKey(serialNumber, workspaceId, configurationItemId));
+
+
+        // Check the access to the part template
+        checkProductInstanceWriteAccess(workspaceId, prodInstM, user);
+
+        if (prodInstM.getAcl() == null) {
+            ACL acl = aclFactory.createACL(workspaceId, userEntries, groupEntries);
+            prodInstM.setAcl(acl);
+        } else {
+            aclFactory.updateACL(workspaceId, prodInstM.getAcl(), userEntries, groupEntries);
+        }
+    }
+
+    private User checkProductInstanceWriteAccess(String workspaceId, ProductInstanceMaster prodInstM, User user) throws AccessRightException, WorkspaceNotFoundException, UserNotFoundException {
+        if (user.isAdministrator()) {
+            // Check if it is the workspace's administrator
+            return user;
+        }
+        if (prodInstM.getAcl() == null) {
+            // Check if the item haven't ACL
+            return userManager.checkWorkspaceWriteAccess(workspaceId);
+        } else if (prodInstM.getAcl().hasWriteAccess(user)) {
+            // Check if there is a write access
+            return user;
+        } else {
+            // Else throw a AccessRightException
+            throw new AccessRightException(new Locale(user.getLanguage()), user);
+        }
+    }
+
+    @Override
+    public void removeACLFromProductInstanceMaster(String workspaceId, String configurationItemId, String serialNumber) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, ProductInstanceMasterNotFoundException {
+
+        // Check the read access to the workspace
+        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+        Locale locale = new Locale(user.getLanguage());
+        // Load the product instance
+        ProductInstanceMasterDAO productInstanceMasterDAO = new ProductInstanceMasterDAO(locale, em);
+        ProductInstanceMaster prodInstM = productInstanceMasterDAO.loadProductInstanceMaster(new ProductInstanceMasterKey(serialNumber, workspaceId, configurationItemId));
+
+
+        // Check the access to the product instance
+        checkProductInstanceWriteAccess(workspaceId, prodInstM, user);
+
+        ACL acl = prodInstM.getAcl();
+        if (acl != null) {
+            new ACLDAO(em).removeACLEntries(acl);
+            prodInstM.setAcl(null);
+        }
     }
 }

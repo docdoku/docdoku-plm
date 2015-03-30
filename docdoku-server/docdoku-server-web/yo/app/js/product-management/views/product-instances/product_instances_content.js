@@ -9,18 +9,21 @@ define([
     'views/product-instances/product_instances_list',
     'views/product-instances/product_instances_creation',
     'text!common-objects/templates/buttons/delete_button.html',
+    'text!common-objects/templates/buttons/ACL_button.html',
     'common-objects/views/alert'
-], function (Backbone, Mustache, ProductInstancesCollection, ConfigurationItemCollection, BaselinesCollection, template, ProductInstancesListView, ProductInstanceCreationView, deleteButton, AlertView) {
+], function (Backbone, Mustache, ProductInstancesCollection, ConfigurationItemCollection, BaselinesCollection, template, ProductInstancesListView, ProductInstanceCreationView, deleteButton,aclButton, AlertView) {
     'use strict';
     var ProductInstancesContentView = Backbone.View.extend({
 
         partials: {
-            deleteButton: deleteButton
+            deleteButton: deleteButton,
+            aclButton:  aclButton
         },
 
         events: {
             'click button.new-product-instance': 'newProductInstance',
-            'click button.delete': 'deleteProductInstances'
+            'click button.delete': 'deleteProductInstances',
+            'click button.edit-acl': 'editACLProductInstances'
         },
 
         initialize: function () {
@@ -64,6 +67,7 @@ define([
         bindDomElements: function () {
             this.$notifications = this.$el.find('.notifications').first();
             this.deleteButton = this.$('.delete');
+            this.aclButton = this.$('.edit-acl');
             this.$inputProductId = this.$('#inputProductId');
         },
 
@@ -100,14 +104,22 @@ define([
             this.listView.on('error', this.onError);
             this.listView.on('warning', this.onWarning);
             this.listView.on('delete-button:display', this.changeDeleteButtonDisplay);
+            this.listView.on('acl-button:display', this.changeACLButtonDisplay);
         },
 
         deleteProductInstances: function () {
             this.listView.deleteSelectedProductInstances();
         },
+        editACLProductInstances: function () {
+                    this.listView.editSelectedProductInstanceACL();
+                },
 
         changeDeleteButtonDisplay: function (state) {
             this.deleteButton.toggle(state);
+        },
+
+        changeACLButtonDisplay: function (state) {
+            this.aclButton.toggle(state);
         },
 
         onError:function(model, error){

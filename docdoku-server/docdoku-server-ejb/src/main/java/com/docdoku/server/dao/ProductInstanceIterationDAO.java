@@ -59,15 +59,6 @@ public class ProductInstanceIterationDAO {
         }
     }
 
-    public List<ProductInstanceIteration> findProductInstanceIterationsByMaster(ProductInstanceMasterKey prodInstMKey) {
-        return em.createQuery("SELECT pii " +
-                              "FROM ProductInstanceIteration pii " +
-                              "WHERE pii.productInstanceMaster.serialNumber = :serialNumber " +
-                              "AND pii.productInstanceMaster.instanceOf = :configurationId", ProductInstanceIteration.class)
-                .setParameter("serialNumber",prodInstMKey.getSerialNumber())
-                .setParameter("configurationId",prodInstMKey.getInstanceOf())
-                .getResultList();
-    }
 
     public ProductInstanceIteration loadProductInstanceIteration(ProductInstanceIterationKey pId) throws ProductInstanceMasterNotFoundException, ProductInstanceIterationNotFoundException {
         ProductInstanceIteration productInstanceIteration = em.find(ProductInstanceIteration.class, pId);
@@ -79,18 +70,11 @@ public class ProductInstanceIterationDAO {
     }
 
     public List<BaselinedPart> findBaselinedPartWithReferenceLike(int collectionId, String q, int maxResults) {
-        List<BaselinedPart> baselinedPartList = em.createNamedQuery("BaselinedPart.findByReference",BaselinedPart.class)
+        return em.createNamedQuery("BaselinedPart.findByReference",BaselinedPart.class)
                 .setParameter("id", "%" + q + "%")
+                .setParameter("partCollection",collectionId)
+                .setMaxResults(maxResults)
                 .getResultList();
-        List<BaselinedPart> returnList = new ArrayList<>();
-        for(BaselinedPart baselinedPart : baselinedPartList){
-            if(baselinedPart.getPartCollection().getId()==collectionId){
-                returnList.add(baselinedPart);
-                if(returnList.size()>=maxResults){
-                    break;
-                }
-            }
-        }
-        return returnList;
+
     }
 }

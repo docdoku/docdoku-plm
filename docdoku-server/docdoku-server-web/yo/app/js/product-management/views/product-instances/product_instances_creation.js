@@ -6,8 +6,10 @@ define([
     'common-objects/models/product_instance',
     'collections/configuration_items',
     'common-objects/collections/baselines',
+    'common-objects/views/attributes/attributes',
+    'common-objects/views/security/acl',
     'common-objects/views/alert'
-], function (Backbone, Mustache, template, ProductInstanceModel, ConfigurationItemCollection, BaselinesCollection, AlertView) {
+], function (Backbone, Mustache, template, ProductInstanceModel, ConfigurationItemCollection, BaselinesCollection,AttributesView,ACLView, AlertView) {
     'use strict';
 
     var ProductInstanceCreationView = Backbone.View.extend({
@@ -32,6 +34,11 @@ define([
         render: function () {
             this.$el.html(Mustache.render(template, {i18n: App.config.i18n}));
             this.bindDomElements();
+            this.bindAttributesView();
+            this.workspaceMembershipsView = new ACLView({
+                el: this.$('#acl-mapping'),
+                editMode: true
+            }).render();
             this.$inputSerialNumber.customValidity(App.config.i18n.REQUIRED_FIELD);
             new ConfigurationItemCollection().fetch({success: this.fillConfigurationItemList});
             return this;
@@ -68,12 +75,20 @@ define([
             this.$inputConfigurationItem = this.$('#inputConfigurationItem');
             this.$inputBaseline = this.$('#inputBaseline');
         },
+        bindAttributesView: function () {
+            this.attributesView = new AttributesView({
+                el: this.$('#tab-products-instances-attributes')
+            }).render();
+        },
 
         onSubmitForm: function (e) {
             var data = {
                 serialNumber: this.$inputSerialNumber.val(),
                 configurationItemId: this.$inputConfigurationItem.val(),
-                baselineId: this.$inputBaseline.val()
+                baselineId: this.$inputBaseline.val(),
+                instanceAttributes: this.attributesView.collection.toJSON(),
+                acl: this.workspaceMembershipsView.toList()
+
             };
 
             if (data.serialNumber && data.configurationItemId && data.baselineId) {

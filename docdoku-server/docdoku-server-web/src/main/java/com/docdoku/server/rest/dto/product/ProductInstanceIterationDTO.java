@@ -20,11 +20,13 @@
 
 package com.docdoku.server.rest.dto.product;
 
+import com.docdoku.server.rest.dto.ACLDTO;
+import com.docdoku.server.rest.dto.DocumentIterationDTO;
+import com.docdoku.server.rest.dto.InstanceAttributeDTO;
 import com.docdoku.server.rest.dto.baseline.BaselinedPartDTO;
 
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @XmlRootElement
 public class ProductInstanceIterationDTO {
@@ -36,6 +38,10 @@ public class ProductInstanceIterationDTO {
     private String updateAuthorName;
     private Date updateDate;
     private List<BaselinedPartDTO> baselinedPartsList;
+
+    private List<InstanceAttributeDTO> instanceAttributes = new ArrayList<>();
+    private Set<DocumentIterationDTO> linkedDocuments = new HashSet<>();
+    private List<String> attachedFiles;
 
     public ProductInstanceIterationDTO() {
     }
@@ -94,5 +100,31 @@ public class ProductInstanceIterationDTO {
     }
     public void setBaselinedPartsList(List<BaselinedPartDTO> baselinedPartsList) {
         this.baselinedPartsList = baselinedPartsList;
+    }
+
+
+
+    public List<InstanceAttributeDTO> getInstanceAttributes() {
+        return instanceAttributes;
+    }
+
+    public void setInstanceAttributes(List<InstanceAttributeDTO> instanceAttributes) {
+        this.instanceAttributes = instanceAttributes;
+    }
+
+    public Set<DocumentIterationDTO> getLinkedDocuments() {
+        return linkedDocuments;
+    }
+
+    public void setLinkedDocuments(Set<DocumentIterationDTO> linkedDocuments) {
+        this.linkedDocuments = linkedDocuments;
+    }
+
+    public List<String> getAttachedFiles() {
+        return attachedFiles;
+    }
+
+    public void setAttachedFiles(List<String> attachedFiles) {
+        this.attachedFiles = attachedFiles;
     }
 }

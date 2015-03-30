@@ -10,15 +10,16 @@ define(['backbone'], function (Backbone) {
         },
 
         initBaselinedParts: function (context, callbacks) {
+            this.setConfigurationItemId(context.model.attributes.configurationItemId);
             var that = this;
             $.ajax({
                 context: context,
                 type: 'GET',
-                url: this.url() + '/baselined-parts',
+                url:  this.url()+'/baselined-parts',
                 success: function (baselinedParts) {
                     that.setBaselinedParts(baselinedParts);
                     callbacks.success(this);
-                }
+                    }
             });
         },
 
@@ -29,6 +30,9 @@ define(['backbone'], function (Backbone) {
             } else {
                 return this.prototype.urlRoot();
             }
+        },
+        getUploadBaseUrl: function () {
+            return App.config.contextPath + '/api/files';
         },
         getSerialNumber: function () {
             return this.get('serialNumber');
@@ -46,7 +50,7 @@ define(['backbone'], function (Backbone) {
             this.set('iterationNote', iterationNote);
         },
         getConfigurationItemId: function () {
-            return this.get('configurationItemId');
+           debugger; return this.get('configurationItemId');
         },
         getUpdateAuthor: function () {
             return this.get('updateAuthor');
@@ -60,8 +64,28 @@ define(['backbone'], function (Backbone) {
         getBaselinedParts: function () {
             return this.get('baselinedPartsList');
         },
+        getACL: function(){
+          return this.get('acl');
+        },
+        getInstanceAttributes:  function(){
+            return this.get('instanceAttributes');
+        },
+        getlinkedDocuments:  function(){
+            return this.get('linkedDocuments');
+        },
+        getAttachedFiles: function(){
+          return this.get('attachedFiles');
+        },
+
+        setInstanceAttributes:  function(instanceAttributes){
+            return this.set('instanceAttributes',instanceAttributes);
+        },
+
         setBaselinedParts: function (baselinedParts) {
             this.set('baselinedPartsList', baselinedParts);
+        },
+        setConfigurationItemId:function(configurationItemId){
+            this.set('configurationItemId', configurationItemId);
         },
         getBaselinePartsWithReference: function (ref, callback) {
             var baselinedParts = null;
