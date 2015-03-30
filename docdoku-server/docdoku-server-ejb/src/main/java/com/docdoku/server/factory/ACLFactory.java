@@ -62,6 +62,36 @@ public class ACLFactory {
         new ACLDAO(em).createACL(acl);
         return acl;
     }
+    public  ACL createACLFromPermissions(String pWorkspaceId, Map<String, ACL.Permission> pUserEntries, Map<String, ACL.Permission> pGroupEntries) {
+
+        Map<String, String> userEntries = new HashMap<>();
+        Map<String, String> groupEntries = new HashMap<>();
+
+        for (Map.Entry<String, ACL.Permission> entry : pUserEntries.entrySet()) {
+            userEntries.put(entry.getKey(), entry.getValue().name());
+        }
+
+        for (Map.Entry<String, ACL.Permission> entry : pGroupEntries.entrySet()) {
+            groupEntries.put(entry.getKey(), entry.getValue().name());
+        }
+
+
+        ACL acl = new ACL();
+        if (userEntries != null) {
+            for (Map.Entry<String, String> entry : userEntries.entrySet()) {
+                acl.addEntry(em.find(User.class, new UserKey(pWorkspaceId, entry.getKey())),
+                        ACL.Permission.valueOf(entry.getValue()));
+            }
+        }
+        if (groupEntries != null) {
+            for (Map.Entry<String, String> entry : groupEntries.entrySet()) {
+                acl.addEntry(em.find(UserGroup.class, new UserGroupKey(pWorkspaceId, entry.getKey())),
+                        ACL.Permission.valueOf(entry.getValue()));
+            }
+        }
+        new ACLDAO(em).createACL(acl);
+        return acl;
+    }
 
     public ACL updateACL(String workspaceId, ACL acl, Map<String, String> pUserEntries, Map<String, String> pGroupEntries) {
 

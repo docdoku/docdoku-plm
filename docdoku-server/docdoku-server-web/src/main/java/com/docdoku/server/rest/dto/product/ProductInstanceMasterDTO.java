@@ -20,6 +20,8 @@
 
 package com.docdoku.server.rest.dto.product;
 
+import com.docdoku.server.rest.dto.ACLDTO;
+
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Date;
 import java.util.List;
@@ -33,7 +35,7 @@ public class ProductInstanceMasterDTO {
     private String updateAuthorName;
     private Date updateDate;
     private List<ProductInstanceIterationDTO> productInstanceIterations;
-
+    private ACLDTO acl;
     public ProductInstanceMasterDTO() {
     }
 
@@ -77,5 +79,12 @@ public class ProductInstanceMasterDTO {
     }
     public void setProductInstanceIterations(List<ProductInstanceIterationDTO> productInstanceIterations) {
         this.productInstanceIterations = productInstanceIterations;
+    }
+    public ACLDTO getAcl() {
+        return acl;
+    }
+
+    public void setAcl(ACLDTO acl) {
+        this.acl = acl;
     }
 }

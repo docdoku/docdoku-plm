@@ -3,8 +3,10 @@ define([
     'backbone',
     'mustache',
     'text!templates/product-instances/product_instances_list.html',
-    'views/product-instances/product_instances_list_item'
-], function (Backbone, Mustache, template, ProductInstancesListItemView) {
+    'views/product-instances/product_instances_list_item',
+    'common-objects/views/security/acl_edit',
+    'common-objects/views/alert'
+], function (Backbone, Mustache, template, ProductInstancesListItemView,ACLEditView,AlertView) {
 	'use strict';
     var ProductInstancesListView = Backbone.View.extend({
 
@@ -123,16 +125,21 @@ define([
         onNoProductInstanceSelected: function () {
             this.trigger('delete-button:display', false);
             this.trigger('duplicate-button:display', false);
+            this.trigger('acl-button:display', false);
+
         },
 
         onOneProductInstanceSelected: function () {
             this.trigger('delete-button:display', true);
             this.trigger('duplicate-button:display', true);
+            this.trigger('acl-button:display', true);
+
         },
 
         onSeveralProductInstancesSelected: function () {
             this.trigger('delete-button:display', true);
             this.trigger('duplicate-button:display', false);
+            this.trigger('acl-button:display', false);
         },
 
         getSelectedProductInstance: function () {
@@ -169,6 +176,7 @@ define([
 
             });
         },
+
         redraw: function () {
             this.dataTable();
         },
@@ -195,6 +203,52 @@ define([
                 ]
             });
             this.$el.find('.dataTables_filter input').attr('placeholder', App.config.i18n.FILTER);
+        },
+
+        onError: function (model) {
+            var errorMessage = model.responseText;
+
+            $("#acl_edit_modal").find('.notifications').first().append(new AlertView({
+                type: 'error',
+                message: errorMessage
+            }).render().$el);
+        },
+        editSelectedProductInstanceACL: function () {
+            var templateSelected;
+            var _this = this;
+            _(_this.listItemViews).each(function (view) {
+                if (view.isChecked()) {
+                    templateSelected = view.model;
+                }
+            });
+
+            var aclEditView = new ACLEditView({
+                editMode: true,
+                acl: templateSelected.get('acl')
+            });
+
+            aclEditView.setTitle(templateSelected.getSerialNumber());
+            window.document.body.appendChild(aclEditView.render().el);
+
+            aclEditView.openModal();
+            aclEditView.on('acl:update', function () {
+
+                var acl = aclEditView.toList();
+
+                templateSelected.updateACL({
+                    acl: acl || {userEntries: {}, groupEntries: {}},
+                    success: function () {
+                        templateSelected.set('acl', acl);
+                        aclEditView.closeModal();
+                    },
+                    error: function (model, err) {
+                        _this.onError(model,err);
+
+                    }
+                });
+            });
+
+            return false;
         }
 
     });

@@ -114,18 +114,11 @@ public class ProductBaselineDAO {
     }
 
     public List<BaselinedPart> findBaselinedPartWithReferenceLike(int collectionId, String q, int maxResults) throws BaselineNotFoundException {
-        List<BaselinedPart> baselinedPartList = em.createNamedQuery("BaselinedPart.findByReference",BaselinedPart.class)
+        return em.createNamedQuery("BaselinedPart.findByReference",BaselinedPart.class)
                                                   .setParameter("id", "%" + q + "%")
+                                                  .setParameter("partCollection",collectionId)
+                                                  .setMaxResults(maxResults)
                                                   .getResultList();
-        List<BaselinedPart> returnList = new ArrayList<>();
-        for(BaselinedPart baselinedPart : baselinedPartList){
-            if(baselinedPart.getPartCollection().getId()==collectionId){
-                returnList.add(baselinedPart);
-                if(returnList.size()>=maxResults){
-                    break;
-                }
-            }
-        }
-        return returnList;
+
     }
 }

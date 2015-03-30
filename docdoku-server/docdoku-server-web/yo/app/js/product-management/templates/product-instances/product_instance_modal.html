@@ -4,33 +4,72 @@
         <h3><a><span class="icon"></span>
             {{i18n.EDIT_PRODUCT_INSTANCE}} {{model.getSerialNumber}}
         </a></h3>
+        <div class="notifications"></div>
     </div>
     <div class="modal-body">
-        <div class="notifications"></div>
-        <form id="product_instance_edit_form" class="form-horizontal">
-            <div class="control-group">
-                <label class="control-label" for="inputConfigurationItemId">{{i18n.PRODUCT_ID}}</label>
+        <div class="tabs">
+            <ul class="nav nav-tabs">
+                <li class="active"><a href="#tab-main" data-toggle="tab">{{i18n.GENERAL}}</a></li>
+                <li><a href="#tab-products-instances-iteration" data-toggle="tab">{{i18n.ITERATION}}</a></li>
+                    <li><a href="#tab-products-instances-versions" data-toggle="tab">{{i18n.VERSIONS}}</a></li>
+                <li><a href="#tab-products-instances-attributes" data-toggle="tab">{{i18n.ATTRIBUTES}}</a></li>
+                <li><a href="#tab-products-instances-files" data-toggle="tab">{{i18n.FILES}}</a></li>
+                <li><a href="#tab-products-instances-links" data-toggle="tab">{{i18n.LINKS}}</a></li>
+            </ul>
+            <form id="product_instance_edit_form" class="tab-content form-horizontal">
+                <div class="tab-pane active" id="tab-main">
+                    <div class="control-group">
+                        <label class="control-label" >{{i18n.PRODUCT_INSTANCES}}</label>
 
-                <div class="controls">
-                    <input type="text" id="inputConfigurationItemId" value="{{model.getConfigurationItemId}}"
-                           disabled="disabled"/>
+                        <div class="controls">
+                            <input type="text" id="inputConfigurationItemId" value=" {{model.getSerialNumber}}"
+                                   disabled="disabled"/>
+                        </div>
+                      </div>
+                    <div class="control-group">
+                            <label class="control-label" for="inputConfigurationItemId">{{i18n.PRODUCT_ID}}</label>
+
+                            <div class="controls">
+                                <input type="text" id="inputConfigurationItemId" value="{{model.getConfigurationItemId}}"
+                                       disabled="disabled"/>
+                            </div>
+
+                    </div>
+
+
                 </div>
-            </div>
-            <div class="control-group">
-                <label class="control-label" for="inputIterationNote">{{i18n.ITERATION_NOTE}}</label>
-
-                <div class="controls">
-                    <input type="text" id="inputIterationNote" value="{{model.getIterationNote}}"
-                    {{^editMode}}disabled="disabled"{{/editMode}} />
+                <div class="tab-pane" id="tab-products-instances-versions">
+                    <div class="control-group">
+                        <div id ="baselinedPartListArea" class="baselinedPartListArea"></div>
+                    </div>
                 </div>
-            </div>
 
-            <div class="control-group">
-                <label class="control-label">{{i18n.PARTS}}</label>
-                <div class="controls baselinedPartListArea"></div>
-            </div>
+                <div id="tab-products-instances-iteration" class="tab-pane iteration iteration-edit" >
+                        <div class="control-group">
+                            <label class="control-label" for="inputIterationNote">{{i18n.ITERATION_NOTE}}</label>
 
-        </form>
+                            <div class="controls">
+                                <input type="text" id="inputIterationNote" value="{{model.getIterationNote}}"
+                                {{^editMode}}disabled="disabled"{{/editMode}} />
+                            </div>
+                    </div>
+
+                </div>
+                <div id="tab-products-instances-attributes" class="tab-pane attributes attributes-edit" >
+                    <div id="attributes-list" class="attributes attributes-edit"></div>
+
+                </div>
+
+                <div id="tab-products-instances-files" class="tab-pane files files-edit">
+                    <div id="iteration-files"></div>
+                </div>
+
+                <div id="tab-products-instances-links" class="tab-pane links links-edit">
+                    <div id="iteration-links"></div>
+                </div>
+
+
+            </form>
     </div>
 
     <div class="modal-footer">
