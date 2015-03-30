@@ -99,6 +99,7 @@ define(['backbone', 'collections/document_iteration', 'common-objects/utils/acl-
                     window.alert(xhr.responseText);
 				},
                 success:function(){
+                    Backbone.Events.trigger('document:iterationChange');
                     if(refresh){
                         this.fetch();
                     }
@@ -116,6 +117,7 @@ define(['backbone', 'collections/document_iteration', 'common-objects/utils/acl-
                     window.alert(xhr.responseText);
 				},
                 success:function(){
+                    Backbone.Events.trigger('document:iterationChange');
                     if(refresh){
                         this.fetch();
                     }
@@ -132,6 +134,7 @@ define(['backbone', 'collections/document_iteration', 'common-objects/utils/acl-
                     window.alert(xhr.responseText);
 				},
                 success:function(){
+                    Backbone.Events.trigger('document:iterationChange');
                     if(refresh){
                         this.fetch();
                     }

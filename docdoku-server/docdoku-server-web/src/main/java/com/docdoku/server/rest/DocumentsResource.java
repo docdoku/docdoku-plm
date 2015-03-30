@@ -158,7 +158,7 @@ public class DocumentsResource {
             docRsDTOs[i] = mapper.map(docRs[i], DocumentRevisionDTO.class);
             docRsDTOs[i].setPath(docRs[i].getLocation().getCompletePath());
             docRsDTOs[i] = Tools.createLightDocumentRevisionDTO(docRsDTOs[i]);
-            docRsDTOs[i].setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId,docRs[i]));
+            docRsDTOs[i].setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId, docRs[i]));
             docRsDTOs[i].setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId,docRs[i]));
         }
 
@@ -203,7 +203,7 @@ public class DocumentsResource {
             docRs = documentService.findDocumentRevisionsByTag(tagKey);
         }else{
             DocumentConfigSpec configSpec = getConfigSpec(workspaceId,configSpecType);
-            docRs = documentConfigSpecService.getFilteredDocumentsByTag(workspaceId,configSpec,tagKey);
+            docRs = documentConfigSpecService.getFilteredDocumentsByTag(workspaceId, configSpec, tagKey);
         }
         DocumentRevisionDTO[] docRsDTOs = new DocumentRevisionDTO[docRs.length];
 
@@ -359,6 +359,14 @@ public class DocumentsResource {
 
         return checkedOutdocRsDTO;
     }
+
+    @GET
+    @Path("countCheckedOut")
+    @Produces(MediaType.APPLICATION_JSON)
+    public CountDTO countCheckedOutDocs(@PathParam("workspaceId") String workspaceId) throws WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException {
+        return new CountDTO(documentService.getCheckedOutDocumentRevisions(workspaceId).length);
+    }
+
 
     @GET
     @Path("docs_last_iter")
