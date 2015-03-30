@@ -17,6 +17,7 @@ define([
         model: new ProductInstanceModel(),
 
         events: {
+            'click .modal-footer .btn-primary': 'interceptSubmit',
             'submit #product_instance_creation_form': 'onSubmitForm',
             'hidden #product_instance_creation_modal': 'onHidden'
         },
@@ -79,6 +80,10 @@ define([
             this.attributesView = new AttributesView({
                 el: this.$('#tab-products-instances-attributes')
             }).render();
+        },
+
+        interceptSubmit: function () {
+            this.isValid = !this.$('.tabs').invalidFormTabSwitcher();
         },
 
         onSubmitForm: function (e) {

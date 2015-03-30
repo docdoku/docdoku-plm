@@ -39,7 +39,7 @@ define([
 
             this.baselinedParts = [];
             this.baselinedPartsViews = [];
-            debugger;
+
             _.each(collection, function (bpData) {
 
                 var baselinedPart = new BaselinedPart(bpData);

@@ -14,6 +14,7 @@ define([
     'use strict';
     var ProductInstancesModalView = Backbone.View.extend({
         events: {
+            'click .btn-primary': 'interceptSubmit',
             'submit #product_instance_edit_form': 'onSubmitForm',
             'hidden #product_instance_modal': 'onHidden',
             'shown #product_instance_modal': 'onShown',
@@ -25,7 +26,6 @@ define([
         template: Mustache.parse(template),
 
         initialize: function () {
-            debugger;
             this.productId = this.options.productId;
             this.iteration = this.model.getLastIteration();
             this.iterations = this.model.getIterations();
@@ -38,6 +38,7 @@ define([
                 model: this.iteration,
                 editMode: this.editMode
             };
+
             if (this.model.hasIterations()) {
                 var hasNextIteration = this.iterations.hasNextIteration(this.iteration);
                 var hasPreviousIteration = this.iterations.hasPreviousIteration(this.iteration);
@@ -158,6 +159,10 @@ define([
         },
         bindUserPopover: function () {
             this.$authorLink.userPopover(this.model.getUpdateAuthor(), this.model.getSerialNumber(), 'right');
+        },
+
+        interceptSubmit: function () {
+            this.isValid = !this.$('.tabs').invalidFormTabSwitcher();
         },
 
         onSubmitForm: function (e) {

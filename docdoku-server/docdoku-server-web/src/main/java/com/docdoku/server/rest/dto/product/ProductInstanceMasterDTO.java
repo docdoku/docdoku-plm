@@ -21,6 +21,7 @@
 package com.docdoku.server.rest.dto.product;
 
 import com.docdoku.server.rest.dto.ACLDTO;
+import com.docdoku.server.rest.dto.baseline.BaselineDTO;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Date;

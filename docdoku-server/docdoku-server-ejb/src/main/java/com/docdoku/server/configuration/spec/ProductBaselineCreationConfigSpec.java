@@ -33,7 +33,7 @@ import java.util.Set;
 /**
  * @author Morgan Guimard
  */
-public class BaselineProductCreationConfigSpec extends ProductConfigSpec {
+public class ProductBaselineCreationConfigSpec extends ProductConfigSpec {
 
     private List<PartIteration> partIterations;
     private List<String> substituteLinks;
@@ -47,10 +47,10 @@ public class BaselineProductCreationConfigSpec extends ProductConfigSpec {
 
     private User user;
 
-    public BaselineProductCreationConfigSpec(){
+    public ProductBaselineCreationConfigSpec(){
     }
 
-    public BaselineProductCreationConfigSpec(User user, ProductBaseline.BaselineType type ,List<PartIteration> partIterations, List<String> substituteLinks, List<String> optionalUsageLinks) {
+    public ProductBaselineCreationConfigSpec(User user, ProductBaseline.BaselineType type, List<PartIteration> partIterations, List<String> substituteLinks, List<String> optionalUsageLinks) {
         this.user = user;
         this.partIterations = partIterations;
         this.substituteLinks = substituteLinks;
