@@ -26,10 +26,12 @@ define([
             '<i class="fa openModal fa-pencil"></i> ' +
         '<%} else if(isReleased){%> ' +
             '<i class="fa openModal fa-check"></i>' +
+        '<%} else if(isObsolete){%> ' +
+            '<i class="fa openModal fa-frown-o"></i>' +
         '<%} else{%> ' +
             '<i class="fa openModal fa-eye"></i>' +
         '<%}%>'+
-        '<%if(hasModificationNotifications) {%> ' +
+        '<%if(hasUnreadModificationNotifications) {%> ' +
             '<i class="fa fa-exclamation"></i>' +
         '<%}%>'
     );
@@ -132,8 +134,9 @@ define([
                 isForbidden: this.model.isForbidden(),
                 isCheckoutByAnotherUser: this.model.isCheckout() && !this.model.isCheckoutByConnectedUser(),
                 isCheckoutByConnectedUser: this.model.isCheckout() && this.model.isCheckoutByConnectedUser(),
+                hasUnreadModificationNotifications: this.model.hasUnreadModificationNotifications(),
                 isReleased: this.model.isReleased(),
-                hasModificationNotifications: this.model.hasModificationNotifications(),
+                isObsolete: this.model.isObsolete(),
                 isLock: this.isLock
             };
 
@@ -224,8 +227,9 @@ define([
                 isForbidden: this.isForbidden,
                 isCheckoutByAnotherUser: this.model.isCheckout() && !this.model.isCheckoutByConnectedUser(),
                 isCheckoutByConnectedUser: this.model.isCheckout() && this.model.isCheckoutByConnectedUser(),
-                hasModificationNotifications: this.model.hasModificationNotifications(),
+                hasUnreadModificationNotifications: this.model.hasUnreadModificationNotifications(),
                 isReleased: this.model.isReleased(),
+                isObsolete: this.model.isObsolete(),
                 isLock: this.isLock
             };
 

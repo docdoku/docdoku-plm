@@ -49,6 +49,7 @@ public class ComponentDTO implements Serializable{
     private UserDTO checkOutUser;
     private Date checkOutDate;
     private boolean released;
+    private boolean obsolete;
     @XmlElement(nillable = true)
     private int lastIterationNumber;
     @XmlElement(nillable = true)
@@ -214,5 +215,13 @@ public class ComponentDTO implements Serializable{
 
     public void setNotifications(List<ModificationNotificationDTO> notifications) {
         this.notifications = notifications;
+    }
+
+    public boolean isObsolete() {
+        return obsolete;
+    }
+
+    public void setObsolete(boolean obsolete) {
+        this.obsolete = obsolete;
     }
 }

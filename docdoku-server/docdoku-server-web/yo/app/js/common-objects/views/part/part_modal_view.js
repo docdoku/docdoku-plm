@@ -84,8 +84,10 @@ define([
             data.isLockedMode = !this.iteration || (this.model.isCheckout() && this.model.isLastIteration(this.iteration.getIteration()) && !this.model.isCheckoutByConnectedUser());
             data.isCheckout = this.model.isCheckout() ;
             this.isCheckout = data.isCheckout ;
-            data.isReleased = this.model.attributes.status == "RELEASED" ;
-            this.isReleased = this.model.attributes.status == "RELEASED" ;
+            this.isReleased = this.model.attributes.status === 'RELEASED';
+            data.isReleased = this.isReleased;
+            this.isObsolete = this.model.attributes.status === 'OBSOLETE';
+            data.isObsolete = this.isObsolete;
             data.isShowingLast = this.iterations.isLast(this.iteration);
 
             if (this.model.hasIterations()) {

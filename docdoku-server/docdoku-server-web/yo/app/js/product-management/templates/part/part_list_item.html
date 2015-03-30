@@ -1,5 +1,9 @@
 <td><input type="checkbox"/></td>
-<td class="modification_notification">{{#model.hasModificationNotifications}}<i class="fa fa-exclamation"></i>{{/model.hasModificationNotifications}}</td>
+<td class="modification_notification">
+    {{#model.hasUnreadModificationNotifications}}
+    <i class="fa fa-exclamation"></i>
+    {{/model.hasUnreadModificationNotifications}}
+</td>
 <td class="part_number">
     {{#model.isCheckout}}
     {{#model.isCheckoutByConnectedUser}}<i class="fa fa-pencil"></i>{{/model.isCheckoutByConnectedUser}}
@@ -7,7 +11,10 @@
     {{/model.isCheckout}}
     {{^model.isCheckout}}
     {{#model.isReleased}}<i class="fa fa-check"></i>{{/model.isReleased}}
-    {{^model.isReleased}}<i class="fa fa-eye"></i>{{/model.isReleased}}
+    {{^model.isReleased}}
+        {{#model.isObsolete}}<i class="fa fa-frown-o"></i>{{/model.isObsolete}}
+        {{^model.isObsolete}}<i class="fa fa-eye"></i>{{/model.isObsolete}}
+    {{/model.isReleased}}
     {{/model.isCheckout}}
 
     {{#model.isLastIterationAssembly}}

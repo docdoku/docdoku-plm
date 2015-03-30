@@ -71,6 +71,10 @@ define([
                 return this.get('status') === 'RELEASED';
             },
 
+            isObsolete : function(){
+                return this.get('status') === 'OBSOLETE';
+            },
+
             getFormattedCheckoutDate: function () {
                 if (this.isCheckout()) {
                     return Date.formatTimestamp(
@@ -168,7 +172,13 @@ define([
             },
 
             hasModificationNotifications: function () {
-                return this.modificationNotifications && this.modificationNotifications.length != 0;
+                return this.modificationNotifications && this.modificationNotifications.models.length != 0;
+            },
+
+            hasUnreadModificationNotifications: function () {
+                return _.select(this.modificationNotifications.models || [], function(notif) {
+                        return !notif.isAcknowledged();
+                }).length;
             },
 
             getModificationNotifications: function () {
@@ -410,7 +420,16 @@ define([
                     }
                 });
             },
-
+            markAsObsolete: function () {
+                return $.ajax({
+                    context: this,
+                    type: 'PUT',
+                    url: this.url() + '/obsolete',
+                    success: function () {
+                        this.fetch();
+                    }
+                });
+            },
             url: function () {
                 if (this.getPartKey()) {
                     return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/' + this.getPartKey();
@@ -425,7 +444,6 @@ define([
                     message: errorMessage
                 }).render().$el);
             }
-
 
         });
 
