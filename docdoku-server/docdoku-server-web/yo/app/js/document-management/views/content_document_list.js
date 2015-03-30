@@ -191,12 +191,11 @@ define([
         },
 
         actionUndocheckout: function () {
+            var self = this;
             bootbox.confirm(App.config.i18n.UNDO_CHECKOUT_QUESTION, function (result) {
                 if (result) {
 
-                    var self = this;
-
-                    var selectedDocuments = this.listView.checkedViews();
+                    var selectedDocuments = self.listView.checkedViews();
                     var queueUndoCheckOut= async.queue(function(docView,callback){
                             docView.model.undocheckout().success(callback);
                         });
@@ -262,7 +261,7 @@ define([
         },
 
         multipleCheckInCheckOutDone: function () {
-            this.collection.fetch({reset: true});
+            this.collection.fetch();
             Backbone.Events.trigger('document:iterationChange');
         },
 
