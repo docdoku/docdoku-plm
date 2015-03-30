@@ -1,4 +1,4 @@
-/*global _,define,App*/
+/*global $,_,define,App*/
 define(['backbone', 'common-objects/collections/product_instance_iterations','common-objects/utils/date'
 ], function (Backbone, ProductInstanceList,date) {
 	'use strict';

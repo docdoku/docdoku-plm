@@ -15,7 +15,7 @@ casper.test.begin('Document creation with attributes',2, function documentCreati
      * Open modal for new document
      */
     casper.then(function(){
-        var newDocumentButtonSelector = '#document-management-content .new-document'
+        var newDocumentButtonSelector = '#document-management-content .new-document';
         this.waitForSelector(newDocumentButtonSelector, function(){
             this.click(newDocumentButtonSelector);
         }, function(){
@@ -29,11 +29,11 @@ casper.test.begin('Document creation with attributes',2, function documentCreati
      * Add Attribute
      */
     casper.then(function(){
-        var attributesTabSelector = '.nav.nav-tabs > li:nth-child(3) > a'
+        var attributesTabSelector = '.nav.nav-tabs > li:nth-child(3) > a';
         this.waitForSelector(attributesTabSelector,function(){
            this.click(attributesTabSelector);
            this.waitForSelector('.nav.nav-tabs > li:nth-child(3).active', function(){
-               var addAttributeButtonSelector = '.btn.add'
+               var addAttributeButtonSelector = '.btn.add';
                this.waitForSelector(addAttributeButtonSelector, function(){
                    this.click(addAttributeButtonSelector);
                }, function(){
@@ -98,11 +98,11 @@ casper.test.begin('Document creation with attributes',2, function documentCreati
      * Add Attribute
      */
     casper.then(function(){
-        var attributesTabSelector = '.nav.nav-tabs > li:nth-child(3) > a'
+        var attributesTabSelector = '.nav.nav-tabs > li:nth-child(3) > a';
         this.waitForSelector(attributesTabSelector,function(){
             this.click(attributesTabSelector);
             this.waitForSelector('.nav.nav-tabs > li:nth-child(3).active', function(){
-                var addAttributeButtonSelector = '.btn.add'
+                var addAttributeButtonSelector = '.btn.add';
                 this.waitForSelector(addAttributeButtonSelector, function(){
                     this.click(addAttributeButtonSelector);
                 }, function(){
