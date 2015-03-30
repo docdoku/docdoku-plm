@@ -8,8 +8,9 @@ define([
     'common-objects/views/prompt',
     'common-objects/views/security/acl_edit',
     'common-objects/views/tags/tags_management',
-    'common-objects/views/alert'
-], function (Backbone, ContentView, DocumentListView, DocumentNewVersionView, AdvancedSearchView, PromptView, ACLEditView, TagsManagementView, AlertView) {
+    'common-objects/views/alert',
+    'async'
+], function (Backbone, ContentView, DocumentListView, DocumentNewVersionView, AdvancedSearchView, PromptView, ACLEditView, TagsManagementView, AlertView, async) {
     'use strict';
     var ContentDocumentListView = ContentView.extend({
 
@@ -172,19 +173,38 @@ define([
         },
 
         actionCheckout: function () {
-            this.listView.eachChecked(function (view) {
-                view.model.checkout(true);
+
+            var self = this;
+
+            var selectedDocuments = this.listView.checkedViews();
+
+            var queueCheckOut= async.queue(function(docView,callback){
+                docView.model.checkout().success(callback);
             });
+
+            queueCheckOut.drain = function(){
+                self.multipleCheckInCheckOutDone();
+            };
+
+            queueCheckOut.push(selectedDocuments);
             return false;
         },
 
         actionUndocheckout: function () {
-            var that = this;
             bootbox.confirm(App.config.i18n.UNDO_CHECKOUT_QUESTION, function (result) {
                 if (result) {
-                    that.listView.eachChecked(function (view) {
-                        view.model.undocheckout(true);
-                    });
+
+                    var self = this;
+
+                    var selectedDocuments = this.listView.checkedViews();
+                    var queueUndoCheckOut= async.queue(function(docView,callback){
+                            docView.model.undocheckout().success(callback);
+                        });
+                    queueUndoCheckOut.drain = function(){
+                        self.multipleCheckInCheckOutDone();
+                    };
+
+                    queueUndoCheckOut.push(selectedDocuments);
                 }
             });
             return false;
@@ -192,39 +212,58 @@ define([
 
         actionCheckin: function () {
 
+            var selectedDocuments = this.listView.checkedViews();
             var promptView = new PromptView();
             promptView.setPromptOptions(App.config.i18n.REVISION_NOTE, App.config.i18n.REVISION_NOTE_PROMPT_LABEL, App.config.i18n.REVISION_NOTE_PROMPT_OK, App.config.i18n.REVISION_NOTE_PROMPT_CANCEL);
             window.document.body.appendChild(promptView.render().el);
             promptView.openModal();
 
             var self = this;
-            this.listView.eachChecked(function (view) {
-                if (!view.model.getLastIteration().get('revisionNote')) {
+            this.listenTo(promptView, 'prompt-ok', function (args) {
 
-
-                    self.listenTo(promptView, 'prompt-ok', function (args) {
-                        var revisionNote = args[0];
-                        if (_.isEqual(revisionNote, '')) {
-                            revisionNote = null;
-                        }
-                        view.model.getLastIteration().save({
-                            revisionNote: revisionNote
-                        }).success(function () {
-                            view.model.checkin(true);
-                        });
-
-                    });
-
-                    self.listenTo(promptView, 'prompt-cancel', function () {
-                        view.model.checkin(true);
-                    });
-
-                } else {
-                    view.model.checkin(true);
+                var iterationNote = args[0];
+                if(_.isEqual(iterationNote, '')){
+                    iterationNote = null;
                 }
 
+                var queueCheckIn= async.queue(function(docView,callback){
+                    var revisionNote = docView.model.getLastIteration().get('revisionNote');
+                    if (iterationNote){
+                        revisionNote = iterationNote;
+                    }
+
+                    docView.model.getLastIteration().save({
+                        revisionNote: revisionNote
+                    }).success(function(){
+                        docView.model.checkin().success(callback);
+                    });
+                });
+
+                queueCheckIn.drain = function(){
+                    self.multipleCheckInCheckOutDone();
+                };
+
+                queueCheckIn.push(selectedDocuments);
             });
+
+            this.listenTo(promptView, 'prompt-cancel', function () {
+                var queueCheckIn= async.queue(function(docView,callback){
+                        docView.model.checkin().success(callback);
+                    });
+
+                queueCheckIn.drain = function(){
+                    self.multipleCheckInCheckOutDone();
+                };
+
+                queueCheckIn.push(selectedDocuments);
+            });
+
             return false;
+        },
+
+        multipleCheckInCheckOutDone: function () {
+            this.collection.fetch({reset: true});
+            Backbone.Events.trigger('document:iterationChange');
         },
 
         actionDelete: function () {

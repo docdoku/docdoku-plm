@@ -416,7 +416,6 @@ define([
                 this.iterations = this.model.getIterations();
                 this.render();
                 this.activateTab(1);
-
             }.bind(this));
 
         },
