@@ -213,23 +213,32 @@ define([
                     if (_.isEqual(iterationNote, '')) {
                         iterationNote = null;
                     }
-                        _(selectedParts).each(function (view) {
-                            view.getLastIteration().save({
-                                iterationNote: iterationNote
-                            }).success(function () {
-                                view.checkin();
-                            });
-                        });
 
+                    var ajaxes = [];
+                    _(selectedParts).each(function (part) {
+                        part.getLastIteration().save({
+                            iterationNote: iterationNote
+                        }).success(function () {
+                            ajaxes.push(part.checkin());
+                        });
+                    });
+                    $.when.apply($, ajaxes).done(this.allCheckinDone);
                 });
 
                 this.listenTo(promptView, 'prompt-cancel', function () {
-                        _(selectedParts).each(function (view) {
-                            view.checkin();
-                        });
+                    var ajaxes = [];
+                    _(selectedParts).each(function (part) {
+                        ajaxes.push(part.checkin());
+                    });
+                    $.when.apply($, ajaxes).done(this.allCheckinDone);
                 });
 
         },
+        allCheckinDone: function () {
+            Backbone.Events.trigger('part:saved');
+            Backbone.Events.trigger('part:iterationChange');
+        },
+
         checkout: function () {
             _(this.partListView.getSelectedParts()).each(function (view) {
                 view.checkout();
