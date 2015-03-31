@@ -28,7 +28,6 @@ import com.docdoku.core.product.PartRevision;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.logging.Level;
@@ -64,9 +63,6 @@ public class ProductBaselineDAO {
     }
 
     public void createBaseline(ProductBaseline productBaseline) throws CreationException {
-        em.persist(productBaseline);
-        em.flush();
-
         try {
             em.persist(productBaseline);
             em.flush();
