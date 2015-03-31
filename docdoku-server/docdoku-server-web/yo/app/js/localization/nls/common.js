@@ -229,7 +229,7 @@ define({
 		MANDATORY: "Mandatory",
         MARK_AS_VERIFIED: "Mark as verified",
         MARK_AS_OBSOLETE: "Mark as obsolete",
-        MARK_AS_OBSOLETE_QUESTION: "Mark as obsolete the selected parts ?",
+        MARK_AS_OBSOLETE_QUESTION: "Mark as obsolete the selected parts?",
 		MARKER_INFO: "Get marker informations",
 		MARKERS: "Markers",
 		MARKERS_OPACITY: "Change markers opacity",
@@ -452,7 +452,7 @@ define({
 		URL: "URL",
 		USE_ACL: "Use ACL ?",
         USER_DEFINED_FUNCTION:"User defined function",
-        USER_MEDIA_FAILED: "Cannot access to your video input. Is this a WebRTC capable browser ?",
+        USER_MEDIA_FAILED: "Cannot access to your video input. Is this a WebRTC capable browser?",
 		USERS_CONNECTED: "users connected",
 		USERS: "Users",
 		VALIDATION_FAILED_FOR: "Validation failed for ",
@@ -485,7 +485,7 @@ define({
 		WORKSPACES_ADMINISTRATION: 'Workspaces administration',
 		WORKSPACES: "Workspaces",
 		WORKSPACE: "Workspace",
-		YOU_HAVE_BEEN_KICKED:"You have been kicked from the room"
+		YOU_HAVE_BEEN_KICKED:"You have been kicked from the collaborative room"
 	},
 	'es': true,
 	'fr': true
