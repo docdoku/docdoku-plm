@@ -122,9 +122,6 @@ define([
         },
 
         bindEvent: function(){
-            // Try to remove this
-            Backbone.Events.on('part:saved', this.resetCollection);
-
             this.partListView.collection.on('page-count:fetch', this.onPageCountFetched);
             this.partListView.collection.fetchPageCount();
 
@@ -241,7 +238,7 @@ define([
 
         },
         allCheckinDone: function () {
-            Backbone.Events.trigger('part:saved');
+            this.resetCollection();
             Backbone.Events.trigger('part:iterationChange');
         },
 
