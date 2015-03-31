@@ -2,7 +2,7 @@
 define([
     'backbone',
     'common-objects/utils/date'
-], function (Backbone, Date) {
+], function (Backbone, date) {
     'use strict';
     var ModificationNotification = Backbone.Model.extend({
 
@@ -50,7 +50,7 @@ define([
         },
 
         getFormattedCheckInDate: function () {
-            return Date.formatTimestamp(
+            return date.formatTimestamp(
                 App.config.i18n._DATE_FORMAT,
                 this.getCheckInDate()
             );
@@ -80,20 +80,16 @@ define([
             return this.get('ackComment');
         },
 
-        hasAckAuthor: function () {
-            return !_.isNull(this.get('ackAuthor'));
-        },
-
         getAckAuthor: function () {
             return this.get('ackAuthor');
         },
 
         getAckAuthorName: function () {
-            return this.getAckAuthor().name;
-        },
-
-        hasAckDate: function () {
-            return !_.isNull(this.get('ackDate'));
+            if (this.getAckAuthor()) {
+                return this.getAckAuthor().name;
+            } else {
+                return App.config.userName;
+            }
         },
 
         getAckDate: function () {
@@ -101,9 +97,9 @@ define([
         },
 
         getFormattedAckDate: function () {
-            return Date.formatTimestamp(
+            return date.formatTimestamp(
                 App.config.i18n._DATE_FORMAT,
-                this.getCheckInDate()
+                this.getAckDate()
             );
         },
 
@@ -119,8 +115,9 @@ define([
                     this.set('acknowledged', false);
                 }
             }).success(function () {
-                this.set('acknowledged', true);
                 this.set('ackComment', data.ackComment);
+                this.set('ackDate', (new Date()).toString());
+                this.set('acknowledged', true);
             });
         }
 

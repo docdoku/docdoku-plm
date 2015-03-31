@@ -20,8 +20,8 @@
 
         {{#modificationNotification.isAcknowledged}}
         <div class="comment-italic">
-            {{i18n.VERIFIED}} {{#modificationNotification.hasAckDate}}{{i18n.ON}} <a class="date-popover">{{modificationNotification.getFormattedCheckInDate}}</a>{{/modificationNotification.hasAckDate}}
-            {{#modificationNotification.hasAckAuthor}}{{i18n.BY}} <a class="author-popover">{{modificationNotification.getAckAuthorName}}</a>{{/modificationNotification.hasAckAuthor}}
+            {{i18n.VERIFIED}} {{i18n.ON}} <a class="date-popover">{{modificationNotification.getFormattedAckDate}}</a>
+            {{i18n.BY}} <a class="author-popover">{{modificationNotification.getAckAuthorName}}</a>
         </div>
         <div class="comment-italic">
             {{modificationNotification.getAckComment}}
