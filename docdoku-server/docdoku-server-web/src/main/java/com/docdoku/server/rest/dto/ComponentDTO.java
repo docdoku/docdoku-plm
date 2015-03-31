@@ -42,6 +42,7 @@ public class ComponentDTO implements Serializable{
     private boolean assembly;
     private boolean substitute;
     private String partUsageLinkId;
+    private String partUsageLinkReferenceDescription;
     private List<ComponentDTO> components;
     private double amount;
     private String unit;
@@ -223,5 +224,13 @@ public class ComponentDTO implements Serializable{
 
     public void setObsolete(boolean obsolete) {
         this.obsolete = obsolete;
+    }
+
+    public String getPartUsageLinkReferenceDescription() {
+        return partUsageLinkReferenceDescription;
+    }
+
+    public void setPartUsageLinkReferenceDescription(String partUsageLinkReferenceDescription) {
+        this.partUsageLinkReferenceDescription = partUsageLinkReferenceDescription;
     }
 }

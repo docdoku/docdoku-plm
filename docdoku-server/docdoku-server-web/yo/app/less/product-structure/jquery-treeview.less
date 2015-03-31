@@ -22,7 +22,7 @@
 	float:none;
 }
 
-.treeview li { 
+.treeview li {
 	margin: 0;
 	padding: 3px 0pt 3px 16px;
 }
@@ -41,8 +41,34 @@
 .treeview .expandable-hitarea { background-position: -80px -3px; }
 
 .treeview li.last { background-position: 0 -1766px }
-.treeview li.lastCollapsable, .treeview li.lastExpandable { background-image: url(../images/treeview-default.gif); }  
+.treeview li.lastCollapsable, .treeview li.lastExpandable { background-image: url(../images/treeview-default.gif); }
 .treeview li.lastCollapsable { background-position: 0 -111px }
 .treeview li.lastExpandable { background-position: -32px -67px }
 
 .treeview div.lastCollapsable-hitarea, .treeview div.lastExpandable-hitarea { background-position: 0; }
+
+.treeview{
+    .description {
+        display: none;
+    }
+
+    a{
+        max-width: 90%;
+    }
+
+    &.displayComment{
+
+        .description {
+            display: table;
+            color: #434C64;
+            font-style: italic;
+            font-weight: 200 !important;
+            font-size: smaller;
+            margin-top: -5px;
+            margin-left: 17px;
+            line-height: 12px;
+            max-width: 90%;
+        }
+    }
+
+}

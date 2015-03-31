@@ -17,7 +17,8 @@ define([
         '<%} else {%>' +
             '<input type="checkbox" disabled <%if (checkedAtInit) {%>checked="checked"<%}%>>' +
         '<%}%>' +
-            '<a><label class="checkbox <%if(isNode) {%>isNode<%}%>"><%= name %> <%= number %>-<%= version %>-<%= iteration %> (<%= amount %><%if (unit) {%> <%= unit %> <%}%>)</label></a>' +
+            '<a><label class="checkbox <%if(isNode) {%>isNode<%}%>"><%= name %> <%= number %>-<%= version %>-<%= iteration %> (<%= amount %><%if (unit) {%> <%= unit %> <%}%>)</label>' +
+        '</a>' +
         '<%if(isForbidden) {%> ' +
             '<i class="fa fa-ban"></i>' +
         '<%} else if(isCheckoutByAnotherUser && isLastIteration) {%> ' +
@@ -33,7 +34,8 @@ define([
         '<%}%>'+
         '<%if(hasUnreadModificationNotifications) {%> ' +
             '<i class="fa fa-exclamation"></i>' +
-        '<%}%>'
+        '<%}%>' +
+        '<%if (partUsageLinkReferenceDescription) {%><span class="description"> <%= partUsageLinkReferenceDescription %> </span><%}%>'
     );
 
     ComponentViews.Components = Backbone.View.extend({
@@ -137,7 +139,8 @@ define([
                 hasUnreadModificationNotifications: this.model.hasUnreadModificationNotifications(),
                 isReleased: this.model.isReleased(),
                 isObsolete: this.model.isObsolete(),
-                isLock: this.isLock
+                isLock: this.isLock,
+                partUsageLinkReferenceDescription: this.model.get('partUsageLinkReferenceDescription')
             };
 
             this.$el.html(nodeTemplate(data));
@@ -230,7 +233,8 @@ define([
                 hasUnreadModificationNotifications: this.model.hasUnreadModificationNotifications(),
                 isReleased: this.model.isReleased(),
                 isObsolete: this.model.isObsolete(),
-                isLock: this.isLock
+                isLock: this.isLock,
+                partUsageLinkReferenceDescription: this.model.get('partUsageLinkReferenceDescription')
             };
 
             this.$el.html(nodeTemplate(data));
