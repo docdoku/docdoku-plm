@@ -1,8 +1,6 @@
 /*global _,$,define,App*/
-define(['backbone',
-    'common-objects/collections/attribute_collection',
-    'common-objects/collections/file/attached_file_collection'
-], function (Backbone,AttributeCollection,AttachedFileCollection) {
+define(['backbone'
+], function (Backbone) {
 	'use strict';
     var ProductInstanceIteration = Backbone.Model.extend({
         idAttribute: 'iteration',
@@ -10,22 +8,6 @@ define(['backbone',
         initialize: function () {
             this.className = 'ProductInstanceIteration';
             _.bindAll(this);
-
-            var attributes = new AttributeCollection(this.get('instanceAttributes'));
-
-            var filesMapping = _.map(this.get('attachedFiles'), function (fullName) {
-                return {
-                    'fullName': fullName,
-                    shortName: _.last(fullName.split('/')),
-                    created: true
-                };
-            });
-            var attachedFiles = new AttachedFileCollection(filesMapping);
-
-            //'attributes' is a special name for Backbone
-            this.set('instanceAttributes', attributes);
-            this.set('attachedFiles', attachedFiles);
-
         },
         defaults: {
             attachedFiles: [],

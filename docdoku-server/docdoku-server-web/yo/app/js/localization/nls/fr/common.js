@@ -32,6 +32,7 @@ define({
 	AUTHOR: "Auteur",
 	AUTHOR_DOCUMENT_HELP: "Auteur du document",
 	AUTHOR_PART_HELP: "Auteur de l'article",
+    BASED_ON: "Baseline de référence",
 	BASELINE: "Baseline",
 	BASELINE_DELETION_ERROR:"Impossible de supprimer la baseline : ",
 	BASELINE_OF: 'Baseline de',

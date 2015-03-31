@@ -33,6 +33,7 @@ define({
 		AUTHOR: "Author",
 		AUTHOR_DOCUMENT_HELP: "Author of the document",
 		AUTHOR_PART_HELP: "Author of the part",
+        BASED_ON: "Based on",
 		BASELINE: "Baseline",
 		BASELINE_DELETION_ERROR:"Cannot delete baseline : ",
 		BASELINE_OF: 'Baseline of',
