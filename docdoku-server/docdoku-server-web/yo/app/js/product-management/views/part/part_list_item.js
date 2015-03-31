@@ -24,7 +24,7 @@ define([
         initialize: function () {
             _.bindAll(this);
             this._isChecked = false;
-            this.listenTo(this.model, 'change', this.render);
+            this.listenTo(this.model, 'change, sync', this.render);
         },
 
         render: function () {

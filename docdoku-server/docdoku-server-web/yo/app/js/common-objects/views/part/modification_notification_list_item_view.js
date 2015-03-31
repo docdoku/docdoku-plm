@@ -32,8 +32,11 @@ define([
         },
 
         acknowledge: function () {
+            var _this = this;
             var data = {ackComment: this.getAcknowledgementComment()};
-            this.model.setAcknowledged(data);
+            this.model.setAcknowledged(data).success(function () {
+                _this.$el.trigger('notification:acknowledged');
+            });
         },
 
         getAcknowledgementComment: function () {
