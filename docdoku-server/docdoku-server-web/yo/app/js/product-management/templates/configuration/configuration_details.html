@@ -8,21 +8,21 @@
     <div class="modal-body">
         <div class="notifications"></div>
 
-        <div class="tabs">
+        <div class="ModalTabs ModalBody-tabs tabs">
 
-            <ul class="nav nav-tabs">
+            <ul class="ModalTabs-nav nav nav-tabs">
                 <li class="active"><a href="#tab-main" data-toggle="tab">{{i18n.GENERAL}}</a></li>
                 <li><a href="#tab-choices" data-toggle="tab">{{i18n.CHOICES}}</a></li>
             </ul>
 
-            <div class="tab-content form-horizontal">
-
+            <div class="ModalTabsContent tab-content form-horizontal">
                 <div class="tab-pane active" id="tab-main">
 
                     <form id="configuration_details_form" class="form-horizontal">
 
                         <div class="control-group">
                             <label class="control-label">{{i18n.PRODUCT}}</label>
+
                             <div class="controls">
                                 {{model.getConfigurationItemId}}
                             </div>
@@ -47,16 +47,13 @@
                     </form>
                 </div>
 
-                <div class="tab-pane" id="tab-choices"></div>
-
+                <div id="tab-choices" class="ModalTabsPane tab-pane choiceListArea">
             </div>
 
         </div>
 
-    </div>
+        <div class="modal-footer">
+            <button class="btn" data-dismiss="modal" aria-hidden="true">{{i18n.CLOSE}}</button>
+        </div>
 
-    <div class="modal-footer">
-        <button class="btn" data-dismiss="modal" aria-hidden="true">{{i18n.CLOSE}}</button>
     </div>
-
-</div>

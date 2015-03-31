@@ -9,6 +9,7 @@ define([
     var ConfigurationDetailsView = Backbone.View.extend({
 
         events: {
+            'hidden #configuration_details_modal': 'onHidden'
         },
 
         template: Mustache.parse(template),

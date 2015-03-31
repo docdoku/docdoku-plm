@@ -80,7 +80,7 @@ public class ProductConfigurationsResource {
         return configurationDTOs;
     }
 
-    @PUT
+    @GET
     @Path("{productConfigurationId}")
     @Produces(MediaType.APPLICATION_JSON)
     public ProductConfigurationDTO getConfiguration(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @PathParam("productConfigurationId") int productConfigurationId) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ProductConfigurationNotFoundException {

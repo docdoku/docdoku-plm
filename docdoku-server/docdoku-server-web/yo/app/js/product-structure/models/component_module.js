@@ -187,7 +187,7 @@ define(['backbone', 'common-objects/utils/date'],
 
             url: function () {
                 var path = this.path ? '-1-'+this.path : '-1';
-                return this.urlBase() + '?configSpec=' + App.config.configSpec + '&path=' + path + '&depth=1';
+                return this.urlBase() + '/filter?configSpec=' + App.config.configSpec + '&path=' + path + '&depth=1';
             },
 
             urlBase: function () {
