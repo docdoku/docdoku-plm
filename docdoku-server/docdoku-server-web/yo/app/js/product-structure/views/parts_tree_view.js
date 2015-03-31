@@ -12,7 +12,8 @@ define(['backbone', 'models/component_module', 'views/component_views'
             'component:selected a': 'onComponentSelected',
             'click #product_title': 'onProductTitleClicked',
             'load:root': 'onProductTitleClicked',
-            'click .fa-refresh': 'refreshProductView'
+            'click .fa-refresh': 'refreshProductView',
+            'click .fa-comment-o': 'toggleComment'
         },
 
         setSelectedComponent: function (component) {
@@ -179,6 +180,10 @@ define(['backbone', 'models/component_module', 'views/component_views'
 
         refreshAll: function () {
             this.componentViews.fetchAll();
+        },
+
+        toggleComment:function(){
+            this.$el.toggleClass("displayComment");
         }
 
     });
