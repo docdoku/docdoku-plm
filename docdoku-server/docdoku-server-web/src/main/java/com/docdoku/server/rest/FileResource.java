@@ -20,10 +20,7 @@
 package com.docdoku.server.rest;
 
 import com.docdoku.core.security.UserGroupMapping;
-import com.docdoku.server.rest.file.DocumentBinaryResource;
-import com.docdoku.server.rest.file.DocumentTemplateBinaryResource;
-import com.docdoku.server.rest.file.PartBinaryResource;
-import com.docdoku.server.rest.file.PartTemplateBinaryResource;
+import com.docdoku.server.rest.file.*;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
@@ -43,6 +40,8 @@ public class FileResource {
     private DocumentTemplateBinaryResource documentTemplateBinaryResource;
     @EJB
     private PartTemplateBinaryResource partTemplateBinaryResource;
+    @EJB
+    private ProductInstanceBinaryResurce productInstanceBinaryResource;
 
     public FileResource() {
     }
@@ -68,4 +67,11 @@ public class FileResource {
     public PartTemplateBinaryResource partTemplateFile(){
         return partTemplateBinaryResource;
     }
+
+    @Path("/{workspaceId}/product-instances/{serialNumber}/{ciId}/iterations/")
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
+    public ProductInstanceBinaryResurce productInstanceFile(){
+        return productInstanceBinaryResource;
+    }
+
 }

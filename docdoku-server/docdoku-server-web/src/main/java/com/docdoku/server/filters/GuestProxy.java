@@ -22,6 +22,8 @@ package com.docdoku.server.filters;
 
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.User;
+import com.docdoku.core.configuration.ProductInstanceIteration;
+import com.docdoku.core.configuration.ProductInstanceIterationKey;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.document.DocumentRevision;
@@ -33,6 +35,7 @@ import com.docdoku.core.product.PartRevisionKey;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.services.IDocumentResourceGetterManagerLocal;
+import com.docdoku.core.services.IProductInstanceManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
 
 import javax.annotation.security.DeclareRoles;
@@ -50,6 +53,8 @@ import java.io.InputStream;
 public class GuestProxy{
     @EJB
     private IProductManagerLocal productService;
+    @EJB
+    private IProductInstanceManagerLocal productInstanceManagerLocal;
     @EJB
     private IDocumentManagerLocal documentService;
     @EJB
@@ -121,8 +126,13 @@ public class GuestProxy{
             throws AccessRightException, NotAllowedException, EntityNotFoundException, UserNotActiveException{
         return productService.getBinaryResource(fullName);
     }
+
+
     public InputStream getConvertedResource(String outputFormat, BinaryResource binaryResource) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConvertedResourceException {
         return documentResourceGetterService.getConvertedResource(outputFormat, binaryResource);
     }
 
+    public BinaryResource getBinaryResourceForProducInstance(String fullName) throws UserNotActiveException, WorkspaceNotFoundException, UserNotFoundException, FileNotFoundException, NotAllowedException, AccessRightException {
+        return productInstanceManagerLocal.getBinaryResource(fullName);
+    }
 }
