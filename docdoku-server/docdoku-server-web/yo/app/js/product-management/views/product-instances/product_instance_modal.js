@@ -126,35 +126,24 @@ define([
 
             this.attributesView.setEditMode(this.editMode);
 
-            var that = this;
-            _.each(that.iteration.getInstanceAttributes(), function (object) {
-                that.attributesView.collection.add({
-                    name: object.name,
-                    type: object.type,
-                    value: object.value,
-                    lovName:object.lovName,
-                    mandatory: object.mandatory
-                });
-            });
-
             this.attributesView.render();
         },
 
         initAttachedFileView:   function(){
-            this.files = new Backbone.Collection();
+            //this.files = new Backbone.Collection();
             var _this = this;
             this.fileListView = new FileListView({
                 deleteBaseUrl: this.iteration.url(),
                 uploadBaseUrl: _this.iteration.getUploadBaseUrl(),
-                collection: this.files,
+                collection: _this.iteration.get('attachedFiles'),
                 editMode: true
             }).render();
 
             // Add the fileListView to the tab
             this.$('#tab-products-instances-files').append(this.fileListView.el);
-            _.each(_this.iteration.getAttachedFiles(), function (object) {
-              //  this.fileListView.upload
-            });
+//            _.each(_this.iteration.getAttachedFiles(), function (object) {
+//               debugger; this.fileListView.addOneFile(object);
+//            });
 
         },
         bindUserPopover: function () {
@@ -172,7 +161,13 @@ define([
             this.iteration.setIterationNote(this.$inputIterationNote.val());
             this.iteration.setBaselinedParts(this.baselinePartListView.getBaselinedParts());
             this.iteration.setInstanceAttributes(this.attributesView.collection.toJSON());
+            /*There is a parsing problem at saving time*/
+            var files = this.iteration.get('attachedFiles');
 
+            /*tracking back files*/
+            this.iteration.set({
+                attachedFiles: files
+            });
             this.iteration.save(JSON.stringify(this.iteration), '', {
                 success: function () {
                     _this.model.fetch();

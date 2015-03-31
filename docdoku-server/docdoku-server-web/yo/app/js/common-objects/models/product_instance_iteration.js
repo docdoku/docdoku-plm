@@ -1,5 +1,8 @@
 /*global _,$,define,App*/
-define(['backbone'], function (Backbone) {
+define(['backbone',
+    'common-objects/collections/attribute_collection',
+    'common-objects/collections/file/attached_file_collection'
+], function (Backbone,AttributeCollection,AttachedFileCollection) {
 	'use strict';
     var ProductInstanceIteration = Backbone.Model.extend({
         idAttribute: 'iteration',
@@ -7,8 +10,27 @@ define(['backbone'], function (Backbone) {
         initialize: function () {
             this.className = 'ProductInstanceIteration';
             _.bindAll(this);
-        },
 
+            var attributes = new AttributeCollection(this.get('instanceAttributes'));
+
+            var filesMapping = _.map(this.get('attachedFiles'), function (fullName) {
+                return {
+                    'fullName': fullName,
+                    shortName: _.last(fullName.split('/')),
+                    created: true
+                };
+            });
+            var attachedFiles = new AttachedFileCollection(filesMapping);
+
+            //'attributes' is a special name for Backbone
+            this.set('instanceAttributes', attributes);
+            this.set('attachedFiles', attachedFiles);
+
+        },
+        defaults: {
+            attachedFiles: [],
+            instanceAttributes: []
+        },
         initBaselinedParts: function (context, callbacks) {
             this.setConfigurationItemId(context.model.attributes.configurationItemId);
             var that = this;
@@ -32,7 +54,11 @@ define(['backbone'], function (Backbone) {
             }
         },
         getUploadBaseUrl: function () {
-            return App.config.contextPath + '/api/files';
+            return App.config.contextPath + '/api/files/'+this.getBaseName();
+
+        },
+        getBaseName: function () {
+            return App.config.workspaceId  + '/product-instances/' + this.getSerialNumber() +'/'+this.getConfigurationItemId() + '/iterations/' + this.getIteration()+'/';
         },
         getSerialNumber: function () {
             return this.get('serialNumber');
