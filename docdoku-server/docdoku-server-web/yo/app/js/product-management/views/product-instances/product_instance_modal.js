@@ -31,6 +31,7 @@ define([
             this.productId = this.options.productId;
             this.iteration = this.model.getLastIteration();
             this.iterations = this.model.getIterations();
+
         },
 
         render: function () {
@@ -124,7 +125,6 @@ define([
                 collection: attributes
             });
 
-            this.iteration.set('instanceAttributes', attributes);
             this.$('#attributes-list').html(this.attributesView.$el);
 
             this.attributesView.setEditMode(this.editMode);
@@ -135,7 +135,7 @@ define([
         initAttachedFileView:   function(){
 
             var filesMapping = _.map(this.iteration.get('attachedFiles'), function (fullName) {
-                debugger;
+
                 return {
                     'fullName': fullName,
                     shortName: _.last(fullName.split('/')),
@@ -154,7 +154,7 @@ define([
                 editMode: true
             }).render();
 
-            this.iteration.set('attachedFiles', attachedFiles);
+
             // Add the fileListView to the tab
             this.$('#tab-products-instances-files').append(this.fileListView.el);
 
