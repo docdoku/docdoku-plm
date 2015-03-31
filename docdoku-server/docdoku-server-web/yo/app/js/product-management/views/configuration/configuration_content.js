@@ -4,11 +4,13 @@ define([
     'mustache',
     'text!templates/configuration/configuration_content.html',
     'collections/configurations',
+    'models/configuration_item',
     'views/configuration/configuration_list',
+    'views/configuration/configuration_creation_view',
     'common-objects/views/alert',
     'text!common-objects/templates/buttons/delete_button.html',
     'text!common-objects/templates/buttons/new_configuration_button.html'
-], function (Backbone, Mustache, template, ConfigurationCollection, ConfigurationListView, AlertView, deleteButton, newConfigurationButton) {
+], function (Backbone, Mustache, template, ConfigurationCollection,ConfigurationItem,  ConfigurationListView,ConfigurationCreationView, AlertView, deleteButton, newConfigurationButton) {
     'use strict';
 	var ConfigurationContentView = Backbone.View.extend({
         partials: {
@@ -63,6 +65,13 @@ define([
 
         changeDeleteButtonDisplay: function (state) {
             this.deleteButton.toggle(state);
+        },
+
+        newConfiguration:function(){
+            var configurationCreationView = new ConfigurationCreationView({collection:this.configurationCollection,model:new ConfigurationItem()});
+            window.document.body.appendChild(configurationCreationView.render().el);
+            configurationCreationView.on('configuration:created',this.configurationCollection.push,this.configurationCollection);
+            configurationCreationView.openModal();
         },
 
         onError:function(model, error){

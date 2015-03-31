@@ -2,13 +2,16 @@
 define([
     'backbone',
     'mustache',
-    'text!templates/configuration/configuration_list_item.html'
-], function (Backbone, Mustache, template) {
+    'text!templates/configuration/configuration_list_item.html',
+    'views/configuration/configuration_details_view',
+    'common-objects/utils/date'
+], function (Backbone, Mustache, template, ConfigurationDetailsView, date) {
     'use strict';
-    var ProductListItemView = Backbone.View.extend({
+    var ConfigurationListItemView = Backbone.View.extend({
 
         events: {
-            'click input[type=checkbox]': 'selectionChanged'
+            'click input[type=checkbox]': 'selectionChanged',
+            'click .configuration_id':'openConfigurationDetailView'
         },
 
         tagName: 'tr',
@@ -22,6 +25,13 @@ define([
             this.$checkbox = this.$('input[type=checkbox]');
             this.trigger('rendered', this);
             return this;
+        },
+
+        openConfigurationDetailView:function(){
+            var that = this;
+            var view = new ConfigurationDetailsView({model: that.model});
+            window.document.body.appendChild(view.render().el);
+            view.openModal();
         },
 
         selectionChanged: function () {
@@ -45,5 +55,5 @@ define([
 
     });
 
-    return ProductListItemView;
+    return ConfigurationListItemView;
 });
