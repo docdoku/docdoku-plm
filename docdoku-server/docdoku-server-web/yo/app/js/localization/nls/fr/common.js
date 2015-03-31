@@ -1,7 +1,7 @@
 /*global define*/
 define({
 	ABOUT_DOCDOKUPLM: 'A propos de DocdokuPLM',
-	ABSOLUTE: "Absolut",
+	ABSOLUTE: "Absolu",
 	ACCEPT_VIDEO_INVITE: "Accepter",
 	ACL: "Droits",
 	ACTIVITY_STATE_PLACEHOLDER: "Nouvel état",
@@ -479,5 +479,5 @@ define({
 	WORKSPACE: "Espace de travail",
 	WORKSPACES_ADMINISTRATION: 'Administration des espaces de travail',
 	WORKSPACES: "Workspaces",
-	YOU_HAVE_BEEN_KICKED:"Vous avez été exclu de la salle com.docdoku.server.mainchannel.collaborative"
+	YOU_HAVE_BEEN_KICKED:"Vous avez été exclu de la salle collaborative"
 });
