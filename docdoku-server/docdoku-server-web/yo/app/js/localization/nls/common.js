@@ -80,6 +80,7 @@ define({
 		COMPONENT_SELECTED: "Selected part",
 		CONFIG_SPEC: "Config spec",
         CONFIGURATION: "Configuration",
+        CONFIGURATIONS: "Configurations",
         CONFIRM: "Confirm password",
 		CONNECTED: "Connected",
 		CONNECTING: "Connecting...",
