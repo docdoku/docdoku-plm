@@ -3,6 +3,7 @@ define([
     'backbone',
     'common-objects/common/singleton_decorator',
     'views/nav/product_nav',
+    'views/nav/configuration_nav',
     'views/nav/baselines_nav',
     'views/nav/product_instances_nav',
     'views/nav/part_nav',
@@ -10,11 +11,12 @@ define([
     'views/nav/checkedouts_nav',
     'views/nav/tag_nav'
 ],
-function (Backbone, singletonDecorator, ProductNavView, BaselinesNavView, ProductInstancesNavView, PartNavView, PartTemplateNavView, CheckedOutNavView, TagNavView) {
+function (Backbone, singletonDecorator, ProductNavView, ConfigurationNavView, BaselinesNavView, ProductInstancesNavView, PartNavView, PartTemplateNavView, CheckedOutNavView, TagNavView) {
     'use strict';
     var Router = Backbone.Router.extend({
         routes: {
             ':workspaceId/products': 'products',
+            ':workspaceId/configurations': 'configurations',
             ':workspaceId/baselines': 'baselines',
             ':workspaceId/product-instances': 'productInstances',
             ':workspaceId/parts': 'parts',
@@ -35,6 +37,7 @@ function (Backbone, singletonDecorator, ProductNavView, BaselinesNavView, Produc
 
         initNavViews: function () {
 	        ProductNavView.getInstance().cleanView();
+            ConfigurationNavView.getInstance().cleanView();
 	        BaselinesNavView.getInstance().cleanView();
 	        ProductInstancesNavView.getInstance().cleanView();
 	        PartNavView.getInstance().cleanView();
@@ -47,6 +50,12 @@ function (Backbone, singletonDecorator, ProductNavView, BaselinesNavView, Produc
             this.executeOrReload(workspaceId,function(){
 	            this.initNavViews();
 	            ProductNavView.getInstance().showContent();
+            });
+        },
+        configurations: function (workspaceId) {
+            this.executeOrReload(workspaceId,function(){
+	            this.initNavViews();
+                ConfigurationNavView.getInstance().showContent();
             });
         },
         baselines: function (workspaceId) {

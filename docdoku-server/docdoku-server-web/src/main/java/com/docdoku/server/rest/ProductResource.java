@@ -69,6 +69,8 @@ public class ProductResource {
     @EJB
     private LayerResource layerResource;
     @EJB
+    private ProductConfigurationsResource productConfigurationsResource;
+    @EJB
     private ProductBaselinesResource productBaselinesResource;
     @EJB
     private ProductInstancesResource productInstancesResource;
@@ -338,6 +340,17 @@ public class ProductResource {
 
         return Response.ok(partDTO).build();
     }
+
+    @Path("configurations")
+    public ProductConfigurationsResource getAllConfigurations(@PathParam("workspaceId") String workspaceId){
+        return productConfigurationsResource;
+    }
+
+    @Path("{ciId}/configurations")
+    public ProductConfigurationsResource getConfigurations(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId){
+        return productConfigurationsResource;
+    }
+
 
     @Path("baselines")
     public ProductBaselinesResource getAllBaselines(@PathParam("workspaceId") String workspaceId){

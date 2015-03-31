@@ -7,7 +7,7 @@ define([
     'text!templates/product/product_content.html',
     'views/product/product_list',
     'views/product/product_creation_view',
-        'views/baselines/baseline_creation_view',
+    'views/baselines/baseline_creation_view',
     'text!common-objects/templates/buttons/snap_button.html',
     'text!common-objects/templates/buttons/delete_button.html',
     'text!common-objects/templates/buttons/udf_button.html',
