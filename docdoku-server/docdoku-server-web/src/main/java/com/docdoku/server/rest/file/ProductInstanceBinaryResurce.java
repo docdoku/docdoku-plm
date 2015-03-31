@@ -18,27 +18,145 @@ package com.docdoku.server.rest.file; /*
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import com.docdoku.core.exceptions.EntityNotFoundException;
-import com.docdoku.core.exceptions.UserNotActiveException;
+import com.docdoku.core.common.BinaryResource;
+import com.docdoku.core.configuration.ProductInstanceIterationKey;
+import com.docdoku.core.document.DocumentIterationKey;
+import com.docdoku.core.exceptions.*;
+import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.security.UserGroupMapping;
+import com.docdoku.core.services.*;
+import com.docdoku.server.filters.GuestProxy;
+import com.docdoku.server.rest.dto.product.ProductInstanceIterationDTO;
+import com.docdoku.server.rest.exceptions.*;
+import com.docdoku.server.rest.file.util.BinaryResourceDownloadMeta;
+import com.docdoku.server.rest.file.util.BinaryResourceDownloadResponseBuilder;
+import com.docdoku.server.rest.file.util.BinaryResourceUpload;
 
+import javax.annotation.Resource;
+import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
+import javax.ejb.EJB;
+import javax.ejb.SessionContext;
+import javax.ejb.Stateless;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.Part;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Request;
+import javax.ws.rs.core.Response;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URLEncoder;
+import java.util.Collection;
 
 /*
  *
  * @author Asmae CHADID on 30/03/15.
  */
+@Stateless
+@DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID})
+@RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
 public class ProductInstanceBinaryResurce {
+
+
+    @EJB
+    private IDataManagerLocal dataManager;
+    @EJB
+    private IProductInstanceManagerLocal productInstanceManagerLocal;
+    @Resource
+    private SessionContext ctx;
+    @EJB
+    private GuestProxy guestProxy;
+
+
+
+
     @POST
-    @Path("{serialNumber}/iterations/{iteration}/")
+    @Path("/{iteration}")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
-    public void uploadFilesToProductInstanceIteration(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, @PathParam("iteration") int iteration)
-            throws EntityNotFoundException, UserNotActiveException {
+    public Response uploadFilesToProductInstanceIteration(
+            @Context HttpServletRequest request,
+            @PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, @PathParam("iteration") int iteration)
+            throws EntityNotFoundException, UserNotActiveException, NotAllowedException, AccessRightException, EntityAlreadyExistsException, CreationException {
 
 
-        return ;
+        try {
+            String fileName = null;
+            ProductInstanceIterationKey iterationKey = new ProductInstanceIterationKey(serialNumber, workspaceId, configurationItemId, iteration);
+            Collection<Part> formParts = request.getParts();
+
+            for (Part formPart : formParts) {
+                fileName = uploadAFile(workspaceId, formPart, iterationKey);
+            }
+
+            if (formParts.size() == 1) {
+                return BinaryResourceUpload.tryToRespondCreated(request.getRequestURI() + URLEncoder.encode(fileName, "UTF-8"));
+            }
+            return Response.ok().build();
+
+        } catch (IOException | ServletException | StorageException e) {
+            return BinaryResourceUpload.uploadError(e);
+        }
+
+    }
+
+
+        @GET
+        @Path("{iteration}/{fileName}")
+        @Produces(MediaType.APPLICATION_OCTET_STREAM)
+        public Response downloadFileFromProductInstance(@Context Request request,
+                                               @HeaderParam("Range") String range,
+                                               @PathParam("workspaceId") final String workspaceId,
+                                               @PathParam("serialNumber") final String serialNumber,
+                                               @PathParam("ciId") final String configurationItemId,
+                                               @PathParam("iteration") final int iteration,
+                                               @PathParam("fileName") final String fileName,
+                                               @QueryParam("type") String type,
+                                               @QueryParam("output") String output)
+                throws EntityNotFoundException, UserNotActiveException, AccessRightException, com.docdoku.core.exceptions.NotAllowedException, PreconditionFailedException, NotModifiedException, RequestedRangeNotSatisfiableException, UnmatchingUuidException, ExpiredLinkException {
+
+
+            String fullName = workspaceId + "/product-instances/" + serialNumber +"/iterations/" + iteration + "/" + fileName;
+            BinaryResource binaryResource = getBinaryResource(fullName);
+            BinaryResourceDownloadMeta binaryResourceDownloadMeta = new BinaryResourceDownloadMeta(binaryResource,output,type);
+
+            // Check cache precondition
+            Response.ResponseBuilder rb = request.evaluatePreconditions(binaryResourceDownloadMeta.getLastModified(), binaryResourceDownloadMeta.getETag());
+            if(rb!= null){
+                return rb.build();
+            }
+
+            try {
+                InputStream binaryContentInputStream = dataManager.getBinaryResourceInputStream(binaryResource);
+                return BinaryResourceDownloadResponseBuilder.prepareResponse(binaryContentInputStream, binaryResourceDownloadMeta, range);
+            } catch (StorageException e) {
+                return BinaryResourceDownloadResponseBuilder.downloadError(e, fullName);
+            }
+        }
+
+    private BinaryResource getBinaryResource(String fullName)
+            throws NotAllowedException, AccessRightException, UserNotActiveException, EntityNotFoundException {
+        if(ctx.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)){
+            return productInstanceManagerLocal.getBinaryResource(fullName);
+        }else{
+            return guestProxy.getBinaryResourceForProducInstance(fullName);
+        }
+    }
+
+
+    private String uploadAFile(String workspaceId, Part formPart, ProductInstanceIterationKey pdtIterationKey)
+            throws EntityNotFoundException, EntityAlreadyExistsException, AccessRightException, NotAllowedException, CreationException, UserNotActiveException, StorageException, IOException {
+
+        String fileName = formPart.getSubmittedFileName();
+        // Init the binary resource with a null length
+        BinaryResource binaryResource = productInstanceManagerLocal.saveFileInProductInstance(workspaceId, pdtIterationKey, fileName, 0);
+        OutputStream outputStream = dataManager.getBinaryResourceOutputStream(binaryResource);
+        long length = BinaryResourceUpload.uploadBinary(outputStream, formPart);
+        productInstanceManagerLocal.saveFileInProductInstance(workspaceId, pdtIterationKey, fileName, (int) length);
+        return fileName;
     }
 }

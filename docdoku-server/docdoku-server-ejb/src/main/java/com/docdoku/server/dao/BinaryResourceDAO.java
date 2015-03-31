@@ -20,6 +20,7 @@
 package com.docdoku.server.dao;
 
 import com.docdoku.core.common.BinaryResource;
+import com.docdoku.core.configuration.ProductInstanceIteration;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentMasterTemplate;
 import com.docdoku.core.exceptions.CreationException;
@@ -102,6 +103,15 @@ public class BinaryResourceDAO {
     
     public DocumentIteration getDocumentOwner(BinaryResource pBinaryResource) {
         TypedQuery<DocumentIteration> query = em.createQuery("SELECT d FROM DocumentIteration d WHERE :binaryResource MEMBER OF d.attachedFiles", DocumentIteration.class);
+        try {
+            return query.setParameter("binaryResource", pBinaryResource).getSingleResult();
+        } catch (NoResultException pNREx) {
+            LOGGER.log(Level.FINER,null,pNREx);
+            return null;
+        }
+    }
+    public ProductInstanceIteration getProductInstanceIterationOwner(BinaryResource pBinaryResource) {
+        TypedQuery<ProductInstanceIteration> query = em.createQuery("SELECT d FROM ProductInstanceIteration d WHERE :binaryResource MEMBER OF d.attachedFiles", ProductInstanceIteration.class);
         try {
             return query.setParameter("binaryResource", pBinaryResource).getSingleResult();
         } catch (NoResultException pNREx) {

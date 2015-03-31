@@ -20,8 +20,11 @@
 
 package com.docdoku.server.products;
 
+import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.User;
 import com.docdoku.core.configuration.*;
+import com.docdoku.core.document.DocumentIteration;
+import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.product.*;
@@ -29,13 +32,17 @@ import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IProductInstanceManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
+import com.docdoku.core.util.NamingConvention;
+import com.docdoku.server.LogDocument;
 import com.docdoku.server.dao.*;
 import com.docdoku.server.factory.ACLFactory;
 
+import javax.annotation.Resource;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Local;
+import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -51,6 +58,9 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
     private EntityManager em;
     @EJB
     private IUserManagerLocal userManager;
+
+    @Resource
+    private SessionContext ctx;
 
     private static final Logger LOGGER = Logger.getLogger(ProductInstanceManagerBean.class.getName());
 
@@ -249,6 +259,85 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         if (acl != null) {
             new ACLDAO(em).removeACLEntries(acl);
             prodInstM.setAcl(null);
+        }
+    }
+
+    @Override
+    public BinaryResource saveFileInProductInstance(String workspaceId,ProductInstanceIterationKey pdtIterationKey, String fileName, int pSize) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, ProductInstanceMasterNotFoundException, AccessRightException, ProductInstanceIterationNotFoundException, FileAlreadyExistsException, CreationException {
+        // Check the read access to the workspace
+        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+        Locale locale = new Locale(user.getLanguage());
+        checkNameFileValidity(fileName, locale);
+
+        // Load the product instance
+        ProductInstanceMasterDAO productInstanceMasterDAO = new ProductInstanceMasterDAO(locale, em);
+        ProductInstanceMaster prodInstM = productInstanceMasterDAO.loadProductInstanceMaster(new ProductInstanceMasterKey(pdtIterationKey.getProductInstanceMaster().getSerialNumber(), workspaceId, pdtIterationKey.getProductInstanceMaster().getInstanceOf().getId()));
+        // Check the access to the product instance
+        checkProductInstanceWriteAccess(workspaceId, prodInstM, user);
+
+        // Load the product instance iteration
+        ProductInstanceIteration productInstanceIteration = this.getProductInstanceIteration(pdtIterationKey);
+
+
+         BinaryResource binaryResource = null;
+         String fullName = workspaceId + "/product-instances/"+prodInstM.getSerialNumber()+"/iterations/"+productInstanceIteration.getIteration()+"/"+fileName ;
+
+         for (BinaryResource bin : productInstanceIteration.getAttachedFiles()) {
+         if (bin.getFullName().equals(fullName)) {
+         binaryResource = bin;
+         break;
+         }
+         }
+
+         if (binaryResource == null) {
+         binaryResource = new BinaryResource(fullName, pSize, new Date());
+         new BinaryResourceDAO(locale, em).createBinaryResource(binaryResource);
+             productInstanceIteration.addFile(binaryResource);
+         } else {
+         binaryResource.setContentLength(pSize);
+         binaryResource.setLastModified(new Date());
+         }
+         return binaryResource;
+
+    }
+
+
+    @LogDocument
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.GUEST_PROXY_ROLE_ID})
+    @Override
+    public BinaryResource getBinaryResource(String fullName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, FileNotFoundException, NotAllowedException {
+
+        if (ctx.isCallerInRole(UserGroupMapping.GUEST_PROXY_ROLE_ID)) {
+            // Don't check access right because it is do before. (Is public or isShared)
+            return new BinaryResourceDAO(em).loadBinaryResource(fullName);
+        }
+
+        User user = userManager.checkWorkspaceReadAccess(BinaryResource.parseWorkspaceId(fullName));
+        Locale userLocale = new Locale(user.getLanguage());
+        BinaryResourceDAO binDAO = new BinaryResourceDAO(userLocale, em);
+        BinaryResource binaryResource = binDAO.loadBinaryResource(fullName);
+
+        ProductInstanceIteration  productInstanceIteration = binDAO.getProductInstanceIterationOwner(binaryResource);
+        if (productInstanceIteration != null) {
+            ProductInstanceMaster productInstanceMaster = productInstanceIteration.getProductInstanceMaster();
+
+            if(isACLGrantReadAccess(user,productInstanceMaster)) {
+                return binaryResource;
+            }else {
+                    throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException34");
+                }
+        } else {
+            throw new FileNotFoundException(userLocale, fullName);
+        }
+    }
+
+    private boolean isACLGrantReadAccess(User user, ProductInstanceMaster productInstanceMaster) {
+      return user.isAdministrator() || productInstanceMaster.getAcl().hasReadAccess(user);
+    }
+
+    private void checkNameFileValidity(String name, Locale locale) throws NotAllowedException {
+        if (!NamingConvention.correctNameFile(name)) {
+            throw new NotAllowedException(locale, "NotAllowedException9");
         }
     }
 }
