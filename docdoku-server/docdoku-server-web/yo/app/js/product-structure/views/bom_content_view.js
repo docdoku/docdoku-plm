@@ -21,8 +21,6 @@ define([
         initialize: function () {
             _.bindAll(this);
             this.itemViews = [];
-            this.selectedPartIndexes = [];
-            this.bindEvent();
         },
 
         render: function () {
@@ -30,11 +28,6 @@ define([
             this.table = this.$('table');
             this.tbody = this.$('tbody');
             return this;
-        },
-
-        bindEvent: function () {
-            // Try to remove this
-            Backbone.Events.on('part:saved', this.resetCollection);
         },
 
         onHeaderSelectionChanged: function (e) {
@@ -55,7 +48,6 @@ define([
             this.partsCollection = new PartList();
             this.partsCollection.setFilterUrl(component.getUrlForBom());
             this.listenTo(this.partsCollection, 'reset', this.addAllBomItem);
-            this.listenTo(this.partsCollection, 'change', this.addAllBomItem);
             this.partsCollection.fetch({reset: true});
         },
 
@@ -64,19 +56,20 @@ define([
             this.partsCollection = new PartList();
             this.partsCollection.setFilterUrl(rootComponent.getRootUrlForBom());
             this.listenTo(this.partsCollection, 'reset', this.addAllBomItem);
-            this.listenTo(this.partsCollection, 'change', this.addAllBomItem);
             this.partsCollection.fetch({reset: true});
         },
 
         addAllBomItem: function (parts) {
             this.render();
-            if (this.partsCollection) {
-                this.partsCollection.each(this.addBomItem, this);
-            } else {
-                parts.each(this.addBomItem, this);
-            }
+            parts.each(this.addBomItem, this);
             this.notifySelectionChanged();
             this.dataTable();
+        },
+
+        checkedViews: function () {
+            return _.filter(this.itemViews, function (itemView) {
+                return itemView.isChecked();
+            });
         },
 
         addBomItem: function (part) {
@@ -86,26 +79,10 @@ define([
             this.tbody.append(bomItemView.el);
         },
 
-        checkedViews: function () {
-            return _.filter(this.itemViews, function (itemView) {
-                return itemView.isChecked();
-            });
-        },
-
-        getSelectedPartIndexes: function () {
-            for (var i=0; i<this.itemViews.length; i++) {
-                if (this.itemViews[i].isChecked()) {
-                    this.selectedPartIndexes[this.selectedPartIndexes.length] = i;
-                }
-            }
-        },
-
         actionCheckout: function () {
-            this.getSelectedPartIndexes();
             var self = this;
 
             _.each(this.checkedViews(), function (view) {
-                // TODO: only refresh the item
                 view.model.checkout().then(self.onSuccess);
             });
 
@@ -113,11 +90,9 @@ define([
         },
 
         actionUndocheckout: function () {
-            this.getSelectedPartIndexes();
             var self = this;
 
             _.each(this.checkedViews(), function (view) {
-                // TODO: only refresh the item
                 view.model.undocheckout().then(self.onSuccess);
             });
 
@@ -125,7 +100,6 @@ define([
         },
 
         actionCheckin: function () {
-            this.getSelectedPartIndexes();
             var self = this;
 
             _.each(this.checkedViews(), function (view) {
@@ -162,21 +136,6 @@ define([
 
         onSuccess: function () {
             Backbone.Events.trigger('part:saved');
-        },
-
-        resetCollection: function () {
-            this.itemViews = [];
-            this.partsCollection.fetch().success(function () {
-                this.checkCheckboxes();
-                this.notifySelectionChanged();
-            }.bind(this));
-        },
-
-        checkCheckboxes: function () {
-            for (var i = 0; i < this.selectedPartIndexes.length; i++) {
-                this.itemViews[this.selectedPartIndexes[i]].setSelectionState(true);
-            }
-            this.selectedPartIndexes = [];
         },
 
         actionUpdateACL:function(){

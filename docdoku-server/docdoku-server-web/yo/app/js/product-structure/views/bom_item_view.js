@@ -20,7 +20,7 @@ define([
         },
 
         initialize: function () {
-            this.listenTo(this.model, 'change, sync, reset', this.render);
+            this.listenTo(this.model, 'sync, reset', this.render);
         },
 
         render: function () {
