@@ -22,6 +22,7 @@ define([
             this.listenTo(this.collection, 'reset', this.resetList);
             this.listenTo(this.collection, 'add', this.addNewPart);
             this.listItemViews = [];
+            this.selectedPartIndexes = [];
             this.$el.on('remove', this.removeSubviews);
         },
 
@@ -103,6 +104,13 @@ define([
                 });
             }
             this.onSelectionChanged();
+        },
+
+        checkCheckboxes: function () {
+            for (var i = 0; i < this.selectedPartIndexes.length; i++) {
+                this.listItemViews[this.selectedPartIndexes[i]].check();
+            }
+            this.selectedPartIndexes = [];
         },
 
         onSelectionChanged: function () {
@@ -222,6 +230,15 @@ define([
             });
             return checkedViews;
         },
+
+        getSelectedPartIndexes: function () {
+            for (var i=0; i<this.listItemViews.length; i++) {
+                if (this.listItemViews[i].isChecked()) {
+                    this.selectedPartIndexes[this.selectedPartIndexes.length] = i;
+                }
+            }
+        },
+
         eachChecked: function (callback) {
             _(this.listItemViews).each(function (view) {
                 if (view.isChecked()) {

@@ -199,6 +199,7 @@ define([
         },
 
         checkin: function () {
+            this.partListView.getSelectedPartIndexes();
 
             var selectedParts = this.partListView.getSelectedParts();
             var promptView = new PromptView();
@@ -304,7 +305,10 @@ define([
         },
 
         resetCollection: function () {
-            this.partListView.collection.fetch({reset: true});
+            this.partListView.collection.fetch({reset: true}).success(function () {
+                this.partListView.checkCheckboxes();
+                this.partListView.canCheckinCheckoutOrUndoCheckout();
+            }.bind(this));
         },
 
         onPageCountFetched: function () {
