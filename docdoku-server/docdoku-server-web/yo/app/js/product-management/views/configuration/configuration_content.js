@@ -25,7 +25,7 @@ define([
         events: {
             'click button.new-configuration': 'newConfiguration',
             'click button.delete': 'deleteConfiguration',
-            'click button.edit-acl': 'actionEditAcl',
+            'click button.edit-acl': 'actionEditAcl'
         },
 
         initialize: function () {
@@ -92,8 +92,6 @@ define([
             if (modelChecked) {
 
                 var self = this;
-
-                modelChecked.fetch();
 
                 var aclEditView = new ACLEditView({
                     editMode: true,

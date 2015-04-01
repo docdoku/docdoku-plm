@@ -75,7 +75,7 @@ public class ProductConfigurationsResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<ProductConfigurationDTO> getAllConfiguration(@PathParam("workspaceId") String workspaceId,  @PathParam("ciId") String ciId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+    public List<ProductConfigurationDTO> getAllConfiguration(@PathParam("workspaceId") String workspaceId,  @PathParam("ciId") String ciId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ConfigurationItemNotFoundException {
         List<ProductConfiguration> allProductConfigurations;
         if(ciId != null) {
             ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId,ciId);
@@ -133,7 +133,7 @@ public class ProductConfigurationsResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ProductConfigurationDTO createConfiguration(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String pCiId, ProductConfigurationDTO pProductConfigurationDTO) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, CreationException {
+    public ProductConfigurationDTO createConfiguration(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String pCiId, ProductConfigurationDTO pProductConfigurationDTO) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, CreationException, AccessRightException {
         String ciId = (pCiId != null) ? pCiId : pProductConfigurationDTO.getConfigurationItemId();
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId,ciId);
         String description = pProductConfigurationDTO.getDescription();
@@ -175,7 +175,7 @@ public class ProductConfigurationsResource {
     @DELETE
     @Path("{productConfigurationId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteProductConfiguration(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @PathParam("productConfigurationId") int productConfigurationId) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ProductConfigurationNotFoundException {
+    public Response deleteProductConfiguration(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @PathParam("productConfigurationId") int productConfigurationId) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ProductConfigurationNotFoundException, AccessRightException {
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId,ciId);
         productBaselineService.deleteProductConfiguration(ciKey, productConfigurationId);
         return Response.ok().build();

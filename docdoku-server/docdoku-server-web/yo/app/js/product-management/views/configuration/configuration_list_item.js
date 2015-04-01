@@ -27,6 +27,10 @@ define([
         render: function () {
             this.$el.html(Mustache.render(template, {model: this.model, i18n: App.config.i18n}));
             this.$checkbox = this.$('input[type=checkbox]');
+            if (this.isChecked()) {
+                this.check();
+                this.trigger('selectionChanged', this);
+            }
             this.trigger('rendered', this);
             date.dateHelper(this.$('.date-popover'));
             return this;
