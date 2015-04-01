@@ -136,7 +136,6 @@ define({
 	DROP_FILE_HERE: "or drop it here",
     DROP_FILES_HERE: "or drop them here",
 	DUE_DATE: "Due date",
-	DUPLICATE_BASELINE: 'Duplicate baseline',
 	DUPLICATE: 'Duplicate',
 	EDIT_BASELINE: 'Edit baseline',
 	EDIT: "Edit",

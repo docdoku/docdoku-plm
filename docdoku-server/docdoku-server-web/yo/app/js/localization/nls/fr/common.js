@@ -143,7 +143,6 @@ define({
 	DROP_FILE_HERE: "ou déposez le ici",
 	DROP_FILES_HERE: "ou déposez les ici",
 	DUE_DATE: "Date d'échéance",
-	DUPLICATE_BASELINE: 'Dupliquer la baseline',
 	DUPLICATE: 'Dupliquer',
 	EDIT_BASELINE: 'Editer la baseline',
 	EDIT: "Editer",

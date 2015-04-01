@@ -182,6 +182,7 @@ define([
             this.iteration.set({
                 attachedFiles: files
             });
+
             this.iteration.save(JSON.stringify(this.iteration), '', {
                 success: function () {
                     _this.model.fetch();

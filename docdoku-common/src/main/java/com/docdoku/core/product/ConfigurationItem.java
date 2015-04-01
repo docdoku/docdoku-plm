@@ -48,7 +48,6 @@ import java.io.Serializable;
 @Entity
 public class ConfigurationItem implements Serializable {
 
-
     @Column(length = 100)
     @Id
     private String id = "";
@@ -118,7 +117,11 @@ public class ConfigurationItem implements Serializable {
         this.workspace = workspace;
     }
 
-        @Override
+    public ConfigurationItemKey getKey(){
+        return new ConfigurationItemKey(getWorkspaceId(),getId());
+    }
+
+    @Override
     public boolean equals(Object pObj) {
         if (this == pObj) {
             return true;

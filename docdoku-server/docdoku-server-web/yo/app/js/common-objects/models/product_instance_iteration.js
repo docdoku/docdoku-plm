@@ -97,26 +97,6 @@ define(['backbone'
         },
         setConfigurationItemId:function(configurationItemId){
             this.set('configurationItemId', configurationItemId);
-        },
-        getBaselinePartsWithReference: function (ref, callback) {
-            var baselinedParts = null;
-            $.ajax({
-                type: 'GET',
-                url: this.url() + '/baselined-parts?q=' + ref,
-                contentType: 'application/json; charset=utf-8',
-                success: function (data) {
-                    baselinedParts = data;
-                    if (callback && callback.success) {
-                        callback.success(data);
-                    }
-                },
-                error: function (data) {
-                    if (callback && callback.error) {
-                        callback.error(data);
-                    }
-                }
-            });
-            return baselinedParts;
         }
     });
 

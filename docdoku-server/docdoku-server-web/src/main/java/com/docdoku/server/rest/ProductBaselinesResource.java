@@ -25,8 +25,12 @@ import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.product.ConfigurationItemKey;
 import com.docdoku.core.product.PartIterationKey;
+import com.docdoku.core.product.PartLink;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IProductBaselineManagerLocal;
+import com.docdoku.core.services.IProductManagerLocal;
+import com.docdoku.server.rest.dto.PartMinimalDTO;
+import com.docdoku.server.rest.dto.PartMinimalListDTO;
 import com.docdoku.server.rest.dto.baseline.BaselinedPartDTO;
 import com.docdoku.server.rest.dto.baseline.ProductBaselineDTO;
 import org.dozer.DozerBeanMapperSingletonWrapper;
@@ -54,6 +58,8 @@ public class ProductBaselinesResource {
 
     @EJB
     private IProductBaselineManagerLocal productBaselineService;
+    @EJB
+    private IProductManagerLocal productService;
 
     private Mapper mapper;
 
@@ -130,6 +136,33 @@ public class ProductBaselinesResource {
         productBaselineDTO.setConfigurationItemId(productBaseline.getConfigurationItem().getId());
         productBaselineDTO.setConfigurationItemLatestRevision(productBaseline.getConfigurationItem().getDesignItem().getLastRevision().getVersion());
         productBaselineDTO.setBaselinedParts(Tools.mapBaselinedPartsToBaselinedPartDTO(productBaseline));
+        ConfigurationItemKey ciKey = productBaseline.getConfigurationItem().getKey();
+
+        List<PartMinimalListDTO> substitutesParts = new ArrayList<>();
+        List<PartMinimalListDTO> optionalParts = new ArrayList<>();
+
+        for(String path:productBaseline.getSubstituteLinks()){
+            PartMinimalListDTO partMinimalListDTO = new PartMinimalListDTO();
+            List<PartMinimalDTO> partDTOs = new ArrayList<>();
+            for(PartLink partLink : productService.decodePath(ciKey, path)){
+                partDTOs.add(mapper.map(partLink.getComponent(), PartMinimalDTO.class));
+            }
+            partMinimalListDTO.setParts(partDTOs);
+            substitutesParts.add(partMinimalListDTO);
+        }
+        for(String path:productBaseline.getOptionalUsageLinks()){
+            PartMinimalListDTO partMinimalListDTO = new PartMinimalListDTO();
+            List<PartMinimalDTO> partDTOs = new ArrayList<>();
+            for(PartLink partLink : productService.decodePath(ciKey, path)){
+                partDTOs.add(mapper.map(partLink.getComponent(),PartMinimalDTO.class));
+            }
+            partMinimalListDTO.setParts(partDTOs);
+            optionalParts.add(partMinimalListDTO);
+        }
+
+        productBaselineDTO.setSubstitutesParts(substitutesParts);
+        productBaselineDTO.setOptionalsParts(optionalParts);
+
         return productBaselineDTO;
     }
 

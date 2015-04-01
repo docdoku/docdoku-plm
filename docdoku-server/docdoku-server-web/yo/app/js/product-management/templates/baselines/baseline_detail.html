@@ -14,7 +14,7 @@
             <ul class="ModalTabs-nav nav nav-tabs">
                 <li class="active"><a href="#tab-baseline-general" data-toggle="tab">{{i18n.GENERAL}}</a></li>
                 <li><a href="#tab-baseline-versions" data-toggle="tab">{{i18n.VERSIONS}}</a></li>
-                <!--<li><a href="#tab-baseline-choices" data-toggle="tab">{{i18n.CONFIGURATION}}</a></li>-->
+                <li><a href="#tab-baseline-choices" data-toggle="tab">{{i18n.CONFIGURATION}}</a></li>
             </ul>
 
             <div class="ModalTabsContent tab-content form-horizontal">
@@ -37,14 +37,14 @@
 
                 <div id="tab-baseline-versions" class="ModalTabsPane tab-pane baselinedPartListArea">
                 </div>
-                <!--<div id="tab-baseline-choices" class="ModalTabsPane tab-pane">-->
-                    <!--<div class="baselinedSubstituteLinks">-->
-                        <!--{{model.getSubstituteLinks}}-->
-                    <!--</div>-->
-                    <!--<div class="optionalUsageLinks">-->
-                        <!--{{model.getOptionalLinks}}-->
-                    <!--</div>-->
-                <!--</div>-->
+                <div id="tab-baseline-choices" class="ModalTabsPane tab-pane">
+                    <div class="choices-list">
+                        <p><i class="fa fa-check"></i> {{i18n.CHOSEN_SUBSTITUTES}} : <span class="substitutes-count"></span></p>
+                        <div class="substitutes-list choices"></div>
+                        <p><i class="fa fa-check"></i> {{i18n.CHOSEN_OPTIONALS}} : <span class="optionals-count"></span></p>
+                        <div class="optionals-list choices"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

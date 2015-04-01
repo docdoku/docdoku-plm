@@ -25,9 +25,13 @@ define([
         },
 
         renderChoices:function(){
-            _.each(this.model.getSubstitutesParts(),this.drawSubstitutesChoice.bind(this));
-            _.each(this.model.getOptionalsParts(),this.drawOptionalsChoice.bind(this));
+            var substitutes = this.model.getSubstitutesParts();
+            var optionals = this.model.getOptionalsParts();
+            this.$substitutesCount.text(substitutes.length);
+            this.$optionalsCount.text(optionals.length);
 
+            _.each(substitutes,this.drawSubstitutesChoice.bind(this));
+            _.each(optionals,this.drawOptionalsChoice.bind(this));
         },
 
         drawSubstitutesChoice:function(data){
@@ -50,7 +54,9 @@ define([
             this.$notifications = this.$el.find('.notifications').first();
             this.$modal = this.$('#configuration_details_modal');
             this.$substitutes = this.$('.substitutes-list');
+            this.$substitutesCount = this.$('.substitutes-count');
             this.$optionals = this.$('.optionals-list');
+            this.$optionalsCount = this.$('.optionals-count');
         },
 
         onError: function (model, error) {
