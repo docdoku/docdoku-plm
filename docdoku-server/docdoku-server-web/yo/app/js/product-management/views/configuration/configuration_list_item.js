@@ -21,6 +21,7 @@ define([
 
         initialize: function () {
             this._isChecked = false;
+            this.listenTo(this.model, 'change', this.render);
         },
 
         render: function () {

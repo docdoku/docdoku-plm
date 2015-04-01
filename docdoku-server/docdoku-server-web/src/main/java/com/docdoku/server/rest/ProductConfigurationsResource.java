@@ -24,9 +24,11 @@ import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.product.ConfigurationItemKey;
 import com.docdoku.core.product.PartLink;
+import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IProductBaselineManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
+import com.docdoku.server.rest.dto.ACLDTO;
 import com.docdoku.server.rest.dto.PartMinimalDTO;
 import com.docdoku.server.rest.dto.PartMinimalListDTO;
 import com.docdoku.server.rest.dto.baseline.ProductConfigurationDTO;
@@ -42,7 +44,9 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -142,20 +146,31 @@ public class ProductConfigurationsResource {
 
 
     @PUT
-    @Path("{productConfigurationId}")
+    @Path("{productConfigurationId}/acl")
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public ProductConfigurationDTO updateConfiguration(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String pCiId, @PathParam("productConfigurationId") int productConfigurationId, ProductConfigurationDTO pProductConfigurationDTO) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ProductConfigurationNotFoundException {
-        String ciId = (pCiId != null) ? pCiId : pProductConfigurationDTO.getConfigurationItemId();
-        ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId,ciId);
-        String description = pProductConfigurationDTO.getDescription();
-        String name = pProductConfigurationDTO.getName();
-        ProductConfiguration productConfiguration = productBaselineService.updateProductConfiguration(ciKey, productConfigurationId, name, description, pProductConfigurationDTO.getSubstituteLinks(), pProductConfigurationDTO.getOptionalUsageLinks());
-        ProductConfigurationDTO productConfigurationDTO = mapper.map(productConfiguration, ProductConfigurationDTO.class);
-        productConfigurationDTO.setConfigurationItemId(productConfiguration.getConfigurationItem().getId());
-        return productConfigurationDTO;
-    }
+    public Response updateConfigurationACL(@PathParam("workspaceId") String workspaceId,@PathParam("ciId") String pCiId, @PathParam("productConfigurationId") int productConfigurationId, ACLDTO acl) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ProductConfigurationNotFoundException, AccessRightException {
+        ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId,pCiId);
 
+        if (acl.getGroupEntries().size() > 0 || acl.getUserEntries().size() > 0) {
+
+            Map<String,String> userEntries = new HashMap<>();
+            Map<String,String> groupEntries = new HashMap<>();
+
+            for (Map.Entry<String, ACL.Permission> entry : acl.getUserEntries().entrySet()) {
+                userEntries.put(entry.getKey(), entry.getValue().name());
+            }
+
+            for (Map.Entry<String, ACL.Permission> entry : acl.getGroupEntries().entrySet()) {
+                groupEntries.put(entry.getKey(), entry.getValue().name());
+            }
+
+            productBaselineService.updateACLForConfiguration(ciKey, productConfigurationId, userEntries, groupEntries);
+        }else{
+            productBaselineService.removeACLFromConfiguration(ciKey, productConfigurationId);
+        }
+
+        return Response.ok().build();
+    }
 
     @DELETE
     @Path("{productConfigurationId}")

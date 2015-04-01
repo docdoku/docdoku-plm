@@ -126,14 +126,17 @@ define([
 
         onNoConfigurationSelected: function () {
             this.trigger('delete-button:display', false);
+            this.trigger('acl-button:display', false);
         },
 
         onOneConfigurationSelected: function () {
             this.trigger('delete-button:display', true);
+            this.trigger('acl-button:display', true);
         },
 
         onSeveralConfigurationsSelected: function () {
             this.trigger('delete-button:display', true);
+            this.trigger('acl-button:display', false);
         },
 
         getSelectedConfiguration: function () {

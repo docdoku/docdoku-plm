@@ -1,9 +1,12 @@
 /*global _,$,define,App*/
-define(['backbone','common-objects/utils/date'], function (Backbone,date) {
+define([
+    'backbone',
+    'common-objects/utils/date',
+    'common-objects/utils/acl-checker'
+], function (Backbone,date, ACLChecker) {
     'use strict';
     var Configuration = Backbone.Model.extend({
         urlRoot: function () {
-
             if (this.configurationItemId) {
                 return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + this.configurationItemId + '/configurations';
             }
@@ -56,6 +59,41 @@ define(['backbone','common-objects/utils/date'], function (Backbone,date) {
                 App.config.i18n._DATE_FORMAT,
                 this.getCreatedDate()
             );
+        },
+
+        getACL: function () {
+            return this.get('acl');
+        },
+
+        updateACL: function (args) {
+            $.ajax({
+                type: 'PUT',
+                url: this.url() + '/acl',
+                data: JSON.stringify(args.acl),
+                contentType: 'application/json; charset=utf-8',
+                success: args.success,
+                error: args.error
+            });
+        },
+
+        hasACLForCurrentUser: function () {
+            return this.getACLPermissionForCurrentUser() !== false;
+        },
+
+        isForbidden: function () {
+            return this.getACLPermissionForCurrentUser() === 'FORBIDDEN';
+        },
+
+        isReadOnly: function () {
+            return this.getACLPermissionForCurrentUser() === 'READ_ONLY';
+        },
+
+        isFullAccess: function () {
+            return this.getACLPermissionForCurrentUser() === 'FULL_ACCESS';
+        },
+
+        getACLPermissionForCurrentUser: function () {
+            return ACLChecker.getPermission(this.getACL());
         }
 
     });

@@ -2,4 +2,11 @@
 <td class="configuration_id">{{model.getName}}</a></td>
 <td><a class="product_id">{{model.getConfigurationItemId}}</a></td>
 <td><a class="date-popover">{{model.getFormattedCreationDate}}</a></td>
-<td><a>acl</a></td>
+<td class="acl-info">
+    {{#model.isReadOnly}}
+    <i class="fa fa-ban read-only" title="{{i18n.READ_ONLY}}"></i>
+    {{/model.isReadOnly}}
+    {{#model.isFullAccess}}
+    <i class="fa fa-ban full-access" title="{{i18n.FULL_ACCESS}}"></i>
+    {{/model.isFullAccess}}
+</td>
