@@ -24,7 +24,8 @@ import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.User;
 import com.docdoku.core.configuration.*;
 import com.docdoku.core.document.DocumentIteration;
-import com.docdoku.core.document.DocumentRevision;
+import com.docdoku.core.document.DocumentIterationKey;
+import com.docdoku.core.document.DocumentLink;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.product.*;
@@ -123,7 +124,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public ProductInstanceMaster createProductInstance(String workspaceId, ConfigurationItemKey configurationItemKey, String serialNumber, int baselineId, Map<String, ACL.Permission> userEntries, Map<String, ACL.Permission> groupEntries, List<InstanceAttribute> attributes) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, BaselineNotFoundException, CreationException, ProductInstanceAlreadyExistsException {
+    public ProductInstanceMaster createProductInstance(String workspaceId, ConfigurationItemKey configurationItemKey, String serialNumber, int baselineId, Map<String, ACL.Permission> userEntries, Map<String, ACL.Permission> groupEntries, List<InstanceAttribute> attributes, DocumentIterationKey[] links, String[] documentLinkComments) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, BaselineNotFoundException, CreationException, ProductInstanceAlreadyExistsException {
         User user = userManager.checkWorkspaceWriteAccess(configurationItemKey.getWorkspace());
         Locale userLocal = new Locale(user.getLanguage());
         ProductInstanceMasterDAO productInstanceMasterDAO = new ProductInstanceMasterDAO(userLocal, em);
@@ -164,6 +165,28 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         productInstanceIteration.setPartCollection(partCollection);
 
         productInstanceIteration.setInstanceAttributes(attributes);
+        DocumentLinkDAO linkDAO = new DocumentLinkDAO(userLocal, em);
+        if (links != null) {
+            ArrayList<DocumentIterationKey> linkKeys = new ArrayList<>(Arrays.asList(links));
+            ArrayList<DocumentIterationKey> currentLinkKeys = new ArrayList<>();
+
+            Set<DocumentLink> currentLinks = new HashSet<>(productInstanceIteration.getLinkedDocuments());
+
+            for (DocumentLink link : currentLinks) {
+                productInstanceIteration.getLinkedDocuments().remove(link);
+            }
+
+            int counter = 0;
+            for (DocumentIterationKey link : linkKeys) {
+                DocumentLink newLink = new DocumentLink(em.getReference(DocumentIteration.class, link));
+                newLink.setComment(documentLinkComments[counter]);
+                linkDAO.createLink(newLink);
+                productInstanceIteration.getLinkedDocuments().add(newLink);
+                counter++;
+            }
+        }
+
+
         return productInstanceMaster;
     }
 
@@ -341,6 +364,11 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         } else {
             throw new FileNotFoundException(userLocale, fullName);
         }
+    }
+
+    @Override
+    public ProductInstanceMaster updateProductInstance(String workspaceId, ConfigurationItemKey configurationItemKey, String serialNumber, int baselineId, Map<String, ACL.Permission> userEntries, Map<String, ACL.Permission> grpEntries, List<InstanceAttribute> attributes, DocumentIterationKey[] links, String[] documentLinkComments) {
+        return null;
     }
 
     private boolean isACLGrantReadAccess(User user, ProductInstanceMaster productInstanceMaster) {

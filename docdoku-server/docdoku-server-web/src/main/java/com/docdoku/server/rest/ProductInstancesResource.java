@@ -20,6 +20,7 @@
 package com.docdoku.server.rest;
 
 import com.docdoku.core.configuration.*;
+import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.meta.InstanceAttribute;
@@ -29,6 +30,7 @@ import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IProductInstanceManagerLocal;
 import com.docdoku.server.rest.dto.ACLDTO;
+import com.docdoku.server.rest.dto.DocumentIterationDTO;
 import com.docdoku.server.rest.dto.FileDTO;
 import com.docdoku.server.rest.dto.InstanceAttributeDTO;
 import com.docdoku.server.rest.dto.baseline.BaselinedPartDTO;
@@ -47,10 +49,7 @@ import javax.ejb.Stateless;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  *
@@ -114,7 +113,61 @@ public class ProductInstancesResource {
             userEntries = acldto.getUserEntries();
             grpEntries= acldto.getGroupEntries();
         }
-        ProductInstanceMaster productInstanceMaster = productInstanceService.createProductInstance(workspaceId,new ConfigurationItemKey(workspaceId, productInstanceCreationDTO.getConfigurationItemId()), productInstanceCreationDTO.getSerialNumber(), productInstanceCreationDTO.getBaselineId(),userEntries,grpEntries,attributes);
+        Set<DocumentIterationDTO> linkedDocs = productInstanceCreationDTO.getLinkedDocuments();
+        DocumentIterationKey[] links = null;
+        String[] documentLinkComments = null;
+        if (linkedDocs != null) {
+            documentLinkComments = new String[linkedDocs.size()];
+            links = createDocumentIterationKey(linkedDocs);
+            int i = 0;
+            for (DocumentIterationDTO docItereationForLink : linkedDocs){
+                String comment = docItereationForLink.getCommentLink();
+                if (comment == null){
+                    comment = "";
+                }
+                documentLinkComments[i++] = comment;
+            }
+        }
+        ProductInstanceMaster productInstanceMaster = productInstanceService.createProductInstance(workspaceId,new ConfigurationItemKey(workspaceId, productInstanceCreationDTO.getConfigurationItemId()), productInstanceCreationDTO.getSerialNumber(), productInstanceCreationDTO.getBaselineId(),userEntries,grpEntries,attributes, links, documentLinkComments);
+
+        return mapper.map(productInstanceMaster, ProductInstanceMasterDTO.class);
+    }
+
+    @PUT
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public ProductInstanceMasterDTO updateProductInstanceMaster(@PathParam("workspaceId") String workspaceId, ProductInstanceCreationDTO productInstanceCreationDTO)
+            throws EntityNotFoundException, EntityAlreadyExistsException, AccessRightException, CreationException {
+
+        InstanceAttributeFactory factory = new InstanceAttributeFactory();
+        ACLDTO acldto = productInstanceCreationDTO.getAcl();
+        Map<String,ACL.Permission> userEntries=new HashMap<>();
+        Map<String,ACL.Permission> grpEntries=new HashMap<>();
+        List<InstanceAttributeDTO> instanceAttributes = productInstanceCreationDTO.getInstanceAttributes();
+        List<InstanceAttribute> attributes = new ArrayList<>();
+        if (instanceAttributes != null) {
+            attributes = factory.createInstanceAttributes(instanceAttributes);
+        }
+        if(acldto != null){
+            userEntries = acldto.getUserEntries();
+            grpEntries= acldto.getGroupEntries();
+        }
+        Set<DocumentIterationDTO> linkedDocs = productInstanceCreationDTO.getLinkedDocuments();
+        DocumentIterationKey[] links = null;
+        String[] documentLinkComments = null;
+        if (linkedDocs != null) {
+            documentLinkComments = new String[linkedDocs.size()];
+            links = createDocumentIterationKey(linkedDocs);
+            int i = 0;
+            for (DocumentIterationDTO docItereationForLink : linkedDocs){
+                String comment = docItereationForLink.getCommentLink();
+                if (comment == null){
+                    comment = "";
+                }
+                documentLinkComments[i++] = comment;
+            }
+        }
+        ProductInstanceMaster productInstanceMaster = productInstanceService.updateProductInstance(workspaceId,new ConfigurationItemKey(workspaceId, productInstanceCreationDTO.getConfigurationItemId()), productInstanceCreationDTO.getSerialNumber(), productInstanceCreationDTO.getBaselineId(),userEntries,grpEntries,attributes, links, documentLinkComments);
 
         return mapper.map(productInstanceMaster, ProductInstanceMasterDTO.class);
     }
@@ -248,5 +301,18 @@ public class ProductInstancesResource {
     public FileDTO renameAttachedFile(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, @PathParam("iteration") int iteration, @PathParam("fileName") String fileName, FileDTO fileDTO) throws UserNotActiveException, WorkspaceNotFoundException, CreationException, UserNotFoundException, FileNotFoundException, NotAllowedException, FileAlreadyExistsException {
 
         return new FileDTO(true,"name","name01");
+    }
+
+    private DocumentIterationKey[] createDocumentIterationKey(Set<DocumentIterationDTO> dtos) {
+        DocumentIterationKey[] data = new DocumentIterationKey[dtos.size()];
+        int i = 0;
+        for (DocumentIterationDTO dto : dtos) {
+            data[i++] = createObject(dto);
+        }
+        return data;
+    }
+
+    private DocumentIterationKey createObject(DocumentIterationDTO dto) {
+        return new DocumentIterationKey(dto.getWorkspaceId(), dto.getDocumentMasterId(), dto.getDocumentRevisionVersion(), dto.getIteration());
     }
 }

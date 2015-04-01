@@ -98,6 +98,9 @@ define(['backbone'
         setConfigurationItemId:function(configurationItemId){
             this.set('configurationItemId', configurationItemId);
         },
+        setLinkedDocuments:  function(linkedDocuments){
+            this.set('linkedDocuments',linkedDocuments);
+        },
         getBaselinePartsWithReference: function (ref, callback) {
             var baselinedParts = null;
             $.ajax({

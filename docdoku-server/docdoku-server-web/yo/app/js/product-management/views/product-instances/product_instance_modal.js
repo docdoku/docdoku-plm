@@ -63,6 +63,7 @@ define([
                 });
             this.initAttributesView();
            this.initAttachedFileView();
+            this.initLinkedDocumentsView();
             this.openModal();
             return this;
         },
@@ -110,7 +111,7 @@ define([
                 editMode: this.editMode,
                 commentEditable:true,
                 documentIteration: this.iteration,
-                collection: new LinkedDocumentCollection(this.iteration.getLinkedDocuments())
+                collection: new LinkedDocumentCollection(this.iteration.getlinkedDocuments())
             }).render();
 
             /* Add the documentLinksView to the tab */
@@ -119,7 +120,7 @@ define([
 
         initAttributesView: function () {
 
-            var attributes = new AttributeCollection(this.iteration.get('instanceAttributes'));
+            var attributes = new AttributeCollection(this.iteration.getInstanceAttributes());
 
             this.attributesView = new ProductInstanceAttributeListView({
                 collection: attributes
@@ -134,7 +135,7 @@ define([
 
         initAttachedFileView:   function(){
 
-            var filesMapping = _.map(this.iteration.get('attachedFiles'), function (fullName) {
+            var filesMapping = _.map(this.iteration.getAttachedFiles(), function (fullName) {
 
                 return {
                     'fullName': fullName,
@@ -160,6 +161,7 @@ define([
 
 
         },
+
         bindUserPopover: function () {
             this.$authorLink.userPopover(this.model.getUpdateAuthor(), this.model.getSerialNumber(), 'right');
         },
@@ -175,6 +177,8 @@ define([
             this.iteration.setIterationNote(this.$inputIterationNote.val());
             this.iteration.setBaselinedParts(this.baselinePartListView.getBaselinedParts());
             this.iteration.setInstanceAttributes(this.attributesView.collection.toJSON());
+            this.iteration.setLinkedDocuments(this.linkedDocumentsView.collection.toJSON());
+            //linkedDocuments: 
             /*There is a parsing problem at saving time*/
             var files = this.iteration.get('attachedFiles');
 
