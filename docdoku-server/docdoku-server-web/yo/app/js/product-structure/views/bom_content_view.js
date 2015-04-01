@@ -101,6 +101,7 @@ define([
         },
 
         actionCheckout: function () {
+            this.getSelectedPartIndexes();
             var self = this;
 
             _.each(this.checkedViews(), function (view) {
@@ -112,6 +113,7 @@ define([
         },
 
         actionUndocheckout: function () {
+            this.getSelectedPartIndexes();
             var self = this;
 
             _.each(this.checkedViews(), function (view) {
