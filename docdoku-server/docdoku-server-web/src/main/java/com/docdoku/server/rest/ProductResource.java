@@ -427,6 +427,7 @@ public class ProductResource {
         dto.setObsolete(partR.isObsolete());
         dto.setDescription(partR.getDescription());
         dto.setPartUsageLinkReferenceDescription(usageLink.getReferenceDescription());
+        dto.setOptional(usageLink.isOptional());
 
         List<InstanceAttributeDTO> lstAttributes = new ArrayList<>();
         List<ComponentDTO> components = new ArrayList<>();

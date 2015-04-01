@@ -13,7 +13,7 @@ define(['backbone', 'models/component_module', 'views/component_views'
             'click #product_title .product_title': 'onProductTitleClicked',
             'load:root': 'onProductTitleClicked',
             'click .fa-refresh': 'refreshProductView',
-            'click .fa-comment-o': 'toggleComment'
+            'click .fa-comment': 'toggleComment'
         },
 
         setSelectedComponent: function (component) {
@@ -36,8 +36,8 @@ define(['backbone', 'models/component_module', 'views/component_views'
         },
 
         refreshProductView: function(){
-            this.onProductTitleClicked();
             this.refreshAll();
+            this.onProductTitleClicked();
         },
 
         render: function () {
@@ -57,6 +57,8 @@ define(['backbone', 'models/component_module', 'views/component_views'
                 }
 
                 self.trigger('collection:fetched');
+
+                self.onProductTitleClicked();
 
             });
 

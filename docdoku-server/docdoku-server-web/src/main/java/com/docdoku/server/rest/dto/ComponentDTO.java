@@ -51,6 +51,7 @@ public class ComponentDTO implements Serializable{
     private Date checkOutDate;
     private boolean released;
     private boolean obsolete;
+    private boolean optional;
     @XmlElement(nillable = true)
     private int lastIterationNumber;
     @XmlElement(nillable = true)
@@ -232,5 +233,13 @@ public class ComponentDTO implements Serializable{
 
     public void setPartUsageLinkReferenceDescription(String partUsageLinkReferenceDescription) {
         this.partUsageLinkReferenceDescription = partUsageLinkReferenceDescription;
+    }
+
+    public boolean isOptional() {
+        return optional;
+    }
+
+    public void setOptional(boolean optional) {
+        this.optional = optional;
     }
 }
