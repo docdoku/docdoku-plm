@@ -22,11 +22,14 @@ package com.docdoku.server.rest.dto.baseline;
 
 import com.docdoku.server.rest.dto.ACLDTO;
 
+import javax.xml.bind.annotation.XmlElement;
 import java.util.Date;
 import java.util.List;
 
 public class ProductConfigurationDTO{
 
+    @XmlElement(nillable = true)
+    private int id;
     private String configurationItemId;
     private String name;
     private String description;
@@ -36,6 +39,14 @@ public class ProductConfigurationDTO{
     private ACLDTO acl;
 
     public ProductConfigurationDTO() {
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getConfigurationItemId() {

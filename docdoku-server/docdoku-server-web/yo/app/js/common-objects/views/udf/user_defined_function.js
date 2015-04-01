@@ -86,7 +86,7 @@ define([
 
             var partCollection = Backbone.Collection.extend({
                 url: function () {
-                    return this.urlBase() + '?configSpec=' + baselineId + '&depth=10';
+                    return this.urlBase() + '/filter?configSpec=' + baselineId + '&depth=10';
                 },
 
                 urlBase: function () {

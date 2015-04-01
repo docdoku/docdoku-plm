@@ -73,49 +73,57 @@ public class ProductConfigurationsResource {
         }
         List<ProductConfigurationDTO> configurationDTOs = new ArrayList<>();
         for(ProductConfiguration productConfiguration :allProductConfigurations){
-            configurationDTOs.add(mapper.map(productConfiguration,ProductConfigurationDTO.class));
+            ProductConfigurationDTO productConfigurationDTO = mapper.map(productConfiguration, ProductConfigurationDTO.class);
+            productConfigurationDTO.setConfigurationItemId(productConfiguration.getConfigurationItem().getId());
+            configurationDTOs.add(productConfigurationDTO);
         }
         return configurationDTOs;
     }
 
-    @PUT
-    @Path("{productConfigurationId}}")
+    @GET
+    @Path("{productConfigurationId}")
     @Produces(MediaType.APPLICATION_JSON)
     public ProductConfigurationDTO getConfiguration(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @PathParam("productConfigurationId") int productConfigurationId) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ProductConfigurationNotFoundException {
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId,ciId);
         ProductConfiguration productConfiguration = productBaselineService.getProductConfiguration(ciKey, productConfigurationId);
-        return mapper.map(productConfiguration,ProductConfigurationDTO.class);
+        ProductConfigurationDTO productConfigurationDTO = mapper.map(productConfiguration, ProductConfigurationDTO.class);
+        productConfigurationDTO.setConfigurationItemId(productConfiguration.getConfigurationItem().getId());
+        return productConfigurationDTO;
     }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ProductConfigurationDTO createConfiguration(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String pCiId, ProductConfigurationDTO productConfigurationDTO) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, CreationException {
-        String ciId = (pCiId != null) ? pCiId : productConfigurationDTO.getConfigurationItemId();
+    public ProductConfigurationDTO createConfiguration(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String pCiId, ProductConfigurationDTO pProductConfigurationDTO) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, CreationException {
+        String ciId = (pCiId != null) ? pCiId : pProductConfigurationDTO.getConfigurationItemId();
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId,ciId);
-        String description = productConfigurationDTO.getDescription();
-        String name = productConfigurationDTO.getName();
-        ProductConfiguration productConfiguration = productBaselineService.createProductConfiguration(ciKey, name, description, productConfigurationDTO.getSubstituteLinks(), productConfigurationDTO.getOptionalUsageLinks());
-        return mapper.map(productConfiguration,ProductConfigurationDTO.class);
+        String description = pProductConfigurationDTO.getDescription();
+        String name = pProductConfigurationDTO.getName();
+        ProductConfiguration productConfiguration = productBaselineService.createProductConfiguration(ciKey, name, description, pProductConfigurationDTO.getSubstituteLinks(), pProductConfigurationDTO.getOptionalUsageLinks());
+        ProductConfigurationDTO productConfigurationDTO = mapper.map(productConfiguration, ProductConfigurationDTO.class);
+        productConfigurationDTO.setConfigurationItemId(productConfiguration.getConfigurationItem().getId());
+        return productConfigurationDTO;
     }
 
 
     @PUT
-    @Path("{productConfigurationId}}")
+    @Path("{productConfigurationId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ProductConfigurationDTO updateConfiguration(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String pCiId, @PathParam("productConfigurationId") int productConfigurationId, ProductConfigurationDTO productConfigurationDTO) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ProductConfigurationNotFoundException {
-        String ciId = (pCiId != null) ? pCiId : productConfigurationDTO.getConfigurationItemId();
+    public ProductConfigurationDTO updateConfiguration(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String pCiId, @PathParam("productConfigurationId") int productConfigurationId, ProductConfigurationDTO pProductConfigurationDTO) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ProductConfigurationNotFoundException {
+        String ciId = (pCiId != null) ? pCiId : pProductConfigurationDTO.getConfigurationItemId();
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId,ciId);
-        String description = productConfigurationDTO.getDescription();
-        String name = productConfigurationDTO.getName();
-        ProductConfiguration productConfiguration = productBaselineService.updateProductConfiguration(ciKey, productConfigurationId, name, description, productConfigurationDTO.getSubstituteLinks(), productConfigurationDTO.getOptionalUsageLinks());
-        return mapper.map(productConfiguration,ProductConfigurationDTO.class);
+        String description = pProductConfigurationDTO.getDescription();
+        String name = pProductConfigurationDTO.getName();
+        ProductConfiguration productConfiguration = productBaselineService.updateProductConfiguration(ciKey, productConfigurationId, name, description, pProductConfigurationDTO.getSubstituteLinks(), pProductConfigurationDTO.getOptionalUsageLinks());
+        ProductConfigurationDTO productConfigurationDTO = mapper.map(productConfiguration, ProductConfigurationDTO.class);
+        productConfigurationDTO.setConfigurationItemId(productConfiguration.getConfigurationItem().getId());
+        return productConfigurationDTO;
     }
 
 
     @DELETE
-    @Path("{productConfigurationId}}")
+    @Path("{productConfigurationId}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteProductConfiguration(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @PathParam("productConfigurationId") int productConfigurationId) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ProductConfigurationNotFoundException {
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId,ciId);

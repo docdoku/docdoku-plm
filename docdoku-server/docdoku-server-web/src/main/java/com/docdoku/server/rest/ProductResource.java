@@ -152,7 +152,7 @@ public class ProductResource {
     }
 
     @GET
-    @Path("{ciId}")
+    @Path("{ciId}/filter")
     @Produces(MediaType.APPLICATION_JSON)
     public ComponentDTO filterProductStructure(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("configSpec") String configSpecType, @QueryParam("path") String path, @QueryParam("depth") Integer depth)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException, EntityConstraintException {
@@ -161,6 +161,17 @@ public class ProductResource {
         List<PartLink> decodedPath = productService.decodePath(ciKey, path);
         Component component = productService.filterProductStructure(ciKey,filter,decodedPath,depth);
         return createComponentDTO(component);
+    }
+
+    @GET
+    @Path("{ciId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public ConfigurationItemDTO getConfigurationItem(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId)
+            throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException, EntityConstraintException {
+        ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
+        ConfigurationItem ci = productService.getConfigurationItem(ciKey);
+
+        return new ConfigurationItemDTO(ci.getId(), ci.getWorkspaceId(), ci.getDescription(), ci.getDesignItem().getNumber(), ci.getDesignItem().getLastRevision().getVersion());
     }
 
     @DELETE

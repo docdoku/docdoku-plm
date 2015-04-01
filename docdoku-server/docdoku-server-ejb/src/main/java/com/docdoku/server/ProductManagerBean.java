@@ -669,6 +669,18 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         return new ConfigurationItemDAO(locale, em).findAllConfigurationItems(pWorkspaceId);
     }
 
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.ADMIN_ROLE_ID})
+    @Override
+    public ConfigurationItem getConfigurationItem(ConfigurationItemKey ciKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ConfigurationItemNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(ciKey.getWorkspace());
+        Locale locale = new Locale(user.getLanguage());
+        ConfigurationItem configurationItem = em.find(ConfigurationItem.class, ciKey);
+        if(configurationItem == null){
+            throw new ConfigurationItemNotFoundException(locale,ciKey.getId());
+        }
+        return  configurationItem;
+    }
+
     /*
     * give pAttributes null for no modification, give an empty list for removing them
     * */

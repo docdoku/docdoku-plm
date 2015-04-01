@@ -2,13 +2,19 @@
 define([
     'backbone',
     'mustache',
-    'text!templates/configuration/configuration_list_item.html'
-], function (Backbone, Mustache, template) {
+    'text!templates/configuration/configuration_list_item.html',
+    'views/configuration/configuration_details_view',
+    'views/product/product_details_view',
+    'models/configuration_item',
+    'common-objects/utils/date'
+], function (Backbone, Mustache, template, ConfigurationDetailsView, ProductDetailsView, ConfigurationItem, date) {
     'use strict';
-    var ProductListItemView = Backbone.View.extend({
+    var ConfigurationListItemView = Backbone.View.extend({
 
         events: {
-            'click input[type=checkbox]': 'selectionChanged'
+            'click input[type=checkbox]': 'selectionChanged',
+            'click .configuration_id':'openConfigurationDetailView',
+            'click .product_id':'openProductDetailView'
         },
 
         tagName: 'tr',
@@ -21,7 +27,24 @@ define([
             this.$el.html(Mustache.render(template, {model: this.model, i18n: App.config.i18n}));
             this.$checkbox = this.$('input[type=checkbox]');
             this.trigger('rendered', this);
+            date.dateHelper(this.$('.date-popover'));
             return this;
+        },
+
+        openConfigurationDetailView:function(){
+            var view = new ConfigurationDetailsView({model: this.model});
+            window.document.body.appendChild(view.render().el);
+            view.openModal();
+        },
+
+        openProductDetailView:function(e){
+            var model = new ConfigurationItem();
+            model.set('_id',this.model.getConfigurationItemId());
+            model.fetch().success(function(){
+                var view = new ProductDetailsView({model:model});
+                window.document.body.appendChild(view.render().el);
+                view.openModal();
+            });
         },
 
         selectionChanged: function () {
@@ -45,5 +68,5 @@ define([
 
     });
 
-    return ProductListItemView;
+    return ConfigurationListItemView;
 });

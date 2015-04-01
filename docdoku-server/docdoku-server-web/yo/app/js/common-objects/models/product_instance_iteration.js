@@ -1,5 +1,6 @@
 /*global _,$,define,App*/
-define(['backbone'], function (Backbone) {
+define(['backbone'
+], function (Backbone) {
 	'use strict';
     var ProductInstanceIteration = Backbone.Model.extend({
         idAttribute: 'iteration',
@@ -8,7 +9,10 @@ define(['backbone'], function (Backbone) {
             this.className = 'ProductInstanceIteration';
             _.bindAll(this);
         },
-
+        defaults: {
+            attachedFiles: [],
+            instanceAttributes: []
+        },
         initBaselinedParts: function (context, callbacks) {
             this.setConfigurationItemId(context.model.attributes.configurationItemId);
             var that = this;
@@ -32,7 +36,11 @@ define(['backbone'], function (Backbone) {
             }
         },
         getUploadBaseUrl: function () {
-            return App.config.contextPath + '/api/files';
+            return App.config.contextPath + '/api/files/'+this.getBaseName();
+
+        },
+        getBaseName: function () {
+            return App.config.workspaceId  + '/product-instances/' + this.getSerialNumber() +'/'+this.getConfigurationItemId() + '/iterations/' + this.getIteration()+'/';
         },
         getSerialNumber: function () {
             return this.get('serialNumber');

@@ -1,7 +1,7 @@
 /*global define*/
 define({
 	ABOUT_DOCDOKUPLM: 'A propos de DocdokuPLM',
-	ABSOLUTE: "Absolut",
+	ABSOLUTE: "Absolu",
 	ACCEPT_VIDEO_INVITE: "Accepter",
 	ACL: "Droits",
 	ACTIVITY_STATE_PLACEHOLDER: "Nouvel état",
@@ -32,6 +32,7 @@ define({
 	AUTHOR: "Auteur",
 	AUTHOR_DOCUMENT_HELP: "Auteur du document",
 	AUTHOR_PART_HELP: "Auteur de l'article",
+    BASED_ON: "Baseline de référence",
 	BASELINE: "Baseline",
 	BASELINE_DELETION_ERROR:"Impossible de supprimer la baseline : ",
 	BASELINE_OF: 'Baseline de',
@@ -154,6 +155,7 @@ define({
 	EDIT_REQUEST: "Editer la demande de modification",
     EDITION_ERROR:"Une erreur est survenue pendant l\'édition",
     EMBED_SCENE: "Exporter la scène",
+    EMPTY_CHOICES:"Impossible de créer une configuration sans choix",
 	ENTER_NAV: "Commencer la navigation",
 	ERROR: "Erreur",
 	EXISTING_TAGS: "Libellé disponible",
@@ -258,6 +260,7 @@ define({
 	NAVIGATION: "Navigation",
 	NB_TASKS_TO_COMPLETE: "tâches à compléter",
 	NEW_BASELINE: 'Nouvelle baseline',
+    NEW_CONFIGURATION:'Nouvelle configuration',
 	NEW_DOCUMENT: "Nouveau document",
 	NEW_FOLDER: "Nouveau dossier",
 	NEW_ISSUE: "Nouveau rapport d'anomalie",
@@ -360,6 +363,7 @@ define({
 	REQUESTS_NUMBER: "Demandes associées",
     REQUIRED_FIELD:"Veuillez renseigner ce champ",
     RESET_CAMERA: "Repositionner la caméra",
+    RETAIN: "Retenir",
     RETRY: "Re-essayer",
     REVISION_DATE: "Date de révision",
 	REVISION_NOTE: "Note de révision",
@@ -479,5 +483,5 @@ define({
 	WORKSPACE: "Espace de travail",
 	WORKSPACES_ADMINISTRATION: 'Administration des espaces de travail',
 	WORKSPACES: "Workspaces",
-	YOU_HAVE_BEEN_KICKED:"Vous avez été exclu de la salle com.docdoku.server.mainchannel.collaborative"
+	YOU_HAVE_BEEN_KICKED:"Vous avez été exclu de la salle collaborative"
 });

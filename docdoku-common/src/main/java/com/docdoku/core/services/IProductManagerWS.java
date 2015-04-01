@@ -370,7 +370,7 @@ public interface IProductManagerWS{
      * @throws WorkspaceNotFoundException
      */
     List<ConfigurationItem> getConfigurationItems(String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
-    
+    ConfigurationItem getConfigurationItem(ConfigurationItemKey ciKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ConfigurationItemNotFoundException;
     /**
      * Retrieves all layers of the given product structure, ie
      * <a href="ConfigurationItem.html">ConfigurationItem</a>.
