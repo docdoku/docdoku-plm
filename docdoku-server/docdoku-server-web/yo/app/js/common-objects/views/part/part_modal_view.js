@@ -293,6 +293,7 @@ define([
             });
             if (unread == 0) {
                 this.model.fetch();
+                Backbone.Events.trigger('part:saved');
             }
         },
 
