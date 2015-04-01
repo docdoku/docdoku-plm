@@ -10,7 +10,7 @@ define(['backbone', 'models/component_module', 'views/component_views'
             'change input': 'checkChildrenInputs',
             'change li': 'checkParentsInputs',
             'component:selected a': 'onComponentSelected',
-            'click #product_title': 'onProductTitleClicked',
+            'click #product_title .product_title': 'onProductTitleClicked',
             'load:root': 'onProductTitleClicked',
             'click .fa-refresh': 'refreshProductView',
             'click .fa-comment-o': 'toggleComment'
@@ -36,6 +36,7 @@ define(['backbone', 'models/component_module', 'views/component_views'
         },
 
         refreshProductView: function(){
+            this.onProductTitleClicked();
             this.refreshAll();
         },
 
