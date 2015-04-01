@@ -169,7 +169,6 @@ define([
             this.partsCollection.fetch().success(function () {
                 this.checkCheckboxes();
                 this.notifySelectionChanged();
-                this.selectedPartIndexes = [];
             }.bind(this));
         },
 
@@ -177,6 +176,7 @@ define([
             for (var i = 0; i < this.selectedPartIndexes.length; i++) {
                 this.itemViews[this.selectedPartIndexes[i]].setSelectionState(true);
             }
+            this.selectedPartIndexes = [];
         },
 
         actionUpdateACL:function(){
