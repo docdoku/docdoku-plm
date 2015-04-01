@@ -21,8 +21,18 @@ define(['backbone', 'models/component_module', 'views/component_views'
         },
 
         onProductTitleClicked: function () {
+            this.setTitleSelected(true);
             this.setSelectedComponent(this.rootComponent);
             App.appView.onComponentSelected(true);
+        },
+
+        setTitleSelected:function(selected){
+            if(selected){
+                this.$('li.active').removeClass('active');
+                this.$('#product_title .product_title').addClass('active');
+            }else{
+                this.$('#product_title .product_title').removeClass('active');
+            }
         },
 
         refreshProductView: function(){
@@ -171,6 +181,7 @@ define(['backbone', 'models/component_module', 'views/component_views'
         },
 
         onComponentSelected: function (e, componentModel, li) {
+            this.setTitleSelected(false);
             e.stopPropagation();
             this.$('li.active').removeClass('active');
             li.addClass('active');
