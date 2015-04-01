@@ -305,7 +305,7 @@ public class ProductResource {
     @Path("{ciId}/instances")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getInstancesByMultiplePath(@Context Request request, @PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("configSpec") String configSpecType, PathListDTO pathsDTO)
+    public Response getInstancesByMultiplePath(@Context Request request, @PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, PathListDTO pathsDTO)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException {
 
         Response.ResponseBuilder rb = fakeSimilarBehavior(request);
@@ -318,7 +318,7 @@ public class ProductResource {
 
             ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
 
-            PSFilter filter = productService.getPSFilter(ciKey, configSpecType);
+            PSFilter filter = productService.getPSFilter(ciKey, pathsDTO.getConfigSpec());
 
             List<List<PartLink>> paths = new ArrayList<>();
 
