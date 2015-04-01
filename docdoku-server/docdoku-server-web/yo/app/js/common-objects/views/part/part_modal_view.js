@@ -199,6 +199,7 @@ define([
                     that.model.fetch();
                     that.hide();
                     that.model.trigger('change');
+                    Backbone.Events.trigger('part:saved');
                 },
                 error: this.onError
             });
