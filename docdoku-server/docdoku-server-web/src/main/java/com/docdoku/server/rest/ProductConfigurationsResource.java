@@ -21,9 +21,14 @@ package com.docdoku.server.rest;
 
 import com.docdoku.core.configuration.ProductConfiguration;
 import com.docdoku.core.exceptions.*;
+import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.product.ConfigurationItemKey;
+import com.docdoku.core.product.PartLink;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IProductBaselineManagerLocal;
+import com.docdoku.core.services.IProductManagerLocal;
+import com.docdoku.server.rest.dto.PartMinimalDTO;
+import com.docdoku.server.rest.dto.PartMinimalListDTO;
 import com.docdoku.server.rest.dto.baseline.ProductConfigurationDTO;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
@@ -50,6 +55,9 @@ public class ProductConfigurationsResource {
 
     @EJB
     private IProductBaselineManagerLocal productBaselineService;
+
+    @EJB
+    private IProductManagerLocal productService;
 
     private Mapper mapper;
 
@@ -83,13 +91,40 @@ public class ProductConfigurationsResource {
     @GET
     @Path("{productConfigurationId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public ProductConfigurationDTO getConfiguration(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @PathParam("productConfigurationId") int productConfigurationId) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ProductConfigurationNotFoundException {
+    public ProductConfigurationDTO getConfiguration(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @PathParam("productConfigurationId") int productConfigurationId) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ProductConfigurationNotFoundException, EntityConstraintException, NotAllowedException, AccessRightException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, PartMasterNotFoundException {
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId,ciId);
         ProductConfiguration productConfiguration = productBaselineService.getProductConfiguration(ciKey, productConfigurationId);
         ProductConfigurationDTO productConfigurationDTO = mapper.map(productConfiguration, ProductConfigurationDTO.class);
         productConfigurationDTO.setConfigurationItemId(productConfiguration.getConfigurationItem().getId());
+
+        List<PartMinimalListDTO> substitutesParts = new ArrayList<>();
+        List<PartMinimalListDTO> optionalParts = new ArrayList<>();
+
+        for(String path:productConfiguration.getSubstituteLinks()){
+            PartMinimalListDTO partMinimalListDTO = new PartMinimalListDTO();
+            List<PartMinimalDTO> partDTOs = new ArrayList<>();
+            for(PartLink partLink : productService.decodePath(ciKey, path)){
+                partDTOs.add(mapper.map(partLink.getComponent(), PartMinimalDTO.class));
+            }
+            partMinimalListDTO.setParts(partDTOs);
+            substitutesParts.add(partMinimalListDTO);
+        }
+        for(String path:productConfiguration.getOptionalUsageLinks()){
+            PartMinimalListDTO partMinimalListDTO = new PartMinimalListDTO();
+            List<PartMinimalDTO> partDTOs = new ArrayList<>();
+            for(PartLink partLink : productService.decodePath(ciKey, path)){
+                partDTOs.add(mapper.map(partLink.getComponent(),PartMinimalDTO.class));
+            }
+            partMinimalListDTO.setParts(partDTOs);
+            optionalParts.add(partMinimalListDTO);
+        }
+
+        productConfigurationDTO.setSubstitutesParts(substitutesParts);
+        productConfigurationDTO.setOptionalsParts(optionalParts);
+
         return productConfigurationDTO;
     }
+
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)

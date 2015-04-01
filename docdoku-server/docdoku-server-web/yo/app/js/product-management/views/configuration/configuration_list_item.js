@@ -32,9 +32,12 @@ define([
         },
 
         openConfigurationDetailView:function(){
-            var view = new ConfigurationDetailsView({model: this.model});
-            window.document.body.appendChild(view.render().el);
-            view.openModal();
+            var model = this.model;
+            model.fetch().success(function(){
+                var view = new ConfigurationDetailsView({model: model});
+                window.document.body.appendChild(view.render().el);
+                view.openModal();
+            });
         },
 
         openProductDetailView:function(e){

@@ -65,6 +65,8 @@ define({
 		CHECKOUTS: "Checked out",
         CHOICES:"Choices",
 		CHOOSE_A_PRODUCT: "Choose a product",
+        CHOSEN_OPTIONALS:"Excluded optionals",
+        CHOSEN_SUBSTITUTES:"Substitutes chosen",
 		CLEAR: "Clear",
 		CLIPPING: "Clipping",
 		CLOSE: "Close",

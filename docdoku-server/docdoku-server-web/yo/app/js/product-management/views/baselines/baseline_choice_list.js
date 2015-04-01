@@ -11,7 +11,7 @@ define([
 
         tagName: 'div',
 
-        className: 'baseline-choices-list',
+        className: 'choices-list',
 
         initialize: function () {
             _.bindAll(this);
@@ -31,7 +31,7 @@ define([
 
         render: function () {
             this.$el.html(Mustache.render(template, {i18n: App.config.i18n}));
-            this.$list = this.$('.baseline-choices');
+            this.$list = this.$('.choices');
             return this;
         },
 

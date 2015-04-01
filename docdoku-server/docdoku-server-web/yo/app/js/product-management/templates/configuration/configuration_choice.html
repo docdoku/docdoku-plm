@@ -1,0 +1,15 @@
+<div class="control-group">
+    <label class="control-label">
+        {{#data.parts}}
+        <a data-part-key="{{.}}" class="model-ref">{{name}}</a>  <i class="fa fa-chevron-right"></i>
+        {{/data.parts}}
+    </label>
+
+    <div class="controls">
+        <ul class="baseline-choice-item">
+            <li>
+                <label class="radio"> {{data.concernedPart.name}} {{data.concernedPart.number}}</label>
+            </li>
+        </ul>
+    </div>
+</div>

@@ -33,9 +33,18 @@ define(['backbone','common-objects/utils/date'], function (Backbone,date) {
         },
 
         getSubstituteLinks:function(){},
+
+        getSubstitutesParts:function(){
+            return this.get('substitutesParts');
+        },
         setSubstituteLinks:function(substituteLinks){},
 
         getOptionalUsageLinks:function(){},
+
+        getOptionalsParts:function(){
+            return this.get('optionalsParts');
+        },
+
         setOptionalUsageLinks:function(optionalUsageLinks){},
 
         getCreatedDate:function(){
