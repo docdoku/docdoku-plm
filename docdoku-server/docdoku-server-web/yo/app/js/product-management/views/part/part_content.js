@@ -201,40 +201,40 @@ define([
         checkin: function () {
 
             var selectedParts = this.partListView.getSelectedParts();
-                var promptView = new PromptView();
-                promptView.setPromptOptions(App.config.i18n.ITERATION_NOTE, App.config.i18n.ITERATION_NOTE_PROMPT_LABEL, App.config.i18n.ITERATION_NOTE_PROMPT_OK, App.config.i18n.ITERATION_NOTE_PROMPT_CANCEL);
-                window.document.body.appendChild(promptView.render().el);
-                promptView.openModal();
+            var promptView = new PromptView();
+            promptView.setPromptOptions(App.config.i18n.ITERATION_NOTE, App.config.i18n.ITERATION_NOTE_PROMPT_LABEL, App.config.i18n.ITERATION_NOTE_PROMPT_OK, App.config.i18n.ITERATION_NOTE_PROMPT_CANCEL);
+            window.document.body.appendChild(promptView.render().el);
+            promptView.openModal();
 
-                this.listenTo(promptView, 'prompt-ok', function (args) {
-                    var iterationNote = args[0];
-                    if (_.isEqual(iterationNote, '')) {
-                        iterationNote = null;
+            this.listenTo(promptView, 'prompt-ok', function (args) {
+                var iterationNote = args[0];
+                if (_.isEqual(iterationNote, '')) {
+                    iterationNote = null;
+                }
+
+                var _this = this;
+                Async.each(selectedParts, function(part, callback) {
+                    part.getLastIteration().save({
+                        iterationNote: iterationNote
+                    }).success(function () {
+                        part.checkin().success(callback);
+                    });
+
+                }, function(err) {
+                    if (!err) {
+                        _this.allCheckinDone();
                     }
-
-                    var _this = this;
-                    Async.each(selectedParts, function(part, callback) {
-                        part.getLastIteration().save({
-                            iterationNote: iterationNote
-                        }).success(function () {
-                            part.checkin().success(callback);
-                        });
-
-                    }, function(err) {
-                        if (!err) {
-                            _this.allCheckinDone();
-                        }
-                    });
-
                 });
 
-                this.listenTo(promptView, 'prompt-cancel', function () {
-                    var ajaxes = [];
-                    _(selectedParts).each(function (part) {
-                        ajaxes.push(part.checkin());
-                    });
-                    $.when.apply($, ajaxes).then(this.allCheckinDone);
+            });
+
+            this.listenTo(promptView, 'prompt-cancel', function () {
+                var ajaxes = [];
+                _(selectedParts).each(function (part) {
+                    ajaxes.push(part.checkin());
                 });
+                $.when.apply($, ajaxes).then(this.allCheckinDone);
+            });
 
         },
         allCheckinDone: function () {

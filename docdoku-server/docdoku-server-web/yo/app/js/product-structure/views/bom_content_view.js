@@ -21,13 +21,14 @@ define([
         initialize: function () {
             _.bindAll(this);
             this.itemViews = [];
+            this.selectedPartIndexes = [];
+            this.bindEvent();
         },
 
         render: function () {
             this.$el.html(Mustache.render(template, {i18n: App.config.i18n}));
             this.table = this.$('table');
             this.tbody = this.$('tbody');
-            this.bindEvent();
             return this;
         },
 
@@ -54,6 +55,7 @@ define([
             this.partsCollection = new PartList();
             this.partsCollection.setFilterUrl(component.getUrlForBom());
             this.listenTo(this.partsCollection, 'reset', this.addAllBomItem);
+            this.listenTo(this.partsCollection, 'change', this.addAllBomItem);
             this.partsCollection.fetch({reset: true});
         },
 
@@ -62,12 +64,17 @@ define([
             this.partsCollection = new PartList();
             this.partsCollection.setFilterUrl(rootComponent.getRootUrlForBom());
             this.listenTo(this.partsCollection, 'reset', this.addAllBomItem);
+            this.listenTo(this.partsCollection, 'change', this.addAllBomItem);
             this.partsCollection.fetch({reset: true});
         },
 
         addAllBomItem: function (parts) {
             this.render();
-            parts.each(this.addBomItem, this);
+            if (this.partsCollection) {
+                this.partsCollection.each(this.addBomItem, this);
+            } else {
+                parts.each(this.addBomItem, this);
+            }
             this.notifySelectionChanged();
             this.dataTable();
         },
@@ -85,10 +92,19 @@ define([
             });
         },
 
+        getSelectedPartIndexes: function () {
+            for (var i=0; i<this.itemViews.length; i++) {
+                if (this.itemViews[i].isChecked()) {
+                    this.selectedPartIndexes[this.selectedPartIndexes.length] = i;
+                }
+            }
+        },
+
         actionCheckout: function () {
             var self = this;
 
             _.each(this.checkedViews(), function (view) {
+                // TODO: only refresh the item
                 view.model.checkout().then(self.onSuccess);
             });
 
@@ -99,6 +115,7 @@ define([
             var self = this;
 
             _.each(this.checkedViews(), function (view) {
+                // TODO: only refresh the item
                 view.model.undocheckout().then(self.onSuccess);
             });
 
@@ -106,6 +123,7 @@ define([
         },
 
         actionCheckin: function () {
+            this.getSelectedPartIndexes();
             var self = this;
 
             _.each(this.checkedViews(), function (view) {
@@ -123,17 +141,17 @@ define([
                         view.model.getLastIteration().save({
                             iterationNote: iterationNote
                         }).success(function () {
-                            view.model.checkin().success(view.model.fetch().success(self.onSuccess));
+                            view.model.checkin().success(self.onSuccess);
                         });
 
                     });
 
                     self.listenTo(promptView, 'prompt-cancel', function () {
-                        view.model.checkin().success(view.model.fetch().success(self.onSuccess));
+                        view.model.checkin().success(self.onSuccess);
                     });
 
                 } else {
-                    view.model.checkin().success(view.model.fetch().success(self.onSuccess));
+                    view.model.checkin().success(self.onSuccess);
                 }
             });
 
@@ -145,7 +163,18 @@ define([
         },
 
         resetCollection: function () {
-            this.partsCollection.fetch();
+            this.itemViews = [];
+            this.partsCollection.fetch().success(function () {
+                this.checkCheckboxes();
+                this.notifySelectionChanged();
+                this.selectedPartIndexes = [];
+            }.bind(this));
+        },
+
+        checkCheckboxes: function () {
+            for (var i = 0; i < this.selectedPartIndexes.length; i++) {
+                this.itemViews[this.selectedPartIndexes[i]].setSelectionState(true);
+            }
         },
 
         actionUpdateACL:function(){
