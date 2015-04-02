@@ -63,4 +63,5 @@ public interface IProductInstanceManagerLocal {
 
     public ProductInstanceMaster removeFileFromProductInstanceIteration(String workspaceId, int iteration, String fullName, ProductInstanceMaster productInstanceMaster) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException;
 
+
 }

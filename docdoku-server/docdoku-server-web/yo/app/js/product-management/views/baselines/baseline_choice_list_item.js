@@ -15,7 +15,8 @@ define([
 
         events: {
             'change input[type=radio]': 'changeChoice',
-            'change input[type=checkbox]': 'changeOptional',
+            'change .baseline-choice-optional': 'changeOptional',
+            'change .choice-retain': 'toggleRetain',
             'click .model-ref':'openPartView'
         },
 
@@ -23,12 +24,14 @@ define([
 
         initialize: function () {
             _.bindAll(this);
+            this.model.retained = !this.options.removable;
         },
 
         render: function () {
             this.$el.html(Mustache.render(template, {
                 model: this.model,
-                i18n: App.config.i18n
+                i18n: App.config.i18n,
+                removable:this.options.removable
             }));
 
             var radio = this.$('input[type=radio]').first();
@@ -38,6 +41,8 @@ define([
             this.defaultChoice = this.choice;
 
             this.$('.fa-chevron-right').last().remove();
+
+            this.$el.toggleClass('not-retained',this.options.removable && !this.model.retained)
 
             return this;
         },
@@ -56,6 +61,10 @@ define([
         },
         changeChoice:function(e){
             this.choice = e.target.value;
+        },
+        toggleRetain:function(){
+            this.model.retained = !this.model.retained;
+            this.$el.toggleClass('not-retained',this.options.removable && !this.model.retained)
         },
         changeOptional:function(e){
             this.optional = e.target.checked;

@@ -28,7 +28,7 @@ define([
 		initialize: function () {
 			_.bindAll(this);
 
-            this.choiceView = new BaselineChoiceListView().render();
+            this.choiceView = new BaselineChoiceListView({removableItems:false}).render();
             this.baselinePartListView = new BaselinedPartsView({
                 editMode:true
             }).render();

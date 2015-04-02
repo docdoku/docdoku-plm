@@ -152,7 +152,7 @@ public class ProductResource {
     }
 
     @GET
-    @Path("{ciId}")
+    @Path("{ciId}/filter")
     @Produces(MediaType.APPLICATION_JSON)
     public ComponentDTO filterProductStructure(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("configSpec") String configSpecType, @QueryParam("path") String path, @QueryParam("depth") Integer depth)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException, EntityConstraintException {
@@ -161,6 +161,17 @@ public class ProductResource {
         List<PartLink> decodedPath = productService.decodePath(ciKey, path);
         Component component = productService.filterProductStructure(ciKey,filter,decodedPath,depth);
         return createComponentDTO(component);
+    }
+
+    @GET
+    @Path("{ciId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public ConfigurationItemDTO getConfigurationItem(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId)
+            throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException, EntityConstraintException {
+        ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
+        ConfigurationItem ci = productService.getConfigurationItem(ciKey);
+
+        return new ConfigurationItemDTO(ci.getId(), ci.getWorkspaceId(), ci.getDescription(), ci.getDesignItem().getNumber(), ci.getDesignItem().getLastRevision().getVersion());
     }
 
     @DELETE
@@ -294,7 +305,7 @@ public class ProductResource {
     @Path("{ciId}/instances")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getInstancesByMultiplePath(@Context Request request, @PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("configSpec") String configSpecType, PathListDTO pathsDTO)
+    public Response getInstancesByMultiplePath(@Context Request request, @PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, PathListDTO pathsDTO)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException {
 
         Response.ResponseBuilder rb = fakeSimilarBehavior(request);
@@ -307,7 +318,7 @@ public class ProductResource {
 
             ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
 
-            PSFilter filter = productService.getPSFilter(ciKey, configSpecType);
+            PSFilter filter = productService.getPSFilter(ciKey, pathsDTO.getConfigSpec());
 
             List<List<PartLink>> paths = new ArrayList<>();
 
@@ -416,6 +427,7 @@ public class ProductResource {
         dto.setObsolete(partR.isObsolete());
         dto.setDescription(partR.getDescription());
         dto.setPartUsageLinkReferenceDescription(usageLink.getReferenceDescription());
+        dto.setOptional(usageLink.isOptional());
 
         List<InstanceAttributeDTO> lstAttributes = new ArrayList<>();
         List<ComponentDTO> components = new ArrayList<>();

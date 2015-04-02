@@ -60,6 +60,15 @@ define(['backbone'], function (Backbone) {
             });
         },
 
+        createConfiguration: function (configurationArgs) {
+            return $.ajax({
+                type: 'POST',
+                url: this.urlRoot() + '/' + this.getId() + '/configurations',
+                data: JSON.stringify(configurationArgs),
+                contentType: 'application/json; charset=utf-8'
+            });
+        },
+
         getReleasedChoices : function(){
             return $.getJSON(this.urlRoot() + '/' + this.getId() + '/path-choices?type=RELEASED');
         },

@@ -129,6 +129,7 @@ define(['dmu/LoaderManager', 'async'],
                     loadedInstances.push({
                         id: directive.id,
                         partIterationId: instance.partIterationId,
+                        path: instance.path,
                         quality: directive.quality,
                         geometry: loadCache[instance.partIterationId + '-' + directive.quality].geometry,
                         materials: loadCache[instance.partIterationId + '-' + directive.quality].material
@@ -159,6 +160,7 @@ define(['dmu/LoaderManager', 'async'],
                         loadedInstances.push({
                             id: directive.id,
                             partIterationId: instance.partIterationId,
+                            path: instance.path,
                             quality: directive.quality,
                             geometry: loadCache[instance.partIterationId + '-' + directive.quality].geometry,
                             materials: loadCache[instance.partIterationId + '-' + directive.quality].material

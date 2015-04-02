@@ -26,10 +26,13 @@ import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.product.ConfigurationItemKey;
 import com.docdoku.core.product.PartIterationKey;
+import com.docdoku.core.product.PartLink;
 import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.services.IProductInstanceManagerLocal;
+import com.docdoku.core.services.IProductManagerLocal;
+import com.docdoku.server.rest.dto.*;
 import com.docdoku.server.rest.dto.ACLDTO;
 import com.docdoku.server.rest.dto.DocumentIterationDTO;
 import com.docdoku.server.rest.dto.FileDTO;
@@ -63,6 +66,9 @@ public class ProductInstancesResource {
 
     @EJB
     private IProductInstanceManagerLocal productInstanceService;
+
+    @EJB
+    private IProductManagerLocal productService;
 
     private Mapper mapper;
 
@@ -179,7 +185,41 @@ public class ProductInstancesResource {
             throws EntityNotFoundException, UserNotActiveException {
 
         ProductInstanceMaster productInstanceMaster = productInstanceService.getProductInstanceMaster(new ProductInstanceMasterKey(serialNumber,workspaceId,configurationItemId));
-        return mapper.map(productInstanceMaster,ProductInstanceMasterDTO.class);
+        ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId,configurationItemId);
+        ProductInstanceMasterDTO dto = mapper.map(productInstanceMaster, ProductInstanceMasterDTO.class);
+
+
+        List<ProductInstanceIterationDTO> productInstanceIterations = dto.getProductInstanceIterations();
+
+        for(ProductInstanceIterationDTO productInstanceIterationDTO : productInstanceIterations){
+
+            List<PartMinimalListDTO> substitutesParts = new ArrayList<>();
+            List<PartMinimalListDTO> optionalParts = new ArrayList<>();
+
+            for(String path:productInstanceIterationDTO.getSubstituteLinks()){
+                PartMinimalListDTO partMinimalListDTO = new PartMinimalListDTO();
+                List<PartMinimalDTO> partDTOs = new ArrayList<>();
+                for(PartLink partLink : productService.decodePath(ciKey, path)){
+                    partDTOs.add(mapper.map(partLink.getComponent(), PartMinimalDTO.class));
+                }
+                partMinimalListDTO.setParts(partDTOs);
+                substitutesParts.add(partMinimalListDTO);
+            }
+            for(String path:productInstanceIterationDTO.getOptionalUsageLinks()){
+                PartMinimalListDTO partMinimalListDTO = new PartMinimalListDTO();
+                List<PartMinimalDTO> partDTOs = new ArrayList<>();
+                for(PartLink partLink : productService.decodePath(ciKey, path)){
+                    partDTOs.add(mapper.map(partLink.getComponent(),PartMinimalDTO.class));
+                }
+                partMinimalListDTO.setParts(partDTOs);
+                optionalParts.add(partMinimalListDTO);
+            }
+
+            productInstanceIterationDTO.setSubstitutesParts(substitutesParts);
+            productInstanceIterationDTO.setOptionalsParts(optionalParts);
+        }
+
+        return dto;
     }
 
     @DELETE

@@ -126,14 +126,17 @@ define([
 
         onNoConfigurationSelected: function () {
             this.trigger('delete-button:display', false);
+            this.trigger('acl-button:display', false);
         },
 
         onOneConfigurationSelected: function () {
             this.trigger('delete-button:display', true);
+            this.trigger('acl-button:display', true);
         },
 
         onSeveralConfigurationsSelected: function () {
             this.trigger('delete-button:display', true);
+            this.trigger('acl-button:display', false);
         },
 
         getSelectedConfiguration: function () {
@@ -190,7 +193,8 @@ define([
                 },
                 sDom: 'ft',
                 aoColumnDefs: [
-                    { 'bSortable': false, 'aTargets': [ 0 ] }
+                    { 'bSortable': false, 'aTargets': [ 0 , 4 ] },
+                    { 'sType': App.config.i18n.DATE_SORT, 'aTargets': [3] }
                 ]
             });
             this.$el.parent().find('.dataTables_filter input').attr('placeholder', App.config.i18n.FILTER);

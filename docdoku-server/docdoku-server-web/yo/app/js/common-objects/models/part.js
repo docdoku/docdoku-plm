@@ -209,7 +209,6 @@ define([
                 return null;
             },
 
-
             getCheckOutUserLogin: function () {
                 if (this.isCheckout()) {
                     return this.getCheckoutUser().login;
@@ -323,10 +322,6 @@ define([
                     context: this,
                     type: 'PUT',
                     url: this.url() + '/checkin',
-                    success:function(){
-                        this.fetch();
-                        Backbone.Events.trigger('part:iterationChange');
-                    },
                     error: function (xhr) {
                         window.alert(xhr.responseText);
                     }

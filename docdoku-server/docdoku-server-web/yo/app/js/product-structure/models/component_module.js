@@ -142,6 +142,18 @@ define(['backbone', 'common-objects/utils/date'],
                 return this.get('obsolete');
             },
 
+            isSubstitute : function(){
+                return this.get('substitute');
+            },
+
+            isOptional : function(){
+                return this.get('optional');
+            },
+
+            getPartUsageLinkReferenceDescription:function(){
+                return this.get('partUsageLinkReferenceDescription');
+            },
+
             getInstancesUrl: function () {
                 return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + App.config.productId + '/instances?configSpec=' + App.config.configSpec + '&path=' + this.getEncodedPath();
             },
@@ -187,7 +199,7 @@ define(['backbone', 'common-objects/utils/date'],
 
             url: function () {
                 var path = this.path ? '-1-'+this.path : '-1';
-                return this.urlBase() + '?configSpec=' + App.config.configSpec + '&path=' + path + '&depth=1';
+                return this.urlBase() + '/filter?configSpec=' + App.config.configSpec + '&path=' + path + '&depth=1';
             },
 
             urlBase: function () {

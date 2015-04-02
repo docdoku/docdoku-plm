@@ -10,14 +10,16 @@ define([
     'views/product-instances/product_instances_creation',
     'text!common-objects/templates/buttons/delete_button.html',
     'text!common-objects/templates/buttons/ACL_button.html',
+    'text!common-objects/templates/buttons/new_product_instance_button.html',
     'common-objects/views/alert'
-], function (Backbone, Mustache, ProductInstancesCollection, ConfigurationItemCollection, BaselinesCollection, template, ProductInstancesListView, ProductInstanceCreationView, deleteButton,aclButton, AlertView) {
+], function (Backbone, Mustache, ProductInstancesCollection, ConfigurationItemCollection, BaselinesCollection, template, ProductInstancesListView, ProductInstanceCreationView, deleteButton,aclButton,newProductInstanceButton, AlertView) {
     'use strict';
     var ProductInstancesContentView = Backbone.View.extend({
 
         partials: {
             deleteButton: deleteButton,
-            aclButton:  aclButton
+            aclButton:  aclButton,
+            newProductInstanceButton:newProductInstanceButton
         },
 
         events: {

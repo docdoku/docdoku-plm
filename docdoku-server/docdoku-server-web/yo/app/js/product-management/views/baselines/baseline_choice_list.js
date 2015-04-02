@@ -11,7 +11,7 @@ define([
 
         tagName: 'div',
 
-        className: 'baseline-choices-list',
+        className: 'choices-list',
 
         initialize: function () {
             _.bindAll(this);
@@ -22,15 +22,16 @@ define([
         getChoices:function(){
             var choices = [];
             _.each(this.choicesViews,function(view){
-                choices.push(view.getChoice());
+                if(view.model.retained){
+                    choices.push(view.getChoice());
+                }
             },this);
             return choices;
         },
 
         render: function () {
             this.$el.html(Mustache.render(template, {i18n: App.config.i18n}));
-            this.$list = this.$('.baseline-choices');
-
+            this.$list = this.$('.choices');
             return this;
         },
 
@@ -44,7 +45,7 @@ define([
         },
 
         addChoiceItemView:function(choice){
-            var view = new BaselineChoiceItemView({model:new PathChoice(choice)}).render();
+            var view = new BaselineChoiceItemView({model:new PathChoice(choice), removable:this.options.removableItems}).render();
             this.choicesViews.push(view);
             this.$list.append(view.$el);
         },

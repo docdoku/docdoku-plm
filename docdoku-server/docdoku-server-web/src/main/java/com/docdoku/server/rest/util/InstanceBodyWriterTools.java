@@ -141,8 +141,9 @@ public class InstanceBodyWriterTools {
         jg.writeStartObject();
         jg.write("id", Tools.getPathInstanceAsString(currentPath, copyInstanceIds));
         jg.write("partIterationId", partIterationId);
+        jg.write("path", Tools.getPathAsString(currentPath));
 
-        writeMatrix(combinedMatrix,jg);
+        writeMatrix(combinedMatrix, jg);
         writeGeometries(partI.getSortedGeometries(),jg);
         writeAttributes(attributes,jg);
 

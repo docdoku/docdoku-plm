@@ -66,6 +66,12 @@ define([
             this.dataTable();
         },
 
+        checkedViews: function () {
+            return _.filter(this.itemViews, function (itemView) {
+                return itemView.isChecked();
+            });
+        },
+
         addBomItem: function (part) {
             var bomItemView = new BomItemView({model: part}).render();
             this.listenTo(bomItemView.model, 'change', this.notifySelectionChanged);
@@ -73,39 +79,29 @@ define([
             this.tbody.append(bomItemView.el);
         },
 
-        checkedViews: function () {
-            return _.filter(this.itemViews, function (itemView) {
-                return itemView.isChecked();
-            });
-        },
-
         actionCheckout: function () {
-            var onSuccess = function(){
-                Backbone.Events.trigger('part:saved');
-            };
+            var self = this;
+
             _.each(this.checkedViews(), function (view) {
-                view.model.checkout().then(onSuccess);
+                view.model.checkout().then(self.onSuccess);
             });
+
             return false;
         },
 
         actionUndocheckout: function () {
-            var onSuccess = function(){
-                Backbone.Events.trigger('part:saved');
-            };
+            var self = this;
+
             _.each(this.checkedViews(), function (view) {
-                view.model.undocheckout().then(onSuccess);
+                view.model.undocheckout().then(self.onSuccess);
             });
+
             return false;
         },
 
         actionCheckin: function () {
+            var self = this;
 
-            var onSuccess = function(){
-                Backbone.Events.trigger('part:saved');
-            };
-
-            var self = this ;
             _.each(this.checkedViews(), function (view) {
                 if (!view.model.getLastIteration().get('iterationNote')) {
                     var promptView = new PromptView();
@@ -121,21 +117,25 @@ define([
                         view.model.getLastIteration().save({
                             iterationNote: iterationNote
                         }).success(function () {
-                            view.model.checkin().then(onSuccess);
+                            view.model.checkin().success(self.onSuccess);
                         });
 
                     });
 
                     self.listenTo(promptView, 'prompt-cancel', function () {
-                        view.model.checkin().then(onSuccess);
+                        view.model.checkin().success(self.onSuccess);
                     });
 
                 } else {
-                    view.model.checkin().then(onSuccess);
+                    view.model.checkin().success(self.onSuccess);
                 }
-
             });
+
             return false;
+        },
+
+        onSuccess: function () {
+            Backbone.Events.trigger('part:saved');
         },
 
         actionUpdateACL:function(){

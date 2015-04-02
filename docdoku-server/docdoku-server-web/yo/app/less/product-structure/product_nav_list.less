@@ -2,15 +2,38 @@
 
   min-width: 500px;
 
+    &.displayComment{
+        .fa-comment{
+            opacity: 1;
+        }
+    }
+
+    .fa-comment{
+        color : green;
+        opacity: 0.5;
+    }
+    .fa-refresh{
+         color : green;
+    }
+
+    .fa-arrows-h{
+        padding-right: 5px;
+    }
+
+    .fa-question{
+        padding-right: 5px;
+    }
+
   #product_title {
 
     background: none;
     font-weight: bold;
     cursor: pointer;
-    border-bottom: 1px dotted #ccc;
+    border-top: 1px dotted #ccc;
     line-height: 18px;
     color: #434C64;
     text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+    padding-top: 6px;
 
     img.loader{
       display:none;
@@ -22,6 +45,17 @@
       margin-left: 5px;
 
     }
+
+      .product_title{
+
+          padding-left: 5px;
+          padding-right: 2px;
+
+          &.active{
+              background-color: #CFD7E4;
+          }
+
+      }
   }
 
   .fa-cogs {

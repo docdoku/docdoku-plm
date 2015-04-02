@@ -3,6 +3,7 @@ define([
     'backbone',
     'mustache',
     'text!templates/product-instances/product_instance_modal.html',
+    'text!templates/configuration/configuration_choice.html',
     'views/baselines/baselined_part_list',
     'common-objects/utils/date',
     'common-objects/collections/attribute_collection',
@@ -12,7 +13,7 @@ define([
     'common-objects/views/linked/linked_documents',
     'common-objects/collections/file/attached_file_collection',
     'common-objects/views/alert'
-], function (Backbone, Mustache, template, BaselinedPartListView,date,AttributeCollection,ProductInstanceAttributeListView,FileListView,LinkedDocumentCollection,LinkedDocumentsView,AttachedFileCollection,AlertView) {
+], function (Backbone, Mustache, template, choiceTemplate, BaselinedPartListView,date,AttributeCollection,ProductInstanceAttributeListView,FileListView,LinkedDocumentCollection,LinkedDocumentsView,AttachedFileCollection,AlertView) {
     'use strict';
     var ProductInstancesModalView = Backbone.View.extend({
         events: {
@@ -35,6 +36,7 @@ define([
         },
 
         render: function () {
+
             this.editMode = this.iterations.isLast(this.iteration);
             var data = {
                 i18n: App.config.i18n,
@@ -62,9 +64,10 @@ define([
                 {success: that.initBaselinedPartListView
                 });
             this.initAttributesView();
-           this.initAttachedFileView();
+            this.initAttachedFileView();
             this.initLinkedDocumentsView();
             this.openModal();
+            this.renderChoices();
             return this;
         },
 
@@ -96,6 +99,10 @@ define([
             this.$inputIterationNote = this.$('#inputIterationNote');
             this.$baselinedPartListArea = this.$('.baselinedPartListArea');
             this.$authorLink = this.$('.author-popover');
+            this.$substitutes = this.$('.substitutes-list');
+            this.$substitutesCount = this.$('.substitutes-count');
+            this.$optionals = this.$('.optionals-list');
+            this.$optionalsCount = this.$('.optionals-count');
         },
 
         initBaselinedPartListView: function (view) {
@@ -103,7 +110,32 @@ define([
             view.$baselinedPartListArea.html(view.baselinePartListView.$el);
             view.baselinePartListView.renderList();
             view.$baselinedPartListArea.html(view.baselinePartListView.$el);
+        },
 
+        renderChoices:function(){
+            var substitutes = this.iteration.getSubstitutesParts();
+            var optionals = this.iteration.getOptionalsParts();
+            this.$substitutesCount.text(substitutes.length);
+            this.$optionalsCount.text(optionals.length);
+
+            _.each(substitutes,this.drawSubstitutesChoice.bind(this));
+            _.each(optionals,this.drawOptionalsChoice.bind(this));
+        },
+
+        drawSubstitutesChoice:function(data){
+            this.$substitutes.append(Mustache.render(choiceTemplate, {i18n: App.config.i18n, data: {
+                parts:data.parts,
+                concernedPart:data.parts.pop()
+            }}));
+            this.$substitutes.find('i.fa-chevron-right:last-child').remove();
+        },
+
+        drawOptionalsChoice:function(data){
+            this.$optionals.append(Mustache.render(choiceTemplate, {i18n: App.config.i18n, data: {
+                parts:data.parts,
+                concernedPart:data.parts.pop()
+            }}));
+            this.$optionals.find('i.fa-chevron-right:last-child').remove();
         },
 
         initLinkedDocumentsView: function () {
@@ -202,7 +234,7 @@ define([
         onError: function (model, error) {
             var errorMessage = error ? error.responseText : model;
 
-            $('.notifications').last().append(new AlertView({
+            this.$notifications.append(new AlertView({
                 type: 'error',
                 message: errorMessage
             }).render().$el);

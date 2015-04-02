@@ -2,7 +2,7 @@
 define([
     'backbone',
     'common-objects/utils/date'
-], function (Backbone, Date) {
+], function (Backbone, date) {
     'use strict';
     var ModificationNotification = Backbone.Model.extend({
 
@@ -50,13 +50,10 @@ define([
         },
 
         getFormattedCheckInDate: function () {
-            if (this.hasCheckInDate()) {
-                return Date.formatTimestamp(
-                    App.config.i18n._DATE_FORMAT,
-                    this.getCheckInDate()
-                );
-            }
-            return null;
+            return date.formatTimestamp(
+                App.config.i18n._DATE_FORMAT,
+                this.getCheckInDate()
+            );
         },
 
         hasAuthor: function () {
@@ -68,10 +65,7 @@ define([
         },
 
         getAuthorName: function () {
-            if (this.hasAuthor()) {
-                return this.getAuthor().name;
-            }
-            return null;
+            return this.getAuthor().name;
         },
 
         getIterationNote: function () {
@@ -90,6 +84,25 @@ define([
             return this.get('ackAuthor');
         },
 
+        getAckAuthorName: function () {
+            if (this.getAckAuthor()) {
+                return this.getAckAuthor().name;
+            } else {
+                return App.config.userName;
+            }
+        },
+
+        getAckDate: function () {
+            return this.get('ackDate');
+        },
+
+        getFormattedAckDate: function () {
+            return date.formatTimestamp(
+                App.config.i18n._DATE_FORMAT,
+                this.getAckDate()
+            );
+        },
+
         setAcknowledged: function (data) {
             return $.ajax({
                 context: this,
@@ -102,8 +115,9 @@ define([
                     this.set('acknowledged', false);
                 }
             }).success(function () {
-                this.set('acknowledged', true);
                 this.set('ackComment', data.ackComment);
+                this.set('ackDate', (new Date()).toString());
+                this.set('acknowledged', true);
             });
         }
 

@@ -2,6 +2,7 @@
 define([
     'backbone',
     'mustache',
+    'async',
     'common-objects/collections/part_collection',
     'common-objects/collections/part_search_collection',
     'text!templates/part/part_content.html',
@@ -23,7 +24,7 @@ define([
     'common-objects/views/alert',
     'common-objects/views/tags/tags_management',
     'views/product/product_creation_view'
-], function (Backbone, Mustache, PartCollection, PartSearchCollection, template, PartListView, PartCreationView, PartNewVersionView, PromptView, ACLEditView, AdvancedSearchView, deleteButton, checkoutButtonGroup, newVersionButton, releaseButton, aclButton, newProductButton, tagsButton, obsoleteButton, searchForm, AlertView,TagsManagementView,ProductCreationView) {
+], function (Backbone, Mustache, Async, PartCollection, PartSearchCollection, template, PartListView, PartCreationView, PartNewVersionView, PromptView, ACLEditView, AdvancedSearchView, deleteButton, checkoutButtonGroup, newVersionButton, releaseButton, aclButton, newProductButton, tagsButton, obsoleteButton, searchForm, AlertView,TagsManagementView,ProductCreationView) {
     'use strict';
 	var PartContentView = Backbone.View.extend({
         events: {
@@ -121,9 +122,6 @@ define([
         },
 
         bindEvent: function(){
-            // Try to remove this
-            Backbone.Events.on('part:saved', this.resetCollection);
-
             this.partListView.collection.on('page-count:fetch', this.onPageCountFetched);
             this.partListView.collection.fetchPageCount();
 
@@ -201,35 +199,50 @@ define([
         },
 
         checkin: function () {
+            this.partListView.getSelectedPartIndexes();
 
             var selectedParts = this.partListView.getSelectedParts();
-                var promptView = new PromptView();
-                promptView.setPromptOptions(App.config.i18n.ITERATION_NOTE, App.config.i18n.ITERATION_NOTE_PROMPT_LABEL, App.config.i18n.ITERATION_NOTE_PROMPT_OK, App.config.i18n.ITERATION_NOTE_PROMPT_CANCEL);
-                window.document.body.appendChild(promptView.render().el);
-                promptView.openModal();
+            var promptView = new PromptView();
+            promptView.setPromptOptions(App.config.i18n.ITERATION_NOTE, App.config.i18n.ITERATION_NOTE_PROMPT_LABEL, App.config.i18n.ITERATION_NOTE_PROMPT_OK, App.config.i18n.ITERATION_NOTE_PROMPT_CANCEL);
+            window.document.body.appendChild(promptView.render().el);
+            promptView.openModal();
 
-                this.listenTo(promptView, 'prompt-ok', function (args) {
-                    var iterationNote = args[0];
-                    if (_.isEqual(iterationNote, '')) {
-                        iterationNote = null;
+            this.listenTo(promptView, 'prompt-ok', function (args) {
+                var iterationNote = args[0];
+                if (_.isEqual(iterationNote, '')) {
+                    iterationNote = null;
+                }
+
+                var _this = this;
+                Async.each(selectedParts, function(part, callback) {
+                    part.getLastIteration().save({
+                        iterationNote: iterationNote
+                    }).success(function () {
+                        part.checkin().success(callback);
+                    });
+
+                }, function(err) {
+                    if (!err) {
+                        _this.allCheckinDone();
                     }
-                        _(selectedParts).each(function (view) {
-                            view.getLastIteration().save({
-                                iterationNote: iterationNote
-                            }).success(function () {
-                                view.checkin();
-                            });
-                        });
-
                 });
 
-                this.listenTo(promptView, 'prompt-cancel', function () {
-                        _(selectedParts).each(function (view) {
-                            view.checkin();
-                        });
+            });
+
+            this.listenTo(promptView, 'prompt-cancel', function () {
+                var ajaxes = [];
+                _(selectedParts).each(function (part) {
+                    ajaxes.push(part.checkin());
                 });
+                $.when.apply($, ajaxes).then(this.allCheckinDone);
+            });
 
         },
+        allCheckinDone: function () {
+            this.resetCollection();
+            Backbone.Events.trigger('part:iterationChange');
+        },
+
         checkout: function () {
             _(this.partListView.getSelectedParts()).each(function (view) {
                 view.checkout();
@@ -292,7 +305,10 @@ define([
         },
 
         resetCollection: function () {
-            this.partListView.collection.fetch({reset: true});
+            this.partListView.collection.fetch({reset: true}).success(function () {
+                this.partListView.checkCheckboxes();
+                this.partListView.canCheckinCheckoutOrUndoCheckout();
+            }.bind(this));
         },
 
         onPageCountFetched: function () {

@@ -17,7 +17,14 @@ define([
         '<%} else {%>' +
             '<input type="checkbox" disabled <%if (checkedAtInit) {%>checked="checked"<%}%>>' +
         '<%}%>' +
-            '<a><label class="checkbox <%if(isNode) {%>isNode<%}%>"><%= name %> <%= number %>-<%= version %>-<%= iteration %> (<%= amount %><%if (unit) {%> <%= unit %> <%}%>)</label>' +
+            '<a><label class="checkbox <%if(isNode) {%>isNode<%}%>">' +
+        '<%if(isSubstitute) {%> ' +
+        '<i class="fa fa-arrows-h"title="'+App.config.i18n.PART_SUBSTITUTE+'"></i>' +
+        '<%}%>' +
+        '<%if(isOptional) {%> ' +
+        '<i class="fa fa-question" title="'+App.config.i18n.OPTIONAL+'"></i>' +
+        '<%}%>' +
+        '<%= name %> <%= number %>-<%= version %>-<%= iteration %> (<%= amount %><%if (unit) {%> <%= unit %> <%}%>)</label>' +
         '</a>' +
         '<%if(isForbidden) {%> ' +
             '<i class="fa fa-ban"></i>' +
@@ -140,7 +147,9 @@ define([
                 isReleased: this.model.isReleased(),
                 isObsolete: this.model.isObsolete(),
                 isLock: this.isLock,
-                partUsageLinkReferenceDescription: this.model.get('partUsageLinkReferenceDescription')
+                partUsageLinkReferenceDescription: this.model.getPartUsageLinkReferenceDescription(),
+                isSubstitute: this.model.isSubstitute(),
+                isOptional:this.model.isOptional()
             };
 
             this.$el.html(nodeTemplate(data));
@@ -234,7 +243,9 @@ define([
                 isReleased: this.model.isReleased(),
                 isObsolete: this.model.isObsolete(),
                 isLock: this.isLock,
-                partUsageLinkReferenceDescription: this.model.get('partUsageLinkReferenceDescription')
+                partUsageLinkReferenceDescription: this.model.getPartUsageLinkReferenceDescription(),
+                isSubstitute: this.model.isSubstitute(),
+                isOptional:this.model.isOptional()
             };
 
             this.$el.html(nodeTemplate(data));

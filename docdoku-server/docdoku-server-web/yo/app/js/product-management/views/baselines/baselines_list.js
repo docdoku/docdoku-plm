@@ -122,16 +122,25 @@ define([
 
         onNoBaselineSelected: function () {
             this.trigger('delete-button:display', false);
+            this.trigger('new-product-instance-button:display', false);
         },
 
         onOneBaselineSelected: function () {
             this.trigger('delete-button:display', true);
+            this.trigger('new-product-instance-button:display', true);
         },
 
         onSeveralBaselinesSelected: function () {
             this.trigger('delete-button:display', true);
+            this.trigger('new-product-instance-button:display', false);
         },
 
+        getSelectedBaseline:function(){
+            var selectedView =  _.select(this.listItemViews,function(view){
+                return view.isChecked();
+            })[0];
+            return selectedView ? selectedView.model : null;
+        },
         deleteSelectedBaselines: function () {
             var _this = this;
             bootbox.confirm(App.config.i18n.CONFIRM_DELETE_BASELINE, function(result){

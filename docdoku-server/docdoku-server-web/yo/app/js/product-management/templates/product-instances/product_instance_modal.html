@@ -12,6 +12,7 @@
                 <li class="active"><a href="#tab-main" data-toggle="tab">{{i18n.GENERAL}}</a></li>
                 <li><a href="#tab-products-instances-iteration" data-toggle="tab">{{i18n.ITERATION}}</a></li>
                     <li><a href="#tab-products-instances-versions" data-toggle="tab">{{i18n.VERSIONS}}</a></li>
+                    <li><a href="#tab-products-instances-choices" data-toggle="tab">{{i18n.CONFIGURATION}}</a></li>
                 <li><a href="#tab-products-instances-attributes" data-toggle="tab">{{i18n.ATTRIBUTES}}</a></li>
                 <li><a href="#tab-products-instances-files" data-toggle="tab">{{i18n.FILES}}</a></li>
                 <li><a href="#tab-products-instances-links" data-toggle="tab">{{i18n.LINKS}}</a></li>
@@ -43,6 +44,15 @@
                 <div class="tab-pane" id="tab-products-instances-versions">
                     <div class="control-group">
                         <div id ="baselinedPartListArea" class="baselinedPartListArea"></div>
+                    </div>
+                </div>
+
+                <div class="tab-pane" id="tab-products-instances-choices">
+                    <div class="choices-list">
+                        <p><i class="fa fa-check"></i> {{i18n.CHOSEN_SUBSTITUTES}} : <span class="substitutes-count"></span></p>
+                        <div class="substitutes-list choices"></div>
+                        <p><i class="fa fa-check"></i> {{i18n.CHOSEN_OPTIONALS}} : <span class="optionals-count"></span></p>
+                        <div class="optionals-list choices"></div>
                     </div>
                 </div>
 

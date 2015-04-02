@@ -138,10 +138,9 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             @Override
             public void onPathWalk(List<PartLink> path, List<PartMaster> parts) {
                 PartMaster pm = parts.get(parts.size() - 1);
-                if(pm.getNumber().matches(search)){
 
+                if (pm.getNumber().matches(search) || (pm.getName() != null && pm.getName().matches(search)) || Tools.getPathAsString(path).equals(search)) {
                     PartLink[] partLinks = path.toArray(new PartLink[path.size()]);
-
                     usagePaths.add(partLinks);
                 }
             }
@@ -667,6 +666,18 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         }
 
         return new ConfigurationItemDAO(locale, em).findAllConfigurationItems(pWorkspaceId);
+    }
+
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.ADMIN_ROLE_ID})
+    @Override
+    public ConfigurationItem getConfigurationItem(ConfigurationItemKey ciKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ConfigurationItemNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(ciKey.getWorkspace());
+        Locale locale = new Locale(user.getLanguage());
+        ConfigurationItem configurationItem = em.find(ConfigurationItem.class, ciKey);
+        if(configurationItem == null){
+            throw new ConfigurationItemNotFoundException(locale,ciKey.getId());
+        }
+        return  configurationItem;
     }
 
     /*

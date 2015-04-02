@@ -25,6 +25,7 @@ import com.docdoku.core.common.Workspace;
 import com.docdoku.core.configuration.*;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.*;
+import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IProductBaselineManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
@@ -34,10 +35,8 @@ import com.docdoku.server.configuration.filter.LatestPSFilter;
 import com.docdoku.server.configuration.filter.ReleasedPSFilter;
 import com.docdoku.server.configuration.spec.ProductBaselineConfigSpec;
 import com.docdoku.server.configuration.spec.ProductBaselineCreationConfigSpec;
-import com.docdoku.server.dao.ConfigurationItemDAO;
-import com.docdoku.server.dao.PartCollectionDAO;
-import com.docdoku.server.dao.ProductBaselineDAO;
-import com.docdoku.server.dao.ProductConfigurationDAO;
+import com.docdoku.server.dao.*;
+import com.docdoku.server.factory.ACLFactory;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
@@ -315,9 +314,9 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public ProductConfiguration createProductConfiguration(ConfigurationItemKey ciKey, String name, String description, List<String> substituteLinks, List<String> optionalUsageLinks) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, CreationException {
-        User user = userManager.checkWorkspaceReadAccess(ciKey.getWorkspace());
-        // TODO check write access
+    public ProductConfiguration createProductConfiguration(ConfigurationItemKey ciKey, String name, String description, List<String> substituteLinks, List<String> optionalUsageLinks, Map<String,ACL.Permission> userEntries, Map<String,ACL.Permission> groupEntries) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, CreationException, AccessRightException {
+        User user = userManager.checkWorkspaceWriteAccess(ciKey.getWorkspace());
+
         Locale locale = new Locale(user.getLanguage());
         ProductConfigurationDAO productConfigurationDAO = new ProductConfigurationDAO(locale,em);
 
@@ -325,6 +324,10 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
         ConfigurationItem configurationItem = configurationItemDAO.loadConfigurationItem(ciKey);
 
         ProductConfiguration productConfiguration = new ProductConfiguration(configurationItem, name,description,null);
+
+        ACLFactory aclFactory = new ACLFactory(em);
+        ACL acl = aclFactory.createACLFromPermissions(ciKey.getWorkspace(), userEntries, groupEntries);
+        productConfiguration.setAcl(acl);
 
         productConfiguration.setOptionalUsageLinks(new HashSet<>(optionalUsageLinks));
         productConfiguration.setSubstituteLinks(new HashSet<>(substituteLinks));
@@ -339,42 +342,70 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
         Locale locale = new Locale(user.getLanguage());
         ProductConfigurationDAO productConfigurationDAO = new ProductConfigurationDAO(locale,em);
         List<ProductConfiguration> productConfigurations = productConfigurationDAO.getAllProductConfigurations(workspaceId);
-        // TODO check read access on each conf
+
+        ListIterator<ProductConfiguration> ite = productConfigurations.listIterator();
+
+        while(ite.hasNext()){
+            ProductConfiguration next = ite.next();
+            try {
+                checkProductConfigurationReadAccess(workspaceId, next, user);
+            } catch (AccessRightException e) {
+                ite.remove();
+            }
+        }
+
         return productConfigurations;
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public List<ProductConfiguration> getAllProductConfigurationsByConfigurationItemId(ConfigurationItemKey ciKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+    public List<ProductConfiguration> getAllProductConfigurationsByConfigurationItemId(ConfigurationItemKey ciKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ConfigurationItemNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(ciKey.getWorkspace());
         Locale locale = new Locale(user.getLanguage());
+
         ProductConfigurationDAO productConfigurationDAO = new ProductConfigurationDAO(locale,em);
         List<ProductConfiguration> productConfigurations = productConfigurationDAO.getAllProductConfigurationsByConfigurationItem(ciKey);
-        // TODO check read access on each conf
+
+        ListIterator<ProductConfiguration> ite = productConfigurations.listIterator();
+
+        while(ite.hasNext()){
+            ProductConfiguration next = ite.next();
+            try {
+                checkProductConfigurationReadAccess(ciKey.getWorkspace(), next, user);
+            } catch (AccessRightException e) {
+                ite.remove();
+            }
+        }
+
         return productConfigurations;
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public ProductConfiguration getProductConfiguration(ConfigurationItemKey ciKey, int productConfigurationId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductConfigurationNotFoundException {
+    public ProductConfiguration getProductConfiguration(ConfigurationItemKey ciKey, int productConfigurationId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductConfigurationNotFoundException, AccessRightException {
         User user = userManager.checkWorkspaceReadAccess(ciKey.getWorkspace());
         Locale locale = new Locale(user.getLanguage());
         ProductConfigurationDAO productConfigurationDAO = new ProductConfigurationDAO(locale,em);
         ProductConfiguration productConfiguration = productConfigurationDAO.getProductConfiguration(productConfigurationId);
-        userManager.checkWorkspaceReadAccess(productConfiguration.getConfigurationItem().getWorkspace().getId());
-        // TODO check read access on conf
+
+        String workspaceId = productConfiguration.getConfigurationItem().getWorkspace().getId();
+        user = userManager.checkWorkspaceReadAccess(workspaceId);
+        checkProductConfigurationReadAccess(workspaceId, productConfiguration, user);
+
         return productConfiguration;
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public ProductConfiguration updateProductConfiguration(ConfigurationItemKey ciKey, int productConfigurationId, String name, String description, List<String> substituteLinks, List<String> optionalUsageLinks) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductConfigurationNotFoundException {
+    public ProductConfiguration updateProductConfiguration(ConfigurationItemKey ciKey, int productConfigurationId, String name, String description, List<String> substituteLinks, List<String> optionalUsageLinks) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductConfigurationNotFoundException, AccessRightException {
         User user = userManager.checkWorkspaceReadAccess(ciKey.getWorkspace());
-        // TODO check write access on conf
         Locale locale = new Locale(user.getLanguage());
         ProductConfigurationDAO productConfigurationDAO = new ProductConfigurationDAO(locale,em);
         ProductConfiguration productConfiguration = productConfigurationDAO.getProductConfiguration(productConfigurationId);
-        userManager.checkWorkspaceReadAccess(productConfiguration.getConfigurationItem().getWorkspace().getId());
+
+        String workspaceId = productConfiguration.getConfigurationItem().getWorkspace().getId();
+        user = userManager.checkWorkspaceReadAccess(workspaceId);
+        checkProductConfigurationWriteAccess(workspaceId,productConfiguration,user);
 
         productConfiguration.setName(name);
         productConfiguration.setDescription(description);
@@ -386,19 +417,102 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public void deleteProductConfiguration(ConfigurationItemKey ciKey, int productConfigurationId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductConfigurationNotFoundException {
+    public void deleteProductConfiguration(ConfigurationItemKey ciKey, int productConfigurationId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductConfigurationNotFoundException, AccessRightException {
         User user = userManager.checkWorkspaceReadAccess(ciKey.getWorkspace());
-        // TODO check write access on conf
         Locale locale = new Locale(user.getLanguage());
         ProductConfigurationDAO productConfigurationDAO = new ProductConfigurationDAO(locale,em);
         ProductConfiguration productConfiguration = productConfigurationDAO.getProductConfiguration(productConfigurationId);
-        userManager.checkWorkspaceReadAccess(productConfiguration.getConfigurationItem().getWorkspace().getId());
+
+        String workspaceId = productConfiguration.getConfigurationItem().getWorkspace().getId();
+        user = userManager.checkWorkspaceReadAccess(workspaceId);
+        checkProductConfigurationWriteAccess(workspaceId,productConfiguration,user);
+
         productConfigurationDAO.deleteProductConfiguration(productConfiguration);
     }
 
-    private boolean hasWriteAccess(ProductConfiguration productConfiguration, User user){
-      return false;
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
+    public void updateACLForConfiguration(ConfigurationItemKey ciKey, int productConfigurationId, Map<String, String> userEntries, Map<String, String> groupEntries) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductConfigurationNotFoundException, AccessRightException {
+
+        ACLFactory aclFactory = new ACLFactory(em);
+
+        // Check the read access to the workspace
+        User user = userManager.checkWorkspaceReadAccess(ciKey.getWorkspace());
+        Locale userLocale = new Locale(user.getLanguage());
+
+        ProductConfigurationDAO productConfigurationDAO = new ProductConfigurationDAO(userLocale,em);
+        ProductConfiguration productConfiguration = productConfigurationDAO.getProductConfiguration(productConfigurationId);
+
+        String workspaceId = productConfiguration.getConfigurationItem().getWorkspaceId();
+        user = userManager.checkWorkspaceReadAccess(workspaceId);
+
+        checkProductConfigurationWriteAccess(workspaceId, productConfiguration, user);
+
+        if (productConfiguration.getAcl() == null) {
+            ACL acl = aclFactory.createACL(workspaceId, userEntries, groupEntries);
+            productConfiguration.setAcl(acl);
+        } else {
+            aclFactory.updateACL(workspaceId, productConfiguration.getAcl(), userEntries, groupEntries);
+        }
     }
 
+    private User checkProductConfigurationWriteAccess(String workspaceId, ProductConfiguration productConfiguration, User user) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException {
+        if (user.isAdministrator()) {
+            // Check if it is the workspace's administrator
+            return user;
+        }
+        if (productConfiguration.getAcl() == null) {
+            // Check if the item haven't ACL
+            return userManager.checkWorkspaceWriteAccess(workspaceId);
+        } else if (productConfiguration.getAcl().hasWriteAccess(user)) {
+            // Check if there is a write access
+            return user;
+        } else {
+            // Else throw a AccessRightException
+            throw new AccessRightException(new Locale(user.getLanguage()), user);
+        }
+    }
+
+
+
+    private User checkProductConfigurationReadAccess(String workspaceId, ProductConfiguration productConfiguration, User user) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException {
+        if (user.isAdministrator()) {
+            // Check if it is the workspace's administrator
+            return user;
+        }
+        if (productConfiguration.getAcl() == null) {
+            // Check if the item haven't ACL
+            return userManager.checkWorkspaceReadAccess(workspaceId);
+        } else if (productConfiguration.getAcl().hasReadAccess(user)) {
+            // Check if there is a write access
+            return user;
+        } else {
+            // Else throw a AccessRightException
+            throw new AccessRightException(new Locale(user.getLanguage()), user);
+        }
+    }
+
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
+    public void removeACLFromConfiguration(ConfigurationItemKey ciKey, int productConfigurationId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductConfigurationNotFoundException, AccessRightException {
+
+        User user = userManager.checkWorkspaceReadAccess(ciKey.getWorkspace());
+        Locale userLocale = new Locale(user.getLanguage());
+
+        ProductConfigurationDAO productConfigurationDAO = new ProductConfigurationDAO(userLocale,em);
+        ProductConfiguration productConfiguration = productConfigurationDAO.getProductConfiguration(productConfigurationId);
+
+        String workspaceId = productConfiguration.getConfigurationItem().getWorkspaceId();
+        user = userManager.checkWorkspaceReadAccess(workspaceId);
+
+        checkProductConfigurationWriteAccess(workspaceId,productConfiguration,user);
+
+        ACL acl = productConfiguration.getAcl();
+        if (acl != null) {
+            new ACLDAO(em).removeACLEntries(acl);
+            productConfiguration.setAcl(null);
+        }
+
+    }
 
 }

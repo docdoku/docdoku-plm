@@ -25,6 +25,7 @@ define([
             this.iterations = this.model.getIterations();
 
             ModalView.prototype.initialize.apply(this, arguments);
+
             this.events['click a#previous-iteration'] = 'onPreviousIteration';
             this.events['click a#next-iteration'] = 'onNextIteration';
             this.events["click .modal-footer button.btn-primary"] = "interceptSubmit";
@@ -32,6 +33,8 @@ define([
             this.events['click .action-checkin'] = 'actionCheckin';
             this.events['click .action-checkout'] = 'actionCheckout';
             this.events['click .action-undocheckout'] = 'actionUndoCheckout';
+            this.events['notification:acknowledged'] = 'updateModificationNotifications';
+
             this.tagsToRemove = [];
         },
 
@@ -196,6 +199,7 @@ define([
                     that.model.fetch();
                     that.hide();
                     that.model.trigger('change');
+                    Backbone.Events.trigger('part:saved');
                 },
                 error: this.onError
             });
@@ -278,6 +282,19 @@ define([
                 el: '#iteration-modification-notifications',
                 collection: this.model.getModificationNotifications()
             }).render();
+        },
+
+        updateModificationNotifications: function () {
+            var unread = 0;
+            this.model.getModificationNotifications().each(function(notif) {
+                if (!notif.isAcknowledged()) {
+                    unread++;
+                }
+            });
+            if (unread == 0) {
+                this.model.fetch();
+                Backbone.Events.trigger('part:saved');
+            }
         },
 
         tagsManagement: function (editMode) {

@@ -10,10 +10,10 @@ define(['backbone', 'models/component_module', 'views/component_views'
             'change input': 'checkChildrenInputs',
             'change li': 'checkParentsInputs',
             'component:selected a': 'onComponentSelected',
-            'click #product_title': 'onProductTitleClicked',
+            'click #product_title .product_title': 'onProductTitleClicked',
             'load:root': 'onProductTitleClicked',
             'click .fa-refresh': 'refreshProductView',
-            'click .fa-comment-o': 'toggleComment'
+            'click .fa-comment': 'toggleComment'
         },
 
         setSelectedComponent: function (component) {
@@ -21,8 +21,18 @@ define(['backbone', 'models/component_module', 'views/component_views'
         },
 
         onProductTitleClicked: function () {
+            this.setTitleSelected(true);
             this.setSelectedComponent(this.rootComponent);
             App.appView.onComponentSelected(true);
+        },
+
+        setTitleSelected:function(selected){
+            if(selected){
+                this.$('li.active').removeClass('active');
+                this.$('#product_title .product_title').addClass('active');
+            }else{
+                this.$('#product_title .product_title').removeClass('active');
+            }
         },
 
         refreshProductView: function(){
@@ -46,6 +56,8 @@ define(['backbone', 'models/component_module', 'views/component_views'
                 }
 
                 self.trigger('collection:fetched');
+
+                self.onProductTitleClicked();
 
             });
 
@@ -171,6 +183,7 @@ define(['backbone', 'models/component_module', 'views/component_views'
         },
 
         onComponentSelected: function (e, componentModel, li) {
+            this.setTitleSelected(false);
             e.stopPropagation();
             this.$('li.active').removeClass('active');
             li.addClass('active');
@@ -180,6 +193,10 @@ define(['backbone', 'models/component_module', 'views/component_views'
 
         refreshAll: function () {
             this.componentViews.fetchAll();
+            this.onProductTitleClicked();
+            App.instancesManager.clear();
+            App.collaborativeController.sendSmartPath(App.partsTreeView.getSmartPath());
+            App.collaborativeController.sendConfigSpec(App.config.configSpec);
         },
 
         toggleComment:function(){

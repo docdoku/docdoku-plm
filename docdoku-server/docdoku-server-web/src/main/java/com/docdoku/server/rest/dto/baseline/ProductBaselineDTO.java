@@ -21,6 +21,7 @@
 package com.docdoku.server.rest.dto.baseline;
 
 import com.docdoku.core.configuration.ProductBaseline;
+import com.docdoku.server.rest.dto.PartMinimalListDTO;
 
 import java.util.Date;
 import java.util.List;
@@ -33,6 +34,9 @@ public class ProductBaselineDTO extends BaselineDTO {
     private List<BaselinedPartDTO> baselinedParts;
     private List<String> substituteLinks;
     private List<String> optionalUsageLinks;
+
+    private List<PartMinimalListDTO> substitutesParts;
+    private List<PartMinimalListDTO> optionalsParts;
 
     public ProductBaselineDTO() {
     }
@@ -93,5 +97,21 @@ public class ProductBaselineDTO extends BaselineDTO {
 
     public void setConfigurationItemLatestRevision(String configurationItemLatestRevision) {
         this.configurationItemLatestRevision = configurationItemLatestRevision;
+    }
+
+    public List<PartMinimalListDTO> getSubstitutesParts() {
+        return substitutesParts;
+    }
+
+    public void setSubstitutesParts(List<PartMinimalListDTO> substitutesParts) {
+        this.substitutesParts = substitutesParts;
+    }
+
+    public List<PartMinimalListDTO> getOptionalsParts() {
+        return optionalsParts;
+    }
+
+    public void setOptionalsParts(List<PartMinimalListDTO> optionalsParts) {
+        this.optionalsParts = optionalsParts;
     }
 }
