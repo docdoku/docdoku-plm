@@ -31,6 +31,9 @@ import com.docdoku.core.services.IUserManagerWS;
 import com.docdoku.core.util.NamingConvention;
 import com.docdoku.server.dao.*;
 import com.docdoku.server.esindexer.ESIndexer;
+import com.docdoku.server.events.PartRevisionChangeEvent;
+import com.docdoku.server.events.Read;
+import com.docdoku.server.events.WorkspaceAccessEvent;
 
 import javax.annotation.Resource;
 import javax.annotation.security.DeclareRoles;
@@ -39,6 +42,9 @@ import javax.ejb.EJB;
 import javax.ejb.Local;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
+import javax.enterprise.event.Event;
+import javax.enterprise.util.AnnotationLiteral;
+import javax.inject.Inject;
 import javax.jws.WebService;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -63,6 +69,8 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
     @EJB
     private IDataManagerLocal dataManager;
 
+    @Inject
+    private Event<WorkspaceAccessEvent> workspaceAccessEvent;
 
     @Override
     public Account createAccount(String pLogin, String pName, String pEmail, String pLanguage, String pPassword, String pTimeZone) throws AccountAlreadyExistsException, CreationException {
@@ -525,23 +533,24 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
     @Override
     public User checkWorkspaceReadAccess(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         String login = ctx.getCallerPrincipal().toString();
-
+        User user;
         UserDAO userDAO = new UserDAO(em);
         WorkspaceUserMembership userMS = userDAO.loadUserMembership(new WorkspaceUserMembershipKey(pWorkspaceId, pWorkspaceId, login));
         if (userMS != null) {
-            return userMS.getMember();
+            user = userMS.getMember();
+        }else {
+            Workspace wks = new WorkspaceDAO(em).loadWorkspace(pWorkspaceId);
+            user = userDAO.loadUser(new UserKey(pWorkspaceId, login));
+            if (!wks.getAdmin().getLogin().equals(login)) {
+                WorkspaceUserGroupMembership[] groupMS = new UserGroupDAO(em).getUserGroupMemberships(pWorkspaceId, user);
+                if (groupMS.length == 0) {
+                    throw new UserNotActiveException(new Locale(user.getLanguage()), login);
+                }
+            }
         }
-        Workspace wks = new WorkspaceDAO(em).loadWorkspace(pWorkspaceId);
-        User user = userDAO.loadUser(new UserKey(pWorkspaceId, login));
-        if (wks.getAdmin().getLogin().equals(login)) {
-            return user;
-        }
-        WorkspaceUserGroupMembership[] groupMS = new UserGroupDAO(em).getUserGroupMemberships(pWorkspaceId, user);
-        if (groupMS.length > 0) {
-            return user;
-        } else {
-            throw new UserNotActiveException(new Locale(user.getLanguage()), login);
-        }
+        workspaceAccessEvent.select(new AnnotationLiteral<Read>(){}).fire(new WorkspaceAccessEvent(user));
+
+        return user;
     }
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})

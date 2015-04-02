@@ -24,8 +24,8 @@ import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.services.IProductManagerLocal;
-import com.docdoku.server.events.ChangePartIterationEvent;
-import com.docdoku.server.events.ChangePartRevisionEvent;
+import com.docdoku.server.events.PartIterationChangeEvent;
+import com.docdoku.server.events.PartRevisionChangeEvent;
 import com.docdoku.server.events.CheckedIn;
 import com.docdoku.server.events.Removed;
 
@@ -46,16 +46,16 @@ public class PartNotificationManager {
     private IProductManagerLocal productService;
 
 
-    private void onRemovePartIteration(@Observes @Removed ChangePartIterationEvent event){
+    private void onRemovePartIteration(@Observes @Removed PartIterationChangeEvent event){
         PartIteration partIteration = event.getModifiedPart();
         productService.removeModificationNotificationsOnIteration(partIteration.getKey());
     }
 
-    private void onRemovePartRevision(@Observes @Removed ChangePartRevisionEvent event){
+    private void onRemovePartRevision(@Observes @Removed PartRevisionChangeEvent event){
         PartRevision partRevision = event.getModifiedPart();
         productService.removeModificationNotificationsOnRevision(partRevision.getKey());
     }
-    private void onCheckInPartIteration(@Observes @CheckedIn ChangePartIterationEvent event) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
+    private void onCheckInPartIteration(@Observes @CheckedIn PartIterationChangeEvent event) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
         PartIteration partIteration = event.getModifiedPart();
         productService.createModificationNotifications(partIteration);
     }
