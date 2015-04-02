@@ -50,14 +50,14 @@ define([
 
         setOptionalUsageLinks:function(optionalUsageLinks){},
 
-        getCreatedDate:function(){
-            return this.get('createdDate');
+        getCreationDate:function(){
+            return this.get('creationDate');
         },
 
         getFormattedCreationDate:function(){
             return date.formatTimestamp(
                 App.config.i18n._DATE_FORMAT,
-                this.getCreatedDate()
+                this.getCreationDate()
             );
         },
 
