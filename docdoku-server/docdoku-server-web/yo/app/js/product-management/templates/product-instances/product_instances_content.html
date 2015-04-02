@@ -5,9 +5,8 @@
             <input id="inputProductId" type="text" class="form-controls" placeholder="{{i18n.PRODUCT_ID}}"/>
         </div>
     </div>
-    <button class="btn btn-default new-product-instance" title="{{i18n.NEW_PRODUCT_INSTANCE}}">
-        <span class="icon"></span>
-    </button>
+
+    {{> newProductInstanceButton}}
     {{> deleteButton}}
     {{> aclButton}}
 </div>

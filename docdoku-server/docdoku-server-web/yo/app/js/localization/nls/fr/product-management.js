@@ -13,6 +13,7 @@ define({
     CREATE_BASELINE_BEFORE_PRODUCT_INSTANCE:"Vous devez avoir créé au moins une baseline pour créer un exemplaire de produit",
     CREATE_PRODUCT_BEFORE_PRODUCT_INSTANCE:"Vous devez avoir créé au moins un produit pour créer un exemplaire de produit",
     PRODUCT_CREATED:'Le produit a été créé',
+    PRODUCT_INSTANCE_CREATED:'L\'exemplaire du produit a été créé',
     BASELINE_CREATED:'La baseline a été créée',
     CONFIGURATION_CREATED:'La configuration a été créée'
 });
