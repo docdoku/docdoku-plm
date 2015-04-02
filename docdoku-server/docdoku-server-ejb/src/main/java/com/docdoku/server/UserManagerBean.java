@@ -34,6 +34,7 @@ import com.docdoku.server.esindexer.ESIndexer;
 import com.docdoku.server.events.PartRevisionChangeEvent;
 import com.docdoku.server.events.Read;
 import com.docdoku.server.events.WorkspaceAccessEvent;
+import com.docdoku.server.events.Write;
 
 import javax.annotation.Resource;
 import javax.annotation.security.DeclareRoles;
@@ -562,26 +563,28 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
 
         Workspace wks = new WorkspaceDAO(em).loadWorkspace(pWorkspaceId);
         User user = userDAO.loadUser(new UserKey(pWorkspaceId, login));
-        if (wks.getAdmin().getLogin().equals(login)) {
-            return user;
-        }
-
-        WorkspaceUserMembership userMS = userDAO.loadUserMembership(new WorkspaceUserMembershipKey(pWorkspaceId, pWorkspaceId, login));
-        if (userMS != null) {
-            if (userMS.isReadOnly()) {
-                throw new AccessRightException(new Locale(user.getLanguage()), user);
-            } else {
-                return userMS.getMember();
+        if (!wks.getAdmin().getLogin().equals(login)) {
+            WorkspaceUserMembership userMS = userDAO.loadUserMembership(new WorkspaceUserMembershipKey(pWorkspaceId, pWorkspaceId, login));
+            if (userMS != null) {
+                if (userMS.isReadOnly()) {
+                    throw new AccessRightException(new Locale(user.getLanguage()), user);
+                }
+            }else {
+                WorkspaceUserGroupMembership[] groupMS = new UserGroupDAO(em).getUserGroupMemberships(pWorkspaceId, user);
+                boolean readOnly=true;
+                for (WorkspaceUserGroupMembership ms : groupMS) {
+                    if (!ms.isReadOnly()) {
+                        readOnly = false;
+                        break;
+                    }
+                }
+                if(readOnly)
+                    throw new AccessRightException(new Locale(user.getLanguage()), user);
             }
         }
+        workspaceAccessEvent.select(new AnnotationLiteral<Write>(){}).fire(new WorkspaceAccessEvent(user));
 
-        WorkspaceUserGroupMembership[] groupMS = new UserGroupDAO(em).getUserGroupMemberships(pWorkspaceId, user);
-        for (WorkspaceUserGroupMembership ms : groupMS) {
-            if (!ms.isReadOnly()) {
-                return user;
-            }
-        }
-        throw new AccessRightException(new Locale(user.getLanguage()), user);
+        return user;
     }
 
 
