@@ -6,8 +6,8 @@ var App = {
         zoomSpeed: 1.2,
         rotateSpeed: 1.0,
         panSpeed: 0.3,
-        cameraNear: 1,
-        cameraFar: 10000,
+        cameraNear: 0.1,
+        cameraFar: 5E4,
         defaultCameraPosition: {x: 0, y: 50, z: 200}
     }
 };

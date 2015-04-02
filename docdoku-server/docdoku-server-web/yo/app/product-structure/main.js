@@ -29,7 +29,7 @@ var App = {
 
     WorkerManagedValues: {
         maxInstances: 500,
-        maxAngle: Math.PI / 4,
+        maxAngle: Math.PI / 2,
         maxDist: 100000,
         minProjectedSize: 0.000001,//100,
         distanceRating: 0.6,//0.7,
@@ -42,7 +42,7 @@ var App = {
         zoomSpeed: 1.2,
         rotateSpeed: 1.0,
         panSpeed: 0.3,
-        cameraNear: 1,
+        cameraNear: 0.1,
         cameraFar: 5E4,
         defaultCameraPosition: {x: -1000, y: 800, z: 1100},
         defaultTargetPosition: {x: 0, y: 0, z: 0},
