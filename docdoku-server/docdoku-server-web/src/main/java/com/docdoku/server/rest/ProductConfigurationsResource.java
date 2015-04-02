@@ -138,7 +138,16 @@ public class ProductConfigurationsResource {
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId,ciId);
         String description = pProductConfigurationDTO.getDescription();
         String name = pProductConfigurationDTO.getName();
-        ProductConfiguration productConfiguration = productBaselineService.createProductConfiguration(ciKey, name, description, pProductConfigurationDTO.getSubstituteLinks(), pProductConfigurationDTO.getOptionalUsageLinks());
+
+        ACLDTO acldto = pProductConfigurationDTO.getAcl();
+        Map<String,ACL.Permission> userEntries=new HashMap<>();
+        Map<String,ACL.Permission> grpEntries=new HashMap<>();
+        if(acldto != null){
+            userEntries = acldto.getUserEntries();
+            grpEntries= acldto.getGroupEntries();
+        }
+
+        ProductConfiguration productConfiguration = productBaselineService.createProductConfiguration(ciKey, name, description, pProductConfigurationDTO.getSubstituteLinks(), pProductConfigurationDTO.getOptionalUsageLinks(),userEntries,grpEntries);
         ProductConfigurationDTO productConfigurationDTO = mapper.map(productConfiguration, ProductConfigurationDTO.class);
         productConfigurationDTO.setConfigurationItemId(productConfiguration.getConfigurationItem().getId());
         return productConfigurationDTO;

@@ -314,7 +314,7 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public ProductConfiguration createProductConfiguration(ConfigurationItemKey ciKey, String name, String description, List<String> substituteLinks, List<String> optionalUsageLinks) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, CreationException, AccessRightException {
+    public ProductConfiguration createProductConfiguration(ConfigurationItemKey ciKey, String name, String description, List<String> substituteLinks, List<String> optionalUsageLinks, Map<String,ACL.Permission> userEntries, Map<String,ACL.Permission> groupEntries) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, CreationException, AccessRightException {
         User user = userManager.checkWorkspaceWriteAccess(ciKey.getWorkspace());
 
         Locale locale = new Locale(user.getLanguage());
@@ -324,6 +324,10 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
         ConfigurationItem configurationItem = configurationItemDAO.loadConfigurationItem(ciKey);
 
         ProductConfiguration productConfiguration = new ProductConfiguration(configurationItem, name,description,null);
+
+        ACLFactory aclFactory = new ACLFactory(em);
+        ACL acl = aclFactory.createACLFromPermissions(ciKey.getWorkspace(), userEntries, groupEntries);
+        productConfiguration.setAcl(acl);
 
         productConfiguration.setOptionalUsageLinks(new HashSet<>(optionalUsageLinks));
         productConfiguration.setSubstituteLinks(new HashSet<>(substituteLinks));

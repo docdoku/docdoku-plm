@@ -7,8 +7,9 @@ define([
     'models/configuration_item',
     'collections/configuration_items',
     'views/baselines/baseline_choice_list',
+    'common-objects/views/security/acl',
     'common-objects/views/alert'
-], function (Backbone, Mustache, template, Configuration, ConfigurationItem, ConfigurationItemCollection,BaselineChoiceListView, AlertView) {
+], function (Backbone, Mustache, template, Configuration, ConfigurationItem, ConfigurationItemCollection,BaselineChoiceListView, ACLView, AlertView) {
     'use strict';
     var ConfigurationCreationView = Backbone.View.extend({
 
@@ -36,6 +37,11 @@ define([
             }else{
                 this.fillProductSelect();
             }
+
+            this.workspaceMembershipsView = new ACLView({
+                el: this.$('#acl-mapping'),
+                editMode: true
+            }).render();
 
             this.$('input[required]').customValidity(App.config.i18n.REQUIRED_FIELD);
             return this;
@@ -142,7 +148,8 @@ define([
                     name: this.$inputName.val(),
                     description: this.$inputDescription.val(),
                     substituteLinks:substituteLinks,
-                    optionalUsageLinks:optionalUsageLinks
+                    optionalUsageLinks:optionalUsageLinks,
+                    acl: this.workspaceMembershipsView.toList()
                 };
 
                 this.model.createConfiguration(data).success(this.onConfigurationCreated.bind(this)).error(this.onError.bind(this));

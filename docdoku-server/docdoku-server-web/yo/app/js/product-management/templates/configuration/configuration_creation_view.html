@@ -11,6 +11,7 @@
             <ul class="ModalTabs-nav nav nav-tabs">
                 <li class="active"><a href="#tab-configuration-general" data-toggle="tab">{{i18n.GENERAL}}</a></li>
                 <li><a href="#tab-configuration-choices" data-toggle="tab">{{i18n.CONFIGURATION}}</a></li>
+                <li><a href="#tab-configuration-acl" data-toggle="tab">{{i18n.ACL}}</a></li>
             </ul>
 
             <form id="configuration_creation_form" class="form-horizontal">
@@ -59,6 +60,9 @@
                         </div>
                     </div>
                     <div id="tab-configuration-choices" class="ModalTabsPane tab-pane choicesListArea">
+                    </div>
+                    <div id="tab-configuration-acl" class="tab-pane">
+                        <div id="acl-mapping"></div>
                     </div>
                 </div>
             </form>
