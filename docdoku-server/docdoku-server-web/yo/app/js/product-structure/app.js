@@ -261,17 +261,17 @@ define([
         },
 
         onMeshSelected: function (mesh) {
-
             var partKey = mesh.partIterationId.substr(0, mesh.partIterationId.lastIndexOf('-'));
             var part = new Part({partKey: partKey});
 
             part.fetch({
                 success: function () {
                     // Search the part in the tree
-                    App.searchView.trigger('instance:selected', part.getNumber());
+                    App.searchView.trigger('instance:selected', mesh.path);
                     App.controlNavigationView.setMesh(mesh);
                     App.controlTransformView.setMesh(mesh).render();
                     App.partMetadataView.setModel(part).render();
+
                 }
             });
 

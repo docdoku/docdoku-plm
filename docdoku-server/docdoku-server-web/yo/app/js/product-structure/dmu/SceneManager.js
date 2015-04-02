@@ -388,6 +388,7 @@ define([
             var mesh = new THREE.Mesh(stuff.geometry, stuff.materials);
             mesh.uuid = stuff.id;
             mesh.partIterationId = stuff.partIterationId;
+            mesh.path = stuff.path;
             mesh.geometry.verticesNeedUpdate = true;
             mesh.applyMatrix(matrix);
             mesh.initialPosition = {x: mesh.position.x, y: mesh.position.y, z: mesh.position.z};

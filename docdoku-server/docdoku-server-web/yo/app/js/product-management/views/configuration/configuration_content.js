@@ -112,7 +112,6 @@ define([
                             self.listView.redraw();
                         },
                         error: function(model, error){
-                            debugger
                             aclEditView.onError(model, error);
                         }
                     });
