@@ -28,6 +28,7 @@ import com.docdoku.core.product.ConfigurationItemKey;
 import com.docdoku.core.product.PartIterationKey;
 import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.UserGroupMapping;
+import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.services.IProductInstanceManagerLocal;
 import com.docdoku.server.rest.dto.ACLDTO;
 import com.docdoku.server.rest.dto.DocumentIterationDTO;
@@ -64,6 +65,7 @@ public class ProductInstancesResource {
     private IProductInstanceManagerLocal productInstanceService;
 
     private Mapper mapper;
+
 
     public ProductInstancesResource() {
     }
@@ -134,24 +136,20 @@ public class ProductInstancesResource {
     }
 
     @PUT
+    @Path("{serialNumber}/iterations/{iteration}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ProductInstanceMasterDTO updateProductInstanceMaster(@PathParam("workspaceId") String workspaceId, ProductInstanceCreationDTO productInstanceCreationDTO)
+    public ProductInstanceMasterDTO updateProductInstanceMaster(@PathParam("workspaceId") String workspaceId,@PathParam("iteration") int iteration, ProductInstanceIterationDTO productInstanceCreationDTO)
             throws EntityNotFoundException, EntityAlreadyExistsException, AccessRightException, CreationException {
 
         InstanceAttributeFactory factory = new InstanceAttributeFactory();
-        ACLDTO acldto = productInstanceCreationDTO.getAcl();
-        Map<String,ACL.Permission> userEntries=new HashMap<>();
-        Map<String,ACL.Permission> grpEntries=new HashMap<>();
+
         List<InstanceAttributeDTO> instanceAttributes = productInstanceCreationDTO.getInstanceAttributes();
         List<InstanceAttribute> attributes = new ArrayList<>();
         if (instanceAttributes != null) {
             attributes = factory.createInstanceAttributes(instanceAttributes);
         }
-        if(acldto != null){
-            userEntries = acldto.getUserEntries();
-            grpEntries= acldto.getGroupEntries();
-        }
+
         Set<DocumentIterationDTO> linkedDocs = productInstanceCreationDTO.getLinkedDocuments();
         DocumentIterationKey[] links = null;
         String[] documentLinkComments = null;
@@ -167,10 +165,12 @@ public class ProductInstancesResource {
                 documentLinkComments[i++] = comment;
             }
         }
-        ProductInstanceMaster productInstanceMaster = productInstanceService.updateProductInstance(workspaceId,new ConfigurationItemKey(workspaceId, productInstanceCreationDTO.getConfigurationItemId()), productInstanceCreationDTO.getSerialNumber(), productInstanceCreationDTO.getBaselineId(),userEntries,grpEntries,attributes, links, documentLinkComments);
+        ProductInstanceMaster productInstanceMaster = productInstanceService.updateProductInstance(iteration,productInstanceCreationDTO.getIterationNote(),new ConfigurationItemKey(workspaceId, productInstanceCreationDTO.getConfigurationItemId()), productInstanceCreationDTO.getSerialNumber(), productInstanceCreationDTO.getBasedOn().getId(),attributes, links, documentLinkComments);
 
         return mapper.map(productInstanceMaster, ProductInstanceMasterDTO.class);
     }
+
+
 
     @GET
     @Path("{serialNumber}")
@@ -181,6 +181,20 @@ public class ProductInstancesResource {
         ProductInstanceMaster productInstanceMaster = productInstanceService.getProductInstanceMaster(new ProductInstanceMasterKey(serialNumber,workspaceId,configurationItemId));
         return mapper.map(productInstanceMaster,ProductInstanceMasterDTO.class);
     }
+
+    @DELETE
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path("{serialNumber}/iterations/{iteration}/files/{fileName}")
+    public Response removeAttachedFile(@PathParam("workspaceId") String workspaceId,@PathParam("iteration") int iteration, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, @PathParam("fileName") String fileName)
+            throws EntityNotFoundException, AccessRightException, UserNotActiveException {
+
+        String fullName = workspaceId + "/product-instances/" + serialNumber +"/iterations/" + iteration + "/" + fileName;
+        ProductInstanceMaster productInstanceMaster = productInstanceService.getProductInstanceMaster(new ProductInstanceMasterKey(serialNumber,workspaceId,configurationItemId));
+
+        ProductInstanceMaster productInstanceMasterUpdated = productInstanceService.removeFileFromProductInstanceIteration(workspaceId, iteration, fullName, productInstanceMaster);
+        return Response.ok().build();
+    }
+
 
     @PUT
     @Path("{serialNumber}/acl")
@@ -234,28 +248,6 @@ public class ProductInstancesResource {
         return productInstanceIterationDTOList;
     }
 
-    @POST
-    @Path("{serialNumber}/iterations")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public ProductInstanceIterationDTO createProductInstanceIteration(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationId, @PathParam("serialNumber") String serialNumber, @PathParam("iteration") int iteration, ProductInstanceIterationDTO productInstanceIterationDTO)
-            throws EntityNotFoundException, AccessRightException {
-
-        String cId = (configurationId != null) ? configurationId : productInstanceIterationDTO.getConfigurationItemId();
-        List<PartIterationKey> partIterationKeys = new ArrayList<>();
-        for(BaselinedPartDTO baselinedPartDTO : productInstanceIterationDTO.getBaselinedParts()){
-            partIterationKeys.add(new PartIterationKey(workspaceId, baselinedPartDTO.getNumber(),baselinedPartDTO.getVersion(),baselinedPartDTO.getIteration()));
-        }
-        InstanceAttributeFactory factory = new InstanceAttributeFactory();
-
-        List<InstanceAttributeDTO> instanceAttributes = productInstanceIterationDTO.getInstanceAttributes();
-        List<InstanceAttribute> attributes = new ArrayList<>();
-        if (instanceAttributes != null) {
-            attributes = factory.createInstanceAttributes(instanceAttributes);
-        }
-        ProductInstanceIteration productInstanceIteration = productInstanceService.updateProductInstance(new ConfigurationItemKey(workspaceId, cId), serialNumber, productInstanceIterationDTO.getIterationNote(), partIterationKeys,attributes);
-        return mapper.map(productInstanceIteration,ProductInstanceIterationDTO.class);
-    }
 
     @GET
     @Path("{serialNumber}/iterations/{iteration}")
@@ -285,14 +277,7 @@ public class ProductInstancesResource {
     }
 
 
-    @DELETE
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Path("{serialNumber}/iterations/{iteration}/files/{fileName}")
-    public Response removeAttachedFile(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, @PathParam("iteration") int iteration, @PathParam("fileName") String fileName)
-            throws EntityNotFoundException, UserNotActiveException {
 
-        return Response.ok().build();
-    }
 
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)

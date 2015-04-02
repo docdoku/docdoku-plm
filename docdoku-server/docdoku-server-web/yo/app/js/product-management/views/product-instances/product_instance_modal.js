@@ -172,20 +172,20 @@ define([
 
         onSubmitForm: function (e) {
             var _this = this;
-            this.iteration = this.iteration.clone();
-            this.iteration.unset('iteration');
+           // this.iteration = this.iteration.clone();
+            //this.iteration.unset('iteration');
             this.iteration.setIterationNote(this.$inputIterationNote.val());
             this.iteration.setBaselinedParts(this.baselinePartListView.getBaselinedParts());
             this.iteration.setInstanceAttributes(this.attributesView.collection.toJSON());
             this.iteration.setLinkedDocuments(this.linkedDocumentsView.collection.toJSON());
-            //linkedDocuments: 
-            /*There is a parsing problem at saving time*/
+
             var files = this.iteration.get('attachedFiles');
 
             /*tracking back files*/
             this.iteration.set({
                 attachedFiles: files
             });
+
             this.iteration.save(JSON.stringify(this.iteration), '', {
                 success: function () {
                     _this.model.fetch();
@@ -202,7 +202,7 @@ define([
         onError: function (model, error) {
             var errorMessage = error ? error.responseText : model;
 
-            this.$notifications.append(new AlertView({
+            $('.notifications').last().append(new AlertView({
                 type: 'error',
                 message: errorMessage
             }).render().$el);

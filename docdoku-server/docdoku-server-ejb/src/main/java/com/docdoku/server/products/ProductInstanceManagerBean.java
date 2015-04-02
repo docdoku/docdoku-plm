@@ -26,11 +26,13 @@ import com.docdoku.core.configuration.*;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.document.DocumentLink;
+import com.docdoku.core.document.DocumentMasterTemplate;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.product.*;
 import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.UserGroupMapping;
+import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.services.IProductInstanceManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.core.util.NamingConvention;
@@ -62,6 +64,8 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
 
     @Resource
     private SessionContext ctx;
+    @EJB
+    private IDataManagerLocal dataManager;
 
     private static final Logger LOGGER = Logger.getLogger(ProductInstanceManagerBean.class.getName());
 
@@ -192,35 +196,72 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public ProductInstanceIteration updateProductInstance(ConfigurationItemKey configurationItemKey, String serialNumber, String iterationNote, List<PartIterationKey> partIterationKeys, List<InstanceAttribute> attributes) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ProductInstanceMasterNotFoundException, PartIterationNotFoundException {
+    public ProductInstanceMaster updateProductInstance(int iteration,String iterationNote,ConfigurationItemKey configurationItemKey, String serialNumber, int baselineId, List<InstanceAttribute> attributes, DocumentIterationKey[] links, String[] documentLinkComments) throws ProductInstanceMasterNotFoundException, UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ProductInstanceIterationNotFoundException {
         User user = userManager.checkWorkspaceWriteAccess(configurationItemKey.getWorkspace());
         Locale userLocal = new Locale(user.getLanguage());
         ProductInstanceMasterDAO productInstanceMasterDAO = new ProductInstanceMasterDAO(userLocal, em);
-        ProductInstanceMaster productInstanceMaster = productInstanceMasterDAO.loadProductInstanceMaster(new ProductInstanceMasterKey(serialNumber, configurationItemKey.getWorkspace(), configurationItemKey.getId()));
+        ProductInstanceMasterKey pInstanceIterationKey = new ProductInstanceMasterKey(serialNumber, configurationItemKey.getWorkspace(), configurationItemKey.getId());
+        ProductInstanceMaster productInstanceMaster = productInstanceMasterDAO.loadProductInstanceMaster(pInstanceIterationKey);
 
         ProductInstanceIteration lastIteration = productInstanceMaster.getLastIteration();
 
-        ProductInstanceIteration productInstanceIteration = productInstanceMaster.createNextIteration();
-        new ProductInstanceIterationDAO(userLocal, em).createProductInstanceIteration(productInstanceIteration);
+        ProductInstanceIteration productInstanceIteration = productInstanceMaster.getProductInstanceIterations().get(iteration- 1);
 
-        productInstanceIteration.setIterationNote(iterationNote);
-        PartCollection partCollection = new PartCollection();
-        new PartCollectionDAO(em).createPartCollection(partCollection);
+        if (productInstanceIteration != null){
+            productInstanceIteration.setIterationNote(iterationNote);
+            productInstanceIteration.setInstanceAttributes(attributes);
+            productInstanceIteration.setSubstituteLinks(new HashSet<>(lastIteration.getSubstituteLinks()));
+            productInstanceIteration.setOptionalUsageLinks(new HashSet<>(lastIteration.getOptionalUsageLinks()));
 
-        partCollection.setAuthor(user);
-        partCollection.setCreationDate(new Date());
-        for (PartIterationKey partIterationKey : partIterationKeys) {
-            partCollection.addBaselinedPart(new PartIterationDAO(userLocal, em).loadPartI(partIterationKey));
+            DocumentLinkDAO linkDAO = new DocumentLinkDAO(userLocal, em);
+            if (links != null) {
+                ArrayList<DocumentIterationKey> linkKeys = new ArrayList<>(Arrays.asList(links));
+                ArrayList<DocumentIterationKey> currentLinkKeys = new ArrayList<>();
+
+                Set<DocumentLink> currentLinks = new HashSet<>(productInstanceIteration.getLinkedDocuments());
+
+                for (DocumentLink link : currentLinks) {
+                    productInstanceIteration.getLinkedDocuments().remove(link);
+                }
+
+                int counter = 0;
+                for (DocumentIterationKey link : linkKeys) {
+                    DocumentLink newLink = new DocumentLink(em.getReference(DocumentIteration.class, link));
+                    newLink.setComment(documentLinkComments[counter]);
+                    linkDAO.createLink(newLink);
+                    productInstanceIteration.getLinkedDocuments().add(newLink);
+                    counter++;
+                }}
+
+            return productInstanceMaster;
+
+        }else{
+            throw  new ProductInstanceIterationNotFoundException(userLocal,new ProductInstanceIterationKey(serialNumber, configurationItemKey.getWorkspace(), configurationItemKey.getId(),iteration));
+
         }
-        productInstanceIteration.setPartCollection(partCollection);
 
-        // TODO : use params instead of recopy.
-        productInstanceIteration.setBasedOn(lastIteration.getBasedOn());
-        productInstanceIteration.setSubstituteLinks(new HashSet<>(lastIteration.getSubstituteLinks()));
-        productInstanceIteration.setOptionalUsageLinks(new HashSet<>(lastIteration.getOptionalUsageLinks()));
+    }
 
-        productInstanceIteration.setInstanceAttributes(attributes);
-        return productInstanceIteration;
+    @Override
+    public ProductInstanceMaster removeFileFromProductInstanceIteration(String workspaceId,int iteration,String fullName,ProductInstanceMaster productInstanceMaster) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException {
+
+        User user = userManager.checkWorkspaceWriteAccess(workspaceId);
+        Locale userLocal = new Locale(user.getLanguage());
+
+        ProductInstanceIteration productInstanceIteration = productInstanceMaster.getProductInstanceIterations().get(iteration - 1);
+        BinaryResourceDAO binDAO = new BinaryResourceDAO(userLocal, em);
+        BinaryResource file = binDAO.loadBinaryResource(fullName);
+        checkProductInstanceWriteAccess(workspaceId, productInstanceMaster, user);
+
+        try {
+            dataManager.deleteData(file);
+        } catch (StorageException e) {
+            LOGGER.log(Level.INFO, null, e);
+        }
+        productInstanceIteration.removeFile(file);
+        binDAO.removeBinaryResource(file);
+        return productInstanceMaster;
+
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
@@ -366,10 +407,8 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         }
     }
 
-    @Override
-    public ProductInstanceMaster updateProductInstance(String workspaceId, ConfigurationItemKey configurationItemKey, String serialNumber, int baselineId, Map<String, ACL.Permission> userEntries, Map<String, ACL.Permission> grpEntries, List<InstanceAttribute> attributes, DocumentIterationKey[] links, String[] documentLinkComments) {
-        return null;
-    }
+
+
 
     private boolean isACLGrantReadAccess(User user, ProductInstanceMaster productInstanceMaster) {
       return user.isAdministrator() || productInstanceMaster.getAcl().hasReadAccess(user);

@@ -283,4 +283,7 @@ public class ProductInstanceIteration implements Serializable, FileHolder {
     public boolean isLinkOptional(String link){
         return optionalUsageLinks.contains(link);
     }
+    public boolean removeFile(BinaryResource pBinaryResource){
+        return attachedFiles.remove(pBinaryResource);
+    }
 }
