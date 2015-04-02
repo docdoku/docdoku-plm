@@ -54,9 +54,12 @@ define([
         },
 
         openEditView: function () {
-            var view = new ProductInstanceModalView({model: this.model});
-            view.render().openModal();
-            window.document.body.appendChild(view.el);
+            var model = this.model;
+            model.fetch().success(function () {
+                var view = new ProductInstanceModalView({model: model});
+                view.render().openModal();
+                window.document.body.appendChild(view.el);
+            });
         }
     });
 

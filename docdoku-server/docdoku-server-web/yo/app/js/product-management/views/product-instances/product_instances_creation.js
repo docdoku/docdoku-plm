@@ -25,7 +25,7 @@ define([
         initialize: function () {
             this._subViews = [];
             _.bindAll(this);
-            this.$el.on('remove', this.removeSubviews);                                                                  // Remove cascade
+            this.$el.on('remove', this.removeSubviews);
         },
 
         removeSubviews: function () {
@@ -41,7 +41,13 @@ define([
                 editMode: true
             }).render();
             this.$inputSerialNumber.customValidity(App.config.i18n.REQUIRED_FIELD);
-            new ConfigurationItemCollection().fetch({success: this.fillConfigurationItemList});
+
+            if(this.options.baseline){
+                this.$inputBaseline.append('<option value="' + this.options.baseline.getId() + '" >' + this.options.baseline.getName() + '</option>');
+                this.$inputConfigurationItem.append('<option value="' + this.options.baseline.getConfigurationItemId() + '" >' + this.options.baseline.getConfigurationItemId() + '</option>');
+            }else{
+                new ConfigurationItemCollection().fetch({success: this.fillConfigurationItemList});
+            }
             return this;
         },
 
@@ -111,7 +117,11 @@ define([
         },
 
         onProductInstanceCreated: function () {
-            this.collection.fetch();
+            this.trigger('info',App.config.i18n.PRODUCT_INSTANCE_CREATED);
+
+            if(this.collection){
+                this.collection.fetch();
+            }
             this.closeModal();
         },
 

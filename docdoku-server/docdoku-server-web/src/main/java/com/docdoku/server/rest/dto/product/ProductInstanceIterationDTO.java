@@ -22,6 +22,7 @@ package com.docdoku.server.rest.dto.product;
 
 import com.docdoku.server.rest.dto.DocumentIterationDTO;
 import com.docdoku.server.rest.dto.InstanceAttributeDTO;
+import com.docdoku.server.rest.dto.PartMinimalListDTO;
 import com.docdoku.server.rest.dto.baseline.BaselineDTO;
 import com.docdoku.server.rest.dto.baseline.BaselinedPartDTO;
 
@@ -40,6 +41,10 @@ public class ProductInstanceIterationDTO {
     private List<BaselinedPartDTO> baselinedParts;
     private List<String> substituteLinks;
     private List<String> optionalUsageLinks;
+
+
+    private List<PartMinimalListDTO> substitutesParts;
+    private List<PartMinimalListDTO> optionalsParts;
 
     private BaselineDTO basedOn;
     private List<InstanceAttributeDTO> instanceAttributes = new ArrayList<>();
@@ -152,5 +157,21 @@ public class ProductInstanceIterationDTO {
 
     public void setSubstituteLinks(List<String> substituteLinks) {
         this.substituteLinks = substituteLinks;
+    }
+
+    public List<PartMinimalListDTO> getSubstitutesParts() {
+        return substitutesParts;
+    }
+
+    public void setSubstitutesParts(List<PartMinimalListDTO> substitutesParts) {
+        this.substitutesParts = substitutesParts;
+    }
+
+    public List<PartMinimalListDTO> getOptionalsParts() {
+        return optionalsParts;
+    }
+
+    public void setOptionalsParts(List<PartMinimalListDTO> optionalsParts) {
+        this.optionalsParts = optionalsParts;
     }
 }

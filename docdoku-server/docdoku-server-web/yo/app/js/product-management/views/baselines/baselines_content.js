@@ -9,20 +9,24 @@ define([
     'views/baselines/baselines_list',
     'text!common-objects/templates/buttons/delete_button.html',
     'text!common-objects/templates/buttons/snap_button.html',
+    'text!common-objects/templates/buttons/new_product_instance_button.html',
     'common-objects/views/alert',
-    'views/baselines/baseline_creation_view'
-], function (Backbone, Mustache, BaselinesCollection, ConfigurationItemCollection,ConfigurationItem, template, BaselinesListView, deleteButton, snapButton, AlertView, BaselineCreationView) {
+    'views/baselines/baseline_creation_view',
+    'views/product-instances/product_instances_creation'
+], function (Backbone, Mustache, BaselinesCollection, ConfigurationItemCollection,ConfigurationItem, template, BaselinesListView, deleteButton, snapButton,newProductInstanceButton, AlertView, BaselineCreationView, ProductInstanceCreationView) {
 	'use strict';
 
     var BaselinesContentView = Backbone.View.extend({
         partials: {
             deleteButton: deleteButton,
-            snapButton:snapButton
+            snapButton:snapButton,
+            newProductInstanceButton:newProductInstanceButton
         },
 
         events: {
             'click button.delete': 'deleteBaseline',
-            'click button.new-baseline': 'createBaseline'
+            'click button.new-baseline': 'createBaseline',
+            'click button.new-product-instance': 'newProductInstance'
         },
 
         initialize: function () {
@@ -36,7 +40,7 @@ define([
             this.$el.html(Mustache.render(template, {i18n: App.config.i18n}, this.partials));
             this.bindDomElements();
             this.createBaselineButton.show();
-
+            this.newProductInstanceButton.hide();
             new ConfigurationItemCollection().fetch().success(function(collection){
                 if(!collection.length){
                     self.$notifications.append(new AlertView({
@@ -67,6 +71,7 @@ define([
             this.$notifications = this.$el.find('.notifications').first();
             this.deleteButton = this.$('.delete');
             this.createBaselineButton = this.$('.new-baseline');
+            this.newProductInstanceButton = this.$('.new-product-instance');
             this.$inputProductId = this.$('#inputProductId');
         },
 
@@ -83,6 +88,15 @@ define([
             window.document.body.appendChild(baselineCreationView.render().el);
             baselineCreationView.on('warning', this.onWarning);
             baselineCreationView.openModal();
+        },
+
+        newProductInstance: function () {
+            var productInstanceCreationView = new ProductInstanceCreationView({
+                baseline:this.listView.getSelectedBaseline()
+            });
+            productInstanceCreationView.on('info',this.onInfo);
+            window.document.body.appendChild(productInstanceCreationView.render().el);
+            productInstanceCreationView.openModal();
         },
 
         createBaselineView: function () {
@@ -103,6 +117,7 @@ define([
             this.listView.on('error', this.onError);
             this.listView.on('warning', this.onWarning);
             this.listView.on('delete-button:display', this.changeDeleteButtonDisplay);
+            this.listView.on('new-product-instance-button:display', this.changeNewProductInstanceButtonDisplay);
         },
 
         deleteBaseline: function () {
@@ -110,11 +125,11 @@ define([
         },
 
         changeDeleteButtonDisplay: function (state) {
-            if (state) {
-                this.deleteButton.show();
-            } else {
-                this.deleteButton.hide();
-            }
+            this.deleteButton.toggle(state);
+        },
+
+        changeNewProductInstanceButtonDisplay:function(state){
+            this.newProductInstanceButton.toggle(state);
         },
 
         onError:function(model, error){
