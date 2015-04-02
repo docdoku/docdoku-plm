@@ -20,6 +20,7 @@
 package com.docdoku.server.rest;
 
 import com.docdoku.core.configuration.*;
+import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.meta.InstanceAttribute;
@@ -28,9 +29,14 @@ import com.docdoku.core.product.PartIterationKey;
 import com.docdoku.core.product.PartLink;
 import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.UserGroupMapping;
+import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.services.IProductInstanceManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.rest.dto.*;
+import com.docdoku.server.rest.dto.ACLDTO;
+import com.docdoku.server.rest.dto.DocumentIterationDTO;
+import com.docdoku.server.rest.dto.FileDTO;
+import com.docdoku.server.rest.dto.InstanceAttributeDTO;
 import com.docdoku.server.rest.dto.baseline.BaselinedPartDTO;
 import com.docdoku.server.rest.dto.product.ProductInstanceCreationDTO;
 import com.docdoku.server.rest.dto.product.ProductInstanceIterationDTO;
@@ -47,10 +53,7 @@ import javax.ejb.Stateless;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  *
@@ -68,6 +71,7 @@ public class ProductInstancesResource {
     private IProductManagerLocal productService;
 
     private Mapper mapper;
+
 
     public ProductInstancesResource() {
     }
@@ -117,10 +121,62 @@ public class ProductInstancesResource {
             userEntries = acldto.getUserEntries();
             grpEntries= acldto.getGroupEntries();
         }
-        ProductInstanceMaster productInstanceMaster = productInstanceService.createProductInstance(workspaceId,new ConfigurationItemKey(workspaceId, productInstanceCreationDTO.getConfigurationItemId()), productInstanceCreationDTO.getSerialNumber(), productInstanceCreationDTO.getBaselineId(),userEntries,grpEntries,attributes);
+        Set<DocumentIterationDTO> linkedDocs = productInstanceCreationDTO.getLinkedDocuments();
+        DocumentIterationKey[] links = null;
+        String[] documentLinkComments = null;
+        if (linkedDocs != null) {
+            documentLinkComments = new String[linkedDocs.size()];
+            links = createDocumentIterationKey(linkedDocs);
+            int i = 0;
+            for (DocumentIterationDTO docItereationForLink : linkedDocs){
+                String comment = docItereationForLink.getCommentLink();
+                if (comment == null){
+                    comment = "";
+                }
+                documentLinkComments[i++] = comment;
+            }
+        }
+        ProductInstanceMaster productInstanceMaster = productInstanceService.createProductInstance(workspaceId,new ConfigurationItemKey(workspaceId, productInstanceCreationDTO.getConfigurationItemId()), productInstanceCreationDTO.getSerialNumber(), productInstanceCreationDTO.getBaselineId(),userEntries,grpEntries,attributes, links, documentLinkComments);
 
         return mapper.map(productInstanceMaster, ProductInstanceMasterDTO.class);
     }
+
+    @PUT
+    @Path("{serialNumber}/iterations/{iteration}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public ProductInstanceMasterDTO updateProductInstanceMaster(@PathParam("workspaceId") String workspaceId,@PathParam("iteration") int iteration, ProductInstanceIterationDTO productInstanceCreationDTO)
+            throws EntityNotFoundException, EntityAlreadyExistsException, AccessRightException, CreationException {
+
+        InstanceAttributeFactory factory = new InstanceAttributeFactory();
+
+        List<InstanceAttributeDTO> instanceAttributes = productInstanceCreationDTO.getInstanceAttributes();
+        List<InstanceAttribute> attributes = new ArrayList<>();
+        if (instanceAttributes != null) {
+            attributes = factory.createInstanceAttributes(instanceAttributes);
+        }
+
+        Set<DocumentIterationDTO> linkedDocs = productInstanceCreationDTO.getLinkedDocuments();
+        DocumentIterationKey[] links = null;
+        String[] documentLinkComments = null;
+        if (linkedDocs != null) {
+            documentLinkComments = new String[linkedDocs.size()];
+            links = createDocumentIterationKey(linkedDocs);
+            int i = 0;
+            for (DocumentIterationDTO docItereationForLink : linkedDocs){
+                String comment = docItereationForLink.getCommentLink();
+                if (comment == null){
+                    comment = "";
+                }
+                documentLinkComments[i++] = comment;
+            }
+        }
+        ProductInstanceMaster productInstanceMaster = productInstanceService.updateProductInstance(iteration,productInstanceCreationDTO.getIterationNote(),new ConfigurationItemKey(workspaceId, productInstanceCreationDTO.getConfigurationItemId()), productInstanceCreationDTO.getSerialNumber(), productInstanceCreationDTO.getBasedOn().getId(),attributes, links, documentLinkComments);
+
+        return mapper.map(productInstanceMaster, ProductInstanceMasterDTO.class);
+    }
+
+
 
     @GET
     @Path("{serialNumber}")
@@ -165,6 +221,20 @@ public class ProductInstancesResource {
 
         return dto;
     }
+
+    @DELETE
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path("{serialNumber}/iterations/{iteration}/files/{fileName}")
+    public Response removeAttachedFile(@PathParam("workspaceId") String workspaceId,@PathParam("iteration") int iteration, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, @PathParam("fileName") String fileName)
+            throws EntityNotFoundException, AccessRightException, UserNotActiveException {
+
+        String fullName = workspaceId + "/product-instances/" + serialNumber +"/iterations/" + iteration + "/" + fileName;
+        ProductInstanceMaster productInstanceMaster = productInstanceService.getProductInstanceMaster(new ProductInstanceMasterKey(serialNumber,workspaceId,configurationItemId));
+
+        ProductInstanceMaster productInstanceMasterUpdated = productInstanceService.removeFileFromProductInstanceIteration(workspaceId, iteration, fullName, productInstanceMaster);
+        return Response.ok().build();
+    }
+
 
     @PUT
     @Path("{serialNumber}/acl")
@@ -218,28 +288,6 @@ public class ProductInstancesResource {
         return productInstanceIterationDTOList;
     }
 
-    @POST
-    @Path("{serialNumber}/iterations")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public ProductInstanceIterationDTO createProductInstanceIteration(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationId, @PathParam("serialNumber") String serialNumber, @PathParam("iteration") int iteration, ProductInstanceIterationDTO productInstanceIterationDTO)
-            throws EntityNotFoundException, AccessRightException {
-
-        String cId = (configurationId != null) ? configurationId : productInstanceIterationDTO.getConfigurationItemId();
-        List<PartIterationKey> partIterationKeys = new ArrayList<>();
-        for(BaselinedPartDTO baselinedPartDTO : productInstanceIterationDTO.getBaselinedParts()){
-            partIterationKeys.add(new PartIterationKey(workspaceId, baselinedPartDTO.getNumber(),baselinedPartDTO.getVersion(),baselinedPartDTO.getIteration()));
-        }
-        InstanceAttributeFactory factory = new InstanceAttributeFactory();
-
-        List<InstanceAttributeDTO> instanceAttributes = productInstanceIterationDTO.getInstanceAttributes();
-        List<InstanceAttribute> attributes = new ArrayList<>();
-        if (instanceAttributes != null) {
-            attributes = factory.createInstanceAttributes(instanceAttributes);
-        }
-        ProductInstanceIteration productInstanceIteration = productInstanceService.updateProductInstance(new ConfigurationItemKey(workspaceId, cId), serialNumber, productInstanceIterationDTO.getIterationNote(), partIterationKeys,attributes);
-        return mapper.map(productInstanceIteration,ProductInstanceIterationDTO.class);
-    }
 
     @GET
     @Path("{serialNumber}/iterations/{iteration}")
@@ -269,14 +317,7 @@ public class ProductInstancesResource {
     }
 
 
-    @DELETE
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Path("{serialNumber}/iterations/{iteration}/files/{fileName}")
-    public Response removeAttachedFile(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, @PathParam("iteration") int iteration, @PathParam("fileName") String fileName)
-            throws EntityNotFoundException, UserNotActiveException {
 
-        return Response.ok().build();
-    }
 
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
@@ -285,5 +326,18 @@ public class ProductInstancesResource {
     public FileDTO renameAttachedFile(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, @PathParam("iteration") int iteration, @PathParam("fileName") String fileName, FileDTO fileDTO) throws UserNotActiveException, WorkspaceNotFoundException, CreationException, UserNotFoundException, FileNotFoundException, NotAllowedException, FileAlreadyExistsException {
 
         return new FileDTO(true,"name","name01");
+    }
+
+    private DocumentIterationKey[] createDocumentIterationKey(Set<DocumentIterationDTO> dtos) {
+        DocumentIterationKey[] data = new DocumentIterationKey[dtos.size()];
+        int i = 0;
+        for (DocumentIterationDTO dto : dtos) {
+            data[i++] = createObject(dto);
+        }
+        return data;
+    }
+
+    private DocumentIterationKey createObject(DocumentIterationDTO dto) {
+        return new DocumentIterationKey(dto.getWorkspaceId(), dto.getDocumentMasterId(), dto.getDocumentRevisionVersion(), dto.getIteration());
     }
 }
