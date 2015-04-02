@@ -190,7 +190,7 @@ define({
 		GOTO_SERIAL_MODE: "Switch activity to serial",
 		GRID_SWITCH: "Show/Hide the grid",
 		GROUPS: "Groups",
-        HEAD_CHECKIN:"Checked in",
+        HEAD_CHECKIN:"Latest checked in",
         HEAD_RELEASED:"Latest released",
         HEAD_WIP:"Work in progress",
         HOME_PAGE: "Home",
