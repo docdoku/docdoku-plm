@@ -57,7 +57,7 @@ function (Backbone, singletonDecorator) {
 
         updateRoute: function (context) {
 
-            if(!App.collaborativeView){
+            if(!App.collaborativeView.roomKey){
 
                 var c = context.camPos.toArray();
                 var t = context.target.toArray();
