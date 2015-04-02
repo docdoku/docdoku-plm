@@ -138,10 +138,9 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             @Override
             public void onPathWalk(List<PartLink> path, List<PartMaster> parts) {
                 PartMaster pm = parts.get(parts.size() - 1);
-                if(pm.getNumber().matches(search)){
 
+                if (pm.getNumber().matches(search) || (pm.getName() != null && pm.getName().matches(search))) {
                     PartLink[] partLinks = path.toArray(new PartLink[path.size()]);
-
                     usagePaths.add(partLinks);
                 }
             }
