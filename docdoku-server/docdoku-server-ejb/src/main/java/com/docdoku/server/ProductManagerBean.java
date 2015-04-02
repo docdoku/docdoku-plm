@@ -46,8 +46,8 @@ import com.docdoku.server.configuration.spec.ProductInstanceConfigSpec;
 import com.docdoku.server.dao.*;
 import com.docdoku.server.esindexer.ESIndexer;
 import com.docdoku.server.esindexer.ESSearcher;
-import com.docdoku.server.events.ChangePartIterationEvent;
-import com.docdoku.server.events.ChangePartRevisionEvent;
+import com.docdoku.server.events.PartIterationChangeEvent;
+import com.docdoku.server.events.PartRevisionChangeEvent;
 import com.docdoku.server.events.CheckedIn;
 import com.docdoku.server.events.Removed;
 import com.docdoku.server.factory.ACLFactory;
@@ -93,9 +93,9 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
 
     @Inject
-    private Event<ChangePartIterationEvent> partIterationEvent;
+    private Event<PartIterationChangeEvent> partIterationEvent;
     @Inject
-    private Event<ChangePartRevisionEvent> partRevisionEvent;
+    private Event<PartRevisionChangeEvent> partRevisionEvent;
 
     private static final Logger LOGGER = Logger.getLogger(ProductManagerBean.class.getName());
 
@@ -307,7 +307,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 throw new NotAllowedException(locale, "NotAllowedException41");
             }
             PartIteration partIte = partR.removeLastIteration();
-            partIterationEvent.select(new AnnotationLiteral<Removed>(){}).fire(new ChangePartIterationEvent(partIte));
+            partIterationEvent.select(new AnnotationLiteral<Removed>(){}).fire(new PartIterationChangeEvent(partIte));
 
             for (Geometry file : partIte.getGeometries()) {
                 try {
@@ -467,7 +467,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             for(PartIteration partIteration : partR.getPartIterations()){
                 esIndexer.index(partIteration);                                                                         // Index all iterations in ElasticSearch (decrease old iteration boost factor)
             }
-            partIterationEvent.select(new AnnotationLiteral<CheckedIn>(){}).fire(new ChangePartIterationEvent(lastIteration));
+            partIterationEvent.select(new AnnotationLiteral<CheckedIn>(){}).fire(new PartIterationChangeEvent(lastIteration));
             return partR;
         } else {
             throw new NotAllowedException(locale, "NotAllowedException20");
@@ -1829,7 +1829,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         // delete CAD files attached with this partMaster
         // and notified remove part observers
         for (PartRevision partRevision : partMaster.getPartRevisions()) {
-            partRevisionEvent.select(new AnnotationLiteral<Removed>(){}).fire(new ChangePartRevisionEvent(partRevision));
+            partRevisionEvent.select(new AnnotationLiteral<Removed>(){}).fire(new PartRevisionChangeEvent(partRevision));
             for (PartIteration partIteration : partRevision.getPartIterations()) {
                 try {
                     removeCADFile(partIteration);
@@ -1900,7 +1900,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 LOGGER.log(Level.INFO, null, e);
             }
         }
-        partRevisionEvent.select(new AnnotationLiteral<Removed>(){}).fire(new ChangePartRevisionEvent(partR));
+        partRevisionEvent.select(new AnnotationLiteral<Removed>(){}).fire(new PartRevisionChangeEvent(partR));
         if(isLastRevision){
             partMasterDAO.removePartM(partMaster);
         }else{

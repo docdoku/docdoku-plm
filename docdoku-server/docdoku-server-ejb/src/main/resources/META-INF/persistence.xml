@@ -87,6 +87,8 @@
     <class>com.docdoku.core.workflow.Workflow</class>
     <class>com.docdoku.core.workflow.WorkflowModel</class>
     <class>com.docdoku.core.workflow.Role</class>
+    <class>com.docdoku.core.payment.PaidSubscription</class>
+    <class>com.docdoku.core.payment.Payment</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <property name="javax.persistence.schema-generation.database.action" value="create"/>
