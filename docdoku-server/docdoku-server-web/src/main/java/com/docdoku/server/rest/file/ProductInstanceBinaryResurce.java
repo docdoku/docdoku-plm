@@ -20,6 +20,8 @@ package com.docdoku.server.rest.file; /*
 
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.configuration.ProductInstanceIterationKey;
+import com.docdoku.core.configuration.ProductInstanceMaster;
+import com.docdoku.core.configuration.ProductInstanceMasterKey;
 import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
@@ -137,6 +139,7 @@ public class ProductInstanceBinaryResurce {
                 return BinaryResourceDownloadResponseBuilder.downloadError(e, fullName);
             }
         }
+
 
     private BinaryResource getBinaryResource(String fullName)
             throws NotAllowedException, AccessRightException, UserNotActiveException, EntityNotFoundException {
