@@ -19,6 +19,9 @@ define(['dmu/LoaderManager', 'async'],
         var InstancesManager = function () {
             var _this = this;
 
+            var timestamp = Date.now();
+            Backbone.Events.on('part:saved', newTimestamp, this);
+
             this.xhrQueue = null;
             this.loadQueue = null;
             this.aborted = 0;
@@ -237,11 +240,22 @@ define(['dmu/LoaderManager', 'async'],
 		        loaderIndicator.hide();
 	        }
 
+            function getTimestamp(){
+                if(!timestamp){
+                    setTimestamp();
+                }
+                return timestamp;
+            }
+
+            function newTimestamp(){
+                timestamp = Date.now();
+            }
+
 	        function loadPath(path, callback) {
 		        $.ajax({
 			        url: App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' +
 				         App.config.productId + '/instances' +
-				         '?configSpec='+App.config.configSpec+'&path='+path,
+				         '?configSpec='+App.config.configSpec+'&path='+path+ '&timestamp=' + getTimestamp(),
 			        type: 'GET',
 			        success:function(instances){
 				        onSuccessLoadPath(instances);
@@ -251,6 +265,7 @@ define(['dmu/LoaderManager', 'async'],
 			        }
 		        });
 	        }
+
             function loadPaths(paths, callback) {
                 $.ajax({
 	                url: App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' +
@@ -275,7 +290,7 @@ define(['dmu/LoaderManager', 'async'],
 		        $.ajax({
 			        url: App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' +
 				         App.config.productId + '/instances' +
-				         '?configSpec=' + App.config.configSpec+'&path='+path,
+				         '?configSpec=' + App.config.configSpec+'&path='+path+ '&timestamp=' + getTimestamp(),
 			        type: 'GET',
 			        success: function (instances) {
 				        _.each(instances, function (instance) {
