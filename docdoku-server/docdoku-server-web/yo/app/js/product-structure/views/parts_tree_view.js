@@ -37,7 +37,6 @@ define(['backbone', 'models/component_module', 'views/component_views'
 
         refreshProductView: function(){
             this.refreshAll();
-            this.onProductTitleClicked();
         },
 
         render: function () {
@@ -194,6 +193,10 @@ define(['backbone', 'models/component_module', 'views/component_views'
 
         refreshAll: function () {
             this.componentViews.fetchAll();
+            this.onProductTitleClicked();
+            App.instancesManager.clear();
+            App.collaborativeController.sendSmartPath(App.partsTreeView.getSmartPath());
+            App.collaborativeController.sendConfigSpec(App.config.configSpec);
         },
 
         toggleComment:function(){
