@@ -100,7 +100,8 @@ require.config({
         colladaloader:{deps:['threecore'],exports:'THREE'},
         stlloader:{deps:['threecore'],exports:'THREE'},
         objloader:{deps:['threecore'],exports:'THREE'},
-        buffergeometryutils:{deps:['threecore'],exports:'THREE'}
+        buffergeometryutils:{deps:['threecore'],exports:'THREE'},
+        typeface : { deps: ['threecore'], exports: 'window' }
     },
     paths: {
         jquery: '../../bower_components/jquery/jquery',
@@ -141,7 +142,8 @@ require.config({
         stlloader:'dmu/loaders/STLLoader',
         objloader:'dmu/loaders/OBJLoader',
         buffergeometryutils: 'dmu/utils/BufferGeometryUtils',
-        stats:'dmu/utils/Stats'
+        stats:'dmu/utils/Stats',
+        typeface:'../lib/helvetiker_regular.typeface'
     },
 
     deps:[
@@ -170,7 +172,8 @@ require.config({
         'stats',
         'dat',
         'tween',
-        'inputValidity'
+        'inputValidity',
+        'typeface'
     ],
     config: {
         i18n: {

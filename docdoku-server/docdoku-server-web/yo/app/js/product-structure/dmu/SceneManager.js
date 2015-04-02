@@ -4,8 +4,9 @@ define([
     'views/marker_create_modal_view',
     'views/blocker_view',
     'dmu/LayerManager',
+    'dmu/MeasureTool',
     'common-objects/utils/date'
-], function (Backbone,MarkerCreateModalView, BlockerView, LayerManager, date) {
+], function (Backbone,MarkerCreateModalView, BlockerView, LayerManager,MeasureTool, date) {
 	'use strict';
     var SceneManager = function (pOptions) {
         var _this = this;
@@ -28,6 +29,10 @@ define([
         var controlChanged = false;
         var editedMeshesColoured = false;
         var transformControls = null;
+
+        var measureTool = null;
+        var measures=[];
+        var measureTexts=[];
 
         var materialEditedMesh = new THREE.MeshPhongMaterial({ transparent: false, color: new THREE.Color(0x08B000) });
 
@@ -68,6 +73,20 @@ define([
                 _this.layerManager.renderList();
             }
         }
+        function initMeasureTool() {
+            measureTool = new MeasureTool({
+                onFirstPoint:function(){
+                    _this.scene.add(measureTool.line);
+                },
+                onSecondPoint:function(){
+                    _this.scene.remove(measureTool.line);
+                },
+                onCancelled:function(){
+                    _this.scene.remove(measureTool.line);
+                }
+            });
+        }
+
         function initAxes() {
             var axes = new THREE.AxisHelper(100);
             axes.position.set(0, 0, 0);
@@ -267,11 +286,6 @@ define([
             }
             mesh.updateMatrix();
         }
-        function applyMeasureStateOpacity(mesh) {
-            if (_this.measureState) {
-                mesh.material.opacity = _this.measureState ? 0.5 : 1;
-            }
-        }
 
         function showGrid() {
             if (_this.grid.added) {
@@ -297,6 +311,12 @@ define([
             }
         }
 
+        function updateMeasures(){
+            _.each(measureTexts,function(text){
+                text.rotation.copy(_this.cameraObject.rotation);
+            });
+        }
+
         /**
          * Scene mouse events
          */
@@ -315,8 +335,21 @@ define([
         }
         function onSceneMouseWheel() {
         }
-        function onSceneMouseMove() {
+        function onSceneMouseMove(e) {
+
+            if(_this.measureState && measureTool.hasOnlyFirstPoint()){
+                var vector = new THREE.Vector3(
+                    ((e.clientX - _this.$container.offset().left) / _this.$container[0].offsetWidth ) * 2 - 1,
+                    -((e.clientY - _this.$container.offset().top) / _this.$container[0].offsetHeight ) * 2 + 1,
+                    0.5
+                );
+                projector.unprojectVector(vector, _this.cameraObject);
+                measureTool.setVirtualPoint(vector);
+                _this.reDraw();
+            }
+
             isMoving = true;
+
         }
         function onMouseUp(event) {
             event.preventDefault();
@@ -344,12 +377,11 @@ define([
                     mcmv.openModal();
                 }
                 else if (_this.measureState) {
-                    _this.measureCallback(intersects[0].point.clone());
+                    measureTool.onClick(intersects[0].point.clone());
                 }
                 else {
                     meshMarkedForSelection = intersects[0].object.uuid;
                     setSelectionBoxOnMesh(intersects[0].object);
-
                     Backbone.Events.trigger('mesh:selected', intersects[0].object);
                 }
             }
@@ -361,10 +393,6 @@ define([
                     Backbone.Events.trigger('selection:reset');
                     meshMarkedForSelection = null;
                     unsetSelectionBox();
-                }
-
-                if (_this.measureState) {
-                    _this.measureCallback(-1);
                 }
             }
 
@@ -460,7 +488,6 @@ define([
                     }
                     applyExplosionCoeff(newMesh);
                     applyWireFrame(newMesh);
-                    applyMeasureStateOpacity(newMesh);
 
                     var potentiallyEdited = _(_this.editedMeshesLeft).where({uuid: newMesh.uuid});
                     if (potentiallyEdited.length) {
@@ -630,7 +657,7 @@ define([
                     transformControls.update();
                 }
                 _this.stats.update();
-
+                updateMeasures();
                 render();
             }
             if (controlChanged && App.collaborativeController) {
@@ -644,6 +671,7 @@ define([
             initDOM();
             initControls();
             initLayerManager();
+            initMeasureTool();
             initAxes();
             initGrid();
             initSelectionBox();
@@ -766,19 +794,58 @@ define([
             });
             _this.reDraw();
         };
-        this.setMeasureListener = function (callback) {
-            _this.measureCallback = callback;
+
+        this.drawMeasure = function(points){
+            var material = new THREE.LineBasicMaterial({
+                color: 0xf47922
+            });
+            var geometry = new THREE.Geometry();
+            geometry.vertices.push(points[0]);
+            geometry.vertices.push(points[1]);
+            var line = new THREE.Line(geometry, material);
+
+            var dist = points[0].distanceTo(points[1]);
+            var distText = (dist/1000).toFixed(3) + ' m';
+
+            var size = dist/100 + 10;
+
+            var  textGeo = new THREE.TextGeometry(distText, {size:size,height:2, font:'helvetiker'});
+            var  textMaterial = new THREE.MeshBasicMaterial({ color: 0xf47922 });
+            var  text = new THREE.Mesh(textGeo , textMaterial);
+
+            text.position.copy(new THREE.Vector3().addVectors(points[0],points[1]).multiplyScalar(0.5));
+            text.rotation.copy(_this.cameraObject.rotation);
+
+            measures.push(line);
+            measureTexts.push(text);
+            _this.scene.add(line);
+            _this.scene.add(text);
+
+            _this.reDraw();
         };
+
+        this.clearMeasures = function(){
+            _.each(measures,function(line){
+                _this.scene.remove(line);
+            });
+            _.each(measureTexts,function(text){
+                _this.scene.remove(text);
+            });
+            measures = [];
+            measureTexts = [];
+        };
+
         this.setMeasureState = function (state) {
             App.$SceneContainer.toggleClass('measureMode', state);
             _this.measureState = state;
-            var opacity = state ? 0.5 : 1;
-            _(_this.scene.children).each(function (child) {
-                if (child instanceof THREE.Mesh && child.partIterationId) {
-                    child.material.opacity = opacity;
-                }
-            });
+
+            if(!state){
+                measureTool.callbacks.onCancelled();
+                _this.clearMeasures();
+                _this.reDraw();
+            }
         };
+
         this.takeScreenShot = function () {
 
             var imageSource = _this.renderer.domElement.toDataURL('image/png');
@@ -999,7 +1066,6 @@ define([
         this.createLayerMaterial = function(color){
             return new THREE.MeshLambertMaterial({
                 color: color,
-                opacity: 1,
                 transparent: true
             });
         };
