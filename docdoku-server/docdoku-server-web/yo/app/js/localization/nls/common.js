@@ -293,7 +293,7 @@ define({
 		NO_WEBGL: "No WebGL available or activated",
 		NUMBER: "Number",
         LITER: "l",
-        LIST_LOV:"Edit list of values",
+        LIST_LOV:"Edit lists of values",
         LOV:"List of values",
 		OBJECTS: "Objects",
         OBSOLETE: "Obsolete",
