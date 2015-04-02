@@ -97,6 +97,13 @@ define(['backbone'
         },
         setConfigurationItemId:function(configurationItemId){
             this.set('configurationItemId', configurationItemId);
+        },
+
+        getSubstitutesParts:function(){
+            return this.get('substitutesParts');
+        },
+        getOptionalsParts:function(){
+            return this.get('optionalsParts');
         }
     });
 
