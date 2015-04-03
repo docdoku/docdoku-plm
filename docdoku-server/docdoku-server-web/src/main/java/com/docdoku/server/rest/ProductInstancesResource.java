@@ -19,6 +19,7 @@
  */
 package com.docdoku.server.rest;
 
+import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.configuration.*;
 import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.exceptions.*;
@@ -323,9 +324,11 @@ public class ProductInstancesResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{serialNumber}/iterations/{iteration}/files/{fileName}")
-    public FileDTO renameAttachedFile(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, @PathParam("iteration") int iteration, @PathParam("fileName") String fileName, FileDTO fileDTO) throws UserNotActiveException, WorkspaceNotFoundException, CreationException, UserNotFoundException, FileNotFoundException, NotAllowedException, FileAlreadyExistsException {
+    public FileDTO renameAttachedFile(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, @PathParam("iteration") int iteration, @PathParam("fileName") String fileName, FileDTO fileDTO) throws UserNotActiveException, WorkspaceNotFoundException, CreationException, UserNotFoundException, FileNotFoundException, NotAllowedException, FileAlreadyExistsException, ProductInstanceMasterNotFoundException, AccessRightException {
 
-        return new FileDTO(true,"name","name01");
+        String fullName = workspaceId + "/product-instances/" + serialNumber +"/iterations/" + iteration + "/" + fileName;
+        BinaryResource binaryResource = productInstanceService.renameFileInProductInstance(fullName, fileDTO.getShortName(), serialNumber, configurationItemId, iteration);
+        return new FileDTO(true,binaryResource.getFullName(),binaryResource.getName());
     }
 
     private DocumentIterationKey[] createDocumentIterationKey(Set<DocumentIterationDTO> dtos) {

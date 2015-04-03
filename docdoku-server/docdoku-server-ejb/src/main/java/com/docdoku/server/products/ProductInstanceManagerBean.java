@@ -23,10 +23,7 @@ package com.docdoku.server.products;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.User;
 import com.docdoku.core.configuration.*;
-import com.docdoku.core.document.DocumentIteration;
-import com.docdoku.core.document.DocumentIterationKey;
-import com.docdoku.core.document.DocumentLink;
-import com.docdoku.core.document.DocumentMasterTemplate;
+import com.docdoku.core.document.*;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.product.*;
@@ -261,6 +258,50 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         productInstanceIteration.removeFile(file);
         binDAO.removeBinaryResource(file);
         return productInstanceMaster;
+
+    }
+
+    @Override
+    public BinaryResource renameFileInProductInstance(String pFullName, String pNewName, String serialNumber,String cId,int iteration) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, FileNotFoundException, ProductInstanceMasterNotFoundException, NotAllowedException, AccessRightException, FileAlreadyExistsException, CreationException {
+        User user = userManager.checkWorkspaceReadAccess(BinaryResource.parseWorkspaceId(pFullName));
+        Locale userLocale = new Locale(user.getLanguage());
+
+        BinaryResourceDAO binDAO = new BinaryResourceDAO(new Locale(user.getLanguage()), em);
+        BinaryResource file = binDAO.loadBinaryResource(pFullName);
+        if (file == null){
+            throw new FileNotFoundException(new Locale(user.getLanguage()),pFullName);
+        }
+        ProductInstanceMasterDAO productInstanceMasterDAO = new ProductInstanceMasterDAO(userLocale, em);
+        ProductInstanceMasterKey pInstanceIterationKey = new ProductInstanceMasterKey(serialNumber, user.getWorkspaceId(), cId);
+        ProductInstanceMaster productInstanceMaster = productInstanceMasterDAO.loadProductInstanceMaster(pInstanceIterationKey);
+        checkNameFileValidity(pNewName, userLocale);
+
+        if (binDAO.loadBinaryResource(file.getNewFullName(pNewName)) == null) {
+
+            ProductInstanceIteration productInstanceIteration = productInstanceMaster.getProductInstanceIterations().get(iteration - 1);
+             //check access rights on product instance
+            checkProductInstanceWriteAccess(user.getWorkspaceId(),productInstanceMaster, user);
+
+
+                try {
+                    dataManager.renameFile(file, pNewName);
+                    productInstanceIteration.removeFile(file);
+                    binDAO.removeBinaryResource(file);
+
+                    BinaryResource newFile = new BinaryResource(file.getNewFullName(pNewName), file.getContentLength(), file.getLastModified());
+                    binDAO.createBinaryResource(newFile);
+                    productInstanceIteration.addFile(newFile);
+                    return newFile;
+
+
+                } catch (StorageException e) {
+                    LOGGER.log(Level.INFO, null, e);
+                    return null;
+                }
+
+        } else {
+            throw new FileAlreadyExistsException(userLocale, pNewName);
+        }
 
     }
 
