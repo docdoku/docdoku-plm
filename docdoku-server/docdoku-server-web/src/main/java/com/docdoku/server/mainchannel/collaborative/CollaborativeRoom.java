@@ -181,6 +181,7 @@ public class CollaborativeRoom {
         final String colourEditedMeshes = "colourEditedMeshes";
         final String explode = "explode";
         final String clipping = "clipping";
+        final String measures = "measures";
 
         if (command.containsKey(cameraInfosField)) {
             saveJsonCommands.add(cameraInfosField,command.getJsonObject(cameraInfosField));
@@ -196,6 +197,8 @@ public class CollaborativeRoom {
             saveJsonCommands.add(explode,command.getString(explode));
         } else if (command.containsKey(clipping)) {
             saveJsonCommands.add(clipping,command.getString(clipping));
+        }else if (command.containsKey(measures)) {
+            saveJsonCommands.add(measures,command.getJsonArray(measures));
         }
     }
 }

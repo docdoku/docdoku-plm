@@ -69,11 +69,13 @@ define([
 				    }
 				    App.layersListView.refreshLayers();
 			    } else if (message.messageBroadcast.markers) {
-				    if (message.messageBroadcast.markers === 'remove marker') {
-					    App.sceneManager.layerManager.removeAllMeshesFromMarkers();
-				    }
-				    App.layersListView.refreshLayers();
-			    }
+                    if (message.messageBroadcast.markers === 'remove marker') {
+                        App.sceneManager.layerManager.removeAllMeshesFromMarkers();
+                    }
+                    App.layersListView.refreshLayers();
+                } else if (message.messageBroadcast.measures){
+                    App.sceneManager.setMeasures(message.messageBroadcast.measures);
+                }
 		    }
 	    }
 
@@ -249,6 +251,19 @@ define([
                     key: App.collaborativeView.roomKey,
                     messageBroadcast: {
                         explode: value
+                    },
+                    remoteUser: ''
+                };
+                App.mainChannel.sendJSON(message);
+            }
+        };
+        this.sendMeasure = function(){
+            if (App.collaborativeView && App.collaborativeView.isMaster) {
+                var message = {
+                    type: ChannelMessagesType.COLLABORATIVE_COMMANDS,
+                    key: App.collaborativeView.roomKey,
+                    messageBroadcast: {
+                        measures: App.sceneManager.getMeasures()
                     },
                     remoteUser: ''
                 };

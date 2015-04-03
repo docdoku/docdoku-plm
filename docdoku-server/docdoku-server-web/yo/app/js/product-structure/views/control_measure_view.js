@@ -11,11 +11,13 @@ function (Backbone, Mustache, template) {
         className: 'side_control_group',
 
         events: {
+            'click .clear-measures-btn':'onClearClicked'
         },
 
         initialize: function () {
             _.bindAll(this);
             this.state = false;
+            Backbone.Events.on('measure:drawn', this.displayClearButton);
         },
 
         render: function () {
@@ -30,6 +32,15 @@ function (Backbone, Mustache, template) {
         switchMeasureState: function (e, data) {
             this.state = data.value;
             App.sceneManager.setMeasureState(data.value);
+        },
+
+        onClearClicked: function(e){
+            App.sceneManager.clearMeasures();
+            this.$('.clear-measures-btn').removeClass('display');
+        },
+
+        displayClearButton: function(){
+            this.$('.clear-measures-btn').addClass('display');
         }
 
     });
