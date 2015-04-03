@@ -94,7 +94,7 @@ define([
         },
 
         bindDomElements: function () {
-            this.$notifications = this.$el.find('.notifications').first();
+            this.$notifications = this.$el.find('.notifications').last();
             this.$modal = this.$('#product_instance_modal');
             this.$inputIterationNote = this.$('#inputIterationNote');
             this.$baselinedPartListArea = this.$('.baselinedPartListArea');
@@ -232,9 +232,9 @@ define([
         },
 
         onError: function (model, error) {
-            var _this= this;
+
             var errorMessage = error ? error.responseText : model;
-            _this.$notifications.append(new AlertView({
+            $('.notifications').last().append(new AlertView({
                 type: 'error',
                 message: errorMessage
             }).render().$el);

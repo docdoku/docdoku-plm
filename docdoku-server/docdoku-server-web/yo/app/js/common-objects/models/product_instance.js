@@ -102,7 +102,6 @@ define(['backbone',
         },
 
         getACLPermissionForCurrentUser: function () {
-            debugger;
             return ACLChecker.getPermission(this.getACL());
         }
 
