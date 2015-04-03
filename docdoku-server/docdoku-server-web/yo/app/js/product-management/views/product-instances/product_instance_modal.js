@@ -94,7 +94,7 @@ define([
         },
 
         bindDomElements: function () {
-            this.$notifications = this.$el.find('.notifications').last();
+            this.$notifications = this.$('.notifications');
             this.$modal = this.$('#product_instance_modal');
             this.$inputIterationNote = this.$('#inputIterationNote');
             this.$baselinedPartListArea = this.$('.baselinedPartListArea');
@@ -204,8 +204,6 @@ define([
 
         onSubmitForm: function (e) {
             var _this = this;
-           // this.iteration = this.iteration.clone();
-            //this.iteration.unset('iteration');
             this.iteration.setIterationNote(this.$inputIterationNote.val());
             this.iteration.setBaselinedParts(this.baselinePartListView.getBaselinedParts());
             this.iteration.setInstanceAttributes(this.attributesView.collection.toJSON());
@@ -223,7 +221,7 @@ define([
                     _this.model.fetch();
                     _this.closeModal();
                 },
-                error: _this.onError
+                error: _this.onError.bind(_this)
             });
             this.fileListView.deleteFilesToDelete();
             e.preventDefault();
@@ -232,9 +230,8 @@ define([
         },
 
         onError: function (model, error) {
-
             var errorMessage = error ? error.responseText : model;
-            $('.notifications').last().append(new AlertView({
+            this.$notifications.append(new AlertView({
                 type: 'error',
                 message: errorMessage
             }).render().$el);
