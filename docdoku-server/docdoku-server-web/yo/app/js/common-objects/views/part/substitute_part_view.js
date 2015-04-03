@@ -137,7 +137,6 @@ define([
                 this.model.amount = 1;
                 this.$amount.val(1);
             }
-
             this.disableEnableAmount(e.target.value);
             this.checkIntegrity(e.target.value);
         },
@@ -185,7 +184,6 @@ define([
                 if (this.$amount.val() > 1) {
                     this.$('.decrease-substitute-cadInstance').show();
                 }
-                this.$unitText.val(this.$defaultUnity);
             }
             else {
                 this.$amount.removeAttr('disabled');

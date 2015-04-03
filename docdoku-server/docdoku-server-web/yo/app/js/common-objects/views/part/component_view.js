@@ -231,7 +231,6 @@ define([
                 if (this.$amount.val() > 1) {
                     this.$('.decrease-cadInstance').show();
                 }
-                this.$unitText.val(this.$unitText.attr('default-unity'));
             }
             else {
                 this.$amount.removeAttr('disabled');
