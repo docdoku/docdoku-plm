@@ -152,6 +152,19 @@ public class ProductInstanceIteration implements Serializable, FileHolder {
 
     private Set<String> optionalUsageLinks=new HashSet<>();
 
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(name = "PRDINSTITERATION_PATHDATA",
+            inverseJoinColumns = {
+                    @JoinColumn(name = "PATHDATA_ID", referencedColumnName = "ID")
+            },
+            joinColumns = {
+                    @JoinColumn(name="PRDINSTANCEMASTER_SERIALNUMBER", referencedColumnName="PRDINSTANCEMASTER_SERIALNUMBER"),
+                    @JoinColumn(name="CONFIGURATIONITEM_ID", referencedColumnName="CONFIGURATIONITEM_ID"),
+                    @JoinColumn(name="WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
+                    @JoinColumn(name="ITERATION", referencedColumnName = "ITERATION")
+            })
+    private List<PathData> pathDataList =new ArrayList<>();
+
     public ProductInstanceIteration() {
     }
 
@@ -289,5 +302,13 @@ public class ProductInstanceIteration implements Serializable, FileHolder {
     }
     public boolean removeFile(BinaryResource pBinaryResource){
         return attachedFiles.remove(pBinaryResource);
+    }
+
+    public List<PathData> getPathDataList() {
+        return pathDataList;
+    }
+
+    public void setPathDataList(List<PathData> pathDataList) {
+        this.pathDataList = pathDataList;
     }
 }

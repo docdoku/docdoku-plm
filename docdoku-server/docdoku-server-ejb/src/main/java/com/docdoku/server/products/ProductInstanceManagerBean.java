@@ -450,8 +450,58 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         }
     }
 
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.GUEST_PROXY_ROLE_ID})
+    @Override
+    public PathData addPathData(String workspaceId, String configurationItemId, String serialNumber, String path, List<InstanceAttribute> attributes) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ProductInstanceMasterNotFoundException, UserNotActiveException {
+        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+        Locale locale = new Locale(user.getLanguage());
+
+        // Load the product instance
+        ProductInstanceMasterDAO productInstanceMasterDAO = new ProductInstanceMasterDAO(locale, em);
+        ProductInstanceMaster prodInstM = productInstanceMasterDAO.loadProductInstanceMaster(new ProductInstanceMasterKey(serialNumber, workspaceId, configurationItemId));
+
+        // Check the access to the product instance
+        checkProductInstanceWriteAccess(workspaceId, prodInstM, user);
+
+        ProductInstanceIteration productInstanceIteration  = prodInstM.getLastIteration();
+
+        PathData pathData = new PathData();
+        pathData.setPath(path);
+        pathData.setInstanceAttributes(attributes);
+
+        PathDataDAO pathDataDAO = new PathDataDAO(locale,em);
+        pathDataDAO.createPathData(pathData);
+
+        productInstanceIteration.getPathDataList().add(pathData);
+
+        return pathData;
+    }
+
+    @Override
+    public void updatePathData(String workspaceId, String configurationItemId, String serialNumber, String path, int pathDataId, List<InstanceAttribute> attributes) {
+
+    }
+
+    @Override
+    public void deletePathData(String workspaceId, String configurationItemId, String serialNumber, int pathDataId) {
+
+    }
+
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.GUEST_PROXY_ROLE_ID})
+    @Override
+    public PathData getPathData(String workspaceId, String configurationItemId, String serialNumber, int pathDataId) {
+        return null;
+    }
+
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.GUEST_PROXY_ROLE_ID})
+    @Override
+    public PathData getPathDataByPath(String workspaceId, String configurationItemId, String serialNumber, String path) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+        Locale userLocale = new Locale(user.getLanguage());
 
 
+        return null;
+    }
 
     private boolean isACLGrantReadAccess(User user, ProductInstanceMaster productInstanceMaster) {
       return user.isAdministrator() || productInstanceMaster.getAcl().hasReadAccess(user);
