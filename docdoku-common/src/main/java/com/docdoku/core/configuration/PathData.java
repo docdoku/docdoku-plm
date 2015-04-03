@@ -33,6 +33,9 @@ import java.util.List;
 
 @Table(name="PATHDATA")
 @Entity
+@NamedQueries({
+        @NamedQuery(name= "PathData.findByPathAndProductInstanceIteration", query="SELECT p FROM PathData p JOIN ProductInstanceIteration l WHERE p member of l.pathDataList and p.path = :path and l = :productInstanceIteration")
+})
 public class PathData implements Serializable {
 
     @GeneratedValue(strategy= GenerationType.IDENTITY)

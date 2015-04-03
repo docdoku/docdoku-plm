@@ -59,9 +59,9 @@ public interface IProductInstanceManagerLocal {
     public ProductInstanceMaster updateProductInstance(String workspaceId,int iteration,String iterationNote, ConfigurationItemKey configurationItemKey, String serialNumber, int baselineId, List<InstanceAttribute> attributes, DocumentIterationKey[] links, String[] documentLinkComments) throws ProductInstanceMasterNotFoundException, UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ProductInstanceIterationNotFoundException;
 
     public PathData addPathData(String workspaceId, String configurationItemId, String serialNumber, String path, List<InstanceAttribute> attributes) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ProductInstanceMasterNotFoundException, UserNotActiveException;
-    public void updatePathData(String workspaceId,  String configurationItemId, String serialNumber ,  String path, int pathDataId, List<InstanceAttribute> attributes);
-    public void deletePathData(String workspaceId,  String configurationItemId, String serialNumber , int pathDataId);
+    public PathData updatePathData(String workspaceId, String configurationItemId, String serialNumber, String path, int pathDataId, List<InstanceAttribute> attributes) throws UserNotActiveException, WorkspaceNotFoundException, UserNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, NotAllowedException;
+    public void deletePathData(String workspaceId,  String configurationItemId, String serialNumber , int pathDataId) throws UserNotActiveException, WorkspaceNotFoundException, UserNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, NotAllowedException;
 
-    public PathData getPathData(String workspaceId,  String configurationItemId,  String serialNumber , int pathDataId);
-    public PathData getPathDataByPath(String workspaceId,  String configurationItemId, String serialNumber , String path) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
+    public PathData getPathData(String workspaceId,  String configurationItemId,  String serialNumber , int pathDataId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, NotAllowedException;
+    public PathData getPathDataByPath(String workspaceId,  String configurationItemId, String serialNumber , String path) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, ProductInstanceMasterNotFoundException;
 }

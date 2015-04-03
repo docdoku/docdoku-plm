@@ -319,12 +319,36 @@ public class ProductInstancesResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{serialNumber}/iterations/{iteration}/files/{fileName}")
     public FileDTO renameAttachedFile(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, @PathParam("iteration") int iteration, @PathParam("fileName") String fileName, FileDTO fileDTO) throws UserNotActiveException, WorkspaceNotFoundException, CreationException, UserNotFoundException, FileNotFoundException, NotAllowedException, FileAlreadyExistsException, ProductInstanceMasterNotFoundException, AccessRightException {
-
         String fullName = workspaceId + "/product-instances/" + serialNumber +"/iterations/" + iteration + "/" + fileName;
         BinaryResource binaryResource = productInstanceService.renameFileInProductInstance(fullName, fileDTO.getShortName(), serialNumber, configurationItemId, iteration);
         return new FileDTO(true,binaryResource.getFullName(),binaryResource.getName());
     }
 
+    @GET
+    @Path("{serialNumber}/pathdata")
+    @Produces(MediaType.APPLICATION_JSON)
+    public PathDataDTO getPathData(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, @QueryParam("path") String path) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException {
+        PathData pathData = productInstanceService.getPathDataByPath(workspaceId, configurationItemId, serialNumber,path);
+        return mapper.map(pathData, PathDataDTO.class);
+    }
+
+    @PUT
+    @Path("{serialNumber}/pathdata/{pathDataId}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public PathDataDTO createPathData(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, @PathParam("pathDataId") int pathDataId, PathDataDTO pathDataDTO) throws UserNotFoundException, AccessRightException, UserNotActiveException, ProductInstanceMasterNotFoundException, WorkspaceNotFoundException, NotAllowedException {
+
+        InstanceAttributeFactory factory = new InstanceAttributeFactory();
+
+        List<InstanceAttributeDTO> instanceAttributes = pathDataDTO.getInstanceAttributes();
+        List<InstanceAttribute> attributes = new ArrayList<>();
+        if (instanceAttributes != null) {
+            attributes = factory.createInstanceAttributes(instanceAttributes);
+        }
+
+        PathData pathData = productInstanceService.updatePathData(workspaceId, configurationItemId, serialNumber, pathDataDTO.getPath(), pathDataId, attributes);
+        return mapper.map(pathData, PathDataDTO.class);
+    }
 
     @POST
     @Path("{serialNumber}/pathdata")

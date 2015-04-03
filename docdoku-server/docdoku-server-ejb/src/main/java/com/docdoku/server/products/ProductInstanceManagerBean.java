@@ -342,22 +342,6 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         }
     }
 
-    private User checkProductInstanceWriteAccess(String workspaceId, ProductInstanceMaster prodInstM, User user) throws AccessRightException, WorkspaceNotFoundException, UserNotFoundException {
-        if (user.isAdministrator()) {
-            // Check if it is the workspace's administrator
-            return user;
-        }
-        if (prodInstM.getAcl() == null) {
-            // Check if the item haven't ACL
-            return userManager.checkWorkspaceWriteAccess(workspaceId);
-        } else if (prodInstM.getAcl().hasWriteAccess(user)) {
-            // Check if there is a write access
-            return user;
-        } else {
-            // Else throw a AccessRightException
-            throw new AccessRightException(new Locale(user.getLanguage()), user);
-        }
-    }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
@@ -477,30 +461,107 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         return pathData;
     }
 
-    @Override
-    public void updatePathData(String workspaceId, String configurationItemId, String serialNumber, String path, int pathDataId, List<InstanceAttribute> attributes) {
-
-    }
-
-    @Override
-    public void deletePathData(String workspaceId, String configurationItemId, String serialNumber, int pathDataId) {
-
-    }
-
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.GUEST_PROXY_ROLE_ID})
     @Override
-    public PathData getPathData(String workspaceId, String configurationItemId, String serialNumber, int pathDataId) {
-        return null;
-    }
+    public PathData updatePathData(String workspaceId, String configurationItemId, String serialNumber, String path, int pathDataId, List<InstanceAttribute> attributes) throws UserNotActiveException, WorkspaceNotFoundException, UserNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, NotAllowedException {
 
-    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.GUEST_PROXY_ROLE_ID})
-    @Override
-    public PathData getPathDataByPath(String workspaceId, String configurationItemId, String serialNumber, String path) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
-        Locale userLocale = new Locale(user.getLanguage());
+        Locale locale = new Locale(user.getLanguage());
+
+        // Load the product instance
+        ProductInstanceMasterDAO productInstanceMasterDAO = new ProductInstanceMasterDAO(locale, em);
+        ProductInstanceMaster prodInstM = productInstanceMasterDAO.loadProductInstanceMaster(new ProductInstanceMasterKey(serialNumber, workspaceId, configurationItemId));
+
+        // Check the access to the product instance
+        checkProductInstanceWriteAccess(workspaceId, prodInstM, user);
+
+        PathData pathData = em.find(PathData.class, pathDataId);
+        pathData.setInstanceAttributes(attributes);
+
+        if(!prodInstM.getLastIteration().getPathDataList().contains(pathData)){
+            throw new NotAllowedException("");
+        }
+
+        return pathData;
+    }
+
+    @Override
+    public void deletePathData(String workspaceId, String configurationItemId, String serialNumber, int pathDataId) throws UserNotActiveException, WorkspaceNotFoundException, UserNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, NotAllowedException {
+
+    }
+
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.GUEST_PROXY_ROLE_ID})
+    @Override
+    public PathData getPathData(String workspaceId, String configurationItemId, String serialNumber, int pathDataId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, NotAllowedException {
+        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+        Locale locale = new Locale(user.getLanguage());
+
+        // Load the product instance
+        ProductInstanceMasterDAO productInstanceMasterDAO = new ProductInstanceMasterDAO(locale, em);
+        ProductInstanceMaster prodInstM = productInstanceMasterDAO.loadProductInstanceMaster(new ProductInstanceMasterKey(serialNumber, workspaceId, configurationItemId));
+
+        // Check the access to the product instance
+        checkProductInstanceReadAccess(workspaceId, prodInstM, user);
+
+        PathData pathData = em.find(PathData.class, pathDataId);
+
+        if(!prodInstM.getLastIteration().getPathDataList().contains(pathData)){
+            throw new NotAllowedException("");
+        }
+
+        return pathData;
+    }
+
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.GUEST_PROXY_ROLE_ID})
+    @Override
+    public PathData getPathDataByPath(String workspaceId, String configurationItemId, String serialNumber, String path) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, ProductInstanceMasterNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+        Locale locale = new Locale(user.getLanguage());
+
+        // Load the product instance
+        ProductInstanceMasterDAO productInstanceMasterDAO = new ProductInstanceMasterDAO(locale, em);
+        ProductInstanceMaster prodInstM = productInstanceMasterDAO.loadProductInstanceMaster(new ProductInstanceMasterKey(serialNumber, workspaceId, configurationItemId));
+
+        // Check the access to the product instance
+        checkProductInstanceReadAccess(workspaceId, prodInstM, user);
+
+        PathDataDAO pathDataDAO = new PathDataDAO(locale,em);
+
+        return pathDataDAO.findByPathAndProductInstance(path,prodInstM.getLastIteration());
+    }
 
 
-        return null;
+    private User checkProductInstanceReadAccess(String workspaceId, ProductInstanceMaster prodInstM, User user) throws AccessRightException, WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
+        if (user.isAdministrator()) {
+            // Check if it is the workspace's administrator
+            return user;
+        }
+        if (prodInstM.getAcl() == null) {
+            // Check if the item haven't ACL
+            return userManager.checkWorkspaceReadAccess(workspaceId);
+        } else if (prodInstM.getAcl().hasWriteAccess(user)) {
+            // Check if there is a write access
+            return user;
+        } else {
+            // Else throw a AccessRightException
+            throw new AccessRightException(new Locale(user.getLanguage()), user);
+        }
+    }
+    private User checkProductInstanceWriteAccess(String workspaceId, ProductInstanceMaster prodInstM, User user) throws AccessRightException, WorkspaceNotFoundException, UserNotFoundException {
+        if (user.isAdministrator()) {
+            // Check if it is the workspace's administrator
+            return user;
+        }
+        if (prodInstM.getAcl() == null) {
+            // Check if the item haven't ACL
+            return userManager.checkWorkspaceWriteAccess(workspaceId);
+        } else if (prodInstM.getAcl().hasWriteAccess(user)) {
+            // Check if there is a write access
+            return user;
+        } else {
+            // Else throw a AccessRightException
+            throw new AccessRightException(new Locale(user.getLanguage()), user);
+        }
     }
 
     private boolean isACLGrantReadAccess(User user, ProductInstanceMaster productInstanceMaster) {
