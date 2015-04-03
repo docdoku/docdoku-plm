@@ -32,6 +32,7 @@ define([
 
         var measureTool = null;
         var measures=[];
+        var measuresPoints = [];
         var measureTexts=[];
 
         var materialEditedMesh = new THREE.MeshPhongMaterial({ transparent: false, color: new THREE.Color(0x08B000) });
@@ -821,6 +822,9 @@ define([
             _this.scene.add(line);
             _this.scene.add(text);
 
+            measuresPoints.push(points);
+            App.collaborativeController.sendMeasure();
+            Backbone.Events.trigger('measure:drawn');
             _this.reDraw();
         };
 
@@ -833,6 +837,9 @@ define([
             });
             measures = [];
             measureTexts = [];
+            measuresPoints = [];
+            App.collaborativeController.sendMeasure();
+            _this.reDraw();
         };
 
         this.setMeasureState = function (state) {
@@ -841,8 +848,8 @@ define([
 
             if(!state){
                 measureTool.callbacks.onCancelled();
-                _this.clearMeasures();
-                _this.reDraw();
+                //_this.clearMeasures();
+                //_this.reDraw();
             }
         };
 
@@ -1078,6 +1085,20 @@ define([
 
         this.onContainerShown = function(){
             handleResize();
+        };
+
+        this.getMeasures = function(){
+            return measuresPoints;
+        };
+
+        this.setMeasures = function(measuresPoints){
+            _this.clearMeasures();
+            _.each(measuresPoints, function(points){
+                var point0 = new THREE.Vector3(points[0].x, points[0].y, points[0].z);
+                var point1 = new THREE.Vector3(points[1].x, points[1].y, points[1].z);;
+
+                _this.drawMeasure([point0, point1]);
+            });
         };
     };
 

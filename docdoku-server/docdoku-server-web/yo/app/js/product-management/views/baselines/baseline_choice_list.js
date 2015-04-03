@@ -36,7 +36,7 @@ define([
         },
 
         renderList:function(choices){
-            this.choicesViews = [];
+            this.clear();
             this.choices  = choices;
             this.choices.sort(function(a,b){
                 return a.partRevisionsKeys.join() < b.partRevisionsKeys.join() ? -1:1;
@@ -58,7 +58,19 @@ define([
         },
 
         removeSubviews: function () {
-            _(this.baselinedPartsViews).invoke('remove');
+            _(this.choicesViews).invoke('remove');
+        },
+
+        updateFromConfiguration:function(configuration){
+            _.invoke(this.choicesViews,'resetNominal');
+            if(configuration){
+                _.each(configuration.substituteLinks,this.checkLink);
+                _.each(configuration.optionalUsageLinks,this.checkLink);
+            }
+        },
+
+        checkLink:function(link){
+            this.$('[data-path="'+link+'"]').click();
         }
 
     });

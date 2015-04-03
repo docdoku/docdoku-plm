@@ -69,6 +69,10 @@ define(['backbone'], function (Backbone) {
             });
         },
 
+        getConfigurations : function(){
+            return $.getJSON(this.urlRoot() + '/' + this.getId() + '/configurations');
+        },
+
         getReleasedChoices : function(){
             return $.getJSON(this.urlRoot() + '/' + this.getId() + '/path-choices?type=RELEASED');
         },

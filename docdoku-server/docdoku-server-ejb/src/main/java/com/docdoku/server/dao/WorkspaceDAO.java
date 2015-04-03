@@ -150,10 +150,6 @@ public class WorkspaceDAO {
         em.createQuery("DELETE FROM DocumentBaseline b where b.workspace = :workspace")
                 .setParameter("workspace",workspace).executeUpdate();
 
-        // EffectivityConfigSpecs
-        em.createQuery("DELETE FROM EffectivityConfigSpec e where e.configurationItem.workspace = :workspace")
-                .setParameter("workspace",workspace).executeUpdate();
-
         // Effectivity
         em.createQuery("DELETE FROM Effectivity e where e.configurationItem.workspace = :workspace")
                 .setParameter("workspace",workspace).executeUpdate();
@@ -189,7 +185,29 @@ public class WorkspaceDAO {
         em.createQuery("DELETE FROM PartMasterTemplate p where p.workspace = :workspace")
                 .setParameter("workspace", workspace).executeUpdate();
 
-        em.flush();
+        // Conversions
+        em.createQuery("DELETE FROM Conversion c where c.partIteration.partRevision.partMaster.workspace = :workspace")
+                .setParameter("workspace", workspace).executeUpdate();
+
+        // Notifications
+        em.createQuery("DELETE FROM ModificationNotification m where m.impactedPart.partRevision.partMaster.workspace = :workspace or m.modifiedPart.partRevision.partMaster.workspace = :workspace")
+                .setParameter("workspace", workspace).executeUpdate();
+
+        // Change issues
+        em.createQuery("DELETE FROM ChangeIssue c where c.workspace = :workspace")
+                .setParameter("workspace", workspace).executeUpdate();
+
+        // Change requests
+        em.createQuery("DELETE FROM ChangeRequest c where c.workspace = :workspace")
+                .setParameter("workspace", workspace).executeUpdate();
+
+        // Change issues
+        em.createQuery("DELETE FROM ChangeOrder c where c.workspace = :workspace")
+                .setParameter("workspace", workspace).executeUpdate();
+
+        // Change issues / requests
+        em.createQuery("DELETE FROM Milestone m where m.workspace = :workspace")
+                .setParameter("workspace", workspace).executeUpdate();
 
         // Clear all document links ...
         List<DocumentIteration> documentsIteration =
@@ -210,7 +228,6 @@ public class WorkspaceDAO {
 
 
         // Remove parents
-
         List<DocumentMaster> documentsMaster =
                 em.createQuery("SELECT d FROM DocumentMaster d WHERE d.workspace = :workspace", DocumentMaster.class)
                         .setParameter("workspace",workspace).getResultList();
@@ -287,11 +304,10 @@ public class WorkspaceDAO {
 
         em.remove(workspace);
 
-        //em.createQuery("DELETE FROM Workspace w where w.id = :workspaceId")
-        //        .setParameter("workspaceId",workspaceId).executeUpdate();
-
         // Delete workspace files
         dataManager.deleteWorkspaceFolder(workspaceId,binaryResourcesInWorkspace);
+
+        em.flush();
 
     }
 

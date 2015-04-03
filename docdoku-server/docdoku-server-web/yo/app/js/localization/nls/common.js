@@ -291,6 +291,7 @@ define({
 		NOT_INVITED_COLLABORATIVE_ROOM:"You are not invited to join this room.",
         NOT_VERIFIED: "Not verified",
 		NO_WEBGL: "No WebGL available or activated",
+        NONE:'None',
 		NUMBER: "Number",
         LITER: "l",
         LIST_LOV:"Edit lists of values",

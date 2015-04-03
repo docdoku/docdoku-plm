@@ -13,7 +13,7 @@
 
             <li class="part-link">
                 <label class="radio">
-                    <input type="radio" name="path-selector-{{model.getPartUsageLinkPath}}" value="{{fullId}}"/>
+                    <input class="nominal-link" type="radio" name="path-selector-{{model.getPartUsageLinkPath}}" data-path="{{model.getPathWithoutLast}}-{{fullId}}" value="{{fullId}}"/>
                     {{component.name}} {{component.number}}
                 </label>
                 <span class="baseline-choice-details">{{referenceDescription}} {{comment}} - {{amount}} {{#unit}}{{.}}{{/unit}} {{^unit}}{{i18n.UNIT}}(s){{/unit}} </span>
@@ -22,7 +22,7 @@
                 <li class="part-link substitute">
                     {{#substitute}}
                     <label class="radio">
-                    <input type="radio" name="path-selector-{{model.getPartUsageLinkPath}}" value="{{fullId}}"/>
+                        <input type="radio" name="path-selector-{{model.getPartUsageLinkPath}}" data-path="{{model.getPathWithoutLast}}-{{fullId}}" value="{{fullId}}"/>
                         {{name}} {{number}}
                     </label>
                     {{/substitute}}
@@ -32,7 +32,7 @@
             {{/substitutes}}
         {{#optional}}
         <li>
-            <label class="radio"><input type="checkbox" class="baseline-choice-optional"/> {{i18n.OPTIONAL_REMOVE}}</label>
+            <label class="radio" data-path="{{model.getPathWithoutLast}}-{{fullId}}"><input type="checkbox" class="baseline-choice-optional"/> {{i18n.OPTIONAL_REMOVE}}</label>
         </li>
         {{/optional}}
         {{/model.getPartUsageLink}}
