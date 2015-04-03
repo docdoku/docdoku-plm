@@ -16,7 +16,9 @@ define([
             _.bindAll(this);
             this.configurationItemId = this.get('configurationItemId');
         },
-
+        getId:function(){
+            return this.get('id');
+        },
         getName:function(){
             return this.get('name');
         },

@@ -34,10 +34,11 @@ define([
                 removable:this.options.removable
             }));
 
-            var radio = this.$('input[type=radio]').first();
-            radio.prop('checked',true);
+            this.$nominalLink = this.$('.nominal-link');
+            this.$nominalLink.prop('checked',true);
+
             this.optional = false;
-            this.choice = radio.val();
+            this.choice = this.$nominalLink.val();
             this.defaultChoice = this.choice;
 
             this.$('.fa-chevron-right').last().remove();
@@ -80,6 +81,14 @@ define([
                 this.choice = radios.first().val();
             }
         },
+        resetNominal:function(){
+            var optionalCheckbox = this.$('.baseline-choice-optional');
+            if(optionalCheckbox.is(':checked')){
+                optionalCheckbox.click();
+            }
+            this.$nominalLink.click();
+        },
+
         openPartView:function(e){
             this.$el.trigger('close-modal-request');
             setTimeout(function(){

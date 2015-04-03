@@ -19,6 +19,12 @@ define(['backbone'], function (Backbone) {
             return this.get('paths').join('-');
         },
 
+        getPathWithoutLast:function(){
+            var paths  = this.getPaths().slice();
+            paths.pop();
+            return paths.join('-');
+        },
+
         getPartUsageLink: function () {
             return this.get('partUsageLink');
         },
