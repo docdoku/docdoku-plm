@@ -232,9 +232,9 @@ define([
         },
 
         onError: function (model, error) {
+            var _this= this;
             var errorMessage = error ? error.responseText : model;
-
-            this.$notifications.append(new AlertView({
+            _this.$notifications.append(new AlertView({
                 type: 'error',
                 message: errorMessage
             }).render().$el);

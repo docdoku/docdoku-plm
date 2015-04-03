@@ -172,7 +172,7 @@ public class ProductInstancesResource {
                 documentLinkComments[i++] = comment;
             }
         }
-        ProductInstanceMaster productInstanceMaster = productInstanceService.updateProductInstance(iteration,productInstanceCreationDTO.getIterationNote(),new ConfigurationItemKey(workspaceId, productInstanceCreationDTO.getConfigurationItemId()), productInstanceCreationDTO.getSerialNumber(), productInstanceCreationDTO.getBasedOn().getId(),attributes, links, documentLinkComments);
+        ProductInstanceMaster productInstanceMaster = productInstanceService.updateProductInstance(workspaceId,iteration,productInstanceCreationDTO.getIterationNote(),new ConfigurationItemKey(workspaceId, productInstanceCreationDTO.getConfigurationItemId()), productInstanceCreationDTO.getSerialNumber(), productInstanceCreationDTO.getBasedOn().getId(),attributes, links, documentLinkComments);
 
         return mapper.map(productInstanceMaster, ProductInstanceMasterDTO.class);
     }
