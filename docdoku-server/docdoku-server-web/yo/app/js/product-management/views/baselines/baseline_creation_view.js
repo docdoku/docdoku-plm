@@ -6,11 +6,13 @@ define([
 	'models/configuration_item',
     'common-objects/models/product_baseline',
 	'collections/configuration_items',
-	'text!templates/baselines/baseline_creation_view.html',
+    'collections/configurations',
+    'text!templates/baselines/baseline_creation_view.html',
     'common-objects/views/alert',
     'views/baselines/baseline_choice_list',
-    'views/baselines/baselined_part_list'
-], function (Backbone, Mustache, Baselines, ConfigurationItem, ProductBaseline, ConfigurationItemCollection, template, AlertView, BaselineChoiceListView, BaselinedPartsView) {
+    'views/baselines/baselined_part_list',
+    'views/baselines/baseline_configuration_list'
+], function (Backbone, Mustache, Baselines, ConfigurationItem, ProductBaseline, ConfigurationItemCollection, ConfigurationCollection, template, AlertView, BaselineChoiceListView, BaselinedPartsView, BaselineConfigurationsView) {
 
     'use strict';
 
@@ -34,6 +36,9 @@ define([
             }).render();
             this.productBaseline = new ProductBaseline();
             this.baselinePartListView.model = this.productBaseline;
+
+            this.baselineConfigurationsView = new BaselineConfigurationsView().render();
+            this.baselineConfigurationsView.on('configuration:changed',this.updateChoicesView)
 		},
 
 		render: function () {
@@ -49,6 +54,7 @@ define([
 
             this.$baselineChoicesListArea.html(this.choiceView.$el);
             this.$baselinedPartListArea.html(this.baselinePartListView.$el);
+            this.$baselinedConfigurationListArea.html(this.baselineConfigurationsView.$el);
 
             this.$inputBaselineName.customValidity(App.config.i18n.REQUIRED_FIELD);
 
@@ -60,6 +66,7 @@ define([
             this.model.set('id',this.$inputConfigurationItem.val());
             this.$inputBaselineType.val('LATEST').trigger('change');
             this.$inputBaselineType.prop('disabled',!this.model.getId());
+
         },
 
 		bindDomElements: function () {
@@ -72,6 +79,7 @@ define([
             this.$inputConfigurationItem = this.$('#inputConfigurationItem');
             this.$baselinedPartListArea = this.$('.baselinedPartListArea');
             this.$baselineChoicesListArea = this.$('.baselineChoicesListArea');
+            this.$baselinedConfigurationListArea = this.$('.baselinedConfigurationListArea');
             this.$loader = this.$('.loader');
         },
 
@@ -109,6 +117,7 @@ define([
                     this.showLoader();
                     this.model.getLatestChoices().success(this.fillChoices).error(this.onRequestsError);
                 }
+                this.model.getConfigurations().success(this.fillConfigurations)
             }
         },
 
@@ -123,12 +132,21 @@ define([
             this.choiceView.renderList(pathChoices);
         },
 
+        fillConfigurations:function(configurations){
+            this.hideLoader();
+            this.baselineConfigurationsView.renderList(configurations);
+        },
+
         onRequestsError:function(xhr,type,message){
             this.$loader.hide();
             this.$notifications.append(new AlertView({
                 type:'error',
                 message:message
             }).render().$el);
+        },
+
+        updateChoicesView:function(configuration){
+            this.choiceView.updateFromConfiguration(configuration);
         },
 
         showLoader:function(){

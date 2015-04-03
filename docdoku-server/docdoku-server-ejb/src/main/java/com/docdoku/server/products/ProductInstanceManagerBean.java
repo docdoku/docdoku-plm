@@ -193,17 +193,18 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public ProductInstanceMaster updateProductInstance(int iteration,String iterationNote,ConfigurationItemKey configurationItemKey, String serialNumber, int baselineId, List<InstanceAttribute> attributes, DocumentIterationKey[] links, String[] documentLinkComments) throws ProductInstanceMasterNotFoundException, UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ProductInstanceIterationNotFoundException {
-        User user = userManager.checkWorkspaceWriteAccess(configurationItemKey.getWorkspace());
+    public ProductInstanceMaster updateProductInstance(String workspaceId,int iteration,String iterationNote,ConfigurationItemKey configurationItemKey, String serialNumber, int baselineId, List<InstanceAttribute> attributes, DocumentIterationKey[] links, String[] documentLinkComments) throws ProductInstanceMasterNotFoundException, UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ProductInstanceIterationNotFoundException {
+        User user = userManager.checkWorkspaceWriteAccess(workspaceId);
         Locale userLocal = new Locale(user.getLanguage());
         ProductInstanceMasterDAO productInstanceMasterDAO = new ProductInstanceMasterDAO(userLocal, em);
-        ProductInstanceMasterKey pInstanceIterationKey = new ProductInstanceMasterKey(serialNumber, configurationItemKey.getWorkspace(), configurationItemKey.getId());
+        ProductInstanceMasterKey pInstanceIterationKey = new ProductInstanceMasterKey(serialNumber, workspaceId, configurationItemKey.getId());
         ProductInstanceMaster productInstanceMaster = productInstanceMasterDAO.loadProductInstanceMaster(pInstanceIterationKey);
 
         ProductInstanceIteration lastIteration = productInstanceMaster.getLastIteration();
 
         ProductInstanceIteration productInstanceIteration = productInstanceMaster.getProductInstanceIterations().get(iteration- 1);
-
+        // Check the access to the product instance
+        checkProductInstanceWriteAccess(workspaceId,productInstanceMaster,user);
         if (productInstanceIteration != null){
             productInstanceIteration.setIterationNote(iterationNote);
             productInstanceIteration.setInstanceAttributes(attributes);

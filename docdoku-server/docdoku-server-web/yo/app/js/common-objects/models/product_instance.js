@@ -1,6 +1,9 @@
 /*global $,_,define,App*/
-define(['backbone', 'common-objects/collections/product_instance_iterations','common-objects/utils/date'
-], function (Backbone, ProductInstanceList,date) {
+define(['backbone',
+    'common-objects/collections/product_instance_iterations',
+     'common-objects/utils/acl-checker',
+    'common-objects/utils/date'
+], function (Backbone, ProductInstanceList,ACLChecker,date) {
 	'use strict';
     var ProductInstance = Backbone.Model.extend({
 
@@ -24,6 +27,9 @@ define(['backbone', 'common-objects/collections/product_instance_iterations','co
                 delete data.productInstanceIterations;
                 return data;
             }
+        },
+        getACL:function(){
+            return this.get('acl');
         },
         getSerialNumber: function () {
             return this.get('serialNumber');
@@ -78,6 +84,25 @@ define(['backbone', 'common-objects/collections/product_instance_iterations','co
 
         getSceneUrl: function () {
             return App.config.contextPath + '/product-structure/#' + App.config.workspaceId + '/' + encodeURIComponent(this.getConfigurationItemId()) + '/config-spec/pi-'+encodeURIComponent(this.getSerialNumber())+'/scene' ;
+        },
+        hasACLForCurrentUser: function () {
+            return this.getACLPermissionForCurrentUser() !== false;
+        },
+
+        isForbidden: function () {
+            return this.getACLPermissionForCurrentUser() === 'FORBIDDEN';
+        },
+
+        isReadOnly: function () {
+            return this.getACLPermissionForCurrentUser() === 'READ_ONLY';
+        },
+
+        isFullAccess: function () {
+            return this.getACLPermissionForCurrentUser() === 'FULL_ACCESS';
+        },
+
+        getACLPermissionForCurrentUser: function () {
+            return ACLChecker.getPermission(this.getACL());
         }
 
     });

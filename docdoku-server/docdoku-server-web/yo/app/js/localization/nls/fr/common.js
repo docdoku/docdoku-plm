@@ -291,6 +291,7 @@ define({
 	NOT_INVITED_COLLABORATIVE_ROOM:"Vous n'êtes pas invité à rejoindre cette salle",
     NOT_VERIFIED: "Non vérifié",
 	NO_WEBGL: "Le navigateur ne supporte pas WebGL ou n'est pas activé.",
+    NONE:'Aucun(e)',
 	NUMBER: "Nombre",
 	OBJECTS: "Objets",
 	OBSOLETE: "Obsolète",
