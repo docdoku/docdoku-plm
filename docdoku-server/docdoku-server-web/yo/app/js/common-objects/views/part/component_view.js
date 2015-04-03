@@ -16,7 +16,8 @@ define([
             'change input[name=number]': 'changeNumber',
             'change input[name=name]': 'changeName',
             'change input[name=optional]': 'changeIsOptional',
-            'input input[name=newUnit]': 'changeMeasureUnit',
+            'change input[name=newUnit]': 'changeMeasureUnit',
+            'blur input[name=newUnit]': 'checkMeasureUnit',
             'click datalist[name=unitMeasure]': 'changeMeasureUnit',
             'click .add-cadInstance': 'addCadInstance',
             'click .decrease-cadInstance': 'removeCadInstance',
@@ -193,6 +194,13 @@ define([
             this.model.set('unit', (e.target.value == this.$defaultUnity ? '' : e.target.value));
             this.$unitText.val(e.target.value);
             this.disableEnableAmount(e.target.value);
+        },
+        checkMeasureUnit: function () {
+            if (!this.$unitText.val()){
+                this.$unitText.val(this.$defaultUnity);
+                this.disableEnableAmount(this.$defaultUnity);
+                this.checkIntegrity(this.$defaultUnity);
+            }
         },
         checkIntegrity: function (unit) {
 

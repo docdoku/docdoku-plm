@@ -14,7 +14,8 @@ define([
             'change input[name=substitute-referenceDescription]': 'changeSubstituteReferenceDescription',
             'change input[name=substitute-name]': 'changeSubstituteName',
             'change input[name=substitute-number]': 'changeSubstituteNumber',
-            'input input[name=substitute-newUnit]': 'changeSubstituteMeasureUnit',
+            'change input[name=substitute-newUnit]': 'changeSubstituteMeasureUnit',
+            'blur input[name=substitute-newUnit]': 'checkSubstituteMeasureUnit',
             'click datalist[name=substitute-unitMeasure]': 'changeSubstituteMeasureUnit',
             'click .add-substitute-cadInstance': 'addCadInstance',
             'click .decrease-substitute-cadInstance': 'removeCadInstance',
@@ -139,6 +140,14 @@ define([
             }
             this.disableEnableAmount(e.target.value);
             this.checkIntegrity(e.target.value);
+        },
+        checkSubstituteMeasureUnit: function () {
+            if (!this.$unitText.val()){
+                this.$unitText.val(this.$defaultUnity);
+                this.disableEnableAmount(this.$defaultUnity);
+                this.checkIntegrity(this.$defaultUnity);
+            }
+
         },
         checkIntegrity: function (unit) {
 
