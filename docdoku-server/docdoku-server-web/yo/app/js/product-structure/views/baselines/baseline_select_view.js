@@ -111,6 +111,10 @@ define([
             }
 		},
 
+        isSerialNumberSelected:function(){
+            return this.$selectConfSpec.val() === 'serial-number';
+        },
+
         changeLatest:function(){
             this.$selectBaselineSpec.hide();
             this.$selectProdInstSpec.hide();
