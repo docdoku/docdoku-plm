@@ -140,10 +140,11 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         ConfigurationItem configurationItem = new ConfigurationItemDAO(em).loadConfigurationItem(configurationItemKey);
         ProductInstanceMaster productInstanceMaster = new ProductInstanceMaster(configurationItem, serialNumber);
 
-        ACLFactory aclFactory = new ACLFactory(em);
-        ACL acl = aclFactory.createACLFromPermissions(workspaceId, userEntries, groupEntries);
-        productInstanceMaster.setAcl(acl);
-
+        if (!userEntries.isEmpty() || !groupEntries.isEmpty()) {
+            ACLFactory aclFactory = new ACLFactory(em);
+            ACL acl = aclFactory.createACLFromPermissions(workspaceId, userEntries, groupEntries);
+            productInstanceMaster.setAcl(acl);
+        }
         ProductInstanceIteration productInstanceIteration = productInstanceMaster.createNextIteration();
         productInstanceIteration.setIterationNote("Initial");
 

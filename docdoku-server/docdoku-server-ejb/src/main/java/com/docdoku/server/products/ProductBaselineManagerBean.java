@@ -325,10 +325,11 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
 
         ProductConfiguration productConfiguration = new ProductConfiguration(configurationItem, name,description,null);
 
-        ACLFactory aclFactory = new ACLFactory(em);
-        ACL acl = aclFactory.createACLFromPermissions(ciKey.getWorkspace(), userEntries, groupEntries);
-        productConfiguration.setAcl(acl);
-
+        if (!userEntries.isEmpty() || !groupEntries.isEmpty()) {
+            ACLFactory aclFactory = new ACLFactory(em);
+            ACL acl = aclFactory.createACLFromPermissions(ciKey.getWorkspace(), userEntries, groupEntries);
+            productConfiguration.setAcl(acl);
+        }
         productConfiguration.setOptionalUsageLinks(new HashSet<>(optionalUsageLinks));
         productConfiguration.setSubstituteLinks(new HashSet<>(substituteLinks));
 
