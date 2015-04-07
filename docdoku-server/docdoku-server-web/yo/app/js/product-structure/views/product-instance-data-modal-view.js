@@ -47,7 +47,6 @@ define([
                         self.isNew = !data.id;
                         self.model = new ProductInstanceDataModel(data);
                         if(self.isNew){
-                            self.model.setPath(self.path);
                             self.$('.delete-button').hide();
                             self.$('.title-tab-file').hide();
                             self.$('.title-tab-link').hide();
@@ -63,6 +62,18 @@ define([
             },
 
             buildTabs:function(){
+                var self = this;
+
+                this.$('.description-input').val(this.model.getDescription());
+                var partsPath = this.model.getPartsPath();
+
+                _.each(partsPath, function(part){
+                    self.$('.path-description').append(part.name);
+                    self.$('.path-description').append('<i class="fa fa-chevron-right">');
+                });
+
+                self.$('.fa.fa-chevron-right').last().remove();
+
                 this.buildAttributesTab();
                 this.buildLinkedDocumentTab();
                 this.buildFileTab();
@@ -119,6 +130,7 @@ define([
             onSave: function(){
                 var self = this;
                 this.model.setAttributes(this.attributesView.collection.toJSON());
+                this.model.setDescription(this.$('.description-input').val());
                 if(this.isNew){
                     //POST
                     var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + App.config.productId + '/product-instances/' + this.serialNumber + '/pathdata';

@@ -34,7 +34,7 @@ define(['backbone'], function (Backbone) {
         },
 
         getPartsPath: function(){
-            return this.get('partsPath');
+            return this.get('partsPath').parts;
         },
 
         getDescription: function(){

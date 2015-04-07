@@ -14,7 +14,13 @@
             </ul>
 
             <form id="form-{{view.cid}}" class="tab-content form-horizontal">
-                <div id="tab-main" class="tab-pane tab-main active">main</div>
+                <div id="tab-main" class="tab-pane tab-main active">
+                    <div class="path-description"></div>
+                    <div>
+                        <span>{{i18n.DESCRIPTION}} <input type="text" class="input-xlarge description-input"></span>
+                    </div>
+
+                </div>
                 <div id="tab-attributes" class="tab-pane tab-attributes attributes attributes-edit">attributes</div>
                 <div id="tab-files" class="tab-pane tab-files">files</div>
                 <div id="tab-link" class="tab-pane tab-part-link">link</div>
