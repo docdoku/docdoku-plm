@@ -439,7 +439,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     @Override
-    public PathData addPathData(String workspaceId, String configurationItemId, String serialNumber, String path, List<InstanceAttribute> attributes, String description) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ProductInstanceMasterNotFoundException, UserNotActiveException {
+    public PathData addPathData(String workspaceId, String configurationItemId, String serialNumber, String path, List<InstanceAttribute> attributes, String description) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ProductInstanceMasterNotFoundException, UserNotActiveException, NotAllowedException {
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         Locale locale = new Locale(user.getLanguage());
 
@@ -450,9 +450,17 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         // Check the access to the product instance
         checkProductInstanceWriteAccess(workspaceId, prodInstM, user);
 
+        // Check if not already a path data for this configuration
+        for(PathData pathData:prodInstM.getPathDataList()){
+            if(pathData.getPath().equals(path)){
+                throw new NotAllowedException("");
+            }
+        }
+
         PathData pathData = new PathData();
         pathData.setPath(path);
         pathData.setInstanceAttributes(attributes);
+        pathData.setDescription(description);
 
         PathDataDAO pathDataDAO = new PathDataDAO(locale, em);
         pathDataDAO.createPathData(pathData);
