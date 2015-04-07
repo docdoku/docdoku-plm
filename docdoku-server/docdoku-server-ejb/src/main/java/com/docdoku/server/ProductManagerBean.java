@@ -1337,6 +1337,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         }
     }
 
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public void deleteConfigurationItem(ConfigurationItemKey configurationItemKey) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, UserNotActiveException, ConfigurationItemNotFoundException, LayerNotFoundException, EntityConstraintException {
         User user = userManager.checkWorkspaceReadAccess(configurationItemKey.getWorkspace());
@@ -1359,6 +1360,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         new ConfigurationItemDAO(locale,em).removeConfigurationItem(configurationItemKey);
     }
 
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public void deleteLayer(String workspaceId, int layerId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, LayerNotFoundException, AccessRightException {
         Layer layer = new LayerDAO(em).loadLayer(layerId);
@@ -1366,6 +1368,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         new LayerDAO(new Locale(user.getLanguage()),em).deleteLayer(layer);
     }
 
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public void removeCADFileFromPartIteration(PartIterationKey partIKey)
             throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartIterationNotFoundException, PartRevisionNotFoundException {

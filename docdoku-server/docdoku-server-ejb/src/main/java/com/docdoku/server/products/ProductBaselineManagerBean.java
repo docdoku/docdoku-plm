@@ -145,7 +145,7 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public void deleteBaseline(String pWorkspaceId,int baselineId) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, BaselineNotFoundException, UserNotActiveException {
+    public void deleteBaseline(String pWorkspaceId,int baselineId) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, BaselineNotFoundException, UserNotActiveException, EntityConstraintException {
 
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
         Locale locale = new Locale(user.getLanguage());
@@ -154,6 +154,15 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
         ProductBaseline productBaseline = productBaselineDAO.loadBaseline(baselineId);
 
         userManager.checkWorkspaceWriteAccess(productBaseline.getConfigurationItem().getWorkspaceId());
+
+        // Check for product instances based on this baseline
+
+        ProductInstanceIterationDAO productInstanceIterationDAO = new ProductInstanceIterationDAO(locale,em);
+
+        if(productInstanceIterationDAO.isBaselinedUsed(productBaseline)){
+            throw new EntityConstraintException(locale,"EntityConstraintException16");
+        }
+
         productBaselineDAO.deleteBaseline(productBaseline);
 
     }

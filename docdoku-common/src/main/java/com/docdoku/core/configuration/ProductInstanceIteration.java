@@ -44,6 +44,10 @@ import java.util.*;
 @Table(name="PRODUCTINSTANCEITERATION")
 @IdClass(com.docdoku.core.configuration.ProductInstanceIterationKey.class)
 @Entity
+@NamedQueries({
+        @NamedQuery(name="ProductInstanceIteration.findByProductBaseline",query="SELECT p FROM ProductInstanceIteration p WHERE p.basedOn = :productBaseline")
+})
+// ProductInstanceIteration.findByProductBaseline
 public class ProductInstanceIteration implements Serializable, FileHolder {
 
     @Id
