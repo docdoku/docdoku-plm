@@ -197,7 +197,7 @@ define([
         onComponentSelected: function (showRoot) {
             this.exportSceneButton.show();
 
-            if(App.baselineSelectView.isSerialNumberSelected() && App.partsTreeView.componentSelected.getPath() !== null){
+            if(App.baselineSelectView.isSerialNumberSelected()){
                 this.productInstanceModalButton.show();
             }else{
                 this.productInstanceModalButton.hide();
@@ -235,7 +235,7 @@ define([
             // Open modal
             var productInstanceModal = new ProductInstanceDataModalView({
                 serialNumber: App.config.configSpec.substr(3),
-                path : App.partsTreeView.componentSelected.getPath()
+                path : App.partsTreeView.componentSelected.getEncodedPath()
             });
             window.document.body.appendChild(productInstanceModal.render().el);
             productInstanceModal.openModal();
