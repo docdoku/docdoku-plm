@@ -22,12 +22,13 @@ package com.docdoku.server.rest.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 @XmlRootElement
 public class PartMinimalListDTO implements Serializable {
 
-    private List<PartMinimalDTO> parts;
+    private List<PartMinimalDTO> parts = new ArrayList<>();
 
     public PartMinimalListDTO() {
     }
@@ -38,5 +39,9 @@ public class PartMinimalListDTO implements Serializable {
 
     public void setParts(List<PartMinimalDTO> parts) {
         this.parts = parts;
+    }
+
+    public void addPart(PartMinimalDTO part){
+        parts.add(part);
     }
 }

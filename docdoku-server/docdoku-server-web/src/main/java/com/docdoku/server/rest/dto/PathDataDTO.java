@@ -26,6 +26,7 @@ import java.util.Set;
 
 public class PathDataDTO implements Serializable {
 
+    private Integer id;
     private String path;
     private List<InstanceAttributeDTO> instanceAttributes;
     private String description;
@@ -54,6 +55,14 @@ public class PathDataDTO implements Serializable {
 
     public String getDescription() {
         return description;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public void setDescription(String description) {
