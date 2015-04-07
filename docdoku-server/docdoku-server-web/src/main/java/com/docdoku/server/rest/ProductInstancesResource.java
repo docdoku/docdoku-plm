@@ -329,6 +329,9 @@ public class ProductInstancesResource {
     @Produces(MediaType.APPLICATION_JSON)
     public PathDataDTO getPathData(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, @QueryParam("path") String path) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException {
         PathData pathData = productInstanceService.getPathDataByPath(workspaceId, configurationItemId, serialNumber,path);
+        if(pathData == null){
+            return new PathDataDTO();
+        }
         return mapper.map(pathData, PathDataDTO.class);
     }
 

@@ -24,6 +24,7 @@ import com.docdoku.core.configuration.PathData;
 import com.docdoku.core.configuration.ProductInstanceIteration;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -55,10 +56,14 @@ public class PathDataDAO {
 
 
     public PathData findByPathAndProductInstance(String path, ProductInstanceIteration productInstanceIteration){
-        return em.createNamedQuery("PathData.findByPathAndProductInstanceIteration",PathData.class)
-                .setParameter("path",path)
-                .setParameter("productInstanceIteration",productInstanceIteration)
-                .getSingleResult();
+        try {
+            return em.createNamedQuery("PathData.findByPathAndProductInstanceIteration", PathData.class)
+                    .setParameter("path", path)
+                    .setParameter("productInstanceIteration", productInstanceIteration)
+                    .getSingleResult();
+        }catch(NoResultException e){
+            return null;
+        }
     }
 
 }
