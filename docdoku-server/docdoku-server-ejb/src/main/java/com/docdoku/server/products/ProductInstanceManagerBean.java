@@ -539,6 +539,15 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         }
 
         prodInstM.getPathDataList().remove(pathData);
+
+        for (BinaryResource file : pathData.getAttachedFiles()) {
+            try {
+                dataManager.deleteData(file);
+            } catch (StorageException e) {
+                LOGGER.log(Level.INFO, null, e);
+            }
+        }
+
         pathDataDAO.removePathData(pathData);
     }
 

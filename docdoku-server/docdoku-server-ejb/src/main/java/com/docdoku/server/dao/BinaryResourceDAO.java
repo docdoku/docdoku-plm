@@ -122,7 +122,7 @@ public class BinaryResourceDAO {
     }
 
     public PathData getPathDataOwner(BinaryResource pBinaryResource) {
-        TypedQuery<PathData> query = em.createQuery("SELECT p FROM PathData p WHERE :binaryResource MEMBER OF d.attachedFiles", PathData.class);
+        TypedQuery<PathData> query = em.createQuery("SELECT p FROM PathData p WHERE :binaryResource MEMBER OF p.attachedFiles", PathData.class);
         try {
             return query.setParameter("binaryResource", pBinaryResource).getSingleResult();
         } catch (NoResultException pNREx) {

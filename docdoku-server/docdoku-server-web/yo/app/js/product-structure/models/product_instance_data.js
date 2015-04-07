@@ -63,7 +63,8 @@ define(['backbone'], function (Backbone) {
         }
 
     });
-
     return ProductInstanceDataModel;
 
 });
+
+
