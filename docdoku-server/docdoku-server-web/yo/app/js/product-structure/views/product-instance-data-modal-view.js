@@ -32,7 +32,9 @@ define([
             },
 
             render: function () {
-                this.$el.html(Mustache.render(template, {i18n: App.config.i18n}));
+                this.$el.html(Mustache.render(template, {
+                    i18n: App.config.i18n
+                }));
                 this.$modal = this.$('.modal.product-instance-data-modal');
                 var self = this;
                 var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + App.config.productId + '/product-instances/' + this.serialNumber + '/pathdata?path=' + this.path;
@@ -40,17 +42,14 @@ define([
                     type: 'GET',
                     url : url,
                     success: function(data){
+                        self.isNew = !data.path;
                         self.model = new ProductInstanceDataModel(data);
                         self.buildTabs();
                     },
                     error : function(){
-
+                        console.log('fail to get model');
                     }
                 });
-
-                this.attributesView = this.$('#tab-attributes');
-                this.fileListView = this.$('#tab-files');
-                this.linkedDocumentsView = this.$('#tab-link');
 
                 return this;
             },
@@ -62,20 +61,27 @@ define([
             },
 
             buildAttributesTab:function(){
-                var attributesView = new AttributesView({});
-                attributesView.render();
-                this.attributesView.html(attributesView.$el);
+                var self = this;
+                this.attributesView = new AttributesView({});
+                this.attributesView.render();
+                this.$('#tab-attributes').html(this.attributesView.$el);
+
+                if(!this.isNew) {
+                    _.each(this.model.getAttributes().models, function (item) {
+                        self.attributesView.addAndFillAttribute(item);
+                    });
+                }
             },
 
             buildLinkedDocumentTab: function(){
                 this.linkedDocuments = new LinkedDocumentCollection(this.model.getDocumentLinked());
-                var linkedDocumentsView = new LinkedDocumentsView({
+                this.linkedDocumentsView = new LinkedDocumentsView({
                     editMode: true,
                     commentEditable:true,
                     collection : this.linkedDocuments
                 });
-                linkedDocumentsView.render();
-                this.linkedDocumentsView.html(linkedDocumentsView.$el);
+                this.linkedDocumentsView.render();
+                this.$('#tab-link').html(this.linkedDocumentsView.$el);
             },
 
             buildFileTab:function(){
@@ -91,19 +97,38 @@ define([
                 this.attachedFiles = new AttachedFileCollection(filesMapping);
 
                 var _this = this;
-                var fileListView = new FileListView({
+                this.fileListView = new FileListView({
                     deleteBaseUrl: this.model.getDeleteBaseUrl(),
                     uploadBaseUrl: _this.model.getUploadBaseUrl(),
                     collection: this.attachedFiles,
                     editMode: true
                 });
-                fileListView.render();
+                this.fileListView.render();
 
-                this.fileListView.html(fileListView.$el);
+                this.$('#tab-files').html(this.fileListView.$el);
             },
 
             onSave: function(){
-
+                var self = this;
+                this.model.setAttributes(this.attributesView.collection.toJSON());
+                if(this.isNew){
+                    //POST
+                    var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + App.config.productId + '/product-instances/' + this.serialNumber + '/pathdata';
+                    $.ajax({
+                        type: 'POST',
+                        url : url,
+                        data : this.model.toJSON(),
+                        contentType : 'application/json',
+                        success: function(){
+                            self.closeModal();
+                        },
+                        error : function(){
+                            console.log('fail to post model');
+                        }
+                    });
+                }else{
+                    //PUT
+                }
             },
 
             openModal: function () {

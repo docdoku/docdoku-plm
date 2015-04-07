@@ -20,6 +20,14 @@ define(['backbone'], function (Backbone) {
 
         getDeleteBaseUrl: function(){
             return '';
+        },
+
+        getAttributes: function(attributes){
+            return this.get('instanceAttributes');
+        },
+
+        setAttributes: function(attributes){
+            this.set('instanceAttributes', attributes);
         }
 
     });
