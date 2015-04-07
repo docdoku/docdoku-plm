@@ -5,21 +5,16 @@ define(['backbone'], function (Backbone) {
 
     var ProductInstanceDataModel = Backbone.Model.extend({
 
+        getId: function(){
+            return this.get('id');
+        },
+
         getDocumentLinked: function(){
             return this.get('linkedDocuments');
         },
 
-        //Files related :
-        getAttachedFiles : function(){
-            return this.get('attachedFiles');
-        },
-
-        getUploadBaseUrl : function(){
-            return '';
-        },
-
-        getDeleteBaseUrl: function(){
-            return '';
+        setDocumentLinked: function(linkedDocuments){
+            this.set('linkedDocuments', linkedDocuments);
         },
 
         getAttributes: function(attributes){
@@ -28,6 +23,43 @@ define(['backbone'], function (Backbone) {
 
         setAttributes: function(attributes){
             this.set('instanceAttributes', attributes);
+        },
+
+        getPath: function(){
+            return this.get('path');
+        },
+
+        setPath: function(path){
+            this.set('path', path);
+        },
+
+        getPartsPath: function(){
+            return this.get('partsPath');
+        },
+
+        getDescription: function(){
+            return this.get('description');
+        },
+
+        setDescription: function(description){
+            this.set('description', description);
+        },
+
+        //Files related :
+        getAttachedFiles : function(){
+            return this.get('attachedFiles');
+        },
+
+        setAttachedFiles : function(attachedFiles){
+            this.set('attachedFiles', attachedFiles);
+        },
+
+        getUploadBaseUrl : function(){
+            return '';
+        },
+
+        getDeleteBaseUrl: function(){
+            return '';
         }
 
     });

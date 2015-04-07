@@ -42,8 +42,11 @@ define([
                     type: 'GET',
                     url : url,
                     success: function(data){
-                        self.isNew = !data.path;
+                        self.isNew = !data.id;
                         self.model = new ProductInstanceDataModel(data);
+                        if(self.isNew){
+                            self.model.setPath(self.path);
+                        }
                         self.buildTabs();
                     },
                     error : function(){
@@ -117,7 +120,7 @@ define([
                     $.ajax({
                         type: 'POST',
                         url : url,
-                        data : this.model.toJSON(),
+                        data : JSON.stringify(this.model),
                         contentType : 'application/json',
                         success: function(){
                             self.closeModal();
@@ -127,7 +130,22 @@ define([
                         }
                     });
                 }else{
+                    this.model.setDocumentLinked(this.linkedDocuments.toJSON());
+                    this.model.setAttachedFiles(this.attachedFiles.toJSON());
                     //PUT
+                    var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + App.config.productId + '/product-instances/' + this.serialNumber + '/pathdata/'+this.model.getId();
+                    $.ajax({
+                        type: 'PUT',
+                        url : url,
+                        data : JSON.stringify(this.model),
+                        contentType : 'application/json',
+                        success: function(){
+                            self.closeModal();
+                        },
+                        error : function(){
+                            console.log('fail to post model');
+                        }
+                    });
                 }
             },
 
