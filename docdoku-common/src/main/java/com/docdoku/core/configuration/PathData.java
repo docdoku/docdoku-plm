@@ -132,4 +132,12 @@ public class PathData implements Serializable, FileHolder {
     public void setAttachedFiles(Set<BinaryResource> attachedFiles) {
         this.attachedFiles = attachedFiles;
     }
+
+    public void addFile(BinaryResource binaryResource) {
+        attachedFiles.add(binaryResource);
+    }
+
+    public void removeFile(BinaryResource file) {
+        attachedFiles.remove(file);
+    }
 }

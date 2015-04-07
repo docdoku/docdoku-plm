@@ -141,7 +141,7 @@ public class ProductInstancesResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public ProductInstanceMasterDTO updateProductInstanceMaster(@PathParam("workspaceId") String workspaceId,@PathParam("iteration") int iteration, ProductInstanceIterationDTO productInstanceCreationDTO)
-            throws EntityNotFoundException, EntityAlreadyExistsException, AccessRightException, CreationException {
+            throws EntityNotFoundException, EntityAlreadyExistsException, AccessRightException, CreationException, UserNotActiveException {
 
         InstanceAttributeFactory factory = new InstanceAttributeFactory();
 

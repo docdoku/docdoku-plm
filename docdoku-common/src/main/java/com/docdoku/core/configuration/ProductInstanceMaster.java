@@ -45,7 +45,8 @@ import java.util.List;
 @IdClass(com.docdoku.core.configuration.ProductInstanceMasterKey.class)
 @Entity
 @NamedQueries({
-        @NamedQuery(name="ProductInstanceMaster.findByConfigurationItemId", query="SELECT pim FROM ProductInstanceMaster pim WHERE pim.instanceOf.id = :ciId AND pim.instanceOf.workspace.id = :workspaceId")
+        @NamedQuery(name="ProductInstanceMaster.findByConfigurationItemId", query="SELECT pim FROM ProductInstanceMaster pim WHERE pim.instanceOf.id = :ciId AND pim.instanceOf.workspace.id = :workspaceId"),
+        @NamedQuery(name="ProductInstanceMaster.findByPathData", query="SELECT pim FROM ProductInstanceMaster pim WHERE :pathData member of pim.pathDataList")
 })
 public class ProductInstanceMaster implements Serializable {
 

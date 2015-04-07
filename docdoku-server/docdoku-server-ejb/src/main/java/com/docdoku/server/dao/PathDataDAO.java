@@ -65,6 +65,15 @@ public class PathDataDAO {
             return null;
         }
     }
+    public ProductInstanceMaster findByPathData(PathData pathData){
+        try {
+            return em.createNamedQuery("ProductInstanceMaster.findByPathData", ProductInstanceMaster.class)
+                    .setParameter("pathData", pathData)
+                    .getSingleResult();
+        }catch(NoResultException e){
+            return null;
+        }
+    }
 
     public void removePathData(PathData pathData) {
         em.remove(pathData);
