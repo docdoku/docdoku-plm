@@ -193,7 +193,7 @@ define([
                 },
                 sDom: 'ft',
                 aoColumnDefs: [
-                    { 'bSortable': false, 'aTargets': [ 0 , 4 ] },
+                    { 'bSortable': false, 'aTargets': [ 0 , 5 ] },
                     { 'sType': App.config.i18n.DATE_SORT, 'aTargets': [3] }
                 ]
             });
