@@ -104,13 +104,13 @@ define([
 
                 this.attachedFiles = new AttachedFileCollection(filesMapping);
 
-                var _this = this;
                 this.fileListView = new FileListView({
-                    deleteBaseUrl: this.model.getDeleteBaseUrl(),
-                    uploadBaseUrl: _this.model.getUploadBaseUrl(),
+                    deleteBaseUrl: this.model.getDeleteBaseUrl(this.serialNumber),
+                    uploadBaseUrl: this.model.getUploadBaseUrl(this.serialNumber),
                     collection: this.attachedFiles,
                     editMode: true
                 });
+
                 this.fileListView.render();
 
                 this.$('#tab-files').html(this.fileListView.$el);

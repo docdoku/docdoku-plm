@@ -54,12 +54,12 @@ define(['backbone'], function (Backbone) {
             this.set('attachedFiles', attachedFiles);
         },
 
-        getUploadBaseUrl : function(){
-            return '';
+        getUploadBaseUrl : function(serialNumber){
+            return App.config.contextPath + '/api/files/' + App.config.workspaceId + '/product-instances/' + serialNumber + '/' + App.config.productId + '/pathdata/' + this.getId()+'/';
         },
 
-        getDeleteBaseUrl: function(){
-            return '';
+        getDeleteBaseUrl: function(serialNumber){
+            return App.config.contextPath + '/api/files/' + App.config.workspaceId + '/product-instances/' + serialNumber + '/' + App.config.productId + '/pathdata/' + this.getId()+'/'
         }
 
     });

@@ -326,11 +326,8 @@ public class ProductInstancesResource {
     @Produces(MediaType.APPLICATION_JSON)
     public PathDataDTO getPathData(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, @QueryParam("path") String path) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException {
         PathData pathData = productInstanceService.getPathDataByPath(workspaceId, configurationItemId, serialNumber,path);
-        if(pathData == null){
-            return new PathDataDTO();
-        }
 
-        PathDataDTO dto = mapper.map(pathData, PathDataDTO.class);
+        PathDataDTO dto = pathData == null ? new PathDataDTO(path) : mapper.map(pathData, PathDataDTO.class);
 
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId,configurationItemId);
         PartMinimalListDTO partList = new PartMinimalListDTO();

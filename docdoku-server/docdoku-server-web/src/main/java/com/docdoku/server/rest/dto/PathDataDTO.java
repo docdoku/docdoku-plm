@@ -37,6 +37,10 @@ public class PathDataDTO implements Serializable {
     public PathDataDTO() {
     }
 
+    public PathDataDTO(String path) {
+        this.path = path;
+    }
+
     public List<InstanceAttributeDTO> getInstanceAttributes() {
         return instanceAttributes;
     }

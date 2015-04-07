@@ -126,7 +126,7 @@ public class PathData implements Serializable, FileHolder {
 
     @Override
     public Set<BinaryResource> getAttachedFiles() {
-        return null;
+        return attachedFiles;
     }
 
     public void setAttachedFiles(Set<BinaryResource> attachedFiles) {
