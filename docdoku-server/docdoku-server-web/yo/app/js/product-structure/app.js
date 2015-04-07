@@ -197,7 +197,7 @@ define([
         onComponentSelected: function (showRoot) {
             this.exportSceneButton.show();
 
-            if(App.baselineSelectView.isSerialNumberSelected()){
+            if(App.baselineSelectView.isSerialNumberSelected() && App.partsTreeView.componentSelected.getPath() !== null){
                 this.productInstanceModalButton.show();
             }else{
                 this.productInstanceModalButton.hide();

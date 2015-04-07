@@ -11,7 +11,9 @@ define([
         var ProductInstanceDataModalView = Backbone.View.extend({
 
             events: {
-                'hidden .modal.product-instance-data-modal': 'onHidden'
+                'hidden .modal.product-instance-data-modal': 'onHidden',
+                'click .cancel-button' : 'closeModal',
+                'click .save-button' : 'onSave'
             },
 
 
@@ -48,6 +50,10 @@ define([
 
             buildTabs:function(){
                 debugger
+            },
+
+            onSave: function(){
+
             },
 
             openModal: function () {
