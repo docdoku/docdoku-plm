@@ -226,7 +226,7 @@ public class ProductInstancesResource {
         String fullName = workspaceId + "/product-instances/" + serialNumber +"/iterations/" + iteration + "/" + fileName;
         ProductInstanceMaster productInstanceMaster = productInstanceService.getProductInstanceMaster(new ProductInstanceMasterKey(serialNumber,workspaceId,configurationItemId));
 
-        ProductInstanceMaster productInstanceMasterUpdated = productInstanceService.removeFileFromProductInstanceIteration(workspaceId, iteration, fullName, productInstanceMaster);
+        productInstanceService.removeFileFromProductInstanceIteration(workspaceId, iteration, fullName, productInstanceMaster);
         return Response.ok().build();
     }
 
@@ -311,9 +311,6 @@ public class ProductInstancesResource {
         return Tools.mapBaselinedPartsToBaselinedPartDTO(baselinedParts);
     }
 
-
-
-
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -374,8 +371,6 @@ public class ProductInstancesResource {
             attributes = factory.createInstanceAttributes(instanceAttributes);
         }
 
-
-
         PathData pathData = productInstanceService.updatePathData(workspaceId, configurationItemId, serialNumber, pathDataDTO.getPath(), pathDataId, attributes, pathDataDTO.getDescription(),links,documentLinkComments);
         return mapper.map(pathData, PathDataDTO.class);
     }
@@ -392,7 +387,7 @@ public class ProductInstancesResource {
     @Path("{serialNumber}/pathdata")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public PathDataDTO createPathData(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, PathDataDTO pathDataDTO) throws UserNotFoundException, AccessRightException, UserNotActiveException, ProductInstanceMasterNotFoundException, WorkspaceNotFoundException, NotAllowedException {
+    public PathDataDTO createPathData(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, PathDataDTO pathDataDTO) throws UserNotFoundException, AccessRightException, UserNotActiveException, ProductInstanceMasterNotFoundException, WorkspaceNotFoundException, NotAllowedException, PathDataAlreadyExistsException {
 
         InstanceAttributeFactory factory = new InstanceAttributeFactory();
 
@@ -406,8 +401,6 @@ public class ProductInstancesResource {
 
         return mapper.map(pathData, PathDataDTO.class);
     }
-
-
 
     private DocumentIterationKey[] createDocumentIterationKeys(Set<DocumentIterationDTO> dtos) {
         DocumentIterationKey[] data = new DocumentIterationKey[dtos.size()];
