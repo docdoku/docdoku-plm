@@ -8,8 +8,9 @@ define([
         'common-objects/views/file/file_list',
         'common-objects/views/linked/linked_documents',
         'common-objects/collections/linked/linked_document_collection',
-        'common-objects/collections/file/attached_file_collection'
-    ], function (Backbone, Mustache, template, ProductInstanceDataModel, AttributesView, FileListView, LinkedDocumentsView, LinkedDocumentCollection, AttachedFileCollection) {
+        'common-objects/collections/file/attached_file_collection',
+        'common-objects/models/attribute'
+    ], function (Backbone, Mustache, template, ProductInstanceDataModel, AttributesView, FileListView, LinkedDocumentsView, LinkedDocumentCollection, AttachedFileCollection, Attribute) {
 
         'use strict';
 
@@ -70,8 +71,8 @@ define([
                 this.$('#tab-attributes').html(this.attributesView.$el);
 
                 if(!this.isNew) {
-                    _.each(this.model.getAttributes().models, function (item) {
-                        self.attributesView.addAndFillAttribute(item);
+                    _.each(this.model.getAttributes(), function (item) {
+                        self.attributesView.addAndFillAttribute(new Attribute(item));
                     });
                 }
             },
