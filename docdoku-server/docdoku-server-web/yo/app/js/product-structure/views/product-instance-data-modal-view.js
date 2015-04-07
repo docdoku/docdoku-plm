@@ -9,8 +9,9 @@ define([
         'common-objects/views/linked/linked_documents',
         'common-objects/collections/linked/linked_document_collection',
         'common-objects/collections/file/attached_file_collection',
-        'common-objects/models/attribute'
-    ], function (Backbone, Mustache, template, ProductInstanceDataModel, AttributesView, FileListView, LinkedDocumentsView, LinkedDocumentCollection, AttachedFileCollection, Attribute) {
+        'common-objects/models/attribute',
+        'common-objects/views/alert'
+    ], function (Backbone, Mustache, template, ProductInstanceDataModel, AttributesView, FileListView, LinkedDocumentsView, LinkedDocumentCollection, AttachedFileCollection, Attribute, AlertView) {
 
         'use strict';
 
@@ -53,8 +54,11 @@ define([
                         }
                         self.buildTabs();
                     },
-                    error : function(){
-                        console.log('fail to get model');
+                    error : function(errorMessage){
+                        self.$('#alerts').append(new AlertView({
+                            type: 'error',
+                            message: errorMessage
+                        }).render().$el);
                     }
                 });
 
@@ -142,8 +146,11 @@ define([
                         success: function(){
                             self.closeModal();
                         },
-                        error : function(){
-                            console.log('fail to post model');
+                        error : function(errorMessage){
+                            self.$('#alerts').append(new AlertView({
+                                type: 'error',
+                                message: errorMessage
+                            }).render().$el);
                         }
                     });
                 }else{
@@ -159,8 +166,11 @@ define([
                         success: function(){
                             self.closeModal();
                         },
-                        error : function(){
-                            console.log('fail to post model');
+                        error : function(errorMessage){
+                            self.$('#alerts').append(new AlertView({
+                                type: 'error',
+                                message: errorMessage
+                            }).render().$el);
                         }
                     });
                 }
@@ -175,8 +185,11 @@ define([
                     success: function(){
                         self.closeModal();
                     },
-                    error : function(){
-                        console.log('fail to delete model');
+                    error : function(errorMessage){
+                        self.$('#alerts').append(new AlertView({
+                            type: 'error',
+                            message: errorMessage
+                        }).render().$el);
                     }
                 });
             },
