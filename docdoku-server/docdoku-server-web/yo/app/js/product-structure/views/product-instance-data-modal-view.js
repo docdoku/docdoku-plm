@@ -155,6 +155,7 @@ define([
             },
 
             onDelete: function(){
+                var self = this;
                 var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + App.config.productId + '/product-instances/' + this.serialNumber + '/pathdata/'+this.model.getId();
                 $.ajax({
                     type: 'DELETE',
