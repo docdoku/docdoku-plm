@@ -18,7 +18,8 @@ define([
             'change select#inputPSFilter':'changePSFilter',
             'click button[form=configuration_creation_form]': 'interceptSubmit',
             'submit #configuration_creation_form': 'onSubmitForm',
-            'hidden #configuration_creation_modal': 'onHidden'
+            'hidden #configuration_creation_modal': 'onHidden',
+            'close-modal-request':'closeModal'
         },
 
         initialize: function () {
