@@ -21,7 +21,7 @@
 package com.docdoku.server.dao;
 
 import com.docdoku.core.configuration.PathData;
-import com.docdoku.core.configuration.ProductInstanceIteration;
+import com.docdoku.core.configuration.ProductInstanceMaster;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -55,15 +55,19 @@ public class PathDataDAO {
     }
 
 
-    public PathData findByPathAndProductInstance(String path, ProductInstanceIteration productInstanceIteration){
+    public PathData findByPathAndProductInstance(String path, ProductInstanceMaster productInstanceMaster){
         try {
-            return em.createNamedQuery("PathData.findByPathAndProductInstanceIteration", PathData.class)
+            return em.createNamedQuery("PathData.findByPathAndProductInstanceMaster", PathData.class)
                     .setParameter("path", path)
-                    .setParameter("productInstanceIteration", productInstanceIteration)
+                    .setParameter("productInstanceMaster", productInstanceMaster)
                     .getSingleResult();
         }catch(NoResultException e){
             return null;
         }
     }
 
+    public void removePathData(PathData pathData) {
+        em.remove(pathData);
+        em.flush();
+    }
 }

@@ -121,7 +121,7 @@ public class ProductInstancesResource {
         String[] documentLinkComments = null;
         if (linkedDocs != null) {
             documentLinkComments = new String[linkedDocs.size()];
-            links = createDocumentIterationKey(linkedDocs);
+            links = createDocumentIterationKeys(linkedDocs);
             int i = 0;
             for (DocumentIterationDTO docItereationForLink : linkedDocs){
                 String comment = docItereationForLink.getCommentLink();
@@ -156,7 +156,7 @@ public class ProductInstancesResource {
         String[] documentLinkComments = null;
         if (linkedDocs != null) {
             documentLinkComments = new String[linkedDocs.size()];
-            links = createDocumentIterationKey(linkedDocs);
+            links = createDocumentIterationKeys(linkedDocs);
             int i = 0;
             for (DocumentIterationDTO docItereationForLink : linkedDocs){
                 String comment = docItereationForLink.getCommentLink();
@@ -343,14 +343,40 @@ public class ProductInstancesResource {
 
         InstanceAttributeFactory factory = new InstanceAttributeFactory();
 
+        Set<DocumentIterationDTO> linkedDocs = pathDataDTO.getLinkedDocuments();
+        DocumentIterationKey[] links = null;
+        String[] documentLinkComments = null;
+        if (linkedDocs != null) {
+            documentLinkComments = new String[linkedDocs.size()];
+            links = createDocumentIterationKeys(linkedDocs);
+            int i = 0;
+            for (DocumentIterationDTO docItereationForLink : linkedDocs){
+                String comment = docItereationForLink.getCommentLink();
+                if (comment == null){
+                    comment = "";
+                }
+                documentLinkComments[i++] = comment;
+            }
+        }
+
         List<InstanceAttributeDTO> instanceAttributes = pathDataDTO.getInstanceAttributes();
         List<InstanceAttribute> attributes = new ArrayList<>();
         if (instanceAttributes != null) {
             attributes = factory.createInstanceAttributes(instanceAttributes);
         }
 
-        PathData pathData = productInstanceService.updatePathData(workspaceId, configurationItemId, serialNumber, pathDataDTO.getPath(), pathDataId, attributes);
+
+
+        PathData pathData = productInstanceService.updatePathData(workspaceId, configurationItemId, serialNumber, pathDataDTO.getPath(), pathDataId, attributes, pathDataDTO.getDescription(),links,documentLinkComments);
         return mapper.map(pathData, PathDataDTO.class);
+    }
+
+    @DELETE
+    @Path("{serialNumber}/pathdata/{pathDataId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response deletePathData(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, @PathParam("pathDataId") int pathDataId) throws UserNotActiveException, WorkspaceNotFoundException, UserNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, NotAllowedException {
+        productInstanceService.deletePathData(workspaceId,configurationItemId,serialNumber,pathDataId);
+        return Response.ok().build();
     }
 
     @POST
@@ -367,14 +393,14 @@ public class ProductInstancesResource {
             attributes = factory.createInstanceAttributes(instanceAttributes);
         }
 
-        PathData pathData = productInstanceService.addPathData(workspaceId, configurationItemId, serialNumber, pathDataDTO.getPath(), attributes);
+        PathData pathData = productInstanceService.addPathData(workspaceId, configurationItemId, serialNumber, pathDataDTO.getPath(), attributes, pathDataDTO.getDescription());
 
         return mapper.map(pathData, PathDataDTO.class);
     }
 
 
 
-    private DocumentIterationKey[] createDocumentIterationKey(Set<DocumentIterationDTO> dtos) {
+    private DocumentIterationKey[] createDocumentIterationKeys(Set<DocumentIterationDTO> dtos) {
         DocumentIterationKey[] data = new DocumentIterationKey[dtos.size()];
         int i = 0;
         for (DocumentIterationDTO dto : dtos) {

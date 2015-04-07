@@ -436,7 +436,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.GUEST_PROXY_ROLE_ID})
     @Override
-    public PathData addPathData(String workspaceId, String configurationItemId, String serialNumber, String path, List<InstanceAttribute> attributes) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ProductInstanceMasterNotFoundException, UserNotActiveException {
+    public PathData addPathData(String workspaceId, String configurationItemId, String serialNumber, String path, List<InstanceAttribute> attributes, String description) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ProductInstanceMasterNotFoundException, UserNotActiveException {
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         Locale locale = new Locale(user.getLanguage());
 
@@ -447,8 +447,6 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         // Check the access to the product instance
         checkProductInstanceWriteAccess(workspaceId, prodInstM, user);
 
-        ProductInstanceIteration productInstanceIteration  = prodInstM.getLastIteration();
-
         PathData pathData = new PathData();
         pathData.setPath(path);
         pathData.setInstanceAttributes(attributes);
@@ -456,14 +454,14 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         PathDataDAO pathDataDAO = new PathDataDAO(locale,em);
         pathDataDAO.createPathData(pathData);
 
-        productInstanceIteration.getPathDataList().add(pathData);
+        prodInstM.getPathDataList().add(pathData);
 
         return pathData;
     }
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.GUEST_PROXY_ROLE_ID})
     @Override
-    public PathData updatePathData(String workspaceId, String configurationItemId, String serialNumber, String path, int pathDataId, List<InstanceAttribute> attributes) throws UserNotActiveException, WorkspaceNotFoundException, UserNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, NotAllowedException {
+    public PathData updatePathData(String workspaceId, String configurationItemId, String serialNumber, String path, int pathDataId, List<InstanceAttribute> attributes, String description, DocumentIterationKey[] pLinkKeys, String[] documentLinkComments) throws UserNotActiveException, WorkspaceNotFoundException, UserNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, NotAllowedException {
 
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         Locale locale = new Locale(user.getLanguage());
@@ -476,17 +474,62 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         checkProductInstanceWriteAccess(workspaceId, prodInstM, user);
 
         PathData pathData = em.find(PathData.class, pathDataId);
-        pathData.setInstanceAttributes(attributes);
 
-        if(!prodInstM.getLastIteration().getPathDataList().contains(pathData)){
+        // This path data isn't owned by product master.
+        // TODO : raise appropriate message in exception
+        if(!prodInstM.getPathDataList().contains(pathData)){
             throw new NotAllowedException("");
+        }
+
+        pathData.setInstanceAttributes(attributes);
+        pathData.setDescription(description);
+
+        // Set links
+        DocumentLinkDAO linkDAO = new DocumentLinkDAO(locale, em);
+
+        ArrayList<DocumentIterationKey> linkKeys = new ArrayList<>(Arrays.asList(pLinkKeys));
+
+        Set<DocumentLink> currentLinks = new HashSet<>(pathData.getLinkedDocuments());
+
+        for (DocumentLink link : currentLinks) {
+            pathData.getLinkedDocuments().remove(link);
+        }
+
+        int counter = 0;
+        for (DocumentIterationKey link : linkKeys) {
+            DocumentLink newLink = new DocumentLink(em.getReference(DocumentIteration.class, link));
+            newLink.setComment(documentLinkComments[counter]);
+            linkDAO.createLink(newLink);
+            pathData.getLinkedDocuments().add(newLink);
+            counter++;
         }
 
         return pathData;
     }
 
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.GUEST_PROXY_ROLE_ID})
     @Override
-    public void deletePathData(String workspaceId, String configurationItemId, String serialNumber, int pathDataId) throws UserNotActiveException, WorkspaceNotFoundException, UserNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, NotAllowedException {
+    public void deletePathData(String workspaceId, String configurationItemId, String serialNumber, int pathDataId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, NotAllowedException {
+
+        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+        Locale locale = new Locale(user.getLanguage());
+
+        // Load the product instance
+        ProductInstanceMasterDAO productInstanceMasterDAO = new ProductInstanceMasterDAO(locale, em);
+        ProductInstanceMaster prodInstM = productInstanceMasterDAO.loadProductInstanceMaster(new ProductInstanceMasterKey(serialNumber, workspaceId, configurationItemId));
+
+        checkProductInstanceWriteAccess(workspaceId,prodInstM,user);
+
+        PathDataDAO pathDataDAO = new PathDataDAO(locale,em);
+        PathData pathData = em.find(PathData.class,pathDataId);
+
+        // This path data isn't owned by product master.
+        // TODO : raise appropriate message in exception
+        if(!prodInstM.getPathDataList().contains(pathData)){
+            throw new NotAllowedException("");
+        }
+
+        pathDataDAO.removePathData(pathData);
 
     }
 
@@ -505,7 +548,9 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
 
         PathData pathData = em.find(PathData.class, pathDataId);
 
-        if(!prodInstM.getLastIteration().getPathDataList().contains(pathData)){
+        // This path data isn't owned by product master.
+        // TODO : raise appropriate message in exception
+        if(!prodInstM.getPathDataList().contains(pathData)){
             throw new NotAllowedException("");
         }
 
@@ -527,7 +572,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
 
         PathDataDAO pathDataDAO = new PathDataDAO(locale,em);
 
-        return pathDataDAO.findByPathAndProductInstance(path,prodInstM.getLastIteration());
+        return pathDataDAO.findByPathAndProductInstance(path,prodInstM);
     }
 
 

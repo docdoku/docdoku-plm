@@ -1312,7 +1312,6 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             DocumentIteration doc = docR.getLastIteration();
 
             ArrayList<DocumentIterationKey> linkKeys = new ArrayList<>(Arrays.asList(pLinkKeys));
-            ArrayList<DocumentIterationKey> currentLinkKeys = new ArrayList<>();
 
             Set<DocumentLink> currentLinks = new HashSet<>(doc.getLinkedDocuments());
 

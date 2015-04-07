@@ -22,11 +22,16 @@ package com.docdoku.server.rest.dto;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
 
 public class PathDataDTO implements Serializable {
 
     private String path;
     private List<InstanceAttributeDTO> instanceAttributes;
+    private String description;
+    private PartMinimalListDTO partsPath;
+    private List<String> attachedFiles;
+    private Set<DocumentIterationDTO> linkedDocuments;
 
     public PathDataDTO() {
     }
@@ -45,5 +50,37 @@ public class PathDataDTO implements Serializable {
 
     public void setPath(String path) {
         this.path = path;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public PartMinimalListDTO getPartsPath() {
+        return partsPath;
+    }
+
+    public void setPartsPath(PartMinimalListDTO partsPath) {
+        this.partsPath = partsPath;
+    }
+
+    public List<String> getAttachedFiles() {
+        return attachedFiles;
+    }
+
+    public void setAttachedFiles(List<String> attachedFiles) {
+        this.attachedFiles = attachedFiles;
+    }
+
+    public Set<DocumentIterationDTO> getLinkedDocuments() {
+        return linkedDocuments;
+    }
+
+    public void setLinkedDocuments(Set<DocumentIterationDTO> linkedDocuments) {
+        this.linkedDocuments = linkedDocuments;
     }
 }

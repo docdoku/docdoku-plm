@@ -20,12 +20,17 @@
 package com.docdoku.core.configuration;
 
 
+import com.docdoku.core.common.BinaryResource;
+import com.docdoku.core.common.FileHolder;
+import com.docdoku.core.document.DocumentLink;
 import com.docdoku.core.meta.InstanceAttribute;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Morgan Guimard
@@ -34,15 +39,18 @@ import java.util.List;
 @Table(name="PATHDATA")
 @Entity
 @NamedQueries({
-        @NamedQuery(name= "PathData.findByPathAndProductInstanceIteration", query="SELECT p FROM PathData p JOIN ProductInstanceIteration l WHERE p member of l.pathDataList and p.path = :path and l = :productInstanceIteration")
+        @NamedQuery(name= "PathData.findByPathAndProductInstanceMaster", query="SELECT p FROM PathData p JOIN ProductInstanceMaster l WHERE p member of l.pathDataList and p.path = :path and l = :productInstanceMaster")
 })
-public class PathData implements Serializable {
+public class PathData implements Serializable, FileHolder {
 
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     @Id
     private int id;
 
     private String path;
+
+    @Lob
+    private String description;
 
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @OrderColumn(name="ATTRIBUTE_ORDER")
@@ -54,6 +62,27 @@ public class PathData implements Serializable {
                     @JoinColumn(name="PATHDATA_ID", referencedColumnName="ID")
             })
     private List<InstanceAttribute> instanceAttributes = new ArrayList<>();
+
+
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(name = "PATHDATA__DOCUMENTLINK",
+            inverseJoinColumns = {
+                    @JoinColumn(name = "DOCUMENTLINK_ID", referencedColumnName = "ID")
+            },
+            joinColumns = {
+                    @JoinColumn(name="PATHDATA_ID", referencedColumnName="ID")
+            })
+    private Set<DocumentLink> linkedDocuments = new HashSet<>();
+
+    @OneToMany(cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, fetch = FetchType.EAGER)
+    @JoinTable(name = "PATHDATA_BINRES",
+            inverseJoinColumns = {
+                    @JoinColumn(name = "ATTACHEDFILE_FULLNAME", referencedColumnName = "FULLNAME")
+            },
+            joinColumns = {
+                    @JoinColumn(name="PATHDATA_ID", referencedColumnName="ID")
+            })
+    private Set<BinaryResource> attachedFiles = new HashSet<>();
 
     public int getId() {
         return id;
@@ -71,11 +100,36 @@ public class PathData implements Serializable {
         this.path = path;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public Set<DocumentLink> getLinkedDocuments() {
+        return linkedDocuments;
+    }
+
+    public void setLinkedDocuments(Set<DocumentLink> linkedDocuments) {
+        this.linkedDocuments = linkedDocuments;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public List<InstanceAttribute> getInstanceAttributes() {
         return instanceAttributes;
     }
 
     public void setInstanceAttributes(List<InstanceAttribute> instanceAttributes) {
         this.instanceAttributes = instanceAttributes;
+    }
+
+    @Override
+    public Set<BinaryResource> getAttachedFiles() {
+        return null;
+    }
+
+    public void setAttachedFiles(Set<BinaryResource> attachedFiles) {
+        this.attachedFiles = attachedFiles;
     }
 }

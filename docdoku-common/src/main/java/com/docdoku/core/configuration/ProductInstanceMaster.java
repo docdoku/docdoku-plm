@@ -65,8 +65,22 @@ public class ProductInstanceMaster implements Serializable {
     @OneToMany(mappedBy = "productInstanceMaster", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @OrderBy("iteration ASC")
     private List<ProductInstanceIteration> productInstanceIterations = new ArrayList<>();
+
     @OneToOne(orphanRemoval = true, cascade=CascadeType.ALL, fetch=FetchType.EAGER)
     private ACL acl;
+
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(name = "PRDINSTMASTER_PATHDATA",
+            inverseJoinColumns = {
+                    @JoinColumn(name = "PATHDATA_ID", referencedColumnName = "ID")
+            },
+            joinColumns = {
+                    @JoinColumn(name="PRDINSTANCEMASTER_SERIALNUMBER", referencedColumnName="SERIALNUMBER"),
+                    @JoinColumn(name="CONFIGURATIONITEM_ID", referencedColumnName="CONFIGURATIONITEM_ID"),
+                    @JoinColumn(name="WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
+            })
+    private List<PathData> pathDataList =new ArrayList<>();
+
     public ProductInstanceMaster() {
     }
 
@@ -148,5 +162,17 @@ public class ProductInstanceMaster implements Serializable {
 
     public void setAcl(ACL acl) {
         this.acl = acl;
+    }
+
+    public void setProductInstanceIterations(List<ProductInstanceIteration> productInstanceIterations) {
+        this.productInstanceIterations = productInstanceIterations;
+    }
+
+    public List<PathData> getPathDataList() {
+        return pathDataList;
+    }
+
+    public void setPathDataList(List<PathData> pathDataList) {
+        this.pathDataList = pathDataList;
     }
 }
