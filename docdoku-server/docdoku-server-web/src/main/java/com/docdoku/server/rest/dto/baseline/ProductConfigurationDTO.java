@@ -22,6 +22,7 @@ package com.docdoku.server.rest.dto.baseline;
 
 import com.docdoku.server.rest.dto.ACLDTO;
 import com.docdoku.server.rest.dto.PartMinimalListDTO;
+import com.docdoku.server.rest.dto.UserDTO;
 
 import javax.xml.bind.annotation.XmlElement;
 import java.util.Date;
@@ -37,6 +38,7 @@ public class ProductConfigurationDTO{
     private List<String> substituteLinks;
     private List<String> optionalUsageLinks;
     private Date creationDate;
+    private UserDTO author;
 
     private List<PartMinimalListDTO> substitutesParts;
     private List<PartMinimalListDTO> optionalsParts;
@@ -124,5 +126,13 @@ public class ProductConfigurationDTO{
 
     public void setOptionalsParts(List<PartMinimalListDTO> optionalsParts) {
         this.optionalsParts = optionalsParts;
+    }
+
+    public UserDTO getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(UserDTO author) {
+        this.author = author;
     }
 }

@@ -323,7 +323,7 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
         ConfigurationItemDAO configurationItemDAO = new ConfigurationItemDAO(new Locale(user.getLanguage()), em);
         ConfigurationItem configurationItem = configurationItemDAO.loadConfigurationItem(ciKey);
 
-        ProductConfiguration productConfiguration = new ProductConfiguration(configurationItem, name,description,null);
+        ProductConfiguration productConfiguration = new ProductConfiguration(user,configurationItem, name,description,null);
 
         if (!userEntries.isEmpty() || !groupEntries.isEmpty()) {
             ACLFactory aclFactory = new ACLFactory(em);

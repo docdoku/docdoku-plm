@@ -22,6 +22,9 @@ define([
         getName:function(){
             return this.get('name');
         },
+        getAuthor:function(){
+            return this.get('author').login;
+        },
         setName:function(name){
             this.set('name',name);
         },

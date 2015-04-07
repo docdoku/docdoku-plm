@@ -19,6 +19,7 @@
  */
 package com.docdoku.core.configuration;
 
+import com.docdoku.core.common.User;
 import com.docdoku.core.product.ConfigurationItem;
 import com.docdoku.core.security.ACL;
 
@@ -99,10 +100,18 @@ public class ProductConfiguration implements Serializable {
     )
     private Set<String> optionalUsageLinks=new HashSet<>();
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumns({
+            @JoinColumn(name = "AUTHOR_LOGIN", referencedColumnName = "LOGIN"),
+            @JoinColumn(name = "AUTHOR_WORKSPACE_ID", referencedColumnName = "WORKSPACE_ID")
+    })
+    private User author;
+
     public ProductConfiguration() {
     }
 
-    public ProductConfiguration(ConfigurationItem configurationItem, String name, String description, ACL acl) {
+    public ProductConfiguration(User user,ConfigurationItem configurationItem, String name, String description, ACL acl) {
+        this.author = user;
         this.configurationItem = configurationItem;
         this.name = name;
         this.description = description;
@@ -180,6 +189,14 @@ public class ProductConfiguration implements Serializable {
 
     public boolean isLinkOptional(String link){
         return optionalUsageLinks.contains(link);
+    }
+
+    public User getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(User author) {
+        this.author = author;
     }
 
     @Override
