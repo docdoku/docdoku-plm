@@ -64,7 +64,7 @@ define({
 	CHECKOUTS: "Réservés",
     CHOICES:"Choix",
 	CHOOSE_A_PRODUCT: "Sélectionnez un produit",
-    CHOSEN_OPTIONALS:"Articles optionels exlcus",
+    CHOSEN_OPTIONALS:"Articles optionels exclus",
     CHOSEN_SUBSTITUTES:"Variantes choisies",
 	CLEAR: "Effacer",
 	CLIPPING: "Couper",
