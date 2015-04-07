@@ -4,6 +4,22 @@
         <h3 id="productInstanceDataTitle">Product Instance Data</h3>
     </div>
     <div class="modal-body">
+        <div id="alerts"></div>
+        <div class="tabs">
+            <ul class="nav nav-tabs">
+                <li class="active"><a href="#tab-main" data-toggle="tab">{{i18n.GENERAL}}</a></li>
+                <li><a href="#tab-attributes" data-toggle="tab">{{i18n.ATTRIBUTES}}</a></li>
+                <li><a href="#tab-files" data-toggle="tab">{{i18n.FILES}}</a></li>
+                <li><a href="#tab-link" data-toggle="tab">{{i18n.LINKS}}</a></li>
+            </ul>
+
+            <form id="form-{{view.cid}}" class="tab-content form-horizontal">
+                <div id="tab-main" class="tab-pane tab-main active">main</div>
+                <div id="tab-attributes" class="tab-pane tab-attributes attributes attributes-edit">attributes</div>
+                <div id="tab-files" class="tab-pane tab-files">files</div>
+                <div id="tab-link" class="tab-pane tab-part-link">link</div>
+            </form>
+        </div>
     </div>
     <div class="modal-footer">
         <button class="btn cancel-button">{{i18n.CANCEL}}</button>
