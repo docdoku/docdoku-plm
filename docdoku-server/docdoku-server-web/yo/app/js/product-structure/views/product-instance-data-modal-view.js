@@ -19,7 +19,8 @@ define([
             events: {
                 'hidden .modal.product-instance-data-modal': 'onHidden',
                 'click .cancel-button' : 'closeModal',
-                'click .save-button' : 'onSave'
+                'click .save-button' : 'onSave',
+                'click .delete-button' : 'onDelete'
             },
 
             initialize: function () {
@@ -47,6 +48,9 @@ define([
                         self.model = new ProductInstanceDataModel(data);
                         if(self.isNew){
                             self.model.setPath(self.path);
+                            self.$('.delete-button').hide();
+                            self.$('.title-tab-file').hide();
+                            self.$('.title-tab-link').hide();
                         }
                         self.buildTabs();
                     },
@@ -148,6 +152,20 @@ define([
                         }
                     });
                 }
+            },
+
+            onDelete: function(){
+                var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + App.config.productId + '/product-instances/' + this.serialNumber + '/pathdata/'+this.model.getId();
+                $.ajax({
+                    type: 'DELETE',
+                    url : url,
+                    success: function(){
+                        self.closeModal();
+                    },
+                    error : function(){
+                        console.log('fail to delete model');
+                    }
+                });
             },
 
             openModal: function () {
