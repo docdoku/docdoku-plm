@@ -117,10 +117,12 @@ define([
                     };
                 });
 
+                var deleteBaseUrl = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + App.config.productId + '/product-instances/' + this.serialNumber + '/pathdata/'+this.model.getId();
+
                 this.attachedFiles = new AttachedFileCollection(filesMapping);
 
                 this.fileListView = new FileListView({
-                    deleteBaseUrl: this.model.getDeleteBaseUrl(this.serialNumber),
+                    deleteBaseUrl: deleteBaseUrl,
                     uploadBaseUrl: this.model.getUploadBaseUrl(this.serialNumber),
                     collection: this.attachedFiles,
                     editMode: true
@@ -173,6 +175,7 @@ define([
                             }).render().$el);
                         }
                     });
+                    this.fileListView.deleteFilesToDelete();
                 }
             },
 

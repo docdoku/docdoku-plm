@@ -372,6 +372,39 @@ public class ProductInstancesResource {
         return mapper.map(pathData, PathDataDTO.class);
     }
 
+    @PUT
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("{serialNumber}/pathdata/{pathDataId}/files/{fileName}")
+    public FileDTO renameAttachedFileInPathData(@PathParam("workspaceId") String workspaceId,
+                                                @PathParam("ciId") String configurationItemId,
+                                                @PathParam("serialNumber") String serialNumber,
+                                                @PathParam("pathDataId") int pathDataId,
+                                                @PathParam("fileName") String fileName,
+                                                FileDTO fileDTO) throws UserNotActiveException, WorkspaceNotFoundException, CreationException, UserNotFoundException, FileNotFoundException, NotAllowedException, FileAlreadyExistsException, ProductInstanceMasterNotFoundException, AccessRightException {
+
+        String fullName = workspaceId + "/product-instances/" + serialNumber +"/pathdata/" + pathDataId + "/" + fileName;
+        BinaryResource binaryResource = productInstanceService.renameFileInPathData(workspaceId, configurationItemId, serialNumber,pathDataId,fullName, fileDTO.getShortName());
+        return new FileDTO(true,binaryResource.getFullName(),binaryResource.getName());
+    }
+
+    @DELETE
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("{serialNumber}/pathdata/{pathDataId}/files/{fileName}")
+    public Response deleteAttachedFileInPathData(@PathParam("workspaceId") String workspaceId,
+                                                @PathParam("ciId") String configurationItemId,
+                                                @PathParam("serialNumber") String serialNumber,
+                                                @PathParam("pathDataId") int pathDataId,
+                                                @PathParam("fileName") String fileName
+                                               ) throws UserNotActiveException, WorkspaceNotFoundException, CreationException, UserNotFoundException, FileNotFoundException, NotAllowedException, FileAlreadyExistsException, ProductInstanceMasterNotFoundException, AccessRightException {
+
+        String fullName = workspaceId + "/product-instances/" + serialNumber +"/pathdata/" + pathDataId + "/" + fileName;
+        ProductInstanceMaster productInstanceMaster = productInstanceService.getProductInstanceMaster(new ProductInstanceMasterKey(serialNumber, workspaceId, configurationItemId));
+        productInstanceService.removeFileFromPathData(workspaceId, configurationItemId, serialNumber, pathDataId, fullName,productInstanceMaster);
+        return Response.ok().build();
+    }
+
     @DELETE
     @Path("{serialNumber}/pathdata/{pathDataId}")
     @Produces(MediaType.APPLICATION_JSON)

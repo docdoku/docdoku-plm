@@ -5,6 +5,11 @@ define(['backbone'], function (Backbone) {
 
     var ProductInstanceDataModel = Backbone.Model.extend({
 
+        defaults: {
+            attachedFiles: [],
+            instanceAttributes: []
+        },
+
         getId: function(){
             return this.get('id');
         },

@@ -180,6 +180,7 @@ define([
             var attachedFiles = new AttachedFileCollection(filesMapping);
 
             var _this = this;
+            debugger
             this.fileListView = new FileListView({
                 deleteBaseUrl: this.iteration.url(),
                 uploadBaseUrl: _this.iteration.getUploadBaseUrl(),
