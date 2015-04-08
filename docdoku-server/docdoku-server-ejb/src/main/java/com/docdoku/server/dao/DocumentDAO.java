@@ -20,6 +20,8 @@
 
 package com.docdoku.server.dao;
 
+import com.docdoku.core.configuration.PathData;
+import com.docdoku.core.configuration.ProductInstanceIteration;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentLink;
 import com.docdoku.core.product.PartIteration;
@@ -49,6 +51,8 @@ public class DocumentDAO {
 
         TypedQuery<DocumentIteration> docQuery = em.createNamedQuery("DocumentLink.findDocumentOwner", DocumentIteration.class);
         TypedQuery<PartIteration> partQuery = em.createNamedQuery("DocumentLink.findPartOwner", PartIteration.class);
+        TypedQuery<ProductInstanceIteration> productInstanceQuery = em.createNamedQuery("DocumentLink.findProductInstanceIteration", ProductInstanceIteration.class);
+        TypedQuery<PathData> pathDataQuery = em.createNamedQuery("DocumentLink.findPathData", PathData.class);
 
         TypedQuery<DocumentLink> linkQuery = em.createNamedQuery("DocumentIteration.findLinks", DocumentLink.class);
         List<DocumentLink> result = linkQuery.setParameter("target", pDoc).getResultList();
@@ -65,6 +69,20 @@ public class DocumentDAO {
             try{
                 PartIteration part = partQuery.setParameter("link",link).getSingleResult();
                 part.getLinkedDocuments().remove(link);
+            }catch(NoResultException ex){
+                LOGGER.log(Level.FINER,null,ex);
+            }
+
+            try{
+                ProductInstanceIteration productInstanceIteration = productInstanceQuery.setParameter("link",link).getSingleResult();
+                productInstanceIteration.getLinkedDocuments().remove(link);
+            }catch(NoResultException ex){
+                LOGGER.log(Level.FINER,null,ex);
+            }
+
+            try{
+                PathData pathData = pathDataQuery.setParameter("link",link).getSingleResult();
+                pathData.getLinkedDocuments().remove(link);
             }catch(NoResultException ex){
                 LOGGER.log(Level.FINER,null,ex);
             }
