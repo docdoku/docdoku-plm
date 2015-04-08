@@ -121,7 +121,7 @@ public class ProductBaselinesResource {
     @Path("{baselineId}")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response deleteBaseline(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @PathParam("baselineId") int baselineId)
-            throws EntityNotFoundException, AccessRightException, UserNotActiveException {
+            throws EntityNotFoundException, AccessRightException, UserNotActiveException, EntityConstraintException {
         productBaselineService.deleteBaseline(workspaceId,baselineId);
         return Response.ok().build();
     }

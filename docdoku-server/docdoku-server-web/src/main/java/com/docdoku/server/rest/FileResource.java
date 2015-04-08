@@ -41,7 +41,7 @@ public class FileResource {
     @EJB
     private PartTemplateBinaryResource partTemplateBinaryResource;
     @EJB
-    private ProductInstanceBinaryResurce productInstanceBinaryResource;
+    private ProductInstanceBinaryResource productInstanceBinaryResource;
 
     public FileResource() {
     }
@@ -68,9 +68,9 @@ public class FileResource {
         return partTemplateBinaryResource;
     }
 
-    @Path("/{workspaceId}/product-instances/{serialNumber}/{ciId}/iterations/")
+    @Path("/{workspaceId}/product-instances/{serialNumber}/{ciId}/")
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
-    public ProductInstanceBinaryResurce productInstanceFile(){
+    public ProductInstanceBinaryResource productInstanceFile(){
         return productInstanceBinaryResource;
     }
 

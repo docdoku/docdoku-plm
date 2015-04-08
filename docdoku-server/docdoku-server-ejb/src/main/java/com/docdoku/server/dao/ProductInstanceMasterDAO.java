@@ -20,10 +20,7 @@
 
 package com.docdoku.server.dao;
 
-import com.docdoku.core.configuration.BaselinedPart;
-import com.docdoku.core.configuration.ProductInstanceIteration;
-import com.docdoku.core.configuration.ProductInstanceMaster;
-import com.docdoku.core.configuration.ProductInstanceMasterKey;
+import com.docdoku.core.configuration.*;
 import com.docdoku.core.exceptions.CreationException;
 import com.docdoku.core.exceptions.ProductInstanceAlreadyExistsException;
 import com.docdoku.core.exceptions.ProductInstanceMasterNotFoundException;
@@ -91,6 +88,7 @@ public class ProductInstanceMasterDAO {
             em.remove(productInstanceIteration.getPartCollection());
             em.remove(productInstanceIteration);
         }
+        // todo remove path data
         em.remove(productInstanceMaster);
         em.flush();
     }

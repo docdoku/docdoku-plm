@@ -22,8 +22,6 @@ package com.docdoku.server.filters;
 
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.User;
-import com.docdoku.core.configuration.ProductInstanceIteration;
-import com.docdoku.core.configuration.ProductInstanceIterationKey;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.document.DocumentRevision;
@@ -134,5 +132,9 @@ public class GuestProxy{
 
     public BinaryResource getBinaryResourceForProducInstance(String fullName) throws UserNotActiveException, WorkspaceNotFoundException, UserNotFoundException, FileNotFoundException, NotAllowedException, AccessRightException {
         return productInstanceManagerLocal.getBinaryResource(fullName);
+    }
+
+    public BinaryResource getBinaryResourceForPathData(String fullName) throws UserNotActiveException, WorkspaceNotFoundException, UserNotFoundException, FileNotFoundException, NotAllowedException, AccessRightException {
+        return productInstanceManagerLocal.getPathDataBinaryResource(fullName);
     }
 }

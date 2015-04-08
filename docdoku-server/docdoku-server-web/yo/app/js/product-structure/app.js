@@ -23,8 +23,9 @@ define([
     'dmu/collaborativeController',
     'dmu/InstancesManager',
     'text!templates/content.html',
-    'common-objects/models/part'
-], function (Backbone, Mustache, SearchView, PartsTreeView, BomView, CollaborativeView, PartMetadataView, PartInstanceView, ExportSceneModalView, ControlNavigationView, ControlModesView, ControlTransformView, ControlMarkersView, ControlLayersView, ControlOptionsView, ControlClippingView, ControlExplodeView, ControlMeasureView, BaselineSelectView, SceneManager, CollaborativeController, InstancesManager, template, Part) {
+    'common-objects/models/part',
+    'views/product-instance-data-modal-view'
+], function (Backbone, Mustache, SearchView, PartsTreeView, BomView, CollaborativeView, PartMetadataView, PartInstanceView, ExportSceneModalView, ControlNavigationView, ControlModesView, ControlTransformView, ControlMarkersView, ControlLayersView, ControlOptionsView, ControlClippingView, ControlExplodeView, ControlMeasureView, BaselineSelectView, SceneManager, CollaborativeController, InstancesManager, template, Part, ProductInstanceDataModalView) {
     'use strict';
     var AppView = Backbone.View.extend({
         el: '#content',
@@ -33,7 +34,8 @@ define([
             'click #scene_view_btn': 'sceneButton',
             'click #bom_view_btn': 'bomButton',
             'click #export_scene_btn': 'exportScene',
-            'click #fullscreen_scene_btn': 'fullScreenScene'
+            'click #fullscreen_scene_btn': 'fullScreenScene',
+            'click #product_instance_btn': 'openProductInstanceModal'
         },
 
         inBomMode: false,
@@ -112,6 +114,7 @@ define([
             this.sceneModeButton = this.$('#scene_view_btn');
             this.bomModeButton = this.$('#bom_view_btn');
             this.exportSceneButton = this.$('#export_scene_btn');
+            this.productInstanceModalButton = this.$('#product_instance_btn');
             this.bomControls = this.$('.bom-controls');
             this.dmuControls = this.$('.dmu-controls');
             App.$ControlsContainer = this.$('#side_controls_container');
@@ -193,6 +196,12 @@ define([
 
         onComponentSelected: function (showRoot) {
             this.exportSceneButton.show();
+
+            if(App.baselineSelectView.isSerialNumberSelected()){
+                this.productInstanceModalButton.show();
+            }else{
+                this.productInstanceModalButton.hide();
+            }
             this.updateBom(showRoot);
             this.showPartMetadata();
             App.sceneManager.setPathForIFrame(App.partsTreeView.componentSelected.getPath());
@@ -220,6 +229,16 @@ define([
             var esmv = new ExportSceneModalView({iframeSrc: iframeSrc});
             window.document.body.appendChild(esmv.render().el);
             esmv.openModal();
+        },
+
+        openProductInstanceModal:function(){
+            // Open modal
+            var productInstanceModal = new ProductInstanceDataModalView({
+                serialNumber: App.config.configSpec.substr(3),
+                path : App.partsTreeView.componentSelected.getEncodedPath()
+            });
+            window.document.body.appendChild(productInstanceModal.render().el);
+            productInstanceModal.openModal();
         },
 
         fullScreenScene: function () {

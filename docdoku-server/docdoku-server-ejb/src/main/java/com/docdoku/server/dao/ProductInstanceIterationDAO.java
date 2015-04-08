@@ -21,14 +21,13 @@
 package com.docdoku.server.dao;
 
 import com.docdoku.core.configuration.BaselinedPart;
+import com.docdoku.core.configuration.ProductBaseline;
 import com.docdoku.core.configuration.ProductInstanceIteration;
 import com.docdoku.core.configuration.ProductInstanceIterationKey;
-import com.docdoku.core.configuration.ProductInstanceMasterKey;
 import com.docdoku.core.exceptions.ProductInstanceIterationNotFoundException;
 import com.docdoku.core.exceptions.ProductInstanceMasterNotFoundException;
 
 import javax.persistence.EntityManager;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.logging.Level;
@@ -76,5 +75,11 @@ public class ProductInstanceIterationDAO {
                 .setMaxResults(maxResults)
                 .getResultList();
 
+    }
+
+    public boolean isBaselinedUsed(ProductBaseline productBaseline) {
+        return !em.createNamedQuery("ProductInstanceIteration.findByProductBaseline",ProductInstanceIteration.class)
+                .setParameter("productBaseline",productBaseline)
+                .getResultList().isEmpty();
     }
 }

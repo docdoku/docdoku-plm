@@ -26,7 +26,6 @@ import com.docdoku.core.common.User;
 import com.docdoku.core.document.DocumentLink;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.product.PartIteration;
-import com.docdoku.core.security.ACL;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlTransient;
@@ -44,6 +43,10 @@ import java.util.*;
 @Table(name="PRODUCTINSTANCEITERATION")
 @IdClass(com.docdoku.core.configuration.ProductInstanceIterationKey.class)
 @Entity
+@NamedQueries({
+        @NamedQuery(name="ProductInstanceIteration.findByProductBaseline",query="SELECT p FROM ProductInstanceIteration p WHERE p.basedOn = :productBaseline")
+})
+// ProductInstanceIteration.findByProductBaseline
 public class ProductInstanceIteration implements Serializable, FileHolder {
 
     @Id
@@ -286,4 +289,5 @@ public class ProductInstanceIteration implements Serializable, FileHolder {
     public boolean removeFile(BinaryResource pBinaryResource){
         return attachedFiles.remove(pBinaryResource);
     }
+
 }
