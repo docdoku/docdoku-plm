@@ -34,7 +34,6 @@ define([
             this.productId = this.model.getConfigurationItemId();
             this.iteration = this.model.getLastIteration();
             this.iterations = this.model.getIterations();
-
         },
 
         render: function () {
@@ -76,7 +75,12 @@ define([
             this.collection.fetch({reset:true}).success(function(){
                 self.$('.rebase-baseline-select').html('');
                 _.each(self.collection.models, function(baseline){
-                    self.$('.rebase-baseline-select').append('<option value="'+baseline.getId()+'">'+baseline.getName()+'</option>');
+                    if(self.iteration.getBasedOnId() === baseline.getId()){
+                        self.$('.rebase-baseline-select').append('<option value="'+baseline.getId()+'" selected="selected">'+baseline.getName()+'</option>');
+                    }else{
+                        self.$('.rebase-baseline-select').append('<option value="'+baseline.getId()+'">'+baseline.getName()+'</option>');
+                    }
+
                 });
             });
 
@@ -254,7 +258,12 @@ define([
                 url : url,
                 success: function(){
                     self.model.fetch().success(function(){
+                        self.initialize();
+                        self.undelegateEvents();
+                        self.closeModal();
+                        self.delegateEvents();
                         self.render();
+
                     });
                 },
                 error : function(errorMessage){

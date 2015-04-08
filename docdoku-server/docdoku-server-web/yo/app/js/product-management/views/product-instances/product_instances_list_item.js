@@ -59,7 +59,7 @@ define([
             var model = this.model;
             model.fetch().success(function () {
                 var view = new ProductInstanceModalView({model: model});
-                view.render().openModal();
+                view.render();
                 window.document.body.appendChild(view.el);
             });
         }
