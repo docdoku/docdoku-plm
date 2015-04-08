@@ -32,6 +32,7 @@ import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IProductInstanceManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.rest.dto.*;
+import com.docdoku.server.rest.dto.baseline.BaselineDTO;
 import com.docdoku.server.rest.dto.baseline.BaselinedPartDTO;
 import com.docdoku.server.rest.dto.product.ProductInstanceCreationDTO;
 import com.docdoku.server.rest.dto.product.ProductInstanceIterationDTO;
@@ -166,12 +167,11 @@ public class ProductInstancesResource {
                 documentLinkComments[i++] = comment;
             }
         }
-        ProductInstanceMaster productInstanceMaster = productInstanceService.updateProductInstance(workspaceId,iteration,productInstanceCreationDTO.getIterationNote(),new ConfigurationItemKey(workspaceId, productInstanceCreationDTO.getConfigurationItemId()), productInstanceCreationDTO.getSerialNumber(), productInstanceCreationDTO.getBasedOn().getId(),attributes, links, documentLinkComments);
+
+        ProductInstanceMaster productInstanceMaster = productInstanceService.updateProductInstance(workspaceId,iteration,productInstanceCreationDTO.getIterationNote(),new ConfigurationItemKey(workspaceId, productInstanceCreationDTO.getConfigurationItemId()), productInstanceCreationDTO.getSerialNumber(), productInstanceCreationDTO.getBasedOn().getId(), attributes, links, documentLinkComments);
 
         return mapper.map(productInstanceMaster, ProductInstanceMasterDTO.class);
     }
-
-
 
     @GET
     @Path("{serialNumber}")
@@ -386,6 +386,18 @@ public class ProductInstancesResource {
         String fullName = workspaceId + "/product-instances/" + serialNumber +"/pathdata/" + pathDataId + "/" + fileName;
         BinaryResource binaryResource = productInstanceService.renameFileInPathData(workspaceId, configurationItemId, serialNumber,pathDataId,fullName, fileDTO.getShortName());
         return new FileDTO(true,binaryResource.getFullName(),binaryResource.getName());
+    }
+
+    @PUT
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("{serialNumber}/rebase")
+    public ProductInstanceMasterDTO rebaseProductInstance(@PathParam("workspaceId") String workspaceId,
+                                                @PathParam("ciId") String configurationItemId,
+                                                @PathParam("serialNumber") String serialNumber, BaselineDTO baselineDTO) throws UserNotActiveException, WorkspaceNotFoundException, BaselineNotFoundException, UserNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, NotAllowedException {
+
+        ProductInstanceMaster productInstanceMaster = productInstanceService.rebaseProductInstance(workspaceId, serialNumber, new ConfigurationItemKey(workspaceId, configurationItemId), baselineDTO.getId());
+        return mapper.map(productInstanceMaster, ProductInstanceMasterDTO.class);
     }
 
     @DELETE
