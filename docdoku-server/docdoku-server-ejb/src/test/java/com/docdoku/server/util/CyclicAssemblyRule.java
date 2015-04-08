@@ -74,7 +74,7 @@ public class CyclicAssemblyRule implements TestRule {
         p2.getLastRevision().getLastIteration().getComponents().add(p2p1);
 
         configurationItemKey = new ConfigurationItemKey(getWorkspaceId(),"productId");
-        configurationItem = new ConfigurationItem(workspace, "productId", "description");
+        configurationItem = new ConfigurationItem(user,workspace, "productId", "description");
         configurationItem.setDesignItem(p1);
 
     }
