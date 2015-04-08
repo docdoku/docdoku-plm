@@ -100,7 +100,7 @@ define({
 	CREATE_BASELINE: "Créer une baseline",
 	CREATE: "Créer",
 	CREATE_NEW_PART: "Créer un nouvel article",
-    CREATE_NEW_PART_AS_SUBSTITUTE: "Créer un nouvel article comme substitut",
+    CREATE_NEW_PART_AS_SUBSTITUTE: "Créer un nouvel article comme variante",
 	CREATE_NEW_VERSION: "Créer une nouvelle version",
 	CREATE_PART: "Créer l'article",
     CREATE_PART_SUBSTITUTE_TOOLTIP: "Pour créer une variante, vous devez d'abord sélectionner un lien d'usage",
