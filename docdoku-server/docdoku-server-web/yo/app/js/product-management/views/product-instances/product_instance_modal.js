@@ -12,8 +12,9 @@ define([
     'common-objects/collections/linked/linked_document_collection',
     'common-objects/views/linked/linked_documents',
     'common-objects/collections/file/attached_file_collection',
-    'common-objects/views/alert'
-], function (Backbone, Mustache, template, choiceTemplate, BaselinedPartListView,date,AttributeCollection,ProductInstanceAttributeListView,FileListView,LinkedDocumentCollection,LinkedDocumentsView,AttachedFileCollection,AlertView) {
+    'common-objects/views/alert',
+    'common-objects/collections/baselines'
+], function (Backbone, Mustache, template, choiceTemplate, BaselinedPartListView,date,AttributeCollection,ProductInstanceAttributeListView,FileListView,LinkedDocumentCollection,LinkedDocumentsView,AttachedFileCollection,AlertView,Baselines) {
     'use strict';
     var ProductInstancesModalView = Backbone.View.extend({
         events: {
@@ -23,13 +24,14 @@ define([
             'shown #product_instance_modal': 'onShown',
             'click a#previous-iteration': 'onPreviousIteration',
             'click a#next-iteration': 'onNextIteration',
-            'close-modal-request':'closeModal'
+            'close-modal-request':'closeModal',
+            'click .btn-rebase': 'onRebase',
         },
 
         template: Mustache.parse(template),
 
         initialize: function () {
-            this.productId = this.options.productId;
+            this.productId = this.model.getConfigurationItemId();
             this.iteration = this.model.getLastIteration();
             this.iterations = this.model.getIterations();
 
@@ -68,6 +70,16 @@ define([
             this.initLinkedDocumentsView();
             this.openModal();
             this.renderChoices();
+
+            var self = this;
+            this.collection = new Baselines({}, {productId: this.productId});
+            this.collection.fetch({reset:true}).success(function(){
+                self.$('.rebase-baseline-select').html('');
+                _.each(self.collection.models, function(baseline){
+                    self.$('.rebase-baseline-select').append('<option value="'+baseline.getId()+'">'+baseline.getName()+'</option>');
+                });
+            });
+
             return this;
         },
 
@@ -227,6 +239,32 @@ define([
             e.preventDefault();
             e.stopPropagation();
             return false;
+        },
+
+        onRebase : function(){
+            var self = this;
+            //Do the rebase
+            var selectedBaselineId = this.$('.rebase-baseline-select').val();
+
+            var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + App.config.productId + '/product-instances/' + this.serialNumber + '/rebase';
+            $.ajax({
+                type: 'PUT',
+                data : {id : selectedBaselineId},
+                contentType:'application/json',
+                url : url,
+                success: function(){
+                    self.model.fetch().success(function(){
+                        self.render();
+                    });
+                },
+                error : function(errorMessage){
+                    self.$('#alerts').append(new AlertView({
+                        type: 'error',
+                        message: errorMessage
+                    }).render().$el);
+                }
+            });
+
         },
 
         onError: function (model, error) {

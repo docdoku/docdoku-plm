@@ -341,6 +341,7 @@ define({
 	PUBLISH: "Publier",
 	QUICK_SEARCH: "Recherche rapide",
 	READ_ONLY: "Lecture seule",
+    REBASE: "Re",
 	REFERENCE_HELP: "ID du document",
 	REFERENCE: "Référence",
 	REFERENCES: "Objets",
