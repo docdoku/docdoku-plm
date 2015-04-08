@@ -43,7 +43,9 @@ define([
 
             this.$('.fa-chevron-right').last().remove();
 
-            this.$el.toggleClass('not-retained',this.options.removable && !this.model.retained)
+            if(this.options.removable){
+                this.$el.toggleClass('not-retained', !this.model.retained)
+            }
 
             return this;
         },
@@ -62,8 +64,11 @@ define([
         },
         changeChoice:function(e){
             this.choice = e.target.value;
-            this.model.retained = this.options.removable && this.choice!==this.defaultChoice;
-            this.$el.toggleClass('not-retained', !this.model.retained);
+
+            if(this.options.removable){
+                this.model.retained = this.choice!==this.defaultChoice;
+                this.$el.toggleClass('not-retained', !this.model.retained)
+            }
         },
         changeOptional:function(e){
             this.optional = e.target.checked;
@@ -78,8 +83,11 @@ define([
                 radios.first().prop('checked',true);
                 this.choice = radios.first().val();
             }
-            this.model.retained = this.options.removable && this.choice!==this.defaultChoice;
-            this.$el.toggleClass('not-retained', !this.model.retained);
+
+            if(this.options.removable){
+                this.model.retained = this.choice!==this.defaultChoice;
+                this.$el.toggleClass('not-retained', !this.model.retained)
+            }
         },
         resetNominal:function(){
             var optionalCheckbox = this.$('.baseline-choice-optional');
