@@ -191,6 +191,7 @@ define({
 	GOTO_SERIAL_MODE: "Transformer l'activité en serie",
 	GRID_SWITCH: "Afficher/Masquer la grille",
 	GROUPS: "Groupes",
+    HAS_SUBSTITUTES: "Possède des variantes",
     HEAD_CHECKIN:"Derniers libérés",
     HEAD_RELEASED:"Derniers finalisés",
     HEAD_WIP:"Travail en cours",

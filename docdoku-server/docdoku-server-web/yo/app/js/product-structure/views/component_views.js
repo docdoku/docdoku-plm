@@ -21,6 +21,9 @@ define([
         '<%if(isSubstitute) {%> ' +
         '<i class="fa fa-arrows-h"title="'+App.config.i18n.PART_SUBSTITUTE+'"></i>' +
         '<%}%>' +
+        '<%if(hasSubstitutes) {%> ' +
+        '<i class="fa fa-random"title="'+App.config.i18n.HAS_SUBSTITUTES+'"></i>' +
+        '<%}%>' +
         '<%if(isOptional) {%> ' +
         '<i class="fa fa-question" title="'+App.config.i18n.OPTIONAL+'"></i>' +
         '<%}%>' +
@@ -149,7 +152,8 @@ define([
                 isLock: this.isLock,
                 partUsageLinkReferenceDescription: this.model.getPartUsageLinkReferenceDescription(),
                 isSubstitute: this.model.isSubstitute(),
-                isOptional:this.model.isOptional()
+                isOptional:this.model.isOptional(),
+                hasSubstitutes : this.model.hasSubstitutes()
             };
 
             this.$el.html(nodeTemplate(data));
@@ -245,7 +249,8 @@ define([
                 isLock: this.isLock,
                 partUsageLinkReferenceDescription: this.model.getPartUsageLinkReferenceDescription(),
                 isSubstitute: this.model.isSubstitute(),
-                isOptional:this.model.isOptional()
+                isOptional:this.model.isOptional(),
+                hasSubstitutes : this.model.hasSubstitutes()
             };
 
             this.$el.html(nodeTemplate(data));

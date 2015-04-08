@@ -146,6 +146,10 @@ define(['backbone', 'common-objects/utils/date'],
                 return this.get('substitute');
             },
 
+            hasSubstitutes : function(){
+                return this.get('hasSubstitutes');
+            },
+
             isOptional : function(){
                 return this.get('optional');
             },
