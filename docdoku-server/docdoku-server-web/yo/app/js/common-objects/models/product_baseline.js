@@ -33,6 +33,9 @@ function(Baseline){
         },
         setOptionalUsageLinks:function(optionalUsageLinks){
             this.set('optionalUsageLinks',optionalUsageLinks);
+        },
+        getAuthor:function(){
+            return this.get("author").login;
         }
 	});
 

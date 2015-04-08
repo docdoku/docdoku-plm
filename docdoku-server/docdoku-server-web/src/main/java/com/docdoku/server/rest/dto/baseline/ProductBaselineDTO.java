@@ -22,6 +22,7 @@ package com.docdoku.server.rest.dto.baseline;
 
 import com.docdoku.core.configuration.ProductBaseline;
 import com.docdoku.server.rest.dto.PartMinimalListDTO;
+import com.docdoku.server.rest.dto.UserDTO;
 
 import java.util.Date;
 import java.util.List;
@@ -37,16 +38,18 @@ public class ProductBaselineDTO extends BaselineDTO {
 
     private List<PartMinimalListDTO> substitutesParts;
     private List<PartMinimalListDTO> optionalsParts;
-
+    private UserDTO author;
     public ProductBaselineDTO() {
     }
 
-    public ProductBaselineDTO(int id, String name, String description, Date creationDate) {
+    public ProductBaselineDTO(UserDTO author,int id, String name, String description, Date creationDate) {
         super(id, name, description, creationDate);
+        this.author  = author;
     }
 
-    public ProductBaselineDTO(int id, String name, String description, Date creationDate, String configurationItemId, ProductBaseline.BaselineType type, List<BaselinedPartDTO> baselinedParts, List<String> substituteLinks, List<String> optionalUsageLinks) {
+    public ProductBaselineDTO(UserDTO user,int id, String name, String description, Date creationDate, String configurationItemId, ProductBaseline.BaselineType type, List<BaselinedPartDTO> baselinedParts, List<String> substituteLinks, List<String> optionalUsageLinks) {
         super(id, name, description, creationDate);
+        this.author = author;
         this.configurationItemId = configurationItemId;
         this.type = type;
         this.baselinedParts = baselinedParts;
@@ -113,5 +116,13 @@ public class ProductBaselineDTO extends BaselineDTO {
 
     public void setOptionalsParts(List<PartMinimalListDTO> optionalsParts) {
         this.optionalsParts = optionalsParts;
+    }
+
+    public UserDTO getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(UserDTO author) {
+        this.author = author;
     }
 }

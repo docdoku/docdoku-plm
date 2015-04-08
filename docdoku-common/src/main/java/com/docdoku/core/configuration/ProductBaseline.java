@@ -19,6 +19,7 @@
  */
 package com.docdoku.core.configuration;
 
+import com.docdoku.core.common.User;
 import com.docdoku.core.product.ConfigurationItem;
 import com.docdoku.core.product.PartIteration;
 
@@ -70,6 +71,13 @@ public class ProductBaseline implements Serializable {
     @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY, orphanRemoval = true)
     private PartCollection partCollection=new PartCollection();
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumns({
+            @JoinColumn(name = "AUTHOR_LOGIN", referencedColumnName = "LOGIN"),
+            @JoinColumn(name = "AUTHOR_WORKSPACE_ID", referencedColumnName = "WORKSPACE_ID")
+    })
+    private User author;
+
 
     /**
      * Set of substitute links (actually their path from the root node)
@@ -109,7 +117,8 @@ public class ProductBaseline implements Serializable {
     public ProductBaseline() {
     }
 
-    public ProductBaseline(ConfigurationItem configurationItem, String name, BaselineType type, String description) {
+    public ProductBaseline(User author,ConfigurationItem configurationItem, String name, BaselineType type, String description) {
+        this.author = author;
         this.configurationItem = configurationItem;
         this.name = name;
         this.type = type;
@@ -210,6 +219,14 @@ public class ProductBaseline implements Serializable {
 
     public boolean isLinkOptional(String link){
         return optionalUsageLinks.contains(link);
+    }
+
+    public User getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(User author) {
+        this.author = author;
     }
 
     @Override

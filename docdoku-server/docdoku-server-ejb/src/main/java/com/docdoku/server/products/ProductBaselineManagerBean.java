@@ -111,7 +111,7 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
         };
 
         // Visitor has finished, and should have thrown an exception if errors
-        ProductBaseline baseline = new ProductBaseline(configurationItem, name, pType , description);
+        ProductBaseline baseline = new ProductBaseline(user,configurationItem, name, pType , description);
         new PartCollectionDAO(em).createPartCollection(baseline.getPartCollection());
 
         baseline.getPartCollection().setCreationDate(new Date());
