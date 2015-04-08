@@ -25,7 +25,7 @@ define([
             'click a#previous-iteration': 'onPreviousIteration',
             'click a#next-iteration': 'onNextIteration',
             'close-modal-request':'closeModal',
-            'click .btn-rebase': 'onRebase',
+            'click .btn-rebase': 'onRebase'
         },
 
         template: Mustache.parse(template),
