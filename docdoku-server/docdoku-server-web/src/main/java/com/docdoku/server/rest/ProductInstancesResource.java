@@ -384,7 +384,7 @@ public class ProductInstancesResource {
                                                 FileDTO fileDTO) throws UserNotActiveException, WorkspaceNotFoundException, CreationException, UserNotFoundException, FileNotFoundException, NotAllowedException, FileAlreadyExistsException, ProductInstanceMasterNotFoundException, AccessRightException {
 
         String fullName = workspaceId + "/product-instances/" + serialNumber +"/pathdata/" + pathDataId + "/" + fileName;
-        BinaryResource binaryResource = productInstanceService.renameFileInPathData(workspaceId, configurationItemId, serialNumber,pathDataId,fullName, fileDTO.getShortName());
+        BinaryResource binaryResource = productInstanceService.renameFileInPathData(workspaceId, configurationItemId, serialNumber, pathDataId, fullName, fileDTO.getShortName());
         return new FileDTO(true,binaryResource.getFullName(),binaryResource.getName());
     }
 
@@ -392,12 +392,13 @@ public class ProductInstancesResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{serialNumber}/rebase")
-    public ProductInstanceMasterDTO rebaseProductInstance(@PathParam("workspaceId") String workspaceId,
+    public Response rebaseProductInstance(@PathParam("workspaceId") String workspaceId,
                                                 @PathParam("ciId") String configurationItemId,
                                                 @PathParam("serialNumber") String serialNumber, BaselineDTO baselineDTO) throws UserNotActiveException, WorkspaceNotFoundException, BaselineNotFoundException, UserNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, NotAllowedException {
 
-        ProductInstanceMaster productInstanceMaster = productInstanceService.rebaseProductInstance(workspaceId, serialNumber, new ConfigurationItemKey(workspaceId, configurationItemId), baselineDTO.getId());
-        return mapper.map(productInstanceMaster, ProductInstanceMasterDTO.class);
+        productInstanceService.rebaseProductInstance(workspaceId, serialNumber, new ConfigurationItemKey(workspaceId, configurationItemId), baselineDTO.getId());
+
+        return Response.ok().build();
     }
 
     @DELETE
