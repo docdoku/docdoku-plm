@@ -76,7 +76,7 @@ import java.util.List;
         user = new User(workspace, login,login,login+"@docdoku.com", "en");
         partMaster = new PartMaster(workspace, partId, user);
         configurationItemKey = new ConfigurationItemKey("workspace1",productId);
-        configurationItem = new ConfigurationItem(workspace, productId, "description");
+        configurationItem = new ConfigurationItem(user,workspace, productId, "description");
         partMaster.setPartRevisions(new ArrayList<PartRevision>());
         if (released){
             List<PartRevision> revisions = new ArrayList<PartRevision>();

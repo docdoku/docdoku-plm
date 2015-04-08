@@ -165,7 +165,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         Locale locale = new Locale(user.getLanguage());
         checkNameValidity(pId,locale);
 
-        ConfigurationItem ci = new ConfigurationItem(user.getWorkspace(), pId, pDescription);
+        ConfigurationItem ci = new ConfigurationItem(user,user.getWorkspace(), pId, pDescription);
 
         try {
             PartMaster designedPartMaster = new PartMasterDAO(locale, em).loadPartM(new PartMasterKey(pWorkspaceId, pDesignItemNumber));

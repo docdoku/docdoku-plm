@@ -19,6 +19,7 @@
  */
 package com.docdoku.core.product;
 
+import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
 
 import javax.persistence.*;
@@ -71,10 +72,18 @@ public class ConfigurationItem implements Serializable {
     })
     private PartMaster designItem;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumns({
+            @JoinColumn(name = "AUTHOR_LOGIN", referencedColumnName = "LOGIN"),
+            @JoinColumn(name = "AUTHOR_WORKSPACE_ID", referencedColumnName = "WORKSPACE_ID")
+    })
+    private User author;
+
     public ConfigurationItem() {
     }
 
-    public ConfigurationItem(Workspace pWorkspace, String pId, String pDescription) {
+    public ConfigurationItem(User author,Workspace pWorkspace, String pId, String pDescription) {
+        this.author = author;
         this.workspace=pWorkspace;
         this.id=pId;
         this.description=pDescription;
@@ -119,6 +128,14 @@ public class ConfigurationItem implements Serializable {
 
     public ConfigurationItemKey getKey(){
         return new ConfigurationItemKey(getWorkspaceId(),getId());
+    }
+
+    public User getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(User author) {
+        this.author = author;
     }
 
     @Override

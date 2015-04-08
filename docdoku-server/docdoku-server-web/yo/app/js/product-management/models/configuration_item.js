@@ -20,6 +20,9 @@ define(['backbone'], function (Backbone) {
         getId: function () {
             return this.get('id');
         },
+        getAuthor: function () {
+                    return this.get('author').login;
+                },
 
         getDesignItemNumber: function () {
             return this.get('designItemNumber');
