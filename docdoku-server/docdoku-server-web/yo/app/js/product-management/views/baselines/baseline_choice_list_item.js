@@ -62,10 +62,8 @@ define([
         },
         changeChoice:function(e){
             this.choice = e.target.value;
-        },
-        toggleRetain:function(){
-            this.model.retained = !this.model.retained;
-            this.$el.toggleClass('not-retained',this.options.removable && !this.model.retained)
+            this.model.retained = this.options.removable && this.choice!==this.defaultChoice;
+            this.$el.toggleClass('not-retained', !this.model.retained);
         },
         changeOptional:function(e){
             this.optional = e.target.checked;
@@ -80,6 +78,8 @@ define([
                 radios.first().prop('checked',true);
                 this.choice = radios.first().val();
             }
+            this.model.retained = this.options.removable && this.choice!==this.defaultChoice;
+            this.$el.toggleClass('not-retained', !this.model.retained);
         },
         resetNominal:function(){
             var optionalCheckbox = this.$('.baseline-choice-optional');
