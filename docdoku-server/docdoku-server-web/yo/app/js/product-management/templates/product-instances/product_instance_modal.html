@@ -36,7 +36,7 @@
                     <div class="control-group">
                             <label class="control-label" for="inputBaselineId">{{i18n.BASED_ON}}</label>
                             <div class="controls">
-                                <input type="text" id="inputBaselineId" value="{{model.getBasedOn}}"
+                                <input type="text" id="inputBaselineId" value="{{model.getBasedOnName}}"
                                        disabled="disabled"/>
                             </div>
                     </div>
@@ -57,13 +57,21 @@
                 </div>
 
                 <div id="tab-products-instances-iteration" class="tab-pane iteration iteration-edit" >
-                        <div class="control-group">
-                            <label class="control-label" for="inputIterationNote">{{i18n.ITERATION_NOTE}}</label>
+                    <div class="control-group">
+                        <label class="control-label" for="inputIterationNote">{{i18n.ITERATION_NOTE}}</label>
 
-                            <div class="controls">
-                                <input type="text" id="inputIterationNote" value="{{model.getIterationNote}}"
-                                {{^editMode}}disabled="disabled"{{/editMode}} />
-                            </div>
+                        <div class="controls">
+                            <input type="text" id="inputIterationNote" value="{{model.getIterationNote}}" {{^editMode}}disabled="disabled"{{/editMode}} />
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label class="control-label" for="inputIterationNote">{{i18n.BASELINE}}</label>
+                        <div class="controls">
+                            <select class="rebase-baseline-select">
+                            </select>
+                            <button type="button" class="btn btn-warning btn-rebase">{{i18n.REBASE}}</button>
+                        </div>
                     </div>
 
                 </div>

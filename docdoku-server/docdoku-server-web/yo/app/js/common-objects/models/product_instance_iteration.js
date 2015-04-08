@@ -60,8 +60,11 @@ define(['backbone'
         getConfigurationItemId: function () {
             return this.get('configurationItemId');
         },
-        getBasedOn:function(){
+        getBasedOnName:function(){
             return this.get('basedOn').name;
+        },
+        getBasedOnId:function(){
+            return this.get('basedOn').id;
         },
         getUpdateAuthor: function () {
             return this.get('updateAuthor');

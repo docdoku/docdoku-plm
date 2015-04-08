@@ -206,6 +206,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         ProductInstanceIteration productInstanceIteration = productInstanceMaster.getProductInstanceIterations().get(iteration - 1);
         // Check the access to the product instance
         checkProductInstanceWriteAccess(workspaceId, productInstanceMaster, user);
+
         if (productInstanceIteration != null) {
             productInstanceIteration.setIterationNote(iterationNote);
             productInstanceIteration.setInstanceAttributes(attributes);
@@ -237,8 +238,60 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
 
         } else {
             throw new ProductInstanceIterationNotFoundException(userLocale, new ProductInstanceIterationKey(serialNumber, configurationItemKey.getWorkspace(), configurationItemKey.getId(), iteration));
-
         }
+
+    }
+
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
+    public ProductInstanceMaster rebaseProductInstance(String workspaceId, String serialNumber, ConfigurationItemKey configurationItemKey, int baselineId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, BaselineNotFoundException, NotAllowedException {
+        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+        Locale userLocale = new Locale(user.getLanguage());
+        ProductInstanceMasterDAO productInstanceMasterDAO = new ProductInstanceMasterDAO(userLocale, em);
+        ProductInstanceMasterKey pInstanceIterationKey = new ProductInstanceMasterKey(serialNumber, workspaceId, configurationItemKey.getId());
+        ProductInstanceMaster productInstanceMaster = productInstanceMasterDAO.loadProductInstanceMaster(pInstanceIterationKey);
+
+        ProductInstanceIteration lastIteration = productInstanceMaster.getLastIteration();
+
+        // Check the access to the product instance
+        checkProductInstanceWriteAccess(workspaceId, productInstanceMaster, user);
+
+        // Load the new baseline
+        ProductBaselineDAO productBaselineDAO = new ProductBaselineDAO(userLocale,em);
+        ProductBaseline baseline = productBaselineDAO.loadBaseline(baselineId);
+
+        // Check valid parameters
+        // Config key should be baseline product's one, same for product instance
+        if(baseline.getConfigurationItem().getKey().equals(configurationItemKey)
+                && baseline.getConfigurationItem().getKey().equals(productInstanceMaster.getInstanceOf().getKey())){
+
+
+            // Create a new iteration
+            ProductInstanceIteration nextIteration = productInstanceMaster.createNextIteration();
+            new ProductInstanceIterationDAO(userLocale,em).createProductInstanceIteration(nextIteration);
+
+            nextIteration.setIterationNote(lastIteration.getIterationNote());
+
+            PartCollection partCollection = new PartCollection();
+            new PartCollectionDAO(em).createPartCollection(partCollection);
+            partCollection.setAuthor(user);
+            partCollection.setCreationDate(new Date());
+
+            for(BaselinedPart baselinedPart : baseline.getBaselinedParts().values()){
+                partCollection.addBaselinedPart(baselinedPart.getTargetPart());
+            }
+
+            nextIteration.setPartCollection(partCollection);
+
+            nextIteration.setBasedOn(baseline);
+            nextIteration.setSubstituteLinks(new HashSet<>(baseline.getSubstituteLinks()));
+            nextIteration.setOptionalUsageLinks(new HashSet<>(baseline.getOptionalUsageLinks()));
+
+        }else{
+            throw new NotAllowedException(userLocale,"NotAllowedException53");
+        }
+
+        return productInstanceMaster;
 
     }
 

@@ -37,7 +37,9 @@ import java.io.Serializable;
 @javax.persistence.Entity
 @NamedQueries ({
     @NamedQuery(name="DocumentLink.findDocumentOwner", query = "SELECT d FROM DocumentIteration d WHERE :link MEMBER OF d.linkedDocuments"),
-    @NamedQuery(name="DocumentLink.findPartOwner", query = "SELECT p FROM PartIteration p WHERE :link MEMBER OF p.linkedDocuments")
+    @NamedQuery(name="DocumentLink.findPartOwner", query = "SELECT p FROM PartIteration p WHERE :link MEMBER OF p.linkedDocuments"),
+    @NamedQuery(name="DocumentLink.findProductInstanceIteration", query = "SELECT p FROM ProductInstanceIteration p WHERE :link MEMBER OF p.linkedDocuments"),
+    @NamedQuery(name="DocumentLink.findPathData", query = "SELECT p FROM PathData p WHERE :link MEMBER OF p.linkedDocuments")
 })
 public class DocumentLink implements Serializable, Cloneable{
 
