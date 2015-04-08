@@ -429,6 +429,13 @@ public class ProductResource {
         dto.setPartUsageLinkReferenceDescription(usageLink.getReferenceDescription());
         dto.setOptional(usageLink.isOptional());
 
+        List<PartSubstituteLink> substitutes = usageLink.getSubstitutes();
+        if(substitutes != null){
+            dto.setHasSubstitutes(!substitutes.isEmpty());
+        }else{
+            dto.setHasSubstitutes(false);
+        }
+
         List<InstanceAttributeDTO> lstAttributes = new ArrayList<>();
         List<ComponentDTO> components = new ArrayList<>();
 

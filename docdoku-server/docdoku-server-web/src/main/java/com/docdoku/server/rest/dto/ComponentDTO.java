@@ -41,6 +41,7 @@ public class ComponentDTO implements Serializable{
     private boolean standardPart;
     private boolean assembly;
     private boolean substitute;
+    private boolean hasSubstitutes;
     private String partUsageLinkId;
     private String partUsageLinkReferenceDescription;
     private List<ComponentDTO> components;
@@ -241,5 +242,13 @@ public class ComponentDTO implements Serializable{
 
     public void setOptional(boolean optional) {
         this.optional = optional;
+    }
+
+    public boolean isHasSubstitutes() {
+        return hasSubstitutes;
+    }
+
+    public void setHasSubstitutes(boolean hasSubstitutes) {
+        this.hasSubstitutes = hasSubstitutes;
     }
 }
