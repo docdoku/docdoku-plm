@@ -246,10 +246,10 @@ define([
             //Do the rebase
             var selectedBaselineId = this.$('.rebase-baseline-select').val();
 
-            var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + App.config.productId + '/product-instances/' + this.serialNumber + '/rebase';
+            var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + this.productId + '/product-instances/' + this.model.getSerialNumber() + '/rebase';
             $.ajax({
                 type: 'PUT',
-                data : {id : selectedBaselineId},
+                data : JSON.stringify({id : selectedBaselineId}),
                 contentType:'application/json',
                 url : url,
                 success: function(){
