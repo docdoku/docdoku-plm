@@ -40,6 +40,7 @@ public class PartIterationDTO implements Serializable {
     private List<PartUsageLinkDTO> components;
     private List<DocumentIterationDTO> linkedDocuments;
     private String number;
+    private String name;
     private String version;
 
     public PartIterationDTO() {
@@ -48,6 +49,13 @@ public class PartIterationDTO implements Serializable {
     public PartIterationDTO(String pWorkspaceId, String pNumber, String pVersion, int pIteration) {
         workspaceId = pWorkspaceId;
         number = pNumber;
+        version = pVersion;
+        iteration = pIteration;
+    }
+    public PartIterationDTO(String pWorkspaceId,String pName, String pNumber, String pVersion, int pIteration) {
+        workspaceId = pWorkspaceId;
+        number = pNumber;
+        name = pName;
         version = pVersion;
         iteration = pIteration;
     }
@@ -154,5 +162,13 @@ public class PartIterationDTO implements Serializable {
 
     public void setVersion(String version) {
         this.version = version;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

@@ -26,6 +26,9 @@ define(['backbone'], function (Backbone) {
         getNumber: function () {
             return  this.get('number');
         },
+        getName: function () {
+            return  this.get('name');
+        },
 
         getVersion: function () {
             return  this.get('version');
