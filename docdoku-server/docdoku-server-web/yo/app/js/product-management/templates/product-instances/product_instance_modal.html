@@ -107,10 +107,10 @@
         {{/iteration}}
 
         {{#editMode}}
+        <a id="cancel-iteration" class="btn cancel" data-dismiss="modal">{{i18n.CANCEL}}</a>
         <button id="save-instance" class="btn btn-primary" form="product_instance_edit_form">
             {{i18n.SAVE}}
         </button>
-        <a id="cancel-iteration" class="btn cancel" data-dismiss="modal">{{i18n.CANCEL}}</a>
         {{/editMode}}
         {{^editMode}}
         <button id="close-product-instance" class="btn modal-close" data-dismiss="modal">{{i18n.CLOSE}}</button>
