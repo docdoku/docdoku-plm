@@ -26,6 +26,26 @@ define(function () {
      is_null
      is_not_null
 
+     * Available types
+
+     string
+     integer
+     double
+     date
+     time
+     datetime
+     boolean
+
+     * Available inputs
+
+     text
+     textarea
+     radio
+     checkbox
+     select
+     custom fn (rule, input_name) -> returns html string.
+
+
      *
      * */
 
@@ -34,56 +54,64 @@ define(function () {
 
     var filters = [];
 
+    // Part
+
     filters.push({
-        id: 'name',
+        id: 'p.name',
         label: 'Name',
         type: 'string',
         operators: stringDefaultOps
     });
 
     filters.push({
-        id: 'number',
+        id: 'p.number',
         label: 'Number',
         type: 'string',
         operators: stringDefaultOps
     });
 
     filters.push({
-        id: 'type',
+        id: 'p.type',
         label: 'Type',
         type: 'string',
         operators: stringDefaultOps
     });
 
     filters.push({
-        id: 'author',
+        id: 'p.author',
         label: 'Author',
         type: 'string',
         operators: stringDefaultOps
     });
 
     filters.push({
-        id: 'date',
-        label: 'Date',
+        id: 'p.date',
+        label: 'Modification date',
         type: 'date',
         operators: dateOperators
     });
 
+    filters.push({
+        id: 'p.life_cycle_state',
+        label: 'Life cycle state',
+        type: 'string',
+        operators: stringDefaultOps
+    });
+
+    // Product instances
 
     filters.push({
-        id: 'category',
-        label: 'Category',
-        type: 'integer',
-        input: 'select',
-        values: {
-            1: 'Books',
-            2: 'Movies',
-            3: 'Music',
-            4: 'Tools',
-            5: 'Goodies',
-            6: 'Clothes'
-        },
-        operators: ['equal', 'not_equal', 'in', 'not_in', 'is_null', 'is_not_null']
+        id: 'pi.serial',
+        label: 'Serial number',
+        type: 'string',
+        operators: stringDefaultOps
+    });
+
+    filters.push({
+        id: 'pi.name',
+        label: 'Name',
+        type: 'string',
+        operators: stringDefaultOps
     });
 
 
