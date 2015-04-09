@@ -30,6 +30,7 @@ import com.docdoku.core.product.PartIterationKey;
 import com.docdoku.core.product.PartMaster;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.query.PartSearchQuery;
+import com.docdoku.core.query.Rule;
 import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;
@@ -38,7 +39,10 @@ import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.rest.dto.*;
 import com.docdoku.server.rest.util.SearchQueryParser;
+import org.dozer.DozerBeanMapperSingletonWrapper;
+import org.dozer.Mapper;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
@@ -65,6 +69,12 @@ public class PartsResource {
     private PartResource part;
 
     public PartsResource() {
+    }
+    private Mapper mapper;
+
+    @PostConstruct
+    public void init() {
+        mapper = DozerBeanMapperSingletonWrapper.getInstance();
     }
 
     @Path("{partNumber: [^/].*}-{partVersion:[A-Z]+}")
@@ -146,6 +156,39 @@ public class PartsResource {
 
         return partDTOs;
     }
+
+    @GET
+    @Path("queries")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<QueryDTO> getCustomQueries(@PathParam("workspaceId") String workspaceId){
+        return new ArrayList<>();
+    }
+
+    @POST
+    @Path("queries")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public QueryResultDTO runCustomQuery(@PathParam("workspaceId") String workspaceId, RuleDTO ruleDTO) throws EntityNotFoundException, UserNotActiveException, AccessRightException {
+
+        Rule rule = mapper.map(ruleDTO,Rule.class);
+//
+//        List<PartRevision> partRevisions = productService.searchPartRevisions(rule);
+//        List<PartDTO> partDTOs = new ArrayList<>();
+//
+//        for(PartRevision partRevision : partRevisions){
+//            PartDTO partDTO = Tools.mapPartRevisionToPartDTO(partRevision);
+//
+//            List<ModificationNotificationDTO> notificationDTOs = getModificationNotificationDTOs(partRevision);
+//            partDTO.setNotifications(notificationDTOs);
+//
+//            partDTOs.add(partDTO);
+//        }
+
+        return new QueryResultDTO();
+    }
+
+
 
     @GET
     @Path("checkedout")
