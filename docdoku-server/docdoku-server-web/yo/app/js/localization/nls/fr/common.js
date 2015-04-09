@@ -335,6 +335,7 @@ define({
 	PRODUCT_ID: "Référence",
 	PRODUCT_INSTANCES: "Exemplaires",
     PRODUCT_INSTANCE_DATA : "Données de l'exemplaire",
+    PRODUCT_NAME: 'Nom de produit',
 	PRODUCTS_MANAGEMENT: 'Gestion des produits',
 	PRODUCTS: "Produits",
 	PRODUCT_STRUCTURE: "Structure du produit",

@@ -15,63 +15,49 @@ define([
         },
 
         initialize: function () {
+            this.selectizeOptions = {
+                plugins: ['remove_button','drag_drop'],
+                persist: false,
+                valueField: 'name',
+                searchField: ['name'],
+                options: querybuilderOptions.fields,
+                render: {
+                    item: function(item, escape) {
+                        return '<div><span class="name">' + escape(item.name) + '</span></div>';
+                    },
+                    option: function(item, escape) {
+                        return '<div><span class="label">' + escape(item.name) + '</span></div>';
+                    }
+                }
+            };
         },
 
         render: function () {
             this.$el.html(Mustache.render(template, {i18n: App.config.i18n}));
             this.bindDomElements();
-
-
-            this.$('#select').selectize({
-                plugins: ['remove_button','drag_drop'],
-                persist: false,
-                maxItems: null,
-                valueField: 'name',
-                searchField: ['name'],
-                options: [
-                    {name: 'foo'},
-                    {name: 'bar'},
-                    {name: 'foofoo'},
-                    {name: 'barbar'}
-                ],
-                render: {
-                    item: function(item, escape) {
-                        return '<div>' +
-                            (item.name ? '<span class="name">' + escape(item.name) + '</span>' : '') +
-                            '</div>';
-                    },
-                    option: function(item, escape) {
-                        var label = item.name;
-                        return '<div>' +
-                            '<span class="label">' + escape(label) + '</span>' +
-                            '</div>';
-                    }
-                },
-                createFilter: function(input) {
-                    var match, regex;
-
-                    // email@address.com
-                    regex = new RegExp('^' + REGEX_EMAIL + '$', 'i');
-                    match = input.match(regex);
-                    if (match) return !this.options.hasOwnProperty(match[0]);
-
-                    return false;
-                }
-
-            });
+            this.fillSelectizes();
 
             this.$('#builder').queryBuilder({
                 plugins: [
                     'bt-tooltip-errors'
                 ],
-
                 filters: querybuilderOptions.filters
+
             });
             return this;
         },
 
+        fillSelectizes: function(){
+            this.$select.selectize(this.selectizeOptions);
+            this.$orderBy.selectize(this.selectizeOptions);
+            this.$groupBy.selectize(this.selectizeOptions);
+        },
+
         bindDomElements: function () {
             this.$modal = this.$('#query-builder-modal');
+            this.$select = this.$('#select');
+            this.$orderBy = this.$('#orderBy');
+            this.$groupBy = this.$('#groupBy');
         },
 
         openModal: function () {

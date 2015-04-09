@@ -1,3 +1,4 @@
+/*global _,define,App*/
 define(function () {
 
     /**
@@ -117,7 +118,16 @@ define(function () {
 
     return {
         filters : filters,
-        fields : []
+        fields : [
+            {name:App.config.i18n.PART_NUMBER, value:'p.id'},
+            {name:App.config.i18n.PART_NAME, value:'p.number'},
+            {name:App.config.i18n.AUTHOR, value:'p.author'},
+            {name:App.config.i18n.TYPE, value:'p.type'},
+            {name:App.config.i18n.MODIFICATION_DATE, value:'p.date'},
+            {name:App.config.i18n.LIFECYCLE_STATE, value:'p.life_cycle_state'},
+            {name:App.config.i18n.SERIAL_NUMBER, value:'p.serial'},
+            {name:App.config.i18n.PRODUCT_NAME, value:'pi.name'}
+        ]
     };
 
 });
