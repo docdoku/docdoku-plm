@@ -243,7 +243,7 @@ public class PartsResource {
         for (PartRevision partR : partRs) {
             PartIteration partLastIter = partR.getLastIteration();
             if (partLastIter != null) {
-                partsLastIter.add(new PartIterationDTO(partLastIter.getWorkspaceId(), partLastIter.getPartNumber(), partLastIter.getPartVersion(), partLastIter.getIteration()));
+                partsLastIter.add(new PartIterationDTO(partLastIter.getWorkspaceId(),partLastIter.getPartName(), partLastIter.getPartNumber(), partLastIter.getPartVersion(), partLastIter.getIteration()));
             }
         }
 
