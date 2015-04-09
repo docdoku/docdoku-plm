@@ -17,9 +17,7 @@
 
     {{/editMode}}
     {{^editMode}}
-    <a class="control-label model-ref">{{model.getNumber}}</a>
-    <div class="controls">
-        {{model.getVersion}}-{{model.getIteration}} - {{model.getName}}
-    </div>
+    <a class="model-ref">{{model.getName}}  < {{model.getNumber}}-{{model.getVersion}}-{{model.getIteration}} > </a>
+
     {{/editMode}}
 </div>

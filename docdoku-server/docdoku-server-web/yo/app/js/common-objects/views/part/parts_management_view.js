@@ -29,7 +29,7 @@ define([
                         var partNumbers = [];
                         _(data).each(function (d) {
                             if ((!that.model.getNumber()) || (that.model.getNumber() !== d.partNumber)) {
-                                partNumbers.push(d.partNumber+", "+d.partName);
+                                partNumbers.push(d.partName + " < "+d.partNumber+">");
                             }
                         });
                         process(partNumbers);
@@ -39,8 +39,8 @@ define([
                     var existingPart = {
                         amount: 1,
                         component: {
-                            number: part.split(",")[0],
-                            name: part.split(",")[1].trim()
+                            number: part.split("<")[1].replace('>','').trim(),
+                            name: part.split("<")[0].trim()
                         }
                     };
 
@@ -154,7 +154,7 @@ define([
                         that.getSelectedComponent();
                         _(data).each(function (d) {
                             if ((!that.model.get('number')) || (that.model.get('number') !== d.partNumber)) {
-                                partNumbers.push(d.partNumber+", "+d.partName);
+                                partNumbers.push(d.partName + " < "+d.partNumber+">");
                             }
                         });
                         process(partNumbers);
@@ -165,8 +165,8 @@ define([
                         amount: 1,
                         unit: '',
                         substitute: {
-                            number: part.split(",")[0],
-                            name: part.split(",")[1].trim()
+                            number: part.split("<")[1].replace('>','').trim(),
+                            name: part.split("<")[0].trim()
                 }, cadInstances: [
                             {tx: 0, ty: 0, tz: 0, rx: 0, ry: 0, rz: 0}
                         ]

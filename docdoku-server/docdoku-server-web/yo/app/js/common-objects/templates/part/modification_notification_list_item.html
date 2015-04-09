@@ -13,7 +13,7 @@
     <div class="modification-notification-details">
         {{#modificationNotification.getModifiedPartName}}{{modificationNotification.getModifiedPartName}}{{/modificationNotification.getModifiedPartName}}
 
-        {{modificationNotification.getModifiedPartNumber}}-{{modificationNotification.getModifiedPartVersion}}-{{modificationNotification.getModifiedPartIteration}}
+        < {{modificationNotification.getModifiedPartNumber}}-{{modificationNotification.getModifiedPartVersion}}-{{modificationNotification.getModifiedPartIteration}} >
         {{i18n.CHECKED_IN}}
         {{#modificationNotification.hasCheckInDate}} {{i18n.ON}} <a class="date-popover">{{modificationNotification.getFormattedCheckInDate}}</a>{{/modificationNotification.hasCheckInDate}}
         {{#modificationNotification.hasAuthor}} {{i18n.BY}} <a class="author-popover">{{modificationNotification.getAuthorName}}</a>{{/modificationNotification.hasAuthor}}
