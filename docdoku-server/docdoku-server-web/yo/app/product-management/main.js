@@ -38,7 +38,8 @@ require.config({
         unmask: { deps: ['jquery'], exports: 'jQuery' },
         unmaskConfig: { deps: ['unmask'], exports: 'jQuery' },
         inputValidity: { deps: ['jquery'], exports: 'jQuery' },
-        queryBuilder: { deps: ['jquery'], exports: 'jQuery' }
+        queryBuilder: { deps: ['jquery'], exports: 'jQuery' },
+        selectize: { deps: ['jquery'], exports: 'jQuery' }
     },
     paths: {
         jquery: '../../bower_components/jquery/jquery',
@@ -70,7 +71,8 @@ require.config({
         datatablesOsortExt: '../utils/datatables.oSort.ext',
         utilsprototype:'../utils/utils.prototype',
         async: '../../bower_components/async/lib/async',
-        queryBuilder: '../../bower_components/jQuery-QueryBuilder/dist/js/query-builder.standalone'
+        queryBuilder: '../../bower_components/jQuery-QueryBuilder/dist/js/query-builder.standalone',
+        selectize: '../../bower_components/selectize/dist/js/standalone/selectize'
     },
 
     deps:[
@@ -89,7 +91,8 @@ require.config({
         'utilsprototype',
         'unmaskConfig',
         'inputValidity',
-        'queryBuilder'
+        'queryBuilder',
+        'selectize'
     ],
     config: {
         i18n: {
