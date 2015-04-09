@@ -37,7 +37,8 @@ require.config({
         bootstrapSwitch:{deps:['jquery'],exports:'jQuery'},
         unmask: { deps: ['jquery'], exports: 'jQuery' },
         unmaskConfig: { deps: ['unmask'], exports: 'jQuery' },
-        inputValidity: { deps: ['jquery'], exports: 'jQuery' }
+        inputValidity: { deps: ['jquery'], exports: 'jQuery' },
+        queryBuilder: { deps: ['jquery'], exports: 'jQuery' }
     },
     paths: {
         jquery: '../../bower_components/jquery/jquery',
@@ -68,7 +69,8 @@ require.config({
         inputValidity: '../utils/input-validity',
         datatablesOsortExt: '../utils/datatables.oSort.ext',
         utilsprototype:'../utils/utils.prototype',
-        async: '../../bower_components/async/lib/async'
+        async: '../../bower_components/async/lib/async',
+        queryBuilder: '../../bower_components/jQuery-QueryBuilder/dist/js/query-builder.standalone'
     },
 
     deps:[
@@ -86,7 +88,8 @@ require.config({
         'bootstrapSwitch',
         'utilsprototype',
         'unmaskConfig',
-        'inputValidity'
+        'inputValidity',
+        'queryBuilder'
     ],
     config: {
         i18n: {

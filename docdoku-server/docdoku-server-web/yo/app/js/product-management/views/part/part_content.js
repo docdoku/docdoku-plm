@@ -11,7 +11,7 @@ define([
     'views/part/part_new_version',
     'common-objects/views/prompt',
     'common-objects/views/security/acl_edit',
-    'views/advanced_search',
+    'views/query_builder_modal',
     'text!common-objects/templates/buttons/delete_button.html',
     'text!common-objects/templates/buttons/checkout_button_group.html',
     'text!common-objects/templates/buttons/new_version_button.html',
@@ -24,7 +24,7 @@ define([
     'common-objects/views/alert',
     'common-objects/views/tags/tags_management',
     'views/product/product_creation_view'
-], function (Backbone, Mustache, Async, PartCollection, PartSearchCollection, template, PartListView, PartCreationView, PartNewVersionView, PromptView, ACLEditView, AdvancedSearchView, deleteButton, checkoutButtonGroup, newVersionButton, releaseButton, aclButton, newProductButton, tagsButton, obsoleteButton, searchForm, AlertView,TagsManagementView,ProductCreationView) {
+], function (Backbone, Mustache, Async, PartCollection, PartSearchCollection, template, PartListView, PartCreationView, PartNewVersionView, PromptView, ACLEditView, QueryBuilderModal, deleteButton, checkoutButtonGroup, newVersionButton, releaseButton, aclButton, newProductButton, tagsButton, obsoleteButton, searchForm, AlertView,TagsManagementView,ProductCreationView) {
     'use strict';
 	var PartContentView = Backbone.View.extend({
         events: {
@@ -366,9 +366,9 @@ define([
             return false;
         },
         onAdvancedSearch: function () {
-            var advancedSearchView = new AdvancedSearchView();
-            window.document.body.appendChild(advancedSearchView.render().el);
-            advancedSearchView.openModal();
+            var queryBuilderView = new QueryBuilderModal();
+            window.document.body.appendChild(queryBuilderView.render().el);
+            queryBuilderView.openModal();
         },
 
 
