@@ -41,7 +41,15 @@ define([
                 plugins: [
                     'bt-tooltip-errors'
                 ],
-                filters: querybuilderOptions.filters
+                filters: querybuilderOptions.filters,
+
+                icons:{
+                    add_group : 'fa fa-plus-circle',
+                    remove_group : 'fa fa-times-circle',
+                    error : 'fa fa-exclamation',
+                    remove_rule : 'fa fa-remove',
+                    add_rule : 'fa fa-plus'
+                }
 
             });
             return this;
