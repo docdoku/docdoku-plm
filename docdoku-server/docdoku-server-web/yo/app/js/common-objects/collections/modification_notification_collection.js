@@ -11,6 +11,12 @@ define([
 
         url: function () {
             return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/notifications/';
+        },
+
+        hasUnreadModificationNotifications: function () {
+            return _.select(this.models || [], function(notif) {
+                return !notif.isAcknowledged();
+            }).length;
         }
 
     });

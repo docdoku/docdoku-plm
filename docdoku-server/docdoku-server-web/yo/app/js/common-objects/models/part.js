@@ -182,7 +182,7 @@ define([
 
             hasUnreadModificationNotifications: function () {
                 return _.select(this.modificationNotifications.models || [], function(notif) {
-                        return !notif.isAcknowledged();
+                    return !notif.isAcknowledged();
                 }).length;
             },
 

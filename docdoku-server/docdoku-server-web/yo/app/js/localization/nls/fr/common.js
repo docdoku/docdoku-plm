@@ -232,6 +232,7 @@ define({
 	MANAGE_PRODUCT: "Gestion des produits",
 	MANAGE_ROLES: "Gestion des rôles",
 	MANDATORY: "Obligatoire",
+    MARK_ALL_AS_VERIFIED: "Marquer tout comme vérifié",
     MARK_AS_VERIFIED: "Marquer comme vérifié",
     MARK_AS_OBSOLETE: "Marquer ces articles comme obsolètes",
     MARK_AS_OBSOLETE_QUESTION: "Marquer les articles sélectionnés comme obsolètes ?",

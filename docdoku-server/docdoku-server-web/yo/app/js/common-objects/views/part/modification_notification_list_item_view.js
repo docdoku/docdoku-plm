@@ -40,13 +40,7 @@ define([
         },
 
         getAcknowledgementComment: function () {
-            var comment;
-            if (_.isEqual(this.$('#acknowledgement-comment').val(), '')) {
-                comment = null;
-            } else {
-                comment = this.$('#acknowledgement-comment').val();
-            }
-            return comment;
+            return this.$('#acknowledgement-comment').val() || null;
         }
 
     });

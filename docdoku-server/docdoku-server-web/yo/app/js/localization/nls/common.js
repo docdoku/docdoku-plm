@@ -231,6 +231,7 @@ define({
 		MANAGE_PRODUCT: "Products management",
 		MANAGE_ROLES: "Manage roles",
 		MANDATORY: "Mandatory",
+        MARK_ALL_AS_VERIFIED: "Mark all as verified",
         MARK_AS_VERIFIED: "Mark as verified",
         MARK_AS_OBSOLETE: "Mark as obsolete",
         MARK_AS_OBSOLETE_QUESTION: "Mark as obsolete the selected parts?",

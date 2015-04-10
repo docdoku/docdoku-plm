@@ -28,13 +28,13 @@
         </div>
         {{/modificationNotification.getAckComment}}
         {{/modificationNotification.isAcknowledged}}
-    </div>
 
-    {{^modificationNotification.isAcknowledged}}
-    <div class="comment">
-        <input id="acknowledgement-comment" type="text" placeholder="{{i18n.VERIFICATION_NOTE}}">
-        <a class="action-acknowledge">{{i18n.MARK_AS_VERIFIED}}</a>
+        {{^modificationNotification.isAcknowledged}}
+        <div class="comment">
+            <input id="acknowledgement-comment" type="text" placeholder="{{i18n.VERIFICATION_NOTE}}">
+            <a class="action-acknowledge">{{i18n.MARK_AS_VERIFIED}}</a>
+        </div>
+        {{/modificationNotification.isAcknowledged}}
     </div>
-    {{/modificationNotification.isAcknowledged}}
 
 </div>
