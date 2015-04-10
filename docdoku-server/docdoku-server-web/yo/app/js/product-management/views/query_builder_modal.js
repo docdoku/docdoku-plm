@@ -43,9 +43,6 @@ define([
             this.fillSelectizes();
 
             this.$where.queryBuilder({
-                plugins: [
-                    'bt-tooltip-errors'
-                ],
                 filters: querybuilderOptions.filters,
 
                 icons:{
@@ -55,7 +52,6 @@ define([
                     remove_rule : 'fa fa-remove',
                     add_rule : 'fa fa-plus'
                 }
-
             });
 
             return this;
@@ -89,7 +85,7 @@ define([
                 orderByList : orderByList,
                 groupedByList : groupByList,
                 subRules : where
-            }
+            };
 
             var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/queries?save='+saveQuery;
             $.ajax({
