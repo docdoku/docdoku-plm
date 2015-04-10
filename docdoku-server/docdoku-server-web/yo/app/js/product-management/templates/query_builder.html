@@ -5,24 +5,40 @@
     <div class="query-builder-body">
         <div id="alert"></div>
 
-        <label>Select</label>
-        <input type="text" id="select">
-        <label>Where</label>
-        <div id="where"></div>
-
-        <label>Order by</label>
-        <input type="text" id="orderBy">
-        <label>Group by</label>
-        <input type="text" id="groupBy">
-
-        {{i18n.SAVE}}
-        <div class="saveSwitch switch switch-small" data-on="success" data-off="danger">
-            <input type="checkbox">
+        <div class="query-select-block">
+            <label>Select</label>
+            <input type="text" id="select" class="query-select-input">
         </div>
 
-        <input type="text" class="queryName input-xlarge" placeholder="{{i18n.QUERY_NAME}}" required>
+        <div class="query-where-block">
+            <label>Where</label>
+            <div id="where" class="query-where-builder"></div>
+        </div>
+
+        <div class="order-by-group-by-block">
+            <div class="order-by-block">
+                <label class="order-by-label">Order by</label>
+                <input type="text" id="orderBy" class="order-by-input">
+            </div>
+            <div class="group-by-block">
+                <input type="text" id="groupBy" class="group-by-input">
+                <label class="group-by-label">Group by</label>
+            </div>
+        </div>
+
+
+        <div class="query-save-block">
+            <span class="query-save-label">{{i18n.SAVE}}</span>
+            <div class="saveSwitch switch switch-small" data-on="success" data-off="danger">
+                <input type="checkbox">
+            </div>
+
+            <input type="text" class="query-name-input queryName input-xlarge" placeholder="{{i18n.QUERY_NAME}}" required>
+        </div>
     </div>
 
-    <button type="button" class="btn btn-primary search-button">{{i18n.SEARCH}}</button>
+    <div class="query-actions-block">
+        <button type="button" class="btn btn-primary search-button">{{i18n.SEARCH}}</button>
+    </div>
 
 </div>
