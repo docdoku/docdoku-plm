@@ -2,11 +2,13 @@ package com.docdoku.server.dao;
 
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.query.Query;
+import com.docdoku.core.query.QueryRule;
 
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -51,16 +53,50 @@ public class QueryDAO {
 
     public List<PartRevision> runQuery(String workspaceId, Query query) {
 
-//        CriteriaBuilder* cb = em.getCriteriaBuilder();
+//        CriteriaBuilder cb = em.getCriteriaBuilder();
+//        CriteriaQuery<Tuple> cq = cb.createTupleQuery();
 //
-//        CriteriaQuery<PartRevision> q = cb.createQuery(PartRevision.class);
-//        Root<PartRevision> c = q.from(PartRevision.class);
-//        CriteriaQuery<PartRevision> select = q.select(c);
+//        Root<PartMaster> pm = cq.from(PartMaster.class);
+//        Root<ProductInstanceMaster> pi = cq.from(ProductInstanceMaster.class);
+//
+//        Expression<String> number = pm.get("number");
+//        Expression<String> type = pm.get("type");
+//        Expression<String> name = pm.get("name");
+//        Expression<String> serialNumber = pi.get("serialNumber");
+//
+//        cq.multiselect(number.alias("pm.number"));
+//        cq.multiselect(serialNumber.alias("pi.serial"));
+//
+//        cq.where(getPredicate(query.getQueryRule()));
+//
+//        cq.orderBy(cb.desc(number));
+//
+//        TypedQuery<Tuple> tq = em.createQuery(cq);
+//        for (Tuple t : tq.getResultList()) {
+//            System.out.println(t.get("foo"));
+//        }
 
-        // TODO create query
         return new ArrayList<>();
 
     }
+
+
+    public Predicate getPredicate(QueryRule queryRule){
+
+//        String condition = queryRule.getCondition();
+//
+//        if(condition == "OR"){
+//
+//        }else if(condition == "AND"){
+//
+//        }
+//
+//        Expression<String> number = root.get("number");
+
+        return null;
+
+    }
+
 
     public List<Query> loadQueries(String workspaceId) {
         return em.createNamedQuery("Query.findByWorkspace", Query.class)
