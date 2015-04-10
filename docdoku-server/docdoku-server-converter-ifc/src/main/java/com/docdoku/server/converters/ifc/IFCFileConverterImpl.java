@@ -18,7 +18,7 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.server.converters.dae;
+package com.docdoku.server.converters.ifc;
 
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.exceptions.*;
@@ -30,31 +30,31 @@ import com.google.common.io.Files;
 import com.google.common.io.InputSupplier;
 
 import javax.ejb.EJB;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.Arrays;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-@DaeFileConverter
-public class DaeFileConverterImpl implements CADConverter{
 
-    private static final String CONF_PROPERTIES="/com/docdoku/server/converters/dae/conf.properties";
+@IFCFileConverter
+public class IFCFileConverterImpl implements CADConverter{
+
+    private static final String CONF_PROPERTIES="/com/docdoku/server/converters/ifc/conf.properties";
     private static final Properties CONF = new Properties();
-    private static final Logger LOGGER = Logger.getLogger(DaeFileConverterImpl.class.getName());
 
     @EJB
     private IDataManagerLocal dataManager;
 
+    private static final Logger LOGGER = Logger.getLogger(IFCFileConverterImpl.class.getName());
+
     static{
         InputStream inputStream = null;
         try {
-            inputStream = DaeFileConverterImpl.class.getResourceAsStream(CONF_PROPERTIES);
+            inputStream = IFCFileConverterImpl.class.getResourceAsStream(CONF_PROPERTIES);
             CONF.load(inputStream);
         } catch (IOException e) {
-            LOGGER.log(Level.INFO, null, e);
+            LOGGER.log(Level.WARNING, null, e);
         } finally {
             try{
                 if(inputStream!=null){
@@ -66,12 +66,15 @@ public class DaeFileConverterImpl implements CADConverter{
         }
     }
 
+
     @Override
     public File convert(PartIteration partToConvert, final BinaryResource cadFile, File tempDir) throws IOException, InterruptedException, UserNotActiveException, PartRevisionNotFoundException, WorkspaceNotFoundException, CreationException, UserNotFoundException, NotAllowedException, FileAlreadyExistsException, StorageException {
 
-        String assimp = CONF.getProperty("assimp");
+        String extension = FileIO.getExtension(cadFile.getName());
+        File tmpCadFile = new File(tempDir, partToConvert.getKey() + "." + extension);
+        String convertedFileName = tempDir.getAbsolutePath() + "/" + partToConvert.getKey()+".obj" ;
+        String ifcConverter = CONF.getProperty("ifc_convert_path");
 
-        File tmpCadFile = new File(tempDir, cadFile.getName().trim());
         Files.copy(new InputSupplier<InputStream>() {
             @Override
             public InputStream getInput() throws IOException {
@@ -84,25 +87,33 @@ public class DaeFileConverterImpl implements CADConverter{
             }
         }, tmpCadFile);
 
-        String convertedFileName = FileIO.getFileNameWithoutExtension(tmpCadFile.getAbsolutePath()) + ".obj";
-
-        String[] args = {assimp, "export", tmpCadFile.getAbsolutePath(), convertedFileName};
+        String[] args = {ifcConverter, tmpCadFile.getAbsolutePath(), convertedFileName};
         ProcessBuilder pb = new ProcessBuilder(args);
         Process proc = pb.start();
 
+        StringBuilder output = new StringBuilder();
+        String line;
+        // Read buffer
+        InputStreamReader isr = new InputStreamReader(proc.getInputStream(),"UTF-8");
+        BufferedReader br = new BufferedReader(isr);
+        while ((line = br.readLine()) != null){
+            output.append(line).append("\n");
+        }
+        br.close();
+
         proc.waitFor();
 
-        if (proc.exitValue() == 0) {
+        if(proc.exitValue() == 0){
             return new File(convertedFileName);
         }
 
+        LOGGER.log(Level.SEVERE, "Cannot convert to obj : " + tmpCadFile.getAbsolutePath(), output.toString());
         return null;
-
     }
 
     @Override
     public boolean canConvertToOBJ(String cadFileExtension) {
-        return Arrays.asList("dae","lwo","x","ac","cob","scn","ms3d").contains(cadFileExtension);
+        return Arrays.asList("ifc").contains(cadFileExtension);
     }
 
 }

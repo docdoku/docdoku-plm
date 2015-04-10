@@ -7,7 +7,7 @@ define([
     'text!common-objects/templates/part/part_modal.html',
     'common-objects/views/attributes/attributes',
     'common-objects/views/part/parts_management_view',
-    'common-objects/views/part/modification_notification_list_view',
+    'common-objects/views/part/modification_notification_group_list_view',
     'common-objects/views/linked/linked_documents',
     'common-objects/views/alert',
     'common-objects/collections/linked/linked_document_collection',
@@ -16,7 +16,7 @@ define([
     'common-objects/utils/date',
     'common-objects/views/tags/tag',
     'common-objects/models/tag'
-], function (Backbone, Mustache, ModalView, FileListView, template, AttributesView, PartsManagementView, ModificationNotificationListView, LinkedDocumentsView, AlertView, LinkedDocumentCollection, LifecycleView, ConversionStatusView, date,TagView,Tag) {
+], function (Backbone, Mustache, ModalView, FileListView, template, AttributesView, PartsManagementView, ModificationNotificationGroupListView, LinkedDocumentsView, AlertView, LinkedDocumentCollection, LifecycleView, ConversionStatusView, date,TagView,Tag) {
     'use strict';
     var PartModalView = ModalView.extend({
 
@@ -136,7 +136,7 @@ define([
                 this.initLifeCycleView();
 
                 if (!data.iteration.hasNextIteration) {
-                    this.initModificationNotificationListView();
+                    this.initModificationNotificationGroupListView();
                 }
             }
 
@@ -282,8 +282,8 @@ define([
             }
         },
 
-        initModificationNotificationListView: function () {
-            new ModificationNotificationListView({
+        initModificationNotificationGroupListView: function () {
+            new ModificationNotificationGroupListView({
                 el: '#iteration-modification-notifications',
                 collection: this.model.getModificationNotifications()
             }).render();
