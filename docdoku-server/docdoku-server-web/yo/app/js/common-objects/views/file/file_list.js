@@ -51,6 +51,7 @@ define([
             } else {
                 this.listenTo(this.collection, 'add', this.addOneFile);
             }
+
         },
 
         // cancel event and hover styling
@@ -96,12 +97,14 @@ define([
             });
             fileView.render();
             self.filesUL.append(fileView.el);
-
         },
 
         addSingleFile: function (attachedFile) {
             this.filesUL.empty();
             this.addOneFile(attachedFile);
+            this.$el.trigger('file:uploaded');
+
+
         },
 
         uploadNewFile: function (file) {

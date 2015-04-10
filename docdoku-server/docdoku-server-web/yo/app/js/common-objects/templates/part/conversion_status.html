@@ -2,23 +2,27 @@
 <div class="conversion-status">
 {{#status}}
     {{#pending}}
-    <i class="fa fa-refresh fa-spin" title="{{i18n.CONVERSION_PENDING}}"></i>
+    <i class="fa fa-refresh fa-spin" title="{{i18n.CONVERSION_PENDING}}"></i><b>{{i18n.CONVERSION_PENDING}} ...</b>
     {{/pending}}
     {{^pending}}
         {{#succeed}}
-            <i class="fa fa-check" title="{{i18n.CONVERSION_SUCCEED}}"></i>
+            <i class="fa fa-recycle success" title="{{i18n.CONVERSION_SUCCEED}}"></i> <b>{{i18n.CONVERSION_SUCCEED}}</b>
         {{/succeed}}
         {{^succeed}}
-            <i class="fa fa-times" title="{{i18n.CONVERSION_FAILED}}"></i>
+            <i class="fa fa-recycle fail" title="{{i18n.CONVERSION_FAILED}}"></i><b>{{i18n.CONVERSION_FAILED}}</b>
         {{/succeed}}
     {{/pending}}
 {{/status}}
 {{^status}}
     <i class="fa fa-times" title="{{i18n.NO_CONVERSION}}"></i>
 {{/status}}
-    <b>{{i18n.CONVERSION}}</b>
+    {{#status}}
+    {{^succeed}}
     <span class="conversion-status-actions">
-            <a class="launch">{{i18n.RETRY}}</a> -  <a class="reload">{{i18n.RELOAD}}</a>
+            <a class="launch">{{i18n.RETRY}}</a>
     </span>
+    {{/succeed}}
+    {{/status}}
+
 </div>
 {{/hasCadFile}}
