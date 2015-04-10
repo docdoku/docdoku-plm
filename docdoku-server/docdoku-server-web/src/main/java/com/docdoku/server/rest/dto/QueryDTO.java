@@ -1,5 +1,6 @@
 package com.docdoku.server.rest.dto;
 
+import javax.xml.bind.annotation.XmlElement;
 import java.util.Date;
 import java.util.List;
 
@@ -11,7 +12,10 @@ public class QueryDTO {
     private int id;
     private String name;
     private Date creationDate;
-    private QueryRuleDTO subRules;
+
+    @XmlElement(nillable = false)
+    private QueryRuleDTO queryRule;
+
     private List<String> selects;
     private List<String> orderByList;
     private List<String> groupedByList;
@@ -27,12 +31,12 @@ public class QueryDTO {
         this.id = id;
     }
 
-    public QueryRuleDTO getSubRules() {
-        return subRules;
+    public QueryRuleDTO getQueryRule() {
+        return queryRule;
     }
 
-    public void setSubRules(QueryRuleDTO subRules) {
-        this.subRules = subRules;
+    public void setQueryRule(QueryRuleDTO queryRule) {
+        this.queryRule = queryRule;
     }
 
     public List<String> getSelects() {

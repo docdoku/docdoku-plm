@@ -34,10 +34,11 @@ public class QueryRule implements Serializable {
 
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     @Id
-    private int id;
+    private int qid;
 
     @Column(name="COND")
     private String condition;
+    private String id;
     private String field;
     private String input;
     private String operator;
@@ -53,11 +54,19 @@ public class QueryRule implements Serializable {
     public QueryRule() {
     }
 
-    public int getId() {
+    public int getQid() {
+        return qid;
+    }
+
+    public void setQid(int qid) {
+        this.qid = qid;
+    }
+
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 

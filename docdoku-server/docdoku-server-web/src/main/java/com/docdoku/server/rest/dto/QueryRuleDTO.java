@@ -33,7 +33,7 @@ public class QueryRuleDTO {
     private String input;
     private String operator;
     private String value;
-    private List<QueryRuleDTO> subQueryRules;
+    private List<QueryRuleDTO> rules;
 
     public QueryRuleDTO() {
     }
@@ -86,11 +86,20 @@ public class QueryRuleDTO {
         this.value = value;
     }
 
-    public List<QueryRuleDTO> getSubQueryRules() {
-        return subQueryRules;
+    public List<QueryRuleDTO> getRules() {
+        return rules;
     }
 
-    public void setSubQueryRules(List<QueryRuleDTO> subQueryRules) {
-        this.subQueryRules = subQueryRules;
+    public void setRules(List<QueryRuleDTO> rules) {
+        this.rules = rules;
     }
+
+    public List<QueryRuleDTO> getSubQueryRules() {
+        return getRules();
+    }
+
+    public void setSubQueryRules(List<QueryRuleDTO> rules) {
+        setRules(rules);
+    }
+
 }

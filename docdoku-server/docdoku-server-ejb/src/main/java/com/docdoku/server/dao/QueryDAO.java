@@ -51,7 +51,7 @@ public class QueryDAO {
 
     public List<PartRevision> runQuery(String workspaceId, Query query) {
 
-//        CriteriaBuilder cb = em.getCriteriaBuilder();
+//        CriteriaBuilder* cb = em.getCriteriaBuilder();
 //
 //        CriteriaQuery<PartRevision> q = cb.createQuery(PartRevision.class);
 //        Root<PartRevision> c = q.from(PartRevision.class);
