@@ -28,6 +28,9 @@ define([
             }).error(function(){
                 self.render();
             });
+         setTimeout(function() {
+                self.render();
+            }, 3000);
         }
     });
     return ConversionStatusView;

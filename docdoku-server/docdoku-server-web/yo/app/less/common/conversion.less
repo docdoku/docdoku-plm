@@ -1,12 +1,17 @@
 .conversion-status{
 
     .conversion-status-actions{
-        display: none;
+        float: right;
+        margin-right: 10px;
     }
+    .fa{
+        margin-right: 4px;
+        &.success{
+            color: green;
+        }
 
-    &:hover{
-        .conversion-status-actions{
-            display: inline-block;
+        &.fail{
+            color: #ee5f5b;
         }
     }
 
