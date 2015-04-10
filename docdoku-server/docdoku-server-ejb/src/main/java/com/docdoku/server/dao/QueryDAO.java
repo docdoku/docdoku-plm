@@ -1,14 +1,16 @@
 package com.docdoku.server.dao;
 
+import com.docdoku.core.product.PartMaster;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.query.Query;
 import com.docdoku.core.query.QueryRule;
 
 import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -53,47 +55,77 @@ public class QueryDAO {
 
     public List<PartRevision> runQuery(String workspaceId, Query query) {
 
-//        CriteriaBuilder cb = em.getCriteriaBuilder();
-//        CriteriaQuery<Tuple> cq = cb.createTupleQuery();
-//
-//        Root<PartMaster> pm = cq.from(PartMaster.class);
-//        Root<ProductInstanceMaster> pi = cq.from(ProductInstanceMaster.class);
-//
-//        Expression<String> number = pm.get("number");
-//        Expression<String> type = pm.get("type");
-//        Expression<String> name = pm.get("name");
-//        Expression<String> serialNumber = pi.get("serialNumber");
-//
-//        cq.multiselect(number.alias("pm.number"));
-//        cq.multiselect(serialNumber.alias("pi.serial"));
-//
-//        cq.where(getPredicate(query.getQueryRule()));
-//
-//        cq.orderBy(cb.desc(number));
-//
-//        TypedQuery<Tuple> tq = em.createQuery(cq);
-//        for (Tuple t : tq.getResultList()) {
-//            System.out.println(t.get("foo"));
-//        }
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery cq = cb.createQuery();
+        Root<PartMaster> pm = cq.from(PartMaster.class);
 
-        return new ArrayList<>();
+        Expression<String> number = pm.get("number");
+        Expression<String> name = pm.get("name");
+        Expression<String> type = pm.get("type");
+
+        cq.multiselect( number.alias("pm.number"),
+                        name.alias("pm.name"),
+                        type.alias("pm.type."));
+
+        Predicate predicate = getPredicate(query.getQueryRule(), cq);
+        cq.where(predicate);
+        cq.orderBy(cb.desc(number));
+        TypedQuery<PartMaster> tp = em.createQuery(cq);
+
+        List<PartRevision> revisions = new ArrayList<>();
+
+        List<PartMaster> resultList = tp.getResultList();
+        for(PartMaster part : resultList){
+            revisions.addAll(part.getPartRevisions());
+        }
+
+        return revisions;
 
     }
 
 
-    public Predicate getPredicate(QueryRule queryRule){
+    public Predicate getPredicate(QueryRule queryRule, CriteriaQuery cq){
 
-//        String condition = queryRule.getCondition();
-//
-//        if(condition == "OR"){
-//
-//        }else if(condition == "AND"){
-//
-//        }
-//
-//        Expression<String> number = root.get("number");
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        String condition = queryRule.getCondition();
 
-        return null;
+        List<QueryRule> subQueryRules = queryRule.getSubQueryRules();
+
+        if(subQueryRules != null){
+
+            Predicate[] predicates = new Predicate[subQueryRules.size()];
+
+            for(int i = 0; i < predicates.length; i++){
+                Predicate predicate = getPredicate(subQueryRules.get(i),cq);
+                predicates[i] = predicate;
+            }
+
+            if("OR".equals(condition)){
+                return cb.or(predicates);
+            }
+            else if("AND".equals(condition)){
+                return cb.and(predicates);
+            }
+            else{
+                return null;
+            }
+
+        }else{
+
+            String field = queryRule.getField();
+            String operator = queryRule.getOperator();
+            String value = queryRule.getValue();
+
+            Root<PartMaster> pm = cq.from(PartMaster.class);
+
+            if("p.number".equals(field)){
+                Expression<String> number = pm.get("number");
+                return number.in(value);
+            }
+
+            return null;
+        }
+
 
     }
 
