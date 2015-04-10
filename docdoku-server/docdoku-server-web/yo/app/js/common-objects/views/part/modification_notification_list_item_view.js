@@ -29,6 +29,9 @@ define([
 
         bindUserPopover: function () {
             this.$('.author-popover').userPopover(this.model.getAuthor().login, this.model.getImpactedPartNumber(), 'right');
+            if (this.model.isAcknowledged()) {
+                this.$('.ack-author-popover').userPopover(this.model.getAckAuthor().login, this.model.getImpactedPartNumber(), 'right');
+            }
         },
 
         acknowledge: function () {
