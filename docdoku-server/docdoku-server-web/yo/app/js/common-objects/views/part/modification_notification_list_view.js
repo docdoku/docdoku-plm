@@ -15,7 +15,12 @@ define([
         },
 
         render: function () {
-            this.$el.html(Mustache.render(template, {i18n: App.config.i18n}));
+            var data = {
+                modificationNotification: this.collection.at(0),
+                i18n: App.config.i18n
+            };
+            this.$el.html(Mustache.render(template, data));
+            this.bindDomElements();
 
             this.modificationNotificationViews = [];
 
@@ -24,13 +29,17 @@ define([
             return this;
         },
 
+        bindDomElements: function () {
+            this.$items = this.$('.items');
+        },
+
         addView: function (model) {
             var modificationNotificationView = new ModificationNotificationListItemView({
                 model: model
             }).render();
 
             this.modificationNotificationViews.push(modificationNotificationView);
-            this.$el.append(modificationNotificationView.$el);
+            this.$items.append(modificationNotificationView.$el);
         }
 
     });
