@@ -88,7 +88,7 @@ define([
                 selects : selectList,
                 orderByList : orderByList,
                 groupedByList : groupByList,
-                rules : where
+                subRules : where
             }
 
             var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/queries?save='+saveQuery;

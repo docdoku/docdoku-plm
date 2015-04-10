@@ -11,7 +11,7 @@ public class QueryDTO {
     private int id;
     private String name;
     private Date creationDate;
-    private QueryRuleDTO rules;
+    private QueryRuleDTO subRules;
     private List<String> selects;
     private List<String> orderByList;
     private List<String> groupedByList;
@@ -27,13 +27,12 @@ public class QueryDTO {
         this.id = id;
     }
 
-
-    public QueryRuleDTO getRules() {
-        return rules;
+    public QueryRuleDTO getSubRules() {
+        return subRules;
     }
 
-    public void setRules(QueryRuleDTO rules) {
-        this.rules = rules;
+    public void setSubRules(QueryRuleDTO subRules) {
+        this.subRules = subRules;
     }
 
     public List<String> getSelects() {
