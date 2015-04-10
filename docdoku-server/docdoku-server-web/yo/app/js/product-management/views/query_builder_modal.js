@@ -54,6 +54,14 @@ define([
                 }
             });
 
+            this.$saveSwitch.bootstrapSwitch();
+            this.$saveSwitch.bootstrapSwitch('setState', false);
+            this.$inputName.toggle(false);
+            var self = this;
+            this.$saveSwitch.on('switch-change', function (event, state) {
+                self.$inputName.toggle(state.value);
+            });
+
             return this;
         },
 
@@ -69,40 +77,51 @@ define([
             this.$select = this.$('#select');
             this.$orderBy = this.$('#orderBy');
             this.$groupBy = this.$('#groupBy');
+            this.$saveSwitch = this.$('.saveSwitch.switch');
+            this.$inputName = this.$('.queryName');
         },
 
         onSearch:function(){
 
-            var selectList = this.$select[0].selectize.getValue().split(this.delimiter);
-            var where = this.$where.queryBuilder('getRules');
-            var orderByList = this.$orderBy[0].selectize.getValue().split(this.delimiter);
-            var groupByList = this.$groupBy[0].selectize.getValue().split(this.delimiter);
+            var isValid = this.$where.queryBuilder('validate');
 
-            var saveQuery = false;
+            if(isValid) {
 
-            var data = {
-                selects : selectList,
-                orderByList : orderByList,
-                groupedByList : groupByList,
-                queryRule : where
-            };
+                var selectList = this.$select[0].selectize.getValue().split(this.delimiter);
+                var where = this.$where.queryBuilder('getRules');
+                var orderByList = this.$orderBy[0].selectize.getValue().split(this.delimiter);
+                var groupByList = this.$groupBy[0].selectize.getValue().split(this.delimiter);
 
-            var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/queries?save='+saveQuery;
-            $.ajax({
-                type: 'POST',
-                url : url,
-                data: JSON.stringify(data),
-                contentType:'application/json',
-                success: function(data){
-                    debugger
-                },
-                error : function(errorMessage){
-                    self.$('#alerts').append(new AlertView({
-                        type: 'error',
-                        message: errorMessage
-                    }).render().$el);
+                var saveQuery = this.$saveSwitch.bootstrapSwitch('status');
+
+                if (saveQuery && this.$inputName.val().length === 0) {
+                    this.$inputName.focus();
                 }
-            });
+
+                var data = {
+                    selects: selectList,
+                    orderByList: orderByList,
+                    groupedByList: groupByList,
+                    subRules: where,
+                    name: saveQuery ? this.$inputName.val() : ''
+                };
+
+                var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/queries?save=' + saveQuery;
+                $.ajax({
+                    type: 'POST',
+                    url: url,
+                    data: JSON.stringify(data),
+                    contentType: 'application/json',
+                    success: function (data) {
+                    },
+                    error: function (errorMessage) {
+                        self.$('#alerts').append(new AlertView({
+                            type: 'error',
+                            message: errorMessage
+                        }).render().$el);
+                    }
+                });
+            }
 
 
         },

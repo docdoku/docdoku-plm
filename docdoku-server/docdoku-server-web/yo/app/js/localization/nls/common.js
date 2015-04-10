@@ -389,6 +389,7 @@ define({
         QUERY_BUILDER_ERRORS_DATETIME_EXCEED_MAX:"Must be before {0}",
         QUERY_BUILDER_ERRORS_BOOLEAN_NOT_VALID:"Not a boolean",
         QUERY_BUILDER_ERRORS_OPERATOR_NOT_MULTIPLE:"Operator {0} cannot accept multiple values",
+        QUERY_NAME:"Query name",
 		READ_ONLY: "Read only",
         REBASE: "Rebase",
 		REFERENCE_HELP: "Document ID",
