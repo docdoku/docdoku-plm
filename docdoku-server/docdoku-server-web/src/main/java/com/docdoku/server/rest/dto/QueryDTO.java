@@ -1,7 +1,6 @@
-package com.docdoku.server.rest;
+package com.docdoku.server.rest.dto;
 
-import com.docdoku.server.rest.dto.RuleDTO;
-
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -10,8 +9,9 @@ import java.util.List;
 public class QueryDTO {
 
     private int id;
-    private String label;
-    private RuleDTO rules;
+    private String name;
+    private Date creationDate;
+    private QueryRuleDTO rules;
     private List<String> selects;
     private List<String> orderByList;
     private List<String> groupedByList;
@@ -27,19 +27,12 @@ public class QueryDTO {
         this.id = id;
     }
 
-    public String getLabel() {
-        return label;
-    }
 
-    public void setLabel(String label) {
-        this.label = label;
-    }
-
-    public RuleDTO getRules() {
+    public QueryRuleDTO getRules() {
         return rules;
     }
 
-    public void setRules(RuleDTO rules) {
+    public void setRules(QueryRuleDTO rules) {
         this.rules = rules;
     }
 
@@ -65,5 +58,21 @@ public class QueryDTO {
 
     public void setGroupedByList(List<String> groupedByList) {
         this.groupedByList = groupedByList;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
     }
 }

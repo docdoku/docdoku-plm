@@ -30,7 +30,7 @@ import com.docdoku.core.product.PartIterationKey;
 import com.docdoku.core.product.PartMaster;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.query.PartSearchQuery;
-import com.docdoku.core.query.Rule;
+import com.docdoku.core.query.Query;
 import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;
@@ -161,7 +161,21 @@ public class PartsResource {
     @Path("queries")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public List<QueryDTO> getCustomQueries(@PathParam("workspaceId") String workspaceId){
+    public List<QueryDTO> getCustomQueries(@PathParam("workspaceId") String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+        List<Query> queries = productService.getQueries(workspaceId);
+        List<QueryDTO> queryDTOs = new ArrayList<>();
+        for(Query query : queries){
+            queryDTOs.add(mapper.map(query,QueryDTO.class));
+        }
+        return queryDTOs;
+    }
+
+    @GET
+    @Path("queries/{queryId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<PartDTO> runExistingQuery(@PathParam("workspaceId") String workspaceId, @PathParam("queryId") int queryId) throws EntityNotFoundException, UserNotActiveException, AccessRightException {
+        Query query = productService.getQuery(workspaceId,queryId);
+        productService.searchPartRevisions(workspaceId, query);
         return new ArrayList<>();
     }
 
@@ -169,26 +183,14 @@ public class PartsResource {
     @Path("queries")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public QueryResultDTO runCustomQuery(@PathParam("workspaceId") String workspaceId, RuleDTO ruleDTO) throws EntityNotFoundException, UserNotActiveException, AccessRightException {
-
-        Rule rule = mapper.map(ruleDTO,Rule.class);
-//
-//        List<PartRevision> partRevisions = productService.searchPartRevisions(rule);
-//        List<PartDTO> partDTOs = new ArrayList<>();
-//
-//        for(PartRevision partRevision : partRevisions){
-//            PartDTO partDTO = Tools.mapPartRevisionToPartDTO(partRevision);
-//
-//            List<ModificationNotificationDTO> notificationDTOs = getModificationNotificationDTOs(partRevision);
-//            partDTO.setNotifications(notificationDTOs);
-//
-//            partDTOs.add(partDTO);
-//        }
-
-        return new QueryResultDTO();
+    public List<PartDTO> runCustomQuery(@PathParam("workspaceId") String workspaceId, @QueryParam("save") boolean save, QueryDTO queryDTO) throws EntityNotFoundException, UserNotActiveException, AccessRightException {
+        Query query = mapper.map(queryDTO, Query.class);
+        productService.searchPartRevisions(workspaceId,query);
+        if(save){
+            productService.createQuery(workspaceId,query);
+        }
+        return new ArrayList<>();
     }
-
-
 
     @GET
     @Path("checkedout")

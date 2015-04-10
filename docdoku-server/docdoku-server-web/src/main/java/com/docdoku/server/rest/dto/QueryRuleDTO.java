@@ -20,15 +20,12 @@
 
 package com.docdoku.server.rest.dto;
 
-import javax.xml.bind.annotation.XmlRootElement;
 import java.util.List;
 
 /**
  * Created by morgan on 09/04/15.
  */
-
-@XmlRootElement
-public class RuleDTO {
+public class QueryRuleDTO {
 
     private String condition;
     private String id;
@@ -36,9 +33,9 @@ public class RuleDTO {
     private String input;
     private String operator;
     private String value;
-    private List<RuleDTO> rules;
+    private List<QueryRuleDTO> subQueryRules;
 
-    public RuleDTO() {
+    public QueryRuleDTO() {
     }
 
     public String getCondition() {
@@ -89,12 +86,11 @@ public class RuleDTO {
         this.value = value;
     }
 
-    public List<RuleDTO> getRules() {
-        return rules;
+    public List<QueryRuleDTO> getSubQueryRules() {
+        return subQueryRules;
     }
 
-    public void setRules(List<RuleDTO> rules) {
-        this.rules = rules;
+    public void setSubQueryRules(List<QueryRuleDTO> subQueryRules) {
+        this.subQueryRules = subQueryRules;
     }
-
 }

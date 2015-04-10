@@ -31,6 +31,7 @@ import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.meta.InstanceAttributeTemplate;
 import com.docdoku.core.product.*;
 import com.docdoku.core.query.PartSearchQuery;
+import com.docdoku.core.query.Query;
 import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.sharing.SharedEntityKey;
@@ -204,4 +205,11 @@ public interface IProductManagerLocal{
     void updateModificationNotification(String pWorkspaceId, int pModificationNotificationId, String pAcknowledgementComment) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, PartRevisionNotFoundException;
 
     List<PartLink> decodePath(ConfigurationItemKey ciKey, String path) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartUsageLinkNotFoundException, ConfigurationItemNotFoundException;
+
+    List<PartRevision> searchPartRevisions(String workspaceId, Query query) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
+
+    List<Query> getQueries(String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
+    Query getQuery(String workspaceId, int queryId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
+    void createQuery(String workspaceId, Query query) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException;
+    void deleteQuery(String workspaceId, int queryId) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException;
 }

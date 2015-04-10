@@ -20,26 +20,45 @@
 
 package com.docdoku.core.query;
 
+import javax.persistence.*;
+import java.io.Serializable;
 import java.util.List;
 
 /**
- * Wraps data needed to perform a query on part revisions.
- *
  * @author Morgan Guimard
- * @version 2.0, 03/01/2014
- * @since   V2.0
  */
-public class Rule {
 
+@Table(name="QUERYRULE")
+@Entity
+public class QueryRule implements Serializable {
+
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @Id
+    private int id;
+
+    @Column(name="COND")
     private String condition;
-    private String id;
     private String field;
     private String input;
     private String operator;
     private String value;
-    private List<Rule> rules;
 
-    public Rule() {
+    @ManyToOne
+    @JoinColumn(name = "PARENT_QUERY_RULE")
+    private QueryRule parentQueryRule;
+
+    @OneToMany(mappedBy = "parentQueryRule")
+    private List<QueryRule> subQueryRules;
+
+    public QueryRule() {
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getCondition() {
@@ -48,14 +67,6 @@ public class Rule {
 
     public void setCondition(String condition) {
         this.condition = condition;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public String getField() {
@@ -90,11 +101,19 @@ public class Rule {
         this.value = value;
     }
 
-    public List<Rule> getRules() {
-        return rules;
+    public QueryRule getParentQueryRule() {
+        return parentQueryRule;
     }
 
-    public void setRules(List<Rule> rules) {
-        this.rules = rules;
+    public void setParentQueryRule(QueryRule parentQueryRule) {
+        this.parentQueryRule = parentQueryRule;
+    }
+
+    public List<QueryRule> getSubQueryRules() {
+        return subQueryRules;
+    }
+
+    public void setSubQueryRules(List<QueryRule> subQueryRules) {
+        this.subQueryRules = subQueryRules;
     }
 }

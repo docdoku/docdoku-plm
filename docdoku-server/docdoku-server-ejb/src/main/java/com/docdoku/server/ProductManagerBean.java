@@ -30,6 +30,7 @@ import com.docdoku.core.meta.*;
 import com.docdoku.core.product.*;
 import com.docdoku.core.product.PartIteration.Source;
 import com.docdoku.core.query.PartSearchQuery;
+import com.docdoku.core.query.Query;
 import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;
@@ -46,9 +47,9 @@ import com.docdoku.server.configuration.spec.ProductInstanceConfigSpec;
 import com.docdoku.server.dao.*;
 import com.docdoku.server.esindexer.ESIndexer;
 import com.docdoku.server.esindexer.ESSearcher;
+import com.docdoku.server.events.CheckedIn;
 import com.docdoku.server.events.PartIterationChangeEvent;
 import com.docdoku.server.events.PartRevisionChangeEvent;
-import com.docdoku.server.events.CheckedIn;
 import com.docdoku.server.events.Removed;
 import com.docdoku.server.factory.ACLFactory;
 
@@ -1713,6 +1714,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         return template;
     }
 
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public BinaryResource renameFileInTemplate(String pFullName, String pNewName) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, FileNotFoundException, UserNotActiveException, FileAlreadyExistsException, CreationException {
         User user = userManager.checkWorkspaceReadAccess(BinaryResource.parseWorkspaceId(pFullName));
@@ -2288,6 +2290,80 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         }
 
         return decodedPath;
+    }
+
+
+
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
+    public List<PartRevision> searchPartRevisions(String workspaceId, Query query) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+        QueryDAO queryDAO = new QueryDAO(new Locale(user.getLanguage()), em);
+
+        List<PartRevision> parts = queryDAO.runQuery(workspaceId,query);
+
+        ListIterator<PartRevision> ite = parts.listIterator();
+
+        while (ite.hasNext()) {
+            PartRevision partR = ite.next();
+
+            if (isCheckoutByAnotherUser(user,partR)) {
+                // Remove CheckedOut PartRevision From Results
+                em.detach(partR);
+                partR.removeLastIteration();
+            }
+
+            if (!hasPartRevisionReadAccess(user,partR)) {
+                ite.remove();
+            }
+        }
+
+        return null;
+    }
+
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
+    public Query getQuery(String workspaceId, int queryId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+
+        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+
+        QueryDAO queryDAO = new QueryDAO(new Locale(user.getLanguage()),em);
+        Query query = queryDAO.loadQuery(queryId);
+
+        if(!query.getAuthor().getWorkspace().getId().equals(workspaceId)){
+            userManager.checkWorkspaceReadAccess(query.getAuthor().getWorkspace().getId());
+        }
+
+        return query;
+    }
+
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
+    public void createQuery(String workspaceId, Query query) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException {
+        User user = userManager.checkWorkspaceWriteAccess(workspaceId);
+        QueryDAO queryDAO = new QueryDAO(new Locale(user.getLanguage()),em);
+        // TODO : check if name already exists
+        queryDAO.createQuery(query);
+    }
+
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
+    public void deleteQuery(String workspaceId, int queryId) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException {
+        User user = userManager.checkWorkspaceWriteAccess(workspaceId);
+        QueryDAO queryDAO = new QueryDAO(new Locale(user.getLanguage()),em);
+        Query query = queryDAO.loadQuery(queryId);
+        if(!query.getAuthor().getWorkspace().getId().equals(workspaceId)){
+            userManager.checkWorkspaceWriteAccess(query.getAuthor().getWorkspace().getId());
+        }
+        queryDAO.removeQuery(query);
+    }
+
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
+    public List<Query> getQueries(String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+        QueryDAO queryDAO = new QueryDAO(new Locale(user.getLanguage()),em);
+        return queryDAO.loadQueries(workspaceId);
     }
 
     private PartUsageLink getPartUsageLink(User user, int id) throws PartUsageLinkNotFoundException {
