@@ -29,6 +29,9 @@ define([
 
         bindUserPopover: function () {
             this.$('.author-popover').userPopover(this.model.getAuthor().login, this.model.getImpactedPartNumber(), 'right');
+            if (this.model.isAcknowledged()) {
+                this.$('.ack-author-popover').userPopover(this.model.getAckAuthor().login, this.model.getImpactedPartNumber(), 'right');
+            }
         },
 
         acknowledge: function () {
@@ -40,13 +43,7 @@ define([
         },
 
         getAcknowledgementComment: function () {
-            var comment;
-            if (_.isEqual(this.$('#acknowledgement-comment').val(), '')) {
-                comment = null;
-            } else {
-                comment = this.$('#acknowledgement-comment').val();
-            }
-            return comment;
+            return this.$('#acknowledgement-comment').val() || null;
         }
 
     });

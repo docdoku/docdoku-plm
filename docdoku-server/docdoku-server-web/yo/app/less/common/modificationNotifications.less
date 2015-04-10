@@ -1,34 +1,40 @@
-div#iteration-modification-notifications{
+div#iteration-modification-notifications {
 
-    i.fa-circle{
+    div.modification-notification-group {
+        margin-top: 10px;
+        padding: 10px;
+        padding-bottom: 0px;
+    }
+
+    div.group-title {
+        font-weight: bold;
+    }
+
+    div.modification-notification {
+        padding: 10px;
+        padding-right: 0px;
+    }
+
+    i.fa-circle {
         float: left;
         margin-top: 3px;
         color:#62697B;
     }
 
-    div.modification-notification{
-        padding: 10px;
-        margin-top: 10px;
-    }
-
-    div.modification-notification-note, div.modification-notification-details, div.comment{
+    div.modification-notification-details {
         margin-left: 20px;
     }
 
-    div.modification-notification-note{
-        font-weight: bold;
-    }
-
-    div.comment-italic {
-        font-style:italic;
+    div.group-comment input#group-acknowledgement-comment {
+        width: calc(~"100% - 179px");
     }
 
     div.comment input#acknowledgement-comment {
         width: calc(~"100% - 152px");
     }
 
-    div.comment button.action-acknowledge {
-        cursor: pointer;
+    div.comment-italic {
+        font-style: italic;
     }
 
 }
