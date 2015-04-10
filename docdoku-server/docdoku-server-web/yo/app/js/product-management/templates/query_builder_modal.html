@@ -6,20 +6,22 @@
     </div>
 
     <div class="modal-body">
+        <div id="alert"></div>
+
         <label>Select</label>
-        <div id="select"></div>
+        <input type="text" id="select">
         <label>Where</label>
-        <div id="builder"></div>
+        <div id="where"></div>
 
         <label>Order by</label>
-        <div id="orderBy"></div>
+        <input type="text" id="orderBy">
         <label>Group by</label>
-        <div id="groupBy"></div>
+        <input type="text" id="groupBy">
     </div>
 
     <div class="modal-footer">
         <button class="btn" data-dismiss="modal" aria-hidden="true">{{i18n.CANCEL}}</button>
-        <button class="btn btn-primary">{{i18n.SEARCH}}</button>
+        <button type="button" class="btn btn-primary search-button">{{i18n.SEARCH}}</button>
     </div>
 
-</div>
+</input>
