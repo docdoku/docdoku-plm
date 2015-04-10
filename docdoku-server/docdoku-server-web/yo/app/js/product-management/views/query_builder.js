@@ -2,7 +2,7 @@
 define([
     'backbone',
     'mustache',
-    'text!templates/query_builder_modal.html',
+    'text!templates/query_builder.html',
     'query-builder',
     'selectize',
     '../../utils/query-builder-options',
@@ -12,7 +12,6 @@ define([
     var QueryBuilderModal = Backbone.View.extend({
 
         events: {
-            'hidden #query-builder-modal': 'onHidden',
             'click .search-button': 'onSearch'
         },
 
@@ -124,21 +123,7 @@ define([
             }
 
 
-        },
-
-        openModal: function () {
-            this.$modal.modal('show');
-        },
-
-        closeModal: function () {
-            this.$modal.modal('hide');
-        },
-
-        onHidden: function () {
-            this.remove();
         }
-
-
     });
 
 

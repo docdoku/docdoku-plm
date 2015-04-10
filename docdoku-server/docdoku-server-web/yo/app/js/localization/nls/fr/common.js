@@ -386,6 +386,7 @@ define({
     QUERY_BUILDER_ERRORS_BOOLEAN_NOT_VALID:"N'est pas un booléen",
     QUERY_BUILDER_ERRORS_OPERATOR_NOT_MULTIPLE:"L'opérateur {0} ne peut utiliser plusieurs valeurs",
     QUERY_NAME:"Nom de la requête",
+    QUERY_SEARCH:"Construire une requete",
 	READ_ONLY: "Lecture seule",
     REBASE: "Re",
 	REFERENCE_HELP: "ID du document",

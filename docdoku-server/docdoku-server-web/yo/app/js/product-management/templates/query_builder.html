@@ -1,11 +1,8 @@
-<div id="query-builder-modal" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+<div id="query-builder-view">
 
-    <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3>{{i18n.ADVANCED_SEARCH}}</h3>
-    </div>
+    <h3>{{i18n.QUERY_SEARCH}}</h3>
 
-    <div class="modal-body">
+    <div class="query-builder-body">
         <div id="alert"></div>
 
         <label>Select</label>
@@ -26,9 +23,6 @@
         <input type="text" class="queryName input-xlarge" placeholder="{{i18n.QUERY_NAME}}" required>
     </div>
 
-    <div class="modal-footer">
-        <button class="btn" data-dismiss="modal" aria-hidden="true">{{i18n.CANCEL}}</button>
-        <button type="button" class="btn btn-primary search-button">{{i18n.SEARCH}}</button>
-    </div>
+    <button type="button" class="btn btn-primary search-button">{{i18n.SEARCH}}</button>
 
 </div>

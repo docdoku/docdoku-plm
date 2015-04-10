@@ -11,7 +11,7 @@ define([
     'views/part/part_new_version',
     'common-objects/views/prompt',
     'common-objects/views/security/acl_edit',
-    'views/query_builder_modal',
+    '../query_builder',
     'text!common-objects/templates/buttons/delete_button.html',
     'text!common-objects/templates/buttons/checkout_button_group.html',
     'text!common-objects/templates/buttons/new_version_button.html',
@@ -23,8 +23,9 @@ define([
 	'text!templates/part/search_part_form.html',
     'common-objects/views/alert',
     'common-objects/views/tags/tags_management',
-    'views/product/product_creation_view'
-], function (Backbone, Mustache, Async, PartCollection, PartSearchCollection, template, PartListView, PartCreationView, PartNewVersionView, PromptView, ACLEditView, QueryBuilderModal, deleteButton, checkoutButtonGroup, newVersionButton, releaseButton, aclButton, newProductButton, tagsButton, obsoleteButton, searchForm, AlertView,TagsManagementView,ProductCreationView) {
+    'views/product/product_creation_view',
+    'views/advanced_search',
+], function (Backbone, Mustache, Async, PartCollection, PartSearchCollection, template, PartListView, PartCreationView, PartNewVersionView, PromptView, ACLEditView, QueryBuilderModal, deleteButton, checkoutButtonGroup, newVersionButton, releaseButton, aclButton, newProductButton, tagsButton, obsoleteButton, searchForm, AlertView,TagsManagementView,ProductCreationView,AdvancedSearchView) {
     'use strict';
 	var PartContentView = Backbone.View.extend({
         events: {
@@ -45,7 +46,8 @@ define([
             'click button.current-page': 'goToPage',
             'click button.new-product': 'newProduct',
             'submit #part-search-form': 'onQuickSearch',
-            'click .advanced-search-button': 'onAdvancedSearch'
+            'click .advanced-search-button': 'onAdvancedSearch',
+            'click .display-query-builder-button': 'toggleQueryBuilder'
         },
 
         partials: {
@@ -98,6 +100,11 @@ define([
             this.partListView = new PartListView({
                 el: this.$('#part_table'),
                 collection: this.partsCollection
+            }).render();
+
+
+            this.queryBuilder = new QueryBuilderModal({
+                el: this.$('.query-builder')
             }).render();
 
             this.bindEvent();
@@ -366,9 +373,9 @@ define([
             return false;
         },
         onAdvancedSearch: function () {
-            var queryBuilderView = new QueryBuilderModal();
-            window.document.body.appendChild(queryBuilderView.render().el);
-            queryBuilderView.openModal();
+            var advancedSearchView = new AdvancedSearchView();
+            window.document.body.appendChild(advancedSearchView.render().el);
+            advancedSearchView.openModal();
         },
 
 
@@ -429,6 +436,12 @@ define([
                 }
 
             });
+        },
+
+        toggleQueryBuilder:function(){
+            this.$el.toggleClass('displayQueryBuilder');
+            this.$('.display-query-builder-button').toggleClass('fa-angle-double-down');
+            this.$('.display-query-builder-button').toggleClass('fa-angle-double-up');
         }
 
     });
