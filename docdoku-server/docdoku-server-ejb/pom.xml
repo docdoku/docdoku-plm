@@ -61,6 +61,18 @@
         </dependency>
         <dependency>
             <groupId>org.ow2.docdoku</groupId>
+            <artifactId>docdoku-server-converter-ifc</artifactId>
+            <version>${project.version}</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.ow2.docdoku</groupId>
+            <artifactId>docdoku-server-converter-ifc</artifactId>
+            <version>${project.version}</version>
+            <type>pom</type>
+        </dependency>
+        <dependency>
+            <groupId>org.ow2.docdoku</groupId>
             <artifactId>docdoku-server-converter-catia</artifactId>
             <version>${project.version}</version>
             <type>jar</type>
@@ -267,6 +279,7 @@
                                     <include>org.ow2.docdoku:docdoku-server-converter-step</include>
                                     <include>org.ow2.docdoku:docdoku-server-converter-dae</include>
                                     <include>org.ow2.docdoku:docdoku-server-converter-all</include>
+                                    <include>org.ow2.docdoku:docdoku-server-converter-ifc</include>
                                     <include>org.ow2.docdoku:docdoku-server-converter-catia</include>
                                     <include>org.ow2.docdoku:docdoku-server-converter-catia-product</include>
                                     <include>org.ow2.docdoku:docdoku-server-scorm</include>

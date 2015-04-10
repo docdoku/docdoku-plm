@@ -13,6 +13,7 @@
     <module>docdoku-server-converter-step</module>
     <module>docdoku-server-converter-dae</module>
     <module>docdoku-server-converter-all</module>
+    <module>docdoku-server-converter-ifc</module>
     <module>docdoku-server-converter-catia</module>
     <module>docdoku-server-converter-catia-product</module>
     <module>docdoku-server-scorm</module>
