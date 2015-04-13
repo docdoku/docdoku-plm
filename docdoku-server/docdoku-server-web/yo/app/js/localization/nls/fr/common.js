@@ -388,7 +388,7 @@ define({
     QUERY_NAME:"Nom de la requête",
     QUERY_SEARCH:"Construire une requete",
 	READ_ONLY: "Lecture seule",
-    REBASE: "Re",
+    REBASE: "Rebaser",
 	REFERENCE_HELP: "ID du document",
 	REFERENCE: "Référence",
 	REFERENCES: "Objets",
