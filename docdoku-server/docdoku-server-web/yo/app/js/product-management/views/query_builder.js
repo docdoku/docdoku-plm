@@ -81,6 +81,7 @@ define([
         },
 
         onSearch:function(){
+            var self = this;
 
             var isValid = this.$where.queryBuilder('validate');
 
@@ -112,6 +113,7 @@ define([
                     data: JSON.stringify(data),
                     contentType: 'application/json',
                     success: function (data) {
+                        self.trigger('query:search', data);
                     },
                     error: function (errorMessage) {
                         self.$('#alerts').append(new AlertView({
