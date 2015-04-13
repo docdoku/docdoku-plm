@@ -457,7 +457,7 @@ define({
 	UPDATE_AUTHOR: "Auteur de la mise à jour",
 	UPDATE_DATE: "Date de la mise à jour",
 	URL: "URL",
-	USE_ACL: "Utiliser les droits ?",
+	USE_ACL: "Utiliser les ACL (droits) ?",
     USER_DEFINED_FUNCTION:'Fonction utilisateur',
 	USER_MEDIA_FAILED: "Imposible d'accéder à votre entrée vidéo. Votre navigateur supporte-il le WebRTC ?",
 	USERS_CONNECTED: "utilisateurs connectés",
