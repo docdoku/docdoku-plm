@@ -1,0 +1,13 @@
+{{#groups}}
+<div>{{.}}</div>
+<table>
+    <thead>
+    <tr>
+        {{#columns}}
+        <th>{{.}}</th>
+        {{/columns}}
+    </tr>
+    </thead>
+    <tbody class="items-{{.}}"></tbody>
+</table>
+{{/groups}}

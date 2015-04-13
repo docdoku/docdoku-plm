@@ -25,7 +25,8 @@ define([
     'common-objects/views/tags/tags_management',
     'views/product/product_creation_view',
     'views/advanced_search',
-], function (Backbone, Mustache, Async, PartCollection, PartSearchCollection, template, PartListView, PartCreationView, PartNewVersionView, PromptView, ACLEditView, QueryBuilderModal, deleteButton, checkoutButtonGroup, newVersionButton, releaseButton, aclButton, newProductButton, tagsButton, obsoleteButton, searchForm, AlertView,TagsManagementView,ProductCreationView,AdvancedSearchView) {
+    'views/part/part_grouped_by_list'
+], function (Backbone, Mustache, Async, PartCollection, PartSearchCollection, template, PartListView, PartCreationView, PartNewVersionView, PromptView, ACLEditView, QueryBuilderModal, deleteButton, checkoutButtonGroup, newVersionButton, releaseButton, aclButton, newProductButton, tagsButton, obsoleteButton, searchForm, AlertView,TagsManagementView,ProductCreationView,AdvancedSearchView, PartGroupedByView) {
     'use strict';
 	var PartContentView = Backbone.View.extend({
         events: {
@@ -97,9 +98,8 @@ define([
                 this.partListView.remove();
             }
 
-            this.partListView = new PartListView({
-                el: this.$('#part_table'),
-                collection: this.partsCollection
+            this.partListView = new PartGroupedByView({
+                el: this.$('#part_table')
             }).render();
 
 
@@ -129,21 +129,21 @@ define([
         },
 
         bindEvent: function(){
-            this.partListView.collection.on('page-count:fetch', this.onPageCountFetched);
-            this.partListView.collection.fetchPageCount();
-
-            this.partListView.on('error', this.onError);
-            this.partListView.on('warning', this.onWarning);
-            this.partListView.on('delete-button:display', this.changeDeleteButtonDisplay);
-            this.partListView.on('checkout-group:display', this.changeCheckoutGroupDisplay);
-            this.partListView.on('checkout-group:update', this.updateCheckoutButtons);
-            this.partListView.on('acl-edit-button:display', this.changeACLButtonDisplay);
-            this.partListView.on('new-version-button:display', this.changeVersionButtonDisplay);
-            this.partListView.on('release-button:display', this.changeReleaseButtonDisplay);
-            this.partListView.on('obsolete-button:display', this.changeObsoleteButtonDisplay);
-            this.partListView.on('new-product-button:display', this.changeNewProductButtonDisplay);
-
-            this.delegateEvents();
+            //this.partListView.collection.on('page-count:fetch', this.onPageCountFetched);
+            //this.partListView.collection.fetchPageCount();
+            //
+            //this.partListView.on('error', this.onError);
+            //this.partListView.on('warning', this.onWarning);
+            //this.partListView.on('delete-button:display', this.changeDeleteButtonDisplay);
+            //this.partListView.on('checkout-group:display', this.changeCheckoutGroupDisplay);
+            //this.partListView.on('checkout-group:update', this.updateCheckoutButtons);
+            //this.partListView.on('acl-edit-button:display', this.changeACLButtonDisplay);
+            //this.partListView.on('new-version-button:display', this.changeVersionButtonDisplay);
+            //this.partListView.on('release-button:display', this.changeReleaseButtonDisplay);
+            //this.partListView.on('obsolete-button:display', this.changeObsoleteButtonDisplay);
+            //this.partListView.on('new-product-button:display', this.changeNewProductButtonDisplay);
+            //
+            //this.delegateEvents();
 
         },
 
