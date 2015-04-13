@@ -2318,7 +2318,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             }
         }
 
-        return null;
+        return parts;
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)

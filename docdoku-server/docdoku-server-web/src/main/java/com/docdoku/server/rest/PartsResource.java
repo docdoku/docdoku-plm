@@ -37,6 +37,7 @@ import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
+import com.docdoku.server.rest.collections.QueryResult;
 import com.docdoku.server.rest.dto.*;
 import com.docdoku.server.rest.util.SearchQueryParser;
 import org.dozer.DozerBeanMapperSingletonWrapper;
@@ -49,10 +50,8 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import javax.ws.rs.core.Response;
+import java.util.*;
 
 @Stateless
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
@@ -173,23 +172,26 @@ public class PartsResource {
     @GET
     @Path("queries/{queryId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<PartDTO> runExistingQuery(@PathParam("workspaceId") String workspaceId, @PathParam("queryId") int queryId) throws EntityNotFoundException, UserNotActiveException, AccessRightException {
+    public Response runExistingQuery(@PathParam("workspaceId") String workspaceId, @PathParam("queryId") int queryId) throws EntityNotFoundException, UserNotActiveException, AccessRightException {
         Query query = productService.getQuery(workspaceId,queryId);
-        productService.searchPartRevisions(workspaceId, query);
-        return new ArrayList<>();
+        List<PartRevision> partRevisions = productService.searchPartRevisions(workspaceId, query);
+        QueryResult queryResult = new QueryResult(query,partRevisions);
+        return Response.ok().lastModified(new Date()).entity(queryResult).build();
+
     }
 
     @POST
     @Path("queries")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public List<PartDTO> runCustomQuery(@PathParam("workspaceId") String workspaceId, @QueryParam("save") boolean save, QueryDTO queryDTO) throws EntityNotFoundException, UserNotActiveException, AccessRightException {
+    public Response runCustomQuery(@PathParam("workspaceId") String workspaceId, @QueryParam("save") boolean save, QueryDTO queryDTO) throws EntityNotFoundException, UserNotActiveException, AccessRightException {
         Query query = mapper.map(queryDTO, Query.class);
-        productService.searchPartRevisions(workspaceId,query);
+        List<PartRevision> partRevisions = productService.searchPartRevisions(workspaceId, query);
         if(save){
             productService.createQuery(workspaceId,query);
         }
-        return new ArrayList<>();
+        QueryResult queryResult = new QueryResult(query,partRevisions);
+        return Response.ok().lastModified(new Date()).entity(queryResult).build();
     }
 
     @GET

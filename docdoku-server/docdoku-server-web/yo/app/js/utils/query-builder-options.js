@@ -175,8 +175,8 @@ define(function () {
     return {
         filters : filters,
         fields : [
-            {name:App.config.i18n.PART_NUMBER, value:'p.id'},
-            {name:App.config.i18n.PART_NAME, value:'p.number'},
+            {name:App.config.i18n.PART_NUMBER, value:'p.number'},
+            {name:App.config.i18n.PART_NAME, value:'p.name'},
             {name:App.config.i18n.AUTHOR, value:'p.author'},
             {name:App.config.i18n.TYPE, value:'p.type'},
             {name:App.config.i18n.MODIFICATION_DATE, value:'p.date'},

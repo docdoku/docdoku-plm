@@ -59,34 +59,29 @@ public class QueryDAO {
         CriteriaQuery cq = cb.createQuery();
         Root<PartMaster> pm = cq.from(PartMaster.class);
 
-        Expression<String> number = pm.get("number");
-        Expression<String> name = pm.get("name");
-        Expression<String> type = pm.get("type");
+        cq.select(pm);
 
-        cq.multiselect( number.alias("pm.number"),
-                        name.alias("pm.name"),
-                        type.alias("pm.type."));
-
-        Predicate predicate = getPredicate(query.getQueryRule(), cq);
+        Predicate predicate = getPredicate(query.getQueryRule(), pm,cb);
         cq.where(predicate);
-        cq.orderBy(cb.desc(number));
+        //cq.orderBy();
         TypedQuery<PartMaster> tp = em.createQuery(cq);
 
         List<PartRevision> revisions = new ArrayList<>();
 
         List<PartMaster> resultList = tp.getResultList();
+
         for(PartMaster part : resultList){
-            revisions.addAll(part.getPartRevisions());
+            if(part.getWorkspaceId().equals(workspaceId)){
+                revisions.addAll(part.getPartRevisions());
+            }
         }
 
         return revisions;
 
     }
 
+    public Predicate getPredicate(QueryRule queryRule, Root<PartMaster> pm, CriteriaBuilder cb){
 
-    public Predicate getPredicate(QueryRule queryRule, CriteriaQuery cq){
-
-        CriteriaBuilder cb = em.getCriteriaBuilder();
         String condition = queryRule.getCondition();
 
         List<QueryRule> subQueryRules = queryRule.getSubQueryRules();
@@ -96,7 +91,7 @@ public class QueryDAO {
             Predicate[] predicates = new Predicate[subQueryRules.size()];
 
             for(int i = 0; i < predicates.length; i++){
-                Predicate predicate = getPredicate(subQueryRules.get(i),cq);
+                Predicate predicate = getPredicate(subQueryRules.get(i),pm,cb);
                 predicates[i] = predicate;
             }
 
@@ -107,28 +102,66 @@ public class QueryDAO {
                 return cb.and(predicates);
             }
             else{
+                // WTF ?
                 return null;
             }
 
         }else{
+            return getRulePredicate(queryRule,pm,cb);
+        }
+    }
 
-            String field = queryRule.getField();
-            String operator = queryRule.getOperator();
-            String value = queryRule.getValue();
+    private Predicate getRulePredicate(QueryRule queryRule, Root<PartMaster> pm, CriteriaBuilder cb){
+        String field = queryRule.getField();
+        String operator = queryRule.getOperator();
+        String value = queryRule.getValue();
 
-            Root<PartMaster> pm = cq.from(PartMaster.class);
 
-            if("p.number".equals(field)){
-                Expression<String> number = pm.get("number");
-                return number.in(value);
-            }
+        if(field.startsWith("p.")){
+            return getPartMasterPredicate(field.substring(2), operator, value, pm, cb);
+        }
 
-            return null;
+        if(field.startsWith("pi.")){
+            return getProductInstancePredicate(field.substring(3),operator,value, pm, cb);
+        }
+
+        throw new IllegalArgumentException();
+    }
+
+    private Predicate getProductInstancePredicate(String field, String operator, String value, Root<PartMaster> pm, CriteriaBuilder cb) {
+
+        return null;
+    }
+
+    private Predicate getPartMasterPredicate(String field, String operator, String value, Root<PartMaster> pm, CriteriaBuilder cb) {
+
+        // var stringDefaultOps =
+        // ['equal', 'not_equal', 'contains', 'not_contains', 'begins_with', 'not_begins_with', 'ends_with', 'not_ends_with'];
+        // var dateOperators =
+        // ['equal', 'not_equal', 'less', 'less_or_equal', 'greater', 'greater_or_equal', 'between'];
+
+        Expression fieldExp = pm.get(field);
+
+        switch (operator){
+
+            case "equal" : return cb.equal(fieldExp,value);
+            case "not_equal" : return cb.equal(fieldExp, value).not();
+
+            case "contains" : return cb.like(fieldExp, "%" + value + "%");
+            case "not_contains" : return cb.like(fieldExp, "%"+value+"%").not();
+
+            case "begins_with" : return cb.like(fieldExp, value+"%");
+            case "not_begins_with" : return  cb.like(fieldExp, value+"%").not();
+
+            case "ends_with" : return cb.like(fieldExp, "%"+value);
+            case "not_ends_with" : return cb.like(fieldExp, "%"+value).not();
+
+            default:
+                throw new IllegalArgumentException();
         }
 
 
     }
-
 
     public List<Query> loadQueries(String workspaceId) {
         return em.createNamedQuery("Query.findByWorkspace", Query.class)
