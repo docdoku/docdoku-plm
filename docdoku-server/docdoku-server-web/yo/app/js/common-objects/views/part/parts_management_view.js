@@ -29,7 +29,7 @@ define([
                         var partNumbers = [];
                         _(data).each(function (d) {
                             if ((!that.model.getNumber()) || (that.model.getNumber() !== d.partNumber)) {
-                                partNumbers.push(d.partName + " < "+d.partNumber+">");
+                                partNumbers.push(d.partName + " < "+d.partNumber+" >");
                             }
                         });
                         process(partNumbers);
@@ -154,7 +154,7 @@ define([
                         that.getSelectedComponent();
                         _(data).each(function (d) {
                             if ((!that.model.get('number')) || (that.model.get('number') !== d.partNumber)) {
-                                partNumbers.push(d.partName + " < "+d.partNumber+">");
+                                partNumbers.push(d.partName + " < "+d.partNumber+" >");
                             }
                         });
                         process(partNumbers);

@@ -1,6 +1,4 @@
 Guava            - Apache License Version 2.0, January 2004 - http://www.apache.org/licenses/
-SwingX           - GNU LESSER GENERAL PUBLIC LICENSE - http://www.gnu.org/copyleft/lesser.html
-L2FProd          - Apache License Version 1.1 - http://www.apache.org/licenses/LICENSE-1.1
 Args4j           - The MIT License - http://opensource.org/licenses/mit-license.php
 Commons IO       - Apache License Version 2.0, January 2004 - http://www.apache.org/licenses/
 Commons Codec    - Apache License Version 2.0, January 2004 - http://www.apache.org/licenses/

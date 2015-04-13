@@ -34,6 +34,7 @@ define([
             this.events['click .action-checkout'] = 'actionCheckout';
             this.events['click .action-undocheckout'] = 'actionUndoCheckout';
             this.events['notification:acknowledged'] = 'updateModificationNotifications';
+            this.events['file:uploaded'] = 'updateCadFileUploadView';
 
             this.tagsToRemove = [];
         },
@@ -216,7 +217,6 @@ define([
         },
 
         initCadFileUploadView: function () {
-
             this.fileListView = new FileListView({
                 baseName: this.iteration.getBaseName(),
                 deleteBaseUrl: this.iteration.url(),
@@ -230,11 +230,16 @@ define([
 
             if(this.editMode){
                 this.conversionStatusView = new ConversionStatusView({model:this.iteration}).render();
-                this.$('#iteration-files').append(this.conversionStatusView.el);
+                this.$('.file-list').append(this.conversionStatusView.el);
+                this.conversionStatusView.render();
             }
 
         },
 
+        updateCadFileUploadView:function(){
+            this.$('.file-list').append(this.conversionStatusView.el);
+            this.conversionStatusView.launch();
+        },
         initPartsManagementView: function () {
             this.partsManagementView = new PartsManagementView({
                 el: '#iteration-components',
