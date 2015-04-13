@@ -23,7 +23,7 @@ define([
             return this.get('name');
         },
         getAuthor:function(){
-            return this.get('author').login;
+            return this.get('author').name;
         },
         setName:function(name){
             this.set('name',name);

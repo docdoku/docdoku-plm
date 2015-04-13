@@ -21,7 +21,7 @@ define(['backbone'], function (Backbone) {
             return this.get('id');
         },
         getAuthor: function () {
-                    return this.get('author').login;
+                    return this.get('author').name;
                 },
 
         getDesignItemNumber: function () {

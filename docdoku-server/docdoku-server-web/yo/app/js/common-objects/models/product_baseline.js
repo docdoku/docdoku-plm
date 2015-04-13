@@ -35,7 +35,7 @@ function(Baseline){
             this.set('optionalUsageLinks',optionalUsageLinks);
         },
         getAuthor:function(){
-            return this.get("author").login;
+            return this.get("author").name;
         }
 	});
 
