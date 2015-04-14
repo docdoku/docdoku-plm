@@ -98,7 +98,7 @@ define([
                     this.$inputName.focus();
                 }
 
-                var data = {
+                var queryData = {
                     selects: selectList,
                     orderByList: orderByList,
                     groupedByList: groupByList,
@@ -110,10 +110,14 @@ define([
                 $.ajax({
                     type: 'POST',
                     url: url,
-                    data: JSON.stringify(data),
+                    data: JSON.stringify(queryData),
                     contentType: 'application/json',
                     success: function (data) {
-                        self.trigger('query:search', data);
+                        var dataToTransmit = {
+                            queryData:queryData,
+                            queryResponse:data
+                        };
+                        self.trigger('query:search', dataToTransmit);
                     },
                     error: function (errorMessage) {
                         self.$('#alerts').append(new AlertView({
