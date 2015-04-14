@@ -48,7 +48,7 @@ public class QueryRule implements Serializable {
     @JoinColumn(name = "PARENT_QUERY_RULE")
     private QueryRule parentQueryRule;
 
-    @OneToMany(mappedBy = "parentQueryRule")
+    @OneToMany(mappedBy = "parentQueryRule", cascade=CascadeType.ALL, fetch=FetchType.EAGER)
     private List<QueryRule> subQueryRules;
 
     public QueryRule() {

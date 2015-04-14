@@ -2341,10 +2341,18 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public void createQuery(String workspaceId, Query query) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException {
+    public void createQuery(String workspaceId, Query query) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, QueryAlreadyExistsException, CreationException {
         User user = userManager.checkWorkspaceWriteAccess(workspaceId);
-        QueryDAO queryDAO = new QueryDAO(new Locale(user.getLanguage()),em);
-        // TODO : check if name already exists
+        Locale locale = new Locale(user.getLanguage());
+        QueryDAO queryDAO = new QueryDAO(locale,em);
+
+        Query exitingQuery = queryDAO.findQueryByName(workspaceId, query.getName());
+        if(exitingQuery != null){
+            throw new QueryAlreadyExistsException(locale,query);
+        }
+
+        query.setAuthor(user);
+        query.setCreationDate(new Date());
         queryDAO.createQuery(query);
     }
 

@@ -2,13 +2,14 @@ package com.docdoku.server.dao;
 
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.configuration.ProductInstanceMaster;
+import com.docdoku.core.exceptions.CreationException;
+import com.docdoku.core.exceptions.QueryAlreadyExistsException;
 import com.docdoku.core.product.PartMaster;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.query.Query;
 import com.docdoku.core.query.QueryRule;
 
-import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
+import javax.persistence.*;
 import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,12 +46,16 @@ public class QueryDAO {
 
     }
 
-    public void createQuery(Query query){
+    public void createQuery(Query query) throws CreationException, QueryAlreadyExistsException {
         try {
             em.persist(query);
             em.flush();
-        }catch (Exception e){
-            LOGGER.log(Level.SEVERE,"Fail to create query",e);
+        }catch (EntityExistsException pEEEx) {
+            LOGGER.log(Level.FINEST,null,pEEEx);
+            throw new QueryAlreadyExistsException(mLocale, query);
+        } catch (PersistenceException pPEx) {
+            LOGGER.log(Level.FINEST,null,pPEx);
+            throw new CreationException(mLocale);
         }
     }
 
@@ -181,5 +186,16 @@ public class QueryDAO {
         return em.createNamedQuery("Query.findByWorkspace", Query.class)
                 .setParameter("workspaceId", workspaceId)
                 .getResultList();
+    }
+
+    public Query findQueryByName(String workspaceId, String name) {
+        try {
+            return em.createNamedQuery("Query.findByWorkspaceAndWorkspace", Query.class)
+                    .setParameter("workspaceId", workspaceId)
+                    .setParameter("name", name)
+                    .getSingleResult();
+        }catch (NoResultException e){
+            return null;
+        }
     }
 }

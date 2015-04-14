@@ -184,7 +184,7 @@ public class PartsResource {
     @Path("queries")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response runCustomQuery(@PathParam("workspaceId") String workspaceId, @QueryParam("save") boolean save, QueryDTO queryDTO) throws EntityNotFoundException, UserNotActiveException, AccessRightException {
+    public Response runCustomQuery(@PathParam("workspaceId") String workspaceId, @QueryParam("save") boolean save, QueryDTO queryDTO) throws EntityNotFoundException, UserNotActiveException, AccessRightException, CreationException, QueryAlreadyExistsException {
         Query query = mapper.map(queryDTO, Query.class);
         List<PartRevision> partRevisions = productService.searchPartRevisions(workspaceId, query);
         if(save){
@@ -199,7 +199,6 @@ public class PartsResource {
     @Produces(MediaType.APPLICATION_JSON)
     public List<PartDTO> getCheckedOutPartRevisions(@PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
-
         PartRevision[] checkedOutPartRevisions = productService.getCheckedOutPartRevisions(workspaceId);
         List<PartDTO> partDTOs = new ArrayList<>();
 

@@ -76,7 +76,7 @@ public class QueryWriter implements MessageBodyWriter<QueryResult> {
 
             if(selects.contains("pm.type")){
                 String sType = part.getType();
-                jg.write("pm.name",sType != null ? sType : "");
+                jg.write("pm.type",sType != null ? sType : "");
             }
 
             if(selects.contains("pr.modificationDate")){

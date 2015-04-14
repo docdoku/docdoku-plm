@@ -37,7 +37,8 @@ import java.util.Set;
 @Table(name="QUERY")
 @Entity
 @NamedQueries({
-        @NamedQuery(name="Query.findByWorkspace",query="SELECT q FROM Query q WHERE q.author.workspaceId = :workspaceId")
+        @NamedQuery(name="Query.findByWorkspace",query="SELECT q FROM Query q WHERE q.author.workspaceId = :workspaceId"),
+        @NamedQuery(name="Query.findByWorkspaceAndWorkspace",query="SELECT q FROM Query q WHERE q.author.workspaceId = :workspaceId AND q.name = :name")
 })
 public class Query implements Serializable {
 
