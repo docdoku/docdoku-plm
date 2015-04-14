@@ -12,7 +12,8 @@ define([
     var QueryBuilderModal = Backbone.View.extend({
 
         events: {
-            'click .search-button': 'onSearch'
+            'click .search-button': 'onSearch',
+            'change select.query-list':'fillQuery'
         },
 
         delimiter: '/',
@@ -36,11 +37,54 @@ define([
             };
         },
 
+        fetchQueries:function(){
+
+            this.queries = [];
+            var queries = this.queries;
+
+            var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/queries';
+
+            var $select = this.$('select.query-list');
+
+            var fillOption = function(q){
+                queries.push(q);
+                $select.append('<option value="'+ q.id+'">'+ q.name+'</option>');
+            };
+
+            $.getJSON(url,function(data){
+                data.map(fillOption);
+            });
+
+        },
+
+        fillQuery:function(e){
+            if(e.target.value){
+                var query = _.findWhere(this.queries,{id: parseInt(e.target.value,10)});
+                this.$where.queryBuilder('setRules', query.queryRule);
+            }else{
+                this.$where.queryBuilder('reset');
+            }
+        },
+
         render: function () {
             this.$el.html(Mustache.render(template, {i18n: App.config.i18n}));
             this.bindDomElements();
             this.fillSelectizes();
+            this.fetchQueries();
+            this.initWhere();
 
+            this.$saveSwitch.bootstrapSwitch();
+            this.$saveSwitch.bootstrapSwitch('setState', false);
+            this.$inputName.toggle(false);
+            var self = this;
+            this.$saveSwitch.on('switch-change', function (event, state) {
+                self.$inputName.toggle(state.value);
+            });
+
+            return this;
+        },
+
+        initWhere:function(){
             this.$where.queryBuilder({
                 filters: querybuilderOptions.filters,
 
@@ -52,16 +96,6 @@ define([
                     add_rule : 'fa fa-plus'
                 }
             });
-
-            this.$saveSwitch.bootstrapSwitch();
-            this.$saveSwitch.bootstrapSwitch('setState', false);
-            this.$inputName.toggle(false);
-            var self = this;
-            this.$saveSwitch.on('switch-change', function (event, state) {
-                self.$inputName.toggle(state.value);
-            });
-
-            return this;
         },
 
         fillSelectizes: function(){
