@@ -29,7 +29,7 @@ define([
 
         bindUserPopover: function () {
             this.$('.author-popover').userPopover(this.model.getAuthor().login, this.model.getImpactedPartNumber(), 'right');
-            if (this.model.isAcknowledged()) {
+            if (this.model.isAcknowledged() && this.model.getAckAuthor()) {
                 this.$('.ack-author-popover').userPopover(this.model.getAckAuthor().login, this.model.getImpactedPartNumber(), 'right');
             }
         },
