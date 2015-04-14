@@ -58,6 +58,7 @@ define([
         },
 
         orderBy:function(items){
+            var self = this;
             return _.orderBy(items, function(item){
                 var orderByStringToUse = "";
                 _.each(self.orderByList, function(orderByColumn){
