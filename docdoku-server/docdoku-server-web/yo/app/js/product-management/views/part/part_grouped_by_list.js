@@ -14,19 +14,6 @@ define([
 
         initialize: function () {
             this.items = this.options.data.queryResponse;
-
-            this.items = [
-                {"pm.number":"ARM-0001","pm.name":"Armoire TOP","pm.type":"Armoires simu"},
-                {"pm.number":"ARM-0001","pm.name":"Armoire TOP","pm.type":"Armoires simu"},
-                {"pm.number":"ARM-0001","pm.name":"Armoire TOP","pm.type":"Armoires simu"},
-                {"pm.number":"ARM-0002","pm.name":"Armoire TIP","pm.type":"Armoires simu"},
-                {"pm.number":"ARM-0002","pm.name":"Armoire TIP","pm.type":"Armoires simu"},
-                {"pm.number":"ARM-0002","pm.name":"Armoire TIP","pm.type":"Armoires"},
-                {"pm.number":"ARM-0003","pm.name":"ARMTAP","pm.type":"Armoires"},
-                {"pm.number":"ARM-0003","pm.name":"ARMTAP","pm.type":"Armoires"},
-                {"pm.number":"ARM-0003","pm.name":"ARMTAP","pm.type":"Armoires"}
-            ];
-
             this.selects = this.options.data.queryData.selects;
             this.orderByList = this.options.data.queryData.orderByList;
             this.groupedByList = this.options.data.queryData.groupedByList;
