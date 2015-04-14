@@ -45,6 +45,8 @@ define([
             var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/queries';
 
             var $select = this.$('select.query-list');
+            $select.empty();
+            $select.append('<option value=""></option>');
 
             var fillOption = function(q){
                 queries.push(q);
@@ -151,6 +153,7 @@ define([
                             queryData:queryData,
                             queryResponse:data
                         };
+                        self.fetchQueries();
                         self.trigger('query:search', dataToTransmit);
                     },
                     error: function (errorMessage) {
