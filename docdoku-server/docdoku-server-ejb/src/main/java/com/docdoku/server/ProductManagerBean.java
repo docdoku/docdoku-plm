@@ -2300,7 +2300,10 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         QueryDAO queryDAO = new QueryDAO(new Locale(user.getLanguage()), em);
 
-        List<PartRevision> parts = queryDAO.runQuery(workspaceId,query);
+        WorkspaceDAO workspaceDAO = new WorkspaceDAO(new Locale(user.getLanguage()),em);
+        Workspace workspace = workspaceDAO.loadWorkspace(workspaceId);
+
+        List<PartRevision> parts = queryDAO.runQuery(workspace,query);
 
         ListIterator<PartRevision> ite = parts.listIterator();
 
@@ -2308,12 +2311,11 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             PartRevision partR = ite.next();
 
             if (isCheckoutByAnotherUser(user,partR)) {
-                // Remove CheckedOut PartRevision From Results
                 em.detach(partR);
                 partR.removeLastIteration();
             }
 
-            if (!hasPartRevisionReadAccess(user,partR)) {
+            if (partR.getLastIteration()!=null && !hasPartRevisionReadAccess(user,partR)) {
                 ite.remove();
             }
         }

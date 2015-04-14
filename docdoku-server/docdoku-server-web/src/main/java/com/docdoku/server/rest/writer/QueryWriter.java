@@ -65,26 +65,28 @@ public class QueryWriter implements MessageBodyWriter<QueryResult> {
 
             jg.writeStartObject();
 
-            if(selects.contains("p.number")){
-                jg.write("p.number",part.getPartNumber());
+            if(selects.contains("pm.number")){
+                jg.write("pm.number",part.getPartNumber());
             }
 
-            if(selects.contains("p.name")){
+            if(selects.contains("pm.name")){
                 String sName = part.getPartName();
-                jg.write("p.name",sName != null ? sName : "");
+                jg.write("pm.name",sName != null ? sName : "");
             }
 
-            if(selects.contains("p.type")){
+            if(selects.contains("pm.type")){
                 String sType = part.getType();
-                jg.write("p.name",sType != null ? sType : "");
+                jg.write("pm.name",sType != null ? sType : "");
             }
 
-            if(selects.contains("p.date")){
-                jg.write("p.date", part.getLastIteration().getModificationDate().getTime());
+            if(selects.contains("pr.modificationDate")){
+                long modificationDate = part.getLastIteration().getModificationDate().getTime();
+                jg.write("pr.modificationDate", modificationDate);
             }
 
-            if(selects.contains("p.life_cycle_state")){
-                jg.write("p.life_cycle_state",part.getLifeCycleState());
+            if(selects.contains("pr.creationDate")){
+                long modificationDate = part.getCreationDate().getTime();
+                jg.write("pr.creationDate", modificationDate);
             }
 
             jg.writeEnd();

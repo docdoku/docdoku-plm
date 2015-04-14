@@ -1,5 +1,7 @@
 package com.docdoku.server.dao;
 
+import com.docdoku.core.common.Workspace;
+import com.docdoku.core.configuration.ProductInstanceMaster;
 import com.docdoku.core.product.PartMaster;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.query.Query;
@@ -22,16 +24,25 @@ public class QueryDAO {
 
     private EntityManager em;
     private Locale mLocale;
+    private CriteriaBuilder cb;
+    private CriteriaQuery cq;
+    private Root<PartMaster> pm;
+    private Root<PartRevision> pr;
+    private Root<ProductInstanceMaster> pi;
+
 
     private static Logger LOGGER = Logger.getLogger(QueryDAO.class.getName());
-
-    public QueryDAO(EntityManager pEM) {
-        em = pEM;
-    }
 
     public QueryDAO(Locale pLocale, EntityManager pEM) {
         em = pEM;
         mLocale = pLocale;
+        cb = em.getCriteriaBuilder();
+
+        cq = cb.createQuery();
+        pm = cq.from(PartMaster.class);
+        pr = cq.from(PartRevision.class);
+        pi = cq.from(ProductInstanceMaster.class);
+
     }
 
     public void createQuery(Query query){
@@ -53,34 +64,31 @@ public class QueryDAO {
         em.flush();
     }
 
-    public List<PartRevision> runQuery(String workspaceId, Query query) {
+    public List<PartRevision> runQuery(Workspace workspace, Query query) {
 
-        CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery cq = cb.createQuery();
-        Root<PartMaster> pm = cq.from(PartMaster.class);
-
+        // Simple select
         cq.select(pm);
 
-        Predicate predicate = getPredicate(query.getQueryRule(), pm,cb);
-        cq.where(predicate);
-        //cq.orderBy();
-        TypedQuery<PartMaster> tp = em.createQuery(cq);
+        // Join on pr
 
+        // Restrict search to workspace
+        Expression workspaceExp = pm.get("workspace");
+        Predicate predicate = getPredicate(query.getQueryRule());
+        Predicate workspaceFilter = cb.and(cb.equal(workspaceExp,workspace));
+        cq.where(cb.and(new Predicate[]{predicate,workspaceFilter}));
+
+        TypedQuery<PartMaster> tp = em.createQuery(cq);
         List<PartRevision> revisions = new ArrayList<>();
 
-        List<PartMaster> resultList = tp.getResultList();
-
-        for(PartMaster part : resultList){
-            if(part.getWorkspaceId().equals(workspaceId)){
-                revisions.addAll(part.getPartRevisions());
-            }
+        for(PartMaster part : tp.getResultList()){
+            revisions.addAll(part.getPartRevisions());
         }
 
         return revisions;
 
     }
 
-    public Predicate getPredicate(QueryRule queryRule, Root<PartMaster> pm, CriteriaBuilder cb){
+    public Predicate getPredicate(QueryRule queryRule){
 
         String condition = queryRule.getCondition();
 
@@ -91,7 +99,7 @@ public class QueryDAO {
             Predicate[] predicates = new Predicate[subQueryRules.size()];
 
             for(int i = 0; i < predicates.length; i++){
-                Predicate predicate = getPredicate(subQueryRules.get(i),pm,cb);
+                Predicate predicate = getPredicate(subQueryRules.get(i));
                 predicates[i] = predicate;
             }
 
@@ -101,39 +109,45 @@ public class QueryDAO {
             else if("AND".equals(condition)){
                 return cb.and(predicates);
             }
-            else{
-                // WTF ?
-                return null;
-            }
+
+            throw new IllegalArgumentException();
 
         }else{
-            return getRulePredicate(queryRule,pm,cb);
+            return getRulePredicate(queryRule);
         }
     }
 
-    private Predicate getRulePredicate(QueryRule queryRule, Root<PartMaster> pm, CriteriaBuilder cb){
+    private Predicate getRulePredicate(QueryRule queryRule){
+
         String field = queryRule.getField();
         String operator = queryRule.getOperator();
         String value = queryRule.getValue();
 
+        if(field.startsWith("pm.")){
+            return getPartMasterPredicate(field.substring(3), operator, value);
+        }
 
-        if(field.startsWith("p.")){
-            return getPartMasterPredicate(field.substring(2), operator, value, pm, cb);
+        if(field.startsWith("pr.")){
+            return getPartRevisionPredicate(field.substring(3), operator, value);
         }
 
         if(field.startsWith("pi.")){
-            return getProductInstancePredicate(field.substring(3),operator,value, pm, cb);
+            return getProductInstancePredicate(field.substring(3),operator,value);
         }
 
         throw new IllegalArgumentException();
     }
 
-    private Predicate getProductInstancePredicate(String field, String operator, String value, Root<PartMaster> pm, CriteriaBuilder cb) {
+    private Predicate getPartRevisionPredicate(String substring, String operator, String value) {
+        return null;
+    }
+
+    private Predicate getProductInstancePredicate(String field, String operator, String value) {
 
         return null;
     }
 
-    private Predicate getPartMasterPredicate(String field, String operator, String value, Root<PartMaster> pm, CriteriaBuilder cb) {
+    private Predicate getPartMasterPredicate(String field, String operator, String value) {
 
         // var stringDefaultOps =
         // ['equal', 'not_equal', 'contains', 'not_contains', 'begins_with', 'not_begins_with', 'ends_with', 'not_ends_with'];
