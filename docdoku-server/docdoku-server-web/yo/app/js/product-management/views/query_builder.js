@@ -170,19 +170,25 @@ define([
             this.$select[0].selectize.addOption(this.selectizeAvailableOptions);
 
             var self = this;
-            this.$select[0].selectize.on('change', function(){
-                self.$orderBy[0].selectize.clearOptions();
-                var possibleValues = [];
-                _.each(self.$select[0].selectize.items, function(key){
-                    possibleValues.push(self.$select[0].selectize.options[key]);
-                });
-                self.$orderBy[0].selectize.addOption(possibleValues);
-                self.$orderBy[0].selectize.refreshOptions(false);
+            this.$select[0].selectize.on('item_add', function(value, $item){
+                var data = _.findWhere(self.$select[0].selectize.options, {value: value});
 
-                self.$groupBy[0].selectize.addOption(possibleValues);
+                self.$groupBy[0].selectize.addOption(data);
                 self.$groupBy[0].selectize.refreshOptions(false);
+
+                self.$orderBy[0].selectize.addOption(data);
+                self.$orderBy[0].selectize.refreshOptions(false);
             });
-            
+
+            this.$select[0].selectize.on('item_remove', function(value, $item){
+                self.$groupBy[0].selectize.removeOption(value);
+                self.$groupBy[0].selectize.refreshOptions(false);
+
+                self.$orderBy[0].selectize.removeOption(value);
+                self.$orderBy[0].selectize.refreshOptions(false);
+            });
+
+
             this.$orderBy.selectize(this.selectizeOptions);
             this.$groupBy.selectize(this.selectizeOptions);
         },
