@@ -60,9 +60,28 @@ define([
         },
 
         fillQuery:function(e){
+
+            var selectSelectize = this.$select[0].selectize;
+            var orderBySelectize = this.$orderBy[0].selectize;
+            var groupBySelectize = this.$groupBy[0].selectize;
+
+            selectSelectize.clear(true);
+            orderBySelectize.clear(true);
+            groupBySelectize.clear(true);
+
             if(e.target.value){
                 var query = _.findWhere(this.queries,{id: parseInt(e.target.value,10)});
                 this.$where.queryBuilder('setRules', query.queryRule);
+
+                _.each(query.selects,function(value){
+                    selectSelectize.addItem(value, true);
+                });
+                _.each(query.orderByList,function(value){
+                    orderBySelectize.addItem(value, true);
+                });
+                _.each(query.orderByList,function(value){
+                    groupBySelectize.addItem(value, true);
+                });
             }else{
                 this.$where.queryBuilder('reset');
             }
