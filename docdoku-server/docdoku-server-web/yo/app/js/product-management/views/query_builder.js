@@ -13,7 +13,8 @@ define([
 
         events: {
             'click .search-button': 'onSearch',
-            'change select.query-list':'fillQuery'
+            'change select.query-list':'onSelectQueryChange',
+            'click .delete-selected-query':'deleteSelectedQuery'
         },
 
         delimiter: '/',
@@ -44,7 +45,7 @@ define([
 
             var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/queries';
 
-            var $select = this.$('select.query-list');
+            var $select = this.$selectQuery;
             $select.empty();
             $select.append('<option value=""></option>');
 
@@ -59,8 +60,7 @@ define([
 
         },
 
-        fillQuery:function(e){
-
+        clear:function(){
             var selectSelectize = this.$select[0].selectize;
             var orderBySelectize = this.$orderBy[0].selectize;
             var groupBySelectize = this.$groupBy[0].selectize;
@@ -69,6 +69,17 @@ define([
             orderBySelectize.clear(true);
             groupBySelectize.clear(true);
 
+            this.$deleteQueryButton.hide();
+        },
+
+        onSelectQueryChange:function(e){
+
+            this.clear();
+
+            var selectSelectize = this.$select[0].selectize;
+            var orderBySelectize = this.$orderBy[0].selectize;
+            var groupBySelectize = this.$groupBy[0].selectize;
+
             if(e.target.value){
                 var query = _.findWhere(this.queries,{id: parseInt(e.target.value,10)});
                 this.$where.queryBuilder('setRules', query.queryRule);
@@ -76,14 +87,46 @@ define([
                 _.each(query.selects,function(value){
                     selectSelectize.addItem(value, true);
                 });
+
                 _.each(query.orderByList,function(value){
                     orderBySelectize.addItem(value, true);
                 });
-                _.each(query.orderByList,function(value){
+
+                _.each(query.groupedByList,function(value){
                     groupBySelectize.addItem(value, true);
                 });
+
             }else{
                 this.$where.queryBuilder('reset');
+            }
+            this.$deleteQueryButton.toggle(e.target.value != '');
+        },
+
+        deleteSelectedQuery:function(){
+            var self = this;
+            var id = this.$selectQuery.val();
+
+            if(id){
+                bootbox.confirm(App.config.i18n.DELETE_QUERY_QUESTION, function (result) {
+                    if (result) {
+
+                        var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/queries/'+id;
+                        $.ajax({
+                            type: 'DELETE',
+                            url: url,
+                            success: function (data) {
+                                self.clear();
+                                self.fetchQueries();
+                            },
+                            error: function (errorMessage) {
+                                self.$('#alerts').append(new AlertView({
+                                    type: 'error',
+                                    message: errorMessage
+                                }).render().$el);
+                            }
+                        });
+                    }
+                });
             }
         },
 
@@ -133,6 +176,8 @@ define([
             this.$groupBy = this.$('#groupBy');
             this.$saveSwitch = this.$('.saveSwitch.switch');
             this.$inputName = this.$('.queryName');
+            this.$selectQuery = this.$('select.query-list');
+            this.$deleteQueryButton = this.$('.delete-selected-query');
         },
 
         onSearch:function(){
@@ -151,6 +196,7 @@ define([
 
                 if (saveQuery && this.$inputName.val().length === 0) {
                     this.$inputName.focus();
+                    return;
                 }
 
                 var queryData = {

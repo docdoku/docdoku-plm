@@ -2360,12 +2360,18 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     @Override
     public void deleteQuery(String workspaceId, int queryId) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException {
         User user = userManager.checkWorkspaceWriteAccess(workspaceId);
-        QueryDAO queryDAO = new QueryDAO(new Locale(user.getLanguage()),em);
+        Locale locale = new Locale(user.getLanguage());
+        QueryDAO queryDAO = new QueryDAO(locale,em);
         Query query = queryDAO.loadQuery(queryId);
-        if(!query.getAuthor().getWorkspace().getId().equals(workspaceId)){
-            userManager.checkWorkspaceWriteAccess(query.getAuthor().getWorkspace().getId());
+
+        Workspace workspace = query.getAuthor().getWorkspace();
+        User userInQueryWorkspace = userManager.checkWorkspaceWriteAccess(workspace.getId());
+
+        if(query.getAuthor().equals(userInQueryWorkspace) || userInQueryWorkspace.isAdministrator()){
+            queryDAO.removeQuery(query);
+        }else{
+            throw new AccessRightException(locale,userInQueryWorkspace);
         }
-        queryDAO.removeQuery(query);
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)

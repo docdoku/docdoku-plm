@@ -194,6 +194,14 @@ public class PartsResource {
         return Response.ok().lastModified(new Date()).entity(queryResult).build();
     }
 
+    @DELETE
+    @Path("queries/{queryId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response deleteQuery(@PathParam("workspaceId") String workspaceId, @PathParam("queryId") int queryId) throws EntityNotFoundException, UserNotActiveException, AccessRightException {
+        productService.deleteQuery(workspaceId,queryId);
+        return Response.ok().build();
+    }
+
     @GET
     @Path("checkedout")
     @Produces(MediaType.APPLICATION_JSON)

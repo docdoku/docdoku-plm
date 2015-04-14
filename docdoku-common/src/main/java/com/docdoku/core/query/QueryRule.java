@@ -49,6 +49,7 @@ public class QueryRule implements Serializable {
     private QueryRule parentQueryRule;
 
     @OneToMany(mappedBy = "parentQueryRule", cascade=CascadeType.ALL, fetch=FetchType.EAGER)
+    @OrderBy("qid ASC")
     private List<QueryRule> subQueryRules;
 
     public QueryRule() {
@@ -124,5 +125,9 @@ public class QueryRule implements Serializable {
 
     public void setSubQueryRules(List<QueryRule> subQueryRules) {
         this.subQueryRules = subQueryRules;
+    }
+
+    public boolean hasSubRules() {
+        return getSubQueryRules() != null && !getSubQueryRules().isEmpty();
     }
 }

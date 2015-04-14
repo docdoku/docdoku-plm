@@ -48,6 +48,7 @@ public class QueryDAO {
 
     public void createQuery(Query query) throws CreationException, QueryAlreadyExistsException {
         try {
+            persistQueryRules(query.getQueryRule());
             em.persist(query);
             em.flush();
         }catch (EntityExistsException pEEEx) {
@@ -57,6 +58,22 @@ public class QueryDAO {
             LOGGER.log(Level.FINEST,null,pPEx);
             throw new CreationException(mLocale);
         }
+    }
+
+    private void persistQueryRules(QueryRule queryRule) {
+
+        em.persist(queryRule);
+        em.flush();
+
+        if(!queryRule.hasSubRules()){
+            return;
+        }
+
+        for(QueryRule subRule : queryRule.getSubQueryRules()){
+            subRule.setParentQueryRule(queryRule);
+            persistQueryRules(subRule);
+        }
+
     }
 
     public Query loadQuery(int id) {

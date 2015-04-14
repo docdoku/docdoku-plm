@@ -130,6 +130,7 @@ define({
 		DELETE_SELECTION: "Delete selection",
 		DELETE_SELECTION_QUESTION: "Delete selection?",
 		DELETE_TAG_QUESTION: "Delete the tag?",
+        DELETE_QUERY_QUESTION: "Delete the query?",
 		DELETE_TASK: "Remove task",
 		DESCRIPTION: 'Description',
 		DEVICE_ERROR: "Cannot access you audio/video device, please insure your browser is WebRTC capable, and if there's no exception for this website.",
