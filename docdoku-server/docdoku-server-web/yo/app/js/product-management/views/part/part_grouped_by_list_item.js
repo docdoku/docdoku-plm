@@ -11,6 +11,8 @@ define([
 
         },
 
+        tagName:'tr',
+
         initialize: function () {
             this.item = this.options.item;
         },

@@ -20,13 +20,16 @@ define([
         delimiter: '/',
 
         initialize: function () {
+
+            this.selectizeAvailableOptions = querybuilderOptions.fields;
+
             this.selectizeOptions = {
                 plugins: ['remove_button','drag_drop'],
                 persist: false,
                 delimiter:this.delimiter,
                 valueField: 'value',
                 searchField: ['name'],
-                options: querybuilderOptions.fields,
+                options: null,
                 render: {
                     item: function(item, escape) {
                         return '<div><span class="name">' + escape(item.name) + '</span></div>';
@@ -164,6 +167,22 @@ define([
 
         fillSelectizes: function(){
             this.$select.selectize(this.selectizeOptions);
+            this.$select[0].selectize.addOption(this.selectizeAvailableOptions);
+
+            var self = this;
+            this.$select[0].selectize.on('change', function(){
+                self.$orderBy[0].selectize.clearOptions();
+                var possibleValues = [];
+                _.each(self.$select[0].selectize.items, function(key){
+                    possibleValues.push(self.$select[0].selectize.options[key]);
+                });
+                self.$orderBy[0].selectize.addOption(possibleValues);
+                self.$orderBy[0].selectize.refreshOptions(false);
+
+                self.$groupBy[0].selectize.addOption(possibleValues);
+                self.$groupBy[0].selectize.refreshOptions(false);
+            });
+            
             this.$orderBy.selectize(this.selectizeOptions);
             this.$groupBy.selectize(this.selectizeOptions);
         },

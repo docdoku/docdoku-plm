@@ -78,7 +78,7 @@ define([
                 item1String = item1String.substring(1);
                 item2String = item2String.substring(1);
 
-                return item1String < item2String;
+                return item1String > item2String;
             });
         }
     });
