@@ -138,7 +138,7 @@ define([
                             error: function (errorMessage) {
                                 self.$('#alerts').append(new AlertView({
                                     type: 'error',
-                                    message: errorMessage
+                                    message: errorMessage.responseText
                                 }).render().$el);
                             }
                         });
@@ -301,7 +301,7 @@ define([
                         self.$searchButton.button('reset');
                         self.$('#alerts').append(new AlertView({
                             type: 'error',
-                            message: errorMessage
+                            message: errorMessage.responseText
                         }).render().$el);
                     }
                 });
