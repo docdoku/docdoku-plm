@@ -203,6 +203,7 @@ define([
             this.$inputName = this.$('.queryName');
             this.$selectQuery = this.$('select.query-list');
             this.$deleteQueryButton = this.$('.delete-selected-query');
+            this.$searchButton = this.$('.search-button');
         },
 
         onSearch:function(){
@@ -232,6 +233,7 @@ define([
                     name: saveQuery ? this.$inputName.val() : ''
                 };
 
+                this.$searchButton.button('loading');
                 var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/queries?save=' + saveQuery;
                 $.ajax({
                     type: 'POST',
@@ -244,10 +246,12 @@ define([
                             queryResponse:data,
                             queryColumnNameMapping:self.selectizeAvailableOptions
                         };
+                        self.$searchButton.button('reset');
                         self.fetchQueries();
                         self.trigger('query:search', dataToTransmit);
                     },
                     error: function (errorMessage) {
+                        self.$searchButton.button('reset');
                         self.$('#alerts').append(new AlertView({
                             type: 'error',
                             message: errorMessage

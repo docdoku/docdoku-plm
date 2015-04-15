@@ -453,6 +453,7 @@ define({
 		SEARCH_PART_ENDING: "Search part ending by ",
 		SEARCH_PARTS: "Search parts",
 		SEARCH: "Search",
+        SEARCHING: "Searching...",
 		SELECT_FILE: "Choose a file",
         SELECT_FILES: "Choose one or more file(s)",
         SEND: "Send",

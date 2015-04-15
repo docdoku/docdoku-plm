@@ -448,6 +448,7 @@ define({
 	SEARCH_PART_ENDING: "Article finissant par",
 	SEARCH_PARTS: "Recherche d'articles",
 	SEARCH: "Rechercher",
+    SEARCHING: "Recherche en cours...",
 	SELECT_FILE: "Choisissez un fichier",
 	SELECT_FILES: "Choisissez un ou plusieurs fichier(s)",
 	SEND: "Envoyer",
