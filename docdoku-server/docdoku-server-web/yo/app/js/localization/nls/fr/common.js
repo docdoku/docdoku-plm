@@ -423,6 +423,7 @@ define({
 	REQUESTS: "Demandes",
 	REQUESTS_NUMBER: "Demandes associées",
     REQUIRED_FIELD:"Veuillez renseigner ce champ",
+    RESET: "Remise à zero",
     RESET_CAMERA: "Repositionner la caméra",
     RETAIN: "Retenir",
     RETRY: "Re-essayer",

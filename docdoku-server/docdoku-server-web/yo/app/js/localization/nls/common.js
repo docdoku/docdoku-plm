@@ -428,6 +428,7 @@ define({
 		REQUESTS_NUMBER: "Number of request",
 		REQUESTS: "Requests",
         REQUIRED_FIELD:"Please fill out this field",
+        RESET: "Reset",
 		RESET_CAMERA: "Reset camera",
         RETAIN: "Retain",
         RETRY: "Retry",

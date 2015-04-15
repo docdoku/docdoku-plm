@@ -14,7 +14,8 @@ define([
         events: {
             'click .search-button': 'onSearch',
             'change select.query-list':'onSelectQueryChange',
-            'click .delete-selected-query':'deleteSelectedQuery'
+            'click .delete-selected-query':'deleteSelectedQuery',
+            'click .reset-button' : 'onReset'
         },
 
         delimiter: '/',
@@ -210,6 +211,13 @@ define([
             this.$selectQuery = this.$('select.query-list');
             this.$deleteQueryButton = this.$('.delete-selected-query');
             this.$searchButton = this.$('.search-button');
+        },
+
+        onReset: function(){
+            this.clear();
+            this.$where.queryBuilder('reset');
+            this.$saveSwitch.bootstrapSwitch('setState', false);
+            this.$selectQuery.val('');
         },
 
         onSearch:function(){
