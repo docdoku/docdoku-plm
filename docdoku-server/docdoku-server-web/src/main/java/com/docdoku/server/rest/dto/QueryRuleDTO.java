@@ -30,7 +30,7 @@ public class QueryRuleDTO {
     private String condition;
     private String id;
     private String field;
-    private String input;
+    private String type;
     private String operator;
     private String value;
     private List<QueryRuleDTO> rules;
@@ -60,14 +60,6 @@ public class QueryRuleDTO {
 
     public void setField(String field) {
         this.field = field;
-    }
-
-    public String getInput() {
-        return input;
-    }
-
-    public void setInput(String input) {
-        this.input = input;
     }
 
     public String getOperator() {
@@ -102,4 +94,11 @@ public class QueryRuleDTO {
         setRules(rules);
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 }

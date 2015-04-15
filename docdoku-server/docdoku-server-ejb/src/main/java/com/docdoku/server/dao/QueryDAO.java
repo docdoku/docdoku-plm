@@ -12,6 +12,8 @@ import com.docdoku.core.query.QueryRule;
 import javax.persistence.*;
 import javax.persistence.criteria.*;
 import javax.persistence.metamodel.Metamodel;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -77,6 +79,23 @@ public class QueryDAO {
 
     }
 
+    public List<Query> loadQueries(String workspaceId) {
+        return em.createNamedQuery("Query.findByWorkspace", Query.class)
+                .setParameter("workspaceId", workspaceId)
+                .getResultList();
+    }
+
+    public Query findQueryByName(String workspaceId, String name) {
+        try {
+            return em.createNamedQuery("Query.findByWorkspaceAndWorkspace", Query.class)
+                    .setParameter("workspaceId", workspaceId)
+                    .setParameter("name", name)
+                    .getSingleResult();
+        }catch (NoResultException e){
+            return null;
+        }
+    }
+
     public Query loadQuery(int id) {
         Query query = em.find(Query.class, id);
         return query;
@@ -118,7 +137,7 @@ public class QueryDAO {
         return new ArrayList<>(revisions);
     }
 
-    public Predicate getPredicate(QueryRule queryRule){
+    private Predicate getPredicate(QueryRule queryRule){
 
         String condition = queryRule.getCondition();
 
@@ -152,121 +171,90 @@ public class QueryDAO {
         String field = queryRule.getField();
         String operator = queryRule.getOperator();
         String value = queryRule.getValue();
+        String type = queryRule.getType();
 
         if(field.startsWith("pm.")){
-            return getPartMasterPredicate(field.substring(3), operator, value);
+            return getPartMasterPredicate(field.substring(3), operator, value , type);
         }
 
         if(field.startsWith("pr.")){
-            return getPartRevisionPredicate(field.substring(3), operator, value);
+            return getPartRevisionPredicate(field.substring(3), operator, value, type);
         }
 
         if(field.startsWith("pi.")){
-            return getProductInstancePredicate(field.substring(3),operator,value);
+            return getProductInstancePredicate(field.substring(3),operator,value, type);
         }
 
         if(field.startsWith("author.")){
-            return getPartRevisionAuthorPredicate(field.substring(7),operator, value);
+            return getAuthorPredicate(field.substring(7), operator, value, type);
         }
 
         throw new IllegalArgumentException();
     }
 
-    private Predicate getPartRevisionAuthorPredicate(String field, String operator, String value) {
-
-        Expression fieldExp = pr.get("author").get(field);
-
-        switch (operator){
-
-            case "equal" : return cb.equal(fieldExp,value);
-            case "not_equal" : return cb.equal(fieldExp, value).not();
-
-            case "contains" : return cb.like(fieldExp, "%" + value + "%");
-            case "not_contains" : return cb.like(fieldExp, "%"+value+"%").not();
-
-            case "begins_with" : return cb.like(fieldExp, value+"%");
-            case "not_begins_with" : return  cb.like(fieldExp, value+"%").not();
-
-            case "ends_with" : return cb.like(fieldExp, "%"+value);
-            case "not_ends_with" : return cb.like(fieldExp, "%"+value).not();
-
-            default:
-                throw new IllegalArgumentException();
-        }
+    private Predicate getAuthorPredicate(String field, String operator, String value, String type) {
+        return getPredicate(pr.get("author").get(field),operator,value,type);
     }
 
-    private Predicate getPartRevisionPredicate(String field, String operator, String value) {
-
-        Expression fieldExp = pm.get(field);
-
-        switch (operator){
-
-            case "equal" : return cb.equal(fieldExp,value);
-            case "not_equal" : return cb.equal(fieldExp, value).not();
-
-            case "contains" : return cb.like(fieldExp, "%" + value + "%");
-            case "not_contains" : return cb.like(fieldExp, "%"+value+"%").not();
-
-            case "begins_with" : return cb.like(fieldExp, value+"%");
-            case "not_begins_with" : return  cb.like(fieldExp, value+"%").not();
-
-            case "ends_with" : return cb.like(fieldExp, "%"+value);
-            case "not_ends_with" : return cb.like(fieldExp, "%"+value).not();
-
-            default:
-                throw new IllegalArgumentException();
-        }
+    private Predicate getPartRevisionPredicate(String field, String operator, String value, String type) {
+        return getPredicate(pm.get(field),operator,value,type);
+    }
+    private Predicate getPartMasterPredicate(String field, String operator, String value, String type) {
+        return getPredicate(pm.get(field),operator,value,type);
     }
 
-    private Predicate getProductInstancePredicate(String field, String operator, String value) {
-
+    private Predicate getProductInstancePredicate(String field, String operator, String value, String type) {
         return null;
     }
 
-    private Predicate getPartMasterPredicate(String field, String operator, String value) {
+    private Predicate getPredicate(Expression fieldExp, String operator, String value, String type){
+        Object o;
 
-        // var stringDefaultOps =
-        // ['equal', 'not_equal', 'contains', 'not_contains', 'begins_with', 'not_begins_with', 'ends_with', 'not_ends_with'];
-        // var dateOperators =
-        // ['equal', 'not_equal', 'less', 'less_or_equal', 'greater', 'greater_or_equal', 'between'];
+        switch(type){
+            case "string" :
+                o=value;
+                break;
 
-        Expression fieldExp = pm.get(field);
+            case "date":
+
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                try {
+                    o = sdf.parse(value);
+                } catch (ParseException e) {
+                    o=value;
+                    e.printStackTrace();
+                }
+                break;
+
+            default :
+                o=value;
+                break;
+        }
 
         switch (operator){
 
-            case "equal" : return cb.equal(fieldExp,value);
-            case "not_equal" : return cb.equal(fieldExp, value).not();
+            case "equal" : return cb.equal(fieldExp,o);
+            case "not_equal" : return cb.equal(fieldExp, o).not();
 
-            case "contains" : return cb.like(fieldExp, "%" + value + "%");
-            case "not_contains" : return cb.like(fieldExp, "%"+value+"%").not();
+            case "contains" : return cb.like(fieldExp, "%" + o + "%");
+            case "not_contains" : return cb.like(fieldExp, "%"+o+"%").not();
 
-            case "begins_with" : return cb.like(fieldExp, value+"%");
-            case "not_begins_with" : return  cb.like(fieldExp, value+"%").not();
+            case "begins_with" : return cb.like(fieldExp, o+"%");
+            case "not_begins_with" : return  cb.like(fieldExp, o+"%").not();
 
-            case "ends_with" : return cb.like(fieldExp, "%"+value);
-            case "not_ends_with" : return cb.like(fieldExp, "%"+value).not();
+            case "ends_with" : return cb.like(fieldExp, "%"+o);
+            case "not_ends_with" : return cb.like(fieldExp, "%"+o).not();
+
+
+            case "less": return cb.lessThan(fieldExp,(Date)o);
+            case "less_or_equal": return cb.lessThanOrEqualTo(fieldExp,(Date)o);
+
+            case "greater": return cb.greaterThan(fieldExp,(Date)o);
+            case "greater_or_equal": return cb.greaterThanOrEqualTo(fieldExp,(Date)o);
 
             default:
                 throw new IllegalArgumentException();
         }
 
-
-    }
-
-    public List<Query> loadQueries(String workspaceId) {
-        return em.createNamedQuery("Query.findByWorkspace", Query.class)
-                .setParameter("workspaceId", workspaceId)
-                .getResultList();
-    }
-
-    public Query findQueryByName(String workspaceId, String name) {
-        try {
-            return em.createNamedQuery("Query.findByWorkspaceAndWorkspace", Query.class)
-                    .setParameter("workspaceId", workspaceId)
-                    .setParameter("name", name)
-                    .getSingleResult();
-        }catch (NoResultException e){
-            return null;
-        }
     }
 }
