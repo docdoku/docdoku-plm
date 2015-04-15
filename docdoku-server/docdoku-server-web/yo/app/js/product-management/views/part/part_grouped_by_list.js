@@ -49,7 +49,8 @@ define([
                 var values = self.orderBy(groups[key]);
                 _.each(values, function(item){
                     var itemView = new PartGroupedByListItemView({
-                        item : item
+                        item : item,
+                        columns:columns
                     }).render();
                     self.$('.items-'+key).append(itemView.el);
                 });

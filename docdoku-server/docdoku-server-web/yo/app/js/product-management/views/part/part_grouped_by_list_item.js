@@ -15,12 +15,21 @@ define([
 
         initialize: function () {
             this.item = this.options.item;
+            this.headerColumns = this.options.columns;
         },
 
         render: function () {
+            var self = this;
+            var itemOrdered = [];
+
+            _.each(this.headerColumns, function(column){
+                var itemColumn = self.item[column.value];
+                itemOrdered.push(itemColumn);
+            });
+
             this.$el.html(Mustache.render(template, {
                 i18n: App.config.i18n,
-                columns: _.values(this.item)
+                columns: itemOrdered
             }));
             return this;
         }
