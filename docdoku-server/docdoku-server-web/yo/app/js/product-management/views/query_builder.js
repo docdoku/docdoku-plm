@@ -15,7 +15,11 @@ define([
             'click .search-button': 'onSearch',
             'change select.query-list':'onSelectQueryChange',
             'click .delete-selected-query':'deleteSelectedQuery',
-            'click .reset-button' : 'onReset'
+            'click .reset-button' : 'onReset',
+            'click .clear-select-badge': 'onClearSelect',
+            'click .clear-where-badge': 'onClearWhere',
+            'click .clear-order-by-badge': 'onClearOrderBy',
+            'click .clear-group-by-badge': 'onClearGroupBy'
         },
 
         delimiter: '/',
@@ -213,6 +217,32 @@ define([
             this.$selectQuery = this.$('select.query-list');
             this.$deleteQueryButton = this.$('.delete-selected-query');
             this.$searchButton = this.$('.search-button');
+        },
+
+        onClearSelect: function(){
+            var selectSelectize = this.$select[0].selectize;
+            var orderBySelectize = this.$orderBy[0].selectize;
+            var groupBySelectize = this.$groupBy[0].selectize;
+
+            selectSelectize.clear();
+            orderBySelectize.clear(true);
+            orderBySelectize.clearOptions();
+            groupBySelectize.clear(true);
+            groupBySelectize.clearOptions();
+        },
+
+        onClearWhere: function(){
+            this.$where.queryBuilder('reset');
+        },
+
+        onClearOrderBy: function(){
+            var orderBySelectize = this.$orderBy[0].selectize;
+            orderBySelectize.clear();
+        },
+
+        onClearGroupBy: function(){
+            var groupBySelectize = this.$groupBy[0].selectize;
+            groupBySelectize.clear();
         },
 
         onReset: function(){
