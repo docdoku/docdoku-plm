@@ -17,9 +17,11 @@ define([
             this.selects = this.options.data.queryData.selects;
             this.orderByList = this.options.data.queryData.orderByList;
             this.groupedByList = this.options.data.queryData.groupedByList;
+            this.columnNameMapping = this.options.data.queryColumnNameMapping;
         },
 
         render: function () {
+            var self = this;
 
             var itemsGroupBy = this.groupBy();
 
@@ -30,9 +32,15 @@ define([
                 i++;
             });
 
+            var columns = [];
+            _.each(this.selects, function(column){
+                var data = _.findWhere(self.columnNameMapping, {value:column});
+                columns.push(data);
+            });
+
             this.$el.html(Mustache.render(template, {
                 i18n: App.config.i18n,
-                columns:this.selects,
+                columns:columns,
                 groups:_.keys(groups)
             }));
 

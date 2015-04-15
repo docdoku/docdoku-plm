@@ -241,7 +241,8 @@ define([
                     success: function (data) {
                         var dataToTransmit = {
                             queryData:queryData,
-                            queryResponse:data
+                            queryResponse:data,
+                            queryColumnNameMapping:self.selectizeAvailableOptions
                         };
                         self.fetchQueries();
                         self.trigger('query:search', dataToTransmit);
