@@ -28,7 +28,7 @@ define([
             var groups = {};
             var i = 0;
             _.each(_.keys(itemsGroupBy), function(key){
-                groups[''+i] = itemsGroupBy[key];
+                groups[''+i] = {key:''+i, name: key, items:itemsGroupBy[key]};
                 i++;
             });
 
@@ -41,12 +41,12 @@ define([
             this.$el.html(Mustache.render(template, {
                 i18n: App.config.i18n,
                 columns:columns,
-                groups:_.keys(groups)
+                groups: _.values(groups)
             }));
 
             var self = this;
             _.each(_.keys(groups),function(key){
-                var values = self.orderBy(groups[key]);
+                var values = self.orderBy(groups[key].items);
                 _.each(values, function(item){
                     var itemView = new PartGroupedByListItemView({
                         item : item,
@@ -66,10 +66,10 @@ define([
 
                 var groupByStringToUse = "";
                 _.each(self.groupedByList, function(groupByColumn){
-                    groupByStringToUse = groupByStringToUse+'_'+item[groupByColumn];
+                    groupByStringToUse = groupByStringToUse+' > '+item[groupByColumn];
                 });
 
-                return groupByStringToUse.substring(1);
+                return groupByStringToUse.substring(3);
             });
 
         },
