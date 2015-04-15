@@ -11,9 +11,8 @@ import com.docdoku.core.query.QueryRule;
 
 import javax.persistence.*;
 import javax.persistence.criteria.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
+import javax.persistence.metamodel.Metamodel;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -26,6 +25,7 @@ public class QueryDAO {
     private EntityManager em;
     private Locale mLocale;
     private CriteriaBuilder cb;
+    private Metamodel metamodel;
     private CriteriaQuery cq;
     private Root<PartMaster> pm;
     private Root<PartRevision> pr;
@@ -38,6 +38,7 @@ public class QueryDAO {
         em = pEM;
         mLocale = pLocale;
         cb = em.getCriteriaBuilder();
+        metamodel = em.getMetamodel();
 
         cq = cb.createQuery();
         pm = cq.from(PartMaster.class);
@@ -91,23 +92,30 @@ public class QueryDAO {
         // Simple select
         cq.select(pm);
 
-        // Join on pr
+        // Join on pr and pi
 
         // Restrict search to workspace
         Expression workspaceExp = pm.get("workspace");
-        Predicate predicate = getPredicate(query.getQueryRule());
-        Predicate workspaceFilter = cb.and(cb.equal(workspaceExp,workspace));
-        cq.where(cb.and(new Predicate[]{predicate,workspaceFilter}));
+        Predicate rulesPredicate = getPredicate(query.getQueryRule());
+        Predicate workspacePredicate = cb.and(cb.equal(workspaceExp,workspace));
+
+        Join<PartRevision,PartMaster> prJoin = pr.join("partMaster");
+        Predicate prJoinPredicate = prJoin.on(cb.equal(pm.get("number"), pr.get("partMasterNumber"))).getOn();
+
+        cq.where(cb.and(new Predicate[]{
+            rulesPredicate,
+            workspacePredicate,
+            prJoinPredicate
+        }));
 
         TypedQuery<PartMaster> tp = em.createQuery(cq);
-        List<PartRevision> revisions = new ArrayList<>();
+        Set<PartRevision> revisions = new HashSet<>();
 
         for(PartMaster part : tp.getResultList()){
             revisions.addAll(part.getPartRevisions());
         }
 
-        return revisions;
-
+        return new ArrayList<>(revisions);
     }
 
     public Predicate getPredicate(QueryRule queryRule){
@@ -157,11 +165,57 @@ public class QueryDAO {
             return getProductInstancePredicate(field.substring(3),operator,value);
         }
 
+        if(field.startsWith("author.")){
+            return getPartRevisionAuthorPredicate(field.substring(7),operator, value);
+        }
+
         throw new IllegalArgumentException();
     }
 
-    private Predicate getPartRevisionPredicate(String substring, String operator, String value) {
-        return null;
+    private Predicate getPartRevisionAuthorPredicate(String field, String operator, String value) {
+
+        Expression fieldExp = pr.get("author").get(field);
+
+        switch (operator){
+
+            case "equal" : return cb.equal(fieldExp,value);
+            case "not_equal" : return cb.equal(fieldExp, value).not();
+
+            case "contains" : return cb.like(fieldExp, "%" + value + "%");
+            case "not_contains" : return cb.like(fieldExp, "%"+value+"%").not();
+
+            case "begins_with" : return cb.like(fieldExp, value+"%");
+            case "not_begins_with" : return  cb.like(fieldExp, value+"%").not();
+
+            case "ends_with" : return cb.like(fieldExp, "%"+value);
+            case "not_ends_with" : return cb.like(fieldExp, "%"+value).not();
+
+            default:
+                throw new IllegalArgumentException();
+        }
+    }
+
+    private Predicate getPartRevisionPredicate(String field, String operator, String value) {
+
+        Expression fieldExp = pm.get(field);
+
+        switch (operator){
+
+            case "equal" : return cb.equal(fieldExp,value);
+            case "not_equal" : return cb.equal(fieldExp, value).not();
+
+            case "contains" : return cb.like(fieldExp, "%" + value + "%");
+            case "not_contains" : return cb.like(fieldExp, "%"+value+"%").not();
+
+            case "begins_with" : return cb.like(fieldExp, value+"%");
+            case "not_begins_with" : return  cb.like(fieldExp, value+"%").not();
+
+            case "ends_with" : return cb.like(fieldExp, "%"+value);
+            case "not_ends_with" : return cb.like(fieldExp, "%"+value).not();
+
+            default:
+                throw new IllegalArgumentException();
+        }
     }
 
     private Predicate getProductInstancePredicate(String field, String operator, String value) {

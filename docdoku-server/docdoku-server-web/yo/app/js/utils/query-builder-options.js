@@ -2,53 +2,9 @@
 define(function () {
 
     /**
-     *
      * Jquery Query builder doc : http://mistic100.github.io/jQuery-QueryBuilder
-     *
-     * Available operators
-
-     equal
-     not_equal
-     in
-     not_in
-     less
-     less_or_equal
-     greater
-     greater_or_equal
-     between
-     begins_with
-     not_begins_with
-     contains
-     not_contains
-     ends_with
-     not_ends_with
-     is_empty
-     is_not_empty
-     is_null
-     is_not_null
-
-     * Available types
-
-     string
-     integer
-     double
-     date
-     time
-     datetime
-     boolean
-
-     * Available inputs
-
-     text
-     textarea
-     radio
-     checkbox
-     select
-     custom fn (rule, input_name) -> returns html string.
-
-
-     *
-     * */
+     * Selectize Events doc : https://github.com/brianreavis/selectize.js/blob/master/docs/events.md
+     */
 
 
     $.fn.queryBuilder.defaults({ lang: {
@@ -112,7 +68,6 @@ define(function () {
     var filters = [];
 
     // Part Master
-
     filters.push({
         id: 'pm.name',
         label: App.config.i18n.PART_NAME,
@@ -135,13 +90,27 @@ define(function () {
     });
 
     filters.push({
-        id: 'pm.author',
-        label: App.config.i18n.AUTHOR,
+        id: 'author.login',
+        label: App.config.i18n.AUTHOR_LOGIN,
+        type: 'string',
+        operators: stringOperators
+    });
+
+    filters.push({
+        id: 'author.name',
+        label: App.config.i18n.AUTHOR_NAME,
         type: 'string',
         operators: stringOperators
     });
 
     // Part Revision
+
+    filters.push({
+        id: 'pr.version',
+        label: App.config.i18n.VERSION,
+        type: 'string',
+        operators: stringOperators
+    });
 
     filters.push({
         id: 'pr.modificationDate',
@@ -158,8 +127,29 @@ define(function () {
     });
 
     filters.push({
+        id: 'pr.checkoutDate',
+        label: App.config.i18n.CHECKOUT_DATE,
+        type: 'date',
+        operators: dateOperators
+    });
+
+    filters.push({
+        id: 'pr.checkinDate',
+        label: App.config.i18n.CHECKIN_DATE,
+        type: 'date',
+        operators: dateOperators
+    });
+
+    filters.push({
         id: 'pr.lifeCycleState',
         label: App.config.i18n.LIFECYCLE_STATE,
+        type: 'string',
+        operators: stringOperators
+    });
+
+    filters.push({
+        id: 'pr.status',
+        label: App.config.i18n.STATUS,
         type: 'string',
         operators: stringOperators
     });
@@ -181,19 +171,18 @@ define(function () {
     });
 
 
+    var fields = [];
+
+    filters.map(function(filter){
+        fields.push({
+            name:filter.label,
+            value:filter.id
+        });
+    });
+
     return {
         filters : filters,
-        fields : [
-            {name:App.config.i18n.PART_NUMBER, value:'pm.number'},
-            {name:App.config.i18n.PART_NAME, value:'pm.name'},
-            {name:App.config.i18n.AUTHOR, value:'pm.author'},
-            {name:App.config.i18n.TYPE, value:'pm.type'},
-            {name:App.config.i18n.MODIFICATION_DATE, value:'pm.modificationDate'},
-            {name:App.config.i18n.CREATION_DATE, value:'pr.creationDate'},
-            {name:App.config.i18n.LIFECYCLE_STATE, value:'pr.lifeCycleState'},
-            {name:App.config.i18n.SERIAL_NUMBER, value:'pi.serial'},
-            {name:App.config.i18n.PRODUCT_NAME, value:'pi.name'}
-        ]
+        fields : fields
     };
 
 });

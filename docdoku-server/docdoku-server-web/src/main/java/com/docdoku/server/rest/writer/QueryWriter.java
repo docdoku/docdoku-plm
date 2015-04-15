@@ -19,7 +19,9 @@
  */
 package com.docdoku.server.rest.writer;
 
+import com.docdoku.core.common.User;
 import com.docdoku.core.product.PartRevision;
+import com.docdoku.core.query.QueryField;
 import com.docdoku.server.rest.collections.QueryResult;
 
 import javax.json.Json;
@@ -35,6 +37,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
+import java.util.Date;
 import java.util.Set;
 
 
@@ -65,28 +68,70 @@ public class QueryWriter implements MessageBodyWriter<QueryResult> {
 
             jg.writeStartObject();
 
-            if(selects.contains("pm.number")){
-                jg.write("pm.number",part.getPartNumber());
+            // PartMaster data
+
+            if(selects.contains(QueryField.PART_MASTER_NUMBER)){
+                jg.write(QueryField.PART_MASTER_NUMBER,part.getPartNumber());
             }
 
-            if(selects.contains("pm.name")){
+            if(selects.contains(QueryField.PART_MASTER_NAME)){
                 String sName = part.getPartName();
-                jg.write("pm.name",sName != null ? sName : "");
+                jg.write(QueryField.PART_MASTER_NAME,sName != null ? sName : "");
             }
 
-            if(selects.contains("pm.type")){
+            if(selects.contains(QueryField.PART_MASTER_TYPE)){
                 String sType = part.getType();
-                jg.write("pm.type",sType != null ? sType : "");
+                jg.write(QueryField.PART_MASTER_TYPE,sType != null ? sType : "");
             }
 
-            if(selects.contains("pr.modificationDate")){
-                long modificationDate = part.getLastIteration().getModificationDate().getTime();
-                jg.write("pr.modificationDate", modificationDate);
+            // PartRevision data
+
+            if(selects.contains(QueryField.PART_REVISION_MODIFICATION_DATE)){
+                Date modificationDate = part.getLastIteration().getModificationDate();
+                String date = modificationDate != null ? modificationDate.toString() : "";
+                jg.write(QueryField.PART_REVISION_MODIFICATION_DATE, date);
             }
 
-            if(selects.contains("pr.creationDate")){
+            if(selects.contains(QueryField.PART_REVISION_CREATION_DATE)){
                 long modificationDate = part.getCreationDate().getTime();
-                jg.write("pr.creationDate", modificationDate);
+                jg.write(QueryField.PART_REVISION_CREATION_DATE, modificationDate);
+            }
+
+            if(selects.contains(QueryField.PART_REVISION_CHECKOUT_DATE)){
+                Date checkoutDate = part.getCheckOutDate();
+                String date = checkoutDate != null ? checkoutDate.toString() : "";
+                jg.write(QueryField.PART_REVISION_CHECKOUT_DATE, date);
+            }
+
+            if(selects.contains(QueryField.PART_REVISION_CHECKIN_DATE)){
+                Date checkinDate = part.getCheckOutDate();
+                String date = checkinDate != null ? checkinDate.toString() : "";
+                jg.write(QueryField.PART_REVISION_CHECKIN_DATE, date);
+            }
+
+            if(selects.contains(QueryField.PART_REVISION_VERSION)){
+                String version = part.getVersion();
+                jg.write(QueryField.PART_REVISION_VERSION, version);
+            }
+
+            if(selects.contains(QueryField.PART_REVISION_LIFECYCLE_STATE)){
+                String version = part.getVersion();
+                jg.write(QueryField.PART_REVISION_VERSION, version);
+            }
+
+            if(selects.contains(QueryField.PART_REVISION_STATUS)){
+                PartRevision.RevisionStatus status = part.getStatus();
+                jg.write(QueryField.PART_REVISION_STATUS, status.toString());
+            }
+
+            if(selects.contains(QueryField.AUTHOR_LOGIN)){
+                User user = part.getAuthor();
+                jg.write(QueryField.AUTHOR_LOGIN, user.getLogin());
+            }
+
+            if(selects.contains(QueryField.AUTHOR_NAME)){
+                User user = part.getAuthor();
+                jg.write(QueryField.AUTHOR_NAME, user.getLogin());
             }
 
             jg.writeEnd();
