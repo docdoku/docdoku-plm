@@ -399,6 +399,7 @@ define({
     QUERY_ORDER_BY:"Ordonner par",
     QUERY_GROUP_BY:"Groupper par",
     QUERY_CLEAR:"vider",
+    QUERY_REMOVE_SAVED_QUERY:"Supprimer de la liste des requêtes",
 	READ_ONLY: "Lecture seule",
     REBASE: "Rebaser",
 	REFERENCE_HELP: "ID du document",

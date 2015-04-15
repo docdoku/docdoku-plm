@@ -403,6 +403,7 @@ define({
         QUERY_ORDER_BY:"Order by",
         QUERY_GROUP_BY:"Group by",
         QUERY_CLEAR:"clear",
+        QUERY_REMOVE_SAVED_QUERY:"Delete from queries list",
 		READ_ONLY: "Read only",
         REBASE: "Rebase",
 		REFERENCE_HELP: "Document ID",
