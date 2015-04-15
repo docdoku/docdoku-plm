@@ -24,9 +24,15 @@ define([
             this.selectizeAvailableOptions = querybuilderOptions.fields;
 
             this.selectizeOptions = {
-                plugins: ['remove_button','drag_drop'],
+                plugins: ['remove_button','drag_drop', 'optgroup_columns'],
                 persist: false,
                 delimiter:this.delimiter,
+
+                optgroupField: 'group',
+                optgroupLabelField: 'name',
+                optgroupValueField: 'id',
+                optgroups: querybuilderOptions.groups,
+
                 valueField: 'value',
                 searchField: ['name'],
                 options: null,

@@ -72,35 +72,40 @@ define(function () {
         id: 'pm.name',
         label: App.config.i18n.PART_NAME,
         type: 'string',
-        operators: stringOperators
+        operators: stringOperators,
+        group:'Pm'
     });
 
     filters.push({
         id: 'pm.number',
         label: App.config.i18n.PART_NUMBER,
         type: 'string',
-        operators: stringOperators
+        operators: stringOperators,
+        group:'Pm'
     });
 
     filters.push({
         id: 'pm.type',
         label: App.config.i18n.TYPE,
         type: 'string',
-        operators: stringOperators
+        operators: stringOperators,
+        group:'Pm'
     });
 
     filters.push({
         id: 'author.login',
         label: App.config.i18n.AUTHOR_LOGIN,
         type: 'string',
-        operators: stringOperators
+        operators: stringOperators,
+        group:'Pm'
     });
 
     filters.push({
         id: 'author.name',
         label: App.config.i18n.AUTHOR_NAME,
         type: 'string',
-        operators: stringOperators
+        operators: stringOperators,
+        group:'Pm'
     });
 
     // Part Revision
@@ -109,49 +114,56 @@ define(function () {
         id: 'pr.version',
         label: App.config.i18n.VERSION,
         type: 'string',
-        operators: stringOperators
+        operators: stringOperators,
+        group:'Pr'
     });
 
     filters.push({
         id: 'pr.modificationDate',
         label: App.config.i18n.MODIFICATION_DATE,
         type: 'date',
-        operators: dateOperators
+        operators: dateOperators,
+        group:'Pr'
     });
 
     filters.push({
         id: 'pr.creationDate',
         label: App.config.i18n.CREATION_DATE,
         type: 'date',
-        operators: dateOperators
+        operators: dateOperators,
+        group:'Pr'
     });
 
     filters.push({
         id: 'pr.checkoutDate',
         label: App.config.i18n.CHECKOUT_DATE,
         type: 'date',
-        operators: dateOperators
+        operators: dateOperators,
+        group:'Pr'
     });
 
     filters.push({
         id: 'pr.checkinDate',
         label: App.config.i18n.CHECKIN_DATE,
         type: 'date',
-        operators: dateOperators
+        operators: dateOperators,
+        group:'Pr'
     });
 
     filters.push({
         id: 'pr.lifeCycleState',
         label: App.config.i18n.LIFECYCLE_STATE,
         type: 'string',
-        operators: stringOperators
+        operators: stringOperators,
+        group:'Pr'
     });
 
     filters.push({
         id: 'pr.status',
         label: App.config.i18n.STATUS,
         type: 'string',
-        operators: stringOperators
+        operators: stringOperators,
+        group:'Pr'
     });
 
     // Product instances
@@ -160,29 +172,39 @@ define(function () {
         id: 'pi.serial',
         label: App.config.i18n.SERIAL_NUMBER,
         type: 'string',
-        operators: stringOperators
+        operators: stringOperators,
+        group:'Pi'
     });
 
     filters.push({
         id: 'pi.name',
         label: App.config.i18n.PRODUCT_NAME,
         type: 'string',
-        operators: stringOperators
+        operators: stringOperators,
+        group:'Pi'
     });
 
 
     var fields = [];
+    var groups = [
+        {id: 'pm', name: App.config.i18n.QUERY_GROUP_PART_MASTER},
+        {id: 'pr', name: App.config.i18n.QUERY_GROUP_PART_REVISION},
+        {id: 'pi', name: App.config.i18n.QUERY_GROUP_PRODUCT_INSTANCE},
+        {id: 'author', name: App.config.i18n.QUERY_GROUP_AUTHOR}
+    ];
 
     filters.map(function(filter){
         fields.push({
             name:filter.label,
-            value:filter.id
+            value:filter.id,
+            group:filter.id.substring(0,filter.id.indexOf('.'))
         });
     });
 
     return {
         filters : filters,
-        fields : fields
+        fields : fields,
+        groups : groups
     };
 
 });
