@@ -132,6 +132,7 @@ define([
                             url: url,
                             success: function (data) {
                                 self.clear();
+                                self.$where.queryBuilder('reset');
                                 self.fetchQueries();
                             },
                             error: function (errorMessage) {
