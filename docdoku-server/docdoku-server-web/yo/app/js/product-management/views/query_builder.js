@@ -75,9 +75,11 @@ define([
             var orderBySelectize = this.$orderBy[0].selectize;
             var groupBySelectize = this.$groupBy[0].selectize;
 
-            selectSelectize.clear(true);
+            selectSelectize.clear();
             orderBySelectize.clear(true);
+            orderBySelectize.clearOptions();
             groupBySelectize.clear(true);
+            groupBySelectize.clearOptions();
 
             this.$deleteQueryButton.hide();
         },
@@ -95,7 +97,7 @@ define([
                 this.$where.queryBuilder('setRules', query.queryRule);
 
                 _.each(query.selects,function(value){
-                    selectSelectize.addItem(value, true);
+                    selectSelectize.addItem(value);
                 });
 
                 _.each(query.orderByList,function(value){
