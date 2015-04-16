@@ -227,7 +227,7 @@ define([
         },
 
         fillSelectizes: function(){
-            var contextOption = _.extend(this.selectizeOptions);
+            var contextOption = _.clone(this.selectizeOptions);
             contextOption.maxItems = 1;
             this.$context.selectize(contextOption);
 
