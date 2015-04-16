@@ -6,8 +6,9 @@ define([
     'query-builder',
     'selectize',
     '../../utils/query-builder-options',
-    'common-objects/views/alert'
-], function (Backbone, Mustache, template, queryBuilder, selectize,querybuilderOptions, AlertView) {
+    'common-objects/views/alert',
+    'collections/configuration_items'
+], function (Backbone, Mustache, template, queryBuilder, selectize,querybuilderOptions, AlertView, ConfigurationItemCollection) {
     'use strict';
     var QueryBuilderModal = Backbone.View.extend({
 
@@ -19,7 +20,8 @@ define([
             'click .clear-select-badge': 'onClearSelect',
             'click .clear-where-badge': 'onClearWhere',
             'click .clear-order-by-badge': 'onClearOrderBy',
-            'click .clear-group-by-badge': 'onClearGroupBy'
+            'click .clear-group-by-badge': 'onClearGroupBy',
+            'click .clear-context-badge' : 'onClearContext'
         },
 
         delimiter: '/',
@@ -79,12 +81,14 @@ define([
             var selectSelectize = this.$select[0].selectize;
             var orderBySelectize = this.$orderBy[0].selectize;
             var groupBySelectize = this.$groupBy[0].selectize;
+            var contextSelectize = this.$context[0].selectize;
 
             selectSelectize.clear();
             orderBySelectize.clear(true);
             orderBySelectize.clearOptions();
             groupBySelectize.clear(true);
             groupBySelectize.clearOptions();
+            contextSelectize.clear();
 
             this.$deleteQueryButton.hide();
         },
@@ -96,6 +100,7 @@ define([
             var selectSelectize = this.$select[0].selectize;
             var orderBySelectize = this.$orderBy[0].selectize;
             var groupBySelectize = this.$groupBy[0].selectize;
+            var contextSelectize = this.$context[0].selectize;
 
             if(e.target.value){
                 var query = _.findWhere(this.queries,{id: parseInt(e.target.value,10)});
@@ -111,6 +116,10 @@ define([
 
                 _.each(query.groupedByList,function(value){
                     groupBySelectize.addItem(value, true);
+                });
+
+                _.each(query.productsId, function(value){
+                    contextSelectize.addItem(value, true);
                 });
 
             }else{
@@ -183,7 +192,7 @@ define([
                 error: function (errorMessage) {
                     self.$('#alerts').append(new AlertView({
                         type: 'warning',
-                        message: 'impossible to retrieve list of attributes'
+                        message: App.config.i18n.QUERY_ATTRIBUTES_ERROR
                     }).render().$el);
 
                     self.fillSelectizes();
@@ -218,6 +227,26 @@ define([
         },
 
         fillSelectizes: function(){
+            var contextOption = _.extend(this.selectizeOptions);
+            contextOption.maxItems = 1;
+            this.$context.selectize(contextOption);
+
+            var self = this;
+            var productCollection = new ConfigurationItemCollection();
+            productCollection.fetch().success(function(productsList){
+                _.each(productsList, function(product){
+                    self.$context[0].selectize.addOption({
+                        name:product.id,
+                        value:product.id
+                    });
+                });
+            }).error(function(){
+                self.$('#alerts').append(new AlertView({
+                    type: 'warning',
+                    message: App.config.i18n.QUERY_CONTEXT_ERROR
+                }).render().$el);
+            });
+
             this.$select.selectize(this.selectizeOptions);
             this.$select[0].selectize.addOption(this.selectizeAvailableOptions);
 
@@ -256,6 +285,7 @@ define([
             this.$selectQuery = this.$('select.query-list');
             this.$deleteQueryButton = this.$('.delete-selected-query');
             this.$searchButton = this.$('.search-button');
+            this.$context = this.$('#context');
         },
 
         onClearSelect: function(){
@@ -284,6 +314,11 @@ define([
             groupBySelectize.clear();
         },
 
+        onClearContext:function(){
+            var contextSelectize = this.$context[0].selectize;
+            contextSelectize.clear();
+        },
+
         onReset: function(){
             this.clear();
             this.$where.queryBuilder('reset');
@@ -298,6 +333,7 @@ define([
 
             if(isValid) {
 
+                var context = this.$context[0].selectize.getValue().split(this.delimiter);
                 var selectList = this.$select[0].selectize.getValue().split(this.delimiter);
                 var where = this.$where.queryBuilder('getRules');
                 var orderByList = this.$orderBy[0].selectize.getValue().split(this.delimiter);
@@ -311,6 +347,7 @@ define([
                 }
 
                 var queryData = {
+                    productsId:context,
                     selects: selectList,
                     orderByList: orderByList,
                     groupedByList: groupByList,
