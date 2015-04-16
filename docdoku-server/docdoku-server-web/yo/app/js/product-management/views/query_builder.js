@@ -28,6 +28,8 @@ define([
 
             this.selectizeAvailableOptions = querybuilderOptions.fields;
 
+            this.queryBuilderFilters = querybuilderOptions.filters;
+
             this.selectizeOptions = {
                 plugins: ['remove_button','drag_drop', 'optgroup_columns'],
                 persist: true,
@@ -150,9 +152,46 @@ define([
         render: function () {
             this.$el.html(Mustache.render(template, {i18n: App.config.i18n}));
             this.bindDomElements();
-            this.fillSelectizes();
-            this.fetchQueries();
-            this.initWhere();
+
+            var self = this;
+            var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/attributes';
+            $.ajax({
+                type: 'GET',
+                url: url,
+                success: function (data) {
+                    _.each(data, function(attribute){
+
+                        var attributeType = querybuilderOptions.types[attribute.type];
+                        self.queryBuilderFilters.push({
+                            id: 'attr-'+attributeType+'.'+attribute.name,
+                            label: attribute.name,
+                            type: attributeType,
+                            optgroup: _.findWhere(querybuilderOptions.groups, {id : 'attr-'+attributeType}).name
+                        });
+
+                        self.selectizeAvailableOptions.push({
+                            name:attribute.name,
+                            value:'attr-'+attributeType+'.'+attribute.name,
+                            group:'attr-'+attributeType
+                        });
+
+                    });
+
+                    self.fillSelectizes();
+                    self.fetchQueries();
+                    self.initWhere();
+                },
+                error: function (errorMessage) {
+                    self.$('#alerts').append(new AlertView({
+                        type: 'warning',
+                        message: 'impossible to retrieve list of attributes'
+                    }).render().$el);
+
+                    self.fillSelectizes();
+                    self.fetchQueries();
+                    self.initWhere();
+                }
+            });
 
             this.$saveSwitch.bootstrapSwitch();
             this.$saveSwitch.bootstrapSwitch('setState', false);
@@ -167,7 +206,7 @@ define([
 
         initWhere:function(){
             this.$where.queryBuilder({
-                filters: querybuilderOptions.filters,
+                filters: this.queryBuilderFilters,
 
                 icons:{
                     add_group : 'fa fa-plus-circle',
