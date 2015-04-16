@@ -210,8 +210,8 @@ define(function () {
         {id: 'pi', name: App.config.i18n.QUERY_GROUP_PRODUCT_INSTANCE},
         {id: 'author', name: App.config.i18n.QUERY_GROUP_AUTHOR},
         {id: 'attr-TEXT', name: App.config.i18n.QUERY_GROUP_ATTRIBUTE_STRING},
-        {id: 'attr-URL', name: App.config.i18n.QUERY_GROUP_ATTRIBUTE_STRING},
-        {id: 'attr-LOV', name: App.config.i18n.QUERY_GROUP_ATTRIBUTE_STRING},
+        {id: 'attr-URL', name: App.config.i18n.QUERY_GROUP_ATTRIBUTE_URL},
+        {id: 'attr-LOV', name: App.config.i18n.QUERY_GROUP_ATTRIBUTE_LOV},
         {id: 'attr-NUMBER', name: App.config.i18n.QUERY_GROUP_ATTRIBUTE_NUMBER},
         {id: 'attr-DATE', name: App.config.i18n.QUERY_GROUP_ATTRIBUTE_DATE},
         {id: 'attr-BOOLEAN', name: App.config.i18n.QUERY_GROUP_ATTRIBUTE_BOOLEAN}
