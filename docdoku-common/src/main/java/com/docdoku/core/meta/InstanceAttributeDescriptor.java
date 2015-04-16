@@ -80,6 +80,31 @@ public class InstanceAttributeDescriptor implements Serializable {
         this.type = type;
     }
 
+    public String getStringType(){
+        String type = "";
+        switch (this.type){
+            case LOV:
+                type = "LOV";
+                break;
+            case DATE:
+                type = "DATE";
+                break;
+            case NUMBER:
+                type = "NUMBER";
+                break;
+            case URL:
+                type = "URL";
+                break;
+            case BOOLEAN:
+                type = "BOOLEAN";
+                break;
+            default :
+                type = "TEXT";
+                break;
+        }
+        return type;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

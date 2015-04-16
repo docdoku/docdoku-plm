@@ -20,6 +20,8 @@
 package com.docdoku.server.rest.writer;
 
 import com.docdoku.core.common.User;
+import com.docdoku.core.meta.InstanceAttribute;
+import com.docdoku.core.meta.InstanceAttributeDescriptor;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.query.QueryField;
 import com.docdoku.server.rest.collections.QueryResult;
@@ -37,7 +39,9 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 
@@ -63,6 +67,13 @@ public class QueryWriter implements MessageBodyWriter<QueryResult> {
         jg.writeStartArray();
 
         Set<String> selects = queryResult.getQuery().getSelects();
+
+        List<String> attributesSelect = new ArrayList<>();
+        for(String select : selects){
+            if (select.contains(QueryField.PART_REVISION_ATTRIBUTES_PREFIX)){
+                attributesSelect.add(select);
+            }
+        }
 
         for(PartRevision part : queryResult.getParts()){
 
@@ -134,6 +145,24 @@ public class QueryWriter implements MessageBodyWriter<QueryResult> {
                 jg.write(QueryField.AUTHOR_NAME, user.getLogin());
             }
 
+            for (String attributeSelect : attributesSelect){
+
+                String attributeSelectType = attributeSelect.substring(0, attributeSelect.indexOf(".")).substring(QueryField.PART_REVISION_ATTRIBUTES_PREFIX.length());;
+                String attributeSelectName = attributeSelect.substring(attributeSelect.indexOf(".") + 1);
+
+                String atttributeValue = "";
+
+                List<InstanceAttribute> attributes = part.getLastIteration().getInstanceAttributes();
+                for (InstanceAttribute attribute : attributes) {
+                    InstanceAttributeDescriptor attributeDescriptor = new InstanceAttributeDescriptor(attribute);
+                    if (attributeDescriptor.getName().equals(attributeSelectName)
+                            && attributeDescriptor.getStringType().equals(attributeSelectType)){
+
+                        atttributeValue = attribute.getValue()+"";
+                    }
+                }
+                jg.write(attributeSelect, atttributeValue);
+            }
             jg.writeEnd();
         }
 
