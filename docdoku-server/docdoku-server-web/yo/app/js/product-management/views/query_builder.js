@@ -30,7 +30,7 @@ define([
 
             this.selectizeOptions = {
                 plugins: ['remove_button','drag_drop', 'optgroup_columns'],
-                persist: false,
+                persist: true,
                 delimiter:this.delimiter,
 
                 optgroupField: 'group',
