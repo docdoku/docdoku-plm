@@ -1,9 +1,10 @@
 package com.docdoku.server.dao;
 
 import com.docdoku.core.common.Workspace;
-import com.docdoku.core.configuration.ProductInstanceMaster;
 import com.docdoku.core.exceptions.CreationException;
 import com.docdoku.core.exceptions.QueryAlreadyExistsException;
+import com.docdoku.core.meta.*;
+import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartMaster;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.query.Query;
@@ -24,11 +25,19 @@ public class QueryDAO {
 
     private EntityManager em;
     private Locale mLocale;
+
     private CriteriaBuilder cb;
     private CriteriaQuery cq;
     private Root<PartMaster> pm;
     private Root<PartRevision> pr;
-    private Root<ProductInstanceMaster> pi;
+    private Root<PartIteration> pi;
+
+    private Root<InstanceBooleanAttribute> iba;
+    private Root<InstanceNumberAttribute> ina;
+    private Root<InstanceDateAttribute> ida;
+    private Root<InstanceListOfValuesAttribute> ila;
+    private Root<InstanceTextAttribute> ita;
+    private Root<InstanceURLAttribute> iua;
 
     private static Logger LOGGER = Logger.getLogger(QueryDAO.class.getName());
 
@@ -40,7 +49,15 @@ public class QueryDAO {
         cq = cb.createQuery();
         pm = cq.from(PartMaster.class);
         pr = cq.from(PartRevision.class);
-        pi = cq.from(ProductInstanceMaster.class);
+        pi = cq.from(PartIteration.class);
+
+        iba = cq.from(InstanceBooleanAttribute.class);
+        ina = cq.from(InstanceNumberAttribute.class);
+        ida = cq.from(InstanceDateAttribute.class);
+        ila = cq.from(InstanceListOfValuesAttribute.class);
+        ita = cq.from(InstanceTextAttribute.class);
+        iua = cq.from(InstanceURLAttribute.class);
+
     }
 
     public void createQuery(Query query) throws CreationException, QueryAlreadyExistsException {
@@ -105,20 +122,28 @@ public class QueryDAO {
         // Simple select
         cq.select(pm);
 
-        // Join on pr and pi
-
         // Restrict search to workspace
         Expression workspaceExp = pm.get("workspace");
         Predicate rulesPredicate = getPredicate(query.getQueryRule());
         Predicate workspacePredicate = cb.and(cb.equal(workspaceExp,workspace));
 
-        Join<PartRevision,PartMaster> prJoin = pr.join("partMaster");
-        Predicate prJoinPredicate = prJoin.on(cb.equal(pm.get("number"), pr.get("partMasterNumber"))).getOn();
+        // Join PartMaster
+        Join<PartRevision,PartMaster> pmJoin = pr.join("partMaster");
+        Predicate prJoinPredicate = pmJoin.on(cb.equal(pm.get("number"), pr.get("partMasterNumber"))).getOn();
+
+        // Join PartIteration
+        Join<PartIteration,PartRevision> piJoin = pi.join("partRevision");
+        Predicate piJoinPredicate = piJoin.on(cb.equal(pi.get("partRevision").get("partMasterNumber"), pr.get("partMasterNumber"))).getOn();
+
+//        Join<PartIteration,InstanceAttribute> iaJoin = pi.join("instanceAttributes");
+//        Predicate iaJoinPredicate = iaJoin.on(????).getOn();
 
         cq.where(cb.and(new Predicate[]{
             rulesPredicate,
             workspacePredicate,
-            prJoinPredicate
+            prJoinPredicate,
+            piJoinPredicate
+
         }));
 
         TypedQuery<PartMaster> tp = em.createQuery(cq);
@@ -175,16 +200,42 @@ public class QueryDAO {
             return getPartRevisionPredicate(field.substring(3), operator, value, type);
         }
 
-        if(field.startsWith("pi.")){
-            return getProductInstancePredicate(field.substring(3),operator,value, type);
-        }
+//        if(field.startsWith("pi.")){
+//            return getPartIterationPredicate(field.substring(3),operator,value, type);
+//        }
 
         if(field.startsWith("author.")){
             return getAuthorPredicate(field.substring(7), operator, value, type);
         }
 
+        if(field.startsWith("attr-TEXT.")){
+            return getInstanceTextAttributePredicate(field.substring(10), operator, value, type);
+        }
+
+        if(field.startsWith("attr-DATE.")){
+            return getInstanceDateAttributePredicate(field.substring(10), operator, value, type);
+        }
+
+        if(field.startsWith("attr-BOOLEAN.")){
+            return getInstanceBooleanAttributePredicate(field.substring(13), operator, value, type);
+        }
+
+        if(field.startsWith("attr-URL.")){
+            return getInstanceURLAttributePredicate(field.substring(9), operator, value, type);
+        }
+
+        if(field.startsWith("attr-NUMBER.")){
+            return getInstanceNumberAttributePredicate(field.substring(10), operator, value, type);
+        }
+
+        if(field.startsWith("attr-LOV.")){
+            return getInstanceLovAttributePredicate(field.substring(8), operator, value, type);
+        }
+
+
         throw new IllegalArgumentException();
     }
+
 
     private Predicate getAuthorPredicate(String field, String operator, String value, String type) {
         return getPredicate(pr.get("author").get(field),operator,value,type);
@@ -197,9 +248,32 @@ public class QueryDAO {
         return getPredicate(pm.get(field),operator,value,type);
     }
 
-    private Predicate getProductInstancePredicate(String field, String operator, String value, String type) {
+    private Predicate getInstanceURLAttributePredicate(String field, String operator, String value, String type) {
         return null;
     }
+
+    private Predicate getInstanceBooleanAttributePredicate(String field, String operator, String value, String type) {
+        return null;
+    }
+
+    private Predicate getInstanceNumberAttributePredicate(String field, String operator, String value, String type) {
+        return null;
+    }
+
+    private Predicate getInstanceLovAttributePredicate(String field, String operator, String value, String type) {
+        return null;
+    }
+
+    private Predicate getInstanceDateAttributePredicate(String field, String operator, String value, String type) {
+        return null;
+    }
+
+    private Predicate getInstanceTextAttributePredicate(String field, String operator, String value, String type) {
+        Predicate namePredicate = getPredicate(ita.get("name"), operator, field, "string");
+        Predicate valuePredicate = getPredicate(ita.get("textValue"), operator, value, "string");
+        return cb.and(namePredicate,valuePredicate);
+    }
+
 
     private Predicate getPredicate(Expression fieldExp, String operator, String value, String type){
         Object o;
