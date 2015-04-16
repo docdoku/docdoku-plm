@@ -276,7 +276,7 @@ define([
                     selects: selectList,
                     orderByList: orderByList,
                     groupedByList: groupByList,
-                    subRules: where,
+                    queryRule: where,
                     name: saveQuery ? this.$inputName.val() : ''
                 };
 
