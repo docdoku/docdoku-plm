@@ -28,7 +28,11 @@ define([
             var groups = {};
             var i = 0;
             _.each(_.keys(itemsGroupBy), function(key){
-                groups[''+i] = {key:''+i, name: key, items:itemsGroupBy[key]};
+                groups[''+i] = {
+                    key:''+i,
+                    name: key === "undefined" ? null : key,
+                    items:itemsGroupBy[key]
+                };
                 i++;
             });
 
