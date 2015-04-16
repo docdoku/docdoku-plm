@@ -8,7 +8,7 @@ define({
 	ADD_ACTIVITY: "Ajouter une activité",
 	ADD: "Ajouter",
     ADD_COMMENT: "Ajouter un commentaire",
-	ADD_DOCUMENT: "Ajouter un document",
+    ADD_DOCUMENT: "Ajouter un document",
 	ADD_ISSUE: "Ajouter une anomalie",
 	ADD_NEW_TAG: "Saisir un nouveau libellé",
 	ADD_PART: "Ajouter un article",

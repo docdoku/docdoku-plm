@@ -23,15 +23,19 @@ define(['backbone'], function (Backbone) {
         },
 
         getDocumentMasterId: function () {
-            return  this.get('documentMasterId');
+            return this.get('documentMasterId');
+        },
+
+        getDocumentRevisionTitle: function () {
+            return this.get('documentTitle');
         },
 
         getDocumentRevisionVersion: function () {
-            return  this.get('documentRevisionVersion');
+            return this.get('documentRevisionVersion');
         },
 
         getDocKey: function () {
-            return  this.getDocumentMasterId() + '-' + this.getDocumentRevisionVersion();
+            return this.getDocumentRevisionTitle() + ' < ' + this.getDocumentMasterId() + '-' + this.getDocumentRevisionVersion() + ' > ';
         },
 
         getDocumentMasterPermalink: function () {
