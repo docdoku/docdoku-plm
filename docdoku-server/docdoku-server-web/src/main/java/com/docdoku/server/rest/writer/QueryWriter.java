@@ -115,8 +115,8 @@ public class QueryWriter implements MessageBodyWriter<QueryResult> {
             }
 
             if(selects.contains(QueryField.PART_REVISION_LIFECYCLE_STATE)){
-                String version = part.getVersion();
-                jg.write(QueryField.PART_REVISION_VERSION, version);
+                String lifeCycleState = part.getLifeCycleState();
+                jg.write(QueryField.PART_REVISION_LIFECYCLE_STATE, lifeCycleState != null ? lifeCycleState : "");
             }
 
             if(selects.contains(QueryField.PART_REVISION_STATUS)){
