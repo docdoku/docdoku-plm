@@ -34,7 +34,6 @@ define([
                 plugins: ['remove_button','drag_drop', 'optgroup_columns'],
                 persist: true,
                 delimiter:this.delimiter,
-
                 optgroupField: 'group',
                 optgroupLabelField: 'name',
                 optgroupValueField: 'id',
@@ -163,16 +162,16 @@ define([
 
                         var attributeType = querybuilderOptions.types[attribute.type];
                         self.queryBuilderFilters.push({
-                            id: 'attr-'+attributeType+'.'+attribute.name,
+                            id: 'attr-'+attribute.type+'.'+attribute.name,
                             label: attribute.name,
                             type: attributeType,
-                            optgroup: _.findWhere(querybuilderOptions.groups, {id : 'attr-'+attributeType}).name
+                            optgroup: _.findWhere(querybuilderOptions.groups, {id : 'attr-'+attribute.type}).name
                         });
 
                         self.selectizeAvailableOptions.push({
                             name:attribute.name,
-                            value:'attr-'+attributeType+'.'+attribute.name,
-                            group:'attr-'+attributeType
+                            value:'attr-'+attribute.type+'.'+attribute.name,
+                            group:'attr-'+attribute.type
                         });
 
                     });

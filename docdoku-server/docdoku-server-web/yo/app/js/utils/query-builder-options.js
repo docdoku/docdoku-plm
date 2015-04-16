@@ -209,10 +209,12 @@ define(function () {
         {id: 'pr', name: App.config.i18n.QUERY_GROUP_PART_REVISION},
         {id: 'pi', name: App.config.i18n.QUERY_GROUP_PRODUCT_INSTANCE},
         {id: 'author', name: App.config.i18n.QUERY_GROUP_AUTHOR},
-        {id: 'attr-string', name: App.config.QUERY_GROUP_ATTRIBUTE_STRING},
-        {id: 'attr-double', name: App.config.QUERY_GROUP_ATTRIBUTE_NUMBER},
-        {id: 'attr-date', name: App.config.QUERY_GROUP_ATTRIBUTE_DATE},
-        {id: 'attr-boolean', name: App.config.QUERY_GROUP_ATTRIBUTE_BOOLEAN}
+        {id: 'attr-TEXT', name: App.config.i18n.QUERY_GROUP_ATTRIBUTE_STRING},
+        {id: 'attr-URL', name: App.config.i18n.QUERY_GROUP_ATTRIBUTE_STRING},
+        {id: 'attr-LOV', name: App.config.i18n.QUERY_GROUP_ATTRIBUTE_STRING},
+        {id: 'attr-NUMBER', name: App.config.i18n.QUERY_GROUP_ATTRIBUTE_NUMBER},
+        {id: 'attr-DATE', name: App.config.i18n.QUERY_GROUP_ATTRIBUTE_DATE},
+        {id: 'attr-BOOLEAN', name: App.config.i18n.QUERY_GROUP_ATTRIBUTE_BOOLEAN}
     ];
 
     filters.map(function(filter){
