@@ -11,7 +11,6 @@ import com.docdoku.core.query.QueryRule;
 
 import javax.persistence.*;
 import javax.persistence.criteria.*;
-import javax.persistence.metamodel.Metamodel;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -23,16 +22,13 @@ import java.util.logging.Logger;
  */
 public class QueryDAO {
 
-
     private EntityManager em;
     private Locale mLocale;
     private CriteriaBuilder cb;
-    private Metamodel metamodel;
     private CriteriaQuery cq;
     private Root<PartMaster> pm;
     private Root<PartRevision> pr;
     private Root<ProductInstanceMaster> pi;
-
 
     private static Logger LOGGER = Logger.getLogger(QueryDAO.class.getName());
 
@@ -40,13 +36,11 @@ public class QueryDAO {
         em = pEM;
         mLocale = pLocale;
         cb = em.getCriteriaBuilder();
-        metamodel = em.getMetamodel();
 
         cq = cb.createQuery();
         pm = cq.from(PartMaster.class);
         pr = cq.from(PartRevision.class);
         pi = cq.from(ProductInstanceMaster.class);
-
     }
 
     public void createQuery(Query query) throws CreationException, QueryAlreadyExistsException {
@@ -216,14 +210,10 @@ public class QueryDAO {
                 break;
 
             case "date":
-
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                 try {
-                    o = sdf.parse(value);
+                    o = new SimpleDateFormat("yyyy-MM-dd").parse(value);
                 } catch (ParseException e) {
-                    o=value;
-                    e.printStackTrace();
-                }
+                    throw new IllegalArgumentException();                }
                 break;
 
             default :

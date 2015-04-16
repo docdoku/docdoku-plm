@@ -177,7 +177,6 @@ public class PartsResource {
         List<PartRevision> partRevisions = productService.searchPartRevisions(workspaceId, query);
         QueryResult queryResult = new QueryResult(query,partRevisions);
         return Response.ok().lastModified(new Date()).entity(queryResult).build();
-
     }
 
     @POST

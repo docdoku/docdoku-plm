@@ -2546,6 +2546,17 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         return filter;
     }
 
+
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
+    public List<InstanceAttributeDescriptor> getInstanceAttributesInWorkspace(String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+        userManager.checkWorkspaceReadAccess(workspaceId);
+        InstanceAttributeDAO instanceAttributeDAO = new InstanceAttributeDAO(em);
+        List<InstanceAttributeDescriptor> instanceAttributesInWorkspace = instanceAttributeDAO.getInstanceAttributesInWorkspace(workspaceId);
+        return instanceAttributesInWorkspace;
+    }
+
+
     private PSFilter getConfigSpecForBaseline(int baselineId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, BaselineNotFoundException {
         return productBaselineManager.getBaselinePSFilter(baselineId);
     }
