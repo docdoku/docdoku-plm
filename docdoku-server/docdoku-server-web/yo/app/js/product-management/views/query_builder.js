@@ -28,9 +28,9 @@ define([
 
         initialize: function () {
 
-            this.selectizeAvailableOptions = querybuilderOptions.fields;
+            this.selectizeAvailableOptions = _.clone(querybuilderOptions.fields);
 
-            this.queryBuilderFilters = querybuilderOptions.filters;
+            this.queryBuilderFilters =  _.clone(querybuilderOptions.filters);
 
             this.selectizeOptions = {
                 plugins: ['remove_button','drag_drop', 'optgroup_columns'],
@@ -39,7 +39,7 @@ define([
                 optgroupField: 'group',
                 optgroupLabelField: 'name',
                 optgroupValueField: 'id',
-                optgroups: querybuilderOptions.groups,
+                optgroups: _.clone(querybuilderOptions.groups),
 
                 valueField: 'value',
                 searchField: ['name'],
@@ -53,6 +53,8 @@ define([
                     }
                 }
             };
+
+            this.fetchAttributes();
         },
 
         fetchQueries:function(){
@@ -157,12 +159,10 @@ define([
             }
         },
 
-        render: function () {
-            this.$el.html(Mustache.render(template, {i18n: App.config.i18n}));
-            this.bindDomElements();
-
+        fetchAttributes : function(){
             var self = this;
             var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/attributes';
+
             $.ajax({
                 type: 'GET',
                 url: url,
@@ -194,6 +194,7 @@ define([
                             });
                             filter.values = values;
                         }
+
                         self.queryBuilderFilters.push(filter);
 
                         self.selectizeAvailableOptions.push({
@@ -203,38 +204,38 @@ define([
                         });
 
                     });
-
-                    self.fillSelectizes();
-                    self.fetchQueries();
-                    self.initWhere();
                 },
                 error: function (errorMessage) {
-                    self.$('#alerts').append(new AlertView({
-                        type: 'warning',
-                        message: App.config.i18n.QUERY_ATTRIBUTES_ERROR
-                    }).render().$el);
-
-                    self.fillSelectizes();
-                    self.fetchQueries();
-                    self.initWhere();
                 }
             });
+        },
+
+        render: function () {
+            this.$el.html(Mustache.render(template, {i18n: App.config.i18n}));
+            this.bindDomElements();
+            this.fillSelectizes();
+            this.fetchQueries();
+            this.initWhere();
 
             this.$saveSwitch.bootstrapSwitch();
             this.$saveSwitch.bootstrapSwitch('setState', false);
             this.$inputName.toggle(false);
-            var self = this;
+            var $inputName = this.$inputName;
             this.$saveSwitch.on('switch-change', function (event, state) {
-                self.$inputName.toggle(state.value);
+                $inputName.toggle(state.value);
             });
 
             return this;
         },
 
+        destroy:function(){
+            this.$where.queryBuilder('destroy');
+        },
+
         initWhere:function(){
+            console.log('init where')
             this.$where.queryBuilder({
                 filters: this.queryBuilderFilters,
-
                 icons:{
                     add_group : 'fa fa-plus-circle',
                     remove_group : 'fa fa-times-circle',

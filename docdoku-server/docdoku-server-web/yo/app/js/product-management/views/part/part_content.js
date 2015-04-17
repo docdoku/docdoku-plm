@@ -26,7 +26,7 @@ define([
     'views/product/product_creation_view',
     'views/advanced_search',
     'views/part/part_grouped_by_list'
-], function (Backbone, Mustache, Async, PartCollection, PartSearchCollection, template, PartListView, PartCreationView, PartNewVersionView, PromptView, ACLEditView, QueryBuilderModal, deleteButton, checkoutButtonGroup, newVersionButton, releaseButton, aclButton, newProductButton, tagsButton, obsoleteButton, searchForm, AlertView,TagsManagementView,ProductCreationView,AdvancedSearchView, PartGroupedByView) {
+], function (Backbone, Mustache, Async, PartCollection, PartSearchCollection, template, PartListView, PartCreationView, PartNewVersionView, PromptView, ACLEditView, QueryBuilder, deleteButton, checkoutButtonGroup, newVersionButton, releaseButton, aclButton, newProductButton, tagsButton, obsoleteButton, searchForm, AlertView,TagsManagementView,ProductCreationView,AdvancedSearchView, PartGroupedByView) {
     'use strict';
 	var PartContentView = Backbone.View.extend({
         events: {
@@ -104,9 +104,9 @@ define([
             }).render();
 
 
-            this.queryBuilder = new QueryBuilderModal({
+            this.queryBuilder = new QueryBuilder({
                 el: this.$('.query-builder')
-            }).render();
+            });
 
             this.bindEvent();
             return this;
@@ -448,7 +448,6 @@ define([
                         part.markAsObsolete();
                     });
                 }
-
             });
         },
 
@@ -456,6 +455,11 @@ define([
             this.$el.toggleClass('displayQueryBuilder');
             this.$('.display-query-builder-button').toggleClass('fa-angle-double-down');
             this.$('.display-query-builder-button').toggleClass('fa-angle-double-up');
+            if(this.$el.hasClass('displayQueryBuilder')){
+                this.queryBuilder.render();
+            }else{
+                this.queryBuilder.destroy();
+            }
         }
 
     });
