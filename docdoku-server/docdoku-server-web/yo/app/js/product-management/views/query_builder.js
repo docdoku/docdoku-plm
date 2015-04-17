@@ -184,14 +184,12 @@ define([
                             filter.type = 'string';
                             filter.operators = querybuilderOptions.lovOperators;
                             filter.input = 'select';
-
                             var values = [];
                             _.each(attribute.lovItems, function(item){
                                 var value = {};
                                 value[item.value] = item.name;
                                 values.push(value);
                             });
-
                             filter.values = values;
                         }
                         self.queryBuilderFilters.push(filter);
