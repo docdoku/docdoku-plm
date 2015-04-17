@@ -185,10 +185,12 @@ define([
                             filter.operators = querybuilderOptions.lovOperators;
                             filter.input = 'select';
                             var values = [];
+                            var index = 0;
                             _.each(attribute.lovItems, function(item){
                                 var value = {};
-                                value[item.value] = item.name;
+                                value[index] = item.name;
                                 values.push(value);
+                                index ++;
                             });
                             filter.values = values;
                         }
