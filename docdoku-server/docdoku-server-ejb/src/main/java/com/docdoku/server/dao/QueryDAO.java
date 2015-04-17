@@ -32,12 +32,6 @@ public class QueryDAO {
     private Root<PartRevision> pr;
     private Root<PartIteration> pi;
 
-    private Root<InstanceBooleanAttribute> iba;
-    private Root<InstanceNumberAttribute> ina;
-    private Root<InstanceDateAttribute> ida;
-    private Root<InstanceListOfValuesAttribute> ila;
-    private Root<InstanceTextAttribute> ita;
-    private Root<InstanceURLAttribute> iua;
 
     private static Logger LOGGER = Logger.getLogger(QueryDAO.class.getName());
 
@@ -50,14 +44,6 @@ public class QueryDAO {
         pm = cq.from(PartMaster.class);
         pr = cq.from(PartRevision.class);
         pi = cq.from(PartIteration.class);
-
-        iba = cq.from(InstanceBooleanAttribute.class);
-        ina = cq.from(InstanceNumberAttribute.class);
-        ida = cq.from(InstanceDateAttribute.class);
-        ila = cq.from(InstanceListOfValuesAttribute.class);
-        ita = cq.from(InstanceTextAttribute.class);
-        iua = cq.from(InstanceURLAttribute.class);
-
     }
 
     public void createQuery(Query query) throws CreationException, QueryAlreadyExistsException {
@@ -134,33 +120,11 @@ public class QueryDAO {
         Join<PartIteration,PartRevision> piJoin = pi.join("partRevision");
         Predicate piJoinPredicate = piJoin.on(cb.and(cb.equal(pi.get("partRevision").get("partMasterNumber"), pr.get("partMasterNumber")), cb.equal(pr.get("partMaster").get("workspace"), workspace))).getOn();
 
-
-//        Join<PartIteration,PartRevision> piJoin = pi.join("partRevision");
-//        Predicate piJoinPredicate = piJoin.on(
-//            cb.equal(pi.get("partRevision").get("partMasterNumber"),pr.get("partMasterNumber"))
-//        ).getOn();
-//
-//        // Join Attributes
-//        Join<PartIteration,InstanceAttribute> iaJoin = pi.join("instanceAttributes");
-//        Predicate itaJoinPredicate = iaJoin.on(ita.in(pi.get("instanceAttributes"))).getOn();
-//        Predicate inaJoinPredicate = iaJoin.on(ina.in(pi.get("instanceAttributes"))).getOn();
-//        Predicate idaJoinPredicate = iaJoin.on(ida.in(pi.get("instanceAttributes"))).getOn();
-//        Predicate ibaJoinPredicate = iaJoin.on(iba.in(pi.get("instanceAttributes"))).getOn();
-//        Predicate iuaJoinPredicate = iaJoin.on(iua.in(pi.get("instanceAttributes"))).getOn();
-//        Predicate ilaJoinPredicate = iaJoin.on(ila.in(pi.get("instanceAttributes"))).getOn();
-
-
         cq.where(cb.and(
             rulesPredicate,
             workspacePredicate,
             prJoinPredicate,
-            piJoinPredicate/*,
-            itaJoinPredicate,
-            inaJoinPredicate,
-            idaJoinPredicate,
-            ibaJoinPredicate,
-            iuaJoinPredicate,
-            ilaJoinPredicate*/
+            piJoinPredicate
         ));
 
         TypedQuery<PartRevision> tp = em.createQuery(cq);
@@ -239,13 +203,12 @@ public class QueryDAO {
         }
 
         if(field.startsWith("attr-NUMBER.")){
-            return getInstanceNumberAttributePredicate(field.substring(10), operator, value, type);
+            return getInstanceNumberAttributePredicate(field.substring(12), operator, value, type);
         }
 
         if(field.startsWith("attr-LOV.")){
-            return getInstanceLovAttributePredicate(field.substring(8), operator, value, type);
+            return getInstanceLovAttributePredicate(field.substring(9), operator, value, type);
         }
-
 
         throw new IllegalArgumentException();
     }
@@ -265,31 +228,44 @@ public class QueryDAO {
 
     // Instances Attributes
     private Predicate getInstanceURLAttributePredicate(String field, String operator, String value, String type) {
+        Root<InstanceURLAttribute> iua = cq.from(InstanceURLAttribute.class);
         Predicate valuePredicate = getPredicate(iua.get("urlValue"), operator, value, "string");
-        return cb.and(cb.equal(iua.get("name"),field),valuePredicate);
+        Predicate memberPredicate = iua.in(pi.get("instanceAttributes"));
+        return cb.and(cb.equal(iua.get("name"), field), valuePredicate, memberPredicate);
     }
 
     private Predicate getInstanceBooleanAttributePredicate(String field, String operator, String value, String type) {
-        return cb.and(cb.equal(ila.get("name"),field),cb.equal(iba.get("booleanValue"),value));
+        Root<InstanceBooleanAttribute> iba = cq.from(InstanceBooleanAttribute.class);
+        Predicate memberPredicate = iba.in(pi.get("instanceAttributes"));
+        return cb.and(cb.equal(iba.get("name"),field),cb.equal(iba.get("booleanValue"),Boolean.getBoolean(value)),memberPredicate);
     }
 
     private Predicate getInstanceNumberAttributePredicate(String field, String operator, String value, String type) {
-        Predicate valuePredicate = getPredicate(ida.get("dateValue"), operator, value, "date");
-        return cb.and(cb.equal(ila.get("name"),field),valuePredicate);
+        Root<InstanceNumberAttribute> ina = cq.from(InstanceNumberAttribute.class);
+        Predicate valuePredicate = getPredicate(ina.get("numberValue"), operator, value, "double");
+        Predicate memberPredicate = ina.in(pi.get("instanceAttributes"));
+        return cb.and(cb.equal(ina.get("name"),field),valuePredicate,memberPredicate);
     }
 
     private Predicate getInstanceLovAttributePredicate(String field, String operator, String value, String type) {
-        return cb.and(cb.equal(ila.get("name"),field),cb.equal(ila.get("indexValue"),value));
+        Root<InstanceListOfValuesAttribute> ila = cq.from(InstanceListOfValuesAttribute.class);
+        Predicate valuePredicate = cb.equal(ila.get("indexValue"),Integer.parseInt(value));
+        Predicate memberPredicate = ila.in(pi.get("instanceAttributes"));
+        return cb.and(cb.equal(ila.get("name"),field),valuePredicate, memberPredicate);
     }
 
     private Predicate getInstanceDateAttributePredicate(String field, String operator, String value, String type) {
+        Root<InstanceDateAttribute> ida = cq.from(InstanceDateAttribute.class);
         Predicate valuePredicate = getPredicate(ida.get("dateValue"), operator, value, "date");
-        return cb.and(cb.equal(ida.get("name"),field),valuePredicate);
+        Predicate memberPredicate = ida.in(pi.get("instanceAttributes"));
+        return cb.and(cb.equal(ida.get("name"),field),valuePredicate,memberPredicate);
     }
 
     private Predicate getInstanceTextAttributePredicate(String field, String operator, String value, String type) {
+        Root<InstanceTextAttribute> ita = cq.from(InstanceTextAttribute.class);
         Predicate valuePredicate = getPredicate(ita.get("textValue"), operator, value, "string");
-        return cb.and(cb.equal(ita.get("name"),field),valuePredicate);
+        Predicate memberPredicate = ita.in(pi.get("instanceAttributes"));
+        return cb.and(cb.equal(ita.get("name"),field),valuePredicate,memberPredicate);
     }
 
 
