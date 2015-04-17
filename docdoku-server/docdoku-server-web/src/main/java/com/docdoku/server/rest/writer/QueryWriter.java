@@ -22,6 +22,7 @@ package com.docdoku.server.rest.writer;
 import com.docdoku.core.common.User;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.meta.InstanceAttributeDescriptor;
+import com.docdoku.core.meta.InstanceListOfValuesAttribute;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.query.QueryField;
 import com.docdoku.server.rest.collections.QueryResult;
@@ -150,7 +151,7 @@ public class QueryWriter implements MessageBodyWriter<QueryResult> {
                 String attributeSelectType = attributeSelect.substring(0, attributeSelect.indexOf(".")).substring(QueryField.PART_REVISION_ATTRIBUTES_PREFIX.length());;
                 String attributeSelectName = attributeSelect.substring(attributeSelect.indexOf(".") + 1);
 
-                String atttributeValue = "";
+                String attributeValue = "";
 
                 List<InstanceAttribute> attributes = part.getLastIteration().getInstanceAttributes();
                 for (InstanceAttribute attribute : attributes) {
@@ -158,10 +159,13 @@ public class QueryWriter implements MessageBodyWriter<QueryResult> {
                     if (attributeDescriptor.getName().equals(attributeSelectName)
                             && attributeDescriptor.getStringType().equals(attributeSelectType)){
 
-                        atttributeValue = attribute.getValue()+"";
+                        attributeValue = attribute.getValue()+"";
+                        if (attribute instanceof InstanceListOfValuesAttribute){
+                            attributeValue = ((InstanceListOfValuesAttribute) attribute).getSelectedName();
+                        }
                     }
                 }
-                jg.write(attributeSelect, atttributeValue);
+                jg.write(attributeSelect, attributeValue);
             }
             jg.writeEnd();
         }
