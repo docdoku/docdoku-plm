@@ -170,12 +170,31 @@ define([
                     _.each(data, function(attribute){
 
                         var attributeType = querybuilderOptions.types[attribute.type];
-                        self.queryBuilderFilters.push({
+                        var filter = {
                             id: 'attr-'+attribute.type+'.'+attribute.name,
                             label: attribute.name,
                             type: attributeType,
                             optgroup: _.findWhere(querybuilderOptions.groups, {id : 'attr-'+attribute.type}).name
-                        });
+                        };
+                        if(attributeType === 'date'){
+                            filter.operators = querybuilderOptions.dateOperators;
+                        } else if (attributeType === 'string'){
+                            filter.operators = querybuilderOptions.stringOperators;
+                        } else if (attributeType === 'lov'){
+                            filter.type = 'string';
+                            filter.operators = querybuilderOptions.lovOperators;
+                            filter.input = 'select';
+
+                            var values = [];
+                            _.each(attribute.lovItems, function(item){
+                                var value = {};
+                                value[item.value] = item.name;
+                                values.push(value);
+                            });
+
+                            filter.values = values;
+                        }
+                        self.queryBuilderFilters.push(filter);
 
                         self.selectizeAvailableOptions.push({
                             name:attribute.name,

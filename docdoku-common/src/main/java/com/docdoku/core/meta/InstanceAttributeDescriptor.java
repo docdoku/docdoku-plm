@@ -21,6 +21,7 @@
 package com.docdoku.core.meta;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * Wraps type and name for attributes facilities
@@ -32,6 +33,7 @@ public class InstanceAttributeDescriptor implements Serializable {
 
     private String name;
     private Type type;
+    private List<NameValuePair> lovItems;
 
     public enum Type {
         TEXT, NUMBER, DATE, BOOLEAN, URL, LOV
@@ -61,6 +63,7 @@ public class InstanceAttributeDescriptor implements Serializable {
         }
         else if(o instanceof InstanceListOfValuesAttribute){
             type = Type.LOV;
+            lovItems = ((InstanceListOfValuesAttribute) o).getItems();
         }
     }
 
@@ -78,6 +81,14 @@ public class InstanceAttributeDescriptor implements Serializable {
 
     public void setType(Type type) {
         this.type = type;
+    }
+
+    public List<NameValuePair> getLovItems() {
+        return lovItems;
+    }
+
+    public void setLovItems(List<NameValuePair> lovItems) {
+        this.lovItems = lovItems;
     }
 
     public String getStringType(){

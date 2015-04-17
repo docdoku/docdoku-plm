@@ -68,6 +68,7 @@ define(function () {
 
     var stringOperators = ['equal', 'not_equal', 'contains', 'not_contains', 'begins_with', 'not_begins_with', 'ends_with', 'not_ends_with'];
     var dateOperators = ['equal', 'not_equal', 'less', 'less_or_equal', 'greater', 'greater_or_equal'];
+    var lovOperators = ['equal', 'not_equal'];
 
     var filters = [];
 
@@ -201,7 +202,7 @@ define(function () {
         NUMBER: 'double',
         TEXT: 'string',
         URL: 'string',
-        LOV: 'string'
+        LOV: 'lov'
     };
 
     var groups = [
@@ -229,7 +230,11 @@ define(function () {
         filters : filters,
         fields : fields,
         groups : groups,
-        types : types
+        types : types,
+
+        stringOperators: stringOperators,
+        dateOperators : dateOperators,
+        lovOperators : lovOperators
     };
 
 });

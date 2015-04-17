@@ -20,6 +20,7 @@
 package com.docdoku.server.rest.dto;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  *
@@ -29,6 +30,7 @@ public class InstanceAttributeDescriptorDTO implements Serializable{
 
     private String name;
     private String type;
+    private List<NameValuePairDTO> lovItems;
 
     public InstanceAttributeDescriptorDTO() {
     }
@@ -47,5 +49,13 @@ public class InstanceAttributeDescriptorDTO implements Serializable{
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public List<NameValuePairDTO> getLovItems() {
+        return lovItems;
+    }
+
+    public void setLovItems(List<NameValuePairDTO> lovItems) {
+        this.lovItems = lovItems;
     }
 }
