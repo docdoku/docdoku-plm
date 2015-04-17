@@ -35,7 +35,10 @@ define(['backbone'], function (Backbone) {
         },
 
         getDocKey: function () {
-            return this.getDocumentRevisionTitle() + ' < ' + this.getDocumentMasterId() + '-' + this.getDocumentRevisionVersion() + ' > ';
+            if (this.getDocumentRevisionTitle()) {
+                return this.getDocumentRevisionTitle() + ' < ' + this.getDocumentMasterId() + '-' + this.getDocumentRevisionVersion() + ' >';
+            }
+            return '< ' + this.getDocumentMasterId() + '-' + this.getDocumentRevisionVersion() + ' >';
         },
 
         getDocumentMasterPermalink: function () {
@@ -57,10 +60,6 @@ define(['backbone'], function (Backbone) {
 
         getDocumentLinkComment:function(comment){
             return this.get('commentLink');
-        },
-
-        getDocumentTitle:function(comment){
-            return this.get('documentTitle');
         }
     });
     return linkedDocument;

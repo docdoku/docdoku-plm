@@ -1,8 +1,7 @@
 {{#editMode}}
 <a class="fa fa-times delete-linked-item" title="{{i18n.DELETE_LINKED_ITEM}}"></a>
 {{/editMode}}
-<span class="documentTitle">{{linkedDocument.getDocumentTitle}}</span>
-<a target="_blank" href="{{linkedDocument.getDocumentMasterPermalink}}" class="reference">< {{linkedDocument.getDocumentMasterId}}-{{linkedDocument.getDocumentRevisionVersion}} ></a>
+<a target="_blank" href="{{linkedDocument.getDocumentMasterPermalink}}" class="reference">{{linkedDocument.getDocKey}}</a>
 {{#commentEditable}}
 {{#editMode}}
 <a class="fa fa-pencil edit-linked-item-comment" title="{{i18n.ADD_COMMENT}}"></a>
