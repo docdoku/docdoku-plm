@@ -23,6 +23,7 @@ import com.docdoku.core.common.User;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.meta.InstanceAttributeDescriptor;
 import com.docdoku.core.meta.InstanceListOfValuesAttribute;
+import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.query.QueryField;
 import com.docdoku.server.rest.collections.QueryResult;
@@ -99,9 +100,12 @@ public class QueryWriter implements MessageBodyWriter<QueryResult> {
             // PartRevision data
 
             if(selects.contains(QueryField.PART_REVISION_MODIFICATION_DATE)){
-                Date modificationDate = part.getLastIteration().getModificationDate();
-                String date = modificationDate != null ? modificationDate.toString() : "";
-                jg.write(QueryField.PART_REVISION_MODIFICATION_DATE, date);
+                PartIteration pi = part.getLastIteration();
+                if(pi != null) {
+                    Date modificationDate = pi.getModificationDate();
+                    String date = modificationDate != null ? modificationDate.toString() : "";
+                    jg.write(QueryField.PART_REVISION_MODIFICATION_DATE, date);
+                }
             }
 
             if(selects.contains(QueryField.PART_REVISION_CREATION_DATE)){
@@ -153,19 +157,24 @@ public class QueryWriter implements MessageBodyWriter<QueryResult> {
 
                 String attributeValue = "";
 
-                List<InstanceAttribute> attributes = part.getLastIteration().getInstanceAttributes();
-                for (InstanceAttribute attribute : attributes) {
-                    InstanceAttributeDescriptor attributeDescriptor = new InstanceAttributeDescriptor(attribute);
-                    if (attributeDescriptor.getName().equals(attributeSelectName)
-                            && attributeDescriptor.getStringType().equals(attributeSelectType)){
+                PartIteration pi = part.getLastIteration();
+                if(pi != null) {
+                    List<InstanceAttribute> attributes = pi.getInstanceAttributes();
+                    if (attributes != null) {
+                        for (InstanceAttribute attribute : attributes) {
+                            InstanceAttributeDescriptor attributeDescriptor = new InstanceAttributeDescriptor(attribute);
+                            if (attributeDescriptor.getName().equals(attributeSelectName)
+                                    && attributeDescriptor.getStringType().equals(attributeSelectType)) {
 
-                        attributeValue = attribute.getValue()+"";
-                        if (attribute instanceof InstanceListOfValuesAttribute){
-                            attributeValue = ((InstanceListOfValuesAttribute) attribute).getSelectedName();
+                                attributeValue = attribute.getValue() + "";
+                                if (attribute instanceof InstanceListOfValuesAttribute) {
+                                    attributeValue = ((InstanceListOfValuesAttribute) attribute).getSelectedName();
+                                }
+                            }
                         }
                     }
+                    jg.write(attributeSelect, attributeValue);
                 }
-                jg.write(attributeSelect, attributeValue);
             }
             jg.writeEnd();
         }
