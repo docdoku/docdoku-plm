@@ -3,12 +3,11 @@ define([
     'backbone',
     'mustache',
     'text!templates/query_builder.html',
-    'query-builder',
     'selectize',
     '../../utils/query-builder-options',
     'common-objects/views/alert',
     'collections/configuration_items'
-], function (Backbone, Mustache, template, queryBuilder, selectize,querybuilderOptions, AlertView, ConfigurationItemCollection) {
+], function (Backbone, Mustache, template,  selectize, querybuilderOptions, AlertView, ConfigurationItemCollection) {
     'use strict';
     var QueryBuilderModal = Backbone.View.extend({
 
