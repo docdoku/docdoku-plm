@@ -61,6 +61,7 @@ define([
             this.checkbox = this.$('input.file-check');
             this.fileNameEl = this.$('.fileName');
             this.fileNameInput = this.$('input[name=filename]');
+            // TODO : remove global jquery calls, moreover, we don't know if we are in modal. Not reliable.
             this.notifications = $('.modal .notifications');
         },
 

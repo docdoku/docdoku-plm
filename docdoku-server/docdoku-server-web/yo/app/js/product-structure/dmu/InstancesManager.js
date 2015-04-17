@@ -1,6 +1,6 @@
 /*global _,$,define,App,THREE,Worker*/
-define(['dmu/LoaderManager', 'async'],
-    function (LoaderManager, async) {
+define(['dmu/LoaderManager', 'async','backbone'],
+    function (LoaderManager, async, Backbone) {
 	    'use strict';
         /**
          *  This class handles instances management.
@@ -20,7 +20,10 @@ define(['dmu/LoaderManager', 'async'],
             var _this = this;
 
             var timestamp = Date.now();
-            Backbone.Events.on('part:saved', newTimestamp, this);
+
+            Backbone.Events.on('part:saved',function(){
+                timestamp = Date.now();
+            }, this);
 
             this.xhrQueue = null;
             this.loadQueue = null;
@@ -241,14 +244,7 @@ define(['dmu/LoaderManager', 'async'],
 	        }
 
             function getTimestamp(){
-                if(!timestamp){
-                    setTimestamp();
-                }
-                return timestamp;
-            }
-
-            function newTimestamp(){
-                timestamp = Date.now();
+                return timestamp || Date.now();
             }
 
 	        function loadPath(path, callback) {

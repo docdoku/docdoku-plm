@@ -1,4 +1,4 @@
-/*global App, THREE*/
+/*global define,App,THREE*/
 define(function(){
 
     'use strict';

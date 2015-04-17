@@ -208,6 +208,7 @@ define([
         onError: function (model) {
             var errorMessage = model.responseText;
 
+            // TODO : avoid global jquery calls. Please fix.
             $("#acl_edit_modal").find('.notifications').first().append(new AlertView({
                 type: 'error',
                 message: errorMessage

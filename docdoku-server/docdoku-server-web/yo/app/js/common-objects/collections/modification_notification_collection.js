@@ -1,4 +1,4 @@
-/*global define,App*/
+/*global _,define,App*/
 define([
     'backbone',
     'common-objects/models/modification_notification'

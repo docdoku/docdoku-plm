@@ -1,4 +1,4 @@
-/*global define,App*/
+/*global define,App,$*/
 define([
     'common-objects/common/singleton_decorator',
     'common-objects/views/base',

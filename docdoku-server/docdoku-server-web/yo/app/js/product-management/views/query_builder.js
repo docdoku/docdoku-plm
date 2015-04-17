@@ -1,4 +1,4 @@
-/*global _,define,App*/
+/*global _,$,bootbox,define,App*/
 define([
     'backbone',
     'mustache',
@@ -9,7 +9,7 @@ define([
     'collections/configuration_items'
 ], function (Backbone, Mustache, template,  selectize, querybuilderOptions, AlertView, ConfigurationItemCollection) {
     'use strict';
-    var QueryBuilderModal = Backbone.View.extend({
+    var QueryBuilderView = Backbone.View.extend({
 
         events: {
             'click .search-button': 'onSearch',
@@ -232,7 +232,6 @@ define([
         },
 
         initWhere:function(){
-            console.log('init where')
             this.$where.queryBuilder({
                 filters: this.queryBuilderFilters,
                 icons:{
@@ -269,7 +268,6 @@ define([
             this.$select.selectize(this.selectizeOptions);
             this.$select[0].selectize.addOption(this.selectizeAvailableOptions);
 
-            var self = this;
             this.$select[0].selectize.on('item_add', function(value, $item){
                 var data = _.findWhere(self.$select[0].selectize.options, {value: value});
 
@@ -405,7 +403,5 @@ define([
         }
     });
 
-
-
-    return QueryBuilderModal
+    return QueryBuilderView
 });

@@ -48,7 +48,6 @@ define([
                 groups: _.values(groups)
             }));
 
-            var self = this;
             _.each(_.keys(groups),function(key){
                 var values = self.orderBy(groups[key].items);
                 _.each(values, function(item){
