@@ -204,6 +204,7 @@ define([
             var selectedParts = this.partListView.getSelectedParts();
             var promptView = new PromptView();
             promptView.setPromptOptions(App.config.i18n.ITERATION_NOTE, App.config.i18n.ITERATION_NOTE_PROMPT_LABEL, App.config.i18n.ITERATION_NOTE_PROMPT_OK, App.config.i18n.ITERATION_NOTE_PROMPT_CANCEL);
+            promptView.specifyInput('textarea');
             window.document.body.appendChild(promptView.render().el);
             promptView.openModal();
 

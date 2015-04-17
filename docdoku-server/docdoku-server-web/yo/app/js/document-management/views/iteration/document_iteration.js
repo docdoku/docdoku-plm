@@ -368,7 +368,6 @@ define([
             var note;
             if (_.isEqual(this.$('#inputRevisionNote').val(), '')) {
                 note = null;
-
             } else {
                 note = this.$('#inputRevisionNote').val();
             }

@@ -152,8 +152,7 @@
                             <label class="control-label" for="inputRevisionNote">{{i18n.REVISION_NOTE}}</label>
 
                             <div class="controls">
-                                <input type="text" id="inputRevisionNote" value="{{iteration.iterationNote}}"
-                                {{^editMode}}disabled="disabled"{{/editMode}} />
+                                <textarea type="text" id="inputRevisionNote" {{^editMode}}disabled="disabled"{{/editMode}} >{{iteration.iterationNote}}</textarea>
                             </div>
                         </div>
                         {{^isReleased}}

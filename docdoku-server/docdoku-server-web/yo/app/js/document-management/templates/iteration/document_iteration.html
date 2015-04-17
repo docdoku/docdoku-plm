@@ -140,9 +140,7 @@
                         <div class="control-group">
                             <label class="control-label" for="inputRevisionNote">{{i18n.REVISION_NOTE}}</label>
                             <div class="controls">
-                                <input type="text" id="inputRevisionNote"  value="{{iteration.revisionNote}}"
-                                {{^editMode}}disabled="disabled"{{/editMode}} />
-
+                                <textarea type="text" id="inputRevisionNote" {{^editMode}}disabled="disabled"{{/editMode}} >{{iteration.revisionNote}}</textarea>
                             </div>
                             <div class="action-checkin-checkout" >
                                 {{^isCheckout}}<button type="button" class="btn btn-small btn-warning action-checkout"> <i class="fa fa-pencil"></i> {{i18n.CHECKOUT}}</button>{{/isCheckout}}
