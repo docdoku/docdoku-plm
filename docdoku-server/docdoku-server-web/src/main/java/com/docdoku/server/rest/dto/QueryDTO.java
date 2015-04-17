@@ -20,6 +20,8 @@ public class QueryDTO {
     private List<String> orderByList;
     private List<String> groupedByList;
 
+    private List<String> productsId;
+
     public QueryDTO() {
     }
 
@@ -77,5 +79,13 @@ public class QueryDTO {
 
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
+    }
+
+    public List<String> getProductsId() {
+        return productsId;
+    }
+
+    public void setProductsId(List<String> productsId) {
+        this.productsId = productsId;
     }
 }

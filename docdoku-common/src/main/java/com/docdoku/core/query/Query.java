@@ -86,17 +86,26 @@ public class Query implements Serializable {
     )
     private Set<String> groupedByList=new HashSet<>();
 
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "QUERY_PRODUCTS",
+            joinColumns= {
+                    @JoinColumn(name = "QUERY_ID", referencedColumnName = "ID")
+            }
+    )
+    private Set<String> productsId=new HashSet<>();
+
     public Query() {
     }
 
-    public Query(User author, String name, QueryRule queryRule, Set<String> selects, Set<String> orderByList, Set<String> groupedByList) {
+    public Query(User author, String name, Date creationDate, QueryRule queryRule, Set<String> selects, Set<String> orderByList, Set<String> groupedByList, Set<String> productsId) {
         this.author = author;
         this.name = name;
+        this.creationDate = creationDate;
         this.queryRule = queryRule;
         this.selects = selects;
         this.orderByList = orderByList;
         this.groupedByList = groupedByList;
-        this.creationDate = new Date();
+        this.productsId = productsId;
     }
 
     public int getId() {
@@ -165,5 +174,13 @@ public class Query implements Serializable {
 
     public void setGroupedByList(Set<String> groupedByList) {
         this.groupedByList = groupedByList;
+    }
+
+    public Set<String> getProductsId() {
+        return productsId;
+    }
+
+    public void setProductsId(Set<String> productsId) {
+        this.productsId = productsId;
     }
 }

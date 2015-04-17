@@ -58,4 +58,5 @@ public class InstanceAttributeDescriptorDTO implements Serializable{
     public void setLovItems(List<NameValuePairDTO> lovItems) {
         this.lovItems = lovItems;
     }
+
 }

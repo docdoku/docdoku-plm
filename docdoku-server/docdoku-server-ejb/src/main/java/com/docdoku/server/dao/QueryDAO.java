@@ -120,37 +120,55 @@ public class QueryDAO {
     public List<PartRevision> runQuery(Workspace workspace, Query query) {
 
         // Simple select
-        cq.select(pm);
+        cq.select(pr);
 
         // Restrict search to workspace
         Expression workspaceExp = pm.get("workspace");
         Predicate rulesPredicate = getPredicate(query.getQueryRule());
-        Predicate workspacePredicate = cb.and(cb.equal(workspaceExp,workspace));
+        Predicate workspacePredicate = cb.and(cb.equal(workspaceExp, workspace));
 
         // Join PartMaster
-        Join<PartRevision,PartMaster> pmJoin = pr.join("partMaster");
-        Predicate prJoinPredicate = pmJoin.on(cb.equal(pm.get("number"), pr.get("partMasterNumber"))).getOn();
+        Predicate prJoinPredicate = cb.and(cb.equal(pm.get("number"), pr.get("partMasterNumber")), cb.equal(pm.get("workspace"), workspace));
 
         // Join PartIteration
         Join<PartIteration,PartRevision> piJoin = pi.join("partRevision");
-        Predicate piJoinPredicate = piJoin.on(cb.equal(pi.get("partRevision").get("partMasterNumber"), pr.get("partMasterNumber"))).getOn();
+        Predicate piJoinPredicate = piJoin.on(cb.and(cb.equal(pi.get("partRevision").get("partMasterNumber"), pr.get("partMasterNumber")), cb.equal(pr.get("partMaster").get("workspace"), workspace))).getOn();
 
+
+//        Join<PartIteration,PartRevision> piJoin = pi.join("partRevision");
+//        Predicate piJoinPredicate = piJoin.on(
+//            cb.equal(pi.get("partRevision").get("partMasterNumber"),pr.get("partMasterNumber"))
+//        ).getOn();
+//
+//        // Join Attributes
 //        Join<PartIteration,InstanceAttribute> iaJoin = pi.join("instanceAttributes");
-//        Predicate iaJoinPredicate = iaJoin.on(????).getOn();
+//        Predicate itaJoinPredicate = iaJoin.on(ita.in(pi.get("instanceAttributes"))).getOn();
+//        Predicate inaJoinPredicate = iaJoin.on(ina.in(pi.get("instanceAttributes"))).getOn();
+//        Predicate idaJoinPredicate = iaJoin.on(ida.in(pi.get("instanceAttributes"))).getOn();
+//        Predicate ibaJoinPredicate = iaJoin.on(iba.in(pi.get("instanceAttributes"))).getOn();
+//        Predicate iuaJoinPredicate = iaJoin.on(iua.in(pi.get("instanceAttributes"))).getOn();
+//        Predicate ilaJoinPredicate = iaJoin.on(ila.in(pi.get("instanceAttributes"))).getOn();
 
-        cq.where(cb.and(new Predicate[]{
+
+        cq.where(cb.and(
             rulesPredicate,
             workspacePredicate,
             prJoinPredicate,
-            piJoinPredicate
+            piJoinPredicate/*,
+            itaJoinPredicate,
+            inaJoinPredicate,
+            idaJoinPredicate,
+            ibaJoinPredicate,
+            iuaJoinPredicate,
+            ilaJoinPredicate*/
+        ));
 
-        }));
-
-        TypedQuery<PartMaster> tp = em.createQuery(cq);
+        TypedQuery<PartRevision> tp = em.createQuery(cq);
         Set<PartRevision> revisions = new HashSet<>();
 
-        for(PartMaster part : tp.getResultList()){
-            revisions.addAll(part.getPartRevisions());
+        for(PartRevision part : tp.getResultList()){
+            System.out.println("###### " + part.getPartMasterWorkspaceId());
+            revisions.add(part);
         }
 
         return new ArrayList<>(revisions);
@@ -200,10 +218,6 @@ public class QueryDAO {
             return getPartRevisionPredicate(field.substring(3), operator, value, type);
         }
 
-//        if(field.startsWith("pi.")){
-//            return getPartIterationPredicate(field.substring(3),operator,value, type);
-//        }
-
         if(field.startsWith("author.")){
             return getAuthorPredicate(field.substring(7), operator, value, type);
         }
@@ -242,40 +256,47 @@ public class QueryDAO {
     }
 
     private Predicate getPartRevisionPredicate(String field, String operator, String value, String type) {
-        return getPredicate(pm.get(field),operator,value,type);
+        return getPredicate(pr.get(field),operator,value,type);
     }
+
     private Predicate getPartMasterPredicate(String field, String operator, String value, String type) {
         return getPredicate(pm.get(field),operator,value,type);
     }
 
+    // Instances Attributes
     private Predicate getInstanceURLAttributePredicate(String field, String operator, String value, String type) {
-        return null;
+        Predicate valuePredicate = getPredicate(iua.get("urlValue"), operator, value, "string");
+        return cb.and(cb.equal(iua.get("name"),field),valuePredicate);
     }
 
     private Predicate getInstanceBooleanAttributePredicate(String field, String operator, String value, String type) {
-        return null;
+        return cb.and(cb.equal(ila.get("name"),field),cb.equal(iba.get("booleanValue"),value));
     }
 
     private Predicate getInstanceNumberAttributePredicate(String field, String operator, String value, String type) {
-        return null;
+        Predicate valuePredicate = getPredicate(ida.get("dateValue"), operator, value, "date");
+        return cb.and(cb.equal(ila.get("name"),field),valuePredicate);
     }
 
     private Predicate getInstanceLovAttributePredicate(String field, String operator, String value, String type) {
-        return null;
+        return cb.and(cb.equal(ila.get("name"),field),cb.equal(ila.get("indexValue"),value));
     }
 
     private Predicate getInstanceDateAttributePredicate(String field, String operator, String value, String type) {
-        return null;
+        Predicate valuePredicate = getPredicate(ida.get("dateValue"), operator, value, "date");
+        return cb.and(cb.equal(ida.get("name"),field),valuePredicate);
     }
 
     private Predicate getInstanceTextAttributePredicate(String field, String operator, String value, String type) {
-        Predicate namePredicate = getPredicate(ita.get("name"), operator, field, "string");
         Predicate valuePredicate = getPredicate(ita.get("textValue"), operator, value, "string");
-        return cb.and(namePredicate,valuePredicate);
+        return cb.and(cb.equal(ita.get("name"),field),valuePredicate);
     }
 
 
+    // Rule parsing
+
     private Predicate getPredicate(Expression fieldExp, String operator, String value, String type){
+
         Object o;
 
         switch(type){
@@ -287,9 +308,16 @@ public class QueryDAO {
                 try {
                     o = new SimpleDateFormat("yyyy-MM-dd").parse(value);
                 } catch (ParseException e) {
-                    throw new IllegalArgumentException();                }
+                    throw new IllegalArgumentException();
+                }
                 break;
-
+            case "double":
+                try {
+                    o = Double.parseDouble(value);
+                }catch(NumberFormatException e){
+                    throw new IllegalArgumentException();
+                }
+                break;
             default :
                 o=value;
                 break;
@@ -309,16 +337,39 @@ public class QueryDAO {
             case "ends_with" : return cb.like(fieldExp, "%"+o);
             case "not_ends_with" : return cb.like(fieldExp, "%"+o).not();
 
-
-            case "less": return cb.lessThan(fieldExp,(Date)o);
-            case "less_or_equal": return cb.lessThanOrEqualTo(fieldExp,(Date)o);
-
-            case "greater": return cb.greaterThan(fieldExp,(Date)o);
-            case "greater_or_equal": return cb.greaterThanOrEqualTo(fieldExp,(Date)o);
-
+            case "less":
+                if(type.equals("date")){
+                    return cb.lessThan(fieldExp,(Date)o);
+                } else if(type.equals("double")){
+                    return cb.lessThan(fieldExp,(Double)o);
+                }
+                break;
+            case "less_or_equal":
+                if(type.equals("date")){
+                    return cb.lessThanOrEqualTo(fieldExp, (Date) o);
+                } else if(type.equals("double")){
+                    return cb.lessThanOrEqualTo(fieldExp, (Double)o);
+                }
+                break;
+            case "greater":
+                if(type.equals("date")){
+                    return cb.greaterThan(fieldExp, (Date) o);
+                } else if(type.equals("double")){
+                    return cb.greaterThan(fieldExp, (Double) o);
+                }
+                break;
+            case "greater_or_equal":
+                if(type.equals("date")){
+                    return cb.greaterThanOrEqualTo(fieldExp, (Date) o);
+                } else if(type.equals("double")){
+                    return cb.greaterThanOrEqualTo(fieldExp, (Double) o);
+                }
+                break;
             default:
-                throw new IllegalArgumentException();
+                break;
         }
 
+        // Should have return a value
+        throw new IllegalArgumentException();
     }
 }
