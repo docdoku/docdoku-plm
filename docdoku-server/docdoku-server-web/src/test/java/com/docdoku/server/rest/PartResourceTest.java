@@ -58,7 +58,7 @@ public class PartResourceTest {
     @Test
     public void createComponents() {
         //Given
-        PartIterationDTO data = new PartIterationDTO(ResourceUtil.WORKSPACE_ID, "partNumber", "A", 1);
+        PartIterationDTO data = new PartIterationDTO(ResourceUtil.WORKSPACE_ID, "partName", "partNumber", "A", 1);
         List partUsageLinkDTOs = new ArrayList<PartUsageLinkDTO>();
         PartUsageLinkDTO partUsageLinkDTO = new PartUsageLinkDTO();
         partUsageLinkDTO.setAmount(2);
