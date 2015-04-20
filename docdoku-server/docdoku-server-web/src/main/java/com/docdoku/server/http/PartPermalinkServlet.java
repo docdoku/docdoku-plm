@@ -22,7 +22,6 @@ package com.docdoku.server.http;
 
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.exceptions.NotAllowedException;
-import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.product.PartRevisionKey;
@@ -98,4 +97,5 @@ public class PartPermalinkServlet extends HttpServlet {
         pRequest.setAttribute("geometryFileURI",geometryFileURI);
         pRequest.getRequestDispatcher(pRequest.getContextPath()+"/faces/partPermalink.xhtml").forward(pRequest, pResponse);
     }
+
 }

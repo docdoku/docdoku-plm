@@ -28,6 +28,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Named("accountBean")
@@ -171,5 +172,21 @@ public class AccountBean {
             return locale;
         }
         return Locale.getDefault();
+    }
+
+    public String addTimeZone(Date date){
+
+        if(date == null){
+            return "";
+        }
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        if(timeZone == null || timeZone.isEmpty()){
+            return simpleDateFormat.format(date);
+        }
+
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone(timeZone));
+        return simpleDateFormat.format(date);
     }
 }
