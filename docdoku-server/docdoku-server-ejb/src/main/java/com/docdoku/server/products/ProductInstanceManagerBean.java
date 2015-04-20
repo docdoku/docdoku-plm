@@ -320,7 +320,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public BinaryResource renameFileInProductInstance(String pFullName, String pNewName, String serialNumber, String cId, int iteration) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, FileNotFoundException, ProductInstanceMasterNotFoundException, NotAllowedException, AccessRightException, FileAlreadyExistsException, CreationException {
+    public BinaryResource renameFileInProductInstance(String pFullName, String pNewName, String serialNumber, String cId, int iteration) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, FileNotFoundException, ProductInstanceMasterNotFoundException, NotAllowedException, AccessRightException, FileAlreadyExistsException, CreationException, StorageException {
         User user = userManager.checkWorkspaceReadAccess(BinaryResource.parseWorkspaceId(pFullName));
         Locale userLocale = new Locale(user.getLanguage());
 
@@ -340,22 +340,14 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
             //check access rights on product instance
             checkProductInstanceWriteAccess(user.getWorkspaceId(), productInstanceMaster, user);
 
+            dataManager.renameFile(file, pNewName);
+            productInstanceIteration.removeFile(file);
+            binDAO.removeBinaryResource(file);
 
-            try {
-                dataManager.renameFile(file, pNewName);
-                productInstanceIteration.removeFile(file);
-                binDAO.removeBinaryResource(file);
-
-                BinaryResource newFile = new BinaryResource(file.getNewFullName(pNewName), file.getContentLength(), file.getLastModified());
-                binDAO.createBinaryResource(newFile);
-                productInstanceIteration.addFile(newFile);
-                return newFile;
-
-
-            } catch (StorageException e) {
-                LOGGER.log(Level.INFO, null, e);
-                return null;
-            }
+            BinaryResource newFile = new BinaryResource(file.getNewFullName(pNewName), file.getContentLength(), file.getLastModified());
+            binDAO.createBinaryResource(newFile);
+            productInstanceIteration.addFile(newFile);
+            return newFile;
 
         } else {
             throw new FileAlreadyExistsException(userLocale, pNewName);
@@ -721,7 +713,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     @Override
-    public BinaryResource renameFileInPathData(String workspaceId, String configurationItemId, String serialNumber, int pathDataId, String pFullName, String pNewName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, FileNotFoundException, ProductInstanceMasterNotFoundException, NotAllowedException, AccessRightException, FileAlreadyExistsException, CreationException {
+    public BinaryResource renameFileInPathData(String workspaceId, String configurationItemId, String serialNumber, int pathDataId, String pFullName, String pNewName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, FileNotFoundException, ProductInstanceMasterNotFoundException, NotAllowedException, AccessRightException, FileAlreadyExistsException, CreationException, StorageException {
 
         User user = userManager.checkWorkspaceReadAccess(BinaryResource.parseWorkspaceId(pFullName));
         Locale userLocale = new Locale(user.getLanguage());
@@ -751,21 +743,14 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
                 throw new NotAllowedException(userLocale,"NotAllowedException52");
             }
 
-            try {
-                dataManager.renameFile(file, pNewName);
-                pathData.removeFile(file);
-                binDAO.removeBinaryResource(file);
+            dataManager.renameFile(file, pNewName);
+            pathData.removeFile(file);
+            binDAO.removeBinaryResource(file);
 
-                BinaryResource newFile = new BinaryResource(file.getNewFullName(pNewName), file.getContentLength(), file.getLastModified());
-                binDAO.createBinaryResource(newFile);
-                pathData.addFile(newFile);
-                return newFile;
-
-
-            } catch (StorageException e) {
-                LOGGER.log(Level.INFO, null, e);
-                return null;
-            }
+            BinaryResource newFile = new BinaryResource(file.getNewFullName(pNewName), file.getContentLength(), file.getLastModified());
+            binDAO.createBinaryResource(newFile);
+            pathData.addFile(newFile);
+            return newFile;
 
         } else {
             throw new FileAlreadyExistsException(userLocale, pNewName);

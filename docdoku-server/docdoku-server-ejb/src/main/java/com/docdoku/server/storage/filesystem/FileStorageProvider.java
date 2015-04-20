@@ -54,6 +54,21 @@ public class FileStorageProvider implements StorageProvider {
         return getInputStream(file);
     }
 
+    @Override
+    public File getBinaryResourceFile(BinaryResource pBinaryResource) throws StorageException, FileNotFoundException {
+        File file = new File(getVirtualPath(pBinaryResource));
+        if (file.exists()) {
+            try {
+                new BufferedInputStream(new FileInputStream(file));
+                return file;
+            } catch (java.io.FileNotFoundException e) {
+                throw new StorageException(e.getMessage(), e);
+            }
+        } else {
+            throw new FileNotFoundException(new StringBuilder().append(file.getAbsolutePath()).append(" not found").toString());
+        }
+    }
+
     public InputStream getBinarySubResourceInputStream(BinaryResource pBinaryResource, String subResourceVirtualPath) throws StorageException, FileNotFoundException {
         File subResourceFile = new File(getSubResourceFolder(pBinaryResource), Tools.unAccent(subResourceVirtualPath));
         return getInputStream(subResourceFile);
@@ -185,8 +200,11 @@ public class FileStorageProvider implements StorageProvider {
     }
 
     @Override
-    public void renameData(BinaryResource pBinaryResource, String pNewName) throws StorageException {
-        File src = new File(getVirtualPath(pBinaryResource));
-        src.renameTo(new File(new StringBuilder().append(src.getParentFile().getAbsolutePath()).append("/").append(Tools.unAccent(pNewName)).toString()));
+    public void renameData(File src, String pNewName) throws StorageException {
+        if(src.exists()){
+            src.renameTo(new File(new StringBuilder().append(src.getParentFile().getAbsolutePath()).append("/").append(Tools.unAccent(pNewName)).toString()));
+        }else{
+            throw new StorageException(new StringBuilder().append("Error in renaming file : ").append(src.getAbsolutePath()).toString());
+        }
     }
 }

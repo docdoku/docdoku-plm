@@ -1386,7 +1386,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public BinaryResource renameCADFileInPartIteration(String pFullName, String pNewName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, FileNotFoundException, FileAlreadyExistsException, CreationException {
+    public BinaryResource renameCADFileInPartIteration(String pFullName, String pNewName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, FileNotFoundException, FileAlreadyExistsException, CreationException, StorageException {
 
         User user = userManager.checkWorkspaceReadAccess(BinaryResource.parseWorkspaceId(pFullName));
         Locale userLocale = new Locale(user.getLanguage());
@@ -1399,26 +1399,21 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         PartRevision partR = partIteration.getPartRevision();
 
         if (isCheckoutByUser(user,partR) && partR.getLastIteration().equals(partIteration)) {
-            try {
 
-                dataManager.renameFile(file, pNewName);
+            dataManager.renameFile(file, pNewName);
 
-                partIteration.setNativeCADFile(null);
-                binDAO.removeBinaryResource(file);
+            partIteration.setNativeCADFile(null);
+            binDAO.removeBinaryResource(file);
 
-                BinaryResource newFile = new BinaryResource(file.getNewFullName(pNewName),file.getContentLength(), file.getLastModified());
+            BinaryResource newFile = new BinaryResource(file.getNewFullName(pNewName),file.getContentLength(), file.getLastModified());
 
-                binDAO.createBinaryResource(newFile);
-                partIteration.setNativeCADFile(newFile);
+            binDAO.createBinaryResource(newFile);
+            partIteration.setNativeCADFile(newFile);
 
-                return newFile;
-            } catch (StorageException e) {
-                LOGGER.log(Level.INFO, null, e);
-                return null;
-            }
+            return newFile;
+        } else{
+            throw new NotAllowedException(userLocale, "NotAllowedException35");
         }
-        return file;
-
 
     }
 
@@ -1716,7 +1711,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public BinaryResource renameFileInTemplate(String pFullName, String pNewName) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, FileNotFoundException, UserNotActiveException, FileAlreadyExistsException, CreationException {
+    public BinaryResource renameFileInTemplate(String pFullName, String pNewName) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, FileNotFoundException, UserNotActiveException, FileAlreadyExistsException, CreationException, StorageException {
         User user = userManager.checkWorkspaceReadAccess(BinaryResource.parseWorkspaceId(pFullName));
 
         BinaryResourceDAO binDAO = new BinaryResourceDAO(new Locale(user.getLanguage()), em);
@@ -1728,25 +1723,17 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
         checkPartTemplateWriteAccess(template,user);
 
-        try {
+        dataManager.renameFile(file, pNewName);
 
-            dataManager.renameFile(file, pNewName);
+        template.setAttachedFile(null);
+        binDAO.removeBinaryResource(file);
 
-            template.setAttachedFile(null);
-            binDAO.removeBinaryResource(file);
+        BinaryResource newFile = new BinaryResource(file.getNewFullName(pNewName),file.getContentLength(), file.getLastModified());
 
-            BinaryResource newFile = new BinaryResource(file.getNewFullName(pNewName),file.getContentLength(), file.getLastModified());
+        binDAO.createBinaryResource(newFile);
+        template.setAttachedFile(newFile);
 
-            binDAO.createBinaryResource(newFile);
-            template.setAttachedFile(newFile);
-
-            return newFile;
-
-        } catch (StorageException e) {
-            LOGGER.log(Level.INFO, null, e);
-            return null;
-        }
-
+        return newFile;
 
     }
 

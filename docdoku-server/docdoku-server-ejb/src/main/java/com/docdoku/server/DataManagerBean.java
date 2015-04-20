@@ -32,6 +32,7 @@ import javax.annotation.Resource;
 import javax.annotation.security.DeclareRoles;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
+import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Date;
@@ -50,7 +51,6 @@ public class DataManagerBean implements IDataManagerLocal {
 
     @PostConstruct
     private void init() {
-        //defaultStorageProvider = new GoogleStorageProvider("");
         fileStorageProvider = new FileStorageProvider(vaultPath);
         defaultStorageProvider = fileStorageProvider;
     }
@@ -125,9 +125,24 @@ public class DataManagerBean implements IDataManagerLocal {
         fileStorageProvider.cleanParentFolders(binaryResource);
     }
 
+
+    private File getBinarySubResourceFile(BinaryResource binaryResource) throws StorageException {
+        try {
+            return fileStorageProvider.getBinaryResourceFile(binaryResource);
+        } catch (FileNotFoundException e) {
+            BinaryResource previous = binaryResource.getPrevious();
+            if (previous != null) {
+                return getBinarySubResourceFile(previous);
+            } else {
+                throw new StorageException(new StringBuilder().append("Can't find resource ").append(binaryResource.getFullName()).toString());
+            }
+        }
+    }
+
     @Override
     public void renameFile(BinaryResource binaryResource, String pNewName) throws StorageException {
-        fileStorageProvider.renameData(binaryResource,pNewName);
+        File file = getBinarySubResourceFile(binaryResource);
+        fileStorageProvider.renameData(file, pNewName);
     }
 
     @Override

@@ -329,7 +329,7 @@ public class PartResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/iterations/{partIteration}/files/{fileName}")
-    public FileDTO renameAttachedFile(@PathParam("workspaceId") String workspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion, @PathParam("partIteration") int partIteration, @PathParam("fileName") String fileName, FileDTO fileDTO) throws UserNotActiveException, WorkspaceNotFoundException, CreationException, UserNotFoundException, FileNotFoundException, NotAllowedException, FileAlreadyExistsException {
+    public FileDTO renameAttachedFile(@PathParam("workspaceId") String workspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion, @PathParam("partIteration") int partIteration, @PathParam("fileName") String fileName, FileDTO fileDTO) throws UserNotActiveException, WorkspaceNotFoundException, CreationException, UserNotFoundException, FileNotFoundException, NotAllowedException, FileAlreadyExistsException, StorageException {
         String fileFullName = workspaceId + "/parts/" + partNumber + "/" + partVersion+ "/" + partIteration+ "/nativecad/" + fileName;
         BinaryResource binaryResource = productService.renameCADFileInPartIteration(fileFullName, fileDTO.getShortName());
         return new FileDTO(true,binaryResource.getFullName(),binaryResource.getName());
