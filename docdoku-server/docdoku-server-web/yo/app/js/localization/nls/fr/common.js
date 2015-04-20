@@ -41,7 +41,7 @@ define({
 	BASELINES: "Baselines",
 	BLOCKER_TEXT: "(Z, Q, S, D = Déplacer, ESPACE = Haut, CTRL = Bas, SOURIS = Regarder autour, ECHAP = Quitter)",
 	BLOCKER_TITLE: "Cliquez pour lancer la visualisation",
-	BOM_VIEW: "Liste des composants",
+	BOM_VIEW: "Visualiser structure produit",
 	BOOLEAN: "Booléen",
     BY: "par",
 	CAD_FILE: "Fichier CAO",
