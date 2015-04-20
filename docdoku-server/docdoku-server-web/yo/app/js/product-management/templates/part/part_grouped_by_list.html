@@ -1,0 +1,15 @@
+{{#groups}}
+{{#name}}
+<h4>{{name}}</h4>
+{{/name}}
+<table class="table table-striped table-condensed">
+   <thead>
+    <tr>
+        {{#columns}}
+        <th>{{name}}</th>
+        {{/columns}}
+    </tr>
+    </thead>
+    <tbody class="items-{{key}}"></tbody>
+</table>
+{{/groups}}

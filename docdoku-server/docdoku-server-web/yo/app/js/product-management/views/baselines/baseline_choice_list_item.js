@@ -44,7 +44,7 @@ define([
             this.$('.fa-chevron-right').last().remove();
 
             if(this.options.removable){
-                this.$el.toggleClass('not-retained', !this.model.retained)
+                this.$el.toggleClass('not-retained', !this.model.retained);
             }
 
             return this;
@@ -67,7 +67,7 @@ define([
 
             if(this.options.removable){
                 this.model.retained = this.choice!==this.defaultChoice;
-                this.$el.toggleClass('not-retained', !this.model.retained)
+                this.$el.toggleClass('not-retained', !this.model.retained);
             }
         },
         changeOptional:function(e){
@@ -86,7 +86,7 @@ define([
 
             if(this.options.removable){
                 this.model.retained = this.choice!==this.defaultChoice;
-                this.$el.toggleClass('not-retained', !this.model.retained)
+                this.$el.toggleClass('not-retained', !this.model.retained);
             }
         },
         resetNominal:function(){

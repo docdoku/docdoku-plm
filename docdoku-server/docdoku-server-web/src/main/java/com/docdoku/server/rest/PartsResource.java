@@ -30,25 +30,28 @@ import com.docdoku.core.product.PartIterationKey;
 import com.docdoku.core.product.PartMaster;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.query.PartSearchQuery;
+import com.docdoku.core.query.Query;
 import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
+import com.docdoku.server.rest.collections.QueryResult;
 import com.docdoku.server.rest.dto.*;
 import com.docdoku.server.rest.util.SearchQueryParser;
+import org.dozer.DozerBeanMapperSingletonWrapper;
+import org.dozer.Mapper;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import javax.ws.rs.core.Response;
+import java.util.*;
 
 @Stateless
 @DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
@@ -65,6 +68,12 @@ public class PartsResource {
     private PartResource part;
 
     public PartsResource() {
+    }
+    private Mapper mapper;
+
+    @PostConstruct
+    public void init() {
+        mapper = DozerBeanMapperSingletonWrapper.getInstance();
     }
 
     @Path("{partNumber: [^/].*}-{partVersion:[A-Z]+}")
@@ -148,11 +157,55 @@ public class PartsResource {
     }
 
     @GET
+    @Path("queries")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<QueryDTO> getCustomQueries(@PathParam("workspaceId") String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+        List<Query> queries = productService.getQueries(workspaceId);
+        List<QueryDTO> queryDTOs = new ArrayList<>();
+        for(Query query : queries){
+            queryDTOs.add(mapper.map(query,QueryDTO.class));
+        }
+        return queryDTOs;
+    }
+
+    @GET
+    @Path("queries/{queryId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response runExistingQuery(@PathParam("workspaceId") String workspaceId, @PathParam("queryId") int queryId) throws EntityNotFoundException, UserNotActiveException, AccessRightException {
+        Query query = productService.getQuery(workspaceId,queryId);
+        List<PartRevision> partRevisions = productService.searchPartRevisions(workspaceId, query);
+        QueryResult queryResult = new QueryResult(query,partRevisions);
+        return Response.ok().lastModified(new Date()).entity(queryResult).build();
+    }
+
+    @POST
+    @Path("queries")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response runCustomQuery(@PathParam("workspaceId") String workspaceId, @QueryParam("save") boolean save, QueryDTO queryDTO) throws EntityNotFoundException, UserNotActiveException, AccessRightException, CreationException, QueryAlreadyExistsException {
+        Query query = mapper.map(queryDTO, Query.class);
+        List<PartRevision> partRevisions = productService.searchPartRevisions(workspaceId, query);
+        if(save){
+            productService.createQuery(workspaceId,query);
+        }
+        QueryResult queryResult = new QueryResult(query,partRevisions);
+        return Response.ok().lastModified(new Date()).entity(queryResult).build();
+    }
+
+    @DELETE
+    @Path("queries/{queryId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response deleteQuery(@PathParam("workspaceId") String workspaceId, @PathParam("queryId") int queryId) throws EntityNotFoundException, UserNotActiveException, AccessRightException {
+        productService.deleteQuery(workspaceId,queryId);
+        return Response.ok().build();
+    }
+
+    @GET
     @Path("checkedout")
     @Produces(MediaType.APPLICATION_JSON)
     public List<PartDTO> getCheckedOutPartRevisions(@PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
-
         PartRevision[] checkedOutPartRevisions = productService.getCheckedOutPartRevisions(workspaceId);
         List<PartDTO> partDTOs = new ArrayList<>();
 

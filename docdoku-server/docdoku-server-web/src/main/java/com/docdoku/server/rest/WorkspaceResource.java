@@ -103,6 +103,9 @@ public class WorkspaceResource {
     @EJB
     private LOVResource lov;
 
+    @EJB
+    private AttributesResource attributes;
+
     private Mapper mapper;
 
     public WorkspaceResource() {
@@ -228,4 +231,7 @@ public class WorkspaceResource {
 
     @Path("/{workspaceId}/lov")
     public LOVResource lov(){ return lov;}
+
+    @Path("/{workspaceId}/attributes")
+    public AttributesResource attributes(){ return attributes;}
 }

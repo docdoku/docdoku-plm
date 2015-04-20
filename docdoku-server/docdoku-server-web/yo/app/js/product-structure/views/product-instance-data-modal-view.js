@@ -1,4 +1,4 @@
-/*global define,App,_*/
+/*global define,App,_,$*/
 define([
         'backbone',
         'mustache',
@@ -134,12 +134,12 @@ define([
             },
 
             onSave: function(){
-                var self = this;
+                var self = this, url;
                 this.model.setAttributes(this.attributesView.collection.toJSON());
                 this.model.setDescription(this.$('.description-input').val());
                 if(this.isNew){
                     //POST
-                    var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + App.config.productId + '/product-instances/' + this.serialNumber + '/pathdata';
+                    url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + App.config.productId + '/product-instances/' + this.serialNumber + '/pathdata';
                     $.ajax({
                         type: 'POST',
                         url : url,
@@ -159,7 +159,7 @@ define([
                     this.model.setDocumentLinked(this.linkedDocuments.toJSON());
                     this.model.setAttachedFiles(this.attachedFiles.toJSON());
                     //PUT
-                    var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + App.config.productId + '/product-instances/' + this.serialNumber + '/pathdata/'+this.model.getId();
+                    url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + App.config.productId + '/product-instances/' + this.serialNumber + '/pathdata/'+this.model.getId();
                     $.ajax({
                         type: 'PUT',
                         url : url,

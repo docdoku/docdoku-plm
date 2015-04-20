@@ -38,7 +38,7 @@ define([
             this.baselinePartListView.model = this.productBaseline;
 
             this.baselineConfigurationsView = new BaselineConfigurationsView().render();
-            this.baselineConfigurationsView.on('configuration:changed',this.updateChoicesView)
+            this.baselineConfigurationsView.on('configuration:changed',this.updateChoicesView);
 		},
 
 		render: function () {
@@ -117,7 +117,7 @@ define([
                     this.showLoader();
                     this.model.getLatestChoices().success(this.fillChoices).error(this.onRequestsError);
                 }
-                this.model.getConfigurations().success(this.fillConfigurations)
+                this.model.getConfigurations().success(this.fillConfigurations);
             }
         },
 

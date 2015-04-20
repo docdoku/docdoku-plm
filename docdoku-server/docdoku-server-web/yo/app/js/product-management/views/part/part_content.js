@@ -1,4 +1,4 @@
-/*global _,define,App,bootbox,window*/
+/*global _,$,define,App,bootbox,window*/
 define([
     'backbone',
     'mustache',
@@ -11,7 +11,7 @@ define([
     'views/part/part_new_version',
     'common-objects/views/prompt',
     'common-objects/views/security/acl_edit',
-    'views/advanced_search',
+    '../query_builder',
     'text!common-objects/templates/buttons/delete_button.html',
     'text!common-objects/templates/buttons/checkout_button_group.html',
     'text!common-objects/templates/buttons/new_version_button.html',
@@ -23,8 +23,10 @@ define([
 	'text!templates/part/search_part_form.html',
     'common-objects/views/alert',
     'common-objects/views/tags/tags_management',
-    'views/product/product_creation_view'
-], function (Backbone, Mustache, Async, PartCollection, PartSearchCollection, template, PartListView, PartCreationView, PartNewVersionView, PromptView, ACLEditView, AdvancedSearchView, deleteButton, checkoutButtonGroup, newVersionButton, releaseButton, aclButton, newProductButton, tagsButton, obsoleteButton, searchForm, AlertView,TagsManagementView,ProductCreationView) {
+    'views/product/product_creation_view',
+    'views/advanced_search',
+    'views/part/part_grouped_by_list'
+], function (Backbone, Mustache, Async, PartCollection, PartSearchCollection, template, PartListView, PartCreationView, PartNewVersionView, PromptView, ACLEditView, QueryBuilder, deleteButton, checkoutButtonGroup, newVersionButton, releaseButton, aclButton, newProductButton, tagsButton, obsoleteButton, searchForm, AlertView,TagsManagementView,ProductCreationView,AdvancedSearchView, PartGroupedByView) {
     'use strict';
 	var PartContentView = Backbone.View.extend({
         events: {
@@ -45,7 +47,8 @@ define([
             'click button.current-page': 'goToPage',
             'click button.new-product': 'newProduct',
             'submit #part-search-form': 'onQuickSearch',
-            'click .advanced-search-button': 'onAdvancedSearch'
+            'click .advanced-search-button': 'onAdvancedSearch',
+            'click .display-query-builder-button': 'toggleQueryBuilder'
         },
 
         partials: {
@@ -100,6 +103,11 @@ define([
                 collection: this.partsCollection
             }).render();
 
+
+            this.queryBuilder = new QueryBuilder({
+                el: this.$('.query-builder')
+            });
+
             this.bindEvent();
             return this;
         },
@@ -137,6 +145,19 @@ define([
             this.partListView.on('new-product-button:display', this.changeNewProductButtonDisplay);
 
             this.delegateEvents();
+
+            var self = this;
+            this.queryBuilder.on('query:search', function(data){
+                if(self.partListView){
+                    self.partListView.remove();
+                    self.pageControls.remove();
+                    self.$('#part_table_filter').remove();
+                }
+                self.queryTable = new PartGroupedByView({
+                    data : data,
+                    el: self.$('#query-table')
+                }).render();
+            });
 
         },
 
@@ -427,8 +448,18 @@ define([
                         part.markAsObsolete();
                     });
                 }
-
             });
+        },
+
+        toggleQueryBuilder:function(){
+            this.$el.toggleClass('displayQueryBuilder');
+            this.$('.display-query-builder-button').toggleClass('fa-angle-double-down');
+            this.$('.display-query-builder-button').toggleClass('fa-angle-double-up');
+            if(this.$el.hasClass('displayQueryBuilder')){
+                this.queryBuilder.render();
+            }else{
+                this.queryBuilder.destroy();
+            }
         }
 
     });

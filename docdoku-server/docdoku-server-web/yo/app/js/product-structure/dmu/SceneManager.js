@@ -1095,7 +1095,7 @@ define([
             _this.clearMeasures();
             _.each(measuresPoints, function(points){
                 var point0 = new THREE.Vector3(points[0].x, points[0].y, points[0].z);
-                var point1 = new THREE.Vector3(points[1].x, points[1].y, points[1].z);;
+                var point1 = new THREE.Vector3(points[1].x, points[1].y, points[1].z);
 
                 _this.drawMeasure([point0, point1]);
             });
