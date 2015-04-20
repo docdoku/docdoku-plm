@@ -376,7 +376,7 @@ public class DocumentsResource {
 
         int maxResults = 8;
 
-        DocumentRevision[] docRs = documentService.getDocumentRevisionsWithReference(workspaceId, q, maxResults);
+        DocumentRevision[] docRs = documentService.getDocumentRevisionsWithReferenceOrTitle(workspaceId, q, maxResults);
 
         List<DocumentIterationDTO> docsLastIter = new ArrayList<>();
         for (DocumentRevision docR : docRs) {
