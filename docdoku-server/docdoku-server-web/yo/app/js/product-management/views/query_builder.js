@@ -141,7 +141,7 @@ define([
                         $.ajax({
                             type: 'DELETE',
                             url: url,
-                            success: function (data) {
+                            success: function () {
                                 self.clear();
                                 self.$where.queryBuilder('reset');
                                 self.fetchQueries();
@@ -204,7 +204,8 @@ define([
 
                     });
                 },
-                error: function (errorMessage) {
+                error: function () {
+
                 }
             });
         },
@@ -268,7 +269,7 @@ define([
             this.$select.selectize(this.selectizeOptions);
             this.$select[0].selectize.addOption(this.selectizeAvailableOptions);
 
-            this.$select[0].selectize.on('item_add', function(value, $item){
+            this.$select[0].selectize.on('item_add', function(value){
                 var data = _.findWhere(self.$select[0].selectize.options, {value: value});
 
                 self.$groupBy[0].selectize.addOption(data);
@@ -278,7 +279,7 @@ define([
                 self.$orderBy[0].selectize.refreshOptions(false);
             });
 
-            this.$select[0].selectize.on('item_remove', function(value, $item){
+            this.$select[0].selectize.on('item_remove', function(value){
                 self.$groupBy[0].selectize.removeOption(value);
                 self.$groupBy[0].selectize.refreshOptions(false);
 
@@ -403,5 +404,7 @@ define([
         }
     });
 
-    return QueryBuilderView
+
+
+    return QueryBuilderView;
 });
