@@ -82,6 +82,8 @@ public class QueryWriter implements MessageBodyWriter<QueryResult> {
 
             jg.writeStartObject();
 
+            jg.write(QueryField.PART_REVISION_PART_KEY, part.getPartNumber() + '-' + part.getVersion());
+
             // PartMaster data
 
             if(selects.contains(QueryField.PART_MASTER_NUMBER)){

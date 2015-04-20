@@ -31,6 +31,7 @@ public class QueryField {
     public final static String PART_MASTER_NAME = "pm.name";
     public final static String PART_MASTER_TYPE = "pm.type";
 
+    public final static String PART_REVISION_PART_KEY = "pr.partKey";
     public final static String PART_REVISION_VERSION = "pr.version";
     public final static String PART_REVISION_MODIFICATION_DATE = "pr.modificationDate";
     public final static String PART_REVISION_CHECKIN_DATE = "pr.checkinDate";

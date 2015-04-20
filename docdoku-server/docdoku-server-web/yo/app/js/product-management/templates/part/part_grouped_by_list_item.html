@@ -3,8 +3,14 @@
     {{#isDate}}
     <a class="date-popover">{{value}}</a>
     {{/isDate}}
-    {{^isDate}}
+
+    {{#isStringValue}}
     {{value}}
-    {{/isDate}}
+    {{/isStringValue}}
+
+    {{#isPartNumber}}
+    <span class="part_number_value">{{value}}</span>
+    {{/isPartNumber}}
+
 </td>
 {{/columns}}

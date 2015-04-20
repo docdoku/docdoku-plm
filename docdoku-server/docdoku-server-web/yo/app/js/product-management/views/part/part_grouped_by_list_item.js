@@ -4,8 +4,10 @@ define([
     'mustache',
     'text!templates/part/part_grouped_by_list_item.html',
     '../../../utils/query-builder-options',
-    'common-objects/utils/date'
-], function (Backbone, Mustache, template, querybuilderOptions, Date){
+    'common-objects/utils/date',
+    'common-objects/models/part',
+    'common-objects/views/part/part_modal_view'
+], function (Backbone, Mustache, template, querybuilderOptions, Date, Part, PartModalView){
     'use strict';
     var PartGroupedByListItemView = Backbone.View.extend({
 
@@ -27,7 +29,12 @@ define([
             _.each(this.headerColumns, function(column){
 
                 var value = self.item[column.value];
-                var isDate = _.findWhere(querybuilderOptions.filters, {id : column.value}).realType === 'date';
+                var type = _.findWhere(querybuilderOptions.filters, {id : column.value}).realType;
+
+                var isDate = type === 'date';
+                var isPartNumber = type ==='partNumber';
+
+                var isStringValue = !isDate && !isPartNumber;
 
                 if(isDate) {
                     if (!value) {
@@ -43,6 +50,8 @@ define([
 
                 var itemColumn = {
                     isDate : isDate,
+                    isPartNumber : isPartNumber,
+                    isStringValue : isStringValue,
                     value : value
                 };
                 itemOrdered.push(itemColumn);
@@ -53,9 +62,22 @@ define([
                 columns: itemOrdered
             }));
 
+            this.$el.on('click', this.openModal.bind(this));
+
             Date.dateHelper(this.$('.date-popover'));
             return this;
+        },
+
+        openModal:function(){
+            var model = new Part({partKey:this.item['pr.partKey']});
+            model.fetch().success(function () {
+                var partModalView = new PartModalView({
+                    model: model
+                });
+                partModalView.show();
+            });
         }
+
     });
 
     return PartGroupedByListItemView;

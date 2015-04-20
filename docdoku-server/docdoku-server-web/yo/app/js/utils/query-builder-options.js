@@ -88,7 +88,7 @@ define(function () {
         type: 'string',
         operators: stringOperators,
         optgroup:App.config.i18n.QUERY_GROUP_PART_MASTER,
-        realType:'string'
+        realType:'partNumber'
     });
 
     filters.push({
