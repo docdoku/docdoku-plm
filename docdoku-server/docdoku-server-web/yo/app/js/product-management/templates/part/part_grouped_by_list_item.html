@@ -1,5 +1,10 @@
 {{#columns}}
 <td>
-    {{.}}
+    {{#isDate}}
+    <a class="date-popover">{{value}}</a>
+    {{/isDate}}
+    {{^isDate}}
+    {{value}}
+    {{/isDate}}
 </td>
 {{/columns}}

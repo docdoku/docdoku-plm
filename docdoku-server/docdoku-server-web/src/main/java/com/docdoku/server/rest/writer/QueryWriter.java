@@ -29,6 +29,7 @@ import com.docdoku.core.query.QueryField;
 import com.docdoku.server.rest.collections.QueryResult;
 
 import javax.json.Json;
+import javax.json.JsonValue;
 import javax.json.stream.JsonGenerator;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
@@ -41,10 +42,8 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 
 @Provider
@@ -77,6 +76,8 @@ public class QueryWriter implements MessageBodyWriter<QueryResult> {
             }
         }
 
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+
         for(PartRevision part : queryResult.getParts()){
 
             jg.writeStartObject();
@@ -101,28 +102,21 @@ public class QueryWriter implements MessageBodyWriter<QueryResult> {
 
             if(selects.contains(QueryField.PART_REVISION_MODIFICATION_DATE)){
                 PartIteration pi = part.getLastIteration();
-                if(pi != null) {
-                    Date modificationDate = pi.getModificationDate();
-                    String date = modificationDate != null ? modificationDate.toString() : "";
-                    jg.write(QueryField.PART_REVISION_MODIFICATION_DATE, date);
+                if (pi != null){
+                    writeDate(jg, simpleDateFormat, QueryField.PART_REVISION_MODIFICATION_DATE, pi.getModificationDate());
                 }
             }
 
             if(selects.contains(QueryField.PART_REVISION_CREATION_DATE)){
-                long modificationDate = part.getCreationDate().getTime();
-                jg.write(QueryField.PART_REVISION_CREATION_DATE, modificationDate);
+                writeDate(jg, simpleDateFormat, QueryField.PART_REVISION_CREATION_DATE, part.getCreationDate());
             }
 
             if(selects.contains(QueryField.PART_REVISION_CHECKOUT_DATE)){
-                Date checkoutDate = part.getCheckOutDate();
-                String date = checkoutDate != null ? checkoutDate.toString() : "";
-                jg.write(QueryField.PART_REVISION_CHECKOUT_DATE, date);
+                writeDate(jg, simpleDateFormat, QueryField.PART_REVISION_CHECKOUT_DATE, part.getCheckOutDate());
             }
 
             if(selects.contains(QueryField.PART_REVISION_CHECKIN_DATE)){
-                Date checkinDate = part.getCheckOutDate();
-                String date = checkinDate != null ? checkinDate.toString() : "";
-                jg.write(QueryField.PART_REVISION_CHECKIN_DATE, date);
+                writeDate(jg, simpleDateFormat, QueryField.PART_REVISION_CHECKIN_DATE, part.getCheckOutDate());
             }
 
             if(selects.contains(QueryField.PART_REVISION_VERSION)){
@@ -184,4 +178,12 @@ public class QueryWriter implements MessageBodyWriter<QueryResult> {
 
     }
 
+    private void writeDate(JsonGenerator jg, SimpleDateFormat simpleDateFormat, String key, Date date) {
+        if (date != null){
+            String formattedDate = simpleDateFormat.format(date);
+            jg.write(key, formattedDate);
+        }else{
+            jg.write(key, JsonValue.NULL);
+        }
+    }
 }
