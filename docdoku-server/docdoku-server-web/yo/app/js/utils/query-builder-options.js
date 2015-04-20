@@ -69,6 +69,7 @@ define(function () {
     var stringOperators = ['equal', 'not_equal', 'contains', 'not_contains', 'begins_with', 'not_begins_with', 'ends_with', 'not_ends_with'];
     var dateOperators = ['equal', 'not_equal', 'less', 'less_or_equal', 'greater', 'greater_or_equal'];
     var lovOperators = ['equal', 'not_equal'];
+    var statusOperators = ['equal', 'not_equal'];
 
     var filters = [];
 
@@ -182,9 +183,15 @@ define(function () {
         id: 'pr.status',
         label: App.config.i18n.STATUS,
         type: 'string',
-        operators: stringOperators,
+        operators: statusOperators,
         optgroup:App.config.i18n.QUERY_GROUP_PART_REVISION,
-        realType:'string'
+        realType:'string',
+        input : 'select',
+        values : [
+            {'WIP':App.config.i18n.QUERY_FILTER_STATUS_WIP},
+            {'RELEASED':App.config.i18n.QUERY_FILTER_STATUS_RELEASED},
+            {'OBSOLETE':App.config.i18n.QUERY_FILTER_STATUS_OBSOLETE}
+        ]
     });
 
     // Product instances
