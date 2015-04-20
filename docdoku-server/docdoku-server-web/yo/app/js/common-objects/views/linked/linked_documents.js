@@ -60,10 +60,13 @@ define([
 
         bindTypeahead: function () {
             var self = this;
+            var itemsLimit = 15;
 
             this.documentReferenceInput.typeahead({
+                items: itemsLimit,
+
                 source: function (query, process) {
-                    $.getJSON(App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/documents/docs_last_iter?q=' + query, function (data) {
+                    $.getJSON(App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/documents/docs_last_iter?q=' + query + '&l=' + itemsLimit, function (data) {
 
                         self.searchResults = new LinkedDocumentCollection(data);
 

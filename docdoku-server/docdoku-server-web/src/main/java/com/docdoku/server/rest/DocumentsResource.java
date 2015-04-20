@@ -371,11 +371,10 @@ public class DocumentsResource {
     @GET
     @Path("docs_last_iter")
     @Produces(MediaType.APPLICATION_JSON)
-    public DocumentIterationDTO[] searchDocumentsLastIterationToLink(@PathParam("workspaceId") String workspaceId,@QueryParam("q") String q)
+    public DocumentIterationDTO[] searchDocumentsLastIterationToLink(@PathParam("workspaceId") String workspaceId, @QueryParam("q") String q, @QueryParam("l") int limit)
             throws EntityNotFoundException, UserNotActiveException {
 
-        int maxResults = 8;
-
+        int maxResults = limit==0 ? 15 : limit;
         DocumentRevision[] docRs = documentService.getDocumentRevisionsWithReference(workspaceId, q, maxResults);
 
         List<DocumentIterationDTO> docsLastIter = new ArrayList<>();

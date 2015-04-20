@@ -286,10 +286,10 @@ public class PartsResource {
     @GET
     @Path("parts_last_iter")
     @Produces(MediaType.APPLICATION_JSON)
-    public PartIterationDTO[] searchDocumentsLastIterationToLink(@PathParam("workspaceId") String workspaceId,@QueryParam("q") String q)
+    public PartIterationDTO[] searchDocumentsLastIterationToLink(@PathParam("workspaceId") String workspaceId, @QueryParam("q") String q, @QueryParam("l") int limit)
             throws EntityNotFoundException, UserNotActiveException {
 
-        int maxResults = 8;
+        int maxResults = limit==0 ? 15 : limit;
         PartRevision[] partRs = productService.getPartRevisionsWithReference(workspaceId, q, maxResults);
 
         List<PartIterationDTO> partsLastIter = new ArrayList<>();
