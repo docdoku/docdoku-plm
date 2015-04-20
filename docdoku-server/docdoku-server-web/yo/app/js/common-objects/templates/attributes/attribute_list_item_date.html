@@ -3,6 +3,7 @@
     {{#editMode}}
     <input type="date" class="input-xlarge value" value="{{model.value}}"
     {{#model.mandatory}}required{{/model.mandatory}}/>
+    {{#model.mandatory}}*{{/model.mandatory}}
     {{/editMode}}
     {{^editMode}}
     {{model.value}}

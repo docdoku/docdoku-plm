@@ -161,9 +161,12 @@ public class DocumentRevisionDAO {
                 setParameter("workspaceId", pWorkspaceId).setParameter("assignedUserLogin", assignedUserLogin).getResultList();
     }
 
-    public List<DocumentRevision> findDocsRevisionsWithReferenceLike(String pWorkspaceId, String reference, int maxResults) {
-        return em.createNamedQuery("DocumentRevision.findByReference",DocumentRevision.class).
-                setParameter("workspaceId", pWorkspaceId).setParameter("id", "%" + reference + "%").setMaxResults(maxResults).getResultList();
+    public List<DocumentRevision> findDocsRevisionsWithReferenceOrTitleLike(String pWorkspaceId, String search, int maxResults) {
+        return em.createNamedQuery("DocumentRevision.findByReferenceOrTitle",DocumentRevision.class).
+                setParameter("workspaceId", pWorkspaceId)
+                .setParameter("id", "%" + search + "%")
+                .setParameter("title", "%" + search + "%")
+                .setMaxResults(maxResults).getResultList();
     }
 
     public int getTotalNumberOfDocuments(String pWorkspaceId) {

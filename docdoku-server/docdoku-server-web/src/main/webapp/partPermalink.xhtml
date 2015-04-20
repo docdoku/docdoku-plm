@@ -71,7 +71,7 @@
                             <tr>
                                 <th scope="row">#{i18nPart['general.creation_date']}:</th>
                                 <td>
-                                    <h:outputText value="#{partRevision.creationDate}">
+                                    <h:outputText value="#{accountBean.addTimeZone(partRevision.creationDate)}">
                                         <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
                                     </h:outputText>
                                 </td>
@@ -103,7 +103,7 @@
                             <tr>
                                 <th scope="row">#{i18nPart['general.checkout_date']}:</th>
                                 <td>
-                                    <h:outputText value="#{partRevision.checkOutDate}">
+                                    <h:outputText value="#{accountBean.addTimeZone(partRevision.checkOutDate)}">
                                         <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
                                     </h:outputText>
                                 </td>
@@ -134,7 +134,7 @@
                             <tr>
                                 <th scope="row">#{i18nPart['iteration.revision_date']}:</th>
                                 <td>
-                                    <h:outputText value="#{partRevision.isCheckedOut() ? partRevision.lastIteration.creationDate : partRevision.lastIteration.checkInDate}">
+                                    <h:outputText value="#{partRevision.isCheckedOut() ? accountBean.addTimeZone(partRevision.lastIteration.creationDate) : accountBean.addTimeZone(partRevision.lastIteration.checkInDate)}">
                                         <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
                                     </h:outputText>
                                 </td>
@@ -142,7 +142,7 @@
                             <tr>
                                 <th scope="row">#{i18nPart['iteration.modification_date']}:</th>
                                 <td>
-                                    <h:outputText value="#{partRevision.lastIteration.modificationDate}">
+                                    <h:outputText value="#{accountBean.addTimeZone(partRevision.lastIteration.modificationDate)}">
                                         <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
                                     </h:outputText>
                                 </td>
