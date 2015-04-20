@@ -140,8 +140,16 @@ public class DataManagerBean implements IDataManagerLocal {
     }
 
     @Override
-    public void renameFile(BinaryResource binaryResource, String pNewName) throws StorageException {
+    public void renameFile(BinaryResource binaryResource, String pNewName) throws StorageException, FileNotFoundException {
+
         File file = getBinarySubResourceFile(binaryResource);
+
+        try {
+            fileStorageProvider.getBinaryResourceFile(binaryResource);
+        } catch (FileNotFoundException e) {
+            file = fileStorageProvider.copyFile(file, binaryResource);
+        }
+
         fileStorageProvider.renameData(file, pNewName);
     }
 

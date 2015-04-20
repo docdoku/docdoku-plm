@@ -128,6 +128,21 @@ public class FileStorageProvider implements StorageProvider {
     }
 
     @Override
+    public File copyFile(File source, BinaryResource pTargetBinaryResource) throws StorageException, FileNotFoundException {
+        if (source.exists()) {
+            File target = new File(getVirtualPath(pTargetBinaryResource));
+            try {
+                FileIO.copyFile(source, target);
+                return target;
+            } catch (IOException e) {
+                throw new StorageException(new StringBuilder().append("Error in copying ").append(source.getAbsolutePath()).append(" to ").append(pTargetBinaryResource.getFullName()).toString(), e);
+            }
+        } else {
+            throw new FileNotFoundException(new StringBuilder("Can't find source file to copy ").append(source.getAbsolutePath()).toString());
+        }
+    }
+
+    @Override
     public void delData(BinaryResource pBinaryResource) {
         File fileToRemove = new File(getVirtualPath(pBinaryResource));
         fileToRemove.delete();

@@ -34,6 +34,7 @@ public interface StorageProvider {
     File getBinaryResourceFile(BinaryResource pBinaryResource) throws StorageException, FileNotFoundException;
     OutputStream getBinaryResourceOutputStream(BinaryResource pBinaryResource) throws StorageException;
     void copyData(BinaryResource pSourceBinaryResource, BinaryResource pTargetBinaryResource) throws StorageException, FileNotFoundException;
+    File copyFile(File file, BinaryResource pTargetBinaryResource) throws StorageException, FileNotFoundException;
     void delData(BinaryResource pBinaryResource) throws StorageException;
     String getExternalResourceURI(BinaryResource binaryResource);
     String getShortenExternalResourceURI(BinaryResource binaryResource);
