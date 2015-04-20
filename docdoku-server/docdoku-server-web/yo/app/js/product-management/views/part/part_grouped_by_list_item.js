@@ -27,7 +27,7 @@ define([
             _.each(this.headerColumns, function(column){
 
                 var value = self.item[column.value];
-                var isDate = _.findWhere(querybuilderOptions.filters, {id : column.value}).type === 'date';
+                var isDate = _.findWhere(querybuilderOptions.filters, {id : column.value}).realType === 'date';
 
                 if(isDate) {
                     if (!value) {

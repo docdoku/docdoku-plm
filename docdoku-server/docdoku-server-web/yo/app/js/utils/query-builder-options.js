@@ -78,7 +78,8 @@ define(function () {
         label: App.config.i18n.PART_NAME,
         type: 'string',
         operators: stringOperators,
-        optgroup:App.config.i18n.QUERY_GROUP_PART_MASTER
+        optgroup:App.config.i18n.QUERY_GROUP_PART_MASTER,
+        realType:'string'
     });
 
     filters.push({
@@ -86,7 +87,8 @@ define(function () {
         label: App.config.i18n.PART_NUMBER,
         type: 'string',
         operators: stringOperators,
-        optgroup:App.config.i18n.QUERY_GROUP_PART_MASTER
+        optgroup:App.config.i18n.QUERY_GROUP_PART_MASTER,
+        realType:'string'
     });
 
     filters.push({
@@ -94,7 +96,8 @@ define(function () {
         label: App.config.i18n.TYPE,
         type: 'string',
         operators: stringOperators,
-        optgroup:App.config.i18n.QUERY_GROUP_PART_MASTER
+        optgroup:App.config.i18n.QUERY_GROUP_PART_MASTER,
+        realType:'string'
     });
 
     filters.push({
@@ -102,7 +105,8 @@ define(function () {
         label: App.config.i18n.AUTHOR_LOGIN,
         type: 'string',
         operators: stringOperators,
-        optgroup:App.config.i18n.QUERY_GROUP_AUTHOR
+        optgroup:App.config.i18n.QUERY_GROUP_AUTHOR,
+        realType:'string'
     });
 
     filters.push({
@@ -110,7 +114,8 @@ define(function () {
         label: App.config.i18n.AUTHOR_NAME,
         type: 'string',
         operators: stringOperators,
-        optgroup:App.config.i18n.QUERY_GROUP_AUTHOR
+        optgroup:App.config.i18n.QUERY_GROUP_AUTHOR,
+        realType:'string'
     });
 
     // Part Revision
@@ -120,7 +125,8 @@ define(function () {
         label: App.config.i18n.VERSION,
         type: 'string',
         operators: stringOperators,
-        optgroup:App.config.i18n.QUERY_GROUP_PART_REVISION
+        optgroup:App.config.i18n.QUERY_GROUP_PART_REVISION,
+        realType:'string'
     });
 
     filters.push({
@@ -129,7 +135,8 @@ define(function () {
         type: 'date',
         input:dateInput,
         operators: dateOperators,
-        optgroup:App.config.i18n.QUERY_GROUP_PART_REVISION
+        optgroup:App.config.i18n.QUERY_GROUP_PART_REVISION,
+        realType:'date'
     });
 
     filters.push({
@@ -138,7 +145,8 @@ define(function () {
         type: 'date',
         input:dateInput,
         operators: dateOperators,
-        optgroup:App.config.i18n.QUERY_GROUP_PART_REVISION
+        optgroup:App.config.i18n.QUERY_GROUP_PART_REVISION,
+        realType:'date'
     });
 
     filters.push({
@@ -147,7 +155,8 @@ define(function () {
         type: 'date',
         input:dateInput,
         operators: dateOperators,
-        optgroup:App.config.i18n.QUERY_GROUP_PART_REVISION
+        optgroup:App.config.i18n.QUERY_GROUP_PART_REVISION,
+        realType:'date'
     });
 
     filters.push({
@@ -156,7 +165,8 @@ define(function () {
         type: 'date',
         input:dateInput,
         operators: dateOperators,
-        optgroup:App.config.i18n.QUERY_GROUP_PART_REVISION
+        optgroup:App.config.i18n.QUERY_GROUP_PART_REVISION,
+        realType:'date'
     });
 
     filters.push({
@@ -164,7 +174,8 @@ define(function () {
         label: App.config.i18n.LIFECYCLE_STATE,
         type: 'string',
         operators: stringOperators,
-        optgroup:App.config.i18n.QUERY_GROUP_PART_REVISION
+        optgroup:App.config.i18n.QUERY_GROUP_PART_REVISION,
+        realType:'string'
     });
 
     filters.push({
@@ -172,7 +183,8 @@ define(function () {
         label: App.config.i18n.STATUS,
         type: 'string',
         operators: stringOperators,
-        optgroup:App.config.i18n.QUERY_GROUP_PART_REVISION
+        optgroup:App.config.i18n.QUERY_GROUP_PART_REVISION,
+        realType:'string'
     });
 
     // Product instances
@@ -182,7 +194,8 @@ define(function () {
         label: App.config.i18n.SERIAL_NUMBER,
         type: 'string',
         operators: stringOperators,
-        optgroup:App.config.i18n.QUERY_GROUP_PRODUCT_INSTANCE
+        optgroup:App.config.i18n.QUERY_GROUP_PRODUCT_INSTANCE,
+        realType:'string'
     });
 
     filters.push({
@@ -190,7 +203,8 @@ define(function () {
         label: App.config.i18n.PRODUCT_NAME,
         type: 'string',
         operators: stringOperators,
-        optgroup:App.config.i18n.QUERY_GROUP_PRODUCT_INSTANCE
+        optgroup:App.config.i18n.QUERY_GROUP_PRODUCT_INSTANCE,
+        realType:'string'
     });
 
 
