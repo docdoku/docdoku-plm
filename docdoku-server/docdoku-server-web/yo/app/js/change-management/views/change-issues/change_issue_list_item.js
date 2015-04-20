@@ -57,12 +57,16 @@ define([
         },
 
         openEditionView: function () {
-            var editionView = new ChangeIssueEditionView({
-                collection: this.collection,
-                model: this.model
+            var _this = this;
+
+            this.model.fetch().success(function () {
+                var editionView = new ChangeIssueEditionView({
+                    collection: _this.collection,
+                    model: _this.model
+                });
+                window.document.body.appendChild(editionView.render().el);
+                editionView.openModal();
             });
-            window.document.body.appendChild(editionView.render().el);
-            editionView.openModal();
         }
     });
 

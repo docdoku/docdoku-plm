@@ -27,7 +27,6 @@ function (Backbone, Mustache, template, ChangeOrderModel, UserList, MilestoneLis
         initialize: function () {
             this.tagsToRemove = [];
             this._subViews = [];
-            this.model.fetch();
             _.bindAll(this);
             this.$el.on('remove', this.removeSubviews);                                                                  // Remove cascade
         },

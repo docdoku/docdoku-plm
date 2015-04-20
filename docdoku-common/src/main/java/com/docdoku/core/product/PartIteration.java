@@ -340,6 +340,10 @@ public class PartIteration implements Serializable, FileHolder, Comparable<PartI
         return equals(partRevision.getLastIteration());
     }
 
+    public String getName() {
+        return partRevision==null ? "" : this.partRevision.getPartName();
+    }
+
     @Override
     public String toString() {
         return partRevision + "-" + iteration;

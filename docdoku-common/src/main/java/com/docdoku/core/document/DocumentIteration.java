@@ -253,6 +253,10 @@ public class DocumentIteration implements Serializable, FileHolder, Comparable<D
         instanceAttributes=pInstanceAttributes;
     }
 
+    public String getDocumentTitle() {
+        return documentRevision==null ? "" : this.documentRevision.getTitle();
+    }
+
     @Override
     public String toString() {
         return documentRevision + "-" + iteration;

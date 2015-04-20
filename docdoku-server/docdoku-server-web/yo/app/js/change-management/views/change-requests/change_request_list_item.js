@@ -9,8 +9,6 @@ define([
 	'use strict';
 	var ChangeRequestListItemView = Backbone.View.extend({
 
-
-
         events: {
             'click input[type=checkbox]': 'selectionChanged',
             'click td.change_request_name': 'openEditionView'
@@ -59,12 +57,16 @@ define([
         },
 
         openEditionView: function () {
-            var editionView = new ChangeRequestEditionView({
-                collection: this.collection,
-                model: this.model
+            var _this = this;
+
+            this.model.fetch().success(function () {
+                var editionView = new ChangeRequestEditionView({
+                    collection: _this.collection,
+                    model: _this.model
+                });
+                window.document.body.appendChild(editionView.render().el);
+                editionView.openModal();
             });
-            window.document.body.appendChild(editionView.render().el);
-            editionView.openModal();
         }
     });
 
