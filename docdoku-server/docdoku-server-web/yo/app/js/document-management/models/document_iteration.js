@@ -78,8 +78,17 @@ define([
 
 		// TODO rename getDocumentRevisionKey
 		getDocKey: function () {
-			return  this.getDocumentMasterId() + '-' + this.getDocumentRevisionVersion();
+			return this.getDocumentMasterId() + '-' + this.getDocumentRevisionVersion();
 		},
+
+        // TODO rename getDocKey if used
+        getLinkedDocKey: function () {
+            //if (this.getDocumentRevisionTitle()) {
+            //    return this.getDocumentRevisionTitle() + ' < ' + this.getDocumentMasterId() + '-' + this.getDocumentRevisionVersion() + ' >';
+            //}
+            return '< ' + this.getDocumentMasterId() + '-' + this.getDocumentRevisionVersion() + ' >';
+
+        },
 
 		getLinkedDocuments: function () {
 			return this.get('linkedDocuments');

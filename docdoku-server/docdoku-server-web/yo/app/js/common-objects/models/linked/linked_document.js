@@ -34,6 +34,7 @@ define(['backbone'], function (Backbone) {
             return this.get('documentRevisionVersion');
         },
 
+        // TODO use this only for display
         getDocKey: function () {
             if (this.getDocumentRevisionTitle()) {
                 return this.getDocumentRevisionTitle() + ' < ' + this.getDocumentMasterId() + '-' + this.getDocumentRevisionVersion() + ' >';

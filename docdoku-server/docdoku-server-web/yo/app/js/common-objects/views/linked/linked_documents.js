@@ -70,16 +70,26 @@ define([
 
                         self.searchResults = new LinkedDocumentCollection(data);
 
+                        // getDocKey
+                        if (self.options.documentIteration && self.options.documentIteration.className === 'DocumentIteration') {
+                            data = _.reject(self.searchResults.models, function(linkedDocument) {
+                                var docLinkedKey = linkedDocument.getDocumentMasterId() + '-' + linkedDocument.getDocumentRevisionVersion();
+                                var docIterationKey = self.options.documentIteration.getDocKey();
+                                return docLinkedKey === docIterationKey;
+                            }, self);
+                            self.searchResults = new LinkedDocumentCollection(data);
+                        }
+
                         // Remove documents that are already linked
                         var docsToRemove = [];
                         self.searchResults.each(
-                            function (documentIteration) {
+                            function (searchLinkedDocument) {
                                 var linkedDoc = self.collection.find(
-                                    function (linkedDocument) {
-                                        return linkedDocument.getDocKey() === documentIteration.getDocKey();
+                                    function (addedLinkedDocument) {
+                                        return addedLinkedDocument.getDocKey() === searchLinkedDocument.getDocKey();
                                     });
                                 if (!_.isUndefined(linkedDoc)) {
-                                    docsToRemove.push(documentIteration);
+                                    docsToRemove.push(searchLinkedDocument);
                                 }
                             }
                         );
