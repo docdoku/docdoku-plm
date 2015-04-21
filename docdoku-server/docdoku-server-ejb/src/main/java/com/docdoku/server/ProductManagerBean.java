@@ -31,6 +31,7 @@ import com.docdoku.core.product.*;
 import com.docdoku.core.product.PartIteration.Source;
 import com.docdoku.core.query.PartSearchQuery;
 import com.docdoku.core.query.Query;
+import com.docdoku.core.query.QueryResultRow;
 import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;
@@ -2543,6 +2544,70 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         return instanceAttributesInWorkspace;
     }
 
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
+    public List<QueryResultRow> filterProductBreakdownStructure(String workspaceId, Query query) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, BaselineNotFoundException, ProductInstanceMasterNotFoundException, ConfigurationItemNotFoundException, NotAllowedException, PartMasterNotFoundException, EntityConstraintException {
+        List<QueryResultRow> rows = new ArrayList<>();
+        for(String configurationItemId :query.getProductsId()){
+            rows.addAll(filterPBS(workspaceId, query, configurationItemId));
+        }
+        return rows;
+    }
+
+    private List<QueryResultRow> filterPBS(String workspaceId, Query query, String configurationItemId) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, BaselineNotFoundException, ProductInstanceMasterNotFoundException, ConfigurationItemNotFoundException, NotAllowedException, EntityConstraintException, PartMasterNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+
+        ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, configurationItemId);
+        Locale locale = new Locale(user.getLanguage());
+
+        List<QueryResultRow> rows = new ArrayList<>();
+        PSFilter filter = getPSFilter(ciKey, "latest");
+
+        ConfigurationItem ci = new ConfigurationItemDAO(locale, em).loadConfigurationItem(ciKey);
+        PartMaster root = ci.getDesignItem();
+
+        new PSFilterVisitor(em, user, filter, root, null, -1) {
+            @Override
+            public void onIndeterminateVersion(PartMaster partMaster, List<PartIteration> partIterations)  throws NotAllowedException{
+            }
+
+            @Override
+            public void onIndeterminatePath(List<PartLink> pCurrentPath, List<PartIteration> pCurrentPathPartIterations) {
+            }
+
+            @Override
+            public void onUnresolvedPath(List<PartLink> pCurrentPath, List<PartIteration> partIterations) throws NotAllowedException {
+
+            }
+
+            @Override
+            public void onBranchDiscovered(List<PartLink> pCurrentPath, List<PartIteration> copyPartIteration) {
+            }
+
+            @Override
+            public void onOptionalPath(List<PartLink> partLinks, List<PartIteration> partIterations) {
+
+            }
+
+            @Override
+            public void onPathWalk(List<PartLink> path, List<PartMaster> parts) {
+                QueryResultRow row = new QueryResultRow();
+                int depth = parts.size();
+                PartMaster part = parts.get(parts.size()-1);
+                List<PartIteration> partIterations = filter.filter(part);
+                row.setPartRevision(partIterations.get(0).getPartRevision());
+                row.setDepth(depth);
+                rows.add(row);
+            }
+
+            @Override
+            public void onUnresolvedVersion(PartMaster partMaster) {
+
+            }
+        };
+
+        return rows;
+    }
 
     private PSFilter getConfigSpecForBaseline(int baselineId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, BaselineNotFoundException {
         return productBaselineManager.getBaselinePSFilter(baselineId);

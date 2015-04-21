@@ -181,4 +181,8 @@ public class Query implements Serializable {
     public void setProductsId(List<String> productsId) {
         this.productsId = productsId;
     }
+
+    public boolean hasContext() {
+        return productsId.size() > 0;
+    }
 }

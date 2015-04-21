@@ -31,6 +31,7 @@ import com.docdoku.core.product.PartMaster;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.query.PartSearchQuery;
 import com.docdoku.core.query.Query;
+import com.docdoku.core.query.QueryResultRow;
 import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;
@@ -172,10 +173,16 @@ public class PartsResource {
     @GET
     @Path("queries/{queryId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response runExistingQuery(@PathParam("workspaceId") String workspaceId, @PathParam("queryId") int queryId) throws EntityNotFoundException, UserNotActiveException, AccessRightException {
+    public Response runExistingQuery(@PathParam("workspaceId") String workspaceId, @PathParam("queryId") int queryId) throws EntityNotFoundException, UserNotActiveException, AccessRightException, EntityConstraintException, NotAllowedException {
         Query query = productService.getQuery(workspaceId,queryId);
         List<PartRevision> partRevisions = productService.searchPartRevisions(workspaceId, query);
-        QueryResult queryResult = new QueryResult(query,partRevisions);
+        QueryResult queryResult = new QueryResult(partRevisions,query);
+
+        if(query.hasContext()){
+            List<QueryResultRow> rows = productService.filterProductBreakdownStructure(workspaceId,query);
+            queryResult.mergeRows(rows);
+        }
+
         return Response.ok().lastModified(new Date()).entity(queryResult).build();
     }
 
@@ -183,13 +190,20 @@ public class PartsResource {
     @Path("queries")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response runCustomQuery(@PathParam("workspaceId") String workspaceId, @QueryParam("save") boolean save, QueryDTO queryDTO) throws EntityNotFoundException, UserNotActiveException, AccessRightException, CreationException, QueryAlreadyExistsException {
+    public Response runCustomQuery(@PathParam("workspaceId") String workspaceId, @QueryParam("save") boolean save, QueryDTO queryDTO) throws EntityNotFoundException, UserNotActiveException, AccessRightException, CreationException, QueryAlreadyExistsException, EntityConstraintException, NotAllowedException {
         Query query = mapper.map(queryDTO, Query.class);
         List<PartRevision> partRevisions = productService.searchPartRevisions(workspaceId, query);
+        QueryResult queryResult = new QueryResult(partRevisions,query);
+
+        if(query.hasContext()){
+            List<QueryResultRow> rows = productService.filterProductBreakdownStructure(workspaceId,query);
+            queryResult.mergeRows(rows);
+        }
+
         if(save){
             productService.createQuery(workspaceId,query);
         }
-        QueryResult queryResult = new QueryResult(query,partRevisions);
+
         return Response.ok().lastModified(new Date()).entity(queryResult).build();
     }
 

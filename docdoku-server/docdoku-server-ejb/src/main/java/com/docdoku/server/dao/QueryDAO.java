@@ -230,7 +230,7 @@ public class QueryDAO {
     private Predicate getTagsPredicate(String value) {
         Root<Tag> tag = cq.from(Tag.class);
         Predicate prPredicate = tag.in(pr.get("tags"));
-        Predicate valuePredicate = cb.equal(tag.get("id"),value);
+        Predicate valuePredicate = cb.equal(tag.get("label"),value);
         return cb.and(prPredicate,valuePredicate);
     }
 

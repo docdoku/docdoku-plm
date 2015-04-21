@@ -22,7 +22,9 @@ package com.docdoku.server.rest.collections;
 
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.query.Query;
+import com.docdoku.core.query.QueryResultRow;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -32,15 +34,22 @@ import java.util.List;
 
 public class QueryResult {
 
-    private List<PartRevision> parts;
     private Query query;
+    private List<QueryResultRow> rows = new ArrayList<>();
 
     public QueryResult() {
     }
 
-    public QueryResult(Query query,List<PartRevision> parts){
+    public QueryResult(Query query, List<QueryResultRow> rows) {
         this.query = query;
-        this.parts = parts;
+        this.rows = rows;
+    }
+
+    public QueryResult(List<PartRevision> partRevisions, Query query) {
+        this.query = query;
+        for(PartRevision partRevision:partRevisions){
+            rows.add(new QueryResultRow(partRevision));
+        }
     }
 
     public Query getQuery() {
@@ -51,11 +60,15 @@ public class QueryResult {
         this.query = query;
     }
 
-    public List<PartRevision> getParts() {
-        return parts;
+    public List<QueryResultRow> getRows() {
+        return rows;
     }
 
-    public void setParts(List<PartRevision> parts) {
-        this.parts = parts;
+    public void setRows(List<QueryResultRow> rows) {
+        this.rows = rows;
+    }
+
+    public void mergeRows(List<QueryResultRow> rows) {
+
     }
 }

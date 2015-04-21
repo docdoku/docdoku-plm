@@ -26,6 +26,7 @@ import com.docdoku.core.meta.InstanceListOfValuesAttribute;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.query.QueryField;
+import com.docdoku.core.query.QueryResultRow;
 import com.docdoku.server.rest.collections.QueryResult;
 
 import javax.json.Json;
@@ -43,7 +44,9 @@ import java.io.OutputStreamWriter;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 
 @Provider
@@ -78,7 +81,9 @@ public class QueryWriter implements MessageBodyWriter<QueryResult> {
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
-        for(PartRevision part : queryResult.getParts()){
+        for(QueryResultRow row : queryResult.getRows()){
+
+            PartRevision part = row.getPartRevision();
 
             jg.writeStartObject();
 
