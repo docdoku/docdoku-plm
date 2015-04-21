@@ -90,7 +90,8 @@ define([
             orderBySelectize.clearOptions();
             groupBySelectize.clear(true);
             groupBySelectize.clearOptions();
-            contextSelectize.clear();
+
+            this.onClearContext;
 
             this.$deleteQueryButton.hide();
         },
@@ -292,7 +293,6 @@ define([
 
         fillSelectizes: function(){
             var contextOption = _.clone(this.selectizeOptions);
-            contextOption.maxItems = 1;
             this.$context.selectize(contextOption);
 
             var self = this;
@@ -340,16 +340,19 @@ define([
             });
 
             this.$context[0].selectize.on('item_remove', function(value){
-                _.each(queryBuilderOptions.contextFields, function(field){
-                    self.$select[0].selectize.removeOption(field.value);
-                    self.$select[0].selectize.refreshOptions(false);
 
-                    self.$groupBy[0].selectize.removeOption(field.value);
-                    self.$groupBy[0].selectize.refreshOptions(false);
+                if(self.$context[0].selectize.items.length === 0) {
+                    _.each(queryBuilderOptions.contextFields, function (field) {
+                        self.$select[0].selectize.removeOption(field.value);
+                        self.$select[0].selectize.refreshOptions(false);
 
-                    self.$orderBy[0].selectize.removeOption(field.value);
-                    self.$orderBy[0].selectize.refreshOptions(false);
-                });
+                        self.$groupBy[0].selectize.removeOption(field.value);
+                        self.$groupBy[0].selectize.refreshOptions(false);
+
+                        self.$orderBy[0].selectize.removeOption(field.value);
+                        self.$orderBy[0].selectize.refreshOptions(false);
+                    });
+                }
             });
 
 
@@ -400,6 +403,18 @@ define([
         onClearContext:function(){
             var contextSelectize = this.$context[0].selectize;
             contextSelectize.clear();
+
+            var self = this;
+            _.each(queryBuilderOptions.contextFields, function (field) {
+                self.$select[0].selectize.removeOption(field.value);
+                self.$select[0].selectize.refreshOptions(false);
+
+                self.$groupBy[0].selectize.removeOption(field.value);
+                self.$groupBy[0].selectize.refreshOptions(false);
+
+                self.$orderBy[0].selectize.removeOption(field.value);
+                self.$orderBy[0].selectize.refreshOptions(false);
+            });
         },
 
         onReset: function(){
