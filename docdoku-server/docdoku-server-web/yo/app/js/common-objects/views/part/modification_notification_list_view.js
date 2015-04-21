@@ -23,7 +23,7 @@ define([
         render: function () {
             var data = {
                 modificationNotification: this.collection.at(0),
-                hasUnreadModificationNotifications: this.collection.hasUnreadModificationNotifications(),
+                hasUnreadModificationNotifications: this.collection.hasUnreadModificationNotifications() > 1,
                 i18n: App.config.i18n
             };
 

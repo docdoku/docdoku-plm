@@ -5,12 +5,12 @@
         < {{modificationNotification.getModifiedPartNumber}} >
     </div>
 
-    {{#hasUnreadModificationNotifications > 1}}
+    {{#hasUnreadModificationNotifications}}
     <div class="group-comment">
         <input id="group-acknowledgement-comment" type="text" placeholder="{{i18n.VERIFICATION_NOTE}}">
         <a class="action-group-acknowledge">{{i18n.MARK_ALL_AS_VERIFIED}}</a>
     </div>
-    {{/hasUnreadModificationNotifications > 1}}
+    {{/hasUnreadModificationNotifications}}
 
     <div class="items"></div>
 
