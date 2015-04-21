@@ -7,7 +7,7 @@ define([
     '../../utils/query-builder-options',
     'common-objects/views/alert',
     'collections/configuration_items'
-], function (Backbone, Mustache, template,  selectize, querybuilderOptions, AlertView, ConfigurationItemCollection) {
+], function (Backbone, Mustache, template,  selectize, queryBuilderOptions, AlertView, ConfigurationItemCollection) {
     'use strict';
     var QueryBuilderView = Backbone.View.extend({
 
@@ -27,9 +27,9 @@ define([
 
         initialize: function () {
 
-            this.selectizeAvailableOptions = _.clone(querybuilderOptions.fields);
+            this.selectizeAvailableOptions = _.clone(queryBuilderOptions.fields);
 
-            this.queryBuilderFilters =  _.clone(querybuilderOptions.filters);
+            this.queryBuilderFilters =  _.clone(queryBuilderOptions.filters);
 
             this.selectizeOptions = {
                 plugins: ['remove_button','drag_drop', 'optgroup_columns'],
@@ -38,7 +38,7 @@ define([
                 optgroupField: 'group',
                 optgroupLabelField: 'name',
                 optgroupValueField: 'id',
-                optgroups: _.clone(querybuilderOptions.groups),
+                optgroups: _.clone(queryBuilderOptions.groups),
 
                 valueField: 'value',
                 searchField: ['name'],
@@ -54,6 +54,7 @@ define([
             };
 
             this.fetchAttributes();
+            this.fetchTags();
         },
 
         fetchQueries:function(){
@@ -168,21 +169,21 @@ define([
                 success: function (data) {
                     _.each(data, function(attribute){
 
-                        var attributeType = querybuilderOptions.types[attribute.type];
+                        var attributeType = queryBuilderOptions.types[attribute.type];
                         var filter = {
                             id: 'attr-'+attribute.type+'.'+attribute.name,
                             label: attribute.name,
                             type: attributeType,
                             realType: attributeType,
-                            optgroup: _.findWhere(querybuilderOptions.groups, {id : 'attr-'+attribute.type}).name
+                            optgroup: _.findWhere(queryBuilderOptions.groups, {id : 'attr-'+attribute.type}).name
                         };
                         if(attributeType === 'date'){
-                            filter.operators = querybuilderOptions.dateOperators;
+                            filter.operators = queryBuilderOptions.dateOperators;
                         } else if (attributeType === 'string'){
-                            filter.operators = querybuilderOptions.stringOperators;
+                            filter.operators = queryBuilderOptions.stringOperators;
                         } else if (attributeType === 'lov'){
                             filter.type = 'string';
-                            filter.operators = querybuilderOptions.lovOperators;
+                            filter.operators = queryBuilderOptions.lovOperators;
                             filter.input = 'select';
                             var values = [];
                             var index = 0;
@@ -195,7 +196,7 @@ define([
                             filter.values = values;
                         } else if(attributeType === 'boolean'){
                             filter.type = 'boolean';
-                            filter.operators = querybuilderOptions.booleanOperators;
+                            filter.operators = queryBuilderOptions.booleanOperators;
                             filter.input = 'select';
                             filter.values = [
                                 {true : App.config.i18n.TRUE},
@@ -210,6 +211,24 @@ define([
                             value:'attr-'+attribute.type+'.'+attribute.name,
                             group:'attr-'+attribute.type
                         });
+
+                    });
+                },
+                error: function () {
+
+                }
+            });
+        },
+
+        fetchTags : function(){
+            var self = this;
+            var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/tags';
+
+            $.ajax({
+                type: 'GET',
+                url: url,
+                success: function (tags) {
+                    _.each(tags, function(tag){
 
                     });
                 },

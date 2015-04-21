@@ -221,8 +221,17 @@ public class QueryDAO {
     private Predicate getPartRevisionPredicate(String field, String operator, String value, String type) {
         if(field.equals("status")){
             return getPredicate(pr.get(field),operator,PartRevision.RevisionStatus.valueOf(value),"");
+        } else if(field.equals("tags")){
+            return getTagsPredicate(value);
         }
         return getPredicate(pr.get(field),operator,value,type);
+    }
+
+    private Predicate getTagsPredicate(String value) {
+        Root<Tag> tag = cq.from(Tag.class);
+        Predicate prPredicate = tag.in(pr.get("tags"));
+        Predicate valuePredicate = cb.equal(tag.get("id"),value);
+        return cb.and(prPredicate,valuePredicate);
     }
 
     private Predicate getPartMasterPredicate(String field, String operator, String value, String type) {
