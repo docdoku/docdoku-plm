@@ -67,7 +67,7 @@ public class QueryWriter implements MessageBodyWriter<QueryResult> {
         JsonGenerator jg = Json.createGenerator(new OutputStreamWriter(outputStream, charSet));
         jg.writeStartArray();
 
-        Set<String> selects = queryResult.getQuery().getSelects();
+        List<String> selects = queryResult.getQuery().getSelects();
 
         List<String> attributesSelect = new ArrayList<>();
         for(String select : selects){

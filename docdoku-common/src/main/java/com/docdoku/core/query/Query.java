@@ -24,9 +24,7 @@ import com.docdoku.core.common.User;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Wraps data needed to perform a custom query on database
@@ -68,7 +66,7 @@ public class Query implements Serializable {
                     @JoinColumn(name = "QUERY_ID", referencedColumnName = "ID")
             }
     )
-    private Set<String> selects=new HashSet<>();
+    private List<String> selects=new ArrayList<>();
 
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "QUERY_ORDER_BY",
@@ -76,7 +74,7 @@ public class Query implements Serializable {
                     @JoinColumn(name = "QUERY_ID", referencedColumnName = "ID")
             }
     )
-    private Set<String> orderByList=new HashSet<>();
+    private List<String> orderByList=new ArrayList<>();
 
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "QUERY_GROUPED_BY",
@@ -84,7 +82,7 @@ public class Query implements Serializable {
                     @JoinColumn(name = "QUERY_ID", referencedColumnName = "ID")
             }
     )
-    private Set<String> groupedByList=new HashSet<>();
+    private List<String> groupedByList=new ArrayList<>();
 
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "QUERY_PRODUCTS",
@@ -92,12 +90,12 @@ public class Query implements Serializable {
                     @JoinColumn(name = "QUERY_ID", referencedColumnName = "ID")
             }
     )
-    private Set<String> productsId=new HashSet<>();
+    private List<String> productsId=new ArrayList<>();
 
     public Query() {
     }
 
-    public Query(User author, String name, Date creationDate, QueryRule queryRule, Set<String> selects, Set<String> orderByList, Set<String> groupedByList, Set<String> productsId) {
+    public Query(User author, String name, Date creationDate, QueryRule queryRule, List<String> selects, List<String> orderByList, List<String> groupedByList, List<String> productsId) {
         this.author = author;
         this.name = name;
         this.creationDate = creationDate;
@@ -152,35 +150,35 @@ public class Query implements Serializable {
         this.queryRule = queryRule;
     }
 
-    public Set<String> getSelects() {
+    public List<String> getSelects() {
         return selects;
     }
 
-    public void setSelects(Set<String> selects) {
+    public void setSelects(List<String> selects) {
         this.selects = selects;
     }
 
-    public Set<String> getOrderByList() {
+    public List<String> getOrderByList() {
         return orderByList;
     }
 
-    public void setOrderByList(Set<String> orderByList) {
+    public void setOrderByList(List<String> orderByList) {
         this.orderByList = orderByList;
     }
 
-    public Set<String> getGroupedByList() {
+    public List<String> getGroupedByList() {
         return groupedByList;
     }
 
-    public void setGroupedByList(Set<String> groupedByList) {
+    public void setGroupedByList(List<String> groupedByList) {
         this.groupedByList = groupedByList;
     }
 
-    public Set<String> getProductsId() {
+    public List<String> getProductsId() {
         return productsId;
     }
 
-    public void setProductsId(Set<String> productsId) {
+    public void setProductsId(List<String> productsId) {
         this.productsId = productsId;
     }
 }
