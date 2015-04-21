@@ -69,6 +69,20 @@ public class QueryResult {
     }
 
     public void mergeRows(List<QueryResultRow> rows) {
+        if (rows != null && !rows.isEmpty()){
+            List<QueryResultRow> mergedRows = new ArrayList<>();
+            for (QueryResultRow row : rows){
+                for (QueryResultRow filteredRow : this.rows){
+                    if (filteredRow.getPartRevision().equals(row.getPartRevision())){
+                        mergedRows.add(row);
+                        break;
+                    }
+                }
+            }
 
+            this.rows = mergedRows;
+        }
     }
+
+
 }

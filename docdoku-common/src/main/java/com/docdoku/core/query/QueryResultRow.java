@@ -47,4 +47,6 @@ public class QueryResultRow {
     public void setResults(double[] results) {
         this.results = results;
     }
+
+
 }
