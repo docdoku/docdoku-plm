@@ -337,6 +337,12 @@ define([
             this.$context[0].selectize.on('item_add', function(value){
                 self.$select[0].selectize.addOption(queryBuilderOptions.contextFields);
                 self.$select[0].selectize.refreshOptions(false);
+
+                if(self.$context[0].selectize.items.length === 1) {
+                    _.each(queryBuilderOptions.contextFields, function(field){
+                        self.selectizeAvailableOptions.push(field);
+                    });
+                }
             });
 
             this.$context[0].selectize.on('item_remove', function(value){
@@ -434,8 +440,8 @@ define([
                 var context = this.$context[0].selectize.getValue().split(this.delimiter);
                 var selectList = this.$select[0].selectize.getValue().split(this.delimiter);
                 var where = this.$where.queryBuilder('getRules');
-                var orderByList = this.$orderBy[0].selectize.getValue().split(this.delimiter);
-                var groupByList = this.$groupBy[0].selectize.getValue().split(this.delimiter);
+                var orderByList = this.$orderBy[0].selectize.getValue().length ? this.$orderBy[0].selectize.getValue().split(this.delimiter) : [];
+                var groupByList = this.$groupBy[0].selectize.getValue().length ? this.$groupBy[0].selectize.getValue().split(this.delimiter) : [];
 
                 var saveQuery = this.$saveSwitch.bootstrapSwitch('status');
 

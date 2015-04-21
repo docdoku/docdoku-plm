@@ -67,7 +67,7 @@ define([
         groupBy:function(){
             var self = this;
 
-            return _.groupBy(this.items,function(item){
+            return !this.groupedByList.length ? {'undefined':this.items} : _.groupBy(this.items,function(item){
 
                 var groupByStringToUse = "";
                 _.each(self.groupedByList, function(groupByColumn){
@@ -81,7 +81,7 @@ define([
 
         orderBy:function(items){
             var self = this;
-            return items.sort(function(item1, item2){
+            return !self.orderByList.length ? items : items.sort(function(item1, item2){
 
                 var item1String = "";
                 var item2String = "";
@@ -92,7 +92,7 @@ define([
                 item1String = item1String.substring(1);
                 item2String = item2String.substring(1);
 
-                return item1String > item2String;
+                return item1String > item2String ? 1 :item1String > item2String ? 0 : -1 ;
             });
         }
     });
