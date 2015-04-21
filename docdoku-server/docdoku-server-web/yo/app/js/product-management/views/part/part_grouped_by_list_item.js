@@ -29,7 +29,9 @@ define([
             _.each(this.headerColumns, function(column){
 
                 var value = self.item[column.value];
-                var type = _.findWhere(self.queryFilters, {id : column.value}).realType;
+
+                var filter = _.findWhere(self.queryFilters, {id : column.value});
+                var type = filter ? filter.realType : 'string';
 
                 var isDate = type === 'date';
                 var isPartNumber = type ==='partNumber';

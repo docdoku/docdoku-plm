@@ -333,6 +333,26 @@ define([
             });
 
 
+
+            this.$context[0].selectize.on('item_add', function(value){
+                self.$select[0].selectize.addOption(queryBuilderOptions.contextFields);
+                self.$select[0].selectize.refreshOptions(false);
+            });
+
+            this.$context[0].selectize.on('item_remove', function(value){
+                _.each(queryBuilderOptions.contextFields, function(field){
+                    self.$select[0].selectize.removeOption(field.value);
+                    self.$select[0].selectize.refreshOptions(false);
+
+                    self.$groupBy[0].selectize.removeOption(field.value);
+                    self.$groupBy[0].selectize.refreshOptions(false);
+
+                    self.$orderBy[0].selectize.removeOption(field.value);
+                    self.$orderBy[0].selectize.refreshOptions(false);
+                });
+            });
+
+
             this.$orderBy.selectize(this.selectizeOptions);
             this.$groupBy.selectize(this.selectizeOptions);
         },

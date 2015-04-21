@@ -238,7 +238,8 @@ define(function () {
         {id: 'attr-LOV', name: App.config.i18n.QUERY_GROUP_ATTRIBUTE_LOV},
         {id: 'attr-NUMBER', name: App.config.i18n.QUERY_GROUP_ATTRIBUTE_NUMBER},
         {id: 'attr-DATE', name: App.config.i18n.QUERY_GROUP_ATTRIBUTE_DATE},
-        {id: 'attr-BOOLEAN', name: App.config.i18n.QUERY_GROUP_ATTRIBUTE_BOOLEAN}
+        {id: 'attr-BOOLEAN', name: App.config.i18n.QUERY_GROUP_ATTRIBUTE_BOOLEAN},
+        {id: 'ctx', name: App.config.i18n.QUERY_GROUP_CONTEXT},
     ];
 
     filters.map(function(filter){
@@ -249,11 +250,20 @@ define(function () {
         });
     });
 
+    var contextFields = [
+        {
+            name:App.config.i18n.QUERY_DEPTH,
+            value:'ctx.depth',
+            group:'ctx'
+        }
+    ];
+
     return {
         filters : filters,
         fields : fields,
         groups : groups,
         types : types,
+        contextFields : contextFields,
 
         stringOperators: stringOperators,
         dateOperators : dateOperators,
