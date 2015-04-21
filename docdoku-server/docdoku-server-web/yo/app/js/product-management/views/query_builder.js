@@ -109,6 +109,10 @@ define([
                 var query = _.findWhere(this.queries,{id: parseInt(e.target.value,10)});
                 this.$where.queryBuilder('setRules', query.queryRule);
 
+                _.each(query.productsId, function(value){
+                    contextSelectize.addItem(value, true);
+                });
+
                 _.each(query.selects,function(value){
                     selectSelectize.addItem(value);
                 });
@@ -119,10 +123,6 @@ define([
 
                 _.each(query.groupedByList,function(value){
                     groupBySelectize.addItem(value, true);
-                });
-
-                _.each(query.productsId, function(value){
-                    contextSelectize.addItem(value, true);
                 });
 
             }else{
