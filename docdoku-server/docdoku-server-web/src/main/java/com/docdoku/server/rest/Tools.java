@@ -127,6 +127,7 @@ public class Tools {
         }
         dto.setAcknowledged(pNotification.isAcknowledged());
         dto.setAckComment(pNotification.getAcknowledgementComment());
+        dto.setAckDate(pNotification.getAcknowledgementDate());
 
         dto.setCheckInDate(pNotification.getModifiedPart().getCheckInDate());
         dto.setIterationNote(pNotification.getModifiedPart().getIterationNote());
@@ -135,8 +136,6 @@ public class Tools {
         dto.setModifiedPartNumber(pNotification.getModifiedPart().getPartNumber());
         dto.setModifiedPartName(pNotification.getModifiedPart().getPartName());
         dto.setModifiedPartVersion(pNotification.getModifiedPart().getPartVersion());
-
-        dto.setAcknowledged(pNotification.isAcknowledged());
 
         return dto;
     }
