@@ -139,7 +139,7 @@ define([
                     data.iteration.modificationDate
                 );
 
-                if (this.model.isCheckout()) {
+                if (this.model.isCheckoutByConnectedUser()) {
                     data.iteration.revisionDate = date.formatTimestamp(
                         App.config.i18n._DATE_FORMAT,
                         data.iteration.creationDate
