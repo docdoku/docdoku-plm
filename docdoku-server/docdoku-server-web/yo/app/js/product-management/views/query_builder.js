@@ -91,7 +91,7 @@ define([
             groupBySelectize.clear(true);
             groupBySelectize.clearOptions();
 
-            this.onClearContext;
+            this.onClearContext();
 
             this.$deleteQueryButton.hide();
         },
