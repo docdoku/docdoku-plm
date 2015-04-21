@@ -47,4 +47,6 @@ public class QueryField {
     public final static String PRODUCT_INSTANCE_SERIAL_NUMBER = "pi.serial";
     public final static String PRODUCT_INSTANCE_NAME = "pi.name";
 
+    public final static String CTX_DEPTH = "ctx.depth";
+
 }

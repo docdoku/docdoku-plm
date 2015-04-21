@@ -151,6 +151,10 @@ public class QueryWriter implements MessageBodyWriter<QueryResult> {
                 jg.write(QueryField.AUTHOR_NAME, user.getLogin());
             }
 
+            if(selects.contains(QueryField.CTX_DEPTH)){
+                jg.write(QueryField.CTX_DEPTH, row.getDepth());
+            }
+
             for (String attributeSelect : attributesSelect){
 
                 String attributeSelectType = attributeSelect.substring(0, attributeSelect.indexOf(".")).substring(QueryField.PART_REVISION_ATTRIBUTES_PREFIX.length());;
