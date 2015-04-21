@@ -219,6 +219,9 @@ public class QueryDAO {
     }
 
     private Predicate getPartRevisionPredicate(String field, String operator, String value, String type) {
+        if(field.equals("status")){
+            return getPredicate(pr.get(field),operator,PartRevision.RevisionStatus.valueOf(value),"");
+        }
         return getPredicate(pr.get(field),operator,value,type);
     }
 
@@ -271,7 +274,7 @@ public class QueryDAO {
 
     // Rule parsing
 
-    private Predicate getPredicate(Expression fieldExp, String operator, String value, String type){
+    private Predicate getPredicate(Expression fieldExp, String operator, Object value, String type){
 
         Object o;
 
@@ -282,14 +285,14 @@ public class QueryDAO {
 
             case "date":
                 try {
-                    o = new SimpleDateFormat("yyyy-MM-dd").parse(value);
+                    o = new SimpleDateFormat("yyyy-MM-dd").parse((String) value);
                 } catch (ParseException e) {
                     throw new IllegalArgumentException();
                 }
                 break;
             case "double":
                 try {
-                    o = Double.parseDouble(value);
+                    o = Double.parseDouble((String) value);
                 }catch(NumberFormatException e){
                     throw new IllegalArgumentException();
                 }
