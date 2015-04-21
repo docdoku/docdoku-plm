@@ -18,6 +18,7 @@ define([
             this.orderByList = this.options.data.queryData.orderByList;
             this.groupedByList = this.options.data.queryData.groupedByList;
             this.columnNameMapping = this.options.data.queryColumnNameMapping;
+            this.queryFilters = this.options.data.queryFilters;
         },
 
         render: function () {
@@ -52,6 +53,7 @@ define([
                 var values = self.orderBy(groups[key].items);
                 _.each(values, function(item){
                     var itemView = new PartGroupedByListItemView({
+                        queryFilters: self.queryFilters,
                         item : item,
                         columns:columns
                     }).render();

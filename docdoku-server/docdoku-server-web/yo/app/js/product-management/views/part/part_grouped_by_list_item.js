@@ -3,11 +3,10 @@ define([
     'backbone',
     'mustache',
     'text!templates/part/part_grouped_by_list_item.html',
-    '../../../utils/query-builder-options',
     'common-objects/utils/date',
     'common-objects/models/part',
     'common-objects/views/part/part_modal_view'
-], function (Backbone, Mustache, template, querybuilderOptions, Date, Part, PartModalView){
+], function (Backbone, Mustache, template, Date, Part, PartModalView){
     'use strict';
     var PartGroupedByListItemView = Backbone.View.extend({
 
@@ -20,6 +19,7 @@ define([
         initialize: function () {
             this.item = this.options.item;
             this.headerColumns = this.options.columns;
+            this.queryFilters = this.options.queryFilters;
         },
 
         render: function () {
@@ -29,7 +29,7 @@ define([
             _.each(this.headerColumns, function(column){
 
                 var value = self.item[column.value];
-                var type = _.findWhere(querybuilderOptions.filters, {id : column.value}).realType;
+                var type = _.findWhere(self.queryFilters, {id : column.value}).realType;
 
                 var isDate = type === 'date';
                 var isPartNumber = type ==='partNumber';

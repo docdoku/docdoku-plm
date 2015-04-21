@@ -240,7 +240,7 @@ public class QueryDAO {
     private Predicate getInstanceBooleanAttributePredicate(String field, String operator, String value, String type) {
         Root<InstanceBooleanAttribute> iba = cq.from(InstanceBooleanAttribute.class);
         Predicate memberPredicate = iba.in(pi.get("instanceAttributes"));
-        return cb.and(cb.equal(iba.get("name"),field),cb.equal(iba.get("booleanValue"),Boolean.getBoolean(value)),memberPredicate);
+        return cb.and(cb.equal(iba.get("name"),field),cb.equal(iba.get("booleanValue"),Boolean.parseBoolean(value)),memberPredicate);
     }
 
     private Predicate getInstanceNumberAttributePredicate(String field, String operator, String value, String type) {

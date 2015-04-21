@@ -173,6 +173,7 @@ define([
                             id: 'attr-'+attribute.type+'.'+attribute.name,
                             label: attribute.name,
                             type: attributeType,
+                            realType: attributeType,
                             optgroup: _.findWhere(querybuilderOptions.groups, {id : 'attr-'+attribute.type}).name
                         };
                         if(attributeType === 'date'){
@@ -192,6 +193,14 @@ define([
                                 index ++;
                             });
                             filter.values = values;
+                        } else if(attributeType === 'boolean'){
+                            filter.type = 'boolean';
+                            filter.operators = querybuilderOptions.booleanOperators;
+                            filter.input = 'select';
+                            filter.values = [
+                                {true : App.config.i18n.TRUE},
+                                {false : App.config.i18n.FALSE}
+                            ];
                         }
 
                         self.queryBuilderFilters.push(filter);
@@ -382,6 +391,7 @@ define([
                     contentType: 'application/json',
                     success: function (data) {
                         var dataToTransmit = {
+                            queryFilters : self.queryBuilderFilters,
                             queryData:queryData,
                             queryResponse:data,
                             queryColumnNameMapping:self.selectizeAvailableOptions

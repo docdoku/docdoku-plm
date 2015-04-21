@@ -70,6 +70,7 @@ define(function () {
     var dateOperators = ['equal', 'not_equal', 'less', 'less_or_equal', 'greater', 'greater_or_equal'];
     var lovOperators = ['equal', 'not_equal'];
     var statusOperators = ['equal', 'not_equal'];
+    var booleanOperators = ['equal', 'not_equal'];
 
     var filters = [];
 
@@ -255,7 +256,8 @@ define(function () {
 
         stringOperators: stringOperators,
         dateOperators : dateOperators,
-        lovOperators : lovOperators
+        lovOperators : lovOperators,
+        booleanOperators : booleanOperators
     };
 
 });
