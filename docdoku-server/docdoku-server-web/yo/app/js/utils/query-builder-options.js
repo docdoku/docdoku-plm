@@ -71,6 +71,7 @@ define(function () {
     var lovOperators = ['equal', 'not_equal'];
     var statusOperators = ['equal', 'not_equal'];
     var booleanOperators = ['equal', 'not_equal'];
+    var tagOperators = ['equal'];
 
     var filters = [];
 
@@ -257,7 +258,8 @@ define(function () {
         stringOperators: stringOperators,
         dateOperators : dateOperators,
         lovOperators : lovOperators,
-        booleanOperators : booleanOperators
+        booleanOperators : booleanOperators,
+        tagOperators: tagOperators
     };
 
 });

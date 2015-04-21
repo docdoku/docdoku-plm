@@ -228,9 +228,26 @@ define([
                 type: 'GET',
                 url: url,
                 success: function (tags) {
-                    _.each(tags, function(tag){
 
+                    var filter = {
+                        id: 'pr.tags',
+                        label: 'TAG',
+                        type: 'string',
+                        realType: 'string',
+                        optgroup: _.findWhere(queryBuilderOptions.groups, {id : 'pr'}).name
+                    };
+
+                    var values = [];
+                    _.each(tags, function(tag){
+                        var value = {};
+                        value[tag.id] = tag.label;
+                        values.push(value);
                     });
+
+                    filter.operators = queryBuilderOptions.tagOperators;
+                    filter.input = 'select';
+                    filter.values = values;
+                    self.queryBuilderFilters.push(filter);
                 },
                 error: function () {
 
