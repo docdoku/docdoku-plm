@@ -36,6 +36,10 @@ define(['backbone'], function (Backbone) {
         },
 
         getPartKey: function () {
+            return this.getNumber() + '-' + this.getVersion();
+        },
+
+        getDisplayPartKey: function () {
             if (this.getName()) {
                 return this.getName() + ' < ' + this.getNumber() + '-' + this.getVersion() + ' >';
             }

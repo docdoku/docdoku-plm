@@ -70,12 +70,9 @@ define([
 
                         self.searchResults = new LinkedDocumentCollection(data);
 
-                        // getDocKey
                         if (self.options.documentIteration && self.options.documentIteration.className === 'DocumentIteration') {
                             data = _.reject(self.searchResults.models, function(linkedDocument) {
-                                var docLinkedKey = linkedDocument.getDocumentMasterId() + '-' + linkedDocument.getDocumentRevisionVersion();
-                                var docIterationKey = self.options.documentIteration.getDocKey();
-                                return docLinkedKey === docIterationKey;
+                                return linkedDocument.getDocKey() === self.options.documentIteration.getDocKey();
                             }, self);
                             self.searchResults = new LinkedDocumentCollection(data);
                         }
