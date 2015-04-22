@@ -102,7 +102,7 @@ public class ProductInstancesResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public ProductInstanceMasterDTO createProductInstanceMaster(@PathParam("workspaceId") String workspaceId, ProductInstanceCreationDTO productInstanceCreationDTO)
-            throws EntityNotFoundException, EntityAlreadyExistsException, AccessRightException, CreationException {
+            throws EntityNotFoundException, EntityAlreadyExistsException, AccessRightException, CreationException, NotAllowedException {
 
         InstanceAttributeFactory factory = new InstanceAttributeFactory();
         ACLDTO acldto = productInstanceCreationDTO.getAcl();

@@ -491,14 +491,30 @@ define([
                     name: saveQuery ? this.$inputName.val() : ''
                 };
 
+                var csv = this.$('.export-csv').is(':checked');
                 this.$searchButton.button('loading');
+
                 var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/queries?save=' + saveQuery;
+
+                if(csv){
+                    url+='&export=CSV';
+                }
+
                 $.ajax({
                     type: 'POST',
                     url: url,
                     data: JSON.stringify(queryData),
                     contentType: 'application/json',
                     success: function (data) {
+                        if(csv){
+                            var blob=new Blob([data]);
+                            var link=document.createElement('a');
+                            link.href=window.URL.createObjectURL(blob);
+                            link.download="export.csv";
+                            link.click();
+                            self.$searchButton.button('reset');
+                            return;
+                        }
                         var dataToTransmit = {
                             queryFilters : self.queryBuilderFilters,
                             queryData:queryData,

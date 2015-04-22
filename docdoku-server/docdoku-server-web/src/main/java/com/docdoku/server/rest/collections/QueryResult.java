@@ -37,6 +37,12 @@ public class QueryResult {
     private Query query;
     private List<QueryResultRow> rows = new ArrayList<>();
 
+    private ExportType exportType = ExportType.JSON;
+
+    public enum ExportType {
+        JSON, CSV
+    }
+
     public QueryResult() {
     }
 
@@ -50,6 +56,14 @@ public class QueryResult {
         for(PartRevision partRevision:partRevisions){
             rows.add(new QueryResultRow(partRevision));
         }
+    }
+
+    public ExportType getExportType() {
+        return exportType;
+    }
+
+    public void setExportType(ExportType exportType) {
+        this.exportType = exportType;
     }
 
     public Query getQuery() {

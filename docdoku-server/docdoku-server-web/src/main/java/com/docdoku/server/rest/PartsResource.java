@@ -172,40 +172,47 @@ public class PartsResource {
 
     @GET
     @Path("queries/{queryId}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response runExistingQuery(@PathParam("workspaceId") String workspaceId, @PathParam("queryId") int queryId) throws EntityNotFoundException, UserNotActiveException, AccessRightException, EntityConstraintException, NotAllowedException {
+    public Response runExistingQuery(@PathParam("workspaceId") String workspaceId, @PathParam("queryId") int queryId, @QueryParam("export") String exportType) throws EntityNotFoundException, UserNotActiveException, AccessRightException, EntityConstraintException, NotAllowedException {
         Query query = productService.getQuery(workspaceId,queryId);
-        List<PartRevision> partRevisions = productService.searchPartRevisions(workspaceId, query);
-        QueryResult queryResult = new QueryResult(partRevisions,query);
-
-        if(query.hasContext()){
-            List<QueryResultRow> rows = productService.filterProductBreakdownStructure(workspaceId,query);
-            queryResult.mergeRows(rows);
-        }
-
-        return Response.ok().lastModified(new Date()).entity(queryResult).build();
+        QueryResult queryResult = getQueryResult(workspaceId, query, exportType);
+        return makeQueryResponse(queryResult);
     }
 
     @POST
     @Path("queries")
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response runCustomQuery(@PathParam("workspaceId") String workspaceId, @QueryParam("save") boolean save, QueryDTO queryDTO) throws EntityNotFoundException, UserNotActiveException, AccessRightException, CreationException, QueryAlreadyExistsException, EntityConstraintException, NotAllowedException {
+    public Response runCustomQuery(@PathParam("workspaceId") String workspaceId, @QueryParam("save") boolean save,  @QueryParam("export") String exportType, QueryDTO queryDTO) throws EntityNotFoundException, UserNotActiveException, AccessRightException, CreationException, QueryAlreadyExistsException, EntityConstraintException, NotAllowedException {
         Query query = mapper.map(queryDTO, Query.class);
+        QueryResult queryResult = getQueryResult(workspaceId, query, exportType);
+        if(save){
+            productService.createQuery(workspaceId,query);
+        }
+        return makeQueryResponse(queryResult);
+    }
+
+    private Response makeQueryResponse(QueryResult queryResult) {
+        String contentType = queryResult.getExportType().equals(QueryResult.ExportType.CSV) ? "application/octet-stream":"application/json";
+        String contentDisposition =  queryResult.getExportType().equals(QueryResult.ExportType.CSV) ? "attachment; filename=\"TSR.csv\"":"inline";
+
+        return Response.ok()
+                .header("Content-Type", contentType)
+                .header("Content-Disposition", contentDisposition)
+                .entity(queryResult).build();
+    }
+
+    private QueryResult getQueryResult(String workspaceId, Query query, String pExportType) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, EntityConstraintException, BaselineNotFoundException, ProductInstanceMasterNotFoundException, NotAllowedException, ConfigurationItemNotFoundException, PartMasterNotFoundException {
         List<PartRevision> partRevisions = productService.searchPartRevisions(workspaceId, query);
         QueryResult queryResult = new QueryResult(partRevisions,query);
-
         if(query.hasContext()){
             List<QueryResultRow> rows = productService.filterProductBreakdownStructure(workspaceId,query);
             queryResult.mergeRows(rows);
         }
-
-        if(save){
-            productService.createQuery(workspaceId,query);
-        }
-
-        return Response.ok().lastModified(new Date()).entity(queryResult).build();
+        String exportType = pExportType != null ? pExportType : "JSON";
+        queryResult.setExportType(QueryResult.ExportType.valueOf(exportType));
+        return queryResult;
     }
+
+
 
     @DELETE
     @Path("queries/{queryId}")

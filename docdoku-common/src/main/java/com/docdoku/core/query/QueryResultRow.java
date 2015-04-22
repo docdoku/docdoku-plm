@@ -11,6 +11,10 @@ public class QueryResultRow {
     private int depth;
     private double[] results;
 
+
+
+
+
     public QueryResultRow() {
     }
 

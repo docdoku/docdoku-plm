@@ -28,11 +28,11 @@ import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.query.QueryField;
 import com.docdoku.core.query.QueryResultRow;
 import com.docdoku.server.rest.collections.QueryResult;
+import org.apache.commons.lang.StringUtils;
 
 import javax.json.Json;
 import javax.json.JsonValue;
 import javax.json.stream.JsonGenerator;
-import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
@@ -41,6 +41,7 @@ import javax.ws.rs.ext.Provider;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
@@ -50,8 +51,9 @@ import java.util.List;
 
 
 @Provider
-@Produces(MediaType.APPLICATION_JSON)
 public class QueryWriter implements MessageBodyWriter<QueryResult> {
+
+    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
     @Override
     public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
@@ -66,22 +68,46 @@ public class QueryWriter implements MessageBodyWriter<QueryResult> {
     @Override
     public void writeTo(QueryResult queryResult, Class<?> aClass, Type type, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> multivaluedMap, OutputStream outputStream) throws IOException, WebApplicationException {
 
-        String charSet="UTF-8";
+        if(queryResult.getExportType().equals(QueryResult.ExportType.JSON)){
+            generateJSONResponse(outputStream,queryResult);
+        } else if(queryResult.getExportType().equals(QueryResult.ExportType.CSV)){
+            generateCSVResponse(outputStream,queryResult);
+        }else{
+            throw new IllegalArgumentException();
+        }
+
+    }
+
+    private void generateCSVResponse(OutputStream o, QueryResult queryResult) throws IOException {
+        String header = StringUtils.join(queryResult.getQuery().getSelects(), ", ");
+        o.write(header.getBytes());
+
+        for(QueryResultRow row : queryResult.getRows()){
+            writeCSVRow(row,o,queryResult);
+        }
+        o.flush();
+    }
+
+    private void writeCSVRow(QueryResultRow row, OutputStream o, QueryResult queryResult) throws IOException {
+
+        List<String> selects = queryResult.getQuery().getSelects();
+        List<String> data = new ArrayList<>();
+        // TODO
+        String rowData = StringUtils.join(data, ", ");
+        o.write(rowData.getBytes());
+    }
+
+    private void generateJSONResponse(OutputStream outputStream, QueryResult queryResult) throws UnsupportedEncodingException {
+
+        String charSet = "UTF-8";
         JsonGenerator jg = Json.createGenerator(new OutputStreamWriter(outputStream, charSet));
         jg.writeStartArray();
 
         List<String> selects = queryResult.getQuery().getSelects();
+        List<String> attributesSelect = getSelectedAttributes(selects);
 
-        List<String> attributesSelect = new ArrayList<>();
-        for(String select : selects){
-            if (select.contains(QueryField.PART_REVISION_ATTRIBUTES_PREFIX)){
-                attributesSelect.add(select);
-            }
-        }
 
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-
-        for(QueryResultRow row : queryResult.getRows()){
+        for (QueryResultRow row : queryResult.getRows()) {
 
             PartRevision part = row.getPartRevision();
 
@@ -91,79 +117,80 @@ public class QueryWriter implements MessageBodyWriter<QueryResult> {
 
             // PartMaster data
 
-            if(selects.contains(QueryField.PART_MASTER_NUMBER)){
-                jg.write(QueryField.PART_MASTER_NUMBER,part.getPartNumber());
+            if (selects.contains(QueryField.PART_MASTER_NUMBER)) {
+                jg.write(QueryField.PART_MASTER_NUMBER, part.getPartNumber());
             }
 
-            if(selects.contains(QueryField.PART_MASTER_NAME)){
+            if (selects.contains(QueryField.PART_MASTER_NAME)) {
                 String sName = part.getPartName();
-                jg.write(QueryField.PART_MASTER_NAME,sName != null ? sName : "");
+                jg.write(QueryField.PART_MASTER_NAME, sName != null ? sName : "");
             }
 
-            if(selects.contains(QueryField.PART_MASTER_TYPE)){
+            if (selects.contains(QueryField.PART_MASTER_TYPE)) {
                 String sType = part.getType();
-                jg.write(QueryField.PART_MASTER_TYPE,sType != null ? sType : "");
+                jg.write(QueryField.PART_MASTER_TYPE, sType != null ? sType : "");
             }
 
             // PartRevision data
 
-            if(selects.contains(QueryField.PART_REVISION_MODIFICATION_DATE)){
+            if (selects.contains(QueryField.PART_REVISION_MODIFICATION_DATE)) {
                 PartIteration pi = part.getLastIteration();
-                if (pi != null){
-                    writeDate(jg, simpleDateFormat, QueryField.PART_REVISION_MODIFICATION_DATE, pi.getModificationDate());
+                if (pi != null) {
+                    writeDate(jg, QueryField.PART_REVISION_MODIFICATION_DATE, pi.getModificationDate());
                 }
             }
 
-            if(selects.contains(QueryField.PART_REVISION_CREATION_DATE)){
-                writeDate(jg, simpleDateFormat, QueryField.PART_REVISION_CREATION_DATE, part.getCreationDate());
+            if (selects.contains(QueryField.PART_REVISION_CREATION_DATE)) {
+                writeDate(jg, QueryField.PART_REVISION_CREATION_DATE, part.getCreationDate());
             }
 
-            if(selects.contains(QueryField.PART_REVISION_CHECKOUT_DATE)){
-                writeDate(jg, simpleDateFormat, QueryField.PART_REVISION_CHECKOUT_DATE, part.getCheckOutDate());
+            if (selects.contains(QueryField.PART_REVISION_CHECKOUT_DATE)) {
+                writeDate(jg, QueryField.PART_REVISION_CHECKOUT_DATE, part.getCheckOutDate());
             }
 
-            if(selects.contains(QueryField.PART_REVISION_CHECKIN_DATE)){
-                writeDate(jg, simpleDateFormat, QueryField.PART_REVISION_CHECKIN_DATE, part.getCheckOutDate());
+            if (selects.contains(QueryField.PART_REVISION_CHECKIN_DATE)) {
+                writeDate(jg, QueryField.PART_REVISION_CHECKIN_DATE, part.getLastCheckedInIteration().getCheckInDate());
             }
 
-            if(selects.contains(QueryField.PART_REVISION_VERSION)){
+            if (selects.contains(QueryField.PART_REVISION_VERSION)) {
                 String version = part.getVersion();
                 jg.write(QueryField.PART_REVISION_VERSION, version);
             }
 
-            if(selects.contains(QueryField.PART_REVISION_LIFECYCLE_STATE)){
+            if (selects.contains(QueryField.PART_REVISION_LIFECYCLE_STATE)) {
                 String lifeCycleState = part.getLifeCycleState();
                 jg.write(QueryField.PART_REVISION_LIFECYCLE_STATE, lifeCycleState != null ? lifeCycleState : "");
             }
 
-            if(selects.contains(QueryField.PART_REVISION_STATUS)){
+            if (selects.contains(QueryField.PART_REVISION_STATUS)) {
                 PartRevision.RevisionStatus status = part.getStatus();
                 jg.write(QueryField.PART_REVISION_STATUS, status.toString());
             }
 
-            if(selects.contains(QueryField.AUTHOR_LOGIN)){
+            if (selects.contains(QueryField.AUTHOR_LOGIN)) {
                 User user = part.getAuthor();
                 jg.write(QueryField.AUTHOR_LOGIN, user.getLogin());
             }
 
-            if(selects.contains(QueryField.AUTHOR_NAME)){
+            if (selects.contains(QueryField.AUTHOR_NAME)) {
                 User user = part.getAuthor();
                 jg.write(QueryField.AUTHOR_NAME, user.getLogin());
             }
 
-            if(selects.contains(QueryField.CTX_DEPTH)){
+            if (selects.contains(QueryField.CTX_DEPTH)) {
                 jg.write(QueryField.CTX_DEPTH, row.getDepth());
             }
 
-            for (String attributeSelect : attributesSelect){
+            for (String attributeSelect : attributesSelect) {
 
-                String attributeSelectType = attributeSelect.substring(0, attributeSelect.indexOf(".")).substring(QueryField.PART_REVISION_ATTRIBUTES_PREFIX.length());;
+                String attributeSelectType = attributeSelect.substring(0, attributeSelect.indexOf(".")).substring(QueryField.PART_REVISION_ATTRIBUTES_PREFIX.length());
+                ;
                 String attributeSelectName = attributeSelect.substring(attributeSelect.indexOf(".") + 1);
 
                 String attributeValue = "";
 
                 PartIteration pi = part.getLastIteration();
-                if(pi != null) {
+                if (pi != null) {
                     List<InstanceAttribute> attributes = pi.getInstanceAttributes();
                     if (attributes != null) {
                         for (InstanceAttribute attribute : attributes) {
@@ -186,15 +213,28 @@ public class QueryWriter implements MessageBodyWriter<QueryResult> {
 
         jg.writeEnd();
         jg.flush();
-
     }
 
-    private void writeDate(JsonGenerator jg, SimpleDateFormat simpleDateFormat, String key, Date date) {
+    private void writeDate(JsonGenerator jg, String key, Date date) {
         if (date != null){
             String formattedDate = simpleDateFormat.format(date);
             jg.write(key, formattedDate);
         }else{
             jg.write(key, JsonValue.NULL);
         }
+    }
+
+    private String getFormattedDate(Date date) {
+        return date != null ? simpleDateFormat.format(date) : "";
+    }
+
+    public List<String> getSelectedAttributes(List<String> selects) {
+        List<String> attributesSelect = new ArrayList<>();
+        for(String select : selects){
+            if (select.contains(QueryField.PART_REVISION_ATTRIBUTES_PREFIX)){
+                attributesSelect.add(select);
+            }
+        }
+        return attributesSelect;
     }
 }

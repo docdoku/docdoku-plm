@@ -131,7 +131,6 @@ public class QueryDAO {
         Set<PartRevision> revisions = new HashSet<>();
 
         for(PartRevision part : tp.getResultList()){
-            System.out.println("###### " + part.getPartMasterWorkspaceId());
             revisions.add(part);
         }
 

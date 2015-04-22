@@ -125,10 +125,12 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public ProductInstanceMaster createProductInstance(String workspaceId, ConfigurationItemKey configurationItemKey, String serialNumber, int baselineId, Map<String, ACL.Permission> userEntries, Map<String, ACL.Permission> groupEntries, List<InstanceAttribute> attributes, DocumentIterationKey[] links, String[] documentLinkComments) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, BaselineNotFoundException, CreationException, ProductInstanceAlreadyExistsException {
+    public ProductInstanceMaster createProductInstance(String workspaceId, ConfigurationItemKey configurationItemKey, String serialNumber, int baselineId, Map<String, ACL.Permission> userEntries, Map<String, ACL.Permission> groupEntries, List<InstanceAttribute> attributes, DocumentIterationKey[] links, String[] documentLinkComments) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, BaselineNotFoundException, CreationException, ProductInstanceAlreadyExistsException, NotAllowedException {
         User user = userManager.checkWorkspaceWriteAccess(configurationItemKey.getWorkspace());
         Locale userLocale = new Locale(user.getLanguage());
         ProductInstanceMasterDAO productInstanceMasterDAO = new ProductInstanceMasterDAO(userLocale, em);
+
+        checkNameValidity(serialNumber,userLocale);
 
         try {// Check if ths product instance already exist
             ProductInstanceMaster productInstanceMaster = productInstanceMasterDAO.loadProductInstanceMaster(new ProductInstanceMasterKey(serialNumber, configurationItemKey.getWorkspace(), configurationItemKey.getId()));
@@ -821,6 +823,12 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
 
     private boolean isACLGrantReadAccess(User user, ProductInstanceMaster productInstanceMaster) {
         return user.isAdministrator() || productInstanceMaster.getAcl().hasReadAccess(user);
+    }
+
+    private void checkNameValidity(String name, Locale locale) throws NotAllowedException {
+        if (!NamingConvention.correct(name)) {
+            throw new NotAllowedException(locale, "NotAllowedException9");
+        }
     }
 
     private void checkNameFileValidity(String name, Locale locale) throws NotAllowedException {
