@@ -396,6 +396,7 @@ define({
         QUERY_GROUP_PART_MASTER:"Part Master",
         QUERY_GROUP_PART_REVISION:"Part Revision",
         QUERY_GROUP_PRODUCT_INSTANCE:"Product Instance",
+        QUERY_GROUP_PRODUCT:"Product",
         QUERY_GROUP_ATTRIBUTE_STRING:"String Attribute",
         QUERY_GROUP_ATTRIBUTE_LOV:"URL Attribute",
         QUERY_GROUP_ATTRIBUTE_URL:"List of values Attribute",

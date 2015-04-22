@@ -6,8 +6,9 @@ define([
     'selectize',
     '../../utils/query-builder-options',
     'common-objects/views/alert',
-    'collections/configuration_items'
-], function (Backbone, Mustache, template,  selectize, queryBuilderOptions, AlertView, ConfigurationItemCollection) {
+    'collections/configuration_items',
+    'common-objects/collections/product_instances'
+], function (Backbone, Mustache, template,  selectize, queryBuilderOptions, AlertView, ConfigurationItemCollection, ProductInstances) {
     'use strict';
     var QueryBuilderView = Backbone.View.extend({
 
@@ -23,7 +24,7 @@ define([
             'click .clear-context-badge' : 'onClearContext'
         },
 
-        delimiter: '/',
+        delimiter: ',',
 
         initialize: function () {
 
@@ -83,7 +84,6 @@ define([
             var selectSelectize = this.$select[0].selectize;
             var orderBySelectize = this.$orderBy[0].selectize;
             var groupBySelectize = this.$groupBy[0].selectize;
-            var contextSelectize = this.$context[0].selectize;
 
             selectSelectize.clear();
             orderBySelectize.clear(true);
@@ -292,24 +292,9 @@ define([
         },
 
         fillSelectizes: function(){
-            var contextOption = _.clone(this.selectizeOptions);
-            this.$context.selectize(contextOption);
-
             var self = this;
-            var productCollection = new ConfigurationItemCollection();
-            productCollection.fetch().success(function(productsList){
-                _.each(productsList, function(product){
-                    self.$context[0].selectize.addOption({
-                        name:product.id,
-                        value:product.id
-                    });
-                });
-            }).error(function(){
-                self.$('#alerts').append(new AlertView({
-                    type: 'warning',
-                    message: App.config.i18n.QUERY_CONTEXT_ERROR
-                }).render().$el);
-            });
+
+            this.fillContext();
 
             this.$select.selectize(this.selectizeOptions);
             this.$select[0].selectize.addOption(this.selectizeAvailableOptions);
@@ -332,22 +317,48 @@ define([
                 self.$orderBy[0].selectize.refreshOptions(false);
             });
 
+            this.$orderBy.selectize(this.selectizeOptions);
+            this.$groupBy.selectize(this.selectizeOptions);
+        },
 
+        fillContext: function(){
+            var contextOption = _.clone(this.selectizeOptions);
+            contextOption.group = [{id: 'pi', name: App.config.i18n.QUERY_GROUP_PRODUCT}];
+            this.$context.selectize(contextOption);
 
-            this.$context[0].selectize.on('item_add', function(value){
+            var self = this;
+            var contextSelectize = this.$context[0].selectize;
+
+            var productCollection = new ConfigurationItemCollection();
+            productCollection.fetch().success(function(productsList){
+                _.each(productsList, function(product){
+                    self.$context[0].selectize.addOption({
+                        name:product.id,
+                        value:product.id,
+                        group:'pi'
+                    });
+                });
+            }).error(function(){
+                self.$('#alerts').append(new AlertView({
+                    type: 'warning',
+                    message: App.config.i18n.QUERY_CONTEXT_ERROR
+                }).render().$el);
+            });
+
+            contextSelectize.on('item_add', function(value){
                 self.$select[0].selectize.addOption(queryBuilderOptions.contextFields);
                 self.$select[0].selectize.refreshOptions(false);
 
-                if(self.$context[0].selectize.items.length === 1) {
+                if(contextSelectize.items.length === 1) {
                     _.each(queryBuilderOptions.contextFields, function(field){
                         self.selectizeAvailableOptions.push(field);
                     });
                 }
             });
 
-            this.$context[0].selectize.on('item_remove', function(value){
+            contextSelectize.on('item_remove', function(value){
 
-                if(self.$context[0].selectize.items.length === 0) {
+                if(contextSelectize.items.length === 0) {
                     _.each(queryBuilderOptions.contextFields, function (field) {
                         self.$select[0].selectize.removeOption(field.value);
                         self.$select[0].selectize.refreshOptions(false);
@@ -362,8 +373,19 @@ define([
             });
 
 
-            this.$orderBy.selectize(this.selectizeOptions);
-            this.$groupBy.selectize(this.selectizeOptions);
+            new ProductInstances().fetch().success(function(productInstances){
+                _.each(productInstances, function(pi){
+                    contextSelectize.addOptionGroup(pi.configurationItemId,{name: pi.configurationItemId});
+
+                    contextSelectize.addOption({
+                        name:pi.serialNumber,
+                        value:pi.configurationItemId +'/'+pi.serialNumber,
+                        group:pi.configurationItemId
+                    });
+
+                });
+            });
+
         },
 
         bindDomElements: function () {
@@ -437,8 +459,18 @@ define([
 
             if(isValid) {
 
-                var context = this.$context[0].selectize.getValue().split(this.delimiter);
-                var selectList = this.$select[0].selectize.getValue().split(this.delimiter);
+                var context = this.$context[0].selectize.getValue().length ? this.$context[0].selectize.getValue().split(this.delimiter) : [];
+
+                var contextToSend = [];
+                _.each(context, function(ctx){
+                    var productAndSerial = ctx.split('/');
+                    contextToSend.push({
+                        configurationItemId:productAndSerial[0],
+                        serialNumber:productAndSerial[1]
+                    });
+                });
+
+                var selectList = this.$select[0].selectize.getValue().length ? this.$select[0].selectize.getValue().split(this.delimiter) : [];
                 var where = this.$where.queryBuilder('getRules');
                 var orderByList = this.$orderBy[0].selectize.getValue().length ? this.$orderBy[0].selectize.getValue().split(this.delimiter) : [];
                 var groupByList = this.$groupBy[0].selectize.getValue().length ? this.$groupBy[0].selectize.getValue().split(this.delimiter) : [];
@@ -451,7 +483,7 @@ define([
                 }
 
                 var queryData = {
-                    productsId:context,
+                    productsId:contextToSend,
                     selects: selectList,
                     orderByList: orderByList,
                     groupedByList: groupByList,
