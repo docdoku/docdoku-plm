@@ -80,6 +80,7 @@ public class QueryWriter implements MessageBodyWriter<QueryResult> {
 
     private void generateCSVResponse(OutputStream o, QueryResult queryResult) throws IOException {
         String header = StringUtils.join(queryResult.getQuery().getSelects(), ", ");
+        header += "\n";
         o.write(header.getBytes());
 
         for(QueryResultRow row : queryResult.getRows()){
@@ -92,8 +93,90 @@ public class QueryWriter implements MessageBodyWriter<QueryResult> {
 
         List<String> selects = queryResult.getQuery().getSelects();
         List<String> data = new ArrayList<>();
-        // TODO
+
+        PartRevision part  = row.getPartRevision();
+
+        for(String select : selects){
+
+            switch (select){
+                case QueryField.PART_MASTER_NUMBER:
+                    data.add(part.getPartNumber());
+                    break;
+                case QueryField.PART_MASTER_NAME:
+                    String sName = part.getPartName();
+                    data.add(sName != null ? sName : "");
+                    break;
+                case QueryField.PART_MASTER_TYPE:
+                    String sType = part.getType();
+                    data.add(sType != null ? sType : "");
+                    break;
+                case QueryField.PART_REVISION_MODIFICATION_DATE:
+                    PartIteration piLastIteration = part.getLastIteration();
+                    data.add((piLastIteration != null && piLastIteration.getModificationDate() != null) ? simpleDateFormat.format(piLastIteration.getModificationDate()) : "");
+                    break;
+                case QueryField.PART_REVISION_CREATION_DATE:
+                    data.add((part.getCreationDate() != null) ? simpleDateFormat.format(part.getCreationDate()) : "");
+                    break;
+                case QueryField.PART_REVISION_CHECKOUT_DATE:
+                    data.add((part.getCheckOutDate() != null) ? simpleDateFormat.format(part.getCheckOutDate()) : "");
+                    break;
+                case QueryField.PART_REVISION_CHECKIN_DATE:
+                    PartIteration lastCheckedPI = part.getLastCheckedInIteration();
+                    data.add((lastCheckedPI != null && lastCheckedPI.getCheckInDate() != null) ? simpleDateFormat.format(lastCheckedPI.getCheckInDate()) : "");
+                    break;
+                case QueryField.PART_REVISION_VERSION:
+                    data.add(part.getVersion() != null ? part.getVersion() : "");
+                    break;
+                case QueryField.PART_REVISION_LIFECYCLE_STATE:
+                    data.add(part.getLifeCycleState() != null ? part.getLifeCycleState() : "");
+                    break;
+                case QueryField.PART_REVISION_STATUS:
+                    data.add(part.getStatus().toString());
+                    break;
+                case QueryField.AUTHOR_LOGIN:
+                    User user = part.getAuthor();
+                    data.add(user.getLogin());
+                    break;
+                case QueryField.AUTHOR_NAME:
+                    User userAuthor = part.getAuthor();
+                    data.add(userAuthor.getName());
+                    break;
+                case QueryField.CTX_DEPTH:
+                    data.add(row.getDepth()+"");
+                    break;
+                default:
+                    if (select.contains(QueryField.PART_REVISION_ATTRIBUTES_PREFIX)){
+                        String attributeSelectType = select.substring(0, select.indexOf(".")).substring(QueryField.PART_REVISION_ATTRIBUTES_PREFIX.length());
+                        String attributeSelectName = select.substring(select.indexOf(".") + 1);
+                        String attributeValue = "";
+                        PartIteration pi = part.getLastIteration();
+                        if (pi != null) {
+                            List<InstanceAttribute> attributes = pi.getInstanceAttributes();
+                            if (attributes != null) {
+                                for (InstanceAttribute attribute : attributes) {
+                                    InstanceAttributeDescriptor attributeDescriptor = new InstanceAttributeDescriptor(attribute);
+                                    if (attributeDescriptor.getName().equals(attributeSelectName)
+                                            && attributeDescriptor.getStringType().equals(attributeSelectType)) {
+
+                                        attributeValue = attribute.getValue() + "";
+                                        if (attribute instanceof InstanceListOfValuesAttribute) {
+                                            attributeValue = ((InstanceListOfValuesAttribute) attribute).getSelectedName();
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        data.add(attributeValue);
+                    } else {
+                        data.add("");
+                    }
+            }
+
+        }
+
         String rowData = StringUtils.join(data, ", ");
+        rowData += "\n";
         o.write(rowData.getBytes());
     }
 
