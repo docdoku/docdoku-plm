@@ -6,13 +6,16 @@ define([
     'common-objects/views/attributes/attributes',
     'common-objects/views/workflow/lifecycle',
     'common-objects/views/linked/linked_documents',
+    'views/where_used/where_used_list_view',
     'common-objects/models/tag',
     'common-objects/views/tags/tag',
     'common-objects/collections/linked/linked_document_collection',
+    'common-objects/collections/part_collection',
+    'collections/where_used_document',
     'text!templates/iteration/document_iteration.html',
     'common-objects/views/prompt',
     'common-objects/utils/date'
-], function (Mustache, ModalView, FileListView, DocumentAttributesView, LifecycleView, LinkedDocumentsView, Tag, TagView, LinkedDocumentCollection, template, PromptView, date) {
+], function (Mustache, ModalView, FileListView, DocumentAttributesView, LifecycleView, LinkedDocumentsView, WhereUsedListView, Tag, TagView, LinkedDocumentCollection, PartList, WhereUsedDocumentList, template, PromptView, date) {
     'use strict';
 
     var IterationView = ModalView.extend({
@@ -191,28 +194,9 @@ define([
                     });
                 }
 
-
-                this.fileListView = new FileListView({
-                    baseName: this.iteration.getBaseName(),
-                    deleteBaseUrl: this.iteration.baseUrl(),
-                    uploadBaseUrl: this.iteration.getUploadBaseUrl(),
-                    collection: this.iteration.getAttachedFiles(),
-                    editMode: editMode
-                }).render();
-
-                /* Add the fileListView to the tab */
-                this.$('#iteration-files').html(this.fileListView.el);
-
-
-                this.linkedDocumentsView = new LinkedDocumentsView({
-                    editMode: editMode,
-                    commentEditable: true,
-                    documentIteration: this.iteration,
-                    collection: new LinkedDocumentCollection(this.iteration.getLinkedDocuments())
-                }).render();
-
-                /* Add the documentLinksView to the tab */
-                this.$('#iteration-links').html(this.linkedDocumentsView.el);
+                this.initFileListView(editMode);
+                this.initLinkedDocumentsView(editMode);
+                this.initWhereUsedListView();
             }
 
             if (this.model.get('workflow')) {
@@ -307,6 +291,42 @@ define([
 
         getPrimaryButton: function () {
             return this.$('div.modal-footer button.btn-primary');
+        },
+
+        initFileListView: function (editMode) {
+            this.fileListView = new FileListView({
+                baseName: this.iteration.getBaseName(),
+                deleteBaseUrl: this.iteration.baseUrl(),
+                uploadBaseUrl: this.iteration.getUploadBaseUrl(),
+                collection: this.iteration.getAttachedFiles(),
+                editMode: editMode
+            }).render();
+
+            /* Add the fileListView to the tab */
+            this.$('#iteration-files').html(this.fileListView.el);
+        },
+
+        initLinkedDocumentsView: function (editMode) {
+            this.linkedDocumentsView = new LinkedDocumentsView({
+                editMode: editMode,
+                commentEditable: true,
+                documentIteration: this.iteration,
+                collection: new LinkedDocumentCollection(this.iteration.getLinkedDocuments())
+            }).render();
+
+            /* Add the documentLinksView to the tab */
+            this.$('#iteration-links').html(this.linkedDocumentsView.el);
+        },
+
+        initWhereUsedListView: function () {
+            this.whereUsedListView = new WhereUsedListView({
+                //documentIteration: this.iteration,
+                partsCollection: new PartList(this.iteration.getWhereUsedParts()),
+                documentsCollection: new WhereUsedDocumentList(this.iteration.getWhereUsedDocuments())
+            }).render();
+
+            /* Add the whereUsedListView to the tab */
+            this.$('#iteration-where-used').html(this.whereUsedListView.el);
         },
 
         tagsManagement: function (editMode) {

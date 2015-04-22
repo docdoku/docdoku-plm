@@ -108,7 +108,15 @@ define([
 
 		getBaseName: function () {
 			return this.getWorkspace() + '/documents/' + this.getDocumentMasterId() + '/' + this.getDocumentRevisionVersion() + '/' + this.getIteration();
-		}
+		},
+
+        getWhereUsedDocuments: function () {
+            return [];
+        },
+
+        getWhereUsedParts: function () {
+            return [];
+        }
 	});
 	return DocumentIteration;
 });

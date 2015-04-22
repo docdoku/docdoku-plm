@@ -560,6 +560,7 @@ define({
 	VISUALIZE_PRODUCT: "Visualiser le produit",
 	WAITING_REMOTE_VIDEO: "En attente de la vidéo de l'utilisateur distant.",
 	WAITING_USER_MEDIA: "En attente de l'entrée vidéo ... Veuillez accepter la demande de votre navigateur.",
+    WHERE_USED_LIST: "Cas d'emploi",
 	WITHDRAW_INVITATION: "Retirer l'invitation",
 	WORKFLOW_HISTORY: "Historique",
 	WORKFLOW_LEGEND_COMPLETE: "Complet",
