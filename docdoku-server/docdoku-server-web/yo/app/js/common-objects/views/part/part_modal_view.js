@@ -111,10 +111,18 @@ define([
                     App.config.i18n._DATE_FORMAT,
                     data.iteration.modificationDate
                 );
-                data.iteration.revisionDate = date.formatTimestamp(
-                    App.config.i18n._DATE_FORMAT,
-                    data.iteration.revisionDate
-                );
+
+                if (this.model.isCheckoutByConnectedUser()) {
+                    data.iteration.revisionDate = date.formatTimestamp(
+                        App.config.i18n._DATE_FORMAT,
+                        data.iteration.creationDate
+                    );
+                } else {
+                    data.iteration.revisionDate = date.formatTimestamp(
+                        App.config.i18n._DATE_FORMAT,
+                        data.iteration.checkInDate
+                    );
+                }
             }
             data.hasOneIteration= (this.iterations.length < 1);
             this.$el.html(Mustache.render(template, data));
