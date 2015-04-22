@@ -79,7 +79,7 @@ public class QueryWriter implements MessageBodyWriter<QueryResult> {
     }
 
     private void generateCSVResponse(OutputStream o, QueryResult queryResult) throws IOException {
-        String header = StringUtils.join(queryResult.getQuery().getSelects(), ", ");
+        String header = StringUtils.join(queryResult.getQuery().getSelects(), "; ");
         header += "\n";
         o.write(header.getBytes());
 
@@ -175,7 +175,7 @@ public class QueryWriter implements MessageBodyWriter<QueryResult> {
 
         }
 
-        String rowData = StringUtils.join(data, ", ");
+        String rowData = StringUtils.join(data, "; ");
         rowData += "\n";
         o.write(rowData.getBytes());
     }
@@ -257,7 +257,7 @@ public class QueryWriter implements MessageBodyWriter<QueryResult> {
 
             if (selects.contains(QueryField.AUTHOR_NAME)) {
                 User user = part.getAuthor();
-                jg.write(QueryField.AUTHOR_NAME, user.getLogin());
+                jg.write(QueryField.AUTHOR_NAME, user.getName());
             }
 
             if (selects.contains(QueryField.CTX_DEPTH)) {
