@@ -37,10 +37,6 @@ public class InstanceAttributeFactory {
     private Mapper mapper;
 
     public InstanceAttributeFactory() {
-    }
-
-    @PostConstruct
-    public void init() {
         mapper = DozerBeanMapperSingletonWrapper.getInstance();
     }
 
