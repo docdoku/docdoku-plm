@@ -110,7 +110,11 @@ define([
                 this.$where.queryBuilder('setRules', query.queryRule);
 
                 _.each(query.contexts, function(value){
-                    contextSelectize.addItem(value.configurationItemId +'/'+value.serialNumber, true);
+                    if(!value.serialNumber){
+                        contextSelectize.addItem(value.configurationItemId, true);
+                    } else {
+                        contextSelectize.addItem(value.configurationItemId +'/'+value.serialNumber, true);
+                    }
                 });
 
                 _.each(query.selects,function(value){
