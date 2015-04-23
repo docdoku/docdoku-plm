@@ -65,6 +65,13 @@ public class PartDTO implements Serializable {
     public PartDTO() {
     }
 
+    public PartDTO(String workspaceId, String number, String name, String version) {
+        this.number = number;
+        this.name = name;
+        this.version = version;
+        this.workspaceId = workspaceId;
+    }
+
     public String getNumber() {
         return number;
     }

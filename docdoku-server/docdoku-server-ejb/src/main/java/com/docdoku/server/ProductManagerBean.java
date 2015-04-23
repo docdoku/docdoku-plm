@@ -2622,6 +2622,29 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
         return rows;
     }
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
+    @Override
+    public List<PartIteration> getInversePartsLink(DocumentIterationKey docKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartIterationNotFoundException, PartRevisionNotFoundException, DocumentIterationNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(docKey.getWorkspaceId());
+
+        Locale locale = new Locale(user.getLanguage());
+
+        DocumentIteration documentIteration = new DocumentRevisionDAO(locale, em).loadDocI(docKey);
+
+        DocumentLinkDAO documentLinkDAO = new DocumentLinkDAO(locale,em);
+        List<PartIteration> iterations = documentLinkDAO.getInversePartsLinks(documentIteration);
+        ListIterator<PartIteration> ite = iterations.listIterator();
+
+        while(ite.hasNext()){
+            PartIteration next = ite.next();
+            if(!canAccess(next.getKey())){
+                ite.remove();
+            }
+        }
+        return iterations;
+    }
+
+
 
     private PSFilter getConfigSpecForBaseline(int baselineId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, BaselineNotFoundException {
         return productBaselineManager.getBaselinePSFilter(baselineId);

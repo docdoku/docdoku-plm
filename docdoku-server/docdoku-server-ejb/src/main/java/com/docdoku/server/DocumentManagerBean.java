@@ -25,6 +25,7 @@ import com.docdoku.core.document.*;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.gcm.GCMAccount;
 import com.docdoku.core.meta.*;
+import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.query.DocumentSearchQuery;
 import com.docdoku.core.security.ACL;
@@ -795,7 +796,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         DocumentRevisionDAO docRDAO = new DocumentRevisionDAO(new Locale(user.getLanguage()), em);
         DocumentRevision docR = docRDAO.loadDocR(pDocRPK);
 
-        // You cannot move a document to someone else's home directory        
+        // You cannot move a document to someone else's home directory
         if (isInAnotherUserHomeFolder(user, docR)) {
             throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException6");
         } else {
@@ -1647,6 +1648,29 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
                         !isCheckoutByAnotherUser(user, docRevision));
     }
 
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
+    @Override
+    public List<DocumentIteration> getInverseDocumentsLink(DocumentIterationKey docKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentRevisionNotFoundException, DocumentIterationNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(docKey.getWorkspaceId());
+
+        Locale locale = new Locale(user.getLanguage());
+
+        DocumentIteration documentIteration = new DocumentRevisionDAO(locale, em).loadDocI(docKey);
+
+        DocumentLinkDAO documentLinkDAO = new DocumentLinkDAO(locale,em);
+        List<DocumentIteration> iterations = documentLinkDAO.getInverseDocumentsLinks(documentIteration);
+
+        ListIterator<DocumentIteration> ite = iterations.listIterator();
+
+        while(ite.hasNext()){
+            DocumentIteration next = ite.next();
+            if(!canAccess(next.getKey())){
+                ite.remove();
+            }
+        }
+
+        return iterations;
+    }
 
     /**
      * Apply read access policy on a document revision

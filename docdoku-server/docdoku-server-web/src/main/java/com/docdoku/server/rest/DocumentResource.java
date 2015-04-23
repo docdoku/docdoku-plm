@@ -24,12 +24,14 @@ import com.docdoku.core.common.User;
 import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.configuration.DocumentConfigSpec;
+import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.document.DocumentRevisionKey;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.meta.*;
+import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;
@@ -37,6 +39,7 @@ import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentConfigSpecManagerLocal;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.services.IDocumentWorkflowManagerLocal;
+import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.core.sharing.SharedDocument;
 import com.docdoku.core.workflow.Workflow;
 import com.docdoku.server.rest.dto.*;
@@ -60,6 +63,8 @@ public class DocumentResource {
 
     @EJB
     private IDocumentManagerLocal documentService;
+    @EJB
+    private IProductManagerLocal productService;
     @EJB
     private IDocumentWorkflowManagerLocal documentWorkflowService;
     @EJB
@@ -447,6 +452,40 @@ public class DocumentResource {
         Collections.sort(abortedWorkflowsDTO);
 
         return abortedWorkflowsDTO;
+    }
+
+    @GET
+    @Path("{iteration}/inverse-document-link")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<DocumentRevisionDTO> getInverseDocumentLinks(@PathParam("workspaceId") String workspaceId,
+                                                   @PathParam("documentId") String documentId,
+                                                   @PathParam("documentVersion") String documentVersion,
+                                                   @PathParam("iteration") int iteration,
+                                                   @QueryParam("configSpec") String configSpecType) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, DocumentRevisionNotFoundException, DocumentIterationNotFoundException {
+        DocumentIterationKey docKey = new DocumentIterationKey(workspaceId,documentId,documentVersion,iteration);
+        List<DocumentIteration> documents = documentService.getInverseDocumentsLink(docKey);
+        Set<DocumentRevisionDTO> dtos = new HashSet<>();
+        for(DocumentIteration doc : documents){
+            dtos.add(new DocumentRevisionDTO(doc.getWorkspaceId(),doc.getDocumentMasterId(), doc.getDocumentTitle(),doc.getDocumentVersion()));
+        }
+        return new ArrayList<>(dtos);
+    }
+
+    @GET
+    @Path("{iteration}/inverse-part-link")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<PartDTO> getInversePartsLinks(@PathParam("workspaceId") String workspaceId,
+                                                        @PathParam("documentId") String documentId,
+                                                        @PathParam("documentVersion") String documentVersion,
+                                                        @PathParam("iteration") int iteration,
+                                                        @QueryParam("configSpec") String configSpecType) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, PartIterationNotFoundException, DocumentIterationNotFoundException {
+        DocumentIterationKey docKey = new DocumentIterationKey(workspaceId,documentId,documentVersion,iteration);
+        List<PartIteration> parts = productService.getInversePartsLink(docKey);
+        Set<PartDTO> dtos = new HashSet<>();
+        for(PartIteration part : parts){
+            new PartDTO(workspaceId,part.getNumber(), part.getPartName(),part.getVersion());
+        }
+        return new ArrayList<>(dtos);
     }
 
     private List<InstanceAttribute> createInstanceAttributes(List<InstanceAttributeDTO> dtos) {

@@ -20,10 +20,13 @@
 
 package com.docdoku.server.dao;
 
+import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentLink;
+import com.docdoku.core.product.PartIteration;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
+import java.util.List;
 import java.util.Locale;
 
 
@@ -42,8 +45,6 @@ public class DocumentLinkDAO {
         mLocale = Locale.getDefault();
     }
 
-
-
     public void removeLink(DocumentLink pLink){
         em.remove(pLink);
     }
@@ -56,5 +57,17 @@ public class DocumentLinkDAO {
         }catch(EntityExistsException pEEEx){
             //already created
         }
+    }
+
+    public List<DocumentIteration> getInverseDocumentsLinks(DocumentIteration documentIteration){
+        return em.createNamedQuery("DocumentLink.findInverseDocumentLinks",DocumentIteration.class)
+                .setParameter("documentIteration",documentIteration)
+                .getResultList();
+    }
+
+    public List<PartIteration> getInversePartsLinks(DocumentIteration documentIteration){
+        return em.createNamedQuery("DocumentLink.findInversePartLinks",PartIteration.class)
+                .setParameter("documentIteration",documentIteration)
+                .getResultList();
     }
 }

@@ -26,6 +26,7 @@ import com.docdoku.core.exceptions.*;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.meta.InstanceAttributeTemplate;
 import com.docdoku.core.meta.TagKey;
+import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.query.DocumentSearchQuery;
 import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;
@@ -199,4 +200,6 @@ public interface IDocumentManagerLocal {
     boolean canAccess(DocumentIterationKey docRKey) throws DocumentRevisionNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
     boolean canUserAccess(User user, DocumentRevisionKey docRKey) throws DocumentRevisionNotFoundException;
     boolean canUserAccess(User user, DocumentIterationKey docRKey) throws DocumentRevisionNotFoundException;
+
+    List<DocumentIteration> getInverseDocumentsLink(DocumentIterationKey docKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentRevisionNotFoundException, DocumentIterationNotFoundException;
 }

@@ -39,7 +39,9 @@ import java.io.Serializable;
     @NamedQuery(name="DocumentLink.findDocumentOwner", query = "SELECT d FROM DocumentIteration d WHERE :link MEMBER OF d.linkedDocuments"),
     @NamedQuery(name="DocumentLink.findPartOwner", query = "SELECT p FROM PartIteration p WHERE :link MEMBER OF p.linkedDocuments"),
     @NamedQuery(name="DocumentLink.findProductInstanceIteration", query = "SELECT p FROM ProductInstanceIteration p WHERE :link MEMBER OF p.linkedDocuments"),
-    @NamedQuery(name="DocumentLink.findPathData", query = "SELECT p FROM PathDataIteration p WHERE :link MEMBER OF p.linkedDocuments")
+        @NamedQuery(name="DocumentLink.findPathData", query = "SELECT p FROM PathDataIteration p WHERE :link MEMBER OF p.linkedDocuments"),
+    @NamedQuery(name="DocumentLink.findInverseDocumentLinks", query = "SELECT d FROM DocumentIteration d JOIN DocumentLink dl WHERE dl MEMBER OF d.linkedDocuments and dl.targetDocument = :documentIteration"),
+    @NamedQuery(name="DocumentLink.findInversePartLinks", query = "SELECT p FROM PartIteration p JOIN DocumentLink dl WHERE dl MEMBER OF p.linkedDocuments and dl.targetDocument = :documentIteration")
 })
 public class DocumentLink implements Serializable, Cloneable{
 

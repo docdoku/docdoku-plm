@@ -23,6 +23,7 @@ import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.User;
 import com.docdoku.core.document.*;
 import com.docdoku.core.exceptions.CreationException;
+import com.docdoku.core.exceptions.DocumentIterationNotFoundException;
 import com.docdoku.core.exceptions.DocumentRevisionAlreadyExistsException;
 import com.docdoku.core.exceptions.DocumentRevisionNotFoundException;
 import com.docdoku.core.meta.Tag;
@@ -90,6 +91,15 @@ public class DocumentRevisionDAO {
             throw new DocumentRevisionNotFoundException(mLocale, pKey);
         } else {
             return docR;
+        }
+    }
+
+    public DocumentIteration loadDocI(DocumentIterationKey pKey) throws DocumentIterationNotFoundException {
+        DocumentIteration docI = em.find(DocumentIteration.class, pKey);
+        if (docI == null) {
+            throw new DocumentIterationNotFoundException(mLocale, pKey);
+        } else {
+            return docI;
         }
     }
 
