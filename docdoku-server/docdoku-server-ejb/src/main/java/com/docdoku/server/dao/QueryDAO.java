@@ -8,6 +8,7 @@ import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartMaster;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.query.Query;
+import com.docdoku.core.query.QueryContext;
 import com.docdoku.core.query.QueryRule;
 
 import javax.persistence.*;
@@ -51,6 +52,7 @@ public class QueryDAO {
             persistQueryRules(query.getQueryRule());
             em.persist(query);
             em.flush();
+            persistContexts(query,query.getContexts());
         }catch (EntityExistsException pEEEx) {
             LOGGER.log(Level.FINEST,null,pEEEx);
             throw new QueryAlreadyExistsException(mLocale, query);
@@ -58,6 +60,14 @@ public class QueryDAO {
             LOGGER.log(Level.FINEST,null,pPEx);
             throw new CreationException(mLocale);
         }
+    }
+
+    private void persistContexts(Query query, List<QueryContext> contexts) {
+        for(QueryContext context:contexts){
+            context.setParentQuery(query);
+            em.persist(context);
+        }
+        em.flush();
     }
 
     private void persistQueryRules(QueryRule queryRule) {
@@ -230,7 +240,7 @@ public class QueryDAO {
         Root<Tag> tag = cq.from(Tag.class);
         Predicate prPredicate = tag.in(pr.get("tags"));
         Predicate valuePredicate = cb.equal(tag.get("label"),value);
-        return cb.and(prPredicate,valuePredicate);
+        return cb.and(prPredicate, valuePredicate);
     }
 
     private Predicate getPartMasterPredicate(String field, String operator, String value, String type) {
