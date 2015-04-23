@@ -271,6 +271,9 @@ define([
                 $inputName.toggle(state.value);
             });
 
+            this.$exportCSVSwitch.bootstrapSwitch();
+            this.$exportCSVSwitch.bootstrapSwitch('setState', false);
+
             return this;
         },
 
@@ -400,6 +403,7 @@ define([
             this.$deleteQueryButton = this.$('.delete-selected-query');
             this.$searchButton = this.$('.search-button');
             this.$context = this.$('#context');
+            this.$exportCSVSwitch = this.$('.export-csv.switch');
         },
 
         onClearSelect: function(){
@@ -491,13 +495,33 @@ define([
                     name: saveQuery ? this.$inputName.val() : ''
                 };
 
-                var csv = this.$('.export-csv').is(':checked');
+                var csv = this.$exportCSVSwitch.bootstrapSwitch('status');
                 this.$searchButton.button('loading');
 
                 var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/queries?save=' + saveQuery;
 
                 if(csv){
-                    url+='&export=CSV';
+                    $.ajax({
+                        type: 'POST',
+                        url: url+'&export=CSV',
+                        data: JSON.stringify(queryData),
+                        contentType: 'application/json',
+                        success: function (data) {
+                            var blob=new Blob([data]);
+                            var link=document.createElement('a');
+                            link.href=window.URL.createObjectURL(blob);
+                            link.download="export.csv";
+                            link.click();
+                            self.$searchButton.button('reset');
+                        },
+                        error: function (errorMessage) {
+                            self.$searchButton.button('reset');
+                            self.$('#alerts').append(new AlertView({
+                                type: 'error',
+                                message: errorMessage.responseText
+                            }).render().$el);
+                        }
+                    });
                 }
 
                 $.ajax({
@@ -506,15 +530,6 @@ define([
                     data: JSON.stringify(queryData),
                     contentType: 'application/json',
                     success: function (data) {
-                        if(csv){
-                            var blob=new Blob([data]);
-                            var link=document.createElement('a');
-                            link.href=window.URL.createObjectURL(blob);
-                            link.download="export.csv";
-                            link.click();
-                            self.$searchButton.button('reset');
-                            return;
-                        }
                         var dataToTransmit = {
                             queryFilters : self.queryBuilderFilters,
                             queryData:queryData,
@@ -534,8 +549,6 @@ define([
                     }
                 });
             }
-
-
         }
     });
 

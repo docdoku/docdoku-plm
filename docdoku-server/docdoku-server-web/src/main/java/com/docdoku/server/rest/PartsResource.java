@@ -170,14 +170,6 @@ public class PartsResource {
         return queryDTOs;
     }
 
-    @GET
-    @Path("queries/{queryId}")
-    public Response runExistingQuery(@PathParam("workspaceId") String workspaceId, @PathParam("queryId") int queryId, @QueryParam("export") String exportType) throws EntityNotFoundException, UserNotActiveException, AccessRightException, EntityConstraintException, NotAllowedException {
-        Query query = productService.getQuery(workspaceId,queryId);
-        QueryResult queryResult = getQueryResult(workspaceId, query, exportType);
-        return makeQueryResponse(queryResult);
-    }
-
     @POST
     @Path("queries")
     @Consumes(MediaType.APPLICATION_JSON)
