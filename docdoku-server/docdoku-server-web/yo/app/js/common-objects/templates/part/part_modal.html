@@ -40,12 +40,12 @@
                 <li><a href="#tab-part-sub-parts" data-toggle="tab">{{i18n.SUB_PARTS}}</a></li>
                 <li><a href="#tab-part-links" data-toggle="tab">{{i18n.LINKS}}</a></li>
                 <li><a href="#tab-iteration-lifecycle" data-toggle="tab">{{i18n.LIFECYCLE_STATE}}</a></li>
-                {{/hasIterations}}
                 {{#isShowingLast}}
                 {{#part.hasModificationNotifications}}
                 <li><a href="#tab-part-modification-notifications" data-toggle="tab">{{i18n.NOTIFICATIONS}}</a></li>
                 {{/part.hasModificationNotifications}}
                 {{/isShowingLast}}
+                {{/hasIterations}}
             </ul>
 
             <form id="form-part" class="form-horizontal">
@@ -204,9 +204,13 @@
                         <div id="iteration-components"></div>
                     </div>
 
+                    {{#isShowingLast}}
+                    {{#part.hasModificationNotifications}}
                     <div id="tab-part-modification-notifications" class="tab-pane">
                         <div id="iteration-modification-notifications"></div>
                     </div>
+                    {{/part.hasModificationNotifications}}
+                    {{/isShowingLast}}
 
                     <div id="tab-part-links" class="tab-pane">
                         <div id="iteration-links"></div>
