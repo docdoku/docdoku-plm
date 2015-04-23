@@ -84,18 +84,14 @@ public class Query implements Serializable {
     )
     private List<String> groupedByList=new ArrayList<>();
 
-    @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(name = "QUERY_PRODUCTS",
-            joinColumns= {
-                    @JoinColumn(name = "QUERY_ID", referencedColumnName = "ID")
-            }
-    )
-    private List<String> productsId=new ArrayList<>();
+
+    @OneToMany(mappedBy = "parentQuery", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<QueryContext> contexts =new ArrayList<>();
 
     public Query() {
     }
 
-    public Query(User author, String name, Date creationDate, QueryRule queryRule, List<String> selects, List<String> orderByList, List<String> groupedByList, List<String> productsId) {
+    public Query(User author, String name, Date creationDate, QueryRule queryRule, List<String> selects, List<String> orderByList, List<String> groupedByList, List<QueryContext> contexts) {
         this.author = author;
         this.name = name;
         this.creationDate = creationDate;
@@ -103,7 +99,7 @@ public class Query implements Serializable {
         this.selects = selects;
         this.orderByList = orderByList;
         this.groupedByList = groupedByList;
-        this.productsId = productsId;
+        this.contexts = contexts;
     }
 
     public int getId() {
@@ -174,15 +170,15 @@ public class Query implements Serializable {
         this.groupedByList = groupedByList;
     }
 
-    public List<String> getProductsId() {
-        return productsId;
+    public List<QueryContext> getContexts() {
+        return contexts;
     }
 
-    public void setProductsId(List<String> productsId) {
-        this.productsId = productsId;
+    public void setContexts(List<QueryContext> contexts) {
+        this.contexts = contexts;
     }
 
     public boolean hasContext() {
-        return productsId.size() > 0;
+        return contexts.size() > 0;
     }
 }

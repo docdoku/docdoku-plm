@@ -2548,9 +2548,9 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     @Override
     public List<QueryResultRow> filterProductBreakdownStructure(String workspaceId, Query query) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, BaselineNotFoundException, ProductInstanceMasterNotFoundException, ConfigurationItemNotFoundException, NotAllowedException, PartMasterNotFoundException, EntityConstraintException {
         List<QueryResultRow> rows = new ArrayList<>();
-        for(String configurationItemId :query.getProductsId()){
-            rows.addAll(filterPBS(workspaceId, query, configurationItemId));
-        }
+//        for(String configurationItemId :query.getContexts()){
+//            rows.addAll(filterPBS(workspaceId, query, configurationItemId));
+//        }
         return rows;
     }
 

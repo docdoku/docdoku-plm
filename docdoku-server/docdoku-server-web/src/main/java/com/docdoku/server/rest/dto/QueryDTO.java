@@ -20,7 +20,7 @@ public class QueryDTO {
     private List<String> orderByList;
     private List<String> groupedByList;
 
-    private List<String> productsId;
+    private List<QueryContextDTO> contexts;
 
     public QueryDTO() {
     }
@@ -81,11 +81,11 @@ public class QueryDTO {
         this.creationDate = creationDate;
     }
 
-    public List<String> getProductsId() {
-        return productsId;
+    public List<QueryContextDTO> getContexts() {
+        return contexts;
     }
 
-    public void setProductsId(List<String> productsId) {
-        this.productsId = productsId;
+    public void setContexts(List<QueryContextDTO> contexts) {
+        this.contexts = contexts;
     }
 }

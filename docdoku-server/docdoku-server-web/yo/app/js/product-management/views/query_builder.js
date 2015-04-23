@@ -487,7 +487,7 @@ define([
                 }
 
                 var queryData = {
-                    productsId:contextToSend,
+                    contexts:contextToSend,
                     selects: selectList,
                     orderByList: orderByList,
                     groupedByList: groupByList,
