@@ -5,7 +5,8 @@ define([
         'common-objects/collections/part_iteration_collection',
         'common-objects/collections/modification_notification_collection',
         'common-objects/utils/acl-checker',
-        'common-objects/views/alert'],
+        'common-objects/views/alert'
+    ],
     function (Backbone, Date, PartIterationList, ModificationNotificationCollection, ACLChecker, AlertView) {
         'use strict';
 
@@ -94,14 +95,14 @@ define([
 
             getFormattedModificationDate: function () {
                 if(!this.getModificationDate()){
-                    return "";
+                    return '';
                 }
                 var timestampFormated = Date.formatTimestamp(
                     App.config.i18n._DATE_FORMAT,
                     this.getModificationDate()
                 );
 
-                return timestampFormated ? timestampFormated : "";
+                return timestampFormated ? timestampFormated : '';
             },
 
             getFormattedRevisionDate: function () {
@@ -177,7 +178,7 @@ define([
             },
 
             hasModificationNotifications: function () {
-                return this.modificationNotifications && this.modificationNotifications.models.length != 0;
+                return this.modificationNotifications && this.modificationNotifications.models.length;
             },
 
             hasUnreadModificationNotifications: function () {

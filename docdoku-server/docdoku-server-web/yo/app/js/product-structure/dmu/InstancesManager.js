@@ -294,7 +294,8 @@ define(['dmu/LoaderManager', 'async','backbone'],
 				        });
 				        _this.planNewEval();
 				        callback();
-			        }});
+                    }
+                });
 	        }
 
             this.loadQueue = async.queue(function (directive, callback) {

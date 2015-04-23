@@ -1,4 +1,4 @@
-/*global _,define,App,THREE*/
+/*global _,define,App*/
 define([
     'backbone',
     'mustache',
@@ -34,7 +34,7 @@ function (Backbone, Mustache, template) {
             App.sceneManager.setMeasureState(data.value);
         },
 
-        onClearClicked: function(e){
+        onClearClicked: function(/*e*/){
             App.sceneManager.clearMeasures();
             this.$('.clear-measures-btn').removeClass('display');
         },

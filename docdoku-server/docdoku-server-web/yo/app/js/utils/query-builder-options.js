@@ -1,5 +1,7 @@
-/*global $,_,define,App*/
+/*global $,define,App*/
 define(function () {
+
+    'use strict';
 
     /**
      * Jquery Query builder doc : http://mistic100.github.io/jQuery-QueryBuilder
@@ -62,8 +64,8 @@ define(function () {
         }
     }});
 
-    var dateInput = function(rule,input_name){
-        return '<input type="date" name="'+input_name+'"/>';
+    var dateInput = function(rule,inputName){
+        return '<input type="date" name="'+inputName+'"/>';
     };
 
     var stringOperators = ['equal', 'not_equal', 'contains', 'not_contains', 'begins_with', 'not_begins_with', 'ends_with', 'not_ends_with'];

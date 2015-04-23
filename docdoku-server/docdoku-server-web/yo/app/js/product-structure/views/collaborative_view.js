@@ -59,7 +59,7 @@ define([
             });
         },
 
-         sendInvite: function (user) {
+        sendInvite: function (user) {
             if (this.isMaster) {
                 App.mainChannel.sendJSON({
                     type: ChannelMessagesType.COLLABORATIVE_INVITE,

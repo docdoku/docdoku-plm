@@ -132,7 +132,7 @@ define([
             }else{
                 this.$where.queryBuilder('reset');
             }
-            this.$deleteQueryButton.toggle(e.target.value != '');
+            this.$deleteQueryButton.toggle(e.target.value !== '');
         },
 
         deleteSelectedQuery:function(){
@@ -514,7 +514,7 @@ define([
                             var blob=new Blob([data]);
                             var link=document.createElement('a');
                             link.href=window.URL.createObjectURL(blob);
-                            link.download="export.csv";
+                            link.download='export.csv';
                             link.click();
                             self.$searchButton.button('reset');
                         },

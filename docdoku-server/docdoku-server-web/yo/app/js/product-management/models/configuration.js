@@ -40,20 +40,12 @@ define([
             this.set('description',description);
         },
 
-        getSubstituteLinks:function(){},
-
-        setSubstituteLinks:function(substituteLinks){},
-
-        getOptionalUsageLinks:function(){},
-
         getSubstitutesParts:function(){
             return this.get('substitutesParts');
         },
         getOptionalsParts:function(){
             return this.get('optionalsParts');
         },
-
-        setOptionalUsageLinks:function(optionalUsageLinks){},
 
         getCreationDate:function(){
             return this.get('creationDate');

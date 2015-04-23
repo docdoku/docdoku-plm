@@ -200,7 +200,7 @@ define(['backbone', 'models/component_module', 'views/component_views'
         },
 
         toggleComment:function(){
-            this.$el.toggleClass("displayComment");
+            this.$el.toggleClass('displayComment');
         }
 
     });

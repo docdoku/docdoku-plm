@@ -1,4 +1,4 @@
-/*global $,define*/
+/*global define*/
 
 define(['common-objects/models/baseline'],
 function(Baseline){
@@ -35,7 +35,7 @@ function(Baseline){
             this.set('optionalUsageLinks',optionalUsageLinks);
         },
         getAuthor:function(){
-            return this.get("author").name;
+            return this.get('author').name;
         }
 	});
 

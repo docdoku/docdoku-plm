@@ -116,7 +116,7 @@ define(['views/progress_bar_view'], function (ProgressBarView) {
                     break;
 
                 case 'dae':
-                     material = new THREE.MeshPhongMaterial({ transparent: true, color: new THREE.Color(0xbbbbbb) });
+                    material = new THREE.MeshPhongMaterial({ transparent: true, color: new THREE.Color(0xbbbbbb) });
 
                     if (this.ColladaLoader === null) {
                         this.ColladaLoader = new THREE.ColladaLoader();
