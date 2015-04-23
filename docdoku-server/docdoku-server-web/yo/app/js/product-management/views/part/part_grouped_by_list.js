@@ -28,14 +28,11 @@ define([
 
             var groups = {};
             var i = 0;
-            _.each(_.keys(itemsGroupBy), function(key){
-                var keyTrimmed = key.trimRight();
-                if(keyTrimmed[keyTrimmed.length-1]==='>'){
-                    keyTrimmed = keyTrimmed.substring(0, keyTrimmed.length-1);
-                }
+
+            _.each(_.keys(itemsGroupBy).sort(), function(key){
                 groups[''+i] = {
                     key:''+i,
-                    name: keyTrimmed === "undefined" ? null : keyTrimmed,
+                    name: key === "undefined" ? null : key,
                     items:itemsGroupBy[key]
                 };
                 i++;
@@ -78,7 +75,12 @@ define([
                     groupByStringToUse = groupByStringToUse+' > '+item[groupByColumn];
                 });
 
-                return groupByStringToUse.substring(3);
+                var keyTrimmed = groupByStringToUse.substring(3).trimRight();
+                if(keyTrimmed[keyTrimmed.length-1]==='>'){
+                    keyTrimmed = keyTrimmed.substring(0, keyTrimmed.length-1);
+                }
+
+                return keyTrimmed;
             });
 
         },
