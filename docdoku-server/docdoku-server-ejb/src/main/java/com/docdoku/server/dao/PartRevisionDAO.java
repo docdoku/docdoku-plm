@@ -264,10 +264,11 @@ public class PartRevisionDAO {
         return query.getResultList();
     }
 
-    public List<PartRevision> findPartsRevisionsWithReferenceLike(String pWorkspaceId, String reference, int maxResults) {
-        return em.createNamedQuery("PartRevision.findByReference",PartRevision.class)
+    public List<PartRevision> findPartsRevisionsWithReferenceOrNameLike(String pWorkspaceId, String reference, int maxResults) {
+        return em.createNamedQuery("PartRevision.findByReferenceOrName",PartRevision.class)
                 .setParameter("workspaceId", pWorkspaceId)
                 .setParameter("partNumber", "%" + reference + "%")
+                .setParameter("partName", "%" + reference + "%")
                 .setMaxResults(maxResults)
                 .getResultList();
     }

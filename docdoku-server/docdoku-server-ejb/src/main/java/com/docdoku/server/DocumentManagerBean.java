@@ -1304,11 +1304,13 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
             int counter = 0;
             for (DocumentIterationKey link : linkKeys) {
-                DocumentLink newLink = new DocumentLink(em.getReference(DocumentIteration.class, link));
-                newLink.setComment(documentLinkComments[counter]);
-                linkDAO.createLink(newLink);
-                doc.getLinkedDocuments().add(newLink);
-                counter++;
+                if(!link.equals(iKey)){
+                    DocumentLink newLink = new DocumentLink(em.getReference(DocumentIteration.class, link));
+                    newLink.setComment(documentLinkComments[counter]);
+                    linkDAO.createLink(newLink);
+                    doc.getLinkedDocuments().add(newLink);
+                    counter++;
+                }
             }
 
             if (pAttributes != null) {

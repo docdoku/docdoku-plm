@@ -301,7 +301,7 @@ public class PartsResource {
             throws EntityNotFoundException, UserNotActiveException {
 
         int maxResults = limit==0 ? 15 : limit;
-        PartRevision[] partRs = productService.getPartRevisionsWithReference(workspaceId, q, maxResults);
+        PartRevision[] partRs = productService.getPartRevisionsWithReferenceOrName(workspaceId, q, maxResults);
 
         List<PartIterationDTO> partsLastIter = new ArrayList<>();
         for (PartRevision partR : partRs) {

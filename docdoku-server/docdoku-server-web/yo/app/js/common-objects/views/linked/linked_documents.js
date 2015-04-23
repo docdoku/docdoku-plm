@@ -93,7 +93,7 @@ define([
                         self.searchResults.remove(docsToRemove);
 
                         process(self.searchResults.map(function (docLastIter) {
-                            return docLastIter.getDocKey();
+                            return docLastIter.getDisplayDocKey();
                         }));
                     });
                 },
@@ -104,7 +104,7 @@ define([
 
                 updater: function (docLastIterDocKey) {
                     var linkedDocument = self.searchResults.find(function (docLastIter) {
-                        return docLastIter.getDocKey() === docLastIterDocKey;
+                        return docLastIter.getDisplayDocKey() === docLastIterDocKey;
                     });
                     linkedDocument.collection.remove(linkedDocument);
                     self.collection.add(linkedDocument);
