@@ -77,16 +77,15 @@ define([
         },
 
         render: function () {
-
             var data = {
                 part: this.model,
                 i18n: App.config.i18n,
-                permalink: this.model.getPermalink()
+                permalink: this.model.getPermalink(),
+                hasIterations: this.model.hasIterations()
             };
 
             this.editMode = this.model.isCheckoutByConnectedUser() && this.iterations.isLast(this.iteration);
             data.editMode = this.editMode;
-            data.isLockedMode = !this.iteration || (this.model.isCheckout() && this.model.isLastIteration(this.iteration.getIteration()) && !this.model.isCheckoutByConnectedUser());
             data.isCheckout = this.model.isCheckout() ;
             this.isCheckout = data.isCheckout ;
             this.isReleased = this.model.attributes.status === 'RELEASED';

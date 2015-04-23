@@ -33,14 +33,14 @@
         <div class="tabs">
             <ul class="nav nav-tabs">
                 <li class="active"><a href="#tab-part-general" data-toggle="tab">{{i18n.GENERAL}}</a></li>
-                {{^isLockedMode}}
+                {{#hasIterations}}
                 <li><a href="#tab-part-iteration" data-toggle="tab">{{i18n.ITERATION}}</a></li>
                 <li><a href="#tab-part-attributes" data-toggle="tab">{{i18n.ATTRIBUTES}}</a></li>
                 <li><a href="#tab-part-files" data-toggle="tab">{{i18n.CAD_FILE}}</a></li>
                 <li><a href="#tab-part-sub-parts" data-toggle="tab">{{i18n.SUB_PARTS}}</a></li>
                 <li><a href="#tab-part-links" data-toggle="tab">{{i18n.LINKS}}</a></li>
                 <li><a href="#tab-iteration-lifecycle" data-toggle="tab">{{i18n.LIFECYCLE_STATE}}</a></li>
-                {{/isLockedMode}}
+                {{/hasIterations}}
                 {{#isShowingLast}}
                 {{#part.hasModificationNotifications}}
                 <li><a href="#tab-part-modification-notifications" data-toggle="tab">{{i18n.NOTIFICATIONS}}</a></li>
@@ -139,7 +139,7 @@
                         </div>
                     </div>
 
-                    {{^isLockedMode}}
+                    {{#hasIterations}}
                     <div id="tab-part-iteration" class="tab-pane">
                         <div class="control-group">
                             <label class="control-label">{{i18n.REFERENCE}}</label>
@@ -203,13 +203,11 @@
                     <div id="tab-part-sub-parts" class="tab-pane">
                         <div id="iteration-components"></div>
                     </div>
-                    {{/isLockedMode}}
 
                     <div id="tab-part-modification-notifications" class="tab-pane">
                         <div id="iteration-modification-notifications"></div>
                     </div>
 
-                    {{^isLockedMode}}
                     <div id="tab-part-links" class="tab-pane">
                         <div id="iteration-links"></div>
                     </div>
@@ -217,7 +215,7 @@
                     <div id="tab-iteration-lifecycle" class="tab-pane ">
                         <div id="iteration-lifecycle"></div>
                     </div>
-                    {{/isLockedMode}}
+                    {{/hasIterations}}
                 </div>
             </form>
         </div>
