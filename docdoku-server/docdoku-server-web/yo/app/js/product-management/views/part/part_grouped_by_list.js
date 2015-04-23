@@ -29,9 +29,13 @@ define([
             var groups = {};
             var i = 0;
             _.each(_.keys(itemsGroupBy), function(key){
+                var keyTrimmed = key.trimRight();
+                if(keyTrimmed[keyTrimmed.length-1]==='>'){
+                    keyTrimmed = keyTrimmed.substring(0, keyTrimmed.length-1);
+                }
                 groups[''+i] = {
                     key:''+i,
-                    name: key === "undefined" ? null : key,
+                    name: keyTrimmed === "undefined" ? null : keyTrimmed,
                     items:itemsGroupBy[key]
                 };
                 i++;

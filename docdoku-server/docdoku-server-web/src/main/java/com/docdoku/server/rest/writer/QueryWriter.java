@@ -310,7 +310,7 @@ public class QueryWriter implements MessageBodyWriter<QueryResult> {
             }
             if (selects.contains(QueryField.CTX_SERIAL_NUMBER)) {
                 String serialNumber = context != null ? context.getSerialNumber() : "";
-                jg.write(QueryField.CTX_PRODUCT_ID, serialNumber != null ? serialNumber : "");
+                jg.write(QueryField.CTX_SERIAL_NUMBER, serialNumber != null ? serialNumber : "");
             }
             jg.writeEnd();
         }
