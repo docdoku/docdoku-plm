@@ -196,25 +196,6 @@ define(function () {
         ]
     });
 
-    // Product instances
-
-    filters.push({
-        id: 'pi.serial',
-        label: App.config.i18n.SERIAL_NUMBER,
-        type: 'string',
-        operators: stringOperators,
-        optgroup:App.config.i18n.QUERY_GROUP_PRODUCT_INSTANCE,
-        realType:'string'
-    });
-
-    filters.push({
-        id: 'pi.name',
-        label: App.config.i18n.PRODUCT_NAME,
-        type: 'string',
-        operators: stringOperators,
-        optgroup:App.config.i18n.QUERY_GROUP_PRODUCT_INSTANCE,
-        realType:'string'
-    });
 
 
     var fields = [];
@@ -250,13 +231,25 @@ define(function () {
         });
     });
 
-    var contextFields = [
-        {
-            name:App.config.i18n.QUERY_DEPTH,
-            value:'ctx.depth',
-            group:'ctx'
-        }
-    ];
+    var contextFields = [];
+
+    contextFields.push({
+        name:App.config.i18n.QUERY_DEPTH,
+        value:'ctx.depth',
+        group:'ctx'
+    });
+
+    contextFields.push({
+        value: 'ctx.serialNumber',
+        name: App.config.i18n.SERIAL_NUMBER,
+        group: 'ctx'
+    });
+
+    contextFields.push({
+        value: 'ctx.productId',
+        name: App.config.i18n.PRODUCT_NAME,
+        group: 'ctx'
+    });
 
     return {
         filters : filters,

@@ -179,6 +179,6 @@ public class Query implements Serializable {
     }
 
     public boolean hasContext() {
-        return contexts.size() > 0;
+        return !contexts.isEmpty();
     }
 }

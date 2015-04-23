@@ -25,6 +25,7 @@ import com.docdoku.core.meta.InstanceAttributeDescriptor;
 import com.docdoku.core.meta.InstanceListOfValuesAttribute;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartRevision;
+import com.docdoku.core.query.QueryContext;
 import com.docdoku.core.query.QueryField;
 import com.docdoku.core.query.QueryResultRow;
 import com.docdoku.server.rest.collections.QueryResult;
@@ -96,9 +97,19 @@ public class QueryWriter implements MessageBodyWriter<QueryResult> {
 
         PartRevision part  = row.getPartRevision();
 
+        QueryContext context = row.getContext();
+
         for(String select : selects){
 
             switch (select){
+                case QueryField.CTX_PRODUCT_ID:
+                    String productId = context != null ? context.getConfigurationItemId() : "";
+                    data.add(productId);
+                    break;
+                case QueryField.CTX_SERIAL_NUMBER:
+                    String serialNumber = context != null ? context.getSerialNumber() : "";
+                    data.add(serialNumber!=null?serialNumber:"");
+                    break;
                 case QueryField.PART_MASTER_NUMBER:
                     data.add(part.getPartNumber());
                     break;
@@ -189,8 +200,9 @@ public class QueryWriter implements MessageBodyWriter<QueryResult> {
         List<String> selects = queryResult.getQuery().getSelects();
         List<String> attributesSelect = getSelectedAttributes(selects);
 
-
         for (QueryResultRow row : queryResult.getRows()) {
+
+            QueryContext context = row.getContext();
 
             PartRevision part = row.getPartRevision();
 
@@ -290,6 +302,15 @@ public class QueryWriter implements MessageBodyWriter<QueryResult> {
                     }
                     jg.write(attributeSelect, attributeValue);
                 }
+            }
+
+            if (selects.contains(QueryField.CTX_PRODUCT_ID)) {
+                String configurationItemId = context != null ? context.getConfigurationItemId() : "";
+                jg.write(QueryField.CTX_PRODUCT_ID, configurationItemId);
+            }
+            if (selects.contains(QueryField.CTX_SERIAL_NUMBER)) {
+                String serialNumber = context != null ? context.getSerialNumber() : "";
+                jg.write(QueryField.CTX_PRODUCT_ID, serialNumber != null ? serialNumber : "");
             }
             jg.writeEnd();
         }

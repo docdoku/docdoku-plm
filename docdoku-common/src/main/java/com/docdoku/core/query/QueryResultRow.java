@@ -10,9 +10,7 @@ public class QueryResultRow {
     private PartRevision partRevision;
     private int depth;
     private double[] results;
-
-
-
+    private QueryContext context;
 
 
     public QueryResultRow() {
@@ -52,5 +50,11 @@ public class QueryResultRow {
         this.results = results;
     }
 
+    public QueryContext getContext() {
+        return context;
+    }
 
+    public void setContext(QueryContext context) {
+        this.context = context;
+    }
 }

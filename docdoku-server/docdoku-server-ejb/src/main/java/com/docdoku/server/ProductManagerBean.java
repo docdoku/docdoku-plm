@@ -31,6 +31,7 @@ import com.docdoku.core.product.*;
 import com.docdoku.core.product.PartIteration.Source;
 import com.docdoku.core.query.PartSearchQuery;
 import com.docdoku.core.query.Query;
+import com.docdoku.core.query.QueryContext;
 import com.docdoku.core.query.QueryResultRow;
 import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.ACLUserEntry;
@@ -2548,20 +2549,24 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     @Override
     public List<QueryResultRow> filterProductBreakdownStructure(String workspaceId, Query query) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, BaselineNotFoundException, ProductInstanceMasterNotFoundException, ConfigurationItemNotFoundException, NotAllowedException, PartMasterNotFoundException, EntityConstraintException {
         List<QueryResultRow> rows = new ArrayList<>();
-//        for(String configurationItemId :query.getContexts()){
-//            rows.addAll(filterPBS(workspaceId, query, configurationItemId));
-//        }
+        for(QueryContext queryContext :query.getContexts()){
+            rows.addAll(filterPBS(workspaceId, query, queryContext));
+        }
         return rows;
     }
 
-    private List<QueryResultRow> filterPBS(String workspaceId, Query query, String configurationItemId) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, BaselineNotFoundException, ProductInstanceMasterNotFoundException, ConfigurationItemNotFoundException, NotAllowedException, EntityConstraintException, PartMasterNotFoundException {
+    private List<QueryResultRow> filterPBS(String workspaceId, Query query, QueryContext queryContext) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, BaselineNotFoundException, ProductInstanceMasterNotFoundException, ConfigurationItemNotFoundException, NotAllowedException, EntityConstraintException, PartMasterNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
+
+        String configurationItemId = queryContext.getConfigurationItemId();
+        String serialNumber = queryContext.getSerialNumber();
 
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, configurationItemId);
         Locale locale = new Locale(user.getLanguage());
 
         List<QueryResultRow> rows = new ArrayList<>();
-        PSFilter filter = getPSFilter(ciKey, "latest");
+
+        PSFilter filter = serialNumber != null ?  getPSFilter(ciKey, "pi-"+serialNumber) : getPSFilter(ciKey, "latest");
 
         ConfigurationItem ci = new ConfigurationItemDAO(locale, em).loadConfigurationItem(ciKey);
         PartMaster root = ci.getDesignItem();
@@ -2598,6 +2603,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 PartRevision partRevision = partIterations.get(0).getPartRevision();
                 row.setPartRevision(partRevision);
                 row.setDepth(depth);
+                row.setContext(queryContext);
                 rows.add(row);
             }
 

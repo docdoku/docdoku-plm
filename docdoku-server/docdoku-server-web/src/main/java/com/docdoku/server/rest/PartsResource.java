@@ -182,16 +182,6 @@ public class PartsResource {
         return makeQueryResponse(queryResult);
     }
 
-    private Response makeQueryResponse(QueryResult queryResult) {
-        String contentType = queryResult.getExportType().equals(QueryResult.ExportType.CSV) ? "application/octet-stream":"application/json";
-        String contentDisposition =  queryResult.getExportType().equals(QueryResult.ExportType.CSV) ? "attachment; filename=\"TSR.csv\"":"inline";
-
-        return Response.ok()
-                .header("Content-Type", contentType)
-                .header("Content-Disposition", contentDisposition)
-                .entity(queryResult).build();
-    }
-
     private QueryResult getQueryResult(String workspaceId, Query query, String pExportType) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, EntityConstraintException, BaselineNotFoundException, ProductInstanceMasterNotFoundException, NotAllowedException, ConfigurationItemNotFoundException, PartMasterNotFoundException {
         List<PartRevision> partRevisions = productService.searchPartRevisions(workspaceId, query);
         QueryResult queryResult = new QueryResult(partRevisions,query);
@@ -204,7 +194,15 @@ public class PartsResource {
         return queryResult;
     }
 
+    private Response makeQueryResponse(QueryResult queryResult) {
+        String contentType = queryResult.getExportType().equals(QueryResult.ExportType.CSV) ? "application/octet-stream":"application/json";
+        String contentDisposition =  queryResult.getExportType().equals(QueryResult.ExportType.CSV) ? "attachment; filename=\"TSR.csv\"":"inline";
 
+        return Response.ok()
+                .header("Content-Type", contentType)
+                .header("Content-Disposition", contentDisposition)
+                .entity(queryResult).build();
+    }
 
     @DELETE
     @Path("queries/{queryId}")

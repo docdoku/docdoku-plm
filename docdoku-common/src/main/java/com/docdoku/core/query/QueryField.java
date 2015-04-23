@@ -44,9 +44,8 @@ public class QueryField {
     public final static String AUTHOR_LOGIN = "author.login";
     public final static String AUTHOR_NAME = "author.name";
 
-    public final static String PRODUCT_INSTANCE_SERIAL_NUMBER = "pi.serial";
-    public final static String PRODUCT_INSTANCE_NAME = "pi.name";
-
+    public final static String CTX_SERIAL_NUMBER = "ctx.serialNumber";
+    public final static String CTX_PRODUCT_ID = "ctx.productId";
     public final static String CTX_DEPTH = "ctx.depth";
 
 }
