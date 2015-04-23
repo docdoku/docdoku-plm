@@ -73,7 +73,7 @@ define([
                 this.$selectProdInstSpec.hide();
                 this.$selectLatestFilter.hide();
                 this.$selectBaselineSpec.val(selected.getId()).show();
-                this.setDescription(selected.getDescription());
+                this.setDescription(selected.getIterationNote());
             }
 		},
 
@@ -128,7 +128,7 @@ define([
             this.$selectBaselineSpec.show();
             this.trigger('config_spec:changed', this.$selectBaselineSpec.val());
             var baseline = this.baselineCollection.findWhere({id:parseInt(this.$selectBaselineSpec.val(),10)});
-            this.setDescription(baseline ? baseline.getDescription() : '');
+            this.setDescription(baseline ? baseline.getIterationNote() : '');
         },
         changeInstance:function(){
             this.$selectBaselineSpec.hide();

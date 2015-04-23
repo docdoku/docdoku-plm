@@ -11,7 +11,7 @@ define(['backbone'], function (Backbone) {
         getName: function () {
             return this.get('name');
         },
-        getDescription:function(){
+        getIterationNote:function(){
             return this.get('description');
         },
         getCreationDate: function () {

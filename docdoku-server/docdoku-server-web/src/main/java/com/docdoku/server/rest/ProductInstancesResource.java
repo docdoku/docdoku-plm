@@ -322,12 +322,12 @@ public class ProductInstancesResource {
     }
 
     @GET
-    @Path("{serialNumber}/pathdata")
+    @Path("{serialNumber}/pathdata/{path}")
     @Produces(MediaType.APPLICATION_JSON)
-    public PathDataDTO getPathData(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, @QueryParam("path") String path) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException {
-        PathData pathData = productInstanceService.getPathDataByPath(workspaceId, configurationItemId, serialNumber,path);
+    public PathDataMasterDTO getPathData(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, @PathParam("path") String path) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException {
+        PathDataMaster pathDataMaster = productInstanceService.getPathDataByPath(workspaceId, configurationItemId, serialNumber,path);
 
-        PathDataDTO dto = pathData == null ? new PathDataDTO(path) : mapper.map(pathData, PathDataDTO.class);
+        PathDataMasterDTO dto = pathDataMaster == null ? new PathDataMasterDTO(path) : mapper.map(pathDataMaster, PathDataMasterDTO.class);
 
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId,configurationItemId);
         PartMinimalListDTO partList = new PartMinimalListDTO();
@@ -335,42 +335,10 @@ public class ProductInstancesResource {
             partList.addPart(mapper.map(partLink.getComponent(), PartMinimalDTO.class));
         }
         dto.setPartsPath(partList);
+
         return dto;
     }
 
-    @PUT
-    @Path("{serialNumber}/pathdata/{pathDataId}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public PathDataDTO updatePathData(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, @PathParam("pathDataId") int pathDataId, PathDataDTO pathDataDTO) throws UserNotFoundException, AccessRightException, UserNotActiveException, ProductInstanceMasterNotFoundException, WorkspaceNotFoundException, NotAllowedException {
-
-        InstanceAttributeFactory factory = new InstanceAttributeFactory();
-
-        Set<DocumentIterationDTO> linkedDocs = pathDataDTO.getLinkedDocuments();
-        DocumentIterationKey[] links = null;
-        String[] documentLinkComments = null;
-        if (linkedDocs != null) {
-            documentLinkComments = new String[linkedDocs.size()];
-            links = createDocumentIterationKeys(linkedDocs);
-            int i = 0;
-            for (DocumentIterationDTO docItereationForLink : linkedDocs){
-                String comment = docItereationForLink.getCommentLink();
-                if (comment == null){
-                    comment = "";
-                }
-                documentLinkComments[i++] = comment;
-            }
-        }
-
-        List<InstanceAttributeDTO> instanceAttributes = pathDataDTO.getInstanceAttributes();
-        List<InstanceAttribute> attributes = new ArrayList<>();
-        if (instanceAttributes != null) {
-            attributes = factory.createInstanceAttributes(instanceAttributes);
-        }
-
-        PathData pathData = productInstanceService.updatePathData(workspaceId, configurationItemId, serialNumber, pathDataDTO.getPath(), pathDataId, attributes, pathDataDTO.getDescription(),links,documentLinkComments);
-        return mapper.map(pathData, PathDataDTO.class);
-    }
 
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
@@ -380,11 +348,12 @@ public class ProductInstancesResource {
                                                 @PathParam("ciId") String configurationItemId,
                                                 @PathParam("serialNumber") String serialNumber,
                                                 @PathParam("pathDataId") int pathDataId,
+                                                @PathParam("iteration") int iteration,
                                                 @PathParam("fileName") String fileName,
                                                 FileDTO fileDTO) throws UserNotActiveException, WorkspaceNotFoundException, CreationException, UserNotFoundException, FileNotFoundException, NotAllowedException, FileAlreadyExistsException, ProductInstanceMasterNotFoundException, AccessRightException, StorageException {
 
         String fullName = workspaceId + "/product-instances/" + serialNumber +"/pathdata/" + pathDataId + "/" + fileName;
-        BinaryResource binaryResource = productInstanceService.renameFileInPathData(workspaceId, configurationItemId, serialNumber, pathDataId, fullName, fileDTO.getShortName());
+        BinaryResource binaryResource = productInstanceService.renameFileInPathData(workspaceId, configurationItemId, serialNumber, pathDataId,iteration, fullName, fileDTO.getShortName());
         return new FileDTO(true,binaryResource.getFullName(),binaryResource.getName());
     }
 
@@ -409,41 +378,156 @@ public class ProductInstancesResource {
                                                 @PathParam("ciId") String configurationItemId,
                                                 @PathParam("serialNumber") String serialNumber,
                                                 @PathParam("pathDataId") int pathDataId,
+                                                @PathParam("iteration") int iteration,
                                                 @PathParam("fileName") String fileName
                                                ) throws UserNotActiveException, WorkspaceNotFoundException, CreationException, UserNotFoundException, FileNotFoundException, NotAllowedException, FileAlreadyExistsException, ProductInstanceMasterNotFoundException, AccessRightException {
 
         String fullName = workspaceId + "/product-instances/" + serialNumber +"/pathdata/" + pathDataId + "/" + fileName;
         ProductInstanceMaster productInstanceMaster = productInstanceService.getProductInstanceMaster(new ProductInstanceMasterKey(serialNumber, workspaceId, configurationItemId));
-        productInstanceService.removeFileFromPathData(workspaceId, configurationItemId, serialNumber, pathDataId, fullName,productInstanceMaster);
+        productInstanceService.removeFileFromPathData(workspaceId, configurationItemId, serialNumber, pathDataId,iteration, fullName,productInstanceMaster);
         return Response.ok().build();
     }
 
     @DELETE
     @Path("{serialNumber}/pathdata/{pathDataId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deletePathData(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, @PathParam("pathDataId") int pathDataId) throws UserNotActiveException, WorkspaceNotFoundException, UserNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, NotAllowedException {
-        productInstanceService.deletePathData(workspaceId,configurationItemId,serialNumber,pathDataId);
+    public Response deletePathData(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, @PathParam("pathDataId") int pathDataId,@PathParam("iteration") int iteration) throws UserNotActiveException, WorkspaceNotFoundException, UserNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, NotAllowedException {
+        productInstanceService.deletePathData(workspaceId,configurationItemId,serialNumber,pathDataId,iteration);
         return Response.ok().build();
     }
 
     @POST
-    @Path("{serialNumber}/pathdata")
+    @Path("{serialNumber}/pathdata/{path}/{pathId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public PathDataDTO createPathData(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, PathDataDTO pathDataDTO) throws UserNotFoundException, AccessRightException, UserNotActiveException, ProductInstanceMasterNotFoundException, WorkspaceNotFoundException, NotAllowedException, PathDataAlreadyExistsException {
+    public PathDataMasterDTO createPathDataIteration(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber,@PathParam("pathId") int pathId,@PathParam("path") String path, PathDataIterationCreationDTO pathDataIterationCreationDTO) throws UserNotFoundException, AccessRightException, UserNotActiveException, ProductInstanceMasterNotFoundException, WorkspaceNotFoundException, NotAllowedException, PathDataAlreadyExistsException, FileAlreadyExistsException, CreationException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException {
 
         InstanceAttributeFactory factory = new InstanceAttributeFactory();
 
-        List<InstanceAttributeDTO> instanceAttributes = pathDataDTO.getInstanceAttributes();
+        List<InstanceAttributeDTO> instanceAttributes = pathDataIterationCreationDTO.getInstanceAttributes();
+        List<InstanceAttribute> attributes = new ArrayList<>();
+        if (instanceAttributes != null) {
+            attributes = factory.createInstanceAttributes(instanceAttributes);
+        }
+        Set<DocumentIterationDTO> linkedDocs = pathDataIterationCreationDTO.getLinkedDocuments();
+        DocumentIterationKey[] links = null;
+        String[] documentLinkComments = null;
+        if (linkedDocs != null) {
+            documentLinkComments = new String[linkedDocs.size()];
+            links = createDocumentIterationKeys(linkedDocs);
+            int i = 0;
+            for (DocumentIterationDTO docItereationForLink : linkedDocs){
+                String comment = docItereationForLink.getCommentLink();
+                if (comment == null){
+                    comment = "";
+                }
+                documentLinkComments[i++] = comment;
+            }
+        }
+
+
+        PathDataMaster pathDataMaster = productInstanceService.addPathData(workspaceId, configurationItemId, serialNumber, pathId,path, attributes, pathDataIterationCreationDTO.getNoteIteration(),links, documentLinkComments);
+
+        PathDataMasterDTO dto = mapper.map(pathDataMaster, PathDataMasterDTO.class);
+
+        ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId,configurationItemId);
+        PartMinimalListDTO partList = new PartMinimalListDTO();
+        for(PartLink partLink : productService.decodePath(ciKey, path)){
+            partList.addPart(mapper.map(partLink.getComponent(), PartMinimalDTO.class));
+        }
+        dto.setPartsPath(partList);
+
+        return dto;
+    }
+
+    @POST
+    @Path("{serialNumber}/pathdata/{path}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public PathDataMasterDTO createPathData(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber,@PathParam("path") String path, PathDataIterationCreationDTO pathDataIterationCreationDTO) throws UserNotFoundException, AccessRightException, UserNotActiveException, ProductInstanceMasterNotFoundException, WorkspaceNotFoundException, NotAllowedException, PathDataAlreadyExistsException, FileAlreadyExistsException, CreationException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException {
+
+        InstanceAttributeFactory factory = new InstanceAttributeFactory();
+
+        List<InstanceAttributeDTO> instanceAttributes = pathDataIterationCreationDTO.getInstanceAttributes();
+        List<InstanceAttribute> attributes = new ArrayList<>();
+        if (instanceAttributes != null) {
+            attributes = factory.createInstanceAttributes(instanceAttributes);
+        }
+        Set<DocumentIterationDTO> linkedDocs = pathDataIterationCreationDTO.getLinkedDocuments();
+        DocumentIterationKey[] links = null;
+        String[] documentLinkComments = null;
+        if (linkedDocs != null) {
+            documentLinkComments = new String[linkedDocs.size()];
+            links = createDocumentIterationKeys(linkedDocs);
+            int i = 0;
+            for (DocumentIterationDTO docItereationForLink : linkedDocs){
+                String comment = docItereationForLink.getCommentLink();
+                if (comment == null){
+                    comment = "";
+                }
+                documentLinkComments[i++] = comment;
+            }
+        }
+
+
+        PathDataMaster pathDataMaster = productInstanceService.createPathData(workspaceId, configurationItemId, serialNumber, path, attributes, pathDataIterationCreationDTO.getNoteIteration());
+
+        PathDataMasterDTO dto = mapper.map(pathDataMaster, PathDataMasterDTO.class);
+
+        ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId,configurationItemId);
+        PartMinimalListDTO partList = new PartMinimalListDTO();
+        for(PartLink partLink : productService.decodePath(ciKey, path)){
+            partList.addPart(mapper.map(partLink.getComponent(), PartMinimalDTO.class));
+        }
+        dto.setPartsPath(partList);
+
+        return dto;
+    }
+    @PUT
+    @Path("{serialNumber}/pathdata/{pathDataId}/iterations/{iteration}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public PathDataMasterDTO updatePathData(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("iteration") int iteration,@PathParam("serialNumber") String serialNumber,@PathParam("pathDataId") int pathDataId, PathDataIterationCreationDTO pathDataIterationCreationDTO) throws UserNotFoundException, AccessRightException, UserNotActiveException, ProductInstanceMasterNotFoundException, WorkspaceNotFoundException, NotAllowedException, PathDataAlreadyExistsException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException {
+
+        InstanceAttributeFactory factory = new InstanceAttributeFactory();
+
+        List<InstanceAttributeDTO> instanceAttributes = pathDataIterationCreationDTO.getInstanceAttributes();
         List<InstanceAttribute> attributes = new ArrayList<>();
         if (instanceAttributes != null) {
             attributes = factory.createInstanceAttributes(instanceAttributes);
         }
 
-        PathData pathData = productInstanceService.addPathData(workspaceId, configurationItemId, serialNumber, pathDataDTO.getPath(), attributes, pathDataDTO.getDescription());
+        Set<DocumentIterationDTO> linkedDocs = pathDataIterationCreationDTO.getLinkedDocuments();
+        DocumentIterationKey[] links = null;
+        String[] documentLinkComments = null;
+        if (linkedDocs != null) {
+            documentLinkComments = new String[linkedDocs.size()];
+            links = createDocumentIterationKeys(linkedDocs);
+            int i = 0;
+            for (DocumentIterationDTO docItereationForLink : linkedDocs){
+                String comment = docItereationForLink.getCommentLink();
+                if (comment == null){
+                    comment = "";
+                }
+                documentLinkComments[i++] = comment;
+            }
+        }
 
-        return mapper.map(pathData, PathDataDTO.class);
+        PathDataMaster pathDataMaster = productInstanceService.updatePathData(workspaceId, configurationItemId, serialNumber, pathDataIterationCreationDTO.getId(),iteration, attributes, pathDataIterationCreationDTO.getNoteIteration(), links, documentLinkComments);
+
+
+        PathDataMasterDTO dto = mapper.map(pathDataMaster, PathDataMasterDTO.class);
+
+        ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId,configurationItemId);
+        PartMinimalListDTO partList = new PartMinimalListDTO();
+        for(PartLink partLink : productService.decodePath(ciKey, dto.getPath())){
+            partList.addPart(mapper.map(partLink.getComponent(), PartMinimalDTO.class));
+        }
+        dto.setPartsPath(partList);
+
+        return dto;
     }
+
 
     private DocumentIterationKey[] createDocumentIterationKeys(Set<DocumentIterationDTO> dtos) {
         DocumentIterationKey[] data = new DocumentIterationKey[dtos.size()];

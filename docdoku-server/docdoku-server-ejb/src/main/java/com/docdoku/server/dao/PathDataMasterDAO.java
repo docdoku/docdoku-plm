@@ -20,7 +20,7 @@
 
 package com.docdoku.server.dao;
 
-import com.docdoku.core.configuration.PathData;
+import com.docdoku.core.configuration.PathDataMaster;
 import com.docdoku.core.configuration.ProductInstanceMaster;
 
 import javax.persistence.EntityManager;
@@ -29,25 +29,25 @@ import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class PathDataDAO {
+public class PathDataMasterDAO {
 
     private EntityManager em;
     private Locale mLocale;
 
-    private static Logger LOGGER = Logger.getLogger(PathDataDAO.class.getName());
+    private static Logger LOGGER = Logger.getLogger(PathDataMasterDAO.class.getName());
 
-    public PathDataDAO(EntityManager pEM) {
+    public PathDataMasterDAO(EntityManager pEM) {
         em = pEM;
     }
 
-    public PathDataDAO(Locale pLocale, EntityManager pEM) {
+    public PathDataMasterDAO(Locale pLocale, EntityManager pEM) {
         em = pEM;
         mLocale = pLocale;
     }
 
-    public void createPathData(PathData pathData){
+    public void createPathData(PathDataMaster pathDataMaster){
         try {
-            em.persist(pathData);
+            em.persist(pathDataMaster);
             em.flush();
         }catch (Exception e){
             LOGGER.log(Level.SEVERE,"Fail to create path data",e);
@@ -55,9 +55,9 @@ public class PathDataDAO {
     }
 
 
-    public PathData findByPathAndProductInstance(String path, ProductInstanceMaster productInstanceMaster){
+    public PathDataMaster findByPathAndProductInstance(String path, ProductInstanceMaster productInstanceMaster){
         try {
-            return em.createNamedQuery("PathData.findByPathAndProductInstanceMaster", PathData.class)
+            return em.createNamedQuery("pathDataMaster.findByPathAndProductInstanceMaster", PathDataMaster.class)
                     .setParameter("path", path)
                     .setParameter("productInstanceMaster", productInstanceMaster)
                     .getSingleResult();
@@ -65,18 +65,29 @@ public class PathDataDAO {
             return null;
         }
     }
-    public ProductInstanceMaster findByPathData(PathData pathData){
+    public PathDataMaster findByPathIdAndProductInstance(int pathId, ProductInstanceMaster productInstanceMaster){
         try {
-            return em.createNamedQuery("ProductInstanceMaster.findByPathData", ProductInstanceMaster.class)
-                    .setParameter("pathData", pathData)
+            return em.createNamedQuery("pathDataMaster.findByPathIdAndProductInstanceMaster", PathDataMaster.class)
+                    .setParameter("pathId", pathId)
+                    .setParameter("productInstanceMaster", productInstanceMaster)
                     .getSingleResult();
         }catch(NoResultException e){
             return null;
         }
     }
 
-    public void removePathData(PathData pathData) {
-        em.remove(pathData);
+    public ProductInstanceMaster findByPathData(PathDataMaster pathDataMaster){
+        try {
+            return em.createNamedQuery("ProductInstanceMaster.findByPathData", ProductInstanceMaster.class)
+                    .setParameter("pathDataList", pathDataMaster)
+                    .getSingleResult();
+        }catch(NoResultException e){
+            return null;
+        }
+    }
+
+    public void removePathData(PathDataMaster pathDataMaster) {
+        em.remove(pathDataMaster);
         em.flush();
     }
 }

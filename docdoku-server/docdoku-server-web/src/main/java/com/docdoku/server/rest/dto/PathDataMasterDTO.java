@@ -21,32 +21,25 @@
 package com.docdoku.server.rest.dto;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
-public class PathDataDTO implements Serializable {
+public class PathDataMasterDTO implements Serializable {
 
     private Integer id;
     private String path;
-    private List<InstanceAttributeDTO> instanceAttributes;
-    private String description;
-    private PartMinimalListDTO partsPath;
-    private List<String> attachedFiles;
-    private Set<DocumentIterationDTO> linkedDocuments;
+    private PartMinimalListDTO partsPath ;
+    private List<PathDataIterationDTO> pathDataIterations = new ArrayList<PathDataIterationDTO>();
 
-    public PathDataDTO() {
+    public PathDataMasterDTO() {
     }
 
-    public PathDataDTO(String path) {
+    public PathDataMasterDTO(String path) {
         this.path = path;
     }
 
-    public List<InstanceAttributeDTO> getInstanceAttributes() {
-        return instanceAttributes;
-    }
-
-    public void setInstanceAttributes(List<InstanceAttributeDTO> instanceAttributes) {
-        this.instanceAttributes = instanceAttributes;
+    public PathDataMasterDTO(Integer id) {
+        this.id = id;
     }
 
     public String getPath() {
@@ -57,9 +50,6 @@ public class PathDataDTO implements Serializable {
         this.path = path;
     }
 
-    public String getDescription() {
-        return description;
-    }
 
     public Integer getId() {
         return id;
@@ -67,10 +57,6 @@ public class PathDataDTO implements Serializable {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public PartMinimalListDTO getPartsPath() {
@@ -81,19 +67,11 @@ public class PathDataDTO implements Serializable {
         this.partsPath = partsPath;
     }
 
-    public List<String> getAttachedFiles() {
-        return attachedFiles;
+    public List<PathDataIterationDTO> getPathDataIterations() {
+        return pathDataIterations;
     }
 
-    public void setAttachedFiles(List<String> attachedFiles) {
-        this.attachedFiles = attachedFiles;
-    }
-
-    public Set<DocumentIterationDTO> getLinkedDocuments() {
-        return linkedDocuments;
-    }
-
-    public void setLinkedDocuments(Set<DocumentIterationDTO> linkedDocuments) {
-        this.linkedDocuments = linkedDocuments;
+    public void setPathDataIterations(List<PathDataIterationDTO> pathDataIterations) {
+        this.pathDataIterations = pathDataIterations;
     }
 }

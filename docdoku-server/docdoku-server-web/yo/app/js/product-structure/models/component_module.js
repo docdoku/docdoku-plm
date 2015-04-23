@@ -105,7 +105,7 @@ define(['backbone', 'common-objects/utils/date'],
                 return this.get('version');
             },
 
-            getDescription: function () {
+            getIterationNote: function () {
                 return this.get('description');
             },
 

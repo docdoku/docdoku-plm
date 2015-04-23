@@ -46,7 +46,7 @@ import java.util.List;
 @Entity
 @NamedQueries({
         @NamedQuery(name="ProductInstanceMaster.findByConfigurationItemId", query="SELECT pim FROM ProductInstanceMaster pim WHERE pim.instanceOf.id = :ciId AND pim.instanceOf.workspace.id = :workspaceId"),
-        @NamedQuery(name="ProductInstanceMaster.findByPathData", query="SELECT pim FROM ProductInstanceMaster pim WHERE :pathData member of pim.pathDataList")
+        @NamedQuery(name="ProductInstanceMaster.findByPathData", query="SELECT pim FROM ProductInstanceMaster pim WHERE :pathDataList member of pim.pathDataList")
 })
 public class ProductInstanceMaster implements Serializable {
 
@@ -71,16 +71,16 @@ public class ProductInstanceMaster implements Serializable {
     private ACL acl;
 
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinTable(name = "PRDINSTMASTER_PATHDATA",
+    @JoinTable(name = "PRDINSTMASTER_PATHDATAMASTER",
             inverseJoinColumns = {
-                    @JoinColumn(name = "PATHDATA_ID", referencedColumnName = "ID")
+                    @JoinColumn(name = "PATHDATAMASTER_ID", referencedColumnName = "ID")
             },
             joinColumns = {
                     @JoinColumn(name="PRDINSTANCEMASTER_SERIALNUMBER", referencedColumnName="SERIALNUMBER"),
                     @JoinColumn(name="CONFIGURATIONITEM_ID", referencedColumnName="CONFIGURATIONITEM_ID"),
                     @JoinColumn(name="WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
             })
-    private List<PathData> pathDataList =new ArrayList<>();
+    private List<PathDataMaster> pathDataList =new ArrayList<>();
 
     public ProductInstanceMaster() {
     }
@@ -169,11 +169,11 @@ public class ProductInstanceMaster implements Serializable {
         this.productInstanceIterations = productInstanceIterations;
     }
 
-    public List<PathData> getPathDataList() {
+    public List<PathDataMaster> getPathDataMasterList() {
         return pathDataList;
     }
 
-    public void setPathDataList(List<PathData> pathDataList) {
-        this.pathDataList = pathDataList;
+    public void setPathDataMasterList(List<PathDataMaster> pathDataMasterList) {
+        this.pathDataList = pathDataMasterList;
     }
 }

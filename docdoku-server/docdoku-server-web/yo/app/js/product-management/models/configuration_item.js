@@ -35,7 +35,7 @@ define(['backbone'], function (Backbone) {
             return this.get('designItemLatestVersion');
         },
 
-        getDescription: function () {
+        getIterationNote: function () {
             return this.get('description');
         },
 

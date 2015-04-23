@@ -33,7 +33,7 @@ define([
             return this.get('configurationItemId');
         },
 
-        getDescription:function(){
+        getIterationNote:function(){
             return this.get('description');
         },
         setDescription:function(description){

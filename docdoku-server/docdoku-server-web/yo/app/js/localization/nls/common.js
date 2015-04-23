@@ -271,6 +271,7 @@ define({
 		NEW_DOCUMENT: "New document",
 		NEW_FOLDER: "New folder",
 		NEW_ISSUE: "New change-issue",
+		NEW_ITERATION: "New iteration",
 		NEW_LAYER: "New layer",
 		NEW_MARKER: "New marker",
 		NEW_MILESTONE: "New milestone",

@@ -20,7 +20,8 @@
 
 package com.docdoku.server.dao;
 
-import com.docdoku.core.configuration.PathData;
+import com.docdoku.core.configuration.PathDataIteration;
+import com.docdoku.core.configuration.PathDataMaster;
 import com.docdoku.core.configuration.ProductInstanceIteration;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentLink;
@@ -52,7 +53,7 @@ public class DocumentDAO {
         TypedQuery<DocumentIteration> docQuery = em.createNamedQuery("DocumentLink.findDocumentOwner", DocumentIteration.class);
         TypedQuery<PartIteration> partQuery = em.createNamedQuery("DocumentLink.findPartOwner", PartIteration.class);
         TypedQuery<ProductInstanceIteration> productInstanceQuery = em.createNamedQuery("DocumentLink.findProductInstanceIteration", ProductInstanceIteration.class);
-        TypedQuery<PathData> pathDataQuery = em.createNamedQuery("DocumentLink.findPathData", PathData.class);
+        TypedQuery<PathDataMaster> pathDataQuery = em.createNamedQuery("DocumentLink.findPathData", PathDataMaster.class);
 
         TypedQuery<DocumentLink> linkQuery = em.createNamedQuery("DocumentIteration.findLinks", DocumentLink.class);
         List<DocumentLink> result = linkQuery.setParameter("target", pDoc).getResultList();
@@ -81,8 +82,10 @@ public class DocumentDAO {
             }
 
             try{
-                PathData pathData = pathDataQuery.setParameter("link",link).getSingleResult();
-                pathData.getLinkedDocuments().remove(link);
+                PathDataMaster pathDataMaster = pathDataQuery.setParameter("link",link).getSingleResult();
+                for (PathDataIteration pathDataIteration:pathDataMaster.getPathDataIterations()){
+                    pathDataIteration.getLinkedDocuments().remove(link);
+                }
             }catch(NoResultException ex){
                 LOGGER.log(Level.FINER,null,ex);
             }

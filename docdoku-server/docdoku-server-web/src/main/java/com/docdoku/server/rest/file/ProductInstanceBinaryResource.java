@@ -148,7 +148,8 @@ public class ProductInstanceBinaryResource {
             @PathParam("workspaceId") String workspaceId,
             @PathParam("ciId") String configurationItemId,
             @PathParam("serialNumber") String serialNumber,
-            @PathParam("pathDataId") int pathDataId)
+            @PathParam("pathDataId") int pathDataId,
+            @PathParam("iteration") int iteration)
             throws EntityNotFoundException, UserNotActiveException, NotAllowedException, AccessRightException, EntityAlreadyExistsException, CreationException {
 
 
@@ -157,7 +158,7 @@ public class ProductInstanceBinaryResource {
             Collection<Part> formParts = request.getParts();
 
             for (Part formPart : formParts) {
-                fileName = uploadAFileToPathData(workspaceId, formPart, configurationItemId, serialNumber,pathDataId);
+                fileName = uploadAFileToPathData(workspaceId, formPart, configurationItemId, serialNumber,pathDataId,iteration);
             }
 
             if (formParts.size() == 1) {
@@ -171,6 +172,38 @@ public class ProductInstanceBinaryResource {
 
     }
 
+    @POST
+    @Path("pathdata/{path}/iterations/{iteration}")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
+    public Response uploadFilesToPathDataIteration(
+            @Context HttpServletRequest request,
+            @PathParam("workspaceId") String workspaceId,
+            @PathParam("ciId") String configurationItemId,
+            @PathParam("serialNumber") String serialNumber,
+            @PathParam("path") int path,
+            @PathParam("iteration") int iteration)
+            throws EntityNotFoundException, UserNotActiveException, NotAllowedException, AccessRightException, EntityAlreadyExistsException, CreationException {
+
+
+        try {
+            String fileName = null;
+            Collection<Part> formParts = request.getParts();
+
+            for (Part formPart : formParts) {
+                fileName = uploadAFileToPathDataIteration(workspaceId, formPart, configurationItemId, serialNumber, path, iteration);
+            }
+
+            if (formParts.size() == 1) {
+                return BinaryResourceUpload.tryToRespondCreated(request.getRequestURI() + URLEncoder.encode(fileName, "UTF-8"));
+            }
+            return Response.ok().build();
+
+        } catch (IOException | ServletException | StorageException e) {
+            return BinaryResourceUpload.uploadError(e);
+        }
+
+    }
 
     @GET
     @Path("pathdata/{pathDataId}/{fileName}")
@@ -205,6 +238,39 @@ public class ProductInstanceBinaryResource {
         }
     }
 
+    @GET
+    @Path("pathdata/{pathDataId}/iterations/{iteration}/{fileName}")
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    public Response downloadFileFromPathDataIteration(@Context Request request,
+                                                    @HeaderParam("Range") String range,
+                                                    @PathParam("workspaceId") final String workspaceId,
+                                                    @PathParam("serialNumber") final String serialNumber,
+                                                    @PathParam("pathDataId") String pathDataId,
+                                                    @PathParam("iteration") final int iteration,
+                                                    @PathParam("fileName") final String fileName,
+                                                    @QueryParam("type") String type,
+                                                    @QueryParam("output") String output)
+            throws EntityNotFoundException, UserNotActiveException, AccessRightException, com.docdoku.core.exceptions.NotAllowedException, PreconditionFailedException, NotModifiedException, RequestedRangeNotSatisfiableException, UnmatchingUuidException, ExpiredLinkException {
+
+
+        String fullName = workspaceId + "/product-instances/" + serialNumber + "/pathdata/" + pathDataId + "/iterations/" +iteration+'/'+ fileName;
+        BinaryResource binaryResource = getPathDataBinaryResource(fullName);
+        BinaryResourceDownloadMeta binaryResourceDownloadMeta = new BinaryResourceDownloadMeta(binaryResource, output, type);
+
+        // Check cache precondition
+        Response.ResponseBuilder rb = request.evaluatePreconditions(binaryResourceDownloadMeta.getLastModified(), binaryResourceDownloadMeta.getETag());
+        if (rb != null) {
+            return rb.build();
+        }
+
+        try {
+            InputStream binaryContentInputStream = dataManager.getBinaryResourceInputStream(binaryResource);
+            return BinaryResourceDownloadResponseBuilder.prepareResponse(binaryContentInputStream, binaryResourceDownloadMeta, range);
+        } catch (StorageException e) {
+            return BinaryResourceDownloadResponseBuilder.downloadError(e, fullName);
+        }
+    }
+
     private BinaryResource getBinaryResource(String fullName)
             throws NotAllowedException, AccessRightException, UserNotActiveException, EntityNotFoundException {
         if (ctx.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)) {
@@ -222,6 +288,7 @@ public class ProductInstanceBinaryResource {
         }
     }
 
+
     private String uploadAFile(String workspaceId, Part formPart, ProductInstanceIterationKey pdtIterationKey)
             throws EntityNotFoundException, EntityAlreadyExistsException, AccessRightException, NotAllowedException, CreationException, UserNotActiveException, StorageException, IOException {
 
@@ -234,15 +301,26 @@ public class ProductInstanceBinaryResource {
         return fileName;
     }
 
-    private String uploadAFileToPathData(String workspaceId, Part formPart, String configurationItemId, String serialNumber, int pathDataId)
+    private String uploadAFileToPathData(String workspaceId, Part formPart, String configurationItemId, String serialNumber, int pathDataId,int iteration)
             throws EntityNotFoundException, EntityAlreadyExistsException, AccessRightException, NotAllowedException, CreationException, UserNotActiveException, StorageException, IOException {
 
         String fileName = formPart.getSubmittedFileName();
         // Init the binary resource with a null length
-        BinaryResource binaryResource = productInstanceManagerLocal.saveFileInPathData(workspaceId, configurationItemId, serialNumber, pathDataId, fileName, 0);
+        BinaryResource binaryResource = productInstanceManagerLocal.saveFileInPathData(workspaceId, configurationItemId, serialNumber, pathDataId,iteration, fileName, 0);
         OutputStream outputStream = dataManager.getBinaryResourceOutputStream(binaryResource);
         long length = BinaryResourceUpload.uploadBinary(outputStream, formPart);
-        productInstanceManagerLocal.saveFileInPathData(workspaceId, configurationItemId, serialNumber, pathDataId, fileName, (int) length);
+        productInstanceManagerLocal.saveFileInPathData(workspaceId, configurationItemId, serialNumber, pathDataId,iteration, fileName, (int) length);
+        return fileName;
+    }
+    private String uploadAFileToPathDataIteration(String workspaceId, Part formPart, String configurationItemId, String serialNumber, int pathDataId,int iteration)
+            throws EntityNotFoundException, EntityAlreadyExistsException, AccessRightException, NotAllowedException, CreationException, UserNotActiveException, StorageException, IOException {
+
+        String fileName = formPart.getSubmittedFileName();
+        // Init the binary resource with a null length
+        BinaryResource binaryResource = productInstanceManagerLocal.saveFileInPathDataIteration(workspaceId, configurationItemId, serialNumber, pathDataId,iteration, fileName, 0);
+        OutputStream outputStream = dataManager.getBinaryResourceOutputStream(binaryResource);
+        long length = BinaryResourceUpload.uploadBinary(outputStream, formPart);
+        productInstanceManagerLocal.saveFileInPathDataIteration(workspaceId, configurationItemId, serialNumber, pathDataId,iteration, fileName, (int) length);
         return fileName;
     }
 }

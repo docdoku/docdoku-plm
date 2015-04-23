@@ -60,7 +60,7 @@ define([
             return 'Now';
         },
 
-        getDescription: function () {
+        getIterationNote: function () {
             return this.get('description');
         },
 

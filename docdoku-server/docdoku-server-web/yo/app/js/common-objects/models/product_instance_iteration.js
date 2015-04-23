@@ -1,7 +1,7 @@
 /*global _,$,define,App*/
 define(['backbone'
 ], function (Backbone) {
-	'use strict';
+    'use strict';
     var ProductInstanceIteration = Backbone.Model.extend({
         idAttribute: 'iteration',
 
@@ -19,7 +19,7 @@ define(['backbone'
             $.ajax({
                 context: context,
                 type: 'GET',
-                url:  this.url()+'/baselined-parts',
+                url: this.url() + '/baselined-parts',
                 success: function (baselinedParts) {
                     that.setBaselinedParts(baselinedParts);
                     callbacks.success(this);
@@ -36,11 +36,11 @@ define(['backbone'
             }
         },
         getUploadBaseUrl: function () {
-            return App.config.contextPath + '/api/files/'+this.getBaseName();
+            return App.config.contextPath + '/api/files/' + this.getBaseName();
 
         },
         getBaseName: function () {
-            return App.config.workspaceId  + '/product-instances/' + this.getSerialNumber() +'/'+this.getConfigurationItemId() + '/iterations/' + this.getIteration()+'/';
+            return App.config.workspaceId + '/product-instances/' + this.getSerialNumber() + '/' + this.getConfigurationItemId() + '/iterations/' + this.getIteration() + '/';
         },
         getSerialNumber: function () {
             return this.get('serialNumber');
@@ -60,10 +60,10 @@ define(['backbone'
         getConfigurationItemId: function () {
             return this.get('configurationItemId');
         },
-        getBasedOnName:function(){
+        getBasedOnName: function () {
             return this.get('basedOn').name;
         },
-        getBasedOnId:function(){
+        getBasedOnId: function () {
             return this.get('basedOn').id;
         },
         getUpdateAuthor: function () {
@@ -78,39 +78,39 @@ define(['backbone'
         getBaselinedParts: function () {
             return this.get('baselinedParts');
         },
-        getACL: function(){
-          return this.get('acl');
+        getACL: function () {
+            return this.get('acl');
         },
-        getInstanceAttributes:  function(){
+        getInstanceAttributes: function () {
             return this.get('instanceAttributes');
         },
-        getlinkedDocuments:  function(){
+        getlinkedDocuments: function () {
             return this.get('linkedDocuments');
         },
-        getAttachedFiles: function(){
-          return this.get('attachedFiles');
+        getAttachedFiles: function () {
+            return this.get('attachedFiles');
         },
 
-        setInstanceAttributes:  function(instanceAttributes){
-            return this.set('instanceAttributes',instanceAttributes);
+        setInstanceAttributes: function (instanceAttributes) {
+            return this.set('instanceAttributes', instanceAttributes);
         },
 
         setBaselinedParts: function (baselinedParts) {
             this.set('baselinedParts', baselinedParts);
         },
-        setConfigurationItemId:function(configurationItemId){
+        setConfigurationItemId: function (configurationItemId) {
             this.set('configurationItemId', configurationItemId);
         },
 
-        getSubstitutesParts:function(){
+        getSubstitutesParts: function () {
             return this.get('substitutesParts');
         },
-        getOptionalsParts:function(){
+        getOptionalsParts: function () {
             return this.get('optionalsParts');
         },
 
-        setLinkedDocuments:  function(linkedDocuments){
-            this.set('linkedDocuments',linkedDocuments);
+        setLinkedDocuments: function (linkedDocuments) {
+            this.set('linkedDocuments', linkedDocuments);
         },
         getBaselinePartsWithReference: function (ref, callback) {
             var baselinedParts = null;

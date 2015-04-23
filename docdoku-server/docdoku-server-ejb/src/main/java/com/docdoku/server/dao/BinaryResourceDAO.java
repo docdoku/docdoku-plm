@@ -20,7 +20,8 @@
 package com.docdoku.server.dao;
 
 import com.docdoku.core.common.BinaryResource;
-import com.docdoku.core.configuration.PathData;
+import com.docdoku.core.configuration.PathDataIteration;
+import com.docdoku.core.configuration.PathDataMaster;
 import com.docdoku.core.configuration.ProductInstanceIteration;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentMasterTemplate;
@@ -121,8 +122,8 @@ public class BinaryResourceDAO {
         }
     }
 
-    public PathData getPathDataOwner(BinaryResource pBinaryResource) {
-        TypedQuery<PathData> query = em.createQuery("SELECT p FROM PathData p WHERE :binaryResource MEMBER OF p.attachedFiles", PathData.class);
+    public PathDataIteration getPathDataOwner(BinaryResource pBinaryResource) {
+        TypedQuery<PathDataIteration> query = em.createQuery("SELECT p FROM PathDataIteration p WHERE :binaryResource MEMBER OF p.attachedFiles", PathDataIteration.class);
         try {
             return query.setParameter("binaryResource", pBinaryResource).getSingleResult();
         } catch (NoResultException pNREx) {
@@ -130,6 +131,7 @@ public class BinaryResourceDAO {
             return null;
         }
     }
+
 
     public DocumentMasterTemplate getDocumentTemplateOwner(BinaryResource pBinaryResource) {
         TypedQuery<DocumentMasterTemplate> query = em.createQuery("SELECT t FROM DocumentMasterTemplate t WHERE :binaryResource MEMBER OF t.attachedFiles", DocumentMasterTemplate.class);
@@ -160,4 +162,6 @@ public class BinaryResourceDAO {
             return null;
         }
     }
+
+
 }

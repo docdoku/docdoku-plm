@@ -20,7 +20,7 @@
 
 package com.docdoku.core.exceptions;
 
-import com.docdoku.core.configuration.PathData;
+import com.docdoku.core.configuration.PathDataMaster;
 
 import java.text.MessageFormat;
 import java.util.Locale;
@@ -31,26 +31,26 @@ import java.util.Locale;
  */
 public class PathDataAlreadyExistsException extends EntityAlreadyExistsException {
 
-    private final PathData pathData;
+    private final PathDataMaster pathDataMaster;
 
     public PathDataAlreadyExistsException(String pMessage) {
         super(pMessage);
-        pathData = null;
+        pathDataMaster = null;
     }
 
 
-    public PathDataAlreadyExistsException(Locale pLocale, PathData pPathData) {
-        this(pLocale, pPathData, null);
+    public PathDataAlreadyExistsException(Locale pLocale, PathDataMaster pPathDataMaster) {
+        this(pLocale, pPathDataMaster, null);
     }
 
-    public PathDataAlreadyExistsException(Locale pLocale, PathData pPathData, Throwable pCause) {
+    public PathDataAlreadyExistsException(Locale pLocale, PathDataMaster pPathDataMaster, Throwable pCause) {
         super(pLocale, pCause);
-        pathData=pPathData;
+        pathDataMaster = pPathDataMaster;
     }
 
     @Override
     public String getLocalizedMessage() {
         String message = getBundleDefaultMessage();
-        return MessageFormat.format(message,pathData);
+        return MessageFormat.format(message, pathDataMaster);
     }
 }

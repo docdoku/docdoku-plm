@@ -40,7 +40,7 @@ define([
             ) : null;
         },
 
-        getDescription: function () {
+        getIterationNote: function () {
             return this.get('description');
         },
 

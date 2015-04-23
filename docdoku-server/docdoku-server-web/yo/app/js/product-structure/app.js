@@ -238,7 +238,10 @@ define([
                 path : App.partsTreeView.componentSelected.getEncodedPath()
             });
             window.document.body.appendChild(productInstanceModal.render().el);
-            productInstanceModal.openModal();
+            productInstanceModal.on('ready',function(){
+                productInstanceModal.openModal();
+
+            });
         },
 
         fullScreenScene: function () {

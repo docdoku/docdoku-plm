@@ -19,7 +19,7 @@ define([
 		render: function () {
 			this.$el.html(Mustache.render(template, {i18n: App.config.i18n, title: this.model.getTitle()}));
 			this.$modal = this.$('#markerModal');
-			this.$('#markerDesc').html(this.model.getDescription().nl2br());
+			this.$('#markerDesc').html(this.model.getIterationNote().nl2br());
 
 			return this;
 		},

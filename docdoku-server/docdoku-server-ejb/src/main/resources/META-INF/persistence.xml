@@ -20,7 +20,8 @@
     <class>com.docdoku.core.configuration.PartCollection</class>
     <class>com.docdoku.core.configuration.ProductInstanceIteration</class>
     <class>com.docdoku.core.configuration.ProductInstanceMaster</class>
-    <class>com.docdoku.core.configuration.PathData</class>
+    <class>com.docdoku.core.configuration.PathDataIteration</class>
+    <class>com.docdoku.core.configuration.PathDataMaster</class>
     <class>com.docdoku.core.document.DocumentIteration</class>
     <class>com.docdoku.core.document.DocumentLink</class>
     <class>com.docdoku.core.document.DocumentMaster</class>

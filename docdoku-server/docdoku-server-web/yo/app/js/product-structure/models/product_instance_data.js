@@ -1,4 +1,4 @@
-/*global define,App*/
+/*global define,_*/
 define(['backbone'], function (Backbone) {
 
     'use strict';
@@ -22,7 +22,7 @@ define(['backbone'], function (Backbone) {
             this.set('linkedDocuments', linkedDocuments);
         },
 
-        getAttributes: function(){
+        getAttributes: function(attributes){
             return this.get('instanceAttributes');
         },
 
@@ -64,7 +64,7 @@ define(['backbone'], function (Backbone) {
         },
 
         getDeleteBaseUrl: function(serialNumber){
-            return App.config.contextPath + '/api/files/' + App.config.workspaceId + '/product-instances/' + serialNumber + '/' + App.config.productId + '/pathdata/' + this.getId()+'/';
+            return App.config.contextPath + '/api/files/' + App.config.workspaceId + '/product-instances/' + serialNumber + '/' + App.config.productId + '/pathdata/' + this.getId()+'/'
         }
 
     });

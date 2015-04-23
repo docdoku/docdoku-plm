@@ -1,4 +1,4 @@
-<div class="modal hide fade product-instance-data-modal">
+<div class="modal hide product-instance-data-modal">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">×</button>
         <h3 id="productInstanceDataTitle">{{i18n.PRODUCT_INSTANCE_DATA}}</h3>
@@ -9,16 +9,25 @@
             <ul class="nav nav-tabs">
                 <li class="active"><a href="#tab-main" data-toggle="tab">{{i18n.GENERAL}}</a></li>
                 <li><a href="#tab-attributes" data-toggle="tab">{{i18n.ATTRIBUTES}}</a></li>
+                {{#iteration}}
                 <li class="title-tab-file"><a href="#tab-files" data-toggle="tab">{{i18n.FILES}}</a></li>
                 <li class="title-tab-link"><a href="#tab-link" data-toggle="tab">{{i18n.LINKS}}</a></li>
+                {{/iteration}}
             </ul>
 
             <form id="form-{{view.cid}}" class="tab-content form-horizontal">
                 <div id="tab-main" class="tab-pane tab-main active">
                     <div class="path-description"></div>
                     <div>
-                        <span>{{i18n.DESCRIPTION}} <input type="text" class="input-xlarge description-input"></span>
+                        <span>{{i18n.ITERATION_NOTE}} <input type="text" class="input-xlarge description-input" value="{{iterationNote}}"></span>
+
                     </div>
+                    {{#iteration}}
+                    <div>
+                        <button type="button" class="btn btn-warning new-iteration">{{i18n.NEW_ITERATION}}</button>
+                    </div>
+                    {{/iteration}}
+
 
                 </div>
                 <div id="tab-attributes" class="tab-pane tab-attributes attributes attributes-edit">attributes</div>
@@ -28,7 +37,18 @@
         </div>
     </div>
     <div class="modal-footer">
-        <button class="btn btn-danger pull-left delete-button">{{i18n.DELETE}}</button>
+        {{#iteration}}
+        <ul id="switch-iteration" class="pager">
+            <li class="{{^hasPreviousIteration}}disabled{{/hasPreviousIteration}}">
+                <a href="#" id="previous-iteration"><i class="fa fa-angle-left icon-large"></i></a>
+            </li>
+            <li>{{iteration}}/{{iterations}}</li>
+            <li class="{{^hasNextIteration}}disabled{{/hasNextIteration}}">
+                <a href="#" id="next-iteration"><i class="fa fa-angle-right icon-large"></i></a>
+            </li>
+        </ul>
+        {{/iteration}}
+
         <button class="btn cancel-button">{{i18n.CANCEL}}</button>
         <button class="btn btn-primary save-button">{{i18n.SAVE}}</button>
     </div>

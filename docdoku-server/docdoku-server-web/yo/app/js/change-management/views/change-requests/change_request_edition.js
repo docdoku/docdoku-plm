@@ -162,7 +162,7 @@ define([
 
             initValue: function () {
                 this.$inputRequestName.val(this.model.getName());
-                this.$inputRequestDescription.val(this.model.getDescription());
+                this.$inputRequestDescription.val(this.model.getIterationNote());
             },
 
             onSubmitForm: function (e) {

@@ -52,7 +52,7 @@ define([
                 return this.get('version');
             },
 
-            getDescription: function () {
+            getIterationNote: function () {
                 return this.get('description');
             },
 

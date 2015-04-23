@@ -26,82 +26,106 @@ import com.docdoku.core.document.DocumentLink;
 import com.docdoku.core.meta.InstanceAttribute;
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
- * @author Morgan Guimard
+ * @author: Chadid Asmae
  */
-
-@Table(name="PATHDATA")
+@Table(name="PATHDATAITERATION")
 @Entity
-@NamedQueries({
-        @NamedQuery(name= "PathData.findByPathAndProductInstanceMaster", query="SELECT p FROM PathData p JOIN ProductInstanceMaster l WHERE p member of l.pathDataList and p.path = :path and l = :productInstanceMaster")
-})
-public class PathData implements Serializable, FileHolder {
+public class PathDataIteration implements Serializable, FileHolder {
 
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
     @Id
-    private int id;
+    @ManyToOne(optional=false, fetch=FetchType.EAGER)
+    @JoinColumns({
+            @JoinColumn(name="PATHDATAMASTER_ID", referencedColumnName="ID"),
 
-    private String path;
+    })
+    private PathDataMaster pathDataMaster;
+
+    @Id
+    @Column(name="ITERATION")
+    private int iteration;
 
     @Lob
-    private String description;
+    private String noteIteration;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private java.util.Date  dateIteration;
 
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @OrderColumn(name="ATTRIBUTE_ORDER")
-    @JoinTable(name = "PATHDATA_ATTRIBUTE",
+    @JoinTable(name = "PATHDATAITERATION_ATTRIBUTE",
             inverseJoinColumns = {
                     @JoinColumn(name = "INSTANCEATTRIBUTE_ID", referencedColumnName = "ID")
             },
             joinColumns = {
-                    @JoinColumn(name="PATHDATA_ID", referencedColumnName="ID")
+                    @JoinColumn(name="PATHDATA_ITERATION", referencedColumnName="ITERATION"),
+                    @JoinColumn(name="PATHDATAMASTER_ID", referencedColumnName="PATHDATAMASTER_ID")
             })
     private List<InstanceAttribute> instanceAttributes = new ArrayList<>();
 
 
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinTable(name = "PATHDATA__DOCUMENTLINK",
+    @JoinTable(name = "PATHDATAITERATION_DOCUMENTLINK",
             inverseJoinColumns = {
                     @JoinColumn(name = "DOCUMENTLINK_ID", referencedColumnName = "ID")
             },
             joinColumns = {
-                    @JoinColumn(name="PATHDATA_ID", referencedColumnName="ID")
+                    @JoinColumn(name="PATHDATA_ITERATION", referencedColumnName="ITERATION"),
+                    @JoinColumn(name="PATHDATAMASTER_ID", referencedColumnName="PATHDATAMASTER_ID")
             })
     private Set<DocumentLink> linkedDocuments = new HashSet<>();
 
     @OneToMany(cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, fetch = FetchType.EAGER)
-    @JoinTable(name = "PATHDATA_BINRES",
+    @JoinTable(name = "PATHDATAITERATION_BINRES",
             inverseJoinColumns = {
                     @JoinColumn(name = "ATTACHEDFILE_FULLNAME", referencedColumnName = "FULLNAME")
             },
             joinColumns = {
-                    @JoinColumn(name="PATHDATA_ID", referencedColumnName="ID")
+                    @JoinColumn(name="PATHDATA_ITERATION", referencedColumnName="ITERATION"),
+                    @JoinColumn(name="PATHDATAMASTER_ID", referencedColumnName="PATHDATAMASTER_ID")
             })
     private Set<BinaryResource> attachedFiles = new HashSet<>();
 
-    public int getId() {
-        return id;
+    public PathDataIteration() {
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public PathDataIteration(int iteration, PathDataMaster pathDataMaster,Date date) {
+        this.iteration = iteration;
+        this.pathDataMaster = pathDataMaster;
+        this.dateIteration = date;
     }
 
-    public String getPath() {
-        return path;
+    @XmlTransient
+    public PathDataMaster getPathDataMaster() {
+        return pathDataMaster;
     }
 
-    public void setPath(String path) {
-        this.path = path;
+    public void setPathDataMaster(PathDataMaster pathDataMaster) {
+        this.pathDataMaster = pathDataMaster;
     }
 
-    public String getDescription() {
-        return description;
+    public String getNoteIteration() {
+        return noteIteration;
+    }
+
+    public int getIteration() {
+        return iteration;
+    }
+
+    public void setIteration(int iteration) {
+        this.iteration = iteration;
+    }
+
+    public Date getDateIteration() {
+        return dateIteration;
+    }
+
+    public void setDateIteration(Date dateIteration) {
+        this.dateIteration = dateIteration;
     }
 
     public Set<DocumentLink> getLinkedDocuments() {
@@ -112,8 +136,8 @@ public class PathData implements Serializable, FileHolder {
         this.linkedDocuments = linkedDocuments;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setNoteIteration(String noteIteration) {
+        this.noteIteration = noteIteration;
     }
 
     public List<InstanceAttribute> getInstanceAttributes() {

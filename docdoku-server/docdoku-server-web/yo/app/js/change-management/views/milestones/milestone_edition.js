@@ -49,7 +49,7 @@ define([
         initValue: function () {
             this.$inputMilestoneTitle.val(this.model.getTitle());
             this.$inputMilestoneDueDate.val(this.model.getDueDateDatePicker());
-            this.$inputMilestoneDescription.val(this.model.getDescription());
+            this.$inputMilestoneDescription.val(this.model.getIterationNote());
         },
 
         linkManagement: function () {
