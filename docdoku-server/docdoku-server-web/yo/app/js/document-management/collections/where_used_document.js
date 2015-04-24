@@ -8,8 +8,16 @@ define([
 
         model: Document,
 
-        comparator: function (document) {
-            return document.get('id');
+        setLinkedDocumentIterationId: function (linkedDocumentIterationId) {
+            this.linkedDocumentIterationId = linkedDocumentIterationId;
+        },
+
+        setLinkedDocument: function (linkedDocument) {
+            this.linkedDocument = linkedDocument;
+        },
+
+        url: function () {
+            return this.linkedDocument.baseUrl() + '/' + this.linkedDocumentIterationId + '/inverse-document-link';
         }
 
     });

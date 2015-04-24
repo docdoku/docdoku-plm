@@ -319,10 +319,16 @@ define([
         },
 
         initWhereUsedListView: function () {
+            var documentsCollection = new WhereUsedDocumentList();
+            documentsCollection.setLinkedDocumentIterationId(this.iteration.getIteration());
+            documentsCollection.setLinkedDocument(this.model);
+
+            var partsCollection = new PartList();
+
             this.whereUsedListView = new WhereUsedListView({
                 //documentIteration: this.iteration,
-                partsCollection: new PartList(this.iteration.getWhereUsedParts()),
-                documentsCollection: new WhereUsedDocumentList(this.iteration.getWhereUsedDocuments())
+                partsCollection: partsCollection,
+                documentsCollection: documentsCollection
             }).render();
 
             /* Add the whereUsedListView to the tab */

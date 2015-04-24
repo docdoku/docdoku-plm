@@ -10,6 +10,10 @@ define(['backbone', 'collections/document_iteration', 'common-objects/utils/acl-
 			return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/documents';
 		},
 
+        initialize: function () {
+            _.bindAll(this);
+        },
+
 		url: function () {
 			if (this.getId()) {
 				return this.baseUrl() + '?configSpec=' + App.config.configSpec;
@@ -45,6 +49,10 @@ define(['backbone', 'collections/document_iteration', 'common-objects/utils/acl-
 		getVersion: function () {
 			return this.get('version');
 		},
+
+        getTitle: function () {
+            return this.get('title');
+        },
 
 		getWorkspace: function () {
 			return this.get('workspaceId');
@@ -89,6 +97,13 @@ define(['backbone', 'collections/document_iteration', 'common-objects/utils/acl-
 		getPath: function () {
 			return this.get('path');
 		},
+
+        getDisplayDocKey: function () {
+            if (this.getTitle()) {
+                return this.getTitle() + ' < ' + this.getId() + ' >';
+            }
+            return '< ' + this.getId() + ' >';
+        },
 
 		checkout: function () {
 			return $.ajax({
