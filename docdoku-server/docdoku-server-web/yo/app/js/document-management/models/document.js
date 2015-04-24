@@ -337,7 +337,6 @@ define(['backbone', 'collections/document_iteration', 'common-objects/utils/acl-
 		},
 
         getWhereUsedPartList: function (iteration, args) {
-            debugger;
             $.ajax({
                 type: 'GET',
                 url: this.baseUrl() + '/' + iteration + '/inverse-part-link',

@@ -235,9 +235,9 @@ define([
 
             getDisplayKey: function () {
                 if (this.getName()) {
-                    return this.getName() + ' < ' + this.getPartKey() + ' >';
+                    return this.getName() + ' < ' + this.getNumber() + '-' + this.getVersion() + ' >';
                 }
-                return '< ' + this.getPartKey() + ' >';
+                return '< ' + this.getNumber() + '-' + this.getVersion() + ' >';
             },
 
             addTags: function (tags) {
