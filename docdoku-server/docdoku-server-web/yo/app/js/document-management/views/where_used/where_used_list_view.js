@@ -10,6 +10,8 @@ define([
     'use strict';
     var WhereUsedListView = Backbone.View.extend({
 
+        className: 'where-used-items-view',
+
         initialize: function () {
             _.bindAll(this);
 
