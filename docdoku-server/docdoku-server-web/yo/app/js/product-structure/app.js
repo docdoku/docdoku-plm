@@ -232,16 +232,13 @@ define([
         },
 
         openProductInstanceModal:function(){
-            // Open modal
+
             var productInstanceModal = new ProductInstanceDataModalView({
                 serialNumber: App.config.configSpec.substr(3),
                 path : App.partsTreeView.componentSelected.getEncodedPath()
             });
-            window.document.body.appendChild(productInstanceModal.render().el);
-            productInstanceModal.on('ready',function(){
-                productInstanceModal.openModal();
-
-            });
+            window.document.body.appendChild(productInstanceModal.el);
+            productInstanceModal.initAndOpenModal();
         },
 
         fullScreenScene: function () {

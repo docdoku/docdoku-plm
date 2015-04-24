@@ -1,7 +1,7 @@
 /*global define,_*/
 define(['backbone',
     'collections/product_instance_iteration'
-    ], function (Backbone,ProductInstanceIterationPathList) {
+], function (Backbone, ProductInstanceIterationPathList) {
 
     'use strict';
 
@@ -11,7 +11,7 @@ define(['backbone',
             pathDataIterations: []
         },
 
-        initialize:function(data){
+        initialize: function (data) {
             this.path = data.path ? data.path : '-1';
             this.serialNumber = data.serialNumber;
             this.iterations = new ProductInstanceIterationPathList(data.pathDataIterations);
@@ -19,23 +19,24 @@ define(['backbone',
             this.iteration = this.getLastIteration();
             _.bindAll(this);
         },
-        url: function () {
-            return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + App.config.productId + '/product-instances/' +this.serialNumber + '/pathdata/'+this.getPath();
 
+        url: function () {
+            return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + App.config.productId + '/product-instances/' + this.serialNumber + '/pathdata/' + this.getPath();
         },
+
         parse: function (data) {
-            if (data){
+            if (data) {
                 this.iterations = new ProductInstanceIterationPathList(data.pathDataIterations);
                 this.iterations.setProductInstance(this);
                 delete data.pathDataIterations;
                 return data;
             }
-
         },
 
         getId: function () {
             return this.get('id');
         },
+
         getIterations: function () {
             return this.iterations;
         },
@@ -52,24 +53,25 @@ define(['backbone',
             return this.get('path');
         },
 
-        getPartsPath: function(){
+        getPartsPath: function () {
             return this.get('partsPath').parts;
         },
 
         setPath: function (path) {
             this.set('path', path);
         },
+
         setSerialNumber: function (serialNumber) {
-                    this.set('serialNumber', serialNumber);
-                },
+            this.set('serialNumber', serialNumber);
+        },
+
         getSerialNumber: function () {
-                            return this.get('serialNumber');
-                        },
+            return this.get('serialNumber');
+        },
 
         hasIterations: function () {
             return this.get('pathDataIterations').length > 0;
         }
-
 
 
     });

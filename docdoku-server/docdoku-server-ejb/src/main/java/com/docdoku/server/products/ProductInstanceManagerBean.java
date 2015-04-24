@@ -787,6 +787,9 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
             PathDataMaster pathDataMaster = em.find(PathDataMaster.class, pathDataId);
             PathDataIteration pathDataIteration = pathDataMaster.getPathDataIterations().get(iteration - 1);
 
+            //TODO : allow only on last iteration
+
+
             // This path data isn't owned by product master.
             if (!productInstanceMaster.getPathDataMasterList().contains(pathDataMaster)) {
                 throw new NotAllowedException(userLocale, "NotAllowedException52");

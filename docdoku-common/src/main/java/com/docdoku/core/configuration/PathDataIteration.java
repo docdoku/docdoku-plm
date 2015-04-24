@@ -40,8 +40,7 @@ public class PathDataIteration implements Serializable, FileHolder {
     @Id
     @ManyToOne(optional=false, fetch=FetchType.EAGER)
     @JoinColumns({
-            @JoinColumn(name="PATHDATAMASTER_ID", referencedColumnName="ID"),
-
+            @JoinColumn(name="PATHDATAMASTER_ID", referencedColumnName="ID")
     })
     private PathDataMaster pathDataMaster;
 
