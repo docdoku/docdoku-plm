@@ -11,6 +11,7 @@ public class QueryResultRow {
     private int depth;
     private double[] results;
     private QueryContext context;
+    private double amount;
 
 
     public QueryResultRow() {
@@ -56,5 +57,13 @@ public class QueryResultRow {
 
     public void setContext(QueryContext context) {
         this.context = context;
+    }
+
+    public double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(double amount) {
+        this.amount = amount;
     }
 }

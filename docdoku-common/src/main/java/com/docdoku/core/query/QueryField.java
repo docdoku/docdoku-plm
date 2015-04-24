@@ -47,5 +47,6 @@ public class QueryField {
     public final static String CTX_SERIAL_NUMBER = "ctx.serialNumber";
     public final static String CTX_PRODUCT_ID = "ctx.productId";
     public final static String CTX_DEPTH = "ctx.depth";
+    public final static String CTX_AMOUNT = "ctx.amount";
 
 }

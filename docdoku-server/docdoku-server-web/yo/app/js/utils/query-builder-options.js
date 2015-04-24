@@ -253,6 +253,12 @@ define(function () {
         group: 'ctx'
     });
 
+    contextFields.push({
+        value: 'ctx.amount',
+        name: App.config.i18n.AMOUNT,
+        group: 'ctx'
+    });
+
     return {
         filters : filters,
         fields : fields,

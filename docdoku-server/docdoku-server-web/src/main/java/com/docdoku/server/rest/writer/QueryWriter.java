@@ -155,6 +155,9 @@ public class QueryWriter implements MessageBodyWriter<QueryResult> {
                 case QueryField.CTX_DEPTH:
                     data.add(row.getDepth()+"");
                     break;
+                case QueryField.CTX_AMOUNT:
+                    data.add(row.getAmount()+"");
+                    break;
                 default:
                     if (select.contains(QueryField.PART_REVISION_ATTRIBUTES_PREFIX)){
                         String attributeSelectType = select.substring(0, select.indexOf(".")).substring(QueryField.PART_REVISION_ATTRIBUTES_PREFIX.length());
@@ -312,6 +315,11 @@ public class QueryWriter implements MessageBodyWriter<QueryResult> {
                 String serialNumber = context != null ? context.getSerialNumber() : "";
                 jg.write(QueryField.CTX_SERIAL_NUMBER, serialNumber != null ? serialNumber : "");
             }
+            if (selects.contains(QueryField.CTX_AMOUNT)) {
+                String amount = row.getAmount()+"";
+                jg.write(QueryField.CTX_AMOUNT, amount);
+            }
+
             jg.writeEnd();
         }
 

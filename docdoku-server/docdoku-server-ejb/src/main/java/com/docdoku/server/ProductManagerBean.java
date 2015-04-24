@@ -614,7 +614,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             }
 
             if(box != null){
-                geometryBinaryResource.setBox(box[0],box[1],box[2],box[3],box[4],box[5]);
+                geometryBinaryResource.setBox(box[0], box[1], box[2], box[3], box[4], box[5]);
             }
 
             return geometryBinaryResource;
@@ -972,7 +972,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 ACL acl = aclFactory.createACL(workspaceId, pACLUserEntries, pACLUserGroupEntries);
                 partRevision.setACL(acl);
             } else {
-                aclFactory.updateACL(workspaceId,partRevision.getACL(), pACLUserEntries, pACLUserGroupEntries);
+                aclFactory.updateACL(workspaceId, partRevision.getACL(), pACLUserEntries, pACLUserGroupEntries);
             }
         } else {
             throw new AccessRightException(locale, user);
@@ -1119,7 +1119,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             ACL acl = aclFactory.createACL(pWorkspaceId, userEntries, groupEntries);
             partMasterTemplate.setAcl(acl);
         } else {
-            aclFactory.updateACL(pWorkspaceId,partMasterTemplate.getAcl(), userEntries, groupEntries);
+            aclFactory.updateACL(pWorkspaceId, partMasterTemplate.getAcl(), userEntries, groupEntries);
         }
     }
 
@@ -1221,7 +1221,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
 
-        List<PartRevision> partsRevision = new PartRevisionDAO(new Locale(user.getLanguage()),em).findPartByTag(new Tag(user.getWorkspace(),tagId));
+        List<PartRevision> partsRevision = new PartRevisionDAO(new Locale(user.getLanguage()),em).findPartByTag(new Tag(user.getWorkspace(), tagId));
         ListIterator<PartRevision> iterator = partsRevision.listIterator();
         while (iterator.hasNext()) {
             PartRevision partRevision = iterator.next();
@@ -1354,7 +1354,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         }
 
         ProductInstanceMasterDAO productInstanceMasterDAO = new ProductInstanceMasterDAO(locale,em);
-        List<ProductInstanceMaster> productInstanceMasters = productInstanceMasterDAO.findProductInstanceMasters(configurationItemKey.getId(),configurationItemKey.getWorkspace());
+        List<ProductInstanceMaster> productInstanceMasters = productInstanceMasterDAO.findProductInstanceMasters(configurationItemKey.getId(), configurationItemKey.getWorkspace());
 
         if(!productInstanceMasters.isEmpty()){
             throw new EntityConstraintException(locale,"EntityConstraintException13");
@@ -1570,7 +1570,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     public PartMasterTemplate createPartMasterTemplate(String pWorkspaceId, String pId, String pPartType, String pWorkflowModelId, String pMask, InstanceAttributeTemplate[] pAttributeTemplates, String[] lovNames, boolean idGenerated, boolean attributesLocked) throws WorkspaceNotFoundException, AccessRightException, PartMasterTemplateAlreadyExistsException, UserNotFoundException, NotAllowedException, CreationException, WorkflowModelNotFoundException, ListOfValuesNotFoundException {
         User user = userManager.checkWorkspaceWriteAccess(pWorkspaceId);
         Locale locale = new Locale(user.getLanguage());
-        checkNameValidity(pId,locale);
+        checkNameValidity(pId, locale);
 
         PartMasterTemplate template = new PartMasterTemplate(user.getWorkspace(), pId, user, pPartType, pMask, attributesLocked);
         Date now = new Date();
@@ -1699,7 +1699,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
         PartMasterTemplate template = binDAO.getPartTemplateOwner(file);
 
-        checkPartTemplateWriteAccess(template,user);
+        checkPartTemplateWriteAccess(template, user);
 
         try {
             dataManager.deleteData(file);
@@ -2153,7 +2153,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         }
 
         User user = userManager.checkWorkspaceReadAccess(partRKey.getPartMaster().getWorkspace());
-        return  canUserAccess(user,partRKey);
+        return  canUserAccess(user, partRKey);
     }
     @RolesAllowed({UserGroupMapping.GUEST_PROXY_ROLE_ID,UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.ADMIN_ROLE_ID})
     @Override
@@ -2597,6 +2597,12 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
             @Override
             public void onPathWalk(List<PartLink> path, List<PartMaster> parts) {
                 QueryResultRow row = new QueryResultRow();
+                double totalAmount = 1;
+                for (PartLink pl : path){
+                    if (pl.getUnit() == null) {
+                        totalAmount *= pl.getAmount();
+                    }
+                }
                 int depth = parts.size();
                 PartMaster part = parts.get(parts.size()-1);
                 List<PartIteration> partIterations = filter.filter(part);
@@ -2604,6 +2610,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 row.setPartRevision(partRevision);
                 row.setDepth(depth);
                 row.setContext(queryContext);
+                row.setAmount(totalAmount);
                 rows.add(row);
             }
 
