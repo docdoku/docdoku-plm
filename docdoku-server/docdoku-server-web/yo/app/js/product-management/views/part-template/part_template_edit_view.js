@@ -53,11 +53,20 @@ define([
 
             this.attributesView.collection.reset(this.model.get('attributeTemplates'));
 
-            this.$('a#mask-help').popover({
+            var $popoverLink = this.$('a#mask-help');
+
+            $popoverLink.popover({
                 title: App.config.i18n.MASK,
                 placement: 'left',
                 html: true,
-                content: App.config.i18n.MASK_HELP.nl2br()
+                trigger: 'manual',
+                content: App.config.i18n.MASK_HELP.nl2br(),
+                container:'#part_template_creation_modal'
+            }).click(function(e){
+                $popoverLink.popover('show');
+                e.stopPropagation();
+                e.preventDefault();
+                return false;
             });
 
         },
