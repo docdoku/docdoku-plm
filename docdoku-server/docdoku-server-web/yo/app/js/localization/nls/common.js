@@ -414,6 +414,7 @@ define({
         QUERY_GROUP_BY:"Group by",
         QUERY_CLEAR:"clear",
         QUERY_REMOVE_SAVED_QUERY:"Delete from queries list",
+        QUERY_CHOOSE_EXISTING_REQUEST:"Or use an existing one ...",
         QUERY_CONTEXT_ERROR:"Can't retrieve products",
         QUERY_ATTRIBUTES_ERROR:"Can't retrieve attribute list",
         QUERY_FILTER_STATUS_WIP:"Work in progress",

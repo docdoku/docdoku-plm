@@ -207,6 +207,8 @@ define([
                                 {true : App.config.i18n.TRUE},
                                 {false : App.config.i18n.FALSE}
                             ];
+                        } else if(attributeType === 'double'){
+                            filter.operators = queryBuilderOptions.numberOperators;
                         }
 
                         self.queryBuilderFilters.push(filter);

@@ -233,7 +233,7 @@ public class QueryDAO {
         } else if(field.equals("tags")){
             return getTagsPredicate(value);
         }
-        return getPredicate(pr.get(field),operator,value,type);
+        return getPredicate(pr.get(field), operator, value, type);
     }
 
     private Predicate getTagsPredicate(String value) {
@@ -244,7 +244,7 @@ public class QueryDAO {
     }
 
     private Predicate getPartMasterPredicate(String field, String operator, String value, String type) {
-        return getPredicate(pm.get(field),operator,value,type);
+        return getPredicate(pm.get(field), operator, value, type);
     }
 
     // Instances Attributes
@@ -270,7 +270,7 @@ public class QueryDAO {
 
     private Predicate getInstanceLovAttributePredicate(String field, String operator, String value, String type) {
         Root<InstanceListOfValuesAttribute> ila = cq.from(InstanceListOfValuesAttribute.class);
-        Predicate valuePredicate = cb.equal(ila.get("indexValue"),Integer.parseInt(value));
+        Predicate valuePredicate = cb.equal(ila.get("indexValue"), Integer.parseInt(value));
         Predicate memberPredicate = ila.in(pi.get("instanceAttributes"));
         return cb.and(cb.equal(ila.get("name"),field),valuePredicate, memberPredicate);
     }
@@ -310,7 +310,11 @@ public class QueryDAO {
                 break;
             case "double":
                 try {
-                    o = Double.parseDouble((String) value);
+                    if (value!= null){
+                        o = Double.parseDouble((String) value);
+                    }else{
+                        o = "";
+                    }
                 }catch(NumberFormatException e){
                     throw new IllegalArgumentException();
                 }
@@ -345,7 +349,7 @@ public class QueryDAO {
                 if(type.equals("date")){
                     return cb.lessThanOrEqualTo(fieldExp, (Date) o);
                 } else if(type.equals("double")){
-                    return cb.lessThanOrEqualTo(fieldExp, (Double)o);
+                    return cb.lessThanOrEqualTo(fieldExp, (Double) o);
                 }
                 break;
             case "greater":

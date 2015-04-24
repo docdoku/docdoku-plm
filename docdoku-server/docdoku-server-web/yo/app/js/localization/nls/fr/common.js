@@ -409,6 +409,7 @@ define({
     QUERY_ORDER_BY:"Ordonner par",
     QUERY_GROUP_BY:"Groupper par",
     QUERY_CLEAR:"vider",
+    QUERY_CHOOSE_EXISTING_REQUEST:"Ou utiliser une requête sauvegardée...",
     QUERY_REMOVE_SAVED_QUERY:"Supprimer de la liste des requêtes",
     QUERY_CONTEXT_ERROR:"Impossible de récuperer la liste des produits",
     QUERY_ATTRIBUTES_ERROR:"Impossible de récuperer la liste des attributs",

@@ -75,6 +75,8 @@ define(function () {
     var booleanOperators = ['equal', 'not_equal'];
     var tagOperators = ['equal'];
 
+    var numberOperators = ['equal', 'not_equal', 'contains', 'not_contains', 'less', 'less_or_equal', 'greater', 'greater_or_equal', 'between'];
+
     var filters = [];
 
     // Part Master
@@ -270,7 +272,8 @@ define(function () {
         dateOperators : dateOperators,
         lovOperators : lovOperators,
         booleanOperators : booleanOperators,
-        tagOperators: tagOperators
+        tagOperators: tagOperators,
+        numberOperators: numberOperators
     };
 
 });
