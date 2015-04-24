@@ -98,7 +98,7 @@ define(['backbone', 'collections/document_iteration', 'common-objects/utils/acl-
 			return this.get('path');
 		},
 
-        getDisplayDocKey: function () {
+        getDisplayKey: function () {
             if (this.getTitle()) {
                 return this.getTitle() + ' < ' + this.getId() + ' >';
             }
@@ -334,7 +334,17 @@ define(['backbone', 'collections/document_iteration', 'common-objects/utils/acl-
 
 		isAttributesLocked: function () {
 			return this.get('attributesLocked');
-		}
+		},
+
+        getWhereUsedPartList: function (iteration, args) {
+            debugger;
+            $.ajax({
+                type: 'GET',
+                url: this.baseUrl() + '/' + iteration + '/inverse-part-link',
+                success: args.success,
+                error: args.error
+            });
+        }
 
 	});
 

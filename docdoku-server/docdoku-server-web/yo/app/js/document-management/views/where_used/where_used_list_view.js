@@ -13,11 +13,25 @@ define([
         initialize: function () {
             _.bindAll(this);
 
-            this.partsCollection = this.options.partsCollection;
-            this.documentsCollection = this.options.documentsCollection;
+            this.linkedDocumentIterationId = this.options.linkedDocumentIterationId;
+            this.linkedDocument = this.options.linkedDocument;
 
-            this.listenTo(this.partsCollection, 'reset', this.addPartViews);
+            this.documentsCollection = new WhereUsedDocumentList();
+            this.documentsCollection.setLinkedDocumentIterationId(this.linkedDocumentIterationId);
+            this.documentsCollection.setLinkedDocument(this.linkedDocument);
+
             this.listenTo(this.documentsCollection, 'reset', this.addDocumentViews);
+
+            var that = this;
+            this.linkedDocument.getWhereUsedPartList(this.linkedDocumentIterationId, {
+                success: function (parts) {
+                    that.partsCollection = new PartList(parts);
+                    that.addPartViews();
+                },
+                error: function () {
+                    console.log('error getting where used parts list');
+                }
+            });
         },
 
         render: function () {
@@ -31,7 +45,6 @@ define([
             this.whereUsedPartViews = [];
             this.whereUsedDocumentViews = [];
 
-            //this.partsCollection.fetch({reset: true});
             this.documentsCollection.fetch({reset: true});
 
             return this;

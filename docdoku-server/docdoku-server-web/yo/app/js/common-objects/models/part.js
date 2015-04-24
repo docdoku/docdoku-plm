@@ -233,6 +233,13 @@ define([
                 return this.get('attributesLocked');
             },
 
+            getDisplayKey: function () {
+                if (this.getName()) {
+                    return this.getName() + ' < ' + this.getPartKey() + ' >';
+                }
+                return '< ' + this.getPartKey() + ' >';
+            },
+
             addTags: function (tags) {
 
                 return $.ajax({
