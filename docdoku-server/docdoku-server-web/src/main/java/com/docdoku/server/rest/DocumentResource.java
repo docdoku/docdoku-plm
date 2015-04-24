@@ -483,7 +483,7 @@ public class DocumentResource {
         List<PartIteration> parts = productService.getInversePartsLink(docKey);
         Set<PartDTO> dtos = new HashSet<>();
         for(PartIteration part : parts){
-            new PartDTO(workspaceId,part.getNumber(), part.getPartName(),part.getVersion());
+            dtos.add(new PartDTO(workspaceId,part.getNumber(), part.getPartName(),part.getVersion()));
         }
         return new ArrayList<>(dtos);
     }
