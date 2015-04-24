@@ -31,7 +31,8 @@ public class NamingConvention {
     };
 
     private static final char[] FORBIDDEN_CHARS_FILE = {
-            '/', '\\', ':', '*', '?','"', '<', '>', '|', '~'
+            '/', '\\', ':', '*', '?','"', '<', '>', '|', '~', '#',
+            '^', '%', '{', '}','&','$','+',',', ';', '@', '\'', '`','=', '[', ']'
     };
     
     private static final String[] FORBIDDEN_NAMES = {"",".."};
