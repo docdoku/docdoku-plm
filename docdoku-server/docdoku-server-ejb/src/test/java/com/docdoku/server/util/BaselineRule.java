@@ -92,9 +92,9 @@ import java.util.List;
         configurationItem.setDesignItem(partMaster);
     }
 
-    public BaselineRule(String baselineName,ProductBaseline.BaselineType type,String description,String workspaceId,String login,String partId,String productId,boolean released,boolean checkouted){
+    public BaselineRule(String baselineName,ProductBaseline.BaselineType type,String description,String workspaceId,String login,String partId,String productId,boolean released,boolean checkedOut){
         this(baselineName,type,description,workspaceId,login,partId,productId,released);
-        if (checkouted){
+        if (checkedOut){
             this.partMaster.getLastReleasedRevision().getIteration(1).getPartRevision().setCheckOutUser(this.user);
         }
     }

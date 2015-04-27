@@ -273,7 +273,7 @@ public class PartRevisionDAO {
                 .getResultList();
     }
 
-    public boolean isCheckoutedIteration(PartIterationKey partIKey) throws PartRevisionNotFoundException {
+    public boolean isCheckedOutIteration(PartIterationKey partIKey) throws PartRevisionNotFoundException {
         PartRevision partR = loadPartR(partIKey.getPartRevision());
         return partR.isCheckedOut() && (partIKey.getIteration() == partR.getLastIterationNumber());
     }

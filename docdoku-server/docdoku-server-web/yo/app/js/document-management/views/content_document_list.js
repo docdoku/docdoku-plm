@@ -107,32 +107,32 @@ define([
             }
 
         },
-        areAllDocumentsCheckouted: function () {
-            var isCheckouted = true;
+        areAllDocumentsCheckedOut: function () {
+            var isCheckedOut = true;
             this.listView.eachChecked(function (view) {
                 if (!view.model.isCheckout()) {
-                    isCheckouted = false;
+                    isCheckedOut = false;
                 }
             });
-            return isCheckouted;
+            return isCheckedOut;
         },
-        areAllDocumentsNotCheckouted: function () {
-            var isNotCheckouted = true;
+        areAllDocumentsNotCheckedOut: function () {
+            var isNotCheckedOut = true;
             this.listView.eachChecked(function (view) {
                 if (view.model.isCheckout()) {
-                    isNotCheckouted = false;
+                    isNotCheckedOut = false;
                 }
             });
-            return isNotCheckouted;
+            return isNotCheckedOut;
         },
-        areAllDocumentsCheckoutedByConnectedUser: function () {
-            var isCheckoutedByMe = true;
+        areAllDocumentsCheckedOutByConnectedUser: function () {
+            var isCheckedOutByMe = true;
             this.listView.eachChecked(function (view) {
                 if (!view.model.isCheckoutByConnectedUser()) {
-                    isCheckoutedByMe = false;
+                    isCheckedOutByMe = false;
                 }
             });
-            return isCheckoutedByMe;
+            return isCheckedOutByMe;
         },
         isNotThefirstIteration: function () {
             var notFirstIteration = true;
@@ -144,14 +144,14 @@ define([
             return notFirstIteration;
         },
         showCheckinCheckoutUndoCheckoutButtons: function () {
-            if (this.areAllDocumentsCheckouted()) {
-                if (this.areAllDocumentsCheckoutedByConnectedUser()) {
+            if (this.areAllDocumentsCheckedOut()) {
+                if (this.areAllDocumentsCheckedOutByConnectedUser()) {
                     this.updateActionsButton(false, this.isNotThefirstIteration(), true);
                 } else {
                     this.updateActionsButton(false, false, false);
                 }
             } else {
-                if (this.areAllDocumentsNotCheckouted()) {
+                if (this.areAllDocumentsNotCheckedOut()) {
                     this.updateActionsButton(true, false, false);
                 } else {
                     this.updateActionsButton(false, false, false);

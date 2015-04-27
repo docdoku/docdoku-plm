@@ -64,7 +64,7 @@ public class ReleasedPSFilter extends PSFilter {
         List<PartIteration> partIterations = new ArrayList<>();
         List<PartRevision> partRevisions = part.getAllReleasedRevisions();
         for(PartRevision partRevision: partRevisions){
-            // Taking last iteration, can't be checkouted if released.
+            // Taking last iteration, can't be checked out if released.
             partIterations.add(partRevision.getLastIteration());
         }
         return partIterations;

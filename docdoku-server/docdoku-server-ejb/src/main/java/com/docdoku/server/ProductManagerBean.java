@@ -2179,7 +2179,7 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         PartRevisionDAO partRevisionDAO = new PartRevisionDAO(new Locale(user.getLanguage()), em);
         PartRevision partR = partRevisionDAO.loadPartR(partIKey.getPartRevision());
         return hasPartRevisionReadAccess(user, partR) &&
-                (!partRevisionDAO.isCheckoutedIteration(partIKey) ||
+                (!partRevisionDAO.isCheckedOutIteration(partIKey) ||
                         user.equals(partR.getCheckOutUser()));
     }
 

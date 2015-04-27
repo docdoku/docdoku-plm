@@ -247,6 +247,7 @@ define([
                 }
             });
         },
+
         isSelectedPartsReleasable: function () {
             var isPartReleasable = true;
             _(this.listItemViews).each(function (view) {
@@ -256,6 +257,7 @@ define([
             });
             return isPartReleasable;
         },
+
         areSelectedPartsCheckoutable: function () {
             var isPartCheckout = true;
             _(this.getSelectedParts()).each(function (view) {
@@ -265,33 +267,37 @@ define([
             });
             return isPartCheckout;
         },
-        areSelectedPartsCheckouted: function () {
-            var isPartCheckouted = true;
+
+        areSelectedPartsCheckedOut: function () {
+            var isPartCheckedOut = true;
             _(this.getSelectedParts()).each(function (view) {
                 if (!view.isCheckout()) {
-                    isPartCheckouted = false;
+                    isPartCheckedOut = false;
                 }
             });
-            return isPartCheckouted;
+            return isPartCheckedOut;
         },
-        areSelectedPartsAllNotCheckouted: function () {
-            var isPartNotCheckouted = true;
+
+        areSelectedPartsAllNotCheckedOut: function () {
+            var isPartNotCheckedOut = true;
             _(this.getSelectedParts()).each(function (view) {
                 if (view.isCheckout() || view.isReleased() || view.isObsolete()) {
-                    isPartNotCheckouted = false;
+                    isPartNotCheckedOut = false;
                 }
             });
-            return isPartNotCheckouted;
+            return isPartNotCheckedOut;
         },
-        areSelectedPartsCheckoutedByConnectedUser: function () {
-            var isPartCheckoutedByConnectedUser = true;
+
+        areSelectedPartsCheckedOutByConnectedUser: function () {
+            var isPartCheckedOutByConnectedUser = true;
             _(this.getSelectedParts()).each(function (view) {
                 if (!view.isCheckoutByConnectedUser()) {
-                    isPartCheckoutedByConnectedUser = false;
+                    isPartCheckedOutByConnectedUser = false;
                 }
             });
-            return isPartCheckoutedByConnectedUser;
+            return isPartCheckedOutByConnectedUser;
         },
+
         haveMoreThanOneIteration: function () {
             var hasMoreThanOneIteration = true;
             _(this.getSelectedParts()).each(function (view) {
@@ -304,15 +310,15 @@ define([
 
         canCheckinCheckoutOrUndoCheckout: function () {
 
-            if (this.areSelectedPartsCheckouted()) {
-                if (this.areSelectedPartsCheckoutedByConnectedUser()) {
+            if (this.areSelectedPartsCheckedOut()) {
+                if (this.areSelectedPartsCheckedOutByConnectedUser()) {
                     this.trigger('checkout-group:display', true);
                     this.trigger('checkout-group:update', {canCheckout: false, canUndo: this.haveMoreThanOneIteration(), canCheckin: true});
                 } else {
                     this.trigger('checkout-group:display', true);
                     this.trigger('checkout-group:update', {canCheckout: false, canUndo: false, canCheckin: false});
                 }
-            } else if(this.areSelectedPartsAllNotCheckouted()) {
+            } else if(this.areSelectedPartsAllNotCheckedOut()) {
                 this.trigger('checkout-group:display', true);
                 this.trigger('checkout-group:update', {canCheckout: true, canUndo: false, canCheckin: false});
             }
@@ -324,7 +330,6 @@ define([
             else{
                 this.trigger('checkout-group:display', false);
             }
-
 
         },
 
