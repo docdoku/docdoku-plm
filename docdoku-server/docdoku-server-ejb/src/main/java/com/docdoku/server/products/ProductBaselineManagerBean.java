@@ -28,6 +28,7 @@ import com.docdoku.core.product.*;
 import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IProductBaselineManagerLocal;
+import com.docdoku.core.services.IProductBaselineManagerWS;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.configuration.PSFilterVisitor;
@@ -43,6 +44,7 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
+import javax.jws.WebService;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.*;
@@ -50,7 +52,9 @@ import java.util.*;
 @DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID, UserGroupMapping.GUEST_PROXY_ROLE_ID})
 @Local(IProductBaselineManagerLocal.class)
 @Stateless(name = "ProductBaselineManagerBean")
-public class ProductBaselineManagerBean implements IProductBaselineManagerLocal {
+@WebService(endpointInterface = "com.docdoku.core.services.IProductBaselineManagerWS")
+public class ProductBaselineManagerBean implements IProductBaselineManagerLocal,IProductBaselineManagerWS {
+
     @PersistenceContext
     private EntityManager em;
     @EJB
