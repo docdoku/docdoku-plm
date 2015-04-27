@@ -342,11 +342,10 @@ define([
                 [0, 'asc']
             ];
             if (this.oTable) {
-                if (this.oTable.fnSettings()) {
+                if(this.oTable.fnSettings()){
                     oldSort = this.oTable.fnSettings().aaSorting;
-                    this.oTable.fnDestroy();
                 }
-                this.bindDomElements();
+                this.oTable.fnDestroy();
             }
             this.oTable = this.$el.dataTable({
                 aaSorting: oldSort,

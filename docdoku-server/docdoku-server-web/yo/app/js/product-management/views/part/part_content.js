@@ -462,6 +462,13 @@ define([
             }else{
                 this.queryBuilder.destroy();
             }
+        },
+
+        destroy:function(){
+            if(this.partListView){
+                this.partListView.remove();
+            }
+            this.remove();
         }
 
     });

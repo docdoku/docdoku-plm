@@ -55,6 +55,11 @@ define([
             this.$('.items').show();
             App.$productManagementMenu.find('.active').removeClass('active');
             this.$('.items').find('.header[data-tag="'+this.tag+'"]').addClass('active');
+
+            if(this.partContentView){
+                this.partContentView.destroy();
+            }
+
             this.partContentView = new PartContentView();
             this.tagPartCollection.setTag(this.tag);
             this.partContentView.setCollection(this.tagPartCollection).render();
