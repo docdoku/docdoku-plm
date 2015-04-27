@@ -134,7 +134,8 @@ define([
                 var partsPath = this.model.getPartsPath();
 
                 _.each(partsPath, function (part) {
-                    self.$('.path-description').append(part.name);
+                    var path = part.name ? part.name + ' < ' + part.number + ' >' : '< ' + part.number + ' >';
+                    self.$('.path-description').append(path);
                     self.$('.path-description').append('<i class="fa fa-chevron-right">');
                 });
 
