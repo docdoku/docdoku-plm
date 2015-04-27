@@ -52,7 +52,7 @@ define([
         render: function () {
             this.$el.html(Mustache.render(template, {i18n: App.config.i18n, task: this.task}));
             this.$el.addClass(this.task.status.toLowerCase());
-            this.$('.user-popover').userPopover(this.task.worker.login, this.task.title, 'top');
+            this.$('.user-popover').userPopover(this.task.worker.login, this.task.title, 'left');
             this.bindDomElements();
             this.lifecycleTaskSigningView = new LifecycleTaskSigningView().render();
             this.$tasksigning.append(this.lifecycleTaskSigningView.$el);
