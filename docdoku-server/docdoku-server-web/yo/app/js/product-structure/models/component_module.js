@@ -150,6 +150,10 @@ define(['backbone', 'common-objects/utils/date'],
                 return this.get('hasSubstitutes');
             },
 
+            hasPathData : function(){
+                return this.get('hasPathData');
+            },
+
             isOptional : function(){
                 return this.get('optional');
             },

@@ -58,6 +58,7 @@ public class ComponentDTO implements Serializable{
     @XmlElement(nillable = true)
     private boolean accessDeny;
     private List<ModificationNotificationDTO> notifications;
+    private boolean hasPathData;
 
 
     public ComponentDTO() {
@@ -250,5 +251,13 @@ public class ComponentDTO implements Serializable{
 
     public void setHasSubstitutes(boolean hasSubstitutes) {
         this.hasSubstitutes = hasSubstitutes;
+    }
+
+    public boolean isHasPathData() {
+        return hasPathData;
+    }
+
+    public void setHasPathData(boolean hasPathData) {
+        this.hasPathData = hasPathData;
     }
 }

@@ -160,7 +160,11 @@ public class ProductResource {
         PSFilter filter = productService.getPSFilter(ciKey, configSpecType);
         List<PartLink> decodedPath = productService.decodePath(ciKey, path);
         Component component = productService.filterProductStructure(ciKey,filter,decodedPath,depth);
-        return createComponentDTO(component);
+        String serialNumber = null;
+        if(configSpecType != null && configSpecType.startsWith("pi-")){
+            serialNumber = configSpecType.substring(3);
+        }
+        return createComponentDTO(component,workspaceId,ciId,serialNumber);
     }
 
     @GET
@@ -396,7 +400,7 @@ public class ProductResource {
         return request.evaluatePreconditions(cal.getTime());
     }
 
-    private ComponentDTO createComponentDTO(Component component)
+    private ComponentDTO createComponentDTO(Component component, String workspaceId, String configurationItemId, String serialNumber)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
 
         PartMaster pm = component.getPartMaster();
@@ -460,8 +464,13 @@ public class ProductResource {
             lstAttributes.add(mapper.map(attr, InstanceAttributeDTO.class));
         }
 
+        if(serialNumber != null){
+            PathDataMasterDTO pathData = productInstancesResource.getPathData(workspaceId, configurationItemId, serialNumber, com.docdoku.core.util.Tools.getPathAsString(path));
+            dto.setHasPathData(!pathData.getPathDataIterations().isEmpty());
+        }
+
         for (Component subComponent : component.getComponents()) {
-            ComponentDTO componentDTO = createComponentDTO(subComponent);
+            ComponentDTO componentDTO = createComponentDTO(subComponent, workspaceId,configurationItemId,serialNumber);
             if(componentDTO != null) {
                 components.add(componentDTO);
             }

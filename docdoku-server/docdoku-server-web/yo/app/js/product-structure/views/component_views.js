@@ -19,10 +19,10 @@ define([
         '<%}%>' +
             '<a><label class="checkbox <%if(isNode) {%>isNode<%}%>">' +
         '<%if(isSubstitute) {%> ' +
-        '<i class="fa fa-arrows-h"title="'+App.config.i18n.PART_SUBSTITUTE+'"></i>' +
+        '<i class="fa fa-arrows-h" title="'+App.config.i18n.PART_SUBSTITUTE+'"></i>' +
         '<%}%>' +
         '<%if(hasSubstitutes) {%> ' +
-        '<i class="fa fa-random"title="'+App.config.i18n.HAS_SUBSTITUTES+'"></i>' +
+        '<i class="fa fa-random" title="'+App.config.i18n.HAS_SUBSTITUTES+'"></i>' +
         '<%}%>' +
         '<%if(isOptional) {%> ' +
         '<i class="fa fa-question" title="'+App.config.i18n.OPTIONAL+'"></i>' +
@@ -44,6 +44,9 @@ define([
         '<%}%>'+
         '<%if(hasUnreadModificationNotifications) {%> ' +
             '<i class="fa fa-exclamation"></i>' +
+        '<%}%>' +
+        '<%if(hasPathData) {%> ' +
+            '<i class="fa fa-database" title="'+App.config.i18n.PRODUCT_INSTANCE_DATA+'"></i>' +
         '<%}%>' +
         '<%if (partUsageLinkReferenceDescription) {%><span class="description"> <%= partUsageLinkReferenceDescription %> </span><%}%>'
     );
@@ -153,7 +156,8 @@ define([
                 partUsageLinkReferenceDescription: this.model.getPartUsageLinkReferenceDescription(),
                 isSubstitute: this.model.isSubstitute(),
                 isOptional:this.model.isOptional(),
-                hasSubstitutes : this.model.hasSubstitutes()
+                hasSubstitutes : this.model.hasSubstitutes(),
+                hasPathData:this.model.hasPathData()
             };
 
             this.$el.html(nodeTemplate(data));
@@ -250,7 +254,8 @@ define([
                 partUsageLinkReferenceDescription: this.model.getPartUsageLinkReferenceDescription(),
                 isSubstitute: this.model.isSubstitute(),
                 isOptional:this.model.isOptional(),
-                hasSubstitutes : this.model.hasSubstitutes()
+                hasSubstitutes : this.model.hasSubstitutes(),
+                hasPathData:this.model.hasPathData()
             };
 
             this.$el.html(nodeTemplate(data));
