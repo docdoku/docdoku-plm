@@ -923,6 +923,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         docR.setTags(tags);
 
         if (isCheckoutByAnotherUser(user, docR)) {
+            em.flush();
             em.detach(docR);
             docR.removeLastIteration();
         }
