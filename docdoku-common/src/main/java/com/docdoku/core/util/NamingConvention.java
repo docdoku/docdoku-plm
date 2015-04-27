@@ -30,6 +30,10 @@ public class NamingConvention {
             '$','&','+',',','/',':',';','=','?','@','"', '<', '>', '#','%','{','}','|','\\','^','~','[',']',' ', '*','`'
     };
 
+    private static final char[] FORBIDDEN_CHARS_MASK = {
+            '$','&','+',',','/',':',';','=','?','@','"', '<', '>','%','{','}','|','\\','^','~','[',']',' ','`'
+    };
+
     private static final char[] FORBIDDEN_CHARS_FILE = {
             '/', '\\', ':', '*', '?','"', '<', '>', '|', '~', '#',
             '^', '%', '{', '}','&','$','+',',', ';', '@', '\'', '`','=', '[', ']'
@@ -75,5 +79,8 @@ public class NamingConvention {
 
     public static boolean correctNameFile(String pShortName) {
         return correct(pShortName, FORBIDDEN_CHARS_FILE);
+    }
+    public static boolean correctNameMask(String mask) {
+        return correct(mask, FORBIDDEN_CHARS_MASK);
     }
 }

@@ -757,6 +757,11 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         Locale locale = new Locale(user.getLanguage());
         checkNameValidity(pId, locale);
 
+        //Check pMask
+        if (!NamingConvention.correctNameMask(pMask)){
+            throw new NotAllowedException(locale, "DocumentMasterTemplateMaskCreationException");
+        }
+
         DocumentMasterTemplate template = new DocumentMasterTemplate(user.getWorkspace(), pId, user, pDocumentType, pMask);
         Date now = new Date();
         template.setCreationDate(now);
