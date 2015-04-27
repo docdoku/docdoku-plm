@@ -61,11 +61,12 @@ define([
 
             render: function () {
                 this.editMode = false;
+                var dataIteration = null;
                 if(this.iterations){
                     this.editMode = this.iteration.getIteration() === this.model.getIterations().size();
                     var hasNextIteration = this.iterations.hasNextIteration(this.iteration);
                     var hasPreviousIteration = this.iterations.hasPreviousIteration(this.iteration);
-                    var dataIteration = {
+                    dataIteration = {
                         iteration: this.iteration.getIteration(),
                         iterationNote: this.iteration.getIterationNote(),
                         iterations: this.model.getIterations().size(),
@@ -199,6 +200,8 @@ define([
             },
 
             onSave: function () {
+                var self = this;
+
                 if (!this.iteration) {
 
                     this.iterations = this.model.iterations;
@@ -209,11 +212,10 @@ define([
                     this.iteration.setIterationNote(this.$('.description-input').val());
 
                     //POST
-                    var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + App.config.productId + '/product-instances/' + this.serialNumber + '/pathdata/' + this.iteration.getPath();
-                    var self = this;
+                    var creationURL = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + App.config.productId + '/product-instances/' + this.serialNumber + '/pathdata/' + this.iteration.getPath();
                     $.ajax({
                         type: 'POST',
-                        url: url,
+                        url: creationURL,
                         data: JSON.stringify(this.iteration),
                         contentType: 'application/json',
                         success: function (data) {
@@ -243,11 +245,10 @@ define([
                         attachedFiles: this.attachedFiles
                     });
                     //PUT
-                    var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + App.config.productId + '/product-instances/' + this.serialNumber + '/pathdata/' + this.iteration.getId() + '/iterations/' + this.iteration.getIteration();
-                    var self = this;
+                    var updateURL = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + App.config.productId + '/product-instances/' + this.serialNumber + '/pathdata/' + this.iteration.getId() + '/iterations/' + this.iteration.getIteration();
                     $.ajax({
                         type: 'PUT',
-                        url: url,
+                        url: updateURL,
                         data: JSON.stringify(this.iteration),
                         contentType: 'application/json',
                         success: function () {

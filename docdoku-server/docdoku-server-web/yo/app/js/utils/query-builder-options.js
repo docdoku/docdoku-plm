@@ -224,7 +224,7 @@ define(function () {
         {id: 'attr-NUMBER', name: App.config.i18n.QUERY_GROUP_ATTRIBUTE_NUMBER},
         {id: 'attr-DATE', name: App.config.i18n.QUERY_GROUP_ATTRIBUTE_DATE},
         {id: 'attr-BOOLEAN', name: App.config.i18n.QUERY_GROUP_ATTRIBUTE_BOOLEAN},
-        {id: 'ctx', name: App.config.i18n.QUERY_GROUP_CONTEXT},
+        {id: 'ctx', name: App.config.i18n.QUERY_GROUP_CONTEXT}
     ];
 
     filters.map(function(filter){
