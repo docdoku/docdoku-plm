@@ -162,7 +162,9 @@ define([
         },
 
         newPart: function () {
-            var partCreationView = new PartCreationView();
+            var partCreationView = new PartCreationView({
+                autoAddTag: this.partListView.collection.tag
+            });
             this.listenTo(partCreationView, 'part:created', this.fetchPartAndAdd);
             window.document.body.appendChild(partCreationView.el);
             partCreationView.openModal();

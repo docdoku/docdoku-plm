@@ -4,13 +4,14 @@ define([
     'mustache',
     'text!templates/part/part_creation_view.html',
     'common-objects/models/part',
+    'common-objects/models/tag',
     'collections/part_templates',
     'common-objects/views/attributes/attributes',
     'common-objects/views/workflow/workflow_list',
     'common-objects/views/workflow/workflow_mapping',
     'common-objects/views/security/acl',
     'common-objects/views/alert'
-], function (Backbone, Mustache, template, Part, PartTemplateCollection, AttributesView, WorkflowListView, DocumentWorkflowMappingView, ACLView, AlertView) {
+], function (Backbone, Mustache, template, Part, Tag, PartTemplateCollection, AttributesView, WorkflowListView, DocumentWorkflowMappingView, ACLView, AlertView) {
     'use strict';
     var PartCreationView = Backbone.View.extend({
 
@@ -134,14 +135,32 @@ define([
         onPartCreated: function () {
             var that = this;
 
-            this.model.getLastIteration().save({instanceAttributes: this.attributesView.collection.toJSON()}, {
+            this.model.getLastIteration().save({
+                instanceAttributes: this.attributesView.collection.toJSON()
+            }, {
                 success: function () {
-                    that.closeModal();
-                    that.model.fetch({
-                        success: function (model) {
-                            that.trigger('part:created', model);
-                        }
-                    });
+                    if (that.options.autoAddTag) {
+                        var tag = new Tag({
+                            label: that.options.autoAddTag,
+                            id: that.options.autoAddTag,
+                            workspaceId: App.config.workspaceId
+                        });
+                        that.model.addTags([tag]).success(function() {
+                            that.closeModal();
+                            that.model.fetch({
+                                success: function (model) {
+                                    that.trigger('part:created', model);
+                                }
+                            });
+                        });
+                    } else {
+                        that.closeModal();
+                        that.model.fetch({
+                            success: function (model) {
+                                that.trigger('part:created', model);
+                            }
+                        });
+                    }
                 }
             });
         },
