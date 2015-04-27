@@ -382,35 +382,24 @@ define([
             }
         },
 
-        setRevisionNote: function () {
-            var note;
-            if (_.isEqual(this.$('#inputRevisionNote').val(), '')) {
-                note = null;
-            } else {
-                note = this.$('#inputRevisionNote').val();
-            }
-            return note;
-        },
         actionCheckin: function () {
-            if (!this.model.getLastIteration().get('revisionNote')) {
-                var self = this;
-                var note = self.setRevisionNote();
-                self.iteration.save({
-                    revisionNote: note
+            var note = this.$('#inputRevisionNote').val() || null;
 
+            if (note) {
+                this.iteration.save({
+                    revisionNote: note
                 }).success(function () {
-                    self.model.checkin().success(function () {
-                        self.onSuccess();
-                    });
-                });
+                    this.model.checkin().success(function () {
+                        this.onSuccess();
+                    }.bind(this));
+                }.bind(this));
 
             } else {
                 this.model.checkin().success(function () {
                     this.onSuccess();
-                });
+                }.bind(this));
             }
-        }
-        ,
+        },
 
         actionCheckout: function () {
             var self = this;

@@ -361,12 +361,11 @@ define([
         },
 
         actionCheckin: function () {
-            if (!this.model.getLastIteration().get('iterationNote')) {
+            var note = this.$('#inputRevisionNote').val() || null;
 
-                var note = this.setRevisionNote();
+            if (note) {
                 this.iteration.save({
                     iterationNote: note
-
                 }).success(function () {
                     this.model.checkin().success(function () {
                         this.onSuccess();
@@ -394,17 +393,6 @@ define([
                 self.onSuccess();
             });
 
-        },
-
-        setRevisionNote: function () {
-            var note;
-            if (_.isEqual(this.$('#inputRevisionNote').val(), '')) {
-                note = null;
-
-            } else {
-                note = this.$('#inputRevisionNote').val();
-            }
-            return note;
         },
 
         onSuccess: function () {
