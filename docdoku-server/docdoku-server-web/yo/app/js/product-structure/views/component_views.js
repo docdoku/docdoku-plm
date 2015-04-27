@@ -27,7 +27,7 @@ define([
         '<%if(isOptional) {%> ' +
         '<i class="fa fa-question" title="'+App.config.i18n.OPTIONAL+'"></i>' +
         '<%}%>' +
-        '<%= name %> < <%= number %>-<%= version %>-<%= iteration %> (<%= amount %><%if (unit) {%> <%= unit %>  <%}%>) > </label>' +
+        '<%= name %> < <%= number %>-<%= version %>-<%= iteration %> > (<%= amount %><%if (unit) {%> <%= unit %>  <%}%>)  </label>' +
         '</a>' +
         '<%if(isForbidden) {%> ' +
             '<i class="fa fa-ban"></i>' +
