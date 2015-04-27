@@ -97,13 +97,6 @@ define([
                 );
             },
 
-            getFormattedRevisionDate: function () {
-                return Date.formatTimestamp(
-                    App.config.i18n._DATE_FORMAT,
-                    this.getRevisionDate()
-                );
-            },
-
             getCheckoutDate: function () {
                 return this.get('checkOutDate');
             },
