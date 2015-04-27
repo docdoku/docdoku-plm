@@ -2606,12 +2606,14 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                 int depth = parts.size();
                 PartMaster part = parts.get(parts.size()-1);
                 List<PartIteration> partIterations = filter.filter(part);
-                PartRevision partRevision = partIterations.get(0).getPartRevision();
-                row.setPartRevision(partRevision);
-                row.setDepth(depth);
-                row.setContext(queryContext);
-                row.setAmount(totalAmount);
-                rows.add(row);
+                if(partIterations.size() != 0) {
+                    PartRevision partRevision = partIterations.get(0).getPartRevision();
+                    row.setPartRevision(partRevision);
+                    row.setDepth(depth);
+                    row.setContext(queryContext);
+                    row.setAmount(totalAmount);
+                    rows.add(row);
+                }
             }
 
             @Override

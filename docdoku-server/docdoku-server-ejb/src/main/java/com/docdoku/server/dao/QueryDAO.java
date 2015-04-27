@@ -141,7 +141,9 @@ public class QueryDAO {
         Set<PartRevision> revisions = new HashSet<>();
 
         for(PartRevision part : tp.getResultList()){
-            revisions.add(part);
+            if(part.getLastCheckedInIteration() != null) {
+                revisions.add(part);
+            }
         }
 
         return new ArrayList<>(revisions);
