@@ -247,7 +247,8 @@ public class QueryWriter implements MessageBodyWriter<QueryResult> {
             }
 
             if (selects.contains(QueryField.PART_REVISION_CHECKIN_DATE)) {
-                writeDate(jg, QueryField.PART_REVISION_CHECKIN_DATE, part.getLastCheckedInIteration().getCheckInDate());
+                PartIteration lastCheckedInIteration = part.getLastCheckedInIteration();
+                writeDate(jg, QueryField.PART_REVISION_CHECKIN_DATE, lastCheckedInIteration != null ? lastCheckedInIteration.getCheckInDate() : null);
             }
 
             if (selects.contains(QueryField.PART_REVISION_VERSION)) {
