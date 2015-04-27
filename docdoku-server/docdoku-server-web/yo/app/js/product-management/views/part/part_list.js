@@ -109,6 +109,7 @@ define([
         checkCheckboxes: function () {
             for (var i = 0; i < this.selectedPartIndexes.length; i++) {
                 this.listItemViews[this.selectedPartIndexes[i]].check();
+                this.listItemViews[this.selectedPartIndexes[i]].selectionChanged();
             }
             this.selectedPartIndexes = [];
         },
