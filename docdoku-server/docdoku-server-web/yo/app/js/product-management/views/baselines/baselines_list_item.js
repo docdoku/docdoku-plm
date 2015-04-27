@@ -24,6 +24,7 @@ define([
         render: function () {
             this.$el.html(Mustache.render(template, {model: this.model, bomUrl: this.model.getBomUrl(), sceneUrl:this.model.getSceneUrl(), i18n: App.config.i18n}));
             this.$checkbox = this.$('input[type=checkbox]');
+            this.bindUserPopover();
             this.trigger('rendered', this);
             return this;
         },
@@ -59,6 +60,10 @@ define([
                 window.document.body.appendChild(view.render().el);
                 view.openModal();
             });
+        },
+
+        bindUserPopover: function () {
+            this.$('.author-popover').userPopover(this.model.getAuthorLogin(), App.config.i18n.BASELINE, 'left');
         }
     });
 

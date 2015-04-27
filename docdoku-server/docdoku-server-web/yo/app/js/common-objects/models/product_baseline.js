@@ -36,6 +36,9 @@ function(Baseline){
         },
         getAuthor:function(){
             return this.get('author').name;
+        },
+        getAuthorLogin: function () {
+            return this.get('author').login;
         }
 	});
 
