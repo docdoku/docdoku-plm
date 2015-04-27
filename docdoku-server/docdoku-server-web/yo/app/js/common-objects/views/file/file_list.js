@@ -87,7 +87,6 @@ define([
         addOneFile: function (attachedFile) {
             var self = this;
 
-
             var fileView = new FileView({
                 model: attachedFile,
                 filesToDelete: self.filesToDelete,
@@ -103,8 +102,6 @@ define([
             this.filesUL.empty();
             this.addOneFile(attachedFile);
             this.$el.trigger('file:uploaded');
-
-
         },
 
         uploadNewFile: function (file) {
@@ -123,9 +120,7 @@ define([
                 shortName: fileName
             });
 
-
             var xhr = new XMLHttpRequest();
-
 
             xhr.upload.addEventListener('progress', function (evt) {
                 if (evt.lengthComputable) {
@@ -148,8 +143,17 @@ define([
                 newFile.isNew = function () {
                     return false;
                 };
-                self.collection.add(newFile);
-                self.newItems.add(newFile);
+                var existingFile = self.filesToDelete.findWhere({fullName:newFile.getFullName()});
+                if(existingFile){
+                    self.filesToDelete.remove(existingFile);
+                    var checkbox = self.$('[data-fullname="'+existingFile.getShortName()+'"]');
+                    if(checkbox && checkbox.is(':checked')){
+                        checkbox.click();
+                    }
+                }else{
+                    self.collection.add(newFile);
+                    self.newItems.add(newFile);
+                }
             }, false);
 
             xhr.open('POST', this.options.uploadBaseUrl);
@@ -190,8 +194,8 @@ define([
             //Abort file upload if there is one
             _.invoke(this.xhrs,'abort');
 
-            /*deleting unwanted files that have been added by upload*/
-            /*we need to reverse read because model.destroy() remove elements from collection*/
+            //deleting unwanted files that have been added by upload
+            //we need to reverse read because model.destroy() remove elements from collection
             while (this.newItems.length !== 0) {
                 var file = this.newItems.pop();
 	            this.deleteAFile(file);
@@ -231,7 +235,6 @@ define([
         bindDomElements: function () {
             this.filedroparea = this.$('#filedroparea');
             this.filesUL = this.$('ul.file-list');
-            this.uploadFileNameP = this.$('p#upload-file-shortname');
             this.uploadInput = this.$('input#upload-btn');
             this.progressBars = this.$('div.progress-bars');
         }
