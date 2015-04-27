@@ -86,7 +86,7 @@ define([
 
             this.editMode = this.model.isCheckoutByConnectedUser() && this.iterations.isLast(this.iteration);
             data.editMode = this.editMode;
-            data.isCheckout = this.model.isCheckout() ;
+            data.isCheckout = this.model.isCheckout();
             this.isCheckout = data.isCheckout ;
             this.isReleased = this.model.attributes.status === 'RELEASED';
             data.isReleased = this.isReleased;
@@ -111,11 +111,8 @@ define([
                     data.iteration.modificationDate
                 );
 
-                if (this.model.isCheckoutByConnectedUser()) {
-                    data.iteration.revisionDate = date.formatTimestamp(
-                        App.config.i18n._DATE_FORMAT,
-                        data.iteration.creationDate
-                    );
+                if (this.editMode) {
+                    data.iteration.revisionDate = data.iteration.creationDate;
                 } else {
                     data.iteration.revisionDate = date.formatTimestamp(
                         App.config.i18n._DATE_FORMAT,

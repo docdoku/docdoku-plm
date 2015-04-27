@@ -133,20 +133,19 @@ define([
                 data.iteration.hasNextIteration = hasNextIteration;
                 data.iteration.hasPreviousIteration = hasPreviousIteration;
                 data.reference = this.iteration.getId();
+
                 data.iteration.creationDate = date.formatTimestamp(
                     App.config.i18n._DATE_FORMAT,
                     data.iteration.creationDate
                 );
+
                 data.iteration.modificationDate = date.formatTimestamp(
                     App.config.i18n._DATE_FORMAT,
                     data.iteration.modificationDate
                 );
 
-                if (this.model.isCheckoutByConnectedUser()) {
-                    data.iteration.revisionDate = date.formatTimestamp(
-                        App.config.i18n._DATE_FORMAT,
-                        data.iteration.creationDate
-                    );
+                if (editMode) {
+                    data.iteration.revisionDate = data.iteration.creationDate;
                 } else {
                     data.iteration.revisionDate = date.formatTimestamp(
                         App.config.i18n._DATE_FORMAT,
