@@ -15,6 +15,9 @@ define([
 
     return {
         formatTimestamp: function (format, timestamp) {
+            if (!timestamp) {
+                return '';
+            }
             try {
                 return moment(timestamp).tz(App.config.timeZone).format(format);
             } catch (error) {

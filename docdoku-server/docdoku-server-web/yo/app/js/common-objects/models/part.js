@@ -77,13 +77,10 @@ define([
             },
 
             getFormattedCheckoutDate: function () {
-                if (this.isCheckout()) {
-                    return Date.formatTimestamp(
-                        App.config.i18n._DATE_FORMAT,
-                        this.getCheckoutDate()
-                    );
-                }
-                return null;
+                return Date.formatTimestamp(
+                    App.config.i18n._DATE_FORMAT,
+                    this.getCheckoutDate()
+                );
             },
 
             getFormattedCreationDate: function () {
@@ -94,15 +91,10 @@ define([
             },
 
             getFormattedModificationDate: function () {
-                if(!this.getModificationDate()){
-                    return '';
-                }
-                var timestampFormated = Date.formatTimestamp(
+                return Date.formatTimestamp(
                     App.config.i18n._DATE_FORMAT,
                     this.getModificationDate()
                 );
-
-                return timestampFormated ? timestampFormated : '';
             },
 
             getFormattedRevisionDate: function () {
