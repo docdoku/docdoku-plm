@@ -62,9 +62,7 @@ define([
             render: function () {
                 this.editMode = false;
                 if(this.iterations){
-
                     this.editMode = this.iteration.getIteration() === this.model.getIterations().size();
-
                     var hasNextIteration = this.iterations.hasNextIteration(this.iteration);
                     var hasPreviousIteration = this.iterations.hasPreviousIteration(this.iteration);
                     var dataIteration = {
@@ -77,7 +75,7 @@ define([
                         editMode:this.editMode
                     };
                 }
-                this.$el.html(Mustache.render(template, dataIteration||{i18n: App.config.i18n}));
+                this.$el.html(Mustache.render(template, dataIteration||{editMode:true,i18n: App.config.i18n}));
                 this.bindDOMElements();
                 this.buildTabs();
             },
@@ -261,9 +259,8 @@ define([
                             }).render().$el);
                         }
                     });
+                    this.fileListView.deleteFilesToDelete();
                 }
-                this.fileListView.deleteFilesToDelete();
-
             },
 
             createIteration: function () {
