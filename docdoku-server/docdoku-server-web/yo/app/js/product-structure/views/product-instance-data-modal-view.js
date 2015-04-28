@@ -143,6 +143,7 @@ define([
                 self.$('.fa.fa-chevron-right').last().remove();
 
                 this.buildAttributesTab();
+                this.addPartAttributes();
 
                 if (this.iteration) {
                     this.buildLinkedDocumentTab();
@@ -153,7 +154,7 @@ define([
             buildAttributesTab: function () {
                 var self = this;
                 this.attributesView = new AttributesView({});
-                this.attributesView.setEditMode(this.editMode);
+                this.attributesView.setEditMode(!this.iteration || this.iteration.getIteration() === this.model.getIterations().size());
                 this.attributesView.render();
                 this.$('#tab-attributes').html(this.attributesView.$el);
 
@@ -300,6 +301,20 @@ define([
                         }).render().$el);
                     }
                 });
+            },
+
+            addPartAttributes:function(){
+
+                var attributesView = new AttributesView({});
+                attributesView.setEditMode(false);
+                attributesView.render();
+
+                _.each(this.model.getPartAttributes(), function (item) {
+                    attributesView.addAndFillAttribute(new Attribute(item));
+                });
+
+                this.attributesView.$el.before(attributesView.el);
+
             },
 
             openModal: function () {

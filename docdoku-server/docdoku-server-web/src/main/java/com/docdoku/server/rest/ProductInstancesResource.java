@@ -26,6 +26,7 @@ import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.product.ConfigurationItemKey;
+import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartLink;
 import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.UserGroupMapping;
@@ -336,17 +337,31 @@ public class ProductInstancesResource {
     @GET
     @Path("{serialNumber}/pathdata/{path}")
     @Produces(MediaType.APPLICATION_JSON)
-    public PathDataMasterDTO getPathData(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, @PathParam("path") String path) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException {
+    public PathDataMasterDTO getPathData(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, @PathParam("path") String path) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, BaselineNotFoundException {
         PathDataMaster pathDataMaster = productInstanceService.getPathDataByPath(workspaceId, configurationItemId, serialNumber,path);
 
         PathDataMasterDTO dto = pathDataMaster == null ? new PathDataMasterDTO(path) : mapper.map(pathDataMaster, PathDataMasterDTO.class);
 
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId,configurationItemId);
         PartMinimalListDTO partList = new PartMinimalListDTO();
-        for(PartLink partLink : productService.decodePath(ciKey, path)){
+        List<PartLink> partLinks = productService.decodePath(ciKey, path);
+        for(PartLink partLink : partLinks){
             partList.addPart(mapper.map(partLink.getComponent(), PartMinimalDTO.class));
         }
         dto.setPartsPath(partList);
+
+        List<InstanceAttributeDTO> attributesDTO = new ArrayList<>();
+        PartLink partLink = partLinks.get(partLinks.size() - 1);
+        PSFilter filter = productService.getPSFilter(ciKey,"pi-"+serialNumber);
+        List<PartIteration> partIterations = filter.filter(partLink.getComponent());
+        PartIteration partIteration = partIterations.get(0);
+
+        if(partIteration != null){
+            for(InstanceAttribute instanceAttribute : partIteration.getInstanceAttributes()){
+                attributesDTO.add(mapper.map(instanceAttribute,InstanceAttributeDTO.class));
+            }
+            dto.setPartAttributes(attributesDTO);
+        }
 
         return dto;
     }

@@ -41,6 +41,10 @@ define(['backbone',
             return this.iterations;
         },
 
+        getPartAttributes:function(){
+            return this.get('partAttributes');
+        },
+
         getLastIteration: function () {
             if (this.getIterations().length > 0) {
                 return this.getIterations().last();

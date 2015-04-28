@@ -30,6 +30,7 @@ public class PathDataMasterDTO implements Serializable {
     private String path;
     private PartMinimalListDTO partsPath ;
     private List<PathDataIterationDTO> pathDataIterations = new ArrayList<PathDataIterationDTO>();
+    private List<InstanceAttributeDTO> partAttributes;
 
     public PathDataMasterDTO() {
     }
@@ -73,5 +74,13 @@ public class PathDataMasterDTO implements Serializable {
 
     public void setPathDataIterations(List<PathDataIterationDTO> pathDataIterations) {
         this.pathDataIterations = pathDataIterations;
+    }
+
+    public List<InstanceAttributeDTO> getPartAttributes() {
+        return partAttributes;
+    }
+
+    public void setPartAttributes(List<InstanceAttributeDTO> partAttributes) {
+        this.partAttributes = partAttributes;
     }
 }
