@@ -120,7 +120,11 @@ public class QueryDAO {
 
         // Restrict search to workspace
         Expression workspaceExp = pm.get("workspace");
-        Predicate rulesPredicate = getPredicate(query.getQueryRule());
+        Predicate rulesPredicate = null;
+        String firstCondition = query.getQueryRule().getCondition();
+        if ( firstCondition != null) {
+             rulesPredicate = getPredicate(query.getQueryRule());
+        }
         Predicate workspacePredicate = cb.and(cb.equal(workspaceExp, workspace));
 
         // Join PartMaster
@@ -130,12 +134,22 @@ public class QueryDAO {
         Join<PartIteration,PartRevision> piJoin = pi.join("partRevision");
         Predicate piJoinPredicate = piJoin.on(cb.and(cb.equal(pi.get("partRevision").get("partMasterNumber"), pr.get("partMasterNumber")), cb.equal(pr.get("partMaster").get("workspace"), workspace))).getOn();
 
-        cq.where(cb.and(
-            rulesPredicate,
-            workspacePredicate,
-            prJoinPredicate,
-            piJoinPredicate
-        ));
+
+        if ( firstCondition != null) {
+            cq.where(cb.and(
+                    rulesPredicate,
+                    workspacePredicate,
+                    prJoinPredicate,
+                    piJoinPredicate
+            ));
+        }else{
+            cq.where(cb.and(
+                    workspacePredicate,
+                    prJoinPredicate,
+                    piJoinPredicate
+            ));
+        }
+
 
         TypedQuery<PartRevision> tp = em.createQuery(cq);
         Set<PartRevision> revisions = new HashSet<>();

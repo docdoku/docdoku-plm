@@ -107,7 +107,11 @@ define([
 
             if(e.target.value){
                 var query = _.findWhere(this.queries,{id: parseInt(e.target.value,10)});
-                this.$where.queryBuilder('setRules', query.queryRule);
+                if (query.queryRule.rules.length === 0){
+                    this.$where.queryBuilder('reset');
+                }else{
+                    this.$where.queryBuilder('setRules', query.queryRule);
+                }
 
                 _.each(query.contexts, function(value){
                     if(!value.serialNumber){
@@ -466,8 +470,9 @@ define([
             var self = this;
 
             var isValid = this.$where.queryBuilder('validate');
+            var rules = this.$where.queryBuilder('getRules');
 
-            if(isValid) {
+            if(isValid || (!rules.condition && !rules.rules)) {
 
                 var context = this.$context[0].selectize.getValue().length ? this.$context[0].selectize.getValue().split(this.delimiter) : [];
 
@@ -481,7 +486,6 @@ define([
                 });
 
                 var selectList = this.$select[0].selectize.getValue().length ? this.$select[0].selectize.getValue().split(this.delimiter) : [];
-                var where = this.$where.queryBuilder('getRules');
                 var orderByList = this.$orderBy[0].selectize.getValue().length ? this.$orderBy[0].selectize.getValue().split(this.delimiter) : [];
                 var groupByList = this.$groupBy[0].selectize.getValue().length ? this.$groupBy[0].selectize.getValue().split(this.delimiter) : [];
 
@@ -497,7 +501,7 @@ define([
                     selects: selectList,
                     orderByList: orderByList,
                     groupedByList: groupByList,
-                    queryRule: where,
+                    queryRule: rules,
                     name: saveQuery ? this.$inputName.val() : ''
                 };
 
