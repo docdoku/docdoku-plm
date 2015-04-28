@@ -164,9 +164,13 @@ define([
 
         onConfigurationCreated: function (model) {
 
-            this.trigger('info',App.config.i18n.CONFIGURATION_CREATED);
+            if (model.message) {
+                this.trigger('warning', model.message);
+            }
 
-            if(this.collection){
+            this.trigger('info', App.config.i18n.CONFIGURATION_CREATED);
+
+            if (this.collection) {
                 model.configurationItemId = this.model.getId();
                 this.collection.add(model);
             }
