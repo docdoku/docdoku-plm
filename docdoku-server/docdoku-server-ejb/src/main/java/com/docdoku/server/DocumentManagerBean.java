@@ -758,7 +758,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         checkNameValidity(pId, locale);
 
         //Check pMask
-        if (!NamingConvention.correctNameMask(pMask)){
+        if (pMask!= null && !pMask.isEmpty() && !NamingConvention.correctNameMask(pMask)){
             throw new NotAllowedException(locale, "DocumentMasterTemplateMaskCreationException");
         }
 

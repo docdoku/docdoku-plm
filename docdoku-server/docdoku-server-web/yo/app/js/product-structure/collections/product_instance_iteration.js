@@ -1,4 +1,4 @@
-/*global define*/
+/*global _,define*/
 define([
     'backbone',
     'models/product_instance_path_data_iteration'

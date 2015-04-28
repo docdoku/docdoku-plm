@@ -1,4 +1,4 @@
-/*global define,_*/
+/*global define,_,App*/
 define(['backbone',
     'collections/product_instance_iteration'
 ], function (Backbone, ProductInstanceIterationPathList) {

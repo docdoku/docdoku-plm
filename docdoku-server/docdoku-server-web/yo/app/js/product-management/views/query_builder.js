@@ -204,8 +204,8 @@ define([
                             filter.operators = queryBuilderOptions.booleanOperators;
                             filter.input = 'select';
                             filter.values = [
-                                {true : App.config.i18n.TRUE},
-                                {false : App.config.i18n.FALSE}
+                                {'true' : App.config.i18n.TRUE},
+                                {'false' : App.config.i18n.FALSE}
                             ];
                         } else if(attributeType === 'double'){
                             filter.operators = queryBuilderOptions.numberOperators;
@@ -513,7 +513,7 @@ define([
                         data: JSON.stringify(queryData),
                         contentType: 'application/json',
                         success: function (data) {
-                            var blob=new Blob([data]);
+                            var blob = new window.Blob([data]);
                             var link=document.createElement('a');
                             link.href=window.URL.createObjectURL(blob);
                             link.download='export.csv';
