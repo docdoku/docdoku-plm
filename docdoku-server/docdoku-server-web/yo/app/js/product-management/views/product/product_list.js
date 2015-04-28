@@ -130,8 +130,9 @@ define([
         },
 
         onOneProductSelected: function () {
-            this.trigger('delete-button:display', true);
+            this.trigger('create-configuration-button:display', true);
             this.trigger('create-baseline-button:display', true);
+            this.trigger('delete-button:display', true);
         },
 
         onSeveralProductsSelected: function () {
