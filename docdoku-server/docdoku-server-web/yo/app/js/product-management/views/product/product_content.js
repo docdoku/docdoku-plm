@@ -4,9 +4,11 @@ define([
     'mustache',
     'collections/configuration_items',
     'common-objects/collections/part_collection',
+    'models/configuration_item',
     'text!templates/product/product_content.html',
     'views/product/product_list',
     'views/product/product_creation_view',
+    'views/configuration/configuration_creation_view',
     'views/baselines/baseline_creation_view',
     'text!common-objects/templates/buttons/new_configuration_button.html',
     'text!common-objects/templates/buttons/snap_button.html',
@@ -14,7 +16,7 @@ define([
     'text!common-objects/templates/buttons/udf_button.html',
     'common-objects/views/alert',
     'common-objects/views/udf/user_defined_function'
-], function (Backbone, Mustache, ConfigurationItemCollection, PartCollection, template, ProductListView, ProductCreationView, BaselineCreationView, newConfigurationButton, snapButton, deleteButton, udfButton,  AlertView, UserDefinedFunctionView) {
+], function (Backbone, Mustache, ConfigurationItemCollection, PartCollection, ConfigurationItem, template, ProductListView, ProductCreationView, ConfigurationCreationView, BaselineCreationView, newConfigurationButton, snapButton, deleteButton, udfButton,  AlertView, UserDefinedFunctionView) {
     'use strict';
 	var ProductContentView = Backbone.View.extend({
         partials: {
@@ -26,7 +28,7 @@ define([
 
         events: {
             'click button.new-product': 'newProduct',
-            //'click button.new-configuration': 'newConfiguration',
+            'click button.new-configuration': 'newConfiguration',
             'click button.delete': 'deleteProduct',
             'click button.udf': 'openUdfView',
             'click button.new-baseline': 'createBaseline'
@@ -82,8 +84,15 @@ define([
             productCreationView.on('product:created',this.configurationItemCollection.push,this.configurationItemCollection);
             productCreationView.openModal();
         },
-        deleteProduct: function () {
-            this.productListView.deleteSelectedProducts();
+
+        newConfiguration: function () {
+            var configurationCreationView = new ConfigurationCreationView({
+                model:new ConfigurationItem()
+            });
+            window.document.body.appendChild(configurationCreationView.render().el);
+            configurationCreationView.on('warning', this.onWarning);
+            configurationCreationView.on('info', this.onInfo);
+            configurationCreationView.openModal();
         },
 
         createBaseline: function () {
@@ -94,6 +103,10 @@ define([
             baselineCreationView.on('warning', this.onWarning);
             baselineCreationView.on('info', this.onInfo);
             baselineCreationView.openModal();
+        },
+
+        deleteProduct: function () {
+            this.productListView.deleteSelectedProducts();
         },
 
         onInfo:function(message){
