@@ -2340,9 +2340,9 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         Locale locale = new Locale(user.getLanguage());
         QueryDAO queryDAO = new QueryDAO(locale,em);
 
-        Query exitingQuery = queryDAO.findQueryByName(workspaceId, query.getName());
-        if(exitingQuery != null){
-            throw new QueryAlreadyExistsException(locale,query);
+        Query existingQuery = queryDAO.findQueryByName(workspaceId, query.getName());
+        if (existingQuery != null) {
+            deleteQuery(workspaceId, existingQuery.getId());
         }
 
         query.setAuthor(user);
