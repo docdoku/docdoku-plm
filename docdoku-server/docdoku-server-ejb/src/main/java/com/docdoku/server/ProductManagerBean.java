@@ -1572,6 +1572,11 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         Locale locale = new Locale(user.getLanguage());
         checkNameValidity(pId, locale);
 
+        //Check pMask
+        if (pMask!= null && !pMask.isEmpty() && !NamingConvention.correctNameMask(pMask)){
+            throw new NotAllowedException(locale, "MaskCreationException");
+        }
+
         PartMasterTemplate template = new PartMasterTemplate(user.getWorkspace(), pId, user, pPartType, pMask, attributesLocked);
         Date now = new Date();
         template.setCreationDate(now);

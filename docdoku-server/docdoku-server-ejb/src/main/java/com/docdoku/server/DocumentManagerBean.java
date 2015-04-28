@@ -759,7 +759,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
 
         //Check pMask
         if (pMask!= null && !pMask.isEmpty() && !NamingConvention.correctNameMask(pMask)){
-            throw new NotAllowedException(locale, "DocumentMasterTemplateMaskCreationException");
+            throw new NotAllowedException(locale, "MaskCreationException");
         }
 
         DocumentMasterTemplate template = new DocumentMasterTemplate(user.getWorkspace(), pId, user, pDocumentType, pMask);
