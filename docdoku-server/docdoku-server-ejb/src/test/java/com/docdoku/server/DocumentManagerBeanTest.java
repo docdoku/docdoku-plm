@@ -38,21 +38,21 @@ import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.esindexer.ESIndexer;
 import com.docdoku.server.esindexer.ESSearcher;
 import com.docdoku.server.util.DocumentUtil;
-import com.docdoku.server.util.DocumentUtil.*;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.Spy;
 
 import javax.ejb.SessionContext;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
-import javax.swing.text.Document;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 import static org.mockito.MockitoAnnotations.initMocks;
 
@@ -82,7 +82,8 @@ public class DocumentManagerBeanTest {
     private IDataManagerLocal dataManager;
     @Mock
     private TypedQuery<DocumentIteration> documentIterationQuery;
-
+    @Mock
+    private TypedQuery<ACL> aclTypedQuery;
 
     private Account account;
     private Workspace workspace ;
@@ -317,7 +318,6 @@ public class DocumentManagerBeanTest {
 
         DocumentMaster documentMaster = new DocumentMaster(workspace, DocumentUtil.DOCUMENT_ID,user);
 
-
         documentRevision = new DocumentRevision(documentMaster, "A", user);
         documentIteration = new DocumentIteration(documentRevision, user);
         documentRevision.setCheckOutUser(user);
@@ -354,6 +354,38 @@ public class DocumentManagerBeanTest {
         } catch (NotAllowedException notAllowedException3){
             Assert.assertTrue("updateDocument shouldn't have raised an exception because the attribute are not frozen", false);
         }
+    }
+
+    /**
+     *
+     * This test will check if the ACL is null when removing it from a document
+     *
+     */
+
+    @Test
+    public void removeACLFromDocument()throws Exception{
+
+        user = new User(workspace, DocumentUtil.USER_1_LOGIN, DocumentUtil.USER_1_NAME, DocumentUtil.USER1_MAIL, DocumentUtil.LANGUAGE);
+
+        DocumentMaster documentMaster = new DocumentMaster(workspace, DocumentUtil.DOCUMENT_ID,user);
+        documentRevision = new DocumentRevision(documentMaster, "A", user);
+        documentIteration = new DocumentIteration(documentRevision, user);
+        documentRevision.setCheckOutUser(user);
+        documentRevision.setCheckOutDate(new Date());
+        acl = new ACL();
+        acl.addEntry(user, ACL.Permission.READ_ONLY);
+        documentRevision.setACL(acl);
+
+        DocumentRevisionKey pKey = new DocumentRevisionKey(workspace.getId(), documentMaster.getId(), documentRevision.getVersion());
+
+        Mockito.when(userManager.checkWorkspaceReadAccess(workspace.getId())).thenReturn(user);
+        Mockito.when(em.getReference(DocumentRevision.class, pKey)).thenReturn(documentRevision);
+
+        Mockito.when(aclTypedQuery.setParameter(Matchers.anyString(),Matchers.any())).thenReturn(aclTypedQuery);
+        Mockito.when(em.createNamedQuery(Matchers.<String>any())).thenReturn(aclTypedQuery);
+
+        documentManagerBean.removeACLFromDocumentRevision(documentRevision.getKey());
+        Assert.assertTrue(documentRevision.getACL() == null);
     }
 
     public void removeTagFromDocument(){

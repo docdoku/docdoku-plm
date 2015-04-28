@@ -1,11 +1,9 @@
 package com.docdoku.server;
 
 import com.docdoku.core.common.*;
-import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.exceptions.AccessRightException;
 import com.docdoku.core.security.ACL;
 import com.docdoku.core.services.IUserManagerLocal;
-import com.docdoku.core.workflow.Workflow;
 import com.docdoku.core.workflow.WorkflowModel;
 import com.docdoku.core.workflow.WorkflowModelKey;
 import com.docdoku.server.util.WorkflowUtil;
@@ -18,15 +16,12 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import javax.persistence.StoredProcedureQuery;
 import javax.persistence.TypedQuery;
-
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class WorkflowManagerBeanTest {
