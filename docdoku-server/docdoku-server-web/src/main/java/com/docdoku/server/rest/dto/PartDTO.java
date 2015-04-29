@@ -238,4 +238,25 @@ public class PartDTO implements Serializable {
     public void setTags(String[] tags) {
         this.tags = tags;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        PartDTO partDTO = (PartDTO) o;
+
+        if (!number.equals(partDTO.number)) return false;
+        if (!version.equals(partDTO.version)) return false;
+        return workspaceId.equals(partDTO.workspaceId);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = number.hashCode();
+        result = 31 * result + version.hashCode();
+        result = 31 * result + workspaceId.hashCode();
+        return result;
+    }
 }
