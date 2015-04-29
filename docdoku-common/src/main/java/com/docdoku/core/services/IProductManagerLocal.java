@@ -222,4 +222,6 @@ public interface IProductManagerLocal{
 
     Map<String,Set<BinaryResource>> getBinariesInTree(String workspaceId, ConfigurationItemKey configurationItemKey, PSFilter psFilter) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, NotAllowedException, EntityConstraintException, PartMasterNotFoundException;
 
+
+    Query loadQuery(String workspaceId,int queryId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
 }

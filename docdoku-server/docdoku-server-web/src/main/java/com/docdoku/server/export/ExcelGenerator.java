@@ -50,9 +50,9 @@ public class ExcelGenerator {
 
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
-    public  void generateXLSResponse(OutputStream out, QueryResult queryResult) {
+    public  File generateXLSResponse(QueryResult queryResult) {
 
-        File excelFile = new File("/Users/asmae/projects/plm/download/export_parts.xlsx");
+        File excelFile = new File("export_parts.xls");
         //Blank workbook
         XSSFWorkbook workbook = new XSSFWorkbook();
 
@@ -85,7 +85,7 @@ public class ExcelGenerator {
 
             }
         }
-       /* Font headerFont = workbook.createFont();
+        Font headerFont = workbook.createFont();
         headerFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
         CellStyle headerStyle = workbook.createCellStyle();
         headerStyle.setFont(headerFont);
@@ -95,22 +95,21 @@ public class ExcelGenerator {
         headerFont.setFontHeightInPoints((short) 10);
         headerFont.setFontName("Courier New");
         headerFont.setItalic(true);
-        sheet.getRow(0).setRowStyle(headerStyle);*/
-       // sheet.getRow(1).setRowStyle(headerStyle);
+        sheet.getRow(0).setRowStyle(headerStyle);
+       sheet.getRow(1).setRowStyle(headerStyle);
         try {
             //Write the workbook in file system
             FileOutputStream fout = new FileOutputStream(excelFile);
             workbook.write(fout);
             fout.close();
-            workbook.write(out);
-            //out = fout;
-            out.close();
-            //out = new FileOutputStream(excelFile);
-
+            workbook.write(fout);
+            fout.close();
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return excelFile;
+
     }
 
     private String[]createXLSRow(QueryResult queryResult,QueryResultRow row){

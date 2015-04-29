@@ -77,7 +77,7 @@ public class QueryWriter implements MessageBodyWriter<QueryResult> {
             generateCSVResponse(outputStream,queryResult);
 
         } else if(queryResult.getExportType().equals(QueryResult.ExportType.XLS)){
-            excelGenerator.generateXLSResponse(outputStream, queryResult);
+            excelGenerator.generateXLSResponse(queryResult);
         }else{
             throw new IllegalArgumentException();
         }

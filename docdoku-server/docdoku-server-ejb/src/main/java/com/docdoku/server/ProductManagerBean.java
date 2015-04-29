@@ -2643,6 +2643,14 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
         return result;
     }
+    
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
+    public Query loadQuery(String workspaceId,int queryId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
+        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+        QueryDAO queryDAO = new QueryDAO(new Locale(user.getLanguage()), em);
+        return queryDAO.loadQuery(queryId);
+    }
 
     private List<QueryResultRow> filterPBS(String workspaceId, QueryContext queryContext) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, BaselineNotFoundException, ProductInstanceMasterNotFoundException, ConfigurationItemNotFoundException, NotAllowedException, EntityConstraintException, PartMasterNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
