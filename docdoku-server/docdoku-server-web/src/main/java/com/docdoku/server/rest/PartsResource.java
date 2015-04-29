@@ -85,11 +85,10 @@ public class PartsResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<PartDTO> getPartRevisions(@PathParam("workspaceId") String workspaceId, @QueryParam("start") int start)
-            throws EntityNotFoundException, AccessRightException, UserNotActiveException {
+    public List<PartDTO> getPartRevisions(@PathParam("workspaceId") String workspaceId, @QueryParam("start") int start, @QueryParam("length") int length)
+        throws EntityNotFoundException, AccessRightException, UserNotActiveException {
 
-        int maxResults = 20;
-        List<PartRevision> partRevisions = productService.getPartRevisions(Tools.stripTrailingSlash(workspaceId), start, maxResults);
+        List<PartRevision> partRevisions = productService.getPartRevisions(Tools.stripTrailingSlash(workspaceId), start, length);
         List<PartDTO> partDTOs = new ArrayList<>();
 
         for(PartRevision partRevision : partRevisions){

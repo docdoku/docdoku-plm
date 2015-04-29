@@ -26,6 +26,10 @@ define([
 
         },
 
+        setResultsPerPage: function (count) {
+            this.resultsPerPage = count;
+        },
+
         fetchPageCount: function () {
             var self = this;
             $.ajax({
@@ -94,7 +98,7 @@ define([
         },
 
         url: function () {
-            return this.urlBase + this.currentPage * this.resultsPerPage;
+            return this.urlBase + this.currentPage * this.resultsPerPage + '&length=' + this.resultsPerPage;
         }
 
     });

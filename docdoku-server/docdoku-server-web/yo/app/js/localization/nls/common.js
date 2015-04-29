@@ -494,6 +494,8 @@ define({
 		SHARED_PARTS_TITLE: "Share part",
 		SHARE: "Share",
 		SHORTCUTS_TITLE: "Keyboard / mouse shortcuts",
+        SHOW_ALL: "Show all",
+        SHOW_BY_PAGE: "Show by page",
 		SHOW_EDITED_MESHES: "Highlight edited meshes",
 		SIGN_TASK: "Signing up",
         SINGLE_FILE_RESTRICTION:"Only one file is allowed",

@@ -489,6 +489,8 @@ define({
 	SHARED_PARTS_TITLE: "Publier l'article",
 	SHARE: "Partager",
 	SHORTCUTS_TITLE: "Raccourcis clavier / souris",
+    SHOW_ALL: "Tout voir",
+    SHOW_BY_PAGE: "Voir par page",
 	SHOW_EDITED_MESHES: "Surligner les objets modifiés",
 	SIGN_TASK: "Signature",
     SINGLE_FILE_RESTRICTION:"Seulement un fichier est autorisé.",

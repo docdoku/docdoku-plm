@@ -1755,7 +1755,14 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     @Override
     public List<PartRevision> getPartRevisions(String pWorkspaceId, int start, int pMaxResults) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, UserNotActiveException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
-        List<PartRevision> partRevisions = new PartRevisionDAO(new Locale(user.getLanguage()), em).getPartRevisions(pWorkspaceId, start, pMaxResults);
+        List<PartRevision> partRevisions = null;
+
+        if (pMaxResults == 0) {
+            partRevisions = new PartRevisionDAO(new Locale(user.getLanguage()), em).getAllPartRevisions(pWorkspaceId);
+        } else {
+            partRevisions = new PartRevisionDAO(new Locale(user.getLanguage()), em).getPartRevisions(pWorkspaceId, start, pMaxResults);
+        }
+
         List<PartRevision> filteredPartRevisions = new ArrayList<>();
 
         for(PartRevision partRevision : partRevisions){
