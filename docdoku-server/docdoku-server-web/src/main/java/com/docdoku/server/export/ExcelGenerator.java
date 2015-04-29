@@ -52,7 +52,7 @@ public class ExcelGenerator {
 
     public  void generateXLSResponse(OutputStream out, QueryResult queryResult) {
 
-        File excelFile = new File("export_parts.xlsx");
+        File excelFile = new File("/Users/asmae/projects/plm/download/export_parts.xlsx");
         //Blank workbook
         XSSFWorkbook workbook = new XSSFWorkbook();
 
@@ -62,22 +62,15 @@ public class ExcelGenerator {
         //This data needs to be written (Object[])
 
         String header = StringUtils.join(queryResult.getQuery().getSelects(), "; ");
-        Map<String, Object[]> data = new HashMap<>();
-        //data.put("1", header.split(";"));
+        Map<String, Object[]> data = new HashMap<String, Object[]>();
+        data.put("1", header.split(";"));
         int i = 1;
-//        for(QueryResultRow row : queryResult.getRows()){
-//            i++;
-//            String[] datas = createXLSRow(queryResult,row);
-//            data.put(String.valueOf(i),datas);
-//        }
+        for(QueryResultRow row : queryResult.getRows()){
+            i++;
+            data.put(String.valueOf(i),createXLSRow(queryResult,row));
+        }
 
-        data.put("1", new Object[]{"Workspace", "Parts", "", "", "", "", "", "", "", "Part Model", "Baseline"});
-        data.put("2", new Object[]{"", "Number", "Name", "Version", "Type", "Author", "Creation Date", "Is Standard", "", ""});
-
-
-
-
-        //Iterate over data and write to sheet
+       //Iterate over data and write to sheet
         Set<String> keyset = data.keySet();
         int rownum = 0;
         for (String key : keyset) {
@@ -106,13 +99,14 @@ public class ExcelGenerator {
        // sheet.getRow(1).setRowStyle(headerStyle);
         try {
             //Write the workbook in file system
-            //FileOutputStream fout = new FileOutputStream(excelFile);
+            FileOutputStream fout = new FileOutputStream(excelFile);
+            workbook.write(fout);
+            fout.close();
             workbook.write(out);
-
             //out = fout;
             out.close();
             //out = new FileOutputStream(excelFile);
-            //workbook.write(out);
+
 
         } catch (Exception e) {
             e.printStackTrace();

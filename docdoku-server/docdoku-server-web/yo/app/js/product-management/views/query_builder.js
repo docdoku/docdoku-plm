@@ -518,7 +518,7 @@ define([
                         type: 'POST',
                         url: url+'&export=CSV',
                         data: JSON.stringify(queryData),
-                        contentType: 'application/json',
+                        contentType: 'application/xls',
                         success: function (data) {
                             var blob = new window.Blob([data]);
                             var link=document.createElement('a');
@@ -543,7 +543,7 @@ define([
                         data: JSON.stringify(queryData),
                         contentType: 'application/json',
                         success: function (data) {
-                            var blob=new Blob([data],{type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+                            var blob=new Blob([data]);
                             var link=document.createElement('a');
                             link.href=window.URL.createObjectURL(blob);
                             link.download='export.xls';
