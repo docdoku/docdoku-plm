@@ -71,12 +71,10 @@ public class QueryWriter implements MessageBodyWriter<QueryResult> {
     public void writeTo(QueryResult queryResult, Class<?> aClass, Type type, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> multivaluedMap, OutputStream outputStream) throws IOException, WebApplicationException {
 
         if(queryResult.getExportType().equals(QueryResult.ExportType.JSON)){
-            //generateJSONResponse(outputStream,queryResult);
-            excelGenerator.generateXLSResponse(outputStream, queryResult);
+            generateJSONResponse(outputStream,queryResult);
 
         } else if(queryResult.getExportType().equals(QueryResult.ExportType.CSV)){
-            //generateCSVResponse(outputStream,queryResult);
-            excelGenerator.generateXLSResponse(outputStream, queryResult);
+            generateCSVResponse(outputStream,queryResult);
 
         } else if(queryResult.getExportType().equals(QueryResult.ExportType.XLS)){
             excelGenerator.generateXLSResponse(outputStream, queryResult);

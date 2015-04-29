@@ -414,6 +414,7 @@ define([
             this.$searchButton = this.$('.search-button');
             this.$context = this.$('#context');
             this.$exportCSVSwitch = this.$('.export-csv.switch');
+            this.$exportXLSSwitch = this.$('.export-xls.switch');
         },
 
         onClearSelect: function(){
@@ -506,16 +507,18 @@ define([
                 };
 
                 var csv = this.$exportCSVSwitch.bootstrapSwitch('status');
+                var xls = this.$exportXLSSwitch.bootstrapSwitch('status');
+
                 this.$searchButton.button('loading');
 
                 var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/queries?save=' + saveQuery;
 
-                if(csv){
+              /*  if(csv){
                     $.ajax({
                         type: 'POST',
                         url: url+'&export=CSV',
                         data: JSON.stringify(queryData),
-                        contentType: 'application/xls',
+                        contentType: 'application/json',
                         success: function (data) {
                             var blob = new window.Blob([data]);
                             var link=document.createElement('a');
@@ -532,9 +535,32 @@ define([
                             }).render().$el);
                         }
                     });
+                }*/
+                 if (xls){
+                    $.ajax({
+                        type: 'POST',
+                        url: url+'&export=XLS',
+                        data: JSON.stringify(queryData),
+                        contentType: 'application/json',
+                        success: function (data) {
+                            var blob=new Blob([data],{type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+                            var link=document.createElement('a');
+                            link.href=window.URL.createObjectURL(blob);
+                            link.download='export.xls';
+                            link.click();
+                            self.$searchButton.button('reset');
+                        },
+                        error: function (errorMessage) {
+                            self.$searchButton.button('reset');
+                            self.$('#alerts').append(new AlertView({
+                                type: 'error',
+                                message: errorMessage.responseText
+                            }).render().$el);
+                        }
+                    });
                 }
 
-                $.ajax({
+               /* $.ajax({
                     type: 'POST',
                     url: url,
                     data: JSON.stringify(queryData),
@@ -557,7 +583,7 @@ define([
                             message: errorMessage.responseText
                         }).render().$el);
                     }
-                });
+                });*/
             }
         }
     });

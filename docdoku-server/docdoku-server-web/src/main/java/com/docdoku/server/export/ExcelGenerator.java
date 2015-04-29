@@ -38,6 +38,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -61,13 +62,18 @@ public class ExcelGenerator {
         //This data needs to be written (Object[])
 
         String header = StringUtils.join(queryResult.getQuery().getSelects(), "; ");
-        Map<String, Object[]> data = new TreeMap<>();
-        data.put("1", new Object[]{header.split(";")});
+        Map<String, Object[]> data = new HashMap<>();
+        //data.put("1", header.split(";"));
         int i = 1;
-        for(QueryResultRow row : queryResult.getRows()){
-            i++;
-            data.put(String.valueOf(i),new Object[]{createXLSRow(queryResult, row)});
-        }
+//        for(QueryResultRow row : queryResult.getRows()){
+//            i++;
+//            String[] datas = createXLSRow(queryResult,row);
+//            data.put(String.valueOf(i),datas);
+//        }
+
+        data.put("1", new Object[]{"Workspace", "Parts", "", "", "", "", "", "", "", "Part Model", "Baseline"});
+        data.put("2", new Object[]{"", "Number", "Name", "Version", "Type", "Author", "Creation Date", "Is Standard", "", ""});
+
 
 
 
@@ -80,13 +86,13 @@ public class ExcelGenerator {
             int cellnum = 0;
             for (Object obj : objArr) {
                 Cell cell = row.createCell(cellnum++);
-                if (obj instanceof String)
-                    cell.setCellValue((String) obj);
-                else if (obj instanceof Integer)
-                    cell.setCellValue((Integer) obj);
+               if (obj instanceof String){
+                   cell.setCellValue((String)obj);
+               }
+
             }
         }
-        Font headerFont = workbook.createFont();
+       /* Font headerFont = workbook.createFont();
         headerFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
         CellStyle headerStyle = workbook.createCellStyle();
         headerStyle.setFont(headerFont);
@@ -96,15 +102,18 @@ public class ExcelGenerator {
         headerFont.setFontHeightInPoints((short) 10);
         headerFont.setFontName("Courier New");
         headerFont.setItalic(true);
-        sheet.getRow(0).setRowStyle(headerStyle);
+        sheet.getRow(0).setRowStyle(headerStyle);*/
        // sheet.getRow(1).setRowStyle(headerStyle);
         try {
             //Write the workbook in file system
-
-            //FileOutputStream out = new FileOutputStream(excelFile);
+            //FileOutputStream fout = new FileOutputStream(excelFile);
             workbook.write(out);
+
+            //out = fout;
             out.close();
-            out.flush();
+            //out = new FileOutputStream(excelFile);
+            //workbook.write(out);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
