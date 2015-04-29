@@ -40,7 +40,7 @@ public class QueryResult {
     private ExportType exportType = ExportType.JSON;
 
     public enum ExportType {
-        JSON, CSV
+        JSON, CSV,XLS
     }
 
     public QueryResult() {

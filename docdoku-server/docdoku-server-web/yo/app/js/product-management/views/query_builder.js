@@ -515,12 +515,12 @@ define([
                         type: 'POST',
                         url: url+'&export=CSV',
                         data: JSON.stringify(queryData),
-                        contentType: 'application/json',
+                        contentType: 'application/xls',
                         success: function (data) {
                             var blob = new window.Blob([data]);
                             var link=document.createElement('a');
                             link.href=window.URL.createObjectURL(blob);
-                            link.download='export.csv';
+                            link.download='export.xls';
                             link.click();
                             self.$searchButton.button('reset');
                         },

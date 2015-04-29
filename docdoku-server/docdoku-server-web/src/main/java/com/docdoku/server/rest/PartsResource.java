@@ -195,8 +195,10 @@ public class PartsResource {
     }
 
     private Response makeQueryResponse(QueryResult queryResult) {
-        String contentType = queryResult.getExportType().equals(QueryResult.ExportType.CSV) ? "application/octet-stream":"application/json";
-        String contentDisposition =  queryResult.getExportType().equals(QueryResult.ExportType.CSV) ? "attachment; filename=\"TSR.csv\"":"inline";
+       // String contentType = queryResult.getExportType().equals(QueryResult.ExportType.CSV) ? "application/octet-stream":"application/json";
+        String contentType = "application/vnd.ms-excel";//queryResult.getExportType().equals(QueryResult.ExportType.CSV) ? "application/octet-stream":"application/json";
+        String contentDisposition =  "attachment; filename=new-excel-file.xls";
+        //queryResult.getExportType().equals(QueryResult.ExportType.CSV) ? "attachment; filename=\"TSR.csv\"":"inline";
 
         return Response.ok()
                 .header("Content-Type", contentType)

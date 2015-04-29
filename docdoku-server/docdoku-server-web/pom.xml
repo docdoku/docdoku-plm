@@ -51,6 +51,13 @@
             <artifactId>exec-maven-plugin</artifactId>
             <version>1.2.1</version>
         </dependency>
+        <!--excel apache lib-->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>3.9</version>
+        </dependency>
+
         <!-- JUNIT & Mockito -->
         <dependency>
             <groupId>org.mockito</groupId>
@@ -85,6 +92,11 @@
             <artifactId>commons-httpclient</artifactId>
             <version>3.1</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>3.9</version>
         </dependency>
 
     </dependencies>

@@ -28,6 +28,7 @@ import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.query.QueryContext;
 import com.docdoku.core.query.QueryField;
 import com.docdoku.core.query.QueryResultRow;
+import com.docdoku.server.export.ExcelGenerator;
 import com.docdoku.server.rest.collections.QueryResult;
 import org.apache.commons.lang.StringUtils;
 
@@ -55,7 +56,7 @@ import java.util.List;
 public class QueryWriter implements MessageBodyWriter<QueryResult> {
 
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-
+    private ExcelGenerator excelGenerator = new ExcelGenerator();
     @Override
     public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
         return type.equals(QueryResult.class);
@@ -70,9 +71,15 @@ public class QueryWriter implements MessageBodyWriter<QueryResult> {
     public void writeTo(QueryResult queryResult, Class<?> aClass, Type type, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> multivaluedMap, OutputStream outputStream) throws IOException, WebApplicationException {
 
         if(queryResult.getExportType().equals(QueryResult.ExportType.JSON)){
-            generateJSONResponse(outputStream,queryResult);
+            //generateJSONResponse(outputStream,queryResult);
+            excelGenerator.generateXLSResponse(outputStream, queryResult);
+
         } else if(queryResult.getExportType().equals(QueryResult.ExportType.CSV)){
-            generateCSVResponse(outputStream,queryResult);
+            //generateCSVResponse(outputStream,queryResult);
+            excelGenerator.generateXLSResponse(outputStream, queryResult);
+
+        } else if(queryResult.getExportType().equals(QueryResult.ExportType.XLS)){
+            excelGenerator.generateXLSResponse(outputStream, queryResult);
         }else{
             throw new IllegalArgumentException();
         }
