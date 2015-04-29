@@ -35,8 +35,6 @@ define([
         },
 
         bindDomElements: function () {
-            this.$items = this.$('.items');
-            this.$checkbox = this.$('.toggle-checkboxes');
         },
 
         resetList: function () {
@@ -87,14 +85,14 @@ define([
         addPartView: function (model) {
             var view = new PartListItemView({model: model}).render();
             this.listItemViews.push(view);
-            this.$items.append(view.$el);
+            this.$('.items').append(view.$el);
             view.on('selectionChanged', this.onSelectionChanged);
             view.on('rendered', this.redraw);
             return view;
         },
 
         toggleSelection: function () {
-            if (this.$checkbox.is(':checked')) {
+            if (this.$('.toggle-checkboxes').is(':checked')) {
                 _(this.listItemViews).each(function (view) {
                     view.check();
                 });
