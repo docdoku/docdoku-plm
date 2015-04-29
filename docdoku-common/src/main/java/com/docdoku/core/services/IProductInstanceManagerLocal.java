@@ -25,6 +25,7 @@ import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.product.ConfigurationItemKey;
+import com.docdoku.core.product.TypedLink;
 import com.docdoku.core.security.ACL;
 
 import java.util.List;
@@ -74,4 +75,10 @@ public interface IProductInstanceManagerLocal {
     BinaryResource saveFileInPathDataIteration(String workspaceId, String configurationItemId, String serialNumber, int pathDataId, int iteration, String fileName, int i) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, AccessRightException, ProductInstanceMasterNotFoundException, FileAlreadyExistsException, CreationException;
 
     PathDataMaster createPathData(String workspaceId, String configurationItemId, String serialNumber, String path, List<InstanceAttribute> attributes, String noteIteration) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException;
+
+    TypedLink createTypedLink(String workspaceId, String configurationItemId, String serialNumber, String type, String pathFrom, String pathTo) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, TypedLinkAlreadyExistsException, CreationException;
+    TypedLink getTypedLink(String workspaceId, String configurationItemId, String serialNumber,int typedLinkId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, TypedLinkNotFoundException;
+    void deleteTypedLink(String workspaceId, String configurationItemId, String serialNumber, int typedLinkId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, TypedLinkNotFoundException;
+    List<String> getTypedLinksType(String workspaceId, String configurationItemId, String serialNumber) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException;
+
 }

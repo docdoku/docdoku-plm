@@ -844,6 +844,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         return productInstanceMaster;
     }
 
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     @Override
     public BinaryResource saveFileInPathDataIteration(String workspaceId, String configurationItemId, String serialNumber, int path, int iteration, String fileName, int pSize) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, AccessRightException, ProductInstanceMasterNotFoundException, FileAlreadyExistsException, CreationException {
 // Check the read access to the workspace
@@ -889,6 +890,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         return binaryResource;
     }
 
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     @Override
     public PathDataMaster createPathData(String workspaceId, String configurationItemId, String serialNumber, String path, List<InstanceAttribute> attributes, String noteIteration) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException {
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
@@ -924,6 +926,73 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         pathDataIterationDAO.createPathDataIteration(pathDataIteration);
         prodInstM.getPathDataMasterList().add(pathDataMaster);
         return pathDataMaster;
+    }
+
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
+    @Override
+    public TypedLink createTypedLink(String workspaceId, String configurationItemId, String serialNumber, String type, String pathFrom, String pathTo) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, TypedLinkAlreadyExistsException, CreationException {
+        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+        Locale locale = new Locale(user.getLanguage());
+        // Load the product instance
+        ProductInstanceMasterDAO productInstanceMasterDAO = new ProductInstanceMasterDAO(locale, em);
+        ProductInstanceMaster prodInstM = productInstanceMasterDAO.loadProductInstanceMaster(new ProductInstanceMasterKey(serialNumber, workspaceId, configurationItemId));
+
+        checkProductInstanceWriteAccess(workspaceId,prodInstM,user);
+
+        TypedLink typedLink = new TypedLink(type, pathFrom, pathTo);
+        new TypedLinkDAO(locale,em).createTypedLink(typedLink);
+
+        prodInstM.getLastIteration().addTypedLink(typedLink);
+
+        return typedLink;
+    }
+
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
+    @Override
+    public TypedLink getTypedLink(String workspaceId, String configurationItemId, String serialNumber, int typedLinkId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, TypedLinkNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+        Locale locale = new Locale(user.getLanguage());
+        // Load the product instance
+        ProductInstanceMasterDAO productInstanceMasterDAO = new ProductInstanceMasterDAO(locale, em);
+        ProductInstanceMaster prodInstM = productInstanceMasterDAO.loadProductInstanceMaster(new ProductInstanceMasterKey(serialNumber, workspaceId, configurationItemId));
+
+        checkProductInstanceReadAccess(workspaceId, prodInstM, user);
+        TypedLinkDAO typedLinkDAO = new TypedLinkDAO(locale, em);
+        return typedLinkDAO.loadTypedLink(typedLinkId);
+    }
+
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
+    @Override
+    public void deleteTypedLink(String workspaceId, String configurationItemId, String serialNumber, int typedLinkId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, TypedLinkNotFoundException {
+
+        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+        Locale locale = new Locale(user.getLanguage());
+        // Load the product instance
+        ProductInstanceMasterDAO productInstanceMasterDAO = new ProductInstanceMasterDAO(locale, em);
+        ProductInstanceMaster prodInstM = productInstanceMasterDAO.loadProductInstanceMaster(new ProductInstanceMasterKey(serialNumber, workspaceId, configurationItemId));
+
+        checkProductInstanceWriteAccess(workspaceId,prodInstM,user);
+        TypedLinkDAO typedLinkDAO = new TypedLinkDAO(locale, em);
+        TypedLink typedLink = typedLinkDAO.loadTypedLink(typedLinkId);
+        prodInstM.getLastIteration().removeTypedLink(typedLink);
+        typedLinkDAO.removeTypedLink(typedLink);
+
+    }
+
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
+    @Override
+    public List<String> getTypedLinksType(String workspaceId, String configurationItemId, String serialNumber) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException {
+
+        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+        Locale locale = new Locale(user.getLanguage());
+        // Load the product instance
+        ProductInstanceMasterDAO productInstanceMasterDAO = new ProductInstanceMasterDAO(locale, em);
+        ProductInstanceMaster prodInstM = productInstanceMasterDAO.loadProductInstanceMaster(new ProductInstanceMasterKey(serialNumber, workspaceId, configurationItemId));
+
+        checkProductInstanceReadAccess(workspaceId,prodInstM,user);
+        List<String> types =  new TypedLinkDAO(locale, em).getDistinctTypedLinksType(prodInstM.getLastIteration());
+
+        return types;
     }
 
     private User checkProductInstanceReadAccess(String workspaceId, ProductInstanceMaster prodInstM, User user) throws AccessRightException, WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {

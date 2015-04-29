@@ -26,6 +26,7 @@ import com.docdoku.core.common.User;
 import com.docdoku.core.document.DocumentLink;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.product.PartIteration;
+import com.docdoku.core.product.TypedLink;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlTransient;
@@ -150,6 +151,20 @@ public class ProductInstanceIteration implements Serializable, FileHolder {
     )
 
     private Set<String> optionalUsageLinks=new HashSet<>();
+
+
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(name = "PRDINSTITERATION_TYPEDLINK",
+            inverseJoinColumns = {
+                    @JoinColumn(name = "TYPEDLINKED_ID", referencedColumnName = "ID")
+            },
+            joinColumns = {
+                    @JoinColumn(name="PRDINSTANCEMASTER_SERIALNUMBER", referencedColumnName="PRDINSTANCEMASTER_SERIALNUMBER"),
+                    @JoinColumn(name="CONFIGURATIONITEM_ID", referencedColumnName="CONFIGURATIONITEM_ID"),
+                    @JoinColumn(name="WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
+                    @JoinColumn(name="ITERATION", referencedColumnName = "ITERATION")
+            })
+    private List<TypedLink> typedLinks=new ArrayList<>();
 
     public ProductInstanceIteration() {
     }
@@ -290,4 +305,19 @@ public class ProductInstanceIteration implements Serializable, FileHolder {
         return attachedFiles.remove(pBinaryResource);
     }
 
+    public List<TypedLink> getTypedLinks() {
+        return typedLinks;
+    }
+
+    public void setTypedLinks(List<TypedLink> typedLinks) {
+        this.typedLinks = typedLinks;
+    }
+
+    public void addTypedLink(TypedLink typedLink) {
+        typedLinks.add(typedLink);
+    }
+
+    public void removeTypedLink(TypedLink typedLink) {
+        typedLinks.remove(typedLink);
+    }
 }

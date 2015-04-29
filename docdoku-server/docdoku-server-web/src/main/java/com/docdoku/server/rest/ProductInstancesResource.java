@@ -28,6 +28,7 @@ import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.product.ConfigurationItemKey;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartLink;
+import com.docdoku.core.product.TypedLink;
 import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IProductInstanceManagerLocal;
@@ -497,6 +498,7 @@ public class ProductInstancesResource {
 
         return dto;
     }
+
     @PUT
     @Path("{serialNumber}/pathdata/{pathDataId}/iterations/{iteration}")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -540,6 +542,38 @@ public class ProductInstancesResource {
         dto.setPartsPath(partList);
 
         return dto;
+    }
+
+    @GET
+    @Path("{serialNumber}/typedlinks")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<TypedLinkDTO> getTypedLinksTypes(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException {
+        List<String> typedLinksType = productInstanceService.getTypedLinksType(workspaceId, configurationItemId, serialNumber);
+        List<TypedLinkDTO> typedLinkDTOs = new ArrayList<>();
+        for(String type : typedLinksType){
+            TypedLinkDTO typedLinkDTO = new TypedLinkDTO();
+            typedLinkDTO.setType(type);
+            typedLinkDTOs.add(typedLinkDTO);
+
+        }
+        return typedLinkDTOs;
+    }
+
+    @GET
+    @Path("{serialNumber}/typedlinks/{typedLinkId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public TypedLinkDTO createTypedLink(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber,@PathParam("typedLinkId") int typedLinkId) throws UserNotActiveException, WorkspaceNotFoundException, UserNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, TypedLinkNotFoundException {
+        TypedLink typedLink = productInstanceService.getTypedLink(workspaceId, configurationItemId, serialNumber, typedLinkId);
+        return mapper.map(typedLink,TypedLinkDTO.class);
+    }
+
+    @POST
+    @Path("{serialNumber}/typedlinks")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public TypedLinkDTO createTypedLink(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, TypedLinkDTO typedLinkDTO) throws TypedLinkAlreadyExistsException, UserNotActiveException, WorkspaceNotFoundException, CreationException, UserNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException {
+        TypedLink typedLink = productInstanceService.createTypedLink(workspaceId, configurationItemId, serialNumber, typedLinkDTO.getType(), typedLinkDTO.getPathFrom(), typedLinkDTO.getPathTo());
+        return mapper.map(typedLink,TypedLinkDTO.class);
     }
 
 
