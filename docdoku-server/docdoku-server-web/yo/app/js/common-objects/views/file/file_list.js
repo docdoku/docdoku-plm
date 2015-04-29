@@ -5,8 +5,9 @@ define([
     'unorm',
     'text!common-objects/templates/file/file_list.html',
     'common-objects/models/file/attached_file',
-    'common-objects/views/file/file'
-], function (Backbone, Mustache, unorm, template, AttachedFile, FileView) {
+    'common-objects/views/file/file',
+    'common-objects/views/alert'
+], function (Backbone, Mustache, unorm, template, AttachedFile, FileView, AlertView) {
     'use strict';
 	var FileListView = Backbone.View.extend({
 
@@ -166,10 +167,15 @@ define([
             this.xhrs.push(xhr);
         },
 
-        xhrFinished : function(xhr){
-            this.xhrs.splice(this.xhrs.indexOf(xhr),1);
-            if(!this.xhrs.length){
+        xhrFinished : function(xhr) {
+            this.xhrs.splice(this.xhrs.indexOf(xhr), 1);
+            if (!this.xhrs.length) {
                 this.gotoIdleState();
+
+                this.notifications.append(new AlertView({
+                    type: 'info',
+                    message: App.config.i18n.FILE_UPLOADED
+                }).render().$el);
             }
         },
 
@@ -237,6 +243,7 @@ define([
             this.filesUL = this.$('ul.file-list');
             this.uploadInput = this.$('input#upload-btn');
             this.progressBars = this.$('div.progress-bars');
+            this.notifications = this.$('div.notifications');
         }
     });
     return FileListView;

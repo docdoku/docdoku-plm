@@ -170,6 +170,7 @@ define({
 	EXPORT: "Exporter",
 	FALSE: "Non",
 	FILE_DELETION_ERROR: "Le fichier %{id} n'a pu être supprimé",
+    FILE_UPLOADED: "Le fichier a bien été envoyé",
 	FILES: "Fichiers",
 	FILTER: "Filtrer",
 	FINAL_STATE_PLACEHOLDER: "Etat final",
