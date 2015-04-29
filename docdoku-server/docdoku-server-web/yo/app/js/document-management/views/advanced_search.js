@@ -1,14 +1,15 @@
 /*global _,define,App*/
 define([
-    'backbone',
-    'mustache',
-    'text!templates/search_document_advanced_form.html',
-    'common-objects/collections/users',
-    'common-objects/views/attributes/attribute_list',
-    'collections/template',
-    'common-objects/utils/date'
-],
-function (Backbone,Mustache, template, Users, DocumentAttributeListView, Templates, date) {
+        'backbone',
+        'mustache',
+        'text!templates/search_document_advanced_form.html',
+        'common-objects/collections/users',
+        'common-objects/views/attributes/attribute_list',
+        'collections/template',
+        'common-objects/utils/date',
+        'common-objects/collections/lovs'
+    ],
+function (Backbone,Mustache, template, Users, DocumentAttributeListView, Templates, date,LOVCollection) {
 	'use strict';
     var AdvancedSearchView = Backbone.View.extend({
 
@@ -18,6 +19,8 @@ function (Backbone,Mustache, template, Users, DocumentAttributeListView, Templat
             'click #search-add-attributes': 'addAttribute',
             'change #template-attributes-helper': 'changeAttributes'
         },
+
+        lovs : new LOVCollection(),
 
         initialize: function () {
             _.bindAll(this);
@@ -36,12 +39,16 @@ function (Backbone,Mustache, template, Users, DocumentAttributeListView, Templat
 
             this.attributes = new Backbone.Collection();
 
-            this.attributesView = new DocumentAttributeListView({
-                collection: this.attributes
+            var that = this;
+            this.lovs.fetch().success(function(){
+                that.attributesView = new DocumentAttributeListView({
+                    collection: that.attributes,
+                    lovs : that.lovs
+                });
+
+                that.$('#attributes-list').html(that.attributesView.$el);
             });
-
-            this.$('#attributes-list').html(this.attributesView.$el);
-
+            
         },
 
         fillInputs: function () {
