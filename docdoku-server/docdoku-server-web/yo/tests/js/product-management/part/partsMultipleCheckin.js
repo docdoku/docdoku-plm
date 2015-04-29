@@ -29,24 +29,24 @@ casper.test.begin('Part multiple checkin tests suite', 1, function partsMultiple
      * Select the checkout parts with checkbox
      */
     casper.then(function waitForPartTable(){
-        this.waitForSelector('#part_table tbody tr:nth-child(2)  td:first-child input',function clickOnPartCheckbox() {
-            this.click('#part_table tbody tr:nth-child(2)  td:first-child input');
+        this.waitForSelector('#part_table tbody tr:nth-child(2)  td:nth-child(2) input',function clickOnPartCheckbox() {
+            this.click('#part_table tbody tr:nth-child(2)  td:nth-child(2) input');
         },function fail(){
             this.capture('screenshot/MultiplePartsCheckin/waitForPartTable-error.png');
             this.test.assert(false,'Part cannot be found');
         });
     });
     casper.then(function waitForPartTable(){
-        this.waitForSelector('#part_table tbody tr:nth-child(3)  td:first-child input',function clickOnPartCheckbox() {
-            this.click('#part_table tbody tr:nth-child(3)  td:first-child input');
+        this.waitForSelector('#part_table tbody tr:nth-child(3)  td:nth-child(2) input',function clickOnPartCheckbox() {
+            this.click('#part_table tbody tr:nth-child(3)  td:nth-child(2) input');
         },function fail(){
             this.capture('screenshot/MultiplePartsCheckin/waitForPartTable-error.png');
             this.test.assert(false,'Part cannot be found');
         });
     });
     casper.then(function waitForPartTable(){
-        this.waitForSelector('#part_table tbody tr:nth-child(5)  td:first-child input',function clickOnPartCheckbox() {
-            this.click('#part_table tbody tr:nth-child(5)  td:first-child input');
+        this.waitForSelector('#part_table tbody tr:nth-child(5)  td:nth-child(2) input',function clickOnPartCheckbox() {
+            this.click('#part_table tbody tr:nth-child(5)  td:nth-child(2) input');
         },function fail(){
             this.capture('screenshot/MultiplePartsCheckin/waitForPartTable-error.png');
             this.test.assert(false,'Part cannot be found');

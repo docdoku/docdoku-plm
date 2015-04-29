@@ -30,24 +30,24 @@ casper.test.begin('Parts  multiple checkout tests suite', 1, function partsMulti
      */
 
     casper.then(function waitForPartTable(){
-        this.waitForSelector('#part_table tbody tr:nth-child(2)  td:first-child input',function clickOnPartCheckbox() {
-            this.click('#part_table tbody tr:nth-child(2)  td:first-child input');
+        this.waitForSelector('#part_table tbody tr:nth-child(2)  td:nth-child(2) input',function clickOnPartCheckbox() {
+            this.click('#part_table tbody tr:nth-child(2)  td:nth-child(2) input');
         },function fail(){
             this.capture('screenshot/partsCheckout/waitForPartTable-error.png');
             this.test.assert(false,'Part cannot be found');
         });
     });
     casper.then(function waitForPartTable(){
-        this.waitForSelector('#part_table tbody tr:nth-child(3)  td:first-child input',function clickOnPartCheckbox() {
-            this.click('#part_table tbody tr:nth-child(3)  td:first-child input');
+        this.waitForSelector('#part_table tbody tr:nth-child(3)  td:nth-child(2) input',function clickOnPartCheckbox() {
+            this.click('#part_table tbody tr:nth-child(3)  td:nth-child(2) input');
         },function fail(){
             this.capture('screenshot/partsCheckout/waitForPartTable-error.png');
             this.test.assert(false,'Part cannot be found');
         });
     });
      casper.then(function waitForPartTable(){
-        this.waitForSelector('#part_table tbody tr:nth-child(5)  td:first-child input',function clickOnPartCheckbox() {
-            this.click('#part_table tbody tr:nth-child(5)  td:first-child input');
+        this.waitForSelector('#part_table tbody tr:nth-child(5)  td:nth-child(2) input',function clickOnPartCheckbox() {
+            this.click('#part_table tbody tr:nth-child(5)  td:nth-child(2) input');
         },function fail(){
             this.capture('screenshot/partsCheckout/waitForPartTable-error.png');
             this.test.assert(false,'Part cannot be found');

@@ -32,7 +32,7 @@ casper.test.begin('Part deletion tests suite', 1, function partDeletionTestsSuit
 
     casper.then(function waitForPartInList(){
         this.waitForSelector('#part_table tbody tr:first-child td.part_number', function clickOnPartCheckbox() {
-            this.click('#part_table tbody tr:first-child td:first-child input');
+            this.click('#part_table tbody tr:first-child td:nth-child(2) input');
         },function fail() {
             this.capture('screenshot/partDeletion/waitForPartInList-error.png');
             this.test.assert(false,'Part to delete rows can not be found');

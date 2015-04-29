@@ -29,8 +29,8 @@ casper.test.begin('Part checkin tests suite', 1, function partCheckinTestsSuite(
      * Select the first part with checkbox
      */
     casper.then(function waitForPartTable(){
-        this.waitForSelector('#part_table tbody tr:first-child  td:first-child input',function clickOnPartCheckbox() {
-            this.click('#part_table tbody tr:first-child  td:first-child input');
+        this.waitForSelector('#part_table tbody tr:first-child  td:nth-child(2) input',function clickOnPartCheckbox() {
+            this.click('#part_table tbody tr:first-child  td:nth-child(2) input');
         },function fail(){
             this.capture('screenshot/partCheckin/waitForPartTable-error.png');
             this.test.assert(false,'Part can not be found');
