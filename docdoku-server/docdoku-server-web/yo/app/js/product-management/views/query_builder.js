@@ -21,7 +21,8 @@ define([
             'click .clear-where-badge': 'onClearWhere',
             'click .clear-order-by-badge': 'onClearOrderBy',
             'click .clear-group-by-badge': 'onClearGroupBy',
-            'click .clear-context-badge' : 'onClearContext'
+            'click .clear-context-badge' : 'onClearContext',
+            'click .export-excel-button': 'onExport'
         },
 
         delimiter: ',',
@@ -94,6 +95,7 @@ define([
             this.onClearContext();
 
             this.$deleteQueryButton.hide();
+            this.$exportQueryButton.hide();
         },
 
         onSelectQueryChange:function(e){
@@ -137,6 +139,7 @@ define([
                 this.$where.queryBuilder('reset');
             }
             this.$deleteQueryButton.toggle(e.target.value !== '');
+            this.$exportQueryButton.toggle(e.target.value !== '');
         },
 
         deleteSelectedQuery:function(){
@@ -281,9 +284,6 @@ define([
                 $inputName.toggle(state.value);
             });
 
-            this.$exportCSVSwitch.bootstrapSwitch();
-            this.$exportCSVSwitch.bootstrapSwitch('setState', false);
-
             return this;
         },
 
@@ -411,10 +411,9 @@ define([
             this.$inputName = this.$('.queryName');
             this.$selectQuery = this.$('select.query-list');
             this.$deleteQueryButton = this.$('.delete-selected-query');
+            this.$exportQueryButton = this.$('.export-excel-button');
             this.$searchButton = this.$('.search-button');
             this.$context = this.$('#context');
-            this.$exportCSVSwitch = this.$('.export-csv.switch');
-            this.$exportXLSSwitch = this.$('.export-xls.switch');
         },
 
         onClearSelect: function(){
@@ -467,6 +466,36 @@ define([
             this.$selectQuery.val('');
         },
 
+        onExport: function(){
+
+            var queryId = this.$selectQuery.val();
+
+            var query = _.findWhere(this.queries, {id : parseInt(queryId)});
+
+            var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/queries/'+query.id;
+
+            $.ajax({
+                type: 'GET',
+                url: url+'&export=XLS',
+                contentType: 'application/json',
+                success: function (data) {
+                    var blob = new window.Blob([data]);
+                    var link=document.createElement('a');
+                    link.href=window.URL.createObjectURL(blob);
+                    link.download='export.csv';
+                    link.click();
+                    self.$searchButton.button('reset');
+                },
+                error: function (errorMessage) {
+                    self.$searchButton.button('reset');
+                    self.$('#alerts').append(new AlertView({
+                        type: 'error',
+                        message: errorMessage.responseText
+                    }).render().$el);
+                }
+            });
+        },
+
         onSearch:function(){
             var self = this;
 
@@ -506,61 +535,11 @@ define([
                     name: saveQuery ? this.$inputName.val() : ''
                 };
 
-                var csv = this.$exportCSVSwitch.bootstrapSwitch('status');
-                var xls = this.$exportXLSSwitch.bootstrapSwitch('status');
-
                 this.$searchButton.button('loading');
 
                 var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/queries?save=' + saveQuery;
 
-              /*  if(csv){
-                    $.ajax({
-                        type: 'POST',
-                        url: url+'&export=CSV',
-                        data: JSON.stringify(queryData),
-                        contentType: 'application/xls',
-                        success: function (data) {
-                            var blob = new window.Blob([data]);
-                            var link=document.createElement('a');
-                            link.href=window.URL.createObjectURL(blob);
-                            link.download='export.xls';
-                            link.click();
-                            self.$searchButton.button('reset');
-                        },
-                        error: function (errorMessage) {
-                            self.$searchButton.button('reset');
-                            self.$('#alerts').append(new AlertView({
-                                type: 'error',
-                                message: errorMessage.responseText
-                            }).render().$el);
-                        }
-                    });
-                }*/
-                 if (xls){
-                    $.ajax({
-                        type: 'POST',
-                        url: url+'&export=XLS',
-                        data: JSON.stringify(queryData),
-                        contentType: 'application/json',
-                        success: function (data) {
-                            var blob=new Blob([data]);
-                            var link=document.createElement('a');
-                            link.href=window.URL.createObjectURL(blob);
-                            link.download='export.xls';
-                            link.click();
-                            self.$searchButton.button('reset');
-                        },
-                        error: function (errorMessage) {
-                            self.$searchButton.button('reset');
-                            self.$('#alerts').append(new AlertView({
-                                type: 'error',
-                                message: errorMessage.responseText
-                            }).render().$el);
-                        }
-                    });
-                }
-
-               /* $.ajax({
+                $.ajax({
                     type: 'POST',
                     url: url,
                     data: JSON.stringify(queryData),
@@ -583,7 +562,7 @@ define([
                             message: errorMessage.responseText
                         }).render().$el);
                     }
-                });*/
+                });
             }
         }
     });

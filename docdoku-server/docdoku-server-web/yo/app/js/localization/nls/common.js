@@ -350,6 +350,8 @@ define({
 		PUBLIC_ACCESS_TITLE: "Public access to permalink",
 		PUBLIC_SHARE: "Public share",
 		PUBLISH: "Publish",
+        QUERY_EXPORT_EXCEL_LOADING:"Export...",
+        QUERY_EXPORT_EXCEL:"Export Excel",
 		QUICK_SEARCH: "Quick search",
         QUERY_BUILDER_CONDITION_AND:"AND",
         QUERY_BUILDER_CONDITION_OR:"OR",
