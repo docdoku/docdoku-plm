@@ -565,7 +565,7 @@ define({
 		VISUALIZE_PRODUCT: "Visualize product",
 		WAITING_REMOTE_VIDEO: "Waiting for remote video.",
 		WAITING_USER_MEDIA: "Waiting user media ... Please accept the prompt from your browser.",
-        WHERE_USED_LIST: "Where-used list",
+        USED_BY: "Used by",
 		WITHDRAW_INVITATION: "Withdraw invitation",
 		WORKFLOW_HISTORY: "History",
 		WORKFLOW_LEGEND_COMPLETE: "Complete",
