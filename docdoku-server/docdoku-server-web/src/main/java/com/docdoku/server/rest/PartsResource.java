@@ -38,6 +38,7 @@ import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
+import com.docdoku.server.export.ExcelGenerator;
 import com.docdoku.server.rest.collections.QueryResult;
 import com.docdoku.server.rest.dto.*;
 import com.docdoku.server.rest.util.SearchQueryParser;
@@ -173,14 +174,25 @@ public class PartsResource {
     @POST
     @Path("queries")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response runCustomQuery(@PathParam("workspaceId") String workspaceId, @QueryParam("save") boolean save,  @QueryParam("export") String exportType, QueryDTO queryDTO) throws EntityNotFoundException, UserNotActiveException, AccessRightException, CreationException, QueryAlreadyExistsException, EntityConstraintException, NotAllowedException {
+    public void runCustomQuery(@PathParam("workspaceId") String workspaceId, @QueryParam("save") boolean save,  @QueryParam("export") String exportType, QueryDTO queryDTO) throws EntityNotFoundException, UserNotActiveException, AccessRightException, CreationException, QueryAlreadyExistsException, EntityConstraintException, NotAllowedException {
         Query query = mapper.map(queryDTO, Query.class);
         QueryResult queryResult = getQueryResult(workspaceId, query, exportType);
         if(save){
             productService.createQuery(workspaceId,query);
         }
+        //return makeQueryResponse(queryResult);
+    }
+    @GET
+    @Path("queries/{queryId}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces("application/vnd.ms-excel")
+    public Response exportCustomQuery(@PathParam("workspaceId") String workspaceId,@PathParam("queryId") int queryId) throws EntityNotFoundException, UserNotActiveException, AccessRightException, CreationException, QueryAlreadyExistsException, EntityConstraintException, NotAllowedException {
+        Query query = productService.loadQuery(workspaceId,queryId);
+        List<PartRevision> partRevisions = productService.searchPartRevisions(workspaceId, query);
+        QueryResult queryResult = new QueryResult(partRevisions,query);
         return makeQueryResponse(queryResult);
     }
+
 
     private QueryResult getQueryResult(String workspaceId, Query query, String pExportType) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, EntityConstraintException, BaselineNotFoundException, ProductInstanceMasterNotFoundException, NotAllowedException, ConfigurationItemNotFoundException, PartMasterNotFoundException {
         List<PartRevision> partRevisions = productService.searchPartRevisions(workspaceId, query);
@@ -194,16 +206,18 @@ public class PartsResource {
         return queryResult;
     }
 
-    private Response makeQueryResponse(QueryResult queryResult) {
-       // String contentType = queryResult.getExportType().equals(QueryResult.ExportType.CSV) ? "application/octet-stream":"application/json";
-        String contentType = "application/vnd.ms-excel";//queryResult.getExportType().equals(QueryResult.ExportType.CSV) ? "application/octet-stream":"application/json";
-        String contentDisposition =  "attachment; filename=new-excel-file.xls";
-        //queryResult.getExportType().equals(QueryResult.ExportType.CSV) ? "attachment; filename=\"TSR.csv\"":"inline";
+    public Response makeQueryResponse(QueryResult queryResult) {
+         ExcelGenerator excelGenerator = new ExcelGenerator();
 
-        return Response.ok()
+        String contentType = "application/vnd.ms-excel";
+        String contentDisposition =  "attachment; filename=export_parts.xls";
+        Response.ResponseBuilder responseBuilder = Response.ok((Object)
+                excelGenerator.generateXLSResponse(queryResult));
+         responseBuilder
                 .header("Content-Type", contentType)
                 .header("Content-Disposition", contentDisposition)
                 .entity(queryResult).build();
+        return responseBuilder.build();
     }
 
     @DELETE
