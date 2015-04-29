@@ -93,6 +93,7 @@ define([
             this.isObsolete = this.model.attributes.status === 'OBSOLETE';
             data.isObsolete = this.isObsolete;
             data.isShowingLast = this.iterations.isLast(this.iteration);
+            data.isLocked = this.model.isCheckout() && !this.model.isCheckoutByConnectedUser();
 
             if (this.model.hasIterations()) {
                 var hasNextIteration = this.iterations.hasNextIteration(this.iteration);

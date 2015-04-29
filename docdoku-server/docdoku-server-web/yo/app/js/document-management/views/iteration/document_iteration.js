@@ -110,6 +110,7 @@ define([
                 hasIterations: this.iterations.length
             };
 
+            data.isLocked = this.model.isCheckout() && !this.model.isCheckoutByConnectedUser();
             data.docRevision.reference = this.model.getReference();
             data.docRevision.creationDate = date.formatTimestamp(
                 App.config.i18n._DATE_FORMAT,
