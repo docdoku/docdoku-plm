@@ -348,6 +348,7 @@ define({
 	PUBLIC_SHARE: "Partage public",
 	PUBLISH: "Publier",
 	QUICK_SEARCH: "Recherche rapide",
+    QUERY_STANDARD: "Standard",
     QUERY_BUILDER_CONDITION_AND:"ET",
     QUERY_BUILDER_CONDITION_OR:"OU",
     QUERY_BUILDER_OPERATORS_EQUALS:"égal",

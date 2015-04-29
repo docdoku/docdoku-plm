@@ -158,6 +158,9 @@ public class QueryWriter implements MessageBodyWriter<QueryResult> {
                 case QueryField.CTX_AMOUNT:
                     data.add(row.getAmount()+"");
                     break;
+                case QueryField.PART_MASTER_IS_STANDARD:
+                    data.add(row.getPartRevision().getPartMaster().isStandardPart() ? "true" : "false");
+                    break;
                 default:
                     if (select.contains(QueryField.PART_REVISION_ATTRIBUTES_PREFIX)){
                         String attributeSelectType = select.substring(0, select.indexOf(".")).substring(QueryField.PART_REVISION_ATTRIBUTES_PREFIX.length());
@@ -319,6 +322,11 @@ public class QueryWriter implements MessageBodyWriter<QueryResult> {
             if (selects.contains(QueryField.CTX_AMOUNT)) {
                 String amount = row.getAmount()+"";
                 jg.write(QueryField.CTX_AMOUNT, amount);
+            }
+
+            if(selects.contains(QueryField.PART_MASTER_IS_STANDARD)){
+                boolean isStandard = row.getPartRevision().getPartMaster().isStandardPart();
+                jg.write(QueryField.PART_MASTER_IS_STANDARD, isStandard);
             }
 
             jg.writeEnd();

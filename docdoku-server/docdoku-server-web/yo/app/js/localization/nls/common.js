@@ -352,6 +352,7 @@ define({
 		PUBLIC_SHARE: "Public share",
 		PUBLISH: "Publish",
 		QUICK_SEARCH: "Quick search",
+        QUERY_STANDARD: "Standard",
         QUERY_BUILDER_CONDITION_AND:"AND",
         QUERY_BUILDER_CONDITION_OR:"OR",
         QUERY_BUILDER_OPERATORS_EQUALS:"equal",

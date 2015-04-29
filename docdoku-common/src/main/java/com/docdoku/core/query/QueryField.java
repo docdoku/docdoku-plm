@@ -30,6 +30,7 @@ public class QueryField {
     public final static String PART_MASTER_NUMBER = "pm.number";
     public final static String PART_MASTER_NAME = "pm.name";
     public final static String PART_MASTER_TYPE = "pm.type";
+    public final static String PART_MASTER_IS_STANDARD = "pm.standardPart";
 
     public final static String PART_REVISION_PART_KEY = "pr.partKey";
     public final static String PART_REVISION_VERSION = "pr.version";
