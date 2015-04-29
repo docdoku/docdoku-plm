@@ -349,6 +349,8 @@ define({
 	PUBLIC_ACCESS_TITLE: "Accès public au permalien",
 	PUBLIC_SHARE: "Partage public",
 	PUBLISH: "Publier",
+    QUERY_EXPORT_EXCEL_LOADING:"Export...",
+    QUERY_EXPORT_EXCEL:"Export Excel",
 	QUICK_SEARCH: "Recherche rapide",
     QUERY_STANDARD: "Standard",
     QUERY_BUILDER_CONDITION_AND:"ET",
