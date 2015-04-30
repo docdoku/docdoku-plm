@@ -66,6 +66,7 @@ public class ExcelGenerator {
              if(!column.isEmpty())
              {   if (column.trim().contains("attr-")){
                  columnTranslated = column.split("-")[1];
+                 columnTranslated = columnTranslated.substring(columnTranslated.indexOf(".") +1);
              }else{
                   columnTranslated = langHelper.getLocalizedMessage(column.trim(), locale);
              }
