@@ -224,7 +224,6 @@ define([
         },
 
         onLoad3D: function (event) {
-            debugger
             if (event) {
                 if (event.target.checked) {
                     App.instancesManager.loadComponent(this.model);

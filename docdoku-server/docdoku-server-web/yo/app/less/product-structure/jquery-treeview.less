@@ -47,16 +47,26 @@
 
 .treeview div.lastCollapsable-hitarea, .treeview div.lastExpandable-hitarea { background-position: 0; }
 
+
 .treeview li input.load-3D{
-//   display: none;
-}
-.treeview li input.load-3D + i.fa.toggle-3D:before{
-    content: "\f204";
+
+    +label{
+        display: inline;
+        i.fa.toggle-3D:before{
+            content: "\f204";
+        }
+    }
+
+    &:checked{
+        +label{
+            i.fa.toggle-3D:before {
+                content: "\f205";
+            }
+        }
+    }
+
 }
 
-.treeview li input.load-3D:checked + i.fa.toggle-3D:before{
-    content: "\f205";
-}
 .treeview{
     .description {
         display: none;
