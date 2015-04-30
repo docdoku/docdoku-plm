@@ -362,22 +362,33 @@ define([
         },
 
         actionCheckin: function () {
-            var note = this.$('#inputRevisionNote').val() || null;
 
-            if (note) {
-                this.iteration.save({
-                    iterationNote: note
-                }).success(function () {
-                    this.model.checkin().success(function () {
-                        this.onSuccess();
-                    }.bind(this));
-                }.bind(this));
-
+            // cannot pass a collection of cad file to server.
+            var cadFile = this.fileListView.collection.first();
+            if (cadFile) {
+                this.iteration.set('nativeCADFile', cadFile.get('fullName'));
             } else {
-                this.model.checkin().success(function () {
-                    this.onSuccess();
-                }.bind(this));
+                this.iteration.set('nativeCADFile', '');
             }
+
+            var that = this;
+            this.iteration.save({
+                    iterationNote: this.$inputIterationNote.val() || null,
+                    components: this.partsManagementView.collection.toJSON(),
+                    instanceAttributes: this.attributesView.collection.toJSON(),
+                    linkedDocuments: this.linkedDocumentsView.collection.toJSON()
+                }, {
+                    success: function () {
+                        that.model.checkin().success(function () {
+                            that.onSuccess();
+                        });
+                    },
+                    error: this.onError
+                }
+            );
+
+            this.fileListView.deleteFilesToDelete();
+            this.deleteClickedTags();
         },
 
         actionCheckout: function () {
