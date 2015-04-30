@@ -13,9 +13,10 @@ define([
             '<%if(isNode) {%>' +
                 '<div class="hitarea expandable-hitarea"></div>' +
             '<%}%>' +
-            '<input type="checkbox" class="available" <%if (checkedAtInit) {%>checked="checked"<%}%>>' +
+            '<input id="load-3D-<%= path %>" type="checkbox" class="load-3D available" <%if (checkedAtInit) {%>checked="checked"<%}%>>' +
+            '<label for="load-3D-<%= path %>"><i class="toggle-3D fa"></i></label>' +
         '<%} else {%>' +
-            '<input type="checkbox" disabled <%if (checkedAtInit) {%>checked="checked"<%}%>>' +
+            '<input type="checkbox" class="load-3D" disabled <%if (checkedAtInit) {%>checked="checked"<%}%>>' +
         '<%}%>' +
             '<a><label class="checkbox <%if(isNode) {%>isNode<%}%>">' +
         '<%if(isSubstitute) {%> ' +
@@ -108,12 +109,12 @@ define([
 
         events: {
             'click a': 'onComponentSelected',
-            'change input:first': 'onChangeCheckbox',
+            'change input.load-3D:first': 'onLoad3D',
             'click .openModal:first': 'onEditPart'
         },
 
         initialize: function () {
-            _.bindAll(this, ['onChangeCheckbox']);
+            _.bindAll(this, ['onLoad3D']);
             this.listenTo(this.options.resultPathCollection, 'reset', this.onAllResultPathAdded);
             this.$el.attr('id', 'path_' + String(this.model.getEncodedPath()));
             this.isForbidden = this.model.isForbidden();
@@ -125,7 +126,7 @@ define([
             this.$el.toggleClass('resultPath',isInResultPaths);
         },
 
-        onChangeCheckbox: function (event) {
+        onLoad3D: function (event) {
             if (event.target.checked) {
                 App.instancesManager.loadComponent(this.model);
             }
@@ -157,12 +158,13 @@ define([
                 isSubstitute: this.model.isSubstitute(),
                 isOptional:this.model.isOptional(),
                 hasSubstitutes : this.model.hasSubstitutes(),
-                hasPathData:this.model.hasPathData()
+                hasPathData:this.model.hasPathData(),
+                path:this.model.getEncodedPath()
             };
 
             this.$el.html(nodeTemplate(data));
 
-            this.input = this.$('>input');
+            this.input = this.$('input.load-3D').first();
 
 	        //If the ComponentViews is checked
 	        if(this.options.checkedAtInit){
@@ -203,13 +205,13 @@ define([
         events: {
             'click a:first': 'onComponentSelected',
             'click .openModal:first': 'onEditPart',
-            'change input:first': 'onChangeCheckbox',
+            'change input.load-3D:first': 'onLoad3D',
             'click .hitarea:first': 'onToggleExpand'
         },
 
         initialize: function () {
             this.isExpanded = false;
-            _.bindAll(this, ['onChangeCheckbox']);
+            _.bindAll(this, ['onLoad3D']);
             this.listenTo(this.options.resultPathCollection, 'reset', this.onAllResultPathAdded);
             this.$el.attr('id', 'path_' + String(this.model.getEncodedPath() || '-1'));
             this.isForbidden = this.model.isForbidden();
@@ -221,7 +223,8 @@ define([
             this.$el.toggleClass('resultPath',isInResultPaths);
         },
 
-        onChangeCheckbox: function (event) {
+        onLoad3D: function (event) {
+            debugger
             if (event) {
                 if (event.target.checked) {
                     App.instancesManager.loadComponent(this.model);
@@ -255,12 +258,13 @@ define([
                 isSubstitute: this.model.isSubstitute(),
                 isOptional:this.model.isOptional(),
                 hasSubstitutes : this.model.hasSubstitutes(),
-                hasPathData:this.model.hasPathData()
+                hasPathData:this.model.hasPathData(),
+                path:this.model.getEncodedPath()
             };
 
             this.$el.html(nodeTemplate(data));
 
-            this.input = this.$('>input');
+            this.input = this.$('input.load-3D').first();
 
 	        //If the ComponentViews is checked
 	        if(this.options.checkedAtInit && (!App.collaborativeView || !App.collaborativeView.roomKey)){
