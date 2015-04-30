@@ -94,13 +94,18 @@ public class FileExportWriter implements MessageBodyWriter<FileExportEntity> {
             for(Map.Entry<String, Set<BinaryResource>> entry:entries){
                 String folderName = entry.getKey();
                 Set<BinaryResource> files = entry.getValue();
+
+                ZipEntry zipEntry = new ZipEntry(folderName);
+                zs.putNextEntry(zipEntry);
                 for(BinaryResource binaryResource:files){
                     try {
-                        addToZipFile(folderName,binaryResource,zs);
+                        addToZipFile(binaryResource,zs);
                     } catch (StorageException e) {
                         e.printStackTrace();
                     }
                 }
+                zs.closeEntry();
+
             }
 
         } catch (UserNotFoundException e) {
@@ -124,11 +129,11 @@ public class FileExportWriter implements MessageBodyWriter<FileExportEntity> {
 
     }
 
-    public static void addToZipFile(String filename, BinaryResource binaryResource, ZipOutputStream zos) throws IOException, StorageException {
+    public static void addToZipFile(BinaryResource binaryResource, ZipOutputStream zos) throws IOException, StorageException {
 
         InputStream binaryResourceInputStream = dataManager.getBinaryResourceInputStream(binaryResource);
 
-        ZipEntry zipEntry = new ZipEntry(filename);
+        ZipEntry zipEntry = new ZipEntry(binaryResource.getName());
         zos.putNextEntry(zipEntry);
 
         byte[] bytes = new byte[1024];
@@ -140,4 +145,5 @@ public class FileExportWriter implements MessageBodyWriter<FileExportEntity> {
         zos.closeEntry();
         binaryResourceInputStream.close();
     }
+
 }

@@ -2619,8 +2619,12 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
                         binaryResources = new HashSet<>();
                         result.put(partMasterNumber,binaryResources);
                     }
+                    BinaryResource nativeCADFile = partIteration.getNativeCADFile();
 
-                    binaryResources.add(partIteration.getNativeCADFile());
+                    if(nativeCADFile != null){
+                        binaryResources.add(nativeCADFile);
+                    }
+
                     Set<DocumentLink> linkedDocuments = partIteration.getLinkedDocuments();
 
                     for(DocumentLink documentLink :linkedDocuments){

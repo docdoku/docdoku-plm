@@ -402,7 +402,6 @@ public class ProductResource {
                 .entity(fileExportEntity).build();
     }
 
-
     /**
      * Because some AS (like Glassfish) forbids the use of CacheControl
      * when authenticated we use the LastModified header to fake
