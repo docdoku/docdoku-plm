@@ -384,21 +384,38 @@ define([
         },
 
         actionCheckin: function () {
-            var note = this.$('#inputRevisionNote').val() || null;
+            this.interceptSubmit();
+            if (this.isValid) {
 
-            if (note) {
+                /*saving iteration*/
+                var that = this;
+
                 this.iteration.save({
-                    revisionNote: note
-                }).success(function () {
-                    this.model.checkin().success(function () {
-                        this.onSuccess();
-                    }.bind(this));
-                }.bind(this));
+                    revisionNote: this.$('#inputRevisionNote').val() || null,
+                    instanceAttributes: this.attributesView.collection.toJSON(),
+                    linkedDocuments: this.linkedDocumentsView.collection.toJSON()
+                }, {
+                    success: function () {
+                        that.model.checkin().success(function () {
+                            that.onSuccess();
+                        });
+                    }
+                });
 
-            } else {
-                this.model.checkin().success(function () {
-                    this.onSuccess();
-                }.bind(this));
+                /*There is a parsing problem at saving time*/
+                var files = this.iteration.get('attachedFiles');
+
+                /*tracking back files*/
+                this.iteration.set({
+                    attachedFiles: files
+                });
+
+                /*
+                 *saving new files : nothing to do : it's already saved
+                 *deleting unwanted files
+                 */
+                this.fileListView.deleteFilesToDelete();
+
             }
         },
 
@@ -424,7 +441,6 @@ define([
                 this.render();
                 this.activateTab(1);
             }.bind(this));
-
         },
 
 
