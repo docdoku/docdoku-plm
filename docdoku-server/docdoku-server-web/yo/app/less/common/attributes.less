@@ -38,13 +38,16 @@
     }
   }
   .controls.boolean {
-    > input {
-      &:checked ~ .false {
-        display: none;
-      }
-      &:not(:checked) ~ .true {
-        display: none;
-      }
+    > label {
+        height : 12px;
+        > input {
+            &:checked ~ .false {
+                display: none;
+            }
+            &:not(:checked) ~ .true {
+                display: none;
+            }
+        }
     }
     input[type="checkbox"].input-xlarge.value {
       height: 18px;
