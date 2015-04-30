@@ -36,7 +36,7 @@ define(['backbone'], function (Backbone) {
         },
 
         getZipUrl:function (){
-            return App.config.contextPath + '/product-structure/#' + App.config.workspaceId + '/products/' + encodeURIComponent(this.getConfigurationItemId()) + '/export-files?configSpecType=' + encodeURIComponent(this.getId());
+            return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + encodeURIComponent(this.getConfigurationItemId()) + '/export-files?configSpecType=' + encodeURIComponent(this.getId());
         },
 
         getSubstitutesParts:function(){

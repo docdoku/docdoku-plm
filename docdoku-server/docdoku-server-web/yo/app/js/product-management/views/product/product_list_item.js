@@ -13,8 +13,7 @@ define([
         events: {
             'click input[type=checkbox]': 'selectionChanged',
             'click td.product_id': 'openDetailsView',
-            'click a.design_item': 'openPartView',
-            'click .fa-file-archive-o': 'onDownloadZip'
+            'click a.design_item': 'openPartView'
         },
 
         tagName: 'tr',
@@ -71,10 +70,6 @@ define([
                 });
                 partModalView.show();
             });
-        },
-
-        onDownloadZip: function(){
-
         }
 
     });

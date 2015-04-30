@@ -57,7 +57,7 @@ define(['backbone'], function (Backbone) {
 
 
         getZipUrl:function (){
-            return App.config.contextPath + '/product-structure/#' + App.config.workspaceId + '/products/' + encodeURIComponent(this.getId()) + '/export-files?configSpecType=latest';
+            return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + encodeURIComponent(this.getId()) + '/export-files?configSpecType=latest';
         },
 
         createBaseline: function (baselineArgs, callbacks) {
