@@ -29,13 +29,13 @@ import java.io.Serializable;
  *
  */
 
-@Table(name="TYPEDLINK")
+@Table(name="PATHTOPATHLINK")
 @Entity
 @NamedQueries({
-        @NamedQuery(name="TypedLink.findTypedLinksTypeByProductInstanceIteration", query="SELECT DISTINCT t.type FROM TypedLink t JOIN ProductInstanceIteration pi ON t member of pi.typedLinks AND pi = :productInstanceIteration")
+        @NamedQuery(name="PathToPathLink.findPathToPathLinkTypesByProductInstanceIteration", query="SELECT DISTINCT t.type FROM PathToPathLink t JOIN ProductInstanceIteration pi ON t member of pi.pathToPathLinks AND pi = :productInstanceIteration")
 })
 
-public class TypedLink implements Serializable{
+public class PathToPathLink implements Serializable{
 
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     @Id
@@ -43,16 +43,16 @@ public class TypedLink implements Serializable{
     private int id;
 
     private String type;
-    private String pathFrom;
-    private String pathTo;
+    private String sourcePath;
+    private String targetPath;
 
-    public TypedLink() {
+    public PathToPathLink() {
     }
 
-    public TypedLink(String type, String pathFrom, String pathTo) {
+    public PathToPathLink(String type, String sourcePath, String targetPath) {
         this.type = type;
-        this.pathFrom = pathFrom;
-        this.pathTo = pathTo;
+        this.sourcePath = sourcePath;
+        this.targetPath = targetPath;
     }
 
     public int getId() {
@@ -63,20 +63,20 @@ public class TypedLink implements Serializable{
         this.id = id;
     }
 
-    public String getPathFrom() {
-        return pathFrom;
+    public String getSourcePath() {
+        return sourcePath;
     }
 
-    public void setPathFrom(String pathFrom) {
-        this.pathFrom = pathFrom;
+    public void setSourcePath(String pathFrom) {
+        this.sourcePath = pathFrom;
     }
 
-    public String getPathTo() {
-        return pathTo;
+    public String getTargetPath() {
+        return targetPath;
     }
 
-    public void setPathTo(String pathTo) {
-        this.pathTo = pathTo;
+    public void setTargetPath(String pathTo) {
+        this.targetPath = pathTo;
     }
 
     public String getType() {

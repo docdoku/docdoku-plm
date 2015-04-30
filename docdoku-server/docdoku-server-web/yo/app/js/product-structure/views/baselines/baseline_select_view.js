@@ -15,7 +15,7 @@ define([
 			'change #latest_selector_list' : 'changeLatest',
 			'change #baseline_selector_list' : 'changeBaseline',
 			'change #product_instance_selector_list' : 'changeInstance',
-			'change #typed_link_selector_list' : 'changeTypedLink'
+			'change #path_to_path_link_selector_list' : 'changePathToPathLink'
 		},
 
         availableFilters:['wip','latest','latest-released'],
@@ -36,7 +36,7 @@ define([
 
             this.$selectBaselineSpec.hide();
             this.$selectProdInstSpec.hide();
-            this.$selectTypedLink.hide();
+            this.$selectPathToPathLink.hide();
 
 			this.baselineCollection.fetch({reset:true});
             this.productInstanceCollection.fetch({reset:true});
@@ -55,7 +55,7 @@ define([
 			this.$selectLatestFilter = this.$('#latest_selector_list');
 			this.$selectBaselineSpec = this.$('#baseline_selector_list');
 			this.$selectProdInstSpec = this.$('#product_instance_selector_list');
-			this.$selectTypedLink = this.$('#typed_link_selector_list');
+			this.$selectPathToPathLink = this.$('#path_to_path_link_selector_list');
 		},
 
 		onBaselineCollectionReset:function(){
@@ -74,7 +74,7 @@ define([
             if(selected){
                 this.$selectConfSpec.val('baseline');
                 this.$selectProdInstSpec.hide();
-                this.$selectTypedLink.hide();
+                this.$selectPathToPathLink.hide();
                 this.$selectLatestFilter.hide();
                 this.$selectBaselineSpec.val(selected.getId()).show();
                 this.setDescription(selected.getIterationNote());
@@ -122,14 +122,14 @@ define([
         changeLatest:function(){
             this.$selectBaselineSpec.hide();
             this.$selectProdInstSpec.hide();
-            this.$selectTypedLink.hide();
+            this.$selectPathToPathLink.hide();
             this.$selectLatestFilter.show();
             this.trigger('config_spec:changed', this.$selectLatestFilter.val());
             this.setDescription('');
         },
         changeBaseline:function(){
             this.$selectProdInstSpec.hide();
-            this.$selectTypedLink.hide();
+            this.$selectPathToPathLink.hide();
             this.$selectLatestFilter.hide();
             this.$selectBaselineSpec.show();
             this.trigger('config_spec:changed', this.$selectBaselineSpec.val());
@@ -141,12 +141,12 @@ define([
             this.$selectBaselineSpec.hide();
             this.$selectLatestFilter.hide();
             this.$selectProdInstSpec.show();
-            this.$selectTypedLink.show();
+            this.$selectPathToPathLink.show();
             this.trigger('config_spec:changed', this.$selectProdInstSpec.val());
             this.setDescription('');
         },
 
-        changeTypedLink:function(){
+        changePathToPathLink:function(){
 
         },
 
@@ -162,7 +162,7 @@ define([
                 this.$selectBaselineSpec.hide();
                 this.$selectLatestFilter.hide();
                 this.$selectProdInstSpec.hide();
-                this.$selectTypedLink.hide();
+                this.$selectPathToPathLink.hide();
 
                 selectedConfigSpecOption.parent().val(App.config.configSpec).show();
 

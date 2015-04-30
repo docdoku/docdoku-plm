@@ -28,7 +28,7 @@ import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.product.ConfigurationItemKey;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartLink;
-import com.docdoku.core.product.TypedLink;
+import com.docdoku.core.product.PathToPathLink;
 import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IProductInstanceManagerLocal;
@@ -545,35 +545,34 @@ public class ProductInstancesResource {
     }
 
     @GET
-    @Path("{serialNumber}/typedlinks")
+    @Path("{serialNumber}/path-to-path-links-types")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<TypedLinkDTO> getTypedLinksTypes(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException {
-        List<String> typedLinksType = productInstanceService.getTypedLinksType(workspaceId, configurationItemId, serialNumber);
-        List<TypedLinkDTO> typedLinkDTOs = new ArrayList<>();
-        for(String type : typedLinksType){
-            TypedLinkDTO typedLinkDTO = new TypedLinkDTO();
-            typedLinkDTO.setType(type);
-            typedLinkDTOs.add(typedLinkDTO);
-
+    public List<PathToPathLinkDTO> getPathToPathLinkTypes(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException {
+        List<String> pathToPathLinkTypes = productInstanceService.getPathToPathLinkTypes(workspaceId, configurationItemId, serialNumber);
+        List<PathToPathLinkDTO> pathToPathLinkDTOs = new ArrayList<>();
+        for(String type : pathToPathLinkTypes){
+            PathToPathLinkDTO pathToPathLinkDTO = new PathToPathLinkDTO();
+            pathToPathLinkDTO.setType(type);
+            pathToPathLinkDTOs.add(pathToPathLinkDTO);
         }
-        return typedLinkDTOs;
+        return pathToPathLinkDTOs;
     }
 
     @GET
-    @Path("{serialNumber}/typedlinks/{typedLinkId}")
+    @Path("{serialNumber}/path-to-path-links/{pathToPathLinkId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public TypedLinkDTO createTypedLink(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber,@PathParam("typedLinkId") int typedLinkId) throws UserNotActiveException, WorkspaceNotFoundException, UserNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, TypedLinkNotFoundException {
-        TypedLink typedLink = productInstanceService.getTypedLink(workspaceId, configurationItemId, serialNumber, typedLinkId);
-        return mapper.map(typedLink,TypedLinkDTO.class);
+    public PathToPathLinkDTO createPathToPathLink(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, @PathParam("pathToPathLinkId") int pathToPathLinkId) throws UserNotActiveException, WorkspaceNotFoundException, UserNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, PathToPathLinkNotFoundException {
+        PathToPathLink pathToPathLink = productInstanceService.getPathToPathLink(workspaceId, configurationItemId, serialNumber, pathToPathLinkId);
+        return mapper.map(pathToPathLink,PathToPathLinkDTO.class);
     }
 
     @POST
-    @Path("{serialNumber}/typedlinks")
+    @Path("{serialNumber}/path-to-path-links")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public TypedLinkDTO createTypedLink(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, TypedLinkDTO typedLinkDTO) throws TypedLinkAlreadyExistsException, UserNotActiveException, WorkspaceNotFoundException, CreationException, UserNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException {
-        TypedLink typedLink = productInstanceService.createTypedLink(workspaceId, configurationItemId, serialNumber, typedLinkDTO.getType(), typedLinkDTO.getPathFrom(), typedLinkDTO.getPathTo());
-        return mapper.map(typedLink,TypedLinkDTO.class);
+    public PathToPathLinkDTO createPathToPathLink(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, PathToPathLinkDTO pathToPathLinkDTO) throws PathToPathLinkAlreadyExistsException, UserNotActiveException, WorkspaceNotFoundException, CreationException, UserNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException {
+        PathToPathLink pathToPathLink = productInstanceService.createPathToPathLink(workspaceId, configurationItemId, serialNumber, pathToPathLinkDTO.getType(), pathToPathLinkDTO.getSourcePath(), pathToPathLinkDTO.getTargetPath());
+        return mapper.map(pathToPathLink,PathToPathLinkDTO.class);
     }
 
 

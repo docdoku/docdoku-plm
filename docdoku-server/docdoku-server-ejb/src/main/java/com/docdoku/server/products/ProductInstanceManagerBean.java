@@ -930,7 +930,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     @Override
-    public TypedLink createTypedLink(String workspaceId, String configurationItemId, String serialNumber, String type, String pathFrom, String pathTo) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, TypedLinkAlreadyExistsException, CreationException {
+    public PathToPathLink createPathToPathLink(String workspaceId, String configurationItemId, String serialNumber, String type, String pathFrom, String pathTo) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, PathToPathLinkAlreadyExistsException, CreationException {
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         Locale locale = new Locale(user.getLanguage());
         // Load the product instance
@@ -939,17 +939,17 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
 
         checkProductInstanceWriteAccess(workspaceId,prodInstM,user);
 
-        TypedLink typedLink = new TypedLink(type, pathFrom, pathTo);
-        new TypedLinkDAO(locale,em).createTypedLink(typedLink);
+        PathToPathLink pathToPathLink = new PathToPathLink(type, pathFrom, pathTo);
+        new PathToPathLinkDAO(locale,em).createPathToPathLink(pathToPathLink);
 
-        prodInstM.getLastIteration().addTypedLink(typedLink);
+        prodInstM.getLastIteration().addPathToPathLink(pathToPathLink);
 
-        return typedLink;
+        return pathToPathLink;
     }
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     @Override
-    public TypedLink getTypedLink(String workspaceId, String configurationItemId, String serialNumber, int typedLinkId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, TypedLinkNotFoundException {
+    public PathToPathLink getPathToPathLink(String workspaceId, String configurationItemId, String serialNumber, int pathToPathLinkId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, PathToPathLinkNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         Locale locale = new Locale(user.getLanguage());
         // Load the product instance
@@ -957,13 +957,13 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         ProductInstanceMaster prodInstM = productInstanceMasterDAO.loadProductInstanceMaster(new ProductInstanceMasterKey(serialNumber, workspaceId, configurationItemId));
 
         checkProductInstanceReadAccess(workspaceId, prodInstM, user);
-        TypedLinkDAO typedLinkDAO = new TypedLinkDAO(locale, em);
-        return typedLinkDAO.loadTypedLink(typedLinkId);
+        PathToPathLinkDAO pathToPathLinkDAO = new PathToPathLinkDAO(locale, em);
+        return pathToPathLinkDAO.loadPathToPathLink(pathToPathLinkId);
     }
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     @Override
-    public void deleteTypedLink(String workspaceId, String configurationItemId, String serialNumber, int typedLinkId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, TypedLinkNotFoundException {
+    public void deletePathToPathLink(String workspaceId, String configurationItemId, String serialNumber, int pathToPathLinkId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException, PathToPathLinkNotFoundException {
 
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         Locale locale = new Locale(user.getLanguage());
@@ -972,16 +972,16 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         ProductInstanceMaster prodInstM = productInstanceMasterDAO.loadProductInstanceMaster(new ProductInstanceMasterKey(serialNumber, workspaceId, configurationItemId));
 
         checkProductInstanceWriteAccess(workspaceId,prodInstM,user);
-        TypedLinkDAO typedLinkDAO = new TypedLinkDAO(locale, em);
-        TypedLink typedLink = typedLinkDAO.loadTypedLink(typedLinkId);
-        prodInstM.getLastIteration().removeTypedLink(typedLink);
-        typedLinkDAO.removeTypedLink(typedLink);
+        PathToPathLinkDAO pathToPathLinkDAO = new PathToPathLinkDAO(locale, em);
+        PathToPathLink pathToPathLink = pathToPathLinkDAO.loadPathToPathLink(pathToPathLinkId);
+        prodInstM.getLastIteration().removePathToPathLink(pathToPathLink);
+        pathToPathLinkDAO.removePathToPathLink(pathToPathLink);
 
     }
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     @Override
-    public List<String> getTypedLinksType(String workspaceId, String configurationItemId, String serialNumber) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException {
+    public List<String> getPathToPathLinkTypes(String workspaceId, String configurationItemId, String serialNumber) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException {
 
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         Locale locale = new Locale(user.getLanguage());
@@ -990,7 +990,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         ProductInstanceMaster prodInstM = productInstanceMasterDAO.loadProductInstanceMaster(new ProductInstanceMasterKey(serialNumber, workspaceId, configurationItemId));
 
         checkProductInstanceReadAccess(workspaceId,prodInstM,user);
-        List<String> types =  new TypedLinkDAO(locale, em).getDistinctTypedLinksType(prodInstM.getLastIteration());
+        List<String> types =  new PathToPathLinkDAO(locale, em).getDistinctPathToPathLinkTypes(prodInstM.getLastIteration());
 
         return types;
     }

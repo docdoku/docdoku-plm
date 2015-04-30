@@ -20,34 +20,36 @@
 
 package com.docdoku.core.exceptions;
 
+import com.docdoku.core.product.PathToPathLink;
+
 import java.text.MessageFormat;
 import java.util.Locale;
 
 /**
  *
- * @author Florent Garin
+ * @author Morgan Guimard
  */
-public class TypedLinkNotFoundException extends EntityNotFoundException {
+public class PathToPathLinkAlreadyExistsException extends EntityAlreadyExistsException {
 
-    private final int mTypedLinkId;
+    private final PathToPathLink mPathToPathLink;
 
-    public TypedLinkNotFoundException(String pMessage) {
+    public PathToPathLinkAlreadyExistsException(String pMessage) {
         super(pMessage);
-        mTypedLinkId=0;
+        mPathToPathLink =null;
     }
 
-    public TypedLinkNotFoundException(Locale pLocale, int pTypedLinkId) {
-        this(pLocale, pTypedLinkId, null);
+    public PathToPathLinkAlreadyExistsException(Locale pLocale, PathToPathLink pPathToPathLink) {
+        this(pLocale, pPathToPathLink, null);
     }
 
-    public TypedLinkNotFoundException(Locale pLocale, int pTypedLinkId, Throwable pCause) {
+    public PathToPathLinkAlreadyExistsException(Locale pLocale, PathToPathLink pPathToPathLink, Throwable pCause) {
         super(pLocale, pCause);
-        mTypedLinkId=pTypedLinkId;
+        mPathToPathLink = pPathToPathLink;
     }
 
     @Override
     public String getLocalizedMessage() {
         String message = getBundleDefaultMessage();
-        return MessageFormat.format(message,mTypedLinkId);
+        return MessageFormat.format(message, mPathToPathLink);
     }
 }

@@ -26,7 +26,7 @@ import com.docdoku.core.common.User;
 import com.docdoku.core.document.DocumentLink;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.product.PartIteration;
-import com.docdoku.core.product.TypedLink;
+import com.docdoku.core.product.PathToPathLink;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlTransient;
@@ -154,9 +154,9 @@ public class ProductInstanceIteration implements Serializable, FileHolder {
 
 
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinTable(name = "PRDINSTITERATION_TYPEDLINK",
+    @JoinTable(name = "PRDINSTITERATION_P2PLINK",
             inverseJoinColumns = {
-                    @JoinColumn(name = "TYPEDLINKED_ID", referencedColumnName = "ID")
+                    @JoinColumn(name = "PATHTOPATHLINK_ID", referencedColumnName = "ID")
             },
             joinColumns = {
                     @JoinColumn(name="PRDINSTANCEMASTER_SERIALNUMBER", referencedColumnName="PRDINSTANCEMASTER_SERIALNUMBER"),
@@ -164,7 +164,7 @@ public class ProductInstanceIteration implements Serializable, FileHolder {
                     @JoinColumn(name="WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
                     @JoinColumn(name="ITERATION", referencedColumnName = "ITERATION")
             })
-    private List<TypedLink> typedLinks=new ArrayList<>();
+    private List<PathToPathLink> pathToPathLinks =new ArrayList<>();
 
     public ProductInstanceIteration() {
     }
@@ -305,19 +305,19 @@ public class ProductInstanceIteration implements Serializable, FileHolder {
         return attachedFiles.remove(pBinaryResource);
     }
 
-    public List<TypedLink> getTypedLinks() {
-        return typedLinks;
+    public List<PathToPathLink> getPathToPathLinks() {
+        return pathToPathLinks;
     }
 
-    public void setTypedLinks(List<TypedLink> typedLinks) {
-        this.typedLinks = typedLinks;
+    public void setPathToPathLinks(List<PathToPathLink> pathToPathLinks) {
+        this.pathToPathLinks = pathToPathLinks;
     }
 
-    public void addTypedLink(TypedLink typedLink) {
-        typedLinks.add(typedLink);
+    public void addPathToPathLink(PathToPathLink pathToPathLink) {
+        pathToPathLinks.add(pathToPathLink);
     }
 
-    public void removeTypedLink(TypedLink typedLink) {
-        typedLinks.remove(typedLink);
+    public void removePathToPathLink(PathToPathLink pathToPathLink) {
+        pathToPathLinks.remove(pathToPathLink);
     }
 }

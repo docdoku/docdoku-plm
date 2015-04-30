@@ -92,7 +92,7 @@
     <class>com.docdoku.core.query.Query</class>
     <class>com.docdoku.core.query.QueryRule</class>
     <class>com.docdoku.core.query.QueryContext</class>
-    <class>com.docdoku.core.product.TypedLink</class>
+    <class>com.docdoku.core.product.PathToPathLink</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <property name="javax.persistence.schema-generation.database.action" value="create"/>

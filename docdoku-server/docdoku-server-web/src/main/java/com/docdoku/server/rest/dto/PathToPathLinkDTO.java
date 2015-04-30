@@ -22,13 +22,13 @@ package com.docdoku.server.rest.dto;
 
 import java.io.Serializable;
 
-public class TypedLinkDTO implements Serializable{
+public class PathToPathLinkDTO implements Serializable{
 
     private String type;
-    private String pathFrom;
-    private String pathTo;
+    private String sourcePath;
+    private String targetPath;
 
-    public TypedLinkDTO() {
+    public PathToPathLinkDTO() {
     }
 
     public String getType() {
@@ -39,19 +39,19 @@ public class TypedLinkDTO implements Serializable{
         this.type = type;
     }
 
-    public String getPathFrom() {
-        return pathFrom;
+    public String getSourcePath() {
+        return sourcePath;
     }
 
-    public void setPathFrom(String pathFrom) {
-        this.pathFrom = pathFrom;
+    public void setSourcePath(String sourcePath) {
+        this.sourcePath = sourcePath;
     }
 
-    public String getPathTo() {
-        return pathTo;
+    public String getTargetPath() {
+        return targetPath;
     }
 
-    public void setPathTo(String pathTo) {
-        this.pathTo = pathTo;
+    public void setTargetPath(String targetPath) {
+        this.targetPath = targetPath;
     }
 }
