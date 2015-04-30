@@ -8,6 +8,7 @@ import com.docdoku.core.product.PathToPathLink;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceException;
 import java.util.List;
 import java.util.Locale;
@@ -63,5 +64,30 @@ public class PathToPathLinkDAO {
         return em.createNamedQuery("PathToPathLink.findPathToPathLinkTypesByProductInstanceIteration",String.class)
                 .setParameter("productInstanceIteration",productInstanceIteration)
                 .getResultList();
+    }
+
+    public PathToPathLink getSamePathToPathLink(ProductInstanceIteration productInstanceIteration, PathToPathLink pathToPathLink){
+        try {
+            return em.createNamedQuery("PathToPathLink.findSamePathToPathLinkInProductInstanceIteration", PathToPathLink.class)
+                    .setParameter("productInstanceIteration", productInstanceIteration)
+                    .setParameter("targetPath", pathToPathLink.getTargetPath())
+                    .setParameter("sourcePath", pathToPathLink.getSourcePath())
+                    .setParameter("type", pathToPathLink.getType())
+                    .getSingleResult();
+        }catch(NoResultException e){
+            return null;
+        }
+    }
+
+    public PathToPathLink getNextPathToPathLink(ProductInstanceIteration productInstanceIteration, PathToPathLink pathToPathLink){
+        try {
+            return em.createNamedQuery("PathToPathLink.findNextPathToPathLinkInProductInstanceIteration", PathToPathLink.class)
+                    .setParameter("productInstanceIteration", productInstanceIteration)
+                    .setParameter("targetPath", pathToPathLink.getTargetPath())
+                    .setParameter("type", pathToPathLink.getType())
+                    .getSingleResult();
+        }catch(NoResultException e){
+            return null;
+        }
     }
 }
