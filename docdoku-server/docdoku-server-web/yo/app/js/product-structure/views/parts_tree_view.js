@@ -13,7 +13,18 @@ define(['backbone', 'models/component_module', 'views/component_views'
             'click #product_title .product_title': 'onProductTitleClicked',
             'load:root': 'onProductTitleClicked',
             'click .fa-refresh': 'refreshProductView',
-            'click .fa-comment': 'toggleComment'
+            'click .fa-comment': 'toggleComment',
+            'checkboxSelected': 'onCheckboxSelected'
+        },
+
+        checkedParts : [],
+
+        onCheckboxSelected:function(e, checked, model){
+            if(checked){
+                this.checkedParts.push(model);
+            }else{
+                this.checkedParts.splice(this.checkedParts.indexOf(model), 1);
+            }
         },
 
         setSelectedComponent: function (component) {
@@ -192,6 +203,7 @@ define(['backbone', 'models/component_module', 'views/component_views'
         },
 
         refreshAll: function () {
+            this.checkedParts = [];
             this.componentViews.fetchAll();
             this.onProductTitleClicked();
             App.instancesManager.clear();

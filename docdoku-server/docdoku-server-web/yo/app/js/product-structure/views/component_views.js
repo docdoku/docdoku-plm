@@ -129,6 +129,7 @@ define([
         },
 
         selectPart:function(e){
+            this.$el.trigger('checkboxSelected', [e.target.checked,this.model]);
             e.preventDefault();
             e.stopPropagation();
             return false;
@@ -233,6 +234,7 @@ define([
         },
 
         selectPart:function(e){
+            this.$el.trigger('checkboxSelected', [e.target.checked,this.model]);
             e.preventDefault();
             e.stopPropagation();
             return false;
