@@ -29,8 +29,10 @@ import com.docdoku.core.product.ConfigurationItemKey;
 public class FileExportEntity {
 
     private ConfigurationItemKey configurationItemKey;
-    private String serialNumber;
     private PSFilter psFilter;
+
+    private String serialNumber;
+    private Integer baselineId;
 
     public FileExportEntity() {
     }
@@ -57,5 +59,13 @@ public class FileExportEntity {
 
     public void setSerialNumber(String serialNumber) {
         this.serialNumber = serialNumber;
+    }
+
+    public Integer getBaselineId() {
+        return baselineId;
+    }
+
+    public void setBaselineId(Integer baselineId) {
+        this.baselineId = baselineId;
     }
 }

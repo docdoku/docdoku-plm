@@ -391,14 +391,31 @@ public class ProductResource {
     @GET
     @Path("{ciId}/export-files")
     public Response exportFiles(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("configSpecType") String configSpecType) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, BaselineNotFoundException, ProductInstanceMasterNotFoundException {
+
+        if(configSpecType == null){
+            configSpecType = "wip";
+        }
+
         FileExportEntity fileExportEntity = new FileExportEntity();
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
         PSFilter psFilter = productService.getPSFilter(ciKey,configSpecType);
+
         fileExportEntity.setPsFilter(psFilter);
         fileExportEntity.setConfigurationItemKey(ciKey);
+
+        if(configSpecType.startsWith("pi-")){
+            fileExportEntity.setSerialNumber(configSpecType.substring(3));
+        }else if(configSpecType!="wip" && configSpecType!="latest" && configSpecType!="released"){
+            try {
+                fileExportEntity.setBaselineId(Integer.parseInt(configSpecType));
+            }catch(NumberFormatException e){
+                e.printStackTrace();
+            }
+        }
+
         return Response.ok()
                 .header("Content-Type", "application/download")
-                .header("Content-Disposition", "attachment; filename=\"export.zip\"")
+                .header("Content-Disposition", "attachment; filename=\""+ciId+"-"+configSpecType+"-export.zip\"")
                 .entity(fileExportEntity).build();
     }
 

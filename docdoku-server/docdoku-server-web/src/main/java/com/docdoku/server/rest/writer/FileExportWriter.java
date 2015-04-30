@@ -20,8 +20,13 @@
 package com.docdoku.server.rest.writer;
 
 import com.docdoku.core.common.BinaryResource;
+import com.docdoku.core.configuration.ProductInstanceIteration;
+import com.docdoku.core.configuration.ProductInstanceMaster;
+import com.docdoku.core.configuration.ProductInstanceMasterKey;
 import com.docdoku.core.exceptions.*;
+import com.docdoku.core.product.ConfigurationItemKey;
 import com.docdoku.core.services.IDataManagerLocal;
+import com.docdoku.core.services.IProductInstanceManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.rest.util.FileExportEntity;
 import com.docdoku.server.rest.util.InstanceBodyWriterTools;
@@ -52,6 +57,7 @@ public class FileExportWriter implements MessageBodyWriter<FileExportEntity> {
 
     private static Context context;
     private static IProductManagerLocal productService;
+    private static IProductInstanceManagerLocal productInstanceService;
     private static IDataManagerLocal dataManager;
     private static final Logger LOGGER = Logger.getLogger(InstanceBodyWriterTools.class.getName());
     private static Mapper mapper;
@@ -60,6 +66,7 @@ public class FileExportWriter implements MessageBodyWriter<FileExportEntity> {
         try {
             context = new InitialContext();
             productService = (IProductManagerLocal) context.lookup("java:global/docdoku-server-ear/docdoku-server-ejb/ProductManagerBean");
+            productInstanceService = (IProductInstanceManagerLocal) context.lookup("java:global/docdoku-server-ear/docdoku-server-ejb/ProductInstanceManagerBean");
             dataManager = (IDataManagerLocal) context.lookup("java:global/docdoku-server-ear/docdoku-server-ejb/DataManagerBean");
             mapper = DozerBeanMapperSingletonWrapper.getInstance();
         } catch (NamingException e) {
@@ -80,21 +87,16 @@ public class FileExportWriter implements MessageBodyWriter<FileExportEntity> {
     @Override
     public void writeTo(FileExportEntity fileExportEntity, Class<?> aClass, Type type, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> multivaluedMap, OutputStream outputStream) throws IOException, WebApplicationException {
 
-        // create a zip file
-        // find all part iteration
-        // for each part iteration => create a folder and store part files (pull links)
-        // if context provided (serial number => put attached files in zip)
-        // serve the response with file name and application/download content type
-
         ZipOutputStream zs = new ZipOutputStream(outputStream);
 
         try {
+
             Map<String, Set<BinaryResource>> binariesInTree = productService.getBinariesInTree(fileExportEntity.getConfigurationItemKey().getWorkspace(),fileExportEntity.getConfigurationItemKey(),fileExportEntity.getPsFilter());
             Set<Map.Entry<String, Set<BinaryResource>>> entries = binariesInTree.entrySet();
+
             for(Map.Entry<String, Set<BinaryResource>> entry:entries){
                 String folderName = entry.getKey();
                 Set<BinaryResource> files = entry.getValue();
-
                 for(BinaryResource binaryResource:files){
                     try {
                         addToZipFile(binaryResource,folderName,zs);
@@ -102,7 +104,10 @@ public class FileExportWriter implements MessageBodyWriter<FileExportEntity> {
                         e.printStackTrace();
                     }
                 }
+            }
 
+            if(fileExportEntity.getSerialNumber() != null){
+                addProductInstanceDataToZip(zs,fileExportEntity.getConfigurationItemKey(),fileExportEntity.getSerialNumber());
             }
 
         } catch (UserNotFoundException e) {
@@ -119,11 +124,23 @@ public class FileExportWriter implements MessageBodyWriter<FileExportEntity> {
             e.printStackTrace();
         } catch (PartMasterNotFoundException e) {
             e.printStackTrace();
+        } catch (ProductInstanceMasterNotFoundException e) {
+            e.printStackTrace();
+        } catch (StorageException e) {
+            e.printStackTrace();
         }
 
         zs.close();
 
+    }
 
+    private void addProductInstanceDataToZip(ZipOutputStream zs, ConfigurationItemKey configurationItemKey, String serialNumber) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ProductInstanceMasterNotFoundException, IOException, StorageException {
+        ProductInstanceMaster productInstanceMaster = productInstanceService.getProductInstanceMaster(new ProductInstanceMasterKey(serialNumber, configurationItemKey));
+        ProductInstanceIteration lastIteration = productInstanceMaster.getLastIteration();
+        Set<BinaryResource> attachedFiles = lastIteration.getAttachedFiles();
+        for(BinaryResource attachedFile : attachedFiles){
+            addToZipFile(attachedFile,productInstanceMaster.getSerialNumber(),zs);
+        }
     }
 
     public static void addToZipFile(BinaryResource binaryResource, String folderName, ZipOutputStream zos) throws IOException, StorageException {
