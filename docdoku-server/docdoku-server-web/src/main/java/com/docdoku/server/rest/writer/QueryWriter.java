@@ -50,6 +50,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 
 @Provider
@@ -71,13 +72,13 @@ public class QueryWriter implements MessageBodyWriter<QueryResult> {
     public void writeTo(QueryResult queryResult, Class<?> aClass, Type type, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> multivaluedMap, OutputStream outputStream) throws IOException, WebApplicationException {
 
         if(queryResult.getExportType().equals(QueryResult.ExportType.JSON)){
-            generateJSONResponse(outputStream,queryResult);
+            generateJSONResponse(outputStream, queryResult);
 
         } else if(queryResult.getExportType().equals(QueryResult.ExportType.CSV)){
             generateCSVResponse(outputStream,queryResult);
 
         } else if(queryResult.getExportType().equals(QueryResult.ExportType.XLS)){
-            excelGenerator.generateXLSResponse(queryResult);
+            excelGenerator.generateXLSResponse(queryResult,new Locale(queryResult.getQuery().getAuthor().getLanguage()));
         }else{
             throw new IllegalArgumentException();
         }

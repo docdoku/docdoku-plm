@@ -27,6 +27,7 @@ import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.query.QueryContext;
 import com.docdoku.core.query.QueryField;
 import com.docdoku.core.query.QueryResultRow;
+import com.docdoku.server.helpers.LangHelper;
 import com.docdoku.server.rest.collections.QueryResult;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.ss.usermodel.*;
@@ -45,8 +46,8 @@ public class ExcelGenerator {
 
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
-    public File generateXLSResponse(QueryResult queryResult) {
-
+    public File generateXLSResponse(QueryResult queryResult,Locale locale) {
+        LangHelper langHelper = new LangHelper(locale);
         File excelFile = new File("export_parts.xls");
         //Blank workbook
         XSSFWorkbook workbook = new XSSFWorkbook();
@@ -57,7 +58,21 @@ public class ExcelGenerator {
         //This data needs to be written (Object[])
         String header = StringUtils.join(queryResult.getQuery().getSelects(), "; ");
         Map<Integer, String[]> data = new HashMap<>();
-        data.put(1, header.split(";"));
+        String[] headerFormatted = new String[header.split(";").length];
+        int headerIndex =0;
+        String[] columns= header.split(";");
+        for(String column:columns){
+            String columnTranslated ="";
+             if(!column.isEmpty())
+             {   if (column.trim().contains("attr-")){
+                 columnTranslated = column.split("-")[1];
+             }else{
+                  columnTranslated = langHelper.getLocalizedMessage(column.trim(), locale);
+             }
+                 headerFormatted[headerIndex++]=  columnTranslated != null?columnTranslated:column;
+             }
+        }
+        data.put(1,headerFormatted);
         int i = 1;
         for (QueryResultRow row : queryResult.getRows()) {
             i++;

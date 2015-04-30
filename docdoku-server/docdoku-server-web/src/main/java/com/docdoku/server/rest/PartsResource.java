@@ -194,10 +194,11 @@ public class PartsResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces("application/vnd.ms-excel")
     public Response exportCustomQuery(@PathParam("workspaceId") String workspaceId, @PathParam("queryId") String queryId, @PathParam("export") String exportType) throws EntityNotFoundException, UserNotActiveException, AccessRightException, CreationException, QueryAlreadyExistsException, EntityConstraintException, NotAllowedException {
-
+        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+        Locale locale = new Locale(user != null?user.getLanguage():"en");
         Query query = productService.loadQuery(workspaceId, Integer.valueOf(queryId));
         QueryResult queryResult = getQueryResult(workspaceId, query, exportType);
-        return makeQueryResponse(queryResult);
+        return makeQueryResponse(queryResult,locale);
     }
 
 
@@ -213,11 +214,11 @@ public class PartsResource {
         return queryResult;
     }
 
-    public Response makeQueryResponse(QueryResult queryResult) {
+    public Response makeQueryResponse(QueryResult queryResult,Locale locale) {
         ExcelGenerator excelGenerator = new ExcelGenerator();
         String contentType = "application/vnd.ms-excel";
         String contentDisposition = "attachment; filename=export_parts.xls";
-        Response.ResponseBuilder responseBuilder = Response.ok((Object) excelGenerator.generateXLSResponse(queryResult));
+        Response.ResponseBuilder responseBuilder = Response.ok((Object) excelGenerator.generateXLSResponse(queryResult,locale));
         responseBuilder
                 .header("Content-Type", contentType)
                 .header("Content-Disposition", contentDisposition);
