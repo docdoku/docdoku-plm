@@ -78,23 +78,21 @@ public class ExcelGenerator {
         }
         Font headerFont = workbook.createFont();
         headerFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
-        CellStyle headerStyle = workbook.createCellStyle();
-        headerStyle.setFont(headerFont);
-        headerStyle.setFillForegroundColor(IndexedColors.BLUE.getIndex());
-        headerFont.setColor(IndexedColors.WHITE.getIndex());
-        headerStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
         headerFont.setFontHeightInPoints((short) 10);
         headerFont.setFontName("Courier New");
         headerFont.setItalic(true);
+        headerFont.setColor(IndexedColors.WHITE.getIndex());
+        CellStyle headerStyle = workbook.createCellStyle();
+        headerStyle.setFont(headerFont);
+        headerStyle.setFillForegroundColor(IndexedColors.BLUE.getIndex());
+        headerStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+
         sheet.getRow(0).setRowStyle(headerStyle);
         try {
             //Write the workbook in file system
-            FileOutputStream fout = new FileOutputStream(excelFile);
-            workbook.write(fout);
-            fout.close();
-            workbook.write(fout);
-            fout.close();
-
+            FileOutputStream out = new FileOutputStream(excelFile);
+            workbook.write(out);
+            out.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
