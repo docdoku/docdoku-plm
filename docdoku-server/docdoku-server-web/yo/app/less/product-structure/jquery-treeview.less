@@ -49,8 +49,10 @@
 
 
 .treeview li input.load-3D{
-
+    display: none;
     +label{
+        float: left;
+        margin: -3px 0 0 2px;
         display: inline;
         i.fa.toggle-3D:before{
             content: "\f204";
@@ -74,7 +76,10 @@
 
     a{
         max-width: 90%;
+        display: inline-block;
+        cursor: pointer;
     }
+
 
     &.displayComment{
 
