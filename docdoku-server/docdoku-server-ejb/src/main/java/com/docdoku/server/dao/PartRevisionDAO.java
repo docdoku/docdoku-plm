@@ -97,6 +97,12 @@ public class PartRevisionDAO {
                 .getResultList();
     }
 
+    public List<PartRevision> getAllPartRevisions(String pWorkspaceId) {
+        return em.createNamedQuery("PartRevision.findByWorkspace", PartRevision.class)
+                .setParameter("workspaceId", pWorkspaceId)
+                .getResultList();
+    }
+
     public int getTotalNumberOfParts(String pWorkspaceId) {
         return ((Number)em.createNamedQuery("PartRevision.countByWorkspace")
                 .setParameter("workspaceId", pWorkspaceId)

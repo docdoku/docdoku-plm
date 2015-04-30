@@ -108,6 +108,20 @@ define(function () {
     });
 
     filters.push({
+        id: 'pm.standardPart',
+        label: App.config.i18n.QUERY_STANDARD,
+        type: 'string',
+        operators: booleanOperators,
+        optgroup:App.config.i18n.QUERY_GROUP_PART_MASTER,
+        realType:'boolean',
+        input : 'select',
+        values : [
+            {'true' : App.config.i18n.TRUE},
+            {'false' : App.config.i18n.FALSE}
+        ]
+    });
+
+    filters.push({
         id: 'author.login',
         label: App.config.i18n.AUTHOR_LOGIN,
         type: 'string',

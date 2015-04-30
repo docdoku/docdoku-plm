@@ -45,6 +45,7 @@ define([
             'click button.first-page': 'toFirstPage',
             'click button.last-page': 'toLastPage',
             'click button.current-page': 'goToPage',
+            'click button.show-all': 'showAll',
             'click button.new-product': 'newProduct',
             'submit #part-search-form': 'onQuickSearch',
             'click .advanced-search-button': 'onAdvancedSearch',
@@ -127,6 +128,8 @@ define([
             this.tagsButton = this.$('.actions .tags');
             this.currentPageIndicator = this.$('.current-page');
             this.pageControls = this.$('.page-controls');
+            this.pagingButtons = this.$('.paging-buttons');
+            this.showAllButton = this.$('.show-all');
         },
 
         bindEvent: function(){
@@ -379,6 +382,20 @@ define([
 
         updatePageIndicator: function () {
             this.currentPageIndicator.text(this.partListView.collection.getCurrentPage() + ' / ' + this.partListView.collection.getPageCount());
+        },
+
+        showAll: function () {
+            if (this.partListView.collection.resultsPerPage) {
+                this.partListView.collection.setResultsPerPage(0);
+                this.pagingButtons.hide();
+                this.showAllButton.html(App.config.i18n.SHOW_BY_PAGE);
+            } else {
+                this.partListView.collection.setResultsPerPage(20);
+                this.pagingButtons.show();
+                this.showAllButton.html(App.config.i18n.SHOW_ALL);
+            }
+            this.partListView.collection.fetch({reset: true});
+            this.partListView.onNoPartSelected();
         },
 
         onQuickSearch: function (e) {

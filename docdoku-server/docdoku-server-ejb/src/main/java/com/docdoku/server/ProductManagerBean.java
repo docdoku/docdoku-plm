@@ -1755,7 +1755,14 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
     @Override
     public List<PartRevision> getPartRevisions(String pWorkspaceId, int start, int pMaxResults) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, UserNotActiveException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
-        List<PartRevision> partRevisions = new PartRevisionDAO(new Locale(user.getLanguage()), em).getPartRevisions(pWorkspaceId, start, pMaxResults);
+        List<PartRevision> partRevisions = null;
+
+        if (pMaxResults == 0) {
+            partRevisions = new PartRevisionDAO(new Locale(user.getLanguage()), em).getAllPartRevisions(pWorkspaceId);
+        } else {
+            partRevisions = new PartRevisionDAO(new Locale(user.getLanguage()), em).getPartRevisions(pWorkspaceId, start, pMaxResults);
+        }
+
         List<PartRevision> filteredPartRevisions = new ArrayList<>();
 
         for(PartRevision partRevision : partRevisions){
@@ -2560,6 +2567,84 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         return rows;
     }
 
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
+    public Map<String, Set<BinaryResource>> getBinariesInTree(String workspaceId, ConfigurationItemKey ciKey, PSFilter psFilter) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, NotAllowedException, EntityConstraintException, PartMasterNotFoundException {
+
+        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+        Map<String, Set<BinaryResource>> result = new HashMap<>();
+
+        Locale locale = new Locale(user.getLanguage());
+
+        List<QueryResultRow> rows = new ArrayList<>();
+
+        ConfigurationItem ci = new ConfigurationItemDAO(locale, em).loadConfigurationItem(ciKey);
+        PartMaster root = ci.getDesignItem();
+
+        new PSFilterVisitor(em, user, psFilter, root, null, -1) {
+            @Override
+            public void onIndeterminateVersion(PartMaster partMaster, List<PartIteration> partIterations)  throws NotAllowedException{
+            }
+
+            @Override
+            public void onIndeterminatePath(List<PartLink> pCurrentPath, List<PartIteration> pCurrentPathPartIterations) {
+            }
+
+            @Override
+            public void onUnresolvedPath(List<PartLink> pCurrentPath, List<PartIteration> partIterations) throws NotAllowedException {
+
+            }
+
+            @Override
+            public void onBranchDiscovered(List<PartLink> pCurrentPath, List<PartIteration> copyPartIteration) {
+            }
+
+            @Override
+            public void onOptionalPath(List<PartLink> partLinks, List<PartIteration> partIterations) {
+
+            }
+
+            @Override
+            public void onPathWalk(List<PartLink> path, List<PartMaster> parts) {
+                PartMaster part = parts.get(parts.size()-1);
+                List<PartIteration> partIterations = psFilter.filter(part);
+
+                if(partIterations.size() != 0) {
+
+                    PartIteration partIteration = partIterations.get(0);
+                    String partMasterNumber = partIteration.getPartNumber();
+                    Set<BinaryResource> binaryResources = result.get(partMasterNumber);
+
+                    if(binaryResources == null){
+                        binaryResources = new HashSet<>();
+                        result.put(partMasterNumber,binaryResources);
+                    }
+                    BinaryResource nativeCADFile = partIteration.getNativeCADFile();
+
+                    if(nativeCADFile != null){
+                        binaryResources.add(nativeCADFile);
+                    }
+
+                    Set<DocumentLink> linkedDocuments = partIteration.getLinkedDocuments();
+
+                    for(DocumentLink documentLink :linkedDocuments){
+                        Set<BinaryResource> attachedFiles = documentLink.getTargetDocument().getAttachedFiles();
+                        binaryResources.addAll(attachedFiles);
+                    }
+
+                }
+            }
+
+            @Override
+            public void onUnresolvedVersion(PartMaster partMaster) {
+
+            }
+        };
+
+        return result;
+    }
+    
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public Query loadQuery(String workspaceId,int queryId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
         User user = userManager.checkWorkspaceReadAccess(workspaceId);

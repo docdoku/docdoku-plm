@@ -42,6 +42,7 @@ import com.docdoku.core.sharing.SharedPart;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 
 /**
@@ -220,4 +221,7 @@ public interface IProductManagerLocal{
     List<QueryResultRow> filterProductBreakdownStructure(String workspaceId, Query query) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, BaselineNotFoundException, ProductInstanceMasterNotFoundException, ConfigurationItemNotFoundException, NotAllowedException, PartMasterNotFoundException, EntityConstraintException;
 
     Query loadQuery(String workspaceId,int queryId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
+
+    Map<String,Set<BinaryResource>> getBinariesInTree(String workspaceId, ConfigurationItemKey configurationItemKey, PSFilter psFilter) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, NotAllowedException, EntityConstraintException, PartMasterNotFoundException;
+
 }

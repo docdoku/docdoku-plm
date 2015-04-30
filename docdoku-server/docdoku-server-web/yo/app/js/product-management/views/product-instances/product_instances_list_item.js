@@ -20,9 +20,14 @@ define([
             this._isChecked = false;
         },
         render: function () {
-            this.$el.html(Mustache.render(template, {model: this.model, i18n: App.config.i18n,bomUrl: this.model.getBomUrl(), sceneUrl:this.model.getSceneUrl(),isReadOnly: this.model.isReadOnly(),isFullAccess: this.model.isFullAccess()
-
-
+            this.$el.html(Mustache.render(template, {
+                model: this.model,
+                i18n: App.config.i18n,
+                bomUrl: this.model.getBomUrl(),
+                sceneUrl:this.model.getSceneUrl(),
+                zipUrl: this.model.getZipUrl(),
+                isReadOnly: this.model.isReadOnly(),
+                isFullAccess: this.model.isFullAccess()
             }));
             this.$checkbox = this.$('input[type=checkbox]');
             this.model.on('change', this.render, this);
