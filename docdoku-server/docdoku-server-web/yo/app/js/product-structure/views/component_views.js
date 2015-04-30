@@ -9,6 +9,7 @@ define([
     var ComponentViews = {};
 
     var nodeTemplate = _.template(
+        '<input type="checkbox" class="selectable-part-checkbox">' +
         '<%if(!isLock && !isForbidden) {%>' +
             '<%if(isNode) {%>' +
                 '<div class="hitarea expandable-hitarea"></div>' +
