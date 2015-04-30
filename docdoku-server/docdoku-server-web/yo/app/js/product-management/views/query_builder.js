@@ -467,33 +467,12 @@ define([
         },
 
         onExport: function(){
-
             var queryId = this.$selectQuery.val();
-
             var query = _.findWhere(this.queries, {id : parseInt(queryId)});
-
-            var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/queries/'+query.id;
-
-            $.ajax({
-                type: 'GET',
-                url: url+'&export=XLS',
-                contentType: 'application/json',
-                success: function (data) {
-                    var blob = new window.Blob([data]);
-                    var link=document.createElement('a');
-                    link.href=window.URL.createObjectURL(blob);
-                    link.download='export.csv';
-                    link.click();
-                    self.$searchButton.button('reset');
-                },
-                error: function (errorMessage) {
-                    self.$searchButton.button('reset');
-                    self.$('#alerts').append(new AlertView({
-                        type: 'error',
-                        message: errorMessage.responseText
-                    }).render().$el);
-                }
-            });
+            var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/parts/queries/'+query.id+'/format/XLS';
+            var link=document.createElement('a');
+            link.href = url;
+            link.click();
         },
 
         onSearch:function(){

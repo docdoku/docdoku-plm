@@ -174,22 +174,28 @@ public class PartsResource {
     @POST
     @Path("queries")
     @Consumes(MediaType.APPLICATION_JSON)
-    public void runCustomQuery(@PathParam("workspaceId") String workspaceId, @QueryParam("save") boolean save,  @QueryParam("export") String exportType, QueryDTO queryDTO) throws EntityNotFoundException, UserNotActiveException, AccessRightException, CreationException, QueryAlreadyExistsException, EntityConstraintException, NotAllowedException {
+    public Response runCustomQuery(@PathParam("workspaceId") String workspaceId, @QueryParam("save") boolean save,  @QueryParam("export") String exportType, QueryDTO queryDTO) throws EntityNotFoundException, UserNotActiveException, AccessRightException, CreationException, QueryAlreadyExistsException, EntityConstraintException, NotAllowedException {
         Query query = mapper.map(queryDTO, Query.class);
         QueryResult queryResult = getQueryResult(workspaceId, query, exportType);
         if(save){
             productService.createQuery(workspaceId,query);
         }
-        //return makeQueryResponse(queryResult);
+        String contentType = queryResult.getExportType().equals(QueryResult.ExportType.CSV) ? "application/octet-stream":"application/json";
+        String contentDisposition =  queryResult.getExportType().equals(QueryResult.ExportType.CSV) ? "attachment; filename=\"TSR.csv\"":"inline";
+
+        return Response.ok()
+                .header("Content-Type", contentType)
+                .header("Content-Disposition", contentDisposition)
+                .entity(queryResult).build();
     }
     @GET
-    @Path("queries/{queryId}")
+    @Path("queries/{queryId}/format/{export}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces("application/vnd.ms-excel")
-    public Response exportCustomQuery(@PathParam("workspaceId") String workspaceId,@PathParam("queryId") int queryId) throws EntityNotFoundException, UserNotActiveException, AccessRightException, CreationException, QueryAlreadyExistsException, EntityConstraintException, NotAllowedException {
-        Query query = productService.loadQuery(workspaceId,queryId);
-        List<PartRevision> partRevisions = productService.searchPartRevisions(workspaceId, query);
-        QueryResult queryResult = new QueryResult(partRevisions,query);
+    public Response exportCustomQuery(@PathParam("workspaceId") String workspaceId,@PathParam("queryId") String queryId,@PathParam("export") String exportType) throws EntityNotFoundException, UserNotActiveException, AccessRightException, CreationException, QueryAlreadyExistsException, EntityConstraintException, NotAllowedException {
+
+        Query query = productService.loadQuery(workspaceId,Integer.valueOf(queryId));
+        QueryResult queryResult = getQueryResult(workspaceId, query, exportType);
         return makeQueryResponse(queryResult);
     }
 
@@ -215,8 +221,8 @@ public class PartsResource {
                 excelGenerator.generateXLSResponse(queryResult));
          responseBuilder
                 .header("Content-Type", contentType)
-                .header("Content-Disposition", contentDisposition)
-                .entity(queryResult).build();
+                .header("Content-Disposition", contentDisposition);
+
         return responseBuilder.build();
     }
 

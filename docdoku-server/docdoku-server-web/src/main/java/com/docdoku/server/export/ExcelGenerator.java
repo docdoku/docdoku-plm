@@ -28,18 +28,13 @@ import com.docdoku.core.query.QueryContext;
 import com.docdoku.core.query.QueryField;
 import com.docdoku.core.query.QueryResultRow;
 import com.docdoku.server.rest.collections.QueryResult;
-import com.docdoku.server.rest.dto.PartDTO;
 import org.apache.commons.lang.StringUtils;
-import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -50,7 +45,7 @@ public class ExcelGenerator {
 
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
-    public  File generateXLSResponse(QueryResult queryResult) {
+    public File generateXLSResponse(QueryResult queryResult) {
 
         File excelFile = new File("export_parts.xls");
         //Blank workbook
@@ -60,29 +55,25 @@ public class ExcelGenerator {
         XSSFSheet sheet = workbook.createSheet("Parts Data");
 
         //This data needs to be written (Object[])
-
         String header = StringUtils.join(queryResult.getQuery().getSelects(), "; ");
-        Map<String, Object[]> data = new HashMap<String, Object[]>();
-        data.put("1", header.split(";"));
+        Map<Integer, String[]> data = new HashMap<>();
+        data.put(1, header.split(";"));
         int i = 1;
-        for(QueryResultRow row : queryResult.getRows()){
+        for (QueryResultRow row : queryResult.getRows()) {
             i++;
-            data.put(String.valueOf(i),createXLSRow(queryResult,row));
+            data.put(i, createXLSRow(queryResult, row));
         }
 
-       //Iterate over data and write to sheet
-        Set<String> keyset = data.keySet();
+        //Iterate over data and write to sheet
+        Set<Integer> keyset = data.keySet();
         int rownum = 0;
-        for (String key : keyset) {
+        for (Integer key : keyset) {
             Row row = sheet.createRow(rownum++);
-            Object[] objArr = data.get(key);
+            String[] objArr = data.get(key);
             int cellnum = 0;
-            for (Object obj : objArr) {
+            for (String obj : objArr) {
                 Cell cell = row.createCell(cellnum++);
-               if (obj instanceof String){
-                   cell.setCellValue((String)obj);
-               }
-
+                cell.setCellValue(obj);
             }
         }
         Font headerFont = workbook.createFont();
@@ -96,7 +87,6 @@ public class ExcelGenerator {
         headerFont.setFontName("Courier New");
         headerFont.setItalic(true);
         sheet.getRow(0).setRowStyle(headerStyle);
-       sheet.getRow(1).setRowStyle(headerStyle);
         try {
             //Write the workbook in file system
             FileOutputStream fout = new FileOutputStream(excelFile);
@@ -112,25 +102,25 @@ public class ExcelGenerator {
 
     }
 
-    private String[]createXLSRow(QueryResult queryResult,QueryResultRow row){
+    private String[] createXLSRow(QueryResult queryResult, QueryResultRow row) {
 
         List<String> selects = queryResult.getQuery().getSelects();
         List<String> data = new ArrayList<>();
 
-        PartRevision part  = row.getPartRevision();
+        PartRevision part = row.getPartRevision();
 
         QueryContext context = row.getContext();
 
-        for(String select : selects){
+        for (String select : selects) {
 
-            switch (select){
+            switch (select) {
                 case QueryField.CTX_PRODUCT_ID:
                     String productId = context != null ? context.getConfigurationItemId() : "";
                     data.add(productId);
                     break;
                 case QueryField.CTX_SERIAL_NUMBER:
                     String serialNumber = context != null ? context.getSerialNumber() : "";
-                    data.add(serialNumber!=null?serialNumber:"");
+                    data.add(serialNumber != null ? serialNumber : "");
                     break;
                 case QueryField.PART_MASTER_NUMBER:
                     data.add(part.getPartNumber());
@@ -175,13 +165,13 @@ public class ExcelGenerator {
                     data.add(userAuthor.getName());
                     break;
                 case QueryField.CTX_DEPTH:
-                    data.add(row.getDepth()+"");
+                    data.add(row.getDepth() + "");
                     break;
                 case QueryField.CTX_AMOUNT:
-                    data.add(row.getAmount()+"");
+                    data.add(row.getAmount() + "");
                     break;
                 default:
-                    if (select.contains(QueryField.PART_REVISION_ATTRIBUTES_PREFIX)){
+                    if (select.contains(QueryField.PART_REVISION_ATTRIBUTES_PREFIX)) {
                         String attributeSelectType = select.substring(0, select.indexOf(".")).substring(QueryField.PART_REVISION_ATTRIBUTES_PREFIX.length());
                         String attributeSelectName = select.substring(select.indexOf(".") + 1);
                         String attributeValue = "";
