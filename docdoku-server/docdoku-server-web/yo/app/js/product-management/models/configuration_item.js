@@ -55,6 +55,11 @@ define(['backbone'], function (Backbone) {
             return  App.config.contextPath + '/visualization/#' + App.config.workspaceId + '/' + this.getId() + '/0/10/1000/null/'+App.config.configSpec;
         },
 
+
+        getZipUrl:function (){
+            return App.config.contextPath + '/product-structure/#' + App.config.workspaceId + '/products/' + encodeURIComponent(this.getId()) + '/export-files?configSpecType=latest';
+        },
+
         createBaseline: function (baselineArgs, callbacks) {
             return $.ajax({
                 type: 'POST',

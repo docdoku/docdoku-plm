@@ -145,6 +145,7 @@ define({
 		DOCUMENT_S_TITLE: "Document title",
 		DOCUMENT_TYPE_HELP: "Type of the document",
 		DOWNLOAD_DPLM_CLIENT: 'Download DPLM client',
+        DOWNLOAD_ZIP:"Download all file in a zip",
 		DROP_FILE_HERE: "or drop it here",
         DROP_FILES_HERE: "or drop them here",
 		DUE_DATE: "Due date",

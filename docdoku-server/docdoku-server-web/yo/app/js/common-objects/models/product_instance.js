@@ -85,6 +85,11 @@ define(['backbone',
         getSceneUrl: function () {
             return App.config.contextPath + '/product-structure/#' + App.config.workspaceId + '/' + encodeURIComponent(this.getConfigurationItemId()) + '/config-spec/pi-'+encodeURIComponent(this.getSerialNumber())+'/scene' ;
         },
+
+        getZipUrl:function (){
+            return App.config.contextPath + '/product-structure/#' + App.config.workspaceId + '/products/' + encodeURIComponent(this.getConfigurationItemId()) + '/export-files?configSpecType=pi-' + encodeURIComponent(this.getSerialNumber());
+        },
+
         hasACLForCurrentUser: function () {
             return this.getACLPermissionForCurrentUser() !== false;
         },

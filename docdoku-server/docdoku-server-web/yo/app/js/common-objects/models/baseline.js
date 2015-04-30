@@ -35,6 +35,10 @@ define(['backbone'], function (Backbone) {
             return App.config.contextPath + '/product-structure/#' + App.config.workspaceId + '/' + encodeURIComponent(this.getConfigurationItemId()) + '/config-spec/'+this.getId()+'/scene' ;
         },
 
+        getZipUrl:function (){
+            return App.config.contextPath + '/product-structure/#' + App.config.workspaceId + '/products/' + encodeURIComponent(this.getConfigurationItemId()) + '/export-files?configSpecType=' + encodeURIComponent(this.getId());
+        },
+
         getSubstitutesParts:function(){
             return this.get('substitutesParts');
         },
