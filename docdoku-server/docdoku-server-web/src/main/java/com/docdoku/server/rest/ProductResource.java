@@ -35,6 +35,7 @@ import com.docdoku.server.rest.collections.InstanceCollection;
 import com.docdoku.server.rest.dto.*;
 import com.docdoku.server.rest.dto.baseline.BaselinedPartDTO;
 import com.docdoku.server.rest.dto.baseline.PathChoiceDTO;
+import com.docdoku.server.rest.util.FileExportEntity;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -386,6 +387,21 @@ public class ProductResource {
     public ProductInstancesResource getProductInstances(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId){
         return productInstancesResource;
     }
+
+    @GET
+    @Path("{ciId}/export-files")
+    public Response exportFiles(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String ciId, @QueryParam("configSpecType") String configSpecType) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, BaselineNotFoundException, ProductInstanceMasterNotFoundException {
+        FileExportEntity fileExportEntity = new FileExportEntity();
+        ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
+        PSFilter psFilter = productService.getPSFilter(ciKey,configSpecType);
+        fileExportEntity.setPsFilter(psFilter);
+        fileExportEntity.setConfigurationItemKey(ciKey);
+        return Response.ok()
+                .header("Content-Type", "application/download")
+                .header("Content-Disposition", "attachment; filename=\"export.zip\"")
+                .entity(fileExportEntity).build();
+    }
+
 
     /**
      * Because some AS (like Glassfish) forbids the use of CacheControl

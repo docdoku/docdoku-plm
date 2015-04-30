@@ -2567,6 +2567,79 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         return rows;
     }
 
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    @Override
+    public Map<String, Set<BinaryResource>> getBinariesInTree(String workspaceId, ConfigurationItemKey ciKey, PSFilter psFilter) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, NotAllowedException, EntityConstraintException, PartMasterNotFoundException {
+
+        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+        Map<String, Set<BinaryResource>> result = new HashMap<>();
+
+        Locale locale = new Locale(user.getLanguage());
+
+        List<QueryResultRow> rows = new ArrayList<>();
+
+        ConfigurationItem ci = new ConfigurationItemDAO(locale, em).loadConfigurationItem(ciKey);
+        PartMaster root = ci.getDesignItem();
+
+        new PSFilterVisitor(em, user, psFilter, root, null, -1) {
+            @Override
+            public void onIndeterminateVersion(PartMaster partMaster, List<PartIteration> partIterations)  throws NotAllowedException{
+            }
+
+            @Override
+            public void onIndeterminatePath(List<PartLink> pCurrentPath, List<PartIteration> pCurrentPathPartIterations) {
+            }
+
+            @Override
+            public void onUnresolvedPath(List<PartLink> pCurrentPath, List<PartIteration> partIterations) throws NotAllowedException {
+
+            }
+
+            @Override
+            public void onBranchDiscovered(List<PartLink> pCurrentPath, List<PartIteration> copyPartIteration) {
+            }
+
+            @Override
+            public void onOptionalPath(List<PartLink> partLinks, List<PartIteration> partIterations) {
+
+            }
+
+            @Override
+            public void onPathWalk(List<PartLink> path, List<PartMaster> parts) {
+                PartMaster part = parts.get(parts.size()-1);
+                List<PartIteration> partIterations = psFilter.filter(part);
+
+                if(partIterations.size() != 0) {
+
+                    PartIteration partIteration = partIterations.get(0);
+                    String partMasterNumber = partIteration.getPartNumber();
+                    Set<BinaryResource> binaryResources = result.get(partMasterNumber);
+
+                    if(binaryResources == null){
+                        binaryResources = new HashSet<>();
+                        result.put(partMasterNumber,binaryResources);
+                    }
+
+                    binaryResources.add(partIteration.getNativeCADFile());
+                    Set<DocumentLink> linkedDocuments = partIteration.getLinkedDocuments();
+
+                    for(DocumentLink documentLink :linkedDocuments){
+                        Set<BinaryResource> attachedFiles = documentLink.getTargetDocument().getAttachedFiles();
+                        binaryResources.addAll(attachedFiles);
+                    }
+
+                }
+            }
+
+            @Override
+            public void onUnresolvedVersion(PartMaster partMaster) {
+
+            }
+        };
+
+        return result;
+    }
+
     private List<QueryResultRow> filterPBS(String workspaceId, QueryContext queryContext) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, BaselineNotFoundException, ProductInstanceMasterNotFoundException, ConfigurationItemNotFoundException, NotAllowedException, EntityConstraintException, PartMasterNotFoundException {
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
 
