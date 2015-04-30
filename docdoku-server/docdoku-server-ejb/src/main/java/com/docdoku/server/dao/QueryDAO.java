@@ -169,7 +169,7 @@ public class QueryDAO {
 
         List<QueryRule> subQueryRules = queryRule.getSubQueryRules();
 
-        if(subQueryRules != null){
+        if(subQueryRules != null && subQueryRules.size() > 0){
 
             Predicate[] predicates = new Predicate[subQueryRules.size()];
 
