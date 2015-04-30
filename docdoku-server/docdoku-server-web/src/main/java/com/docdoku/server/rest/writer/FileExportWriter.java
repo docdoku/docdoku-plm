@@ -95,16 +95,13 @@ public class FileExportWriter implements MessageBodyWriter<FileExportEntity> {
                 String folderName = entry.getKey();
                 Set<BinaryResource> files = entry.getValue();
 
-                ZipEntry zipEntry = new ZipEntry(folderName);
-                zs.putNextEntry(zipEntry);
                 for(BinaryResource binaryResource:files){
                     try {
-                        addToZipFile(binaryResource,zs);
+                        addToZipFile(binaryResource,folderName,zs);
                     } catch (StorageException e) {
                         e.printStackTrace();
                     }
                 }
-                zs.closeEntry();
 
             }
 
@@ -129,11 +126,11 @@ public class FileExportWriter implements MessageBodyWriter<FileExportEntity> {
 
     }
 
-    public static void addToZipFile(BinaryResource binaryResource, ZipOutputStream zos) throws IOException, StorageException {
+    public static void addToZipFile(BinaryResource binaryResource, String folderName, ZipOutputStream zos) throws IOException, StorageException {
 
         InputStream binaryResourceInputStream = dataManager.getBinaryResourceInputStream(binaryResource);
 
-        ZipEntry zipEntry = new ZipEntry(binaryResource.getName());
+        ZipEntry zipEntry = new ZipEntry(folderName+"/"+binaryResource.getName());
         zos.putNextEntry(zipEntry);
 
         byte[] bytes = new byte[1024];
