@@ -9,7 +9,7 @@ define([
     var ComponentViews = {};
 
     var nodeTemplate = _.template(
-        '<input type="checkbox" class="selectable-part-checkbox">' +
+        '<input id="select-<%= path %>" type="checkbox" class="selectable-part-checkbox">' +
         '<%if(!isLock && !isForbidden) {%>' +
             '<%if(isNode) {%>' +
                 '<div class="hitarea expandable-hitarea"></div>' +
@@ -111,6 +111,7 @@ define([
         events: {
             'click a': 'onComponentSelected',
             'change input.load-3D:first': 'onLoad3D',
+            'change input.selectable-part-checkbox:first': 'selectPart',
             'click .openModal:first': 'onEditPart'
         },
 
@@ -125,6 +126,12 @@ define([
         onAllResultPathAdded: function () {
             var isInResultPaths = this.options.resultPathCollection.contains(this.model.attributes.partUsageLinkId);
             this.$el.toggleClass('resultPath',isInResultPaths);
+        },
+
+        selectPart:function(e){
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
         },
 
         onLoad3D: function (event) {
@@ -207,6 +214,7 @@ define([
             'click a:first': 'onComponentSelected',
             'click .openModal:first': 'onEditPart',
             'change input.load-3D:first': 'onLoad3D',
+            'change input.selectable-part-checkbox:first': 'selectPart',
             'click .hitarea:first': 'onToggleExpand'
         },
 
@@ -222,6 +230,12 @@ define([
         onAllResultPathAdded: function () {
             var isInResultPaths = this.options.resultPathCollection.contains(this.model.attributes.partUsageLinkId);
             this.$el.toggleClass('resultPath',isInResultPaths);
+        },
+
+        selectPart:function(e){
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
         },
 
         onLoad3D: function (event) {

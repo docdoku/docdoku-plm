@@ -76,7 +76,7 @@ define(['backbone', 'models/component_module', 'views/component_views'
         },
 
         checkChildrenInputs: function (event) {
-            var inputs = event.target.parentNode.querySelectorAll('input.available');
+            var inputs = event.target.parentNode.querySelectorAll('input.load-3D.available');
             for (var i = 0; i < inputs.length; i++) {
                 inputs[i].checked = event.target.checked;
                 // on retire les fils du smartPath
@@ -86,7 +86,7 @@ define(['backbone', 'models/component_module', 'views/component_views'
 
         // Set smartPaths while checking parents
         checkParentsInputs: function (event) {
-            var relativeInput = event.currentTarget.querySelector('input');
+            var relativeInput = event.currentTarget.querySelector('input.load-3D');
             relativeInput.checked = event.target.checked;
             var childrenUl = event.currentTarget.querySelector('ul');
 
@@ -97,7 +97,7 @@ define(['backbone', 'models/component_module', 'views/component_views'
 
                 for (var i = 0; i < childrenUl.childNodes.length; i++) {
                     var li = childrenUl.childNodes[i];
-                    if (li.querySelector('input') && li.querySelector('input').checked) {
+                    if (li.querySelector('input.load-3D') && li.querySelector('input.load-3D').checked) {
                         inputsChecked++;
                         // add children into a temporary array
                         tempArray.push(li.id.substring(5));
@@ -176,9 +176,9 @@ define(['backbone', 'models/component_module', 'views/component_views'
         },
 
         setCheckboxes: function () {
-            this.$('li input').prop('checked', false);
+            this.$('li input.load-3D').prop('checked', false);
             _.each(this.smartPath, function (path) {
-                this.$('li[id^="path_' + path + '"] input').prop('checked', true);
+                this.$('li[id^="path_' + path + '"] input.load-3D').prop('checked', true);
             },this);
         },
 
