@@ -39,6 +39,7 @@
                 <li><a href="#tab-part-files" data-toggle="tab">{{i18n.CAD_FILE}}</a></li>
                 <li><a href="#tab-part-sub-parts" data-toggle="tab">{{i18n.SUB_PARTS}}</a></li>
                 <li><a href="#tab-part-links" data-toggle="tab">{{i18n.LINKS}}</a></li>
+                <li><a href="#tab-iteration-where-used" data-toggle="tab">{{i18n.USED_BY}}</a></li>
                 <li><a href="#tab-iteration-lifecycle" data-toggle="tab">{{i18n.LIFECYCLE_STATE}}</a></li>
                 {{#isShowingLast}}
                 {{#part.hasModificationNotifications}}
@@ -168,7 +169,7 @@
                         {{/isObsolete}}
                         {{/isReleased}}
 
-                        <div class="control-group">
+                        <div class="controlp-group">
                             <label class="control-label">{{i18n.REVISION_DATE}}</label>
 
                             <div class="controls">
@@ -206,6 +207,18 @@
                         <div id="iteration-components"></div>
                     </div>
 
+                    <div id="tab-part-links" class="tab-pane">
+                        <div id="iteration-links"></div>
+                    </div>
+
+                    <div id="tab-iteration-where-used" class="tab-pane">
+                        <div id="iteration-where-used"></div>
+                    </div>
+
+                    <div id="tab-iteration-lifecycle" class="tab-pane ">
+                        <div id="iteration-lifecycle"></div>
+                    </div>
+
                     {{#isShowingLast}}
                     {{#part.hasModificationNotifications}}
                     <div id="tab-part-modification-notifications" class="tab-pane">
@@ -214,13 +227,6 @@
                     {{/part.hasModificationNotifications}}
                     {{/isShowingLast}}
 
-                    <div id="tab-part-links" class="tab-pane">
-                        <div id="iteration-links"></div>
-                    </div>
-
-                    <div id="tab-iteration-lifecycle" class="tab-pane ">
-                        <div id="iteration-lifecycle"></div>
-                    </div>
                     {{/hasIterations}}
                 </div>
             </form>
