@@ -2,10 +2,8 @@
 define([
     'backbone',
     'mustache',
-    'common-objects/models/part',
-    'models/document',
     'text!templates/where_used/where_used_list_item.html'
-], function (Backbone, Mustache, Part, Document, template) {
+], function (Backbone, Mustache, template) {
     'use strict';
     var WhereUsedListItemView = Backbone.View.extend({
 
