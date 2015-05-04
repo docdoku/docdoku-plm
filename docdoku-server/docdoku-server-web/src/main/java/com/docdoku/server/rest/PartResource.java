@@ -24,6 +24,7 @@ import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.common.Workspace;
+import com.docdoku.core.configuration.ProductInstanceMaster;
 import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
@@ -39,6 +40,7 @@ import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.core.sharing.SharedPart;
 import com.docdoku.core.workflow.Workflow;
 import com.docdoku.server.rest.dto.*;
+import com.docdoku.server.rest.dto.product.ProductInstanceMasterDTO;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -85,9 +87,26 @@ public class PartResource {
         PartIterationKey iterationKey = new PartIterationKey(revisionKey, partRevision.getLastIterationNumber());
         List<ModificationNotification> notifications=productService.getModificationNotifications(iterationKey);
         List<ModificationNotificationDTO> notificationDTOs=Tools.mapModificationNotificationsToModificationNotificationDTO(notifications);
-
         partDTO.setNotifications(notificationDTOs);
+
         return Response.ok(partDTO).build();
+    }
+
+    @GET
+    @Path("/used-by-productInstanceMasters")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<ProductInstanceMasterDTO> getProductInstanceMasterDTOs(@PathParam("workspaceId") String pWorkspaceId, @PathParam("partNumber") String partNumber, @PathParam("partVersion") String partVersion)
+            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
+
+        List<ProductInstanceMaster> productInstanceMasters = productService.getProductInstanceMasters(pWorkspaceId, partNumber, partVersion);
+        List<ProductInstanceMasterDTO> productInstanceMasterDTOs = new ArrayList<>();
+
+        for (ProductInstanceMaster productInstanceMaster : productInstanceMasters) {
+            ProductInstanceMasterDTO productInstanceMasterDTO = mapper.map(productInstanceMaster, ProductInstanceMasterDTO.class);
+            productInstanceMasterDTOs.add(productInstanceMasterDTO);
+        }
+
+        return productInstanceMasterDTOs;
     }
 
     @PUT

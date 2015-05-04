@@ -51,10 +51,18 @@ public class ProductInstanceMasterDAO {
                 .getResultList();
     }
 
-    public List<ProductInstanceMaster> findProductInstanceMasters(String ciId, String workspaceId){
+    public List<ProductInstanceMaster> findProductInstanceMasters(String ciId, String workspaceId) {
         return em.createNamedQuery("ProductInstanceMaster.findByConfigurationItemId", ProductInstanceMaster.class)
                 .setParameter("ciId", ciId)
                 .setParameter("workspaceId",workspaceId)
+                .getResultList();
+    }
+
+    public List<ProductInstanceMaster> findProductInstanceMasters(String workspaceId, String partNumber, String partVersion) {
+        return em.createNamedQuery("ProductInstanceMaster.findByPart", ProductInstanceMaster.class)
+                .setParameter("partNumber", partNumber)
+                .setParameter("partVersion", partVersion)
+                .setParameter("workspaceId", workspaceId)
                 .getResultList();
     }
 

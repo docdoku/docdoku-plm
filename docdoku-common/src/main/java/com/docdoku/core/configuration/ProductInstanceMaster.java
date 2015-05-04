@@ -46,7 +46,8 @@ import java.util.List;
 @Entity
 @NamedQueries({
         @NamedQuery(name="ProductInstanceMaster.findByConfigurationItemId", query="SELECT pim FROM ProductInstanceMaster pim WHERE pim.instanceOf.id = :ciId AND pim.instanceOf.workspace.id = :workspaceId"),
-        @NamedQuery(name="ProductInstanceMaster.findByPathData", query="SELECT pim FROM ProductInstanceMaster pim WHERE :pathDataList member of pim.pathDataList")
+        @NamedQuery(name="ProductInstanceMaster.findByPathData", query="SELECT pim FROM ProductInstanceMaster pim WHERE :pathDataList member of pim.pathDataList"),
+        @NamedQuery(name="ProductInstanceMaster.findByPart", query="SELECT pim FROM ProductInstanceMaster pim JOIN ProductBaseline pb JOIN BaselinedPart bp WHERE pim.instanceOf.id = pb.configurationItem.id AND pb.partCollection.id = bp.partCollection.id AND bp.targetPart.partRevision.partMasterNumber = :partNumber AND bp.targetPart.partRevision.partMasterWorkspaceId = :workspaceId AND bp.targetPartVersion = :partVersion")
 })
 public class ProductInstanceMaster implements Serializable {
 

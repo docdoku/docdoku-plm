@@ -25,6 +25,7 @@ import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.User;
 import com.docdoku.core.configuration.PSFilter;
 import com.docdoku.core.configuration.ProductBaseline;
+import com.docdoku.core.configuration.ProductInstanceMaster;
 import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.meta.InstanceAttribute;
@@ -190,6 +191,8 @@ public interface IProductManagerLocal{
     PartRevision[] findPartRevisionsByTag(String workspaceId, String tagId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
 
     List<ModificationNotification> getModificationNotifications(PartIterationKey pPartIPK) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException;
+
+    List<ProductInstanceMaster> getProductInstanceMasters(String pWorkspaceId, String pPartNumber, String pPartVersion) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException;
 
     void createModificationNotifications(PartIteration modifiedPartIteration) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException;
 

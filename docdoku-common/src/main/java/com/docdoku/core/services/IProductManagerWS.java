@@ -24,6 +24,7 @@ import com.docdoku.core.change.ModificationNotification;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.configuration.PSFilter;
 import com.docdoku.core.configuration.ProductBaseline;
+import com.docdoku.core.configuration.ProductInstanceMaster;
 import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.meta.InstanceAttribute;
@@ -631,6 +632,8 @@ public interface IProductManagerWS{
     void endConversion(PartIterationKey partIterationKey, boolean succeed) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException, PartIterationNotFoundException;
 
     List<ModificationNotification> getModificationNotifications(PartIterationKey pPartIPK) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException;
+
+    List<ProductInstanceMaster> getProductInstanceMasters(String pWorkspaceId, String pPartNumber, String pPartVersion) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException;
 
     List<PartIteration> getUsedByAsComponent(PartIterationKey pPartIPK) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException;
 

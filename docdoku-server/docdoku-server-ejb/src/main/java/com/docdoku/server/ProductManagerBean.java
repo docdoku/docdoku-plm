@@ -916,6 +916,15 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     @Override
+    public List<ProductInstanceMaster> getProductInstanceMasters(String pWorkspaceId, String pPartNumber, String pPartVersion)
+            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
+        return new ProductInstanceMasterDAO(em).findProductInstanceMasters(pWorkspaceId, pPartNumber, pPartVersion);
+    }
+
+
+
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
+    @Override
     public List<PartIteration> getUsedByAsComponent(PartIterationKey pPartIPK) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException {
         PartRevisionKey partRevisionKey = pPartIPK.getPartRevision();
         User user = checkPartRevisionReadAccess(partRevisionKey);
