@@ -35,15 +35,10 @@ import java.io.IOException;
 public class HelpCommand extends AbstractCommandLine {
 
     @Argument(metaVar = "<command>", index=0, usage = "the command to display the help information")
-    private String command;
+    private String command="";
 
     @Override
     public void execImpl() throws Exception {
-
-        if(command == null){
-            output.printUsage();
-            return;
-        }
 
         CommandLine cl;
         switch(command){
@@ -76,10 +71,16 @@ public class HelpCommand extends AbstractCommandLine {
                 break;
 
             case "help": case "?" : case "h":
-            default:
                 cl=new HelpCommand();
-        }
+                break;
 
+            default:
+                cl=null;
+        }
+        if(cl == null){
+            output.printUsage();
+            return;
+        }
         output.printCommandUsage(cl);
 
     }

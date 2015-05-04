@@ -39,7 +39,7 @@ import java.util.Locale;
 import static com.docdoku.cli.helpers.CliOutput.formats.HUMAN;
 
 /**
- * @author Morgan GUIMARD
+ * @author Morgan Guimard
  * @version 1.0, 14/11/14
  * @since   V2.0
  */

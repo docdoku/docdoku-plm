@@ -20,7 +20,6 @@
 
 package com.docdoku.cli.helpers;
 
-import com.docdoku.cli.commands.common.HelpCommand;
 import com.docdoku.cli.interfaces.CommandLine;
 import com.docdoku.core.common.Account;
 import com.docdoku.core.common.Workspace;
@@ -65,9 +64,6 @@ public class HumanOutput extends CliOutput{
         System.out.println();
         parser.printUsage(System.out);
         System.out.println();
-        if(cl instanceof HelpCommand){
-            printAvailableCommands();
-        }
     }
 
     @Override

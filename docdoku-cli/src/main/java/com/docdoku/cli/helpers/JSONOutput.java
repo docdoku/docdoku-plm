@@ -44,7 +44,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public class JSONOutput  extends CliOutput {
+public class JSONOutput extends CliOutput {
 
     private Locale locale;
 
@@ -58,22 +58,20 @@ public class JSONOutput  extends CliOutput {
         try {
             jsonObj.put("error", e.getMessage());
         } catch (JSONException e1) {
-
         }
         System.err.println(jsonObj.toString());
     }
 
     @Override
     public void printCommandUsage(CommandLine cl) throws IOException {
-        CmdLineParser parser = new CmdLineParser(cl);
         JSONObject jsonObj = new JSONObject();
+        CmdLineParser parser = new CmdLineParser(cl);
         ByteArrayOutputStream o = new ByteArrayOutputStream();
         parser.printUsage(o);
         try {
             jsonObj.put("description", cl.getDescription());
             jsonObj.put("usage", o.toString());
         } catch (JSONException e) {
-
         }
         System.out.println(jsonObj.toString());
     }
@@ -97,9 +95,9 @@ public class JSONOutput  extends CliOutput {
     @Override
     public void printWorkspaces(Workspace[] workspaces) {
         JSONArray wks = new JSONArray();
-        for(int i = 0 ; i < workspaces.length; i++){
+        for (int i = 0; i < workspaces.length; i++) {
             try {
-                wks.put(i,workspaces[i].getId());
+                wks.put(i, workspaces[i].getId());
             } catch (JSONException e) {
 
             }
@@ -111,7 +109,7 @@ public class JSONOutput  extends CliOutput {
     public void printPartRevisionsCount(int partMastersCount) {
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("count",partMastersCount);
+            jsonObject.put("count", partMastersCount);
         } catch (JSONException e) {
 
         }
@@ -130,7 +128,7 @@ public class JSONOutput  extends CliOutput {
     @Override
     public void printBaselines(List<ProductBaseline> productBaselines) {
         JSONArray jsonArray = new JSONArray();
-        for(ProductBaseline productBaseline : productBaselines) {
+        for (ProductBaseline productBaseline : productBaselines) {
             try {
                 JSONObject baselineObject = new JSONObject();
                 baselineObject.put("id", productBaseline.hashCode());
@@ -158,7 +156,7 @@ public class JSONOutput  extends CliOutput {
             for (PartRevision pr : pm.getPartRevisions()) {
                 revisions.put(getPartRevision(pr, lastModified));
             }
-        }catch(JSONException e){
+        } catch (JSONException e) {
 
         }
 
@@ -168,20 +166,20 @@ public class JSONOutput  extends CliOutput {
     @Override
     public void printConversion(Conversion conversion) throws JSONException {
         JSONObject cv = new JSONObject();
-        cv.put("pending",conversion.isPending());
-        cv.put("succeed",conversion.isSucceed());
-        cv.put("startDate",conversion.getStartDate());
-        cv.put("endDate",conversion.getEndDate());
+        cv.put("pending", conversion.isPending());
+        cv.put("succeed", conversion.isSucceed());
+        cv.put("startDate", conversion.getStartDate());
+        cv.put("endDate", conversion.getEndDate());
         System.out.println(cv.toString());
     }
 
     @Override
     public void printAccount(Account account) throws JSONException {
         JSONObject cv = new JSONObject();
-        cv.put("login",account.getLogin());
-        cv.put("language",account.getLanguage());
-        cv.put("email",account.getEmail());
-        cv.put("timezone",account.getTimeZone());
+        cv.put("login", account.getLogin());
+        cv.put("language", account.getLanguage());
+        cv.put("email", account.getEmail());
+        cv.put("timezone", account.getTimeZone());
         System.out.println(cv.toString());
     }
 
@@ -210,16 +208,16 @@ public class JSONOutput  extends CliOutput {
 
     @Override
     public FilterInputStream getMonitor(long maximum, InputStream in) {
-        return new JSONProgressMonitorInputStream(maximum,in);
+        return new JSONProgressMonitorInputStream(maximum, in);
     }
 
     private JSONObject getPartRevision(PartRevision pr, long lastModified) {
 
         JSONObject status = new JSONObject();
 
-        if(pr != null){
+        if (pr != null) {
 
-            try{
+            try {
 
                 User user = pr.getCheckOutUser();
                 String login = user != null ? user.getLogin() : "";
@@ -235,8 +233,8 @@ public class JSONOutput  extends CliOutput {
                 status.put("description", pr.getDescription());
                 status.put("lastModified", lastModified);
 
-                if(pr.getLastIteration() != null && pr.getLastIteration().getNativeCADFile() != null) {
-                    String nativeCADFileName  = pr.getLastIteration().getNativeCADFile().getName();
+                if (pr.getLastIteration() != null && pr.getLastIteration().getNativeCADFile() != null) {
+                    String nativeCADFileName = pr.getLastIteration().getNativeCADFile().getName();
                     status.put("cadFileName", nativeCADFileName);
                 }
 
@@ -244,13 +242,13 @@ public class JSONOutput  extends CliOutput {
                 JSONArray partIterationJSonArray;
                 if (partIterations != null) {
                     partIterationJSonArray = new JSONArray();
-                    for(PartIteration partIteration : partIterations) {
+                    for (PartIteration partIteration : partIterations) {
                         partIterationJSonArray.put(partIteration.getIteration());
                     }
                     status.put("iterations", partIterationJSonArray);
                 }
 
-            }catch (JSONException e){
+            } catch (JSONException e) {
 
             }
         }
@@ -262,9 +260,9 @@ public class JSONOutput  extends CliOutput {
 
         JSONObject status = new JSONObject();
 
-        if(dr != null){
+        if (dr != null) {
 
-            try{
+            try {
 
                 User user = dr.getCheckOutUser();
                 String login = user != null ? user.getLogin() : "";
@@ -279,7 +277,7 @@ public class JSONOutput  extends CliOutput {
                 status.put("description", dr.getDescription());
                 status.put("lastModified", lastModified);
 
-                if(dr.getLastIteration() != null && dr.getLastIteration().getAttachedFiles() != null) {
+                if (dr.getLastIteration() != null && dr.getLastIteration().getAttachedFiles() != null) {
                     JSONArray files = new JSONArray(dr.getLastIteration().getAttachedFiles());
                     status.put("files", files);
                 }
@@ -287,13 +285,13 @@ public class JSONOutput  extends CliOutput {
                 List<DocumentIteration> documentIterations = dr.getDocumentIterations();
                 if (documentIterations != null) {
                     JSONArray documentIterationsArray = new JSONArray();
-                    for(DocumentIteration documentIteration : documentIterations) {
+                    for (DocumentIteration documentIteration : documentIterations) {
                         documentIterationsArray.put(documentIteration.getIteration());
                     }
                     status.put("iterations", documentIterationsArray);
                 }
 
-            }catch (JSONException e){
+            } catch (JSONException e) {
 
             }
         }

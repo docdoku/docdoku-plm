@@ -186,17 +186,14 @@ public class MainCommand {
                 case "help":
                 case "?":
                 case "h":
-                    if(args.length == 1){
-                        execCommand(new HelpCommand(), args);
-                    }else{
-                        execCommand(new HelpCommand(), Arrays.copyOfRange(args, 1, args.length));
-                    }
+                    execCommand(new HelpCommand(), Arrays.copyOfRange(args, 1, args.length));
                     break;
                 default:
                     execCommand(new HelpCommand(), args);
                     break;
             }
         } catch (Exception e) {
+            e.printStackTrace();
             execCommand(new HelpCommand(), args);
         }
     }
