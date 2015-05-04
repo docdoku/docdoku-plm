@@ -10,12 +10,10 @@ define([
     'common-objects/models/tag',
     'common-objects/views/tags/tag',
     'common-objects/collections/linked/linked_document_collection',
-    'common-objects/collections/part_collection',
-    'collections/used_by_document',
     'text!templates/iteration/document_iteration.html',
     'common-objects/views/prompt',
     'common-objects/utils/date'
-], function (Mustache, ModalView, FileListView, DocumentAttributesView, LifecycleView, LinkedDocumentsView, UsedByListView, Tag, TagView, LinkedDocumentCollection, PartList, UsedByDocumentList, template, PromptView, date) {
+], function (Mustache, ModalView, FileListView, DocumentAttributesView, LifecycleView, LinkedDocumentsView, UsedByListView, Tag, TagView, LinkedDocumentCollection, template, PromptView, date) {
     'use strict';
 
     var IterationView = ModalView.extend({
