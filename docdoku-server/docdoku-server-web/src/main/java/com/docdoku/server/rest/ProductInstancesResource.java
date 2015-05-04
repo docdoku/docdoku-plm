@@ -566,6 +566,18 @@ public class ProductInstancesResource {
         return mapper.map(pathToPathLink,PathToPathLinkDTO.class);
     }
 
+    @GET
+    @Path("{serialNumber}/path-to-path-links/source/{sourcePath}/target/{targetPath}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<PathToPathLinkDTO> getPathToPathLinksForGivenSourceAndTarget(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, @PathParam("sourcePath") String sourcePath, @PathParam("targetPath") String targetPath) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException {
+        List<PathToPathLink> pathToPathLinks = productInstanceService.getPathToPathLinkFromSourceAndTarget(workspaceId, configurationItemId, serialNumber, sourcePath, targetPath);
+        List<PathToPathLinkDTO> dtos = new ArrayList<>();
+        for(PathToPathLink pathToPathLink : pathToPathLinks) {
+            dtos.add(mapper.map(pathToPathLink, PathToPathLinkDTO.class));
+        }
+        return dtos;
+    }
+
     @POST
     @Path("{serialNumber}/path-to-path-links")
     @Consumes(MediaType.APPLICATION_JSON)

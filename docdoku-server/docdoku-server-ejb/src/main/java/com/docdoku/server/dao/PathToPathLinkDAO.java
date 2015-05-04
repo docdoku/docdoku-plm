@@ -90,4 +90,12 @@ public class PathToPathLinkDAO {
             return null;
         }
     }
+
+    public List<PathToPathLink> getPathToPathLinkFromSourceAndTarget(ProductInstanceIteration productInstanceIteration, String source, String target) {
+        return em.createNamedQuery("PathToPathLink.findPathToPathLinkBySourceAndTarget", PathToPathLink.class)
+                .setParameter("productInstanceIteration", productInstanceIteration)
+                .setParameter("source",source)
+                .setParameter("target", target)
+                .getResultList();
+    }
 }
