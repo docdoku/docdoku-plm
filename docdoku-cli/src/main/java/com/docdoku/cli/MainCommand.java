@@ -193,7 +193,6 @@ public class MainCommand {
                     break;
             }
         } catch (Exception e) {
-            e.printStackTrace();
             execCommand(new HelpCommand(), args);
         }
     }
