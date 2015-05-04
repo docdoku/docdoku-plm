@@ -3,14 +3,14 @@ define([
     'backbone',
     'mustache',
     'common-objects/collections/part_collection',
-    'collections/where_used_document',
-    'views/where_used/where_used_list_item_view',
-    'text!templates/where_used/where_used_list.html'
-], function (Backbone, Mustache, PartList, WhereUsedDocumentList, WhereUsedListItemView, template) {
+    'collections/used_by_document',
+    'views/used_by/used_by_list_item_view',
+    'text!templates/used_by/used_by_list.html'
+], function (Backbone, Mustache, PartList, UsedByDocumentList, UsedByListItemView, template) {
     'use strict';
-    var WhereUsedListView = Backbone.View.extend({
+    var UsedByListView = Backbone.View.extend({
 
-        className: 'where-used-items-view',
+        className: 'used-by-items-view',
 
         initialize: function () {
             _.bindAll(this);
@@ -18,14 +18,14 @@ define([
             this.linkedDocumentIterationId = this.options.linkedDocumentIterationId;
             this.linkedDocument = this.options.linkedDocument;
 
-            this.documentsCollection = new WhereUsedDocumentList();
+            this.documentsCollection = new UsedByDocumentList();
             this.documentsCollection.setLinkedDocumentIterationId(this.linkedDocumentIterationId);
             this.documentsCollection.setLinkedDocument(this.linkedDocument);
 
             this.listenTo(this.documentsCollection, 'reset', this.addDocumentViews);
 
             var that = this;
-            this.linkedDocument.getWhereUsedPartList(this.linkedDocumentIterationId, {
+            this.linkedDocument.getUsedByPartList(this.linkedDocumentIterationId, {
                 success: function (parts) {
                     that.partsCollection = new PartList(parts);
                     that.addPartViews();
@@ -44,8 +44,8 @@ define([
             this.$el.html(Mustache.render(template, data));
             this.bindDomElements();
 
-            this.whereUsedPartViews = [];
-            this.whereUsedDocumentViews = [];
+            this.usedByPartViews = [];
+            this.usedByDocumentViews = [];
 
             this.documentsCollection.fetch({reset: true});
 
@@ -53,8 +53,8 @@ define([
         },
 
         bindDomElements: function () {
-            this.documentsUL = this.$('#where-used-documents');
-            this.partsUL = this.$('#where-used-parts');
+            this.documentsUL = this.$('#used-by-documents');
+            this.partsUL = this.$('#used-by-parts');
         },
 
         addPartViews: function () {
@@ -66,24 +66,24 @@ define([
         },
 
         addPartView: function (model) {
-            var whereUsedView = new WhereUsedListItemView({
+            var usedByView = new UsedByListItemView({
                 model: model
             }).render();
 
-            this.whereUsedPartViews.push(whereUsedView);
-            this.partsUL.append(whereUsedView.$el);
+            this.usedByPartViews.push(usedByView);
+            this.partsUL.append(usedByView.$el);
         },
 
         addDocumentView: function (model) {
-            var whereUsedView = new WhereUsedListItemView({
+            var usedByView = new UsedByListItemView({
                 model: model
             }).render();
 
-            this.whereUsedDocumentViews.push(whereUsedView);
-            this.documentsUL.append(whereUsedView.$el);
+            this.usedByDocumentViews.push(usedByView);
+            this.documentsUL.append(usedByView.$el);
         }
 
     });
 
-    return WhereUsedListView;
+    return UsedByListView;
 });

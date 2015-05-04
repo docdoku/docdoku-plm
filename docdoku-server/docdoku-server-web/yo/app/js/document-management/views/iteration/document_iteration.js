@@ -6,16 +6,16 @@ define([
     'common-objects/views/attributes/attributes',
     'common-objects/views/workflow/lifecycle',
     'common-objects/views/linked/linked_documents',
-    'views/where_used/where_used_list_view',
+    'views/used_by/used_by_list_view',
     'common-objects/models/tag',
     'common-objects/views/tags/tag',
     'common-objects/collections/linked/linked_document_collection',
     'common-objects/collections/part_collection',
-    'collections/where_used_document',
+    'collections/used_by_document',
     'text!templates/iteration/document_iteration.html',
     'common-objects/views/prompt',
     'common-objects/utils/date'
-], function (Mustache, ModalView, FileListView, DocumentAttributesView, LifecycleView, LinkedDocumentsView, WhereUsedListView, Tag, TagView, LinkedDocumentCollection, PartList, WhereUsedDocumentList, template, PromptView, date) {
+], function (Mustache, ModalView, FileListView, DocumentAttributesView, LifecycleView, LinkedDocumentsView, UsedByListView, Tag, TagView, LinkedDocumentCollection, PartList, UsedByDocumentList, template, PromptView, date) {
     'use strict';
 
     var IterationView = ModalView.extend({
@@ -196,7 +196,7 @@ define([
 
                 this.initFileListView(editMode);
                 this.initLinkedDocumentsView(editMode);
-                this.initWhereUsedListView();
+                this.initUsedByListView();
             }
 
             if (this.model.get('workflow')) {
@@ -318,14 +318,14 @@ define([
             this.$('#iteration-links').html(this.linkedDocumentsView.el);
         },
 
-        initWhereUsedListView: function () {
-            this.whereUsedListView = new WhereUsedListView({
+        initUsedByListView: function () {
+            this.usedByListView = new UsedByListView({
                 linkedDocumentIterationId: this.iteration.getIteration(),
                 linkedDocument: this.model
             }).render();
 
-            /* Add the whereUsedListView to the tab */
-            this.$('#iteration-where-used').html(this.whereUsedListView.el);
+            /* Add the usedByListView to the tab */
+            this.$('#iteration-used-by').html(this.usedByListView.el);
         },
 
         tagsManagement: function (editMode) {

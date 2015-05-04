@@ -9,7 +9,7 @@ define([
     'common-objects/views/part/parts_management_view',
     'common-objects/views/part/modification_notification_group_list_view',
     'common-objects/views/linked/linked_documents',
-    'views/where_used/where_used_list_view',
+    'views/used_by/used_by_list_view',
     'common-objects/views/alert',
     'common-objects/collections/linked/linked_document_collection',
     'common-objects/views/workflow/lifecycle',
@@ -17,7 +17,7 @@ define([
     'common-objects/utils/date',
     'common-objects/views/tags/tag',
     'common-objects/models/tag'
-], function (Backbone, Mustache, ModalView, FileListView, template, AttributesView, PartsManagementView, ModificationNotificationGroupListView, LinkedDocumentsView, WhereUsedListView, AlertView, LinkedDocumentCollection, LifecycleView, ConversionStatusView, date,TagView,Tag) {
+], function (Backbone, Mustache, ModalView, FileListView, template, AttributesView, PartsManagementView, ModificationNotificationGroupListView, LinkedDocumentsView, UsedByListView, AlertView, LinkedDocumentCollection, LifecycleView, ConversionStatusView, date,TagView,Tag) {
     'use strict';
     var PartModalView = ModalView.extend({
 
@@ -139,7 +139,7 @@ define([
                 this.initPartsManagementView();
 
                 this.initLinkedDocumentsView();
-                this.initWhereUsedListView();
+                this.initUsedByListView();
                 this.initLifeCycleView();
 
                 if (!data.iteration.hasNextIteration) {
@@ -270,14 +270,14 @@ define([
             this.$('#iteration-links').html(this.linkedDocumentsView.el);
         },
 
-        initWhereUsedListView: function () {
-            this.whereUsedListView = new WhereUsedListView({
+        initUsedByListView: function () {
+            this.usedByListView = new UsedByListView({
                 linkedPartIterationId: this.iteration.getIteration(),
                 linkedPart: this.model
             }).render();
 
-            /* Add the whereUsedListView to the tab */
-            this.$('#iteration-where-used').html(this.whereUsedListView.el);
+            /* Add the usedByListView to the tab */
+            this.$('#iteration-used-by').html(this.usedByListView.el);
         },
 
         initLifeCycleView: function () {

@@ -4,7 +4,7 @@ define([
     'models/document'
 ], function (Backbone, Document) {
     'use strict';
-    var WhereUsedDocumentList = Backbone.Collection.extend({
+    var UsedByDocumentList = Backbone.Collection.extend({
 
         model: Document,
 
@@ -22,7 +22,7 @@ define([
 
     });
 
-    WhereUsedDocumentList.className = 'WhereUsedDocumentList';
+    UsedByDocumentList.className = 'UsedByDocumentList';
 
-    return WhereUsedDocumentList;
+    return UsedByDocumentList;
 });

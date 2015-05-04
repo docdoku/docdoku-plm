@@ -2,13 +2,13 @@
 define([
     'backbone',
     'mustache',
-    'text!templates/where_used/where_used_list_item.html'
+    'text!templates/used_by/used_by_list_item.html'
 ], function (Backbone, Mustache, template) {
     'use strict';
-    var WhereUsedListItemView = Backbone.View.extend({
+    var UsedByListItemView = Backbone.View.extend({
 
         tagName: 'li',
-        className: 'where-used-item well',
+        className: 'used-by-item well',
 
         initialize: function () {
             _.bindAll(this);
@@ -26,6 +26,6 @@ define([
 
     });
 
-    return WhereUsedListItemView;
+    return UsedByListItemView;
 });
 

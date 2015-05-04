@@ -336,7 +336,7 @@ define(['backbone', 'collections/document_iteration', 'common-objects/utils/acl-
 			return this.get('attributesLocked');
 		},
 
-        getWhereUsedPartList: function (iteration, args) {
+        getUsedByPartList: function (iteration, args) {
             $.ajax({
                 type: 'GET',
                 url: this.baseUrl() + '/' + iteration + '/inverse-part-link',

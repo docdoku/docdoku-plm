@@ -110,11 +110,11 @@ define([
 			return this.getWorkspace() + '/documents/' + this.getDocumentMasterId() + '/' + this.getDocumentRevisionVersion() + '/' + this.getIteration();
 		},
 
-        getWhereUsedDocuments: function () {
+        getUsedByDocuments: function () {
             return [];
         },
 
-        getWhereUsedParts: function () {
+        getUsedByParts: function () {
             return [];
         }
 	});
