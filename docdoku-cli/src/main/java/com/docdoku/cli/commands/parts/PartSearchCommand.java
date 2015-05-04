@@ -20,7 +20,7 @@
 
 package com.docdoku.cli.commands.parts;
 
-import com.docdoku.cli.commands.AbstractCommandLine;
+import com.docdoku.cli.commands.BaseCommandLine;
 import com.docdoku.cli.helpers.LangHelper;
 import com.docdoku.cli.tools.ScriptingTools;
 import com.docdoku.core.product.PartRevision;
@@ -35,7 +35,7 @@ import java.util.List;
  *
  * @author Morgan Guimard
  */
-public class PartSearchCommand extends AbstractCommandLine {
+public class PartSearchCommand extends BaseCommandLine {
 
     @Option(name = "-w", aliases = "--workspace", required = true, metaVar = "<workspace>", usage = "workspace on which operations occur")
     protected String workspace;

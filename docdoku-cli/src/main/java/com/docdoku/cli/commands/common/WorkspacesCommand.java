@@ -20,7 +20,7 @@
 
 package com.docdoku.cli.commands.common;
 
-import com.docdoku.cli.commands.AbstractCommandLine;
+import com.docdoku.cli.commands.BaseCommandLine;
 import com.docdoku.cli.helpers.AccountsManager;
 import com.docdoku.cli.helpers.LangHelper;
 import com.docdoku.cli.tools.ScriptingTools;
@@ -33,7 +33,7 @@ import java.io.IOException;
  *
  * @author Morgan Guimard
  */
-public class WorkspacesCommand extends AbstractCommandLine {
+public class WorkspacesCommand extends BaseCommandLine {
 
     public void execImpl() throws Exception {
         IUserManagerWS userS = ScriptingTools.createUserManagerService(getServerURL(), user, password);

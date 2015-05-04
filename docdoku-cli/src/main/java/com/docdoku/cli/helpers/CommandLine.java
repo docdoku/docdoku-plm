@@ -18,7 +18,7 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.cli.interfaces;
+package com.docdoku.cli.helpers;
 
 import java.io.IOException;
 
@@ -27,6 +27,7 @@ import java.io.IOException;
  * @author Florent Garin
  */
 public interface CommandLine {
+    CliOutput getOutput();
     void exec() throws Exception;
     String getDescription() throws IOException;
 }

@@ -20,7 +20,7 @@
 
 package com.docdoku.cli.commands.documents;
 
-import com.docdoku.cli.commands.AbstractCommandLine;
+import com.docdoku.cli.commands.BaseCommandLine;
 import com.docdoku.cli.helpers.AccountsManager;
 import com.docdoku.cli.helpers.FileHelper;
 import com.docdoku.cli.helpers.LangHelper;
@@ -39,7 +39,7 @@ import java.io.IOException;
  *
  * @author Morgan Guimard
  */
-public class DocumentCreationCommand extends AbstractCommandLine {
+public class DocumentCreationCommand extends BaseCommandLine {
 
     @Option(metaVar = "<id>", name = "-o", aliases = "--id", required = true, usage = "the id of the document to save")
     private String id;

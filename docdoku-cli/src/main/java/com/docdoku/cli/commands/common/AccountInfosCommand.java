@@ -20,7 +20,7 @@
 
 package com.docdoku.cli.commands.common;
 
-import com.docdoku.cli.commands.AbstractCommandLine;
+import com.docdoku.cli.commands.BaseCommandLine;
 import com.docdoku.cli.helpers.LangHelper;
 import com.docdoku.cli.tools.ScriptingTools;
 import com.docdoku.core.common.Account;
@@ -32,7 +32,7 @@ import java.io.IOException;
  *
  * @author Morgan Guimard
  */
-public class AccountInfosCommand extends AbstractCommandLine {
+public class AccountInfosCommand extends BaseCommandLine {
 
     private IUserManagerWS userS;
 

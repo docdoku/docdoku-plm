@@ -20,7 +20,7 @@
 
 package com.docdoku.cli.commands.parts;
 
-import com.docdoku.cli.commands.AbstractCommandLine;
+import com.docdoku.cli.commands.BaseCommandLine;
 import com.docdoku.cli.helpers.AccountsManager;
 import com.docdoku.cli.helpers.FileHelper;
 import com.docdoku.cli.helpers.LangHelper;
@@ -46,7 +46,7 @@ import java.util.List;
  *
  * @author Florent Garin
  */
-public class PartGetCommand extends AbstractCommandLine {
+public class PartGetCommand extends BaseCommandLine {
 
 
     @Option(metaVar = "<revision>", name="-r", aliases = "--revision", usage="specify revision of the part to retrieve ('A', 'B'...); default is the latest")

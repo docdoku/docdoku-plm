@@ -20,7 +20,7 @@
 
 package com.docdoku.cli.commands.parts;
 
-import com.docdoku.cli.commands.AbstractCommandLine;
+import com.docdoku.cli.commands.BaseCommandLine;
 import com.docdoku.cli.helpers.AccountsManager;
 import com.docdoku.cli.helpers.FileHelper;
 import com.docdoku.cli.helpers.LangHelper;
@@ -42,7 +42,7 @@ import java.io.IOException;
  *
  * @author Florent Garin
  */
-public class PartPutCommand extends AbstractCommandLine {
+public class PartPutCommand extends BaseCommandLine {
 
     @Option(metaVar = "<revision>", name="-r", aliases = "--revision", usage="specify revision of the part to save ('A', 'B'...); if not specified the part identity (number and revision) corresponding to the cad file will be selected")
     private Version revision;

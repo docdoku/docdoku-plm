@@ -23,7 +23,7 @@ package com.docdoku.cli.commands.common;
 import com.docdoku.cli.commands.AbstractCommandLine;
 import com.docdoku.cli.commands.parts.*;
 import com.docdoku.cli.helpers.LangHelper;
-import com.docdoku.cli.interfaces.CommandLine;
+import com.docdoku.cli.helpers.CommandLine;
 import org.kohsuke.args4j.Argument;
 
 import java.io.IOException;

@@ -20,7 +20,7 @@
 
 package com.docdoku.cli.commands.common;
 
-import com.docdoku.cli.commands.AbstractCommandLine;
+import com.docdoku.cli.commands.BaseCommandLine;
 import com.docdoku.cli.helpers.LangHelper;
 import com.docdoku.cli.helpers.MetaDirectoryManager;
 import com.docdoku.cli.tools.ScriptingTools;
@@ -41,7 +41,7 @@ import java.io.IOException;
  *
  * @author Morgan Guimard
  */
-public class FileStatusCommand extends AbstractCommandLine {
+public class FileStatusCommand extends BaseCommandLine {
 
     @Argument(metaVar = "[<file>]", required=true, index=0, usage = "specify the file of a document or a part to get a status")
     private File file;

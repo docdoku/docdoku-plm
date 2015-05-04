@@ -20,7 +20,7 @@
 
 package com.docdoku.cli.commands.documents;
 
-import com.docdoku.cli.commands.AbstractCommandLine;
+import com.docdoku.cli.commands.BaseCommandLine;
 import com.docdoku.cli.helpers.AccountsManager;
 import com.docdoku.cli.helpers.FileHelper;
 import com.docdoku.cli.helpers.LangHelper;
@@ -44,7 +44,7 @@ import java.security.NoSuchAlgorithmException;
  *
  * @author Morgan Guimard
  */
-public class DocumentGetCommand extends AbstractCommandLine {
+public class DocumentGetCommand extends BaseCommandLine {
 
     @Option(metaVar = "<revision>", name="-r", aliases = "--revision", usage="specify revision of the document to retrieve ('A', 'B'...); default is the latest")
     private Version revision;

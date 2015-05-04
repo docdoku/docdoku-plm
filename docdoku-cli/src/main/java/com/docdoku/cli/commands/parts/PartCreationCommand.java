@@ -20,7 +20,7 @@
 
 package com.docdoku.cli.commands.parts;
 
-import com.docdoku.cli.commands.AbstractCommandLine;
+import com.docdoku.cli.commands.BaseCommandLine;
 import com.docdoku.cli.helpers.AccountsManager;
 import com.docdoku.cli.helpers.FileHelper;
 import com.docdoku.cli.helpers.LangHelper;
@@ -40,7 +40,7 @@ import java.io.IOException;
  *
  * @author Morgan Guimard
  */
-public class PartCreationCommand extends AbstractCommandLine {
+public class PartCreationCommand extends BaseCommandLine {
 
     @Option(metaVar = "<partnumber>", name = "-o", aliases = "--part", required = true, usage = "the part number of the part to save")
     private String partNumber;

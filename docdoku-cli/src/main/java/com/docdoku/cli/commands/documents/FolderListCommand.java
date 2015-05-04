@@ -20,7 +20,7 @@
 
 package com.docdoku.cli.commands.documents;
 
-import com.docdoku.cli.commands.AbstractCommandLine;
+import com.docdoku.cli.commands.BaseCommandLine;
 import com.docdoku.cli.helpers.LangHelper;
 import com.docdoku.cli.tools.ScriptingTools;
 import com.docdoku.core.services.IDocumentManagerWS;
@@ -32,7 +32,7 @@ import java.io.IOException;
  *
  * @author Morgan Guimard
  */
-public class FolderListCommand extends AbstractCommandLine {
+public class FolderListCommand extends BaseCommandLine {
 
     @Option(name="-w", aliases = "--workspace", required = true, metaVar = "<workspace>", usage="workspace on which operations occur")
     protected String workspace;
