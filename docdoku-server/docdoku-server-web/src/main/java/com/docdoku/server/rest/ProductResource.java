@@ -446,6 +446,32 @@ public class ProductResource {
         return Response.ok().build();
     }
 
+    @GET
+    @Path("{ciId}/path-to-path-links/source/{sourcePath}/target/{targetPath}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<PathToPathLinkDTO> getPathToPathLinksForGivenSourceAndTarget(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("sourcePath") String sourcePath, @PathParam("targetPath") String targetPath) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException {
+        List<PathToPathLink> pathToPathLinks = productService.getPathToPathLinkFromSourceAndTarget(workspaceId, configurationItemId, sourcePath, targetPath);
+        List<PathToPathLinkDTO> dtos = new ArrayList<>();
+        for(PathToPathLink pathToPathLink : pathToPathLinks) {
+            dtos.add(mapper.map(pathToPathLink, PathToPathLinkDTO.class));
+        }
+        return dtos;
+    }
+
+    @GET
+    @Path("{ciId}/path-to-path-links-types")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<PathToPathLinkDTO> getPathToPathLinkTypes(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException, ConfigurationItemNotFoundException {
+        List<String> pathToPathLinkTypes = productService.getPathToPathLinkTypes(workspaceId, configurationItemId);
+        List<PathToPathLinkDTO> pathToPathLinkDTOs = new ArrayList<>();
+        for(String type : pathToPathLinkTypes){
+            PathToPathLinkDTO pathToPathLinkDTO = new PathToPathLinkDTO();
+            pathToPathLinkDTO.setType(type);
+            pathToPathLinkDTOs.add(pathToPathLinkDTO);
+        }
+        return pathToPathLinkDTOs;
+    }
+
 
     /**
      * Because some AS (like Glassfish) forbids the use of CacheControl

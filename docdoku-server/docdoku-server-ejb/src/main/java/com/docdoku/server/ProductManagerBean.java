@@ -2780,6 +2780,24 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     @Override
+    public List<String> getPathToPathLinkTypes(String workspaceId, String configurationItemId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ConfigurationItemNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+        Locale locale = new Locale(user.getLanguage());
+        ConfigurationItem configurationItem = new ConfigurationItemDAO(locale,em).loadConfigurationItem(new ConfigurationItemKey(workspaceId,configurationItemId));
+        return new PathToPathLinkDAO(locale, em).getDistinctPathToPathLinkTypes(configurationItem);
+    }
+
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
+    @Override
+    public List<PathToPathLink> getPathToPathLinkFromSourceAndTarget(String workspaceId, String configurationItemId, String sourcePath, String targetPath) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ConfigurationItemNotFoundException {
+        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+        Locale locale = new Locale(user.getLanguage());
+        ConfigurationItem configurationItem = new ConfigurationItemDAO(locale,em).loadConfigurationItem(new ConfigurationItemKey(workspaceId,configurationItemId));
+        return new PathToPathLinkDAO(locale, em).getPathToPathLinkFromSourceAndTarget(configurationItem, sourcePath, targetPath);
+    }
+
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
+    @Override
     public void deletePathToPathLink(String workspaceId, String configurationItemId, int pathToPathLinkId) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, PathToPathLinkNotFoundException {
 
         User user = userManager.checkWorkspaceWriteAccess(workspaceId);
