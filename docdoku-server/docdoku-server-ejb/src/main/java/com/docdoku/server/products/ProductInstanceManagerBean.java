@@ -1000,9 +1000,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         ProductInstanceMaster prodInstM = productInstanceMasterDAO.loadProductInstanceMaster(new ProductInstanceMasterKey(serialNumber, workspaceId, configurationItemId));
 
         checkProductInstanceReadAccess(workspaceId,prodInstM,user);
-        List<String> types =  new PathToPathLinkDAO(locale, em).getDistinctPathToPathLinkTypes(prodInstM.getLastIteration());
-
-        return types;
+        return new PathToPathLinkDAO(locale, em).getDistinctPathToPathLinkTypes(prodInstM.getLastIteration());
     }
 
     private void checkCyclicPathToPathLink (ProductInstanceIteration productInstanceIteration, PathToPathLink startLink, User user, List<PathToPathLink> visitedLinks) throws PathToPathCyclicException {
@@ -1022,11 +1020,11 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
 
     private User checkProductInstanceReadAccess(String workspaceId, ProductInstanceMaster prodInstM, User user) throws AccessRightException, WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
         if (user.isAdministrator()) {
-            // Check if it is the workspace's administrator
+            // Check if the user is workspace administrator
             return user;
         }
         if (prodInstM.getAcl() == null) {
-            // Check if the item haven't ACL
+            // Check if the item has no ACL
             return userManager.checkWorkspaceReadAccess(workspaceId);
         } else if (prodInstM.getAcl().hasWriteAccess(user)) {
             // Check if there is a write access

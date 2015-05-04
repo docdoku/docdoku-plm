@@ -96,8 +96,10 @@ define([
                 this.$selectConfSpec.val('serial-number');
                 this.$selectBaselineSpec.hide();
                 this.$selectLatestFilter.hide();
+                this.$selectPathToPathLink.show();
                 this.$selectProdInstSpec.val(selected.getSerialNumber()).show();
                 this.setDescription('');
+                this.fetchPathToPathLinkTypes();
             }
         },
 
@@ -127,6 +129,7 @@ define([
             this.trigger('config_spec:changed', this.$selectLatestFilter.val());
             this.setDescription('');
         },
+
         changeBaseline:function(){
             this.$selectProdInstSpec.hide();
             this.$selectPathToPathLink.hide();
@@ -144,6 +147,14 @@ define([
             this.$selectPathToPathLink.show();
             this.trigger('config_spec:changed', this.$selectProdInstSpec.val());
             this.setDescription('');
+            this.fetchPathToPathLinkTypes();
+        },
+
+        fetchPathToPathLinkTypes:function(){
+            var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + App.config.productId + '/product-instances/' + this.$selectProdInstSpec.val().substr(3) + '/path-to-path-links-types';
+            $.getJSON(url).success(function(data){
+
+            });
         },
 
         changePathToPathLink:function(){

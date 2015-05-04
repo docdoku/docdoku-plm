@@ -32,9 +32,9 @@ import java.io.Serializable;
 @Table(name="PATHTOPATHLINK")
 @Entity
 @NamedQueries({
-        @NamedQuery(name="PathToPathLink.findPathToPathLinkTypesByProductInstanceIteration", query="SELECT DISTINCT p.type FROM PathToPathLink p JOIN ProductInstanceIteration pi ON p member of pi.pathToPathLinks AND pi = :productInstanceIteration"),
-        @NamedQuery(name="PathToPathLink.findNextPathToPathLinkInProductInstanceIteration", query="SELECT DISTINCT p FROM PathToPathLink p JOIN ProductInstanceIteration pi ON p member of pi.pathToPathLinks AND pi = :productInstanceIteration AND p.sourcePath = :targetPath AND p.type = :type"),
-        @NamedQuery(name="PathToPathLink.findSamePathToPathLinkInProductInstanceIteration", query="SELECT DISTINCT p FROM PathToPathLink p JOIN ProductInstanceIteration pi ON p member of pi.pathToPathLinks AND pi = :productInstanceIteration AND p.sourcePath = :sourcePath AND p.targetPath = :targetPath AND p.type = :type")
+        @NamedQuery(name="PathToPathLink.findPathToPathLinkTypesByProductInstanceIteration", query="SELECT DISTINCT(p.type) FROM PathToPathLink p JOIN ProductInstanceIteration pi WHERE p member of pi.pathToPathLinks AND pi = :productInstanceIteration"),
+        @NamedQuery(name="PathToPathLink.findNextPathToPathLinkInProductInstanceIteration", query="SELECT DISTINCT p FROM PathToPathLink p JOIN ProductInstanceIteration pi WHERE p member of pi.pathToPathLinks AND pi = :productInstanceIteration AND p.sourcePath = :targetPath AND p.type = :type"),
+        @NamedQuery(name="PathToPathLink.findSamePathToPathLinkInProductInstanceIteration", query="SELECT DISTINCT p FROM PathToPathLink p JOIN ProductInstanceIteration pi WHERE p member of pi.pathToPathLinks AND pi = :productInstanceIteration AND p.sourcePath = :sourcePath AND p.targetPath = :targetPath AND p.type = :type")
 })
 
 public class PathToPathLink implements Serializable{

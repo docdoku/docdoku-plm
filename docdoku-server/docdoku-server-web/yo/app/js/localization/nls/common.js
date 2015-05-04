@@ -514,6 +514,7 @@ define({
 		START: "Start",
 		STATE_CHANGE: "State change",
 		STATUS: "Status",
+		STRUCTURE: "Structure",
 		SUB_PARTS: "Assembly",
 		SUBSCRIBE_ITERATION_CHANGE: "Subscribe to iteration change notifications",
 		SUBSCRIBE_STATE_CHANGE: "Subscribe to document state change notifications",

@@ -202,6 +202,7 @@ define([
             }else{
                 this.productInstanceModalButton.hide();
             }
+
             this.updateBom(showRoot);
             this.showPartMetadata();
             App.sceneManager.setPathForIFrame(App.partsTreeView.componentSelected.getPath());
