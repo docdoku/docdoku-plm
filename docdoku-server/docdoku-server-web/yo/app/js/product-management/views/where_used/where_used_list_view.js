@@ -2,11 +2,11 @@
 define([
     'backbone',
     'mustache',
+    'collections/used_by_product_instance',
     //'common-objects/collections/part_collection',
-    //'collections/where_used_document',
     'views/where_used/where_used_list_item_view',
     'text!templates/where_used/where_used_list.html'
-], function (Backbone, Mustache, /*PartList, WhereUsedDocumentList, */WhereUsedListItemView, template) {
+], function (Backbone, Mustache, UsedByProductInstanceList, /*PartList, */WhereUsedListItemView, template) {
     'use strict';
     var WhereUsedListView = Backbone.View.extend({
 
@@ -18,11 +18,10 @@ define([
             this.linkedPartIterationId = this.options.linkedPartIterationId;
             this.linkedPart = this.options.linkedPart;
 
-            //this.documentsCollection = new WhereUsedDocumentList();
-            //this.documentsCollection.setLinkedDocumentIterationId(this.linkedDocumentIterationId);
-            //this.documentsCollection.setLinkedDocument(this.linkedDocument);
-            //
-            //this.listenTo(this.documentsCollection, 'reset', this.addDocumentViews);
+            this.productInstancesCollection = new UsedByProductInstanceList();
+            this.productInstancesCollection.setLinkedPart(this.linkedPart);
+
+            this.listenTo(this.productInstancesCollection, 'reset', this.addProductInstanceViews);
 
             //var that = this;
             //this.linkedDocument.getWhereUsedPartList(this.linkedDocumentIterationId, {
@@ -45,15 +44,15 @@ define([
             this.bindDomElements();
 
             //this.whereUsedPartViews = [];
-            //this.whereUsedDocumentViews = [];
-            //
-            //this.documentsCollection.fetch({reset: true});
+            this.whereUsedProductInstanceViews = [];
+
+            this.productInstancesCollection.fetch({reset: true});
 
             return this;
         },
 
         bindDomElements: function () {
-            this.documentsUL = this.$('#where-used-documents');
+            this.productInstancesUL = this.$('#where-used-product-instances');
             this.partsUL = this.$('#where-used-parts');
         },
 
@@ -61,8 +60,8 @@ define([
             this.partsCollection.each(this.addPartView.bind(this));
         },
 
-        addDocumentViews: function () {
-            this.documentsCollection.each(this.addDocumentView.bind(this));
+        addProductInstanceViews: function () {
+            this.productInstancesCollection.each(this.addProductInstanceView.bind(this));
         },
 
         addPartView: function (model) {
@@ -74,13 +73,13 @@ define([
             this.partsUL.append(whereUsedView.$el);
         },
 
-        addDocumentView: function (model) {
+        addProductInstanceView: function (model) {
             var whereUsedView = new WhereUsedListItemView({
                 model: model
             }).render();
 
-            this.whereUsedDocumentViews.push(whereUsedView);
-            this.documentsUL.append(whereUsedView.$el);
+            this.whereUsedProductInstanceViews.push(whereUsedView);
+            this.productInstancesUL.append(whereUsedView.$el);
         }
 
     });
