@@ -36,7 +36,6 @@ define([
 
             this.$selectBaselineSpec.hide();
             this.$selectProdInstSpec.hide();
-            this.$selectPathToPathLink.hide();
 
 			this.baselineCollection.fetch({reset:true});
             this.productInstanceCollection.fetch({reset:true});
@@ -44,6 +43,8 @@ define([
             if(_.contains(this.availableFilters,App.config.configSpec)){
                 this.$selectLatestFilter.val(App.config.configSpec);
             }
+
+            this.fetchPathToPathLinkTypes();
 
 			return this ;
 		},
@@ -74,7 +75,6 @@ define([
             if(selected){
                 this.$selectConfSpec.val('baseline');
                 this.$selectProdInstSpec.hide();
-                this.$selectPathToPathLink.hide();
                 this.$selectLatestFilter.hide();
                 this.$selectBaselineSpec.val(selected.getId()).show();
                 this.setDescription(selected.getIterationNote());
@@ -96,10 +96,8 @@ define([
                 this.$selectConfSpec.val('serial-number');
                 this.$selectBaselineSpec.hide();
                 this.$selectLatestFilter.hide();
-                this.$selectPathToPathLink.show();
                 this.$selectProdInstSpec.val(selected.getSerialNumber()).show();
                 this.setDescription('');
-                this.fetchPathToPathLinkTypes();
             }
         },
 
@@ -116,6 +114,7 @@ define([
 			}else if(selectedType==='serial-number'){
                 this.changeInstance();
             }
+            this.fetchPathToPathLinkTypes();
 		},
 
         isSerialNumberSelected:function(){
@@ -125,7 +124,6 @@ define([
         changeLatest:function(){
             this.$selectBaselineSpec.hide();
             this.$selectProdInstSpec.hide();
-            this.$selectPathToPathLink.hide();
             this.$selectLatestFilter.show();
             this.trigger('config_spec:changed', this.$selectLatestFilter.val());
             this.setDescription('');
@@ -133,7 +131,6 @@ define([
 
         changeBaseline:function(){
             this.$selectProdInstSpec.hide();
-            this.$selectPathToPathLink.hide();
             this.$selectLatestFilter.hide();
             this.$selectBaselineSpec.show();
             this.trigger('config_spec:changed', this.$selectBaselineSpec.val());
@@ -145,14 +142,19 @@ define([
             this.$selectBaselineSpec.hide();
             this.$selectLatestFilter.hide();
             this.$selectProdInstSpec.show();
-            this.$selectPathToPathLink.show();
             this.trigger('config_spec:changed', this.$selectProdInstSpec.val());
             this.setDescription('');
-            this.fetchPathToPathLinkTypes();
         },
 
         fetchPathToPathLinkTypes:function(){
-            var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + App.config.productId + '/product-instances/' + this.$selectProdInstSpec.val().substr(3) + '/path-to-path-links-types';
+            var url = App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + App.config.productId ;
+
+            var selectedType = this.$selectConfSpec.val();
+            if(selectedType==='serial-number'){
+                url+= '/product-instances/' + this.$selectProdInstSpec.val().substr(3);
+            }
+            url+= '/path-to-path-links-types';
+
             var $select = this.$selectPathToPathLink;
             $select.empty();
             $select.append('<option value="">'+App.config.i18n.STRUCTURE+'</option>');
@@ -178,7 +180,6 @@ define([
                 this.$selectBaselineSpec.hide();
                 this.$selectLatestFilter.hide();
                 this.$selectProdInstSpec.hide();
-                this.$selectPathToPathLink.hide();
 
                 selectedConfigSpecOption.parent().val(App.config.configSpec).show();
 
