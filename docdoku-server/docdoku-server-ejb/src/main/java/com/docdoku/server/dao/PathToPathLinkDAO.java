@@ -99,28 +99,22 @@ public class PathToPathLinkDAO {
         }
     }
 
-    public PathToPathLink getNextPathToPathLinkInProduct(ConfigurationItem configurationItem, PathToPathLink pathToPathLink){
-        try {
-            return em.createNamedQuery("PathToPathLink.findNextPathToPathLinkInProduct", PathToPathLink.class)
-                    .setParameter("configurationItem", configurationItem)
-                    .setParameter("targetPath", pathToPathLink.getTargetPath())
-                    .setParameter("type", pathToPathLink.getType())
-                    .getSingleResult();
-        }catch(NoResultException e){
-            return null;
-        }
+    public List<PathToPathLink> getNextPathToPathLinkInProduct(ConfigurationItem configurationItem, PathToPathLink pathToPathLink){
+        return em.createNamedQuery("PathToPathLink.findNextPathToPathLinkInProduct", PathToPathLink.class)
+                .setParameter("configurationItem", configurationItem)
+                .setParameter("targetPath", pathToPathLink.getTargetPath())
+                .setParameter("type", pathToPathLink.getType())
+                .getResultList();
     }
 
-    public PathToPathLink getNextPathToPathLinkInProductInstance(ProductInstanceIteration productInstanceIteration, PathToPathLink pathToPathLink){
-        try {
-            return em.createNamedQuery("PathToPathLink.findNextPathToPathLinkInProductInstanceIteration", PathToPathLink.class)
-                    .setParameter("productInstanceIteration", productInstanceIteration)
-                    .setParameter("targetPath", pathToPathLink.getTargetPath())
-                    .setParameter("type", pathToPathLink.getType())
-                    .getSingleResult();
-        }catch(NoResultException e){
-            return null;
-        }
+    public List<PathToPathLink> getNextPathToPathLinkInProductInstance(ProductInstanceIteration productInstanceIteration, PathToPathLink pathToPathLink){
+
+        return em.createNamedQuery("PathToPathLink.findNextPathToPathLinkInProductInstanceIteration", PathToPathLink.class)
+                .setParameter("productInstanceIteration", productInstanceIteration)
+                .setParameter("targetPath", pathToPathLink.getTargetPath())
+                .setParameter("type", pathToPathLink.getType())
+                .getResultList();
+
     }
 
     public List<PathToPathLink> getPathToPathLinkFromSourceAndTarget(ProductInstanceIteration productInstanceIteration, String source, String target) {
@@ -139,6 +133,13 @@ public class PathToPathLinkDAO {
                 .getResultList();
     }
 
+    public List<PathToPathLink> findRootPathToPathLinks(ConfigurationItem configurationItem, String type) {
+        return em.createNamedQuery("PathToPathLink.findRootPathToPathLinkForGivenProductAndType", PathToPathLink.class)
+                .setParameter("configurationItem", configurationItem)
+                .setParameter("type", type)
+                .getResultList();
+    }
+
     public List<PathToPathLink> findRootPathToPathLinks(ProductInstanceIteration productInstanceIteration, String type) {
         return em.createNamedQuery("PathToPathLink.findRootPathToPathLinkForGivenProductInstanceIterationAndType", PathToPathLink.class)
                 .setParameter("productInstanceIteration", productInstanceIteration)
@@ -150,6 +151,14 @@ public class PathToPathLinkDAO {
         return em.createNamedQuery("PathToPathLink.findPathToPathLinkByPathListInProduct", PathToPathLink.class)
                 .setParameter("configurationItem", configurationItem)
                 .setParameter("paths",paths)
+                .getResultList();
+    }
+
+    public List<PathToPathLink> getSourcesPathToPathLinksInProduct(ConfigurationItem configurationItem, String type, String source) {
+        return em.createNamedQuery("PathToPathLink.findSourcesPathToPathLinkInProduct", PathToPathLink.class)
+                .setParameter("configurationItem", configurationItem)
+                .setParameter("type",type)
+                .setParameter("source", source)
                 .getResultList();
     }
 }

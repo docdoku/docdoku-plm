@@ -206,9 +206,17 @@ define(['backbone', 'common-objects/utils/date'],
             },
 
             url: function () {
-                var path = this.path ? '-1-'+this.path : '-1';
-                var url = this.urlBase() + '/filter?configSpec=' + App.config.configSpec + '&path=' + path + '&depth=1' ;
-                if(App.config.linkType){
+                var path = this.path;
+                var url = this.urlBase() + '/filter?configSpec=' + App.config.configSpec + '&depth=1';
+
+                if(!App.config.linkType){
+                    url+= '&path=' + (path?'-1'+path:'-1');
+                }
+                else{
+                    if(path){
+                        url+= '&path=' + path;
+                    }
+
                     url += '&linkType='+App.config.linkType;
                 }
                 return url;

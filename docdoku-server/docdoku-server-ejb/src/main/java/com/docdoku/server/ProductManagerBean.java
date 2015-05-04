@@ -2258,9 +2258,128 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public Component filterProductStructureOnLinkType(ConfigurationItemKey ciKey, String serialNumber, String path, String linkType) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ConfigurationItemNotFoundException {
-        // TODO
-        return null;
+    public Component filterProductStructureOnLinkType(ConfigurationItemKey ciKey, PSFilter filter, String serialNumber, String path, String linkType) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException {
+
+        User user = userManager.checkWorkspaceReadAccess(ciKey.getWorkspace());
+        Locale locale = new Locale(user.getLanguage());
+        ConfigurationItem ci = new ConfigurationItemDAO(locale, em).loadConfigurationItem(ciKey);
+
+        PathToPathLinkDAO pathToPathLinkDAO = new PathToPathLinkDAO(locale,em);
+
+        Component component = new Component();
+        component.setUser(user);
+        component.setComponents(new ArrayList<>());
+
+        List<PathToPathLink> links;
+
+        // If path is null => get Root links embedded as subComponents of a virtual component
+        if(path == null){
+
+            links = pathToPathLinkDAO.findRootPathToPathLinks(ci, linkType);
+
+            PartMaster virtualPartMaster = new PartMaster(ci.getWorkspace(),linkType,user);
+            PartRevision virtualPartRevision = new PartRevision(virtualPartMaster,user);
+            virtualPartMaster.getPartRevisions().add(virtualPartRevision);
+            PartIteration virtualPartIteration = new PartIteration(virtualPartRevision,user);
+            virtualPartRevision.getPartIterations().add(virtualPartIteration);
+
+            component.setPartMaster(virtualPartMaster);
+            component.setRetainedIteration(virtualPartIteration);
+            component.setPath(new ArrayList<>());
+            component.setVirtual(true);
+
+            component.getPath().add(new PartLink() {
+                @Override
+                public int getId() {
+                    return 0;
+                }
+
+                @Override
+                public Character getCode() {
+                    return null;
+                }
+
+                @Override
+                public String getFullId() {
+                    return null;
+                }
+
+                @Override
+                public double getAmount() {
+                    return 1;
+                }
+
+                @Override
+                public String getUnit() {
+                    return null;
+                }
+
+                @Override
+                public String getComment() {
+                    return null;
+                }
+
+                @Override
+                public boolean isOptional() {
+                    return false;
+                }
+
+                @Override
+                public PartMaster getComponent() {
+                    return virtualPartMaster;
+                }
+
+                @Override
+                public List<PartSubstituteLink> getSubstitutes() {
+                    return null;
+                }
+
+                @Override
+                public String getReferenceDescription() {
+                    return linkType;
+                }
+
+                @Override
+                public List<CADInstance> getCadInstances() {
+                    return null;
+                }
+            });
+
+        }
+        // If path is not null => get next path to path links
+
+        else{
+            links = pathToPathLinkDAO.getSourcesPathToPathLinksInProduct(ci, linkType, path);
+            List<PartLink> decodedSourcePath = decodePath(ciKey, path);
+            PartLink link = decodedSourcePath.get(decodedSourcePath.size() - 1);
+            List<PartIteration> partIterations = filter.filter(link.getComponent());
+            PartIteration retainedIteration = partIterations.get(partIterations.size() - 1);
+
+            component.setPath(decodedSourcePath);
+            component.setPartMaster(link.getComponent());
+            component.setRetainedIteration(retainedIteration);
+        }
+
+        // Iterate the list and populate sub components
+
+        for(PathToPathLink rootLink:links){
+
+            Component subComponent = new Component();
+
+            List<PartLink> decodedPath = decodePath(ciKey, rootLink.getSourcePath());
+            PartLink link = decodedPath.get(decodedPath.size() - 1);
+            List<PartIteration> partIterations = filter.filter(link.getComponent());
+            PartIteration retainedIteration = partIterations.get(partIterations.size() - 1);
+
+            subComponent.setPartMaster(link.getComponent());
+            subComponent.setPath(decodedPath);
+            subComponent.setRetainedIteration(retainedIteration);
+            subComponent.setUser(user);
+            subComponent.setComponents(new ArrayList<>());
+            component.addComponent(subComponent);
+        }
+
+        return component;
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
@@ -2817,15 +2936,14 @@ public class ProductManagerBean implements IProductManagerWS, IProductManagerLoc
         Locale locale = new Locale(user.getLanguage());
         PathToPathLinkDAO pathToPathLinkDAO = new PathToPathLinkDAO(locale, em);
 
-        PathToPathLink nextPathToPathLink = pathToPathLinkDAO.getNextPathToPathLinkInProduct(ci, startLink);
-        if(nextPathToPathLink != null){
+        List<PathToPathLink> nextPathToPathLinks = pathToPathLinkDAO.getNextPathToPathLinkInProduct(ci, startLink);
+        for(PathToPathLink nextPathToPathLink: nextPathToPathLinks){
             if(visitedLinks.contains(nextPathToPathLink)){
                 throw new PathToPathCyclicException(locale);
             }
             visitedLinks.add(nextPathToPathLink);
             checkCyclicPathToPathLink(ci, startLink, user, visitedLinks);
         }
-
     }
 
     private PSFilter getConfigSpecForBaseline(int baselineId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, BaselineNotFoundException {

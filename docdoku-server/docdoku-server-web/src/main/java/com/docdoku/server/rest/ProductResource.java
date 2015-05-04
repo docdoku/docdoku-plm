@@ -159,23 +159,26 @@ public class ProductResource {
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException, EntityConstraintException {
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
 
+        PSFilter filter = productService.getPSFilter(ciKey, configSpecType);
+
         Component component = null;
         String serialNumber = null;
 
-        if(linkType == null){
-            PSFilter filter = productService.getPSFilter(ciKey, configSpecType);
-            List<PartLink> decodedPath = productService.decodePath(ciKey, path);
-            component = productService.filterProductStructure(ciKey,filter,decodedPath,depth);
+        if(configSpecType.startsWith("pi-")){
+            serialNumber = configSpecType.substring(3);
         }
 
-        if(component == null && configSpecType != null && configSpecType.startsWith("pi-")){
-            serialNumber = configSpecType.substring(3);
-            component = productService.filterProductStructureOnLinkType(ciKey, serialNumber, path, linkType);
+        if(linkType == null){
+            List<PartLink> decodedPath = productService.decodePath(ciKey, path);
+            component = productService.filterProductStructure(ciKey,filter,decodedPath,depth);
+        }else {
+            component = productService.filterProductStructureOnLinkType(ciKey, filter, serialNumber, path, linkType);
         }
 
         if(component == null){
             throw new IllegalArgumentException();
         }
+
         return createComponentDTO(component,workspaceId,ciId,serialNumber);
     }
 
@@ -535,22 +538,25 @@ public class ProductResource {
             dto.setCheckOutDate(partR.getCheckOutDate());
         }
 
-        try {
-            productService.checkPartRevisionReadAccess(partR.getKey());
+        if(!component.isVirtual()){
+            try {
+                productService.checkPartRevisionReadAccess(partR.getKey());
+                dto.setAccessDeny(false);
+                dto.setLastIterationNumber(productService.getNumberOfIteration(partR.getKey()));
+            }catch (Exception e){
+                LOGGER.log(Level.FINEST,null,e);
+                dto.setLastIterationNumber(-1);
+                dto.setAccessDeny(true);
+            }
+        }else{
             dto.setAccessDeny(false);
-            dto.setLastIterationNumber(productService.getNumberOfIteration(partR.getKey()));
-        }catch (Exception e){
-            LOGGER.log(Level.FINEST,null,e);
-            dto.setLastIterationNumber(-1);
-            dto.setAccessDeny(true);
         }
-
 
         for (InstanceAttribute attr : retainedIteration.getInstanceAttributes()) {
             lstAttributes.add(mapper.map(attr, InstanceAttributeDTO.class));
         }
 
-        if(serialNumber != null){
+        if(!component.isVirtual() && serialNumber != null){
             PathDataMasterDTO pathData = productInstancesResource.getPathData(workspaceId, configurationItemId, serialNumber, com.docdoku.core.util.Tools.getPathAsString(path));
             dto.setHasPathData(!pathData.getPathDataIterations().isEmpty());
         }
@@ -562,9 +568,13 @@ public class ProductResource {
             }
         }
 
-        dto.setAssembly(retainedIteration.isAssembly());
+        dto.setAssembly(component.isVirtual() && !component.getComponents().isEmpty() || retainedIteration.isAssembly());
         dto.setAttributes(lstAttributes);
-        dto.setNotifications(getModificationNotificationDTOs(partR));
+
+        if(!component.isVirtual()) {
+            dto.setNotifications(getModificationNotificationDTOs(partR));
+        }
+
         dto.setComponents(components);
 
         return dto;

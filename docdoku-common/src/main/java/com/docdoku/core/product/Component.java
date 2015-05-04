@@ -37,6 +37,7 @@ public class Component implements Serializable {
     private PartIteration retainedIteration;
     private List<PartLink> path;
     private List<Component> components;
+    private boolean isVirtual = false;
 
     public Component() {
     }
@@ -74,7 +75,9 @@ public class Component implements Serializable {
     public void setComponents(List<Component> components) {
         this.components = components;
     }
-
+    public void addComponent(Component component) {
+        this.components.add(component);
+    }
     public PartMaster getPartMaster() {
         return partMaster;
     }
@@ -89,5 +92,13 @@ public class Component implements Serializable {
 
     public void setRetainedIteration(PartIteration retainedIteration) {
         this.retainedIteration = retainedIteration;
+    }
+
+    public boolean isVirtual() {
+        return isVirtual;
+    }
+
+    public void setVirtual(boolean isVirtual) {
+        this.isVirtual = isVirtual;
     }
 }

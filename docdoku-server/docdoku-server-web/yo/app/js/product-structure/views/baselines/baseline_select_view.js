@@ -158,6 +158,7 @@ define([
             var $select = this.$selectPathToPathLink;
             $select.empty();
             $select.append('<option value="">'+App.config.i18n.STRUCTURE+'</option>');
+
             $.getJSON(url).success(function(data){
                 data.map(function(link){
                     $select.append('<option value="'+link.type+'">'+link.type+'</option>');
