@@ -17,14 +17,16 @@ define(['backbone', 'models/component_module', 'views/component_views'
             'checkboxSelected': 'onCheckboxSelected'
         },
 
-        checkedParts : [],
+        checkedPath : [],
 
         onCheckboxSelected:function(e, checked, model){
             if(checked){
-                this.checkedParts.push(model);
+                this.checkedPath.push(model);
             }else{
-                this.checkedParts.splice(this.checkedParts.indexOf(model), 1);
+                this.checkedPath.splice(this.checkedPath.indexOf(model), 1);
             }
+            Backbone.Events.trigger('pathSelected', this.checkedPath);
+
         },
 
         setSelectedComponent: function (component) {

@@ -533,6 +533,7 @@ define({
 	TRANSFORM_CONTROLS: "Transformation",
 	TRUE: "Oui",
 	TYPE: "Type",
+    TYPED_LINK:"Lien de chemin",
     UDF_DEF:'Fonction',
 	UNDO_CHECKOUT: "Annuler la réservation",
 	UNDO_CHECKOUT_QUESTION: "Annuler la réservation ?",

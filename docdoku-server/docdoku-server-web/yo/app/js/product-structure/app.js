@@ -24,8 +24,9 @@ define([
     'dmu/InstancesManager',
     'text!templates/content.html',
     'common-objects/models/part',
-    'views/product-instance-data-modal-view'
-], function (Backbone, Mustache, SearchView, PartsTreeView, BomView, CollaborativeView, PartMetadataView, PartInstanceView, ExportSceneModalView, ControlNavigationView, ControlModesView, ControlTransformView, ControlMarkersView, ControlLayersView, ControlOptionsView, ControlClippingView, ControlExplodeView, ControlMeasureView, BaselineSelectView, SceneManager, CollaborativeController, InstancesManager, template, Part, ProductInstanceDataModalView) {
+    'views/product-instance-data-modal-view',
+    'views/typed-link-modal'
+], function (Backbone, Mustache, SearchView, PartsTreeView, BomView, CollaborativeView, PartMetadataView, PartInstanceView, ExportSceneModalView, ControlNavigationView, ControlModesView, ControlTransformView, ControlMarkersView, ControlLayersView, ControlOptionsView, ControlClippingView, ControlExplodeView, ControlMeasureView, BaselineSelectView, SceneManager, CollaborativeController, InstancesManager, template, Part, ProductInstanceDataModalView, TypedLinkModalView) {
     'use strict';
     var AppView = Backbone.View.extend({
         el: '#content',
@@ -35,7 +36,8 @@ define([
             'click #bom_view_btn': 'bomButton',
             'click #export_scene_btn': 'exportScene',
             'click #fullscreen_scene_btn': 'fullScreenScene',
-            'click #product_instance_btn': 'openProductInstanceModal'
+            'click #product_instance_btn': 'openProductInstanceModal',
+            'click #typed_link_btn' : 'openTypedLinkModal'
         },
 
         inBomMode: false,
@@ -78,6 +80,7 @@ define([
             App.$ControlsContainer.append(new ControlLayersView().render().$el);
             App.$ControlsContainer.append(new ControlMeasureView().render().$el);
 
+            this.typedLinkButton.hide();
             try {
                 App.sceneManager.init();
                 this.bindDatGUIControls();
@@ -115,6 +118,7 @@ define([
             this.bomModeButton = this.$('#bom_view_btn');
             this.exportSceneButton = this.$('#export_scene_btn');
             this.productInstanceModalButton = this.$('#product_instance_btn');
+            this.typedLinkButton = this.$('#typed_link_btn');
             this.bomControls = this.$('.bom-controls');
             this.dmuControls = this.$('.dmu-controls');
             App.$ControlsContainer = this.$('#side_controls_container');
@@ -156,6 +160,24 @@ define([
             Backbone.Events.on('mesh:selected', this.onMeshSelected, this);
             Backbone.Events.on('selection:reset', this.onResetSelection, this);
             Backbone.Events.on('part:saved', this.refreshTree, this);
+            Backbone.Events.on('pathSelected', this.updateDisplayTypedLinkButton, this);
+        },
+
+        updateDisplayTypedLinkButton: function(pathSelected){
+            this.pathSelected = pathSelected;
+            if(pathSelected.length > 1){
+                this.typedLinkButton.show();
+            }else{
+                this.typedLinkButton.hide();
+            }
+        },
+
+        openTypedLinkModal:function(){
+            var typedModal = new TypedLinkModalView({
+                pathSelected : this.pathSelected
+            }).render();
+            window.document.body.appendChild(typedModal.el);
+            typedModal.openModal();
         },
 
         updateBom: function (showRoot) {
