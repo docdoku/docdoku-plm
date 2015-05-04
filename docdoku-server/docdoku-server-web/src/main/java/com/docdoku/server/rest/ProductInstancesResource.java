@@ -566,11 +566,30 @@ public class ProductInstancesResource {
         return mapper.map(pathToPathLink,PathToPathLinkDTO.class);
     }
 
+    @DELETE
+    @Path("{serialNumber}/path-to-path-links/{pathToPathLinkId}")
+    public Response deletePathToPathLink(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, @PathParam("pathToPathLinkId") int pathToPathLinkId) throws PathToPathLinkNotFoundException, UserNotActiveException, WorkspaceNotFoundException, UserNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException {
+        productInstanceService.deletePathToPathLink(workspaceId, configurationItemId, serialNumber, pathToPathLinkId);
+        return Response.ok().build();
+    }
+
     @GET
     @Path("{serialNumber}/path-to-path-links/source/{sourcePath}/target/{targetPath}")
     @Produces(MediaType.APPLICATION_JSON)
     public List<PathToPathLinkDTO> getPathToPathLinksForGivenSourceAndTarget(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, @PathParam("sourcePath") String sourcePath, @PathParam("targetPath") String targetPath) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException {
         List<PathToPathLink> pathToPathLinks = productInstanceService.getPathToPathLinkFromSourceAndTarget(workspaceId, configurationItemId, serialNumber, sourcePath, targetPath);
+        List<PathToPathLinkDTO> dtos = new ArrayList<>();
+        for(PathToPathLink pathToPathLink : pathToPathLinks) {
+            dtos.add(mapper.map(pathToPathLink, PathToPathLinkDTO.class));
+        }
+        return dtos;
+    }
+
+    @GET
+    @Path("{serialNumber}/path-to-path-links-roots/{type}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<PathToPathLinkDTO> getRootPathToPathLinks(@PathParam("workspaceId") String workspaceId, @PathParam("ciId") String configurationItemId, @PathParam("serialNumber") String serialNumber, @PathParam("type") String type) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, ProductInstanceMasterNotFoundException {
+        List<PathToPathLink> pathToPathLinks = productInstanceService.getRootPathToPathLinks(workspaceId, configurationItemId, serialNumber, type);
         List<PathToPathLinkDTO> dtos = new ArrayList<>();
         for(PathToPathLink pathToPathLink : pathToPathLinks) {
             dtos.add(mapper.map(pathToPathLink, PathToPathLinkDTO.class));
