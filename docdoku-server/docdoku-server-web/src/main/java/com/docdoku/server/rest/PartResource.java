@@ -103,6 +103,7 @@ public class PartResource {
 
         for (ProductInstanceMaster productInstanceMaster : productInstanceMasters) {
             ProductInstanceMasterDTO productInstanceMasterDTO = mapper.map(productInstanceMaster, ProductInstanceMasterDTO.class);
+            productInstanceMasterDTO.setProductInstanceIterations(null);
             productInstanceMasterDTOs.add(productInstanceMasterDTO);
         }
 
